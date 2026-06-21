@@ -1,0 +1,1195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skbp.local/schemas/pipeline-shortlist-analysis.schema.json",
+  "title": "SKBP PreC Pipeline Shortlist Analysis",
+  "type": "object",
+  "required": [
+    "meta",
+    "input",
+    "source_report",
+    "company_profile",
+    "rubric",
+    "json_summary",
+    "structured_table",
+    "hard_filter",
+    "scoring",
+    "competitive_analysis",
+    "validation",
+    "final_insight",
+    "obsidian"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "$ref": "#/$defs/meta"
+    },
+    "input": {
+      "$ref": "#/$defs/input"
+    },
+    "rubric": {
+      "$ref": "#/$defs/rubric"
+    },
+    "json_summary": {
+      "$ref": "#/$defs/json_summary"
+    },
+    "structured_table": {
+      "$ref": "#/$defs/structured_table"
+    },
+    "hard_filter": {
+      "$ref": "#/$defs/hard_filter"
+    },
+    "scoring": {
+      "$ref": "#/$defs/scoring"
+    },
+    "competitive_analysis": {
+      "$ref": "#/$defs/competitive_analysis"
+    },
+    "validation": {
+      "$ref": "#/$defs/validation"
+    },
+    "final_insight": {
+      "$ref": "#/$defs/final_insight"
+    },
+    "obsidian": {
+      "$ref": "#/$defs/obsidian"
+    },
+    "source_report": {
+      "$ref": "#/$defs/source_report"
+    },
+    "company_profile": {
+      "$ref": "#/$defs/company_profile"
+    }
+  },
+  "$defs": {
+    "nullable_string": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "string_array": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "meta": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "generated_at",
+        "language",
+        "analyst_role",
+        "output_format",
+        "output_filename_base",
+        "rubric_version",
+        "rubric_author"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "const": "3.0"
+        },
+        "generated_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "ko",
+            "en"
+          ]
+        },
+        "analyst_role": {
+          "type": "string"
+        },
+        "output_format": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "json",
+              "markdown"
+            ]
+          },
+          "minItems": 1
+        },
+        "output_filename_base": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rubric_version": {
+          "type": "string"
+        },
+        "rubric_author": {
+          "type": "string",
+          "default": "kate"
+        }
+      }
+    },
+    "input": {
+      "type": "object",
+      "required": [
+        "company_input",
+        "asset_input",
+        "source_text",
+        "source_type",
+        "notes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "company_input": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "asset_input": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "source_text": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "notes": {
+          "$ref": "#/$defs/nullable_string"
+        }
+      }
+    },
+    "rubric": {
+      "type": "object",
+      "description": "기준 설명 전용 섹션. scoring의 main_line_summary에는 이 기준 문구를 반복하지 않는다.",
+      "required": [
+        "target_relevance",
+        "competitive_landscape",
+        "moa_validity",
+        "platform_attractiveness",
+        "expansion_potential",
+        "data_maturity",
+        "marketability"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "target_relevance": {
+          "$ref": "#/$defs/rubric_criterion"
+        },
+        "competitive_landscape": {
+          "$ref": "#/$defs/rubric_criterion"
+        },
+        "moa_validity": {
+          "$ref": "#/$defs/rubric_criterion"
+        },
+        "platform_attractiveness": {
+          "$ref": "#/$defs/rubric_criterion"
+        },
+        "expansion_potential": {
+          "$ref": "#/$defs/rubric_criterion"
+        },
+        "data_maturity": {
+          "$ref": "#/$defs/rubric_criterion"
+        },
+        "marketability": {
+          "$ref": "#/$defs/rubric_criterion"
+        }
+      }
+    },
+    "rubric_criterion": {
+      "type": "object",
+      "required": [
+        "description",
+        "score_definitions"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "score_definitions": {
+          "type": "object",
+          "required": [
+            "0",
+            "1",
+            "2",
+            "3"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "0": {
+              "type": "string"
+            },
+            "1": {
+              "type": "string"
+            },
+            "2": {
+              "type": "string"
+            },
+            "3": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "json_summary": {
+      "type": "object",
+      "required": [
+        "company",
+        "company_country",
+        "asset_name",
+        "target",
+        "theme",
+        "cluster",
+        "target_relevance_score",
+        "one_line_summary"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "company": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "company_country": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "asset_name": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "target": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "theme": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "E/I Balance",
+            "Neuroimmune",
+            "No Theme",
+            null
+          ]
+        },
+        "cluster": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "target_relevance_score": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 3
+        },
+        "one_line_summary": {
+          "$ref": "#/$defs/nullable_string"
+        }
+      }
+    },
+    "structured_table": {
+      "type": "object",
+      "required": [
+        "company",
+        "company_country",
+        "asset_name",
+        "target",
+        "theme",
+        "cluster",
+        "target_mapping_rationale",
+        "moa",
+        "modality_platform",
+        "indication",
+        "development_stage",
+        "key_data",
+        "sources"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "company": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "company_country": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "asset_name": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "target": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "theme": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "E/I Balance",
+            "Neuroimmune",
+            "No Theme",
+            null
+          ]
+        },
+        "cluster": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "target_mapping_rationale": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "moa": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "modality_platform": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "indication": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "development_stage": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "key_data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/key_data_item"
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/basic_source"
+          }
+        }
+      }
+    },
+    "key_data_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "data_type",
+        "summary",
+        "details"
+      ],
+      "properties": {
+        "data_type": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "summary": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "details": {
+          "$ref": "#/$defs/nullable_string"
+        }
+      }
+    },
+    "basic_source": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "source_id",
+        "source_title",
+        "source_url",
+        "source_excerpt"
+      ],
+      "properties": {
+        "source_id": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "source_title": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "source_url": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "source_excerpt": {
+          "$ref": "#/$defs/nullable_string"
+        }
+      }
+    },
+    "hard_filter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "within_target_ta",
+        "relevant_biological_target",
+        "stage_preclinical_to_ind",
+        "overall_result",
+        "fail_reasons"
+      ],
+      "properties": {
+        "within_target_ta": {
+          "$ref": "#/$defs/filter_answer"
+        },
+        "relevant_biological_target": {
+          "$ref": "#/$defs/filter_answer"
+        },
+        "stage_preclinical_to_ind": {
+          "$ref": "#/$defs/filter_answer"
+        },
+        "overall_result": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FAIL",
+            "Unclear"
+          ]
+        },
+        "fail_reasons": {
+          "$ref": "#/$defs/string_array"
+        }
+      }
+    },
+    "filter_answer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "answer",
+        "reason"
+      ],
+      "properties": {
+        "answer": {
+          "type": "string",
+          "enum": [
+            "Yes",
+            "No",
+            "Unclear",
+            "Unknown"
+          ]
+        },
+        "reason": {
+          "$ref": "#/$defs/nullable_string"
+        }
+      }
+    },
+    "scoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "total_score",
+        "max_score",
+        "criteria"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_scored",
+            "scored",
+            "partial",
+            "needs_review"
+          ]
+        },
+        "total_score": {
+          "type": [
+            "integer",
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 21
+        },
+        "max_score": {
+          "type": "integer",
+          "const": 21
+        },
+        "criteria": {
+          "$ref": "#/$defs/scoring_criteria"
+        }
+      }
+    },
+    "scoring_criteria": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_relevance",
+        "competitive_landscape",
+        "moa_validity",
+        "platform_attractiveness",
+        "expansion_potential",
+        "data_maturity",
+        "marketability"
+      ],
+      "properties": {
+        "target_relevance": {
+          "$ref": "#/$defs/scoring_criterion"
+        },
+        "competitive_landscape": {
+          "$ref": "#/$defs/scoring_criterion"
+        },
+        "moa_validity": {
+          "$ref": "#/$defs/scoring_criterion"
+        },
+        "platform_attractiveness": {
+          "$ref": "#/$defs/scoring_criterion"
+        },
+        "expansion_potential": {
+          "$ref": "#/$defs/scoring_criterion"
+        },
+        "data_maturity": {
+          "$ref": "#/$defs/scoring_criterion"
+        },
+        "marketability": {
+          "$ref": "#/$defs/marketability_criterion"
+        }
+      }
+    },
+    "scoring_criterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "score",
+        "main_line_summary",
+        "evidence_sources",
+        "investigation_note",
+        "uncertain_points"
+      ],
+      "properties": {
+        "score": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 3
+        },
+        "main_line_summary": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "evidence_sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence_source"
+          }
+        },
+        "investigation_note": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "uncertain_points": {
+          "$ref": "#/$defs/string_array"
+        }
+      }
+    },
+    "marketability_criterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "score",
+        "main_line_summary",
+        "calculation",
+        "evidence_sources",
+        "investigation_note",
+        "uncertain_points"
+      ],
+      "properties": {
+        "score": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 3
+        },
+        "main_line_summary": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "evidence_sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence_source"
+          }
+        },
+        "investigation_note": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "uncertain_points": {
+          "$ref": "#/$defs/string_array"
+        },
+        "calculation": {
+          "$ref": "#/$defs/marketability_calculation"
+        }
+      }
+    },
+    "marketability_calculation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "A_targetable_addressable_patient",
+        "B_unrisked_peak_sales",
+        "C_obtainable_peak_sales"
+      ],
+      "properties": {
+        "A_targetable_addressable_patient": {
+          "type": "object",
+          "description": "A. Targetable Addressable Patient (TAP): estimate the actually treatable patient pool.",
+          "additionalProperties": false,
+          "required": [
+            "total_patient_pool",
+            "diagnosis_rate",
+            "eligibility_rate",
+            "biomarker_positive_rate",
+            "treatable_subgroup_rate",
+            "targetable_addressable_patient",
+            "formula",
+            "assumption_note"
+          ],
+          "properties": {
+            "total_patient_pool": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "diagnosis_rate": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "eligibility_rate": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "biomarker_positive_rate": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "treatable_subgroup_rate": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "targetable_addressable_patient": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "formula": {
+              "type": "string"
+            },
+            "assumption_note": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "B_unrisked_peak_sales": {
+          "type": "object",
+          "description": "B. Unrisked Peak Sales: theoretical peak sales before full competition and execution risk adjustment. Sales output should be expressed in million USD.",
+          "additionalProperties": false,
+          "required": [
+            "tap",
+            "annual_net_price",
+            "peak_penetration",
+            "treatment_duration_factor",
+            "entry_order_share_assumption",
+            "unrisked_peak_sales",
+            "formula",
+            "assumption_note"
+          ],
+          "properties": {
+            "tap": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "annual_net_price": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "peak_penetration": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "treatment_duration_factor": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "sales_unit": {
+              "type": "string",
+              "const": "million USD",
+              "description": "Preferred display and storage unit for sales outputs."
+            },
+            "entry_order_share_assumption": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "market_player_count",
+                "expected_entry_order",
+                "matrix_share_reference",
+                "assumption_note"
+              ],
+              "properties": {
+                "market_player_count": {
+                  "type": [
+                    "number",
+                    "string",
+                    "null"
+                  ]
+                },
+                "expected_entry_order": {
+                  "type": [
+                    "number",
+                    "string",
+                    "null"
+                  ]
+                },
+                "matrix_share_reference": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "assumption_note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "unrisked_peak_sales": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "formula": {
+              "type": "string"
+            },
+            "assumption_note": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "C_obtainable_peak_sales": {
+          "type": "object",
+          "description": "C. Obtainable Peak Sales: realistic commercial opportunity after competition, pricing power, and expansion adjustments. Sales output should be expressed in million USD.",
+          "additionalProperties": false,
+          "required": [
+            "unrisked_peak_sales",
+            "competition_haircut",
+            "pricing_power_adjustment",
+            "expansion_capacity_adjustment",
+            "obtainable_peak_sales",
+            "formula",
+            "score_basis_note"
+          ],
+          "properties": {
+            "unrisked_peak_sales": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "competition_haircut": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "pricing_power_adjustment": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "expansion_capacity_adjustment": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "sales_unit": {
+              "type": "string",
+              "const": "million USD",
+              "description": "Preferred display and storage unit for sales outputs."
+            },
+            "obtainable_peak_sales": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "formula": {
+              "type": "string"
+            },
+            "score_basis_note": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "evidence_source": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "source_id": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "source_title": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "source_url": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "published_at": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "accessed_at": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "evidence_summary": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "relevance_to_assessment": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "supports_score": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "reliability": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "High",
+            "Medium",
+            "Low",
+            "Unclear",
+            null
+          ]
+        }
+      }
+    },
+    "competitive_analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "competitive_density",
+        "competitor_table",
+        "similarity_summary",
+        "similar_pipelines",
+        "differentiation_points",
+        "analysis_summary"
+      ],
+      "properties": {
+        "competitive_density": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "competitor_table": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/competitor_row"
+          }
+        },
+        "similarity_summary": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "similar_pipelines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "differentiation_points": {
+          "$ref": "#/$defs/string_array"
+        },
+        "analysis_summary": {
+          "$ref": "#/$defs/nullable_string"
+        }
+      }
+    },
+    "competitor_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "competitor_name",
+        "company",
+        "modality",
+        "target_or_moa",
+        "development_stage",
+        "relevance_to_asset",
+        "source"
+      ],
+      "properties": {
+        "competitor_name": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "company": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "modality": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "target_or_moa": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "development_stage": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "relevance_to_asset": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "source": {
+          "$ref": "#/$defs/nullable_string"
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cross_checked_facts",
+        "uncertain_points",
+        "source_registry"
+      ],
+      "properties": {
+        "cross_checked_facts": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "additionalProperties": true
+              }
+            ]
+          }
+        },
+        "uncertain_points": {
+          "$ref": "#/$defs/string_array"
+        },
+        "source_registry": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "final_insight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "one_line_summary",
+        "key_strengths",
+        "key_risks"
+      ],
+      "properties": {
+        "one_line_summary": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "key_strengths": {
+          "$ref": "#/$defs/string_array"
+        },
+        "key_risks": {
+          "$ref": "#/$defs/string_array"
+        }
+      }
+    },
+    "obsidian": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "note_title",
+        "note_type",
+        "aliases",
+        "tags",
+        "wikilink_entities"
+      ],
+      "properties": {
+        "note_title": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "note_type": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "aliases": {
+          "$ref": "#/$defs/string_array"
+        },
+        "tags": {
+          "$ref": "#/$defs/string_array"
+        },
+        "wikilink_entities": {
+          "$ref": "#/$defs/string_array"
+        }
+      }
+    },
+    "source_report": {
+      "type": "object",
+      "description": "Human-readable GPT report used as the primary raw source for downstream schema parsing.",
+      "required": [
+        "raw_markdown",
+        "source_format",
+        "parser_status",
+        "parser_note"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "raw_markdown": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_format": {
+          "type": "string",
+          "enum": [
+            "markdown",
+            "plain_text",
+            "unknown"
+          ]
+        },
+        "parser_status": {
+          "type": "string",
+          "enum": [
+            "not_parsed",
+            "mock_parsed",
+            "parsed",
+            "needs_review"
+          ]
+        },
+        "parser_note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "company_profile": {
+      "type": "object",
+      "description": "Basic company information and verification sources used before asset-level scoring.",
+      "required": [
+        "company_name",
+        "legal_name",
+        "aliases",
+        "country",
+        "headquarters",
+        "website",
+        "founded_year",
+        "company_stage",
+        "ownership_status",
+        "focus_areas",
+        "platform_summary",
+        "lead_pipeline_summary",
+        "financing_or_partnership_signals",
+        "official_source_urls",
+        "notes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "company_name": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "legal_name": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "aliases": {
+          "$ref": "#/$defs/string_array"
+        },
+        "country": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "headquarters": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "website": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "founded_year": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ]
+        },
+        "company_stage": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "ownership_status": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "focus_areas": {
+          "$ref": "#/$defs/string_array"
+        },
+        "platform_summary": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "lead_pipeline_summary": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "financing_or_partnership_signals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "official_source_urls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence_source"
+          }
+        },
+        "notes": {
+          "$ref": "#/$defs/nullable_string"
+        }
+      }
+    }
+  }
+}

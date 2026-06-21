@@ -1,0 +1,127 @@
+{
+  "target_relevance": {
+    "description": "SKBP Theme / Cluster 적합성 평가",
+    "score_definitions": {
+      "3": "SKBP 관심 Theme 2개 또는 Cluster 5개 중 하나에 정확히 해당",
+      "2": "general neurodegeneration / neuroinflammation / epilepsy에 해당",
+      "1": "CNS와 약하게만 연결되거나 간접적 연관만 있음",
+      "0": "CNS 관련성이 거의 없음"
+    },
+    "theme_definition": "Theme은 여러 질환군을 기전적으로 접근할 수 있는 Cluster 상위 개념이다. SKBP는 질환군별 타깃 포트폴리오를 넘어서 Theme-based R&D Strategy를 채택한다.",
+    "cluster_definition": "Cluster는 Theme 내 공통 병태생리를 기반으로 반복적인 target 발굴과 Asset 전환이 가능한 세부 biology 축이다.",
+    "focus_themes": [
+      {
+        "name": "E/I Balance",
+        "gpt_explanation": "Balance between excitation and inhibition",
+        "clusters": [
+          "Ion Channel",
+          "Inhibitory Tone 강화",
+          "Synaptic Transmission",
+          "Chloride Homeostasis",
+          "Network Modulation"
+        ]
+      },
+      {
+        "name": "Neuroimmune",
+        "gpt_explanation": "Neuroimmune biology across CNS disease",
+        "clusters": [
+          "CNS 손상 면역반응",
+          "교세포 향상성",
+          "Cytokine 신경조절",
+          "손상/질환 면역조절",
+          "말초 면역기관 연결"
+        ]
+      }
+    ]
+  },
+  "competitive_landscape": {
+    "description": "같은 target 또는 같은 MoA 기준 경쟁 강도 평가",
+    "score_definitions": {
+      "3": "front runner 1개",
+      "2": "front runner 2개",
+      "1": "front runner 0개 또는 사실상 없음",
+      "0": "경쟁군 판단 불가"
+    },
+    "interpretation_note": "FIC 자체를 과도하게 선호하지 않고, 1개 정도 앞서가는 약물이 있어 biology/market validation이 확인되는 상태를 가장 선호한다."
+  },
+  "moa_validity": {
+    "description": "작동 원리의 설득력과 publication 기반 근거 평가",
+    "score_definitions": {
+      "3": "충분한 publication + 강한 mechanistic consistency",
+      "2": "publication 기반 plausibility 충분",
+      "1": "간접 근거 또는 비공개 자료 위주",
+      "0": "기전 불명확 또는 근거 부족"
+    },
+    "evidence_expectation": "2점 이상은 PMID, 저널명, conference abstract, company deck 등 출처를 반드시 연결한다."
+  },
+  "platform_attractiveness": {
+    "description": "플랫폼 기술의 신뢰성, 차별성, SKBP modality fit 평가",
+    "major_modalities": [
+      "small molecule",
+      "ASO",
+      "siRNA"
+    ],
+    "secondary_modalities": [
+      "AOC",
+      "antibody"
+    ],
+    "score_definitions": {
+      "3": "small molecule / ASO / siRNA + 차별화 포인트 분명 + Theme/Cluster fit 매우 높음",
+      "2": "AOC / antibody 등 둘째 관심 모달리티 또는 그에 준하는 수준 + 차별화 근거 있음",
+      "1": "차별성 약하고 근거 부족",
+      "0": "플랫폼 신뢰성 낮음 또는 재현성 의심"
+    }
+  },
+  "expansion_potential": {
+    "description": "main indication 외 적응증/cluster 확장성 평가",
+    "score_definitions": {
+      "3": "여러 indication / 여러 cluster로 확장 가능",
+      "2": "main indication 외 인접 적응증 1개 이상 확장 가능",
+      "1": "확장 가능성은 있으나 근거 약함",
+      "0": "one-off asset"
+    }
+  },
+  "data_maturity": {
+    "description": "clinical data 제외, preclinical 실험 데이터 성숙도 평가",
+    "score_definitions": {
+      "3": "in vitro + in vivo + 정량성 + 재현성까지 탄탄",
+      "2": "명확한 preclinical data 있음",
+      "1": "제한적 PoC 수준",
+      "0": "실험 데이터 거의 없음"
+    },
+    "interpretation_note": "MoA Validity는 왜 작동할 것 같은지이고, Data Maturity는 실제 어떤 preclinical 데이터가 나왔는지이다."
+  },
+  "marketability": {
+    "description": "전임상 단계에서 해당 자산의 상업적 잠재력을 정성/정량 혼합 방식으로 평가한다.",
+    "method": "TAP를 먼저 추정한 뒤 Unrisked Peak Sales를 계산하고, 경쟁·가격·확장성 보정을 적용해 Obtainable Peak Sales를 도출한다. rNPV는 사용하지 않는다.",
+    "required_reason_structure": "main_line_summary에는 반드시 A. TAP, B. Unrisked Peak Sales, C. Obtainable Peak Sales 판단을 모두 포함한다.",
+    "calculation_steps": {
+      "A_TAP": {
+        "label": "Targetable Addressable Patient",
+        "description": "전체 환자군에서 진단 가능성, 적격성, biomarker 여부, 치료 가능 subgroup을 반영해 실제 치료 가능한 환자군을 추정한다.",
+        "formula": "TAP = Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate",
+        "optional_inputs": [
+          "biomarker_positive_rate",
+          "treatable_subgroup_rate"
+        ]
+      },
+      "B_unrisked_peak_sales": {
+        "label": "Unrisked Peak Sales",
+        "description": "TAP에 연간 순매출과 피크 침투율, 치료기간 계수를 곱해 경쟁이나 실행 리스크를 아직 완전히 반영하지 않은 이론상 매출을 계산한다.",
+        "formula": "Unrisked Peak Sales = TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor",
+        "entry_order_matrix_note": "Peak penetration 또는 attainable share 가정은 entry order와 경쟁자 수를 참고한다. 예: 3-player 시장에서 1st entrant 약 50%, 2nd entrant 약 30%, 3rd entrant 약 20%."
+      },
+      "C_obtainable_peak_sales": {
+        "label": "Obtainable Peak Sales",
+        "description": "Unrisked Peak Sales에 경쟁 강도, 가격 결정력, 확장 가능성을 반영해 실제로 얻을 수 있는 시장 크기를 계산한다.",
+        "formula": "Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment"
+      }
+    },
+    "score_definitions": {
+      "3": "obtainable peak sales가 USD 2,000M 이상이고 expansion capacity도 높음",
+      "2": "obtainable peak sales가 USD 1,000M 이상",
+      "1": "unrisked peak sales는 크지만 경쟁 포화로 obtainable pie < USD 1,000M",
+      "0": "pricing power도 없고 market size도 낮음"
+    }
+  }
+}

@@ -1,0 +1,830 @@
+const params = new URLSearchParams(window.location.search);
+const recordId = params.get('id');
+
+const elements = {
+  title: document.querySelector('#detailTitle'),
+  status: document.querySelector('#detailStatus'),
+  subtitle: document.querySelector('#detailSubtitle'),
+  sourceReportViewer: document.querySelector('#sourceReportViewer'),
+  scoreEvidenceSubtitle: document.querySelector('#scoreEvidenceSubtitle'),
+  scoreEvidenceStatus: document.querySelector('#scoreEvidenceStatus'),
+  scoreEvidenceViewer: document.querySelector('#scoreEvidenceViewer'),
+  detailAiButton: document.querySelector('#detailAiButton'),
+  criteriaDrawerButton: document.querySelector('#criteriaDrawerButton'),
+  criteriaDrawer: document.querySelector('#criteriaDrawer'),
+  criteriaBackdrop: document.querySelector('#criteriaBackdrop'),
+  criteriaDrawerClose: document.querySelector('#criteriaDrawerClose'),
+  deleteRecordButton: document.querySelector('#deleteRecordButton'),
+  aiDrawer: document.querySelector('#aiDrawer'),
+  aiBackdrop: document.querySelector('#aiBackdrop'),
+  aiDrawerClose: document.querySelector('#aiDrawerClose'),
+  messages: document.querySelector('#chatMessages'),
+  form: document.querySelector('#chatForm'),
+  input: document.querySelector('#chatInput'),
+  editButton: document.querySelector('#editJsonButton'),
+  editDrawer: document.querySelector('#editDrawer'),
+  editBackdrop: document.querySelector('#editBackdrop'),
+  editDrawerClose: document.querySelector('#editDrawerClose'),
+  jsonEditor: document.querySelector('#jsonEditor'),
+  saveJsonEditButton: document.querySelector('#saveJsonEditButton'),
+  formatJsonButton: document.querySelector('#formatJsonButton'),
+  editStatus: document.querySelector('#editStatus')
+};
+
+const scoringLabels = {
+  target_relevance: 'Target Relevance',
+  competitive_landscape: 'Competitive Landscape',
+  moa_validity: 'MoA Validity',
+  platform_attractiveness: 'Platform Attractiveness',
+  expansion_potential: 'Expansion Potential',
+  data_maturity: 'Data Maturity',
+  marketability: 'Marketability'
+};
+
+let currentRecord = null;
+let currentRecordId = recordId;
+let pendingDraftRecord = null;
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function isPlaceholderRawMarkdown(value) {
+  const text = String(value || '').trim();
+  return !text
+    || text === 'Paste the full Markdown report text here if available.'
+    || text === 'Markdown report is provided separately in the MD copy box.';
+}
+
+function prettifyKey(key) {
+  return key.replaceAll('_', ' ');
+}
+
+function renderPrimitive(value) {
+  if (value === null) return '<span class="json-null">null</span>';
+  if (typeof value === 'number') return `<span class="json-number">${value}</span>`;
+  if (typeof value === 'boolean') return `<span class="json-bool">${value}</span>`;
+  return `<span>${escapeHtml(value)}</span>`;
+}
+
+function renderValue(value, depth = 0) {
+  if (Array.isArray(value)) {
+    if (!value.length) return '<span class="json-empty">[]</span>';
+    return `
+      <div class="json-array">
+        ${value
+          .map((item, index) => `
+            <div class="json-array-item">
+              <span class="json-index">${index + 1}</span>
+              <div>${renderValue(item, depth + 1)}</div>
+            </div>
+          `)
+          .join('')}
+      </div>
+    `;
+  }
+
+  if (value && typeof value === 'object') {
+    const entries = Object.entries(value);
+    if (!entries.length) return '<span class="json-empty">{}</span>';
+    return `
+      <div class="json-object depth-${Math.min(depth, 3)}">
+        ${entries
+          .map(([key, item]) => `
+            <div class="json-row">
+              <div class="json-key">${escapeHtml(prettifyKey(key))}</div>
+              <div class="json-value">${renderValue(item, depth + 1)}</div>
+            </div>
+          `)
+          .join('')}
+      </div>
+    `;
+  }
+
+  return renderPrimitive(value);
+}
+
+function formatScore(value) {
+  return value === null || value === undefined ? '-' : value;
+}
+
+function formatMillionUsd(value, unit = '') {
+  if (value === null || value === undefined || value === '') return '-';
+  const isMillionUnit = /million\s*usd/i.test(String(unit));
+  if (typeof value === 'number') {
+    const millionValue = isMillionUnit ? value : value / 1_000_000;
+    return `USD ${millionValue.toLocaleString(undefined, { maximumFractionDigits: 1 })}M`;
+  }
+
+  const text = String(value).trim();
+  const numeric = Number(text.replace(/[$,]/g, '').match(/-?\d+(\.\d+)?/)?.[0]);
+  if (!Number.isFinite(numeric)) return text;
+  if (/\b(b|bn|billion)\b/i.test(text)) {
+    return `USD ${(numeric * 1000).toLocaleString(undefined, { maximumFractionDigits: 1 })}M`;
+  }
+  if (/\b(m|mn|million)\b/i.test(text)) {
+    return `USD ${numeric.toLocaleString(undefined, { maximumFractionDigits: 1 })}M`;
+  }
+  if (/usd|dollar|\$/i.test(text) && numeric >= 1_000_000) {
+    return `USD ${(numeric / 1_000_000).toLocaleString(undefined, { maximumFractionDigits: 1 })}M`;
+  }
+  return text;
+}
+
+function getRubricDefinition(record, key, score) {
+  return record.rubric?.[key]?.score_definitions?.[String(score)] || '-';
+}
+
+function renderSourceLink(source, index) {
+  if (!source || typeof source !== 'object') return '';
+  const title = source.source_title || source.title || source.name || `Source ${index + 1}`;
+  const url = source.source_url || source.url || source.link || '';
+  const type = source.source_type || source.type || '-';
+  const reliability = source.reliability || '-';
+  const summary = source.evidence_summary || source.source_excerpt || source.summary || '';
+  const relevance = source.relevance_to_assessment || source.relevance || '';
+  const titleHtml = url
+    ? `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${escapeHtml(title)}</a>`
+    : `<span>${escapeHtml(title)}</span>`;
+
+  return `
+    <li class="source-link-item">
+      <div>
+        <strong>${titleHtml}</strong>
+        <span>${escapeHtml(type)} · reliability ${escapeHtml(reliability)}</span>
+      </div>
+      ${summary ? `<p>${escapeHtml(summary)}</p>` : ''}
+      ${relevance ? `<p>${escapeHtml(relevance)}</p>` : ''}
+    </li>
+  `;
+}
+
+function renderSourceList(sources = []) {
+  const normalized = Array.isArray(sources) ? sources.filter((source) => source && typeof source === 'object') : [];
+  if (!normalized.length) {
+    return '<div class="empty-evidence">연결된 출처 링크가 없습니다. 원문 리포트 또는 evidence_sources에 URL을 추가하면 여기에 표시됩니다.</div>';
+  }
+  return `<ul class="source-link-list">${normalized.map(renderSourceLink).join('')}</ul>`;
+}
+
+function collectMarkdownReferenceSources(markdown = '') {
+  const sources = [];
+  const pattern = /^\[(\d+)\]:\s+(\S+)(?:\s+"([^"]+)")?/gm;
+  let match = pattern.exec(markdown);
+  while (match) {
+    sources.push({
+      source_id: `raw-report-ref-${match[1]}`,
+      source_title: match[3] || `Raw report reference ${match[1]}`,
+      source_url: match[2],
+      source_type: 'raw_report_reference',
+      reliability: 'Unclear',
+      evidence_summary: 'Reference link extracted from the original GPT report.'
+    });
+    match = pattern.exec(markdown);
+  }
+  return sources;
+}
+
+function renderMarketabilityCalculation(calculation) {
+  if (!calculation || typeof calculation !== 'object') return '';
+  const stepA = calculation.A_targetable_addressable_patient || {};
+  const stepB = calculation.B_unrisked_peak_sales || {};
+  const stepC = calculation.C_obtainable_peak_sales || {};
+  const entry = stepB.entry_order_share_assumption || {};
+
+  return `
+    <div class="market-calc">
+      <h4>Marketability A/B/C Calculation</h4>
+      <div class="calc-step">
+        <strong>A. TAP</strong>
+        <p>${escapeHtml(stepA.formula || 'TAP = Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate')}</p>
+        <dl>
+          <div><dt>Total patient pool</dt><dd>${escapeHtml(formatScore(stepA.total_patient_pool))}</dd></div>
+          <div><dt>Diagnosis rate</dt><dd>${escapeHtml(formatScore(stepA.diagnosis_rate))}</dd></div>
+          <div><dt>Eligibility rate</dt><dd>${escapeHtml(formatScore(stepA.eligibility_rate))}</dd></div>
+          <div><dt>Biomarker-positive</dt><dd>${escapeHtml(formatScore(stepA.biomarker_positive_rate))}</dd></div>
+          <div><dt>TAP output</dt><dd>${escapeHtml(formatScore(stepA.targetable_addressable_patient))}</dd></div>
+        </dl>
+      </div>
+      <div class="calc-step">
+        <strong>B. Unrisked Peak Sales</strong>
+        <p>${escapeHtml(stepB.formula || 'Unrisked Peak Sales = TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor')}</p>
+        <dl>
+          <div><dt>Annual net price</dt><dd>${escapeHtml(formatScore(stepB.annual_net_price))}</dd></div>
+          <div><dt>Peak penetration</dt><dd>${escapeHtml(formatScore(stepB.peak_penetration))}</dd></div>
+          <div><dt>Duration factor</dt><dd>${escapeHtml(formatScore(stepB.treatment_duration_factor))}</dd></div>
+          <div><dt>Entry-order share</dt><dd>${escapeHtml(entry.matrix_share_reference || '-')}</dd></div>
+          <div><dt>Unrisked sales</dt><dd>${escapeHtml(formatMillionUsd(stepB.unrisked_peak_sales, stepB.sales_unit))}</dd></div>
+        </dl>
+      </div>
+      <div class="calc-step">
+        <strong>C. Obtainable Peak Sales</strong>
+        <p>${escapeHtml(stepC.formula || 'Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment')}</p>
+        <dl>
+          <div><dt>Competition haircut</dt><dd>${escapeHtml(formatScore(stepC.competition_haircut))}</dd></div>
+          <div><dt>Pricing power</dt><dd>${escapeHtml(formatScore(stepC.pricing_power_adjustment))}</dd></div>
+          <div><dt>Expansion capacity</dt><dd>${escapeHtml(formatScore(stepC.expansion_capacity_adjustment))}</dd></div>
+          <div><dt>Obtainable sales</dt><dd>${escapeHtml(formatMillionUsd(stepC.obtainable_peak_sales, stepC.sales_unit))}</dd></div>
+        </dl>
+      </div>
+    </div>
+  `;
+}
+
+function renderCompanyProfile(profile = {}) {
+  const officialSources = Array.isArray(profile.official_source_urls) ? profile.official_source_urls : [];
+  const focusAreas = Array.isArray(profile.focus_areas) && profile.focus_areas.length ? profile.focus_areas.join(', ') : '-';
+  const aliases = Array.isArray(profile.aliases) && profile.aliases.length ? profile.aliases.join(', ') : '-';
+  const signals = Array.isArray(profile.financing_or_partnership_signals) && profile.financing_or_partnership_signals.length
+    ? profile.financing_or_partnership_signals
+        .map((signal) => `<li>${escapeHtml(signal.summary || signal.title || JSON.stringify(signal))}</li>`)
+        .join('')
+    : '<li>확인된 financing / partnership signal 없음</li>';
+
+  return `
+    <section class="company-profile-card">
+      <div class="score-card-header">
+        <div>
+          <span>Company Profile</span>
+          <h3>${escapeHtml(profile.company_name || '-')}</h3>
+        </div>
+        ${profile.website ? `<strong><a href="${escapeHtml(profile.website)}" target="_blank" rel="noreferrer">Official website</a></strong>` : '<strong>Official website 필요</strong>'}
+      </div>
+      <div class="company-profile-grid">
+        <div><span>Legal / aliases</span><strong>${escapeHtml(profile.legal_name || aliases)}</strong></div>
+        <div><span>Country</span><strong>${escapeHtml(profile.country || '-')}</strong></div>
+        <div><span>Headquarters</span><strong>${escapeHtml(profile.headquarters || '-')}</strong></div>
+        <div><span>Company stage</span><strong>${escapeHtml(profile.company_stage || '-')}</strong></div>
+        <div><span>Focus areas</span><strong>${escapeHtml(focusAreas)}</strong></div>
+        <div><span>Ownership</span><strong>${escapeHtml(profile.ownership_status || '-')}</strong></div>
+      </div>
+      <div class="score-evidence-block">
+        <h4>Platform / Lead Pipeline</h4>
+        <p>${escapeHtml(profile.platform_summary || '-')}</p>
+        <p>${escapeHtml(profile.lead_pipeline_summary || '-')}</p>
+      </div>
+      <div class="score-evidence-block">
+        <h4>Financing / Partnership Signals</h4>
+        <ul>${signals}</ul>
+      </div>
+      <div class="score-evidence-block">
+        <h4>Official Company Sources</h4>
+        ${renderSourceList(officialSources)}
+      </div>
+    </section>
+  `;
+}
+
+function collectGlobalSources(record) {
+  const sources = [];
+  const add = (items) => {
+    if (!Array.isArray(items)) return;
+    items.forEach((item) => {
+      if (item && typeof item === 'object') sources.push(item);
+    });
+  };
+  add(record.structured_table?.sources);
+  add(record.validation?.source_registry);
+  add(collectMarkdownReferenceSources(record.source_report?.raw_markdown || ''));
+  Object.values(record.scoring?.criteria || {}).forEach((criterion) => add(criterion?.evidence_sources));
+  const seen = new Set();
+  return sources.filter((source) => {
+    const key = `${source.source_title || source.title || ''}|${source.source_url || source.url || ''}|${source.evidence_summary || ''}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function renderScoreEvidence(record) {
+  const scoring = record.scoring || {};
+  const criteria = scoring.criteria || {};
+  const hardFilter = record.hard_filter?.overall_result || '-';
+  const cards = Object.entries(scoringLabels)
+    .map(([key, label]) => {
+      const item = criteria[key] || {};
+      const score = item.score;
+      const rubricDefinition = getRubricDefinition(record, key, score);
+      const uncertain = Array.isArray(item.uncertain_points) && item.uncertain_points.length
+        ? item.uncertain_points.map((point) => `<li>${escapeHtml(point)}</li>`).join('')
+        : '<li>별도 불확실성 메모 없음</li>';
+      return `
+        <article class="score-evidence-card">
+          <div class="score-card-header">
+            <div>
+              <span>${escapeHtml(label)}</span>
+              <h3>${escapeHtml(formatScore(score))} / 3</h3>
+            </div>
+            <strong>${escapeHtml(rubricDefinition)}</strong>
+          </div>
+          <div class="score-evidence-block">
+            <h4>판단 이유</h4>
+            <p>${escapeHtml(item.main_line_summary || '-')}</p>
+          </div>
+          <div class="score-evidence-block">
+            <h4>조사 메모</h4>
+            <p>${escapeHtml(item.investigation_note || '-')}</p>
+          </div>
+          <div class="score-evidence-block">
+            <h4>불확실성 / 확인 필요</h4>
+            <ul>${uncertain}</ul>
+          </div>
+          ${key === 'marketability' ? renderMarketabilityCalculation(item.calculation) : ''}
+          <div class="score-evidence-block">
+            <h4>출처 / 웹페이지 링크</h4>
+            ${renderSourceList(item.evidence_sources)}
+          </div>
+        </article>
+      `;
+    })
+    .join('');
+
+  return `
+    ${renderCompanyProfile(record.company_profile || {})}
+    <div class="score-evidence-summary">
+      <div><span>Total Score</span><strong>${escapeHtml(formatScore(scoring.total_score))} / ${escapeHtml(formatScore(scoring.max_score || 21))}</strong></div>
+      <div><span>Hard Filter</span><strong>${escapeHtml(hardFilter)}</strong></div>
+      <div><span>Rubric</span><strong>${escapeHtml(record.meta?.rubric_version || '1.0')} · ${escapeHtml(record.meta?.rubric_author || 'kate')}</strong></div>
+    </div>
+    <div class="score-evidence-list">${cards}</div>
+    <section class="score-evidence-card source-index-card">
+      <div class="score-card-header">
+        <div>
+          <span>Source Index</span>
+          <h3>전체 출처</h3>
+        </div>
+      </div>
+      ${renderSourceList(collectGlobalSources(record))}
+    </section>
+  `;
+}
+
+function renderRecord(record) {
+  const summary = record.json_summary || {};
+  elements.title.textContent = `Details : ${summary.asset_name || 'Pipeline'} · ${summary.company || '-'}`;
+  elements.subtitle.textContent = `${summary.target || '-'} · ${summary.theme || '-'} · ${summary.cluster || '-'}`;
+  const sourceReport = record.source_report || {};
+  const rawMarkdown = isPlaceholderRawMarkdown(sourceReport.raw_markdown) ? '' : sourceReport.raw_markdown;
+  elements.sourceReportViewer.innerHTML = rawMarkdown
+    ? renderMarkdown(sourceReport.raw_markdown)
+    : renderMarkdown(buildReadableSourceReport(record));
+  elements.scoreEvidenceViewer.innerHTML = renderScoreEvidence(record);
+  elements.scoreEvidenceStatus.textContent = 'Loaded';
+  elements.scoreEvidenceSubtitle.textContent = `${scoringLabels.target_relevance}부터 Marketability까지 점수별 근거를 표시합니다.`;
+}
+
+function buildReadableSourceReport(record) {
+  const summary = record.json_summary || {};
+  const table = record.structured_table || {};
+  const scoring = record.scoring || {};
+  const finalInsight = record.final_insight || {};
+  return `## ${summary.company || table.company || 'Company'} Lead Pipeline 분석: **${summary.asset_name || table.asset_name || 'Asset'}**
+
+## 1. 한 줄 결론
+
+**${finalInsight.one_line_summary || summary.one_line_summary || '-'}**
+
+제 판단상 Shortlist 관점 점수는 **${scoring.total_score ?? '-'} / ${scoring.max_score ?? 21}점**입니다.
+
+## 2. 회사 및 Lead Pipeline 요약
+
+| 항목 | 내용 |
+|---|---|
+| 회사 | ${summary.company || table.company || '-'} |
+| 국가 | ${summary.company_country || table.company_country || '-'} |
+| Lead asset | ${summary.asset_name || table.asset_name || '-'} |
+| 적응증 | ${table.indication || '-'} |
+| Target | ${summary.target || table.target || '-'} |
+| Modality | ${table.modality_platform || '-'} |
+| 개발 단계 | ${table.development_stage || '-'} |
+| Theme fit | ${summary.theme || table.theme || '-'} |
+| Cluster | ${summary.cluster || table.cluster || '-'} |
+
+## 3. 핵심 과학적 포인트
+
+${table.moa || '-'}
+
+## 4. SKBP Theme / Cluster 적합성
+
+Theme: **${summary.theme || table.theme || '-'}**  
+Cluster: **${summary.cluster || table.cluster || '-'}**
+
+## 5. SKBP Pipeline Finder식 점수
+
+| Criteria | Score | 판단 |
+|---|---:|---|
+${Object.entries(scoring.criteria || {})
+  .map(([key, item]) => `| ${prettifyKey(key)} | ${item?.score ?? '-'} / 3 | ${item?.main_line_summary || '-'} |`)
+  .join('\n')}
+| **Total** | **${scoring.total_score ?? '-'} / ${scoring.max_score ?? 21}** | **${finalInsight.one_line_summary || '-'}** |
+`;
+}
+
+function parseFrontmatter(markdown) {
+  if (!markdown.startsWith('---')) return { frontmatter: '', body: markdown };
+  const end = markdown.indexOf('\n---', 3);
+  if (end === -1) return { frontmatter: '', body: markdown };
+  return {
+    frontmatter: markdown.slice(3, end).trim(),
+    body: markdown.slice(end + 4).trim()
+  };
+}
+
+function renderFrontmatter(frontmatter) {
+  if (!frontmatter) return '';
+  const rows = frontmatter
+    .split('\n')
+    .filter((line) => line.includes(':') && !line.trim().startsWith('-'))
+    .slice(0, 12)
+    .map((line) => {
+      const [key, ...rest] = line.split(':');
+      return `
+        <div class="obsidian-meta-row">
+          <span>${escapeHtml(prettifyKey(key.trim()))}</span>
+          <strong>${escapeHtml(rest.join(':').trim().replace(/^"|"$/g, '') || '-')}</strong>
+        </div>
+      `;
+    })
+    .join('');
+  return `<div class="obsidian-meta">${rows}</div>`;
+}
+
+function renderMarkdownTable(lines, startIndex) {
+  const tableLines = [];
+  let index = startIndex;
+  while (index < lines.length && lines[index].trim().startsWith('|')) {
+    tableLines.push(lines[index].trim());
+    index += 1;
+  }
+
+  const rows = tableLines
+    .filter((line) => !/^\|\s*-+/.test(line))
+    .map((line) => line.split('|').slice(1, -1).map((cell) => cell.trim()));
+  if (!rows.length) return { html: '', nextIndex: index };
+
+  const [head, ...body] = rows;
+  const html = `
+    <div class="obsidian-table-wrap">
+      <table class="obsidian-table">
+        <thead><tr>${head.map((cell) => `<th>${renderInlineMarkdown(cell)}</th>`).join('')}</tr></thead>
+        <tbody>
+          ${body
+            .map((row) => `<tr>${row.map((cell) => `<td>${renderInlineMarkdown(cell)}</td>`).join('')}</tr>`)
+            .join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+  return { html, nextIndex: index };
+}
+
+function renderInlineMarkdown(text) {
+  return escapeHtml(text)
+    .replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '<span class="wikilink">$2</span>')
+    .replace(/\[\[([^\]]+)\]\]/g, '<span class="wikilink">$1</span>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+function renderMarkdown(markdown) {
+  const { frontmatter, body } = parseFrontmatter(markdown);
+  const lines = body.split('\n');
+  const blocks = [renderFrontmatter(frontmatter)];
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index].trim();
+    if (!line) continue;
+
+    if (line.startsWith('|')) {
+      const table = renderMarkdownTable(lines, index);
+      blocks.push(table.html);
+      index = table.nextIndex - 1;
+      continue;
+    }
+
+    if (line.startsWith('# ')) {
+      blocks.push(`<h1>${renderInlineMarkdown(line.slice(2))}</h1>`);
+      continue;
+    }
+    if (line.startsWith('## ')) {
+      blocks.push(`<h2>${renderInlineMarkdown(line.slice(3))}</h2>`);
+      continue;
+    }
+    if (line.startsWith('### ')) {
+      blocks.push(`<h3>${renderInlineMarkdown(line.slice(4))}</h3>`);
+      continue;
+    }
+    if (line.startsWith('>')) {
+      blocks.push(`<blockquote>${renderInlineMarkdown(line.replace(/^>\s*/, ''))}</blockquote>`);
+      continue;
+    }
+    if (line.startsWith('- ')) {
+      const items = [];
+      while (index < lines.length && lines[index].trim().startsWith('- ')) {
+        items.push(`<li>${renderInlineMarkdown(lines[index].trim().slice(2))}</li>`);
+        index += 1;
+      }
+      blocks.push(`<ul>${items.join('')}</ul>`);
+      index -= 1;
+      continue;
+    }
+
+    blocks.push(`<p>${renderInlineMarkdown(line)}</p>`);
+  }
+
+  return blocks.join('');
+}
+
+function summarizeDraftChanges(changes = []) {
+  if (!changes.length) return '변경 항목 없음';
+  return changes.map((change) => `• ${change}`).join('\n');
+}
+
+function addMessage(role, text, options = {}) {
+  const bubble = document.createElement('div');
+  bubble.className = `chat-message ${role}`;
+  bubble.innerHTML = `
+    <div class="chat-role">${role === 'user' ? 'You' : 'AI'}</div>
+    <div class="chat-text">${escapeHtml(text)}</div>
+  `;
+
+  if (options.draftRecord) {
+    pendingDraftRecord = options.draftRecord;
+    const draftCard = document.createElement('div');
+    draftCard.className = 'draft-card';
+    draftCard.innerHTML = `
+      <strong>근거 수정 초안</strong>
+      <pre>${escapeHtml(summarizeDraftChanges(options.draftChanges))}</pre>
+      <div class="draft-actions">
+        <button type="button" data-action="apply-draft">초안 적용</button>
+        <button type="button" data-action="review-draft">초안 검토</button>
+      </div>
+    `;
+    bubble.appendChild(draftCard);
+  }
+
+  elements.messages.appendChild(bubble);
+  elements.messages.scrollTop = elements.messages.scrollHeight;
+}
+
+async function saveRecord(payload, statusTarget = null) {
+  if (statusTarget) statusTarget.textContent = '저장 중';
+  const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.detail || '저장 실패');
+  }
+
+  currentRecordId = data.record_id;
+  const nextUrl = `/detail?id=${encodeURIComponent(currentRecordId)}`;
+  window.history.replaceState(null, '', nextUrl);
+  await fetch('/api/obsidian/export', { method: 'POST' }).catch(() => null);
+  await loadRecord();
+  return data;
+}
+
+async function deleteCurrentRecord() {
+  if (!currentRecordId || !currentRecord) return;
+  const summary = currentRecord.json_summary || {};
+  const table = currentRecord.structured_table || {};
+  const asset = summary.asset_name || table.asset_name || currentRecordId;
+  const company = summary.company || table.company || '-';
+  const confirmed = window.confirm(`${asset} · ${company} record를 삭제할까요?\n\njson/pipeline-records.json에서 제거되고 Obsidian MD도 재생성됩니다.`);
+  if (!confirmed) return;
+
+  elements.status.textContent = 'Deleting';
+  elements.deleteRecordButton.disabled = true;
+  try {
+    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}`, {
+      method: 'DELETE'
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '삭제 실패');
+    elements.status.textContent = 'Deleted';
+    window.location.href = '/';
+  } catch (error) {
+    elements.status.textContent = 'Delete failed';
+    elements.deleteRecordButton.disabled = false;
+    addMessage('assistant', `삭제 실패: ${error.message}`);
+  }
+}
+
+async function loadRecord() {
+  if (!currentRecordId) {
+    elements.status.textContent = 'Missing id';
+    elements.sourceReportViewer.innerHTML = '<div class="empty-state">record id가 없습니다.</div>';
+    return;
+  }
+
+  const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}`);
+  if (!response.ok) throw new Error(await response.text());
+  const data = await response.json();
+  currentRecord = data.record;
+  currentRecordId = data.record_id;
+  renderRecord(currentRecord);
+  elements.status.textContent = 'Loaded';
+  if (!elements.messages.querySelector('.chat-message')) {
+    addMessage('assistant', '이 약물 record를 불러왔습니다. 점수 근거, 리스크, 시장성, 경쟁 상황에 대해 질문할 수 있습니다.');
+  }
+}
+
+function openAiDrawer() {
+  elements.aiDrawer.hidden = false;
+  elements.aiBackdrop.hidden = false;
+  requestAnimationFrame(() => {
+    elements.aiDrawer.classList.add('open');
+    elements.aiBackdrop.classList.add('open');
+    elements.aiDrawer.setAttribute('aria-hidden', 'false');
+    elements.input.focus();
+  });
+}
+
+function closeAiDrawer() {
+  elements.aiDrawer.classList.remove('open');
+  elements.aiBackdrop.classList.remove('open');
+  elements.aiDrawer.setAttribute('aria-hidden', 'true');
+  setTimeout(() => {
+    elements.aiDrawer.hidden = true;
+    elements.aiBackdrop.hidden = true;
+  }, 180);
+}
+
+function openCriteriaDrawer() {
+  elements.criteriaDrawer.hidden = false;
+  elements.criteriaBackdrop.hidden = false;
+  requestAnimationFrame(() => {
+    elements.criteriaDrawer.classList.add('open');
+    elements.criteriaBackdrop.classList.add('open');
+    elements.criteriaDrawer.setAttribute('aria-hidden', 'false');
+  });
+}
+
+function closeCriteriaDrawer() {
+  elements.criteriaDrawer.classList.remove('open');
+  elements.criteriaBackdrop.classList.remove('open');
+  elements.criteriaDrawer.setAttribute('aria-hidden', 'true');
+  setTimeout(() => {
+    elements.criteriaDrawer.hidden = true;
+    elements.criteriaBackdrop.hidden = true;
+  }, 180);
+}
+
+function openEditDrawer() {
+  if (!currentRecord) return;
+  elements.jsonEditor.value = JSON.stringify(currentRecord, null, 2);
+  elements.editStatus.textContent = '편집 가능';
+  elements.editDrawer.hidden = false;
+  elements.editBackdrop.hidden = false;
+  requestAnimationFrame(() => {
+    elements.editDrawer.classList.add('open');
+    elements.editBackdrop.classList.add('open');
+    elements.editDrawer.setAttribute('aria-hidden', 'false');
+    elements.jsonEditor.focus();
+  });
+}
+
+function closeEditDrawer() {
+  elements.editDrawer.classList.remove('open');
+  elements.editBackdrop.classList.remove('open');
+  elements.editDrawer.setAttribute('aria-hidden', 'true');
+  setTimeout(() => {
+    elements.editDrawer.hidden = true;
+    elements.editBackdrop.hidden = true;
+  }, 180);
+}
+
+function formatEditorJson() {
+  try {
+    const parsed = JSON.parse(elements.jsonEditor.value);
+    elements.jsonEditor.value = JSON.stringify(parsed, null, 2);
+    elements.editStatus.textContent = '포맷 완료';
+  } catch (error) {
+    elements.editStatus.textContent = `JSON 오류: ${error.message}`;
+  }
+}
+
+async function saveEditedJson() {
+  let payload;
+  try {
+    payload = JSON.parse(elements.jsonEditor.value);
+  } catch (error) {
+    elements.editStatus.textContent = `JSON 오류: ${error.message}`;
+    return;
+  }
+
+  try {
+    await saveRecord(payload, elements.editStatus);
+    elements.editStatus.textContent = '저장 완료';
+    closeEditDrawer();
+  } catch (error) {
+    elements.editStatus.textContent = error.message;
+  }
+}
+
+async function applyPendingDraft(button) {
+  if (!pendingDraftRecord) return;
+  button.disabled = true;
+  button.textContent = '적용 중';
+  try {
+    await saveRecord(pendingDraftRecord);
+    pendingDraftRecord = null;
+    addMessage('assistant', '수정 초안을 JSON 원본에 저장했습니다. 왼쪽 JSON 보기와 메인 대시보드 점수도 이 값 기준으로 갱신됩니다.');
+  } catch (error) {
+    addMessage('assistant', `초안 저장 오류: ${error.message}`);
+  } finally {
+    button.disabled = false;
+    button.textContent = '초안 적용';
+  }
+}
+
+function reviewPendingDraft() {
+  if (!pendingDraftRecord) return;
+  elements.jsonEditor.value = JSON.stringify(pendingDraftRecord, null, 2);
+  elements.editStatus.textContent = 'AI 초안 검토 중';
+  elements.editDrawer.hidden = false;
+  elements.editBackdrop.hidden = false;
+  requestAnimationFrame(() => {
+    elements.editDrawer.classList.add('open');
+    elements.editBackdrop.classList.add('open');
+    elements.editDrawer.setAttribute('aria-hidden', 'false');
+    elements.jsonEditor.focus();
+  });
+}
+
+elements.form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const message = elements.input.value.trim();
+  if (!message || !currentRecord) return;
+
+  elements.input.value = '';
+  addMessage('user', message);
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ record_id: currentRecordId, message })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'chat failed');
+    addMessage('assistant', data.reply, {
+      draftRecord: data.draft_record,
+      draftChanges: data.draft_changes || []
+    });
+  } catch (error) {
+    addMessage('assistant', `채팅 응답 오류: ${error.message}`);
+  }
+});
+
+elements.messages.addEventListener('click', (event) => {
+  const button = event.target.closest('button[data-action]');
+  if (!button) return;
+
+  if (button.dataset.action === 'apply-draft') {
+    applyPendingDraft(button);
+  }
+
+  if (button.dataset.action === 'review-draft') {
+    reviewPendingDraft();
+  }
+});
+
+elements.detailAiButton.addEventListener('click', openAiDrawer);
+elements.criteriaDrawerButton.addEventListener('click', openCriteriaDrawer);
+elements.criteriaDrawerClose.addEventListener('click', closeCriteriaDrawer);
+elements.criteriaBackdrop.addEventListener('click', closeCriteriaDrawer);
+elements.deleteRecordButton.addEventListener('click', deleteCurrentRecord);
+elements.aiDrawerClose.addEventListener('click', closeAiDrawer);
+elements.aiBackdrop.addEventListener('click', closeAiDrawer);
+elements.editButton?.addEventListener('click', openEditDrawer);
+elements.editDrawerClose?.addEventListener('click', closeEditDrawer);
+elements.editBackdrop?.addEventListener('click', closeEditDrawer);
+elements.formatJsonButton?.addEventListener('click', formatEditorJson);
+elements.saveJsonEditButton?.addEventListener('click', saveEditedJson);
+
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && elements.aiDrawer.classList.contains('open')) {
+    closeAiDrawer();
+  }
+  if (event.key === 'Escape' && elements.criteriaDrawer.classList.contains('open')) {
+    closeCriteriaDrawer();
+  }
+  if (event.key === 'Escape' && elements.editDrawer.classList.contains('open')) {
+    closeEditDrawer();
+  }
+});
+
+loadRecord().catch((error) => {
+  elements.status.textContent = 'Load failed';
+  elements.sourceReportViewer.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`;
+  elements.scoreEvidenceViewer.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`;
+  elements.scoreEvidenceStatus.textContent = 'Failed';
+});

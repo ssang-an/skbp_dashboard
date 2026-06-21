@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SKBP Pipeline Dashboard</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">SKBP Pipeline Finder</p>
+          <h1>Dashboard</h1>
+        </div>
+        <div class="top-actions">
+          <span class="status-pill" id="dataStatus">Loading</span>
+          <button id="aiDrawerButton" type="button">AI</button>
+          <button id="criteriaDrawerButton" type="button">판단근거</button>
+          <button class="primary-button" id="refreshButton" type="button">새로고침</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="summary-grid" aria-label="Summary metrics">
+          <article class="metric">
+            <span>총 분석 건수</span>
+            <strong id="metricTotal">-</strong>
+          </article>
+          <article class="metric">
+            <span>Hard Filter PASS</span>
+            <strong id="metricPass">-</strong>
+          </article>
+          <article class="metric">
+            <span>평균 총점</span>
+            <strong id="metricScore">-</strong>
+          </article>
+          <article class="metric">
+            <span>평균 Target Relevance</span>
+            <strong id="metricTarget">-</strong>
+          </article>
+          <article class="metric">
+            <span>국가 수</span>
+            <strong id="metricCountries">-</strong>
+          </article>
+        </section>
+
+        <section class="visual-grid" aria-label="Score visualizations">
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Target Relevance 분포</h2>
+              <span>1-3점</span>
+            </div>
+            <div class="chart-stack" id="targetChart"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Theme 분포</h2>
+              <span>AI Champion</span>
+            </div>
+            <div class="chart-stack" id="themeChart"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h2>국가별 후보군</h2>
+              <span>Company country</span>
+            </div>
+            <div class="chart-stack" id="countryChart"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Hard Filter</h2>
+              <span>PASS / FAIL</span>
+            </div>
+            <div class="donut-wrap">
+              <div class="donut" id="passDonut">-</div>
+              <div class="donut-legend" id="passLegend"></div>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel control-panel" aria-label="Dashboard controls">
+          <div class="controls">
+            <label>
+              <span>검색</span>
+              <input id="searchInput" type="search" placeholder="회사, 자산, 타깃, Theme, Cluster 검색" />
+            </label>
+            <label>
+              <span>개발 단계</span>
+              <select id="stageFilter">
+                <option value="all">전체</option>
+              </select>
+            </label>
+            <label>
+              <span>Theme</span>
+              <select id="themeFilter">
+                <option value="all">전체</option>
+              </select>
+            </label>
+            <label>
+              <span>국가</span>
+              <select id="countryFilter">
+                <option value="all">전체</option>
+              </select>
+            </label>
+            <label>
+              <span>Hard Filter</span>
+              <select id="passFilter">
+                <option value="all">전체</option>
+                <option value="PASS">PASS</option>
+                <option value="FAIL">FAIL</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h2>파이프라인 테이블</h2>
+            <div class="panel-actions">
+              <span id="tableCount">0 items</span>
+              <button id="deleteSelectedButton" class="danger-link-button" type="button" disabled>선택 삭제</button>
+              <button id="exportExcelButton" type="button">Excel export</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="select-col">
+                    <input id="selectPageRows" type="checkbox" aria-label="현재 페이지 전체 선택" />
+                  </th>
+                  <th><button data-sort="company" type="button">Company</button></th>
+                  <th><button data-sort="country" type="button">Country</button></th>
+                  <th><button data-sort="asset" type="button">Asset</button></th>
+                  <th><button data-sort="target" type="button">Target / Theme / Cluster</button></th>
+                  <th><button data-sort="stage" type="button">Stage</button></th>
+                  <th><button data-sort="hardFilter" type="button">Filter</button></th>
+                  <th><button data-sort="targetScore" type="button">TR</button></th>
+                  <th><button data-sort="competitiveScore" type="button">Comp</button></th>
+                  <th><button data-sort="moaScore" type="button">MOA</button></th>
+                  <th><button data-sort="platformScore" type="button">Platform</button></th>
+                  <th><button data-sort="expansionScore" type="button">Expand</button></th>
+                  <th><button data-sort="dataScore" type="button">Data</button></th>
+                  <th><button data-sort="marketScore" type="button">Market</button></th>
+                  <th><button data-sort="totalScore" type="button">Total</button></th>
+                </tr>
+              </thead>
+              <tbody id="pipelineTable"></tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <button id="prevPage" type="button">이전</button>
+            <span id="pageInfo">1 / 1</span>
+            <button id="nextPage" type="button">다음</button>
+          </div>
+        </section>
+
+        <section class="panel paste-panel">
+          <div class="panel-header">
+            <div>
+              <h2>데이터 입력</h2>
+              <p>GPT 결과에서 markdown code block은 왼쪽, JSON code block은 오른쪽에 붙여넣습니다.</p>
+            </div>
+            <span id="saveStatus">원문 + JSON 입력 대기</span>
+          </div>
+          <div class="data-input-grid">
+            <label class="data-input-box">
+              <span>왼쪽: MD 파일용 code block</span>
+              <textarea id="rawReportInput" spellcheck="false" placeholder="## 회사 Lead Pipeline 분석: **Asset**&#10;&#10;1. Company Profile&#10;2. Pipeline Snapshot&#10;3. Scorecard Summary&#10;..."></textarea>
+            </label>
+            <label class="data-input-box">
+              <span>오른쪽: JSON Schema code block</span>
+              <textarea id="structuredJsonInput" spellcheck="false" placeholder="{&#10;  &quot;meta&quot;: { ... },&#10;  &quot;source_report&quot;: { ... },&#10;  &quot;company_profile&quot;: { ... },&#10;  &quot;json_summary&quot;: { ... },&#10;  &quot;structured_table&quot;: { ... },&#10;  &quot;scoring&quot;: { ... }&#10;}"></textarea>
+            </label>
+          </div>
+          <div class="editor-actions">
+            <button id="previewInputButton" type="button">입력 검토</button>
+            <button class="primary-button" id="saveJsonButton" type="button">JSON 저장</button>
+            <button id="clearJsonButton" type="button">비우기</button>
+          </div>
+        </section>
+
+        <section class="panel prompt-panel">
+          <div class="panel-header">
+            <div>
+              <h2>GPT 조사 지침</h2>
+              <p>회사명과 약물명만 바꿔서 GPT에 붙여넣으면 MD 파일 박스와 JSON 박스를 함께 만들 수 있습니다.</p>
+            </div>
+            <span id="promptCopyStatus">대기 중</span>
+          </div>
+          <div class="prompt-copy-body">
+            <p>
+              복사된 지침은 회사 기본정보, Pipeline Snapshot, Scorecard, 기준별 판단근거, 경쟁약물, Marketability A/B/C, URL 출처, MD/JSON 복붙 박스 출력 형식을 포함합니다.
+            </p>
+            <button class="primary-button" id="copyPromptButton" type="button">GPT 지침 복사</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="drawer-backdrop" id="aiBackdrop" hidden></div>
+    <aside class="ai-drawer" id="aiDrawer" aria-label="AI pipeline search drawer" aria-hidden="true">
+      <div class="ai-drawer-header">
+        <div>
+          <p class="eyebrow">Obsidian + Agentic Search</p>
+          <h2>Pipeline Discovery Agent</h2>
+        </div>
+        <button id="aiDrawerClose" type="button" aria-label="Close AI drawer">닫기</button>
+      </div>
+
+      <div class="agent-context">
+        <div>
+          <span>Loaded Context</span>
+          <strong id="agentContextCount">-</strong>
+        </div>
+        <div>
+          <span>Knowledge Mode</span>
+          <strong>Mockup</strong>
+        </div>
+      </div>
+
+      <div class="agent-tabs" aria-label="Agent sources">
+        <button class="active" type="button">Dashboard</button>
+        <button type="button">Obsidian</button>
+        <button type="button">Agentic Search</button>
+      </div>
+
+      <div class="agent-suggestions">
+        <button type="button" data-agent-prompt="Find the best E/I Balance assets with strong platform fit.">E/I Balance 우선 후보 찾기</button>
+        <button type="button" data-agent-prompt="Compare Neuroimmune assets by data maturity and marketability.">Neuroimmune 비교</button>
+        <button type="button" data-agent-prompt="Which assets need more evidence before shortlisting?">근거 부족 후보 찾기</button>
+      </div>
+
+      <div class="agent-messages" id="agentMessages">
+        <div class="agent-message assistant">
+          <strong>AI Agent</strong>
+          <p>현재 대시보드의 pipeline JSON, Obsidian note metadata, agentic search 결과를 함께 보는 탐색 에이전트 mockup입니다. 정확한 물질을 찾기 위한 질문을 입력해보세요.</p>
+        </div>
+      </div>
+
+      <form class="agent-form" id="agentForm">
+        <textarea id="agentInput" rows="4" placeholder="예: Target Relevance 3점이면서 Marketability 2점 이상인 후보를 찾아줘."></textarea>
+        <button class="primary-button" type="submit">질문</button>
+      </form>
+    </aside>
+
+    <div class="drawer-backdrop" id="criteriaBackdrop" hidden></div>
+    <aside class="ai-drawer criteria-drawer" id="criteriaDrawer" aria-label="Scoring criteria drawer" aria-hidden="true" hidden>
+      <div class="ai-drawer-header">
+        <div>
+          <p class="eyebrow">AI Champion</p>
+          <h2>판단근거</h2>
+        </div>
+        <button id="criteriaDrawerClose" type="button" aria-label="Close criteria drawer">닫기</button>
+      </div>
+
+      <div class="criteria-drawer-body">
+        <section class="criteria-intro">
+          <strong>총 7개 항목, 각 0-3점, 총 21점 만점</strong>
+          <p>
+            이 기준은 전임상 pipeline shortlisting을 위한 AI Champion scoring 구조입니다.
+            각 점수는 단순 의견이 아니라 적용한 점수 정의, 명확한 판단 근거, 출처를 함께 남기는 것을 원칙으로 합니다.
+          </p>
+        </section>
+
+        <section class="criteria-theme-grid" aria-label="SKBP theme and cluster">
+          <article>
+            <h3>E/I Balance</h3>
+            <p>balance between excitation and inhibition</p>
+            <ul>
+              <li>Ion Channel</li>
+              <li>Inhibitory Tone 강화</li>
+              <li>Synaptic Transmission</li>
+              <li>Chloride Homeostasis</li>
+              <li>Network Modulation</li>
+            </ul>
+          </article>
+          <article>
+            <h3>Neuroimmune</h3>
+            <p>neuroimmune biology across CNS disease</p>
+            <ul>
+              <li>CNS 손상 면역반응</li>
+              <li>교세포 향상성</li>
+              <li>Cytokine 신경조절</li>
+              <li>손상/질환 면역조절</li>
+              <li>말초 면역기관 연결</li>
+            </ul>
+          </article>
+        </section>
+
+        <section>
+          <div class="criteria-section-header">
+            <h3>Scoring Table</h3>
+            <span>0점에서 3점까지 보수적으로 적용</span>
+          </div>
+          <div class="criteria-table-wrap">
+            <table class="criteria-table">
+              <colgroup>
+                <col class="criteria-name-col" />
+                <col class="criteria-score-col" />
+                <col class="criteria-score-col" />
+                <col class="criteria-score-col" />
+                <col class="criteria-score-col" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>항목</th>
+                  <th>0점</th>
+                  <th>1점</th>
+                  <th>2점</th>
+                  <th>3점</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>Target Relevance</th>
+                  <td>CNS와 거의 무관</td>
+                  <td>general CNS relevance도 약함</td>
+                  <td>general neurodegeneration / neuroinflammation / epilepsy</td>
+                  <td>SKBP Theme 또는 Cluster에 정확히 해당</td>
+                </tr>
+                <tr>
+                  <th>Competitive Landscape</th>
+                  <td>정보 부족 / 판단 불가</td>
+                  <td>front runner 0개 또는 사실상 없음</td>
+                  <td>front runner 2개 정도</td>
+                  <td>front runner 1개 정도</td>
+                </tr>
+                <tr>
+                  <th>MoA Validity</th>
+                  <td>기전 불명확 / 불일치</td>
+                  <td>근거 약함, 간접적</td>
+                  <td>publication 기반 plausibility 충분</td>
+                  <td>충분한 publication + 강한 mechanistic consistency</td>
+                </tr>
+                <tr>
+                  <th>Platform Attractiveness</th>
+                  <td>플랫폼 신뢰성 낮음 / 재현성 의심</td>
+                  <td>차별성 약함, 마케팅성 설명 위주</td>
+                  <td>차별화 포인트 분명 + SKBP 관심 모달리티 적합</td>
+                  <td>차별화 포인트 분명 + small molecule / ASO / siRNA + Theme/Cluster fit 매우 높음</td>
+                </tr>
+                <tr>
+                  <th>Expansion Potential</th>
+                  <td>one-off asset</td>
+                  <td>확장 근거 약함</td>
+                  <td>main indication 외 인접 적응증 1개 이상 확장 가능</td>
+                  <td>여러 indication / 여러 cluster로 확장 가능</td>
+                </tr>
+                <tr>
+                  <th>Data Maturity</th>
+                  <td>실험 데이터 거의 없음</td>
+                  <td>제한적 PoC 수준</td>
+                  <td>명확한 preclinical data 있음</td>
+                  <td>in vitro + in vivo + 재현성/정량성까지 탄탄</td>
+                </tr>
+                <tr>
+                  <th>Marketability</th>
+                  <td>pricing power도 없고 market size도 낮음</td>
+                  <td>peak sales는 있어도 경쟁 때문에 obtainable pie &lt; USD 1,000M</td>
+                  <td>obtainable peak sales >= USD 1,000M</td>
+                  <td>obtainable peak sales >= USD 2,000M + expansion capacity 높음</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="criteria-detail-grid" aria-label="Detailed scoring guidance">
+          <article>
+            <h3>Target Relevance</h3>
+            <p>Target을 먼저 identify한 뒤 <code>Theme</code>과 <code>Cluster</code>를 분리해서 기록합니다. Target 아래에는 <code>Theme: ___ (Cluster: ___)</code> 형식으로 표시합니다.</p>
+          </article>
+          <article>
+            <h3>Competitive Landscape</h3>
+            <p>FIC만 높게 보지 않고, 이미 1개 정도 앞서가는 약물이 있는 경우를 가장 선호합니다. 판단 불가이면 0점으로 둡니다.</p>
+          </article>
+          <article>
+            <h3>MoA Validity</h3>
+            <p>왜 작동할 것 같은지의 설득력입니다. 2점 이상은 PMID, 저널, conference abstract, company deck 같은 출처를 반드시 남깁니다.</p>
+          </article>
+          <article>
+            <h3>Data Maturity</h3>
+            <p>clinical data는 제외하고 preclinical 실험값만 봅니다. MoA는 기전의 설득력, Data는 실제 실험 결과의 성숙도입니다.</p>
+          </article>
+          <article>
+            <h3>Platform Attractiveness</h3>
+            <p>주요 관심 모달리티는 small molecule, ASO, siRNA입니다. AOC, antibody 등은 둘째 관심 모달리티로 평가합니다.</p>
+          </article>
+          <article>
+            <h3>Marketability</h3>
+            <p><code>A. TAP</code>를 먼저 추정하고, <code>B. Unrisked Peak Sales</code>를 계산한 뒤, <code>C. Obtainable Peak Sales</code>로 현실화합니다. 모든 sales 결과는 <code>million USD</code> 단위로 기록합니다.</p>
+          </article>
+        </section>
+
+        <section class="criteria-rule">
+          <h3>Marketability A/B/C</h3>
+          <p>
+            <code>A. TAP = Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate</code><br />
+            <code>B. Unrisked Peak Sales = TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor</code><br />
+            <code>C. Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment</code><br />
+            <code>Sales output unit = million USD</code>
+          </p>
+        </section>
+
+        <section class="criteria-rule">
+          <h3>근거 기록 규칙</h3>
+          <p>
+            기준 설명은 <code>rubric</code> 섹션에만 남깁니다. 각 scoring 항목의
+            <code>main_line_summary</code>에는 왜 그 점수가 나왔는지만 쓰고,
+            <code>evidence_sources</code>, <code>investigation_note</code>,
+            <code>uncertain_points</code>에는 출처, 조사 과정, 불확실성을 분리해서 기록합니다.
+          </p>
+        </section>
+
+        <section class="criteria-rule">
+          <h3>경쟁사 유사도 기록</h3>
+          <p>
+            경쟁 pipeline은 <code>similar_pipeline_count</code>, high/medium/low similarity 개수,
+            각 유사 pipeline의 matched dimensions, shared data points, differentiating data points,
+            evidence source를 함께 기록합니다.
+          </p>
+        </section>
+      </div>
+    </aside>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
