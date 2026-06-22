@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-06-21T18:48:26"
+generated_at: "2026-06-22T23:36:17"
 record_id: "Hangzhou_Westan_WT-1108_20260621"
 company: "Hangzhou Westan Pharmaceutical Technology Co., Ltd."
 country: "China"
@@ -37,7 +37,7 @@ tags:
 | Stage | Phase IIa registered/ongoing; China CTR20254063 listed as ongoing/not yet recruiting on 2025-10-11; Phase I CTR20233488 listed as completed in Synapse. |
 | Indication | Refractory or unexplained chronic cough (RCC/UCC) |
 | Modality | Oral small molecule tablet; reportedly developed using WestanAI+ and proprietary compound library. |
-| Hard Filter | - |
+| Hard Filter | FAIL |
 | Total Score | 8 / 21 |
 
 ## One-Line Insight
@@ -46,15 +46,15 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
 
 ## Scoring
 
-| Criterion | Score | Rubric Definition | Judgment Reason | Evidence Sources |
-|---|---:|---|---|---|
-| Target Relevance | 1 | - | RCC/UCC target biology is strong, but P2X3 is mainly peripheral sensory-neuron cough biology and does not fit SKBP E/I Balance or Neuroimmune clusters. | Westan products page (https://westanpharma.com/Products.aspx)<br>HRA gefapixant mechanism summary (https://www.hra.nhs.uk/planning-and-improving-research/application-summaries/research-summaries/gefapixant-phase-3b-study-in-adults-with-recent-onset-chronic-cough/)<br>Merck CHMP press release (https://www.merck.com/news/merck-receives-positive-european-union-chmp-opinion-for-gefapixant/) |
-| Competitive Landscape | 1 | - | P2X3 is a validated but crowded chronic cough class; WT-1108 appears behind gefapixant and camlipixant and near several China Phase I/II followers. | EMA Lyfnua EPAR (https://www.ema.europa.eu/en/medicines/human/EPAR/lyfnua)<br>Merck Japan regulatory update (https://www.merck.com/news/merck-provides-u-s-and-japan-regulatory-update-for-gefapixant/)<br>GSK/BELLUS acquisition press release (https://www.gsk.com/en-gb/media/press-releases/gsk-reaches-agreement-to-acquire-late-stage-biopharmaceutical-company-bellus-health/) |
-| MoA Validity | 2 | - | P2X3 antagonism is clinically validated by gefapixant Phase III/approvals and supported by camlipixant/sivopixant trials, but WT-1108-specific efficacy data are not public. | Gefapixant COUGH-1/COUGH-2 PubMed (https://pubmed.ncbi.nlm.nih.gov/35248186/)<br>Gefapixant pooled Phase 3 analysis (https://link.springer.com/article/10.1007/s00408-022-00553-y)<br>HRA mechanism summary (https://www.hra.nhs.uk/planning-and-improving-research/application-summaries/research-summaries/gefapixant-phase-3b-study-in-adults-with-recent-onset-chronic-cough/) |
-| Platform Attractiveness | 1 | - | Oral small molecule modality is attractive, but WestanAI+ differentiation and WT-1108 selectivity/taste claims are not independently supported by visible data. | ByDrug Westan profile (https://bydrug.pharmcube.com/investgo/company/detail/1b0943a3d0a44519a9d5a4189948c7da)<br>BioDuro-Sundia WT-1108 IND article (https://www.bioduro-sundia.cn/company-news/westanpharma-ind-approval-P2X3.html)<br>Zhihuiya WT-1108 news (https://www.zhihuiya.com/news/info_2271.html) |
-| Expansion Potential | 1 | - | Expansion into other chronic cough, COPD/IPF cough, pruritus and pain is plausible but mostly preclinical or externally reported. | BioDuro-Sundia WT-1108 IND article (https://www.bioduro-sundia.cn/company-news/westanpharma-ind-approval-P2X3.html)<br>Synapse WT-1108 (https://synapse.patsnap.com/drug/0b28edb3230146bca084e523c94678b2)<br>Westan about page (https://westanpharma.com/AboutUs.aspx) |
-| Data Maturity | 1 | - | Clinical operations are visible through Phase I completion and Phase IIa registry, but WT-1108-specific efficacy/safety results and quantitative preclinical package are not public. | Synapse WT-1108 drug page (https://synapse.patsnap.com/drug/0b28edb3230146bca084e523c94678b2)<br>Changbaicao CTR20254063 (https://www.changbaicao.cn/trialsdetail-id-20793.html)<br>Sina WT-1108 Phase IIa news (https://finance.sina.com.cn/stock/aigc/ywsygs/2025-10-11/doc-inftnueu7432084.shtml) |
-| Marketability | 1 | - | A. TAP 약 1.10M China-addressable patients; B. Unrisked Peak Sales 약 USD 148.8M; C. Obtainable Peak Sales 약 USD 72.3M under conservative China-focused assumptions, below USD 1B threshold. | BioDuro-Sundia/PharmCube WT-1108 IND article (https://www.bioduro-sundia.cn/company-news/westanpharma-ind-approval-P2X3.html)<br>GSK/BELLUS acquisition press release (https://www.gsk.com/en-gb/media/press-releases/gsk-reaches-agreement-to-acquire-late-stage-biopharmaceutical-company-bellus-health/)<br>DelveInsight RCC market (https://www.delveinsight.com/report-store/chronic-refractory-cough-market) |
+| Criterion | Score | Evidence Type | Rubric Definition | Judgment Reason | Why Not Higher | Evidence Sources |
+|---|---:|---|---|---|---|---|
+| Target Relevance | 1 | E1_company_claim_or_scientific_rationale_only | - | RCC/UCC target biology is strong, but P2X3 is mainly peripheral sensory-neuron cough biology and does not fit SKBP E/I Balance or Neuroimmune clusters. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | Westan products page (https://westanpharma.com/Products.aspx)<br>HRA gefapixant mechanism summary (https://www.hra.nhs.uk/planning-and-improving-research/application-summaries/research-summaries/gefapixant-phase-3b-study-in-adults-with-recent-onset-chronic-cough/)<br>Merck CHMP press release (https://www.merck.com/news/merck-receives-positive-european-union-chmp-opinion-for-gefapixant/) |
+| Competitive Landscape | 1 | E1_company_claim_or_scientific_rationale_only | - | P2X3 is a validated but crowded chronic cough class; WT-1108 appears behind gefapixant and camlipixant and near several China Phase I/II followers. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | EMA Lyfnua EPAR (https://www.ema.europa.eu/en/medicines/human/EPAR/lyfnua)<br>Merck Japan regulatory update (https://www.merck.com/news/merck-provides-u-s-and-japan-regulatory-update-for-gefapixant/)<br>GSK/BELLUS acquisition press release (https://www.gsk.com/en-gb/media/press-releases/gsk-reaches-agreement-to-acquire-late-stage-biopharmaceutical-company-bellus-health/) |
+| MoA Validity | 2 | E2_indirect_or_class_level_evidence | - | P2X3 antagonism is clinically validated by gefapixant Phase III/approvals and supported by camlipixant/sivopixant trials, but WT-1108-specific efficacy data are not public. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | Gefapixant COUGH-1/COUGH-2 PubMed (https://pubmed.ncbi.nlm.nih.gov/35248186/)<br>Gefapixant pooled Phase 3 analysis (https://link.springer.com/article/10.1007/s00408-022-00553-y)<br>HRA mechanism summary (https://www.hra.nhs.uk/planning-and-improving-research/application-summaries/research-summaries/gefapixant-phase-3b-study-in-adults-with-recent-onset-chronic-cough/) |
+| Platform Attractiveness | 1 | E1_company_claim_or_scientific_rationale_only | - | Oral small molecule modality is attractive, but WestanAI+ differentiation and WT-1108 selectivity/taste claims are not independently supported by visible data. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | ByDrug Westan profile (https://bydrug.pharmcube.com/investgo/company/detail/1b0943a3d0a44519a9d5a4189948c7da)<br>BioDuro-Sundia WT-1108 IND article (https://www.bioduro-sundia.cn/company-news/westanpharma-ind-approval-P2X3.html)<br>Zhihuiya WT-1108 news (https://www.zhihuiya.com/news/info_2271.html) |
+| Expansion Potential | 1 | E1_company_claim_or_scientific_rationale_only | - | Expansion into other chronic cough, COPD/IPF cough, pruritus and pain is plausible but mostly preclinical or externally reported. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | BioDuro-Sundia WT-1108 IND article (https://www.bioduro-sundia.cn/company-news/westanpharma-ind-approval-P2X3.html)<br>Synapse WT-1108 (https://synapse.patsnap.com/drug/0b28edb3230146bca084e523c94678b2)<br>Westan about page (https://westanpharma.com/AboutUs.aspx) |
+| Data Maturity | 1 | E1_company_claim_or_scientific_rationale_only | - | Clinical operations are visible through Phase I completion and Phase IIa registry, but WT-1108-specific efficacy/safety results and quantitative preclinical package are not public. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | Synapse WT-1108 drug page (https://synapse.patsnap.com/drug/0b28edb3230146bca084e523c94678b2)<br>Changbaicao CTR20254063 (https://www.changbaicao.cn/trialsdetail-id-20793.html)<br>Sina WT-1108 Phase IIa news (https://finance.sina.com.cn/stock/aigc/ywsygs/2025-10-11/doc-inftnueu7432084.shtml) |
+| Marketability | 1 | E1_company_claim_or_scientific_rationale_only | - | A. TAP 약 1.10M China-addressable patients; B. Unrisked Peak Sales 약 USD 148.8M; C. Obtainable Peak Sales 약 USD 72.3M under conservative China-focused assumptions, below USD 1B threshold. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | BioDuro-Sundia/PharmCube WT-1108 IND article (https://www.bioduro-sundia.cn/company-news/westanpharma-ind-approval-P2X3.html)<br>GSK/BELLUS acquisition press release (https://www.gsk.com/en-gb/media/press-releases/gsk-reaches-agreement-to-acquire-late-stage-biopharmaceutical-company-bellus-health/)<br>DelveInsight RCC market (https://www.delveinsight.com/report-store/chronic-refractory-cough-market) |
 
 ## Detailed Scoring Rationale
 
@@ -63,8 +63,11 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
 | Field | Value |
 |---|---|
 | Score | 1 |
+| Evidence Type | E1_company_claim_or_scientific_rationale_only |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | RCC/UCC target biology is strong, but P2X3 is mainly peripheral sensory-neuron cough biology and does not fit SKBP E/I Balance or Neuroimmune clusters. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | Score is 1 rather than 2 because disease relevance is respiratory/peripheral sensory biology, not a direct SKBP CNS theme. It is not 0 because P2X3 is an ion-channel target with pain/pruritus adjacency. |
 
 #### Conflicting Or Missing Evidence
@@ -87,8 +90,11 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
 | Field | Value |
 |---|---|
 | Score | 1 |
+| Evidence Type | E1_company_claim_or_scientific_rationale_only |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | P2X3 is a validated but crowded chronic cough class; WT-1108 appears behind gefapixant and camlipixant and near several China Phase I/II followers. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | Score is 1 because the target is competitive rather than empty. A higher score would require clear WT-1108 superiority versus gefapixant/camlipixant and China followers. |
 
 #### Conflicting Or Missing Evidence
@@ -114,8 +120,11 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
 | Field | Value |
 |---|---|
 | Score | 2 |
+| Evidence Type | E2_indirect_or_class_level_evidence |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | P2X3 antagonism is clinically validated by gefapixant Phase III/approvals and supported by camlipixant/sivopixant trials, but WT-1108-specific efficacy data are not public. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | Score is 2 because the class MoA is robustly validated. It is not 3 because WT-1108 has no publicly visible efficacy dataset or peer-reviewed WT-1108 paper. |
 
 #### Conflicting Or Missing Evidence
@@ -139,8 +148,11 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
 | Field | Value |
 |---|---|
 | Score | 1 |
+| Evidence Type | E1_company_claim_or_scientific_rationale_only |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | Oral small molecule modality is attractive, but WestanAI+ differentiation and WT-1108 selectivity/taste claims are not independently supported by visible data. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | Score is 1 because the modality is SKBP-friendly small molecule, but platform differentiation is mostly self/partner-reported and not reproducible from public data. |
 
 #### Conflicting Or Missing Evidence
@@ -163,8 +175,11 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
 | Field | Value |
 |---|---|
 | Score | 1 |
+| Evidence Type | E1_company_claim_or_scientific_rationale_only |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | Expansion into other chronic cough, COPD/IPF cough, pruritus and pain is plausible but mostly preclinical or externally reported. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | Score is 1 because adjacent indications exist conceptually but lack clinical validation or asset-specific expansion data. |
 
 #### Conflicting Or Missing Evidence
@@ -187,8 +202,11 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
 | Field | Value |
 |---|---|
 | Score | 1 |
+| Evidence Type | E1_company_claim_or_scientific_rationale_only |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | Clinical operations are visible through Phase I completion and Phase IIa registry, but WT-1108-specific efficacy/safety results and quantitative preclinical package are not public. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | Score is 1 rather than 2 because trial-stage evidence exists but outcome data do not. This criterion is data-driven, not stage-label-driven. |
 
 #### Conflicting Or Missing Evidence
@@ -212,8 +230,11 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
 | Field | Value |
 |---|---|
 | Score | 1 |
+| Evidence Type | E1_company_claim_or_scientific_rationale_only |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | A. TAP 약 1.10M China-addressable patients; B. Unrisked Peak Sales 약 USD 148.8M; C. Obtainable Peak Sales 약 USD 72.3M under conservative China-focused assumptions, below USD 1B threshold. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | Score is 1 because obtainable China-focused peak sales is well below USD 1B under conservative assumptions. A score of 2 would require credible global rights, superior differentiation and higher durable penetration. |
 
 #### Conflicting Or Missing Evidence
@@ -308,7 +329,7 @@ All listed competitors are same-target P2X3 antagonists in RCC/UCC or chronic co
 ```json
 {
   "meta": {
-    "schema_version": "3.0",
+    "schema_version": "3.1",
     "generated_at": "2026-06-21",
     "language": "ko",
     "analyst_role": "[OIT] PreC Pipeline Shortlister",
@@ -317,7 +338,7 @@ All listed competitors are same-target P2X3 antagonists in RCC/UCC or chronic co
       "json"
     ],
     "output_filename_base": "Hangzhou_Westan_WT-1108_20260621",
-    "rubric_version": "3.0",
+    "rubric_version": "3.1",
     "rubric_author": "kate"
   },
   "input": {
@@ -447,8 +468,8 @@ All listed competitors are same-target P2X3 antagonists in RCC/UCC or chronic co
     ]
   },
   "hard_filter": {
-    "status": "REVIEW",
-    "reason": "Mechanism and indication are clinically validated, but the asset maps poorly to SKBP CNS E/I or Neuroimmune themes and is a late entrant in a crowded P2X3 chronic cough class.",
+    "status": "FAIL",
+    "reason": "FAIL: Total score 8 <= 8; Target Relevance 1 <= 1; no SKBP Theme/Cluster fit; outside primary SKBP CNS theme.",
     "flags": [
       "Outside primary SKBP CNS theme mapping",
       "Crowded P2X3 RCC/UCC class with approved and Phase III competitors",
@@ -498,7 +519,10 @@ All listed competitors are same-target P2X3 antagonists in RCC/UCC or chronic co
         "uncertain_points": [
           "No public Westan source was found showing CNS exposure, CNS indication strategy, or neuroimmune/E/I positioning.",
           "Pain/pruritus expansion appears preclinical or database-reported and needs company confirmation."
-        ]
+        ],
+        "evidence_type": "E1_company_claim_or_scientific_rationale_only",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
       },
       "competitive_landscape": {
         "score": 1,
@@ -558,7 +582,10 @@ All listed competitors are same-target P2X3 antagonists in RCC/UCC or chronic co
         "uncertain_points": [
           "HRS-2261 active/discontinued status is unclear; PharmCube reports possible abandonment but official confirmation is needed.",
           "Direct head-to-head selectivity, taste and efficacy data versus camlipixant/gefapixant were not found for WT-1108."
-        ]
+        ],
+        "evidence_type": "E1_company_claim_or_scientific_rationale_only",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
       },
       "moa_validity": {
         "score": 2,
@@ -605,7 +632,10 @@ All listed competitors are same-target P2X3 antagonists in RCC/UCC or chronic co
         "uncertain_points": [
           "WT-1108 receptor selectivity values, in vivo cough-model efficacy and Phase I safety/taste data were not found in primary public sources.",
           "Company claims of low taste side effects need quantitative human data."
-        ]
+        ],
+        "evidence_type": "E2_indirect_or_class_level_evidence",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
       },
       "platform_attractiveness": {
         "score": 1,
@@ -646,7 +676,10 @@ All listed competitors are same-target P2X3 antagonists in RCC/UCC or chronic co
         "uncertain_points": [
           "Need WT-1108 biochemical selectivity panel including P2X3 vs P2X2/3 and off-targets.",
           "Need patent family, structure/scaffold disclosure, DMPK and taste-disturbance translational evidence."
-        ]
+        ],
+        "evidence_type": "E1_company_claim_or_scientific_rationale_only",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
       },
       "expansion_potential": {
         "score": 1,
@@ -686,7 +719,10 @@ All listed competitors are same-target P2X3 antagonists in RCC/UCC or chronic co
         "uncertain_points": [
           "Need official WT-1108 development plan for pruritus/pain and evidence of translational models.",
           "COPD/IPF cough positioning needs disease-specific clinical rationale and regulatory path."
-        ]
+        ],
+        "evidence_type": "E1_company_claim_or_scientific_rationale_only",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
       },
       "data_maturity": {
         "score": 1,
@@ -728,7 +764,25 @@ All listed competitors are same-target P2X3 antagonists in RCC/UCC or chronic co
           "Need Phase I completed results, including safety, taste disturbance, PK and food effect.",
           "Need preclinical pharmacology package: IC50, selectivity, oral exposure, efficacy model and tox margin.",
           "Need updated recruitment/dosing status from official ChinaDrugTrials/CDE."
-        ]
+        ],
+        "evidence_type": "E1_company_claim_or_scientific_rationale_only",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria.",
+        "claimed_development_stage": "Phase IIa registered/ongoing; China CTR20254063 listed as ongoing/not yet recruiting on 2025-10-11; Phase I CTR20233488 listed as completed in Synapse.",
+        "expected_data_for_stage": [
+          "stage-appropriate asset-specific data package"
+        ],
+        "visible_asset_specific_data": [
+          "Synapse lists Phase I CTR20233488 as completed and Phase II CTR20254063 as not yet recruiting.",
+          "Changbaicao registry mirror describes Phase IIa design, dose, duration, enrollment and endpoints.",
+          "No Phase I CSR, poster, PK table, dysgeusia table, in vitro IC50, selectivity panel or in vivo cough-model data were found."
+        ],
+        "missing_data": [
+          "Need Phase I completed results, including safety, taste disturbance, PK and food effect.",
+          "Need preclinical pharmacology package: IC50, selectivity, oral exposure, efficacy model and tox margin.",
+          "Need updated recruitment/dosing status from official ChinaDrugTrials/CDE."
+        ],
+        "stage_data_alignment_judgment": "Clinical operations are visible through Phase I completion and Phase IIa registry, but WT-1108-specific efficacy/safety results and quantitative preclinical package are not public."
       },
       "marketability": {
         "score": 1,
@@ -814,7 +868,9 @@ All listed competitors are same-target P2X3 antagonists in RCC/UCC or chronic co
               }
             ],
             "sales_unit": "million USD"
-          }
+          },
+          "commercial_rationale_status": "established",
+          "commercial_rationale_failure_reason": null
         },
         "evidence_trail": [
           "Starting patient pool used China RCC/UCC >7M from BioDuro-Sundia/PharmCube reprint, cross-checked against GSK's global RCC burden estimates.",
@@ -852,7 +908,10 @@ All listed competitors are same-target P2X3 antagonists in RCC/UCC or chronic co
           "No verified WT-1108 price, payer coverage or annual net price source was found.",
           "China-specific diagnosis, eligibility and treatment-duration assumptions require epidemiology/payer validation.",
           "Global obtainable peak sales could be materially higher if WT-1108 is partnered globally and shows best-in-class taste profile."
-        ]
+        ],
+        "evidence_type": "E1_company_claim_or_scientific_rationale_only",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
       }
     }
   },

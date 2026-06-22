@@ -1,0 +1,44 @@
+---
+type: "source"
+canonical_id: "source::https_www.mk.co.kr_en_it_11981980"
+title: "https://www.mk.co.kr/en/it/11981980"
+aliases:
+  - "https://www.mk.co.kr/en/it/11981980"
+tags:
+  - "pipeline/source"
+  - "source/other"
+created_at: "2026-06-22"
+updated_at: "2026-06-22"
+source_report: null
+source_json: "json/pipeline-records.json"
+status: "active"
+confidence: "medium"
+---
+
+# https://www.mk.co.kr/en/it/11981980
+
+## Source Metadata
+
+| Field | Value |
+|---|---|
+| Source type | other |
+| Reliability | medium |
+| URL | https://www.mk.co.kr/en/it/11981980 |
+| Accessed / generated date | 2026-06-22 |
+
+## Evidence Summary
+
+-
+
+## Used In
+
+- [[02_Assets/Asset__ILM01_GAIA-Aβ__GAIA-Aβ|Asset__ILM01_GAIA-Aβ__GAIA-Aβ]]
+- [[10_Scorecards/Scorecard__ILM01_GAIA-Aβ__20260621|Scorecard__ILM01_GAIA-Aβ__20260621]]
+
+## Extracted Claims
+
+- -
+
+## Caution / Limitations
+
+- Source note is generated from structured JSON. Verify primary source context before using for investment decisions.

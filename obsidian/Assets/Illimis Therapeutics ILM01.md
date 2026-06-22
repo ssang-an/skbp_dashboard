@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-06-21T18:48:26"
+generated_at: "2026-06-22T23:36:17"
 record_id: "Illimis_Therapeutics_ILM01_20260621"
 company: "Illimis Therapeutics"
 country: "Republic of Korea"
@@ -38,7 +38,7 @@ tags:
 | Stage | Preclinical / IND-enabling preparation; public clinical trial registry record not verified |
 | Indication | Alzheimer's disease |
 | Modality | Biologic / bispecific-like chimeric fusion protein; GAIA platform |
-| Hard Filter | - |
+| Hard Filter | REVIEW |
 | Total Score | 16 / 21 |
 
 ## One-Line Insight
@@ -47,15 +47,15 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 
 ## Scoring
 
-| Criterion | Score | Rubric Definition | Judgment Reason | Evidence Sources |
-|---|---:|---|---|---|
-| Target Relevance | 3 | - | Aβ 자체는 AD target이지만 ILM01의 differentiating biology는 TAM receptor, microglia/astrocyte phagocytosis, anti-inflammatory clearance라서 Neuroimmune / 교세포 향상성 cluster에 정확히 매핑된다. | - |
-| Competitive Landscape | 1 | - | True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않지만, commercial indication 기준으로 Leqembi, Kisunla, remternetug 등 anti-Aβ 경쟁이 이미 과밀하다. | - |
-| MoA Validity | 3 | - | Nature Medicine 기반 αAβ-Gas6 data가 TAM-dependent clearance, reduced NF-κB/inflammation, astrocyte/microglia phagocytosis, reduced synapse elimination and microhemorrhage를 일관되게 뒷받침한다. | - |
-| Platform Attractiveness | 2 | - | GAIA는 differentiated biologic fusion platform이고 anti-inflammatory clearance data가 명확하지만, SKBP 우선 modality인 small molecule/ASO/siRNA는 아니므로 2점이다. | - |
-| Expansion Potential | 3 | - | Official pipeline/platform 자료가 Aβ 외 tau, α-syn, myelin debris, PS/SLE 등으로 확장을 명시해 one-off AD asset이 아니라 TAM biology platform으로 해석된다. | - |
-| Data Maturity | 2 | - | In vitro, in vivo, cytokine/NF-κB, scRNA-seq, AD/CAA model data는 명확하나 final ILM01 IND-enabling GLP tox/PK/PD/CMC and human data are not public. | - |
-| Marketability | 2 | - | A. TAP: U.S. AD pool 7.4M에서 diagnosis/eligibility/treatable assumptions를 적용해 약 46만 명. B. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy를 적용하면 약 $1.94B. C. Obtainable Peak Sales: approved Aβ competitors and late-entry haircut을 반영하면 약 $1.06B로 추정되어 2점. | - |
+| Criterion | Score | Evidence Type | Rubric Definition | Judgment Reason | Why Not Higher | Evidence Sources |
+|---|---:|---|---|---|---|---|
+| Target Relevance | 3 | E3_asset_specific_preclinical_or_technical_evidence | - | Aβ 자체는 AD target이지만 ILM01의 differentiating biology는 TAM receptor, microglia/astrocyte phagocytosis, anti-inflammatory clearance라서 Neuroimmune / 교세포 향상성 cluster에 정확히 매핑된다. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
+| Competitive Landscape | 1 | E1_company_claim_or_scientific_rationale_only | - | True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않지만, commercial indication 기준으로 Leqembi, Kisunla, remternetug 등 anti-Aβ 경쟁이 이미 과밀하다. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
+| MoA Validity | 3 | E3_asset_specific_preclinical_or_technical_evidence | - | Nature Medicine 기반 αAβ-Gas6 data가 TAM-dependent clearance, reduced NF-κB/inflammation, astrocyte/microglia phagocytosis, reduced synapse elimination and microhemorrhage를 일관되게 뒷받침한다. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
+| Platform Attractiveness | 2 | E2_indirect_or_class_level_evidence | - | GAIA는 differentiated biologic fusion platform이고 anti-inflammatory clearance data가 명확하지만, SKBP 우선 modality인 small molecule/ASO/siRNA는 아니므로 2점이다. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
+| Expansion Potential | 3 | E3_asset_specific_preclinical_or_technical_evidence | - | Official pipeline/platform 자료가 Aβ 외 tau, α-syn, myelin debris, PS/SLE 등으로 확장을 명시해 one-off AD asset이 아니라 TAM biology platform으로 해석된다. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
+| Data Maturity | 2 | E3_asset_specific_preclinical_or_technical_evidence | - | In vitro, in vivo, cytokine/NF-κB, scRNA-seq, AD/CAA model data는 명확하나 final ILM01 IND-enabling GLP tox/PK/PD/CMC and human data are not public. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
+| Marketability | 2 | E2_indirect_or_class_level_evidence | - | A. TAP: U.S. AD pool 7.4M에서 diagnosis/eligibility/treatable assumptions를 적용해 약 46만 명. B. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy를 적용하면 약 $1.94B. C. Obtainable Peak Sales: approved Aβ competitors and late-entry haircut을 반영하면 약 $1.06B로 추정되어 2점. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
 
 ## Detailed Scoring Rationale
 
@@ -64,8 +64,11 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 | Field | Value |
 |---|---|
 | Score | 3 |
+| Evidence Type | E3_asset_specific_preclinical_or_technical_evidence |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | Aβ 자체는 AD target이지만 ILM01의 differentiating biology는 TAM receptor, microglia/astrocyte phagocytosis, anti-inflammatory clearance라서 Neuroimmune / 교세포 향상성 cluster에 정확히 매핑된다. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | SKBP mapping은 Aβ-only가 아니라 glial immune regulation 중심으로 판단. |
 
 #### Conflicting Or Missing Evidence
@@ -85,8 +88,11 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 | Field | Value |
 |---|---|
 | Score | 1 |
+| Evidence Type | E1_company_claim_or_scientific_rationale_only |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않지만, commercial indication 기준으로 Leqembi, Kisunla, remternetug 등 anti-Aβ 경쟁이 이미 과밀하다. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | Same-MoA 경쟁은 낮지만 AD/Aβ market은 late-entrant burden이 커서 1점. |
 
 #### Conflicting Or Missing Evidence
@@ -106,8 +112,11 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 | Field | Value |
 |---|---|
 | Score | 3 |
+| Evidence Type | E3_asset_specific_preclinical_or_technical_evidence |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | Nature Medicine 기반 αAβ-Gas6 data가 TAM-dependent clearance, reduced NF-κB/inflammation, astrocyte/microglia phagocytosis, reduced synapse elimination and microhemorrhage를 일관되게 뒷받침한다. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | Publication plus multiple functional and safety-relevant readouts support 3점. |
 
 #### Conflicting Or Missing Evidence
@@ -127,8 +136,11 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 | Field | Value |
 |---|---|
 | Score | 2 |
+| Evidence Type | E2_indirect_or_class_level_evidence |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | GAIA는 differentiated biologic fusion platform이고 anti-inflammatory clearance data가 명확하지만, SKBP 우선 modality인 small molecule/ASO/siRNA는 아니므로 2점이다. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | Differentiation is strong, but biologic fusion CMC and modality fit limit score to 2. |
 
 #### Conflicting Or Missing Evidence
@@ -148,8 +160,11 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 | Field | Value |
 |---|---|
 | Score | 3 |
+| Evidence Type | E3_asset_specific_preclinical_or_technical_evidence |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | Official pipeline/platform 자료가 Aβ 외 tau, α-syn, myelin debris, PS/SLE 등으로 확장을 명시해 one-off AD asset이 아니라 TAM biology platform으로 해석된다. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | Multiple target/indication expansion is visible in public sources, so 3점. |
 
 #### Conflicting Or Missing Evidence
@@ -169,8 +184,11 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 | Field | Value |
 |---|---|
 | Score | 2 |
+| Evidence Type | E3_asset_specific_preclinical_or_technical_evidence |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | In vitro, in vivo, cytokine/NF-κB, scRNA-seq, AD/CAA model data는 명확하나 final ILM01 IND-enabling GLP tox/PK/PD/CMC and human data are not public. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | Strong preclinical POC warrants 2점; 3점 requires clearer final-candidate reproducible IND-enabling package. |
 
 #### Conflicting Or Missing Evidence
@@ -190,8 +208,11 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 | Field | Value |
 |---|---|
 | Score | 2 |
+| Evidence Type | E2_indirect_or_class_level_evidence |
+| Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
 | Judgment Reason | A. TAP: U.S. AD pool 7.4M에서 diagnosis/eligibility/treatable assumptions를 적용해 약 46만 명. B. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy를 적용하면 약 $1.94B. C. Obtainable Peak Sales: approved Aβ competitors and late-entry haircut을 반영하면 약 $1.06B로 추정되어 2점. |
+| Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
 | Investigation Note | Marketability는 rNPV가 아니라 TAP -> Unrisked Peak Sales -> Obtainable Peak Sales 순서로 산출했다. |
 
 #### Conflicting Or Missing Evidence
@@ -279,7 +300,7 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
 ```json
 {
   "meta": {
-    "schema_version": "3.0",
+    "schema_version": "3.1",
     "generated_at": "2026-06-21",
     "language": "ko",
     "analyst_role": "[OIT] PreC Pipeline Shortlister",
@@ -288,7 +309,7 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
       "json"
     ],
     "output_filename_base": "Illimis_Therapeutics_ILM01_20260621",
-    "rubric_version": "3.0",
+    "rubric_version": "3.1",
     "rubric_author": "kate"
   },
   "input": {
@@ -380,8 +401,8 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
     ]
   },
   "hard_filter": {
-    "status": "PASS",
-    "reason": "CNS/AD asset with strong Neuroimmune fit and public preclinical-to-IND window, but final-candidate and IND-enabling package need DD.",
+    "status": "REVIEW",
+    "reason": "REVIEW: high score, but stage / final candidate / registry / source uncertainty needs diligence.",
     "flags": [
       "clinical_stage_not_registry_verified",
       "final_candidate_unclear",
@@ -413,7 +434,10 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
         "investigation_note": "SKBP mapping은 Aβ-only가 아니라 glial immune regulation 중심으로 판단.",
         "uncertain_points": [
           "Final ILM01 target binder and TAM receptor subtype selectivity are not public."
-        ]
+        ],
+        "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
       },
       "competitive_landscape": {
         "score": 1,
@@ -438,7 +462,10 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
         "investigation_note": "Same-MoA 경쟁은 낮지만 AD/Aβ market은 late-entrant burden이 커서 1점.",
         "uncertain_points": [
           "Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist."
-        ]
+        ],
+        "evidence_type": "E1_company_claim_or_scientific_rationale_only",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
       },
       "moa_validity": {
         "score": 3,
@@ -462,7 +489,10 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
         "investigation_note": "Publication plus multiple functional and safety-relevant readouts support 3점.",
         "uncertain_points": [
           "Publication prototype and final ILM01 clinical candidate identity require confirmation."
-        ]
+        ],
+        "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
       },
       "platform_attractiveness": {
         "score": 2,
@@ -486,7 +516,10 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
         "investigation_note": "Differentiation is strong, but biologic fusion CMC and modality fit limit score to 2.",
         "uncertain_points": [
           "Expression yield, aggregation, immunogenicity, route, half-life, and scalable CMC data are not public."
-        ]
+        ],
+        "evidence_type": "E2_indirect_or_class_level_evidence",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
       },
       "expansion_potential": {
         "score": 3,
@@ -509,7 +542,10 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
         "investigation_note": "Multiple target/indication expansion is visible in public sources, so 3점.",
         "uncertain_points": [
           "Non-Aβ programs' independent POC maturity is not public."
-        ]
+        ],
+        "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
       },
       "data_maturity": {
         "score": 2,
@@ -534,7 +570,23 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
         "investigation_note": "Strong preclinical POC warrants 2점; 3점 requires clearer final-candidate reproducible IND-enabling package.",
         "uncertain_points": [
           "No public GLP tox, human PK/PD, immunogenicity, toxicology, or clinical data verified."
-        ]
+        ],
+        "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria.",
+        "claimed_development_stage": "Preclinical / IND-enabling preparation; public clinical trial registry record not verified",
+        "expected_data_for_stage": [
+          "stage-appropriate asset-specific data package"
+        ],
+        "visible_asset_specific_data": [
+          "Nature Medicine/KAIST model data",
+          "Keystone poster readouts",
+          "Public sources describe preclinical entry and 2027 IND/Phase 1 preparation"
+        ],
+        "missing_data": [
+          "No public GLP tox, human PK/PD, immunogenicity, toxicology, or clinical data verified."
+        ],
+        "stage_data_alignment_judgment": "In vitro, in vivo, cytokine/NF-κB, scRNA-seq, AD/CAA model data는 명확하나 final ILM01 IND-enabling GLP tox/PK/PD/CMC and human data are not public."
       },
       "marketability": {
         "score": 2,
@@ -592,7 +644,9 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
               "https://trials.lilly.com/en-US/trial/548297"
             ],
             "sales_unit": "million USD"
-          }
+          },
+          "commercial_rationale_status": "established",
+          "commercial_rationale_failure_reason": null
         },
         "evidence_trail": [
           "Alzheimer's Association: 7.4M Americans age 65+ with Alzheimer's in 2026",
@@ -608,7 +662,10 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
         "investigation_note": "Marketability는 rNPV가 아니라 TAP -> Unrisked Peak Sales -> Obtainable Peak Sales 순서로 산출했다.",
         "uncertain_points": [
           "Diagnosis rate, eligibility rate, peak penetration, net price, treatment duration, payer coverage, and ILM01 dosing are assumptions."
-        ]
+        ],
+        "evidence_type": "E2_indirect_or_class_level_evidence",
+        "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
       }
     }
   },

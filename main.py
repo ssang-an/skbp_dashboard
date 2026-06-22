@@ -20,6 +20,10 @@ DATA_FILE = JSON_DIR / "pipeline-records.json"
 SAMPLE_FILE = JSON_DIR / "drug-valuations.sample.json"
 SCHEMA_FILE = JSON_DIR / "drug-valuation.schema.json"
 OBSIDIAN_DIR = ROOT / "obsidian"
+WIKI_DIR = ROOT / "skbp_pipeline_wiki"
+SCORING_CRITERIA_VERSION = "3.1"
+SCORING_CRITERIA_FULL_MD = ROOT / "config" / "scoring_criteria" / "v3_1_full.md"
+SCORING_CRITERIA_DISPLAY_MD = ROOT / "config" / "scoring_criteria" / "v3_1_display.md"
 
 CRITERION_ALIASES = {
     "target_relevance": ["target_relevance", "target relevance", "타깃", "타겟", "target"],
@@ -30,6 +34,27 @@ CRITERION_ALIASES = {
     "data_maturity": ["data_maturity", "data maturity", "데이터", "성숙", "data"],
     "marketability": ["marketability", "시장성", "market"],
 }
+
+CRITERION_IDS = [
+    "target_relevance",
+    "competitive_landscape",
+    "moa_validity",
+    "platform_attractiveness",
+    "expansion_potential",
+    "data_maturity",
+    "marketability",
+]
+
+EVIDENCE_TYPE_ALLOWED_VALUES = {
+    "E0_not_found_or_not_assessable",
+    "E1_company_claim_or_scientific_rationale_only",
+    "E2_indirect_or_class_level_evidence",
+    "E3_asset_specific_preclinical_or_technical_evidence",
+    "E4_asset_specific_clinical_evidence",
+}
+
+SCORE_ALLOWED_VALUES = {0, 1, 2, 3}
+MARKETABILITY_COMMERCIAL_RATIONALE_STATUS_ALLOWED_VALUES = {"established", "not_established"}
 
 RULE_PREFIXES = {
     "target_relevance": "TR",
@@ -74,8 +99,10 @@ CLUSTERS = {
 app = FastAPI(title="SKBP Pipeline Dashboard")
 app.mount("/src", StaticFiles(directory=ROOT / "src"), name="src")
 app.mount("/json", StaticFiles(directory=JSON_DIR), name="json")
+WIKI_DIR.mkdir(exist_ok=True)
 if OBSIDIAN_DIR.exists():
     app.mount("/obsidian", StaticFiles(directory=OBSIDIAN_DIR), name="obsidian")
+app.mount("/wiki", StaticFiles(directory=WIKI_DIR), name="wiki")
 
 
 def read_json(path: Path) -> Any:
@@ -112,6 +139,106 @@ def normalize_records(payload: Any) -> list[dict[str, Any]]:
     if not all(isinstance(item, dict) for item in records):
         raise HTTPException(status_code=400, detail="Every record must be a JSON object.")
     return records
+
+
+def validation_error(message: str) -> None:
+    raise HTTPException(status_code=400, detail=message)
+
+
+def require_list_field(criterion: dict[str, Any], criterion_id: str, field: str) -> None:
+    value = criterion.get(field)
+    if not isinstance(value, list):
+        validation_error(f"{criterion_id}.{field} is required and must be an array.")
+
+
+def validate_score(value: Any, criterion_id: str) -> None:
+    if not isinstance(value, int) or value not in SCORE_ALLOWED_VALUES:
+        validation_error(f"{criterion_id}.score must be one integer among 0, 1, 2, 3. Got: {value!r}")
+
+
+def validate_scoring_criterion(criterion: Any, criterion_id: str) -> None:
+    if not isinstance(criterion, dict):
+        validation_error(f"{criterion_id} must be an object.")
+
+    validate_score(criterion.get("score"), criterion_id)
+
+    evidence_type = criterion.get("evidence_type")
+    if evidence_type not in EVIDENCE_TYPE_ALLOWED_VALUES:
+        validation_error(
+            f"{criterion_id}.evidence_type is required and must be one of {sorted(EVIDENCE_TYPE_ALLOWED_VALUES)}."
+        )
+
+    for field in ["evidence_type_reason", "main_line_summary", "investigation_note", "why_not_higher"]:
+        if field not in criterion:
+            validation_error(f"{criterion_id}.{field} is required.")
+
+    for field in ["what_was_checked", "evidence_trail", "evidence_sources", "uncertain_points"]:
+        require_list_field(criterion, criterion_id, field)
+
+
+def is_blank(value: Any) -> bool:
+    return value is None or value == ""
+
+
+def validate_marketability(criterion: dict[str, Any]) -> None:
+    calculation = criterion.get("calculation")
+    if not isinstance(calculation, dict):
+        validation_error("marketability.calculation is required and must be an object.")
+
+    status = calculation.get("commercial_rationale_status")
+    if status not in MARKETABILITY_COMMERCIAL_RATIONALE_STATUS_ALLOWED_VALUES:
+        validation_error(
+            "marketability.calculation.commercial_rationale_status must be established or not_established."
+        )
+
+    step_a = calculation.get("A_targetable_addressable_patient") or {}
+    step_b = calculation.get("B_unrisked_peak_sales") or {}
+    step_c = calculation.get("C_obtainable_peak_sales") or {}
+    if not all(isinstance(step, dict) for step in [step_a, step_b, step_c]):
+        validation_error("marketability.calculation A/B/C steps must be objects.")
+
+    if status == "not_established":
+        if criterion.get("score") != 0:
+            validation_error("marketability.score must be 0 when commercial_rationale_status is not_established.")
+        if is_blank(calculation.get("commercial_rationale_failure_reason")):
+            validation_error("marketability.commercial_rationale_failure_reason is required when not_established.")
+        for path, value in [
+            ("A_targetable_addressable_patient.targetable_addressable_patient", step_a.get("targetable_addressable_patient")),
+            ("B_unrisked_peak_sales.unrisked_peak_sales", step_b.get("unrisked_peak_sales")),
+            ("C_obtainable_peak_sales.obtainable_peak_sales", step_c.get("obtainable_peak_sales")),
+        ]:
+            if value is not None:
+                validation_error(f"marketability.calculation.{path} must be null when commercial rationale is not_established.")
+    else:
+        for path, value in [
+            ("A_targetable_addressable_patient.targetable_addressable_patient", step_a.get("targetable_addressable_patient")),
+            ("B_unrisked_peak_sales.unrisked_peak_sales", step_b.get("unrisked_peak_sales")),
+            ("C_obtainable_peak_sales.obtainable_peak_sales", step_c.get("obtainable_peak_sales")),
+        ]:
+            if is_blank(value):
+                validation_error(f"marketability.calculation.{path} is required when commercial rationale is established.")
+
+
+def validate_stage_specific_fields(criteria: dict[str, Any]) -> None:
+    data_maturity = criteria.get("data_maturity") or {}
+    for field in ["claimed_development_stage", "expected_data_for_stage", "visible_asset_specific_data"]:
+        if field not in data_maturity:
+            validation_error(f"data_maturity.{field} is required for v3.1 stage-specific assessment.")
+
+
+def validate_records_for_save(records: list[dict[str, Any]]) -> None:
+    for index, record in enumerate(records):
+        criteria = ((record.get("scoring") or {}).get("criteria") or {})
+        if not isinstance(criteria, dict):
+            validation_error(f"record[{index}].scoring.criteria is required.")
+
+        for criterion_id in CRITERION_IDS:
+            if criterion_id not in criteria:
+                validation_error(f"record[{index}].scoring.criteria.{criterion_id} is required.")
+            validate_scoring_criterion(criteria[criterion_id], criterion_id)
+
+        validate_marketability(criteria["marketability"])
+        validate_stage_specific_fields(criteria)
 
 
 def record_key(record: dict[str, Any]) -> str:
@@ -176,6 +303,40 @@ def run_obsidian_export() -> dict[str, Any]:
         else "Obsidian export failed",
         "stdout": result.stdout,
         "stderr": result.stderr,
+    }
+
+
+def run_wiki_export() -> dict[str, Any]:
+    script = ROOT / "scripts" / "export_pipeline_wiki.py"
+    if not script.exists():
+        return {
+            "ok": False,
+            "message": "Missing scripts/export_pipeline_wiki.py",
+            "stdout": "",
+            "stderr": "",
+        }
+
+    result = subprocess.run(
+        [sys.executable, str(script)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    return {
+        "ok": result.returncode == 0,
+        "message": "Pipeline wiki regenerated from json/pipeline-records.json"
+        if result.returncode == 0
+        else "Pipeline wiki export failed",
+        "stdout": result.stdout,
+        "stderr": result.stderr,
+    }
+
+
+def run_markdown_exports() -> dict[str, Any]:
+    return {
+        "obsidian": run_obsidian_export(),
+        "wiki": run_wiki_export(),
     }
 
 
@@ -512,7 +673,7 @@ async def delete_records(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=404, detail="No matching records found.")
 
     save_records(kept)
-    obsidian = run_obsidian_export()
+    exports = run_markdown_exports()
     return {
         "ok": True,
         "deleted": len(deleted_ids),
@@ -520,7 +681,7 @@ async def delete_records(request: Request) -> dict[str, Any]:
         "missing_ids": sorted(requested_ids - set(deleted_ids)),
         "total": len(kept),
         "data_file": str(DATA_FILE.relative_to(ROOT)).replace("\\", "/"),
-        "obsidian": obsidian,
+        "exports": exports,
     }
 
 
@@ -542,17 +703,20 @@ async def update_record(record_id: str, request: Request) -> dict[str, Any]:
 
     if not isinstance(payload, dict) or "structured_table" not in payload:
         raise HTTPException(status_code=400, detail="Expected one analysis JSON object.")
+    validate_records_for_save([payload])
 
     records = load_records()
     for index, record in enumerate(records):
         if record_key(record) == record_id:
             records[index] = payload
             save_records(records)
+            exports = run_markdown_exports()
             return {
                 "ok": True,
                 "record_id": record_key(payload),
                 "updated_previous_id": record_id,
                 "total": len(records),
+                "exports": exports,
             }
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
 
@@ -566,14 +730,14 @@ def delete_record(record_id: str) -> dict[str, Any]:
         raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
 
     save_records(kept)
-    obsidian = run_obsidian_export()
+    exports = run_markdown_exports()
     return {
         "ok": True,
         "deleted": deleted,
         "deleted_ids": [record_id],
         "total": len(kept),
         "data_file": str(DATA_FILE.relative_to(ROOT)).replace("\\", "/"),
-        "obsidian": obsidian,
+        "exports": exports,
     }
 
 
@@ -585,6 +749,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
 
     incoming = normalize_records(payload)
+    validate_records_for_save(incoming)
     records = load_records()
     index_by_key = {record_key(record): i for i, record in enumerate(records)}
     inserted = 0
@@ -601,12 +766,14 @@ async def upsert_records(request: Request) -> dict[str, Any]:
             inserted += 1
 
     save_records(records)
+    exports = run_markdown_exports()
     return {
         "ok": True,
         "inserted": inserted,
         "updated": updated,
         "total": len(records),
         "data_file": str(DATA_FILE.relative_to(ROOT)).replace("\\", "/"),
+        "exports": exports,
     }
 
 
@@ -618,18 +785,35 @@ async def replace_records(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
 
     records = normalize_records(payload)
+    validate_records_for_save(records)
     save_records(records)
+    exports = run_markdown_exports()
     return {
         "ok": True,
         "replaced": len(records),
         "total": len(records),
         "data_file": str(DATA_FILE.relative_to(ROOT)).replace("\\", "/"),
+        "exports": exports,
     }
 
 
 @app.get("/api/schema")
 def get_schema() -> Any:
     return read_json(SCHEMA_FILE)
+
+
+@app.get("/api/scoring-criteria")
+def get_scoring_criteria() -> dict[str, Any]:
+    return {
+        "version": SCORING_CRITERIA_VERSION,
+        "full_markdown": SCORING_CRITERIA_FULL_MD.read_text(encoding="utf-8"),
+        "display_markdown": SCORING_CRITERIA_DISPLAY_MD.read_text(encoding="utf-8"),
+        "evidence_type_allowed_values": sorted(EVIDENCE_TYPE_ALLOWED_VALUES),
+        "score_allowed_values": sorted(SCORE_ALLOWED_VALUES),
+        "marketability_commercial_rationale_status_allowed_values": sorted(
+            MARKETABILITY_COMMERCIAL_RATIONALE_STATUS_ALLOWED_VALUES
+        ),
+    }
 
 
 @app.post("/api/obsidian/export")
@@ -655,6 +839,37 @@ def export_obsidian() -> dict[str, Any]:
         "files": files,
         "count": len(files),
     }
+
+
+@app.post("/api/wiki/export")
+def export_pipeline_wiki() -> dict[str, Any]:
+    script = ROOT / "scripts" / "export_pipeline_wiki.py"
+    if not script.exists():
+        raise HTTPException(status_code=404, detail="Missing scripts/export_pipeline_wiki.py")
+
+    result = subprocess.run(
+        [sys.executable, str(script)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    if result.returncode != 0:
+        raise HTTPException(status_code=500, detail=result.stderr or result.stdout)
+
+    files = [str(path.relative_to(ROOT)).replace("\\", "/") for path in WIKI_DIR.rglob("*") if path.is_file()]
+    return {
+        "ok": True,
+        "message": "Pipeline wiki regenerated from json/pipeline-records.json",
+        "summary": json.loads(result.stdout) if result.stdout.strip().startswith("{") else result.stdout,
+        "files": files,
+        "count": len(files),
+    }
+
+
+@app.post("/api/markdown/export")
+def export_markdown_layers() -> dict[str, Any]:
+    return {"ok": True, "exports": run_markdown_exports()}
 
 
 @app.post("/api/chat")

@@ -111,6 +111,7 @@
               <select id="passFilter">
                 <option value="all">전체</option>
                 <option value="PASS">PASS</option>
+                <option value="REVIEW">REVIEW</option>
                 <option value="FAIL">FAIL</option>
               </select>
             </label>
@@ -127,7 +128,24 @@
             </div>
           </div>
           <div class="table-wrap">
-            <table>
+            <table class="pipeline-table">
+              <colgroup>
+                <col class="pipeline-col-select" />
+                <col class="pipeline-col-company" />
+                <col class="pipeline-col-country" />
+                <col class="pipeline-col-asset" />
+                <col class="pipeline-col-target" />
+                <col class="pipeline-col-stage" />
+                <col class="pipeline-col-filter" />
+                <col class="pipeline-col-score" />
+                <col class="pipeline-col-score" />
+                <col class="pipeline-col-score" />
+                <col class="pipeline-col-score" />
+                <col class="pipeline-col-score" />
+                <col class="pipeline-col-score" />
+                <col class="pipeline-col-score" />
+                <col class="pipeline-col-score" />
+              </colgroup>
               <thead>
                 <tr>
                   <th class="select-col">
@@ -142,8 +160,8 @@
                   <th><button data-sort="targetScore" type="button">TR</button></th>
                   <th><button data-sort="competitiveScore" type="button">Comp</button></th>
                   <th><button data-sort="moaScore" type="button">MOA</button></th>
-                  <th><button data-sort="platformScore" type="button">Platform</button></th>
-                  <th><button data-sort="expansionScore" type="button">Expand</button></th>
+                  <th><button data-sort="platformScore" type="button">Plat</button></th>
+                  <th><button data-sort="expansionScore" type="button">Exp</button></th>
                   <th><button data-sort="dataScore" type="button">Data</button></th>
                   <th><button data-sort="marketScore" type="button">Market</button></th>
                   <th><button data-sort="totalScore" type="button">Total</button></th>
@@ -260,10 +278,10 @@
 
       <div class="criteria-drawer-body">
         <section class="criteria-intro">
-          <strong>총 7개 항목, 각 0-3점, 총 21점 만점</strong>
+          <strong>판단근거 — SKBP Pipeline Finder v3.1</strong>
           <p>
-            이 기준은 전임상 pipeline shortlisting을 위한 AI Champion scoring 구조입니다.
-            각 점수는 단순 의견이 아니라 적용한 점수 정의, 명확한 판단 근거, 출처를 함께 남기는 것을 원칙으로 합니다.
+            각 항목은 독립적으로 평가하며, 모든 점수는 0, 1, 2, 3 중 하나의 단일 정수로만 부여합니다.
+            Evidence Type은 점수를 자동 결정하지 않고, 해당 점수가 어떤 수준의 근거에 기반했는지 보여주는 audit label입니다.
           </p>
         </section>
 
@@ -288,6 +306,56 @@
               <li>Cytokine 신경조절</li>
               <li>손상/질환 면역조절</li>
               <li>말초 면역기관 연결</li>
+            </ul>
+          </article>
+        </section>
+
+        <section class="criteria-rule">
+          <h3>Evidence Type</h3>
+          <div class="criteria-table-wrap">
+            <table class="criteria-table evidence-type-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>의미</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><th>E0</th><td>근거 없음 / 판단 불가</td></tr>
+                <tr><th>E1</th><td>회사 주장 또는 과학적 논리만 있음</td></tr>
+                <tr><th>E2</th><td>class-level / indirect evidence</td></tr>
+                <tr><th>E3</th><td>asset-specific 전임상/기술 근거</td></tr>
+                <tr><th>E4</th><td>asset-specific 임상 근거</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="criteria-pass-grid" aria-label="PASS REVIEW FAIL criteria">
+          <article>
+            <h3>PASS</h3>
+            <ul>
+              <li>Total score >= 14</li>
+              <li>Target Relevance >= 3</li>
+              <li>MoA Validity >= 2</li>
+              <li>Data Maturity >= 2</li>
+              <li>Hard blocker 없음</li>
+            </ul>
+          </article>
+          <article>
+            <h3>REVIEW</h3>
+            <ul>
+              <li>Total score 9-13</li>
+              <li>또는 score는 높지만 stage / 권리 / asset identity / source 불확실성 있음</li>
+              <li>추가 diligence 후 PASS/FAIL 재판정</li>
+            </ul>
+          </article>
+          <article>
+            <h3>FAIL</h3>
+            <ul>
+              <li>Total score <= 8</li>
+              <li>또는 Target Relevance <= 1</li>
+              <li>또는 SKBP Theme / Cluster fit 없음</li>
             </ul>
           </article>
         </section>
@@ -319,51 +387,51 @@
                 <tr>
                   <th>Target Relevance</th>
                   <td>CNS와 거의 무관</td>
-                  <td>general CNS relevance도 약함</td>
-                  <td>general neurodegeneration / neuroinflammation / epilepsy</td>
-                  <td>SKBP Theme 또는 Cluster에 정확히 해당</td>
+                  <td>CNS 관련성 약함</td>
+                  <td>general CNS relevance</td>
+                  <td>Theme 또는 Cluster 직접 해당</td>
                 </tr>
                 <tr>
                   <th>Competitive Landscape</th>
-                  <td>정보 부족 / 판단 불가</td>
-                  <td>front runner 0개 또는 사실상 없음</td>
-                  <td>front runner 2개 정도</td>
-                  <td>front runner 1개 정도</td>
+                  <td>정보 부족 또는 front runner 5개 이상</td>
+                  <td>경쟁 2개 이상, 차별화 불명확</td>
+                  <td>front runner 1-2개, BIC 가능</td>
+                  <td>front runner 없음, FIC 가능</td>
                 </tr>
                 <tr>
                   <th>MoA Validity</th>
-                  <td>기전 불명확 / 불일치</td>
-                  <td>근거 약함, 간접적</td>
-                  <td>publication 기반 plausibility 충분</td>
-                  <td>충분한 publication + 강한 mechanistic consistency</td>
+                  <td>MoA 불명확</td>
+                  <td>rationale / claim 중심</td>
+                  <td>functional evidence 또는 class validation</td>
+                  <td>asset-specific validation 또는 human PoC</td>
                 </tr>
                 <tr>
                   <th>Platform Attractiveness</th>
-                  <td>플랫폼 신뢰성 낮음 / 재현성 의심</td>
-                  <td>차별성 약함, 마케팅성 설명 위주</td>
-                  <td>차별화 포인트 분명 + SKBP 관심 모달리티 적합</td>
-                  <td>차별화 포인트 분명 + small molecule / ASO / siRNA + Theme/Cluster fit 매우 높음</td>
+                  <td>식별 불가 또는 rationale 없음</td>
+                  <td>claim / 논리 중심</td>
+                  <td>기술적 차별화 논리 명확</td>
+                  <td>data 또는 외부 검증으로 입증</td>
                 </tr>
                 <tr>
                   <th>Expansion Potential</th>
-                  <td>one-off asset</td>
-                  <td>확장 근거 약함</td>
-                  <td>main indication 외 인접 적응증 1개 이상 확장 가능</td>
-                  <td>여러 indication / 여러 cluster로 확장 가능</td>
+                  <td>확장 근거 없음</td>
+                  <td>이론적 가능성</td>
+                  <td>biology 근거 있음</td>
+                  <td>복수 indication / pipeline 확인</td>
                 </tr>
                 <tr>
                   <th>Data Maturity</th>
-                  <td>실험 데이터 거의 없음</td>
-                  <td>제한적 PoC 수준</td>
-                  <td>명확한 preclinical data 있음</td>
-                  <td>in vitro + in vivo + 재현성/정량성까지 탄탄</td>
+                  <td>data 없음</td>
+                  <td>stage 대비 부족</td>
+                  <td>stage에 부합</td>
+                  <td>decision-ready package</td>
                 </tr>
                 <tr>
                   <th>Marketability</th>
-                  <td>pricing power도 없고 market size도 낮음</td>
-                  <td>peak sales는 있어도 경쟁 때문에 obtainable pie &lt; USD 1,000M</td>
-                  <td>obtainable peak sales >= USD 1,000M</td>
-                  <td>obtainable peak sales >= USD 2,000M + expansion capacity 높음</td>
+                  <td>상업적 rationale / 계산 불가</td>
+                  <td>&lt; USD 1B</td>
+                  <td>USD 1B-2B</td>
+                  <td>&gt;= USD 2B + 확장성/가격/차별성</td>
                 </tr>
               </tbody>
             </table>

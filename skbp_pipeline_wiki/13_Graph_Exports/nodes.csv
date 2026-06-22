@@ -1,0 +1,239 @@
+id,label,type,title,tags,score,recommendation,evidence_level
+asset::ilm01_gaia-aβ,ILM01 / GAIA-Aβ,asset,Asset__ILM01_GAIA-Aβ__GAIA-Aβ,pipeline/asset;theme/neuroimmune,16,Watch,E3
+company::illimis_therapeutics,Illimis Therapeutics,company,Company__Illimis_Therapeutics,pipeline/company,,,
+target::aβ_aggregates_with_tam_receptor-mediated_clearance_biology,Aβ aggregates with TAM receptor-mediated clearance biology,target,Target__Aβ_aggregates_with_TAM_receptor-mediated_clearance_biology,pipeline/target,,,
+moa::aβ_binder와_engineered_gas6_tam_receptor_binder를_결합해_aβ_aggregates와_tam_1a0a75c6,Aβ binder와 engineered Gas6 TAM receptor binder를 결합해 Aβ aggregates와 TAM receptors를 동시에 결합하고 microglia/astrocyte phagocytosis를 유도하여 FcγR-mediated inflammation과 ARIA-relevant inflammatory response를 낮추는 전략.,moa,MoA__Aβ_binder와_engineered_Gas6_TAM_receptor_binder를_결합해_Aβ_aggregates와_TAM_1a0a75c6,pipeline/moa,,,
+modality::biologic_bispecific-like_chimeric_fusion_protein;_gaia_platform,Biologic / bispecific-like chimeric fusion protein; GAIA platform,modality,Modality__Biologic_bispecific-like_chimeric_fusion_protein;_GAIA_platform,pipeline/modality,,,
+indication::alzheimer's_disease,Alzheimer's disease,indication,Indication__Alzheimer's_disease,pipeline/indication,,,
+theme::neuroimmune,Neuroimmune,theme,Theme__Neuroimmune,skbp/theme,,,
+cluster::교세포_향상성,교세포 향상성,cluster,Cluster__교세포_향상성,skbp/cluster,,,
+scorecard::ilm01_gaia-aβ_20260621,Scorecard - ILM01 / GAIA-Aβ,scorecard,Scorecard__ILM01_GAIA-Aβ__20260621,pipeline/scorecard,16,Watch,E3
+competitor::eisai_biogen_leqembi_lecanemab,Leqembi / lecanemab,competitor,Competitor__Eisai_Biogen__Leqembi_lecanemab,pipeline/competitor,,,
+competitor::eli_lilly_kisunla_donanemab,Kisunla / donanemab,competitor,Competitor__Eli_Lilly__Kisunla_donanemab,pipeline/competitor,,,
+competitor::eli_lilly_remternetug_ly3372993,Remternetug / LY3372993,competitor,Competitor__Eli_Lilly__Remternetug_LY3372993,pipeline/competitor,,,
+competitor::biogen_eisai_historical_program_aduhelm_aducanumab,Aduhelm / aducanumab,competitor,Competitor__Biogen_Eisai_historical_program__Aduhelm_aducanumab,pipeline/competitor,,,
+competitor::inmune_bio_xpro1595_xpro,XPro1595 / XPro,competitor,Competitor__INmune_Bio__XPro1595_XPro,pipeline/competitor,,,
+competitor::biogen_ionis_diranersen_biib080,Diranersen / BIIB080,competitor,Competitor__Biogen_Ionis__Diranersen_BIIB080,pipeline/competitor,,,
+source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php,Illimis official pipeline page,source,Source__Illimis_official_pipeline_page,pipeline/source;source/official_company,,,E3
+source::https_illimistx.com_en_sub_platform%26pipeline_platform.php,Illimis official platform page,source,Source__Illimis_official_platform_page,pipeline/source;source/official_company,,,E3
+source::https_www.nature.com_articles_s41591-022-01926-9,Nature Medicine αAβ-Gas6 paper,source,Source__Nature_Medicine_αAβ-Gas6_paper,pipeline/source;source/publication,,,E3
+source::https_pure.kaist.ac.kr_en_publications_anti-inflammatory-clearance-of-a_4ffde966,KAIST Pure publication record,source,Source__KAIST_Pure_publication_record,pipeline/source;source/publication,,,E3
+source::https_www.illimistx.com_data_poster_illimis_keystone2022.pdf,Illimis Keystone 2022 poster,source,Source__Illimis_Keystone_2022_poster,pipeline/source;source/publication,,,E3
+source::https_www.biospectator.com_news_view_25729,BioSpectator Series B/stage article,source,Source__BioSpectator_Series_B_stage_article,pipeline/source;source/news,,,E3
+source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af,FDA Leqembi approval,source,Source__FDA_Leqembi_approval,pipeline/source;source/regulatory,,,E3
+source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc,FDA Kisunla approval,source,Source__FDA_Kisunla_approval,pipeline/source;source/regulatory,,,E3
+source::https_trials.lilly.com_en-us_trial_548297,Lilly Remternetug Phase III trial,source,Source__Lilly_Remternetug_Phase_III_trial,pipeline/source;source/clinical_trial_registry,,,E3
+source::https_www.alz.org_alzheimers-dementia_facts-figures,Alzheimer's Association Facts and Figures,source,Source__Alzheimer's_Association_Facts_and_Figures,pipeline/source;source/market,,,E3
+source::https_www.eisai.com_news_2023_news202302.html,https://www.eisai.com/news/2023/news202302.html,source,Source__https_www.eisai.com_news_2023_news202302.html,pipeline/source;source/other,,,E3
+source::https_www.biopharmadive.com_news_lilly-alzheimers-drug-fda-approval-kis_3067c15c,Kisunla pricing,source,Source__Kisunla_pricing,pipeline/source;source/market,,,E3
+source::https_investors.biogen.com_news-releases_news-release-details_biogen-re_2170daf2,Aduhelm / aducanumab source,source,Source__Aduhelm_aducanumab_source,pipeline/source;source/other,,,E3
+source::https_www.inmunebio.com_index.php_newsroom_2026-news_muneionnounceslign_d59db4fe,XPro1595 / XPro source,source,Source__XPro1595_XPro_source,pipeline/source;source/other,,,E3
+source::https_investors.biogen.com_news-releases_news-release-details_topline-r_3daa3724,Diranersen / BIIB080 source,source,Source__Diranersen_BIIB080_source,pipeline/source;source/other,,,E3
+source::https_www.koreabiomed.com_news_articleview.html_idxno=29100,https://www.koreabiomed.com/news/articleView.html?idxno=29100,source,Source__https_www.koreabiomed.com_news_articleView.html_idxno=29100,pipeline/source;source/other,,,E3
+source::https_www.mk.co.kr_en_it_11981980,https://www.mk.co.kr/en/it/11981980,source,Source__https_www.mk.co.kr_en_it_11981980,pipeline/source;source/other,,,E3
+source::https_snu.elsevierpure.com_en_publications_eligibility-for-lecanemab-an_9c2ffbd8,https://snu.elsevierpure.com/en/publications/eligibility-for-lecanemab-and-donanemab-in-korea-under-appropriat/,source,Source__https_snu.elsevierpure.com_en_publications_eligibility-for-lecanemab-an_9c2ffbd8,pipeline/source;source/other,,,E3
+asset::wt-1108,WT-1108,asset,Asset__WT-1108__WT1108,pipeline/asset;theme/no_theme,8,Watch,E2
+"company::hangzhou_westan_pharmaceutical_technology_co.,_ltd","Hangzhou Westan Pharmaceutical Technology Co., Ltd.",company,"Company__Hangzhou_Westan_Pharmaceutical_Technology_Co.,_Ltd",pipeline/company,,,
+target::p2x3_receptor_p2rx3,P2X3 receptor / P2RX3,target,Target__P2X3_receptor_P2RX3,pipeline/target,,,
+moa::selective_p2x3_receptor_antagonism_intended_to_reduce_atp-mediated_airw_a0f471fe,Selective P2X3 receptor antagonism intended to reduce ATP-mediated airway sensory nerve activation and cough hypersensitivity.,moa,MoA__Selective_P2X3_receptor_antagonism_intended_to_reduce_ATP-mediated_airw_a0f471fe,pipeline/moa,,,
+modality::oral_small_molecule_tablet;_reportedly_developed_using_westanai+_and_pr_1de450e9,Oral small molecule tablet; reportedly developed using WestanAI+ and proprietary compound library.,modality,Modality__Oral_small_molecule_tablet;_reportedly_developed_using_WestanAI+_and_pr_1de450e9,pipeline/modality,,,
+indication::refractory_or_unexplained_chronic_cough_(rcc_ucc),Refractory or unexplained chronic cough (RCC/UCC),indication,Indication__Refractory_or_unexplained_chronic_cough_(RCC_UCC),pipeline/indication,,,
+theme::no_theme,No Theme,theme,Theme__No_Theme,skbp/theme,,,
+cluster::no_mapped_skbp_cluster,No mapped SKBP cluster,cluster,Cluster__No_mapped_SKBP_cluster,skbp/cluster,,,
+scorecard::wt-1108_20260621,Scorecard - WT-1108,scorecard,Scorecard__WT-1108__20260621,pipeline/scorecard,8,Watch,E2
+competitor::merck_&_co._msd_gefapixant_lyfnua,Gefapixant / Lyfnua,competitor,Competitor__Merck_&_Co._MSD__Gefapixant_Lyfnua,pipeline/competitor,,,
+competitor::gsk_bellus_health_camlipixant_blu-5937,Camlipixant / BLU-5937,competitor,Competitor__GSK_BELLUS_Health__Camlipixant_BLU-5937,pipeline/competitor,,,
+competitor::shionogi_sivopixant_s-600918,Sivopixant / S-600918,competitor,Competitor__Shionogi__Sivopixant_S-600918,pipeline/competitor,,,
+competitor::jiangsu_hengrui_guangdong_hengrui_hrs-2261,HRS-2261,competitor,Competitor__Jiangsu_Hengrui_Guangdong_Hengrui__HRS-2261,pipeline/competitor,,,
+competitor::hansoh_pharma_hs-10383,HS-10383,competitor,Competitor__Hansoh_Pharma__HS-10383,pipeline/competitor,,,
+competitor::createrna_langlai_technology_qr052107b_relicpixant,QR052107B / relicpixant,competitor,Competitor__Createrna_Langlai_Technology__QR052107B_relicpixant,pipeline/competitor,,,
+source::https_westanpharma.com_products.aspx,Westan products page,source,Source__Westan_products_page,pipeline/source;source/official_company,,,E2
+source::https_www.changbaicao.cn_trialsdetail-id-20793.html,Changbaicao CTR20254063 trial page,source,Source__Changbaicao_CTR20254063_trial_page,pipeline/source;source/clinical_trial_registry,,,E2
+source::https_synapse.patsnap.com_drug_0b28edb3230146bca084e523c94678b2,Synapse WT-1108 drug page,source,Source__Synapse_WT-1108_drug_page,pipeline/source;source/other,,,E2
+source::https_pubmed.ncbi.nlm.nih.gov_35248186,Lancet COUGH-1/COUGH-2 PubMed record,source,Source__Lancet_COUGH-1_COUGH-2_PubMed_record,pipeline/source;source/publication,,,E2
+source::https_www.gsk.com_en-gb_media_press-releases_gsk-reaches-agreement-to-a_c4beb605,GSK/BELLUS acquisition press release,source,Source__GSK_BELLUS_acquisition_press_release,pipeline/source;source/news,,,E2
+source::https_www.bioduro-sundia.cn_company-news_westanpharma-ind-approval-p2x3.html,BioDuro-Sundia/PharmCube WT-1108 IND article,source,Source__BioDuro-Sundia_PharmCube_WT-1108_IND_article,pipeline/source;source/news,,,E2
+source::https_www.delveinsight.com_report-store_chronic-refractory-cough-market,DelveInsight chronic refractory cough market page,source,Source__DelveInsight_chronic_refractory_cough_market_page,pipeline/source;source/market,,,E2
+source::https_www.westanpharma.com,Westan official site,source,Source__Westan_official_site,pipeline/source;source/official_company,,,E2
+source::https_www.ema.europa.eu_en_medicines_human_epar_lyfnua,Gefapixant / Lyfnua source,source,Source__Gefapixant_Lyfnua_source,pipeline/source;source/other,,,E2
+source::https_link.springer.com_article_10.1007_s00408-022-00592-5,Sivopixant / S-600918 source,source,Source__Sivopixant_S-600918_source,pipeline/source;source/other,,,E2
+source::https_pubmed.ncbi.nlm.nih.gov_38198010,HRS-2261 source,source,Source__HRS-2261_source,pipeline/source;source/other,,,E2
+source::https_www.hspharm.com_news_news-detail-513247.htm,HS-10383 source,source,Source__HS-10383_source,pipeline/source;source/other,,,E2
+source::https_www.prnewswire.com_news-releases_createrna-announces-positive-top_fc58721f,QR052107B / relicpixant source,source,Source__QR052107B_relicpixant_source,pipeline/source;source/other,,,E2
+source::https_www.hra.nhs.uk_planning-and-improving-research_application-summar_0bed49ad,HRA gefapixant mechanism summary,source,Source__HRA_gefapixant_mechanism_summary,pipeline/source;source/clinical_trial_registry,,,E2
+source::https_www.merck.com_news_merck-receives-positive-european-union-chmp-op_29185acb,Merck CHMP press release,source,Source__Merck_CHMP_press_release,pipeline/source;source/news,,,E2
+source::https_www.merck.com_news_merck-provides-u-s-and-japan-regulatory-update_5ebeacc7,Merck Japan regulatory update,source,Source__Merck_Japan_regulatory_update,pipeline/source;source/news,,,E2
+source::https_link.springer.com_article_10.1007_s00408-022-00553-y,Gefapixant pooled Phase 3 analysis,source,Source__Gefapixant_pooled_Phase_3_analysis,pipeline/source;source/publication,,,E2
+source::https_pubmed.ncbi.nlm.nih.gov_40043302,Camlipixant Phase 2b PubMed,source,Source__Camlipixant_Phase_2b_PubMed,pipeline/source;source/publication,,,E2
+source::https_bydrug.pharmcube.com_investgo_company_detail_1b0943a3d0a44519a9d5_4e2ff7d3,ByDrug Westan profile,source,Source__ByDrug_Westan_profile,pipeline/source;source/other,,,E2
+source::https_www.zhihuiya.com_news_info_2271.html,Zhihuiya WT-1108 news,source,Source__Zhihuiya_WT-1108_news,pipeline/source;source/news,,,E2
+source::https_westanpharma.com_aboutus.aspx,Westan about page,source,Source__Westan_about_page,pipeline/source;source/official_company,,,E2
+source::https_finance.sina.com.cn_stock_aigc_ywsygs_2025-10-11_doc-inftnueu7432084.shtml,Sina WT-1108 Phase IIa news,source,Source__Sina_WT-1108_Phase_IIa_news,pipeline/source;source/news,,,E2
+asset::ux-ep001_uxep-001,UX-EP001 / UXEP-001,asset,Asset__UX-EP001_UXEP-001__UX-EP001,pipeline/asset;theme/e_i_balance,5,Deprioritize,E1
+"company::shanghai_unixell_biotechnology_co.,_ltd","Shanghai UniXell Biotechnology Co., Ltd.",company,"Company__Shanghai_UniXell_Biotechnology_Co.,_Ltd",pipeline/company,,,
+target::undisclosed,Undisclosed,target,Target__Undisclosed,pipeline/target,,,
+"moa::undisclosed_for_ux-ep001._if_confused_with_ux-gip001,_the_moa_would_be_cf2be7de","Undisclosed for UX-EP001. If confused with UX-GIP001, the MoA would be iPSC-derived GABAergic interneuron progenitor replacement to restore inhibitory neural circuitry, but this cannot be assumed without company confirmation.",moa,"MoA__Undisclosed_for_UX-EP001._If_confused_with_UX-GIP001,_the_MoA_would_be_cf2be7de",pipeline/moa,,,
+"modality::synapse_lists_tcr-t_cell_therapy_for_ux-ep001,_but_this_is_not_corrobor_f837809e","Synapse lists TCR-T Cell therapy for UX-EP001, but this is not corroborated by official UniXell sources. Company platform is hPSC/iPSC-derived neural cell therapy based on reprogramming, differentiation, SISBAR lineage tracing and gene editing.",modality,"Modality__Synapse_lists_TCR-T_Cell_therapy_for_UX-EP001,_but_this_is_not_corrobor_f837809e",pipeline/modality,,,
+indication::epilepsy,Epilepsy,indication,Indication__Epilepsy,pipeline/indication,,,
+theme::e_i_balance,E/I Balance,theme,Theme__E-I_Balance,skbp/theme,,,
+cluster::network_modulation,Network Modulation,cluster,Cluster__Network_Modulation,skbp/cluster,,,
+scorecard::ux-ep001_uxep-001_20260621,Scorecard - UX-EP001 / UXEP-001,scorecard,Scorecard__UX-EP001_UXEP-001__20260621,pipeline/scorecard,5,Deprioritize,E1
+competitor::neurona_therapeutics_ucb_nrtx-1001_rezanecel,NRTX-1001 / rezanecel,competitor,Competitor__Neurona_Therapeutics_UCB__NRTX-1001_rezanecel,pipeline/competitor,,,
+competitor::unixell_biotech_ux-gip001,UX-GIP001,competitor,Competitor__UniXell_Biotech__UX-GIP001,pipeline/competitor,,,
+competitor::encoded_therapeutics_etx101,ETX101,competitor,Competitor__Encoded_Therapeutics__ETX101,pipeline/competitor,,,
+competitor::stoke_therapeutics_biogen_zorevunersen_stk-001,Zorevunersen / STK-001,competitor,Competitor__Stoke_Therapeutics_Biogen__Zorevunersen_STK-001,pipeline/competitor,,,
+source::https_synapse.patsnap.com_drug_0f29bad183a3471187fd29db65e62bd7,Synapse UX-EP001 asset page,source,Source__Synapse_UX-EP001_asset_page,pipeline/source;source/other,,,E1
+source::https_www.unixell.com_en_technologyplatformsandproductpipelines_index.aspx,UniXell Technology Platform and R&D pipeline,source,Source__UniXell_Technology_Platform_and_R&D_pipeline,pipeline/source;source/official_company,,,E1
+source::https_www.unixell.com_en_companynews_info.aspx_itemid=307,UniXell UX-GIP001 IND news,source,Source__UniXell_UX-GIP001_IND_news,pipeline/source;source/official_company,,,E1
+source::https_www.biospace.com_press-releases_unixell-biotech-receives-ind-clea_1d38ec1e,BioSpace / PRNewswire UX-GIP001 FDA IND clearance,source,Source__BioSpace_PRNewswire_UX-GIP001_FDA_IND_clearance,pipeline/source;source/news,,,E1
+source::https_www.ucb.com_newsroom_press-releases_article_ucb-to-acquire-neuron_5495d099,UCB acquisition of Neurona,source,Source__UCB_acquisition_of_Neurona,pipeline/source;source/news,,,E1
+source::https_www.unixell.com_en_index.aspx,UniXell official website,source,Source__UniXell_official_website,pipeline/source;source/official_company,,,E1
+source::https_www.unixell.com_en_aboutthejump_index.aspx,UniXell About page,source,Source__UniXell_About_page,pipeline/source;source/official_company,,,E1
+source::https_encoded.com_programs_etx101-for-dravet-syndrome,ETX101 source,source,Source__ETX101_source,pipeline/source;source/other,,,E1
+source::https_pubmed.ncbi.nlm.nih.gov_41780062,Zorevunersen / STK-001 source,source,Source__Zorevunersen_STK-001_source,pipeline/source;source/other,,,E1
+source::https_www.neuronatherapeutics.com_nte001,Neurona NTE001 study page,source,Source__Neurona_NTE001_study_page,pipeline/source;source/clinical_trial_registry,,,E1
+source::https_www.cell.com_cell-stem-cell_fulltext_s1934-5909%2823%2900044-9,SISBAR Cell Stem Cell paper,source,Source__SISBAR_Cell_Stem_Cell_paper,pipeline/source;source/publication,,,E1
+source::https_www.cell.com_cell-stem-cell_abstract_s1934-5909%2825%2900369-8,SphereDiff Cell Stem Cell paper,source,Source__SphereDiff_Cell_Stem_Cell_paper,pipeline/source;source/publication,,,E1
+source::https_www.innostarbio.com_en_news_693.html,InnoStar UX-GIP001 FDA IND support,source,Source__InnoStar_UX-GIP001_FDA_IND_support,pipeline/source;source/news,,,E1
+asset::lnk01006_blkr201,LNK01006 / BLKR201,asset,Asset__LNK01006_BLKR201__LNK01006,pipeline/asset;theme/neuroimmune,14,Shortlist,E3
+"company::lynk_pharmaceuticals_co.,_ltd","Lynk Pharmaceuticals Co., Ltd.",company,"Company__Lynk_Pharmaceuticals_Co.,_Ltd",pipeline/company,,,
+target::tyk2,TYK2,target,Target__TYK2,pipeline/target,,,
+moa::oral_allosteric_tyk2_inhibitor_targeting_the_jh2_pseudokinase_regulator_cc811ca3,"Oral allosteric TYK2 inhibitor targeting the JH2 pseudokinase/regulatory domain; designed to inhibit TYK2-mediated IL-12, IL-23 and type I interferon signaling with CNS exposure.",moa,MoA__Oral_allosteric_TYK2_inhibitor_targeting_the_JH2_pseudokinase_regulator_cc811ca3,pipeline/moa,,,
+modality::oral_small_molecule;_cns-penetrant_allosteric_tyk2_inhibitor;_developed_458cb9bc,Oral small molecule; CNS-penetrant allosteric TYK2 inhibitor; developed through Lynk medicinal chemistry and Formation/Bleecker clinical development platform.,modality,Modality__Oral_small_molecule;_CNS-penetrant_allosteric_TYK2_inhibitor;_developed_458cb9bc,pipeline/modality,,,
+indication::phase_1_healthy-volunteer_study;_intended_development_positioning_inclu_d38001b6,Phase 1 healthy-volunteer study; intended development positioning includes MS and broader CNS/neuroinflammatory or autoimmune/inflammatory diseases.,indication,Indication__Phase_1_healthy-volunteer_study;_intended_development_positioning_inclu_d38001b6,pipeline/indication,,,
+cluster::cytokine_신경조절,Cytokine 신경조절,cluster,Cluster__Cytokine_신경조절,skbp/cluster,,,
+scorecard::lnk01006_blkr201_20260621,Scorecard - LNK01006 / BLKR201,scorecard,Scorecard__LNK01006_BLKR201__20260621,pipeline/scorecard,14,Shortlist,E3
+competitor::neuron23_neu-627,NEU-627,competitor,Competitor__Neuron23__NEU-627,pipeline/competitor,,,
+competitor::alumis_a-005,A-005,competitor,Competitor__Alumis__A-005,pipeline/competitor,,,
+competitor::bristol_myers_squibb_deucravacitinib_sotyktu,Deucravacitinib / Sotyktu,competitor,Competitor__Bristol_Myers_Squibb__Deucravacitinib_Sotyktu,pipeline/competitor,,,
+competitor::takeda_zasocitinib_tak-279,Zasocitinib / TAK-279,competitor,Competitor__Takeda__Zasocitinib_TAK-279,pipeline/competitor,,,
+competitor::roche_fenebrutinib,Fenebrutinib,competitor,Competitor__Roche__Fenebrutinib,pipeline/competitor,,,
+competitor::sanofi_tolebrutinib,Tolebrutinib,competitor,Competitor__Sanofi__Tolebrutinib,pipeline/competitor,,,
+source::https_www.prnewswire.com_apac_news-releases_lynk-pharmaceuticals-announ_9f29a386,Lynk FDA IND announcement,source,Source__Lynk_FDA_IND_announcement,pipeline/source;source/official_company,,,E3
+source::https_www.formation.bio_press_formation-bio-licenses-phase-1-ready-cns-_be31f330,Formation Bio licensing page,source,Source__Formation_Bio_licensing_page,pipeline/source;source/official_company,,,E3
+source::https_www.prnewswire.com_news-releases_lynk-pharmaceuticals-and-formati_31aa61aa,Lynk and Formation licensing agreement,source,Source__Lynk_and_Formation_licensing_agreement,pipeline/source;source/news,,,E3
+source::https_www.prnewswire.com_news-releases_formation-bio-doses-first-partic_a8856057,Formation first participant dosed,source,Source__Formation_first_participant_dosed,pipeline/source;source/news,,,E3
+source::https_clinicaltrials.gov_study_nct07501039,ClinicalTrials.gov NCT07501039,source,Source__ClinicalTrials.gov_NCT07501039,pipeline/source;source/clinical_trial_registry,,,E3
+source::https_synapse.patsnap.com_drug_565a5da0689043fb8f26295eeae190fa,Synapse LNK-01006,source,Source__Synapse_LNK-01006,pipeline/source;source/other,,,E3
+source::https_www.lynkpharma.com,Lynk official website,source,Source__Lynk_official_website,pipeline/source;source/official_company,,,E3
+source::https_www.pnas.org_doi_10.1073_pnas.2422172122,Central TYK2 inhibition PNAS,source,Source__Central_TYK2_inhibition_PNAS,pipeline/source;source/publication,,,E3
+source::https_atlasofms.org,Atlas of MS,source,Source__Atlas_of_MS,pipeline/source;source/market,,,E3
+source::https_www.ocrevus.com_patient_cost.html,Ocrevus pricing,source,Source__Ocrevus_pricing,pipeline/source;source/market,,,E3
+source::https_neuron23.com_neuron23-announces-publication-in-pnas-highlighting-_98044a46,NEU-627 source,source,Source__NEU-627_source,pipeline/source;source/other,,,E3
+source::https_investors.alumis.com_news-releases_news-release-details_alumis-an_5c9ebe89,A-005 source,source,Source__A-005_source,pipeline/source;source/other,,,E3
+source::https_news.bms.com_news_details_2022_u.s.-food-and-drug-administration-_19dd85b7,Deucravacitinib / Sotyktu source,source,Source__Deucravacitinib_Sotyktu_source,pipeline/source;source/other,,,E3
+source::https_www.takeda.com_newsroom_newsreleases_2026_zasocitinib-outperforms_b6fb7e68,Zasocitinib / TAK-279 source,source,Source__Zasocitinib_TAK-279_source,pipeline/source;source/other,,,E3
+source::https_www.roche.com_media_releases_med-cor-2026-04-21c,Fenebrutinib source,source,Source__Fenebrutinib_source,pipeline/source;source/other,,,E3
+source::https_www.sanofi.com_en_media-room_press-releases_2025_2025-12-15-06-05_61888b0d,Tolebrutinib source,source,Source__Tolebrutinib_source,pipeline/source;source/other,,,E3
+asset::small_molecules_to_antagonize_trpm7,Small Molecules to Antagonize TRPM7,asset,Asset__Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7,pipeline/asset;theme/e_i_balance,11,Watch,E2
+company::vivavision_biotech,VivaVision Biotech,company,Company__VivaVision_Biotech,pipeline/company,,,
+target::trpm7,TRPM7,target,Target__TRPM7,pipeline/target,,,
+moa::trpm7_antagonist_inhibitor;_channel_closed-state_stabilization_is_suppo_2a2e465e,"TRPM7 antagonist / inhibitor; channel closed-state stabilization is supported at target level for some tool compounds, but asset-level MoA is unverified",moa,MoA__TRPM7_antagonist_inhibitor;_channel_closed-state_stabilization_is_suppo_2a2e465e,pipeline/moa,,,
+modality::small_molecule;_exact_compound_and_platform_undisclosed,Small molecule; exact compound and platform undisclosed,modality,Modality__Small_molecule;_exact_compound_and_platform_undisclosed,pipeline/modality,,,
+"indication::market-source_description_includes_oncology,_ophthalmology,_cardiovascu_6b2c47da","Market-source description includes oncology, ophthalmology, cardiovascular and CNS disorders; SKBP-relevant CNS hypotheses include acute ischemic stroke and status epilepticus",indication,"Indication__Market-source_description_includes_oncology,_ophthalmology,_cardiovascu_6b2c47da",pipeline/indication,,,
+cluster::ion_channel,Ion Channel,cluster,Cluster__Ion_Channel,skbp/cluster,,,
+scorecard::small_molecules_to_antagonize_trpm7_20260622,Scorecard - Small Molecules to Antagonize TRPM7,scorecard,Scorecard__Small_Molecules_to_Antagonize_TRPM7__20260622,pipeline/scorecard,11,Watch,E2
+competitor::vivavision_biotech_small_molecules_to_antagonize_trpm7,Small Molecules to Antagonize TRPM7,competitor,Competitor__VivaVision_Biotech__Small_Molecules_to_Antagonize_TRPM7,pipeline/competitor,,,
+competitor::academic_research_tool_cct128930,CCT128930,competitor,Competitor__Academic_research_tool__CCT128930,pipeline/competitor,,,
+competitor::academic_ns8593_sduy-225,NS8593 / SDUY-225,competitor,Competitor__Academic__NS8593_SDUY-225,pipeline/competitor,,,
+competitor::academic_university_research_vpc01091.4_vpc4,VPC01091.4 / VPC4,competitor,Competitor__Academic_University_research__VPC01091.4_VPC4,pipeline/competitor,,,
+competitor::university_of_hawaii_system_academic_natural_product_research_waixenicin_a,Waixenicin A,competitor,Competitor__University_of_Hawaii_System_academic_natural_product_research__Waixenicin_A,pipeline/competitor,,,
+competitor::vivavision_biotech_vvn539,VVN539,competitor,Competitor__VivaVision_Biotech__VVN539,pipeline/competitor,,,
+competitor::genentech_roche_and_others;_device_procedure_ecosystem_alteplase_tenect_30f72285,Alteplase / Tenecteplase / Mechanical thrombectomy,competitor,Competitor__Genentech_Roche_and_others;_device_procedure_ecosystem__Alteplase_Tenecteplase_Mechanical_thrombectomy,pipeline/competitor,,,
+source::https_www.vivabioinnovator.com_portfolio_viva-vision,Viva BioInnovator portfolio: Viva Vision,source,Source__Viva_BioInnovator_portfolio_Viva_Vision,pipeline/source;source/official_company,,,E2
+source::https_www.vivabiotech.com_news_789.html,VivaVision Series D2 financing and pipeline summary,source,Source__VivaVision_Series_D2_financing_and_pipeline_summary,pipeline/source;source/official_company,,,E2
+source::https_www.marketresearch.com_global-markets-direct-v3480_glaucoma-drugs_f451f4c7,MarketResearch/GlobalData glaucoma pipeline report,source,Source__MarketResearch_GlobalData_glaucoma_pipeline_report,pipeline/source;source/market,,,E2
+source::https_www.marketresearch.com_global-markets-direct-v3480_stroke-drugs-d_51a7d3b9,MarketResearch/GlobalData stroke pipeline report,source,Source__MarketResearch_GlobalData_stroke_pipeline_report,pipeline/source;source/market,,,E2
+source::https_www.ncbi.nlm.nih.gov_gene_54822,NCBI Gene TRPM7,source,Source__NCBI_Gene_TRPM7,pipeline/source;source/other,,,E2
+source::https_www.nature.com_articles_s41467-023-38362-3,Structural mechanisms of TRPM7 activation and inhibition,source,Source__Structural_mechanisms_of_TRPM7_activation_and_inhibition,pipeline/source;source/publication,,,E2
+source::https_link.springer.com_article_10.1186_s12974-024-03292-4,TRPM7 contributes to pyroptosis and status epilepticus,source,Source__TRPM7_contributes_to_pyroptosis_and_status_epilepticus,pipeline/source;source/publication,,,E2
+source::https_www.vivavisionbio.com_en,VivaVision official website,source,Source__VivaVision_official_website,pipeline/source;source/official_company,,,E2
+source::https_www.vivabioinnovator.com_news_vvn539-a-dual-target-innovative-dru_6bd2c1f0,VVN539 Phase II announcement,source,Source__VVN539_Phase_II_announcement,pipeline/source;source/official_company,,,E2
+source::https_pubmed.ncbi.nlm.nih.gov_38192683,VVN539 Phase 2 publication,source,Source__VVN539_Phase_2_publication,pipeline/source;source/publication,,,E2
+source::https_patents.google.com_patent_cn118340775a_en,VVN539 patent,source,Source__VVN539_patent,pipeline/source;source/other,,,E2
+source::https_rupress.org_jgp_article_156_1_e202313419_276399_analogs-of-fty720_995336bc,JGP FTY720 analogs inhibit TRPM7,source,Source__JGP_FTY720_analogs_inhibit_TRPM7,pipeline/source;source/publication,,,E2
+source::https_pubmed.ncbi.nlm.nih.gov_37433006,Science Signaling TRPM7 kinase activity and amyloid-beta degradation,source,Source__Science_Signaling_TRPM7_kinase_activity_and_amyloid-beta_degradation,pipeline/source;source/publication,,,E2
+source::https_www.cdc.gov_stroke_data-research_facts-stats_index.html,CDC Stroke Facts,source,Source__CDC_Stroke_Facts,pipeline/source;source/market,,,E2
+source::https_www.stroke.org_en_about-stroke_types-of-stroke_ischemic-stroke-clots,American Stroke Association Ischemic Stroke,source,Source__American_Stroke_Association_Ischemic_Stroke,pipeline/source;source/market,,,E2
+source::https_www.cell.com_cell-reports_fulltext_s2211-1247%2824%2900436-4,CCT128930 source,source,Source__CCT128930_source,pipeline/source;source/other,,,E2
+source::https_synapse.patsnap.com_drug_fc93832996cf23becaadb14833e7a0a4,Waixenicin A source,source,Source__Waixenicin_A_source,pipeline/source;source/other,,,E2
+source::https_www.mdpi.com_1422-0067_25_2_719,https://www.mdpi.com/1422-0067/25/2/719,source,Source__https_www.mdpi.com_1422-0067_25_2_719,pipeline/source;source/other,,,E2
+source::https_www.ahajournals.org_doi_10.1161_strokeaha.116.015822,https://www.ahajournals.org/doi/10.1161/STROKEAHA.116.015822,source,Source__https_www.ahajournals.org_doi_10.1161_STROKEAHA.116.015822,pipeline/source;source/other,,,E2
+asset::hy209_nucerin,HY209 / NuCerin,asset,Asset__HY209_NuCerin__HY-209,pipeline/asset;theme/neuroimmune,16,Watch,E3
+company::shaperon_inc,Shaperon Inc.,company,Company__Shaperon_Inc,pipeline/company,,,
+target::gpcr19_tgr5_with_downstream_p2x7r-nlrp3_inflammasome_modulation,GPCR19 / TGR5 with downstream P2X7R-NLRP3 inflammasome modulation,target,Target__GPCR19_TGR5_with_downstream_P2X7R-NLRP3_inflammasome_modulation,pipeline/target,,,
+"moa::hy209_tdca_activates_gpcr19_tgr5_and_modulates_gpcr19-p2x7_interaction,_4c969749","HY209/TDCA activates GPCR19/TGR5 and modulates GPCR19-P2X7 interaction, suppressing P2X7R-mediated Ca2+ mobilization, NLRP3 activation and IL-1β/IL-18 production in microglia; in AD mouse models it is reported to reduce Aβ plaques, microgliosis and neuronal loss and improve memory.",moa,"MoA__HY209_TDCA_activates_GPCR19_TGR5_and_modulates_GPCR19-P2X7_interaction,_4c969749",pipeline/moa,,,
+modality::oral_small_molecule_gpcr19_tgr5_agonist_inflammasome_modulator,Oral small molecule GPCR19/TGR5 agonist / inflammasome modulator,modality,Modality__Oral_small_molecule_GPCR19_TGR5_agonist_inflammasome_modulator,pipeline/modality,,,
+indication::alzheimer’s_disease,Alzheimer’s disease,indication,Indication__Alzheimer’s_disease,pipeline/indication,,,
+scorecard::hy209_nucerin_20260622,Scorecard - HY209 / NuCerin,scorecard,Scorecard__HY209_NuCerin__20260622,pipeline/scorecard,16,Watch,E3
+competitor::eisai_biogen_bioarctic_leqembi_lecanemab,Leqembi / lecanemab,competitor,Competitor__Eisai_Biogen_BioArctic__Leqembi_lecanemab,pipeline/competitor,,,
+competitor::nodthera_nt-0796,NT-0796,competitor,Competitor__NodThera__NT-0796,pipeline/competitor,,,
+competitor::ventyx_biosciences_vtx3232,VTX3232,competitor,Competitor__Ventyx_Biosciences__VTX3232,pipeline/competitor,,,
+competitor::ventus_therapeutics_vent-02,VENT-02,competitor,Competitor__Ventus_Therapeutics__VENT-02,pipeline/competitor,,,
+competitor::olatec_dapansutrile_olt1177,Dapansutrile / OLT1177,competitor,Competitor__Olatec__Dapansutrile_OLT1177,pipeline/competitor,,,
+source::https_shaperon.com_en_sub_pipeline.html,Shaperon official pipeline page,source,Source__Shaperon_official_pipeline_page,pipeline/source;source/official_company,,,E3
+source::https_shaperon.com_en_main_main.html,Shaperon official homepage,source,Source__Shaperon_official_homepage,pipeline/source;source/official_company,,,E3
+source::https_www.frontiersin.org_journals_immunology_articles_10.3389_fimmu.20_fc7b5288,Frontiers Immunology GPCR19/P2X7R/NLRP3 AD mouse paper,source,Source__Frontiers_Immunology_GPCR19_P2X7R_NLRP3_AD_mouse_paper,pipeline/source;source/publication,,,E3
+source::https_www.centerwatch.com_clinical-trials_listings_nct06533878_evaluate_75da78f2,NCT06533878 HY209 Phase 1 listing,source,Source__NCT06533878_HY209_Phase_1_listing,pipeline/source;source/clinical_trial_registry,,,E3
+source::https_app.rndcircle.io_lab_c061ff05-ac82-4bae-93f1-aa04115834c0_papers_aa7299bb,NuCerin oral HY209 AD mouse abstract summary,source,Source__NuCerin_oral_HY209_AD_mouse_abstract_summary,pipeline/source;source/publication,,,E3
+source::https_englishdart.fss.or.kr_dsbc001_selectpopup.ax_selectkey=01387164,DART Shaperon company profile,source,Source__DART_Shaperon_company_profile,pipeline/source;source/company_registry,,,E3
+source::https_www.bio.org_events_bio-international-convention_sessions_2420132,BIO company profile,source,Source__BIO_company_profile,pipeline/source;source/company_profile,,,E3
+source::https_www.who.int_news-room_fact-sheets_detail_dementia,WHO dementia fact sheet,source,Source__WHO_dementia_fact_sheet,pipeline/source;source/market,,,E3
+source::https_www.nodthera.com_news_nodtheras-nlrp3-inhibitor-nt-0796-reverses-_4c6e96b7,NT-0796 source,source,Source__NT-0796_source,pipeline/source;source/other,,,E3
+source::https_clinicaltrials.gov_study_nct06556173,VTX3232 source,source,Source__VTX3232_source,pipeline/source;source/other,,,E3
+source::https_www.ventustx.com_ventus-therapeutics-announces-first-patient-dose_15e90dd2,VENT-02 source,source,Source__VENT-02_source,pipeline/source;source/other,,,E3
+source::https_www.frontiersin.org_journals_pharmacology_articles_10.3389_fphar._243e0656,Dapansutrile / OLT1177 source,source,Source__Dapansutrile_OLT1177_source,pipeline/source;source/other,,,E3
+source::https_hudsontherapeutics.com_inflammasome,https://hudsontherapeutics.com/inflammasome,source,Source__https_hudsontherapeutics.com_inflammasome,pipeline/source;source/other,,,E3
+source::https_www.frontiersin.org_journals_pharmacology_articles_10.3389_fphar._78cd83ed,https://www.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2022.845185/full,source,Source__https_www.frontiersin.org_journals_pharmacology_articles_10.3389_fphar._78cd83ed,pipeline/source;source/other,,,E3
+source::https_www.alzdiscovery.org_uploads_cognitive_vitality_media_nlrp3_inhib_1c280093,https://www.alzdiscovery.org/uploads/cognitive_vitality_media/NLRP3_Inhibitors_UPDATE_%28drug_in_development%29.pdf,source,Source__https_www.alzdiscovery.org_uploads_cognitive_vitality_media_NLRP3_Inhib_1c280093,pipeline/source;source/other,,,E3
+source::https_www.mdpi.com_1422-0067_25_17_9279,https://www.mdpi.com/1422-0067/25/17/9279,source,Source__https_www.mdpi.com_1422-0067_25_17_9279,pipeline/source;source/other,,,E3
+source::https_pmc.ncbi.nlm.nih.gov_articles_pmc11212731,https://pmc.ncbi.nlm.nih.gov/articles/PMC11212731/,source,Source__https_pmc.ncbi.nlm.nih.gov_articles_PMC11212731,pipeline/source;source/other,,,E3
+source::https_doaj.org_article_89f6e0b19a8d46f9b3063ba13be1f0d1,https://doaj.org/article/89f6e0b19a8d46f9b3063ba13be1f0d1,source,Source__https_doaj.org_article_89f6e0b19a8d46f9b3063ba13be1f0d1,pipeline/source;source/other,,,E3
+source::https_www.bioworld.com_articles_518211-bridge-biotherapeutics-inks-30b-_dd0e8f4d,https://www.bioworld.com/articles/518211-bridge-biotherapeutics-inks-30b-deal-with-shaperon-for-gpcr19-agonist,source,Source__https_www.bioworld.com_articles_518211-bridge-biotherapeutics-inks-30b-_dd0e8f4d,pipeline/source;source/other,,,E3
+source::https_link.springer.com_article_10.1186_s12974-021-02087-1,https://link.springer.com/article/10.1186/s12974-021-02087-1,source,Source__https_link.springer.com_article_10.1186_s12974-021-02087-1,pipeline/source;source/other,,,E3
+asset::meta-01_meta-1i_mp-5342,META-01 / META-1i / MP-5342,asset,Asset__META-01_META-1i_MP-5342__META01,pipeline/asset;theme/neuroimmune,11,Watch,E2
+company::meta_pharmaceuticals_inc,META Pharmaceuticals Inc.,company,Company__META_Pharmaceuticals_Inc,pipeline/company,,,
+target::ldh_lactate_dehydrogenase;_likely_ldha-focused_but_isoform_selectivity_2955c872,LDH / lactate dehydrogenase; likely LDHA-focused but isoform selectivity is not fully public,target,Target__LDH_lactate_dehydrogenase;_likely_LDHA-focused_but_isoform_selectivity_2955c872,pipeline/target,,,
+moa::oral_small-molecule_ldh_inhibition_intended_to_modulate_immune-cell_glu_8049671b,"Oral small-molecule LDH inhibition intended to modulate immune-cell glucose metabolism and T-cell/B-cell function, restoring immune balance and reducing pathogenic inflammation. CNS relevance is indirect through autoimmune/neuroimmune expansion such as multiple sclerosis.",moa,MoA__Oral_small-molecule_LDH_inhibition_intended_to_modulate_immune-cell_glu_8049671b,pipeline/moa,,,
+modality::oral_small_molecule;_immunometabolism_platform;_ai-assisted_metabolic_p_ce1f0603,Oral small molecule; immunometabolism platform; AI-assisted metabolic pathway target discovery with XtalPi AI/FEP/robotic synthesis support,modality,Modality__Oral_small_molecule;_immunometabolism_platform;_AI-assisted_metabolic_p_ce1f0603,pipeline/modality,,,
+indication::lead_disclosed_indication_inflammatory_bowel_disease;_expansion_potenti_5e2ac79e,"Lead disclosed indication: inflammatory bowel disease; expansion potential claimed for MS, PBC and atopic dermatitis",indication,Indication__Lead_disclosed_indication_inflammatory_bowel_disease;_expansion_potenti_5e2ac79e,pipeline/indication,,,
+cluster::말초_면역기관_연결,말초 면역기관 연결,cluster,Cluster__말초_면역기관_연결,skbp/cluster,,,
+scorecard::meta-01_meta-1i_mp-5342_20260622,Scorecard - META-01 / META-1i / MP-5342,scorecard,Scorecard__META-01_META-1i_MP-5342__20260622,pipeline/scorecard,11,Watch,E2
+competitor::abbvie_skyrizi_risankizumab,Skyrizi / risankizumab,competitor,Competitor__AbbVie__Skyrizi_risankizumab,pipeline/competitor,,,
+competitor::abbvie_rinvoq_upadacitinib,Rinvoq / upadacitinib,competitor,Competitor__AbbVie__Rinvoq_upadacitinib,pipeline/competitor,,,
+competitor::eli_lilly_omvoh_mirikizumab,Omvoh / mirikizumab,competitor,Competitor__Eli_Lilly__Omvoh_mirikizumab,pipeline/competitor,,,
+competitor::takeda_entyvio_vedolizumab,Entyvio / vedolizumab,competitor,Competitor__Takeda__Entyvio_vedolizumab,pipeline/competitor,,,
+competitor::merck_tulisokibart_mk-7240,Tulisokibart / MK-7240,competitor,Competitor__Merck__Tulisokibart_MK-7240,pipeline/competitor,,,
+competitor::sanofi_teva_duvakitug_tev-48574,Duvakitug / TEV-48574,competitor,Competitor__Sanofi_Teva__Duvakitug_TEV-48574,pipeline/competitor,,,
+competitor::roche_telavant_rvt-3101_afimkibart,RVT-3101 / afimkibart,competitor,Competitor__Roche_Telavant__RVT-3101_afimkibart,pipeline/competitor,,,
+competitor::academic_tool_compounds_fx11_gsk2837808a-type_ldha_inhibitors,FX11 / GSK2837808A-type LDHA inhibitors,competitor,Competitor__Academic_tool_compounds__FX11_GSK2837808A-type_LDHA_inhibitors,pipeline/competitor,,,
+source::https_en.metabiopharma.com,META Pharmaceuticals official homepage,source,Source__META_Pharmaceuticals_official_homepage,pipeline/source;source/official_company,,,E2
+source::https_en.metabiopharma.com_index.php_news,META Pharmaceuticals official news,source,Source__META_Pharmaceuticals_official_news,pipeline/source;source/official_company,,,E2
+source::https_metabiopharma.com,META Pharmaceuticals Chinese official site,source,Source__META_Pharmaceuticals_Chinese_official_site,pipeline/source;source/official_company,,,E2
+source::https_synapse.patsnap.com_drug_7196b08c3c4b4dd3bbc0cd3292c675b0,Synapse META-01 profile,source,Source__Synapse_META-01_profile,pipeline/source;source/other,,,E2
+source::https_www.prnewswire.com_apac_news-releases_xtalpi-holdings-announces-f_7598d997,XtalPi 2025 annual results,source,Source__XtalPi_2025_annual_results,pipeline/source;source/news,,,E2
+source::https_pubmed.ncbi.nlm.nih.gov_27708054,Science 2016 LDHA/T helper 1 paper,source,Source__Science_2016_LDHA_T_helper_1_paper,pipeline/source;source/publication,,,E2
+source::https_pubmed.ncbi.nlm.nih.gov_33479154,Science 2021 CD8 T-cell LDHA paper,source,Source__Science_2021_CD8_T-cell_LDHA_paper,pipeline/source;source/publication,,,E2
+source::https_pmc.ncbi.nlm.nih.gov_articles_pmc10069527,Global IBD burden paper,source,Source__Global_IBD_burden_paper,pipeline/source;source/market,,,E2
+source::https_en.metabiopharma.com_index.php_about,META Pharmaceuticals About page,source,Source__META_Pharmaceuticals_About_page,pipeline/source;source/official_company,,,E2
+source::https_www.hkstp.org_en_park-life_news-and-events_news_meta-pharm-inc-an_bd5ce4fb,HKSTP Series A1 financing news,source,Source__HKSTP_Series_A1_financing_news,pipeline/source;source/news,,,E2
+source::https_synapse.patsnap.com_organization_beb5d2619a0c1fa0af931d10269fb4e4,Synapse Shenzhen META Pharmaceuticals organization profile,source,Source__Synapse_Shenzhen_META_Pharmaceuticals_organization_profile,pipeline/source;source/other,,,E2
+source::https_adisinsight.springer.com_drugs_800074116,AdisInsight META 1i,source,Source__AdisInsight_META_1i,pipeline/source;source/other,,,E2
+source::https_pubmed.ncbi.nlm.nih.gov_33979589,Immunity 2021 Th17 glycolysis paper,source,Source__Immunity_2021_Th17_glycolysis_paper,pipeline/source;source/publication,,,E2
+source::https_www.cdc.gov_inflammatory-bowel-disease_php_facts-stats_index.html,CDC IBD facts and stats,source,Source__CDC_IBD_facts_and_stats,pipeline/source;source/market,,,E2
+source::https_news.abbvie.com_2024-06-18-u-s-fda-approves-skyrizi-r-risankizuma_56617c43,Skyrizi / risankizumab source,source,Source__Skyrizi_risankizumab_source,pipeline/source;source/other,,,E2
+source::https_news.abbvie.com_2025-10-13-u-s-food-and-drug-administration-fda-a_94c1c66c,Rinvoq / upadacitinib source,source,Source__Rinvoq_upadacitinib_source,pipeline/source;source/other,,,E2
+source::https_www.prnewswire.com_news-releases_fda-approves-lillys-omvoh-miriki_bad9781b,Omvoh / mirikizumab source,source,Source__Omvoh_mirikizumab_source,pipeline/source;source/other,,,E2
+source::https_www.takeda.com_newsroom_newsreleases_2024_fda-approves-subcutaneo_626609f9,Entyvio / vedolizumab source,source,Source__Entyvio_vedolizumab_source,pipeline/source;source/other,,,E2
+source::https_www.merck.com_news_merck-to-present-new-long-term-data-for-tuliso_47bdd5f3,Tulisokibart / MK-7240 source,source,Source__Tulisokibart_MK-7240_source,pipeline/source;source/other,,,E2
+source::https_www.sanofi.com_en_media-room_press-releases_2026_2026-02-17-11-00_04c36811,Duvakitug / TEV-48574 source,source,Source__Duvakitug_TEV-48574_source,pipeline/source;source/other,,,E2
+source::https_www.roche.com_investors_updates_inv-update-2023-10-23,RVT-3101 / afimkibart source,source,Source__RVT-3101_afimkibart_source,pipeline/source;source/other,,,E2
+source::https_pubmed.ncbi.nlm.nih.gov_32602217,FX11 / GSK2837808A-type LDHA inhibitors source,source,Source__FX11_GSK2837808A-type_LDHA_inhibitors_source,pipeline/source;source/other,,,E2
+source::https_pmc.ncbi.nlm.nih.gov_articles_pmc8913504,https://pmc.ncbi.nlm.nih.gov/articles/PMC8913504/,source,Source__https_pmc.ncbi.nlm.nih.gov_articles_PMC8913504,pipeline/source;source/other,,,E2
+source::https_pmc.ncbi.nlm.nih.gov_articles_pmc10799425,https://pmc.ncbi.nlm.nih.gov/articles/PMC10799425/,source,Source__https_pmc.ncbi.nlm.nih.gov_articles_PMC10799425,pipeline/source;source/other,,,E2
+source::https_en.metabiopharma.com_index.php_science,https://en.metabiopharma.com/index.php/science/,source,Source__https_en.metabiopharma.com_index.php_science,pipeline/source;source/other,,,E2
+source::https_www.vcbeathealth.com_article_4398,https://www.vcbeathealth.com/article/4398,source,Source__https_www.vcbeathealth.com_article_4398,pipeline/source;source/other,,,E2
+source::https_www.prnewswire.com_news-releases_meta-pharmaceuticals-announces-f_11d397f9,https://www.prnewswire.com/news-releases/meta-pharmaceuticals-announces-fda-grants-rare-pediatric-disease-designation-to-meta-001-ph-for-the-treatment-of-primary-hyperoxaluria-302214393.html,source,Source__https_www.prnewswire.com_news-releases_meta-pharmaceuticals-announces-f_11d397f9,pipeline/source;source/other,,,E2
+source::https_www.rinvoq.com_cost,https://www.rinvoq.com/cost,source,Source__https_www.rinvoq.com_cost,pipeline/source;source/other,,,E2
+source::https_www.skyrizi.com_ulcerative-colitis_cost-and-savings,https://www.skyrizi.com/ulcerative-colitis/cost-and-savings,source,Source__https_www.skyrizi.com_ulcerative-colitis_cost-and-savings,pipeline/source;source/other,,,E2
+source::https_icer.org_news-insights_press-releases_icer-publishes-final-report_8763a14b,https://icer.org/news-insights/press-releases/icer-publishes-final-report-and-policy-recommendations-for-targeted-immune-modulator-therapies-for-ulcerative-colitis/,source,Source__https_icer.org_news-insights_press-releases_icer-publishes-final-report_8763a14b,pipeline/source;source/other,,,E2

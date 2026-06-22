@@ -411,15 +411,28 @@
     },
     "hard_filter": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
-        "within_target_ta",
-        "relevant_biological_target",
-        "stage_preclinical_to_ind",
-        "overall_result",
-        "fail_reasons"
+        "status",
+        "reason",
+        "flags"
       ],
       "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "REVIEW",
+            "FAIL",
+            "Unclear"
+          ],
+          "description": "PASS if Total >= 14, Target Relevance >= 3, MoA Validity >= 2, Data Maturity >= 2, and no hard blocker. REVIEW if Total 9-13, or score is high but stage/rights/asset identity/source uncertainty exists. FAIL if Total <= 8, Target Relevance <= 1, or no SKBP Theme/Cluster fit."
+        },
+        "reason": {
+          "type": "string"
+        },
+        "flags": {
+          "$ref": "#/$defs/string_array"
+        },
         "within_target_ta": {
           "$ref": "#/$defs/filter_answer"
         },
@@ -434,6 +447,7 @@
           "enum": [
             "PASS",
             "FAIL",
+            "REVIEW",
             "Unclear"
           ]
         },
@@ -542,22 +556,36 @@
       "additionalProperties": false,
       "required": [
         "score",
+        "evidence_type",
+        "evidence_type_reason",
         "main_line_summary",
+        "what_was_checked",
+        "evidence_trail",
         "evidence_sources",
         "investigation_note",
+        "why_not_higher",
         "uncertain_points"
       ],
       "properties": {
         "score": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
           "minimum": 0,
           "maximum": 3
         },
+        "evidence_type": {
+          "$ref": "#/$defs/evidence_type"
+        },
+        "evidence_type_reason": {
+          "$ref": "#/$defs/nullable_string"
+        },
         "main_line_summary": {
           "$ref": "#/$defs/nullable_string"
+        },
+        "what_was_checked": {
+          "$ref": "#/$defs/string_array"
+        },
+        "evidence_trail": {
+          "$ref": "#/$defs/string_array"
         },
         "evidence_sources": {
           "type": "array",
@@ -568,8 +596,68 @@
         "investigation_note": {
           "$ref": "#/$defs/nullable_string"
         },
+        "why_not_higher": {
+          "$ref": "#/$defs/nullable_string"
+        },
         "uncertain_points": {
           "$ref": "#/$defs/string_array"
+        },
+        "same_target_same_moa_front_runner_count": {
+          "type": [
+            "number",
+            "string",
+            "null"
+          ]
+        },
+        "broader_same_disease_competitor_count": {
+          "type": [
+            "number",
+            "string",
+            "null"
+          ]
+        },
+        "fic_bic_late_follower_classification": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "competitor_table": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "proposed_moa": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "functional_readout": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "target_engagement_to_disease_phenotype_linkage": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "modality_platform_identity": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "claimed_or_inferred_differentiation": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "differentiation_support": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "claimed_development_stage": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "expected_data_for_stage": {
+          "$ref": "#/$defs/string_array"
+        },
+        "visible_asset_specific_data": {
+          "$ref": "#/$defs/string_array"
+        },
+        "missing_data": {
+          "$ref": "#/$defs/string_array"
+        },
+        "stage_data_alignment_judgment": {
+          "$ref": "#/$defs/nullable_string"
         }
       }
     },
@@ -578,23 +666,37 @@
       "additionalProperties": false,
       "required": [
         "score",
+        "evidence_type",
+        "evidence_type_reason",
         "main_line_summary",
+        "what_was_checked",
+        "evidence_trail",
         "calculation",
         "evidence_sources",
         "investigation_note",
+        "why_not_higher",
         "uncertain_points"
       ],
       "properties": {
         "score": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
           "minimum": 0,
           "maximum": 3
         },
+        "evidence_type": {
+          "$ref": "#/$defs/evidence_type"
+        },
+        "evidence_type_reason": {
+          "$ref": "#/$defs/nullable_string"
+        },
         "main_line_summary": {
           "$ref": "#/$defs/nullable_string"
+        },
+        "what_was_checked": {
+          "$ref": "#/$defs/string_array"
+        },
+        "evidence_trail": {
+          "$ref": "#/$defs/string_array"
         },
         "evidence_sources": {
           "type": "array",
@@ -603,6 +705,9 @@
           }
         },
         "investigation_note": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "why_not_higher": {
           "$ref": "#/$defs/nullable_string"
         },
         "uncertain_points": {
@@ -617,11 +722,26 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "commercial_rationale_status",
+        "commercial_rationale_failure_reason",
         "A_targetable_addressable_patient",
         "B_unrisked_peak_sales",
         "C_obtainable_peak_sales"
       ],
       "properties": {
+        "commercial_rationale_status": {
+          "type": "string",
+          "enum": [
+            "established",
+            "not_established"
+          ]
+        },
+        "commercial_rationale_failure_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "A_targetable_addressable_patient": {
           "type": "object",
           "description": "A. Targetable Addressable Patient (TAP): estimate the actually treatable patient pool.",
@@ -909,6 +1029,16 @@
           ]
         }
       }
+    },
+    "evidence_type": {
+      "type": "string",
+      "enum": [
+        "E0_not_found_or_not_assessable",
+        "E1_company_claim_or_scientific_rationale_only",
+        "E2_indirect_or_class_level_evidence",
+        "E3_asset_specific_preclinical_or_technical_evidence",
+        "E4_asset_specific_clinical_evidence"
+      ]
     },
     "competitive_analysis": {
       "type": "object",

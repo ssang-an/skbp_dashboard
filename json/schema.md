@@ -1,6 +1,6 @@
-# SKBP Pipeline Shortlist JSON Structure v3.0
+# SKBP Pipeline Shortlist JSON Structure v3.1
 
-`drug-valuation.schema.json` defines the v3.0 dashboard schema. The core change is that scoring rules and score judgment are separated.
+`drug-valuation.schema.json` defines the v3.1 dashboard schema. The core change is that criterion-specific scoring, evidence type, and score judgment are separated.
 
 ## Top-Level Sections
 
@@ -11,7 +11,7 @@
 - `rubric`: The only place where scoring criteria and score definitions are stored.
 - `json_summary`: Dashboard summary fields, including company country, target, theme, cluster, and target relevance score.
 - `structured_table`: Core pipeline facts such as company, country, asset, target, theme, cluster, MOA, modality, indication, stage, key data, and sources.
-- `hard_filter`: Required pass/fail checks before scoring.
+- `hard_filter`: PASS / REVIEW / FAIL gate before final shortlisting.
 - `scoring`: Seven criterion-level scores and asset-specific judgment results.
 - `competitive_analysis`: Competitor table, similar pipeline counts, similar pipelines, and differentiation points.
 - `validation`: Cross-checked facts, uncertainty, and source registry.
@@ -29,13 +29,34 @@ scoring.criteria.* = why this asset received this score
 
 Do not repeat rubric definitions inside scoring reasons.
 
+## Hard Filter Rule
+
+Use this rule for `hard_filter.status` and dashboard interpretation:
+
+- `PASS`: `total_score >= 14`, `Target Relevance >= 3`, `MoA Validity >= 2`, `Data Maturity >= 2`, and no hard blocker.
+- `REVIEW`: `total_score` is 9-13, or the score is high but stage / rights / asset identity / source uncertainty exists.
+- `FAIL`: `total_score <= 8`, or `Target Relevance <= 1`, or no SKBP Theme / Cluster fit.
+
 Each scoring criterion should contain:
 
 - `score`: Integer from 0 to 3, or null if not scored.
+- `evidence_type`: Audit label showing evidence level.
+- `evidence_type_reason`: Why this evidence type was selected.
 - `main_line_summary`: One-line explanation of why this asset received the score.
+- `what_was_checked`: Checklist of reviewed evidence.
+- `evidence_trail`: Key facts leading to the score.
 - `evidence_sources`: Source-level evidence for the judgment.
 - `investigation_note`: How the analyst/GPT investigated or interpreted the evidence.
+- `why_not_higher`: Why the score was not one point higher.
 - `uncertain_points`: Missing, weak, or conflicting evidence.
+
+Allowed evidence types:
+
+- `E0_not_found_or_not_assessable`
+- `E1_company_claim_or_scientific_rationale_only`
+- `E2_indirect_or_class_level_evidence`
+- `E3_asset_specific_preclinical_or_technical_evidence`
+- `E4_asset_specific_clinical_evidence`
 
 `marketability` additionally contains:
 
@@ -50,6 +71,12 @@ with A/B/C steps:
 - `C_obtainable_peak_sales`: unrisked peak sales adjusted by competition, pricing power, and expansion capacity.
 
 Marketability should use obtainable peak sales, not rNPV.
+
+Marketability has a hard 0 gate. If `commercial_rationale_status` is `not_established`, then:
+
+- `score` must be `0`.
+- TAP, Unrisked Peak Sales, and Obtainable Peak Sales outputs must be `null`.
+- `commercial_rationale_failure_reason` is required.
 
 Marketability `main_line_summary` must explicitly mention all three steps:
 

@@ -133,6 +133,9 @@ function criterion(record, key) {
     score: number(item.score),
     reason: mainLineSummary,
     mainLineSummary,
+    evidenceType: item.evidence_type || '-',
+    evidenceTypeReason: item.evidence_type_reason || '-',
+    whyNotHigher: item.why_not_higher || '-',
     version: get(record, 'meta.rubric_version', item.criteria_reference?.criteria_version || '-'),
     author: get(record, 'meta.rubric_author', item.criteria_reference?.criteria_author || '-'),
     rule: appliedRule,
@@ -151,6 +154,80 @@ function criterion(record, key) {
   };
 }
 
+function collectHardFilterNotes(record) {
+  const hardFilter = record.hard_filter || {};
+  const criteria = record.scoring?.criteria || {};
+  const notes = [
+    hardFilter.status,
+    hardFilter.overall_result,
+    hardFilter.reason,
+    ...(Array.isArray(hardFilter.flags) ? hardFilter.flags : []),
+    ...(Array.isArray(hardFilter.fail_reasons) ? hardFilter.fail_reasons : []),
+    record.structured_table?.development_stage,
+    record.json_summary?.theme,
+    record.json_summary?.cluster
+  ];
+
+  Object.values(criteria).forEach((item) => {
+    if (!item || typeof item !== 'object') return;
+    notes.push(item.main_line_summary, item.investigation_note);
+    if (Array.isArray(item.uncertain_points)) notes.push(...item.uncertain_points);
+  });
+
+  return notes.filter(Boolean).join(' | ');
+}
+
+function hasNoThemeFit(theme, cluster) {
+  const value = `${theme || ''} ${cluster || ''}`.toLowerCase();
+  return !value.trim() || /no theme|no cluster|no mapped|none|미해당/.test(value);
+}
+
+function computeHardFilter(record, criteria) {
+  const summary = record.json_summary || {};
+  const scoring = record.scoring || {};
+  const total = number(scoring.total_score);
+  const targetScore = number(summary.target_relevance_score ?? criteria.target.score);
+  const moaScore = number(criteria.moa.score);
+  const dataScore = number(criteria.data.score);
+  const theme = summary.theme || '';
+  const cluster = summary.cluster || '';
+  const notes = collectHardFilterNotes(record);
+  const reasons = [];
+
+  const noThemeFit = hasNoThemeFit(theme, cluster);
+  const failBlocker = /(outside primary|outside.*theme|out of scope|no public target|no.*target\/moa|discontinued|dormant|범위 밖|미해당|중단)/i.test(notes);
+  const reviewUncertainty = /(stage|rights?|license|licensed|ownership|asset identity|identity|source|official|registry|unclear|uncertain|not public|not verified|confirmation|confirm|sponsor|단계|권리|출처|공식|불확실|확인|미확인|식별|정체|라이선스|스폰서)/i.test(notes);
+
+  if (Number.isFinite(total) && total <= 8) reasons.push(`Total score ${total} <= 8`);
+  if (Number.isFinite(targetScore) && targetScore <= 1) reasons.push(`Target Relevance ${targetScore} <= 1`);
+  if (noThemeFit) reasons.push('SKBP Theme/Cluster fit 없음');
+  if (failBlocker) reasons.push('Hard blocker keyword detected');
+
+  if (reasons.length) {
+    return { status: 'FAIL', reason: reasons.join('; ') };
+  }
+
+  const passScores = total >= 14 && targetScore >= 3 && moaScore >= 2 && dataScore >= 2;
+  if (passScores && !reviewUncertainty) {
+    return {
+      status: 'PASS',
+      reason: `Total ${total} >= 14, TR ${targetScore} >= 3, MOA ${moaScore} >= 2, Data ${dataScore} >= 2, hard blocker 없음`
+    };
+  }
+
+  if (Number.isFinite(total) && total >= 9 && total <= 13) {
+    reasons.push(`Total score ${total} is REVIEW range 9-13`);
+  }
+  if (!passScores) {
+    reasons.push(`PASS score gate 미충족: Total ${total ?? '-'}, TR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
+  }
+  if (reviewUncertainty) {
+    reasons.push('stage/rights/asset identity/source 불확실성 확인 필요');
+  }
+
+  return { status: 'REVIEW', reason: reasons.join('; ') || '추가 diligence 필요' };
+}
+
 function flattenRecord(record, index) {
   const summary = record.json_summary || {};
   const table = record.structured_table || {};
@@ -167,6 +244,8 @@ function flattenRecord(record, index) {
     market: criterion(record, 'marketability')
   };
 
+  const computedHardFilter = computeHardFilter(record, criteria);
+
   return {
     id: get(record, 'meta.output_filename_base', `${summary.company || table.company || 'record'}-${index}`),
     company: summary.company || table.company || '-',
@@ -178,7 +257,8 @@ function flattenRecord(record, index) {
     stage: table.development_stage || '-',
     indication: table.indication || '-',
     modality: table.modality_platform || '-',
-    hardFilter: get(record, 'hard_filter.overall_result', 'Unclear'),
+    hardFilter: computedHardFilter.status,
+    hardFilterReason: computedHardFilter.reason,
     targetScore: number(summary.target_relevance_score ?? criteria.target.score ?? champion.score),
     competitiveScore: criteria.competitive.score,
     moaScore: criteria.moa.score,
@@ -343,8 +423,10 @@ function scoreTooltip(label, criterionInfo, max) {
     .join('\n') || '-';
   const lines = [
     `${label}: ${score} / ${max}`,
+    `Evidence Type: ${criterionInfo?.evidenceType || '-'} (${criterionInfo?.evidenceTypeReason || '-'})`,
     `Rubric 기준: ${criterionInfo?.appliedScoreDefinition || criterionInfo?.ruleCriteria || '-'}`,
     `판단 이유: ${criterionInfo?.mainLineSummary || criterionInfo?.decisionSummary || criterionInfo?.reason || '-'}`,
+    `Why not higher: ${criterionInfo?.whyNotHigher || '-'}`,
     `조사 메모: ${criterionInfo?.investigationNote || '-'}`,
     `자료 근거 요약: ${criterionInfo?.supportingEvidenceSummary || '-'}`,
     `출처: ${sources}`,
@@ -384,33 +466,33 @@ function renderTable() {
   elements.pipelineTable.innerHTML = pageRows.length
     ? pageRows
         .map((row) => {
-          const filterClass = row.hardFilter === 'PASS' ? 'pill pass' : 'pill fail';
+          const filterClass = row.hardFilter === 'PASS' ? 'pill pass' : row.hardFilter === 'FAIL' ? 'pill fail' : 'pill review';
           const checked = state.selectedIds.has(row.id) ? 'checked' : '';
           return `
             <tr class="clickable-row" data-record-id="${escapeHtml(row.id)}" title="${escapeHtml(row.summary)}">
               <td class="select-col">
                 <input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} 선택" ${checked} />
               </td>
-              <td>${escapeHtml(row.company)}</td>
-              <td>${escapeHtml(row.country)}</td>
-              <td><strong>${escapeHtml(row.asset)}</strong></td>
-              <td>
+              <td class="company-cell">${escapeHtml(row.company)}</td>
+              <td class="country-cell">${escapeHtml(row.country)}</td>
+              <td class="asset-cell"><strong>${escapeHtml(row.asset)}</strong></td>
+              <td class="target-column-cell">
                 <div class="target-cell">
                   <strong>${escapeHtml(row.target)}</strong>
                   <span>Theme: ${escapeHtml(row.theme)}</span>
                   <span>Cluster: ${escapeHtml(row.cluster)}</span>
                 </div>
               </td>
-              <td>${escapeHtml(row.stage)}</td>
-              <td><span class="${filterClass}">${escapeHtml(row.hardFilter)}</span></td>
-              <td>${scoreBadge(row.targetScore, 3, scoreTooltip('Target Relevance', row.criteria.target, 3))}</td>
-              <td>${scoreBadge(row.competitiveScore, 3, scoreTooltip('Competitive Landscape', row.criteria.competitive, 3))}</td>
-              <td>${scoreBadge(row.moaScore, 3, scoreTooltip('MOA Validity', row.criteria.moa, 3))}</td>
-              <td>${scoreBadge(row.platformScore, 3, scoreTooltip('Platform Attractiveness', row.criteria.platform, 3))}</td>
-              <td>${scoreBadge(row.expansionScore, 3, scoreTooltip('Expansion Potential', row.criteria.expansion, 3))}</td>
-              <td>${scoreBadge(row.dataScore, 3, scoreTooltip('Data Maturity', row.criteria.data, 3))}</td>
-              <td>${scoreBadge(row.marketScore, 3, scoreTooltip('Marketability', row.criteria.market, 3))}</td>
-              <td>${scoreBadge(row.totalScore, row.maxScore, `Total Score: ${row.totalScore ?? '-'} / ${row.maxScore}`)}</td>
+              <td class="stage-cell">${escapeHtml(row.stage)}</td>
+              <td class="filter-cell"><span class="${filterClass}" title="${escapeHtml(row.hardFilterReason)}">${escapeHtml(row.hardFilter)}</span></td>
+              <td class="score-cell">${scoreBadge(row.targetScore, 3, scoreTooltip('Target Relevance', row.criteria.target, 3))}</td>
+              <td class="score-cell">${scoreBadge(row.competitiveScore, 3, scoreTooltip('Competitive Landscape', row.criteria.competitive, 3))}</td>
+              <td class="score-cell">${scoreBadge(row.moaScore, 3, scoreTooltip('MOA Validity', row.criteria.moa, 3))}</td>
+              <td class="score-cell">${scoreBadge(row.platformScore, 3, scoreTooltip('Platform Attractiveness', row.criteria.platform, 3))}</td>
+              <td class="score-cell">${scoreBadge(row.expansionScore, 3, scoreTooltip('Expansion Potential', row.criteria.expansion, 3))}</td>
+              <td class="score-cell">${scoreBadge(row.dataScore, 3, scoreTooltip('Data Maturity', row.criteria.data, 3))}</td>
+              <td class="score-cell">${scoreBadge(row.marketScore, 3, scoreTooltip('Marketability', row.criteria.market, 3))}</td>
+              <td class="score-cell total-score-cell">${scoreBadge(row.totalScore, row.maxScore, `Total Score: ${row.totalScore ?? '-'} / ${row.maxScore}`)}</td>
             </tr>
           `;
         })
@@ -482,10 +564,13 @@ function scoreExportFields(row, key) {
     .join(' | ');
   return [
     item.score ?? '',
+    item.evidenceType || '',
+    item.evidenceTypeReason || '',
     item.rule || '',
     item.ruleLabel || '',
     item.appliedScoreDefinition || item.ruleCriteria || '',
     item.mainLineSummary || item.reason || '',
+    item.whyNotHigher || '',
     item.decisionSummary || item.mainLineSummary || '',
     (item.keyJudgmentFactors || []).join(' | '),
     item.supportingEvidenceSummary || '',
@@ -508,11 +593,15 @@ function exportPipelineTable() {
     'Indication',
     'Modality',
     'Hard Filter',
+    'Hard Filter Reason',
     'Target Relevance Score',
+    'Target Relevance Evidence Type',
+    'Target Relevance Evidence Type Reason',
     'Target Relevance Rule',
     'Target Relevance Rule Label',
     'Target Relevance Applied Criteria',
     'Target Relevance Reason',
+    'Target Relevance Why Not Higher',
     'Target Relevance Decision Summary',
     'Target Relevance Key Factors',
     'Target Relevance Evidence Summary',
@@ -520,10 +609,13 @@ function exportPipelineTable() {
     'Target Relevance Confidence',
     'Target Relevance Sources',
     'Competitive Score',
+    'Competitive Evidence Type',
+    'Competitive Evidence Type Reason',
     'Competitive Rule',
     'Competitive Rule Label',
     'Competitive Applied Criteria',
     'Competitive Reason',
+    'Competitive Why Not Higher',
     'Competitive Decision Summary',
     'Competitive Key Factors',
     'Competitive Evidence Summary',
@@ -531,10 +623,13 @@ function exportPipelineTable() {
     'Competitive Confidence',
     'Competitive Sources',
     'MOA Score',
+    'MOA Evidence Type',
+    'MOA Evidence Type Reason',
     'MOA Rule',
     'MOA Rule Label',
     'MOA Applied Criteria',
     'MOA Reason',
+    'MOA Why Not Higher',
     'MOA Decision Summary',
     'MOA Key Factors',
     'MOA Evidence Summary',
@@ -542,10 +637,13 @@ function exportPipelineTable() {
     'MOA Confidence',
     'MOA Sources',
     'Platform Score',
+    'Platform Evidence Type',
+    'Platform Evidence Type Reason',
     'Platform Rule',
     'Platform Rule Label',
     'Platform Applied Criteria',
     'Platform Reason',
+    'Platform Why Not Higher',
     'Platform Decision Summary',
     'Platform Key Factors',
     'Platform Evidence Summary',
@@ -553,10 +651,13 @@ function exportPipelineTable() {
     'Platform Confidence',
     'Platform Sources',
     'Expansion Score',
+    'Expansion Evidence Type',
+    'Expansion Evidence Type Reason',
     'Expansion Rule',
     'Expansion Rule Label',
     'Expansion Applied Criteria',
     'Expansion Reason',
+    'Expansion Why Not Higher',
     'Expansion Decision Summary',
     'Expansion Key Factors',
     'Expansion Evidence Summary',
@@ -564,10 +665,13 @@ function exportPipelineTable() {
     'Expansion Confidence',
     'Expansion Sources',
     'Data Score',
+    'Data Evidence Type',
+    'Data Evidence Type Reason',
     'Data Rule',
     'Data Rule Label',
     'Data Applied Criteria',
     'Data Reason',
+    'Data Why Not Higher',
     'Data Decision Summary',
     'Data Key Factors',
     'Data Evidence Summary',
@@ -575,10 +679,13 @@ function exportPipelineTable() {
     'Data Confidence',
     'Data Sources',
     'Market Score',
+    'Market Evidence Type',
+    'Market Evidence Type Reason',
     'Market Rule',
     'Market Rule Label',
     'Market Applied Criteria',
     'Market Reason',
+    'Market Why Not Higher',
     'Market Decision Summary',
     'Market Key Factors',
     'Market Evidence Summary',
@@ -604,6 +711,7 @@ function exportPipelineTable() {
     row.indication,
     row.modality,
     row.hardFilter,
+    row.hardFilterReason,
     ...scoreExportFields(row, 'target'),
     ...scoreExportFields(row, 'competitive'),
     ...scoreExportFields(row, 'moa'),
@@ -826,8 +934,25 @@ Non-negotiable rules:
 8. Competitive Landscape must include competitor drugs/assets with company, modality, target/MoA, stage/status, why it matters, similarity level, and source.
 9. Marketability must show A. TAP, B. Unrisked Peak Sales, and C. Obtainable Peak Sales in both the markdown report and JSON.
 10. Express every sales output in million USD. In JSON, store sales values as numeric million USD values, not raw USD. Example: USD 1.2B should be 1200.
-11. If the latest stage, ownership, financing, or trial status is unclear, mark it as uncertain and state what source is needed.
-12. Do not invent URLs. If a URL cannot be verified, write null in JSON and describe the missing source in uncertain_points.
+11. Hard Filter must use this rule: PASS if Total >= 14, Target Relevance >= 3, MoA Validity >= 2, Data Maturity >= 2, and no hard blocker. REVIEW if Total 9-13, or score is high but stage / rights / asset identity / source uncertainty exists. FAIL if Total <= 8, Target Relevance <= 1, or no SKBP Theme / Cluster fit.
+12. If the latest stage, ownership, financing, or trial status is unclear, mark it as uncertain and state what source is needed.
+13. Do not invent URLs. If a URL cannot be verified, write null in JSON and describe the missing source in uncertain_points.
+
+Scoring v3.1 rules:
+- Each scoring criterion must be scored independently using its own criterion-specific scoring table.
+- Do not apply a universal scoring rule across all criteria.
+- For every criterion, assign exactly one integer score: 0, 1, 2, or 3.
+- For every criterion, assign exactly one Evidence Type:
+  - E0_not_found_or_not_assessable
+  - E1_company_claim_or_scientific_rationale_only
+  - E2_indirect_or_class_level_evidence
+  - E3_asset_specific_preclinical_or_technical_evidence
+  - E4_asset_specific_clinical_evidence
+- Explain why the selected score is appropriate.
+- Explain why the score was not one point higher in why_not_higher.
+- Clearly distinguish company claims, indirect/class-level evidence, and asset-specific evidence.
+- Do not output score ranges such as 0-1, 1-2, or 2-3.
+- If evidence is ambiguous, select the single closest score and explain uncertainty in uncertain_points.
 
 Expected final answer shape:
 
@@ -1162,63 +1287,90 @@ After the markdown code block, output the second copyable box as a JSON code blo
     "criteria": {
       "target_relevance": {
         "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
         "main_line_summary": "",
         "what_was_checked": [],
         "evidence_trail": [],
         "evidence_sources": [],
         "investigation_note": "",
+        "why_not_higher": "",
         "uncertain_points": []
       },
       "competitive_landscape": {
         "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
         "main_line_summary": "",
         "what_was_checked": [],
         "evidence_trail": [],
         "evidence_sources": [],
         "investigation_note": "",
+        "why_not_higher": "",
         "uncertain_points": []
       },
       "moa_validity": {
         "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
         "main_line_summary": "",
         "what_was_checked": [],
         "evidence_trail": [],
         "evidence_sources": [],
         "investigation_note": "",
+        "why_not_higher": "",
         "uncertain_points": []
       },
       "platform_attractiveness": {
         "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
         "main_line_summary": "",
         "what_was_checked": [],
         "evidence_trail": [],
         "evidence_sources": [],
         "investigation_note": "",
+        "why_not_higher": "",
         "uncertain_points": []
       },
       "expansion_potential": {
         "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
         "main_line_summary": "",
         "what_was_checked": [],
         "evidence_trail": [],
         "evidence_sources": [],
         "investigation_note": "",
+        "why_not_higher": "",
         "uncertain_points": []
       },
       "data_maturity": {
         "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
         "main_line_summary": "",
         "what_was_checked": [],
         "evidence_trail": [],
         "evidence_sources": [],
         "investigation_note": "",
+        "why_not_higher": "",
+        "claimed_development_stage": "",
+        "expected_data_for_stage": [],
+        "visible_asset_specific_data": [],
+        "missing_data": [],
+        "stage_data_alignment_judgment": "",
         "uncertain_points": []
       },
       "marketability": {
         "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
         "main_line_summary": "Must explicitly summarize A. TAP, B. Unrisked Peak Sales, and C. Obtainable Peak Sales.",
         "what_was_checked": ["TAP", "Unrisked Peak Sales", "Entry-order share assumption", "Competition haircut", "Pricing power", "Expansion capacity"],
         "calculation": {
+          "commercial_rationale_status": "established",
+          "commercial_rationale_failure_reason": null,
           "A_targetable_addressable_patient": {
             "total_patient_pool": null,
             "diagnosis_rate": null,
@@ -1258,6 +1410,7 @@ After the markdown code block, output the second copyable box as a JSON code blo
         "evidence_trail": [],
         "evidence_sources": [],
         "investigation_note": "",
+        "why_not_higher": "",
         "uncertain_points": []
       }
     }

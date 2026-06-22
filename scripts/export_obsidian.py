@@ -78,7 +78,7 @@ def score_table(record: dict[str, Any]) -> str:
         "data_maturity": "Data Maturity",
         "marketability": "Marketability",
     }
-    rows = ["| Criterion | Score | Rubric Definition | Judgment Reason | Evidence Sources |", "|---|---:|---|---|---|"]
+    rows = ["| Criterion | Score | Evidence Type | Rubric Definition | Judgment Reason | Why Not Higher | Evidence Sources |", "|---|---:|---|---|---|---|---|"]
     for key, label in labels.items():
         item = criteria.get(key, {}) if isinstance(criteria, dict) else {}
         definition = rubric.get(key, {}) if isinstance(rubric, dict) else {}
@@ -96,8 +96,10 @@ def score_table(record: dict[str, Any]) -> str:
                 [
                     md_cell(label),
                     md_cell(score if score is not None else "-"),
+                    md_cell(item.get("evidence_type", "-")),
                     md_cell((definition.get("score_definitions") or {}).get(str(score), "-")),
                     md_cell(item.get("main_line_summary") or item.get("reason", "-")),
+                    md_cell(item.get("why_not_higher", "-")),
                     md_cell("<br>".join(source_titles) if source_titles else "-"),
                 ]
             )
@@ -214,8 +216,11 @@ def scoring_rationale_sections(record: dict[str, Any]) -> str:
 | Field | Value |
 |---|---|
 | Score | {md_cell(item.get("score", "-"))} |
+| Evidence Type | {md_cell(item.get("evidence_type", "-"))} |
+| Evidence Type Reason | {md_cell(item.get("evidence_type_reason", "-"))} |
 | Rubric Definition | {md_cell((definition.get("score_definitions") or {}).get(str(score), "-"))} |
 | Judgment Reason | {md_cell(item.get("main_line_summary") or item.get("reason", "-"))} |
+| Why Not Higher | {md_cell(item.get("why_not_higher", "-"))} |
 | Investigation Note | {md_cell(item.get("investigation_note", "-"))} |
 
 #### Conflicting Or Missing Evidence
@@ -354,7 +359,7 @@ def asset_note(record: dict[str, Any], generated_at: str) -> tuple[str, str]:
 | Stage | {table.get("development_stage", "-")} |
 | Indication | {table.get("indication", "-")} |
 | Modality | {table.get("modality_platform", "-")} |
-| Hard Filter | {get(record, "hard_filter.overall_result", "-")} |
+| Hard Filter | {get(record, "hard_filter.status", get(record, "hard_filter.overall_result", "-"))} |
 | Total Score | {scoring.get("total_score", "-")} / {scoring.get("max_score", "-")} |
 
 ## One-Line Insight

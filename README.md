@@ -99,6 +99,37 @@ obsidian/
 2. `scripts/export_obsidian.py`를 실행합니다.
 3. Obsidian에서는 `obsidian/Pipeline_Index.md`부터 열면 전체 링크를 따라갈 수 있습니다.
 
+## Pipeline Wiki Layer
+
+The advanced Obsidian-ready wiki vault is generated in:
+
+```text
+skbp_pipeline_wiki/
+```
+
+Generate it from the JSON source of truth:
+
+```powershell
+.\.venv\Scripts\python.exe .\scripts\export_pipeline_wiki.py
+```
+
+The exporter creates:
+
+- raw report archive in `01_Raw_Reports/`
+- entity notes for assets, companies, targets, MoA, modalities, indications, competitors, evidence sources, scorecards, themes, and clusters
+- folder-level `CLAUDE.md` rules
+- scoring criteria docs in `00_System/`
+- dashboard notes in `12_Dashboards/`
+- graph exports in `13_Graph_Exports/nodes.csv`, `edges.csv`, and `graph.json`
+
+FastAPI endpoints:
+
+```text
+POST /api/wiki/export
+POST /api/markdown/export
+GET  /wiki/README.md
+```
+
 ## Git Deploy
 
 GitHub에 올린 뒤 Render, Railway, Fly.io 같은 Python web service에서 실행할 수 있습니다.

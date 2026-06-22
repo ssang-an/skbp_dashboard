@@ -113,6 +113,82 @@ function formatScore(value) {
   return value === null || value === undefined ? '-' : value;
 }
 
+function number(value) {
+  return Number.isFinite(Number(value)) ? Number(value) : null;
+}
+
+function collectHardFilterNotes(record) {
+  const hardFilter = record.hard_filter || {};
+  const criteria = record.scoring?.criteria || {};
+  const notes = [
+    hardFilter.status,
+    hardFilter.overall_result,
+    hardFilter.reason,
+    ...(Array.isArray(hardFilter.flags) ? hardFilter.flags : []),
+    ...(Array.isArray(hardFilter.fail_reasons) ? hardFilter.fail_reasons : []),
+    record.structured_table?.development_stage,
+    record.json_summary?.theme,
+    record.json_summary?.cluster
+  ];
+
+  Object.values(criteria).forEach((item) => {
+    if (!item || typeof item !== 'object') return;
+    notes.push(item.main_line_summary, item.investigation_note);
+    if (Array.isArray(item.uncertain_points)) notes.push(...item.uncertain_points);
+  });
+
+  return notes.filter(Boolean).join(' | ');
+}
+
+function hasNoThemeFit(theme, cluster) {
+  const value = `${theme || ''} ${cluster || ''}`.toLowerCase();
+  return !value.trim() || /no theme|no cluster|no mapped|none|미해당/.test(value);
+}
+
+function computeHardFilter(record) {
+  const summary = record.json_summary || {};
+  const criteria = record.scoring?.criteria || {};
+  const total = number(record.scoring?.total_score);
+  const targetScore = number(summary.target_relevance_score ?? criteria.target_relevance?.score);
+  const moaScore = number(criteria.moa_validity?.score);
+  const dataScore = number(criteria.data_maturity?.score);
+  const notes = collectHardFilterNotes(record);
+  const reasons = [];
+
+  const noThemeFit = hasNoThemeFit(summary.theme, summary.cluster);
+  const failBlocker = /(outside primary|outside.*theme|out of scope|no public target|no.*target\/moa|discontinued|dormant|범위 밖|미해당|중단)/i.test(notes);
+  const reviewUncertainty = /(stage|rights?|license|licensed|ownership|asset identity|identity|source|official|registry|unclear|uncertain|not public|not verified|confirmation|confirm|sponsor|단계|권리|출처|공식|불확실|확인|미확인|식별|정체|라이선스|스폰서)/i.test(notes);
+
+  if (Number.isFinite(total) && total <= 8) reasons.push(`Total score ${total} <= 8`);
+  if (Number.isFinite(targetScore) && targetScore <= 1) reasons.push(`Target Relevance ${targetScore} <= 1`);
+  if (noThemeFit) reasons.push('SKBP Theme/Cluster fit 없음');
+  if (failBlocker) reasons.push('Hard blocker keyword detected');
+
+  if (reasons.length) {
+    return { status: 'FAIL', reason: reasons.join('; ') };
+  }
+
+  const passScores = total >= 14 && targetScore >= 3 && moaScore >= 2 && dataScore >= 2;
+  if (passScores && !reviewUncertainty) {
+    return {
+      status: 'PASS',
+      reason: `Total ${total} >= 14, TR ${targetScore} >= 3, MOA ${moaScore} >= 2, Data ${dataScore} >= 2, hard blocker 없음`
+    };
+  }
+
+  if (Number.isFinite(total) && total >= 9 && total <= 13) {
+    reasons.push(`Total score ${total} is REVIEW range 9-13`);
+  }
+  if (!passScores) {
+    reasons.push(`PASS score gate 미충족: Total ${total ?? '-'}, TR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
+  }
+  if (reviewUncertainty) {
+    reasons.push('stage/rights/asset identity/source 불확실성 확인 필요');
+  }
+
+  return { status: 'REVIEW', reason: reasons.join('; ') || '추가 diligence 필요' };
+}
+
 function formatMillionUsd(value, unit = '') {
   if (value === null || value === undefined || value === '') return '-';
   const isMillionUnit = /million\s*usd/i.test(String(unit));
@@ -200,6 +276,11 @@ function renderMarketabilityCalculation(calculation) {
   return `
     <div class="market-calc">
       <h4>Marketability A/B/C Calculation</h4>
+      <div class="calc-step">
+        <strong>Commercial Rationale Gate</strong>
+        <p>${escapeHtml(calculation.commercial_rationale_status || '-')}</p>
+        ${calculation.commercial_rationale_failure_reason ? `<p>${escapeHtml(calculation.commercial_rationale_failure_reason)}</p>` : ''}
+      </div>
       <div class="calc-step">
         <strong>A. TAP</strong>
         <p>${escapeHtml(stepA.formula || 'TAP = Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate')}</p>
@@ -304,7 +385,7 @@ function collectGlobalSources(record) {
 function renderScoreEvidence(record) {
   const scoring = record.scoring || {};
   const criteria = scoring.criteria || {};
-  const hardFilter = record.hard_filter?.overall_result || '-';
+  const hardFilter = computeHardFilter(record);
   const cards = Object.entries(scoringLabels)
     .map(([key, label]) => {
       const item = criteria[key] || {};
@@ -323,8 +404,17 @@ function renderScoreEvidence(record) {
             <strong>${escapeHtml(rubricDefinition)}</strong>
           </div>
           <div class="score-evidence-block">
+            <h4>Evidence Type</h4>
+            <p>${escapeHtml(item.evidence_type || '-')}</p>
+            <p>${escapeHtml(item.evidence_type_reason || '-')}</p>
+          </div>
+          <div class="score-evidence-block">
             <h4>판단 이유</h4>
             <p>${escapeHtml(item.main_line_summary || '-')}</p>
+          </div>
+          <div class="score-evidence-block">
+            <h4>Why Not Higher</h4>
+            <p>${escapeHtml(item.why_not_higher || '-')}</p>
           </div>
           <div class="score-evidence-block">
             <h4>조사 메모</h4>
@@ -348,7 +438,8 @@ function renderScoreEvidence(record) {
     ${renderCompanyProfile(record.company_profile || {})}
     <div class="score-evidence-summary">
       <div><span>Total Score</span><strong>${escapeHtml(formatScore(scoring.total_score))} / ${escapeHtml(formatScore(scoring.max_score || 21))}</strong></div>
-      <div><span>Hard Filter</span><strong>${escapeHtml(hardFilter)}</strong></div>
+      <div><span>Hard Filter</span><strong title="${escapeHtml(hardFilter.reason)}">${escapeHtml(hardFilter.status)}</strong></div>
+      <div><span>Filter Reason</span><strong>${escapeHtml(hardFilter.reason)}</strong></div>
       <div><span>Rubric</span><strong>${escapeHtml(record.meta?.rubric_version || '1.0')} · ${escapeHtml(record.meta?.rubric_author || 'kate')}</strong></div>
     </div>
     <div class="score-evidence-list">${cards}</div>
