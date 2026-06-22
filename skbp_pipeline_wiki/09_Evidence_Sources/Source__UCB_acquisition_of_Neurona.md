@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/news"
-created_at: "2026-06-22"
-updated_at: "2026-06-22"
+created_at: "2026-06-23"
+updated_at: "2026-06-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | news |
 | Reliability | high |
 | URL | https://www.ucb.com/newsroom/press-releases/article/ucb-to-acquire-neurona-therapeutics-advancing-its-innovative-leadership-in-epilepsy-through-regenerative-science |
-| Accessed / generated date | 2026-06-22 |
+| Accessed / generated date | 2026-06-23 |
 
 ## Evidence Summary
 

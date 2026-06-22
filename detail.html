@@ -48,18 +48,37 @@
 
     <div class="drawer-backdrop" id="aiBackdrop" hidden></div>
     <aside class="ai-drawer detail-ai-drawer" id="aiDrawer" aria-label="AI drug chat drawer" aria-hidden="true" hidden>
+      <div class="drawer-resize-handle" data-resize-drawer aria-label="Resize AI drawer" role="separator" tabindex="0"></div>
       <div class="ai-drawer-header">
         <div>
-          <p class="eyebrow">AI Drug Chat</p>
-          <h2>Score Evidence Drafting</h2>
+          <p class="eyebrow">JSON + Wiki Agent</p>
+          <h2>Asset Evidence Agent</h2>
         </div>
         <button id="aiDrawerClose" type="button" aria-label="Close AI drawer">닫기</button>
       </div>
 
-      <div id="chatMessages" class="chat-messages drawer-chat-messages"></div>
-      <form id="chatForm" class="chat-form">
+      <div class="agent-context">
+        <div>
+          <span>Current Asset</span>
+          <strong id="chatContextAsset">-</strong>
+        </div>
+        <div>
+          <span>Score Context</span>
+          <strong id="chatContextScore">-</strong>
+        </div>
+      </div>
+
+      <div class="agent-suggestions">
+        <button type="button" data-chat-prompt="이 asset의 Target Relevance와 SKBP Theme / Cluster fit 근거를 검토해줘.">Target fit</button>
+        <button type="button" data-chat-prompt="Marketability 점수를 A. TAP, B. Unrisked Peak Sales, C. Obtainable Peak Sales 기준으로 점검해줘.">Marketability</button>
+        <button type="button" data-chat-prompt="이 asset에서 score를 낮게 볼 수 있는 evidence gap과 추가 확인 source를 정리해줘.">Evidence gap</button>
+        <button type="button" data-chat-prompt="wiki note와 JSON 근거를 함께 보고 competitor / similar asset 리스크를 요약해줘.">Competitor risk</button>
+      </div>
+
+      <div id="chatMessages" class="agent-messages drawer-chat-messages"></div>
+      <form id="chatForm" class="agent-form">
         <textarea id="chatInput" rows="4" placeholder="예: Marketability 2점 근거를 A/B/C 기준으로 보강해줘&#10;예: Competitive Landscape 출처 링크와 판단 이유를 업데이트해줘"></textarea>
-        <button class="primary-button" type="submit">질문 보내기</button>
+        <button class="primary-button" type="submit">질문</button>
       </form>
     </aside>
 

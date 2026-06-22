@@ -6,8 +6,8 @@ aliases:
   - "aβ_binder와_engineered_gas6_tam_receptor_binder를_결합해_aβ_aggregates와_tam_1a0a75c6"
 tags:
   - "pipeline/moa"
-created_at: "2026-06-22"
-updated_at: "2026-06-22"
+created_at: "2026-06-23"
+updated_at: "2026-06-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/news"
-created_at: "2026-06-22"
-updated_at: "2026-06-22"
+created_at: "2026-06-23"
+updated_at: "2026-06-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | news |
 | Reliability | medium |
 | URL | https://finance.sina.com.cn/stock/aigc/ywsygs/2025-10-11/doc-inftnueu7432084.shtml |
-| Accessed / generated date | 2026-06-22 |
+| Accessed / generated date | 2026-06-23 |
 
 ## Evidence Summary
 

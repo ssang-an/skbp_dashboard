@@ -6,8 +6,8 @@ aliases:
   - "small_molecule;_exact_compound_and_platform_undisclosed"
 tags:
   - "pipeline/modality"
-created_at: "2026-06-22"
-updated_at: "2026-06-22"
+created_at: "2026-06-23"
+updated_at: "2026-06-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

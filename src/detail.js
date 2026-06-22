@@ -18,6 +18,8 @@ const elements = {
   aiDrawer: document.querySelector('#aiDrawer'),
   aiBackdrop: document.querySelector('#aiBackdrop'),
   aiDrawerClose: document.querySelector('#aiDrawerClose'),
+  chatContextAsset: document.querySelector('#chatContextAsset'),
+  chatContextScore: document.querySelector('#chatContextScore'),
   messages: document.querySelector('#chatMessages'),
   form: document.querySelector('#chatForm'),
   input: document.querySelector('#chatInput'),
@@ -457,8 +459,15 @@ function renderScoreEvidence(record) {
 
 function renderRecord(record) {
   const summary = record.json_summary || {};
+  const scoring = record.scoring || {};
   elements.title.textContent = `Details : ${summary.asset_name || 'Pipeline'} · ${summary.company || '-'}`;
   elements.subtitle.textContent = `${summary.target || '-'} · ${summary.theme || '-'} · ${summary.cluster || '-'}`;
+  if (elements.chatContextAsset) {
+    elements.chatContextAsset.textContent = `${summary.asset_name || 'Pipeline'} · ${summary.company || '-'}`;
+  }
+  if (elements.chatContextScore) {
+    elements.chatContextScore.textContent = `${scoring.total_score ?? '-'} / ${scoring.max_score ?? 21} · ${summary.theme || 'No Theme'}`;
+  }
   const sourceReport = record.source_report || {};
   const rawMarkdown = isPlaceholderRawMarkdown(sourceReport.raw_markdown) ? '' : sourceReport.raw_markdown;
   elements.sourceReportViewer.innerHTML = rawMarkdown
@@ -578,6 +587,9 @@ function renderInlineMarkdown(text) {
   return escapeHtml(text)
     .replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '<span class="wikilink">$2</span>')
     .replace(/\[\[([^\]]+)\]\]/g, '<span class="wikilink">$1</span>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
     .replace(/`([^`]+)`/g, '<code>$1</code>');
 }
 
@@ -589,6 +601,18 @@ function renderMarkdown(markdown) {
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index].trim();
     if (!line) continue;
+
+    if (line.startsWith('```')) {
+      const language = line.slice(3).trim() || 'code';
+      const code = [];
+      index += 1;
+      while (index < lines.length && !lines[index].trim().startsWith('```')) {
+        code.push(lines[index]);
+        index += 1;
+      }
+      blocks.push(`<pre><span>${escapeHtml(language)}</span><code>${escapeHtml(code.join('\n'))}</code></pre>`);
+      continue;
+    }
 
     if (line.startsWith('|')) {
       const table = renderMarkdownTable(lines, index);
@@ -623,6 +647,16 @@ function renderMarkdown(markdown) {
       index -= 1;
       continue;
     }
+    if (/^\d+\.\s+/.test(line)) {
+      const items = [];
+      while (index < lines.length && /^\d+\.\s+/.test(lines[index].trim())) {
+        items.push(`<li>${renderInlineMarkdown(lines[index].trim().replace(/^\d+\.\s+/, ''))}</li>`);
+        index += 1;
+      }
+      blocks.push(`<ol>${items.join('')}</ol>`);
+      index -= 1;
+      continue;
+    }
 
     blocks.push(`<p>${renderInlineMarkdown(line)}</p>`);
   }
@@ -637,10 +671,15 @@ function summarizeDraftChanges(changes = []) {
 
 function addMessage(role, text, options = {}) {
   const bubble = document.createElement('div');
-  bubble.className = `chat-message ${role}`;
+  bubble.className = `agent-message ${role}${options.pending ? ' pending' : ''}`;
+  const speaker = role === 'user' ? 'You' : 'Asset Agent';
+  const meta = role === 'user' ? 'question' : (options.pending ? 'streaming response' : 'JSON + Wiki retrieval');
   bubble.innerHTML = `
-    <div class="chat-role">${role === 'user' ? 'You' : 'AI'}</div>
-    <div class="chat-text">${escapeHtml(text)}</div>
+    <div class="agent-message-meta">
+      <strong>${speaker}</strong>
+      <span>${meta}</span>
+    </div>
+    <div class="agent-message-text">${renderMarkdown(text)}</div>
   `;
 
   if (options.draftRecord) {
@@ -659,6 +698,37 @@ function addMessage(role, text, options = {}) {
   }
 
   elements.messages.appendChild(bubble);
+  elements.messages.scrollTop = elements.messages.scrollHeight;
+  return bubble;
+}
+
+function sourceLabel(path) {
+  return String(path || '')
+    .split('/')
+    .pop()
+    .replace(/\.md$/i, '')
+    .replaceAll('_', ' ');
+}
+
+function renderChatSources(sources = []) {
+  if (!Array.isArray(sources) || !sources.length) return '';
+  const chips = sources.slice(0, 5).map((source) => {
+    const label = escapeHtml(sourceLabel(source.path));
+    const score = escapeHtml(source.score ?? '');
+    const href = `/wiki-view?path=${encodeURIComponent(source.path || '')}`;
+    return `<a class="agent-source-chip" href="${href}" target="_blank" rel="noreferrer">${label}<span>${score}</span></a>`;
+  }).join('');
+  return `<div class="agent-sources"><span>Wiki sources</span>${chips}</div>`;
+}
+
+function updateMessage(bubble, text, options = {}) {
+  const textNode = bubble.querySelector('.agent-message-text');
+  if (textNode) textNode.innerHTML = renderMarkdown(text);
+  if (options.done) bubble.classList.remove('pending');
+  if (options.sources) {
+    bubble.querySelector('.agent-sources')?.remove();
+    bubble.insertAdjacentHTML('beforeend', renderChatSources(options.sources));
+  }
   elements.messages.scrollTop = elements.messages.scrollHeight;
 }
 
@@ -722,7 +792,7 @@ async function loadRecord() {
   currentRecordId = data.record_id;
   renderRecord(currentRecord);
   elements.status.textContent = 'Loaded';
-  if (!elements.messages.querySelector('.chat-message')) {
+  if (!elements.messages.querySelector('.agent-message')) {
     addMessage('assistant', '이 약물 record를 불러왔습니다. 점수 근거, 리스크, 시장성, 경쟁 상황에 대해 질문할 수 있습니다.');
   }
 }
@@ -746,6 +816,57 @@ function closeAiDrawer() {
     elements.aiDrawer.hidden = true;
     elements.aiBackdrop.hidden = true;
   }, 180);
+}
+
+function setupResizableDrawer(drawer, storageKey, defaultWidth = 560) {
+  const handle = drawer?.querySelector('[data-resize-drawer]');
+  if (!drawer || !handle) return;
+
+  const minWidth = 380;
+  const getMaxWidth = () => Math.max(minWidth, Math.min(window.innerWidth - 32, 1080));
+  const clampWidth = (value) => Math.max(minWidth, Math.min(value, getMaxWidth()));
+  const applyWidth = (value) => {
+    const width = clampWidth(value);
+    drawer.style.setProperty('--drawer-width', `${width}px`);
+    localStorage.setItem(storageKey, String(width));
+  };
+
+  const savedWidth = Number(localStorage.getItem(storageKey));
+  applyWidth(Number.isFinite(savedWidth) ? savedWidth : defaultWidth);
+
+  const startResize = (event) => {
+    event.preventDefault();
+    handle.setPointerCapture?.(event.pointerId);
+    drawer.classList.add('is-resizing');
+
+    const onMove = (moveEvent) => {
+      applyWidth(window.innerWidth - moveEvent.clientX);
+    };
+    const onUp = () => {
+      drawer.classList.remove('is-resizing');
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp, { once: true });
+  };
+
+  handle.addEventListener('pointerdown', startResize);
+  handle.addEventListener('keydown', (event) => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const current = Number.parseInt(getComputedStyle(drawer).getPropertyValue('--drawer-width'), 10) || defaultWidth;
+    if (event.key === 'ArrowLeft') applyWidth(current + 32);
+    if (event.key === 'ArrowRight') applyWidth(current - 32);
+    if (event.key === 'Home') applyWidth(minWidth);
+    if (event.key === 'End') applyWidth(getMaxWidth());
+  });
+
+  window.addEventListener('resize', () => {
+    const current = Number.parseInt(getComputedStyle(drawer).getPropertyValue('--drawer-width'), 10) || defaultWidth;
+    applyWidth(current);
+  });
 }
 
 function openCriteriaDrawer() {
@@ -850,6 +971,78 @@ function reviewPendingDraft() {
   });
 }
 
+function parseSseEvent(block) {
+  const lines = block.split('\n');
+  let event = 'message';
+  const dataLines = [];
+  for (const line of lines) {
+    if (line.startsWith('event:')) event = line.slice(6).trim();
+    if (line.startsWith('data:')) dataLines.push(line.slice(5).trim());
+  }
+  if (!dataLines.length) return null;
+  try {
+    return { event, data: JSON.parse(dataLines.join('\n')) };
+  } catch {
+    return null;
+  }
+}
+
+async function streamDetailChatReply(message, bubble) {
+  const response = await fetch('/api/chat/stream', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      record_id: currentRecordId,
+      message,
+      dashboard_context: '',
+      allow_draft: false
+    })
+  });
+  if (!response.ok || !response.body) {
+    const detail = await response.text();
+    throw new Error(detail || 'stream failed');
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let text = '';
+  let sources = [];
+  let completed = false;
+
+  const handleSseBlock = (block) => {
+    const parsed = parseSseEvent(block);
+    if (!parsed) return;
+    if (parsed.event === 'sources') {
+      sources = parsed.data || [];
+      updateMessage(bubble, text || '관련 wiki note를 찾았습니다. 답변을 생성 중입니다...', { sources });
+    }
+    if (parsed.event === 'status' && !text) {
+      updateMessage(bubble, parsed.data?.message || '답변 생성 중입니다...', { sources });
+    }
+    if (parsed.event === 'delta') {
+      text += parsed.data?.text || '';
+      updateMessage(bubble, text, { sources });
+    }
+    if (parsed.event === 'done') {
+      completed = true;
+      updateMessage(bubble, text || '답변이 비어 있습니다. 다시 질문해 주세요.', { done: true, sources });
+    }
+  };
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const blocks = buffer.split('\n\n');
+    buffer = blocks.pop() || '';
+    for (const block of blocks) handleSseBlock(block);
+  }
+
+  if (buffer.trim()) handleSseBlock(buffer);
+  if (!completed) updateMessage(bubble, text || '답변이 비어 있습니다. 다시 질문해 주세요.', { done: true, sources });
+}
+
 elements.form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const message = elements.input.value.trim();
@@ -857,22 +1050,36 @@ elements.form.addEventListener('submit', async (event) => {
 
   elements.input.value = '';
   addMessage('user', message);
+  const submitButton = elements.form.querySelector('button[type="submit"]');
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = '답변 중';
+  }
+  const responseBubble = addMessage('assistant', '질문 분석 중...', { pending: true });
 
   try {
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ record_id: currentRecordId, message })
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.detail || 'chat failed');
-    addMessage('assistant', data.reply, {
-      draftRecord: data.draft_record,
-      draftChanges: data.draft_changes || []
-    });
+    await streamDetailChatReply(message, responseBubble);
   } catch (error) {
-    addMessage('assistant', `채팅 응답 오류: ${error.message}`);
+    updateMessage(responseBubble, `채팅 응답 오류: ${error.message}`, { done: true });
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = '질문';
+    }
   }
+});
+
+elements.input.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
+  event.preventDefault();
+  elements.form.requestSubmit();
+});
+
+document.querySelectorAll('[data-chat-prompt]').forEach((button) => {
+  button.addEventListener('click', () => {
+    elements.input.value = button.dataset.chatPrompt;
+    elements.input.focus();
+  });
 });
 
 elements.messages.addEventListener('click', (event) => {
@@ -912,6 +1119,8 @@ window.addEventListener('keydown', (event) => {
     closeEditDrawer();
   }
 });
+
+setupResizableDrawer(elements.aiDrawer, 'skbp.detail.aiDrawerWidth', 600);
 
 loadRecord().catch((error) => {
   elements.status.textContent = 'Load failed';

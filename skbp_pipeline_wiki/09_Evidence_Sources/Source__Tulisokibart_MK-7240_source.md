@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-06-22"
-updated_at: "2026-06-22"
+created_at: "2026-06-23"
+updated_at: "2026-06-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.merck.com/news/merck-to-present-new-long-term-data-for-tulisokibart-mk-7240-an-investigational-anti-tl1a-monoclonal-antibody-in-inflammatory-bowel-disease-at-ueg-week-2024/ |
-| Accessed / generated date | 2026-06-22 |
+| Accessed / generated date | 2026-06-23 |
 
 ## Evidence Summary
 

@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import json
 import copy
+import os
 import re
 import tempfile
+import urllib.error
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -11,7 +14,7 @@ import subprocess
 import sys
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 ROOT = Path(__file__).resolve().parent
@@ -24,6 +27,33 @@ WIKI_DIR = ROOT / "skbp_pipeline_wiki"
 SCORING_CRITERIA_VERSION = "3.1"
 SCORING_CRITERIA_FULL_MD = ROOT / "config" / "scoring_criteria" / "v3_1_full.md"
 SCORING_CRITERIA_DISPLAY_MD = ROOT / "config" / "scoring_criteria" / "v3_1_display.md"
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_DEFAULT_MODEL = "openrouter/free"
+OPENROUTER_DEFAULT_FALLBACK_MODELS = [
+    "openai/gpt-oss-20b:free",
+    "google/gemma-4-31b-it:free",
+    "google/gemma-4-26b-a4b-it:free",
+]
+CHAT_JSON_CONTEXT_LIMIT = 6500
+CHAT_DASHBOARD_CONTEXT_LIMIT = 2500
+CHAT_WIKI_SNIPPET_LIMIT = 1100
+CHAT_WIKI_TOP_K = 5
+OPENROUTER_MAX_TOKENS = int(os.getenv("OPENROUTER_MAX_TOKENS", "1200"))
+
+
+def load_local_env() -> None:
+    env_path = ROOT / ".env"
+    if not env_path.exists():
+        return
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in stripped:
+            continue
+        key, value = stripped.split("=", 1)
+        os.environ.setdefault(key.strip().lstrip("\ufeff"), value.strip().strip('"').strip("'"))
+
+
+load_local_env()
 
 CRITERION_ALIASES = {
     "target_relevance": ["target_relevance", "target relevance", "타깃", "타겟", "target"],
@@ -591,6 +621,503 @@ def build_ai_draft(record: dict[str, Any], message: str) -> dict[str, Any] | Non
     return {"record": draft, "changes": changes}
 
 
+def compact_chat_context(record: dict[str, Any]) -> str:
+    scoring = record.get("scoring") or {}
+    criteria = scoring.get("criteria") or {}
+    compact_criteria: dict[str, Any] = {}
+    for key, item in criteria.items():
+        if not isinstance(item, dict):
+            continue
+        compact_criteria[key] = {
+            "score": item.get("score"),
+            "judgment": item.get("main_line_summary") or item.get("reason"),
+            "why_not_higher": item.get("why_not_higher"),
+            "uncertain_points": item.get("uncertain_points"),
+            "evidence_type": item.get("evidence_type"),
+            "evidence_sources": get_limited_list({"sources": item.get("evidence_sources")}, "sources", 3),
+        }
+
+    context = {
+        "json_summary": record.get("json_summary"),
+        "pipeline_snapshot": {
+            "company": get_nested(record, "structured_table.company"),
+            "asset_name": get_nested(record, "structured_table.asset_name"),
+            "target": get_nested(record, "structured_table.target"),
+            "indication": get_nested(record, "structured_table.indication"),
+            "development_stage": get_nested(record, "structured_table.development_stage"),
+            "modality_platform": get_nested(record, "structured_table.modality_platform"),
+        },
+        "scoring": {
+            "total_score": scoring.get("total_score"),
+            "max_score": scoring.get("max_score"),
+            "recommendation": scoring.get("recommendation"),
+            "criteria": compact_criteria,
+        },
+        "hard_filter": record.get("hard_filter"),
+        "competitive_analysis": {
+            "competitive_density": get_nested(record, "competitive_analysis.competitive_density"),
+            "similarity_summary": get_nested(record, "competitive_analysis.similarity_summary"),
+            "key_competitors": get_limited_list(record, "competitive_analysis.key_competitors", 5),
+        },
+        "validation": {
+            "cross_checked_facts": get_limited_list(record, "validation.cross_checked_facts", 4),
+            "uncertain_points": get_limited_list(record, "validation.uncertain_points", 6),
+        },
+        "final_insight": record.get("final_insight"),
+    }
+    text = json.dumps(context, ensure_ascii=False, indent=2)
+    return text[:CHAT_JSON_CONTEXT_LIMIT]
+
+
+def tokenize_for_search(text: str) -> set[str]:
+    tokens = {
+        token.lower()
+        for token in re.findall(r"[A-Za-z0-9가-힣βΒαΑ/\-_.]+", text or "")
+        if len(token) >= 2
+    }
+    stopwords = {
+        "the", "and", "for", "with", "this", "that", "asset", "assets", "score", "scores",
+        "pipeline", "pipelines", "find", "best", "strong", "platform", "fit", "current",
+    }
+    return {token for token in tokens if token not in stopwords}
+
+
+def build_wiki_search_query(record: dict[str, Any], message: str, dashboard_context: str = "") -> str:
+    summary = record.get("json_summary") or {}
+    fields = [
+        message,
+        dashboard_context,
+        summary.get("asset_name", ""),
+        summary.get("company", ""),
+        summary.get("target", ""),
+        summary.get("theme", ""),
+        summary.get("cluster", ""),
+        get_nested(record, "structured_table.indication", ""),
+    ]
+    return "\n".join(str(item) for item in fields if item)
+
+
+def make_wiki_snippet(text: str, terms: set[str], limit: int = CHAT_WIKI_SNIPPET_LIMIT) -> str:
+    clean = re.sub(r"\n{3,}", "\n\n", text.strip())
+    if len(clean) <= limit:
+        return clean
+
+    lowered = clean.lower()
+    positions = [lowered.find(term) for term in terms if len(term) >= 3 and lowered.find(term) >= 0]
+    center = min(positions) if positions else 0
+    start = max(0, center - limit // 3)
+    end = min(len(clean), start + limit)
+    snippet = clean[start:end].strip()
+    if start:
+        snippet = "..." + snippet
+    if end < len(clean):
+        snippet += "..."
+    return snippet
+
+
+def search_wiki_notes(query: str, top_k: int = CHAT_WIKI_TOP_K) -> list[dict[str, str | int]]:
+    if not WIKI_DIR.exists():
+        return []
+
+    terms = tokenize_for_search(query)
+    if not terms:
+        return []
+
+    results: list[dict[str, str | int]] = []
+    for path in WIKI_DIR.rglob("*.md"):
+        try:
+            text = path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+
+        haystack = f"{path.name}\n{path.relative_to(WIKI_DIR)}\n{text}".lower()
+        score = 0
+        matched_terms: list[str] = []
+        for term in terms:
+            count = haystack.count(term)
+            if count:
+                matched_terms.append(term)
+                score += min(count, 8)
+                if term in path.name.lower():
+                    score += 8
+                if term in str(path.parent.relative_to(WIKI_DIR)).lower():
+                    score += 4
+
+        if score <= 0:
+            continue
+
+        relative_path = path.relative_to(WIKI_DIR).as_posix()
+        results.append({
+            "path": relative_path,
+            "score": score,
+            "matched_terms": ", ".join(matched_terms[:10]),
+            "snippet": make_wiki_snippet(text, set(matched_terms)),
+        })
+
+    results.sort(key=lambda item: int(item["score"]), reverse=True)
+    return results[:top_k]
+
+
+def format_wiki_context(snippets: list[dict[str, str | int]]) -> str:
+    if not snippets:
+        return "No relevant wiki notes found."
+    blocks = []
+    for index, item in enumerate(snippets, 1):
+        blocks.append(
+            f"[Wiki {index}] {item['path']} (score {item['score']}, matched: {item['matched_terms']})\n"
+            f"{item['snippet']}"
+        )
+    return "\n\n---\n\n".join(blocks)
+
+
+def get_limited_list(record: dict[str, Any], path: str, limit: int) -> list[Any]:
+    value = get_nested(record, path, [])
+    return value[:limit] if isinstance(value, list) else []
+
+
+def get_nested(record: dict[str, Any], path: str, fallback: Any = None) -> Any:
+    current: Any = record
+    for key in path.split("."):
+        if not isinstance(current, dict):
+            return fallback
+        current = current.get(key)
+    return fallback if current is None else current
+
+
+def openrouter_models_to_try() -> list[str]:
+    primary = os.getenv("OPENROUTER_MODEL", OPENROUTER_DEFAULT_MODEL).strip() or OPENROUTER_DEFAULT_MODEL
+    fallback_text = os.getenv("OPENROUTER_FALLBACK_MODELS", ",".join(OPENROUTER_DEFAULT_FALLBACK_MODELS))
+    candidates = [primary] + [item.strip() for item in fallback_text.split(",") if item.strip()]
+
+    models: list[str] = []
+    for model in candidates:
+        if model not in models:
+            models.append(model)
+    return models
+
+
+def summarize_openrouter_error(detail: str) -> str:
+    try:
+        parsed = json.loads(detail)
+    except json.JSONDecodeError:
+        return detail[:500]
+
+    error = parsed.get("error") if isinstance(parsed, dict) else None
+    if isinstance(error, dict):
+        message = error.get("message") or "OpenRouter error"
+        code = error.get("code")
+        metadata = error.get("metadata") if isinstance(error.get("metadata"), dict) else {}
+        raw = metadata.get("raw")
+        provider = metadata.get("provider_name")
+        parts = [str(message)]
+        if code is not None:
+            parts.append(f"code={code}")
+        if provider:
+            parts.append(f"provider={provider}")
+        if raw and raw != message:
+            parts.append(str(raw))
+        return " | ".join(parts)[:700]
+
+    return json.dumps(parsed, ensure_ascii=False)[:500]
+
+
+def call_openrouter_chat(
+    record: dict[str, Any],
+    message: str,
+    dashboard_context: str = "",
+) -> tuple[str | None, str | None, list[dict[str, str | int]]]:
+    dashboard_context = (dashboard_context or "")[:CHAT_DASHBOARD_CONTEXT_LIMIT]
+    wiki_snippets = search_wiki_notes(build_wiki_search_query(record, message, dashboard_context))
+    wiki_context = format_wiki_context(wiki_snippets)
+
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        return None, "OPENROUTER_API_KEY is not set.", wiki_snippets
+
+    base_payload = {
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You are an internal AI assistant for SKBP Pipeline Finder. "
+                    "Answer in Korean unless the user asks otherwise. "
+                    "Use only the provided compact JSON, dashboard rows, and retrieved SKBP wiki notes. "
+                    "Act like a practical pipeline diligence agent: retrieve, compare, then answer. "
+                    "Never use markdown tables. Use short bullet sections only. "
+                    "For comparisons, list one asset per bullet with score, rationale, and caveat. "
+                    "Cite wiki note filenames or evidence URLs when available. "
+                    "If evidence is missing, say what is uncertain and what to verify next. "
+                    "Do not invent URLs or unsupported claims. "
+                    "Keep the answer concise enough to fit in a chat panel, usually under 450 words."
+                ),
+            },
+            {
+                "role": "user",
+                "content": (
+                    "Compact pipeline JSON context:\n"
+                    f"{compact_chat_context(record)}\n\n"
+                    "Dashboard visible rows context:\n"
+                    f"{dashboard_context or 'No dashboard context provided.'}\n\n"
+                    "Retrieved SKBP wiki notes:\n"
+                    f"{wiki_context}\n\n"
+                    "User question:\n"
+                    f"{message}"
+                ),
+            },
+        ],
+        "temperature": 0.2,
+        "max_tokens": OPENROUTER_MAX_TOKENS,
+    }
+
+    errors: list[str] = []
+    for model in openrouter_models_to_try():
+        payload = {**base_payload, "model": model}
+        request = urllib.request.Request(
+            OPENROUTER_API_URL,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": os.getenv("OPENROUTER_SITE_URL", "http://127.0.0.1:8000"),
+                "X-Title": os.getenv("OPENROUTER_APP_TITLE", "SKBP Pipeline Finder"),
+            },
+            method="POST",
+        )
+
+        try:
+            with urllib.request.urlopen(request, timeout=120) as response:
+                data = json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="replace")
+            errors.append(f"{model}: HTTP {exc.code} - {summarize_openrouter_error(detail)}")
+            if exc.code in {401, 402, 403} or "free-models-per-day" in detail.lower():
+                break
+            continue
+        except Exception as exc:
+            errors.append(f"{model}: request failed - {exc}")
+            continue
+
+        error = data.get("error") if isinstance(data, dict) else None
+        if error:
+            detail = json.dumps(data, ensure_ascii=False)
+            errors.append(f"{model}: {summarize_openrouter_error(detail)}")
+            if "free-models-per-day" in detail.lower():
+                break
+            continue
+
+        try:
+            content = data["choices"][0]["message"]["content"]
+        except (KeyError, IndexError, TypeError):
+            errors.append(f"{model}: unexpected response - {json.dumps(data, ensure_ascii=False)[:500]}")
+            continue
+
+        if content:
+            return content, None, wiki_snippets
+        errors.append(f"{model}: empty response")
+
+    return None, " / ".join(errors[:4]) or "OpenRouter returned no usable response.", wiki_snippets
+
+
+def fallback_chat_reply(record: dict[str, Any], draft: dict[str, Any] | None) -> str:
+    summary = record.get("json_summary") or {}
+    scoring = record.get("scoring") or {}
+    criteria = scoring.get("criteria") or {}
+    target_relevance = criteria.get("target_relevance") or {}
+
+    reply = (
+        "OpenRouter API key가 설정되지 않아 로컬 mock 답변으로 응답합니다.\n\n"
+        f"- Asset: {summary.get('asset_name', '-')}\n"
+        f"- Company: {summary.get('company', '-')}\n"
+        f"- Target: {summary.get('target', '-')}\n"
+        f"- Theme: {summary.get('theme', '-')} / Cluster: {summary.get('cluster', '-')}\n"
+        f"- Total score: {scoring.get('total_score', '-')} / {scoring.get('max_score', '-')}\n"
+        f"- Target relevance reason: {target_relevance.get('main_line_summary') or target_relevance.get('reason', '-')}"
+    )
+    if draft:
+        reply += "\n\n수정 초안을 만들었습니다. 화면의 '초안 적용' 버튼을 누르면 이 record JSON에 바로 저장됩니다."
+    else:
+        reply += "\n\n실제 AI 답변을 사용하려면 서버 환경변수 `OPENROUTER_API_KEY`를 설정한 뒤 uvicorn을 재시작하세요."
+    return reply
+
+
+def fallback_chat_reply(record: dict[str, Any], ai_error: str | None = None) -> str:
+    summary = record.get("json_summary") or {}
+    scoring = record.get("scoring") or {}
+    criteria = scoring.get("criteria") or {}
+    target_relevance = criteria.get("target_relevance") or {}
+
+    lines = ["OpenRouter 응답을 받지 못해 로컬 요약으로 응답합니다."]
+    if ai_error:
+        lines.extend(["", f"OpenRouter 상태: {ai_error}"])
+
+    lines.extend([
+        "",
+        f"- Asset: {summary.get('asset_name', '-')}",
+        f"- Company: {summary.get('company', '-')}",
+        f"- Target: {summary.get('target', '-')}",
+        f"- Theme: {summary.get('theme', '-')} / Cluster: {summary.get('cluster', '-')}",
+        f"- Total score: {scoring.get('total_score', '-')} / {scoring.get('max_score', '-')}",
+        f"- Target relevance reason: {target_relevance.get('main_line_summary') or target_relevance.get('reason', '-')}",
+    ])
+    return "\n".join(lines)
+
+
+def concise_ai_error(ai_error: str | None) -> str:
+    if not ai_error:
+        return ""
+    lowered = ai_error.lower()
+    if "free-models-per-day" in lowered:
+        return "OpenRouter free model 일일 한도를 초과했습니다. OpenRouter에 5 credits 이상을 추가하거나 유료/개인 provider key 모델로 바꾸면 다시 실제 AI 답변을 받을 수 있습니다."
+    if "rate-limited upstream" in lowered or "temporarily rate-limited" in lowered:
+        return "OpenRouter upstream provider가 일시적으로 rate limit 상태입니다. 잠시 후 재시도하거나 다른 모델을 지정해 주세요."
+    if "api_key" in lowered or "401" in lowered:
+        return "OpenRouter API key 설정 또는 권한을 확인해 주세요."
+    return ai_error[:350]
+
+
+def sse_event(event: str, data: Any) -> str:
+    return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
+
+
+def chunk_text(text: str, size: int = 90) -> list[str]:
+    if not text:
+        return []
+    return [text[index : index + size] for index in range(0, len(text), size)]
+
+
+def stream_openrouter_chat(
+    record: dict[str, Any],
+    message: str,
+    dashboard_context: str = "",
+) -> tuple[Any, list[dict[str, str | int]], str | None]:
+    dashboard_context = (dashboard_context or "")[:CHAT_DASHBOARD_CONTEXT_LIMIT]
+    wiki_snippets = search_wiki_notes(build_wiki_search_query(record, message, dashboard_context))
+    wiki_context = format_wiki_context(wiki_snippets)
+
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        return iter(()), wiki_snippets, "OPENROUTER_API_KEY is not set."
+
+    base_payload = {
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You are an internal AI assistant for SKBP Pipeline Finder. "
+                    "Answer in Korean unless the user asks otherwise. "
+                    "Use only the provided compact JSON, dashboard rows, and retrieved SKBP wiki notes. "
+                    "Never use markdown tables. Use short bullet sections only. "
+                    "Cite wiki note filenames or evidence URLs when available. "
+                    "If evidence is missing, say what is uncertain and what to verify next. "
+                    "Keep the answer concise enough to fit in a chat panel, usually under 450 words."
+                ),
+            },
+            {
+                "role": "user",
+                "content": (
+                    "Compact pipeline JSON context:\n"
+                    f"{compact_chat_context(record)}\n\n"
+                    "Dashboard visible rows context:\n"
+                    f"{dashboard_context or 'No dashboard context provided.'}\n\n"
+                    "Retrieved SKBP wiki notes:\n"
+                    f"{wiki_context}\n\n"
+                    "User question:\n"
+                    f"{message}"
+                ),
+            },
+        ],
+        "temperature": 0.2,
+        "max_tokens": OPENROUTER_MAX_TOKENS,
+        "stream": True,
+    }
+
+    errors: list[str] = []
+    for model in openrouter_models_to_try():
+        payload = {**base_payload, "model": model}
+        request = urllib.request.Request(
+            OPENROUTER_API_URL,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": os.getenv("OPENROUTER_SITE_URL", "http://127.0.0.1:8000"),
+                "X-Title": os.getenv("OPENROUTER_APP_TITLE", "SKBP Pipeline Finder"),
+            },
+            method="POST",
+        )
+        try:
+            response = urllib.request.urlopen(request, timeout=120)
+            return response, wiki_snippets, None
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="replace")
+            errors.append(f"{model}: HTTP {exc.code} - {summarize_openrouter_error(detail)}")
+            if exc.code in {401, 402, 403} or "free-models-per-day" in detail.lower():
+                break
+        except Exception as exc:
+            errors.append(f"{model}: request failed - {exc}")
+
+    return iter(()), wiki_snippets, " / ".join(errors[:4]) or "OpenRouter returned no usable response."
+
+
+def local_agentic_reply(
+    record: dict[str, Any],
+    message: str,
+    dashboard_context: str,
+    wiki_sources: list[dict[str, str | int]],
+    ai_error: str | None,
+) -> str:
+    summary = record.get("json_summary") or {}
+    scoring = record.get("scoring") or {}
+    criteria = scoring.get("criteria") or {}
+    platform = criteria.get("platform_attractiveness") or {}
+    target = criteria.get("target_relevance") or {}
+    data = criteria.get("data_maturity") or {}
+    market = criteria.get("marketability") or {}
+    source_lines = [
+        f"- {source.get('path')} (match score {source.get('score')})"
+        for source in wiki_sources[:4]
+    ]
+    visible_lines = [
+        line.strip()
+        for line in (dashboard_context or "").splitlines()
+        if line.strip().startswith("-")
+    ][:5]
+
+    lines = [
+        "OpenRouter 실제 답변을 받지 못해, 로컬 JSON + wiki 검색 결과로 우선 답변합니다.",
+    ]
+    error = concise_ai_error(ai_error)
+    if error:
+        lines.extend(["", f"상태: {error}"])
+
+    lines.extend([
+        "",
+        "우선 후보",
+        f"- {summary.get('asset_name', '-')} ({summary.get('company', '-')})",
+        f"- Theme / Cluster: {summary.get('theme', '-')} / {summary.get('cluster', '-')}",
+        f"- Target: {summary.get('target', '-')}",
+        f"- Total score: {scoring.get('total_score', '-')} / {scoring.get('max_score', '-')}",
+        "",
+        "판단 근거",
+        f"- Target Relevance {target.get('score', '-')}: {target.get('main_line_summary') or target.get('reason', '-')}",
+        f"- Platform {platform.get('score', '-')}: {platform.get('main_line_summary') or platform.get('reason', '-')}",
+        f"- Data Maturity {data.get('score', '-')}: {data.get('main_line_summary') or data.get('reason', '-')}",
+        f"- Marketability {market.get('score', '-')}: {market.get('main_line_summary') or market.get('reason', '-')}",
+    ])
+
+    if visible_lines:
+        lines.extend(["", "대시보드 비교 후보", *visible_lines])
+    if source_lines:
+        lines.extend(["", "검색된 wiki 근거", *source_lines])
+
+    lines.extend([
+        "",
+        "다음 확인 포인트",
+        "- 임상 efficacy readout, 권리/라이선스 범위, 경쟁 asset 대비 차별성, marketability 산식의 근거 URL을 추가 확인하는 것이 좋습니다.",
+    ])
+    return "\n".join(lines)
+
+
 @app.get("/")
 def index() -> FileResponse:
     return FileResponse(ROOT / "index.html")
@@ -599,6 +1126,27 @@ def index() -> FileResponse:
 @app.get("/detail")
 def detail() -> FileResponse:
     return FileResponse(ROOT / "detail.html")
+
+
+@app.get("/wiki-view")
+def wiki_view() -> FileResponse:
+    return FileResponse(ROOT / "wiki_view.html")
+
+
+@app.get("/api/wiki-note")
+def get_wiki_note(path: str) -> dict[str, Any]:
+    normalized = path.replace("\\", "/").lstrip("/")
+    target = (WIKI_DIR / normalized).resolve()
+    wiki_root = WIKI_DIR.resolve()
+    if not str(target).startswith(str(wiki_root)) or target.suffix.lower() != ".md":
+        raise HTTPException(status_code=400, detail="Invalid wiki note path.")
+    if not target.exists() or not target.is_file():
+        raise HTTPException(status_code=404, detail=f"Wiki note not found: {normalized}")
+    return {
+        "path": target.relative_to(wiki_root).as_posix(),
+        "title": target.stem.replace("_", " "),
+        "markdown": target.read_text(encoding="utf-8", errors="replace"),
+    }
 
 
 @app.get("/api/records")
@@ -873,6 +1421,103 @@ def export_markdown_layers() -> dict[str, Any]:
 
 
 @app.post("/api/chat")
+async def chat_with_record_openrouter(request: Request) -> dict[str, Any]:
+    payload = await request.json()
+    record_id = payload.get("record_id")
+    message = (payload.get("message") or "").strip()
+    dashboard_context = (payload.get("dashboard_context") or "").strip()
+    allow_draft = bool(payload.get("allow_draft", True))
+
+    if not record_id or not message:
+        raise HTTPException(status_code=400, detail="record_id and message are required.")
+
+    records = load_records()
+    record = next((item for item in records if record_key(item) == record_id), None)
+    if record is None:
+        raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
+
+    draft = build_ai_draft(record, message) if allow_draft else None
+    reply, ai_error, wiki_sources = call_openrouter_chat(record, message, dashboard_context)
+    if not reply:
+        reply = local_agentic_reply(record, message, dashboard_context, wiki_sources, ai_error)
+        ai_error = None
+    draft_response = draft
+    if draft_response:
+        reply += "\n\n수정 초안도 함께 만들었습니다. 화면의 '초안 적용' 버튼을 누르면 이 record JSON에 저장됩니다."
+    draft = None
+    if ai_error:
+            reply += f"\n\nOpenRouter 상태: {ai_error}"
+
+    if draft:
+        reply += "\n\n수정 초안도 함께 만들었습니다. 화면의 '초안 적용' 버튼을 누르면 이 record JSON에 저장됩니다."
+
+    return {
+        "reply": reply,
+        "draft_record": draft_response["record"] if draft_response else None,
+        "draft_changes": draft_response["changes"] if draft_response else [],
+        "sources": wiki_sources,
+    }
+
+
+@app.post("/api/chat/stream")
+async def chat_with_record_stream(request: Request) -> StreamingResponse:
+    payload = await request.json()
+    record_id = payload.get("record_id")
+    message = (payload.get("message") or "").strip()
+    dashboard_context = (payload.get("dashboard_context") or "").strip()
+
+    if not record_id or not message:
+        raise HTTPException(status_code=400, detail="record_id and message are required.")
+
+    records = load_records()
+    record = next((item for item in records if record_key(item) == record_id), None)
+    if record is None:
+        raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
+
+    def event_generator():
+        stream, wiki_sources, ai_error = stream_openrouter_chat(record, message, dashboard_context)
+        yield sse_event("sources", wiki_sources)
+        yield sse_event("status", {"message": "관련 JSON과 wiki note를 검색했습니다. AI 답변을 생성합니다."})
+
+        if ai_error:
+            fallback = local_agentic_reply(record, message, dashboard_context, wiki_sources, ai_error)
+            for chunk in chunk_text(fallback):
+                yield sse_event("delta", {"text": chunk})
+            yield sse_event("done", {"fallback": True})
+            return
+
+        try:
+            for raw_line in stream:
+                line = raw_line.decode("utf-8", errors="replace").strip()
+                if not line or not line.startswith("data:"):
+                    continue
+                data_text = line.removeprefix("data:").strip()
+                if data_text == "[DONE]":
+                    break
+                try:
+                    data = json.loads(data_text)
+                except json.JSONDecodeError:
+                    continue
+                delta = data.get("choices", [{}])[0].get("delta", {}).get("content")
+                if delta:
+                    yield sse_event("delta", {"text": delta})
+        except Exception as exc:
+            fallback = local_agentic_reply(record, message, dashboard_context, wiki_sources, str(exc))
+            for chunk in chunk_text(fallback):
+                yield sse_event("delta", {"text": chunk})
+            yield sse_event("done", {"fallback": True})
+            return
+        finally:
+            close = getattr(stream, "close", None)
+            if callable(close):
+                close()
+
+        yield sse_event("done", {"fallback": False})
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+
+@app.post("/api/chat/mock")
 async def chat_with_record(request: Request) -> dict[str, Any]:
     payload = await request.json()
     record_id = payload.get("record_id")

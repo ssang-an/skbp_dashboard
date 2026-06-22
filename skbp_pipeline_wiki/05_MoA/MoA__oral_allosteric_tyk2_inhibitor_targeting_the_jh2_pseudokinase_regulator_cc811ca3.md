@@ -6,8 +6,8 @@ aliases:
   - "oral_allosteric_tyk2_inhibitor_targeting_the_jh2_pseudokinase_regulator_cc811ca3"
 tags:
   - "pipeline/moa"
-created_at: "2026-06-22"
-updated_at: "2026-06-22"
+created_at: "2026-06-23"
+updated_at: "2026-06-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

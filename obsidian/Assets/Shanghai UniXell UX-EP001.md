@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-06-22T23:36:17"
+generated_at: "2026-06-23T00:19:35"
 record_id: "Shanghai_UniXell_UX-EP001_20260621"
 company: "Shanghai UniXell Biotechnology Co., Ltd."
 country: "China"

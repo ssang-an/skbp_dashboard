@@ -2379,6 +2379,416 @@
       "score": "",
       "recommendation": "",
       "evidence_level": "E2"
+    },
+    {
+      "id": "asset::ns-041",
+      "label": "NS-041",
+      "type": "asset",
+      "title": "Asset__NS-041__NeuShen_NS-041",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": 14,
+      "recommendation": "Watch",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "company::neushen_therapeutics",
+      "label": "NeuShen Therapeutics",
+      "type": "company",
+      "title": "Company__NeuShen_Therapeutics",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::kcnq2_3_(kv7.2_kv7.3)",
+      "label": "KCNQ2/3 (Kv7.2/Kv7.3)",
+      "type": "target",
+      "title": "Target__KCNQ2_3_(Kv7.2_Kv7.3)",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::selective_kcnq2_3_activator;_modulates_m-current,_hyperpolarizes_neuron_889f7860",
+      "label": "Selective KCNQ2/3 activator; modulates M-current, hyperpolarizes neurons, suppresses repetitive action potential firing and neuronal hyperexcitability.",
+      "type": "moa",
+      "title": "MoA__Selective_KCNQ2_3_activator;_modulates_M-current,_hyperpolarizes_neuron_889f7860",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::oral_small-molecule_tablet;_neushen_small-molecule_cns_discovery_platform",
+      "label": "Oral small-molecule / tablet; NeuShen small-molecule CNS discovery platform",
+      "type": "modality",
+      "title": "Modality__Oral_small-molecule_tablet;_NeuShen_small-molecule_CNS_discovery_platform",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::focal_onset_seizure;_major_depressive_disorder;_pain",
+      "label": "Focal onset seizure; major depressive disorder; pain",
+      "type": "indication",
+      "title": "Indication__Focal_onset_seizure;_major_depressive_disorder;_pain",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::ns-041_20260623",
+      "label": "Scorecard - NS-041",
+      "type": "scorecard",
+      "title": "Scorecard__NS-041__20260623",
+      "tags": "pipeline/scorecard",
+      "score": 14,
+      "recommendation": "Watch",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "competitor::xenon_pharmaceuticals_azetukalner_xen1101",
+      "label": "Azetukalner / XEN1101",
+      "type": "competitor",
+      "title": "Competitor__Xenon_Pharmaceuticals__Azetukalner_XEN1101",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::biohaven_opakalim_bhv-7000",
+      "label": "Opakalim / BHV-7000",
+      "type": "competitor",
+      "title": "Competitor__Biohaven__Opakalim_BHV-7000",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::gsk_valeant_historical_retigabine_ezogabine_potiga_trobalt",
+      "label": "Retigabine / Ezogabine / Potiga / Trobalt",
+      "type": "competitor",
+      "title": "Competitor__GSK_Valeant_historical__Retigabine_Ezogabine_Potiga_Trobalt",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::quralis_qrl-101",
+      "label": "QRL-101",
+      "type": "competitor",
+      "title": "Competitor__QurAlis__QRL-101",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::saniona_jazz_pharmaceuticals_san2355",
+      "label": "SAN2355",
+      "type": "competitor",
+      "title": "Competitor__Saniona_Jazz_Pharmaceuticals__SAN2355",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::praxis_precision_medicines_prax-628",
+      "label": "PRAX-628",
+      "type": "competitor",
+      "title": "Competitor__Praxis_Precision_Medicines__PRAX-628",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::sk_life_science_sk_biopharmaceuticals_cenobamate_xcopri",
+      "label": "Cenobamate / XCOPRI",
+      "type": "competitor",
+      "title": "Competitor__SK_Life_Science_SK_Biopharmaceuticals__Cenobamate_XCOPRI",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "source::https_www.neushen.com_news_2024_neushen-therapeutics-granted-nmpa-cde-i_17f201b3",
+      "label": "NeuShen NS-041 NMPA CDE IND approval",
+      "type": "source",
+      "title": "Source__NeuShen_NS-041_NMPA_CDE_IND_approval",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.neushen.com_our-pipeline.html",
+      "label": "NeuShen pipeline",
+      "type": "source",
+      "title": "Source__NeuShen_pipeline",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.neushen.com_news_2023_neushen-therapeutics-announces-poster-p_8287ae4c",
+      "label": "NeuShen ACS Fall 2023 poster",
+      "type": "source",
+      "title": "Source__NeuShen_ACS_Fall_2023_poster",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.hkexnews.hk_listedco_listconews_sehk_2025_1221_2025122100017.pdf",
+      "label": "HKEX/Livzon depression clinical trial approval",
+      "type": "source",
+      "title": "Source__HKEX_Livzon_depression_clinical_trial_approval",
+      "tags": "pipeline/source;source/clinical_trial_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_en.livzon.com.cn_news_1028.html",
+      "label": "Livzon Phase I completion",
+      "type": "source",
+      "title": "Source__Livzon_Phase_I_completion",
+      "tags": "pipeline/source;source/news",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.neushen.com_company.html",
+      "label": "NeuShen company page",
+      "type": "source",
+      "title": "Source__NeuShen_company_page",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.chinadrugtrials.org.cn_clinicaltrials.searchlist.dhtml_keywor_8402ee62",
+      "label": "China Drug Trials CTR20251874",
+      "type": "source",
+      "title": "Source__China_Drug_Trials_CTR20251874",
+      "tags": "pipeline/source;source/clinical_trial_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.chinadrugtrials.org.cn_clinicaltrials.searchlist.dhtml_keywor_3bfec74b",
+      "label": "China Drug Trials CTR20253838",
+      "type": "source",
+      "title": "Source__China_Drug_Trials_CTR20253838",
+      "tags": "pipeline/source;source/clinical_trial_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_jamanetwork.com_journals_jamaneurology_fullarticle_2809938",
+      "label": "JAMA Neurology XEN1101 epilepsy",
+      "type": "source",
+      "title": "Source__JAMA_Neurology_XEN1101_epilepsy",
+      "tags": "pipeline/source;source/publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_jamanetwork.com_journals_jamanetworkopen_fullarticle_2834419",
+      "label": "JAMA Network Open azetukalner MDD",
+      "type": "source",
+      "title": "Source__JAMA_Network_Open_azetukalner_MDD",
+      "tags": "pipeline/source;source/publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_investor.xenon-pharma.com_news-releases_news-release-details_xeno_dfccb5d1",
+      "label": "Xenon Phase 3 azetukalner PR",
+      "type": "source",
+      "title": "Source__Xenon_Phase_3_azetukalner_PR",
+      "tags": "pipeline/source;source/news",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.biohaven.com_pipeline_innovation-engine_kv7",
+      "label": "Biohaven Kv7 pipeline",
+      "type": "source",
+      "title": "Source__Biohaven_Kv7_pipeline",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.who.int_news-room_fact-sheets_detail_epilepsy",
+      "label": "WHO epilepsy fact sheet",
+      "type": "source",
+      "title": "Source__WHO_epilepsy_fact_sheet",
+      "tags": "pipeline/source;source/market",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.sklifescienceinc.com_pdf_sklsi_connecticut_prescriber_disclos_5d011039",
+      "label": "SK Life Science XCOPRI WAC disclosure",
+      "type": "source",
+      "title": "Source__SK_Life_Science_XCOPRI_WAC_disclosure",
+      "tags": "pipeline/source;source/market",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.accessdata.fda.gov_drugsatfda_docs_label_2013_022345s006lbl.pdf",
+      "label": "Retigabine / Ezogabine / Potiga / Trobalt source",
+      "type": "source",
+      "title": "Source__Retigabine_Ezogabine_Potiga_Trobalt_source",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.quralis.com_news_quralis-announces-expansion-of-its-selective_9729cd1f",
+      "label": "QRL-101 source",
+      "type": "source",
+      "title": "Source__QRL-101_source",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.bioworld.com_articles_723481-jazz-gains-rights-to-sanionas-san-2355",
+      "label": "SAN2355 source",
+      "type": "source",
+      "title": "Source__SAN2355_source",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_ir.praxismedicines.com_news-releases_news-release-details_praxis-_54863f5e",
+      "label": "PRAX-628 source",
+      "type": "source",
+      "title": "Source__PRAX-628_source",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.neushen.com_news_2023_neushen-therapeutics-announces-nmpa-cde_495859f0",
+      "label": "https://www.neushen.com/news/2023/neushen-therapeutics-announces-nmpa-cde-acceptance-of-ind-application-for-kcnq23-activator-ns-041.html",
+      "type": "source",
+      "title": "Source__https_www.neushen.com_news_2023_neushen-therapeutics-announces-nmpa-cde_495859f0",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.prnewswire.com_news-releases_biohaven-reports-new-clinical-da_fced1f21",
+      "label": "https://www.prnewswire.com/news-releases/biohaven-reports-new-clinical-data-in-epilepsy-with-opakalim-a-selective-kv7-27-3-activator-highlighting-seizure-control-and-markedly-differentiated-tolerability-profile-302781743.html",
+      "type": "source",
+      "title": "Source__https_www.prnewswire.com_news-releases_biohaven-reports-new-clinical-da_fced1f21",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.gsk.com_en-gb_media_press-releases_gsk-and-valeant-receive-eu_0732d64c",
+      "label": "https://www.gsk.com/en-gb/media/press-releases/gsk-and-valeant-receive-european-authorisation-for-trobalt-retigabine/",
+      "type": "source",
+      "title": "Source__https_www.gsk.com_en-gb_media_press-releases_gsk-and-valeant-receive-eu_0732d64c",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.ilae.org_files_dmfile_gsk_retigabinetrobalt-reminder.pdf",
+      "label": "https://www.ilae.org/files/dmfile/GSK_RetigabineTrobalt-Reminder.pdf",
+      "type": "source",
+      "title": "Source__https_www.ilae.org_files_dmfile_GSK_RetigabineTrobalt-Reminder.pdf",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_mfn.se_a_saniona_saniona-provides-update-on-major-progress-for-san2355",
+      "label": "https://mfn.se/a/saniona/saniona-provides-update-on-major-progress-for-san2355",
+      "type": "source",
+      "title": "Source__https_mfn.se_a_saniona_saniona-provides-update-on-major-progress-for-san2355",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.neushen.com_news_2026_neushen-therapeutics-announces-completi_523a0bb1",
+      "label": "https://www.neushen.com/news/2026/neushen-therapeutics-announces-completion-of-series-a-plus-financing.html",
+      "type": "source",
+      "title": "Source__https_www.neushen.com_news_2026_neushen-therapeutics-announces-completi_523a0bb1",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_synapse.patsnap.com_drug_ffa60f392516470c92875b9236e91c4e",
+      "label": "https://synapse.patsnap.com/drug/ffa60f392516470c92875b9236e91c4e",
+      "type": "source",
+      "title": "Source__https_synapse.patsnap.com_drug_ffa60f392516470c92875b9236e91c4e",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc1071497",
+      "label": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1071497/",
+      "type": "source",
+      "title": "Source__https_pmc.ncbi.nlm.nih.gov_articles_PMC1071497",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_securities.miraeasset.com_bbs_download_2108666.pdf_attachmentid=2108666",
+      "label": "https://securities.miraeasset.com/bbs/download/2108666.pdf?attachmentId=2108666",
+      "type": "source",
+      "title": "Source__https_securities.miraeasset.com_bbs_download_2108666.pdf_attachmentId=2108666",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
     }
   ],
   "edges": [
@@ -5062,6 +5472,489 @@
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E2",
       "source_note": "Source__https_icer.org_news-insights_press-releases_icer-publishes-final-report_8763a14b"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "company::neushen_therapeutics",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "target::kcnq2_3_(kv7.2_kv7.3)",
+      "relationship": "TARGETS",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "moa::selective_kcnq2_3_activator;_modulates_m-current,_hyperpolarizes_neuron_889f7860",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "modality::oral_small-molecule_tablet;_neushen_small-molecule_cns_discovery_platform",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "indication::focal_onset_seizure;_major_depressive_disorder;_pain",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "cluster::ion_channel",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "scorecard::ns-041_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "competitor::xenon_pharmaceuticals_azetukalner_xen1101",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "competitor::biohaven_opakalim_bhv-7000",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "competitor::gsk_valeant_historical_retigabine_ezogabine_potiga_trobalt",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "competitor::quralis_qrl-101",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "competitor::saniona_jazz_pharmaceuticals_san2355",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "competitor::praxis_precision_medicines_prax-628",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "competitor::sk_life_science_sk_biopharmaceuticals_cenobamate_xcopri",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__NS-041__20260623"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.neushen.com_news_2024_neushen-therapeutics-granted-nmpa-cde-i_17f201b3",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__NeuShen_NS-041_NMPA_CDE_IND_approval"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.neushen.com_news_2024_neushen-therapeutics-granted-nmpa-cde-i_17f201b3",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__NeuShen_NS-041_NMPA_CDE_IND_approval"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.neushen.com_our-pipeline.html",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__NeuShen_pipeline"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.neushen.com_our-pipeline.html",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__NeuShen_pipeline"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.neushen.com_news_2023_neushen-therapeutics-announces-poster-p_8287ae4c",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__NeuShen_ACS_Fall_2023_poster"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.neushen.com_news_2023_neushen-therapeutics-announces-poster-p_8287ae4c",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__NeuShen_ACS_Fall_2023_poster"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.hkexnews.hk_listedco_listconews_sehk_2025_1221_2025122100017.pdf",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__HKEX_Livzon_depression_clinical_trial_approval"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.hkexnews.hk_listedco_listconews_sehk_2025_1221_2025122100017.pdf",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__HKEX_Livzon_depression_clinical_trial_approval"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_en.livzon.com.cn_news_1028.html",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Livzon_Phase_I_completion"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_en.livzon.com.cn_news_1028.html",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Livzon_Phase_I_completion"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.neushen.com_company.html",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__NeuShen_company_page"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.neushen.com_company.html",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__NeuShen_company_page"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.chinadrugtrials.org.cn_clinicaltrials.searchlist.dhtml_keywor_8402ee62",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__China_Drug_Trials_CTR20251874"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.chinadrugtrials.org.cn_clinicaltrials.searchlist.dhtml_keywor_8402ee62",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__China_Drug_Trials_CTR20251874"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.chinadrugtrials.org.cn_clinicaltrials.searchlist.dhtml_keywor_3bfec74b",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__China_Drug_Trials_CTR20253838"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.chinadrugtrials.org.cn_clinicaltrials.searchlist.dhtml_keywor_3bfec74b",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__China_Drug_Trials_CTR20253838"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_jamanetwork.com_journals_jamaneurology_fullarticle_2809938",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__JAMA_Neurology_XEN1101_epilepsy"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_jamanetwork.com_journals_jamaneurology_fullarticle_2809938",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__JAMA_Neurology_XEN1101_epilepsy"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_jamanetwork.com_journals_jamanetworkopen_fullarticle_2834419",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__JAMA_Network_Open_azetukalner_MDD"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_jamanetwork.com_journals_jamanetworkopen_fullarticle_2834419",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__JAMA_Network_Open_azetukalner_MDD"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_investor.xenon-pharma.com_news-releases_news-release-details_xeno_dfccb5d1",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Xenon_Phase_3_azetukalner_PR"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_investor.xenon-pharma.com_news-releases_news-release-details_xeno_dfccb5d1",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Xenon_Phase_3_azetukalner_PR"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.biohaven.com_pipeline_innovation-engine_kv7",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Biohaven_Kv7_pipeline"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.biohaven.com_pipeline_innovation-engine_kv7",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Biohaven_Kv7_pipeline"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.who.int_news-room_fact-sheets_detail_epilepsy",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__WHO_epilepsy_fact_sheet"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.who.int_news-room_fact-sheets_detail_epilepsy",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__WHO_epilepsy_fact_sheet"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.sklifescienceinc.com_pdf_sklsi_connecticut_prescriber_disclos_5d011039",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__SK_Life_Science_XCOPRI_WAC_disclosure"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.sklifescienceinc.com_pdf_sklsi_connecticut_prescriber_disclos_5d011039",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__SK_Life_Science_XCOPRI_WAC_disclosure"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.accessdata.fda.gov_drugsatfda_docs_label_2013_022345s006lbl.pdf",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Retigabine_Ezogabine_Potiga_Trobalt_source"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.accessdata.fda.gov_drugsatfda_docs_label_2013_022345s006lbl.pdf",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Retigabine_Ezogabine_Potiga_Trobalt_source"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.quralis.com_news_quralis-announces-expansion-of-its-selective_9729cd1f",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__QRL-101_source"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.quralis.com_news_quralis-announces-expansion-of-its-selective_9729cd1f",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__QRL-101_source"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.bioworld.com_articles_723481-jazz-gains-rights-to-sanionas-san-2355",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__SAN2355_source"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.bioworld.com_articles_723481-jazz-gains-rights-to-sanionas-san-2355",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__SAN2355_source"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_ir.praxismedicines.com_news-releases_news-release-details_praxis-_54863f5e",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__PRAX-628_source"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_ir.praxismedicines.com_news-releases_news-release-details_praxis-_54863f5e",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__PRAX-628_source"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.neushen.com_news_2023_neushen-therapeutics-announces-nmpa-cde_495859f0",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_www.neushen.com_news_2023_neushen-therapeutics-announces-nmpa-cde_495859f0"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.neushen.com_news_2023_neushen-therapeutics-announces-nmpa-cde_495859f0",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_www.neushen.com_news_2023_neushen-therapeutics-announces-nmpa-cde_495859f0"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.prnewswire.com_news-releases_biohaven-reports-new-clinical-da_fced1f21",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_www.prnewswire.com_news-releases_biohaven-reports-new-clinical-da_fced1f21"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.prnewswire.com_news-releases_biohaven-reports-new-clinical-da_fced1f21",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_www.prnewswire.com_news-releases_biohaven-reports-new-clinical-da_fced1f21"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.gsk.com_en-gb_media_press-releases_gsk-and-valeant-receive-eu_0732d64c",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_www.gsk.com_en-gb_media_press-releases_gsk-and-valeant-receive-eu_0732d64c"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.gsk.com_en-gb_media_press-releases_gsk-and-valeant-receive-eu_0732d64c",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_www.gsk.com_en-gb_media_press-releases_gsk-and-valeant-receive-eu_0732d64c"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.ilae.org_files_dmfile_gsk_retigabinetrobalt-reminder.pdf",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_www.ilae.org_files_dmfile_GSK_RetigabineTrobalt-Reminder.pdf"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.ilae.org_files_dmfile_gsk_retigabinetrobalt-reminder.pdf",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_www.ilae.org_files_dmfile_GSK_RetigabineTrobalt-Reminder.pdf"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_mfn.se_a_saniona_saniona-provides-update-on-major-progress-for-san2355",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_mfn.se_a_saniona_saniona-provides-update-on-major-progress-for-san2355"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_mfn.se_a_saniona_saniona-provides-update-on-major-progress-for-san2355",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_mfn.se_a_saniona_saniona-provides-update-on-major-progress-for-san2355"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_www.neushen.com_news_2026_neushen-therapeutics-announces-completi_523a0bb1",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_www.neushen.com_news_2026_neushen-therapeutics-announces-completi_523a0bb1"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_www.neushen.com_news_2026_neushen-therapeutics-announces-completi_523a0bb1",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_www.neushen.com_news_2026_neushen-therapeutics-announces-completi_523a0bb1"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_synapse.patsnap.com_drug_ffa60f392516470c92875b9236e91c4e",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_synapse.patsnap.com_drug_ffa60f392516470c92875b9236e91c4e"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_synapse.patsnap.com_drug_ffa60f392516470c92875b9236e91c4e",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_synapse.patsnap.com_drug_ffa60f392516470c92875b9236e91c4e"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc1071497",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_pmc.ncbi.nlm.nih.gov_articles_PMC1071497"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc1071497",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_pmc.ncbi.nlm.nih.gov_articles_PMC1071497"
+    },
+    {
+      "source": "asset::ns-041",
+      "target": "source::https_securities.miraeasset.com_bbs_download_2108666.pdf_attachmentid=2108666",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_securities.miraeasset.com_bbs_download_2108666.pdf_attachmentId=2108666"
+    },
+    {
+      "source": "scorecard::ns-041_20260623",
+      "target": "source::https_securities.miraeasset.com_bbs_download_2108666.pdf_attachmentid=2108666",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_securities.miraeasset.com_bbs_download_2108666.pdf_attachmentId=2108666"
     }
   ]
 }

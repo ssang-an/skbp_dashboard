@@ -1,5 +1,7 @@
 const API_URL = '/api/records';
 const PAGE_SIZE = 10;
+const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
+const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
 
 const state = {
   rawRecords: [],
@@ -12,7 +14,10 @@ const state = {
   sortKey: 'totalScore',
   sortDirection: 'desc',
   page: 1,
-  selectedIds: new Set()
+  selectedIds: new Set(),
+  extraColumns: new Set(JSON.parse(localStorage.getItem('skbp.dashboard.extraColumns') || '[]')),
+  agentSessions: [],
+  activeAgentSessionId: localStorage.getItem(AGENT_ACTIVE_SESSION_KEY) || ''
 };
 
 const elements = {
@@ -31,6 +36,9 @@ const elements = {
   agentMessages: document.querySelector('#agentMessages'),
   agentForm: document.querySelector('#agentForm'),
   agentInput: document.querySelector('#agentInput'),
+  agentSessionSelect: document.querySelector('#agentSessionSelect'),
+  agentNewSessionButton: document.querySelector('#agentNewSessionButton'),
+  agentDeleteSessionButton: document.querySelector('#agentDeleteSessionButton'),
   metricTotal: document.querySelector('#metricTotal'),
   metricPass: document.querySelector('#metricPass'),
   metricScore: document.querySelector('#metricScore'),
@@ -41,15 +49,22 @@ const elements = {
   countryChart: document.querySelector('#countryChart'),
   passDonut: document.querySelector('#passDonut'),
   passLegend: document.querySelector('#passLegend'),
+  scoreAverageChart: document.querySelector('#scoreAverageChart'),
+  priorityList: document.querySelector('#priorityList'),
   searchInput: document.querySelector('#searchInput'),
   stageFilter: document.querySelector('#stageFilter'),
   themeFilter: document.querySelector('#themeFilter'),
   countryFilter: document.querySelector('#countryFilter'),
   passFilter: document.querySelector('#passFilter'),
   tableCount: document.querySelector('#tableCount'),
+  columnSettingsButton: document.querySelector('#columnSettingsButton'),
+  columnSettingsPanel: document.querySelector('#columnSettingsPanel'),
+  columnSettingsGrid: document.querySelector('#columnSettingsGrid'),
+  pipelineHeaderRow: document.querySelector('#pipelineHeaderRow'),
   selectPageRows: document.querySelector('#selectPageRows'),
   deleteSelectedButton: document.querySelector('#deleteSelectedButton'),
   pipelineTable: document.querySelector('#pipelineTable'),
+  pipelineColGroup: document.querySelector('#pipelineColGroup'),
   pageInfo: document.querySelector('#pageInfo'),
   prevPage: document.querySelector('#prevPage'),
   nextPage: document.querySelector('#nextPage'),
@@ -278,6 +293,43 @@ function flattenRecord(record, index) {
   };
 }
 
+const EXTRA_COLUMN_DEFINITIONS = [
+  { key: 'moa', label: 'MoA', path: 'structured_table.moa' },
+  { key: 'modality', label: 'Modality', path: 'structured_table.modality_platform' },
+  { key: 'indication', label: 'Indication', path: 'structured_table.indication' },
+  { key: 'headquarters', label: 'HQ', path: 'company_profile.headquarters' },
+  { key: 'companyStage', label: 'Company stage', path: 'company_profile.company_stage' },
+  { key: 'platformSummary', label: 'Platform summary', path: 'company_profile.platform_summary' },
+  { key: 'competitiveDensity', label: 'Competition', path: 'competitive_analysis.competitive_density' },
+  { key: 'similarCount', label: 'Similar count', path: 'competitive_analysis.similarity_summary.similar_pipeline_count' },
+  { key: 'recommendation', label: 'Recommendation', path: 'scoring.recommendation' },
+  { key: 'hardFilterReason', label: 'Filter reason', path: 'hard_filter.reason' },
+  { key: 'parserStatus', label: 'Parser status', path: 'source_report.parser_status' },
+  { key: 'firstSource', label: 'First source URL', path: 'structured_table.sources.0.source_url' },
+  { key: 'uncertainPoints', label: 'Uncertain points', path: 'validation.uncertain_points' }
+];
+
+function formatExtraColumnValue(value) {
+  if (value === null || value === undefined || value === '') return '-';
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => (typeof item === 'object' ? JSON.stringify(item) : String(item)))
+      .filter(Boolean)
+      .slice(0, 3)
+      .join(' | ') || '-';
+  }
+  if (typeof value === 'object') return JSON.stringify(value);
+  return String(value);
+}
+
+function selectedExtraColumns() {
+  return EXTRA_COLUMN_DEFINITIONS.filter((column) => state.extraColumns.has(column.key));
+}
+
+function persistExtraColumns() {
+  localStorage.setItem('skbp.dashboard.extraColumns', JSON.stringify([...state.extraColumns]));
+}
+
 function average(values) {
   const nums = values.filter((value) => Number.isFinite(value));
   if (!nums.length) return null;
@@ -371,11 +423,12 @@ function renderMetrics() {
 
 function chartBar(label, value, max, tone = '') {
   const width = max ? Math.round((value / max) * 100) : 0;
+  const safeLabel = escapeHtml(label);
   return `
     <div class="bar-row">
-      <span>${label}</span>
+      <span title="${safeLabel}">${safeLabel}</span>
       <div class="bar-track"><div class="bar-fill ${tone}" style="width:${width}%"></div></div>
-      <strong>${value}</strong>
+      <strong>${escapeHtml(value)}</strong>
     </div>
   `;
 }
@@ -412,6 +465,47 @@ function renderCharts() {
     <span><b class="legend-dot pass"></b>PASS ${pass}</span>
     <span><b class="legend-dot fail"></b>Other ${Math.max(total - pass, 0)}</span>
   `;
+
+  if (elements.scoreAverageChart) {
+    const scoreItems = [
+      ['TR', average(state.rows.map((row) => row.targetScore))],
+      ['Comp', average(state.rows.map((row) => row.competitiveScore))],
+      ['MOA', average(state.rows.map((row) => row.moaScore))],
+      ['Plat', average(state.rows.map((row) => row.platformScore))],
+      ['Exp', average(state.rows.map((row) => row.expansionScore))],
+      ['Data', average(state.rows.map((row) => row.dataScore))],
+      ['Market', average(state.rows.map((row) => row.marketScore))]
+    ];
+    elements.scoreAverageChart.innerHTML = scoreItems
+      .map(([label, value]) => chartBar(label, Number.isFinite(value) ? Number(value.toFixed(1)) : 0, 3, value >= 2 ? 'good' : ''))
+      .join('');
+  }
+
+  if (elements.priorityList) {
+    const topRows = [...state.rows]
+      .sort((a, b) => (b.totalScore ?? -1) - (a.totalScore ?? -1))
+      .slice(0, 3);
+    elements.priorityList.innerHTML = topRows.length
+      ? topRows.map((row) => `
+          <button type="button" class="priority-item" data-record-id="${escapeHtml(row.id)}">
+            <strong>${escapeHtml(row.asset)}</strong>
+            <span>${escapeHtml(row.theme)} · ${escapeHtml(row.cluster)}</span>
+            <b>${row.totalScore ?? '-'} / ${row.maxScore ?? 21}</b>
+          </button>
+        `).join('')
+      : '<div class="empty-state">No assets loaded</div>';
+  }
+}
+
+function renderColumnSettings() {
+  if (!elements.columnSettingsGrid) return;
+  elements.columnSettingsGrid.innerHTML = EXTRA_COLUMN_DEFINITIONS.map((column) => `
+    <label class="column-option">
+      <input type="checkbox" value="${escapeHtml(column.key)}" ${state.extraColumns.has(column.key) ? 'checked' : ''} />
+      <span>${escapeHtml(column.label)}</span>
+      <small>${escapeHtml(column.path)}</small>
+    </label>
+  `).join('');
 }
 
 function scoreTooltip(label, criterionInfo, max) {
@@ -461,6 +555,56 @@ function renderTable() {
   state.page = Math.min(state.page, pageCount);
   const start = (state.page - 1) * PAGE_SIZE;
   const pageRows = visibleRows.slice(start, start + PAGE_SIZE);
+  const extraColumns = selectedExtraColumns();
+
+  if (elements.pipelineColGroup) {
+    elements.pipelineColGroup.innerHTML = `
+      <col class="pipeline-col-select" />
+      <col class="pipeline-col-company" />
+      <col class="pipeline-col-country" />
+      <col class="pipeline-col-asset" />
+      <col class="pipeline-col-target" />
+      <col class="pipeline-col-stage" />
+      <col class="pipeline-col-filter" />
+      <col class="pipeline-col-score" />
+      <col class="pipeline-col-score" />
+      <col class="pipeline-col-score" />
+      <col class="pipeline-col-score" />
+      <col class="pipeline-col-score" />
+      <col class="pipeline-col-score" />
+      <col class="pipeline-col-score" />
+      <col class="pipeline-col-score" />
+      ${extraColumns.map(() => '<col class="pipeline-col-extra" />').join('')}
+    `;
+  }
+  const tableElement = elements.pipelineTable?.closest('table');
+  if (tableElement) {
+    tableElement.style.minWidth = extraColumns.length ? `${1180 + extraColumns.length * 150}px` : '0';
+  }
+
+  if (elements.pipelineHeaderRow) {
+    elements.pipelineHeaderRow.innerHTML = `
+      <th class="select-col">
+        <input id="selectPageRows" type="checkbox" aria-label="현재 페이지 전체 선택" />
+      </th>
+      <th><button data-sort="company" type="button">Company</button></th>
+      <th><button data-sort="country" type="button">Country</button></th>
+      <th><button data-sort="asset" type="button">Asset</button></th>
+      <th><button data-sort="target" type="button">Target / Theme / Cluster</button></th>
+      <th><button data-sort="stage" type="button">Stage</button></th>
+      <th><button data-sort="hardFilter" type="button">Filter</button></th>
+      <th><button data-sort="targetScore" type="button">TR</button></th>
+      <th><button data-sort="competitiveScore" type="button">Comp</button></th>
+      <th><button data-sort="moaScore" type="button">MOA</button></th>
+      <th><button data-sort="platformScore" type="button">Plat</button></th>
+      <th><button data-sort="expansionScore" type="button">Exp</button></th>
+      <th><button data-sort="dataScore" type="button">Data</button></th>
+      <th><button data-sort="marketScore" type="button">Market</button></th>
+      <th><button data-sort="totalScore" type="button">Total</button></th>
+      ${extraColumns.map((column) => `<th class="extra-column-head"><span title="${escapeHtml(column.path)}">${escapeHtml(column.label)}</span></th>`).join('')}
+    `;
+    elements.selectPageRows = document.querySelector('#selectPageRows');
+  }
 
   elements.tableCount.textContent = `${visibleRows.length} items · 10 rows/page`;
   elements.pipelineTable.innerHTML = pageRows.length
@@ -493,11 +637,15 @@ function renderTable() {
               <td class="score-cell">${scoreBadge(row.dataScore, 3, scoreTooltip('Data Maturity', row.criteria.data, 3))}</td>
               <td class="score-cell">${scoreBadge(row.marketScore, 3, scoreTooltip('Marketability', row.criteria.market, 3))}</td>
               <td class="score-cell total-score-cell">${scoreBadge(row.totalScore, row.maxScore, `Total Score: ${row.totalScore ?? '-'} / ${row.maxScore}`)}</td>
+              ${extraColumns.map((column) => {
+                const value = formatExtraColumnValue(get(row.raw, column.path, '-'));
+                return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
+              }).join('')}
             </tr>
           `;
         })
         .join('')
-    : '<tr><td colspan="15" class="empty-cell">조건에 맞는 데이터가 없습니다.</td></tr>';
+    : `<tr><td colspan="${15 + extraColumns.length}" class="empty-cell">조건에 맞는 데이터가 없습니다.</td></tr>`;
 
   elements.pageInfo.textContent = `${state.page} / ${pageCount}`;
   elements.prevPage.disabled = state.page <= 1;
@@ -548,6 +696,7 @@ async function deleteSelectedRecords() {
 function render() {
   renderMetrics();
   renderCharts();
+  renderColumnSettings();
   renderTable();
 }
 
@@ -582,6 +731,7 @@ function scoreExportFields(row, key) {
 
 function exportPipelineTable() {
   const rows = getVisibleRows();
+  const extraColumns = selectedExtraColumns();
   const headers = [
     'Company',
     'Country',
@@ -697,7 +847,8 @@ function exportPipelineTable() {
     'Similar Pipeline Count',
     'High Similarity Count',
     'One Line Summary',
-    'Record ID'
+    'Record ID',
+    ...extraColumns.map((column) => column.label)
   ];
 
   const body = rows.map((row) => [
@@ -724,7 +875,8 @@ function exportPipelineTable() {
     row.similarPipelineCount ?? '',
     row.highSimilarityCount ?? '',
     row.summary,
-    row.id
+    row.id,
+    ...extraColumns.map((column) => formatExtraColumnValue(get(row.raw, column.path, '-')))
   ]);
 
   const csv = [headers, ...body].map((line) => line.map(csvValue).join(',')).join('\r\n');
@@ -778,6 +930,57 @@ function closeAiDrawer() {
   }, 180);
 }
 
+function setupResizableDrawer(drawer, storageKey, defaultWidth = 520) {
+  const handle = drawer?.querySelector('[data-resize-drawer]');
+  if (!drawer || !handle) return;
+
+  const minWidth = 380;
+  const getMaxWidth = () => Math.max(minWidth, Math.min(window.innerWidth - 32, 1080));
+  const clampWidth = (value) => Math.max(minWidth, Math.min(value, getMaxWidth()));
+  const applyWidth = (value) => {
+    const width = clampWidth(value);
+    drawer.style.setProperty('--drawer-width', `${width}px`);
+    localStorage.setItem(storageKey, String(width));
+  };
+
+  const savedWidth = Number(localStorage.getItem(storageKey));
+  applyWidth(Number.isFinite(savedWidth) ? savedWidth : defaultWidth);
+
+  const startResize = (event) => {
+    event.preventDefault();
+    handle.setPointerCapture?.(event.pointerId);
+    drawer.classList.add('is-resizing');
+
+    const onMove = (moveEvent) => {
+      applyWidth(window.innerWidth - moveEvent.clientX);
+    };
+    const onUp = () => {
+      drawer.classList.remove('is-resizing');
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp, { once: true });
+  };
+
+  handle.addEventListener('pointerdown', startResize);
+  handle.addEventListener('keydown', (event) => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const current = Number.parseInt(getComputedStyle(drawer).getPropertyValue('--drawer-width'), 10) || defaultWidth;
+    if (event.key === 'ArrowLeft') applyWidth(current + 32);
+    if (event.key === 'ArrowRight') applyWidth(current - 32);
+    if (event.key === 'Home') applyWidth(minWidth);
+    if (event.key === 'End') applyWidth(getMaxWidth());
+  });
+
+  window.addEventListener('resize', () => {
+    const current = Number.parseInt(getComputedStyle(drawer).getPropertyValue('--drawer-width'), 10) || defaultWidth;
+    applyWidth(current);
+  });
+}
+
 function openCriteriaDrawer() {
   elements.criteriaDrawer.hidden = false;
   elements.criteriaBackdrop.hidden = false;
@@ -798,14 +1001,315 @@ function closeCriteriaDrawer() {
   }, 180);
 }
 
-function addAgentMessage(role, text) {
+function renderAgentInlineMarkdown(text) {
+  return escapeHtml(text)
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+function renderAgentMarkdownTable(lines, startIndex) {
+  const tableLines = [];
+  let index = startIndex;
+  while (index < lines.length && lines[index].trim().startsWith('|')) {
+    tableLines.push(lines[index].trim());
+    index += 1;
+  }
+
+  const rows = tableLines
+    .filter((line) => !/^\|\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$/.test(line))
+    .map((line) => line.replace(/^\||\|$/g, '').split('|').map((cell) => cell.trim()));
+  if (!rows.length) return { html: '', nextIndex: index };
+
+  const [head, ...body] = rows;
+  const header = `<thead><tr>${head.map((cell) => `<th>${renderAgentInlineMarkdown(cell)}</th>`).join('')}</tr></thead>`;
+  const bodyHtml = `<tbody>${body.map((row) => `<tr>${row.map((cell) => `<td>${renderAgentInlineMarkdown(cell)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  return {
+    html: `<div class="agent-md-table-wrap"><table class="agent-md-table">${header}${bodyHtml}</table></div>`,
+    nextIndex: index,
+  };
+}
+
+function renderAgentText(text) {
+  const lines = String(text || '').split('\n');
+  const blocks = [];
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const raw = lines[index];
+    const line = raw.trim();
+    if (!line) continue;
+
+    if (line.startsWith('```')) {
+      const language = line.slice(3).trim();
+      const code = [];
+      index += 1;
+      while (index < lines.length && !lines[index].trim().startsWith('```')) {
+        code.push(lines[index]);
+        index += 1;
+      }
+      blocks.push(`<pre><span>${escapeHtml(language || 'code')}</span><code>${escapeHtml(code.join('\n'))}</code></pre>`);
+      continue;
+    }
+
+    if (line.startsWith('|')) {
+      const table = renderAgentMarkdownTable(lines, index);
+      blocks.push(table.html);
+      index = table.nextIndex - 1;
+      continue;
+    }
+
+    if (line.startsWith('### ')) {
+      blocks.push(`<h4>${renderAgentInlineMarkdown(line.slice(4))}</h4>`);
+      continue;
+    }
+    if (line.startsWith('## ')) {
+      blocks.push(`<h3>${renderAgentInlineMarkdown(line.slice(3))}</h3>`);
+      continue;
+    }
+    if (line.startsWith('# ')) {
+      blocks.push(`<h3>${renderAgentInlineMarkdown(line.slice(2))}</h3>`);
+      continue;
+    }
+    if (line.startsWith('>')) {
+      blocks.push(`<blockquote>${renderAgentInlineMarkdown(line.replace(/^>\s*/, ''))}</blockquote>`);
+      continue;
+    }
+    if (/^[-*]\s+/.test(line)) {
+      const items = [];
+      while (index < lines.length && /^[-*]\s+/.test(lines[index].trim())) {
+        items.push(`<li>${renderAgentInlineMarkdown(lines[index].trim().replace(/^[-*]\s+/, ''))}</li>`);
+        index += 1;
+      }
+      blocks.push(`<ul>${items.join('')}</ul>`);
+      index -= 1;
+      continue;
+    }
+    if (/^\d+\.\s+/.test(line)) {
+      const items = [];
+      while (index < lines.length && /^\d+\.\s+/.test(lines[index].trim())) {
+        items.push(`<li>${renderAgentInlineMarkdown(lines[index].trim().replace(/^\d+\.\s+/, ''))}</li>`);
+        index += 1;
+      }
+      blocks.push(`<ol>${items.join('')}</ol>`);
+      index -= 1;
+      continue;
+    }
+
+    blocks.push(`<p>${renderAgentInlineMarkdown(line)}</p>`);
+  }
+
+  return blocks.join('');
+}
+
+function sourceLabel(path) {
+  return String(path || '')
+    .split('/')
+    .pop()
+    .replace(/\.md$/i, '')
+    .replaceAll('_', ' ');
+}
+
+function renderAgentSources(sources = []) {
+  if (!Array.isArray(sources) || !sources.length) return '';
+  const chips = sources.slice(0, 5).map((source) => {
+    const path = escapeHtml(source.path || '');
+    const label = escapeHtml(sourceLabel(source.path));
+    const score = escapeHtml(source.score ?? '');
+    return `<a class="agent-source-chip" href="/wiki-view?path=${encodeURIComponent(source.path || '')}" target="_blank" rel="noreferrer">${label}<span>${score}</span></a>`;
+  }).join('');
+  return `<div class="agent-sources"><span>Wiki sources</span>${chips}</div>`;
+}
+
+function createAgentMessageId() {
+  return `msg_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+}
+
+function createAgentSession(title = '새 대화') {
+  const now = new Date().toISOString();
+  return {
+    id: `session_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+    title,
+    createdAt: now,
+    updatedAt: now,
+    messages: [
+      {
+        id: createAgentMessageId(),
+        role: 'assistant',
+        text: '대시보드 JSON과 skbp_pipeline_wiki note를 자동으로 검색해 답변합니다. 후보 비교, shortlist, evidence gap, 경쟁 리스크를 질문해보세요.',
+        sources: [],
+        createdAt: now,
+        status: 'done'
+      }
+    ]
+  };
+}
+
+function loadAgentSessions() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(AGENT_SESSION_STORAGE_KEY) || '[]');
+    state.agentSessions = Array.isArray(parsed) ? parsed.filter((session) => session && session.id) : [];
+  } catch {
+    state.agentSessions = [];
+  }
+  if (!state.agentSessions.length) {
+    state.agentSessions = [createAgentSession('Pipeline discovery')];
+  }
+  if (!state.agentSessions.some((session) => session.id === state.activeAgentSessionId)) {
+    state.activeAgentSessionId = state.agentSessions[0].id;
+  }
+  saveAgentSessions();
+}
+
+function saveAgentSessions() {
+  const trimmed = state.agentSessions
+    .slice(-12)
+    .map((session) => ({
+      ...session,
+      messages: (session.messages || []).slice(-60)
+    }));
+  state.agentSessions = trimmed;
+  localStorage.setItem(AGENT_SESSION_STORAGE_KEY, JSON.stringify(trimmed));
+  localStorage.setItem(AGENT_ACTIVE_SESSION_KEY, state.activeAgentSessionId);
+}
+
+function activeAgentSession() {
+  return state.agentSessions.find((session) => session.id === state.activeAgentSessionId) || state.agentSessions[0];
+}
+
+function updateAgentSessionMessage(message) {
+  const session = activeAgentSession();
+  if (!session) return;
+  const index = (session.messages || []).findIndex((item) => item.id === message.id);
+  if (index >= 0) {
+    session.messages[index] = { ...session.messages[index], ...message };
+  } else {
+    session.messages = [...(session.messages || []), message];
+  }
+  session.updatedAt = new Date().toISOString();
+  saveAgentSessions();
+  renderAgentSessionControls();
+}
+
+function sessionTitleFromQuestion(question) {
+  const compact = String(question || '').replace(/\s+/g, ' ').trim();
+  return compact.length > 34 ? `${compact.slice(0, 34)}...` : compact || '새 대화';
+}
+
+function renderAgentSessionControls() {
+  if (!elements.agentSessionSelect) return;
+  elements.agentSessionSelect.innerHTML = state.agentSessions
+    .map((session) => {
+      const count = Math.max(0, (session.messages || []).filter((message) => message.role === 'user').length);
+      return `<option value="${escapeHtml(session.id)}">${escapeHtml(session.title || '새 대화')} · ${count}Q</option>`;
+    })
+    .join('');
+  elements.agentSessionSelect.value = state.activeAgentSessionId;
+  if (elements.agentDeleteSessionButton) {
+    elements.agentDeleteSessionButton.disabled = state.agentSessions.length <= 1;
+  }
+}
+
+function renderAgentMessagesFromSession() {
+  const session = activeAgentSession();
+  if (!session || !elements.agentMessages) return;
+  elements.agentMessages.innerHTML = '';
+  (session.messages || []).forEach((message) => {
+    addAgentMessage(message.role, message.text, {
+      messageId: message.id,
+      sources: message.sources || [],
+      pending: message.status === 'pending',
+      persist: false
+    });
+  });
+}
+
+function initializeAgentSessions() {
+  loadAgentSessions();
+  renderAgentSessionControls();
+  renderAgentMessagesFromSession();
+}
+
+function startNewAgentSession(title = '새 대화') {
+  const session = createAgentSession(title);
+  state.agentSessions.push(session);
+  state.activeAgentSessionId = session.id;
+  saveAgentSessions();
+  renderAgentSessionControls();
+  renderAgentMessagesFromSession();
+  elements.agentInput?.focus();
+}
+
+function deleteActiveAgentSession() {
+  if (state.agentSessions.length <= 1) return;
+  const current = activeAgentSession();
+  const confirmed = window.confirm(`'${current?.title || '현재 대화'}' 세션을 삭제할까요?`);
+  if (!confirmed) return;
+  state.agentSessions = state.agentSessions.filter((session) => session.id !== state.activeAgentSessionId);
+  state.activeAgentSessionId = state.agentSessions[0]?.id || '';
+  saveAgentSessions();
+  renderAgentSessionControls();
+  renderAgentMessagesFromSession();
+}
+
+function retitleActiveSessionFromQuestion(question) {
+  const session = activeAgentSession();
+  if (!session) return;
+  const userQuestionCount = (session.messages || []).filter((message) => message.role === 'user').length;
+  if (userQuestionCount === 0 || /^새 대화|Pipeline discovery$/i.test(session.title || '')) {
+    session.title = sessionTitleFromQuestion(question);
+    session.updatedAt = new Date().toISOString();
+    saveAgentSessions();
+    renderAgentSessionControls();
+  }
+}
+
+function addAgentMessage(role, text, options = {}) {
   const bubble = document.createElement('div');
   bubble.className = `agent-message ${role}`;
+  if (options.pending) bubble.classList.add('pending');
+  const messageId = options.messageId || createAgentMessageId();
+  bubble.dataset.messageId = messageId;
   bubble.innerHTML = `
-    <strong>${role === 'user' ? 'You' : 'AI Agent'}</strong>
-    <p>${escapeHtml(text)}</p>
+    <div class="agent-message-meta">
+      <strong>${role === 'user' ? 'You' : 'Pipeline Agent'}</strong>
+      ${role === 'assistant' ? '<span>JSON + Wiki retrieval</span>' : ''}
+    </div>
+    <div class="agent-message-text">${renderAgentText(text)}</div>
+    ${renderAgentSources(options.sources)}
   `;
   elements.agentMessages.appendChild(bubble);
+  elements.agentMessages.scrollTop = elements.agentMessages.scrollHeight;
+  if (options.persist !== false) {
+    updateAgentSessionMessage({
+      id: messageId,
+      role,
+      text,
+      sources: options.sources || [],
+      createdAt: new Date().toISOString(),
+      status: options.pending ? 'pending' : 'done'
+    });
+  }
+  return bubble;
+}
+
+function updateAgentMessage(bubble, text, options = {}) {
+  const textNode = bubble.querySelector('.agent-message-text');
+  if (textNode) textNode.innerHTML = renderAgentText(text);
+  if (options.done) bubble.classList.remove('pending');
+  if (options.sources) {
+    bubble.querySelector('.agent-sources')?.remove();
+    bubble.insertAdjacentHTML('beforeend', renderAgentSources(options.sources));
+  }
+  if (bubble.dataset.messageId) {
+    updateAgentSessionMessage({
+      id: bubble.dataset.messageId,
+      role: bubble.classList.contains('user') ? 'user' : 'assistant',
+      text,
+      sources: options.sources || undefined,
+      status: options.done ? 'done' : (bubble.classList.contains('pending') ? 'pending' : 'done')
+    });
+  }
   elements.agentMessages.scrollTop = elements.agentMessages.scrollHeight;
 }
 
@@ -826,6 +1330,159 @@ function mockAgentReply(question) {
     '',
     'Obsidian mock: 관련 note alias/tags를 확인하고, Agentic Search mock은 target, modality, front runner, marketability 근거를 보강하는 흐름으로 구성됩니다.'
   ].join('\n');
+}
+
+function buildDashboardAgentContext() {
+  const visibleRows = getVisibleRows();
+  const topRows = [...visibleRows]
+    .sort((a, b) => (b.totalScore ?? -1) - (a.totalScore ?? -1))
+    .slice(0, 5);
+  const summary = topRows
+    .map((row) => [
+      `- ${row.asset} (${row.company}, ${row.country})`,
+      `theme=${row.theme}`,
+      `cluster=${row.cluster}`,
+      `stage=${row.stage}`,
+      `scores=${row.totalScore}/${row.maxScore}`,
+      `TR=${row.targetScore}`,
+      `Data=${row.dataScore}`,
+      `Market=${row.marketScore}`,
+      `filter=${row.hardFilter}`
+    ].join('; '))
+    .join('\n');
+
+  return [
+    'Dashboard visible pipeline context:',
+    summary || '- No candidates match the current filters.',
+    '',
+    'Answer as a SKBP Pipeline Finder dashboard agent. Compare assets using the visible dashboard context and the selected anchor asset JSON context. If source evidence is missing, say what evidence is missing.'
+  ].join('\n');
+}
+
+function getAgentAnchorRecordId(question = '') {
+  const visibleRows = getVisibleRows();
+  const lowerQuestion = question.toLowerCase();
+  if (lowerQuestion.includes('e/i') || lowerQuestion.includes('excitation') || lowerQuestion.includes('inhibition')) {
+    const eiRow = visibleRows
+      .filter((row) => String(row.theme).toLowerCase().includes('e/i'))
+      .sort((a, b) => (b.totalScore ?? -1) - (a.totalScore ?? -1))[0];
+    if (eiRow) return eiRow.id;
+  }
+  if (lowerQuestion.includes('neuroimmune')) {
+    const neuroimmuneRow = visibleRows
+      .filter((row) => String(row.theme).toLowerCase().includes('neuroimmune'))
+      .sort((a, b) => (b.totalScore ?? -1) - (a.totalScore ?? -1))[0];
+    if (neuroimmuneRow) return neuroimmuneRow.id;
+  }
+
+  const selectedVisibleRow = visibleRows.find((row) => state.selectedIds.has(row.id));
+  if (selectedVisibleRow) return selectedVisibleRow.id;
+
+  const topVisibleRow = [...visibleRows]
+    .sort((a, b) => (b.totalScore ?? -1) - (a.totalScore ?? -1))[0];
+  return topVisibleRow?.id || state.rows[0]?.id || null;
+}
+
+async function requestDashboardAgentReply(question) {
+  const recordId = getAgentAnchorRecordId(question);
+  if (!recordId) {
+    return '분석할 pipeline JSON이 없습니다. 먼저 json 폴더에 데이터를 추가해 주세요.';
+  }
+
+  const response = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      record_id: recordId,
+      message: question,
+      dashboard_context: buildDashboardAgentContext(),
+      allow_draft: false
+    })
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'chat failed');
+  return data;
+}
+
+function parseSseEvent(block) {
+  const lines = block.split('\n');
+  let event = 'message';
+  const dataLines = [];
+  for (const line of lines) {
+    if (line.startsWith('event:')) event = line.slice(6).trim();
+    if (line.startsWith('data:')) dataLines.push(line.slice(5).trim());
+  }
+  if (!dataLines.length) return null;
+  try {
+    return { event, data: JSON.parse(dataLines.join('\n')) };
+  } catch {
+    return null;
+  }
+}
+
+async function streamDashboardAgentReply(question, bubble) {
+  const recordId = getAgentAnchorRecordId(question);
+  if (!recordId) {
+    updateAgentMessage(bubble, '분석할 pipeline JSON이 없습니다. 먼저 json 폴더에 데이터를 추가해 주세요.', { done: true });
+    return;
+  }
+
+  const response = await fetch('/api/chat/stream', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      record_id: recordId,
+      message: question,
+      dashboard_context: buildDashboardAgentContext(),
+      allow_draft: false
+    })
+  });
+  if (!response.ok || !response.body) {
+    const detail = await response.text();
+    throw new Error(detail || 'stream failed');
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let text = '';
+  let sources = [];
+  let completed = false;
+
+  const handleSseBlock = (block) => {
+    const parsed = parseSseEvent(block);
+    if (!parsed) return;
+    if (parsed.event === 'sources') {
+      sources = parsed.data || [];
+      updateAgentMessage(bubble, text || '관련 wiki note를 찾았습니다. 답변을 생성 중입니다...', { sources });
+    }
+    if (parsed.event === 'status' && !text) {
+      updateAgentMessage(bubble, parsed.data?.message || '답변 생성 중입니다...', { sources });
+    }
+    if (parsed.event === 'delta') {
+      text += parsed.data?.text || '';
+      updateAgentMessage(bubble, text, { sources });
+    }
+    if (parsed.event === 'done') {
+      completed = true;
+      updateAgentMessage(bubble, text || '답변이 비어 있습니다. 다시 질문해 주세요.', { done: true, sources });
+    }
+  };
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const blocks = buffer.split('\n\n');
+    buffer = blocks.pop() || '';
+
+    for (const block of blocks) {
+      handleSseBlock(block);
+    }
+  }
+
+  if (buffer.trim()) handleSseBlock(buffer);
+  if (!completed) updateAgentMessage(bubble, text || '답변이 비어 있습니다. 다시 질문해 주세요.', { done: true, sources });
 }
 
 async function previewPastedReportParsing() {
@@ -1575,6 +2232,23 @@ elements.selectPageRows.addEventListener('change', (event) => {
   renderTable();
 });
 
+elements.pipelineHeaderRow?.addEventListener('change', (event) => {
+  if (event.target.id !== 'selectPageRows') return;
+  const visibleRows = getVisibleRows();
+  const pageCount = Math.max(1, Math.ceil(visibleRows.length / PAGE_SIZE));
+  state.page = Math.min(state.page, pageCount);
+  const start = (state.page - 1) * PAGE_SIZE;
+  const pageRows = visibleRows.slice(start, start + PAGE_SIZE);
+  pageRows.forEach((row) => {
+    if (event.target.checked) {
+      state.selectedIds.add(row.id);
+    } else {
+      state.selectedIds.delete(row.id);
+    }
+  });
+  renderTable();
+});
+
 elements.refreshButton.addEventListener('click', () => {
   loadRecords().catch((error) => {
     elements.dataStatus.textContent = 'Load failed';
@@ -1584,6 +2258,37 @@ elements.refreshButton.addEventListener('click', () => {
 
 elements.exportExcelButton.addEventListener('click', exportPipelineTable);
 elements.deleteSelectedButton.addEventListener('click', deleteSelectedRecords);
+elements.priorityList?.addEventListener('click', (event) => {
+  const item = event.target.closest('[data-record-id]');
+  if (!item) return;
+  window.location.href = `/detail?id=${encodeURIComponent(item.dataset.recordId)}`;
+});
+elements.columnSettingsButton?.addEventListener('click', () => {
+  elements.columnSettingsPanel.hidden = !elements.columnSettingsPanel.hidden;
+});
+elements.columnSettingsGrid?.addEventListener('change', (event) => {
+  const checkbox = event.target.closest('input[type="checkbox"]');
+  if (!checkbox) return;
+  if (checkbox.checked) {
+    state.extraColumns.add(checkbox.value);
+  } else {
+    state.extraColumns.delete(checkbox.value);
+  }
+  persistExtraColumns();
+  renderTable();
+});
+
+elements.agentSessionSelect?.addEventListener('change', (event) => {
+  state.activeAgentSessionId = event.target.value;
+  saveAgentSessions();
+  renderAgentMessagesFromSession();
+});
+
+elements.agentNewSessionButton?.addEventListener('click', () => {
+  startNewAgentSession();
+});
+
+elements.agentDeleteSessionButton?.addEventListener('click', deleteActiveAgentSession);
 
 elements.aiDrawerButton.addEventListener('click', openAiDrawer);
 elements.aiDrawerClose.addEventListener('click', closeAiDrawer);
@@ -1599,13 +2304,35 @@ document.querySelectorAll('[data-agent-prompt]').forEach((button) => {
   });
 });
 
-elements.agentForm.addEventListener('submit', (event) => {
+elements.agentInput.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
+  event.preventDefault();
+  elements.agentForm.requestSubmit();
+});
+
+elements.agentForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   const question = elements.agentInput.value.trim();
   if (!question) return;
   elements.agentInput.value = '';
+  retitleActiveSessionFromQuestion(question);
   addAgentMessage('user', question);
-  addAgentMessage('assistant', mockAgentReply(question));
+  const submitButton = elements.agentForm.querySelector('button[type="submit"]');
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = '답변 중';
+  }
+  const responseBubble = addAgentMessage('assistant', '질문 분석 중...', { pending: true });
+  try {
+    await streamDashboardAgentReply(question, responseBubble);
+  } catch (error) {
+    updateAgentMessage(responseBubble, `AI 응답 오류: ${error.message}`, { done: true });
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = '질문';
+    }
+  }
 });
 
 window.addEventListener('keydown', (event) => {
@@ -1625,6 +2352,9 @@ elements.clearJsonButton.addEventListener('click', () => {
   elements.saveStatus.textContent = '원문 + JSON 입력 대기';
 });
 elements.copyPromptButton.addEventListener('click', copyPromptToClipboard);
+
+setupResizableDrawer(elements.aiDrawer, 'skbp.dashboard.aiDrawerWidth', 560);
+initializeAgentSessions();
 
 loadRecords().catch((error) => {
   elements.dataStatus.textContent = 'Load failed';

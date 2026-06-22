@@ -80,6 +80,22 @@
               <div class="donut-legend" id="passLegend"></div>
             </div>
           </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Score Profile</h2>
+              <span>criterion avg</span>
+            </div>
+            <div class="chart-stack" id="scoreAverageChart"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Priority Watch</h2>
+              <span>top assets</span>
+            </div>
+            <div class="priority-list" id="priorityList"></div>
+          </article>
         </section>
 
         <section class="panel control-panel" aria-label="Dashboard controls">
@@ -123,13 +139,21 @@
             <h2>파이프라인 테이블</h2>
             <div class="panel-actions">
               <span id="tableCount">0 items</span>
+              <button id="columnSettingsButton" type="button">컬럼 설정</button>
               <button id="deleteSelectedButton" class="danger-link-button" type="button" disabled>선택 삭제</button>
               <button id="exportExcelButton" type="button">Excel export</button>
             </div>
           </div>
+          <div class="column-settings-panel" id="columnSettingsPanel" hidden>
+            <div>
+              <strong>추가 컬럼</strong>
+              <p>JSON 원본에 있는 항목을 파이프라인 테이블에 추가로 표시합니다. 너무 많은 컬럼을 켜면 표가 촘촘해질 수 있습니다.</p>
+            </div>
+            <div class="column-settings-grid" id="columnSettingsGrid"></div>
+          </div>
           <div class="table-wrap">
             <table class="pipeline-table">
-              <colgroup>
+              <colgroup id="pipelineColGroup">
                 <col class="pipeline-col-select" />
                 <col class="pipeline-col-company" />
                 <col class="pipeline-col-country" />
@@ -147,7 +171,7 @@
                 <col class="pipeline-col-score" />
               </colgroup>
               <thead>
-                <tr>
+                <tr id="pipelineHeaderRow">
                   <th class="select-col">
                     <input id="selectPageRows" type="checkbox" aria-label="현재 페이지 전체 선택" />
                   </th>
@@ -222,6 +246,7 @@
 
     <div class="drawer-backdrop" id="aiBackdrop" hidden></div>
     <aside class="ai-drawer" id="aiDrawer" aria-label="AI pipeline search drawer" aria-hidden="true">
+      <div class="drawer-resize-handle" data-resize-drawer aria-label="Resize AI drawer" role="separator" tabindex="0"></div>
       <div class="ai-drawer-header">
         <div>
           <p class="eyebrow">Obsidian + Agentic Search</p>
@@ -237,31 +262,38 @@
         </div>
         <div>
           <span>Knowledge Mode</span>
-          <strong>Mockup</strong>
+          <strong>JSON + Wiki Agent</strong>
         </div>
       </div>
 
-      <div class="agent-tabs" aria-label="Agent sources">
-        <button class="active" type="button">Dashboard</button>
-        <button type="button">Obsidian</button>
-        <button type="button">Agentic Search</button>
+      <div class="agent-sessionbar">
+        <label>
+          <span>Conversation</span>
+          <select id="agentSessionSelect" aria-label="AI conversation session"></select>
+        </label>
+        <button id="agentNewSessionButton" type="button">새 대화</button>
+        <button id="agentDeleteSessionButton" type="button">삭제</button>
       </div>
 
       <div class="agent-suggestions">
-        <button type="button" data-agent-prompt="Find the best E/I Balance assets with strong platform fit.">E/I Balance 우선 후보 찾기</button>
-        <button type="button" data-agent-prompt="Compare Neuroimmune assets by data maturity and marketability.">Neuroimmune 비교</button>
-        <button type="button" data-agent-prompt="Which assets need more evidence before shortlisting?">근거 부족 후보 찾기</button>
+        <button type="button" data-agent-prompt="E/I Balance 후보 중 platform fit과 Data Maturity 기준으로 가장 우선순위가 높은 asset을 골라줘.">E/I 우선순위</button>
+        <button type="button" data-agent-prompt="Neuroimmune 후보를 Data Maturity, Marketability, 경쟁강도 기준으로 비교해줘.">Neuroimmune 비교</button>
+        <button type="button" data-agent-prompt="score는 괜찮지만 evidence gap이나 source 불확실성이 큰 후보를 찾아줘.">근거 gap 탐색</button>
+        <button type="button" data-agent-prompt="wiki note 근거를 바탕으로 NS-041의 경쟁 리스크와 추가 확인 포인트를 요약해줘.">Wiki 기반 검토</button>
       </div>
 
       <div class="agent-messages" id="agentMessages">
         <div class="agent-message assistant">
-          <strong>AI Agent</strong>
-          <p>현재 대시보드의 pipeline JSON, Obsidian note metadata, agentic search 결과를 함께 보는 탐색 에이전트 mockup입니다. 정확한 물질을 찾기 위한 질문을 입력해보세요.</p>
+          <div class="agent-message-meta">
+            <strong>Pipeline Agent</strong>
+            <span>JSON + Wiki retrieval</span>
+          </div>
+          <div class="agent-message-text">대시보드 JSON과 skbp_pipeline_wiki note를 자동으로 검색해 답변합니다. 후보 비교, shortlist, evidence gap, 경쟁 리스크를 질문해보세요.</div>
         </div>
       </div>
 
       <form class="agent-form" id="agentForm">
-        <textarea id="agentInput" rows="4" placeholder="예: Target Relevance 3점이면서 Marketability 2점 이상인 후보를 찾아줘."></textarea>
+        <textarea id="agentInput" rows="4" placeholder="예: E/I Balance 후보 중 platform fit과 Data Maturity가 가장 좋은 asset을 찾아줘"></textarea>
         <button class="primary-button" type="submit">질문</button>
       </form>
     </aside>

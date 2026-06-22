@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SKBP Wiki Note</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell wiki-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">SKBP Pipeline Finder</p>
+          <h1 id="wikiTitle">Wiki</h1>
+        </div>
+        <div class="top-actions">
+          <a class="secondary-link" href="/">Dashboard</a>
+          <a class="secondary-link" id="rawWikiLink" href="#" target="_blank" rel="noreferrer">Raw MD</a>
+          <span class="status-pill" id="wikiStatus">Loading</span>
+        </div>
+      </header>
+
+      <main class="wiki-layout">
+        <section class="panel wiki-note-panel">
+          <div class="panel-header">
+            <div>
+              <h2 id="wikiNoteTitle">Loading</h2>
+              <p id="wikiNotePath">-</p>
+            </div>
+          </div>
+          <article id="wikiNoteContent" class="wiki-note-content"></article>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./src/wiki_view.js"></script>
+  </body>
+</html>

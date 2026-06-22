@@ -6,8 +6,8 @@ aliases:
   - "oral_small-molecule_ldh_inhibition_intended_to_modulate_immune-cell_glu_8049671b"
 tags:
   - "pipeline/moa"
-created_at: "2026-06-22"
-updated_at: "2026-06-22"
+created_at: "2026-06-23"
+updated_at: "2026-06-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
