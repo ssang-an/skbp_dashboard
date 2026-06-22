@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SKBP Pipeline Dashboard</title>
+    <script>
+      (() => {
+        const stored = localStorage.getItem('skbp.ui.theme');
+        const theme = stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
     <link rel="stylesheet" href="./src/styles.css" />
   </head>
   <body>
@@ -13,11 +20,47 @@
           <p class="eyebrow">SKBP Pipeline Finder</p>
           <h1>Dashboard</h1>
         </div>
-        <div class="top-actions">
-          <span class="status-pill" id="dataStatus">Loading</span>
-          <button id="aiDrawerButton" type="button">AI</button>
-          <button id="criteriaDrawerButton" type="button">판단근거</button>
-          <button class="primary-button" id="refreshButton" type="button">새로고침</button>
+        <div class="top-actions" aria-label="Dashboard actions">
+          <div class="top-action-group top-primary-actions" role="group" aria-label="Analysis tools">
+            <button
+              id="aiDrawerButton"
+              class="help-tooltip"
+              type="button"
+              data-tooltip="대시보드 JSON과 Wiki note를 기반으로 후보 비교, shortlist, evidence gap을 질문합니다."
+            ><span aria-hidden="true">AI</span><b>Agent</b></button>
+            <button
+              id="criteriaDrawerButton"
+              class="help-tooltip"
+              type="button"
+              data-tooltip="SKBP 평가 기준, PASS/REVIEW/FAIL 조건, 점수표를 확인합니다."
+            ><span aria-hidden="true">?</span><b>판단근거</b></button>
+            <button
+              id="copyPromptTopButton"
+              class="help-tooltip"
+              type="button"
+              data-tooltip="GPT 조사 지침을 클립보드에 복사합니다. 복사한 지침을 ChatGPT에 붙여넣은 뒤, 조사할 회사명과 약물명/파이프라인명을 함께 입력하면 MD 리포트와 JSON Schema 형식으로 결과를 받을 수 있습니다."
+              aria-label="GPT 조사 지침 복사"
+            ><span aria-hidden="true">GPT</span><b>지침</b></button>
+          </div>
+          <div class="top-action-group top-data-actions" role="group" aria-label="Data status">
+            <button
+              class="primary-button help-tooltip"
+              id="refreshButton"
+              type="button"
+              data-tooltip="저장된 파이프라인 JSON을 다시 불러와 대시보드를 갱신합니다."
+            ><span aria-hidden="true">↻</span><b>새로고침</b></button>
+            <span class="status-pill" id="dataStatus">Loading</span>
+          </div>
+          <button
+            class="theme-toggle icon-button help-tooltip"
+            data-theme-toggle
+            type="button"
+            data-tooltip="라이트/다크 모드를 전환합니다."
+            aria-label="라이트/다크 모드 전환"
+          >
+            <span data-theme-icon aria-hidden="true">◐</span>
+            <span class="sr-only" data-theme-label>Dark</span>
+          </button>
         </div>
       </header>
 
@@ -139,9 +182,18 @@
             <h2>파이프라인 테이블</h2>
             <div class="panel-actions">
               <span id="tableCount">0 items</span>
-              <button id="columnSettingsButton" type="button">컬럼 설정</button>
-              <button id="deleteSelectedButton" class="danger-link-button" type="button" disabled>선택 삭제</button>
-              <button id="exportExcelButton" type="button">Excel export</button>
+              <label class="page-size-control">
+                <span>Rows</span>
+                <select id="pageSizeSelect" aria-label="한 페이지 표시 행 수">
+                  <option value="10">10</option>
+                  <option value="30">30</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </label>
+              <button id="columnSettingsButton" class="help-tooltip" type="button" data-tooltip="테이블에 표시할 추가 JSON 컬럼을 선택합니다.">컬럼 설정</button>
+              <button id="deleteSelectedButton" class="danger-link-button help-tooltip" type="button" data-tooltip="체크한 파이프라인 레코드를 삭제합니다." disabled>선택 삭제</button>
+              <button id="exportExcelButton" class="help-tooltip" type="button" data-tooltip="현재 테이블 데이터를 Excel 파일로 내보냅니다.">Excel export</button>
             </div>
           </div>
           <div class="column-settings-panel" id="columnSettingsPanel" hidden>
@@ -170,7 +222,7 @@
                 <col class="pipeline-col-score" />
                 <col class="pipeline-col-score" />
               </colgroup>
-              <thead>
+              <thead id="pipelineTableHead">
                 <tr id="pipelineHeaderRow">
                   <th class="select-col">
                     <input id="selectPageRows" type="checkbox" aria-label="현재 페이지 전체 선택" />
@@ -195,9 +247,9 @@
             </table>
           </div>
           <div class="table-footer">
-            <button id="prevPage" type="button">이전</button>
+            <button id="prevPage" class="help-tooltip" type="button" data-tooltip="이전 페이지로 이동합니다.">이전</button>
             <span id="pageInfo">1 / 1</span>
-            <button id="nextPage" type="button">다음</button>
+            <button id="nextPage" class="help-tooltip" type="button" data-tooltip="다음 페이지로 이동합니다.">다음</button>
           </div>
         </section>
 
@@ -220,25 +272,9 @@
             </label>
           </div>
           <div class="editor-actions">
-            <button id="previewInputButton" type="button">입력 검토</button>
-            <button class="primary-button" id="saveJsonButton" type="button">JSON 저장</button>
-            <button id="clearJsonButton" type="button">비우기</button>
-          </div>
-        </section>
-
-        <section class="panel prompt-panel">
-          <div class="panel-header">
-            <div>
-              <h2>GPT 조사 지침</h2>
-              <p>회사명과 약물명만 바꿔서 GPT에 붙여넣으면 MD 파일 박스와 JSON 박스를 함께 만들 수 있습니다.</p>
-            </div>
-            <span id="promptCopyStatus">대기 중</span>
-          </div>
-          <div class="prompt-copy-body">
-            <p>
-              복사된 지침은 회사 기본정보, Pipeline Snapshot, Scorecard, 기준별 판단근거, 경쟁약물, Marketability A/B/C, URL 출처, MD/JSON 복붙 박스 출력 형식을 포함합니다.
-            </p>
-            <button class="primary-button" id="copyPromptButton" type="button">GPT 지침 복사</button>
+            <button class="action-pill help-tooltip" id="previewInputButton" type="button" data-tooltip="붙여넣은 Markdown과 JSON을 저장 전에 검토합니다."><span aria-hidden="true">✓</span><b>입력 검토</b></button>
+            <button class="action-pill primary-button help-tooltip" id="saveJsonButton" type="button" data-tooltip="검토한 원문 리포트와 구조화 JSON을 새 레코드로 저장합니다."><span aria-hidden="true">＋</span><b>JSON 저장</b></button>
+            <button class="action-pill help-tooltip" id="clearJsonButton" type="button" data-tooltip="입력한 Markdown과 JSON 내용을 모두 비웁니다."><span aria-hidden="true">×</span><b>비우기</b></button>
           </div>
         </section>
       </main>

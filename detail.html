@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pipeline Detail</title>
+    <script>
+      (() => {
+        const stored = localStorage.getItem('skbp.ui.theme');
+        const theme = stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
     <link rel="stylesheet" href="./src/styles.css" />
   </head>
   <body>
@@ -13,16 +20,57 @@
           <p class="eyebrow">SKBP Pipeline Finder</p>
           <h1 id="detailTitle">Details : Loading</h1>
         </div>
-        <div class="top-actions">
-          <a class="secondary-link" href="/">대시보드로 돌아가기</a>
-          <button id="detailAiButton" type="button">AI</button>
-          <button id="criteriaDrawerButton" type="button">판단근거</button>
-          <button id="deleteRecordButton" class="danger-button" type="button">삭제</button>
-          <span class="status-pill" id="detailStatus">Loading</span>
+        <div class="top-actions" aria-label="Detail actions">
+          <div class="top-action-group top-primary-actions" role="group" aria-label="Detail tools">
+            <a
+              class="secondary-link help-tooltip"
+              href="/"
+              data-tooltip="대시보드 목록 화면으로 돌아갑니다."
+            ><span aria-hidden="true">←</span><b>대시보드</b></a>
+            <button
+              id="detailAiButton"
+              class="help-tooltip"
+              type="button"
+              data-tooltip="현재 asset의 JSON과 Wiki note를 기반으로 근거, 리스크, 시장성을 질문합니다."
+            ><span aria-hidden="true">AI</span><b>Agent</b></button>
+            <button
+              id="criteriaDrawerButton"
+              class="help-tooltip"
+              type="button"
+              data-tooltip="SKBP 평가 기준, PASS/REVIEW/FAIL 조건, 점수표를 확인합니다."
+            ><span aria-hidden="true">?</span><b>판단근거</b></button>
+          </div>
+          <div class="top-action-group top-data-actions" role="group" aria-label="Record status">
+            <button
+              id="deleteRecordButton"
+              class="danger-button help-tooltip"
+              type="button"
+              data-tooltip="현재 asset record를 삭제합니다."
+            ><span aria-hidden="true">×</span><b>삭제</b></button>
+            <span class="status-pill" id="detailStatus">Loading</span>
+          </div>
+          <button
+            class="theme-toggle icon-button help-tooltip"
+            data-theme-toggle
+            type="button"
+            data-tooltip="라이트/다크 모드를 전환합니다."
+            aria-label="라이트/다크 모드 전환"
+          >
+            <span data-theme-icon aria-hidden="true">◐</span>
+            <span class="sr-only" data-theme-label>Dark</span>
+          </button>
         </div>
       </header>
 
       <main class="detail-layout">
+        <aside class="panel detail-outline-panel" aria-label="Detail outline">
+          <div class="detail-outline-header">
+            <span>Outline</span>
+            <strong>Mini TOC</strong>
+          </div>
+          <nav id="detailOutlineList" class="detail-outline-list"></nav>
+        </aside>
+
         <section class="panel raw-report-panel">
           <div class="panel-header">
             <div>
@@ -66,6 +114,15 @@
           <span>Score Context</span>
           <strong id="chatContextScore">-</strong>
         </div>
+      </div>
+
+      <div class="agent-sessionbar">
+        <label>
+          <span>Conversation</span>
+          <select id="chatSessionSelect" aria-label="Asset chat conversation session"></select>
+        </label>
+        <button id="chatNewSessionButton" type="button">새 대화</button>
+        <button id="chatDeleteSessionButton" type="button">삭제</button>
       </div>
 
       <div class="agent-suggestions">

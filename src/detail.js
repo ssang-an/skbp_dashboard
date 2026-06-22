@@ -1,11 +1,16 @@
+import { setupThemeToggle } from './theme.js';
+
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
+const DETAIL_CHAT_SESSION_PREFIX = 'skbp.detail.chatSessions.v1';
+const DETAIL_CHAT_ACTIVE_PREFIX = 'skbp.detail.activeChatSession.v1';
 
 const elements = {
   title: document.querySelector('#detailTitle'),
   status: document.querySelector('#detailStatus'),
   subtitle: document.querySelector('#detailSubtitle'),
   sourceReportViewer: document.querySelector('#sourceReportViewer'),
+  detailOutlineList: document.querySelector('#detailOutlineList'),
   scoreEvidenceSubtitle: document.querySelector('#scoreEvidenceSubtitle'),
   scoreEvidenceStatus: document.querySelector('#scoreEvidenceStatus'),
   scoreEvidenceViewer: document.querySelector('#scoreEvidenceViewer'),
@@ -20,6 +25,9 @@ const elements = {
   aiDrawerClose: document.querySelector('#aiDrawerClose'),
   chatContextAsset: document.querySelector('#chatContextAsset'),
   chatContextScore: document.querySelector('#chatContextScore'),
+  chatSessionSelect: document.querySelector('#chatSessionSelect'),
+  chatNewSessionButton: document.querySelector('#chatNewSessionButton'),
+  chatDeleteSessionButton: document.querySelector('#chatDeleteSessionButton'),
   messages: document.querySelector('#chatMessages'),
   form: document.querySelector('#chatForm'),
   input: document.querySelector('#chatInput'),
@@ -46,6 +54,8 @@ const scoringLabels = {
 let currentRecord = null;
 let currentRecordId = recordId;
 let pendingDraftRecord = null;
+let chatSessions = [];
+let activeChatSessionId = '';
 
 function escapeHtml(value) {
   return String(value ?? '')
@@ -473,6 +483,7 @@ function renderRecord(record) {
   elements.sourceReportViewer.innerHTML = rawMarkdown
     ? renderMarkdown(sourceReport.raw_markdown)
     : renderMarkdown(buildReadableSourceReport(record));
+  renderDetailOutline();
   elements.scoreEvidenceViewer.innerHTML = renderScoreEvidence(record);
   elements.scoreEvidenceStatus.textContent = 'Loaded';
   elements.scoreEvidenceSubtitle.textContent = `${scoringLabels.target_relevance}부터 Marketability까지 점수별 근거를 표시합니다.`;
@@ -664,14 +675,147 @@ function renderMarkdown(markdown) {
   return blocks.join('');
 }
 
+function renderDetailOutline() {
+  if (!elements.detailOutlineList || !elements.sourceReportViewer) return;
+  const headings = [...elements.sourceReportViewer.querySelectorAll('h1, h2, h3')].slice(0, 14);
+  if (!headings.length) {
+    elements.detailOutlineList.innerHTML = '<span class="detail-outline-empty">No headings</span>';
+    return;
+  }
+
+  headings.forEach((heading, index) => {
+    heading.id = heading.id || `detail-section-${index + 1}`;
+  });
+
+  elements.detailOutlineList.innerHTML = headings
+    .map((heading) => `
+      <button type="button" data-outline-target="${escapeHtml(heading.id)}" class="outline-${heading.tagName.toLowerCase()}">
+        ${escapeHtml(heading.textContent.trim() || 'Section')}
+      </button>
+    `)
+    .join('');
+}
+
 function summarizeDraftChanges(changes = []) {
   if (!changes.length) return '변경 항목 없음';
   return changes.map((change) => `• ${change}`).join('\n');
 }
 
+function detailChatStorageKey() {
+  return `${DETAIL_CHAT_SESSION_PREFIX}:${currentRecordId || 'unknown'}`;
+}
+
+function detailChatActiveKey() {
+  return `${DETAIL_CHAT_ACTIVE_PREFIX}:${currentRecordId || 'unknown'}`;
+}
+
+function createChatMessageId() {
+  return `msg_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+}
+
+function currentAssetLabel() {
+  const summary = currentRecord?.json_summary || {};
+  const table = currentRecord?.structured_table || {};
+  return summary.asset_name || table.asset_name || currentRecordId || '이 asset';
+}
+
+function defaultDetailChatText() {
+  return `${currentAssetLabel()} record를 불러왔습니다. 점수 근거, 리스크, 시장성, 경쟁 상황에 대해 질문할 수 있습니다.`;
+}
+
+function createChatSession(title = '새 대화') {
+  const now = new Date().toISOString();
+  return {
+    id: `session_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+    title,
+    createdAt: now,
+    updatedAt: now,
+    messages: [
+      {
+        id: createChatMessageId(),
+        role: 'assistant',
+        text: defaultDetailChatText(),
+        sources: [],
+        createdAt: now,
+        status: 'done',
+        canApply: false
+      }
+    ]
+  };
+}
+
+function loadChatSessions() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(detailChatStorageKey()) || '[]');
+    chatSessions = Array.isArray(parsed) ? parsed.filter((session) => session && session.id) : [];
+  } catch {
+    chatSessions = [];
+  }
+
+  activeChatSessionId = localStorage.getItem(detailChatActiveKey()) || '';
+  if (!chatSessions.length) {
+    chatSessions = [createChatSession('Asset evidence')];
+  }
+  if (!chatSessions.some((session) => session.id === activeChatSessionId)) {
+    activeChatSessionId = chatSessions[0].id;
+  }
+  saveChatSessions();
+}
+
+function saveChatSessions() {
+  const trimmed = chatSessions
+    .slice(-12)
+    .map((session) => ({
+      ...session,
+      messages: (session.messages || []).slice(-60)
+    }));
+  chatSessions = trimmed;
+  localStorage.setItem(detailChatStorageKey(), JSON.stringify(trimmed));
+  localStorage.setItem(detailChatActiveKey(), activeChatSessionId);
+}
+
+function activeChatSession() {
+  return chatSessions.find((session) => session.id === activeChatSessionId) || chatSessions[0];
+}
+
+function sessionTitleFromQuestion(question) {
+  const compact = String(question || '').replace(/\s+/g, ' ').trim();
+  return compact.length > 34 ? `${compact.slice(0, 34)}...` : compact || '새 대화';
+}
+
+function renderChatSessionControls() {
+  if (!elements.chatSessionSelect) return;
+  elements.chatSessionSelect.innerHTML = chatSessions
+    .map((session) => {
+      const count = Math.max(0, (session.messages || []).filter((message) => message.role === 'user').length);
+      return `<option value="${escapeHtml(session.id)}">${escapeHtml(session.title || '새 대화')} · ${count}Q</option>`;
+    })
+    .join('');
+  elements.chatSessionSelect.value = activeChatSessionId;
+  if (elements.chatDeleteSessionButton) {
+    elements.chatDeleteSessionButton.disabled = chatSessions.length <= 1;
+  }
+}
+
+function updateChatSessionMessage(message) {
+  const session = activeChatSession();
+  if (!session) return;
+  const index = (session.messages || []).findIndex((item) => item.id === message.id);
+  if (index >= 0) {
+    session.messages[index] = { ...session.messages[index], ...message };
+  } else {
+    session.messages = [...(session.messages || []), message];
+  }
+  session.updatedAt = new Date().toISOString();
+  saveChatSessions();
+  renderChatSessionControls();
+}
+
 function addMessage(role, text, options = {}) {
   const bubble = document.createElement('div');
   bubble.className = `agent-message ${role}${options.pending ? ' pending' : ''}`;
+  const messageId = options.messageId || createChatMessageId();
+  bubble.dataset.messageId = messageId;
   const speaker = role === 'user' ? 'You' : 'Asset Agent';
   const meta = role === 'user' ? 'question' : (options.pending ? 'streaming response' : 'JSON + Wiki retrieval');
   bubble.innerHTML = `
@@ -680,6 +824,7 @@ function addMessage(role, text, options = {}) {
       <span>${meta}</span>
     </div>
     <div class="agent-message-text">${renderMarkdown(text)}</div>
+    ${renderChatSources(options.sources)}
   `;
 
   if (options.draftRecord) {
@@ -697,8 +842,23 @@ function addMessage(role, text, options = {}) {
     bubble.appendChild(draftCard);
   }
 
+  if (options.canApply && role === 'assistant' && !bubble.querySelector('[data-action="apply-ai-reply"]')) {
+    bubble.insertAdjacentHTML('beforeend', renderMessageActions());
+  }
+
   elements.messages.appendChild(bubble);
   elements.messages.scrollTop = elements.messages.scrollHeight;
+  if (options.persist !== false) {
+    updateChatSessionMessage({
+      id: messageId,
+      role,
+      text,
+      sources: options.sources || [],
+      createdAt: new Date().toISOString(),
+      status: options.pending ? 'pending' : 'done',
+      canApply: Boolean(options.canApply)
+    });
+  }
   return bubble;
 }
 
@@ -721,6 +881,14 @@ function renderChatSources(sources = []) {
   return `<div class="agent-sources"><span>Wiki sources</span>${chips}</div>`;
 }
 
+function renderMessageActions() {
+  return `
+    <div class="agent-message-actions">
+      <button type="button" data-action="apply-ai-reply">이 답변을 JSON에 반영</button>
+    </div>
+  `;
+}
+
 function updateMessage(bubble, text, options = {}) {
   const textNode = bubble.querySelector('.agent-message-text');
   if (textNode) textNode.innerHTML = renderMarkdown(text);
@@ -729,7 +897,92 @@ function updateMessage(bubble, text, options = {}) {
     bubble.querySelector('.agent-sources')?.remove();
     bubble.insertAdjacentHTML('beforeend', renderChatSources(options.sources));
   }
+  if (options.done && bubble.classList.contains('assistant') && !bubble.querySelector('[data-action="apply-ai-reply"]')) {
+    bubble.insertAdjacentHTML('beforeend', renderMessageActions());
+  }
+  if (bubble.dataset.messageId) {
+    updateChatSessionMessage({
+      id: bubble.dataset.messageId,
+      role: bubble.classList.contains('user') ? 'user' : 'assistant',
+      text,
+      sources: options.sources || undefined,
+      status: options.done ? 'done' : (bubble.classList.contains('pending') ? 'pending' : 'done'),
+      canApply: bubble.classList.contains('assistant') && (options.done || Boolean(bubble.querySelector('[data-action="apply-ai-reply"]')))
+    });
+  }
   elements.messages.scrollTop = elements.messages.scrollHeight;
+}
+
+function renderMessagesFromChatSession() {
+  const session = activeChatSession();
+  if (!session || !elements.messages) return;
+  elements.messages.innerHTML = '';
+  (session.messages || []).forEach((message) => {
+    addMessage(message.role, message.text, {
+      messageId: message.id,
+      sources: message.sources || [],
+      pending: message.status === 'pending',
+      canApply: Boolean(message.canApply),
+      persist: false
+    });
+  });
+}
+
+function initializeChatSessions() {
+  loadChatSessions();
+  renderChatSessionControls();
+  renderMessagesFromChatSession();
+}
+
+function startNewChatSession(title = '새 대화') {
+  const session = createChatSession(title);
+  chatSessions.push(session);
+  activeChatSessionId = session.id;
+  saveChatSessions();
+  renderChatSessionControls();
+  renderMessagesFromChatSession();
+  elements.input?.focus();
+}
+
+function deleteActiveChatSession() {
+  if (chatSessions.length <= 1) return;
+  const current = activeChatSession();
+  const confirmed = window.confirm(`'${current?.title || '현재 대화'}' 세션을 삭제할까요?`);
+  if (!confirmed) return;
+  chatSessions = chatSessions.filter((session) => session.id !== activeChatSessionId);
+  activeChatSessionId = chatSessions[0]?.id || '';
+  saveChatSessions();
+  renderChatSessionControls();
+  renderMessagesFromChatSession();
+}
+
+function retitleActiveChatSessionFromQuestion(question) {
+  const session = activeChatSession();
+  if (!session) return;
+  const userQuestionCount = (session.messages || []).filter((message) => message.role === 'user').length;
+  if (userQuestionCount === 0 || /^새 대화|Asset evidence$/i.test(session.title || '')) {
+    session.title = sessionTitleFromQuestion(question);
+    session.updatedAt = new Date().toISOString();
+    saveChatSessions();
+    renderChatSessionControls();
+  }
+}
+
+function createAiReplyJsonDraft(button) {
+  if (!currentRecord) return;
+  const bubble = button.closest('.agent-message');
+  const replyText = bubble?.querySelector('.agent-message-text')?.innerText?.trim();
+  if (!replyText) return;
+
+  const nextRecord = structuredClone(currentRecord);
+  nextRecord.ai_revision_draft = {
+    created_at: new Date().toISOString(),
+    source: 'detail_ai_chat',
+    instruction: 'Review this AI answer and selectively merge validated updates into the canonical schema fields.',
+    answer_markdown: replyText
+  };
+  pendingDraftRecord = nextRecord;
+  reviewPendingDraft();
 }
 
 async function saveRecord(payload, statusTarget = null) {
@@ -792,9 +1045,7 @@ async function loadRecord() {
   currentRecordId = data.record_id;
   renderRecord(currentRecord);
   elements.status.textContent = 'Loaded';
-  if (!elements.messages.querySelector('.agent-message')) {
-    addMessage('assistant', '이 약물 record를 불러왔습니다. 점수 근거, 리스크, 시장성, 경쟁 상황에 대해 질문할 수 있습니다.');
-  }
+  initializeChatSessions();
 }
 
 function openAiDrawer() {
@@ -1049,6 +1300,7 @@ elements.form.addEventListener('submit', async (event) => {
   if (!message || !currentRecord) return;
 
   elements.input.value = '';
+  retitleActiveChatSessionFromQuestion(message);
   addMessage('user', message);
   const submitButton = elements.form.querySelector('button[type="submit"]');
   if (submitButton) {
@@ -1082,9 +1334,25 @@ document.querySelectorAll('[data-chat-prompt]').forEach((button) => {
   });
 });
 
+elements.chatSessionSelect?.addEventListener('change', (event) => {
+  activeChatSessionId = event.target.value;
+  saveChatSessions();
+  renderMessagesFromChatSession();
+});
+
+elements.chatNewSessionButton?.addEventListener('click', () => {
+  startNewChatSession();
+});
+
+elements.chatDeleteSessionButton?.addEventListener('click', deleteActiveChatSession);
+
 elements.messages.addEventListener('click', (event) => {
   const button = event.target.closest('button[data-action]');
   if (!button) return;
+
+  if (button.dataset.action === 'apply-ai-reply') {
+    createAiReplyJsonDraft(button);
+  }
 
   if (button.dataset.action === 'apply-draft') {
     applyPendingDraft(button);
@@ -1093,6 +1361,12 @@ elements.messages.addEventListener('click', (event) => {
   if (button.dataset.action === 'review-draft') {
     reviewPendingDraft();
   }
+});
+
+elements.detailOutlineList?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-outline-target]');
+  if (!button) return;
+  document.getElementById(button.dataset.outlineTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 elements.detailAiButton.addEventListener('click', openAiDrawer);
@@ -1121,6 +1395,7 @@ window.addEventListener('keydown', (event) => {
 });
 
 setupResizableDrawer(elements.aiDrawer, 'skbp.detail.aiDrawerWidth', 600);
+setupThemeToggle();
 
 loadRecord().catch((error) => {
   elements.status.textContent = 'Load failed';

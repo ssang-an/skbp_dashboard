@@ -1,7 +1,53 @@
+import { setupThemeToggle } from './theme.js';
+
 const API_URL = '/api/records';
-const PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 10;
+const PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.pageSize.v1';
 const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
 const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
+const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v1';
+
+const DEFAULT_COLUMN_WIDTHS = {
+  select: 36,
+  company: 128,
+  country: 112,
+  asset: 92,
+  target: 360,
+  stage: 190,
+  hardFilter: 82,
+  targetScore: 52,
+  competitiveScore: 58,
+  moaScore: 52,
+  platformScore: 52,
+  expansionScore: 52,
+  dataScore: 56,
+  marketScore: 64,
+  totalScore: 58,
+  extra: 180
+};
+
+const MIN_COLUMN_WIDTHS = {
+  select: 34,
+  company: 86,
+  country: 82,
+  asset: 72,
+  target: 180,
+  stage: 120,
+  hardFilter: 70,
+  targetScore: 46,
+  competitiveScore: 50,
+  moaScore: 46,
+  platformScore: 46,
+  expansionScore: 46,
+  dataScore: 50,
+  marketScore: 56,
+  totalScore: 52,
+  extra: 110
+};
+
+const MAX_COLUMN_WIDTH = 720;
+const PROMPT_TOOLTIP =
+  'GPT 조사 지침을 클립보드에 복사합니다. 복사한 지침을 ChatGPT에 붙여넣은 뒤, 조사할 회사명과 약물명/파이프라인명을 함께 입력하면 MD 리포트와 JSON Schema 형식으로 결과를 받을 수 있습니다.';
 
 const state = {
   rawRecords: [],
@@ -14,8 +60,10 @@ const state = {
   sortKey: 'totalScore',
   sortDirection: 'desc',
   page: 1,
+  pageSize: Number(localStorage.getItem(PAGE_SIZE_STORAGE_KEY)) || DEFAULT_PAGE_SIZE,
   selectedIds: new Set(),
   extraColumns: new Set(JSON.parse(localStorage.getItem('skbp.dashboard.extraColumns') || '[]')),
+  columnWidths: JSON.parse(localStorage.getItem(COLUMN_WIDTH_STORAGE_KEY) || '{}'),
   agentSessions: [],
   activeAgentSessionId: localStorage.getItem(AGENT_ACTIVE_SESSION_KEY) || ''
 };
@@ -57,9 +105,11 @@ const elements = {
   countryFilter: document.querySelector('#countryFilter'),
   passFilter: document.querySelector('#passFilter'),
   tableCount: document.querySelector('#tableCount'),
+  pageSizeSelect: document.querySelector('#pageSizeSelect'),
   columnSettingsButton: document.querySelector('#columnSettingsButton'),
   columnSettingsPanel: document.querySelector('#columnSettingsPanel'),
   columnSettingsGrid: document.querySelector('#columnSettingsGrid'),
+  pipelineTableHead: document.querySelector('#pipelineTableHead'),
   pipelineHeaderRow: document.querySelector('#pipelineHeaderRow'),
   selectPageRows: document.querySelector('#selectPageRows'),
   deleteSelectedButton: document.querySelector('#deleteSelectedButton'),
@@ -74,9 +124,13 @@ const elements = {
   saveJsonButton: document.querySelector('#saveJsonButton'),
   clearJsonButton: document.querySelector('#clearJsonButton'),
   saveStatus: document.querySelector('#saveStatus'),
+  copyPromptTopButton: document.querySelector('#copyPromptTopButton'),
   copyPromptButton: document.querySelector('#copyPromptButton'),
   promptCopyStatus: document.querySelector('#promptCopyStatus')
 };
+
+let activeColumnResize = null;
+let promptCopyFeedbackTimer = null;
 
 function get(record, path, fallback = '') {
   return path.split('.').reduce((value, key) => value?.[key], record) ?? fallback;
@@ -330,6 +384,89 @@ function persistExtraColumns() {
   localStorage.setItem('skbp.dashboard.extraColumns', JSON.stringify([...state.extraColumns]));
 }
 
+function extraColumnKey(column) {
+  return `extra:${column.key}`;
+}
+
+function defaultColumnWidth(key) {
+  return DEFAULT_COLUMN_WIDTHS[key] || DEFAULT_COLUMN_WIDTHS.extra;
+}
+
+function minColumnWidth(key) {
+  return MIN_COLUMN_WIDTHS[key] || MIN_COLUMN_WIDTHS.extra;
+}
+
+function columnWidth(key) {
+  const width = Number(state.columnWidths[key]);
+  return Number.isFinite(width)
+    ? Math.max(minColumnWidth(key), Math.min(MAX_COLUMN_WIDTH, width))
+    : defaultColumnWidth(key);
+}
+
+function columnWidthStyle(key) {
+  const width = columnWidth(key);
+  return `width: ${width}px; min-width: ${width}px; max-width: ${width}px;`;
+}
+
+function columnAttrs(key) {
+  return `data-col-key="${escapeHtml(key)}" style="${columnWidthStyle(key)}"`;
+}
+
+function resizeHandle(key) {
+  if (key === 'select') return '';
+  return `<span class="column-resize-handle" data-resize-column="${escapeHtml(key)}" aria-hidden="true"></span>`;
+}
+
+function sortableHeader(label, sortKey, columnKey, attrs = '') {
+  return `<th ${attrs} ${columnAttrs(columnKey)}><button data-sort="${escapeHtml(sortKey)}" type="button">${escapeHtml(label)}</button>${resizeHandle(columnKey)}</th>`;
+}
+
+function plainHeader(label, columnKey, className = '') {
+  const classAttr = className ? ` class="${escapeHtml(className)}"` : '';
+  return `<th${classAttr} ${columnAttrs(columnKey)}><span title="${escapeHtml(label)}">${escapeHtml(label)}</span>${resizeHandle(columnKey)}</th>`;
+}
+
+function visibleColumnKeys(extraColumns = selectedExtraColumns()) {
+  return [
+    'select',
+    'company',
+    'country',
+    'asset',
+    'target',
+    'stage',
+    'hardFilter',
+    'targetScore',
+    'competitiveScore',
+    'moaScore',
+    'platformScore',
+    'expansionScore',
+    'dataScore',
+    'marketScore',
+    'totalScore',
+    ...extraColumns.map(extraColumnKey)
+  ];
+}
+
+function visibleTableWidth(extraColumns = selectedExtraColumns()) {
+  return visibleColumnKeys(extraColumns).reduce((sum, key) => sum + columnWidth(key), 0);
+}
+
+function persistColumnWidths() {
+  localStorage.setItem(COLUMN_WIDTH_STORAGE_KEY, JSON.stringify(state.columnWidths));
+}
+
+function applyColumnWidths(extraColumns = selectedExtraColumns()) {
+  visibleColumnKeys(extraColumns).forEach((key) => {
+    document.querySelectorAll(`[data-col-key="${CSS.escape(key)}"]`).forEach((element) => {
+      element.style.width = `${columnWidth(key)}px`;
+      element.style.minWidth = `${columnWidth(key)}px`;
+      element.style.maxWidth = `${columnWidth(key)}px`;
+    });
+  });
+  const tableElement = elements.pipelineTable?.closest('table');
+  if (tableElement) tableElement.style.minWidth = `${visibleTableWidth(extraColumns)}px`;
+}
+
 function average(values) {
   const nums = values.filter((value) => Number.isFinite(value));
   if (!nums.length) return null;
@@ -551,10 +688,10 @@ function scoreBadge(score, max = 3, tooltip = '') {
 
 function renderTable() {
   const visibleRows = getVisibleRows();
-  const pageCount = Math.max(1, Math.ceil(visibleRows.length / PAGE_SIZE));
+  const pageCount = Math.max(1, Math.ceil(visibleRows.length / state.pageSize));
   state.page = Math.min(state.page, pageCount);
-  const start = (state.page - 1) * PAGE_SIZE;
-  const pageRows = visibleRows.slice(start, start + PAGE_SIZE);
+  const start = (state.page - 1) * state.pageSize;
+  const pageRows = visibleRows.slice(start, start + state.pageSize);
   const extraColumns = selectedExtraColumns();
 
   if (elements.pipelineColGroup) {
@@ -577,9 +714,29 @@ function renderTable() {
       ${extraColumns.map(() => '<col class="pipeline-col-extra" />').join('')}
     `;
   }
+  if (elements.pipelineColGroup) {
+    elements.pipelineColGroup.innerHTML = `
+      <col class="pipeline-col-select" data-col-key="select" style="${columnWidthStyle('select')}" />
+      <col class="pipeline-col-company" data-col-key="company" style="${columnWidthStyle('company')}" />
+      <col class="pipeline-col-country" data-col-key="country" style="${columnWidthStyle('country')}" />
+      <col class="pipeline-col-asset" data-col-key="asset" style="${columnWidthStyle('asset')}" />
+      <col class="pipeline-col-target" data-col-key="target" style="${columnWidthStyle('target')}" />
+      <col class="pipeline-col-stage" data-col-key="stage" style="${columnWidthStyle('stage')}" />
+      <col class="pipeline-col-filter" data-col-key="hardFilter" style="${columnWidthStyle('hardFilter')}" />
+      <col class="pipeline-col-score" data-col-key="targetScore" style="${columnWidthStyle('targetScore')}" />
+      <col class="pipeline-col-score" data-col-key="competitiveScore" style="${columnWidthStyle('competitiveScore')}" />
+      <col class="pipeline-col-score" data-col-key="moaScore" style="${columnWidthStyle('moaScore')}" />
+      <col class="pipeline-col-score" data-col-key="platformScore" style="${columnWidthStyle('platformScore')}" />
+      <col class="pipeline-col-score" data-col-key="expansionScore" style="${columnWidthStyle('expansionScore')}" />
+      <col class="pipeline-col-score" data-col-key="dataScore" style="${columnWidthStyle('dataScore')}" />
+      <col class="pipeline-col-score" data-col-key="marketScore" style="${columnWidthStyle('marketScore')}" />
+      <col class="pipeline-col-score" data-col-key="totalScore" style="${columnWidthStyle('totalScore')}" />
+      ${extraColumns.map((column) => `<col class="pipeline-col-extra" data-col-key="${escapeHtml(extraColumnKey(column))}" style="${columnWidthStyle(extraColumnKey(column))}" />`).join('')}
+    `;
+  }
   const tableElement = elements.pipelineTable?.closest('table');
   if (tableElement) {
-    tableElement.style.minWidth = extraColumns.length ? `${1180 + extraColumns.length * 150}px` : '0';
+    tableElement.style.minWidth = `${visibleTableWidth(extraColumns)}px`;
   }
 
   if (elements.pipelineHeaderRow) {
@@ -606,14 +763,76 @@ function renderTable() {
     elements.selectPageRows = document.querySelector('#selectPageRows');
   }
 
-  elements.tableCount.textContent = `${visibleRows.length} items · 10 rows/page`;
+  if (elements.pipelineTableHead) {
+    elements.pipelineTableHead.innerHTML = `
+      <tr id="pipelineHeaderRow" class="pipeline-group-row">
+        <th class="select-col" rowspan="2">
+          <input id="selectPageRows" type="checkbox" aria-label="현재 페이지 전체 선택" />
+        </th>
+        <th rowspan="2"><button data-sort="company" type="button">Company</button></th>
+        <th rowspan="2"><button data-sort="country" type="button">Country</button></th>
+        <th rowspan="2"><button data-sort="asset" type="button">Asset</button></th>
+        <th rowspan="2"><button data-sort="target" type="button">Target / Theme / Cluster</button></th>
+        <th rowspan="2"><button data-sort="stage" type="button">Stage</button></th>
+        <th rowspan="2"><button data-sort="hardFilter" type="button">Filter</button></th>
+        <th class="score-group-head" colspan="8">Scorecard</th>
+        ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
+      </tr>
+      <tr class="pipeline-score-row">
+        <th><button data-sort="targetScore" type="button">TR</button></th>
+        <th><button data-sort="competitiveScore" type="button">Comp</button></th>
+        <th><button data-sort="moaScore" type="button">MOA</button></th>
+        <th><button data-sort="platformScore" type="button">Plat</button></th>
+        <th><button data-sort="expansionScore" type="button">Exp</button></th>
+        <th><button data-sort="dataScore" type="button">Data</button></th>
+        <th><button data-sort="marketScore" type="button">Market</button></th>
+        <th><button data-sort="totalScore" type="button">Total</button></th>
+        ${extraColumns.map((column) => `<th class="extra-column-head"><span title="${escapeHtml(column.path)}">${escapeHtml(column.label)}</span></th>`).join('')}
+      </tr>
+    `;
+    elements.pipelineHeaderRow = document.querySelector('#pipelineHeaderRow');
+    elements.selectPageRows = document.querySelector('#selectPageRows');
+  }
+  if (elements.pipelineTableHead) {
+    elements.pipelineTableHead.innerHTML = `
+      <tr id="pipelineHeaderRow" class="pipeline-group-row">
+        <th class="select-col" rowspan="2" ${columnAttrs('select')}>
+          <input id="selectPageRows" type="checkbox" aria-label="현재 페이지 전체 선택" />
+        </th>
+        ${sortableHeader('Company', 'company', 'company', 'rowspan="2"')}
+        ${sortableHeader('Country', 'country', 'country', 'rowspan="2"')}
+        ${sortableHeader('Asset', 'asset', 'asset', 'rowspan="2"')}
+        ${sortableHeader('Target / Theme / Cluster', 'target', 'target', 'rowspan="2"')}
+        ${sortableHeader('Stage', 'stage', 'stage', 'rowspan="2"')}
+        ${sortableHeader('Filter', 'hardFilter', 'hardFilter', 'rowspan="2"')}
+        <th class="score-group-head" colspan="8">Scorecard</th>
+        ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
+      </tr>
+      <tr class="pipeline-score-row">
+        ${sortableHeader('TR', 'targetScore', 'targetScore')}
+        ${sortableHeader('Comp', 'competitiveScore', 'competitiveScore')}
+        ${sortableHeader('MOA', 'moaScore', 'moaScore')}
+        ${sortableHeader('Plat', 'platformScore', 'platformScore')}
+        ${sortableHeader('Exp', 'expansionScore', 'expansionScore')}
+        ${sortableHeader('Data', 'dataScore', 'dataScore')}
+        ${sortableHeader('Market', 'marketScore', 'marketScore')}
+        ${sortableHeader('Total', 'totalScore', 'totalScore')}
+        ${extraColumns.map((column) => plainHeader(column.label, extraColumnKey(column), 'extra-column-head')).join('')}
+      </tr>
+    `;
+    elements.pipelineHeaderRow = document.querySelector('#pipelineHeaderRow');
+    elements.selectPageRows = document.querySelector('#selectPageRows');
+  }
+
+  elements.tableCount.textContent = `${visibleRows.length} items · ${state.pageSize} rows/page`;
   elements.pipelineTable.innerHTML = pageRows.length
     ? pageRows
         .map((row) => {
           const filterClass = row.hardFilter === 'PASS' ? 'pill pass' : row.hardFilter === 'FAIL' ? 'pill fail' : 'pill review';
-          const checked = state.selectedIds.has(row.id) ? 'checked' : '';
+          const isSelected = state.selectedIds.has(row.id);
+          const checked = isSelected ? 'checked' : '';
           return `
-            <tr class="clickable-row" data-record-id="${escapeHtml(row.id)}" title="${escapeHtml(row.summary)}">
+            <tr class="clickable-row${isSelected ? ' selected-row' : ''}" data-record-id="${escapeHtml(row.id)}" title="${escapeHtml(row.summary)}">
               <td class="select-col">
                 <input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} 선택" ${checked} />
               </td>
@@ -654,7 +873,7 @@ function renderTable() {
 }
 
 function updateSelectionControls(pageRows = null) {
-  const visibleRows = pageRows || getVisibleRows().slice((state.page - 1) * PAGE_SIZE, state.page * PAGE_SIZE);
+  const visibleRows = pageRows || getVisibleRows().slice((state.page - 1) * state.pageSize, state.page * state.pageSize);
   const selectedCount = state.selectedIds.size;
   if (elements.deleteSelectedButton) {
     elements.deleteSelectedButton.disabled = selectedCount === 0;
@@ -694,6 +913,7 @@ async function deleteSelectedRecords() {
 }
 
 function render() {
+  if (elements.pageSizeSelect) elements.pageSizeSelect.value = String(state.pageSize);
   renderMetrics();
   renderCharts();
   renderColumnSettings();
@@ -2117,7 +2337,7 @@ async function copyPromptToClipboard() {
   const prompt = buildGptInstructionPrompt();
   try {
     await navigator.clipboard.writeText(prompt);
-    elements.promptCopyStatus.textContent = '복사 완료';
+    setPromptCopyFeedback();
   } catch (error) {
     const scratch = document.createElement('textarea');
     scratch.value = prompt;
@@ -2128,33 +2348,96 @@ async function copyPromptToClipboard() {
     scratch.select();
     document.execCommand('copy');
     scratch.remove();
-    elements.promptCopyStatus.textContent = '복사 완료';
+    setPromptCopyFeedback();
   }
 }
 
-document.querySelectorAll('[data-sort]').forEach((button) => {
-  button.addEventListener('click', () => {
-    const key = button.dataset.sort;
-    if (state.sortKey === key) {
-      state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      state.sortKey = key;
-      state.sortDirection = [
-        'targetScore',
-        'competitiveScore',
-        'moaScore',
-        'platformScore',
-        'expansionScore',
-        'dataScore',
-        'marketScore',
-        'totalScore'
-      ].includes(key)
-        ? 'desc'
-        : 'asc';
+function setPromptCopyFeedback() {
+  if (elements.promptCopyStatus) {
+    elements.promptCopyStatus.textContent = '복사 완료';
+  }
+
+  if (!elements.copyPromptTopButton) {
+    return;
+  }
+
+  const label = elements.copyPromptTopButton.querySelector('b');
+  if (label) {
+    label.textContent = '복사됨';
+  }
+  elements.copyPromptTopButton.dataset.tooltip = 'GPT 조사 지침을 클립보드에 복사했습니다.';
+
+  window.clearTimeout(promptCopyFeedbackTimer);
+  promptCopyFeedbackTimer = window.setTimeout(() => {
+    if (label) {
+      label.textContent = '지침';
     }
-    renderTable();
-  });
-});
+    elements.copyPromptTopButton.dataset.tooltip = PROMPT_TOOLTIP;
+  }, 1800);
+}
+
+function sortByColumn(key) {
+  if (state.sortKey === key) {
+    state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    state.sortKey = key;
+    state.sortDirection = [
+      'targetScore',
+      'competitiveScore',
+      'moaScore',
+      'platformScore',
+      'expansionScore',
+      'dataScore',
+      'marketScore',
+      'totalScore'
+    ].includes(key)
+      ? 'desc'
+      : 'asc';
+  }
+  renderTable();
+}
+
+function beginColumnResize(event) {
+  const handle = event.target.closest('[data-resize-column]');
+  if (!handle) return;
+  event.preventDefault();
+  event.stopPropagation();
+  const key = handle.dataset.resizeColumn;
+  activeColumnResize = {
+    key,
+    startX: event.clientX,
+    startWidth: columnWidth(key)
+  };
+  document.body.classList.add('is-resizing-column');
+  handle.setPointerCapture?.(event.pointerId);
+}
+
+function updateColumnResize(event) {
+  if (!activeColumnResize) return;
+  const nextWidth = Math.max(
+    minColumnWidth(activeColumnResize.key),
+    Math.min(MAX_COLUMN_WIDTH, activeColumnResize.startWidth + event.clientX - activeColumnResize.startX)
+  );
+  state.columnWidths[activeColumnResize.key] = Math.round(nextWidth);
+  applyColumnWidths();
+}
+
+function endColumnResize() {
+  if (!activeColumnResize) return;
+  persistColumnWidths();
+  activeColumnResize = null;
+  document.body.classList.remove('is-resizing-column');
+}
+
+function resetColumnWidth(event) {
+  const handle = event.target.closest('[data-resize-column]');
+  if (!handle) return;
+  event.preventDefault();
+  event.stopPropagation();
+  delete state.columnWidths[handle.dataset.resizeColumn];
+  persistColumnWidths();
+  renderTable();
+}
 
 elements.searchInput.addEventListener('input', (event) => {
   state.query = event.target.value;
@@ -2186,6 +2469,14 @@ elements.passFilter.addEventListener('change', (event) => {
   renderTable();
 });
 
+elements.pageSizeSelect?.addEventListener('change', (event) => {
+  const nextSize = Number(event.target.value);
+  state.pageSize = [10, 30, 50, 100].includes(nextSize) ? nextSize : DEFAULT_PAGE_SIZE;
+  localStorage.setItem(PAGE_SIZE_STORAGE_KEY, String(state.pageSize));
+  state.page = 1;
+  renderTable();
+});
+
 elements.prevPage.addEventListener('click', () => {
   state.page = Math.max(1, state.page - 1);
   renderTable();
@@ -2213,15 +2504,16 @@ elements.pipelineTable.addEventListener('change', (event) => {
   } else {
     state.selectedIds.delete(id);
   }
+  checkbox.closest('tr')?.classList.toggle('selected-row', checkbox.checked);
   updateSelectionControls();
 });
 
-elements.selectPageRows.addEventListener('change', (event) => {
+elements.selectPageRows?.addEventListener('change', (event) => {
   const visibleRows = getVisibleRows();
-  const pageCount = Math.max(1, Math.ceil(visibleRows.length / PAGE_SIZE));
+  const pageCount = Math.max(1, Math.ceil(visibleRows.length / state.pageSize));
   state.page = Math.min(state.page, pageCount);
-  const start = (state.page - 1) * PAGE_SIZE;
-  const pageRows = visibleRows.slice(start, start + PAGE_SIZE);
+  const start = (state.page - 1) * state.pageSize;
+  const pageRows = visibleRows.slice(start, start + state.pageSize);
   pageRows.forEach((row) => {
     if (event.target.checked) {
       state.selectedIds.add(row.id);
@@ -2232,13 +2524,25 @@ elements.selectPageRows.addEventListener('change', (event) => {
   renderTable();
 });
 
-elements.pipelineHeaderRow?.addEventListener('change', (event) => {
+elements.pipelineTableHead?.addEventListener('click', (event) => {
+  if (event.target.closest('[data-resize-column]')) return;
+  const button = event.target.closest('button[data-sort]');
+  if (!button) return;
+  sortByColumn(button.dataset.sort);
+});
+
+elements.pipelineTableHead?.addEventListener('pointerdown', beginColumnResize);
+elements.pipelineTableHead?.addEventListener('dblclick', resetColumnWidth);
+document.addEventListener('pointermove', updateColumnResize);
+document.addEventListener('pointerup', endColumnResize);
+
+elements.pipelineTableHead?.addEventListener('change', (event) => {
   if (event.target.id !== 'selectPageRows') return;
   const visibleRows = getVisibleRows();
-  const pageCount = Math.max(1, Math.ceil(visibleRows.length / PAGE_SIZE));
+  const pageCount = Math.max(1, Math.ceil(visibleRows.length / state.pageSize));
   state.page = Math.min(state.page, pageCount);
-  const start = (state.page - 1) * PAGE_SIZE;
-  const pageRows = visibleRows.slice(start, start + PAGE_SIZE);
+  const start = (state.page - 1) * state.pageSize;
+  const pageRows = visibleRows.slice(start, start + state.pageSize);
   pageRows.forEach((row) => {
     if (event.target.checked) {
       state.selectedIds.add(row.id);
@@ -2351,9 +2655,11 @@ elements.clearJsonButton.addEventListener('click', () => {
   elements.structuredJsonInput.value = '';
   elements.saveStatus.textContent = '원문 + JSON 입력 대기';
 });
-elements.copyPromptButton.addEventListener('click', copyPromptToClipboard);
+elements.copyPromptButton?.addEventListener('click', copyPromptToClipboard);
+elements.copyPromptTopButton?.addEventListener('click', copyPromptToClipboard);
 
 setupResizableDrawer(elements.aiDrawer, 'skbp.dashboard.aiDrawerWidth', 560);
+setupThemeToggle();
 initializeAgentSessions();
 
 loadRecords().catch((error) => {
