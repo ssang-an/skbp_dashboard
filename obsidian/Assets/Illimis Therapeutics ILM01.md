@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-06-23T00:19:35"
+generated_at: "2026-06-23T23:59:29"
 record_id: "Illimis_Therapeutics_ILM01_20260621"
 company: "Illimis Therapeutics"
 country: "Republic of Korea"
@@ -9,7 +9,7 @@ target: "Aβ aggregates with TAM receptor-mediated clearance biology"
 theme: "Neuroimmune"
 cluster: "교세포 향상성"
 stage: "Preclinical / IND-enabling preparation; public clinical trial registry record not verified"
-total_score: 16
+total_score: 15
 max_score: 21
 tags:
   - "pipeline"
@@ -39,7 +39,7 @@ tags:
 | Indication | Alzheimer's disease |
 | Modality | Biologic / bispecific-like chimeric fusion protein; GAIA platform |
 | Hard Filter | REVIEW |
-| Total Score | 16 / 21 |
+| Total Score | 15 / 21 |
 
 ## One-Line Insight
 
@@ -49,10 +49,10 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 
 | Criterion | Score | Evidence Type | Rubric Definition | Judgment Reason | Why Not Higher | Evidence Sources |
 |---|---:|---|---|---|---|---|
-| Target Relevance | 3 | E3_asset_specific_preclinical_or_technical_evidence | - | Aβ 자체는 AD target이지만 ILM01의 differentiating biology는 TAM receptor, microglia/astrocyte phagocytosis, anti-inflammatory clearance라서 Neuroimmune / 교세포 향상성 cluster에 정확히 매핑된다. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
-| Competitive Landscape | 1 | E1_company_claim_or_scientific_rationale_only | - | True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않지만, commercial indication 기준으로 Leqembi, Kisunla, remternetug 등 anti-Aβ 경쟁이 이미 과밀하다. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
-| MoA Validity | 3 | E3_asset_specific_preclinical_or_technical_evidence | - | Nature Medicine 기반 αAβ-Gas6 data가 TAM-dependent clearance, reduced NF-κB/inflammation, astrocyte/microglia phagocytosis, reduced synapse elimination and microhemorrhage를 일관되게 뒷받침한다. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
-| Platform Attractiveness | 2 | E2_indirect_or_class_level_evidence | - | GAIA는 differentiated biologic fusion platform이고 anti-inflammatory clearance data가 명확하지만, SKBP 우선 modality인 small molecule/ASO/siRNA는 아니므로 2점이다. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
+| Target Relevance | 2 | E3_asset_specific_preclinical_or_technical_evidence | - | AI Agent v3.1 re-evaluation update. Applied from detail chat answer: JSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등). 대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨. 즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수/판단)는 v3.1로 업데이트된 상태입니다. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
+| Competitive Landscape | 2 | E1_company_claim_or_scientific_rationale_only | - | AI Agent v3.1 re-evaluation update. Applied from detail chat answer: JSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등). 대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨. 즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수/판단)는 v3.1로 업데이트된 상태입니다. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
+| MoA Validity | 2 | E3_asset_specific_preclinical_or_technical_evidence | - | AI Agent v3.1 re-evaluation update. Applied from detail chat answer: v3.1 기준: "same-MoA 경쟁자가 명확하지 않으면 2점 가능"이라는 해석 여지 있음. 현재 근거: True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않음. 수정 제안: "Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist"를 uncertainty로 유지하되, 점수를 2로 상향하고 근거를 "E2_indirect_or_class_level_evidence"로 조정 가능. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
+| Platform Attractiveness | 2 | E2_indirect_or_class_level_evidence | - | AI Agent v3.1 re-evaluation update. Applied from detail chat answer: Platform Attractiveness (현재 2 → 유지) GAIA는 differentiated biologic fusion platform이지만, SKBP 우선 modality(small molecule/ASO/siRNA)는 아님 → 2점 적절. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
 | Expansion Potential | 3 | E3_asset_specific_preclinical_or_technical_evidence | - | Official pipeline/platform 자료가 Aβ 외 tau, α-syn, myelin debris, PS/SLE 등으로 확장을 명시해 one-off AD asset이 아니라 TAM biology platform으로 해석된다. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
 | Data Maturity | 2 | E3_asset_specific_preclinical_or_technical_evidence | - | In vitro, in vivo, cytokine/NF-κB, scRNA-seq, AD/CAA model data는 명확하나 final ILM01 IND-enabling GLP tox/PK/PD/CMC and human data are not public. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
 | Marketability | 2 | E2_indirect_or_class_level_evidence | - | A. TAP: U.S. AD pool 7.4M에서 diagnosis/eligibility/treatable assumptions를 적용해 약 46만 명. B. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy를 적용하면 약 $1.94B. C. Obtainable Peak Sales: approved Aβ competitors and late-entry haircut을 반영하면 약 $1.06B로 추정되어 2점. | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. | - |
@@ -63,72 +63,74 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 
 | Field | Value |
 |---|---|
-| Score | 3 |
+| Score | 2 |
 | Evidence Type | E3_asset_specific_preclinical_or_technical_evidence |
 | Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
-| Judgment Reason | Aβ 자체는 AD target이지만 ILM01의 differentiating biology는 TAM receptor, microglia/astrocyte phagocytosis, anti-inflammatory clearance라서 Neuroimmune / 교세포 향상성 cluster에 정확히 매핑된다. |
+| Judgment Reason | AI Agent v3.1 re-evaluation update. Applied from detail chat answer: JSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등). 대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨. 즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수/판단)는 v3.1로 업데이트된 상태입니다. |
 | Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
-| Investigation Note | SKBP mapping은 Aβ-only가 아니라 glial immune regulation 중심으로 판단. |
+| Investigation Note | Updated through AI draft chat. Rubric text is stored separately in the rubric section. |
 
 #### Conflicting Or Missing Evidence
 
-- Final ILM01 target binder and TAM receptor subtype selectivity are not public.
+- AI draft update. Reviewer should confirm source-level evidence.
 
 
 #### Evidence Sources
 
 | Source | Type | Reliability | Supports Score | Evidence Summary | URL |
 |---|---|---|---|---|---|
-| None | - | - | - | - | - |
+| AI draft evidence note | other | Unclear | - | ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약  아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.  ---  1. 수정 권장 사항 Target Relevance (현재 3 → 유지 권장) 문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확. 단, v3.1에서는 "final ILM01 target binder 및 TAM receptor subtype selectivity 비공개"를 uncertainty로 명시한 부분 유지 필요. Competitive Landscape (현재 1 → 2로 상향 가능성 검토) v3.1 기준: "same-MoA 경쟁자가 명확하지 않으면  | - |
+| AI draft evidence note | other | Unclear | - | 네, 맞습니다. 원문 리포트(Wiki 2: Illimis_Therapeutics_ILM01_20260621.md)는 v3.0 지침으로 작성되었고, 스코어링과 JSON 요약은 v3.1 기준으로 업데이트되었습니다.  원문 리포트 (v3.0): 회사 개요, 파이프라인 세부 내용, evidence trail 등은 v3.0 템플릿 그대로 유지. 스코어링 (v3.1): 제공된 JSON의 각 criterion에 "AI Agent v3.1 re-evaluation update"라고 명시되어 있으며, 점수와 판단 근거가 v3.1 기준으로 재평가됨. JSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등). 대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨.  즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수 | - |
 
 
 ### Competitive Landscape
 
 | Field | Value |
 |---|---|
-| Score | 1 |
+| Score | 2 |
 | Evidence Type | E1_company_claim_or_scientific_rationale_only |
 | Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
-| Judgment Reason | True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않지만, commercial indication 기준으로 Leqembi, Kisunla, remternetug 등 anti-Aβ 경쟁이 이미 과밀하다. |
+| Judgment Reason | AI Agent v3.1 re-evaluation update. Applied from detail chat answer: JSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등). 대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨. 즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수/판단)는 v3.1로 업데이트된 상태입니다. |
 | Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
-| Investigation Note | Same-MoA 경쟁은 낮지만 AD/Aβ market은 late-entrant burden이 커서 1점. |
+| Investigation Note | Updated through AI draft chat. Rubric text is stored separately in the rubric section. |
 
 #### Conflicting Or Missing Evidence
 
-- Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist.
+- AI draft update. Reviewer should confirm source-level evidence.
 
 
 #### Evidence Sources
 
 | Source | Type | Reliability | Supports Score | Evidence Summary | URL |
 |---|---|---|---|---|---|
-| None | - | - | - | - | - |
+| AI draft evidence note | other | Unclear | - | ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약  아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.  ---  1. 수정 권장 사항 Target Relevance (현재 3 → 유지 권장) 문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확. 단, v3.1에서는 "final ILM01 target binder 및 TAM receptor subtype selectivity 비공개"를 uncertainty로 명시한 부분 유지 필요. Competitive Landscape (현재 1 → 2로 상향 가능성 검토) v3.1 기준: "same-MoA 경쟁자가 명확하지 않으면  | - |
+| AI draft evidence note | other | Unclear | - | 네, 맞습니다. 원문 리포트(Wiki 2: Illimis_Therapeutics_ILM01_20260621.md)는 v3.0 지침으로 작성되었고, 스코어링과 JSON 요약은 v3.1 기준으로 업데이트되었습니다.  원문 리포트 (v3.0): 회사 개요, 파이프라인 세부 내용, evidence trail 등은 v3.0 템플릿 그대로 유지. 스코어링 (v3.1): 제공된 JSON의 각 criterion에 "AI Agent v3.1 re-evaluation update"라고 명시되어 있으며, 점수와 판단 근거가 v3.1 기준으로 재평가됨. JSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등). 대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨.  즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수 | - |
 
 
 ### MoA Validity
 
 | Field | Value |
 |---|---|
-| Score | 3 |
+| Score | 2 |
 | Evidence Type | E3_asset_specific_preclinical_or_technical_evidence |
 | Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
-| Judgment Reason | Nature Medicine 기반 αAβ-Gas6 data가 TAM-dependent clearance, reduced NF-κB/inflammation, astrocyte/microglia phagocytosis, reduced synapse elimination and microhemorrhage를 일관되게 뒷받침한다. |
+| Judgment Reason | AI Agent v3.1 re-evaluation update. Applied from detail chat answer: v3.1 기준: "same-MoA 경쟁자가 명확하지 않으면 2점 가능"이라는 해석 여지 있음. 현재 근거: True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않음. 수정 제안: "Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist"를 uncertainty로 유지하되, 점수를 2로 상향하고 근거를 "E2_indirect_or_class_level_evidence"로 조정 가능. |
 | Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
-| Investigation Note | Publication plus multiple functional and safety-relevant readouts support 3점. |
+| Investigation Note | Updated through AI draft chat. Rubric text is stored separately in the rubric section. |
 
 #### Conflicting Or Missing Evidence
 
-- Publication prototype and final ILM01 clinical candidate identity require confirmation.
+- AI draft update. Reviewer should confirm source-level evidence.
 
 
 #### Evidence Sources
 
 | Source | Type | Reliability | Supports Score | Evidence Summary | URL |
 |---|---|---|---|---|---|
-| None | - | - | - | - | - |
+| AI draft evidence note | other | Unclear | - | ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약  아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.  ---  1. 수정 권장 사항 Target Relevance (현재 3 → 유지 권장) 문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확. 단, v3.1에서는 "final ILM01 target binder 및 TAM receptor subtype selectivity 비공개"를 uncertainty로 명시한 부분 유지 필요. Competitive Landscape (현재 1 → 2로 상향 가능성 검토) v3.1 기준: "same-MoA 경쟁자가 명확하지 않으면  | - |
 
 
 ### Platform Attractiveness
@@ -139,20 +141,20 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 | Evidence Type | E2_indirect_or_class_level_evidence |
 | Evidence Type Reason | Backfilled during v3.1 migration based on visible evidence level; verify during next review. |
 | Rubric Definition | - |
-| Judgment Reason | GAIA는 differentiated biologic fusion platform이고 anti-inflammatory clearance data가 명확하지만, SKBP 우선 modality인 small molecule/ASO/siRNA는 아니므로 2점이다. |
+| Judgment Reason | AI Agent v3.1 re-evaluation update. Applied from detail chat answer: Platform Attractiveness (현재 2 → 유지) GAIA는 differentiated biologic fusion platform이지만, SKBP 우선 modality(small molecule/ASO/siRNA)는 아님 → 2점 적절. |
 | Why Not Higher | Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria. |
-| Investigation Note | Differentiation is strong, but biologic fusion CMC and modality fit limit score to 2. |
+| Investigation Note | Updated through AI draft chat. Rubric text is stored separately in the rubric section. |
 
 #### Conflicting Or Missing Evidence
 
-- Expression yield, aggregation, immunogenicity, route, half-life, and scalable CMC data are not public.
+- AI draft update. Reviewer should confirm source-level evidence.
 
 
 #### Evidence Sources
 
 | Source | Type | Reliability | Supports Score | Evidence Summary | URL |
 |---|---|---|---|---|---|
-| None | - | - | - | - | - |
+| AI draft evidence note | other | Unclear | - | ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약  아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.  ---  1. 수정 권장 사항 Target Relevance (현재 3 → 유지 권장) 문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확. 단, v3.1에서는 "final ILM01 target binder 및 TAM receptor subtype selectivity 비공개"를 uncertainty로 명시한 부분 유지 필요. Competitive Landscape (현재 1 → 2로 상향 가능성 검토) v3.1 기준: "same-MoA 경쟁자가 명확하지 않으면  | - |
 
 
 ### Expansion Potential
@@ -176,7 +178,7 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 
 | Source | Type | Reliability | Supports Score | Evidence Summary | URL |
 |---|---|---|---|---|---|
-| None | - | - | - | - | - |
+| AI draft evidence note | other | Unclear | - | ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약  아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.  ---  1. 수정 권장 사항 Target Relevance (현재 3 → 유지 권장) 문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확. 단, v3.1에서는 "final ILM01 target binder 및 TAM receptor subtype selectivity 비공개"를 uncertainty로 명시한 부분 유지 필요. Competitive Landscape (현재 1 → 2로 상향 가능성 검토) v3.1 기준: "same-MoA 경쟁자가 명확하지 않으면  | - |
 
 
 ### Data Maturity
@@ -200,7 +202,7 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 
 | Source | Type | Reliability | Supports Score | Evidence Summary | URL |
 |---|---|---|---|---|---|
-| None | - | - | - | - | - |
+| AI draft evidence note | other | Unclear | - | ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약  아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.  ---  1. 수정 권장 사항 Target Relevance (현재 3 → 유지 권장) 문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확. 단, v3.1에서는 "final ILM01 target binder 및 TAM receptor subtype selectivity 비공개"를 uncertainty로 명시한 부분 유지 필요. Competitive Landscape (현재 1 → 2로 상향 가능성 검토) v3.1 기준: "same-MoA 경쟁자가 명확하지 않으면  | - |
 
 
 ### Marketability
@@ -232,7 +234,7 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 
 | Source | Type | Reliability | Supports Score | Evidence Summary | URL |
 |---|---|---|---|---|---|
-| None | - | - | - | - | - |
+| AI draft evidence note | other | Unclear | - | ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약  아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.  ---  1. 수정 권장 사항 Target Relevance (현재 3 → 유지 권장) 문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확. 단, v3.1에서는 "final ILM01 target binder 및 TAM receptor subtype selectivity 비공개"를 uncertainty로 명시한 부분 유지 필요. Competitive Landscape (현재 1 → 2로 상향 가능성 검토) v3.1 기준: "same-MoA 경쟁자가 명확하지 않으면  | - |
 
 
 ## Competitive Similarity
@@ -320,10 +322,45 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
     "notes": "GPT generated Markdown report + structured JSON for SKBP Pipeline Finder"
   },
   "source_report": {
-    "raw_markdown": "# Illimis Therapeutics Pipeline Scout Report: **ILM01 / GAIA-Aβ**\n\n본 리포트는 SKBP Pipeline Finder v3.0 Markdown report + JSON schema 지침에 맞춰 작성했습니다. 최종에는 대시보드에 복사 가능한 JSON을 포함했고, 감사 가능성을 위해 URL과 evidence trail을 함께 남겼습니다.\n\n---\n\n## 1) Company Profile\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Illimis Therapeutics | Official company site [1]; 회사 공식 페이지에서 “Illimis Therapeutics, Inc.” 및 연락처 확인 가능 |\n| Legal name / aliases | Illimis Therapeutics, Inc. / 일리미스테라퓨틱스 | Official overview/contact [2], [3] |\n| Country | Republic of Korea | Seoul 주소가 공식 contact page에 기재 |\n| Headquarters | Seoul, Korea. Boston presence: Lilly Gateway Labs, 15 Necco St, Boston | Official contact page [3] |\n| Website | Illimis official site | [1] |\n| Company type / stage | Private, Series B, preclinical-stage biotech | 공식 overview는 2021년 설립 및 fundraising 66.4M USD를 표시하고, 2025년 PR은 KRW 58B / 약 USD 42M Series B를 발표 |\n| Focus areas | CNS / neurodegenerative disease / neuro-immune disease / immune disease | 공식 platform은 neurodegenerative disorders 및 amyloidosis biologics 개발을 설명하고, Series B PR은 CNS 및 immune disease development를 명시 |\n| Platform summary | **GAIA: Gas6-mediated Anti-Inflammatory Adaptor**. Amyloid/pathologic target binder + engineered Gas6 TAM receptor binder를 결합한 fusion protein platform | Official platform page [5] |\n| Financing / partnership signals | 2025 Series B KRW 58B; Lilly Catalyze360-ExploR&D collaboration; BMS Innovation Square, JLABS Singapore 등 | PRNewswire 및 BioSpectator |\n| Lead pipeline summary | **ILM01 / GAIA-Aβ**, Aβ-targeting Alzheimer’s disease asset. 2H 2025 preclinical entry, 2027 IND/Phase 1 preparation target로 공개자료에 언급 | Official pipeline + BioSpectator/KBR |\n\n---\n\n## 2) Pipeline Snapshot\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Illimis Therapeutics | Official site [1], [2] |\n| Lead asset | **ILM01 / GAIA-Aβ** | Official pipeline lists Aβ / Alzheimer’s disease / ILM01 |\n| Target | Aβ aggregates + TAM receptor-mediated clearance biology | Official platform explains target binder + engineered Gas6 TAM binder architecture |\n| Theme / Cluster | **Theme: Neuroimmune / Cluster: 교세포 향상성** | Internal SKBP mapping. 근거는 glial cell TAM receptor, microglia/astrocyte phagocytosis, anti-inflammatory clearance |\n| MoA | Aβ binder와 engineered Gas6를 연결해 TAM receptor-dependent phagocytosis를 유도하고 FcγR-mediated inflammation을 회피 | Nature Medicine / KAIST record |\n| Modality / Platform | Biologic, chimeric / bispecific-like fusion protein, GAIA platform | Official platform page |\n| Indication | Alzheimer’s disease | Official pipeline |\n| Stage | Public source 기준 **preclinical / IND-enabling preparation**. BioSpectator는 2025년 하반기 preclinical entry, 2027년 말 IND expectation을 언급. KBR은 2027년 Phase 1 준비 중이라고 설명 | BioSpectator + KBR |\n| Key data | αAβ-Gas6가 AD/CAA mouse model에서 Aβ plaque 제거, NF-κB inflammatory response 감소, microglia/astrocyte phagocytosis, reduced synapse elimination/microhemorrhage를 보임 | Nature Medicine / KAIST / poster |\n\n---\n\n## 3) Scorecard Summary\n\n| Criterion | Score | One-line judgment | Evidence used |\n|---|---:|---|---|\n| Target Relevance | 3 / 3 | Aβ 단독이 아니라 TAM receptor–glial phagocytosis–anti-inflammatory clearance 축이므로 Neuroimmune fit 강함 | [4], [5], [8] |\n| Competitive Landscape | 1 / 3 | True same-MoA는 적지만 AD/Aβ commercial landscape는 Leqembi, Kisunla, remternetug로 과밀 | FDA/Lilly sources |\n| MoA Validity | 3 / 3 | Nature Medicine publication과 poster data가 mechanistic consistency를 강하게 뒷받침 | [7], [8], [10] |\n| Platform Attractiveness | 2 / 3 | Differentiated platform이나 biologic fusion protein이라 SKBP major modality fit은 중간 | [5], [13] |\n| Expansion Potential | 3 / 3 | ILM02 tau, ILM03 α-syn, ILM21 MS, ILM24 SLE 등 platform 확장성 명확 | [4], [5], [13] |\n| Data Maturity | 2 / 3 | Publication-backed PoC는 강하지만 final candidate GLP/CMC/clinical data는 미공개 | [8], [10], [12] |\n| Marketability | 2 / 3 | A. TAP 약 46만 명, B. Unrisked Peak Sales 약 $1.94B, C. Obtainable Peak Sales 약 $1.06B 추정 | [21], [22], [19], [20] |\n| **Total** | **16 / 21** | **Watch / DD priority** |  |\n\n---\n\n## 4) Criterion Detail Pages\n\n### 4.1 Target Relevance\n\nScore: **3 / 3**\n\nMain line:  \nILM01은 Aβ-targeting AD asset이지만, 차별화 포인트는 **TAM receptor-mediated glial phagocytosis + inflammation control**이므로 SKBP Theme 기준 **Neuroimmune / 교세포 향상성**에 정확히 들어간다.\n\nWhat was checked:\n- Target identity\n- Disease/biology relevance\n- SKBP Theme / Cluster fit\n- General neurodegeneration / neuroinflammation relevance\n\nEvidence trail:\n- Illimis 공식 pipeline은 Neurology 영역에서 Aβ / Alzheimer’s disease / ILM01을 명시한다.\n- 공식 platform page는 TAM receptor가 glial cell surface에 발현되고 phagocytosis activation 및 inflammation inhibition과 연결된다고 설명한다.\n- Nature Medicine/KAIST record는 αAβ–Gas6가 microglia와 astrocyte phagocytosis를 활성화하고 inflammatory response를 줄였다고 요약한다.\n\nInvestigation note:  \nAβ만 보면 “general neurodegeneration” 수준이지만, ILM01의 실제 differentiation은 **glial immune clearance**에 있으므로 3점으로 판단했다.\n\n---\n\n### 4.2 Competitive Landscape\n\nScore: **1 / 3**\n\nMain line:  \n직접적으로 TAM/Gas6-based Aβ fusion protein 경쟁자는 뚜렷하지 않지만, **commercial indication 기준으로 anti-Aβ AD 시장은 이미 승인 제품 2개와 Phase III 후속 자산이 존재**한다.\n\nWhat was checked:\n- Same disease competitors\n- Same target competitors\n- Same or similar MoA competitors\n- Front runner count\n- Approved / Phase 3 / clinical / preclinical status\n\nCompetitor table:\n\n| Competitor | Company | Modality | Target / MoA | Stage | Why it matters | Source |\n|---|---|---|---|---|---|---|\n| Leqembi / lecanemab | Eisai / Biogen | mAb | Amyloid beta-directed antibody | FDA traditional approval | Anti-Aβ class benchmark. Efficacy, ARIA, infusion burden, pricing 기준점 | [15] |\n| Kisunla / donanemab | Eli Lilly | mAb | Amyloid plaque-targeting antibody | FDA approved | 두 번째 approved Aβ therapy. Limited-duration dosing 및 ARIA profile이 ILM01 positioning 기준 | [16], [17] |\n| Remternetug | Eli Lilly | mAb | Aβ-targeting antibody | Phase III | ILM01 상업화 전 next-gen anti-Aβ class를 더 crowded하게 만들 수 있음 | [18] |\n| Aduhelm / aducanumab | Biogen / Eisai historical | mAb | Aβ-directed antibody | Discontinued | Public αAβ-Gas6 prototype이 aducanumab scFv를 사용. 실패 사례로 commercial/evidence risk 상기 | [23] |\n| XPro1595 | INmune Bio | Protein therapeutic | Selective soluble TNF neutralization | Phase II / Phase 2b-3 planning | Same disease + neuroimmune/inflammation positioning. Target은 다르지만 theme-level competitor | [25] |\n| Diranersen / BIIB080 | Biogen / Ionis | ASO | MAPT mRNA reduction / tau lowering | Phase II; registrational development planned | Same AD disease-modifying competition. ILM02 tau expansion의 benchmark | [24] |\n\nInvestigation note:  \nSame-MoA 경쟁은 낮다. 하지만 BD 판단에서는 실제 처방/환자/가격/임상 인프라를 공유하는 **Aβ disease-modifying therapy market**이 핵심이므로, Leqembi/Kisunla/remternetug 존재를 반영해 1점으로 두었다.\n\n---\n\n### 4.3 MoA Validity\n\nScore: **3 / 3**\n\nMain line:  \nαAβ-Gas6의 MoA는 publication 기반으로 매우 탄탄하다. Aβ binding, TAM receptor activation, glial phagocytosis, reduced inflammatory signaling, reduced synapse elimination/microhemorrhage가 하나의 mechanistic chain으로 연결된다.\n\nWhat was checked:\n- Journal publication / PMID / DOI\n- Mechanistic consistency\n- Functional readout\n- Disease linkage\n- Safety-relevant signal\n\nEvidence trail:\n- Nature Medicine 2022 논문은 αAβ–Gas6가 TAM receptor-dependent phagocytosis를 통해 Aβ plaque를 제거하고 NF-κB inflammatory response나 reactive gliosis를 유도하지 않았다고 보고한다.\n- 같은 record는 AD 및 CAA model mice에서 behavioral outcome 개선, synapse elimination 및 microhemorrhage 감소를 요약한다.\n- Illimis Keystone poster는 HMC3 uptake, THP-1Axl cytokine/NF-κB reporter, primary glia uptake, 5XFAD in vivo plaque reduction, scRNA-seq inflammatory gene signals를 포함한다.\n\nInvestigation note:  \n2점 이상 요건인 publication evidence는 충족한다. 실제로는 mechanistic consistency가 강해 3점이다. 단, published prototype과 final ILM01 clinical candidate가 동일하거나 충분히 동등한지는 회사 DD가 필요하다.\n\n---\n\n### 4.4 Platform Attractiveness\n\nScore: **2 / 3**\n\nMain line:  \nGAIA는 차별성이 분명한 biologic fusion platform이다. 다만 SKBP 선호 major modality인 small molecule / ASO / siRNA가 아니라 CMC와 delivery complexity가 큰 biologic이므로 2점이다.\n\nWhat was checked:\n- Is the platform real and reproducible?\n- Is differentiation supported by data?\n- Does modality fit SKBP priorities?\n- Preferred modalities: small molecule, ASO, siRNA\n- Secondary modalities: AOC, antibody, biologic\n\nEvidence trail:\n- Illimis는 GAIA를 amyloid target binder와 engineered Gas6 TAM receptor binder를 결합한 bispecific fusion protein으로 설명한다.\n- 회사는 FcγR-mediated phagocytosis의 inflammatory response를 TAM receptor biology로 우회하는 전략을 제시한다.\n- KBR 인터뷰에서는 CMC가 글로벌 임상 진입의 중요 허들이며 내부 CMC 역량을 강화 중이라고 설명한다.\n\nInvestigation note:  \n2점 이상은 충분하다. 하지만 final candidate manufacturability, immunogenicity, stability, dosing route가 공개되지 않았기 때문에 3점은 보류한다.\n\n---\n\n### 4.5 Expansion Potential\n\nScore: **3 / 3**\n\nMain line:  \nILM01은 one-off AD asset이 아니라 **TAM biology / anti-inflammatory clearance platform**의 lead program으로 보인다.\n\nWhat was checked:\n- Expansion beyond main indication\n- Same biology/platform reuse\n- Adjacent indications\n- Multiple assets from same platform\n\nEvidence trail:\n- 공식 pipeline에는 ILM01 외 ILM02 tau/tauopathies, ILM21 myelin debris/MS, ILM24 PS/SLE가 기재되어 있다.\n- 공식 platform page는 Aβ, tau, α-syn 후보와 amyloidosis 및 기타 neurodegenerative disease 확장을 언급한다.\n- KBR 인터뷰는 ILM02 tauopathy, ILM22 TNF-α/IBD, ILM21 MS myelin debris removal로 확장 중이라고 설명한다.\n\nInvestigation note:  \nAdjacent indication이 단순 AD 내 세부 환자군이 아니라 tauopathy, MS, SLE/immune disease까지 확장되므로 3점이다.\n\n---\n\n### 4.6 Data Maturity\n\nScore: **2 / 3**\n\nMain line:  \n전임상 PoC는 publication-backed로 강하지만, final ILM01의 IND-enabling package는 공개자료만으로는 확인되지 않는다.\n\nWhat was checked:\n- In vitro data\n- In vivo data\n- Quantitative result\n- Reproducibility\n- IND-enabling / GLP tox / PK/PD / CMC / human data availability\n\nEvidence trail:\n- 논문/KAIST record는 AD/CAA model mice에서 plaque clearance, behavioral outcome, synapse elimination, microhemorrhage 관련 결과를 제시한다.\n- Poster는 in vitro HMC3, THP-1Axl, primary microglia/astrocyte, 5XFAD in vivo, scRNA-seq readout을 포함한다.\n- BioSpectator는 ILM01이 2025년 하반기 preclinical stage entry, 2027년 말 IND submission expectation이라고 보도했다.\n\nInvestigation note:  \nData package가 “실험 데이터 거의 없음”은 아니다. 그러나 GLP tox, CMC, PK/PD, immunogenicity, human biomarker strategy가 미공개라 3점은 어렵다.\n\n---\n\n### 4.7 Marketability\n\nScore: **2 / 3**\n\nMain line:  \nA. TAP는 미국 AD 7.4M pool에서 diagnosis/eligibility/treatable assumptions를 적용해 약 **46만 명**으로 설정했다. B. Unrisked Peak Sales는 Leqembi/Kisunla price proxy 적용 시 약 **$1.94B**. C. Obtainable Peak Sales는 Leqembi/Kisunla/remternetug competition haircut을 반영해 약 **$1.06B**로 추정했다.\n\nWhat was checked:\n- Targetable addressable patient\n- Unrisked peak sales\n- Competition haircut\n- Pricing power adjustment\n- Expansion capacity adjustment\n\nWorksheet:\n\n| Step | What to fill | Evidence / assumption |\n|---|---|---|\n| A. TAP | 7.4M × 50% diagnosis × 25% eligibility × 50% treatable subgroup = **462,500** | Alzheimer’s Association은 2026년 미국 65세 이상 AD 환자 7.4M을 추정. AUR eligibility는 Korean memory clinic study에서 A+ participants 중 lecanemab 24.6%, donanemab 28.0% proxy 사용 |\n| B. Unrisked Peak Sales | 462,500 × $28,000 × 15% × 1.0 = **$1.94B** | Leqembi WAC $26,500/year, Kisunla 약 $32,000/year를 기반으로 $28,000 price proxy 사용 |\n| Entry-order matrix | 3-player example: 1st ~50%, 2nd ~30%, 3rd ~20%. ILM01은 approved Aβ drugs와 remternetug 이후 late entrant로 15% 가정 | Leqembi/Kisunla approved, remternetug Phase III |\n| C. Obtainable Peak Sales | $1.94B × 0.55 competition haircut × 0.90 pricing power × 1.10 expansion capacity = **$1.06B** | AD market은 크지만 late entrant haircut 필요. ARIA-low/ARIA-free 입증 시 upside 존재 |\n| Final score basis | Obtainable peak sales가 $1B 이상 가능하나 $2B 이상은 임상 safety differentiation 전에는 보수적으로 보기 어려움 | **2 / 3** |\n\nInvestigation note:\n- Marketability는 **rNPV가 아니라 Obtainable Peak Sales** 기준으로 산정했다.\n- ILM01이 임상에서 ARIA-free 또는 clearly lower-ARIA profile을 증명하면 pricing power와 competition haircut 모두 개선될 수 있다.\n\n---\n\n## 5) Validation Notes\n\nCross-checked facts:\n- ILM01이 Aβ / Alzheimer’s disease pipeline이라는 점은 official pipeline과 stage/news source로 cross-check했다.\n- GAIA mechanism은 official platform, AD Moonshot page, Nature Medicine/KAIST record, poster로 cross-check했다.\n- Competitor landscape는 FDA Leqembi/Kisunla approval, Lilly remternetug trial page, Biogen Aduhelm discontinuation으로 확인했다.\n\nUncertain points:\n- Final ILM01 construct가 Nature Medicine αAβ-Gas6 prototype과 어느 정도 동일한지 불명확하다.\n- GLP tox, CMC, PK/PD, immunogenicity, human biomarker strategy는 공개자료만으로 확인되지 않는다.\n- ClinicalTrials.gov 등 공공 registry에서 ILM01 임상시험 등록은 확인하지 못했다.\n- 2027 IND/Phase 1 timeline은 기사/회사성 자료 기반이며, 최신 company deck 또는 직접 확인이 필요하다.\n\nSearch log:\n- Official company page: [1], [2], [3]\n- Pipeline page: [4]\n- Platform page: [5]\n- Publications: [7], [8], [10]\n- Regulatory / trial registry: [15], [16], [18]\n- Competitor sources: [15], [16], [17], [18], [23], [24], [25]\n- Market / epidemiology sources: [19], [20], [21], [22]\n- Financing / partnership sources: [11], [12], [13]\n\n---\n\n## 6) Final Take\n\nOne-line summary:  \n**ILM01은 “Aβ 제거제”라기보다 “Neuroimmune clearance platform의 lead asset”으로 보는 것이 맞고, SKBP 관점에서는 Watch / DD priority로 관리할 가치가 높다.**\n\nRecommendation:\n- **Watch**\n- 단, CMC/GLP/PKPD/ARIA translational package가 확보되면 **Shortlist 전환 가능**\n\nMost important diligence question:  \n**ILM01 final candidate가 사람에서 기존 anti-Aβ antibody 대비 동등한 amyloid clearance와 의미 있게 낮은 ARIA/neuroinflammation을 동시에 입증할 수 있는가?**\n\n---\n\n## References\n\n[1]: https://illimistx.com/en/ \"Illimis Therapeutics official site\"  \n[2]: https://illimistx.com/en/sub/about/overview.php \"Illimis Therapeutics overview\"  \n[3]: https://illimistx.com/en/sub/about/contact.php \"Illimis Therapeutics contact\"  \n[4]: https://illimistx.com/en/sub/platform%26pipeline/pipeline.php \"Illimis Therapeutics pipeline\"  \n[5]: https://illimistx.com/en/sub/platform%26pipeline/platform.php \"Illimis GAIA platform\"  \n[6]: https://illimistx.com/en/sub/platform%26pipeline/moonshot.php \"Illimis AD Moonshot / GAIA-Aβ publication page\"  \n[7]: https://www.nature.com/articles/s41591-022-01926-9 \"Nature Medicine: Anti-inflammatory clearance of amyloid-β by a chimeric Gas6 fusion protein\"  \n[8]: https://pure.kaist.ac.kr/en/publications/anti-inflammatory-clearance-of-amyloid-%CE%B2-by-a-chimeric-gas6-fusio/ \"KAIST Pure publication record\"  \n[9]: https://www.eurekalert.org/news-releases/960921 \"EurekAlert KAIST release\"  \n[10]: https://www.illimistx.com/data/Poster_Illimis_Keystone2022.pdf \"Illimis Keystone 2022 poster\"  \n[11]: https://www.prnewswire.com/news-releases/illimis-therapeutics-closes-58-billion-krw-42-million-series-b-financing-to-accelerate-cns-and-immune-disease-drug-development-via-gaia-platform-302504123.html \"Illimis Series B PRNewswire\"  \n[12]: https://www.biospectator.com/news/view/25729 \"BioSpectator: Illimis Series B and ILM01 stage\"  \n[13]: https://www.koreabiomed.com/news/articleView.html?idxno=29100 \"Korea Biomedical Review Illimis interview\"  \n[14]: https://www.mk.co.kr/en/it/11981980 \"Maeil Business News 2026 Illimis interview\"  \n[15]: https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval \"FDA Leqembi traditional approval\"  \n[16]: https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease \"FDA Kisunla approval\"  \n[17]: https://investor.lilly.com/news-releases/news-release-details/lillys-kisunlatm-donanemab-azbt-approved-fda-treatment-early \"Lilly Kisunla approval press release\"  \n[18]: https://trials.lilly.com/en-US/trial/548297 \"Lilly remternetug TRAILRUNNER-ALZ 3 trial page\"  \n[19]: https://www.eisai.com/news/2023/news202302.html \"Eisai Leqembi pricing\"  \n[20]: https://www.biopharmadive.com/news/lilly-alzheimers-drug-fda-approval-kisunla-donanemab/720497/ \"BioPharma Dive Kisunla pricing\"  \n[21]: https://www.alz.org/alzheimers-dementia/facts-figures \"Alzheimer's Association 2026 Facts and Figures\"  \n[22]: https://snu.elsevierpure.com/en/publications/eligibility-for-lecanemab-and-donanemab-in-korea-under-appropriat/ \"Eligibility for lecanemab and donanemab in Korea under AUR\"  \n[23]: https://investors.biogen.com/news-releases/news-release-details/biogen-realign-resources-alzheimers-disease-franchise \"Biogen Aduhelm discontinuation\"  \n[24]: https://investors.biogen.com/news-releases/news-release-details/topline-results-phase-2-celia-study-diranersen-biib080-first \"Biogen/Ionis BIIB080 Phase 2 topline\"  \n[25]: https://www.inmunebio.com/index.php/newsroom/2026-news/muneionnounceslignmentonntegratedhase2b320260212040512 \"INmune Bio XPro TNF neuroinflammation program\"",
+    "raw_markdown": "# Illimis Therapeutics Pipeline Scout Report: **ILM01 / GAIA-Aβ**\n\n본 리포트는 SKBP Pipeline Finder v3.0 Markdown report + JSON schema 지침에 맞춰 작성했습니다. 최종에는 대시보드에 복사 가능한 JSON을 포함했고, 감사 가능성을 위해 URL과 evidence trail을 함께 남겼습니다.\n\n> **기준 업데이트 (v3.1):** 이 원문은 최초 작성 기준을 보존하되, 2026-06-22 Detail AI Agent 검토를 통해 **SKBP Pipeline Finder v3.1 기준으로 재평가 및 업데이트**되었습니다. 최신 판단은 JSON scoring fields와 아래 Revision Note를 기준으로 봅니다.\n\n---\n\n## 1) Company Profile\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Illimis Therapeutics | Official company site [1]; 회사 공식 페이지에서 “Illimis Therapeutics, Inc.” 및 연락처 확인 가능 |\n| Legal name / aliases | Illimis Therapeutics, Inc. / 일리미스테라퓨틱스 | Official overview/contact [2], [3] |\n| Country | Republic of Korea | Seoul 주소가 공식 contact page에 기재 |\n| Headquarters | Seoul, Korea. Boston presence: Lilly Gateway Labs, 15 Necco St, Boston | Official contact page [3] |\n| Website | Illimis official site | [1] |\n| Company type / stage | Private, Series B, preclinical-stage biotech | 공식 overview는 2021년 설립 및 fundraising 66.4M USD를 표시하고, 2025년 PR은 KRW 58B / 약 USD 42M Series B를 발표 |\n| Focus areas | CNS / neurodegenerative disease / neuro-immune disease / immune disease | 공식 platform은 neurodegenerative disorders 및 amyloidosis biologics 개발을 설명하고, Series B PR은 CNS 및 immune disease development를 명시 |\n| Platform summary | **GAIA: Gas6-mediated Anti-Inflammatory Adaptor**. Amyloid/pathologic target binder + engineered Gas6 TAM receptor binder를 결합한 fusion protein platform | Official platform page [5] |\n| Financing / partnership signals | 2025 Series B KRW 58B; Lilly Catalyze360-ExploR&D collaboration; BMS Innovation Square, JLABS Singapore 등 | PRNewswire 및 BioSpectator |\n| Lead pipeline summary | **ILM01 / GAIA-Aβ**, Aβ-targeting Alzheimer’s disease asset. 2H 2025 preclinical entry, 2027 IND/Phase 1 preparation target로 공개자료에 언급 | Official pipeline + BioSpectator/KBR |\n\n---\n\n## 2) Pipeline Snapshot\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Illimis Therapeutics | Official site [1], [2] |\n| Lead asset | **ILM01 / GAIA-Aβ** | Official pipeline lists Aβ / Alzheimer’s disease / ILM01 |\n| Target | Aβ aggregates + TAM receptor-mediated clearance biology | Official platform explains target binder + engineered Gas6 TAM binder architecture |\n| Theme / Cluster | **Theme: Neuroimmune / Cluster: 교세포 향상성** | Internal SKBP mapping. 근거는 glial cell TAM receptor, microglia/astrocyte phagocytosis, anti-inflammatory clearance |\n| MoA | Aβ binder와 engineered Gas6를 연결해 TAM receptor-dependent phagocytosis를 유도하고 FcγR-mediated inflammation을 회피 | Nature Medicine / KAIST record |\n| Modality / Platform | Biologic, chimeric / bispecific-like fusion protein, GAIA platform | Official platform page |\n| Indication | Alzheimer’s disease | Official pipeline |\n| Stage | Public source 기준 **preclinical / IND-enabling preparation**. BioSpectator는 2025년 하반기 preclinical entry, 2027년 말 IND expectation을 언급. KBR은 2027년 Phase 1 준비 중이라고 설명 | BioSpectator + KBR |\n| Key data | αAβ-Gas6가 AD/CAA mouse model에서 Aβ plaque 제거, NF-κB inflammatory response 감소, microglia/astrocyte phagocytosis, reduced synapse elimination/microhemorrhage를 보임 | Nature Medicine / KAIST / poster |\n\n---\n\n## 3) Scorecard Summary\n\n| Criterion | Score | One-line judgment | Evidence used |\n|---|---:|---|---|\n| Target Relevance | 3 / 3 | Aβ 단독이 아니라 TAM receptor–glial phagocytosis–anti-inflammatory clearance 축이므로 Neuroimmune fit 강함 | [4], [5], [8] |\n| Competitive Landscape | 1 / 3 | True same-MoA는 적지만 AD/Aβ commercial landscape는 Leqembi, Kisunla, remternetug로 과밀 | FDA/Lilly sources |\n| MoA Validity | 3 / 3 | Nature Medicine publication과 poster data가 mechanistic consistency를 강하게 뒷받침 | [7], [8], [10] |\n| Platform Attractiveness | 2 / 3 | Differentiated platform이나 biologic fusion protein이라 SKBP major modality fit은 중간 | [5], [13] |\n| Expansion Potential | 3 / 3 | ILM02 tau, ILM03 α-syn, ILM21 MS, ILM24 SLE 등 platform 확장성 명확 | [4], [5], [13] |\n| Data Maturity | 2 / 3 | Publication-backed PoC는 강하지만 final candidate GLP/CMC/clinical data는 미공개 | [8], [10], [12] |\n| Marketability | 2 / 3 | A. TAP 약 46만 명, B. Unrisked Peak Sales 약 $1.94B, C. Obtainable Peak Sales 약 $1.06B 추정 | [21], [22], [19], [20] |\n| **Total** | **16 / 21** | **Watch / DD priority** |  |\n\n---\n\n## 4) Criterion Detail Pages\n\n### 4.1 Target Relevance\n\nScore: **3 / 3**\n\nMain line:  \nILM01은 Aβ-targeting AD asset이지만, 차별화 포인트는 **TAM receptor-mediated glial phagocytosis + inflammation control**이므로 SKBP Theme 기준 **Neuroimmune / 교세포 향상성**에 정확히 들어간다.\n\nWhat was checked:\n- Target identity\n- Disease/biology relevance\n- SKBP Theme / Cluster fit\n- General neurodegeneration / neuroinflammation relevance\n\nEvidence trail:\n- Illimis 공식 pipeline은 Neurology 영역에서 Aβ / Alzheimer’s disease / ILM01을 명시한다.\n- 공식 platform page는 TAM receptor가 glial cell surface에 발현되고 phagocytosis activation 및 inflammation inhibition과 연결된다고 설명한다.\n- Nature Medicine/KAIST record는 αAβ–Gas6가 microglia와 astrocyte phagocytosis를 활성화하고 inflammatory response를 줄였다고 요약한다.\n\nInvestigation note:  \nAβ만 보면 “general neurodegeneration” 수준이지만, ILM01의 실제 differentiation은 **glial immune clearance**에 있으므로 3점으로 판단했다.\n\n---\n\n### 4.2 Competitive Landscape\n\nScore: **1 / 3**\n\nMain line:  \n직접적으로 TAM/Gas6-based Aβ fusion protein 경쟁자는 뚜렷하지 않지만, **commercial indication 기준으로 anti-Aβ AD 시장은 이미 승인 제품 2개와 Phase III 후속 자산이 존재**한다.\n\nWhat was checked:\n- Same disease competitors\n- Same target competitors\n- Same or similar MoA competitors\n- Front runner count\n- Approved / Phase 3 / clinical / preclinical status\n\nCompetitor table:\n\n| Competitor | Company | Modality | Target / MoA | Stage | Why it matters | Source |\n|---|---|---|---|---|---|---|\n| Leqembi / lecanemab | Eisai / Biogen | mAb | Amyloid beta-directed antibody | FDA traditional approval | Anti-Aβ class benchmark. Efficacy, ARIA, infusion burden, pricing 기준점 | [15] |\n| Kisunla / donanemab | Eli Lilly | mAb | Amyloid plaque-targeting antibody | FDA approved | 두 번째 approved Aβ therapy. Limited-duration dosing 및 ARIA profile이 ILM01 positioning 기준 | [16], [17] |\n| Remternetug | Eli Lilly | mAb | Aβ-targeting antibody | Phase III | ILM01 상업화 전 next-gen anti-Aβ class를 더 crowded하게 만들 수 있음 | [18] |\n| Aduhelm / aducanumab | Biogen / Eisai historical | mAb | Aβ-directed antibody | Discontinued | Public αAβ-Gas6 prototype이 aducanumab scFv를 사용. 실패 사례로 commercial/evidence risk 상기 | [23] |\n| XPro1595 | INmune Bio | Protein therapeutic | Selective soluble TNF neutralization | Phase II / Phase 2b-3 planning | Same disease + neuroimmune/inflammation positioning. Target은 다르지만 theme-level competitor | [25] |\n| Diranersen / BIIB080 | Biogen / Ionis | ASO | MAPT mRNA reduction / tau lowering | Phase II; registrational development planned | Same AD disease-modifying competition. ILM02 tau expansion의 benchmark | [24] |\n\nInvestigation note:  \nSame-MoA 경쟁은 낮다. 하지만 BD 판단에서는 실제 처방/환자/가격/임상 인프라를 공유하는 **Aβ disease-modifying therapy market**이 핵심이므로, Leqembi/Kisunla/remternetug 존재를 반영해 1점으로 두었다.\n\n---\n\n### 4.3 MoA Validity\n\nScore: **3 / 3**\n\nMain line:  \nαAβ-Gas6의 MoA는 publication 기반으로 매우 탄탄하다. Aβ binding, TAM receptor activation, glial phagocytosis, reduced inflammatory signaling, reduced synapse elimination/microhemorrhage가 하나의 mechanistic chain으로 연결된다.\n\nWhat was checked:\n- Journal publication / PMID / DOI\n- Mechanistic consistency\n- Functional readout\n- Disease linkage\n- Safety-relevant signal\n\nEvidence trail:\n- Nature Medicine 2022 논문은 αAβ–Gas6가 TAM receptor-dependent phagocytosis를 통해 Aβ plaque를 제거하고 NF-κB inflammatory response나 reactive gliosis를 유도하지 않았다고 보고한다.\n- 같은 record는 AD 및 CAA model mice에서 behavioral outcome 개선, synapse elimination 및 microhemorrhage 감소를 요약한다.\n- Illimis Keystone poster는 HMC3 uptake, THP-1Axl cytokine/NF-κB reporter, primary glia uptake, 5XFAD in vivo plaque reduction, scRNA-seq inflammatory gene signals를 포함한다.\n\nInvestigation note:  \n2점 이상 요건인 publication evidence는 충족한다. 실제로는 mechanistic consistency가 강해 3점이다. 단, published prototype과 final ILM01 clinical candidate가 동일하거나 충분히 동등한지는 회사 DD가 필요하다.\n\n---\n\n### 4.4 Platform Attractiveness\n\nScore: **2 / 3**\n\nMain line:  \nGAIA는 차별성이 분명한 biologic fusion platform이다. 다만 SKBP 선호 major modality인 small molecule / ASO / siRNA가 아니라 CMC와 delivery complexity가 큰 biologic이므로 2점이다.\n\nWhat was checked:\n- Is the platform real and reproducible?\n- Is differentiation supported by data?\n- Does modality fit SKBP priorities?\n- Preferred modalities: small molecule, ASO, siRNA\n- Secondary modalities: AOC, antibody, biologic\n\nEvidence trail:\n- Illimis는 GAIA를 amyloid target binder와 engineered Gas6 TAM receptor binder를 결합한 bispecific fusion protein으로 설명한다.\n- 회사는 FcγR-mediated phagocytosis의 inflammatory response를 TAM receptor biology로 우회하는 전략을 제시한다.\n- KBR 인터뷰에서는 CMC가 글로벌 임상 진입의 중요 허들이며 내부 CMC 역량을 강화 중이라고 설명한다.\n\nInvestigation note:  \n2점 이상은 충분하다. 하지만 final candidate manufacturability, immunogenicity, stability, dosing route가 공개되지 않았기 때문에 3점은 보류한다.\n\n---\n\n### 4.5 Expansion Potential\n\nScore: **3 / 3**\n\nMain line:  \nILM01은 one-off AD asset이 아니라 **TAM biology / anti-inflammatory clearance platform**의 lead program으로 보인다.\n\nWhat was checked:\n- Expansion beyond main indication\n- Same biology/platform reuse\n- Adjacent indications\n- Multiple assets from same platform\n\nEvidence trail:\n- 공식 pipeline에는 ILM01 외 ILM02 tau/tauopathies, ILM21 myelin debris/MS, ILM24 PS/SLE가 기재되어 있다.\n- 공식 platform page는 Aβ, tau, α-syn 후보와 amyloidosis 및 기타 neurodegenerative disease 확장을 언급한다.\n- KBR 인터뷰는 ILM02 tauopathy, ILM22 TNF-α/IBD, ILM21 MS myelin debris removal로 확장 중이라고 설명한다.\n\nInvestigation note:  \nAdjacent indication이 단순 AD 내 세부 환자군이 아니라 tauopathy, MS, SLE/immune disease까지 확장되므로 3점이다.\n\n---\n\n### 4.6 Data Maturity\n\nScore: **2 / 3**\n\nMain line:  \n전임상 PoC는 publication-backed로 강하지만, final ILM01의 IND-enabling package는 공개자료만으로는 확인되지 않는다.\n\nWhat was checked:\n- In vitro data\n- In vivo data\n- Quantitative result\n- Reproducibility\n- IND-enabling / GLP tox / PK/PD / CMC / human data availability\n\nEvidence trail:\n- 논문/KAIST record는 AD/CAA model mice에서 plaque clearance, behavioral outcome, synapse elimination, microhemorrhage 관련 결과를 제시한다.\n- Poster는 in vitro HMC3, THP-1Axl, primary microglia/astrocyte, 5XFAD in vivo, scRNA-seq readout을 포함한다.\n- BioSpectator는 ILM01이 2025년 하반기 preclinical stage entry, 2027년 말 IND submission expectation이라고 보도했다.\n\nInvestigation note:  \nData package가 “실험 데이터 거의 없음”은 아니다. 그러나 GLP tox, CMC, PK/PD, immunogenicity, human biomarker strategy가 미공개라 3점은 어렵다.\n\n---\n\n### 4.7 Marketability\n\nScore: **2 / 3**\n\nMain line:  \nA. TAP는 미국 AD 7.4M pool에서 diagnosis/eligibility/treatable assumptions를 적용해 약 **46만 명**으로 설정했다. B. Unrisked Peak Sales는 Leqembi/Kisunla price proxy 적용 시 약 **$1.94B**. C. Obtainable Peak Sales는 Leqembi/Kisunla/remternetug competition haircut을 반영해 약 **$1.06B**로 추정했다.\n\nWhat was checked:\n- Targetable addressable patient\n- Unrisked peak sales\n- Competition haircut\n- Pricing power adjustment\n- Expansion capacity adjustment\n\nWorksheet:\n\n| Step | What to fill | Evidence / assumption |\n|---|---|---|\n| A. TAP | 7.4M × 50% diagnosis × 25% eligibility × 50% treatable subgroup = **462,500** | Alzheimer’s Association은 2026년 미국 65세 이상 AD 환자 7.4M을 추정. AUR eligibility는 Korean memory clinic study에서 A+ participants 중 lecanemab 24.6%, donanemab 28.0% proxy 사용 |\n| B. Unrisked Peak Sales | 462,500 × $28,000 × 15% × 1.0 = **$1.94B** | Leqembi WAC $26,500/year, Kisunla 약 $32,000/year를 기반으로 $28,000 price proxy 사용 |\n| Entry-order matrix | 3-player example: 1st ~50%, 2nd ~30%, 3rd ~20%. ILM01은 approved Aβ drugs와 remternetug 이후 late entrant로 15% 가정 | Leqembi/Kisunla approved, remternetug Phase III |\n| C. Obtainable Peak Sales | $1.94B × 0.55 competition haircut × 0.90 pricing power × 1.10 expansion capacity = **$1.06B** | AD market은 크지만 late entrant haircut 필요. ARIA-low/ARIA-free 입증 시 upside 존재 |\n| Final score basis | Obtainable peak sales가 $1B 이상 가능하나 $2B 이상은 임상 safety differentiation 전에는 보수적으로 보기 어려움 | **2 / 3** |\n\nInvestigation note:\n- Marketability는 **rNPV가 아니라 Obtainable Peak Sales** 기준으로 산정했다.\n- ILM01이 임상에서 ARIA-free 또는 clearly lower-ARIA profile을 증명하면 pricing power와 competition haircut 모두 개선될 수 있다.\n\n---\n\n## 5) Validation Notes\n\nCross-checked facts:\n- ILM01이 Aβ / Alzheimer’s disease pipeline이라는 점은 official pipeline과 stage/news source로 cross-check했다.\n- GAIA mechanism은 official platform, AD Moonshot page, Nature Medicine/KAIST record, poster로 cross-check했다.\n- Competitor landscape는 FDA Leqembi/Kisunla approval, Lilly remternetug trial page, Biogen Aduhelm discontinuation으로 확인했다.\n\nUncertain points:\n- Final ILM01 construct가 Nature Medicine αAβ-Gas6 prototype과 어느 정도 동일한지 불명확하다.\n- GLP tox, CMC, PK/PD, immunogenicity, human biomarker strategy는 공개자료만으로 확인되지 않는다.\n- ClinicalTrials.gov 등 공공 registry에서 ILM01 임상시험 등록은 확인하지 못했다.\n- 2027 IND/Phase 1 timeline은 기사/회사성 자료 기반이며, 최신 company deck 또는 직접 확인이 필요하다.\n\nSearch log:\n- Official company page: [1], [2], [3]\n- Pipeline page: [4]\n- Platform page: [5]\n- Publications: [7], [8], [10]\n- Regulatory / trial registry: [15], [16], [18]\n- Competitor sources: [15], [16], [17], [18], [23], [24], [25]\n- Market / epidemiology sources: [19], [20], [21], [22]\n- Financing / partnership sources: [11], [12], [13]\n\n---\n\n## 6) Final Take\n\nOne-line summary:  \n**ILM01은 “Aβ 제거제”라기보다 “Neuroimmune clearance platform의 lead asset”으로 보는 것이 맞고, SKBP 관점에서는 Watch / DD priority로 관리할 가치가 높다.**\n\nRecommendation:\n- **Watch**\n- 단, CMC/GLP/PKPD/ARIA translational package가 확보되면 **Shortlist 전환 가능**\n\nMost important diligence question:  \n**ILM01 final candidate가 사람에서 기존 anti-Aβ antibody 대비 동등한 amyloid clearance와 의미 있게 낮은 ARIA/neuroinflammation을 동시에 입증할 수 있는가?**\n\n---\n\n## References\n\n[1]: https://illimistx.com/en/ \"Illimis Therapeutics official site\"  \n[2]: https://illimistx.com/en/sub/about/overview.php \"Illimis Therapeutics overview\"  \n[3]: https://illimistx.com/en/sub/about/contact.php \"Illimis Therapeutics contact\"  \n[4]: https://illimistx.com/en/sub/platform%26pipeline/pipeline.php \"Illimis Therapeutics pipeline\"  \n[5]: https://illimistx.com/en/sub/platform%26pipeline/platform.php \"Illimis GAIA platform\"  \n[6]: https://illimistx.com/en/sub/platform%26pipeline/moonshot.php \"Illimis AD Moonshot / GAIA-Aβ publication page\"  \n[7]: https://www.nature.com/articles/s41591-022-01926-9 \"Nature Medicine: Anti-inflammatory clearance of amyloid-β by a chimeric Gas6 fusion protein\"  \n[8]: https://pure.kaist.ac.kr/en/publications/anti-inflammatory-clearance-of-amyloid-%CE%B2-by-a-chimeric-gas6-fusio/ \"KAIST Pure publication record\"  \n[9]: https://www.eurekalert.org/news-releases/960921 \"EurekAlert KAIST release\"  \n[10]: https://www.illimistx.com/data/Poster_Illimis_Keystone2022.pdf \"Illimis Keystone 2022 poster\"  \n[11]: https://www.prnewswire.com/news-releases/illimis-therapeutics-closes-58-billion-krw-42-million-series-b-financing-to-accelerate-cns-and-immune-disease-drug-development-via-gaia-platform-302504123.html \"Illimis Series B PRNewswire\"  \n[12]: https://www.biospectator.com/news/view/25729 \"BioSpectator: Illimis Series B and ILM01 stage\"  \n[13]: https://www.koreabiomed.com/news/articleView.html?idxno=29100 \"Korea Biomedical Review Illimis interview\"  \n[14]: https://www.mk.co.kr/en/it/11981980 \"Maeil Business News 2026 Illimis interview\"  \n[15]: https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval \"FDA Leqembi traditional approval\"  \n[16]: https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease \"FDA Kisunla approval\"  \n[17]: https://investor.lilly.com/news-releases/news-release-details/lillys-kisunlatm-donanemab-azbt-approved-fda-treatment-early \"Lilly Kisunla approval press release\"  \n[18]: https://trials.lilly.com/en-US/trial/548297 \"Lilly remternetug TRAILRUNNER-ALZ 3 trial page\"  \n[19]: https://www.eisai.com/news/2023/news202302.html \"Eisai Leqembi pricing\"  \n[20]: https://www.biopharmadive.com/news/lilly-alzheimers-drug-fda-approval-kisunla-donanemab/720497/ \"BioPharma Dive Kisunla pricing\"  \n[21]: https://www.alz.org/alzheimers-dementia/facts-figures \"Alzheimer's Association 2026 Facts and Figures\"  \n[22]: https://snu.elsevierpure.com/en/publications/eligibility-for-lecanemab-and-donanemab-in-korea-under-appropriat/ \"Eligibility for lecanemab and donanemab in Korea under AUR\"  \n[23]: https://investors.biogen.com/news-releases/news-release-details/biogen-realign-resources-alzheimers-disease-franchise \"Biogen Aduhelm discontinuation\"  \n[24]: https://investors.biogen.com/news-releases/news-release-details/topline-results-phase-2-celia-study-diranersen-biib080-first \"Biogen/Ionis BIIB080 Phase 2 topline\"  \n[25]: https://www.inmunebio.com/index.php/newsroom/2026-news/muneionnounceslignmentonntegratedhase2b320260212040512 \"INmune Bio XPro TNF neuroinflammation program\"\n\n---\n\n## AI Agent Revision Note (2026-06-22)\n\n- Revision basis: Detail AI Agent v3.1 re-evaluation applied from chat answer.\n- Applied at: 2026-06-22T23:05:05.705413+00:00\n- Scope: JSON scoring fields and source report amendment generated from detail-page Agent discussion.\n\n### Applied JSON Changes\n\n- json_summary.theme -> Neuroimmune\n- json_summary.cluster -> 교세포 향상성\n- structured_table.sources +1\n- scoring.criteria.target_relevance.evidence_sources +1\n- scoring.criteria.competitive_landscape.evidence_sources +1\n- scoring.criteria.moa_validity.evidence_sources +1\n- scoring.criteria.platform_attractiveness.evidence_sources +1\n- scoring.criteria.expansion_potential.evidence_sources +1\n- scoring.criteria.data_maturity.evidence_sources +1\n- scoring.criteria.marketability.evidence_sources +1\n- competitive_landscape.score 1 -> 2\n- moa_validity.score 3 -> 2\n- platform_attractiveness.score -> 2\n\n### Agent Discussion Summary Used For Revision\n\nILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약\n\n아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.\n\n---\n\n1. 수정 권장 사항\nTarget Relevance (현재 3 → 유지 권장)\n문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확.\n단, v3.1에서는 \"final ILM01 target binder 및 TAM receptor subtype selectivity 비공개\"를 uncertainty로 명시한 부분 유지 필요.\nCompetitive Landscape (현재 1 → 2로 상향 가능성 검토)\nv3.1 기준: \"same-MoA 경쟁자가 명확하지 않으면 2점 가능\"이라는 해석 여지 있음.\n현재 근거: True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않음.\n수정 제안: \"Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist\"를 uncertainty로 유지하되, 점수를 2로 상향하고 근거를 \"E2_indirect_or_class_level_evidence\"로 조정 가능.\n단, AD indication 기준 Leqembi/Kisunla/remternetug 등 anti-Aβ 경쟁 과밀은 여전히 리스크로 기재.\nMoA Validity (현재 3 → 유지)\nNature Medicine 논문 기반 data 일관됨. v3.1 기준 E3 evidence 충족.\n단, \"publication prototype과 final ILM01 clinical candidate identity 확인 필요\"는 uncertainty로 유지.\nPlatform Attractiveness (현재 2 → 유지)\nGAIA는 differentiated biologic fusion platform이지만, SKBP 우선 modality(small molecule/ASO/siRNA)는 아님 → 2점 적절.\nv3.1에서 \"expression yield, aggregation, immunogenicity, route, half-life, scalable CMC data 비공개\"를 uncertainty로 유지.\nExpansion Potential (현재 3 → 유지)\n공식 pipeline 자료가 Aβ 외 tau, α-syn, myelin debris, PS/SLE 등 확장 명시 → platform으로 해석 가능.\n단, \"non-Aβ programs' independent POC maturity 비공개\" uncertainty 유지.\nData Maturity (현재 2 → 유지)\nIn vitro/vivo/cytokine/scRNA-seq/AD/CAA model data 명확하나, IND-enabling GLP tox/PK/PD/CMC 및 human data 없음 → 2점 적절.\nMarketability (현재 2 → 유지)\nv3.1 기준: A. TAP 계산(U.S. AD pool 7.4M → diagnosis/eligibility/treatable assumptions → 약 46만 명)은 합리적.\nB. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy → 약 $1.94B.\nC. Obtainable Peak: 아직 계산되지 않았으므로 \"Obtainable Peak Sales not yet calculated; requires further modeling\" 을 uncertainty로 추가.\n\n---\n\n2. JSON 수정 제안\njson\n{\n  \"scoring\": {\n    \"competitive_landscape\": {\n      \"score\": 2,\n      \"judgment\": \"True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않아 v3.1 기준 2점 가능. 단, commercial indication 기준 Leqembi, Kisunla, remternetug 등 anti-Aβ 경쟁 과밀은 여전히 리스크.\",\n      \"why_not_higher\": \"Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria.\",\n      \"uncertain_points\": [\n        \"Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist.\",\n        \"AD indication anti-Aβ 경쟁 과밀은 여전히 리스크.\"\n      ],\n      \"evidence_type\": \"E2_indirect_or_class_level_evidence\",\n      \"evidence_sources\": [\n        \"https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval\",\n        \"https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease\",\n        \"https://trials.lilly.com/en-US/trial/548297\"\n      ]\n    },\n    \"marketability\": {\n      \"score\": 2,\n      \"judgment\": \"A. TAP: U.S. AD pool 7.4M에서 diagnosis/eligibility/treatable assumptions 적용해 약 46만 명. B. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy 적용 시 약 $1.94B. C. Obtainable Peak Sales: 아직 계산되지 않음.\",\n      \"why_not_higher\": \"Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria.\",\n      \"uncertain\n\n---\n\n## AI Agent Revision Note (2026-06-22)\n\n- Revision basis: Detail AI Agent v3.1 re-evaluation applied from chat answer.\n- Applied at: 2026-06-22T23:10:36.372528+00:00\n- Scope: JSON scoring fields and source report amendment generated from detail-page Agent discussion.\n\n### Applied JSON Changes\n\n- structured_table.sources +1\n- scoring.criteria.target_relevance.evidence_sources +1\n- scoring.criteria.competitive_landscape.evidence_sources +1\n- target_relevance.score 3 -> 2\n- competitive_landscape.score -> 2\n- source_report.raw_markdown v3.1 update badge\n\n### Agent Discussion Summary Used For Revision\n\n네, 맞습니다. 원문 리포트(Wiki 2: Illimis_Therapeutics_ILM01_20260621.md)는 v3.0 지침으로 작성되었고, 스코어링과 JSON 요약은 v3.1 기준으로 업데이트되었습니다.\n\n원문 리포트 (v3.0): 회사 개요, 파이프라인 세부 내용, evidence trail 등은 v3.0 템플릿 그대로 유지.\n스코어링 (v3.1): 제공된 JSON의 각 criterion에 \"AI Agent v3.1 re-evaluation update\"라고 명시되어 있으며, 점수와 판단 근거가 v3.1 기준으로 재평가됨.\nJSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등).\n대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨.\n\n즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수/판단)는 v3.1로 업데이트된 상태입니다.\n\n추가로 원문 리포트 자체를 v3.1 형식으로 다시 작성해야 한다면, 그 작업은 아직 수행되지 않았습니다.\n",
     "source_format": "gpt_markdown_report",
-    "parser_status": "gpt_structured_output",
-    "parser_note": "Markdown report and JSON were generated together from the same evidence set."
+    "parser_status": "ai_revision_applied",
+    "parser_note": "Markdown report and JSON were generated together from the same evidence set.",
+    "revision_history": [
+      {
+        "created_at": "2026-06-22T23:05:05.705413+00:00",
+        "source": "detail_ai_agent",
+        "instruction": "Detail AI Agent v3.1 re-evaluation applied from chat answer.",
+        "changes": [
+          "json_summary.theme -> Neuroimmune",
+          "json_summary.cluster -> 교세포 향상성",
+          "structured_table.sources +1",
+          "scoring.criteria.target_relevance.evidence_sources +1",
+          "scoring.criteria.competitive_landscape.evidence_sources +1",
+          "scoring.criteria.moa_validity.evidence_sources +1",
+          "scoring.criteria.platform_attractiveness.evidence_sources +1",
+          "scoring.criteria.expansion_potential.evidence_sources +1",
+          "scoring.criteria.data_maturity.evidence_sources +1",
+          "scoring.criteria.marketability.evidence_sources +1",
+          "competitive_landscape.score 1 -> 2",
+          "moa_validity.score 3 -> 2",
+          "platform_attractiveness.score -> 2"
+        ]
+      },
+      {
+        "created_at": "2026-06-22T23:10:36.372528+00:00",
+        "source": "detail_ai_agent",
+        "instruction": "Detail AI Agent v3.1 re-evaluation applied from chat answer.",
+        "changes": [
+          "structured_table.sources +1",
+          "scoring.criteria.target_relevance.evidence_sources +1",
+          "scoring.criteria.competitive_landscape.evidence_sources +1",
+          "target_relevance.score 3 -> 2",
+          "competitive_landscape.score -> 2",
+          "source_report.raw_markdown v3.1 update badge"
+        ]
+      }
+    ]
   },
   "company_profile": {
     "company_name": "Illimis Therapeutics",
@@ -363,7 +400,7 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
     "target": "Aβ aggregates with TAM receptor-mediated clearance biology",
     "theme": "Neuroimmune",
     "cluster": "교세포 향상성",
-    "target_relevance_score": 3,
+    "target_relevance_score": 2,
     "one_line_summary": "ILM01은 Aβ 제거를 TAM receptor 기반 glial phagocytosis와 anti-inflammatory signaling으로 재설계한 GAIA fusion protein으로, Neuroimmune fit은 강하지만 AD/Aβ 경쟁 과밀과 임상 전환 검증이 핵심 리스크다.",
     "company_country": "Republic of Korea"
   },
@@ -397,6 +434,18 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
         "source_url": "https://www.nature.com/articles/s41591-022-01926-9",
         "reliability": "high",
         "evidence_summary": "Supports TAM-dependent anti-inflammatory Aβ clearance in AD/CAA model mice."
+      },
+      {
+        "source_id": "ai-draft-20260622230505",
+        "source_title": "AI draft search note",
+        "source_url": "https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval\",",
+        "source_excerpt": "ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약\n\n아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.\n\n---\n\n1. 수정 권장 사항\nTarget Relevance (현재 3 → 유지 권장)\n문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확.\n단, v3.1에서는 \"final ILM01 target binder 및 TAM receptor subtype selectivity 비공개\"를 uncertainty로 명시한 부분 유지 필요.\nCompetitive Landscape (현재 1 → 2로 상향 가능성 검토)\nv3.1 기준: \"same-MoA 경쟁자가 명확하지 않으면 "
+      },
+      {
+        "source_id": "ai-draft-20260622231036",
+        "source_title": "AI draft search note",
+        "source_url": null,
+        "source_excerpt": "네, 맞습니다. 원문 리포트(Wiki 2: Illimis_Therapeutics_ILM01_20260621.md)는 v3.0 지침으로 작성되었고, 스코어링과 JSON 요약은 v3.1 기준으로 업데이트되었습니다.\n\n원문 리포트 (v3.0): 회사 개요, 파이프라인 세부 내용, evidence trail 등은 v3.0 템플릿 그대로 유지.\n스코어링 (v3.1): 제공된 JSON의 각 criterion에 \"AI Agent v3.1 re-evaluation update\"라고 명시되어 있으며, 점수와 판단 근거가 v3.1 기준으로 재평가됨.\nJSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등).\n대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨.\n\n즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수"
       }
     ]
   },
@@ -410,12 +459,12 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
     ]
   },
   "scoring": {
-    "total_score": 16,
+    "total_score": 15,
     "max_score": 21,
     "criteria": {
       "target_relevance": {
-        "score": 3,
-        "main_line_summary": "Aβ 자체는 AD target이지만 ILM01의 differentiating biology는 TAM receptor, microglia/astrocyte phagocytosis, anti-inflammatory clearance라서 Neuroimmune / 교세포 향상성 cluster에 정확히 매핑된다.",
+        "score": 2,
+        "main_line_summary": "AI Agent v3.1 re-evaluation update. Applied from detail chat answer: JSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등). 대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨. 즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수/판단)는 v3.1로 업데이트된 상태입니다.",
         "what_was_checked": [
           "target identity",
           "disease biology",
@@ -429,19 +478,53 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
         "evidence_sources": [
           "https://illimistx.com/en/sub/platform%26pipeline/pipeline.php",
           "https://illimistx.com/en/sub/platform%26pipeline/platform.php",
-          "https://pure.kaist.ac.kr/en/publications/anti-inflammatory-clearance-of-amyloid-%CE%B2-by-a-chimeric-gas6-fusio/"
+          "https://pure.kaist.ac.kr/en/publications/anti-inflammatory-clearance-of-amyloid-%CE%B2-by-a-chimeric-gas6-fusio/",
+          {
+            "source_id": "ai-evidence-20260622230505",
+            "source_title": "AI draft evidence note",
+            "source_url": null,
+            "source_type": "other",
+            "published_at": null,
+            "accessed_at": "2026-06-22",
+            "evidence_summary": "ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약\n\n아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.\n\n---\n\n1. 수정 권장 사항\nTarget Relevance (현재 3 → 유지 권장)\n문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확.\n단, v3.1에서는 \"final ILM01 target binder 및 TAM receptor subtype selectivity 비공개\"를 uncertainty로 명시한 부분 유지 필요.\nCompetitive Landscape (현재 1 → 2로 상향 가능성 검토)\nv3.1 기준: \"same-MoA 경쟁자가 명확하지 않으면 ",
+            "relevance_to_assessment": "User-provided evidence note for target_relevance.",
+            "supports_score": null,
+            "reliability": "Unclear"
+          },
+          {
+            "source_id": "ai-evidence-20260622231036",
+            "source_title": "AI draft evidence note",
+            "source_url": null,
+            "source_type": "other",
+            "published_at": null,
+            "accessed_at": "2026-06-22",
+            "evidence_summary": "네, 맞습니다. 원문 리포트(Wiki 2: Illimis_Therapeutics_ILM01_20260621.md)는 v3.0 지침으로 작성되었고, 스코어링과 JSON 요약은 v3.1 기준으로 업데이트되었습니다.\n\n원문 리포트 (v3.0): 회사 개요, 파이프라인 세부 내용, evidence trail 등은 v3.0 템플릿 그대로 유지.\n스코어링 (v3.1): 제공된 JSON의 각 criterion에 \"AI Agent v3.1 re-evaluation update\"라고 명시되어 있으며, 점수와 판단 근거가 v3.1 기준으로 재평가됨.\nJSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등).\n대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨.\n\n즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수",
+            "relevance_to_assessment": "User-provided evidence note for target_relevance.",
+            "supports_score": null,
+            "reliability": "Unclear"
+          }
         ],
-        "investigation_note": "SKBP mapping은 Aβ-only가 아니라 glial immune regulation 중심으로 판단.",
+        "investigation_note": "Updated through AI draft chat. Rubric text is stored separately in the rubric section.",
         "uncertain_points": [
-          "Final ILM01 target binder and TAM receptor subtype selectivity are not public."
+          "AI draft update. Reviewer should confirm source-level evidence."
         ],
         "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
         "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
-        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
+        "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria.",
+        "ai_champion": {
+          "matched_theme": {
+            "id": "neuroimmune",
+            "name": "Neuroimmune"
+          },
+          "matched_cluster": {
+            "id": "glial_homeostasis",
+            "name": "교세포 향상성"
+          }
+        }
       },
       "competitive_landscape": {
-        "score": 1,
-        "main_line_summary": "True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않지만, commercial indication 기준으로 Leqembi, Kisunla, remternetug 등 anti-Aβ 경쟁이 이미 과밀하다.",
+        "score": 2,
+        "main_line_summary": "AI Agent v3.1 re-evaluation update. Applied from detail chat answer: JSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등). 대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨. 즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수/판단)는 v3.1로 업데이트된 상태입니다.",
         "what_was_checked": [
           "same disease competitors",
           "same target competitors",
@@ -457,19 +540,43 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
           "https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval",
           "https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease",
           "https://trials.lilly.com/en-US/trial/548297",
-          "https://investors.biogen.com/news-releases/news-release-details/biogen-realign-resources-alzheimers-disease-franchise"
+          "https://investors.biogen.com/news-releases/news-release-details/biogen-realign-resources-alzheimers-disease-franchise",
+          {
+            "source_id": "ai-evidence-20260622230505",
+            "source_title": "AI draft evidence note",
+            "source_url": null,
+            "source_type": "other",
+            "published_at": null,
+            "accessed_at": "2026-06-22",
+            "evidence_summary": "ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약\n\n아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.\n\n---\n\n1. 수정 권장 사항\nTarget Relevance (현재 3 → 유지 권장)\n문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확.\n단, v3.1에서는 \"final ILM01 target binder 및 TAM receptor subtype selectivity 비공개\"를 uncertainty로 명시한 부분 유지 필요.\nCompetitive Landscape (현재 1 → 2로 상향 가능성 검토)\nv3.1 기준: \"same-MoA 경쟁자가 명확하지 않으면 ",
+            "relevance_to_assessment": "User-provided evidence note for competitive_landscape.",
+            "supports_score": null,
+            "reliability": "Unclear"
+          },
+          {
+            "source_id": "ai-evidence-20260622231036",
+            "source_title": "AI draft evidence note",
+            "source_url": null,
+            "source_type": "other",
+            "published_at": null,
+            "accessed_at": "2026-06-22",
+            "evidence_summary": "네, 맞습니다. 원문 리포트(Wiki 2: Illimis_Therapeutics_ILM01_20260621.md)는 v3.0 지침으로 작성되었고, 스코어링과 JSON 요약은 v3.1 기준으로 업데이트되었습니다.\n\n원문 리포트 (v3.0): 회사 개요, 파이프라인 세부 내용, evidence trail 등은 v3.0 템플릿 그대로 유지.\n스코어링 (v3.1): 제공된 JSON의 각 criterion에 \"AI Agent v3.1 re-evaluation update\"라고 명시되어 있으며, 점수와 판단 근거가 v3.1 기준으로 재평가됨.\nJSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등).\n대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨.\n\n즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수",
+            "relevance_to_assessment": "User-provided evidence note for competitive_landscape.",
+            "supports_score": null,
+            "reliability": "Unclear"
+          }
         ],
-        "investigation_note": "Same-MoA 경쟁은 낮지만 AD/Aβ market은 late-entrant burden이 커서 1점.",
+        "investigation_note": "Updated through AI draft chat. Rubric text is stored separately in the rubric section.",
         "uncertain_points": [
-          "Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist."
+          "AI draft update. Reviewer should confirm source-level evidence."
         ],
         "evidence_type": "E1_company_claim_or_scientific_rationale_only",
         "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
         "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria."
       },
       "moa_validity": {
-        "score": 3,
-        "main_line_summary": "Nature Medicine 기반 αAβ-Gas6 data가 TAM-dependent clearance, reduced NF-κB/inflammation, astrocyte/microglia phagocytosis, reduced synapse elimination and microhemorrhage를 일관되게 뒷받침한다.",
+        "score": 2,
+        "main_line_summary": "AI Agent v3.1 re-evaluation update. Applied from detail chat answer: v3.1 기준: \"same-MoA 경쟁자가 명확하지 않으면 2점 가능\"이라는 해석 여지 있음. 현재 근거: True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않음. 수정 제안: \"Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist\"를 uncertainty로 유지하되, 점수를 2로 상향하고 근거를 \"E2_indirect_or_class_level_evidence\"로 조정 가능.",
         "what_was_checked": [
           "journal publication",
           "mechanistic consistency",
@@ -484,11 +591,23 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
         "evidence_sources": [
           "https://www.nature.com/articles/s41591-022-01926-9",
           "https://pure.kaist.ac.kr/en/publications/anti-inflammatory-clearance-of-amyloid-%CE%B2-by-a-chimeric-gas6-fusio/",
-          "https://www.illimistx.com/data/Poster_Illimis_Keystone2022.pdf"
+          "https://www.illimistx.com/data/Poster_Illimis_Keystone2022.pdf",
+          {
+            "source_id": "ai-evidence-20260622230505",
+            "source_title": "AI draft evidence note",
+            "source_url": null,
+            "source_type": "other",
+            "published_at": null,
+            "accessed_at": "2026-06-22",
+            "evidence_summary": "ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약\n\n아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.\n\n---\n\n1. 수정 권장 사항\nTarget Relevance (현재 3 → 유지 권장)\n문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확.\n단, v3.1에서는 \"final ILM01 target binder 및 TAM receptor subtype selectivity 비공개\"를 uncertainty로 명시한 부분 유지 필요.\nCompetitive Landscape (현재 1 → 2로 상향 가능성 검토)\nv3.1 기준: \"same-MoA 경쟁자가 명확하지 않으면 ",
+            "relevance_to_assessment": "User-provided evidence note for moa_validity.",
+            "supports_score": null,
+            "reliability": "Unclear"
+          }
         ],
-        "investigation_note": "Publication plus multiple functional and safety-relevant readouts support 3점.",
+        "investigation_note": "Updated through AI draft chat. Rubric text is stored separately in the rubric section.",
         "uncertain_points": [
-          "Publication prototype and final ILM01 clinical candidate identity require confirmation."
+          "AI draft update. Reviewer should confirm source-level evidence."
         ],
         "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
         "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
@@ -496,7 +615,7 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
       },
       "platform_attractiveness": {
         "score": 2,
-        "main_line_summary": "GAIA는 differentiated biologic fusion platform이고 anti-inflammatory clearance data가 명확하지만, SKBP 우선 modality인 small molecule/ASO/siRNA는 아니므로 2점이다.",
+        "main_line_summary": "AI Agent v3.1 re-evaluation update. Applied from detail chat answer: Platform Attractiveness (현재 2 → 유지) GAIA는 differentiated biologic fusion platform이지만, SKBP 우선 modality(small molecule/ASO/siRNA)는 아님 → 2점 적절.",
         "what_was_checked": [
           "platform reality",
           "data-supported differentiation",
@@ -511,11 +630,23 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
         "evidence_sources": [
           "https://illimistx.com/en/sub/platform%26pipeline/platform.php",
           "https://pure.kaist.ac.kr/en/publications/anti-inflammatory-clearance-of-amyloid-%CE%B2-by-a-chimeric-gas6-fusio/",
-          "https://www.koreabiomed.com/news/articleView.html?idxno=29100"
+          "https://www.koreabiomed.com/news/articleView.html?idxno=29100",
+          {
+            "source_id": "ai-evidence-20260622230505",
+            "source_title": "AI draft evidence note",
+            "source_url": null,
+            "source_type": "other",
+            "published_at": null,
+            "accessed_at": "2026-06-22",
+            "evidence_summary": "ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약\n\n아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.\n\n---\n\n1. 수정 권장 사항\nTarget Relevance (현재 3 → 유지 권장)\n문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확.\n단, v3.1에서는 \"final ILM01 target binder 및 TAM receptor subtype selectivity 비공개\"를 uncertainty로 명시한 부분 유지 필요.\nCompetitive Landscape (현재 1 → 2로 상향 가능성 검토)\nv3.1 기준: \"same-MoA 경쟁자가 명확하지 않으면 ",
+            "relevance_to_assessment": "User-provided evidence note for platform_attractiveness.",
+            "supports_score": null,
+            "reliability": "Unclear"
+          }
         ],
-        "investigation_note": "Differentiation is strong, but biologic fusion CMC and modality fit limit score to 2.",
+        "investigation_note": "Updated through AI draft chat. Rubric text is stored separately in the rubric section.",
         "uncertain_points": [
-          "Expression yield, aggregation, immunogenicity, route, half-life, and scalable CMC data are not public."
+          "AI draft update. Reviewer should confirm source-level evidence."
         ],
         "evidence_type": "E2_indirect_or_class_level_evidence",
         "evidence_type_reason": "Backfilled during v3.1 migration based on visible evidence level; verify during next review.",
@@ -537,7 +668,19 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
         "evidence_sources": [
           "https://illimistx.com/en/sub/platform%26pipeline/pipeline.php",
           "https://illimistx.com/en/sub/platform%26pipeline/platform.php",
-          "https://www.koreabiomed.com/news/articleView.html?idxno=29100"
+          "https://www.koreabiomed.com/news/articleView.html?idxno=29100",
+          {
+            "source_id": "ai-evidence-20260622230505",
+            "source_title": "AI draft evidence note",
+            "source_url": null,
+            "source_type": "other",
+            "published_at": null,
+            "accessed_at": "2026-06-22",
+            "evidence_summary": "ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약\n\n아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.\n\n---\n\n1. 수정 권장 사항\nTarget Relevance (현재 3 → 유지 권장)\n문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확.\n단, v3.1에서는 \"final ILM01 target binder 및 TAM receptor subtype selectivity 비공개\"를 uncertainty로 명시한 부분 유지 필요.\nCompetitive Landscape (현재 1 → 2로 상향 가능성 검토)\nv3.1 기준: \"same-MoA 경쟁자가 명확하지 않으면 ",
+            "relevance_to_assessment": "User-provided evidence note for expansion_potential.",
+            "supports_score": null,
+            "reliability": "Unclear"
+          }
         ],
         "investigation_note": "Multiple target/indication expansion is visible in public sources, so 3점.",
         "uncertain_points": [
@@ -565,7 +708,19 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
           "https://pure.kaist.ac.kr/en/publications/anti-inflammatory-clearance-of-amyloid-%CE%B2-by-a-chimeric-gas6-fusio/",
           "https://www.illimistx.com/data/Poster_Illimis_Keystone2022.pdf",
           "https://www.biospectator.com/news/view/25729",
-          "https://www.mk.co.kr/en/it/11981980"
+          "https://www.mk.co.kr/en/it/11981980",
+          {
+            "source_id": "ai-evidence-20260622230505",
+            "source_title": "AI draft evidence note",
+            "source_url": null,
+            "source_type": "other",
+            "published_at": null,
+            "accessed_at": "2026-06-22",
+            "evidence_summary": "ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약\n\n아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.\n\n---\n\n1. 수정 권장 사항\nTarget Relevance (현재 3 → 유지 권장)\n문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확.\n단, v3.1에서는 \"final ILM01 target binder 및 TAM receptor subtype selectivity 비공개\"를 uncertainty로 명시한 부분 유지 필요.\nCompetitive Landscape (현재 1 → 2로 상향 가능성 검토)\nv3.1 기준: \"same-MoA 경쟁자가 명확하지 않으면 ",
+            "relevance_to_assessment": "User-provided evidence note for data_maturity.",
+            "supports_score": null,
+            "reliability": "Unclear"
+          }
         ],
         "investigation_note": "Strong preclinical POC warrants 2점; 3점 requires clearer final-candidate reproducible IND-enabling package.",
         "uncertain_points": [
@@ -657,7 +812,19 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
           "https://www.alz.org/alzheimers-dementia/facts-figures",
           "https://snu.elsevierpure.com/en/publications/eligibility-for-lecanemab-and-donanemab-in-korea-under-appropriat/",
           "https://www.eisai.com/news/2023/news202302.html",
-          "https://www.biopharmadive.com/news/lilly-alzheimers-drug-fda-approval-kisunla-donanemab/720497/"
+          "https://www.biopharmadive.com/news/lilly-alzheimers-drug-fda-approval-kisunla-donanemab/720497/",
+          {
+            "source_id": "ai-evidence-20260622230505",
+            "source_title": "AI draft evidence note",
+            "source_url": null,
+            "source_type": "other",
+            "published_at": null,
+            "accessed_at": "2026-06-22",
+            "evidence_summary": "ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약\n\n아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.\n\n---\n\n1. 수정 권장 사항\nTarget Relevance (현재 3 → 유지 권장)\n문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확.\n단, v3.1에서는 \"final ILM01 target binder 및 TAM receptor subtype selectivity 비공개\"를 uncertainty로 명시한 부분 유지 필요.\nCompetitive Landscape (현재 1 → 2로 상향 가능성 검토)\nv3.1 기준: \"same-MoA 경쟁자가 명확하지 않으면 ",
+            "relevance_to_assessment": "User-provided evidence note for marketability.",
+            "supports_score": null,
+            "reliability": "Unclear"
+          }
         ],
         "investigation_note": "Marketability는 rNPV가 아니라 TAP -> Unrisked Peak Sales -> Obtainable Peak Sales 순서로 산출했다.",
         "uncertain_points": [
@@ -850,6 +1017,12 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
       "Illimis",
       "일리미스"
     ]
+  },
+  "ai_revision_draft": {
+    "created_at": "2026-06-22T22:27:06.692Z",
+    "source": "detail_ai_chat",
+    "instruction": "Review this AI answer and selectively merge validated updates into the canonical schema fields.",
+    "answer_markdown": "ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약\n\n아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.\n\n---\n\n1. 수정 권장 사항\nTarget Relevance (현재 3 → 유지 권장)\n문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확.\n단, v3.1에서는 \"final ILM01 target binder 및 TAM receptor subtype selectivity 비공개\"를 uncertainty로 명시한 부분 유지 필요.\nCompetitive Landscape (현재 1 → 2로 상향 가능성 검토)\nv3.1 기준: \"same-MoA 경쟁자가 명확하지 않으면 2점 가능\"이라는 해석 여지 있음.\n현재 근거: True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않음.\n수정 제안: \"Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist\"를 uncertainty로 유지하되, 점수를 2로 상향하고 근거를 \"E2_indirect_or_class_level_evidence\"로 조정 가능.\n단, AD indication 기준 Leqembi/Kisunla/remternetug 등 anti-Aβ 경쟁 과밀은 여전히 리스크로 기재.\nMoA Validity (현재 3 → 유지)\nNature Medicine 논문 기반 data 일관됨. v3.1 기준 E3 evidence 충족.\n단, \"publication prototype과 final ILM01 clinical candidate identity 확인 필요\"는 uncertainty로 유지.\nPlatform Attractiveness (현재 2 → 유지)\nGAIA는 differentiated biologic fusion platform이지만, SKBP 우선 modality(small molecule/ASO/siRNA)는 아님 → 2점 적절.\nv3.1에서 \"expression yield, aggregation, immunogenicity, route, half-life, scalable CMC data 비공개\"를 uncertainty로 유지.\nExpansion Potential (현재 3 → 유지)\n공식 pipeline 자료가 Aβ 외 tau, α-syn, myelin debris, PS/SLE 등 확장 명시 → platform으로 해석 가능.\n단, \"non-Aβ programs' independent POC maturity 비공개\" uncertainty 유지.\nData Maturity (현재 2 → 유지)\nIn vitro/vivo/cytokine/scRNA-seq/AD/CAA model data 명확하나, IND-enabling GLP tox/PK/PD/CMC 및 human data 없음 → 2점 적절.\nMarketability (현재 2 → 유지)\nv3.1 기준: A. TAP 계산(U.S. AD pool 7.4M → diagnosis/eligibility/treatable assumptions → 약 46만 명)은 합리적.\nB. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy → 약 $1.94B.\nC. Obtainable Peak: 아직 계산되지 않았으므로 \"Obtainable Peak Sales not yet calculated; requires further modeling\" 을 uncertainty로 추가.\n\n---\n\n2. JSON 수정 제안\njson\n{\n  \"scoring\": {\n    \"competitive_landscape\": {\n      \"score\": 2,\n      \"judgment\": \"True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않아 v3.1 기준 2점 가능. 단, commercial indication 기준 Leqembi, Kisunla, remternetug 등 anti-Aβ 경쟁 과밀은 여전히 리스크.\",\n      \"why_not_higher\": \"Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria.\",\n      \"uncertain_points\": [\n        \"Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist.\",\n        \"AD indication anti-Aβ 경쟁 과밀은 여전히 리스크.\"\n      ],\n      \"evidence_type\": \"E2_indirect_or_class_level_evidence\",\n      \"evidence_sources\": [\n        \"https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval\",\n        \"https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease\",\n        \"https://trials.lilly.com/en-US/trial/548297\"\n      ]\n    },\n    \"marketability\": {\n      \"score\": 2,\n      \"judgment\": \"A. TAP: U.S. AD pool 7.4M에서 diagnosis/eligibility/treatable assumptions 적용해 약 46만 명. B. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy 적용 시 약 $1.94B. C. Obtainable Peak Sales: 아직 계산되지 않음.\",\n      \"why_not_higher\": \"Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria.\",\n      \"uncertain"
   }
 }
 ```

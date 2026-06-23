@@ -1,6 +1,7 @@
 import { setupThemeToggle } from './theme.js';
 
 const API_URL = '/api/records';
+const CATEGORY_SYNONYMS_URL = '/api/category-synonyms';
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.pageSize.v1';
 const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
@@ -12,9 +13,11 @@ const DEFAULT_COLUMN_WIDTHS = {
   company: 128,
   country: 112,
   asset: 92,
-  target: 360,
+  target: 280,
+  mainIndication: 180,
   stage: 190,
-  hardFilter: 82,
+  filter1: 82,
+  filter2: 82,
   targetScore: 52,
   competitiveScore: 58,
   moaScore: 52,
@@ -32,8 +35,10 @@ const MIN_COLUMN_WIDTHS = {
   country: 82,
   asset: 72,
   target: 180,
+  mainIndication: 130,
   stage: 120,
-  hardFilter: 70,
+  filter1: 70,
+  filter2: 70,
   targetScore: 46,
   competitiveScore: 50,
   moaScore: 46,
@@ -48,6 +53,8 @@ const MIN_COLUMN_WIDTHS = {
 const MAX_COLUMN_WIDTH = 720;
 const PROMPT_TOOLTIP =
   'GPT 조사 지침을 클립보드에 복사합니다. 복사한 지침을 ChatGPT에 붙여넣은 뒤, 조사할 회사명과 약물명/파이프라인명을 함께 입력하면 MD 리포트와 JSON Schema 형식으로 결과를 받을 수 있습니다.';
+const TRIAGE_PROMPT_TOOLTIP =
+  'GPT fast triage 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / N/A로 screening할 때 사용합니다.';
 
 const state = {
   rawRecords: [],
@@ -55,8 +62,11 @@ const state = {
   query: '',
   stage: 'all',
   theme: 'all',
+  cluster: 'all',
+  indication: 'all',
   country: 'all',
   pass: 'all',
+  tableMode: 'full',
   sortKey: 'totalScore',
   sortDirection: 'desc',
   page: 1,
@@ -65,7 +75,9 @@ const state = {
   extraColumns: new Set(JSON.parse(localStorage.getItem('skbp.dashboard.extraColumns') || '[]')),
   columnWidths: JSON.parse(localStorage.getItem(COLUMN_WIDTH_STORAGE_KEY) || '{}'),
   agentSessions: [],
-  activeAgentSessionId: localStorage.getItem(AGENT_ACTIVE_SESSION_KEY) || ''
+  activeAgentSessionId: localStorage.getItem(AGENT_ACTIVE_SESSION_KEY) || '',
+  categorySynonyms: { country: [], stage: [], indication: [] },
+  categorySynonymsLoaded: false
 };
 
 const elements = {
@@ -80,6 +92,12 @@ const elements = {
   criteriaDrawer: document.querySelector('#criteriaDrawer'),
   criteriaBackdrop: document.querySelector('#criteriaBackdrop'),
   criteriaDrawerClose: document.querySelector('#criteriaDrawerClose'),
+  triageReportDrawer: document.querySelector('#triageReportDrawer'),
+  triageReportBackdrop: document.querySelector('#triageReportBackdrop'),
+  triageReportClose: document.querySelector('#triageReportClose'),
+  triageReportTitle: document.querySelector('#triageReportTitle'),
+  triageReportMeta: document.querySelector('#triageReportMeta'),
+  triageReportBody: document.querySelector('#triageReportBody'),
   agentContextCount: document.querySelector('#agentContextCount'),
   agentMessages: document.querySelector('#agentMessages'),
   agentForm: document.querySelector('#agentForm'),
@@ -102,13 +120,16 @@ const elements = {
   searchInput: document.querySelector('#searchInput'),
   stageFilter: document.querySelector('#stageFilter'),
   themeFilter: document.querySelector('#themeFilter'),
+  clusterFilter: document.querySelector('#clusterFilter'),
   countryFilter: document.querySelector('#countryFilter'),
+  indicationFilter: document.querySelector('#indicationFilter'),
   passFilter: document.querySelector('#passFilter'),
   tableCount: document.querySelector('#tableCount'),
   pageSizeSelect: document.querySelector('#pageSizeSelect'),
   columnSettingsButton: document.querySelector('#columnSettingsButton'),
   columnSettingsPanel: document.querySelector('#columnSettingsPanel'),
   columnSettingsGrid: document.querySelector('#columnSettingsGrid'),
+  pipelineTableTabs: document.querySelectorAll('[data-table-mode]'),
   pipelineTableHead: document.querySelector('#pipelineTableHead'),
   pipelineHeaderRow: document.querySelector('#pipelineHeaderRow'),
   selectPageRows: document.querySelector('#selectPageRows'),
@@ -124,6 +145,7 @@ const elements = {
   saveJsonButton: document.querySelector('#saveJsonButton'),
   clearJsonButton: document.querySelector('#clearJsonButton'),
   saveStatus: document.querySelector('#saveStatus'),
+  copyTriagePromptTopButton: document.querySelector('#copyTriagePromptTopButton'),
   copyPromptTopButton: document.querySelector('#copyPromptTopButton'),
   copyPromptButton: document.querySelector('#copyPromptButton'),
   promptCopyStatus: document.querySelector('#promptCopyStatus')
@@ -160,6 +182,165 @@ function formatMillionUsd(value, unit = '') {
   if (/usd|dollar|\$/i.test(text) && numeric >= 1_000_000) {
     return `USD ${(numeric / 1_000_000).toLocaleString(undefined, { maximumFractionDigits: 1 })}M`;
   }
+  return text;
+}
+
+function mainIndicationFrom(value) {
+  const text = String(value || '').trim();
+  if (!text || text === '-') return '-';
+  return text
+    .split(/\s*(?:;|\||,|\band\b)\s*/i)
+    .map((item) => item.trim())
+    .filter(Boolean)[0] || text;
+}
+
+function normalizeCategoryText(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[\u2018\u2019\u201A\u201B]/g, "'")
+    .replace(/[\u2010-\u2015]/g, '-')
+    .replace(/\s+/g, ' ');
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function matchesDictionaryTerm(normalizedText, term) {
+  const normalizedTerm = normalizeCategoryText(term);
+  if (!normalizedText || !normalizedTerm) return false;
+  if (normalizedText === normalizedTerm) return true;
+
+  const compactTerm = normalizedTerm.replace(/[^a-z0-9]/g, '');
+  const isShortToken = compactTerm.length <= 3 && /^[a-z0-9]+$/.test(compactTerm);
+  if (isShortToken) {
+    return new RegExp(`(^|[^a-z0-9])${escapeRegExp(compactTerm)}([^a-z0-9]|$)`, 'i')
+      .test(normalizedText.replace(/[^a-z0-9]+/g, ' '));
+  }
+
+  return normalizedText.includes(normalizedTerm);
+}
+
+function orderedDictionaryEntries(kind) {
+  const entries = Array.isArray(state.categorySynonyms?.[kind]) ? state.categorySynonyms[kind] : [];
+  if (kind !== 'stage') return entries;
+
+  const stagePriority = {
+    'Discontinued / inactive': 120,
+    'Approved / marketed': 110,
+    Registration: 100,
+    'Phase 3': 90,
+    'Phase 2/3': 85,
+    'Phase 2': 80,
+    'Phase 1/2': 75,
+    'Phase 1': 70,
+    'IND-enabling': 65,
+    IND: 60,
+    'Lead Selection': 40,
+    'Lead Optimization': 30,
+    'Hit discovery': 20
+  };
+
+  return [...entries].sort((a, b) => {
+    return (stagePriority[b?.canonical] || 0) - (stagePriority[a?.canonical] || 0);
+  });
+}
+
+function canonicalFromDictionary(kind, value) {
+  const text = String(value || '').trim();
+  const normalized = normalizeCategoryText(text);
+  if (!normalized || normalized === '-') return null;
+
+  for (const entry of orderedDictionaryEntries(kind)) {
+    if (!entry?.canonical) continue;
+    if (matchesDictionaryTerm(normalized, entry.canonical)) return entry.canonical;
+
+    const synonyms = Array.isArray(entry.synonyms) ? entry.synonyms : [];
+    if (synonyms.some((term) => matchesDictionaryTerm(normalized, term))) {
+      return entry.canonical;
+    }
+
+    const patterns = Array.isArray(entry.patterns) ? entry.patterns : [];
+    for (const pattern of patterns) {
+      try {
+        if (new RegExp(pattern, 'i').test(normalized)) return entry.canonical;
+      } catch (error) {
+        console.warn(`Invalid ${kind} synonym pattern skipped: ${pattern}`, error);
+      }
+    }
+  }
+
+  return null;
+}
+
+async function loadCategorySynonyms() {
+  if (state.categorySynonymsLoaded) return;
+  try {
+    const response = await fetch(CATEGORY_SYNONYMS_URL);
+    if (!response.ok) throw new Error(await response.text());
+    const dictionary = await response.json();
+    state.categorySynonyms = {
+      country: Array.isArray(dictionary.country) ? dictionary.country : [],
+      stage: Array.isArray(dictionary.stage) ? dictionary.stage : [],
+      indication: Array.isArray(dictionary.indication) ? dictionary.indication : []
+    };
+  } catch (error) {
+    console.warn('Category synonym dictionary unavailable; using built-in fallback rules.', error);
+  } finally {
+    state.categorySynonymsLoaded = true;
+  }
+}
+
+function canonicalDashboardIndication(value) {
+  const text = String(value || '').trim();
+  const fromDictionary = canonicalFromDictionary('indication', text);
+  if (fromDictionary) return fromDictionary;
+
+  const normalized = normalizeCategoryText(text);
+  if (!text || text === '-') return '-';
+  if (/alzheimer|ad\b/.test(normalized)) return "Alzheimer's disease";
+  if (/epilep|seizure|focal onset|partial onset|status epilepticus/.test(normalized)) return 'Epilepsy / seizure disorders';
+  if (/chronic cough|rcc|ucc|refractory cough|unexplained cough/.test(normalized)) return 'Chronic cough';
+  if (/multiple sclerosis|\bms\b|neuroinflamm|autoimmune/.test(normalized)) return 'Multiple sclerosis / neuroinflammatory disease';
+  if (/inflammatory bowel|\bibd\b|crohn|ulcerative colitis/.test(normalized)) return 'Inflammatory bowel disease';
+  if (/major depressive|depression|\bmdd\b/.test(normalized)) return 'Major depressive disorder';
+  if (/pain/.test(normalized)) return 'Pain';
+  if (/acute ischemic stroke|stroke/.test(normalized)) return 'Stroke';
+  return mainIndicationFrom(text).replace(/[\u2018\u2019\u201A\u201B]/g, "'");
+}
+
+function canonicalCountry(value) {
+  const text = String(value || '').trim();
+  const fromDictionary = canonicalFromDictionary('country', text);
+  if (fromDictionary) return fromDictionary;
+
+  const lowered = normalizeCategoryText(text);
+  if (!text || text === '-') return '-';
+  if (/china|hong kong|prc|mainland/.test(lowered)) return 'China';
+  if (/korea|republic of korea|south korea/.test(lowered)) return 'Republic of Korea';
+  if (/united states|usa|u\.s\.|us\b/.test(lowered)) return 'United States';
+  return text;
+}
+
+function canonicalDevelopmentStage(value) {
+  const text = String(value || '').trim();
+  const fromDictionary = canonicalFromDictionary('stage', text);
+  if (fromDictionary) return fromDictionary;
+
+  const normalized = normalizeCategoryText(text);
+  if (!text || text === '-') return '-';
+  if (/discontinued|terminated|withdrawn|suspended|inactive|dormant/.test(normalized)) return 'Discontinued / inactive';
+  if (/approved|launched|marketed|commercial/.test(normalized)) return 'Approved / marketed';
+  if (/nda|bla|maa|registration|filed|under review/.test(normalized)) return 'Registration';
+  if (/(phase|ph|p)\s*-?\s*(2|ii)\s*\/\s*(3|iii)|\b2\s*\/\s*3\s*상/.test(normalized)) return 'Phase 2/3';
+  if (/(phase|ph|p)\s*-?\s*(1|i)\s*\/\s*(2|ii)|\b1\s*\/\s*2\s*상/.test(normalized)) return 'Phase 1/2';
+  if (/(phase|ph|p)\s*-?\s*(3|iii)\b|\b3상/.test(normalized)) return 'Phase 3';
+  if (/(phase|ph|p)\s*-?\s*(2|ii)\b|\b2상/.test(normalized)) return 'Phase 2';
+  if (/(phase|ph|p)\s*-?\s*(1|i)\b|\b1상|\bfih\b|first[- ]?in[- ]?human/.test(normalized)) return 'Phase 1';
+  if (/ind[- ]?enabling|ind preparation|ind-ready|glp tox|candidate selection|candidate selected/.test(normalized)) return 'IND-enabling';
+  if (/preclinical|pre-clinical|nonclinical|in vivo|in vitro/.test(normalized)) return 'Preclinical';
+  if (/discovery|lead optimization|lead-op|hit-to-lead|research/.test(normalized)) return 'Discovery';
   return text;
 }
 
@@ -297,6 +478,68 @@ function computeHardFilter(record, criteria) {
   return { status: 'REVIEW', reason: reasons.join('; ') || '추가 diligence 필요' };
 }
 
+function normalizeTriageStatus(value) {
+  const text = String(value || '').trim().toUpperCase();
+  if (['SELECT', 'REJECT', 'N/A', 'NA'].includes(text)) {
+    return text === 'NA' ? 'N/A' : text;
+  }
+  return '';
+}
+
+function isTriageRecord(record) {
+  const status = normalizeTriageStatus(record?.hard_filter?.status || record?.triage?.status || record?.triage_status);
+  const parserStatus = String(record?.source_report?.parser_status || '').toLowerCase();
+  const reviewType = String(record?.meta?.review_type || record?.meta?.workflow || '').toLowerCase();
+  return Boolean(status) || parserStatus.includes('triage') || reviewType.includes('triage');
+}
+
+function recordFilterStatus(record, computedHardFilter) {
+  const triageRecord = isTriageRecord(record);
+  const stage = canonicalDevelopmentStage(record?.structured_table?.development_stage || '');
+  if (triageRecord && stage === 'Discontinued / inactive') {
+    return {
+      status: 'REJECT',
+      reason: 'Fast triage auto-reject: discontinued / inactive pipeline'
+    };
+  }
+
+  const triageStatus = normalizeTriageStatus(record?.hard_filter?.status || record?.triage?.status || record?.triage_status);
+  if (triageStatus) {
+    return {
+      status: triageStatus,
+      reason: record?.hard_filter?.reason || record?.triage?.reason || record?.triage_reason || 'Fast triage result'
+    };
+  }
+  return computedHardFilter;
+}
+
+function recordFilter1Status(record) {
+  const triageRecord = isTriageRecord(record);
+  const stage = canonicalDevelopmentStage(record?.structured_table?.development_stage || '');
+  if (triageRecord && stage === 'Discontinued / inactive') {
+    return {
+      status: 'REJECT',
+      reason: 'Fast triage auto-reject: discontinued / inactive pipeline'
+    };
+  }
+
+  const triageStatus = normalizeTriageStatus(record?.hard_filter?.status || record?.triage?.status || record?.triage_status);
+  if (triageStatus) {
+    return {
+      status: triageStatus,
+      reason: record?.hard_filter?.reason || record?.triage?.reason || record?.triage_reason || 'Fast triage result'
+    };
+  }
+
+  return { status: '-', reason: '' };
+}
+
+function recordFilter2Status(record, computedHardFilter) {
+  return isTriageRecord(record)
+    ? { status: '-', reason: 'Full Scout v3.1 not run yet' }
+    : computedHardFilter;
+}
+
 function flattenRecord(record, index) {
   const summary = record.json_summary || {};
   const table = record.structured_table || {};
@@ -314,20 +557,30 @@ function flattenRecord(record, index) {
   };
 
   const computedHardFilter = computeHardFilter(record, criteria);
+  const filter1Status = recordFilter1Status(record);
+  const filter2Status = recordFilter2Status(record, computedHardFilter);
+  const filterStatus = filter1Status.status !== '-' ? filter1Status : filter2Status;
 
   return {
     id: get(record, 'meta.output_filename_base', `${summary.company || table.company || 'record'}-${index}`),
     company: summary.company || table.company || '-',
-    country: summary.company_country || table.company_country || '-',
+    countryRaw: summary.company_country || table.company_country || '-',
+    country: canonicalCountry(summary.company_country || table.company_country || '-'),
     asset: summary.asset_name || table.asset_name || '-',
     target: summary.target || table.target || '-',
     theme: summary.theme || get(champion, 'matched_theme.name', '-'),
     cluster: summary.cluster || get(champion, 'matched_cluster.name', '-'),
-    stage: table.development_stage || '-',
+    stageRaw: table.development_stage || '-',
+    stage: canonicalDevelopmentStage(table.development_stage || '-'),
     indication: table.indication || '-',
+    mainIndicationRaw: table.main_indication || table.primary_indication || summary.main_indication || mainIndicationFrom(table.indication),
+    mainIndication: canonicalDashboardIndication(table.main_indication || table.primary_indication || summary.main_indication || table.indication),
     modality: table.modality_platform || '-',
-    hardFilter: computedHardFilter.status,
-    hardFilterReason: computedHardFilter.reason,
+    isTriage: isTriageRecord(record),
+    filter1: filter1Status.status,
+    filter2: filter2Status.status,
+    hardFilter: filterStatus.status,
+    hardFilterReason: filterStatus.reason,
     targetScore: number(summary.target_relevance_score ?? criteria.target.score ?? champion.score),
     competitiveScore: criteria.competitive.score,
     moaScore: criteria.moa.score,
@@ -336,7 +589,7 @@ function flattenRecord(record, index) {
     dataScore: criteria.data.score,
     marketScore: criteria.market.score,
     totalScore: number(scoring.total_score),
-    maxScore: number(scoring.max_score) || 20,
+    maxScore: number(scoring.max_score) || 21,
     competition: get(record, 'competitive_analysis.competitive_density', 'Unclear'),
     similarPipelineCount: number(get(record, 'competitive_analysis.similarity_summary.similar_pipeline_count', 0)),
     highSimilarityCount: number(get(record, 'competitive_analysis.similarity_summary.high_similarity_count', 0)),
@@ -357,7 +610,6 @@ const EXTRA_COLUMN_DEFINITIONS = [
   { key: 'competitiveDensity', label: 'Competition', path: 'competitive_analysis.competitive_density' },
   { key: 'similarCount', label: 'Similar count', path: 'competitive_analysis.similarity_summary.similar_pipeline_count' },
   { key: 'recommendation', label: 'Recommendation', path: 'scoring.recommendation' },
-  { key: 'hardFilterReason', label: 'Filter reason', path: 'hard_filter.reason' },
   { key: 'parserStatus', label: 'Parser status', path: 'source_report.parser_status' },
   { key: 'firstSource', label: 'First source URL', path: 'structured_table.sources.0.source_url' },
   { key: 'uncertainPoints', label: 'Uncertain points', path: 'validation.uncertain_points' }
@@ -426,6 +678,36 @@ function plainHeader(label, columnKey, className = '') {
   return `<th${classAttr} ${columnAttrs(columnKey)}><span title="${escapeHtml(label)}">${escapeHtml(label)}</span>${resizeHandle(columnKey)}</th>`;
 }
 
+function activeTableMode() {
+  return state.tableMode === 'triage' ? 'triage' : 'full';
+}
+
+function activeFilterKey() {
+  return activeTableMode() === 'triage' ? 'filter1' : 'filter2';
+}
+
+function activeFilterLabel() {
+  return activeTableMode() === 'triage' ? 'Filter 1' : 'Filter 2';
+}
+
+function activeScoreColumnKeys() {
+  const triageCore = ['targetScore', 'moaScore', 'dataScore'];
+  if (activeTableMode() === 'triage') return triageCore;
+  return [
+    ...triageCore,
+    'competitiveScore',
+    'platformScore',
+    'expansionScore',
+    'marketScore',
+    'totalScore'
+  ];
+}
+
+function rowMatchesActiveTableMode(row) {
+  const status = row[activeFilterKey()];
+  return Boolean(status && status !== '-');
+}
+
 function visibleColumnKeys(extraColumns = selectedExtraColumns()) {
   return [
     'select',
@@ -433,16 +715,10 @@ function visibleColumnKeys(extraColumns = selectedExtraColumns()) {
     'country',
     'asset',
     'target',
+    'mainIndication',
     'stage',
-    'hardFilter',
-    'targetScore',
-    'competitiveScore',
-    'moaScore',
-    'platformScore',
-    'expansionScore',
-    'dataScore',
-    'marketScore',
-    'totalScore',
+    activeFilterKey(),
+    ...activeScoreColumnKeys(),
     ...extraColumns.map(extraColumnKey)
   ];
 }
@@ -488,16 +764,21 @@ function countBy(rows, keyGetter) {
 
 function getVisibleRows() {
   const query = state.query.trim().toLowerCase();
+  const filterKey = activeFilterKey();
   return state.rows
     .filter((row) => {
       const searchable = [
         row.company,
         row.country,
+        row.countryRaw,
         row.asset,
         row.target,
         row.theme,
         row.cluster,
         row.stage,
+        row.stageRaw,
+        row.mainIndication,
+        row.mainIndicationRaw,
         row.indication,
         row.modality
       ]
@@ -505,11 +786,14 @@ function getVisibleRows() {
         .toLowerCase();
 
       return (
+        rowMatchesActiveTableMode(row) &&
         (!query || searchable.includes(query)) &&
         (state.stage === 'all' || row.stage === state.stage) &&
         (state.theme === 'all' || row.theme === state.theme) &&
+        (state.cluster === 'all' || row.cluster === state.cluster) &&
+        (state.indication === 'all' || row.mainIndication === state.indication) &&
         (state.country === 'all' || row.country === state.country) &&
-        (state.pass === 'all' || row.hardFilter === state.pass)
+        (state.pass === 'all' || row[filterKey] === state.pass)
       );
     })
     .sort((a, b) => {
@@ -527,25 +811,53 @@ function getVisibleRows() {
 function renderFilters() {
   const stages = [...new Set(state.rows.map((row) => row.stage).filter(Boolean))].sort();
   const themes = [...new Set(state.rows.map((row) => row.theme).filter(Boolean))].sort();
+  const clusters = [...new Set(state.rows.map((row) => row.cluster).filter(Boolean))].sort();
   const countries = [...new Set(state.rows.map((row) => row.country).filter(Boolean))].sort();
+  const indications = [...new Set(state.rows.map((row) => row.mainIndication).filter(Boolean))].sort();
+  const filterKey = activeFilterKey();
+  const filterStatuses = [...new Set(state.rows
+    .filter(rowMatchesActiveTableMode)
+    .map((row) => row[filterKey])
+    .filter((value) => value && value !== '-'))]
+    .sort((a, b) => {
+      const order = ['SELECT', 'PASS', 'REVIEW', 'REJECT', 'FAIL', 'N/A'];
+      return (order.indexOf(a) === -1 ? 99 : order.indexOf(a)) - (order.indexOf(b) === -1 ? 99 : order.indexOf(b));
+    });
+  const option = (value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`;
+  if (state.pass !== 'all' && !filterStatuses.includes(state.pass)) {
+    state.pass = 'all';
+  }
 
   elements.stageFilter.innerHTML = [
     '<option value="all">전체</option>',
-    ...stages.map((stage) => `<option value="${stage}">${stage}</option>`)
+    ...stages.map(option)
   ].join('');
   elements.themeFilter.innerHTML = [
     '<option value="all">전체</option>',
-    ...themes.map((theme) => `<option value="${theme}">${theme}</option>`)
+    ...themes.map(option)
+  ].join('');
+  elements.clusterFilter.innerHTML = [
+    '<option value="all">전체</option>',
+    ...clusters.map(option)
   ].join('');
   elements.countryFilter.innerHTML = [
     '<option value="all">전체</option>',
-    ...countries.map((country) => `<option value="${country}">${country}</option>`)
+    ...countries.map(option)
   ].join('');
+  elements.indicationFilter.innerHTML = [
+    '<option value="all">전체</option>',
+    ...indications.map(option)
+  ].join('');
+  elements.passFilter.innerHTML = [
+    '<option value="all">전체</option>',
+    ...filterStatuses.map(option)
+  ].join('');
+  elements.passFilter.value = state.pass;
 }
 
 function renderMetrics() {
   const total = state.rows.length;
-  const pass = state.rows.filter((row) => row.hardFilter === 'PASS').length;
+  const pass = state.rows.filter((row) => row.filter1 === 'SELECT' || row.filter2 === 'PASS').length;
   const avgTotal = average(state.rows.map((row) => row.totalScore));
   const avgTarget = average(state.rows.map((row) => row.targetScore));
   const maxTotal = state.rows.find((row) => Number.isFinite(row.maxScore))?.maxScore || 21;
@@ -594,23 +906,23 @@ function renderCharts() {
     .join('');
 
   const total = state.rows.length;
-  const pass = state.rows.filter((row) => row.hardFilter === 'PASS').length;
+  const pass = state.rows.filter((row) => row.filter1 === 'SELECT' || row.filter2 === 'PASS').length;
   const passRate = total ? Math.round((pass / total) * 100) : 0;
   elements.passDonut.style.setProperty('--pass-rate', `${passRate}%`);
   elements.passDonut.textContent = `${passRate}%`;
   elements.passLegend.innerHTML = `
-    <span><b class="legend-dot pass"></b>PASS ${pass}</span>
+    <span><b class="legend-dot pass"></b>PASS/SELECT ${pass}</span>
     <span><b class="legend-dot fail"></b>Other ${Math.max(total - pass, 0)}</span>
   `;
 
   if (elements.scoreAverageChart) {
     const scoreItems = [
       ['TR', average(state.rows.map((row) => row.targetScore))],
-      ['Comp', average(state.rows.map((row) => row.competitiveScore))],
       ['MOA', average(state.rows.map((row) => row.moaScore))],
+      ['Data', average(state.rows.map((row) => row.dataScore))],
+      ['Comp', average(state.rows.map((row) => row.competitiveScore))],
       ['Plat', average(state.rows.map((row) => row.platformScore))],
       ['Exp', average(state.rows.map((row) => row.expansionScore))],
-      ['Data', average(state.rows.map((row) => row.dataScore))],
       ['Market', average(state.rows.map((row) => row.marketScore))]
     ];
     elements.scoreAverageChart.innerHTML = scoreItems
@@ -645,7 +957,7 @@ function renderColumnSettings() {
   `).join('');
 }
 
-function scoreTooltip(label, criterionInfo, max) {
+function scoreTooltipLegacy(label, criterionInfo, max) {
   const score = criterionInfo?.score ?? '-';
   const missing = (criterionInfo?.conflictingOrMissingEvidence || []).slice(0, 2).join('; ') || '-';
   const sources = (criterionInfo?.evidenceSources || [])
@@ -680,13 +992,95 @@ function scoreTooltip(label, criterionInfo, max) {
   return lines.join('\n');
 }
 
+function scoreTooltip(label, criterionInfo, max) {
+  const meaningfulValue = (value) => {
+    if (value === null || value === undefined) return '';
+    const text = String(value).trim();
+    if (!text || text === '-' || /^null$/i.test(text) || /^undefined$/i.test(text)) return '';
+    return text;
+  };
+  const pushLine = (lines, lineLabel, value) => {
+    const text = meaningfulValue(value);
+    if (text) lines.push(`${lineLabel}: ${text}`);
+  };
+  const score = meaningfulValue(criterionInfo?.score);
+  const lines = [score ? `${label}: ${score} / ${max}` : label];
+  const evidenceType = meaningfulValue(criterionInfo?.evidenceType);
+  const evidenceReason = meaningfulValue(criterionInfo?.evidenceTypeReason);
+  if (evidenceType && evidenceReason) {
+    lines.push(`Evidence Type: ${evidenceType} (${evidenceReason})`);
+  } else {
+    pushLine(lines, 'Evidence Type', evidenceType);
+  }
+
+  const calc = criterionInfo?.calculation;
+  if (calc?.A_targetable_addressable_patient || calc?.B_unrisked_peak_sales || calc?.C_obtainable_peak_sales) {
+    const a = calc.A_targetable_addressable_patient || {};
+    const b = calc.B_unrisked_peak_sales || {};
+    const c = calc.C_obtainable_peak_sales || {};
+    const aValue = [meaningfulValue(a.targetable_addressable_patient), meaningfulValue(a.formula)].filter(Boolean).join(' | ');
+    const bValue = [meaningfulValue(formatMillionUsd(b.unrisked_peak_sales, b.sales_unit)), meaningfulValue(b.formula)].filter(Boolean).join(' | ');
+    const cValue = [meaningfulValue(formatMillionUsd(c.obtainable_peak_sales, c.sales_unit)), meaningfulValue(c.formula)].filter(Boolean).join(' | ');
+    pushLine(lines, 'A. TAP', aValue);
+    pushLine(lines, 'B. Unrisked Peak Sales', bValue);
+    pushLine(lines, 'C. Obtainable Peak Sales', cValue);
+  }
+
+  pushLine(lines, 'Rubric', criterionInfo?.appliedScoreDefinition || criterionInfo?.ruleCriteria);
+  pushLine(lines, 'Judgment', criterionInfo?.mainLineSummary || criterionInfo?.decisionSummary || criterionInfo?.reason);
+  pushLine(lines, 'Why not higher', criterionInfo?.whyNotHigher);
+  pushLine(lines, 'Investigation note', criterionInfo?.investigationNote);
+  pushLine(lines, 'Evidence summary', criterionInfo?.supportingEvidenceSummary);
+
+  const sources = (criterionInfo?.evidenceSources || [])
+    .slice(0, 3)
+    .map((source) => {
+      const title = meaningfulValue(source.source_title);
+      const url = meaningfulValue(source.source_url);
+      if (title && url) return `${title} (${url})`;
+      return title || url;
+    })
+    .filter(Boolean)
+    .join('\n');
+  pushLine(lines, 'Sources', sources);
+
+  const missing = (criterionInfo?.conflictingOrMissingEvidence || [])
+    .map(meaningfulValue)
+    .filter(Boolean)
+    .slice(0, 2)
+    .join('; ');
+  pushLine(lines, 'Missing or conflicting evidence', missing);
+
+  const versionInfo = [criterionInfo?.version, criterionInfo?.author].map(meaningfulValue).filter(Boolean).join(' / ');
+  pushLine(lines, 'Rubric version', versionInfo);
+  return lines.join('\n');
+}
+
 function scoreBadge(score, max = 3, tooltip = '') {
   const className = score >= max ? 'score high' : score >= max * 0.6 ? 'score mid' : 'score low';
   const safeTooltip = escapeHtml(tooltip);
   return `<span class="${className}" data-tooltip="${safeTooltip}" title="${safeTooltip}">${score ?? '-'}</span>`;
 }
 
-function renderTable() {
+function pendingScoreBadge(message = 'Full Scout v3.1 review not run yet') {
+  const safeTooltip = escapeHtml(message);
+  return `<span class="score pending" data-tooltip="${safeTooltip}" title="${safeTooltip}">-</span>`;
+}
+
+function fullReviewScoreBadge(row, scoreKey, criterionKey, label) {
+  if (row.isTriage) return pendingScoreBadge();
+  return scoreBadge(row[scoreKey], 3, scoreTooltip(label, row.criteria[criterionKey], 3));
+}
+
+function filterToneClass(status) {
+  if (!status || status === '-') return 'empty';
+  if (['PASS', 'SELECT'].includes(status)) return 'pass select';
+  if (status === 'FAIL') return 'fail';
+  if (['REJECT', 'N/A'].includes(status)) return 'na reject';
+  return 'review';
+}
+
+function renderTableLegacy() {
   const visibleRows = getVisibleRows();
   const pageCount = Math.max(1, Math.ceil(visibleRows.length / state.pageSize));
   state.page = Math.min(state.page, pageCount);
@@ -701,7 +1095,9 @@ function renderTable() {
       <col class="pipeline-col-country" />
       <col class="pipeline-col-asset" />
       <col class="pipeline-col-target" />
+      <col class="pipeline-col-indication" />
       <col class="pipeline-col-stage" />
+      <col class="pipeline-col-filter" />
       <col class="pipeline-col-filter" />
       <col class="pipeline-col-score" />
       <col class="pipeline-col-score" />
@@ -721,14 +1117,16 @@ function renderTable() {
       <col class="pipeline-col-country" data-col-key="country" style="${columnWidthStyle('country')}" />
       <col class="pipeline-col-asset" data-col-key="asset" style="${columnWidthStyle('asset')}" />
       <col class="pipeline-col-target" data-col-key="target" style="${columnWidthStyle('target')}" />
+      <col class="pipeline-col-indication" data-col-key="mainIndication" style="${columnWidthStyle('mainIndication')}" />
       <col class="pipeline-col-stage" data-col-key="stage" style="${columnWidthStyle('stage')}" />
-      <col class="pipeline-col-filter" data-col-key="hardFilter" style="${columnWidthStyle('hardFilter')}" />
+      <col class="pipeline-col-filter" data-col-key="filter1" style="${columnWidthStyle('filter1')}" />
+      <col class="pipeline-col-filter" data-col-key="filter2" style="${columnWidthStyle('filter2')}" />
       <col class="pipeline-col-score" data-col-key="targetScore" style="${columnWidthStyle('targetScore')}" />
-      <col class="pipeline-col-score" data-col-key="competitiveScore" style="${columnWidthStyle('competitiveScore')}" />
       <col class="pipeline-col-score" data-col-key="moaScore" style="${columnWidthStyle('moaScore')}" />
+      <col class="pipeline-col-score" data-col-key="dataScore" style="${columnWidthStyle('dataScore')}" />
+      <col class="pipeline-col-score" data-col-key="competitiveScore" style="${columnWidthStyle('competitiveScore')}" />
       <col class="pipeline-col-score" data-col-key="platformScore" style="${columnWidthStyle('platformScore')}" />
       <col class="pipeline-col-score" data-col-key="expansionScore" style="${columnWidthStyle('expansionScore')}" />
-      <col class="pipeline-col-score" data-col-key="dataScore" style="${columnWidthStyle('dataScore')}" />
       <col class="pipeline-col-score" data-col-key="marketScore" style="${columnWidthStyle('marketScore')}" />
       <col class="pipeline-col-score" data-col-key="totalScore" style="${columnWidthStyle('totalScore')}" />
       ${extraColumns.map((column) => `<col class="pipeline-col-extra" data-col-key="${escapeHtml(extraColumnKey(column))}" style="${columnWidthStyle(extraColumnKey(column))}" />`).join('')}
@@ -748,14 +1146,16 @@ function renderTable() {
       <th><button data-sort="country" type="button">Country</button></th>
       <th><button data-sort="asset" type="button">Asset</button></th>
       <th><button data-sort="target" type="button">Target / Theme / Cluster</button></th>
+      <th><button data-sort="mainIndication" type="button">Main indication</button></th>
       <th><button data-sort="stage" type="button">Stage</button></th>
-      <th><button data-sort="hardFilter" type="button">Filter</button></th>
+      <th><button data-sort="filter1" type="button">Filter 1</button></th>
+      <th><button data-sort="filter2" type="button">Filter 2</button></th>
       <th><button data-sort="targetScore" type="button">TR</button></th>
-      <th><button data-sort="competitiveScore" type="button">Comp</button></th>
       <th><button data-sort="moaScore" type="button">MOA</button></th>
+      <th><button data-sort="dataScore" type="button">Data</button></th>
+      <th><button data-sort="competitiveScore" type="button">Comp</button></th>
       <th><button data-sort="platformScore" type="button">Plat</button></th>
       <th><button data-sort="expansionScore" type="button">Exp</button></th>
-      <th><button data-sort="dataScore" type="button">Data</button></th>
       <th><button data-sort="marketScore" type="button">Market</button></th>
       <th><button data-sort="totalScore" type="button">Total</button></th>
       ${extraColumns.map((column) => `<th class="extra-column-head"><span title="${escapeHtml(column.path)}">${escapeHtml(column.label)}</span></th>`).join('')}
@@ -773,18 +1173,21 @@ function renderTable() {
         <th rowspan="2"><button data-sort="country" type="button">Country</button></th>
         <th rowspan="2"><button data-sort="asset" type="button">Asset</button></th>
         <th rowspan="2"><button data-sort="target" type="button">Target / Theme / Cluster</button></th>
+        <th rowspan="2"><button data-sort="mainIndication" type="button">Main indication</button></th>
         <th rowspan="2"><button data-sort="stage" type="button">Stage</button></th>
-        <th rowspan="2"><button data-sort="hardFilter" type="button">Filter</button></th>
-        <th class="score-group-head" colspan="8">Scorecard</th>
+        <th rowspan="2"><button data-sort="filter1" type="button">Filter 1</button></th>
+        <th rowspan="2"><button data-sort="filter2" type="button">Filter 2</button></th>
+        <th class="score-group-head" colspan="3">Triage Core</th>
+        <th class="score-group-head" colspan="5">Full Scout only</th>
         ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
       </tr>
       <tr class="pipeline-score-row">
         <th><button data-sort="targetScore" type="button">TR</button></th>
-        <th><button data-sort="competitiveScore" type="button">Comp</button></th>
         <th><button data-sort="moaScore" type="button">MOA</button></th>
+        <th><button data-sort="dataScore" type="button">Data</button></th>
+        <th><button data-sort="competitiveScore" type="button">Comp</button></th>
         <th><button data-sort="platformScore" type="button">Plat</button></th>
         <th><button data-sort="expansionScore" type="button">Exp</button></th>
-        <th><button data-sort="dataScore" type="button">Data</button></th>
         <th><button data-sort="marketScore" type="button">Market</button></th>
         <th><button data-sort="totalScore" type="button">Total</button></th>
         ${extraColumns.map((column) => `<th class="extra-column-head"><span title="${escapeHtml(column.path)}">${escapeHtml(column.label)}</span></th>`).join('')}
@@ -803,18 +1206,21 @@ function renderTable() {
         ${sortableHeader('Country', 'country', 'country', 'rowspan="2"')}
         ${sortableHeader('Asset', 'asset', 'asset', 'rowspan="2"')}
         ${sortableHeader('Target / Theme / Cluster', 'target', 'target', 'rowspan="2"')}
+        ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
         ${sortableHeader('Stage', 'stage', 'stage', 'rowspan="2"')}
-        ${sortableHeader('Filter', 'hardFilter', 'hardFilter', 'rowspan="2"')}
-        <th class="score-group-head" colspan="8">Scorecard</th>
+        ${sortableHeader('Filter 1', 'filter1', 'filter1', 'rowspan="2"')}
+        ${sortableHeader('Filter 2', 'filter2', 'filter2', 'rowspan="2"')}
+        <th class="score-group-head" colspan="3">Triage Core</th>
+        <th class="score-group-head" colspan="5">Full Scout only</th>
         ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
       </tr>
       <tr class="pipeline-score-row">
         ${sortableHeader('TR', 'targetScore', 'targetScore')}
-        ${sortableHeader('Comp', 'competitiveScore', 'competitiveScore')}
         ${sortableHeader('MOA', 'moaScore', 'moaScore')}
+        ${sortableHeader('Data', 'dataScore', 'dataScore')}
+        ${sortableHeader('Comp', 'competitiveScore', 'competitiveScore')}
         ${sortableHeader('Plat', 'platformScore', 'platformScore')}
         ${sortableHeader('Exp', 'expansionScore', 'expansionScore')}
-        ${sortableHeader('Data', 'dataScore', 'dataScore')}
         ${sortableHeader('Market', 'marketScore', 'marketScore')}
         ${sortableHeader('Total', 'totalScore', 'totalScore')}
         ${extraColumns.map((column) => plainHeader(column.label, extraColumnKey(column), 'extra-column-head')).join('')}
@@ -828,7 +1234,8 @@ function renderTable() {
   elements.pipelineTable.innerHTML = pageRows.length
     ? pageRows
         .map((row) => {
-          const filterClass = row.hardFilter === 'PASS' ? 'pill pass' : row.hardFilter === 'FAIL' ? 'pill fail' : 'pill review';
+          const filter1Class = `pill ${filterToneClass(row.filter1)}`;
+          const filter2Class = `pill ${filterToneClass(row.filter2)}`;
           const isSelected = state.selectedIds.has(row.id);
           const checked = isSelected ? 'checked' : '';
           return `
@@ -837,7 +1244,7 @@ function renderTable() {
                 <input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} 선택" ${checked} />
               </td>
               <td class="company-cell">${escapeHtml(row.company)}</td>
-              <td class="country-cell">${escapeHtml(row.country)}</td>
+              <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${escapeHtml(row.country)}</td>
               <td class="asset-cell"><strong>${escapeHtml(row.asset)}</strong></td>
               <td class="target-column-cell">
                 <div class="target-cell">
@@ -846,16 +1253,18 @@ function renderTable() {
                   <span>Cluster: ${escapeHtml(row.cluster)}</span>
                 </div>
               </td>
-              <td class="stage-cell">${escapeHtml(row.stage)}</td>
-              <td class="filter-cell"><span class="${filterClass}" title="${escapeHtml(row.hardFilterReason)}">${escapeHtml(row.hardFilter)}</span></td>
+              <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(row.mainIndication)}</td>
+              <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</td>
+              <td class="filter-cell"><span class="${filter1Class}">${escapeHtml(row.filter1)}</span></td>
+              <td class="filter-cell"><span class="${filter2Class}">${escapeHtml(row.filter2)}</span></td>
               <td class="score-cell">${scoreBadge(row.targetScore, 3, scoreTooltip('Target Relevance', row.criteria.target, 3))}</td>
-              <td class="score-cell">${scoreBadge(row.competitiveScore, 3, scoreTooltip('Competitive Landscape', row.criteria.competitive, 3))}</td>
               <td class="score-cell">${scoreBadge(row.moaScore, 3, scoreTooltip('MOA Validity', row.criteria.moa, 3))}</td>
-              <td class="score-cell">${scoreBadge(row.platformScore, 3, scoreTooltip('Platform Attractiveness', row.criteria.platform, 3))}</td>
-              <td class="score-cell">${scoreBadge(row.expansionScore, 3, scoreTooltip('Expansion Potential', row.criteria.expansion, 3))}</td>
               <td class="score-cell">${scoreBadge(row.dataScore, 3, scoreTooltip('Data Maturity', row.criteria.data, 3))}</td>
-              <td class="score-cell">${scoreBadge(row.marketScore, 3, scoreTooltip('Marketability', row.criteria.market, 3))}</td>
-              <td class="score-cell total-score-cell">${scoreBadge(row.totalScore, row.maxScore, `Total Score: ${row.totalScore ?? '-'} / ${row.maxScore}`)}</td>
+              <td class="score-cell">${fullReviewScoreBadge(row, 'competitiveScore', 'competitive', 'Competitive Landscape')}</td>
+              <td class="score-cell">${fullReviewScoreBadge(row, 'platformScore', 'platform', 'Platform Attractiveness')}</td>
+              <td class="score-cell">${fullReviewScoreBadge(row, 'expansionScore', 'expansion', 'Expansion Potential')}</td>
+              <td class="score-cell">${fullReviewScoreBadge(row, 'marketScore', 'market', 'Marketability')}</td>
+              <td class="score-cell total-score-cell">${row.isTriage ? pendingScoreBadge('Full Scout total score not available for triage rows') : scoreBadge(row.totalScore, row.maxScore, `Total Score: ${row.totalScore ?? '-'} / ${row.maxScore}`)}</td>
               ${extraColumns.map((column) => {
                 const value = formatExtraColumnValue(get(row.raw, column.path, '-'));
                 return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
@@ -864,7 +1273,131 @@ function renderTable() {
           `;
         })
         .join('')
-    : `<tr><td colspan="${15 + extraColumns.length}" class="empty-cell">조건에 맞는 데이터가 없습니다.</td></tr>`;
+    : `<tr><td colspan="${17 + extraColumns.length}" class="empty-cell">조건에 맞는 데이터가 없습니다.</td></tr>`;
+
+  elements.pageInfo.textContent = `${state.page} / ${pageCount}`;
+  elements.prevPage.disabled = state.page <= 1;
+  elements.nextPage.disabled = state.page >= pageCount;
+  updateSelectionControls(pageRows);
+}
+
+function renderTable() {
+  const visibleRows = getVisibleRows();
+  const pageCount = Math.max(1, Math.ceil(visibleRows.length / state.pageSize));
+  state.page = Math.min(state.page, pageCount);
+  const start = (state.page - 1) * state.pageSize;
+  const pageRows = visibleRows.slice(start, start + state.pageSize);
+  const extraColumns = selectedExtraColumns();
+  const mode = activeTableMode();
+  const filterKey = activeFilterKey();
+  const filterLabel = activeFilterLabel();
+  const scoreColumns = activeScoreColumnKeys();
+  const modeLabel = mode === 'triage' ? 'Fast Triage' : 'Full Scout';
+  const scoreLabels = {
+    targetScore: 'TR',
+    moaScore: 'MOA',
+    dataScore: 'Data',
+    competitiveScore: 'Comp',
+    platformScore: 'Plat',
+    expansionScore: 'Exp',
+    marketScore: 'Market',
+    totalScore: 'Total'
+  };
+
+  if (elements.pipelineColGroup) {
+    elements.pipelineColGroup.innerHTML = `
+      <col class="pipeline-col-select" data-col-key="select" style="${columnWidthStyle('select')}" />
+      <col class="pipeline-col-company" data-col-key="company" style="${columnWidthStyle('company')}" />
+      <col class="pipeline-col-country" data-col-key="country" style="${columnWidthStyle('country')}" />
+      <col class="pipeline-col-asset" data-col-key="asset" style="${columnWidthStyle('asset')}" />
+      <col class="pipeline-col-target" data-col-key="target" style="${columnWidthStyle('target')}" />
+      <col class="pipeline-col-indication" data-col-key="mainIndication" style="${columnWidthStyle('mainIndication')}" />
+      <col class="pipeline-col-stage" data-col-key="stage" style="${columnWidthStyle('stage')}" />
+      <col class="pipeline-col-filter" data-col-key="${filterKey}" style="${columnWidthStyle(filterKey)}" />
+      ${scoreColumns.map((key) => `<col class="pipeline-col-score" data-col-key="${escapeHtml(key)}" style="${columnWidthStyle(key)}" />`).join('')}
+      ${extraColumns.map((column) => `<col class="pipeline-col-extra" data-col-key="${escapeHtml(extraColumnKey(column))}" style="${columnWidthStyle(extraColumnKey(column))}" />`).join('')}
+    `;
+  }
+
+  const tableElement = elements.pipelineTable?.closest('table');
+  if (tableElement) {
+    tableElement.style.minWidth = `${visibleTableWidth(extraColumns)}px`;
+  }
+
+  if (elements.pipelineTableHead) {
+    elements.pipelineTableHead.innerHTML = `
+      <tr id="pipelineHeaderRow" class="pipeline-group-row">
+        <th class="select-col" rowspan="2" ${columnAttrs('select')}>
+          <input id="selectPageRows" type="checkbox" aria-label="Select visible page rows" />
+        </th>
+        ${sortableHeader('Company', 'company', 'company', 'rowspan="2"')}
+        ${sortableHeader('Country', 'country', 'country', 'rowspan="2"')}
+        ${sortableHeader('Asset', 'asset', 'asset', 'rowspan="2"')}
+        ${sortableHeader('Target / Theme / Cluster', 'target', 'target', 'rowspan="2"')}
+        ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
+        ${sortableHeader('Stage', 'stage', 'stage', 'rowspan="2"')}
+        ${sortableHeader(filterLabel, filterKey, filterKey, 'rowspan="2"')}
+        ${mode === 'triage'
+          ? '<th class="score-group-head" colspan="3">Fast Triage Core</th>'
+          : '<th class="score-group-head" colspan="3">Triage Core</th><th class="score-group-head" colspan="5">Full Scout only</th>'}
+        ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
+      </tr>
+      <tr class="pipeline-score-row">
+        ${scoreColumns.map((key) => sortableHeader(scoreLabels[key] || key, key, key)).join('')}
+        ${extraColumns.map((column) => plainHeader(column.label, extraColumnKey(column), 'extra-column-head')).join('')}
+      </tr>
+    `;
+    elements.pipelineHeaderRow = document.querySelector('#pipelineHeaderRow');
+    elements.selectPageRows = document.querySelector('#selectPageRows');
+  }
+
+  elements.tableCount.textContent = `${modeLabel}: ${visibleRows.length} items 쨌 ${state.pageSize} rows/page`;
+  elements.pipelineTable.innerHTML = pageRows.length
+    ? pageRows
+        .map((row) => {
+          const filterClass = `pill ${filterToneClass(row[filterKey])}`;
+          const isSelected = state.selectedIds.has(row.id);
+          const checked = isSelected ? 'checked' : '';
+          const rowTitle = mode === 'triage'
+            ? markdownPreviewSnippet(rawMarkdownForRow(row), row.summary)
+            : row.summary;
+          return `
+            <tr class="clickable-row${mode === 'triage' ? ' triage-preview-row' : ''}${isSelected ? ' selected-row' : ''}" data-record-id="${escapeHtml(row.id)}" title="${escapeHtml(rowTitle)}">
+              <td class="select-col">
+                <input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} select" ${checked} />
+              </td>
+              <td class="company-cell">${escapeHtml(row.company)}</td>
+              <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${escapeHtml(row.country)}</td>
+              <td class="asset-cell"><strong>${escapeHtml(row.asset)}</strong></td>
+              <td class="target-column-cell">
+                <div class="target-cell">
+                  <strong>${escapeHtml(row.target)}</strong>
+                  <span>Theme: ${escapeHtml(row.theme)}</span>
+                  <span>Cluster: ${escapeHtml(row.cluster)}</span>
+                </div>
+              </td>
+              <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(row.mainIndication)}</td>
+              <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</td>
+              <td class="filter-cell"><span class="${filterClass}">${escapeHtml(row[filterKey])}</span></td>
+              <td class="score-cell">${scoreBadge(row.targetScore, 3, scoreTooltip('Target Relevance', row.criteria.target, 3))}</td>
+              <td class="score-cell">${scoreBadge(row.moaScore, 3, scoreTooltip('MOA Validity', row.criteria.moa, 3))}</td>
+              <td class="score-cell">${scoreBadge(row.dataScore, 3, scoreTooltip('Data Maturity', row.criteria.data, 3))}</td>
+              ${mode === 'full' ? `
+                <td class="score-cell">${fullReviewScoreBadge(row, 'competitiveScore', 'competitive', 'Competitive Landscape')}</td>
+                <td class="score-cell">${fullReviewScoreBadge(row, 'platformScore', 'platform', 'Platform Attractiveness')}</td>
+                <td class="score-cell">${fullReviewScoreBadge(row, 'expansionScore', 'expansion', 'Expansion Potential')}</td>
+                <td class="score-cell">${fullReviewScoreBadge(row, 'marketScore', 'market', 'Marketability')}</td>
+                <td class="score-cell total-score-cell">${scoreBadge(row.totalScore, row.maxScore, `Total Score: ${row.totalScore ?? '-'} / ${row.maxScore}`)}</td>
+              ` : ''}
+              ${extraColumns.map((column) => {
+                const value = formatExtraColumnValue(get(row.raw, column.path, '-'));
+                return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
+              }).join('')}
+            </tr>
+          `;
+        })
+        .join('')
+    : `<tr><td colspan="${8 + scoreColumns.length + extraColumns.length}" class="empty-cell">No matching ${modeLabel} rows.</td></tr>`;
 
   elements.pageInfo.textContent = `${state.page} / ${pageCount}`;
   elements.prevPage.disabled = state.page <= 1;
@@ -912,8 +1445,18 @@ async function deleteSelectedRecords() {
   }
 }
 
+function renderTableTabs() {
+  elements.pipelineTableTabs?.forEach((tab) => {
+    const isActive = tab.dataset.tableMode === activeTableMode();
+    tab.classList.toggle('active', isActive);
+    tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    tab.tabIndex = isActive ? 0 : -1;
+  });
+}
+
 function render() {
   if (elements.pageSizeSelect) elements.pageSizeSelect.value = String(state.pageSize);
+  renderTableTabs();
   renderMetrics();
   renderCharts();
   renderColumnSettings();
@@ -959,11 +1502,12 @@ function exportPipelineTable() {
     'Target',
     'Theme',
     'Cluster',
+    'Main Indication',
     'Stage',
     'Indication',
     'Modality',
-    'Hard Filter',
-    'Hard Filter Reason',
+    'Filter 1',
+    'Filter 2',
     'Target Relevance Score',
     'Target Relevance Evidence Type',
     'Target Relevance Evidence Type Reason',
@@ -1078,11 +1622,12 @@ function exportPipelineTable() {
     row.target,
     row.theme,
     row.cluster,
+    row.mainIndication,
     row.stage,
     row.indication,
     row.modality,
-    row.hardFilter,
-    row.hardFilterReason,
+    row.filter1,
+    row.filter2,
     ...scoreExportFields(row, 'target'),
     ...scoreExportFields(row, 'competitive'),
     ...scoreExportFields(row, 'moa'),
@@ -1115,6 +1660,7 @@ function exportPipelineTable() {
 
 async function loadRecords() {
   elements.dataStatus.textContent = 'Loading';
+  await loadCategorySynonyms();
   const response = await fetch(API_URL);
   if (!response.ok) throw new Error(await response.text());
   const data = await response.json();
@@ -1218,6 +1764,70 @@ function closeCriteriaDrawer() {
   setTimeout(() => {
     elements.criteriaDrawer.hidden = true;
     elements.criteriaBackdrop.hidden = true;
+  }, 180);
+}
+
+function rawMarkdownForRow(row) {
+  const markdown = row?.raw?.source_report?.raw_markdown;
+  return String(markdown || '').trim();
+}
+
+function markdownPreviewSnippet(markdown, fallback = '') {
+  const compactSource = String(markdown || fallback || '')
+    .split(/\r?\n/)
+    .filter((line) => {
+      const trimmed = line.trim();
+      if (!trimmed) return false;
+      if (/^```/.test(trimmed)) return false;
+      if (/^\|/.test(trimmed)) return false;
+      if (/^[-=_]{3,}$/.test(trimmed)) return false;
+      const withoutMarkdown = trimmed
+        .replace(/^\s{0,3}#{1,6}\s+/, '')
+        .replace(/^[-*]\s+/, '')
+        .replace(/[*_`>#]/g, '')
+        .trim();
+      return Boolean(withoutMarkdown && withoutMarkdown !== '-');
+    })
+    .join(' ');
+  const text = compactSource
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/^\s{0,3}#{1,6}\s+/gm, '')
+    .replace(/^\s*\|.*$/gm, ' ')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
+    .replace(/[*_`>#-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return text.length > 520 ? `${text.slice(0, 520)}...` : text;
+}
+
+function openTriageReportDrawer(row) {
+  if (!elements.triageReportDrawer || !elements.triageReportBackdrop || !elements.triageReportBody) return;
+  const markdown = rawMarkdownForRow(row);
+  elements.triageReportTitle.textContent = row?.asset || 'Markdown report';
+  elements.triageReportMeta.textContent = [row?.company, row?.filter1, row?.stage]
+    .filter((value) => value && value !== '-')
+    .join(' · ') || 'Fast triage markdown';
+  elements.triageReportBody.innerHTML = markdown
+    ? renderAgentText(markdown)
+    : '<div class="empty-state">저장된 Fast Triage 원문 Markdown이 없습니다.</div>';
+
+  elements.triageReportDrawer.hidden = false;
+  elements.triageReportBackdrop.hidden = false;
+  requestAnimationFrame(() => {
+    elements.triageReportDrawer.classList.add('open');
+    elements.triageReportBackdrop.classList.add('open');
+    elements.triageReportDrawer.setAttribute('aria-hidden', 'false');
+  });
+}
+
+function closeTriageReportDrawer() {
+  if (!elements.triageReportDrawer || !elements.triageReportBackdrop) return;
+  elements.triageReportDrawer.classList.remove('open');
+  elements.triageReportBackdrop.classList.remove('open');
+  elements.triageReportDrawer.setAttribute('aria-hidden', 'true');
+  setTimeout(() => {
+    elements.triageReportDrawer.hidden = true;
+    elements.triageReportBackdrop.hidden = true;
   }, 180);
 }
 
@@ -1567,7 +2177,8 @@ function buildDashboardAgentContext() {
       `TR=${row.targetScore}`,
       `Data=${row.dataScore}`,
       `Market=${row.marketScore}`,
-      `filter=${row.hardFilter}`
+      `filter1=${row.filter1}`,
+      `filter2=${row.filter2}`
     ].join('; '))
     .join('\n');
 
@@ -1788,6 +2399,217 @@ async function saveStructuredJsonInput() {
   }
 }
 
+function buildTriageInstructionPrompt() {
+  return `You are an expert biotech pipeline scout for SKBP Pipeline Finder.
+
+Mission:
+Run FAST TRIAGE on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.1 in-depth review.
+
+This is GPT instruction 1: Fast Triage v3.1.
+Use GPT instruction 2 only after a candidate receives SELECT and needs full SKBP v3.1 review.
+
+Core rule:
+- Do not create a full scout report.
+- Do not evaluate all 7 SKBP criteria.
+- Do not build a full competitive landscape table.
+- Do not calculate marketability.
+- Do not estimate peak sales.
+- Do not perform full diligence.
+- Only perform quick source-aware triage.
+
+Important distinction:
+- Triage status is not a final SKBP v3.1 recommendation.
+- SELECT means worth sending to Full Scout v3.1.
+- REJECT means not worth full review based on current quick evidence.
+- N/A means asset identity cannot be verified as a biotech/pharma pipeline asset from public sources.
+- A REJECT or N/A can change later if the user provides better target, MoA, data, company, or source evidence.
+
+Input:
+The user may provide structured rows copied from Excel/TSV/CSV/plain text or a simple asset list.
+Each entry may include asset name, target, MoA, company, therapeutic area, indication, development stage, region/country, notes, and source URL.
+The input may contain 1 to 50 entries. If more than 50 entries are provided, process only the first 50 and state this in the markdown block.
+
+Parsing rules:
+- Parse each entry as one candidate asset.
+- Preserve row order.
+- If the same asset appears multiple times with different indications or regions, keep separate rows and add a duplicate/related-row note.
+- If a field is missing, write "Unknown".
+- If a source URL is not provided, write "source_url_not_provided".
+- Do not ask the user to reformat unless the entries are impossible to parse.
+
+Research rules:
+- If structured fields are provided, use them as the starting point.
+- If only an asset name or sparse list is provided, perform only a quick public-source identity check.
+- Search only enough to support triage.
+- Prefer credible biotech/pharma source types: official company/pipeline page, clinical trial registry, regulatory source, peer-reviewed publication, reputable biotech news, company presentation, or patent/source clearly linking asset to target/indication.
+- Do not invent facts or URLs.
+- If public search results are ambiguous, choose the lower score and explain uncertainty.
+- If search results are unrelated SKUs, tools, electronics, finance tickers, or ambiguous non-drug references, classify as N/A.
+
+Early stop rules:
+- Apply N/A before scoring if the candidate cannot be verified as a biotech/pharma pipeline asset, or if company/target/indication cannot be credibly linked after a quick identity check. Do not continue deep searching.
+- Apply REJECT before scoring if the development stage is Discontinued / inactive, terminated, withdrawn, suspended, dormant, or clearly failed. This means the pipeline is not an active review candidate.
+- For N/A or Discontinued / inactive cases, keep the markdown and JSON short. Do not perform full diligence, marketability, competitor landscaping, or extended source chasing.
+
+Triage scoring:
+- Use the same scoring direction as Full Scout v3.1, but only for these three matching criteria:
+  - Full Scout criterion 1: Target Relevance (TR)
+  - Full Scout criterion 3: MoA Validity (MOA)
+  - Full Scout criterion 6: Data Maturity (Data)
+- Assign preliminary integer scores only: 0, 1, 2, or 3. Do not output ranges such as 1-2.
+- Do not assign E0-E4 evidence types, do not write why_not_higher, and do not require full source trails.
+- The difference from GPT instruction 2 is depth, not scoring direction: instruction 1 is a fast preliminary read; instruction 2 is the full evidence-based review.
+- Quick interpretation:
+  - 0 = unclear / not assessable / out of scope
+  - 1 = weak or sparse
+  - 2 = plausible enough to consider
+  - 3 = strong fit or clearly visible maturity
+
+Triage status rule:
+- SELECT if asset identity is verified and at least two of TR/MOA/Data are >= 2.
+- REJECT if asset identity is verified but SKBP fit, MoA, or Data is too weak for Full Scout priority.
+- REJECT if development_stage is Discontinued / inactive, terminated, withdrawn, suspended, dormant, or clearly failed, even if target/MoA look interesting.
+- N/A if asset identity is not verified as a biotech/pharma pipeline asset.
+- If unsure between SELECT and REJECT, choose REJECT and explain the missing evidence needed.
+
+Controlled vocabulary:
+- company_country must use canonical values such as China, Republic of Korea, Japan, United States, Europe/UK, Taiwan, Singapore, Canada, Australia, Israel, Unknown, or N/A.
+- development_stage must use one canonical bucket when possible: Hit discovery, Lead Selection, Lead Optimization, IND-enabling, IND, Phase 1, Phase 1/2, Phase 2, Phase 2/3, Phase 3, Registration, Approved / marketed, Discontinued / inactive, Unknown, or N/A.
+- main_indication must use one canonical disease bucket when possible: Alzheimer's disease, Parkinson's disease, Epilepsy / seizure disorders, Multiple sclerosis / neuroinflammatory disease, Amyotrophic lateral sclerosis / motor neuron disease, Frontotemporal dementia, Stroke, Pain, Major depressive disorder, Chronic cough, Inflammatory bowel disease, Systemic lupus erythematosus / autoimmune disease, Unknown, or N/A.
+
+Output language:
+Korean. English is allowed for scientific terms.
+
+Final output format:
+The final answer must contain exactly two fenced code blocks:
+
+\`\`\`markdown
+# SKBP Fast Triage Result
+
+중요: 한 문장으로 triage 결론과 filter rationale을 먼저 씁니다. 예: 공개 자료상 asset identity는 확인되지만 개발 단계가 Discontinued / inactive로 확인되어 REJECT로 처리합니다.
+
+| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |
+|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|
+| 1 |  |  |  |  |  |  |  |  |  | SELECT/REJECT/N/A |  |  |
+
+## Notes
+- Keep notes short.
+- Mention only source uncertainty, duplicate rows, or reason to run Full Scout.
+\`\`\`
+
+\`\`\`json
+[
+  {
+    "meta": {
+      "schema_version": "3.1",
+      "rubric_version": "3.1",
+      "review_type": "fast_triage",
+      "generated_at": "YYYY-MM-DD",
+      "language": "ko",
+      "output_filename_base": "Company_Asset_fast_triage_YYYYMMDD"
+    },
+    "input": {
+      "company_input": "",
+      "asset_input": "",
+      "source_type": "fast triage",
+      "notes": ""
+    },
+    "source_report": {
+      "raw_markdown": "",
+      "source_format": "fast_triage_markdown",
+      "parser_status": "fast_triage",
+      "parser_note": "GPT instruction 1 Fast Triage v3.1 output. Full SKBP v3.1 review has not been run."
+    },
+    "json_summary": {
+      "company": "",
+      "asset_name": "",
+      "target": "",
+      "theme": "E/I Balance | Neuroimmune | No Theme | Unknown",
+      "cluster": "",
+      "target_relevance_score": 0,
+      "one_line_summary": "",
+      "company_country": ""
+    },
+    "structured_table": {
+      "company": "",
+      "asset_name": "",
+      "target": "",
+      "moa": "",
+      "modality_platform": "Unknown",
+      "main_indication": "",
+      "indication": "",
+      "development_stage": "",
+      "company_country": "",
+      "sources": [
+        {
+          "source_title": "",
+          "source_type": "official_company | publication | clinical_trial_registry | regulatory | news | patent | source_url_not_provided | other",
+          "source_url": "",
+          "reliability": "high | medium | low | unknown",
+          "evidence_summary": ""
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "SELECT | REJECT | N/A",
+      "reason": "",
+      "flags": []
+    },
+    "triage": {
+      "instruction_version": "3.1",
+      "status": "SELECT | REJECT | N/A",
+      "identity_verified": true,
+      "why": "",
+      "missing_evidence_needed_for_full_scout": []
+    },
+    "scoring": {
+      "total_score": null,
+      "max_score": 21,
+      "criteria": {
+        "target_relevance": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "main_line_summary": "",
+          "evidence_sources": [],
+          "uncertain_points": []
+        },
+        "moa_validity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "main_line_summary": "",
+          "evidence_sources": [],
+          "uncertain_points": []
+        },
+        "data_maturity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "main_line_summary": "",
+          "evidence_sources": [],
+          "uncertain_points": []
+        }
+      }
+    },
+    "validation": {
+      "cross_checked_facts": [],
+      "uncertain_points": [],
+      "source_registry": []
+    },
+    "final_insight": {
+      "one_line_summary": "",
+      "recommendation": "Run Full Scout | Do not run Full Scout | N/A",
+      "most_important_diligence_question": ""
+    }
+  }
+]
+\`\`\`
+
+Remember:
+- Output only the two fenced code blocks.
+- Do not include prose outside the code blocks.
+- For one input entry, output a JSON array with one object.
+- Do not include full v3.1 criteria, marketability, competitor tables, or peak sales.`;
+}
+
 function buildGptInstructionPrompt() {
   return `You are an expert biotech pipeline scout for SKBP Pipeline Finder.
 
@@ -1798,10 +2620,31 @@ Company: [COMPANY_NAME]
 Asset / drug / pipeline name: [ASSET_NAME]
 Output language: Korean. English is allowed for scientific terms.
 
+Identity Gate / N-A early stop:
+- Before writing the full report, first verify whether the input appears to be a real biotech/pharma pipeline asset.
+- Use only a short identity check at this gate. Check for at least one credible biotech source type: official company/pipeline page, clinical trial registry, regulatory source, peer-reviewed publication, reputable biotech news, company presentation, patent/source that clearly links the asset to a drug target or indication.
+- If the asset cannot be linked to a biotech/pharma company, drug target, modality, indication, or credible pipeline source, stop early. Do not write the full report sections, do not score, do not build competitor tables, and do not estimate marketability.
+- If search results are mostly unrelated SKUs, tools, electronics, finance tickers, unrelated abbreviations, or ambiguous non-drug references, classify as N/A unless a credible drug-development source is found.
+- In the N/A case, the final answer must still be exactly two fenced code blocks, but both must be short.
+- N/A markdown block format:
+  - Title: "# N/A Pipeline Scout Result: **[ASSET_NAME]**"
+  - One-line conclusion: "Public-source identity check did not verify this as a biotech/pharma pipeline asset."
+  - Include only 3 short bullets: what was searched, what was found, what source would be needed to proceed.
+  - Include references only for the few sources that explain the non-match or ambiguity.
+- N/A JSON block format:
+  - Keep it valid JSON.
+  - Set meta.schema_version and meta.rubric_version to "3.1".
+  - Set source_report.parser_status to "asset_identity_not_verified".
+  - Set hard_filter.status to "FAIL".
+  - Set hard_filter.reason to "Asset identity not verified from public biotech/pharma sources."
+  - Set scoring.total_score to 0 and scoring.max_score to 21.
+  - Set final_insight.recommendation to "Deprioritize".
+  - Use "N/A" or null for unknown company, target, indication, stage, country, and source URLs. Do not invent placeholders.
+
 Non-negotiable rules:
 1. Final answer format must be exactly two fenced code blocks:
-   - Box 1: \`\`\`markdown containing the complete .md report.
-   - Box 2: \`\`\`json containing the complete structured JSON.
+   - Box 1: \`\`\`markdown containing either the complete .md report or the short N/A markdown block allowed by the Identity Gate.
+   - Box 2: \`\`\`json containing either the complete structured JSON or the short N/A JSON block allowed by the Identity Gate.
 2. Do not write the Markdown report as normal prose outside the markdown code block.
 3. The final JSON block must be valid JSON: no comments, no trailing commas, no Markdown inside the JSON except string values.
 4. Every factual claim used for scoring must include a source URL or a clear uncertainty note.
@@ -1831,6 +2674,35 @@ Scoring v3.1 rules:
 - Do not output score ranges such as 0-1, 1-2, or 2-3.
 - If evidence is ambiguous, select the single closest score and explain uncertainty in uncertain_points.
 
+Controlled vocabulary for dashboard filters:
+- Use canonical values for filter-facing fields so the dashboard can group comparable assets.
+- json_summary.company_country and structured_table.company_country must use a single canonical country/region label. Examples: China, Republic of Korea, United States, Japan, Europe/UK. Do not write combined labels such as "China / Hong Kong" or "China / United States operations" in these fields; put that nuance in headquarters, company_profile.notes, or validation.uncertain_points.
+- structured_table.main_indication is required and must contain one canonical disease bucket. structured_table.indication can contain the full detailed indication wording.
+- If the asset has many indications, choose the lead/currently most relevant indication as main_indication and keep the rest in indication.
+- structured_table.development_stage must use one canonical stage bucket for dashboard filtering. Put detailed wording such as recruiting status, indication-specific stages, or expected IND timing in source evidence, notes, or validation.uncertain_points.
+- Standard development stage buckets include: Hit discovery, Lead Selection, Lead Optimization, IND-enabling, IND, Phase 1, Phase 1/2, Phase 2, Phase 2/3, Phase 3, Registration, Approved / marketed, Discontinued / inactive.
+- Map stage synonyms into the same bucket. Examples: P1, Ph1, Phase I, FIH, first-in-human, Phase 1 SAD/MAD, and 1상 -> Phase 1; P2, Ph2, Phase II, Phase 2 recruiting, and 2상 -> Phase 2; preclinical / IND preparation -> IND-enabling when IND-enabling work is explicitly described.
+- Standard indication buckets include:
+  - Alzheimer's disease
+  - Parkinson's disease
+  - Epilepsy / seizure disorders
+  - Amyotrophic lateral sclerosis / motor neuron disease
+  - Frontotemporal dementia
+  - Huntington's disease
+  - Chronic cough
+  - Multiple sclerosis / neuroinflammatory disease
+  - Inflammatory bowel disease
+  - Major depressive disorder
+  - Schizophrenia / psychosis
+  - Bipolar disorder
+  - Anxiety disorders
+  - Autism spectrum disorder
+  - ADHD
+  - Migraine / headache disorders
+  - Pain
+  - Stroke
+- Map synonymous or narrower terms into the same bucket. Examples: partial-onset seizure, focal-onset seizure, epilepsy, and status epilepticus -> Epilepsy / seizure disorders; RCC, UCC, refractory chronic cough, and unexplained chronic cough -> Chronic cough; Crohn's disease and ulcerative colitis -> Inflammatory bowel disease.
+
 Expected final answer shape:
 
 \`\`\`markdown
@@ -1841,16 +2713,24 @@ Expected final answer shape:
 \`\`\`json
 {
   "meta": {
-    "schema_version": "3.0"
+    "schema_version": "3.1"
   }
 }
 \`\`\`
+
+If the Identity Gate returns N/A:
+- Return short N/A markdown + valid compact N/A JSON only.
+- In JSON, set source_report.parser_status = "asset_identity_not_verified", hard_filter.status = "FAIL", scoring.total_score = 0, scoring.max_score = 21, final_insight.recommendation = "Deprioritize".
+- Use "N/A", null, or [] for unknown company, target, indication, stage, country, sources, and unavailable fields.
+- Keep only the sources needed to explain the non-match or ambiguity.
 
 Use this exact report structure inside the markdown code block:
 
 # [Company] Pipeline Scout Report: **[Asset]**
 
-Briefly state that this report is prepared for SKBP Pipeline Finder v3.0 and that URLs are included for auditability.
+Briefly state that this report is prepared for SKBP Pipeline Finder v3.1 and that URLs are included for auditability.
+
+중요: 한 문장으로 filter/recommendation rationale을 먼저 씁니다. 예: 공개 자료상 active asset명·compound code·임상 단계가 명확히 확인되지 않아 stage/ownership은 uncertain / REVIEW로 처리합니다.
 
 ---
 
@@ -2086,13 +2966,13 @@ After the markdown code block, output the second copyable box as a JSON code blo
 \`\`\`json
 {
   "meta": {
-    "schema_version": "3.0",
+    "schema_version": "3.1",
     "generated_at": "YYYY-MM-DD",
     "language": "ko",
     "analyst_role": "[OIT] PreC Pipeline Shortlister",
     "output_format": ["markdown_report", "json"],
     "output_filename_base": "Company_Asset_YYYYMMDD",
-    "rubric_version": "3.0",
+    "rubric_version": "3.1",
     "rubric_author": "kate"
   },
   "input": {
@@ -2140,6 +3020,7 @@ After the markdown code block, output the second copyable box as a JSON code blo
     "target": "",
     "moa": "",
     "modality_platform": "",
+    "main_indication": "",
     "indication": "",
     "development_stage": "",
     "company_country": "",
@@ -2333,11 +3214,199 @@ After the markdown code block, output the second copyable box as a JSON code blo
 \`\`\``;
 }
 
-async function copyPromptToClipboard() {
-  const prompt = buildGptInstructionPrompt();
+function buildGptInstructionPromptCompact() {
+  return `You are an expert biotech pipeline scout for SKBP Pipeline Finder.
+
+Mission:
+Run Full Scout v3.1 for one biotech/pharma pipeline asset. Produce exactly two fenced code blocks: first markdown, second JSON. Output language: Korean, with English allowed for scientific terms.
+
+Input:
+Company: [COMPANY_NAME]
+Asset / pipeline: [ASSET_NAME]
+
+Identity Gate:
+- First verify whether this is a real biotech/pharma pipeline asset using credible public sources.
+- Acceptable sources: official company/pipeline page, clinical trial registry, regulatory source, peer-reviewed paper, company deck/presentation, reputable biotech news, patent/source linking asset to target or indication.
+- If asset identity cannot be linked to company + target/MoA + indication/source, stop early as N/A. Do not score, do not build competitor landscape, do not estimate marketability.
+
+Required output:
+1. Markdown code block with the report.
+2. JSON code block with the same facts, scores, URLs, rationale, and marketability assumptions.
+3. No prose outside the two code blocks.
+4. JSON must be valid: no comments, no trailing commas.
+
+Markdown report structure:
+# [Company] Pipeline Scout Report: **[Asset]**
+중요: Start with one sentence explaining the filter/recommendation rationale, e.g. why PASS / REVIEW / FAIL or why stage/ownership/source uncertainty matters.
+
+## 1) Company Profile
+Company, legal name/aliases, country, HQ, website, company type/stage, focus areas, platform, financing/partnership, lead pipeline summary.
+
+## 2) Pipeline Snapshot
+Company, asset, target, Theme / Cluster, MoA, modality/platform, indication, stage, key data.
+
+## 3) Scorecard Summary
+Table: Target Relevance, Competitive Landscape, MoA Validity, Platform Attractiveness, Expansion Potential, Data Maturity, Marketability, Total.
+
+## 4) Criterion Details
+For each criterion include: Score, Evidence Type, Main line, What was checked, Evidence trail, Investigation note, Why not higher, Uncertain points, Source URLs.
+
+## 5) Validation Notes
+Cross-checked facts, uncertain points, search log.
+
+## 6) Final Take
+One-line summary, recommendation, most important diligence question.
+
+## References
+Use Markdown reference links with actual URLs.
+
+Scoring v3.1:
+- Score each criterion independently as one integer: 0, 1, 2, or 3. No ranges.
+- Evidence Type must be one of:
+  E0_not_found_or_not_assessable
+  E1_company_claim_or_scientific_rationale_only
+  E2_indirect_or_class_level_evidence
+  E3_asset_specific_preclinical_or_technical_evidence
+  E4_asset_specific_clinical_evidence
+- PASS: Total >= 14, Target Relevance >= 3, MoA >= 2, Data Maturity >= 2, and no hard blocker.
+- REVIEW: Total 9-13, or score looks high but stage / rights / asset identity / source uncertainty remains.
+- FAIL: Total <= 8, or Target Relevance <= 1, or no SKBP Theme / Cluster fit.
+
+Criterion intent:
+1. Target Relevance: target/disease biology fit to SKBP E/I Balance or Neuroimmune theme. Direct target-level fit matters more than broad CNS label.
+2. Competitive Landscape: same indication, same target/MoA competitors, front-runners, differentiation, similarity level.
+3. MoA Validity: biological plausibility, functional evidence, class validation, asset-specific validation, human PoC if available.
+4. Platform Attractiveness: modality/platform fit, reproducibility, differentiation, data support. Preferred: small molecule, ASO, siRNA.
+5. Expansion Potential: adjacent indications, same biology/platform reuse, follow-on pipeline logic.
+6. Data Maturity: stage-appropriate asset-specific evidence. Preclinical needs experimental readout; clinical needs safety/efficacy/biomarker evidence.
+7. Marketability: show A/B/C and score by obtainable peak sales: 0 weak/not calculable, 1 < USD 1,000M, 2 >= USD 1,000M, 3 >= USD 2,000M plus strong expansion/pricing/differentiation.
+
+Marketability A/B/C:
+A. TAP = Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate
+B. Unrisked Peak Sales = TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor
+C. Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment
+Sales output unit = million USD. Store JSON sales numbers as numeric million USD values.
+
+Controlled vocabulary for dashboard:
+- company_country: use one canonical label such as China, Republic of Korea, United States, Japan, Europe/UK, Taiwan, Singapore, Canada, Australia, Israel, Unknown, N/A.
+- development_stage: Hit discovery, Lead Selection, Lead Optimization, IND-enabling, IND, Phase 1, Phase 1/2, Phase 2, Phase 2/3, Phase 3, Registration, Approved / marketed, Discontinued / inactive, Unknown, N/A.
+- Map synonyms: P1/Ph1/FIH/Phase I -> Phase 1; P2/Ph2/Phase II -> Phase 2; preclinical/IND prep -> IND-enabling when appropriate.
+- main_indication: use one canonical disease bucket; put detailed wording in indication.
+
+N/A output:
+If identity gate fails, output short markdown and short JSON only. Set source_report.parser_status = "asset_identity_not_verified", hard_filter.status = "FAIL", scoring.total_score = 0, final_insight.recommendation = "Deprioritize".
+
+JSON requirements:
+Use this top-level shape and fill all fields. Use [] for missing lists and ""/null for unknown values. Every score criterion must include the same required field names.
+
+\`\`\`json
+{
+  "meta": {
+    "schema_version": "3.1",
+    "generated_at": "YYYY-MM-DD",
+    "language": "ko",
+    "analyst_role": "[OIT] PreC Pipeline Shortlister",
+    "output_format": ["markdown_report", "json"],
+    "output_filename_base": "Company_Asset_YYYYMMDD",
+    "rubric_version": "3.1",
+    "rubric_author": "kate"
+  },
+  "input": {
+    "company_input": "[COMPANY_NAME]",
+    "asset_input": "[ASSET_NAME]",
+    "source_text": null,
+    "source_type": "web research",
+    "notes": ""
+  },
+  "source_report": {
+    "raw_markdown": "",
+    "source_format": "gpt_markdown_report",
+    "parser_status": "gpt_structured_output",
+    "parser_note": "Markdown report and JSON were generated together from the same evidence set."
+  },
+  "company_profile": {
+    "company_name": "",
+    "legal_name": "",
+    "aliases": [],
+    "country": "",
+    "headquarters": "",
+    "website": "",
+    "company_stage": "",
+    "ownership_status": "",
+    "focus_areas": [],
+    "platform_summary": "",
+    "lead_pipeline_summary": "",
+    "financing_or_partnership_signals": [],
+    "official_source_urls": [],
+    "notes": ""
+  },
+  "json_summary": {
+    "company": "",
+    "asset_name": "",
+    "target": "",
+    "theme": "E/I Balance | Neuroimmune | No Theme",
+    "cluster": "",
+    "target_relevance_score": 0,
+    "one_line_summary": "",
+    "company_country": ""
+  },
+  "structured_table": {
+    "company": "",
+    "asset_name": "",
+    "target": "",
+    "moa": "",
+    "modality_platform": "",
+    "main_indication": "",
+    "indication": "",
+    "development_stage": "",
+    "company_country": "",
+    "sources": []
+  },
+  "hard_filter": {
+    "status": "PASS | REVIEW | FAIL",
+    "reason": "",
+    "flags": []
+  },
+  "scoring": {
+    "total_score": 0,
+    "max_score": 21,
+    "criteria": {
+      "target_relevance": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": [], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "uncertain_points": []},
+      "competitive_landscape": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": [], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "uncertain_points": []},
+      "moa_validity": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": [], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "uncertain_points": []},
+      "platform_attractiveness": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": [], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "uncertain_points": []},
+      "expansion_potential": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": [], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "uncertain_points": []},
+      "data_maturity": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": [], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "claimed_development_stage": "", "expected_data_for_stage": [], "visible_asset_specific_data": [], "missing_data": [], "stage_data_alignment_judgment": "", "uncertain_points": []},
+      "marketability": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": ["TAP", "Unrisked Peak Sales", "Obtainable Peak Sales"], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "uncertain_points": [], "calculation": {"commercial_rationale_status": "established | not_established", "commercial_rationale_failure_reason": null, "A_targetable_addressable_patient": {"total_patient_pool": null, "diagnosis_rate": null, "eligibility_rate": null, "biomarker_positive_rate": null, "treatable_subgroup_rate": null, "formula": "TAP = Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate", "targetable_addressable_patient": null, "evidence_sources": []}, "B_unrisked_peak_sales": {"tap": null, "annual_net_price": null, "peak_penetration": null, "treatment_duration_factor": null, "sales_unit": "million USD", "entry_order_share_assumption": {"competitor_count": null, "expected_entry_order": null, "matrix_share_reference": ""}, "formula": "Unrisked Peak Sales = TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor", "unrisked_peak_sales": null, "evidence_sources": []}, "C_obtainable_peak_sales": {"unrisked_peak_sales": null, "competition_haircut": null, "pricing_power_adjustment": null, "expansion_capacity_adjustment": null, "sales_unit": "million USD", "formula": "Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment", "obtainable_peak_sales": null, "evidence_sources": []}}}
+    }
+  },
+  "competitive_analysis": {
+    "competitive_density": "",
+    "similarity_summary": {"similar_pipeline_count": 0, "high_similarity_count": 0, "medium_similarity_count": 0, "low_similarity_count": 0},
+    "similar_pipelines": []
+  },
+  "validation": {
+    "cross_checked_facts": [],
+    "uncertain_points": [],
+    "source_registry": []
+  },
+  "final_insight": {
+    "one_line_summary": "",
+    "recommendation": "Shortlist | Watch | Deprioritize",
+    "most_important_diligence_question": ""
+  },
+  "obsidian": {"note_title": "Company Asset", "tags": ["pipeline", "skbp"], "aliases": []}
+}
+\`\`\`
+
+Remember: final answer must be only the markdown code block and the JSON code block.`;
+}
+
+async function copyPromptToClipboard(kind = 'full') {
+  const prompt = kind === 'triage' ? buildTriageInstructionPrompt() : buildGptInstructionPrompt();
   try {
     await navigator.clipboard.writeText(prompt);
-    setPromptCopyFeedback();
+    setPromptCopyFeedback(kind);
   } catch (error) {
     const scratch = document.createElement('textarea');
     scratch.value = prompt;
@@ -2348,31 +3417,32 @@ async function copyPromptToClipboard() {
     scratch.select();
     document.execCommand('copy');
     scratch.remove();
-    setPromptCopyFeedback();
+    setPromptCopyFeedback(kind);
   }
 }
 
-function setPromptCopyFeedback() {
+function setPromptCopyFeedback(kind = 'full') {
   if (elements.promptCopyStatus) {
-    elements.promptCopyStatus.textContent = '복사 완료';
+    elements.promptCopyStatus.textContent = kind === 'triage' ? 'Triage 지침 복사 완료' : 'Full Scout 지침 복사 완료';
   }
 
-  if (!elements.copyPromptTopButton) {
-    return;
-  }
+  const button = kind === 'triage' ? elements.copyTriagePromptTopButton : elements.copyPromptTopButton;
+  if (!button) return;
 
-  const label = elements.copyPromptTopButton.querySelector('b');
+  const label = button.querySelector('b');
+  const idleLabel = kind === 'triage' ? '지침 1' : '지침 2';
+  const idleTooltip = kind === 'triage' ? TRIAGE_PROMPT_TOOLTIP : 'GPT full scout v3.1 지침을 복사합니다. triage에서 SELECT된 asset을 심층 검토할 때 사용합니다.';
   if (label) {
     label.textContent = '복사됨';
   }
-  elements.copyPromptTopButton.dataset.tooltip = 'GPT 조사 지침을 클립보드에 복사했습니다.';
+  button.dataset.tooltip = kind === 'triage' ? 'GPT fast triage 지침을 복사했습니다.' : 'GPT full scout v3.1 지침을 복사했습니다.';
 
   window.clearTimeout(promptCopyFeedbackTimer);
   promptCopyFeedbackTimer = window.setTimeout(() => {
     if (label) {
-      label.textContent = '지침';
+      label.textContent = idleLabel;
     }
-    elements.copyPromptTopButton.dataset.tooltip = PROMPT_TOOLTIP;
+    button.dataset.tooltip = idleTooltip;
   }, 1800);
 }
 
@@ -2383,17 +3453,38 @@ function sortByColumn(key) {
     state.sortKey = key;
     state.sortDirection = [
       'targetScore',
-      'competitiveScore',
       'moaScore',
+      'dataScore',
+      'competitiveScore',
       'platformScore',
       'expansionScore',
-      'dataScore',
       'marketScore',
       'totalScore'
     ].includes(key)
       ? 'desc'
       : 'asc';
   }
+  renderTable();
+}
+
+function setTableMode(mode) {
+  const nextMode = mode === 'triage' ? 'triage' : 'full';
+  if (state.tableMode === nextMode) return;
+  state.tableMode = nextMode;
+  state.pass = 'all';
+  state.page = 1;
+
+  if (nextMode === 'triage' && ['filter2', 'competitiveScore', 'platformScore', 'expansionScore', 'marketScore', 'totalScore'].includes(state.sortKey)) {
+    state.sortKey = 'targetScore';
+    state.sortDirection = 'desc';
+  }
+  if (nextMode === 'full' && state.sortKey === 'filter1') {
+    state.sortKey = 'totalScore';
+    state.sortDirection = 'desc';
+  }
+
+  renderFilters();
+  renderTableTabs();
   renderTable();
 }
 
@@ -2457,8 +3548,20 @@ elements.themeFilter.addEventListener('change', (event) => {
   renderTable();
 });
 
+elements.clusterFilter.addEventListener('change', (event) => {
+  state.cluster = event.target.value;
+  state.page = 1;
+  renderTable();
+});
+
 elements.countryFilter.addEventListener('change', (event) => {
   state.country = event.target.value;
+  state.page = 1;
+  renderTable();
+});
+
+elements.indicationFilter.addEventListener('change', (event) => {
+  state.indication = event.target.value;
   state.page = 1;
   renderTable();
 });
@@ -2489,9 +3592,15 @@ elements.nextPage.addEventListener('click', () => {
 
 elements.pipelineTable.addEventListener('click', (event) => {
   if (event.target.closest('input, button, a, label')) return;
-  const row = event.target.closest('[data-record-id]');
-  if (!row) return;
-  window.location.href = `/detail?id=${encodeURIComponent(row.dataset.recordId)}`;
+  const rowElement = event.target.closest('[data-record-id]');
+  if (!rowElement) return;
+  const recordId = rowElement.dataset.recordId;
+  if (activeTableMode() === 'triage') {
+    const row = state.rows.find((item) => item.id === recordId);
+    openTriageReportDrawer(row);
+    return;
+  }
+  window.location.href = `/detail?id=${encodeURIComponent(recordId)}`;
 });
 
 elements.pipelineTable.addEventListener('change', (event) => {
@@ -2582,6 +3691,10 @@ elements.columnSettingsGrid?.addEventListener('change', (event) => {
   renderTable();
 });
 
+elements.pipelineTableTabs?.forEach((tab) => {
+  tab.addEventListener('click', () => setTableMode(tab.dataset.tableMode));
+});
+
 elements.agentSessionSelect?.addEventListener('change', (event) => {
   state.activeAgentSessionId = event.target.value;
   saveAgentSessions();
@@ -2600,6 +3713,8 @@ elements.aiBackdrop.addEventListener('click', closeAiDrawer);
 elements.criteriaDrawerButton.addEventListener('click', openCriteriaDrawer);
 elements.criteriaDrawerClose.addEventListener('click', closeCriteriaDrawer);
 elements.criteriaBackdrop.addEventListener('click', closeCriteriaDrawer);
+elements.triageReportClose?.addEventListener('click', closeTriageReportDrawer);
+elements.triageReportBackdrop?.addEventListener('click', closeTriageReportDrawer);
 
 document.querySelectorAll('[data-agent-prompt]').forEach((button) => {
   button.addEventListener('click', () => {
@@ -2646,6 +3761,9 @@ window.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && elements.criteriaDrawer.classList.contains('open')) {
     closeCriteriaDrawer();
   }
+  if (event.key === 'Escape' && elements.triageReportDrawer?.classList.contains('open')) {
+    closeTriageReportDrawer();
+  }
 });
 
 elements.previewInputButton.addEventListener('click', previewPastedReportParsing);
@@ -2655,10 +3773,20 @@ elements.clearJsonButton.addEventListener('click', () => {
   elements.structuredJsonInput.value = '';
   elements.saveStatus.textContent = '원문 + JSON 입력 대기';
 });
-elements.copyPromptButton?.addEventListener('click', copyPromptToClipboard);
-elements.copyPromptTopButton?.addEventListener('click', copyPromptToClipboard);
+if (elements.copyTriagePromptTopButton) {
+  elements.copyTriagePromptTopButton.dataset.tooltip = TRIAGE_PROMPT_TOOLTIP;
+}
+if (elements.copyPromptTopButton) {
+  const label = elements.copyPromptTopButton.querySelector('b');
+  if (label) label.textContent = '지침 2';
+  elements.copyPromptTopButton.dataset.tooltip = 'GPT full scout v3.1 지침을 복사합니다. triage에서 SELECT된 asset을 심층 검토할 때 사용합니다.';
+}
+elements.copyPromptButton?.addEventListener('click', () => copyPromptToClipboard('full'));
+elements.copyTriagePromptTopButton?.addEventListener('click', () => copyPromptToClipboard('triage'));
+elements.copyPromptTopButton?.addEventListener('click', () => copyPromptToClipboard('full'));
 
 setupResizableDrawer(elements.aiDrawer, 'skbp.dashboard.aiDrawerWidth', 560);
+setupResizableDrawer(elements.triageReportDrawer, 'skbp.dashboard.triageReportDrawerWidth', 620);
 setupThemeToggle();
 initializeAgentSessions();
 

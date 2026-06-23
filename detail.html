@@ -158,6 +158,52 @@
           </p>
         </section>
 
+        <section class="criteria-rule criteria-triage-rule">
+          <h3>GPT 지침 1 — Fast Triage · v3.1 기준</h3>
+          <p>
+            지침 1은 여러 후보 중 지침 2 Full Scout로 넘길 대상을 빠르게 고르는 1차 screening입니다.
+            <code>Target Relevance</code>, <code>MoA Validity</code>, <code>Data Maturity</code>는 지침 2의 같은 항목을 그대로 쓰되,
+            evidence type, why_not_higher, full source trail까지 요구하지 않는 예비 평가입니다.
+            <code>SELECT</code>만 지침 2에서 심층 검토하는 것이 기본 흐름입니다.
+          </p>
+        </section>
+
+        <section class="criteria-pass-grid triage-status-grid" aria-label="SELECT REJECT N/A triage criteria">
+          <article>
+            <h3>SELECT</h3>
+            <ul>
+              <li>Asset identity 확인 가능</li>
+              <li>TR / MOA / Data 중 2개 이상이 2점 이상</li>
+              <li>SKBP fit이 있어 지침 2 검토 가치 있음</li>
+            </ul>
+          </article>
+          <article>
+            <h3>REJECT</h3>
+            <ul>
+              <li>Asset identity는 확인됨</li>
+              <li>SKBP fit, MoA, Data 중 핵심이 약함</li>
+              <li>현재 공개자료 기준 지침 2 우선순위 낮음</li>
+            </ul>
+          </article>
+          <article>
+            <h3>N/A</h3>
+            <ul>
+              <li>Pipeline asset identity 확인 불가</li>
+              <li>회사, target, indication 연결 불가</li>
+              <li>회사/타깃/적응증을 확인할 단서가 부족함</li>
+            </ul>
+          </article>
+        </section>
+
+        <section class="criteria-rule criteria-full-rule">
+          <h3>GPT 지침 2 — Full Scout · v3.1 기준</h3>
+          <p>
+            지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
+            지침 1에서 예비로 본 TR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
+            Competitive Landscape, Platform, Expansion, Marketability까지 완성해 최종 <code>PASS</code>, <code>REVIEW</code>, <code>FAIL</code>로 판단합니다.
+          </p>
+        </section>
+
         <section class="criteria-theme-grid" aria-label="SKBP theme and cluster">
           <article>
             <h3>E/I Balance</h3>
@@ -183,7 +229,7 @@
           </article>
         </section>
 
-        <section class="criteria-rule">
+        <section class="criteria-rule criteria-other-card">
           <h3>Evidence Type</h3>
           <div class="criteria-table-wrap">
             <table class="criteria-table evidence-type-table">
@@ -204,7 +250,7 @@
           </div>
         </section>
 
-        <section class="criteria-pass-grid" aria-label="PASS REVIEW FAIL criteria">
+        <section class="criteria-pass-grid full-status-grid" aria-label="PASS REVIEW FAIL criteria">
           <article>
             <h3>PASS</h3>
             <ul>
@@ -233,7 +279,7 @@
           </article>
         </section>
 
-        <section>
+        <section class="criteria-scoring-section">
           <div class="criteria-section-header">
             <h3>Scoring Table</h3>
             <span>0점에서 3점까지 보수적으로 적용</span>
@@ -311,7 +357,7 @@
           </div>
         </section>
 
-        <section class="criteria-detail-grid" aria-label="Detailed scoring guidance">
+        <section class="criteria-detail-grid compact-criteria-detail-grid criteria-parameter-guide" aria-label="Detailed scoring guidance">
           <article>
             <h3>Target Relevance</h3>
             <p>Target을 먼저 identify한 뒤 <code>Theme</code>과 <code>Cluster</code>를 분리해서 기록합니다. Target 아래에는 <code>Theme: ___ (Cluster: ___)</code> 형식으로 표시합니다.</p>
@@ -332,33 +378,43 @@
             <h3>Platform Attractiveness</h3>
             <p>주요 관심 모달리티는 small molecule, ASO, siRNA입니다. AOC, antibody 등은 둘째 관심 모달리티로 평가합니다.</p>
           </article>
-          <article>
-            <h3>Marketability</h3>
-            <p><code>A. TAP</code>를 먼저 추정하고, <code>B. Unrisked Peak Sales</code>를 계산한 뒤, <code>C. Obtainable Peak Sales</code>로 현실화합니다. 모든 sales 결과는 <code>million USD</code> 단위로 기록합니다.</p>
+          <article class="parameter-card-wide marketability-parameter-card">
+            <h3>7. Marketability</h3>
+            <p>
+              Marketability는 환자 풀에서 시작해 실제 매출 가능성까지 단계적으로 좁혀 봅니다.
+              A는 치료 가능한 환자 수, B는 경쟁 리스크를 반영하기 전 peak sales,
+              C는 경쟁·가격·확장성을 반영한 obtainable peak sales입니다.
+            </p>
+            <div class="marketability-formula-grid" aria-label="Marketability A/B/C formula cards">
+              <div>
+                <strong>A. TAP</strong>
+                <span>Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate</span>
+              </div>
+              <div>
+                <strong>B. Unrisked Peak Sales</strong>
+                <span>TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor</span>
+              </div>
+              <div>
+                <strong>C. Obtainable Peak Sales</strong>
+                <span>Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment</span>
+              </div>
+            </div>
+            <p class="marketability-unit-line"><strong>Sales output unit</strong><span>million USD</span></p>
           </article>
         </section>
 
-        <section class="criteria-rule">
-          <h3>Marketability A/B/C</h3>
-          <p>
-            <code>A. TAP = Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate</code><br />
-            <code>B. Unrisked Peak Sales = TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor</code><br />
-            <code>C. Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment</code><br />
-            <code>Sales output unit = million USD</code>
-          </p>
-        </section>
-
-        <section class="criteria-rule">
+        <section class="criteria-rule criteria-other-card">
           <h3>근거 기록 규칙</h3>
-          <p>
-            기준 설명은 <code>rubric</code> 섹션에만 남깁니다. 각 scoring 항목의
-            <code>main_line_summary</code>에는 왜 그 점수가 나왔는지만 쓰고,
-            <code>evidence_sources</code>, <code>investigation_note</code>,
-            <code>uncertain_points</code>에는 출처, 조사 과정, 불확실성을 분리해서 기록합니다.
-          </p>
+          <ul class="criteria-subbullet-list">
+            <li><strong>Rubric</strong><span>기준 설명은 <code>rubric</code> 섹션에만 남깁니다.</span></li>
+            <li><strong>main_line_summary</strong><span>각 scoring 항목에서 왜 그 점수가 나왔는지만 한 줄로 기록합니다.</span></li>
+            <li><strong>evidence_sources</strong><span>점수 판단에 사용한 출처 URL과 핵심 근거를 분리합니다.</span></li>
+            <li><strong>investigation_note</strong><span>조사 과정, 확인한 항목, 판단 경계를 짧게 남깁니다.</span></li>
+            <li><strong>uncertain_points</strong><span>자료 부족, 모호한 claim, 추가 확인 필요사항을 따로 기록합니다.</span></li>
+          </ul>
         </section>
 
-        <section class="criteria-rule">
+        <section class="criteria-rule criteria-other-card">
           <h3>경쟁사 유사도 기록</h3>
           <p>
             경쟁 pipeline은 <code>similar_pipeline_count</code>, high/medium/low similarity 개수,

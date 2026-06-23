@@ -1,3 +1,5 @@
+import { setupThemeToggle } from './theme.js';
+
 const params = new URLSearchParams(window.location.search);
 const notePath = params.get('path') || '';
 
@@ -146,6 +148,8 @@ async function loadWikiNote() {
   elements.content.innerHTML = renderMarkdown(data.markdown);
   elements.status.textContent = 'Loaded';
 }
+
+setupThemeToggle();
 
 loadWikiNote().catch((error) => {
   elements.status.textContent = 'Failed';

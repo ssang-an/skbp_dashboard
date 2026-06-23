@@ -6,7 +6,7 @@
       "type": "asset",
       "title": "Asset__ILM01_GAIA-Aβ__GAIA-Aβ",
       "tags": "pipeline/asset;theme/neuroimmune",
-      "score": 16,
+      "score": 15,
       "recommendation": "Watch",
       "evidence_level": "E3"
     },
@@ -86,7 +86,7 @@
       "type": "scorecard",
       "title": "Scorecard__ILM01_GAIA-Aβ__20260621",
       "tags": "pipeline/scorecard",
-      "score": 16,
+      "score": 15,
       "recommendation": "Watch",
       "evidence_level": "E3"
     },
@@ -176,6 +176,26 @@
       "type": "source",
       "title": "Source__Nature_Medicine_αAβ-Gas6_paper",
       "tags": "pipeline/source;source/publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_ef80b277",
+      "label": "AI draft search note",
+      "type": "source",
+      "title": "Source__AI_draft_search_note",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::ai_draft_search_note",
+      "label": "AI draft search note",
+      "type": "source",
+      "title": "Source__AI_draft_search_note",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
@@ -295,6 +315,16 @@
       "label": "Diranersen / BIIB080 source",
       "type": "source",
       "title": "Source__Diranersen_BIIB080_source",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::ai_draft_evidence_note",
+      "label": "AI draft evidence note",
+      "type": "source",
+      "title": "Source__AI_draft_evidence_note",
       "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
@@ -502,13 +532,13 @@
     },
     {
       "id": "source::https_synapse.patsnap.com_drug_0b28edb3230146bca084e523c94678b2",
-      "label": "Synapse WT-1108 drug page",
+      "label": "Synapse WT-1108",
       "type": "source",
-      "title": "Source__Synapse_WT-1108_drug_page",
+      "title": "Source__Synapse_WT-1108",
       "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
-      "evidence_level": "E2"
+      "evidence_level": "E0"
     },
     {
       "id": "source::https_pubmed.ncbi.nlm.nih.gov_35248186",
@@ -722,9 +752,9 @@
     },
     {
       "id": "target::undisclosed",
-      "label": "Undisclosed",
+      "label": "undisclosed",
       "type": "target",
-      "title": "Target__Undisclosed",
+      "title": "Target__undisclosed",
       "tags": "pipeline/target",
       "score": "",
       "recommendation": "",
@@ -2602,13 +2632,13 @@
     },
     {
       "id": "source::https_jamanetwork.com_journals_jamaneurology_fullarticle_2809938",
-      "label": "JAMA Neurology XEN1101 epilepsy",
+      "label": "JAMA Neurology XEN1101 Phase 2b trial",
       "type": "source",
-      "title": "Source__JAMA_Neurology_XEN1101_epilepsy",
+      "title": "Source__JAMA_Neurology_XEN1101_Phase_2b_trial",
       "tags": "pipeline/source;source/publication",
       "score": "",
       "recommendation": "",
-      "evidence_level": "E4"
+      "evidence_level": "E0"
     },
     {
       "id": "source::https_jamanetwork.com_journals_jamanetworkopen_fullarticle_2834419",
@@ -2622,23 +2652,23 @@
     },
     {
       "id": "source::https_investor.xenon-pharma.com_news-releases_news-release-details_xeno_dfccb5d1",
-      "label": "Xenon Phase 3 azetukalner PR",
+      "label": "Xenon Announces Positive Topline Data from Phase 3 X-TOLE2 Study",
       "type": "source",
-      "title": "Source__Xenon_Phase_3_azetukalner_PR",
-      "tags": "pipeline/source;source/news",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E4"
-    },
-    {
-      "id": "source::https_www.biohaven.com_pipeline_innovation-engine_kv7",
-      "label": "Biohaven Kv7 pipeline",
-      "type": "source",
-      "title": "Source__Biohaven_Kv7_pipeline",
+      "title": "Source__Xenon_Announces_Positive_Topline_Data_from_Phase_3_X-TOLE2_Study",
       "tags": "pipeline/source;source/official_company",
       "score": "",
       "recommendation": "",
-      "evidence_level": "E4"
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_www.biohaven.com_pipeline_innovation-engine_kv7",
+      "label": "Biohaven Kv7 Ion Channel Modulation Platform",
+      "type": "source",
+      "title": "Source__Biohaven_Kv7_Ion_Channel_Modulation_Platform",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
     },
     {
       "id": "source::https_www.who.int_news-room_fact-sheets_detail_epilepsy",
@@ -2712,13 +2742,13 @@
     },
     {
       "id": "source::https_www.prnewswire.com_news-releases_biohaven-reports-new-clinical-da_fced1f21",
-      "label": "https://www.prnewswire.com/news-releases/biohaven-reports-new-clinical-data-in-epilepsy-with-opakalim-a-selective-kv7-27-3-activator-highlighting-seizure-control-and-markedly-differentiated-tolerability-profile-302781743.html",
+      "label": "Biohaven Reports New Clinical Data in Epilepsy with Opakalim",
       "type": "source",
-      "title": "Source__https_www.prnewswire.com_news-releases_biohaven-reports-new-clinical-da_fced1f21",
-      "tags": "pipeline/source;source/other",
+      "title": "Source__Biohaven_Reports_New_Clinical_Data_in_Epilepsy_with_Opakalim",
+      "tags": "pipeline/source;source/news",
       "score": "",
       "recommendation": "",
-      "evidence_level": "E4"
+      "evidence_level": "E0"
     },
     {
       "id": "source::https_www.gsk.com_en-gb_media_press-releases_gsk-and-valeant-receive-eu_0732d64c",
@@ -2789,6 +2819,1956 @@
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
+    },
+    {
+      "id": "asset::azetukalner_xen1101",
+      "label": "Azetukalner / XEN1101",
+      "type": "asset",
+      "title": "Asset__Azetukalner_XEN1101",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::xenon_pharmaceuticals",
+      "label": "Xenon Pharmaceuticals",
+      "type": "company",
+      "title": "Company__Xenon_Pharmaceuticals",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::kv7_kcnq_potassium_channels",
+      "label": "Kv7/KCNQ potassium channels",
+      "type": "target",
+      "title": "Target__Kv7_KCNQ_potassium_channels",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::potassium_channel_opener_neuronal_hyperexcitability_reduction",
+      "label": "Potassium channel opener / neuronal hyperexcitability reduction",
+      "type": "moa",
+      "title": "MoA__Potassium_channel_opener_neuronal_hyperexcitability_reduction",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::oral_small_molecule",
+      "label": "Oral small molecule",
+      "type": "modality",
+      "title": "Modality__Oral_small_molecule",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::focal_onset_seizures",
+      "label": "Focal onset seizures",
+      "type": "indication",
+      "title": "Indication__Focal_onset_seizures",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::azetukalner_xen1101_20260623",
+      "label": "Scorecard - Azetukalner / XEN1101",
+      "type": "scorecard",
+      "title": "Scorecard__Azetukalner_XEN1101__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::opakalim_bhv-7000",
+      "label": "Opakalim / BHV-7000",
+      "type": "asset",
+      "title": "Asset__Opakalim_BHV-7000",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::biohaven",
+      "label": "Biohaven",
+      "type": "company",
+      "title": "Company__Biohaven",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::kv7.2_kv7.3",
+      "label": "Kv7.2/Kv7.3",
+      "type": "target",
+      "title": "Target__Kv7.2_Kv7.3",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::selective_kv7.2_kv7.3_potassium_channel_activator",
+      "label": "Selective Kv7.2/Kv7.3 potassium channel activator",
+      "type": "moa",
+      "title": "MoA__Selective_Kv7.2_Kv7.3_potassium_channel_activator",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::focal_epilepsy_and_broader_epilepsy_populations",
+      "label": "Focal epilepsy and broader epilepsy populations",
+      "type": "indication",
+      "title": "Indication__Focal_epilepsy_and_broader_epilepsy_populations",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::opakalim_bhv-7000_20260623",
+      "label": "Scorecard - Opakalim / BHV-7000",
+      "type": "scorecard",
+      "title": "Scorecard__Opakalim_BHV-7000__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::qrl-101",
+      "label": "QRL-101",
+      "type": "asset",
+      "title": "Asset__QRL-101",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::quralis",
+      "label": "QurAlis",
+      "type": "company",
+      "title": "Company__QurAlis",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::selective_kv7.2_kv7.3_ion-channel_opener_intended_to_reduce_neuronal_hy_86d0a748",
+      "label": "Selective Kv7.2/Kv7.3 ion-channel opener intended to reduce neuronal hyperexcitability",
+      "type": "moa",
+      "title": "MoA__Selective_Kv7.2_Kv7.3_ion-channel_opener_intended_to_reduce_neuronal_hy_86d0a748",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::dee_planning;_als_hyperexcitability_clinical_pom_context",
+      "label": "DEE planning; ALS hyperexcitability clinical PoM context",
+      "type": "indication",
+      "title": "Indication__DEE_planning;_ALS_hyperexcitability_clinical_PoM_context",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::qrl-101_20260623",
+      "label": "Scorecard - QRL-101",
+      "type": "scorecard",
+      "title": "Scorecard__QRL-101__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_www.quralis.com_news_quralis-to-present-data-from-its-phase-1-cli_4ee5fefb",
+      "label": "QurAlis Phase 1 QRL-101 AES 2025 announcement",
+      "type": "source",
+      "title": "Source__QurAlis_Phase_1_QRL-101_AES_2025_announcement",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::san2355",
+      "label": "SAN2355",
+      "type": "asset",
+      "title": "Asset__SAN2355",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::jazz_pharmaceuticals_saniona",
+      "label": "Jazz Pharmaceuticals / Saniona",
+      "type": "company",
+      "title": "Company__Jazz_Pharmaceuticals_Saniona",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::selective_small-molecule_activator_of_kv7.2_kv7.3_potassium_channels",
+      "label": "Selective small-molecule activator of Kv7.2/Kv7.3 potassium channels",
+      "type": "moa",
+      "title": "MoA__Selective_small-molecule_activator_of_Kv7.2_Kv7.3_potassium_channels",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::san2355_20260623",
+      "label": "Scorecard - SAN2355",
+      "type": "scorecard",
+      "title": "Scorecard__SAN2355__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_investor.jazzpharma.com_news-releases_news-release-details_jazz-p_cc776602",
+      "label": "Jazz Pharmaceuticals enters exclusive licensing agreement for SAN2355",
+      "type": "source",
+      "title": "Source__Jazz_Pharmaceuticals_enters_exclusive_licensing_agreement_for_SAN2355",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::rap-219",
+      "label": "RAP-219",
+      "type": "asset",
+      "title": "Asset__RAP-219",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::rapport_therapeutics",
+      "label": "Rapport Therapeutics",
+      "type": "company",
+      "title": "Company__Rapport_Therapeutics",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::tarpγ8-associated_ampa_receptor_modulation",
+      "label": "TARPγ8-associated AMPA receptor modulation",
+      "type": "target",
+      "title": "Target__TARPγ8-associated_AMPA_receptor_modulation",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::tarpγ8-specific_ampar_negative_allosteric_modulator",
+      "label": "TARPγ8-specific AMPAR negative allosteric modulator",
+      "type": "moa",
+      "title": "MoA__TARPγ8-specific_AMPAR_negative_allosteric_modulator",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "cluster::synaptic_transmission",
+      "label": "Synaptic Transmission",
+      "type": "cluster",
+      "title": "Cluster__Synaptic_Transmission",
+      "tags": "skbp/cluster",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::rap-219_20260623",
+      "label": "Scorecard - RAP-219",
+      "type": "scorecard",
+      "title": "Scorecard__RAP-219__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_investors.rapportrx.com_news-releases_news-release-details_rappor_bf39c8e4",
+      "label": "Rapport RAP-219 Phase 2a follow-up results",
+      "type": "source",
+      "title": "Source__Rapport_RAP-219_Phase_2a_follow-up_results",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_aesnet.org_abstractslisting_efficacy-and-tolerability-of-rap-219-_1a629fcb",
+      "label": "AES abstract: RAP-219 TARPγ8 NAM",
+      "type": "source",
+      "title": "Source__AES_abstract_RAP-219_TARPγ8_NAM",
+      "tags": "pipeline/source;source/publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::abs-1230",
+      "label": "ABS-1230",
+      "type": "asset",
+      "title": "Asset__ABS-1230__Actio_ABS-1230",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": 15,
+      "recommendation": "Shortlist",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "company::actio_biosciences",
+      "label": "Actio Biosciences",
+      "type": "company",
+      "title": "Company__Actio_Biosciences",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::kcnt1",
+      "label": "KCNT1",
+      "type": "target",
+      "title": "Target__KCNT1",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::selective_kcnt1_ion-channel_inhibitor",
+      "label": "Selective KCNT1 ion-channel inhibitor",
+      "type": "moa",
+      "title": "MoA__Selective_KCNT1_ion-channel_inhibitor",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::kcnt1-related_epilepsy",
+      "label": "KCNT1-related epilepsy",
+      "type": "indication",
+      "title": "Indication__KCNT1-related_epilepsy",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::abs-1230_20260623",
+      "label": "Scorecard - ABS-1230",
+      "type": "scorecard",
+      "title": "Scorecard__ABS-1230__20260623",
+      "tags": "pipeline/scorecard",
+      "score": 15,
+      "recommendation": "Shortlist",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_actiobiosciences.com_actio-biosciences-announces-first-participan_ae820dd4",
+      "label": "ABS-1230 first participant dosed Phase 1",
+      "type": "source",
+      "title": "Source__ABS-1230_first_participant_dosed_Phase_1",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.clinicaltrialsarena.com_news_actio-biosciences-begins-abs-1230-trial",
+      "label": "Clinical Trials Arena ABS-1230 Phase Ib/II trial",
+      "type": "source",
+      "title": "Source__Clinical_Trials_Arena_ABS-1230_Phase_Ib_II_trial",
+      "tags": "pipeline/source;source/news",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::zorevunersen_stk-001",
+      "label": "Zorevunersen / STK-001",
+      "type": "asset",
+      "title": "Asset__Zorevunersen_STK-001",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::stoke_therapeutics_biogen",
+      "label": "Stoke Therapeutics / Biogen",
+      "type": "company",
+      "title": "Company__Stoke_Therapeutics_Biogen",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::scn1a_nav1.1_expression_restoration",
+      "label": "SCN1A / Nav1.1 expression restoration",
+      "type": "target",
+      "title": "Target__SCN1A_Nav1.1_expression_restoration",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::aso_intended_to_increase_productive_scn1a_mrna_and_nav1.1_protein_expression",
+      "label": "ASO intended to increase productive SCN1A mRNA and Nav1.1 protein expression",
+      "type": "moa",
+      "title": "MoA__ASO_intended_to_increase_productive_SCN1A_mRNA_and_Nav1.1_protein_expression",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::antisense_oligonucleotide",
+      "label": "Antisense oligonucleotide",
+      "type": "modality",
+      "title": "Modality__Antisense_oligonucleotide",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::dravet_syndrome",
+      "label": "Dravet syndrome",
+      "type": "indication",
+      "title": "Indication__Dravet_syndrome",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::zorevunersen_stk-001_20260623",
+      "label": "Scorecard - Zorevunersen / STK-001",
+      "type": "scorecard",
+      "title": "Scorecard__Zorevunersen_STK-001__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_investor.stoketherapeutics.com_news-releases_news-release-details_a7bab995",
+      "label": "Stoke Phase 3 EMPEROR timeline update",
+      "type": "source",
+      "title": "Source__Stoke_Phase_3_EMPEROR_timeline_update",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_www.stoketherapeutics.com_patients-families_clinical-studies",
+      "label": "Stoke Clinical Studies",
+      "type": "source",
+      "title": "Source__Stoke_Clinical_Studies",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::etx101",
+      "label": "ETX101",
+      "type": "asset",
+      "title": "Asset__ETX101",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::encoded_therapeutics",
+      "label": "Encoded Therapeutics",
+      "type": "company",
+      "title": "Company__Encoded_Therapeutics",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::scn1a_expression_regulation",
+      "label": "SCN1A expression regulation",
+      "type": "target",
+      "title": "Target__SCN1A_expression_regulation",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::aav9_gene_regulation_therapy_intended_to_increase_scn1a_expression",
+      "label": "AAV9 gene regulation therapy intended to increase SCN1A expression",
+      "type": "moa",
+      "title": "MoA__AAV9_gene_regulation_therapy_intended_to_increase_SCN1A_expression",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::aav9_gene_therapy",
+      "label": "AAV9 gene therapy",
+      "type": "modality",
+      "title": "Modality__AAV9_gene_therapy",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::scn1a-positive_dravet_syndrome",
+      "label": "SCN1A-positive Dravet syndrome",
+      "type": "indication",
+      "title": "Indication__SCN1A-positive_Dravet_syndrome",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::etx101_20260623",
+      "label": "Scorecard - ETX101",
+      "type": "scorecard",
+      "title": "Scorecard__ETX101__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_encoded.com_press-releases_encoded-therapeutics-presents-positive_27f71b38",
+      "label": "Encoded ETX101 Phase 1/2 interim data",
+      "type": "source",
+      "title": "Source__Encoded_ETX101_Phase_1_2_interim_data",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct05419492",
+      "label": "ClinicalTrials.gov ETX101 ENDEAVOR",
+      "type": "source",
+      "title": "Source__ClinicalTrials.gov_ETX101_ENDEAVOR",
+      "tags": "pipeline/source;source/clinical_trial_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::bexicaserin_lp352",
+      "label": "Bexicaserin / LP352",
+      "type": "asset",
+      "title": "Asset__Bexicaserin_LP352",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::lundbeck_longboard_pharmaceuticals",
+      "label": "Lundbeck / Longboard Pharmaceuticals",
+      "type": "company",
+      "title": "Company__Lundbeck_Longboard_Pharmaceuticals",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::5-ht2c_receptor",
+      "label": "5-HT2C receptor",
+      "type": "target",
+      "title": "Target__5-HT2C_receptor",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::highly_selective_5-ht2c_receptor_superagonist_for_seizure_reduction_in_dee",
+      "label": "Highly selective 5-HT2C receptor superagonist for seizure reduction in DEE",
+      "type": "moa",
+      "title": "MoA__Highly_selective_5-HT2C_receptor_superagonist_for_seizure_reduction_in_DEE",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::developmental_and_epileptic_encephalopathies_including_dravet_syndrome_cc97e161",
+      "label": "Developmental and epileptic encephalopathies including Dravet syndrome and Lennox-Gastaut syndrome",
+      "type": "indication",
+      "title": "Indication__Developmental_and_epileptic_encephalopathies_including_Dravet_syndrome_cc97e161",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::bexicaserin_lp352_20260623",
+      "label": "Scorecard - Bexicaserin / LP352",
+      "type": "scorecard",
+      "title": "Scorecard__Bexicaserin_LP352__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_www.lundbeck.com_us_newsroom_2025_lundbeck-announces-positive-res_0c6bc5d2",
+      "label": "Lundbeck PACIFIC OLE bexicaserin results",
+      "type": "source",
+      "title": "Source__Lundbeck_PACIFIC_OLE_bexicaserin_results",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc12927688",
+      "label": "Bexicaserin PACIFIC trial publication",
+      "type": "source",
+      "title": "Source__Bexicaserin_PACIFIC_trial_publication",
+      "tags": "pipeline/source;source/publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::bmb-101",
+      "label": "BMB-101",
+      "type": "asset",
+      "title": "Asset__BMB-101",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::bright_minds_biosciences",
+      "label": "Bright Minds Biosciences",
+      "type": "company",
+      "title": "Company__Bright_Minds_Biosciences",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::highly_selective_5-ht2c_receptor_agonist_biased_agonist",
+      "label": "Highly selective 5-HT2C receptor agonist / biased agonist",
+      "type": "moa",
+      "title": "MoA__Highly_selective_5-HT2C_receptor_agonist_biased_agonist",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::classic_absence_epilepsy_and_developmental_epileptic_encephalopathy",
+      "label": "Classic absence epilepsy and developmental epileptic encephalopathy",
+      "type": "indication",
+      "title": "Indication__Classic_absence_epilepsy_and_developmental_epileptic_encephalopathy",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::bmb-101_20260623",
+      "label": "Scorecard - BMB-101",
+      "type": "scorecard",
+      "title": "Scorecard__BMB-101__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_brightmindsbio.com_bright-minds-biosciences-initiates-the-breakth_9b2c7dc4",
+      "label": "Bright Minds initiates Phase 2 BREAKTHROUGH study",
+      "type": "source",
+      "title": "Source__Bright_Minds_initiates_Phase_2_BREAKTHROUGH_study",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct06401538",
+      "label": "ClinicalTrials.gov BMB-101 in absence epilepsy and DEE",
+      "type": "source",
+      "title": "Source__ClinicalTrials.gov_BMB-101_in_absence_epilepsy_and_DEE",
+      "tags": "pipeline/source;source/clinical_trial_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "moa::selective_inhibition_of_overactive_kcnt1_potassium_ion_channel_caused_b_ecf51c22",
+      "label": "Selective inhibition of overactive KCNT1 potassium ion channel caused by pathogenic gain-of-function variants",
+      "type": "moa",
+      "title": "MoA__Selective_inhibition_of_overactive_KCNT1_potassium_ion_channel_caused_b_ecf51c22",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::oral_small_molecule;_genetics-driven_precision_small_molecule_platform",
+      "label": "Oral small molecule; genetics-driven precision small molecule platform",
+      "type": "modality",
+      "title": "Modality__Oral_small_molecule;_genetics-driven_precision_small_molecule_platform",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::kcnt1-related_epilepsy;_pediatric_developmental_and_epileptic_encephalo_b19f0030",
+      "label": "KCNT1-related epilepsy; pediatric developmental and epileptic encephalopathy including EIMFS / EOEE phenotype in KYRON eligibility",
+      "type": "indication",
+      "title": "Indication__KCNT1-related_epilepsy;_pediatric_developmental_and_epileptic_encephalo_b19f0030",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::servier_s230815_kandle_study",
+      "label": "S230815 / KANDLE Study",
+      "type": "competitor",
+      "title": "Competitor__Servier__S230815_KANDLE_Study",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::atalanta_therapeutics_atl-201",
+      "label": "ATL-201",
+      "type": "competitor",
+      "title": "Competitor__Atalanta_Therapeutics__ATL-201",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::generic_off-label_quinidine",
+      "label": "Quinidine",
+      "type": "competitor",
+      "title": "Competitor__Generic_off-label__Quinidine",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::lundbeck_longboard_pharmaceuticals_bexicaserin_lp352",
+      "label": "Bexicaserin / LP352",
+      "type": "competitor",
+      "title": "Competitor__Lundbeck_Longboard_Pharmaceuticals__Bexicaserin_LP352",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::ucb_fintepla_fenfluramine",
+      "label": "FINTEPLA / fenfluramine",
+      "type": "competitor",
+      "title": "Competitor__UCB__FINTEPLA_fenfluramine",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::marinus_pharmaceuticals_immedica_ztalmy_ganaxolone",
+      "label": "ZTALMY / ganaxolone",
+      "type": "competitor",
+      "title": "Competitor__Marinus_Pharmaceuticals_Immedica__ZTALMY_ganaxolone",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "source::https_actiobiosciences.com_programs",
+      "label": "Actio Biosciences Programs",
+      "type": "source",
+      "title": "Source__Actio_Biosciences_Programs",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_actiobiosciences.com_actio-biosciences-announces-initiation-of-ky_0641e5f1",
+      "label": "Actio KYRON Phase 1b/2 initiation release",
+      "type": "source",
+      "title": "Source__Actio_KYRON_Phase_1b_2_initiation_release",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct07600736",
+      "label": "ClinicalTrials.gov NCT07600736",
+      "type": "source",
+      "title": "Source__ClinicalTrials.gov_NCT07600736",
+      "tags": "pipeline/source;source/clinical_trial_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_actiobiosciences.com_wp-content_uploads_2026_01_2025-aes-abs1230-_55fb159b",
+      "label": "ABS-1230 AES 2025 poster",
+      "type": "source",
+      "title": "Source__ABS-1230_AES_2025_poster",
+      "tags": "pipeline/source;source/publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_actiobiosciences.com",
+      "label": "Actio Biosciences homepage",
+      "type": "source",
+      "title": "Source__Actio_Biosciences_homepage",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_actiobiosciences.com_about",
+      "label": "Actio Biosciences About",
+      "type": "source",
+      "title": "Source__Actio_Biosciences_About",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_actiobiosciences.com_approach",
+      "label": "Actio Biosciences Approach",
+      "type": "source",
+      "title": "Source__Actio_Biosciences_Approach",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_actiobiosciences.com_actio-biosciences-secures-66-million-series-_03b68041",
+      "label": "Actio Series B financing",
+      "type": "source",
+      "title": "Source__Actio_Series_B_financing",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_actiobiosciences.com_actio-biosciences-announces-55-million-serie_129c9bcd",
+      "label": "Actio Series A financing",
+      "type": "source",
+      "title": "Source__Actio_Series_A_financing",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct07156201",
+      "label": "ClinicalTrials.gov NCT07156201",
+      "type": "source",
+      "title": "Source__ClinicalTrials.gov_NCT07156201",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.chop.edu_conditions-diseases_kcnt1-related-epilepsy",
+      "label": "CHOP KCNT1-related epilepsy",
+      "type": "source",
+      "title": "Source__CHOP_KCNT1-related_epilepsy",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.ncbi.nlm.nih.gov_books_nbk525917",
+      "label": "GeneReviews KCNT1-related epilepsy",
+      "type": "source",
+      "title": "Source__GeneReviews_KCNT1-related_epilepsy",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.kcnt1epilepsy.org_kcnt1-research-publications",
+      "label": "KCNT1 Epilepsy Foundation research page",
+      "type": "source",
+      "title": "Source__KCNT1_Epilepsy_Foundation_research_page",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_clinicaltrials.servier.com_trial_a-phase-ib-ii-first-in-human-mul_1e276b62",
+      "label": "Servier S230815 KANDLE trial",
+      "type": "source",
+      "title": "Source__Servier_S230815_KANDLE_trial",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.atalantatx.com_atalanta-therapeutics-publishes-preclinical-da_0dd924c8",
+      "label": "Atalanta ATL-201 preclinical data",
+      "type": "source",
+      "title": "Source__Atalanta_ATL-201_preclinical_data",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.lundbeck.com_us_newsroom_2025_lundbeck-to-present-new-data-on_23efaaab",
+      "label": "Lundbeck bexicaserin Phase 3 program",
+      "type": "source",
+      "title": "Source__Lundbeck_bexicaserin_Phase_3_program",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct06719141",
+      "label": "ClinicalTrials.gov NCT06719141 bexicaserin",
+      "type": "source",
+      "title": "Source__ClinicalTrials.gov_NCT06719141_bexicaserin",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.ucb-usa.com_sustainability_affordability_fintepla-pricing-info",
+      "label": "FINTEPLA pricing information",
+      "type": "source",
+      "title": "Source__FINTEPLA_pricing_information",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_icer.org_wp-content_uploads_2025_10_icer_2025_launch-price-and-ac_890db01f",
+      "label": "ICER 2025 Launch Price and Access Report",
+      "type": "source",
+      "title": "Source__ICER_2025_Launch_Price_and_Access_Report",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_ir.marinuspharma.com_news_news-details_2022_marinus-pharmaceutica_63bf82ac",
+      "label": "Marinus ZTALMY FDA approval",
+      "type": "source",
+      "title": "Source__Marinus_ZTALMY_FDA_approval",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.ucb.com_newsroom_press-releases_article_us-fda-approves-finte_5547244f",
+      "label": "FINTEPLA / fenfluramine source",
+      "type": "source",
+      "title": "Source__FINTEPLA_fenfluramine_source",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_actiotrials.com_abs-1230",
+      "label": "https://actiotrials.com/abs-1230/",
+      "type": "source",
+      "title": "Source__https_actiotrials.com_abs-1230",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct07227857",
+      "label": "https://clinicaltrials.gov/study/NCT07227857",
+      "type": "source",
+      "title": "Source__https_clinicaltrials.gov_study_NCT07227857",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_pubmed.ncbi.nlm.nih.gov_39871703",
+      "label": "https://pubmed.ncbi.nlm.nih.gov/39871703/",
+      "type": "source",
+      "title": "Source__https_pubmed.ncbi.nlm.nih.gov_39871703",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_actiobiosciences.com_actio-biosciences-announces-preclinical-data_92a93b61",
+      "label": "https://actiobiosciences.com/actio-biosciences-announces-preclinical-data-highlighting-ability-of-abs-1230-to-potently-and-selectively-inhibit-kcnt1-and-significantly-reduce-seizure-activity/",
+      "type": "source",
+      "title": "Source__https_actiobiosciences.com_actio-biosciences-announces-preclinical-data_92a93b61",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_actiobiosciences.com_actio-biosciences-announces-u-s-fda-clearanc_94ee63bc",
+      "label": "https://actiobiosciences.com/actio-biosciences-announces-u-s-fda-clearance-of-investigational-new-drug-application-and-fast-track-designation-for-abs-1230-a-kcnt1-inhibitor-for-the-treatment-of-kcnt1-related-epilepsy/",
+      "type": "source",
+      "title": "Source__https_actiobiosciences.com_actio-biosciences-announces-u-s-fda-clearanc_94ee63bc",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "asset::wt-1-2.0",
+      "label": "WT-1-2.0",
+      "type": "asset",
+      "title": "Asset__WT-1-2.0",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": "",
+      "recommendation": "N/A",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::hangzhou_vitan_pharmaceutical_technology_co_ltd",
+      "label": "Hangzhou Vitan Pharmaceutical Technology Co Ltd",
+      "type": "company",
+      "title": "Company__Hangzhou_Vitan_Pharmaceutical_Technology_Co_Ltd",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::p2x3",
+      "label": "P2X3",
+      "type": "target",
+      "title": "Target__P2X3",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::p2x3_antagonist_follow-on,_unverified_for_wt-1-2.0",
+      "label": "P2X3 antagonist follow-on, unverified for WT-1-2.0",
+      "type": "moa",
+      "title": "MoA__P2X3_antagonist_follow-on,_unverified_for_WT-1-2.0",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::sm",
+      "label": "SM",
+      "type": "modality",
+      "title": "Modality__SM",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::pain",
+      "label": "Pain",
+      "type": "indication",
+      "title": "Indication__Pain",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::wt-1-2.0_20260623",
+      "label": "Scorecard - WT-1-2.0",
+      "type": "scorecard",
+      "title": "Scorecard__WT-1-2.0__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "N/A",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::http_www.westanpharma.com_default.aspx",
+      "label": "Westan Pharma official site",
+      "type": "source",
+      "title": "Source__Westan_Pharma_official_site",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_rejection",
+      "label": "Fusion Protein for Allergic Asthma, Multiple Sclerosis and Transplant Rejection",
+      "type": "asset",
+      "title": "Asset__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection",
+      "tags": "pipeline/asset;theme/neuroimmune",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::hanyang_university",
+      "label": "Hanyang University",
+      "type": "company",
+      "title": "Company__Hanyang_University",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::t_cell",
+      "label": "T cell",
+      "type": "target",
+      "title": "Target__T_cell",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::fusion_protein_immunomodulation,_details_unknown",
+      "label": "Fusion protein immunomodulation, details unknown",
+      "type": "moa",
+      "title": "MoA__Fusion_protein_immunomodulation,_details_unknown",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::fusion_protein",
+      "label": "Fusion Protein",
+      "type": "modality",
+      "title": "Modality__Fusion_Protein",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::multiple_sclerosis;_allergic_asthma;_transplant_rejection",
+      "label": "Multiple Sclerosis; allergic asthma; transplant rejection",
+      "type": "indication",
+      "title": "Indication__Multiple_Sclerosis;_allergic_asthma;_transplant_rejection",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "cluster::손상_질환_면역조절",
+      "label": "손상/질환 면역조절",
+      "type": "cluster",
+      "title": "Cluster__손상-질환_면역조절",
+      "tags": "skbp/cluster",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_r_8375f6ea",
+      "label": "Scorecard - Fusion Protein for Allergic Asthma, Multiple Sclerosis and Transplant Rejection",
+      "type": "scorecard",
+      "title": "Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::source_url_not_provided",
+      "label": "Source URL not provided",
+      "type": "source",
+      "title": "Source__Source_URL_not_provided",
+      "tags": "pipeline/source;source/source_url_not_provided",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::lead_compound",
+      "label": "Lead compound",
+      "type": "asset",
+      "title": "Asset__Lead_compound",
+      "tags": "pipeline/asset;theme/neuroimmune",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "target::microglia",
+      "label": "Microglia",
+      "type": "target",
+      "title": "Target__Microglia",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::unknown_microglia_modulation",
+      "label": "Unknown microglia modulation",
+      "type": "moa",
+      "title": "MoA__Unknown_microglia_modulation",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::parkinson's_disease",
+      "label": "Parkinson's Disease",
+      "type": "indication",
+      "title": "Indication__Parkinson's_Disease",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::lead_compound_20260623",
+      "label": "Scorecard - Lead compound",
+      "type": "scorecard",
+      "title": "Scorecard__Lead_compound__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::cns_xdc",
+      "label": "CNS XDC",
+      "type": "asset",
+      "title": "Asset__CNS_XDC",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::harbour_biomed_(guangzhou)_co_ltd",
+      "label": "Harbour BioMed (Guangzhou) Co Ltd",
+      "type": "company",
+      "title": "Company__Harbour_BioMed_(Guangzhou)_Co_Ltd",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::undisclosed_antibody-drug_or_xdc_cns_platform_concept",
+      "label": "Undisclosed antibody-drug or XDC CNS platform concept",
+      "type": "moa",
+      "title": "MoA__Undisclosed_antibody-drug_or_XDC_CNS_platform_concept",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::ab",
+      "label": "Ab",
+      "type": "modality",
+      "title": "Modality__Ab",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::unspecified_central_nervous_system_disorders",
+      "label": "Unspecified Central Nervous System Disorders",
+      "type": "indication",
+      "title": "Indication__Unspecified_Central_Nervous_System_Disorders",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "theme::unknown",
+      "label": "Unknown",
+      "type": "theme",
+      "title": "Theme__Unknown",
+      "tags": "skbp/theme",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "cluster::unknown",
+      "label": "Unknown",
+      "type": "cluster",
+      "title": "Cluster__Unknown",
+      "tags": "skbp/cluster",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::cns_xdc_20260623",
+      "label": "Scorecard - CNS XDC",
+      "type": "scorecard",
+      "title": "Scorecard__CNS_XDC__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_www.harbourbiomed.com",
+      "label": "Harbour BioMed official website",
+      "type": "source",
+      "title": "Source__Harbour_BioMed_official_website",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::next-generation_biologics",
+      "label": "Next-Generation Biologics",
+      "type": "asset",
+      "title": "Asset__Next-Generation_Biologics",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "moa::undisclosed_bispecific_multispecific_antibody_approach",
+      "label": "Undisclosed bispecific/multispecific antibody approach",
+      "type": "moa",
+      "title": "MoA__Undisclosed_bispecific_multispecific_antibody_approach",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::bispecific_multi-specific_antibodies",
+      "label": "Bispecific/Multi-specific Antibodies",
+      "type": "modality",
+      "title": "Modality__Bispecific_Multi-specific_Antibodies",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::next-generation_biologics_20260623",
+      "label": "Scorecard - Next-Generation Biologics",
+      "type": "scorecard",
+      "title": "Scorecard__Next-Generation_Biologics__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::hb-02",
+      "label": "HB-02",
+      "type": "asset",
+      "title": "Asset__HB-02",
+      "tags": "pipeline/asset;theme/neuroimmune",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::healthbiome_inc",
+      "label": "HealthBiome Inc",
+      "type": "company",
+      "title": "Company__HealthBiome_Inc",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::gut_microbiome",
+      "label": "Gut microbiome",
+      "type": "target",
+      "title": "Target__Gut_microbiome",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::live_biotherapeutic_product_targeting_gut-brain_microbiome_axis",
+      "label": "Live biotherapeutic product targeting gut-brain/microbiome axis",
+      "type": "moa",
+      "title": "MoA__Live_biotherapeutic_product_targeting_gut-brain_microbiome_axis",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::lbp",
+      "label": "LBP",
+      "type": "modality",
+      "title": "Modality__LBP",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::alzheimer's_disease;_dementia",
+      "label": "Alzheimer's Disease; Dementia",
+      "type": "indication",
+      "title": "Indication__Alzheimer's_Disease;_Dementia",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::hb-02_20260623",
+      "label": "Scorecard - HB-02",
+      "type": "scorecard",
+      "title": "Scorecard__HB-02__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_healthbiome.co.kr",
+      "label": "HealthBiome official site",
+      "type": "source",
+      "title": "Source__HealthBiome_official_site",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_synapse.patsnap.com_drug_3877c8e8f53a4437bc903307d8cec6a0",
+      "label": "Synapse HB-02",
+      "type": "source",
+      "title": "Source__Synapse_HB-02",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::hb-03",
+      "label": "HB-03",
+      "type": "asset",
+      "title": "Asset__HB-03",
+      "tags": "pipeline/asset;theme/neuroimmune",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "moa::live_biotherapeutic_product,_details_unknown",
+      "label": "Live biotherapeutic product, details unknown",
+      "type": "moa",
+      "title": "MoA__Live_biotherapeutic_product,_details_unknown",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::neurodegenerative_diseases",
+      "label": "Neurodegenerative Diseases",
+      "type": "indication",
+      "title": "Indication__Neurodegenerative_Diseases",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::hb-03_20260623",
+      "label": "Scorecard - HB-03",
+      "type": "scorecard",
+      "title": "Scorecard__HB-03__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::hb-05",
+      "label": "HB-05",
+      "type": "asset",
+      "title": "Asset__HB-05",
+      "tags": "pipeline/asset;theme/neuroimmune",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "indication::cognitive_disorders",
+      "label": "Cognitive Disorders",
+      "type": "indication",
+      "title": "Indication__Cognitive_Disorders",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::hb-05_20260623",
+      "label": "Scorecard - HB-05",
+      "type": "scorecard",
+      "title": "Scorecard__HB-05__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::hzr-061",
+      "label": "HZR-061",
+      "type": "asset",
+      "title": "Asset__HZR-061",
+      "tags": "pipeline/asset;theme/neuroimmune",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::healzen_therapeutics_co_ltd",
+      "label": "HealZen Therapeutics Co Ltd",
+      "type": "company",
+      "title": "Company__HealZen_Therapeutics_Co_Ltd",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::stat3",
+      "label": "STAT3",
+      "type": "target",
+      "title": "Target__STAT3",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::targeted_protein_degradation_of_stat3",
+      "label": "Targeted protein degradation of STAT3",
+      "type": "moa",
+      "title": "MoA__Targeted_protein_degradation_of_STAT3",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::tpd",
+      "label": "TPD",
+      "type": "modality",
+      "title": "Modality__TPD",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::multiple_sclerosis",
+      "label": "Multiple Sclerosis",
+      "type": "indication",
+      "title": "Indication__Multiple_Sclerosis",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::hzr-061_20260623",
+      "label": "Scorecard - HZR-061",
+      "type": "scorecard",
+      "title": "Scorecard__HZR-061__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_www.healzentx.com",
+      "label": "HealZen official site",
+      "type": "source",
+      "title": "Source__HealZen_official_site",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::glycoprotein_29-modified_deferoxamine",
+      "label": "glycoprotein 29-modified deferoxamine",
+      "type": "asset",
+      "title": "Asset__glycoprotein_29-modified_deferoxamine",
+      "tags": "pipeline/asset;theme/neuroimmune",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::hebei_normal_university",
+      "label": "Hebei Normal University",
+      "type": "company",
+      "title": "Company__Hebei_Normal_University",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::brain_iron_overload",
+      "label": "Brain iron overload",
+      "type": "target",
+      "title": "Target__Brain_iron_overload",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::bbb-targeted_deferoxamine_nanoparticle_to_remove_excess_brain_iron",
+      "label": "BBB-targeted deferoxamine nanoparticle to remove excess brain iron",
+      "type": "moa",
+      "title": "MoA__BBB-targeted_deferoxamine_nanoparticle_to_remove_excess_brain_iron",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::nanoparticle",
+      "label": "Nanoparticle",
+      "type": "modality",
+      "title": "Modality__Nanoparticle",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "cluster::cns_손상_면역반응",
+      "label": "CNS 손상 면역반응",
+      "type": "cluster",
+      "title": "Cluster__CNS_손상_면역반응",
+      "tags": "skbp/cluster",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::glycoprotein_29-modified_deferoxamine_20260623",
+      "label": "Scorecard - glycoprotein 29-modified deferoxamine",
+      "type": "scorecard",
+      "title": "Scorecard__glycoprotein_29-modified_deferoxamine__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_en.hbnu.edu.cn_main.htm",
+      "label": "Hebei Normal University official site",
+      "type": "source",
+      "title": "Source__Hebei_Normal_University_official_site",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::hec20002",
+      "label": "HEC20002",
+      "type": "asset",
+      "title": "Asset__HEC20002",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::hec_pharm",
+      "label": "HEC Pharm",
+      "type": "company",
+      "title": "Company__HEC_Pharm",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::mao-b",
+      "label": "MAO-B",
+      "type": "target",
+      "title": "Target__MAO-B",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::mao-b_inhibitor",
+      "label": "MAO-B inhibitor",
+      "type": "moa",
+      "title": "MoA__MAO-B_inhibitor",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::hec20002_20260623",
+      "label": "Scorecard - HEC20002",
+      "type": "scorecard",
+      "title": "Scorecard__HEC20002__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_www.hecpharm.com_en",
+      "label": "HEC Pharm official site",
+      "type": "source",
+      "title": "Source__HEC_Pharm_official_site",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::hb018",
+      "label": "HB018",
+      "type": "asset",
+      "title": "Asset__HB018",
+      "tags": "pipeline/asset;theme/no_theme",
+      "score": "",
+      "recommendation": "N/A",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::hefei_huafang_pharmaceutical_sciences_and_technology",
+      "label": "Hefei Huafang Pharmaceutical Sciences and Technology",
+      "type": "company",
+      "title": "Company__Hefei_Huafang_Pharmaceutical_Sciences_and_Technology",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::unknown",
+      "label": "Unknown",
+      "type": "moa",
+      "title": "MoA__Unknown",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::schizophrenia",
+      "label": "Schizophrenia",
+      "type": "indication",
+      "title": "Indication__Schizophrenia",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::hb018_20260623",
+      "label": "Scorecard - HB018",
+      "type": "scorecard",
+      "title": "Scorecard__HB018__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "N/A",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::cxjm-66_injection",
+      "label": "CXJM-66 Injection",
+      "type": "asset",
+      "title": "Asset__CXJM-66_Injection",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::humanwell_healthcare_group",
+      "label": "Humanwell Healthcare Group",
+      "type": "company",
+      "title": "Company__Humanwell_Healthcare_Group",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::vgscs",
+      "label": "VGSCs",
+      "type": "target",
+      "title": "Target__VGSCs",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::voltage-gated_sodium_channel_modulation_for_surgical_anesthesia_and_pos_17f2679a",
+      "label": "Voltage-gated sodium channel modulation for surgical anesthesia and postoperative pain management",
+      "type": "moa",
+      "title": "MoA__Voltage-gated_sodium_channel_modulation_for_surgical_anesthesia_and_pos_17f2679a",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::acute_pain;_surgical_anesthesia_and_postoperative_pain_management",
+      "label": "Acute pain; surgical anesthesia and postoperative pain management",
+      "type": "indication",
+      "title": "Indication__Acute_pain;_surgical_anesthesia_and_postoperative_pain_management",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::cxjm-66_injection_20260623",
+      "label": "Scorecard - CXJM-66 Injection",
+      "type": "scorecard",
+      "title": "Scorecard__CXJM-66_Injection__20260623",
+      "tags": "pipeline/scorecard",
+      "score": "",
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_en.humanwell.com.cn",
+      "label": "Humanwell official site",
+      "type": "source",
+      "title": "Source__Humanwell_official_site",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_en.likang-pharma.com_news_213.html",
+      "label": "Yichang Renfu CXJM-66 clinical trial approval",
+      "type": "source",
+      "title": "Source__Yichang_Renfu_CXJM-66_clinical_trial_approval",
+      "tags": "pipeline/source;source/regulatory",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_synapse.patsnap.com_drug_09e0b67b6d02474ea75e89ed532a7df5",
+      "label": "Synapse CXJM-66",
+      "type": "source",
+      "title": "Source__Synapse_CXJM-66",
+      "tags": "pipeline/source;source/clinical_trial_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
     }
   ],
   "edges": [
@@ -2934,6 +4914,34 @@
     },
     {
       "source": "asset::ilm01_gaia-aβ",
+      "target": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_ef80b277",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__AI_draft_search_note"
+    },
+    {
+      "source": "scorecard::ilm01_gaia-aβ_20260621",
+      "target": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_ef80b277",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__AI_draft_search_note"
+    },
+    {
+      "source": "asset::ilm01_gaia-aβ",
+      "target": "source::ai_draft_search_note",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__AI_draft_search_note"
+    },
+    {
+      "source": "scorecard::ilm01_gaia-aβ_20260621",
+      "target": "source::ai_draft_search_note",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__AI_draft_search_note"
+    },
+    {
+      "source": "asset::ilm01_gaia-aβ",
       "target": "source::https_pure.kaist.ac.kr_en_publications_anti-inflammatory-clearance-of-a_4ffde966",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
@@ -3099,6 +5107,20 @@
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
       "source_note": "Source__Diranersen_BIIB080_source"
+    },
+    {
+      "source": "asset::ilm01_gaia-aβ",
+      "target": "source::ai_draft_evidence_note",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__AI_draft_evidence_note"
+    },
+    {
+      "source": "scorecard::ilm01_gaia-aβ_20260621",
+      "target": "source::ai_draft_evidence_note",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__AI_draft_evidence_note"
     },
     {
       "source": "asset::ilm01_gaia-aβ",
@@ -4677,6 +6699,20 @@
     },
     {
       "source": "asset::hy209_nucerin",
+      "target": "source::ai_draft_search_note",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__AI_draft_search_note"
+    },
+    {
+      "source": "scorecard::hy209_nucerin_20260622",
+      "target": "source::ai_draft_search_note",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__AI_draft_search_note"
+    },
+    {
+      "source": "asset::hy209_nucerin",
       "target": "source::https_englishdart.fss.or.kr_dsbc001_selectpopup.ax_selectkey=01387164",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
@@ -5955,6 +7991,2260 @@
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E4",
       "source_note": "Source__https_securities.miraeasset.com_bbs_download_2108666.pdf_attachmentId=2108666"
+    },
+    {
+      "source": "asset::azetukalner_xen1101",
+      "target": "company::xenon_pharmaceuticals",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Azetukalner_XEN1101__20260623"
+    },
+    {
+      "source": "asset::azetukalner_xen1101",
+      "target": "target::kv7_kcnq_potassium_channels",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Azetukalner_XEN1101__20260623"
+    },
+    {
+      "source": "asset::azetukalner_xen1101",
+      "target": "moa::potassium_channel_opener_neuronal_hyperexcitability_reduction",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Azetukalner_XEN1101__20260623"
+    },
+    {
+      "source": "asset::azetukalner_xen1101",
+      "target": "modality::oral_small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Azetukalner_XEN1101__20260623"
+    },
+    {
+      "source": "asset::azetukalner_xen1101",
+      "target": "indication::focal_onset_seizures",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Azetukalner_XEN1101__20260623"
+    },
+    {
+      "source": "asset::azetukalner_xen1101",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Azetukalner_XEN1101__20260623"
+    },
+    {
+      "source": "asset::azetukalner_xen1101",
+      "target": "cluster::ion_channel",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Azetukalner_XEN1101__20260623"
+    },
+    {
+      "source": "asset::azetukalner_xen1101",
+      "target": "scorecard::azetukalner_xen1101_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Azetukalner_XEN1101__20260623"
+    },
+    {
+      "source": "asset::azetukalner_xen1101",
+      "target": "source::https_investor.xenon-pharma.com_news-releases_news-release-details_xeno_dfccb5d1",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Xenon_Announces_Positive_Topline_Data_from_Phase_3_X-TOLE2_Study"
+    },
+    {
+      "source": "scorecard::azetukalner_xen1101_20260623",
+      "target": "source::https_investor.xenon-pharma.com_news-releases_news-release-details_xeno_dfccb5d1",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Xenon_Announces_Positive_Topline_Data_from_Phase_3_X-TOLE2_Study"
+    },
+    {
+      "source": "asset::azetukalner_xen1101",
+      "target": "source::https_jamanetwork.com_journals_jamaneurology_fullarticle_2809938",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__JAMA_Neurology_XEN1101_Phase_2b_trial"
+    },
+    {
+      "source": "scorecard::azetukalner_xen1101_20260623",
+      "target": "source::https_jamanetwork.com_journals_jamaneurology_fullarticle_2809938",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__JAMA_Neurology_XEN1101_Phase_2b_trial"
+    },
+    {
+      "source": "asset::opakalim_bhv-7000",
+      "target": "company::biohaven",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Opakalim_BHV-7000__20260623"
+    },
+    {
+      "source": "asset::opakalim_bhv-7000",
+      "target": "target::kv7.2_kv7.3",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Opakalim_BHV-7000__20260623"
+    },
+    {
+      "source": "asset::opakalim_bhv-7000",
+      "target": "moa::selective_kv7.2_kv7.3_potassium_channel_activator",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Opakalim_BHV-7000__20260623"
+    },
+    {
+      "source": "asset::opakalim_bhv-7000",
+      "target": "modality::oral_small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Opakalim_BHV-7000__20260623"
+    },
+    {
+      "source": "asset::opakalim_bhv-7000",
+      "target": "indication::focal_epilepsy_and_broader_epilepsy_populations",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Opakalim_BHV-7000__20260623"
+    },
+    {
+      "source": "asset::opakalim_bhv-7000",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Opakalim_BHV-7000__20260623"
+    },
+    {
+      "source": "asset::opakalim_bhv-7000",
+      "target": "cluster::ion_channel",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Opakalim_BHV-7000__20260623"
+    },
+    {
+      "source": "asset::opakalim_bhv-7000",
+      "target": "scorecard::opakalim_bhv-7000_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Opakalim_BHV-7000__20260623"
+    },
+    {
+      "source": "asset::opakalim_bhv-7000",
+      "target": "source::https_www.biohaven.com_pipeline_innovation-engine_kv7",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Biohaven_Kv7_Ion_Channel_Modulation_Platform"
+    },
+    {
+      "source": "scorecard::opakalim_bhv-7000_20260623",
+      "target": "source::https_www.biohaven.com_pipeline_innovation-engine_kv7",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Biohaven_Kv7_Ion_Channel_Modulation_Platform"
+    },
+    {
+      "source": "asset::opakalim_bhv-7000",
+      "target": "source::https_www.prnewswire.com_news-releases_biohaven-reports-new-clinical-da_fced1f21",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Biohaven_Reports_New_Clinical_Data_in_Epilepsy_with_Opakalim"
+    },
+    {
+      "source": "scorecard::opakalim_bhv-7000_20260623",
+      "target": "source::https_www.prnewswire.com_news-releases_biohaven-reports-new-clinical-da_fced1f21",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Biohaven_Reports_New_Clinical_Data_in_Epilepsy_with_Opakalim"
+    },
+    {
+      "source": "asset::qrl-101",
+      "target": "company::quralis",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__QRL-101__20260623"
+    },
+    {
+      "source": "asset::qrl-101",
+      "target": "target::kv7.2_kv7.3",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__QRL-101__20260623"
+    },
+    {
+      "source": "asset::qrl-101",
+      "target": "moa::selective_kv7.2_kv7.3_ion-channel_opener_intended_to_reduce_neuronal_hy_86d0a748",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__QRL-101__20260623"
+    },
+    {
+      "source": "asset::qrl-101",
+      "target": "modality::oral_small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__QRL-101__20260623"
+    },
+    {
+      "source": "asset::qrl-101",
+      "target": "indication::dee_planning;_als_hyperexcitability_clinical_pom_context",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__QRL-101__20260623"
+    },
+    {
+      "source": "asset::qrl-101",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__QRL-101__20260623"
+    },
+    {
+      "source": "asset::qrl-101",
+      "target": "cluster::ion_channel",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__QRL-101__20260623"
+    },
+    {
+      "source": "asset::qrl-101",
+      "target": "scorecard::qrl-101_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__QRL-101__20260623"
+    },
+    {
+      "source": "asset::qrl-101",
+      "target": "source::https_www.quralis.com_news_quralis-to-present-data-from-its-phase-1-cli_4ee5fefb",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__QurAlis_Phase_1_QRL-101_AES_2025_announcement"
+    },
+    {
+      "source": "scorecard::qrl-101_20260623",
+      "target": "source::https_www.quralis.com_news_quralis-to-present-data-from-its-phase-1-cli_4ee5fefb",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__QurAlis_Phase_1_QRL-101_AES_2025_announcement"
+    },
+    {
+      "source": "asset::san2355",
+      "target": "company::jazz_pharmaceuticals_saniona",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__SAN2355__20260623"
+    },
+    {
+      "source": "asset::san2355",
+      "target": "target::kv7.2_kv7.3",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__SAN2355__20260623"
+    },
+    {
+      "source": "asset::san2355",
+      "target": "moa::selective_small-molecule_activator_of_kv7.2_kv7.3_potassium_channels",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__SAN2355__20260623"
+    },
+    {
+      "source": "asset::san2355",
+      "target": "modality::oral_small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__SAN2355__20260623"
+    },
+    {
+      "source": "asset::san2355",
+      "target": "indication::epilepsy",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__SAN2355__20260623"
+    },
+    {
+      "source": "asset::san2355",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__SAN2355__20260623"
+    },
+    {
+      "source": "asset::san2355",
+      "target": "cluster::ion_channel",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__SAN2355__20260623"
+    },
+    {
+      "source": "asset::san2355",
+      "target": "scorecard::san2355_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__SAN2355__20260623"
+    },
+    {
+      "source": "asset::san2355",
+      "target": "source::https_investor.jazzpharma.com_news-releases_news-release-details_jazz-p_cc776602",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Jazz_Pharmaceuticals_enters_exclusive_licensing_agreement_for_SAN2355"
+    },
+    {
+      "source": "scorecard::san2355_20260623",
+      "target": "source::https_investor.jazzpharma.com_news-releases_news-release-details_jazz-p_cc776602",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Jazz_Pharmaceuticals_enters_exclusive_licensing_agreement_for_SAN2355"
+    },
+    {
+      "source": "asset::rap-219",
+      "target": "company::rapport_therapeutics",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__RAP-219__20260623"
+    },
+    {
+      "source": "asset::rap-219",
+      "target": "target::tarpγ8-associated_ampa_receptor_modulation",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__RAP-219__20260623"
+    },
+    {
+      "source": "asset::rap-219",
+      "target": "moa::tarpγ8-specific_ampar_negative_allosteric_modulator",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__RAP-219__20260623"
+    },
+    {
+      "source": "asset::rap-219",
+      "target": "modality::oral_small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__RAP-219__20260623"
+    },
+    {
+      "source": "asset::rap-219",
+      "target": "indication::focal_onset_seizures",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__RAP-219__20260623"
+    },
+    {
+      "source": "asset::rap-219",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__RAP-219__20260623"
+    },
+    {
+      "source": "asset::rap-219",
+      "target": "cluster::synaptic_transmission",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__RAP-219__20260623"
+    },
+    {
+      "source": "asset::rap-219",
+      "target": "scorecard::rap-219_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__RAP-219__20260623"
+    },
+    {
+      "source": "asset::rap-219",
+      "target": "source::https_investors.rapportrx.com_news-releases_news-release-details_rappor_bf39c8e4",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Rapport_RAP-219_Phase_2a_follow-up_results"
+    },
+    {
+      "source": "scorecard::rap-219_20260623",
+      "target": "source::https_investors.rapportrx.com_news-releases_news-release-details_rappor_bf39c8e4",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Rapport_RAP-219_Phase_2a_follow-up_results"
+    },
+    {
+      "source": "asset::rap-219",
+      "target": "source::https_aesnet.org_abstractslisting_efficacy-and-tolerability-of-rap-219-_1a629fcb",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__AES_abstract_RAP-219_TARPγ8_NAM"
+    },
+    {
+      "source": "scorecard::rap-219_20260623",
+      "target": "source::https_aesnet.org_abstractslisting_efficacy-and-tolerability-of-rap-219-_1a629fcb",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__AES_abstract_RAP-219_TARPγ8_NAM"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "company::actio_biosciences",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "target::kcnt1",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "moa::selective_kcnt1_ion-channel_inhibitor",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "modality::oral_small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "indication::kcnt1-related_epilepsy",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "cluster::ion_channel",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "scorecard::abs-1230_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-announces-first-participan_ae820dd4",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Actio_first_participant_dosed_in_Phase_1_ABS-1230"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-announces-first-participan_ae820dd4",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Actio_first_participant_dosed_in_Phase_1_ABS-1230"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_www.clinicaltrialsarena.com_news_actio-biosciences-begins-abs-1230-trial",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Clinical_Trials_Arena_ABS-1230_Phase_Ib_II_trial"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_www.clinicaltrialsarena.com_news_actio-biosciences-begins-abs-1230-trial",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Clinical_Trials_Arena_ABS-1230_Phase_Ib_II_trial"
+    },
+    {
+      "source": "asset::zorevunersen_stk-001",
+      "target": "company::stoke_therapeutics_biogen",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Zorevunersen_STK-001__20260623"
+    },
+    {
+      "source": "asset::zorevunersen_stk-001",
+      "target": "target::scn1a_nav1.1_expression_restoration",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Zorevunersen_STK-001__20260623"
+    },
+    {
+      "source": "asset::zorevunersen_stk-001",
+      "target": "moa::aso_intended_to_increase_productive_scn1a_mrna_and_nav1.1_protein_expression",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Zorevunersen_STK-001__20260623"
+    },
+    {
+      "source": "asset::zorevunersen_stk-001",
+      "target": "modality::antisense_oligonucleotide",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Zorevunersen_STK-001__20260623"
+    },
+    {
+      "source": "asset::zorevunersen_stk-001",
+      "target": "indication::dravet_syndrome",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Zorevunersen_STK-001__20260623"
+    },
+    {
+      "source": "asset::zorevunersen_stk-001",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Zorevunersen_STK-001__20260623"
+    },
+    {
+      "source": "asset::zorevunersen_stk-001",
+      "target": "cluster::ion_channel",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Zorevunersen_STK-001__20260623"
+    },
+    {
+      "source": "asset::zorevunersen_stk-001",
+      "target": "scorecard::zorevunersen_stk-001_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Zorevunersen_STK-001__20260623"
+    },
+    {
+      "source": "asset::zorevunersen_stk-001",
+      "target": "source::https_investor.stoketherapeutics.com_news-releases_news-release-details_a7bab995",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Stoke_Phase_3_EMPEROR_timeline_update"
+    },
+    {
+      "source": "scorecard::zorevunersen_stk-001_20260623",
+      "target": "source::https_investor.stoketherapeutics.com_news-releases_news-release-details_a7bab995",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Stoke_Phase_3_EMPEROR_timeline_update"
+    },
+    {
+      "source": "asset::zorevunersen_stk-001",
+      "target": "source::https_www.stoketherapeutics.com_patients-families_clinical-studies",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Stoke_Clinical_Studies"
+    },
+    {
+      "source": "scorecard::zorevunersen_stk-001_20260623",
+      "target": "source::https_www.stoketherapeutics.com_patients-families_clinical-studies",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Stoke_Clinical_Studies"
+    },
+    {
+      "source": "asset::etx101",
+      "target": "company::encoded_therapeutics",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ETX101__20260623"
+    },
+    {
+      "source": "asset::etx101",
+      "target": "target::scn1a_expression_regulation",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ETX101__20260623"
+    },
+    {
+      "source": "asset::etx101",
+      "target": "moa::aav9_gene_regulation_therapy_intended_to_increase_scn1a_expression",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ETX101__20260623"
+    },
+    {
+      "source": "asset::etx101",
+      "target": "modality::aav9_gene_therapy",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ETX101__20260623"
+    },
+    {
+      "source": "asset::etx101",
+      "target": "indication::scn1a-positive_dravet_syndrome",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ETX101__20260623"
+    },
+    {
+      "source": "asset::etx101",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ETX101__20260623"
+    },
+    {
+      "source": "asset::etx101",
+      "target": "cluster::ion_channel",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ETX101__20260623"
+    },
+    {
+      "source": "asset::etx101",
+      "target": "scorecard::etx101_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ETX101__20260623"
+    },
+    {
+      "source": "asset::etx101",
+      "target": "source::https_encoded.com_press-releases_encoded-therapeutics-presents-positive_27f71b38",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Encoded_ETX101_Phase_1_2_interim_data"
+    },
+    {
+      "source": "scorecard::etx101_20260623",
+      "target": "source::https_encoded.com_press-releases_encoded-therapeutics-presents-positive_27f71b38",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Encoded_ETX101_Phase_1_2_interim_data"
+    },
+    {
+      "source": "asset::etx101",
+      "target": "source::https_clinicaltrials.gov_study_nct05419492",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__ClinicalTrials.gov_ETX101_ENDEAVOR"
+    },
+    {
+      "source": "scorecard::etx101_20260623",
+      "target": "source::https_clinicaltrials.gov_study_nct05419492",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__ClinicalTrials.gov_ETX101_ENDEAVOR"
+    },
+    {
+      "source": "asset::bexicaserin_lp352",
+      "target": "company::lundbeck_longboard_pharmaceuticals",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Bexicaserin_LP352__20260623"
+    },
+    {
+      "source": "asset::bexicaserin_lp352",
+      "target": "target::5-ht2c_receptor",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Bexicaserin_LP352__20260623"
+    },
+    {
+      "source": "asset::bexicaserin_lp352",
+      "target": "moa::highly_selective_5-ht2c_receptor_superagonist_for_seizure_reduction_in_dee",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Bexicaserin_LP352__20260623"
+    },
+    {
+      "source": "asset::bexicaserin_lp352",
+      "target": "modality::oral_small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Bexicaserin_LP352__20260623"
+    },
+    {
+      "source": "asset::bexicaserin_lp352",
+      "target": "indication::developmental_and_epileptic_encephalopathies_including_dravet_syndrome_cc97e161",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Bexicaserin_LP352__20260623"
+    },
+    {
+      "source": "asset::bexicaserin_lp352",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Bexicaserin_LP352__20260623"
+    },
+    {
+      "source": "asset::bexicaserin_lp352",
+      "target": "cluster::network_modulation",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Bexicaserin_LP352__20260623"
+    },
+    {
+      "source": "asset::bexicaserin_lp352",
+      "target": "scorecard::bexicaserin_lp352_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Bexicaserin_LP352__20260623"
+    },
+    {
+      "source": "asset::bexicaserin_lp352",
+      "target": "source::https_www.lundbeck.com_us_newsroom_2025_lundbeck-announces-positive-res_0c6bc5d2",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Lundbeck_PACIFIC_OLE_bexicaserin_results"
+    },
+    {
+      "source": "scorecard::bexicaserin_lp352_20260623",
+      "target": "source::https_www.lundbeck.com_us_newsroom_2025_lundbeck-announces-positive-res_0c6bc5d2",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Lundbeck_PACIFIC_OLE_bexicaserin_results"
+    },
+    {
+      "source": "asset::bexicaserin_lp352",
+      "target": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc12927688",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Bexicaserin_PACIFIC_trial_publication"
+    },
+    {
+      "source": "scorecard::bexicaserin_lp352_20260623",
+      "target": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc12927688",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Bexicaserin_PACIFIC_trial_publication"
+    },
+    {
+      "source": "asset::bmb-101",
+      "target": "company::bright_minds_biosciences",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__BMB-101__20260623"
+    },
+    {
+      "source": "asset::bmb-101",
+      "target": "target::5-ht2c_receptor",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__BMB-101__20260623"
+    },
+    {
+      "source": "asset::bmb-101",
+      "target": "moa::highly_selective_5-ht2c_receptor_agonist_biased_agonist",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__BMB-101__20260623"
+    },
+    {
+      "source": "asset::bmb-101",
+      "target": "modality::oral_small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__BMB-101__20260623"
+    },
+    {
+      "source": "asset::bmb-101",
+      "target": "indication::classic_absence_epilepsy_and_developmental_epileptic_encephalopathy",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__BMB-101__20260623"
+    },
+    {
+      "source": "asset::bmb-101",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__BMB-101__20260623"
+    },
+    {
+      "source": "asset::bmb-101",
+      "target": "cluster::network_modulation",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__BMB-101__20260623"
+    },
+    {
+      "source": "asset::bmb-101",
+      "target": "scorecard::bmb-101_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__BMB-101__20260623"
+    },
+    {
+      "source": "asset::bmb-101",
+      "target": "source::https_brightmindsbio.com_bright-minds-biosciences-initiates-the-breakth_9b2c7dc4",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Bright_Minds_initiates_Phase_2_BREAKTHROUGH_study"
+    },
+    {
+      "source": "scorecard::bmb-101_20260623",
+      "target": "source::https_brightmindsbio.com_bright-minds-biosciences-initiates-the-breakth_9b2c7dc4",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Bright_Minds_initiates_Phase_2_BREAKTHROUGH_study"
+    },
+    {
+      "source": "asset::bmb-101",
+      "target": "source::https_clinicaltrials.gov_study_nct06401538",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__ClinicalTrials.gov_BMB-101_in_absence_epilepsy_and_DEE"
+    },
+    {
+      "source": "scorecard::bmb-101_20260623",
+      "target": "source::https_clinicaltrials.gov_study_nct06401538",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__ClinicalTrials.gov_BMB-101_in_absence_epilepsy_and_DEE"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "company::actio_biosciences",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "target::kcnt1",
+      "relationship": "TARGETS",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "moa::selective_inhibition_of_overactive_kcnt1_potassium_ion_channel_caused_b_ecf51c22",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "modality::oral_small_molecule;_genetics-driven_precision_small_molecule_platform",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "indication::kcnt1-related_epilepsy;_pediatric_developmental_and_epileptic_encephalo_b19f0030",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "cluster::ion_channel",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "scorecard::abs-1230_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "competitor::servier_s230815_kandle_study",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "competitor::atalanta_therapeutics_atl-201",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "competitor::generic_off-label_quinidine",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "competitor::lundbeck_longboard_pharmaceuticals_bexicaserin_lp352",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "competitor::ucb_fintepla_fenfluramine",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "competitor::marinus_pharmaceuticals_immedica_ztalmy_ganaxolone",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__ABS-1230__20260623"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_actiobiosciences.com_programs",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_Biosciences_Programs"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_actiobiosciences.com_programs",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_Biosciences_Programs"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-announces-initiation-of-ky_0641e5f1",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_KYRON_Phase_1b_2_initiation_release"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-announces-initiation-of-ky_0641e5f1",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_KYRON_Phase_1b_2_initiation_release"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_clinicaltrials.gov_study_nct07600736",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__ClinicalTrials.gov_NCT07600736"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_clinicaltrials.gov_study_nct07600736",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__ClinicalTrials.gov_NCT07600736"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_actiobiosciences.com_wp-content_uploads_2026_01_2025-aes-abs1230-_55fb159b",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__ABS-1230_AES_2025_poster"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_actiobiosciences.com_wp-content_uploads_2026_01_2025-aes-abs1230-_55fb159b",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__ABS-1230_AES_2025_poster"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_actiobiosciences.com",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_Biosciences_homepage"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_actiobiosciences.com",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_Biosciences_homepage"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_actiobiosciences.com_about",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_Biosciences_About"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_actiobiosciences.com_about",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_Biosciences_About"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_actiobiosciences.com_approach",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_Biosciences_Approach"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_actiobiosciences.com_approach",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_Biosciences_Approach"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-secures-66-million-series-_03b68041",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_Series_B_financing"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-secures-66-million-series-_03b68041",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_Series_B_financing"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-announces-55-million-serie_129c9bcd",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_Series_A_financing"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-announces-55-million-serie_129c9bcd",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Actio_Series_A_financing"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-announces-first-participan_ae820dd4",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__ABS-1230_first_participant_dosed_Phase_1"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-announces-first-participan_ae820dd4",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__ABS-1230_first_participant_dosed_Phase_1"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_clinicaltrials.gov_study_nct07156201",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__ClinicalTrials.gov_NCT07156201"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_clinicaltrials.gov_study_nct07156201",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__ClinicalTrials.gov_NCT07156201"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_www.chop.edu_conditions-diseases_kcnt1-related-epilepsy",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__CHOP_KCNT1-related_epilepsy"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_www.chop.edu_conditions-diseases_kcnt1-related-epilepsy",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__CHOP_KCNT1-related_epilepsy"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_www.ncbi.nlm.nih.gov_books_nbk525917",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__GeneReviews_KCNT1-related_epilepsy"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_www.ncbi.nlm.nih.gov_books_nbk525917",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__GeneReviews_KCNT1-related_epilepsy"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_www.kcnt1epilepsy.org_kcnt1-research-publications",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__KCNT1_Epilepsy_Foundation_research_page"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_www.kcnt1epilepsy.org_kcnt1-research-publications",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__KCNT1_Epilepsy_Foundation_research_page"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_clinicaltrials.servier.com_trial_a-phase-ib-ii-first-in-human-mul_1e276b62",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Servier_S230815_KANDLE_trial"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_clinicaltrials.servier.com_trial_a-phase-ib-ii-first-in-human-mul_1e276b62",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Servier_S230815_KANDLE_trial"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_www.atalantatx.com_atalanta-therapeutics-publishes-preclinical-da_0dd924c8",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Atalanta_ATL-201_preclinical_data"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_www.atalantatx.com_atalanta-therapeutics-publishes-preclinical-da_0dd924c8",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Atalanta_ATL-201_preclinical_data"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_www.lundbeck.com_us_newsroom_2025_lundbeck-to-present-new-data-on_23efaaab",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Lundbeck_bexicaserin_Phase_3_program"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_www.lundbeck.com_us_newsroom_2025_lundbeck-to-present-new-data-on_23efaaab",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Lundbeck_bexicaserin_Phase_3_program"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_clinicaltrials.gov_study_nct06719141",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__ClinicalTrials.gov_NCT06719141_bexicaserin"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_clinicaltrials.gov_study_nct06719141",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__ClinicalTrials.gov_NCT06719141_bexicaserin"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_www.ucb-usa.com_sustainability_affordability_fintepla-pricing-info",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__FINTEPLA_pricing_information"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_www.ucb-usa.com_sustainability_affordability_fintepla-pricing-info",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__FINTEPLA_pricing_information"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_icer.org_wp-content_uploads_2025_10_icer_2025_launch-price-and-ac_890db01f",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__ICER_2025_Launch_Price_and_Access_Report"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_icer.org_wp-content_uploads_2025_10_icer_2025_launch-price-and-ac_890db01f",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__ICER_2025_Launch_Price_and_Access_Report"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_ir.marinuspharma.com_news_news-details_2022_marinus-pharmaceutica_63bf82ac",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Marinus_ZTALMY_FDA_approval"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_ir.marinuspharma.com_news_news-details_2022_marinus-pharmaceutica_63bf82ac",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Marinus_ZTALMY_FDA_approval"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_www.ucb.com_newsroom_press-releases_article_us-fda-approves-finte_5547244f",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__FINTEPLA_fenfluramine_source"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_www.ucb.com_newsroom_press-releases_article_us-fda-approves-finte_5547244f",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__FINTEPLA_fenfluramine_source"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_actiotrials.com_abs-1230",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_actiotrials.com_abs-1230"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_actiotrials.com_abs-1230",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_actiotrials.com_abs-1230"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_clinicaltrials.gov_study_nct07227857",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_clinicaltrials.gov_study_NCT07227857"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_clinicaltrials.gov_study_nct07227857",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_clinicaltrials.gov_study_NCT07227857"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_pubmed.ncbi.nlm.nih.gov_39871703",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_pubmed.ncbi.nlm.nih.gov_39871703"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_pubmed.ncbi.nlm.nih.gov_39871703",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_pubmed.ncbi.nlm.nih.gov_39871703"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-announces-preclinical-data_92a93b61",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_actiobiosciences.com_actio-biosciences-announces-preclinical-data_92a93b61"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-announces-preclinical-data_92a93b61",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_actiobiosciences.com_actio-biosciences-announces-preclinical-data_92a93b61"
+    },
+    {
+      "source": "asset::abs-1230",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-announces-u-s-fda-clearanc_94ee63bc",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_actiobiosciences.com_actio-biosciences-announces-u-s-fda-clearanc_94ee63bc"
+    },
+    {
+      "source": "scorecard::abs-1230_20260623",
+      "target": "source::https_actiobiosciences.com_actio-biosciences-announces-u-s-fda-clearanc_94ee63bc",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__https_actiobiosciences.com_actio-biosciences-announces-u-s-fda-clearanc_94ee63bc"
+    },
+    {
+      "source": "asset::wt-1-2.0",
+      "target": "company::hangzhou_vitan_pharmaceutical_technology_co_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__WT-1-2.0__20260623"
+    },
+    {
+      "source": "asset::wt-1-2.0",
+      "target": "target::p2x3",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__WT-1-2.0__20260623"
+    },
+    {
+      "source": "asset::wt-1-2.0",
+      "target": "moa::p2x3_antagonist_follow-on,_unverified_for_wt-1-2.0",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__WT-1-2.0__20260623"
+    },
+    {
+      "source": "asset::wt-1-2.0",
+      "target": "modality::sm",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__WT-1-2.0__20260623"
+    },
+    {
+      "source": "asset::wt-1-2.0",
+      "target": "indication::pain",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__WT-1-2.0__20260623"
+    },
+    {
+      "source": "asset::wt-1-2.0",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__WT-1-2.0__20260623"
+    },
+    {
+      "source": "asset::wt-1-2.0",
+      "target": "cluster::ion_channel",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__WT-1-2.0__20260623"
+    },
+    {
+      "source": "asset::wt-1-2.0",
+      "target": "scorecard::wt-1-2.0_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__WT-1-2.0__20260623"
+    },
+    {
+      "source": "asset::wt-1-2.0",
+      "target": "source::http_www.westanpharma.com_default.aspx",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Westan_Pharma_official_site"
+    },
+    {
+      "source": "scorecard::wt-1-2.0_20260623",
+      "target": "source::http_www.westanpharma.com_default.aspx",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Westan_Pharma_official_site"
+    },
+    {
+      "source": "asset::wt-1-2.0",
+      "target": "source::https_synapse.patsnap.com_drug_0b28edb3230146bca084e523c94678b2",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_WT-1108"
+    },
+    {
+      "source": "scorecard::wt-1-2.0_20260623",
+      "target": "source::https_synapse.patsnap.com_drug_0b28edb3230146bca084e523c94678b2",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_WT-1108"
+    },
+    {
+      "source": "asset::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_rejection",
+      "target": "company::hanyang_university",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623"
+    },
+    {
+      "source": "asset::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_rejection",
+      "target": "target::t_cell",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623"
+    },
+    {
+      "source": "asset::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_rejection",
+      "target": "moa::fusion_protein_immunomodulation,_details_unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623"
+    },
+    {
+      "source": "asset::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_rejection",
+      "target": "modality::fusion_protein",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623"
+    },
+    {
+      "source": "asset::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_rejection",
+      "target": "indication::multiple_sclerosis;_allergic_asthma;_transplant_rejection",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623"
+    },
+    {
+      "source": "asset::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_rejection",
+      "target": "theme::neuroimmune",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623"
+    },
+    {
+      "source": "asset::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_rejection",
+      "target": "cluster::손상_질환_면역조절",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623"
+    },
+    {
+      "source": "asset::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_rejection",
+      "target": "scorecard::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_r_8375f6ea",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623"
+    },
+    {
+      "source": "asset::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_rejection",
+      "target": "source::source_url_not_provided",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Source_URL_not_provided"
+    },
+    {
+      "source": "scorecard::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_r_8375f6ea",
+      "target": "source::source_url_not_provided",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Source_URL_not_provided"
+    },
+    {
+      "source": "asset::lead_compound",
+      "target": "company::hanyang_university",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Lead_compound__20260623"
+    },
+    {
+      "source": "asset::lead_compound",
+      "target": "target::microglia",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Lead_compound__20260623"
+    },
+    {
+      "source": "asset::lead_compound",
+      "target": "moa::unknown_microglia_modulation",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Lead_compound__20260623"
+    },
+    {
+      "source": "asset::lead_compound",
+      "target": "modality::fusion_protein",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Lead_compound__20260623"
+    },
+    {
+      "source": "asset::lead_compound",
+      "target": "indication::parkinson's_disease",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Lead_compound__20260623"
+    },
+    {
+      "source": "asset::lead_compound",
+      "target": "theme::neuroimmune",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Lead_compound__20260623"
+    },
+    {
+      "source": "asset::lead_compound",
+      "target": "cluster::교세포_향상성",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Lead_compound__20260623"
+    },
+    {
+      "source": "asset::lead_compound",
+      "target": "scorecard::lead_compound_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Lead_compound__20260623"
+    },
+    {
+      "source": "asset::lead_compound",
+      "target": "source::source_url_not_provided",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Source_URL_not_provided"
+    },
+    {
+      "source": "scorecard::lead_compound_20260623",
+      "target": "source::source_url_not_provided",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Source_URL_not_provided"
+    },
+    {
+      "source": "asset::cns_xdc",
+      "target": "company::harbour_biomed_(guangzhou)_co_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CNS_XDC__20260623"
+    },
+    {
+      "source": "asset::cns_xdc",
+      "target": "target::undisclosed",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CNS_XDC__20260623"
+    },
+    {
+      "source": "asset::cns_xdc",
+      "target": "moa::undisclosed_antibody-drug_or_xdc_cns_platform_concept",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CNS_XDC__20260623"
+    },
+    {
+      "source": "asset::cns_xdc",
+      "target": "modality::ab",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CNS_XDC__20260623"
+    },
+    {
+      "source": "asset::cns_xdc",
+      "target": "indication::unspecified_central_nervous_system_disorders",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CNS_XDC__20260623"
+    },
+    {
+      "source": "asset::cns_xdc",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CNS_XDC__20260623"
+    },
+    {
+      "source": "asset::cns_xdc",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CNS_XDC__20260623"
+    },
+    {
+      "source": "asset::cns_xdc",
+      "target": "scorecard::cns_xdc_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CNS_XDC__20260623"
+    },
+    {
+      "source": "asset::cns_xdc",
+      "target": "source::https_www.harbourbiomed.com",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Harbour_BioMed_official_website"
+    },
+    {
+      "source": "scorecard::cns_xdc_20260623",
+      "target": "source::https_www.harbourbiomed.com",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Harbour_BioMed_official_website"
+    },
+    {
+      "source": "asset::next-generation_biologics",
+      "target": "company::harbour_biomed_(guangzhou)_co_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Next-Generation_Biologics__20260623"
+    },
+    {
+      "source": "asset::next-generation_biologics",
+      "target": "target::undisclosed",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Next-Generation_Biologics__20260623"
+    },
+    {
+      "source": "asset::next-generation_biologics",
+      "target": "moa::undisclosed_bispecific_multispecific_antibody_approach",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Next-Generation_Biologics__20260623"
+    },
+    {
+      "source": "asset::next-generation_biologics",
+      "target": "modality::bispecific_multi-specific_antibodies",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Next-Generation_Biologics__20260623"
+    },
+    {
+      "source": "asset::next-generation_biologics",
+      "target": "indication::unspecified_central_nervous_system_disorders",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Next-Generation_Biologics__20260623"
+    },
+    {
+      "source": "asset::next-generation_biologics",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Next-Generation_Biologics__20260623"
+    },
+    {
+      "source": "asset::next-generation_biologics",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Next-Generation_Biologics__20260623"
+    },
+    {
+      "source": "asset::next-generation_biologics",
+      "target": "scorecard::next-generation_biologics_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Next-Generation_Biologics__20260623"
+    },
+    {
+      "source": "asset::next-generation_biologics",
+      "target": "source::https_www.harbourbiomed.com",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Harbour_BioMed_official_website"
+    },
+    {
+      "source": "scorecard::next-generation_biologics_20260623",
+      "target": "source::https_www.harbourbiomed.com",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Harbour_BioMed_official_website"
+    },
+    {
+      "source": "asset::hb-02",
+      "target": "company::healthbiome_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-02__20260623"
+    },
+    {
+      "source": "asset::hb-02",
+      "target": "target::gut_microbiome",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-02__20260623"
+    },
+    {
+      "source": "asset::hb-02",
+      "target": "moa::live_biotherapeutic_product_targeting_gut-brain_microbiome_axis",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-02__20260623"
+    },
+    {
+      "source": "asset::hb-02",
+      "target": "modality::lbp",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-02__20260623"
+    },
+    {
+      "source": "asset::hb-02",
+      "target": "indication::alzheimer's_disease;_dementia",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-02__20260623"
+    },
+    {
+      "source": "asset::hb-02",
+      "target": "theme::neuroimmune",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-02__20260623"
+    },
+    {
+      "source": "asset::hb-02",
+      "target": "cluster::말초_면역기관_연결",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-02__20260623"
+    },
+    {
+      "source": "asset::hb-02",
+      "target": "scorecard::hb-02_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-02__20260623"
+    },
+    {
+      "source": "asset::hb-02",
+      "target": "source::https_healthbiome.co.kr",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__HealthBiome_official_site"
+    },
+    {
+      "source": "scorecard::hb-02_20260623",
+      "target": "source::https_healthbiome.co.kr",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__HealthBiome_official_site"
+    },
+    {
+      "source": "asset::hb-02",
+      "target": "source::https_synapse.patsnap.com_drug_3877c8e8f53a4437bc903307d8cec6a0",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_HB-02"
+    },
+    {
+      "source": "scorecard::hb-02_20260623",
+      "target": "source::https_synapse.patsnap.com_drug_3877c8e8f53a4437bc903307d8cec6a0",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_HB-02"
+    },
+    {
+      "source": "asset::hb-03",
+      "target": "company::healthbiome_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-03__20260623"
+    },
+    {
+      "source": "asset::hb-03",
+      "target": "target::gut_microbiome",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-03__20260623"
+    },
+    {
+      "source": "asset::hb-03",
+      "target": "moa::live_biotherapeutic_product,_details_unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-03__20260623"
+    },
+    {
+      "source": "asset::hb-03",
+      "target": "modality::lbp",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-03__20260623"
+    },
+    {
+      "source": "asset::hb-03",
+      "target": "indication::neurodegenerative_diseases",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-03__20260623"
+    },
+    {
+      "source": "asset::hb-03",
+      "target": "theme::neuroimmune",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-03__20260623"
+    },
+    {
+      "source": "asset::hb-03",
+      "target": "cluster::말초_면역기관_연결",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-03__20260623"
+    },
+    {
+      "source": "asset::hb-03",
+      "target": "scorecard::hb-03_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-03__20260623"
+    },
+    {
+      "source": "asset::hb-03",
+      "target": "source::https_healthbiome.co.kr",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__HealthBiome_official_site"
+    },
+    {
+      "source": "scorecard::hb-03_20260623",
+      "target": "source::https_healthbiome.co.kr",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__HealthBiome_official_site"
+    },
+    {
+      "source": "asset::hb-05",
+      "target": "company::healthbiome_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-05__20260623"
+    },
+    {
+      "source": "asset::hb-05",
+      "target": "target::gut_microbiome",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-05__20260623"
+    },
+    {
+      "source": "asset::hb-05",
+      "target": "moa::live_biotherapeutic_product,_details_unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-05__20260623"
+    },
+    {
+      "source": "asset::hb-05",
+      "target": "modality::lbp",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-05__20260623"
+    },
+    {
+      "source": "asset::hb-05",
+      "target": "indication::cognitive_disorders",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-05__20260623"
+    },
+    {
+      "source": "asset::hb-05",
+      "target": "theme::neuroimmune",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-05__20260623"
+    },
+    {
+      "source": "asset::hb-05",
+      "target": "cluster::말초_면역기관_연결",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-05__20260623"
+    },
+    {
+      "source": "asset::hb-05",
+      "target": "scorecard::hb-05_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB-05__20260623"
+    },
+    {
+      "source": "asset::hb-05",
+      "target": "source::https_healthbiome.co.kr",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__HealthBiome_official_site"
+    },
+    {
+      "source": "scorecard::hb-05_20260623",
+      "target": "source::https_healthbiome.co.kr",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__HealthBiome_official_site"
+    },
+    {
+      "source": "asset::hzr-061",
+      "target": "company::healzen_therapeutics_co_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HZR-061__20260623"
+    },
+    {
+      "source": "asset::hzr-061",
+      "target": "target::stat3",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HZR-061__20260623"
+    },
+    {
+      "source": "asset::hzr-061",
+      "target": "moa::targeted_protein_degradation_of_stat3",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HZR-061__20260623"
+    },
+    {
+      "source": "asset::hzr-061",
+      "target": "modality::tpd",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HZR-061__20260623"
+    },
+    {
+      "source": "asset::hzr-061",
+      "target": "indication::multiple_sclerosis",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HZR-061__20260623"
+    },
+    {
+      "source": "asset::hzr-061",
+      "target": "theme::neuroimmune",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HZR-061__20260623"
+    },
+    {
+      "source": "asset::hzr-061",
+      "target": "cluster::cytokine_신경조절",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HZR-061__20260623"
+    },
+    {
+      "source": "asset::hzr-061",
+      "target": "scorecard::hzr-061_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HZR-061__20260623"
+    },
+    {
+      "source": "asset::hzr-061",
+      "target": "source::https_www.healzentx.com",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__HealZen_official_site"
+    },
+    {
+      "source": "scorecard::hzr-061_20260623",
+      "target": "source::https_www.healzentx.com",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__HealZen_official_site"
+    },
+    {
+      "source": "asset::glycoprotein_29-modified_deferoxamine",
+      "target": "company::hebei_normal_university",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__glycoprotein_29-modified_deferoxamine__20260623"
+    },
+    {
+      "source": "asset::glycoprotein_29-modified_deferoxamine",
+      "target": "target::brain_iron_overload",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__glycoprotein_29-modified_deferoxamine__20260623"
+    },
+    {
+      "source": "asset::glycoprotein_29-modified_deferoxamine",
+      "target": "moa::bbb-targeted_deferoxamine_nanoparticle_to_remove_excess_brain_iron",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__glycoprotein_29-modified_deferoxamine__20260623"
+    },
+    {
+      "source": "asset::glycoprotein_29-modified_deferoxamine",
+      "target": "modality::nanoparticle",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__glycoprotein_29-modified_deferoxamine__20260623"
+    },
+    {
+      "source": "asset::glycoprotein_29-modified_deferoxamine",
+      "target": "indication::parkinson's_disease",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__glycoprotein_29-modified_deferoxamine__20260623"
+    },
+    {
+      "source": "asset::glycoprotein_29-modified_deferoxamine",
+      "target": "theme::neuroimmune",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__glycoprotein_29-modified_deferoxamine__20260623"
+    },
+    {
+      "source": "asset::glycoprotein_29-modified_deferoxamine",
+      "target": "cluster::cns_손상_면역반응",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__glycoprotein_29-modified_deferoxamine__20260623"
+    },
+    {
+      "source": "asset::glycoprotein_29-modified_deferoxamine",
+      "target": "scorecard::glycoprotein_29-modified_deferoxamine_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__glycoprotein_29-modified_deferoxamine__20260623"
+    },
+    {
+      "source": "asset::glycoprotein_29-modified_deferoxamine",
+      "target": "source::https_en.hbnu.edu.cn_main.htm",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Hebei_Normal_University_official_site"
+    },
+    {
+      "source": "scorecard::glycoprotein_29-modified_deferoxamine_20260623",
+      "target": "source::https_en.hbnu.edu.cn_main.htm",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Hebei_Normal_University_official_site"
+    },
+    {
+      "source": "asset::hec20002",
+      "target": "company::hec_pharm",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HEC20002__20260623"
+    },
+    {
+      "source": "asset::hec20002",
+      "target": "target::mao-b",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HEC20002__20260623"
+    },
+    {
+      "source": "asset::hec20002",
+      "target": "moa::mao-b_inhibitor",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HEC20002__20260623"
+    },
+    {
+      "source": "asset::hec20002",
+      "target": "modality::sm",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HEC20002__20260623"
+    },
+    {
+      "source": "asset::hec20002",
+      "target": "indication::parkinson's_disease",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HEC20002__20260623"
+    },
+    {
+      "source": "asset::hec20002",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HEC20002__20260623"
+    },
+    {
+      "source": "asset::hec20002",
+      "target": "cluster::synaptic_transmission",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HEC20002__20260623"
+    },
+    {
+      "source": "asset::hec20002",
+      "target": "scorecard::hec20002_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HEC20002__20260623"
+    },
+    {
+      "source": "asset::hec20002",
+      "target": "source::https_www.hecpharm.com_en",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__HEC_Pharm_official_site"
+    },
+    {
+      "source": "scorecard::hec20002_20260623",
+      "target": "source::https_www.hecpharm.com_en",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__HEC_Pharm_official_site"
+    },
+    {
+      "source": "asset::hb018",
+      "target": "company::hefei_huafang_pharmaceutical_sciences_and_technology",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB018__20260623"
+    },
+    {
+      "source": "asset::hb018",
+      "target": "target::undisclosed",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB018__20260623"
+    },
+    {
+      "source": "asset::hb018",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB018__20260623"
+    },
+    {
+      "source": "asset::hb018",
+      "target": "modality::sm",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB018__20260623"
+    },
+    {
+      "source": "asset::hb018",
+      "target": "indication::schizophrenia",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB018__20260623"
+    },
+    {
+      "source": "asset::hb018",
+      "target": "theme::no_theme",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB018__20260623"
+    },
+    {
+      "source": "asset::hb018",
+      "target": "cluster::no_mapped_skbp_cluster",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB018__20260623"
+    },
+    {
+      "source": "asset::hb018",
+      "target": "scorecard::hb018_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HB018__20260623"
+    },
+    {
+      "source": "asset::hb018",
+      "target": "source::source_url_not_provided",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Source_URL_not_provided"
+    },
+    {
+      "source": "scorecard::hb018_20260623",
+      "target": "source::source_url_not_provided",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Source_URL_not_provided"
+    },
+    {
+      "source": "asset::cxjm-66_injection",
+      "target": "company::humanwell_healthcare_group",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CXJM-66_Injection__20260623"
+    },
+    {
+      "source": "asset::cxjm-66_injection",
+      "target": "target::vgscs",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CXJM-66_Injection__20260623"
+    },
+    {
+      "source": "asset::cxjm-66_injection",
+      "target": "moa::voltage-gated_sodium_channel_modulation_for_surgical_anesthesia_and_pos_17f2679a",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CXJM-66_Injection__20260623"
+    },
+    {
+      "source": "asset::cxjm-66_injection",
+      "target": "modality::sm",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CXJM-66_Injection__20260623"
+    },
+    {
+      "source": "asset::cxjm-66_injection",
+      "target": "indication::acute_pain;_surgical_anesthesia_and_postoperative_pain_management",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CXJM-66_Injection__20260623"
+    },
+    {
+      "source": "asset::cxjm-66_injection",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CXJM-66_Injection__20260623"
+    },
+    {
+      "source": "asset::cxjm-66_injection",
+      "target": "cluster::ion_channel",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CXJM-66_Injection__20260623"
+    },
+    {
+      "source": "asset::cxjm-66_injection",
+      "target": "scorecard::cxjm-66_injection_20260623",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CXJM-66_Injection__20260623"
+    },
+    {
+      "source": "asset::cxjm-66_injection",
+      "target": "source::https_en.humanwell.com.cn",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Humanwell_official_site"
+    },
+    {
+      "source": "scorecard::cxjm-66_injection_20260623",
+      "target": "source::https_en.humanwell.com.cn",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Humanwell_official_site"
+    },
+    {
+      "source": "asset::cxjm-66_injection",
+      "target": "source::https_en.likang-pharma.com_news_213.html",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Yichang_Renfu_CXJM-66_clinical_trial_approval"
+    },
+    {
+      "source": "scorecard::cxjm-66_injection_20260623",
+      "target": "source::https_en.likang-pharma.com_news_213.html",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Yichang_Renfu_CXJM-66_clinical_trial_approval"
+    },
+    {
+      "source": "asset::cxjm-66_injection",
+      "target": "source::https_synapse.patsnap.com_drug_09e0b67b6d02474ea75e89ed532a7df5",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_CXJM-66"
+    },
+    {
+      "source": "scorecard::cxjm-66_injection_20260623",
+      "target": "source::https_synapse.patsnap.com_drug_09e0b67b6d02474ea75e89ed532a7df5",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_CXJM-66"
     }
   ]
 }

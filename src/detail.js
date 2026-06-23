@@ -73,6 +73,16 @@ function isPlaceholderRawMarkdown(value) {
     || text === 'Markdown report is provided separately in the MD copy box.';
 }
 
+function isFastTriageRecord(record) {
+  const reviewType = String(record?.meta?.review_type || '').toLowerCase();
+  const parserStatus = String(record?.source_report?.parser_status || '').toLowerCase();
+  const sourceFormat = String(record?.source_report?.source_format || '').toLowerCase();
+  return reviewType === 'fast_triage'
+    || parserStatus.includes('triage')
+    || sourceFormat.includes('fast_triage')
+    || Boolean(record?.triage);
+}
+
 function prettifyKey(key) {
   return key.replaceAll('_', ' ');
 }
@@ -329,6 +339,38 @@ function renderMarketabilityCalculation(calculation) {
   `;
 }
 
+function extractImportantLine(markdown = '') {
+  const lines = String(markdown || '').split(/\r?\n/);
+  for (const line of lines.slice(0, 30)) {
+    const cleaned = line.replace(/^>\s*/, '').trim();
+    const match = cleaned.match(/^중요\s*[:：]\s*(.+)$/);
+    if (match?.[1]) return match[1].trim();
+  }
+  return '';
+}
+
+function buildFilterRationale(record, hardFilter) {
+  const sourceImportantLine = extractImportantLine(record.source_report?.raw_markdown || '');
+  const explicitReason = record.hard_filter?.reason || record.hard_filter?.overall_result || '';
+  const insight = record.final_insight?.one_line_summary || record.json_summary?.one_line_summary || '';
+  const reason = sourceImportantLine || explicitReason || insight || hardFilter.reason || 'Filter rationale is not available in this record.';
+  const status = record.hard_filter?.status || hardFilter.status || '-';
+  return { status, reason };
+}
+
+function renderFilterRationale(record, hardFilter) {
+  const rationale = buildFilterRationale(record, hardFilter);
+  return `
+    <section class="filter-rationale-card">
+      <div>
+        <span>Filter rationale</span>
+        <strong>${escapeHtml(rationale.status)}</strong>
+      </div>
+      <p>${escapeHtml(rationale.reason)}</p>
+    </section>
+  `;
+}
+
 function renderCompanyProfile(profile = {}) {
   const officialSources = Array.isArray(profile.official_source_urls) ? profile.official_source_urls : [];
   const focusAreas = Array.isArray(profile.focus_areas) && profile.focus_areas.length ? profile.focus_areas.join(', ') : '-';
@@ -447,12 +489,12 @@ function renderScoreEvidence(record) {
     .join('');
 
   return `
+    ${renderFilterRationale(record, hardFilter)}
     ${renderCompanyProfile(record.company_profile || {})}
     <div class="score-evidence-summary">
       <div><span>Total Score</span><strong>${escapeHtml(formatScore(scoring.total_score))} / ${escapeHtml(formatScore(scoring.max_score || 21))}</strong></div>
-      <div><span>Hard Filter</span><strong title="${escapeHtml(hardFilter.reason)}">${escapeHtml(hardFilter.status)}</strong></div>
-      <div><span>Filter Reason</span><strong>${escapeHtml(hardFilter.reason)}</strong></div>
-      <div><span>Rubric</span><strong>${escapeHtml(record.meta?.rubric_version || '1.0')} · ${escapeHtml(record.meta?.rubric_author || 'kate')}</strong></div>
+      <div><span>Pipeline Filter</span><strong>${escapeHtml(hardFilter.status)}</strong></div>
+      <div><span>Rubric</span><strong>${escapeHtml(record.meta?.rubric_version || '3.1')} · ${escapeHtml(record.meta?.rubric_author || 'kate')}</strong></div>
     </div>
     <div class="score-evidence-list">${cards}</div>
     <section class="score-evidence-card source-index-card">
@@ -884,7 +926,7 @@ function renderChatSources(sources = []) {
 function renderMessageActions() {
   return `
     <div class="agent-message-actions">
-      <button type="button" data-action="apply-ai-reply">이 답변을 JSON에 반영</button>
+      <button type="button" data-action="apply-ai-reply">JSON/원문에 반영</button>
     </div>
   `;
 }
@@ -968,21 +1010,46 @@ function retitleActiveChatSessionFromQuestion(question) {
   }
 }
 
-function createAiReplyJsonDraft(button) {
+async function createAiReplyJsonDraft(button) {
   if (!currentRecord) return;
   const bubble = button.closest('.agent-message');
   const replyText = bubble?.querySelector('.agent-message-text')?.innerText?.trim();
   if (!replyText) return;
 
-  const nextRecord = structuredClone(currentRecord);
-  nextRecord.ai_revision_draft = {
-    created_at: new Date().toISOString(),
-    source: 'detail_ai_chat',
-    instruction: 'Review this AI answer and selectively merge validated updates into the canonical schema fields.',
-    answer_markdown: replyText
-  };
-  pendingDraftRecord = nextRecord;
-  reviewPendingDraft();
+  const confirmed = window.confirm('이 Agent 답변을 현재 record JSON과 원문 리포트에 반영할까요? 저장 후 대시보드 점수도 갱신됩니다.');
+  if (!confirmed) return;
+
+  button.disabled = true;
+  const previousText = button.textContent;
+  button.textContent = '반영 중';
+
+  try {
+    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/apply-ai-revision`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        answer_markdown: replyText,
+        instruction: isFastTriageRecord(currentRecord)
+          ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.1 update applied from chat answer.'
+          : 'Detail AI Agent v3.1 re-evaluation applied from chat answer.'
+      })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'AI 답변 반영 실패');
+
+    if (bubble.dataset.messageId) {
+      updateChatSessionMessage({ id: bubble.dataset.messageId, canApply: false });
+    }
+    currentRecord = data.record;
+    currentRecordId = data.record_id;
+    window.history.replaceState(null, '', `/detail?id=${encodeURIComponent(currentRecordId)}`);
+    await loadRecord();
+    addMessage('assistant', `JSON과 원문 리포트에 반영했습니다.\n\n${summarizeDraftChanges(data.changes || [])}`);
+  } catch (error) {
+    addMessage('assistant', `반영 실패: ${error.message}`);
+    button.disabled = false;
+    button.textContent = previousText;
+  }
 }
 
 async function saveRecord(payload, statusTarget = null) {

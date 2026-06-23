@@ -1,0 +1,817 @@
+{
+  "version": "1.0",
+  "description": "Dashboard canonical category dictionary for filter grouping. Add synonyms here when new source wording should map to an existing category.",
+  "country": [
+    {
+      "canonical": "China",
+      "synonyms": [
+        "China",
+        "People's Republic of China",
+        "PRC",
+        "Mainland China",
+        "Chinese mainland",
+        "Hong Kong",
+        "HK",
+        "China / Hong Kong",
+        "Greater China"
+      ],
+      "patterns": [
+        "\\bchina\\b",
+        "\\bprc\\b",
+        "hong kong",
+        "mainland"
+      ]
+    },
+    {
+      "canonical": "Republic of Korea",
+      "synonyms": [
+        "Republic of Korea",
+        "South Korea",
+        "Korea",
+        "ROK",
+        "KOR",
+        "Seoul"
+      ],
+      "patterns": [
+        "south korea",
+        "republic of korea",
+        "\\bkorea\\b",
+        "\\brok\\b"
+      ]
+    },
+    {
+      "canonical": "Japan",
+      "synonyms": [
+        "Japan",
+        "JP",
+        "Tokyo",
+        "Osaka"
+      ],
+      "patterns": [
+        "\\bjapan\\b",
+        "\\bjp\\b"
+      ]
+    },
+    {
+      "canonical": "United States",
+      "synonyms": [
+        "United States",
+        "United States of America",
+        "USA",
+        "U.S.",
+        "US",
+        "America",
+        "Boston",
+        "Cambridge",
+        "California",
+        "San Diego",
+        "New York"
+      ],
+      "patterns": [
+        "united states",
+        "\\busa\\b",
+        "\\bu\\.s\\.\\b",
+        "\\bus\\b"
+      ]
+    },
+    {
+      "canonical": "Europe/UK",
+      "synonyms": [
+        "Europe",
+        "European Union",
+        "EU",
+        "United Kingdom",
+        "UK",
+        "U.K.",
+        "England",
+        "Scotland",
+        "Germany",
+        "France",
+        "Switzerland",
+        "Netherlands",
+        "Sweden",
+        "Denmark",
+        "Belgium",
+        "Spain",
+        "Italy"
+      ],
+      "patterns": [
+        "europe",
+        "european union",
+        "\\beu\\b",
+        "united kingdom",
+        "\\buk\\b",
+        "germany",
+        "france",
+        "switzerland",
+        "netherlands",
+        "sweden",
+        "denmark",
+        "belgium",
+        "spain",
+        "italy"
+      ]
+    },
+    {
+      "canonical": "Taiwan",
+      "synonyms": [
+        "Taiwan",
+        "TW",
+        "Taipei"
+      ],
+      "patterns": [
+        "taiwan",
+        "taipei"
+      ]
+    },
+    {
+      "canonical": "Singapore",
+      "synonyms": [
+        "Singapore",
+        "SG"
+      ],
+      "patterns": [
+        "singapore"
+      ]
+    },
+    {
+      "canonical": "Canada",
+      "synonyms": [
+        "Canada",
+        "CA",
+        "Toronto",
+        "Vancouver",
+        "Montreal"
+      ],
+      "patterns": [
+        "canada",
+        "toronto",
+        "vancouver",
+        "montreal"
+      ]
+    },
+    {
+      "canonical": "Australia",
+      "synonyms": [
+        "Australia",
+        "AU"
+      ],
+      "patterns": [
+        "australia"
+      ]
+    },
+    {
+      "canonical": "Israel",
+      "synonyms": [
+        "Israel",
+        "IL"
+      ],
+      "patterns": [
+        "israel"
+      ]
+    }
+  ],
+  "stage": [
+    {
+      "canonical": "Hit discovery",
+      "synonyms": [
+        "Hit discovery",
+        "Hit finding",
+        "Screening",
+        "Primary screening",
+        "High-throughput screening",
+        "HTS",
+        "Hit identification",
+        "Hit ID",
+        "Hit-to-lead"
+      ],
+      "patterns": [
+        "hit[- ]?discovery",
+        "hit[- ]?finding",
+        "screening",
+        "\\bhts\\b",
+        "hit[- ]?to[- ]?lead"
+      ]
+    },
+    {
+      "canonical": "Lead Selection",
+      "synonyms": [
+        "Lead Selection",
+        "Lead selection",
+        "Lead candidate selection",
+        "Candidate selection",
+        "Development candidate selection",
+        "DC selection",
+        "PCC selection",
+        "Preclinical candidate selection",
+        "Candidate selected"
+      ],
+      "patterns": [
+        "lead candidate",
+        "candidate selection",
+        "development candidate",
+        "\\bdc selection\\b",
+        "\\bpcc\\b",
+        "candidate selected"
+      ]
+    },
+    {
+      "canonical": "Lead Optimization",
+      "synonyms": [
+        "Lead Optimization",
+        "Lead optimisation",
+        "Lead opt",
+        "Lead-op",
+        "LO",
+        "Optimization",
+        "Optimisation"
+      ],
+      "patterns": [
+        "lead[- ]?op",
+        "lead optimization",
+        "lead optimisation",
+        "\\blo\\b"
+      ]
+    },
+    {
+      "canonical": "IND-enabling",
+      "synonyms": [
+        "IND-enabling",
+        "IND enabling",
+        "IND preparation",
+        "IND prep",
+        "IND-ready",
+        "GLP tox",
+        "GLP toxicology",
+        "Tox package",
+        "Pre-IND",
+        "CTA-enabling",
+        "Preclinical / IND-enabling"
+      ],
+      "patterns": [
+        "ind[- ]?enabling",
+        "ind preparation",
+        "ind prep",
+        "ind[- ]?ready",
+        "glp tox",
+        "toxicology",
+        "pre[- ]?ind",
+        "cta[- ]?enabling"
+      ]
+    },
+    {
+      "canonical": "IND",
+      "synonyms": [
+        "IND",
+        "IND filed",
+        "IND submitted",
+        "IND accepted",
+        "IND cleared",
+        "CTA",
+        "CTA filed",
+        "CTA approved",
+        "Clinical trial approval",
+        "Clinical trial application",
+        "NMPA CDE IND approval"
+      ],
+      "patterns": [
+        "\\bind\\b",
+        "ind filed",
+        "ind submitted",
+        "ind accepted",
+        "ind cleared",
+        "\\bcta\\b",
+        "clinical trial approval",
+        "clinical trial application"
+      ]
+    },
+    {
+      "canonical": "Phase 1",
+      "synonyms": [
+        "P1",
+        "P 1",
+        "Ph1",
+        "Ph 1",
+        "Phase 1",
+        "Phase I",
+        "FIH",
+        "First-in-human",
+        "First in human",
+        "SAD",
+        "MAD",
+        "SAD/MAD",
+        "Healthy volunteer study",
+        "1상"
+      ],
+      "patterns": [
+        "\\bp\\s*-?\\s*1\\b",
+        "\\bph\\s*-?\\s*1\\b",
+        "phase\\s*-?\\s*(1|i)\\b",
+        "\\bfih\\b",
+        "first[- ]?in[- ]?human",
+        "\\bsad\\b",
+        "\\bmad\\b",
+        "healthy volunteer",
+        "1\\s*상"
+      ]
+    },
+    {
+      "canonical": "Phase 1/2",
+      "synonyms": [
+        "P1/2",
+        "P1b/2a",
+        "Phase 1/2",
+        "Phase I/II",
+        "Phase 1b/2a",
+        "Phase Ib/IIa",
+        "1/2상"
+      ],
+      "patterns": [
+        "phase\\s*-?\\s*(1|i)\\s*/\\s*(2|ii)",
+        "\\bp\\s*-?\\s*1\\s*/\\s*2\\b",
+        "1\\s*/\\s*2\\s*상"
+      ]
+    },
+    {
+      "canonical": "Phase 2",
+      "synonyms": [
+        "P2",
+        "P 2",
+        "Ph2",
+        "Ph 2",
+        "Phase 2",
+        "Phase II",
+        "Phase 2a",
+        "Phase 2b",
+        "POC",
+        "Proof-of-concept",
+        "Proof of concept",
+        "Patient POC",
+        "2상"
+      ],
+      "patterns": [
+        "\\bp\\s*-?\\s*2\\b",
+        "\\bph\\s*-?\\s*2\\b",
+        "phase\\s*-?\\s*(2|ii)\\b",
+        "\\bpoc\\b",
+        "proof[- ]?of[- ]?concept",
+        "2\\s*상"
+      ]
+    },
+    {
+      "canonical": "Phase 2/3",
+      "synonyms": [
+        "P2/3",
+        "Phase 2/3",
+        "Phase II/III",
+        "Phase 2b/3",
+        "Phase IIb/III",
+        "Pivotal Phase 2/3",
+        "2/3상"
+      ],
+      "patterns": [
+        "phase\\s*-?\\s*(2|ii)\\s*/\\s*(3|iii)",
+        "\\bp\\s*-?\\s*2\\s*/\\s*3\\b",
+        "2\\s*/\\s*3\\s*상"
+      ]
+    },
+    {
+      "canonical": "Phase 3",
+      "synonyms": [
+        "P3",
+        "P 3",
+        "Ph3",
+        "Ph 3",
+        "Phase 3",
+        "Phase III",
+        "Pivotal trial",
+        "Registrational trial",
+        "3상"
+      ],
+      "patterns": [
+        "\\bp\\s*-?\\s*3\\b",
+        "\\bph\\s*-?\\s*3\\b",
+        "phase\\s*-?\\s*(3|iii)\\b",
+        "pivotal",
+        "registrational trial",
+        "3\\s*상"
+      ]
+    },
+    {
+      "canonical": "Registration",
+      "synonyms": [
+        "Registration",
+        "NDA",
+        "BLA",
+        "MAA",
+        "NDA filed",
+        "BLA filed",
+        "MAA filed",
+        "Under review",
+        "Regulatory review",
+        "Marketing authorization application"
+      ],
+      "patterns": [
+        "\\bnda\\b",
+        "\\bbla\\b",
+        "\\bmaa\\b",
+        "under review",
+        "regulatory review",
+        "marketing authorization"
+      ]
+    },
+    {
+      "canonical": "Approved / marketed",
+      "synonyms": [
+        "Market approved",
+        "Regulatory approved",
+        "FDA approved",
+        "EMA approved",
+        "NMPA approved",
+        "Marketed",
+        "Launched",
+        "Commercial",
+        "Commercialized",
+        "On market"
+      ],
+      "patterns": [
+        "fda approved",
+        "ema approved",
+        "nmpa approved",
+        "approved for treatment",
+        "marketing approval",
+        "marketed",
+        "launched",
+        "commercial"
+      ]
+    },
+    {
+      "canonical": "Discontinued / inactive",
+      "synonyms": [
+        "Discontinued",
+        "Terminated",
+        "Withdrawn",
+        "Suspended",
+        "Inactive",
+        "Dormant",
+        "No longer active"
+      ],
+      "patterns": [
+        "discontinued",
+        "terminated",
+        "withdrawn",
+        "suspended",
+        "inactive",
+        "dormant"
+      ]
+    }
+  ],
+  "indication": [
+    {
+      "canonical": "Alzheimer's disease",
+      "synonyms": [
+        "Alzheimer's disease",
+        "Alzheimer disease",
+        "Alzheimer's",
+        "Alzheimers",
+        "AD",
+        "Mild cognitive impairment due to AD",
+        "MCI due to AD",
+        "Early Alzheimer's disease",
+        "Prodromal AD"
+      ],
+      "patterns": [
+        "alzheimer",
+        "\\bad\\b",
+        "\\bmci due to ad\\b"
+      ]
+    },
+    {
+      "canonical": "Parkinson's disease",
+      "synonyms": [
+        "Parkinson's disease",
+        "Parkinson disease",
+        "Parkinson's",
+        "PD",
+        "Lewy body disease",
+        "Dementia with Lewy bodies",
+        "DLB",
+        "Parkinson's disease dementia",
+        "PDD"
+      ],
+      "patterns": [
+        "parkinson",
+        "\\bpd\\b",
+        "lewy body",
+        "\\bdlb\\b"
+      ]
+    },
+    {
+      "canonical": "Epilepsy / seizure disorders",
+      "synonyms": [
+        "Epilepsy",
+        "Seizure",
+        "Seizure disorder",
+        "Partial onset seizure",
+        "Partial-onset seizure",
+        "Focal onset seizure",
+        "Focal-onset seizure",
+        "FOS",
+        "Status epilepticus",
+        "Refractory epilepsy",
+        "Drug-resistant epilepsy",
+        "DEE",
+        "Developmental and epileptic encephalopathy"
+      ],
+      "patterns": [
+        "epilep",
+        "seizure",
+        "focal[- ]?onset",
+        "partial[- ]?onset",
+        "status epilepticus",
+        "\\bfos\\b",
+        "\\bdee\\b"
+      ]
+    },
+    {
+      "canonical": "Multiple sclerosis / neuroinflammatory disease",
+      "synonyms": [
+        "Multiple sclerosis",
+        "MS",
+        "Relapsing-remitting MS",
+        "RRMS",
+        "Progressive MS",
+        "PPMS",
+        "SPMS",
+        "Neuroinflammation",
+        "Neuroinflammatory disease",
+        "Demyelinating disease"
+      ],
+      "patterns": [
+        "multiple sclerosis",
+        "\\bms\\b",
+        "\\brrms\\b",
+        "\\bppms\\b",
+        "\\bspms\\b",
+        "neuroinflamm",
+        "demyelinating"
+      ]
+    },
+    {
+      "canonical": "Amyotrophic lateral sclerosis / motor neuron disease",
+      "synonyms": [
+        "Amyotrophic lateral sclerosis",
+        "ALS",
+        "Motor neuron disease",
+        "Motor neurone disease",
+        "MND",
+        "Lou Gehrig's disease"
+      ],
+      "patterns": [
+        "amyotrophic lateral sclerosis",
+        "\\bals\\b",
+        "motor neuro",
+        "\\bmnd\\b"
+      ]
+    },
+    {
+      "canonical": "Frontotemporal dementia",
+      "synonyms": [
+        "Frontotemporal dementia",
+        "FTD",
+        "FTLD",
+        "Behavioral variant FTD",
+        "bvFTD",
+        "Primary progressive aphasia",
+        "PPA"
+      ],
+      "patterns": [
+        "frontotemporal",
+        "\\bftd\\b",
+        "\\bftld\\b",
+        "\\bbvftd\\b",
+        "primary progressive aphasia"
+      ]
+    },
+    {
+      "canonical": "Huntington's disease",
+      "synonyms": [
+        "Huntington's disease",
+        "Huntington disease",
+        "HD",
+        "Huntington's chorea"
+      ],
+      "patterns": [
+        "huntington",
+        "\\bhd\\b"
+      ]
+    },
+    {
+      "canonical": "Stroke",
+      "synonyms": [
+        "Stroke",
+        "Acute ischemic stroke",
+        "Ischemic stroke",
+        "Haemorrhagic stroke",
+        "Hemorrhagic stroke",
+        "Cerebral ischemia",
+        "Post-stroke"
+      ],
+      "patterns": [
+        "stroke",
+        "cerebral ischemia",
+        "post[- ]?stroke"
+      ]
+    },
+    {
+      "canonical": "Migraine / headache disorders",
+      "synonyms": [
+        "Migraine",
+        "Chronic migraine",
+        "Episodic migraine",
+        "Headache",
+        "Cluster headache",
+        "Trigeminal autonomic cephalalgia"
+      ],
+      "patterns": [
+        "migraine",
+        "headache",
+        "cephalalgia"
+      ]
+    },
+    {
+      "canonical": "Pain",
+      "synonyms": [
+        "Pain",
+        "Neuropathic pain",
+        "Chronic pain",
+        "Peripheral neuropathic pain",
+        "Diabetic neuropathy",
+        "Fibromyalgia",
+        "Postherpetic neuralgia",
+        "PHN",
+        "Radiculopathy"
+      ],
+      "patterns": [
+        "pain",
+        "neuropath",
+        "fibromyalgia",
+        "neuralgia",
+        "\\bphn\\b",
+        "radiculopathy"
+      ]
+    },
+    {
+      "canonical": "Major depressive disorder",
+      "synonyms": [
+        "Major depressive disorder",
+        "Major depression",
+        "Depression",
+        "MDD",
+        "Treatment-resistant depression",
+        "TRD"
+      ],
+      "patterns": [
+        "major depressive",
+        "depression",
+        "\\bmdd\\b",
+        "\\btrd\\b"
+      ]
+    },
+    {
+      "canonical": "Schizophrenia / psychosis",
+      "synonyms": [
+        "Schizophrenia",
+        "Psychosis",
+        "CIAS",
+        "Cognitive impairment associated with schizophrenia"
+      ],
+      "patterns": [
+        "schizophrenia",
+        "psychosis",
+        "\\bcias\\b"
+      ]
+    },
+    {
+      "canonical": "Bipolar disorder",
+      "synonyms": [
+        "Bipolar disorder",
+        "Bipolar depression",
+        "Mania",
+        "BD",
+        "BPD"
+      ],
+      "patterns": [
+        "bipolar",
+        "\\bbpd\\b"
+      ]
+    },
+    {
+      "canonical": "Anxiety disorders",
+      "synonyms": [
+        "Anxiety",
+        "Generalized anxiety disorder",
+        "GAD",
+        "Social anxiety disorder",
+        "Panic disorder",
+        "PTSD"
+      ],
+      "patterns": [
+        "anxiety",
+        "\\bgad\\b",
+        "panic disorder",
+        "\\bptsd\\b"
+      ]
+    },
+    {
+      "canonical": "Autism spectrum disorder",
+      "synonyms": [
+        "Autism",
+        "Autism spectrum disorder",
+        "ASD"
+      ],
+      "patterns": [
+        "autism",
+        "\\basd\\b"
+      ]
+    },
+    {
+      "canonical": "ADHD",
+      "synonyms": [
+        "ADHD",
+        "Attention-deficit/hyperactivity disorder",
+        "Attention deficit hyperactivity disorder"
+      ],
+      "patterns": [
+        "\\badhd\\b",
+        "attention[- ]deficit"
+      ]
+    },
+    {
+      "canonical": "Sleep / wake disorders",
+      "synonyms": [
+        "Insomnia",
+        "Narcolepsy",
+        "Sleep disorder",
+        "Sleep apnea",
+        "Excessive daytime sleepiness",
+        "EDS"
+      ],
+      "patterns": [
+        "insomnia",
+        "narcolepsy",
+        "sleep",
+        "\\beds\\b"
+      ]
+    },
+    {
+      "canonical": "Chronic cough",
+      "synonyms": [
+        "Chronic cough",
+        "Refractory chronic cough",
+        "Unexplained chronic cough",
+        "RCC",
+        "UCC"
+      ],
+      "patterns": [
+        "chronic cough",
+        "refractory cough",
+        "unexplained cough",
+        "\\brcc\\b",
+        "\\bucc\\b"
+      ]
+    },
+    {
+      "canonical": "Inflammatory bowel disease",
+      "synonyms": [
+        "Inflammatory bowel disease",
+        "IBD",
+        "Crohn's disease",
+        "Crohn disease",
+        "Ulcerative colitis",
+        "UC"
+      ],
+      "patterns": [
+        "inflammatory bowel",
+        "\\bibd\\b",
+        "crohn",
+        "ulcerative colitis"
+      ]
+    },
+    {
+      "canonical": "Systemic lupus erythematosus / autoimmune disease",
+      "synonyms": [
+        "Systemic lupus erythematosus",
+        "SLE",
+        "Lupus",
+        "Autoimmune disease",
+        "Autoimmune disorder"
+      ],
+      "patterns": [
+        "lupus",
+        "\\bsle\\b",
+        "autoimmune"
+      ]
+    }
+  ]
+}

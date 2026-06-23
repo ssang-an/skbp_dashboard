@@ -2,6 +2,8 @@
 
 본 리포트는 SKBP Pipeline Finder v3.0 Markdown report + JSON schema 지침에 맞춰 작성했습니다. 최종에는 대시보드에 복사 가능한 JSON을 포함했고, 감사 가능성을 위해 URL과 evidence trail을 함께 남겼습니다.
 
+> **기준 업데이트 (v3.1):** 이 원문은 최초 작성 기준을 보존하되, 2026-06-22 Detail AI Agent 검토를 통해 **SKBP Pipeline Finder v3.1 기준으로 재평가 및 업데이트**되었습니다. 최신 판단은 JSON scoring fields와 아래 Revision Note를 기준으로 봅니다.
+
 ---
 
 ## 1) Company Profile
@@ -298,3 +300,117 @@ Most important diligence question:
 [23]: https://investors.biogen.com/news-releases/news-release-details/biogen-realign-resources-alzheimers-disease-franchise "Biogen Aduhelm discontinuation"  
 [24]: https://investors.biogen.com/news-releases/news-release-details/topline-results-phase-2-celia-study-diranersen-biib080-first "Biogen/Ionis BIIB080 Phase 2 topline"  
 [25]: https://www.inmunebio.com/index.php/newsroom/2026-news/muneionnounceslignmentonntegratedhase2b320260212040512 "INmune Bio XPro TNF neuroinflammation program"
+
+---
+
+## AI Agent Revision Note (2026-06-22)
+
+- Revision basis: Detail AI Agent v3.1 re-evaluation applied from chat answer.
+- Applied at: 2026-06-22T23:05:05.705413+00:00
+- Scope: JSON scoring fields and source report amendment generated from detail-page Agent discussion.
+
+### Applied JSON Changes
+
+- json_summary.theme -> Neuroimmune
+- json_summary.cluster -> 교세포 향상성
+- structured_table.sources +1
+- scoring.criteria.target_relevance.evidence_sources +1
+- scoring.criteria.competitive_landscape.evidence_sources +1
+- scoring.criteria.moa_validity.evidence_sources +1
+- scoring.criteria.platform_attractiveness.evidence_sources +1
+- scoring.criteria.expansion_potential.evidence_sources +1
+- scoring.criteria.data_maturity.evidence_sources +1
+- scoring.criteria.marketability.evidence_sources +1
+- competitive_landscape.score 1 -> 2
+- moa_validity.score 3 -> 2
+- platform_attractiveness.score -> 2
+
+### Agent Discussion Summary Used For Revision
+
+ILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약
+
+아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.
+
+---
+
+1. 수정 권장 사항
+Target Relevance (현재 3 → 유지 권장)
+문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확.
+단, v3.1에서는 "final ILM01 target binder 및 TAM receptor subtype selectivity 비공개"를 uncertainty로 명시한 부분 유지 필요.
+Competitive Landscape (현재 1 → 2로 상향 가능성 검토)
+v3.1 기준: "same-MoA 경쟁자가 명확하지 않으면 2점 가능"이라는 해석 여지 있음.
+현재 근거: True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않음.
+수정 제안: "Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist"를 uncertainty로 유지하되, 점수를 2로 상향하고 근거를 "E2_indirect_or_class_level_evidence"로 조정 가능.
+단, AD indication 기준 Leqembi/Kisunla/remternetug 등 anti-Aβ 경쟁 과밀은 여전히 리스크로 기재.
+MoA Validity (현재 3 → 유지)
+Nature Medicine 논문 기반 data 일관됨. v3.1 기준 E3 evidence 충족.
+단, "publication prototype과 final ILM01 clinical candidate identity 확인 필요"는 uncertainty로 유지.
+Platform Attractiveness (현재 2 → 유지)
+GAIA는 differentiated biologic fusion platform이지만, SKBP 우선 modality(small molecule/ASO/siRNA)는 아님 → 2점 적절.
+v3.1에서 "expression yield, aggregation, immunogenicity, route, half-life, scalable CMC data 비공개"를 uncertainty로 유지.
+Expansion Potential (현재 3 → 유지)
+공식 pipeline 자료가 Aβ 외 tau, α-syn, myelin debris, PS/SLE 등 확장 명시 → platform으로 해석 가능.
+단, "non-Aβ programs' independent POC maturity 비공개" uncertainty 유지.
+Data Maturity (현재 2 → 유지)
+In vitro/vivo/cytokine/scRNA-seq/AD/CAA model data 명확하나, IND-enabling GLP tox/PK/PD/CMC 및 human data 없음 → 2점 적절.
+Marketability (현재 2 → 유지)
+v3.1 기준: A. TAP 계산(U.S. AD pool 7.4M → diagnosis/eligibility/treatable assumptions → 약 46만 명)은 합리적.
+B. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy → 약 $1.94B.
+C. Obtainable Peak: 아직 계산되지 않았으므로 "Obtainable Peak Sales not yet calculated; requires further modeling" 을 uncertainty로 추가.
+
+---
+
+2. JSON 수정 제안
+json
+{
+  "scoring": {
+    "competitive_landscape": {
+      "score": 2,
+      "judgment": "True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않아 v3.1 기준 2점 가능. 단, commercial indication 기준 Leqembi, Kisunla, remternetug 등 anti-Aβ 경쟁 과밀은 여전히 리스크.",
+      "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria.",
+      "uncertain_points": [
+        "Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist.",
+        "AD indication anti-Aβ 경쟁 과밀은 여전히 리스크."
+      ],
+      "evidence_type": "E2_indirect_or_class_level_evidence",
+      "evidence_sources": [
+        "https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval",
+        "https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease",
+        "https://trials.lilly.com/en-US/trial/548297"
+      ]
+    },
+    "marketability": {
+      "score": 2,
+      "judgment": "A. TAP: U.S. AD pool 7.4M에서 diagnosis/eligibility/treatable assumptions 적용해 약 46만 명. B. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy 적용 시 약 $1.94B. C. Obtainable Peak Sales: 아직 계산되지 않음.",
+      "why_not_higher": "Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria.",
+      "uncertain
+
+---
+
+## AI Agent Revision Note (2026-06-22)
+
+- Revision basis: Detail AI Agent v3.1 re-evaluation applied from chat answer.
+- Applied at: 2026-06-22T23:10:36.372528+00:00
+- Scope: JSON scoring fields and source report amendment generated from detail-page Agent discussion.
+
+### Applied JSON Changes
+
+- structured_table.sources +1
+- scoring.criteria.target_relevance.evidence_sources +1
+- scoring.criteria.competitive_landscape.evidence_sources +1
+- target_relevance.score 3 -> 2
+- competitive_landscape.score -> 2
+- source_report.raw_markdown v3.1 update badge
+
+### Agent Discussion Summary Used For Revision
+
+네, 맞습니다. 원문 리포트(Wiki 2: Illimis_Therapeutics_ILM01_20260621.md)는 v3.0 지침으로 작성되었고, 스코어링과 JSON 요약은 v3.1 기준으로 업데이트되었습니다.
+
+원문 리포트 (v3.0): 회사 개요, 파이프라인 세부 내용, evidence trail 등은 v3.0 템플릿 그대로 유지.
+스코어링 (v3.1): 제공된 JSON의 각 criterion에 "AI Agent v3.1 re-evaluation update"라고 명시되어 있으며, 점수와 판단 근거가 v3.1 기준으로 재평가됨.
+JSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등).
+대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨.
+
+즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수/판단)는 v3.1로 업데이트된 상태입니다.
+
+추가로 원문 리포트 자체를 v3.1 형식으로 다시 작성해야 한다면, 그 작업은 아직 수행되지 않았습니다.

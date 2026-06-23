@@ -25,8 +25,10 @@ SCHEMA_FILE = JSON_DIR / "drug-valuation.schema.json"
 OBSIDIAN_DIR = ROOT / "obsidian"
 WIKI_DIR = ROOT / "skbp_pipeline_wiki"
 SCORING_CRITERIA_VERSION = "3.1"
+TRIAGE_CRITERIA_VERSION = SCORING_CRITERIA_VERSION
 SCORING_CRITERIA_FULL_MD = ROOT / "config" / "scoring_criteria" / "v3_1_full.md"
 SCORING_CRITERIA_DISPLAY_MD = ROOT / "config" / "scoring_criteria" / "v3_1_display.md"
+CATEGORY_SYNONYMS_FILE = ROOT / "config" / "category-synonyms.json"
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_DEFAULT_MODEL = "openrouter/free"
 OPENROUTER_DEFAULT_FALLBACK_MODELS = [
@@ -206,6 +208,17 @@ def validate_scoring_criterion(criterion: Any, criterion_id: str) -> None:
         require_list_field(criterion, criterion_id, field)
 
 
+def validate_triage_scoring_criterion(criterion: Any, criterion_id: str) -> None:
+    if not isinstance(criterion, dict):
+        validation_error(f"{criterion_id} must be an object.")
+    validate_score(criterion.get("score"), criterion_id)
+    if "main_line_summary" in criterion and not isinstance(criterion.get("main_line_summary"), str):
+        validation_error(f"{criterion_id}.main_line_summary must be a string when provided.")
+    for field in ["evidence_sources", "uncertain_points"]:
+        if field in criterion and not isinstance(criterion.get(field), list):
+            validation_error(f"{criterion_id}.{field} must be an array when provided.")
+
+
 def is_blank(value: Any) -> bool:
     return value is None or value == ""
 
@@ -261,6 +274,13 @@ def validate_records_for_save(records: list[dict[str, Any]]) -> None:
         criteria = ((record.get("scoring") or {}).get("criteria") or {})
         if not isinstance(criteria, dict):
             validation_error(f"record[{index}].scoring.criteria is required.")
+
+        if is_fast_triage_record(record):
+            for criterion_id in ["target_relevance", "moa_validity", "data_maturity"]:
+                if criterion_id not in criteria:
+                    validation_error(f"record[{index}].scoring.criteria.{criterion_id} is required for fast triage.")
+                validate_triage_scoring_criterion(criteria[criterion_id], criterion_id)
+            continue
 
         for criterion_id in CRITERION_IDS:
             if criterion_id not in criteria:
@@ -618,6 +638,289 @@ def build_ai_draft(record: dict[str, Any], message: str) -> dict[str, Any] | Non
         return None
 
     recalculate_total_score(draft)
+    return {"record": draft, "changes": changes}
+
+
+def score_from_revision_text(text: str) -> int | None:
+    normalized = str(text or "")
+    score_matches = []
+    score_matches.extend(
+        re.findall(r"(?:->|→|to|로|으로)\s*([0-3])\s*(?:점|/\s*3)?", normalized, flags=re.IGNORECASE)
+    )
+    score_matches.extend(
+        re.findall(r"(?:score|점수|평가)\s*[:=]?\s*([0-3])\s*(?:점|/\s*3)?", normalized, flags=re.IGNORECASE)
+    )
+    score_matches.extend(re.findall(r"(?<![\d.])([0-3])\s*/\s*3(?![\d.])", normalized))
+    score_matches.extend(re.findall(r"(?<![\d.])([0-3])\s*점(?![\d.])", normalized))
+    if not score_matches:
+        return None
+    return int(score_matches[-1])
+
+
+def criterion_revision_snippet(message: str, aliases: list[str]) -> str | None:
+    lines = [line.strip() for line in str(message or "").splitlines() if line.strip()]
+    lowered_aliases = [alias.lower() for alias in aliases]
+    for index, line in enumerate(lines):
+        lowered = line.lower()
+        if not any(alias in lowered for alias in lowered_aliases):
+            continue
+        window = [line]
+        for next_line in lines[index + 1 : index + 3]:
+            next_lowered = next_line.lower()
+            if any(
+                other_alias in next_lowered
+                for criterion, other_aliases in CRITERION_ALIASES.items()
+                for other_alias in other_aliases
+                if criterion and other_alias.lower() not in lowered_aliases
+            ):
+                break
+            window.append(next_line)
+        return " ".join(window)[:1000]
+    return None
+
+
+def is_fast_triage_record(record: dict[str, Any]) -> bool:
+    meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+    source_report = record.get("source_report") if isinstance(record.get("source_report"), dict) else {}
+    review_type = str(meta.get("review_type") or "").lower()
+    parser_status = str(source_report.get("parser_status") or "").lower()
+    source_format = str(source_report.get("source_format") or "").lower()
+    return (
+        review_type == "fast_triage"
+        or "triage" in parser_status
+        or "fast_triage" in source_format
+        or isinstance(record.get("triage"), dict)
+    )
+
+
+def next_minor_version(version: Any, default_version: str) -> str:
+    text = str(version or "").strip().lstrip("vV") or default_version
+    match = re.match(r"^(\d+)(?:\.(\d+))?", text)
+    if not match:
+        text = default_version
+        match = re.match(r"^(\d+)(?:\.(\d+))?", text)
+    major = int(match.group(1)) if match else 1
+    minor = int(match.group(2) or 0) if match else 0
+    return f"{major}.{minor + 1}"
+
+
+def next_triage_revision_version(version: Any) -> str:
+    text = str(version or "").strip().lstrip("vV")
+    base = TRIAGE_CRITERIA_VERSION
+    match = re.match(rf"^{re.escape(base)}-r(\d+)$", text, flags=re.IGNORECASE)
+    if match:
+        return f"{base}-r{int(match.group(1)) + 1}"
+    return f"{base}-r1"
+
+
+def prepare_revision_context(record: dict[str, Any]) -> dict[str, Any]:
+    if not is_fast_triage_record(record):
+        return {
+            "workflow": "full_scout",
+            "display_name": "SKBP Pipeline Finder",
+            "instruction_label": "GPT 지침 2",
+            "version": SCORING_CRITERIA_VERSION,
+            "incremented": False,
+        }
+
+    meta = record.setdefault("meta", {})
+    triage = record.setdefault("triage", {})
+    previous_version = (
+        triage.get("instruction_version")
+        or meta.get("rubric_version")
+        or TRIAGE_CRITERIA_VERSION
+    )
+    next_version = next_triage_revision_version(previous_version)
+    meta["rubric_version"] = next_version
+    triage["instruction_version"] = next_version
+    return {
+        "workflow": "fast_triage",
+        "display_name": "SKBP Fast Triage",
+        "instruction_label": "GPT 지침 1",
+        "version": next_version,
+        "incremented": True,
+        "previous_version": str(previous_version),
+    }
+
+
+def apply_ai_revision_scores(record: dict[str, Any], answer_markdown: str, changes: list[str]) -> None:
+    criteria = record.setdefault("scoring", {}).setdefault("criteria", {})
+    revision_context = record.get("_revision_context") if isinstance(record.get("_revision_context"), dict) else {}
+    revision_label = (
+        f"{revision_context.get('instruction_label')} v{revision_context.get('version')}"
+        if revision_context.get("version")
+        else f"v{SCORING_CRITERIA_VERSION}"
+    )
+    for criterion_id, aliases in CRITERION_ALIASES.items():
+        criterion = criteria.get(criterion_id)
+        if not isinstance(criterion, dict):
+            continue
+        snippet = criterion_revision_snippet(answer_markdown, aliases)
+        if not snippet:
+            continue
+
+        new_score = score_from_revision_text(snippet)
+        if new_score is None:
+            continue
+
+        old_score = criterion.get("score")
+        reason = (
+            f"AI Agent {revision_label} re-evaluation update. "
+            f"Applied from detail chat answer: {snippet}"
+        )
+        update_score(record, criterion_id, new_score, reason, changes)
+        if old_score != new_score:
+            changes[-1] = f"{criterion_id}.score {old_score} -> {new_score}"
+
+
+def annotate_source_report_version(
+    raw_markdown: str,
+    applied_date: str,
+    revision_context: dict[str, Any],
+) -> tuple[str, bool]:
+    version = str(revision_context.get("version") or SCORING_CRITERIA_VERSION)
+    display_name = str(revision_context.get("display_name") or "SKBP Pipeline Finder")
+    instruction_label = str(revision_context.get("instruction_label") or "GPT 지침 2")
+    if revision_context.get("workflow") == "fast_triage":
+        title = f"지침 업데이트 ({instruction_label} v{version})"
+        updated_phrase = f"{display_name} {instruction_label} v{version} 기준으로 재평가 및 업데이트"
+    else:
+        title = f"기준 업데이트 (v{version})"
+        updated_phrase = f"{display_name} v{version} 기준으로 재평가 및 업데이트"
+
+    banner = (
+        f"> **{title}:** "
+        "이 원문은 최초 작성 기준을 보존하되, "
+        f"{applied_date} Detail AI Agent 검토를 통해 "
+        f"**{updated_phrase}**되었습니다. "
+        "최신 판단은 JSON fields와 아래 Revision Note를 기준으로 봅니다."
+    )
+    marker = f"> **{title}:**"
+    text = raw_markdown or ""
+
+    if marker in text:
+        updated = re.sub(
+            rf"> \*\*{re.escape(title)}:\*\* [^\n]+",
+            banner,
+            text,
+            count=1,
+        )
+        return updated, updated != text
+
+    if revision_context.get("workflow") == "fast_triage":
+        updated = re.sub(
+            r"> \*\*지침 업데이트 \(GPT 지침 1 v\d+(?:\.\d+)?(?:-r\d+)?\):\*\* [^\n]+",
+            banner,
+            text,
+            count=1,
+        )
+        if updated != text:
+            return updated, True
+
+    lines = text.splitlines()
+    for index, line in enumerate(lines):
+        if re.search(r"SKBP Pipeline Finder v\d+(?:\.\d+)?|SKBP Fast Triage|GPT 지침 1", line):
+            insert_at = index + 1
+            while insert_at < len(lines) and lines[insert_at].strip():
+                insert_at += 1
+            lines[insert_at:insert_at] = ["", banner]
+            return "\n".join(lines), True
+
+    if lines and lines[0].startswith("#"):
+        lines[1:1] = ["", banner]
+        return "\n".join(lines), True
+
+    return f"{banner}\n\n{text}".rstrip(), True
+
+
+def append_source_report_revision(
+    record: dict[str, Any],
+    answer_markdown: str,
+    changes: list[str],
+    instruction: str = "",
+    revision_context: dict[str, Any] | None = None,
+) -> None:
+    revision_context = revision_context or {
+        "workflow": "full_scout",
+        "display_name": "SKBP Pipeline Finder",
+        "instruction_label": "GPT 지침 2",
+        "version": SCORING_CRITERIA_VERSION,
+    }
+    source_report = record.setdefault("source_report", {})
+    raw_markdown = source_report.get("raw_markdown")
+    raw_markdown = raw_markdown if isinstance(raw_markdown, str) else ""
+    applied_at = datetime.now(timezone.utc).isoformat()
+    revision_version = str(revision_context.get("version") or SCORING_CRITERIA_VERSION)
+    instruction_label = str(revision_context.get("instruction_label") or "GPT 지침 2")
+    instruction_line = instruction.strip() or f"Detail AI Agent {instruction_label} v{revision_version} re-evaluation"
+    answer = answer_markdown.strip()
+    raw_markdown, version_annotated = annotate_source_report_version(raw_markdown, applied_at[:10], revision_context)
+    if version_annotated:
+        changes.append(f"source_report.raw_markdown {instruction_label} v{revision_version} update badge")
+    change_lines = "\n".join(f"- {change}" for change in changes) or "- No structured score/path changes detected."
+
+    revision_block = (
+        "\n\n---\n\n"
+        f"## AI Agent Revision Note ({instruction_label} v{revision_version}, {applied_at[:10]})\n\n"
+        f"- Revision basis: {instruction_line}\n"
+        f"- Version applied: {instruction_label} v{revision_version}\n"
+        f"- Applied at: {applied_at}\n"
+        "- Scope: JSON scoring fields and source report amendment generated from detail-page Agent discussion.\n\n"
+        "### Applied JSON Changes\n\n"
+        f"{change_lines}\n\n"
+        "### Agent Discussion Summary Used For Revision\n\n"
+        f"{answer or '-'}\n"
+    )
+    source_report["raw_markdown"] = f"{raw_markdown.rstrip()}{revision_block}"
+    history = source_report.setdefault("revision_history", [])
+    if isinstance(history, list):
+        history.append(
+            {
+                "created_at": applied_at,
+                "source": "detail_ai_agent",
+                "instruction": instruction_line,
+                "instruction_label": instruction_label,
+                "rubric_version": revision_version,
+                "workflow": revision_context.get("workflow") or "full_scout",
+                "changes": changes[:],
+            }
+        )
+    source_report["parser_status"] = (
+        "fast_triage_ai_revision_applied"
+        if revision_context.get("workflow") == "fast_triage"
+        else "ai_revision_applied"
+    )
+    changes.append("source_report.raw_markdown + AI Agent Revision Note")
+
+
+def build_ai_revision_update(
+    record: dict[str, Any],
+    answer_markdown: str,
+    instruction: str = "",
+) -> dict[str, Any]:
+    draft = copy.deepcopy(record)
+    changes: list[str] = []
+    message = answer_markdown.strip()
+    revision_context = prepare_revision_context(draft)
+    draft["_revision_context"] = revision_context
+    if revision_context.get("incremented"):
+        changes.append(
+            f"meta.rubric_version {revision_context.get('previous_version')} -> {revision_context.get('version')}"
+        )
+
+    apply_path_assignments(draft, message, changes)
+    apply_theme_cluster(draft, message, changes)
+    append_source_from_message(draft, message, changes)
+    append_criterion_evidence(draft, message, changes)
+    apply_ai_revision_scores(draft, message, changes)
+    if is_fast_triage_record(draft):
+        scoring = draft.setdefault("scoring", {})
+        scoring["total_score"] = None
+        scoring["max_score"] = 21
+    else:
+        recalculate_total_score(draft)
+    append_source_report_revision(draft, message, changes, instruction, revision_context)
+    draft.pop("_revision_context", None)
     return {"record": draft, "changes": changes}
 
 
@@ -1159,6 +1462,42 @@ def get_records() -> dict[str, Any]:
     }
 
 
+@app.post("/api/records/{record_id}/apply-ai-revision")
+async def apply_ai_revision_to_record(record_id: str, request: Request) -> dict[str, Any]:
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+
+    answer_markdown = (payload.get("answer_markdown") or "").strip()
+    instruction = (payload.get("instruction") or "").strip()
+    if not answer_markdown:
+        raise HTTPException(status_code=400, detail="answer_markdown is required.")
+
+    records = load_records()
+    for index, record in enumerate(records):
+        if record_key(record) != record_id:
+            continue
+
+        result = build_ai_revision_update(record, answer_markdown, instruction)
+        updated_record = result["record"]
+        validate_records_for_save([updated_record])
+        records[index] = updated_record
+        save_records(records)
+        exports = run_markdown_exports()
+        return {
+            "ok": True,
+            "record": updated_record,
+            "record_id": record_key(updated_record),
+            "updated_previous_id": record_id,
+            "changes": result["changes"],
+            "total": len(records),
+            "exports": exports,
+        }
+
+    raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
+
+
 @app.get("/api/obsidian/assets/{record_id:path}")
 def get_obsidian_asset(record_id: str) -> dict[str, Any]:
     records = load_records()
@@ -1362,6 +1701,11 @@ def get_scoring_criteria() -> dict[str, Any]:
             MARKETABILITY_COMMERCIAL_RATIONALE_STATUS_ALLOWED_VALUES
         ),
     }
+
+
+@app.get("/api/category-synonyms")
+def get_category_synonyms() -> Any:
+    return read_json(CATEGORY_SYNONYMS_FILE)
 
 
 @app.post("/api/obsidian/export")

@@ -35,6 +35,13 @@
               data-tooltip="SKBP 평가 기준, PASS/REVIEW/FAIL 조건, 점수표를 확인합니다."
             ><span aria-hidden="true">?</span><b>판단근거</b></button>
             <button
+              id="copyTriagePromptTopButton"
+              class="help-tooltip"
+              type="button"
+              data-tooltip="GPT fast triage 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / N/A로 screening할 때 사용합니다."
+              aria-label="GPT triage 지침 복사"
+            ><span aria-hidden="true">GPT</span><b>지침 1</b></button>
+            <button
               id="copyPromptTopButton"
               class="help-tooltip"
               type="button"
@@ -71,7 +78,7 @@
             <strong id="metricTotal">-</strong>
           </article>
           <article class="metric">
-            <span>Hard Filter PASS</span>
+            <span>Pipeline Filter PASS/SELECT</span>
             <strong id="metricPass">-</strong>
           </article>
           <article class="metric">
@@ -115,7 +122,7 @@
 
           <article class="panel">
             <div class="panel-header">
-              <h2>Hard Filter</h2>
+              <h2>Pipeline Filter</h2>
               <span>PASS / FAIL</span>
             </div>
             <div class="donut-wrap">
@@ -160,13 +167,25 @@
               </select>
             </label>
             <label>
+              <span>Cluster</span>
+              <select id="clusterFilter">
+                <option value="all">전체</option>
+              </select>
+            </label>
+            <label>
               <span>국가</span>
               <select id="countryFilter">
                 <option value="all">전체</option>
               </select>
             </label>
             <label>
-              <span>Hard Filter</span>
+              <span>Main indication</span>
+              <select id="indicationFilter">
+                <option value="all">전체</option>
+              </select>
+            </label>
+            <label>
+              <span>Pipeline Filter</span>
               <select id="passFilter">
                 <option value="all">전체</option>
                 <option value="PASS">PASS</option>
@@ -203,6 +222,16 @@
             </div>
             <div class="column-settings-grid" id="columnSettingsGrid"></div>
           </div>
+          <div class="pipeline-table-tabs" role="tablist" aria-label="Pipeline table mode">
+            <button id="fastTriageTableTab" type="button" role="tab" aria-selected="false" data-table-mode="triage">
+              <span>GPT 1</span>
+              <b>Fast Triage</b>
+            </button>
+            <button class="active" id="fullScoutTableTab" type="button" role="tab" aria-selected="true" data-table-mode="full">
+              <span>GPT 2</span>
+              <b>Full Scout</b>
+            </button>
+          </div>
           <div class="table-wrap">
             <table class="pipeline-table">
               <colgroup id="pipelineColGroup">
@@ -211,7 +240,9 @@
                 <col class="pipeline-col-country" />
                 <col class="pipeline-col-asset" />
                 <col class="pipeline-col-target" />
+                <col class="pipeline-col-indication" />
                 <col class="pipeline-col-stage" />
+                <col class="pipeline-col-filter" />
                 <col class="pipeline-col-filter" />
                 <col class="pipeline-col-score" />
                 <col class="pipeline-col-score" />
@@ -231,8 +262,10 @@
                   <th><button data-sort="country" type="button">Country</button></th>
                   <th><button data-sort="asset" type="button">Asset</button></th>
                   <th><button data-sort="target" type="button">Target / Theme / Cluster</button></th>
+                  <th><button data-sort="mainIndication" type="button">Main indication</button></th>
                   <th><button data-sort="stage" type="button">Stage</button></th>
-                  <th><button data-sort="hardFilter" type="button">Filter</button></th>
+                  <th><button data-sort="filter1" type="button">Filter 1</button></th>
+                  <th><button data-sort="filter2" type="button">Filter 2</button></th>
                   <th><button data-sort="targetScore" type="button">TR</button></th>
                   <th><button data-sort="competitiveScore" type="button">Comp</button></th>
                   <th><button data-sort="moaScore" type="button">MOA</button></th>
@@ -334,6 +367,20 @@
       </form>
     </aside>
 
+    <div class="drawer-backdrop" id="triageReportBackdrop" hidden></div>
+    <aside class="ai-drawer triage-report-drawer" id="triageReportDrawer" aria-label="Fast triage markdown report drawer" aria-hidden="true" hidden>
+      <div class="drawer-resize-handle" data-resize-drawer aria-label="Resize triage report drawer" role="separator" tabindex="0"></div>
+      <div class="ai-drawer-header">
+        <div>
+          <p class="eyebrow">GPT 1 Fast Triage</p>
+          <h2 id="triageReportTitle">Markdown report</h2>
+          <span id="triageReportMeta" class="triage-report-meta">원문 미선택</span>
+        </div>
+        <button id="triageReportClose" type="button" aria-label="Close triage report">닫기</button>
+      </div>
+      <div id="triageReportBody" class="report-viewer triage-report-body"></div>
+    </aside>
+
     <div class="drawer-backdrop" id="criteriaBackdrop" hidden></div>
     <aside class="ai-drawer criteria-drawer" id="criteriaDrawer" aria-label="Scoring criteria drawer" aria-hidden="true" hidden>
       <div class="ai-drawer-header">
@@ -350,6 +397,60 @@
           <p>
             각 항목은 독립적으로 평가하며, 모든 점수는 0, 1, 2, 3 중 하나의 단일 정수로만 부여합니다.
             Evidence Type은 점수를 자동 결정하지 않고, 해당 점수가 어떤 수준의 근거에 기반했는지 보여주는 audit label입니다.
+          </p>
+        </section>
+
+        <section class="criteria-rule criteria-triage-rule">
+          <h3>GPT 지침 1 — Fast Triage · v3.1 기준</h3>
+          <p>
+            지침 1은 여러 후보 중 지침 2 Full Scout로 넘길 대상을 빠르게 고르는 1차 screening입니다.
+            <code>Target Relevance</code>, <code>MoA Validity</code>, <code>Data Maturity</code>는 지침 2의 같은 항목을 그대로 쓰되,
+            evidence type, why_not_higher, full source trail까지 요구하지 않는 예비 평가입니다.
+            <code>SELECT</code>만 지침 2에서 심층 검토하는 것이 기본 흐름입니다.
+          </p>
+        </section>
+
+        <section class="criteria-pass-grid triage-status-grid" aria-label="SELECT REJECT N/A triage criteria">
+          <article>
+            <h3>SELECT</h3>
+            <ul>
+              <li>Asset identity 확인 가능</li>
+              <li>TR / MOA / Data 중 2개 이상이 2점 이상</li>
+              <li>SKBP fit이 있어 지침 2 검토 가치 있음</li>
+            </ul>
+          </article>
+          <article>
+            <h3>REJECT</h3>
+            <ul>
+              <li>Asset identity는 확인됨</li>
+              <li>SKBP fit, MoA, Data 중 핵심이 약함</li>
+              <li>현재 공개자료 기준 지침 2 우선순위 낮음</li>
+            </ul>
+          </article>
+          <article>
+            <h3>N/A</h3>
+            <ul>
+              <li>Pipeline asset identity 확인 불가</li>
+              <li>회사, target, indication 연결 불가</li>
+              <li>회사/타깃/적응증을 확인할 단서가 부족함</li>
+            </ul>
+          </article>
+        </section>
+
+        <section class="criteria-rule criteria-full-rule">
+          <h3>GPT 지침 2 — Full Scout · v3.1 기준</h3>
+          <p>
+            지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
+            지침 1에서 예비로 본 TR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
+            Competitive Landscape, Platform, Expansion, Marketability까지 완성해 최종 <code>PASS</code>, <code>REVIEW</code>, <code>FAIL</code>로 판단합니다.
+          </p>
+        </section>
+
+        <section class="criteria-rule target-theme-note">
+          <h3>Target Relevance — Theme / Cluster 근거</h3>
+          <p>
+            E/I Balance와 Neuroimmune은 Target Relevance를 판단할 때 쓰는 SKBP 내부 biology map입니다.
+            asset의 target과 MoA가 아래 theme/cluster 중 어디에 들어가는지 먼저 확인하고, 맞지 않으면 Target Relevance를 높게 주지 않습니다.
           </p>
         </section>
 
@@ -378,7 +479,15 @@
           </article>
         </section>
 
-        <section class="criteria-rule">
+        <section class="criteria-rule criteria-other-header">
+          <h3>기타 기록 규칙</h3>
+          <p>
+            아래 항목들은 점수 자체보다 auditability를 위해 남깁니다. Evidence Type은 근거 수준의 라벨이고,
+            근거 기록은 왜 그 점수인지 추적하기 위한 메모이며, 경쟁사 유사도는 Competitive Landscape 판단을 보조합니다.
+          </p>
+        </section>
+
+        <section class="criteria-rule criteria-other-card">
           <h3>Evidence Type</h3>
           <div class="criteria-table-wrap">
             <table class="criteria-table evidence-type-table">
@@ -399,7 +508,7 @@
           </div>
         </section>
 
-        <section class="criteria-pass-grid" aria-label="PASS REVIEW FAIL criteria">
+        <section class="criteria-pass-grid full-status-grid" aria-label="PASS REVIEW FAIL criteria">
           <article>
             <h3>PASS</h3>
             <ul>
@@ -428,7 +537,152 @@
           </article>
         </section>
 
-        <section>
+        <section class="criteria-scoring-section">
+          <div class="criteria-section-header">
+            <h3>Scoring Table</h3>
+            <span>지침 1은 TR/MOA/Data만 예비 적용, 지침 2는 7개 전체 적용</span>
+          </div>
+          <div class="criteria-table-wrap">
+            <table class="criteria-table">
+              <colgroup>
+                <col class="criteria-name-col" />
+                <col class="criteria-score-col" />
+                <col class="criteria-score-col" />
+                <col class="criteria-score-col" />
+                <col class="criteria-score-col" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>항목</th>
+                  <th>0점</th>
+                  <th>1점</th>
+                  <th>2점</th>
+                  <th>3점</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>Target Relevance</th>
+                  <td>CNS/SKBP 관련성 거의 없음</td>
+                  <td>질환 또는 target 관련성 약함</td>
+                  <td>neurology 관련성은 있으나 theme/cluster fit은 제한적</td>
+                  <td>SKBP theme 또는 cluster에 직접 해당</td>
+                </tr>
+                <tr>
+                  <th>Competitive Landscape</th>
+                  <td>판단 불가 또는 강한 front runner 다수</td>
+                  <td>경쟁 2개 이상, 차별성 불명확</td>
+                  <td>front runner 1-2개이나 BIC 가능성 있음</td>
+                  <td>직접 경쟁 적고 FIC/BIC 가능성 높음</td>
+                </tr>
+                <tr>
+                  <th>MoA Validity</th>
+                  <td>MoA 불명확 또는 biology 연결 약함</td>
+                  <td>회사 claim / 이론적 rationale 중심</td>
+                  <td>functional evidence 또는 class validation 있음</td>
+                  <td>asset-specific validation 또는 human PoC 있음</td>
+                </tr>
+                <tr>
+                  <th>Platform Attractiveness</th>
+                  <td>platform 실체 또는 재현성 불명확</td>
+                  <td>차별성 claim 중심</td>
+                  <td>기술 차별성 논리와 일부 data 있음</td>
+                  <td>data 또는 외부검증으로 platform 장점 입증</td>
+                </tr>
+                <tr>
+                  <th>Expansion Potential</th>
+                  <td>확장 근거 없음</td>
+                  <td>이론적 가능성만 있음</td>
+                  <td>adjacent indication biology 근거 있음</td>
+                  <td>복수 indication 또는 pipeline 확장 확인</td>
+                </tr>
+                <tr>
+                  <th>Data Maturity</th>
+                  <td>asset-specific data 없음</td>
+                  <td>stage 대비 공개 data 부족</td>
+                  <td>stage에 부합하는 전임상/초기 임상 data 있음</td>
+                  <td>decision-ready package 또는 임상 PoC 있음</td>
+                </tr>
+                <tr>
+                  <th>Marketability</th>
+                  <td>상업성 rationale 또는 계산 불가</td>
+                  <td>Obtainable peak sales &lt; USD 1B</td>
+                  <td>USD 1B-2B 가능</td>
+                  <td>&gt;= USD 2B + 확장성/가격/차별성 우수</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="criteria-parameter-guide">
+          <div class="criteria-section-header">
+            <h3>Parameter Guide</h3>
+            <span>각 항목에서 실제로 보는 핵심 쟁점</span>
+          </div>
+          <div class="criteria-detail-grid compact-criteria-detail-grid" aria-label="Detailed scoring guidance">
+            <article class="parameter-card-wide target-parameter-card">
+              <h3>1. Target Relevance</h3>
+              <p>Target, disease biology, indication이 SKBP의 E/I Balance 또는 Neuroimmune theme/cluster에 직접 맞는지 봅니다. 단순 CNS 질환보다 target-level fit이 중요합니다.</p>
+              <div class="target-theme-inline" aria-label="Target Relevance theme cards">
+                <div>
+                  <strong>E/I Balance</strong>
+                  <span>Ion Channel, Inhibitory Tone, Synaptic Transmission, Chloride Homeostasis, Network Modulation</span>
+                </div>
+                <div>
+                  <strong>Neuroimmune</strong>
+                  <span>Glial homeostasis, CNS injury immune response, Cytokine neuromodulation, disease immune modulation</span>
+                </div>
+              </div>
+            </article>
+            <article class="parameter-card-wide competitive-parameter-card">
+              <h3>2. Competitive Landscape</h3>
+              <p>같은 indication, target, MoA에서 앞선 competitor가 얼마나 강한지와 차별 가능한 위치인지를 봅니다. 유사 pipeline은 similar_pipeline_count, high/medium/low similarity, matched dimensions, shared data points, differentiating data points, evidence source를 함께 기록합니다.</p>
+              <p>같은 indication, target, MoA에서 앞선 competitor가 얼마나 강한지 봅니다. 경쟁이 없다는 것보다 차별 가능한 위치인지가 핵심입니다.</p>
+            </article>
+            <article>
+              <h3>3. MoA Validity</h3>
+              <p>MoA가 질환 biology와 기능적으로 연결되는지 봅니다. claim만 있는지, class validation 또는 asset-specific validation이 있는지가 점수 차이를 만듭니다.</p>
+            </article>
+            <article>
+              <h3>4. Platform Attractiveness</h3>
+              <p>modality와 platform이 SKBP 관점에서 다루기 좋은지, 반복 가능성과 차별성이 있는지 봅니다. small molecule, ASO, siRNA는 기본 선호도가 높습니다.</p>
+            </article>
+            <article>
+              <h3>5. Expansion Potential</h3>
+              <p>같은 biology, target, platform으로 adjacent indication이나 후속 pipeline 확장이 가능한지 봅니다. 단순 label 확장이 아니라 실제 biology 근거가 필요합니다.</p>
+            </article>
+            <article>
+              <h3>6. Data Maturity</h3>
+              <p>현재 stage에 맞는 asset-specific data가 보이는지 봅니다. preclinical이면 실험 readout, clinical이면 human safety/efficacy/biomarker 근거가 핵심입니다.</p>
+            </article>
+            <article class="parameter-card-wide marketability-parameter-card">
+              <h3>7. Marketability</h3>
+              <p>
+                Marketability는 환자 풀에서 시작해 실제 매출 가능성까지 단계적으로 좁혀 봅니다.
+                A는 치료 가능한 환자 수, B는 경쟁 리스크를 반영하기 전 peak sales,
+                C는 경쟁·가격·확장성을 반영한 obtainable peak sales입니다.
+              </p>
+              <div class="marketability-formula-grid" aria-label="Marketability A/B/C formula cards">
+                <div>
+                  <strong>A. TAP</strong>
+                  <span>Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate</span>
+                </div>
+                <div>
+                  <strong>B. Unrisked Peak Sales</strong>
+                  <span>TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor</span>
+                </div>
+                <div>
+                  <strong>C. Obtainable Peak Sales</strong>
+                  <span>Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment</span>
+                </div>
+              </div>
+              <p class="marketability-unit-line"><strong>Sales output unit</strong><span>million USD</span></p>
+            </article>
+          </div>
+        </section>
+
+        <section class="criteria-scoring-section legacy-scoring-section">
           <div class="criteria-section-header">
             <h3>Scoring Table</h3>
             <span>0점에서 3점까지 보수적으로 적용</span>
@@ -533,27 +787,18 @@
           </article>
         </section>
 
-        <section class="criteria-rule">
-          <h3>Marketability A/B/C</h3>
-          <p>
-            <code>A. TAP = Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate</code><br />
-            <code>B. Unrisked Peak Sales = TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor</code><br />
-            <code>C. Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment</code><br />
-            <code>Sales output unit = million USD</code>
-          </p>
-        </section>
-
-        <section class="criteria-rule">
+        <section class="criteria-rule criteria-other-card">
           <h3>근거 기록 규칙</h3>
-          <p>
-            기준 설명은 <code>rubric</code> 섹션에만 남깁니다. 각 scoring 항목의
-            <code>main_line_summary</code>에는 왜 그 점수가 나왔는지만 쓰고,
-            <code>evidence_sources</code>, <code>investigation_note</code>,
-            <code>uncertain_points</code>에는 출처, 조사 과정, 불확실성을 분리해서 기록합니다.
-          </p>
+          <ul class="criteria-subbullet-list">
+            <li><strong>Rubric</strong><span>기준 설명은 <code>rubric</code> 섹션에만 남깁니다.</span></li>
+            <li><strong>main_line_summary</strong><span>각 scoring 항목에서 왜 그 점수가 나왔는지만 한 줄로 기록합니다.</span></li>
+            <li><strong>evidence_sources</strong><span>점수 판단에 사용한 출처 URL과 핵심 근거를 분리합니다.</span></li>
+            <li><strong>investigation_note</strong><span>조사 과정, 확인한 항목, 판단 경계를 짧게 남깁니다.</span></li>
+            <li><strong>uncertain_points</strong><span>자료 부족, 모호한 claim, 추가 확인 필요사항을 따로 기록합니다.</span></li>
+          </ul>
         </section>
 
-        <section class="criteria-rule">
+        <section class="criteria-rule criteria-other-card">
           <h3>경쟁사 유사도 기록</h3>
           <p>
             경쟁 pipeline은 <code>similar_pipeline_count</code>, high/medium/low similarity 개수,

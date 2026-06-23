@@ -31,6 +31,8 @@ A reusable biology axis under a Theme that supports repeated target discovery an
 
 ## Related Assets
 
+- [[02_Assets/Asset__BMB-101|BMB-101]]
+- [[02_Assets/Asset__Bexicaserin_LP352|Bexicaserin_LP352]]
 - [[02_Assets/Asset__UX-EP001_UXEP-001__UX-EP001|UX-EP001_UXEP-001__UX-EP001]]
 
 ## Notes

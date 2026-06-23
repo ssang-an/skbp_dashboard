@@ -31,6 +31,7 @@ A reusable biology axis under a Theme that supports repeated target discovery an
 
 ## Related Assets
 
+- [[02_Assets/Asset__HB018|HB018]]
 - [[02_Assets/Asset__WT-1108__WT1108|WT-1108__WT1108]]
 
 ## Notes

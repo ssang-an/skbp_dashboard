@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SKBP Wiki Note</title>
+    <script>
+      (() => {
+        const stored = localStorage.getItem('skbp.ui.theme');
+        const theme = stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
     <link rel="stylesheet" href="./src/styles.css" />
   </head>
   <body>
@@ -15,7 +22,11 @@
         </div>
         <div class="top-actions">
           <a class="secondary-link" href="/">Dashboard</a>
-          <a class="secondary-link" id="rawWikiLink" href="#" target="_blank" rel="noreferrer">Raw MD</a>
+          <button class="theme-toggle" data-theme-toggle type="button" aria-label="라이트/다크 모드 전환">
+            <span data-theme-icon aria-hidden="true">◐</span>
+            <span data-theme-label>Dark</span>
+          </button>
+          <a class="secondary-link" id="rawWikiLink" href="#" target="_blank" rel="noreferrer"><span aria-hidden="true">↗</span><b>Raw MD</b></a>
           <span class="status-pill" id="wikiStatus">Loading</span>
         </div>
       </header>

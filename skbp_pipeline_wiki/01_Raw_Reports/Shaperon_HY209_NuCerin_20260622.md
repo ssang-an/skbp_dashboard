@@ -3,6 +3,8 @@
 본 보고서는 SKBP Pipeline Finder v3.0용으로 작성되었으며, 사용자 제공 SKBP v3.0 템플릿을 기준으로 구성했다. :contentReference[oaicite:0]{index=0}  
 모든 핵심 판단에는 auditability를 위해 URL을 포함했다. HY209는 Shaperon의 GPCR19/TGR5 agonist 계열 물질이며, 본 보고서는 CNS 관점에서 **NuCerin / Alzheimer’s disease** 프로그램을 중심으로 평가한다. NuGel, NuSepin, NuPulin 등 다른 HY209/GPCR19 프로그램은 확장성 근거로만 반영했다.
 
+> **기준 업데이트 (v3.1):** 이 원문은 최초 작성 기준을 보존하되, 2026-06-23 Detail AI Agent 검토를 통해 **SKBP Pipeline Finder v3.1 기준으로 재평가 및 업데이트**되었습니다. 최신 판단은 JSON fields와 아래 Revision Note를 기준으로 봅니다.
+
 ---
 
 ## 1) Company Profile
@@ -331,3 +333,27 @@ Most important diligence question:
 [28]: https://www.ventustx.com/ventus-therapeutics-announces-first-patient-dosed-in-phase-2a-clinical-trial-evaluating-vent-02-an-oral-brain-penetrant-nlrp3-inhibitor-in-parkinsons-disease/ "Ventus VENT-02 Phase 2a PD trial announcement"
 [29]: https://www.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2025.1731165/full "Dapansutrile therapeutic applications review"
 [30]: https://pmc.ncbi.nlm.nih.gov/articles/PMC11212731/ "TGR5 deletion effects in AD mouse model"
+
+---
+
+## AI Agent Revision Note (GPT 지침 2 v3.1, 2026-06-23)
+
+- Revision basis: Detail AI Agent v3.1 re-evaluation applied from chat answer.
+- Version applied: GPT 지침 2 v3.1
+- Applied at: 2026-06-23T10:13:38.578688+00:00
+- Scope: JSON scoring fields and source report amendment generated from detail-page Agent discussion.
+
+### Applied JSON Changes
+
+- structured_table.sources +1
+- source_report.raw_markdown GPT 지침 2 v3.1 update badge
+
+### Agent Discussion Summary Used For Revision
+
+v3.0 → v3.1 변경점과 HY209/NuCerin 반영 방안을 아래에 정리합니다.
+
+---
+
+v3.1에서 달라진 주요 기준 (wiki note 및 scorecard 기반 추론)
+Evidence type 세분화: E1(규제/임상), E2(간접/클래스), E3(자산 특이 전임상/기술)로 명확히 구분. 각 criterion에 evidence_type 필드가 추가됨.
+**“Why not

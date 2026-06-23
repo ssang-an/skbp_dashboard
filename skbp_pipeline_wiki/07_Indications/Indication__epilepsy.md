@@ -22,6 +22,7 @@ confidence: "medium"
 
 ## Related Assets
 
+- [[02_Assets/Asset__SAN2355|SAN2355]]
 - [[02_Assets/Asset__UX-EP001_UXEP-001__UX-EP001|UX-EP001_UXEP-001__UX-EP001]]
 
 ## Related Targets / MoA

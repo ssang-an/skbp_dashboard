@@ -91,11 +91,11 @@ HY209/NuCerin is a strong SKBP Neuroimmune-fit oral GPCR19/TGR5-P2X7/NLRP3 Alzhe
 - [[09_Evidence_Sources/Source__Frontiers_Immunology_GPCR19_P2X7R_NLRP3_AD_mouse_paper|Frontiers Immunology GPCR19/P2X7R/NLRP3 AD mouse paper]]
 - [[09_Evidence_Sources/Source__NCT06533878_HY209_Phase_1_listing|NCT06533878 HY209 Phase 1 listing]]
 - [[09_Evidence_Sources/Source__NuCerin_oral_HY209_AD_mouse_abstract_summary|NuCerin oral HY209 AD mouse abstract summary]]
+- [[09_Evidence_Sources/Source__AI_draft_search_note|AI draft search note]]
 - [[09_Evidence_Sources/Source__DART_Shaperon_company_profile|DART Shaperon company profile]]
 - [[09_Evidence_Sources/Source__BIO_company_profile|BIO company profile]]
 - [[09_Evidence_Sources/Source__WHO_dementia_fact_sheet|WHO dementia fact sheet]]
 - [[09_Evidence_Sources/Source__Alzheimer's_Association_Facts_and_Figures|Alzheimer's Association Facts and Figures]]
-- [[09_Evidence_Sources/Source__FDA_Leqembi_approval|FDA Leqembi approval]]
 
 ## 6. Key Diligence Questions
 

@@ -31,6 +31,9 @@ A reusable biology axis under a Theme that supports repeated target discovery an
 
 ## Related Assets
 
+- [[02_Assets/Asset__HB-02|HB-02]]
+- [[02_Assets/Asset__HB-03|HB-03]]
+- [[02_Assets/Asset__HB-05|HB-05]]
 - [[02_Assets/Asset__META-01_META-1i_MP-5342__META01|META-01_META-1i_MP-5342__META01]]
 
 ## Notes

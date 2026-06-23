@@ -1,12 +1,31 @@
 # Companies
 
-> Generated at `2026-06-23T00:19:35`.
+> Generated at `2026-06-23T23:59:29`.
 
+- [[Actio Biosciences]] (2)
+- [[Biohaven]] (1)
+- [[Bright Minds Biosciences]] (1)
+- [[Encoded Therapeutics]] (1)
+- [[HEC Pharm]] (1)
+- [[Hangzhou Vitan Pharmaceutical Technology Co Ltd]] (1)
 - [[Hangzhou Westan Pharmaceutical Technology Co., Ltd|Hangzhou Westan Pharmaceutical Technology Co., Ltd.]] (1)
+- [[Hanyang University]] (2)
+- [[Harbour BioMed (Guangzhou) Co Ltd]] (2)
+- [[HealZen Therapeutics Co Ltd]] (1)
+- [[HealthBiome Inc]] (3)
+- [[Hebei Normal University]] (1)
+- [[Hefei Huafang Pharmaceutical Sciences and Technology]] (1)
+- [[Humanwell Healthcare Group]] (1)
 - [[Illimis Therapeutics]] (1)
+- [[Jazz Pharmaceuticals - Saniona|Jazz Pharmaceuticals / Saniona]] (1)
+- [[Lundbeck - Longboard Pharmaceuticals|Lundbeck / Longboard Pharmaceuticals]] (1)
 - [[Lynk Pharmaceuticals Co., Ltd|Lynk Pharmaceuticals Co., Ltd.]] (1)
 - [[META Pharmaceuticals Inc|META Pharmaceuticals Inc.]] (1)
 - [[NeuShen Therapeutics]] (1)
+- [[QurAlis]] (1)
+- [[Rapport Therapeutics]] (1)
 - [[Shanghai UniXell Biotechnology Co., Ltd|Shanghai UniXell Biotechnology Co., Ltd.]] (1)
 - [[Shaperon Inc|Shaperon Inc.]] (1)
+- [[Stoke Therapeutics - Biogen|Stoke Therapeutics / Biogen]] (1)
 - [[VivaVision Biotech]] (1)
+- [[Xenon Pharmaceuticals]] (1)

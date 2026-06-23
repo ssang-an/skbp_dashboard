@@ -31,6 +31,7 @@ A cross-disease strategic biology theme used for SKBP Theme-based R&D strategy.
 
 ## Related Assets
 
+- [[02_Assets/Asset__HB018|HB018]]
 - [[02_Assets/Asset__WT-1108__WT1108|WT-1108__WT1108]]
 
 ## Notes

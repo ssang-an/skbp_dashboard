@@ -33,7 +33,7 @@ indications:
 scorecard: "[[10_Scorecards/Scorecard__ILM01_GAIA-Aβ__20260621|Scorecard__ILM01_GAIA-Aβ__20260621]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__교세포_향상성|교세포 향상성]]"
-total_score: 16
+total_score: 15
 max_score: 21
 recommendation: "Watch"
 evidence_level: "E3"
@@ -54,7 +54,7 @@ evidence_level: "E3"
 | Stage | Preclinical / IND-enabling preparation; public clinical trial registry record not verified |
 | Theme / Cluster | [[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]] / [[11_Themes_Clusters/Cluster__교세포_향상성|교세포 향상성]] |
 | Recommendation | Watch |
-| Total Score | 16/21 |
+| Total Score | 15/21 |
 
 ## 2. One-line Summary
 
@@ -62,8 +62,8 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 
 ## 3. Why This Asset Matters
 
-- Strategic relevance: Aβ 자체는 AD target이지만 ILM01의 differentiating biology는 TAM receptor, microglia/astrocyte phagocytosis, anti-inflammatory clearance라서 Neuroimmune / 교세포 향상성 cluster에 정확히 매핑된다.
-- Scientific rationale: Nature Medicine 기반 αAβ-Gas6 data가 TAM-dependent clearance, reduced NF-κB/inflammation, astrocyte/microglia phagocytosis, reduced synapse elimination and microhemorrhage를 일관되게 뒷받침한다.
+- Strategic relevance: AI Agent v3.1 re-evaluation update. Applied from detail chat answer: JSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등). 대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨. 즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수/판단)는 v3.1로 업데이트된 상태입니다.
+- Scientific rationale: AI Agent v3.1 re-evaluation update. Applied from detail chat answer: v3.1 기준: "same-MoA 경쟁자가 명확하지 않으면 2점 가능"이라는 해석 여지 있음. 현재 근거: True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않음. 수정 제안: "Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist"를 uncertainty로 유지하되, 점수를 2로 상향하고 근거를 "E2_indirect_or_class_level_evidence"로 조정 가능.
 - BD relevance: ILM01 final candidate가 사람에서 기존 anti-Aβ antibody 대비 동등한 amyloid clearance와 의미 있게 낮은 ARIA/neuroinflammation을 동시에 입증할 수 있는가?
 
 ## 4. Scorecard
@@ -87,13 +87,13 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 - [[09_Evidence_Sources/Source__Illimis_official_pipeline_page|Illimis official pipeline page]]
 - [[09_Evidence_Sources/Source__Illimis_official_platform_page|Illimis official platform page]]
 - [[09_Evidence_Sources/Source__Nature_Medicine_αAβ-Gas6_paper|Nature Medicine αAβ-Gas6 paper]]
+- [[09_Evidence_Sources/Source__AI_draft_search_note|AI draft search note]]
+- [[09_Evidence_Sources/Source__AI_draft_search_note|AI draft search note]]
 - [[09_Evidence_Sources/Source__KAIST_Pure_publication_record|KAIST Pure publication record]]
 - [[09_Evidence_Sources/Source__Illimis_Keystone_2022_poster|Illimis Keystone 2022 poster]]
 - [[09_Evidence_Sources/Source__BioSpectator_Series_B_stage_article|BioSpectator Series B/stage article]]
 - [[09_Evidence_Sources/Source__FDA_Leqembi_approval|FDA Leqembi approval]]
 - [[09_Evidence_Sources/Source__FDA_Kisunla_approval|FDA Kisunla approval]]
-- [[09_Evidence_Sources/Source__Lilly_Remternetug_Phase_III_trial|Lilly Remternetug Phase III trial]]
-- [[09_Evidence_Sources/Source__Alzheimer's_Association_2026_Facts_and_Figures|Alzheimer's Association 2026 Facts and Figures]]
 
 ## 6. Key Diligence Questions
 
@@ -109,7 +109,7 @@ ILM01은 Neuroimmune clearance platform으로 SKBP OI radar에 올릴 가치가 
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260621 | 16/21 | Watch | [[10_Scorecards/Scorecard__ILM01_GAIA-Aβ__20260621|Scorecard__ILM01_GAIA-Aβ__20260621]] |
+| 20260621 | 15/21 | Watch | [[10_Scorecards/Scorecard__ILM01_GAIA-Aβ__20260621|Scorecard__ILM01_GAIA-Aβ__20260621]] |
 
 ## 9. Raw Report
 
