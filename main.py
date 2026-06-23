@@ -5,17 +5,19 @@ import copy
 import os
 import re
 import tempfile
-import urllib.error
-import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 import subprocess
 import sys
 
+import requests
+import urllib3
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 ROOT = Path(__file__).resolve().parent
 JSON_DIR = ROOT / "json"
@@ -41,6 +43,39 @@ CHAT_DASHBOARD_CONTEXT_LIMIT = 2500
 CHAT_WIKI_SNIPPET_LIMIT = 1100
 CHAT_WIKI_TOP_K = 5
 OPENROUTER_MAX_TOKENS = int(os.getenv("OPENROUTER_MAX_TOKENS", "1200"))
+
+
+class RequestsLineStream:
+    def __init__(self, response: requests.Response):
+        self.response = response
+
+    def __iter__(self):
+        return self.response.iter_lines()
+
+    def close(self) -> None:
+        self.response.close()
+
+
+def openrouter_headers(api_key: str) -> dict[str, str]:
+    return {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": os.getenv("OPENROUTER_SITE_URL", "http://127.0.0.1:8000"),
+        "X-Title": os.getenv("OPENROUTER_APP_TITLE", "SKBP Pipeline Finder"),
+    }
+
+
+def post_openrouter(payload: dict[str, Any], api_key: str, *, stream: bool = False) -> requests.Response:
+    response = requests.post(
+        OPENROUTER_API_URL,
+        json=payload,
+        headers=openrouter_headers(api_key),
+        timeout=120,
+        stream=stream,
+        verify=False,
+    )
+    response.raise_for_status()
+    return response
 
 
 def load_local_env() -> None:
@@ -1175,25 +1210,16 @@ def call_openrouter_chat(
     errors: list[str] = []
     for model in openrouter_models_to_try():
         payload = {**base_payload, "model": model}
-        request = urllib.request.Request(
-            OPENROUTER_API_URL,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": os.getenv("OPENROUTER_SITE_URL", "http://127.0.0.1:8000"),
-                "X-Title": os.getenv("OPENROUTER_APP_TITLE", "SKBP Pipeline Finder"),
-            },
-            method="POST",
-        )
 
         try:
-            with urllib.request.urlopen(request, timeout=120) as response:
-                data = json.loads(response.read().decode("utf-8"))
-        except urllib.error.HTTPError as exc:
-            detail = exc.read().decode("utf-8", errors="replace")
-            errors.append(f"{model}: HTTP {exc.code} - {summarize_openrouter_error(detail)}")
-            if exc.code in {401, 402, 403} or "free-models-per-day" in detail.lower():
+            response = post_openrouter(payload, api_key)
+            data = response.json()
+        except requests.HTTPError as exc:
+            response = exc.response
+            status_code = response.status_code if response is not None else 0
+            detail = response.text if response is not None else str(exc)
+            errors.append(f"{model}: HTTP {status_code} - {summarize_openrouter_error(detail)}")
+            if status_code in {401, 402, 403} or "free-models-per-day" in detail.lower():
                 break
             continue
         except Exception as exc:
@@ -1337,24 +1363,15 @@ def stream_openrouter_chat(
     errors: list[str] = []
     for model in openrouter_models_to_try():
         payload = {**base_payload, "model": model}
-        request = urllib.request.Request(
-            OPENROUTER_API_URL,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": os.getenv("OPENROUTER_SITE_URL", "http://127.0.0.1:8000"),
-                "X-Title": os.getenv("OPENROUTER_APP_TITLE", "SKBP Pipeline Finder"),
-            },
-            method="POST",
-        )
         try:
-            response = urllib.request.urlopen(request, timeout=120)
-            return response, wiki_snippets, None
-        except urllib.error.HTTPError as exc:
-            detail = exc.read().decode("utf-8", errors="replace")
-            errors.append(f"{model}: HTTP {exc.code} - {summarize_openrouter_error(detail)}")
-            if exc.code in {401, 402, 403} or "free-models-per-day" in detail.lower():
+            response = post_openrouter(payload, api_key, stream=True)
+            return RequestsLineStream(response), wiki_snippets, None
+        except requests.HTTPError as exc:
+            response = exc.response
+            status_code = response.status_code if response is not None else 0
+            detail = response.text if response is not None else str(exc)
+            errors.append(f"{model}: HTTP {status_code} - {summarize_openrouter_error(detail)}")
+            if status_code in {401, 402, 403} or "free-models-per-day" in detail.lower():
                 break
         except Exception as exc:
             errors.append(f"{model}: request failed - {exc}")
