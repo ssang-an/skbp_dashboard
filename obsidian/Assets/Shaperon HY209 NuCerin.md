@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-06-23T23:59:29"
+generated_at: "2026-07-29T00:20:08"
 record_id: "Shaperon_HY209_NuCerin_20260622"
 company: "Shaperon Inc."
 country: "Republic of Korea"
@@ -332,7 +332,36 @@ No clear same-target GPCR19/TGR5 AD clinical front-runner was found in public so
     ],
     "output_filename_base": "Shaperon_HY209_NuCerin_20260622",
     "rubric_version": "3.1",
-    "rubric_author": "kate"
+    "rubric_author": "kate",
+    "focus_management": {
+      "is_tracked": true,
+      "added_at": "2026-07-28T14:16:54.916934+00:00",
+      "user_comment": "",
+      "due_date": "",
+      "updated_at": "2026-07-28T14:53:08.094254+00:00",
+      "updated_source": "dashboard_tab3",
+      "updated_by": "127.0.0.1"
+    },
+    "edit_history": [
+      {
+        "changed_at": "2026-07-28T14:53:07.338872+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.remove",
+        "previous_value": null,
+        "new_value": null
+      },
+      {
+        "changed_at": "2026-07-28T14:53:08.094273+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.add",
+        "previous_value": null,
+        "new_value": null
+      }
+    ],
+    "last_edited_at": "2026-07-28T14:53:08.094273+00:00",
+    "last_edited_by": "127.0.0.1"
   },
   "input": {
     "company_input": "Shaperon Inc.",

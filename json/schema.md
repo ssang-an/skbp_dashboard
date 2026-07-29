@@ -4,7 +4,7 @@
 
 ## Top-Level Sections
 
-- `meta`: Schema version, generated date, analyst role, output filename, `rubric_version`, and `rubric_author`.
+- `meta`: Schema version, generated date, analyst role, output filename, `rubric_version`, and `rubric_author`. Also carries edit-provenance fields — see "Metadata Provenance" below.
 - `input`: Company/asset inputs, source type, and notes.
 - `source_report`: Human-readable GPT report used as the primary raw source for parser-driven extraction.
 - `company_profile`: Basic company information, country, headquarters, website, focus areas, platform summary, financing/partnership signals, and official source URLs.
@@ -87,6 +87,26 @@ C. Obtainable Peak Sales: ...
 ```
 
 Entry-order matrix should be used as a share/penetration reference. For example, in a 3-player market, a 1st entrant may be modeled around 50% share, a 2nd entrant around 30%, and a 3rd entrant around 20%.
+
+## Metadata Provenance
+
+Every record's `meta` carries two kinds of provenance:
+
+- **Source provenance** (when/how the raw data was obtained): `meta.generated_at` is the date the GPT report/search underlying this record was produced. It is required by schema and, if a saved record omits it, `main.py`'s `ensure_meta_defaults` backfills it with today's UTC date on save. `meta.rubric_version` records which rubric/guideline version (full-scout `SCORING_CRITERIA_VERSION` or triage `TRIAGE_CRITERIA_VERSION`) was used to score it. Both are shown as a hover tooltip on dashboard table rows and in the detail-page metadata panel.
+- **Edit provenance** (when/who made a manual change): `meta.last_edited_at` / `meta.last_edited_by` reflect the most recent human/dashboard edit, and `meta.edit_history` is an append-only log of such edits (newest last), each with `changed_at`, `actor_ip`, `source`, and the changed `field`. SSO login isn't wired up yet, so `actor_ip` (the requester's IP address) is a temporary stand-in for user identity — `main.py`'s `append_edit_history` helper stamps these on every mutating endpoint (`PUT /api/records/{id}`, the `manual-review` / `focus-management` / attachment / qualitative-review PATCH-or-POST endpoints, comment creation, and JSON-paste upserts). Do not hand-write `edit_history` entries; they are stamped server-side from the request.
+- **Rubric recalculation provenance**: the TAB2 row-level refresh action reapplies the latest Full Scout rubric's Total Score / Filter 2 rules to the seven stored criterion scores without changing source evidence or human overrides. It stores the latest event in `meta.rubric_recalculation` and `source_report.rubric_recalculation`, updates `meta.rubric_version`, and inserts a `Recalculated by Full Scout Rubric vX.Y` banner near the top of the raw GPT report. This system recalculation intentionally does not append `meta.edit_history`.
+
+## Detail Page Attachments and Qualitative Review
+
+Three loosely-typed `meta` sub-objects support detail-page workflows that live outside the core scoring rubric:
+
+- `meta.human_review`: manual score and decision overrides. `overrides.status_reason` stores the editable one-line rationale shown beside Review status. Status and rationale edits are separate audit events in both `meta.human_review.history` and `meta.edit_history`.
+- `meta.focus_management`: focus/TAB3 review state for Full Scout records. OI Partnership v1.0 automatically stores `partnership_type` (`investment`, `value_up`, `joint_research`, `n_a`, or `unknown`), `partnership_note`, `partnership_evidence_sources`, classification source/status/version, and the latest auto suggestion. Target indication is checked first; Value Up applies only to Small Molecule with In Vivo O, In Vitro O, and ADMET >=25; investment applies to Non-Small Molecule at IND Enabling; joint research applies to Non-Small Molecule with Platform Attractiveness exactly 3 and wins an investment overlap. Missing required inputs produce `unknown`; non-target indications or complete-but-unmet rules produce `n_a`. Human classification/note edits take precedence until Auto is selected again. The same object also stores `owner_name`, `action_plan`, due date, and human-maintained `partner_material_flags`; explicit `partner_material_flag_overrides` take precedence over standalone CDP/NCDP/ADMET filename detection.
+- `meta.focus_management` evidence triple: `in_vivo_status` / `in_vitro_status` (`O`/`X`/`N/A`) and `admet_completed` (0-50, denominator fixed at 50, `null` until an admet-named attachment exists) are auto-computed by `main.py` over `source_report.raw_markdown` plus extracted attachment text. `O` now requires explicit positive efficacy/activity wording, `X` requires explicit negative/failure wording, and a mere experiment mention with no clear outcome remains `N/A`. ADMET is the count of `Completed` occurrences in attachments whose filename contains `admet`. Each field remains human-overridable through its `_source: "manual"` sibling; changes immediately recalculate the latest OI auto suggestion without overwriting a human OI decision.
+- `meta.human_review.overrides.total_score`: optional TAB2 Full Scout Total Score correction (0-21). It is independent from the seven criterion overrides, is audit-logged with reviewer ID, and receives the same refined red human-edit treatment. TAB3 displays this Tab2 Total Score as a read-only circular badge; legacy `meta.focus_management.total_score_override` values are retained in old records for compatibility but are no longer displayed or editable.
+- Manual score/status/focus edits may store both `actor_name` (reviewer-entered name or employee ID) and `actor_ip`; the team workspace audit trail displays `actor_name` first and retains the IP as a fallback.
+- `meta.attachments`: array of original source files (PPT/PPTX/PDF/TXT/Word/Excel) a company sent, uploaded from the detail page's Partner Materials dropzone. Each entry is `{id, filename, stored_path, content_type, size_bytes, uploaded_by, uploaded_at}`; files are stored on disk under `attachments/<record_id>/` (served via the `/attachments` static mount, gitignored — not committed to the JSON-as-source-of-truth data file) and only the metadata lives in the record. PDF is previewed in-browser, TXT and OpenXML PPTX/DOCX text can be shown in the report viewer, and unsupported binary formats remain downloadable. Managed by `POST` / `GET preview` / `DELETE /api/records/{id}/attachments...` in `main.py`.
+- `meta.qualitative_review`: `{ criteria: { <criterion_id>: { entries: [...] } } }`, one entry list per fixed qualitative-review criterion (currently a temporary v1 set defined in `config/qualitative_review_criteria.md` — separate from the seven scoring criteria below). Each entry is `{id, author, body, is_ai, created_at}`. Submitting a human opinion via `POST /api/records/{id}/qualitative-review` immediately appends a second, rule-based placeholder entry with `is_ai: true` (no OpenRouter call) generated by `main.py`'s `build_placeholder_ai_comment`.
 
 ## Rubric Version Management
 

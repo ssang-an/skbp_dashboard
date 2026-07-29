@@ -1,0 +1,31 @@
+Create a 16:9 closing slide image for a Korean corporate seminar.
+
+Exact title text:
+“마무리: 이 대시보드의 핵심 특징”
+
+Main layout:
+- Three large premium cards across the center.
+- Under them, one strong summary sentence.
+- Background: dark navy with subtle dashboard/evidence graph/molecule motif.
+
+Three cards exact text:
+1. Header: “비교 가능성”
+   Body: “후보를 같은 점수체계와 필터로 비교”
+2. Header: “감사 가능성”
+   Body: “점수·근거·출처·불확실성까지 보존”
+3. Header: “확장 가능성”
+   Body: “JSON → Dashboard → Wiki → Agent로 재사용”
+
+Summary sentence exact text:
+“흩어진 GPT 조사 결과를 전사 공유 가능한 pipeline intelligence cockpit으로 전환”
+
+Bottom center:
+“Q&A”
+
+Visual style:
+- Executive closing image, minimal but premium.
+- The three cards should feel like pillars.
+- Use teal, amber, and violet accent colors respectively.
+- Clean Korean typography, high contrast.
+
+Negative constraints: Do not use real corporate logos. Do not show screenshots or browser chrome. Do not render random unreadable pseudo text outside the specified labels. Avoid clutter. Avoid tiny dense paragraphs. Avoid cartoonish style. Avoid low contrast. Avoid photorealistic people. No watermark. No PowerPoint UI. No slide thumbnails. No mock app window borders unless explicitly requested. Korean text must be clean and legible; if any Korean text is uncertain, leave that area as clean abstract visual space rather than inventing broken text.

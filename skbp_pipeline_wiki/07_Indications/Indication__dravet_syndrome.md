@@ -6,8 +6,8 @@ aliases:
   - "dravet_syndrome"
 tags:
   - "pipeline/indication"
-created_at: "2026-06-23"
-updated_at: "2026-06-23"
+created_at: "2026-07-29"
+updated_at: "2026-07-29"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

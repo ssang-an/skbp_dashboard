@@ -1,0 +1,35 @@
+Create a 16:9 generated interface concept image for the SKBP Pipeline Finder detail page and AI Evidence Agent.
+
+Exact title text:
+“상세 화면: 원문 리포트와 Score 근거를 같은 화면에서 검토”
+
+Visual concept:
+- Left 65%: stylized detail page layout with three sections:
+  1. “Mini TOC” sidebar
+  2. “GPT 원문 리포트” main document viewer
+  3. “Score 판단근거” evidence panel
+- Right 35%: AI drawer panel titled “Asset Evidence Agent” with abstract chat bubbles and evidence graph links.
+- Use one example asset label: “ILM01 / GAIA-Aβ” and score label “16 / 21”.
+- Do not make this a screenshot; make it a clean generated product concept image.
+
+Labels to render:
+- “Mini TOC”
+- “GPT 원문 리포트”
+- “Score 판단근거”
+- “Asset Evidence Agent”
+- “Target fit”
+- “Marketability”
+- “Evidence gap”
+- “Competitor risk”
+
+Right side feature list as small callout cards:
+- “원문과 구조화 JSON 동시 검토”
+- “점수별 근거·출처 확인”
+- “현재 asset 맥락으로 AI 질의”
+
+Style:
+- Dark mode enterprise SaaS, high-end, readable Korean UI labels.
+- Teal glow around evidence connections; violet graph nodes; amber score chips.
+- Clear separation between report, score evidence, and AI agent.
+
+Negative constraints: Do not use real corporate logos. Do not show screenshots or browser chrome. Do not render random unreadable pseudo text outside the specified labels. Avoid clutter. Avoid tiny dense paragraphs. Avoid cartoonish style. Avoid low contrast. Avoid photorealistic people. No watermark. No PowerPoint UI. No slide thumbnails. No mock app window borders unless explicitly requested. Korean text must be clean and legible; if any Korean text is uncertain, leave that area as clean abstract visual space rather than inventing broken text.

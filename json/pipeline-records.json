@@ -11,7 +11,590 @@
       ],
       "output_filename_base": "Illimis_Therapeutics_ILM01_20260621",
       "rubric_version": "3.1",
-      "rubric_author": "kate"
+      "rubric_author": "kate",
+      "focus_management": {
+        "is_tracked": true,
+        "added_at": "2026-07-28T14:52:28.874464+00:00",
+        "user_comment": "",
+        "due_date": "2026-07-31",
+        "updated_at": "2026-07-29T06:00:23.600986+00:00",
+        "updated_source": "dashboard_tab3",
+        "updated_by": "127.0.0.1",
+        "owner_name": "",
+        "action_plan": "",
+        "partnership_type": "investment",
+        "partnership_classification_status": "auto_classified",
+        "partnership_classification_source": "auto",
+        "partnership_classified_at": "2026-07-29T05:16:27.849292+00:00",
+        "partner_material_flags": {
+          "cdp": false,
+          "ncdp": false,
+          "admet": false
+        },
+        "in_vivo_status": "O",
+        "in_vivo_status_source": "auto",
+        "in_vitro_status": "X",
+        "in_vitro_status_source": "auto",
+        "admet_completed": null,
+        "admet_completed_source": "auto",
+        "partnership_evidence_updated_at": "2026-07-29T05:15:45.132786+00:00",
+        "partnership_auto_suggestion": "investment",
+        "partnership_auto_note": "Non-Small Molecule / IND Enabling",
+        "partnership_auto_evidence_sources": [
+          "Tab3에 이미 입력된 구조화 데이터",
+          "Tab2 상세 리포트"
+        ],
+        "partnership_classification_criteria_version": "1.0",
+        "partnership_note": "Non-Small Molecule / IND Enabling",
+        "partnership_evidence_sources": [
+          "Tab3에 이미 입력된 구조화 데이터",
+          "Tab2 상세 리포트"
+        ],
+        "partner_material_flag_overrides": {
+          "cdp": false
+        },
+        "filter3_document_analyses": [],
+        "filter3_document_analysis_updated_at": "2026-07-29T05:16:27.849202+00:00"
+      },
+      "edit_history": [
+        {
+          "changed_at": "2026-07-28T14:52:28.874491+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.add",
+          "previous_value": null,
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-07-28T14:52:32.933629+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.remove",
+          "previous_value": null,
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-07-28T15:09:36.996963+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "test_deck.pptx"
+        },
+        {
+          "changed_at": "2026-07-28T15:09:51.986977+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "test_deck.pptx",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-07-28T15:11:36.133014+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_qualitative_review",
+          "field": "qualitative_review.commercial_appeal",
+          "previous_value": null,
+          "new_value": "second test opinion"
+        },
+        {
+          "changed_at": "2026-07-28T15:12:22.284192+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_qualitative_review",
+          "field": "qualitative_review.execution_risk",
+          "previous_value": null,
+          "new_value": "third clean test"
+        },
+        {
+          "changed_at": "2026-07-28T15:12:22.402602+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "test_deck2.pptx"
+        },
+        {
+          "changed_at": "2026-07-28T15:12:42.311361+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "test_deck2.pptx",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-07-28T15:13:44.045946+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_qualitative_review",
+          "field": "qualitative_review.scientific_rigor",
+          "previous_value": null,
+          "new_value": "ㅇㅇㅇ 이 내용이야"
+        },
+        {
+          "changed_at": "2026-07-28T15:13:51.205032+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_qualitative_review",
+          "field": "qualitative_review.scientific_rigor",
+          "previous_value": null,
+          "new_value": "안녕"
+        },
+        {
+          "changed_at": "2026-07-28T15:20:08.149876+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_table_manual_review",
+          "field": "scores.target_relevance",
+          "previous_value": 2,
+          "new_value": 3
+        },
+        {
+          "changed_at": "2026-07-28T21:02:49.038740+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.add",
+          "previous_value": false,
+          "new_value": true
+        },
+        {
+          "changed_at": "2026-07-28T21:02:51.640858+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.remove",
+          "previous_value": true,
+          "new_value": false
+        },
+        {
+          "changed_at": "2026-07-28T21:02:52.301323+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.add",
+          "previous_value": false,
+          "new_value": true
+        },
+        {
+          "changed_at": "2026-07-28T21:02:55.773379+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.remove",
+          "previous_value": true,
+          "new_value": false
+        },
+        {
+          "changed_at": "2026-07-28T21:02:56.683120+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.add",
+          "previous_value": false,
+          "new_value": true
+        },
+        {
+          "changed_at": "2026-07-28T21:06:11.414764+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_qualitative_review",
+          "field": "qualitative_review.scientific_rigor",
+          "previous_value": null,
+          "new_value": "의견등록"
+        },
+        {
+          "changed_at": "2026-07-29T00:24:45.749821+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "",
+          "new_value": "value_up"
+        },
+        {
+          "changed_at": "2026-07-29T00:24:49.519243+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "value_up",
+          "new_value": ""
+        },
+        {
+          "changed_at": "2026-07-29T00:45:08.908267+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.add",
+          "previous_value": true,
+          "new_value": true
+        },
+        {
+          "changed_at": "2026-07-29T00:45:27.136222+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.in_vivo_status",
+          "previous_value": "O",
+          "new_value": "X"
+        },
+        {
+          "changed_at": "2026-07-29T00:45:27.366190+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "unrelated.txt"
+        },
+        {
+          "changed_at": "2026-07-29T00:46:28.578005+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "ADMET_checklist.txt"
+        },
+        {
+          "changed_at": "2026-07-29T00:46:37.931040+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.admet_completed",
+          "previous_value": 27,
+          "new_value": 40
+        },
+        {
+          "changed_at": "2026-07-29T00:46:38.102043+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.admet_completed",
+          "previous_value": 40,
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-07-29T00:46:58.587409+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "unrelated.txt",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-07-29T00:46:58.682418+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "ADMET_checklist.txt",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-07-29T00:46:58.784765+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.add",
+          "previous_value": true,
+          "new_value": true
+        },
+        {
+          "changed_at": "2026-07-29T00:47:10.587220+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "",
+          "new_value": "value_up"
+        },
+        {
+          "changed_at": "2026-07-29T00:47:13.395428+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "value_up",
+          "new_value": ""
+        },
+        {
+          "changed_at": "2026-07-29T01:17:35.105825+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "",
+          "new_value": "value_up"
+        },
+        {
+          "changed_at": "2026-07-29T01:17:36.524088+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "value_up",
+          "new_value": ""
+        },
+        {
+          "changed_at": "2026-07-29T01:43:25.085686+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partner_material_flags.cdp",
+          "previous_value": false,
+          "new_value": true
+        },
+        {
+          "changed_at": "2026-07-29T01:43:25.282428+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partner_material_flags.cdp",
+          "previous_value": true,
+          "new_value": false
+        },
+        {
+          "changed_at": "2026-07-29T02:03:46.866562+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_note",
+          "previous_value": "Non-Small Molecule / IND Enabling",
+          "new_value": "Non-Small Molecule / IND Enabling (담당자 검증 완료)"
+        },
+        {
+          "changed_at": "2026-07-29T02:04:32.905459+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "investment",
+          "new_value": "investment"
+        },
+        {
+          "changed_at": "2026-07-29T02:04:35.667819+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "investment",
+          "new_value": ""
+        },
+        {
+          "changed_at": "2026-07-29T02:08:05.356958+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "investment",
+          "new_value": "value_up"
+        },
+        {
+          "changed_at": "2026-07-29T02:08:21.355221+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "value_up",
+          "new_value": "investment"
+        },
+        {
+          "changed_at": "2026-07-29T02:12:29.860733+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_note",
+          "previous_value": "Non-Small Molecule / IND Enabling",
+          "new_value": "Manual override test note"
+        },
+        {
+          "changed_at": "2026-07-29T02:12:44.382984+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "investment",
+          "new_value": ""
+        },
+        {
+          "changed_at": "2026-07-29T02:15:02.115345+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "investment",
+          "new_value": "investment"
+        },
+        {
+          "changed_at": "2026-07-29T02:16:52.894929+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "investment",
+          "new_value": "joint_research"
+        },
+        {
+          "changed_at": "2026-07-29T02:17:09.412348+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "joint_research",
+          "new_value": "investment"
+        },
+        {
+          "changed_at": "2026-07-29T02:22:34.956699+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "SKBP_Pipeline_Dashboard_전사발표_7분.pptx"
+        },
+        {
+          "changed_at": "2026-07-29T02:24:24.109170+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "SKBP_Pipeline_Dashboard_전사발표_7분.pptx",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-07-29T02:27:24.569514+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "SKBP_Pipeline_Dashboard_전사발표_7분.pptx"
+        },
+        {
+          "changed_at": "2026-07-29T02:29:28.462613+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "SKBP_Pipeline_Dashboard_전사발표_7분.pptx",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-07-29T05:09:47.902494+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.remove",
+          "previous_value": true,
+          "new_value": false
+        },
+        {
+          "changed_at": "2026-07-29T05:09:50.786987+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.add",
+          "previous_value": false,
+          "new_value": true
+        },
+        {
+          "changed_at": "2026-07-29T05:12:06.673812+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.remove",
+          "previous_value": true,
+          "new_value": false
+        },
+        {
+          "changed_at": "2026-07-29T05:12:08.201747+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.add",
+          "previous_value": false,
+          "new_value": true
+        },
+        {
+          "changed_at": "2026-07-29T05:12:09.253373+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.remove",
+          "previous_value": true,
+          "new_value": false
+        },
+        {
+          "changed_at": "2026-07-29T05:12:11.045261+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.add",
+          "previous_value": false,
+          "new_value": true
+        },
+        {
+          "changed_at": "2026-07-29T05:16:03.991486+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "AI_Pipeline_Finder.pptx"
+        },
+        {
+          "changed_at": "2026-07-29T05:16:27.849344+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "AI_Pipeline_Finder.pptx",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-07-29T06:00:23.601113+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.due_date",
+          "previous_value": "",
+          "new_value": "2026-07-31"
+        }
+      ],
+      "last_edited_at": "2026-07-29T06:00:23.601113+00:00",
+      "last_edited_by": "127.0.0.1",
+      "attachments": [],
+      "qualitative_review": {
+        "criteria": {
+          "scientific_rigor": {
+            "entries": [
+              {
+                "id": "dc45d9e00bc647189a7bc2a906fd41c7",
+                "author": "hello",
+                "body": "ㅇㅇㅇ 이 내용이야",
+                "is_ai": false,
+                "created_at": "2026-07-28T15:13:44.045861+00:00"
+              },
+              {
+                "id": "37f4e74e596143718a65573cced18102",
+                "author": "AI (초안)",
+                "body": "[과학적 타당성] 의견 감사합니다. 이 코멘트는 규칙 기반 임시(placeholder) 코멘트이며, 추후 OpenRouter 연동 시 실제 AI 분석 코멘트로 교체될 예정입니다.",
+                "is_ai": true,
+                "created_at": "2026-07-28T15:13:44.045938+00:00"
+              },
+              {
+                "id": "2d4850eafe074d36bd09d462de003de6",
+                "author": "hello",
+                "body": "안녕",
+                "is_ai": false,
+                "created_at": "2026-07-28T15:13:51.204968+00:00"
+              },
+              {
+                "id": "9815cd2660e1437784bbecfe58a16011",
+                "author": "AI (초안)",
+                "body": "[과학적 타당성] 의견 감사합니다. 이 코멘트는 규칙 기반 임시(placeholder) 코멘트이며, 추후 OpenRouter 연동 시 실제 AI 분석 코멘트로 교체될 예정입니다.",
+                "is_ai": true,
+                "created_at": "2026-07-28T15:13:51.205027+00:00"
+              },
+              {
+                "id": "0d5f257baa97429ba53dab095a9562ef",
+                "author": "hello",
+                "body": "의견등록",
+                "is_ai": false,
+                "created_at": "2026-07-28T21:06:11.414663+00:00"
+              },
+              {
+                "id": "31c4b393c28c468ea842a4fba8fced39",
+                "author": "AI (초안)",
+                "body": "[과학적 타당성] 의견 감사합니다. 이 코멘트는 규칙 기반 임시(placeholder) 코멘트이며, 추후 OpenRouter 연동 시 실제 AI 분석 코멘트로 교체될 예정입니다.",
+                "is_ai": true,
+                "created_at": "2026-07-28T21:06:11.414758+00:00"
+              }
+            ]
+          }
+        },
+        "updated_at": "2026-07-28T21:06:11.414758+00:00"
+      },
+      "human_review": {
+        "overrides": {
+          "scores": {
+            "target_relevance": 3
+          }
+        },
+        "ai_baseline": {
+          "scores": {
+            "target_relevance": 2
+          }
+        },
+        "history": [
+          {
+            "changed_at": "2026-07-28T15:20:08.149833+00:00",
+            "actor_ip": "127.0.0.1",
+            "source": "dashboard_table",
+            "field": "scores.target_relevance",
+            "previous_value": 2,
+            "new_value": 3
+          }
+        ],
+        "last_updated_at": "2026-07-28T15:20:08.149833+00:00",
+        "last_updated_source": "dashboard_table",
+        "last_updated_by": "127.0.0.1",
+        "has_manual_override": true
+      }
     },
     "input": {
       "company_input": "Illimis Therapeutics",
@@ -2224,7 +2807,45 @@
       ],
       "output_filename_base": "Lynk_Pharmaceuticals_LNK01006_20260621",
       "rubric_version": "3.1",
-      "rubric_author": "kate"
+      "rubric_author": "kate",
+      "human_review": {
+        "overrides": {
+          "scores": {
+            "target_relevance": 2
+          }
+        },
+        "ai_baseline": {
+          "scores": {
+            "target_relevance": 3
+          }
+        },
+        "history": [
+          {
+            "changed_at": "2026-07-28T15:19:59.200776+00:00",
+            "actor_ip": "127.0.0.1",
+            "source": "dashboard_table",
+            "field": "scores.target_relevance",
+            "previous_value": 3,
+            "new_value": 2
+          }
+        ],
+        "last_updated_at": "2026-07-28T15:19:59.200776+00:00",
+        "last_updated_source": "dashboard_table",
+        "last_updated_by": "127.0.0.1",
+        "has_manual_override": true
+      },
+      "edit_history": [
+        {
+          "changed_at": "2026-07-28T15:19:59.200822+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_table_manual_review",
+          "field": "scores.target_relevance",
+          "previous_value": 3,
+          "new_value": 2
+        }
+      ],
+      "last_edited_at": "2026-07-28T15:19:59.200822+00:00",
+      "last_edited_by": "127.0.0.1"
     },
     "input": {
       "company_input": "Lynk Pharmaceuticals Co., Ltd.",
@@ -3716,7 +4337,90 @@
       ],
       "output_filename_base": "Shaperon_HY209_NuCerin_20260622",
       "rubric_version": "3.1",
-      "rubric_author": "kate"
+      "rubric_author": "kate",
+      "focus_management": {
+        "is_tracked": true,
+        "added_at": "2026-07-28T14:16:54.916934+00:00",
+        "user_comment": "",
+        "due_date": "",
+        "updated_at": "2026-07-29T02:16:17.441558+00:00",
+        "updated_source": "dashboard_tab3",
+        "updated_by": "127.0.0.1",
+        "in_vivo_status": "O",
+        "in_vivo_status_source": "auto",
+        "in_vitro_status": "O",
+        "in_vitro_status_source": "auto",
+        "admet_completed": null,
+        "admet_completed_source": "auto",
+        "partnership_auto_suggestion": "unknown",
+        "partnership_auto_note": "ADMET Score 확인 불가",
+        "partnership_auto_evidence_sources": [
+          "Tab3에 이미 입력된 구조화 데이터",
+          "Tab2 원문 리포트: Shaperon_HY209_NuCerin_20260622"
+        ],
+        "partnership_classification_criteria_version": "1.0",
+        "partnership_type": "unknown",
+        "partnership_note": "ADMET Score 확인 불가",
+        "partnership_evidence_sources": [
+          "Tab3에 이미 입력된 구조화 데이터",
+          "Tab2 원문 리포트: Shaperon_HY209_NuCerin_20260622"
+        ],
+        "partnership_classification_source": "auto",
+        "partnership_classification_status": "auto_classified",
+        "partnership_classified_at": "2026-07-29T02:16:17.441690+00:00"
+      },
+      "edit_history": [
+        {
+          "changed_at": "2026-07-28T14:53:07.338872+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.remove",
+          "previous_value": null,
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-07-28T14:53:08.094273+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.add",
+          "previous_value": null,
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-07-29T02:10:02.835167+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "unknown",
+          "new_value": "joint_research"
+        },
+        {
+          "changed_at": "2026-07-29T02:10:17.484618+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "joint_research",
+          "new_value": "unknown"
+        },
+        {
+          "changed_at": "2026-07-29T02:12:28.715560+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "unknown",
+          "new_value": "value_up"
+        },
+        {
+          "changed_at": "2026-07-29T02:16:17.441704+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "value_up",
+          "new_value": "unknown"
+        }
+      ],
+      "last_edited_at": "2026-07-29T02:16:17.441704+00:00",
+      "last_edited_by": "127.0.0.1"
     },
     "input": {
       "company_input": "Shaperon Inc.",
@@ -5170,7 +5874,64 @@
       ],
       "output_filename_base": "NeuShen_Therapeutics_NS-041_20260623",
       "rubric_version": "3.1",
-      "rubric_author": "kate"
+      "rubric_author": "kate",
+      "focus_management": {
+        "is_tracked": true,
+        "added_at": "2026-07-28T14:34:58.108835+00:00",
+        "user_comment": "",
+        "due_date": "",
+        "updated_at": "2026-07-28T20:46:05.205886+00:00",
+        "updated_source": "dashboard_tab3",
+        "updated_by": "127.0.0.1",
+        "in_vivo_status": "X",
+        "in_vivo_status_source": "auto",
+        "in_vitro_status": "X",
+        "in_vitro_status_source": "auto",
+        "admet_completed": null,
+        "admet_completed_source": "auto",
+        "partnership_auto_suggestion": "n_a",
+        "partnership_auto_note": "대상 적응증 아님",
+        "partnership_auto_evidence_sources": [
+          "Tab3에 이미 입력된 구조화 데이터"
+        ],
+        "partnership_classification_criteria_version": "1.0",
+        "partnership_type": "n_a",
+        "partnership_note": "대상 적응증 아님",
+        "partnership_evidence_sources": [
+          "Tab3에 이미 입력된 구조화 데이터"
+        ],
+        "partnership_classification_source": "auto",
+        "partnership_classification_status": "auto_classified",
+        "partnership_classified_at": "2026-07-29T01:32:22.264711+00:00"
+      },
+      "edit_history": [
+        {
+          "changed_at": "2026-07-28T20:45:14.404630+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.user_comment",
+          "previous_value": "",
+          "new_value": "경쟁사 임상 결과 확인 필요"
+        },
+        {
+          "changed_at": "2026-07-28T20:45:51.415830+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.due_date",
+          "previous_value": "",
+          "new_value": "0008-08-26"
+        },
+        {
+          "changed_at": "2026-07-28T20:46:05.205912+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.due_date",
+          "previous_value": "0008-08-26",
+          "new_value": "2026-08-15"
+        }
+      ],
+      "last_edited_at": "2026-07-28T20:46:05.205912+00:00",
+      "last_edited_by": "127.0.0.1"
     },
     "input": {
       "company_input": "NeuShen Therapeutics (asset-only input에서 추정)",
@@ -9461,6 +10222,516 @@
       "one_line_summary": "SELECT: high-priority full scout candidate among this batch.",
       "recommendation": "Run Full Scout",
       "most_important_diligence_question": "Which VGSC subtype does CXJM-66 hit, and does Phase 1 PK/PD support differentiated analgesia?"
+    }
+  },
+  {
+    "meta": {
+      "schema_version": "3.1",
+      "generated_at": "2026-07-13",
+      "language": "ko",
+      "analyst_role": "[OIT] PreC Pipeline Shortlister",
+      "output_format": [
+        "compact_markdown_report",
+        "json"
+      ],
+      "output_filename_base": "GenixCure_GXC-303_20260713",
+      "rubric_version": "3.1",
+      "rubric_author": "kate"
+    },
+    "input": {
+      "company_input": "제닉스큐어 (GenixCure)",
+      "asset_input": "GXC-303",
+      "source_text": null,
+      "source_type": "web research",
+      "notes": "GPT Full Scout v3.1 Lean output"
+    },
+    "source_report": {
+      "raw_markdown": "# GenixCure Pipeline Scout Report: **GXC-303**\n\n**FAIL / Deprioritize:** GXC-303은 실재하는 ALS용 preclinical AAV gene-therapy asset이고 STMN2 biology도 타당하지만, 공개 asset-specific 데이터가 company-claim 수준이며 현 SKBP의 **E/I Balance / Neuroimmune** Theme·Cluster에 직접 부합하지 않아 **11/21, FAIL**로 판정한다.\n\n평가 기준일: 2026-07-13 · 검증 범위: public-only · 공식 stage `In Vivo`는 공개 근거상 `Lead Optimization`으로 보수 매핑.\n\n## 1) Company And Pipeline Snapshot\n\n| Field | Content |\n|---|---|\n| Company | GenixCure / 제닉스큐어㈜; Republic of Korea; private preclinical/platform biotech |\n| Asset | GXC-303 |\n| Target | STMN2 / TDP-43–STMN2 axis |\n| Theme / Cluster | **No Theme / N/A** |\n| MoA | STMN2 발현 회복을 통해 motor-neuron axonal maintenance/regeneration을 촉진하려는 접근; 정확한 cargo 설계는 비공개 |\n| Modality / Platform | AAV gene therapy; CARE/InsightMiner-engineered CNS/neuron-targeted capsid family; 최종 capsid/version 미확인 |\n| Main indication | Amyotrophic lateral sclerosis / motor neuron disease |\n| Stage | **Lead Optimization** — 회사 표기 `In Vivo`; IND-enabling 근거 미확인 |\n| Key visible data | 회사/언론이 세포 축삭 재성장과 BIO USA 2025 동물행동 데이터 공개를 보고했으나 model, dose, n, statistics, durability, biodistribution 및 tox 원자료는 공개되지 않음 [S1–S3] |\n\n## 2) Scorecard\n\n| Criterion | Score | Evidence type | One-line reason | Sources |\n|---|---:|---|---|---|\n| Target Relevance | 2/3 | E2_indirect_or_class_level_evidence | ALS/TDP-43–STMN2 연관성은 강하나 SKBP Theme 직접 적합성 없음 | S2, S5, S6 |\n| Competitive Landscape | 2/3 | E4_asset_specific_clinical_evidence | QRL-201 한 개의 direct clinical front-runner; one-time AAV는 잠재적 BIC angle | S7–S11 |\n| MoA Validity | 2/3 | E2_indirect_or_class_level_evidence | STMN2 restoration의 axonal-repair rationale은 독립 연구로 지지 | S2, S5–S7 |\n| Platform Attractiveness | 2/3 | E2_indirect_or_class_level_evidence | AI capsid/CNS targeting 차별화 논리는 명확하나 final-asset 검증 부족 | S4, S12, S13 |\n| Expansion Potential | 2/3 | E2_indirect_or_class_level_evidence | TDP-43 proteinopathy와 다자산 AAV 재사용 논리는 있으나 GXC-303 확장계획 없음 | S1, S4, S5 |\n| Data Maturity | 1/3 | E1_company_claim_or_scientific_rationale_only | In Vivo 및 효능 주장은 확인되나 공개 정량 package가 stage 대비 약함 | S1–S3 |\n| Marketability | 0/3 | E0_not_found_or_not_assessable | Patient eligibility·regimen·price·entry order가 없어 A/B/C 계산 불가 | S1, S2, S7–S10 |\n| **Total** | **11/21** |  | REVIEW 점수대이나 `No Theme`가 명시적 FAIL 조건 |  |\n\n## 3) Criterion Notes\n\n### Target Relevance — 2/3\nSTMN2는 TDP-43 dysfunction과 연계된 ALS axonal-repair target으로 과학적 관련성이 높다. 다만 axonal maintenance/regeneration은 현재 지정된 E/I Balance 또는 Neuroimmune cluster에 직접 포함되지 않는다.\n\n### Competitive Landscape — 2/3\nQRL-201은 같은 STMN2 restoration을 표방하며 Phase 1/2에서 target engagement, biomarker 및 ALSFRS-R signal을 공개한 직접 선행자다. GXC-303의 one-time AAV 가능성은 차별화 여지가 있지만 임상 진입시점·용량·안전성·효능 우위가 입증되지 않았다.\n\n### MoA Validity — 2/3\n독립 연구는 TDP-43 loss가 STMN2 misprocessing과 axonal-regeneration deficit을 유도하고 STMN2 correction이 이를 rescue할 수 있음을 지지한다. GXC-303 고유 cargo의 disease-model dose-response, functional/survival rescue 또는 human PoC가 없어 3점은 아니다.\n\n### Platform Attractiveness — 2/3\nCARE/InsightMiner와 CNS/neuron-targeted AAV는 전달효율·저용량·안전성 차별화 논리를 제공한다. 그러나 final GXC-303 capsid의 head-to-head NHP dataset, route, biodistribution, immunogenicity, therapeutic window 및 CMC는 공개되지 않았다.\n\n### Expansion Potential — 2/3\nSTMN2/TDP-43 biology는 FTD 등 인접 proteinopathy로 확장 가능하고 회사의 AAV platform은 여러 CNS 자산에 재사용된다. GXC-303 자체의 ALS 외 indication plan은 확인되지 않았다.\n\n### Data Maturity — 1/3\n공식 pipeline의 `In Vivo`, 회사가 보고한 세포 축삭 재생 및 동물행동 자료는 asset identity와 early efficacy signal을 뒷받침한다. 그러나 full poster/deck, model, n, controls, statistics, dose/route, durability, target engagement, biodistribution, tox 및 CMC가 없어 `IND-enabling` 또는 2점으로 올릴 수 없다.\n\n### Marketability — 0/3\nALS unmet need만으로 숫자를 만들지 않았다. Exact target geography, STMN2/TDP-43 eligibility, final regimen, one-time net price analogue, launch timing, entry order, manufacturing economics 및 rights가 확보되어야 계산 가능하다.\n\n## 4) Competitors\n\n| Type | Asset | Company | Modality / target | Stage | Similarity | Why it matters | Sources |\n|---|---|---|---|---|---|---|---|\n| Direct | QRL-201 | QurAlis | Intrathecal ASO; STMN2 splicing correction | Phase 1/2 | High | Same-target clinical front-runner; Phase 3 preparation reported | S7 |\n| Pathway/modality | CTx1000 | Celosia | Single-dose AAV9; pathological TDP-43 degradation | Phase 1 | Medium | Same TDP-43 axis and one-time AAV; already clinical | S8 |\n| Modality risk analogue | AMT-162 | uniQure | Intrathecal AAV-miRNA; SOD1 silencing | Discontinued / inactive | Medium | Dose-limiting toxicity 후 중단되어 AAV dose/route/safety 경고사례 | S11 |\n| Genetic ALS benchmark | Qalsody / tofersen | Biogen / Ionis | Intrathecal ASO; SOD1 reduction | Approved / marketed | Low | Biomarker-based accelerated approval and repeat-IT benchmark | S9 |\n| Genetic ALS benchmark | Ulefnersen / ION363 | Ionis / Otsuka | ASO; FUS reduction | Phase 3 | Low | Late-stage genetic-ALS development benchmark | S10 |\n\n## 5) Marketability\n\n- **A. TAP:** null — geography와 biomarker/eligibility definition 미확정.\n- **B. Unrisked Peak Sales:** null — final regimen, net price, penetration 및 duration factor 미확정.\n- **C. Obtainable Peak Sales:** null — launch timing, competition haircut, pricing power, manufacturing capacity 및 expansion factor 미확정.\n- **Commercial rationale status:** `insufficient_evidence`; Marketability score **0/3**. 숫자 부재는 시장이 작다는 판정이 아니라 현재 입력으로 재현 가능한 commercial model을 만들 수 없다는 의미다.\n\n## 6) Key Uncertainties And Final Take\n\n- **Hard Filter:** `FAIL` — 총점은 11점이나 `No Theme / N/A Cluster`가 명시적 blocker.\n- **Recommendation:** `Deprioritize` for current SKBP scope; axonal repair/proteostasis가 향후 전략축에 포함되면 재평가.\n- **가장 중요한 diligence 질문:** 최종 capsid/cargo/route/dose를 사용한 ALS disease model에서 blinded, dose-responsive, statistically powered functional·survival efficacy와 CNS biodistribution·target engagement·toxicity를 동시에 입증한 원자료가 있는가?\n- **재평가 trigger:** full preclinical deck/poster, IND-enabling plan, NHP biodistribution/tox, CMC readiness, QRL-201 대비 differentiation 및 rights 확인.\n\n## References\n\n[S1]: https://www.genix-cure.com/company/pipeline.php \"GenixCure Pipeline\"\n[S2]: https://dailypharm.com/user/news/2900 \"GXC-303 STMN2 and axonal-regrowth report, 2025-08-22\"\n[S3]: https://www.genix-cure.com/bbs/?mode=VIEW&num=44&so_table=news \"GenixCure BIO USA 2025 update\"\n[S4]: https://postbi.jbnu.ac.kr/bbs/postbi/4612/388799/artclView.do \"GenixCure AAV platform interview, 2026-04-20\"\n[S5]: https://www.science.org/doi/10.1126/science.abq5622 \"STMN2 cryptic splice-polyadenylation and correction\"\n[S6]: https://pubmed.ncbi.nlm.nih.gov/40392845/ \"STMN2 motor-axon regeneration\"\n[S7]: https://www.quralis.com/news/quralis-demonstrates-effects-on-disease-progression-and-target-engagement-in-anqur-clinical-trial-of-qrl-201-a-first-in-class-precision-medicine-in-development-for-sporadic-als/ \"QRL-201 Phase 1/2 interim update, 2026-02-23\"\n[S8]: https://clinicaltrials.gov/study/NCT07401121 \"CTx1000 KOANEWA Phase 1\"\n[S9]: https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-amyotrophic-lateral-sclerosis-associated-mutation-sod1-gene \"FDA Qalsody approval\"\n[S10]: https://ir.ionis.com/news-releases/news-release-details/ionis-reports-first-quarter-2026-financial-results-and \"Ionis Q1 2026 pipeline update\"\n[S11]: https://www.uniqure.com/programs-pipeline/als-sod1 \"AMT-162 discontinuation\"\n[S12]: https://doi.org/10.1016/j.neuroscience.2025.03.026 \"AAV9 route-dependent transduction\"\n[S13]: https://pharm.edaily.co.kr/news/read?newsId=01626886638852512 \"GenixCure recombinant AAV platform interview, 2024-04-03\"",
+      "source_format": "compact_gpt_markdown_report",
+      "parser_status": "gpt_structured_output",
+      "parser_note": "JSON is canonical; markdown is concise rendering."
+    },
+    "company_profile": {
+      "company_name": "GenixCure",
+      "legal_name": "제닉스큐어㈜ (GenixCure)",
+      "aliases": [
+        "ANL Bio",
+        "에이앤엘바이오"
+      ],
+      "country": "Republic of Korea",
+      "headquarters": "Suwon, Gyeonggi-do, Republic of Korea",
+      "website": "https://www.genix-cure.com/",
+      "company_stage": "Private preclinical/platform biotechnology company",
+      "ownership_status": "Private",
+      "focus_areas": [
+        "CNS/rare-disease gene therapy",
+        "AI AAV capsid engineering"
+      ],
+      "platform_summary": "CARE/InsightMiner 기반 차세대 AAV capsid platform. CNS/neuron targeting 및 NHP 성능은 회사가 보고했으나 GXC-303 최종 capsid의 독립 검증은 제한적이다.",
+      "lead_pipeline_summary": "GXC-301 (Lafora), GXC-303 (ALS), GXC-304 (FTD).",
+      "financing_or_partnership_signals": [
+        "Series A 약 KRW 12.5B; 2026년 Series B KRW 8–10B 추진을 회사가 공개.",
+        "CNS AAV 공동연구·기술이전 및 IPO 준비를 공개했으나 일정은 변동 가능."
+      ],
+      "official_source_urls": [
+        "https://www.genix-cure.com/",
+        "https://www.genix-cure.com/company/pipeline.php"
+      ],
+      "notes": "Final capsid, cargo, promoter, route, dose, rights and IND timing are not public."
+    },
+    "json_summary": {
+      "company": "GenixCure",
+      "asset_name": "GXC-303",
+      "target": "STMN2 / TDP-43–STMN2 axis",
+      "theme": "No Theme",
+      "cluster": "N/A",
+      "target_relevance_score": 2,
+      "one_line_summary": "실재하는 preclinical ALS AAV asset이나, 공개 효능·안전성 패키지가 company-claim 수준이고 현 SKBP Theme/Cluster에 직접 부합하지 않아 FAIL/Deprioritize.",
+      "company_country": "Republic of Korea"
+    },
+    "structured_table": {
+      "company": "GenixCure",
+      "asset_name": "GXC-303",
+      "target": "STMN2 / TDP-43–STMN2 axis",
+      "moa": "STMN2 발현 회복을 통해 motor-neuron axonal maintenance/regeneration을 촉진하려는 유전자치료 접근; 정확한 cargo 설계는 비공개",
+      "modality_platform": "AAV-based gene therapy; CARE/InsightMiner-engineered CNS/neuron-targeted capsid family, exact GXC-303 capsid/version unconfirmed",
+      "main_indication": "Amyotrophic lateral sclerosis / motor neuron disease",
+      "indication": "ALS, likely TDP-43/STMN2-deficient sporadic ALS; exact biomarker-selected population not disclosed",
+      "development_stage": "Lead Optimization",
+      "company_country": "Republic of Korea",
+      "sources": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S13"
+      ]
+    },
+    "hard_filter": {
+      "status": "FAIL",
+      "reason": "총점 11/21은 REVIEW band이나, Theme가 No Theme이고 허용 Cluster에 직접 매핑되지 않아 명시적 FAIL rule을 적용했다.",
+      "flags": [
+        "NO_SKBP_THEME_CLUSTER_FIT",
+        "PUBLIC_PRECLINICAL_PACKAGE_NOT_QUANTITATIVE",
+        "DIRECT_STMN2_CLINICAL_FRONT_RUNNER",
+        "FINAL_CAPSID_CARGO_ROUTE_AND_DOSE_UNCONFIRMED",
+        "COMMERCIAL_MODEL_INSUFFICIENT"
+      ]
+    },
+    "scoring": {
+      "total_score": 11,
+      "max_score": 21,
+      "criteria": {
+        "target_relevance": {
+          "score": 2,
+          "evidence_type": "E2_indirect_or_class_level_evidence",
+          "main_line_summary": "ALS/TDP-43–STMN2 relevance는 강하지만 현 E/I Balance·Neuroimmune Theme에는 직접 부합하지 않는다.",
+          "why_not_higher": "허용 Theme/Cluster 직접 적합성이 없다.",
+          "source_ids": [
+            "S2",
+            "S5",
+            "S6"
+          ],
+          "uncertain_points": [
+            "Axonal repair/proteostasis가 향후 별도 전략축이면 재평가 필요."
+          ]
+        },
+        "competitive_landscape": {
+          "score": 2,
+          "evidence_type": "E4_asset_specific_clinical_evidence",
+          "main_line_summary": "Same-target QRL-201 한 개의 임상 선행자가 있고 one-time AAV는 잠재적 BIC 차별화 요소다.",
+          "why_not_higher": "QRL-201이 Phase 1/2 STMN2 target engagement·임상 신호를 먼저 공개했다.",
+          "source_ids": [
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11"
+          ],
+          "uncertain_points": [
+            "GXC-303의 임상 진입시점과 실제 efficacy/safety 우위 미확인."
+          ]
+        },
+        "moa_validity": {
+          "score": 2,
+          "evidence_type": "E2_indirect_or_class_level_evidence",
+          "main_line_summary": "TDP-43 loss→STMN2 misprocessing→axon repair defect와 STMN2 restoration rescue는 독립 연구로 지지된다.",
+          "why_not_higher": "GXC-303 고유의 dose-response, disease-model functional rescue 또는 human PoC가 없다.",
+          "source_ids": [
+            "S2",
+            "S5",
+            "S6",
+            "S7"
+          ],
+          "uncertain_points": [
+            "장기 STMN2 발현 수준과 TDP-43의 다른 downstream pathology 보완 여부."
+          ]
+        },
+        "platform_attractiveness": {
+          "score": 2,
+          "evidence_type": "E2_indirect_or_class_level_evidence",
+          "main_line_summary": "AI capsid engineering과 CNS/neuron targeting은 전달·용량·안전성 차별화 논리가 명확하다.",
+          "why_not_higher": "최종 GXC-303 capsid의 head-to-head NHP, biodistribution, immunogenicity 및 CMC가 공개되지 않았다.",
+          "source_ids": [
+            "S4",
+            "S12",
+            "S13"
+          ],
+          "uncertain_points": [
+            "XOB-031/GenC2 계열 중 최종 적용 버전과 route 미확인."
+          ]
+        },
+        "expansion_potential": {
+          "score": 2,
+          "evidence_type": "E2_indirect_or_class_level_evidence",
+          "main_line_summary": "STMN2/TDP-43 axis의 FTD 확장 논리와 회사 AAV platform의 다자산 재사용성이 있다.",
+          "why_not_higher": "GXC-303 자체의 ALS 외 개발계획은 공개되지 않았다.",
+          "source_ids": [
+            "S1",
+            "S4",
+            "S5"
+          ],
+          "uncertain_points": [
+            "동일 product로 FTD 확장이 가능한지 미확인."
+          ]
+        },
+        "data_maturity": {
+          "score": 1,
+          "evidence_type": "E1_company_claim_or_scientific_rationale_only",
+          "main_line_summary": "공식 pipeline은 In Vivo이며 세포 축삭재생·동물행동 데이터를 회사가 보고했지만 공개 정량 패키지는 부족하다.",
+          "why_not_higher": "모델, n, dose, route, controls, statistics, durability, biodistribution, tox 및 CMC가 보이지 않는다.",
+          "source_ids": [
+            "S1",
+            "S2",
+            "S3"
+          ],
+          "claimed_development_stage": "In Vivo / preclinical",
+          "expected_data_for_stage": [
+            "blinded quantitative ALS-model efficacy and dose-response",
+            "durability, target engagement and biodistribution",
+            "immunogenicity/toxicology",
+            "CMC and IND timeline"
+          ],
+          "visible_asset_specific_data": [
+            "회사/언론이 보고한 motor-neuron axonal regrowth",
+            "BIO USA 2025 animal-behavior data disclosure announcement",
+            "official In Vivo stage"
+          ],
+          "missing_data": [
+            "full poster/deck or publication",
+            "model, sample size, controls and statistics",
+            "final capsid/cargo/route/dose",
+            "PK/PD, biodistribution, tox and CMC"
+          ],
+          "stage_data_alignment_judgment": "Lead Optimization으로 보수 매핑; IND-enabling 근거 부족.",
+          "uncertain_points": [
+            "비공개 원자료 존재 여부는 public-only 평가에서 확인 불가."
+          ]
+        },
+        "marketability": {
+          "score": 0,
+          "evidence_type": "E0_not_found_or_not_assessable",
+          "main_line_summary": "ALS의 unmet need는 크지만 GXC-303의 targetable population, dose/route, price, durability, launch timing 및 share assumptions가 없어 A/B/C 산출을 유보했다.",
+          "why_not_higher": "Obtainable Peak Sales를 재현 가능한 입력으로 계산할 수 없다.",
+          "source_ids": [
+            "S1",
+            "S2",
+            "S7",
+            "S8",
+            "S9",
+            "S10"
+          ],
+          "uncertain_points": [
+            "target geography and patient pool",
+            "biomarker/eligibility definition",
+            "annual or one-time net price analogue",
+            "clinical entry and launch timing",
+            "manufacturing capacity, rights and competitive share"
+          ],
+          "calculation": {
+            "commercial_rationale_status": "insufficient_evidence",
+            "commercial_rationale_failure_reason": "Lead geography, eligible STMN2/TDP-43-defined population, final dosing regimen, pricing analogue, durability, launch timing, entry order, manufacturing economics and rights are not sufficiently supported.",
+            "A_targetable_addressable_patient": {
+              "total_patient_pool": null,
+              "diagnosis_rate": null,
+              "eligibility_rate": null,
+              "biomarker_positive_rate": null,
+              "treatable_subgroup_rate": null,
+              "formula": "TAP = Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate",
+              "targetable_addressable_patient": null
+            },
+            "B_unrisked_peak_sales": {
+              "tap": null,
+              "annual_net_price": null,
+              "peak_penetration": null,
+              "treatment_duration_factor": null,
+              "sales_unit": "million USD",
+              "entry_order_share_assumption": {
+                "competitor_count": null,
+                "expected_entry_order": null,
+                "matrix_share_reference": ""
+              },
+              "formula": "Unrisked Peak Sales = TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor",
+              "unrisked_peak_sales": null
+            },
+            "C_obtainable_peak_sales": {
+              "unrisked_peak_sales": null,
+              "competition_haircut": null,
+              "pricing_power_adjustment": null,
+              "expansion_capacity_adjustment": null,
+              "sales_unit": "million USD",
+              "formula": "Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment",
+              "obtainable_peak_sales": null
+            }
+          }
+        }
+      }
+    },
+    "competitive_analysis": {
+      "similarity_summary": {
+        "similar_pipeline_count": 5,
+        "high_similarity_count": 1,
+        "medium_similarity_count": 2,
+        "low_similarity_count": 2,
+        "summary": "QRL-201은 direct STMN2 front-runner다. CTx1000과 AMT-162는 AAV/TDP-43 또는 AAV-ALS modality benchmark, Qalsody와 ulefnersen은 genetic-ALS clinical benchmark다."
+      },
+      "competitor_table": [
+        {
+          "competitor_asset": "QRL-201",
+          "company": "QurAlis",
+          "modality": "Intrathecal ASO",
+          "target_or_moa": "STMN2 cryptic-splicing correction / STMN2 restoration",
+          "stage": "Phase 1/2; pivotal Phase 3 preparation reported for 2027",
+          "similarity_level": "high",
+          "why_it_matters": "유일한 명확한 same-target front-runner로 human target engagement, biomarker 및 ALSFRS-R signal을 공개.",
+          "source_ids": [
+            "S7"
+          ]
+        },
+        {
+          "competitor_asset": "CTx1000",
+          "company": "Celosia Therapeutics",
+          "modality": "Single-dose AAV9 gene therapy",
+          "target_or_moa": "Pathological TDP-43 targeted degradation",
+          "stage": "Phase 1",
+          "similarity_level": "medium",
+          "why_it_matters": "같은 TDP-43 disease axis와 one-time AAV modality로, 2026년 이미 임상 진입한 근접 차별화 benchmark.",
+          "source_ids": [
+            "S8"
+          ]
+        },
+        {
+          "competitor_asset": "AMT-162",
+          "company": "uniQure",
+          "modality": "Intrathecal AAV-miRNA gene therapy",
+          "target_or_moa": "SOD1 silencing",
+          "stage": "Discontinued / inactive",
+          "similarity_level": "medium",
+          "why_it_matters": "같은 one-time intrathecal AAV ALS analogue가 dose-limiting toxicity 후 중단되어 route·dose·safety diligence의 핵심 경고사례.",
+          "source_ids": [
+            "S11"
+          ]
+        },
+        {
+          "competitor_asset": "Qalsody (tofersen)",
+          "company": "Biogen / Ionis",
+          "modality": "Intrathecal ASO",
+          "target_or_moa": "SOD1 mRNA reduction",
+          "stage": "Approved / marketed",
+          "similarity_level": "low",
+          "why_it_matters": "유전자 정의 ALS에서 target engagement biomarker 기반 허가와 반복 척수강 투여의 규제·상업 benchmark.",
+          "source_ids": [
+            "S9"
+          ]
+        },
+        {
+          "competitor_asset": "Ulefnersen (ION363)",
+          "company": "Ionis / Otsuka",
+          "modality": "ASO",
+          "target_or_moa": "FUS RNA reduction",
+          "stage": "Phase 3",
+          "similarity_level": "low",
+          "why_it_matters": "유전자 정의 ALS의 late-stage 경쟁자이며 2026년 FUSION readout이 예정된 clinical-development benchmark.",
+          "source_ids": [
+            "S10"
+          ]
+        }
+      ],
+      "similar_pipelines": [
+        "QRL-201",
+        "CTx1000",
+        "AMT-162",
+        "Qalsody",
+        "Ulefnersen"
+      ]
+    },
+    "validation": {
+      "identity_verification_scope": "public_only",
+      "cross_checked_facts": [
+        "GXC-303 identity/ALS/In Vivo stage: official pipeline + independent media + company BIO USA notice.",
+        "STMN2 rationale: company description + independent Science/PNAS studies.",
+        "QRL-201 direct-competitor status: official clinical update.",
+        "AAV route risk: peer-reviewed AAV9 study; not proprietary capsid validation."
+      ],
+      "uncertain_points": [
+        "final capsid/cargo/promoter/route/dose",
+        "quantitative efficacy, durability, biodistribution, target engagement and tox",
+        "IND timeline, rights and financing runway",
+        "all-comer ALS versus biomarker-selected population"
+      ],
+      "source_registry": [
+        {
+          "source_id": "S1",
+          "source_type": "official_company_pipeline",
+          "title": "GenixCure Pipeline",
+          "date": null,
+          "source_url": "https://www.genix-cure.com/company/pipeline.php",
+          "access_scope": "public",
+          "independence": "company",
+          "evidence_summary": "GXC-303; ALS; In Vivo."
+        },
+        {
+          "source_id": "S2",
+          "source_type": "reputable_biotech_news",
+          "title": "루게릭병 표적옵션 등장…제약사들, 질환 원인 정조준",
+          "date": "2025-08-22",
+          "source_url": "https://dailypharm.com/user/news/2900",
+          "access_scope": "public",
+          "independence": "independent",
+          "evidence_summary": "STMN2 goal and company-reported axonal regrowth."
+        },
+        {
+          "source_id": "S3",
+          "source_type": "official_company_news",
+          "title": "GenixCure BIO USA 2025 partnering update",
+          "date": "2025-06-25",
+          "source_url": "https://www.genix-cure.com/bbs/?mode=VIEW&num=44&so_table=news",
+          "access_scope": "public",
+          "independence": "company",
+          "evidence_summary": "GXC-303 animal-data presentation announcement."
+        },
+        {
+          "source_id": "S4",
+          "source_type": "company_interview",
+          "title": "제닉스큐어 AAV 플랫폼 인터뷰",
+          "date": "2026-04-20",
+          "source_url": "https://postbi.jbnu.ac.kr/bbs/postbi/4612/388799/artclView.do",
+          "access_scope": "public",
+          "independence": "company",
+          "evidence_summary": "CARE/InsightMiner, NHP claims, financing and platform expansion."
+        },
+        {
+          "source_id": "S5",
+          "source_type": "peer_reviewed_publication",
+          "title": "Mechanism of STMN2 cryptic splice-polyadenylation and its correction",
+          "date": "2023-03-16",
+          "source_url": "https://www.science.org/doi/10.1126/science.abq5622",
+          "access_scope": "public",
+          "independence": "independent",
+          "evidence_summary": "TDP-43/STMN2 mechanism and rescue."
+        },
+        {
+          "source_id": "S6",
+          "source_type": "peer_reviewed_publication",
+          "title": "Stathmin-2 enhances motor axon regeneration",
+          "date": "2025",
+          "source_url": "https://pubmed.ncbi.nlm.nih.gov/40392845/",
+          "access_scope": "public",
+          "independence": "independent",
+          "evidence_summary": "Motor-axon regeneration and functional recovery."
+        },
+        {
+          "source_id": "S7",
+          "source_type": "official_competitor_news",
+          "title": "QRL-201 ANQUR Phase 1/2 interim update",
+          "date": "2026-02-23",
+          "source_url": "https://www.quralis.com/news/quralis-demonstrates-effects-on-disease-progression-and-target-engagement-in-anqur-clinical-trial-of-qrl-201-a-first-in-class-precision-medicine-in-development-for-sporadic-als/",
+          "access_scope": "public",
+          "independence": "company",
+          "evidence_summary": "STMN2 target engagement, biomarkers and ALSFRS-R signal."
+        },
+        {
+          "source_id": "S8",
+          "source_type": "clinical_trial_registry",
+          "title": "NCT07401121 — CTx1000 KOANEWA",
+          "date": "2026",
+          "source_url": "https://clinicaltrials.gov/study/NCT07401121",
+          "access_scope": "public",
+          "independence": "regulatory",
+          "evidence_summary": "Phase 1 single-dose AAV9 TDP-43 degrader."
+        },
+        {
+          "source_id": "S9",
+          "source_type": "regulatory_source",
+          "title": "FDA approval of Qalsody for SOD1-ALS",
+          "date": "2023-04-25",
+          "source_url": "https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-amyotrophic-lateral-sclerosis-associated-mutation-sod1-gene",
+          "access_scope": "public",
+          "independence": "regulatory",
+          "evidence_summary": "Approved intrathecal SOD1 ASO benchmark."
+        },
+        {
+          "source_id": "S10",
+          "source_type": "official_competitor_update",
+          "title": "Ionis Q1 2026 pipeline update",
+          "date": "2026-04-29",
+          "source_url": "https://ir.ionis.com/news-releases/news-release-details/ionis-reports-first-quarter-2026-financial-results-and",
+          "access_scope": "public",
+          "independence": "company",
+          "evidence_summary": "Ulefnersen Phase 3/FUSION status."
+        },
+        {
+          "source_id": "S11",
+          "source_type": "official_competitor_pipeline",
+          "title": "uniQure AMT-162 ALS program",
+          "date": "2025",
+          "source_url": "https://www.uniqure.com/programs-pipeline/als-sod1",
+          "access_scope": "public",
+          "independence": "company",
+          "evidence_summary": "AAV program discontinued after dose-limiting toxicity."
+        },
+        {
+          "source_id": "S12",
+          "source_type": "peer_reviewed_publication",
+          "title": "Evaluation of AAV transduction efficiency via multiple delivery routes",
+          "date": "2025",
+          "source_url": "https://doi.org/10.1016/j.neuroscience.2025.03.026",
+          "access_scope": "public",
+          "independence": "independent",
+          "evidence_summary": "Route-dependent CNS/peripheral AAV9 transduction."
+        },
+        {
+          "source_id": "S13",
+          "source_type": "reputable_biotech_news",
+          "title": "GenixCure recombinant AAV platform interview",
+          "date": "2024-04-03",
+          "source_url": "https://pharm.edaily.co.kr/news/read?newsId=01626886638852512",
+          "access_scope": "public",
+          "independence": "independent",
+          "evidence_summary": "Early GXC-303 status and XOB-031 re-engineering."
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "과학적 target rationale와 AAV 차별화 가능성은 있으나, 현 SKBP 전략축 미부합과 공개 asset-specific package 부족 때문에 현재는 Deprioritize가 타당하다.",
+      "recommendation": "Deprioritize",
+      "most_important_diligence_question": "GXC-303의 최종 capsid/cargo/route/dose를 사용한 ALS disease model에서 blinded, dose-responsive, statistically powered functional·survival efficacy와 CNS biodistribution·target engagement·toxicity를 동시에 입증한 원자료가 있는가?"
+    },
+    "obsidian": {
+      "note_title": "GenixCure GXC-303",
+      "tags": [
+        "pipeline",
+        "skbp",
+        "ALS",
+        "STMN2",
+        "AAV",
+        "gene-therapy",
+        "deprioritize"
+      ],
+      "aliases": [
+        "제닉스큐어 303",
+        "GXC303"
+      ]
     }
   }
 ]

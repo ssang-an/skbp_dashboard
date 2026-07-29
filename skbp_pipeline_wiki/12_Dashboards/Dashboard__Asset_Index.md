@@ -10,6 +10,7 @@
 | [[02_Assets/Asset__CXJM-66_Injection|CXJM-66 Injection]] |  | Run Full Scout | E0 |
 | [[02_Assets/Asset__ETX101|ETX101]] |  | Run Full Scout | E0 |
 | [[02_Assets/Asset__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection|Fusion Protein for Allergic Asthma, Multiple Sclerosis and Transplant Rejection]] |  | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__GXC-303__GXC303|GXC-303]] | 11 | Deprioritize | E4 |
 | [[02_Assets/Asset__HB-02|HB-02]] |  | Run Full Scout | E0 |
 | [[02_Assets/Asset__HB-03|HB-03]] |  | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__HB-05|HB-05]] |  | Do not run Full Scout | E0 |

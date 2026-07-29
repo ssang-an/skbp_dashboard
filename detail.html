@@ -6,12 +6,25 @@
     <title>Pipeline Detail</title>
     <script>
       (() => {
+        if (
+          ['127.0.0.1', 'localhost'].includes(window.location.hostname)
+          && window.location.port === '8000'
+        ) {
+          window.location.replace(`http://${window.location.hostname}:8011${window.location.pathname}${window.location.search}${window.location.hash}`);
+          return;
+        }
         const stored = localStorage.getItem('skbp.ui.theme');
         const theme = stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+    />
+    <link rel="stylesheet" href="./src/styles.css?v=20260729-oi-partnership-1" />
   </head>
   <body>
     <div class="app-shell detail-shell">
@@ -63,35 +76,234 @@
       </header>
 
       <main class="detail-layout">
-        <aside class="panel detail-outline-panel" aria-label="Detail outline">
-          <div class="detail-outline-header">
-            <span>Outline</span>
-            <strong>Mini TOC</strong>
-          </div>
-          <nav id="detailOutlineList" class="detail-outline-list"></nav>
-        </aside>
+        <div class="detail-left-rail">
+          <aside class="panel detail-outline-panel" aria-label="Detail outline">
+            <div class="detail-outline-header">
+              <span>Outline</span>
+              <strong>Mini TOC</strong>
+            </div>
+            <nav id="detailOutlineList" class="detail-outline-list"></nav>
+          </aside>
+
+          <section class="panel detail-material-panel" aria-label="파트너사 자료">
+            <div class="detail-material-header">
+              <div>
+                <span>Partner materials</span>
+                <strong>파트너사 자료함</strong>
+              </div>
+              <span id="detailAttachmentCount" class="material-count">0</span>
+            </div>
+            <div
+              id="detailAttachmentDropzone"
+              class="attachment-dropzone"
+              role="button"
+              tabindex="0"
+              aria-label="파일을 선택하거나 이 영역에 드래그해서 업로드"
+            >
+              <span class="attachment-dropzone-icon" aria-hidden="true">＋</span>
+              <strong>클릭 또는 드래그해서 업로드</strong>
+              <small>PPT·PPTX·PDF·TXT 및 Office 파일 · 최대 30MB</small>
+            </div>
+            <button id="detailAttachmentAddButton" class="secondary-button material-add-button" type="button">
+              내 컴퓨터에서 파일 선택
+            </button>
+            <input
+              id="detailAttachmentInput"
+              type="file"
+              accept=".ppt,.pptx,.pdf,.txt,.doc,.docx,.xls,.xlsx"
+              multiple
+              hidden
+            />
+            <p id="detailAttachmentStatus" class="attachment-status" aria-live="polite"></p>
+            <div id="detailAttachmentsList" class="attachments-list"></div>
+          </section>
+        </div>
 
         <section class="panel raw-report-panel">
           <div class="panel-header">
             <div>
-              <h2>GPT 원문 리포트</h2>
+              <h2 id="detailViewerTitle">GPT 원문 리포트</h2>
               <p id="detailSubtitle">원문 리포트 기반 primary source</p>
+              <p id="detailMetaInfo" class="detail-meta-info"></p>
+            </div>
+            <div class="panel-header-actions">
+              <button id="detailViewerBackButton" class="secondary-button" type="button" hidden>
+                ← GPT 원문으로
+              </button>
             </div>
           </div>
           <div id="sourceReportViewer" class="report-viewer"></div>
         </section>
 
-        <aside class="panel parsed-output-panel">
-          <div class="panel-header">
-            <div>
-              <h2>Score 판단근거</h2>
-              <p id="scoreEvidenceSubtitle">점수별 판단 기준, 근거, 출처 링크</p>
+        <aside class="panel collaboration-panel" aria-label="팀 코멘트 및 후속 액션">
+          <div class="collaboration-header">
+            <div class="collaboration-title-row">
+              <div>
+                <p class="eyebrow">Review workspace</p>
+                <h2>팀 코멘트</h2>
+              </div>
+              <div class="collaboration-title-actions">
+                <button id="detailFocusToggle" class="focus-action-button icon-only add" type="button" aria-label="즐겨찾기에 추가">
+                  <span aria-hidden="true">☆</span>
+                </button>
+                <span id="detailCommentCount" class="comment-count">0</span>
+              </div>
             </div>
-            <span id="scoreEvidenceStatus">Loading</span>
+
+            <div class="review-info-stack">
+              <div class="review-info-columns">
+                <section id="detailFilter2Row" class="review-info-row status-info-row review-info-column">
+                  <p class="review-column-heading">Full Scout</p>
+                  <div class="review-info-label">
+                    <span>Filter 2</span>
+                    <small id="detailDecisionOrigin">Scoring rubric</small>
+                  </div>
+                  <div class="filter-decision-line">
+                    <select id="detailDecisionStatus" autocomplete="off" aria-label="Filter 2 decision">
+                      <option value="PASS">PASS</option>
+                      <option value="REVIEW">REVIEW</option>
+                      <option value="FAIL">FAIL</option>
+                    </select>
+                    <div class="filter-score-summary" aria-label="Total score">
+                      <span>Total Score <strong id="detailTotalScore">- / 21</strong></span>
+                    </div>
+                  </div>
+                  <div class="filter-score-panel" aria-label="Seven criterion scores">
+                    <span class="filter-score-panel-label">Criteria scores</span>
+                    <span id="detailScoreSequence" class="filter-score-sequence">-/-/-/-/-/-/-</span>
+                  </div>
+                  <div id="detailReviewReasonShell" class="review-reason-shell">
+                    <textarea
+                      id="detailReviewSummary"
+                      class="review-reason-input"
+                      maxlength="500"
+                      rows="2"
+                      autocomplete="off"
+                      placeholder="Filter 2의 한 줄 근거를 입력"
+                      aria-label="Filter 2 한 줄 근거"
+                      title="클릭해서 Filter 2의 한 줄 근거를 수정"
+                    ></textarea>
+                    <span id="detailReviewReasonOrigin" class="review-reason-origin">Rubric rationale</span>
+                    <span class="review-reason-edit-icon" aria-hidden="true">✎</span>
+                  </div>
+                </section>
+
+                <section id="detailOiPartnershipRow" class="review-info-row oi-info-row review-info-column">
+                  <p class="review-column-heading">집중 관리</p>
+                  <div class="review-info-label">
+                    <span>Filter 3</span>
+                    <small id="detailOiPartnershipOrigin">OI Partnership v1.0</small>
+                  </div>
+                  <select id="detailOiPartnershipType" autocomplete="off" aria-label="OI partnership 분류">
+                    <option value="">↻ 자동 기준으로 재분류</option>
+                    <option value="investment">투자</option>
+                    <option value="value_up">Value Up</option>
+                    <option value="joint_research">공동 연구</option>
+                    <option value="n_a">N/A</option>
+                    <option value="unknown">Unknown</option>
+                  </select>
+                  <div class="oi-classification-summary">
+                    <div id="detailOiPartnershipNoteShell" class="review-reason-shell oi-note-shell">
+                      <textarea
+                        id="detailOiPartnershipNote"
+                        class="review-reason-input"
+                        maxlength="500"
+                        rows="2"
+                        autocomplete="off"
+                        placeholder="OI Partnership 분류 근거를 입력"
+                        aria-label="OI Partnership 분류 근거"
+                        title="클릭해서 OI Partnership 분류 근거를 수정"
+                      ></textarea>
+                      <span id="detailOiPartnershipNoteOrigin" class="review-reason-origin">자동 분류 v1.0</span>
+                      <span class="review-reason-edit-icon" aria-hidden="true">✎</span>
+                    </div>
+                  </div>
+                  <div id="detailOiMaterialFlags" class="oi-material-flags" role="group" aria-label="파트너 자료 보유 여부">
+                    <span class="oi-material-flags-label">자료 보유</span>
+                    <button class="oi-material-toggle" type="button" data-material-key="cdp" aria-pressed="false">
+                      <span class="oi-material-dot" aria-hidden="true"></span>
+                      CDP
+                    </button>
+                    <button class="oi-material-toggle" type="button" data-material-key="ncdp" aria-pressed="false">
+                      <span class="oi-material-dot" aria-hidden="true"></span>
+                      NCDP
+                    </button>
+                    <button class="oi-material-toggle" type="button" data-material-key="admet" aria-pressed="false">
+                      <span class="oi-material-dot" aria-hidden="true"></span>
+                      ADMET
+                    </button>
+                  </div>
+
+                  <div class="review-info-label action-date-label">
+                    <span>Action date</span>
+                    <small>Owner &amp; follow-up</small>
+                  </div>
+                  <div class="action-info-fields">
+                    <input id="detailActionDate" type="date" autocomplete="off" aria-label="Action date" />
+                    <input id="detailActionOwner" type="text" maxlength="100" autocomplete="off" placeholder="담당자" aria-label="담당자 이름" />
+                  </div>
+                  <input
+                    id="detailActionPlan"
+                    class="review-row-note"
+                    type="text"
+                    maxlength="500"
+                    autocomplete="off"
+                    placeholder="확인할 데이터 또는 향후 F/U 계획을 한 문장으로 입력"
+                    aria-label="확인할 데이터 또는 향후 계획"
+                  />
+                </section>
+              </div>
+            </div>
+
+            <p id="detailCollaborationStatus" class="collaboration-status" aria-live="polite"></p>
+            <div id="detailEditHistory" class="detail-edit-history"></div>
           </div>
-          <div id="scoreEvidenceViewer" class="score-evidence-viewer"></div>
+
+          <div class="collaboration-scroll">
+            <section id="qualitativeReviewPanel" class="qualitative-review-panel" aria-label="정성 평가 기준"></section>
+
+            <div id="detailCommentThread" class="comment-thread" aria-live="polite"></div>
+          </div>
+
+          <form id="detailCommentForm" class="comment-composer">
+            <div id="detailReplyContext" class="reply-context" hidden>
+              <span id="detailReplyLabel"></span>
+              <button id="detailReplyCancel" type="button" aria-label="답글 취소">취소</button>
+            </div>
+            <div class="comment-identity-bar">
+              <span id="detailCommentIdentity" class="comment-identity"></span>
+              <button id="detailCommentIdentityChange" type="button" class="comment-identity-change">이름 변경</button>
+            </div>
+            <div class="comment-input-row">
+              <label class="comment-input-field">
+                <span>코멘트</span>
+                <textarea
+                  id="detailCommentInput"
+                  maxlength="5000"
+                  rows="3"
+                  placeholder="검토 의견이나 다음 액션을 남겨주세요. (Enter: 등록, Shift+Enter: 줄바꿈)"
+                  required
+                ></textarea>
+              </label>
+              <button id="detailCommentSubmit" type="submit">댓글 등록</button>
+            </div>
+            <p class="comment-composer-hint">댓글과 답글은 이 약물 기록에 함께 저장됩니다.</p>
+            <input id="detailReplyParentId" type="hidden" />
+          </form>
         </aside>
       </main>
+    </div>
+
+    <div class="identity-modal-backdrop" id="identityModalBackdrop" hidden>
+      <div class="identity-modal" role="dialog" aria-modal="true" aria-labelledby="identityModalTitle">
+        <h3 id="identityModalTitle">댓글에 사용할 이름을 입력해주세요</h3>
+        <p class="identity-modal-hint">이 탭을 여는 동안만 저장되며, 브라우저를 닫았다 다시 열면 다시 물어봅니다.</p>
+        <input id="identityModalInput" maxlength="100" placeholder="이름 또는 ID" autocomplete="name" />
+        <div class="identity-modal-actions">
+          <button id="identityModalCancel" type="button" class="identity-modal-cancel">취소</button>
+          <button id="identityModalSubmit" type="button" class="identity-modal-submit">확인</button>
+        </div>
+      </div>
     </div>
 
     <div class="drawer-backdrop" id="aiBackdrop" hidden></div>
@@ -143,60 +355,15 @@
     <aside class="ai-drawer criteria-drawer" id="criteriaDrawer" aria-label="Scoring criteria drawer" aria-hidden="true" hidden>
       <div class="ai-drawer-header">
         <div>
-          <p class="eyebrow">AI Champion</p>
+          <p class="eyebrow" id="criteriaDrawerScopeLabel">AI Champion</p>
           <h2>판단근거</h2>
         </div>
         <button id="criteriaDrawerClose" type="button" aria-label="Close criteria drawer">닫기</button>
       </div>
 
       <div class="criteria-drawer-body">
-        <section class="criteria-intro">
-          <strong>판단근거 — SKBP Pipeline Finder v3.1</strong>
-          <p>
-            각 항목은 독립적으로 평가하며, 모든 점수는 0, 1, 2, 3 중 하나의 단일 정수로만 부여합니다.
-            Evidence Type은 점수를 자동 결정하지 않고, 해당 점수가 어떤 수준의 근거에 기반했는지 보여주는 audit label입니다.
-          </p>
-        </section>
-
-        <section class="criteria-rule criteria-triage-rule">
-          <h3>GPT 지침 1 — Fast Triage · v3.1 기준</h3>
-          <p>
-            지침 1은 여러 후보 중 지침 2 Full Scout로 넘길 대상을 빠르게 고르는 1차 screening입니다.
-            <code>Target Relevance</code>, <code>MoA Validity</code>, <code>Data Maturity</code>는 지침 2의 같은 항목을 그대로 쓰되,
-            evidence type, why_not_higher, full source trail까지 요구하지 않는 예비 평가입니다.
-            <code>SELECT</code>만 지침 2에서 심층 검토하는 것이 기본 흐름입니다.
-          </p>
-        </section>
-
-        <section class="criteria-pass-grid triage-status-grid" aria-label="SELECT REJECT N/A triage criteria">
-          <article>
-            <h3>SELECT</h3>
-            <ul>
-              <li>Asset identity 확인 가능</li>
-              <li>TR / MOA / Data 중 2개 이상이 2점 이상</li>
-              <li>SKBP fit이 있어 지침 2 검토 가치 있음</li>
-            </ul>
-          </article>
-          <article>
-            <h3>REJECT</h3>
-            <ul>
-              <li>Asset identity는 확인됨</li>
-              <li>SKBP fit, MoA, Data 중 핵심이 약함</li>
-              <li>현재 공개자료 기준 지침 2 우선순위 낮음</li>
-            </ul>
-          </article>
-          <article>
-            <h3>N/A</h3>
-            <ul>
-              <li>Pipeline asset identity 확인 불가</li>
-              <li>회사, target, indication 연결 불가</li>
-              <li>회사/타깃/적응증을 확인할 단서가 부족함</li>
-            </ul>
-          </article>
-        </section>
-
-        <section class="criteria-rule criteria-full-rule">
-          <h3>GPT 지침 2 — Full Scout · v3.1 기준</h3>
+        <section class="criteria-rule criteria-full-rule" data-criteria-tab="full">
+          <h3>GPT 지침 2 — Full Scout · v3.2 기준</h3>
           <p>
             지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
             지침 1에서 예비로 본 TR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
@@ -204,7 +371,7 @@
           </p>
         </section>
 
-        <section class="criteria-theme-grid" aria-label="SKBP theme and cluster">
+        <section class="criteria-theme-grid" aria-label="SKBP theme and cluster" data-criteria-tab="full">
           <article>
             <h3>E/I Balance</h3>
             <p>balance between excitation and inhibition</p>
@@ -229,7 +396,7 @@
           </article>
         </section>
 
-        <section class="criteria-rule criteria-other-card">
+        <section class="criteria-rule criteria-other-card" data-criteria-tab="full">
           <h3>Evidence Type</h3>
           <div class="criteria-table-wrap">
             <table class="criteria-table evidence-type-table">
@@ -250,7 +417,7 @@
           </div>
         </section>
 
-        <section class="criteria-pass-grid full-status-grid" aria-label="PASS REVIEW FAIL criteria">
+        <section class="criteria-pass-grid full-status-grid" aria-label="PASS REVIEW FAIL criteria" data-criteria-tab="full">
           <article>
             <h3>PASS</h3>
             <ul>
@@ -279,7 +446,7 @@
           </article>
         </section>
 
-        <section class="criteria-scoring-section">
+        <section class="criteria-scoring-section" data-criteria-tab="full">
           <div class="criteria-section-header">
             <h3>Scoring Table</h3>
             <span>0점에서 3점까지 보수적으로 적용</span>
@@ -326,10 +493,10 @@
                 </tr>
                 <tr>
                   <th>Platform Attractiveness</th>
-                  <td>식별 불가 또는 rationale 없음</td>
-                  <td>claim / 논리 중심</td>
-                  <td>기술적 차별화 논리 명확</td>
-                  <td>data 또는 외부 검증으로 입증</td>
+                  <td>Platform 실재 또는 구현 가능성 불명확</td>
+                  <td>차별성 claim·이론적 rationale 중심</td>
+                  <td>Comparator 대비 정량적 기술 우위가 확인되나 단일·전임상 조건에 제한</td>
+                  <td>Platform 적용 자산 First Patient Dosed 또는 반복성·외부검증 확인</td>
                 </tr>
                 <tr>
                   <th>Expansion Potential</th>
@@ -357,7 +524,7 @@
           </div>
         </section>
 
-        <section class="criteria-detail-grid compact-criteria-detail-grid criteria-parameter-guide" aria-label="Detailed scoring guidance">
+        <section class="criteria-detail-grid compact-criteria-detail-grid criteria-parameter-guide" aria-label="Detailed scoring guidance" data-criteria-tab="full">
           <article>
             <h3>Target Relevance</h3>
             <p>Target을 먼저 identify한 뒤 <code>Theme</code>과 <code>Cluster</code>를 분리해서 기록합니다. Target 아래에는 <code>Theme: ___ (Cluster: ___)</code> 형식으로 표시합니다.</p>
@@ -372,11 +539,11 @@
           </article>
           <article>
             <h3>Data Maturity</h3>
-            <p>clinical data는 제외하고 preclinical 실험값만 봅니다. MoA는 기전의 설득력, Data는 실제 실험 결과의 성숙도입니다.</p>
+            <p>현재 assessed asset 하나의 stage-appropriate development package만 평가합니다. 다른 asset 또는 platform-wide data는 이 점수를 올리지 않습니다.</p>
           </article>
           <article>
             <h3>Platform Attractiveness</h3>
-            <p>주요 관심 모달리티는 small molecule, ASO, siRNA입니다. AOC, antibody 등은 둘째 관심 모달리티로 평가합니다.</p>
+            <p>개별 asset의 개발 성숙도가 아니라 modality, delivery, chemistry, manufacturing 등 underlying technology가 다른 프로그램에도 반복 적용 가능한 기술적 우위를 제공하는지 평가합니다. 같은 platform에 공식 연결된 다른 asset의 근거도 사용할 수 있습니다.</p>
           </article>
           <article class="parameter-card-wide marketability-parameter-card">
             <h3>7. Marketability</h3>
@@ -403,7 +570,7 @@
           </article>
         </section>
 
-        <section class="criteria-rule criteria-other-card">
+        <section class="criteria-rule criteria-other-card" data-criteria-tab="full">
           <h3>근거 기록 규칙</h3>
           <ul class="criteria-subbullet-list">
             <li><strong>Rubric</strong><span>기준 설명은 <code>rubric</code> 섹션에만 남깁니다.</span></li>
@@ -414,13 +581,30 @@
           </ul>
         </section>
 
-        <section class="criteria-rule criteria-other-card">
+        <section class="criteria-rule criteria-other-card" data-criteria-tab="full">
           <h3>경쟁사 유사도 기록</h3>
           <p>
             경쟁 pipeline은 <code>similar_pipeline_count</code>, high/medium/low similarity 개수,
             각 유사 pipeline의 matched dimensions, shared data points, differentiating data points,
             evidence source를 함께 기록합니다.
           </p>
+        </section>
+
+        <section class="criteria-rule criteria-other-card oi-partnership-guide" data-criteria-tab="focus">
+          <h3>OI Partnership 자동 분류 v1.0</h3>
+          <p>
+            대상 적응증은 AD, PD, ALS, MS, Neuropathic Pain, Epilepsy입니다.
+            Tab3 구조화 값을 우선 사용하고, 부족한 값만 Tab2 원문·상세 리포트와 업로드 파일에서 확인합니다.
+          </p>
+          <div class="oi-criteria-grid">
+            <article><strong>투자</strong><span>Non-Small Molecule + IND Enabling</span></article>
+            <article><strong>Value Up</strong><span>Small Molecule + In Vivo O + In Vitro O + ADMET ≥25</span></article>
+            <article><strong>공동 연구</strong><span>Non-Small Molecule + Platform Attractiveness 3</span></article>
+            <article><strong>중복</strong><span>투자와 공동 연구 동시 해당 시 공동 연구 우선</span></article>
+            <article><strong>Unknown</strong><span>판정 필수 정보 부족</span></article>
+            <article><strong>N/A</strong><span>대상 적응증 아님 또는 조건 미충족</span></article>
+          </div>
+          <p class="criteria-footnote">수동 수정은 자동 결과보다 우선하며, <code>↻ 자동 기준으로 재분류</code>로 되돌릴 수 있습니다.</p>
         </section>
       </div>
     </aside>
@@ -450,6 +634,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js"></script>
+    <script type="module" src="./src/detail.js?v=20260729-review-rationale-layout-2"></script>
   </body>
 </html>

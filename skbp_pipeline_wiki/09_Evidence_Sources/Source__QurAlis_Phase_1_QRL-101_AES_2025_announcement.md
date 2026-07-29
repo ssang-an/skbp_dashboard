@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company"
-created_at: "2026-06-23"
-updated_at: "2026-06-23"
+created_at: "2026-07-29"
+updated_at: "2026-07-29"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company |
 | Reliability | high |
 | URL | https://www.quralis.com/news/quralis-to-present-data-from-its-phase-1-clinical-trial-of-qrl-101-a-potential-best-in-class-selective-kv7-2-7-3-ion-channel-opener-at-american-epilepsy-society-2025-annual-meeting/ |
-| Accessed / generated date | 2026-06-23 |
+| Accessed / generated date | 2026-07-29 |
 
 ## Evidence Summary
 

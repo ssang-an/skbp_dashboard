@@ -43,9 +43,73 @@ function renderInlineMarkdown(text) {
 
 function renderFrontmatter(frontmatter) {
   if (!frontmatter) return '';
-  const rows = frontmatter.split('\n').filter(Boolean).map((line) => {
-    const [key, ...rest] = line.split(':');
-    return `<div><span>${escapeHtml(key.trim())}</span><strong>${escapeHtml(rest.join(':').trim())}</strong></div>`;
+  const parsedRows = [];
+  let currentRow = null;
+
+  frontmatter.split('\n').forEach((sourceLine) => {
+    const line = sourceLine.trim();
+    if (!line) return;
+
+    const keyMatch = line.match(/^([A-Za-z0-9_-]+)\s*:\s*(.*)$/);
+    if (keyMatch) {
+      currentRow = {
+        key: keyMatch[1],
+        value: keyMatch[2],
+        items: []
+      };
+      parsedRows.push(currentRow);
+      return;
+    }
+
+    const listMatch = line.match(/^-\s*(.*)$/);
+    if (listMatch && currentRow) {
+      currentRow.items.push(listMatch[1]);
+      return;
+    }
+
+    if (currentRow) {
+      currentRow.value = `${currentRow.value} ${line}`.trim();
+    }
+  });
+
+  const wideKeys = new Set([
+    'source_report',
+    'source_json',
+    'target',
+    'moa',
+    'modality',
+    'scorecard'
+  ]);
+  const mediumKeys = new Set([
+    'aliases',
+    'tags',
+    'company',
+    'indications',
+    'theme',
+    'cluster'
+  ]);
+  const cleanValue = (value) => String(value || '').replace(/^"(.*)"$/, '$1');
+  const renderValue = (row) => {
+    if (row.items.length) {
+      return `<ul class="wiki-meta-list">${row.items
+        .map((item) => `<li>${renderInlineMarkdown(cleanValue(item))}</li>`)
+        .join('')}</ul>`;
+    }
+    return `<strong>${renderInlineMarkdown(cleanValue(row.value) || '—')}</strong>`;
+  };
+
+  const rows = parsedRows.map((row) => {
+    const normalizedKey = row.key.toLowerCase();
+    const contentLength = `${row.value} ${row.items.join(' ')}`.length;
+    const sizeClass = wideKeys.has(normalizedKey) || contentLength > 110
+      ? 'wide'
+      : mediumKeys.has(normalizedKey) || contentLength > 42
+        ? 'medium'
+        : 'compact';
+    return `<div class="wiki-meta-item ${sizeClass}">
+      <span>${escapeHtml(row.key.replaceAll('_', ' '))}</span>
+      ${renderValue(row)}
+    </div>`;
   }).join('');
   return `<section class="wiki-frontmatter">${rows}</section>`;
 }

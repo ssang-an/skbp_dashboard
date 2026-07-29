@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fast Triage Detail</title>
+    <script>
+      (() => {
+        const stored = localStorage.getItem('skbp.ui.theme');
+        const theme = stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+    />
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell triage-detail-shell">
+      <header class="topbar triage-detail-topbar">
+        <div class="triage-title-block">
+          <p class="eyebrow">GPT 1 · Fast Triage</p>
+          <h1 id="triageDetailTitle">Fast Triage : Loading</h1>
+          <p id="triageDetailSubtitle" class="triage-detail-subtitle">약물 원본 데이터를 불러오는 중입니다.</p>
+        </div>
+        <div class="top-actions" aria-label="Fast Triage 상세 작업">
+          <a class="secondary-link" href="/?tab=triage">
+            <span aria-hidden="true">←</span>
+            <b>Fast Triage 목록</b>
+          </a>
+          <span id="triageDetailLoadStatus" class="status-pill">Loading</span>
+          <button
+            class="theme-toggle icon-button"
+            data-theme-toggle
+            type="button"
+            aria-label="라이트·다크 모드 전환"
+          >
+            <span data-theme-icon aria-hidden="true">◐</span>
+            <span class="sr-only" data-theme-label>Dark</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="triage-detail-layout">
+        <div class="triage-detail-main">
+          <section id="triageDecisionHero" class="panel triage-decision-hero"></section>
+
+          <section class="panel triage-detail-section">
+            <div class="triage-section-heading">
+              <div>
+                <p class="eyebrow">Pipeline identity</p>
+                <h2>파이프라인 핵심 정보</h2>
+              </div>
+              <span>Fast Triage 입력값 기준</span>
+            </div>
+            <div id="triageIdentityGrid" class="triage-identity-grid"></div>
+          </section>
+
+          <section class="panel triage-detail-section">
+            <div class="triage-section-heading">
+              <div>
+                <p class="eyebrow">3-point screening</p>
+                <h2>핵심 평가 점수</h2>
+              </div>
+              <span>Target · MoA · Data</span>
+            </div>
+            <div id="triageScoreGrid" class="triage-score-grid"></div>
+          </section>
+
+          <section class="triage-evidence-grid">
+            <article class="panel triage-detail-section">
+              <div class="triage-section-heading compact">
+                <div>
+                  <p class="eyebrow">Evidence trail</p>
+                  <h2>확인된 출처</h2>
+                </div>
+              </div>
+              <div id="triageSourceList" class="triage-source-list"></div>
+            </article>
+
+            <article class="panel triage-detail-section">
+              <div class="triage-section-heading compact">
+                <div>
+                  <p class="eyebrow">Diligence handoff</p>
+                  <h2>Full Scout 전 확인사항</h2>
+                </div>
+              </div>
+              <div id="triageDiligence" class="triage-diligence"></div>
+            </article>
+          </section>
+
+          <details class="panel triage-raw-panel">
+            <summary>
+              <span>
+                <b>GPT 1 배치 원본 Markdown</b>
+                <small>감사·대조가 필요할 때만 펼쳐보세요.</small>
+              </span>
+              <span aria-hidden="true">펼치기</span>
+            </summary>
+            <div class="triage-raw-note">
+              이 원문은 여러 약물을 한 번에 조사한 배치 표일 수 있습니다. 위 영역은 현재 약물 한 건의 JSON
+              레코드만 추려 가독성 있게 재구성한 화면입니다.
+            </div>
+            <div id="triageRawReport" class="report-viewer triage-raw-report"></div>
+          </details>
+        </div>
+
+        <aside class="panel triage-quick-panel">
+          <div class="triage-quick-header">
+            <p class="eyebrow">Quick scan</p>
+            <h2>판단 요약</h2>
+          </div>
+          <div id="triageQuickSummary" class="triage-quick-summary"></div>
+          <div class="triage-status-guide">
+            <h3>상태 해석</h3>
+            <dl>
+              <div><dt class="select">SELECT</dt><dd>Full Scout 우선 검토 후보</dd></div>
+              <div><dt class="reject">REJECT</dt><dd>현재 기준에서는 심층조사 제외</dd></div>
+              <div><dt class="na">N/A</dt><dd>관심 범주에 적용되지 않는 항목</dd></div>
+            </dl>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <script type="module" src="./src/triage-detail.js"></script>
+  </body>
+</html>

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/clinical_trial_registry"
-created_at: "2026-06-23"
-updated_at: "2026-06-23"
+created_at: "2026-07-29"
+updated_at: "2026-07-29"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | clinical_trial_registry |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/09e0b67b6d02474ea75e89ed532a7df5 |
-| Accessed / generated date | 2026-06-23 |
+| Accessed / generated date | 2026-07-29 |
 
 ## Evidence Summary
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/publication"
-created_at: "2026-06-23"
-updated_at: "2026-06-23"
+created_at: "2026-07-29"
+updated_at: "2026-07-29"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | publication |
 | Reliability | medium |
 | URL | https://pure.kaist.ac.kr/en/publications/anti-inflammatory-clearance-of-amyloid-%CE%B2-by-a-chimeric-gas6-fusio/ |
-| Accessed / generated date | 2026-06-23 |
+| Accessed / generated date | 2026-07-29 |
 
 ## Evidence Summary
 

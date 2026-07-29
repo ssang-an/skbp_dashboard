@@ -1,0 +1,7 @@
+{
+  "name": "skbp-pipeline-dashboard",
+  "private": true,
+  "scripts": {
+    "company": "bun run ./scripts/company-server.ts"
+  }
+}

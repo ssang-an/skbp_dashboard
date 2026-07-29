@@ -6,12 +6,25 @@
     <title>SKBP Pipeline Dashboard</title>
     <script>
       (() => {
+        if (
+          ['127.0.0.1', 'localhost'].includes(window.location.hostname)
+          && window.location.port === '8000'
+        ) {
+          window.location.replace(`http://${window.location.hostname}:8011${window.location.pathname}${window.location.search}${window.location.hash}`);
+          return;
+        }
         const stored = localStorage.getItem('skbp.ui.theme');
         const theme = stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+    />
+    <link rel="stylesheet" href="./src/styles.css?v=20260729-oi-partnership-1" />
   </head>
   <body>
     <div class="app-shell">
@@ -98,18 +111,26 @@
         <section class="visual-grid" aria-label="Score visualizations">
           <article class="panel">
             <div class="panel-header">
-              <h2>Target Relevance 분포</h2>
-              <span>1-3점</span>
-            </div>
-            <div class="chart-stack" id="targetChart"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-header">
               <h2>Theme 분포</h2>
               <span>AI Champion</span>
             </div>
             <div class="chart-stack" id="themeChart"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Indication 분포</h2>
+              <span>Main indication</span>
+            </div>
+            <div class="chart-stack" id="indicationChart"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Modality 분포</h2>
+              <span>Modality</span>
+            </div>
+            <div class="chart-stack" id="modalityChart"></div>
           </article>
 
           <article class="panel">
@@ -122,29 +143,18 @@
 
           <article class="panel">
             <div class="panel-header">
-              <h2>Pipeline Filter</h2>
-              <span>PASS / FAIL</span>
-            </div>
-            <div class="donut-wrap">
-              <div class="donut" id="passDonut">-</div>
-              <div class="donut-legend" id="passLegend"></div>
-            </div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-header">
-              <h2>Score Profile</h2>
-              <span>criterion avg</span>
-            </div>
-            <div class="chart-stack" id="scoreAverageChart"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-header">
               <h2>Priority Watch</h2>
-              <span>top assets</span>
+              <span>Review 최상위 pipeline</span>
             </div>
             <div class="priority-list" id="priorityList"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Due Date Watch</h2>
+              <span>Action date 임박순</span>
+            </div>
+            <div class="priority-list" id="dueDateList"></div>
           </article>
         </section>
 
@@ -157,6 +167,12 @@
             <label>
               <span>개발 단계</span>
               <select id="stageFilter">
+                <option value="all">전체</option>
+              </select>
+            </label>
+            <label>
+              <span>Modality</span>
+              <select id="modalityFilter">
                 <option value="all">전체</option>
               </select>
             </label>
@@ -196,7 +212,7 @@
           </div>
         </section>
 
-        <section class="panel">
+        <section class="panel pipeline-table-panel">
           <div class="panel-header">
             <h2>파이프라인 테이블</h2>
             <div class="panel-actions">
@@ -222,15 +238,30 @@
             </div>
             <div class="column-settings-grid" id="columnSettingsGrid"></div>
           </div>
-          <div class="pipeline-table-tabs" role="tablist" aria-label="Pipeline table mode">
-            <button id="fastTriageTableTab" type="button" role="tab" aria-selected="false" data-table-mode="triage">
-              <span>GPT 1</span>
-              <b>Fast Triage</b>
-            </button>
-            <button class="active" id="fullScoutTableTab" type="button" role="tab" aria-selected="true" data-table-mode="full">
-              <span>GPT 2</span>
-              <b>Full Scout</b>
-            </button>
+          <div class="pipeline-table-tabs-row">
+            <div class="pipeline-table-tabs" role="tablist" aria-label="Pipeline table mode">
+              <button id="fastTriageTableTab" type="button" role="tab" aria-selected="false" data-table-mode="triage">
+                <span class="tab-step" aria-hidden="true">1</span>
+                <span class="tab-label-group">
+                  <span class="tab-eyebrow">1차 스크리닝</span>
+                  <b>Fast Triage</b>
+                </span>
+              </button>
+              <button class="active" id="fullScoutTableTab" type="button" role="tab" aria-selected="true" data-table-mode="full">
+                <span class="tab-step" aria-hidden="true">2</span>
+                <span class="tab-label-group">
+                  <span class="tab-eyebrow">2차 정밀분석</span>
+                  <b>Full Scout</b>
+                </span>
+              </button>
+              <button id="focusManagementTableTab" type="button" role="tab" aria-selected="false" data-table-mode="focus">
+                <span class="tab-step tab-step-star" aria-hidden="true">★</span>
+                <span class="tab-label-group">
+                  <span class="tab-eyebrow">관심 목록</span>
+                  <b>집중 관리 <em id="focusTabCount">0</em></b>
+                </span>
+              </button>
+            </div>
           </div>
           <div class="table-wrap">
             <table class="pipeline-table">
@@ -259,10 +290,11 @@
                     <input id="selectPageRows" type="checkbox" aria-label="현재 페이지 전체 선택" />
                   </th>
                   <th><button data-sort="company" type="button">Company</button></th>
-                  <th><button data-sort="country" type="button">Country</button></th>
-                  <th><button data-sort="asset" type="button">Asset</button></th>
-                  <th><button data-sort="target" type="button">Target / Theme / Cluster</button></th>
-                  <th><button data-sort="mainIndication" type="button">Main indication</button></th>
+                <th><button data-sort="country" type="button">Country</button></th>
+                <th><button data-sort="asset" type="button">Asset</button></th>
+                <th><button data-sort="target" type="button">Target / Modality / Theme / Cluster</button></th>
+                <th><button data-sort="modality" type="button">Modality</button></th>
+                <th><button data-sort="mainIndication" type="button">Main indication</button></th>
                   <th><button data-sort="stage" type="button">Stage</button></th>
                   <th><button data-sort="filter1" type="button">Filter 1</button></th>
                   <th><button data-sort="filter2" type="button">Filter 2</button></th>
@@ -367,40 +399,18 @@
       </form>
     </aside>
 
-    <div class="drawer-backdrop" id="triageReportBackdrop" hidden></div>
-    <aside class="ai-drawer triage-report-drawer" id="triageReportDrawer" aria-label="Fast triage markdown report drawer" aria-hidden="true" hidden>
-      <div class="drawer-resize-handle" data-resize-drawer aria-label="Resize triage report drawer" role="separator" tabindex="0"></div>
-      <div class="ai-drawer-header">
-        <div>
-          <p class="eyebrow">GPT 1 Fast Triage</p>
-          <h2 id="triageReportTitle">Markdown report</h2>
-          <span id="triageReportMeta" class="triage-report-meta">원문 미선택</span>
-        </div>
-        <button id="triageReportClose" type="button" aria-label="Close triage report">닫기</button>
-      </div>
-      <div id="triageReportBody" class="report-viewer triage-report-body"></div>
-    </aside>
-
     <div class="drawer-backdrop" id="criteriaBackdrop" hidden></div>
     <aside class="ai-drawer criteria-drawer" id="criteriaDrawer" aria-label="Scoring criteria drawer" aria-hidden="true" hidden>
       <div class="ai-drawer-header">
         <div>
-          <p class="eyebrow">AI Champion</p>
+          <p class="eyebrow" id="criteriaDrawerScopeLabel">AI Champion</p>
           <h2>판단근거</h2>
         </div>
         <button id="criteriaDrawerClose" type="button" aria-label="Close criteria drawer">닫기</button>
       </div>
 
       <div class="criteria-drawer-body">
-        <section class="criteria-intro">
-          <strong>판단근거 — SKBP Pipeline Finder v3.1</strong>
-          <p>
-            각 항목은 독립적으로 평가하며, 모든 점수는 0, 1, 2, 3 중 하나의 단일 정수로만 부여합니다.
-            Evidence Type은 점수를 자동 결정하지 않고, 해당 점수가 어떤 수준의 근거에 기반했는지 보여주는 audit label입니다.
-          </p>
-        </section>
-
-        <section class="criteria-rule criteria-triage-rule">
+        <section class="criteria-rule criteria-triage-rule" data-criteria-tab="triage">
           <h3>GPT 지침 1 — Fast Triage · v3.1 기준</h3>
           <p>
             지침 1은 여러 후보 중 지침 2 Full Scout로 넘길 대상을 빠르게 고르는 1차 screening입니다.
@@ -410,7 +420,7 @@
           </p>
         </section>
 
-        <section class="criteria-pass-grid triage-status-grid" aria-label="SELECT REJECT N/A triage criteria">
+        <section class="criteria-pass-grid triage-status-grid" aria-label="SELECT REJECT N/A triage criteria" data-criteria-tab="triage">
           <article>
             <h3>SELECT</h3>
             <ul>
@@ -437,8 +447,73 @@
           </article>
         </section>
 
-        <section class="criteria-rule criteria-full-rule">
-          <h3>GPT 지침 2 — Full Scout · v3.1 기준</h3>
+        <section class="criteria-scoring-section" data-criteria-tab="triage">
+          <div class="criteria-section-header">
+            <h3>Fast Triage Scoring Table</h3>
+            <span>TR / MOA / Data 예비 평가 · 0점에서 3점까지 보수적으로 적용</span>
+          </div>
+          <div class="criteria-table-wrap">
+            <table class="criteria-table">
+              <colgroup>
+                <col class="criteria-name-col" />
+                <col class="criteria-score-col" />
+                <col class="criteria-score-col" />
+                <col class="criteria-score-col" />
+                <col class="criteria-score-col" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>항목</th>
+                  <th>0점</th>
+                  <th>1점</th>
+                  <th>2점</th>
+                  <th>3점</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>Target Relevance</th>
+                  <td>CNS/SKBP 관련성이 없거나 판단 불가</td>
+                  <td>질환·target 관련성이 약하거나 간접적</td>
+                  <td>Neurology/CNS 관련성은 있으나 SKBP theme·cluster fit은 제한적</td>
+                  <td>SKBP theme 또는 cluster에 직접 해당</td>
+                </tr>
+                <tr>
+                  <th>MoA Validity</th>
+                  <td>MoA 또는 target–질환 연결 불명확</td>
+                  <td>회사 claim·이론적 rationale 중심</td>
+                  <td>Functional evidence 또는 동일 target/class validation 있음</td>
+                  <td>Asset-specific validation 또는 human target engagement/PoC 있음</td>
+                </tr>
+                <tr>
+                  <th>Data Maturity</th>
+                  <td>공개된 asset-specific data 없음</td>
+                  <td>주장 stage 대비 공개 data 부족</td>
+                  <td>Stage에 부합하는 전임상·PK/PD·초기 임상 data 있음</td>
+                  <td>Decision-ready package 또는 asset-specific human result/clinical PoC 있음</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="criteria-table-footnote">
+            <li>각 항목은 독립적으로 평가하며, 2점 이상은 해당 점수를 뒷받침하는 공개 근거가 확인돼야 합니다.</li>
+            <li>N/A는 asset identity 자체를 확인하지 못한 경우에만 사용하며, identity는 확인됐지만 근거가 없으면 0점입니다.</li>
+          </ul>
+
+          <div class="criteria-rule triage-evidence-note">
+            <h3>Evidence Level 안내</h3>
+            <p>
+              지침 1은 최대 50개 후보의 Full Scout 우선순위를 정하는 screening-grade 조사입니다.
+              Asset identity, target/MoA, indication, active stage 및 공개된 asset-specific data 존재 여부를 빠르게 확인하며,
+              주로 공식 company/pipeline page, clinical trial registry, publication 등 1~2개의 credible source를 사용합니다.
+              3점 후보나 출처가 충돌하는 경우에만 추가 확인하며, 경쟁환경·시장성·특허/FTO·상세 CMC 등 full diligence는 수행하지 않습니다.
+              점수는 공개자료에서 현재 확인되는 evidence 수준이며 최종 scientific 또는 business diligence 결과가 아닙니다.
+            </p>
+          </div>
+        </section>
+
+        <section class="criteria-rule criteria-full-rule" data-criteria-tab="full">
+          <h3>GPT 지침 2 — Full Scout · v3.2 기준</h3>
           <p>
             지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
             지침 1에서 예비로 본 TR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
@@ -446,7 +521,7 @@
           </p>
         </section>
 
-        <section class="criteria-rule target-theme-note">
+        <section class="criteria-rule target-theme-note" data-criteria-tab="triage full">
           <h3>Target Relevance — Theme / Cluster 근거</h3>
           <p>
             E/I Balance와 Neuroimmune은 Target Relevance를 판단할 때 쓰는 SKBP 내부 biology map입니다.
@@ -454,7 +529,7 @@
           </p>
         </section>
 
-        <section class="criteria-theme-grid" aria-label="SKBP theme and cluster">
+        <section class="criteria-theme-grid" aria-label="SKBP theme and cluster" data-criteria-tab="triage full">
           <article>
             <h3>E/I Balance</h3>
             <p>balance between excitation and inhibition</p>
@@ -479,7 +554,7 @@
           </article>
         </section>
 
-        <section class="criteria-rule criteria-other-header">
+        <section class="criteria-rule criteria-other-header" data-criteria-tab="full">
           <h3>기타 기록 규칙</h3>
           <p>
             아래 항목들은 점수 자체보다 auditability를 위해 남깁니다. Evidence Type은 근거 수준의 라벨이고,
@@ -487,7 +562,7 @@
           </p>
         </section>
 
-        <section class="criteria-rule criteria-other-card">
+        <section class="criteria-rule criteria-other-card" data-criteria-tab="full">
           <h3>Evidence Type</h3>
           <div class="criteria-table-wrap">
             <table class="criteria-table evidence-type-table">
@@ -508,7 +583,7 @@
           </div>
         </section>
 
-        <section class="criteria-pass-grid full-status-grid" aria-label="PASS REVIEW FAIL criteria">
+        <section class="criteria-pass-grid full-status-grid" aria-label="PASS REVIEW FAIL criteria" data-criteria-tab="full">
           <article>
             <h3>PASS</h3>
             <ul>
@@ -537,7 +612,7 @@
           </article>
         </section>
 
-        <section class="criteria-scoring-section">
+        <section class="criteria-scoring-section" data-criteria-tab="full">
           <div class="criteria-section-header">
             <h3>Scoring Table</h3>
             <span>지침 1은 TR/MOA/Data만 예비 적용, 지침 2는 7개 전체 적용</span>
@@ -584,10 +659,10 @@
                 </tr>
                 <tr>
                   <th>Platform Attractiveness</th>
-                  <td>platform 실체 또는 재현성 불명확</td>
-                  <td>차별성 claim 중심</td>
-                  <td>기술 차별성 논리와 일부 data 있음</td>
-                  <td>data 또는 외부검증으로 platform 장점 입증</td>
+                  <td>Platform 실재 또는 구현 가능성 불명확</td>
+                  <td>차별성 claim·이론적 rationale 중심</td>
+                  <td>Comparator 대비 정량적 기술 우위가 확인되나 단일·전임상 조건에 제한</td>
+                  <td>Platform 적용 자산 First Patient Dosed 또는 반복성·외부검증 확인</td>
                 </tr>
                 <tr>
                   <th>Expansion Potential</th>
@@ -615,7 +690,7 @@
           </div>
         </section>
 
-        <section class="criteria-parameter-guide">
+        <section class="criteria-parameter-guide" data-criteria-tab="full">
           <div class="criteria-section-header">
             <h3>Parameter Guide</h3>
             <span>각 항목에서 실제로 보는 핵심 쟁점</span>
@@ -646,7 +721,7 @@
             </article>
             <article>
               <h3>4. Platform Attractiveness</h3>
-              <p>modality와 platform이 SKBP 관점에서 다루기 좋은지, 반복 가능성과 차별성이 있는지 봅니다. small molecule, ASO, siRNA는 기본 선호도가 높습니다.</p>
+              <p>개별 asset의 개발 성숙도가 아니라 modality, delivery, chemistry, manufacturing 등 underlying technology가 다른 프로그램에도 반복 적용 가능한 기술적 우위를 제공하는지 평가합니다. 같은 platform에 공식 연결된 다른 asset의 근거도 사용할 수 있습니다.</p>
             </article>
             <article>
               <h3>5. Expansion Potential</h3>
@@ -654,7 +729,7 @@
             </article>
             <article>
               <h3>6. Data Maturity</h3>
-              <p>현재 stage에 맞는 asset-specific data가 보이는지 봅니다. preclinical이면 실험 readout, clinical이면 human safety/efficacy/biomarker 근거가 핵심입니다.</p>
+              <p>현재 assessed asset 하나의 stage-appropriate development package만 평가합니다. 다른 asset 또는 platform-wide data는 이 점수를 올리지 않습니다.</p>
             </article>
             <article class="parameter-card-wide marketability-parameter-card">
               <h3>7. Marketability</h3>
@@ -682,7 +757,7 @@
           </div>
         </section>
 
-        <section class="criteria-scoring-section legacy-scoring-section">
+        <section class="criteria-scoring-section legacy-scoring-section" data-criteria-tab="full">
           <div class="criteria-section-header">
             <h3>Scoring Table</h3>
             <span>0점에서 3점까지 보수적으로 적용</span>
@@ -729,10 +804,10 @@
                 </tr>
                 <tr>
                   <th>Platform Attractiveness</th>
-                  <td>식별 불가 또는 rationale 없음</td>
-                  <td>claim / 논리 중심</td>
-                  <td>기술적 차별화 논리 명확</td>
-                  <td>data 또는 외부 검증으로 입증</td>
+                  <td>Platform 실재 또는 구현 가능성 불명확</td>
+                  <td>차별성 claim·이론적 rationale 중심</td>
+                  <td>Comparator 대비 정량적 기술 우위가 확인되나 단일·전임상 조건에 제한</td>
+                  <td>Platform 적용 자산 First Patient Dosed 또는 반복성·외부검증 확인</td>
                 </tr>
                 <tr>
                   <th>Expansion Potential</th>
@@ -787,7 +862,7 @@
           </article>
         </section>
 
-        <section class="criteria-rule criteria-other-card">
+        <section class="criteria-rule criteria-other-card" data-criteria-tab="full">
           <h3>근거 기록 규칙</h3>
           <ul class="criteria-subbullet-list">
             <li><strong>Rubric</strong><span>기준 설명은 <code>rubric</code> 섹션에만 남깁니다.</span></li>
@@ -798,7 +873,7 @@
           </ul>
         </section>
 
-        <section class="criteria-rule criteria-other-card">
+        <section class="criteria-rule criteria-other-card" data-criteria-tab="full">
           <h3>경쟁사 유사도 기록</h3>
           <p>
             경쟁 pipeline은 <code>similar_pipeline_count</code>, high/medium/low similarity 개수,
@@ -806,9 +881,45 @@
             evidence source를 함께 기록합니다.
           </p>
         </section>
+
+        <section class="criteria-rule criteria-other-card oi-partnership-guide" data-criteria-tab="focus">
+          <h3>Filter 3 — OI Partnership 자동 분류 v1.0</h3>
+          <p>
+            대상 적응증은 AD, PD, ALS, MS, Neuropathic Pain, Epilepsy입니다.
+            Tab3 구조화 값이 우선이며, 부족한 값만 Tab2 원문·상세 리포트와 사용자 업로드 파일에서 확인합니다.
+            확인되지 않은 값은 추정하지 않습니다.
+          </p>
+          <div class="oi-criteria-grid">
+            <article><strong>투자</strong><span>Non-Small Molecule + IND Enabling</span></article>
+            <article><strong>Value Up</strong><span>Small Molecule + In Vivo O + In Vitro O + ADMET ≥25</span></article>
+            <article><strong>공동 연구</strong><span>Non-Small Molecule + Platform Attractiveness 3</span></article>
+            <article><strong>중복 우선순위</strong><span>투자와 공동 연구가 모두 해당하면 공동 연구</span></article>
+            <article><strong>Unknown</strong><span>대상 적응증이지만 필수 정보가 부족함</span></article>
+            <article><strong>N/A</strong><span>대상 적응증이 아니거나, 정보는 충분하지만 조건 미충족</span></article>
+          </div>
+          <p class="criteria-footnote">
+            자동 결과·OI Note·Evidence Source를 함께 저장합니다. 담당자가 드롭다운이나 비고를 수정하면 HUMAN으로 표시되며,
+            <code>↻ Auto</code>를 선택하면 v1.0 기준으로 다시 계산합니다.
+          </p>
+        </section>
       </div>
     </aside>
 
-    <script type="module" src="./src/app.js"></script>
+    <div class="identity-modal-backdrop" id="reviewerIdentityModal" hidden>
+      <div class="identity-modal" role="dialog" aria-modal="true" aria-labelledby="reviewerIdentityTitle">
+        <h3 id="reviewerIdentityTitle">수정자 ID를 입력해주세요</h3>
+        <p class="identity-modal-hint">
+          점수와 자동 판정값을 수기로 변경한 사람을 팀 워크스페이스 변경 이력에 기록합니다.
+          입력값은 현재 브라우저 세션 동안 유지됩니다.
+        </p>
+        <input id="reviewerIdentityInput" maxlength="100" placeholder="이름 또는 사번" autocomplete="name" />
+        <div class="identity-modal-actions">
+          <button id="reviewerIdentityCancel" type="button" class="identity-modal-cancel">취소</button>
+          <button id="reviewerIdentitySubmit" type="button" class="identity-modal-submit">확인</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/app.js?v=20260729-donut-percent-only-1"></script>
   </body>
 </html>

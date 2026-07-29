@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/news"
-created_at: "2026-06-23"
-updated_at: "2026-06-23"
+created_at: "2026-07-29"
+updated_at: "2026-07-29"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | news |
 | Reliability | medium |
 | URL | https://www.biospectator.com/news/view/25729 |
-| Accessed / generated date | 2026-06-23 |
+| Accessed / generated date | 2026-07-29 |
 
 ## Evidence Summary
 

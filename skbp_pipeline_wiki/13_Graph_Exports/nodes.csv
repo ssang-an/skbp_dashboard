@@ -476,3 +476,34 @@ scorecard::cxjm-66_injection_20260623,Scorecard - CXJM-66 Injection,scorecard,Sc
 source::https_en.humanwell.com.cn,Humanwell official site,source,Source__Humanwell_official_site,pipeline/source;source/official_company,,,E0
 source::https_en.likang-pharma.com_news_213.html,Yichang Renfu CXJM-66 clinical trial approval,source,Source__Yichang_Renfu_CXJM-66_clinical_trial_approval,pipeline/source;source/regulatory,,,E0
 source::https_synapse.patsnap.com_drug_09e0b67b6d02474ea75e89ed532a7df5,Synapse CXJM-66,source,Source__Synapse_CXJM-66,pipeline/source;source/clinical_trial_registry,,,E0
+asset::gxc-303,GXC-303,asset,Asset__GXC-303__GXC303,pipeline/asset;theme/no_theme,11,Deprioritize,E4
+company::genixcure,GenixCure,company,Company__GenixCure,pipeline/company,,,
+target::stmn2_tdp-43–stmn2_axis,STMN2 / TDP-43–STMN2 axis,target,Target__STMN2_TDP-43–STMN2_axis,pipeline/target,,,
+moa::stmn2_발현_회복을_통해_motor-neuron_axonal_maintenance_regeneration을_촉진하려는_유전자_47910c81,STMN2 발현 회복을 통해 motor-neuron axonal maintenance/regeneration을 촉진하려는 유전자치료 접근; 정확한 cargo 설계는 비공개,moa,MoA__STMN2_발현_회복을_통해_motor-neuron_axonal_maintenance_regeneration을_촉진하려는_유전자_47910c81,pipeline/moa,,,
+modality::aav-based_gene_therapy;_care_insightminer-engineered_cns_neuron-targete_40de3825,"AAV-based gene therapy; CARE/InsightMiner-engineered CNS/neuron-targeted capsid family, exact GXC-303 capsid/version unconfirmed",modality,Modality__AAV-based_gene_therapy;_CARE_InsightMiner-engineered_CNS_neuron-targete_40de3825,pipeline/modality,,,
+"indication::als,_likely_tdp-43_stmn2-deficient_sporadic_als;_exact_biomarker-select_f3022790","ALS, likely TDP-43/STMN2-deficient sporadic ALS; exact biomarker-selected population not disclosed",indication,"Indication__ALS,_likely_TDP-43_STMN2-deficient_sporadic_ALS;_exact_biomarker-select_f3022790",pipeline/indication,,,
+cluster::n_a,N/A,cluster,Cluster__N-A,skbp/cluster,,,
+scorecard::gxc-303_20260713,Scorecard - GXC-303,scorecard,Scorecard__GXC-303__20260713,pipeline/scorecard,11,Deprioritize,E4
+competitor::quralis_qrl-201,QRL-201,competitor,Competitor__QurAlis__QRL-201,pipeline/competitor,,,
+competitor::celosia_therapeutics_ctx1000,CTx1000,competitor,Competitor__Celosia_Therapeutics__CTx1000,pipeline/competitor,,,
+competitor::uniqure_amt-162,AMT-162,competitor,Competitor__uniQure__AMT-162,pipeline/competitor,,,
+competitor::biogen_ionis_qalsody_(tofersen),Qalsody (tofersen),competitor,Competitor__Biogen_Ionis__Qalsody_(tofersen),pipeline/competitor,,,
+competitor::ionis_otsuka_ulefnersen_(ion363),Ulefnersen (ION363),competitor,Competitor__Ionis_Otsuka__Ulefnersen_(ION363),pipeline/competitor,,,
+source::s1,S1,source,Source__S1,pipeline/source;source/other,,,E4
+source::s2,S2,source,Source__S2,pipeline/source;source/other,,,E4
+source::s3,S3,source,Source__S3,pipeline/source;source/other,,,E4
+source::s4,S4,source,Source__S4,pipeline/source;source/other,,,E4
+source::s13,S13,source,Source__S13,pipeline/source;source/other,,,E4
+source::https_www.genix-cure.com_company_pipeline.php,GenixCure Pipeline,source,Source__GenixCure_Pipeline,pipeline/source;source/official_company_pipeline,,,E4
+source::https_dailypharm.com_user_news_2900,"루게릭병 표적옵션 등장…제약사들, 질환 원인 정조준",source,"Source__루게릭병_표적옵션_등장…제약사들,_질환_원인_정조준",pipeline/source;source/reputable_biotech_news,,,E4
+source::https_www.genix-cure.com_bbs_mode=view&num=44&so_table=news,GenixCure BIO USA 2025 partnering update,source,Source__GenixCure_BIO_USA_2025_partnering_update,pipeline/source;source/official_company_news,,,E4
+source::https_postbi.jbnu.ac.kr_bbs_postbi_4612_388799_artclview.do,제닉스큐어 AAV 플랫폼 인터뷰,source,Source__제닉스큐어_AAV_플랫폼_인터뷰,pipeline/source;source/company_interview,,,E4
+source::https_www.science.org_doi_10.1126_science.abq5622,Mechanism of STMN2 cryptic splice-polyadenylation and its correction,source,Source__Mechanism_of_STMN2_cryptic_splice-polyadenylation_and_its_correction,pipeline/source;source/peer_reviewed_publication,,,E4
+source::https_pubmed.ncbi.nlm.nih.gov_40392845,Stathmin-2 enhances motor axon regeneration,source,Source__Stathmin-2_enhances_motor_axon_regeneration,pipeline/source;source/peer_reviewed_publication,,,E4
+source::https_www.quralis.com_news_quralis-demonstrates-effects-on-disease-prog_4b6f7426,QRL-201 ANQUR Phase 1/2 interim update,source,Source__QRL-201_ANQUR_Phase_1_2_interim_update,pipeline/source;source/official_competitor_news,,,E4
+source::https_clinicaltrials.gov_study_nct07401121,NCT07401121 — CTx1000 KOANEWA,source,Source__NCT07401121_—_CTx1000_KOANEWA,pipeline/source;source/clinical_trial_registry,,,E4
+source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_b9f55f97,FDA approval of Qalsody for SOD1-ALS,source,Source__FDA_approval_of_Qalsody_for_SOD1-ALS,pipeline/source;source/regulatory_source,,,E4
+source::https_ir.ionis.com_news-releases_news-release-details_ionis-reports-fir_68d904c2,Ionis Q1 2026 pipeline update,source,Source__Ionis_Q1_2026_pipeline_update,pipeline/source;source/official_competitor_update,,,E4
+source::https_www.uniqure.com_programs-pipeline_als-sod1,uniQure AMT-162 ALS program,source,Source__uniQure_AMT-162_ALS_program,pipeline/source;source/official_competitor_pipeline,,,E4
+source::https_doi.org_10.1016_j.neuroscience.2025.03.026,Evaluation of AAV transduction efficiency via multiple delivery routes,source,Source__Evaluation_of_AAV_transduction_efficiency_via_multiple_delivery_routes,pipeline/source;source/peer_reviewed_publication,,,E4
+source::https_pharm.edaily.co.kr_news_read_newsid=01626886638852512,GenixCure recombinant AAV platform interview,source,Source__GenixCure_recombinant_AAV_platform_interview,pipeline/source;source/reputable_biotech_news,,,E4

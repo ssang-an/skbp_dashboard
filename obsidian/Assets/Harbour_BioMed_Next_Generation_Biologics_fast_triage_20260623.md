@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-06-23T23:59:29"
+generated_at: "2026-07-29T00:20:08"
 record_id: "Harbour_BioMed_Next_Generation_Biologics_fast_triage_20260623"
 company: "Harbour BioMed (Guangzhou) Co Ltd"
 country: "China"

@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-06-23T23:59:29"
+generated_at: "2026-07-29T00:20:08"
 record_id: "Illimis_Therapeutics_ILM01_20260621"
 company: "Illimis Therapeutics"
 country: "Republic of Korea"
@@ -312,7 +312,173 @@ High similarity competitors are Aβ-directed disease-modifying therapies for ear
     ],
     "output_filename_base": "Illimis_Therapeutics_ILM01_20260621",
     "rubric_version": "3.1",
-    "rubric_author": "kate"
+    "rubric_author": "kate",
+    "focus_management": {
+      "is_tracked": false,
+      "added_at": "2026-07-28T14:52:28.874464+00:00",
+      "user_comment": "",
+      "due_date": "",
+      "updated_at": "2026-07-28T14:52:32.933291+00:00",
+      "updated_source": "dashboard_tab3",
+      "updated_by": "127.0.0.1",
+      "removed_at": "2026-07-28T14:52:32.933291+00:00"
+    },
+    "edit_history": [
+      {
+        "changed_at": "2026-07-28T14:52:28.874491+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.add",
+        "previous_value": null,
+        "new_value": null
+      },
+      {
+        "changed_at": "2026-07-28T14:52:32.933629+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.remove",
+        "previous_value": null,
+        "new_value": null
+      },
+      {
+        "changed_at": "2026-07-28T15:09:36.996963+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_attachment_upload",
+        "field": "attachments",
+        "previous_value": null,
+        "new_value": "test_deck.pptx"
+      },
+      {
+        "changed_at": "2026-07-28T15:09:51.986977+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_attachment_delete",
+        "field": "attachments",
+        "previous_value": "test_deck.pptx",
+        "new_value": null
+      },
+      {
+        "changed_at": "2026-07-28T15:11:36.133014+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_qualitative_review",
+        "field": "qualitative_review.commercial_appeal",
+        "previous_value": null,
+        "new_value": "second test opinion"
+      },
+      {
+        "changed_at": "2026-07-28T15:12:22.284192+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_qualitative_review",
+        "field": "qualitative_review.execution_risk",
+        "previous_value": null,
+        "new_value": "third clean test"
+      },
+      {
+        "changed_at": "2026-07-28T15:12:22.402602+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_attachment_upload",
+        "field": "attachments",
+        "previous_value": null,
+        "new_value": "test_deck2.pptx"
+      },
+      {
+        "changed_at": "2026-07-28T15:12:42.311361+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_attachment_delete",
+        "field": "attachments",
+        "previous_value": "test_deck2.pptx",
+        "new_value": null
+      },
+      {
+        "changed_at": "2026-07-28T15:13:44.045946+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_qualitative_review",
+        "field": "qualitative_review.scientific_rigor",
+        "previous_value": null,
+        "new_value": "ㅇㅇㅇ 이 내용이야"
+      },
+      {
+        "changed_at": "2026-07-28T15:13:51.205032+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_qualitative_review",
+        "field": "qualitative_review.scientific_rigor",
+        "previous_value": null,
+        "new_value": "안녕"
+      },
+      {
+        "changed_at": "2026-07-28T15:20:08.149876+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_table_manual_review",
+        "field": "scores.target_relevance",
+        "previous_value": 2,
+        "new_value": 3
+      }
+    ],
+    "last_edited_at": "2026-07-28T15:20:08.149876+00:00",
+    "last_edited_by": "127.0.0.1",
+    "attachments": [],
+    "qualitative_review": {
+      "criteria": {
+        "scientific_rigor": {
+          "entries": [
+            {
+              "id": "dc45d9e00bc647189a7bc2a906fd41c7",
+              "author": "hello",
+              "body": "ㅇㅇㅇ 이 내용이야",
+              "is_ai": false,
+              "created_at": "2026-07-28T15:13:44.045861+00:00"
+            },
+            {
+              "id": "37f4e74e596143718a65573cced18102",
+              "author": "AI (초안)",
+              "body": "[과학적 타당성] 의견 감사합니다. 이 코멘트는 규칙 기반 임시(placeholder) 코멘트이며, 추후 OpenRouter 연동 시 실제 AI 분석 코멘트로 교체될 예정입니다.",
+              "is_ai": true,
+              "created_at": "2026-07-28T15:13:44.045938+00:00"
+            },
+            {
+              "id": "2d4850eafe074d36bd09d462de003de6",
+              "author": "hello",
+              "body": "안녕",
+              "is_ai": false,
+              "created_at": "2026-07-28T15:13:51.204968+00:00"
+            },
+            {
+              "id": "9815cd2660e1437784bbecfe58a16011",
+              "author": "AI (초안)",
+              "body": "[과학적 타당성] 의견 감사합니다. 이 코멘트는 규칙 기반 임시(placeholder) 코멘트이며, 추후 OpenRouter 연동 시 실제 AI 분석 코멘트로 교체될 예정입니다.",
+              "is_ai": true,
+              "created_at": "2026-07-28T15:13:51.205027+00:00"
+            }
+          ]
+        }
+      },
+      "updated_at": "2026-07-28T15:13:51.205027+00:00"
+    },
+    "human_review": {
+      "overrides": {
+        "scores": {
+          "target_relevance": 3
+        }
+      },
+      "ai_baseline": {
+        "scores": {
+          "target_relevance": 2
+        }
+      },
+      "history": [
+        {
+          "changed_at": "2026-07-28T15:20:08.149833+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_table",
+          "field": "scores.target_relevance",
+          "previous_value": 2,
+          "new_value": 3
+        }
+      ],
+      "last_updated_at": "2026-07-28T15:20:08.149833+00:00",
+      "last_updated_source": "dashboard_table",
+      "last_updated_by": "127.0.0.1",
+      "has_manual_override": true
+    }
   },
   "input": {
     "company_input": "Illimis Therapeutics",

@@ -1,0 +1,36 @@
+Create a 16:9 process infographic image for a Korean internal seminar.
+
+Topic: How SKBP Pipeline Finder is created and operated.
+
+Exact title text:
+“제작 과정: GPT 결과를 운영 가능한 파이프라인으로 구조화”
+
+Main visual:
+A left-to-right five-step workflow with large numbered modules connected by glowing teal arrows.
+
+Five steps, exact text:
+1. “GPT 1 Fast Triage”
+   Subtext: “SELECT / REJECT / N/A 1차 선별”
+2. “GPT 2 Full Scout”
+   Subtext: “v3.1 Rubric 심층 조사”
+3. “JSON Schema”
+   Subtext: “pipeline-records.json 단일 원본”
+4. “Dashboard”
+   Subtext: “필터·정렬·차트·상세 검토”
+5. “Wiki Export”
+   Subtext: “Obsidian Markdown note와 graph 생성”
+
+Bottom principle bar:
+“운영 원칙: JSON이 Single Source of Truth, Dashboard와 Wiki는 재생성 가능한 산출물”
+
+Visual elements:
+- Step 1: funnel icon.
+- Step 2: magnifying glass over molecule.
+- Step 3: structured braces / data blocks.
+- Step 4: dashboard panels.
+- Step 5: connected knowledge graph nodes.
+- Use subtle biotech molecule motif in background.
+
+Style: technical schematic + premium dark mode, high readability, clean Korean typography, no unnecessary decoration.
+
+Negative constraints: Do not use real corporate logos. Do not show screenshots or browser chrome. Do not render random unreadable pseudo text outside the specified labels. Avoid clutter. Avoid tiny dense paragraphs. Avoid cartoonish style. Avoid low contrast. Avoid photorealistic people. No watermark. No PowerPoint UI. No slide thumbnails. No mock app window borders unless explicitly requested. Korean text must be clean and legible; if any Korean text is uncertain, leave that area as clean abstract visual space rather than inventing broken text.

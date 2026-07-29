@@ -1,0 +1,26 @@
+Create a 16:9 agenda / run-of-show image for a 7-minute internal presentation.
+
+Exact title text:
+“전사 데모 7분 구성안”
+
+Main layout:
+- A clean vertical timeline or horizontal winding roadmap with seven time blocks.
+- Each block has time, section title, and short focus text.
+
+Exact agenda text:
+1. “0:00–0:40 문제 정의 — 후보 검토 병목”
+2. “0:40–1:30 제작 과정 — GPT1/2, JSON, rubric”
+3. “1:30–3:10 Dashboard Demo — KPI·차트·필터·Priority Watch”
+4. “3:10–4:40 Detail Demo — 원문·점수근거·AI Agent”
+5. “4:40–5:40 Wiki Layer — Obsidian export·graph”
+6. “5:40–6:40 운영/확장 — 데이터 갱신·배포·DB 전환”
+7. “6:40–7:00 마무리 — 속도·근거·재사용성”
+
+Visual elements:
+- Small icons for problem, workflow, dashboard, evidence, graph, deployment, closing.
+- Use teal for completed flow line, amber highlights for demo parts.
+- Keep text large enough and aligned.
+
+Style: polished executive agenda, dark background, high contrast, Korean typography.
+
+Negative constraints: Do not use real corporate logos. Do not show screenshots or browser chrome. Do not render random unreadable pseudo text outside the specified labels. Avoid clutter. Avoid tiny dense paragraphs. Avoid cartoonish style. Avoid low contrast. Avoid photorealistic people. No watermark. No PowerPoint UI. No slide thumbnails. No mock app window borders unless explicitly requested. Korean text must be clean and legible; if any Korean text is uncertain, leave that area as clean abstract visual space rather than inventing broken text.

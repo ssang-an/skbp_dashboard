@@ -1,11 +1,12 @@
 # Companies
 
-> Generated at `2026-06-23T23:59:29`.
+> Generated at `2026-07-29T00:20:08`.
 
 - [[Actio Biosciences]] (2)
 - [[Biohaven]] (1)
 - [[Bright Minds Biosciences]] (1)
 - [[Encoded Therapeutics]] (1)
+- [[GenixCure]] (1)
 - [[HEC Pharm]] (1)
 - [[Hangzhou Vitan Pharmaceutical Technology Co Ltd]] (1)
 - [[Hangzhou Westan Pharmaceutical Technology Co., Ltd|Hangzhou Westan Pharmaceutical Technology Co., Ltd.]] (1)

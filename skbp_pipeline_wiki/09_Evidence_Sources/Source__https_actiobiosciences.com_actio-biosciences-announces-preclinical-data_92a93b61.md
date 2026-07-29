@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-06-23"
-updated_at: "2026-06-23"
+created_at: "2026-07-29"
+updated_at: "2026-07-29"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://actiobiosciences.com/actio-biosciences-announces-preclinical-data-highlighting-ability-of-abs-1230-to-potently-and-selectively-inhibit-kcnt1-and-significantly-reduce-seizure-activity/ |
-| Accessed / generated date | 2026-06-23 |
+| Accessed / generated date | 2026-07-29 |
 
 ## Evidence Summary
 

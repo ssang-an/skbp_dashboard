@@ -1,6 +1,6 @@
 # Pipeline Index
 
-> Generated from `json/pipeline-records.json` at `2026-06-23T23:59:29`.
+> Generated from `json/pipeline-records.json` at `2026-07-29T00:20:08`.
 
 ## Assets
 
@@ -38,6 +38,7 @@
 | [[HEC_Pharm_HEC20002_fast_triage_20260623|HEC20002]] | [[HEC Pharm]] | China | [[Theme - E-I Balance|E/I Balance]] | [[Cluster - Synaptic Transmission|Synaptic Transmission]] | IND-enabling | None / 21 |
 | [[Hefei_Huafang_HB018_fast_triage_20260623|HB018]] | [[Hefei Huafang Pharmaceutical Sciences and Technology]] | China | [[Theme - No Theme|No Theme]] | [[Cluster - No mapped SKBP cluster|No mapped SKBP cluster]] | IND-enabling | None / 21 |
 | [[Humanwell_CXJM-66_fast_triage_20260623|CXJM-66 Injection]] | [[Humanwell Healthcare Group]] | China | [[Theme - E-I Balance|E/I Balance]] | [[Cluster - Ion Channel|Ion Channel]] | Phase 1 | None / 21 |
+| [[GenixCure GXC-303|GXC-303]] | [[GenixCure]] | Republic of Korea | [[Theme - No Theme|No Theme]] | [[Cluster - N-A|N/A]] | Lead Optimization | 11 / 21 |
 
 ## Navigation
 

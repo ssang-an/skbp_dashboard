@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-06-23T23:59:29"
+generated_at: "2026-07-29T00:20:08"
 record_id: "Lynk_Pharmaceuticals_LNK01006_20260621"
 company: "Lynk Pharmaceuticals Co., Ltd."
 country: "China"
@@ -345,7 +345,45 @@ The closest competitors are CNS-penetrant TYK2 inhibitors NEU-627 and A-005. Per
     ],
     "output_filename_base": "Lynk_Pharmaceuticals_LNK01006_20260621",
     "rubric_version": "3.1",
-    "rubric_author": "kate"
+    "rubric_author": "kate",
+    "human_review": {
+      "overrides": {
+        "scores": {
+          "target_relevance": 2
+        }
+      },
+      "ai_baseline": {
+        "scores": {
+          "target_relevance": 3
+        }
+      },
+      "history": [
+        {
+          "changed_at": "2026-07-28T15:19:59.200776+00:00",
+          "actor_ip": "127.0.0.1",
+          "source": "dashboard_table",
+          "field": "scores.target_relevance",
+          "previous_value": 3,
+          "new_value": 2
+        }
+      ],
+      "last_updated_at": "2026-07-28T15:19:59.200776+00:00",
+      "last_updated_source": "dashboard_table",
+      "last_updated_by": "127.0.0.1",
+      "has_manual_override": true
+    },
+    "edit_history": [
+      {
+        "changed_at": "2026-07-28T15:19:59.200822+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_table_manual_review",
+        "field": "scores.target_relevance",
+        "previous_value": 3,
+        "new_value": 2
+      }
+    ],
+    "last_edited_at": "2026-07-28T15:19:59.200822+00:00",
+    "last_edited_by": "127.0.0.1"
   },
   "input": {
     "company_input": "Lynk Pharmaceuticals Co., Ltd.",

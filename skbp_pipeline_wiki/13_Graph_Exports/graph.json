@@ -4769,6 +4769,316 @@
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
+    },
+    {
+      "id": "asset::gxc-303",
+      "label": "GXC-303",
+      "type": "asset",
+      "title": "Asset__GXC-303__GXC303",
+      "tags": "pipeline/asset;theme/no_theme",
+      "score": 11,
+      "recommendation": "Deprioritize",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "company::genixcure",
+      "label": "GenixCure",
+      "type": "company",
+      "title": "Company__GenixCure",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::stmn2_tdp-43–stmn2_axis",
+      "label": "STMN2 / TDP-43–STMN2 axis",
+      "type": "target",
+      "title": "Target__STMN2_TDP-43–STMN2_axis",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::stmn2_발현_회복을_통해_motor-neuron_axonal_maintenance_regeneration을_촉진하려는_유전자_47910c81",
+      "label": "STMN2 발현 회복을 통해 motor-neuron axonal maintenance/regeneration을 촉진하려는 유전자치료 접근; 정확한 cargo 설계는 비공개",
+      "type": "moa",
+      "title": "MoA__STMN2_발현_회복을_통해_motor-neuron_axonal_maintenance_regeneration을_촉진하려는_유전자_47910c81",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::aav-based_gene_therapy;_care_insightminer-engineered_cns_neuron-targete_40de3825",
+      "label": "AAV-based gene therapy; CARE/InsightMiner-engineered CNS/neuron-targeted capsid family, exact GXC-303 capsid/version unconfirmed",
+      "type": "modality",
+      "title": "Modality__AAV-based_gene_therapy;_CARE_InsightMiner-engineered_CNS_neuron-targete_40de3825",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::als,_likely_tdp-43_stmn2-deficient_sporadic_als;_exact_biomarker-select_f3022790",
+      "label": "ALS, likely TDP-43/STMN2-deficient sporadic ALS; exact biomarker-selected population not disclosed",
+      "type": "indication",
+      "title": "Indication__ALS,_likely_TDP-43_STMN2-deficient_sporadic_ALS;_exact_biomarker-select_f3022790",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "cluster::n_a",
+      "label": "N/A",
+      "type": "cluster",
+      "title": "Cluster__N-A",
+      "tags": "skbp/cluster",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::gxc-303_20260713",
+      "label": "Scorecard - GXC-303",
+      "type": "scorecard",
+      "title": "Scorecard__GXC-303__20260713",
+      "tags": "pipeline/scorecard",
+      "score": 11,
+      "recommendation": "Deprioritize",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "competitor::quralis_qrl-201",
+      "label": "QRL-201",
+      "type": "competitor",
+      "title": "Competitor__QurAlis__QRL-201",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::celosia_therapeutics_ctx1000",
+      "label": "CTx1000",
+      "type": "competitor",
+      "title": "Competitor__Celosia_Therapeutics__CTx1000",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::uniqure_amt-162",
+      "label": "AMT-162",
+      "type": "competitor",
+      "title": "Competitor__uniQure__AMT-162",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::biogen_ionis_qalsody_(tofersen)",
+      "label": "Qalsody (tofersen)",
+      "type": "competitor",
+      "title": "Competitor__Biogen_Ionis__Qalsody_(tofersen)",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::ionis_otsuka_ulefnersen_(ion363)",
+      "label": "Ulefnersen (ION363)",
+      "type": "competitor",
+      "title": "Competitor__Ionis_Otsuka__Ulefnersen_(ION363)",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "source::s1",
+      "label": "S1",
+      "type": "source",
+      "title": "Source__S1",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::s2",
+      "label": "S2",
+      "type": "source",
+      "title": "Source__S2",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::s3",
+      "label": "S3",
+      "type": "source",
+      "title": "Source__S3",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::s4",
+      "label": "S4",
+      "type": "source",
+      "title": "Source__S4",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::s13",
+      "label": "S13",
+      "type": "source",
+      "title": "Source__S13",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.genix-cure.com_company_pipeline.php",
+      "label": "GenixCure Pipeline",
+      "type": "source",
+      "title": "Source__GenixCure_Pipeline",
+      "tags": "pipeline/source;source/official_company_pipeline",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_dailypharm.com_user_news_2900",
+      "label": "루게릭병 표적옵션 등장…제약사들, 질환 원인 정조준",
+      "type": "source",
+      "title": "Source__루게릭병_표적옵션_등장…제약사들,_질환_원인_정조준",
+      "tags": "pipeline/source;source/reputable_biotech_news",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.genix-cure.com_bbs_mode=view&num=44&so_table=news",
+      "label": "GenixCure BIO USA 2025 partnering update",
+      "type": "source",
+      "title": "Source__GenixCure_BIO_USA_2025_partnering_update",
+      "tags": "pipeline/source;source/official_company_news",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_postbi.jbnu.ac.kr_bbs_postbi_4612_388799_artclview.do",
+      "label": "제닉스큐어 AAV 플랫폼 인터뷰",
+      "type": "source",
+      "title": "Source__제닉스큐어_AAV_플랫폼_인터뷰",
+      "tags": "pipeline/source;source/company_interview",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.science.org_doi_10.1126_science.abq5622",
+      "label": "Mechanism of STMN2 cryptic splice-polyadenylation and its correction",
+      "type": "source",
+      "title": "Source__Mechanism_of_STMN2_cryptic_splice-polyadenylation_and_its_correction",
+      "tags": "pipeline/source;source/peer_reviewed_publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_pubmed.ncbi.nlm.nih.gov_40392845",
+      "label": "Stathmin-2 enhances motor axon regeneration",
+      "type": "source",
+      "title": "Source__Stathmin-2_enhances_motor_axon_regeneration",
+      "tags": "pipeline/source;source/peer_reviewed_publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.quralis.com_news_quralis-demonstrates-effects-on-disease-prog_4b6f7426",
+      "label": "QRL-201 ANQUR Phase 1/2 interim update",
+      "type": "source",
+      "title": "Source__QRL-201_ANQUR_Phase_1_2_interim_update",
+      "tags": "pipeline/source;source/official_competitor_news",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct07401121",
+      "label": "NCT07401121 — CTx1000 KOANEWA",
+      "type": "source",
+      "title": "Source__NCT07401121_—_CTx1000_KOANEWA",
+      "tags": "pipeline/source;source/clinical_trial_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_b9f55f97",
+      "label": "FDA approval of Qalsody for SOD1-ALS",
+      "type": "source",
+      "title": "Source__FDA_approval_of_Qalsody_for_SOD1-ALS",
+      "tags": "pipeline/source;source/regulatory_source",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_ir.ionis.com_news-releases_news-release-details_ionis-reports-fir_68d904c2",
+      "label": "Ionis Q1 2026 pipeline update",
+      "type": "source",
+      "title": "Source__Ionis_Q1_2026_pipeline_update",
+      "tags": "pipeline/source;source/official_competitor_update",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_www.uniqure.com_programs-pipeline_als-sod1",
+      "label": "uniQure AMT-162 ALS program",
+      "type": "source",
+      "title": "Source__uniQure_AMT-162_ALS_program",
+      "tags": "pipeline/source;source/official_competitor_pipeline",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_doi.org_10.1016_j.neuroscience.2025.03.026",
+      "label": "Evaluation of AAV transduction efficiency via multiple delivery routes",
+      "type": "source",
+      "title": "Source__Evaluation_of_AAV_transduction_efficiency_via_multiple_delivery_routes",
+      "tags": "pipeline/source;source/peer_reviewed_publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
+    },
+    {
+      "id": "source::https_pharm.edaily.co.kr_news_read_newsid=01626886638852512",
+      "label": "GenixCure recombinant AAV platform interview",
+      "type": "source",
+      "title": "Source__GenixCure_recombinant_AAV_platform_interview",
+      "tags": "pipeline/source;source/reputable_biotech_news",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E4"
     }
   ],
   "edges": [
@@ -10245,6 +10555,349 @@
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E0",
       "source_note": "Source__Synapse_CXJM-66"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "company::genixcure",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__GXC-303__20260713"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "target::stmn2_tdp-43–stmn2_axis",
+      "relationship": "TARGETS",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__GXC-303__20260713"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "moa::stmn2_발현_회복을_통해_motor-neuron_axonal_maintenance_regeneration을_촉진하려는_유전자_47910c81",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__GXC-303__20260713"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "modality::aav-based_gene_therapy;_care_insightminer-engineered_cns_neuron-targete_40de3825",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__GXC-303__20260713"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "indication::als,_likely_tdp-43_stmn2-deficient_sporadic_als;_exact_biomarker-select_f3022790",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__GXC-303__20260713"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "theme::no_theme",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__GXC-303__20260713"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "cluster::n_a",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__GXC-303__20260713"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "scorecard::gxc-303_20260713",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__GXC-303__20260713"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "competitor::quralis_qrl-201",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__GXC-303__20260713"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "competitor::celosia_therapeutics_ctx1000",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__GXC-303__20260713"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "competitor::uniqure_amt-162",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__GXC-303__20260713"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "competitor::biogen_ionis_qalsody_(tofersen)",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__GXC-303__20260713"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "competitor::ionis_otsuka_ulefnersen_(ion363)",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E4",
+      "source_note": "Scorecard__GXC-303__20260713"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::s1",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__S1"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::s1",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__S1"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::s2",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__S2"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::s2",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__S2"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::s3",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__S3"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::s3",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__S3"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::s4",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__S4"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::s4",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__S4"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::s13",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__S13"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::s13",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__S13"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::https_www.genix-cure.com_company_pipeline.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__GenixCure_Pipeline"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::https_www.genix-cure.com_company_pipeline.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__GenixCure_Pipeline"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::https_dailypharm.com_user_news_2900",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__루게릭병_표적옵션_등장…제약사들,_질환_원인_정조준"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::https_dailypharm.com_user_news_2900",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__루게릭병_표적옵션_등장…제약사들,_질환_원인_정조준"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::https_www.genix-cure.com_bbs_mode=view&num=44&so_table=news",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__GenixCure_BIO_USA_2025_partnering_update"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::https_www.genix-cure.com_bbs_mode=view&num=44&so_table=news",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__GenixCure_BIO_USA_2025_partnering_update"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::https_postbi.jbnu.ac.kr_bbs_postbi_4612_388799_artclview.do",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__제닉스큐어_AAV_플랫폼_인터뷰"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::https_postbi.jbnu.ac.kr_bbs_postbi_4612_388799_artclview.do",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__제닉스큐어_AAV_플랫폼_인터뷰"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::https_www.science.org_doi_10.1126_science.abq5622",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Mechanism_of_STMN2_cryptic_splice-polyadenylation_and_its_correction"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::https_www.science.org_doi_10.1126_science.abq5622",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Mechanism_of_STMN2_cryptic_splice-polyadenylation_and_its_correction"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::https_pubmed.ncbi.nlm.nih.gov_40392845",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Stathmin-2_enhances_motor_axon_regeneration"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::https_pubmed.ncbi.nlm.nih.gov_40392845",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Stathmin-2_enhances_motor_axon_regeneration"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::https_www.quralis.com_news_quralis-demonstrates-effects-on-disease-prog_4b6f7426",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__QRL-201_ANQUR_Phase_1_2_interim_update"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::https_www.quralis.com_news_quralis-demonstrates-effects-on-disease-prog_4b6f7426",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__QRL-201_ANQUR_Phase_1_2_interim_update"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::https_clinicaltrials.gov_study_nct07401121",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__NCT07401121_—_CTx1000_KOANEWA"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::https_clinicaltrials.gov_study_nct07401121",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__NCT07401121_—_CTx1000_KOANEWA"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_b9f55f97",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__FDA_approval_of_Qalsody_for_SOD1-ALS"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_b9f55f97",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__FDA_approval_of_Qalsody_for_SOD1-ALS"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::https_ir.ionis.com_news-releases_news-release-details_ionis-reports-fir_68d904c2",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Ionis_Q1_2026_pipeline_update"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::https_ir.ionis.com_news-releases_news-release-details_ionis-reports-fir_68d904c2",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Ionis_Q1_2026_pipeline_update"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::https_www.uniqure.com_programs-pipeline_als-sod1",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__uniQure_AMT-162_ALS_program"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::https_www.uniqure.com_programs-pipeline_als-sod1",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__uniQure_AMT-162_ALS_program"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::https_doi.org_10.1016_j.neuroscience.2025.03.026",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__Evaluation_of_AAV_transduction_efficiency_via_multiple_delivery_routes"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::https_doi.org_10.1016_j.neuroscience.2025.03.026",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__Evaluation_of_AAV_transduction_efficiency_via_multiple_delivery_routes"
+    },
+    {
+      "source": "asset::gxc-303",
+      "target": "source::https_pharm.edaily.co.kr_news_read_newsid=01626886638852512",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E4",
+      "source_note": "Source__GenixCure_recombinant_AAV_platform_interview"
+    },
+    {
+      "source": "scorecard::gxc-303_20260713",
+      "target": "source::https_pharm.edaily.co.kr_news_read_newsid=01626886638852512",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E4",
+      "source_note": "Source__GenixCure_recombinant_AAV_platform_interview"
     }
   ]
 }

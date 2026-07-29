@@ -1,0 +1,35 @@
+Create a 16:9 visual explanation image for a scoring rubric used in biotech pipeline shortlisting.
+
+Exact title text:
+“판단 기준: 점수만이 아니라 ‘왜 그 점수인가’를 남김”
+
+Main layout:
+- Top area: seven scoring criteria cards arranged in a clean grid.
+- Bottom area: two large explanation panels: PASS/REVIEW/FAIL gate and Audit label.
+
+Seven cards exact labels:
+1. “Target Relevance”
+2. “Competitive Landscape”
+3. “MoA Validity”
+4. “Platform Attractiveness”
+5. “Expansion Potential”
+6. “Data Maturity”
+7. “Marketability”
+Each card includes small text: “0–3점 + Evidence Type”
+
+Bottom left panel exact text:
+Header: “PASS / REVIEW / FAIL 게이트”
+Body: “Total ≥14, TR ≥3, MOA ≥2, Data ≥2 + hard blocker 없음 → PASS 후보”
+
+Bottom right panel exact text:
+Header: “Audit label”
+Body: “E0–E4 evidence type · why_not_higher · investigation_note · source URL 보존”
+
+Visual metaphor:
+- Criteria cards feed into a decision gate with three outputs: PASS, REVIEW, FAIL.
+- Evidence trail nodes connect to source documents.
+- Use green/teal for PASS, amber for REVIEW, red for FAIL.
+
+Style: dark technical infographic, clean high contrast, rigorous audit/compliance feeling, biotech strategy.
+
+Negative constraints: Do not use real corporate logos. Do not show screenshots or browser chrome. Do not render random unreadable pseudo text outside the specified labels. Avoid clutter. Avoid tiny dense paragraphs. Avoid cartoonish style. Avoid low contrast. Avoid photorealistic people. No watermark. No PowerPoint UI. No slide thumbnails. No mock app window borders unless explicitly requested. Korean text must be clean and legible; if any Korean text is uncertain, leave that area as clean abstract visual space rather than inventing broken text.

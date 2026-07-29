@@ -1,0 +1,38 @@
+Create a 16:9 infographic image explaining the Wiki/Obsidian knowledge layer of SKBP Pipeline Finder.
+
+Exact title text:
+“Wiki/Obsidian 레이어: Dashboard 밖 지식베이스”
+
+Visual concept:
+- Center: a glowing knowledge graph with nodes and links.
+- Left: generated Markdown note cards for Asset, Company, Target, Indication, Scorecard.
+- Right: dashboard note cards and graph export cards.
+- Bottom: one-line operating rule.
+
+Exact text labels:
+Node groups:
+- “Assets”
+- “Companies”
+- “Targets”
+- “Indications”
+- “Scorecards”
+- “Themes / Clusters”
+Dashboard notes:
+- “Asset Index”
+- “By Target”
+- “By Theme”
+- “Evidence Gaps”
+Graph export:
+- “nodes.csv”
+- “edges.csv”
+- “graph.json”
+Metric callout:
+- “477 nodes · 782 edges”
+Bottom rule:
+- “JSON 수정 → Wiki 재생성 → Obsidian에서 연결 지식으로 활용”
+
+Style:
+- Dark navy knowledge graph, elegant enterprise data product, teal node glow, violet links, amber metric callout.
+- Make it feel like a reusable research intelligence layer, not a simple folder diagram.
+
+Negative constraints: Do not use real corporate logos. Do not show screenshots or browser chrome. Do not render random unreadable pseudo text outside the specified labels. Avoid clutter. Avoid tiny dense paragraphs. Avoid cartoonish style. Avoid low contrast. Avoid photorealistic people. No watermark. No PowerPoint UI. No slide thumbnails. No mock app window borders unless explicitly requested. Korean text must be clean and legible; if any Korean text is uncertain, leave that area as clean abstract visual space rather than inventing broken text.

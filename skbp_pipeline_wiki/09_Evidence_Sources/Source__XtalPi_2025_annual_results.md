@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/news"
-created_at: "2026-06-23"
-updated_at: "2026-06-23"
+created_at: "2026-07-29"
+updated_at: "2026-07-29"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | news |
 | Reliability | medium |
 | URL | https://www.prnewswire.com/apac/news-releases/xtalpi-holdings-announces-full-year-2025-annual-results-302724975.html |
-| Accessed / generated date | 2026-06-23 |
+| Accessed / generated date | 2026-07-29 |
 
 ## Evidence Summary
 

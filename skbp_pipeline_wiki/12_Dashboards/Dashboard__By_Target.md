@@ -17,6 +17,7 @@
 - [[04_Targets/Target__scn1a_expression_regulation|scn1a_expression_regulation]]
 - [[04_Targets/Target__scn1a_nav1.1_expression_restoration|scn1a_nav1.1_expression_restoration]]
 - [[04_Targets/Target__stat3|stat3]]
+- [[04_Targets/Target__stmn2_tdp-43–stmn2_axis|stmn2_tdp-43–stmn2_axis]]
 - [[04_Targets/Target__t_cell|t_cell]]
 - [[04_Targets/Target__tarpγ8-associated_ampa_receptor_modulation|tarpγ8-associated_ampa_receptor_modulation]]
 - [[04_Targets/Target__trpm7|trpm7]]

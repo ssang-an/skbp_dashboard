@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-06-23T23:59:29"
+generated_at: "2026-07-29T00:20:08"
 record_id: "NeuShen_Therapeutics_NS-041_20260623"
 company: "NeuShen Therapeutics"
 country: "China / United States operations"
@@ -315,7 +315,15 @@ High-similarity same-target competitors include azetukalner/XEN1101, opakalim/BH
     ],
     "output_filename_base": "NeuShen_Therapeutics_NS-041_20260623",
     "rubric_version": "3.1",
-    "rubric_author": "kate"
+    "rubric_author": "kate",
+    "focus_management": {
+      "is_tracked": true,
+      "added_at": "2026-07-28T14:34:58.108835+00:00",
+      "user_comment": "",
+      "due_date": "",
+      "updated_at": "2026-07-28T14:34:58.108835+00:00",
+      "updated_source": "dashboard_tab3"
+    }
   },
   "input": {
     "company_input": "NeuShen Therapeutics (asset-only input에서 추정)",

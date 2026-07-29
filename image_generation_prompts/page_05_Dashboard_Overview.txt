@@ -1,0 +1,28 @@
+Create a 16:9 full-page generated illustration of the SKBP Pipeline Finder dashboard, not a screenshot.
+
+Exact title text:
+“대시보드 한눈에 보기: 후보군을 숫자와 차트로 즉시 파악”
+
+Visual concept:
+- A clean abstract dark-mode dashboard UI mockup occupying the left 70% of the image.
+- Right 30%: explanatory feature cards.
+- The dashboard should look like a biotech candidate shortlisting cockpit, with KPI cards, charts, priority list, filters, and a table.
+- Do not copy a real screenshot. Generate a stylized, clean, presentation-ready dashboard illustration.
+
+Dashboard labels to render:
+KPI cards: “총 분석 건수 32”, “PASS/SELECT 13/32”, “평균 총점 12.1/21”, “평균 TR 2.1/3”, “국가 수 5”
+Chart titles: “Target Relevance”, “Theme 분포”, “국가별 후보군”, “Pipeline Filter”, “Score Profile”, “Priority Watch”
+Filter labels: “Stage”, “Theme”, “Cluster”, “Country”, “Indication”
+
+Right feature cards exact text:
+- “KPI 요약”
+- “분포 차트”
+- “Priority Watch”
+- “필터·정렬·Excel export”
+
+Style:
+- Premium dark mode SaaS dashboard.
+- Glassmorphism panels, crisp chart shapes, teal/violet highlights.
+- Corporate Korean typography, readable at 16:9.
+
+Negative constraints: Do not use real corporate logos. Do not show screenshots or browser chrome. Do not render random unreadable pseudo text outside the specified labels. Avoid clutter. Avoid tiny dense paragraphs. Avoid cartoonish style. Avoid low contrast. Avoid photorealistic people. No watermark. No PowerPoint UI. No slide thumbnails. No mock app window borders unless explicitly requested. Korean text must be clean and legible; if any Korean text is uncertain, leave that area as clean abstract visual space rather than inventing broken text.

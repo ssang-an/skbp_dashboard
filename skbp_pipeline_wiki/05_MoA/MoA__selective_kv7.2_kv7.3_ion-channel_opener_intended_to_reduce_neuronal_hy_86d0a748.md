@@ -6,8 +6,8 @@ aliases:
   - "selective_kv7.2_kv7.3_ion-channel_opener_intended_to_reduce_neuronal_hy_86d0a748"
 tags:
   - "pipeline/moa"
-created_at: "2026-06-23"
-updated_at: "2026-06-23"
+created_at: "2026-07-29"
+updated_at: "2026-07-29"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

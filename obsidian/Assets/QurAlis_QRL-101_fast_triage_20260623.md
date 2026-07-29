@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-06-23T23:59:29"
+generated_at: "2026-07-29T00:20:08"
 record_id: "QurAlis_QRL-101_fast_triage_20260623"
 company: "QurAlis"
 country: "United States"

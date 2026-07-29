@@ -8,7 +8,6 @@
     "input",
     "source_report",
     "company_profile",
-    "rubric",
     "json_summary",
     "structured_table",
     "hard_filter",
@@ -85,7 +84,7 @@
         "rubric_version",
         "rubric_author"
       ],
-      "additionalProperties": false,
+      "additionalProperties": true,
       "properties": {
         "schema_version": {
           "type": "string",
@@ -96,7 +95,8 @@
             "string",
             "null"
           ],
-          "format": "date"
+          "format": "date",
+          "description": "Date the underlying GPT report/search was produced. Defaults to today (UTC) on save if missing."
         },
         "language": {
           "type": "string",
@@ -126,11 +126,194 @@
           ]
         },
         "rubric_version": {
-          "type": "string"
+          "type": "string",
+          "description": "Rubric/guideline version used to score this record (full-scout or fast-triage rubric depending on workflow)."
         },
         "rubric_author": {
           "type": "string",
           "default": "kate"
+        },
+        "last_edited_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "ISO 8601 UTC timestamp of the most recent human/dashboard edit to this record."
+        },
+        "last_edited_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Identifier of who made the most recent edit. Temporary stand-in until SSO login is wired up: stores the requester's IP address."
+        },
+        "edit_history": {
+          "type": "array",
+          "description": "Append-only log of human/dashboard edits, newest last. Each entry stamps when and by whom (IP, pending SSO) a change was made.",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": [
+              "changed_at",
+              "actor_ip",
+              "source"
+            ],
+            "properties": {
+              "changed_at": {
+                "type": "string",
+                "description": "ISO 8601 UTC timestamp."
+              },
+              "actor_ip": {
+                "type": "string",
+                "description": "Requester IP address, temporary stand-in for user identity until SSO is available."
+              },
+              "actor_name": {
+                "type": "string",
+                "description": "Reviewer-entered name or employee ID. Preferred for the visible audit trail when present; actor_ip remains as a technical fallback."
+              },
+              "source": {
+                "type": "string",
+                "description": "Which UI/endpoint made the change, e.g. detail_json_editor, dashboard_table_manual_review, dashboard_tab3_focus_management, dashboard_comment, dashboard_attachment_upload, dashboard_attachment_delete, dashboard_qualitative_review, paste_json_upsert."
+              },
+              "field": {
+                "type": "string"
+              },
+              "previous_value": {},
+              "new_value": {}
+            }
+          }
+        },
+        "human_review": {
+          "type": "object",
+          "description": "Manual score/status overrides layered on top of AI baseline values. overrides.status_reason stores the editable one-line human rationale shown beside Review status; both status and rationale changes are audit-logged.",
+          "additionalProperties": true
+        },
+        "focus_management": {
+          "type": "object",
+          "description": "TAB3/full-scout review workspace state. OI Partnership v1.0 stores an auto-classified or human-overridden partnership_type (investment|value_up|joint_research|n_a|unknown), partnership_note, evidence sources, source/status, and the auto suggestion. Also supports partner material flags and the in_vivo_status/in_vitro_status/admet_completed evidence-summary triple.",
+          "additionalProperties": true,
+          "properties": {
+            "partnership_type": {
+              "type": "string",
+              "enum": ["", "investment", "value_up", "joint_research", "n_a", "unknown"],
+              "description": "Final Filter 3 value. Automatic rules use target indication, modality, stage, in-vivo/in-vitro outcome, ADMET score, and Platform Attractiveness. A human selection takes precedence until Auto is selected again. Empty is accepted only for legacy/untracked records before classification."
+            },
+            "partnership_note": {
+              "type": "string",
+              "description": "Applied rule, overlap, missing-field list, or N/A reason shown immediately to the right of Filter 3."
+            },
+            "partnership_evidence_sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Tab3 structured data, Tab2 report, and uploaded filenames used for the final classification."
+            },
+            "partnership_classification_source": {
+              "type": "string",
+              "enum": ["auto", "manual", "unclassified"]
+            },
+            "partnership_classification_status": {
+              "type": "string",
+              "enum": ["auto_classified", "manual_override", "pending_criteria"]
+            },
+            "partnership_classification_criteria_version": {
+              "type": "string"
+            },
+            "partnership_auto_suggestion": {
+              "type": "string",
+              "enum": ["investment", "value_up", "joint_research", "n_a", "unknown"],
+              "description": "Latest v1.0 automatic suggestion retained even when the final partnership_type is manually overridden."
+            },
+            "partnership_auto_note": {
+              "type": "string"
+            },
+            "partnership_auto_evidence_sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "partner_material_flags": {
+              "type": "object",
+              "description": "Human-maintained availability indicators for CDP, NCDP, and ADMET partner materials. The detail UI also derives effective active states only from standalone CDP, NCDP, or ADMET tokens in uploaded attachment filenames; an automatic match does not overwrite these manual booleans.",
+              "additionalProperties": false,
+              "properties": {
+                "cdp": {
+                  "type": "boolean"
+                },
+                "ncdp": {
+                  "type": "boolean"
+                },
+                "admet": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "partner_material_flag_overrides": {
+              "type": "object",
+              "description": "Explicit human overrides for CDP, NCDP, and ADMET availability. When a boolean exists for a key, it takes precedence over filename auto-detection so a user can manually switch the indicator on or off.",
+              "additionalProperties": false,
+              "properties": {
+                "cdp": {
+                  "type": "boolean"
+                },
+                "ncdp": {
+                  "type": "boolean"
+                },
+                "admet": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "in_vivo_status": {
+              "type": "string",
+              "enum": ["O", "X", "N/A"],
+              "description": "Whether an explicit in-vivo outcome was found in the GPT report + uploaded attachments. O requires positive efficacy/activity wording, X requires negative/failure wording, and N/A means absent or outcome unclear. A mere statement that an experiment was performed is not O."
+            },
+            "in_vivo_status_source": {
+              "type": "string",
+              "enum": ["auto", "manual"],
+              "description": "Whether in_vivo_status was last set by the keyword heuristic (main.py's classify_evidence_presence) or overridden by a reviewer in the TAB3 table."
+            },
+            "in_vitro_status": {
+              "type": "string",
+              "enum": ["O", "X", "N/A"],
+              "description": "Same detection as in_vivo_status, for in-vitro efficacy evidence."
+            },
+            "in_vitro_status_source": {
+              "type": "string",
+              "enum": ["auto", "manual"]
+            },
+            "admet_completed": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "maximum": 50,
+              "description": "Count of 'Completed' occurrences found in attachments whose filename contains 'admet', out of a fixed denominator of 50 (main.py's count_admet_completed). Null when no admet-named attachment has been uploaded yet."
+            },
+            "admet_completed_source": {
+              "type": "string",
+              "enum": ["auto", "manual"]
+            }
+          }
+        },
+        "collaboration": {
+          "type": "object",
+          "description": "Threaded reviewer comments attached to this record.",
+          "additionalProperties": true
+        },
+        "attachments": {
+          "type": "array",
+          "description": "Original source files (PPT/PPTX/PDF/TXT/Word/Excel) uploaded from the detail page's partner-material dropzone. Each item: {id, filename, stored_path, content_type, size_bytes, uploaded_by, uploaded_at}.",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "qualitative_review": {
+          "type": "object",
+          "description": "Researcher opinions keyed by qualitative-review criterion id (see config/qualitative_review_criteria.md), each with an entries array of {id, author, body, is_ai, created_at}. A placeholder AI entry is auto-appended after each human entry.",
+          "additionalProperties": true
         }
       }
     },
@@ -553,16 +736,11 @@
     },
     "scoring_criterion": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "required": [
         "score",
         "evidence_type",
-        "evidence_type_reason",
         "main_line_summary",
-        "what_was_checked",
-        "evidence_trail",
-        "evidence_sources",
-        "investigation_note",
         "why_not_higher",
         "uncertain_points"
       ],
@@ -580,6 +758,12 @@
         },
         "main_line_summary": {
           "$ref": "#/$defs/nullable_string"
+        },
+        "reason": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "source_ids": {
+          "$ref": "#/$defs/string_array"
         },
         "what_was_checked": {
           "$ref": "#/$defs/string_array"
@@ -663,17 +847,12 @@
     },
     "marketability_criterion": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "required": [
         "score",
         "evidence_type",
-        "evidence_type_reason",
         "main_line_summary",
-        "what_was_checked",
-        "evidence_trail",
         "calculation",
-        "evidence_sources",
-        "investigation_note",
         "why_not_higher",
         "uncertain_points"
       ],
@@ -691,6 +870,9 @@
         },
         "main_line_summary": {
           "$ref": "#/$defs/nullable_string"
+        },
+        "source_ids": {
+          "$ref": "#/$defs/string_array"
         },
         "what_was_checked": {
           "$ref": "#/$defs/string_array"
@@ -720,7 +902,7 @@
     },
     "marketability_calculation": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "required": [
         "commercial_rationale_status",
         "commercial_rationale_failure_reason",
@@ -732,9 +914,36 @@
         "commercial_rationale_status": {
           "type": "string",
           "enum": [
+            "evidence_based",
+            "assumption_based",
+            "assumption_based_scenario",
             "established",
-            "not_established"
+            "not_established",
+            "insufficient_evidence"
           ]
+        },
+        "commercial_model_type": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "commercial_model_confidence": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "commercial_rationale_basis": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "sensitivity": {
+          "type": "object",
+          "additionalProperties": true
         },
         "commercial_rationale_failure_reason": {
           "type": [
@@ -745,7 +954,7 @@
         "A_targetable_addressable_patient": {
           "type": "object",
           "description": "A. Targetable Addressable Patient (TAP): estimate the actually treatable patient pool.",
-          "additionalProperties": false,
+          "additionalProperties": true,
           "required": [
             "total_patient_pool",
             "diagnosis_rate",
@@ -753,8 +962,7 @@
             "biomarker_positive_rate",
             "treatable_subgroup_rate",
             "targetable_addressable_patient",
-            "formula",
-            "assumption_note"
+            "formula"
           ],
           "properties": {
             "total_patient_pool": {
@@ -813,7 +1021,7 @@
         "B_unrisked_peak_sales": {
           "type": "object",
           "description": "B. Unrisked Peak Sales: theoretical peak sales before full competition and execution risk adjustment. Sales output should be expressed in million USD.",
-          "additionalProperties": false,
+          "additionalProperties": true,
           "required": [
             "tap",
             "annual_net_price",
@@ -821,8 +1029,7 @@
             "treatment_duration_factor",
             "entry_order_share_assumption",
             "unrisked_peak_sales",
-            "formula",
-            "assumption_note"
+            "formula"
           ],
           "properties": {
             "tap": {
@@ -860,15 +1067,20 @@
             },
             "entry_order_share_assumption": {
               "type": "object",
-              "additionalProperties": false,
+              "additionalProperties": true,
               "required": [
-                "market_player_count",
                 "expected_entry_order",
-                "matrix_share_reference",
-                "assumption_note"
+                "matrix_share_reference"
               ],
               "properties": {
                 "market_player_count": {
+                  "type": [
+                    "number",
+                    "string",
+                    "null"
+                  ]
+                },
+                "competitor_count": {
                   "type": [
                     "number",
                     "string",
@@ -917,15 +1129,14 @@
         "C_obtainable_peak_sales": {
           "type": "object",
           "description": "C. Obtainable Peak Sales: realistic commercial opportunity after competition, pricing power, and expansion adjustments. Sales output should be expressed in million USD.",
-          "additionalProperties": false,
+          "additionalProperties": true,
           "required": [
             "unrisked_peak_sales",
             "competition_haircut",
             "pricing_power_adjustment",
             "expansion_capacity_adjustment",
             "obtainable_peak_sales",
-            "formula",
-            "score_basis_note"
+            "formula"
           ],
           "properties": {
             "unrisked_peak_sales": {
@@ -1125,6 +1336,9 @@
         "source_registry"
       ],
       "properties": {
+        "identity_verification_scope": {
+          "$ref": "#/$defs/nullable_string"
+        },
         "cross_checked_facts": {
           "type": "array",
           "items": {
@@ -1153,14 +1367,18 @@
     },
     "final_insight": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "required": [
-        "one_line_summary",
-        "key_strengths",
-        "key_risks"
+        "one_line_summary"
       ],
       "properties": {
         "one_line_summary": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "recommendation": {
+          "$ref": "#/$defs/nullable_string"
+        },
+        "most_important_diligence_question": {
           "$ref": "#/$defs/nullable_string"
         },
         "key_strengths": {
@@ -1173,13 +1391,11 @@
     },
     "obsidian": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "required": [
         "note_title",
-        "note_type",
         "aliases",
-        "tags",
-        "wikilink_entities"
+        "tags"
       ],
       "properties": {
         "note_title": {
@@ -1221,7 +1437,11 @@
           "enum": [
             "markdown",
             "plain_text",
-            "unknown"
+            "unknown",
+            "gpt_markdown_report",
+            "compact_gpt_markdown_report",
+            "balanced_gpt_markdown_report",
+            "fast_triage_markdown"
           ]
         },
         "parser_status": {
@@ -1230,7 +1450,10 @@
             "not_parsed",
             "mock_parsed",
             "parsed",
-            "needs_review"
+            "needs_review",
+            "gpt_structured_output",
+            "fast_triage",
+            "asset_identity_not_verified"
           ]
         },
         "parser_note": {

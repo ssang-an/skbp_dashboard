@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company"
-created_at: "2026-06-23"
-updated_at: "2026-06-23"
+created_at: "2026-07-29"
+updated_at: "2026-07-29"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company |
 | Reliability | high |
 | URL | https://investors.rapportrx.com/news-releases/news-release-details/rapport-therapeutics-presents-rap-219-focal-onset-seizure-phase/ |
-| Accessed / generated date | 2026-06-23 |
+| Accessed / generated date | 2026-07-29 |
 
 ## Evidence Summary
 

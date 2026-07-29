@@ -1,0 +1,26 @@
+Create a polished 16:9 corporate keynote cover image for an internal company seminar.
+
+Topic: “SKBP Pipeline Finder” — a biotech PreC pipeline shortlisting intelligence dashboard.
+
+Visual concept:
+- Deep navy background with subtle radial glow from the right side.
+- Center-right: a futuristic abstract “pipeline intelligence cockpit” — glassmorphism dashboard panels, small bar charts, donut chart, candidate table blocks, evidence network nodes, molecular structure lines.
+- Left side must remain clean for title text.
+- Premium enterprise look, not cartoon, not overly sci-fi.
+- Palette: #050B18 deep navy, #2DD4BF teal, #8BA8FF blue-violet, #FBBF24 amber.
+
+Exact Korean/English text to render clearly:
+Top small label: “SKBP Pipeline Finder”
+Main title: “PreC Pipeline Shortlisting Dashboard”
+Subtitle: “GPT 조사 결과를 JSON 단일 원본으로 모아 후보 비교·근거 검토·Wiki 재사용까지 지원”
+Small footer tag: “전사 설명회 · 7분”
+
+Layout:
+- Text block on left 55% area.
+- Visual cockpit on right 45% area.
+- Include four small KPI chips below subtitle: “32 records”, “13/32 PASS·SELECT”, “2.1/3 TR”, “477 graph nodes”.
+- Large title should be bold and very readable.
+
+Style keywords: executive biotech, dark mode dashboard, AI evidence graph, molecule network, clean Korean typography, premium internal strategy deck.
+
+Negative constraints: Do not use real corporate logos. Do not show screenshots or browser chrome. Do not render random unreadable pseudo text outside the specified labels. Avoid clutter. Avoid tiny dense paragraphs. Avoid cartoonish style. Avoid low contrast. Avoid photorealistic people. No watermark. No PowerPoint UI. No slide thumbnails. No mock app window borders unless explicitly requested. Korean text must be clean and legible; if any Korean text is uncertain, leave that area as clean abstract visual space rather than inventing broken text.

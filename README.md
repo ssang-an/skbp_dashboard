@@ -4,15 +4,24 @@ GPT로 조사한 PreC pipeline shortlisting JSON을 로컬 파일로 저장하�
 
 ## Install
 
+Git clone 직후에는 `.venv`가 없으므로 서버 PC에서 한 번 생성합니다.
+
 ```powershell
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
+py -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
 ## Run
 
 ```powershell
-uvicorn main:app --reload --port 8000
+.\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8000
+```
+
+바로 열기:
+
+```text
+http://127.0.0.1:8000
 ```
 
 브라우저에서 엽니다.
@@ -20,6 +29,76 @@ uvicorn main:app --reload --port 8000
 ```text
 http://localhost:8000
 ```
+
+## 사내망에서 여러 PC가 함께 접속
+
+이 프로젝트는 저장 API를 FastAPI가 제공하므로 Bun 정적 서버가 아니라, Bun이 Uvicorn을
+사내망 모드로 실행합니다. 서버 PC에서 다음 명령을 실행합니다.
+
+1. Bun이 없다면 공식 Windows 설치 스크립트로 한 번 설치하고 터미널을 다시 엽니다.
+
+```powershell
+powershell -c "irm bun.sh/install.ps1 | iex"
+```
+
+2. 프로젝트 폴더에서 공유 서버를 실행합니다.
+
+```powershell
+bun run company
+```
+
+기본 포트는 `8011`이며 서버 PC와 같은 사내망의 다른 PC에서는 아래처럼 접속합니다.
+실행 직후 터미널에 현재 서버 PC의 `Company:` 주소가 자동으로 표시됩니다.
+
+```text
+http://SERVER_PC_IP:8011
+```
+
+예를 들어 실행 화면에 `Company: http://192.168.10.25:8011`이 표시되면 다른 PC에서
+그 주소를 그대로 엽니다.
+
+```text
+http://192.168.10.25:8011
+```
+
+다른 포트를 사용하려면 실행 전에 `PORT`를 지정합니다.
+
+```powershell
+$env:PORT = "8011"
+bun run company
+```
+
+주의:
+
+- 서버 터미널을 닫으면 대시보드도 종료됩니다.
+- Windows 방화벽에서 TCP 8011 인바운드를 같은 로컬 서브넷에 허용해야 합니다.
+
+## 업로드 문서 문자 추출과 Filter 3 판정
+
+PDF/PPTX 업로드 시 아래 순서로 처리합니다.
+
+1. PDF는 PyMuPDF, PPTX는 `python-pptx`로 네이티브 텍스트를 우선 추출합니다.
+2. PPT/PPTX 미리보기 PDF는 LibreOffice가 설치된 환경에서 생성합니다.
+3. PDF 네이티브 텍스트 품질이 부족할 때만 기존 OpenRouter 키로 무료
+   `cloudflare-ai` file parser를 호출합니다.
+4. 추출 텍스트와 page/slide 근거를 기존 `OPENROUTER_MODEL`의 DeepSeek에 전달해
+   Filter 3 사실을 `true / false / unknown`으로 판정합니다.
+5. Python 규칙이 구조화 판정으로 OI Partnership을 계산합니다. 사람이 수정한 값은
+   자동 갱신으로 덮어쓰지 않습니다.
+
+`.env` 운영 설정:
+
+```dotenv
+ENABLE_PDF_PARSER_FALLBACK=true
+PDF_PARSER_ENGINE=cloudflare-ai
+PDF_TEXT_MIN_CHARACTERS=50
+ENABLE_PAID_OCR=false
+```
+
+`ENABLE_PAID_OCR=true`는 네이티브 추출과 Cloudflare parser가 모두 부족할 때 유료
+`mistral-ocr` 폴백을 허용합니다. 별도의 OCR/LLM API 키는 사용하지 않습니다.
+- 로그인 기능은 아직 없으므로 회사 내부의 신뢰된 네트워크에서만 사용합니다.
+- 여러 사용자의 변경은 같은 `json/pipeline-records.json`에 누적됩니다.
 
 ## Where To Put Data
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-06-23"
-updated_at: "2026-06-23"
+created_at: "2026-07-29"
+updated_at: "2026-07-29"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://clinicaltrials.servier.com/trial/a-phase-ib-ii-first-in-human-multicentre-open-label-multiple-ascending-dose-study-of-s230815-in-paediatric-participants-with-kcnt1-related-developmental-and-epileptic-encephalopathy/ |
-| Accessed / generated date | 2026-06-23 |
+| Accessed / generated date | 2026-07-29 |
 
 ## Evidence Summary
 

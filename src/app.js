@@ -6,18 +6,23 @@ const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.pageSize.v1';
 const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
 const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
-const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v1';
+const DASHBOARD_REVIEWER_ID_KEY = 'skbp.detail.commentAuthor';
+const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v2';
+const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v2';
 
 const DEFAULT_COLUMN_WIDTHS = {
   select: 36,
   company: 128,
   country: 112,
   asset: 92,
-  target: 280,
+  modality: 140,
+  target: 320,
   mainIndication: 180,
   stage: 190,
   filter1: 82,
   filter2: 82,
+  filter3: 82,
+  filter3Note: 280,
   targetScore: 52,
   competitiveScore: 58,
   moaScore: 52,
@@ -26,6 +31,12 @@ const DEFAULT_COLUMN_WIDTHS = {
   dataScore: 56,
   marketScore: 64,
   totalScore: 58,
+  focusAction: 112,
+  inVivo: 74,
+  inVitro: 74,
+  admet: 84,
+  focusDueDate: 140,
+  focusManage: 90,
   extra: 180
 };
 
@@ -34,11 +45,14 @@ const MIN_COLUMN_WIDTHS = {
   company: 86,
   country: 82,
   asset: 72,
-  target: 180,
+  modality: 100,
+  target: 260,
   mainIndication: 130,
   stage: 120,
   filter1: 70,
   filter2: 70,
+  filter3: 70,
+  filter3Note: 210,
   targetScore: 46,
   competitiveScore: 50,
   moaScore: 46,
@@ -47,7 +61,35 @@ const MIN_COLUMN_WIDTHS = {
   dataScore: 50,
   marketScore: 56,
   totalScore: 52,
+  focusAction: 100,
+  inVivo: 64,
+  inVitro: 64,
+  admet: 70,
+  focusDueDate: 120,
+  focusManage: 70,
   extra: 110
+};
+
+const FOCUS_DEFAULT_COLUMN_WIDTHS = {
+  ...DEFAULT_COLUMN_WIDTHS,
+  target: 430,
+  mainIndication: 165,
+  stage: 125,
+  filter2: 76,
+  totalScore: 92,
+  filter3: 104,
+  filter3Note: 300,
+  focusManage: 72
+};
+
+const FOCUS_MIN_COLUMN_WIDTHS = {
+  ...MIN_COLUMN_WIDTHS,
+  target: 320,
+  stage: 96,
+  filter2: 68,
+  totalScore: 82,
+  filter3Note: 220,
+  focusManage: 62
 };
 
 const MAX_COLUMN_WIDTH = 720;
@@ -55,6 +97,11 @@ const PROMPT_TOOLTIP =
   'GPT 조사 지침을 클립보드에 복사합니다. 복사한 지침을 ChatGPT에 붙여넣은 뒤, 조사할 회사명과 약물명/파이프라인명을 함께 입력하면 MD 리포트와 JSON Schema 형식으로 결과를 받을 수 있습니다.';
 const TRIAGE_PROMPT_TOOLTIP =
   'GPT fast triage 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / N/A로 screening할 때 사용합니다.';
+const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.2';
+const requestedTableMode = new URLSearchParams(window.location.search).get('tab');
+const initialTableMode = ['triage', 'full', 'focus'].includes(requestedTableMode)
+  ? requestedTableMode
+  : 'full';
 
 const state = {
   rawRecords: [],
@@ -63,10 +110,11 @@ const state = {
   stage: 'all',
   theme: 'all',
   cluster: 'all',
+  modality: 'all',
   indication: 'all',
   country: 'all',
   pass: 'all',
-  tableMode: 'full',
+  tableMode: initialTableMode,
   sortKey: 'totalScore',
   sortDirection: 'desc',
   page: 1,
@@ -74,6 +122,7 @@ const state = {
   selectedIds: new Set(),
   extraColumns: new Set(JSON.parse(localStorage.getItem('skbp.dashboard.extraColumns') || '[]')),
   columnWidths: JSON.parse(localStorage.getItem(COLUMN_WIDTH_STORAGE_KEY) || '{}'),
+  focusColumnWidths: JSON.parse(localStorage.getItem(FOCUS_COLUMN_WIDTH_STORAGE_KEY) || '{}'),
   agentSessions: [],
   activeAgentSessionId: localStorage.getItem(AGENT_ACTIVE_SESSION_KEY) || '',
   categorySynonyms: { country: [], stage: [], indication: [] },
@@ -92,12 +141,7 @@ const elements = {
   criteriaDrawer: document.querySelector('#criteriaDrawer'),
   criteriaBackdrop: document.querySelector('#criteriaBackdrop'),
   criteriaDrawerClose: document.querySelector('#criteriaDrawerClose'),
-  triageReportDrawer: document.querySelector('#triageReportDrawer'),
-  triageReportBackdrop: document.querySelector('#triageReportBackdrop'),
-  triageReportClose: document.querySelector('#triageReportClose'),
-  triageReportTitle: document.querySelector('#triageReportTitle'),
-  triageReportMeta: document.querySelector('#triageReportMeta'),
-  triageReportBody: document.querySelector('#triageReportBody'),
+  criteriaDrawerScopeLabel: document.querySelector('#criteriaDrawerScopeLabel'),
   agentContextCount: document.querySelector('#agentContextCount'),
   agentMessages: document.querySelector('#agentMessages'),
   agentForm: document.querySelector('#agentForm'),
@@ -110,17 +154,17 @@ const elements = {
   metricScore: document.querySelector('#metricScore'),
   metricTarget: document.querySelector('#metricTarget'),
   metricCountries: document.querySelector('#metricCountries'),
-  targetChart: document.querySelector('#targetChart'),
   themeChart: document.querySelector('#themeChart'),
+  indicationChart: document.querySelector('#indicationChart'),
+  modalityChart: document.querySelector('#modalityChart'),
   countryChart: document.querySelector('#countryChart'),
-  passDonut: document.querySelector('#passDonut'),
-  passLegend: document.querySelector('#passLegend'),
-  scoreAverageChart: document.querySelector('#scoreAverageChart'),
   priorityList: document.querySelector('#priorityList'),
+  dueDateList: document.querySelector('#dueDateList'),
   searchInput: document.querySelector('#searchInput'),
   stageFilter: document.querySelector('#stageFilter'),
   themeFilter: document.querySelector('#themeFilter'),
   clusterFilter: document.querySelector('#clusterFilter'),
+  modalityFilter: document.querySelector('#modalityFilter'),
   countryFilter: document.querySelector('#countryFilter'),
   indicationFilter: document.querySelector('#indicationFilter'),
   passFilter: document.querySelector('#passFilter'),
@@ -130,6 +174,7 @@ const elements = {
   columnSettingsPanel: document.querySelector('#columnSettingsPanel'),
   columnSettingsGrid: document.querySelector('#columnSettingsGrid'),
   pipelineTableTabs: document.querySelectorAll('[data-table-mode]'),
+  focusTabCount: document.querySelector('#focusTabCount'),
   pipelineTableHead: document.querySelector('#pipelineTableHead'),
   pipelineHeaderRow: document.querySelector('#pipelineHeaderRow'),
   selectPageRows: document.querySelector('#selectPageRows'),
@@ -148,11 +193,51 @@ const elements = {
   copyTriagePromptTopButton: document.querySelector('#copyTriagePromptTopButton'),
   copyPromptTopButton: document.querySelector('#copyPromptTopButton'),
   copyPromptButton: document.querySelector('#copyPromptButton'),
-  promptCopyStatus: document.querySelector('#promptCopyStatus')
+  promptCopyStatus: document.querySelector('#promptCopyStatus'),
+  reviewerIdentityModal: document.querySelector('#reviewerIdentityModal'),
+  reviewerIdentityInput: document.querySelector('#reviewerIdentityInput'),
+  reviewerIdentityCancel: document.querySelector('#reviewerIdentityCancel'),
+  reviewerIdentitySubmit: document.querySelector('#reviewerIdentitySubmit')
 };
 
 let activeColumnResize = null;
 let promptCopyFeedbackTimer = null;
+let targetContextTooltip = null;
+let targetContextAnchor = null;
+const focusSaveQueues = new Map();
+let reviewerIdentityResolve = null;
+
+function getDashboardReviewerIdentity() {
+  return (sessionStorage.getItem(DASHBOARD_REVIEWER_ID_KEY) || '').trim();
+}
+
+function openReviewerIdentityModal() {
+  if (!elements.reviewerIdentityModal) return Promise.resolve(null);
+  return new Promise((resolve) => {
+    reviewerIdentityResolve = resolve;
+    elements.reviewerIdentityInput.value = getDashboardReviewerIdentity();
+    elements.reviewerIdentityModal.hidden = false;
+    elements.reviewerIdentityInput.focus();
+  });
+}
+
+function closeReviewerIdentityModal(value = null) {
+  if (elements.reviewerIdentityModal) elements.reviewerIdentityModal.hidden = true;
+  const resolve = reviewerIdentityResolve;
+  reviewerIdentityResolve = null;
+  if (resolve) resolve(value);
+}
+
+async function ensureDashboardReviewerIdentity() {
+  const existing = getDashboardReviewerIdentity();
+  if (existing) return existing;
+  const entered = await openReviewerIdentityModal();
+  if (!entered) return null;
+  const identity = String(entered).trim();
+  if (!identity) return null;
+  sessionStorage.setItem(DASHBOARD_REVIEWER_ID_KEY, identity);
+  return identity;
+}
 
 function get(record, path, fallback = '') {
   return path.split('.').reduce((value, key) => value?.[key], record) ?? fallback;
@@ -187,7 +272,7 @@ function formatMillionUsd(value, unit = '') {
 
 function mainIndicationFrom(value) {
   const text = String(value || '').trim();
-  if (!text || text === '-') return '-';
+  if (!text || text === '-' || /^n\/?a$/i.test(text)) return 'Unknown';
   return text
     .split(/\s*(?:;|\||,|\band\b)\s*/i)
     .map((item) => item.trim())
@@ -298,7 +383,7 @@ function canonicalDashboardIndication(value) {
   if (fromDictionary) return fromDictionary;
 
   const normalized = normalizeCategoryText(text);
-  if (!text || text === '-') return '-';
+  if (!text || text === '-' || /^n\/?a$/i.test(text)) return 'Unknown';
   if (/alzheimer|ad\b/.test(normalized)) return "Alzheimer's disease";
   if (/epilep|seizure|focal onset|partial onset|status epilepticus/.test(normalized)) return 'Epilepsy / seizure disorders';
   if (/chronic cough|rcc|ucc|refractory cough|unexplained cough/.test(normalized)) return 'Chronic cough';
@@ -316,7 +401,7 @@ function canonicalCountry(value) {
   if (fromDictionary) return fromDictionary;
 
   const lowered = normalizeCategoryText(text);
-  if (!text || text === '-') return '-';
+  if (!text || text === '-' || /^n\/?a$/i.test(text)) return 'Unknown';
   if (/china|hong kong|prc|mainland/.test(lowered)) return 'China';
   if (/korea|republic of korea|south korea/.test(lowered)) return 'Republic of Korea';
   if (/united states|usa|u\.s\.|us\b/.test(lowered)) return 'United States';
@@ -329,7 +414,7 @@ function canonicalDevelopmentStage(value) {
   if (fromDictionary) return fromDictionary;
 
   const normalized = normalizeCategoryText(text);
-  if (!text || text === '-') return '-';
+  if (!text || text === '-' || /^n\/?a$/i.test(text)) return 'Unknown';
   if (/discontinued|terminated|withdrawn|suspended|inactive|dormant/.test(normalized)) return 'Discontinued / inactive';
   if (/approved|launched|marketed|commercial/.test(normalized)) return 'Approved / marketed';
   if (/nda|bla|maa|registration|filed|under review/.test(normalized)) return 'Registration';
@@ -344,6 +429,36 @@ function canonicalDevelopmentStage(value) {
   return text;
 }
 
+function canonicalModality(value) {
+  const text = String(value || '').trim();
+  const normalized = normalizeCategoryText(text);
+  if (!text || text === '-' || /^(unknown|not known|n\/a)$/i.test(text)) return 'Unknown';
+  if (/small molecule|\bsm\b|oral compound|chemical compound/.test(normalized)) return 'Small molecule';
+  if (/peptide/.test(normalized)) return 'Peptide';
+  if (/rna|oligonucleotide|antisense|\baso\b|sirna|mirna|mrna/.test(normalized)) return 'RNA therapy';
+  if (/car[- ]?t|tcr[- ]?t|cell therapy|cellular therapy|stem cell/.test(normalized)) return 'Cell therapy';
+  if (/gene therapy|aav|lentiviral|gene editing|crispr/.test(normalized)) return 'Gene therapy';
+  if (/antibody|antibody drug conjugate|\badc\b|bispecific/.test(normalized)) return 'Antibody';
+  if (/protein biologic|recombinant protein|fusion protein|enzyme replacement/.test(normalized)) return 'Protein biologic';
+  return 'Other';
+}
+
+function canonicalTheme(value) {
+  const text = String(value || '').trim();
+  const normalized = normalizeCategoryText(text);
+  if (!text || text === '-' || /^(unknown|not known)$/i.test(text)) return 'Unknown';
+  if (/^n\/?a$|no theme|no mapped|no fit|out of scope|none/.test(normalized)) return 'N/A';
+  return text;
+}
+
+function canonicalCluster(value) {
+  const text = String(value || '').trim();
+  const normalized = normalizeCategoryText(text);
+  if (!text || text === '-' || /^(unknown|not known)$/i.test(text)) return 'Unknown';
+  if (/^n\/?a$|no cluster|no mapped|no fit|out of scope|none/.test(normalized)) return 'N/A';
+  return text;
+}
+
 function escapeHtml(value) {
   return String(value ?? '')
     .replaceAll('&', '&amp;')
@@ -351,6 +466,59 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
+}
+
+function ensureTargetContextTooltip() {
+  if (targetContextTooltip) return targetContextTooltip;
+  targetContextTooltip = document.createElement('div');
+  targetContextTooltip.id = 'targetContextTooltip';
+  targetContextTooltip.className = 'target-context-tooltip';
+  targetContextTooltip.setAttribute('role', 'tooltip');
+  targetContextTooltip.hidden = true;
+  document.body.appendChild(targetContextTooltip);
+  return targetContextTooltip;
+}
+
+function positionTargetContextTooltip(anchor, tooltip) {
+  const anchorRect = anchor.getBoundingClientRect();
+  const tooltipRect = tooltip.getBoundingClientRect();
+  const viewportPadding = 12;
+  let left = Math.max(
+    viewportPadding,
+    Math.min(anchorRect.left, window.innerWidth - tooltipRect.width - viewportPadding)
+  );
+  let top = anchorRect.bottom + 8;
+  if (top + tooltipRect.height > window.innerHeight - viewportPadding) {
+    top = anchorRect.top - tooltipRect.height - 8;
+  }
+  if (top < viewportPadding) top = viewportPadding;
+  tooltip.style.left = `${Math.round(left)}px`;
+  tooltip.style.top = `${Math.round(top)}px`;
+}
+
+function showTargetContextTooltip(anchor) {
+  if (!anchor) return;
+  const tooltip = ensureTargetContextTooltip();
+  const theme = anchor.dataset.theme || 'Unknown';
+  const cluster = anchor.dataset.cluster || 'Unknown';
+  const description = anchor.dataset.description || '-';
+  targetContextAnchor = anchor;
+  tooltip.innerHTML = `
+    <div><span>Theme</span><strong title="${escapeHtml(theme)}">${escapeHtml(theme)}</strong></div>
+    <div><span>Cluster</span><strong title="${escapeHtml(cluster)}">${escapeHtml(cluster)}</strong></div>
+    <div><span>Description</span><strong title="${escapeHtml(description)}">${escapeHtml(description)}</strong></div>
+  `;
+  tooltip.hidden = false;
+  anchor.setAttribute('aria-describedby', tooltip.id);
+  requestAnimationFrame(() => positionTargetContextTooltip(anchor, tooltip));
+}
+
+function hideTargetContextTooltip(anchor = null) {
+  if (!targetContextTooltip) return;
+  if (anchor && targetContextAnchor && anchor !== targetContextAnchor) return;
+  targetContextAnchor?.removeAttribute('aria-describedby');
+  targetContextAnchor = null;
+  targetContextTooltip.hidden = true;
 }
 
 function isPlaceholderRawMarkdown(value) {
@@ -429,13 +597,33 @@ function collectHardFilterNotes(record) {
 
 function hasNoThemeFit(theme, cluster) {
   const value = `${theme || ''} ${cluster || ''}`.toLowerCase();
-  return !value.trim() || /no theme|no cluster|no mapped|none|미해당/.test(value);
+  return !value.trim() || /n\/?a|no theme|no cluster|no mapped|none|미해당/.test(value);
 }
 
 function computeHardFilter(record, criteria) {
   const summary = record.json_summary || {};
   const scoring = record.scoring || {};
-  const total = number(scoring.total_score);
+  const totalOverrideRaw = humanReviewOverrides(record).total_score;
+  const totalOverride = totalOverrideRaw === null || totalOverrideRaw === undefined || totalOverrideRaw === ''
+    ? null
+    : number(totalOverrideRaw);
+  const effectiveScores = [
+    criteria.target.score,
+    criteria.competitive.score,
+    criteria.moa.score,
+    criteria.platform.score,
+    criteria.expansion.score,
+    criteria.data.score,
+    criteria.market.score
+  ].map(number);
+  const storedTotal = number(scoring.total_score);
+  const total = Number.isInteger(totalOverride) && totalOverride >= 0 && totalOverride <= 21
+    ? totalOverride
+    : Number.isFinite(storedTotal)
+      ? storedTotal
+      : effectiveScores.every(Number.isFinite)
+        ? effectiveScores.reduce((sum, score) => sum + score, 0)
+        : null;
   const targetScore = number(summary.target_relevance_score ?? criteria.target.score);
   const moaScore = number(criteria.moa.score);
   const dataScore = number(criteria.data.score);
@@ -486,6 +674,25 @@ function normalizeTriageStatus(value) {
   return '';
 }
 
+function normalizeFullStatus(value) {
+  const text = String(value || '').trim().toUpperCase();
+  return ['PASS', 'REVIEW', 'FAIL'].includes(text) ? text : '';
+}
+
+function humanReviewOverrides(record) {
+  const overrides = get(record, 'meta.human_review.overrides', {});
+  return overrides && typeof overrides === 'object' ? overrides : {};
+}
+
+function humanScoreOverride(record, criterionId, fallback) {
+  const value = get(record, `meta.human_review.overrides.scores.${criterionId}`, null);
+  if (value !== null && value !== undefined && value !== '') {
+    const numeric = number(value);
+    if (Number.isInteger(numeric) && numeric >= 0 && numeric <= 3) return numeric;
+  }
+  return fallback === null || fallback === undefined || fallback === '' ? null : number(fallback);
+}
+
 function isTriageRecord(record) {
   const status = normalizeTriageStatus(record?.hard_filter?.status || record?.triage?.status || record?.triage_status);
   const parserStatus = String(record?.source_report?.parser_status || '').toLowerCase();
@@ -515,6 +722,14 @@ function recordFilterStatus(record, computedHardFilter) {
 
 function recordFilter1Status(record) {
   const triageRecord = isTriageRecord(record);
+  const manualStatus = normalizeTriageStatus(humanReviewOverrides(record).filter_status);
+  if (triageRecord && manualStatus) {
+    return {
+      status: manualStatus,
+      reason: 'Human reviewer override from dashboard table'
+    };
+  }
+
   const stage = canonicalDevelopmentStage(record?.structured_table?.development_stage || '');
   if (triageRecord && stage === 'Discontinued / inactive') {
     return {
@@ -535,8 +750,12 @@ function recordFilter1Status(record) {
 }
 
 function recordFilter2Status(record, computedHardFilter) {
-  return isTriageRecord(record)
-    ? { status: '-', reason: 'Full Scout v3.1 not run yet' }
+  if (isTriageRecord(record)) {
+    return { status: '-', reason: 'Full Scout v3.2 not run yet' };
+  }
+  const manualStatus = normalizeFullStatus(humanReviewOverrides(record).filter_status);
+  return manualStatus
+    ? { status: manualStatus, reason: 'Human reviewer override from dashboard table' }
     : computedHardFilter;
 }
 
@@ -544,6 +763,10 @@ function flattenRecord(record, index) {
   const summary = record.json_summary || {};
   const table = record.structured_table || {};
   const scoring = record.scoring || {};
+  const focusManagement = get(record, 'meta.focus_management', {});
+  const collaborationComments = get(record, 'meta.collaboration.comments', []);
+  const teamComments = Array.isArray(collaborationComments) ? collaborationComments : [];
+  const latestTeamComment = teamComments.at(-1) || {};
   const targetCriterion = get(record, 'scoring.criteria.target_relevance', {});
   const champion = targetCriterion.ai_champion || {};
   const criteria = {
@@ -555,6 +778,37 @@ function flattenRecord(record, index) {
     data: criterion(record, 'data_maturity'),
     market: criterion(record, 'marketability')
   };
+  const isTriage = isTriageRecord(record);
+  const targetScore = humanScoreOverride(
+    record,
+    'target_relevance',
+    summary.target_relevance_score ?? criteria.target.score ?? champion.score
+  );
+  const competitiveScore = humanScoreOverride(record, 'competitive_landscape', criteria.competitive.score);
+  const moaScore = humanScoreOverride(record, 'moa_validity', criteria.moa.score);
+  const platformScore = humanScoreOverride(record, 'platform_attractiveness', criteria.platform.score);
+  const expansionScore = humanScoreOverride(record, 'expansion_potential', criteria.expansion.score);
+  const dataScore = humanScoreOverride(record, 'data_maturity', criteria.data.score);
+  const marketScore = humanScoreOverride(record, 'marketability', criteria.market.score);
+  criteria.target.score = targetScore;
+  criteria.competitive.score = competitiveScore;
+  criteria.moa.score = moaScore;
+  criteria.platform.score = platformScore;
+  criteria.expansion.score = expansionScore;
+  criteria.data.score = dataScore;
+  criteria.market.score = marketScore;
+  const totalScoreOverrideRaw = humanReviewOverrides(record).total_score;
+  const totalScoreOverride = totalScoreOverrideRaw === null
+    || totalScoreOverrideRaw === undefined
+    || totalScoreOverrideRaw === ''
+    ? null
+    : number(totalScoreOverrideRaw);
+  const storedTotalScore = number(scoring.total_score);
+  const effectiveTotalScore = Number.isInteger(totalScoreOverride)
+    && totalScoreOverride >= 0
+    && totalScoreOverride <= 21
+    ? totalScoreOverride
+    : storedTotalScore;
 
   const computedHardFilter = computeHardFilter(record, criteria);
   const filter1Status = recordFilter1Status(record);
@@ -568,36 +822,92 @@ function flattenRecord(record, index) {
     country: canonicalCountry(summary.company_country || table.company_country || '-'),
     asset: summary.asset_name || table.asset_name || '-',
     target: summary.target || table.target || '-',
-    theme: summary.theme || get(champion, 'matched_theme.name', '-'),
-    cluster: summary.cluster || get(champion, 'matched_cluster.name', '-'),
+    theme: canonicalTheme(summary.theme || get(champion, 'matched_theme.name', '-')),
+    cluster: canonicalCluster(summary.cluster || get(champion, 'matched_cluster.name', '-')),
     stageRaw: table.development_stage || '-',
     stage: canonicalDevelopmentStage(table.development_stage || '-'),
     indication: table.indication || '-',
     mainIndicationRaw: table.main_indication || table.primary_indication || summary.main_indication || mainIndicationFrom(table.indication),
     mainIndication: canonicalDashboardIndication(table.main_indication || table.primary_indication || summary.main_indication || table.indication),
-    modality: table.modality_platform || '-',
-    isTriage: isTriageRecord(record),
+    modality: canonicalModality(table.modality_platform),
+    targetDescription: String(
+      targetCriterion.main_line_summary
+      || targetCriterion.investigation_note
+      || get(record, 'final_insight.one_line_summary', summary.one_line_summary || '-')
+    ),
+    focusTracked: focusManagement?.is_tracked === true,
+    focusComment: String(focusManagement?.user_comment || ''),
+    focusDueDate: String(focusManagement?.due_date || ''),
+    focusAddedAt: String(focusManagement?.added_at || ''),
+    teamCommentCount: teamComments.length,
+    latestTeamComment: String(latestTeamComment?.body || ''),
+    latestTeamCommentAuthor: String(latestTeamComment?.author || ''),
+    isTriage,
     filter1: filter1Status.status,
     filter2: filter2Status.status,
+    filter3: String(focusManagement?.partnership_type || ''),
+    filter3Note: String(focusManagement?.partnership_note || ''),
+    filter3Source: String(focusManagement?.partnership_classification_source || 'auto'),
+    filter3EvidenceSources: Array.isArray(focusManagement?.partnership_evidence_sources)
+      ? focusManagement.partnership_evidence_sources.map(String)
+      : [],
+    inVivoStatus: String(focusManagement?.in_vivo_status || 'N/A'),
+    inVivoSource: String(focusManagement?.in_vivo_status_source || 'auto'),
+    inVitroStatus: String(focusManagement?.in_vitro_status || 'N/A'),
+    inVitroSource: String(focusManagement?.in_vitro_status_source || 'auto'),
+    admetCompleted: Number.isFinite(focusManagement?.admet_completed) ? focusManagement.admet_completed : null,
+    admetSource: String(focusManagement?.admet_completed_source || 'auto'),
     hardFilter: filterStatus.status,
     hardFilterReason: filterStatus.reason,
-    targetScore: number(summary.target_relevance_score ?? criteria.target.score ?? champion.score),
-    competitiveScore: criteria.competitive.score,
-    moaScore: criteria.moa.score,
-    platformScore: criteria.platform.score,
-    expansionScore: criteria.expansion.score,
-    dataScore: criteria.data.score,
-    marketScore: criteria.market.score,
-    totalScore: number(scoring.total_score),
+    targetScore,
+    competitiveScore,
+    moaScore,
+    platformScore,
+    expansionScore,
+    dataScore,
+    marketScore,
+    totalScore: effectiveTotalScore,
+    focusTotalScore: effectiveTotalScore,
     maxScore: number(scoring.max_score) || 21,
     competition: get(record, 'competitive_analysis.competitive_density', 'Unclear'),
     similarPipelineCount: number(get(record, 'competitive_analysis.similarity_summary.similar_pipeline_count', 0)),
     highSimilarityCount: number(get(record, 'competitive_analysis.similarity_summary.high_similarity_count', 0)),
     summary: get(record, 'final_insight.one_line_summary', summary.one_line_summary || '-'),
     criteriaVersion: get(record, 'meta.rubric_version', get(record, 'scoring.criteria.target_relevance.criteria_reference.criteria_version', '-')),
+    generatedAt: get(record, 'meta.generated_at', ''),
+    lastEditedAt: get(record, 'meta.last_edited_at', ''),
+    lastEditedBy: get(record, 'meta.last_edited_by', ''),
     criteria,
     raw: record
   };
+}
+
+function formatDateTimeKo(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date);
+}
+
+function metaTooltipSuffix(row) {
+  const lines = [
+    `GPT 검색일: ${row.generatedAt || '-'}`,
+    `스코어링 지침: v${row.criteriaVersion || '-'}`
+  ];
+  if (row.lastEditedAt) {
+    lines.push(`마지막 수정: ${formatDateTimeKo(row.lastEditedAt)}에 ${row.lastEditedBy || 'unknown'}에 의해 수정됨`);
+  }
+  return lines.join('\n');
+}
+
+function rowHoverTitle(row, baseText = row.summary) {
+  return [baseText, metaTooltipSuffix(row)].filter(Boolean).join('\n\n');
 }
 
 const EXTRA_COLUMN_DEFINITIONS = [
@@ -629,7 +939,10 @@ function formatExtraColumnValue(value) {
 }
 
 function selectedExtraColumns() {
-  return EXTRA_COLUMN_DEFINITIONS.filter((column) => state.extraColumns.has(column.key));
+  return EXTRA_COLUMN_DEFINITIONS.filter((column) => (
+    state.extraColumns.has(column.key)
+    && !(activeTableMode() === 'full' && column.key === 'modality')
+  ));
 }
 
 function persistExtraColumns() {
@@ -641,15 +954,25 @@ function extraColumnKey(column) {
 }
 
 function defaultColumnWidth(key) {
+  if (activeTableMode() === 'focus') {
+    return FOCUS_DEFAULT_COLUMN_WIDTHS[key] || FOCUS_DEFAULT_COLUMN_WIDTHS.extra;
+  }
   return DEFAULT_COLUMN_WIDTHS[key] || DEFAULT_COLUMN_WIDTHS.extra;
 }
 
 function minColumnWidth(key) {
+  if (activeTableMode() === 'focus') {
+    return FOCUS_MIN_COLUMN_WIDTHS[key] || FOCUS_MIN_COLUMN_WIDTHS.extra;
+  }
   return MIN_COLUMN_WIDTHS[key] || MIN_COLUMN_WIDTHS.extra;
 }
 
+function activeColumnWidths() {
+  return activeTableMode() === 'focus' ? state.focusColumnWidths : state.columnWidths;
+}
+
 function columnWidth(key) {
-  const width = Number(state.columnWidths[key]);
+  const width = Number(activeColumnWidths()[key]);
   return Number.isFinite(width)
     ? Math.max(minColumnWidth(key), Math.min(MAX_COLUMN_WIDTH, width))
     : defaultColumnWidth(key);
@@ -673,13 +996,15 @@ function sortableHeader(label, sortKey, columnKey, attrs = '') {
   return `<th ${attrs} ${columnAttrs(columnKey)}><button data-sort="${escapeHtml(sortKey)}" type="button">${escapeHtml(label)}</button>${resizeHandle(columnKey)}</th>`;
 }
 
-function plainHeader(label, columnKey, className = '') {
+function plainHeader(label, columnKey, className = '', attrs = '') {
   const classAttr = className ? ` class="${escapeHtml(className)}"` : '';
-  return `<th${classAttr} ${columnAttrs(columnKey)}><span title="${escapeHtml(label)}">${escapeHtml(label)}</span>${resizeHandle(columnKey)}</th>`;
+  return `<th${classAttr} ${attrs} ${columnAttrs(columnKey)}><span title="${escapeHtml(label)}">${escapeHtml(label)}</span>${resizeHandle(columnKey)}</th>`;
 }
 
 function activeTableMode() {
-  return state.tableMode === 'triage' ? 'triage' : 'full';
+  if (state.tableMode === 'triage') return 'triage';
+  if (state.tableMode === 'focus') return 'focus';
+  return 'full';
 }
 
 function activeFilterKey() {
@@ -693,6 +1018,7 @@ function activeFilterLabel() {
 function activeScoreColumnKeys() {
   const triageCore = ['targetScore', 'moaScore', 'dataScore'];
   if (activeTableMode() === 'triage') return triageCore;
+  if (activeTableMode() === 'focus') return [];
   return [
     ...triageCore,
     'competitiveScore',
@@ -704,16 +1030,42 @@ function activeScoreColumnKeys() {
 }
 
 function rowMatchesActiveTableMode(row) {
+  if (activeTableMode() === 'focus') {
+    return !row.isTriage && row.focusTracked;
+  }
+  if (activeTableMode() === 'full') {
+    return !row.isTriage;
+  }
   const status = row[activeFilterKey()];
   return Boolean(status && status !== '-');
 }
 
+const FOCUS_TABLE_COLUMN_KEYS = [
+  'company',
+  'country',
+  'asset',
+  'modality',
+  'target',
+  'mainIndication',
+  'stage',
+  'filter2',
+  'totalScore',
+  'filter3',
+  'inVivo',
+  'inVitro',
+  'admet',
+  'focusDueDate',
+  'focusManage'
+];
+
 function visibleColumnKeys(extraColumns = selectedExtraColumns()) {
-  return [
+  if (activeTableMode() === 'focus') return FOCUS_TABLE_COLUMN_KEYS;
+  const keys = [
     'select',
     'company',
     'country',
     'asset',
+    'modality',
     'target',
     'mainIndication',
     'stage',
@@ -721,6 +1073,18 @@ function visibleColumnKeys(extraColumns = selectedExtraColumns()) {
     ...activeScoreColumnKeys(),
     ...extraColumns.map(extraColumnKey)
   ];
+  if (activeTableMode() === 'full') keys.push('focusAction');
+  return keys;
+}
+
+function updateFrozenColumnOffsets() {
+  const tableElement = elements.pipelineTable?.closest('table');
+  if (!tableElement) return;
+  let offset = 0;
+  if (activeTableMode() !== 'focus') offset += columnWidth('select');
+  tableElement.style.setProperty('--freeze-left-company', `${offset}px`);
+  offset += columnWidth('company');
+  tableElement.style.setProperty('--freeze-left-asset', `${offset}px`);
 }
 
 function visibleTableWidth(extraColumns = selectedExtraColumns()) {
@@ -728,6 +1092,10 @@ function visibleTableWidth(extraColumns = selectedExtraColumns()) {
 }
 
 function persistColumnWidths() {
+  if (activeTableMode() === 'focus') {
+    localStorage.setItem(FOCUS_COLUMN_WIDTH_STORAGE_KEY, JSON.stringify(state.focusColumnWidths));
+    return;
+  }
   localStorage.setItem(COLUMN_WIDTH_STORAGE_KEY, JSON.stringify(state.columnWidths));
 }
 
@@ -741,6 +1109,7 @@ function applyColumnWidths(extraColumns = selectedExtraColumns()) {
   });
   const tableElement = elements.pipelineTable?.closest('table');
   if (tableElement) tableElement.style.minWidth = `${visibleTableWidth(extraColumns)}px`;
+  updateFrozenColumnOffsets();
 }
 
 function average(values) {
@@ -760,6 +1129,58 @@ function countBy(rows, keyGetter) {
     acc[key] = (acc[key] || 0) + 1;
     return acc;
   }, {});
+}
+
+function topCountsWithOthers(
+  rows,
+  keyGetter,
+  topN = 5,
+  othersLabel = 'Others',
+  { adjacentSequence = [] } = {}
+) {
+  const counts = countBy(rows, keyGetter);
+  const isGenericOtherLabel = (label) => /^others?$/i.test(String(label).trim());
+  const entries = Object.entries(counts);
+  const genericOtherTotal = entries
+    .filter(([label]) => isGenericOtherLabel(label))
+    .reduce((sum, [, value]) => sum + value, 0);
+  const sorted = entries
+    .filter(([label]) => !isGenericOtherLabel(label))
+    .sort((a, b) => b[1] - a[1]);
+  let top = sorted.slice(0, topN);
+
+  const normalizedSequence = adjacentSequence.map((label) => normalizeCategoryText(label));
+  if (normalizedSequence.length) {
+    const pinnedEntries = normalizedSequence
+      .map((normalizedLabel) => sorted.find(([label]) => normalizeCategoryText(label) === normalizedLabel))
+      .filter(Boolean);
+    pinnedEntries.forEach((entry) => {
+      if (top.includes(entry)) return;
+      const removableIndex = [...top]
+        .map(([label], index) => ({ label: normalizeCategoryText(label), index }))
+        .reverse()
+        .find((item) => !normalizedSequence.includes(item.label))?.index;
+      if (removableIndex !== undefined) top.splice(removableIndex, 1, entry);
+    });
+
+    const pinnedInTop = pinnedEntries.filter((entry) => top.includes(entry));
+    if (pinnedInTop.length > 1) {
+      const firstRank = Math.min(...pinnedInTop.map((entry) => sorted.indexOf(entry)));
+      const remaining = top
+        .filter((entry) => !pinnedInTop.includes(entry))
+        .sort((a, b) => sorted.indexOf(a) - sorted.indexOf(b));
+      const insertionIndex = remaining.filter((entry) => sorted.indexOf(entry) < firstRank).length;
+      remaining.splice(insertionIndex, 0, ...pinnedInTop);
+      top = remaining;
+    }
+  }
+
+  const selectedLabels = new Set(top.map(([label]) => label));
+  const othersTotal = sorted
+    .filter(([label]) => !selectedLabels.has(label))
+    .reduce((sum, [, value]) => sum + value, 0) + genericOtherTotal;
+  if (othersTotal > 0) top.push([othersLabel, othersTotal]);
+  return top;
 }
 
 function getVisibleRows() {
@@ -791,6 +1212,7 @@ function getVisibleRows() {
         (state.stage === 'all' || row.stage === state.stage) &&
         (state.theme === 'all' || row.theme === state.theme) &&
         (state.cluster === 'all' || row.cluster === state.cluster) &&
+        (state.modality === 'all' || row.modality === state.modality) &&
         (state.indication === 'all' || row.mainIndication === state.indication) &&
         (state.country === 'all' || row.country === state.country) &&
         (state.pass === 'all' || row[filterKey] === state.pass)
@@ -812,6 +1234,7 @@ function renderFilters() {
   const stages = [...new Set(state.rows.map((row) => row.stage).filter(Boolean))].sort();
   const themes = [...new Set(state.rows.map((row) => row.theme).filter(Boolean))].sort();
   const clusters = [...new Set(state.rows.map((row) => row.cluster).filter(Boolean))].sort();
+  const modalities = [...new Set(state.rows.map((row) => row.modality).filter(Boolean))].sort();
   const countries = [...new Set(state.rows.map((row) => row.country).filter(Boolean))].sort();
   const indications = [...new Set(state.rows.map((row) => row.mainIndication).filter(Boolean))].sort();
   const filterKey = activeFilterKey();
@@ -840,6 +1263,12 @@ function renderFilters() {
     '<option value="all">전체</option>',
     ...clusters.map(option)
   ].join('');
+  elements.modalityFilter.innerHTML = [
+    '<option value="all">전체</option>',
+    ...modalities.map(option)
+  ].join('');
+  elements.modalityFilter.value = state.modality;
+
   elements.countryFilter.innerHTML = [
     '<option value="all">전체</option>',
     ...countries.map(option)
@@ -870,91 +1299,268 @@ function renderMetrics() {
   elements.metricCountries.textContent = String(countries.size);
 }
 
-function chartBar(label, value, max, tone = '') {
-  const width = max ? Math.round((value / max) * 100) : 0;
-  const safeLabel = escapeHtml(label);
+const DONUT_PALETTE = [
+  'var(--chart-1)',
+  'var(--chart-2)',
+  'var(--chart-3)',
+  'var(--chart-4)',
+  'var(--chart-5)',
+  'var(--chart-6)'
+];
+const DONUT_OTHERS_COLOR = 'var(--chart-other)';
+
+function distributionDisplayLabel(kind, label) {
+  const value = String(label || '');
+  if (kind === 'country' && /^republic of korea$/i.test(value)) return 'Korea';
+  if (kind === 'modality') {
+    if (/^small molecule$/i.test(value)) return 'SM';
+    if (/^cell therapy$/i.test(value)) return 'CT';
+    if (/^gene therapy$/i.test(value)) return 'GT';
+  }
+  if (kind !== 'indication') return value;
+
+  const indicationAbbreviations = [
+    [/alzheimer/i, 'AD'],
+    [/parkinson/i, 'PD'],
+    [/^multiple sclerosis\b/i, 'MS'],
+    [/amyotrophic lateral sclerosis|\bals\b/i, 'ALS'],
+    [/major depressive disorder|\bmdd\b/i, 'MDD'],
+    [/inflammatory bowel disease|\bibd\b/i, 'IBD'],
+    [/developmental and epileptic encephalopathy|\bdee\b/i, 'DEE'],
+    [/epilepsy\s*\/\s*seizure disorders/i, 'Epilepsy']
+  ];
+  return indicationAbbreviations.find(([pattern]) => pattern.test(value))?.[1] || value;
+}
+
+function distributionDescription(kind, label) {
+  const value = String(label || '').trim();
+  if (value === 'Others') {
+    return '빈도 상위 5개에 포함되지 않은 6번째 이하 항목과 일반 Other 값을 합산한 그룹입니다.';
+  }
+  if (value === 'Unknown') {
+    return kind === 'theme'
+      ? '공개자료의 Target 또는 MoA 근거가 부족해 SKBP Theme/Cluster를 확정하지 못한 경우입니다.'
+      : '공개자료가 부족해 해당 항목을 확정하지 못한 경우입니다.';
+  }
+  if (value === 'N/A') {
+    return kind === 'theme'
+      ? '파이프라인은 확인됐지만 SKBP 관심 Theme/Cluster 범위에 부합하지 않는 것으로 확인된 경우입니다.'
+      : '해당 항목이 적용되지 않거나, Fast Triage에서 파이프라인 identity를 확인하지 못한 경우입니다.';
+  }
+  return '';
+}
+
+const DONUT_RADIUS = 38;
+const DONUT_STROKE_WIDTH = 14;
+const DONUT_CIRCUMFERENCE = 2 * Math.PI * DONUT_RADIUS;
+
+function donutChart(entries, kind) {
+  const total = entries.reduce((sum, [, value]) => sum + value, 0);
+  if (!total) return '<div class="empty-state">데이터 없음</div>';
+
+  let cursor = 0;
+  const isNeutralDonutLabel = (label) => label === 'Others' || label === 'Unknown';
+  const segmentColor = (label, index) => (isNeutralDonutLabel(label) ? DONUT_OTHERS_COLOR : DONUT_PALETTE[index % DONUT_PALETTE.length]);
+  const segments = entries
+    .map(([label, value], index) => {
+      const fraction = value / total;
+      const pct = Math.round(fraction * 100);
+      const dash = fraction * DONUT_CIRCUMFERENCE;
+      const offset = -cursor * DONUT_CIRCUMFERENCE;
+      cursor += fraction;
+      const displayLabel = distributionDisplayLabel(kind, label);
+      return `
+        <circle
+          class="donut-segment"
+          cx="50" cy="50" r="${DONUT_RADIUS}"
+          fill="none"
+          stroke="${segmentColor(label, index)}"
+          stroke-width="${DONUT_STROKE_WIDTH}"
+          stroke-dasharray="${dash} ${DONUT_CIRCUMFERENCE - dash}"
+          stroke-dashoffset="${offset}"
+          data-donut-index="${index}"
+          data-value="${value}"
+          data-label="${escapeHtml(displayLabel)}"
+          data-pct="${pct}"
+          tabindex="0"
+          aria-label="${escapeHtml(displayLabel)} ${value}, ${pct}%"
+        ></circle>
+      `;
+    })
+    .join('');
+
+  const legend = entries
+    .map(([label, value], index) => {
+      const pct = Math.round((value / total) * 100);
+      const displayLabel = distributionDisplayLabel(kind, label);
+      const description = distributionDescription(kind, label);
+      const fullNameNote = displayLabel !== label ? `${displayLabel}: ${label}` : label;
+      const tooltip = [fullNameNote, description].filter(Boolean).join(' — ');
+      return `
+        <span
+          class="${description ? 'has-description' : ''}"
+          data-donut-index="${index}"
+          title="${escapeHtml(tooltip)}"
+          aria-label="${escapeHtml(tooltip)}, ${value}, ${pct}%"
+          tabindex="0"
+        >
+          <b class="legend-dot" style="background:${segmentColor(label, index)}"></b>${escapeHtml(displayLabel)}
+          <em>${pct}%</em>
+        </span>
+      `;
+    })
+    .join('');
+
   return `
-    <div class="bar-row">
-      <span title="${safeLabel}">${safeLabel}</span>
-      <div class="bar-track"><div class="bar-fill ${tone}" style="width:${width}%"></div></div>
-      <strong>${escapeHtml(value)}</strong>
+    <div class="donut-wrap">
+      <div class="donut" data-default-value="${total}">
+        <svg class="donut-svg" viewBox="0 0 100 100">${segments}</svg>
+        <div class="donut-center">
+          <span class="donut-value">${total}</span>
+        </div>
+      </div>
+      <div class="donut-legend">${legend}</div>
     </div>
   `;
 }
 
+function wireDonutHover(container) {
+  const donut = container.querySelector('.donut');
+  if (!donut) return;
+  const valueEl = donut.querySelector('.donut-value');
+  const defaultValue = donut.dataset.defaultValue || '';
+  const segments = [...donut.querySelectorAll('.donut-segment')];
+  const legendItems = [...container.querySelectorAll('.donut-legend [data-donut-index]')];
+
+  const activateIndex = (index) => {
+    const activeSegment = segments.find(
+      (segment) => segment.dataset.donutIndex === String(index)
+    );
+    if (!activeSegment) return;
+    valueEl.textContent = activeSegment.dataset.value;
+    segments.forEach((segment) => {
+      const isActive = segment === activeSegment;
+      segment.classList.toggle('is-active', isActive);
+      segment.classList.toggle('is-dimmed', !isActive);
+    });
+    legendItems.forEach((item) => {
+      const isActive = item.dataset.donutIndex === String(index);
+      item.classList.toggle('is-active', isActive);
+      item.classList.toggle('is-dimmed', !isActive);
+    });
+  };
+
+  const resetCenter = () => {
+    valueEl.textContent = defaultValue;
+    segments.forEach((segment) => segment.classList.remove('is-active', 'is-dimmed'));
+    legendItems.forEach((item) => item.classList.remove('is-active', 'is-dimmed'));
+  };
+
+  container.addEventListener('pointerover', (event) => {
+    const item = event.target.closest('[data-donut-index]');
+    if (!item || !container.contains(item)) return;
+    activateIndex(item.dataset.donutIndex);
+  });
+
+  container.addEventListener('pointerout', (event) => {
+    const item = event.target.closest('[data-donut-index]');
+    if (!item) return;
+    const nextItem = event.relatedTarget?.closest?.('[data-donut-index]');
+    if (nextItem && container.contains(nextItem)) {
+      activateIndex(nextItem.dataset.donutIndex);
+      return;
+    }
+    resetCenter();
+  });
+
+  container.addEventListener('focusin', (event) => {
+    const item = event.target.closest('[data-donut-index]');
+    if (item) activateIndex(item.dataset.donutIndex);
+  });
+
+  container.addEventListener('focusout', (event) => {
+    const nextItem = event.relatedTarget?.closest?.('[data-donut-index]');
+    if (nextItem && container.contains(nextItem)) {
+      activateIndex(nextItem.dataset.donutIndex);
+      return;
+    }
+    resetCenter();
+  });
+}
+
 function renderCharts() {
-  const targetCounts = countBy(state.rows, (row) => (row.targetScore ? `${row.targetScore}점` : '미평가'));
-  const maxTarget = Math.max(1, ...Object.values(targetCounts));
-  elements.targetChart.innerHTML = ['3점', '2점', '1점', '미평가']
-    .map((label) => chartBar(label, targetCounts[label] || 0, maxTarget, label === '3점' ? 'good' : ''))
-    .join('');
+  const themeTop = topCountsWithOthers(state.rows, (row) => row.theme || 'N/A', 5, 'Others');
+  elements.themeChart.innerHTML = donutChart(themeTop, 'theme');
+  wireDonutHover(elements.themeChart);
 
-  const themeCounts = countBy(state.rows, (row) => row.theme || 'N/A');
-  const maxTheme = Math.max(1, ...Object.values(themeCounts));
-  elements.themeChart.innerHTML = Object.entries(themeCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 6)
-    .map(([label, value]) => chartBar(label, value, maxTheme, 'accent'))
-    .join('');
+  const indicationTop = topCountsWithOthers(state.rows, (row) => row.mainIndication || 'N/A', 5, 'Others');
+  elements.indicationChart.innerHTML = donutChart(indicationTop, 'indication');
+  wireDonutHover(elements.indicationChart);
 
-  const countryCounts = countBy(state.rows, (row) => row.country || 'N/A');
-  const maxCountry = Math.max(1, ...Object.values(countryCounts));
-  elements.countryChart.innerHTML = Object.entries(countryCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 8)
-    .map(([label, value]) => chartBar(label, value, maxCountry, 'country'))
-    .join('');
+  const modalityTop = topCountsWithOthers(
+    state.rows,
+    (row) => row.modality || 'N/A',
+    5,
+    'Others',
+    { adjacentSequence: ['Cell therapy', 'Gene therapy'] }
+  );
+  elements.modalityChart.innerHTML = donutChart(modalityTop, 'modality');
+  wireDonutHover(elements.modalityChart);
 
-  const total = state.rows.length;
-  const pass = state.rows.filter((row) => row.filter1 === 'SELECT' || row.filter2 === 'PASS').length;
-  const passRate = total ? Math.round((pass / total) * 100) : 0;
-  elements.passDonut.style.setProperty('--pass-rate', `${passRate}%`);
-  elements.passDonut.textContent = `${passRate}%`;
-  elements.passLegend.innerHTML = `
-    <span><b class="legend-dot pass"></b>PASS/SELECT ${pass}</span>
-    <span><b class="legend-dot fail"></b>Other ${Math.max(total - pass, 0)}</span>
-  `;
-
-  if (elements.scoreAverageChart) {
-    const scoreItems = [
-      ['TR', average(state.rows.map((row) => row.targetScore))],
-      ['MOA', average(state.rows.map((row) => row.moaScore))],
-      ['Data', average(state.rows.map((row) => row.dataScore))],
-      ['Comp', average(state.rows.map((row) => row.competitiveScore))],
-      ['Plat', average(state.rows.map((row) => row.platformScore))],
-      ['Exp', average(state.rows.map((row) => row.expansionScore))],
-      ['Market', average(state.rows.map((row) => row.marketScore))]
-    ];
-    elements.scoreAverageChart.innerHTML = scoreItems
-      .map(([label, value]) => chartBar(label, Number.isFinite(value) ? Number(value.toFixed(1)) : 0, 3, value >= 2 ? 'good' : ''))
-      .join('');
-  }
+  const countryTop = topCountsWithOthers(state.rows, (row) => row.country || 'N/A', 6, 'Others');
+  elements.countryChart.innerHTML = donutChart(countryTop, 'country');
+  wireDonutHover(elements.countryChart);
 
   if (elements.priorityList) {
-    const topRows = [...state.rows]
+    const reviewRows = state.rows.filter((row) => row.filter1 === 'REVIEW' || row.filter2 === 'REVIEW');
+    const topRows = [...reviewRows]
       .sort((a, b) => (b.totalScore ?? -1) - (a.totalScore ?? -1))
       .slice(0, 3);
     elements.priorityList.innerHTML = topRows.length
       ? topRows.map((row) => `
-          <button type="button" class="priority-item" data-record-id="${escapeHtml(row.id)}">
+          <button type="button" class="priority-item" data-record-id="${escapeHtml(row.id)}" data-is-triage="${row.isTriage ? '1' : ''}">
             <strong>${escapeHtml(row.asset)}</strong>
             <span>${escapeHtml(row.theme)} · ${escapeHtml(row.cluster)}</span>
             <b>${row.totalScore ?? '-'} / ${row.maxScore ?? 21}</b>
           </button>
         `).join('')
-      : '<div class="empty-state">No assets loaded</div>';
+      : '<div class="empty-state">Review 대기 중인 pipeline이 없습니다</div>';
+  }
+
+  if (elements.dueDateList) {
+    const dueRows = state.rows
+      .filter((row) => row.focusTracked && row.focusDueDate)
+      .sort((a, b) => (a.focusDueDate < b.focusDueDate ? -1 : a.focusDueDate > b.focusDueDate ? 1 : 0))
+      .slice(0, 3);
+    elements.dueDateList.innerHTML = dueRows.length
+      ? dueRows.map((row) => `
+          <button type="button" class="priority-item" data-record-id="${escapeHtml(row.id)}" data-is-triage="${row.isTriage ? '1' : ''}">
+            <strong>${escapeHtml(row.asset)}</strong>
+            <span>${escapeHtml(row.focusComment || row.latestTeamComment || '등록된 action item 없음')}</span>
+            <b>${escapeHtml(row.focusDueDate)}</b>
+          </button>
+        `).join('')
+      : '<div class="empty-state">Action date가 설정된 관심 목록 항목이 없습니다</div>';
   }
 }
 
 function renderColumnSettings() {
   if (!elements.columnSettingsGrid) return;
-  elements.columnSettingsGrid.innerHTML = EXTRA_COLUMN_DEFINITIONS.map((column) => `
-    <label class="column-option">
-      <input type="checkbox" value="${escapeHtml(column.key)}" ${state.extraColumns.has(column.key) ? 'checked' : ''} />
-      <span>${escapeHtml(column.label)}</span>
-      <small>${escapeHtml(column.path)}</small>
-    </label>
-  `).join('');
+  elements.columnSettingsGrid.innerHTML = EXTRA_COLUMN_DEFINITIONS.map((column) => {
+    const isBuiltInFullScoutColumn = activeTableMode() === 'full' && column.key === 'modality';
+    return `
+      <label class="column-option ${isBuiltInFullScoutColumn ? 'is-built-in' : ''}">
+        <input
+          type="checkbox"
+          value="${escapeHtml(column.key)}"
+          ${isBuiltInFullScoutColumn || state.extraColumns.has(column.key) ? 'checked' : ''}
+          ${isBuiltInFullScoutColumn ? 'disabled' : ''}
+        />
+        <span>${escapeHtml(column.label)}</span>
+        <small>${isBuiltInFullScoutColumn ? 'TAB2 기본 컬럼' : escapeHtml(column.path)}</small>
+      </label>
+    `;
+  }).join('');
 }
 
 function scoreTooltipLegacy(label, criterionInfo, max) {
@@ -1056,13 +1662,228 @@ function scoreTooltip(label, criterionInfo, max) {
   return lines.join('\n');
 }
 
-function scoreBadge(score, max = 3, tooltip = '') {
-  const className = score >= max ? 'score high' : score >= max * 0.6 ? 'score mid' : 'score low';
+function scoreBadge(score, max = 3, tooltip = '', extraClass = '') {
+  const tone = score >= max ? 'high' : score >= max * 0.6 ? 'mid' : 'low';
+  const className = `score ${tone}${extraClass ? ` ${extraClass}` : ''}`;
   const safeTooltip = escapeHtml(tooltip);
   return `<span class="${className}" data-tooltip="${safeTooltip}" title="${safeTooltip}">${score ?? '-'}</span>`;
 }
 
-function pendingScoreBadge(message = 'Full Scout v3.1 review not run yet') {
+function selectOption(value, currentValue, label = value) {
+  return `<option value="${escapeHtml(value)}" ${String(value) === String(currentValue) ? 'selected' : ''}>${escapeHtml(label)}</option>`;
+}
+
+function statusEditSelect(row, filterKey) {
+  const value = row[filterKey];
+  const options = row.isTriage ? ['SELECT', 'REJECT', 'N/A'] : ['PASS', 'REVIEW', 'FAIL'];
+  const isManual = Object.prototype.hasOwnProperty.call(humanReviewOverrides(row.raw), 'filter_status');
+  return `
+    <select
+      class="table-edit-select status-edit ${filterToneClass(value)} ${isManual ? 'is-human' : 'is-auto'}"
+      data-record-id="${escapeHtml(row.id)}"
+      data-edit-kind="status"
+      data-previous-value="${escapeHtml(value)}"
+      aria-label="${escapeHtml(row.asset)} reviewer status"
+      title="AI initial status; editable by a human reviewer"
+    >
+      ${options.map((option) => selectOption(option, value)).join('')}
+    </select>
+  `;
+}
+
+const PARTNERSHIP_TYPE_OPTIONS = [
+  { value: '', label: '↻ Auto' },
+  { value: 'investment', label: '투자' },
+  { value: 'value_up', label: 'Value Up' },
+  { value: 'joint_research', label: '공동 연구' },
+  { value: 'n_a', label: 'N/A' },
+  { value: 'unknown', label: 'Unknown' }
+];
+
+function partnershipToneClass(value) {
+  if (!value) return 'empty';
+  if (value === 'investment') return 'investment';
+  if (value === 'value_up') return 'value-up';
+  if (value === 'joint_research') return 'joint-research';
+  return 'na';
+}
+
+function partnershipEditSelect(row) {
+  const value = row.filter3;
+  const isManual = row.filter3Source === 'manual';
+  const note = row.filter3Note || '등록된 OI Note 없음';
+  const evidence = row.filter3EvidenceSources.length
+    ? row.filter3EvidenceSources.join(' · ')
+    : '등록된 Evidence Source 없음';
+  const hoverText = [
+    `OI Note: ${note}`,
+    `Evidence Source: ${evidence}`,
+    `분류 기준: ${isManual ? 'HUMAN · 담당자 수동 분류' : 'AUTO · OI Partnership v1.0'}`
+  ].join('\n');
+  return `
+    <select
+      class="partnership-edit-select ${partnershipToneClass(value)} ${isManual ? 'is-human' : 'is-auto'}"
+      data-record-id="${escapeHtml(row.id)}"
+      data-previous-value="${escapeHtml(value)}"
+      aria-label="${escapeHtml(row.asset)} filter 3 (partnership type)"
+      title="${escapeHtml(hoverText)}"
+    >
+      ${PARTNERSHIP_TYPE_OPTIONS.map((option) => selectOption(option.value, value, option.label)).join('')}
+    </select>
+  `;
+}
+
+function partnershipNoteEditor(row) {
+  const evidence = row.filter3EvidenceSources.length
+    ? row.filter3EvidenceSources.join(' · ')
+    : '저장된 근거 출처 없음';
+  const sourceLabel = row.filter3Source === 'manual' ? 'HUMAN' : 'AUTO';
+  return `
+    <div class="partnership-note-editor" title="${escapeHtml(`Evidence Source: ${evidence}`)}">
+      <input
+        class="partnership-note-input"
+        type="text"
+        maxlength="500"
+        data-record-id="${escapeHtml(row.id)}"
+        data-previous-value="${escapeHtml(row.filter3Note)}"
+        value="${escapeHtml(row.filter3Note)}"
+        aria-label="${escapeHtml(row.asset)} OI Partnership Note"
+      />
+      <span class="partnership-source-badge ${row.filter3Source === 'manual' ? 'is-human' : 'is-auto'}">${sourceLabel}</span>
+    </div>
+  `;
+}
+
+const EVIDENCE_STATUS_OPTIONS = ['O', 'X', 'N/A'];
+const ADMET_TOTAL_ITEMS = 50;
+const EVIDENCE_FIELD_TO_BACKEND = {
+  inVivoStatus: 'in_vivo_status',
+  inVitroStatus: 'in_vitro_status',
+  admetCompleted: 'admet_completed'
+};
+
+function evidenceToneClass(value) {
+  if (value === 'O') return 'pass';
+  if (value === 'X') return 'fail';
+  return 'na';
+}
+
+function evidenceSourceLabel(source) {
+  return source === 'manual' ? '수동 입력' : '자동 판단 (GPT 원문 리포트 + 첨부파일 키워드 기반, 실험 데이터 확인 필요)';
+}
+
+function evidenceEditSelect(row, field, sourceField, label) {
+  const value = row[field] || 'N/A';
+  const source = row[sourceField];
+  return `
+    <select
+      class="evidence-edit ${evidenceToneClass(value)} ${source === 'manual' ? 'is-human' : 'is-auto'}"
+      data-record-id="${escapeHtml(row.id)}"
+      data-evidence-field="${escapeHtml(field)}"
+      data-previous-value="${escapeHtml(value)}"
+      aria-label="${escapeHtml(row.asset)} ${escapeHtml(label)}"
+      title="${escapeHtml(`${label}: ${evidenceSourceLabel(source)}`)}"
+    >
+      ${EVIDENCE_STATUS_OPTIONS.map((option) => selectOption(option, value)).join('')}
+    </select>
+  `;
+}
+
+function admetToneClass(value) {
+  if (value === null) return 'na';
+  if (value >= ADMET_TOTAL_ITEMS) return 'pass';
+  if (value === 0) return 'na';
+  return 'review';
+}
+
+function admetEditSelect(row) {
+  const value = row.admetCompleted;
+  const options = [
+    { value: '', label: `-/${ADMET_TOTAL_ITEMS}` },
+    ...Array.from({ length: ADMET_TOTAL_ITEMS + 1 }, (_, count) => ({ value: String(count), label: `${count}/${ADMET_TOTAL_ITEMS}` }))
+  ];
+  const currentValue = value === null ? '' : String(value);
+  return `
+    <select
+      class="evidence-edit ${admetToneClass(value)} ${row.admetSource === 'manual' ? 'is-human' : 'is-auto'}"
+      data-record-id="${escapeHtml(row.id)}"
+      data-evidence-field="admetCompleted"
+      data-previous-value="${escapeHtml(currentValue)}"
+      aria-label="${escapeHtml(row.asset)} ADMET completed"
+      title="${escapeHtml(`ADMET: ${evidenceSourceLabel(row.admetSource)}`)}"
+    >
+      ${options.map((option) => selectOption(option.value, currentValue, option.label)).join('')}
+    </select>
+  `;
+}
+
+function scoreEditSelect(row, scoreKey, criterionId, label) {
+  const value = row[scoreKey];
+  const tone = value >= 3 ? 'high' : value >= 2 ? 'mid' : 'low';
+  const isManual = Object.prototype.hasOwnProperty.call(
+    humanReviewOverrides(row.raw)?.scores || {},
+    criterionId
+  );
+  const tooltip = scoreTooltip(label, row.criteria[
+    {
+      target_relevance: 'target',
+      competitive_landscape: 'competitive',
+      moa_validity: 'moa',
+      platform_attractiveness: 'platform',
+      expansion_potential: 'expansion',
+      data_maturity: 'data',
+      marketability: 'market'
+    }[criterionId]
+  ], 3);
+  return `
+    <select
+      class="table-edit-select score-edit ${tone} ${isManual ? 'is-human' : 'is-auto'}"
+      data-record-id="${escapeHtml(row.id)}"
+      data-edit-kind="score"
+      data-criterion="${escapeHtml(criterionId)}"
+      data-previous-value="${escapeHtml(value ?? '')}"
+      aria-label="${escapeHtml(row.asset)} ${escapeHtml(label)} score"
+      title="${escapeHtml(`AI evidence remains in the report. Human reviewer can override 0-3.\n${tooltip}`)}"
+    >
+      ${[0, 1, 2, 3].map((score) => selectOption(score, value)).join('')}
+    </select>
+  `;
+}
+
+function hasManualTotalScoreOverride(record) {
+  return Object.prototype.hasOwnProperty.call(humanReviewOverrides(record), 'total_score');
+}
+
+function totalScoreEditCircle(row) {
+  const isManual = hasManualTotalScoreOverride(row.raw);
+  const displayValue = row.totalScore ?? '';
+  const tone = displayValue >= row.maxScore
+    ? 'high'
+    : displayValue >= row.maxScore * 0.6
+      ? 'mid'
+      : 'low';
+  const title = isManual
+    ? `HUMAN · 담당자가 Tab2 Total Score를 ${displayValue}점으로 수정했습니다.`
+    : `AUTO · 원본 Full Scout Total Score ${displayValue}점. Tab2에서 독립적으로 수정할 수 있습니다.`;
+  return `
+    <input
+      class="total-score-edit-circle ${tone} ${isManual ? 'is-human' : 'is-auto'}"
+      type="number"
+      min="0"
+      max="21"
+      step="1"
+      inputmode="numeric"
+      data-record-id="${escapeHtml(row.id)}"
+      data-edit-kind="total_score"
+      data-previous-value="${escapeHtml(displayValue)}"
+      value="${escapeHtml(displayValue)}"
+      aria-label="${escapeHtml(row.asset)} Tab2 Total Score"
+      title="${escapeHtml(title)}"
+    />
+  `;
+}
+
+function pendingScoreBadge(message = 'Full Scout v3.2 review not run yet') {
   const safeTooltip = escapeHtml(message);
   return `<span class="score pending" data-tooltip="${safeTooltip}" title="${safeTooltip}">-</span>`;
 }
@@ -1134,6 +1955,7 @@ function renderTableLegacy() {
   }
   const tableElement = elements.pipelineTable?.closest('table');
   if (tableElement) {
+    tableElement.classList.remove('focus-management-table');
     tableElement.style.minWidth = `${visibleTableWidth(extraColumns)}px`;
   }
 
@@ -1145,7 +1967,7 @@ function renderTableLegacy() {
       <th><button data-sort="company" type="button">Company</button></th>
       <th><button data-sort="country" type="button">Country</button></th>
       <th><button data-sort="asset" type="button">Asset</button></th>
-      <th><button data-sort="target" type="button">Target / Theme / Cluster</button></th>
+      <th><button data-sort="target" type="button">Target / Modality / Theme / Cluster</button></th>
       <th><button data-sort="mainIndication" type="button">Main indication</button></th>
       <th><button data-sort="stage" type="button">Stage</button></th>
       <th><button data-sort="filter1" type="button">Filter 1</button></th>
@@ -1172,7 +1994,7 @@ function renderTableLegacy() {
         <th rowspan="2"><button data-sort="company" type="button">Company</button></th>
         <th rowspan="2"><button data-sort="country" type="button">Country</button></th>
         <th rowspan="2"><button data-sort="asset" type="button">Asset</button></th>
-        <th rowspan="2"><button data-sort="target" type="button">Target / Theme / Cluster</button></th>
+        <th rowspan="2"><button data-sort="target" type="button">Target / Modality / Theme / Cluster</button></th>
         <th rowspan="2"><button data-sort="mainIndication" type="button">Main indication</button></th>
         <th rowspan="2"><button data-sort="stage" type="button">Stage</button></th>
         <th rowspan="2"><button data-sort="filter1" type="button">Filter 1</button></th>
@@ -1205,7 +2027,7 @@ function renderTableLegacy() {
         ${sortableHeader('Company', 'company', 'company', 'rowspan="2"')}
         ${sortableHeader('Country', 'country', 'country', 'rowspan="2"')}
         ${sortableHeader('Asset', 'asset', 'asset', 'rowspan="2"')}
-        ${sortableHeader('Target / Theme / Cluster', 'target', 'target', 'rowspan="2"')}
+        ${sortableHeader('Target / Modality / Theme / Cluster', 'target', 'target', 'rowspan="2"')}
         ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
         ${sortableHeader('Stage', 'stage', 'stage', 'rowspan="2"')}
         ${sortableHeader('Filter 1', 'filter1', 'filter1', 'rowspan="2"')}
@@ -1239,7 +2061,7 @@ function renderTableLegacy() {
           const isSelected = state.selectedIds.has(row.id);
           const checked = isSelected ? 'checked' : '';
           return `
-            <tr class="clickable-row${isSelected ? ' selected-row' : ''}" data-record-id="${escapeHtml(row.id)}" title="${escapeHtml(row.summary)}">
+            <tr class="clickable-row${isSelected ? ' selected-row' : ''}" data-record-id="${escapeHtml(row.id)}" title="${escapeHtml(rowHoverTitle(row))}">
               <td class="select-col">
                 <input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} 선택" ${checked} />
               </td>
@@ -1249,6 +2071,7 @@ function renderTableLegacy() {
               <td class="target-column-cell">
                 <div class="target-cell">
                   <strong>${escapeHtml(row.target)}</strong>
+                  <span>Modality: ${escapeHtml(row.modality)}</span>
                   <span>Theme: ${escapeHtml(row.theme)}</span>
                   <span>Cluster: ${escapeHtml(row.cluster)}</span>
                 </div>
@@ -1264,7 +2087,7 @@ function renderTableLegacy() {
               <td class="score-cell">${fullReviewScoreBadge(row, 'platformScore', 'platform', 'Platform Attractiveness')}</td>
               <td class="score-cell">${fullReviewScoreBadge(row, 'expansionScore', 'expansion', 'Expansion Potential')}</td>
               <td class="score-cell">${fullReviewScoreBadge(row, 'marketScore', 'market', 'Marketability')}</td>
-              <td class="score-cell total-score-cell">${row.isTriage ? pendingScoreBadge('Full Scout total score not available for triage rows') : scoreBadge(row.totalScore, row.maxScore, `Total Score: ${row.totalScore ?? '-'} / ${row.maxScore}`)}</td>
+              <td class="score-cell total-score-cell">${row.isTriage ? pendingScoreBadge('Full Scout total score not available for triage rows') : totalScoreEditCircle(row)}</td>
               ${extraColumns.map((column) => {
                 const value = formatExtraColumnValue(get(row.raw, column.path, '-'));
                 return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
@@ -1281,14 +2104,217 @@ function renderTableLegacy() {
   updateSelectionControls(pageRows);
 }
 
+function focusActionButton(row, location = 'full') {
+  const isTracked = row.focusTracked;
+  const action = isTracked ? 'remove' : 'add';
+  const ariaLabel = location === 'focus'
+    ? '즐겨찾기 해제'
+    : isTracked
+      ? '즐겨찾기됨 (클릭 시 해제)'
+      : '즐겨찾기에 추가';
+  return `
+    <button
+      type="button"
+      class="focus-action-button icon-only ${isTracked ? 'remove' : 'add'}"
+      data-focus-action="${action}"
+      data-record-id="${escapeHtml(row.id)}"
+      title="${isTracked ? '즐겨찾기(집중 관리)에서 제거합니다. 작성한 메모는 보존됩니다.' : '이 약물을 즐겨찾기(집중 관리)에 추가합니다.'}"
+      aria-label="${escapeHtml(ariaLabel)}"
+    >
+      <span aria-hidden="true">${isTracked ? '★' : '☆'}</span>
+    </button>
+  `;
+}
+
+function rubricRefreshButton(row) {
+  const currentVersion = String(row.criteriaVersion || '-');
+  const lastVersion = String(get(row.raw, 'meta.rubric_recalculation.version', ''));
+  const isCurrent = lastVersion === LATEST_FULL_SCOUT_RUBRIC_VERSION;
+  return `
+    <button
+      type="button"
+      class="focus-action-button icon-only rubric-refresh-button ${isCurrent ? 'is-current' : ''}"
+      data-rubric-refresh
+      data-record-id="${escapeHtml(row.id)}"
+      title="저장된 7개 점수로 최신 Full Scout Rubric v${LATEST_FULL_SCOUT_RUBRIC_VERSION}의 Total Score와 Filter 2를 재계산합니다. 현재 표시 버전: v${escapeHtml(currentVersion)}"
+      aria-label="${escapeHtml(row.asset)} 최신 Rubric v${LATEST_FULL_SCOUT_RUBRIC_VERSION} 재계산"
+    >
+      <span aria-hidden="true">↻</span>
+    </button>
+  `;
+}
+
+function fullScoutRowActions(row) {
+  return `
+    <div class="full-scout-row-actions">
+      ${rubricRefreshButton(row)}
+      ${focusActionButton(row, 'full')}
+    </div>
+  `;
+}
+
+function focusDueState(value) {
+  if (!value) return '';
+  const now = new Date();
+  const today = [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, '0'),
+    String(now.getDate()).padStart(2, '0')
+  ].join('-');
+  return value < today ? 'overdue' : value === today ? 'due-today' : '';
+}
+
+function renderFocusTable() {
+  const visibleRows = getVisibleRows();
+  const pageCount = Math.max(1, Math.ceil(visibleRows.length / state.pageSize));
+  state.page = Math.min(state.page, pageCount);
+  const start = (state.page - 1) * state.pageSize;
+  const pageRows = visibleRows.slice(start, start + state.pageSize);
+  const tableElement = elements.pipelineTable?.closest('table');
+
+  if (tableElement) {
+    tableElement.classList.add('focus-management-table');
+    tableElement.style.minWidth = `${visibleTableWidth()}px`;
+  }
+  if (elements.deleteSelectedButton) elements.deleteSelectedButton.hidden = true;
+  if (elements.columnSettingsButton) elements.columnSettingsButton.hidden = true;
+  if (elements.pipelineColGroup) {
+    elements.pipelineColGroup.innerHTML = `
+      <col class="pipeline-col-company" data-col-key="company" style="${columnWidthStyle('company')}" />
+      <col class="pipeline-col-country" data-col-key="country" style="${columnWidthStyle('country')}" />
+      <col class="pipeline-col-asset" data-col-key="asset" style="${columnWidthStyle('asset')}" />
+      <col class="pipeline-col-modality" data-col-key="modality" style="${columnWidthStyle('modality')}" />
+      <col class="pipeline-col-target" data-col-key="target" style="${columnWidthStyle('target')}" />
+      <col class="pipeline-col-indication" data-col-key="mainIndication" style="${columnWidthStyle('mainIndication')}" />
+      <col class="pipeline-col-stage" data-col-key="stage" style="${columnWidthStyle('stage')}" />
+      <col class="pipeline-col-filter" data-col-key="filter2" style="${columnWidthStyle('filter2')}" />
+      <col class="pipeline-col-score" data-col-key="totalScore" style="${columnWidthStyle('totalScore')}" />
+      <col class="pipeline-col-filter" data-col-key="filter3" style="${columnWidthStyle('filter3')}" />
+      <col class="pipeline-col-filter" data-col-key="inVivo" style="${columnWidthStyle('inVivo')}" />
+      <col class="pipeline-col-filter" data-col-key="inVitro" style="${columnWidthStyle('inVitro')}" />
+      <col class="pipeline-col-filter" data-col-key="admet" style="${columnWidthStyle('admet')}" />
+      <col data-col-key="focusDueDate" style="${columnWidthStyle('focusDueDate')}" />
+      <col data-col-key="focusManage" style="${columnWidthStyle('focusManage')}" />
+    `;
+  }
+  if (elements.pipelineTableHead) {
+    elements.pipelineTableHead.innerHTML = `
+      <tr id="pipelineHeaderRow" class="pipeline-group-row focus-pipeline-group-row">
+        ${sortableHeader('Company', 'company', 'company', 'rowspan="2"')}
+        ${sortableHeader('Country', 'country', 'country', 'rowspan="2"')}
+        ${sortableHeader('Asset', 'asset', 'asset', 'rowspan="2"')}
+        ${sortableHeader('Modality', 'modality', 'modality', 'rowspan="2"')}
+        ${sortableHeader('Target', 'target', 'target', 'rowspan="2"')}
+        ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
+        ${sortableHeader('Stage', 'stage', 'stage', 'rowspan="2"')}
+        <th class="score-group-head focus-group-head" colspan="2">Full Scout</th>
+        <th class="score-group-head focus-group-head" colspan="5">집중 관리</th>
+        ${plainHeader('관리', 'focusManage', 'focus-action-head', 'rowspan="2"')}
+      </tr>
+      <tr class="pipeline-score-row focus-column-label-row">
+        ${sortableHeader('Filter 2', 'filter2', 'filter2')}
+        ${sortableHeader('Total Score', 'focusTotalScore', 'totalScore')}
+        ${sortableHeader('Filter 3', 'filter3', 'filter3')}
+        ${sortableHeader('In-vivo', 'inVivoStatus', 'inVivo')}
+        ${sortableHeader('In-vitro', 'inVitroStatus', 'inVitro')}
+        ${sortableHeader('ADMET', 'admetCompleted', 'admet')}
+        ${sortableHeader('Action date', 'focusDueDate', 'focusDueDate')}
+      </tr>
+    `;
+    elements.pipelineHeaderRow = document.querySelector('#pipelineHeaderRow');
+    elements.selectPageRows = null;
+  }
+
+  elements.tableCount.textContent = `집중 관리: ${visibleRows.length} items · ${state.pageSize} rows/page`;
+  elements.pipelineTable.innerHTML = pageRows.length
+    ? pageRows.map((row) => `
+        <tr class="clickable-row focus-management-row" data-record-id="${escapeHtml(row.id)}" title="${escapeHtml(rowHoverTitle(row))}">
+          <td class="company-cell">${escapeHtml(row.company)}</td>
+          <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${escapeHtml(row.country)}</td>
+          <td class="asset-cell"><strong>${escapeHtml(row.asset)}</strong></td>
+          <td
+            class="modality-column-cell"
+            tabindex="0"
+            data-target-context
+            data-theme="${escapeHtml(row.theme)}"
+            data-cluster="${escapeHtml(row.cluster)}"
+            data-description="${escapeHtml(row.targetDescription)}"
+            aria-label="${escapeHtml(`${row.modality}. Theme ${row.theme}. Cluster ${row.cluster}. Description ${row.targetDescription}`)}"
+          >
+            <span class="single-line-cell">${escapeHtml(row.modality)}</span>
+          </td>
+          <td
+            class="target-column-cell target-context-cell"
+            tabindex="0"
+            data-target-context
+            data-theme="${escapeHtml(row.theme)}"
+            data-cluster="${escapeHtml(row.cluster)}"
+            data-description="${escapeHtml(row.targetDescription)}"
+            aria-label="${escapeHtml(`${row.target}. Theme ${row.theme}. Cluster ${row.cluster}. Description ${row.targetDescription}`)}"
+          >
+            <span class="target-single-line">${escapeHtml(row.target)}</span>
+            <span class="target-context-indicator" aria-hidden="true">i</span>
+          </td>
+          <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(row.mainIndication)}</td>
+          <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</td>
+          <td class="filter-cell">${statusEditSelect(row, 'filter2')}</td>
+          <td class="score-cell total-score-cell">${scoreBadge(
+            row.totalScore,
+            row.maxScore,
+            `Tab2 Total Score: ${row.totalScore ?? '-'}${hasManualTotalScoreOverride(row.raw) ? ' · Human edited' : ''}`,
+            hasManualTotalScoreOverride(row.raw) ? 'is-human' : ''
+          )}</td>
+          <td class="focus-status-cell">${partnershipEditSelect(row)}</td>
+          <td class="focus-status-cell">${evidenceEditSelect(row, 'inVivoStatus', 'inVivoSource', 'In-vivo efficacy')}</td>
+          <td class="focus-status-cell">${evidenceEditSelect(row, 'inVitroStatus', 'inVitroSource', 'In-vitro efficacy')}</td>
+          <td class="focus-status-cell">${admetEditSelect(row)}</td>
+          <td class="focus-due-cell ${focusDueState(row.focusDueDate)}">
+            <input
+              class="focus-due-input"
+              type="date"
+              data-record-id="${escapeHtml(row.id)}"
+              data-focus-field="due_date"
+              data-previous-value="${escapeHtml(row.focusDueDate)}"
+              value="${escapeHtml(row.focusDueDate)}"
+              aria-label="${escapeHtml(row.asset)} action date"
+            />
+            ${focusDueState(row.focusDueDate) === 'overdue' ? '<span class="due-label">Overdue</span>' : ''}
+            ${focusDueState(row.focusDueDate) === 'due-today' ? '<span class="due-label">Today</span>' : ''}
+          </td>
+          <td class="focus-action-cell">${focusActionButton(row, 'focus')}</td>
+        </tr>
+      `).join('')
+    : `
+      <tr>
+        <td colspan="15" class="empty-cell focus-empty-state">
+          <strong>아직 집중 관리 중인 약물이 없습니다.</strong>
+          <span>TAB2 Full Scout의 오른쪽 ‘즐겨찾기’ 버튼으로 관리 대상을 추가하세요.</span>
+        </td>
+      </tr>
+    `;
+
+  elements.pageInfo.textContent = `${state.page} / ${pageCount}`;
+  elements.prevPage.disabled = state.page <= 1;
+  elements.nextPage.disabled = state.page >= pageCount;
+  updateFrozenColumnOffsets();
+}
+
 function renderTable() {
+  hideTargetContextTooltip();
+  const mode = activeTableMode();
+  if (mode === 'focus') {
+    renderFocusTable();
+    return;
+  }
+  if (elements.deleteSelectedButton) elements.deleteSelectedButton.hidden = false;
+  if (elements.columnSettingsButton) elements.columnSettingsButton.hidden = false;
+
   const visibleRows = getVisibleRows();
   const pageCount = Math.max(1, Math.ceil(visibleRows.length / state.pageSize));
   state.page = Math.min(state.page, pageCount);
   const start = (state.page - 1) * state.pageSize;
   const pageRows = visibleRows.slice(start, start + state.pageSize);
   const extraColumns = selectedExtraColumns();
-  const mode = activeTableMode();
   const filterKey = activeFilterKey();
   const filterLabel = activeFilterLabel();
   const scoreColumns = activeScoreColumnKeys();
@@ -1310,17 +2336,20 @@ function renderTable() {
       <col class="pipeline-col-company" data-col-key="company" style="${columnWidthStyle('company')}" />
       <col class="pipeline-col-country" data-col-key="country" style="${columnWidthStyle('country')}" />
       <col class="pipeline-col-asset" data-col-key="asset" style="${columnWidthStyle('asset')}" />
+      <col class="pipeline-col-modality" data-col-key="modality" style="${columnWidthStyle('modality')}" />
       <col class="pipeline-col-target" data-col-key="target" style="${columnWidthStyle('target')}" />
       <col class="pipeline-col-indication" data-col-key="mainIndication" style="${columnWidthStyle('mainIndication')}" />
       <col class="pipeline-col-stage" data-col-key="stage" style="${columnWidthStyle('stage')}" />
       <col class="pipeline-col-filter" data-col-key="${filterKey}" style="${columnWidthStyle(filterKey)}" />
       ${scoreColumns.map((key) => `<col class="pipeline-col-score" data-col-key="${escapeHtml(key)}" style="${columnWidthStyle(key)}" />`).join('')}
       ${extraColumns.map((column) => `<col class="pipeline-col-extra" data-col-key="${escapeHtml(extraColumnKey(column))}" style="${columnWidthStyle(extraColumnKey(column))}" />`).join('')}
+      ${mode === 'full' ? `<col class="pipeline-col-focus-action" data-col-key="focusAction" style="${columnWidthStyle('focusAction')}" />` : ''}
     `;
   }
 
   const tableElement = elements.pipelineTable?.closest('table');
   if (tableElement) {
+    tableElement.classList.remove('focus-management-table');
     tableElement.style.minWidth = `${visibleTableWidth(extraColumns)}px`;
   }
 
@@ -1333,7 +2362,8 @@ function renderTable() {
         ${sortableHeader('Company', 'company', 'company', 'rowspan="2"')}
         ${sortableHeader('Country', 'country', 'country', 'rowspan="2"')}
         ${sortableHeader('Asset', 'asset', 'asset', 'rowspan="2"')}
-        ${sortableHeader('Target / Theme / Cluster', 'target', 'target', 'rowspan="2"')}
+        ${sortableHeader('Modality', 'modality', 'modality', 'rowspan="2"')}
+        ${sortableHeader('Target', 'target', 'target', 'rowspan="2"')}
         ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
         ${sortableHeader('Stage', 'stage', 'stage', 'rowspan="2"')}
         ${sortableHeader(filterLabel, filterKey, filterKey, 'rowspan="2"')}
@@ -1341,6 +2371,7 @@ function renderTable() {
           ? '<th class="score-group-head" colspan="3">Fast Triage Core</th>'
           : '<th class="score-group-head" colspan="3">Triage Core</th><th class="score-group-head" colspan="5">Full Scout only</th>'}
         ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
+        ${mode === 'full' ? plainHeader('관리', 'focusAction', 'focus-action-head', 'rowspan="2"') : ''}
       </tr>
       <tr class="pipeline-score-row">
         ${scoreColumns.map((key) => sortableHeader(scoreLabels[key] || key, key, key)).join('')}
@@ -1351,58 +2382,85 @@ function renderTable() {
     elements.selectPageRows = document.querySelector('#selectPageRows');
   }
 
-  elements.tableCount.textContent = `${modeLabel}: ${visibleRows.length} items 쨌 ${state.pageSize} rows/page`;
+  elements.tableCount.textContent = `${modeLabel}: ${visibleRows.length} items · ${state.pageSize} rows/page`;
   elements.pipelineTable.innerHTML = pageRows.length
     ? pageRows
         .map((row) => {
-          const filterClass = `pill ${filterToneClass(row[filterKey])}`;
           const isSelected = state.selectedIds.has(row.id);
           const checked = isSelected ? 'checked' : '';
           const rowTitle = mode === 'triage'
-            ? markdownPreviewSnippet(rawMarkdownForRow(row), row.summary)
-            : row.summary;
+            ? rowHoverTitle(row, markdownPreviewSnippet(rawMarkdownForRow(row), row.summary))
+            : rowHoverTitle(row);
           return `
-            <tr class="clickable-row${mode === 'triage' ? ' triage-preview-row' : ''}${isSelected ? ' selected-row' : ''}" data-record-id="${escapeHtml(row.id)}" title="${escapeHtml(rowTitle)}">
+            <tr
+              class="clickable-row${mode === 'triage' ? ' triage-preview-row' : ''}${isSelected ? ' selected-row' : ''}"
+              data-record-id="${escapeHtml(row.id)}"
+              ${mode === 'triage' ? `title="${escapeHtml(rowTitle)}"` : ''}
+            >
               <td class="select-col">
                 <input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} select" ${checked} />
               </td>
               <td class="company-cell">${escapeHtml(row.company)}</td>
               <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${escapeHtml(row.country)}</td>
               <td class="asset-cell"><strong>${escapeHtml(row.asset)}</strong></td>
-              <td class="target-column-cell">
-                <div class="target-cell">
-                  <strong>${escapeHtml(row.target)}</strong>
-                  <span>Theme: ${escapeHtml(row.theme)}</span>
-                  <span>Cluster: ${escapeHtml(row.cluster)}</span>
-                </div>
+              <td
+                class="modality-column-cell"
+                tabindex="0"
+                data-target-context
+                data-theme="${escapeHtml(row.theme)}"
+                data-cluster="${escapeHtml(row.cluster)}"
+                data-description="${escapeHtml(row.targetDescription)}"
+                aria-label="${escapeHtml(`${row.modality}. Theme ${row.theme}. Cluster ${row.cluster}. Description ${row.targetDescription}`)}"
+              >
+                <span class="single-line-cell">${escapeHtml(row.modality)}</span>
+              </td>
+              <td
+                class="target-column-cell target-context-cell"
+                tabindex="0"
+                data-target-context
+                data-theme="${escapeHtml(row.theme)}"
+                data-cluster="${escapeHtml(row.cluster)}"
+                data-description="${escapeHtml(row.targetDescription)}"
+                aria-label="${escapeHtml(`${row.target}. Theme ${row.theme}. Cluster ${row.cluster}. Description ${row.targetDescription}`)}"
+              >
+                <span class="target-single-line">${escapeHtml(row.target)}</span>
+                <span class="target-context-indicator" aria-hidden="true">i</span>
               </td>
               <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(row.mainIndication)}</td>
               <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</td>
-              <td class="filter-cell"><span class="${filterClass}">${escapeHtml(row[filterKey])}</span></td>
-              <td class="score-cell">${scoreBadge(row.targetScore, 3, scoreTooltip('Target Relevance', row.criteria.target, 3))}</td>
-              <td class="score-cell">${scoreBadge(row.moaScore, 3, scoreTooltip('MOA Validity', row.criteria.moa, 3))}</td>
-              <td class="score-cell">${scoreBadge(row.dataScore, 3, scoreTooltip('Data Maturity', row.criteria.data, 3))}</td>
+              <td class="filter-cell">${statusEditSelect(row, filterKey)}</td>
+              <td class="score-cell">${mode === 'full'
+                ? scoreEditSelect(row, 'targetScore', 'target_relevance', 'Target Relevance')
+                : scoreBadge(row.targetScore, 3, scoreTooltip('Target Relevance', row.criteria.target, 3))}</td>
+              <td class="score-cell">${mode === 'full'
+                ? scoreEditSelect(row, 'moaScore', 'moa_validity', 'MOA Validity')
+                : scoreBadge(row.moaScore, 3, scoreTooltip('MOA Validity', row.criteria.moa, 3))}</td>
+              <td class="score-cell">${mode === 'full'
+                ? scoreEditSelect(row, 'dataScore', 'data_maturity', 'Data Maturity')
+                : scoreBadge(row.dataScore, 3, scoreTooltip('Data Maturity', row.criteria.data, 3))}</td>
               ${mode === 'full' ? `
-                <td class="score-cell">${fullReviewScoreBadge(row, 'competitiveScore', 'competitive', 'Competitive Landscape')}</td>
-                <td class="score-cell">${fullReviewScoreBadge(row, 'platformScore', 'platform', 'Platform Attractiveness')}</td>
-                <td class="score-cell">${fullReviewScoreBadge(row, 'expansionScore', 'expansion', 'Expansion Potential')}</td>
-                <td class="score-cell">${fullReviewScoreBadge(row, 'marketScore', 'market', 'Marketability')}</td>
-                <td class="score-cell total-score-cell">${scoreBadge(row.totalScore, row.maxScore, `Total Score: ${row.totalScore ?? '-'} / ${row.maxScore}`)}</td>
+                <td class="score-cell">${scoreEditSelect(row, 'competitiveScore', 'competitive_landscape', 'Competitive Landscape')}</td>
+                <td class="score-cell">${scoreEditSelect(row, 'platformScore', 'platform_attractiveness', 'Platform Attractiveness')}</td>
+                <td class="score-cell">${scoreEditSelect(row, 'expansionScore', 'expansion_potential', 'Expansion Potential')}</td>
+                <td class="score-cell">${scoreEditSelect(row, 'marketScore', 'marketability', 'Marketability')}</td>
+                <td class="score-cell total-score-cell">${totalScoreEditCircle(row)}</td>
               ` : ''}
               ${extraColumns.map((column) => {
                 const value = formatExtraColumnValue(get(row.raw, column.path, '-'));
                 return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
               }).join('')}
+              ${mode === 'full' ? `<td class="focus-action-cell">${fullScoutRowActions(row)}</td>` : ''}
             </tr>
           `;
         })
         .join('')
-    : `<tr><td colspan="${8 + scoreColumns.length + extraColumns.length}" class="empty-cell">No matching ${modeLabel} rows.</td></tr>`;
+    : `<tr><td colspan="${9 + scoreColumns.length + extraColumns.length + (mode === 'full' ? 1 : 0)}" class="empty-cell">No matching ${modeLabel} rows.</td></tr>`;
 
   elements.pageInfo.textContent = `${state.page} / ${pageCount}`;
   elements.prevPage.disabled = state.page <= 1;
   elements.nextPage.disabled = state.page >= pageCount;
   updateSelectionControls(pageRows);
+  updateFrozenColumnOffsets();
 }
 
 function updateSelectionControls(pageRows = null) {
@@ -1446,6 +2504,9 @@ async function deleteSelectedRecords() {
 }
 
 function renderTableTabs() {
+  if (elements.focusTabCount) {
+    elements.focusTabCount.textContent = String(state.rows.filter((row) => !row.isTriage && row.focusTracked).length);
+  }
   elements.pipelineTableTabs?.forEach((tab) => {
     const isActive = tab.dataset.tableMode === activeTableMode();
     tab.classList.toggle('active', isActive);
@@ -1675,6 +2736,164 @@ async function loadRecords() {
   elements.agentContextCount.textContent = `${state.rows.length} pipelines`;
 }
 
+async function saveManualReviewEdit(select) {
+  const recordId = select.dataset.recordId;
+  const kind = select.dataset.editKind;
+  const previousValue = select.dataset.previousValue;
+  if (kind === 'total_score' && select.value.trim() === '') {
+    select.value = previousValue;
+    elements.dataStatus.textContent = 'Total Score는 0~21 정수로 입력해주세요';
+    return;
+  }
+  const value = ['score', 'total_score'].includes(kind) ? Number(select.value) : select.value;
+  if (!recordId || !['status', 'score', 'total_score'].includes(kind)) return;
+  const actorName = await ensureDashboardReviewerIdentity();
+  if (!actorName) {
+    select.value = previousValue;
+    elements.dataStatus.textContent = '수정자 ID 입력이 취소되어 변경하지 않았습니다';
+    return;
+  }
+
+  const payload = {
+    kind,
+    value,
+    actor_name: actorName,
+    previous_value: ['score', 'total_score'].includes(kind) && previousValue !== ''
+      ? Number(previousValue)
+      : previousValue
+  };
+  if (kind === 'score') payload.criterion = select.dataset.criterion;
+
+  select.disabled = true;
+  select.classList.add('is-saving');
+  elements.dataStatus.textContent = 'Saving human review';
+
+  try {
+    const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/manual-review`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
+
+    const rowIndex = state.rows.findIndex((row) => row.id === recordId);
+    if (rowIndex >= 0 && data.record) {
+      state.rawRecords[rowIndex] = data.record;
+      state.rows = state.rawRecords.map(flattenRecord);
+    }
+    renderFilters();
+    render();
+    elements.dataStatus.textContent = 'Human review saved';
+  } catch (error) {
+    select.value = previousValue;
+    select.disabled = false;
+    select.classList.remove('is-saving');
+    elements.dataStatus.textContent = `Human review save failed: ${error.message}`;
+  }
+}
+
+function replaceRecordFromApi(recordId, record) {
+  const rowIndex = state.rows.findIndex((row) => row.id === recordId);
+  if (rowIndex < 0 || !record) return;
+  state.rawRecords[rowIndex] = record;
+  state.rows = state.rawRecords.map(flattenRecord);
+}
+
+async function recalculateLatestRubric(button) {
+  const recordId = button?.dataset.recordId;
+  if (!recordId) return;
+  button.disabled = true;
+  button.classList.add('is-saving');
+  elements.dataStatus.textContent = `Rubric v${LATEST_FULL_SCOUT_RUBRIC_VERSION} 재계산 중`;
+
+  try {
+    const response = await fetch(
+      `/api/records/${encodeURIComponent(recordId)}/recalculate-rubric`,
+      { method: 'POST' }
+    );
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
+    replaceRecordFromApi(recordId, data.record);
+    renderFilters();
+    render();
+    elements.dataStatus.textContent = `Recalculated by Full Scout Rubric v${data.rubric_version || LATEST_FULL_SCOUT_RUBRIC_VERSION}`;
+  } catch (error) {
+    button.disabled = false;
+    button.classList.remove('is-saving');
+    elements.dataStatus.textContent = `Rubric 재계산 실패: ${error.message}`;
+  }
+}
+
+async function performFocusManagementSave(recordId, payload, control = null) {
+  if (!recordId) return false;
+  const actorName = getDashboardReviewerIdentity();
+  if (actorName && !payload.actor_name) payload = { ...payload, actor_name: actorName };
+  if (control) {
+    control.disabled = true;
+    control.classList.add('is-saving');
+  }
+  elements.dataStatus.textContent = 'Saving TAB3';
+
+  try {
+    const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/focus-management`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
+    replaceRecordFromApi(recordId, data.record);
+    if (payload.action === 'update') {
+      if (control) {
+        control.disabled = false;
+        control.classList.remove('is-saving');
+        control.dataset.previousValue = String(payload.value ?? '');
+      }
+      if (payload.field === 'due_date' && control) {
+        const cell = control.closest('.focus-due-cell');
+        const stateClass = focusDueState(String(payload.value || ''));
+        cell?.classList.toggle('overdue', stateClass === 'overdue');
+        cell?.classList.toggle('due-today', stateClass === 'due-today');
+        cell?.querySelector('.due-label')?.remove();
+        if (stateClass && cell) {
+          cell.insertAdjacentHTML('beforeend', `<span class="due-label">${stateClass === 'overdue' ? 'Overdue' : 'Today'}</span>`);
+        }
+      }
+      renderTableTabs();
+      renderTable();
+    } else {
+      renderFilters();
+      render();
+    }
+    elements.dataStatus.textContent = payload.action === 'add'
+      ? 'TAB3에 추가했습니다'
+      : payload.action === 'remove'
+        ? 'TAB3에서 제거했습니다'
+        : 'TAB3 내용을 저장했습니다';
+    return true;
+  } catch (error) {
+    if (control) {
+      control.disabled = false;
+      control.classList.remove('is-saving');
+    }
+    elements.dataStatus.textContent = `TAB3 저장 실패: ${error.message}`;
+    return false;
+  }
+}
+
+function saveFocusManagement(recordId, payload, control = null) {
+  const previous = focusSaveQueues.get(recordId) || Promise.resolve();
+  const next = previous
+    .catch(() => false)
+    .then(() => performFocusManagementSave(recordId, payload, control));
+  focusSaveQueues.set(recordId, next);
+  next.finally(() => {
+    if (focusSaveQueues.get(recordId) === next) focusSaveQueues.delete(recordId);
+  });
+  return next;
+}
+
 function openAiDrawer() {
   elements.aiDrawer.hidden = false;
   elements.aiBackdrop.hidden = false;
@@ -1747,7 +2966,25 @@ function setupResizableDrawer(drawer, storageKey, defaultWidth = 520) {
   });
 }
 
+const CRITERIA_DRAWER_SCOPE_LABELS = {
+  triage: 'TAB1 · Fast Triage (SELECT/REJECT/N/A)',
+  full: 'TAB2 · Full Scout (PASS/REVIEW/FAIL)',
+  focus: 'TAB3 · 집중 관리 (OI Partnership Type)'
+};
+
+function updateCriteriaDrawerScope() {
+  const mode = activeTableMode();
+  if (elements.criteriaDrawerScopeLabel) {
+    elements.criteriaDrawerScopeLabel.textContent = CRITERIA_DRAWER_SCOPE_LABELS[mode] || '';
+  }
+  document.querySelectorAll('[data-criteria-tab]').forEach((section) => {
+    const scopes = section.dataset.criteriaTab.split(' ');
+    section.hidden = !scopes.includes(mode);
+  });
+}
+
 function openCriteriaDrawer() {
+  updateCriteriaDrawerScope();
   elements.criteriaDrawer.hidden = false;
   elements.criteriaBackdrop.hidden = false;
   requestAnimationFrame(() => {
@@ -1798,37 +3035,6 @@ function markdownPreviewSnippet(markdown, fallback = '') {
     .replace(/\s+/g, ' ')
     .trim();
   return text.length > 520 ? `${text.slice(0, 520)}...` : text;
-}
-
-function openTriageReportDrawer(row) {
-  if (!elements.triageReportDrawer || !elements.triageReportBackdrop || !elements.triageReportBody) return;
-  const markdown = rawMarkdownForRow(row);
-  elements.triageReportTitle.textContent = row?.asset || 'Markdown report';
-  elements.triageReportMeta.textContent = [row?.company, row?.filter1, row?.stage]
-    .filter((value) => value && value !== '-')
-    .join(' · ') || 'Fast triage markdown';
-  elements.triageReportBody.innerHTML = markdown
-    ? renderAgentText(markdown)
-    : '<div class="empty-state">저장된 Fast Triage 원문 Markdown이 없습니다.</div>';
-
-  elements.triageReportDrawer.hidden = false;
-  elements.triageReportBackdrop.hidden = false;
-  requestAnimationFrame(() => {
-    elements.triageReportDrawer.classList.add('open');
-    elements.triageReportBackdrop.classList.add('open');
-    elements.triageReportDrawer.setAttribute('aria-hidden', 'false');
-  });
-}
-
-function closeTriageReportDrawer() {
-  if (!elements.triageReportDrawer || !elements.triageReportBackdrop) return;
-  elements.triageReportDrawer.classList.remove('open');
-  elements.triageReportBackdrop.classList.remove('open');
-  elements.triageReportDrawer.setAttribute('aria-hidden', 'true');
-  setTimeout(() => {
-    elements.triageReportDrawer.hidden = true;
-    elements.triageReportBackdrop.hidden = true;
-  }, 180);
 }
 
 function renderAgentInlineMarkdown(text) {
@@ -2473,9 +3679,12 @@ Triage status rule:
 - If unsure between SELECT and REJECT, choose REJECT and explain the missing evidence needed.
 
 Controlled vocabulary:
-- company_country must use canonical values such as China, Republic of Korea, Japan, United States, Europe/UK, Taiwan, Singapore, Canada, Australia, Israel, Unknown, or N/A.
-- development_stage must use one canonical bucket when possible: Hit discovery, Lead Selection, Lead Optimization, IND-enabling, IND, Phase 1, Phase 1/2, Phase 2, Phase 2/3, Phase 3, Registration, Approved / marketed, Discontinued / inactive, Unknown, or N/A.
-- main_indication must use one canonical disease bucket when possible: Alzheimer's disease, Parkinson's disease, Epilepsy / seizure disorders, Multiple sclerosis / neuroinflammatory disease, Amyotrophic lateral sclerosis / motor neuron disease, Frontotemporal dementia, Stroke, Pain, Major depressive disorder, Chronic cough, Inflammatory bowel disease, Systemic lupus erythematosus / autoimmune disease, Unknown, or N/A.
+- For an identity-verified asset, use Unknown (never N/A) when country, development stage, modality, main indication, target, or another factual field cannot be established from public sources. N/A is reserved for the triage status when asset identity itself is not verified.
+- company_country must use canonical values such as China, Republic of Korea, Japan, United States, Europe/UK, Taiwan, Singapore, Canada, Australia, Israel, or Unknown.
+- development_stage must use one canonical bucket when possible: Hit discovery, Lead Selection, Lead Optimization, IND-enabling, IND, Phase 1, Phase 1/2, Phase 2, Phase 2/3, Phase 3, Registration, Approved / marketed, Discontinued / inactive, or Unknown.
+- modality_platform must use exactly one short dashboard label: Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Other, or Unknown.
+- main_indication must use one canonical disease bucket when possible: Alzheimer's disease, Parkinson's disease, Epilepsy / seizure disorders, Multiple sclerosis / neuroinflammatory disease, Amyotrophic lateral sclerosis / motor neuron disease, Frontotemporal dementia, Stroke, Pain, Major depressive disorder, Chronic cough, Inflammatory bowel disease, Systemic lupus erythematosus / autoimmune disease, or Unknown.
+- For theme and cluster only: use N/A for both fields when an identity-verified asset is confirmed not to fit an SKBP interest theme/cluster. Use Unknown for both fields when target or MoA evidence is insufficient to map the asset. Do not use No Theme.
 
 Output language:
 Korean. English is allowed for scientific terms.
@@ -2524,7 +3733,7 @@ The final answer must contain exactly two fenced code blocks:
       "company": "",
       "asset_name": "",
       "target": "",
-      "theme": "E/I Balance | Neuroimmune | No Theme | Unknown",
+      "theme": "E/I Balance | Neuroimmune | N/A | Unknown",
       "cluster": "",
       "target_relevance_score": 0,
       "one_line_summary": "",
@@ -2616,6 +3825,8 @@ function buildGptInstructionPrompt() {
 Mission:
 Find and evaluate a pipeline asset by doing the full workflow: company research, source verification, competitor search, SKBP scoring, and evidence tracking. The final answer must include two copyable boxes: first a complete Markdown file code block, then a valid JSON code block that follows the SKBP JSON schema.
 
+This is GPT instruction 2: Full Scout v3.2.
+
 Company: [COMPANY_NAME]
 Asset / drug / pipeline name: [ASSET_NAME]
 Output language: Korean. English is allowed for scientific terms.
@@ -2633,7 +3844,7 @@ Identity Gate / N-A early stop:
   - Include references only for the few sources that explain the non-match or ambiguity.
 - N/A JSON block format:
   - Keep it valid JSON.
-  - Set meta.schema_version and meta.rubric_version to "3.1".
+  - Set meta.schema_version and meta.rubric_version to "3.2".
   - Set source_report.parser_status to "asset_identity_not_verified".
   - Set hard_filter.status to "FAIL".
   - Set hard_filter.reason to "Asset identity not verified from public biotech/pharma sources."
@@ -2657,8 +3868,9 @@ Non-negotiable rules:
 11. Hard Filter must use this rule: PASS if Total >= 14, Target Relevance >= 3, MoA Validity >= 2, Data Maturity >= 2, and no hard blocker. REVIEW if Total 9-13, or score is high but stage / rights / asset identity / source uncertainty exists. FAIL if Total <= 8, Target Relevance <= 1, or no SKBP Theme / Cluster fit.
 12. If the latest stage, ownership, financing, or trial status is unclear, mark it as uncertain and state what source is needed.
 13. Do not invent URLs. If a URL cannot be verified, write null in JSON and describe the missing source in uncertain_points.
+14. For scoring.criteria.marketability.calculation.commercial_rationale_status, use exactly one of: evidence_based, assumption_based, assumption_based_scenario, established, not_established, or insufficient_evidence. Use not_established or insufficient_evidence only when marketability.score is 0; then set commercial_rationale_failure_reason and leave the A/B/C output values null. For assumption_based_scenario, also provide commercial_rationale_basis. Do not invent other status values.
 
-Scoring v3.1 rules:
+Scoring v3.2 rules:
 - Each scoring criterion must be scored independently using its own criterion-specific scoring table.
 - Do not apply a universal scoring rule across all criteria.
 - For every criterion, assign exactly one integer score: 0, 1, 2, or 3.
@@ -2676,12 +3888,15 @@ Scoring v3.1 rules:
 
 Controlled vocabulary for dashboard filters:
 - Use canonical values for filter-facing fields so the dashboard can group comparable assets.
+- For an identity-verified asset, use Unknown (never N/A) when country, development stage, modality, main indication, target, or another factual field cannot be established from public sources.
+- N/A is reserved for an Identity Gate failure, except for Theme and Cluster: use N/A for both only when an identity-verified asset is confirmed not to fit an SKBP interest theme/cluster. Use Unknown for both when target or MoA evidence is insufficient to map the asset. Do not use No Theme.
 - json_summary.company_country and structured_table.company_country must use a single canonical country/region label. Examples: China, Republic of Korea, United States, Japan, Europe/UK. Do not write combined labels such as "China / Hong Kong" or "China / United States operations" in these fields; put that nuance in headquarters, company_profile.notes, or validation.uncertain_points.
 - structured_table.main_indication is required and must contain one canonical disease bucket. structured_table.indication can contain the full detailed indication wording.
 - If the asset has many indications, choose the lead/currently most relevant indication as main_indication and keep the rest in indication.
 - structured_table.development_stage must use one canonical stage bucket for dashboard filtering. Put detailed wording such as recruiting status, indication-specific stages, or expected IND timing in source evidence, notes, or validation.uncertain_points.
 - Standard development stage buckets include: Hit discovery, Lead Selection, Lead Optimization, IND-enabling, IND, Phase 1, Phase 1/2, Phase 2, Phase 2/3, Phase 3, Registration, Approved / marketed, Discontinued / inactive.
 - Map stage synonyms into the same bucket. Examples: P1, Ph1, Phase I, FIH, first-in-human, Phase 1 SAD/MAD, and 1상 -> Phase 1; P2, Ph2, Phase II, Phase 2 recruiting, and 2상 -> Phase 2; preclinical / IND preparation -> IND-enabling when IND-enabling work is explicitly described.
+- structured_table.modality_platform must use exactly one short dashboard label: Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Other, or Unknown. Put technical platform detail in structured_table.moa, company_profile.platform_summary, or source evidence; do not combine multiple labels in modality_platform.
 - Standard indication buckets include:
   - Alzheimer's disease
   - Parkinson's disease
@@ -2713,7 +3928,7 @@ Expected final answer shape:
 \`\`\`json
 {
   "meta": {
-    "schema_version": "3.1"
+    "schema_version": "3.2"
   }
 }
 \`\`\`
@@ -2728,7 +3943,7 @@ Use this exact report structure inside the markdown code block:
 
 # [Company] Pipeline Scout Report: **[Asset]**
 
-Briefly state that this report is prepared for SKBP Pipeline Finder v3.1 and that URLs are included for auditability.
+ Briefly state that this report is prepared for SKBP Pipeline Finder v3.2 and that URLs are included for auditability.
 
 중요: 한 문장으로 filter/recommendation rationale을 먼저 씁니다. 예: 공개 자료상 active asset명·compound code·임상 단계가 명확히 확인되지 않아 stage/ownership은 uncertain / REVIEW로 처리합니다.
 
@@ -2768,7 +3983,8 @@ Briefly state that this report is prepared for SKBP Pipeline Finder v3.1 and tha
 Allowed Theme values:
 - E/I Balance
 - Neuroimmune
-- No Theme
+- N/A (identity-verified asset confirmed outside SKBP Theme/Cluster scope)
+- Unknown (target or MoA evidence insufficient to map)
 
 Allowed clusters:
 - E/I Balance: Ion Channel, Inhibitory Tone 강화, Synaptic Transmission, Chloride Homeostasis, Network Modulation
@@ -2862,6 +4078,14 @@ Evidence trail:
 Investigation note:
 - 2점 이상이면 the data supporting differentiation must be explicit.
 
+Platform vs Data Maturity separation:
+- Platform Attractiveness evaluates platform-level technical advantage and may use evidence from other assets officially linked to the same platform.
+- Data Maturity evaluates only the assessed asset's stage-appropriate development evidence.
+- A 2-point Platform score requires at least one quantitative experimental result directly testing the claimed technical advantage against an appropriate comparator.
+- A 3-point Platform score requires First Patient Dosed for an asset officially linked to the platform. Before clinical dosing, 3 points require repeated quantitative advantage across multiple conditions plus credible external validation.
+- IND clearance, trial registration, financing, patent, MOU, or partnership announcement alone is insufficient for 3 points.
+- The same endpoint must not be double-counted in Platform Attractiveness and Data Maturity.
+
 ### 4.5 Expansion Potential
 Score:
 Main line:
@@ -2894,6 +4118,7 @@ Evidence trail:
 
 Investigation note:
 - This score should be driven by preclinical experimental evidence, not market excitement.
+- Data Maturity must be based only on asset-specific, stage-appropriate evidence; platform-wide or other-asset data must not increase this score.
 
 ### 4.7 Marketability
 Score:
@@ -2966,13 +4191,13 @@ After the markdown code block, output the second copyable box as a JSON code blo
 \`\`\`json
 {
   "meta": {
-    "schema_version": "3.1",
+    "schema_version": "3.2",
     "generated_at": "YYYY-MM-DD",
     "language": "ko",
     "analyst_role": "[OIT] PreC Pipeline Shortlister",
     "output_format": ["markdown_report", "json"],
     "output_filename_base": "Company_Asset_YYYYMMDD",
-    "rubric_version": "3.1",
+    "rubric_version": "3.2",
     "rubric_author": "kate"
   },
   "input": {
@@ -3008,7 +4233,7 @@ After the markdown code block, output the second copyable box as a JSON code blo
     "company": "",
     "asset_name": "",
     "target": "",
-    "theme": "E/I Balance | Neuroimmune | No Theme",
+    "theme": "E/I Balance | Neuroimmune | N/A | Unknown",
     "cluster": "",
     "target_relevance_score": 0,
     "one_line_summary": "",
@@ -3218,7 +4443,7 @@ function buildGptInstructionPromptCompact() {
   return `You are an expert biotech pipeline scout for SKBP Pipeline Finder.
 
 Mission:
-Run Full Scout v3.1 for one biotech/pharma pipeline asset. Produce exactly two fenced code blocks: first markdown, second JSON. Output language: Korean, with English allowed for scientific terms.
+Run Full Scout v3.2 for one biotech/pharma pipeline asset. Produce exactly two fenced code blocks: first markdown, second JSON. Output language: Korean, with English allowed for scientific terms.
 
 Input:
 Company: [COMPANY_NAME]
@@ -3260,7 +4485,7 @@ One-line summary, recommendation, most important diligence question.
 ## References
 Use Markdown reference links with actual URLs.
 
-Scoring v3.1:
+Scoring v3.2:
 - Score each criterion independently as one integer: 0, 1, 2, or 3. No ranges.
 - Evidence Type must be one of:
   E0_not_found_or_not_assessable
@@ -3288,8 +4513,10 @@ C. Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing P
 Sales output unit = million USD. Store JSON sales numbers as numeric million USD values.
 
 Controlled vocabulary for dashboard:
-- company_country: use one canonical label such as China, Republic of Korea, United States, Japan, Europe/UK, Taiwan, Singapore, Canada, Australia, Israel, Unknown, N/A.
-- development_stage: Hit discovery, Lead Selection, Lead Optimization, IND-enabling, IND, Phase 1, Phase 1/2, Phase 2, Phase 2/3, Phase 3, Registration, Approved / marketed, Discontinued / inactive, Unknown, N/A.
+- For an identity-verified asset, use Unknown (never N/A) when country, development stage, modality, main indication, target, or another factual field cannot be established from public sources. N/A is reserved for identity-gate failure, except that Theme and Cluster are both N/A when the asset is confirmed outside SKBP scope.
+- company_country: use one canonical label such as China, Republic of Korea, United States, Japan, Europe/UK, Taiwan, Singapore, Canada, Australia, Israel, or Unknown.
+- development_stage: Hit discovery, Lead Selection, Lead Optimization, IND-enabling, IND, Phase 1, Phase 1/2, Phase 2, Phase 2/3, Phase 3, Registration, Approved / marketed, Discontinued / inactive, or Unknown.
+- modality_platform: Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Other, or Unknown.
 - Map synonyms: P1/Ph1/FIH/Phase I -> Phase 1; P2/Ph2/Phase II -> Phase 2; preclinical/IND prep -> IND-enabling when appropriate.
 - main_indication: use one canonical disease bucket; put detailed wording in indication.
 
@@ -3302,13 +4529,13 @@ Use this top-level shape and fill all fields. Use [] for missing lists and ""/nu
 \`\`\`json
 {
   "meta": {
-    "schema_version": "3.1",
+    "schema_version": "3.2",
     "generated_at": "YYYY-MM-DD",
     "language": "ko",
     "analyst_role": "[OIT] PreC Pipeline Shortlister",
     "output_format": ["markdown_report", "json"],
     "output_filename_base": "Company_Asset_YYYYMMDD",
-    "rubric_version": "3.1",
+    "rubric_version": "3.2",
     "rubric_author": "kate"
   },
   "input": {
@@ -3344,7 +4571,7 @@ Use this top-level shape and fill all fields. Use [] for missing lists and ""/nu
     "company": "",
     "asset_name": "",
     "target": "",
-    "theme": "E/I Balance | Neuroimmune | No Theme",
+    "theme": "E/I Balance | Neuroimmune | N/A | Unknown",
     "cluster": "",
     "target_relevance_score": 0,
     "one_line_summary": "",
@@ -3431,11 +4658,11 @@ function setPromptCopyFeedback(kind = 'full') {
 
   const label = button.querySelector('b');
   const idleLabel = kind === 'triage' ? '지침 1' : '지침 2';
-  const idleTooltip = kind === 'triage' ? TRIAGE_PROMPT_TOOLTIP : 'GPT full scout v3.1 지침을 복사합니다. triage에서 SELECT된 asset을 심층 검토할 때 사용합니다.';
+  const idleTooltip = kind === 'triage' ? TRIAGE_PROMPT_TOOLTIP : 'GPT full scout v3.2 지침을 복사합니다. triage에서 SELECT된 asset을 심층 검토할 때 사용합니다.';
   if (label) {
     label.textContent = '복사됨';
   }
-  button.dataset.tooltip = kind === 'triage' ? 'GPT fast triage 지침을 복사했습니다.' : 'GPT full scout v3.1 지침을 복사했습니다.';
+  button.dataset.tooltip = kind === 'triage' ? 'GPT fast triage 지침을 복사했습니다.' : 'GPT full scout v3.2 지침을 복사했습니다.';
 
   window.clearTimeout(promptCopyFeedbackTimer);
   promptCopyFeedbackTimer = window.setTimeout(() => {
@@ -3468,13 +4695,13 @@ function sortByColumn(key) {
 }
 
 function setTableMode(mode) {
-  const nextMode = mode === 'triage' ? 'triage' : 'full';
+  const nextMode = mode === 'triage' ? 'triage' : mode === 'focus' ? 'focus' : 'full';
   if (state.tableMode === nextMode) return;
   state.tableMode = nextMode;
   state.pass = 'all';
   state.page = 1;
 
-  if (nextMode === 'triage' && ['filter2', 'competitiveScore', 'platformScore', 'expansionScore', 'marketScore', 'totalScore'].includes(state.sortKey)) {
+  if (nextMode === 'triage' && ['filter2', 'competitiveScore', 'platformScore', 'expansionScore', 'marketScore', 'totalScore', 'focusAddedAt', 'focusDueDate'].includes(state.sortKey)) {
     state.sortKey = 'targetScore';
     state.sortDirection = 'desc';
   }
@@ -3482,10 +4709,19 @@ function setTableMode(mode) {
     state.sortKey = 'totalScore';
     state.sortDirection = 'desc';
   }
+  if (nextMode === 'focus') {
+    state.sortKey = 'focusAddedAt';
+    state.sortDirection = 'desc';
+  }
+  if (nextMode === 'full' && ['focusAddedAt', 'focusDueDate'].includes(state.sortKey)) {
+    state.sortKey = 'totalScore';
+    state.sortDirection = 'desc';
+  }
 
   renderFilters();
   renderTableTabs();
   renderTable();
+  if (elements.criteriaDrawer.classList.contains('open')) updateCriteriaDrawerScope();
 }
 
 function beginColumnResize(event) {
@@ -3509,7 +4745,7 @@ function updateColumnResize(event) {
     minColumnWidth(activeColumnResize.key),
     Math.min(MAX_COLUMN_WIDTH, activeColumnResize.startWidth + event.clientX - activeColumnResize.startX)
   );
-  state.columnWidths[activeColumnResize.key] = Math.round(nextWidth);
+  activeColumnWidths()[activeColumnResize.key] = Math.round(nextWidth);
   applyColumnWidths();
 }
 
@@ -3525,7 +4761,7 @@ function resetColumnWidth(event) {
   if (!handle) return;
   event.preventDefault();
   event.stopPropagation();
-  delete state.columnWidths[handle.dataset.resizeColumn];
+  delete activeColumnWidths()[handle.dataset.resizeColumn];
   persistColumnWidths();
   renderTable();
 }
@@ -3550,6 +4786,12 @@ elements.themeFilter.addEventListener('change', (event) => {
 
 elements.clusterFilter.addEventListener('change', (event) => {
   state.cluster = event.target.value;
+  state.page = 1;
+  renderTable();
+});
+
+elements.modalityFilter.addEventListener('change', (event) => {
+  state.modality = event.target.value;
   state.page = 1;
   renderTable();
 });
@@ -3590,20 +4832,119 @@ elements.nextPage.addEventListener('click', () => {
   renderTable();
 });
 
+elements.pipelineTable.addEventListener('pointerover', (event) => {
+  const anchor = event.target.closest('[data-target-context]');
+  if (!anchor || anchor.contains(event.relatedTarget)) return;
+  showTargetContextTooltip(anchor);
+});
+
+elements.pipelineTable.addEventListener('pointerout', (event) => {
+  const anchor = event.target.closest('[data-target-context]');
+  if (!anchor || anchor.contains(event.relatedTarget)) return;
+  hideTargetContextTooltip(anchor);
+});
+
+elements.pipelineTable.addEventListener('focusin', (event) => {
+  const anchor = event.target.closest('[data-target-context]');
+  if (anchor) showTargetContextTooltip(anchor);
+});
+
+elements.pipelineTable.addEventListener('focusout', (event) => {
+  const anchor = event.target.closest('[data-target-context]');
+  if (!anchor || anchor.contains(event.relatedTarget)) return;
+  hideTargetContextTooltip(anchor);
+});
+
+window.addEventListener('scroll', () => hideTargetContextTooltip(), true);
+window.addEventListener('resize', () => hideTargetContextTooltip());
+
 elements.pipelineTable.addEventListener('click', (event) => {
-  if (event.target.closest('input, button, a, label')) return;
+  const rubricRefresh = event.target.closest('[data-rubric-refresh]');
+  if (rubricRefresh) {
+    recalculateLatestRubric(rubricRefresh);
+    return;
+  }
+  const focusAction = event.target.closest('[data-focus-action]');
+  if (focusAction) {
+    saveFocusManagement(
+      focusAction.dataset.recordId,
+      { action: focusAction.dataset.focusAction },
+      focusAction
+    );
+    return;
+  }
+  if (event.target.closest('input, select, textarea, button, a, label')) return;
   const rowElement = event.target.closest('[data-record-id]');
   if (!rowElement) return;
   const recordId = rowElement.dataset.recordId;
   if (activeTableMode() === 'triage') {
-    const row = state.rows.find((item) => item.id === recordId);
-    openTriageReportDrawer(row);
+    window.location.href = `/triage-detail?id=${encodeURIComponent(recordId)}`;
     return;
   }
-  window.location.href = `/detail?id=${encodeURIComponent(recordId)}`;
+  window.location.href = `/detail?id=${encodeURIComponent(recordId)}&tab=${activeTableMode()}`;
 });
 
 elements.pipelineTable.addEventListener('change', (event) => {
+  const editSelect = event.target.closest('.table-edit-select, .total-score-edit-circle');
+  if (editSelect) {
+    saveManualReviewEdit(editSelect);
+    return;
+  }
+
+  const partnershipSelect = event.target.closest('.partnership-edit-select');
+  if (partnershipSelect) {
+    const previousValue = partnershipSelect.dataset.previousValue || '';
+    const nextValue = partnershipSelect.value || '';
+    if (previousValue === nextValue) return;
+    saveFocusManagement(
+      partnershipSelect.dataset.recordId,
+      { action: 'update', field: 'partnership_type', value: nextValue },
+      partnershipSelect
+    );
+    return;
+  }
+
+  const partnershipNote = event.target.closest('.partnership-note-input');
+  if (partnershipNote) {
+    const previousValue = partnershipNote.dataset.previousValue || '';
+    const nextValue = partnershipNote.value.trim();
+    if (previousValue === nextValue) return;
+    saveFocusManagement(
+      partnershipNote.dataset.recordId,
+      { action: 'update', field: 'partnership_note', value: nextValue },
+      partnershipNote
+    );
+    return;
+  }
+
+  const evidenceSelect = event.target.closest('.evidence-edit');
+  if (evidenceSelect) {
+    const previousValue = evidenceSelect.dataset.previousValue || '';
+    const nextValue = evidenceSelect.value || '';
+    if (previousValue === nextValue) return;
+    const backendField = EVIDENCE_FIELD_TO_BACKEND[evidenceSelect.dataset.evidenceField];
+    if (!backendField) return;
+    saveFocusManagement(
+      evidenceSelect.dataset.recordId,
+      { action: 'update', field: backendField, value: nextValue },
+      evidenceSelect
+    );
+    return;
+  }
+
+  const dueInput = event.target.closest('.focus-due-input');
+  if (dueInput) {
+    const previousValue = dueInput.dataset.previousValue || '';
+    const nextValue = dueInput.value || '';
+    if (previousValue === nextValue) return;
+    saveFocusManagement(
+      dueInput.dataset.recordId,
+      { action: 'update', field: 'due_date', value: nextValue },
+      dueInput
+    );
+    return;
+  }
+
   const checkbox = event.target.closest('.row-select');
   if (!checkbox) return;
   const id = checkbox.dataset.recordId;
@@ -3640,6 +4981,20 @@ elements.pipelineTableHead?.addEventListener('click', (event) => {
   sortByColumn(button.dataset.sort);
 });
 
+elements.pipelineTable.addEventListener('keydown', (event) => {
+  const input = event.target.closest('.total-score-edit-circle');
+  if (!input) return;
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    input.blur();
+  }
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    input.value = input.dataset.previousValue || '';
+    input.blur();
+  }
+});
+
 elements.pipelineTableHead?.addEventListener('pointerdown', beginColumnResize);
 elements.pipelineTableHead?.addEventListener('dblclick', resetColumnWidth);
 document.addEventListener('pointermove', updateColumnResize);
@@ -3671,11 +5026,19 @@ elements.refreshButton.addEventListener('click', () => {
 
 elements.exportExcelButton.addEventListener('click', exportPipelineTable);
 elements.deleteSelectedButton.addEventListener('click', deleteSelectedRecords);
-elements.priorityList?.addEventListener('click', (event) => {
-  const item = event.target.closest('[data-record-id]');
-  if (!item) return;
-  window.location.href = `/detail?id=${encodeURIComponent(item.dataset.recordId)}`;
-});
+function goToRecordDetail(tabOrigin) {
+  return (event) => {
+    const item = event.target.closest('[data-record-id]');
+    if (!item) return;
+    if (item.dataset.isTriage) {
+      window.location.href = `/triage-detail?id=${encodeURIComponent(item.dataset.recordId)}`;
+      return;
+    }
+    window.location.href = `/detail?id=${encodeURIComponent(item.dataset.recordId)}&tab=${tabOrigin}`;
+  };
+}
+elements.priorityList?.addEventListener('click', goToRecordDetail('full'));
+elements.dueDateList?.addEventListener('click', goToRecordDetail('focus'));
 elements.columnSettingsButton?.addEventListener('click', () => {
   elements.columnSettingsPanel.hidden = !elements.columnSettingsPanel.hidden;
 });
@@ -3713,8 +5076,28 @@ elements.aiBackdrop.addEventListener('click', closeAiDrawer);
 elements.criteriaDrawerButton.addEventListener('click', openCriteriaDrawer);
 elements.criteriaDrawerClose.addEventListener('click', closeCriteriaDrawer);
 elements.criteriaBackdrop.addEventListener('click', closeCriteriaDrawer);
-elements.triageReportClose?.addEventListener('click', closeTriageReportDrawer);
-elements.triageReportBackdrop?.addEventListener('click', closeTriageReportDrawer);
+elements.reviewerIdentitySubmit?.addEventListener('click', () => {
+  const identity = elements.reviewerIdentityInput?.value.trim() || '';
+  if (!identity) {
+    elements.reviewerIdentityInput?.focus();
+    return;
+  }
+  closeReviewerIdentityModal(identity);
+});
+elements.reviewerIdentityCancel?.addEventListener('click', () => closeReviewerIdentityModal(null));
+elements.reviewerIdentityModal?.addEventListener('click', (event) => {
+  if (event.target === elements.reviewerIdentityModal) closeReviewerIdentityModal(null);
+});
+elements.reviewerIdentityInput?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    elements.reviewerIdentitySubmit?.click();
+  }
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    closeReviewerIdentityModal(null);
+  }
+});
 
 document.querySelectorAll('[data-agent-prompt]').forEach((button) => {
   button.addEventListener('click', () => {
@@ -3761,9 +5144,6 @@ window.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && elements.criteriaDrawer.classList.contains('open')) {
     closeCriteriaDrawer();
   }
-  if (event.key === 'Escape' && elements.triageReportDrawer?.classList.contains('open')) {
-    closeTriageReportDrawer();
-  }
 });
 
 elements.previewInputButton.addEventListener('click', previewPastedReportParsing);
@@ -3779,14 +5159,13 @@ if (elements.copyTriagePromptTopButton) {
 if (elements.copyPromptTopButton) {
   const label = elements.copyPromptTopButton.querySelector('b');
   if (label) label.textContent = '지침 2';
-  elements.copyPromptTopButton.dataset.tooltip = 'GPT full scout v3.1 지침을 복사합니다. triage에서 SELECT된 asset을 심층 검토할 때 사용합니다.';
+  elements.copyPromptTopButton.dataset.tooltip = 'GPT full scout v3.2 지침을 복사합니다. triage에서 SELECT된 asset을 심층 검토할 때 사용합니다.';
 }
 elements.copyPromptButton?.addEventListener('click', () => copyPromptToClipboard('full'));
 elements.copyTriagePromptTopButton?.addEventListener('click', () => copyPromptToClipboard('triage'));
 elements.copyPromptTopButton?.addEventListener('click', () => copyPromptToClipboard('full'));
 
 setupResizableDrawer(elements.aiDrawer, 'skbp.dashboard.aiDrawerWidth', 560);
-setupResizableDrawer(elements.triageReportDrawer, 'skbp.dashboard.triageReportDrawerWidth', 620);
 setupThemeToggle();
 initializeAgentSessions();
 

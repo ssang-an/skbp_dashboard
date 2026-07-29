@@ -1,0 +1,31 @@
+Create a 16:9 Korean corporate presentation image explaining why the SKBP Pipeline Finder was built.
+
+Visual concept:
+- Problem-to-solution composition.
+- Left side: scattered unstructured research reports, source links, and score notes floating as abstract document cards.
+- Middle: a narrowing transformation bridge labeled with standardization / rubric / JSON.
+- Right side: organized dashboard and evidence graph, clean and confident.
+- Dark navy background, teal highlights for the solution, amber for the “Need” section, soft red for pain points.
+
+Exact title text:
+“왜 만들었나: 후보 검토의 병목을 줄이는 도구”
+
+Three large cards across the middle:
+1. Header: “Before”
+   Body: “리포트·출처·점수가 흩어져 후보 비교가 느림”
+2. Header: “Need”
+   Body: “같은 기준으로 빠르게 선별하고 점수 근거를 추적”
+3. Header: “After”
+   Body: “JSON 기반 대시보드에서 비교·필터·근거 확인”
+
+Bottom takeaway ribbon:
+“문서 읽기 중심의 후보 탐색을 데이터 기반 의사결정으로 전환”
+
+Layout:
+- Use 3 large rounded cards in a horizontal flow.
+- Add arrow or energy flow from Before → Need → After.
+- Add subtle icons: document stack, rubric checklist, dashboard grid, evidence network.
+
+Style: dark executive, glass panels, clean Korean typography, biotech intelligence, minimal and high contrast.
+
+Negative constraints: Do not use real corporate logos. Do not show screenshots or browser chrome. Do not render random unreadable pseudo text outside the specified labels. Avoid clutter. Avoid tiny dense paragraphs. Avoid cartoonish style. Avoid low contrast. Avoid photorealistic people. No watermark. No PowerPoint UI. No slide thumbnails. No mock app window borders unless explicitly requested. Korean text must be clean and legible; if any Korean text is uncertain, leave that area as clean abstract visual space rather than inventing broken text.
