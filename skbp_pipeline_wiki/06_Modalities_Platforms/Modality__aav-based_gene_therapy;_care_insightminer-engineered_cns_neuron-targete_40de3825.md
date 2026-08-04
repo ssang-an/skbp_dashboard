@@ -6,8 +6,8 @@ aliases:
   - "aav-based_gene_therapy;_care_insightminer-engineered_cns_neuron-targete_40de3825"
 tags:
   - "pipeline/modality"
-created_at: "2026-07-29"
-updated_at: "2026-07-29"
+created_at: "2026-08-02"
+updated_at: "2026-08-02"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

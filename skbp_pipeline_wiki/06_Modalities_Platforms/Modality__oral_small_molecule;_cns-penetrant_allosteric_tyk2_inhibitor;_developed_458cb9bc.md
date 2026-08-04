@@ -6,8 +6,8 @@ aliases:
   - "oral_small_molecule;_cns-penetrant_allosteric_tyk2_inhibitor;_developed_458cb9bc"
 tags:
   - "pipeline/modality"
-created_at: "2026-07-29"
-updated_at: "2026-07-29"
+created_at: "2026-08-02"
+updated_at: "2026-08-02"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

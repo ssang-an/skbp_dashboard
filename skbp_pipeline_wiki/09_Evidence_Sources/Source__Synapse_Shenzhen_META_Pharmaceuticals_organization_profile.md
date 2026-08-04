@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-07-29"
-updated_at: "2026-07-29"
+created_at: "2026-08-02"
+updated_at: "2026-08-02"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/organization/beb5d2619a0c1fa0af931d10269fb4e4 |
-| Accessed / generated date | 2026-07-29 |
+| Accessed / generated date | 2026-08-02 |
 
 ## Evidence Summary
 

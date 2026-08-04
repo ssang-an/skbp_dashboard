@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-07-29"
-updated_at: "2026-07-29"
+created_at: "2026-08-02"
+updated_at: "2026-08-02"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.mdpi.com/1422-0067/25/2/719 |
-| Accessed / generated date | 2026-07-29 |
+| Accessed / generated date | 2026-08-02 |
 
 ## Evidence Summary
 

@@ -1,4 +1,7 @@
-﻿import { setupThemeToggle } from './theme.js';
+import { setupThemeToggle } from './theme.js';
+
+import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
+import { getCurrentUser, initAuthUI, openAuthModal, requireAuth } from './auth.js?v=20260802-required-login-1';
 
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
@@ -15,11 +18,10 @@ const DETAIL_CHAT_ACTIVE_PREFIX = 'skbp.detail.activeChatSession.v1';
 const DETAIL_COMMENT_AUTHOR_KEY = 'skbp.detail.commentAuthor';
 
 function getStoredIdentity() {
-  return (sessionStorage.getItem(DETAIL_COMMENT_AUTHOR_KEY) || '').trim();
+  return getCurrentUser()?.name || '';
 }
 
 function setStoredIdentity(name) {
-  sessionStorage.setItem(DETAIL_COMMENT_AUTHOR_KEY, name);
   renderCommentIdentity();
 }
 
@@ -53,40 +55,39 @@ function closeIdentityModal(result) {
 }
 
 async function ensureIdentity() {
-  const stored = getStoredIdentity();
-  if (stored) return stored;
-  const entered = await openIdentityModal();
-  if (!entered) return null;
-  setStoredIdentity(entered);
-  return entered;
+  const user = await requireAuth();
+  renderCommentIdentity();
+  return user?.name || null;
 }
 
 const elements = {
+  detailBackLink: document.querySelector('#detailBackLink'),
   title: document.querySelector('#detailTitle'),
-  status: document.querySelector('#detailStatus'),
   subtitle: document.querySelector('#detailSubtitle'),
   detailMetaInfo: document.querySelector('#detailMetaInfo'),
   detailEditHistory: document.querySelector('#detailEditHistory'),
   sourceReportViewer: document.querySelector('#sourceReportViewer'),
   detailOutlineList: document.querySelector('#detailOutlineList'),
   detailFocusToggle: document.querySelector('#detailFocusToggle'),
+  detailReviewInfoStack: document.querySelector('#detailReviewInfoStack'),
+  detailReviewInfoToggle: document.querySelector('#detailReviewInfoToggle'),
   detailFilter2Row: document.querySelector('#detailFilter2Row'),
   detailActionDate: document.querySelector('#detailActionDate'),
   detailActionOwner: document.querySelector('#detailActionOwner'),
   detailActionPlan: document.querySelector('#detailActionPlan'),
   detailDecisionStatus: document.querySelector('#detailDecisionStatus'),
   detailDecisionOrigin: document.querySelector('#detailDecisionOrigin'),
+  rubricRefreshButton: document.querySelector('#rubricRefreshButton'),
   detailTotalScore: document.querySelector('#detailTotalScore'),
   detailScoreSequence: document.querySelector('#detailScoreSequence'),
   detailReviewSummary: document.querySelector('#detailReviewSummary'),
   detailReviewReasonShell: document.querySelector('#detailReviewReasonShell'),
-  detailReviewReasonOrigin: document.querySelector('#detailReviewReasonOrigin'),
   detailOiPartnershipRow: document.querySelector('#detailOiPartnershipRow'),
   detailOiPartnershipOrigin: document.querySelector('#detailOiPartnershipOrigin'),
+  oiPartnershipRefreshButton: document.querySelector('#oiPartnershipRefreshButton'),
   detailOiPartnershipType: document.querySelector('#detailOiPartnershipType'),
   detailOiPartnershipNoteShell: document.querySelector('#detailOiPartnershipNoteShell'),
   detailOiPartnershipNote: document.querySelector('#detailOiPartnershipNote'),
-  detailOiPartnershipNoteOrigin: document.querySelector('#detailOiPartnershipNoteOrigin'),
   detailOiMaterialFlags: document.querySelector('#detailOiMaterialFlags'),
   detailOiMaterialButtons: document.querySelectorAll('.oi-material-toggle[data-material-key]'),
   detailCollaborationStatus: document.querySelector('#detailCollaborationStatus'),
@@ -110,9 +111,17 @@ const elements = {
   detailAttachmentDropzone: document.querySelector('#detailAttachmentDropzone'),
   detailAttachmentCount: document.querySelector('#detailAttachmentCount'),
   detailAttachmentsList: document.querySelector('#detailAttachmentsList'),
+  detailAttachmentAiScope: document.querySelector('#detailAttachmentAiScope'),
   detailAttachmentStatus: document.querySelector('#detailAttachmentStatus'),
+  detailViewerEyebrow: document.querySelector('#detailViewerEyebrow'),
   detailViewerTitle: document.querySelector('#detailViewerTitle'),
   detailViewerBackButton: document.querySelector('#detailViewerBackButton'),
+  detailViewerOpenWindowButton: document.querySelector('#detailViewerOpenWindowButton'),
+  detailViewerCopyButton: document.querySelector('#detailViewerCopyButton'),
+  reportModalBackdrop: document.querySelector('#reportModalBackdrop'),
+  reportModalBody: document.querySelector('#reportModalBody'),
+  reportModalCloseButton: document.querySelector('#reportModalCloseButton'),
+  reportModalCopyButton: document.querySelector('#reportModalCopyButton'),
   qualitativeReviewPanel: document.querySelector('#qualitativeReviewPanel'),
   detailAiButton: document.querySelector('#detailAiButton'),
   criteriaDrawerButton: document.querySelector('#criteriaDrawerButton'),
@@ -120,9 +129,9 @@ const elements = {
   criteriaBackdrop: document.querySelector('#criteriaBackdrop'),
   criteriaDrawerClose: document.querySelector('#criteriaDrawerClose'),
   criteriaDrawerScopeLabel: document.querySelector('#criteriaDrawerScopeLabel'),
+  criteriaDrawerBody: document.querySelector('#criteriaDrawerBody'),
   deleteRecordButton: document.querySelector('#deleteRecordButton'),
   aiDrawer: document.querySelector('#aiDrawer'),
-  aiBackdrop: document.querySelector('#aiBackdrop'),
   aiDrawerClose: document.querySelector('#aiDrawerClose'),
   chatContextAsset: document.querySelector('#chatContextAsset'),
   chatContextScore: document.querySelector('#chatContextScore'),
@@ -141,6 +150,10 @@ const elements = {
   formatJsonButton: document.querySelector('#formatJsonButton'),
   editStatus: document.querySelector('#editStatus')
 };
+
+if (elements.detailBackLink && viewTab) {
+  elements.detailBackLink.href = `/?${new URLSearchParams({ tab: viewTab }).toString()}`;
+}
 
 const scoringLabels = {
   target_relevance: 'Target Relevance',
@@ -161,8 +174,9 @@ function scoreChipTone(score, max = 3) {
   return score >= max ? 'high' : score >= max * 0.6 ? 'mid' : 'low';
 }
 
-// Temporary v1 criteria — keep in sync with main.py's QUALITATIVE_REVIEW_CRITERIA
-// and config/qualitative_review_criteria.md.
+// Fixed base criteria — keep in sync with main.py's QUALITATIVE_REVIEW_CRITERIA
+// and config/qualitative_review_criteria.md. Additional per-record criteria can be
+// registered by users at runtime and are stored in meta.qualitative_review.custom_criteria.
 const qualitativeReviewCriteria = [
   {
     id: 'efficacy',
@@ -185,7 +199,9 @@ const qualitativeReviewCriteria = [
 let currentRecord = null;
 let currentRecordId = recordId;
 let activeAttachmentId = '';
-let pendingDraftRecord = null;
+let attachmentPreviewController = null;
+let activeReportJumpHeading = null;
+let reportJumpHighlightTimer = null;
 let chatSessions = [];
 let activeChatSessionId = '';
 
@@ -198,6 +214,57 @@ function escapeHtml(value) {
     .replaceAll("'", '&#039;');
 }
 
+function safeHttpUrl(value) {
+  try {
+    const url = new URL(String(value || '').trim());
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+  } catch {
+    return '';
+  }
+}
+
+function syncMessageComposer(textarea) {
+  if (!(textarea instanceof HTMLTextAreaElement)) return;
+  const styles = window.getComputedStyle(textarea);
+  const lineHeight = Number.parseFloat(styles.lineHeight) || 20;
+  const verticalChrome = [
+    styles.paddingTop,
+    styles.paddingBottom,
+    styles.borderTopWidth,
+    styles.borderBottomWidth
+  ].reduce((total, value) => total + (Number.parseFloat(value) || 0), 0);
+  const minHeight = Math.ceil(lineHeight + verticalChrome);
+  const maxHeight = Math.ceil(lineHeight * 3 + verticalChrome);
+
+  textarea.style.height = 'auto';
+  const contentHeight = textarea.value ? Math.max(textarea.scrollHeight, minHeight) : minHeight;
+  const shouldScroll = Boolean(textarea.value) && contentHeight > maxHeight + 1;
+  textarea.style.height = `${Math.min(contentHeight, maxHeight)}px`;
+  textarea.style.overflowY = shouldScroll ? 'auto' : 'hidden';
+  textarea.classList.toggle('has-scroll', shouldScroll);
+
+  const submitButton = textarea.closest('form')?.querySelector('.message-send-button');
+  if (submitButton && submitButton.dataset.saving !== 'true') {
+    submitButton.disabled = !textarea.value.trim();
+  }
+}
+
+function dashboardThemeLabel(value) {
+  const text = String(value || '').trim();
+  if (!text || text === '-' || /^(unknown|not known|n\/?a)$/i.test(text)) return 'Unknown';
+  if (/e\s*\/\s*i\s*balance|excitation.*inhibition/i.test(text)) return 'E/I Balance';
+  if (/neuro[\s-]*immune/i.test(text)) return 'Neuroimmune';
+  return 'Others';
+}
+
+function dashboardClusterLabel(value, theme = '') {
+  const text = String(value || '').trim();
+  if (!text || text === '-' || /^(unknown|not known)$/i.test(text)) return 'Unknown';
+  if (/^n\/?a$/i.test(text)) return dashboardThemeLabel(theme) === 'Others' ? 'Others' : 'Unknown';
+  if (/^others?$|no cluster|no mapped|no fit|out of scope|none/i.test(text)) return 'Others';
+  return text;
+}
+
 function isPlaceholderRawMarkdown(value) {
   const text = String(value || '').trim();
   return !text
@@ -208,7 +275,10 @@ function isPlaceholderRawMarkdown(value) {
 function getRubricMetadata(record) {
   const meta = record?.meta || {};
   const criteriaReference = record?.scoring?.criteria?.target_relevance?.criteria_reference || null;
-  const fallbackVersion = meta.schema_version || (isFastTriageRecord(record) ? '3.1' : '3.1');
+  // New v3.2/v3.3 outputs always carry meta.rubric_version. Keep the historical
+  // fallback conservative so a legacy record without provenance is never
+  // mislabeled as having been researched under the newest instruction.
+  const fallbackVersion = meta.schema_version || '3.1';
   const version = meta.rubric_version
     || criteriaReference?.criteria_version
     || criteriaReference?.version
@@ -291,6 +361,10 @@ function formatScore(value) {
   return value === null || value === undefined ? '-' : value;
 }
 
+function formatCriterionScore(value) {
+  return value === null || value === undefined ? '미평가' : `${value}점`;
+}
+
 function number(value) {
   return Number.isFinite(Number(value)) ? Number(value) : null;
 }
@@ -318,28 +392,45 @@ function collectHardFilterNotes(record) {
   return notes.filter(Boolean).join(' | ');
 }
 
-function hasNoThemeFit(theme, cluster) {
-  const value = `${theme || ''} ${cluster || ''}`.toLowerCase();
-  return !value.trim() || /n\/?a|no theme|no cluster|no mapped|none|미해당/.test(value);
+function hasAffirmedHardBlocker(notes) {
+  const blockerPattern = /(\boutside\s+(?:the\s+)?(?:primary\s+)?(?:therapeutic\s+area|indication|disease)\s+scope\b|\bout\s+of\s+(?:therapeutic|indication|disease)\s+scope\b|\bno\s+public\s+target\b|\bno\b[^|.;\n]{0,48}\btarget\s*\/\s*moa\b|\basset\s+identity\s+(?:is\s+)?(?:not\s+verified|unverified)\b|\b(?:discontinued|terminated|withdrawn|suspended|dormant|inactive|clearly\s+failed)\b|(?:관심\s*)?(?:질환|적응증|치료\s*영역)\s*범위\s*밖|자산\s*식별\s*불가|(?:개발|프로그램|임상)\s*(?:이\s*)?(?:중단|종료|철회|휴면|비활성))/i;
+  return String(notes || '').split('|').some((segment) => {
+    const match = blockerPattern.exec(segment);
+    if (!match) return false;
+    const prefix = segment.slice(Math.max(0, match.index - 28), match.index);
+    const suffix = segment.slice(match.index + match[0].length, match.index + match[0].length + 20);
+    if (/\b(?:not|without|never)\b[^.;\n]{0,20}$|(?:아니|없)는?\s*$/i.test(prefix)) return false;
+    if (/^\s*(?:없(?:음|다)?|아님|아니|not\b|false\b)/i.test(suffix)) return false;
+    return true;
+  });
+}
+
+function hasScopedFullScoutReviewUncertainty(notes) {
+  const text = String(notes || '');
+  const subject = '(?:stage|rights?|licen[cs]e|ownership|asset\\s+identity|source|registry|sponsor)';
+  const uncertainty = '(?:unclear|uncertain|unknown|unverified|unconfirmed|ambiguous|not\\s+(?:public(?:ly\\s+available)?|verified|confirmed|clear|established)|(?:could\\s+not|cannot|unable\\s+to)\\s+(?:be\\s+)?(?:verify|verified|confirm|confirmed|establish|established|identify|identified)|(?:pending|requires?|needs?)\\s+(?:independent\\s+)?(?:verification|confirmation)|(?:verification|confirmation)\\s+(?:is\\s+)?(?:required|needed|pending))';
+  const english = new RegExp(`\\b${subject}\\b[^|.;\\n]{0,64}\\b${uncertainty}\\b|\\b${uncertainty}\\b[^|.;\\n]{0,64}\\b${subject}\\b`, 'i');
+  const koreanSubject = '(?:개발\\s*단계|단계|권리|라이선스|소유권|자산\\s*식별|출처|소스|레지스트리|스폰서)';
+  const koreanUncertainty = '(?:불확실|불명확|미확인|확인\\s*(?:불가|필요)|검증\\s*(?:불가|필요)|자료\\s*(?:부족|없음))';
+  const korean = new RegExp(`${koreanSubject}[^|.;\\n]{0,48}${koreanUncertainty}|${koreanUncertainty}[^|.;\\n]{0,48}${koreanSubject}`, 'i');
+  return english.test(text) || korean.test(text);
 }
 
 function computeHardFilter(record) {
   const summary = record.json_summary || {};
   const criteria = record.scoring?.criteria || {};
   const total = number(record.scoring?.total_score);
-  const targetScore = number(summary.target_relevance_score ?? criteria.target_relevance?.score);
+  const targetScore = number(criteria.target_relevance?.score ?? summary.target_relevance_score);
   const moaScore = number(criteria.moa_validity?.score);
   const dataScore = number(criteria.data_maturity?.score);
   const notes = collectHardFilterNotes(record);
   const reasons = [];
 
-  const noThemeFit = hasNoThemeFit(summary.theme, summary.cluster);
-  const failBlocker = /(outside primary|outside.*theme|out of scope|no public target|no.*target\/moa|discontinued|dormant|범위 밖|미해당|중단)/i.test(notes);
-  const reviewUncertainty = /(stage|rights?|license|licensed|ownership|asset identity|identity|source|official|registry|unclear|uncertain|not public|not verified|confirmation|confirm|sponsor|단계|권리|출처|공식|불확실|확인 필요|미확인|정체|라이선스)/i.test(notes);
+  const failBlocker = hasAffirmedHardBlocker(notes);
+  const reviewUncertainty = hasScopedFullScoutReviewUncertainty(notes);
 
   if (Number.isFinite(total) && total <= 8) reasons.push(`Total score ${total} <= 8`);
   if (Number.isFinite(targetScore) && targetScore <= 1) reasons.push(`Target Relevance ${targetScore} <= 1`);
-  if (noThemeFit) reasons.push('SKBP Theme/Cluster fit ?놁쓬');
   if (failBlocker) reasons.push('Hard blocker keyword detected');
 
   if (reasons.length) {
@@ -350,7 +441,7 @@ function computeHardFilter(record) {
   if (passScores && !reviewUncertainty) {
     return {
       status: 'PASS',
-      reason: `Total ${total} >= 14, TR ${targetScore} >= 3, MOA ${moaScore} >= 2, Data ${dataScore} >= 2, hard blocker ?놁쓬`
+      reason: `Total ${total} >= 14, TR ${targetScore} >= 3, MOA ${moaScore} >= 2, Data ${dataScore} >= 2, hard blocker 없음`
     };
   }
 
@@ -358,13 +449,13 @@ function computeHardFilter(record) {
     reasons.push(`Total score ${total} is REVIEW range 9-13`);
   }
   if (!passScores) {
-    reasons.push(`PASS score gate 誘몄땐議? Total ${total ?? '-'}, TR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
+    reasons.push(`PASS score gate 미충족: Total ${total ?? '-'}, TR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
   }
   if (reviewUncertainty) {
-    reasons.push('stage/rights/asset identity/source 遺덊솗?ㅼ꽦 ?뺤씤 ?꾩슂');
+    reasons.push('stage/rights/asset identity/source 불확실성 확인 필요');
   }
 
-  return { status: 'REVIEW', reason: reasons.join('; ') || '異붽? diligence ?꾩슂' };
+  return { status: 'REVIEW', reason: reasons.join('; ') || '추가 diligence 필요' };
 }
 
 function formatMillionUsd(value, unit = '') {
@@ -402,8 +493,9 @@ function renderSourceLink(source, index) {
   const reliability = source.reliability || '-';
   const summary = source.evidence_summary || source.source_excerpt || source.summary || '';
   const relevance = source.relevance_to_assessment || source.relevance || '';
-  const titleHtml = url
-    ? `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${escapeHtml(title)}</a>`
+  const safeUrl = safeHttpUrl(url);
+  const titleHtml = safeUrl
+    ? `<a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a>`
     : `<span>${escapeHtml(title)}</span>`;
 
   return `
@@ -421,7 +513,7 @@ function renderSourceLink(source, index) {
 function renderSourceList(sources = []) {
   const normalized = Array.isArray(sources) ? sources.filter((source) => source && typeof source === 'object') : [];
   if (!normalized.length) {
-    return '<div class="empty-evidence">?곌껐??異쒖쿂 留곹겕媛 ?놁뒿?덈떎. ?먮Ц 由ы룷???먮뒗 evidence_sources??URL??異붽??섎㈃ ?ш린???쒖떆?⑸땲??</div>';
+    return '<div class="empty-evidence">연결된 출처 링크가 없습니다. 원문 리포트의 evidence_sources에 URL을 추가하면 여기에 표시됩니다.</div>';
   }
   return `<ul class="source-link-list">${normalized.map(renderSourceLink).join('')}</ul>`;
 }
@@ -535,7 +627,8 @@ function renderCompanyProfile(profile = {}) {
     ? profile.financing_or_partnership_signals
         .map((signal) => `<li>${escapeHtml(signal.summary || signal.title || JSON.stringify(signal))}</li>`)
         .join('')
-    : '<li>?뺤씤??financing / partnership signal ?놁쓬</li>';
+    : '<li>확인된 financing / partnership signal 없음</li>';
+  const websiteUrl = safeHttpUrl(profile.website);
 
   return `
     <section class="company-profile-card">
@@ -544,7 +637,7 @@ function renderCompanyProfile(profile = {}) {
           <span>Company Profile</span>
           <h3>${escapeHtml(profile.company_name || '-')}</h3>
         </div>
-        ${profile.website ? `<strong><a href="${escapeHtml(profile.website)}" target="_blank" rel="noreferrer">Official website</a></strong>` : '<strong>Official website ?꾩슂</strong>'}
+        ${websiteUrl ? `<strong><a href="${escapeHtml(websiteUrl)}" target="_blank" rel="noopener noreferrer">Official website</a></strong>` : '<strong>Official website 확인 필요</strong>'}
       </div>
       <div class="company-profile-grid">
         <div><span>Legal / aliases</span><strong>${escapeHtml(profile.legal_name || aliases)}</strong></div>
@@ -603,13 +696,13 @@ function renderScoreEvidence(record) {
       const rubricDefinition = getRubricDefinition(record, key, score);
       const uncertain = Array.isArray(item.uncertain_points) && item.uncertain_points.length
         ? item.uncertain_points.map((point) => `<li>${escapeHtml(point)}</li>`).join('')
-        : '<li>蹂꾨룄 遺덊솗?ㅼ꽦 硫붾え ?놁쓬</li>';
+        : '<li>별도 불확실성 메모 없음</li>';
       return `
         <article class="score-evidence-card">
           <div class="score-card-header">
             <div>
               <span>${escapeHtml(label)}</span>
-              <h3>${escapeHtml(formatScore(score))} / 3</h3>
+              <h3>${escapeHtml(formatCriterionScore(score))}<small>최대 3점</small></h3>
             </div>
             <strong>${escapeHtml(rubricDefinition)}</strong>
           </div>
@@ -619,7 +712,7 @@ function renderScoreEvidence(record) {
             <p>${escapeHtml(item.evidence_type_reason || '-')}</p>
           </div>
           <div class="score-evidence-block">
-            <h4>?먮떒 ?댁쑀</h4>
+            <h4>판단 이유</h4>
             <p>${escapeHtml(item.main_line_summary || '-')}</p>
           </div>
           <div class="score-evidence-block">
@@ -627,16 +720,16 @@ function renderScoreEvidence(record) {
             <p>${escapeHtml(item.why_not_higher || '-')}</p>
           </div>
           <div class="score-evidence-block">
-            <h4>議곗궗 硫붾え</h4>
+            <h4>조사 메모</h4>
             <p>${escapeHtml(item.investigation_note || '-')}</p>
           </div>
           <div class="score-evidence-block">
-            <h4>遺덊솗?ㅼ꽦 / ?뺤씤 ?꾩슂</h4>
+            <h4>불확실성 / 확인 필요</h4>
             <ul>${uncertain}</ul>
           </div>
           ${key === 'marketability' ? renderMarketabilityCalculation(item.calculation) : ''}
           <div class="score-evidence-block">
-            <h4>異쒖쿂 / ?뱁럹?댁? 留곹겕</h4>
+            <h4>출처 / Evidence 링크</h4>
             ${renderSourceList(item.evidence_sources)}
           </div>
         </article>
@@ -657,7 +750,7 @@ function renderScoreEvidence(record) {
       <div class="score-card-header">
         <div>
           <span>Source Index</span>
-          <h3>?꾩껜 異쒖쿂</h3>
+          <h3>전체 출처</h3>
         </div>
       </div>
       ${renderSourceList(collectGlobalSources(record))}
@@ -862,6 +955,20 @@ function detectPartnerMaterialFlags(attachments) {
   return detected;
 }
 
+function setReviewInfoExpanded(expanded) {
+  const isExpanded = expanded === true;
+  elements.detailReviewInfoStack?.classList.toggle('is-collapsed', !isExpanded);
+  if (!elements.detailReviewInfoToggle) return;
+  elements.detailReviewInfoToggle.setAttribute('aria-expanded', String(isExpanded));
+  elements.detailReviewInfoToggle.setAttribute(
+    'aria-label',
+    isExpanded ? 'Review Workspace 세부 정보 숨기기' : 'Review Workspace 세부 정보 표시'
+  );
+  elements.detailReviewInfoToggle.title = isExpanded ? '세부 정보 숨기기' : '세부 정보 표시';
+  const label = elements.detailReviewInfoToggle.querySelector('[data-review-toggle-label]');
+  if (label) label.textContent = isExpanded ? 'Hide' : 'Show';
+}
+
 function renderCollaborationPanel(record) {
   const focus = record?.meta?.focus_management || {};
   const tracked = focus.is_tracked === true;
@@ -873,9 +980,6 @@ function renderCollaborationPanel(record) {
     elements.detailFocusToggle.dataset.focusAction = tracked ? 'remove' : 'add';
     elements.detailFocusToggle.classList.toggle('add', !tracked);
     elements.detailFocusToggle.classList.toggle('remove', tracked);
-    elements.detailFocusToggle.innerHTML = tracked
-      ? '<span aria-hidden="true">★</span>'
-      : '<span aria-hidden="true">☆</span>';
     elements.detailFocusToggle.title = tracked
       ? '즐겨찾기(집중 관리)에서 제거합니다.'
       : '즐겨찾기(집중 관리)에 추가합니다.';
@@ -900,9 +1004,7 @@ function renderCollaborationPanel(record) {
     elements.detailDecisionStatus.classList.toggle('is-human', statusIsHuman);
   }
   if (elements.detailDecisionOrigin) {
-    elements.detailDecisionOrigin.textContent = statusIsHuman
-      ? 'Human decision'
-      : `Rubric v${getDisplayRubricVersion(record)}`;
+    elements.detailDecisionOrigin.textContent = `Rubric v${getDisplayRubricVersion(record)}`;
     elements.detailDecisionOrigin.classList.toggle('is-human', statusIsHuman);
   }
   if (elements.detailTotalScore) {
@@ -915,9 +1017,15 @@ function renderCollaborationPanel(record) {
         const tone = scoreChipTone(score);
         const label = scoringFirstWord[criterionId] || criterionId;
         return `
-          <span class="score-chip tone-${tone}" title="${escapeHtml(scoringLabels[criterionId])}: ${escapeHtml(formatScore(score))} / 3">
-            <span class="score-chip-label">${escapeHtml(label)}</span><span class="score-chip-value">${escapeHtml(formatScore(score))}</span>
-          </span>
+          <button
+            type="button"
+            class="score-chip score-chip-link tone-${tone}"
+            data-report-criterion="${escapeHtml(criterionId)}"
+            title="${escapeHtml(scoringLabels[criterionId])}: ${escapeHtml(formatCriterionScore(score))} · GPT 원문 근거로 이동"
+            aria-label="${escapeHtml(scoringLabels[criterionId])} ${escapeHtml(formatCriterionScore(score))}점, GPT 원문 근거로 이동"
+          >
+            <span class="score-chip-label">${escapeHtml(label)}</span><span class="score-chip-value">${escapeHtml(formatCriterionScore(score))}</span>
+          </button>
         `;
       })
       .join('');
@@ -926,15 +1034,11 @@ function renderCollaborationPanel(record) {
     const summary = conciseReviewSummary(record);
     elements.detailReviewSummary.value = summary;
     elements.detailReviewSummary.dataset.previousValue = summary;
-    elements.detailReviewSummary.title = summary;
+    elements.detailReviewSummary.title = '해당 Pipeline의 최종 평가 의견을 한 줄로 요약합니다.';
     resizeReviewReasonInput();
   }
   if (elements.detailReviewReasonShell) {
     elements.detailReviewReasonShell.classList.toggle('is-human', reasonIsHuman);
-  }
-  if (elements.detailReviewReasonOrigin) {
-    elements.detailReviewReasonOrigin.textContent = reasonIsHuman ? 'Human edited' : 'Rubric rationale';
-    elements.detailReviewReasonOrigin.classList.toggle('is-human', reasonIsHuman);
   }
   // Full Scout (Filter 2) and 집중 관리 (OI partnership) now show side by side.
   // Filter 2 always applies (every Full Scout record has a scored decision); the
@@ -950,26 +1054,18 @@ function renderCollaborationPanel(record) {
   }
   const partnershipNoteIsManual = focus.partnership_classification_source === 'manual';
   if (elements.detailOiPartnershipOrigin) {
-    elements.detailOiPartnershipOrigin.textContent = partnershipNoteIsManual
-      ? 'Human decision'
-      : `OI Partnership v${focus.partnership_classification_criteria_version || '1.0'}`;
+    elements.detailOiPartnershipOrigin.textContent = `OI Partnership v${focus.partnership_classification_criteria_version || '1.0'}`;
     elements.detailOiPartnershipOrigin.classList.toggle('is-human', partnershipNoteIsManual);
   }
   if (elements.detailOiPartnershipNote) {
     const note = String(focus.partnership_note || '');
     elements.detailOiPartnershipNote.value = note;
     elements.detailOiPartnershipNote.dataset.previousValue = note;
-    elements.detailOiPartnershipNote.title = note || 'OI Partnership 분류 근거를 입력';
+    elements.detailOiPartnershipNote.title = 'OI 파트너십 분류 근거를 짧게 요약합니다.';
     resizeOiPartnershipNoteInput();
   }
   if (elements.detailOiPartnershipNoteShell) {
     elements.detailOiPartnershipNoteShell.classList.toggle('is-human', partnershipNoteIsManual);
-  }
-  if (elements.detailOiPartnershipNoteOrigin) {
-    elements.detailOiPartnershipNoteOrigin.textContent = partnershipNoteIsManual
-      ? '담당자 수동 분류'
-      : `자동 분류 v${focus.partnership_classification_criteria_version || '1.0'}`;
-    elements.detailOiPartnershipNoteOrigin.classList.toggle('is-human', partnershipNoteIsManual);
   }
   const materialFlags = focus.partner_material_flags && typeof focus.partner_material_flags === 'object'
     ? focus.partner_material_flags
@@ -1021,16 +1117,25 @@ function renderMetaInfoBar(record) {
   const meta = record?.meta || {};
   const generatedAt = meta.generated_at || '-';
   const rubricVersion = getDisplayRubricVersion(record);
-  const lastEditedAt = meta.last_edited_at ? formatCommentTime(meta.last_edited_at) : null;
-  const lastEditedBy = meta.last_edited_by || null;
+  const rescoredVersion = String(meta.rescored_rubric_version || '');
+  const rescoredLabel = rescoredVersion && rescoredVersion !== String(rubricVersion)
+    ? ` · Score recalculated with rubric v${rescoredVersion}`
+    : '';
+  const history = Array.isArray(meta.edit_history) ? meta.edit_history : [];
+  const sourceReportEdit = [...history]
+    .reverse()
+    .find((entry) => entry?.field === 'source_report.raw_markdown');
+  const lastEditedAt = sourceReportEdit?.changed_at ? formatCommentTime(sourceReportEdit.changed_at) : null;
+  const lastEditedBy = sourceRevisionActorLabel(sourceReportEdit);
+  const sourceRevisionLabel = sourceReportEditLabel(sourceReportEdit);
 
   const items = [
     `<span class="meta-info-item">GPT 검색일 <strong>${escapeHtml(generatedAt)}</strong></span>`,
-    `<span class="meta-info-item">스코어링 지침 <strong>v${escapeHtml(rubricVersion)}</strong></span>`
+    `<span class="meta-info-item">원본 스코어링 지침 <strong>v${escapeHtml(rubricVersion)}</strong>${escapeHtml(rescoredLabel)}</span>`
   ];
   if (lastEditedAt) {
     items.push(
-      `<span class="meta-info-item">마지막 수정 <strong>${escapeHtml(lastEditedAt)}</strong>${
+      `<span class="meta-info-item">${escapeHtml(sourceRevisionLabel)} <strong>${escapeHtml(lastEditedAt)}</strong>${
         lastEditedBy ? ` · ${escapeHtml(lastEditedBy)}` : ''
       }</span>`
     );
@@ -1038,28 +1143,60 @@ function renderMetaInfoBar(record) {
   elements.detailMetaInfo.innerHTML = items.join('');
   elements.detailMetaInfo.title = [
     `GPT 검색일: ${generatedAt}`,
-    `스코어링 지침 버전: v${rubricVersion}`,
+    `원본 스코어링 지침 버전: v${rubricVersion}${rescoredLabel}`,
     lastEditedAt
-      ? `마지막 수정: ${lastEditedAt}에 ${lastEditedBy || 'unknown'}에 의해 수정됨`
+      ? `${sourceRevisionLabel}: ${lastEditedAt} · ${lastEditedBy || 'unknown'}`
       : null
   ]
     .filter(Boolean)
     .join('\n');
 }
 
+function sourceReportEditLabel(entry) {
+  const source = String(entry?.source || '');
+  if (source === 'detail_json_editor') return 'GPT 원문 갱신일';
+  if (source === 'paste_json_upsert') return 'GPT 원문 재업로드일';
+  if (['dashboard_rubric_refresh', 'dashboard_tab2_rubric_recalculation'].includes(source)) {
+    return 'GPT 원문·Score 갱신일';
+  }
+  return 'GPT 원문 갱신일';
+}
+
+function sourceRevisionActorLabel(entry) {
+  if (!entry) return null;
+  if (['dashboard_rubric_refresh', 'dashboard_tab2_rubric_recalculation'].includes(entry.source)) {
+    const rubricVersion = String(entry.new_value || '').match(/rubric\s+v([^\s]+)/i)?.[1];
+    return rubricVersion ? `Rubric v${rubricVersion}` : 'Rubric recalculation';
+  }
+  if (entry.actor_name) return String(entry.actor_name);
+  if (['127.0.0.1', '::1', 'localhost'].includes(String(entry.actor_ip || '').toLowerCase())) {
+    return 'Local workspace';
+  }
+  return entry.actor_ip ? String(entry.actor_ip) : null;
+}
+
+function teamReviewActorLabel(entry) {
+  if (entry?.actor_name) return String(entry.actor_name);
+  if (['127.0.0.1', '::1', 'localhost'].includes(String(entry?.actor_ip || '').toLowerCase())) {
+    return 'Local workspace';
+  }
+  return String(entry?.actor_ip || 'unknown');
+}
+
 function renderEditHistory(record) {
   if (!elements.detailEditHistory) return;
-  const history = Array.isArray(record?.meta?.edit_history) ? record.meta.edit_history : [];
+  const auditHistory = Array.isArray(record?.meta?.edit_history) ? record.meta.edit_history : [];
+  const history = auditHistory.filter((entry) => entry?.field !== 'source_report.raw_markdown');
   if (!history.length) {
     elements.detailEditHistory.innerHTML = '';
     return;
   }
   const items = history
-    .slice(-10)
+    .slice()
     .reverse()
     .map((entry) => {
       const when = formatCommentTime(entry?.changed_at);
-      const who = entry?.actor_name || entry?.actor_ip || 'unknown';
+      const who = teamReviewActorLabel(entry);
       const sourceLabels = {
         dashboard_table_manual_review: 'Review status/점수',
         dashboard_tab3_focus_management: '집중관리 정보',
@@ -1067,6 +1204,12 @@ function renderEditHistory(record) {
         dashboard_attachment_upload: '파트너 자료 업로드',
         dashboard_attachment_delete: '파트너 자료 삭제',
         dashboard_qualitative_review: '정성 평가',
+        dashboard_qualitative_review_ai_generate: 'AI 정성 평가',
+        dashboard_qualitative_review_delete: '정성 평가 삭제',
+        dashboard_qualitative_review_criterion_add: '정성평가 기준 추가',
+        dashboard_qualitative_review_criterion_import: '정성평가 기준 가져오기',
+        dashboard_qualitative_review_criterion_delete: '정성평가 기준 삭제',
+        paste_json_upsert: 'GPT JSON 저장',
         detail_json_editor: 'Record JSON'
       };
       const fieldLabels = {
@@ -1082,7 +1225,11 @@ function renderEditHistory(record) {
         total_score: 'Tab2 Total Score',
         'focus_management.total_score_override': 'Tab3 Total Score'
       };
-      const source = fieldLabels[entry?.field] || sourceLabels[entry?.source] || entry?.field || '레코드';
+      const fieldSource = fieldLabels[entry?.field];
+      const baseSource = entry?.source === 'paste_json_score_reset' && fieldSource
+        ? `${fieldSource} · GPT 원문 재업로드`
+        : fieldSource || sourceLabels[entry?.source] || entry?.field || '레코드';
+      const source = entry?.change_method === 'ai_agent' ? `${baseSource} · AI Agent` : baseSource;
       const formatAuditValue = (value) => {
         if (value === null || value === undefined || value === '') return 'Auto';
         if (typeof value === 'object') return JSON.stringify(value);
@@ -1095,7 +1242,7 @@ function renderEditHistory(record) {
     .join('');
   elements.detailEditHistory.innerHTML = `
     <details>
-      <summary>변경 활동 이력 (${history.length})</summary>
+      <summary>Team Review 변경 이력 (${history.length})</summary>
       <ul>${items}</ul>
     </details>
   `;
@@ -1142,20 +1289,20 @@ function attachmentProcessingLabel(attachment) {
 function renderAttachments(record) {
   if (!elements.detailAttachmentsList) return;
   const attachments = Array.isArray(record?.meta?.attachments) ? record.meta.attachments : [];
+  if (elements.detailAttachmentAiScope) {
+    elements.detailAttachmentAiScope.hidden = attachments.length > 0;
+  }
   if (elements.detailAttachmentCount) {
     elements.detailAttachmentCount.textContent = String(attachments.length);
     elements.detailAttachmentCount.setAttribute('aria-label', `첨부자료 ${attachments.length}개`);
   }
   if (!attachments.length) {
-    elements.detailAttachmentsList.innerHTML = `
-      <p class="attachments-empty">아직 첨부자료가 없습니다.</p>
-    `;
+    elements.detailAttachmentsList.innerHTML = '';
     return;
   }
   elements.detailAttachmentsList.innerHTML = attachments
     .map(
       (attachment) => {
-        const extension = String(attachment.filename || '').split('.').pop()?.toUpperCase() || 'FILE';
         const activeClass = String(attachment.id) === activeAttachmentId ? ' is-active' : '';
         return `
         <div class="attachment-row${activeClass}" data-attachment-id="${escapeHtml(attachment.id)}">
@@ -1165,7 +1312,6 @@ function renderAttachments(record) {
             data-preview-attachment-id="${escapeHtml(attachment.id)}"
             title="${escapeHtml(attachment.filename || 'attachment')}"
           >
-            <span class="attachment-type-badge">${escapeHtml(extension)}</span>
             <span class="attachment-copy">
               <strong>${escapeHtml(attachment.filename || 'attachment')}</strong>
               <small>${escapeHtml(formatFileSize(attachment.size_bytes))} · ${escapeHtml(formatCommentTime(attachment.uploaded_at))}</small>
@@ -1222,16 +1368,21 @@ async function uploadAttachments(files) {
 
 function renderSourceReport(record = currentRecord) {
   if (!record || !elements.sourceReportViewer) return;
+  attachmentPreviewController?.abort();
+  attachmentPreviewController = null;
   activeAttachmentId = '';
   const sourceReport = record.source_report || {};
   const rawMarkdown = isPlaceholderRawMarkdown(sourceReport.raw_markdown) ? '' : sourceReport.raw_markdown;
+  if (elements.detailViewerEyebrow) elements.detailViewerEyebrow.textContent = 'AI REPORT UPLOADED';
   if (elements.detailViewerTitle) elements.detailViewerTitle.textContent = 'GPT 원문 리포트';
   if (elements.subtitle) {
-    const summary = record.json_summary || {};
-    elements.subtitle.textContent = `${summary.target || '-'} · ${summary.theme || '-'} · ${summary.cluster || '-'}`;
+    elements.subtitle.textContent = '';
+    elements.subtitle.hidden = true;
   }
   if (elements.detailMetaInfo) elements.detailMetaInfo.hidden = false;
   if (elements.detailViewerBackButton) elements.detailViewerBackButton.hidden = true;
+  if (elements.detailViewerOpenWindowButton) elements.detailViewerOpenWindowButton.hidden = false;
+  if (elements.detailViewerCopyButton) elements.detailViewerCopyButton.hidden = false;
   elements.sourceReportViewer.classList.remove('showing-attachment');
   elements.sourceReportViewer.innerHTML = rawMarkdown
     ? renderMarkdown(sourceReport.raw_markdown)
@@ -1247,35 +1398,57 @@ async function showAttachmentPreview(attachmentId) {
   );
   if (!attachment) return;
 
-  activeAttachmentId = String(attachmentId);
+  const previewId = String(attachmentId);
+  attachmentPreviewController?.abort();
+  const previewController = new AbortController();
+  attachmentPreviewController = previewController;
+  activeAttachmentId = previewId;
   renderAttachments(currentRecord);
+  if (elements.detailViewerEyebrow) elements.detailViewerEyebrow.textContent = 'Partner material';
   if (elements.detailViewerTitle) elements.detailViewerTitle.textContent = attachment.filename || '파트너사 자료';
   if (elements.subtitle) {
     elements.subtitle.textContent = `${formatFileSize(attachment.size_bytes)} · ${formatCommentTime(attachment.uploaded_at)}`;
+    elements.subtitle.hidden = false;
   }
   if (elements.detailMetaInfo) elements.detailMetaInfo.hidden = true;
   if (elements.detailViewerBackButton) elements.detailViewerBackButton.hidden = false;
+  if (elements.detailViewerOpenWindowButton) elements.detailViewerOpenWindowButton.hidden = true;
+  if (elements.detailViewerCopyButton) elements.detailViewerCopyButton.hidden = true;
   elements.sourceReportViewer.classList.add('showing-attachment');
   elements.sourceReportViewer.innerHTML = '<div class="attachment-preview-loading">자료를 불러오는 중입니다…</div>';
 
   try {
     const response = await fetch(
-      `/api/attachment-preview/${encodeURIComponent(attachmentId)}?record_id=${encodeURIComponent(currentRecordId)}`
+      `/api/attachment-preview/${encodeURIComponent(attachmentId)}?record_id=${encodeURIComponent(currentRecordId)}`,
+      { signal: previewController.signal }
     );
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.detail || '자료 미리보기를 불러오지 못했습니다.');
+    if (previewController.signal.aborted || activeAttachmentId !== previewId) return;
 
-    const openAction = `
-      <a class="attachment-open-link" href="${escapeHtml(data.url || attachment.stored_path)}" target="_blank" rel="noopener">
+    const previewUrl = data.url || attachment.stored_path;
+    const originalName = attachment.filename || 'attachment';
+    const isPdfAttachment = /\.pdf$/i.test(originalName);
+
+    const openOriginalLink = `
+      <a class="attachment-open-link" href="${escapeHtml(previewUrl)}" target="_blank" rel="noopener">
         원본 파일 열기 ↗
       </a>
     `;
+    const downloadOriginalLink = `
+      <a class="attachment-open-link" href="${escapeHtml(attachment.stored_path)}" download="${escapeHtml(originalName)}">
+        원본 다운로드 ↓
+      </a>
+    `;
+    // The browser's own PDF viewer already offers a download control, so real PDFs keep the single open link.
+    const openAction = isPdfAttachment ? openOriginalLink : `${downloadOriginalLink}${openOriginalLink}`;
+
     if (data.preview_type === 'pdf') {
       elements.sourceReportViewer.innerHTML = `
         <div class="attachment-preview-toolbar">${openAction}</div>
         <iframe
           class="attachment-pdf-preview"
-          src="${escapeHtml(data.url || attachment.stored_path)}"
+          src="${escapeHtml(previewUrl)}"
           title="${escapeHtml(attachment.filename || 'PDF preview')}"
         ></iframe>
       `;
@@ -1294,8 +1467,8 @@ async function showAttachmentPreview(attachmentId) {
         </div>
       `;
     }
-    renderDetailOutline();
   } catch (error) {
+    if (error?.name === 'AbortError' || previewController.signal.aborted || activeAttachmentId !== previewId) return;
     elements.sourceReportViewer.innerHTML = `
       <div class="attachment-preview-empty">
         <strong>미리보기를 표시할 수 없습니다.</strong>
@@ -1303,6 +1476,8 @@ async function showAttachmentPreview(attachmentId) {
         <a class="attachment-open-link" href="${escapeHtml(attachment.stored_path)}" target="_blank" rel="noopener">원본 파일 열기 ↗</a>
       </div>
     `;
+  } finally {
+    if (attachmentPreviewController === previewController) attachmentPreviewController = null;
   }
 }
 
@@ -1325,52 +1500,160 @@ async function deleteAttachment(attachmentId) {
   }
 }
 
+const QUALITATIVE_LEGACY_AI_AUTHOR = 'AI (초안)';
+let isGeneratingAllQualitativeOpinions = false;
+
 function renderQualitativeReview(record) {
   if (!elements.qualitativeReviewPanel) return;
-  const criteriaState = record?.meta?.qualitative_review?.criteria || {};
+  const qualitativeState = record?.meta?.qualitative_review || {};
+  const criteriaState = qualitativeState.criteria || {};
+  const customCriteria = Array.isArray(qualitativeState.custom_criteria) ? qualitativeState.custom_criteria : [];
+  const allCriteria = [
+    ...qualitativeReviewCriteria,
+    ...customCriteria
+      .filter((item) => item && item.id)
+      .map((item) => ({
+        id: item.id,
+        label: item.label || '이름 없음',
+        description: item.description || '',
+        isCustom: true
+      }))
+  ];
+
   elements.qualitativeReviewPanel.innerHTML = `
     <div class="qualitative-panel-heading">
-      <p class="eyebrow">정성 평가 기준 (임시)</p>
-      <span>Manual only</span>
-      <small>담당자가 직접 작성하며 자동 입력하지 않습니다.</small>
+      <p class="eyebrow">정성 평가</p>
+      <button
+        type="button"
+        class="qualitative-ai-generate-all-button help-tooltip"
+        id="qualitativeAiGenerateAllButton"
+        data-tooltip="전체 AI 생성"
+        aria-label="전체 AI 생성"
+      ><span aria-hidden="true">✨</span></button>
+      <small>담당자가 직접 작성하거나, 'AI 생성' 버튼으로 원문·업로드 자료 기반 1차 초안을 받아 검토·수정할 수 있습니다.</small>
     </div>
-    ${qualitativeReviewCriteria
-      .map((criterion) => {
-        const criterionState = criteriaState[criterion.id]
-          || (criterion.legacyIds || []).map((id) => criteriaState[id]).find(Boolean)
-          || {};
-        const entries = Array.isArray(criterionState.entries)
-          ? criterionState.entries.filter((entry) => !entry?.is_ai)
-          : [];
-        const entriesHtml = entries.length
-          ? entries
-              .map(
-                (entry) => `
-                  <article class="qualitative-entry ${entry.is_ai ? 'is-ai' : ''}">
-                    <div class="comment-meta">
-                      <strong>${escapeHtml(entry.author || '익명')}</strong>
-                      <time>${escapeHtml(formatCommentTime(entry.created_at))}</time>
-                    </div>
-                    <p>${escapeHtml(entry.body || '').replaceAll('\n', '<br>')}</p>
-                  </article>
-                `
-              )
-              .join('')
-          : '';
-        return `
-          <section class="qualitative-criterion" data-criterion-id="${escapeHtml(criterion.id)}">
-            <header>
-              <h3>${escapeHtml(criterion.label)}</h3>
-            </header>
-            <div class="qualitative-entries">${entriesHtml}</div>
-            <form class="qualitative-form" data-criterion-id="${escapeHtml(criterion.id)}">
-              <textarea rows="2" maxlength="5000" placeholder="${escapeHtml(criterion.description)}" required></textarea>
-              <button type="submit">의견 등록</button>
-            </form>
-          </section>
-        `;
-      })
-      .join('')}
+    ${allCriteria.map((criterion) => renderQualitativeCriterionSection(criterion, criteriaState)).join('')}
+    ${renderQualitativeAddCriterionSection()}
+  `;
+}
+
+function renderQualitativeCriterionSection(criterion, criteriaState) {
+  const criterionState = criteriaState[criterion.id]
+    || (criterion.legacyIds || []).map((id) => criteriaState[id]).find(Boolean)
+    || {};
+  const entries = Array.isArray(criterionState.entries)
+    ? criterionState.entries.filter((entry) => entry?.author !== QUALITATIVE_LEGACY_AI_AUTHOR)
+    : [];
+  const entriesHtml = entries.length
+    ? entries
+        .map(
+          (entry) => `
+            <article class="qualitative-entry ${entry.is_ai ? 'is-ai' : ''}">
+              <div class="qualitative-entry-meta">
+                <div class="qualitative-entry-meta-left">
+                  ${entry.is_ai ? '<span class="qualitative-ai-badge">AI</span>' : ''}
+                  <strong>${escapeHtml(entry.author || '익명')}</strong>
+                  <time>${escapeHtml(formatCommentTime(entry.created_at))}</time>
+                </div>
+                <button
+                  type="button"
+                  class="qualitative-entry-delete"
+                  data-delete-qualitative-entry-id="${escapeHtml(entry.id)}"
+                  aria-label="의견 삭제"
+                >×</button>
+              </div>
+              <p>${escapeHtml(entry.body || '').replaceAll('\n', '<br>')}</p>
+            </article>
+          `
+        )
+        .join('')
+    : '<p class="qualitative-empty">아직 등록된 의견이 없습니다.</p>';
+
+  return `
+    <section class="qualitative-criterion" data-criterion-id="${escapeHtml(criterion.id)}">
+      <header class="qualitative-criterion-header">
+        <div class="qualitative-criterion-heading">
+          <h3>${escapeHtml(criterion.label)}</h3>
+          ${criterion.description ? `<p>${escapeHtml(criterion.description)}</p>` : ''}
+        </div>
+        <div class="qualitative-criterion-actions">
+          <button
+            type="button"
+            class="qualitative-ai-generate-button help-tooltip"
+            data-ai-generate-criterion-id="${escapeHtml(criterion.id)}"
+            data-tooltip="AI 생성"
+            aria-label="AI 생성"
+          ><span aria-hidden="true">✨</span></button>
+          ${criterion.isCustom
+            ? `<button
+                 type="button"
+                 class="qualitative-criterion-delete"
+                 data-delete-criterion-id="${escapeHtml(criterion.id)}"
+                 aria-label="평가 항목 삭제"
+               >×</button>`
+            : ''}
+        </div>
+      </header>
+      <div class="qualitative-entries">${entriesHtml}</div>
+      <form class="qualitative-form" data-criterion-id="${escapeHtml(criterion.id)}">
+        <textarea
+          class="message-composer-textarea"
+          rows="1"
+          maxlength="5000"
+          aria-label="${escapeHtml(criterion.label)} 의견 입력"
+          placeholder="의견을 추가하세요…"
+          required
+        ></textarea>
+        <button
+          class="message-send-button"
+          type="submit"
+          aria-label="${escapeHtml(criterion.label)} 의견 보내기"
+          title="의견 보내기"
+          disabled
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M22 2 9.6 14.4"></path>
+            <path d="m22 2-7.2 20-4.1-8.7L2 9.2Z"></path>
+          </svg>
+        </button>
+      </form>
+    </section>
+  `;
+}
+
+function renderQualitativeAddCriterionSection() {
+  return `
+    <section class="qualitative-add-criterion">
+      <button type="button" class="qualitative-add-criterion-toggle" id="qualitativeAddCriterionToggle">
+        + 새 평가 항목 추가
+      </button>
+      <form class="qualitative-add-criterion-form" id="qualitativeAddCriterionForm" hidden>
+        <div class="qualitative-criterion-suggestions" id="qualitativeCriterionSuggestions" aria-live="polite">
+          <div class="qualitative-suggestion-heading">
+            <strong>다른 파이프라인에서 사용 중</strong>
+            <span>불러오면 제목과 설명만 복사됩니다.</span>
+          </div>
+          <p class="qualitative-suggestion-status">추천 항목을 불러오는 중…</p>
+        </div>
+        <label>
+          <span>제목</span>
+          <input type="text" name="label" maxlength="60" placeholder="예: Regulatory Pathway" required />
+        </label>
+        <label>
+          <span>설명 / 질문</span>
+          <textarea
+            name="description"
+            rows="2"
+            maxlength="400"
+            placeholder="이 항목에서 평가하고자 하는 질문이나 관점을 입력하세요 (AI 생성 시 이 설명을 기준으로 초안을 작성합니다)"
+          ></textarea>
+        </label>
+        <div class="qualitative-add-criterion-form-actions">
+          <button type="button" class="qualitative-add-criterion-cancel" id="qualitativeAddCriterionCancel">취소</button>
+          <button type="submit">항목 등록</button>
+        </div>
+      </form>
+    </section>
   `;
 }
 
@@ -1381,7 +1664,11 @@ async function submitQualitativeOpinion(criterionId, form) {
   const author = await ensureIdentity();
   if (!author) return;
   const submitButton = form.querySelector('button[type="submit"]');
-  if (submitButton) submitButton.disabled = true;
+  if (submitButton) {
+    submitButton.dataset.saving = 'true';
+    submitButton.disabled = true;
+    submitButton.setAttribute('aria-busy', 'true');
+  }
   setCollaborationStatus('의견 저장 중…');
   try {
     const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review`, {
@@ -1397,7 +1684,237 @@ async function submitQualitativeOpinion(criterionId, form) {
   } catch (error) {
     setCollaborationStatus(error.message, 'error');
   } finally {
+    if (submitButton?.isConnected) {
+      delete submitButton.dataset.saving;
+      submitButton.removeAttribute('aria-busy');
+      submitButton.disabled = !textarea?.value.trim();
+    }
+  }
+}
+
+async function deleteQualitativeOpinion(entryId) {
+  if (!entryId || !currentRecordId) return;
+  setCollaborationStatus('의견 삭제 중…');
+  try {
+    const response = await fetch(
+      `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/${encodeURIComponent(entryId)}`,
+      { method: 'DELETE' }
+    );
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '의견 삭제에 실패했습니다.');
+    currentRecord = data.record;
+    renderQualitativeReview(currentRecord);
+    setCollaborationStatus('정성 평가 의견을 삭제했습니다.', 'success');
+  } catch (error) {
+    setCollaborationStatus(error.message, 'error');
+  }
+}
+
+async function generateQualitativeAiOpinion(criterionId, button) {
+  if (!criterionId || !currentRecordId || !button || isGeneratingAllQualitativeOpinions) return;
+  const originalTooltip = button.dataset.tooltip || 'AI 생성';
+  const originalAriaLabel = button.getAttribute('aria-label') || 'AI 생성';
+  button.disabled = true;
+  button.dataset.tooltip = 'AI 생성 중…';
+  button.setAttribute('aria-label', 'AI 생성 중');
+  setCollaborationStatus('원문·업로드 자료를 분석해 AI 초안을 생성하는 중입니다…');
+  try {
+    const response = await fetch(
+      `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/ai-generate`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ criterion_id: criterionId })
+      }
+    );
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'AI 생성에 실패했습니다.');
+    currentRecord = data.record;
+    renderQualitativeReview(currentRecord);
+    setCollaborationStatus('AI 초안을 생성했습니다. 내용을 검토 후 필요하면 직접 의견을 추가해주세요.', 'success');
+  } catch (error) {
+    setCollaborationStatus(error.message, 'error');
+    button.disabled = false;
+    button.dataset.tooltip = originalTooltip;
+    button.setAttribute('aria-label', originalAriaLabel);
+  }
+}
+
+async function generateAllQualitativeAiOpinions(button) {
+  if (!currentRecordId || !button || isGeneratingAllQualitativeOpinions) return;
+  isGeneratingAllQualitativeOpinions = true;
+  const fixedCriteria = qualitativeReviewCriteria.slice(0, 3);
+  const failures = [];
+
+  button.disabled = true;
+  button.setAttribute('aria-busy', 'true');
+  elements.qualitativeReviewPanel
+    ?.querySelectorAll('[data-ai-generate-criterion-id]')
+    .forEach((item) => { item.disabled = true; });
+
+  try {
+    for (let index = 0; index < fixedCriteria.length; index += 1) {
+      const criterion = fixedCriteria[index];
+      button.dataset.tooltip = `전체 AI 생성 중 ${index + 1}/${fixedCriteria.length}`;
+      button.setAttribute('aria-label', `전체 AI 생성 중 ${index + 1}/${fixedCriteria.length}`);
+      setCollaborationStatus(`${criterion.label} AI 초안을 생성하는 중입니다… (${index + 1}/${fixedCriteria.length})`);
+      try {
+        const response = await fetch(
+          `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/ai-generate`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ criterion_id: criterion.id })
+          }
+        );
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.detail || 'AI 생성에 실패했습니다.');
+        currentRecord = data.record;
+      } catch (error) {
+        failures.push(`${criterion.label}: ${error.message}`);
+      }
+    }
+  } finally {
+    isGeneratingAllQualitativeOpinions = false;
+    renderQualitativeReview(currentRecord);
+  }
+
+  if (failures.length) {
+    setCollaborationStatus(
+      `${fixedCriteria.length - failures.length}개 항목을 생성했습니다. 실패: ${failures.join(' / ')}`,
+      'error'
+    );
+  } else {
+    setCollaborationStatus('정성평가 3개 항목의 AI 초안을 모두 생성했습니다.', 'success');
+  }
+}
+
+async function addCustomQualitativeCriterion(form) {
+  if (!currentRecordId || !form) return;
+  const label = form.querySelector('input[name="label"]')?.value.trim() || '';
+  const description = form.querySelector('textarea[name="description"]')?.value.trim() || '';
+  if (!label) return;
+  const author = await ensureIdentity();
+  if (!author) return;
+  const submitButton = form.querySelector('button[type="submit"]');
+  if (submitButton) submitButton.disabled = true;
+  setCollaborationStatus('평가 항목 등록 중…');
+  try {
+    const response = await fetch(
+      `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/criteria`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ label, description, author })
+      }
+    );
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '평가 항목 등록에 실패했습니다.');
+    currentRecord = data.record;
+    renderQualitativeReview(currentRecord);
+    setCollaborationStatus('새 평가 항목을 등록했습니다.', 'success');
+  } catch (error) {
+    setCollaborationStatus(error.message, 'error');
     if (submitButton) submitButton.disabled = false;
+  }
+}
+
+async function loadQualitativeCriterionSuggestions(form) {
+  const container = form?.querySelector('#qualitativeCriterionSuggestions');
+  if (!container || !currentRecordId) return;
+  try {
+    const response = await fetch(
+      `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/criteria/suggestions`
+    );
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '추천 평가 항목을 불러오지 못했습니다.');
+    const suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
+    container.innerHTML = `
+      <div class="qualitative-suggestion-heading">
+        <strong>다른 파이프라인에서 사용 중</strong>
+        <span>불러오면 제목과 설명만 복사됩니다.</span>
+      </div>
+      ${suggestions.length
+        ? `<div class="qualitative-suggestion-list">${suggestions.map(renderQualitativeCriterionSuggestion).join('')}</div>`
+        : '<p class="qualitative-suggestion-status">가져올 수 있는 새 평가 항목이 아직 없습니다.</p>'}
+    `;
+  } catch (error) {
+    container.innerHTML = `<p class="qualitative-suggestion-status is-error">${escapeHtml(error.message)}</p>`;
+  }
+}
+
+function renderQualitativeCriterionSuggestion(suggestion) {
+  const sources = Array.isArray(suggestion.source_records) ? suggestion.source_records : [];
+  const sourceText = sources.map((item) => item?.label).filter(Boolean).join(', ');
+  return `
+    <article class="qualitative-suggestion-card">
+      <div>
+        <strong>${escapeHtml(suggestion.label || '이름 없음')}</strong>
+        ${suggestion.description ? `<p>${escapeHtml(suggestion.description)}</p>` : ''}
+        <small>${escapeHtml(sourceText || '다른 파이프라인')} · ${Number(suggestion.usage_count) || 1}개 레코드에서 사용</small>
+      </div>
+      <button
+        type="button"
+        class="qualitative-suggestion-import"
+        data-import-criterion="true"
+        data-label="${escapeHtml(suggestion.label || '')}"
+        data-description="${escapeHtml(suggestion.description || '')}"
+        data-source-record-id="${escapeHtml(sources[0]?.record_id || '')}"
+        data-source-criterion-id="${escapeHtml(suggestion.source_criterion_id || '')}"
+      >가져오기</button>
+    </article>
+  `;
+}
+
+async function importQualitativeCriterion(button) {
+  if (!button || !currentRecordId) return;
+  const author = await ensureIdentity();
+  if (!author) return;
+  button.disabled = true;
+  setCollaborationStatus('추천 평가 항목을 가져오는 중…');
+  try {
+    const response = await fetch(
+      `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/criteria`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          label: button.dataset.label || '',
+          description: button.dataset.description || '',
+          author,
+          imported_from_record_id: button.dataset.sourceRecordId || '',
+          imported_from_criterion_id: button.dataset.sourceCriterionId || ''
+        })
+      }
+    );
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '평가 항목 가져오기에 실패했습니다.');
+    currentRecord = data.record;
+    renderQualitativeReview(currentRecord);
+    setCollaborationStatus(`'${button.dataset.label}' 평가 항목을 가져왔습니다.`, 'success');
+  } catch (error) {
+    button.disabled = false;
+    setCollaborationStatus(error.message, 'error');
+  }
+}
+
+async function deleteCustomQualitativeCriterion(criterionId) {
+  if (!criterionId || !currentRecordId) return;
+  const confirmed = window.confirm('이 평가 항목과 등록된 모든 의견을 삭제할까요?');
+  if (!confirmed) return;
+  setCollaborationStatus('평가 항목 삭제 중…');
+  try {
+    const response = await fetch(
+      `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/criteria/${encodeURIComponent(criterionId)}`,
+      { method: 'DELETE' }
+    );
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '평가 항목 삭제에 실패했습니다.');
+    currentRecord = data.record;
+    renderQualitativeReview(currentRecord);
+    setCollaborationStatus('평가 항목을 삭제했습니다.', 'success');
+  } catch (error) {
+    setCollaborationStatus(error.message, 'error');
   }
 }
 
@@ -1609,7 +2126,11 @@ async function submitDetailComment() {
   if (!body || !currentRecordId) return;
   const author = await ensureIdentity();
   if (!author) return;
-  if (elements.detailCommentSubmit) elements.detailCommentSubmit.disabled = true;
+  if (elements.detailCommentSubmit) {
+    elements.detailCommentSubmit.dataset.saving = 'true';
+    elements.detailCommentSubmit.disabled = true;
+    elements.detailCommentSubmit.setAttribute('aria-busy', 'true');
+  }
   setCollaborationStatus('댓글 저장 중…');
   try {
     const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/comments`, {
@@ -1624,7 +2145,10 @@ async function submitDetailComment() {
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.detail || '댓글 저장에 실패했습니다.');
     currentRecord = data.record;
-    if (elements.detailCommentInput) elements.detailCommentInput.value = '';
+    if (elements.detailCommentInput) {
+      elements.detailCommentInput.value = '';
+      syncMessageComposer(elements.detailCommentInput);
+    }
     clearReplyTarget();
     renderCollaborationPanel(currentRecord);
     elements.detailCommentThread?.scrollTo({ top: elements.detailCommentThread.scrollHeight, behavior: 'smooth' });
@@ -1632,20 +2156,26 @@ async function submitDetailComment() {
   } catch (error) {
     setCollaborationStatus(error.message, 'error');
   } finally {
-    if (elements.detailCommentSubmit) elements.detailCommentSubmit.disabled = false;
+    if (elements.detailCommentSubmit) {
+      delete elements.detailCommentSubmit.dataset.saving;
+      elements.detailCommentSubmit.removeAttribute('aria-busy');
+      elements.detailCommentSubmit.disabled = !elements.detailCommentInput?.value.trim();
+    }
   }
 }
 
 function renderRecord(record) {
   const summary = record.json_summary || {};
   const scoring = record.scoring || {};
-  elements.title.textContent = `Details : ${summary.asset_name || 'Pipeline'} · ${summary.company || '-'}`;
-  elements.subtitle.textContent = `${summary.target || '-'} · ${summary.theme || '-'} · ${summary.cluster || '-'}`;
+  const assetLabel = summary.asset_name || record.structured_table?.asset_name || 'Pipeline';
+  const companyLabel = summary.company || record.structured_table?.company || '-';
+  elements.title.textContent = `Details : ${assetLabel} · ${companyLabel}`;
+  document.title = `${assetLabel} · ${companyLabel} · SKBP`;
   if (elements.chatContextAsset) {
     elements.chatContextAsset.textContent = `${summary.asset_name || 'Pipeline'} · ${summary.company || '-'}`;
   }
   if (elements.chatContextScore) {
-    elements.chatContextScore.textContent = `${scoring.total_score ?? '-'} / ${scoring.max_score ?? 21} · ${summary.theme || 'No Theme'}`;
+    elements.chatContextScore.textContent = `${scoring.total_score ?? '-'} / ${scoring.max_score ?? 21} · ${dashboardThemeLabel(summary.theme)}`;
   }
   renderSourceReport(record);
   renderCollaborationPanel(record);
@@ -1658,45 +2188,46 @@ function buildReadableSourceReport(record) {
   const finalInsight = record.final_insight || {};
   const rubricVersion = getDisplayRubricVersion(record);
   const rubricAuthor = getDisplayRubricAuthor(record);
-  return `## ${summary.company || table.company || 'Company'} Lead Pipeline 遺꾩꽍: **${summary.asset_name || table.asset_name || 'Asset'}**
+  return `## ${summary.company || table.company || 'Company'} Lead Pipeline 분석: **${summary.asset_name || table.asset_name || 'Asset'}**
 
 > This report is prepared for SKBP Pipeline Finder v${rubricVersion} (${rubricAuthor}) criteria.
 
-## 1. ??以?寃곕줎
+## 1. 최종 결론
 
 **${finalInsight.one_line_summary || summary.one_line_summary || '-'}**
 
-???먮떒??Shortlist 愿???먯닔??**${scoring.total_score ?? '-'} / ${scoring.max_score ?? 21}??*?낅땲??
+이 판단의 Shortlist 관련 총점은 **${scoring.total_score ?? '-'} / ${scoring.max_score ?? 21}**입니다.
 
-## 2. ?뚯궗 諛?Lead Pipeline ?붿빟
+## 2. 회사 및 Lead Pipeline 요약
 
-| ??ぉ | ?댁슜 |
+| 항목 | 내용 |
 |---|---|
-| ?뚯궗 | ${summary.company || table.company || '-'} |
-| 援?? | ${summary.company_country || table.company_country || '-'} |
+| 회사 | ${summary.company || table.company || '-'} |
+| 국가 | ${summary.company_country || table.company_country || '-'} |
 | Lead asset | ${summary.asset_name || table.asset_name || '-'} |
-| ?곸쓳利?| ${table.indication || '-'} |
+| 적응증 | ${table.indication || '-'} |
 | Target | ${summary.target || table.target || '-'} |
 | Modality | ${table.modality_platform || '-'} |
-| 媛쒕컻 ?④퀎 | ${table.development_stage || '-'} |
-| Theme fit | ${summary.theme || table.theme || '-'} |
-| Cluster | ${summary.cluster || table.cluster || '-'} |
+| 개발 단계 | ${table.development_stage || '-'} |
+| Theme fit | ${dashboardThemeLabel(summary.theme || table.theme)} |
+| Cluster | ${dashboardClusterLabel(summary.cluster || table.cluster, summary.theme || table.theme)} |
 
-## 3. ?듭떖 怨쇳븰???ъ씤??
+## 3. 핵심 과학적 차별점
 
 ${table.moa || '-'}
 
-## 4. SKBP Theme / Cluster ?곹빀??
+## 4. SKBP Theme / Cluster 적합성
 
-Theme: **${summary.theme || table.theme || '-'}**  
-Cluster: **${summary.cluster || table.cluster || '-'}**
+Theme: **${dashboardThemeLabel(summary.theme || table.theme)}**
 
-## 5. SKBP Pipeline Finder???먯닔
+Cluster: **${dashboardClusterLabel(summary.cluster || table.cluster, summary.theme || table.theme)}**
 
-| Criteria | Score | ?먮떒 |
+## 5. SKBP Pipeline Finder 평가 점수
+
+| Criteria | Score | 판단 |
 |---|---:|---|
 ${Object.entries(scoring.criteria || {})
-  .map(([key, item]) => `| ${prettifyKey(key)} | ${item?.score ?? '-'} / 3 | ${item?.main_line_summary || '-'} |`)
+  .map(([key, item]) => `| ${prettifyKey(key)} | ${formatCriterionScore(item?.score)} | ${item?.main_line_summary || '-'} |`)
   .join('\n')}
 | **Total** | **${scoring.total_score ?? '-'} / ${scoring.max_score ?? 21}** | **${finalInsight.one_line_summary || '-'}** |
 `;
@@ -1762,12 +2293,20 @@ function renderMarkdownTable(lines, startIndex) {
 
 function renderInlineMarkdown(text) {
   return escapeHtml(text)
-    .replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '<span class="wikilink">$2</span>')
-    .replace(/\[\[([^\]]+)\]\]/g, '<span class="wikilink">$1</span>')
+    .replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, (_, target, label) => renderWikiLink(target, label))
+    .replace(/\[\[([^\]]+)\]\]/g, (_, target) => renderWikiLink(target, target))
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>')
     .replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+
+function renderWikiLink(rawTarget, rawLabel) {
+  const target = String(rawTarget || '').split('#', 1)[0].trim();
+  const label = String(rawLabel || target).trim();
+  if (!target) return `<span class="wikilink">${label}</span>`;
+  const path = /\.md$/i.test(target) ? target : `${target}.md`;
+  return `<a class="wikilink" href="/wiki-view?path=${encodeURIComponent(path)}">${label}</a>`;
 }
 
 function renderMarkdown(markdown) {
@@ -1841,9 +2380,118 @@ function renderMarkdown(markdown) {
   return blocks.join('');
 }
 
+function openMarkdownInNewWindow(title, rawMarkdown) {
+  const win = window.open('', '_blank');
+  if (!win) return;
+  // Keep a usable WindowProxy for document.write while preventing the opened
+  // report from navigating its parent page.
+  win.opener = null;
+  const theme = document.documentElement.dataset.theme || 'light';
+  win.document.write(`<!doctype html>
+<html lang="ko" data-theme="${theme === 'dark' ? 'dark' : 'light'}">
+<head>
+<meta charset="UTF-8" />
+<title>${escapeHtml(title || 'Markdown')}</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin: 0; padding: 40px; max-width: 880px; margin-inline: auto; font-family: Tahoma, 'Malgun Gothic', '맑은 고딕', sans-serif; line-height: 1.7; color: #1f2933; background: #ffffff; }
+  h1, h2, h3 { line-height: 1.35; }
+  pre { background: #f4f6f8; padding: 12px; border-radius: 8px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+  th, td { border: 1px solid #d7dde4; padding: 6px 10px; text-align: left; }
+  blockquote { border-left: 3px solid #cbd5e1; margin: 0; padding-left: 12px; color: #52606d; }
+  code { background: #f4f6f8; padding: 1px 5px; border-radius: 4px; }
+  html[data-theme="dark"] body { background: #10161d; color: #e5e9ee; }
+  html[data-theme="dark"] pre, html[data-theme="dark"] code { background: #1b232c; }
+  html[data-theme="dark"] th, html[data-theme="dark"] td { border-color: #2a333d; }
+  html[data-theme="dark"] blockquote { border-color: #3a4552; color: #9aa7b4; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #10161d; color: #e5e9ee; }
+    pre, code { background: #1b232c; }
+    th, td { border-color: #2a333d; }
+    blockquote { border-color: #3a4552; color: #9aa7b4; }
+  }
+</style>
+</head>
+<body>${renderMarkdown(String(rawMarkdown || ''))}</body>
+</html>`);
+  win.document.close();
+}
+
+function getCurrentSourceMarkdown() {
+  if (!currentRecord) return '';
+  const sourceReport = currentRecord.source_report || {};
+  const rawMarkdown = isPlaceholderRawMarkdown(sourceReport.raw_markdown) ? '' : sourceReport.raw_markdown;
+  return rawMarkdown || buildReadableSourceReport(currentRecord);
+}
+
+async function copyCurrentSourceMarkdown(button) {
+  const text = getCurrentSourceMarkdown();
+  if (!text) return;
+
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.append(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      textarea.remove();
+    }
+    if (button) {
+      if (button.classList.contains('report-action-icon')) {
+        const originalTooltip = button.dataset.tooltip || '복사';
+        const originalLabel = button.getAttribute('aria-label') || 'GPT 원문 리포트 복사';
+        button.dataset.tooltip = '복사됨';
+        button.setAttribute('aria-label', '복사됨');
+        button.classList.add('is-success');
+        window.setTimeout(() => {
+          button.dataset.tooltip = originalTooltip;
+          button.setAttribute('aria-label', originalLabel);
+          button.classList.remove('is-success');
+        }, 1400);
+      } else {
+        const original = button.innerHTML;
+        button.innerHTML = '<span aria-hidden="true">✓</span> 복사됨';
+        window.setTimeout(() => { button.innerHTML = original; }, 1400);
+      }
+    }
+  } catch (error) {
+    console.error('원문 리포트 복사 실패:', error);
+  }
+}
+
+function openReportModal() {
+  const text = getCurrentSourceMarkdown();
+  if (!text || !elements.reportModalBackdrop || !elements.reportModalBody) return;
+  elements.reportModalBody.innerHTML = renderMarkdown(text);
+  elements.reportModalBackdrop.hidden = false;
+  document.body.classList.add('report-modal-open');
+  elements.reportModalCloseButton?.focus();
+}
+
+function closeReportModal() {
+  if (!elements.reportModalBackdrop || elements.reportModalBackdrop.hidden) return;
+  elements.reportModalBackdrop.hidden = true;
+  document.body.classList.remove('report-modal-open');
+  elements.detailViewerOpenWindowButton?.focus();
+}
+
 function renderDetailOutline() {
   if (!elements.detailOutlineList || !elements.sourceReportViewer) return;
-  const headings = [...elements.sourceReportViewer.querySelectorAll('h1, h2, h3')].slice(0, 14);
+  const headings = [...elements.sourceReportViewer.querySelectorAll('h1, h2, h3')]
+    .filter((heading, index) => {
+      const headingText = String(heading.textContent || '').trim();
+      const isReportTitle = index === 0
+        && heading.tagName === 'H1'
+        && /\bpipeline\s+scout\s+report\b/i.test(headingText);
+      return !isReportTitle;
+    })
+    .slice(0, 14);
   if (!headings.length) {
     elements.detailOutlineList.innerHTML = '<span class="detail-outline-empty">No headings</span>';
     return;
@@ -1862,9 +2510,63 @@ function renderDetailOutline() {
     .join('');
 }
 
-function summarizeDraftChanges(changes = []) {
-  if (!changes.length) return '蹂寃???ぉ ?놁쓬';
-  return changes.map((change) => `??${change}`).join('\n');
+function navigateToOutlineTarget(targetId) {
+  if (!targetId) return;
+  const returnToReport = elements.sourceReportViewer?.classList.contains('showing-attachment');
+  if (returnToReport && currentRecord) {
+    renderSourceReport(currentRecord);
+    window.requestAnimationFrame(() => {
+      scrollReportHeadingIntoView(document.getElementById(targetId));
+    });
+    return;
+  }
+  scrollReportHeadingIntoView(document.getElementById(targetId));
+}
+
+const criterionReportHeadingPatterns = {
+  target_relevance: /\btarget\s+relevance\b/i,
+  competitive_landscape: /\bcompetitive\s+landscape\b/i,
+  moa_validity: /\b(?:moa|mechanism\s+of\s+action)\s+validity\b/i,
+  platform_attractiveness: /\bplatform\s+attractiveness\b/i,
+  expansion_potential: /\bexpansion\s+potential\b/i,
+  data_maturity: /\bdata\s+maturity\b/i,
+  marketability: /\bmarketability\b/i
+};
+
+function reportCriterionHeading(criterionId) {
+  const headings = [...(elements.sourceReportViewer?.querySelectorAll('h1, h2, h3') || [])];
+  const pattern = criterionReportHeadingPatterns[criterionId];
+  if (!pattern) return null;
+  return headings.find((heading) => pattern.test(heading.textContent || ''))
+    || headings.find((heading) => /scorecard|criterion|평가\s*점수/i.test(heading.textContent || ''))
+    || null;
+}
+
+function scrollReportHeadingIntoView(heading) {
+  if (!heading) return false;
+  activeReportJumpHeading?.classList.remove('criterion-jump-highlight');
+  window.clearTimeout(reportJumpHighlightTimer);
+  activeReportJumpHeading = heading;
+  heading.classList.add('criterion-jump-highlight');
+  heading.setAttribute('tabindex', '-1');
+  heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  heading.focus({ preventScroll: true });
+  reportJumpHighlightTimer = window.setTimeout(() => {
+    heading.classList.remove('criterion-jump-highlight');
+    if (activeReportJumpHeading === heading) activeReportJumpHeading = null;
+  }, 1800);
+  return true;
+}
+
+function navigateToCriterionReportSection(criterionId) {
+  if (!criterionId || !currentRecord) return;
+  if (activeAttachmentId) renderSourceReport(currentRecord);
+  const heading = reportCriterionHeading(criterionId);
+  if (scrollReportHeadingIntoView(heading)) {
+    setCollaborationStatus(`${scoringLabels[criterionId] || criterionId} GPT 원문 근거로 이동했습니다.`, 'success');
+    return;
+  }
+  setCollaborationStatus(`${scoringLabels[criterionId] || criterionId} 원문 섹션을 찾지 못했습니다.`, 'error');
 }
 
 function detailChatStorageKey() {
@@ -1882,11 +2584,11 @@ function createChatMessageId() {
 function currentAssetLabel() {
   const summary = currentRecord?.json_summary || {};
   const table = currentRecord?.structured_table || {};
-  return summary.asset_name || table.asset_name || currentRecordId || '??asset';
+  return summary.asset_name || table.asset_name || currentRecordId || '현재 asset';
 }
 
 function defaultDetailChatText() {
-  return `${currentAssetLabel()} record瑜?遺덈윭?붿뒿?덈떎. ?먯닔 洹쇨굅, 由ъ뒪?? ?쒖옣?? 寃쎌웳 ?곹솴?????吏덈Ц?????덉뒿?덈떎.`;
+  return `${currentAssetLabel()} record를 불러왔습니다. 점수 근거, 리스크, 시장 및 경쟁 상황을 질문할 수 있습니다.`;
 }
 
 function createChatSession(title = '새 대화') {
@@ -1903,8 +2605,7 @@ function createChatSession(title = '새 대화') {
         text: defaultDetailChatText(),
         sources: [],
         createdAt: now,
-        status: 'done',
-        canApply: false
+        status: 'done'
       }
     ]
   };
@@ -1982,35 +2683,24 @@ function addMessage(role, text, options = {}) {
   bubble.className = `agent-message ${role}${options.pending ? ' pending' : ''}`;
   const messageId = options.messageId || createChatMessageId();
   bubble.dataset.messageId = messageId;
-  const speaker = role === 'user' ? 'You' : 'Asset Agent';
-  const meta = role === 'user' ? 'question' : (options.pending ? 'streaming response' : 'JSON + Wiki retrieval');
+  const speaker = role === 'user' ? 'You' : 'Due Diligence Agent';
+  const meta = role === 'user' ? 'question' : (options.pending ? 'streaming response' : '현재 파이프라인 1개');
   bubble.innerHTML = `
     <div class="agent-message-meta">
-      <strong>${speaker}</strong>
-      <span>${meta}</span>
+      <div class="agent-message-meta-labels">
+        <strong>${speaker}</strong>
+        <span>${meta}</span>
+      </div>
     </div>
     <div class="agent-message-text">${renderMarkdown(text)}</div>
     ${renderChatSources(options.sources)}
-  `;
-
-  if (options.draftRecord) {
-    pendingDraftRecord = options.draftRecord;
-    const draftCard = document.createElement('div');
-    draftCard.className = 'draft-card';
-    draftCard.innerHTML = `
-      <strong>洹쇨굅 ?섏젙 珥덉븞</strong>
-      <pre>${escapeHtml(summarizeDraftChanges(options.draftChanges))}</pre>
-      <div class="draft-actions">
-        <button type="button" data-action="apply-draft">珥덉븞 ?곸슜</button>
-        <button type="button" data-action="review-draft">초안 검토</button>
+    ${role === 'assistant' ? `
+      <div class="agent-message-actions">
+        <button type="button" class="help-tooltip" data-action="copy-message" data-tooltip="복사" aria-label="복사"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg></button>
+        <button type="button" class="help-tooltip" data-action="open-message-window" data-tooltip="전체보기" aria-label="전체보기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5"></path></svg></button>
       </div>
-    `;
-    bubble.appendChild(draftCard);
-  }
-
-  if (options.canApply && role === 'assistant' && !bubble.querySelector('[data-action="apply-ai-reply"]')) {
-    bubble.insertAdjacentHTML('beforeend', renderMessageActions());
-  }
+    ` : ''}
+  `;
 
   elements.messages.appendChild(bubble);
   elements.messages.scrollTop = elements.messages.scrollHeight;
@@ -2021,8 +2711,7 @@ function addMessage(role, text, options = {}) {
       text,
       sources: options.sources || [],
       createdAt: new Date().toISOString(),
-      status: options.pending ? 'pending' : 'done',
-      canApply: Boolean(options.canApply)
+      status: options.pending ? 'pending' : 'done'
     });
   }
   return bubble;
@@ -2047,12 +2736,33 @@ function renderChatSources(sources = []) {
   return `<div class="agent-sources"><span>Wiki sources</span>${chips}</div>`;
 }
 
-function renderMessageActions() {
-  return `
-    <div class="agent-message-actions">
-      <button type="button" data-action="apply-ai-reply">JSON/?먮Ц??諛섏쁺</button>
-    </div>
-  `;
+async function copyChatMessage(text, button) {
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    textarea.remove();
+  }
+  if (button) {
+    const originalHtml = button.innerHTML;
+    const originalTooltip = button.dataset.tooltip || '복사';
+    const originalAriaLabel = button.getAttribute('aria-label') || '복사';
+    button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
+    button.dataset.tooltip = '복사됨';
+    button.setAttribute('aria-label', '복사됨');
+    window.setTimeout(() => {
+      button.innerHTML = originalHtml;
+      button.dataset.tooltip = originalTooltip;
+      button.setAttribute('aria-label', originalAriaLabel);
+    }, 1400);
+  }
 }
 
 function updateMessage(bubble, text, options = {}) {
@@ -2063,17 +2773,13 @@ function updateMessage(bubble, text, options = {}) {
     bubble.querySelector('.agent-sources')?.remove();
     bubble.insertAdjacentHTML('beforeend', renderChatSources(options.sources));
   }
-  if (options.done && bubble.classList.contains('assistant') && !bubble.querySelector('[data-action="apply-ai-reply"]')) {
-    bubble.insertAdjacentHTML('beforeend', renderMessageActions());
-  }
   if (bubble.dataset.messageId) {
     updateChatSessionMessage({
       id: bubble.dataset.messageId,
       role: bubble.classList.contains('user') ? 'user' : 'assistant',
       text,
       sources: options.sources || undefined,
-      status: options.done ? 'done' : (bubble.classList.contains('pending') ? 'pending' : 'done'),
-      canApply: bubble.classList.contains('assistant') && (options.done || Boolean(bubble.querySelector('[data-action="apply-ai-reply"]')))
+      status: options.done ? 'done' : (bubble.classList.contains('pending') ? 'pending' : 'done')
     });
   }
   elements.messages.scrollTop = elements.messages.scrollHeight;
@@ -2088,7 +2794,6 @@ function renderMessagesFromChatSession() {
       messageId: message.id,
       sources: message.sources || [],
       pending: message.status === 'pending',
-      canApply: Boolean(message.canApply),
       persist: false
     });
   });
@@ -2134,46 +2839,294 @@ function retitleActiveChatSessionFromQuestion(question) {
   }
 }
 
+async function refreshRubric() {
+  if (!currentRecord || !currentRecordId) return;
+  const button = elements.rubricRefreshButton;
+  if (!button) return;
+
+  button.disabled = true;
+  button.classList.add('is-saving');
+  setCollaborationStatus('Score 기준 갱신 검토 중…');
+
+  try {
+    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/refresh-rubric`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'Score 재계산에 실패했습니다.');
+
+    const tone = data.status === 'updated' ? 'success' : data.status === 'error' ? 'error' : '';
+    setCollaborationStatus(data.message || '', tone);
+
+    if (data.status === 'updated' && data.record) {
+      currentRecord = data.record;
+      await loadRecord();
+    }
+  } catch (error) {
+    setCollaborationStatus(error.message, 'error');
+  } finally {
+    button.disabled = false;
+    button.classList.remove('is-saving');
+  }
+}
+
+async function refreshOiPartnership() {
+  if (!currentRecord || !currentRecordId) return;
+  const button = elements.oiPartnershipRefreshButton;
+  if (!button) return;
+
+  button.disabled = true;
+  button.classList.add('is-saving');
+  setCollaborationStatus('OI Partnership 기준 갱신 중…');
+
+  try {
+    const response = await fetch(
+      `/api/records/${encodeURIComponent(currentRecordId)}/recalculate-oi-partnership`,
+      { method: 'POST' }
+    );
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'OI Partnership 재분류에 실패했습니다.');
+
+    currentRecord = data.record;
+    renderCollaborationPanel(currentRecord);
+    setCollaborationStatus(
+      `OI Partnership v${data.oi_partnership_criteria_version || '1.0'} 기준 갱신 완료`,
+      'success'
+    );
+  } catch (error) {
+    setCollaborationStatus(error.message, 'error');
+  } finally {
+    button.disabled = false;
+    button.classList.remove('is-saving');
+  }
+}
+
+function aiRevisionInstruction(record) {
+  return isFastTriageRecord(record)
+    ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.2 update applied from chat answer.'
+    : 'Detail AI Agent Full Scout v3.3 re-evaluation applied from chat answer.';
+}
+
+function setAiApplyModalStatus(message = '', tone = '') {
+  if (!elements.aiApplyModalStatus) return;
+  elements.aiApplyModalStatus.textContent = message;
+  elements.aiApplyModalStatus.dataset.tone = tone;
+}
+
+function setAiApplyModalStep(step) {
+  if (!elements.aiApplyModal) return;
+  const previewStep = step === 'preview';
+  elements.aiApplyModal.dataset.step = previewStep ? 'preview' : 'confirm';
+  elements.aiApplyConfirmView.hidden = previewStep;
+  elements.aiApplyPreviewView.hidden = !previewStep;
+  elements.aiApplyConfirmActions.hidden = previewStep;
+  elements.aiApplyPreviewActions.hidden = !previewStep;
+  elements.aiApplyModalTitle.textContent = previewStep
+    ? '변경 내용 미리보기'
+    : 'Agent 답변을 현재 Asset에 반영할까요?';
+  setAiApplyModalStatus('');
+  (previewStep ? elements.aiApplyCommitButton : elements.aiApplyPreviewButton)?.focus();
+}
+
+function openAiApplyModal(context) {
+  if (!elements.aiApplyModalBackdrop) return;
+  pendingAiApplyContext = context;
+  pendingAiApplyPreview = null;
+  elements.aiApplySummaryPills.innerHTML = '';
+  elements.aiApplyDiffList.innerHTML = '';
+  setAiApplyModalStep('confirm');
+  elements.aiApplyModalBackdrop.hidden = false;
+  document.body.classList.add('ai-apply-modal-open');
+  elements.aiApplyPreviewButton?.focus();
+}
+
+function closeAiApplyModal() {
+  if (!elements.aiApplyModalBackdrop || elements.aiApplyModalBackdrop.hidden) return;
+  const sourceButton = pendingAiApplyContext?.button;
+  elements.aiApplyModalBackdrop.hidden = true;
+  document.body.classList.remove('ai-apply-modal-open');
+  pendingAiApplyContext = null;
+  pendingAiApplyPreview = null;
+  setAiApplyModalStatus('');
+  if (sourceButton?.isConnected) sourceButton.focus();
+}
+
+function aiApplyChangeType(row = {}) {
+  const path = String(row.path || '').toLowerCase();
+  if (path.includes('score')) return '점수 변경';
+  if (path.includes('source')) return '출처 추가';
+  if (/summary|reason|rationale|why_not_higher/.test(path)) return '판단근거 추가';
+  return 'Agent 검토 메모 추가';
+}
+
+function aiApplyContentPreview(value, label = '실제 반영 내용') {
+  const text = String(value ?? '');
+  const lines = text.split(/\r?\n/);
+  const truncated = lines.length > 5 || text.length > 700;
+  const shortText = lines.slice(0, 5).join('\n').slice(0, 700);
+  return `
+    <div class="ai-apply-content-preview">
+      <span>${escapeHtml(label)}</span>
+      <pre>${escapeHtml(shortText || '내용 없음')}${truncated ? '\n…' : ''}</pre>
+      ${truncated ? `<details><summary>전체 내용 보기</summary><pre>${escapeHtml(text)}</pre></details>` : ''}
+    </div>
+  `;
+}
+
+function renderAiApplyPreview(preview) {
+  const summary = preview?.summary || {};
+  elements.aiApplySummaryPills.innerHTML = `
+    <span><b>${Number(summary.json_change_count) || 0}</b> 실제 변경 항목</span>
+    <span><b>${Number(summary.report_change_count) || 0}</b> Revision Note 변경</span>
+    <span><b>${Number(summary.wiki_export_count) || 0}</b> 재생성 대상</span>
+  `;
+
+  const jsonRows = Array.isArray(preview?.json_diff) ? preview.json_diff : [];
+  const jsonContent = jsonRows.length
+    ? jsonRows.map((row) => `
+        <article class="ai-apply-json-row">
+          <div class="ai-apply-change-heading">
+            <strong>${escapeHtml(row.label || row.path)}</strong>
+            <span>${escapeHtml(aiApplyChangeType(row))}</span>
+          </div>
+          ${aiApplyContentPreview(row.after)}
+          <p class="ai-apply-location"><span>반영 위치</span><code>${escapeHtml(row.label || row.path)} · ${escapeHtml(row.path)}</code></p>
+          <div class="ai-apply-before-after">
+            <div><span>변경 전</span><pre>${escapeHtml(row.before)}</pre></div>
+            <div><span>변경 후</span><pre>${escapeHtml(row.after)}</pre></div>
+          </div>
+        </article>
+      `).join('')
+    : '<p class="ai-apply-empty">구조화 JSON에서 변경되는 값이 없습니다.</p>';
+  const rawJsonDiff = jsonRows.length
+    ? `<details class="ai-apply-raw-details"><summary>전체 raw JSON diff 보기</summary><pre>${escapeHtml(JSON.stringify(jsonRows, null, 2))}</pre></details>`
+    : '';
+
+  const reportDiff = preview?.report_diff || {};
+  const reportLines = Array.isArray(reportDiff.lines) ? reportDiff.lines : [];
+  const revisionNote = reportLines
+    .filter((line) => line.type === 'add')
+    .map((line) => line.text)
+    .join('\n')
+    .trim();
+  const reportContent = reportLines.length
+    ? `${aiApplyContentPreview(revisionNote, '실제로 추가될 Revision Note')}
+       <p class="ai-apply-location"><span>반영 위치</span><code>GPT 원문 리포트 하단 · Revision Note</code></p>
+       <details class="ai-apply-raw-details"><summary>원문 Report diff 상세보기</summary><div class="ai-apply-code-diff">${reportLines.map((line) => `
+        <div class="is-${escapeHtml(line.type || 'context')}"><span>${line.type === 'add' ? '+' : line.type === 'remove' ? '−' : '·'}</span><code>${escapeHtml(line.text)}</code></div>
+      `).join('')}</div>${reportDiff.truncated ? '<p class="ai-apply-truncated">긴 변경 내용은 일부만 표시했습니다.</p>' : ''}</details>`
+    : '<p class="ai-apply-empty">GPT 원문 리포트에서 변경되는 줄이 없습니다.</p>';
+
+  const wiki = preview?.wiki_export || {};
+  const wikiTargets = Array.isArray(wiki.targets) ? wiki.targets : [];
+  elements.aiApplyDiffList.innerHTML = `
+    <section class="ai-apply-diff-section">
+      <header><span>JSON</span><h3>점수 및 판단근거</h3></header>
+      <p class="ai-apply-diff-help">최종 저장될 항목명, 변경 유형, 실제 내용과 JSON 위치를 확인하세요.</p>
+      <div class="ai-apply-diff-section-body">${jsonContent}${rawJsonDiff}</div>
+    </section>
+    <section class="ai-apply-diff-section">
+      <header><span>REPORT</span><h3>GPT 원문 리포트</h3></header>
+      <p class="ai-apply-diff-help">${escapeHtml(reportDiff.summary || '')} 원문 하단에 추가될 내용을 최종 반영 전에 확인할 수 있습니다.</p>
+      <div class="ai-apply-diff-section-body">${reportContent}</div>
+    </section>
+    <section class="ai-apply-diff-section">
+      <header><span>EXPORT</span><h3>Wiki export</h3></header>
+      <div class="ai-apply-export-row">
+        <span class="ai-apply-export-icon" aria-hidden="true">↻</span>
+        <div><strong>${escapeHtml(wikiTargets.join(' · ') || 'Wiki export')}</strong><small>${escapeHtml(wiki.note || '')} 저장된 JSON을 기준으로 기존 Wiki 파일을 재생성합니다.</small></div>
+      </div>
+    </section>
+  `;
+}
+
+async function requestAiApplyPreview() {
+  if (!pendingAiApplyContext) return;
+  const button = elements.aiApplyPreviewButton;
+  const previousContent = button.innerHTML;
+  button.disabled = true;
+  button.textContent = '변경 계산 중…';
+  setAiApplyModalStatus('저장하지 않고 변경 전·후를 계산하고 있습니다.', 'working');
+  try {
+    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/preview-ai-revision`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        answer_markdown: pendingAiApplyContext.replyText,
+        actor_name: pendingAiApplyContext.actorName,
+        instruction: pendingAiApplyContext.instruction
+      })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '변경 내용 미리보기 실패');
+    pendingAiApplyPreview = data;
+    renderAiApplyPreview(data.preview || {});
+    setAiApplyModalStep('preview');
+  } catch (error) {
+    setAiApplyModalStatus(error.message, 'error');
+  } finally {
+    button.disabled = false;
+    button.innerHTML = previousContent;
+  }
+}
+
+async function commitAiApplyPreview() {
+  if (!pendingAiApplyContext || !pendingAiApplyPreview) return;
+  const context = pendingAiApplyContext;
+  const preview = pendingAiApplyPreview;
+  const button = elements.aiApplyCommitButton;
+  const previousText = button.textContent;
+  button.disabled = true;
+  button.textContent = '반영 중…';
+  setAiApplyModalStatus('확인한 변경을 저장하고 Wiki export를 재생성하고 있습니다.', 'working');
+  try {
+    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/apply-ai-revision`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        answer_markdown: context.replyText,
+        actor_name: context.actorName,
+        instruction: context.instruction,
+        base_record_hash: preview.base_record_hash
+      })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'AI 응답 반영 실패');
+
+    if (context.messageId) updateChatSessionMessage({ id: context.messageId, canApply: false });
+    const wasFastTriage = isFastTriageRecord(currentRecord);
+    currentRecord = data.record;
+    currentRecordId = data.record_id;
+    window.history.replaceState(null, '', detailUrlForCurrentRecord());
+    closeAiApplyModal();
+    await loadRecord();
+    addMessage('assistant', `${wasFastTriage
+      ? '확인한 JSON과 원문 리포트 변경을 반영했습니다.'
+      : '확인한 Team Review override와 Revision Note를 반영했습니다. GPT 원문 점수표는 변경하지 않았습니다.'}\n\n${summarizeDraftChanges(data.changes || [])}`);
+  } catch (error) {
+    setAiApplyModalStatus(error.message, 'error');
+  } finally {
+    button.disabled = false;
+    button.textContent = previousText;
+  }
+}
+
 async function createAiReplyJsonDraft(button) {
   if (!currentRecord) return;
   const bubble = button.closest('.agent-message');
   const replyText = bubble?.querySelector('.agent-message-text')?.innerText?.trim();
   if (!replyText) return;
 
-  const confirmed = window.confirm('??Agent ?듬????꾩옱 record JSON怨??먮Ц 由ы룷?몄뿉 諛섏쁺?좉퉴?? ???????쒕낫???먯닔??媛깆떊?⑸땲??');
-  if (!confirmed) return;
-
-  button.disabled = true;
-  const previousText = button.textContent;
-  button.textContent = '반영 중';
-
-  try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/apply-ai-revision`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        answer_markdown: replyText,
-        instruction: isFastTriageRecord(currentRecord)
-          ? 'Detail AI Agent GPT 吏移?1 Fast Triage v3.1 update applied from chat answer.'
-          : 'Detail AI Agent v3.1 re-evaluation applied from chat answer.'
-      })
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.detail || 'AI ?듬? 諛섏쁺 ?ㅽ뙣');
-
-    if (bubble.dataset.messageId) {
-      updateChatSessionMessage({ id: bubble.dataset.messageId, canApply: false });
-    }
-    currentRecord = data.record;
-    currentRecordId = data.record_id;
-    window.history.replaceState(null, '', detailUrlForCurrentRecord());
-    await loadRecord();
-    addMessage('assistant', `JSON怨??먮Ц 由ы룷?몄뿉 諛섏쁺?덉뒿?덈떎.\n\n${summarizeDraftChanges(data.changes || [])}`);
-  } catch (error) {
-    addMessage('assistant', `諛섏쁺 ?ㅽ뙣: ${error.message}`);
-    button.disabled = false;
-    button.textContent = previousText;
-  }
+  const actorName = await ensureIdentity();
+  if (!actorName) return;
+  openAiApplyModal({
+    button,
+    messageId: bubble.dataset.messageId || '',
+    replyText,
+    actorName,
+    instruction: aiRevisionInstruction(currentRecord)
+  });
 }
 
 async function saveRecord(payload, statusTarget = null) {
@@ -2190,7 +3143,6 @@ async function saveRecord(payload, statusTarget = null) {
 
   currentRecordId = data.record_id;
   window.history.replaceState(null, '', detailUrlForCurrentRecord());
-  await fetch('/api/obsidian/export', { method: 'POST' }).catch(() => null);
   await loadRecord();
   return data;
 }
@@ -2201,7 +3153,7 @@ async function deleteCurrentRecord() {
   const table = currentRecord.structured_table || {};
   const asset = summary.asset_name || table.asset_name || currentRecordId;
   const company = summary.company || table.company || '-';
-  const confirmed = window.confirm(`${asset} 쨌 ${company} record瑜???젣?좉퉴??\n\njson/pipeline-records.json?먯꽌 ?쒓굅?섍퀬 Obsidian MD???ъ깮?깅맗?덈떎.`);
+  const confirmed = window.confirm(`${asset} · ${company} record를 삭제할까요?\n\njson/pipeline-records.json에서 제거되고 Obsidian MD가 재생성됩니다.`);
   if (!confirmed) return;
 
   elements.status.textContent = 'Deleting';
@@ -2211,13 +3163,13 @@ async function deleteCurrentRecord() {
       method: 'DELETE'
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.detail || '??젣 ?ㅽ뙣');
+    if (!response.ok) throw new Error(data.detail || '삭제 실패');
     elements.status.textContent = 'Deleted';
-    window.location.href = '/';
+    window.location.href = elements.detailBackLink?.href || '/';
   } catch (error) {
     elements.status.textContent = 'Delete failed';
     elements.deleteRecordButton.disabled = false;
-    addMessage('assistant', `??젣 ?ㅽ뙣: ${error.message}`);
+    addMessage('assistant', `삭제 실패: ${error.message}`);
   }
 }
 
@@ -2234,100 +3186,53 @@ async function loadRecord() {
   currentRecord = data.record;
   currentRecordId = data.record_id;
   renderRecord(currentRecord);
-  elements.status.textContent = 'Loaded';
   initializeChatSessions();
 }
 
-function openAiDrawer() {
-  elements.aiDrawer.hidden = false;
-  elements.aiBackdrop.hidden = false;
-  requestAnimationFrame(() => {
-    elements.aiDrawer.classList.add('open');
-    elements.aiBackdrop.classList.add('open');
-    elements.aiDrawer.setAttribute('aria-hidden', 'false');
-    elements.input.focus();
-  });
-}
-
-function closeAiDrawer() {
-  elements.aiDrawer.classList.remove('open');
-  elements.aiBackdrop.classList.remove('open');
-  elements.aiDrawer.setAttribute('aria-hidden', 'true');
-  setTimeout(() => {
-    elements.aiDrawer.hidden = true;
-    elements.aiBackdrop.hidden = true;
-  }, 180);
-}
-
-function setupResizableDrawer(drawer, storageKey, defaultWidth = 560) {
-  const handle = drawer?.querySelector('[data-resize-drawer]');
-  if (!drawer || !handle) return;
-
-  const minWidth = 380;
-  const getMaxWidth = () => Math.max(minWidth, Math.min(window.innerWidth - 32, 1080));
-  const clampWidth = (value) => Math.max(minWidth, Math.min(value, getMaxWidth()));
-  const applyWidth = (value) => {
-    const width = clampWidth(value);
-    drawer.style.setProperty('--drawer-width', `${width}px`);
-    localStorage.setItem(storageKey, String(width));
-  };
-
-  const savedWidth = Number(localStorage.getItem(storageKey));
-  applyWidth(Number.isFinite(savedWidth) ? savedWidth : defaultWidth);
-
-  const startResize = (event) => {
-    event.preventDefault();
-    handle.setPointerCapture?.(event.pointerId);
-    drawer.classList.add('is-resizing');
-
-    const onMove = (moveEvent) => {
-      applyWidth(window.innerWidth - moveEvent.clientX);
-    };
-    const onUp = () => {
-      drawer.classList.remove('is-resizing');
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
-    };
-
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp, { once: true });
-  };
-
-  handle.addEventListener('pointerdown', startResize);
-  handle.addEventListener('keydown', (event) => {
-    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
-    event.preventDefault();
-    const current = Number.parseInt(getComputedStyle(drawer).getPropertyValue('--drawer-width'), 10) || defaultWidth;
-    if (event.key === 'ArrowLeft') applyWidth(current + 32);
-    if (event.key === 'ArrowRight') applyWidth(current - 32);
-    if (event.key === 'Home') applyWidth(minWidth);
-    if (event.key === 'End') applyWidth(getMaxWidth());
-  });
-
-  window.addEventListener('resize', () => {
-    const current = Number.parseInt(getComputedStyle(drawer).getPropertyValue('--drawer-width'), 10) || defaultWidth;
-    applyWidth(current);
-  });
-}
+let floatingAgentController = null;
 
 const CRITERIA_DRAWER_SCOPE_LABELS = {
   full: 'TAB2 · Full Scout (PASS/REVIEW/FAIL)',
-  focus: 'TAB3 · 집중 관리 (OI Partnership Type)'
+  focus: 'TAB3 · 집중관리 (OI Partnership Type)'
 };
 
 function updateCriteriaDrawerScope() {
   const isFocusTracked = currentRecord?.meta?.focus_management?.is_tracked === true;
-  const mode = isFocusTracked ? 'focus' : 'full';
+  const mode = viewTab === 'focus' && isFocusTracked ? 'focus' : 'full';
   if (elements.criteriaDrawerScopeLabel) {
     elements.criteriaDrawerScopeLabel.textContent = CRITERIA_DRAWER_SCOPE_LABELS[mode] || '';
   }
-  document.querySelectorAll('[data-criteria-tab]').forEach((section) => {
+  elements.criteriaDrawerBody?.querySelectorAll('[data-criteria-tab]').forEach((section) => {
     section.hidden = section.dataset.criteriaTab !== mode;
   });
+  if (elements.criteriaDrawer) elements.criteriaDrawer.dataset.activeCriteriaTab = mode;
+  return mode;
 }
 
-function openCriteriaDrawer() {
-  updateCriteriaDrawerScope();
+async function syncCriteriaDrawerFromDashboard(mode) {
+  const response = await fetch('/', { cache: 'no-store' });
+  if (!response.ok) throw new Error(`Dashboard criteria HTTP ${response.status}`);
+  const dashboardHtml = await response.text();
+  const dashboardDocument = new DOMParser().parseFromString(dashboardHtml, 'text/html');
+  const dashboardBody = dashboardDocument.querySelector('#criteriaDrawer .criteria-drawer-body');
+  if (!dashboardBody || !elements.criteriaDrawerBody) {
+    throw new Error('Dashboard 판단근거를 찾을 수 없습니다.');
+  }
+  const activeSections = [...dashboardBody.children]
+    .filter((section) => section.dataset.criteriaTab === mode);
+  if (!activeSections.length) throw new Error(`Dashboard ${mode} 판단근거가 비어 있습니다.`);
+  const fragment = document.createDocumentFragment();
+  activeSections.forEach((section) => {
+    const clone = section.cloneNode(true);
+    clone.hidden = false;
+    fragment.append(clone);
+  });
+  elements.criteriaDrawerBody.replaceChildren(fragment);
+  elements.criteriaDrawer.dataset.activeCriteriaTab = mode;
+}
+
+async function openCriteriaDrawer() {
+  const mode = updateCriteriaDrawerScope();
   elements.criteriaDrawer.hidden = false;
   elements.criteriaBackdrop.hidden = false;
   requestAnimationFrame(() => {
@@ -2335,6 +3240,14 @@ function openCriteriaDrawer() {
     elements.criteriaBackdrop.classList.add('open');
     elements.criteriaDrawer.setAttribute('aria-hidden', 'false');
   });
+  if (elements.criteriaDrawerBody) elements.criteriaDrawerBody.setAttribute('aria-busy', 'true');
+  try {
+    await syncCriteriaDrawerFromDashboard(mode);
+  } catch (error) {
+    console.warn('Dashboard 판단근거 동기화 실패:', error);
+  } finally {
+    elements.criteriaDrawerBody?.removeAttribute('aria-busy');
+  }
 }
 
 function closeCriteriaDrawer() {
@@ -2375,9 +3288,9 @@ function formatEditorJson() {
   try {
     const parsed = JSON.parse(elements.jsonEditor.value);
     elements.jsonEditor.value = JSON.stringify(parsed, null, 2);
-    elements.editStatus.textContent = '?щ㎎ ?꾨즺';
+    elements.editStatus.textContent = '정렬 완료';
   } catch (error) {
-    elements.editStatus.textContent = `JSON ?ㅻ쪟: ${error.message}`;
+    elements.editStatus.textContent = `JSON 오류: ${error.message}`;
   }
 }
 
@@ -2386,7 +3299,7 @@ async function saveEditedJson() {
   try {
     payload = JSON.parse(elements.jsonEditor.value);
   } catch (error) {
-    elements.editStatus.textContent = `JSON ?ㅻ쪟: ${error.message}`;
+    elements.editStatus.textContent = `JSON 오류: ${error.message}`;
     return;
   }
 
@@ -2406,12 +3319,12 @@ async function applyPendingDraft(button) {
   try {
     await saveRecord(pendingDraftRecord);
     pendingDraftRecord = null;
-    addMessage('assistant', '?섏젙 珥덉븞??JSON ?먮낯????ν뻽?듬땲?? ?쇱そ JSON 蹂닿린? 硫붿씤 ??쒕낫???먯닔????媛?湲곗??쇰줈 媛깆떊?⑸땲??');
+    addMessage('assistant', '수정 초안을 JSON 원본에 저장했습니다. 원문 JSON 보기와 메인 대시보드 점수가 같은 기준으로 갱신됩니다.');
   } catch (error) {
-    addMessage('assistant', `珥덉븞 ????ㅻ쪟: ${error.message}`);
+    addMessage('assistant', `초안 저장 오류: ${error.message}`);
   } finally {
     button.disabled = false;
-    button.textContent = '珥덉븞 ?곸슜';
+    button.textContent = '초안 적용';
   }
 }
 
@@ -2473,10 +3386,10 @@ async function streamDetailChatReply(message, bubble) {
     if (!parsed) return;
     if (parsed.event === 'sources') {
       sources = parsed.data || [];
-      updateMessage(bubble, text || '愿??wiki note瑜?李얠븯?듬땲?? ?듬????앹꽦 以묒엯?덈떎...', { sources });
+      updateMessage(bubble, text || '관련 wiki note를 찾았습니다. 응답을 생성 중입니다…', { sources });
     }
     if (parsed.event === 'status' && !text) {
-      updateMessage(bubble, parsed.data?.message || '?듬? ?앹꽦 以묒엯?덈떎...', { sources });
+      updateMessage(bubble, parsed.data?.message || '응답을 생성 중입니다…', { sources });
     }
     if (parsed.event === 'delta') {
       text += parsed.data?.text || '';
@@ -2484,7 +3397,7 @@ async function streamDetailChatReply(message, bubble) {
     }
     if (parsed.event === 'done') {
       completed = true;
-      updateMessage(bubble, text || '?듬???鍮꾩뼱 ?덉뒿?덈떎. ?ㅼ떆 吏덈Ц??二쇱꽭??', { done: true, sources });
+      updateMessage(bubble, text || '응답이 비어 있습니다. 다시 질문해 주세요.', { done: true, sources });
     }
   };
 
@@ -2498,7 +3411,7 @@ async function streamDetailChatReply(message, bubble) {
   }
 
   if (buffer.trim()) handleSseBlock(buffer);
-  if (!completed) updateMessage(bubble, text || '?듬???鍮꾩뼱 ?덉뒿?덈떎. ?ㅼ떆 吏덈Ц??二쇱꽭??', { done: true, sources });
+  if (!completed) updateMessage(bubble, text || '응답이 비어 있습니다. 다시 질문해 주세요.', { done: true, sources });
 }
 
 elements.form.addEventListener('submit', async (event) => {
@@ -2510,20 +3423,25 @@ elements.form.addEventListener('submit', async (event) => {
   retitleActiveChatSessionFromQuestion(message);
   addMessage('user', message);
   const submitButton = elements.form.querySelector('button[type="submit"]');
+  const submitButtonContent = submitButton?.innerHTML;
   if (submitButton) {
     submitButton.disabled = true;
-    submitButton.textContent = '응답 중';
+    submitButton.setAttribute('aria-busy', 'true');
+    submitButton.setAttribute('aria-label', '답변 생성 중');
+    submitButton.innerHTML = '<svg class="agent-send-progress" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /></svg>';
   }
-  const responseBubble = addMessage('assistant', '吏덈Ц 遺꾩꽍 以?..', { pending: true });
+  const responseBubble = addMessage('assistant', '질문 분석 중…', { pending: true });
 
   try {
     await streamDetailChatReply(message, responseBubble);
   } catch (error) {
-    updateMessage(responseBubble, `梨꾪똿 ?묐떟 ?ㅻ쪟: ${error.message}`, { done: true });
+    updateMessage(responseBubble, `채팅 응답 오류: ${error.message}`, { done: true });
   } finally {
     if (submitButton) {
       submitButton.disabled = false;
-      submitButton.textContent = '吏덈Ц';
+      submitButton.removeAttribute('aria-busy');
+      submitButton.setAttribute('aria-label', '질문 전송');
+      submitButton.innerHTML = submitButtonContent;
     }
   }
 });
@@ -2557,27 +3475,42 @@ elements.messages.addEventListener('click', (event) => {
   const button = event.target.closest('button[data-action]');
   if (!button) return;
 
-  if (button.dataset.action === 'apply-ai-reply') {
-    createAiReplyJsonDraft(button);
+  if (button.dataset.action === 'copy-message') {
+    const bubble = button.closest('.agent-message');
+    const messageId = bubble?.dataset.messageId;
+    const message = activeChatSession()?.messages?.find((item) => item.id === messageId);
+    if (message) copyChatMessage(message.text || '', button);
   }
 
-  if (button.dataset.action === 'apply-draft') {
-    applyPendingDraft(button);
-  }
-
-  if (button.dataset.action === 'review-draft') {
-    reviewPendingDraft();
+  if (button.dataset.action === 'open-message-window') {
+    const bubble = button.closest('.agent-message');
+    const messageId = bubble?.dataset.messageId;
+    const message = activeChatSession()?.messages?.find((item) => item.id === messageId);
+    if (message) openMarkdownInNewWindow('AI 응답 전체보기', message.text || '');
   }
 });
 
 elements.detailOutlineList?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-outline-target]');
   if (!button) return;
-  document.getElementById(button.dataset.outlineTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  navigateToOutlineTarget(button.dataset.outlineTarget);
+});
+
+elements.detailScoreSequence?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-report-criterion]');
+  if (!button) return;
+  navigateToCriterionReportSection(button.dataset.reportCriterion);
 });
 
 elements.detailFocusToggle?.addEventListener('click', () => {
   saveDetailFocus(elements.detailFocusToggle.dataset.focusAction || 'add');
+});
+
+elements.rubricRefreshButton?.addEventListener('click', refreshRubric);
+elements.oiPartnershipRefreshButton?.addEventListener('click', refreshOiPartnership);
+elements.detailReviewInfoToggle?.addEventListener('click', () => {
+  const expanded = elements.detailReviewInfoToggle.getAttribute('aria-expanded') === 'true';
+  setReviewInfoExpanded(!expanded);
 });
 
 elements.detailActionDate?.addEventListener('change', (event) => {
@@ -2655,6 +3588,10 @@ elements.detailCommentForm?.addEventListener('submit', (event) => {
   submitDetailComment();
 });
 
+elements.detailCommentInput?.addEventListener('input', (event) => {
+  syncMessageComposer(event.currentTarget);
+});
+
 elements.detailCommentInput?.addEventListener('keydown', (event) => {
   if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
     event.preventDefault();
@@ -2696,6 +3633,28 @@ elements.detailViewerBackButton?.addEventListener('click', () => {
   renderSourceReport(currentRecord);
 });
 
+elements.detailViewerOpenWindowButton?.addEventListener('click', () => {
+  openReportModal();
+});
+
+elements.detailViewerCopyButton?.addEventListener('click', () => {
+  copyCurrentSourceMarkdown(elements.detailViewerCopyButton);
+});
+
+elements.reportModalCopyButton?.addEventListener('click', () => {
+  copyCurrentSourceMarkdown(elements.reportModalCopyButton);
+});
+
+elements.reportModalCloseButton?.addEventListener('click', closeReportModal);
+
+elements.reportModalBackdrop?.addEventListener('click', (event) => {
+  if (event.target === elements.reportModalBackdrop) closeReportModal();
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !elements.reportModalBackdrop?.hidden) closeReportModal();
+});
+
 if (elements.detailAttachmentDropzone) {
   ['dragenter', 'dragover'].forEach((eventName) => {
     elements.detailAttachmentDropzone.addEventListener(eventName, (event) => {
@@ -2727,18 +3686,83 @@ if (elements.detailAttachmentDropzone) {
 
 elements.qualitativeReviewPanel?.addEventListener('submit', (event) => {
   const form = event.target.closest('.qualitative-form');
-  if (!form) return;
-  event.preventDefault();
-  submitQualitativeOpinion(form.dataset.criterionId, form);
+  if (form) {
+    event.preventDefault();
+    submitQualitativeOpinion(form.dataset.criterionId, form);
+    return;
+  }
+  const addCriterionForm = event.target.closest('#qualitativeAddCriterionForm');
+  if (addCriterionForm) {
+    event.preventDefault();
+    addCustomQualitativeCriterion(addCriterionForm);
+  }
 });
 
-elements.detailAiButton.addEventListener('click', openAiDrawer);
+elements.qualitativeReviewPanel?.addEventListener('input', (event) => {
+  const textarea = event.target.closest('.qualitative-form .message-composer-textarea');
+  if (textarea) syncMessageComposer(textarea);
+});
+
+elements.qualitativeReviewPanel?.addEventListener('keydown', (event) => {
+  const textarea = event.target.closest('.qualitative-form .message-composer-textarea');
+  if (!textarea || event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
+  event.preventDefault();
+  textarea.closest('form')?.requestSubmit();
+});
+
+elements.qualitativeReviewPanel?.addEventListener('click', (event) => {
+  const aiGenerateAllButton = event.target.closest('#qualitativeAiGenerateAllButton');
+  if (aiGenerateAllButton) {
+    generateAllQualitativeAiOpinions(aiGenerateAllButton);
+    return;
+  }
+  const deleteButton = event.target.closest('[data-delete-qualitative-entry-id]');
+  if (deleteButton) {
+    deleteQualitativeOpinion(deleteButton.dataset.deleteQualitativeEntryId);
+    return;
+  }
+  const aiGenerateButton = event.target.closest('[data-ai-generate-criterion-id]');
+  if (aiGenerateButton) {
+    generateQualitativeAiOpinion(aiGenerateButton.dataset.aiGenerateCriterionId, aiGenerateButton);
+    return;
+  }
+  const deleteCriterionButton = event.target.closest('[data-delete-criterion-id]');
+  if (deleteCriterionButton) {
+    deleteCustomQualitativeCriterion(deleteCriterionButton.dataset.deleteCriterionId);
+    return;
+  }
+  const addToggleButton = event.target.closest('#qualitativeAddCriterionToggle');
+  if (addToggleButton) {
+    const form = elements.qualitativeReviewPanel.querySelector('#qualitativeAddCriterionForm');
+    if (form) {
+      form.hidden = false;
+      addToggleButton.hidden = true;
+      loadQualitativeCriterionSuggestions(form);
+      form.querySelector('input[name="label"]')?.focus();
+    }
+    return;
+  }
+  const importCriterionButton = event.target.closest('[data-import-criterion]');
+  if (importCriterionButton) {
+    importQualitativeCriterion(importCriterionButton);
+    return;
+  }
+  const cancelAddButton = event.target.closest('#qualitativeAddCriterionCancel');
+  if (cancelAddButton) {
+    const form = elements.qualitativeReviewPanel.querySelector('#qualitativeAddCriterionForm');
+    const toggleButton = elements.qualitativeReviewPanel.querySelector('#qualitativeAddCriterionToggle');
+    if (form) {
+      form.reset();
+      form.hidden = true;
+    }
+    if (toggleButton) toggleButton.hidden = false;
+  }
+});
+
 elements.criteriaDrawerButton.addEventListener('click', openCriteriaDrawer);
 elements.criteriaDrawerClose.addEventListener('click', closeCriteriaDrawer);
 elements.criteriaBackdrop.addEventListener('click', closeCriteriaDrawer);
 elements.deleteRecordButton.addEventListener('click', deleteCurrentRecord);
-elements.aiDrawerClose.addEventListener('click', closeAiDrawer);
-elements.aiBackdrop.addEventListener('click', closeAiDrawer);
 elements.editButton?.addEventListener('click', openEditDrawer);
 elements.editDrawerClose?.addEventListener('click', closeEditDrawer);
 elements.editBackdrop?.addEventListener('click', closeEditDrawer);
@@ -2746,20 +3770,37 @@ elements.formatJsonButton?.addEventListener('click', formatEditorJson);
 elements.saveJsonEditButton?.addEventListener('click', saveEditedJson);
 
 window.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && elements.aiDrawer.classList.contains('open')) {
-    closeAiDrawer();
-  }
-  if (event.key === 'Escape' && elements.criteriaDrawer.classList.contains('open')) {
-    closeCriteriaDrawer();
-  }
-  if (event.key === 'Escape' && elements.editDrawer.classList.contains('open')) {
+  if (event.key !== 'Escape') return;
+  if (elements.editDrawer.classList.contains('open')) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
     closeEditDrawer();
+    return;
+  }
+  if (elements.criteriaDrawer.classList.contains('open')) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    closeCriteriaDrawer();
   }
 });
 
-setupResizableDrawer(elements.aiDrawer, 'skbp.detail.aiDrawerWidth', 600);
+floatingAgentController = initFloatingAgent({
+  launcher: elements.detailAiButton,
+  panel: elements.aiDrawer,
+  closeButton: elements.aiDrawerClose,
+  minimizeButton: elements.aiDrawer.querySelector('[data-floating-agent-minimize]'),
+  maximizeButton: elements.aiDrawer.querySelector('[data-floating-agent-maximize]'),
+  dragHandle: elements.aiDrawer.querySelector('[data-floating-agent-drag]'),
+  resizeHandle: elements.aiDrawer.querySelector('[data-floating-agent-resize]'),
+  storageKey: 'skbp.detail.floatingAgentGeometry.v1',
+  initialWidth: 600,
+  initialHeight: 700,
+  focusTarget: elements.input
+});
 setupThemeToggle();
+initAuthUI();
 renderCommentIdentity();
+window.addEventListener('skbp:authchange', renderCommentIdentity);
 
 elements.identityModalSubmit?.addEventListener('click', () => {
   const value = elements.identityModalInput?.value.trim() || '';
@@ -2787,8 +3828,8 @@ elements.identityModalInput?.addEventListener('keydown', (event) => {
 });
 
 elements.detailCommentIdentityChange?.addEventListener('click', async () => {
-  const entered = await openIdentityModal();
-  if (entered) setStoredIdentity(entered);
+  await openAuthModal('signin');
+  renderCommentIdentity();
 });
 
 loadRecord().catch((error) => {

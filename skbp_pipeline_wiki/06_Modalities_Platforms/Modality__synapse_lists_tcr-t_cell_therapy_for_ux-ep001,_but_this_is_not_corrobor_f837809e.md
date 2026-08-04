@@ -6,8 +6,8 @@ aliases:
   - "synapse_lists_tcr-t_cell_therapy_for_ux-ep001,_but_this_is_not_corrobor_f837809e"
 tags:
   - "pipeline/modality"
-created_at: "2026-07-29"
-updated_at: "2026-07-29"
+created_at: "2026-08-02"
+updated_at: "2026-08-02"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

@@ -6,8 +6,8 @@ aliases:
   - "shanghai_unixell_biotechnology_co.,_ltd"
 tags:
   - "pipeline/company"
-created_at: "2026-07-29"
-updated_at: "2026-07-29"
+created_at: "2026-08-02"
+updated_at: "2026-08-02"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

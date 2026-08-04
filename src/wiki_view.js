@@ -1,5 +1,7 @@
 import { setupThemeToggle } from './theme.js';
 
+import { initAuthUI } from './auth.js?v=20260802-required-login-1';
+
 const params = new URLSearchParams(window.location.search);
 const notePath = params.get('path') || '';
 
@@ -32,13 +34,68 @@ function parseFrontmatter(markdown) {
 }
 
 function renderInlineMarkdown(text) {
-  return escapeHtml(text)
-    .replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '<span class="wikilink">$2</span>')
-    .replace(/\[\[([^\]]+)\]\]/g, '<span class="wikilink">$1</span>')
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
+  const tokens = [];
+  const stash = (html) => `\uE000${tokens.push(html) - 1}\uE001`;
+  const tokenized = String(text || '')
+    .replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, (_, target, label) => stash(renderWikiLink(target, label)))
+    .replace(/\[\[([^\]]+)\]\]/g, (_, target) => stash(renderWikiLink(target, target)))
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, (_, label, href) => {
+      try {
+        const url = new URL(href);
+        if (!['http:', 'https:'].includes(url.protocol)) return escapeHtml(label);
+        return stash(`<a href="${escapeHtml(url.href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`);
+      } catch {
+        return escapeHtml(label);
+      }
+    });
+  return escapeHtml(tokenized)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>');
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\uE000(\d+)\uE001/g, (_, index) => tokens[Number(index)] || '');
+}
+
+function renderWikiLink(rawTarget, rawLabel) {
+  const target = String(rawTarget || '').split('#', 1)[0].trim();
+  const label = String(rawLabel || target).trim();
+  if (!target) return `<span class="wikilink">${escapeHtml(label)}</span>`;
+  const path = /\.md$/i.test(target) ? target : `${target}.md`;
+  return `<a class="wikilink" href="/wiki-view?path=${encodeURIComponent(path)}">${escapeHtml(label)}</a>`;
+}
+
+function splitMarkdownTableRow(line) {
+  const source = String(line || '').trim().replace(/^\|/, '').replace(/\|$/, '');
+  const cells = [];
+  let cell = '';
+  let wikiDepth = 0;
+  for (let index = 0; index < source.length; index += 1) {
+    const pair = source.slice(index, index + 2);
+    if (pair === '[[') {
+      wikiDepth += 1;
+      cell += pair;
+      index += 1;
+      continue;
+    }
+    if (pair === ']]' && wikiDepth > 0) {
+      wikiDepth -= 1;
+      cell += pair;
+      index += 1;
+      continue;
+    }
+    if (source[index] === '\\' && source[index + 1] === '|') {
+      cell += '|';
+      index += 1;
+      continue;
+    }
+    if (source[index] === '|' && wikiDepth === 0) {
+      cells.push(cell.trim());
+      cell = '';
+      continue;
+    }
+    cell += source[index];
+  }
+  cells.push(cell.trim());
+  return cells;
 }
 
 function renderFrontmatter(frontmatter) {
@@ -123,7 +180,7 @@ function renderMarkdownTable(lines, startIndex) {
   }
   const rows = tableLines
     .filter((line) => !/^\|\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$/.test(line))
-    .map((line) => line.replace(/^\||\|$/g, '').split('|').map((cell) => cell.trim()));
+    .map(splitMarkdownTableRow);
   if (!rows.length) return { html: '', nextIndex: index };
   const [head, ...body] = rows;
   const header = `<thead><tr>${head.map((cell) => `<th>${renderInlineMarkdown(cell)}</th>`).join('')}</tr></thead>`;
@@ -208,16 +265,20 @@ async function loadWikiNote() {
   elements.title.textContent = 'Wiki : ' + data.title;
   elements.noteTitle.textContent = data.title;
   elements.notePath.textContent = data.path;
-  elements.rawLink.href = `/wiki/${data.path}`;
+  elements.rawLink.href = `/wiki/${data.path.split('/').map(encodeURIComponent).join('/')}`;
+  elements.rawLink.hidden = false;
   elements.content.innerHTML = renderMarkdown(data.markdown);
   elements.status.textContent = 'Loaded';
+  document.title = `${data.title} · SKBP Wiki`;
 }
 
 setupThemeToggle();
+initAuthUI();
 
 loadWikiNote().catch((error) => {
   elements.status.textContent = 'Failed';
+  elements.rawLink.hidden = true;
   elements.noteTitle.textContent = 'Wiki note load failed';
   elements.notePath.textContent = notePath || '-';
-  elements.content.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`;
+  elements.content.innerHTML = `<div class="empty-state wiki-error-state"><strong>노트를 불러오지 못했습니다.</strong><span>${escapeHtml(error.message)}</span><a class="secondary-link" href="/">Dashboard로 돌아가기</a></div>`;
 });

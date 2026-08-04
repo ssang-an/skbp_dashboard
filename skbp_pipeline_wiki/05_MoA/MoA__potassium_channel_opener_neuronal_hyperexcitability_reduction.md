@@ -6,8 +6,8 @@ aliases:
   - "potassium_channel_opener_neuronal_hyperexcitability_reduction"
 tags:
   - "pipeline/moa"
-created_at: "2026-07-29"
-updated_at: "2026-07-29"
+created_at: "2026-08-02"
+updated_at: "2026-08-02"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

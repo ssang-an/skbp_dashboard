@@ -7,15 +7,232 @@
     "meta",
     "input",
     "source_report",
-    "company_profile",
     "json_summary",
     "structured_table",
     "hard_filter",
     "scoring",
-    "competitive_analysis",
     "validation",
-    "final_insight",
-    "obsidian"
+    "final_insight"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "meta": {
+            "properties": {
+              "review_type": { "const": "fast_triage" }
+            },
+            "required": ["review_type"]
+          }
+        }
+      },
+      "then": {
+        "required": ["triage"]
+      },
+      "else": {
+        "required": ["company_profile", "competitive_analysis", "obsidian"]
+      }
+    },
+    {
+      "if": {
+        "required": ["meta"],
+        "properties": {
+          "meta": {
+            "properties": {
+              "review_type": { "const": "fast_triage" }
+            },
+            "required": ["review_type"]
+          }
+        },
+        "anyOf": [
+          {
+            "properties": {
+              "meta": {
+                "properties": { "schema_version": { "const": "3.2" } },
+                "required": ["schema_version"]
+              }
+            }
+          },
+          {
+            "properties": {
+              "meta": {
+                "properties": { "instruction_version": { "type": "string", "pattern": "^3\\.2(?:-r[0-9]+)?$" } },
+                "required": ["instruction_version"]
+              }
+            }
+          },
+          {
+            "properties": {
+              "scoring": {
+                "properties": {
+                  "criteria": {
+                    "anyOf": [
+                      {
+                        "properties": { "target_relevance": { "required": ["evidence_basis"] } },
+                        "required": ["target_relevance"]
+                      },
+                      {
+                        "properties": { "moa_validity": { "required": ["evidence_basis"] } },
+                        "required": ["moa_validity"]
+                      },
+                      {
+                        "properties": { "data_maturity": { "required": ["evidence_basis"] } },
+                        "required": ["data_maturity"]
+                      }
+                    ]
+                  }
+                },
+                "required": ["criteria"]
+              }
+            },
+            "required": ["scoring"]
+          },
+          {
+            "properties": {
+              "triage": {
+                "properties": { "status": { "const": "UNVERIFIED" } },
+                "required": ["status"]
+              }
+            },
+            "required": ["triage"]
+          }
+        ]
+      },
+      "then": {
+        "properties": {
+          "meta": {
+            "properties": {
+              "schema_version": { "const": "3.2" },
+              "instruction_version": { "type": "string", "pattern": "^3\\.2(?:-r[0-9]+)?$" },
+              "rubric_version": { "type": "string", "pattern": "^3\\.2(?:-r[0-9]+)?$" }
+            },
+            "required": ["schema_version", "instruction_version", "rubric_version"]
+          },
+          "structured_table": {
+            "properties": {
+              "development_stage": { "$ref": "#/$defs/canonical_development_stage" }
+            }
+          },
+          "hard_filter": {
+            "properties": {
+              "status": { "enum": ["SELECT", "REJECT", "UNVERIFIED"] }
+            }
+          },
+          "triage": { "$ref": "#/$defs/current_triage" },
+          "scoring": { "$ref": "#/$defs/current_triage_scoring" },
+          "final_insight": {
+            "properties": {
+              "recommendation": {
+                "enum": ["Run Full Scout", "Do not run Full Scout", "Verify asset identity"]
+              }
+            },
+            "required": ["recommendation"]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "hard_filter": {
+                  "properties": { "status": { "const": "SELECT" } },
+                  "required": ["status"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "final_insight": {
+                  "properties": { "recommendation": { "const": "Run Full Scout" } },
+                  "required": ["recommendation"]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "hard_filter": {
+                  "properties": { "status": { "const": "REJECT" } },
+                  "required": ["status"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "final_insight": {
+                  "properties": { "recommendation": { "const": "Do not run Full Scout" } },
+                  "required": ["recommendation"]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "hard_filter": {
+                  "properties": { "status": { "const": "UNVERIFIED" } },
+                  "required": ["status"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "final_insight": {
+                  "properties": { "recommendation": { "const": "Verify asset identity" } },
+                  "required": ["recommendation"]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "required": ["meta"],
+        "anyOf": [
+          {
+            "properties": {
+              "meta": {
+                "properties": { "instruction_version": { "const": "3.3" } },
+                "required": ["instruction_version"]
+              }
+            }
+          },
+          {
+            "properties": {
+              "meta": {
+                "properties": { "rubric_version": { "const": "3.3" } },
+                "required": ["rubric_version"],
+                "not": { "required": ["rubric_recalculation"] }
+              }
+            }
+          }
+        ]
+      },
+      "then": {
+        "properties": {
+          "meta": {
+            "properties": {
+              "schema_version": { "const": "3.2" },
+              "instruction_version": { "const": "3.3" },
+              "rubric_version": { "const": "3.3" }
+            },
+            "required": ["schema_version", "instruction_version", "rubric_version"]
+          },
+          "structured_table": {
+            "properties": {
+              "development_stage": { "$ref": "#/$defs/canonical_development_stage" }
+            }
+          },
+          "hard_filter": {
+            "properties": {
+              "status": { "enum": ["PASS", "REVIEW", "FAIL"] }
+            }
+          }
+        }
+      }
+    }
   ],
   "additionalProperties": false,
   "properties": {
@@ -32,10 +249,13 @@
       "$ref": "#/$defs/json_summary"
     },
     "structured_table": {
-      "$ref": "#/$defs/structured_table"
+      "$ref": "#/$defs/structured_table_union"
     },
     "hard_filter": {
       "$ref": "#/$defs/hard_filter"
+    },
+    "triage": {
+      "$ref": "#/$defs/triage"
     },
     "scoring": {
       "$ref": "#/$defs/scoring"
@@ -44,7 +264,7 @@
       "$ref": "#/$defs/competitive_analysis"
     },
     "validation": {
-      "$ref": "#/$defs/validation"
+      "$ref": "#/$defs/validation_union"
     },
     "final_insight": {
       "$ref": "#/$defs/final_insight"
@@ -72,23 +292,50 @@
         "type": "string"
       }
     },
+    "canonical_development_stage": {
+      "type": "string",
+      "enum": [
+        "Hit Discovery",
+        "Lead Optimization",
+        "Preclinical Candidate",
+        "IND-enabling",
+        "Preclinical unspecified",
+        "IND filed/cleared",
+        "Phase 1",
+        "Phase 1/2",
+        "Phase 2",
+        "Phase 2/3",
+        "Phase 3",
+        "Registration",
+        "Approved / marketed",
+        "Discontinued / inactive",
+        "Unknown"
+      ],
+      "description": "Canonical dashboard classification. Confirmed current wording/milestones may be normalized; plans, expectations, financing, hiring, and adjacent programs must not be promoted to a current stage."
+    },
     "meta": {
       "type": "object",
       "required": [
         "schema_version",
         "generated_at",
         "language",
-        "analyst_role",
-        "output_format",
         "output_filename_base",
-        "rubric_version",
-        "rubric_author"
+        "rubric_version"
       ],
       "additionalProperties": true,
       "properties": {
         "schema_version": {
           "type": "string",
-          "const": "3.0"
+          "enum": ["3.0", "3.1", "3.2"],
+          "description": "Fast Triage v3.2 output must use 3.2. Full Scout retains its existing schema version because its JSON shape did not change. Older values remain readable for stored legacy records."
+        },
+        "instruction_version": {
+          "type": "string",
+          "description": "3.2 for current Fast Triage output; 3.3 for current Full Scout output."
+        },
+        "review_type": {
+          "type": "string",
+          "enum": ["fast_triage", "full_scout"]
         },
         "generated_at": {
           "type": [
@@ -114,7 +361,8 @@
             "type": "string",
             "enum": [
               "json",
-              "markdown"
+              "markdown",
+              "markdown_report"
             ]
           },
           "minItems": 1
@@ -133,23 +381,50 @@
           "type": "string",
           "default": "kate"
         },
+        "rescored_rubric_version": {
+          "type": "string",
+          "description": "Set only by the detail page's 'Score 기준 갱신' button (POST /api/records/{id}/refresh-rubric) when OpenRouter finds clear evidence to update this single record's scores. rubric_version above always stays the original GPT-search-time version; this field chains forward from it (or from the previous rescored_rubric_version) via next_minor_version, e.g. 3.1 -> 3.2 -> 3.3. v1 scope: single-record only — does not bump SCORING_CRITERIA_VERSION or other records."
+        },
+        "rescored_at": {
+          "type": ["string", "null"],
+          "description": "ISO 8601 UTC timestamp of the most recent successful rubric refresh."
+        },
+        "rescored_by": {
+          "type": ["string", "null"],
+          "description": "Actor IP of the most recent successful rubric refresh (temporary stand-in for user identity, same convention as last_edited_by)."
+        },
+        "rubric_refresh_history": {
+          "type": "array",
+          "description": "Append-only log of successful rubric-refresh applications on this record, newest last.",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "version": { "type": "string" },
+              "changed_at": { "type": "string" },
+              "actor_ip": { "type": "string" },
+              "reason": { "type": "string" },
+              "changes": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
         "last_edited_at": {
           "type": [
             "string",
             "null"
           ],
-          "description": "ISO 8601 UTC timestamp of the most recent human/dashboard edit to this record."
+          "description": "Derived ISO 8601 UTC timestamp of the newest edit_history event whose field is exactly source_report.raw_markdown. Full Scout load/save normalization removes stale values when no such event exists; general Team Review activity never updates this field."
         },
         "last_edited_by": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Identifier of who made the most recent edit. Temporary stand-in until SSO login is wired up: stores the requester's IP address."
+          "description": "Derived identifier from the newest source_report.raw_markdown audit event. actor_name is preferred and actor_ip remains the technical fallback until SSO is wired up; the UI presents loopback IPs as Local workspace and rubric recalculation events as the rubric version."
         },
         "edit_history": {
           "type": "array",
-          "description": "Append-only log of human/dashboard edits, newest last. Each entry stamps when and by whom (IP, pending SSO) a change was made.",
+          "description": "Append-only log of human/dashboard edits, newest last and capped at 200 entries server-side. Exact source_report.raw_markdown events drive GPT source/score revision metadata; all other entries are shown in the Team Review workspace history.",
           "items": {
             "type": "object",
             "additionalProperties": true,
@@ -312,7 +587,7 @@
         },
         "qualitative_review": {
           "type": "object",
-          "description": "Researcher opinions keyed by qualitative-review criterion id (see config/qualitative_review_criteria.md), each with an entries array of {id, author, body, is_ai, created_at}. A placeholder AI entry is auto-appended after each human entry.",
+          "description": "Researcher opinions keyed by qualitative-review criterion id (see config/qualitative_review_criteria.md), each with an entries array of {id, author, body, is_ai, created_at}. Entries with is_ai=true and author='AI' are genuine OpenRouter-generated first drafts (grounded in source_report.raw_markdown and uploaded attachments) produced via the 'AI 생성' button, shown in the UI with an [AI] badge. Entries authored 'AI (초안)' are legacy rule-based placeholders kept for data compatibility but hidden from the UI. custom_criteria is an array of user-registered additional criteria: {id, label, description, created_by, created_at}, id prefixed 'custom_'. Criteria imported from another record may additionally store imported_from_record_id and imported_from_criterion_id; only the definition is copied, never opinion entries.",
           "additionalProperties": true
         }
       }
@@ -322,7 +597,6 @@
       "required": [
         "company_input",
         "asset_input",
-        "source_text",
         "source_type",
         "notes"
       ],
@@ -453,6 +727,8 @@
           "enum": [
             "E/I Balance",
             "Neuroimmune",
+            "Others",
+            "Unknown",
             "No Theme",
             null
           ]
@@ -472,6 +748,72 @@
           "$ref": "#/$defs/nullable_string"
         }
       }
+    },
+    "structured_table_union": {
+      "anyOf": [
+        { "$ref": "#/$defs/structured_table" },
+        { "$ref": "#/$defs/triage_structured_table" }
+      ]
+    },
+    "triage_structured_table": {
+      "type": "object",
+      "required": [
+        "company",
+        "company_country",
+        "asset_name",
+        "target",
+        "moa",
+        "modality_platform",
+        "main_indication",
+        "indication",
+        "development_stage",
+        "sources"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "company": { "$ref": "#/$defs/nullable_string" },
+        "company_country": { "$ref": "#/$defs/nullable_string" },
+        "asset_name": { "$ref": "#/$defs/nullable_string" },
+        "target": { "$ref": "#/$defs/nullable_string" },
+        "moa": { "$ref": "#/$defs/nullable_string" },
+        "modality_platform": { "$ref": "#/$defs/nullable_string" },
+        "main_indication": { "$ref": "#/$defs/nullable_string" },
+        "indication": { "$ref": "#/$defs/nullable_string" },
+        "development_stage": { "$ref": "#/$defs/nullable_string" },
+        "theme": { "$ref": "#/$defs/nullable_string" },
+        "cluster": { "$ref": "#/$defs/nullable_string" },
+        "sources": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/triage_evidence_source" }
+        }
+      }
+    },
+    "triage_evidence_source": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "source_title": { "$ref": "#/$defs/nullable_string" },
+        "source_type": { "$ref": "#/$defs/nullable_string" },
+        "source_url": { "$ref": "#/$defs/nullable_string" },
+        "reliability": {
+          "type": ["string", "null"],
+          "enum": ["high", "medium", "low", "unknown", "High", "Medium", "Low", "Unclear", null]
+        },
+        "evidence_summary": { "$ref": "#/$defs/nullable_string" },
+        "verified": { "type": "boolean" }
+      }
+    },
+    "verified_triage_evidence_source": {
+      "allOf": [
+        { "$ref": "#/$defs/triage_evidence_source" },
+        {
+          "required": ["source_url", "verified"],
+          "properties": {
+            "source_url": { "type": "string", "pattern": "^https?://" },
+            "verified": { "const": true }
+          }
+        }
+      ]
     },
     "structured_table": {
       "type": "object",
@@ -512,6 +854,8 @@
           "enum": [
             "E/I Balance",
             "Neuroimmune",
+            "Others",
+            "Unknown",
             "No Theme",
             null
           ]
@@ -606,9 +950,13 @@
             "PASS",
             "REVIEW",
             "FAIL",
+            "SELECT",
+            "REJECT",
+            "UNVERIFIED",
+            "N/A",
             "Unclear"
           ],
-          "description": "PASS if Total >= 14, Target Relevance >= 3, MoA Validity >= 2, Data Maturity >= 2, and no hard blocker. REVIEW if Total 9-13, or score is high but stage/rights/asset identity/source uncertainty exists. FAIL if Total <= 8, Target Relevance <= 1, or no SKBP Theme/Cluster fit."
+          "description": "Full Scout uses PASS/REVIEW/FAIL; absence of direct Theme/Cluster fit alone is not an automatic FAIL. Fast Triage v3.2 uses SELECT/REJECT/UNVERIFIED, where UNVERIFIED is limited to an asset identity that cannot be verified from credible public sources. N/A and Unclear are legacy-read compatibility values and are not valid for new v3.2 Fast Triage output."
         },
         "reason": {
           "type": "string"
@@ -665,7 +1013,6 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "status",
         "total_score",
         "max_score",
         "criteria"
@@ -690,13 +1037,20 @@
           "maximum": 21
         },
         "max_score": {
-          "type": "integer",
-          "const": 21
+          "type": ["integer", "null"],
+          "enum": [9, 21, null],
+          "description": "Full Scout uses 21. Fast Triage uses 9 only when total_score is used; otherwise both total_score and max_score are null."
         },
         "criteria": {
-          "$ref": "#/$defs/scoring_criteria"
+          "$ref": "#/$defs/scoring_criteria_union"
         }
       }
+    },
+    "scoring_criteria_union": {
+      "oneOf": [
+        { "$ref": "#/$defs/scoring_criteria" },
+        { "$ref": "#/$defs/triage_scoring_criteria" }
+      ]
     },
     "scoring_criteria": {
       "type": "object",
@@ -733,6 +1087,137 @@
           "$ref": "#/$defs/marketability_criterion"
         }
       }
+    },
+    "triage": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["instruction_version", "status", "identity_verified"],
+      "properties": {
+        "instruction_version": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["SELECT", "REJECT", "UNVERIFIED", "N/A"],
+          "description": "N/A is accepted only for stored Fast Triage v3.1 compatibility. New v3.2 output uses UNVERIFIED."
+        },
+        "identity_verified": { "type": "boolean" },
+        "active_asset": {
+          "type": ["boolean", "null"],
+          "description": "Required in Fast Triage v3.2: true only when active status is confirmed, false when inactive is confirmed, and null when activity cannot be established. SELECT requires true; identity failure uses UNVERIFIED."
+        },
+        "why": { "$ref": "#/$defs/nullable_string" },
+        "missing_evidence_needed_for_full_scout": { "$ref": "#/$defs/string_array" }
+      }
+    },
+    "current_triage": {
+      "allOf": [
+        { "$ref": "#/$defs/triage" },
+        {
+          "required": ["instruction_version", "status", "identity_verified", "active_asset"],
+          "properties": {
+            "instruction_version": { "type": "string", "pattern": "^3\\.2(?:-r[0-9]+)?$" },
+            "status": { "enum": ["SELECT", "REJECT", "UNVERIFIED"] }
+          }
+        }
+      ]
+    },
+    "triage_scoring_criteria": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_relevance", "moa_validity", "data_maturity"],
+      "properties": {
+        "target_relevance": { "$ref": "#/$defs/triage_scoring_criterion" },
+        "moa_validity": { "$ref": "#/$defs/triage_scoring_criterion" },
+        "data_maturity": { "$ref": "#/$defs/triage_scoring_criterion" }
+      }
+    },
+    "current_triage_scoring_criteria": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_relevance", "moa_validity", "data_maturity"],
+      "properties": {
+        "target_relevance": { "$ref": "#/$defs/current_triage_scoring_criterion" },
+        "moa_validity": { "$ref": "#/$defs/current_triage_scoring_criterion" },
+        "data_maturity": { "$ref": "#/$defs/current_triage_scoring_criterion" }
+      }
+    },
+    "triage_scoring_criterion": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["score"],
+      "properties": {
+        "score": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "main_line_summary": { "$ref": "#/$defs/nullable_string" },
+        "evidence_basis": {
+          "type": "string",
+          "enum": [
+            "user_input_only",
+            "public_source",
+            "user_input_and_public_source",
+            "no_supporting_basis"
+          ]
+        },
+        "evidence_sources": {
+          "type": "array",
+          "description": "Fast Triage v3.2: only http(s) sources whose contents were actually opened and verified for this criterion. A user-supplied URL that was not opened is not verified evidence.",
+          "items": {
+            "anyOf": [
+              { "type": "string", "format": "uri" },
+              { "$ref": "#/$defs/triage_evidence_source" }
+            ]
+          }
+        },
+        "verified_evidence_sources": {
+          "type": "array",
+          "description": "Optional explicit verified-source list. When present it is authoritative for verified source count instead of evidence_sources.",
+          "items": {
+            "anyOf": [
+              { "type": "string", "format": "uri" },
+              { "$ref": "#/$defs/triage_evidence_source" }
+            ]
+          }
+        },
+        "verified_source_count": { "type": "integer", "minimum": 0 },
+        "verified_public_source_count": { "type": "integer", "minimum": 0 },
+        "uncertain_points": { "$ref": "#/$defs/string_array" }
+      }
+    },
+    "current_triage_scoring_criterion": {
+      "allOf": [
+        { "$ref": "#/$defs/triage_scoring_criterion" },
+        {
+          "required": ["score", "main_line_summary", "evidence_basis", "evidence_sources", "uncertain_points"],
+          "properties": {
+            "evidence_sources": {
+              "type": "array",
+              "description": "Current Fast Triage evidence requires an opened/checked http(s) URL and explicit verified=true; unverified user-supplied URLs do not count.",
+              "items": { "$ref": "#/$defs/verified_triage_evidence_source" }
+            }
+          }
+        }
+      ]
+    },
+    "current_triage_scoring": {
+      "type": "object",
+      "required": ["total_score", "max_score", "criteria"],
+      "properties": {
+        "total_score": { "type": ["integer", "null"], "minimum": 0, "maximum": 9 },
+        "max_score": { "type": ["integer", "null"], "enum": [9, null] },
+        "criteria": { "$ref": "#/$defs/current_triage_scoring_criteria" }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "total_score": { "const": null },
+            "max_score": { "const": null }
+          }
+        },
+        {
+          "properties": {
+            "total_score": { "type": "integer", "minimum": 0, "maximum": 9 },
+            "max_score": { "const": 9 }
+          }
+        }
+      ]
     },
     "scoring_criterion": {
       "type": "object",
@@ -1324,6 +1809,38 @@
         },
         "source": {
           "$ref": "#/$defs/nullable_string"
+        }
+      }
+    },
+    "validation_union": {
+      "anyOf": [
+        { "$ref": "#/$defs/validation" },
+        { "$ref": "#/$defs/triage_validation" }
+      ]
+    },
+    "triage_validation": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["cross_checked_facts", "uncertain_points", "source_registry"],
+      "properties": {
+        "cross_checked_facts": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              { "type": "string" },
+              { "type": "object", "additionalProperties": true }
+            ]
+          }
+        },
+        "uncertain_points": { "$ref": "#/$defs/string_array" },
+        "source_registry": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              { "type": "string", "format": "uri" },
+              { "type": "object", "additionalProperties": true }
+            ]
+          }
         }
       }
     },

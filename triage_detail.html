@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fast Triage Detail</title>
+    <link rel="icon" type="image/svg+xml" href="./src/sk-butterfly.svg?v=20260802-1" />
     <script>
       (() => {
         const stored = localStorage.getItem('skbp.ui.theme');
@@ -11,32 +12,44 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap"
-    />
-    <link rel="stylesheet" href="./src/styles.css" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260804-attachment-original-download-toolbar-1" />
   </head>
   <body>
     <div class="app-shell triage-detail-shell">
       <header class="topbar triage-detail-topbar">
-        <div class="triage-title-block">
+        <a class="triage-title-block topbar-home-link" href="/" aria-label="홈 대시보드로 이동">
           <p class="eyebrow">GPT 1 · Fast Triage</p>
           <h1 id="triageDetailTitle">Fast Triage : Loading</h1>
           <p id="triageDetailSubtitle" class="triage-detail-subtitle">약물 원본 데이터를 불러오는 중입니다.</p>
-        </div>
+        </a>
         <div class="top-actions" aria-label="Fast Triage 상세 작업">
-          <a class="secondary-link" href="/?tab=triage">
-            <span aria-hidden="true">←</span>
-            <b>Fast Triage 목록</b>
-          </a>
-          <span id="triageDetailLoadStatus" class="status-pill">Loading</span>
+          <div class="top-action-group top-primary-actions" role="group" aria-label="Fast Triage 상세 도구">
+            <a
+              class="secondary-link help-tooltip"
+              href="/?tab=triage"
+              data-tooltip="Fast Triage 목록으로 돌아갑니다."
+            ><span aria-hidden="true">←</span><b>Fast Triage 목록</b></a>
+            <button
+              id="triageCriteriaDrawerButton"
+              class="detail-header-action-pill help-tooltip"
+              type="button"
+              data-tooltip="Filter 1의 SELECT/REJECT/UNVERIFIED 조건과 Fast Triage 점수 기준을 확인합니다."
+            ><span aria-hidden="true">?</span><b>판단근거</b></button>
+          </div>
+          <div class="top-action-group top-data-actions" role="group" aria-label="Fast Triage 레코드 상태">
+            <button
+              id="triageDeleteRecordButton"
+              class="detail-header-action-pill detail-header-delete-pill danger-button help-tooltip"
+              type="button"
+              data-tooltip="현재 Fast Triage asset record를 삭제합니다."
+            ><span aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" /></svg></span><b>삭제</b></button>
+            <span id="triageDetailLoadStatus" class="status-pill" role="status" aria-live="polite">Loading</span>
+          </div>
           <button
-            class="theme-toggle icon-button"
+            class="theme-toggle icon-button help-tooltip"
             data-theme-toggle
             type="button"
+            data-tooltip="라이트/다크 모드를 전환합니다."
             aria-label="라이트·다크 모드 전환"
           >
             <span data-theme-icon aria-hidden="true">◐</span>
@@ -120,13 +133,200 @@
             <dl>
               <div><dt class="select">SELECT</dt><dd>Full Scout 우선 검토 후보</dd></div>
               <div><dt class="reject">REJECT</dt><dd>현재 기준에서는 심층조사 제외</dd></div>
-              <div><dt class="na">N/A</dt><dd>관심 범주에 적용되지 않는 항목</dd></div>
+              <div><dt class="unverified">UNVERIFIED</dt><dd>공개 자료로 asset identity를 확인하지 못한 항목</dd></div>
             </dl>
           </div>
         </aside>
       </main>
     </div>
 
-    <script type="module" src="./src/triage-detail.js"></script>
+    <div class="drawer-backdrop" id="triageCriteriaBackdrop" hidden></div>
+    <aside
+      class="ai-drawer criteria-drawer"
+      id="triageCriteriaDrawer"
+      aria-label="Fast Triage Filter 1 판단근거"
+      aria-hidden="true"
+      data-active-criteria-tab="triage"
+      hidden
+    >
+      <div class="ai-drawer-header">
+        <div class="criteria-drawer-heading">
+          <p class="eyebrow">TAB 1 · FAST TRIAGE · SCORING GUIDE</p>
+          <div class="criteria-drawer-title-row">
+            <h2>판단근거</h2>
+            <span class="criteria-version-badge">v3.2</span>
+          </div>
+          <p class="criteria-drawer-subtitle">Full Scout 검토 후보를 선별하기 위한 3-point screening 기준</p>
+        </div>
+        <button id="triageCriteriaDrawerClose" class="criteria-drawer-close" type="button" aria-label="Fast Triage 판단근거 닫기"><span>닫기</span><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17" /></svg></button>
+      </div>
+
+      <div class="criteria-drawer-body" id="triageCriteriaDrawerBody">
+        <section class="criteria-rule criteria-triage-rule" data-criteria-tab="triage">
+          <h3>GPT 지침 1 — Fast Triage · v3.2 기준</h3>
+          <p>
+            지침 1은 여러 후보 중 지침 2 Full Scout로 넘길 대상을 빠르게 고르는 1차 screening입니다.
+            <code>Target Relevance</code>, <code>MoA Validity</code>, <code>Data Maturity</code>를 예비 평가하고
+            <code>SELECT</code>, <code>REJECT</code>, <code>UNVERIFIED</code>로 분류합니다.
+          </p>
+        </section>
+
+        <section class="criteria-pass-grid triage-status-grid" aria-label="SELECT REJECT UNVERIFIED triage criteria" data-criteria-tab="triage">
+          <article>
+            <h3>SELECT</h3>
+            <p class="criteria-status-subtitle">Full Scout 심층 검토 대상입니다. 최종 BD recommendation을 의미하지 않습니다.</p>
+            <ul>
+              <li>Asset identity 확인</li>
+              <li>Active asset</li>
+              <li>TR 2점 이상</li>
+              <li>MoA 또는 Data 중 하나 이상 2점 이상</li>
+            </ul>
+          </article>
+          <article>
+            <h3>REJECT</h3>
+            <p class="criteria-status-subtitle">현재 공개 근거 및 개발 상태 기준, Full Scout 우선순위가 충분하지 않습니다.</p>
+            <ul>
+              <li>Asset identity는 확인됐으나 SELECT 기준 미충족</li>
+              <li>MoA 또는 Data 근거가 Full Scout 우선순위를 뒷받침하지 못함</li>
+              <li>Inactive, discontinued 또는 명확한 hard blocker가 있는 경우</li>
+            </ul>
+          </article>
+          <article>
+            <h3>UNVERIFIED</h3>
+            <p class="criteria-status-subtitle">공개 자료에서 해당 후보를 특정 biotech/pharma pipeline asset으로 확인하지 못했습니다.</p>
+            <ul>
+              <li>Asset명 또는 compound code를 실제 의약품 개발 프로그램으로 확인할 수 없음</li>
+              <li>검색 결과가 비의약품, 동명 코드 또는 불명확한 약어와 혼재함</li>
+              <li>공식 pipeline page, clinical trial registry 또는 publication 등 identity 확인 source가 필요함</li>
+            </ul>
+          </article>
+        </section>
+
+        <section class="criteria-scoring-section" data-criteria-tab="triage">
+          <div class="criteria-section-header">
+            <h3>Fast Triage Scoring Table</h3>
+            <span>TR / MoA / Data · 각 0점에서 3점</span>
+          </div>
+          <div class="criteria-table-wrap">
+            <table class="criteria-table">
+              <colgroup>
+                <col class="criteria-name-col" />
+                <col class="criteria-score-col" />
+                <col class="criteria-score-col" />
+                <col class="criteria-score-col" />
+                <col class="criteria-score-col" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>항목</th>
+                  <th>0점</th>
+                  <th>1점</th>
+                  <th>2점</th>
+                  <th>3점</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>Target Relevance</th>
+                  <td>SKBP 관련성을 판단할 정보가 부족하거나 관심 질환 범위 밖</td>
+                  <td>신경계·신경면역·신경퇴행·통증 관련 질환이지만 SKBP 우선 관심 적응증에는 해당하지 않음</td>
+                  <td>SKBP 우선 관심 적응증에 해당</td>
+                  <td>SKBP 우선 관심 적응증에 해당하며, target/MoA가 해당 질환 biology 또는 SKBP Theme/Cluster에 직접 연결</td>
+                </tr>
+                <tr>
+                  <th>MoA Validity</th>
+                  <td>Target 또는 작용기전을 확인할 수 없어 평가 불가</td>
+                  <td>작용기전 설명은 있으나 회사 주장 또는 이론적 근거 중심</td>
+                  <td>기전이 실제로 작동함을 보여주는 기능적 실험 또는 동일 target/class의 독립 검증 근거 있음</td>
+                  <td>해당 asset에서 target engagement, mechanism-linked PD/biomarker 또는 직접적인 작용기전 검증이 확인됨</td>
+                </tr>
+                <tr>
+                  <th>Data Maturity</th>
+                  <td>공개된 asset-specific 결과 없음</td>
+                  <td>정성적 claim 또는 단편적 결과만 있어 개발 단계 대비 불충분</td>
+                  <td>개발 단계에 맞는 해석 가능한 정량 데이터 영역 1개 이상</td>
+                  <td>개발 단계에 맞는 상호보완적 정량 데이터 영역 2개 이상</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="criteria-table-footnote">
+            <li>UNVERIFIED는 asset identity 자체를 확인하지 못한 경우에만 사용합니다.</li>
+            <li>Identity는 확인됐지만 평가 근거가 없으면 해당 항목을 0점으로 기록합니다.</li>
+          </ul>
+        </section>
+
+        <section class="criteria-parameter-guide triage-parameter-guide" data-criteria-tab="triage">
+          <div class="criteria-section-header">
+            <h3>Fast Triage Parameter Guide</h3>
+            <span>세 항목의 평가 범위</span>
+          </div>
+          <div class="criteria-detail-grid compact-criteria-detail-grid triage-parameter-grid" aria-label="Fast Triage parameter guide">
+            <article class="parameter-card-wide target-parameter-card parameter-breakdown-card">
+              <h3>1. Target Relevance</h3>
+              <p>SKBP 우선 관심 적응증 및 R&amp;D Theme과 그 하위 Cluster의 적합성을 평가합니다.</p>
+              <ul class="parameter-evidence-list" aria-label="Target Relevance priority indications and themes">
+                <li><strong>SKBP 우선 관심 적응증</strong><span>Alzheimer's disease, Parkinson's disease, Amyotrophic lateral sclerosis / motor neuron disease, Multiple sclerosis / neuroinflammatory disease, Neuropathic pain, Epilepsy / seizure disorders</span></li>
+                <li><strong>E/I Balance</strong><span>Ion Channel, Inhibitory Tone, Synaptic Transmission, Chloride Homeostasis, Network Modulation</span></li>
+                <li><strong>Neuroimmune</strong><span>Glial homeostasis, CNS injury immune response, Cytokine neuromodulation, disease immune modulation</span></li>
+              </ul>
+            </article>
+            <article>
+              <h3>2. MoA Validity</h3>
+              <p>작용기전이 얼마나 구체적으로 정의되어 있고, 이를 뒷받침하는 기능적·과학적 근거가 어느 수준인지 평가합니다.</p>
+            </article>
+            <article>
+              <h3>3. Data Maturity</h3>
+              <p>해당 asset의 개발 단계에 맞는 공개 데이터가 얼마나 충분하고 해석 가능한지 평가합니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="criteria-rule target-theme-note" data-criteria-tab="triage">
+          <h3>Target Relevance — Theme / Cluster 근거</h3>
+          <p>
+            E/I Balance와 Neuroimmune은 우선 관심 적응증과 함께 Target Relevance를 정교화하는 SKBP 내부 biology map입니다.
+            우선 관심 적응증이면 2점을 검토하고, target/MoA가 질환 biology 또는 아래 Theme/Cluster에 직접 연결되면 3점을 검토합니다.
+          </p>
+        </section>
+
+        <section class="criteria-theme-grid" aria-label="SKBP theme and cluster" data-criteria-tab="triage">
+          <article>
+            <h3>E/I Balance</h3>
+            <p>balance between excitation and inhibition</p>
+            <ul>
+              <li>Ion Channel</li>
+              <li>Inhibitory Tone 강화</li>
+              <li>Synaptic Transmission</li>
+              <li>Chloride Homeostasis</li>
+              <li>Network Modulation</li>
+            </ul>
+          </article>
+          <article>
+            <h3>Neuroimmune</h3>
+            <p>neuroimmune biology across CNS disease</p>
+            <ul>
+              <li>CNS 손상 면역반응</li>
+              <li>교세포 향상성</li>
+              <li>Cytokine 신경조절</li>
+              <li>손상/질환 면역조절</li>
+              <li>말초 면역기관 연결</li>
+            </ul>
+          </article>
+        </section>
+
+        <section class="criteria-rule triage-evidence-note criteria-framed-section" data-criteria-tab="triage">
+          <h3>Evidence Level 안내</h3>
+          <p>확인된 사용자 입력정보 또는 공개자료만 사용합니다. 계획·예상·정황은 현재 사실로 간주하지 않으며, 확인되지 않은 항목은 Unknown으로 표시합니다.</p>
+          <dl class="criteria-evidence-definitions">
+            <div><dt>사용자 입력정보</dt><dd>사용자가 표, 텍스트 또는 업로드 자료에 제공한 정보입니다.</dd></div>
+            <div><dt>공개자료</dt><dd>GPT가 웹서칭을 통해 공식 회사 자료, 논문, 임상시험 registry 등에서 직접 확인한 정보입니다.</dd></div>
+          </dl>
+          <p class="criteria-evidence-footnote">TR은 두 근거 유형 중 하나만으로도 평가할 수 있습니다. MoA와 Data에서 2점 이상을 부여하려면 공개 technical evidence 또는 asset-specific 공개 data가 필요합니다.</p>
+        </section>
+      </div>
+    </aside>
+
+    <script type="module" src="./src/triage-detail.js?v=20260802-dashboard-criteria-sync-1"></script>
   </body>
 </html>

@@ -1,32 +1,33 @@
 ---
 name: post-edit-log
-description: Use right after finishing any code/content edit in this repo (dashboard HTML/JS/CSS, main.py, scripts, obsidian exporters). Adds a short end-of-turn comment on what changed and appends a dated entry to docs/CHANGELOG.md so every agent session leaves a durable trail.
+description: Use right after finishing any persistent code, content, configuration, or documentation edit in this repo. Adds a required final change summary and appends a concise entry to the date-based work log so every agent session leaves a durable trail.
 ---
 
 # Post-edit change log
 
-Applies to every coding session in this repo, run by any agent. After finishing a set of edits (a single fix, a small feature, a polish pass — whatever the user asked for), before ending the turn:
+Applies to every editing session in this repo, run by any agent. After finishing a set of persistent edits and before ending the turn:
 
-1. **Comment on what changed.** In the final reply to the user, state plainly what was modified and where (file names, and line numbers or function/selector names when useful). Keep it to 1-3 sentences — this is the existing "what changed / what's next" closing style used in this repo, not a new format.
-2. **Log it.** Append one entry to `docs/CHANGELOG.md` in the repo root. If the file doesn't exist yet, create it with the header shown below.
+1. **Summarize what changed.** End the final reply with a `변경 요약` section. State plainly what was modified and where (file names, and line numbers or function/selector names when useful), plus verification performed when applicable.
+2. **Log it by date.** Append one entry to `docs/changelog/YYYY/YYYY-MM-DD.md`, using the current local date. Reuse the existing daily file and append under `## Changes`. If it does not exist, create it from the template below.
+3. **Keep the index current.** Ensure the year/date link exists in `docs/CHANGELOG.md`. That file is navigation only; detailed entries never go there.
 
-Do this for real code/content changes. Skip it for pure read-only investigation, answering questions, or throwaway scratch/experiment work that isn't being kept.
+Do this for real code, content, configuration, and documentation changes. Skip it for pure read-only investigation, answers, or throwaway experiments that are not kept.
 
-## Entry format
-
-One `##` section per calendar date (reuse the same date section if it already exists from earlier that day), then one bullet per distinct change:
+## Daily file format
 
 ```markdown
-# Changelog
+# Work Log — 2026-08-01
 
-## 2026-07-29
-- `src/app.js`, `index.html`: reworded the TAB1/2/3 selector labels and redesigned the tab bar (numbered step badges + eyebrow/label groups).
-- `src/app.js`, `src/styles.css`, `detail.html`, `src/detail.js`: replaced the "TAB3 추가" text button with an icon-only star (☆/★) favorite toggle.
-- `index.html`, `src/styles.css`: moved the tab selector out of a centered floating position into its own row flush under the panel title.
+## Changes
+
+- `src/app.js`, `index.html`: reworded the selector labels and redesigned the tab bar.
+- `src/app.js`, `src/styles.css`: replaced the text action with an icon-only favorite toggle.
 ```
 
 Guidelines:
-- Terse, factual, past tense. No design rationale essays — this is a log, not a doc.
+
+- Terse, factual, past tense. This is a log, not a design rationale document.
 - Group by files touched, not by every micro-edit; one bullet per user-visible or structurally meaningful change is enough.
-- Use the current date from context (convert "today"/relative dates to `YYYY-MM-DD`).
-- Always append — never delete or rewrite prior entries, never start a second changelog file.
+- Use the current local date from context and format it as `YYYY-MM-DD`.
+- Always append to that date's file; never delete or rewrite prior entries and never start a second file for the same date.
+- Keep each daily file focused on work performed that day. Do not mix multiple dates in one file.

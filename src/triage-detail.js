@@ -1,7 +1,10 @@
 import { setupThemeToggle } from './theme.js';
 
+import { initAuthUI } from './auth.js?v=20260802-required-login-1';
+
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
+let currentRecord = null;
 
 const elements = {
   title: document.querySelector('#triageDetailTitle'),
@@ -13,7 +16,13 @@ const elements = {
   sourceList: document.querySelector('#triageSourceList'),
   diligence: document.querySelector('#triageDiligence'),
   quickSummary: document.querySelector('#triageQuickSummary'),
-  rawReport: document.querySelector('#triageRawReport')
+  rawReport: document.querySelector('#triageRawReport'),
+  criteriaDrawerButton: document.querySelector('#triageCriteriaDrawerButton'),
+  criteriaDrawer: document.querySelector('#triageCriteriaDrawer'),
+  criteriaBackdrop: document.querySelector('#triageCriteriaBackdrop'),
+  criteriaDrawerClose: document.querySelector('#triageCriteriaDrawerClose'),
+  criteriaDrawerBody: document.querySelector('#triageCriteriaDrawerBody'),
+  deleteRecordButton: document.querySelector('#triageDeleteRecordButton')
 };
 
 const scoreDefinitions = [
@@ -21,19 +30,19 @@ const scoreDefinitions = [
     key: 'target_relevance',
     shortLabel: 'TR',
     label: 'Target Relevance',
-    description: 'SKBP 관심 Theme·Cluster와 표적 생물학의 직접 연결성'
+    description: 'SKBP 우선 관심 적응증 및 R&D Theme/Cluster와의 적합성'
   },
   {
     key: 'moa_validity',
     shortLabel: 'MoA',
     label: 'MoA Validity',
-    description: '작용기전의 과학적·임상적 타당성과 검증 수준'
+    description: '작용기전의 구체성과 기능적·과학적 검증 수준'
   },
   {
     key: 'data_maturity',
     shortLabel: 'Data',
     label: 'Data Maturity',
-    description: '공개된 정량 데이터와 개발 근거의 성숙도'
+    description: '개발 단계에 맞는 공개 데이터의 충분성과 해석 가능성'
   }
 ];
 
@@ -70,6 +79,22 @@ function repairMojibake(value) {
 function displayValue(value, fallback = 'Unknown') {
   const text = repairMojibake(value).trim();
   return text || fallback;
+}
+
+function dashboardThemeLabel(value) {
+  const text = displayValue(value);
+  if (/^(unknown|not known|n\/?a)$/i.test(text)) return 'Unknown';
+  if (/e\s*\/\s*i\s*balance|excitation.*inhibition/i.test(text)) return 'E/I Balance';
+  if (/neuro[\s-]*immune/i.test(text)) return 'Neuroimmune';
+  return 'Others';
+}
+
+function dashboardClusterLabel(value, theme = '') {
+  const text = displayValue(value);
+  if (/^(unknown|not known)$/i.test(text)) return 'Unknown';
+  if (/^n\/?a$/i.test(text)) return dashboardThemeLabel(theme) === 'Others' ? 'Others' : 'Unknown';
+  if (/^others?$|no cluster|no mapped|no fit|out of scope|none/i.test(text)) return 'Others';
+  return text;
 }
 
 function formatTimestamp(value) {
@@ -184,9 +209,17 @@ function isFastTriageRecord(record) {
 
 function reviewStatus(record) {
   const override = record?.meta?.human_review?.overrides?.filter_status;
-  const baseline = override || record?.hard_filter?.status || record?.triage?.status || 'N/A';
+  const baseline = override || record?.hard_filter?.status || record?.triage?.status || 'UNVERIFIED';
   const status = String(baseline).trim().toUpperCase();
-  return ['SELECT', 'REJECT', 'N/A'].includes(status) ? status : 'N/A';
+  if (status === 'N/A') return 'UNVERIFIED';
+  return ['SELECT', 'REJECT', 'UNVERIFIED'].includes(status) ? status : 'UNVERIFIED';
+}
+
+function identityIsVerified(record) {
+  const parserStatus = String(record?.source_report?.parser_status || '');
+  return record?.triage?.identity_verified !== false
+    && reviewStatus(record) !== 'UNVERIFIED'
+    && !/asset_identity_not_verified/i.test(parserStatus);
 }
 
 function scoreFor(record, criterionKey) {
@@ -219,7 +252,7 @@ function renderDecision(record) {
   elements.decisionHero.innerHTML = `
     <div class="triage-decision-topline">
       <span class="triage-status-badge ${statusTone(status)}">${escapeHtml(status)}</span>
-      <span>${triage.identity_verified === true ? 'Asset identity verified' : 'Asset identity 확인 필요'}</span>
+      <span>${identityIsVerified(record) ? 'Asset identity verified' : 'Asset identity 확인 필요'}</span>
     </div>
     <h2>${escapeHtml(headline)}</h2>
     <p>${escapeHtml(reason)}</p>
@@ -229,6 +262,7 @@ function renderDecision(record) {
 function identityFields(record) {
   const summary = record.json_summary || {};
   const table = record.structured_table || {};
+  const verified = identityIsVerified(record);
   return [
     ['Company', summary.company || table.company],
     ['Country', summary.company_country || table.company_country],
@@ -239,8 +273,8 @@ function identityFields(record) {
     ['MoA', table.moa],
     ['Main indication', table.main_indication],
     ['Detailed indication', table.indication],
-    ['Theme', summary.theme],
-    ['Cluster', summary.cluster]
+    ['Theme', verified ? dashboardThemeLabel(summary.theme) : 'Unknown'],
+    ['Cluster', verified ? dashboardClusterLabel(summary.cluster, summary.theme) : 'Unknown']
   ];
 }
 
@@ -255,20 +289,77 @@ function renderIdentity(record) {
     .join('');
 }
 
-function criterionSources(criterion) {
-  const sources = Array.isArray(criterion?.evidence_sources) ? criterion.evidence_sources : [];
-  return sources
-    .map((source) => typeof source === 'string' ? source : source?.source_url)
-    .map(safeHttpUrl)
-    .filter(Boolean);
+function isCurrentFastTriageContract(record) {
+  const meta = record?.meta || {};
+  const schemaVersion = String(meta.schema_version || '').trim().replace(/^v/i, '');
+  const instructionVersion = String(meta.instruction_version || '').trim().replace(/^v/i, '');
+  const triageStatus = String(record?.triage?.status || '').trim().toUpperCase();
+  const criteria = record?.scoring?.criteria || {};
+  return schemaVersion === '3.2'
+    || instructionVersion === '3.2'
+    || triageStatus === 'UNVERIFIED'
+    || Object.values(criteria).some((item) => item && typeof item === 'object' && 'evidence_basis' in item);
+}
+
+function criterionSources(criterion, { requireExplicitVerification = false } = {}) {
+  const explicitVerifiedList = Array.isArray(criterion?.verified_evidence_sources);
+  const preferredSources = explicitVerifiedList
+    ? criterion.verified_evidence_sources
+    : Array.isArray(criterion?.evidence_sources)
+      ? criterion.evidence_sources
+      : [];
+  const uniqueSources = new Map();
+  preferredSources.forEach((source) => {
+    if (source && typeof source === 'object') {
+      if (source.verified === false) return;
+      if (requireExplicitVerification && !explicitVerifiedList && source.verified !== true) return;
+    } else if (requireExplicitVerification && !explicitVerifiedList) {
+      return;
+    }
+    const rawUrl = typeof source === 'string' ? source : source?.source_url || source?.url;
+    const url = safeHttpUrl(rawUrl);
+    if (!url) return;
+    try {
+      const parsed = new URL(url);
+      if (!['http:', 'https:'].includes(parsed.protocol)) return;
+      if (!parsed.hostname || ['localhost', '127.0.0.1', '::1'].includes(parsed.hostname.toLowerCase())) return;
+      parsed.hash = '';
+      const normalizedUrl = parsed.href.replace(/\/$/, '');
+      const dedupeKey = normalizedUrl;
+      if (!uniqueSources.has(dedupeKey)) uniqueSources.set(dedupeKey, normalizedUrl);
+    } catch {
+      // A descriptive citation without a public URL is not verified evidence.
+    }
+  });
+  return [...uniqueSources.values()];
+}
+
+function evidenceBasisLabel(criterion, verifiedSourceCount) {
+  const basis = String(criterion?.evidence_basis || '').trim().toLowerCase();
+  if (basis === 'user_input_only') return '사용자 입력정보 기반 · 공개자료 미확인';
+  if (basis === 'public_source') {
+    return verifiedSourceCount > 0
+      ? `공개자료 ${verifiedSourceCount}건 확인`
+      : '공개자료 기반으로 분류됐으나 확인 가능한 URL 없음';
+  }
+  if (basis === 'user_input_and_public_source') {
+    return verifiedSourceCount > 0
+      ? `사용자 입력정보 + 공개자료 ${verifiedSourceCount}건 확인`
+      : '사용자 입력정보 + 공개자료로 분류됐으나 확인 가능한 URL 없음';
+  }
+  if (basis === 'no_supporting_basis') return '확인된 판단근거 없음';
+  return verifiedSourceCount > 0 ? `공개자료 ${verifiedSourceCount}건 확인` : '확인된 판단근거 없음';
 }
 
 function renderScores(record) {
+  const requireExplicitVerification = isCurrentFastTriageContract(record);
   elements.scoreGrid.innerHTML = scoreDefinitions.map((definition) => {
     const criterion = record?.scoring?.criteria?.[definition.key] || {};
     const score = scoreFor(record, definition.key);
-    const evidenceSources = criterionSources(criterion);
+    const evidenceSources = criterionSources(criterion, { requireExplicitVerification });
+    const evidenceBasis = evidenceBasisLabel(criterion, evidenceSources.length);
     const uncertainties = listValues(criterion.uncertain_points);
+    const scoreLabel = score === null ? '미평가' : `${score}점`;
     return `
       <article class="triage-score-card score-${score ?? 'unknown'}">
         <div class="triage-score-card-header">
@@ -276,16 +367,15 @@ function renderScores(record) {
             <span>${definition.shortLabel}</span>
             <h3>${definition.label}</h3>
           </div>
-          <strong>${score ?? '-'}<small>/3</small></strong>
+          <strong>${escapeHtml(scoreLabel)}<small>최대 3점</small></strong>
         </div>
-        <div class="triage-score-track" aria-label="${definition.label} ${score ?? 'Unknown'} out of 3">
+        <div class="triage-score-track" aria-label="${definition.label} ${score === null ? '미평가' : `${score}점, 최대 3점`}">
           ${[1, 2, 3].map((step) => `<i class="${score >= step ? 'filled' : ''}"></i>`).join('')}
         </div>
         <p class="triage-score-definition">${definition.description}</p>
         <p class="triage-score-judgment">${escapeHtml(displayValue(criterion.main_line_summary || criterion.reason, '판단 요약 없음'))}</p>
         <div class="triage-score-meta">
-          <span>${escapeHtml(displayValue(criterion.evidence_type, 'Evidence type unknown'))}</span>
-          <span>${evidenceSources.length} sources</span>
+          <span>${escapeHtml(evidenceBasis)}</span>
         </div>
         ${uncertainties.length ? `
           <div class="triage-score-uncertainty">
@@ -312,6 +402,7 @@ function collectSources(record) {
       if (url) sources.push({ source_url: url });
       return;
     }
+    if (source.verified === false) return;
     const url = safeHttpUrl(source.source_url || source.url);
     if (url) sources.push({ ...source, source_url: url });
   };
@@ -319,13 +410,19 @@ function collectSources(record) {
   (record?.structured_table?.sources || []).forEach(add);
   (record?.validation?.source_registry || []).forEach(add);
   Object.values(record?.scoring?.criteria || {}).forEach((criterion) => {
-    (criterion?.evidence_sources || []).forEach(add);
+    const criterionEvidence = Array.isArray(criterion?.verified_evidence_sources)
+      ? criterion.verified_evidence_sources
+      : Array.isArray(criterion?.evidence_sources)
+        ? criterion.evidence_sources
+        : [];
+    criterionEvidence.forEach(add);
   });
 
   const deduplicated = new Map();
   sources.forEach((source) => {
-    const existing = deduplicated.get(source.source_url) || {};
-    deduplicated.set(source.source_url, { ...existing, ...source });
+    const dedupeKey = source.source_url.replace(/\/+$/, '').toLowerCase();
+    const existing = deduplicated.get(dedupeKey) || {};
+    deduplicated.set(dedupeKey, { ...existing, ...source });
   });
   return [...deduplicated.values()];
 }
@@ -402,16 +499,20 @@ function renderQuickSummary(record) {
   const sourceReport = record.source_report || {};
   const triage = record.triage || {};
   const status = reviewStatus(record);
-  const sources = collectSources(record);
+  const requireExplicitVerification = isCurrentFastTriageContract(record);
+  const verifiedCriterionUrls = new Set();
+  Object.values(record?.scoring?.criteria || {}).forEach((criterion) => {
+    criterionSources(criterion, { requireExplicitVerification }).forEach((url) => verifiedCriterionUrls.add(url));
+  });
   const flags = listValues(record.hard_filter?.flags);
   const lastEditedAt = meta.last_edited_at ? formatTimestamp(meta.last_edited_at) : null;
   const rows = [
     ['Triage status', status],
     ['Rubric version', meta.rubric_version || triage.instruction_version || meta.schema_version],
     ['Generated at', meta.generated_at],
-    ['Identity verified', triage.identity_verified === true ? 'Yes' : 'Needs review'],
+    ['Identity verified', identityIsVerified(record) ? 'Yes' : 'Needs review'],
     ['Parser status', sourceReport.parser_status],
-    ['Public sources', String(sources.length)]
+    ['Verified public sources', String(verifiedCriterionUrls.size)]
   ];
   if (lastEditedAt) {
     rows.push(['Last edited', `${lastEditedAt} · ${meta.last_edited_by || 'unknown'}`]);
@@ -443,7 +544,7 @@ function renderEditHistoryBlock(record) {
     .reverse()
     .map((entry) => {
       const when = formatTimestamp(entry?.changed_at);
-      const who = entry?.actor_ip || 'unknown';
+      const who = entry?.actor_name || entry?.actor_ip || 'unknown';
       const field = entry?.field && entry.field !== 'record' ? ` (${escapeHtml(entry.field)})` : '';
       return `<li>${escapeHtml(when)}에 <strong>${escapeHtml(who)}</strong>에 의해 수정됨${field}</li>`;
     })
@@ -461,12 +562,16 @@ function renderRecord(record) {
     window.location.replace(`/detail?id=${encodeURIComponent(recordId)}`);
     return;
   }
+  currentRecord = record;
   const summary = record.json_summary || {};
   const table = record.structured_table || {};
   const asset = displayValue(summary.asset_name || table.asset_name, 'Pipeline');
   const company = displayValue(summary.company || table.company, 'Company unknown');
+  const verified = identityIsVerified(record);
+  const theme = verified ? dashboardThemeLabel(summary.theme) : 'Unknown';
+  const cluster = verified ? dashboardClusterLabel(summary.cluster, summary.theme) : 'Unknown';
   elements.title.textContent = `Fast Triage : ${asset}`;
-  elements.subtitle.textContent = `${company} · ${displayValue(table.development_stage)} · ${displayValue(summary.theme)} / ${displayValue(summary.cluster)}`;
+  elements.subtitle.textContent = `${company} · ${displayValue(table.development_stage)} · ${theme} / ${cluster}`;
   document.title = `${asset} · Fast Triage`;
   renderDecision(record);
   renderIdentity(record);
@@ -481,6 +586,89 @@ function renderRecord(record) {
     : '<div class="triage-empty">저장된 Fast Triage 원본 Markdown이 없습니다.</div>';
 }
 
+let criteriaDrawerSyncPromise = null;
+
+function syncCriteriaDrawerFromDashboard() {
+  if (criteriaDrawerSyncPromise) return criteriaDrawerSyncPromise;
+  criteriaDrawerSyncPromise = (async () => {
+    const response = await fetch('/', { cache: 'no-store' });
+    if (!response.ok) throw new Error(`Dashboard criteria HTTP ${response.status}`);
+    const dashboardHtml = await response.text();
+    const dashboardDocument = new DOMParser().parseFromString(dashboardHtml, 'text/html');
+    const dashboardBody = dashboardDocument.querySelector('#criteriaDrawer .criteria-drawer-body');
+    if (!dashboardBody || !elements.criteriaDrawerBody) {
+      throw new Error('Dashboard Tab 1 판단근거를 찾을 수 없습니다.');
+    }
+    const triageSections = [...dashboardBody.children]
+      .filter((section) => section.dataset.criteriaTab === 'triage');
+    if (!triageSections.length) throw new Error('Dashboard Tab 1 판단근거가 비어 있습니다.');
+    const fragment = document.createDocumentFragment();
+    triageSections.forEach((section) => fragment.append(section.cloneNode(true)));
+    elements.criteriaDrawerBody.replaceChildren(fragment);
+    elements.criteriaDrawer.dataset.activeCriteriaTab = 'triage';
+  })().catch((error) => {
+    criteriaDrawerSyncPromise = null;
+    throw error;
+  });
+  return criteriaDrawerSyncPromise;
+}
+
+async function openCriteriaDrawer() {
+  elements.criteriaDrawer.hidden = false;
+  elements.criteriaBackdrop.hidden = false;
+  requestAnimationFrame(() => {
+    elements.criteriaDrawer.classList.add('open');
+    elements.criteriaBackdrop.classList.add('open');
+    elements.criteriaDrawer.setAttribute('aria-hidden', 'false');
+  });
+  if (elements.criteriaDrawerBody) elements.criteriaDrawerBody.setAttribute('aria-busy', 'true');
+  try {
+    await syncCriteriaDrawerFromDashboard();
+  } catch (error) {
+    console.warn('Dashboard 판단근거 동기화 실패:', error);
+  } finally {
+    elements.criteriaDrawerBody?.removeAttribute('aria-busy');
+  }
+}
+
+function closeCriteriaDrawer() {
+  elements.criteriaDrawer.classList.remove('open');
+  elements.criteriaBackdrop.classList.remove('open');
+  elements.criteriaDrawer.setAttribute('aria-hidden', 'true');
+  window.setTimeout(() => {
+    elements.criteriaDrawer.hidden = true;
+    elements.criteriaBackdrop.hidden = true;
+  }, 180);
+}
+
+async function deleteCurrentRecord() {
+  if (!recordId || !currentRecord) return;
+  const summary = currentRecord.json_summary || {};
+  const table = currentRecord.structured_table || {};
+  const asset = displayValue(summary.asset_name || table.asset_name, recordId);
+  const company = displayValue(summary.company || table.company, 'Company unknown');
+  const confirmed = window.confirm(
+    `${asset} · ${company} Fast Triage record를 삭제할까요?\n\n저장된 대시보드 레코드와 연결된 Obsidian 문서가 함께 갱신됩니다.`
+  );
+  if (!confirmed) return;
+
+  elements.loadStatus.textContent = 'Deleting';
+  elements.deleteRecordButton.disabled = true;
+  try {
+    const response = await fetch(`/api/records/${encodeURIComponent(recordId)}`, {
+      method: 'DELETE'
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '삭제에 실패했습니다.');
+    elements.loadStatus.textContent = 'Deleted';
+    window.location.href = '/?tab=triage';
+  } catch (error) {
+    elements.loadStatus.textContent = 'Delete failed';
+    elements.deleteRecordButton.disabled = false;
+    window.alert(`삭제 실패: ${error.message}`);
+  }
+}
+
 async function loadRecord() {
   if (!recordId) throw new Error('Fast Triage record id가 없습니다.');
   const response = await fetch(`/api/records/${encodeURIComponent(recordId)}`);
@@ -490,7 +678,21 @@ async function loadRecord() {
   elements.loadStatus.textContent = 'Loaded';
 }
 
+elements.criteriaDrawerButton?.addEventListener('click', openCriteriaDrawer);
+elements.criteriaDrawerClose?.addEventListener('click', closeCriteriaDrawer);
+elements.criteriaBackdrop?.addEventListener('click', closeCriteriaDrawer);
+elements.deleteRecordButton?.addEventListener('click', deleteCurrentRecord);
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && elements.criteriaDrawer?.classList.contains('open')) {
+    closeCriteriaDrawer();
+  }
+});
+
 setupThemeToggle();
+initAuthUI();
+syncCriteriaDrawerFromDashboard().catch((error) => {
+  console.warn('Dashboard 판단근거 사전 로드 실패:', error);
+});
 loadRecord().catch((error) => {
   elements.loadStatus.textContent = 'Load failed';
   elements.title.textContent = 'Fast Triage : Load failed';

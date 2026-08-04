@@ -1,6 +1,6 @@
 # Companies
 
-> Generated at `2026-07-29T00:20:08`.
+> Generated at `2026-08-02T02:42:40`.
 
 - [[Actio Biosciences]] (2)
 - [[Biohaven]] (1)

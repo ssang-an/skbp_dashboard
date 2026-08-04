@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-07-29"
-updated_at: "2026-07-29"
+created_at: "2026-08-02"
+updated_at: "2026-08-02"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.ventustx.com/ventus-therapeutics-announces-first-patient-dosed-in-phase-2a-clinical-trial-evaluating-vent-02-an-oral-brain-penetrant-nlrp3-inhibitor-in-parkinsons-disease/ |
-| Accessed / generated date | 2026-07-29 |
+| Accessed / generated date | 2026-08-02 |
 
 ## Evidence Summary
 

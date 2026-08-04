@@ -4,157 +4,172 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SKBP Pipeline Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="./src/sk-butterfly.svg?v=20260802-1" />
     <script>
       (() => {
-        if (
-          ['127.0.0.1', 'localhost'].includes(window.location.hostname)
-          && window.location.port === '8000'
-        ) {
-          window.location.replace(`http://${window.location.hostname}:8011${window.location.pathname}${window.location.search}${window.location.hash}`);
-          return;
-        }
         const stored = localStorage.getItem('skbp.ui.theme');
         const theme = stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap"
-    />
-    <link rel="stylesheet" href="./src/styles.css?v=20260729-oi-partnership-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260804-attachment-original-download-toolbar-1" />
   </head>
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <div>
-          <p class="eyebrow">SKBP Pipeline Finder</p>
-          <h1>Dashboard</h1>
-        </div>
-        <div class="top-actions" aria-label="Dashboard actions">
-          <div class="top-action-group top-primary-actions" role="group" aria-label="Analysis tools">
-            <button
-              id="aiDrawerButton"
-              class="help-tooltip"
-              type="button"
-              data-tooltip="대시보드 JSON과 Wiki note를 기반으로 후보 비교, shortlist, evidence gap을 질문합니다."
-            ><span aria-hidden="true">AI</span><b>Agent</b></button>
-            <button
-              id="criteriaDrawerButton"
-              class="help-tooltip"
-              type="button"
-              data-tooltip="SKBP 평가 기준, PASS/REVIEW/FAIL 조건, 점수표를 확인합니다."
-            ><span aria-hidden="true">?</span><b>판단근거</b></button>
-            <button
-              id="copyTriagePromptTopButton"
-              class="help-tooltip"
-              type="button"
-              data-tooltip="GPT fast triage 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / N/A로 screening할 때 사용합니다."
-              aria-label="GPT triage 지침 복사"
-            ><span aria-hidden="true">GPT</span><b>지침 1</b></button>
-            <button
-              id="copyPromptTopButton"
-              class="help-tooltip"
-              type="button"
-              data-tooltip="GPT 조사 지침을 클립보드에 복사합니다. 복사한 지침을 ChatGPT에 붙여넣은 뒤, 조사할 회사명과 약물명/파이프라인명을 함께 입력하면 MD 리포트와 JSON Schema 형식으로 결과를 받을 수 있습니다."
-              aria-label="GPT 조사 지침 복사"
-            ><span aria-hidden="true">GPT</span><b>지침</b></button>
+        <div class="topbar-top">
+          <div class="topbar-brand-cluster">
+            <a class="topbar-home-link" href="/" aria-label="홈 대시보드로 이동">
+              <span class="brand-organization-label">OPEN INNOVATION CENTER</span>
+              <span class="brand-organization-divider" aria-hidden="true">·</span>
+              <h1>SKBP Pipeline Finder</h1>
+            </a>
+            <span class="brand-record-status" role="status" aria-live="polite"><b id="dataStatus">Loading</b></span>
           </div>
-          <div class="top-action-group top-data-actions" role="group" aria-label="Data status">
-            <button
-              class="primary-button help-tooltip"
-              id="refreshButton"
-              type="button"
-              data-tooltip="저장된 파이프라인 JSON을 다시 불러와 대시보드를 갱신합니다."
-            ><span aria-hidden="true">↻</span><b>새로고침</b></button>
-            <span class="status-pill" id="dataStatus">Loading</span>
+
+          <nav class="workflow-navigation-shell" aria-label="Pipeline workflow">
+            <div class="pipeline-table-tabs" role="tablist" aria-label="Pipeline table mode">
+              <button id="fastTriageTableTab" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="triage">
+                <span class="tab-step" aria-hidden="true">1</span>
+                <b>Fast Triage</b>
+              </button>
+              <button class="active" id="fullScoutTableTab" type="button" role="tab" aria-selected="true" aria-controls="pipelineContent" tabindex="0" data-table-mode="full">
+                <span class="tab-step" aria-hidden="true">2</span>
+                <b>Full Scout</b>
+              </button>
+              <button id="focusManagementTableTab" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="focus">
+                <span class="tab-step tab-step-star" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="m12 2.75 2.78 5.64 6.22.9-4.5 4.39 1.06 6.2L12 16.95l-5.56 2.93 1.06-6.2L3 9.29l6.22-.9L12 2.75Z" />
+                  </svg>
+                </span>
+                <b>Shortlisting</b>
+              </button>
+            </div>
+          </nav>
+
+          <div class="top-actions" aria-label="Dashboard actions">
+            <div class="top-action-group top-primary-actions" role="group" aria-label="Analysis tools">
+              <button
+                class="data-utility-segment data-refresh-action help-tooltip"
+                id="refreshButton"
+                type="button"
+                data-tooltip="저장된 파이프라인 JSON을 다시 불러와 대시보드를 갱신합니다."
+                aria-label="새로고침"
+              ><span class="data-utility-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></svg></span><b class="data-refresh-label">새로고침</b></button>
+              <button
+                id="criteriaDrawerButton"
+                class="help-tooltip"
+                type="button"
+                data-tooltip="SKBP 평가 기준, PASS/REVIEW/FAIL 조건, 점수표를 확인합니다."
+              ><span aria-hidden="true">?</span><b>판단근거</b></button>
+            </div>
+            <div class="top-action-group top-data-actions" role="group" aria-label="GPT instructions and result upload">
+              <button
+                id="copyTriagePromptTopButton"
+                class="help-tooltip"
+                type="button"
+                hidden
+                data-tooltip="GPT Fast Triage v3.2 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / UNVERIFIED로 screening할 때 사용합니다."
+                aria-label="GPT Fast Triage v3.2 지침 복사"
+              ><span aria-hidden="true">GPT</span><b>지침 1</b></button>
+              <button
+                id="copyPromptTopButton"
+                class="help-tooltip"
+                type="button"
+                data-tooltip="GPT Full Scout v3.3 지침을 복사합니다. Fast Triage에서 SELECT된 asset을 심층 검토할 때 사용합니다."
+                aria-label="GPT Full Scout v3.3 지침 복사"
+              ><span aria-hidden="true">GPT</span><b>지침 2</b></button>
+              <button
+                class="data-utility-segment data-upload-shortcut help-tooltip"
+                id="dataUploadShortcutButton"
+                type="button"
+                data-tooltip="현재 탭의 Pipeline 업로드 입력 영역으로 이동합니다."
+                aria-label="PIPELINE 업로드"
+                aria-controls="dataUploadPanel"
+              ><span class="data-utility-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 16V4M7.5 8.5 12 4l4.5 4.5" /><path d="M5 13v6h14v-6" /></svg></span><b><span class="data-upload-label-full">PIPELINE 업로드</span><span class="data-upload-label-compact">업로드</span></b></button>
+            </div>
+            <div class="top-action-group top-personal-actions" aria-label="Personal and appearance">
+              <button
+                class="theme-toggle icon-button help-tooltip"
+                data-theme-toggle
+                type="button"
+                data-tooltip="라이트/다크 모드를 전환합니다."
+                aria-label="라이트/다크 모드 전환"
+              >
+                <span data-theme-icon aria-hidden="true">◐</span>
+                <span class="sr-only" data-theme-label>Dark</span>
+              </button>
+            </div>
           </div>
-          <button
-            class="theme-toggle icon-button help-tooltip"
-            data-theme-toggle
-            type="button"
-            data-tooltip="라이트/다크 모드를 전환합니다."
-            aria-label="라이트/다크 모드 전환"
-          >
-            <span data-theme-icon aria-hidden="true">◐</span>
-            <span class="sr-only" data-theme-label>Dark</span>
-          </button>
         </div>
+
       </header>
 
-      <main>
-        <section class="summary-grid" aria-label="Summary metrics">
-          <article class="metric">
-            <span>총 분석 건수</span>
-            <strong id="metricTotal">-</strong>
-          </article>
-          <article class="metric">
-            <span>Pipeline Filter PASS/SELECT</span>
-            <strong id="metricPass">-</strong>
-          </article>
-          <article class="metric">
-            <span>평균 총점</span>
-            <strong id="metricScore">-</strong>
-          </article>
-          <article class="metric">
-            <span>평균 Target Relevance</span>
-            <strong id="metricTarget">-</strong>
-          </article>
-          <article class="metric">
-            <span>국가 수</span>
-            <strong id="metricCountries">-</strong>
-          </article>
+      <main id="pipelineContent" role="tabpanel" aria-labelledby="fullScoutTableTab" tabindex="-1">
+        <section id="workflowModeDescription" class="workflow-mode-description" data-workflow-mode="full" role="note" aria-live="polite">
+          <span class="workflow-description-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 10.75v5.5M12 7.75h.01" />
+            </svg>
+          </span>
+          <span class="workflow-description-copy">
+            <strong>2차 정밀 분석<span class="workflow-description-separator" aria-hidden="true">·</span></strong>
+            <span>선별된 후보를 과학성·차별성·개발성·사업성 관점에서 심층 평가합니다.</span>
+          </span>
+          <span class="workflow-description-filter">Filter 2</span>
         </section>
 
-        <section class="visual-grid" aria-label="Score visualizations">
-          <article class="panel">
+        <button
+          id="visualDashboardToggleButton"
+          class="visual-dashboard-toggle-bar"
+          type="button"
+          aria-expanded="true"
+          aria-controls="visualGrid"
+        >
+          <span class="visual-dashboard-toggle-title">
+            Summary Dashboard
+            <strong class="summary-average-score" id="summaryAverageScore" aria-label="현재 탭 평균 총점">-</strong>
+            <small id="summaryScopeNote">현재 Tab·Filter 기준</small>
+          </span>
+          <span class="visual-dashboard-toggle-action">
+            <span id="visualDashboardToggleLabel">접기</span>
+            <span class="visual-dashboard-toggle-icon" aria-hidden="true">⌃</span>
+          </span>
+        </button>
+
+        <section class="visual-grid workflow-summary-grid" id="visualGrid" aria-label="Workflow summary">
+          <article class="panel" id="passRatePanel">
             <div class="panel-header">
-              <h2>Theme 분포</h2>
-              <span>AI Champion</span>
+              <h2 id="workflowStatusTitle">PASS Rate</h2>
+              <span id="passRateSubtitle">PASS / Full Scout Assets</span>
             </div>
-            <div class="chart-stack" id="themeChart"></div>
+            <div class="chart-stack pass-rate-chart" id="passRateChart"></div>
           </article>
 
           <article class="panel">
             <div class="panel-header">
-              <h2>Indication 분포</h2>
-              <span>Main indication</span>
+              <h2 id="indicationSummaryTitle">SKBP 관심 적응증 분포</h2>
+              <span id="indicationSummarySubtitle">현재 탭 전체 asset · 적응증 6개 · Others</span>
             </div>
             <div class="chart-stack" id="indicationChart"></div>
           </article>
 
           <article class="panel">
             <div class="panel-header">
-              <h2>Modality 분포</h2>
-              <span>Modality</span>
+              <h2 id="modalitySummaryTitle">Modality 분포</h2>
+              <span id="modalitySummarySubtitle">상위 6개 · 나머지는 Others</span>
             </div>
             <div class="chart-stack" id="modalityChart"></div>
           </article>
 
-          <article class="panel">
+          <article class="panel workflow-priority-panel">
             <div class="panel-header">
-              <h2>국가별 후보군</h2>
-              <span>Company country</span>
+              <h2 id="workflowPriorityTitle">Priority Pipeline</h2>
+              <span id="workflowPrioritySubtitle">Total score · 동점 시 최신 조사 순</span>
             </div>
-            <div class="chart-stack" id="countryChart"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-header">
-              <h2>Priority Watch</h2>
-              <span>Review 최상위 pipeline</span>
-            </div>
-            <div class="priority-list" id="priorityList"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-header">
-              <h2>Due Date Watch</h2>
-              <span>Action date 임박순</span>
-            </div>
-            <div class="priority-list" id="dueDateList"></div>
+            <div class="priority-list workflow-priority-list" id="workflowPriorityList"></div>
           </article>
         </section>
 
@@ -165,8 +180,8 @@
               <input id="searchInput" type="search" placeholder="회사, 자산, 타깃, Theme, Cluster 검색" />
             </label>
             <label>
-              <span>개발 단계</span>
-              <select id="stageFilter">
+              <span>Country</span>
+              <select id="countryFilter">
                 <option value="all">전체</option>
               </select>
             </label>
@@ -189,19 +204,19 @@
               </select>
             </label>
             <label>
-              <span>국가</span>
-              <select id="countryFilter">
-                <option value="all">전체</option>
-              </select>
-            </label>
-            <label>
               <span>Main indication</span>
               <select id="indicationFilter">
                 <option value="all">전체</option>
               </select>
             </label>
             <label>
-              <span>Pipeline Filter</span>
+              <span>Stage</span>
+              <select id="stageFilter">
+                <option value="all">전체</option>
+              </select>
+            </label>
+            <label>
+              <span id="passFilterLabel">Filter 2</span>
               <select id="passFilter">
                 <option value="all">전체</option>
                 <option value="PASS">PASS</option>
@@ -209,12 +224,20 @@
                 <option value="FAIL">FAIL</option>
               </select>
             </label>
+            <button
+              id="resetFiltersButton"
+              class="filter-reset-button help-tooltip"
+              type="button"
+              data-tooltip="현재 탭 테이블 필터 초기화"
+              aria-label="현재 탭 테이블 필터 초기화"
+              disabled
+            >↻</button>
           </div>
         </section>
 
         <section class="panel pipeline-table-panel">
           <div class="panel-header">
-            <h2>파이프라인 테이블</h2>
+            <h2>Pipeline Table</h2>
             <div class="panel-actions">
               <span id="tableCount">0 items</span>
               <label class="page-size-control">
@@ -228,7 +251,10 @@
               </label>
               <button id="columnSettingsButton" class="help-tooltip" type="button" data-tooltip="테이블에 표시할 추가 JSON 컬럼을 선택합니다.">컬럼 설정</button>
               <button id="deleteSelectedButton" class="danger-link-button help-tooltip" type="button" data-tooltip="체크한 파이프라인 레코드를 삭제합니다." disabled>선택 삭제</button>
-              <button id="exportExcelButton" class="help-tooltip" type="button" data-tooltip="현재 테이블 데이터를 Excel 파일로 내보냅니다.">Excel export</button>
+              <button id="exportExcelButton" class="excel-export-button help-tooltip" type="button" data-tooltip="현재 필터 결과를 Excel용 CSV로 내보냅니다." disabled>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h5M3 9h9v9H3zM5.5 11.5l4 4m0-4-4 4"/></svg>
+                <span>Excel export</span>
+              </button>
             </div>
           </div>
           <div class="column-settings-panel" id="columnSettingsPanel" hidden>
@@ -237,31 +263,6 @@
               <p>JSON 원본에 있는 항목을 파이프라인 테이블에 추가로 표시합니다. 너무 많은 컬럼을 켜면 표가 촘촘해질 수 있습니다.</p>
             </div>
             <div class="column-settings-grid" id="columnSettingsGrid"></div>
-          </div>
-          <div class="pipeline-table-tabs-row">
-            <div class="pipeline-table-tabs" role="tablist" aria-label="Pipeline table mode">
-              <button id="fastTriageTableTab" type="button" role="tab" aria-selected="false" data-table-mode="triage">
-                <span class="tab-step" aria-hidden="true">1</span>
-                <span class="tab-label-group">
-                  <span class="tab-eyebrow">1차 스크리닝</span>
-                  <b>Fast Triage</b>
-                </span>
-              </button>
-              <button class="active" id="fullScoutTableTab" type="button" role="tab" aria-selected="true" data-table-mode="full">
-                <span class="tab-step" aria-hidden="true">2</span>
-                <span class="tab-label-group">
-                  <span class="tab-eyebrow">2차 정밀분석</span>
-                  <b>Full Scout</b>
-                </span>
-              </button>
-              <button id="focusManagementTableTab" type="button" role="tab" aria-selected="false" data-table-mode="focus">
-                <span class="tab-step tab-step-star" aria-hidden="true">★</span>
-                <span class="tab-label-group">
-                  <span class="tab-eyebrow">관심 목록</span>
-                  <b>집중 관리 <em id="focusTabCount">0</em></b>
-                </span>
-              </button>
-            </div>
           </div>
           <div class="table-wrap">
             <table class="pipeline-table">
@@ -313,47 +314,79 @@
           </div>
           <div class="table-footer">
             <button id="prevPage" class="help-tooltip" type="button" data-tooltip="이전 페이지로 이동합니다.">이전</button>
-            <span id="pageInfo">1 / 1</span>
+            <span id="pageInfo" role="status" aria-live="polite">1 / 1</span>
             <button id="nextPage" class="help-tooltip" type="button" data-tooltip="다음 페이지로 이동합니다.">다음</button>
           </div>
         </section>
 
-        <section class="panel paste-panel">
+        <section class="panel paste-panel" id="dataUploadPanel">
           <div class="panel-header">
-            <div>
-              <h2>데이터 입력</h2>
-              <p>GPT 결과에서 markdown code block은 왼쪽, JSON code block은 오른쪽에 붙여넣습니다.</p>
+            <div class="data-upload-header-copy">
+              <h2>Data Upload</h2>
             </div>
-            <span id="saveStatus">원문 + JSON 입력 대기</span>
+            <span id="saveStatus" class="data-upload-status" data-state="waiting" role="status" aria-live="polite">
+              <svg class="data-upload-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><circle cx="12" cy="12" r="2" /></svg>
+              <span>응답 붙여넣기 대기</span>
+            </span>
           </div>
-          <div class="data-input-grid">
-            <label class="data-input-box">
-              <span>왼쪽: MD 파일용 code block</span>
-              <textarea id="rawReportInput" spellcheck="false" placeholder="## 회사 Lead Pipeline 분석: **Asset**&#10;&#10;1. Company Profile&#10;2. Pipeline Snapshot&#10;3. Scorecard Summary&#10;..."></textarea>
-            </label>
-            <label class="data-input-box">
-              <span>오른쪽: JSON Schema code block</span>
-              <textarea id="structuredJsonInput" spellcheck="false" placeholder="{&#10;  &quot;meta&quot;: { ... },&#10;  &quot;source_report&quot;: { ... },&#10;  &quot;company_profile&quot;: { ... },&#10;  &quot;json_summary&quot;: { ... },&#10;  &quot;structured_table&quot;: { ... },&#10;  &quot;scoring&quot;: { ... }&#10;}"></textarea>
-            </label>
-          </div>
-          <div class="editor-actions">
-            <button class="action-pill help-tooltip" id="previewInputButton" type="button" data-tooltip="붙여넣은 Markdown과 JSON을 저장 전에 검토합니다."><span aria-hidden="true">✓</span><b>입력 검토</b></button>
-            <button class="action-pill primary-button help-tooltip" id="saveJsonButton" type="button" data-tooltip="검토한 원문 리포트와 구조화 JSON을 새 레코드로 저장합니다."><span aria-hidden="true">＋</span><b>JSON 저장</b></button>
-            <button class="action-pill help-tooltip" id="clearJsonButton" type="button" data-tooltip="입력한 Markdown과 JSON 내용을 모두 비웁니다."><span aria-hidden="true">×</span><b>비우기</b></button>
+          <div class="data-upload-layout">
+            <div class="data-upload-workspace">
+              <div class="data-input-grid data-input-grid-single">
+                <label class="data-input-box">
+                  <span class="data-upload-input-label">
+                    <svg class="data-upload-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M8 5.5h8M9 3h6v4H9z" /><path d="M7 5H5.5A1.5 1.5 0 0 0 4 6.5v13A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-13A1.5 1.5 0 0 0 18.5 5H17" /><path d="m9 14 2 2 4-4" /></svg>
+                    <b id="dataUploadInputLabel">GPT 지침 2 전체 응답</b>
+                  </span>
+                  <div class="data-upload-textarea-shell">
+                    <textarea id="gptResponseInput" spellcheck="false" placeholder="새 브라우저 탭에서 GPT를 열고, 오른쪽 Full Scout 실행 가이드 순서대로 심층조사를 완료한 뒤 생성된 전체 응답을 그대로 붙여넣으세요.&#10;관련 NCDP 파일이 있다면 GPT 실행 시 GPT 지침 1과 함께 첨부할 수 있습니다."></textarea>
+                  </div>
+                </label>
+              </div>
+              <div id="inputValidationResults" class="input-validation-results" aria-live="polite" hidden></div>
+              <div class="editor-actions">
+                <button class="action-pill data-upload-clear-button help-tooltip" id="clearJsonButton" type="button" data-tooltip="붙여넣은 전체 응답을 비웁니다."><span aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" /></svg></span><b>비우기</b></button>
+                <button class="action-pill header-action-button help-tooltip" id="previewInputButton" type="button" data-tooltip="전체 응답에서 Markdown과 JSON을 분리하고 현재 워크플로 기준으로 검토합니다." disabled><span class="data-upload-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 3 5 6v5c0 4.7 2.8 8 7 10 4.2-2 7-5.3 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></svg></span><b>입력 검토</b></button>
+                <button class="action-pill header-action-button primary-button help-tooltip" id="saveJsonButton" type="button" data-tooltip="입력 검토를 통과한 원문 리포트와 구조화 데이터를 저장합니다." disabled><span class="data-upload-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 20v-6h8v6" /></svg></span><b>검증 후 저장</b></button>
+              </div>
+            </div>
+            <aside class="data-upload-guide" aria-labelledby="dataUploadGuideTitle">
+              <div class="data-upload-guide-header">
+                <div>
+                  <span class="data-upload-guide-eyebrow">QUICK GUIDE</span>
+                  <h3 id="dataUploadGuideTitle">Full Scout 실행 가이드</h3>
+                </div>
+                <span id="dataUploadRecommendation" class="data-upload-recommendation">High 이상 · 1개/회</span>
+              </div>
+              <ol id="dataUploadGuideSteps" class="data-upload-guide-steps"></ol>
+            </aside>
           </div>
         </section>
       </main>
     </div>
 
-    <div class="drawer-backdrop" id="aiBackdrop" hidden></div>
-    <aside class="ai-drawer" id="aiDrawer" aria-label="AI pipeline search drawer" aria-hidden="true">
-      <div class="drawer-resize-handle" data-resize-drawer aria-label="Resize AI drawer" role="separator" tabindex="0"></div>
-      <div class="ai-drawer-header">
+    <button
+      id="aiDrawerButton"
+      class="floating-agent-launcher"
+      type="button"
+      hidden
+      aria-label="All Pipelines Agent 열기. 드래그하여 위치 이동"
+      title="All Pipelines Agent 열기"
+      data-tooltip="All Pipelines Agent 열기"
+    >
+      <span class="floating-agent-launcher-mark" aria-hidden="true">🤖</span>
+    </button>
+
+    <aside class="ai-drawer floating-agent-window" id="aiDrawer" role="dialog" aria-label="All Pipelines Agent" aria-modal="false" aria-hidden="true" hidden>
+      <div class="ai-drawer-header floating-agent-dragbar" data-floating-agent-drag tabindex="0" aria-label="에이전트 창 이동. Alt와 방향키로 위치를 조절할 수 있습니다.">
         <div>
-          <p class="eyebrow">Obsidian + Agentic Search</p>
-          <h2>Pipeline Discovery Agent</h2>
+          <p class="eyebrow">현재 탭·필터 전체</p>
+          <h2 id="aiDrawerTitle">All Pipelines Agent</h2>
         </div>
-        <button id="aiDrawerClose" type="button" aria-label="Close AI drawer">닫기</button>
+        <div class="floating-agent-window-actions" data-floating-agent-no-drag>
+          <button type="button" data-floating-agent-minimize aria-label="에이전트 창 최소화" title="최소화"><span class="floating-agent-window-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 12h14" /></svg></span></button>
+          <button type="button" data-floating-agent-maximize aria-label="에이전트 창 최대화" title="최대화"><span class="floating-agent-window-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="5" y="5" width="14" height="14" rx="1.5" /></svg></span></button>
+          <button id="aiDrawerClose" type="button" aria-label="에이전트 창 닫기" title="닫기"><span class="floating-agent-window-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m6 6 12 12M18 6 6 18" /></svg></span></button>
+        </div>
       </div>
 
       <div class="agent-context">
@@ -363,7 +396,7 @@
         </div>
         <div>
           <span>Knowledge Mode</span>
-          <strong>JSON + Wiki Agent</strong>
+          <strong>JSON + Wiki + Files</strong>
         </div>
       </div>
 
@@ -386,7 +419,7 @@
       <div class="agent-messages" id="agentMessages">
         <div class="agent-message assistant">
           <div class="agent-message-meta">
-            <strong>Pipeline Agent</strong>
+            <strong>All Pipelines Agent</strong>
             <span>JSON + Wiki retrieval</span>
           </div>
           <div class="agent-message-text">대시보드 JSON과 skbp_pipeline_wiki note를 자동으로 검색해 답변합니다. 후보 비교, shortlist, evidence gap, 경쟁 리스크를 질문해보세요.</div>
@@ -394,63 +427,78 @@
       </div>
 
       <form class="agent-form" id="agentForm">
-        <textarea id="agentInput" rows="4" placeholder="예: E/I Balance 후보 중 platform fit과 Data Maturity가 가장 좋은 asset을 찾아줘"></textarea>
-        <button class="primary-button" type="submit">질문</button>
+        <label class="sr-only" for="agentInput">에이전트에게 질문</label>
+        <textarea id="agentInput" rows="2" data-workflow-mode="full" aria-label="AI Agent 질문" placeholder="예: E/I balance 후보 중 platform attractiveness가 가장 높은 Pipeline 두 개의 장단점을 비교해줘."></textarea>
+        <button class="primary-button agent-send-button" type="submit" aria-label="질문 전송" title="전송">
+          <svg class="agent-send-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m4 5 16 7-16 7 3-7-3-7Z" /><path d="M7 12h13" /></svg>
+        </button>
       </form>
+      <div class="floating-agent-resize-grip" data-floating-agent-resize role="button" tabindex="0" aria-label="에이전트 창 크기 조절. 방향키로 너비와 높이를 조절할 수 있습니다."></div>
     </aside>
 
     <div class="drawer-backdrop" id="criteriaBackdrop" hidden></div>
-    <aside class="ai-drawer criteria-drawer" id="criteriaDrawer" aria-label="Scoring criteria drawer" aria-hidden="true" hidden>
+    <aside class="ai-drawer criteria-drawer" id="criteriaDrawer" role="dialog" aria-modal="true" aria-label="Scoring criteria dialog" aria-hidden="true" hidden>
       <div class="ai-drawer-header">
-        <div>
+        <div class="criteria-drawer-heading">
           <p class="eyebrow" id="criteriaDrawerScopeLabel">AI Champion</p>
-          <h2>판단근거</h2>
+          <div class="criteria-drawer-title-row">
+            <h2>판단근거</h2>
+            <span id="criteriaDrawerVersionBadge" class="criteria-version-badge">v3.2</span>
+          </div>
+          <p id="criteriaDrawerSubtitle" class="criteria-drawer-subtitle">Full Scout 검토 후보를 선별하기 위한 3-point screening 기준</p>
         </div>
-        <button id="criteriaDrawerClose" type="button" aria-label="Close criteria drawer">닫기</button>
+        <button id="criteriaDrawerClose" class="criteria-drawer-close" type="button" aria-label="판단근거 닫기"><span>닫기</span><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17" /></svg></button>
       </div>
 
       <div class="criteria-drawer-body">
         <section class="criteria-rule criteria-triage-rule" data-criteria-tab="triage">
-          <h3>GPT 지침 1 — Fast Triage · v3.1 기준</h3>
+          <h3>GPT 지침 1 — Fast Triage · v3.2 기준</h3>
           <p>
             지침 1은 여러 후보 중 지침 2 Full Scout로 넘길 대상을 빠르게 고르는 1차 screening입니다.
-            <code>Target Relevance</code>, <code>MoA Validity</code>, <code>Data Maturity</code>는 지침 2의 같은 항목을 그대로 쓰되,
-            evidence type, why_not_higher, full source trail까지 요구하지 않는 예비 평가입니다.
-            <code>SELECT</code>만 지침 2에서 심층 검토하는 것이 기본 흐름입니다.
+            <code>Target Relevance</code>, <code>MoA Validity</code>, <code>Data Maturity</code>를 독립적으로 예비 평가하고
+            <code>SELECT</code>, <code>REJECT</code>, <code>UNVERIFIED</code>로 분류합니다.
           </p>
         </section>
 
-        <section class="criteria-pass-grid triage-status-grid" aria-label="SELECT REJECT N/A triage criteria" data-criteria-tab="triage">
-          <article>
-            <h3>SELECT</h3>
+        <section class="criteria-pass-grid triage-status-grid criteria-guide-section" aria-label="SELECT REJECT UNVERIFIED triage criteria" data-criteria-tab="triage">
+          <div class="criteria-guide-section-heading">
+            <span class="criteria-guide-step-number" aria-hidden="true">1</span>
+            <span class="criteria-guide-section-copy"><h3>Final Status</h3><p>SELECT / REJECT / UNVERIFIED의 최종 판정 기준</p></span>
+          </div>
+          <article class="criteria-status-card" data-triage-status="select">
+            <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></svg></span><h3>SELECT</h3></div>
+            <p class="criteria-status-subtitle">Full Scout 심층 검토 대상입니다. 최종 BD recommendation을 의미하지 않습니다.</p>
             <ul>
-              <li>Asset identity 확인 가능</li>
-              <li>TR / MOA / Data 중 2개 이상이 2점 이상</li>
-              <li>SKBP fit이 있어 지침 2 검토 가치 있음</li>
+              <li>Asset identity 확인</li>
+              <li>Active asset</li>
+              <li>TR 2점 이상</li>
+              <li>MoA 또는 Data 중 하나 이상 2점 이상</li>
             </ul>
           </article>
-          <article>
-            <h3>REJECT</h3>
+          <article class="criteria-status-card" data-triage-status="reject">
+            <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6M15 9l-6 6" /></svg></span><h3>REJECT</h3></div>
+            <p class="criteria-status-subtitle">현재 공개 근거 및 개발 상태 기준, Full Scout 우선순위가 충분하지 않습니다.</p>
             <ul>
-              <li>Asset identity는 확인됨</li>
-              <li>SKBP fit, MoA, Data 중 핵심이 약함</li>
-              <li>현재 공개자료 기준 지침 2 우선순위 낮음</li>
+              <li>Asset identity는 확인됐으나 SELECT 기준 미충족</li>
+              <li>MoA 또는 Data 근거가 Full Scout 우선순위를 뒷받침하지 못함</li>
+              <li>Inactive, discontinued 또는 명확한 hard blocker가 있는 경우</li>
             </ul>
           </article>
-          <article>
-            <h3>N/A</h3>
+          <article class="criteria-status-card" data-triage-status="unverified">
+            <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="11" cy="11" r="7" /><path d="m16.5 16.5 4 4M11 8.5v3M11 14.5h.01" /></svg></span><h3>UNVERIFIED</h3></div>
+            <p class="criteria-status-subtitle">공개 자료에서 해당 후보를 특정 biotech/pharma pipeline asset으로 확인하지 못했습니다.</p>
             <ul>
-              <li>Pipeline asset identity 확인 불가</li>
-              <li>회사, target, indication 연결 불가</li>
-              <li>회사/타깃/적응증을 확인할 단서가 부족함</li>
+              <li>Asset명 또는 compound code를 실제 의약품 개발 프로그램으로 확인할 수 없음</li>
+              <li>검색 결과가 비의약품, 동명 코드 또는 불명확한 약어와 혼재함</li>
+              <li>공식 pipeline page, clinical trial registry 또는 publication 등 identity 확인 source가 필요함</li>
             </ul>
           </article>
         </section>
 
-        <section class="criteria-scoring-section" data-criteria-tab="triage">
-          <div class="criteria-section-header">
-            <h3>Fast Triage Scoring Table</h3>
-            <span>TR / MOA / Data 예비 평가 · 0점에서 3점까지 보수적으로 적용</span>
+        <section class="criteria-scoring-section criteria-guide-section" data-criteria-tab="triage">
+          <div class="criteria-guide-section-heading">
+            <span class="criteria-guide-step-number" aria-hidden="true">2</span>
+            <span class="criteria-guide-section-copy"><h3>Scoring Table</h3><p>TR · MoA · Data의 0–3점 분류 기준</p></span>
           </div>
           <div class="criteria-table-wrap">
             <table class="criteria-table">
@@ -472,48 +520,64 @@
               </thead>
               <tbody>
                 <tr>
-                  <th>Target Relevance</th>
-                  <td>CNS/SKBP 관련성이 없거나 판단 불가</td>
-                  <td>질환·target 관련성이 약하거나 간접적</td>
-                  <td>Neurology/CNS 관련성은 있으나 SKBP theme·cluster fit은 제한적</td>
-                  <td>SKBP theme 또는 cluster에 직접 해당</td>
+                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg></span><span><b>TR</b>Target Relevance</span></span></th>
+                  <td>SKBP 관련성을 판단할 정보가 부족하거나 관심 질환 범위 밖</td>
+                  <td>신경계·신경면역·신경퇴행·통증 관련 질환이지만 SKBP 우선 관심 적응증에는 해당하지 않음</td>
+                  <td>SKBP 우선 관심 적응증에 해당</td>
+                  <td>SKBP 우선 관심 적응증에 해당하며, target/MoA가 해당 질환 biology 또는 SKBP Theme/Cluster에 직접 연결</td>
                 </tr>
                 <tr>
-                  <th>MoA Validity</th>
-                  <td>MoA 또는 target–질환 연결 불명확</td>
-                  <td>회사 claim·이론적 rationale 중심</td>
-                  <td>Functional evidence 또는 동일 target/class validation 있음</td>
-                  <td>Asset-specific validation 또는 human target engagement/PoC 있음</td>
+                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 4h8M10 4v5l-5 9a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 18l-5-9V4" /><path d="M8 15h8" /></svg></span><span><b>MoA</b>MoA Validity</span></span></th>
+                  <td>Target 또는 작용기전을 확인할 수 없어 평가 불가</td>
+                  <td>작용기전 설명은 있으나 회사 주장 또는 이론적 근거 중심</td>
+                  <td>기전이 실제로 작동함을 보여주는 기능적 실험 또는 동일 target/class의 독립 검증 근거 있음</td>
+                  <td>해당 asset에서 target engagement, mechanism-linked PD/biomarker 또는 직접적인 작용기전 검증이 확인됨</td>
                 </tr>
                 <tr>
-                  <th>Data Maturity</th>
-                  <td>공개된 asset-specific data 없음</td>
-                  <td>주장 stage 대비 공개 data 부족</td>
-                  <td>Stage에 부합하는 전임상·PK/PD·초기 임상 data 있음</td>
-                  <td>Decision-ready package 또는 asset-specific human result/clinical PoC 있음</td>
+                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /><path d="M3 20h18" /></svg></span><span><b>Data</b>Data Maturity</span></span></th>
+                  <td>공개된 asset-specific 결과 없음</td>
+                  <td>정성적 claim 또는 단편적 결과만 있어 개발 단계 대비 불충분</td>
+                  <td>개발 단계에 맞는 해석 가능한 정량 데이터 영역 1개 이상</td>
+                  <td>개발 단계에 맞는 상호보완적 정량 데이터 영역 2개 이상</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <ul class="criteria-table-footnote">
-            <li>각 항목은 독립적으로 평가하며, 2점 이상은 해당 점수를 뒷받침하는 공개 근거가 확인돼야 합니다.</li>
-            <li>N/A는 asset identity 자체를 확인하지 못한 경우에만 사용하며, identity는 확인됐지만 근거가 없으면 0점입니다.</li>
+            <li><span class="triage-status-badge unverified criteria-footnote-status">UNVERIFIED</span><span>asset identity 자체를 확인하지 못한 경우에만 사용합니다.</span></li>
+            <li>Identity는 확인됐지만 평가 근거가 없거나 asset이 inactive·discontinued(개발 중단) 상태이면 해당 항목을 0점으로 기록합니다.</li>
           </ul>
 
-          <div class="criteria-rule triage-evidence-note">
-            <h3>Evidence Level 안내</h3>
-            <p>
-              지침 1은 최대 50개 후보의 Full Scout 우선순위를 정하는 screening-grade 조사입니다.
-              Asset identity, target/MoA, indication, active stage 및 공개된 asset-specific data 존재 여부를 빠르게 확인하며,
-              주로 공식 company/pipeline page, clinical trial registry, publication 등 1~2개의 credible source를 사용합니다.
-              3점 후보나 출처가 충돌하는 경우에만 추가 확인하며, 경쟁환경·시장성·특허/FTO·상세 CMC 등 full diligence는 수행하지 않습니다.
-              점수는 공개자료에서 현재 확인되는 evidence 수준이며 최종 scientific 또는 business diligence 결과가 아닙니다.
-            </p>
+        </section>
+
+        <section class="criteria-parameter-guide triage-parameter-guide criteria-guide-section" data-criteria-tab="triage">
+          <div class="criteria-guide-section-heading">
+            <span class="criteria-guide-step-number" aria-hidden="true">3</span>
+            <span class="criteria-guide-section-copy"><h3>Parameter Guide</h3><p>세 평가항목이 실제로 확인하는 범위</p></span>
+          </div>
+          <div class="criteria-detail-grid compact-criteria-detail-grid triage-parameter-grid" aria-label="Fast Triage parameter guide">
+            <article class="parameter-card-wide target-parameter-card parameter-breakdown-card">
+              <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4M9.5 12a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z" /></svg></span><h3><b>TR</b><span>Target Relevance</span></h3></div>
+              <p>SKBP 우선 관심 적응증 및 R&amp;D Theme/Cluster와의 적합성을 평가합니다.</p>
+              <ul class="parameter-evidence-list" aria-label="Target Relevance priority indications and themes">
+                <li><strong>SKBP 우선 관심 적응증</strong><span class="criteria-keyword-list"><span>Alzheimer's disease</span><span>Parkinson's disease</span><span>Amyotrophic lateral sclerosis / motor neuron disease</span><span>Multiple sclerosis / neuroinflammatory disease</span><span>Neuropathic pain</span><span>Epilepsy / seizure disorders</span></span></li>
+                <li><strong>R&amp;D Theme 1 · E/I Balance</strong><span class="criteria-keyword-list"><span>Ion Channel</span><span>Inhibitory Tone</span><span>Synaptic Transmission</span><span>Chloride Homeostasis</span><span>Network Modulation</span></span></li>
+                <li><strong>R&amp;D Theme 2 · Neuroimmune</strong><span class="criteria-keyword-list"><span>Glial homeostasis</span><span>CNS injury immune response</span><span>Cytokine neuromodulation</span><span>Disease immune modulation</span></span></li>
+              </ul>
+            </article>
+            <article>
+              <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 4h8M10 4v5l-5 9a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 18l-5-9V4" /><path d="M8 15h8" /></svg></span><h3><b>MoA</b><span>MoA Validity</span></h3></div>
+              <p>Target·작용기전이 얼마나 명확히 정의되어 있고, 기능적·독립적·asset-specific 근거로 어느 수준까지 검증됐는지를 평가합니다.</p>
+            </article>
+            <article>
+              <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /><path d="M3 20h18" /></svg></span><h3><b>Data</b><span>Data Maturity</span></h3></div>
+              <p>해당 asset의 개발 단계에 맞는 공개 정량 데이터가 얼마나 충분하고, 서로 보완되어 해석 가능한지를 평가합니다.</p>
+            </article>
           </div>
         </section>
 
         <section class="criteria-rule criteria-full-rule" data-criteria-tab="full">
-          <h3>GPT 지침 2 — Full Scout · v3.2 기준</h3>
+          <h3>GPT 지침 2 — Full Scout · v3.3 기준</h3>
           <p>
             지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
             지침 1에서 예비로 본 TR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
@@ -521,101 +585,62 @@
           </p>
         </section>
 
-        <section class="criteria-rule target-theme-note" data-criteria-tab="triage full">
-          <h3>Target Relevance — Theme / Cluster 근거</h3>
-          <p>
-            E/I Balance와 Neuroimmune은 Target Relevance를 판단할 때 쓰는 SKBP 내부 biology map입니다.
-            asset의 target과 MoA가 아래 theme/cluster 중 어디에 들어가는지 먼저 확인하고, 맞지 않으면 Target Relevance를 높게 주지 않습니다.
-          </p>
-        </section>
-
-        <section class="criteria-theme-grid" aria-label="SKBP theme and cluster" data-criteria-tab="triage full">
-          <article>
-            <h3>E/I Balance</h3>
-            <p>balance between excitation and inhibition</p>
-            <ul>
-              <li>Ion Channel</li>
-              <li>Inhibitory Tone 강화</li>
-              <li>Synaptic Transmission</li>
-              <li>Chloride Homeostasis</li>
-              <li>Network Modulation</li>
-            </ul>
-          </article>
-          <article>
-            <h3>Neuroimmune</h3>
-            <p>neuroimmune biology across CNS disease</p>
-            <ul>
-              <li>CNS 손상 면역반응</li>
-              <li>교세포 향상성</li>
-              <li>Cytokine 신경조절</li>
-              <li>손상/질환 면역조절</li>
-              <li>말초 면역기관 연결</li>
-            </ul>
-          </article>
-        </section>
-
-        <section class="criteria-rule criteria-other-header" data-criteria-tab="full">
-          <h3>기타 기록 규칙</h3>
-          <p>
-            아래 항목들은 점수 자체보다 auditability를 위해 남깁니다. Evidence Type은 근거 수준의 라벨이고,
-            근거 기록은 왜 그 점수인지 추적하기 위한 메모이며, 경쟁사 유사도는 Competitive Landscape 판단을 보조합니다.
-          </p>
-        </section>
-
-        <section class="criteria-rule criteria-other-card" data-criteria-tab="full">
-          <h3>Evidence Type</h3>
-          <div class="criteria-table-wrap">
-            <table class="criteria-table evidence-type-table">
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>의미</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><th>E0</th><td>근거 없음 / 판단 불가</td></tr>
-                <tr><th>E1</th><td>회사 주장 또는 과학적 논리만 있음</td></tr>
-                <tr><th>E2</th><td>class-level / indirect evidence</td></tr>
-                <tr><th>E3</th><td>asset-specific 전임상/기술 근거</td></tr>
-                <tr><th>E4</th><td>asset-specific 임상 근거</td></tr>
-              </tbody>
-            </table>
+        <section class="criteria-rule triage-evidence-note criteria-guide-section" data-criteria-tab="triage">
+          <div class="criteria-guide-section-heading">
+            <span class="criteria-guide-step-number" aria-hidden="true">4</span>
+            <span class="criteria-guide-section-copy"><h3>Evidence Level</h3><p>점수에 사용되는 근거와 출처 원칙</p></span>
           </div>
+          <p class="criteria-evidence-intro">확인된 사용자 입력정보 또는 공개자료만 사용하며, 미확인 항목은 <code>Unknown</code>으로 기록하고, 출처 개수 자체로 점수를 결정하지 않습니다.</p>
+          <dl class="criteria-evidence-definitions">
+            <div><dt><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM5 21a7 7 0 0 1 14 0" /><path d="m17 13 1.5 1.5L21 12" /></svg></span><span>사용자 입력정보</span></dt><dd><ul><li>사용자가 제공한 정보</li><li>TR 평가에 사용 가능</li></ul></dd></div>
+            <div><dt><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="11" cy="11" r="7" /><path d="m16.5 16.5 4 4M4 11h14M11 4a11 11 0 0 1 0 14M11 4a11 11 0 0 0 0 14" /></svg></span><span>공개자료</span></dt><dd><ul><li>GPT가 웹에서 직접 확인한 정보</li><li>판단에 사용된 출처와 핵심 사실 표시</li></ul></dd></div>
+            <div><dt><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 3 5 6v5c0 4.7 2.8 8 7 10 4.2-2 7-5.3 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></svg></span><span>평가 원칙</span></dt><dd><ul><li>TR: 사용자 입력정보 및 공개자료 모두 사용 가능</li><li>MoA·Data 2점 이상: 공개 asset-specific 근거 필요</li></ul></dd></div>
+          </dl>
         </section>
 
-        <section class="criteria-pass-grid full-status-grid" aria-label="PASS REVIEW FAIL criteria" data-criteria-tab="full">
-          <article>
-            <h3>PASS</h3>
+        <section class="criteria-pass-grid full-status-grid criteria-guide-section" aria-label="PASS REVIEW FAIL criteria" data-criteria-tab="full">
+          <div class="criteria-guide-section-heading">
+            <span class="criteria-guide-step-number" aria-hidden="true">1</span>
+            <span class="criteria-guide-section-copy"><h3>Final Status</h3><p>PASS / REVIEW / FAIL의 최종 판정 기준</p></span>
+          </div>
+          <article class="criteria-status-card" data-full-status="pass">
+            <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></svg></span><h3>PASS</h3></div>
+            <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">Full Scout의 총점과 필수 기준을 모두 충족하고 active development가 확인된 후속 BD 우선 검토 후보입니다.</p></div>
             <ul>
-              <li>Total score >= 14</li>
-              <li>Target Relevance >= 3</li>
-              <li>MoA Validity >= 2</li>
-              <li>Data Maturity >= 2</li>
-              <li>Hard blocker 없음</li>
+              <li>Total Score ≥ 15</li>
+              <li>Target Relevance ≥ 2</li>
+              <li>MoA Validity ≥ 2</li>
+              <li>Data Maturity ≥ 2</li>
+              <li>Asset identity verified</li>
+              <li>Active development program confirmed</li>
             </ul>
           </article>
-          <article>
-            <h3>REVIEW</h3>
+          <article class="criteria-status-card" data-full-status="review">
+            <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="11" cy="11" r="7" /><path d="m16.5 16.5 4 4M11 8.5v3M11 14.5h.01" /></svg></span><h3>REVIEW</h3></div>
+            <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">잠재력은 있으나 총점, 필수 기준 또는 active status와 핵심 근거가 충분하지 않아 추가 확인이 필요한 후보입니다.</p></div>
             <ul>
-              <li>Total score 9-13</li>
-              <li>또는 score는 높지만 stage / 권리 / asset identity / source 불확실성 있음</li>
+              <li>Total Score 9–14</li>
+              <li>또는 Total Score ≥ 15이지만 TR, MoA 또는 Data 필수조건 미충족</li>
+              <li>또는 active status, stage 또는 핵심 evidence 불확실</li>
               <li>추가 diligence 후 PASS/FAIL 재판정</li>
             </ul>
           </article>
-          <article>
-            <h3>FAIL</h3>
+          <article class="criteria-status-card" data-full-status="fail">
+            <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6M15 9l-6 6" /></svg></span><h3>FAIL</h3></div>
+            <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">현재 확인된 근거 또는 개발 상태가 Full Scout 통과 기준에 미달하거나 명확한 제외 조건에 해당하는 후보입니다.</p></div>
             <ul>
-              <li>Total score <= 8</li>
-              <li>또는 Target Relevance <= 1</li>
-              <li>또는 SKBP Theme / Cluster fit 없음</li>
+              <li>Total Score ≤ 8</li>
+              <li>또는 Target Relevance ≤ 1</li>
+              <li>또는 Asset identity not verified</li>
+              <li>또는 Discontinued / Terminated / Withdrawn / Inactive / Clearly failed</li>
             </ul>
           </article>
         </section>
 
-        <section class="criteria-scoring-section" data-criteria-tab="full">
-          <div class="criteria-section-header">
-            <h3>Scoring Table</h3>
-            <span>지침 1은 TR/MOA/Data만 예비 적용, 지침 2는 7개 전체 적용</span>
+        <section class="criteria-scoring-section criteria-guide-section" data-criteria-tab="full">
+          <div class="criteria-guide-section-heading">
+            <span class="criteria-guide-step-number" aria-hidden="true">2</span>
+            <span class="criteria-guide-section-copy"><h3>Scoring Table</h3><p>7개 criteria의 0–3점 평가 기준</p></span>
           </div>
           <div class="criteria-table-wrap">
             <table class="criteria-table">
@@ -637,271 +662,244 @@
               </thead>
               <tbody>
                 <tr>
-                  <th>Target Relevance</th>
-                  <td>CNS/SKBP 관련성 거의 없음</td>
-                  <td>질환 또는 target 관련성 약함</td>
-                  <td>neurology 관련성은 있으나 theme/cluster fit은 제한적</td>
-                  <td>SKBP theme 또는 cluster에 직접 해당</td>
+                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg></span><span><b>TR</b>Target Relevance</span></span></th>
+                  <td>SKBP 관련성 판단 근거 부족 또는 관심 질환 범위 밖</td>
+                  <td>신경·신경면역·신경퇴행·통증 관련이나 6개 우선 관심 적응증에는 해당하지 않음</td>
+                  <td>SKBP 우선 관심 적응증 확인</td>
+                  <td>관심 적응증이며 target/MoA가 disease biology 또는 SKBP Theme/Cluster에 직접 연결</td>
                 </tr>
                 <tr>
-                  <th>Competitive Landscape</th>
-                  <td>판단 불가 또는 강한 front runner 다수</td>
-                  <td>경쟁 2개 이상, 차별성 불명확</td>
-                  <td>front runner 1-2개이나 BIC 가능성 있음</td>
-                  <td>직접 경쟁 적고 FIC/BIC 가능성 높음</td>
+                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="7" r="2.5" /><circle cx="18" cy="17" r="2.5" /><path d="m8.5 11 7-3M8.5 13l7 3" /></svg></span><span><b>COMP</b>Competitive Landscape</span></span></th>
+                  <td>검색 또는 근거 부족으로 direct competitor와 경쟁구도 판단 불가</td>
+                  <td>경쟁자는 확인되나 차별성은 claim 또는 이론 수준</td>
+                  <td>Comparator 대비 asset-specific 정량 차별성 또는 현실적 진입공간 확인</td>
+                  <td>충분한 검색 후 high-similarity 경쟁자가 제한적이고 강한 정량 차별성 또는 선도 위치 확인</td>
                 </tr>
                 <tr>
-                  <th>MoA Validity</th>
-                  <td>MoA 불명확 또는 biology 연결 약함</td>
-                  <td>회사 claim / 이론적 rationale 중심</td>
-                  <td>functional evidence 또는 class validation 있음</td>
-                  <td>asset-specific validation 또는 human PoC 있음</td>
+                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 4h8M10 4v5l-5 9a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 18l-5-9V4" /><path d="M8 15h8" /></svg></span><span><b>MoA</b>MoA Validity</span></span></th>
+                  <td>Target 또는 MoA 확인 불가</td>
+                  <td>회사 주장 또는 theoretical rationale 수준</td>
+                  <td>Functional evidence 또는 independent same-target/class validation</td>
+                  <td>Asset-specific target engagement, mechanism-linked PD/biomarker 또는 직접 functional validation</td>
                 </tr>
                 <tr>
-                  <th>Platform Attractiveness</th>
-                  <td>Platform 실재 또는 구현 가능성 불명확</td>
-                  <td>차별성 claim·이론적 rationale 중심</td>
-                  <td>Comparator 대비 정량적 기술 우위가 확인되나 단일·전임상 조건에 제한</td>
-                  <td>Platform 적용 자산 First Patient Dosed 또는 반복성·외부검증 확인</td>
+                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 3 8 4-8 4-8-4 8-4Z" /><path d="m4 12 8 4 8-4M4 17l8 4 8-4" /></svg></span><span><b>PLATFORM</b>Platform Attractiveness</span></span></th>
+                  <td>재사용 가능한 Platform 또는 검증 가능한 기술 장점 미확인</td>
+                  <td>재사용 구조와 rationale은 있으나 차별성은 claim 수준</td>
+                  <td>적절한 comparator 대비 정량적 기술 우위 최소 1건</td>
+                  <td>2점 조건 충족 후 반복 정량 검증 또는 Platform-derived Asset FPD</td>
                 </tr>
                 <tr>
-                  <th>Expansion Potential</th>
-                  <td>확장 근거 없음</td>
-                  <td>이론적 가능성만 있음</td>
-                  <td>adjacent indication biology 근거 있음</td>
-                  <td>복수 indication 또는 pipeline 확장 확인</td>
+                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="5" r="2" /><circle cx="18" cy="7" r="2" /><circle cx="18" cy="18" r="2" /><path d="M6 7v5a6 6 0 0 0 6 6h4M8 7h4a6 6 0 0 1 6 6v3" /></svg></span><span><b>EXPANSION</b>Expansion Potential</span></span></th>
+                  <td>Main indication 외 추가 적응증 미확인</td>
+                  <td>추가 적응증과 biological rationale은 있으나 회사 설명·이론 수준</td>
+                  <td>하나 이상의 추가 적응증에서 asset-specific 초기 정량 데이터 확인</td>
+                  <td>복수 추가 적응증 + 최소 1개 공식 전임상·IND-enabling·임상 개발 프로그램 + 해당 적응증 정량 데이터</td>
                 </tr>
                 <tr>
-                  <th>Data Maturity</th>
-                  <td>asset-specific data 없음</td>
-                  <td>stage 대비 공개 data 부족</td>
-                  <td>stage에 부합하는 전임상/초기 임상 data 있음</td>
-                  <td>decision-ready package 또는 임상 PoC 있음</td>
+                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /><path d="M3 20h18" /></svg></span><span><b>DATA</b>Data Maturity</span></span></th>
+                  <td>Asset-specific 결과 미확인</td>
+                  <td>정성적 claim 또는 단편적 결과</td>
+                  <td>Stage-appropriate quantitative evidence domain 1개 이상</td>
+                  <td>Complementary quantitative evidence domain 2개 이상이며 최소 하나가 program progression 지지</td>
                 </tr>
                 <tr>
-                  <th>Marketability</th>
-                  <td>상업성 rationale 또는 계산 불가</td>
-                  <td>Obtainable peak sales &lt; USD 1B</td>
-                  <td>USD 1B-2B 가능</td>
-                  <td>&gt;= USD 2B + 확장성/가격/차별성 우수</td>
+                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 19V9M10 19V5M16 19v-7M3 19h18" /><path d="m4 8 6-4 6 6 4-3" /></svg></span><span><b>MARKET</b>Marketability</span></span></th>
+                  <td>신뢰 가능한 내부 계산과 외부 peak-sales 전망 모두 없음</td>
+                  <td>Assessed Global Peak Sales &lt; USD 1B</td>
+                  <td>Assessed Global Peak Sales ≥ USD 1B, &lt; USD 2B</td>
+                  <td>Assessed Global Peak Sales ≥ USD 2B</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </section>
 
-        <section class="criteria-parameter-guide" data-criteria-tab="full">
-          <div class="criteria-section-header">
-            <h3>Parameter Guide</h3>
-            <span>각 항목에서 실제로 보는 핵심 쟁점</span>
+        <section class="criteria-parameter-guide full-parameter-guide criteria-guide-section" data-criteria-tab="full">
+          <div class="criteria-guide-section-heading">
+            <span class="criteria-guide-step-number" aria-hidden="true">3</span>
+            <span class="criteria-guide-section-copy"><h3>Parameter Guide</h3><p>각 항목에서 실제로 보는 핵심 쟁점</p></span>
           </div>
-          <div class="criteria-detail-grid compact-criteria-detail-grid" aria-label="Detailed scoring guidance">
-            <article class="parameter-card-wide target-parameter-card">
-              <h3>1. Target Relevance</h3>
-              <p>Target, disease biology, indication이 SKBP의 E/I Balance 또는 Neuroimmune theme/cluster에 직접 맞는지 봅니다. 단순 CNS 질환보다 target-level fit이 중요합니다.</p>
-              <div class="target-theme-inline" aria-label="Target Relevance theme cards">
-                <div>
-                  <strong>E/I Balance</strong>
-                  <span>Ion Channel, Inhibitory Tone, Synaptic Transmission, Chloride Homeostasis, Network Modulation</span>
-                </div>
-                <div>
-                  <strong>Neuroimmune</strong>
-                  <span>Glial homeostasis, CNS injury immune response, Cytokine neuromodulation, disease immune modulation</span>
-                </div>
+          <div class="criteria-detail-grid compact-criteria-detail-grid full-parameter-grid" aria-label="Detailed scoring guidance">
+            <article class="target-parameter-card parameter-breakdown-card full-parameter-card">
+              <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4M9.5 12a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z" /></svg></span><h3><b>TR</b><span>Target Relevance</span></h3></div>
+              <p>SKBP 6개 우선 관심 적응증 해당 여부와, 확인된 target/MoA가 disease biology 또는 SKBP Theme/Cluster에 직접 연결되는지를 평가합니다.</p>
+              <ul class="parameter-evidence-list" aria-label="Target Relevance priority indications and themes">
+                <li><strong>SKBP 우선 관심 적응증</strong><span class="criteria-keyword-list"><span>Alzheimer's disease</span><span>Parkinson's disease</span><span>Amyotrophic lateral sclerosis / motor neuron disease</span><span>Multiple sclerosis / neuroinflammatory disease</span><span>Neuropathic pain</span><span>Epilepsy / seizure disorders</span></span></li>
+                <li><strong>R&amp;D Theme 1 · E/I Balance</strong><span class="criteria-keyword-list"><span>Ion Channel</span><span>Inhibitory Tone</span><span>Synaptic Transmission</span><span>Chloride Homeostasis</span><span>Network Modulation</span></span></li>
+                <li><strong>R&amp;D Theme 2 · Neuroimmune</strong><span class="criteria-keyword-list"><span>Glial homeostasis</span><span>CNS injury immune response</span><span>Cytokine neuromodulation</span><span>Disease immune modulation</span></span></li>
+              </ul>
+            </article>
+            <article class="competitive-parameter-card full-parameter-card">
+              <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="7" r="2.5" /><circle cx="18" cy="17" r="2.5" /><path d="m8.5 11 7-3M8.5 13l7 3" /></svg></span><h3><b>COMP</b><span>Competitive Landscape</span></h3></div>
+              <p>충분한 경쟁검색을 전제로 direct/high-similarity competitor 대비 경쟁 위치와 asset-specific 정량 차별성을 평가합니다.</p>
+            </article>
+            <article class="full-parameter-card">
+              <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 4h8M10 4v5l-5 9a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 18l-5-9V4" /><path d="M8 15h8" /></svg></span><h3><b>MoA</b><span>MoA Validity</span></h3></div>
+              <p>Target/MoA의 biological plausibility와 functional, independent class-level 및 asset-specific mechanism validation 수준을 평가합니다.</p>
+            </article>
+            <article class="full-parameter-card">
+              <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 3 8 4-8 4-8-4 8-4Z" /><path d="m4 12 8 4 8-4M4 17l8 4 8-4" /></svg></span><h3><b>PLATFORM</b><span>Platform Attractiveness</span></h3></div>
+              <p>복수 후보 또는 프로그램에 반복 적용 가능한 재사용 기술체계와 comparator 대비 정량적 기술 우위를 평가합니다.</p>
+            </article>
+            <article class="full-parameter-card">
+              <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="5" r="2" /><circle cx="18" cy="7" r="2" /><circle cx="18" cy="18" r="2" /><path d="M6 7v5a6 6 0 0 0 6 6h4M8 7h4a6 6 0 0 1 6 6v3" /></svg></span><h3><b>EXPANSION</b><span>Expansion Potential</span></h3></div>
+              <p>조사 Asset의 main indication 외 추가 적응증에 대한 asset-specific 근거와 공식 개발 진행 여부를 평가합니다.</p>
+            </article>
+            <article class="full-parameter-card">
+              <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /><path d="M3 20h18" /></svg></span><h3><b>DATA</b><span>Data Maturity</span></h3></div>
+              <p>현재 개발단계에서 기대되는 Asset-specific 정량 efficacy, PK/PD, safety, CMC 또는 clinical evidence의 성숙도를 평가합니다.</p>
+            </article>
+            <article class="parameter-card-wide marketability-parameter-card parameter-horizontal-card parameter-breakdown-card full-parameter-card">
+              <div class="parameter-horizontal-copy">
+                <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 19h16M5 16l5-5 4 3 5-7" /><path d="M15 7h4v4" /></svg></span><h3><b>MARKET</b><span>Marketability</span></h3></div>
+                <p>내부 US 기반 peak-sales 계산 또는 신뢰 가능한 외부 Asset-specific peak-sales forecast 중 최소 하나로 Global peak-sales 잠재력을 평가하며, 둘 다 있으면 함께 기록합니다.</p>
               </div>
-            </article>
-            <article class="parameter-card-wide competitive-parameter-card">
-              <h3>2. Competitive Landscape</h3>
-              <p>같은 indication, target, MoA에서 앞선 competitor가 얼마나 강한지와 차별 가능한 위치인지를 봅니다. 유사 pipeline은 similar_pipeline_count, high/medium/low similarity, matched dimensions, shared data points, differentiating data points, evidence source를 함께 기록합니다.</p>
-              <p>같은 indication, target, MoA에서 앞선 competitor가 얼마나 강한지 봅니다. 경쟁이 없다는 것보다 차별 가능한 위치인지가 핵심입니다.</p>
-            </article>
-            <article>
-              <h3>3. MoA Validity</h3>
-              <p>MoA가 질환 biology와 기능적으로 연결되는지 봅니다. claim만 있는지, class validation 또는 asset-specific validation이 있는지가 점수 차이를 만듭니다.</p>
-            </article>
-            <article>
-              <h3>4. Platform Attractiveness</h3>
-              <p>개별 asset의 개발 성숙도가 아니라 modality, delivery, chemistry, manufacturing 등 underlying technology가 다른 프로그램에도 반복 적용 가능한 기술적 우위를 제공하는지 평가합니다. 같은 platform에 공식 연결된 다른 asset의 근거도 사용할 수 있습니다.</p>
-            </article>
-            <article>
-              <h3>5. Expansion Potential</h3>
-              <p>같은 biology, target, platform으로 adjacent indication이나 후속 pipeline 확장이 가능한지 봅니다. 단순 label 확장이 아니라 실제 biology 근거가 필요합니다.</p>
-            </article>
-            <article>
-              <h3>6. Data Maturity</h3>
-              <p>현재 assessed asset 하나의 stage-appropriate development package만 평가합니다. 다른 asset 또는 platform-wide data는 이 점수를 올리지 않습니다.</p>
-            </article>
-            <article class="parameter-card-wide marketability-parameter-card">
-              <h3>7. Marketability</h3>
-              <p>
-                Marketability는 환자 풀에서 시작해 실제 매출 가능성까지 단계적으로 좁혀 봅니다.
-                A는 치료 가능한 환자 수, B는 경쟁 리스크를 반영하기 전 peak sales,
-                C는 경쟁·가격·확장성을 반영한 obtainable peak sales입니다.
-              </p>
-              <div class="marketability-formula-grid" aria-label="Marketability A/B/C formula cards">
-                <div>
-                  <strong>A. TAP</strong>
-                  <span>Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate</span>
-                </div>
-                <div>
-                  <strong>B. Unrisked Peak Sales</strong>
-                  <span>TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor</span>
-                </div>
-                <div>
-                  <strong>C. Obtainable Peak Sales</strong>
-                  <span>Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment</span>
-                </div>
-              </div>
-              <p class="marketability-unit-line"><strong>Sales output unit</strong><span>million USD</span></p>
+              <aside class="parameter-formula-panel" aria-label="Marketability A/B/C formulas">
+                <ul class="parameter-evidence-list marketability-formula-list" aria-label="Marketability A/B/C formulas">
+                  <li>
+                    <strong>A. US TAP</strong>
+                    <span class="criteria-keyword-list marketability-formula-components"><span>US Patient Pool</span><b aria-hidden="true">×</b><span>Diagnosis Rate</span><b aria-hidden="true">×</b><span>Eligibility Rate</span><b aria-hidden="true">×</b><span>Treatable Subgroup Rate</span></span>
+                  </li>
+                  <li>
+                    <strong>B. US Unrisked Peak Sales</strong>
+                    <span class="criteria-keyword-list marketability-formula-components"><span>US TAP</span><b aria-hidden="true">×</b><span>Benchmark Annualized Net Price</span><b aria-hidden="true">×</b><span>Peak Penetration</span><b aria-hidden="true">×</b><span>Treatment Duration Factor</span></span>
+                  </li>
+                  <li>
+                    <strong>C. US Obtainable Peak Sales</strong>
+                    <span class="criteria-keyword-list marketability-formula-components"><span>US Unrisked Peak Sales</span><b aria-hidden="true">×</b><span>Competition Haircut</span><b aria-hidden="true">×</b><span>Pricing Power Adjustment</span></span>
+                  </li>
+                  <li>
+                    <strong>Global</strong>
+                    <span class="criteria-keyword-list marketability-formula-components"><span>US Obtainable Peak Sales</span><b aria-hidden="true">×</b><span>1.5</span></span>
+                  </li>
+                </ul>
+              </aside>
             </article>
           </div>
         </section>
 
-        <section class="criteria-scoring-section legacy-scoring-section" data-criteria-tab="full">
-          <div class="criteria-section-header">
-            <h3>Scoring Table</h3>
-            <span>0점에서 3점까지 보수적으로 적용</span>
+        <section class="criteria-rule criteria-other-header criteria-guide-section criteria-records-section" data-criteria-tab="full">
+          <div class="criteria-guide-section-heading">
+            <span class="criteria-guide-step-number" aria-hidden="true">4</span>
+            <span class="criteria-guide-section-copy"><h3>Evidence &amp; Record Rules</h3><p>근거 수준과 판단 추적성을 위한 기록 원칙</p></span>
           </div>
-          <div class="criteria-table-wrap">
-            <table class="criteria-table">
-              <colgroup>
-                <col class="criteria-name-col" />
-                <col class="criteria-score-col" />
-                <col class="criteria-score-col" />
-                <col class="criteria-score-col" />
-                <col class="criteria-score-col" />
-              </colgroup>
-              <thead>
-                <tr>
-                  <th>항목</th>
-                  <th>0점</th>
-                  <th>1점</th>
-                  <th>2점</th>
-                  <th>3점</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th>Target Relevance</th>
-                  <td>CNS와 거의 무관</td>
-                  <td>CNS 관련성 약함</td>
-                  <td>general CNS relevance</td>
-                  <td>Theme 또는 Cluster 직접 해당</td>
-                </tr>
-                <tr>
-                  <th>Competitive Landscape</th>
-                  <td>정보 부족 또는 front runner 5개 이상</td>
-                  <td>경쟁 2개 이상, 차별화 불명확</td>
-                  <td>front runner 1-2개, BIC 가능</td>
-                  <td>front runner 없음, FIC 가능</td>
-                </tr>
-                <tr>
-                  <th>MoA Validity</th>
-                  <td>MoA 불명확</td>
-                  <td>rationale / claim 중심</td>
-                  <td>functional evidence 또는 class validation</td>
-                  <td>asset-specific validation 또는 human PoC</td>
-                </tr>
-                <tr>
-                  <th>Platform Attractiveness</th>
-                  <td>Platform 실재 또는 구현 가능성 불명확</td>
-                  <td>차별성 claim·이론적 rationale 중심</td>
-                  <td>Comparator 대비 정량적 기술 우위가 확인되나 단일·전임상 조건에 제한</td>
-                  <td>Platform 적용 자산 First Patient Dosed 또는 반복성·외부검증 확인</td>
-                </tr>
-                <tr>
-                  <th>Expansion Potential</th>
-                  <td>확장 근거 없음</td>
-                  <td>이론적 가능성</td>
-                  <td>biology 근거 있음</td>
-                  <td>복수 indication / pipeline 확인</td>
-                </tr>
-                <tr>
-                  <th>Data Maturity</th>
-                  <td>data 없음</td>
-                  <td>stage 대비 부족</td>
-                  <td>stage에 부합</td>
-                  <td>decision-ready package</td>
-                </tr>
-                <tr>
-                  <th>Marketability</th>
-                  <td>상업적 rationale / 계산 불가</td>
-                  <td>&lt; USD 1B</td>
-                  <td>USD 1B-2B</td>
-                  <td>&gt;= USD 2B + 확장성/가격/차별성</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="criteria-detail-grid" aria-label="Detailed scoring guidance">
-          <article>
-            <h3>Target Relevance</h3>
-            <p>Target을 먼저 identify한 뒤 <code>Theme</code>과 <code>Cluster</code>를 분리해서 기록합니다. Target 아래에는 <code>Theme: ___ (Cluster: ___)</code> 형식으로 표시합니다.</p>
-          </article>
-          <article>
-            <h3>Competitive Landscape</h3>
-            <p>FIC만 높게 보지 않고, 이미 1개 정도 앞서가는 약물이 있는 경우를 가장 선호합니다. 판단 불가이면 0점으로 둡니다.</p>
-          </article>
-          <article>
-            <h3>MoA Validity</h3>
-            <p>왜 작동할 것 같은지의 설득력입니다. 2점 이상은 PMID, 저널, conference abstract, company deck 같은 출처를 반드시 남깁니다.</p>
-          </article>
-          <article>
-            <h3>Data Maturity</h3>
-            <p>clinical data는 제외하고 preclinical 실험값만 봅니다. MoA는 기전의 설득력, Data는 실제 실험 결과의 성숙도입니다.</p>
-          </article>
-          <article>
-            <h3>Platform Attractiveness</h3>
-            <p>주요 관심 모달리티는 small molecule, ASO, siRNA입니다. AOC, antibody 등은 둘째 관심 모달리티로 평가합니다.</p>
-          </article>
-          <article>
-            <h3>Marketability</h3>
-            <p><code>A. TAP</code>를 먼저 추정하고, <code>B. Unrisked Peak Sales</code>를 계산한 뒤, <code>C. Obtainable Peak Sales</code>로 현실화합니다. 모든 sales 결과는 <code>million USD</code> 단위로 기록합니다.</p>
-          </article>
-        </section>
-
-        <section class="criteria-rule criteria-other-card" data-criteria-tab="full">
-          <h3>근거 기록 규칙</h3>
-          <ul class="criteria-subbullet-list">
-            <li><strong>Rubric</strong><span>기준 설명은 <code>rubric</code> 섹션에만 남깁니다.</span></li>
-            <li><strong>main_line_summary</strong><span>각 scoring 항목에서 왜 그 점수가 나왔는지만 한 줄로 기록합니다.</span></li>
-            <li><strong>evidence_sources</strong><span>점수 판단에 사용한 출처 URL과 핵심 근거를 분리합니다.</span></li>
-            <li><strong>investigation_note</strong><span>조사 과정, 확인한 항목, 판단 경계를 짧게 남깁니다.</span></li>
-            <li><strong>uncertain_points</strong><span>자료 부족, 모호한 claim, 추가 확인 필요사항을 따로 기록합니다.</span></li>
-          </ul>
-        </section>
-
-        <section class="criteria-rule criteria-other-card" data-criteria-tab="full">
-          <h3>경쟁사 유사도 기록</h3>
-          <p>
-            경쟁 pipeline은 <code>similar_pipeline_count</code>, high/medium/low similarity 개수,
-            각 유사 pipeline의 matched dimensions, shared data points, differentiating data points,
-            evidence source를 함께 기록합니다.
+          <p class="criteria-records-intro">
+            점수와 별도로 근거·출처·불확실성을 기록해 판단 과정을 다시 확인할 수 있게 합니다.
           </p>
+          <div class="criteria-records-grid criteria-records-grid-three">
+            <article class="criteria-record-subcard">
+              <div class="criteria-record-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 3 5 6v5c0 4.7 2.8 8 7 10 4.2-2 7-5.3 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></svg></span><h3>Evidence Type</h3></div>
+              <p class="criteria-record-card-helper">근거의 직접성과 asset-specific 수준을 E0–E4로 구분합니다.</p>
+              <ul class="criteria-record-pairs">
+                <li><strong>E0</strong><span>근거 없음·평가 불가</span></li>
+                <li><strong>E1</strong><span>회사 주장·이론</span></li>
+                <li><strong>E2</strong><span>class-level·간접 근거</span></li>
+                <li><strong>E3</strong><span>asset-specific 전임상·기술 근거</span></li>
+                <li><strong>E4</strong><span>asset-specific 임상 근거</span></li>
+              </ul>
+            </article>
+            <article class="criteria-record-subcard">
+              <div class="criteria-record-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="5" y="4" width="14" height="17" rx="2" /><path d="M9 4V2h6v2M9 9h6M9 13h6M9 17h4" /><path d="m7.5 9 .7.7 1.3-1.5" /></svg></span><h3>점수별 기록</h3></div>
+              <p class="criteria-record-card-helper">각 점수의 정의, 선택 규칙, 근거와 gap을 함께 기록합니다.</p>
+              <ul class="criteria-record-pairs criteria-record-pairs-wide">
+                <li><strong>Definition</strong><span>무엇을 평가하는지</span></li>
+                <li><strong>Rule</strong><span>선택된 점수의 핵심 조건</span></li>
+                <li><strong>Basis</strong><span>왜 해당 점수인지</span></li>
+                <li><strong>Evidence</strong><span>핵심 근거와 출처</span></li>
+                <li><strong>Gap</strong><span>why_not_higher 및 불확실성</span></li>
+              </ul>
+            </article>
+            <article class="criteria-record-subcard">
+              <div class="criteria-record-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="9" cy="10" r="5" /><circle cx="15" cy="10" r="5" /><path d="m16.5 16.5 3.5 3.5" /></svg></span><h3>경쟁사 유사도</h3></div>
+              <p class="criteria-record-card-helper">유사도와 검색 범위·제약을 같은 기준으로 정리합니다.</p>
+              <ul class="criteria-record-pairs criteria-record-pairs-wide">
+                <li><strong>High</strong><span>동일 indication + target/MoA + 유사 modality</span></li>
+                <li><strong>Medium</strong><span>동일 indication + pathway/biology</span></li>
+                <li><strong>Low</strong><span>동일 indication</span></li>
+                <li><strong>Search Scope</strong><span>검색 범위 및 limitation</span></li>
+                <li><strong>Sources</strong><span>판단 근거 출처</span></li>
+              </ul>
+            </article>
+          </div>
         </section>
 
-        <section class="criteria-rule criteria-other-card oi-partnership-guide" data-criteria-tab="focus">
-          <h3>Filter 3 — OI Partnership 자동 분류 v1.0</h3>
-          <p>
-            대상 적응증은 AD, PD, ALS, MS, Neuropathic Pain, Epilepsy입니다.
-            Tab3 구조화 값이 우선이며, 부족한 값만 Tab2 원문·상세 리포트와 사용자 업로드 파일에서 확인합니다.
-            확인되지 않은 값은 추정하지 않습니다.
-          </p>
-          <div class="oi-criteria-grid">
-            <article><strong>투자</strong><span>Non-Small Molecule + IND Enabling</span></article>
-            <article><strong>Value Up</strong><span>Small Molecule + In Vivo O + In Vitro O + ADMET ≥25</span></article>
-            <article><strong>공동 연구</strong><span>Non-Small Molecule + Platform Attractiveness 3</span></article>
-            <article><strong>중복 우선순위</strong><span>투자와 공동 연구가 모두 해당하면 공동 연구</span></article>
-            <article><strong>Unknown</strong><span>대상 적응증이지만 필수 정보가 부족함</span></article>
-            <article><strong>N/A</strong><span>대상 적응증이 아니거나, 정보는 충분하지만 조건 미충족</span></article>
-          </div>
-          <p class="criteria-footnote">
-            자동 결과·OI Note·Evidence Source를 함께 저장합니다. 담당자가 드롭다운이나 비고를 수정하면 HUMAN으로 표시되며,
-            <code>↻ Auto</code>를 선택하면 v1.0 기준으로 다시 계산합니다.
-          </p>
+        <section class="criteria-rule criteria-focus-rule" data-criteria-tab="focus">
+          <h3>Filter 3 — OI Partnership 자동 분류 · v1.0 기준</h3>
+          <p>Tab 3는 Full Scout 검토 후 Shortlisting에 등록된 후보를 대상으로, SKBP 우선 관심 적응증 여부와 확인된 modality·stage·Platform Attractiveness·In-vivo·In-vitro·ADMET 값을 사용해 투자, Value Up, 공동연구, Unknown 또는 N/A로 자동 분류합니다.</p>
         </section>
+
+        <section class="criteria-focus-section criteria-guide-section" data-criteria-tab="focus" data-focus-section="eligibility">
+          <div class="criteria-guide-section-heading criteria-focus-section-heading">
+            <span class="criteria-guide-step-number" aria-hidden="true">1</span>
+            <span class="criteria-focus-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 4h6l1 3h3v13H5V7h3l1-3Z" /><path d="m9 13 2 2 4-5" /></svg></span>
+            <span class="criteria-guide-section-copy"><h3>Eligibility &amp; Input Basis</h3><p>자동분류 대상과 사용하는 정보</p></span>
+          </div>
+          <div class="criteria-focus-grid criteria-focus-input-grid">
+            <article class="criteria-focus-info-card">
+              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" /></svg></span><h4>Shortlisting 후보</h4></div>
+              <p>Full Scout 검토 후 사용자가 Shortlisting에 등록한 pipeline을 자동분류 대상으로 사용합니다.</p>
+            </article>
+            <article class="criteria-focus-info-card criteria-focus-indication-card">
+              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4M9.5 12a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z" /></svg></span><h4>SKBP 우선 관심 적응증</h4></div>
+              <div class="criteria-focus-chip-list" aria-label="SKBP 우선 관심 적응증"><span>Alzheimer’s disease</span><span>Parkinson’s disease</span><span>Amyotrophic lateral sclerosis</span><span>Multiple sclerosis</span><span>Neuropathic pain</span><span>Epilepsy</span></div>
+            </article>
+            <article class="criteria-focus-info-card">
+              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 3 5 6v5c0 4.7 2.8 8 7 10 4.2-2 7-5.3 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></svg></span><h4>확인된 정보 사용</h4></div>
+              <p>구조화된 Dashboard 값과 확인된 Full Scout 정보를 사용하며, 확인되지 않은 값은 임의로 추정하지 않습니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="criteria-focus-section criteria-guide-section" data-criteria-tab="focus" data-focus-section="partnership">
+          <div class="criteria-guide-section-heading criteria-focus-section-heading">
+            <span class="criteria-guide-step-number" aria-hidden="true">2</span>
+            <span class="criteria-focus-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 7V5h8v2M4 9h16v10H4V9Z" /><path d="M4 13h16M10 13v2h4v-2" /></svg></span>
+            <span class="criteria-guide-section-copy"><h3>OI Partnership Type</h3><p>투자·Value Up·공동연구의 핵심 자동분류 조건</p></span>
+          </div>
+          <div class="criteria-focus-grid criteria-focus-decision-grid">
+            <article class="criteria-focus-decision-card" data-focus-decision="investment">
+              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 7V5h8v2M4 9h16v10H4V9Z" /><path d="M4 13h16" /></svg></span><h4>투자</h4></div>
+              <p class="criteria-focus-card-summary">비소분자 자산이 현재 정확히 IND-enabling 단계에 있는 경우 투자 검토 유형으로 분류합니다.</p>
+              <ul class="criteria-focus-condition-list" aria-label="투자 자동분류 조건"><li><strong>Non-small molecule</strong></li><li><strong>Stage = IND-enabling</strong></li><li class="criteria-focus-condition-note">IND filed/cleared 및 Phase 1 이상은 포함하지 않음</li></ul>
+            </article>
+            <article class="criteria-focus-decision-card" data-focus-decision="value-up">
+              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m7 14 4-4 3 3 4-5M15 8h3v3" /></svg></span><h4>Value Up</h4></div>
+              <p class="criteria-focus-card-summary">소분자 자산이 추가 개발 지원을 검토할 수 있는 실험 및 ADMET 조건을 충족한 경우입니다.</p>
+              <ul class="criteria-focus-condition-list" aria-label="Value Up 자동분류 조건"><li><strong>Small molecule</strong></li><li class="criteria-focus-condition-inline"><strong>In-vivo = O, In-vitro = O</strong></li><li><strong>ADMET ≥ 25</strong></li></ul>
+            </article>
+            <article class="criteria-focus-decision-card" data-focus-decision="joint-research">
+              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="7" cy="12" r="3" /><circle cx="17" cy="12" r="3" /><path d="M10 12h4M4 19c.7-2.6 2-4 3-4s2.3 1.4 3 4M14 19c.7-2.6 2-4 3-4s2.3 1.4 3 4" /></svg></span><h4>공동연구</h4></div>
+              <p class="criteria-focus-card-summary">비소분자 자산의 Platform Attractiveness가 높은 경우 공동연구 검토 유형으로 분류합니다.</p>
+              <ul class="criteria-focus-condition-list" aria-label="공동연구 자동분류 조건"><li><strong>Non-small molecule</strong></li><li><strong>Platform Attractiveness = 3</strong></li></ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="criteria-focus-section criteria-guide-section" data-criteria-tab="focus" data-focus-section="exceptions">
+          <div class="criteria-guide-section-heading criteria-focus-section-heading">
+            <span class="criteria-guide-step-number" aria-hidden="true">3</span>
+            <span class="criteria-focus-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 3 8 4-8 4-8-4 8-4Z" /><path d="m4 12 8 4 8-4M4 17l8 4 8-4" /></svg></span>
+            <span class="criteria-guide-section-copy"><h3>Priority &amp; Exceptions</h3><p>중복 조건과 정보 부족 처리 기준</p></span>
+          </div>
+          <div class="criteria-focus-grid criteria-focus-exception-grid">
+            <article class="criteria-focus-info-card">
+              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></svg></span><h4>공동연구 우선</h4></div>
+              <p>투자와 공동연구 조건을 모두 충족하면 공동연구를 최종 자동분류로 사용합니다.</p>
+              <div class="criteria-focus-priority-formula"><strong>공동연구</strong><span>&gt;</span><span>투자</span></div>
+            </article>
+            <article class="criteria-focus-info-card">
+              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="11" cy="11" r="7" /><path d="m16.5 16.5 4 4M9.5 9a2 2 0 1 1 2.8 1.8c-.9.4-1.3.9-1.3 1.7M11 15.5h.01" /></svg></span><h4>Unknown</h4></div>
+              <p>SKBP 우선 관심 적응증 경우에는 해당하지만, 아래 분류에 대한 값을 확인하지 못한 경우입니다.</p>
+              <ul class="criteria-focus-keyword-list" aria-label="Unknown 분류 미확인 항목"><li>modality</li><li>ADMET 정보</li><li>Platform Attractiveness</li></ul>
+            </article>
+            <article class="criteria-focus-info-card">
+              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m6 18 12-12" /></svg></span><h4>N/A</h4></div>
+              <p>SKBP 우선 관심 적응증 대상이 아니거나, 필요한 값은 확인됐지만 어떤 자동분류 조건도 충족하지 않은 경우입니다.</p>
+            </article>
+          </div>
+        </section>
+
       </div>
     </aside>
 
@@ -912,7 +910,7 @@
           점수와 자동 판정값을 수기로 변경한 사람을 팀 워크스페이스 변경 이력에 기록합니다.
           입력값은 현재 브라우저 세션 동안 유지됩니다.
         </p>
-        <input id="reviewerIdentityInput" maxlength="100" placeholder="이름 또는 사번" autocomplete="name" />
+        <input id="reviewerIdentityInput" maxlength="100" aria-label="수정자 이름 또는 사번" placeholder="이름 또는 사번" autocomplete="name" />
         <div class="identity-modal-actions">
           <button id="reviewerIdentityCancel" type="button" class="identity-modal-cancel">취소</button>
           <button id="reviewerIdentitySubmit" type="button" class="identity-modal-submit">확인</button>
@@ -920,6 +918,46 @@
       </div>
     </div>
 
-    <script type="module" src="./src/app.js?v=20260729-donut-percent-only-1"></script>
+    <div class="identity-modal-backdrop" id="dataReuploadModal" hidden>
+      <section class="identity-modal data-reupload-modal" role="dialog" aria-modal="true" aria-labelledby="dataReuploadTitle">
+        <div class="data-reupload-modal-heading">
+          <span class="data-reupload-modal-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></svg>
+          </span>
+          <div>
+            <p>기존 조사 결과 확인</p>
+            <h3 id="dataReuploadTitle">기존 Full Scout 레코드가 발견되었습니다.</h3>
+          </div>
+        </div>
+        <strong id="dataReuploadIdentity" class="data-reupload-identity"></strong>
+        <p class="identity-modal-hint data-reupload-modal-hint">
+          기존 GPT 원문과 공식 점수는 새 조사 결과로 갱신됩니다. 첨부자료와 Team Review 정보는 유지되며,
+          기존 Human 점수는 해제 후 변경 이력에 남습니다.
+        </p>
+        <div class="identity-modal-actions data-reupload-modal-actions">
+          <button id="dataReuploadKeepNew" type="button" class="identity-modal-cancel">아니요 · 신규로 추가</button>
+          <button id="dataReuploadConfirm" type="button" class="identity-modal-submit">네 · 기존 원문 갱신</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="agent-response-modal-backdrop" id="agentResponseModal" hidden>
+      <section class="agent-response-modal" role="dialog" aria-modal="true" aria-labelledby="agentResponseModalTitle">
+        <header class="agent-response-modal-header">
+          <div>
+            <span>All Pipelines Agent</span>
+            <h2 id="agentResponseModalTitle">에이전트 답변 전체보기</h2>
+          </div>
+          <button id="agentResponseModalClose" type="button" aria-label="전체보기 닫기" title="닫기">×</button>
+        </header>
+        <div class="agent-response-modal-body agent-message-text" id="agentResponseModalBody" tabindex="0"></div>
+        <footer class="agent-response-modal-footer">
+          <span id="agentResponseModalStatus" role="status" aria-live="polite"></span>
+          <button id="agentResponseModalCopy" type="button">답변 복사</button>
+        </footer>
+      </section>
+    </div>
+
+    <script type="module" src="./src/app.js?v=20260803-guide-input-pill-1"></script>
   </body>
 </html>

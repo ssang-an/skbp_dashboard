@@ -1,5 +1,7 @@
 # Illimis Therapeutics Pipeline Scout Report: **ILM01 / GAIA-Aβ**
 
+> **Recalculated by Full Scout Rubric v3.2:** 2026-07-29 대시보드에서 저장된 7개 criterion score와 최신 v3.2 Filter 2 규칙으로 Total Score 및 결정값을 재계산했습니다. 기존 수동 criterion/Total Score override는 해제했으며 원조사 evidence와 본문, 담당자의 명시적인 Human decision 및 코멘트는 유지했습니다.
+
 본 리포트는 SKBP Pipeline Finder v3.0 Markdown report + JSON schema 지침에 맞춰 작성했습니다. 최종에는 대시보드에 복사 가능한 JSON을 포함했고, 감사 가능성을 위해 URL과 evidence trail을 함께 남겼습니다.
 
 > **기준 업데이트 (v3.1):** 이 원문은 최초 작성 기준을 보존하되, 2026-06-22 Detail AI Agent 검토를 통해 **SKBP Pipeline Finder v3.1 기준으로 재평가 및 업데이트**되었습니다. 최신 판단은 JSON scoring fields와 아래 Revision Note를 기준으로 봅니다.

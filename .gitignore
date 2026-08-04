@@ -13,3 +13,6 @@ Thumbs.db
 .hermes/
 .obsidian/
 attachments/
+node_modules/
+tmp/
+data/users.json

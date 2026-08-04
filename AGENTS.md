@@ -1,3 +1,13 @@
+# Required change summary and work log
+
+After making any persistent code, content, configuration, or documentation change:
+
+1. End the final response with a concise `변경 요약` section that states what changed and names the main files. Include verification performed when applicable.
+2. Add a terse, factual entry to `docs/changelog/YYYY/YYYY-MM-DD.md`, using the current local date. Reuse that day's file and append a bullet under `## Changes`; never create a second file for the same date.
+3. Keep `docs/CHANGELOG.md` as an index only. Do not append detailed change entries there.
+
+Skip the work-log entry for read-only investigation or answers that leave no persistent repository changes, but still clearly say that no files were changed when useful.
+
 # AGENTS.md
 
 This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.

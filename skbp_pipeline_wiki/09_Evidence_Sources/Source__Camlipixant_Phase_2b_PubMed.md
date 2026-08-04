@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/publication"
-created_at: "2026-07-29"
-updated_at: "2026-07-29"
+created_at: "2026-08-02"
+updated_at: "2026-08-02"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | publication |
 | Reliability | medium |
 | URL | https://pubmed.ncbi.nlm.nih.gov/40043302/ |
-| Accessed / generated date | 2026-07-29 |
+| Accessed / generated date | 2026-08-02 |
 
 ## Evidence Summary
 

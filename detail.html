@@ -4,63 +4,51 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pipeline Detail</title>
+    <link rel="icon" type="image/svg+xml" href="./src/sk-butterfly.svg?v=20260802-1" />
     <script>
       (() => {
-        if (
-          ['127.0.0.1', 'localhost'].includes(window.location.hostname)
-          && window.location.port === '8000'
-        ) {
-          window.location.replace(`http://${window.location.hostname}:8011${window.location.pathname}${window.location.search}${window.location.hash}`);
-          return;
-        }
         const stored = localStorage.getItem('skbp.ui.theme');
         const theme = stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap"
-    />
-    <link rel="stylesheet" href="./src/styles.css?v=20260729-oi-partnership-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260804-attachment-original-download-toolbar-1" />
   </head>
   <body>
     <div class="app-shell detail-shell">
       <header class="topbar">
-        <div>
+        <a class="topbar-home-link" href="/" aria-label="홈 대시보드로 이동">
           <p class="eyebrow">SKBP Pipeline Finder</p>
           <h1 id="detailTitle">Details : Loading</h1>
-        </div>
+        </a>
         <div class="top-actions" aria-label="Detail actions">
           <div class="top-action-group top-primary-actions" role="group" aria-label="Detail tools">
             <a
+              id="detailBackLink"
               class="secondary-link help-tooltip"
               href="/"
               data-tooltip="대시보드 목록 화면으로 돌아갑니다."
             ><span aria-hidden="true">←</span><b>대시보드</b></a>
             <button
-              id="detailAiButton"
-              class="help-tooltip"
-              type="button"
-              data-tooltip="현재 asset의 JSON과 Wiki note를 기반으로 근거, 리스크, 시장성을 질문합니다."
-            ><span aria-hidden="true">AI</span><b>Agent</b></button>
-            <button
               id="criteriaDrawerButton"
-              class="help-tooltip"
+              class="detail-header-action-pill help-tooltip"
               type="button"
               data-tooltip="SKBP 평가 기준, PASS/REVIEW/FAIL 조건, 점수표를 확인합니다."
             ><span aria-hidden="true">?</span><b>판단근거</b></button>
+            <button
+              id="editJsonButton"
+              class="help-tooltip"
+              type="button"
+              data-tooltip="현재 record JSON을 고급 편집기로 확인하고 수정합니다."
+            ><span aria-hidden="true">{ }</span><b>JSON</b></button>
           </div>
-          <div class="top-action-group top-data-actions" role="group" aria-label="Record status">
+          <div class="top-action-group top-data-actions" role="group" aria-label="Record actions">
             <button
               id="deleteRecordButton"
-              class="danger-button help-tooltip"
+              class="detail-header-action-pill detail-header-delete-pill danger-button help-tooltip"
               type="button"
               data-tooltip="현재 asset record를 삭제합니다."
-            ><span aria-hidden="true">×</span><b>삭제</b></button>
-            <span class="status-pill" id="detailStatus">Loading</span>
+            ><span aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" /></svg></span><b>삭제</b></button>
           </div>
           <button
             class="theme-toggle icon-button help-tooltip"
@@ -79,54 +67,75 @@
         <div class="detail-left-rail">
           <aside class="panel detail-outline-panel" aria-label="Detail outline">
             <div class="detail-outline-header">
-              <span>Outline</span>
-              <strong>Mini TOC</strong>
+              <strong>TABLE OF CONTENTS</strong>
             </div>
             <nav id="detailOutlineList" class="detail-outline-list"></nav>
           </aside>
 
-          <section class="panel detail-material-panel" aria-label="파트너사 자료">
+          <section id="detailPartnerMaterials" class="panel detail-material-panel" aria-label="파트너사 자료">
             <div class="detail-material-header">
               <div>
-                <span>Partner materials</span>
-                <strong>파트너사 자료함</strong>
+                <strong>PARTNER MATERIALS</strong>
               </div>
               <span id="detailAttachmentCount" class="material-count">0</span>
             </div>
-            <div
-              id="detailAttachmentDropzone"
-              class="attachment-dropzone"
-              role="button"
-              tabindex="0"
-              aria-label="파일을 선택하거나 이 영역에 드래그해서 업로드"
-            >
-              <span class="attachment-dropzone-icon" aria-hidden="true">＋</span>
-              <strong>클릭 또는 드래그해서 업로드</strong>
-              <small>PPT·PPTX·PDF·TXT 및 Office 파일 · 최대 30MB</small>
+            <div class="detail-material-body" aria-label="파트너사 자료 업로드 및 파일 목록">
+              <div
+                id="detailAttachmentDropzone"
+                class="attachment-dropzone"
+                role="button"
+                tabindex="0"
+                aria-label="파일을 선택하거나 이 영역에 드래그해서 업로드"
+              >
+                <span class="attachment-dropzone-icon" aria-hidden="true">＋</span>
+                <strong>클릭 또는 드래그해서 업로드</strong>
+                <small>PPT·PPTX·PDF·TXT 및 Office 파일 · 최대 30MB</small>
+              </div>
+              <div id="detailAttachmentAiScope" class="attachment-ai-scope" role="note" aria-label="AI 첨부자료 활용 범위">
+                <span class="attachment-ai-scope-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M12 3.5 13.3 8l4.2 1.3-4.2 1.3L12 15l-1.3-4.4-4.2-1.3L10.7 8 12 3.5Z" />
+                    <path d="m18.5 14 .7 2.3 2.3.7-2.3.7-.7 2.3-.7-2.3-2.3-.7 2.3-.7.7-2.3Z" />
+                  </svg>
+                </span>
+                <span class="attachment-ai-scope-copy">
+                  <strong class="attachment-ai-scope-title">AI 질의·정성평가</strong>
+                  <span class="attachment-ai-scope-detail">첨부 추출 텍스트 합산 최대 <b>9,000자</b> 활용 가능</span>
+                </span>
+              </div>
+              <button id="detailAttachmentAddButton" class="secondary-button material-add-button" type="button">
+                내 컴퓨터에서 파일 선택
+              </button>
+              <input
+                id="detailAttachmentInput"
+                type="file"
+                accept=".ppt,.pptx,.pdf,.txt,.doc,.docx,.xls,.xlsx"
+                multiple
+                hidden
+              />
+              <p id="detailAttachmentStatus" class="attachment-status" aria-live="polite"></p>
+              <div id="detailAttachmentsList" class="attachments-list"></div>
             </div>
-            <button id="detailAttachmentAddButton" class="secondary-button material-add-button" type="button">
-              내 컴퓨터에서 파일 선택
-            </button>
-            <input
-              id="detailAttachmentInput"
-              type="file"
-              accept=".ppt,.pptx,.pdf,.txt,.doc,.docx,.xls,.xlsx"
-              multiple
-              hidden
-            />
-            <p id="detailAttachmentStatus" class="attachment-status" aria-live="polite"></p>
-            <div id="detailAttachmentsList" class="attachments-list"></div>
           </section>
         </div>
 
         <section class="panel raw-report-panel">
           <div class="panel-header">
-            <div>
+            <div class="report-header-copy">
+              <p id="detailViewerEyebrow" class="eyebrow">AI REPORT UPLOADED</p>
               <h2 id="detailViewerTitle">GPT 원문 리포트</h2>
-              <p id="detailSubtitle">원문 리포트 기반 primary source</p>
+              <p id="detailSubtitle" hidden></p>
               <p id="detailMetaInfo" class="detail-meta-info"></p>
             </div>
             <div class="panel-header-actions">
+              <a class="secondary-link detail-mobile-jump-link" href="#detailTeamWorkspace">팀 코멘트</a>
+              <a class="secondary-link detail-mobile-jump-link" href="#detailPartnerMaterials">자료함</a>
+              <button id="detailViewerOpenWindowButton" class="report-action-icon help-tooltip" type="button" data-tooltip="전체보기" aria-label="GPT 원문 리포트 전체보기">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5"></path></svg>
+              </button>
+              <button id="detailViewerCopyButton" class="report-action-icon help-tooltip" type="button" data-tooltip="복사" aria-label="GPT 원문 리포트 복사">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>
+              </button>
               <button id="detailViewerBackButton" class="secondary-button" type="button" hidden>
                 ← GPT 원문으로
               </button>
@@ -135,7 +144,7 @@
           <div id="sourceReportViewer" class="report-viewer"></div>
         </section>
 
-        <aside class="panel collaboration-panel" aria-label="팀 코멘트 및 후속 액션">
+        <aside id="detailTeamWorkspace" class="panel collaboration-panel" aria-label="팀 코멘트 및 후속 액션">
           <div class="collaboration-header">
             <div class="collaboration-title-row">
               <div>
@@ -143,20 +152,30 @@
                 <h2>팀 코멘트</h2>
               </div>
               <div class="collaboration-title-actions">
+                <a class="secondary-link detail-mobile-jump-link icon-only" href="#sourceReportViewer" aria-label="GPT 원문 리포트로 이동">↑</a>
                 <button id="detailFocusToggle" class="focus-action-button icon-only add" type="button" aria-label="즐겨찾기에 추가">
-                  <span aria-hidden="true">☆</span>
+                  <svg class="focus-star-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 3.4l2.66 5.39 5.95.86-4.31 4.2 1.02 5.93L12 17l-5.32 2.78 1.02-5.93-4.31-4.2 5.95-.86L12 3.4Z" />
+                  </svg>
                 </button>
                 <span id="detailCommentCount" class="comment-count">0</span>
               </div>
             </div>
 
-            <div class="review-info-stack">
-              <div class="review-info-columns">
+            <div id="detailReviewInfoStack" class="review-info-stack is-collapsed">
+              <div id="detailReviewInfoColumns" class="review-info-columns">
                 <section id="detailFilter2Row" class="review-info-row status-info-row review-info-column">
                   <p class="review-column-heading">Full Scout</p>
                   <div class="review-info-label">
                     <span>Filter 2</span>
-                    <small id="detailDecisionOrigin">Scoring rubric</small>
+                    <div class="review-info-label-row">
+                      <small id="detailDecisionOrigin">Scoring rubric</small>
+                      <span class="metadata-divider" aria-hidden="true">·</span>
+                      <button id="rubricRefreshButton" class="criteria-refresh-pill" type="button" title="최신 Full Scout Rubric으로 Score 기준을 갱신합니다. 수동 점수 보정은 초기화될 수 있습니다." aria-label="최신 Full Scout Rubric으로 Score 기준 갱신">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.2 6.5L3 16m0 0v5m0-5h5M3 12A9 9 0 0 1 18.2 5.5L21 8m0 0V3m0 5h-5"></path></svg>
+                        <span>Score 기준 갱신</span>
+                      </button>
+                    </div>
                   </div>
                   <div class="filter-decision-line">
                     <select id="detailDecisionStatus" autocomplete="off" aria-label="Filter 2 decision">
@@ -181,18 +200,23 @@
                       autocomplete="off"
                       placeholder="Filter 2의 한 줄 근거를 입력"
                       aria-label="Filter 2 한 줄 근거"
-                      title="클릭해서 Filter 2의 한 줄 근거를 수정"
+                      title="해당 Pipeline의 최종 평가 의견을 한 줄로 요약합니다."
                     ></textarea>
-                    <span id="detailReviewReasonOrigin" class="review-reason-origin">Rubric rationale</span>
-                    <span class="review-reason-edit-icon" aria-hidden="true">✎</span>
                   </div>
                 </section>
 
                 <section id="detailOiPartnershipRow" class="review-info-row oi-info-row review-info-column">
-                  <p class="review-column-heading">집중 관리</p>
+                  <p class="review-column-heading">Shortlisting</p>
                   <div class="review-info-label">
                     <span>Filter 3</span>
-                    <small id="detailOiPartnershipOrigin">OI Partnership v1.0</small>
+                    <div class="review-info-label-row">
+                      <small id="detailOiPartnershipOrigin">OI Partnership v1.0</small>
+                      <span class="metadata-divider" aria-hidden="true">·</span>
+                      <button id="oiPartnershipRefreshButton" class="criteria-refresh-pill" type="button" title="최신 OI Partnership 기준으로 Filter 3와 분류 근거를 갱신합니다. 수동 분류와 Note는 자동 결과로 초기화됩니다." aria-label="최신 OI Partnership 기준으로 재분류">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.2 6.5L3 16m0 0v5m0-5h5M3 12A9 9 0 0 1 18.2 5.5L21 8m0 0V3m0 5h-5"></path></svg>
+                        <span>v1.0 기준 갱신</span>
+                      </button>
+                    </div>
                   </div>
                   <select id="detailOiPartnershipType" autocomplete="off" aria-label="OI partnership 분류">
                     <option value="">↻ 자동 기준으로 재분류</option>
@@ -212,10 +236,8 @@
                         autocomplete="off"
                         placeholder="OI Partnership 분류 근거를 입력"
                         aria-label="OI Partnership 분류 근거"
-                        title="클릭해서 OI Partnership 분류 근거를 수정"
+                        title="OI 파트너십 분류 근거를 짧게 요약합니다."
                       ></textarea>
-                      <span id="detailOiPartnershipNoteOrigin" class="review-reason-origin">자동 분류 v1.0</span>
-                      <span class="review-reason-edit-icon" aria-hidden="true">✎</span>
                     </div>
                   </div>
                   <div id="detailOiMaterialFlags" class="oi-material-flags" role="group" aria-label="파트너 자료 보유 여부">
@@ -235,8 +257,11 @@
                   </div>
 
                   <div class="review-info-label action-date-label">
-                    <span>Action date</span>
-                    <small>Owner &amp; follow-up</small>
+                    <div class="review-info-label-row action-date-meta-row">
+                      <span class="review-info-primary-label">Action Date</span>
+                      <span class="metadata-divider" aria-hidden="true">·</span>
+                      <small>Set by Asset Owner</small>
+                    </div>
                   </div>
                   <div class="action-info-fields">
                     <input id="detailActionDate" type="date" autocomplete="off" aria-label="Action date" />
@@ -252,6 +277,12 @@
                     aria-label="확인할 데이터 또는 향후 계획"
                   />
                 </section>
+              </div>
+              <div class="review-info-toggle-row">
+                <button id="detailReviewInfoToggle" class="review-info-toggle" type="button" aria-expanded="false" aria-controls="detailReviewInfoColumns" aria-label="Review Workspace 세부 정보 표시" title="세부 정보 표시">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"></path></svg>
+                  <span data-review-toggle-label>Show</span>
+                </button>
               </div>
             </div>
 
@@ -272,33 +303,63 @@
             </div>
             <div class="comment-identity-bar">
               <span id="detailCommentIdentity" class="comment-identity"></span>
-              <button id="detailCommentIdentityChange" type="button" class="comment-identity-change">이름 변경</button>
+              <button id="detailCommentIdentityChange" type="button" class="comment-identity-change">계정 변경</button>
             </div>
             <div class="comment-input-row">
               <label class="comment-input-field">
-                <span>코멘트</span>
+                <span class="sr-only">코멘트</span>
                 <textarea
                   id="detailCommentInput"
+                  class="message-composer-textarea"
                   maxlength="5000"
-                  rows="3"
-                  placeholder="검토 의견이나 다음 액션을 남겨주세요. (Enter: 등록, Shift+Enter: 줄바꿈)"
+                  rows="1"
+                  aria-label="팀 의견 입력"
+                  placeholder="검토 의견이나 다음 액션을 남겨주세요…"
                   required
                 ></textarea>
               </label>
-              <button id="detailCommentSubmit" type="submit">댓글 등록</button>
+              <button
+                id="detailCommentSubmit"
+                class="message-send-button"
+                type="submit"
+                aria-label="의견 보내기"
+                title="의견 보내기"
+                disabled
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M22 2 9.6 14.4"></path>
+                  <path d="m22 2-7.2 20-4.1-8.7L2 9.2Z"></path>
+                </svg>
+              </button>
             </div>
-            <p class="comment-composer-hint">댓글과 답글은 이 약물 기록에 함께 저장됩니다.</p>
+            <p class="comment-composer-hint">Enter 전송 · Shift+Enter 줄바꿈</p>
             <input id="detailReplyParentId" type="hidden" />
           </form>
         </aside>
       </main>
     </div>
 
+    <div class="report-modal-backdrop" id="reportModalBackdrop" hidden>
+      <section class="report-modal" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+        <header class="report-modal-header">
+          <div>
+            <p class="eyebrow">Markdown report</p>
+            <h2 id="reportModalTitle">GPT 원문 리포트</h2>
+          </div>
+          <div class="report-modal-actions">
+            <button id="reportModalCopyButton" class="secondary-button" type="button"><span aria-hidden="true">📋</span> 복사</button>
+            <button id="reportModalCloseButton" class="report-modal-close" type="button" aria-label="전체보기 닫기">×</button>
+          </div>
+        </header>
+        <div id="reportModalBody" class="report-modal-body report-viewer"></div>
+      </section>
+    </div>
+
     <div class="identity-modal-backdrop" id="identityModalBackdrop" hidden>
       <div class="identity-modal" role="dialog" aria-modal="true" aria-labelledby="identityModalTitle">
         <h3 id="identityModalTitle">댓글에 사용할 이름을 입력해주세요</h3>
         <p class="identity-modal-hint">이 탭을 여는 동안만 저장되며, 브라우저를 닫았다 다시 열면 다시 물어봅니다.</p>
-        <input id="identityModalInput" maxlength="100" placeholder="이름 또는 ID" autocomplete="name" />
+        <input id="identityModalInput" maxlength="100" aria-label="댓글 작성자 이름 또는 ID" placeholder="이름 또는 ID" autocomplete="name" />
         <div class="identity-modal-actions">
           <button id="identityModalCancel" type="button" class="identity-modal-cancel">취소</button>
           <button id="identityModalSubmit" type="button" class="identity-modal-submit">확인</button>
@@ -306,15 +367,28 @@
       </div>
     </div>
 
-    <div class="drawer-backdrop" id="aiBackdrop" hidden></div>
-    <aside class="ai-drawer detail-ai-drawer" id="aiDrawer" aria-label="AI drug chat drawer" aria-hidden="true" hidden>
-      <div class="drawer-resize-handle" data-resize-drawer aria-label="Resize AI drawer" role="separator" tabindex="0"></div>
-      <div class="ai-drawer-header">
+    <button
+      id="detailAiButton"
+      class="floating-agent-launcher"
+      type="button"
+      aria-label="Due Diligence Agent 열기. 드래그하여 위치 이동"
+      title="Due Diligence Agent 열기"
+      data-tooltip="Due Diligence Agent 열기"
+    >
+      <span class="floating-agent-launcher-mark" aria-hidden="true">🤖</span>
+    </button>
+
+    <aside class="ai-drawer detail-ai-drawer floating-agent-window" id="aiDrawer" role="dialog" aria-label="Due Diligence Agent" aria-modal="false" aria-hidden="true" hidden>
+      <div class="ai-drawer-header floating-agent-dragbar" data-floating-agent-drag tabindex="0" aria-label="에이전트 창 이동. Alt와 방향키로 위치를 조절할 수 있습니다.">
         <div>
-          <p class="eyebrow">JSON + Wiki Agent</p>
-          <h2>Asset Evidence Agent</h2>
+          <p class="eyebrow">현재 파이프라인 1개</p>
+          <h2>Due Diligence Agent</h2>
         </div>
-        <button id="aiDrawerClose" type="button" aria-label="Close AI drawer">닫기</button>
+        <div class="floating-agent-window-actions" data-floating-agent-no-drag>
+          <button type="button" data-floating-agent-minimize aria-label="에이전트 창 최소화" title="최소화"><span class="floating-agent-window-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 12h14" /></svg></span></button>
+          <button type="button" data-floating-agent-maximize aria-label="에이전트 창 최대화" title="최대화"><span class="floating-agent-window-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="5" y="5" width="14" height="14" rx="1.5" /></svg></span></button>
+          <button id="aiDrawerClose" type="button" aria-label="에이전트 창 닫기" title="닫기"><span class="floating-agent-window-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m6 6 12 12M18 6 6 18" /></svg></span></button>
+        </div>
       </div>
 
       <div class="agent-context">
@@ -346,13 +420,17 @@
 
       <div id="chatMessages" class="agent-messages drawer-chat-messages"></div>
       <form id="chatForm" class="agent-form">
-        <textarea id="chatInput" rows="4" placeholder="예: Marketability 2점 근거를 A/B/C 기준으로 보강해줘&#10;예: Competitive Landscape 출처 링크와 판단 이유를 업데이트해줘"></textarea>
-        <button class="primary-button" type="submit">질문</button>
+        <label class="sr-only" for="chatInput">에이전트에게 질문</label>
+        <textarea id="chatInput" rows="4" aria-label="상세 AI Agent 질문" placeholder="예: Obtainable peak sales 계산에서 가장 민감한 가정이 무엇인지 알려줘.&#10;예: 점수를 한 단계씩 높이기 위해 필요한 최소 추가 근거를 항목별로 알려줘."></textarea>
+        <button class="primary-button agent-send-button" type="submit" aria-label="질문 전송" title="전송">
+          <svg class="agent-send-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m4 5 16 7-16 7 3-7-3-7Z" /><path d="M7 12h13" /></svg>
+        </button>
       </form>
+      <div class="floating-agent-resize-grip" data-floating-agent-resize role="button" tabindex="0" aria-label="에이전트 창 크기 조절. 방향키로 너비와 높이를 조절할 수 있습니다."></div>
     </aside>
 
     <div class="drawer-backdrop" id="criteriaBackdrop" hidden></div>
-    <aside class="ai-drawer criteria-drawer" id="criteriaDrawer" aria-label="Scoring criteria drawer" aria-hidden="true" hidden>
+    <aside class="ai-drawer criteria-drawer" id="criteriaDrawer" role="dialog" aria-modal="true" aria-label="Scoring criteria dialog" aria-hidden="true" hidden>
       <div class="ai-drawer-header">
         <div>
           <p class="eyebrow" id="criteriaDrawerScopeLabel">AI Champion</p>
@@ -361,39 +439,14 @@
         <button id="criteriaDrawerClose" type="button" aria-label="Close criteria drawer">닫기</button>
       </div>
 
-      <div class="criteria-drawer-body">
+      <div class="criteria-drawer-body" id="criteriaDrawerBody">
         <section class="criteria-rule criteria-full-rule" data-criteria-tab="full">
-          <h3>GPT 지침 2 — Full Scout · v3.2 기준</h3>
+          <h3>GPT 지침 2 — Full Scout · v3.3 기준</h3>
           <p>
             지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
             지침 1에서 예비로 본 TR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
             Competitive Landscape, Platform, Expansion, Marketability까지 완성해 최종 <code>PASS</code>, <code>REVIEW</code>, <code>FAIL</code>로 판단합니다.
           </p>
-        </section>
-
-        <section class="criteria-theme-grid" aria-label="SKBP theme and cluster" data-criteria-tab="full">
-          <article>
-            <h3>E/I Balance</h3>
-            <p>balance between excitation and inhibition</p>
-            <ul>
-              <li>Ion Channel</li>
-              <li>Inhibitory Tone 강화</li>
-              <li>Synaptic Transmission</li>
-              <li>Chloride Homeostasis</li>
-              <li>Network Modulation</li>
-            </ul>
-          </article>
-          <article>
-            <h3>Neuroimmune</h3>
-            <p>neuroimmune biology across CNS disease</p>
-            <ul>
-              <li>CNS 손상 면역반응</li>
-              <li>교세포 향상성</li>
-              <li>Cytokine 신경조절</li>
-              <li>손상/질환 면역조절</li>
-              <li>말초 면역기관 연결</li>
-            </ul>
-          </article>
         </section>
 
         <section class="criteria-rule criteria-other-card" data-criteria-tab="full">
@@ -441,7 +494,7 @@
             <ul>
               <li>Total score <= 8</li>
               <li>또는 Target Relevance <= 1</li>
-              <li>또는 SKBP Theme / Cluster fit 없음</li>
+              <li>또는 asset identity 불확실, 개발 중단 등 명확한 hard blocker가 있음</li>
             </ul>
           </article>
         </section>
@@ -472,10 +525,10 @@
               <tbody>
                 <tr>
                   <th>Target Relevance</th>
-                  <td>CNS와 거의 무관</td>
-                  <td>CNS 관련성 약함</td>
-                  <td>general CNS relevance</td>
-                  <td>Theme 또는 Cluster 직접 해당</td>
+                  <td>SKBP 관련성을 판단할 정보가 부족하거나 관심 질환 범위 밖</td>
+                  <td>신경계·신경면역·신경퇴행·통증 관련 질환이지만 SKBP 우선 관심 적응증에는 해당하지 않음</td>
+                  <td>SKBP 우선 관심 적응증에 해당</td>
+                  <td>SKBP 우선 관심 적응증에 해당하며, target/MoA가 해당 질환 biology 또는 SKBP Theme/Cluster에 직접 연결</td>
                 </tr>
                 <tr>
                   <th>Competitive Landscape</th>
@@ -486,10 +539,10 @@
                 </tr>
                 <tr>
                   <th>MoA Validity</th>
-                  <td>MoA 불명확</td>
-                  <td>rationale / claim 중심</td>
-                  <td>functional evidence 또는 class validation</td>
-                  <td>asset-specific validation 또는 human PoC</td>
+                  <td>Target 또는 작용기전을 확인할 수 없어 평가 불가</td>
+                  <td>작용기전 설명은 있으나 회사 주장 또는 이론적 근거 중심</td>
+                  <td>기전이 실제로 작동함을 보여주는 기능적 실험 또는 동일 target/class의 독립 검증 근거 있음</td>
+                  <td>해당 asset에서 target engagement, mechanism-linked PD/biomarker 또는 직접적인 작용기전 검증이 확인됨</td>
                 </tr>
                 <tr>
                   <th>Platform Attractiveness</th>
@@ -507,10 +560,10 @@
                 </tr>
                 <tr>
                   <th>Data Maturity</th>
-                  <td>data 없음</td>
-                  <td>stage 대비 부족</td>
-                  <td>stage에 부합</td>
-                  <td>decision-ready package</td>
+                  <td>공개된 asset-specific 결과 없음</td>
+                  <td>정성적 claim 또는 단편적 결과만 있어 개발 단계 대비 불충분</td>
+                  <td>개발 단계에 맞는 해석 가능한 정량 데이터 영역 1개 이상</td>
+                  <td>개발 단계에 맞는 상호보완적 정량 데이터 영역 2개 이상</td>
                 </tr>
                 <tr>
                   <th>Marketability</th>
@@ -524,50 +577,55 @@
           </div>
         </section>
 
-        <section class="criteria-detail-grid compact-criteria-detail-grid criteria-parameter-guide" aria-label="Detailed scoring guidance" data-criteria-tab="full">
-          <article>
-            <h3>Target Relevance</h3>
-            <p>Target을 먼저 identify한 뒤 <code>Theme</code>과 <code>Cluster</code>를 분리해서 기록합니다. Target 아래에는 <code>Theme: ___ (Cluster: ___)</code> 형식으로 표시합니다.</p>
+        <section class="criteria-parameter-guide full-parameter-guide" data-criteria-tab="full">
+          <div class="criteria-section-header">
+            <h3>Parameter Guide</h3>
+            <span>각 항목에서 실제로 보는 핵심 관점</span>
+          </div>
+          <div class="criteria-detail-grid compact-criteria-detail-grid" aria-label="Detailed scoring guidance">
+          <article class="parameter-card-wide target-parameter-card target-parameter-card-compact parameter-breakdown-card">
+            <h3>1. Target Relevance</h3>
+            <p>SKBP 우선 관심 적응증 및 R&amp;D Theme과 그 하위 Cluster의 적합성을 평가합니다.</p>
+            <ul class="parameter-evidence-list" aria-label="Target Relevance priority indications and themes">
+              <li><strong>SKBP 우선 관심 적응증</strong><span class="criteria-keyword-list"><span>Alzheimer's disease</span><span>Parkinson's disease</span><span>Amyotrophic lateral sclerosis / motor neuron disease</span><span>Multiple sclerosis / neuroinflammatory disease</span><span>Neuropathic pain</span><span>Epilepsy / seizure disorders</span></span></li>
+              <li><strong>E/I Balance</strong><span class="criteria-keyword-list"><span>Ion Channel</span><span>Inhibitory Tone</span><span>Synaptic Transmission</span><span>Chloride Homeostasis</span><span>Network Modulation</span></span></li>
+              <li><strong>Neuroimmune</strong><span class="criteria-keyword-list"><span>Glial homeostasis</span><span>CNS injury immune response</span><span>Cytokine neuromodulation</span><span>Disease immune modulation</span></span></li>
+            </ul>
           </article>
           <article>
-            <h3>Competitive Landscape</h3>
+            <h3>2. Competitive Landscape</h3>
             <p>FIC만 높게 보지 않고, 이미 1개 정도 앞서가는 약물이 있는 경우를 가장 선호합니다. 판단 불가이면 0점으로 둡니다.</p>
           </article>
           <article>
-            <h3>MoA Validity</h3>
-            <p>왜 작동할 것 같은지의 설득력입니다. 2점 이상은 PMID, 저널, conference abstract, company deck 같은 출처를 반드시 남깁니다.</p>
+            <h3>3. MoA Validity</h3>
+            <p>작용기전이 얼마나 구체적으로 정의되어 있고, 이를 뒷받침하는 기능적·과학적 근거가 어느 수준인지 평가합니다.</p>
           </article>
           <article>
-            <h3>Data Maturity</h3>
-            <p>현재 assessed asset 하나의 stage-appropriate development package만 평가합니다. 다른 asset 또는 platform-wide data는 이 점수를 올리지 않습니다.</p>
-          </article>
-          <article>
-            <h3>Platform Attractiveness</h3>
+            <h3>4. Platform Attractiveness</h3>
             <p>개별 asset의 개발 성숙도가 아니라 modality, delivery, chemistry, manufacturing 등 underlying technology가 다른 프로그램에도 반복 적용 가능한 기술적 우위를 제공하는지 평가합니다. 같은 platform에 공식 연결된 다른 asset의 근거도 사용할 수 있습니다.</p>
           </article>
-          <article class="parameter-card-wide marketability-parameter-card">
+          <article>
+            <h3>5. Expansion Potential</h3>
+            <p>같은 biology, target, platform으로 adjacent indication이나 후속 pipeline 확장이 가능한지 봅니다. 단순 label 확장이 아니라 실제 biology 근거가 필요합니다.</p>
+          </article>
+          <article>
+            <h3>6. Data Maturity</h3>
+            <p>해당 asset의 개발 단계에 맞는 공개 데이터가 얼마나 충분하고 해석 가능한지 평가합니다.</p>
+          </article>
+          <article class="parameter-card-wide marketability-parameter-card parameter-breakdown-card">
             <h3>7. Marketability</h3>
             <p>
               Marketability는 환자 풀에서 시작해 실제 매출 가능성까지 단계적으로 좁혀 봅니다.
               A는 치료 가능한 환자 수, B는 경쟁 리스크를 반영하기 전 peak sales,
               C는 경쟁·가격·확장성을 반영한 obtainable peak sales입니다.
             </p>
-            <div class="marketability-formula-grid" aria-label="Marketability A/B/C formula cards">
-              <div>
-                <strong>A. TAP</strong>
-                <span>Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate</span>
-              </div>
-              <div>
-                <strong>B. Unrisked Peak Sales</strong>
-                <span>TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor</span>
-              </div>
-              <div>
-                <strong>C. Obtainable Peak Sales</strong>
-                <span>Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment</span>
-              </div>
-            </div>
-            <p class="marketability-unit-line"><strong>Sales output unit</strong><span>million USD</span></p>
+            <ul class="parameter-evidence-list" aria-label="Marketability A/B/C formulas">
+              <li><strong>A. TAP</strong><span>Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate</span></li>
+              <li><strong>B. Unrisked Peak Sales</strong><span>TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor</span></li>
+              <li><strong>C. Obtainable Peak Sales</strong><span>Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment</span></li>
+            </ul>
           </article>
+          </div>
         </section>
 
         <section class="criteria-rule criteria-other-card" data-criteria-tab="full">
@@ -610,7 +668,7 @@
     </aside>
 
     <div class="drawer-backdrop" id="editBackdrop" hidden></div>
-    <aside class="ai-drawer json-edit-drawer" id="editDrawer" aria-label="Record data edit drawer" aria-hidden="true">
+    <aside class="ai-drawer json-edit-drawer" id="editDrawer" aria-label="Record data edit drawer" aria-hidden="true" hidden>
       <div class="ai-drawer-header">
         <div>
           <p class="eyebrow">Edit Record Data</p>
@@ -624,7 +682,7 @@
           이 편집기는 로컬 record 데이터를 직접 업데이트합니다.
           저장 후 상세 화면이 다시 로드됩니다.
         </p>
-        <textarea id="jsonEditor" spellcheck="false"></textarea>
+        <textarea id="jsonEditor" aria-label="Record JSON 편집기" spellcheck="false"></textarea>
       </div>
 
       <div class="edit-drawer-actions">
@@ -634,6 +692,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260729-review-rationale-layout-2"></script>
+    <script type="module" src="./src/detail.js?v=20260804-attachment-original-download-toolbar-1"></script>
   </body>
 </html>

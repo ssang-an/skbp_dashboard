@@ -173,46 +173,46 @@
   ],
   "stage": [
     {
-      "canonical": "Hit discovery",
+      "canonical": "Hit Discovery",
       "synonyms": [
+        "Hit Discovery",
         "Hit discovery",
         "Hit finding",
-        "Screening",
         "Primary screening",
         "High-throughput screening",
         "HTS",
+        "Early screening",
         "Hit identification",
-        "Hit ID",
-        "Hit-to-lead"
+        "Hit ID"
       ],
       "patterns": [
         "hit[- ]?discovery",
         "hit[- ]?finding",
-        "screening",
+        "(?:early|primary|high-throughput) screening",
         "\\bhts\\b",
-        "hit[- ]?to[- ]?lead"
+        "hit[- ]?identification",
+        "early screening"
       ]
     },
     {
-      "canonical": "Lead Selection",
+      "canonical": "Preclinical Candidate",
       "synonyms": [
-        "Lead Selection",
-        "Lead selection",
-        "Lead candidate selection",
-        "Candidate selection",
-        "Development candidate selection",
-        "DC selection",
-        "PCC selection",
-        "Preclinical candidate selection",
-        "Candidate selected"
+        "Preclinical Candidate",
+        "Development candidate selected",
+        "Development candidate nominated",
+        "Preclinical candidate selected",
+        "Preclinical candidate nominated",
+        "DC selected",
+        "DC nominated",
+        "PCC selected",
+        "PCC nominated",
+        "Candidate selected",
+        "Candidate nominated"
       ],
       "patterns": [
-        "lead candidate",
-        "candidate selection",
-        "development candidate",
-        "\\bdc selection\\b",
-        "\\bpcc\\b",
-        "candidate selected"
+        "(?:development|preclinical) candidate (?:selected|nominated)",
+        "\\b(?:dc|pcc) (?:selected|nominated)\\b",
+        "candidate (?:selected|nominated)"
       ]
     },
     {
@@ -223,6 +223,9 @@
         "Lead opt",
         "Lead-op",
         "LO",
+        "Hit-to-lead",
+        "Lead selection ongoing",
+        "Candidate selection ongoing",
         "Optimization",
         "Optimisation"
       ],
@@ -230,7 +233,19 @@
         "lead[- ]?op",
         "lead optimization",
         "lead optimisation",
+        "hit[- ]?to[- ]?lead",
+        "(?:lead|candidate) selection (?:ongoing|underway|in progress)",
         "\\blo\\b"
+      ]
+    },
+    {
+      "canonical": "Preclinical unspecified",
+      "synonyms": [
+        "Preclinical unspecified"
+      ],
+      "patterns": [
+        "^preclinical$",
+        "^pre-clinical$"
       ]
     },
     {
@@ -238,51 +253,41 @@
       "synonyms": [
         "IND-enabling",
         "IND enabling",
-        "IND preparation",
-        "IND prep",
-        "IND-ready",
         "GLP tox",
         "GLP toxicology",
-        "Tox package",
-        "Pre-IND",
+        "IND-directed CMC",
+        "IND preparation underway",
+        "IND preparation in progress",
         "CTA-enabling",
         "Preclinical / IND-enabling"
       ],
       "patterns": [
         "ind[- ]?enabling",
-        "ind preparation",
-        "ind prep",
-        "ind[- ]?ready",
         "glp tox",
-        "toxicology",
-        "pre[- ]?ind",
+        "ind[- ]directed cmc",
+        "ind preparation (?:underway|ongoing|in progress)",
         "cta[- ]?enabling"
       ]
     },
     {
-      "canonical": "IND",
+      "canonical": "IND filed/cleared",
       "synonyms": [
-        "IND",
+        "IND filed/cleared",
         "IND filed",
         "IND submitted",
         "IND accepted",
+        "IND effective",
         "IND cleared",
-        "CTA",
         "CTA filed",
+        "CTA submitted",
+        "CTA accepted",
+        "CTA effective",
         "CTA approved",
-        "Clinical trial approval",
-        "Clinical trial application",
         "NMPA CDE IND approval"
       ],
       "patterns": [
-        "\\bind\\b",
-        "ind filed",
-        "ind submitted",
-        "ind accepted",
-        "ind cleared",
-        "\\bcta\\b",
-        "clinical trial approval",
-        "clinical trial application"
+        "(?:ind|cta) (?:filed|submitted|accepted|effective|cleared|approved)",
+        "(?:filed|submitted|accepted|effective|cleared) (?:an? )?(?:ind|cta)"
       ]
     },
     {
@@ -343,18 +348,12 @@
         "Phase II",
         "Phase 2a",
         "Phase 2b",
-        "POC",
-        "Proof-of-concept",
-        "Proof of concept",
-        "Patient POC",
         "2상"
       ],
       "patterns": [
         "\\bp\\s*-?\\s*2\\b",
         "\\bph\\s*-?\\s*2\\b",
         "phase\\s*-?\\s*(2|ii)\\b",
-        "\\bpoc\\b",
-        "proof[- ]?of[- ]?concept",
         "2\\s*상"
       ]
     },
@@ -463,6 +462,15 @@
         "suspended",
         "inactive",
         "dormant"
+      ]
+    },
+    {
+      "canonical": "Unknown",
+      "synonyms": [
+        "Unknown"
+      ],
+      "patterns": [
+        "^unknown$"
       ]
     }
   ],

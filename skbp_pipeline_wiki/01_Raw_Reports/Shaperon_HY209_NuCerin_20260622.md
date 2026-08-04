@@ -1,5 +1,7 @@
 # Shaperon Pipeline Scout Report: **HY209 / NuCerin**
 
+> **Recalculated by Full Scout Rubric v3.3:** 2026-08-01 대시보드에서 저장된 7개 criterion score와 최신 v3.3 Filter 2 규칙으로 Total Score 및 결정값을 재계산했습니다. 기존 수동 criterion/Total Score override는 해제했으며 원조사 evidence와 본문, 담당자의 명시적인 Human decision 및 코멘트는 유지했습니다.
+
 본 보고서는 SKBP Pipeline Finder v3.0용으로 작성되었으며, 사용자 제공 SKBP v3.0 템플릿을 기준으로 구성했다. :contentReference[oaicite:0]{index=0}  
 모든 핵심 판단에는 auditability를 위해 URL을 포함했다. HY209는 Shaperon의 GPCR19/TGR5 agonist 계열 물질이며, 본 보고서는 CNS 관점에서 **NuCerin / Alzheimer’s disease** 프로그램을 중심으로 평가한다. NuGel, NuSepin, NuPulin 등 다른 HY209/GPCR19 프로그램은 확장성 근거로만 반영했다.
 

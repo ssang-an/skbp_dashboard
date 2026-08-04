@@ -5,8 +5,8 @@ title: "Scorecard - HY209 / NuCerin"
 tags:
   - "pipeline/scorecard"
   - "skbp/scoring"
-created_at: "2026-07-29"
-updated_at: "2026-07-29"
+created_at: "2026-08-02"
+updated_at: "2026-08-02"
 source_report: "[[01_Raw_Reports/Shaperon_HY209_NuCerin_20260622]]"
 source_json: "json/pipeline-records.json"
 asset: "[[02_Assets/Asset__HY209_NuCerin__HY-209|HY209 / NuCerin]]"
@@ -34,7 +34,7 @@ recommendation: "Watch"
 |---|---:|
 | Total Score | 16/21 |
 | Recommendation | Watch |
-| Hard Filter | REVIEW |
+| Hard Filter | PASS |
 
 ## 2. Criterion Details
 

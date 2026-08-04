@@ -13,8 +13,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "json" / "pipeline-records.json"
 VAULT_DIR = ROOT / "skbp_pipeline_wiki"
-SCORING_FULL = ROOT / "config" / "scoring_criteria" / "v3_1_full.md"
-SCORING_DISPLAY = ROOT / "config" / "scoring_criteria" / "v3_1_display.md"
+SCORING_FULL = ROOT / "config" / "scoring_criteria" / "v3_3_full.md"
+SCORING_DISPLAY = ROOT / "config" / "scoring_criteria" / "v3_3_display.md"
 
 CRITERIA = {
     "target_relevance": "Target Relevance",
@@ -924,10 +924,10 @@ def render_theme_cluster_note(kind: str, name: str, asset_files: set[str]) -> st
 
 
 def write_system_notes() -> None:
-    full_text = SCORING_FULL.read_text(encoding="utf-8") if SCORING_FULL.exists() else "# Scoring Criteria v3.1\n"
-    display_text = SCORING_DISPLAY.read_text(encoding="utf-8") if SCORING_DISPLAY.exists() else "# Scoring Criteria v3.1 Display\n"
-    write_note("00_System/Scoring_Criteria_v3.1_Full.md", full_text)
-    write_note("00_System/Scoring_Criteria_v3.1_Display.md", display_text)
+    full_text = SCORING_FULL.read_text(encoding="utf-8") if SCORING_FULL.exists() else "# Scoring Criteria v3.3\n"
+    display_text = SCORING_DISPLAY.read_text(encoding="utf-8") if SCORING_DISPLAY.exists() else "# Scoring Criteria v3.3 Display\n"
+    write_note("00_System/Scoring_Criteria_v3.3_Full.md", full_text)
+    write_note("00_System/Scoring_Criteria_v3.3_Display.md", display_text)
     write_note(
         "00_System/Evidence_Type_Guide.md",
         """# Evidence Type Guide

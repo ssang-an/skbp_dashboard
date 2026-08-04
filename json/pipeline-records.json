@@ -10,7 +10,7 @@
         "json"
       ],
       "output_filename_base": "Illimis_Therapeutics_ILM01_20260621",
-      "rubric_version": "3.1",
+      "rubric_version": "3.2",
       "rubric_author": "kate",
       "focus_management": {
         "is_tracked": true,
@@ -513,35 +513,154 @@
           "field": "focus_management.due_date",
           "previous_value": "",
           "new_value": "2026-07-31"
+        },
+        {
+          "changed_at": "2026-08-01T11:02:49.681916+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_delete",
+          "field": "qualitative_review.scientific_rigor",
+          "previous_value": "ㅇㅇㅇ 이 내용이야",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-01T11:02:49.790417+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_delete",
+          "field": "qualitative_review.scientific_rigor",
+          "previous_value": "안녕",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-01T11:02:49.923917+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_delete",
+          "field": "qualitative_review.scientific_rigor",
+          "previous_value": "의견등록",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-01T11:13:23.639892+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_criterion_add",
+          "field": "qualitative_review.custom_criteria",
+          "previous_value": null,
+          "new_value": "Regulatory Pathway"
+        },
+        {
+          "changed_at": "2026-08-01T11:13:45.140184+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_criterion_delete",
+          "field": "qualitative_review.custom_criteria",
+          "previous_value": "Regulatory Pathway",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-01T11:14:08.153583+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_criterion_add",
+          "field": "qualitative_review.custom_criteria",
+          "previous_value": null,
+          "new_value": "Regulatory Pathway"
+        },
+        {
+          "changed_at": "2026-08-01T11:14:12.579730+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.efficacy",
+          "previous_value": null,
+          "new_value": "원본 보고서에는 정상군 대비 회복율이나 SoC 대비 통계적 유의성(p-value)을 제시한 정량적 데이터가 포함되어 있지 않습니다. ILM01은 전임상 단계로, Nature Medicine 논문에서 행동 개선과 플라크 감소 등의 결과가 보고되었으나 구체적인 회복율 및 p-value는 확인할 수 없습니다. 따라서 이 기준을 평가하기에는 증거가 부족하며, 향후 임상 데이터가 공개되어야 판단이 가능합니다."
+        },
+        {
+          "changed_at": "2026-08-01T11:14:28.610896+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.custom_6c14d314b4",
+          "previous_value": null,
+          "new_value": "규제 경로 측면에서 ILM01은 현재 공개 자료 기준 preclinical/IND-enabling 단계로, FDA breakthrough 또는 fast-track 지정 가능성을 평가할 만한 임상 데이터가 아직 없다. Nature Medicine 게재 및 poster 데이터가 MoA 타당성은 강하게 뒷받침하지만, 이는 published prototype 기반이며 final clinical candidate의 GLP/CMC/임상 데이터가 미공개 상태라 지정 신청의 근거가 될 공식적 근거는 부족하다. 다만 Aβ plaque 제거와 염증 억제를 동시에 보이는 차별화된 기전과 미충족 수요가 큰 Alzheimer’s disease 적응증은 향후 IND 이후 fast-track 후보로서 유망한 요소로 보인다. FDA 지정 가능성을 판단하려면 2027년 IND 준비 상황, final candidate의 전임상 독성 및 효능 데이터, 그리고 경쟁 anti-Aβ 제제들과의 차별화 근거가 추가로 필요하다."
+        },
+        {
+          "changed_at": "2026-08-01T11:14:28.658295+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review",
+          "field": "qualitative_review.custom_6c14d314b4",
+          "previous_value": null,
+          "new_value": "수동 의견 테스트"
+        },
+        {
+          "changed_at": "2026-08-01T11:14:28.708634+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_criterion_delete",
+          "field": "qualitative_review.custom_criteria",
+          "previous_value": "Regulatory Pathway",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-01T11:14:40.916418+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_delete",
+          "field": "qualitative_review.efficacy",
+          "previous_value": "원본 보고서에는 정상군 대비 회복율이나 SoC 대비 통계적 유의성(p-value)을 제시한 정량적 데이터가 포함되어 있지 않습니다. ILM01은 전임상 단계로, Nature Medicine 논문에서 행동 개선과 플라크 감소 등의 결과가 보고되었으나 구체적인 회복율 및 p-value는 확인할 수 없습니다. 따라서 이 기준을 평가하기에는 증거가 부족하며, 향후 임상 데이터가 공개되어야 판단이 가능합니다.",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-01T11:15:05.196321+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.efficacy",
+          "previous_value": null,
+          "new_value": "원문 보고서는 ILM01이 AD/CAA 마우스 모델에서 Aβ 플라크 제거, 염증 반응 감소, 행동 개선 등을 보였다고 언급하지만, 정상군 대비 회복율(%)이나 표준치료제(SoC) 대비 통계적 유의성(p-value)을 제시하지 않았습니다. 또한 사용된 프로토타입과 최종 임상 후보물질의 동등성에 대한 검증이 필요합니다. 따라서 이 기준을 평가하기에는 정량적 효능 데이터와 SoC 비교 근거가 부족합니다."
+        },
+        {
+          "changed_at": "2026-08-01T11:15:30.185612+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.commercial_appeal",
+          "previous_value": null,
+          "new_value": "원문 보고서는 Commercial criterion을 직접 평가하지 않았으며, Marketability 점수(2/3)와 경쟁사 현황(Leqembi, Kisunla 등)만 제시되어 TPP 매력도와 Unmet Need 충족 여부를 판단하기에 불충분합니다. ILM01의 TAM receptor 기반 차별성은 언급되나, 실제 상업적 가치와 파트너사 관점의 시장 차별성은 추가적인 시장 분석 및 L-IN/L-OUT 맥락에서의 검토가 필요합니다."
+        },
+        {
+          "changed_at": "2026-08-01T11:15:49.726593+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.execution_risk",
+          "previous_value": null,
+          "new_value": "ILM01은 GAIA 플랫폼 기반의 융합 단백질로 CMC 복잡성과 대규모 생산 경험이 부족하여 개발 리스크가 존재하며, 공개된 PoC 데이터는 강력하지만 최종 임상 후보물질의 GLP/CMC/임상 데이터가 미공개이므로 추가 DD가 필수적입니다. 또한 현재 파트너십은 Lilly Catalyze360 등 초기 단계에 머물러 있어 향후 공동개발 또는 기술이전을 위한 추가 검증이 필요합니다."
+        },
+        {
+          "changed_at": "2026-08-03T10:35:06.772862+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review",
+          "field": "qualitative_review.efficacy",
+          "previous_value": null,
+          "new_value": "hello"
         }
       ],
-      "last_edited_at": "2026-07-29T06:00:23.601113+00:00",
-      "last_edited_by": "127.0.0.1",
       "attachments": [],
       "qualitative_review": {
         "criteria": {
           "scientific_rigor": {
             "entries": [
               {
-                "id": "dc45d9e00bc647189a7bc2a906fd41c7",
-                "author": "hello",
-                "body": "ㅇㅇㅇ 이 내용이야",
-                "is_ai": false,
-                "created_at": "2026-07-28T15:13:44.045861+00:00"
-              },
-              {
                 "id": "37f4e74e596143718a65573cced18102",
                 "author": "AI (초안)",
                 "body": "[과학적 타당성] 의견 감사합니다. 이 코멘트는 규칙 기반 임시(placeholder) 코멘트이며, 추후 OpenRouter 연동 시 실제 AI 분석 코멘트로 교체될 예정입니다.",
                 "is_ai": true,
                 "created_at": "2026-07-28T15:13:44.045938+00:00"
-              },
-              {
-                "id": "2d4850eafe074d36bd09d462de003de6",
-                "author": "hello",
-                "body": "안녕",
-                "is_ai": false,
-                "created_at": "2026-07-28T15:13:51.204968+00:00"
               },
               {
                 "id": "9815cd2660e1437784bbecfe58a16011",
@@ -551,13 +670,6 @@
                 "created_at": "2026-07-28T15:13:51.205027+00:00"
               },
               {
-                "id": "0d5f257baa97429ba53dab095a9562ef",
-                "author": "hello",
-                "body": "의견등록",
-                "is_ai": false,
-                "created_at": "2026-07-28T21:06:11.414663+00:00"
-              },
-              {
                 "id": "31c4b393c28c468ea842a4fba8fced39",
                 "author": "AI (초안)",
                 "body": "[과학적 타당성] 의견 감사합니다. 이 코멘트는 규칙 기반 임시(placeholder) 코멘트이며, 추후 OpenRouter 연동 시 실제 AI 분석 코멘트로 교체될 예정입니다.",
@@ -565,21 +677,54 @@
                 "created_at": "2026-07-28T21:06:11.414758+00:00"
               }
             ]
+          },
+          "efficacy": {
+            "entries": [
+              {
+                "id": "b5bb3de5028848e5a11a48c20c6d09ee",
+                "author": "AI",
+                "body": "원문 보고서는 ILM01이 AD/CAA 마우스 모델에서 Aβ 플라크 제거, 염증 반응 감소, 행동 개선 등을 보였다고 언급하지만, 정상군 대비 회복율(%)이나 표준치료제(SoC) 대비 통계적 유의성(p-value)을 제시하지 않았습니다. 또한 사용된 프로토타입과 최종 임상 후보물질의 동등성에 대한 검증이 필요합니다. 따라서 이 기준을 평가하기에는 정량적 효능 데이터와 SoC 비교 근거가 부족합니다.",
+                "is_ai": true,
+                "created_at": "2026-08-01T11:15:05.196207+00:00"
+              },
+              {
+                "id": "457e34a4f8fa4ebeab92ee9819340c25",
+                "author": "정주원",
+                "body": "hello",
+                "is_ai": false,
+                "created_at": "2026-08-03T10:35:06.772778+00:00"
+              }
+            ]
+          },
+          "commercial_appeal": {
+            "entries": [
+              {
+                "id": "a888c8628e3d4fd996fcdbbb0c536b11",
+                "author": "AI",
+                "body": "원문 보고서는 Commercial criterion을 직접 평가하지 않았으며, Marketability 점수(2/3)와 경쟁사 현황(Leqembi, Kisunla 등)만 제시되어 TPP 매력도와 Unmet Need 충족 여부를 판단하기에 불충분합니다. ILM01의 TAM receptor 기반 차별성은 언급되나, 실제 상업적 가치와 파트너사 관점의 시장 차별성은 추가적인 시장 분석 및 L-IN/L-OUT 맥락에서의 검토가 필요합니다.",
+                "is_ai": true,
+                "created_at": "2026-08-01T11:15:30.185536+00:00"
+              }
+            ]
+          },
+          "execution_risk": {
+            "entries": [
+              {
+                "id": "bd1ae1e2f11e4e9f95b0f7725e26e2b9",
+                "author": "AI",
+                "body": "ILM01은 GAIA 플랫폼 기반의 융합 단백질로 CMC 복잡성과 대규모 생산 경험이 부족하여 개발 리스크가 존재하며, 공개된 PoC 데이터는 강력하지만 최종 임상 후보물질의 GLP/CMC/임상 데이터가 미공개이므로 추가 DD가 필수적입니다. 또한 현재 파트너십은 Lilly Catalyze360 등 초기 단계에 머물러 있어 향후 공동개발 또는 기술이전을 위한 추가 검증이 필요합니다.",
+                "is_ai": true,
+                "created_at": "2026-08-01T11:15:49.726547+00:00"
+              }
+            ]
           }
         },
-        "updated_at": "2026-07-28T21:06:11.414758+00:00"
+        "updated_at": "2026-08-03T10:35:06.772778+00:00",
+        "custom_criteria": []
       },
       "human_review": {
-        "overrides": {
-          "scores": {
-            "target_relevance": 3
-          }
-        },
-        "ai_baseline": {
-          "scores": {
-            "target_relevance": 2
-          }
-        },
+        "overrides": {},
+        "ai_baseline": {},
         "history": [
           {
             "changed_at": "2026-07-28T15:20:08.149833+00:00",
@@ -593,7 +738,21 @@
         "last_updated_at": "2026-07-28T15:20:08.149833+00:00",
         "last_updated_source": "dashboard_table",
         "last_updated_by": "127.0.0.1",
-        "has_manual_override": true
+        "has_manual_override": false,
+        "last_scoring_override_reset_at": "2026-07-29T10:17:52.713421+00:00",
+        "last_scoring_override_reset_source": "dashboard_tab2_rubric_refresh"
+      },
+      "rubric_recalculation": {
+        "version": "3.2",
+        "previous_version": "3.2",
+        "recalculated_at": "2026-07-29T10:17:52.713421+00:00",
+        "source": "dashboard_tab2_rubric_refresh",
+        "scope": "stored_criterion_scores_total_and_filter2_reset_manual_scoring_overrides",
+        "cleared_manual_scoring_overrides": {
+          "scores": {
+            "target_relevance": 3
+          }
+        }
       }
     },
     "input": {
@@ -604,7 +763,7 @@
       "notes": "GPT generated Markdown report + structured JSON for SKBP Pipeline Finder"
     },
     "source_report": {
-      "raw_markdown": "# Illimis Therapeutics Pipeline Scout Report: **ILM01 / GAIA-Aβ**\n\n본 리포트는 SKBP Pipeline Finder v3.0 Markdown report + JSON schema 지침에 맞춰 작성했습니다. 최종에는 대시보드에 복사 가능한 JSON을 포함했고, 감사 가능성을 위해 URL과 evidence trail을 함께 남겼습니다.\n\n> **기준 업데이트 (v3.1):** 이 원문은 최초 작성 기준을 보존하되, 2026-06-22 Detail AI Agent 검토를 통해 **SKBP Pipeline Finder v3.1 기준으로 재평가 및 업데이트**되었습니다. 최신 판단은 JSON scoring fields와 아래 Revision Note를 기준으로 봅니다.\n\n---\n\n## 1) Company Profile\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Illimis Therapeutics | Official company site [1]; 회사 공식 페이지에서 “Illimis Therapeutics, Inc.” 및 연락처 확인 가능 |\n| Legal name / aliases | Illimis Therapeutics, Inc. / 일리미스테라퓨틱스 | Official overview/contact [2], [3] |\n| Country | Republic of Korea | Seoul 주소가 공식 contact page에 기재 |\n| Headquarters | Seoul, Korea. Boston presence: Lilly Gateway Labs, 15 Necco St, Boston | Official contact page [3] |\n| Website | Illimis official site | [1] |\n| Company type / stage | Private, Series B, preclinical-stage biotech | 공식 overview는 2021년 설립 및 fundraising 66.4M USD를 표시하고, 2025년 PR은 KRW 58B / 약 USD 42M Series B를 발표 |\n| Focus areas | CNS / neurodegenerative disease / neuro-immune disease / immune disease | 공식 platform은 neurodegenerative disorders 및 amyloidosis biologics 개발을 설명하고, Series B PR은 CNS 및 immune disease development를 명시 |\n| Platform summary | **GAIA: Gas6-mediated Anti-Inflammatory Adaptor**. Amyloid/pathologic target binder + engineered Gas6 TAM receptor binder를 결합한 fusion protein platform | Official platform page [5] |\n| Financing / partnership signals | 2025 Series B KRW 58B; Lilly Catalyze360-ExploR&D collaboration; BMS Innovation Square, JLABS Singapore 등 | PRNewswire 및 BioSpectator |\n| Lead pipeline summary | **ILM01 / GAIA-Aβ**, Aβ-targeting Alzheimer’s disease asset. 2H 2025 preclinical entry, 2027 IND/Phase 1 preparation target로 공개자료에 언급 | Official pipeline + BioSpectator/KBR |\n\n---\n\n## 2) Pipeline Snapshot\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Illimis Therapeutics | Official site [1], [2] |\n| Lead asset | **ILM01 / GAIA-Aβ** | Official pipeline lists Aβ / Alzheimer’s disease / ILM01 |\n| Target | Aβ aggregates + TAM receptor-mediated clearance biology | Official platform explains target binder + engineered Gas6 TAM binder architecture |\n| Theme / Cluster | **Theme: Neuroimmune / Cluster: 교세포 향상성** | Internal SKBP mapping. 근거는 glial cell TAM receptor, microglia/astrocyte phagocytosis, anti-inflammatory clearance |\n| MoA | Aβ binder와 engineered Gas6를 연결해 TAM receptor-dependent phagocytosis를 유도하고 FcγR-mediated inflammation을 회피 | Nature Medicine / KAIST record |\n| Modality / Platform | Biologic, chimeric / bispecific-like fusion protein, GAIA platform | Official platform page |\n| Indication | Alzheimer’s disease | Official pipeline |\n| Stage | Public source 기준 **preclinical / IND-enabling preparation**. BioSpectator는 2025년 하반기 preclinical entry, 2027년 말 IND expectation을 언급. KBR은 2027년 Phase 1 준비 중이라고 설명 | BioSpectator + KBR |\n| Key data | αAβ-Gas6가 AD/CAA mouse model에서 Aβ plaque 제거, NF-κB inflammatory response 감소, microglia/astrocyte phagocytosis, reduced synapse elimination/microhemorrhage를 보임 | Nature Medicine / KAIST / poster |\n\n---\n\n## 3) Scorecard Summary\n\n| Criterion | Score | One-line judgment | Evidence used |\n|---|---:|---|---|\n| Target Relevance | 3 / 3 | Aβ 단독이 아니라 TAM receptor–glial phagocytosis–anti-inflammatory clearance 축이므로 Neuroimmune fit 강함 | [4], [5], [8] |\n| Competitive Landscape | 1 / 3 | True same-MoA는 적지만 AD/Aβ commercial landscape는 Leqembi, Kisunla, remternetug로 과밀 | FDA/Lilly sources |\n| MoA Validity | 3 / 3 | Nature Medicine publication과 poster data가 mechanistic consistency를 강하게 뒷받침 | [7], [8], [10] |\n| Platform Attractiveness | 2 / 3 | Differentiated platform이나 biologic fusion protein이라 SKBP major modality fit은 중간 | [5], [13] |\n| Expansion Potential | 3 / 3 | ILM02 tau, ILM03 α-syn, ILM21 MS, ILM24 SLE 등 platform 확장성 명확 | [4], [5], [13] |\n| Data Maturity | 2 / 3 | Publication-backed PoC는 강하지만 final candidate GLP/CMC/clinical data는 미공개 | [8], [10], [12] |\n| Marketability | 2 / 3 | A. TAP 약 46만 명, B. Unrisked Peak Sales 약 $1.94B, C. Obtainable Peak Sales 약 $1.06B 추정 | [21], [22], [19], [20] |\n| **Total** | **16 / 21** | **Watch / DD priority** |  |\n\n---\n\n## 4) Criterion Detail Pages\n\n### 4.1 Target Relevance\n\nScore: **3 / 3**\n\nMain line:  \nILM01은 Aβ-targeting AD asset이지만, 차별화 포인트는 **TAM receptor-mediated glial phagocytosis + inflammation control**이므로 SKBP Theme 기준 **Neuroimmune / 교세포 향상성**에 정확히 들어간다.\n\nWhat was checked:\n- Target identity\n- Disease/biology relevance\n- SKBP Theme / Cluster fit\n- General neurodegeneration / neuroinflammation relevance\n\nEvidence trail:\n- Illimis 공식 pipeline은 Neurology 영역에서 Aβ / Alzheimer’s disease / ILM01을 명시한다.\n- 공식 platform page는 TAM receptor가 glial cell surface에 발현되고 phagocytosis activation 및 inflammation inhibition과 연결된다고 설명한다.\n- Nature Medicine/KAIST record는 αAβ–Gas6가 microglia와 astrocyte phagocytosis를 활성화하고 inflammatory response를 줄였다고 요약한다.\n\nInvestigation note:  \nAβ만 보면 “general neurodegeneration” 수준이지만, ILM01의 실제 differentiation은 **glial immune clearance**에 있으므로 3점으로 판단했다.\n\n---\n\n### 4.2 Competitive Landscape\n\nScore: **1 / 3**\n\nMain line:  \n직접적으로 TAM/Gas6-based Aβ fusion protein 경쟁자는 뚜렷하지 않지만, **commercial indication 기준으로 anti-Aβ AD 시장은 이미 승인 제품 2개와 Phase III 후속 자산이 존재**한다.\n\nWhat was checked:\n- Same disease competitors\n- Same target competitors\n- Same or similar MoA competitors\n- Front runner count\n- Approved / Phase 3 / clinical / preclinical status\n\nCompetitor table:\n\n| Competitor | Company | Modality | Target / MoA | Stage | Why it matters | Source |\n|---|---|---|---|---|---|---|\n| Leqembi / lecanemab | Eisai / Biogen | mAb | Amyloid beta-directed antibody | FDA traditional approval | Anti-Aβ class benchmark. Efficacy, ARIA, infusion burden, pricing 기준점 | [15] |\n| Kisunla / donanemab | Eli Lilly | mAb | Amyloid plaque-targeting antibody | FDA approved | 두 번째 approved Aβ therapy. Limited-duration dosing 및 ARIA profile이 ILM01 positioning 기준 | [16], [17] |\n| Remternetug | Eli Lilly | mAb | Aβ-targeting antibody | Phase III | ILM01 상업화 전 next-gen anti-Aβ class를 더 crowded하게 만들 수 있음 | [18] |\n| Aduhelm / aducanumab | Biogen / Eisai historical | mAb | Aβ-directed antibody | Discontinued | Public αAβ-Gas6 prototype이 aducanumab scFv를 사용. 실패 사례로 commercial/evidence risk 상기 | [23] |\n| XPro1595 | INmune Bio | Protein therapeutic | Selective soluble TNF neutralization | Phase II / Phase 2b-3 planning | Same disease + neuroimmune/inflammation positioning. Target은 다르지만 theme-level competitor | [25] |\n| Diranersen / BIIB080 | Biogen / Ionis | ASO | MAPT mRNA reduction / tau lowering | Phase II; registrational development planned | Same AD disease-modifying competition. ILM02 tau expansion의 benchmark | [24] |\n\nInvestigation note:  \nSame-MoA 경쟁은 낮다. 하지만 BD 판단에서는 실제 처방/환자/가격/임상 인프라를 공유하는 **Aβ disease-modifying therapy market**이 핵심이므로, Leqembi/Kisunla/remternetug 존재를 반영해 1점으로 두었다.\n\n---\n\n### 4.3 MoA Validity\n\nScore: **3 / 3**\n\nMain line:  \nαAβ-Gas6의 MoA는 publication 기반으로 매우 탄탄하다. Aβ binding, TAM receptor activation, glial phagocytosis, reduced inflammatory signaling, reduced synapse elimination/microhemorrhage가 하나의 mechanistic chain으로 연결된다.\n\nWhat was checked:\n- Journal publication / PMID / DOI\n- Mechanistic consistency\n- Functional readout\n- Disease linkage\n- Safety-relevant signal\n\nEvidence trail:\n- Nature Medicine 2022 논문은 αAβ–Gas6가 TAM receptor-dependent phagocytosis를 통해 Aβ plaque를 제거하고 NF-κB inflammatory response나 reactive gliosis를 유도하지 않았다고 보고한다.\n- 같은 record는 AD 및 CAA model mice에서 behavioral outcome 개선, synapse elimination 및 microhemorrhage 감소를 요약한다.\n- Illimis Keystone poster는 HMC3 uptake, THP-1Axl cytokine/NF-κB reporter, primary glia uptake, 5XFAD in vivo plaque reduction, scRNA-seq inflammatory gene signals를 포함한다.\n\nInvestigation note:  \n2점 이상 요건인 publication evidence는 충족한다. 실제로는 mechanistic consistency가 강해 3점이다. 단, published prototype과 final ILM01 clinical candidate가 동일하거나 충분히 동등한지는 회사 DD가 필요하다.\n\n---\n\n### 4.4 Platform Attractiveness\n\nScore: **2 / 3**\n\nMain line:  \nGAIA는 차별성이 분명한 biologic fusion platform이다. 다만 SKBP 선호 major modality인 small molecule / ASO / siRNA가 아니라 CMC와 delivery complexity가 큰 biologic이므로 2점이다.\n\nWhat was checked:\n- Is the platform real and reproducible?\n- Is differentiation supported by data?\n- Does modality fit SKBP priorities?\n- Preferred modalities: small molecule, ASO, siRNA\n- Secondary modalities: AOC, antibody, biologic\n\nEvidence trail:\n- Illimis는 GAIA를 amyloid target binder와 engineered Gas6 TAM receptor binder를 결합한 bispecific fusion protein으로 설명한다.\n- 회사는 FcγR-mediated phagocytosis의 inflammatory response를 TAM receptor biology로 우회하는 전략을 제시한다.\n- KBR 인터뷰에서는 CMC가 글로벌 임상 진입의 중요 허들이며 내부 CMC 역량을 강화 중이라고 설명한다.\n\nInvestigation note:  \n2점 이상은 충분하다. 하지만 final candidate manufacturability, immunogenicity, stability, dosing route가 공개되지 않았기 때문에 3점은 보류한다.\n\n---\n\n### 4.5 Expansion Potential\n\nScore: **3 / 3**\n\nMain line:  \nILM01은 one-off AD asset이 아니라 **TAM biology / anti-inflammatory clearance platform**의 lead program으로 보인다.\n\nWhat was checked:\n- Expansion beyond main indication\n- Same biology/platform reuse\n- Adjacent indications\n- Multiple assets from same platform\n\nEvidence trail:\n- 공식 pipeline에는 ILM01 외 ILM02 tau/tauopathies, ILM21 myelin debris/MS, ILM24 PS/SLE가 기재되어 있다.\n- 공식 platform page는 Aβ, tau, α-syn 후보와 amyloidosis 및 기타 neurodegenerative disease 확장을 언급한다.\n- KBR 인터뷰는 ILM02 tauopathy, ILM22 TNF-α/IBD, ILM21 MS myelin debris removal로 확장 중이라고 설명한다.\n\nInvestigation note:  \nAdjacent indication이 단순 AD 내 세부 환자군이 아니라 tauopathy, MS, SLE/immune disease까지 확장되므로 3점이다.\n\n---\n\n### 4.6 Data Maturity\n\nScore: **2 / 3**\n\nMain line:  \n전임상 PoC는 publication-backed로 강하지만, final ILM01의 IND-enabling package는 공개자료만으로는 확인되지 않는다.\n\nWhat was checked:\n- In vitro data\n- In vivo data\n- Quantitative result\n- Reproducibility\n- IND-enabling / GLP tox / PK/PD / CMC / human data availability\n\nEvidence trail:\n- 논문/KAIST record는 AD/CAA model mice에서 plaque clearance, behavioral outcome, synapse elimination, microhemorrhage 관련 결과를 제시한다.\n- Poster는 in vitro HMC3, THP-1Axl, primary microglia/astrocyte, 5XFAD in vivo, scRNA-seq readout을 포함한다.\n- BioSpectator는 ILM01이 2025년 하반기 preclinical stage entry, 2027년 말 IND submission expectation이라고 보도했다.\n\nInvestigation note:  \nData package가 “실험 데이터 거의 없음”은 아니다. 그러나 GLP tox, CMC, PK/PD, immunogenicity, human biomarker strategy가 미공개라 3점은 어렵다.\n\n---\n\n### 4.7 Marketability\n\nScore: **2 / 3**\n\nMain line:  \nA. TAP는 미국 AD 7.4M pool에서 diagnosis/eligibility/treatable assumptions를 적용해 약 **46만 명**으로 설정했다. B. Unrisked Peak Sales는 Leqembi/Kisunla price proxy 적용 시 약 **$1.94B**. C. Obtainable Peak Sales는 Leqembi/Kisunla/remternetug competition haircut을 반영해 약 **$1.06B**로 추정했다.\n\nWhat was checked:\n- Targetable addressable patient\n- Unrisked peak sales\n- Competition haircut\n- Pricing power adjustment\n- Expansion capacity adjustment\n\nWorksheet:\n\n| Step | What to fill | Evidence / assumption |\n|---|---|---|\n| A. TAP | 7.4M × 50% diagnosis × 25% eligibility × 50% treatable subgroup = **462,500** | Alzheimer’s Association은 2026년 미국 65세 이상 AD 환자 7.4M을 추정. AUR eligibility는 Korean memory clinic study에서 A+ participants 중 lecanemab 24.6%, donanemab 28.0% proxy 사용 |\n| B. Unrisked Peak Sales | 462,500 × $28,000 × 15% × 1.0 = **$1.94B** | Leqembi WAC $26,500/year, Kisunla 약 $32,000/year를 기반으로 $28,000 price proxy 사용 |\n| Entry-order matrix | 3-player example: 1st ~50%, 2nd ~30%, 3rd ~20%. ILM01은 approved Aβ drugs와 remternetug 이후 late entrant로 15% 가정 | Leqembi/Kisunla approved, remternetug Phase III |\n| C. Obtainable Peak Sales | $1.94B × 0.55 competition haircut × 0.90 pricing power × 1.10 expansion capacity = **$1.06B** | AD market은 크지만 late entrant haircut 필요. ARIA-low/ARIA-free 입증 시 upside 존재 |\n| Final score basis | Obtainable peak sales가 $1B 이상 가능하나 $2B 이상은 임상 safety differentiation 전에는 보수적으로 보기 어려움 | **2 / 3** |\n\nInvestigation note:\n- Marketability는 **rNPV가 아니라 Obtainable Peak Sales** 기준으로 산정했다.\n- ILM01이 임상에서 ARIA-free 또는 clearly lower-ARIA profile을 증명하면 pricing power와 competition haircut 모두 개선될 수 있다.\n\n---\n\n## 5) Validation Notes\n\nCross-checked facts:\n- ILM01이 Aβ / Alzheimer’s disease pipeline이라는 점은 official pipeline과 stage/news source로 cross-check했다.\n- GAIA mechanism은 official platform, AD Moonshot page, Nature Medicine/KAIST record, poster로 cross-check했다.\n- Competitor landscape는 FDA Leqembi/Kisunla approval, Lilly remternetug trial page, Biogen Aduhelm discontinuation으로 확인했다.\n\nUncertain points:\n- Final ILM01 construct가 Nature Medicine αAβ-Gas6 prototype과 어느 정도 동일한지 불명확하다.\n- GLP tox, CMC, PK/PD, immunogenicity, human biomarker strategy는 공개자료만으로 확인되지 않는다.\n- ClinicalTrials.gov 등 공공 registry에서 ILM01 임상시험 등록은 확인하지 못했다.\n- 2027 IND/Phase 1 timeline은 기사/회사성 자료 기반이며, 최신 company deck 또는 직접 확인이 필요하다.\n\nSearch log:\n- Official company page: [1], [2], [3]\n- Pipeline page: [4]\n- Platform page: [5]\n- Publications: [7], [8], [10]\n- Regulatory / trial registry: [15], [16], [18]\n- Competitor sources: [15], [16], [17], [18], [23], [24], [25]\n- Market / epidemiology sources: [19], [20], [21], [22]\n- Financing / partnership sources: [11], [12], [13]\n\n---\n\n## 6) Final Take\n\nOne-line summary:  \n**ILM01은 “Aβ 제거제”라기보다 “Neuroimmune clearance platform의 lead asset”으로 보는 것이 맞고, SKBP 관점에서는 Watch / DD priority로 관리할 가치가 높다.**\n\nRecommendation:\n- **Watch**\n- 단, CMC/GLP/PKPD/ARIA translational package가 확보되면 **Shortlist 전환 가능**\n\nMost important diligence question:  \n**ILM01 final candidate가 사람에서 기존 anti-Aβ antibody 대비 동등한 amyloid clearance와 의미 있게 낮은 ARIA/neuroinflammation을 동시에 입증할 수 있는가?**\n\n---\n\n## References\n\n[1]: https://illimistx.com/en/ \"Illimis Therapeutics official site\"  \n[2]: https://illimistx.com/en/sub/about/overview.php \"Illimis Therapeutics overview\"  \n[3]: https://illimistx.com/en/sub/about/contact.php \"Illimis Therapeutics contact\"  \n[4]: https://illimistx.com/en/sub/platform%26pipeline/pipeline.php \"Illimis Therapeutics pipeline\"  \n[5]: https://illimistx.com/en/sub/platform%26pipeline/platform.php \"Illimis GAIA platform\"  \n[6]: https://illimistx.com/en/sub/platform%26pipeline/moonshot.php \"Illimis AD Moonshot / GAIA-Aβ publication page\"  \n[7]: https://www.nature.com/articles/s41591-022-01926-9 \"Nature Medicine: Anti-inflammatory clearance of amyloid-β by a chimeric Gas6 fusion protein\"  \n[8]: https://pure.kaist.ac.kr/en/publications/anti-inflammatory-clearance-of-amyloid-%CE%B2-by-a-chimeric-gas6-fusio/ \"KAIST Pure publication record\"  \n[9]: https://www.eurekalert.org/news-releases/960921 \"EurekAlert KAIST release\"  \n[10]: https://www.illimistx.com/data/Poster_Illimis_Keystone2022.pdf \"Illimis Keystone 2022 poster\"  \n[11]: https://www.prnewswire.com/news-releases/illimis-therapeutics-closes-58-billion-krw-42-million-series-b-financing-to-accelerate-cns-and-immune-disease-drug-development-via-gaia-platform-302504123.html \"Illimis Series B PRNewswire\"  \n[12]: https://www.biospectator.com/news/view/25729 \"BioSpectator: Illimis Series B and ILM01 stage\"  \n[13]: https://www.koreabiomed.com/news/articleView.html?idxno=29100 \"Korea Biomedical Review Illimis interview\"  \n[14]: https://www.mk.co.kr/en/it/11981980 \"Maeil Business News 2026 Illimis interview\"  \n[15]: https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval \"FDA Leqembi traditional approval\"  \n[16]: https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease \"FDA Kisunla approval\"  \n[17]: https://investor.lilly.com/news-releases/news-release-details/lillys-kisunlatm-donanemab-azbt-approved-fda-treatment-early \"Lilly Kisunla approval press release\"  \n[18]: https://trials.lilly.com/en-US/trial/548297 \"Lilly remternetug TRAILRUNNER-ALZ 3 trial page\"  \n[19]: https://www.eisai.com/news/2023/news202302.html \"Eisai Leqembi pricing\"  \n[20]: https://www.biopharmadive.com/news/lilly-alzheimers-drug-fda-approval-kisunla-donanemab/720497/ \"BioPharma Dive Kisunla pricing\"  \n[21]: https://www.alz.org/alzheimers-dementia/facts-figures \"Alzheimer's Association 2026 Facts and Figures\"  \n[22]: https://snu.elsevierpure.com/en/publications/eligibility-for-lecanemab-and-donanemab-in-korea-under-appropriat/ \"Eligibility for lecanemab and donanemab in Korea under AUR\"  \n[23]: https://investors.biogen.com/news-releases/news-release-details/biogen-realign-resources-alzheimers-disease-franchise \"Biogen Aduhelm discontinuation\"  \n[24]: https://investors.biogen.com/news-releases/news-release-details/topline-results-phase-2-celia-study-diranersen-biib080-first \"Biogen/Ionis BIIB080 Phase 2 topline\"  \n[25]: https://www.inmunebio.com/index.php/newsroom/2026-news/muneionnounceslignmentonntegratedhase2b320260212040512 \"INmune Bio XPro TNF neuroinflammation program\"\n\n---\n\n## AI Agent Revision Note (2026-06-22)\n\n- Revision basis: Detail AI Agent v3.1 re-evaluation applied from chat answer.\n- Applied at: 2026-06-22T23:05:05.705413+00:00\n- Scope: JSON scoring fields and source report amendment generated from detail-page Agent discussion.\n\n### Applied JSON Changes\n\n- json_summary.theme -> Neuroimmune\n- json_summary.cluster -> 교세포 향상성\n- structured_table.sources +1\n- scoring.criteria.target_relevance.evidence_sources +1\n- scoring.criteria.competitive_landscape.evidence_sources +1\n- scoring.criteria.moa_validity.evidence_sources +1\n- scoring.criteria.platform_attractiveness.evidence_sources +1\n- scoring.criteria.expansion_potential.evidence_sources +1\n- scoring.criteria.data_maturity.evidence_sources +1\n- scoring.criteria.marketability.evidence_sources +1\n- competitive_landscape.score 1 -> 2\n- moa_validity.score 3 -> 2\n- platform_attractiveness.score -> 2\n\n### Agent Discussion Summary Used For Revision\n\nILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약\n\n아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.\n\n---\n\n1. 수정 권장 사항\nTarget Relevance (현재 3 → 유지 권장)\n문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확.\n단, v3.1에서는 \"final ILM01 target binder 및 TAM receptor subtype selectivity 비공개\"를 uncertainty로 명시한 부분 유지 필요.\nCompetitive Landscape (현재 1 → 2로 상향 가능성 검토)\nv3.1 기준: \"same-MoA 경쟁자가 명확하지 않으면 2점 가능\"이라는 해석 여지 있음.\n현재 근거: True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않음.\n수정 제안: \"Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist\"를 uncertainty로 유지하되, 점수를 2로 상향하고 근거를 \"E2_indirect_or_class_level_evidence\"로 조정 가능.\n단, AD indication 기준 Leqembi/Kisunla/remternetug 등 anti-Aβ 경쟁 과밀은 여전히 리스크로 기재.\nMoA Validity (현재 3 → 유지)\nNature Medicine 논문 기반 data 일관됨. v3.1 기준 E3 evidence 충족.\n단, \"publication prototype과 final ILM01 clinical candidate identity 확인 필요\"는 uncertainty로 유지.\nPlatform Attractiveness (현재 2 → 유지)\nGAIA는 differentiated biologic fusion platform이지만, SKBP 우선 modality(small molecule/ASO/siRNA)는 아님 → 2점 적절.\nv3.1에서 \"expression yield, aggregation, immunogenicity, route, half-life, scalable CMC data 비공개\"를 uncertainty로 유지.\nExpansion Potential (현재 3 → 유지)\n공식 pipeline 자료가 Aβ 외 tau, α-syn, myelin debris, PS/SLE 등 확장 명시 → platform으로 해석 가능.\n단, \"non-Aβ programs' independent POC maturity 비공개\" uncertainty 유지.\nData Maturity (현재 2 → 유지)\nIn vitro/vivo/cytokine/scRNA-seq/AD/CAA model data 명확하나, IND-enabling GLP tox/PK/PD/CMC 및 human data 없음 → 2점 적절.\nMarketability (현재 2 → 유지)\nv3.1 기준: A. TAP 계산(U.S. AD pool 7.4M → diagnosis/eligibility/treatable assumptions → 약 46만 명)은 합리적.\nB. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy → 약 $1.94B.\nC. Obtainable Peak: 아직 계산되지 않았으므로 \"Obtainable Peak Sales not yet calculated; requires further modeling\" 을 uncertainty로 추가.\n\n---\n\n2. JSON 수정 제안\njson\n{\n  \"scoring\": {\n    \"competitive_landscape\": {\n      \"score\": 2,\n      \"judgment\": \"True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않아 v3.1 기준 2점 가능. 단, commercial indication 기준 Leqembi, Kisunla, remternetug 등 anti-Aβ 경쟁 과밀은 여전히 리스크.\",\n      \"why_not_higher\": \"Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria.\",\n      \"uncertain_points\": [\n        \"Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist.\",\n        \"AD indication anti-Aβ 경쟁 과밀은 여전히 리스크.\"\n      ],\n      \"evidence_type\": \"E2_indirect_or_class_level_evidence\",\n      \"evidence_sources\": [\n        \"https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval\",\n        \"https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease\",\n        \"https://trials.lilly.com/en-US/trial/548297\"\n      ]\n    },\n    \"marketability\": {\n      \"score\": 2,\n      \"judgment\": \"A. TAP: U.S. AD pool 7.4M에서 diagnosis/eligibility/treatable assumptions 적용해 약 46만 명. B. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy 적용 시 약 $1.94B. C. Obtainable Peak Sales: 아직 계산되지 않음.\",\n      \"why_not_higher\": \"Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria.\",\n      \"uncertain\n\n---\n\n## AI Agent Revision Note (2026-06-22)\n\n- Revision basis: Detail AI Agent v3.1 re-evaluation applied from chat answer.\n- Applied at: 2026-06-22T23:10:36.372528+00:00\n- Scope: JSON scoring fields and source report amendment generated from detail-page Agent discussion.\n\n### Applied JSON Changes\n\n- structured_table.sources +1\n- scoring.criteria.target_relevance.evidence_sources +1\n- scoring.criteria.competitive_landscape.evidence_sources +1\n- target_relevance.score 3 -> 2\n- competitive_landscape.score -> 2\n- source_report.raw_markdown v3.1 update badge\n\n### Agent Discussion Summary Used For Revision\n\n네, 맞습니다. 원문 리포트(Wiki 2: Illimis_Therapeutics_ILM01_20260621.md)는 v3.0 지침으로 작성되었고, 스코어링과 JSON 요약은 v3.1 기준으로 업데이트되었습니다.\n\n원문 리포트 (v3.0): 회사 개요, 파이프라인 세부 내용, evidence trail 등은 v3.0 템플릿 그대로 유지.\n스코어링 (v3.1): 제공된 JSON의 각 criterion에 \"AI Agent v3.1 re-evaluation update\"라고 명시되어 있으며, 점수와 판단 근거가 v3.1 기준으로 재평가됨.\nJSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등).\n대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨.\n\n즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수/판단)는 v3.1로 업데이트된 상태입니다.\n\n추가로 원문 리포트 자체를 v3.1 형식으로 다시 작성해야 한다면, 그 작업은 아직 수행되지 않았습니다.\n",
+      "raw_markdown": "# Illimis Therapeutics Pipeline Scout Report: **ILM01 / GAIA-Aβ**\n\n> **Recalculated by Full Scout Rubric v3.2:** 2026-07-29 대시보드에서 저장된 7개 criterion score와 최신 v3.2 Filter 2 규칙으로 Total Score 및 결정값을 재계산했습니다. 기존 수동 criterion/Total Score override는 해제했으며 원조사 evidence와 본문, 담당자의 명시적인 Human decision 및 코멘트는 유지했습니다.\n\n본 리포트는 SKBP Pipeline Finder v3.0 Markdown report + JSON schema 지침에 맞춰 작성했습니다. 최종에는 대시보드에 복사 가능한 JSON을 포함했고, 감사 가능성을 위해 URL과 evidence trail을 함께 남겼습니다.\n\n> **기준 업데이트 (v3.1):** 이 원문은 최초 작성 기준을 보존하되, 2026-06-22 Detail AI Agent 검토를 통해 **SKBP Pipeline Finder v3.1 기준으로 재평가 및 업데이트**되었습니다. 최신 판단은 JSON scoring fields와 아래 Revision Note를 기준으로 봅니다.\n\n---\n\n## 1) Company Profile\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Illimis Therapeutics | Official company site [1]; 회사 공식 페이지에서 “Illimis Therapeutics, Inc.” 및 연락처 확인 가능 |\n| Legal name / aliases | Illimis Therapeutics, Inc. / 일리미스테라퓨틱스 | Official overview/contact [2], [3] |\n| Country | Republic of Korea | Seoul 주소가 공식 contact page에 기재 |\n| Headquarters | Seoul, Korea. Boston presence: Lilly Gateway Labs, 15 Necco St, Boston | Official contact page [3] |\n| Website | Illimis official site | [1] |\n| Company type / stage | Private, Series B, preclinical-stage biotech | 공식 overview는 2021년 설립 및 fundraising 66.4M USD를 표시하고, 2025년 PR은 KRW 58B / 약 USD 42M Series B를 발표 |\n| Focus areas | CNS / neurodegenerative disease / neuro-immune disease / immune disease | 공식 platform은 neurodegenerative disorders 및 amyloidosis biologics 개발을 설명하고, Series B PR은 CNS 및 immune disease development를 명시 |\n| Platform summary | **GAIA: Gas6-mediated Anti-Inflammatory Adaptor**. Amyloid/pathologic target binder + engineered Gas6 TAM receptor binder를 결합한 fusion protein platform | Official platform page [5] |\n| Financing / partnership signals | 2025 Series B KRW 58B; Lilly Catalyze360-ExploR&D collaboration; BMS Innovation Square, JLABS Singapore 등 | PRNewswire 및 BioSpectator |\n| Lead pipeline summary | **ILM01 / GAIA-Aβ**, Aβ-targeting Alzheimer’s disease asset. 2H 2025 preclinical entry, 2027 IND/Phase 1 preparation target로 공개자료에 언급 | Official pipeline + BioSpectator/KBR |\n\n---\n\n## 2) Pipeline Snapshot\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Illimis Therapeutics | Official site [1], [2] |\n| Lead asset | **ILM01 / GAIA-Aβ** | Official pipeline lists Aβ / Alzheimer’s disease / ILM01 |\n| Target | Aβ aggregates + TAM receptor-mediated clearance biology | Official platform explains target binder + engineered Gas6 TAM binder architecture |\n| Theme / Cluster | **Theme: Neuroimmune / Cluster: 교세포 향상성** | Internal SKBP mapping. 근거는 glial cell TAM receptor, microglia/astrocyte phagocytosis, anti-inflammatory clearance |\n| MoA | Aβ binder와 engineered Gas6를 연결해 TAM receptor-dependent phagocytosis를 유도하고 FcγR-mediated inflammation을 회피 | Nature Medicine / KAIST record |\n| Modality / Platform | Biologic, chimeric / bispecific-like fusion protein, GAIA platform | Official platform page |\n| Indication | Alzheimer’s disease | Official pipeline |\n| Stage | Public source 기준 **preclinical / IND-enabling preparation**. BioSpectator는 2025년 하반기 preclinical entry, 2027년 말 IND expectation을 언급. KBR은 2027년 Phase 1 준비 중이라고 설명 | BioSpectator + KBR |\n| Key data | αAβ-Gas6가 AD/CAA mouse model에서 Aβ plaque 제거, NF-κB inflammatory response 감소, microglia/astrocyte phagocytosis, reduced synapse elimination/microhemorrhage를 보임 | Nature Medicine / KAIST / poster |\n\n---\n\n## 3) Scorecard Summary\n\n| Criterion | Score | One-line judgment | Evidence used |\n|---|---:|---|---|\n| Target Relevance | 3 / 3 | Aβ 단독이 아니라 TAM receptor–glial phagocytosis–anti-inflammatory clearance 축이므로 Neuroimmune fit 강함 | [4], [5], [8] |\n| Competitive Landscape | 1 / 3 | True same-MoA는 적지만 AD/Aβ commercial landscape는 Leqembi, Kisunla, remternetug로 과밀 | FDA/Lilly sources |\n| MoA Validity | 3 / 3 | Nature Medicine publication과 poster data가 mechanistic consistency를 강하게 뒷받침 | [7], [8], [10] |\n| Platform Attractiveness | 2 / 3 | Differentiated platform이나 biologic fusion protein이라 SKBP major modality fit은 중간 | [5], [13] |\n| Expansion Potential | 3 / 3 | ILM02 tau, ILM03 α-syn, ILM21 MS, ILM24 SLE 등 platform 확장성 명확 | [4], [5], [13] |\n| Data Maturity | 2 / 3 | Publication-backed PoC는 강하지만 final candidate GLP/CMC/clinical data는 미공개 | [8], [10], [12] |\n| Marketability | 2 / 3 | A. TAP 약 46만 명, B. Unrisked Peak Sales 약 $1.94B, C. Obtainable Peak Sales 약 $1.06B 추정 | [21], [22], [19], [20] |\n| **Total** | **16 / 21** | **Watch / DD priority** |  |\n\n---\n\n## 4) Criterion Detail Pages\n\n### 4.1 Target Relevance\n\nScore: **3 / 3**\n\nMain line:  \nILM01은 Aβ-targeting AD asset이지만, 차별화 포인트는 **TAM receptor-mediated glial phagocytosis + inflammation control**이므로 SKBP Theme 기준 **Neuroimmune / 교세포 향상성**에 정확히 들어간다.\n\nWhat was checked:\n- Target identity\n- Disease/biology relevance\n- SKBP Theme / Cluster fit\n- General neurodegeneration / neuroinflammation relevance\n\nEvidence trail:\n- Illimis 공식 pipeline은 Neurology 영역에서 Aβ / Alzheimer’s disease / ILM01을 명시한다.\n- 공식 platform page는 TAM receptor가 glial cell surface에 발현되고 phagocytosis activation 및 inflammation inhibition과 연결된다고 설명한다.\n- Nature Medicine/KAIST record는 αAβ–Gas6가 microglia와 astrocyte phagocytosis를 활성화하고 inflammatory response를 줄였다고 요약한다.\n\nInvestigation note:  \nAβ만 보면 “general neurodegeneration” 수준이지만, ILM01의 실제 differentiation은 **glial immune clearance**에 있으므로 3점으로 판단했다.\n\n---\n\n### 4.2 Competitive Landscape\n\nScore: **1 / 3**\n\nMain line:  \n직접적으로 TAM/Gas6-based Aβ fusion protein 경쟁자는 뚜렷하지 않지만, **commercial indication 기준으로 anti-Aβ AD 시장은 이미 승인 제품 2개와 Phase III 후속 자산이 존재**한다.\n\nWhat was checked:\n- Same disease competitors\n- Same target competitors\n- Same or similar MoA competitors\n- Front runner count\n- Approved / Phase 3 / clinical / preclinical status\n\nCompetitor table:\n\n| Competitor | Company | Modality | Target / MoA | Stage | Why it matters | Source |\n|---|---|---|---|---|---|---|\n| Leqembi / lecanemab | Eisai / Biogen | mAb | Amyloid beta-directed antibody | FDA traditional approval | Anti-Aβ class benchmark. Efficacy, ARIA, infusion burden, pricing 기준점 | [15] |\n| Kisunla / donanemab | Eli Lilly | mAb | Amyloid plaque-targeting antibody | FDA approved | 두 번째 approved Aβ therapy. Limited-duration dosing 및 ARIA profile이 ILM01 positioning 기준 | [16], [17] |\n| Remternetug | Eli Lilly | mAb | Aβ-targeting antibody | Phase III | ILM01 상업화 전 next-gen anti-Aβ class를 더 crowded하게 만들 수 있음 | [18] |\n| Aduhelm / aducanumab | Biogen / Eisai historical | mAb | Aβ-directed antibody | Discontinued | Public αAβ-Gas6 prototype이 aducanumab scFv를 사용. 실패 사례로 commercial/evidence risk 상기 | [23] |\n| XPro1595 | INmune Bio | Protein therapeutic | Selective soluble TNF neutralization | Phase II / Phase 2b-3 planning | Same disease + neuroimmune/inflammation positioning. Target은 다르지만 theme-level competitor | [25] |\n| Diranersen / BIIB080 | Biogen / Ionis | ASO | MAPT mRNA reduction / tau lowering | Phase II; registrational development planned | Same AD disease-modifying competition. ILM02 tau expansion의 benchmark | [24] |\n\nInvestigation note:  \nSame-MoA 경쟁은 낮다. 하지만 BD 판단에서는 실제 처방/환자/가격/임상 인프라를 공유하는 **Aβ disease-modifying therapy market**이 핵심이므로, Leqembi/Kisunla/remternetug 존재를 반영해 1점으로 두었다.\n\n---\n\n### 4.3 MoA Validity\n\nScore: **3 / 3**\n\nMain line:  \nαAβ-Gas6의 MoA는 publication 기반으로 매우 탄탄하다. Aβ binding, TAM receptor activation, glial phagocytosis, reduced inflammatory signaling, reduced synapse elimination/microhemorrhage가 하나의 mechanistic chain으로 연결된다.\n\nWhat was checked:\n- Journal publication / PMID / DOI\n- Mechanistic consistency\n- Functional readout\n- Disease linkage\n- Safety-relevant signal\n\nEvidence trail:\n- Nature Medicine 2022 논문은 αAβ–Gas6가 TAM receptor-dependent phagocytosis를 통해 Aβ plaque를 제거하고 NF-κB inflammatory response나 reactive gliosis를 유도하지 않았다고 보고한다.\n- 같은 record는 AD 및 CAA model mice에서 behavioral outcome 개선, synapse elimination 및 microhemorrhage 감소를 요약한다.\n- Illimis Keystone poster는 HMC3 uptake, THP-1Axl cytokine/NF-κB reporter, primary glia uptake, 5XFAD in vivo plaque reduction, scRNA-seq inflammatory gene signals를 포함한다.\n\nInvestigation note:  \n2점 이상 요건인 publication evidence는 충족한다. 실제로는 mechanistic consistency가 강해 3점이다. 단, published prototype과 final ILM01 clinical candidate가 동일하거나 충분히 동등한지는 회사 DD가 필요하다.\n\n---\n\n### 4.4 Platform Attractiveness\n\nScore: **2 / 3**\n\nMain line:  \nGAIA는 차별성이 분명한 biologic fusion platform이다. 다만 SKBP 선호 major modality인 small molecule / ASO / siRNA가 아니라 CMC와 delivery complexity가 큰 biologic이므로 2점이다.\n\nWhat was checked:\n- Is the platform real and reproducible?\n- Is differentiation supported by data?\n- Does modality fit SKBP priorities?\n- Preferred modalities: small molecule, ASO, siRNA\n- Secondary modalities: AOC, antibody, biologic\n\nEvidence trail:\n- Illimis는 GAIA를 amyloid target binder와 engineered Gas6 TAM receptor binder를 결합한 bispecific fusion protein으로 설명한다.\n- 회사는 FcγR-mediated phagocytosis의 inflammatory response를 TAM receptor biology로 우회하는 전략을 제시한다.\n- KBR 인터뷰에서는 CMC가 글로벌 임상 진입의 중요 허들이며 내부 CMC 역량을 강화 중이라고 설명한다.\n\nInvestigation note:  \n2점 이상은 충분하다. 하지만 final candidate manufacturability, immunogenicity, stability, dosing route가 공개되지 않았기 때문에 3점은 보류한다.\n\n---\n\n### 4.5 Expansion Potential\n\nScore: **3 / 3**\n\nMain line:  \nILM01은 one-off AD asset이 아니라 **TAM biology / anti-inflammatory clearance platform**의 lead program으로 보인다.\n\nWhat was checked:\n- Expansion beyond main indication\n- Same biology/platform reuse\n- Adjacent indications\n- Multiple assets from same platform\n\nEvidence trail:\n- 공식 pipeline에는 ILM01 외 ILM02 tau/tauopathies, ILM21 myelin debris/MS, ILM24 PS/SLE가 기재되어 있다.\n- 공식 platform page는 Aβ, tau, α-syn 후보와 amyloidosis 및 기타 neurodegenerative disease 확장을 언급한다.\n- KBR 인터뷰는 ILM02 tauopathy, ILM22 TNF-α/IBD, ILM21 MS myelin debris removal로 확장 중이라고 설명한다.\n\nInvestigation note:  \nAdjacent indication이 단순 AD 내 세부 환자군이 아니라 tauopathy, MS, SLE/immune disease까지 확장되므로 3점이다.\n\n---\n\n### 4.6 Data Maturity\n\nScore: **2 / 3**\n\nMain line:  \n전임상 PoC는 publication-backed로 강하지만, final ILM01의 IND-enabling package는 공개자료만으로는 확인되지 않는다.\n\nWhat was checked:\n- In vitro data\n- In vivo data\n- Quantitative result\n- Reproducibility\n- IND-enabling / GLP tox / PK/PD / CMC / human data availability\n\nEvidence trail:\n- 논문/KAIST record는 AD/CAA model mice에서 plaque clearance, behavioral outcome, synapse elimination, microhemorrhage 관련 결과를 제시한다.\n- Poster는 in vitro HMC3, THP-1Axl, primary microglia/astrocyte, 5XFAD in vivo, scRNA-seq readout을 포함한다.\n- BioSpectator는 ILM01이 2025년 하반기 preclinical stage entry, 2027년 말 IND submission expectation이라고 보도했다.\n\nInvestigation note:  \nData package가 “실험 데이터 거의 없음”은 아니다. 그러나 GLP tox, CMC, PK/PD, immunogenicity, human biomarker strategy가 미공개라 3점은 어렵다.\n\n---\n\n### 4.7 Marketability\n\nScore: **2 / 3**\n\nMain line:  \nA. TAP는 미국 AD 7.4M pool에서 diagnosis/eligibility/treatable assumptions를 적용해 약 **46만 명**으로 설정했다. B. Unrisked Peak Sales는 Leqembi/Kisunla price proxy 적용 시 약 **$1.94B**. C. Obtainable Peak Sales는 Leqembi/Kisunla/remternetug competition haircut을 반영해 약 **$1.06B**로 추정했다.\n\nWhat was checked:\n- Targetable addressable patient\n- Unrisked peak sales\n- Competition haircut\n- Pricing power adjustment\n- Expansion capacity adjustment\n\nWorksheet:\n\n| Step | What to fill | Evidence / assumption |\n|---|---|---|\n| A. TAP | 7.4M × 50% diagnosis × 25% eligibility × 50% treatable subgroup = **462,500** | Alzheimer’s Association은 2026년 미국 65세 이상 AD 환자 7.4M을 추정. AUR eligibility는 Korean memory clinic study에서 A+ participants 중 lecanemab 24.6%, donanemab 28.0% proxy 사용 |\n| B. Unrisked Peak Sales | 462,500 × $28,000 × 15% × 1.0 = **$1.94B** | Leqembi WAC $26,500/year, Kisunla 약 $32,000/year를 기반으로 $28,000 price proxy 사용 |\n| Entry-order matrix | 3-player example: 1st ~50%, 2nd ~30%, 3rd ~20%. ILM01은 approved Aβ drugs와 remternetug 이후 late entrant로 15% 가정 | Leqembi/Kisunla approved, remternetug Phase III |\n| C. Obtainable Peak Sales | $1.94B × 0.55 competition haircut × 0.90 pricing power × 1.10 expansion capacity = **$1.06B** | AD market은 크지만 late entrant haircut 필요. ARIA-low/ARIA-free 입증 시 upside 존재 |\n| Final score basis | Obtainable peak sales가 $1B 이상 가능하나 $2B 이상은 임상 safety differentiation 전에는 보수적으로 보기 어려움 | **2 / 3** |\n\nInvestigation note:\n- Marketability는 **rNPV가 아니라 Obtainable Peak Sales** 기준으로 산정했다.\n- ILM01이 임상에서 ARIA-free 또는 clearly lower-ARIA profile을 증명하면 pricing power와 competition haircut 모두 개선될 수 있다.\n\n---\n\n## 5) Validation Notes\n\nCross-checked facts:\n- ILM01이 Aβ / Alzheimer’s disease pipeline이라는 점은 official pipeline과 stage/news source로 cross-check했다.\n- GAIA mechanism은 official platform, AD Moonshot page, Nature Medicine/KAIST record, poster로 cross-check했다.\n- Competitor landscape는 FDA Leqembi/Kisunla approval, Lilly remternetug trial page, Biogen Aduhelm discontinuation으로 확인했다.\n\nUncertain points:\n- Final ILM01 construct가 Nature Medicine αAβ-Gas6 prototype과 어느 정도 동일한지 불명확하다.\n- GLP tox, CMC, PK/PD, immunogenicity, human biomarker strategy는 공개자료만으로 확인되지 않는다.\n- ClinicalTrials.gov 등 공공 registry에서 ILM01 임상시험 등록은 확인하지 못했다.\n- 2027 IND/Phase 1 timeline은 기사/회사성 자료 기반이며, 최신 company deck 또는 직접 확인이 필요하다.\n\nSearch log:\n- Official company page: [1], [2], [3]\n- Pipeline page: [4]\n- Platform page: [5]\n- Publications: [7], [8], [10]\n- Regulatory / trial registry: [15], [16], [18]\n- Competitor sources: [15], [16], [17], [18], [23], [24], [25]\n- Market / epidemiology sources: [19], [20], [21], [22]\n- Financing / partnership sources: [11], [12], [13]\n\n---\n\n## 6) Final Take\n\nOne-line summary:  \n**ILM01은 “Aβ 제거제”라기보다 “Neuroimmune clearance platform의 lead asset”으로 보는 것이 맞고, SKBP 관점에서는 Watch / DD priority로 관리할 가치가 높다.**\n\nRecommendation:\n- **Watch**\n- 단, CMC/GLP/PKPD/ARIA translational package가 확보되면 **Shortlist 전환 가능**\n\nMost important diligence question:  \n**ILM01 final candidate가 사람에서 기존 anti-Aβ antibody 대비 동등한 amyloid clearance와 의미 있게 낮은 ARIA/neuroinflammation을 동시에 입증할 수 있는가?**\n\n---\n\n## References\n\n[1]: https://illimistx.com/en/ \"Illimis Therapeutics official site\"  \n[2]: https://illimistx.com/en/sub/about/overview.php \"Illimis Therapeutics overview\"  \n[3]: https://illimistx.com/en/sub/about/contact.php \"Illimis Therapeutics contact\"  \n[4]: https://illimistx.com/en/sub/platform%26pipeline/pipeline.php \"Illimis Therapeutics pipeline\"  \n[5]: https://illimistx.com/en/sub/platform%26pipeline/platform.php \"Illimis GAIA platform\"  \n[6]: https://illimistx.com/en/sub/platform%26pipeline/moonshot.php \"Illimis AD Moonshot / GAIA-Aβ publication page\"  \n[7]: https://www.nature.com/articles/s41591-022-01926-9 \"Nature Medicine: Anti-inflammatory clearance of amyloid-β by a chimeric Gas6 fusion protein\"  \n[8]: https://pure.kaist.ac.kr/en/publications/anti-inflammatory-clearance-of-amyloid-%CE%B2-by-a-chimeric-gas6-fusio/ \"KAIST Pure publication record\"  \n[9]: https://www.eurekalert.org/news-releases/960921 \"EurekAlert KAIST release\"  \n[10]: https://www.illimistx.com/data/Poster_Illimis_Keystone2022.pdf \"Illimis Keystone 2022 poster\"  \n[11]: https://www.prnewswire.com/news-releases/illimis-therapeutics-closes-58-billion-krw-42-million-series-b-financing-to-accelerate-cns-and-immune-disease-drug-development-via-gaia-platform-302504123.html \"Illimis Series B PRNewswire\"  \n[12]: https://www.biospectator.com/news/view/25729 \"BioSpectator: Illimis Series B and ILM01 stage\"  \n[13]: https://www.koreabiomed.com/news/articleView.html?idxno=29100 \"Korea Biomedical Review Illimis interview\"  \n[14]: https://www.mk.co.kr/en/it/11981980 \"Maeil Business News 2026 Illimis interview\"  \n[15]: https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval \"FDA Leqembi traditional approval\"  \n[16]: https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease \"FDA Kisunla approval\"  \n[17]: https://investor.lilly.com/news-releases/news-release-details/lillys-kisunlatm-donanemab-azbt-approved-fda-treatment-early \"Lilly Kisunla approval press release\"  \n[18]: https://trials.lilly.com/en-US/trial/548297 \"Lilly remternetug TRAILRUNNER-ALZ 3 trial page\"  \n[19]: https://www.eisai.com/news/2023/news202302.html \"Eisai Leqembi pricing\"  \n[20]: https://www.biopharmadive.com/news/lilly-alzheimers-drug-fda-approval-kisunla-donanemab/720497/ \"BioPharma Dive Kisunla pricing\"  \n[21]: https://www.alz.org/alzheimers-dementia/facts-figures \"Alzheimer's Association 2026 Facts and Figures\"  \n[22]: https://snu.elsevierpure.com/en/publications/eligibility-for-lecanemab-and-donanemab-in-korea-under-appropriat/ \"Eligibility for lecanemab and donanemab in Korea under AUR\"  \n[23]: https://investors.biogen.com/news-releases/news-release-details/biogen-realign-resources-alzheimers-disease-franchise \"Biogen Aduhelm discontinuation\"  \n[24]: https://investors.biogen.com/news-releases/news-release-details/topline-results-phase-2-celia-study-diranersen-biib080-first \"Biogen/Ionis BIIB080 Phase 2 topline\"  \n[25]: https://www.inmunebio.com/index.php/newsroom/2026-news/muneionnounceslignmentonntegratedhase2b320260212040512 \"INmune Bio XPro TNF neuroinflammation program\"\n\n---\n\n## AI Agent Revision Note (2026-06-22)\n\n- Revision basis: Detail AI Agent v3.1 re-evaluation applied from chat answer.\n- Applied at: 2026-06-22T23:05:05.705413+00:00\n- Scope: JSON scoring fields and source report amendment generated from detail-page Agent discussion.\n\n### Applied JSON Changes\n\n- json_summary.theme -> Neuroimmune\n- json_summary.cluster -> 교세포 향상성\n- structured_table.sources +1\n- scoring.criteria.target_relevance.evidence_sources +1\n- scoring.criteria.competitive_landscape.evidence_sources +1\n- scoring.criteria.moa_validity.evidence_sources +1\n- scoring.criteria.platform_attractiveness.evidence_sources +1\n- scoring.criteria.expansion_potential.evidence_sources +1\n- scoring.criteria.data_maturity.evidence_sources +1\n- scoring.criteria.marketability.evidence_sources +1\n- competitive_landscape.score 1 -> 2\n- moa_validity.score 3 -> 2\n- platform_attractiveness.score -> 2\n\n### Agent Discussion Summary Used For Revision\n\nILM01 / GAIA-Aβ — v3.1 지침 기반 수정 요약\n\n아래는 현재 JSON 및 위키 노트를 v3.1 기준으로 재검토한 결과입니다. 수정이 필요한 항목과 유지 가능한 항목을 구분해 제시합니다.\n\n---\n\n1. 수정 권장 사항\nTarget Relevance (현재 3 → 유지 권장)\n문제 없음. Aβ 자체는 AD target이지만, ILM01의 차별화 포인트는 TAM receptor·microglia/astrocyte phagocytosis·anti-inflammatory clearance이므로 Neuroimmune/교세포 향상성 클러스터 매핑은 정확.\n단, v3.1에서는 \"final ILM01 target binder 및 TAM receptor subtype selectivity 비공개\"를 uncertainty로 명시한 부분 유지 필요.\nCompetitive Landscape (현재 1 → 2로 상향 가능성 검토)\nv3.1 기준: \"same-MoA 경쟁자가 명확하지 않으면 2점 가능\"이라는 해석 여지 있음.\n현재 근거: True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않음.\n수정 제안: \"Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist\"를 uncertainty로 유지하되, 점수를 2로 상향하고 근거를 \"E2_indirect_or_class_level_evidence\"로 조정 가능.\n단, AD indication 기준 Leqembi/Kisunla/remternetug 등 anti-Aβ 경쟁 과밀은 여전히 리스크로 기재.\nMoA Validity (현재 3 → 유지)\nNature Medicine 논문 기반 data 일관됨. v3.1 기준 E3 evidence 충족.\n단, \"publication prototype과 final ILM01 clinical candidate identity 확인 필요\"는 uncertainty로 유지.\nPlatform Attractiveness (현재 2 → 유지)\nGAIA는 differentiated biologic fusion platform이지만, SKBP 우선 modality(small molecule/ASO/siRNA)는 아님 → 2점 적절.\nv3.1에서 \"expression yield, aggregation, immunogenicity, route, half-life, scalable CMC data 비공개\"를 uncertainty로 유지.\nExpansion Potential (현재 3 → 유지)\n공식 pipeline 자료가 Aβ 외 tau, α-syn, myelin debris, PS/SLE 등 확장 명시 → platform으로 해석 가능.\n단, \"non-Aβ programs' independent POC maturity 비공개\" uncertainty 유지.\nData Maturity (현재 2 → 유지)\nIn vitro/vivo/cytokine/scRNA-seq/AD/CAA model data 명확하나, IND-enabling GLP tox/PK/PD/CMC 및 human data 없음 → 2점 적절.\nMarketability (현재 2 → 유지)\nv3.1 기준: A. TAP 계산(U.S. AD pool 7.4M → diagnosis/eligibility/treatable assumptions → 약 46만 명)은 합리적.\nB. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy → 약 $1.94B.\nC. Obtainable Peak: 아직 계산되지 않았으므로 \"Obtainable Peak Sales not yet calculated; requires further modeling\" 을 uncertainty로 추가.\n\n---\n\n2. JSON 수정 제안\njson\n{\n  \"scoring\": {\n    \"competitive_landscape\": {\n      \"score\": 2,\n      \"judgment\": \"True same-MoA TAM/Gas6 Aβ fusion front-runner는 뚜렷하지 않아 v3.1 기준 2점 가능. 단, commercial indication 기준 Leqembi, Kisunla, remternetug 등 anti-Aβ 경쟁 과밀은 여전히 리스크.\",\n      \"why_not_higher\": \"Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria.\",\n      \"uncertain_points\": [\n        \"Non-public TAM/Gas6 or efferocytosis-based Aβ competitors may exist.\",\n        \"AD indication anti-Aβ 경쟁 과밀은 여전히 리스크.\"\n      ],\n      \"evidence_type\": \"E2_indirect_or_class_level_evidence\",\n      \"evidence_sources\": [\n        \"https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval\",\n        \"https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease\",\n        \"https://trials.lilly.com/en-US/trial/548297\"\n      ]\n    },\n    \"marketability\": {\n      \"score\": 2,\n      \"judgment\": \"A. TAP: U.S. AD pool 7.4M에서 diagnosis/eligibility/treatable assumptions 적용해 약 46만 명. B. Unrisked Peak Sales: Leqembi/Kisunla pricing proxy 적용 시 약 $1.94B. C. Obtainable Peak Sales: 아직 계산되지 않음.\",\n      \"why_not_higher\": \"Higher score requires stronger asset-specific evidence or lower uncertainty under v3.1 criteria.\",\n      \"uncertain\n\n---\n\n## AI Agent Revision Note (2026-06-22)\n\n- Revision basis: Detail AI Agent v3.1 re-evaluation applied from chat answer.\n- Applied at: 2026-06-22T23:10:36.372528+00:00\n- Scope: JSON scoring fields and source report amendment generated from detail-page Agent discussion.\n\n### Applied JSON Changes\n\n- structured_table.sources +1\n- scoring.criteria.target_relevance.evidence_sources +1\n- scoring.criteria.competitive_landscape.evidence_sources +1\n- target_relevance.score 3 -> 2\n- competitive_landscape.score -> 2\n- source_report.raw_markdown v3.1 update badge\n\n### Agent Discussion Summary Used For Revision\n\n네, 맞습니다. 원문 리포트(Wiki 2: Illimis_Therapeutics_ILM01_20260621.md)는 v3.0 지침으로 작성되었고, 스코어링과 JSON 요약은 v3.1 기준으로 업데이트되었습니다.\n\n원문 리포트 (v3.0): 회사 개요, 파이프라인 세부 내용, evidence trail 등은 v3.0 템플릿 그대로 유지.\n스코어링 (v3.1): 제공된 JSON의 각 criterion에 \"AI Agent v3.1 re-evaluation update\"라고 명시되어 있으며, 점수와 판단 근거가 v3.1 기준으로 재평가됨.\nJSON summary: json_summary와 scoring 블록은 v3.1 업데이트를 반영 (예: Target Relevance 3점, Competitive Landscape 1→2점 상향 등).\n대시보드: 별도 대시보드 row는 제공되지 않았으나, JSON이 v3.1 기준으로 구성됨.\n\n즉, 원문 리포트 본문은 v3.0 그대로지만, 평가 결과(점수/판단)는 v3.1로 업데이트된 상태입니다.\n\n추가로 원문 리포트 자체를 v3.1 형식으로 다시 작성해야 한다면, 그 작업은 아직 수행되지 않았습니다.",
       "source_format": "gpt_markdown_report",
       "parser_status": "ai_revision_applied",
       "parser_note": "Markdown report and JSON were generated together from the same evidence set.",
@@ -642,7 +801,19 @@
             "source_report.raw_markdown v3.1 update badge"
           ]
         }
-      ]
+      ],
+      "rubric_recalculation": {
+        "version": "3.2",
+        "previous_version": "3.2",
+        "recalculated_at": "2026-07-29T10:17:52.713421+00:00",
+        "source": "dashboard_tab2_rubric_refresh",
+        "scope": "stored_criterion_scores_total_and_filter2_reset_manual_scoring_overrides",
+        "cleared_manual_scoring_overrides": {
+          "scores": {
+            "target_relevance": 3
+          }
+        }
+      }
     },
     "company_profile": {
       "company_name": "Illimis Therapeutics",
@@ -733,7 +904,7 @@
     },
     "hard_filter": {
       "status": "REVIEW",
-      "reason": "REVIEW: high score, but stage / final candidate / registry / source uncertainty needs diligence.",
+      "reason": "PASS gate 미충족: Total 15, TR 2, MOA 2, Data 2; stage/rights/asset identity/source 불확실성 확인 필요",
       "flags": [
         "clinical_stage_not_registry_verified",
         "final_candidate_unclear",
@@ -2842,10 +3013,33 @@
           "field": "scores.target_relevance",
           "previous_value": 3,
           "new_value": 2
+        },
+        {
+          "changed_at": "2026-08-01T12:19:50.742275+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.efficacy",
+          "previous_value": null,
+          "new_value": "LNK01006의 efficacy 평가에 필요한 정상군 대비 회복률이나 SoC 대비 통계적 유의성(p-value) 개선 데이터는 공개된 자료 어디에도 존재하지 않습니다. 현재 Phase 1은 건강한 지원자 대상으로 진행 중이며 질환군 대상 임상 결과가 전혀 없습니다. 구체적인 preclinical efficacy 수치나 human PoC 결과가 보고되어야 판단이 가능합니다."
         }
       ],
-      "last_edited_at": "2026-07-28T15:19:59.200822+00:00",
-      "last_edited_by": "127.0.0.1"
+      "qualitative_review": {
+        "criteria": {
+          "efficacy": {
+            "entries": [
+              {
+                "id": "6c835f54e6684b49bf98c1dc0e575249",
+                "author": "AI",
+                "body": "LNK01006의 efficacy 평가에 필요한 정상군 대비 회복률이나 SoC 대비 통계적 유의성(p-value) 개선 데이터는 공개된 자료 어디에도 존재하지 않습니다. 현재 Phase 1은 건강한 지원자 대상으로 진행 중이며 질환군 대상 임상 결과가 전혀 없습니다. 구체적인 preclinical efficacy 수치나 human PoC 결과가 보고되어야 판단이 가능합니다.",
+                "is_ai": true,
+                "created_at": "2026-08-01T12:19:50.742216+00:00"
+              }
+            ]
+          }
+        },
+        "updated_at": "2026-08-01T12:19:50.742216+00:00"
+      }
     },
     "input": {
       "company_input": "Lynk Pharmaceuticals Co., Ltd.",
@@ -4336,38 +4530,214 @@
         "json"
       ],
       "output_filename_base": "Shaperon_HY209_NuCerin_20260622",
-      "rubric_version": "3.1",
+      "rubric_version": "3.3",
       "rubric_author": "kate",
       "focus_management": {
         "is_tracked": true,
         "added_at": "2026-07-28T14:16:54.916934+00:00",
         "user_comment": "",
-        "due_date": "",
-        "updated_at": "2026-07-29T02:16:17.441558+00:00",
+        "due_date": "2026-08-05",
+        "updated_at": "2026-08-04T06:35:16.869277+00:00",
         "updated_source": "dashboard_tab3",
         "updated_by": "127.0.0.1",
-        "in_vivo_status": "O",
-        "in_vivo_status_source": "auto",
-        "in_vitro_status": "O",
-        "in_vitro_status_source": "auto",
+        "in_vivo_status": "N/A",
+        "in_vivo_status_source": "deepseek",
+        "in_vitro_status": "N/A",
+        "in_vitro_status_source": "deepseek",
         "admet_completed": null,
-        "admet_completed_source": "auto",
+        "admet_completed_source": "deepseek",
         "partnership_auto_suggestion": "unknown",
-        "partnership_auto_note": "ADMET Score 확인 불가",
+        "partnership_auto_note": "In Vivo, In Vitro, ADMET Score 확인 불가",
         "partnership_auto_evidence_sources": [
-          "Tab3에 이미 입력된 구조화 데이터",
-          "Tab2 원문 리포트: Shaperon_HY209_NuCerin_20260622"
+          "Tab2 구조화 데이터",
+          "Tab2 원문 리포트: Shaperon_HY209_NuCerin_20260622",
+          "사용자 업로드 파일: AI_Pipeline_Finder.pdf",
+          "사용자 업로드 파일: AI_Pipeline_Finder.pptx",
+          "사용자 업로드 파일: AI_Pipeline_Finder2.pptx"
         ],
         "partnership_classification_criteria_version": "1.0",
         "partnership_type": "unknown",
-        "partnership_note": "ADMET Score 확인 불가",
+        "partnership_note": "In Vivo, In Vitro, ADMET Score 확인 불가",
         "partnership_evidence_sources": [
-          "Tab3에 이미 입력된 구조화 데이터",
-          "Tab2 원문 리포트: Shaperon_HY209_NuCerin_20260622"
+          "Tab2 구조화 데이터",
+          "Tab2 원문 리포트: Shaperon_HY209_NuCerin_20260622",
+          "사용자 업로드 파일: AI_Pipeline_Finder.pdf",
+          "사용자 업로드 파일: AI_Pipeline_Finder.pptx",
+          "사용자 업로드 파일: AI_Pipeline_Finder2.pptx"
         ],
         "partnership_classification_source": "auto",
         "partnership_classification_status": "auto_classified",
-        "partnership_classified_at": "2026-07-29T02:16:17.441690+00:00"
+        "partnership_classified_at": "2026-08-04T06:35:16.869735+00:00",
+        "partnership_evidence_updated_at": "2026-08-03T13:35:38.312831+00:00",
+        "filter3_document_analyses": [
+          {
+            "attachment_id": "395da471c4304075a5ec021194d39a0c",
+            "filename": "AI_Pipeline_Finder.pdf",
+            "document_id": "b8a3254f78ae41b3a82985b962b76eb9",
+            "extraction_method": "native_pdf_text",
+            "result": {
+              "target_indication": {
+                "verdict": "unknown",
+                "rationale": "The document does not mention any specific target indications such as Alzheimer's, Parkinson's, etc. It describes a general pipeline evaluation tool.",
+                "evidence": []
+              },
+              "small_molecule": {
+                "verdict": "unknown",
+                "rationale": "The document does not mention small molecule or non-small molecule classifications.",
+                "evidence": []
+              },
+              "ind_enabling": {
+                "verdict": "unknown",
+                "rationale": "The document does not mention IND enabling or any stage of development.",
+                "evidence": []
+              },
+              "in_vivo_efficacy": {
+                "verdict": "unknown",
+                "rationale": "The document does not mention any in vivo efficacy results.",
+                "evidence": []
+              },
+              "in_vitro_efficacy": {
+                "verdict": "unknown",
+                "rationale": "The document does not mention any in vitro efficacy results.",
+                "evidence": []
+              },
+              "admet_at_least_25": {
+                "verdict": "unknown",
+                "rationale": "The document does not mention ADMET values or any numeric thresholds.",
+                "evidence": []
+              },
+              "admet_completed_count": null,
+              "matched_indication": null,
+              "concise_summary": "The document describes an AI tool for pipeline evaluation but contains no specific data on target indications, molecule type, efficacy, ADMET, or development stage. All relevant criteria are unknown."
+            }
+          },
+          {
+            "attachment_id": "8534763776f54acfb117fd38b6d9110e",
+            "filename": "AI_Pipeline_Finder.pptx",
+            "document_id": "24dcd279ae864e8286349501da1b05ad",
+            "extraction_method": "native_pptx_text",
+            "result": {
+              "target_indication": {
+                "verdict": "unknown",
+                "rationale": "The document does not mention any specific target indications such as Alzheimer's, Parkinson's, ALS, MS, Neuropathic Pain, or Epilepsy.",
+                "evidence": []
+              },
+              "small_molecule": {
+                "verdict": "unknown",
+                "rationale": "The document does not specify whether the assets are small molecules or non-small molecules.",
+                "evidence": []
+              },
+              "ind_enabling": {
+                "verdict": "unknown",
+                "rationale": "The document does not mention IND Enabling or any stage of regulatory filing.",
+                "evidence": []
+              },
+              "in_vivo_efficacy": {
+                "verdict": "unknown",
+                "rationale": "The document does not describe any in vivo experiments or results.",
+                "evidence": []
+              },
+              "in_vitro_efficacy": {
+                "verdict": "unknown",
+                "rationale": "The document does not describe any in vitro experiments or results.",
+                "evidence": []
+              },
+              "admet_at_least_25": {
+                "verdict": "unknown",
+                "rationale": "The document does not mention ADMET values or any numeric ADMET data.",
+                "evidence": []
+              },
+              "admet_completed_count": null,
+              "matched_indication": null,
+              "concise_summary": "The document describes an AI Pipeline Finder tool for standardizing and automating preclinical pipeline evaluation, but does not provide specific data on any particular asset."
+            }
+          },
+          {
+            "attachment_id": "db0b1f22c38343ac87cf7fa34cedc47c",
+            "filename": "AI_Pipeline_Finder2.pptx",
+            "document_id": "7eaeef1afe08437bbc35f751b3010fd1",
+            "extraction_method": "native_pptx_text",
+            "result": {
+              "target_indication": {
+                "verdict": "unknown",
+                "rationale": "The document describes a pipeline evaluation tool but does not mention any specific target indication (e.g., Alzheimer's, Parkinson's).",
+                "evidence": [
+                  {
+                    "page_or_slide": 1,
+                    "location_status": "located",
+                    "text": "1,000개 Preclinical Pipeline Evaluation의 표준화·자동화"
+                  }
+                ]
+              },
+              "small_molecule": {
+                "verdict": "unknown",
+                "rationale": "No mention of small molecule or non-small molecule modality.",
+                "evidence": [
+                  {
+                    "page_or_slide": 1,
+                    "location_status": "located",
+                    "text": "1,000개 Preclinical Pipeline Evaluation의 표준화·자동화"
+                  }
+                ]
+              },
+              "ind_enabling": {
+                "verdict": "unknown",
+                "rationale": "No mention of IND enabling stage.",
+                "evidence": [
+                  {
+                    "page_or_slide": 1,
+                    "location_status": "located",
+                    "text": "1,000개 Preclinical Pipeline Evaluation의 표준화·자동화"
+                  }
+                ]
+              },
+              "in_vivo_efficacy": {
+                "verdict": "unknown",
+                "rationale": "No in vivo efficacy results are reported.",
+                "evidence": [
+                  {
+                    "page_or_slide": 1,
+                    "location_status": "located",
+                    "text": "1,000개 Preclinical Pipeline Evaluation의 표준화·자동화"
+                  }
+                ]
+              },
+              "in_vitro_efficacy": {
+                "verdict": "unknown",
+                "rationale": "No in vitro efficacy results are reported.",
+                "evidence": [
+                  {
+                    "page_or_slide": 1,
+                    "location_status": "located",
+                    "text": "1,000개 Preclinical Pipeline Evaluation의 표준화·자동화"
+                  }
+                ]
+              },
+              "admet_at_least_25": {
+                "verdict": "unknown",
+                "rationale": "No ADMET data or numeric values are provided.",
+                "evidence": [
+                  {
+                    "page_or_slide": 1,
+                    "location_status": "located",
+                    "text": "1,000개 Preclinical Pipeline Evaluation의 표준화·자동화"
+                  }
+                ]
+              },
+              "admet_completed_count": null,
+              "matched_indication": null,
+              "concise_summary": "The document is a process overview for an AI pipeline evaluation tool and contains no specific asset-level data required for Filter 3 classification."
+            }
+          }
+        ],
+        "filter3_document_analysis_updated_at": "2026-08-04T06:35:16.869461+00:00",
+        "owner_name": "",
+        "action_plan": "",
+        "partner_material_flags": {
+          "cdp": false,
+          "ncdp": false,
+          "admet": false
+        }
       },
       "edit_history": [
         {
@@ -4417,10 +4787,735 @@
           "field": "focus_management.partnership_type",
           "previous_value": "value_up",
           "new_value": "unknown"
+        },
+        {
+          "changed_at": "2026-08-01T11:29:23.837107+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.due_date",
+          "previous_value": "",
+          "new_value": "2026-08-05"
+        },
+        {
+          "changed_at": "2026-08-01T12:00:21.076708+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.efficacy",
+          "previous_value": null,
+          "new_value": "제공된 자료에는 알츠하이머병 동물 모델에서의 인지 개선 및 병리 감소 전임상 데이터만 포함되어 있으며, 인간 대상 임상 효능 데이터나 정상군 대비 회복율 또는 표준치료(SoC) 대비 통계적 유의성(p-value) 있는 개선 우위를 확인할 수 있는 정보는 없습니다. 따라서 이 평가 기준을 판단하기에는 증거가 불충분하며, 임상 2상 효능 데이터와 적절한 대조군 비교 결과가 필요합니다."
+        },
+        {
+          "changed_at": "2026-08-01T12:11:58.961983+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.commercial_appeal",
+          "previous_value": null,
+          "new_value": "원문 보고서에 따르면 HY209/NuCerin은 GPCR19/TGR5 작용제로, AD 신경염증 경로에 직접 연결되어 SKBP Neuroimmune 테마와 정합성이 높아 TPP 매력도가 높습니다. 그러나 인간 대상 AD 유효성 및 CNS 노출/표적 결합 데이터가 공개되지 않아 임상적 차별성과 unmet need 충족 여부를 확정할 수 없습니다. 동일 MoA의 GPCR19 AD 경쟁자는 드물지만, 승인된 항-Aβ 항체와 경구용 NLRP3 계열 자산이 주요 경쟁 압력으로 작용합니다. 따라서 현재 정보만으로는 L-IN/L-OUT 파트너사 관점에서의 최종 매력도를 판단하기에 불충분하며, 인간 PK/CSF 바이오마커 데이터와 권리 명확성이 추가로 필요합니다."
+        },
+        {
+          "changed_at": "2026-08-01T12:12:29.015108+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_criterion_add",
+          "field": "qualitative_review.custom_criteria",
+          "previous_value": null,
+          "new_value": "약물의 가치 시장성 조사"
+        },
+        {
+          "changed_at": "2026-08-01T12:13:00.281742+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.custom_69aa2632e6",
+          "previous_value": null,
+          "new_value": "해당 보고서는 HY209/NuCerin의 시장성에 대해 TAP 약 325만 명, 무위험 최대 매출 약 29억 5900만 달러, 경쟁 및 가격 조정 후 획득 가능 최대 매출 약 15억 6200만 달러로 추정하고 있습니다. 이 수치는 경쟁 제품과의 차별화 가능성에 대한 가정에 기반하나, 실제 임상 2상 효능 데이터와 뇌 내 약물 노출 및 표적 결합 증거가 부재하여 시장 가치 추정의 신뢰도는 제한적입니다. 따라서 현재 정보만으로는 약물의 시장 가치를 확정적으로 판단하기 어려우며, 인간 대상 약동학 및 바이오마커 데이터가 추가로 필요합니다."
+        },
+        {
+          "changed_at": "2026-08-01T12:13:24.554192+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.execution_risk",
+          "previous_value": null,
+          "new_value": "HY209/NuCerin의 임상 리스크는 Phase I Part A만 완료되고 Part B 진행 중이며, AD 환자 대상 효능 및 CSF 바이오마커 데이터가 전무하여 불확실성이 높습니다. CMC 관련 정보는 보고서에 포함되지 않아 제조 공정이나 안정성에 대한 평가가 불가능합니다. 파트너십 측면에서는 Bridge Biotherapeutics의 BBT-209 라이선스 계약이 존재하나, NuCerin의 상업적 권리 주체에 대한 혼선이 있어 추가 실사가 필요합니다."
+        },
+        {
+          "changed_at": "2026-08-01T13:38:48.840566+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_comment",
+          "field": "collaboration.comments",
+          "previous_value": null,
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-01T17:42:40.444352+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab2_rubric_recalculation",
+          "field": "source_report.raw_markdown",
+          "previous_value": "rubric v3.1",
+          "new_value": "rubric v3.3"
+        },
+        {
+          "changed_at": "2026-08-03T11:53:24.198122+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "AI_Pipeline_Finder.pptx"
+        },
+        {
+          "changed_at": "2026-08-03T11:57:00.007515+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "AI_Pipeline_Finder.pptx",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-03T11:58:12.983039+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "AI_Pipeline_Finder.pptx"
+        },
+        {
+          "changed_at": "2026-08-03T12:02:37.042195+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "AI_Pipeline_Finder.pptx",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-03T12:03:24.961787+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "AI_Pipeline_Finder.pptx"
+        },
+        {
+          "changed_at": "2026-08-03T12:09:53.066374+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "AI_Pipeline_Finder.pdf"
+        },
+        {
+          "changed_at": "2026-08-03T12:13:07.156530+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "AI_Pipeline_Finder.pptx",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-03T12:15:20.370653+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "AI_Pipeline_Finder.pptx"
+        },
+        {
+          "changed_at": "2026-08-03T13:34:30.356796+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "unknown",
+          "new_value": "investment"
+        },
+        {
+          "changed_at": "2026-08-03T13:34:34.648427+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "investment",
+          "new_value": "unknown"
+        },
+        {
+          "changed_at": "2026-08-03T13:36:26.393392+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "AI_Pipeline_Finder2.pptx"
+        },
+        {
+          "changed_at": "2026-08-03T13:43:24.172593+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.efficacy",
+          "previous_value": null,
+          "new_value": "Efficacy 기준으로 볼 때, 원문 보고서에는 5xFAD 마우스 모델에서 NuCerin 30 mg/kg b.i.d. 12주 투여 시 MWM/NOR 인지 개선, amyloid plaque 감소, NeuN 양성 뉴런 보존 등이 보고되어 있으나, 정상군 대비 % Reversal 수치나 SoC 대비 통계적 유의성(p-value)에 대한 구체적인 데이터는 제시되어 있지 않습니다. 현재 공개된 자료는 전임상 동물 모델 수준에 머물러 있으며, 인간 대상 환자 효능 데이터나 Phase II 결과는 확인되지 않아 SoC 대비 우위를 입증할 근거가 부족합니다. 따라서 이 기준에 대한 판단은 '불충분'으로, % Reversal 값과 대조군 및 SoC와의 통계적 비교 결과가 포함된 원시 데이터가 추가로 필요합니다."
+        },
+        {
+          "changed_at": "2026-08-03T13:43:33.257371+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.commercial_appeal",
+          "previous_value": null,
+          "new_value": "NuCerin은 GPCR19/TGR5 경구 소분자로서 알츠하이머병의 미충족 수요가 큰 염증 경로를 표적으로 하지만, 아직 인간 임상 효능과 CNS 표적 결합 데이터가 공개되지 않아 TPP 매력도를 확정하기 어렵습니다. 동일 기전의 GPCR19 경쟁자는 거의 없어 차별성 가능성은 있으나, AD 시장 내 승인된 항-Aβ 항체와 경구용 NLRP3 계열 자산들이 주요 압박 요인으로 작용합니다. 시장성 추정치는 있으나 파트너사 관점에서 실제 Obtainable Peak Sales와 권리 명확성에 대한 추가 실사가 필요합니다."
+        },
+        {
+          "changed_at": "2026-08-03T13:43:55.045499+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.execution_risk",
+          "previous_value": null,
+          "new_value": "HY209/NuCerin의 임상 및 개발 리스크로는 Phase I Part B가 진행 중이나 환자 efficacy 데이터와 CSF/brain target engagement 자료가 전혀 공개되지 않아 human AD에서의 MoA 검증이 아직 이루어지지 않은 점이 가장 큰 불확실성입니다. 또한 CenterWatch에 등록된 임상시험의 sponsor가 Kukjeon Pharmaceutical으로 명시되어 HY209의 AD 개발 권리 및 운영 주체에 대한 모호성이 존재하므로, 이에 대한 명확한 실사가 필수적입니다. TGR5의 CNS context-dependent effect 및 chronic activation risk에 대한 추가 검증과 함께, 경쟁 측면에서는 승인된 anti-Aβ mAb 및 oral NLRP3 계열 자산들이 이미 시장에 존재하므로 차별화 근거를 확보해야 합니다."
+        },
+        {
+          "changed_at": "2026-08-03T23:11:16.434061+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_delete",
+          "field": "qualitative_review.efficacy",
+          "previous_value": "제공된 자료에는 알츠하이머병 동물 모델에서의 인지 개선 및 병리 감소 전임상 데이터만 포함되어 있으며, 인간 대상 임상 효능 데이터나 정상군 대비 회복율 또는 표준치료(SoC) 대비 통계적 유의성(p-value) 있는 개선 우위를 확인할 수 있는 정보는 없습니다. 따라서 이 평가 기준을 판단하기에는 증거가 불충분하며, 임상 2상 효능 데이터와 적절한 대조군 비교 결과가 필요합니다.",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-03T23:11:18.913998+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_delete",
+          "field": "qualitative_review.commercial_appeal",
+          "previous_value": "원문 보고서에 따르면 HY209/NuCerin은 GPCR19/TGR5 작용제로, AD 신경염증 경로에 직접 연결되어 SKBP Neuroimmune 테마와 정합성이 높아 TPP 매력도가 높습니다. 그러나 인간 대상 AD 유효성 및 CNS 노출/표적 결합 데이터가 공개되지 않아 임상적 차별성과 unmet need 충족 여부를 확정할 수 없습니다. 동일 MoA의 GPCR19 AD 경쟁자는 드물지만, 승인된 항-Aβ 항체와 경구용 NLRP3 계열 자산이 주요 경쟁 압력으로 작용합니다. 따라서 현재 정보만으로는 L-IN/L-OUT 파트너사 관점에서의 최종 매력도를 판단하기에 불충분하며, 인간 PK/CSF 바이오마커 데이터와 권리 명확성이 추가로 필요합니다.",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-03T23:11:21.346370+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_delete",
+          "field": "qualitative_review.execution_risk",
+          "previous_value": "HY209/NuCerin의 임상 리스크는 Phase I Part A만 완료되고 Part B 진행 중이며, AD 환자 대상 효능 및 CSF 바이오마커 데이터가 전무하여 불확실성이 높습니다. CMC 관련 정보는 보고서에 포함되지 않아 제조 공정이나 안정성에 대한 평가가 불가능합니다. 파트너십 측면에서는 Bridge Biotherapeutics의 BBT-209 라이선스 계약이 존재하나, NuCerin의 상업적 권리 주체에 대한 혼선이 있어 추가 실사가 필요합니다.",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-04T01:50:30.646794+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.efficacy",
+          "previous_value": null,
+          "new_value": "제공된 자료에서 HY209/NuCerin의 효능 평가 기준인 정상군 대비 회복율(%) 및 SoC 대비 통계적 유의성(p-value) 있는 개선 우위를 확인할 수 있는 정량적 데이터는 부재합니다. 5xFAD 마우스 모델에서 인지 개선 및 병리학적 지표 호전이 보고되었으나, 회복율이나 대조군 대비 p-value는 명시되지 않았고 SoC와의 직접 비교도 없습니다. 인간 임상 효능 데이터는 아직 공개되지 않아 이 기준을 충족하는 근거가 충분하지 않습니다."
+        },
+        {
+          "changed_at": "2026-08-04T06:35:14.621339+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.remove",
+          "previous_value": true,
+          "new_value": false
+        },
+        {
+          "changed_at": "2026-08-04T06:35:16.869746+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.add",
+          "previous_value": false,
+          "new_value": true
         }
       ],
-      "last_edited_at": "2026-07-29T02:16:17.441704+00:00",
-      "last_edited_by": "127.0.0.1"
+      "last_edited_at": "2026-08-01T17:42:40.444352+00:00",
+      "last_edited_by": "127.0.0.1",
+      "qualitative_review": {
+        "criteria": {
+          "efficacy": {
+            "entries": [
+              {
+                "id": "ced18a9a59f84f519f50f6c32471ce21",
+                "author": "AI",
+                "body": "Efficacy 기준으로 볼 때, 원문 보고서에는 5xFAD 마우스 모델에서 NuCerin 30 mg/kg b.i.d. 12주 투여 시 MWM/NOR 인지 개선, amyloid plaque 감소, NeuN 양성 뉴런 보존 등이 보고되어 있으나, 정상군 대비 % Reversal 수치나 SoC 대비 통계적 유의성(p-value)에 대한 구체적인 데이터는 제시되어 있지 않습니다. 현재 공개된 자료는 전임상 동물 모델 수준에 머물러 있으며, 인간 대상 환자 효능 데이터나 Phase II 결과는 확인되지 않아 SoC 대비 우위를 입증할 근거가 부족합니다. 따라서 이 기준에 대한 판단은 '불충분'으로, % Reversal 값과 대조군 및 SoC와의 통계적 비교 결과가 포함된 원시 데이터가 추가로 필요합니다.",
+                "is_ai": true,
+                "created_at": "2026-08-03T13:43:24.172538+00:00"
+              },
+              {
+                "id": "ab7370b307b044fda563e640418cca09",
+                "author": "AI",
+                "body": "제공된 자료에서 HY209/NuCerin의 효능 평가 기준인 정상군 대비 회복율(%) 및 SoC 대비 통계적 유의성(p-value) 있는 개선 우위를 확인할 수 있는 정량적 데이터는 부재합니다. 5xFAD 마우스 모델에서 인지 개선 및 병리학적 지표 호전이 보고되었으나, 회복율이나 대조군 대비 p-value는 명시되지 않았고 SoC와의 직접 비교도 없습니다. 인간 임상 효능 데이터는 아직 공개되지 않아 이 기준을 충족하는 근거가 충분하지 않습니다.",
+                "is_ai": true,
+                "created_at": "2026-08-04T01:50:30.646727+00:00"
+              }
+            ]
+          },
+          "commercial_appeal": {
+            "entries": [
+              {
+                "id": "a5d65f24faec49929be512e3de3c9f77",
+                "author": "AI",
+                "body": "NuCerin은 GPCR19/TGR5 경구 소분자로서 알츠하이머병의 미충족 수요가 큰 염증 경로를 표적으로 하지만, 아직 인간 임상 효능과 CNS 표적 결합 데이터가 공개되지 않아 TPP 매력도를 확정하기 어렵습니다. 동일 기전의 GPCR19 경쟁자는 거의 없어 차별성 가능성은 있으나, AD 시장 내 승인된 항-Aβ 항체와 경구용 NLRP3 계열 자산들이 주요 압박 요인으로 작용합니다. 시장성 추정치는 있으나 파트너사 관점에서 실제 Obtainable Peak Sales와 권리 명확성에 대한 추가 실사가 필요합니다.",
+                "is_ai": true,
+                "created_at": "2026-08-03T13:43:33.257310+00:00"
+              }
+            ]
+          },
+          "custom_69aa2632e6": {
+            "entries": [
+              {
+                "id": "dfe3c3b0383649439ba6ba135f325f24",
+                "author": "AI",
+                "body": "해당 보고서는 HY209/NuCerin의 시장성에 대해 TAP 약 325만 명, 무위험 최대 매출 약 29억 5900만 달러, 경쟁 및 가격 조정 후 획득 가능 최대 매출 약 15억 6200만 달러로 추정하고 있습니다. 이 수치는 경쟁 제품과의 차별화 가능성에 대한 가정에 기반하나, 실제 임상 2상 효능 데이터와 뇌 내 약물 노출 및 표적 결합 증거가 부재하여 시장 가치 추정의 신뢰도는 제한적입니다. 따라서 현재 정보만으로는 약물의 시장 가치를 확정적으로 판단하기 어려우며, 인간 대상 약동학 및 바이오마커 데이터가 추가로 필요합니다.",
+                "is_ai": true,
+                "created_at": "2026-08-01T12:13:00.281680+00:00"
+              }
+            ]
+          },
+          "execution_risk": {
+            "entries": [
+              {
+                "id": "19526231bbbf4d8da3bb33bb4a6196f4",
+                "author": "AI",
+                "body": "HY209/NuCerin의 임상 및 개발 리스크로는 Phase I Part B가 진행 중이나 환자 efficacy 데이터와 CSF/brain target engagement 자료가 전혀 공개되지 않아 human AD에서의 MoA 검증이 아직 이루어지지 않은 점이 가장 큰 불확실성입니다. 또한 CenterWatch에 등록된 임상시험의 sponsor가 Kukjeon Pharmaceutical으로 명시되어 HY209의 AD 개발 권리 및 운영 주체에 대한 모호성이 존재하므로, 이에 대한 명확한 실사가 필수적입니다. TGR5의 CNS context-dependent effect 및 chronic activation risk에 대한 추가 검증과 함께, 경쟁 측면에서는 승인된 anti-Aβ mAb 및 oral NLRP3 계열 자산들이 이미 시장에 존재하므로 차별화 근거를 확보해야 합니다.",
+                "is_ai": true,
+                "created_at": "2026-08-03T13:43:55.045447+00:00"
+              }
+            ]
+          }
+        },
+        "updated_at": "2026-08-04T01:50:30.646727+00:00",
+        "custom_criteria": [
+          {
+            "id": "custom_69aa2632e6",
+            "label": "약물의 가치 시장성 조사",
+            "description": "이 약물이 시장에서 얼마나 가치있는지 판단 지표",
+            "created_by": "정주원",
+            "created_at": "2026-08-01T12:12:29.015072+00:00"
+          }
+        ]
+      },
+      "collaboration": {
+        "comments": [
+          {
+            "id": "c625a81095734e75a5253e90853e5bd8",
+            "parent_id": null,
+            "author": "정주원",
+            "actor_ip": "127.0.0.1",
+            "body": "hello",
+            "created_at": "2026-08-01T13:38:48.840472+00:00",
+            "updated_at": "2026-08-01T13:38:48.840472+00:00"
+          }
+        ],
+        "updated_at": "2026-08-01T13:38:48.840472+00:00",
+        "comment_count": 1
+      },
+      "rubric_recalculation": {
+        "version": "3.3",
+        "previous_version": "3.1",
+        "recalculated_at": "2026-08-01T17:42:40.441201+00:00",
+        "source": "dashboard_tab2_rubric_refresh",
+        "scope": "stored_criterion_scores_total_and_filter2_reset_manual_scoring_overrides",
+        "cleared_manual_scoring_overrides": {}
+      },
+      "attachments": [
+        {
+          "id": "395da471c4304075a5ec021194d39a0c",
+          "filename": "AI_Pipeline_Finder.pdf",
+          "stored_path": "/attachments/Shaperon_HY209_NuCerin_20260622/3af56b9620c54a7fbbb311791b002683_AI_Pipeline_Finder.pdf",
+          "content_type": "application/pdf",
+          "size_bytes": 427121,
+          "uploaded_by": "정주원",
+          "uploaded_at": "2026-08-03T12:07:06.505311+00:00",
+          "processing_status": "completed",
+          "document_processing": {
+            "document_id": "b8a3254f78ae41b3a82985b962b76eb9",
+            "file_sha256": "dc7547a75acbd8567891bf5fce4ff0b5abcf0162c640f01d720dff4724b26646",
+            "filename": "AI_Pipeline_Finder.pdf",
+            "status": "completed",
+            "extraction": {
+              "method": "native_pdf_text",
+              "pages_or_slides": [
+                {
+                  "number": 1,
+                  "text": "AI PIPELINE FINDER\n대외비\n반복조사는AI에게,\n전략적판단은실무자에게\n1,000개Preclinical Pipeline Evaluation의표준화·자동화\n1\nFAST TRIAGE\n2\nFULL SCOUT\nDECISION-READY\nREPORT\nSK Biopharmaceuticals  |  Open Innovation Center"
+                },
+                {
+                  "number": 2,
+                  "text": "AI PIPELINE FINDER  |  01\n대외비\n1,000개Pipeline, 모두사람이하나씩조사하고있었습니다\n전문가의판단보다, LLM이대신할수있는조사와정리에더많은시간이쓰이고있었음\n기존Longlist Evaluation\nAsset List\n→\n웹검색\n→\nExcel 정리\n→\n평가\n→\n재검색\n회사홈페이지·논문·학회자료\n1\nAsset이많아질수록조사품질의편차가커짐\n•\n담당자별조사범위와깊이가달라질수있음\n•\n모든Pipeline을충분히검토하기어려움\n2\n전문가시간이자동화가능한업무에소모됨\n•\n정보탐색·추출·구조화는LLM으로자동화가능\n•\n반복조사와Excel 정리로야근이빈번하게발생\n핵심문제|  느린조사· 평가편차· 충분한심층검토의어려움\nSK Biopharmaceuticals  |  Open Innovation Center\n2"
+                },
+                {
+                  "number": 3,
+                  "text": "AI PIPELINE FINDER  |  02\n대외비\n관심Asset을먼저선별하고, 필요한Asset만심층조사합니다\nLonglist Evaluation을Fast Triage → Full Scout의2단계Workflow로자동화\nPIPELINE\nLONGLIST\n1,000+ Assets\n→\n1\nFAST TRIAGE\n최대20개일괄평가\nSELECT · REJECT · N/A\n→\n✓\nSELECT\n심층검토대상선별\n→\n2\nFULL SCOUT\n개별심층조사· Scoring\nScore · Evidence · Rationale\n→\n✓\nPASS\n–\nREVIEW\n✕\nFAIL\n분류\n기준\nFAST TRIAGE\nSelect / Reject / N/A\n심층조사대상선별\nFULL SCOUT\nPass / Review / Fail\n종합Score Threshold에따라분류\n→\nDecision-ready\nReport\nSK Biopharmaceuticals  |  Open Innovation Center\n3"
+                },
+                {
+                  "number": 4,
+                  "text": "AI PIPELINE FINDER  |  03\n대외비\nAI가실무진이설정한기준으로빠짐없이조사하고Scoring합니다\nAI가임의로판단하는것이아니라, 동일한Rubric을모든Asset에반복적용\n공통Scoring Rubric\n1\nTarget / MoA Validity\n2\nModality 차별성\n3\nPreclinical Evidence\n4\nCompetitor Landscape\n5\nSafety / 개발리스크\n6\nMarketability 추정\n7\nData Gap\n8\nSKBP Strategic Fit\n왜더일관적인가?\n1\n동일한Checklist\n모든Asset에같은평가항목적용\n2\n누락최소화\n시간·피로와무관하게항목별조사\n3\n근거기반Scoring\nScore와Evidence를함께기록\n4\nAsset 간비교\n동일형식으로결과를구조화\n조사누락↓\nScoring 일관성↑\nAsset 비교가능성↑\nSK Biopharmaceuticals  |  Open Innovation Center\n4"
+                },
+                {
+                  "number": 5,
+                  "text": "AI PIPELINE FINDER  |  04\n대외비\n조사결과를한눈에보고, 질문하고, 전체Asset과비교합니다\n평가데이터가쌓일수록Knowledge Wiki가확장되고, 더많은검색·비교·분석이가능\nPIPELINE DASHBOARD\n…\n개별Asset Pipeline Chat\n개별Full Scout Report에즉시질문\n“이Asset의가장큰개발리스크와추가로확인\n해야할Data Gap은?”\nObsidian\nKnowledge\nLayer\nAsset · Target ·\nMoA · Company ·\nIndication 연결\n•\n전체Asset Knowledge Wiki\n축적된전체Pipeline을검색·선별·비교\n“PD Asset 중SKBP가우선검토할상위2개를선정하고, \nSKBP Fit·MoA Validity·경쟁력·Marketability·개발리스크를\n기준으로비교해줘.”\n개별Report Q&A   +   전체Asset 검색+   Asset vs. Asset 비교+   축적정보기반추가분석\nSK Biopharmaceuticals  |  Open Innovation Center\n5"
+                },
+                {
+                  "number": 6,
+                  "text": "AI PIPELINE FINDER  |  05\n대외비\n반복업무는AI에게, 실무자는의사결정에집중합니다\n1,000개이상의Longlist Evaluation을표준화·자동화하여, 조사보다판단에시간을씁니다\nBEFORE\n→\n→\nX\n→\n→\nAsset List → 웹검색→ Excel 정리→ 평가→ 재검색\n•\n반복작업에많은시간소요\n•\n담당자마다조사깊이·범위가달라짐\nAI Pipeline Finder\nAFTER\nFast Triage로관심Pipeline 선별\nFull Scout로동일기준의심층조사· Scoring\n✓\n완성된Report를검토하고핵심의사결정에집중\nNEXT STEP\n1\nPeer Cross-check로\n평가정확성검증\n2\nGPT 모드별\n결과일관성점검\n3\nReport Cosmetics\n단순화\n4\nOpen Innovation Team\nDashboard 정보축적\n✓\n자동화가능한조사업무는줄이고, 실무자의전략적판단은더깊게\nSK Biopharmaceuticals  |  Open Innovation Center\n6"
+                }
+              ],
+              "page_or_slide_count": 6,
+              "parsed_text": "[PAGE 1]\nAI PIPELINE FINDER\n대외비\n반복조사는AI에게,\n전략적판단은실무자에게\n1,000개Preclinical Pipeline Evaluation의표준화·자동화\n1\nFAST TRIAGE\n2\nFULL SCOUT\nDECISION-READY\nREPORT\nSK Biopharmaceuticals  |  Open Innovation Center\n\n[PAGE 2]\nAI PIPELINE FINDER  |  01\n대외비\n1,000개Pipeline, 모두사람이하나씩조사하고있었습니다\n전문가의판단보다, LLM이대신할수있는조사와정리에더많은시간이쓰이고있었음\n기존Longlist Evaluation\nAsset List\n→\n웹검색\n→\nExcel 정리\n→\n평가\n→\n재검색\n회사홈페이지·논문·학회자료\n1\nAsset이많아질수록조사품질의편차가커짐\n•\n담당자별조사범위와깊이가달라질수있음\n•\n모든Pipeline을충분히검토하기어려움\n2\n전문가시간이자동화가능한업무에소모됨\n•\n정보탐색·추출·구조화는LLM으로자동화가능\n•\n반복조사와Excel 정리로야근이빈번하게발생\n핵심문제|  느린조사· 평가편차· 충분한심층검토의어려움\nSK Biopharmaceuticals  |  Open Innovation Center\n2\n\n[PAGE 3]\nAI PIPELINE FINDER  |  02\n대외비\n관심Asset을먼저선별하고, 필요한Asset만심층조사합니다\nLonglist Evaluation을Fast Triage → Full Scout의2단계Workflow로자동화\nPIPELINE\nLONGLIST\n1,000+ Assets\n→\n1\nFAST TRIAGE\n최대20개일괄평가\nSELECT · REJECT · N/A\n→\n✓\nSELECT\n심층검토대상선별\n→\n2\nFULL SCOUT\n개별심층조사· Scoring\nScore · Evidence · Rationale\n→\n✓\nPASS\n–\nREVIEW\n✕\nFAIL\n분류\n기준\nFAST TRIAGE\nSelect / Reject / N/A\n심층조사대상선별\nFULL SCOUT\nPass / Review / Fail\n종합Score Threshold에따라분류\n→\nDecision-ready\nReport\nSK Biopharmaceuticals  |  Open Innovation Center\n3\n\n[PAGE 4]\nAI PIPELINE FINDER  |  03\n대외비\nAI가실무진이설정한기준으로빠짐없이조사하고Scoring합니다\nAI가임의로판단하는것이아니라, 동일한Rubric을모든Asset에반복적용\n공통Scoring Rubric\n1\nTarget / MoA Validity\n2\nModality 차별성\n3\nPreclinical Evidence\n4\nCompetitor Landscape\n5\nSafety / 개발리스크\n6\nMarketability 추정\n7\nData Gap\n8\nSKBP Strategic Fit\n왜더일관적인가?\n1\n동일한Checklist\n모든Asset에같은평가항목적용\n2\n누락최소화\n시간·피로와무관하게항목별조사\n3\n근거기반Scoring\nScore와Evidence를함께기록\n4\nAsset 간비교\n동일형식으로결과를구조화\n조사누락↓\nScoring 일관성↑\nAsset 비교가능성↑\nSK Biopharmaceuticals  |  Open Innovation Center\n4\n\n[PAGE 5]\nAI PIPELINE FINDER  |  04\n대외비\n조사결과를한눈에보고, 질문하고, 전체Asset과비교합니다\n평가데이터가쌓일수록Knowledge Wiki가확장되고, 더많은검색·비교·분석이가능\nPIPELINE DASHBOARD\n…\n개별Asset Pipeline Chat\n개별Full Scout Report에즉시질문\n“이Asset의가장큰개발리스크와추가로확인\n해야할Data Gap은?”\nObsidian\nKnowledge\nLayer\nAsset · Target ·\nMoA · Company ·\nIndication 연결\n•\n전체Asset Knowledge Wiki\n축적된전체Pipeline을검색·선별·비교\n“PD Asset 중SKBP가우선검토할상위2개를선정하고, \nSKBP Fit·MoA Validity·경쟁력·Marketability·개발리스크를\n기준으로비교해줘.”\n개별Report Q&A   +   전체Asset 검색+   Asset vs. Asset 비교+   축적정보기반추가분석\nSK Biopharmaceuticals  |  Open Innovation Center\n5\n\n[PAGE 6]\nAI PIPELINE FINDER  |  05\n대외비\n반복업무는AI에게, 실무자는의사결정에집중합니다\n1,000개이상의Longlist Evaluation을표준화·자동화하여, 조사보다판단에시간을씁니다\nBEFORE\n→\n→\nX\n→\n→\nAsset List → 웹검색→ Excel 정리→ 평가→ 재검색\n•\n반복작업에많은시간소요\n•\n담당자마다조사깊이·범위가달라짐\nAI Pipeline Finder\nAFTER\nFast Triage로관심Pipeline 선별\nFull Scout로동일기준의심층조사· Scoring\n✓\n완성된Report를검토하고핵심의사결정에집중\nNEXT STEP\n1\nPeer Cross-check로\n평가정확성검증\n2\nGPT 모드별\n결과일관성점검\n3\nReport Cosmetics\n단순화\n4\nOpen Innovation Team\nDashboard 정보축적\n✓\n자동화가능한조사업무는줄이고, 실무자의전략적판단은더깊게\nSK Biopharmaceuticals  |  Open Innovation Center\n6",
+              "quality": {
+                "sufficient": true,
+                "quality_score": 6,
+                "character_count": 2221,
+                "corrupted_character_ratio": 0.0,
+                "repeated_character_ratio": 0.0,
+                "text_unit_ratio": 1.0,
+                "text_units": 6,
+                "total_units": 6,
+                "keyword_hits": [
+                  "pd"
+                ],
+                "reasons": []
+              }
+            },
+            "parser": null,
+            "deepseek_analysis": {
+              "status": "completed",
+              "model": "deepseek/deepseek-v4-flash",
+              "structured_output_supported": true,
+              "structured_output_used": true,
+              "analyzed_at": "2026-08-03T12:09:53.065561+00:00",
+              "result": {
+                "target_indication": {
+                  "verdict": "unknown",
+                  "rationale": "The document does not mention any specific target indications such as Alzheimer's, Parkinson's, etc. It describes a general pipeline evaluation tool.",
+                  "evidence": []
+                },
+                "small_molecule": {
+                  "verdict": "unknown",
+                  "rationale": "The document does not mention small molecule or non-small molecule classifications.",
+                  "evidence": []
+                },
+                "ind_enabling": {
+                  "verdict": "unknown",
+                  "rationale": "The document does not mention IND enabling or any stage of development.",
+                  "evidence": []
+                },
+                "in_vivo_efficacy": {
+                  "verdict": "unknown",
+                  "rationale": "The document does not mention any in vivo efficacy results.",
+                  "evidence": []
+                },
+                "in_vitro_efficacy": {
+                  "verdict": "unknown",
+                  "rationale": "The document does not mention any in vitro efficacy results.",
+                  "evidence": []
+                },
+                "admet_at_least_25": {
+                  "verdict": "unknown",
+                  "rationale": "The document does not mention ADMET values or any numeric thresholds.",
+                  "evidence": []
+                },
+                "admet_completed_count": null,
+                "matched_indication": null,
+                "concise_summary": "The document describes an AI tool for pipeline evaluation but contains no specific data on target indications, molecule type, efficacy, ADMET, or development stage. All relevant criteria are unknown."
+              },
+              "error": null
+            },
+            "viewer_conversion": {
+              "status": "not_required",
+              "pdf_path": null,
+              "error": null
+            },
+            "processed_at": "2026-08-03T12:09:53.066257+00:00"
+          },
+          "processing_error": ""
+        },
+        {
+          "id": "8534763776f54acfb117fd38b6d9110e",
+          "filename": "AI_Pipeline_Finder.pptx",
+          "stored_path": "/attachments/Shaperon_HY209_NuCerin_20260622/b0bbbcccf02b42178322c98a724a352c_AI_Pipeline_Finder.pptx",
+          "content_type": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          "size_bytes": 265029,
+          "uploaded_by": "정주원",
+          "uploaded_at": "2026-08-03T12:13:55.488651+00:00",
+          "processing_status": "completed",
+          "preview_pdf_path": "/attachments/Shaperon_HY209_NuCerin_20260622/converted/b0bbbcccf02b42178322c98a724a352c_AI_Pipeline_Finder.pdf",
+          "document_processing": {
+            "document_id": "24dcd279ae864e8286349501da1b05ad",
+            "file_sha256": "00199a76c06b71e39dfd212b933b41db6adae46bdf76853e9849a73233fa2a59",
+            "filename": "AI_Pipeline_Finder.pptx",
+            "status": "completed",
+            "extraction": {
+              "method": "native_pptx_text",
+              "pages_or_slides": [
+                {
+                  "number": 1,
+                  "text": "AI PIPELINE FINDER\n대외비\n반복 조사는 AI에게,\n전략적 판단은 실무자에게\n1,000개 Preclinical Pipeline Evaluation의 표준화·자동화\n1\nFAST TRIAGE\n2\nFULL SCOUT\nDECISION-READY\nREPORT\nSK Biopharmaceuticals  |  Open Innovation Center"
+                },
+                {
+                  "number": 2,
+                  "text": "AI PIPELINE FINDER  |  01\n대외비\n1,000개 Pipeline, 모두 사람이 하나씩 조사하고 있었습니다\n전문가의 판단보다, LLM이 대신할 수 있는 조사와 정리에 더 많은 시간이 쓰이고 있었음\n기존 Longlist Evaluation\nAsset List\n→\n웹 검색\n→\nExcel 정리\n→\n평가\n→\n재검색\n회사 홈페이지·논문·학회자료\n1\nAsset이 많아질수록 조사 품질의 편차가 커짐\n담당자별 조사 범위와 깊이가 달라질 수 있음\n모든 Pipeline을 충분히 검토하기 어려움\n2\n전문가 시간이 자동화 가능한 업무에 소모됨\n정보 탐색·추출·구조화는 LLM으로 자동화 가능\n반복 조사와 Excel 정리로 야근이 빈번하게 발생\n핵심 문제  |  느린 조사 · 평가 편차 · 충분한 심층검토의 어려움\nSK Biopharmaceuticals  |  Open Innovation Center\n2"
+                },
+                {
+                  "number": 3,
+                  "text": "AI PIPELINE FINDER  |  02\n대외비\n관심 Asset을 먼저 선별하고, 필요한 Asset만 심층조사합니다\nLonglist Evaluation을 Fast Triage → Full Scout의 2단계 Workflow로 자동화\nPIPELINE\nLONGLIST\n1,000+ Assets\n→\n1\nFAST TRIAGE\n최대 20개 일괄 평가\nSELECT · REJECT · N/A\n→\n✓\nSELECT\n심층검토 대상 선별\n→\n2\nFULL SCOUT\n개별 심층조사 · Scoring\nScore · Evidence · Rationale\n→\n✓\nPASS\n–\nREVIEW\n✕\nFAIL\n분류\n기준\nFAST TRIAGE\nSelect / Reject / N/A\n심층조사 대상 선별\nFULL SCOUT\nPass / Review / Fail\n종합 Score Threshold에 따라 분류\n→\nDecision-ready\nReport\nSK Biopharmaceuticals  |  Open Innovation Center\n3"
+                },
+                {
+                  "number": 4,
+                  "text": "AI PIPELINE FINDER  |  03\n대외비\nAI가 실무진이 설정한 기준으로 빠짐없이 조사하고 Scoring합니다\nAI가 임의로 판단하는 것이 아니라, 동일한 Rubric을 모든 Asset에 반복 적용\n공통 Scoring Rubric\n1\nTarget / MoA Validity\n2\nModality 차별성\n3\nPreclinical Evidence\n4\nCompetitor Landscape\n5\nSafety / 개발 리스크\n6\nMarketability 추정\n7\nData Gap\n8\nSKBP Strategic Fit\n왜 더 일관적인가?\n1\n동일한 Checklist\n모든 Asset에 같은 평가항목 적용\n2\n누락 최소화\n시간·피로와 무관하게 항목별 조사\n3\n근거 기반 Scoring\nScore와 Evidence를 함께 기록\n4\nAsset 간 비교\n동일 형식으로 결과를 구조화\n조사 누락 ↓\nScoring 일관성 ↑\nAsset 비교 가능성 ↑\nSK Biopharmaceuticals  |  Open Innovation Center\n4"
+                },
+                {
+                  "number": 5,
+                  "text": "AI PIPELINE FINDER  |  04\n대외비\n조사 결과를 한눈에 보고, 질문하고, 전체 Asset과 비교합니다\n평가 데이터가 쌓일수록 Knowledge Wiki가 확장되고, 더 많은 검색·비교·분석이 가능\nPIPELINE DASHBOARD\n…\n개별 Asset Pipeline Chat\n개별 Full Scout Report에 즉시 질문\n“이 Asset의 가장 큰 개발 리스크와 추가로 확인해야 할 Data Gap은?”\nObsidian\nKnowledge\nLayer\nAsset · Target ·\nMoA · Company ·\nIndication 연결\n•\n전체 Asset Knowledge Wiki\n축적된 전체 Pipeline을 검색·선별·비교\n“PD Asset 중 SKBP가 우선 검토할 상위 2개를 선정하고, SKBP Fit·MoA Validity·경쟁력·Marketability·개발 리스크를 기준으로 비교해줘.”\n개별 Report Q&A   +   전체 Asset 검색   +   Asset vs. Asset 비교   +   축적 정보 기반 추가 분석\nSK Biopharmaceuticals  |  Open Innovation Center\n5"
+                },
+                {
+                  "number": 6,
+                  "text": "AI PIPELINE FINDER  |  05\n대외비\n반복 업무는 AI에게, 실무자는 의사결정에 집중합니다\n1,000개 이상의 Longlist Evaluation을 표준화·자동화하여, 조사보다 판단에 시간을 씁니다\nBEFORE\n→\n→\nX\n→\n→\nAsset List → 웹 검색 → Excel 정리 → 평가 → 재검색\n반복 작업에 많은 시간 소요\n담당자마다 조사 깊이·범위가 달라짐\nAI Pipeline Finder\nAFTER\nFast Triage로 관심 Pipeline 선별\nFull Scout로 동일 기준의 심층 조사 · Scoring\n✓\n완성된 Report를 검토하고 핵심 의사결정에 집중\nNEXT STEP\n1\nPeer Cross-check로\n평가 정확성 검증\n2\nGPT 모드별\n결과 일관성 점검\n3\nReport Cosmetics\n단순화\n4\nOpen Innovation Team\nDashboard 정보 축적\n✓\n자동화 가능한 조사 업무는 줄이고, 실무자의 전략적 판단은 더 깊게\nSK Biopharmaceuticals  |  Open Innovation Center\n6"
+                }
+              ],
+              "page_or_slide_count": 6,
+              "parsed_text": "[SLIDE 1]\nAI PIPELINE FINDER\n대외비\n반복 조사는 AI에게,\n전략적 판단은 실무자에게\n1,000개 Preclinical Pipeline Evaluation의 표준화·자동화\n1\nFAST TRIAGE\n2\nFULL SCOUT\nDECISION-READY\nREPORT\nSK Biopharmaceuticals  |  Open Innovation Center\n\n[SLIDE 2]\nAI PIPELINE FINDER  |  01\n대외비\n1,000개 Pipeline, 모두 사람이 하나씩 조사하고 있었습니다\n전문가의 판단보다, LLM이 대신할 수 있는 조사와 정리에 더 많은 시간이 쓰이고 있었음\n기존 Longlist Evaluation\nAsset List\n→\n웹 검색\n→\nExcel 정리\n→\n평가\n→\n재검색\n회사 홈페이지·논문·학회자료\n1\nAsset이 많아질수록 조사 품질의 편차가 커짐\n담당자별 조사 범위와 깊이가 달라질 수 있음\n모든 Pipeline을 충분히 검토하기 어려움\n2\n전문가 시간이 자동화 가능한 업무에 소모됨\n정보 탐색·추출·구조화는 LLM으로 자동화 가능\n반복 조사와 Excel 정리로 야근이 빈번하게 발생\n핵심 문제  |  느린 조사 · 평가 편차 · 충분한 심층검토의 어려움\nSK Biopharmaceuticals  |  Open Innovation Center\n2\n\n[SLIDE 3]\nAI PIPELINE FINDER  |  02\n대외비\n관심 Asset을 먼저 선별하고, 필요한 Asset만 심층조사합니다\nLonglist Evaluation을 Fast Triage → Full Scout의 2단계 Workflow로 자동화\nPIPELINE\nLONGLIST\n1,000+ Assets\n→\n1\nFAST TRIAGE\n최대 20개 일괄 평가\nSELECT · REJECT · N/A\n→\n✓\nSELECT\n심층검토 대상 선별\n→\n2\nFULL SCOUT\n개별 심층조사 · Scoring\nScore · Evidence · Rationale\n→\n✓\nPASS\n–\nREVIEW\n✕\nFAIL\n분류\n기준\nFAST TRIAGE\nSelect / Reject / N/A\n심층조사 대상 선별\nFULL SCOUT\nPass / Review / Fail\n종합 Score Threshold에 따라 분류\n→\nDecision-ready\nReport\nSK Biopharmaceuticals  |  Open Innovation Center\n3\n\n[SLIDE 4]\nAI PIPELINE FINDER  |  03\n대외비\nAI가 실무진이 설정한 기준으로 빠짐없이 조사하고 Scoring합니다\nAI가 임의로 판단하는 것이 아니라, 동일한 Rubric을 모든 Asset에 반복 적용\n공통 Scoring Rubric\n1\nTarget / MoA Validity\n2\nModality 차별성\n3\nPreclinical Evidence\n4\nCompetitor Landscape\n5\nSafety / 개발 리스크\n6\nMarketability 추정\n7\nData Gap\n8\nSKBP Strategic Fit\n왜 더 일관적인가?\n1\n동일한 Checklist\n모든 Asset에 같은 평가항목 적용\n2\n누락 최소화\n시간·피로와 무관하게 항목별 조사\n3\n근거 기반 Scoring\nScore와 Evidence를 함께 기록\n4\nAsset 간 비교\n동일 형식으로 결과를 구조화\n조사 누락 ↓\nScoring 일관성 ↑\nAsset 비교 가능성 ↑\nSK Biopharmaceuticals  |  Open Innovation Center\n4\n\n[SLIDE 5]\nAI PIPELINE FINDER  |  04\n대외비\n조사 결과를 한눈에 보고, 질문하고, 전체 Asset과 비교합니다\n평가 데이터가 쌓일수록 Knowledge Wiki가 확장되고, 더 많은 검색·비교·분석이 가능\nPIPELINE DASHBOARD\n…\n개별 Asset Pipeline Chat\n개별 Full Scout Report에 즉시 질문\n“이 Asset의 가장 큰 개발 리스크와 추가로 확인해야 할 Data Gap은?”\nObsidian\nKnowledge\nLayer\nAsset · Target ·\nMoA · Company ·\nIndication 연결\n•\n전체 Asset Knowledge Wiki\n축적된 전체 Pipeline을 검색·선별·비교\n“PD Asset 중 SKBP가 우선 검토할 상위 2개를 선정하고, SKBP Fit·MoA Validity·경쟁력·Marketability·개발 리스크를 기준으로 비교해줘.”\n개별 Report Q&A   +   전체 Asset 검색   +   Asset vs. Asset 비교   +   축적 정보 기반 추가 분석\nSK Biopharmaceuticals  |  Open Innovation Center\n5\n\n[SLIDE 6]\nAI PIPELINE FINDER  |  05\n대외비\n반복 업무는 AI에게, 실무자는 의사결정에 집중합니다\n1,000개 이상의 Longlist Evaluation을 표준화·자동화하여, 조사보다 판단에 시간을 씁니다\nBEFORE\n→\n→\nX\n→\n→\nAsset List → 웹 검색 → Excel 정리 → 평가 → 재검색\n반복 작업에 많은 시간 소요\n담당자마다 조사 깊이·범위가 달라짐\nAI Pipeline Finder\nAFTER\nFast Triage로 관심 Pipeline 선별\nFull Scout로 동일 기준의 심층 조사 · Scoring\n✓\n완성된 Report를 검토하고 핵심 의사결정에 집중\nNEXT STEP\n1\nPeer Cross-check로\n평가 정확성 검증\n2\nGPT 모드별\n결과 일관성 점검\n3\nReport Cosmetics\n단순화\n4\nOpen Innovation Team\nDashboard 정보 축적\n✓\n자동화 가능한 조사 업무는 줄이고, 실무자의 전략적 판단은 더 깊게\nSK Biopharmaceuticals  |  Open Innovation Center\n6",
+              "quality": {
+                "sufficient": true,
+                "quality_score": 6,
+                "character_count": 2215,
+                "corrupted_character_ratio": 0.0,
+                "repeated_character_ratio": 0.0,
+                "text_unit_ratio": 1.0,
+                "text_units": 6,
+                "total_units": 6,
+                "keyword_hits": [
+                  "pd"
+                ],
+                "reasons": []
+              }
+            },
+            "parser": null,
+            "deepseek_analysis": {
+              "status": "completed",
+              "model": "deepseek/deepseek-v4-flash",
+              "structured_output_supported": true,
+              "structured_output_used": true,
+              "analyzed_at": "2026-08-03T12:15:20.368272+00:00",
+              "result": {
+                "target_indication": {
+                  "verdict": "unknown",
+                  "rationale": "The document does not mention any specific target indications such as Alzheimer's, Parkinson's, ALS, MS, Neuropathic Pain, or Epilepsy.",
+                  "evidence": []
+                },
+                "small_molecule": {
+                  "verdict": "unknown",
+                  "rationale": "The document does not specify whether the assets are small molecules or non-small molecules.",
+                  "evidence": []
+                },
+                "ind_enabling": {
+                  "verdict": "unknown",
+                  "rationale": "The document does not mention IND Enabling or any stage of regulatory filing.",
+                  "evidence": []
+                },
+                "in_vivo_efficacy": {
+                  "verdict": "unknown",
+                  "rationale": "The document does not describe any in vivo experiments or results.",
+                  "evidence": []
+                },
+                "in_vitro_efficacy": {
+                  "verdict": "unknown",
+                  "rationale": "The document does not describe any in vitro experiments or results.",
+                  "evidence": []
+                },
+                "admet_at_least_25": {
+                  "verdict": "unknown",
+                  "rationale": "The document does not mention ADMET values or any numeric ADMET data.",
+                  "evidence": []
+                },
+                "admet_completed_count": null,
+                "matched_indication": null,
+                "concise_summary": "The document describes an AI Pipeline Finder tool for standardizing and automating preclinical pipeline evaluation, but does not provide specific data on any particular asset."
+              },
+              "error": null
+            },
+            "viewer_conversion": {
+              "status": "converted",
+              "pdf_path": null,
+              "error": null
+            },
+            "processed_at": "2026-08-03T12:15:20.369769+00:00"
+          },
+          "processing_error": ""
+        },
+        {
+          "id": "db0b1f22c38343ac87cf7fa34cedc47c",
+          "filename": "AI_Pipeline_Finder2.pptx",
+          "stored_path": "/attachments/Shaperon_HY209_NuCerin_20260622/fe60a7e3d7f14aa8930e120a7fdce1b4_AI_Pipeline_Finder2.pptx",
+          "content_type": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          "size_bytes": 52784,
+          "uploaded_by": "정주원",
+          "uploaded_at": "2026-08-03T13:35:38.312831+00:00",
+          "processing_status": "completed",
+          "preview_pdf_path": "/attachments/Shaperon_HY209_NuCerin_20260622/converted/fe60a7e3d7f14aa8930e120a7fdce1b4_AI_Pipeline_Finder2.pdf",
+          "document_processing": {
+            "document_id": "7eaeef1afe08437bbc35f751b3010fd1",
+            "file_sha256": "0f41359ece689fafdbc52ac3a20e515907af203c9bcdb6934960f3cb1c4923f8",
+            "filename": "AI_Pipeline_Finder2.pptx",
+            "status": "completed",
+            "extraction": {
+              "method": "native_pptx_text",
+              "pages_or_slides": [
+                {
+                  "number": 1,
+                  "text": "AI PIPELINE FINDER\n대외비\n반복 조사는 AI에게,\n전략적 판단은 실무자에게\n1,000개 Preclinical Pipeline Evaluation의 표준화·자동화\n1\nFAST TRIAGE\n2\nFULL SCOUT\nDECISION-READY\nREPORT\nSK Biopharmaceuticals  |  Open Innovation Center"
+                },
+                {
+                  "number": 2,
+                  "text": "AI PIPELINE FINDER  |  01\n대외비\n1,000개 Pipeline, 모두 사람이 하나씩 조사하고 있었습니다\n전문가의 판단보다, LLM이 대신할 수 있는 조사와 정리에 더 많은 시간이 쓰이고 있었음\n기존 Longlist Evaluation\nAsset List\n→\n웹 검색\n→\nExcel 정리\n→\n평가\n→\n재검색\n회사 홈페이지·논문·학회자료\n1\nAsset이 많아질수록 조사 품질의 편차가 커짐\n담당자별 조사 범위와 깊이가 달라질 수 있음\n모든 Pipeline을 충분히 검토하기 어려움\n2\n전문가 시간이 자동화 가능한 업무에 소모됨\n정보 탐색·추출·구조화는 LLM으로 자동화 가능\n반복 조사와 Excel 정리로 야근이 빈번하게 발생\n핵심 문제  |  느린 조사 · 평가 편차 · 충분한 심층검토의 어려움\nSK Biopharmaceuticals  |  Open Innovation Center\n2"
+                },
+                {
+                  "number": 3,
+                  "text": "AI PIPELINE FINDER  |  02\n대외비\n관심 Asset을 먼저 선별하고, 필요한 Asset만 심층조사합니다\nLonglist Evaluation을 Fast Triage → Full Scout의 2단계 Workflow로 자동화\nPIPELINE\nLONGLIST\n1,000+ Assets\n→\n1\nFAST TRIAGE\n최대 20개 일괄 평가\nSELECT · REJECT · N/A\n→\n✓\nSELECT\n심층검토 대상 선별\n→\n2\nFULL SCOUT\n개별 심층조사 · Scoring\nScore · Evidence · Rationale\n→\n✓\nPASS\n–\nREVIEW\n✕\nFAIL\n분류\n기준\nFAST TRIAGE\nSelect / Reject / N/A\n심층조사 대상 선별\nFULL SCOUT\nPass / Review / Fail\n종합 Score Threshold에 따라 분류\n→\nDecision-ready\nReport\nSK Biopharmaceuticals  |  Open Innovation Center\n3"
+                },
+                {
+                  "number": 4,
+                  "text": "AI PIPELINE FINDER  |  03\n대외비\nAI가 실무진이 설정한 기준으로 빠짐없이 조사하고 Scoring합니다\nAI가 임의로 판단하는 것이 아니라, 동일한 Rubric을 모든 Asset에 반복 적용\n공통 Scoring Rubric\n1\nTarget / MoA Validity\n2\nModality 차별성\n3\nPreclinical Evidence\n4\nCompetitor Landscape\n5\nSafety / 개발 리스크\n6\nMarketability 추정\n7\nData Maturity\n8\nSKBP Strategic Fit\n왜 더 일관적인가?\n1\n동일한 Checklist\n모든 Asset에 같은 평가항목 적용\n2\n일부 정보 누락 최소화\n시간·피로와 무관하게 항목별 조사\n3\n근거 기반 Scoring\nScore와 Evidence를 함께 기록\n4\nAsset 간 비교\n동일 형식으로 결과를 구조화\n조사 누락 ↓\nScoring 일관성 ↑\nAsset 비교 가능성 ↑\nSK Biopharmaceuticals  |  Open Innovation Center\n4"
+                },
+                {
+                  "number": 5,
+                  "text": "AI PIPELINE FINDER  |  04\n대외비\n조사 결과를 한눈에 보고, 질문하고, 전체 Asset과 비교합니다\n평가 데이터가 쌓일수록 Knowledge Wiki가 확장되고, 더 많은 검색·비교·분석이 가능\nPIPELINE DASHBOARD\n1\n개별 Asset Pipeline Chat\n개별 Full Scout Report에 즉시 질문\n“이 Asset의 가장 큰 개발 리스크와 추가로 \u000b확인해야 할 data는?”\nObsidian\nKnowledge\nLayer\nAsset · Target ·\nMoA · Company ·\nIndication 연결\n2\n전체 Asset Knowledge Wiki\n축적된 전체 Pipeline을 검색·선별·비교\n“PD Asset 중 SKBP가 우선 검토할 상위 2개를 선정하고, Marketability·개발 리스크를 기준으로 비교해줘”\n개별 Report Q&A   +   전체 Asset 검색   +   Asset vs. Asset 비교   +   축적 정보 기반 추가 분석\nSK Biopharmaceuticals  |  Open Innovation Center\n5"
+                },
+                {
+                  "number": 6,
+                  "text": "AI PIPELINE FINDER  |  05\n대외비\n반복 업무는 AI에게, 실무자는 의사결정에 집중합니다\n1,000개 이상의 Longlist Evaluation을 표준화·자동화하여, 조사보다 판단에 시간을 씁니다\nBEFORE\n→\n→\nX\n→\n→\nAsset List → 웹 검색 → Excel 정리 → 평가 → 재검색\n반복 작업에 많은 시간 소요\n담당자마다 조사 깊이·범위가 달라짐\nAI Pipeline Finder\nAFTER\nFast Triage로 관심 Pipeline 선별\nFull Scout로 동일 기준의 심층 조사 · Scoring\n✓\n완성된 Report를 검토하고 핵심 의사결정에 집중\nNEXT STEP\n1\nPeer Cross-check로\n평가 정확성 검증\n2\nGPT 모드별\n결과 일관성 점검\n3\nReport Cosmetics\n단순화\n4\nOpen Innovation Team\nDashboard 정보 축적\n✓\n자동화 가능한 조사 업무는 줄이고, 실무자의 전략적 판단은 더 깊게\nSK Biopharmaceuticals  |  Open Innovation Center\n6"
+                },
+                {
+                  "number": 7,
+                  "text": "6. 향후계획\n대외비\n검증-개선-축적의 반복으로 평가 품질을 높입니다\n✓\n1\n실무진\nPeer Cross-check\n실제 실무 판단과\nAI 평가 결과 비교\n2\nScoring Rubric\n개선\n평가항목·점수 기준 및\nPass·Review·Fail Threshold 정교화\n3\nGPT 결과\n일관성 점검\nGPT 실행 모드별\n결과 편차와 안정성 검증\n4\nReport 형식\n단순화\n핵심 결론과 판단 근거 중심으로\n가독성 개선\n5\nOI Dashboard\n정보 축적\nPipeline 평가 데이터를 지속 축적해\nKnowledge Wiki 확장\n“\n”\n실무진 검증과 Rubric 개선을 반복하며 평가 품질을 높이고,\n축적된 결과를 OI의 Pipeline Knowledge로 발전시키겠습니다.\nSK Biopharmaceuticals  |  Open Innovation Center\n7"
+                },
+                {
+                  "number": 8,
+                  "text": "3. 실무진 역할의 변화\n대외비\n실무진은 더 전략적인 판단에 집중할 수 있게 됩니다\nAI\n정보 탐색\n자동화\n웹 검색, 논문/학회자료 탐색,\nFact 정리 등을 AI가 수행\n표준화된 평가\n초안 생성\nScore 기반 평가 및 근거 정리를\nAI가 초안으로 생성\n반복 문의 및\n추가 확인\n개별 Agent Chat을 통해\n추가 질문 및 상세 정보 확인\n전체 비교 및\n인사이트 도출\n다수 Asset 간 비교 분석 및\n주요 인사이트 도출\n전략적 판단 및\n최종 의사결정\nPass/Review/Fail 최종 판단과\n우선순위 결정은 실무진이 수행\n“\n”\nAI가 수많은 정보를 빠르게 조사하고 정리해주어,\n조사에 쓰는 시간이 크게 줄었습니다.\n일관된 기준으로 평가 초안을 제공해주어,\n여러 Asset을 공정하게 비교할 수 있었습니다.\n반복적인 정리와 문의가 줄어들어,\n핵심 판단과 전략 수립에 더 집중할 수 있습니다.\nSK Biopharmaceuticals  |  Open Innovation Center\n8"
+                }
+              ],
+              "page_or_slide_count": 8,
+              "parsed_text": "[SLIDE 1]\nAI PIPELINE FINDER\n대외비\n반복 조사는 AI에게,\n전략적 판단은 실무자에게\n1,000개 Preclinical Pipeline Evaluation의 표준화·자동화\n1\nFAST TRIAGE\n2\nFULL SCOUT\nDECISION-READY\nREPORT\nSK Biopharmaceuticals  |  Open Innovation Center\n\n[SLIDE 2]\nAI PIPELINE FINDER  |  01\n대외비\n1,000개 Pipeline, 모두 사람이 하나씩 조사하고 있었습니다\n전문가의 판단보다, LLM이 대신할 수 있는 조사와 정리에 더 많은 시간이 쓰이고 있었음\n기존 Longlist Evaluation\nAsset List\n→\n웹 검색\n→\nExcel 정리\n→\n평가\n→\n재검색\n회사 홈페이지·논문·학회자료\n1\nAsset이 많아질수록 조사 품질의 편차가 커짐\n담당자별 조사 범위와 깊이가 달라질 수 있음\n모든 Pipeline을 충분히 검토하기 어려움\n2\n전문가 시간이 자동화 가능한 업무에 소모됨\n정보 탐색·추출·구조화는 LLM으로 자동화 가능\n반복 조사와 Excel 정리로 야근이 빈번하게 발생\n핵심 문제  |  느린 조사 · 평가 편차 · 충분한 심층검토의 어려움\nSK Biopharmaceuticals  |  Open Innovation Center\n2\n\n[SLIDE 3]\nAI PIPELINE FINDER  |  02\n대외비\n관심 Asset을 먼저 선별하고, 필요한 Asset만 심층조사합니다\nLonglist Evaluation을 Fast Triage → Full Scout의 2단계 Workflow로 자동화\nPIPELINE\nLONGLIST\n1,000+ Assets\n→\n1\nFAST TRIAGE\n최대 20개 일괄 평가\nSELECT · REJECT · N/A\n→\n✓\nSELECT\n심층검토 대상 선별\n→\n2\nFULL SCOUT\n개별 심층조사 · Scoring\nScore · Evidence · Rationale\n→\n✓\nPASS\n–\nREVIEW\n✕\nFAIL\n분류\n기준\nFAST TRIAGE\nSelect / Reject / N/A\n심층조사 대상 선별\nFULL SCOUT\nPass / Review / Fail\n종합 Score Threshold에 따라 분류\n→\nDecision-ready\nReport\nSK Biopharmaceuticals  |  Open Innovation Center\n3\n\n[SLIDE 4]\nAI PIPELINE FINDER  |  03\n대외비\nAI가 실무진이 설정한 기준으로 빠짐없이 조사하고 Scoring합니다\nAI가 임의로 판단하는 것이 아니라, 동일한 Rubric을 모든 Asset에 반복 적용\n공통 Scoring Rubric\n1\nTarget / MoA Validity\n2\nModality 차별성\n3\nPreclinical Evidence\n4\nCompetitor Landscape\n5\nSafety / 개발 리스크\n6\nMarketability 추정\n7\nData Maturity\n8\nSKBP Strategic Fit\n왜 더 일관적인가?\n1\n동일한 Checklist\n모든 Asset에 같은 평가항목 적용\n2\n일부 정보 누락 최소화\n시간·피로와 무관하게 항목별 조사\n3\n근거 기반 Scoring\nScore와 Evidence를 함께 기록\n4\nAsset 간 비교\n동일 형식으로 결과를 구조화\n조사 누락 ↓\nScoring 일관성 ↑\nAsset 비교 가능성 ↑\nSK Biopharmaceuticals  |  Open Innovation Center\n4\n\n[SLIDE 5]\nAI PIPELINE FINDER  |  04\n대외비\n조사 결과를 한눈에 보고, 질문하고, 전체 Asset과 비교합니다\n평가 데이터가 쌓일수록 Knowledge Wiki가 확장되고, 더 많은 검색·비교·분석이 가능\nPIPELINE DASHBOARD\n1\n개별 Asset Pipeline Chat\n개별 Full Scout Report에 즉시 질문\n“이 Asset의 가장 큰 개발 리스크와 추가로 \u000b확인해야 할 data는?”\nObsidian\nKnowledge\nLayer\nAsset · Target ·\nMoA · Company ·\nIndication 연결\n2\n전체 Asset Knowledge Wiki\n축적된 전체 Pipeline을 검색·선별·비교\n“PD Asset 중 SKBP가 우선 검토할 상위 2개를 선정하고, Marketability·개발 리스크를 기준으로 비교해줘”\n개별 Report Q&A   +   전체 Asset 검색   +   Asset vs. Asset 비교   +   축적 정보 기반 추가 분석\nSK Biopharmaceuticals  |  Open Innovation Center\n5\n\n[SLIDE 6]\nAI PIPELINE FINDER  |  05\n대외비\n반복 업무는 AI에게, 실무자는 의사결정에 집중합니다\n1,000개 이상의 Longlist Evaluation을 표준화·자동화하여, 조사보다 판단에 시간을 씁니다\nBEFORE\n→\n→\nX\n→\n→\nAsset List → 웹 검색 → Excel 정리 → 평가 → 재검색\n반복 작업에 많은 시간 소요\n담당자마다 조사 깊이·범위가 달라짐\nAI Pipeline Finder\nAFTER\nFast Triage로 관심 Pipeline 선별\nFull Scout로 동일 기준의 심층 조사 · Scoring\n✓\n완성된 Report를 검토하고 핵심 의사결정에 집중\nNEXT STEP\n1\nPeer Cross-check로\n평가 정확성 검증\n2\nGPT 모드별\n결과 일관성 점검\n3\nReport Cosmetics\n단순화\n4\nOpen Innovation Team\nDashboard 정보 축적\n✓\n자동화 가능한 조사 업무는 줄이고, 실무자의 전략적 판단은 더 깊게\nSK Biopharmaceuticals  |  Open Innovation Center\n6\n\n[SLIDE 7]\n6. 향후계획\n대외비\n검증-개선-축적의 반복으로 평가 품질을 높입니다\n✓\n1\n실무진\nPeer Cross-check\n실제 실무 판단과\nAI 평가 결과 비교\n2\nScoring Rubric\n개선\n평가항목·점수 기준 및\nPass·Review·Fail Threshold 정교화\n3\nGPT 결과\n일관성 점검\nGPT 실행 모드별\n결과 편차와 안정성 검증\n4\nReport 형식\n단순화\n핵심 결론과 판단 근거 중심으로\n가독성 개선\n5\nOI Dashboard\n정보 축적\nPipeline 평가 데이터를 지속 축적해\nKnowledge Wiki 확장\n“\n”\n실무진 검증과 Rubric 개선을 반복하며 평가 품질을 높이고,\n축적된 결과를 OI의 Pipeline Knowledge로 발전시키겠습니다.\nSK Biopharmaceuticals  |  Open Innovation Center\n7\n\n[SLIDE 8]\n3. 실무진 역할의 변화\n대외비\n실무진은 더 전략적인 판단에 집중할 수 있게 됩니다\nAI\n정보 탐색\n자동화\n웹 검색, 논문/학회자료 탐색,\nFact 정리 등을 AI가 수행\n표준화된 평가\n초안 생성\nScore 기반 평가 및 근거 정리를\nAI가 초안으로 생성\n반복 문의 및\n추가 확인\n개별 Agent Chat을 통해\n추가 질문 및 상세 정보 확인\n전체 비교 및\n인사이트 도출\n다수 Asset 간 비교 분석 및\n주요 인사이트 도출\n전략적 판단 및\n최종 의사결정\nPass/Review/Fail 최종 판단과\n우선순위 결정은 실무진이 수행\n“\n”\nAI가 수많은 정보를 빠르게 조사하고 정리해주어,\n조사에 쓰는 시간이 크게 줄었습니다.\n일관된 기준으로 평가 초안을 제공해주어,\n여러 Asset을 공정하게 비교할 수 있었습니다.\n반복적인 정리와 문의가 줄어들어,\n핵심 판단과 전략 수립에 더 집중할 수 있습니다.\nSK Biopharmaceuticals  |  Open Innovation Center\n8",
+              "quality": {
+                "sufficient": true,
+                "quality_score": 6,
+                "character_count": 2906,
+                "corrupted_character_ratio": 0.0,
+                "repeated_character_ratio": 0.0,
+                "text_unit_ratio": 1.0,
+                "text_units": 8,
+                "total_units": 8,
+                "keyword_hits": [
+                  "pd",
+                  "독성"
+                ],
+                "reasons": []
+              }
+            },
+            "parser": null,
+            "deepseek_analysis": {
+              "status": "completed",
+              "model": "deepseek/deepseek-v4-flash",
+              "structured_output_supported": true,
+              "structured_output_used": true,
+              "analyzed_at": "2026-08-03T13:36:26.390983+00:00",
+              "result": {
+                "target_indication": {
+                  "verdict": "unknown",
+                  "rationale": "The document describes a pipeline evaluation tool but does not mention any specific target indication (e.g., Alzheimer's, Parkinson's).",
+                  "evidence": [
+                    {
+                      "page_or_slide": 1,
+                      "location_status": "located",
+                      "text": "1,000개 Preclinical Pipeline Evaluation의 표준화·자동화"
+                    }
+                  ]
+                },
+                "small_molecule": {
+                  "verdict": "unknown",
+                  "rationale": "No mention of small molecule or non-small molecule modality.",
+                  "evidence": [
+                    {
+                      "page_or_slide": 1,
+                      "location_status": "located",
+                      "text": "1,000개 Preclinical Pipeline Evaluation의 표준화·자동화"
+                    }
+                  ]
+                },
+                "ind_enabling": {
+                  "verdict": "unknown",
+                  "rationale": "No mention of IND enabling stage.",
+                  "evidence": [
+                    {
+                      "page_or_slide": 1,
+                      "location_status": "located",
+                      "text": "1,000개 Preclinical Pipeline Evaluation의 표준화·자동화"
+                    }
+                  ]
+                },
+                "in_vivo_efficacy": {
+                  "verdict": "unknown",
+                  "rationale": "No in vivo efficacy results are reported.",
+                  "evidence": [
+                    {
+                      "page_or_slide": 1,
+                      "location_status": "located",
+                      "text": "1,000개 Preclinical Pipeline Evaluation의 표준화·자동화"
+                    }
+                  ]
+                },
+                "in_vitro_efficacy": {
+                  "verdict": "unknown",
+                  "rationale": "No in vitro efficacy results are reported.",
+                  "evidence": [
+                    {
+                      "page_or_slide": 1,
+                      "location_status": "located",
+                      "text": "1,000개 Preclinical Pipeline Evaluation의 표준화·자동화"
+                    }
+                  ]
+                },
+                "admet_at_least_25": {
+                  "verdict": "unknown",
+                  "rationale": "No ADMET data or numeric values are provided.",
+                  "evidence": [
+                    {
+                      "page_or_slide": 1,
+                      "location_status": "located",
+                      "text": "1,000개 Preclinical Pipeline Evaluation의 표준화·자동화"
+                    }
+                  ]
+                },
+                "admet_completed_count": null,
+                "matched_indication": null,
+                "concise_summary": "The document is a process overview for an AI pipeline evaluation tool and contains no specific asset-level data required for Filter 3 classification."
+              },
+              "error": null
+            },
+            "viewer_conversion": {
+              "status": "converted",
+              "pdf_path": null,
+              "error": null
+            },
+            "processed_at": "2026-08-03T13:36:26.392332+00:00"
+          },
+          "processing_error": ""
+        }
+      ]
     },
     "input": {
       "company_input": "Shaperon Inc.",
@@ -4430,7 +5525,7 @@
       "notes": "HY209는 Shaperon의 GPCR19/TGR5 agonist 계열 물질로 확인되며, CNS 관점에서는 NuCerin Alzheimer’s disease 프로그램을 중심으로 평가했다."
     },
     "source_report": {
-      "raw_markdown": "# Shaperon Pipeline Scout Report: **HY209 / NuCerin**\n\n본 보고서는 SKBP Pipeline Finder v3.0용으로 작성되었으며, 사용자 제공 SKBP v3.0 템플릿을 기준으로 구성했다. :contentReference[oaicite:0]{index=0}  \n모든 핵심 판단에는 auditability를 위해 URL을 포함했다. HY209는 Shaperon의 GPCR19/TGR5 agonist 계열 물질이며, 본 보고서는 CNS 관점에서 **NuCerin / Alzheimer’s disease** 프로그램을 중심으로 평가한다. NuGel, NuSepin, NuPulin 등 다른 HY209/GPCR19 프로그램은 확장성 근거로만 반영했다.\n\n> **기준 업데이트 (v3.1):** 이 원문은 최초 작성 기준을 보존하되, 2026-06-23 Detail AI Agent 검토를 통해 **SKBP Pipeline Finder v3.1 기준으로 재평가 및 업데이트**되었습니다. 최신 판단은 JSON fields와 아래 Revision Note를 기준으로 봅니다.\n\n---\n\n## 1) Company Profile\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Shaperon Inc. / 샤페론 | [1], [2], [3] |\n| Legal name / aliases | Shaperon Inc.; 주식회사 샤페론; KRX 378800; HY209 aliases: HY-209, taurodeoxycholic acid / sodium taurodeoxycholate, TDCA | [3], [22], [23] |\n| Country | Republic of Korea | [1], [3] |\n| Headquarters | 서울시 강남구 자곡로 174-10, 강남에이스타워 G9 218호 & 606호 | [1], [2] |\n| Website | https://shaperon.com/en/main/main.html | [1] |\n| Company type / stage | KOSDAQ-listed clinical-stage biotech; inflammasome inhibitor and nanobody platform company | [3], [4], [5] |\n| Focus areas | Inflammasome inhibitors, GPCR19-P2X7-NLRP3 modulation, neuroinflammation, dermatology, systemic inflammation, fibrosis, nanobody / NanoMab | [1], [2], [4], [19] |\n| Platform summary | GPCR19 agonist / GPCR19-P2X7 modulation platform designed to suppress inflammasome priming and activation phases and reduce IL-1β, IL-18, IL-6, TNF-α signaling; also has NanoMab and AIDEN AI platform | [1], [2], [19] |\n| Financing / partnership signals | Public company; BIO profile identifies Shaperon as clinical-stage biotech; Bridge Biotherapeutics licensed GPCR19 agonist BBT-209 for IPF in a ₩30B headline-value deal; broader partnership/news validation exists but NuCerin commercial rights need direct diligence | [3], [4], [21] |\n| Lead pipeline summary | NuGel: atopic dermatitis, Korea Phase IIa completed and U.S. Phase IIb Part 1 completed; NuCerin: Alzheimer’s disease, Korea Phase I Part A completed and Part B ongoing per Shaperon; NuSepin: systemic inflammation/COVID/CVA; NuPulin: IPF | [1], [2] |\n\n---\n\n## 2) Pipeline Snapshot\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Shaperon Inc. | [1], [2], [3] |\n| Lead asset | HY209 / NuCerin | [1], [2], [8], [22] |\n| Target | GPCR19 / TGR5; downstream regulation of P2X7R-mediated NLRP3 inflammasome activation in microglia | [5], [19], [22] |\n| Theme / Cluster | Theme: **Neuroimmune** / Cluster: **Cytokine 신경조절** | Internal SKBP mapping + [5], [6], [19] |\n| MoA | TDCA/HY209 activates GPCR19/TGR5, modulates GPCR19-P2X7 interaction, suppresses P2X7R-mediated Ca²⁺ mobilization, NLRP3 inflammasome oligomerization and IL-1β/IL-18 production; in AD mouse models, reported to reduce Aβ plaques, microgliosis, neuronal loss and improve memory | [5], [20] |\n| Modality / Platform | Oral small molecule GPCR19/TGR5 agonist / inflammasome modulator; Shaperon describes NuCerin as oral GPCR19-targeting therapy | [1], [2], [5], [8] |\n| Indication | Alzheimer’s disease, especially early/mild-to-moderate AD positioning; exact clinical label not established | [1], [2], [8], [15] |\n| Stage | AD/NuCerin: Korea Phase I Part A completed and Part B ongoing per Shaperon official site. NCT06533878 is listed as HY209 Phase I healthy-volunteer trial; CenterWatch lists sponsor as Kukjeon Pharmaceutical, creating ownership/operational ambiguity requiring diligence. | [1], [2], [8], [9] |\n| Key data | 2022 Frontiers paper: TDCA inhibited microglial NLRP3 activation and improved AD mouse model endpoints. 2024 Alzheimer’s & Dementia abstract: oral NuCerin 30 mg/kg b.i.d. for 12 weeks in 5xFAD mice improved MWM/NOR cognition, reduced amyloid plaque deposition, preserved NeuN-positive neurons, and identified a serum biomarker candidate. | [5], [20] |\n\nAllowed Theme values:\n- E/I Balance\n- Neuroimmune\n- No Theme\n\nAllowed clusters:\n- E/I Balance: Ion Channel, Inhibitory Tone 강화, Synaptic Transmission, Chloride Homeostasis, Network Modulation\n- Neuroimmune: CNS 손상 면역반응, 교세포 향상성, Cytokine 신경조절, 손상/질환 면역조절, 말초 면역기관 연결\n\n---\n\n## 3) Scorecard Summary\n\n| Criterion | Score | One-line judgment | Evidence used |\n|---|---:|---|---|\n| Target Relevance | 3 / 3 | GPCR19-P2X7-NLRP3 axis is directly aligned with AD neuroinflammation and SKBP Neuroimmune / Cytokine 신경조절 cluster. | [5], [6], [19] |\n| Competitive Landscape | 2 / 3 | Same-MoA GPCR19 AD competitors appear sparse, but AD itself is highly competitive due to approved anti-Aβ mAbs and adjacent oral NLRP3 neuroinflammation assets. | [11], [12], [18], [24], [25], [26] |\n| MoA Validity | 2 / 3 | Strong preclinical mechanistic package exists, but human AD efficacy and CNS target engagement are not yet visible. | [5], [20], [8] |\n| Platform Attractiveness | 2 / 3 | Oral small molecule GPCR19 platform fits SKBP modality preference and has multi-indication human validation signals, but CNS exposure/biomarker differentiation remains insufficiently public. | [1], [2], [10], [19] |\n| Expansion Potential | 3 / 3 | GPCR19 biology is reused across AD, atopic dermatitis, SIRS/COVID/CVA, IPF, DFU and alopecia programs, supporting broad platform expansion. | [1], [2], [21], [24] |\n| Data Maturity | 2 / 3 | In vitro/in vivo AD evidence and Phase I safety/PK signals exist, but no patient efficacy, CSF/brain target engagement or Phase II AD data are public. | [5], [8], [10], [20] |\n| Marketability | 2 / 3 | A. TAP ≈ 3.25M; B. Unrisked Peak Sales ≈ USD 2,959M; C. Obtainable Peak Sales ≈ USD 1,562M after competition/pricing haircuts. | [1], [14], [15], [16], [17] |\n| **Total** | **16 / 21** | Strong watchlist asset; shortlist depends on human PK/CSF biomarker and rights clarity. |  |\n\n---\n\n## 4) Criterion Detail Pages\n\n### 4.1 Target Relevance\nScore: **3 / 3**  \nMain line: **GPCR19/TGR5-P2X7R-NLRP3 axis maps tightly to AD neuroinflammation and SKBP Neuroimmune / Cytokine 신경조절 cluster.**\n\nWhat was checked:\n- Target identity: GPCR19/TGR5 agonist; HY209/TDCA.\n- Disease/biology relevance: microglial P2X7R-mediated NLRP3 inflammasome activation by Aβ.\n- SKBP Theme / Cluster fit: Neuroimmune / Cytokine 신경조절.\n- General neurodegeneration / neuroinflammation / epilepsy relevance: strongest for AD/neuroinflammation; broader NLRP3 relevance across PD/AD/epilepsy is supported by competitor pipelines but HY209’s direct public data are AD-focused.\n\nEvidence trail:\n- Frontiers 2022 paper states that Aβ and/or ATP activate NLRP3 inflammasome via P2X7R in microglia and that TDCA, a GPCR19 ligand, suppressed priming/activation phases and improved AD mouse endpoints. [5]\n- Shaperon describes NuCerin as an oral therapy targeting both Aβ and neuroinflammation, with the development rationale positioned against antibody limitations. [1], [2]\n- Hudson/Shaperon platform description states GPCR19-P2X7 modulation suppresses broad inflammatory cytokines including IL-1β, IL-18, IL-6 and TNF-α. [19]\n- AD/NLRP3 literature supports NLRP3 inflammasome as a relevant pathological node in AD. [6]\n\nInvestigation note:\n- 3점으로 판단한 이유는 target이 단순히 “염증 관련”이 아니라, **Aβ → microglia → P2X7R/NLRP3 → IL-1β/IL-18 → neuroinflammation** 흐름에 직접 연결되어 있으며 SKBP Neuroimmune theme에 정합성이 높기 때문이다.\n- 단, TGR5 biology는 CNS에서 context-dependent할 수 있다는 문헌도 있어, cell-type specific effect와 chronic activation risk는 추가 검증이 필요하다. [27]\n\nUncertain points:\n- Human AD brain/CSF에서 GPCR19 engagement가 실제로 확인되는지 불명확.\n- GPCR19/TGR5 activation이 neuron, astrocyte, microglia에서 동일하게 유리한지 불명확.\n- HY209 oral dosing 후 CNS exposure 및 target occupancy 자료가 공개적으로 충분하지 않음.\n\n### 4.2 Competitive Landscape\nScore: **2 / 3**  \nMain line: **AD 시장은 매우 혼잡하지만, true same-MoA GPCR19 AD front-runner는 명확하지 않아 차별성은 있다. 다만 anti-Aβ mAb와 oral NLRP3 계열이 주요 압박 요인이다.**\n\nWhat was checked:\n- Same disease competitors: approved anti-Aβ therapies and early AD DMTs.\n- Same target competitors: direct GPCR19/TGR5 AD clinical competitor는 확인 제한적.\n- Same or similar MoA competitors: NLRP3 inflammasome inhibitors in neurodegeneration.\n- Front runner count: approved anti-Aβ mAbs 2개 이상; NLRP3 oral CNS assets multiple.\n- Approved / Phase 3 / clinical / preclinical status.\n\nCompetitor table:\n\n| Competitor | Company | Modality | Target / MoA | Stage | Similarity level | Why it matters | Source |\n|---|---|---|---|---|---|---|---|\n| Leqembi / lecanemab | Eisai / Biogen / BioArctic | mAb | Anti-Aβ protofibril antibody | FDA traditional approval for early AD | Low MoA / High disease | First major approved disease-modifying benchmark; IV, ARIA risk, high cost create oral non-amyloid opportunity but also establishes efficacy bar. | [11], [16] |\n| Kisunla / donanemab | Eli Lilly | mAb | Anti-Aβ plaque antibody | FDA approved; EMA also reviewed/authorized in selected early AD population | Low MoA / High disease | Second approved anti-Aβ DMT; reinforces amyloid biomarker and early AD clinical standard; ARIA and infusion burden support oral alternative positioning. | [12], [13], [17] |\n| NT-0796 | NodThera | Oral small molecule | Brain-penetrant NLRP3 inhibitor | Phase Ib/IIa PD biomarker data; Phase II planning | Medium | Similar neuroinflammation / inflammasome biology; not same upstream target but competes for oral CNS inflammasome thesis. | [24], [25] |\n| VTX3232 | Ventyx Biosciences | Oral small molecule | NLRP3 inhibitor | Phase 2a PD / NCT06556173 | Medium | CNS inflammasome clinical competitor; target engagement and clinical biomarker package could set the bar for NuCerin. | [26] |\n| VENT-02 | Ventus Therapeutics | Oral small molecule | Brain-penetrant NLRP3 inhibitor | Phase 2a PD initiated; later status appears uncertain/possibly terminated in secondary sources | Medium | Similar CNS inflammasome positioning; demonstrates active industry pursuit of oral CNS NLRP3 modulation. | [18], [28] |\n| Dapansutrile / OLT1177 | Olatec | Oral small molecule | Selective NLRP3 inhibitor | Human inflammatory disease clinical data; AD evidence mainly preclinical/review-level | Medium-Low | Similar downstream inflammasome node, but not GPCR19 and not clearly active AD clinical competitor. | [6], [29] |\n\nInvestigation note:\n- 경쟁 분석은 “같은 질환 AD”와 “같은 biology neuroinflammation/NLRP3”를 분리해서 봐야 한다.\n- Leqembi/Kisunla는 같은 MoA는 아니지만 AD DMT 시장의 clinical efficacy, biomarker, reimbursement bar를 만든다.\n- NT-0796/VTX3232/VENT-02/OLT1177은 AD 직접 경쟁보다는 “oral CNS inflammasome” thesis의 adjacent competitors이다.\n- 2점인 이유: same-MoA direct crowding은 낮지만, AD 시장의 front-runner와 adjacent NLRP3 경쟁이 모두 존재한다.\n\nUncertain points:\n- GPCR19/TGR5-specific AD competitor landscape는 patent/database 기반 추가 검색 필요.\n- VENT-02의 최신 임상 상태는 공식 trial registry 및 회사 업데이트로 재확인 필요.\n- NuCerin의 expected entry order는 HY209 Phase I 완료 후 AD Phase II 진입 여부에 따라 크게 달라짐.\n\n### 4.3 MoA Validity\nScore: **2 / 3**  \nMain line: **Mechanistic validation은 뚜렷하지만, 아직 human AD PoC가 없어 3점은 아니다.**\n\nWhat was checked:\n- Journal publication / PMID / DOI.\n- Mechanistic consistency.\n- Functional readout.\n- Disease linkage.\n- Safety-relevant signal.\n\nEvidence trail:\n- Frontiers Immunology 2022: TDCA/HY209는 GPCR19 agonist로 사용되었고, Aβ/ATP 자극 microglia에서 IL-1β secretion 억제 IC50 490.6 nM, P2X7R expression 및 Ca²⁺ mobilization 억제, NLRP3 activation 억제를 보였다. [5]\n- 같은 논문에서 TDCA는 5xFAD mouse에서 Aβ plaque, microgliosis, neuronal loss를 줄이고 memory function을 개선했다고 보고했다. [5]\n- 2024 Alzheimer’s & Dementia abstract는 oral NuCerin 30 mg/kg b.i.d. 12주 투여에서 MWM/NOR 개선, amyloid plaque 감소, NeuN-positive neuron preservation을 보고했다. [20]\n- TGR5 activation의 CNS 효과는 긍정/부정 문헌이 공존하므로 cell-type, disease stage, dose duration 검증이 필요하다. [27], [30]\n\nInvestigation note:\n- 2점 이상 조건인 publication/equivalent technical evidence는 충족한다.\n- 3점이 아닌 이유는 AD patient efficacy, CSF biomarker, target engagement, dose-response, chronic safety window가 아직 공개적으로 확인되지 않았기 때문이다.\n\nUncertain points:\n- oral HY209가 사람에서 충분한 brain/CSF exposure를 확보하는지.\n- GPCR19 agonism이 chronic AD setting에서 microglia에 선택적으로 작동하는지.\n- Aβ clearance와 neuroinflammation 억제 중 어느 축이 clinical benefit에 핵심인지.\n\n### 4.4 Platform Attractiveness\nScore: **2 / 3**  \nMain line: **Oral small molecule GPCR19 platform은 매력적이나, CNS-specific differentiation data는 아직 제한적이다.**\n\nWhat was checked:\n- Is the platform real and reproducible?\n- Is differentiation supported by data?\n- Does modality fit SKBP priorities?\n- Preferred modalities: small molecule, ASO, siRNA.\n- Secondary modalities: AOC, antibody, biologic.\n\nEvidence trail:\n- Shaperon은 GPCR19-targeting inflammasome inhibitor platform을 기반으로 NuGel, NuCerin, NuSepin, NuPulin 등 복수 파이프라인을 전개하고 있다. [1], [2]\n- Hudson/Shaperon platform page는 GPCR19-P2X7 modulation이 priming/activation phases를 동시에 조절한다고 설명한다. [19]\n- HY209 IV Phase I safety/PK publication은 sepsis/systemic inflammation indication에서 단회 정맥투여 안전성 및 dose proportional PK를 보고했다. [10]\n- NuGel의 atopic dermatitis clinical progress는 GPCR19 class의 human development experience를 뒷받침하지만, 이는 topical dermatology 프로그램이므로 CNS NuCerin에 직접 전이되는 근거는 제한적이다. [1], [2], [9]\n\nInvestigation note:\n- 2점 이상인 이유는 small molecule, oral 가능성, multi-indication use, human safety experience가 있기 때문이다.\n- 3점이 아닌 이유는 CNS drug-like profile, BBB/CSF penetration, human target engagement, biomarker differentiation이 공개 자료에서 아직 충분하지 않기 때문이다.\n\nUncertain points:\n- HY209 oral tablet의 human PK, food effect, brain penetration, CSF exposure.\n- GPCR19 agonist의 long-term tolerability and off-target bile-acid receptor effects.\n- Kukjeon Pharmaceutical이 sponsor로 표시되는 Phase I trial의 rights/ownership 구조.\n\n### 4.5 Expansion Potential\nScore: **3 / 3**  \nMain line: **같은 GPCR19/inflammasome biology가 AD 외 다수 적응증으로 확장되어 있어 platform expansion 근거가 강하다.**\n\nWhat was checked:\n- Expansion beyond main indication.\n- Same biology/platform reuse.\n- Adjacent indications.\n- Multiple assets from same platform.\n\nEvidence trail:\n- Shaperon pipeline은 GPCR19 agonist 기반으로 NuCerin AD, NuGel atopic dermatitis, NuSepin COVID/SIRS/CVA, NuPulin IPF, NuDifin diabetic foot ulcer, NuAreatin alopecia areata 등 다수 indication을 제시한다. [1], [2]\n- NuSepin은 systemic inflammation, COVID-19, SIRS, ischemic stroke 등으로 확장 가능성이 언급된다. [1], [2]\n- Bridge Biotherapeutics와의 IPF GPCR19 agonist BBT-209 라이선스 사례는 non-CNS fibrosis expansion 가능성을 보여준다. [21]\n- TGR5/GPCR19 neuroinflammation biology는 stroke, PD, AD 등 CNS inflammation axis와 연결된다. [7], [24], [25], [26]\n\nInvestigation note:\n- Adjacent indication이 단순히 AD의 다른 표현이 아니라 dermatology, systemic inflammation, fibrosis, wound healing, stroke 등으로 넓게 확장되어 있으므로 3점으로 판단했다.\n- 다만 이는 “platform breadth” 점수이고, NuCerin 단일 프로그램의 임상 성공 가능성을 의미하지는 않는다.\n\nUncertain points:\n- 각 indication별 compound가 동일 HY209인지, salt/formulation/route 차이가 있는지 확인 필요.\n- Shaperon vs partner별 지역권/적응증권리 분할 여부 확인 필요.\n\n### 4.6 Data Maturity\nScore: **2 / 3**  \nMain line: **전임상 data package는 비교적 탄탄하지만, AD 환자 human PoC는 아직 없다.**\n\nWhat was checked:\n- In vitro data.\n- In vivo data.\n- Quantitative result.\n- Reproducibility.\n- IND-enabling / GLP tox / PK/PD / CMC / human data availability.\n\nEvidence trail:\n- In vitro: microglia Aβ/ATP stimulation model에서 IL-1β secretion, Ca²⁺ mobilization, P2X7R expression, NLRP3 activation readouts가 제시되었다. [5]\n- In vivo: 5xFAD mouse에서 Aβ plaque, microgliosis, neuronal loss, memory function 개선이 보고되었다. [5]\n- Oral NuCerin abstract: 12주 oral dosing, MWM/NOR, Thioflavin-S plaque, NeuN staining, serum LC-MS/MS biomarker 탐색이 보고되었다. [20]\n- Clinical: NCT06533878 Phase I healthy-volunteer HY209 trial이 등록되어 있고, Shaperon은 Korea Phase I Part A completed / Part B ongoing으로 설명한다. [1], [8], [9]\n- HY209 IV Phase I publication은 systemic indication에서 safety/PK를 보고하나, oral CNS indication과는 route/indication이 다르다. [10]\n\nInvestigation note:\n- 이 점수는 시장 hype가 아니라 preclinical experimental evidence와 human safety readiness에 기반했다.\n- 2점인 이유는 in vitro + in vivo + clinical Phase I 진입 근거가 있기 때문이다.\n- 3점이 아닌 이유는 AD patient biomarker/efficacy, CSF exposure, GLP tox/CMC package, Phase II data가 공개적으로 부족하기 때문이다.\n\nUncertain points:\n- HY209 oral AD Phase I 최종 CSR.\n- MAD Part B safety/PK 결과 및 dose selection rationale.\n- AD Phase II design, biomarker inclusion criteria, CSF/plasma inflammatory biomarker plan.\n\n### 4.7 Marketability\nScore: **2 / 3**  \nMain line: **A. TAP ≈ 3.25M, B. Unrisked Peak Sales ≈ USD 2,959M, C. Obtainable Peak Sales ≈ USD 1,562M로 산정되어 2점이다.**\n\nWhat was checked:\n- Targetable addressable patient.\n- Unrisked peak sales.\n- Competition haircut.\n- Pricing power adjustment.\n- Expansion capacity adjustment.\n\nWorksheet:\n\n| Step | What to fill | Evidence / assumption |\n|---|---|---|\n| A. TAP | Global dementia 57M x AD share 65% = AD-estimated pool 37.05M. Diagnosis/access rate 45% x early/mild eligible rate 30% x treatable subgroup rate 65% = **TAP ≈ 3,251,138 patients**. | WHO reports 57M dementia patients in 2021 and AD as 60-70% of dementia cases. Diagnosis/access and eligibility rates are analyst assumptions due no approved label. [15] |\n| B. Unrisked Peak Sales | TAP 3,251,138 x annual net price USD 13,000 x peak penetration 7% x duration factor 1.0 = **USD 2,958.5M**. | Annual net price assumes oral small molecule discount vs Leqembi USD 26,500/year and Kisunla antibody pricing context. [16], [17] |\n| Entry-order matrix | 3-player example: 1st ~50%, 2nd ~30%, 3rd ~20%. NuCerin is assumed to be a later entrant in AD DMT, but differentiated oral neuroimmune MoA may avoid direct same-MoA crowding. | Approved mAbs and oral NLRP3 assets considered. [11], [12], [24], [26] |\n| C. Obtainable Peak Sales | Unrisked USD 2,958.5M x competition haircut 0.55 x pricing power adjustment 0.80 x expansion capacity adjustment 1.20 = **USD 1,562.1M**. | Competition haircut reflects approved mAbs and emerging oral inflammasome competitors; expansion adjustment reflects oral safety/convenience and multi-indication platform. |\n| Final score basis | 0 < weak market, 1 < USD 1,000M obtainable, 2 >= USD 1,000M, 3 >= USD 2,000M + high expansion | Obtainable Peak Sales is > USD 1B but < USD 2B, so 2점. |\n\nInvestigation note:\n- Marketability is based on obtainable peak sales, not rNPV.\n- Always show TAP -> Unrisked Peak Sales -> Obtainable Peak Sales.\n- All sales outputs are in million USD.\n- Shaperon’s own market outlook states global AD treatment market may grow from USD 6.4B in 2025 to USD 31B in 2034; this supports market size but is company-provided, so it was used as directional evidence, not sole basis. [2]\n\nUncertain points:\n- NuCerin’s final label: prodromal AD, MCI due to AD, mild AD, mild-to-moderate AD, or broader AD.\n- Pricing will depend on efficacy, biomarker requirement, monitoring burden, and whether oral therapy can reduce MRI/infusion infrastructure.\n- Global reimbursement and diagnosis/access rates are highly uncertain.\n\n---\n\n## 5) Validation Notes\n\nCross-checked facts:\n- HY209 / NuCerin identity was cross-checked across Shaperon official pipeline, Synapse/Patsnap, AdisInsight, and Frontiers publication. [1], [2], [5], [22], [23]\n- GPCR19/TGR5-P2X7-NLRP3 MoA was cross-checked across Frontiers publication, Shaperon/Hudson platform explanation, and BIO company profile. [4], [5], [19]\n- Clinical stage was cross-checked between Shaperon official site and CenterWatch/NCT06533878 listing; however, sponsor/ownership discrepancy remains. [1], [2], [8], [9]\n- AD market assumptions were grounded using WHO global dementia prevalence, Alzheimer’s Association U.S. prevalence, and approved antibody pricing context. [14], [15], [16], [17]\n\nUncertain points:\n- **Ownership / sponsorship:** NCT06533878 lists Kukjeon Pharmaceutical as sponsor in CenterWatch, while Shaperon lists NuCerin in its pipeline. Need official agreement/IR disclosure clarifying rights.\n- **Clinical status:** Shaperon official says Phase I Part A completed and Part B ongoing; later Korean news suggests completion, but this should be verified against MFDS/ClinicalTrials.gov/CSR.\n- **CNS exposure:** Public data do not yet provide clear oral human brain/CSF exposure or GPCR19 target engagement.\n- **Differentiation vs NLRP3 inhibitors:** HY209 is upstream GPCR19 modulation, not direct NLRP3 inhibition. Need head-to-head or biomarker evidence.\n- **TGR5 biology:** Some literature reports context-dependent or potentially detrimental TGR5 effects in AD models, so chronic dosing risk requires diligence. [27], [30]\n\nSearch log:\n- Official company page: Shaperon homepage and pipeline page. [1], [2]\n- Pipeline page: NuCerin, NuGel, NuSepin, NuPulin sections. [1], [2]\n- Platform page: Shaperon/Hudson GPCR19-P2X7 inflammasome platform. [19]\n- Publications: Frontiers Immunology 2022; Alzheimer’s & Dementia 2024 abstract; HY209 Phase I safety/PK publication. [5], [10], [20]\n- Regulatory / trial registry: NCT06533878 via CenterWatch / ClinicalTrials.gov URL. [8], [9]\n- Competitor sources: FDA Leqembi/Kisunla, NodThera NT-0796, Ventyx VTX3232, Ventus VENT-02, NLRP3 inhibitor review. [11], [12], [18], [24], [26], [29]\n- Market / epidemiology sources: WHO dementia fact sheet, Alzheimer’s Association Facts & Figures, Leqembi/Kisunla pricing context. [14], [15], [16], [17]\n- Financing / partnership sources: BIO profile, Bridge/Shaperon GPCR19 license news. [4], [21]\n\n---\n\n## 6) Final Take\n\nOne-line summary: **HY209/NuCerin은 SKBP Neuroimmune theme에 잘 맞는 oral GPCR19/TGR5-P2X7/NLRP3 AD asset이지만, human CNS target engagement와 AD efficacy가 아직 보이지 않아 “Watch”가 적절하다.**\n\nRecommendation:\n- **Watch**\n\nMost important diligence question:\n- **Oral HY209가 사람에서 충분한 brain/CSF exposure와 GPCR19-P2X7/NLRP3 target engagement를 만들고, AD-relevant biomarker 또는 cognitive signal을 보여줄 수 있는가?**\n\n---\n\n## References\n\n[1]: https://shaperon.com/en/main/main.html \"Shaperon official homepage\"\n[2]: https://shaperon.com/en/sub/pipeline.html \"Shaperon official pipeline page\"\n[3]: https://englishdart.fss.or.kr/dsbc001/selectPopup.ax?selectKey=01387164 \"DART company information: Shaperon Inc.\"\n[4]: https://www.bio.org/events/bio-international-convention/sessions/2420132 \"BIO International Convention company profile: Shaperon\"\n[5]: https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2022.766919/full \"GPCR19 regulates P2X7R-mediated NLRP3 inflammasome activation in AD mouse model\"\n[6]: https://www.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2022.845185/full \"The Role of NLRP3 Inflammasome in Alzheimer's Disease\"\n[7]: https://link.springer.com/article/10.1186/s12974-021-02087-1 \"TGR5 activation attenuates neuroinflammation after MCAO\"\n[8]: https://www.centerwatch.com/clinical-trials/listings/NCT06533878/evaluate-tolerability-and-safety-of-hy209-in-healthy-volunteers \"NCT06533878 HY209 Phase 1 listing\"\n[9]: https://clinicaltrials.gov/study/NCT06533878 \"ClinicalTrials.gov NCT06533878\"\n[10]: https://doaj.org/article/89f6e0b19a8d46f9b3063ba13be1f0d1 \"HY209 IV Phase 1 safety PK publication\"\n[11]: https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval \"FDA Leqembi traditional approval\"\n[12]: https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease \"FDA Kisunla approval\"\n[13]: https://www.ema.europa.eu/en/medicines/human/EPAR/kisunla \"EMA Kisunla overview\"\n[14]: https://www.alz.org/alzheimers-dementia/facts-figures \"Alzheimer's Association Facts and Figures\"\n[15]: https://www.who.int/news-room/fact-sheets/detail/dementia \"WHO dementia fact sheet\"\n[16]: https://www.eisai.com/news/2023/news202302.html \"Eisai U.S. pricing for Leqembi\"\n[17]: https://investor.lilly.com/news-releases/news-release-details/lillys-kisunlatm-donanemab-azbt-approved-fda-treatment-early \"Lilly Kisunla FDA approval and pricing context\"\n[18]: https://www.alzdiscovery.org/uploads/cognitive_vitality_media/NLRP3_Inhibitors_UPDATE_%28drug_in_development%29.pdf \"Cognitive Vitality NLRP3 inhibitors update\"\n[19]: https://hudsontherapeutics.com/inflammasome \"Hudson/Shaperon GPCR19-P2X7 inflammasome platform\"\n[20]: https://app.rndcircle.io/lab/c061ff05-ac82-4bae-93f1-aa04115834c0/papers/f5c5fe56-38a0-4803-a802-1990eccb7e5c \"NuCerin oral HY209 in AD mouse model abstract summary\"\n[21]: https://www.bioworld.com/articles/518211-bridge-biotherapeutics-inks-30b-deal-with-shaperon-for-gpcr19-agonist \"Bridge Biotherapeutics and Shaperon GPCR19 license news\"\n[22]: https://synapse.patsnap.com/drug/d957c5540bf044a1b51095232e982c66 \"Synapse taurodeoxycholic acid / HY209 profile\"\n[23]: https://adisinsight.springer.com/drugs/800051733 \"AdisInsight: taurodeoxycholic acid / HY209\"\n[24]: https://www.nodthera.com/news/nodtheras-nlrp3-inhibitor-nt-0796-reverses-neuroinflammation-in-parkinsons-disease-phase-ib-iia-trial/ \"NodThera NT-0796 Phase Ib/IIa PD data\"\n[25]: https://movementdisorders.onlinelibrary.wiley.com/doi/full/10.1002/mds.30307 \"NT-0796 anti-neuroinflammatory effects publication\"\n[26]: https://clinicaltrials.gov/study/NCT06556173 \"VTX3232 Phase 2a Parkinson's disease clinical trial\"\n[27]: https://www.mdpi.com/1422-0067/25/17/9279 \"Emerging roles of bile acids and TGR5 in CNS\"\n[28]: https://www.ventustx.com/ventus-therapeutics-announces-first-patient-dosed-in-phase-2a-clinical-trial-evaluating-vent-02-an-oral-brain-penetrant-nlrp3-inhibitor-in-parkinsons-disease/ \"Ventus VENT-02 Phase 2a PD trial announcement\"\n[29]: https://www.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2025.1731165/full \"Dapansutrile therapeutic applications review\"\n[30]: https://pmc.ncbi.nlm.nih.gov/articles/PMC11212731/ \"TGR5 deletion effects in AD mouse model\"\n\n---\n\n## AI Agent Revision Note (GPT 지침 2 v3.1, 2026-06-23)\n\n- Revision basis: Detail AI Agent v3.1 re-evaluation applied from chat answer.\n- Version applied: GPT 지침 2 v3.1\n- Applied at: 2026-06-23T10:13:38.578688+00:00\n- Scope: JSON scoring fields and source report amendment generated from detail-page Agent discussion.\n\n### Applied JSON Changes\n\n- structured_table.sources +1\n- source_report.raw_markdown GPT 지침 2 v3.1 update badge\n\n### Agent Discussion Summary Used For Revision\n\nv3.0 → v3.1 변경점과 HY209/NuCerin 반영 방안을 아래에 정리합니다.\n\n---\n\nv3.1에서 달라진 주요 기준 (wiki note 및 scorecard 기반 추론)\nEvidence type 세분화: E1(규제/임상), E2(간접/클래스), E3(자산 특이 전임상/기술)로 명확히 구분. 각 criterion에 evidence_type 필드가 추가됨.\n**“Why not\n",
+      "raw_markdown": "# Shaperon Pipeline Scout Report: **HY209 / NuCerin**\n\n> **Recalculated by Full Scout Rubric v3.3:** 2026-08-01 대시보드에서 저장된 7개 criterion score와 최신 v3.3 Filter 2 규칙으로 Total Score 및 결정값을 재계산했습니다. 기존 수동 criterion/Total Score override는 해제했으며 원조사 evidence와 본문, 담당자의 명시적인 Human decision 및 코멘트는 유지했습니다.\n\n본 보고서는 SKBP Pipeline Finder v3.0용으로 작성되었으며, 사용자 제공 SKBP v3.0 템플릿을 기준으로 구성했다. :contentReference[oaicite:0]{index=0}  \n모든 핵심 판단에는 auditability를 위해 URL을 포함했다. HY209는 Shaperon의 GPCR19/TGR5 agonist 계열 물질이며, 본 보고서는 CNS 관점에서 **NuCerin / Alzheimer’s disease** 프로그램을 중심으로 평가한다. NuGel, NuSepin, NuPulin 등 다른 HY209/GPCR19 프로그램은 확장성 근거로만 반영했다.\n\n> **기준 업데이트 (v3.1):** 이 원문은 최초 작성 기준을 보존하되, 2026-06-23 Detail AI Agent 검토를 통해 **SKBP Pipeline Finder v3.1 기준으로 재평가 및 업데이트**되었습니다. 최신 판단은 JSON fields와 아래 Revision Note를 기준으로 봅니다.\n\n---\n\n## 1) Company Profile\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Shaperon Inc. / 샤페론 | [1], [2], [3] |\n| Legal name / aliases | Shaperon Inc.; 주식회사 샤페론; KRX 378800; HY209 aliases: HY-209, taurodeoxycholic acid / sodium taurodeoxycholate, TDCA | [3], [22], [23] |\n| Country | Republic of Korea | [1], [3] |\n| Headquarters | 서울시 강남구 자곡로 174-10, 강남에이스타워 G9 218호 & 606호 | [1], [2] |\n| Website | https://shaperon.com/en/main/main.html | [1] |\n| Company type / stage | KOSDAQ-listed clinical-stage biotech; inflammasome inhibitor and nanobody platform company | [3], [4], [5] |\n| Focus areas | Inflammasome inhibitors, GPCR19-P2X7-NLRP3 modulation, neuroinflammation, dermatology, systemic inflammation, fibrosis, nanobody / NanoMab | [1], [2], [4], [19] |\n| Platform summary | GPCR19 agonist / GPCR19-P2X7 modulation platform designed to suppress inflammasome priming and activation phases and reduce IL-1β, IL-18, IL-6, TNF-α signaling; also has NanoMab and AIDEN AI platform | [1], [2], [19] |\n| Financing / partnership signals | Public company; BIO profile identifies Shaperon as clinical-stage biotech; Bridge Biotherapeutics licensed GPCR19 agonist BBT-209 for IPF in a ₩30B headline-value deal; broader partnership/news validation exists but NuCerin commercial rights need direct diligence | [3], [4], [21] |\n| Lead pipeline summary | NuGel: atopic dermatitis, Korea Phase IIa completed and U.S. Phase IIb Part 1 completed; NuCerin: Alzheimer’s disease, Korea Phase I Part A completed and Part B ongoing per Shaperon; NuSepin: systemic inflammation/COVID/CVA; NuPulin: IPF | [1], [2] |\n\n---\n\n## 2) Pipeline Snapshot\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Shaperon Inc. | [1], [2], [3] |\n| Lead asset | HY209 / NuCerin | [1], [2], [8], [22] |\n| Target | GPCR19 / TGR5; downstream regulation of P2X7R-mediated NLRP3 inflammasome activation in microglia | [5], [19], [22] |\n| Theme / Cluster | Theme: **Neuroimmune** / Cluster: **Cytokine 신경조절** | Internal SKBP mapping + [5], [6], [19] |\n| MoA | TDCA/HY209 activates GPCR19/TGR5, modulates GPCR19-P2X7 interaction, suppresses P2X7R-mediated Ca²⁺ mobilization, NLRP3 inflammasome oligomerization and IL-1β/IL-18 production; in AD mouse models, reported to reduce Aβ plaques, microgliosis, neuronal loss and improve memory | [5], [20] |\n| Modality / Platform | Oral small molecule GPCR19/TGR5 agonist / inflammasome modulator; Shaperon describes NuCerin as oral GPCR19-targeting therapy | [1], [2], [5], [8] |\n| Indication | Alzheimer’s disease, especially early/mild-to-moderate AD positioning; exact clinical label not established | [1], [2], [8], [15] |\n| Stage | AD/NuCerin: Korea Phase I Part A completed and Part B ongoing per Shaperon official site. NCT06533878 is listed as HY209 Phase I healthy-volunteer trial; CenterWatch lists sponsor as Kukjeon Pharmaceutical, creating ownership/operational ambiguity requiring diligence. | [1], [2], [8], [9] |\n| Key data | 2022 Frontiers paper: TDCA inhibited microglial NLRP3 activation and improved AD mouse model endpoints. 2024 Alzheimer’s & Dementia abstract: oral NuCerin 30 mg/kg b.i.d. for 12 weeks in 5xFAD mice improved MWM/NOR cognition, reduced amyloid plaque deposition, preserved NeuN-positive neurons, and identified a serum biomarker candidate. | [5], [20] |\n\nAllowed Theme values:\n- E/I Balance\n- Neuroimmune\n- No Theme\n\nAllowed clusters:\n- E/I Balance: Ion Channel, Inhibitory Tone 강화, Synaptic Transmission, Chloride Homeostasis, Network Modulation\n- Neuroimmune: CNS 손상 면역반응, 교세포 향상성, Cytokine 신경조절, 손상/질환 면역조절, 말초 면역기관 연결\n\n---\n\n## 3) Scorecard Summary\n\n| Criterion | Score | One-line judgment | Evidence used |\n|---|---:|---|---|\n| Target Relevance | 3 / 3 | GPCR19-P2X7-NLRP3 axis is directly aligned with AD neuroinflammation and SKBP Neuroimmune / Cytokine 신경조절 cluster. | [5], [6], [19] |\n| Competitive Landscape | 2 / 3 | Same-MoA GPCR19 AD competitors appear sparse, but AD itself is highly competitive due to approved anti-Aβ mAbs and adjacent oral NLRP3 neuroinflammation assets. | [11], [12], [18], [24], [25], [26] |\n| MoA Validity | 2 / 3 | Strong preclinical mechanistic package exists, but human AD efficacy and CNS target engagement are not yet visible. | [5], [20], [8] |\n| Platform Attractiveness | 2 / 3 | Oral small molecule GPCR19 platform fits SKBP modality preference and has multi-indication human validation signals, but CNS exposure/biomarker differentiation remains insufficiently public. | [1], [2], [10], [19] |\n| Expansion Potential | 3 / 3 | GPCR19 biology is reused across AD, atopic dermatitis, SIRS/COVID/CVA, IPF, DFU and alopecia programs, supporting broad platform expansion. | [1], [2], [21], [24] |\n| Data Maturity | 2 / 3 | In vitro/in vivo AD evidence and Phase I safety/PK signals exist, but no patient efficacy, CSF/brain target engagement or Phase II AD data are public. | [5], [8], [10], [20] |\n| Marketability | 2 / 3 | A. TAP ≈ 3.25M; B. Unrisked Peak Sales ≈ USD 2,959M; C. Obtainable Peak Sales ≈ USD 1,562M after competition/pricing haircuts. | [1], [14], [15], [16], [17] |\n| **Total** | **16 / 21** | Strong watchlist asset; shortlist depends on human PK/CSF biomarker and rights clarity. |  |\n\n---\n\n## 4) Criterion Detail Pages\n\n### 4.1 Target Relevance\nScore: **3 / 3**  \nMain line: **GPCR19/TGR5-P2X7R-NLRP3 axis maps tightly to AD neuroinflammation and SKBP Neuroimmune / Cytokine 신경조절 cluster.**\n\nWhat was checked:\n- Target identity: GPCR19/TGR5 agonist; HY209/TDCA.\n- Disease/biology relevance: microglial P2X7R-mediated NLRP3 inflammasome activation by Aβ.\n- SKBP Theme / Cluster fit: Neuroimmune / Cytokine 신경조절.\n- General neurodegeneration / neuroinflammation / epilepsy relevance: strongest for AD/neuroinflammation; broader NLRP3 relevance across PD/AD/epilepsy is supported by competitor pipelines but HY209’s direct public data are AD-focused.\n\nEvidence trail:\n- Frontiers 2022 paper states that Aβ and/or ATP activate NLRP3 inflammasome via P2X7R in microglia and that TDCA, a GPCR19 ligand, suppressed priming/activation phases and improved AD mouse endpoints. [5]\n- Shaperon describes NuCerin as an oral therapy targeting both Aβ and neuroinflammation, with the development rationale positioned against antibody limitations. [1], [2]\n- Hudson/Shaperon platform description states GPCR19-P2X7 modulation suppresses broad inflammatory cytokines including IL-1β, IL-18, IL-6 and TNF-α. [19]\n- AD/NLRP3 literature supports NLRP3 inflammasome as a relevant pathological node in AD. [6]\n\nInvestigation note:\n- 3점으로 판단한 이유는 target이 단순히 “염증 관련”이 아니라, **Aβ → microglia → P2X7R/NLRP3 → IL-1β/IL-18 → neuroinflammation** 흐름에 직접 연결되어 있으며 SKBP Neuroimmune theme에 정합성이 높기 때문이다.\n- 단, TGR5 biology는 CNS에서 context-dependent할 수 있다는 문헌도 있어, cell-type specific effect와 chronic activation risk는 추가 검증이 필요하다. [27]\n\nUncertain points:\n- Human AD brain/CSF에서 GPCR19 engagement가 실제로 확인되는지 불명확.\n- GPCR19/TGR5 activation이 neuron, astrocyte, microglia에서 동일하게 유리한지 불명확.\n- HY209 oral dosing 후 CNS exposure 및 target occupancy 자료가 공개적으로 충분하지 않음.\n\n### 4.2 Competitive Landscape\nScore: **2 / 3**  \nMain line: **AD 시장은 매우 혼잡하지만, true same-MoA GPCR19 AD front-runner는 명확하지 않아 차별성은 있다. 다만 anti-Aβ mAb와 oral NLRP3 계열이 주요 압박 요인이다.**\n\nWhat was checked:\n- Same disease competitors: approved anti-Aβ therapies and early AD DMTs.\n- Same target competitors: direct GPCR19/TGR5 AD clinical competitor는 확인 제한적.\n- Same or similar MoA competitors: NLRP3 inflammasome inhibitors in neurodegeneration.\n- Front runner count: approved anti-Aβ mAbs 2개 이상; NLRP3 oral CNS assets multiple.\n- Approved / Phase 3 / clinical / preclinical status.\n\nCompetitor table:\n\n| Competitor | Company | Modality | Target / MoA | Stage | Similarity level | Why it matters | Source |\n|---|---|---|---|---|---|---|---|\n| Leqembi / lecanemab | Eisai / Biogen / BioArctic | mAb | Anti-Aβ protofibril antibody | FDA traditional approval for early AD | Low MoA / High disease | First major approved disease-modifying benchmark; IV, ARIA risk, high cost create oral non-amyloid opportunity but also establishes efficacy bar. | [11], [16] |\n| Kisunla / donanemab | Eli Lilly | mAb | Anti-Aβ plaque antibody | FDA approved; EMA also reviewed/authorized in selected early AD population | Low MoA / High disease | Second approved anti-Aβ DMT; reinforces amyloid biomarker and early AD clinical standard; ARIA and infusion burden support oral alternative positioning. | [12], [13], [17] |\n| NT-0796 | NodThera | Oral small molecule | Brain-penetrant NLRP3 inhibitor | Phase Ib/IIa PD biomarker data; Phase II planning | Medium | Similar neuroinflammation / inflammasome biology; not same upstream target but competes for oral CNS inflammasome thesis. | [24], [25] |\n| VTX3232 | Ventyx Biosciences | Oral small molecule | NLRP3 inhibitor | Phase 2a PD / NCT06556173 | Medium | CNS inflammasome clinical competitor; target engagement and clinical biomarker package could set the bar for NuCerin. | [26] |\n| VENT-02 | Ventus Therapeutics | Oral small molecule | Brain-penetrant NLRP3 inhibitor | Phase 2a PD initiated; later status appears uncertain/possibly terminated in secondary sources | Medium | Similar CNS inflammasome positioning; demonstrates active industry pursuit of oral CNS NLRP3 modulation. | [18], [28] |\n| Dapansutrile / OLT1177 | Olatec | Oral small molecule | Selective NLRP3 inhibitor | Human inflammatory disease clinical data; AD evidence mainly preclinical/review-level | Medium-Low | Similar downstream inflammasome node, but not GPCR19 and not clearly active AD clinical competitor. | [6], [29] |\n\nInvestigation note:\n- 경쟁 분석은 “같은 질환 AD”와 “같은 biology neuroinflammation/NLRP3”를 분리해서 봐야 한다.\n- Leqembi/Kisunla는 같은 MoA는 아니지만 AD DMT 시장의 clinical efficacy, biomarker, reimbursement bar를 만든다.\n- NT-0796/VTX3232/VENT-02/OLT1177은 AD 직접 경쟁보다는 “oral CNS inflammasome” thesis의 adjacent competitors이다.\n- 2점인 이유: same-MoA direct crowding은 낮지만, AD 시장의 front-runner와 adjacent NLRP3 경쟁이 모두 존재한다.\n\nUncertain points:\n- GPCR19/TGR5-specific AD competitor landscape는 patent/database 기반 추가 검색 필요.\n- VENT-02의 최신 임상 상태는 공식 trial registry 및 회사 업데이트로 재확인 필요.\n- NuCerin의 expected entry order는 HY209 Phase I 완료 후 AD Phase II 진입 여부에 따라 크게 달라짐.\n\n### 4.3 MoA Validity\nScore: **2 / 3**  \nMain line: **Mechanistic validation은 뚜렷하지만, 아직 human AD PoC가 없어 3점은 아니다.**\n\nWhat was checked:\n- Journal publication / PMID / DOI.\n- Mechanistic consistency.\n- Functional readout.\n- Disease linkage.\n- Safety-relevant signal.\n\nEvidence trail:\n- Frontiers Immunology 2022: TDCA/HY209는 GPCR19 agonist로 사용되었고, Aβ/ATP 자극 microglia에서 IL-1β secretion 억제 IC50 490.6 nM, P2X7R expression 및 Ca²⁺ mobilization 억제, NLRP3 activation 억제를 보였다. [5]\n- 같은 논문에서 TDCA는 5xFAD mouse에서 Aβ plaque, microgliosis, neuronal loss를 줄이고 memory function을 개선했다고 보고했다. [5]\n- 2024 Alzheimer’s & Dementia abstract는 oral NuCerin 30 mg/kg b.i.d. 12주 투여에서 MWM/NOR 개선, amyloid plaque 감소, NeuN-positive neuron preservation을 보고했다. [20]\n- TGR5 activation의 CNS 효과는 긍정/부정 문헌이 공존하므로 cell-type, disease stage, dose duration 검증이 필요하다. [27], [30]\n\nInvestigation note:\n- 2점 이상 조건인 publication/equivalent technical evidence는 충족한다.\n- 3점이 아닌 이유는 AD patient efficacy, CSF biomarker, target engagement, dose-response, chronic safety window가 아직 공개적으로 확인되지 않았기 때문이다.\n\nUncertain points:\n- oral HY209가 사람에서 충분한 brain/CSF exposure를 확보하는지.\n- GPCR19 agonism이 chronic AD setting에서 microglia에 선택적으로 작동하는지.\n- Aβ clearance와 neuroinflammation 억제 중 어느 축이 clinical benefit에 핵심인지.\n\n### 4.4 Platform Attractiveness\nScore: **2 / 3**  \nMain line: **Oral small molecule GPCR19 platform은 매력적이나, CNS-specific differentiation data는 아직 제한적이다.**\n\nWhat was checked:\n- Is the platform real and reproducible?\n- Is differentiation supported by data?\n- Does modality fit SKBP priorities?\n- Preferred modalities: small molecule, ASO, siRNA.\n- Secondary modalities: AOC, antibody, biologic.\n\nEvidence trail:\n- Shaperon은 GPCR19-targeting inflammasome inhibitor platform을 기반으로 NuGel, NuCerin, NuSepin, NuPulin 등 복수 파이프라인을 전개하고 있다. [1], [2]\n- Hudson/Shaperon platform page는 GPCR19-P2X7 modulation이 priming/activation phases를 동시에 조절한다고 설명한다. [19]\n- HY209 IV Phase I safety/PK publication은 sepsis/systemic inflammation indication에서 단회 정맥투여 안전성 및 dose proportional PK를 보고했다. [10]\n- NuGel의 atopic dermatitis clinical progress는 GPCR19 class의 human development experience를 뒷받침하지만, 이는 topical dermatology 프로그램이므로 CNS NuCerin에 직접 전이되는 근거는 제한적이다. [1], [2], [9]\n\nInvestigation note:\n- 2점 이상인 이유는 small molecule, oral 가능성, multi-indication use, human safety experience가 있기 때문이다.\n- 3점이 아닌 이유는 CNS drug-like profile, BBB/CSF penetration, human target engagement, biomarker differentiation이 공개 자료에서 아직 충분하지 않기 때문이다.\n\nUncertain points:\n- HY209 oral tablet의 human PK, food effect, brain penetration, CSF exposure.\n- GPCR19 agonist의 long-term tolerability and off-target bile-acid receptor effects.\n- Kukjeon Pharmaceutical이 sponsor로 표시되는 Phase I trial의 rights/ownership 구조.\n\n### 4.5 Expansion Potential\nScore: **3 / 3**  \nMain line: **같은 GPCR19/inflammasome biology가 AD 외 다수 적응증으로 확장되어 있어 platform expansion 근거가 강하다.**\n\nWhat was checked:\n- Expansion beyond main indication.\n- Same biology/platform reuse.\n- Adjacent indications.\n- Multiple assets from same platform.\n\nEvidence trail:\n- Shaperon pipeline은 GPCR19 agonist 기반으로 NuCerin AD, NuGel atopic dermatitis, NuSepin COVID/SIRS/CVA, NuPulin IPF, NuDifin diabetic foot ulcer, NuAreatin alopecia areata 등 다수 indication을 제시한다. [1], [2]\n- NuSepin은 systemic inflammation, COVID-19, SIRS, ischemic stroke 등으로 확장 가능성이 언급된다. [1], [2]\n- Bridge Biotherapeutics와의 IPF GPCR19 agonist BBT-209 라이선스 사례는 non-CNS fibrosis expansion 가능성을 보여준다. [21]\n- TGR5/GPCR19 neuroinflammation biology는 stroke, PD, AD 등 CNS inflammation axis와 연결된다. [7], [24], [25], [26]\n\nInvestigation note:\n- Adjacent indication이 단순히 AD의 다른 표현이 아니라 dermatology, systemic inflammation, fibrosis, wound healing, stroke 등으로 넓게 확장되어 있으므로 3점으로 판단했다.\n- 다만 이는 “platform breadth” 점수이고, NuCerin 단일 프로그램의 임상 성공 가능성을 의미하지는 않는다.\n\nUncertain points:\n- 각 indication별 compound가 동일 HY209인지, salt/formulation/route 차이가 있는지 확인 필요.\n- Shaperon vs partner별 지역권/적응증권리 분할 여부 확인 필요.\n\n### 4.6 Data Maturity\nScore: **2 / 3**  \nMain line: **전임상 data package는 비교적 탄탄하지만, AD 환자 human PoC는 아직 없다.**\n\nWhat was checked:\n- In vitro data.\n- In vivo data.\n- Quantitative result.\n- Reproducibility.\n- IND-enabling / GLP tox / PK/PD / CMC / human data availability.\n\nEvidence trail:\n- In vitro: microglia Aβ/ATP stimulation model에서 IL-1β secretion, Ca²⁺ mobilization, P2X7R expression, NLRP3 activation readouts가 제시되었다. [5]\n- In vivo: 5xFAD mouse에서 Aβ plaque, microgliosis, neuronal loss, memory function 개선이 보고되었다. [5]\n- Oral NuCerin abstract: 12주 oral dosing, MWM/NOR, Thioflavin-S plaque, NeuN staining, serum LC-MS/MS biomarker 탐색이 보고되었다. [20]\n- Clinical: NCT06533878 Phase I healthy-volunteer HY209 trial이 등록되어 있고, Shaperon은 Korea Phase I Part A completed / Part B ongoing으로 설명한다. [1], [8], [9]\n- HY209 IV Phase I publication은 systemic indication에서 safety/PK를 보고하나, oral CNS indication과는 route/indication이 다르다. [10]\n\nInvestigation note:\n- 이 점수는 시장 hype가 아니라 preclinical experimental evidence와 human safety readiness에 기반했다.\n- 2점인 이유는 in vitro + in vivo + clinical Phase I 진입 근거가 있기 때문이다.\n- 3점이 아닌 이유는 AD patient biomarker/efficacy, CSF exposure, GLP tox/CMC package, Phase II data가 공개적으로 부족하기 때문이다.\n\nUncertain points:\n- HY209 oral AD Phase I 최종 CSR.\n- MAD Part B safety/PK 결과 및 dose selection rationale.\n- AD Phase II design, biomarker inclusion criteria, CSF/plasma inflammatory biomarker plan.\n\n### 4.7 Marketability\nScore: **2 / 3**  \nMain line: **A. TAP ≈ 3.25M, B. Unrisked Peak Sales ≈ USD 2,959M, C. Obtainable Peak Sales ≈ USD 1,562M로 산정되어 2점이다.**\n\nWhat was checked:\n- Targetable addressable patient.\n- Unrisked peak sales.\n- Competition haircut.\n- Pricing power adjustment.\n- Expansion capacity adjustment.\n\nWorksheet:\n\n| Step | What to fill | Evidence / assumption |\n|---|---|---|\n| A. TAP | Global dementia 57M x AD share 65% = AD-estimated pool 37.05M. Diagnosis/access rate 45% x early/mild eligible rate 30% x treatable subgroup rate 65% = **TAP ≈ 3,251,138 patients**. | WHO reports 57M dementia patients in 2021 and AD as 60-70% of dementia cases. Diagnosis/access and eligibility rates are analyst assumptions due no approved label. [15] |\n| B. Unrisked Peak Sales | TAP 3,251,138 x annual net price USD 13,000 x peak penetration 7% x duration factor 1.0 = **USD 2,958.5M**. | Annual net price assumes oral small molecule discount vs Leqembi USD 26,500/year and Kisunla antibody pricing context. [16], [17] |\n| Entry-order matrix | 3-player example: 1st ~50%, 2nd ~30%, 3rd ~20%. NuCerin is assumed to be a later entrant in AD DMT, but differentiated oral neuroimmune MoA may avoid direct same-MoA crowding. | Approved mAbs and oral NLRP3 assets considered. [11], [12], [24], [26] |\n| C. Obtainable Peak Sales | Unrisked USD 2,958.5M x competition haircut 0.55 x pricing power adjustment 0.80 x expansion capacity adjustment 1.20 = **USD 1,562.1M**. | Competition haircut reflects approved mAbs and emerging oral inflammasome competitors; expansion adjustment reflects oral safety/convenience and multi-indication platform. |\n| Final score basis | 0 < weak market, 1 < USD 1,000M obtainable, 2 >= USD 1,000M, 3 >= USD 2,000M + high expansion | Obtainable Peak Sales is > USD 1B but < USD 2B, so 2점. |\n\nInvestigation note:\n- Marketability is based on obtainable peak sales, not rNPV.\n- Always show TAP -> Unrisked Peak Sales -> Obtainable Peak Sales.\n- All sales outputs are in million USD.\n- Shaperon’s own market outlook states global AD treatment market may grow from USD 6.4B in 2025 to USD 31B in 2034; this supports market size but is company-provided, so it was used as directional evidence, not sole basis. [2]\n\nUncertain points:\n- NuCerin’s final label: prodromal AD, MCI due to AD, mild AD, mild-to-moderate AD, or broader AD.\n- Pricing will depend on efficacy, biomarker requirement, monitoring burden, and whether oral therapy can reduce MRI/infusion infrastructure.\n- Global reimbursement and diagnosis/access rates are highly uncertain.\n\n---\n\n## 5) Validation Notes\n\nCross-checked facts:\n- HY209 / NuCerin identity was cross-checked across Shaperon official pipeline, Synapse/Patsnap, AdisInsight, and Frontiers publication. [1], [2], [5], [22], [23]\n- GPCR19/TGR5-P2X7-NLRP3 MoA was cross-checked across Frontiers publication, Shaperon/Hudson platform explanation, and BIO company profile. [4], [5], [19]\n- Clinical stage was cross-checked between Shaperon official site and CenterWatch/NCT06533878 listing; however, sponsor/ownership discrepancy remains. [1], [2], [8], [9]\n- AD market assumptions were grounded using WHO global dementia prevalence, Alzheimer’s Association U.S. prevalence, and approved antibody pricing context. [14], [15], [16], [17]\n\nUncertain points:\n- **Ownership / sponsorship:** NCT06533878 lists Kukjeon Pharmaceutical as sponsor in CenterWatch, while Shaperon lists NuCerin in its pipeline. Need official agreement/IR disclosure clarifying rights.\n- **Clinical status:** Shaperon official says Phase I Part A completed and Part B ongoing; later Korean news suggests completion, but this should be verified against MFDS/ClinicalTrials.gov/CSR.\n- **CNS exposure:** Public data do not yet provide clear oral human brain/CSF exposure or GPCR19 target engagement.\n- **Differentiation vs NLRP3 inhibitors:** HY209 is upstream GPCR19 modulation, not direct NLRP3 inhibition. Need head-to-head or biomarker evidence.\n- **TGR5 biology:** Some literature reports context-dependent or potentially detrimental TGR5 effects in AD models, so chronic dosing risk requires diligence. [27], [30]\n\nSearch log:\n- Official company page: Shaperon homepage and pipeline page. [1], [2]\n- Pipeline page: NuCerin, NuGel, NuSepin, NuPulin sections. [1], [2]\n- Platform page: Shaperon/Hudson GPCR19-P2X7 inflammasome platform. [19]\n- Publications: Frontiers Immunology 2022; Alzheimer’s & Dementia 2024 abstract; HY209 Phase I safety/PK publication. [5], [10], [20]\n- Regulatory / trial registry: NCT06533878 via CenterWatch / ClinicalTrials.gov URL. [8], [9]\n- Competitor sources: FDA Leqembi/Kisunla, NodThera NT-0796, Ventyx VTX3232, Ventus VENT-02, NLRP3 inhibitor review. [11], [12], [18], [24], [26], [29]\n- Market / epidemiology sources: WHO dementia fact sheet, Alzheimer’s Association Facts & Figures, Leqembi/Kisunla pricing context. [14], [15], [16], [17]\n- Financing / partnership sources: BIO profile, Bridge/Shaperon GPCR19 license news. [4], [21]\n\n---\n\n## 6) Final Take\n\nOne-line summary: **HY209/NuCerin은 SKBP Neuroimmune theme에 잘 맞는 oral GPCR19/TGR5-P2X7/NLRP3 AD asset이지만, human CNS target engagement와 AD efficacy가 아직 보이지 않아 “Watch”가 적절하다.**\n\nRecommendation:\n- **Watch**\n\nMost important diligence question:\n- **Oral HY209가 사람에서 충분한 brain/CSF exposure와 GPCR19-P2X7/NLRP3 target engagement를 만들고, AD-relevant biomarker 또는 cognitive signal을 보여줄 수 있는가?**\n\n---\n\n## References\n\n[1]: https://shaperon.com/en/main/main.html \"Shaperon official homepage\"\n[2]: https://shaperon.com/en/sub/pipeline.html \"Shaperon official pipeline page\"\n[3]: https://englishdart.fss.or.kr/dsbc001/selectPopup.ax?selectKey=01387164 \"DART company information: Shaperon Inc.\"\n[4]: https://www.bio.org/events/bio-international-convention/sessions/2420132 \"BIO International Convention company profile: Shaperon\"\n[5]: https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2022.766919/full \"GPCR19 regulates P2X7R-mediated NLRP3 inflammasome activation in AD mouse model\"\n[6]: https://www.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2022.845185/full \"The Role of NLRP3 Inflammasome in Alzheimer's Disease\"\n[7]: https://link.springer.com/article/10.1186/s12974-021-02087-1 \"TGR5 activation attenuates neuroinflammation after MCAO\"\n[8]: https://www.centerwatch.com/clinical-trials/listings/NCT06533878/evaluate-tolerability-and-safety-of-hy209-in-healthy-volunteers \"NCT06533878 HY209 Phase 1 listing\"\n[9]: https://clinicaltrials.gov/study/NCT06533878 \"ClinicalTrials.gov NCT06533878\"\n[10]: https://doaj.org/article/89f6e0b19a8d46f9b3063ba13be1f0d1 \"HY209 IV Phase 1 safety PK publication\"\n[11]: https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval \"FDA Leqembi traditional approval\"\n[12]: https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease \"FDA Kisunla approval\"\n[13]: https://www.ema.europa.eu/en/medicines/human/EPAR/kisunla \"EMA Kisunla overview\"\n[14]: https://www.alz.org/alzheimers-dementia/facts-figures \"Alzheimer's Association Facts and Figures\"\n[15]: https://www.who.int/news-room/fact-sheets/detail/dementia \"WHO dementia fact sheet\"\n[16]: https://www.eisai.com/news/2023/news202302.html \"Eisai U.S. pricing for Leqembi\"\n[17]: https://investor.lilly.com/news-releases/news-release-details/lillys-kisunlatm-donanemab-azbt-approved-fda-treatment-early \"Lilly Kisunla FDA approval and pricing context\"\n[18]: https://www.alzdiscovery.org/uploads/cognitive_vitality_media/NLRP3_Inhibitors_UPDATE_%28drug_in_development%29.pdf \"Cognitive Vitality NLRP3 inhibitors update\"\n[19]: https://hudsontherapeutics.com/inflammasome \"Hudson/Shaperon GPCR19-P2X7 inflammasome platform\"\n[20]: https://app.rndcircle.io/lab/c061ff05-ac82-4bae-93f1-aa04115834c0/papers/f5c5fe56-38a0-4803-a802-1990eccb7e5c \"NuCerin oral HY209 in AD mouse model abstract summary\"\n[21]: https://www.bioworld.com/articles/518211-bridge-biotherapeutics-inks-30b-deal-with-shaperon-for-gpcr19-agonist \"Bridge Biotherapeutics and Shaperon GPCR19 license news\"\n[22]: https://synapse.patsnap.com/drug/d957c5540bf044a1b51095232e982c66 \"Synapse taurodeoxycholic acid / HY209 profile\"\n[23]: https://adisinsight.springer.com/drugs/800051733 \"AdisInsight: taurodeoxycholic acid / HY209\"\n[24]: https://www.nodthera.com/news/nodtheras-nlrp3-inhibitor-nt-0796-reverses-neuroinflammation-in-parkinsons-disease-phase-ib-iia-trial/ \"NodThera NT-0796 Phase Ib/IIa PD data\"\n[25]: https://movementdisorders.onlinelibrary.wiley.com/doi/full/10.1002/mds.30307 \"NT-0796 anti-neuroinflammatory effects publication\"\n[26]: https://clinicaltrials.gov/study/NCT06556173 \"VTX3232 Phase 2a Parkinson's disease clinical trial\"\n[27]: https://www.mdpi.com/1422-0067/25/17/9279 \"Emerging roles of bile acids and TGR5 in CNS\"\n[28]: https://www.ventustx.com/ventus-therapeutics-announces-first-patient-dosed-in-phase-2a-clinical-trial-evaluating-vent-02-an-oral-brain-penetrant-nlrp3-inhibitor-in-parkinsons-disease/ \"Ventus VENT-02 Phase 2a PD trial announcement\"\n[29]: https://www.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2025.1731165/full \"Dapansutrile therapeutic applications review\"\n[30]: https://pmc.ncbi.nlm.nih.gov/articles/PMC11212731/ \"TGR5 deletion effects in AD mouse model\"\n\n---\n\n## AI Agent Revision Note (GPT 지침 2 v3.1, 2026-06-23)\n\n- Revision basis: Detail AI Agent v3.1 re-evaluation applied from chat answer.\n- Version applied: GPT 지침 2 v3.1\n- Applied at: 2026-06-23T10:13:38.578688+00:00\n- Scope: JSON scoring fields and source report amendment generated from detail-page Agent discussion.\n\n### Applied JSON Changes\n\n- structured_table.sources +1\n- source_report.raw_markdown GPT 지침 2 v3.1 update badge\n\n### Agent Discussion Summary Used For Revision\n\nv3.0 → v3.1 변경점과 HY209/NuCerin 반영 방안을 아래에 정리합니다.\n\n---\n\nv3.1에서 달라진 주요 기준 (wiki note 및 scorecard 기반 추론)\nEvidence type 세분화: E1(규제/임상), E2(간접/클래스), E3(자산 특이 전임상/기술)로 명확히 구분. 각 criterion에 evidence_type 필드가 추가됨.\n**“Why not",
       "source_format": "gpt_markdown_report",
       "parser_status": "ai_revision_applied",
       "parser_note": "Markdown report and JSON were generated together from the same evidence set.",
@@ -4447,7 +5542,15 @@
             "source_report.raw_markdown GPT 지침 2 v3.1 update badge"
           ]
         }
-      ]
+      ],
+      "rubric_recalculation": {
+        "version": "3.3",
+        "previous_version": "3.1",
+        "recalculated_at": "2026-08-01T17:42:40.441201+00:00",
+        "source": "dashboard_tab2_rubric_refresh",
+        "scope": "stored_criterion_scores_total_and_filter2_reset_manual_scoring_overrides",
+        "cleared_manual_scoring_overrides": {}
+      }
     },
     "company_profile": {
       "company_name": "Shaperon Inc.",
@@ -4558,8 +5661,8 @@
       ]
     },
     "hard_filter": {
-      "status": "REVIEW",
-      "reason": "REVIEW: high score, but human efficacy, CNS exposure, sponsor/rights and source uncertainty need diligence.",
+      "status": "PASS",
+      "reason": "Rubric v3.3: Total 16 >= 14, TR 3 >= 3, MOA 2 >= 2, Data 2 >= 2, hard blocker 없음",
       "flags": [
         "Human AD efficacy not public",
         "CSF/brain exposure not public",
@@ -5879,10 +6982,10 @@
         "is_tracked": true,
         "added_at": "2026-07-28T14:34:58.108835+00:00",
         "user_comment": "",
-        "due_date": "",
-        "updated_at": "2026-07-28T20:46:05.205886+00:00",
+        "due_date": "2026-08-03",
+        "updated_at": "2026-08-01T11:29:21.213904+00:00",
         "updated_source": "dashboard_tab3",
-        "updated_by": "127.0.0.1",
+        "updated_by": "정주원",
         "in_vivo_status": "X",
         "in_vivo_status_source": "auto",
         "in_vitro_status": "X",
@@ -5928,10 +7031,122 @@
           "field": "focus_management.due_date",
           "previous_value": "0008-08-26",
           "new_value": "2026-08-15"
+        },
+        {
+          "changed_at": "2026-08-01T11:29:21.214132+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.due_date",
+          "previous_value": "",
+          "new_value": "2026-08-03"
+        },
+        {
+          "changed_at": "2026-08-01T12:28:34.578476+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_criterion_import",
+          "field": "qualitative_review.custom_criteria",
+          "previous_value": null,
+          "new_value": "약물의 가치 시장성 조사"
+        },
+        {
+          "changed_at": "2026-08-01T12:28:43.676399+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.custom_b21545c191",
+          "previous_value": null,
+          "new_value": "시장성 측면에서 NS-041은 1/3점으로 낮게 평가되며, 동일 KCNQ2/3 타깃의 후기 단계 경쟁자(Xenon azetukalner, Biohaven opakalim)가 앞서 있어 후발 진입자로서 차별화 근거가 부족해 보입니다. 보고서상 TAP 810,000명, unrisked peak sales 1,458백만 달러, obtainable peak sales 981백만 달러로 추정되지만, 환자 효능 데이터가 미공개라 해당 매출 추정의 신뢰성은 제한적입니다. 가격·급여 조건이나 시장 접근성 관련 근거는 현재 자료에 없어 추가 확인이 필요합니다."
+        },
+        {
+          "changed_at": "2026-08-01T12:28:56.434040+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.efficacy",
+          "previous_value": null,
+          "new_value": "NS-041의 환자 대상 efficacy 데이터는 아직 공개되지 않았으며, 정상군 대비 회복율이나 SoC 대비 통계적 유의성 있는 개선 우위를 확인할 수 있는 근거가 없습니다. 현재까지 공개된 정보는 전임상 동물 모델에서의 항경련 효능과 Phase I 안전성/PK 자료에 국한되어 있습니다. 따라서 이 기준을 평가하기 위해서는 환자 대상 임상 결과와 SoC 대비 비교 데이터가 추가로 필요합니다."
+        },
+        {
+          "changed_at": "2026-08-01T12:29:05.834754+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.commercial_appeal",
+          "previous_value": null,
+          "new_value": "동일 KCNQ2/3 타겟의 후기 단계 경쟁자(Xenon, Biohaven)가 존재하여 NS-041의 TPP 매력도는 낮으며, 환자 효능 데이터 부재로 시장 차별성을 입증할 근거가 충분하지 않습니다. Focal onset seizure 시장에서 기존 승인약물 및 동일 MoA 파이프라인이 이미 자리잡고 있어 Unmet Need 충족 측면에서도 제한적입니다. Greater China 권리가 Livzon에 라이선스된 점과 ex-China 전략의 불확실성도 파트너사 관점에서 매력도를 낮추는 요인입니다."
+        },
+        {
+          "changed_at": "2026-08-01T12:29:31.541853+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.execution_risk",
+          "previous_value": null,
+          "new_value": "NS-041의 임상/안전성/CMC 진행과 관련하여, 환자 대상 효능 데이터가 아직 공개되지 않아 주요 리스크로 판단됩니다. Phase I SAD/MAD 안전성 및 PK 데이터는 press release 수준으로만 확인되며, 전체 임상 패키지에 대한 상세 검토가 필요합니다. 동일 타겟 경쟁사(Xenon, Biohaven) 대비 차별화된 안전성 및 효능 우위를 입증할 자료가 부재하여, 추가 DD를 통해 NS-041의 differentiation 근거를 확인해야 합니다. CMC 측면에서 oral small molecule modality는 적합하나, platform 수준의 재현성 및 제조 관련 공개 정보가 제한적이므로 이에 대한 검토도 필요합니다."
         }
       ],
-      "last_edited_at": "2026-07-28T20:46:05.205912+00:00",
-      "last_edited_by": "127.0.0.1"
+      "qualitative_review": {
+        "custom_criteria": [
+          {
+            "id": "custom_b21545c191",
+            "label": "약물의 가치 시장성 조사",
+            "description": "이 약물이 시장에서 얼마나 가치있는지 판단 지표",
+            "created_by": "정주원",
+            "created_at": "2026-08-01T12:28:34.578412+00:00",
+            "imported_from_record_id": "Shaperon_HY209_NuCerin_20260622",
+            "imported_from_criterion_id": "custom_69aa2632e6"
+          }
+        ],
+        "updated_at": "2026-08-01T12:29:31.541771+00:00",
+        "criteria": {
+          "custom_b21545c191": {
+            "entries": [
+              {
+                "id": "89af45a8c0fb42849f7ab101136bec4b",
+                "author": "AI",
+                "body": "시장성 측면에서 NS-041은 1/3점으로 낮게 평가되며, 동일 KCNQ2/3 타깃의 후기 단계 경쟁자(Xenon azetukalner, Biohaven opakalim)가 앞서 있어 후발 진입자로서 차별화 근거가 부족해 보입니다. 보고서상 TAP 810,000명, unrisked peak sales 1,458백만 달러, obtainable peak sales 981백만 달러로 추정되지만, 환자 효능 데이터가 미공개라 해당 매출 추정의 신뢰성은 제한적입니다. 가격·급여 조건이나 시장 접근성 관련 근거는 현재 자료에 없어 추가 확인이 필요합니다.",
+                "is_ai": true,
+                "created_at": "2026-08-01T12:28:43.676335+00:00"
+              }
+            ]
+          },
+          "efficacy": {
+            "entries": [
+              {
+                "id": "5ee68593ee0247e59f833cb016c85b8d",
+                "author": "AI",
+                "body": "NS-041의 환자 대상 efficacy 데이터는 아직 공개되지 않았으며, 정상군 대비 회복율이나 SoC 대비 통계적 유의성 있는 개선 우위를 확인할 수 있는 근거가 없습니다. 현재까지 공개된 정보는 전임상 동물 모델에서의 항경련 효능과 Phase I 안전성/PK 자료에 국한되어 있습니다. 따라서 이 기준을 평가하기 위해서는 환자 대상 임상 결과와 SoC 대비 비교 데이터가 추가로 필요합니다.",
+                "is_ai": true,
+                "created_at": "2026-08-01T12:28:56.433982+00:00"
+              }
+            ]
+          },
+          "commercial_appeal": {
+            "entries": [
+              {
+                "id": "50d0281756b04359ad0eb96f64878fce",
+                "author": "AI",
+                "body": "동일 KCNQ2/3 타겟의 후기 단계 경쟁자(Xenon, Biohaven)가 존재하여 NS-041의 TPP 매력도는 낮으며, 환자 효능 데이터 부재로 시장 차별성을 입증할 근거가 충분하지 않습니다. Focal onset seizure 시장에서 기존 승인약물 및 동일 MoA 파이프라인이 이미 자리잡고 있어 Unmet Need 충족 측면에서도 제한적입니다. Greater China 권리가 Livzon에 라이선스된 점과 ex-China 전략의 불확실성도 파트너사 관점에서 매력도를 낮추는 요인입니다.",
+                "is_ai": true,
+                "created_at": "2026-08-01T12:29:05.834689+00:00"
+              }
+            ]
+          },
+          "execution_risk": {
+            "entries": [
+              {
+                "id": "1d9df5c75df640959e631a9739463403",
+                "author": "AI",
+                "body": "NS-041의 임상/안전성/CMC 진행과 관련하여, 환자 대상 효능 데이터가 아직 공개되지 않아 주요 리스크로 판단됩니다. Phase I SAD/MAD 안전성 및 PK 데이터는 press release 수준으로만 확인되며, 전체 임상 패키지에 대한 상세 검토가 필요합니다. 동일 타겟 경쟁사(Xenon, Biohaven) 대비 차별화된 안전성 및 효능 우위를 입증할 자료가 부재하여, 추가 DD를 통해 NS-041의 differentiation 근거를 확인해야 합니다. CMC 측면에서 oral small molecule modality는 적합하나, platform 수준의 재현성 및 제조 관련 공개 정보가 제한적이므로 이에 대한 검토도 필요합니다.",
+                "is_ai": true,
+                "created_at": "2026-08-01T12:29:31.541771+00:00"
+              }
+            ]
+          }
+        }
+      }
     },
     "input": {
       "company_input": "NeuShen Therapeutics (asset-only input에서 추정)",

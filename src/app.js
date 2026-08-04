@@ -1,111 +1,267 @@
-import { setupThemeToggle } from './theme.js';
+import { setupThemeToggle } from './theme.js?v=20260802-header-icons-1';
+import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
+import { initAuthUI } from './auth.js?v=20260803-personal-group-1';
 
 const API_URL = '/api/records';
+const DASHBOARD_SUMMARY_URL = '/api/dashboard-summary';
 const CATEGORY_SYNONYMS_URL = '/api/category-synonyms';
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.pageSize.v1';
 const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
 const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
 const DASHBOARD_REVIEWER_ID_KEY = 'skbp.detail.commentAuthor';
-const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v2';
-const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v2';
+const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v3';
+const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v5';
+const VISUAL_DASHBOARD_HIDDEN_KEY = 'skbp.dashboard.visualDashboardHidden.v1';
+
+function readStoredJson(key, fallback, validator) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    return validator(parsed) ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function storedPageSize() {
+  const value = Number(localStorage.getItem(PAGE_SIZE_STORAGE_KEY));
+  return [10, 30, 50, 100].includes(value) ? value : DEFAULT_PAGE_SIZE;
+}
 
 const DEFAULT_COLUMN_WIDTHS = {
-  select: 36,
-  company: 128,
-  country: 112,
-  asset: 92,
-  modality: 140,
-  target: 320,
-  mainIndication: 180,
-  stage: 190,
-  filter1: 82,
-  filter2: 82,
-  filter3: 82,
+  select: 34,
+  company: 108,
+  country: 78,
+  asset: 86,
+  modality: 96,
+  target: 220,
+  mainIndication: 140,
+  stage: 112,
+  filter1: 72,
+  filter2: 72,
+  filter3: 72,
   filter3Note: 280,
-  targetScore: 52,
-  competitiveScore: 58,
-  moaScore: 52,
-  platformScore: 52,
-  expansionScore: 52,
-  dataScore: 56,
-  marketScore: 64,
-  totalScore: 58,
-  focusAction: 112,
+  targetScore: 48,
+  competitiveScore: 52,
+  moaScore: 48,
+  platformScore: 48,
+  expansionScore: 48,
+  dataScore: 50,
+  marketScore: 56,
+  totalScore: 52,
+  focusAction: 96,
+  rubricAction: 68,
   inVivo: 74,
   inVitro: 74,
   admet: 84,
   focusDueDate: 140,
   focusManage: 90,
+  generatedAt: 116,
   extra: 180
 };
 
 const MIN_COLUMN_WIDTHS = {
-  select: 34,
-  company: 86,
-  country: 82,
-  asset: 72,
-  modality: 100,
-  target: 260,
-  mainIndication: 130,
-  stage: 120,
-  filter1: 70,
-  filter2: 70,
-  filter3: 70,
+  select: 32,
+  company: 78,
+  country: 64,
+  asset: 68,
+  modality: 76,
+  target: 170,
+  mainIndication: 105,
+  stage: 88,
+  filter1: 62,
+  filter2: 62,
+  filter3: 62,
   filter3Note: 210,
-  targetScore: 46,
-  competitiveScore: 50,
-  moaScore: 46,
-  platformScore: 46,
-  expansionScore: 46,
-  dataScore: 50,
-  marketScore: 56,
-  totalScore: 52,
-  focusAction: 100,
+  targetScore: 42,
+  competitiveScore: 46,
+  moaScore: 42,
+  platformScore: 42,
+  expansionScore: 42,
+  dataScore: 44,
+  marketScore: 48,
+  totalScore: 46,
+  focusAction: 84,
+  rubricAction: 60,
   inVivo: 64,
   inVitro: 64,
   admet: 70,
   focusDueDate: 120,
   focusManage: 70,
+  generatedAt: 102,
   extra: 110
 };
 
 const FOCUS_DEFAULT_COLUMN_WIDTHS = {
   ...DEFAULT_COLUMN_WIDTHS,
-  target: 430,
-  mainIndication: 165,
-  stage: 125,
-  filter2: 76,
-  totalScore: 92,
-  filter3: 104,
-  filter3Note: 300,
-  focusManage: 72
+  select: 34,
+  company: 94,
+  country: 74,
+  asset: 86,
+  modality: 80,
+  target: 200,
+  mainIndication: 116,
+  stage: 86,
+  filter2: 62,
+  totalScore: 62,
+  filter3: 82,
+  inVivo: 56,
+  inVitro: 56,
+  admet: 60,
+  focusDueDate: 108,
+  focusManage: 76
 };
 
 const FOCUS_MIN_COLUMN_WIDTHS = {
   ...MIN_COLUMN_WIDTHS,
-  target: 320,
-  stage: 96,
-  filter2: 68,
-  totalScore: 82,
-  filter3Note: 220,
+  company: 78,
+  country: 62,
+  asset: 68,
+  modality: 64,
+  target: 160,
+  mainIndication: 96,
+  stage: 72,
+  filter2: 54,
+  totalScore: 52,
+  filter3: 66,
+  inVivo: 48,
+  inVitro: 48,
+  admet: 50,
+  focusDueDate: 88,
   focusManage: 62
 };
 
 const MAX_COLUMN_WIDTH = 720;
 const PROMPT_TOOLTIP =
-  'GPT 조사 지침을 클립보드에 복사합니다. 복사한 지침을 ChatGPT에 붙여넣은 뒤, 조사할 회사명과 약물명/파이프라인명을 함께 입력하면 MD 리포트와 JSON Schema 형식으로 결과를 받을 수 있습니다.';
+  'GPT Full Scout v3.3 지침을 복사합니다. Fast Triage에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
 const TRIAGE_PROMPT_TOOLTIP =
-  'GPT fast triage 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / N/A로 screening할 때 사용합니다.';
-const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.2';
+  'GPT Fast Triage v3.2 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / UNVERIFIED로 screening합니다.';
+const LATEST_TRIAGE_RUBRIC_VERSION = '3.2';
+const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.3';
+const FAST_TRIAGE_SCHEMA_VERSION = '3.2';
+const FULL_SCOUT_SCHEMA_VERSION = '3.2';
+const FULL_SCOUT_AGENT_INPUT_PLACEHOLDER =
+  '예: E/I balance 후보 중 platform attractiveness가 가장 높은 Pipeline 두 개의 장단점을 비교해줘.';
+const SHORTLISTING_AGENT_INPUT_PLACEHOLDER =
+  '예: Shortlisted 후보 중 F/U Action이 필요한 Pipeline을 우선순위대로 알려줘.';
+const AGENT_INPUT_PLACEHOLDERS = {
+  full: FULL_SCOUT_AGENT_INPUT_PLACEHOLDER,
+  focus: SHORTLISTING_AGENT_INPUT_PLACEHOLDER
+};
+const DATA_UPLOAD_GUIDES = {
+  triage: {
+    title: 'Fast Triage 실행 가이드',
+    recommendation: 'GPT 모드 High · 권장 10–20개/회',
+    inputLabel: 'GPT 지침 1 전체 응답',
+    placeholder: [
+      '새 브라우저 탭에서 GPT를 열고, 오른쪽 Fast Triage 실행 가이드 순서대로 조사를 완료한 뒤 생성된 전체 응답을 그대로 붙여넣으세요.',
+      '',
+      '지침 1은 최대 50개까지 처리할 수 있으나, 안정적인 조사와 출력 형식을 위해 10~20개씩 실행하는 것을 권장합니다.'
+    ].join('\n'),
+    steps: [
+      {
+        title: '새 GPT 창 열기 및 모드 선택',
+        body: '새 브라우저 탭에서 GPT를 열고 High 이상의 추론 모드를 선택합니다.'
+      },
+      {
+        title: '지침 및 대상 입력',
+        body: '{{prompt}} 입력 후, 조사할 Asset명과 회사명이 각각 구분되도록 입력합니다.',
+        actions: [
+          { token: 'prompt', kind: 'copy-prompt', promptKind: 'triage', icon: 'GPT', label: '지침 1' }
+        ],
+        example: 'XEN1101, Asset B, Asset C …\n\n또는\n\nXenon Pharmaceuticals · XEN1101\nCompany B · Asset B'
+      },
+      {
+        title: '전체 응답 붙여넣기',
+        body: 'GPT가 출력한 답변을 수정하지 않고 {{input}}에 붙여넣습니다.',
+        actions: [
+          { token: 'input', kind: 'focus-input', icon: 'clipboard', label: 'GPT 지침 1 전체 응답' }
+        ]
+      },
+      {
+        title: '검토 후 저장',
+        body: '{{review}}를 누른 뒤, 오류가 없으면 {{save}}을 누릅니다.',
+        actions: [
+          { token: 'review', kind: 'review', icon: '✓', label: '입력 검토' },
+          { token: 'save', kind: 'save', icon: '＋', label: '검증 후 저장' }
+        ]
+      }
+    ]
+  },
+  full: {
+    title: 'Full Scout 실행 가이드',
+    recommendation: 'GPT 모드 High · 1개/회',
+    inputLabel: 'GPT 지침 2 전체 응답',
+    placeholder: [
+      '새 브라우저 탭에서 GPT를 열고, 오른쪽 Full Scout 실행 가이드 순서대로 심층조사를 완료한 뒤 생성된 전체 응답을 그대로 붙여넣으세요.',
+      '',
+      '관련 NCDP 파일이 있다면 GPT 실행 시 GPT 지침 1과 함께 첨부할 수 있습니다.'
+    ].join('\n'),
+    steps: [
+      {
+        title: '새 GPT 창 열기 및 모드 선택',
+        body: '새 브라우저 탭에서 GPT를 열고 High 이상의 추론 모드를 선택합니다.'
+      },
+      {
+        title: '지침 및 대상 입력',
+        body: '{{prompt}} 입력 후, 심층 검토할 Asset명을 1개 입력합니다. 회사명을 함께 입력하면 더 좋습니다.',
+        actions: [
+          { token: 'prompt', kind: 'copy-prompt', promptKind: 'full', icon: 'GPT', label: '지침 2' }
+        ],
+        example: 'XEN1101 · Xenon Pharmaceuticals'
+      },
+      {
+        title: '필요 시 NCDP 첨부',
+        body: '관련 NCDP 파일이 있으면 GPT 실행 시 함께 첨부합니다.'
+      },
+      {
+        title: '전체 응답 붙여넣기 및 저장',
+        body: `GPT가 출력한 전체 응답을 {{input}}에 붙여넣고, {{review}} 후 오류가 없으면 {{save}}을 누릅니다.`,
+        actions: [
+          { token: 'input', kind: 'focus-input', icon: 'clipboard', label: 'GPT 지침 2 전체 응답' },
+          { token: 'review', kind: 'review', icon: '✓', label: '입력 검토' },
+          { token: 'save', kind: 'save', icon: '＋', label: '검증 후 저장' }
+        ]
+      }
+    ]
+  }
+};
+const CANONICAL_DEVELOPMENT_STAGES = [
+  'Hit Discovery',
+  'Lead Optimization',
+  'Preclinical Candidate',
+  'IND-enabling',
+  'Preclinical unspecified',
+  'IND filed/cleared',
+  'Phase 1',
+  'Phase 1/2',
+  'Phase 2',
+  'Phase 2/3',
+  'Phase 3',
+  'Registration',
+  'Approved / marketed',
+  'Discontinued / inactive',
+  'Unknown'
+];
 const requestedTableMode = new URLSearchParams(window.location.search).get('tab');
 const initialTableMode = ['triage', 'full', 'focus'].includes(requestedTableMode)
   ? requestedTableMode
   : 'full';
+const initialSort = initialTableMode === 'triage'
+  ? { key: 'targetScore', direction: 'desc' }
+  : initialTableMode === 'focus'
+    ? { key: 'focusAddedAt', direction: 'desc' }
+    : { key: 'totalScore', direction: 'desc' };
 
 const state = {
   rawRecords: [],
   rows: [],
+  dashboardSummary: null,
+  dashboardSummaryRequestId: 0,
+  dataUploadGuideMode: null,
+  dataUploadReview: null,
   query: '',
   stage: 'all',
   theme: 'all',
@@ -114,34 +270,57 @@ const state = {
   indication: 'all',
   country: 'all',
   pass: 'all',
+  duePeriod: 'all',
+  filtersByMode: {
+    triage: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: 'all', country: 'all', pass: 'all' },
+    full: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: 'all', country: 'all', pass: 'all' },
+    focus: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: 'all', country: 'all', pass: 'all' }
+  },
   tableMode: initialTableMode,
-  sortKey: 'totalScore',
-  sortDirection: 'desc',
+  sortKey: initialSort.key,
+  sortDirection: initialSort.direction,
   page: 1,
-  pageSize: Number(localStorage.getItem(PAGE_SIZE_STORAGE_KEY)) || DEFAULT_PAGE_SIZE,
+  pageSize: storedPageSize(),
   selectedIds: new Set(),
-  extraColumns: new Set(JSON.parse(localStorage.getItem('skbp.dashboard.extraColumns') || '[]')),
-  columnWidths: JSON.parse(localStorage.getItem(COLUMN_WIDTH_STORAGE_KEY) || '{}'),
-  focusColumnWidths: JSON.parse(localStorage.getItem(FOCUS_COLUMN_WIDTH_STORAGE_KEY) || '{}'),
+  extraColumns: new Set(readStoredJson(
+    'skbp.dashboard.extraColumns',
+    [],
+    (value) => Array.isArray(value) && value.every((item) => typeof item === 'string')
+  )),
+  columnWidths: readStoredJson(
+    COLUMN_WIDTH_STORAGE_KEY,
+    {},
+    (value) => value && typeof value === 'object' && !Array.isArray(value)
+  ),
+  focusColumnWidths: readStoredJson(
+    FOCUS_COLUMN_WIDTH_STORAGE_KEY,
+    {},
+    (value) => value && typeof value === 'object' && !Array.isArray(value)
+  ),
+  fittedColumnWidths: {},
   agentSessions: [],
   activeAgentSessionId: localStorage.getItem(AGENT_ACTIVE_SESSION_KEY) || '',
   categorySynonyms: { country: [], stage: [], indication: [] },
-  categorySynonymsLoaded: false
+  categorySynonymsLoaded: false,
+  latestOiPartnershipCriteriaVersion: '1.0'
 };
 
 const elements = {
   dataStatus: document.querySelector('#dataStatus'),
   refreshButton: document.querySelector('#refreshButton'),
+  dataUploadShortcutButton: document.querySelector('#dataUploadShortcutButton'),
   exportExcelButton: document.querySelector('#exportExcelButton'),
   aiDrawerButton: document.querySelector('#aiDrawerButton'),
   aiDrawer: document.querySelector('#aiDrawer'),
-  aiBackdrop: document.querySelector('#aiBackdrop'),
+  aiDrawerTitle: document.querySelector('#aiDrawerTitle'),
   aiDrawerClose: document.querySelector('#aiDrawerClose'),
   criteriaDrawerButton: document.querySelector('#criteriaDrawerButton'),
   criteriaDrawer: document.querySelector('#criteriaDrawer'),
   criteriaBackdrop: document.querySelector('#criteriaBackdrop'),
   criteriaDrawerClose: document.querySelector('#criteriaDrawerClose'),
   criteriaDrawerScopeLabel: document.querySelector('#criteriaDrawerScopeLabel'),
+  criteriaDrawerVersionBadge: document.querySelector('#criteriaDrawerVersionBadge'),
+  criteriaDrawerSubtitle: document.querySelector('#criteriaDrawerSubtitle'),
   agentContextCount: document.querySelector('#agentContextCount'),
   agentMessages: document.querySelector('#agentMessages'),
   agentForm: document.querySelector('#agentForm'),
@@ -149,25 +328,61 @@ const elements = {
   agentSessionSelect: document.querySelector('#agentSessionSelect'),
   agentNewSessionButton: document.querySelector('#agentNewSessionButton'),
   agentDeleteSessionButton: document.querySelector('#agentDeleteSessionButton'),
+  agentResponseModal: document.querySelector('#agentResponseModal'),
+  agentResponseModalBody: document.querySelector('#agentResponseModalBody'),
+  agentResponseModalClose: document.querySelector('#agentResponseModalClose'),
+  agentResponseModalCopy: document.querySelector('#agentResponseModalCopy'),
+  agentResponseModalStatus: document.querySelector('#agentResponseModalStatus'),
   metricTotal: document.querySelector('#metricTotal'),
+  metricTotalCard: document.querySelector('#metricTotalCard'),
+  metricTotalLabel: document.querySelector('#metricTotalLabel'),
+  metricTotalIcon: document.querySelector('#metricTotalIcon'),
   metricPass: document.querySelector('#metricPass'),
+  metricPassCard: document.querySelector('#metricPassCard'),
+  metricPassLabel: document.querySelector('#metricPassLabel'),
+  metricPassIcon: document.querySelector('#metricPassIcon'),
   metricScore: document.querySelector('#metricScore'),
+  metricScoreCard: document.querySelector('#metricScoreCard'),
+  metricScoreLabel: document.querySelector('#metricScoreLabel'),
+  metricScoreIcon: document.querySelector('#metricScoreIcon'),
   metricTarget: document.querySelector('#metricTarget'),
+  metricTargetCard: document.querySelector('#metricTargetCard'),
+  metricTargetLabel: document.querySelector('#metricTargetLabel'),
+  metricTargetIcon: document.querySelector('#metricTargetIcon'),
   metricCountries: document.querySelector('#metricCountries'),
-  themeChart: document.querySelector('#themeChart'),
+  metricCountriesCard: document.querySelector('#metricCountriesCard'),
+  metricCountriesLabel: document.querySelector('#metricCountriesLabel'),
+  metricCountriesIcon: document.querySelector('#metricCountriesIcon'),
+  workflowModeDescription: document.querySelector('#workflowModeDescription'),
+  pipelineContent: document.querySelector('#pipelineContent'),
+  visualGrid: document.querySelector('#visualGrid'),
+  visualDashboardToggleButton: document.querySelector('#visualDashboardToggleButton'),
+  visualDashboardToggleLabel: document.querySelector('#visualDashboardToggleLabel'),
+  summaryAverageScore: document.querySelector('#summaryAverageScore'),
+  summaryScopeNote: document.querySelector('#summaryScopeNote'),
   indicationChart: document.querySelector('#indicationChart'),
+  indicationSummaryTitle: document.querySelector('#indicationSummaryTitle'),
+  indicationSummarySubtitle: document.querySelector('#indicationSummarySubtitle'),
   modalityChart: document.querySelector('#modalityChart'),
-  countryChart: document.querySelector('#countryChart'),
-  priorityList: document.querySelector('#priorityList'),
-  dueDateList: document.querySelector('#dueDateList'),
+  modalitySummaryTitle: document.querySelector('#modalitySummaryTitle'),
+  modalitySummarySubtitle: document.querySelector('#modalitySummarySubtitle'),
+  passRatePanel: document.querySelector('#passRatePanel'),
+  passRateChart: document.querySelector('#passRateChart'),
+  passRateSubtitle: document.querySelector('#passRateSubtitle'),
+  workflowStatusTitle: document.querySelector('#workflowStatusTitle'),
+  workflowPriorityTitle: document.querySelector('#workflowPriorityTitle'),
+  workflowPrioritySubtitle: document.querySelector('#workflowPrioritySubtitle'),
+  workflowPriorityList: document.querySelector('#workflowPriorityList'),
   searchInput: document.querySelector('#searchInput'),
-  stageFilter: document.querySelector('#stageFilter'),
   themeFilter: document.querySelector('#themeFilter'),
   clusterFilter: document.querySelector('#clusterFilter'),
   modalityFilter: document.querySelector('#modalityFilter'),
   countryFilter: document.querySelector('#countryFilter'),
   indicationFilter: document.querySelector('#indicationFilter'),
+  stageFilter: document.querySelector('#stageFilter'),
   passFilter: document.querySelector('#passFilter'),
+  passFilterLabel: document.querySelector('#passFilterLabel'),
+  resetFiltersButton: document.querySelector('#resetFiltersButton'),
   tableCount: document.querySelector('#tableCount'),
   pageSizeSelect: document.querySelector('#pageSizeSelect'),
   columnSettingsButton: document.querySelector('#columnSettingsButton'),
@@ -184,8 +399,13 @@ const elements = {
   pageInfo: document.querySelector('#pageInfo'),
   prevPage: document.querySelector('#prevPage'),
   nextPage: document.querySelector('#nextPage'),
-  rawReportInput: document.querySelector('#rawReportInput'),
-  structuredJsonInput: document.querySelector('#structuredJsonInput'),
+  gptResponseInput: document.querySelector('#gptResponseInput'),
+  dataUploadPanel: document.querySelector('.paste-panel'),
+  dataUploadInputLabel: document.querySelector('#dataUploadInputLabel'),
+  dataUploadGuideTitle: document.querySelector('#dataUploadGuideTitle'),
+  dataUploadRecommendation: document.querySelector('#dataUploadRecommendation'),
+  dataUploadGuideSteps: document.querySelector('#dataUploadGuideSteps'),
+  inputValidationResults: document.querySelector('#inputValidationResults'),
   previewInputButton: document.querySelector('#previewInputButton'),
   saveJsonButton: document.querySelector('#saveJsonButton'),
   clearJsonButton: document.querySelector('#clearJsonButton'),
@@ -197,7 +417,12 @@ const elements = {
   reviewerIdentityModal: document.querySelector('#reviewerIdentityModal'),
   reviewerIdentityInput: document.querySelector('#reviewerIdentityInput'),
   reviewerIdentityCancel: document.querySelector('#reviewerIdentityCancel'),
-  reviewerIdentitySubmit: document.querySelector('#reviewerIdentitySubmit')
+  reviewerIdentitySubmit: document.querySelector('#reviewerIdentitySubmit'),
+  dataReuploadModal: document.querySelector('#dataReuploadModal'),
+  dataReuploadTitle: document.querySelector('#dataReuploadTitle'),
+  dataReuploadIdentity: document.querySelector('#dataReuploadIdentity'),
+  dataReuploadKeepNew: document.querySelector('#dataReuploadKeepNew'),
+  dataReuploadConfirm: document.querySelector('#dataReuploadConfirm')
 };
 
 let activeColumnResize = null;
@@ -206,6 +431,7 @@ let targetContextTooltip = null;
 let targetContextAnchor = null;
 const focusSaveQueues = new Map();
 let reviewerIdentityResolve = null;
+let dataReuploadResolve = null;
 
 function getDashboardReviewerIdentity() {
   return (sessionStorage.getItem(DASHBOARD_REVIEWER_ID_KEY) || '').trim();
@@ -237,6 +463,98 @@ async function ensureDashboardReviewerIdentity() {
   if (!identity) return null;
   sessionStorage.setItem(DASHBOARD_REVIEWER_ID_KEY, identity);
   return identity;
+}
+
+function normalizedPipelineIdentityText(value) {
+  return String(value || '')
+    .normalize('NFKC')
+    .toLocaleLowerCase('en')
+    .replace(/[^\p{L}\p{N}]+/gu, '');
+}
+
+function dataUploadRecordIdentity(record) {
+  const table = isInputObject(record?.structured_table) ? record.structured_table : {};
+  const summary = isInputObject(record?.json_summary) ? record.json_summary : {};
+  const mode = detectInputRecordMode(record).mode;
+  const company = String(table.company || summary.company || '').trim();
+  const asset = String(table.asset_name || summary.asset_name || '').trim();
+  return {
+    mode,
+    company,
+    asset,
+    normalizedCompany: normalizedPipelineIdentityText(company),
+    normalizedAsset: normalizedPipelineIdentityText(asset)
+  };
+}
+
+function dataUploadRecordRecency(record) {
+  const meta = isInputObject(record?.meta) ? record.meta : {};
+  const parsed = Date.parse(meta.generated_at || meta.completed_at || '');
+  if (Number.isFinite(parsed)) return parsed;
+  const idDate = String(meta.output_filename_base || '').match(/(20\d{6})(?!.*20\d{6})/)?.[1];
+  return idDate ? Date.parse(`${idDate.slice(0, 4)}-${idDate.slice(4, 6)}-${idDate.slice(6, 8)}`) || 0 : 0;
+}
+
+function findDataReuploadMatches(records) {
+  return records.flatMap((incomingRecord) => {
+    const incomingIdentity = dataUploadRecordIdentity(incomingRecord);
+    if (!incomingIdentity.normalizedCompany || !incomingIdentity.normalizedAsset) return [];
+    const incomingRecordId = recordIdentifier(incomingRecord);
+    const candidates = state.rawRecords
+      .filter((existingRecord) => {
+        const existingIdentity = dataUploadRecordIdentity(existingRecord);
+        return existingIdentity.mode === incomingIdentity.mode
+          && existingIdentity.normalizedCompany === incomingIdentity.normalizedCompany
+          && existingIdentity.normalizedAsset === incomingIdentity.normalizedAsset;
+      })
+      .sort((a, b) => {
+        const exactA = Number(recordIdentifier(a) === incomingRecordId);
+        const exactB = Number(recordIdentifier(b) === incomingRecordId);
+        return exactB - exactA || dataUploadRecordRecency(b) - dataUploadRecordRecency(a);
+      });
+    if (!candidates.length) return [];
+    const existingRecord = candidates[0];
+    const existingRecordId = recordIdentifier(existingRecord);
+    return [{
+      incomingRecordId,
+      existingRecordId,
+      exactRecordId: incomingRecordId === existingRecordId,
+      mode: incomingIdentity.mode,
+      company: incomingIdentity.company,
+      asset: incomingIdentity.asset
+    }];
+  });
+}
+
+function closeDataReuploadModal(decision = null) {
+  if (elements.dataReuploadModal) elements.dataReuploadModal.hidden = true;
+  const resolve = dataReuploadResolve;
+  dataReuploadResolve = null;
+  if (resolve) resolve(decision);
+}
+
+function openDataReuploadModal(match) {
+  if (!elements.dataReuploadModal) return Promise.resolve(null);
+  return new Promise((resolve) => {
+    dataReuploadResolve = resolve;
+    const workflowLabel = match.mode === 'triage' ? 'Fast Triage' : 'Full Scout';
+    elements.dataReuploadTitle.textContent = `기존 ${workflowLabel} 레코드가 발견되었습니다.`;
+    elements.dataReuploadIdentity.textContent = `${match.company || 'Unknown company'} · ${match.asset || 'Unknown asset'}`;
+    elements.dataReuploadKeepNew.hidden = match.exactRecordId;
+    elements.dataReuploadKeepNew.textContent = '아니요 · 신규로 추가';
+    elements.dataReuploadModal.hidden = false;
+    elements.dataReuploadConfirm.focus();
+  });
+}
+
+async function reviewDataReuploadMatches(matches) {
+  const decisions = [];
+  for (const match of matches) {
+    const replaceExisting = await openDataReuploadModal(match);
+    if (replaceExisting === null) return null;
+    decisions.push({ ...match, replaceExisting });
+  }
+  return decisions;
 }
 
 function get(record, path, fallback = '') {
@@ -320,11 +638,13 @@ function orderedDictionaryEntries(kind) {
     'Phase 2': 80,
     'Phase 1/2': 75,
     'Phase 1': 70,
-    'IND-enabling': 65,
-    IND: 60,
-    'Lead Selection': 40,
-    'Lead Optimization': 30,
-    'Hit discovery': 20
+    'IND filed/cleared': 65,
+    'IND-enabling': 60,
+    'Preclinical Candidate': 55,
+    'Preclinical unspecified': 50,
+    'Lead Optimization': 40,
+    'Hit Discovery': 30,
+    Unknown: 0
   };
 
   return [...entries].sort((a, b) => {
@@ -408,25 +728,127 @@ function canonicalCountry(value) {
   return text;
 }
 
-function canonicalDevelopmentStage(value) {
-  const text = String(value || '').trim();
-  const fromDictionary = canonicalFromDictionary('stage', text);
-  if (fromDictionary) return fromDictionary;
+function countryDisplayLabel(country) {
+  const value = String(country || 'Unknown').trim() || 'Unknown';
+  const labels = [
+    [/^(?:republic of korea|south korea|korea)$/i, 'Korea'],
+    [/^(?:united states(?: of america)?|usa|u\.s\.?|us)$/i, 'US'],
+    [/^china$/i, 'CN'],
+    [/^japan$/i, 'JP'],
+    [/^canada$/i, 'CA'],
+    [/^singapore$/i, 'SG'],
+    [/^taiwan$/i, 'TW'],
+    [/^australia$/i, 'AU'],
+    [/^israel$/i, 'IL'],
+    [/^(?:united kingdom|uk)$/i, 'UK'],
+    [/^europe(?:\s*\/\s*uk)?$/i, 'EU']
+  ];
+  return labels.find(([pattern]) => pattern.test(value))?.[1] || value;
+}
 
-  const normalized = normalizeCategoryText(text);
-  if (!text || text === '-' || /^n\/?a$/i.test(text)) return 'Unknown';
-  if (/discontinued|terminated|withdrawn|suspended|inactive|dormant/.test(normalized)) return 'Discontinued / inactive';
-  if (/approved|launched|marketed|commercial/.test(normalized)) return 'Approved / marketed';
-  if (/nda|bla|maa|registration|filed|under review/.test(normalized)) return 'Registration';
-  if (/(phase|ph|p)\s*-?\s*(2|ii)\s*\/\s*(3|iii)|\b2\s*\/\s*3\s*상/.test(normalized)) return 'Phase 2/3';
-  if (/(phase|ph|p)\s*-?\s*(1|i)\s*\/\s*(2|ii)|\b1\s*\/\s*2\s*상/.test(normalized)) return 'Phase 1/2';
-  if (/(phase|ph|p)\s*-?\s*(3|iii)\b|\b3상/.test(normalized)) return 'Phase 3';
-  if (/(phase|ph|p)\s*-?\s*(2|ii)\b|\b2상/.test(normalized)) return 'Phase 2';
-  if (/(phase|ph|p)\s*-?\s*(1|i)\b|\b1상|\bfih\b|first[- ]?in[- ]?human/.test(normalized)) return 'Phase 1';
-  if (/ind[- ]?enabling|ind preparation|ind-ready|glp tox|candidate selection|candidate selected/.test(normalized)) return 'IND-enabling';
-  if (/preclinical|pre-clinical|nonclinical|in vivo|in vitro/.test(normalized)) return 'Preclinical';
-  if (/discovery|lead optimization|lead-op|hit-to-lead|research/.test(normalized)) return 'Discovery';
-  return text;
+function countryTableCode(country) {
+  const value = String(country || 'Unknown').trim() || 'Unknown';
+  const codes = [
+    [/^china\s*\/\s*hong kong$/i, 'CN/HK'],
+    [/^china\s*\/\s*united states(?: operations)?$/i, 'CN/US'],
+    [/^europe\s*\/\s*(?:united kingdom|uk)$/i, 'EU/GB'],
+    [/^(?:republic of korea|south korea|korea)$/i, 'KR'],
+    [/^(?:united states(?: of america)?|usa|u\.s\.?|us)$/i, 'US'],
+    [/^china$/i, 'CN'],
+    [/^hong kong$/i, 'HK'],
+    [/^japan$/i, 'JP'],
+    [/^canada$/i, 'CA'],
+    [/^singapore$/i, 'SG'],
+    [/^taiwan$/i, 'TW'],
+    [/^australia$/i, 'AU'],
+    [/^israel$/i, 'IL'],
+    [/^(?:united kingdom|uk)$/i, 'GB'],
+    [/^europe$/i, 'EU'],
+    [/^(?:unknown|n\/?a|-)$/i, 'N/A']
+  ];
+  if (/^[a-z]{2}(?:\/[a-z]{2})*$/i.test(value)) return value.toUpperCase();
+  return codes.find(([pattern]) => pattern.test(value))?.[1] || value;
+}
+
+function canonicalDevelopmentStage(value) {
+  const raw = String(value || '').trim();
+  if (!raw || raw === '-' || /^n\/?a$/i.test(raw)) return 'Unknown';
+  const exact = CANONICAL_DEVELOPMENT_STAGES.find((stage) => stage.toLowerCase() === raw.toLowerCase());
+  if (exact) return exact;
+
+  const text = raw.toLowerCase().replace(/[_–—]+/g, '-').replace(/\s+/g, ' ').trim();
+  if (/\b(?:conflict(?:ing|ed)?|inconsistent|discrepan(?:t|cy)|unresolved|unclear|uncertain)\b|상충|불일치|해소할\s*수\s*없|불명확|불확실/.test(text)) {
+    return 'Unknown';
+  }
+
+  const matchIsPlanned = (match) => {
+    const separators = [';', '.', '\n', ',', ':'];
+    const left = Math.max(...separators.map((separator) => text.lastIndexOf(separator, match.index)));
+    const matchEnd = match.index + match[0].length;
+    const rightCandidates = separators
+      .map((separator) => text.indexOf(separator, matchEnd))
+      .filter((position) => position >= 0);
+    const right = rightCandidates.length ? Math.min(...rightCandidates) : text.length;
+    const before = text.slice(Math.max(left + 1, match.index - 64), match.index);
+    const after = text.slice(matchEnd, Math.min(right, matchEnd + 64));
+    const plannedBefore = /(?:\b(?:plan(?:s|ned|ning)?|expect(?:s|ed|ing)?|target(?:s|ed|ing)?|aim(?:s|ed|ing)?|intend(?:s|ed|ing)?|project(?:s|ed|ing)?|anticipat(?:e|es|ed|ing)|propos(?:e|es|ed|ing)|schedul(?:e|es|ed|ing)|will|would)\b(?:\s+(?:to|for))?(?:\s+(?:enter|start|begin|initiate|advance\s+to))?\s*$|(?:예정|계획|목표|전망)(?:인|된|으로)?\s*$)/.test(before);
+    const plannedAfter = /^\s*(?:(?:trial|study|studies|program|development|submission|initiation)\s+)?(?:(?:is|are|was|were|to\s+be)\s+)?(?:plan(?:s|ned|ning)?|expect(?:s|ed|ing)?|target(?:s|ed|ing)?|aim(?:s|ed|ing)?|intend(?:s|ed|ing)?|project(?:s|ed|ing)?|anticipat(?:e|es|ed|ing)|propos(?:e|es|ed|ing)|schedul(?:e|es|ed|ing)|next\s+year|future)\b|^\s*(?:will|would)\s+(?:enter|start|begin|initiate|advance\s+to)\b|^\s*(?:trial|study|studies|program|development)?\s*to\s+(?:enter|start|begin|initiate)(?:\s+in)?\s+(?:next\s+year|the\s+future)\b|^\s*(?:(?:진입|시작|착수|개시)\s*)?(?:시험|연구|개발|제출|착수)?\s*(?:이|가|은|는)?\s*(?:예정|계획|목표|전망)/.test(after);
+    return plannedBefore || plannedAfter;
+  };
+
+  const inactiveMatch = text.match(/\b(?:discontinued|inactive|terminated|withdrawn|suspended|dormant|clearly failed)\b|중단|종료|철회|휴면/);
+  if (inactiveMatch) {
+    const prefix = text.slice(Math.max(0, inactiveMatch.index - 16), inactiveMatch.index);
+    if (!/\b(?:not|isn't|is not|never)\s*$|아니|않/.test(prefix)) return 'Discontinued / inactive';
+  }
+
+  if (/\b(?:ind|cta)\s*(?:submitted|filed|accepted|effective|cleared|approved|approval)\b|\b(?:submitted|filed|accepted|effective|cleared|approved)\s+(?:an?\s+)?(?:ind|cta)\b|(?:ind|cta)\s*(?:제출|승인|수리|효력)/.test(text)) {
+    return 'IND filed/cleared';
+  }
+  if (/\b(?:registration|nda|bla|maa)\s+(?:submitted|filed|accepted|review|under review)\b|\b(?:submitted|filed|accepted)\s+(?:an?\s+)?(?:nda|bla|maa)\b|허가\s*(?:신청|제출|심사)/.test(text)) {
+    return 'Registration';
+  }
+  if (/^(?:approved|marketed|commercial(?:ized|ised))$|\b(?:nda|bla|maa)\s+(?:approved|approval)\b|\b(?:approved|marketed|commercial(?:ized|ised))\s+(?:drug|medicine|product|therapy|therapeutic|asset)\b|\b(?:drug|medicine|product|therapy|therapeutic|asset)\s+(?:approved|marketed|commercial(?:ized|ised))\b|\b(?:marketed|commercial(?:ized|ised))\b|(?:품목\s*)?허가\s*(?:승인|완료)?|시판/.test(text)) {
+    return 'Approved / marketed';
+  }
+
+  const phasePatterns = [
+    ['Phase 2/3', /\b(?:phase\s*(?:ii\s*\/\s*iii|2\s*\/\s*3)|p2\s*\/\s*p?3)\b/],
+    ['Phase 1/2', /\b(?:phase\s*(?:i\s*\/\s*ii|1\s*\/\s*2)|p1\s*\/\s*p?2)\b/],
+    ['Phase 3', /\b(?:phase\s*(?:iii|3)(?!\s*\/)|p3)\b/],
+    ['Phase 2', /\b(?:phase\s*(?:ii|2)(?:a|b)?|p2(?:a|b)?)\b/],
+    ['Phase 1', /\b(?:phase\s*(?:i|1)(?:a|b)?|p1(?:a|b)?|fih|sad\s*\/\s*mad)\b/]
+  ];
+  for (const [canonical, pattern] of phasePatterns) {
+    const phaseMatch = text.match(pattern);
+    if (phaseMatch && !matchIsPlanned(phaseMatch)) return canonical;
+  }
+
+  if (/\b(?:development\s+candidate|preclinical\s+candidate)\s+(?:selected|nominated)\b|\bcandidate\s+nominated\b|개발\s*후보(?:물질)?\s*(?:선정|지명)/.test(text)) {
+    return 'Preclinical Candidate';
+  }
+  const leadMatch = text.match(/\b(?:candidate|lead)\s+selection\s+(?:ongoing|underway|in progress)\b|\blead\s+optimization\b|리드\s*최적화/);
+  if (leadMatch && !matchIsPlanned(leadMatch)) return 'Lead Optimization';
+  const hitMatch = text.match(/\b(?:hit\s+discovery|hit\s+identification|early\s+screening)\b|히트\s*(?:발굴|탐색)/);
+  if (hitMatch && !matchIsPlanned(hitMatch)) return 'Hit Discovery';
+  const indEnablingMatch = text.match(/\bind[- ]?enabling(?:\s+stud(?:y|ies))?\b|\bglp\s+(?:toxicology|tox)\b|\bind[- ]directed\s+cmc\b|\bind\s+preparation\b|\bpreparing\s+(?:an?\s+)?ind\b|ind\s*준비|glp\s*독성/);
+  if (indEnablingMatch && !matchIsPlanned(indEnablingMatch)) return 'IND-enabling';
+  const preclinicalMatch = text.match(/\bpreclinical\b|비임상/);
+  if (preclinicalMatch && !matchIsPlanned(preclinicalMatch)) return 'Preclinical unspecified';
+  return 'Unknown';
+}
+
+function stageSummaryGroup(stage) {
+  const canonical = canonicalDevelopmentStage(stage);
+  return [
+    'Hit Discovery',
+    'Lead Optimization',
+    'Preclinical Candidate',
+    'IND-enabling',
+    'Preclinical unspecified'
+  ].includes(canonical)
+    ? 'Preclinical'
+    : canonical;
 }
 
 function canonicalModality(value) {
@@ -446,17 +868,29 @@ function canonicalModality(value) {
 function canonicalTheme(value) {
   const text = String(value || '').trim();
   const normalized = normalizeCategoryText(text);
-  if (!text || text === '-' || /^(unknown|not known)$/i.test(text)) return 'Unknown';
-  if (/^n\/?a$|no theme|no mapped|no fit|out of scope|none/.test(normalized)) return 'N/A';
-  return text;
+  if (!text || text === '-' || /^(unknown|not known|n\/?a)$/i.test(text)) return 'Unknown';
+  if (/e\s*\/\s*i\s*balance|excitation.*inhibition/.test(normalized)) return 'E/I Balance';
+  if (/neuro[\s-]*immune/.test(normalized)) return 'Neuroimmune';
+  return 'Others';
 }
 
-function canonicalCluster(value) {
+function canonicalCluster(value, theme = '') {
   const text = String(value || '').trim();
   const normalized = normalizeCategoryText(text);
   if (!text || text === '-' || /^(unknown|not known)$/i.test(text)) return 'Unknown';
-  if (/^n\/?a$|no cluster|no mapped|no fit|out of scope|none/.test(normalized)) return 'N/A';
+  if (/^n\/?a$/.test(normalized)) return theme === 'Others' ? 'Others' : 'Unknown';
+  if (/^others?$|no cluster|no mapped|no fit|out of scope|none/.test(normalized)) return 'Others';
   return text;
+}
+
+function recordIdentifier(record, index = 0) {
+  const explicit = String(record?.meta?.output_filename_base || '').trim();
+  if (explicit) return explicit;
+  const table = record?.structured_table || {};
+  const summary = record?.json_summary || {};
+  const company = String(table.company || summary.company || 'unknown').trim() || 'unknown';
+  const asset = String(table.asset_name || summary.asset_name || `asset-${index + 1}`).trim() || `asset-${index + 1}`;
+  return `${company}_${asset}`;
 }
 
 function escapeHtml(value) {
@@ -528,6 +962,56 @@ function isPlaceholderRawMarkdown(value) {
     || text === 'Markdown report is provided separately in the MD copy box.';
 }
 
+function evidenceSourceUrl(source) {
+  if (typeof source === 'string') return source.trim();
+  if (!source || typeof source !== 'object') return '';
+  return String(source.source_url || source.url || source.href || '').trim();
+}
+
+function criterionEvidenceSources(criterion) {
+  if (!criterion || typeof criterion !== 'object') return [];
+  if (Array.isArray(criterion.verified_evidence_sources)) return criterion.verified_evidence_sources;
+  return Array.isArray(criterion.evidence_sources) ? criterion.evidence_sources : [];
+}
+
+function verifiedPublicSourceUrls(criterionOrSources, { requireExplicitVerification = false } = {}) {
+  const explicitVerifiedList = !Array.isArray(criterionOrSources)
+    && Array.isArray(criterionOrSources?.verified_evidence_sources);
+  const sources = Array.isArray(criterionOrSources)
+    ? criterionOrSources
+    : criterionEvidenceSources(criterionOrSources);
+  const unique = new Set();
+  sources.forEach((source) => {
+    if (source && typeof source === 'object') {
+      if (source.verified === false) return;
+      if (requireExplicitVerification && !explicitVerifiedList && source.verified !== true) return;
+    } else if (requireExplicitVerification && !explicitVerifiedList) {
+      return;
+    }
+    const rawUrl = evidenceSourceUrl(source);
+    if (!rawUrl || /^(unknown|n\/?a|null|source_url_not_provided)$/i.test(rawUrl)) return;
+    try {
+      const parsed = new URL(rawUrl);
+      if (!['http:', 'https:'].includes(parsed.protocol)) return;
+      if (!parsed.hostname || ['localhost', '127.0.0.1'].includes(parsed.hostname.toLowerCase())) return;
+      parsed.hash = '';
+      unique.add(parsed.href.replace(/\/$/, ''));
+    } catch {
+      // A descriptive citation without a public URL is not a verified public source.
+    }
+  });
+  return [...unique];
+}
+
+function evidenceBasisLabel(value, verifiedSourceCount = 0) {
+  return ({
+    user_input_only: '사용자 입력정보 기반 · 공개자료 미확인',
+    public_source: `공개자료 ${verifiedSourceCount}건 확인`,
+    user_input_and_public_source: `사용자 입력정보 + 공개자료 ${verifiedSourceCount}건 확인`,
+    no_supporting_basis: '확인된 판단근거 없음'
+  })[String(value || '').trim()] || '-';
+}
+
 function criterion(record, key) {
   const item = get(record, `scoring.criteria.${key}`, {});
   const rubric = get(record, `rubric.${key}`, {});
@@ -535,6 +1019,9 @@ function criterion(record, key) {
   const appliedRule = item.criteria_reference?.applied_rule_id || item.ai_champion?.rule_applied || (item.score != null ? `${key}:${item.score}` : '-');
   const rationale = item.score_rationale || {};
   const evidenceSources = Array.isArray(item.evidence_sources) ? item.evidence_sources : [];
+  const verifiedSourceUrls = verifiedPublicSourceUrls(item, {
+    requireExplicitVerification: isCurrentFastTriageContract(record)
+  });
   const matchingRule = (definition.scoring_rules || []).find((rule) => {
     return rule.rule_id === appliedRule || rule.score === item.score;
   });
@@ -553,6 +1040,10 @@ function criterion(record, key) {
     mainLineSummary,
     evidenceType: item.evidence_type || '-',
     evidenceTypeReason: item.evidence_type_reason || '-',
+    evidenceBasis: item.evidence_basis || '',
+    evidenceBasisLabel: evidenceBasisLabel(item.evidence_basis, verifiedSourceUrls.length),
+    verifiedPublicSourceCount: verifiedSourceUrls.length,
+    verifiedPublicSourceUrls: verifiedSourceUrls,
     whyNotHigher: item.why_not_higher || '-',
     version: get(record, 'meta.rubric_version', item.criteria_reference?.criteria_version || '-'),
     author: get(record, 'meta.rubric_author', item.criteria_reference?.criteria_author || '-'),
@@ -595,9 +1086,46 @@ function collectHardFilterNotes(record) {
   return notes.filter(Boolean).join(' | ');
 }
 
-function hasNoThemeFit(theme, cluster) {
-  const value = `${theme || ''} ${cluster || ''}`.toLowerCase();
-  return !value.trim() || /n\/?a|no theme|no cluster|no mapped|none|미해당/.test(value);
+function hasAffirmedHardBlocker(notes) {
+  const blockerPattern = /(\boutside\s+(?:the\s+)?(?:primary\s+)?(?:therapeutic\s+area|indication|disease)\s+scope\b|\bout\s+of\s+(?:therapeutic|indication|disease)\s+scope\b|\bno\s+public\s+target\b|\bno\b[^|.;\n]{0,48}\btarget\s*\/\s*moa\b|\basset\s+identity\s+(?:is\s+)?(?:not\s+verified|unverified)\b|\b(?:discontinued|terminated|withdrawn|suspended|dormant|inactive|clearly\s+failed)\b|(?:관심\s*)?(?:질환|적응증|치료\s*영역)\s*범위\s*밖|자산\s*식별\s*불가|(?:개발|프로그램|임상)\s*(?:이\s*)?(?:중단|종료|철회|휴면|비활성))/i;
+  return String(notes || '').split('|').some((segment) => {
+    const match = blockerPattern.exec(segment);
+    if (!match) return false;
+    const prefix = segment.slice(Math.max(0, match.index - 28), match.index);
+    const suffix = segment.slice(match.index + match[0].length, match.index + match[0].length + 20);
+    if (/\b(?:not|without|never)\b[^.;\n]{0,20}$|(?:아니|없)는?\s*$/i.test(prefix)) return false;
+    if (/^\s*(?:없(?:음|다)?|아님|아니|not\b|false\b)/i.test(suffix)) return false;
+    return true;
+  });
+}
+
+function hasAffirmedLifecycleBlocker(values) {
+  const blockerPattern = /\b(?:inactive|discontinued|terminated|withdrawn|suspended|dormant|clearly[\s_-]+failed|hard[\s_-]*blocker)\b|(?:개발|프로그램|임상)\s*(?:이\s*)?(?:중단|종료|철회|휴면|비활성)/gi;
+  const items = Array.isArray(values) ? values : [values];
+  return items.some((value) => {
+    const text = String(value || '');
+    blockerPattern.lastIndex = 0;
+    let match;
+    while ((match = blockerPattern.exec(text)) !== null) {
+      const prefix = text.slice(Math.max(0, match.index - 28), match.index);
+      const suffix = text.slice(match.index + match[0].length, match.index + match[0].length + 20);
+      if (/\b(?:not|without|never|no)\b[^|.;\n]{0,20}$|(?:아니|없)는?\s*$/i.test(prefix)) continue;
+      if (/^\s*(?:없(?:음|다)?|아님|아니|not\b|false\b)/i.test(suffix)) continue;
+      return true;
+    }
+    return false;
+  });
+}
+
+function hasScopedFullScoutReviewUncertainty(notes) {
+  const text = String(notes || '');
+  const subject = '(?:stage|rights?|licen[cs]e|ownership|asset\\s+identity|source|registry|sponsor)';
+  const uncertainty = '(?:unclear|uncertain|unknown|unverified|unconfirmed|ambiguous|not\\s+(?:public(?:ly\\s+available)?|verified|confirmed|clear|established)|(?:could\\s+not|cannot|unable\\s+to)\\s+(?:be\\s+)?(?:verify|verified|confirm|confirmed|establish|established|identify|identified)|(?:pending|requires?|needs?)\\s+(?:independent\\s+)?(?:verification|confirmation)|(?:verification|confirmation)\\s+(?:is\\s+)?(?:required|needed|pending))';
+  const english = new RegExp(`\\b${subject}\\b[^|.;\\n]{0,64}\\b${uncertainty}\\b|\\b${uncertainty}\\b[^|.;\\n]{0,64}\\b${subject}\\b`, 'i');
+  const koreanSubject = '(?:개발\\s*단계|단계|권리|라이선스|소유권|자산\\s*식별|출처|소스|레지스트리|스폰서)';
+  const koreanUncertainty = '(?:불확실|불명확|미확인|확인\\s*(?:불가|필요)|검증\\s*(?:불가|필요)|자료\\s*(?:부족|없음))';
+  const korean = new RegExp(`${koreanSubject}[^|.;\\n]{0,48}${koreanUncertainty}|${koreanUncertainty}[^|.;\\n]{0,48}${koreanSubject}`, 'i');
+  return english.test(text) || korean.test(text);
 }
 
 function computeHardFilter(record, criteria) {
@@ -624,21 +1152,17 @@ function computeHardFilter(record, criteria) {
       : effectiveScores.every(Number.isFinite)
         ? effectiveScores.reduce((sum, score) => sum + score, 0)
         : null;
-  const targetScore = number(summary.target_relevance_score ?? criteria.target.score);
+  const targetScore = number(criteria.target.score ?? summary.target_relevance_score);
   const moaScore = number(criteria.moa.score);
   const dataScore = number(criteria.data.score);
-  const theme = summary.theme || '';
-  const cluster = summary.cluster || '';
   const notes = collectHardFilterNotes(record);
   const reasons = [];
 
-  const noThemeFit = hasNoThemeFit(theme, cluster);
-  const failBlocker = /(outside primary|outside.*theme|out of scope|no public target|no.*target\/moa|discontinued|dormant|범위 밖|미해당|중단)/i.test(notes);
-  const reviewUncertainty = /(stage|rights?|license|licensed|ownership|asset identity|identity|source|official|registry|unclear|uncertain|not public|not verified|confirmation|confirm|sponsor|단계|권리|출처|공식|불확실|확인|미확인|식별|정체|라이선스|스폰서)/i.test(notes);
+  const failBlocker = hasAffirmedHardBlocker(notes);
+  const reviewUncertainty = hasScopedFullScoutReviewUncertainty(notes);
 
   if (Number.isFinite(total) && total <= 8) reasons.push(`Total score ${total} <= 8`);
   if (Number.isFinite(targetScore) && targetScore <= 1) reasons.push(`Target Relevance ${targetScore} <= 1`);
-  if (noThemeFit) reasons.push('SKBP Theme/Cluster fit 없음');
   if (failBlocker) reasons.push('Hard blocker keyword detected');
 
   if (reasons.length) {
@@ -668,8 +1192,11 @@ function computeHardFilter(record, criteria) {
 
 function normalizeTriageStatus(value) {
   const text = String(value || '').trim().toUpperCase();
-  if (['SELECT', 'REJECT', 'N/A', 'NA'].includes(text)) {
-    return text === 'NA' ? 'N/A' : text;
+  if (['SELECT', 'REJECT', 'UNVERIFIED'].includes(text)) {
+    return text;
+  }
+  if (['N/A', 'NA'].includes(text)) {
+    return 'UNVERIFIED';
   }
   return '';
 }
@@ -698,6 +1225,19 @@ function isTriageRecord(record) {
   const parserStatus = String(record?.source_report?.parser_status || '').toLowerCase();
   const reviewType = String(record?.meta?.review_type || record?.meta?.workflow || '').toLowerCase();
   return Boolean(status) || parserStatus.includes('triage') || reviewType.includes('triage');
+}
+
+function isCurrentFastTriageContract(record) {
+  if (!isTriageRecord(record)) return false;
+  const meta = record?.meta || {};
+  const schemaVersion = String(meta.schema_version || '').trim().replace(/^v/i, '');
+  const instructionVersion = String(meta.instruction_version || '').trim().replace(/^v/i, '');
+  const triageStatus = String(record?.triage?.status || '').trim().toUpperCase();
+  const criteria = record?.scoring?.criteria || {};
+  return schemaVersion === FAST_TRIAGE_SCHEMA_VERSION
+    || instructionVersion === LATEST_TRIAGE_RUBRIC_VERSION
+    || triageStatus === 'UNVERIFIED'
+    || Object.values(criteria).some((item) => item && typeof item === 'object' && 'evidence_basis' in item);
 }
 
 function recordFilterStatus(record, computedHardFilter) {
@@ -751,7 +1291,7 @@ function recordFilter1Status(record) {
 
 function recordFilter2Status(record, computedHardFilter) {
   if (isTriageRecord(record)) {
-    return { status: '-', reason: 'Full Scout v3.2 not run yet' };
+    return { status: '-', reason: `Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} not run yet` };
   }
   const manualStatus = normalizeFullStatus(humanReviewOverrides(record).filter_status);
   return manualStatus
@@ -759,11 +1299,48 @@ function recordFilter2Status(record, computedHardFilter) {
     : computedHardFilter;
 }
 
+function latestSourceReportEdit(record) {
+  const history = Array.isArray(record?.meta?.edit_history) ? record.meta.edit_history : [];
+  return [...history]
+    .reverse()
+    .find((entry) => entry?.field === 'source_report.raw_markdown') || null;
+}
+
+function sourceRevisionActorLabel(entry) {
+  if (!entry) return '';
+  if (['dashboard_rubric_refresh', 'dashboard_tab2_rubric_recalculation'].includes(entry.source)) {
+    const rubricVersion = String(entry.new_value || '').match(/rubric\s+v([^\s]+)/i)?.[1];
+    return rubricVersion ? `Rubric v${rubricVersion}` : `Rubric v${LATEST_FULL_SCOUT_RUBRIC_VERSION}`;
+  }
+  if (entry.actor_name) return String(entry.actor_name);
+  if (['127.0.0.1', '::1', 'localhost'].includes(String(entry.actor_ip || '').toLowerCase())) {
+    return 'Local workspace';
+  }
+  return String(entry.actor_ip || '');
+}
+
+function sourceReportEditLabel(entry) {
+  const source = String(entry?.source || '');
+  if (source === 'detail_json_editor') return 'GPT 원문 갱신일';
+  if (source === 'paste_json_upsert') return 'GPT 원문 재업로드일';
+  if (['dashboard_rubric_refresh', 'dashboard_tab2_rubric_recalculation'].includes(source)) {
+    return 'GPT 원문·Score 갱신일';
+  }
+  return 'GPT 원문 갱신일';
+}
+
 function flattenRecord(record, index) {
   const summary = record.json_summary || {};
   const table = record.structured_table || {};
   const scoring = record.scoring || {};
   const focusManagement = get(record, 'meta.focus_management', {});
+  const storedPartnershipType = String(focusManagement?.partnership_type || '').trim();
+  const storedPartnershipSource = String(focusManagement?.partnership_classification_source || 'auto').trim().toLowerCase();
+  const autoPartnershipType = String(focusManagement?.partnership_auto_suggestion || '').trim();
+  const hasHumanPartnership = storedPartnershipSource === 'manual' && storedPartnershipType;
+  const effectivePartnershipType = hasHumanPartnership
+    ? storedPartnershipType
+    : autoPartnershipType || storedPartnershipType || 'unknown';
   const collaborationComments = get(record, 'meta.collaboration.comments', []);
   const teamComments = Array.isArray(collaborationComments) ? collaborationComments : [];
   const latestTeamComment = teamComments.at(-1) || {};
@@ -809,21 +1386,31 @@ function flattenRecord(record, index) {
     && totalScoreOverride <= 21
     ? totalScoreOverride
     : storedTotalScore;
+  const sourceReportEdit = latestSourceReportEdit(record);
 
   const computedHardFilter = computeHardFilter(record, criteria);
   const filter1Status = recordFilter1Status(record);
   const filter2Status = recordFilter2Status(record, computedHardFilter);
   const filterStatus = filter1Status.status !== '-' ? filter1Status : filter2Status;
+  const identityUnverified = isTriage && (
+    record?.triage?.identity_verified === false
+    || filter1Status.status === 'UNVERIFIED'
+    || /asset_identity_not_verified/i.test(String(record?.source_report?.parser_status || ''))
+  );
+  const rawTheme = summary.theme || get(champion, 'matched_theme.name', '-');
+  const theme = identityUnverified ? 'Unknown' : canonicalTheme(rawTheme);
 
   return {
-    id: get(record, 'meta.output_filename_base', `${summary.company || table.company || 'record'}-${index}`),
+    id: recordIdentifier(record, index),
     company: summary.company || table.company || '-',
     countryRaw: summary.company_country || table.company_country || '-',
     country: canonicalCountry(summary.company_country || table.company_country || '-'),
     asset: summary.asset_name || table.asset_name || '-',
     target: summary.target || table.target || '-',
-    theme: canonicalTheme(summary.theme || get(champion, 'matched_theme.name', '-')),
-    cluster: canonicalCluster(summary.cluster || get(champion, 'matched_cluster.name', '-')),
+    theme,
+    cluster: identityUnverified
+      ? 'Unknown'
+      : canonicalCluster(summary.cluster || get(champion, 'matched_cluster.name', '-'), theme),
     stageRaw: table.development_stage || '-',
     stage: canonicalDevelopmentStage(table.development_stage || '-'),
     indication: table.indication || '-',
@@ -838,6 +1425,8 @@ function flattenRecord(record, index) {
     focusTracked: focusManagement?.is_tracked === true,
     focusComment: String(focusManagement?.user_comment || ''),
     focusDueDate: String(focusManagement?.due_date || ''),
+    focusOwner: String(focusManagement?.owner_name || ''),
+    focusActionPlan: String(focusManagement?.action_plan || ''),
     focusAddedAt: String(focusManagement?.added_at || ''),
     teamCommentCount: teamComments.length,
     latestTeamComment: String(latestTeamComment?.body || ''),
@@ -845,9 +1434,10 @@ function flattenRecord(record, index) {
     isTriage,
     filter1: filter1Status.status,
     filter2: filter2Status.status,
-    filter3: String(focusManagement?.partnership_type || ''),
+    filter3: effectivePartnershipType,
     filter3Note: String(focusManagement?.partnership_note || ''),
-    filter3Source: String(focusManagement?.partnership_classification_source || 'auto'),
+    filter3Source: hasHumanPartnership ? 'manual' : 'auto',
+    filter3CriteriaVersion: String(focusManagement?.partnership_classification_criteria_version || ''),
     filter3EvidenceSources: Array.isArray(focusManagement?.partnership_evidence_sources)
       ? focusManagement.partnership_evidence_sources.map(String)
       : [],
@@ -875,8 +1465,9 @@ function flattenRecord(record, index) {
     summary: get(record, 'final_insight.one_line_summary', summary.one_line_summary || '-'),
     criteriaVersion: get(record, 'meta.rubric_version', get(record, 'scoring.criteria.target_relevance.criteria_reference.criteria_version', '-')),
     generatedAt: get(record, 'meta.generated_at', ''),
-    lastEditedAt: get(record, 'meta.last_edited_at', ''),
-    lastEditedBy: get(record, 'meta.last_edited_by', ''),
+    lastEditedAt: sourceReportEdit?.changed_at || '',
+    lastEditedBy: sourceRevisionActorLabel(sourceReportEdit),
+    lastEditedLabel: sourceReportEditLabel(sourceReportEdit),
     criteria,
     raw: record
   };
@@ -901,13 +1492,20 @@ function metaTooltipSuffix(row) {
     `스코어링 지침: v${row.criteriaVersion || '-'}`
   ];
   if (row.lastEditedAt) {
-    lines.push(`마지막 수정: ${formatDateTimeKo(row.lastEditedAt)}에 ${row.lastEditedBy || 'unknown'}에 의해 수정됨`);
+    lines.push(`${row.lastEditedLabel || 'GPT 원문 갱신일'}: ${formatDateTimeKo(row.lastEditedAt)} · ${row.lastEditedBy || 'unknown'}`);
   }
   return lines.join('\n');
 }
 
 function rowHoverTitle(row, baseText = row.summary) {
   return [baseText, metaTooltipSuffix(row)].filter(Boolean).join('\n\n');
+}
+
+function triageRowHoverTitle(row) {
+  return [
+    `GPT 검색일: ${row.generatedAt || '-'}`,
+    `스코어링 지침: v${row.criteriaVersion || '-'}`
+  ].join('\n');
 }
 
 const EXTRA_COLUMN_DEFINITIONS = [
@@ -971,11 +1569,15 @@ function activeColumnWidths() {
   return activeTableMode() === 'focus' ? state.focusColumnWidths : state.columnWidths;
 }
 
-function columnWidth(key) {
+function rawColumnWidth(key) {
   const width = Number(activeColumnWidths()[key]);
   return Number.isFinite(width)
     ? Math.max(minColumnWidth(key), Math.min(MAX_COLUMN_WIDTH, width))
     : defaultColumnWidth(key);
+}
+
+function columnWidth(key) {
+  return state.fittedColumnWidths[key] || rawColumnWidth(key);
 }
 
 function columnWidthStyle(key) {
@@ -996,6 +1598,28 @@ function sortableHeader(label, sortKey, columnKey, attrs = '') {
   return `<th ${attrs} ${columnAttrs(columnKey)}><button data-sort="${escapeHtml(sortKey)}" type="button">${escapeHtml(label)}</button>${resizeHandle(columnKey)}</th>`;
 }
 
+function updateSortIndicators() {
+  elements.pipelineTableHead?.querySelectorAll('button[data-sort]').forEach((button) => {
+    const isActive = Boolean(
+      state.sortKey &&
+      state.sortDirection &&
+      button.dataset.sort === state.sortKey
+    );
+    const direction = state.sortDirection === 'asc' ? '오름차순' : '내림차순';
+    button.classList.toggle('sort-active', isActive);
+    button.dataset.sortDirection = isActive ? state.sortDirection : '';
+    button.title = isActive
+      ? `${direction} 정렬 중 · 계속 클릭하면 반대 순서 또는 원본 순서로 전환됩니다.`
+      : '클릭하여 정렬 · 오름차순/내림차순/원본 순서로 전환됩니다.';
+    button.setAttribute(
+      'aria-label',
+      `${button.textContent.trim()} 정렬${isActive ? `, 현재 ${direction}` : ', 현재 원본 순서'}`
+    );
+    const header = button.closest('th');
+    if (header) header.setAttribute('aria-sort', isActive ? (state.sortDirection === 'asc' ? 'ascending' : 'descending') : 'none');
+  });
+}
+
 function plainHeader(label, columnKey, className = '', attrs = '') {
   const classAttr = className ? ` class="${escapeHtml(className)}"` : '';
   return `<th${classAttr} ${attrs} ${columnAttrs(columnKey)}><span title="${escapeHtml(label)}">${escapeHtml(label)}</span>${resizeHandle(columnKey)}</th>`;
@@ -1007,12 +1631,21 @@ function activeTableMode() {
   return 'full';
 }
 
+function recordDetailHref(row, mode = activeTableMode()) {
+  if (row.isTriage) return `/triage-detail?id=${encodeURIComponent(row.id)}`;
+  return `/detail?id=${encodeURIComponent(row.id)}&tab=${encodeURIComponent(mode)}`;
+}
+
 function activeFilterKey() {
-  return activeTableMode() === 'triage' ? 'filter1' : 'filter2';
+  if (activeTableMode() === 'triage') return 'filter1';
+  if (activeTableMode() === 'focus') return 'filter3';
+  return 'filter2';
 }
 
 function activeFilterLabel() {
-  return activeTableMode() === 'triage' ? 'Filter 1' : 'Filter 2';
+  if (activeTableMode() === 'triage') return 'Filter 1';
+  if (activeTableMode() === 'focus') return 'Filter 3';
+  return 'Filter 2';
 }
 
 function activeScoreColumnKeys() {
@@ -1041,6 +1674,7 @@ function rowMatchesActiveTableMode(row) {
 }
 
 const FOCUS_TABLE_COLUMN_KEYS = [
+  'select',
   'company',
   'country',
   'asset',
@@ -1071,17 +1705,60 @@ function visibleColumnKeys(extraColumns = selectedExtraColumns()) {
     'stage',
     activeFilterKey(),
     ...activeScoreColumnKeys(),
+    ...(activeTableMode() === 'triage' ? ['rubricAction'] : []),
     ...extraColumns.map(extraColumnKey)
   ];
   if (activeTableMode() === 'full') keys.push('focusAction');
   return keys;
 }
 
+function fitColumnWidthsToTable(extraColumns = selectedExtraColumns()) {
+  const keys = visibleColumnKeys(extraColumns);
+  const wrapper = elements.pipelineTable?.closest('.table-wrap');
+  const availableWidth = Math.floor(wrapper?.clientWidth || 0);
+  const rawWidths = Object.fromEntries(keys.map((key) => [key, rawColumnWidth(key)]));
+  const rawTotal = keys.reduce((sum, key) => sum + rawWidths[key], 0);
+  const minimumTotal = keys.reduce((sum, key) => sum + minColumnWidth(key), 0);
+
+  state.fittedColumnWidths = { ...rawWidths };
+  if (!availableWidth || rawTotal <= availableWidth) return;
+
+  if (availableWidth < minimumTotal) {
+    if (activeTableMode() !== 'focus') return;
+    const scale = availableWidth / minimumTotal;
+    keys.forEach((key) => {
+      state.fittedColumnWidths[key] = Math.max(1, Math.floor(minColumnWidth(key) * scale));
+    });
+    let remaining = availableWidth - keys.reduce((sum, key) => sum + state.fittedColumnWidths[key], 0);
+    for (let index = 0; remaining > 0; index = (index + 1) % keys.length) {
+      state.fittedColumnWidths[keys[index]] += 1;
+      remaining -= 1;
+    }
+    return;
+  }
+
+  const compressible = rawTotal - minimumTotal;
+  const targetReduction = rawTotal - availableWidth;
+  keys.forEach((key) => {
+    const minimum = minColumnWidth(key);
+    const reducible = rawWidths[key] - minimum;
+    const reduction = compressible > 0 ? targetReduction * (reducible / compressible) : 0;
+    state.fittedColumnWidths[key] = Math.max(minimum, Math.floor(rawWidths[key] - reduction));
+  });
+
+  let remaining = availableWidth - keys.reduce((sum, key) => sum + state.fittedColumnWidths[key], 0);
+  for (let index = 0; remaining > 0; index = (index + 1) % keys.length) {
+    const key = keys[index];
+    if (state.fittedColumnWidths[key] >= rawWidths[key]) continue;
+    state.fittedColumnWidths[key] += 1;
+    remaining -= 1;
+  }
+}
+
 function updateFrozenColumnOffsets() {
   const tableElement = elements.pipelineTable?.closest('table');
   if (!tableElement) return;
-  let offset = 0;
-  if (activeTableMode() !== 'focus') offset += columnWidth('select');
+  let offset = columnWidth('select');
   tableElement.style.setProperty('--freeze-left-company', `${offset}px`);
   offset += columnWidth('company');
   tableElement.style.setProperty('--freeze-left-asset', `${offset}px`);
@@ -1100,6 +1777,7 @@ function persistColumnWidths() {
 }
 
 function applyColumnWidths(extraColumns = selectedExtraColumns()) {
+  fitColumnWidthsToTable(extraColumns);
   visibleColumnKeys(extraColumns).forEach((key) => {
     document.querySelectorAll(`[data-col-key="${CSS.escape(key)}"]`).forEach((element) => {
       element.style.width = `${columnWidth(key)}px`;
@@ -1116,6 +1794,13 @@ function average(values) {
   const nums = values.filter((value) => Number.isFinite(value));
   if (!nums.length) return null;
   return nums.reduce((sum, value) => sum + value, 0) / nums.length;
+}
+
+function fastTriageRowTotal(row) {
+  const scores = [row.targetScore, row.moaScore, row.dataScore];
+  return scores.every((score) => typeof score === 'number' && Number.isFinite(score))
+    ? scores.reduce((sum, score) => sum + score, 0)
+    : null;
 }
 
 function formatAverage(value, max) {
@@ -1183,11 +1868,40 @@ function topCountsWithOthers(
   return top;
 }
 
-function getVisibleRows() {
-  const query = state.query.trim().toLowerCase();
+function dueHalfPeriod(value) {
+  const match = String(value || '').trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return '';
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const parsed = new Date(year, month - 1, day);
+  if (
+    parsed.getFullYear() !== year
+    || parsed.getMonth() !== month - 1
+    || parsed.getDate() !== day
+  ) return '';
+  return `${year}-${month <= 6 ? '1H' : '2H'}`;
+}
+
+function dueHalfOrder(period) {
+  const match = String(period || '').match(/^(\d{4})-(1H|2H)$/);
+  if (!match) return Number.POSITIVE_INFINITY;
+  return Number(match[1]) * 2 + (match[2] === '2H' ? 1 : 0);
+}
+
+function currentDueHalfOrder(now = new Date()) {
+  return now.getFullYear() * 2 + (now.getMonth() >= 6 ? 1 : 0);
+}
+
+function dueHalfLabel(period) {
+  const match = String(period || '').match(/^(\d{4})-(1H|2H)$/);
+  return match ? `${match[1]} ${match[2]}` : period;
+}
+
+function getVisibleRows(includeQuery = true) {
+  const query = includeQuery ? state.query.trim().toLowerCase() : '';
   const filterKey = activeFilterKey();
-  return state.rows
-    .filter((row) => {
+  const rows = state.rows.filter((row) => {
       const searchable = [
         row.company,
         row.country,
@@ -1209,16 +1923,19 @@ function getVisibleRows() {
       return (
         rowMatchesActiveTableMode(row) &&
         (!query || searchable.includes(query)) &&
-        (state.stage === 'all' || row.stage === state.stage) &&
         (state.theme === 'all' || row.theme === state.theme) &&
         (state.cluster === 'all' || row.cluster === state.cluster) &&
         (state.modality === 'all' || row.modality === state.modality) &&
         (state.indication === 'all' || row.mainIndication === state.indication) &&
         (state.country === 'all' || row.country === state.country) &&
+        (state.stage === 'all' || canonicalDevelopmentStage(row.stage) === state.stage) &&
         (state.pass === 'all' || row[filterKey] === state.pass)
       );
-    })
-    .sort((a, b) => {
+    });
+
+  if (!state.sortKey || !state.sortDirection) return rows;
+
+  return rows.sort((a, b) => {
       const av = a[state.sortKey];
       const bv = b[state.sortKey];
       const direction = state.sortDirection === 'asc' ? 1 : -1;
@@ -1231,38 +1948,63 @@ function getVisibleRows() {
 }
 
 function renderFilters() {
-  const stages = [...new Set(state.rows.map((row) => row.stage).filter(Boolean))].sort();
-  const themes = [...new Set(state.rows.map((row) => row.theme).filter(Boolean))].sort();
-  const clusters = [...new Set(state.rows.map((row) => row.cluster).filter(Boolean))].sort();
-  const modalities = [...new Set(state.rows.map((row) => row.modality).filter(Boolean))].sort();
-  const countries = [...new Set(state.rows.map((row) => row.country).filter(Boolean))].sort();
-  const indications = [...new Set(state.rows.map((row) => row.mainIndication).filter(Boolean))].sort();
-  const filterKey = activeFilterKey();
-  const filterStatuses = [...new Set(state.rows
-    .filter(rowMatchesActiveTableMode)
-    .map((row) => row[filterKey])
-    .filter((value) => value && value !== '-'))]
+  const modeRows = state.rows.filter(rowMatchesActiveTableMode);
+  if (elements.searchInput) elements.searchInput.value = state.query;
+  const themes = [...new Set(modeRows.map((row) => row.theme).filter(Boolean))].sort();
+  const clusters = [...new Set(modeRows.map((row) => row.cluster).filter(Boolean))].sort();
+  const modalities = [...new Set(modeRows.map((row) => row.modality).filter(Boolean))].sort();
+  const countries = [...new Set(modeRows.map((row) => row.country).filter(Boolean))].sort();
+  const indications = [...new Set(modeRows.map((row) => row.mainIndication).filter(Boolean))].sort();
+  const stages = [...new Set(modeRows.map((row) => canonicalDevelopmentStage(row.stage)).filter(Boolean))]
     .sort((a, b) => {
-      const order = ['SELECT', 'PASS', 'REVIEW', 'REJECT', 'FAIL', 'N/A'];
-      return (order.indexOf(a) === -1 ? 99 : order.indexOf(a)) - (order.indexOf(b) === -1 ? 99 : order.indexOf(b));
+      const aIndex = CANONICAL_DEVELOPMENT_STAGES.indexOf(a);
+      const bIndex = CANONICAL_DEVELOPMENT_STAGES.indexOf(b);
+      const aRank = aIndex < 0 ? CANONICAL_DEVELOPMENT_STAGES.length : aIndex;
+      const bRank = bIndex < 0 ? CANONICAL_DEVELOPMENT_STAGES.length : bIndex;
+      return aRank - bRank || a.localeCompare(b, 'en');
     });
+  const filterStatuses = activeTableMode() === 'triage'
+    ? [
+        { value: 'SELECT', label: 'SELECT' },
+        { value: 'REJECT', label: 'REJECT' },
+        { value: 'UNVERIFIED', label: 'UNVERIFIED' }
+      ]
+    : activeTableMode() === 'focus'
+      ? [
+          { value: 'investment', label: '투자' },
+          { value: 'value_up', label: 'Value Up' },
+          { value: 'joint_research', label: '공동연구' },
+          { value: 'unknown', label: 'Unknown' },
+          { value: 'n_a', label: 'N/A' }
+        ]
+      : [
+          { value: 'PASS', label: 'PASS' },
+          { value: 'REVIEW', label: 'REVIEW' },
+          { value: 'FAIL', label: 'FAIL' }
+        ];
   const option = (value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`;
-  if (state.pass !== 'all' && !filterStatuses.includes(state.pass)) {
+  const resetInvalidSelection = (key, values) => {
+    if (state[key] !== 'all' && !values.includes(state[key])) state[key] = 'all';
+  };
+  resetInvalidSelection('theme', themes);
+  resetInvalidSelection('cluster', clusters);
+  resetInvalidSelection('modality', modalities);
+  resetInvalidSelection('country', countries);
+  resetInvalidSelection('indication', indications);
+  resetInvalidSelection('stage', stages);
+  if (state.pass !== 'all' && !filterStatuses.some((item) => item.value === state.pass)) {
     state.pass = 'all';
   }
-
-  elements.stageFilter.innerHTML = [
-    '<option value="all">전체</option>',
-    ...stages.map(option)
-  ].join('');
   elements.themeFilter.innerHTML = [
     '<option value="all">전체</option>',
     ...themes.map(option)
   ].join('');
+  elements.themeFilter.value = state.theme;
   elements.clusterFilter.innerHTML = [
     '<option value="all">전체</option>',
     ...clusters.map(option)
   ].join('');
+  elements.clusterFilter.value = state.cluster;
   elements.modalityFilter.innerHTML = [
     '<option value="all">전체</option>',
     ...modalities.map(option)
@@ -1271,32 +2013,375 @@ function renderFilters() {
 
   elements.countryFilter.innerHTML = [
     '<option value="all">전체</option>',
-    ...countries.map(option)
+    ...countries.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`)
   ].join('');
+  elements.countryFilter.value = state.country;
   elements.indicationFilter.innerHTML = [
     '<option value="all">전체</option>',
     ...indications.map(option)
   ].join('');
+  elements.indicationFilter.value = state.indication;
+  elements.stageFilter.innerHTML = [
+    '<option value="all">전체</option>',
+    ...stages.map(option)
+  ].join('');
+  elements.stageFilter.value = state.stage;
   elements.passFilter.innerHTML = [
     '<option value="all">전체</option>',
-    ...filterStatuses.map(option)
+    ...filterStatuses.map((item) => `<option value="${escapeHtml(item.value)}">${escapeHtml(item.label)}</option>`)
   ].join('');
   elements.passFilter.value = state.pass;
+  if (elements.passFilterLabel) elements.passFilterLabel.textContent = activeFilterLabel();
+}
+
+const WORKFLOW_COPY = {
+  triage: {
+    stage: '1차 스크리닝',
+    description: '관심 적응증과 공개 근거를 기준으로 Full Scout 검토 후보를 빠르게 선별합니다.',
+    filterLabel: 'Filter 1',
+    priorityTitle: 'Full Scout 대기 후보',
+    prioritySubtitle: 'SELECT 후보 · Stage 분포'
+  },
+  full: {
+    stage: '2차 정밀 분석',
+    description: '선별된 후보를 과학성·차별성·개발성·사업성 관점에서 심층 평가합니다.',
+    filterLabel: 'Filter 2',
+    priorityTitle: 'Priority Pipeline',
+    prioritySubtitle: '최대 10개 · Total score · 동점 시 최신 조사 순'
+  },
+  focus: {
+    stage: '3차 집중 관리',
+    description: '즐겨찾기로 등록한 Full Scout 후보의 OI Partnership Type과 후속 Action을 관리합니다.',
+    filterLabel: 'Filter 3',
+    priorityTitle: 'F/U Action',
+    prioritySubtitle: '최대 10개 · 동점 시 최신 업데이트 순'
+  }
+};
+
+const PARTNERSHIP_LABELS = {
+  investment: '투자',
+  value_up: 'Value Up',
+  joint_research: '공동연구',
+  tbd: 'TBD',
+  unknown: 'Unknown',
+  n_a: 'N/A',
+  '': 'Unknown'
+};
+
+function uniqueAssetKey(row) {
+  return `${String(row.company || '').trim().toLowerCase()}::${String(row.asset || '').trim().toLowerCase()}`;
+}
+
+function uniqueAssetRows(rows) {
+  return [...new Map(rows.map((row) => [uniqueAssetKey(row), row])).values()];
+}
+
+function dashboardAssetIdentity(row) {
+  return state.dashboardSummary?.record_asset_identities?.[row.id] || uniqueAssetKey(row);
+}
+
+function uniqueAssetCount(rows) {
+  return new Set(rows.map(dashboardAssetIdentity)).size;
+}
+
+function fallbackInterestIndicationLabel(value) {
+  const text = String(value || '').toLowerCase();
+  if (/alzheimer|\bad\b/.test(text)) return "Alzheimer's disease";
+  if (/parkinson|\bpd\b/.test(text)) return "Parkinson's disease";
+  if (/amyotrophic lateral sclerosis|motor neuron disease|\bals\b/.test(text)) return 'Amyotrophic lateral sclerosis';
+  if (/multiple sclerosis|neuroinflamm|\bms\b/.test(text)) return 'Multiple sclerosis';
+  if (/neuropathic pain|neuralgia|peripheral neuropath/.test(text)) return 'Neuropathic pain';
+  if (/epilep|seizure/.test(text)) return 'Epilepsy';
+  return 'Others';
+}
+
+function fallbackDistribution(rows, valueGetter, orderedLabels) {
+  const counts = countBy(rows, valueGetter);
+  return orderedLabels.map((label) => ({
+    key: label,
+    label,
+    count: Number(counts[label] || 0)
+  }));
+}
+
+function fallbackModalityDistribution(rows) {
+  const counts = countBy(rows, (row) => modalitySummaryGroup(
+    String(row.modality || 'Unknown').trim() || 'Unknown'
+  ));
+  let othersCount = 0;
+  const known = [];
+  Object.entries(counts).forEach(([label, count]) => {
+    if (/^(unknown|n\/?a|others?|-)$/i.test(label)) {
+      othersCount += count;
+      return;
+    }
+    known.push([label, count]);
+  });
+  known.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ko'));
+  const top = known.slice(0, 6);
+  othersCount += known.slice(6).reduce((sum, [, count]) => sum + count, 0);
+  return [
+    ...top.map(([label, count]) => ({ key: label, label, count })),
+    { key: 'others', label: 'Others', count: othersCount }
+  ];
+}
+
+function fallbackCommonListItem(row) {
+  return {
+    record_id: row.id,
+    company: row.company,
+    asset: row.asset,
+    country: row.country,
+    main_indication: row.mainIndication,
+    detailed_indication: row.indication,
+    development_stage: row.stage
+  };
+}
+
+function fallbackTabSummary(mode, filteredRows = null) {
+  const allTriageRows = uniqueAssetRows(state.rows.filter((row) => row.isTriage));
+  const allFullRows = uniqueAssetRows(state.rows.filter((row) => !row.isTriage));
+  const hasFilteredRows = Array.isArray(filteredRows);
+  const filteredAssetRows = hasFilteredRows ? uniqueAssetRows(filteredRows) : [];
+  const triageRows = hasFilteredRows && mode === 'triage' ? filteredAssetRows : allTriageRows;
+  const fullRows = hasFilteredRows && mode !== 'triage' ? filteredAssetRows : allFullRows;
+  const focusRows = hasFilteredRows && mode === 'focus'
+    ? fullRows
+    : fullRows.filter((row) => row.focusTracked);
+  const interestLabels = [
+    "Alzheimer's disease",
+    "Parkinson's disease",
+    'Amyotrophic lateral sclerosis',
+    'Multiple sclerosis',
+    'Neuropathic pain',
+    'Epilepsy',
+    'Others'
+  ];
+  const indicationDistribution = (rows) => fallbackDistribution(
+    rows,
+    (row) => fallbackInterestIndicationLabel(row.mainIndication || row.indication),
+    interestLabels
+  );
+  if (mode === 'triage') {
+    const fullKeys = new Set(fullRows.map(uniqueAssetKey));
+    const awaiting = triageRows
+      .filter((row) => row.filter1 === 'SELECT' && !fullKeys.has(uniqueAssetKey(row)))
+      .sort((a, b) => (b.dataScore - a.dataScore) || (b.moaScore - a.moaScore) || String(b.generatedAt).localeCompare(String(a.generatedAt)))
+      .map((row) => ({
+        ...fallbackCommonListItem(row),
+        filter1: row.filter1,
+        completed_at: row.generatedAt,
+        target_relevance: row.targetScore,
+        moa_validity: row.moaScore,
+        data_maturity: row.dataScore
+      }));
+    return {
+      kpis: {
+        assets: triageRows.length,
+        select: triageRows.filter((row) => row.filter1 === 'SELECT').length,
+        reject: triageRows.filter((row) => row.filter1 === 'REJECT').length,
+        unverified: triageRows.filter((row) => row.filter1 === 'UNVERIFIED').length,
+        average_total_score: average(triageRows.map(fastTriageRowTotal)),
+        max_score: 9
+      },
+      distribution_population: {
+        scope: hasFilteredRows ? 'filtered_rows' : 'active_tab',
+        assets: triageRows.length
+      },
+      status_distribution: fallbackDistribution(triageRows, (row) => row.filter1, ['SELECT', 'REJECT', 'UNVERIFIED']),
+      indication_distribution: indicationDistribution(triageRows),
+      modality_distribution: fallbackModalityDistribution(triageRows),
+      awaiting_full_scout: awaiting
+    };
+  }
+  if (mode === 'focus') {
+    const ongoingPartnershipTypes = ['investment', 'value_up', 'joint_research'];
+    const ongoingFocusRows = focusRows.filter((row) => ongoingPartnershipTypes.includes(row.filter3));
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const actionRows = focusRows.map((row) => {
+      const due = row.focusDueDate ? new Date(`${row.focusDueDate}T00:00:00`) : null;
+      const days = due && !Number.isNaN(due.getTime()) ? Math.ceil((due - now) / 86400000) : null;
+      let actionStatus = '';
+      let actionRank = 99;
+      if (days !== null && days < 0) { actionStatus = 'OVERDUE'; actionRank = 0; }
+      else if (days !== null && days <= 30) { actionStatus = 'WITHIN_30_DAYS'; actionRank = 1; }
+      else if (!row.filter3 || row.filter3 === 'unknown') { actionStatus = 'FILTER3_UNKNOWN'; actionRank = 2; }
+      else if (!row.focusDueDate) { actionStatus = 'MISSING_ACTION_DATE'; actionRank = 3; }
+      return {
+        ...fallbackCommonListItem(row),
+        filter2: row.filter2,
+        total_score: row.totalScore,
+        partnership_type: row.filter3 || 'unknown',
+        partnership_label: PARTNERSHIP_LABELS[row.filter3] || row.filter3,
+        partnership_source: row.filter3Source,
+        human_override: row.filter3Source === 'manual',
+        action_date: row.focusDueDate,
+        days_until_due: days,
+        action_status: actionStatus,
+        action_rank: actionRank
+      };
+    }).filter((item) => item.action_status).sort((a, b) => a.action_rank - b.action_rank || (a.days_until_due ?? 99999) - (b.days_until_due ?? 99999));
+    return {
+      kpis: {
+        pipelines: focusRows.length,
+        ongoing: ongoingFocusRows.length,
+        investment: focusRows.filter((row) => row.filter3 === 'investment').length,
+        value_up: focusRows.filter((row) => row.filter3 === 'value_up').length,
+        joint_research: focusRows.filter((row) => row.filter3 === 'joint_research').length,
+        unknown: focusRows.filter((row) => !row.filter3 || row.filter3 === 'unknown').length,
+        average_total_score: average(focusRows.map((row) => row.totalScore)),
+        max_score: 21
+      },
+      distribution_population: {
+        scope: hasFilteredRows ? 'filtered_rows' : 'shortlisted_pool',
+        assets: focusRows.length
+      },
+      partnership_distribution: fallbackDistribution(
+        focusRows,
+        (row) => ongoingPartnershipTypes.includes(row.filter3) ? row.filter3 : 'tbd',
+        [...ongoingPartnershipTypes, 'tbd']
+      )
+        .map((item) => ({ ...item, label: PARTNERSHIP_LABELS[item.key] })),
+      indication_distribution: indicationDistribution(focusRows),
+      modality_distribution: fallbackModalityDistribution(focusRows),
+      action_required: actionRows
+    };
+  }
+  const priority = fullRows
+    .filter((row) => row.filter2 !== 'FAIL')
+    .sort((a, b) => (b.totalScore - a.totalScore) || (b.dataScore - a.dataScore) || (b.targetScore - a.targetScore))
+    .map((row) => ({
+      ...fallbackCommonListItem(row),
+      filter2: row.filter2,
+      total_score: row.totalScore,
+      max_score: row.maxScore,
+      data_maturity: row.dataScore,
+      target_relevance: row.targetScore
+    }));
+  return {
+    kpis: {
+      assets: fullRows.length,
+      pass: fullRows.filter((row) => row.filter2 === 'PASS').length,
+      review: fullRows.filter((row) => row.filter2 === 'REVIEW').length,
+      fail: fullRows.filter((row) => row.filter2 === 'FAIL').length,
+      average_total_score: average(fullRows.map((row) => row.totalScore)),
+      max_score: 21
+    },
+    distribution_population: {
+      scope: hasFilteredRows ? 'filtered_rows' : 'active_tab',
+      assets: fullRows.length
+    },
+    status_distribution: fallbackDistribution(fullRows, (row) => row.filter2, ['PASS', 'REVIEW', 'FAIL']),
+    indication_distribution: indicationDistribution(fullRows),
+    modality_distribution: fallbackModalityDistribution(fullRows),
+    priority_pipelines: priority
+  };
+}
+
+function activeTabSummary() {
+  const mode = activeTableMode();
+  if (activeSummaryFilterCount() > 0) {
+    return fallbackTabSummary(mode, getVisibleRows(false));
+  }
+  const key = mode === 'triage'
+    ? 'fast_triage'
+    : mode === 'focus'
+      ? 'shortlisting'
+      : 'full_scout';
+  return state.dashboardSummary?.tabs?.[key] || fallbackTabSummary(mode);
+}
+
+async function refreshDashboardSummary() {
+  const requestId = ++state.dashboardSummaryRequestId;
+  try {
+    const response = await fetch(DASHBOARD_SUMMARY_URL, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const summary = await response.json();
+    if (requestId !== state.dashboardSummaryRequestId) return false;
+    state.dashboardSummary = summary;
+    return true;
+  } catch (error) {
+    if (requestId !== state.dashboardSummaryRequestId) return false;
+    console.warn('Dashboard summary refresh failed; using current table data.', error);
+    state.dashboardSummary = null;
+    return false;
+  }
+}
+
+function workflowIconMarkup(name) {
+  const paths = {
+    assets: '<path d="M4 7.5h16M6 4h12v16H6z"/><path d="M9 11h6M9 15h6"/>',
+    check: '<circle cx="12" cy="12" r="9"/><path d="m8 12 2.6 2.6L16.5 9"/>',
+    reject: '<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6m0-6-6 6"/>',
+    question: '<circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.5 2.5 0 0 1 4.8 1c0 2-2.6 2-2.6 4M12 17h.01"/>',
+    review: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    score: '<path d="M5 20V9m7 11V4m7 16v-7"/>',
+    investment: '<path d="M4 19h16M6 16V9m4 7V9m4 7V9m4 7V9M4 7l8-4 8 4z"/>',
+    value: '<path d="M5 17 10 12l3 3 6-8"/><path d="M14 7h5v5"/>',
+    research: '<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M8 15h8"/>'
+  };
+  return `<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">${paths[name] || paths.assets}</svg>`;
+}
+
+function setMetricSlot(slot, { label, value, icon, tone = 'neutral', hidden = false }) {
+  const card = elements[`${slot}Card`];
+  const labelElement = elements[`${slot}Label`];
+  const valueElement = elements[slot];
+  const iconElement = elements[`${slot}Icon`];
+  if (!card || !labelElement || !valueElement || !iconElement) return;
+  card.hidden = hidden;
+  card.classList.remove('tone-green', 'tone-red', 'tone-gray', 'tone-blue', 'tone-purple', 'tone-amber');
+  card.classList.add(`tone-${tone}`);
+  labelElement.textContent = label;
+  valueElement.textContent = value === null || value === undefined || value === '' ? '-' : String(value);
+  iconElement.innerHTML = workflowIconMarkup(icon);
 }
 
 function renderMetrics() {
-  const total = state.rows.length;
-  const pass = state.rows.filter((row) => row.filter1 === 'SELECT' || row.filter2 === 'PASS').length;
-  const avgTotal = average(state.rows.map((row) => row.totalScore));
-  const avgTarget = average(state.rows.map((row) => row.targetScore));
-  const maxTotal = state.rows.find((row) => Number.isFinite(row.maxScore))?.maxScore || 21;
-  const countries = new Set(state.rows.map((row) => row.country).filter((country) => country && country !== '-'));
-
-  elements.metricTotal.textContent = String(total);
-  elements.metricPass.textContent = total ? `${pass} / ${total}` : '-';
-  elements.metricScore.textContent = formatAverage(avgTotal, maxTotal);
-  elements.metricTarget.textContent = formatAverage(avgTarget, 3);
-  elements.metricCountries.textContent = String(countries.size);
+  const mode = activeTableMode();
+  const summary = activeTabSummary();
+  const kpis = summary.kpis || {};
+  const scoreValue = kpis.average_total_score !== null
+    && kpis.average_total_score !== undefined
+    && Number.isFinite(Number(kpis.average_total_score))
+    ? Number(kpis.average_total_score).toFixed(1)
+    : '-';
+  if (elements.summaryAverageScore) {
+    const scoreMaximum = mode === 'triage' ? 9 : 21;
+    elements.summaryAverageScore.textContent = scoreValue === '-' ? '평균 -' : `평균 ${scoreValue}점`;
+    elements.summaryAverageScore.title = `현재 탭에 포함된 asset의 총점 평균 (${scoreMaximum}점 만점)`;
+    elements.summaryAverageScore.setAttribute(
+      'aria-label',
+      scoreValue === '-'
+        ? '현재 탭의 평균 총점 없음'
+        : `현재 탭의 평균 총점 ${scoreValue}점, ${scoreMaximum}점 만점`
+    );
+  }
+  const slots = mode === 'triage'
+    ? [
+        ['metricTotal', { label: 'Fast Triage Assets', value: kpis.assets ?? 0, icon: 'assets', tone: 'blue' }],
+        ['metricPass', { label: 'SELECT', value: kpis.select ?? 0, icon: 'check', tone: 'green' }],
+        ['metricScore', { label: 'REJECT', value: kpis.reject ?? 0, icon: 'reject', tone: 'red' }],
+        ['metricTarget', { label: 'UNVERIFIED', value: kpis.unverified ?? 0, icon: 'question', tone: 'gray' }],
+        ['metricCountries', { label: '평균 총점 / 9', value: scoreValue, icon: 'score', tone: 'blue', hidden: true }]
+      ]
+    : mode === 'focus'
+      ? [
+          ['metricTotal', { label: 'Shortlisting Pipelines', value: kpis.pipelines ?? 0, icon: 'assets', tone: 'purple' }],
+          ['metricPass', { label: '투자', value: kpis.investment ?? 0, icon: 'investment', tone: 'green' }],
+          ['metricScore', { label: 'Value Up', value: kpis.value_up ?? 0, icon: 'value', tone: 'blue' }],
+          ['metricTarget', { label: '공동연구', value: kpis.joint_research ?? 0, icon: 'research', tone: 'purple' }],
+          ['metricCountries', { label: '평균 총점 / 21', value: scoreValue, icon: 'score', tone: 'blue', hidden: true }]
+        ]
+      : [
+          ['metricTotal', { label: 'Full Scout Assets', value: kpis.assets ?? 0, icon: 'assets', tone: 'blue' }],
+          ['metricPass', { label: 'PASS', value: kpis.pass ?? 0, icon: 'check', tone: 'green' }],
+          ['metricScore', { label: 'REVIEW', value: kpis.review ?? 0, icon: 'review', tone: 'amber' }],
+          ['metricTarget', { label: 'FAIL', value: kpis.fail ?? 0, icon: 'reject', tone: 'red' }],
+          ['metricCountries', { label: '평균 총점 / 21', value: scoreValue, icon: 'score', tone: 'blue', hidden: true }]
+        ];
+  slots.forEach(([slot, config]) => setMetricSlot(slot, config));
 }
 
 const DONUT_PALETTE = [
@@ -1311,8 +2396,18 @@ const DONUT_OTHERS_COLOR = 'var(--chart-other)';
 
 function distributionDisplayLabel(kind, label) {
   const value = String(label || '');
-  if (kind === 'country' && /^republic of korea$/i.test(value)) return 'Korea';
-  if (kind === 'modality') {
+  if (kind === 'interest-indication') {
+    if (/alzheimer/i.test(value)) return 'AD';
+    if (/parkinson/i.test(value)) return 'PD';
+    if (/amyotrophic lateral sclerosis|motor neuron disease|\bals\b/i.test(value)) return 'ALS';
+    if (/multiple sclerosis|neuroinflammatory|\bms\b/i.test(value)) return 'MS';
+    if (/neuropathic pain|\bnp\b/i.test(value)) return 'NP';
+    if (/epilepsy|seizure|\bep\b/i.test(value)) return 'EP';
+    if (/other|unknown|미확인/i.test(value)) return 'Others';
+    return value;
+  }
+  if (kind === 'country') return countryDisplayLabel(value);
+  if (kind === 'modality' || kind === 'modality-summary') {
     if (/^small molecule$/i.test(value)) return 'SM';
     if (/^cell therapy$/i.test(value)) return 'CT';
     if (/^gene therapy$/i.test(value)) return 'GT';
@@ -1334,8 +2429,26 @@ function distributionDisplayLabel(kind, label) {
 
 function distributionDescription(kind, label) {
   const value = String(label || '').trim();
+  if (kind === 'partnership' && /^TBD$/i.test(value)) {
+    return 'Shortlisting 후 OI Partnership 분류가 아직 이루어지지 않은 그룹입니다.';
+  }
+  if ((kind === 'modality' || kind === 'modality-summary') && value === 'CGT') {
+    return 'Cell Therapy와 Gene Therapy를 합산한 차트 전용 분류입니다.';
+  }
   if (value === 'Others') {
-    return '빈도 상위 5개에 포함되지 않은 6번째 이하 항목과 일반 Other 값을 합산한 그룹입니다.';
+    if (kind === 'interest-indication') {
+      return 'SKBP 우선 관심 적응증 6개에 포함되지 않은 적응증과 Unknown을 합산한 그룹입니다.';
+    }
+    if (kind === 'modality-summary') {
+      return '상위 6개 외 Modality와 Other·Unknown·N/A를 합산한 Summary 차트 전용 그룹입니다.';
+    }
+    if (kind === 'theme') {
+      return 'E/I Balance·Neuroimmune 외 Theme와 Unknown·N/A를 합산한 차트 전용 그룹입니다.';
+    }
+    if (kind === 'country') {
+      return '상위 3개 국가를 제외한 국가와 Unknown·N/A를 합산한 차트 전용 그룹입니다.';
+    }
+    return '빈도 상위 5개에 포함되지 않은 항목과 Other·Unknown·N/A를 합산한 그룹입니다.';
   }
   if (value === 'Unknown') {
     return kind === 'theme'
@@ -1359,8 +2472,25 @@ function donutChart(entries, kind) {
   if (!total) return '<div class="empty-state">데이터 없음</div>';
 
   let cursor = 0;
-  const isNeutralDonutLabel = (label) => label === 'Others' || label === 'Unknown';
-  const segmentColor = (label, index) => (isNeutralDonutLabel(label) ? DONUT_OTHERS_COLOR : DONUT_PALETTE[index % DONUT_PALETTE.length]);
+  const semanticDonutColors = {
+    SELECT: '#168b67',
+    PASS: '#168b67',
+    REJECT: '#b84f5f',
+    FAIL: '#b84f5f',
+    REVIEW: '#b47c25',
+    UNVERIFIED: 'var(--chart-other)',
+    투자: '#2f73c9',
+    'Value Up': '#7657c9',
+    공동연구: '#0f9f8f'
+  };
+  const isNeutralDonutLabel = (label) => /^(others?|unknown|n\/?a|other\s*\/\s*unknown|기타\s*\/\s*미확인)$/i.test(String(label).trim());
+  const segmentColor = (label, index) => {
+    if (kind === 'partnership' && /^TBD$/i.test(String(label).trim())) {
+      return DONUT_OTHERS_COLOR;
+    }
+    return semanticDonutColors[label]
+      || (isNeutralDonutLabel(label) ? DONUT_OTHERS_COLOR : DONUT_PALETTE[index % DONUT_PALETTE.length]);
+  };
   const segments = entries
     .map(([label, value], index) => {
       const fraction = value / total;
@@ -1382,8 +2512,7 @@ function donutChart(entries, kind) {
           data-value="${value}"
           data-label="${escapeHtml(displayLabel)}"
           data-pct="${pct}"
-          tabindex="0"
-          aria-label="${escapeHtml(displayLabel)} ${value}, ${pct}%"
+          aria-hidden="true"
         ></circle>
       `;
     })
@@ -1404,8 +2533,11 @@ function donutChart(entries, kind) {
           aria-label="${escapeHtml(tooltip)}, ${value}, ${pct}%"
           tabindex="0"
         >
-          <b class="legend-dot" style="background:${segmentColor(label, index)}"></b>${escapeHtml(displayLabel)}
-          <em>${pct}%</em>
+          <span class="donut-legend-copy">
+            <b class="legend-dot" style="background:${segmentColor(label, index)}"></b>
+            <span class="donut-legend-text">${escapeHtml(displayLabel)}</span>
+          </span>
+          <em>${value}</em>
         </span>
       `;
     })
@@ -1425,6 +2557,10 @@ function donutChart(entries, kind) {
 }
 
 function wireDonutHover(container) {
+  container._chartHoverController?.abort();
+  const controller = new AbortController();
+  container._chartHoverController = controller;
+  const listenerOptions = { signal: controller.signal };
   const donut = container.querySelector('.donut');
   if (!donut) return;
   const valueEl = donut.querySelector('.donut-value');
@@ -1437,7 +2573,8 @@ function wireDonutHover(container) {
       (segment) => segment.dataset.donutIndex === String(index)
     );
     if (!activeSegment) return;
-    valueEl.textContent = activeSegment.dataset.value;
+    valueEl.textContent = `${activeSegment.dataset.pct}%`;
+    donut.classList.add('is-hovering');
     segments.forEach((segment) => {
       const isActive = segment === activeSegment;
       segment.classList.toggle('is-active', isActive);
@@ -1452,6 +2589,7 @@ function wireDonutHover(container) {
 
   const resetCenter = () => {
     valueEl.textContent = defaultValue;
+    donut.classList.remove('is-hovering');
     segments.forEach((segment) => segment.classList.remove('is-active', 'is-dimmed'));
     legendItems.forEach((item) => item.classList.remove('is-active', 'is-dimmed'));
   };
@@ -1460,7 +2598,7 @@ function wireDonutHover(container) {
     const item = event.target.closest('[data-donut-index]');
     if (!item || !container.contains(item)) return;
     activateIndex(item.dataset.donutIndex);
-  });
+  }, listenerOptions);
 
   container.addEventListener('pointerout', (event) => {
     const item = event.target.closest('[data-donut-index]');
@@ -1471,12 +2609,12 @@ function wireDonutHover(container) {
       return;
     }
     resetCenter();
-  });
+  }, listenerOptions);
 
   container.addEventListener('focusin', (event) => {
     const item = event.target.closest('[data-donut-index]');
     if (item) activateIndex(item.dataset.donutIndex);
-  });
+  }, listenerOptions);
 
   container.addEventListener('focusout', (event) => {
     const nextItem = event.relatedTarget?.closest?.('[data-donut-index]');
@@ -1485,63 +2623,535 @@ function wireDonutHover(container) {
       return;
     }
     resetCenter();
+  }, listenerOptions);
+}
+
+function barChart(entries, kind) {
+  const total = entries.reduce((sum, [, value]) => sum + value, 0);
+  if (!total) return '<div class="empty-state">데이터 없음</div>';
+
+  const maxValue = Math.max(...entries.map(([, value]) => value), 1);
+  const isNeutralLabel = (label) => /^(others?|unknown|n\/?a|other\s*\/\s*unknown|기타\s*\/\s*미확인)$/i.test(String(label).trim());
+  const barColor = (label, index) => (
+    isNeutralLabel(label) ? DONUT_OTHERS_COLOR : DONUT_PALETTE[index % DONUT_PALETTE.length]
+  );
+
+  const rows = entries.map(([label, value], index) => {
+    const pct = Math.round((value / total) * 100);
+    const relativeWidth = value > 0 ? Math.max(4, (value / maxValue) * 100) : 0;
+    const displayLabel = distributionDisplayLabel(kind, label);
+    const description = distributionDescription(kind, label);
+    const fullNameNote = displayLabel !== label ? `${displayLabel}: ${label}` : label;
+    const tooltip = [fullNameNote, description].filter(Boolean).join(' · ');
+    return `
+      <div
+        class="distribution-bar-item${value === 0 ? ' is-zero' : ''}"
+        data-bar-index="${index}"
+        tabindex="0"
+        title="${escapeHtml(tooltip)}"
+        aria-label="${escapeHtml(displayLabel)} ${value}건, ${pct}%"
+      >
+        <span class="distribution-bar-label">${escapeHtml(displayLabel)}</span>
+        <span
+          class="distribution-bar-track"
+          style="--bar-width:${relativeWidth}%; --bar-color:${barColor(label, index)}"
+          aria-hidden="true"
+        >
+          <span class="distribution-bar-fill"></span>
+          <strong class="distribution-bar-percent">${pct}%</strong>
+        </span>
+        <b class="distribution-bar-count">${value}</b>
+      </div>
+    `;
+  }).join('');
+
+  return `<div class="distribution-bars">${rows}</div>`;
+}
+
+function wireBarHover(container) {
+  container._chartHoverController?.abort();
+  const controller = new AbortController();
+  container._chartHoverController = controller;
+  const listenerOptions = { signal: controller.signal };
+  const items = [...container.querySelectorAll('[data-bar-index]')];
+  if (!items.length) return;
+
+  const activateIndex = (index) => {
+    items.forEach((item) => {
+      const isActive = item.dataset.barIndex === String(index);
+      item.classList.toggle('is-active', isActive);
+      item.classList.toggle('is-dimmed', !isActive);
+    });
+  };
+
+  const resetBars = () => {
+    items.forEach((item) => item.classList.remove('is-active', 'is-dimmed'));
+  };
+
+  container.addEventListener('pointerover', (event) => {
+    const item = event.target.closest('[data-bar-index]');
+    if (item && container.contains(item)) activateIndex(item.dataset.barIndex);
+  }, listenerOptions);
+
+  container.addEventListener('pointerout', (event) => {
+    const item = event.target.closest('[data-bar-index]');
+    if (!item) return;
+    const nextItem = event.relatedTarget?.closest?.('[data-bar-index]');
+    if (nextItem && container.contains(nextItem)) {
+      activateIndex(nextItem.dataset.barIndex);
+      return;
+    }
+    resetBars();
+  }, listenerOptions);
+
+  container.addEventListener('focusin', (event) => {
+    const item = event.target.closest('[data-bar-index]');
+    if (item) activateIndex(item.dataset.barIndex);
+  }, listenerOptions);
+
+  container.addEventListener('focusout', (event) => {
+    const nextItem = event.relatedTarget?.closest?.('[data-bar-index]');
+    if (nextItem && container.contains(nextItem)) {
+      activateIndex(nextItem.dataset.barIndex);
+      return;
+    }
+    resetBars();
+  }, listenerOptions);
+}
+
+function modalityDistributionGroup(value) {
+  const modality = String(value || 'N/A');
+  return /^(cell therapy|gene therapy)$/i.test(modality) ? 'CGT' : modality;
+}
+
+function modalitySummaryGroup(value) {
+  const modality = modalityDistributionGroup(value);
+  if (/^small molecule$/i.test(modality)) return 'Small molecule';
+  if (/^peptide$/i.test(modality)) return 'Peptide';
+  if (/^rna therapy$/i.test(modality)) return 'RNA therapy';
+  if (/^cgt$/i.test(modality)) return 'CGT';
+  if (/^antibody$/i.test(modality)) return 'Antibody';
+  if (/^protein biologic$/i.test(modality)) return 'Protein biologic';
+  return 'Others';
+}
+
+function themeDistributionEntries(rows) {
+  const counts = countBy(rows, (row) => {
+    const theme = String(row.theme || '').trim();
+    if (/^e\s*\/\s*i\s*balance$/i.test(theme)) return 'E/I Balance';
+    if (/^neuro[\s-]*immune$/i.test(theme)) return 'Neuroimmune';
+    return 'Others';
+  });
+  return ['E/I Balance', 'Neuroimmune', 'Others']
+    .map((label) => [label, counts[label] || 0])
+    .filter(([, count]) => count > 0);
+}
+
+function countryDistributionEntries(rows) {
+  const counts = countBy(rows, (row) => row.country || 'Unknown');
+  const isOtherCountry = (label) => /^(unknown|n\/?a|others?|-)?$/i.test(String(label).trim());
+  const knownCountries = Object.entries(counts)
+    .filter(([label]) => !isOtherCountry(label))
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3);
+  const visibleTotal = knownCountries.reduce((sum, [, count]) => sum + count, 0);
+  const othersTotal = rows.length - visibleTotal;
+  if (othersTotal > 0) knownCountries.push(['Others', othersTotal]);
+  return knownCountries;
+}
+
+function summaryDistributionPairs(entries = [], kind = '') {
+  return entries.map((item) => {
+    const label = kind === 'partnership'
+      ? PARTNERSHIP_LABELS[item.key] || item.label || item.key || 'Unknown'
+      : item.label || item.key || 'Unknown';
+    return [label, Number(item.count || 0)];
   });
 }
 
-function renderCharts() {
-  const themeTop = topCountsWithOthers(state.rows, (row) => row.theme || 'N/A', 5, 'Others');
-  elements.themeChart.innerHTML = donutChart(themeTop, 'theme');
-  wireDonutHover(elements.themeChart);
+function partnershipSummaryDistribution(entries = []) {
+  const keys = ['investment', 'value_up', 'joint_research', 'tbd'];
+  const counts = Object.fromEntries(keys.map((key) => [key, 0]));
+  entries.forEach((item) => {
+    const key = keys.slice(0, 3).includes(item?.key) ? item.key : 'tbd';
+    counts[key] += Number(item?.count || 0);
+  });
+  return keys.map((key) => ({ key, label: PARTNERSHIP_LABELS[key], count: counts[key] }));
+}
 
-  const indicationTop = topCountsWithOthers(state.rows, (row) => row.mainIndication || 'N/A', 5, 'Others');
-  elements.indicationChart.innerHTML = donutChart(indicationTop, 'indication');
+function workflowListBadge(label, tone = '') {
+  return `<span class="workflow-list-badge ${escapeHtml(tone)}">${escapeHtml(label || '-')}</span>`;
+}
+
+function workflowStageDistribution(rows) {
+  const counts = countBy(rows, (item) => stageSummaryGroup(item.development_stage || 'Unknown'));
+  const order = [
+    'Preclinical',
+    'IND filed/cleared',
+    'Phase 1',
+    'Phase 1/2',
+    'Phase 2',
+    'Phase 2/3',
+    'Phase 3',
+    'Registration',
+    'Approved / marketed',
+    'Discontinued / inactive',
+    'Unknown'
+  ];
+  return Object.entries(counts).sort((a, b) => {
+    const aIndex = order.indexOf(a[0]);
+    const bIndex = order.indexOf(b[0]);
+    const aRank = aIndex < 0 ? order.length : aIndex;
+    const bRank = bIndex < 0 ? order.length : bIndex;
+    return aRank - bRank || a[0].localeCompare(b[0], 'en');
+  });
+}
+
+function renderWorkflowPriorityList(summary) {
+  const mode = activeTableMode();
+  const rows = mode === 'triage'
+    ? summary.awaiting_full_scout || []
+    : mode === 'focus'
+      ? summary.action_required || []
+      : summary.priority_pipelines || [];
+  const emptyMessage = mode === 'triage'
+    ? '현재 Full Scout 대기 후보가 없습니다.'
+    : mode === 'focus'
+      ? '현재 확인이 필요한 Action이 없습니다.'
+      : '현재 표시할 Priority Pipeline이 없습니다.';
+
+  elements.workflowPriorityList.classList.toggle('is-stage-distribution', mode === 'triage');
+  if (mode === 'triage') {
+    elements.workflowPriorityList.innerHTML = rows.length
+      ? barChart(workflowStageDistribution(rows), 'stage')
+      : `<div class="empty-state workflow-empty-state"><span aria-hidden="true">○</span><p>${escapeHtml(emptyMessage)}</p></div>`;
+    wireBarHover(elements.workflowPriorityList);
+    return;
+  }
+
+  const visibleRows = mode === 'full'
+    ? [...rows].sort((a, b) => {
+        const scoreDifference = Number(b.total_score ?? -1) - Number(a.total_score ?? -1);
+        if (scoreDifference) return scoreDifference;
+        const bDate = Date.parse(b.completed_at || b.generated_at || '') || 0;
+        const aDate = Date.parse(a.completed_at || a.generated_at || '') || 0;
+        return bDate - aDate || String(a.asset || '').localeCompare(String(b.asset || ''), 'en');
+      })
+    : mode === 'focus'
+      ? [...rows].sort((a, b) => {
+          const rankDifference = Number(a.action_rank ?? 99) - Number(b.action_rank ?? 99);
+          if (rankDifference) return rankDifference;
+          const actionDateDifference = String(a.action_date || '9999-12-31').localeCompare(String(b.action_date || '9999-12-31'));
+          if (actionDateDifference) return actionDateDifference;
+          const bDate = Date.parse(b.action_updated_at || b.completed_at || '') || 0;
+          const aDate = Date.parse(a.action_updated_at || a.completed_at || '') || 0;
+          return bDate - aDate || String(a.asset || '').localeCompare(String(b.asset || ''), 'en');
+        })
+      : rows;
+
+  elements.workflowPriorityList.innerHTML = visibleRows.length
+    ? visibleRows.slice(0, 10).map((item) => {
+        const recordId = item.record_id || '';
+        const asset = item.asset || item.asset_identity || 'Unknown asset';
+        const company = item.company || 'Unknown company';
+        const indication = item.detailed_indication || item.main_indication || 'Unknown';
+        if (mode === 'focus') {
+          const actionLabels = {
+            OVERDUE: 'Overdue',
+            WITHIN_30_DAYS: '30일 이내',
+            FILTER3_UNKNOWN: 'Filter 3 확인',
+            MISSING_ACTION_DATE: '날짜 미등록'
+          };
+          const actionTone = item.action_status === 'OVERDUE' ? 'fail' : item.action_status === 'WITHIN_30_DAYS' ? 'review' : 'neutral';
+          return `
+            <button type="button" class="priority-item workflow-priority-item" data-record-id="${escapeHtml(recordId)}">
+              <span class="workflow-priority-main"><strong>${escapeHtml(asset)}</strong><small>${escapeHtml(company)}</small></span>
+              <span class="workflow-priority-context">${escapeHtml(PARTNERSHIP_LABELS[item.partnership_type] || item.partnership_label || 'Unknown')} · ${escapeHtml(item.action_date || 'Action date 미등록')}</span>
+              <span class="workflow-priority-badges">
+                ${workflowListBadge(actionLabels[item.action_status] || '확인 필요', actionTone)}
+                ${item.human_override || item.partnership_source === 'manual' ? workflowListBadge('HUMAN', 'human') : ''}
+              </span>
+            </button>
+          `;
+        }
+        const decision = String(item.filter2 || 'REVIEW').toUpperCase();
+        return `
+          <button type="button" class="priority-item workflow-priority-item" data-record-id="${escapeHtml(recordId)}">
+            <span class="workflow-priority-main"><strong>${escapeHtml(asset)}</strong><small>${escapeHtml(company)}</small></span>
+            <span class="workflow-priority-context">${escapeHtml(item.main_indication || indication)} · Data ${item.data_maturity ?? '-'} · TR ${item.target_relevance ?? '-'}</span>
+            <span class="workflow-priority-badges">${workflowListBadge(decision, decision.toLowerCase())}<b class="workflow-total-score">${item.total_score ?? '-'} / ${item.max_score ?? 21}</b></span>
+          </button>
+        `;
+      }).join('')
+    : `<div class="empty-state workflow-empty-state"><span aria-hidden="true">○</span><p>${escapeHtml(emptyMessage)}</p></div>`;
+}
+
+function dataUploadIconMarkup(name) {
+  const paths = {
+    sparkles: '<path d="m12 3 1.2 3.8L17 8l-3.8 1.2L12 13l-1.2-3.8L7 8l3.8-1.2L12 3Z"></path><path d="m18.5 14 .7 2.3 2.3.7-2.3.7-.7 2.3-.7-2.3-2.3-.7 2.3-.7.7-2.3Z"></path>',
+    'external-link': '<path d="M14 4h6v6M20 4l-9 9"></path><path d="M18 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6"></path>',
+    'file-text': '<path d="M6 3h8l4 4v14H6z"></path><path d="M14 3v5h4M9 12h6M9 16h6"></path>',
+    clipboard: '<path d="M8 5.5h8M9 3h6v4H9z"></path><path d="M7 5H5.5A1.5 1.5 0 0 0 4 6.5v13A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-13A1.5 1.5 0 0 0 18.5 5H17"></path>',
+    paperclip: '<path d="m9.5 12.5 5.8-5.8a3 3 0 0 1 4.2 4.2l-7.7 7.7a5 5 0 0 1-7.1-7.1l7.1-7.1"></path>',
+    'shield-check': '<path d="M12 3 5 6v5c0 4.7 2.8 8 7 10 4.2-2 7-5.3 7-10V6l-7-3Z"></path><path d="m9 12 2 2 4-4"></path>',
+    save: '<path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 20v-6h8v6"></path>',
+    code: '<path d="m9 8-4 4 4 4M15 8l4 4-4 4M13 6l-2 12"></path>',
+    waiting: '<circle cx="12" cy="12" r="8.5"></circle><circle cx="12" cy="12" r="2"></circle>',
+    review: '<path d="M8 5.5h8M9 3h6v4H9z"></path><path d="M7 5H5.5A1.5 1.5 0 0 0 4 6.5v13A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-13A1.5 1.5 0 0 0 18.5 5H17"></path><path d="m9 14 2 2 4-4"></path>',
+    loader: '<path d="M12 3a9 9 0 1 1-7.8 4.5"></path>',
+    check: '<circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.5 2.5L16 9"></path>',
+    alert: '<circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 17h.01"></path>',
+    saved: '<path d="M12 3 5 6v5c0 4.7 2.8 8 7 10 4.2-2 7-5.3 7-10V6l-7-3Z"></path><path d="m9 12 2 2 4-4"></path>'
+  };
+  return `<svg class="data-upload-icon data-upload-icon-${escapeHtml(name)}" viewBox="0 0 24 24" focusable="false" aria-hidden="true">${paths[name] || paths.waiting}</svg>`;
+}
+
+function setDataUploadStatus(status, errorCount = 0) {
+  if (!elements.saveStatus) return;
+  const labels = {
+    waiting: '응답 붙여넣기 대기',
+    'review-needed': '입력 검토 필요',
+    validating: '검증 중',
+    valid: '검증 완료 · 저장 가능',
+    error: `수정 필요 · 오류 ${Math.max(0, Number(errorCount) || 0)}개`,
+    saved: '저장 완료'
+  };
+  const nextStatus = Object.prototype.hasOwnProperty.call(labels, status) ? status : 'waiting';
+  const statusIcons = {
+    waiting: 'waiting',
+    'review-needed': 'review',
+    validating: 'loader',
+    valid: 'check',
+    error: 'alert',
+    saved: 'saved'
+  };
+  elements.saveStatus.dataset.state = nextStatus;
+  elements.saveStatus.setAttribute('aria-busy', String(nextStatus === 'validating'));
+  elements.saveStatus.innerHTML = `${dataUploadIconMarkup(statusIcons[nextStatus])}<span>${escapeHtml(labels[nextStatus])}</span>`;
+}
+
+function resetDataUploadValidationState() {
+  const hasInput = Boolean(elements.gptResponseInput?.value.trim());
+  state.dataUploadReview = null;
+  if (elements.previewInputButton) elements.previewInputButton.disabled = !hasInput;
+  if (elements.saveJsonButton) elements.saveJsonButton.disabled = true;
+  if (elements.inputValidationResults) {
+    elements.inputValidationResults.hidden = true;
+    elements.inputValidationResults.innerHTML = '';
+  }
+  setDataUploadStatus(hasInput ? 'review-needed' : 'waiting');
+}
+
+function dataUploadStepBodyMarkup(step) {
+  let markup = escapeHtml(step.body || '');
+  const actions = Array.isArray(step.actions) ? step.actions : [];
+  actions.forEach((action) => {
+    const token = `{{${action.token}}}`;
+    const title = action.kind === 'copy-prompt'
+      ? `클릭하여 GPT ${action.label} 복사`
+      : action.kind === 'focus-input'
+        ? `${action.label} 입력창으로 이동`
+      : action.kind === 'review'
+        ? '붙여넣은 입력 검토 실행'
+        : '검증을 통과한 입력 저장';
+    const actionIcon = action.kind === 'copy-prompt'
+      ? escapeHtml(action.icon)
+      : dataUploadIconMarkup(action.kind === 'focus-input' ? (action.icon || 'clipboard') : action.kind === 'review' ? 'shield-check' : 'save');
+    const chip = `<button
+      type="button"
+      class="data-upload-prompt-chip data-upload-guide-action-chip"
+      data-upload-guide-action="${escapeHtml(action.kind)}"
+      ${action.promptKind ? `data-prompt-kind="${escapeHtml(action.promptKind)}"` : ''}
+      aria-label="${escapeHtml(title)}"
+      title="${escapeHtml(title)}"
+    ><span class="${action.kind === 'copy-prompt' ? '' : 'data-upload-action-icon'}" aria-hidden="true">${actionIcon}</span><b>${escapeHtml(action.label)}</b></button>`;
+    markup = markup.replaceAll(token, chip);
+  });
+  return markup;
+}
+
+function renderDataUploadGuide(mode = activeTableMode()) {
+  if (!elements.dataUploadPanel) return;
+  const isFocusMode = mode === 'focus';
+  elements.dataUploadPanel.hidden = isFocusMode;
+  if (state.dataUploadGuideMode === mode) return;
+  state.dataUploadGuideMode = mode;
+  resetDataUploadValidationState();
+  if (isFocusMode) return;
+
+  const guide = DATA_UPLOAD_GUIDES[mode === 'triage' ? 'triage' : 'full'];
+  if (elements.dataUploadInputLabel) elements.dataUploadInputLabel.textContent = guide.inputLabel;
+  if (elements.gptResponseInput) elements.gptResponseInput.placeholder = guide.placeholder;
+  if (elements.dataUploadGuideTitle) elements.dataUploadGuideTitle.textContent = guide.title;
+  if (elements.dataUploadRecommendation) {
+    elements.dataUploadRecommendation.innerHTML = `${dataUploadIconMarkup('sparkles')}<span>${escapeHtml(guide.recommendation)}</span>`;
+    elements.dataUploadRecommendation.setAttribute('aria-label', guide.recommendation);
+  }
+  if (elements.dataUploadGuideSteps) {
+    const stepIcons = mode === 'triage'
+      ? ['external-link', 'file-text', 'clipboard', 'shield-check']
+      : ['external-link', 'file-text', 'paperclip', 'shield-check'];
+    elements.dataUploadGuideSteps.innerHTML = guide.steps.map((step, index) => `
+      <li>
+        <span class="data-upload-step-icon" aria-hidden="true">${dataUploadIconMarkup(stepIcons[index] || 'file-text')}</span>
+        <div class="data-upload-step-copy">
+          <strong>${escapeHtml(step.title)}</strong>
+          <p>${dataUploadStepBodyMarkup(step)}</p>
+          ${step.example ? `<pre><span>${dataUploadIconMarkup('code')}입력 형식 예시</span>${escapeHtml(step.example)}</pre>` : ''}
+        </div>
+      </li>
+    `).join('');
+  }
+}
+
+function renderWorkflowMode(summary = activeTabSummary()) {
+  const mode = activeTableMode();
+  if (elements.agentInput) {
+    elements.agentInput.dataset.workflowMode = mode;
+    elements.agentInput.placeholder = AGENT_INPUT_PLACEHOLDERS[mode] || FULL_SCOUT_AGENT_INPUT_PLACEHOLDER;
+    elements.agentInput.rows = 2;
+  }
+  renderDataUploadGuide(mode);
+  if (elements.dataUploadShortcutButton) {
+    elements.dataUploadShortcutButton.hidden = mode === 'focus';
+  }
+  if (elements.copyTriagePromptTopButton) {
+    elements.copyTriagePromptTopButton.hidden = mode !== 'triage';
+  }
+  if (elements.copyPromptTopButton) {
+    elements.copyPromptTopButton.hidden = mode !== 'full';
+  }
+  const topDataActions = elements.dataUploadShortcutButton?.closest('.top-data-actions');
+  if (topDataActions) {
+    topDataActions.hidden = mode === 'focus';
+  }
+  const pipelineCount = Number(
+    mode === 'focus' ? summary?.kpis?.pipelines : summary?.kpis?.assets
+  );
+  if (elements.dataStatus && Number.isFinite(pipelineCount)) {
+    elements.dataStatus.textContent = `총 ${pipelineCount}건 로드됨`;
+  }
+  const copy = WORKFLOW_COPY[mode];
+  const distributionAssets = Number(summary?.distribution_population?.assets) || 0;
+  if (elements.workflowModeDescription) {
+    elements.workflowModeDescription.dataset.workflowMode = mode;
+    elements.workflowModeDescription.innerHTML = `
+      <span class="workflow-description-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 10.75v5.5M12 7.75h.01"></path>
+        </svg>
+      </span>
+      <span class="workflow-description-copy">
+        <strong>${escapeHtml(copy.stage)}<span class="workflow-description-separator" aria-hidden="true">·</span></strong>
+        <span>${escapeHtml(copy.description)}</span>
+      </span>
+      <span class="workflow-description-filter">${escapeHtml(copy.filterLabel)}</span>`;
+  }
+  if (elements.summaryScopeNote) {
+    elements.summaryScopeNote.textContent = '현재 Tab·Filter 기준';
+  }
+  if (elements.indicationSummarySubtitle) {
+    elements.indicationSummarySubtitle.textContent = activeSummaryFilterCount() > 0
+      ? `Filter 결과 ${distributionAssets}개 · 적응증 6개 · Others`
+      : '현재 탭 전체 asset · 적응증 6개 · Others';
+  }
+  if (elements.modalitySummarySubtitle) {
+    elements.modalitySummarySubtitle.textContent = activeSummaryFilterCount() > 0
+      ? `Filter 결과 ${distributionAssets}개 · 상위 6개와 Others`
+      : mode === 'focus'
+        ? `Shortlisted Pool ${distributionAssets}개 · 상위 6개와 Others`
+        : '상위 6개 · 나머지와 Unknown은 Others';
+  }
+  if (elements.passRatePanel) elements.passRatePanel.hidden = false;
+  if (elements.workflowPriorityTitle) elements.workflowPriorityTitle.textContent = copy.priorityTitle;
+  if (elements.workflowPrioritySubtitle) elements.workflowPrioritySubtitle.textContent = copy.prioritySubtitle;
+  if (elements.pipelineContent) {
+    const activeTab = [...elements.pipelineTableTabs].find((tab) => tab.dataset.tableMode === mode);
+    if (activeTab) elements.pipelineContent.setAttribute('aria-labelledby', activeTab.id);
+  }
+  document.documentElement.dataset.workflowMode = mode;
+}
+
+let dataUploadHighlightTimer = 0;
+
+function scrollToDataUpload() {
+  if (activeTableMode() === 'focus' || !elements.dataUploadPanel || !elements.gptResponseInput) return;
+  const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  window.clearTimeout(dataUploadHighlightTimer);
+  elements.dataUploadPanel.classList.remove('is-shortcut-highlighted');
+  void elements.dataUploadPanel.offsetWidth;
+  elements.dataUploadPanel.classList.add('is-shortcut-highlighted');
+  elements.dataUploadPanel.scrollIntoView({
+    behavior: reducedMotion ? 'auto' : 'smooth',
+    block: 'start'
+  });
+  window.setTimeout(() => {
+    elements.gptResponseInput.focus({ preventScroll: true });
+  }, reducedMotion ? 0 : 420);
+  dataUploadHighlightTimer = window.setTimeout(() => {
+    elements.dataUploadPanel.classList.remove('is-shortcut-highlighted');
+  }, 1800);
+}
+
+function renderCharts() {
+  const summary = activeTabSummary();
+  const indicationEntries = summaryDistributionPairs(summary.indication_distribution)
+    .sort((a, b) => b[1] - a[1]
+      || Number(/^Others$/i.test(a[0])) - Number(/^Others$/i.test(b[0]))
+      || a[0].localeCompare(b[0], 'ko'));
+  elements.indicationChart.innerHTML = donutChart(indicationEntries, 'interest-indication');
   wireDonutHover(elements.indicationChart);
 
-  const modalityTop = topCountsWithOthers(
-    state.rows,
-    (row) => row.modality || 'N/A',
-    5,
-    'Others',
-    { adjacentSequence: ['Cell therapy', 'Gene therapy'] }
-  );
-  elements.modalityChart.innerHTML = donutChart(modalityTop, 'modality');
+  const modalityEntries = summaryDistributionPairs(summary.modality_distribution);
+  elements.modalityChart.innerHTML = donutChart(modalityEntries, 'modality-summary');
   wireDonutHover(elements.modalityChart);
 
-  const countryTop = topCountsWithOthers(state.rows, (row) => row.country || 'N/A', 6, 'Others');
-  elements.countryChart.innerHTML = donutChart(countryTop, 'country');
-  wireDonutHover(elements.countryChart);
-
-  if (elements.priorityList) {
-    const reviewRows = state.rows.filter((row) => row.filter1 === 'REVIEW' || row.filter2 === 'REVIEW');
-    const topRows = [...reviewRows]
-      .sort((a, b) => (b.totalScore ?? -1) - (a.totalScore ?? -1))
-      .slice(0, 3);
-    elements.priorityList.innerHTML = topRows.length
-      ? topRows.map((row) => `
-          <button type="button" class="priority-item" data-record-id="${escapeHtml(row.id)}" data-is-triage="${row.isTriage ? '1' : ''}">
-            <strong>${escapeHtml(row.asset)}</strong>
-            <span>${escapeHtml(row.theme)} · ${escapeHtml(row.cluster)}</span>
-            <b>${row.totalScore ?? '-'} / ${row.maxScore ?? 21}</b>
-          </button>
-        `).join('')
-      : '<div class="empty-state">Review 대기 중인 pipeline이 없습니다</div>';
+  if (elements.passRateChart) {
+    const mode = activeTableMode();
+    const sourceDistribution = mode === 'focus'
+      ? partnershipSummaryDistribution(summary.partnership_distribution)
+      : summary.status_distribution;
+    const distributionKind = mode === 'focus' ? 'partnership' : 'status';
+    const statusEntries = summaryDistributionPairs(sourceDistribution, distributionKind);
+    const total = statusEntries.reduce((sum, [, value]) => sum + value, 0);
+    const leadLabel = mode === 'triage' ? 'SELECT' : mode === 'full' ? 'PASS' : '';
+    const leadCount = leadLabel
+      ? statusEntries.find(([label]) => label === leadLabel)?.[1] || 0
+      : 0;
+    const ongoingCount = mode === 'focus'
+      ? statusEntries
+          .filter(([label]) => label !== 'TBD')
+          .reduce((sum, [, value]) => sum + value, 0)
+      : leadCount;
+    const leadRate = total ? Math.round((ongoingCount / total) * 100) : 0;
+    elements.passRateChart.innerHTML = donutChart(statusEntries, distributionKind);
+    const donut = elements.passRateChart.querySelector('.donut');
+    const value = elements.passRateChart.querySelector('.donut-value');
+    const center = elements.passRateChart.querySelector('.donut-center');
+    if (donut && value) {
+      const defaultValue = mode === 'focus' ? String(ongoingCount) : `${leadRate}%`;
+      donut.dataset.defaultValue = defaultValue;
+      value.textContent = defaultValue;
+    }
+    if (center) center.insertAdjacentHTML('beforeend', `<small>${mode === 'focus' ? 'ONGOING' : leadLabel}</small>`);
+    if (elements.workflowStatusTitle) {
+      elements.workflowStatusTitle.textContent = mode === 'triage'
+        ? 'SELECT Rate'
+        : mode === 'focus'
+          ? 'OI Partnership 분포'
+          : 'PASS Rate';
+    }
+    if (elements.passRateSubtitle) {
+      elements.passRateSubtitle.textContent = mode === 'focus'
+        ? `Ongoing ${ongoingCount} / Shortlisted ${total} · ${leadRate}%`
+        : `${leadLabel} ${leadCount} / ${total} · ${leadRate}%`;
+    }
+    wireDonutHover(elements.passRateChart);
   }
 
-  if (elements.dueDateList) {
-    const dueRows = state.rows
-      .filter((row) => row.focusTracked && row.focusDueDate)
-      .sort((a, b) => (a.focusDueDate < b.focusDueDate ? -1 : a.focusDueDate > b.focusDueDate ? 1 : 0))
-      .slice(0, 3);
-    elements.dueDateList.innerHTML = dueRows.length
-      ? dueRows.map((row) => `
-          <button type="button" class="priority-item" data-record-id="${escapeHtml(row.id)}" data-is-triage="${row.isTriage ? '1' : ''}">
-            <strong>${escapeHtml(row.asset)}</strong>
-            <span>${escapeHtml(row.focusComment || row.latestTeamComment || '등록된 action item 없음')}</span>
-            <b>${escapeHtml(row.focusDueDate)}</b>
-          </button>
-        `).join('')
-      : '<div class="empty-state">Action date가 설정된 관심 목록 항목이 없습니다</div>';
-  }
+  renderWorkflowPriorityList(summary);
+  renderWorkflowMode(summary);
 }
 
 function renderColumnSettings() {
@@ -1573,6 +3183,8 @@ function scoreTooltipLegacy(label, criterionInfo, max) {
   const lines = [
     `${label}: ${score} / ${max}`,
     `Evidence Type: ${criterionInfo?.evidenceType || '-'} (${criterionInfo?.evidenceTypeReason || '-'})`,
+    `Evidence basis: ${criterionInfo?.evidenceBasisLabel || '-'}`,
+    `Verified public sources: ${criterionInfo?.verifiedPublicSourceCount ?? 0}`,
     `Rubric 기준: ${criterionInfo?.appliedScoreDefinition || criterionInfo?.ruleCriteria || '-'}`,
     `판단 이유: ${criterionInfo?.mainLineSummary || criterionInfo?.decisionSummary || criterionInfo?.reason || '-'}`,
     `Why not higher: ${criterionInfo?.whyNotHigher || '-'}`,
@@ -1618,6 +3230,10 @@ function scoreTooltip(label, criterionInfo, max) {
   } else {
     pushLine(lines, 'Evidence Type', evidenceType);
   }
+  pushLine(lines, 'Evidence basis', criterionInfo?.evidenceBasisLabel);
+  if (criterionInfo?.evidenceBasis) {
+    lines.push(`Verified public sources: ${criterionInfo?.verifiedPublicSourceCount ?? 0}`);
+  }
 
   const calc = criterionInfo?.calculation;
   if (calc?.A_targetable_addressable_patient || calc?.B_unrisked_peak_sales || calc?.C_obtainable_peak_sales) {
@@ -1641,8 +3257,8 @@ function scoreTooltip(label, criterionInfo, max) {
   const sources = (criterionInfo?.evidenceSources || [])
     .slice(0, 3)
     .map((source) => {
-      const title = meaningfulValue(source.source_title);
-      const url = meaningfulValue(source.source_url);
+      const title = meaningfulValue(typeof source === 'object' ? source.source_title : '');
+      const url = meaningfulValue(evidenceSourceUrl(source));
       if (title && url) return `${title} (${url})`;
       return title || url;
     })
@@ -1666,7 +3282,7 @@ function scoreBadge(score, max = 3, tooltip = '', extraClass = '') {
   const tone = score >= max ? 'high' : score >= max * 0.6 ? 'mid' : 'low';
   const className = `score ${tone}${extraClass ? ` ${extraClass}` : ''}`;
   const safeTooltip = escapeHtml(tooltip);
-  return `<span class="${className}" data-tooltip="${safeTooltip}" title="${safeTooltip}">${score ?? '-'}</span>`;
+  return `<span class="${className}" tabindex="0" aria-label="${safeTooltip}" data-tooltip="${safeTooltip}" title="${safeTooltip}">${score ?? '-'}</span>`;
 }
 
 function selectOption(value, currentValue, label = value) {
@@ -1675,7 +3291,7 @@ function selectOption(value, currentValue, label = value) {
 
 function statusEditSelect(row, filterKey) {
   const value = row[filterKey];
-  const options = row.isTriage ? ['SELECT', 'REJECT', 'N/A'] : ['PASS', 'REVIEW', 'FAIL'];
+  const options = row.isTriage ? ['SELECT', 'REJECT', 'UNVERIFIED'] : ['PASS', 'REVIEW', 'FAIL'];
   const isManual = Object.prototype.hasOwnProperty.call(humanReviewOverrides(row.raw), 'filter_status');
   return `
     <select
@@ -1695,7 +3311,7 @@ const PARTNERSHIP_TYPE_OPTIONS = [
   { value: '', label: '↻ Auto' },
   { value: 'investment', label: '투자' },
   { value: 'value_up', label: 'Value Up' },
-  { value: 'joint_research', label: '공동 연구' },
+  { value: 'joint_research', label: '공동연구' },
   { value: 'n_a', label: 'N/A' },
   { value: 'unknown', label: 'Unknown' }
 ];
@@ -1718,7 +3334,9 @@ function partnershipEditSelect(row) {
   const hoverText = [
     `OI Note: ${note}`,
     `Evidence Source: ${evidence}`,
-    `분류 기준: ${isManual ? 'HUMAN · 담당자 수동 분류' : 'AUTO · OI Partnership v1.0'}`
+    `분류 기준: ${isManual
+      ? 'HUMAN · 담당자 수동 분류'
+      : `AUTO · OI Partnership v${row.filter3CriteriaVersion || state.latestOiPartnershipCriteriaVersion}`}`
   ].join('\n');
   return `
     <select
@@ -1883,9 +3501,9 @@ function totalScoreEditCircle(row) {
   `;
 }
 
-function pendingScoreBadge(message = 'Full Scout v3.2 review not run yet') {
+function pendingScoreBadge(message = `Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} review not run yet`) {
   const safeTooltip = escapeHtml(message);
-  return `<span class="score pending" data-tooltip="${safeTooltip}" title="${safeTooltip}">-</span>`;
+  return `<span class="score pending" tabindex="0" aria-label="${safeTooltip}" data-tooltip="${safeTooltip}" title="${safeTooltip}">-</span>`;
 }
 
 function fullReviewScoreBadge(row, scoreKey, criterionKey, label) {
@@ -1897,7 +3515,7 @@ function filterToneClass(status) {
   if (!status || status === '-') return 'empty';
   if (['PASS', 'SELECT'].includes(status)) return 'pass select';
   if (status === 'FAIL') return 'fail';
-  if (['REJECT', 'N/A'].includes(status)) return 'na reject';
+  if (['REJECT', 'UNVERIFIED', 'N/A'].includes(status)) return 'na reject';
   return 'review';
 }
 
@@ -2066,8 +3684,8 @@ function renderTableLegacy() {
                 <input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} 선택" ${checked} />
               </td>
               <td class="company-cell">${escapeHtml(row.company)}</td>
-              <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${escapeHtml(row.country)}</td>
-              <td class="asset-cell"><strong>${escapeHtml(row.asset)}</strong></td>
+              <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${countryDisplayMarkup(row.countryRaw || row.country)}</td>
+              <td class="asset-cell"><a href="${escapeHtml(recordDetailHref(row, row.isTriage ? 'triage' : 'full'))}"><strong>${escapeHtml(row.asset)}</strong></a></td>
               <td class="target-column-cell">
                 <div class="target-cell">
                   <strong>${escapeHtml(row.target)}</strong>
@@ -2118,7 +3736,7 @@ function focusActionButton(row, location = 'full') {
       class="focus-action-button icon-only ${isTracked ? 'remove' : 'add'}"
       data-focus-action="${action}"
       data-record-id="${escapeHtml(row.id)}"
-      title="${isTracked ? '즐겨찾기(집중 관리)에서 제거합니다. 작성한 메모는 보존됩니다.' : '이 약물을 즐겨찾기(집중 관리)에 추가합니다.'}"
+      title="${isTracked ? '즐겨찾기(Shortlisting)에서 제거합니다. 작성한 메모는 보존됩니다.' : '이 약물을 즐겨찾기(Shortlisting)에 추가합니다.'}"
       aria-label="${escapeHtml(ariaLabel)}"
     >
       <span aria-hidden="true">${isTracked ? '★' : '☆'}</span>
@@ -2127,6 +3745,22 @@ function focusActionButton(row, location = 'full') {
 }
 
 function rubricRefreshButton(row) {
+  if (row.isTriage) {
+    const lastVersion = String(get(row.raw, 'meta.rubric_recalculation.version', ''));
+    const isCurrent = lastVersion === LATEST_TRIAGE_RUBRIC_VERSION;
+    const title = `저장된 평가 근거와 TR·MOA·Data 점수를 최신 Fast Triage 지침 v${LATEST_TRIAGE_RUBRIC_VERSION}에 다시 적용합니다.`;
+    return `
+      <button
+        type="button"
+        class="focus-action-button icon-only rubric-refresh-button ${isCurrent ? 'is-current' : ''}"
+        data-rubric-refresh
+        data-review-type="triage"
+        data-record-id="${escapeHtml(row.id)}"
+        title="${escapeHtml(title)}"
+        aria-label="${escapeHtml(`${row.asset} 최신 Fast Triage 지침 재평가`)}"
+      ><span aria-hidden="true">↻</span></button>
+    `;
+  }
   const currentVersion = String(row.criteriaVersion || '-');
   const lastVersion = String(get(row.raw, 'meta.rubric_recalculation.version', ''));
   const isCurrent = lastVersion === LATEST_FULL_SCOUT_RUBRIC_VERSION;
@@ -2136,7 +3770,7 @@ function rubricRefreshButton(row) {
       class="focus-action-button icon-only rubric-refresh-button ${isCurrent ? 'is-current' : ''}"
       data-rubric-refresh
       data-record-id="${escapeHtml(row.id)}"
-      title="저장된 7개 점수로 최신 Full Scout Rubric v${LATEST_FULL_SCOUT_RUBRIC_VERSION}의 Total Score와 Filter 2를 재계산합니다. 현재 표시 버전: v${escapeHtml(currentVersion)}"
+      title="저장된 7개 자동 점수로 최신 Full Scout Rubric v${LATEST_FULL_SCOUT_RUBRIC_VERSION}의 Total Score와 Filter 2를 재계산합니다. 수동 criterion/Total Score 보정과 붉은 표시는 초기화되며, Human decision과 코멘트는 유지됩니다. 현재 표시 버전: v${escapeHtml(currentVersion)}"
       aria-label="${escapeHtml(row.asset)} 최신 Rubric v${LATEST_FULL_SCOUT_RUBRIC_VERSION} 재계산"
     >
       <span aria-hidden="true">↻</span>
@@ -2147,8 +3781,68 @@ function rubricRefreshButton(row) {
 function fullScoutRowActions(row) {
   return `
     <div class="full-scout-row-actions">
-      ${rubricRefreshButton(row)}
+      ${rubricReevaluationButton(row)}
       ${focusActionButton(row, 'full')}
+    </div>
+  `;
+}
+
+function triageRowActions(row) {
+  return `<div class="full-scout-row-actions">${rubricRefreshButton(row)}</div>`;
+}
+
+function rubricReevaluationButton(row) {
+  const isTriage = row.isTriage;
+  const workflowLabel = isTriage ? 'Fast Triage' : 'Full Scout';
+  const latestVersion = isTriage ? LATEST_TRIAGE_RUBRIC_VERSION : LATEST_FULL_SCOUT_RUBRIC_VERSION;
+  const appliedVersion = String(get(row.raw, 'meta.rubric_recalculation.version', row.criteriaVersion || '-'));
+  const evaluatedAt = get(row.raw, 'meta.rubric_recalculation.recalculated_at', row.generatedAt || '-');
+  const isCurrent = String(get(row.raw, 'meta.rubric_recalculation.version', '')) === latestVersion;
+  const title = [
+    `최신 ${workflowLabel} 지침으로 다시 평가`,
+    `적용 지침: v${appliedVersion}`,
+    `평가 날짜: ${formatDateTimeKo(evaluatedAt)}`
+  ].join('\n');
+  return `
+    <button
+      type="button"
+      class="focus-action-button icon-only rubric-refresh-button ${isCurrent ? 'is-current' : ''}"
+      data-rubric-refresh
+      data-review-type="${isTriage ? 'triage' : 'full'}"
+      data-record-id="${escapeHtml(row.id)}"
+      title="${escapeHtml(title)}"
+      aria-label="${escapeHtml(`${row.asset} ${workflowLabel} 최신 지침으로 재평가`)}"
+    ><span aria-hidden="true">↻</span></button>
+  `;
+}
+
+function rubricReevaluationCell(row) {
+  return `<div class="full-scout-row-actions">${rubricReevaluationButton(row)}</div>`;
+}
+
+function oiPartnershipRefreshButton(row) {
+  const latestVersion = state.latestOiPartnershipCriteriaVersion;
+  const currentVersion = row.filter3CriteriaVersion || '-';
+  const isCurrent = row.filter3Source !== 'manual' && currentVersion === latestVersion;
+  return `
+    <button
+      type="button"
+      class="focus-action-button icon-only rubric-refresh-button oi-partnership-refresh-button ${isCurrent ? 'is-current' : ''}"
+      data-oi-partnership-refresh
+      data-record-id="${escapeHtml(row.id)}"
+      title="최신 OI Partnership v${escapeHtml(latestVersion)} 기준으로 Filter 3와 OI Note를 다시 자동 분류합니다. 수동 Filter 3·Note와 붉은 표시는 자동 결과로 초기화되며, In-vivo·In-vitro·ADMET 입력과 업로드 자료는 유지됩니다. 현재 표시 버전: v${escapeHtml(currentVersion)}"
+      aria-label="${escapeHtml(row.asset)} 최신 OI Partnership v${escapeHtml(latestVersion)} 재분류"
+    >
+      <span aria-hidden="true">↻</span>
+    </button>
+  `;
+}
+
+function focusRowActions(row) {
+  return `
+    <div class="full-scout-row-actions">
+      ${oiPartnershipRefreshButton(row)}
+      ${focusActionButton(row, 'focus')}
     </div>
   `;
 }
@@ -2164,8 +3858,51 @@ function focusDueState(value) {
   return value < today ? 'overdue' : value === today ? 'due-today' : '';
 }
 
+function countryFlagSvg(country) {
+  const value = String(country || '').trim().toLowerCase();
+  const frame = (content) => `<svg class="country-flag" viewBox="0 0 24 16" aria-hidden="true" focusable="false"><rect x=".5" y=".5" width="23" height="15" rx="2" fill="#fff" stroke="rgba(15,23,42,.18)"/>${content}</svg>`;
+  if (/korea/.test(value)) {
+    return frame('<path d="M12 4a4 4 0 0 1 0 8 2 2 0 0 0 0-4 2 2 0 0 1 0-4Z" fill="#d9485f"/><path d="M12 12a4 4 0 0 1 0-8 2 2 0 0 0 0 4 2 2 0 0 1 0 4Z" fill="#3157a4"/>');
+  }
+  if (/united states|\busa?\b|america/.test(value)) {
+    return frame('<path d="M1 1h22v2H1zm0 4h22v2H1zm0 4h22v2H1zm0 4h22v2H1z" fill="#c63f50"/><rect x="1" y="1" width="10" height="8" fill="#3157a4"/><path d="m3 3 .4 1.1h1.2l-1 .7.4 1.2-1-.7-1 .7.4-1.2-1-.7h1.2z" fill="#fff"/>');
+  }
+  if (/canada/.test(value)) {
+    return frame('<path d="M1 1h5v14H1zm17 0h5v14h-5z" fill="#cf334a"/><path d="m12 4 1 2 2-.5-1 2 1.4 1-2.4.8.4 2.2h-2.8l.4-2.2-2.4-.8 1.4-1-1-2 2 .5z" fill="#cf334a"/>');
+  }
+  if (/china/.test(value)) {
+    return frame('<rect x="1" y="1" width="22" height="14" rx="1.5" fill="#d63845"/><path d="m5 3 .6 1.7h1.8l-1.5 1 .6 1.8L5 6.4 3.5 7.5l.6-1.8-1.5-1h1.8z" fill="#ffd34d"/>');
+  }
+  if (/japan/.test(value)) {
+    return frame('<circle cx="12" cy="8" r="3.6" fill="#cf334a"/>');
+  }
+  if (/singapore/.test(value)) {
+    return frame('<path d="M1 1h22v7H1z" fill="#d63845"/><path d="M5.8 2.3a2.5 2.5 0 1 0 0 4 2 2 0 1 1 0-4Z" fill="#fff"/>');
+  }
+  if (/israel/.test(value)) {
+    return frame('<path d="M1 3h22v2H1zm0 8h22v2H1z" fill="#3157a4"/><path d="m12 5 2 3.5h-4zm0 6-2-3.5h4z" fill="none" stroke="#3157a4" stroke-width=".8"/>');
+  }
+  if (/taiwan/.test(value)) {
+    return frame('<rect x="1" y="1" width="22" height="14" rx="1.5" fill="#d63845"/><rect x="1" y="1" width="10" height="7" fill="#3157a4"/><circle cx="6" cy="4.5" r="1.7" fill="#fff"/>');
+  }
+  if (/australia/.test(value)) {
+    return frame('<rect x="1" y="1" width="22" height="14" rx="1.5" fill="#25467f"/><path d="m17 5 .5 1.2 1.3.1-1 .8.3 1.3-1.1-.7-1.1.7.3-1.3-1-.8 1.3-.1z" fill="#fff"/>');
+  }
+  if (/europe|united kingdom|\buk\b/.test(value)) {
+    return frame('<rect x="1" y="1" width="22" height="14" rx="1.5" fill="#3157a4"/><path d="M1 6.5h22v3H1zM10.5 1h3v14h-3z" fill="#fff"/><path d="M1 7h22v2H1zM11 1h2v14h-2z" fill="#cf334a"/>');
+  }
+  return '<svg class="country-globe" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4a13 13 0 0 1 0 16M12 4a13 13 0 0 0 0 16"/></svg>';
+}
+
+function countryDisplayMarkup(country) {
+  const label = String(country || 'Unknown').trim() || 'Unknown';
+  const displayLabel = countryTableCode(label);
+  return `<span class="country-cell-content" aria-label="${escapeHtml(label)}">${countryFlagSvg(label)}<span>${escapeHtml(displayLabel)}</span></span>`;
+}
+
 function renderFocusTable() {
   const visibleRows = getVisibleRows();
+  const allModeRows = state.rows.filter(rowMatchesActiveTableMode);
   const pageCount = Math.max(1, Math.ceil(visibleRows.length / state.pageSize));
   state.page = Math.min(state.page, pageCount);
   const start = (state.page - 1) * state.pageSize;
@@ -2174,12 +3911,15 @@ function renderFocusTable() {
 
   if (tableElement) {
     tableElement.classList.add('focus-management-table');
+    tableElement.classList.remove('triage-table');
     tableElement.style.minWidth = `${visibleTableWidth()}px`;
   }
   if (elements.deleteSelectedButton) elements.deleteSelectedButton.hidden = true;
   if (elements.columnSettingsButton) elements.columnSettingsButton.hidden = true;
+  if (elements.columnSettingsPanel) elements.columnSettingsPanel.hidden = true;
   if (elements.pipelineColGroup) {
     elements.pipelineColGroup.innerHTML = `
+      <col class="pipeline-col-select" data-col-key="select" style="${columnWidthStyle('select')}" />
       <col class="pipeline-col-company" data-col-key="company" style="${columnWidthStyle('company')}" />
       <col class="pipeline-col-country" data-col-key="country" style="${columnWidthStyle('country')}" />
       <col class="pipeline-col-asset" data-col-key="asset" style="${columnWidthStyle('asset')}" />
@@ -2200,6 +3940,9 @@ function renderFocusTable() {
   if (elements.pipelineTableHead) {
     elements.pipelineTableHead.innerHTML = `
       <tr id="pipelineHeaderRow" class="pipeline-group-row focus-pipeline-group-row">
+        <th class="select-col" rowspan="2" ${columnAttrs('select')}>
+          <input id="selectPageRows" type="checkbox" aria-label="현재 페이지 전체 선택" />
+        </th>
         ${sortableHeader('Company', 'company', 'company', 'rowspan="2"')}
         ${sortableHeader('Country', 'country', 'country', 'rowspan="2"')}
         ${sortableHeader('Asset', 'asset', 'asset', 'rowspan="2"')}
@@ -2208,7 +3951,7 @@ function renderFocusTable() {
         ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
         ${sortableHeader('Stage', 'stage', 'stage', 'rowspan="2"')}
         <th class="score-group-head focus-group-head" colspan="2">Full Scout</th>
-        <th class="score-group-head focus-group-head" colspan="5">집중 관리</th>
+        <th class="score-group-head focus-group-head" colspan="5">Shortlisting</th>
         ${plainHeader('관리', 'focusManage', 'focus-action-head', 'rowspan="2"')}
       </tr>
       <tr class="pipeline-score-row focus-column-label-row">
@@ -2222,16 +3965,23 @@ function renderFocusTable() {
       </tr>
     `;
     elements.pipelineHeaderRow = document.querySelector('#pipelineHeaderRow');
-    elements.selectPageRows = null;
+    elements.selectPageRows = document.querySelector('#selectPageRows');
   }
 
-  elements.tableCount.textContent = `집중 관리: ${visibleRows.length} items · ${state.pageSize} rows/page`;
+  elements.tableCount.textContent = `검색 결과 ${uniqueAssetCount(visibleRows)} / 전체 ${uniqueAssetCount(allModeRows)} assets`;
+  if (elements.exportExcelButton) elements.exportExcelButton.disabled = visibleRows.length === 0;
   elements.pipelineTable.innerHTML = pageRows.length
-    ? pageRows.map((row) => `
-        <tr class="clickable-row focus-management-row" data-record-id="${escapeHtml(row.id)}" title="${escapeHtml(rowHoverTitle(row))}">
+    ? pageRows.map((row) => {
+        const isSelected = state.selectedIds.has(row.id);
+        const checked = isSelected ? 'checked' : '';
+        return `
+        <tr class="clickable-row focus-management-row${isSelected ? ' selected-row' : ''}" data-record-id="${escapeHtml(row.id)}" title="${escapeHtml(rowHoverTitle(row))}">
+          <td class="select-col">
+            <input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} 선택" ${checked} />
+          </td>
           <td class="company-cell">${escapeHtml(row.company)}</td>
-          <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${escapeHtml(row.country)}</td>
-          <td class="asset-cell"><strong>${escapeHtml(row.asset)}</strong></td>
+          <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${countryDisplayMarkup(row.countryRaw || row.country)}</td>
+          <td class="asset-cell"><a href="${escapeHtml(recordDetailHref(row, 'focus'))}"><strong>${escapeHtml(row.asset)}</strong></a></td>
           <td
             class="modality-column-cell"
             tabindex="0"
@@ -2281,14 +4031,15 @@ function renderFocusTable() {
             ${focusDueState(row.focusDueDate) === 'overdue' ? '<span class="due-label">Overdue</span>' : ''}
             ${focusDueState(row.focusDueDate) === 'due-today' ? '<span class="due-label">Today</span>' : ''}
           </td>
-          <td class="focus-action-cell">${focusActionButton(row, 'focus')}</td>
+          <td class="focus-action-cell">${focusRowActions(row)}</td>
         </tr>
-      `).join('')
+      `;
+      }).join('')
     : `
       <tr>
-        <td colspan="15" class="empty-cell focus-empty-state">
-          <strong>아직 집중 관리 중인 약물이 없습니다.</strong>
-          <span>TAB2 Full Scout의 오른쪽 ‘즐겨찾기’ 버튼으로 관리 대상을 추가하세요.</span>
+        <td colspan="16" class="empty-cell focus-empty-state">
+          <strong>${allModeRows.length ? '현재 조건에 맞는 Shortlisting asset이 없습니다.' : '아직 Shortlisting에 추가된 약물이 없습니다.'}</strong>
+          <span>${allModeRows.length ? '필터를 조정하거나 초기화해 주세요.' : 'TAB2 Full Scout의 오른쪽 ‘즐겨찾기’ 버튼으로 관리 대상을 추가하세요.'}</span>
         </td>
       </tr>
     `;
@@ -2296,12 +4047,18 @@ function renderFocusTable() {
   elements.pageInfo.textContent = `${state.page} / ${pageCount}`;
   elements.prevPage.disabled = state.page <= 1;
   elements.nextPage.disabled = state.page >= pageCount;
+  updateSelectionControls(pageRows);
   updateFrozenColumnOffsets();
+  updateSortIndicators();
 }
 
 function renderTable() {
   hideTargetContextTooltip();
+  fitColumnWidthsToTable();
   const mode = activeTableMode();
+  elements.pipelineTable
+    ?.closest('.table-wrap')
+    ?.classList.toggle('focus-management-table-wrap', mode === 'focus');
   if (mode === 'focus') {
     renderFocusTable();
     return;
@@ -2310,6 +4067,7 @@ function renderTable() {
   if (elements.columnSettingsButton) elements.columnSettingsButton.hidden = false;
 
   const visibleRows = getVisibleRows();
+  const allModeRows = state.rows.filter(rowMatchesActiveTableMode);
   const pageCount = Math.max(1, Math.ceil(visibleRows.length / state.pageSize));
   state.page = Math.min(state.page, pageCount);
   const start = (state.page - 1) * state.pageSize;
@@ -2342,6 +4100,7 @@ function renderTable() {
       <col class="pipeline-col-stage" data-col-key="stage" style="${columnWidthStyle('stage')}" />
       <col class="pipeline-col-filter" data-col-key="${filterKey}" style="${columnWidthStyle(filterKey)}" />
       ${scoreColumns.map((key) => `<col class="pipeline-col-score" data-col-key="${escapeHtml(key)}" style="${columnWidthStyle(key)}" />`).join('')}
+      ${mode === 'triage' ? `<col class="pipeline-col-focus-action" data-col-key="rubricAction" style="${columnWidthStyle('rubricAction')}" />` : ''}
       ${extraColumns.map((column) => `<col class="pipeline-col-extra" data-col-key="${escapeHtml(extraColumnKey(column))}" style="${columnWidthStyle(extraColumnKey(column))}" />`).join('')}
       ${mode === 'full' ? `<col class="pipeline-col-focus-action" data-col-key="focusAction" style="${columnWidthStyle('focusAction')}" />` : ''}
     `;
@@ -2350,6 +4109,7 @@ function renderTable() {
   const tableElement = elements.pipelineTable?.closest('table');
   if (tableElement) {
     tableElement.classList.remove('focus-management-table');
+    tableElement.classList.toggle('triage-table', mode === 'triage');
     tableElement.style.minWidth = `${visibleTableWidth(extraColumns)}px`;
   }
 
@@ -2370,6 +4130,7 @@ function renderTable() {
         ${mode === 'triage'
           ? '<th class="score-group-head" colspan="3">Fast Triage Core</th>'
           : '<th class="score-group-head" colspan="3">Triage Core</th><th class="score-group-head" colspan="5">Full Scout only</th>'}
+        ${mode === 'triage' ? plainHeader('재평가', 'rubricAction', 'focus-action-head', 'rowspan="2"') : ''}
         ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
         ${mode === 'full' ? plainHeader('관리', 'focusAction', 'focus-action-head', 'rowspan="2"') : ''}
       </tr>
@@ -2382,15 +4143,14 @@ function renderTable() {
     elements.selectPageRows = document.querySelector('#selectPageRows');
   }
 
-  elements.tableCount.textContent = `${modeLabel}: ${visibleRows.length} items · ${state.pageSize} rows/page`;
+  elements.tableCount.textContent = `검색 결과 ${uniqueAssetCount(visibleRows)} / 전체 ${uniqueAssetCount(allModeRows)} assets`;
+  if (elements.exportExcelButton) elements.exportExcelButton.disabled = visibleRows.length === 0;
   elements.pipelineTable.innerHTML = pageRows.length
     ? pageRows
         .map((row) => {
           const isSelected = state.selectedIds.has(row.id);
           const checked = isSelected ? 'checked' : '';
-          const rowTitle = mode === 'triage'
-            ? rowHoverTitle(row, markdownPreviewSnippet(rawMarkdownForRow(row), row.summary))
-            : rowHoverTitle(row);
+          const rowTitle = mode === 'triage' ? triageRowHoverTitle(row) : rowHoverTitle(row);
           return `
             <tr
               class="clickable-row${mode === 'triage' ? ' triage-preview-row' : ''}${isSelected ? ' selected-row' : ''}"
@@ -2401,8 +4161,8 @@ function renderTable() {
                 <input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} select" ${checked} />
               </td>
               <td class="company-cell">${escapeHtml(row.company)}</td>
-              <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${escapeHtml(row.country)}</td>
-              <td class="asset-cell"><strong>${escapeHtml(row.asset)}</strong></td>
+              <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${countryDisplayMarkup(row.countryRaw || row.country)}</td>
+              <td class="asset-cell"><a href="${escapeHtml(recordDetailHref(row, mode))}"><strong>${escapeHtml(row.asset)}</strong></a></td>
               <td
                 class="modality-column-cell"
                 tabindex="0"
@@ -2445,6 +4205,7 @@ function renderTable() {
                 <td class="score-cell">${scoreEditSelect(row, 'marketScore', 'marketability', 'Marketability')}</td>
                 <td class="score-cell total-score-cell">${totalScoreEditCircle(row)}</td>
               ` : ''}
+              ${mode === 'triage' ? `<td class="focus-action-cell">${rubricReevaluationCell(row)}</td>` : ''}
               ${extraColumns.map((column) => {
                 const value = formatExtraColumnValue(get(row.raw, column.path, '-'));
                 return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
@@ -2454,13 +4215,14 @@ function renderTable() {
           `;
         })
         .join('')
-    : `<tr><td colspan="${9 + scoreColumns.length + extraColumns.length + (mode === 'full' ? 1 : 0)}" class="empty-cell">No matching ${modeLabel} rows.</td></tr>`;
+    : `<tr><td colspan="${10 + scoreColumns.length + extraColumns.length}" class="empty-cell">현재 조건에 맞는 ${modeLabel} asset이 없습니다. 필터를 조정하거나 초기화해 주세요.</td></tr>`;
 
   elements.pageInfo.textContent = `${state.page} / ${pageCount}`;
   elements.prevPage.disabled = state.page <= 1;
   elements.nextPage.disabled = state.page >= pageCount;
   updateSelectionControls(pageRows);
   updateFrozenColumnOffsets();
+  updateSortIndicators();
 }
 
 function updateSelectionControls(pageRows = null) {
@@ -2513,11 +4275,70 @@ function renderTableTabs() {
     tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
     tab.tabIndex = isActive ? 0 : -1;
   });
+  renderAgentIdentity();
+}
+
+function renderAgentIdentity() {
+  const isAvailable = activeTableMode() !== 'triage';
+  const title = 'All Pipelines Agent';
+  if (elements.aiDrawerButton) {
+    elements.aiDrawerButton.hidden = !isAvailable;
+    elements.aiDrawerButton.setAttribute('aria-hidden', String(!isAvailable));
+  }
+  if (!isAvailable) {
+    if (elements.aiDrawer?.classList.contains('open')) floatingAgentController?.close();
+    if (elements.aiDrawer) {
+      elements.aiDrawer.classList.remove('open', 'is-minimized');
+      elements.aiDrawer.hidden = true;
+      elements.aiDrawer.setAttribute('aria-hidden', 'true');
+    }
+    closeAgentResponseModal();
+  }
+  if (elements.aiDrawerTitle) elements.aiDrawerTitle.textContent = title;
+  if (elements.aiDrawer) elements.aiDrawer.setAttribute('aria-label', title);
+}
+
+function activeFilterCount() {
+  return [
+    state.query.trim(),
+    state.modality !== 'all',
+    state.theme !== 'all',
+    state.cluster !== 'all',
+    state.country !== 'all',
+    state.indication !== 'all',
+    state.stage !== 'all',
+    state.pass !== 'all'
+  ].filter(Boolean).length;
+}
+
+function activeSummaryFilterCount() {
+  return [
+    state.modality !== 'all',
+    state.theme !== 'all',
+    state.cluster !== 'all',
+    state.country !== 'all',
+    state.indication !== 'all',
+    state.stage !== 'all',
+    state.pass !== 'all'
+  ].filter(Boolean).length;
+}
+
+function renderFilterSummary() {
+  const count = activeFilterCount();
+  if (elements.resetFiltersButton) elements.resetFiltersButton.disabled = count === 0;
+}
+
+function renderFilteredDashboard() {
+  renderFilterSummary();
+  renderMetrics();
+  renderCharts();
+  renderTable();
 }
 
 function render() {
   if (elements.pageSizeSelect) elements.pageSizeSelect.value = String(state.pageSize);
   renderTableTabs();
+  renderFilterSummary();
   renderMetrics();
   renderCharts();
   renderColumnSettings();
@@ -2569,6 +4390,12 @@ function exportPipelineTable() {
     'Modality',
     'Filter 1',
     'Filter 2',
+    'Filter 3',
+    'Filter 3 Source',
+    'In-vivo',
+    'In-vitro',
+    'ADMET Completed',
+    'Action Date',
     'Target Relevance Score',
     'Target Relevance Evidence Type',
     'Target Relevance Evidence Type Reason',
@@ -2689,6 +4516,12 @@ function exportPipelineTable() {
     row.modality,
     row.filter1,
     row.filter2,
+    row.filter3,
+    row.filter3Source,
+    row.inVivoStatus,
+    row.inVitroStatus,
+    row.admetCompleted ?? '',
+    row.focusDueDate,
     ...scoreExportFields(row, 'target'),
     ...scoreExportFields(row, 'competitive'),
     ...scoreExportFields(row, 'moa'),
@@ -2722,9 +4555,15 @@ function exportPipelineTable() {
 async function loadRecords() {
   elements.dataStatus.textContent = 'Loading';
   await loadCategorySynonyms();
-  const response = await fetch(API_URL);
+  const [response] = await Promise.all([
+    fetch(API_URL, { cache: 'no-store' }),
+    refreshDashboardSummary()
+  ]);
   if (!response.ok) throw new Error(await response.text());
   const data = await response.json();
+  state.latestOiPartnershipCriteriaVersion = String(
+    data.oi_partnership_criteria_version || state.latestOiPartnershipCriteriaVersion
+  );
   state.rawRecords = Array.isArray(data.records) ? data.records : [];
   state.rows = state.rawRecords.map(flattenRecord);
   const availableIds = new Set(state.rows.map((row) => row.id));
@@ -2732,7 +4571,6 @@ async function loadRecords() {
   state.page = 1;
   renderFilters();
   render();
-  elements.dataStatus.textContent = `${state.rows.length} records loaded`;
   elements.agentContextCount.textContent = `${state.rows.length} pipelines`;
 }
 
@@ -2782,6 +4620,7 @@ async function saveManualReviewEdit(select) {
       state.rawRecords[rowIndex] = data.record;
       state.rows = state.rawRecords.map(flattenRecord);
     }
+    await refreshDashboardSummary();
     renderFilters();
     render();
     elements.dataStatus.textContent = 'Human review saved';
@@ -2798,14 +4637,18 @@ function replaceRecordFromApi(recordId, record) {
   if (rowIndex < 0 || !record) return;
   state.rawRecords[rowIndex] = record;
   state.rows = state.rawRecords.map(flattenRecord);
+  state.dashboardSummary = null;
 }
 
 async function recalculateLatestRubric(button) {
   const recordId = button?.dataset.recordId;
   if (!recordId) return;
+  const isTriage = button.dataset.reviewType === 'triage';
+  const workflowLabel = isTriage ? 'Fast Triage' : 'Full Scout';
+  const latestVersion = isTriage ? LATEST_TRIAGE_RUBRIC_VERSION : LATEST_FULL_SCOUT_RUBRIC_VERSION;
   button.disabled = true;
   button.classList.add('is-saving');
-  elements.dataStatus.textContent = `Rubric v${LATEST_FULL_SCOUT_RUBRIC_VERSION} 재계산 중`;
+  elements.dataStatus.textContent = `${workflowLabel} 지침 v${latestVersion} 재평가 중`;
 
   try {
     const response = await fetch(
@@ -2815,13 +4658,45 @@ async function recalculateLatestRubric(button) {
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
     replaceRecordFromApi(recordId, data.record);
+    await refreshDashboardSummary();
     renderFilters();
     render();
-    elements.dataStatus.textContent = `Recalculated by Full Scout Rubric v${data.rubric_version || LATEST_FULL_SCOUT_RUBRIC_VERSION}`;
+    const clearedFields = Array.isArray(data.cleared_manual_scoring_override_fields)
+      ? data.cleared_manual_scoring_override_fields
+      : [];
+    elements.dataStatus.textContent = `${workflowLabel} 지침 v${data.rubric_version || latestVersion} 기준 재평가 완료${clearedFields.length ? ' · manual score reset' : ''}`;
   } catch (error) {
     button.disabled = false;
     button.classList.remove('is-saving');
-    elements.dataStatus.textContent = `Rubric 재계산 실패: ${error.message}`;
+    elements.dataStatus.textContent = `${workflowLabel} 재평가 실패: ${error.message}`;
+  }
+}
+
+async function recalculateLatestOiPartnership(button) {
+  const recordId = button?.dataset.recordId;
+  if (!recordId) return;
+  button.disabled = true;
+  button.classList.add('is-saving');
+  const latestVersion = state.latestOiPartnershipCriteriaVersion;
+  elements.dataStatus.textContent = `OI Partnership v${latestVersion} 재분류 중`;
+
+  try {
+    const response = await fetch(
+      `/api/records/${encodeURIComponent(recordId)}/recalculate-oi-partnership`,
+      { method: 'POST' }
+    );
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
+    replaceRecordFromApi(recordId, data.record);
+    renderFilters();
+    render();
+    elements.dataStatus.textContent = `Filter 3 recalculated by OI Partnership v${
+      data.oi_partnership_criteria_version || latestVersion
+    }`;
+  } catch (error) {
+    button.disabled = false;
+    button.classList.remove('is-saving');
+    elements.dataStatus.textContent = `Filter 3 재분류 실패: ${error.message}`;
   }
 }
 
@@ -2859,6 +4734,7 @@ async function performFocusManagementSave(recordId, payload, control = null) {
         if (stateClass && cell) {
           cell.insertAdjacentHTML('beforeend', `<span class="due-label">${stateClass === 'overdue' ? 'Overdue' : 'Today'}</span>`);
         }
+        renderFilters();
       }
       renderTableTabs();
       renderTable();
@@ -2876,7 +4752,11 @@ async function performFocusManagementSave(recordId, payload, control = null) {
     if (control) {
       control.disabled = false;
       control.classList.remove('is-saving');
+      if ('value' in control && control.dataset.previousValue !== undefined) {
+        control.value = control.dataset.previousValue;
+      }
     }
+    renderTable();
     elements.dataStatus.textContent = `TAB3 저장 실패: ${error.message}`;
     return false;
   }
@@ -2894,82 +4774,18 @@ function saveFocusManagement(recordId, payload, control = null) {
   return next;
 }
 
-function openAiDrawer() {
-  elements.aiDrawer.hidden = false;
-  elements.aiBackdrop.hidden = false;
-  requestAnimationFrame(() => {
-    elements.aiDrawer.classList.add('open');
-    elements.aiBackdrop.classList.add('open');
-    elements.aiDrawer.setAttribute('aria-hidden', 'false');
-    elements.agentInput.focus();
-  });
-}
-
-function closeAiDrawer() {
-  elements.aiDrawer.classList.remove('open');
-  elements.aiBackdrop.classList.remove('open');
-  elements.aiDrawer.setAttribute('aria-hidden', 'true');
-  setTimeout(() => {
-    elements.aiDrawer.hidden = true;
-    elements.aiBackdrop.hidden = true;
-  }, 180);
-}
-
-function setupResizableDrawer(drawer, storageKey, defaultWidth = 520) {
-  const handle = drawer?.querySelector('[data-resize-drawer]');
-  if (!drawer || !handle) return;
-
-  const minWidth = 380;
-  const getMaxWidth = () => Math.max(minWidth, Math.min(window.innerWidth - 32, 1080));
-  const clampWidth = (value) => Math.max(minWidth, Math.min(value, getMaxWidth()));
-  const applyWidth = (value) => {
-    const width = clampWidth(value);
-    drawer.style.setProperty('--drawer-width', `${width}px`);
-    localStorage.setItem(storageKey, String(width));
-  };
-
-  const savedWidth = Number(localStorage.getItem(storageKey));
-  applyWidth(Number.isFinite(savedWidth) ? savedWidth : defaultWidth);
-
-  const startResize = (event) => {
-    event.preventDefault();
-    handle.setPointerCapture?.(event.pointerId);
-    drawer.classList.add('is-resizing');
-
-    const onMove = (moveEvent) => {
-      applyWidth(window.innerWidth - moveEvent.clientX);
-    };
-    const onUp = () => {
-      drawer.classList.remove('is-resizing');
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
-    };
-
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp, { once: true });
-  };
-
-  handle.addEventListener('pointerdown', startResize);
-  handle.addEventListener('keydown', (event) => {
-    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
-    event.preventDefault();
-    const current = Number.parseInt(getComputedStyle(drawer).getPropertyValue('--drawer-width'), 10) || defaultWidth;
-    if (event.key === 'ArrowLeft') applyWidth(current + 32);
-    if (event.key === 'ArrowRight') applyWidth(current - 32);
-    if (event.key === 'Home') applyWidth(minWidth);
-    if (event.key === 'End') applyWidth(getMaxWidth());
-  });
-
-  window.addEventListener('resize', () => {
-    const current = Number.parseInt(getComputedStyle(drawer).getPropertyValue('--drawer-width'), 10) || defaultWidth;
-    applyWidth(current);
-  });
-}
+let floatingAgentController = null;
 
 const CRITERIA_DRAWER_SCOPE_LABELS = {
-  triage: 'TAB1 · Fast Triage (SELECT/REJECT/N/A)',
-  full: 'TAB2 · Full Scout (PASS/REVIEW/FAIL)',
-  focus: 'TAB3 · 집중 관리 (OI Partnership Type)'
+  triage: 'TAB 1 · FAST TRIAGE · SCORING GUIDE',
+  full: 'TAB 2 · FULL SCOUT · SCORING GUIDE',
+  focus: 'TAB 3 · SHORTLISTING · DECISION GUIDE'
+};
+
+const CRITERIA_DRAWER_SUBTITLES = {
+  triage: 'Full Scout 검토 후보를 선별하기 위한 3-point screening 기준',
+  full: '과학성·차별성·개발성·사업성을 평가하는 Full Scout 기준',
+  focus: 'Shortlisted 후보의 OI Partnership Type 자동분류 및 후속 관리 기준'
 };
 
 function updateCriteriaDrawerScope() {
@@ -2977,6 +4793,18 @@ function updateCriteriaDrawerScope() {
   if (elements.criteriaDrawerScopeLabel) {
     elements.criteriaDrawerScopeLabel.textContent = CRITERIA_DRAWER_SCOPE_LABELS[mode] || '';
   }
+  if (elements.criteriaDrawerVersionBadge) {
+    const version = mode === 'triage'
+      ? LATEST_TRIAGE_RUBRIC_VERSION
+      : mode === 'full'
+        ? LATEST_FULL_SCOUT_RUBRIC_VERSION
+        : state.latestOiPartnershipCriteriaVersion;
+    elements.criteriaDrawerVersionBadge.textContent = `v${version}`;
+  }
+  if (elements.criteriaDrawerSubtitle) {
+    elements.criteriaDrawerSubtitle.textContent = CRITERIA_DRAWER_SUBTITLES[mode] || '';
+  }
+  if (elements.criteriaDrawer) elements.criteriaDrawer.dataset.activeCriteriaTab = mode;
   document.querySelectorAll('[data-criteria-tab]').forEach((section) => {
     const scopes = section.dataset.criteriaTab.split(' ');
     section.hidden = !scopes.includes(mode);
@@ -2987,10 +4815,12 @@ function openCriteriaDrawer() {
   updateCriteriaDrawerScope();
   elements.criteriaDrawer.hidden = false;
   elements.criteriaBackdrop.hidden = false;
+  document.body.classList.add('criteria-modal-open');
   requestAnimationFrame(() => {
     elements.criteriaDrawer.classList.add('open');
     elements.criteriaBackdrop.classList.add('open');
     elements.criteriaDrawer.setAttribute('aria-hidden', 'false');
+    elements.criteriaDrawerClose.focus();
   });
 }
 
@@ -3001,6 +4831,8 @@ function closeCriteriaDrawer() {
   setTimeout(() => {
     elements.criteriaDrawer.hidden = true;
     elements.criteriaBackdrop.hidden = true;
+    document.body.classList.remove('criteria-modal-open');
+    elements.criteriaDrawerButton.focus();
   }, 180);
 }
 
@@ -3308,11 +5140,14 @@ function addAgentMessage(role, text, options = {}) {
   bubble.dataset.messageId = messageId;
   bubble.innerHTML = `
     <div class="agent-message-meta">
-      <strong>${role === 'user' ? 'You' : 'Pipeline Agent'}</strong>
-      ${role === 'assistant' ? '<span>JSON + Wiki retrieval</span>' : ''}
+      <div class="agent-message-meta-labels">
+        <strong>${role === 'user' ? 'You' : 'All Pipelines Agent'}</strong>
+        ${role === 'assistant' ? '<span>JSON + Wiki retrieval</span>' : ''}
+      </div>
     </div>
     <div class="agent-message-text">${renderAgentText(text)}</div>
     ${renderAgentSources(options.sources)}
+    ${role === 'assistant' ? '<div class="agent-message-actions"><button type="button" class="help-tooltip" data-agent-action="copy" data-tooltip="복사" aria-label="복사"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg></button><button type="button" class="help-tooltip" data-agent-action="expand" data-tooltip="전체보기" aria-label="전체보기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5"></path></svg></button></div>' : ''}
   `;
   elements.agentMessages.appendChild(bubble);
   elements.agentMessages.scrollTop = elements.agentMessages.scrollHeight;
@@ -3327,6 +5162,63 @@ function addAgentMessage(role, text, options = {}) {
     });
   }
   return bubble;
+}
+
+let activeAgentResponseText = '';
+let agentResponseModalPreviousFocus = null;
+
+function agentMessageText(bubble) {
+  const messageId = bubble?.dataset.messageId;
+  const sessionMessage = activeAgentSession()?.messages?.find((message) => message.id === messageId);
+  return String(sessionMessage?.text ?? bubble?.querySelector('.agent-message-text')?.textContent ?? '').trim();
+}
+
+async function copyAgentResponse(text, feedbackButton = null) {
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    textarea.remove();
+  }
+  if (feedbackButton) {
+    const originalHtml = feedbackButton.innerHTML;
+    const originalTooltip = feedbackButton.dataset.tooltip || '복사';
+    const originalAriaLabel = feedbackButton.getAttribute('aria-label') || '복사';
+    feedbackButton.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>';
+    feedbackButton.dataset.tooltip = '복사됨';
+    feedbackButton.setAttribute('aria-label', '복사됨');
+    window.setTimeout(() => {
+      feedbackButton.innerHTML = originalHtml;
+      feedbackButton.dataset.tooltip = originalTooltip;
+      feedbackButton.setAttribute('aria-label', originalAriaLabel);
+    }, 1400);
+  }
+}
+
+function openAgentResponseModal(text, trigger) {
+  if (!elements.agentResponseModal || !elements.agentResponseModalBody) return;
+  activeAgentResponseText = text;
+  agentResponseModalPreviousFocus = trigger || document.activeElement;
+  elements.agentResponseModalBody.innerHTML = renderAgentText(text);
+  elements.agentResponseModalStatus.textContent = '';
+  elements.agentResponseModal.hidden = false;
+  document.body.classList.add('agent-response-modal-open');
+  elements.agentResponseModalClose?.focus();
+}
+
+function closeAgentResponseModal() {
+  if (!elements.agentResponseModal || elements.agentResponseModal.hidden) return;
+  elements.agentResponseModal.hidden = true;
+  document.body.classList.remove('agent-response-modal-open');
+  activeAgentResponseText = '';
+  agentResponseModalPreviousFocus?.focus?.();
 }
 
 function updateAgentMessage(bubble, text, options = {}) {
@@ -3370,30 +5262,52 @@ function mockAgentReply(question) {
 
 function buildDashboardAgentContext() {
   const visibleRows = getVisibleRows();
-  const topRows = [...visibleRows]
-    .sort((a, b) => (b.totalScore ?? -1) - (a.totalScore ?? -1))
-    .slice(0, 5);
-  const summary = topRows
-    .map((row) => [
-      `- ${row.asset} (${row.company}, ${row.country})`,
-      `theme=${row.theme}`,
-      `cluster=${row.cluster}`,
-      `stage=${row.stage}`,
-      `scores=${row.totalScore}/${row.maxScore}`,
-      `TR=${row.targetScore}`,
-      `Data=${row.dataScore}`,
-      `Market=${row.marketScore}`,
-      `filter1=${row.filter1}`,
-      `filter2=${row.filter2}`
-    ].join('; '))
+  const mode = activeTableMode();
+  const scopeRows = [...visibleRows]
+    .sort((a, b) => (b.totalScore ?? -1) - (a.totalScore ?? -1));
+  const summary = scopeRows
+    .map((row) => {
+      const fields = [
+        `- ${row.asset} (${row.company}, ${row.country})`,
+        `theme=${row.theme}`,
+        `cluster=${row.cluster}`,
+        `stage=${row.stage}`,
+        `scores=${row.totalScore}/${row.maxScore}`,
+        `TR=${row.targetScore}`,
+        `Data=${row.dataScore}`,
+        `Market=${row.marketScore}`,
+        `filter1=${row.filter1}`,
+        `filter2=${row.filter2}`
+      ];
+      if (mode === 'focus') {
+        fields.push(
+          `oi_partnership=${row.filter3}`,
+          `in_vivo=${row.inVivoStatus}`,
+          `in_vitro=${row.inVitroStatus}`,
+          `admet_completed=${row.admetCompleted ?? 'N/A'}`,
+          `owner=${row.focusOwner || '-'}`,
+          `action_date=${row.focusDueDate || '-'}`,
+          `action_plan=${String(row.focusActionPlan || '').replace(/\s+/g, ' ').slice(0, 300) || '-'}`,
+          `focus_note=${String(row.focusComment || '').replace(/\s+/g, ' ').slice(0, 500) || '-'}`,
+          `team_review_count=${row.teamCommentCount}`,
+          `latest_team_review=${String(row.latestTeamComment || '').replace(/\s+/g, ' ').slice(0, 500) || '-'}`,
+          `latest_team_review_author=${row.latestTeamCommentAuthor || '-'}`
+        );
+      }
+      return fields.join('; ');
+    })
     .join('\n');
 
   return [
-    'Dashboard visible pipeline context:',
+    `Dashboard current ${mode === 'focus' ? 'Shortlisting' : 'Tab/filter'} scope: ${scopeRows.length} pipelines.`,
     summary || '- No candidates match the current filters.',
     '',
     'Answer as a SKBP Pipeline Finder dashboard agent. Compare assets using the visible dashboard context and the selected anchor asset JSON context. If source evidence is missing, say what evidence is missing.'
   ].join('\n');
+}
+
+function dashboardAgentCandidateRecordIds() {
+  return [...new Set(getVisibleRows().map((row) => row.id).filter(Boolean))];
 }
 
 function getAgentAnchorRecordId(question = '') {
@@ -3417,7 +5331,7 @@ function getAgentAnchorRecordId(question = '') {
 
   const topVisibleRow = [...visibleRows]
     .sort((a, b) => (b.totalScore ?? -1) - (a.totalScore ?? -1))[0];
-  return topVisibleRow?.id || state.rows[0]?.id || null;
+  return topVisibleRow?.id || null;
 }
 
 async function requestDashboardAgentReply(question) {
@@ -3431,6 +5345,7 @@ async function requestDashboardAgentReply(question) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       record_id: recordId,
+      candidate_record_ids: dashboardAgentCandidateRecordIds(),
       message: question,
       dashboard_context: buildDashboardAgentContext(),
       allow_draft: false
@@ -3469,6 +5384,7 @@ async function streamDashboardAgentReply(question, bubble) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       record_id: recordId,
+      candidate_record_ids: dashboardAgentCandidateRecordIds(),
       message: question,
       dashboard_context: buildDashboardAgentContext(),
       allow_draft: false
@@ -3522,97 +5438,1013 @@ async function streamDashboardAgentReply(question, bubble) {
   if (!completed) updateAgentMessage(bubble, text || '답변이 비어 있습니다. 다시 질문해 주세요.', { done: true, sources });
 }
 
-async function previewPastedReportParsing() {
-  const rawText = elements.rawReportInput.value.trim();
-  const jsonText = elements.structuredJsonInput.value.trim();
-  if (!rawText && !jsonText) {
-    elements.saveStatus.textContent = '붙여넣을 원문 또는 JSON이 없습니다.';
-    return;
+const INPUT_FULL_CRITERIA = [
+  'target_relevance',
+  'competitive_landscape',
+  'moa_validity',
+  'platform_attractiveness',
+  'expansion_potential',
+  'data_maturity',
+  'marketability'
+];
+const INPUT_TRIAGE_CRITERIA = ['target_relevance', 'moa_validity', 'data_maturity'];
+const INPUT_EVIDENCE_TYPES = new Set([
+  'E0_not_found_or_not_assessable',
+  'E1_company_claim_or_scientific_rationale_only',
+  'E2_indirect_or_class_level_evidence',
+  'E3_asset_specific_preclinical_or_technical_evidence',
+  'E4_asset_specific_clinical_evidence'
+]);
+const INPUT_MARKETABILITY_STATUSES = new Set([
+  'evidence_based',
+  'assumption_based',
+  'assumption_based_scenario',
+  'insufficient_evidence',
+  'established',
+  'not_established'
+]);
+const INPUT_TRIAGE_STATUSES = new Set(['SELECT', 'REJECT', 'UNVERIFIED']);
+const INPUT_FULL_STATUSES = new Set(['PASS', 'REVIEW', 'FAIL']);
+const INPUT_MODALITIES = new Set([
+  'Small molecule',
+  'Peptide',
+  'RNA therapy',
+  'Cell therapy',
+  'Gene therapy',
+  'Antibody',
+  'Protein biologic',
+  'Other',
+  'Unknown'
+]);
+const INPUT_STAGES = new Set(CANONICAL_DEVELOPMENT_STAGES);
+const INPUT_EVIDENCE_BASES = new Set([
+  'user_input_only',
+  'public_source',
+  'user_input_and_public_source',
+  'no_supporting_basis'
+]);
+const INPUT_THEMES = new Set(['E/I Balance', 'Neuroimmune', 'Others', 'Unknown']);
+
+function isInputObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function addInputIssue(issues, level, path, message) {
+  issues.push({ level, path, message });
+}
+
+function fencedResponseBlocks(text) {
+  const blocks = [];
+  const pattern = /```([^\r\n`]*)\r?\n([\s\S]*?)```/g;
+  let match;
+  while ((match = pattern.exec(text)) !== null) {
+    blocks.push({
+      language: String(match[1] || '').trim().toLowerCase(),
+      content: String(match[2] || '').replace(/^\uFEFF/, '').trim(),
+      start: match.index,
+      end: pattern.lastIndex
+    });
   }
+  return blocks;
+}
 
-  const headingCount = (rawText.match(/^#{1,3}\s+/gm) || []).length;
-  const tableCount = (rawText.match(/^\|.+\|$/gm) || []).length;
-  const hasScore = /(\d+)\s*\/\s*21|Total|Score|점수/i.test(rawText);
-  const hasMarketabilitySteps = /A\.\s*TAP|B\.\s*Unrisked|C\.\s*Obtainable/i.test(rawText);
-  let jsonStatus = 'JSON 없음';
+function parseJsonCandidate(text) {
+  const cleaned = String(text || '').replace(/^\uFEFF/, '').trim();
+  if (!cleaned) return null;
+  return { text: cleaned, payload: JSON.parse(cleaned) };
+}
 
-  if (jsonText) {
-    try {
-      const parsed = JSON.parse(jsonText);
-      const records = Array.isArray(parsed) ? parsed : [parsed];
-      const validCount = records.filter((record) => record && typeof record === 'object' && record.structured_table).length;
-      jsonStatus = `JSON valid · ${validCount}/${records.length} records`;
-    } catch (error) {
-      jsonStatus = `JSON error · ${error.message}`;
+function balancedJsonCandidates(text) {
+  const candidates = [];
+  const source = String(text || '');
+
+  for (let start = 0; start < source.length; start += 1) {
+    if (source[start] !== '{' && source[start] !== '[') continue;
+    const stack = [];
+    let inString = false;
+    let escaped = false;
+
+    for (let index = start; index < source.length; index += 1) {
+      const character = source[index];
+      if (inString) {
+        if (escaped) {
+          escaped = false;
+        } else if (character === '\\') {
+          escaped = true;
+        } else if (character === '"') {
+          inString = false;
+        }
+        continue;
+      }
+
+      if (character === '"') {
+        inString = true;
+        continue;
+      }
+      if (character === '{' || character === '[') {
+        stack.push(character);
+        continue;
+      }
+      if (character !== '}' && character !== ']') continue;
+
+      const opener = stack.pop();
+      const matches = (opener === '{' && character === '}') || (opener === '[' && character === ']');
+      if (!matches) break;
+      if (stack.length) continue;
+
+      const candidateText = source.slice(start, index + 1).trim();
+      try {
+        const parsed = parseJsonCandidate(candidateText);
+        if (parsed) {
+          candidates.push({ ...parsed, start, end: index + 1 });
+          start = index;
+        }
+      } catch (_error) {
+        // Keep searching: Markdown can contain bracketed text before the real JSON.
+      }
+      break;
     }
   }
 
-  elements.saveStatus.textContent = `원문 headings ${headingCount}, tables ${tableCount}, score ${hasScore ? 'OK' : 'missing'}, A/B/C ${hasMarketabilitySteps ? 'OK' : 'missing'} · ${jsonStatus}`;
+  return candidates;
+}
+
+function normalizeInputRecords(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (isInputObject(payload) && Array.isArray(payload.records)) return payload.records;
+  if (isInputObject(payload)) return [payload];
+  return [];
+}
+
+function splitCombinedGptResponse(value) {
+  const text = String(value || '').replace(/^\uFEFF/, '').trim();
+  const errors = [];
+  const warnings = [];
+  if (!text) {
+    addInputIssue(errors, 'error', 'input', 'GPT 전체 응답을 붙여넣어 주세요.');
+    return { rawMarkdown: '', jsonText: '', payload: null, records: [], errors, warnings, fenceCount: 0 };
+  }
+
+  const blocks = fencedResponseBlocks(text);
+  const explicitJsonBlocks = blocks.filter((block) => block.language === 'json');
+  const markdownBlocks = blocks.filter((block) => ['markdown', 'md'].includes(block.language));
+  const parsedJsonBlocks = [];
+
+  explicitJsonBlocks.forEach((block) => {
+    try {
+      parsedJsonBlocks.push({ ...block, ...parseJsonCandidate(block.content) });
+    } catch (error) {
+      addInputIssue(errors, 'error', 'JSON', `JSON 블록 문법 오류: ${error.message}`);
+    }
+  });
+
+  if (!explicitJsonBlocks.length) {
+    blocks.forEach((block) => {
+      try {
+        const parsed = parseJsonCandidate(block.content);
+        if (parsed) parsedJsonBlocks.push({ ...block, ...parsed });
+      } catch (_error) {
+        // A non-JSON fenced block is expected to be the Markdown report.
+      }
+    });
+  }
+
+  if (!parsedJsonBlocks.length && !explicitJsonBlocks.length) {
+    balancedJsonCandidates(text).forEach((candidate) => parsedJsonBlocks.push(candidate));
+  }
+
+  if (parsedJsonBlocks.length > 1) {
+    addInputIssue(errors, 'error', 'JSON', `JSON 후보가 ${parsedJsonBlocks.length}개 감지되었습니다. 최종 구조화 JSON은 하나만 출력해야 합니다.`);
+  }
+
+  const jsonBlock = parsedJsonBlocks[0] || null;
+  let rawMarkdown = markdownBlocks[0]?.content || '';
+  if (markdownBlocks.length > 1) {
+    addInputIssue(warnings, 'warning', 'Markdown', `Markdown 블록이 ${markdownBlocks.length}개입니다. 첫 번째 블록을 원문으로 사용합니다.`);
+  }
+
+  if (!rawMarkdown) {
+    const nonJsonBlock = blocks.find((block) => (
+      !explicitJsonBlocks.includes(block)
+      && (!jsonBlock || block.start !== jsonBlock.start || block.end !== jsonBlock.end)
+    ));
+    if (nonJsonBlock) rawMarkdown = nonJsonBlock.content;
+  }
+
+  if (!rawMarkdown && jsonBlock) {
+    rawMarkdown = `${text.slice(0, jsonBlock.start)}\n${text.slice(jsonBlock.end)}`.trim();
+  }
+  rawMarkdown = rawMarkdown.replace(/^```(?:markdown|md)?\s*/i, '').replace(/```\s*$/i, '').trim();
+
+  if (!rawMarkdown || !/^#{1,6}\s+/m.test(rawMarkdown)) {
+    addInputIssue(errors, 'error', 'Markdown', 'Markdown 원문 블록을 찾지 못했습니다. GPT의 전체 응답을 그대로 붙여넣어 주세요.');
+  }
+  if (!jsonBlock) {
+    addInputIssue(errors, 'error', 'JSON', '파싱 가능한 JSON 블록을 찾지 못했습니다. 출력이 마지막 } 또는 ]까지 완성되었는지 확인해 주세요.');
+  }
+
+  const records = jsonBlock ? normalizeInputRecords(jsonBlock.payload) : [];
+  if (jsonBlock && !records.length) {
+    addInputIssue(errors, 'error', 'JSON', 'JSON 최상위에는 record 객체, record 배열 또는 {"records": [...]}가 필요합니다.');
+  }
+
+  return {
+    rawMarkdown,
+    jsonText: jsonBlock?.text || '',
+    payload: jsonBlock?.payload || null,
+    records,
+    errors,
+    warnings,
+    fenceCount: blocks.length
+  };
+}
+
+function fastTriageMarkdownStatusRows(markdown) {
+  const lines = String(markdown || '').split(/\r?\n/);
+  for (let headerIndex = 0; headerIndex < lines.length; headerIndex += 1) {
+    const line = lines[headerIndex];
+    if (!/^\s*\|.*\|\s*$/.test(line)) continue;
+    const headers = line.trim().replace(/^\||\|$/g, '').split('|')
+      .map((cell) => cell.replace(/[*_`]/g, '').trim().toLowerCase());
+    const statusIndex = headers.findIndex((header) => ['triage', 'status', 'final status', '판정'].includes(header));
+    if (statusIndex < 0) continue;
+    const assetIndex = headers.findIndex((header) => header === 'asset');
+    const rows = [];
+    for (let rowIndex = headerIndex + 1; rowIndex < lines.length; rowIndex += 1) {
+      const rowLine = lines[rowIndex];
+      if (!/^\s*\|.*\|\s*$/.test(rowLine)) {
+        if (rows.length) break;
+        continue;
+      }
+      const cells = rowLine.trim().replace(/^\||\|$/g, '').split('|').map((cell) => cell.trim());
+      if (cells.length && cells.every((cell) => /^:?-{3,}:?$/.test(cell))) continue;
+      if (statusIndex >= cells.length) continue;
+      rows.push({
+        asset: assetIndex >= 0 && assetIndex < cells.length ? cells[assetIndex].replace(/[*_`]/g, '').trim() : '',
+        status: cells[statusIndex].replace(/[*_`]/g, '').trim().toUpperCase()
+      });
+    }
+    return rows;
+  }
+  return [];
+}
+
+function detectInputRecordMode(record) {
+  if (!isInputObject(record)) return { mode: 'unknown', conflict: false };
+  const meta = isInputObject(record.meta) ? record.meta : {};
+  const sourceReport = isInputObject(record.source_report) ? record.source_report : {};
+  const criteria = isInputObject(record.scoring?.criteria) ? record.scoring.criteria : {};
+  const reviewType = String(meta.review_type || meta.workflow || '').trim().toLowerCase();
+  const parserStatus = String(sourceReport.parser_status || '').toLowerCase();
+  const sourceFormat = String(sourceReport.source_format || '').toLowerCase();
+  const status = String(record.hard_filter?.status || record.triage?.status || '').trim().toUpperCase();
+
+  const triageSignal = (
+    reviewType.includes('triage')
+    || parserStatus.includes('triage')
+    || sourceFormat.includes('triage')
+    || isInputObject(record.triage)
+    || INPUT_TRIAGE_STATUSES.has(status)
+  );
+  const fullSignal = (
+    reviewType.includes('full')
+    || INPUT_FULL_CRITERIA.every((criterionId) => isInputObject(criteria[criterionId]))
+    || INPUT_FULL_STATUSES.has(status)
+  );
+
+  if (triageSignal && fullSignal) return { mode: 'unknown', conflict: true };
+  if (triageSignal) return { mode: 'triage', conflict: false };
+  if (fullSignal) return { mode: 'full', conflict: false };
+  return { mode: 'unknown', conflict: false };
+}
+
+function fastTriageSummaryHasSingleScore(summaryValue, criterionId, expectedScore) {
+  const summary = String(summaryValue || '').trim();
+  if (!summary || !Number.isInteger(expectedScore) || expectedScore < 0 || expectedScore > 3) return false;
+  if (/(?<!\d)[0-3]\s*(?:점|points?)?\s*(?:\/|~|–|—|-|to)\s*[0-3]\s*(?:점|points?)?/i.test(summary)) {
+    return false;
+  }
+
+  const statedScores = new Set();
+  for (const match of summary.matchAll(/(?<!\d)([0-3])\s*점/gi)) statedScores.add(Number(match[1]));
+  const criterionLabel = ({
+    target_relevance: '(?:TR|Target\\s+Relevance)',
+    moa_validity: '(?:MoA|Mechanism(?:\\s+of\\s+Action)?(?:\\s+Validity)?)',
+    data_maturity: '(?:Data(?:\\s+Maturity)?)'
+  })[criterionId];
+  if (criterionLabel) {
+    const labelPattern = new RegExp(`\\b${criterionLabel}\\b\\s*(?:score\\s*)?(?:is|=|:)?\\s*([0-3])\\b`, 'gi');
+    for (const match of summary.matchAll(labelPattern)) statedScores.add(Number(match[1]));
+  }
+  for (const pattern of [/\bscore\s*(?:is|=|:)?\s*([0-3])\b/gi, /\b([0-3])\s*points?\b/gi]) {
+    for (const match of summary.matchAll(pattern)) statedScores.add(Number(match[1]));
+  }
+  return statedScores.size === 1 && statedScores.has(expectedScore);
+}
+
+function validateInputScoreCriterion(criterion, criterionId, recordPath, issues, { full = false } = {}) {
+  const path = `${recordPath}.scoring.criteria.${criterionId}`;
+  if (!isInputObject(criterion)) {
+    addInputIssue(issues, 'error', path, '필수 criterion 객체가 누락되었습니다.');
+    return;
+  }
+  if (!Number.isInteger(criterion.score) || criterion.score < 0 || criterion.score > 3) {
+    addInputIssue(issues, 'error', `${path}.score`, `0, 1, 2, 3 중 하나의 정수가 필요합니다. 현재 값: ${JSON.stringify(criterion.score)}`);
+  }
+
+  if (full) {
+    if (!INPUT_EVIDENCE_TYPES.has(criterion.evidence_type)) {
+      addInputIssue(issues, 'error', `${path}.evidence_type`, 'E0~E4의 허용된 Evidence Type이 필요합니다.');
+    }
+    if (!('main_line_summary' in criterion) && !('reason' in criterion)) {
+      addInputIssue(issues, 'error', `${path}.main_line_summary`, 'main_line_summary 또는 reason이 필요합니다.');
+    }
+    if (!('why_not_higher' in criterion)) {
+      addInputIssue(issues, 'error', `${path}.why_not_higher`, '한 단계 높은 점수가 아닌 이유가 필요합니다.');
+    }
+    if (!('uncertain_points' in criterion)) {
+      addInputIssue(issues, 'error', `${path}.uncertain_points`, '필수 배열이 누락되었습니다. 값이 없으면 []를 사용하세요.');
+    }
+  } else {
+    const evidenceBasis = String(criterion.evidence_basis || '').trim();
+    const summary = String(criterion.main_line_summary || '').trim();
+    if (!summary) {
+      addInputIssue(issues, 'error', `${path}.main_line_summary`, 'Fast Triage v3.2에는 비어 있지 않은 main_line_summary가 필요합니다.');
+    } else if (Number.isInteger(criterion.score)
+      && criterion.score >= 0
+      && criterion.score <= 3
+      && !fastTriageSummaryHasSingleScore(summary, criterionId, criterion.score)) {
+      addInputIssue(issues, 'error', `${path}.main_line_summary`, `범위 없이 선택한 단일 점수 ${criterion.score}점만 summary에 명시해야 합니다.`);
+    }
+    if (!Array.isArray(criterion.uncertain_points)) {
+      addInputIssue(issues, 'error', `${path}.uncertain_points`, 'Fast Triage uncertain_points는 배열이어야 합니다. 값이 없으면 []를 사용하세요.');
+    }
+    if (!INPUT_EVIDENCE_BASES.has(evidenceBasis)) {
+      addInputIssue(
+        issues,
+        'error',
+        `${path}.evidence_basis`,
+        'user_input_only, public_source, user_input_and_public_source, no_supporting_basis 중 하나가 필요합니다.'
+      );
+    }
+    if (!Array.isArray(criterion.evidence_sources)) {
+      addInputIssue(issues, 'error', `${path}.evidence_sources`, 'Fast Triage evidence_sources는 배열이어야 합니다. 값이 없으면 []를 사용하세요.');
+    } else {
+      const verifiedCount = verifiedPublicSourceUrls(criterion, { requireExplicitVerification: true }).length;
+      ['verified_source_count', 'verified_public_source_count'].forEach((countField) => {
+        if (!(countField in criterion)) return;
+        const declaredCount = criterion[countField];
+        if (!Number.isInteger(declaredCount) || declaredCount < 0 || declaredCount !== verifiedCount) {
+          addInputIssue(
+            issues,
+            'error',
+            `${path}.${countField}`,
+            `고유한 verified public URL 수 ${verifiedCount}와 일치하는 0 이상의 정수여야 합니다.`
+          );
+        }
+      });
+      if (['public_source', 'user_input_and_public_source'].includes(evidenceBasis) && verifiedCount < 1) {
+        addInputIssue(
+          issues,
+          'error',
+          `${path}.evidence_sources`,
+          `${evidenceBasis}는 실제로 인용한 유효한 public source_url이 1개 이상 필요합니다.`
+        );
+      }
+      if (['user_input_only', 'no_supporting_basis'].includes(evidenceBasis) && verifiedCount > 0) {
+        addInputIssue(
+          issues,
+          'error',
+          `${path}.evidence_basis`,
+          `유효한 public URL ${verifiedCount}개가 있으므로 ${evidenceBasis}와 일치하지 않습니다.`
+        );
+      }
+      if (criterion.score >= 2 && evidenceBasis === 'no_supporting_basis') {
+        addInputIssue(issues, 'error', `${path}.evidence_basis`, 'score >= 2에는 no_supporting_basis를 사용할 수 없습니다.');
+      }
+      if (['moa_validity', 'data_maturity'].includes(criterionId) && criterion.score >= 2 && verifiedCount < 1) {
+        addInputIssue(
+          issues,
+          'error',
+          `${path}.evidence_sources`,
+          `${criterionId} 2점 이상에는 실제 확인한 public technical/source URL이 1개 이상 필요합니다.`
+        );
+      }
+    }
+  }
+
+  ['what_was_checked', 'evidence_trail', 'evidence_sources', 'verified_evidence_sources', 'source_ids', 'uncertain_points'].forEach((field) => {
+    if (field in criterion && !Array.isArray(criterion[field])) {
+      addInputIssue(issues, 'error', `${path}.${field}`, '배열이어야 합니다.');
+    }
+  });
+}
+
+function validateInputFilterFields(record, recordPath, errors, warnings) {
+  const table = record.structured_table;
+  if (!isInputObject(table)) {
+    addInputIssue(errors, 'error', `${recordPath}.structured_table`, '필수 structured_table 객체가 누락되었습니다.');
+    return;
+  }
+
+  const asset = String(table.asset_name || record.json_summary?.asset_name || '').trim();
+  if (!asset) {
+    addInputIssue(errors, 'error', `${recordPath}.structured_table.asset_name`, 'Asset 이름이 필요합니다.');
+  }
+
+  const modality = String(table.modality_platform || '').trim();
+  if (modality && !INPUT_MODALITIES.has(modality)) {
+    addInputIssue(warnings, 'warning', `${recordPath}.structured_table.modality_platform`, `"${modality}"는 표준 Modality가 아닙니다. 짧은 canonical label을 확인하세요.`);
+  }
+  const stage = String(table.development_stage || '').trim();
+  if (!stage) {
+    addInputIssue(errors, 'error', `${recordPath}.structured_table.development_stage`, 'canonical development_stage가 필요합니다. 확인할 수 없으면 Unknown을 사용하세요.');
+  } else if (!INPUT_STAGES.has(stage)) {
+    addInputIssue(errors, 'error', `${recordPath}.structured_table.development_stage`, `"${stage}"는 허용된 canonical 개발단계가 아닙니다.`);
+  }
+  const theme = String(record.json_summary?.theme || '').trim();
+  if (theme && !INPUT_THEMES.has(theme)) {
+    addInputIssue(warnings, 'warning', `${recordPath}.json_summary.theme`, `"${theme}"는 E/I Balance, Neuroimmune, Others, Unknown 중 하나여야 합니다.`);
+  }
+}
+
+function validateInputMarketability(criterion, recordPath, issues) {
+  const path = `${recordPath}.scoring.criteria.marketability`;
+  if (!isInputObject(criterion)) return;
+  const calculation = criterion.calculation;
+  if (!isInputObject(calculation)) {
+    addInputIssue(issues, 'error', `${path}.calculation`, 'Marketability A/B/C calculation 객체가 필요합니다.');
+    return;
+  }
+
+  const status = calculation.commercial_rationale_status;
+  if (!INPUT_MARKETABILITY_STATUSES.has(status)) {
+    addInputIssue(issues, 'error', `${path}.calculation.commercial_rationale_status`, `허용값이 아닙니다. 현재 값: ${JSON.stringify(status)}`);
+    return;
+  }
+
+  const steps = [
+    ['A_targetable_addressable_patient', 'targetable_addressable_patient'],
+    ['B_unrisked_peak_sales', 'unrisked_peak_sales'],
+    ['C_obtainable_peak_sales', 'obtainable_peak_sales']
+  ];
+  steps.forEach(([stepName]) => {
+    if (!isInputObject(calculation[stepName])) {
+      addInputIssue(issues, 'error', `${path}.calculation.${stepName}`, '필수 계산 단계 객체가 누락되었습니다.');
+    }
+  });
+
+  if (['insufficient_evidence', 'not_established'].includes(status)) {
+    if (criterion.score !== 0) {
+      addInputIssue(issues, 'error', `${path}.score`, `${status}일 때 Marketability 점수는 0이어야 합니다.`);
+    }
+    if (!String(calculation.commercial_rationale_failure_reason || '').trim()) {
+      addInputIssue(issues, 'error', `${path}.calculation.commercial_rationale_failure_reason`, `${status}의 구체적인 실패 사유가 필요합니다.`);
+    }
+    steps.forEach(([stepName, outputName]) => {
+      const output = calculation[stepName]?.[outputName];
+      if (output !== null && output !== undefined) {
+        addInputIssue(issues, 'error', `${path}.calculation.${stepName}.${outputName}`, `${status}일 때 결과값은 null이어야 합니다.`);
+      }
+    });
+    return;
+  }
+
+  if (['assumption_based', 'assumption_based_scenario'].includes(status)
+    && !String(calculation.commercial_rationale_basis || '').trim()) {
+    addInputIssue(issues, 'error', `${path}.calculation.commercial_rationale_basis`, `${status}에 사용한 가정 근거가 필요합니다.`);
+  }
+  steps.forEach(([stepName, outputName]) => {
+    const output = calculation[stepName]?.[outputName];
+    if (output === null || output === undefined || output === '') {
+      addInputIssue(issues, 'error', `${path}.calculation.${stepName}.${outputName}`, `${status}일 때 숫자 결과값이 필요합니다.`);
+    } else if (typeof output !== 'number' || !Number.isFinite(output)) {
+      addInputIssue(issues, 'error', `${path}.calculation.${stepName}.${outputName}`, 'million USD 단위의 숫자여야 합니다.');
+    }
+  });
+}
+
+function validateInputFullScoutStructures(record, recordPath, issues) {
+  const companyProfile = record.company_profile;
+  const companyFields = [
+    'company_name',
+    'legal_name',
+    'aliases',
+    'country',
+    'headquarters',
+    'website',
+    'founded_year',
+    'company_stage',
+    'ownership_status',
+    'focus_areas',
+    'platform_summary',
+    'lead_pipeline_summary',
+    'financing_or_partnership_signals',
+    'official_source_urls',
+    'notes'
+  ];
+  if (!isInputObject(companyProfile)) {
+    addInputIssue(issues, 'error', `${recordPath}.company_profile`, 'Full Scout 필수 객체가 누락되었습니다.');
+  } else {
+    companyFields.forEach((field) => {
+      if (!Object.prototype.hasOwnProperty.call(companyProfile, field)) {
+        addInputIssue(issues, 'error', `${recordPath}.company_profile.${field}`, 'JSON Schema 필수 필드가 누락되었습니다.');
+      }
+    });
+    ['aliases', 'focus_areas', 'financing_or_partnership_signals', 'official_source_urls'].forEach((field) => {
+      if (field in companyProfile && !Array.isArray(companyProfile[field])) {
+        addInputIssue(issues, 'error', `${recordPath}.company_profile.${field}`, '배열이어야 합니다.');
+      }
+    });
+  }
+
+  const competitive = record.competitive_analysis;
+  if (!isInputObject(competitive)) {
+    addInputIssue(issues, 'error', `${recordPath}.competitive_analysis`, 'Full Scout 경쟁사 분석 객체가 누락되었습니다.');
+    return;
+  }
+  const requiredCompetitiveFields = [
+    'competitive_density',
+    'competitor_table',
+    'similarity_summary',
+    'similar_pipelines',
+    'differentiation_points',
+    'analysis_summary'
+  ];
+  requiredCompetitiveFields.forEach((field) => {
+    if (!Object.prototype.hasOwnProperty.call(competitive, field)) {
+      addInputIssue(issues, 'error', `${recordPath}.competitive_analysis.${field}`, 'JSON Schema 필수 필드가 누락되었습니다.');
+    }
+  });
+  ['competitor_table', 'similar_pipelines', 'differentiation_points'].forEach((field) => {
+    if (field in competitive && !Array.isArray(competitive[field])) {
+      addInputIssue(issues, 'error', `${recordPath}.competitive_analysis.${field}`, '배열이어야 합니다.');
+    }
+  });
+  if ('similarity_summary' in competitive && !isInputObject(competitive.similarity_summary)) {
+    addInputIssue(issues, 'error', `${recordPath}.competitive_analysis.similarity_summary`, '객체여야 합니다.');
+  }
+}
+
+function validateCombinedInput(value) {
+  const split = splitCombinedGptResponse(value);
+  const errors = [...split.errors];
+  const warnings = [...split.warnings];
+  const modes = [];
+
+  split.records.forEach((record, index) => {
+    const recordPath = `record[${index}]`;
+    if (!isInputObject(record)) {
+      addInputIssue(errors, 'error', recordPath, '각 record는 JSON 객체여야 합니다.');
+      modes.push('unknown');
+      return;
+    }
+
+    const detected = detectInputRecordMode(record);
+    modes.push(detected.mode);
+    if (detected.conflict) {
+      addInputIssue(errors, 'error', recordPath, 'Fast Triage와 Full Scout 신호가 한 record에 섞여 있습니다.');
+      return;
+    }
+    if (detected.mode === 'unknown') {
+      addInputIssue(errors, 'error', recordPath, '분석 모드를 판별할 수 없습니다. meta.review_type과 scoring 구조를 확인하세요.');
+      return;
+    }
+
+    validateInputFilterFields(record, recordPath, errors, warnings);
+    const criteria = isInputObject(record.scoring?.criteria) ? record.scoring.criteria : {};
+
+    if (detected.mode === 'triage') {
+      const hardStatus = String(record.hard_filter?.status || '').trim().toUpperCase();
+      const triageStatus = String(record.triage?.status || '').trim().toUpperCase();
+      const status = hardStatus || triageStatus;
+      if (!INPUT_TRIAGE_STATUSES.has(status)) {
+        addInputIssue(errors, 'error', `${recordPath}.hard_filter.status`, 'Fast Triage v3.2 판정은 SELECT, REJECT, UNVERIFIED 중 하나여야 합니다.');
+      }
+      if (hardStatus && triageStatus && hardStatus !== triageStatus) {
+        addInputIssue(errors, 'error', `${recordPath}.triage.status`, `hard_filter.status(${hardStatus})와 triage.status(${triageStatus})가 일치해야 합니다.`);
+      }
+      INPUT_TRIAGE_CRITERIA.forEach((criterionId) => {
+        validateInputScoreCriterion(criteria[criterionId], criterionId, recordPath, errors);
+      });
+
+      const expectedVersions = {
+        'meta.schema_version': [record.meta?.schema_version, FAST_TRIAGE_SCHEMA_VERSION],
+        'meta.instruction_version': [record.meta?.instruction_version, LATEST_TRIAGE_RUBRIC_VERSION],
+        'meta.rubric_version': [record.meta?.rubric_version, LATEST_TRIAGE_RUBRIC_VERSION],
+        'triage.instruction_version': [record.triage?.instruction_version, LATEST_TRIAGE_RUBRIC_VERSION]
+      };
+      Object.entries(expectedVersions).forEach(([field, [actual, expected]]) => {
+        if (String(actual || '').trim().replace(/^v/i, '') !== expected) {
+          addInputIssue(errors, 'error', `${recordPath}.${field}`, `Fast Triage v3.2에서는 ${field}=${expected}가 필요합니다.`);
+        }
+      });
+
+      const identityVerified = record.triage?.identity_verified;
+      const activeAsset = record.triage?.active_asset;
+      if (typeof identityVerified !== 'boolean') {
+        addInputIssue(errors, 'error', `${recordPath}.triage.identity_verified`, 'true 또는 false가 필요합니다.');
+      }
+      if (!isInputObject(record.triage) || !Object.prototype.hasOwnProperty.call(record.triage, 'active_asset')) {
+        addInputIssue(errors, 'error', `${recordPath}.triage.active_asset`, '필수 필드입니다. true, false, null 중 하나가 필요합니다.');
+      } else if (activeAsset !== null && typeof activeAsset !== 'boolean') {
+        addInputIssue(errors, 'error', `${recordPath}.triage.active_asset`, 'true, false, null 중 하나가 필요합니다.');
+      }
+      const trScore = criteria.target_relevance?.score;
+      const moaScore = criteria.moa_validity?.score;
+      const dataScore = criteria.data_maturity?.score;
+      const hasHardBlocker = activeAsset === false
+        || canonicalDevelopmentStage(record.structured_table?.development_stage) === 'Discontinued / inactive'
+        || hasAffirmedLifecycleBlocker(record.hard_filter?.flags || []);
+      const expectedStatus = identityVerified !== true
+        ? 'UNVERIFIED'
+        : activeAsset !== true || hasHardBlocker
+          ? 'REJECT'
+          : trScore >= 2 && (moaScore >= 2 || dataScore >= 2)
+            ? 'SELECT'
+            : 'REJECT';
+      if (INPUT_TRIAGE_STATUSES.has(status) && status !== expectedStatus) {
+        addInputIssue(
+          errors,
+          'error',
+          `${recordPath}.triage.status`,
+          `identity/activity/TR/MoA/Data 산식에 따른 status는 ${expectedStatus}여야 합니다. 현재 값: ${status}`
+        );
+      }
+      const expectedRecommendation = {
+        SELECT: 'Run Full Scout',
+        REJECT: 'Do not run Full Scout',
+        UNVERIFIED: 'Verify asset identity'
+      }[status];
+      if (expectedRecommendation && record.final_insight?.recommendation !== expectedRecommendation) {
+        addInputIssue(
+          errors,
+          'error',
+          `${recordPath}.final_insight.recommendation`,
+          `${status} status에는 recommendation을 정확히 "${expectedRecommendation}"로 써야 합니다.`
+        );
+      }
+
+      const totalScore = record.scoring?.total_score;
+      const maxScore = record.scoring?.max_score;
+      if (totalScore === null || totalScore === undefined) {
+        if (maxScore !== null && maxScore !== undefined) {
+          addInputIssue(errors, 'error', `${recordPath}.scoring.max_score`, 'Fast Triage total_score가 null이면 max_score도 null이어야 합니다.');
+        }
+      } else {
+        const expectedTotal = trScore + moaScore + dataScore;
+        if (!Number.isInteger(totalScore) || totalScore !== expectedTotal) {
+          addInputIssue(errors, 'error', `${recordPath}.scoring.total_score`, `TR/MoA/Data 합계 ${expectedTotal}와 일치해야 합니다.`);
+        }
+        if (maxScore !== 9) {
+          addInputIssue(errors, 'error', `${recordPath}.scoring.max_score`, 'Fast Triage total_score를 사용하면 max_score는 9여야 합니다.');
+        }
+      }
+      return;
+    }
+
+    const status = String(record.hard_filter?.status || '').trim().toUpperCase();
+    if (!INPUT_FULL_STATUSES.has(status)) {
+      addInputIssue(errors, 'error', `${recordPath}.hard_filter.status`, 'Full Scout 판정은 PASS, REVIEW, FAIL 중 하나여야 합니다.');
+    }
+    INPUT_FULL_CRITERIA.forEach((criterionId) => {
+      validateInputScoreCriterion(criteria[criterionId], criterionId, recordPath, errors, { full: true });
+    });
+    validateInputMarketability(criteria.marketability, recordPath, errors);
+    validateInputFullScoutStructures(record, recordPath, errors);
+
+    const scoreValues = INPUT_FULL_CRITERIA.map((criterionId) => criteria[criterionId]?.score);
+    if (scoreValues.every((score) => Number.isInteger(score) && score >= 0 && score <= 3)) {
+      const sum = scoreValues.reduce((total, score) => total + score, 0);
+      if (record.scoring?.total_score !== sum) {
+        addInputIssue(errors, 'error', `${recordPath}.scoring.total_score`, `7개 점수 합계 ${sum}와 total_score ${JSON.stringify(record.scoring?.total_score)}가 일치해야 합니다.`);
+      }
+    }
+    if (record.scoring?.max_score !== 21) {
+      addInputIssue(errors, 'error', `${recordPath}.scoring.max_score`, 'Full Scout max_score는 21이어야 합니다.');
+    }
+    if (scoreValues.every((score) => Number.isInteger(score) && score >= 0 && score <= 3)
+      && record.scoring?.total_score === scoreValues.reduce((total, score) => total + score, 0)
+      && INPUT_FULL_STATUSES.has(status)) {
+      const expectedFilter = computeHardFilter(record, {
+        target: criteria.target_relevance,
+        competitive: criteria.competitive_landscape,
+        moa: criteria.moa_validity,
+        platform: criteria.platform_attractiveness,
+        expansion: criteria.expansion_potential,
+        data: criteria.data_maturity,
+        market: criteria.marketability
+      });
+      if (status !== expectedFilter.status) {
+        addInputIssue(
+          errors,
+          'error',
+          `${recordPath}.hard_filter.status`,
+          `Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} threshold에 따른 status는 ${expectedFilter.status}여야 합니다. 현재 값: ${status}`
+        );
+      }
+    }
+    const fullSchemaVersion = String(record.meta?.schema_version || '').replace(/^v/i, '');
+    const fullRubricVersion = String(record.meta?.rubric_version || '').replace(/^v/i, '');
+    const fullInstructionVersion = String(record.meta?.instruction_version || '').replace(/^v/i, '');
+    if (fullSchemaVersion !== FULL_SCOUT_SCHEMA_VERSION) {
+      addInputIssue(errors, 'error', `${recordPath}.meta.schema_version`, `Full Scout schema_version은 ${FULL_SCOUT_SCHEMA_VERSION}를 유지해야 합니다.`);
+    }
+    if (fullRubricVersion !== LATEST_FULL_SCOUT_RUBRIC_VERSION) {
+      addInputIssue(errors, 'error', `${recordPath}.meta.rubric_version`, `Full Scout rubric_version은 ${LATEST_FULL_SCOUT_RUBRIC_VERSION}이어야 합니다.`);
+    }
+    if (fullInstructionVersion !== LATEST_FULL_SCOUT_RUBRIC_VERSION) {
+      addInputIssue(errors, 'error', `${recordPath}.meta.instruction_version`, `Full Scout instruction_version은 ${LATEST_FULL_SCOUT_RUBRIC_VERSION}이어야 합니다.`);
+    }
+  });
+
+  const knownModes = [...new Set(modes.filter((mode) => mode !== 'unknown'))];
+  if (knownModes.length > 1) {
+    addInputIssue(errors, 'error', 'records', '한 번의 입력에 Fast Triage와 Full Scout record를 섞을 수 없습니다.');
+  }
+  const mode = knownModes[0] || 'unknown';
+  if (mode === 'triage' && split.records.length > 50) {
+    addInputIssue(errors, 'error', 'records', `Fast Triage는 한 번에 최대 50개까지 처리할 수 있습니다. 현재 ${split.records.length}개입니다.`);
+  }
+  if (mode === 'full' && split.records.length > 1) {
+    addInputIssue(errors, 'error', 'records', `Full Scout는 한 번에 한 asset만 입력합니다. 현재 ${split.records.length}개입니다.`);
+  }
+
+  const headingCount = (split.rawMarkdown.match(/^#{1,6}\s+/gm) || []).length;
+  const tableCount = (split.rawMarkdown.match(/^\|.+\|$/gm) || []).length;
+  if (split.rawMarkdown && !headingCount) {
+    addInputIssue(warnings, 'warning', 'Markdown', 'Markdown 제목을 찾지 못했습니다.');
+  }
+  if (mode === 'triage' && split.rawMarkdown) {
+    const markdownRows = fastTriageMarkdownStatusRows(split.rawMarkdown);
+    if (!markdownRows.length) {
+      addInputIssue(errors, 'error', 'Markdown.Triage', 'Fast Triage 표의 Triage 상태 열을 찾지 못했습니다.');
+    } else {
+      if (markdownRows.length !== split.records.length) {
+        addInputIssue(
+          errors,
+          'error',
+          'Markdown.Triage',
+          `Markdown status row ${markdownRows.length}개와 JSON record ${split.records.length}개가 일치해야 합니다.`
+        );
+      }
+      markdownRows.forEach((row, index) => {
+        if (['N/A', 'NA'].includes(row.status)) {
+          addInputIssue(errors, 'error', `Markdown.Triage[${index}]`, 'Fast Triage v3.2에서는 legacy N/A 대신 UNVERIFIED를 사용해야 합니다.');
+          return;
+        }
+        if (!INPUT_TRIAGE_STATUSES.has(row.status)) {
+          addInputIssue(errors, 'error', `Markdown.Triage[${index}]`, 'SELECT, REJECT, UNVERIFIED 중 하나만 사용해야 합니다.');
+          return;
+        }
+        const record = split.records[index];
+        const jsonStatus = String(record?.hard_filter?.status || record?.triage?.status || '').trim().toUpperCase();
+        if (record && row.status !== jsonStatus) {
+          addInputIssue(
+            errors,
+            'error',
+            `Markdown.Triage[${index}]`,
+            `Markdown 상태 ${row.status}와 JSON 상태 ${jsonStatus || '(blank)'}가 일치해야 합니다.`
+          );
+        }
+      });
+    }
+  }
+  if (mode === 'full' && split.rawMarkdown && !/A\.\s*TAP|B\.\s*Unrisked|C\.\s*Obtainable/i.test(split.rawMarkdown)) {
+    addInputIssue(warnings, 'warning', 'Markdown', 'Full Scout 원문에서 Marketability A/B/C 설명을 찾지 못했습니다.');
+  }
+
+  return {
+    ...split,
+    errors,
+    warnings,
+    mode,
+    headingCount,
+    tableCount,
+    canSave: errors.length === 0
+  };
+}
+
+function renderInputValidation(result, { savedMessage = '' } = {}) {
+  if (!elements.inputValidationResults) return;
+  elements.inputValidationResults.hidden = false;
+  const modeLabel = result.mode === 'triage'
+    ? `Fast Triage · Rubric v${LATEST_TRIAGE_RUBRIC_VERSION}`
+    : result.mode === 'full'
+      ? `Full Scout · Rubric v${LATEST_FULL_SCOUT_RUBRIC_VERSION}`
+      : '모드 판별 대기';
+  const badgeClass = result.errors.length ? 'error' : result.warnings.length ? 'warning' : '';
+  const badgeText = savedMessage || (result.errors.length ? '저장 불가' : result.warnings.length ? '경고 확인' : '저장 가능');
+  const rows = [
+    {
+      level: result.rawMarkdown ? 'ok' : 'error',
+      label: result.rawMarkdown ? '완료' : '오류',
+      path: 'Markdown',
+      message: result.rawMarkdown
+        ? `원문 추출 · headings ${result.headingCount} · table rows ${result.tableCount}`
+        : '원문을 추출하지 못했습니다.'
+    },
+    {
+      level: result.payload ? 'ok' : 'error',
+      label: result.payload ? '완료' : '오류',
+      path: 'JSON',
+      message: result.payload
+        ? `구조화 데이터 추출 · ${result.records.length} record`
+        : 'JSON을 추출하지 못했습니다.'
+    },
+    ...result.errors.map((issue) => ({ ...issue, label: '차단' })),
+    ...result.warnings.map((issue) => ({ ...issue, label: '경고' })),
+    ...(Array.isArray(result.reuploadDecisions) ? result.reuploadDecisions.map((decision) => ({
+      level: decision.replaceExisting ? 'warning' : 'ok',
+      label: decision.replaceExisting ? '갱신' : '신규',
+      path: `${decision.mode === 'triage' ? 'Fast Triage' : 'Full Scout'} · ${decision.company} · ${decision.asset}`,
+      message: decision.replaceExisting
+        ? '기존 GPT 원문과 공식 점수를 이번 조사 결과로 갱신합니다.'
+        : '기존 조사 결과를 유지하고 신규 레코드로 추가합니다.'
+    })) : [])
+  ];
+
+  elements.inputValidationResults.innerHTML = `
+    <div class="input-validation-summary">
+      <span class="input-validation-badge ${badgeClass}">${escapeHtml(badgeText)}</span>
+      <strong>${escapeHtml(modeLabel)}</strong>
+      <span>${result.records.length}건 · 오류 ${result.errors.length} · 경고 ${result.warnings.length}</span>
+    </div>
+    <ul class="input-validation-list">
+      ${rows.map((row) => `
+        <li class="${escapeHtml(row.level || '')}">
+          <b>${escapeHtml(row.label || '')}</b>
+          <span><strong>${escapeHtml(row.path || '')}</strong>${row.path ? ' · ' : ''}${escapeHtml(row.message || '')}</span>
+        </li>
+      `).join('')}
+    </ul>
+  `;
+}
+
+async function previewPastedReportParsing() {
+  setDataUploadStatus('validating');
+  elements.previewInputButton.disabled = true;
+  await new Promise((resolve) => window.requestAnimationFrame(resolve));
+  const result = validateCombinedInput(elements.gptResponseInput.value);
+  if (result.canSave) {
+    const matches = findDataReuploadMatches(result.records);
+    if (matches.length) {
+      const decisions = await reviewDataReuploadMatches(matches);
+      if (decisions === null) {
+        result.canSave = false;
+        result.warnings.push({
+          level: 'warning',
+          path: '기존 레코드 확인',
+          message: '갱신 여부를 확인해야 저장할 수 있습니다.'
+        });
+      } else {
+        result.reuploadDecisions = decisions;
+      }
+    }
+  }
+  state.dataUploadReview = result.canSave
+    ? {
+        input: elements.gptResponseInput.value,
+        reuploadDecisions: result.reuploadDecisions || []
+      }
+    : null;
+  renderInputValidation(result);
+  elements.previewInputButton.disabled = false;
+  elements.saveJsonButton.disabled = !result.canSave;
+  setDataUploadStatus(result.canSave ? 'valid' : 'error', result.errors.length);
+  return result;
 }
 
 async function saveStructuredJsonInput() {
-  const rawText = elements.rawReportInput.value.trim();
-  const jsonText = elements.structuredJsonInput.value.trim();
-  if (!jsonText) {
-    elements.saveStatus.textContent = '저장할 JSON이 없습니다.';
+  const validation = validateCombinedInput(elements.gptResponseInput.value);
+  const reviewed = state.dataUploadReview?.input === elements.gptResponseInput.value
+    ? state.dataUploadReview
+    : null;
+  validation.reuploadDecisions = reviewed?.reuploadDecisions || [];
+  renderInputValidation(validation);
+  if (!validation.canSave || !reviewed) {
+    elements.saveJsonButton.disabled = true;
+    setDataUploadStatus(validation.canSave ? 'review-needed' : 'error', validation.errors.length);
     return;
   }
 
-  let payload;
-  try {
-    payload = JSON.parse(jsonText);
-  } catch (error) {
-    elements.saveStatus.textContent = `JSON 파싱 실패: ${error.message}`;
-    return;
-  }
+  const records = validation.records;
+  records.forEach((record) => {
+    const existingSourceReport = isInputObject(record.source_report) ? record.source_report : {};
+    const existingRaw = existingSourceReport.raw_markdown;
+    const triage = detectInputRecordMode(record).mode === 'triage';
+    record.source_report = {
+      ...existingSourceReport,
+      raw_markdown: isPlaceholderRawMarkdown(existingRaw)
+        ? validation.rawMarkdown
+        : validation.rawMarkdown || existingRaw,
+      source_format: existingSourceReport.source_format || (triage ? 'fast_triage_markdown' : 'gpt_markdown_report'),
+      parser_status: existingSourceReport.parser_status || (triage ? 'fast_triage' : 'gpt_structured_output'),
+      parser_note: existingSourceReport.parser_note || 'Dashboard unified GPT response input에서 Markdown과 JSON을 자동 분리해 저장함.'
+    };
+  });
 
-  const records = Array.isArray(payload) ? payload : [payload];
-  for (const record of records) {
-    if (!record || typeof record !== 'object' || !record.structured_table) {
-      elements.saveStatus.textContent = '저장 실패: 각 record에는 structured_table이 필요합니다.';
-      return;
-    }
-    if (rawText) {
-      const existingSourceReport = record.source_report && typeof record.source_report === 'object' ? record.source_report : {};
-      const existingRaw = existingSourceReport.raw_markdown;
-      record.source_report = {
-        ...existingSourceReport,
-        raw_markdown: isPlaceholderRawMarkdown(existingRaw) ? rawText : rawText || existingRaw,
-        source_format: existingSourceReport.source_format || 'gpt_markdown_report',
-        parser_status: existingSourceReport.parser_status || 'manual_json_paste',
-        parser_note: existingSourceReport.parser_note || 'Dashboard input panel에서 원문과 JSON을 함께 붙여넣어 저장함.'
-      };
-    }
-  }
+  const payload = {
+    records,
+    confirmed_replacements: validation.reuploadDecisions
+      .filter((decision) => decision.replaceExisting)
+      .map((decision) => ({
+        incoming_record_id: decision.incomingRecordId,
+        existing_record_id: decision.existingRecordId
+      }))
+  };
 
-  elements.saveStatus.textContent = '저장 중...';
+  elements.saveJsonButton.disabled = true;
+  setDataUploadStatus('validating');
   try {
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(Array.isArray(payload) ? records : records[0])
+      body: JSON.stringify(payload)
     });
     if (!response.ok) {
-      const detail = await response.text();
-      throw new Error(detail || `HTTP ${response.status}`);
+      const detailText = await response.text();
+      let message = detailText || `HTTP ${response.status}`;
+      try {
+        message = JSON.parse(detailText).detail || message;
+      } catch (_error) {
+        // Keep the raw server response when it is not JSON.
+      }
+      throw new Error(message);
     }
     const result = await response.json();
-    elements.saveStatus.textContent = `저장 완료 · inserted ${result.inserted}, updated ${result.updated}, total ${result.total}`;
-    elements.structuredJsonInput.value = JSON.stringify(Array.isArray(payload) ? records : records[0], null, 2);
+    renderInputValidation(validation, { savedMessage: '저장 완료' });
+    setDataUploadStatus('saved');
+    state.dataUploadReview = null;
     await loadRecords();
   } catch (error) {
-    elements.saveStatus.textContent = `저장 실패: ${error.message}`;
+    const failed = {
+      ...validation,
+      errors: [...validation.errors, { level: 'error', path: '서버 저장', message: error.message }],
+      canSave: false
+    };
+    renderInputValidation(failed);
+    setDataUploadStatus('error', failed.errors.length);
   }
 }
+
+const SHARED_EVIDENCE_DISCIPLINE = `Use only asset-specific facts explicitly provided by the user or verified from credible public sources.
+
+Canonicalize confirmed facts into approved dashboard values, but do not infer unconfirmed facts or completed/current status from plans, expectations, financing, hiring activity, adjacent programs, class assumptions, or general scientific knowledge.
+
+General scientific knowledge may only be used to map confirmed facts to the scoring rubric. If a fact cannot be established or conflicting sources cannot be resolved, use Unknown and record the uncertainty.`;
+
+const SHARED_INTEREST_AND_CORE_RUBRIC = `SKBP Interest Indications:
+- Alzheimer's disease
+- Parkinson's disease
+- Amyotrophic lateral sclerosis / motor neuron disease
+- Multiple sclerosis / neuroinflammatory disease
+- Neuropathic pain
+- Epilepsy / seizure disorders
+
+Use the most specific confirmed indication wording for Target Relevance. Neuropathic pain and explicit neuropathic subtypes/synonyms are interest indications. If only generic Pain is confirmed, the subtype is unknown, or the pain is acute, postoperative, or non-neuropathic, apply the TR 1 rule.
+
+Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.2 and Full Scout v3.3):
+- For Target Relevance, always evaluate in descending order: 3, then 2, then 1, then 0. If more than one rule appears applicable, assign only the single highest applicable score.
+- Target Relevance 0: insufficient information to judge SKBP relevance, or confirmed indication is outside the SKBP-related disease scope.
+- Target Relevance 1: neurologic, neuroimmune, neurodegenerative, or pain-related disease outside the six interest indications; also use 1 when a claimed interest indication clearly contradicts the verified target/MoA.
+- Target Relevance 2: a confirmed detailed indication is one of the six interest indications, even if target/MoA is undisclosed or direct biology fit is not established.
+- Target Relevance 3: a confirmed interest indication plus a verified target/MoA directly linked to that disease biology or an SKBP Theme/Cluster. Undisclosed target/MoA is not a contradiction.
+- MoA Validity 0: target or MoA cannot be confirmed.
+- MoA Validity 1: mechanism description exists but is supported only by a company claim or theoretical rationale.
+- MoA Validity 2: functional evidence shows the mechanism works, or independent same-target/class validation exists.
+- MoA Validity 3: the assessed asset has target engagement, mechanism-linked PD/biomarker, or direct functional MoA validation. General clinical efficacy alone is not MoA 3.
+- Data Maturity 0: no public asset-specific result.
+- Data Maturity 1: only a qualitative claim or fragmentary result, insufficient for the confirmed stage.
+- Data Maturity 2: at least one interpretable, quantitative, stage-appropriate evidence domain for the assessed asset.
+- Data Maturity 3: at least two complementary, quantitative, stage-appropriate evidence domains, with at least one directly supporting program progression.
+
+MoA evidence definitions:
+- Functional evidence: an experiment shows the expected functional or downstream biological effect after the target or pathway is modulated.
+- Same target/class validation: the target or mechanism is validated by another drug, an independent study, or the same class rather than by the assessed asset itself.
+- Asset-specific validation: the assessed asset itself shows target engagement, a mechanism-linked PD/biomarker, or a direct functional effect.
+- Generic clinical efficacy is not sufficient for MoA 3. Clinical evidence counts toward MoA 3 only when it is a mechanism-linked clinical PoC tied to the proposed mechanism.
+
+Evidence domains answer different development questions, such as in vitro activity/selectivity, target engagement/PD, in vivo efficacy, PK/PD, safety/tolerability, or clinical outcome. Endpoints, doses, figures, or repeated sources from the same underlying experiment count as one domain. Potency and selectivity count as one in vitro characterization domain. One source may support two domains when it reports distinct development questions, such as in vivo efficacy and PK/PD. Human data are not required.`;
+
+const SHARED_CANONICAL_STAGE_RULE = `Canonical Development Stage — structured_table.development_stage must be exactly one of:
+Hit Discovery; Lead Optimization; Preclinical Candidate; IND-enabling; Preclinical unspecified; IND filed/cleared; Phase 1; Phase 1/2; Phase 2; Phase 2/3; Phase 3; Registration; Approved / marketed; Discontinued / inactive; Unknown.
+
+Canonicalize only an explicitly confirmed current stage or a completed/started milestone. Do not promote stage from plans, expectations, targets, financing, hiring, or adjacent programs. Generic preclinical -> Preclinical unspecified. Candidate nominated/selected -> Preclinical Candidate. Ongoing GLP tox, IND-directed CMC, or explicit IND-enabling work -> IND-enabling. IND/CTA submitted, filed, accepted, effective, or cleared -> IND filed/cleared. Planned IND submission alone does not establish IND filed/cleared; "preclinical; IND planned" remains Preclinical unspecified. Use Unknown for unresolved or conflicting stage evidence.`;
 
 function buildTriageInstructionPrompt() {
   return `You are an expert biotech pipeline scout for SKBP Pipeline Finder.
 
 Mission:
-Run FAST TRIAGE on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.1 in-depth review.
+Run FAST TRIAGE on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.3 in-depth review.
 
-This is GPT instruction 1: Fast Triage v3.1.
-Use GPT instruction 2 only after a candidate receives SELECT and needs full SKBP v3.1 review.
+This is GPT instruction 1: Fast Triage v3.2.
+Use GPT instruction 2 only after a candidate receives SELECT and needs Full Scout v3.3 review.
+
+Evidence Discipline (apply to every factual field and every score):
+${SHARED_EVIDENCE_DISCIPLINE}
+
+Keep user-provided facts separate from facts actually verified in public sources. A URL is not verified merely because it was supplied or appeared in search results; count it only after checking the source content and confirming that it supports the assessed asset and claim.
 
 Core rule:
 - Do not create a full scout report.
@@ -3624,16 +6456,42 @@ Core rule:
 - Only perform quick source-aware triage.
 
 Important distinction:
-- Triage status is not a final SKBP v3.1 recommendation.
-- SELECT means worth sending to Full Scout v3.1.
+- Triage status is not a final Full Scout recommendation.
+- SELECT means worth sending to Full Scout v3.3.
 - REJECT means not worth full review based on current quick evidence.
-- N/A means asset identity cannot be verified as a biotech/pharma pipeline asset from public sources.
-- A REJECT or N/A can change later if the user provides better target, MoA, data, company, or source evidence.
+- UNVERIFIED means asset identity itself cannot be verified as a biotech/pharma pipeline asset from credible public sources.
+- A REJECT or UNVERIFIED can change later if better identity, target, MoA, data, company, or source evidence becomes available.
 
 Input:
 The user may provide structured rows copied from Excel/TSV/CSV/plain text or a simple asset list.
 Each entry may include asset name, target, MoA, company, therapeutic area, indication, development stage, region/country, notes, and source URL.
 The input may contain 1 to 50 entries. If more than 50 entries are provided, process only the first 50 and state this in the markdown block.
+If no candidate entry is provided, ask for an asset list and do not invent records.
+
+Common Asset + Company list format:
+- Treat every non-empty line as one independent candidate.
+- The asset/product name normally comes first and the company name comes last.
+- A tab or two-or-more spaces may separate Asset from Company.
+- Preserve spaces inside multi-word asset and company names.
+- If repeated spaces collapse to one space, infer the company from the rightmost organization-like phrase (for example Inc, Corp, Ltd, Therapeutics, Pharmaceutical, Pharma, Biotech, Biology) and verify it during the quick search.
+- A comma inside the asset field can represent an alias and must not create a new row. Example: "IBSM01,ibiome    Ibiome Biology" is one candidate.
+- If a line contains only an asset name, keep company as Unknown at input and search that asset independently to identify the company.
+- Never merge adjacent lines, even when company names repeat.
+- Return exactly one Markdown table row and one JSON record per parsed candidate, in the original order.
+
+Examples of valid input:
+Drug to Inhibit Tau for Alzheimer’s Disease    Hyper Corp Inc
+MDR-652    Hyper Corp Inc
+Drug to Inhibit IL1B for Alzheimer's Disease    Hyper Corp Inc
+HBW-015    Hyperway Pharmaceutical
+HBW-3-20    Hyperway Pharmaceutical
+IBNI10    Ibiome Biology
+IBSM01,ibiome    Ibiome Biology
+
+Asset-only input is also valid:
+MDR-652
+HBW-015
+IBNI10
 
 Parsing rules:
 - Parse each entry as one candidate asset.
@@ -3649,42 +6507,58 @@ Research rules:
 - Search only enough to support triage.
 - Prefer credible biotech/pharma source types: official company/pipeline page, clinical trial registry, regulatory source, peer-reviewed publication, reputable biotech news, company presentation, or patent/source clearly linking asset to target/indication.
 - Do not invent facts or URLs.
-- If public search results are ambiguous, choose the lower score and explain uncertainty.
-- If search results are unrelated SKUs, tools, electronics, finance tickers, or ambiguous non-drug references, classify as N/A.
+- When evidence is ambiguous, apply each criterion's exact rule and record unresolved factual conflicts as Unknown. Do not lower a confirmed interest indication below TR 2 solely because direct target/MoA biology is missing or weak; only a verified contradiction triggers the TR 1 rule.
+- If credible public sources cannot verify the named item as a specific biotech/pharma pipeline asset, classify it as UNVERIFIED.
 
 Early stop rules:
-- Apply N/A before scoring if the candidate cannot be verified as a biotech/pharma pipeline asset, or if company/target/indication cannot be credibly linked after a quick identity check. Do not continue deep searching.
+- Apply UNVERIFIED before scoring only when the asset identity itself cannot be verified as a biotech/pharma pipeline asset. Missing target, MoA, indication, or stage alone does not make an asset UNVERIFIED; use Unknown and continue scoring.
 - Apply REJECT before scoring if the development stage is Discontinued / inactive, terminated, withdrawn, suspended, dormant, or clearly failed. This means the pipeline is not an active review candidate.
-- For N/A or Discontinued / inactive cases, keep the markdown and JSON short. Do not perform full diligence, marketability, competitor landscaping, or extended source chasing.
+- For UNVERIFIED or Discontinued / inactive cases, keep the markdown and research depth short. Do not perform full diligence, marketability, competitor landscaping, or extended source chasing.
+- Early stop never shortens the required JSON contract: every record must still contain all three TR/MoA/Data criterion objects with evidence_basis, a non-empty main_line_summary, evidence_sources, and uncertain_points. For identity-unverified criteria without support, use score 0 + no_supporting_basis + a concise asset-specific reason. An inactive asset remains REJECT because of the lifecycle hard blocker regardless of otherwise available preliminary scores.
 
 Triage scoring:
-- Use the same scoring direction as Full Scout v3.1, but only for these three matching criteria:
+- Use the same scoring direction as Full Scout v3.3, but only for these three matching criteria:
   - Full Scout criterion 1: Target Relevance (TR)
   - Full Scout criterion 3: MoA Validity (MOA)
   - Full Scout criterion 6: Data Maturity (Data)
 - Assign preliminary integer scores only: 0, 1, 2, or 3. Do not output ranges such as 1-2.
-- Do not assign E0-E4 evidence types, do not write why_not_higher, and do not require full source trails.
+- Use evidence_type="triage_only". Do not assign E0-E4 or require Full Scout-length source trails.
 - The difference from GPT instruction 2 is depth, not scoring direction: instruction 1 is a fast preliminary read; instruction 2 is the full evidence-based review.
-- Quick interpretation:
-  - 0 = unclear / not assessable / out of scope
-  - 1 = weak or sparse
-  - 2 = plausible enough to consider
-  - 3 = strong fit or clearly visible maturity
+
+${SHARED_INTEREST_AND_CORE_RUBRIC}
+
+Criterion Evidence Basis:
+- Every TR/MoA/Data criterion must contain evidence_basis with exactly one value: user_input_only, public_source, user_input_and_public_source, or no_supporting_basis.
+- user_input_only: only facts explicitly present in the user's row/input were used. Do not add an unprovided target, cell type, MoA, or data claim to main_line_summary.
+- public_source: only public sources that you actually opened and verified were used.
+- user_input_and_public_source: both explicit user input and actually verified public sources were used.
+- no_supporting_basis: neither user input nor verified public sources support the score.
+- evidence_sources must be an array. Each verified item must include source_title, source_type, source_url, verified=true, and a concise evidence_summary. source_url_not_provided, Unknown, blank/null, or verified=false do not count as verified public URLs.
+- public_source and user_input_and_public_source require at least one unique verified http(s) URL. user_input_only and no_supporting_basis must contain zero verified public URLs.
+- score >= 2 cannot use no_supporting_basis. MoA >= 2 and Data >= 2 each require at least one citable, verified public technical/source URL for that criterion. TR may preliminarily score from explicit user input.
+- If verified_public_source_count is included, it must exactly equal the unique verified public URL count after removing duplicates and trailing-slash variants. Source count itself does not determine the score.
+
+Summary rule:
+- Each main_line_summary must be a non-empty 1–2 sentence explanation containing the confirmed asset-specific fact, why it maps to the selected score, and the key limitation.
+- State the single score explicitly (for example, "TR 2점") and never use a score range.
+- General disease biology alone cannot explain an asset score. For user_input_only, do not introduce facts absent from the user input.
 
 Triage status rule:
-- SELECT if asset identity is verified and at least two of TR/MOA/Data are >= 2.
-- REJECT if asset identity is verified but SKBP fit, MoA, or Data is too weak for Full Scout priority.
+- active_asset is required and must be true, false, or null: true only when current activity is confirmed, false when inactivity is confirmed, and null when activity cannot be established.
+- SELECT only if identity_verified=true, active_asset=true, TR >= 2, and either MoA >= 2 or Data >= 2.
+- REJECT if asset identity is verified but active_asset is false/null, or SKBP fit, MoA, or Data is too weak for Full Scout priority.
 - REJECT if development_stage is Discontinued / inactive, terminated, withdrawn, suspended, dormant, or clearly failed, even if target/MoA look interesting.
-- N/A if asset identity is not verified as a biotech/pharma pipeline asset.
+- UNVERIFIED if asset identity itself is not verified as a biotech/pharma pipeline asset.
 - If unsure between SELECT and REJECT, choose REJECT and explain the missing evidence needed.
 
 Controlled vocabulary:
-- For an identity-verified asset, use Unknown (never N/A) when country, development stage, modality, main indication, target, or another factual field cannot be established from public sources. N/A is reserved for the triage status when asset identity itself is not verified.
+- For an identity-verified asset, use Unknown when country, development stage, modality, main indication, target, or another factual field cannot be established. UNVERIFIED is reserved for failure of asset identity itself.
 - company_country must use canonical values such as China, Republic of Korea, Japan, United States, Europe/UK, Taiwan, Singapore, Canada, Australia, Israel, or Unknown.
-- development_stage must use one canonical bucket when possible: Hit discovery, Lead Selection, Lead Optimization, IND-enabling, IND, Phase 1, Phase 1/2, Phase 2, Phase 2/3, Phase 3, Registration, Approved / marketed, Discontinued / inactive, or Unknown.
+${SHARED_CANONICAL_STAGE_RULE}
 - modality_platform must use exactly one short dashboard label: Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Other, or Unknown.
-- main_indication must use one canonical disease bucket when possible: Alzheimer's disease, Parkinson's disease, Epilepsy / seizure disorders, Multiple sclerosis / neuroinflammatory disease, Amyotrophic lateral sclerosis / motor neuron disease, Frontotemporal dementia, Stroke, Pain, Major depressive disorder, Chronic cough, Inflammatory bowel disease, Systemic lupus erythematosus / autoimmune disease, or Unknown.
-- For theme and cluster only: use N/A for both fields when an identity-verified asset is confirmed not to fit an SKBP interest theme/cluster. Use Unknown for both fields when target or MoA evidence is insufficient to map the asset. Do not use No Theme.
+- main_indication remains the dashboard's existing canonical bucket: Alzheimer's disease, Parkinson's disease, Epilepsy / seizure disorders, Multiple sclerosis / neuroinflammatory disease, Amyotrophic lateral sclerosis / motor neuron disease, Frontotemporal dementia, Stroke, Pain, Major depressive disorder, Chronic cough, Inflammatory bowel disease, Systemic lupus erythematosus / autoimmune disease, or Unknown.
+- structured_table.indication must preserve the most specific confirmed wording (for example, diabetic peripheral neuropathic pain). Use that detailed indication—not the broader main_indication bucket—for TR and the neuropathic-pain rule.
+- For theme and cluster only: use Others for both fields when an identity-verified asset is confirmed not to fit E/I Balance or Neuroimmune. Use Unknown for both fields when target or MoA evidence is insufficient to map the asset. Do not use N/A or No Theme.
 
 Output language:
 Korean. English is allowed for scientific terms.
@@ -3695,11 +6569,13 @@ The final answer must contain exactly two fenced code blocks:
 \`\`\`markdown
 # SKBP Fast Triage Result
 
+> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.
+
 중요: 한 문장으로 triage 결론과 filter rationale을 먼저 씁니다. 예: 공개 자료상 asset identity는 확인되지만 개발 단계가 Discontinued / inactive로 확인되어 REJECT로 처리합니다.
 
 | # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |
 |---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|
-| 1 |  |  |  |  |  |  |  |  |  | SELECT/REJECT/N/A |  |  |
+| 1 |  |  |  |  |  |  |  |  |  | SELECT/REJECT/UNVERIFIED |  |  |
 
 ## Notes
 - Keep notes short.
@@ -3710,8 +6586,9 @@ The final answer must contain exactly two fenced code blocks:
 [
   {
     "meta": {
-      "schema_version": "3.1",
-      "rubric_version": "3.1",
+      "schema_version": "3.2",
+      "instruction_version": "3.2",
+      "rubric_version": "3.2",
       "review_type": "fast_triage",
       "generated_at": "YYYY-MM-DD",
       "language": "ko",
@@ -3727,85 +6604,86 @@ The final answer must contain exactly two fenced code blocks:
       "raw_markdown": "",
       "source_format": "fast_triage_markdown",
       "parser_status": "fast_triage",
-      "parser_note": "GPT instruction 1 Fast Triage v3.1 output. Full SKBP v3.1 review has not been run."
+      "parser_note": "GPT instruction 1 Fast Triage v3.2 output. Full Scout v3.3 review has not been run."
     },
     "json_summary": {
-      "company": "",
+      "company": "Unknown",
       "asset_name": "",
-      "target": "",
-      "theme": "E/I Balance | Neuroimmune | N/A | Unknown",
-      "cluster": "",
+      "target": "Unknown",
+      "theme": "Unknown",
+      "cluster": "Unknown",
       "target_relevance_score": 0,
-      "one_line_summary": "",
-      "company_country": ""
+      "one_line_summary": "Asset-specific evidence has not yet been established.",
+      "company_country": "Unknown"
     },
     "structured_table": {
-      "company": "",
+      "company": "Unknown",
       "asset_name": "",
-      "target": "",
-      "moa": "",
+      "target": "Unknown",
+      "moa": "Unknown",
       "modality_platform": "Unknown",
-      "main_indication": "",
-      "indication": "",
-      "development_stage": "",
-      "company_country": "",
-      "sources": [
-        {
-          "source_title": "",
-          "source_type": "official_company | publication | clinical_trial_registry | regulatory | news | patent | source_url_not_provided | other",
-          "source_url": "",
-          "reliability": "high | medium | low | unknown",
-          "evidence_summary": ""
-        }
-      ]
+      "main_indication": "Unknown",
+      "indication": "Unknown",
+      "development_stage": "Unknown",
+      "company_country": "Unknown",
+      "sources": []
     },
     "hard_filter": {
-      "status": "SELECT | REJECT | N/A",
-      "reason": "",
+      "status": "UNVERIFIED",
+      "reason": "Asset identity has not yet been verified from credible public sources.",
       "flags": []
     },
     "triage": {
-      "instruction_version": "3.1",
-      "status": "SELECT | REJECT | N/A",
-      "identity_verified": true,
-      "why": "",
+      "instruction_version": "3.2",
+      "status": "UNVERIFIED",
+      "identity_verified": false,
+      "active_asset": null,
+      "why": "Asset identity has not yet been verified from credible public sources.",
       "missing_evidence_needed_for_full_scout": []
     },
     "scoring": {
       "total_score": null,
-      "max_score": 21,
+      "max_score": null,
       "criteria": {
         "target_relevance": {
           "score": 0,
           "evidence_type": "triage_only",
-          "main_line_summary": "",
+          "evidence_basis": "no_supporting_basis",
+          "main_line_summary": "TR 0점: asset identity and indication evidence have not been established.",
           "evidence_sources": [],
+          "verified_public_source_count": 0,
           "uncertain_points": []
         },
         "moa_validity": {
           "score": 0,
           "evidence_type": "triage_only",
-          "main_line_summary": "",
+          "evidence_basis": "no_supporting_basis",
+          "main_line_summary": "MOA 0점: asset-specific target or mechanism evidence has not been established.",
           "evidence_sources": [],
+          "verified_public_source_count": 0,
           "uncertain_points": []
         },
         "data_maturity": {
           "score": 0,
           "evidence_type": "triage_only",
-          "main_line_summary": "",
+          "evidence_basis": "no_supporting_basis",
+          "main_line_summary": "Data 0점: no public asset-specific result has been established.",
           "evidence_sources": [],
+          "verified_public_source_count": 0,
           "uncertain_points": []
         }
       }
     },
     "validation": {
+      "instruction_version": "3.2",
+      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.2; Full Scout v3.3 not run.",
       "cross_checked_facts": [],
       "uncertain_points": [],
       "source_registry": []
     },
     "final_insight": {
-      "one_line_summary": "",
-      "recommendation": "Run Full Scout | Do not run Full Scout | N/A",
+      "one_line_summary": "Asset identity must be verified before Full Scout.",
+      "recommendation": "Verify asset identity",
       "most_important_diligence_question": ""
     }
   }
@@ -3816,46 +6694,82 @@ Remember:
 - Output only the two fenced code blocks.
 - Do not include prose outside the code blocks.
 - For one input entry, output a JSON array with one object.
-- Do not include full v3.1 criteria, marketability, competitor tables, or peak sales.`;
+- For multiple input entries, output one JSON array item per candidate in the original order, up to 50.
+- Do not leave pipe-delimited template choices such as "SELECT | REJECT | UNVERIFIED" in the final JSON; choose exactly one allowed value.
+- Recommendation mapping is exact: SELECT -> "Run Full Scout"; REJECT -> "Do not run Full Scout"; UNVERIFIED -> "Verify asset identity".
+- The user will paste this entire response once into the dashboard. Keep the Markdown block first and the JSON block second so the dashboard can split them automatically.
+- Do not include Full Scout-only criteria, marketability, competitor tables, or peak sales.`;
 }
 
 function buildGptInstructionPrompt() {
   return `You are an expert biotech pipeline scout for SKBP Pipeline Finder.
 
 Mission:
-Find and evaluate a pipeline asset by doing the full workflow: company research, source verification, competitor search, SKBP scoring, and evidence tracking. The final answer must include two copyable boxes: first a complete Markdown file code block, then a valid JSON code block that follows the SKBP JSON schema.
+Evaluate exactly one biotech/pharma pipeline asset through company research, attachment review, public-source verification, competitor search, seven-criterion scoring, and evidence tracking. Return exactly two fenced code blocks: first Markdown, then valid JSON.
 
-This is GPT instruction 2: Full Scout v3.2.
+This is GPT instruction 2: Full Scout v3.3. Keep meta.schema_version at 3.2, and set meta.instruction_version and meta.rubric_version to 3.3.
+
+Evidence Discipline (apply to every factual field and every scoring criterion):
+${SHARED_EVIDENCE_DISCIPLINE}
+
+Required input: Company name and Asset name.
+Optional input: user-provided or company-supplied PDF, PPT, Excel, or text attachments. Review readable attachment content first and cross-check with public web sources when needed. Unread or unchecked file regions are not evidence.
+
+Evidence has independent dimensions:
+- Evidence Type (content level): E0_not_found_or_not_assessable; E1_company_claim_or_scientific_rationale_only; E2_indirect_or_class_level_evidence; E3_asset_specific_preclinical_or_technical_evidence; E4_asset_specific_clinical_evidence.
+- Evidence Origin: public_web; user_uploaded_file; user_text.
+- Optional source_nature: company_generated; independent; regulatory; clinical_registry; analyst_generated; unknown.
+
+Judge Evidence Type by content, not origin. Asset-specific quantitative PK/efficacy in a company deck may be E3 and asset-specific clinical PK/PD/efficacy may be E4; an independent paper covering only the same target/class is E2; a user estimate is an analyst assumption, not evidence. Company material is never independent evidence. Attachment evidence may support any of the seven criteria or Marketability when its content directly meets that criterion's rule. For file evidence record file_name; page, slide, sheet, or section; evidence_summary; supported_criterion; evidence_type; evidence_origin; and source_nature.
+
+Do not treat a URL as verified unless you opened it and confirmed that it supports the assessed asset and claim. Separate user-provided facts, company claims, independent/class evidence, asset-specific evidence, and analyst assumptions throughout.
+
+SKBP Interest Indications:
+- Alzheimer's disease
+- Parkinson's disease
+- Amyotrophic lateral sclerosis / motor neuron disease
+- Multiple sclerosis / neuroinflammatory disease
+- Neuropathic pain
+- Epilepsy / seizure disorders
+
+For Target Relevance, generic, acute, postoperative, or otherwise unverified-as-neuropathic pain is related disease only (score 1), not a six-interest indication.
+
+${SHARED_CANONICAL_STAGE_RULE}
 
 Company: [COMPANY_NAME]
 Asset / drug / pipeline name: [ASSET_NAME]
 Output language: Korean. English is allowed for scientific terms.
 
-Identity Gate / N-A early stop:
+Identity Gate / identity-not-verified early stop:
 - Before writing the full report, first verify whether the input appears to be a real biotech/pharma pipeline asset.
 - Use only a short identity check at this gate. Check for at least one credible biotech source type: official company/pipeline page, clinical trial registry, regulatory source, peer-reviewed publication, reputable biotech news, company presentation, patent/source that clearly links the asset to a drug target or indication.
-- If the asset cannot be linked to a biotech/pharma company, drug target, modality, indication, or credible pipeline source, stop early. Do not write the full report sections, do not score, do not build competitor tables, and do not estimate marketability.
-- If search results are mostly unrelated SKUs, tools, electronics, finance tickers, unrelated abbreviations, or ambiguous non-drug references, classify as N/A unless a credible drug-development source is found.
-- In the N/A case, the final answer must still be exactly two fenced code blocks, but both must be short.
-- N/A markdown block format:
-  - Title: "# N/A Pipeline Scout Result: **[ASSET_NAME]**"
+- Fail this gate only when the named asset itself cannot be verified as a specific biotech/pharma pipeline asset from credible public sources. Missing target, MoA, modality, indication, stage, country, or ownership does not fail the gate; write Unknown for that factual field, record the uncertainty, and continue the full review and scoring.
+- If search results are mostly unrelated SKUs, tools, electronics, finance tickers, unrelated abbreviations, or ambiguous non-drug references and no credible source verifies a specific drug-development asset, classify it as identity not verified.
+- If the asset identity is not verified, stop Full Scout and return FAIL / Deprioritize. Also return FAIL regardless of score when a credible source confirms the lifecycle as Discontinued, Terminated, Withdrawn, Inactive, or Clearly failed.
+- Uncertain rights or exact stage alone is REVIEW, not automatic FAIL.
+- In the identity-not-verified case, the final answer must still be exactly two fenced code blocks, but both must be short.
+- Identity-not-verified markdown block format:
+  - Title: "# Pipeline Scout Result — Asset Identity Not Verified: **[ASSET_NAME]**"
   - One-line conclusion: "Public-source identity check did not verify this as a biotech/pharma pipeline asset."
   - Include only 3 short bullets: what was searched, what was found, what source would be needed to proceed.
   - Include references only for the few sources that explain the non-match or ambiguity.
-- N/A JSON block format:
-  - Keep it valid JSON.
-  - Set meta.schema_version and meta.rubric_version to "3.2".
+- Identity-not-verified JSON block format:
+  - Keep it valid JSON and keep the complete dashboard-required top-level structure.
+  - Set meta.schema_version to "3.2"; set meta.instruction_version and meta.rubric_version to "3.3".
+  - Set meta.review_type to "full_scout".
   - Set source_report.parser_status to "asset_identity_not_verified".
   - Set hard_filter.status to "FAIL".
   - Set hard_filter.reason to "Asset identity not verified from public biotech/pharma sources."
   - Set scoring.total_score to 0 and scoring.max_score to 21.
+  - Include all seven scoring.criteria objects with score 0, evidence_type E0_not_found_or_not_assessable, why_not_higher, and uncertain_points.
+  - Set marketability.calculation.commercial_rationale_status to "insufficient_evidence", provide commercial_rationale_failure_reason, and set all A/B/C output values to null.
   - Set final_insight.recommendation to "Deprioritize".
-  - Use "N/A" or null for unknown company, target, indication, stage, country, and source URLs. Do not invent placeholders.
+  - structured_table.development_stage must be "Unknown" when stage is not established; never use null, an empty string, or N/A for that field. Use "Unknown", null, or [] as appropriate for other unknown factual fields and sources. Do not invent placeholders.
 
 Non-negotiable rules:
 1. Final answer format must be exactly two fenced code blocks:
-   - Box 1: \`\`\`markdown containing either the complete .md report or the short N/A markdown block allowed by the Identity Gate.
-   - Box 2: \`\`\`json containing either the complete structured JSON or the short N/A JSON block allowed by the Identity Gate.
+   - Box 1: \`\`\`markdown containing either the complete .md report or the short identity-not-verified markdown block allowed by the Identity Gate.
+   - Box 2: \`\`\`json containing either the complete structured JSON or the short identity-not-verified JSON block allowed by the Identity Gate.
 2. Do not write the Markdown report as normal prose outside the markdown code block.
 3. The final JSON block must be valid JSON: no comments, no trailing commas, no Markdown inside the JSON except string values.
 4. Every factual claim used for scoring must include a source URL or a clear uncertainty note.
@@ -3863,14 +6777,15 @@ Non-negotiable rules:
 6. Distinguish official company sources, peer-reviewed papers, regulatory/clinical trial sources, market sources, and news/financing sources.
 7. For every score, include: score, one-line judgment, what was checked, evidence trail, investigation note, uncertain points, and source URLs.
 8. Competitive Landscape must include competitor drugs/assets with company, modality, target/MoA, stage/status, why it matters, similarity level, and source.
-9. Marketability must show A. TAP, B. Unrisked Peak Sales, and C. Obtainable Peak Sales in both the markdown report and JSON.
+9. Marketability may use an internal calculation, an external forecast, both, or insufficient evidence. Show A/B/C only when calculation is performed; show external forecast references when used.
 10. Express every sales output in million USD. In JSON, store sales values as numeric million USD values, not raw USD. Example: USD 1.2B should be 1200.
-11. Hard Filter must use this rule: PASS if Total >= 14, Target Relevance >= 3, MoA Validity >= 2, Data Maturity >= 2, and no hard blocker. REVIEW if Total 9-13, or score is high but stage / rights / asset identity / source uncertainty exists. FAIL if Total <= 8, Target Relevance <= 1, or no SKBP Theme / Cluster fit.
+11. Hard Filter is canonical: PASS when Total >= 15, Target Relevance >= 2, MoA Validity >= 2, Data Maturity >= 2, asset identity is verified, and an active development program is confirmed. REVIEW when Total is 9-14; or Total >= 15 but a TR/MoA/Data gate is missed; or active status, key evidence, source, rights, or stage uncertainty prevents a firm conclusion. FAIL when Total <= 8, Target Relevance <= 1, asset identity is unverified, or a lifecycle FAIL condition is confirmed.
 12. If the latest stage, ownership, financing, or trial status is unclear, mark it as uncertain and state what source is needed.
 13. Do not invent URLs. If a URL cannot be verified, write null in JSON and describe the missing source in uncertain_points.
-14. For scoring.criteria.marketability.calculation.commercial_rationale_status, use exactly one of: evidence_based, assumption_based, assumption_based_scenario, established, not_established, or insufficient_evidence. Use not_established or insufficient_evidence only when marketability.score is 0; then set commercial_rationale_failure_reason and leave the A/B/C output values null. For assumption_based_scenario, also provide commercial_rationale_basis. Do not invent other status values.
+14. For scoring.criteria.marketability.calculation.commercial_rationale_status, use exactly one of: evidence_based, assumption_based, assumption_based_scenario, established, not_established, or insufficient_evidence. Use not_established or insufficient_evidence only when marketability.score is 0; then set commercial_rationale_failure_reason and leave the A/B/C output values null. For both assumption_based and assumption_based_scenario, also provide commercial_rationale_basis. Do not invent other status values.
+15. The JSON template defaults Marketability to score 0 + insufficient_evidence and null A/B/C outputs. Calculation is not mandatory: a reliable asset-specific external forecast may independently support scores 1-3. Replace every template instruction/placeholder with one final value before output.
 
-Scoring v3.2 rules:
+Scoring v3.3 rules:
 - Each scoring criterion must be scored independently using its own criterion-specific scoring table.
 - Do not apply a universal scoring rule across all criteria.
 - For every criterion, assign exactly one integer score: 0, 1, 2, or 3.
@@ -3886,16 +6801,35 @@ Scoring v3.2 rules:
 - Do not output score ranges such as 0-1, 1-2, or 2-3.
 - If evidence is ambiguous, select the single closest score and explain uncertainty in uncertain_points.
 
+Criterion-specific scoring (canonical; do not replace with a universal evidence ladder):
+- Target Relevance — 0: insufficient SKBP-relevance evidence or confirmed indication outside the relevant disease scope; 1: neurologic/neuroimmune/neurodegenerative/pain disease outside the six SKBP interests; 2: one six-interest indication is specifically confirmed; 3: score-2 indication plus verified target/MoA directly linked to its disease biology or an SKBP Theme/Cluster.
+- MoA Validity — 0: target or MoA unconfirmed; 1: company claim or theoretical rationale only; 2: functional evidence or independent same-target/class validation; 3: assessed-asset target engagement, mechanism-linked PD/biomarker, or direct functional validation.
+- Data Maturity — 0: no asset-specific result in public sources or readable attachments; 1: qualitative claim or fragmentary result only; 2: at least one asset-specific quantitative evidence domain appropriate to the current stage; 3: at least two complementary quantitative domains addressing different development questions, with at least one directly supporting program progression. Source count, endpoint count, and repeated presentations of one experiment do not create extra domains.
+- Competitive Landscape evaluates competitive position and differentiation only; patient counts, price, market size, and peak sales belong only to Marketability. Similarity is High for same indication + same target/MoA + similar modality; Medium for same indication + same pathway/biology; Low for same indication only. Score 0: search scope/evidence insufficient to judge a direct competitor set; 1: competitors found but differentiation is claim/concept only with no asset-specific quantitative comparison; 2: asset-specific quantitative differentiation versus an appropriate comparator or realistic entry space; 3: sufficient search completed, high-similarity competitors are limited, and strong quantitative differentiation or a leading position is verified. Never award 3 merely because no competitor was found or by competitor count alone. Search at minimum: asset name/aliases; same indication + target/MoA; same indication + pathway/biology; approved, Phase 3, clinical, and major preclinical competitors; trial registries; and recent review, official-pipeline, or patent sources. Separate direct/high-similarity from broader competitors and record scope and limitations.
+- Platform Attractiveness evaluates a reusable technical system whose common principles/design/manufacturing/delivery can generate multiple candidates/programs or improve performance. Score 0: no reusable structure or verifiable technical advantage; 1: reusable structure with plausible rationale but claim/concept-level differentiation; 2: at least one quantitative result showing technical advantage versus an appropriate comparator; 3: score 2 plus repeated quantitative advantage across multiple conditions or multiple platform-derived assets, or a platform-derived asset has reached First Patient Dosed. FPD alone is insufficient without score-2 quantitative evidence. Do not award points merely for preferred modality, indication expansion, multiple assets, or pipeline breadth.
+- Expansion Potential evaluates only additional indications for the assessed asset beyond its main indication. Score 0: none confirmed; 1: additional indication with biological rationale only; 2: asset-specific early quantitative data in at least one additional indication; 3: at least two distinct additional indications, at least one confirmed as an active asset-specific program, and asset-specific quantitative efficacy, PD, or biomarker data in that additional indication. An active program may be separately listed on the official pipeline or be in preclinical, IND-enabling, trial registration/authorization, or dosing; it is not limited to clinical development. Future opportunity, possible/planned evaluation, an indication list, platform-level expansion not tied to the asset, wording variants of one disease, and patient subgroups are not separate programs/indications. Do not award points for platform reuse, multiple platform assets, or platform breadth.
+
+Marketability method and score:
+- assessment_method is exactly calculation, external_forecast, both, or insufficient_evidence. Do not force A/B/C.
+- score_basis_type: when both exist, calculation is the primary score basis and external forecast is a cross-check; otherwise use the available reliable method. With neither, score 0.
+- assessed_global_peak_sales_musd determines score: 0 only when neither a reliable calculation nor external forecast exists; 1 when < 1000; 2 when >= 1000 and < 2000; 3 when >= 2000. Do not use weak-market language, expansion strength, or mandatory A/B/C completeness as alternate thresholds.
+- Internal calculation covers one lead/main indication and uses the United States base: A. US TAP = US Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate; choose prevalence or annual incidence appropriately and state why. B. US Unrisked Peak Sales = US TAP x Benchmark Annualized Net Price x Peak Penetration x Treatment Duration Factor. Annualize benchmark net price by therapy type (chronic annual price; short course price x annual courses; episodic administration price x annual administrations; one-time net price). Use annual incidence or peak-year treatable cohort for one-time therapy when appropriate. Treatment Duration Factor defaults to 1.0 unless persistence/discontinuation/actual duration evidence supports adjustment. C. US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment. Benchmark price is the unadjusted price of the closest approved therapy/standard of care; apply asset-specific efficacy, safety, convenience, frequency, monitoring, or modality premium/discount only in Pricing Power Adjustment, never twice. Competition Haircut reflects competitor count, lead, expected entry order, and asset differentiation.
+- Calculated Global Obtainable Peak Sales = completed US Obtainable Peak Sales x 1.5. This is a user-defined screening policy applied once, never to TAP, price, penetration, or another factor.
+- Remove Expansion Capacity Adjustment from the formula. If schema compatibility requires the field, fix it at 1.0, mark it deprecated, and never use it in the score. Do not run sensitivity analysis.
+- Record reliable asset-specific external peak-sales forecasts from independent analysts, consensus databases, reputable market research, or a company forecast containing a concrete number. Non-quantitative “blockbuster potential” is not a score basis. Record source_name, source_type, publication_date, geography, forecast_year, peak_sales_musd, forecast_low_musd, forecast_high_musd, source_url, confidence, and normalized_global_peak_sales_musd. Normalize a US forecast x 1.5 and leave a Global forecast unchanged. For a range, score the midpoint and retain low/high. A representative external value may be the median of comparable reliable independent forecasts; label company forecasts company_estimate with lower confidence. Explain a material calculation/forecast gap in one sentence.
+- Store every sales value as numeric million USD. External-only assessment permits all A/B/C values to be null.
+
+For every criterion rationale state compactly: criterion definition, selected score, core selected-score rule, why the asset meets it, key evidence, and key gap/why not higher. Platform technical advantage and assessed-asset Data Maturity are separate; do not double-count one fact with the same meaning.
+
 Controlled vocabulary for dashboard filters:
 - Use canonical values for filter-facing fields so the dashboard can group comparable assets.
 - For an identity-verified asset, use Unknown (never N/A) when country, development stage, modality, main indication, target, or another factual field cannot be established from public sources.
-- N/A is reserved for an Identity Gate failure, except for Theme and Cluster: use N/A for both only when an identity-verified asset is confirmed not to fit an SKBP interest theme/cluster. Use Unknown for both when target or MoA evidence is insufficient to map the asset. Do not use No Theme.
+- Never use N/A as a factual, Theme, or Cluster value. For Theme and Cluster, use Others for both when an identity-verified asset is confirmed not to fit E/I Balance or Neuroimmune; use Unknown for both when target or MoA evidence is insufficient to map the asset. Do not use No Theme.
 - json_summary.company_country and structured_table.company_country must use a single canonical country/region label. Examples: China, Republic of Korea, United States, Japan, Europe/UK. Do not write combined labels such as "China / Hong Kong" or "China / United States operations" in these fields; put that nuance in headquarters, company_profile.notes, or validation.uncertain_points.
 - structured_table.main_indication is required and must contain one canonical disease bucket. structured_table.indication can contain the full detailed indication wording.
 - If the asset has many indications, choose the lead/currently most relevant indication as main_indication and keep the rest in indication.
-- structured_table.development_stage must use one canonical stage bucket for dashboard filtering. Put detailed wording such as recruiting status, indication-specific stages, or expected IND timing in source evidence, notes, or validation.uncertain_points.
-- Standard development stage buckets include: Hit discovery, Lead Selection, Lead Optimization, IND-enabling, IND, Phase 1, Phase 1/2, Phase 2, Phase 2/3, Phase 3, Registration, Approved / marketed, Discontinued / inactive.
-- Map stage synonyms into the same bucket. Examples: P1, Ph1, Phase I, FIH, first-in-human, Phase 1 SAD/MAD, and 1상 -> Phase 1; P2, Ph2, Phase II, Phase 2 recruiting, and 2상 -> Phase 2; preclinical / IND preparation -> IND-enabling when IND-enabling work is explicitly described.
+- structured_table.development_stage must follow the Canonical Development Stage rule above. Put exact raw wording, trial status, indication-specific stage, and future milestone timing in source evidence, notes, or validation.uncertain_points.
+- Map clinical synonyms conservatively: P1/Ph1/Phase I/FIH -> Phase 1 and P2/Ph2/Phase II -> Phase 2 only when the phase is current or started. A future plan must not be promoted to current stage.
 - structured_table.modality_platform must use exactly one short dashboard label: Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Other, or Unknown. Put technical platform detail in structured_table.moa, company_profile.platform_summary, or source evidence; do not combine multiple labels in modality_platform.
 - Standard indication buckets include:
   - Alzheimer's disease
@@ -3928,22 +6862,25 @@ Expected final answer shape:
 \`\`\`json
 {
   "meta": {
-    "schema_version": "3.2"
+    "schema_version": "3.2",
+    "instruction_version": "3.3",
+    "rubric_version": "3.3"
   }
 }
 \`\`\`
 
-If the Identity Gate returns N/A:
-- Return short N/A markdown + valid compact N/A JSON only.
+If the Identity Gate cannot verify the asset identity:
+- Return short identity-not-verified markdown + valid schema-complete identity-not-verified JSON.
 - In JSON, set source_report.parser_status = "asset_identity_not_verified", hard_filter.status = "FAIL", scoring.total_score = 0, scoring.max_score = 21, final_insight.recommendation = "Deprioritize".
-- Use "N/A", null, or [] for unknown company, target, indication, stage, country, sources, and unavailable fields.
+- Keep all seven required scoring.criteria objects at score 0 / E0 and use an insufficient_evidence Marketability calculation with null A/B/C outputs.
+- structured_table.development_stage must be "Unknown" when stage is not established; never use null, an empty string, or N/A for that field. Use "Unknown", null, or [] as appropriate for other unknown factual fields, sources, and unavailable fields. N/A is not a factual placeholder.
 - Keep only the sources needed to explain the non-match or ambiguity.
 
 Use this exact report structure inside the markdown code block:
 
 # [Company] Pipeline Scout Report: **[Asset]**
 
- Briefly state that this report is prepared for SKBP Pipeline Finder v3.2 and that URLs are included for auditability.
+ Briefly state that this report was researched and scored with GPT instruction 2 — Full Scout v3.3 (schema v3.2), and that URLs are included for auditability.
 
 중요: 한 문장으로 filter/recommendation rationale을 먼저 씁니다. 예: 공개 자료상 active asset명·compound code·임상 단계가 명확히 확인되지 않아 stage/ownership은 uncertain / REVIEW로 처리합니다.
 
@@ -3983,7 +6920,7 @@ Use this exact report structure inside the markdown code block:
 Allowed Theme values:
 - E/I Balance
 - Neuroimmune
-- N/A (identity-verified asset confirmed outside SKBP Theme/Cluster scope)
+- Others (identity-verified asset confirmed outside E/I Balance and Neuroimmune)
 - Unknown (target or MoA evidence insufficient to map)
 
 Allowed clusters:
@@ -3994,16 +6931,16 @@ Allowed clusters:
 
 ## 3) Scorecard Summary
 
-| Criterion | Score | One-line judgment | Evidence used |
+| Criterion | Score (maximum 3 points each) | One-line judgment | Evidence used |
 |---|---:|---|---|
-| Target Relevance |  / 3 |  | URL/source |
-| Competitive Landscape |  / 3 |  | URL/source |
-| MoA Validity |  / 3 |  | URL/source |
-| Platform Attractiveness |  / 3 |  | URL/source |
-| Expansion Potential |  / 3 |  | URL/source |
-| Data Maturity |  / 3 |  | URL/source |
-| Marketability |  / 3 | Must mention A/B/C | URL/source |
-| **Total** | ** / 21** |  |  |
+| Target Relevance | [single score]점 |  | URL/source |
+| Competitive Landscape | [single score]점 |  | URL/source |
+| MoA Validity | [single score]점 |  | URL/source |
+| Platform Attractiveness | [single score]점 |  | URL/source |
+| Expansion Potential | [single score]점 |  | URL/source |
+| Data Maturity | [single score]점 |  | URL/source |
+| Marketability | [single score]점 | State method, score basis, and assessed global peak sales | URL/source |
+| **Total** | **[total]점** | Maximum total: 21점 |  |
 
 ---
 
@@ -4068,9 +7005,7 @@ Main line:
 What was checked:
 - Is the platform real and reproducible?
 - Is differentiation supported by data?
-- Does modality fit SKBP priorities?
-- Preferred modalities: small molecule, ASO, siRNA
-- Secondary modalities: AOC, antibody, biologic
+- Is the underlying technical system reusable across candidates, programs, or conditions?
 
 Evidence trail:
 - Cite platform page, paper, patent, data page, or company technical material.
@@ -4082,7 +7017,8 @@ Platform vs Data Maturity separation:
 - Platform Attractiveness evaluates platform-level technical advantage and may use evidence from other assets officially linked to the same platform.
 - Data Maturity evaluates only the assessed asset's stage-appropriate development evidence.
 - A 2-point Platform score requires at least one quantitative experimental result directly testing the claimed technical advantage against an appropriate comparator.
-- A 3-point Platform score requires First Patient Dosed for an asset officially linked to the platform. Before clinical dosing, 3 points require repeated quantitative advantage across multiple conditions plus credible external validation.
+- A 3-point Platform score requires the 2-point evidence plus repeated quantitative advantage across multiple conditions/assets, or First Patient Dosed for an officially linked platform asset.
+- First Patient Dosed alone is insufficient without the 2-point quantitative technical evidence.
 - IND clearance, trial registration, financing, patent, MOU, or partnership announcement alone is insufficient for 3 points.
 - The same endpoint must not be double-counted in Platform Attractiveness and Data Maturity.
 
@@ -4092,15 +7028,15 @@ Main line:
 
 What was checked:
 - Expansion beyond main indication
-- Same biology/platform reuse
-- Adjacent indications
-- Multiple assets from same platform
+- Asset-specific quantitative data in additional indications
+- Confirmed asset-specific preclinical, IND-enabling, or clinical development programs
 
 Evidence trail:
 - Cite pipeline page, platform page, company deck, publication, or press release.
 
 Investigation note:
 - Adjacent indication means outside the main indication, not merely a different wording of the same disease.
+- Future/planned opportunities, indication lists, platform-wide expansion, and patient subgroups are not separate active programs or indications.
 
 ### 4.6 Data Maturity
 Score:
@@ -4123,27 +7059,30 @@ Investigation note:
 ### 4.7 Marketability
 Score:
 Main line:
+Assessment method: calculation / external_forecast / both / insufficient_evidence
+Score basis type:
+Assessed global peak sales (million USD):
 
 What was checked:
-- Targetable addressable patient
-- Unrisked peak sales
-- Competition haircut
-- Pricing power adjustment
-- Expansion capacity adjustment
+- Internal A/B/C calculation, if performed
+- Reliable asset-specific external peak-sales forecast, if available
+- Competition haircut and pricing power without double counting
 
 Worksheet:
 
 | Step | What to fill | Evidence / assumption |
 |---|---|---|
-| A. TAP | Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate | patient/epidemiology source URL |
-| B. Unrisked Peak Sales | TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor; output in million USD | pricing source, penetration/share assumption |
-| Entry-order matrix | 3-player example: 1st ~50%, 2nd ~30%, 3rd ~20% | competitor count and likely entry order |
-| C. Obtainable Peak Sales | Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment; output in million USD | competition/price/expansion evidence |
-| Final score basis | 0 < weak market, 1 < USD 1,000M obtainable, 2 >= USD 1,000M, 3 >= USD 2,000M + high expansion | final judgment |
+| A. US TAP (calculation only) | US Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate | epidemiology source and prevalence/incidence rationale |
+| B. US Unrisked Peak Sales (calculation only) | US TAP x Benchmark Annualized Net Price x Peak Penetration x Treatment Duration Factor | price source and assumptions |
+| C. US Obtainable Peak Sales (calculation only) | US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment | competition and asset-specific pricing evidence |
+| Calculated Global (calculation only) | US Obtainable Peak Sales x 1.5 once | user-defined screening policy |
+| External Peak Sales Reference | source, date, geography, year, value/range, normalized global value, confidence | source URL |
+| Final score basis | 0 no reliable method; 1 < 1000; 2 >= 1000 and < 2000; 3 >= 2000 million USD | assessed global value |
 
 Investigation note:
 - Marketability is based on obtainable peak sales, not rNPV.
-- Always show TAP -> Unrisked Peak Sales -> Obtainable Peak Sales.
+- Show A/B/C only when calculation was performed; do not fabricate unavailable analysis.
+- When both methods exist, use calculation as the primary score basis and external forecast as a cross-check.
 - All sales outputs must be in million USD.
 
 ---
@@ -4186,18 +7125,20 @@ Use Markdown reference links:
 
 End the markdown code block after References.
 
-After the markdown code block, output the second copyable box as a JSON code block. Fill it with the same facts, scores, reasons, source URLs, competitor evidence, and marketability A/B/C assumptions used in the Markdown report. The user will paste the markdown block into the dashboard's left input box and the JSON block into the dashboard's right input box.
+After the markdown code block, output the second copyable box as a JSON code block. Fill it with the same facts, scores, reasons, source URLs, competitor evidence, and marketability A/B/C assumptions used in the Markdown report. The user will paste the entire response once into the dashboard, which will automatically split the first Markdown block and the second JSON block. Do not add any prose outside those two blocks.
 
 \`\`\`json
 {
   "meta": {
     "schema_version": "3.2",
+    "instruction_version": "3.3",
+    "review_type": "full_scout",
     "generated_at": "YYYY-MM-DD",
     "language": "ko",
     "analyst_role": "[OIT] PreC Pipeline Shortlister",
     "output_format": ["markdown_report", "json"],
     "output_filename_base": "Company_Asset_YYYYMMDD",
-    "rubric_version": "3.2",
+    "rubric_version": "3.3",
     "rubric_author": "kate"
   },
   "input": {
@@ -4211,7 +7152,7 @@ After the markdown code block, output the second copyable box as a JSON code blo
     "raw_markdown": "",
     "source_format": "gpt_markdown_report",
     "parser_status": "gpt_structured_output",
-    "parser_note": "Markdown report and JSON were generated together from the same evidence set."
+    "parser_note": "GPT instruction 2 Full Scout v3.3 output using schema v3.2; Markdown report and JSON were generated together from the same evidence set."
   },
   "company_profile": {
     "company_name": "",
@@ -4220,6 +7161,7 @@ After the markdown code block, output the second copyable box as a JSON code blo
     "country": "",
     "headquarters": "",
     "website": "",
+    "founded_year": null,
     "company_stage": "",
     "ownership_status": "",
     "focus_areas": [],
@@ -4230,38 +7172,30 @@ After the markdown code block, output the second copyable box as a JSON code blo
     "notes": ""
   },
   "json_summary": {
-    "company": "",
+    "company": "Unknown",
     "asset_name": "",
-    "target": "",
-    "theme": "E/I Balance | Neuroimmune | N/A | Unknown",
-    "cluster": "",
+    "target": "Unknown",
+    "theme": "Unknown",
+    "cluster": "Unknown",
     "target_relevance_score": 0,
-    "one_line_summary": "",
-    "company_country": ""
+    "one_line_summary": "Asset-specific evidence has not yet been established.",
+    "company_country": "Unknown"
   },
   "structured_table": {
-    "company": "",
+    "company": "Unknown",
     "asset_name": "",
-    "target": "",
-    "moa": "",
-    "modality_platform": "",
-    "main_indication": "",
-    "indication": "",
-    "development_stage": "",
-    "company_country": "",
-    "sources": [
-      {
-        "source_title": "",
-        "source_type": "official_company | publication | clinical_trial_registry | market | news | other",
-        "source_url": "",
-        "reliability": "high | medium | low",
-        "evidence_summary": ""
-      }
-    ]
+    "target": "Unknown",
+    "moa": "Unknown",
+    "modality_platform": "Unknown",
+    "main_indication": "Unknown",
+    "indication": "Unknown",
+    "development_stage": "Unknown",
+    "company_country": "Unknown",
+    "sources": []
   },
   "hard_filter": {
-    "status": "PASS | FAIL | REVIEW",
-    "reason": "",
+    "status": "FAIL",
+    "reason": "Default template state: replace with the evidence-based Full Scout decision.",
     "flags": []
   },
   "scoring": {
@@ -4349,11 +7283,18 @@ After the markdown code block, output the second copyable box as a JSON code blo
         "score": 0,
         "evidence_type": "E0_not_found_or_not_assessable",
         "evidence_type_reason": "",
-        "main_line_summary": "Must explicitly summarize A. TAP, B. Unrisked Peak Sales, and C. Obtainable Peak Sales.",
-        "what_was_checked": ["TAP", "Unrisked Peak Sales", "Entry-order share assumption", "Competition haircut", "Pricing power", "Expansion capacity"],
+        "main_line_summary": "State the assessment method, score basis, and assessed global peak sales.",
+        "what_was_checked": ["Internal calculation", "External peak-sales forecast", "Competition haircut", "Pricing power"],
+        "assessment_method": "insufficient_evidence",
+        "score_basis_type": "insufficient_evidence",
+        "assessed_global_peak_sales_musd": null,
+        "calculation_status": "not_performed",
+        "calculated_global_obtainable_peak_sales_musd": null,
+        "external_peak_sales_references": [],
+        "external_normalized_global_peak_sales_musd": null,
         "calculation": {
-          "commercial_rationale_status": "established",
-          "commercial_rationale_failure_reason": null,
+          "commercial_rationale_status": "insufficient_evidence",
+          "commercial_rationale_failure_reason": "No reliable internal calculation or asset-specific external peak-sales forecast was established.",
           "A_targetable_addressable_patient": {
             "total_patient_pool": null,
             "diagnosis_rate": null,
@@ -4383,9 +7324,10 @@ After the markdown code block, output the second copyable box as a JSON code blo
             "unrisked_peak_sales": null,
             "competition_haircut": null,
             "pricing_power_adjustment": null,
-            "expansion_capacity_adjustment": null,
+            "expansion_capacity_adjustment": 1.0,
+            "expansion_capacity_adjustment_status": "deprecated_fixed_at_1.0_not_used",
             "sales_unit": "million USD",
-            "formula": "Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment; output in million USD",
+            "formula": "US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment; output in million USD",
             "obtainable_peak_sales": null,
             "evidence_sources": []
           }
@@ -4399,6 +7341,12 @@ After the markdown code block, output the second copyable box as a JSON code blo
     }
   },
   "competitive_analysis": {
+    "competitive_density": "Unknown",
+    "competitive_search_complete": false,
+    "search_scope_checked": [],
+    "search_limitations": [],
+    "direct_competitors": [],
+    "broader_competitors": [],
     "similarity_summary": {
       "similar_pipeline_count": 0,
       "high_similarity_count": 0,
@@ -4406,28 +7354,20 @@ After the markdown code block, output the second copyable box as a JSON code blo
       "low_similarity_count": 0,
       "summary": ""
     },
-    "competitor_table": [
-      {
-        "competitor_asset": "",
-        "company": "",
-        "modality": "",
-        "target_or_moa": "",
-        "stage": "",
-        "similarity_level": "high | medium | low",
-        "why_it_matters": "",
-        "source_url": ""
-      }
-    ],
-    "similar_pipelines": []
+    "competitor_table": [],
+    "similar_pipelines": [],
+    "differentiation_points": [],
+    "analysis_summary": ""
   },
   "validation": {
     "cross_checked_facts": [],
     "uncertain_points": [],
+    "attachment_evidence_registry": [],
     "source_registry": []
   },
   "final_insight": {
     "one_line_summary": "",
-    "recommendation": "Shortlist | Watch | Deprioritize",
+    "recommendation": "Deprioritize",
     "most_important_diligence_question": ""
   },
   "obsidian": {
@@ -4436,199 +7376,25 @@ After the markdown code block, output the second copyable box as a JSON code blo
     "aliases": []
   }
 }
-\`\`\``;
+\`\`\`
+
+Final validation before output:
+- Keep every displayed version unchanged: schema 3.2, instruction 3.3, rubric 3.3.
+- total_score equals the sum of all seven integer criterion scores.
+- Apply PASS >= 15 plus TR/MoA/Data >= 2, verified identity, and confirmed active program; apply identity and lifecycle FAIL rules.
+- Do not infer Competitive Landscape 3 from no competitors; record search sufficiency, scope, and limitations.
+- Keep Platform and Expansion separate; accept preclinical, IND-enabling, or clinical programs for Expansion 3, but not plans or indication lists.
+- Permit Marketability from calculation or a reliable external forecast alone. Do not double-count benchmark price and pricing power inputs.
+- Exclude Expansion Capacity and sensitivity from calculation. Apply x1.5 exactly once to completed US calculation or US external forecast, never to an already-Global forecast.
+- Markdown and JSON use identical scores, numeric values, method, and score basis.
+- No conflicting legacy rule or unresolved template placeholder remains.
+
+Remember: output only one markdown fenced code block followed by one JSON fenced code block, with no prose outside them.`;
 }
 
 function buildGptInstructionPromptCompact() {
-  return `You are an expert biotech pipeline scout for SKBP Pipeline Finder.
-
-Mission:
-Run Full Scout v3.2 for one biotech/pharma pipeline asset. Produce exactly two fenced code blocks: first markdown, second JSON. Output language: Korean, with English allowed for scientific terms.
-
-Input:
-Company: [COMPANY_NAME]
-Asset / pipeline: [ASSET_NAME]
-
-Identity Gate:
-- First verify whether this is a real biotech/pharma pipeline asset using credible public sources.
-- Acceptable sources: official company/pipeline page, clinical trial registry, regulatory source, peer-reviewed paper, company deck/presentation, reputable biotech news, patent/source linking asset to target or indication.
-- If asset identity cannot be linked to company + target/MoA + indication/source, stop early as N/A. Do not score, do not build competitor landscape, do not estimate marketability.
-
-Required output:
-1. Markdown code block with the report.
-2. JSON code block with the same facts, scores, URLs, rationale, and marketability assumptions.
-3. No prose outside the two code blocks.
-4. JSON must be valid: no comments, no trailing commas.
-
-Markdown report structure:
-# [Company] Pipeline Scout Report: **[Asset]**
-중요: Start with one sentence explaining the filter/recommendation rationale, e.g. why PASS / REVIEW / FAIL or why stage/ownership/source uncertainty matters.
-
-## 1) Company Profile
-Company, legal name/aliases, country, HQ, website, company type/stage, focus areas, platform, financing/partnership, lead pipeline summary.
-
-## 2) Pipeline Snapshot
-Company, asset, target, Theme / Cluster, MoA, modality/platform, indication, stage, key data.
-
-## 3) Scorecard Summary
-Table: Target Relevance, Competitive Landscape, MoA Validity, Platform Attractiveness, Expansion Potential, Data Maturity, Marketability, Total.
-
-## 4) Criterion Details
-For each criterion include: Score, Evidence Type, Main line, What was checked, Evidence trail, Investigation note, Why not higher, Uncertain points, Source URLs.
-
-## 5) Validation Notes
-Cross-checked facts, uncertain points, search log.
-
-## 6) Final Take
-One-line summary, recommendation, most important diligence question.
-
-## References
-Use Markdown reference links with actual URLs.
-
-Scoring v3.2:
-- Score each criterion independently as one integer: 0, 1, 2, or 3. No ranges.
-- Evidence Type must be one of:
-  E0_not_found_or_not_assessable
-  E1_company_claim_or_scientific_rationale_only
-  E2_indirect_or_class_level_evidence
-  E3_asset_specific_preclinical_or_technical_evidence
-  E4_asset_specific_clinical_evidence
-- PASS: Total >= 14, Target Relevance >= 3, MoA >= 2, Data Maturity >= 2, and no hard blocker.
-- REVIEW: Total 9-13, or score looks high but stage / rights / asset identity / source uncertainty remains.
-- FAIL: Total <= 8, or Target Relevance <= 1, or no SKBP Theme / Cluster fit.
-
-Criterion intent:
-1. Target Relevance: target/disease biology fit to SKBP E/I Balance or Neuroimmune theme. Direct target-level fit matters more than broad CNS label.
-2. Competitive Landscape: same indication, same target/MoA competitors, front-runners, differentiation, similarity level.
-3. MoA Validity: biological plausibility, functional evidence, class validation, asset-specific validation, human PoC if available.
-4. Platform Attractiveness: modality/platform fit, reproducibility, differentiation, data support. Preferred: small molecule, ASO, siRNA.
-5. Expansion Potential: adjacent indications, same biology/platform reuse, follow-on pipeline logic.
-6. Data Maturity: stage-appropriate asset-specific evidence. Preclinical needs experimental readout; clinical needs safety/efficacy/biomarker evidence.
-7. Marketability: show A/B/C and score by obtainable peak sales: 0 weak/not calculable, 1 < USD 1,000M, 2 >= USD 1,000M, 3 >= USD 2,000M plus strong expansion/pricing/differentiation.
-
-Marketability A/B/C:
-A. TAP = Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate
-B. Unrisked Peak Sales = TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor
-C. Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment
-Sales output unit = million USD. Store JSON sales numbers as numeric million USD values.
-
-Controlled vocabulary for dashboard:
-- For an identity-verified asset, use Unknown (never N/A) when country, development stage, modality, main indication, target, or another factual field cannot be established from public sources. N/A is reserved for identity-gate failure, except that Theme and Cluster are both N/A when the asset is confirmed outside SKBP scope.
-- company_country: use one canonical label such as China, Republic of Korea, United States, Japan, Europe/UK, Taiwan, Singapore, Canada, Australia, Israel, or Unknown.
-- development_stage: Hit discovery, Lead Selection, Lead Optimization, IND-enabling, IND, Phase 1, Phase 1/2, Phase 2, Phase 2/3, Phase 3, Registration, Approved / marketed, Discontinued / inactive, or Unknown.
-- modality_platform: Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Other, or Unknown.
-- Map synonyms: P1/Ph1/FIH/Phase I -> Phase 1; P2/Ph2/Phase II -> Phase 2; preclinical/IND prep -> IND-enabling when appropriate.
-- main_indication: use one canonical disease bucket; put detailed wording in indication.
-
-N/A output:
-If identity gate fails, output short markdown and short JSON only. Set source_report.parser_status = "asset_identity_not_verified", hard_filter.status = "FAIL", scoring.total_score = 0, final_insight.recommendation = "Deprioritize".
-
-JSON requirements:
-Use this top-level shape and fill all fields. Use [] for missing lists and ""/null for unknown values. Every score criterion must include the same required field names.
-
-\`\`\`json
-{
-  "meta": {
-    "schema_version": "3.2",
-    "generated_at": "YYYY-MM-DD",
-    "language": "ko",
-    "analyst_role": "[OIT] PreC Pipeline Shortlister",
-    "output_format": ["markdown_report", "json"],
-    "output_filename_base": "Company_Asset_YYYYMMDD",
-    "rubric_version": "3.2",
-    "rubric_author": "kate"
-  },
-  "input": {
-    "company_input": "[COMPANY_NAME]",
-    "asset_input": "[ASSET_NAME]",
-    "source_text": null,
-    "source_type": "web research",
-    "notes": ""
-  },
-  "source_report": {
-    "raw_markdown": "",
-    "source_format": "gpt_markdown_report",
-    "parser_status": "gpt_structured_output",
-    "parser_note": "Markdown report and JSON were generated together from the same evidence set."
-  },
-  "company_profile": {
-    "company_name": "",
-    "legal_name": "",
-    "aliases": [],
-    "country": "",
-    "headquarters": "",
-    "website": "",
-    "company_stage": "",
-    "ownership_status": "",
-    "focus_areas": [],
-    "platform_summary": "",
-    "lead_pipeline_summary": "",
-    "financing_or_partnership_signals": [],
-    "official_source_urls": [],
-    "notes": ""
-  },
-  "json_summary": {
-    "company": "",
-    "asset_name": "",
-    "target": "",
-    "theme": "E/I Balance | Neuroimmune | N/A | Unknown",
-    "cluster": "",
-    "target_relevance_score": 0,
-    "one_line_summary": "",
-    "company_country": ""
-  },
-  "structured_table": {
-    "company": "",
-    "asset_name": "",
-    "target": "",
-    "moa": "",
-    "modality_platform": "",
-    "main_indication": "",
-    "indication": "",
-    "development_stage": "",
-    "company_country": "",
-    "sources": []
-  },
-  "hard_filter": {
-    "status": "PASS | REVIEW | FAIL",
-    "reason": "",
-    "flags": []
-  },
-  "scoring": {
-    "total_score": 0,
-    "max_score": 21,
-    "criteria": {
-      "target_relevance": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": [], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "uncertain_points": []},
-      "competitive_landscape": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": [], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "uncertain_points": []},
-      "moa_validity": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": [], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "uncertain_points": []},
-      "platform_attractiveness": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": [], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "uncertain_points": []},
-      "expansion_potential": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": [], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "uncertain_points": []},
-      "data_maturity": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": [], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "claimed_development_stage": "", "expected_data_for_stage": [], "visible_asset_specific_data": [], "missing_data": [], "stage_data_alignment_judgment": "", "uncertain_points": []},
-      "marketability": {"score": 0, "evidence_type": "", "evidence_type_reason": "", "main_line_summary": "", "what_was_checked": ["TAP", "Unrisked Peak Sales", "Obtainable Peak Sales"], "evidence_trail": [], "evidence_sources": [], "investigation_note": "", "why_not_higher": "", "uncertain_points": [], "calculation": {"commercial_rationale_status": "established | not_established", "commercial_rationale_failure_reason": null, "A_targetable_addressable_patient": {"total_patient_pool": null, "diagnosis_rate": null, "eligibility_rate": null, "biomarker_positive_rate": null, "treatable_subgroup_rate": null, "formula": "TAP = Total Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate", "targetable_addressable_patient": null, "evidence_sources": []}, "B_unrisked_peak_sales": {"tap": null, "annual_net_price": null, "peak_penetration": null, "treatment_duration_factor": null, "sales_unit": "million USD", "entry_order_share_assumption": {"competitor_count": null, "expected_entry_order": null, "matrix_share_reference": ""}, "formula": "Unrisked Peak Sales = TAP x Annual Net Price x Peak Penetration x Treatment Duration Factor", "unrisked_peak_sales": null, "evidence_sources": []}, "C_obtainable_peak_sales": {"unrisked_peak_sales": null, "competition_haircut": null, "pricing_power_adjustment": null, "expansion_capacity_adjustment": null, "sales_unit": "million USD", "formula": "Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment", "obtainable_peak_sales": null, "evidence_sources": []}}}
-    }
-  },
-  "competitive_analysis": {
-    "competitive_density": "",
-    "similarity_summary": {"similar_pipeline_count": 0, "high_similarity_count": 0, "medium_similarity_count": 0, "low_similarity_count": 0},
-    "similar_pipelines": []
-  },
-  "validation": {
-    "cross_checked_facts": [],
-    "uncertain_points": [],
-    "source_registry": []
-  },
-  "final_insight": {
-    "one_line_summary": "",
-    "recommendation": "Shortlist | Watch | Deprioritize",
-    "most_important_diligence_question": ""
-  },
-  "obsidian": {"note_title": "Company Asset", "tags": ["pipeline", "skbp"], "aliases": []}
+  return buildGptInstructionPrompt();
 }
-\`\`\`
-
-Remember: final answer must be only the markdown code block and the JSON code block.`;
-}
-
 async function copyPromptToClipboard(kind = 'full') {
   const prompt = kind === 'triage' ? buildTriageInstructionPrompt() : buildGptInstructionPrompt();
   try {
@@ -4658,11 +7424,13 @@ function setPromptCopyFeedback(kind = 'full') {
 
   const label = button.querySelector('b');
   const idleLabel = kind === 'triage' ? '지침 1' : '지침 2';
-  const idleTooltip = kind === 'triage' ? TRIAGE_PROMPT_TOOLTIP : 'GPT full scout v3.2 지침을 복사합니다. triage에서 SELECT된 asset을 심층 검토할 때 사용합니다.';
+  const idleTooltip = kind === 'triage' ? TRIAGE_PROMPT_TOOLTIP : `GPT Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} 지침을 복사합니다. Triage에서 SELECT된 asset을 심층 검토할 때 사용합니다.`;
   if (label) {
     label.textContent = '복사됨';
   }
-  button.dataset.tooltip = kind === 'triage' ? 'GPT fast triage 지침을 복사했습니다.' : 'GPT full scout v3.2 지침을 복사했습니다.';
+  button.dataset.tooltip = kind === 'triage'
+    ? `GPT Fast Triage v${LATEST_TRIAGE_RUBRIC_VERSION} 지침을 복사했습니다.`
+    : `GPT Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} 지침을 복사했습니다.`;
 
   window.clearTimeout(promptCopyFeedbackTimer);
   promptCopyFeedbackTimer = window.setTimeout(() => {
@@ -4673,54 +7441,97 @@ function setPromptCopyFeedback(kind = 'full') {
   }, 1800);
 }
 
+const DESCENDING_FIRST_SORT_KEYS = new Set([
+  'targetScore',
+  'moaScore',
+  'dataScore',
+  'competitiveScore',
+  'platformScore',
+  'expansionScore',
+  'marketScore',
+  'totalScore'
+]);
+
 function sortByColumn(key) {
-  if (state.sortKey === key) {
-    state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
-  } else {
+  const firstDirection = DESCENDING_FIRST_SORT_KEYS.has(key) ? 'desc' : 'asc';
+
+  if (state.sortKey !== key || !state.sortDirection) {
     state.sortKey = key;
-    state.sortDirection = [
-      'targetScore',
-      'moaScore',
-      'dataScore',
-      'competitiveScore',
-      'platformScore',
-      'expansionScore',
-      'marketScore',
-      'totalScore'
-    ].includes(key)
-      ? 'desc'
-      : 'asc';
+    state.sortDirection = firstDirection;
+  } else if (state.sortDirection === firstDirection) {
+    state.sortDirection = firstDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    state.sortKey = null;
+    state.sortDirection = null;
   }
+  state.page = 1;
   renderTable();
+}
+
+const COMMON_SORT_KEYS = ['company', 'country', 'asset', 'modality', 'target', 'mainIndication', 'stage'];
+const SORT_KEYS_BY_MODE = {
+  triage: new Set([...COMMON_SORT_KEYS, 'filter1', 'targetScore', 'moaScore', 'dataScore', 'generatedAt']),
+  full: new Set([
+    ...COMMON_SORT_KEYS,
+    'filter2',
+    'targetScore',
+    'competitiveScore',
+    'moaScore',
+    'platformScore',
+    'expansionScore',
+    'dataScore',
+    'marketScore',
+    'totalScore'
+  ]),
+  focus: new Set([
+    ...COMMON_SORT_KEYS,
+    'filter2',
+    'focusTotalScore',
+    'filter3',
+    'inVivoStatus',
+    'inVitroStatus',
+    'admetCompleted',
+    'focusDueDate',
+    'focusAddedAt'
+  ])
+};
+
+function normalizeSortForMode(mode) {
+  if (!state.sortKey) return;
+  if (SORT_KEYS_BY_MODE[mode]?.has(state.sortKey)) return;
+  state.sortKey = mode === 'triage' ? 'targetScore' : mode === 'focus' ? 'focusAddedAt' : 'totalScore';
+  state.sortDirection = 'desc';
+}
+
+const TABLE_FILTER_STATE_KEYS = ['query', 'stage', 'theme', 'cluster', 'modality', 'indication', 'country', 'pass'];
+
+function captureModeFilters(mode = activeTableMode()) {
+  state.filtersByMode[mode] = Object.fromEntries(
+    TABLE_FILTER_STATE_KEYS.map((key) => [key, state[key]])
+  );
+}
+
+function restoreModeFilters(mode) {
+  Object.assign(state, state.filtersByMode[mode] || {});
+  if (elements.searchInput) elements.searchInput.value = state.query;
 }
 
 function setTableMode(mode) {
   const nextMode = mode === 'triage' ? 'triage' : mode === 'focus' ? 'focus' : 'full';
   if (state.tableMode === nextMode) return;
+  captureModeFilters(activeTableMode());
   state.tableMode = nextMode;
-  state.pass = 'all';
+  restoreModeFilters(nextMode);
   state.page = 1;
+  state.selectedIds.clear();
+  normalizeSortForMode(nextMode);
 
-  if (nextMode === 'triage' && ['filter2', 'competitiveScore', 'platformScore', 'expansionScore', 'marketScore', 'totalScore', 'focusAddedAt', 'focusDueDate'].includes(state.sortKey)) {
-    state.sortKey = 'targetScore';
-    state.sortDirection = 'desc';
-  }
-  if (nextMode === 'full' && state.sortKey === 'filter1') {
-    state.sortKey = 'totalScore';
-    state.sortDirection = 'desc';
-  }
-  if (nextMode === 'focus') {
-    state.sortKey = 'focusAddedAt';
-    state.sortDirection = 'desc';
-  }
-  if (nextMode === 'full' && ['focusAddedAt', 'focusDueDate'].includes(state.sortKey)) {
-    state.sortKey = 'totalScore';
-    state.sortDirection = 'desc';
-  }
+  const nextUrl = new URL(window.location.href);
+  nextUrl.searchParams.set('tab', nextMode);
+  window.history.replaceState(null, '', `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
 
   renderFilters();
-  renderTableTabs();
-  renderTable();
+  render();
   if (elements.criteriaDrawer.classList.contains('open')) updateCriteriaDrawerScope();
 }
 
@@ -4769,49 +7580,49 @@ function resetColumnWidth(event) {
 elements.searchInput.addEventListener('input', (event) => {
   state.query = event.target.value;
   state.page = 1;
-  renderTable();
-});
-
-elements.stageFilter.addEventListener('change', (event) => {
-  state.stage = event.target.value;
-  state.page = 1;
-  renderTable();
+  renderFilteredDashboard();
 });
 
 elements.themeFilter.addEventListener('change', (event) => {
   state.theme = event.target.value;
   state.page = 1;
-  renderTable();
+  renderFilteredDashboard();
 });
 
 elements.clusterFilter.addEventListener('change', (event) => {
   state.cluster = event.target.value;
   state.page = 1;
-  renderTable();
+  renderFilteredDashboard();
 });
 
 elements.modalityFilter.addEventListener('change', (event) => {
   state.modality = event.target.value;
   state.page = 1;
-  renderTable();
+  renderFilteredDashboard();
 });
 
 elements.countryFilter.addEventListener('change', (event) => {
   state.country = event.target.value;
   state.page = 1;
-  renderTable();
+  renderFilteredDashboard();
 });
 
 elements.indicationFilter.addEventListener('change', (event) => {
   state.indication = event.target.value;
   state.page = 1;
-  renderTable();
+  renderFilteredDashboard();
+});
+
+elements.stageFilter.addEventListener('change', (event) => {
+  state.stage = event.target.value;
+  state.page = 1;
+  renderFilteredDashboard();
 });
 
 elements.passFilter.addEventListener('change', (event) => {
   state.pass = event.target.value;
   state.page = 1;
-  renderTable();
+  renderFilteredDashboard();
 });
 
 elements.pageSizeSelect?.addEventListener('change', (event) => {
@@ -4856,12 +7667,20 @@ elements.pipelineTable.addEventListener('focusout', (event) => {
 });
 
 window.addEventListener('scroll', () => hideTargetContextTooltip(), true);
-window.addEventListener('resize', () => hideTargetContextTooltip());
+window.addEventListener('resize', () => {
+  hideTargetContextTooltip();
+  applyColumnWidths();
+});
 
 elements.pipelineTable.addEventListener('click', (event) => {
   const rubricRefresh = event.target.closest('[data-rubric-refresh]');
   if (rubricRefresh) {
     recalculateLatestRubric(rubricRefresh);
+    return;
+  }
+  const oiPartnershipRefresh = event.target.closest('[data-oi-partnership-refresh]');
+  if (oiPartnershipRefresh) {
+    recalculateLatestOiPartnership(oiPartnershipRefresh);
     return;
   }
   const focusAction = event.target.closest('[data-focus-action]');
@@ -5014,7 +7833,7 @@ elements.pipelineTableHead?.addEventListener('change', (event) => {
       state.selectedIds.delete(row.id);
     }
   });
-  renderTable();
+  renderFilteredDashboard();
 });
 
 elements.refreshButton.addEventListener('click', () => {
@@ -5023,6 +7842,8 @@ elements.refreshButton.addEventListener('click', () => {
     elements.saveStatus.textContent = error.message;
   });
 });
+
+elements.dataUploadShortcutButton?.addEventListener('click', scrollToDataUpload);
 
 elements.exportExcelButton.addEventListener('click', exportPipelineTable);
 elements.deleteSelectedButton.addEventListener('click', deleteSelectedRecords);
@@ -5037,10 +7858,35 @@ function goToRecordDetail(tabOrigin) {
     window.location.href = `/detail?id=${encodeURIComponent(item.dataset.recordId)}&tab=${tabOrigin}`;
   };
 }
-elements.priorityList?.addEventListener('click', goToRecordDetail('full'));
-elements.dueDateList?.addEventListener('click', goToRecordDetail('focus'));
+
+elements.workflowPriorityList?.addEventListener('click', (event) => {
+  const mode = activeTableMode();
+  goToRecordDetail(mode)(event);
+});
 elements.columnSettingsButton?.addEventListener('click', () => {
   elements.columnSettingsPanel.hidden = !elements.columnSettingsPanel.hidden;
+});
+
+function applyVisualDashboardHidden(hidden) {
+  if (elements.visualGrid) elements.visualGrid.classList.toggle('is-collapsed', hidden);
+  if (elements.visualDashboardToggleButton) {
+    elements.visualDashboardToggleButton.setAttribute('aria-expanded', String(!hidden));
+    elements.visualDashboardToggleButton.setAttribute(
+      'aria-label',
+      hidden ? '시각화 대시보드 펼치기' : '시각화 대시보드 접기'
+    );
+  }
+  if (elements.visualDashboardToggleLabel) {
+    elements.visualDashboardToggleLabel.textContent = hidden ? '펼치기' : '접기';
+  }
+}
+
+applyVisualDashboardHidden(localStorage.getItem(VISUAL_DASHBOARD_HIDDEN_KEY) === 'true');
+
+elements.visualDashboardToggleButton?.addEventListener('click', () => {
+  const hidden = !elements.visualGrid?.classList.contains('is-collapsed');
+  applyVisualDashboardHidden(hidden);
+  localStorage.setItem(VISUAL_DASHBOARD_HIDDEN_KEY, String(hidden));
 });
 elements.columnSettingsGrid?.addEventListener('change', (event) => {
   const checkbox = event.target.closest('input[type="checkbox"]');
@@ -5054,8 +7900,38 @@ elements.columnSettingsGrid?.addEventListener('change', (event) => {
   renderTable();
 });
 
+elements.resetFiltersButton?.addEventListener('click', () => {
+  state.query = '';
+  state.modality = 'all';
+  state.theme = 'all';
+  state.cluster = 'all';
+  state.country = 'all';
+  state.indication = 'all';
+  state.stage = 'all';
+  state.pass = 'all';
+  state.page = 1;
+  elements.searchInput.value = '';
+  captureModeFilters();
+  renderFilters();
+  renderFilteredDashboard();
+});
+
 elements.pipelineTableTabs?.forEach((tab) => {
   tab.addEventListener('click', () => setTableMode(tab.dataset.tableMode));
+  tab.addEventListener('keydown', (event) => {
+    const tabs = [...elements.pipelineTableTabs];
+    const currentIndex = tabs.indexOf(tab);
+    let nextIndex = currentIndex;
+    if (event.key === 'ArrowRight') nextIndex = (currentIndex + 1) % tabs.length;
+    else if (event.key === 'ArrowLeft') nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    else if (event.key === 'Home') nextIndex = 0;
+    else if (event.key === 'End') nextIndex = tabs.length - 1;
+    else return;
+    event.preventDefault();
+    const nextTab = tabs[nextIndex];
+    setTableMode(nextTab.dataset.tableMode);
+    nextTab.focus();
+  });
 });
 
 elements.agentSessionSelect?.addEventListener('change', (event) => {
@@ -5070,9 +7946,47 @@ elements.agentNewSessionButton?.addEventListener('click', () => {
 
 elements.agentDeleteSessionButton?.addEventListener('click', deleteActiveAgentSession);
 
-elements.aiDrawerButton.addEventListener('click', openAiDrawer);
-elements.aiDrawerClose.addEventListener('click', closeAiDrawer);
-elements.aiBackdrop.addEventListener('click', closeAiDrawer);
+elements.agentMessages?.addEventListener('click', (event) => {
+  const actionButton = event.target.closest('[data-agent-action]');
+  if (!actionButton) return;
+  const bubble = actionButton.closest('.agent-message.assistant');
+  const text = agentMessageText(bubble);
+  if (actionButton.dataset.agentAction === 'copy') copyAgentResponse(text, actionButton);
+  if (actionButton.dataset.agentAction === 'expand') openAgentResponseModal(text, actionButton);
+});
+
+elements.agentResponseModalClose?.addEventListener('click', closeAgentResponseModal);
+elements.agentResponseModal?.addEventListener('click', (event) => {
+  if (event.target === elements.agentResponseModal) closeAgentResponseModal();
+});
+elements.agentResponseModalCopy?.addEventListener('click', async () => {
+  await copyAgentResponse(activeAgentResponseText, elements.agentResponseModalCopy);
+  elements.agentResponseModalStatus.textContent = '클립보드에 복사했습니다.';
+});
+document.addEventListener('keydown', (event) => {
+  if (elements.agentResponseModal?.hidden) return;
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    event.stopPropagation();
+    closeAgentResponseModal();
+    return;
+  }
+  if (event.key !== 'Tab') return;
+  const focusable = [...elements.agentResponseModal.querySelectorAll(
+    'button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )].filter((element) => !element.hidden && element.getClientRects().length);
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+});
+
 elements.criteriaDrawerButton.addEventListener('click', openCriteriaDrawer);
 elements.criteriaDrawerClose.addEventListener('click', closeCriteriaDrawer);
 elements.criteriaBackdrop.addEventListener('click', closeCriteriaDrawer);
@@ -5098,6 +8012,17 @@ elements.reviewerIdentityInput?.addEventListener('keydown', (event) => {
     closeReviewerIdentityModal(null);
   }
 });
+elements.dataReuploadConfirm?.addEventListener('click', () => closeDataReuploadModal(true));
+elements.dataReuploadKeepNew?.addEventListener('click', () => closeDataReuploadModal(false));
+elements.dataReuploadModal?.addEventListener('click', (event) => {
+  if (event.target === elements.dataReuploadModal) closeDataReuploadModal(null);
+});
+elements.dataReuploadModal?.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    closeDataReuploadModal(null);
+  }
+});
 
 document.querySelectorAll('[data-agent-prompt]').forEach((button) => {
   button.addEventListener('click', () => {
@@ -5114,15 +8039,19 @@ elements.agentInput.addEventListener('keydown', (event) => {
 
 elements.agentForm.addEventListener('submit', async (event) => {
   event.preventDefault();
+  if (activeTableMode() === 'triage') return;
   const question = elements.agentInput.value.trim();
   if (!question) return;
   elements.agentInput.value = '';
   retitleActiveSessionFromQuestion(question);
   addAgentMessage('user', question);
   const submitButton = elements.agentForm.querySelector('button[type="submit"]');
+  const submitButtonContent = submitButton?.innerHTML;
   if (submitButton) {
     submitButton.disabled = true;
-    submitButton.textContent = '답변 중';
+    submitButton.setAttribute('aria-busy', 'true');
+    submitButton.setAttribute('aria-label', '답변 생성 중');
+    submitButton.innerHTML = '<svg class="agent-send-progress" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /></svg>';
   }
   const responseBubble = addAgentMessage('assistant', '질문 분석 중...', { pending: true });
   try {
@@ -5132,16 +8061,17 @@ elements.agentForm.addEventListener('submit', async (event) => {
   } finally {
     if (submitButton) {
       submitButton.disabled = false;
-      submitButton.textContent = '질문';
+      submitButton.removeAttribute('aria-busy');
+      submitButton.setAttribute('aria-label', '질문 전송');
+      submitButton.innerHTML = submitButtonContent;
     }
   }
 });
 
 window.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && elements.aiDrawer.classList.contains('open')) {
-    closeAiDrawer();
-  }
   if (event.key === 'Escape' && elements.criteriaDrawer.classList.contains('open')) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
     closeCriteriaDrawer();
   }
 });
@@ -5149,9 +8079,63 @@ window.addEventListener('keydown', (event) => {
 elements.previewInputButton.addEventListener('click', previewPastedReportParsing);
 elements.saveJsonButton.addEventListener('click', saveStructuredJsonInput);
 elements.clearJsonButton.addEventListener('click', () => {
-  elements.rawReportInput.value = '';
-  elements.structuredJsonInput.value = '';
-  elements.saveStatus.textContent = '원문 + JSON 입력 대기';
+  elements.gptResponseInput.value = '';
+  state.dataUploadReview = null;
+  elements.previewInputButton.disabled = true;
+  elements.saveJsonButton.disabled = true;
+  setDataUploadStatus('waiting');
+  if (elements.inputValidationResults) {
+    elements.inputValidationResults.hidden = true;
+    elements.inputValidationResults.innerHTML = '';
+  }
+});
+elements.gptResponseInput?.addEventListener('input', () => {
+  const hasInput = Boolean(elements.gptResponseInput.value.trim());
+  state.dataUploadReview = null;
+  elements.previewInputButton.disabled = !hasInput;
+  elements.saveJsonButton.disabled = true;
+  setDataUploadStatus(hasInput ? 'review-needed' : 'waiting');
+  if (elements.inputValidationResults) {
+    elements.inputValidationResults.hidden = true;
+    elements.inputValidationResults.innerHTML = '';
+  }
+});
+elements.dataUploadGuideSteps?.addEventListener('click', async (event) => {
+  const button = event.target.closest('[data-upload-guide-action]');
+  if (!button) return;
+  const action = button.dataset.uploadGuideAction;
+  if (action === 'focus-input') {
+    scrollToDataUpload();
+    return;
+  }
+  if (action === 'review') {
+    if (elements.previewInputButton.disabled) {
+      elements.gptResponseInput.focus();
+      return;
+    }
+    elements.previewInputButton.click();
+    return;
+  }
+  if (action === 'save') {
+    if (elements.saveJsonButton.disabled) {
+      (elements.previewInputButton.disabled ? elements.gptResponseInput : elements.previewInputButton).focus();
+      return;
+    }
+    elements.saveJsonButton.click();
+    return;
+  }
+  const kind = button.dataset.promptKind === 'triage' ? 'triage' : 'full';
+  const label = button.querySelector('b');
+  const idleLabel = kind === 'triage' ? '지침 1' : '지침 2';
+  button.disabled = true;
+  await copyPromptToClipboard(kind);
+  button.classList.add('is-copied');
+  if (label) label.textContent = '복사됨';
+  window.setTimeout(() => {
+    button.disabled = false;
+    button.classList.remove('is-copied');
+    if (label) label.textContent = idleLabel;
+  }, 1800);
 });
 if (elements.copyTriagePromptTopButton) {
   elements.copyTriagePromptTopButton.dataset.tooltip = TRIAGE_PROMPT_TOOLTIP;
@@ -5159,14 +8143,28 @@ if (elements.copyTriagePromptTopButton) {
 if (elements.copyPromptTopButton) {
   const label = elements.copyPromptTopButton.querySelector('b');
   if (label) label.textContent = '지침 2';
-  elements.copyPromptTopButton.dataset.tooltip = 'GPT full scout v3.2 지침을 복사합니다. triage에서 SELECT된 asset을 심층 검토할 때 사용합니다.';
+  elements.copyPromptTopButton.dataset.tooltip = PROMPT_TOOLTIP;
 }
 elements.copyPromptButton?.addEventListener('click', () => copyPromptToClipboard('full'));
 elements.copyTriagePromptTopButton?.addEventListener('click', () => copyPromptToClipboard('triage'));
 elements.copyPromptTopButton?.addEventListener('click', () => copyPromptToClipboard('full'));
 
-setupResizableDrawer(elements.aiDrawer, 'skbp.dashboard.aiDrawerWidth', 560);
+floatingAgentController = initFloatingAgent({
+  launcher: elements.aiDrawerButton,
+  panel: elements.aiDrawer,
+  closeButton: elements.aiDrawerClose,
+  minimizeButton: elements.aiDrawer.querySelector('[data-floating-agent-minimize]'),
+  maximizeButton: elements.aiDrawer.querySelector('[data-floating-agent-maximize]'),
+  dragHandle: elements.aiDrawer.querySelector('[data-floating-agent-drag]'),
+  resizeHandle: elements.aiDrawer.querySelector('[data-floating-agent-resize]'),
+  storageKey: 'skbp.dashboard.floatingAgentGeometry.v1',
+  initialWidth: 560,
+  initialHeight: 680,
+  focusTarget: elements.agentInput
+});
+renderAgentIdentity();
 setupThemeToggle();
+initAuthUI();
 initializeAgentSessions();
 
 loadRecords().catch((error) => {

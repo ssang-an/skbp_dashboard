@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/clinical_trial_registry"
-created_at: "2026-07-29"
-updated_at: "2026-07-29"
+created_at: "2026-08-02"
+updated_at: "2026-08-02"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | clinical_trial_registry |
 | Reliability | high |
 | URL | https://www.chinadrugtrials.org.cn/clinicaltrials.searchlist.dhtml?keywords=CTR20253838 |
-| Accessed / generated date | 2026-07-29 |
+| Accessed / generated date | 2026-08-02 |
 
 ## Evidence Summary
 

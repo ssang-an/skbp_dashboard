@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-07-29T00:20:08"
+generated_at: "2026-08-02T02:42:40"
 record_id: "NeuShen_Therapeutics_NS-041_20260623"
 company: "NeuShen Therapeutics"
 country: "China / United States operations"
@@ -320,9 +320,172 @@ High-similarity same-target competitors include azetukalner/XEN1101, opakalim/BH
       "is_tracked": true,
       "added_at": "2026-07-28T14:34:58.108835+00:00",
       "user_comment": "",
-      "due_date": "",
-      "updated_at": "2026-07-28T14:34:58.108835+00:00",
-      "updated_source": "dashboard_tab3"
+      "due_date": "2026-08-03",
+      "updated_at": "2026-08-01T11:29:21.213904+00:00",
+      "updated_source": "dashboard_tab3",
+      "updated_by": "정주원",
+      "in_vivo_status": "X",
+      "in_vivo_status_source": "auto",
+      "in_vitro_status": "X",
+      "in_vitro_status_source": "auto",
+      "admet_completed": null,
+      "admet_completed_source": "auto",
+      "partnership_auto_suggestion": "n_a",
+      "partnership_auto_note": "대상 적응증 아님",
+      "partnership_auto_evidence_sources": [
+        "Tab3에 이미 입력된 구조화 데이터"
+      ],
+      "partnership_classification_criteria_version": "1.0",
+      "partnership_type": "n_a",
+      "partnership_note": "대상 적응증 아님",
+      "partnership_evidence_sources": [
+        "Tab3에 이미 입력된 구조화 데이터"
+      ],
+      "partnership_classification_source": "auto",
+      "partnership_classification_status": "auto_classified",
+      "partnership_classified_at": "2026-07-29T01:32:22.264711+00:00"
+    },
+    "edit_history": [
+      {
+        "changed_at": "2026-07-28T20:45:14.404630+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.user_comment",
+        "previous_value": "",
+        "new_value": "경쟁사 임상 결과 확인 필요"
+      },
+      {
+        "changed_at": "2026-07-28T20:45:51.415830+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.due_date",
+        "previous_value": "",
+        "new_value": "0008-08-26"
+      },
+      {
+        "changed_at": "2026-07-28T20:46:05.205912+00:00",
+        "actor_ip": "127.0.0.1",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.due_date",
+        "previous_value": "0008-08-26",
+        "new_value": "2026-08-15"
+      },
+      {
+        "changed_at": "2026-08-01T11:29:21.214132+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.due_date",
+        "previous_value": "",
+        "new_value": "2026-08-03"
+      },
+      {
+        "changed_at": "2026-08-01T12:28:34.578476+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_qualitative_review_criterion_import",
+        "field": "qualitative_review.custom_criteria",
+        "previous_value": null,
+        "new_value": "약물의 가치 시장성 조사"
+      },
+      {
+        "changed_at": "2026-08-01T12:28:43.676399+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_qualitative_review_ai_generate",
+        "field": "qualitative_review.custom_b21545c191",
+        "previous_value": null,
+        "new_value": "시장성 측면에서 NS-041은 1/3점으로 낮게 평가되며, 동일 KCNQ2/3 타깃의 후기 단계 경쟁자(Xenon azetukalner, Biohaven opakalim)가 앞서 있어 후발 진입자로서 차별화 근거가 부족해 보입니다. 보고서상 TAP 810,000명, unrisked peak sales 1,458백만 달러, obtainable peak sales 981백만 달러로 추정되지만, 환자 효능 데이터가 미공개라 해당 매출 추정의 신뢰성은 제한적입니다. 가격·급여 조건이나 시장 접근성 관련 근거는 현재 자료에 없어 추가 확인이 필요합니다."
+      },
+      {
+        "changed_at": "2026-08-01T12:28:56.434040+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_qualitative_review_ai_generate",
+        "field": "qualitative_review.efficacy",
+        "previous_value": null,
+        "new_value": "NS-041의 환자 대상 efficacy 데이터는 아직 공개되지 않았으며, 정상군 대비 회복율이나 SoC 대비 통계적 유의성 있는 개선 우위를 확인할 수 있는 근거가 없습니다. 현재까지 공개된 정보는 전임상 동물 모델에서의 항경련 효능과 Phase I 안전성/PK 자료에 국한되어 있습니다. 따라서 이 기준을 평가하기 위해서는 환자 대상 임상 결과와 SoC 대비 비교 데이터가 추가로 필요합니다."
+      },
+      {
+        "changed_at": "2026-08-01T12:29:05.834754+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_qualitative_review_ai_generate",
+        "field": "qualitative_review.commercial_appeal",
+        "previous_value": null,
+        "new_value": "동일 KCNQ2/3 타겟의 후기 단계 경쟁자(Xenon, Biohaven)가 존재하여 NS-041의 TPP 매력도는 낮으며, 환자 효능 데이터 부재로 시장 차별성을 입증할 근거가 충분하지 않습니다. Focal onset seizure 시장에서 기존 승인약물 및 동일 MoA 파이프라인이 이미 자리잡고 있어 Unmet Need 충족 측면에서도 제한적입니다. Greater China 권리가 Livzon에 라이선스된 점과 ex-China 전략의 불확실성도 파트너사 관점에서 매력도를 낮추는 요인입니다."
+      },
+      {
+        "changed_at": "2026-08-01T12:29:31.541853+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_qualitative_review_ai_generate",
+        "field": "qualitative_review.execution_risk",
+        "previous_value": null,
+        "new_value": "NS-041의 임상/안전성/CMC 진행과 관련하여, 환자 대상 효능 데이터가 아직 공개되지 않아 주요 리스크로 판단됩니다. Phase I SAD/MAD 안전성 및 PK 데이터는 press release 수준으로만 확인되며, 전체 임상 패키지에 대한 상세 검토가 필요합니다. 동일 타겟 경쟁사(Xenon, Biohaven) 대비 차별화된 안전성 및 효능 우위를 입증할 자료가 부재하여, 추가 DD를 통해 NS-041의 differentiation 근거를 확인해야 합니다. CMC 측면에서 oral small molecule modality는 적합하나, platform 수준의 재현성 및 제조 관련 공개 정보가 제한적이므로 이에 대한 검토도 필요합니다."
+      }
+    ],
+    "last_edited_at": "2026-08-01T12:29:31.541853+00:00",
+    "last_edited_by": "127.0.0.1",
+    "qualitative_review": {
+      "custom_criteria": [
+        {
+          "id": "custom_b21545c191",
+          "label": "약물의 가치 시장성 조사",
+          "description": "이 약물이 시장에서 얼마나 가치있는지 판단 지표",
+          "created_by": "정주원",
+          "created_at": "2026-08-01T12:28:34.578412+00:00",
+          "imported_from_record_id": "Shaperon_HY209_NuCerin_20260622",
+          "imported_from_criterion_id": "custom_69aa2632e6"
+        }
+      ],
+      "updated_at": "2026-08-01T12:29:31.541771+00:00",
+      "criteria": {
+        "custom_b21545c191": {
+          "entries": [
+            {
+              "id": "89af45a8c0fb42849f7ab101136bec4b",
+              "author": "AI",
+              "body": "시장성 측면에서 NS-041은 1/3점으로 낮게 평가되며, 동일 KCNQ2/3 타깃의 후기 단계 경쟁자(Xenon azetukalner, Biohaven opakalim)가 앞서 있어 후발 진입자로서 차별화 근거가 부족해 보입니다. 보고서상 TAP 810,000명, unrisked peak sales 1,458백만 달러, obtainable peak sales 981백만 달러로 추정되지만, 환자 효능 데이터가 미공개라 해당 매출 추정의 신뢰성은 제한적입니다. 가격·급여 조건이나 시장 접근성 관련 근거는 현재 자료에 없어 추가 확인이 필요합니다.",
+              "is_ai": true,
+              "created_at": "2026-08-01T12:28:43.676335+00:00"
+            }
+          ]
+        },
+        "efficacy": {
+          "entries": [
+            {
+              "id": "5ee68593ee0247e59f833cb016c85b8d",
+              "author": "AI",
+              "body": "NS-041의 환자 대상 efficacy 데이터는 아직 공개되지 않았으며, 정상군 대비 회복율이나 SoC 대비 통계적 유의성 있는 개선 우위를 확인할 수 있는 근거가 없습니다. 현재까지 공개된 정보는 전임상 동물 모델에서의 항경련 효능과 Phase I 안전성/PK 자료에 국한되어 있습니다. 따라서 이 기준을 평가하기 위해서는 환자 대상 임상 결과와 SoC 대비 비교 데이터가 추가로 필요합니다.",
+              "is_ai": true,
+              "created_at": "2026-08-01T12:28:56.433982+00:00"
+            }
+          ]
+        },
+        "commercial_appeal": {
+          "entries": [
+            {
+              "id": "50d0281756b04359ad0eb96f64878fce",
+              "author": "AI",
+              "body": "동일 KCNQ2/3 타겟의 후기 단계 경쟁자(Xenon, Biohaven)가 존재하여 NS-041의 TPP 매력도는 낮으며, 환자 효능 데이터 부재로 시장 차별성을 입증할 근거가 충분하지 않습니다. Focal onset seizure 시장에서 기존 승인약물 및 동일 MoA 파이프라인이 이미 자리잡고 있어 Unmet Need 충족 측면에서도 제한적입니다. Greater China 권리가 Livzon에 라이선스된 점과 ex-China 전략의 불확실성도 파트너사 관점에서 매력도를 낮추는 요인입니다.",
+              "is_ai": true,
+              "created_at": "2026-08-01T12:29:05.834689+00:00"
+            }
+          ]
+        },
+        "execution_risk": {
+          "entries": [
+            {
+              "id": "1d9df5c75df640959e631a9739463403",
+              "author": "AI",
+              "body": "NS-041의 임상/안전성/CMC 진행과 관련하여, 환자 대상 효능 데이터가 아직 공개되지 않아 주요 리스크로 판단됩니다. Phase I SAD/MAD 안전성 및 PK 데이터는 press release 수준으로만 확인되며, 전체 임상 패키지에 대한 상세 검토가 필요합니다. 동일 타겟 경쟁사(Xenon, Biohaven) 대비 차별화된 안전성 및 효능 우위를 입증할 자료가 부재하여, 추가 DD를 통해 NS-041의 differentiation 근거를 확인해야 합니다. CMC 측면에서 oral small molecule modality는 적합하나, platform 수준의 재현성 및 제조 관련 공개 정보가 제한적이므로 이에 대한 검토도 필요합니다.",
+              "is_ai": true,
+              "created_at": "2026-08-01T12:29:31.541771+00:00"
+            }
+          ]
+        }
+      }
     }
   },
   "input": {

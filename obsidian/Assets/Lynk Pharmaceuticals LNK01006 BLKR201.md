@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-07-29T00:20:08"
+generated_at: "2026-08-02T02:42:40"
 record_id: "Lynk_Pharmaceuticals_LNK01006_20260621"
 company: "Lynk Pharmaceuticals Co., Ltd."
 country: "China"
@@ -380,10 +380,35 @@ The closest competitors are CNS-penetrant TYK2 inhibitors NEU-627 and A-005. Per
         "field": "scores.target_relevance",
         "previous_value": 3,
         "new_value": 2
+      },
+      {
+        "changed_at": "2026-08-01T12:19:50.742275+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_qualitative_review_ai_generate",
+        "field": "qualitative_review.efficacy",
+        "previous_value": null,
+        "new_value": "LNK01006의 efficacy 평가에 필요한 정상군 대비 회복률이나 SoC 대비 통계적 유의성(p-value) 개선 데이터는 공개된 자료 어디에도 존재하지 않습니다. 현재 Phase 1은 건강한 지원자 대상으로 진행 중이며 질환군 대상 임상 결과가 전혀 없습니다. 구체적인 preclinical efficacy 수치나 human PoC 결과가 보고되어야 판단이 가능합니다."
       }
     ],
-    "last_edited_at": "2026-07-28T15:19:59.200822+00:00",
-    "last_edited_by": "127.0.0.1"
+    "last_edited_at": "2026-08-01T12:19:50.742275+00:00",
+    "last_edited_by": "127.0.0.1",
+    "qualitative_review": {
+      "criteria": {
+        "efficacy": {
+          "entries": [
+            {
+              "id": "6c835f54e6684b49bf98c1dc0e575249",
+              "author": "AI",
+              "body": "LNK01006의 efficacy 평가에 필요한 정상군 대비 회복률이나 SoC 대비 통계적 유의성(p-value) 개선 데이터는 공개된 자료 어디에도 존재하지 않습니다. 현재 Phase 1은 건강한 지원자 대상으로 진행 중이며 질환군 대상 임상 결과가 전혀 없습니다. 구체적인 preclinical efficacy 수치나 human PoC 결과가 보고되어야 판단이 가능합니다.",
+              "is_ai": true,
+              "created_at": "2026-08-01T12:19:50.742216+00:00"
+            }
+          ]
+        }
+      },
+      "updated_at": "2026-08-01T12:19:50.742216+00:00"
+    }
   },
   "input": {
     "company_input": "Lynk Pharmaceuticals Co., Ltd.",
