@@ -21,6 +21,20 @@ function textValue(...values) {
   return values.map((value) => String(value ?? '').trim()).find(Boolean) || '';
 }
 
+function numericValue(value) {
+  if (typeof value === 'number') return value;
+  if (typeof value !== 'string') return value;
+  const normalized = value.trim().replace(/,/g, '');
+  return /^-?(?:\d+\.?\d*|\.\d+)$/.test(normalized) ? Number(normalized) : value;
+}
+
+function normalizeNumericFields(object, fields) {
+  fields.forEach((field) => {
+    if (field in object) object[field] = numericValue(object[field]);
+  });
+  return object;
+}
+
 function compactSourceId(source) {
   return textValue(source?.source_id, source?.id, source?.ref_id);
 }
@@ -49,6 +63,7 @@ function resolvedSources(value, lookup) {
 
 function expandCriterion(value, lookup) {
   const criterion = { ...objectValue(value) };
+  criterion.score = numericValue(criterion.score);
   const evidenceSources = resolvedSources(criterion, lookup);
   const summaries = evidenceSources
     .map((source) => textValue(source.evidence_summary, source.claim_supported, source.source_title))
@@ -67,6 +82,11 @@ function expandCriterion(value, lookup) {
 
 function expandMarketability(value, lookup) {
   const criterion = expandCriterion(value, lookup);
+  normalizeNumericFields(criterion, [
+    'assessed_global_peak_sales_musd',
+    'calculated_global_obtainable_peak_sales_musd',
+    'external_normalized_global_peak_sales_musd'
+  ]);
   if (!Array.isArray(criterion.external_peak_sales_references) || !criterion.external_peak_sales_references.length) {
     criterion.external_peak_sales_references = listValue(criterion.external_forecast_source_ids)
       .map((sourceId) => lookup.get(String(sourceId)))
@@ -77,6 +97,18 @@ function expandMarketability(value, lookup) {
   const stepA = { ...objectValue(calculation.A_targetable_addressable_patient) };
   const stepB = { ...objectValue(calculation.B_unrisked_peak_sales) };
   const stepC = { ...objectValue(calculation.C_obtainable_peak_sales) };
+  normalizeNumericFields(stepA, [
+    'total_patient_pool', 'diagnosis_rate', 'eligibility_rate',
+    'treatable_subgroup_rate', 'targetable_addressable_patient'
+  ]);
+  normalizeNumericFields(stepB, [
+    'tap', 'annual_net_price', 'peak_penetration',
+    'treatment_duration_factor', 'unrisked_peak_sales'
+  ]);
+  normalizeNumericFields(stepC, [
+    'unrisked_peak_sales', 'competition_haircut',
+    'pricing_power_adjustment', 'obtainable_peak_sales'
+  ]);
   stepA.evidence_sources = resolvedSources(stepA, lookup);
   stepB.evidence_sources = resolvedSources(stepB, lookup);
   stepC.evidence_sources = resolvedSources(stepC, lookup);
@@ -100,6 +132,9 @@ function expandedMeta(record, mode) {
   meta.rubric_version ||= triage ? '3.2' : '3.3';
   meta.review_type ||= triage ? 'fast_triage' : 'full_scout';
   meta.language ||= 'ko';
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(textValue(meta.generated_at)) || /Y{4}/i.test(textValue(meta.generated_at))) {
+    meta.generated_at = new Date().toISOString().slice(0, 10);
+  }
   return meta;
 }
 

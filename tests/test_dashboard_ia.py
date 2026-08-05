@@ -1792,7 +1792,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         context = function_body(JS, "buildDashboardAgentContext")
         self.assertIn("scopeRows.length", context)
         self.assertNotIn(".slice(0, 5)", context)
-        self.assertIn("app.js?v=20260805-rubric-ai-3", HTML)
+        self.assertIn("app.js?v=20260805-ingestion-guard-3", HTML)
 
     def test_table_manual_review_uses_authenticated_user_without_identity_modal(self):
         actor = function_body(JS, "ensureDashboardActorName")
@@ -1820,7 +1820,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("state.dataUploadDrafts[previousMode]", guide)
         self.assertIn("state.dataUploadDrafts[mode]", guide)
         self.assertIn("expandCompactInputRecord(record, lockedMode)", validator)
-        self.assertIn("compact-ingestion.js?v=20260805-compact-v1", JS)
+        self.assertIn("compact-ingestion.js?v=20260805-ingestion-guard-3", JS)
 
     def test_detail_agent_is_qa_only_without_apply_controls_or_routes(self):
         main_py = (ROOT / "main.py").read_text(encoding="utf-8")
@@ -2045,7 +2045,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn(".detail-material-body::-webkit-scrollbar", layout)
         self.assertIn("width: 6px", layout)
         self.assertIn("border-radius: 999px", layout)
-        self.assertIn("detail.js?v=20260805-topic-notes-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260805-ingestion-guard-3", DETAIL_HTML)
 
     def test_report_header_matches_review_workspace_and_uses_icon_actions(self):
         report_header = DETAIL_HTML[
@@ -2255,7 +2255,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("detailOiPartnershipNoteOrigin", DETAIL_JS)
         self.assertIn('title="OI 파트너십 분류 근거를 짧게 요약합니다."', note_markup)
         self.assertNotIn("review-reason-edit-icon", note_markup)
-        self.assertIn("detail.js?v=20260805-topic-notes-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260805-ingestion-guard-3", DETAIL_HTML)
 
     def test_partner_material_body_scrolls_below_fixed_header(self):
         header_index = DETAIL_HTML.index('class="detail-material-header"')

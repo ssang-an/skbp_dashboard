@@ -2,7 +2,8 @@ import { setupThemeToggle } from './theme.js';
 
 import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
 import { getCurrentUser, initAuthUI, openAuthModal, requireAuth } from './auth.js?v=20260802-required-login-1';
-import { expandCompactInputRecord } from './compact-ingestion.js?v=20260805-compact-v1';
+import { expandCompactInputRecord } from './compact-ingestion.js?v=20260805-ingestion-guard-3';
+import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260805-ingestion-guard-3';
 
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
@@ -3461,24 +3462,16 @@ function recordKeyForDetailReupload(record) {
 }
 
 function parseFullScoutReupload(value) {
-  let text = String(value || '').trim();
-  const outerFence = text.match(/^```(?:text|markdown|md)?\s*\r?\n([\s\S]*?)\r?\n```$/i);
-  if (outerFence) text = outerFence[1].trim();
-  const separatorMatches = [...text.matchAll(/^--- JSON DATA ---[ \t]*$/gm)];
-  if (separatorMatches.length !== 1) {
-    throw new Error('--- JSON DATA --- 구분선이 정확히 한 번 있어야 합니다.');
+  const recovered = splitAtRecoverableJsonSeparator(value);
+  if (!recovered.separators.length) throw new Error('--- JSON DATA --- 구분선을 찾지 못했습니다.');
+  if (!recovered.parsedSuffix || !recovered.separator) {
+    throw new Error(`JSON 문법 오류: ${recovered.lastError?.message || '유효한 최상위 JSON을 찾지 못했습니다.'}`);
   }
-  const separator = separatorMatches[0];
-  const markdown = text.slice(0, separator.index).trim();
-  const jsonText = text.slice(separator.index + separator[0].length).trim();
+  const markdown = recovered.markdown;
+  const jsonText = recovered.parsedSuffix.text;
   if (!markdown || !/^#{1,6}\s+/m.test(markdown)) throw new Error('제목이 포함된 Markdown 원문을 찾지 못했습니다.');
   if (!jsonText) throw new Error('구분선 아래에 Full Scout JSON이 없습니다.');
-  let payload;
-  try {
-    payload = JSON.parse(jsonText);
-  } catch (error) {
-    throw new Error(`JSON 문법 오류: ${error.message}`);
-  }
+  let payload = recovered.parsedSuffix.payload;
   if (payload && !Array.isArray(payload) && Array.isArray(payload.records)) payload = payload.records;
   if (Array.isArray(payload)) {
     if (payload.length !== 1) throw new Error('상세 재업로드는 Full Scout record 한 개만 입력할 수 있습니다.');
@@ -3499,7 +3492,11 @@ function parseFullScoutReupload(value) {
     parser_status: record.source_report?.parser_status || 'gpt_structured_output',
     parser_note: record.source_report?.parser_note || 'Detail Full Scout combined response reupload.'
   };
-  return { record, markdown };
+  const recoveryCount = Number(recovered.separators.length > 1)
+    + Number(Boolean(recovered.parsedSuffix.ignoredLeading))
+    + Number(Boolean(recovered.parsedSuffix.ignoredTrailing))
+    + (recovered.parsedSuffix.repairActions?.length || 0);
+  return { record, markdown, recoveryCount };
 }
 
 function openReportReuploadModal() {
@@ -3520,7 +3517,8 @@ function closeReportReuploadModal() {
   elements.detailReuploadButton?.focus();
 }
 
-function reviewReportReupload() {
+async function reviewReportReupload() {
+  elements.reportReuploadReview.disabled = true;
   try {
     const parsed = parseFullScoutReupload(elements.reportReuploadInput.value);
     const incoming = recordIdentityParts(parsed.record);
@@ -3531,16 +3529,26 @@ function reviewReportReupload() {
     ) {
       throw new Error(`현재 Asset(${existing.company} · ${existing.asset})과 입력 결과(${incoming.company} · ${incoming.asset})가 일치하지 않습니다.`);
     }
+    const response = await fetch('/api/records/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ records: [parsed.record] })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'FastAPI 최종 검증에 실패했습니다.');
     pendingReuploadRecord = parsed.record;
     const noteCount = Array.isArray(currentRecord?.meta?.topic_notes) ? currentRecord.meta.topic_notes.length : 0;
     elements.reportReuploadValidation.dataset.tone = 'success';
-    elements.reportReuploadValidation.textContent = `검증 완료 · ${incoming.company} · ${incoming.asset} · Topic 메모 ${noteCount}개 유지`;
+    const recoveryNote = parsed.recoveryCount ? ` · 형식 보정 ${parsed.recoveryCount}건` : '';
+    elements.reportReuploadValidation.textContent = `검증 완료 · ${incoming.company} · ${incoming.asset} · Topic 메모 ${noteCount}개 유지${recoveryNote}`;
     elements.reportReuploadSave.disabled = false;
   } catch (error) {
     pendingReuploadRecord = null;
     elements.reportReuploadValidation.dataset.tone = 'error';
     elements.reportReuploadValidation.textContent = error.message;
     elements.reportReuploadSave.disabled = true;
+  } finally {
+    elements.reportReuploadReview.disabled = false;
   }
 }
 

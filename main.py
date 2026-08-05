@@ -4,6 +4,7 @@ import json
 import copy
 import difflib
 import hashlib
+import math
 import secrets
 import os
 import re
@@ -27,6 +28,7 @@ from pypdf import PdfReader
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, ValidationError
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -1150,7 +1152,117 @@ def is_blank(value: Any) -> bool:
     return value is None or value == ""
 
 
-def validate_marketability(criterion: dict[str, Any]) -> None:
+class _TypedIngestionCriterion(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    score: StrictInt = Field(ge=0, le=3)
+
+
+class _TypedIngestionScoring(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    total_score: StrictInt | None
+    max_score: StrictInt | None
+    criteria: dict[str, _TypedIngestionCriterion]
+
+
+class _TypedIngestionRecord(BaseModel):
+    """Strict save-boundary types; workflow semantics remain in validate_records_for_save."""
+
+    model_config = ConfigDict(extra="allow")
+
+    meta: dict[str, Any]
+    structured_table: dict[str, Any]
+    hard_filter: dict[str, Any]
+    scoring: _TypedIngestionScoring
+
+
+def validate_typed_ingestion_contract(record: dict[str, Any], index: int) -> None:
+    try:
+        _TypedIngestionRecord.model_validate(record)
+    except ValidationError as exc:
+        first = exc.errors(include_url=False)[0]
+        location = ".".join(str(part) for part in first.get("loc", ())) or "record"
+        validation_error(
+            f"record[{index}].{location} failed strict type validation: {first.get('msg', 'invalid value')}."
+        )
+
+
+def validate_compact_source_references(record: dict[str, Any], index: int) -> None:
+    meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+    if str(meta.get("ingestion_format") or "").strip().lower() != "compact_v1":
+        return
+    validation = record.get("validation") if isinstance(record.get("validation"), dict) else {}
+    registry = validation.get("source_registry")
+    registry = registry if isinstance(registry, list) else []
+    source_ids: set[str] = set()
+    for source_index, source in enumerate(registry):
+        source_id = str(source.get("source_id") or "").strip() if isinstance(source, dict) else ""
+        if not source_id:
+            validation_error(
+                f"record[{index}].validation.source_registry[{source_index}].source_id must be non-empty."
+            )
+        if source_id in source_ids:
+            validation_error(f"record[{index}] has duplicate source_id {source_id!r}.")
+        source_ids.add(source_id)
+
+    def visit(value: Any, path: str) -> None:
+        if isinstance(value, list):
+            for child_index, child in enumerate(value):
+                visit(child, f"{path}[{child_index}]")
+            return
+        if not isinstance(value, dict):
+            return
+        for key, child in value.items():
+            child_path = f"{path}.{key}"
+            if key in {"source_ids", "external_forecast_source_ids"}:
+                if not isinstance(child, list):
+                    validation_error(f"{child_path} must be an array.")
+                for source_index, source_id in enumerate(child):
+                    normalized = str(source_id or "").strip()
+                    if not normalized or normalized not in source_ids:
+                        validation_error(
+                            f"{child_path}[{source_index}] references unknown source_id {source_id!r}."
+                        )
+                continue
+            visit(child, child_path)
+
+    visit(record, f"record[{index}]")
+
+
+def validate_marketability(criterion: dict[str, Any], *, require_method: bool = False) -> None:
+    method = str(criterion.get("assessment_method") or "").strip()
+    allowed_methods = {"calculation", "external_forecast", "both", "insufficient_evidence"}
+    if require_method and not method:
+        validation_error("marketability.assessment_method is required for Compact Full Scout input.")
+    if method and method not in allowed_methods:
+        validation_error(
+            "marketability.assessment_method must be calculation, external_forecast, both, or insufficient_evidence."
+        )
+    has_calculation = method in {"calculation", "both"} if method else None
+    has_external_forecast = method in {"external_forecast", "both"} if method else None
+
+    def is_finite_number(value: Any) -> bool:
+        return not isinstance(value, bool) and isinstance(value, (int, float)) and math.isfinite(value)
+
+    if method:
+        expected_basis_type = "calculation" if method == "both" else method
+        if criterion.get("score_basis_type") != expected_basis_type:
+            validation_error(
+                f"marketability.score_basis_type must be {expected_basis_type} for assessment_method={method}."
+            )
+        expected_calculation_status = "performed" if has_calculation else "not_performed"
+        if criterion.get("calculation_status") != expected_calculation_status:
+            validation_error(
+                f"marketability.calculation_status must be {expected_calculation_status} for assessment_method={method}."
+            )
+        if require_method and has_external_forecast:
+            external_source_ids = criterion.get("external_forecast_source_ids")
+            if not isinstance(external_source_ids, list) or not any(str(value or "").strip() for value in external_source_ids):
+                validation_error(
+                    "marketability.external_forecast_source_ids requires at least one source_id for external_forecast or both."
+                )
+
     calculation = criterion.get("calculation")
     if not isinstance(calculation, dict):
         validation_error("marketability.calculation is required and must be an object.")
@@ -1160,6 +1272,16 @@ def validate_marketability(criterion: dict[str, Any]) -> None:
         validation_error(
             f"marketability.calculation.commercial_rationale_status must be one of: {', '.join(sorted(MARKETABILITY_COMMERCIAL_RATIONALE_STATUS_ALLOWED_VALUES))}."
         )
+    insufficient_statuses = {"insufficient_evidence", "not_established"}
+    if method == "insufficient_evidence" and status not in insufficient_statuses:
+        validation_error(
+            "marketability.assessment_method=insufficient_evidence requires commercial_rationale_status "
+            "insufficient_evidence or not_established."
+        )
+    if method and method != "insufficient_evidence" and status in insufficient_statuses:
+        validation_error(
+            f"marketability.commercial_rationale_status={status} is incompatible with assessment_method={method}."
+        )
 
     step_a = calculation.get("A_targetable_addressable_patient") or {}
     step_b = calculation.get("B_unrisked_peak_sales") or {}
@@ -1167,8 +1289,8 @@ def validate_marketability(criterion: dict[str, Any]) -> None:
     if not all(isinstance(step, dict) for step in [step_a, step_b, step_c]):
         validation_error("marketability.calculation A/B/C steps must be objects.")
 
-    if status in {"insufficient_evidence", "not_established"}:
-        if criterion.get("score") != 0:
+    if status in insufficient_statuses:
+        if criterion.get("score") != 0 or (method and method != "insufficient_evidence"):
             validation_error("marketability.score must be 0 when commercial_rationale_status is insufficient_evidence or not_established.")
         if is_blank(calculation.get("commercial_rationale_failure_reason")):
             validation_error("marketability.commercial_rationale_failure_reason is required when commercial rationale is insufficient_evidence or not_established.")
@@ -1191,8 +1313,70 @@ def validate_marketability(criterion: dict[str, Any]) -> None:
             ("B_unrisked_peak_sales.unrisked_peak_sales", step_b.get("unrisked_peak_sales")),
             ("C_obtainable_peak_sales.obtainable_peak_sales", step_c.get("obtainable_peak_sales")),
         ]:
-            if is_blank(value):
+            if has_calculation is False:
+                if value is not None:
+                    validation_error(
+                        f"marketability.calculation.{path} must be null when assessment_method does not use calculation."
+                    )
+            elif is_blank(value):
                 validation_error(f"marketability.calculation.{path} is required when commercial rationale is established.")
+            elif not is_finite_number(value):
+                validation_error(f"marketability.calculation.{path} must be a finite JSON number.")
+
+    if method:
+        numeric_requirements = {
+            "calculated_global_obtainable_peak_sales_musd": bool(has_calculation),
+            "external_normalized_global_peak_sales_musd": bool(has_external_forecast),
+            "assessed_global_peak_sales_musd": method != "insufficient_evidence",
+        }
+        for field, required in numeric_requirements.items():
+            value = criterion.get(field)
+            if required and not is_finite_number(value):
+                validation_error(f"marketability.{field} must be a finite JSON number for assessment_method={method}.")
+            if not required and value is not None and not is_finite_number(value):
+                validation_error(f"marketability.{field} must be null or a finite JSON number.")
+
+        assessed = criterion.get("assessed_global_peak_sales_musd")
+        if method == "insufficient_evidence":
+            if criterion.get("score") != 0 or assessed is not None:
+                validation_error(
+                    "marketability assessment_method=insufficient_evidence requires score 0 and assessed_global_peak_sales_musd=null."
+                )
+        elif is_finite_number(assessed):
+            expected_score = 3 if assessed >= 2000 else 2 if assessed >= 1000 else 1
+            if criterion.get("score") != expected_score:
+                validation_error(
+                    f"marketability.score must be {expected_score} for assessed_global_peak_sales_musd={assessed}."
+                )
+
+        if has_calculation:
+            component_rules = [
+                ("A_targetable_addressable_patient", "total_patient_pool", 0, None),
+                ("A_targetable_addressable_patient", "diagnosis_rate", 0, 1),
+                ("A_targetable_addressable_patient", "eligibility_rate", 0, 1),
+                ("A_targetable_addressable_patient", "treatable_subgroup_rate", 0, 1),
+                ("B_unrisked_peak_sales", "tap", 0, None),
+                ("B_unrisked_peak_sales", "annual_net_price", 0, None),
+                ("B_unrisked_peak_sales", "peak_penetration", 0, 1),
+                ("B_unrisked_peak_sales", "treatment_duration_factor", 0, None),
+                ("C_obtainable_peak_sales", "unrisked_peak_sales", 0, None),
+                ("C_obtainable_peak_sales", "competition_haircut", 0, 1),
+                ("C_obtainable_peak_sales", "pricing_power_adjustment", 0, None),
+            ]
+            steps_by_name = {
+                "A_targetable_addressable_patient": step_a,
+                "B_unrisked_peak_sales": step_b,
+                "C_obtainable_peak_sales": step_c,
+            }
+            for step_name, field, minimum, maximum in component_rules:
+                value = steps_by_name[step_name].get(field)
+                if not is_finite_number(value):
+                    validation_error(f"marketability.calculation.{step_name}.{field} must be a finite JSON number.")
+                if value < minimum or (maximum is not None and value > maximum):
+                    validation_error(
+                        f"marketability.calculation.{step_name}.{field} must be between {minimum}"
+                        f"{' and ' + str(maximum) if maximum is not None else ' or greater'}."
+                    )
 
 
 def validate_stage_specific_fields(criteria: dict[str, Any]) -> None:
@@ -1279,6 +1463,7 @@ def fast_triage_lifecycle_text_has_hard_blocker(values: Any) -> bool:
 def validate_records_for_save(records: list[dict[str, Any]]) -> None:
     for index, record in enumerate(records):
         ensure_meta_defaults(record)
+        validate_compact_source_references(record, index)
         scoring = record.get("scoring")
         if not isinstance(scoring, dict):
             validation_error(f"record[{index}].scoring is required and must be an object.")
@@ -1300,6 +1485,8 @@ def validate_records_for_save(records: list[dict[str, Any]]) -> None:
             if triage is not None and not isinstance(triage, dict):
                 validation_error(f"record[{index}].triage must be an object when provided.")
             current_contract = is_current_fast_triage_contract(record)
+            if current_contract:
+                validate_typed_ingestion_contract(record, index)
             if current_contract and not isinstance(triage, dict):
                 validation_error(f"record[{index}].triage is required for Fast Triage v{TRIAGE_CRITERIA_VERSION}.")
             triage = triage or {}
@@ -1481,6 +1668,7 @@ def validate_records_for_save(records: list[dict[str, Any]]) -> None:
                 validation_error(
                     f"record[{index}].meta.rubric_version must be {SCORING_CRITERIA_VERSION} for current Full Scout output."
                 )
+            validate_typed_ingestion_contract(record, index)
             normalize_current_record_stage(record, index)
 
         if hard_filter_status not in {"PASS", "REVIEW", "FAIL"}:
@@ -1493,7 +1681,13 @@ def validate_records_for_save(records: list[dict[str, Any]]) -> None:
                 validation_error(f"record[{index}].scoring.criteria.{criterion_id} is required.")
             validate_scoring_criterion(criteria[criterion_id], criterion_id)
 
-        validate_marketability(criteria["marketability"])
+        validate_marketability(
+            criteria["marketability"],
+            require_method=(
+                current_full_contract
+                and str((record.get("meta") or {}).get("ingestion_format") or "").strip().lower() == "compact_v1"
+            ),
+        )
         validate_stage_specific_fields(criteria)
 
         expected_total = sum(criteria[criterion_id]["score"] for criterion_id in CRITERION_IDS)
@@ -7624,6 +7818,23 @@ def delete_record(record_id: str) -> dict[str, Any]:
         "total": len(kept),
         "data_file": str(DATA_FILE.relative_to(ROOT)).replace("\\", "/"),
         "exports": exports,
+    }
+
+
+@app.post("/api/records/validate")
+async def validate_incoming_records(request: Request) -> dict[str, Any]:
+    """Run the same strict save-boundary validation without mutating persisted records."""
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    incoming = copy.deepcopy(normalize_records(payload))
+    validate_records_for_save(incoming)
+    return {
+        "ok": True,
+        "record_count": len(incoming),
+        "record_ids": [record_key(record) for record in incoming],
+        "workflows": ["triage" if is_fast_triage_record(record) else "full" for record in incoming],
     }
 
 

@@ -1,7 +1,8 @@
 import { setupThemeToggle } from './theme.js?v=20260802-header-icons-1';
 import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
 import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260803-personal-group-1';
-import { expandCompactInputRecord, isCompactIngestionRecord } from './compact-ingestion.js?v=20260805-compact-v1';
+import { expandCompactInputRecord, isCompactIngestionRecord } from './compact-ingestion.js?v=20260805-ingestion-guard-3';
+import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260805-ingestion-guard-3';
 
 const API_URL = '/api/records';
 const DASHBOARD_SUMMARY_URL = '/api/dashboard-summary';
@@ -5544,25 +5545,61 @@ function splitCombinedGptResponse(value) {
     ['', 'text', 'markdown', 'md'].includes(block.language)
     && /^--- JSON DATA ---[ \t]*$/m.test(block.content)
   ));
-  const primarySource = combinedBlocks.length === 1 ? combinedBlocks[0].content : text;
-  const separators = [...primarySource.matchAll(separatorPattern)];
+  let recovered;
+  try {
+    recovered = splitAtRecoverableJsonSeparator(text);
+  } catch (error) {
+    addInputIssue(errors, 'error', '입력 형식', String(error?.message || error));
+    return {
+      rawMarkdown: '',
+      jsonText: '',
+      payload: null,
+      records: [],
+      errors,
+      warnings,
+      fenceCount: blocks.length,
+      inputFormat: 'separator'
+    };
+  }
+  const primarySource = recovered.source;
+  const separators = recovered.separators;
 
   if (separators.length) {
+    const parsedSuffix = recovered.parsedSuffix;
+    const selectedSeparator = recovered.separator;
+    const lastParseError = recovered.lastError;
     if (combinedBlocks.length > 1 || separators.length > 1) {
-      addInputIssue(errors, 'error', '입력 형식', '--- JSON DATA --- 구분선은 전체 응답에 정확히 한 번만 있어야 합니다.');
+      addInputIssue(
+        parsedSuffix ? warnings : errors,
+        parsedSuffix ? 'warning' : 'error',
+        '입력 형식',
+        parsedSuffix
+          ? `--- JSON DATA --- 구분선이 ${separators.length}회 감지되어 유효한 최종 JSON 경계를 사용했습니다.`
+          : '--- JSON DATA --- 구분선은 전체 응답에 정확히 한 번만 있어야 합니다.'
+      );
     }
-    const separator = separators[0];
+    const separator = selectedSeparator || separators[separators.length - 1];
     const rawMarkdown = primarySource.slice(0, separator.index).trim();
-    const jsonText = primarySource.slice(separator.index + separator[0].length).trim();
-    let payload = null;
+    const jsonText = parsedSuffix?.text || primarySource.slice(separator.index + separator[0].length).trim();
+    const payload = parsedSuffix?.payload ?? null;
     if (!jsonText) {
       addInputIssue(errors, 'error', 'JSON', '--- JSON DATA --- 아래에 구조화 JSON이 없습니다.');
-    } else {
-      try {
-        payload = JSON.parse(jsonText);
-      } catch (error) {
-        addInputIssue(errors, 'error', 'JSON', jsonSyntaxIssue(error, jsonText));
-      }
+    } else if (!parsedSuffix) {
+      addInputIssue(errors, 'error', 'JSON', jsonSyntaxIssue(lastParseError, jsonText));
+    }
+    if (parsedSuffix?.ignoredLeading) {
+      addInputIssue(warnings, 'warning', 'JSON', 'JSON 앞의 설명 또는 내부 fence를 무시하고 최상위 JSON 객체/배열부터 읽었습니다.');
+    }
+    if (parsedSuffix?.ignoredTrailing) {
+      addInputIssue(warnings, 'warning', 'JSON', '최상위 JSON 뒤의 설명 문구를 저장 대상에서 제외했습니다.');
+    }
+    if (parsedSuffix?.repairActions?.length) {
+      addInputIssue(
+        warnings,
+        'warning',
+        'JSON 자동 복구',
+        `의미를 바꾸지 않는 문법 보정만 적용했습니다: ${parsedSuffix.repairActions.join(', ')}.`
+      );
     }
     if (!rawMarkdown || !/^#{1,6}\s+/m.test(rawMarkdown)) {
       addInputIssue(errors, 'error', 'Markdown', '구분선 위에서 제목이 포함된 Markdown 원문을 찾지 못했습니다.');
@@ -5865,9 +5902,38 @@ function validateInputFilterFields(record, recordPath, errors, warnings) {
   }
 }
 
-function validateInputMarketability(criterion, recordPath, issues) {
+function validateInputMarketability(criterion, recordPath, issues, { requireCompactSources = false } = {}) {
   const path = `${recordPath}.scoring.criteria.marketability`;
   if (!isInputObject(criterion)) return;
+  const allowedMethods = new Set(['calculation', 'external_forecast', 'both', 'insufficient_evidence']);
+  const method = String(criterion.assessment_method || '').trim();
+  if (!allowedMethods.has(method)) {
+    addInputIssue(issues, 'error', `${path}.assessment_method`, 'calculation, external_forecast, both, insufficient_evidence 중 하나가 필요합니다.');
+  }
+  const hasCalculation = ['calculation', 'both'].includes(method);
+  const hasExternalForecast = ['external_forecast', 'both'].includes(method);
+  const expectedBasisType = method === 'both' ? 'calculation' : method;
+  if (allowedMethods.has(method) && criterion.score_basis_type !== expectedBasisType) {
+    addInputIssue(
+      issues,
+      'error',
+      `${path}.score_basis_type`,
+      `${method} 방식의 score_basis_type은 ${expectedBasisType}이어야 합니다.`
+    );
+  }
+  const expectedCalculationStatus = hasCalculation ? 'performed' : 'not_performed';
+  if (allowedMethods.has(method) && criterion.calculation_status !== expectedCalculationStatus) {
+    addInputIssue(
+      issues,
+      'error',
+      `${path}.calculation_status`,
+      `${method} 방식의 calculation_status는 ${expectedCalculationStatus}이어야 합니다.`
+    );
+  }
+  if (requireCompactSources && hasExternalForecast && (!Array.isArray(criterion.external_forecast_source_ids)
+    || !criterion.external_forecast_source_ids.some((value) => String(value || '').trim()))) {
+    addInputIssue(issues, 'error', `${path}.external_forecast_source_ids`, 'external_forecast 또는 both 방식에는 검증된 forecast source_id가 1개 이상 필요합니다.');
+  }
   const calculation = criterion.calculation;
   if (!isInputObject(calculation)) {
     addInputIssue(issues, 'error', `${path}.calculation`, 'Marketability A/B/C calculation 객체가 필요합니다.');
@@ -5878,6 +5944,13 @@ function validateInputMarketability(criterion, recordPath, issues) {
   if (!INPUT_MARKETABILITY_STATUSES.has(status)) {
     addInputIssue(issues, 'error', `${path}.calculation.commercial_rationale_status`, `허용값이 아닙니다. 현재 값: ${JSON.stringify(status)}`);
     return;
+  }
+  const insufficientStatuses = ['insufficient_evidence', 'not_established'];
+  if (method === 'insufficient_evidence' && !insufficientStatuses.includes(status)) {
+    addInputIssue(issues, 'error', `${path}.calculation.commercial_rationale_status`, 'insufficient_evidence 방식에는 insufficient_evidence 또는 not_established 상태가 필요합니다.');
+  }
+  if (method && method !== 'insufficient_evidence' && insufficientStatuses.includes(status)) {
+    addInputIssue(issues, 'error', `${path}.calculation.commercial_rationale_status`, `${method} 방식과 ${status} 상태가 상충합니다.`);
   }
 
   const steps = [
@@ -5891,8 +5964,8 @@ function validateInputMarketability(criterion, recordPath, issues) {
     }
   });
 
-  if (['insufficient_evidence', 'not_established'].includes(status)) {
-    if (criterion.score !== 0) {
+  if (insufficientStatuses.includes(status)) {
+    if (criterion.score !== 0 || method !== 'insufficient_evidence') {
       addInputIssue(issues, 'error', `${path}.score`, `${status}일 때 Marketability 점수는 0이어야 합니다.`);
     }
     if (!String(calculation.commercial_rationale_failure_reason || '').trim()) {
@@ -5904,21 +5977,74 @@ function validateInputMarketability(criterion, recordPath, issues) {
         addInputIssue(issues, 'error', `${path}.calculation.${stepName}.${outputName}`, `${status}일 때 결과값은 null이어야 합니다.`);
       }
     });
-    return;
+  } else {
+    if (['assumption_based', 'assumption_based_scenario'].includes(status)
+      && !String(calculation.commercial_rationale_basis || '').trim()) {
+      addInputIssue(issues, 'error', `${path}.calculation.commercial_rationale_basis`, `${status}에 사용한 가정 근거가 필요합니다.`);
+    }
+    steps.forEach(([stepName, outputName]) => {
+      const output = calculation[stepName]?.[outputName];
+      if (hasCalculation) {
+        if (output === null || output === undefined || output === '') {
+          addInputIssue(issues, 'error', `${path}.calculation.${stepName}.${outputName}`, `${method} 방식에는 숫자 결과값이 필요합니다.`);
+        } else if (typeof output !== 'number' || !Number.isFinite(output)) {
+          addInputIssue(issues, 'error', `${path}.calculation.${stepName}.${outputName}`, 'million USD 단위의 숫자여야 합니다. 숫자를 따옴표로 감싸지 마세요.');
+        }
+      } else if (output !== null && output !== undefined) {
+        addInputIssue(issues, 'error', `${path}.calculation.${stepName}.${outputName}`, `${method} 방식에서 수행하지 않은 A/B/C 결과는 null이어야 합니다.`);
+      }
+    });
   }
 
-  if (['assumption_based', 'assumption_based_scenario'].includes(status)
-    && !String(calculation.commercial_rationale_basis || '').trim()) {
-    addInputIssue(issues, 'error', `${path}.calculation.commercial_rationale_basis`, `${status}에 사용한 가정 근거가 필요합니다.`);
-  }
-  steps.forEach(([stepName, outputName]) => {
-    const output = calculation[stepName]?.[outputName];
-    if (output === null || output === undefined || output === '') {
-      addInputIssue(issues, 'error', `${path}.calculation.${stepName}.${outputName}`, `${status}일 때 숫자 결과값이 필요합니다.`);
-    } else if (typeof output !== 'number' || !Number.isFinite(output)) {
-      addInputIssue(issues, 'error', `${path}.calculation.${stepName}.${outputName}`, 'million USD 단위의 숫자여야 합니다.');
+  const numericField = (field, required) => {
+    const value = criterion[field];
+    if (required && (typeof value !== 'number' || !Number.isFinite(value))) {
+      addInputIssue(issues, 'error', `${path}.${field}`, 'million USD 단위의 숫자가 필요합니다. 숫자를 따옴표로 감싸지 마세요.');
+    } else if (!required && value !== null && value !== undefined && (typeof value !== 'number' || !Number.isFinite(value))) {
+      addInputIssue(issues, 'error', `${path}.${field}`, '값이 있으면 million USD 단위 숫자여야 합니다.');
     }
-  });
+  };
+  numericField('calculated_global_obtainable_peak_sales_musd', hasCalculation);
+  numericField('external_normalized_global_peak_sales_musd', hasExternalForecast);
+  numericField('assessed_global_peak_sales_musd', method !== 'insufficient_evidence');
+
+  const validateComponent = (stepName, field, { minimum = 0, maximum = null } = {}) => {
+    const value = calculation[stepName]?.[field];
+    const componentPath = `${path}.calculation.${stepName}.${field}`;
+    if (!hasCalculation) return;
+    if (typeof value !== 'number' || !Number.isFinite(value)) {
+      addInputIssue(issues, 'error', componentPath, 'calculation 방식에서는 유한한 JSON 숫자가 필요합니다.');
+      return;
+    }
+    if (value < minimum || (maximum !== null && value > maximum)) {
+      addInputIssue(issues, 'error', componentPath, `${minimum}${maximum === null ? ' 이상' : `~${maximum}`} 범위여야 합니다.`);
+    }
+  };
+  [
+    ['A_targetable_addressable_patient', 'total_patient_pool', { minimum: 0 }],
+    ['A_targetable_addressable_patient', 'diagnosis_rate', { minimum: 0, maximum: 1 }],
+    ['A_targetable_addressable_patient', 'eligibility_rate', { minimum: 0, maximum: 1 }],
+    ['A_targetable_addressable_patient', 'treatable_subgroup_rate', { minimum: 0, maximum: 1 }],
+    ['B_unrisked_peak_sales', 'tap', { minimum: 0 }],
+    ['B_unrisked_peak_sales', 'annual_net_price', { minimum: 0 }],
+    ['B_unrisked_peak_sales', 'peak_penetration', { minimum: 0, maximum: 1 }],
+    ['B_unrisked_peak_sales', 'treatment_duration_factor', { minimum: 0 }],
+    ['C_obtainable_peak_sales', 'unrisked_peak_sales', { minimum: 0 }],
+    ['C_obtainable_peak_sales', 'competition_haircut', { minimum: 0, maximum: 1 }],
+    ['C_obtainable_peak_sales', 'pricing_power_adjustment', { minimum: 0 }]
+  ].forEach(([stepName, field, bounds]) => validateComponent(stepName, field, bounds));
+
+  const assessed = criterion.assessed_global_peak_sales_musd;
+  if (method === 'insufficient_evidence') {
+    if (criterion.score !== 0 || assessed !== null) {
+      addInputIssue(issues, 'error', path, 'insufficient_evidence이면 score=0이고 assessed_global_peak_sales_musd=null이어야 합니다.');
+    }
+  } else if (typeof assessed === 'number' && Number.isFinite(assessed)) {
+    const expectedScore = assessed >= 2000 ? 3 : assessed >= 1000 ? 2 : 1;
+    if (criterion.score !== expectedScore) {
+      addInputIssue(issues, 'error', `${path}.score`, `assessed_global_peak_sales_musd ${assessed}에 따른 점수는 ${expectedScore}점이어야 합니다.`);
+    }
+  }
 }
 
 function validateInputFullScoutStructures(record, recordPath, issues) {
@@ -5983,6 +6109,115 @@ function validateInputFullScoutStructures(record, recordPath, issues) {
   }
 }
 
+function validateCompactSourceReferences(record, recordPath, issues) {
+  if (!isCompactIngestionRecord(record)) return;
+  const registry = Array.isArray(record.validation?.source_registry)
+    ? record.validation.source_registry
+    : [];
+  const sourceIds = new Set();
+  registry.forEach((source, index) => {
+    const sourceId = String(source?.source_id || '').trim();
+    const path = `${recordPath}.validation.source_registry[${index}].source_id`;
+    if (!sourceId) {
+      addInputIssue(issues, 'error', path, 'Compact source에는 비어 있지 않은 source_id가 필요합니다.');
+    } else if (sourceIds.has(sourceId)) {
+      addInputIssue(issues, 'error', path, `중복 source_id ${sourceId}를 사용할 수 없습니다.`);
+    } else {
+      sourceIds.add(sourceId);
+    }
+  });
+
+  const visit = (value, path) => {
+    if (Array.isArray(value)) {
+      value.forEach((item, index) => visit(item, `${path}[${index}]`));
+      return;
+    }
+    if (!isInputObject(value)) return;
+    Object.entries(value).forEach(([key, child]) => {
+      const childPath = `${path}.${key}`;
+      if (key === 'source_ids' || key === 'external_forecast_source_ids') {
+        if (!Array.isArray(child)) {
+          addInputIssue(issues, 'error', childPath, 'source reference는 배열이어야 합니다.');
+          return;
+        }
+        child.forEach((sourceId, index) => {
+          const normalized = String(sourceId || '').trim();
+          if (!normalized || !sourceIds.has(normalized)) {
+            addInputIssue(
+              issues,
+              'error',
+              `${childPath}[${index}]`,
+              `source_registry에 없는 source_id ${JSON.stringify(sourceId)}를 참조합니다.`
+            );
+          }
+        });
+        return;
+      }
+      visit(child, childPath);
+    });
+  };
+  visit(record, recordPath);
+}
+
+function validateCompactInputTypes(record, recordPath, issues) {
+  if (!isCompactIngestionRecord(record)) return;
+  const objectPaths = [
+    ['meta'], ['structured_table'], ['hard_filter'], ['scoring'], ['scoring', 'criteria'],
+    ['validation'], ['final_insight']
+  ];
+  objectPaths.forEach((parts) => {
+    let value = record;
+    for (const part of parts) value = value?.[part];
+    if (!isInputObject(value)) {
+      addInputIssue(issues, 'error', `${recordPath}.${parts.join('.')}`, 'Compact JSON에서 객체여야 합니다.');
+    }
+  });
+  for (const optionalObject of ['company_profile', 'competitive_analysis', 'json_summary', 'triage']) {
+    if (optionalObject in record && !isInputObject(record[optionalObject])) {
+      addInputIssue(issues, 'error', `${recordPath}.${optionalObject}`, '값을 제공하면 객체여야 합니다.');
+    }
+  }
+
+  const criteria = isInputObject(record.scoring?.criteria) ? record.scoring.criteria : {};
+  Object.entries(criteria).forEach(([criterionId, criterion]) => {
+    const path = `${recordPath}.scoring.criteria.${criterionId}`;
+    if (!isInputObject(criterion)) {
+      addInputIssue(issues, 'error', path, 'criterion은 객체여야 합니다.');
+      return;
+    }
+    const rawScore = criterion.score;
+    const normalizedScore = typeof rawScore === 'string' && /^\s*[0-3]\s*$/.test(rawScore)
+      ? Number(rawScore)
+      : rawScore;
+    if (!Number.isInteger(normalizedScore) || normalizedScore < 0 || normalizedScore > 3) {
+      addInputIssue(issues, 'error', `${path}.score`, '0~3의 정수 또는 순수 숫자 문자열이어야 합니다.');
+    }
+    ['source_ids', 'uncertain_points', 'what_was_checked'].forEach((field) => {
+      if (field in criterion && !Array.isArray(criterion[field])) {
+        addInputIssue(issues, 'error', `${path}.${field}`, '값을 제공하면 배열이어야 합니다.');
+      }
+    });
+    if (criterionId === 'marketability' && !isInputObject(criterion.calculation)) {
+      addInputIssue(issues, 'error', `${path}.calculation`, 'Marketability calculation은 객체여야 합니다.');
+    }
+  });
+
+  const similarity = record.competitive_analysis?.similarity_summary;
+  if (similarity !== undefined && !isInputObject(similarity)) {
+    addInputIssue(issues, 'error', `${recordPath}.competitive_analysis.similarity_summary`, '값을 제공하면 객체여야 합니다.');
+  } else if (isInputObject(similarity)) {
+    ['similar_pipeline_count', 'high_similarity_count', 'medium_similarity_count', 'low_similarity_count']
+      .forEach((field) => {
+        if (!(field in similarity)) return;
+        const raw = similarity[field];
+        const numeric = typeof raw === 'string' && /^\s*\d+\s*$/.test(raw) ? Number(raw) : raw;
+        if (!Number.isInteger(numeric) || numeric < 0) {
+          addInputIssue(issues, 'error', `${recordPath}.competitive_analysis.similarity_summary.${field}`, '0 이상의 정수여야 합니다.');
+        }
+      });
+  }
+}
+
 function validateCombinedInput(value, expectedMode = '') {
   const split = splitCombinedGptResponse(value);
   const errors = [...split.errors];
@@ -6016,6 +6251,9 @@ function validateCombinedInput(value, expectedMode = '') {
       addInputIssue(errors, 'error', recordPath, 'Fast Triage와 Full Scout 신호가 한 record에 섞여 있습니다.');
       return;
     }
+
+    validateCompactInputTypes(split.records[index], recordPath, errors);
+    validateCompactSourceReferences(split.records[index], recordPath, errors);
     if (lockedMode && detected.mode !== 'unknown' && detected.mode !== lockedMode) {
       const currentTab = lockedMode === 'triage' ? 'TAB1 Fast Triage' : 'TAB2 Full Scout';
       const pastedMode = detected.mode === 'triage' ? 'Fast Triage' : 'Full Scout';
@@ -6134,7 +6372,9 @@ function validateCombinedInput(value, expectedMode = '') {
     INPUT_FULL_CRITERIA.forEach((criterionId) => {
       validateInputScoreCriterion(criteria[criterionId], criterionId, recordPath, errors, { full: true });
     });
-    validateInputMarketability(criteria.marketability, recordPath, errors);
+    validateInputMarketability(criteria.marketability, recordPath, errors, {
+      requireCompactSources: String(record.meta?.ingestion_format || '').toLowerCase() === 'compact_v1'
+    });
     validateInputFullScoutStructures(record, recordPath, errors);
 
     const scoreValues = INPUT_FULL_CRITERIA.map((criterionId) => criteria[criterionId]?.score);
@@ -6323,6 +6563,20 @@ async function previewPastedReportParsing() {
   const expectedMode = activeTableMode() === 'triage' ? 'triage' : 'full';
   const result = validateCombinedInput(elements.gptResponseInput.value, expectedMode);
   if (result.canSave) {
+    try {
+      const response = await fetch('/api/records/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ records: result.records })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.detail || 'FastAPI 최종 검증에 실패했습니다.');
+    } catch (error) {
+      addInputIssue(result.errors, 'error', 'FastAPI 최종 검증', String(error?.message || error));
+      result.canSave = false;
+    }
+  }
+  if (result.canSave) {
     const matches = findDataReuploadMatches(result.records);
     if (matches.length) {
       const decisions = await reviewDataReuploadMatches(matches);
@@ -6471,13 +6725,9 @@ Canonicalize only an explicitly confirmed current stage or a completed/started m
 
 const COMPACT_TRIAGE_JSON_TEMPLATE = `[
   {
-    "meta": {
-      "ingestion_format": "compact_v1",
-      "schema_version": "3.2",
-      "instruction_version": "3.2",
-      "rubric_version": "3.2",
-      "review_type": "fast_triage",
-      "generated_at": "YYYY-MM-DD"
+  "meta": {
+    "ingestion_format": "compact_v1",
+    "review_type": "fast_triage"
     },
     "json_summary": {
       "theme": "Unknown",
@@ -6500,7 +6750,6 @@ const COMPACT_TRIAGE_JSON_TEMPLATE = `[
       "flags": []
     },
     "triage": {
-      "instruction_version": "3.2",
       "status": "UNVERIFIED",
       "identity_verified": false,
       "active_asset": null,
@@ -6535,16 +6784,7 @@ const COMPACT_TRIAGE_JSON_TEMPLATE = `[
     "validation": {
       "cross_checked_facts": [],
       "uncertain_points": [],
-      "source_registry": [
-        {
-          "source_id": "S1",
-          "source_title": "",
-          "source_type": "official_company",
-          "source_url": "https://example.com",
-          "verified": true,
-          "evidence_summary": ""
-        }
-      ]
+      "source_registry": []
     },
     "final_insight": {
       "one_line_summary": "",
@@ -6557,14 +6797,7 @@ const COMPACT_TRIAGE_JSON_TEMPLATE = `[
 const COMPACT_FULL_SCOUT_JSON_TEMPLATE = `{
   "meta": {
     "ingestion_format": "compact_v1",
-    "schema_version": "3.2",
-    "instruction_version": "3.3",
-    "rubric_version": "3.3",
-    "review_type": "full_scout",
-    "generated_at": "YYYY-MM-DD"
-  },
-  "source_report": {
-    "parser_status": "gpt_structured_output"
+    "review_type": "full_scout"
   },
   "company_profile": {
     "company_name": "",
@@ -6608,66 +6841,48 @@ const COMPACT_FULL_SCOUT_JSON_TEMPLATE = `{
       "target_relevance": {
         "score": 0,
         "evidence_type": "E0_not_found_or_not_assessable",
-        "evidence_type_reason": "",
         "main_line_summary": "",
-        "what_was_checked": [],
         "source_ids": [],
-        "investigation_note": "",
         "why_not_higher": "",
         "uncertain_points": []
       },
       "competitive_landscape": {
         "score": 0,
         "evidence_type": "E0_not_found_or_not_assessable",
-        "evidence_type_reason": "",
         "main_line_summary": "",
-        "what_was_checked": [],
         "source_ids": [],
-        "investigation_note": "",
         "why_not_higher": "",
         "uncertain_points": []
       },
       "moa_validity": {
         "score": 0,
         "evidence_type": "E0_not_found_or_not_assessable",
-        "evidence_type_reason": "",
         "main_line_summary": "",
-        "what_was_checked": [],
         "source_ids": [],
-        "investigation_note": "",
         "why_not_higher": "",
         "uncertain_points": []
       },
       "platform_attractiveness": {
         "score": 0,
         "evidence_type": "E0_not_found_or_not_assessable",
-        "evidence_type_reason": "",
         "main_line_summary": "",
-        "what_was_checked": [],
         "source_ids": [],
-        "investigation_note": "",
         "why_not_higher": "",
         "uncertain_points": []
       },
       "expansion_potential": {
         "score": 0,
         "evidence_type": "E0_not_found_or_not_assessable",
-        "evidence_type_reason": "",
         "main_line_summary": "",
-        "what_was_checked": [],
         "source_ids": [],
-        "investigation_note": "",
         "why_not_higher": "",
         "uncertain_points": []
       },
       "data_maturity": {
         "score": 0,
         "evidence_type": "E0_not_found_or_not_assessable",
-        "evidence_type_reason": "",
         "main_line_summary": "",
-        "what_was_checked": [],
         "source_ids": [],
-        "investigation_note": "",
         "claimed_development_stage": "",
         "expected_data_for_stage": [],
         "visible_asset_specific_data": [],
@@ -6679,9 +6894,7 @@ const COMPACT_FULL_SCOUT_JSON_TEMPLATE = `{
       "marketability": {
         "score": 0,
         "evidence_type": "E0_not_found_or_not_assessable",
-        "evidence_type_reason": "",
         "main_line_summary": "",
-        "what_was_checked": [],
         "assessment_method": "insufficient_evidence",
         "score_basis_type": "insufficient_evidence",
         "assessed_global_peak_sales_musd": null,
@@ -6693,32 +6906,8 @@ const COMPACT_FULL_SCOUT_JSON_TEMPLATE = `{
         "calculation": {
           "commercial_rationale_status": "insufficient_evidence",
           "commercial_rationale_failure_reason": "",
-          "commercial_rationale_basis": "",
-          "A_targetable_addressable_patient": {
-            "total_patient_pool": null,
-            "diagnosis_rate": null,
-            "eligibility_rate": null,
-            "treatable_subgroup_rate": null,
-            "targetable_addressable_patient": null,
-            "source_ids": []
-          },
-          "B_unrisked_peak_sales": {
-            "tap": null,
-            "annual_net_price": null,
-            "peak_penetration": null,
-            "treatment_duration_factor": null,
-            "unrisked_peak_sales": null,
-            "source_ids": []
-          },
-          "C_obtainable_peak_sales": {
-            "unrisked_peak_sales": null,
-            "competition_haircut": null,
-            "pricing_power_adjustment": null,
-            "obtainable_peak_sales": null,
-            "source_ids": []
-          }
+          "commercial_rationale_basis": ""
         },
-        "investigation_note": "",
         "why_not_higher": "",
         "uncertain_points": []
       }
@@ -6744,16 +6933,7 @@ const COMPACT_FULL_SCOUT_JSON_TEMPLATE = `{
   "validation": {
     "cross_checked_facts": [],
     "uncertain_points": [],
-    "source_registry": [
-      {
-        "source_id": "S1",
-        "source_title": "",
-        "source_type": "official_company",
-        "source_url": "https://example.com",
-        "verified": true,
-        "evidence_summary": ""
-      }
-    ]
+    "source_registry": []
   },
   "final_insight": {
     "one_line_summary": "",
@@ -6901,7 +7081,7 @@ Output language:
 Korean. English is allowed for scientific terms.
 
 Final output format:
-The final answer must contain exactly one copyable fenced code block. Inside that single block, put the Markdown report first, then the literal separator "--- JSON DATA ---", then the raw JSON array. Do not create inner Markdown or JSON fences.
+The final answer must contain exactly one copyable fenced code block. Inside that single block, put the Markdown report first, then the single separator line shown in the template below, then the raw JSON array. Do not create inner Markdown or JSON fences.
 The TAB1 importer splits on that exact separator and parses the entire suffix once. Therefore the JSON suffix must be one complete top-level array, not several JSON objects or partial fragments.
 
 \`\`\`text
@@ -7030,11 +7210,12 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
 
 Remember:
 - Output only the single fenced code block described above containing both sections.
-- Keep Markdown first and JSON second inside that same block, separated by the exact line "--- JSON DATA ---".
+- Keep Markdown first and JSON second inside that same block, using the template separator exactly once.
 - Do not include prose outside the single code block and do not add nested fences.
 - The separator must appear exactly once on its own line.
 - The JSON suffix must start with [ and end with ]. Use 2-space indentation; do not minify it.
 - Before answering, parse-check the complete JSON suffix: matched braces/brackets, double-quoted keys and strings, escaped line breaks inside strings, no comments, no trailing commas, no placeholder alternatives, and no truncation.
+- Write score/count fields as JSON numbers, never quoted numeric strings. Escape any double quote, backslash, or line break that appears inside a JSON string value.
 - Keep source_report.raw_markdown as an empty string because the dashboard inserts the Markdown portion. Keep JSON summaries concise and do not duplicate full Markdown paragraphs across multiple fields.
 - For one input entry, output a JSON array with one object.
 - For multiple input entries, output one JSON array item per candidate in the original order, up to 50.
@@ -7059,7 +7240,7 @@ function buildGptInstructionPromptLegacy() {
 Mission:
 Evaluate exactly one biotech/pharma pipeline asset through company research, attachment review, public-source verification, competitor search, seven-criterion scoring, and evidence tracking. Return exactly one copyable fenced code block containing the Markdown report first and the valid JSON second.
 
-This is GPT instruction 2: Full Scout v3.3. Keep meta.schema_version at 3.2, and set meta.instruction_version and meta.rubric_version to 3.3.
+This is GPT instruction 2: Full Scout v3.3. State v3.3 in the Markdown report. In compact JSON, do not repeat schema/instruction/rubric version fields; the dashboard adds schema 3.2 and instruction/rubric 3.3 during deterministic expansion.
 
 Evidence Discipline (apply to every factual field and every scoring criterion):
 ${SHARED_EVIDENCE_DISCIPLINE}
@@ -7106,26 +7287,23 @@ Identity Gate / identity-not-verified early stop:
   - Include only 3 short bullets: what was searched, what was found, what source would be needed to proceed.
   - Include references only for the few sources that explain the non-match or ambiguity.
 - Identity-not-verified JSON block format:
-- Keep it valid JSON and keep the complete compact_v1 ingestion structure; the dashboard expands omitted boilerplate fields before validation and storage.
-  - Set meta.schema_version to "3.2"; set meta.instruction_version and meta.rubric_version to "3.3".
-  - Set meta.review_type to "full_scout".
-  - Set source_report.parser_status to "asset_identity_not_verified".
+  - Keep the complete compact_v1 structure shown in the single final JSON template; the dashboard expands omitted boilerplate fields before validation and storage.
+  - Keep meta.ingestion_format="compact_v1" and meta.review_type="full_scout"; the dashboard adds version and source-report fields deterministically.
   - Set hard_filter.status to "FAIL".
   - Set hard_filter.reason to "Asset identity not verified from public biotech/pharma sources."
-  - Set scoring.total_score to 0 and scoring.max_score to 21.
-  - Include all seven scoring.criteria objects with score 0, evidence_type E0_not_found_or_not_assessable, why_not_higher, and uncertain_points.
-  - Set marketability.calculation.commercial_rationale_status to "insufficient_evidence", provide commercial_rationale_failure_reason, and set all A/B/C output values to null.
+  - Include all seven scoring.criteria objects with score 0, evidence_type E0_not_found_or_not_assessable, why_not_higher, and uncertain_points; the dashboard derives total_score=0 and max_score=21.
+  - For Marketability, keep assessment_method and score_basis_type as "insufficient_evidence", calculation_status as "not_performed", assessed values as null, and provide commercial_rationale_failure_reason. Omit A/B/C step objects; the dashboard materializes their compatible null form.
   - Set final_insight.recommendation to "Deprioritize".
   - structured_table.development_stage must be "Unknown" when stage is not established; never use null, an empty string, or N/A for that field. Use "Unknown", null, or [] as appropriate for other unknown factual fields and sources. Do not invent placeholders.
 
 Non-negotiable rules:
-1. Final answer format must be exactly one \`\`\`text fenced code block. Inside it, place either the complete Markdown report or the short identity-not-verified Markdown first, then the exact separator line "--- JSON DATA ---", then the corresponding structured JSON object. Do not create inner Markdown or JSON fences.
+1. Final answer format must be exactly one \`\`\`text fenced code block. Inside it, place either the complete Markdown report or the short identity-not-verified Markdown first, then the single separator line shown immediately before the final JSON template below, then the corresponding structured JSON object. Do not create inner Markdown or JSON fences.
 2. Do not write any report prose outside the single combined code block.
 3. The TAB2 importer splits on the exact separator and parses the complete suffix once. The JSON portion must be exactly one complete top-level object beginning with { and ending with }: no comments, no trailing commas, no extra object, and no Markdown outside JSON string values.
 4. Every factual claim used for scoring must include a source URL or a clear uncertainty note.
 5. Include actual URLs in Markdown reference-link format at the end of the markdown block. In compact JSON, register each URL once in validation.source_registry and reference it from criteria or calculation steps through source_ids.
 6. Distinguish official company sources, peer-reviewed papers, regulatory/clinical trial sources, market sources, and news/financing sources.
-7. For every score in compact JSON, include score, evidence_type, evidence_type_reason, main_line_summary, what_was_checked, source_ids, investigation_note, why_not_higher, and uncertain_points. Keep the full evidence trail in Markdown; the dashboard materializes evidence_sources/evidence_trail and expands the criterion into the existing stored shape.
+7. For every score in compact JSON, include score, evidence_type, main_line_summary, source_ids, why_not_higher, and uncertain_points. Keep what_was_checked in Markdown instead of repeating it in JSON. Do not duplicate main_line_summary as evidence_type_reason or why_not_higher as investigation_note; the dashboard derives those compatibility fields while expanding the existing stored shape.
 8. Competitive Landscape must include competitor drugs/assets with company, modality, target/MoA, stage/status, why it matters, similarity level, and source. In compact_v1 competitor rows, use source_ids; the dashboard materializes source_url and evidence_sources from validation.source_registry.
 9. Marketability may use an internal calculation, an external forecast, both, or insufficient evidence. Show A/B/C only when calculation is performed; show external forecast references when used.
 10. Express every sales output in million USD. In JSON, store sales values as numeric million USD values, not raw USD. Example: USD 1.2B should be 1200.
@@ -7162,13 +7340,15 @@ Criterion-specific scoring (canonical; do not replace with a universal evidence 
 
 Marketability method and score:
 - assessment_method is exactly calculation, external_forecast, both, or insufficient_evidence. Do not force A/B/C.
-- score_basis_type: when both exist, calculation is the primary score basis and external forecast is a cross-check; otherwise use the available reliable method. With neither, score 0.
+- score_basis_type must equal calculation for assessment_method calculation or both, external_forecast for external_forecast, and insufficient_evidence for insufficient_evidence. When both exist, calculation is the primary score basis and external forecast is a cross-check.
+- calculation_status must be performed for calculation or both, and not_performed for external_forecast or insufficient_evidence.
 - assessed_global_peak_sales_musd determines score: 0 only when neither a reliable calculation nor external forecast exists; 1 when < 1000; 2 when >= 1000 and < 2000; 3 when >= 2000. Do not use weak-market language, expansion strength, or mandatory A/B/C completeness as alternate thresholds.
 - Internal calculation covers one lead/main indication and uses the United States base: A. US TAP = US Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate; choose prevalence or annual incidence appropriately and state why. B. US Unrisked Peak Sales = US TAP x Benchmark Annualized Net Price x Peak Penetration x Treatment Duration Factor. Annualize benchmark net price by therapy type (chronic annual price; short course price x annual courses; episodic administration price x annual administrations; one-time net price). Use annual incidence or peak-year treatable cohort for one-time therapy when appropriate. Treatment Duration Factor defaults to 1.0 unless persistence/discontinuation/actual duration evidence supports adjustment. C. US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment. Benchmark price is the unadjusted price of the closest approved therapy/standard of care; apply asset-specific efficacy, safety, convenience, frequency, monitoring, or modality premium/discount only in Pricing Power Adjustment, never twice. Competition Haircut reflects competitor count, lead, expected entry order, and asset differentiation.
 - Calculated Global Obtainable Peak Sales = completed US Obtainable Peak Sales x 1.5. This is a user-defined screening policy applied once, never to TAP, price, penetration, or another factor.
 - Remove Expansion Capacity Adjustment from the formula. If schema compatibility requires the field, fix it at 1.0, mark it deprecated, and never use it in the score. Do not run sensitivity analysis.
 - Record reliable asset-specific external peak-sales forecasts from independent analysts, consensus databases, reputable market research, or a company forecast containing a concrete number. Non-quantitative “blockbuster potential” is not a score basis. Record source_name, source_type, publication_date, geography, forecast_year, peak_sales_musd, forecast_low_musd, forecast_high_musd, source_url, confidence, and normalized_global_peak_sales_musd. Normalize a US forecast x 1.5 and leave a Global forecast unchanged. For a range, score the midpoint and retain low/high. A representative external value may be the median of comparable reliable independent forecasts; label company forecasts company_estimate with lower confidence. Explain a material calculation/forecast gap in one sentence.
 - Store every sales value as numeric million USD. External-only assessment permits all A/B/C values to be null.
+- For external_forecast or insufficient_evidence, omit the A/B/C step objects instead of emitting many null fields; the dashboard supplies compatible empty step objects. For calculation or both, add calculation.A_targetable_addressable_patient with total_patient_pool, diagnosis_rate, eligibility_rate, treatable_subgroup_rate, targetable_addressable_patient, source_ids; calculation.B_unrisked_peak_sales with tap, annual_net_price, peak_penetration, treatment_duration_factor, unrisked_peak_sales, source_ids; and calculation.C_obtainable_peak_sales with unrisked_peak_sales, competition_haircut, pricing_power_adjustment, obtainable_peak_sales, source_ids. Every populated component must be a JSON number; rates and competition_haircut must be between 0 and 1.
 
 For every criterion rationale state compactly: criterion definition, selected score, core selected-score rule, why the asset meets it, key evidence, and key gap/why not higher. Platform technical advantage and assessed-asset Data Maturity are separate; do not double-count one fact with the same meaning.
 
@@ -7202,30 +7382,6 @@ Controlled vocabulary for dashboard filters:
   - Pain
   - Stroke
 - Map synonymous or narrower terms into the same bucket. Examples: partial-onset seizure, focal-onset seizure, epilepsy, and status epilepticus -> Epilepsy / seizure disorders; RCC, UCC, refractory chronic cough, and unexplained chronic cough -> Chronic cough; Crohn's disease and ulcerative colitis -> Inflammatory bowel disease.
-
-Expected final answer shape:
-
-\`\`\`text
-# [Company] Pipeline Scout Report: **[Asset]**
-...complete report...
-
---- JSON DATA ---
-
-{
-  "meta": {
-    "schema_version": "3.2",
-    "instruction_version": "3.3",
-    "rubric_version": "3.3"
-  }
-}
-\`\`\`
-
-If the Identity Gate cannot verify the asset identity:
-- Return short identity-not-verified markdown + valid schema-complete identity-not-verified JSON.
-- In JSON, set source_report.parser_status = "asset_identity_not_verified", hard_filter.status = "FAIL", scoring.total_score = 0, scoring.max_score = 21, final_insight.recommendation = "Deprioritize".
-- Keep all seven required scoring.criteria objects at score 0 / E0 and use an insufficient_evidence Marketability calculation with null A/B/C outputs.
-- structured_table.development_stage must be "Unknown" when stage is not established; never use null, an empty string, or N/A for that field. Use "Unknown", null, or [] as appropriate for other unknown factual fields, sources, and unavailable fields. N/A is not a factual placeholder.
-- Keep only the sources needed to explain the non-match or ambiguity.
 
 Use this exact report structure inside the Markdown portion of the single combined code block:
 
@@ -7474,7 +7630,7 @@ Most important diligence question:
 Use Markdown reference links:
 [1]: https://example.com "Source title"
 
-End the Markdown portion after References. Immediately after References, write the exact separator line "--- JSON DATA ---" and then the raw JSON object with no inner JSON fence. Fill it with the same facts, scores, reasons, source URLs, competitor evidence, and marketability A/B/C assumptions used in the Markdown report. The user will copy this one combined block and paste it once into the dashboard, which will automatically split the Markdown and JSON portions. Do not add any prose outside the single block.
+End the Markdown portion after References. The next line in this template is the sole separator; after it, write the raw JSON object with no inner JSON fence. Fill it with the same facts, scores, reasons, source URLs, competitor evidence, and Marketability assumptions used in the Markdown report. The user will copy this one combined block and paste it once into the dashboard, which will automatically split the Markdown and JSON portions. Do not add any prose outside the single block.
 
 --- JSON DATA ---
 
@@ -7728,7 +7884,7 @@ End the Markdown portion after References. Immediately after References, write t
 }
 
 Final validation before output:
-- Keep every displayed version unchanged: schema 3.2, instruction 3.3, rubric 3.3.
+- Keep the Markdown version statement at instruction/rubric 3.3. The dashboard deterministically adds JSON schema 3.2 and instruction/rubric 3.3.
 - total_score equals the sum of all seven integer criterion scores.
 - Apply PASS >= 15 plus TR/MoA/Data >= 2, verified identity, and confirmed active program; apply identity and lifecycle FAIL rules.
 - Do not infer Competitive Landscape 3 from no competitors; record search sufficiency, scope, and limitations.
@@ -7740,11 +7896,13 @@ Final validation before output:
 
 Remember:
 - Output only one \`\`\`text fenced code block, with no prose outside it.
-- Keep Markdown first and JSON second inside that same block, separated by the exact line "--- JSON DATA ---".
+- Keep Markdown first and JSON second inside that same block, using the template separator exactly once.
 - Do not add nested Markdown or JSON fences.
 - The separator must appear exactly once on its own line.
 - The JSON suffix must start with { and end with }. Use 2-space indentation; do not minify it.
 - Before answering, parse-check the complete JSON suffix: matched braces/brackets, double-quoted keys and strings, escaped line breaks inside strings, no comments, no trailing commas, no unresolved placeholders, no extra text after the final }, and no truncation.
+- Write every score, count, patient, rate, adjustment, and sales field as a JSON number, never a quoted numeric string. Escape any double quote, backslash, or line break inside JSON string values.
+- Cross-check Marketability before output: assessment_method, score_basis_type, calculation_status, A/B/C nullability, assessed value, and the 0/1/2/3 score threshold must agree.
 - The dashboard accepts the entire combined response in the single "GPT 지침 2 전체 응답" input and splits both portions automatically.`;
 }
 
