@@ -393,15 +393,34 @@
           "type": ["string", "null"],
           "description": "Actor IP of the most recent successful rubric refresh (temporary stand-in for user identity, same convention as last_edited_by)."
         },
+        "rubric_reviewed_version": {
+          "type": "string",
+          "description": "Latest rubric version against which the stored scores were successfully reviewed, whether or not a score changed."
+        },
+        "rubric_reviewed_at": {
+          "type": ["string", "null"],
+          "description": "ISO 8601 UTC timestamp of the latest valid, non-conflicting rubric review."
+        },
+        "rubric_reviewed_by": {
+          "type": ["string", "null"],
+          "description": "Actor IP of the latest valid, non-conflicting rubric review."
+        },
+        "rubric_review_result": {
+          "type": "string",
+          "enum": ["updated", "no_change", "no_score_changes"],
+          "description": "Whether the latest successful rubric review changed official scores or retained them."
+        },
         "rubric_refresh_history": {
           "type": "array",
-          "description": "Append-only log of successful rubric-refresh applications on this record, newest last.",
+          "description": "Append-only log of valid, non-conflicting rubric reviews on this record, newest last and capped at 20 entries.",
           "items": {
             "type": "object",
             "additionalProperties": true,
             "properties": {
               "version": { "type": "string" },
               "changed_at": { "type": "string" },
+              "reviewed_at": { "type": "string" },
+              "result": { "type": "string", "enum": ["updated", "no_change", "no_score_changes"] },
               "actor_ip": { "type": "string" },
               "reason": { "type": "string" },
               "changes": { "type": "array", "items": { "type": "string" } }

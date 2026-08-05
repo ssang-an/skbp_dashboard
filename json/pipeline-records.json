@@ -5039,6 +5039,60 @@
           "field": "focus_management.add",
           "previous_value": false,
           "new_value": true
+        },
+        {
+          "changed_at": "2026-08-04T06:59:54.720603+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_delete",
+          "field": "qualitative_review.efficacy",
+          "previous_value": "Efficacy 기준으로 볼 때, 원문 보고서에는 5xFAD 마우스 모델에서 NuCerin 30 mg/kg b.i.d. 12주 투여 시 MWM/NOR 인지 개선, amyloid plaque 감소, NeuN 양성 뉴런 보존 등이 보고되어 있으나, 정상군 대비 % Reversal 수치나 SoC 대비 통계적 유의성(p-value)에 대한 구체적인 데이터는 제시되어 있지 않습니다. 현재 공개된 자료는 전임상 동물 모델 수준에 머물러 있으며, 인간 대상 환자 효능 데이터나 Phase II 결과는 확인되지 않아 SoC 대비 우위를 입증할 근거가 부족합니다. 따라서 이 기준에 대한 판단은 '불충분'으로, % Reversal 값과 대조군 및 SoC와의 통계적 비교 결과가 포함된 원시 데이터가 추가로 필요합니다.",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-04T06:59:56.280010+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_delete",
+          "field": "qualitative_review.commercial_appeal",
+          "previous_value": "NuCerin은 GPCR19/TGR5 경구 소분자로서 알츠하이머병의 미충족 수요가 큰 염증 경로를 표적으로 하지만, 아직 인간 임상 효능과 CNS 표적 결합 데이터가 공개되지 않아 TPP 매력도를 확정하기 어렵습니다. 동일 기전의 GPCR19 경쟁자는 거의 없어 차별성 가능성은 있으나, AD 시장 내 승인된 항-Aβ 항체와 경구용 NLRP3 계열 자산들이 주요 압박 요인으로 작용합니다. 시장성 추정치는 있으나 파트너사 관점에서 실제 Obtainable Peak Sales와 권리 명확성에 대한 추가 실사가 필요합니다.",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-04T07:00:37.689237+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_ai_generate",
+          "field": "qualitative_review.commercial_appeal",
+          "previous_value": null,
+          "new_value": "현재 보고서상 HY209/NuCerin은 경구용 GPCR19 작용제로서 기존 항-Aβ 항체 대비 투여 편의성과 비용 측면에서 차별화 가능성이 있으며, 미충족 수요가 큰 조기 알츠하이머 시장에서 TPP 매력도가 일부 확인됩니다. 그러나 CNS 노출 및 바이오마커 데이터, 임상 2상 효능 결과가 부재하고, 상업적 권리 관계에 대한 직접 실사가 필요하여 L-IN/L-OUT 파트너사 관점에서의 최종 매력도 평가는 현재 정보만으로 확정하기 어렵습니다."
+        },
+        {
+          "changed_at": "2026-08-05T02:25:38.048440+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review",
+          "field": "qualitative_review.efficacy",
+          "previous_value": null,
+          "new_value": "ㅇㄹ"
+        },
+        {
+          "changed_at": "2026-08-05T02:25:39.486876+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_qualitative_review_delete",
+          "field": "qualitative_review.efficacy",
+          "previous_value": "ㅇㄹ",
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-05T02:25:44.508915+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_comment",
+          "field": "collaboration.comments",
+          "previous_value": null,
+          "new_value": null
         }
       ],
       "last_edited_at": "2026-08-01T17:42:40.444352+00:00",
@@ -5047,13 +5101,6 @@
         "criteria": {
           "efficacy": {
             "entries": [
-              {
-                "id": "ced18a9a59f84f519f50f6c32471ce21",
-                "author": "AI",
-                "body": "Efficacy 기준으로 볼 때, 원문 보고서에는 5xFAD 마우스 모델에서 NuCerin 30 mg/kg b.i.d. 12주 투여 시 MWM/NOR 인지 개선, amyloid plaque 감소, NeuN 양성 뉴런 보존 등이 보고되어 있으나, 정상군 대비 % Reversal 수치나 SoC 대비 통계적 유의성(p-value)에 대한 구체적인 데이터는 제시되어 있지 않습니다. 현재 공개된 자료는 전임상 동물 모델 수준에 머물러 있으며, 인간 대상 환자 효능 데이터나 Phase II 결과는 확인되지 않아 SoC 대비 우위를 입증할 근거가 부족합니다. 따라서 이 기준에 대한 판단은 '불충분'으로, % Reversal 값과 대조군 및 SoC와의 통계적 비교 결과가 포함된 원시 데이터가 추가로 필요합니다.",
-                "is_ai": true,
-                "created_at": "2026-08-03T13:43:24.172538+00:00"
-              },
               {
                 "id": "ab7370b307b044fda563e640418cca09",
                 "author": "AI",
@@ -5066,11 +5113,11 @@
           "commercial_appeal": {
             "entries": [
               {
-                "id": "a5d65f24faec49929be512e3de3c9f77",
+                "id": "5ffd5d3aed3a46bbad3240f1239f4c0d",
                 "author": "AI",
-                "body": "NuCerin은 GPCR19/TGR5 경구 소분자로서 알츠하이머병의 미충족 수요가 큰 염증 경로를 표적으로 하지만, 아직 인간 임상 효능과 CNS 표적 결합 데이터가 공개되지 않아 TPP 매력도를 확정하기 어렵습니다. 동일 기전의 GPCR19 경쟁자는 거의 없어 차별성 가능성은 있으나, AD 시장 내 승인된 항-Aβ 항체와 경구용 NLRP3 계열 자산들이 주요 압박 요인으로 작용합니다. 시장성 추정치는 있으나 파트너사 관점에서 실제 Obtainable Peak Sales와 권리 명확성에 대한 추가 실사가 필요합니다.",
+                "body": "현재 보고서상 HY209/NuCerin은 경구용 GPCR19 작용제로서 기존 항-Aβ 항체 대비 투여 편의성과 비용 측면에서 차별화 가능성이 있으며, 미충족 수요가 큰 조기 알츠하이머 시장에서 TPP 매력도가 일부 확인됩니다. 그러나 CNS 노출 및 바이오마커 데이터, 임상 2상 효능 결과가 부재하고, 상업적 권리 관계에 대한 직접 실사가 필요하여 L-IN/L-OUT 파트너사 관점에서의 최종 매력도 평가는 현재 정보만으로 확정하기 어렵습니다.",
                 "is_ai": true,
-                "created_at": "2026-08-03T13:43:33.257310+00:00"
+                "created_at": "2026-08-04T07:00:37.688435+00:00"
               }
             ]
           },
@@ -5097,7 +5144,7 @@
             ]
           }
         },
-        "updated_at": "2026-08-04T01:50:30.646727+00:00",
+        "updated_at": "2026-08-05T02:25:39.486819+00:00",
         "custom_criteria": [
           {
             "id": "custom_69aa2632e6",
@@ -5118,10 +5165,21 @@
             "body": "hello",
             "created_at": "2026-08-01T13:38:48.840472+00:00",
             "updated_at": "2026-08-01T13:38:48.840472+00:00"
+          },
+          {
+            "id": "1e11e2e91d3d4f12b5437d15ea8496bd",
+            "parent_id": null,
+            "author": "정주원",
+            "author_user_id": "9979fce95e884382853e0aed85d6901e",
+            "author_email": "joowon.jung@sk.com",
+            "actor_ip": "127.0.0.1",
+            "body": "ㅇㄹ",
+            "created_at": "2026-08-05T02:25:44.508860+00:00",
+            "updated_at": "2026-08-05T02:25:44.508860+00:00"
           }
         ],
-        "updated_at": "2026-08-01T13:38:48.840472+00:00",
-        "comment_count": 1
+        "updated_at": "2026-08-05T02:25:44.508860+00:00",
+        "comment_count": 2
       },
       "rubric_recalculation": {
         "version": "3.3",

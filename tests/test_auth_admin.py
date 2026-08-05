@@ -80,5 +80,45 @@ class AuthAdminTests(unittest.TestCase):
         self.assertEqual(error.exception.status_code, 400)
 
 
+    def test_manual_review_requires_authentication(self):
+        with self.assertRaises(HTTPException) as error:
+            asyncio.run(main.update_manual_review("asset-1", FakeRequest(payload={"kind": "status", "value": "PASS"})))
+        self.assertEqual(error.exception.status_code, 401)
+
+    def test_manual_review_audit_uses_authenticated_name_not_payload_name(self):
+        _, token = self.create_user("reviewer@sk.com", name="Logged In Reviewer")
+        record = {
+            "meta": {},
+            "json_summary": {"company": "Test Co", "asset_name": "Asset-1"},
+            "structured_table": {
+                "company": "Test Co",
+                "asset_name": "Asset-1",
+                "development_stage": "Preclinical Candidate",
+            },
+            "hard_filter": {"status": "PASS", "reason": "", "flags": []},
+            "scoring": {"total_score": 15, "max_score": 21, "criteria": {}},
+        }
+        record_id = main.record_key(record)
+        request = FakeRequest(
+            token,
+            {
+                "kind": "status",
+                "value": "REVIEW",
+                "previous_value": "PASS",
+                "actor_name": "Spoofed Name",
+            },
+        )
+        with (
+            patch.object(main, "load_records", return_value=[record]),
+            patch.object(main, "save_records"),
+            patch.object(main, "run_markdown_exports", return_value={}),
+        ):
+            result = asyncio.run(main.update_manual_review(record_id, request))
+
+        human_review = result["record"]["meta"]["human_review"]
+        self.assertEqual(human_review["history"][-1]["actor_name"], "Logged In Reviewer")
+        self.assertEqual(human_review["last_updated_by"], "Logged In Reviewer")
+
+
 if __name__ == "__main__":
     unittest.main()

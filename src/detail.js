@@ -2,6 +2,7 @@ import { setupThemeToggle } from './theme.js';
 
 import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
 import { getCurrentUser, initAuthUI, openAuthModal, requireAuth } from './auth.js?v=20260802-required-login-1';
+import { expandCompactInputRecord } from './compact-ingestion.js?v=20260805-compact-v1';
 
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
@@ -113,9 +114,10 @@ const elements = {
   detailAttachmentsList: document.querySelector('#detailAttachmentsList'),
   detailAttachmentAiScope: document.querySelector('#detailAttachmentAiScope'),
   detailAttachmentStatus: document.querySelector('#detailAttachmentStatus'),
-  detailViewerEyebrow: document.querySelector('#detailViewerEyebrow'),
   detailViewerTitle: document.querySelector('#detailViewerTitle'),
+  detailViewerBackGroup: document.querySelector('#detailViewerBackGroup'),
   detailViewerBackButton: document.querySelector('#detailViewerBackButton'),
+  detailAttachmentOriginalActions: document.querySelector('#detailAttachmentOriginalActions'),
   detailViewerOpenWindowButton: document.querySelector('#detailViewerOpenWindowButton'),
   detailViewerCopyButton: document.querySelector('#detailViewerCopyButton'),
   reportModalBackdrop: document.querySelector('#reportModalBackdrop'),
@@ -131,6 +133,7 @@ const elements = {
   criteriaDrawerScopeLabel: document.querySelector('#criteriaDrawerScopeLabel'),
   criteriaDrawerBody: document.querySelector('#criteriaDrawerBody'),
   deleteRecordButton: document.querySelector('#deleteRecordButton'),
+  detailReuploadButton: document.querySelector('#detailReuploadButton'),
   aiDrawer: document.querySelector('#aiDrawer'),
   aiDrawerClose: document.querySelector('#aiDrawerClose'),
   chatContextAsset: document.querySelector('#chatContextAsset'),
@@ -148,7 +151,13 @@ const elements = {
   jsonEditor: document.querySelector('#jsonEditor'),
   saveJsonEditButton: document.querySelector('#saveJsonEditButton'),
   formatJsonButton: document.querySelector('#formatJsonButton'),
-  editStatus: document.querySelector('#editStatus')
+  editStatus: document.querySelector('#editStatus'),
+  reportReuploadBackdrop: document.querySelector('#reportReuploadBackdrop'),
+  reportReuploadClose: document.querySelector('#reportReuploadClose'),
+  reportReuploadInput: document.querySelector('#reportReuploadInput'),
+  reportReuploadValidation: document.querySelector('#reportReuploadValidation'),
+  reportReuploadReview: document.querySelector('#reportReuploadReview'),
+  reportReuploadSave: document.querySelector('#reportReuploadSave')
 };
 
 if (elements.detailBackLink && viewTab) {
@@ -1373,20 +1382,25 @@ function renderSourceReport(record = currentRecord) {
   activeAttachmentId = '';
   const sourceReport = record.source_report || {};
   const rawMarkdown = isPlaceholderRawMarkdown(sourceReport.raw_markdown) ? '' : sourceReport.raw_markdown;
-  if (elements.detailViewerEyebrow) elements.detailViewerEyebrow.textContent = 'AI REPORT UPLOADED';
-  if (elements.detailViewerTitle) elements.detailViewerTitle.textContent = 'GPT 원문 리포트';
+  if (elements.detailViewerTitle) elements.detailViewerTitle.textContent = 'GPT ORIGINAL REPORT';
   if (elements.subtitle) {
     elements.subtitle.textContent = '';
     elements.subtitle.hidden = true;
   }
   if (elements.detailMetaInfo) elements.detailMetaInfo.hidden = false;
+  if (elements.detailViewerBackGroup) elements.detailViewerBackGroup.hidden = true;
   if (elements.detailViewerBackButton) elements.detailViewerBackButton.hidden = true;
+  if (elements.detailAttachmentOriginalActions) {
+    elements.detailAttachmentOriginalActions.hidden = true;
+    elements.detailAttachmentOriginalActions.innerHTML = '';
+  }
   if (elements.detailViewerOpenWindowButton) elements.detailViewerOpenWindowButton.hidden = false;
   if (elements.detailViewerCopyButton) elements.detailViewerCopyButton.hidden = false;
   elements.sourceReportViewer.classList.remove('showing-attachment');
   elements.sourceReportViewer.innerHTML = rawMarkdown
     ? renderMarkdown(sourceReport.raw_markdown)
     : renderMarkdown(buildReadableSourceReport(record));
+  renderTopicNotes(record);
   renderAttachments(record);
   renderDetailOutline();
 }
@@ -1404,14 +1418,18 @@ async function showAttachmentPreview(attachmentId) {
   attachmentPreviewController = previewController;
   activeAttachmentId = previewId;
   renderAttachments(currentRecord);
-  if (elements.detailViewerEyebrow) elements.detailViewerEyebrow.textContent = 'Partner material';
   if (elements.detailViewerTitle) elements.detailViewerTitle.textContent = attachment.filename || '파트너사 자료';
   if (elements.subtitle) {
     elements.subtitle.textContent = `${formatFileSize(attachment.size_bytes)} · ${formatCommentTime(attachment.uploaded_at)}`;
     elements.subtitle.hidden = false;
   }
   if (elements.detailMetaInfo) elements.detailMetaInfo.hidden = true;
+  if (elements.detailViewerBackGroup) elements.detailViewerBackGroup.hidden = false;
   if (elements.detailViewerBackButton) elements.detailViewerBackButton.hidden = false;
+  if (elements.detailAttachmentOriginalActions) {
+    elements.detailAttachmentOriginalActions.hidden = true;
+    elements.detailAttachmentOriginalActions.innerHTML = '';
+  }
   if (elements.detailViewerOpenWindowButton) elements.detailViewerOpenWindowButton.hidden = true;
   if (elements.detailViewerCopyButton) elements.detailViewerCopyButton.hidden = true;
   elements.sourceReportViewer.classList.add('showing-attachment');
@@ -1428,24 +1446,30 @@ async function showAttachmentPreview(attachmentId) {
 
     const previewUrl = data.url || attachment.stored_path;
     const originalName = attachment.filename || 'attachment';
-    const isPdfAttachment = /\.pdf$/i.test(originalName);
-
-    const openOriginalLink = `
-      <a class="attachment-open-link" href="${escapeHtml(previewUrl)}" target="_blank" rel="noopener">
-        원본 파일 열기 ↗
-      </a>
+    const downloadIcon = `
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 3v12"></path><path d="m7.5 10.5 4.5 4.5 4.5-4.5"></path><path d="M5 20h14"></path>
+      </svg>
     `;
-    const downloadOriginalLink = `
-      <a class="attachment-open-link" href="${escapeHtml(attachment.stored_path)}" download="${escapeHtml(originalName)}">
-        원본 다운로드 ↓
-      </a>
+    const openIcon = `
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5"></path>
+      </svg>
     `;
-    // The browser's own PDF viewer already offers a download control, so real PDFs keep the single open link.
-    const openAction = isPdfAttachment ? openOriginalLink : `${downloadOriginalLink}${openOriginalLink}`;
+    if (elements.detailAttachmentOriginalActions) {
+      elements.detailAttachmentOriginalActions.innerHTML = `
+        <a class="report-action-icon help-tooltip attachment-original-action" href="${escapeHtml(attachment.stored_path)}" download="${escapeHtml(originalName)}" data-tooltip="원본 다운로드" aria-label="원본 다운로드">
+          ${downloadIcon}
+        </a>
+        <a class="report-action-icon help-tooltip attachment-original-action" href="${escapeHtml(previewUrl)}" target="_blank" rel="noopener" data-tooltip="원본 파일 열기" aria-label="원본 파일 열기">
+          ${openIcon}
+        </a>
+      `;
+      elements.detailAttachmentOriginalActions.hidden = false;
+    }
 
     if (data.preview_type === 'pdf') {
       elements.sourceReportViewer.innerHTML = `
-        <div class="attachment-preview-toolbar">${openAction}</div>
         <iframe
           class="attachment-pdf-preview"
           src="${escapeHtml(previewUrl)}"
@@ -1454,7 +1478,6 @@ async function showAttachmentPreview(attachmentId) {
       `;
     } else if (data.preview_type === 'text') {
       elements.sourceReportViewer.innerHTML = `
-        <div class="attachment-preview-toolbar">${openAction}</div>
         <pre class="attachment-text-preview">${escapeHtml(data.text || '추출된 텍스트가 없습니다.')}</pre>
       `;
     } else {
@@ -1463,7 +1486,6 @@ async function showAttachmentPreview(attachmentId) {
           <span class="attachment-type-badge large">${escapeHtml(String(attachment.filename || '').split('.').pop()?.toUpperCase() || 'FILE')}</span>
           <strong>브라우저 내 미리보기를 지원하지 않는 파일입니다.</strong>
           <p>PPT 바이너리 및 Excel 파일은 원본 열기로 확인할 수 있습니다. PPTX·PDF·TXT는 이 영역에서 내용을 확인할 수 있습니다.</p>
-          ${openAction}
         </div>
       `;
     }
@@ -1473,9 +1495,19 @@ async function showAttachmentPreview(attachmentId) {
       <div class="attachment-preview-empty">
         <strong>미리보기를 표시할 수 없습니다.</strong>
         <p>${escapeHtml(error.message)}</p>
-        <a class="attachment-open-link" href="${escapeHtml(attachment.stored_path)}" target="_blank" rel="noopener">원본 파일 열기 ↗</a>
       </div>
     `;
+    if (elements.detailAttachmentOriginalActions) {
+      elements.detailAttachmentOriginalActions.innerHTML = `
+        <a class="report-action-icon help-tooltip attachment-original-action" href="${escapeHtml(attachment.stored_path)}" download="${escapeHtml(attachment.filename || 'attachment')}" data-tooltip="원본 다운로드" aria-label="원본 다운로드">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3v12"></path><path d="m7.5 10.5 4.5 4.5 4.5-4.5"></path><path d="M5 20h14"></path></svg>
+        </a>
+        <a class="report-action-icon help-tooltip attachment-original-action" href="${escapeHtml(attachment.stored_path)}" target="_blank" rel="noopener" data-tooltip="원본 파일 열기" aria-label="원본 파일 열기">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5"></path></svg>
+        </a>
+      `;
+      elements.detailAttachmentOriginalActions.hidden = false;
+    }
   } finally {
     if (attachmentPreviewController === previewController) attachmentPreviewController = null;
   }
@@ -2380,6 +2412,152 @@ function renderMarkdown(markdown) {
   return blocks.join('');
 }
 
+function normalizedTopicKey(value) {
+  return String(value || '')
+    .normalize('NFKC')
+    .toLowerCase()
+    .trim()
+    .replace(/^\s*(?:section\s+)?\d+(?:\.\d+)*[.)\-:]?\s*/i, '')
+    .replace(/[^0-9a-z가-힣]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 160);
+}
+
+function reportTopicDescriptors() {
+  const headings = [...(elements.sourceReportViewer?.querySelectorAll('h1, h2, h3') || [])];
+  const seen = new Map();
+  return headings.flatMap((heading, index) => {
+    const title = String(heading.textContent || '').trim();
+    const isReportTitle = index === 0 && heading.tagName === 'H1';
+    const key = normalizedTopicKey(title);
+    if (!title || !key || isReportTitle) return [];
+    const occurrence = (seen.get(key) || 0) + 1;
+    seen.set(key, occurrence);
+    const topicId = `topic-${key}${occurrence > 1 ? `-${occurrence}` : ''}`;
+    heading.id = topicId;
+    heading.dataset.topicId = topicId;
+    heading.dataset.topicKey = key;
+    return [{ heading, title, key, topicId, level: Number(heading.tagName.slice(1)), index }];
+  });
+}
+
+function currentUserCanManageTopicNote(note) {
+  const user = getCurrentUser();
+  return Boolean(user && (user.is_admin || String(note?.author_id || '') === String(user.id || '')));
+}
+
+function topicNoteMarkup(note) {
+  const canManage = currentUserCanManageTopicNote(note);
+  return `
+    <article class="topic-note-item" data-topic-note-id="${escapeHtml(note.id || '')}">
+      <div class="topic-note-meta">
+        <strong>${escapeHtml(note.author_name || 'Unknown')}</strong>
+        <span>${escapeHtml(formatCommentTime(note.updated_at || note.created_at))}</span>
+      </div>
+      <p>${escapeHtml(note.body || '')}</p>
+      ${canManage ? `
+        <div class="topic-note-item-actions">
+          <button type="button" data-topic-note-edit>수정</button>
+          <button type="button" data-topic-note-delete>삭제</button>
+        </div>
+      ` : ''}
+    </article>
+  `;
+}
+
+function topicNotePanelMarkup(topic, notes, unmatched = false) {
+  const noteStateClass = notes.length ? ' has-notes' : ' is-empty';
+  return `
+    <section class="topic-note-panel${unmatched ? ' is-unmatched' : ''}${noteStateClass}" data-topic-note-panel data-topic-id="${escapeHtml(topic.topicId)}" data-topic-key="${escapeHtml(topic.key)}" data-topic-title="${escapeHtml(topic.title)}">
+      <div class="topic-note-panel-heading">
+        <strong>${unmatched ? '이전 리포트 미매칭 메모' : 'Topic 메모'}</strong>
+        <span>${notes.length}</span>
+        ${unmatched ? '' : '<button type="button" data-topic-note-add>＋ 메모 추가</button>'}
+      </div>
+      <div class="topic-note-list">${notes.map(topicNoteMarkup).join('')}</div>
+      ${unmatched ? '' : `
+        <form class="topic-note-form" data-topic-note-form hidden>
+          <textarea maxlength="4000" rows="3" placeholder="이 Topic에 대한 정성 의견이나 확인할 내용을 남겨주세요." aria-label="${escapeHtml(topic.title)} Topic 메모"></textarea>
+          <div><span data-topic-note-status></span><button type="button" data-topic-note-cancel>취소</button><button type="submit">저장</button></div>
+        </form>
+      `}
+    </section>
+  `;
+}
+
+function renderTopicNotes(record = currentRecord) {
+  if (!elements.sourceReportViewer || elements.sourceReportViewer.classList.contains('showing-attachment')) return;
+  elements.sourceReportViewer.querySelectorAll('[data-topic-note-panel]').forEach((panel) => panel.remove());
+  const topics = reportTopicDescriptors();
+  const notes = Array.isArray(record?.meta?.topic_notes) ? record.meta.topic_notes.filter((note) => note && typeof note === 'object') : [];
+  const matchedNoteIds = new Set();
+
+  [...topics].reverse().forEach((topic, reverseIndex) => {
+    const topicIndex = topics.length - reverseIndex - 1;
+    const boundary = topics.slice(topicIndex + 1).find((candidate) => candidate.level <= topic.level)?.heading || null;
+    const topicNotes = notes.filter((note) => {
+      const matches = note.topic_id === topic.topicId || normalizedTopicKey(note.topic_key || note.topic_title) === topic.key;
+      if (matches && note.id) matchedNoteIds.add(note.id);
+      return matches;
+    });
+    const shell = document.createElement('div');
+    shell.innerHTML = topicNotePanelMarkup(topic, topicNotes);
+    const panel = shell.firstElementChild;
+    if (boundary) elements.sourceReportViewer.insertBefore(panel, boundary);
+    else elements.sourceReportViewer.append(panel);
+  });
+
+  const unmatched = notes.filter((note) => !matchedNoteIds.has(note.id));
+  if (unmatched.length) {
+    const shell = document.createElement('div');
+    shell.innerHTML = topicNotePanelMarkup(
+      { topicId: 'unmatched', key: 'unmatched', title: '이전 리포트 미매칭 메모' },
+      unmatched,
+      true
+    );
+    elements.sourceReportViewer.append(shell.firstElementChild);
+  }
+}
+
+async function saveTopicNote(panel, body) {
+  const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/topic-notes`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      topic_id: panel.dataset.topicId,
+      topic_key: panel.dataset.topicKey,
+      topic_title: panel.dataset.topicTitle,
+      body
+    })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || 'Topic 메모 저장에 실패했습니다.');
+  currentRecord = data.record;
+  renderSourceReport(currentRecord);
+}
+
+async function editTopicNote(noteId, body) {
+  const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/topic-notes/${encodeURIComponent(noteId)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ body })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || 'Topic 메모 수정에 실패했습니다.');
+  currentRecord = data.record;
+  renderSourceReport(currentRecord);
+}
+
+async function deleteTopicNote(noteId) {
+  const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/topic-notes/${encodeURIComponent(noteId)}`, {
+    method: 'DELETE'
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || 'Topic 메모 삭제에 실패했습니다.');
+  currentRecord = data.record;
+  renderSourceReport(currentRecord);
+}
+
 function openMarkdownInNewWindow(title, rawMarkdown) {
   const win = window.open('', '_blank');
   if (!win) return;
@@ -3260,8 +3438,145 @@ function closeCriteriaDrawer() {
   }, 180);
 }
 
+let pendingReuploadRecord = null;
+
+function normalizedPipelineIdentityText(value) {
+  return String(value || '').normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
+}
+
+function recordIdentityParts(record) {
+  const table = record?.structured_table || {};
+  const summary = record?.json_summary || {};
+  return {
+    company: String(table.company || summary.company || '').trim(),
+    asset: String(table.asset_name || summary.asset_name || '').trim()
+  };
+}
+
+function recordKeyForDetailReupload(record) {
+  const explicit = String(record?.meta?.output_filename_base || '').trim();
+  if (explicit) return explicit;
+  const identity = recordIdentityParts(record);
+  return `${identity.company || 'unknown'}_${identity.asset || 'asset'}`;
+}
+
+function parseFullScoutReupload(value) {
+  let text = String(value || '').trim();
+  const outerFence = text.match(/^```(?:text|markdown|md)?\s*\r?\n([\s\S]*?)\r?\n```$/i);
+  if (outerFence) text = outerFence[1].trim();
+  const separatorMatches = [...text.matchAll(/^--- JSON DATA ---[ \t]*$/gm)];
+  if (separatorMatches.length !== 1) {
+    throw new Error('--- JSON DATA --- 구분선이 정확히 한 번 있어야 합니다.');
+  }
+  const separator = separatorMatches[0];
+  const markdown = text.slice(0, separator.index).trim();
+  const jsonText = text.slice(separator.index + separator[0].length).trim();
+  if (!markdown || !/^#{1,6}\s+/m.test(markdown)) throw new Error('제목이 포함된 Markdown 원문을 찾지 못했습니다.');
+  if (!jsonText) throw new Error('구분선 아래에 Full Scout JSON이 없습니다.');
+  let payload;
+  try {
+    payload = JSON.parse(jsonText);
+  } catch (error) {
+    throw new Error(`JSON 문법 오류: ${error.message}`);
+  }
+  if (payload && !Array.isArray(payload) && Array.isArray(payload.records)) payload = payload.records;
+  if (Array.isArray(payload)) {
+    if (payload.length !== 1) throw new Error('상세 재업로드는 Full Scout record 한 개만 입력할 수 있습니다.');
+    [payload] = payload;
+  }
+  if (!payload || typeof payload !== 'object') throw new Error('Full Scout JSON 객체를 찾지 못했습니다.');
+  const record = expandCompactInputRecord(payload, 'full');
+  const reviewType = String(record?.meta?.review_type || '').toLowerCase();
+  if (reviewType.includes('triage') || record.triage) throw new Error('TAB1 Fast Triage 결과는 상세 Full Scout 재업로드에 사용할 수 없습니다.');
+  const criteria = record?.scoring?.criteria || {};
+  const requiredCriteria = Object.keys(scoringLabels);
+  const missing = requiredCriteria.filter((criterionId) => !criteria[criterionId]);
+  if (missing.length) throw new Error(`Full Scout 점수 항목이 누락되었습니다: ${missing.join(', ')}`);
+  record.source_report = {
+    ...(record.source_report || {}),
+    raw_markdown: markdown,
+    source_format: record.source_report?.source_format || 'gpt_markdown_report',
+    parser_status: record.source_report?.parser_status || 'gpt_structured_output',
+    parser_note: record.source_report?.parser_note || 'Detail Full Scout combined response reupload.'
+  };
+  return { record, markdown };
+}
+
+function openReportReuploadModal() {
+  pendingReuploadRecord = null;
+  elements.reportReuploadInput.value = '';
+  elements.reportReuploadValidation.textContent = '입력 대기 중';
+  elements.reportReuploadValidation.dataset.tone = '';
+  elements.reportReuploadSave.disabled = true;
+  elements.reportReuploadBackdrop.hidden = false;
+  document.body.classList.add('report-reupload-open');
+  elements.reportReuploadInput.focus();
+}
+
+function closeReportReuploadModal() {
+  pendingReuploadRecord = null;
+  elements.reportReuploadBackdrop.hidden = true;
+  document.body.classList.remove('report-reupload-open');
+  elements.detailReuploadButton?.focus();
+}
+
+function reviewReportReupload() {
+  try {
+    const parsed = parseFullScoutReupload(elements.reportReuploadInput.value);
+    const incoming = recordIdentityParts(parsed.record);
+    const existing = recordIdentityParts(currentRecord);
+    if (
+      normalizedPipelineIdentityText(incoming.company) !== normalizedPipelineIdentityText(existing.company)
+      || normalizedPipelineIdentityText(incoming.asset) !== normalizedPipelineIdentityText(existing.asset)
+    ) {
+      throw new Error(`현재 Asset(${existing.company} · ${existing.asset})과 입력 결과(${incoming.company} · ${incoming.asset})가 일치하지 않습니다.`);
+    }
+    pendingReuploadRecord = parsed.record;
+    const noteCount = Array.isArray(currentRecord?.meta?.topic_notes) ? currentRecord.meta.topic_notes.length : 0;
+    elements.reportReuploadValidation.dataset.tone = 'success';
+    elements.reportReuploadValidation.textContent = `검증 완료 · ${incoming.company} · ${incoming.asset} · Topic 메모 ${noteCount}개 유지`;
+    elements.reportReuploadSave.disabled = false;
+  } catch (error) {
+    pendingReuploadRecord = null;
+    elements.reportReuploadValidation.dataset.tone = 'error';
+    elements.reportReuploadValidation.textContent = error.message;
+    elements.reportReuploadSave.disabled = true;
+  }
+}
+
+async function saveReportReupload() {
+  if (!pendingReuploadRecord || !currentRecordId) return;
+  const identity = recordIdentityParts(currentRecord);
+  const confirmed = window.confirm(
+    `${identity.company} · ${identity.asset} Full Scout 원문과 구조화 데이터를 교체할까요?\n\nTopic 메모, 팀 코멘트, 파트너사 자료는 유지됩니다.`
+  );
+  if (!confirmed) return;
+  const incomingId = recordKeyForDetailReupload(pendingReuploadRecord);
+  elements.reportReuploadSave.disabled = true;
+  elements.reportReuploadValidation.dataset.tone = '';
+  elements.reportReuploadValidation.textContent = '검증된 리포트로 교체하는 중…';
+  try {
+    const response = await fetch('/api/records', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        records: [pendingReuploadRecord],
+        confirmed_replacements: [{ incoming_record_id: incomingId, existing_record_id: currentRecordId }]
+      })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'Full Scout 재업로드에 실패했습니다.');
+    closeReportReuploadModal();
+    await loadRecord();
+  } catch (error) {
+    elements.reportReuploadValidation.dataset.tone = 'error';
+    elements.reportReuploadValidation.textContent = error.message;
+    elements.reportReuploadSave.disabled = false;
+  }
+}
+
 function openEditDrawer() {
-  if (!currentRecord) return;
+  if (!currentRecord || !getCurrentUser()?.is_admin) return;
   elements.jsonEditor.value = JSON.stringify(currentRecord, null, 2);
   elements.editStatus.textContent = '편집 가능';
   elements.editDrawer.hidden = false;
@@ -3763,11 +4078,90 @@ elements.criteriaDrawerButton.addEventListener('click', openCriteriaDrawer);
 elements.criteriaDrawerClose.addEventListener('click', closeCriteriaDrawer);
 elements.criteriaBackdrop.addEventListener('click', closeCriteriaDrawer);
 elements.deleteRecordButton.addEventListener('click', deleteCurrentRecord);
+elements.detailReuploadButton?.addEventListener('click', openReportReuploadModal);
+elements.reportReuploadClose?.addEventListener('click', closeReportReuploadModal);
+elements.reportReuploadBackdrop?.addEventListener('click', (event) => {
+  if (event.target === elements.reportReuploadBackdrop) closeReportReuploadModal();
+});
+elements.reportReuploadReview?.addEventListener('click', reviewReportReupload);
+elements.reportReuploadSave?.addEventListener('click', saveReportReupload);
+elements.reportReuploadInput?.addEventListener('input', () => {
+  pendingReuploadRecord = null;
+  elements.reportReuploadSave.disabled = true;
+  elements.reportReuploadValidation.dataset.tone = '';
+  elements.reportReuploadValidation.textContent = '내용이 변경되었습니다. 입력 검토를 다시 실행해 주세요.';
+});
 elements.editButton?.addEventListener('click', openEditDrawer);
 elements.editDrawerClose?.addEventListener('click', closeEditDrawer);
 elements.editBackdrop?.addEventListener('click', closeEditDrawer);
 elements.formatJsonButton?.addEventListener('click', formatEditorJson);
 elements.saveJsonEditButton?.addEventListener('click', saveEditedJson);
+
+elements.sourceReportViewer?.addEventListener('click', async (event) => {
+  const panel = event.target.closest('[data-topic-note-panel]');
+  if (!panel) return;
+  if (event.target.closest('[data-topic-note-add]')) {
+    const form = panel.querySelector('[data-topic-note-form]');
+    if (form) {
+      form.hidden = false;
+      form.querySelector('textarea')?.focus();
+    }
+    return;
+  }
+  if (event.target.closest('[data-topic-note-cancel]')) {
+    const form = panel.querySelector('[data-topic-note-form]');
+    if (form) {
+      form.reset();
+      form.hidden = true;
+    }
+    return;
+  }
+  const noteItem = event.target.closest('[data-topic-note-id]');
+  const noteId = noteItem?.dataset.topicNoteId;
+  if (!noteId) return;
+  const note = (currentRecord?.meta?.topic_notes || []).find((item) => item?.id === noteId);
+  if (event.target.closest('[data-topic-note-edit]')) {
+    const nextBody = window.prompt('Topic 메모 수정', note?.body || '');
+    if (nextBody === null || nextBody.trim() === String(note?.body || '').trim()) return;
+    try {
+      await editTopicNote(noteId, nextBody.trim());
+    } catch (error) {
+      window.alert(error.message);
+    }
+    return;
+  }
+  if (event.target.closest('[data-topic-note-delete]')) {
+    if (!window.confirm('이 Topic 메모를 삭제할까요?')) return;
+    try {
+      await deleteTopicNote(noteId);
+    } catch (error) {
+      window.alert(error.message);
+    }
+  }
+});
+
+elements.sourceReportViewer?.addEventListener('submit', async (event) => {
+  const form = event.target.closest('[data-topic-note-form]');
+  if (!form) return;
+  event.preventDefault();
+  const panel = form.closest('[data-topic-note-panel]');
+  const textarea = form.querySelector('textarea');
+  const status = form.querySelector('[data-topic-note-status]');
+  const body = textarea?.value.trim() || '';
+  if (!body) {
+    if (status) status.textContent = '메모를 입력해 주세요.';
+    textarea?.focus();
+    return;
+  }
+  form.querySelectorAll('button, textarea').forEach((control) => { control.disabled = true; });
+  if (status) status.textContent = '저장 중…';
+  try {
+    await saveTopicNote(panel, body);
+  } catch (error) {
+    form.querySelectorAll('button, textarea').forEach((control) => { control.disabled = false; });
+    if (status) status.textContent = error.message;
+  }
+});
 
 window.addEventListener('keydown', (event) => {
   if (event.key !== 'Escape') return;
@@ -3775,6 +4169,12 @@ window.addEventListener('keydown', (event) => {
     event.preventDefault();
     event.stopImmediatePropagation();
     closeEditDrawer();
+    return;
+  }
+  if (!elements.reportReuploadBackdrop?.hidden) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    closeReportReuploadModal();
     return;
   }
   if (elements.criteriaDrawer.classList.contains('open')) {

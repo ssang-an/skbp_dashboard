@@ -630,6 +630,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('class="parameter-formula-panel"', section)
         self.assertIn('class="parameter-evidence-list marketability-formula-list"', section)
         self.assertEqual(section.count('class="criteria-keyword-list marketability-formula-components"'), 4)
+        self.assertIn('<strong>D. Global</strong>', section)
+        self.assertNotIn('<strong>Global</strong>', section)
         for component in (
             'US Patient Pool',
             'Treatable Subgroup Rate',
@@ -1251,7 +1253,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
 
     def test_data_upload_placeholders_use_prominent_spaced_body_copy(self):
         self.assertIn("오른쪽 Fast Triage 실행 가이드 순서대로", JS)
-        self.assertIn("지침 1은 최대 50개까지 처리할 수 있으나, 안정적인 조사와 출력 형식을 위해 10~20개씩 실행하는 것을 권장합니다.", JS)
+        self.assertIn("이 입력란은 Fast Triage 형식만 검증합니다.", JS)
+        self.assertIn("지침 1은 최대 50개까지 처리할 수 있으나 안정적인 조사를 위해 10~20개씩 실행하는 것을 권장합니다.", JS)
         self.assertIn(".paste-panel #gptResponseInput::placeholder", CSS)
         placeholder_styles = CSS[CSS.index(".paste-panel #gptResponseInput::placeholder"):]
         self.assertIn("font-size: 16px", placeholder_styles)
@@ -1262,7 +1265,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("inputLabel: 'GPT 지침 1 전체 응답'", JS)
         self.assertIn("inputLabel: 'GPT 지침 2 전체 응답'", JS)
         self.assertNotIn("전체 응답 · Markdown + JSON", JS)
-        self.assertIn('id="dataUploadInputLabel">GPT 지침 2 전체 응답</span>', HTML)
+        self.assertIn('id="dataUploadInputLabel">GPT 지침 2 전체 응답</b>', HTML)
 
     def test_triage_parameter_guide_uses_requested_one_line_summaries(self):
         start = HTML.index('class="criteria-parameter-guide triage-parameter-guide')
@@ -1789,7 +1792,35 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         context = function_body(JS, "buildDashboardAgentContext")
         self.assertIn("scopeRows.length", context)
         self.assertNotIn(".slice(0, 5)", context)
-        self.assertIn("app.js?v=20260803-guide-input-pill-1", HTML)
+        self.assertIn("app.js?v=20260805-rubric-ai-3", HTML)
+
+    def test_table_manual_review_uses_authenticated_user_without_identity_modal(self):
+        actor = function_body(JS, "ensureDashboardActorName")
+        save = function_body(JS, "saveManualReviewEdit")
+        self.assertIn("getCurrentUser() || await requireAuth()", actor)
+        self.assertIn("user?.name", actor)
+        self.assertIn("await ensureDashboardActorName()", save)
+        self.assertNotIn("actor_name:", save)
+        self.assertNotIn("reviewerIdentityModal", HTML)
+        self.assertNotIn("openReviewerIdentityModal", JS)
+        self.assertNotIn("DASHBOARD_REVIEWER_ID_KEY", JS)
+
+    def test_data_upload_locks_contract_and_preserves_separate_tab_drafts(self):
+        validator = function_body(JS, "validateCombinedInput")
+        preview = function_body(JS, "previewPastedReportParsing")
+        save = function_body(JS, "saveStructuredJsonInput")
+        guide = function_body(JS, "renderDataUploadGuide")
+        self.assertIn("lockedMode", validator)
+        self.assertIn("TAB1 Fast Triage", validator)
+        self.assertIn("TAB2 Full Scout", validator)
+        self.assertIn("최상위 JSON 배열", validator)
+        self.assertIn("activeTableMode() === 'triage' ? 'triage' : 'full'", preview)
+        self.assertIn("validateCombinedInput(elements.gptResponseInput.value, expectedMode)", preview)
+        self.assertIn("validateCombinedInput(elements.gptResponseInput.value, expectedMode)", save)
+        self.assertIn("state.dataUploadDrafts[previousMode]", guide)
+        self.assertIn("state.dataUploadDrafts[mode]", guide)
+        self.assertIn("expandCompactInputRecord(record, lockedMode)", validator)
+        self.assertIn("compact-ingestion.js?v=20260805-compact-v1", JS)
 
     def test_detail_agent_is_qa_only_without_apply_controls_or_routes(self):
         main_py = (ROOT / "main.py").read_text(encoding="utf-8")
@@ -1821,7 +1852,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn(".ai-apply-before-after", CSS)
         for filename in ("index.html", "detail.html", "triage_detail.html", "wiki_view.html", "user_admin.html"):
             markup = (ROOT / filename).read_text(encoding="utf-8")
-            self.assertIn('./src/styles.css?v=20260803-guide-pill-height-1', markup)
+            self.assertIn('./src/styles.css?v=20260805-topic-notes-1', markup)
             self.assertNotIn('href="$1', markup)
 
         rendered_preview = function_body(DETAIL_JS, "renderAiApplyPreview")
@@ -2014,29 +2045,30 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn(".detail-material-body::-webkit-scrollbar", layout)
         self.assertIn("width: 6px", layout)
         self.assertIn("border-radius: 999px", layout)
-        self.assertIn("detail.js?v=20260804-attachment-original-download-toolbar-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260805-topic-notes-1", DETAIL_HTML)
 
     def test_report_header_matches_review_workspace_and_uses_icon_actions(self):
         report_header = DETAIL_HTML[
             DETAIL_HTML.index('<section class="panel raw-report-panel">') :
             DETAIL_HTML.index('<div id="sourceReportViewer"')
         ]
-        self.assertIn('<p id="detailViewerEyebrow" class="eyebrow">AI REPORT UPLOADED</p>', report_header)
-        shared_eyebrow = CSS[CSS.index(".detail-shell .report-header-copy .eyebrow,") : CSS.index(".report-header-copy h2,")]
-        self.assertIn(".detail-shell .collaboration-title-row .eyebrow", shared_eyebrow)
-        self.assertIn("color: #2f8f68", shared_eyebrow)
-        aligned_headers = CSS[CSS.index("Align the report and review-workspace labels") :]
+        self.assertNotIn('id="detailViewerEyebrow"', report_header)
+        self.assertIn('<h2 id="detailViewerTitle" class="detail-primary-panel-title">GPT ORIGINAL REPORT</h2>', report_header)
+        self.assertIn('<h2 class="detail-primary-panel-title">TEAM REVIEW WORKSPACE</h2>', DETAIL_HTML)
+        aligned_headers = CSS[CSS.index("Keep the report and review-workspace titles") :]
         self.assertIn(".detail-shell .collaboration-title-row", aligned_headers)
         self.assertIn("min-height: 0", aligned_headers)
         self.assertIn("align-items: flex-start", aligned_headers)
         self.assertIn(".detail-shell .report-header-copy,", aligned_headers)
         self.assertIn(".detail-shell .collaboration-title-row > div:first-child", aligned_headers)
         self.assertIn("gap: 3px", aligned_headers)
-        self.assertIn("line-height: 1.2", aligned_headers)
-        self.assertIn('<h2 id="detailViewerTitle">GPT 원문 리포트</h2>', report_header)
+        title_style = CSS[CSS.index(".detail-shell .detail-primary-panel-title {") : CSS.index(".detail-shell .collaboration-title-actions")]
+        self.assertIn("font-size: 18px", title_style)
+        self.assertIn("line-height: 30px", title_style)
         self.assertIn('<p id="detailSubtitle" hidden></p>', report_header)
         self.assertNotIn("원문 리포트 기반 primary source", report_header)
-        self.assertEqual(report_header.count('class="report-action-icon help-tooltip"'), 2)
+        self.assertEqual(report_header.count('class="report-action-icon help-tooltip"'), 3)
+        self.assertIn('data-tooltip="GPT 원문으로"', report_header)
         self.assertIn('data-tooltip="전체보기"', report_header)
         self.assertIn('data-tooltip="복사"', report_header)
         self.assertIn('<svg viewBox="0 0 24 24"', report_header)
@@ -2044,11 +2076,11 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         source_report = function_body(DETAIL_JS, "renderSourceReport")
         attachment_preview = function_body(DETAIL_JS, "showAttachmentPreview")
         copy_source = function_body(DETAIL_JS, "copyCurrentSourceMarkdown")
-        self.assertIn("detailViewerEyebrow.textContent = 'AI REPORT UPLOADED'", source_report)
+        self.assertIn("detailViewerTitle.textContent = 'GPT ORIGINAL REPORT'", source_report)
         self.assertIn("elements.subtitle.textContent = ''", source_report)
         self.assertIn("elements.subtitle.hidden = true", source_report)
         self.assertNotIn("summary.target", source_report)
-        self.assertIn("detailViewerEyebrow.textContent = 'Partner material'", attachment_preview)
+        self.assertNotIn("detailViewerEyebrow", attachment_preview)
         self.assertIn("elements.subtitle.hidden = false", attachment_preview)
         self.assertIn("classList.contains('report-action-icon')", copy_source)
         self.assertIn("button.dataset.tooltip = '복사됨'", copy_source)
@@ -2065,7 +2097,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn(".detail-shell .raw-report-panel .panel-header-actions", unified_icons)
         self.assertIn("align-self: flex-start", unified_icons)
         self.assertIn("min-height: 30px", unified_icons)
-        self.assertIn("margin-top: 4px", unified_icons)
+        self.assertIn("margin-top: 0", unified_icons)
         self.assertIn("gap: 7px", unified_icons)
         self.assertIn("border: 0", unified_icons)
         self.assertIn("background: var(--accent-soft)", unified_icons)
@@ -2074,26 +2106,37 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("height: 17px", unified_icons)
         self.assertIn("stroke-width: 1.7", unified_icons)
 
-    def test_attachment_preview_shows_original_download_for_non_pdf_files_only(self):
+    def test_attachment_preview_uses_three_matching_icon_actions_with_tooltips(self):
         preview = function_body(DETAIL_JS, "showAttachmentPreview")
-        self.assertIn("isPdfAttachment = /\\.pdf$/i.test(originalName)", preview)
         self.assertIn("원본 파일 열기", preview)
         self.assertIn("원본 다운로드", preview)
         self.assertIn('download="${escapeHtml(originalName)}"', preview)
-        self.assertIn(
-            "openAction = isPdfAttachment ? openOriginalLink : `${downloadOriginalLink}${openOriginalLink}`",
-            preview,
-        )
+        self.assertIn("detailAttachmentOriginalActions.innerHTML", preview)
+        self.assertIn('class="report-action-icon help-tooltip attachment-original-action"', preview)
+        self.assertIn('data-tooltip="원본 다운로드" aria-label="원본 다운로드"', preview)
+        self.assertIn('data-tooltip="원본 파일 열기" aria-label="원본 파일 열기"', preview)
+        self.assertIn('M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5', preview)
+        self.assertIn('href="${escapeHtml(previewUrl)}" target="_blank" rel="noopener"', preview)
         self.assertNotIn("isConvertedSlide", preview)
         self.assertNotIn("PDF 다운로드", preview)
         self.assertNotIn("PPT 다운로드", preview)
-        # Back to a single toolbar in the viewer itself; no separate header download group.
-        self.assertNotIn("detailAttachmentDownloadActions", preview)
-        self.assertNotIn('id="detailAttachmentDownloadActions"', DETAIL_HTML)
-        self.assertNotIn(".detail-viewer-back-group", CSS)
+        self.assertNotIn("attachment-preview-toolbar", preview)
 
-        toolbar = CSS[CSS.index(".attachment-preview-toolbar {") : CSS.index(".attachment-open-link {")]
-        self.assertIn("gap: 8px", toolbar)
+        report_header = DETAIL_HTML[
+            DETAIL_HTML.index('<section class="panel raw-report-panel">') :
+            DETAIL_HTML.index('<div id="sourceReportViewer"')
+        ]
+        back_index = report_header.index('id="detailViewerBackButton"')
+        actions_index = report_header.index('id="detailAttachmentOriginalActions"')
+        self.assertLess(back_index, actions_index)
+        self.assertIn('id="detailViewerBackGroup" class="detail-viewer-back-group" hidden', report_header)
+        self.assertIn('class="report-action-icon help-tooltip"', report_header)
+        self.assertIn(".attachment-original-actions", CSS)
+        self.assertIn("display: flex", CSS[CSS.index(".detail-viewer-back-group {") : CSS.index(".report-viewer.showing-attachment")])
+        attachment_icon_style = CSS[CSS.index("Attachment navigation mirrors the neutral favorite control") :]
+        self.assertIn("background: var(--surface-soft)", attachment_icon_style)
+        self.assertIn("color: var(--muted)", attachment_icon_style)
+        self.assertIn("background: var(--accent-soft)", attachment_icon_style)
 
     def test_review_workspace_uses_compact_version_refresh_pills_and_owner_meta(self):
         workspace = DETAIL_HTML[
@@ -2212,7 +2255,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("detailOiPartnershipNoteOrigin", DETAIL_JS)
         self.assertIn('title="OI 파트너십 분류 근거를 짧게 요약합니다."', note_markup)
         self.assertNotIn("review-reason-edit-icon", note_markup)
-        self.assertIn("detail.js?v=20260804-attachment-original-download-toolbar-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260805-topic-notes-1", DETAIL_HTML)
 
     def test_partner_material_body_scrolls_below_fixed_header(self):
         header_index = DETAIL_HTML.index('class="detail-material-header"')
@@ -2239,7 +2282,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("overflow: visible", list_style)
         for filename in ("index.html", "detail.html", "triage_detail.html", "wiki_view.html", "user_admin.html"):
             markup = (ROOT / filename).read_text(encoding="utf-8")
-            self.assertIn('./src/styles.css?v=20260803-guide-pill-height-1', markup)
+            self.assertIn('./src/styles.css?v=20260805-topic-notes-1', markup)
 
     def test_data_upload_reviews_same_company_asset_before_replacing_existing_record(self):
         finder = function_body(JS, "findDataReuploadMatches")

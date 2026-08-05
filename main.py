@@ -44,6 +44,7 @@ TRIAGE_CRITERIA_VERSION = "3.2"
 TRIAGE_SCHEMA_VERSION = "3.2"
 FULL_SCOUT_SCHEMA_VERSION = "3.2"
 SCORING_CRITERIA_FULL_MD = ROOT / "config" / "scoring_criteria" / "v3_3_full.md"
+SCORING_CRITERIA_TRIAGE_MD = ROOT / "config" / "scoring_criteria" / "v3_2_triage.md"
 SCORING_CRITERIA_DISPLAY_MD = ROOT / "config" / "scoring_criteria" / "v3_3_display.md"
 CATEGORY_SYNONYMS_FILE = ROOT / "config" / "category-synonyms.json"
 OPENROUTER_DEFAULT_MODEL = "openrouter/free"
@@ -114,7 +115,7 @@ def load_local_env() -> None:
 
 load_local_env()
 
-OPENROUTER_MAX_TOKENS = int(os.getenv("OPENROUTER_MAX_TOKENS", "1200"))
+OPENROUTER_MAX_TOKENS = int(os.getenv("OPENROUTER_MAX_TOKENS", "1600"))
 
 CRITERION_ALIASES = {
     "target_relevance": ["target_relevance", "target relevance", "타깃", "타겟", "target"],
@@ -1370,7 +1371,8 @@ def validate_records_for_save(records: list[dict[str, Any]]) -> None:
                         if len(markdown_rows) == len(records) and index < len(markdown_rows)
                         else None
                     )
-                    if markdown_row and markdown_row["status"] != filter_status:
+                    score_only_rubric_refresh = bool(meta.get("rescored_rubric_version"))
+                    if markdown_row and markdown_row["status"] != filter_status and not score_only_rubric_refresh:
                         validation_error(
                             f"record[{index}].source_report.raw_markdown Triage status "
                             f"{markdown_row['status'] or '(blank)'} must match JSON status {filter_status}."
@@ -2375,6 +2377,8 @@ def preserve_dashboard_meta(incoming: dict[str, Any], existing: dict[str, Any]) 
         "attachments",
         "collaboration",
         "qualitative_review",
+        "topic_notes",
+        "report_reupload_history",
         "human_review",
         "edit_history",
         "last_edited_at",
@@ -2382,6 +2386,33 @@ def preserve_dashboard_meta(incoming: dict[str, Any], existing: dict[str, Any]) 
     ):
         if key in existing_meta:
             incoming_meta[key] = copy.deepcopy(existing_meta[key])
+
+
+def append_report_reupload_snapshot(
+    incoming: dict[str, Any],
+    existing: dict[str, Any],
+    *,
+    actor_ip: str,
+) -> None:
+    """Keep a recoverable pre-reupload report/data snapshot without recursive history nesting."""
+    snapshot = copy.deepcopy(existing)
+    snapshot_meta = snapshot.get("meta") if isinstance(snapshot.get("meta"), dict) else {}
+    snapshot_meta.pop("report_reupload_history", None)
+    history = incoming.setdefault("meta", {}).setdefault("report_reupload_history", [])
+    if not isinstance(history, list):
+        history = []
+        incoming["meta"]["report_reupload_history"] = history
+    history.append({
+        "id": uuid.uuid4().hex,
+        "replaced_at": datetime.now(timezone.utc).isoformat(),
+        "actor_ip": actor_ip,
+        "previous_record_id": record_key(existing),
+        "previous_rubric_version": (existing.get("meta") or {}).get("rubric_version"),
+        "previous_source_report": copy.deepcopy(existing.get("source_report") or {}),
+        "previous_record_snapshot": snapshot,
+    })
+    if len(history) > 10:
+        incoming["meta"]["report_reupload_history"] = history[-10:]
 
 
 def ensure_data_file() -> None:
@@ -4235,19 +4266,44 @@ def build_ai_revision_preview(record: dict[str, Any], updated_record: dict[str, 
     }
 
 
-RUBRIC_REFRESH_ATTACHMENTS_LIMIT = 8000
+RUBRIC_REFRESH_REPORT_LIMIT = 24000
+RUBRIC_REFRESH_ATTACHMENTS_LIMIT = 16000
 RUBRIC_REFRESH_CRITERION_NAMES = (
     "Target Relevance, Competitive Landscape, MoA Validity, Platform Attractiveness, "
     "Expansion Potential, Data Maturity, Marketability"
 )
+TRIAGE_RUBRIC_REFRESH_CRITERION_NAMES = "Target Relevance, MoA Validity, Data Maturity"
+
+
+def rubric_refresh_report_excerpt(record: dict[str, Any], report_text: str) -> str:
+    text = str(report_text or "").strip()
+    if len(text) <= RUBRIC_REFRESH_REPORT_LIMIT:
+        return text
+    if is_fast_triage_record(record):
+        table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else {}
+        summary = record.get("json_summary") if isinstance(record.get("json_summary"), dict) else {}
+        asset = non_empty_text(table.get("asset_name"), summary.get("asset_name"))
+        company = non_empty_text(table.get("company"), summary.get("company"))
+        terms = {value.casefold() for value in (asset, company) if len(value) >= 3}
+        return make_wiki_snippet(text, terms, RUBRIC_REFRESH_REPORT_LIMIT)
+    head_limit = RUBRIC_REFRESH_REPORT_LIMIT * 2 // 3
+    tail_limit = RUBRIC_REFRESH_REPORT_LIMIT - head_limit
+    return f"{text[:head_limit].rstrip()}\n\n[...middle omitted...]\n\n{text[-tail_limit:].lstrip()}"
 
 
 def build_rubric_refresh_prompt(record: dict[str, Any], attachments_text: str) -> tuple[str, str]:
-    rubric_text = SCORING_CRITERIA_FULL_MD.read_text(encoding="utf-8")
+    triage = is_fast_triage_record(record)
+    rubric_version = TRIAGE_CRITERIA_VERSION if triage else SCORING_CRITERIA_VERSION
+    rubric_path = SCORING_CRITERIA_TRIAGE_MD if triage else SCORING_CRITERIA_FULL_MD
+    rubric_text = rubric_path.read_text(encoding="utf-8")
+    criterion_names = TRIAGE_RUBRIC_REFRESH_CRITERION_NAMES if triage else RUBRIC_REFRESH_CRITERION_NAMES
+    criterion_count = "three Fast Triage" if triage else "seven Full Scout"
+    workflow_name = "Fast Triage" if triage else "Full Scout"
     report_text = str((record.get("source_report") or {}).get("raw_markdown") or "")
     system_prompt = (
-        "You are reviewing whether NEW evidence for a single biotech pipeline asset provides "
-        "clear, unambiguous grounds to update its scores under the SKBP scoring rubric below. "
+        "You are re-evaluating a single biotech pipeline asset against the latest SKBP scoring rubric below. "
+        "Review every stored score using the existing source report and partner-uploaded attachments, even when "
+        "the evidence itself is not new, because the rubric definition may have changed. "
         "Only propose a change when there is concrete, specific evidence with a direct scoring implication. "
         "Do NOT propose a change when: the evidence for change is unclear, there is no specific score or "
         "weighting implication, it is merely a difference of interpretation, or the sources conflict with "
@@ -4261,20 +4317,20 @@ def build_rubric_refresh_prompt(record: dict[str, Any], attachments_text: str) -
         "REASON: <one sentence in Korean>\n"
         "If RUBRIC_UPDATE_NEEDED is yes and CONFLICT is no, follow the header with one line per criterion "
         "that should change, formatted as '<Criterion Name>: <new score 0-3> - <one-sentence reason>' "
-        f"(criterion names: {RUBRIC_REFRESH_CRITERION_NAMES}). Omit criteria that should not change. "
+        f"(criterion names: {criterion_names}). Omit criteria that should not change. "
         "If RUBRIC_UPDATE_NEEDED is no, or CONFLICT is yes, output nothing after the three header lines."
     )
     user_prompt = (
-        f"[Current SKBP Scoring Rubric — v{SCORING_CRITERIA_VERSION}]\n"
+        f"[Current SKBP {workflow_name} Scoring Rubric — v{rubric_version}]\n"
         f"{rubric_text}\n\n"
         "[This Record's Current Scores]\n"
         f"{compact_chat_context(record)}\n\n"
         "[GPT Source Report — original primary source]\n"
-        f"{report_text[:CHAT_JSON_CONTEXT_LIMIT]}\n\n"
+        f"{rubric_refresh_report_excerpt(record, report_text)}\n\n"
         "[User-Uploaded Attachments — newly added evidence, if any]\n"
         f"{attachments_text[:RUBRIC_REFRESH_ATTACHMENTS_LIMIT] if attachments_text else '(no attachments uploaded)'}\n\n"
-        "Task: Decide whether the source report and/or uploaded attachments contain clear, specific evidence "
-        "that justifies updating this record's scores under the rubric above."
+        f"Task: Re-evaluate all {criterion_count} criterion scores under the latest rubric. Change only criteria for which "
+        "the source report and/or uploaded attachments provide clear, specific support for a different score."
     )
     return system_prompt, user_prompt
 
@@ -5400,18 +5456,51 @@ async def apply_ai_revision_to_record(record_id: str, request: Request) -> dict[
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
 
 
+def record_successful_rubric_review(
+    record: dict[str, Any],
+    *,
+    rubric_version: str,
+    reviewed_at: str,
+    actor_ip: str,
+    result: str,
+    reason: str,
+    changes: list[str] | None = None,
+) -> None:
+    meta = record.setdefault("meta", {})
+    meta["rubric_reviewed_version"] = rubric_version
+    meta["rubric_reviewed_at"] = reviewed_at
+    meta["rubric_reviewed_by"] = actor_ip
+    meta["rubric_review_result"] = result
+    history = meta.setdefault("rubric_refresh_history", [])
+    if not isinstance(history, list):
+        history = []
+        meta["rubric_refresh_history"] = history
+    entry = {
+        "version": rubric_version,
+        "reviewed_at": reviewed_at,
+        "result": result,
+        "actor_ip": actor_ip,
+        "reason": reason,
+        "changes": list(changes or []),
+    }
+    if result == "updated":
+        entry["changed_at"] = reviewed_at
+    history.append(entry)
+    if len(history) > 20:
+        meta["rubric_refresh_history"] = history[-20:]
+
+
 @app.post("/api/records/{record_id:path}/refresh-rubric")
 async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, Any]:
     records = load_records()
     for index, record in enumerate(records):
         if record_key(record) != record_id:
             continue
-        if is_fast_triage_record(record):
-            raise HTTPException(status_code=400, detail="Score 기준 갱신은 Full Scout 레코드에서만 사용할 수 있습니다.")
-
+        triage_workflow = is_fast_triage_record(record)
+        latest_rubric_version = TRIAGE_CRITERIA_VERSION if triage_workflow else SCORING_CRITERIA_VERSION
         meta = record.setdefault("meta", {})
         current_version = str(
-            meta.get("rescored_rubric_version") or meta.get("rubric_version") or SCORING_CRITERIA_VERSION
+            meta.get("rescored_rubric_version") or meta.get("rubric_version") or latest_rubric_version
         )
 
         api_key = os.getenv("OPENROUTER_API_KEY")
@@ -5457,28 +5546,90 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
                 "reason": verdict["reason"],
             }
         if not verdict["update_needed"]:
+            reviewed_at = datetime.now(timezone.utc).isoformat()
+            record_successful_rubric_review(
+                record,
+                rubric_version=latest_rubric_version,
+                reviewed_at=reviewed_at,
+                actor_ip=get_client_ip(request),
+                result="no_change",
+                reason=verdict["reason"],
+            )
+            validate_records_for_save([record])
+            records[index] = record
+            save_records(records)
             return {
                 "ok": True,
                 "status": "no_evidence",
-                "message": f"변경 근거가 없어 기존 rubric v{current_version}을 유지했습니다.",
+                "message": (
+                    f"Fast Triage rubric v{latest_rubric_version} 검토 완료 · 점수 변경 없음"
+                    if triage_workflow
+                    else f"Full Scout rubric v{latest_rubric_version} 검토 완료 · 점수 변경 없음"
+                ),
                 "record": record,
                 "reason": verdict["reason"],
+                "rubric_reviewed_version": latest_rubric_version,
+                "rubric_reviewed_at": reviewed_at,
             }
 
         candidate = copy.deepcopy(record)
+        candidate["_revision_context"] = {
+            "instruction_label": "Fast Triage Rubric" if triage_workflow else "Full Scout Rubric",
+            "version": latest_rubric_version,
+        }
         changes: list[str] = []
         apply_ai_revision_scores(candidate, answer, changes)
+        candidate.pop("_revision_context", None)
         if not changes:
+            reviewed_at = datetime.now(timezone.utc).isoformat()
+            record_successful_rubric_review(
+                record,
+                rubric_version=latest_rubric_version,
+                reviewed_at=reviewed_at,
+                actor_ip=get_client_ip(request),
+                result="no_score_changes",
+                reason=verdict["reason"],
+            )
+            validate_records_for_save([record])
+            records[index] = record
+            save_records(records)
             return {
                 "ok": True,
                 "status": "no_score_changes",
-                "message": f"실제 점수 변경이 없어 기존 rubric v{current_version}을 유지했습니다.",
+                "message": f"Rubric v{latest_rubric_version} 검토 완료 · 실제 점수 변경 없음",
                 "record": record,
                 "reason": verdict["reason"],
+                "rubric_reviewed_version": latest_rubric_version,
+                "rubric_reviewed_at": reviewed_at,
             }
 
         recalculate_total_score(candidate)
-        synchronize_full_scout_hard_filter(candidate)
+        if triage_workflow:
+            triage = candidate.setdefault("triage", {})
+            criteria = candidate.setdefault("scoring", {}).setdefault("criteria", {})
+            hard_blocker = fast_triage_record_has_hard_blocker(candidate)
+            active_asset = triage.get("active_asset")
+            if not isinstance(active_asset, bool):
+                active_asset = not hard_blocker
+            status = calculate_fast_triage_status(
+                identity_verified=triage.get("identity_verified") is True,
+                target_relevance=int((criteria.get("target_relevance") or {}).get("score")),
+                moa_validity=int((criteria.get("moa_validity") or {}).get("score")),
+                data_maturity=int((criteria.get("data_maturity") or {}).get("score")),
+                active_asset=active_asset,
+                hard_blocker=hard_blocker,
+            )
+            triage["status"] = status
+            hard_filter = candidate.setdefault("hard_filter", {})
+            hard_filter["status"] = status
+            hard_filter["reason"] = f"Fast Triage rubric v{latest_rubric_version} AI score refresh"
+            candidate.setdefault("final_insight", {})["recommendation"] = {
+                "SELECT": "Run Full Scout",
+                "REJECT": "Do not run Full Scout",
+                "UNVERIFIED": "Verify asset identity",
+            }[status]
+        else:
+            synchronize_full_scout_hard_filter(candidate)
         changed_at = datetime.now(timezone.utc).isoformat()
         cleared_manual_scoring_overrides = clear_manual_scoring_overrides_for_rubric_refresh(
             candidate,
@@ -5490,52 +5641,35 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
             )
         record = candidate
         meta = record.setdefault("meta", {})
-        next_version = next_minor_version(current_version, SCORING_CRITERIA_VERSION)
-        revision_context = {
-            "workflow": "rubric_refresh",
-            "display_name": "SKBP Pipeline Finder",
-            "instruction_label": "Score 기준 갱신",
-            "version": next_version,
-        }
-        changes.extend(synchronize_full_scout_report_scores(record))
-        append_source_report_revision(
-            record,
-            answer,
-            changes,
-            f"Score 기준 갱신 자동 재검토: {verdict['reason']}",
-            revision_context,
-        )
-
         actor_ip = get_client_ip(request)
-        meta["rescored_rubric_version"] = next_version
+        meta["rescored_rubric_version"] = latest_rubric_version
         meta["rescored_at"] = changed_at
         meta["rescored_by"] = actor_ip
-        history = meta.setdefault("rubric_refresh_history", [])
-        if not isinstance(history, list):
-            history = []
-            meta["rubric_refresh_history"] = history
-        history.append(
-            {
-                "version": next_version,
-                "changed_at": changed_at,
-                "actor_ip": actor_ip,
-                "reason": verdict["reason"],
-                "cleared_manual_scoring_overrides": copy.deepcopy(cleared_manual_scoring_overrides),
-                "changes": changes[:],
-            }
+        record_successful_rubric_review(
+            record,
+            rubric_version=latest_rubric_version,
+            reviewed_at=changed_at,
+            actor_ip=actor_ip,
+            result="updated",
+            reason=verdict["reason"],
+            changes=changes,
+        )
+        meta["rubric_refresh_history"][-1]["cleared_manual_scoring_overrides"] = copy.deepcopy(
+            cleared_manual_scoring_overrides
         )
 
         focus = meta.get("focus_management")
-        if isinstance(focus, dict) and focus.get("is_tracked") is True:
+        if not triage_workflow and isinstance(focus, dict) and focus.get("is_tracked") is True:
             apply_auto_oi_partnership(focus, record)
 
         append_edit_history(
             record,
             source="dashboard_rubric_refresh",
             actor_ip=actor_ip,
-            field="source_report.raw_markdown",
-            new_value=f"rubric v{next_version}",
-            update_last_edited=True,
+            field="scoring",
+            previous_value=f"rubric v{current_version}",
+            new_value=f"rubric v{latest_rubric_version}",
+            update_last_edited=False,
         )
 
         validate_records_for_save([record])
@@ -5546,11 +5680,12 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
             "ok": True,
             "status": "updated",
             "message": (
-                f"Score recalculated with rubric v{next_version}"
+                f"Score recalculated with rubric v{latest_rubric_version}"
                 f"{' · manual score reset' if cleared_manual_scoring_overrides else ''}"
             ),
             "record": record,
             "record_id": record_id,
+            "rubric_version": latest_rubric_version,
             "changes": changes,
             "cleared_manual_scoring_override_fields": sorted(cleared_manual_scoring_overrides),
             "exports": exports,
@@ -6137,6 +6272,7 @@ def recalculate_record_oi_partnership(record_id: str) -> dict[str, Any]:
 
 @app.patch("/api/records/{record_id:path}/manual-review")
 async def update_manual_review(record_id: str, request: Request) -> dict[str, Any]:
+    account = require_authenticated_user(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -6146,9 +6282,9 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
         raise HTTPException(status_code=400, detail="Expected a manual review edit object.")
 
     edit_kind = str(payload.get("kind") or "").strip().lower()
-    actor_name = str(payload.get("actor_name") or "").strip()
-    if len(actor_name) > 100:
-        raise HTTPException(status_code=400, detail="actor_name must be 100 characters or fewer.")
+    actor_name = str(account.get("name") or "").strip()
+    if not actor_name:
+        raise HTTPException(status_code=400, detail="로그인 사용자 이름을 확인할 수 없습니다.")
     records = load_records()
     actor_ip = get_client_ip(request)
     for index, record in enumerate(records):
@@ -6568,6 +6704,141 @@ async def create_record_comment(record_id: str, request: Request) -> dict[str, A
             "comments": comments,
         }
 
+    raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
+
+
+def normalized_topic_note_key(value: Any) -> str:
+    text = unicodedata.normalize("NFKC", str(value or "")).casefold().strip()
+    text = re.sub(r"^\s*(?:section\s+)?\d+(?:\.\d+)*[.)\-:]?\s*", "", text)
+    return re.sub(r"[^0-9a-z가-힣]+", "-", text).strip("-")[:160]
+
+
+@app.post("/api/records/{record_id:path}/topic-notes")
+async def add_record_topic_note(record_id: str, request: Request) -> dict[str, Any]:
+    account = require_authenticated_user(request)
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected a topic note object.")
+    topic_id = str(payload.get("topic_id") or "").strip()[:180]
+    topic_title = str(payload.get("topic_title") or "").strip()[:300]
+    topic_key = normalized_topic_note_key(payload.get("topic_key") or topic_title)
+    body = str(payload.get("body") or "").strip()
+    if not topic_id or not topic_key:
+        raise HTTPException(status_code=400, detail="topic_id and a recognizable topic title are required.")
+    if not body:
+        raise HTTPException(status_code=400, detail="메모 내용을 입력해 주세요.")
+    if len(body) > 4000:
+        raise HTTPException(status_code=400, detail="Topic 메모는 4,000자 이하여야 합니다.")
+
+    records = load_records()
+    for index, record in enumerate(records):
+        if record_key(record) != record_id:
+            continue
+        now = datetime.now(timezone.utc).isoformat()
+        note = {
+            "id": uuid.uuid4().hex,
+            "topic_id": topic_id,
+            "topic_key": topic_key,
+            "topic_title": topic_title or topic_id,
+            "body": body,
+            "author_id": str(account.get("id") or ""),
+            "author_name": str(account.get("name") or ""),
+            "created_at": now,
+            "updated_at": now,
+        }
+        notes = record.setdefault("meta", {}).setdefault("topic_notes", [])
+        if not isinstance(notes, list):
+            notes = []
+            record["meta"]["topic_notes"] = notes
+        notes.append(note)
+        append_edit_history(
+            record,
+            source="detail_topic_note_add",
+            actor_ip=get_client_ip(request),
+            actor_name=note["author_name"],
+            field=f"topic_notes.{topic_id}",
+            new_value=body,
+        )
+        records[index] = record
+        save_records(records)
+        return {"ok": True, "record_id": record_id, "record": record, "note": note}
+    raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
+
+
+def can_manage_topic_note(account: dict[str, Any], note: dict[str, Any]) -> bool:
+    return is_auth_admin(account) or str(note.get("author_id") or "") == str(account.get("id") or "")
+
+
+@app.patch("/api/records/{record_id:path}/topic-notes/{note_id}")
+async def update_record_topic_note(record_id: str, note_id: str, request: Request) -> dict[str, Any]:
+    account = require_authenticated_user(request)
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    body = str((payload or {}).get("body") or "").strip() if isinstance(payload, dict) else ""
+    if not body:
+        raise HTTPException(status_code=400, detail="메모 내용을 입력해 주세요.")
+    if len(body) > 4000:
+        raise HTTPException(status_code=400, detail="Topic 메모는 4,000자 이하여야 합니다.")
+    records = load_records()
+    for index, record in enumerate(records):
+        if record_key(record) != record_id:
+            continue
+        notes = ((record.get("meta") or {}).get("topic_notes") or [])
+        note = next((item for item in notes if isinstance(item, dict) and item.get("id") == note_id), None)
+        if note is None:
+            raise HTTPException(status_code=404, detail="Topic 메모를 찾지 못했습니다.")
+        if not can_manage_topic_note(account, note):
+            raise HTTPException(status_code=403, detail="본인이 작성한 메모만 수정할 수 있습니다.")
+        previous = str(note.get("body") or "")
+        note["body"] = body
+        note["updated_at"] = datetime.now(timezone.utc).isoformat()
+        append_edit_history(
+            record,
+            source="detail_topic_note_update",
+            actor_ip=get_client_ip(request),
+            actor_name=str(account.get("name") or ""),
+            field=f"topic_notes.{note.get('topic_id')}",
+            previous_value=previous,
+            new_value=body,
+        )
+        records[index] = record
+        save_records(records)
+        return {"ok": True, "record_id": record_id, "record": record, "note": note}
+    raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
+
+
+@app.delete("/api/records/{record_id:path}/topic-notes/{note_id}")
+def delete_record_topic_note(record_id: str, note_id: str, request: Request) -> dict[str, Any]:
+    account = require_authenticated_user(request)
+    records = load_records()
+    for index, record in enumerate(records):
+        if record_key(record) != record_id:
+            continue
+        notes = ((record.get("meta") or {}).get("topic_notes") or [])
+        note = next((item for item in notes if isinstance(item, dict) and item.get("id") == note_id), None)
+        if note is None:
+            raise HTTPException(status_code=404, detail="Topic 메모를 찾지 못했습니다.")
+        if not can_manage_topic_note(account, note):
+            raise HTTPException(status_code=403, detail="본인이 작성한 메모만 삭제할 수 있습니다.")
+        record.setdefault("meta", {})["topic_notes"] = [
+            item for item in notes if not isinstance(item, dict) or item.get("id") != note_id
+        ]
+        append_edit_history(
+            record,
+            source="detail_topic_note_delete",
+            actor_ip=get_client_ip(request),
+            actor_name=str(account.get("name") or ""),
+            field=f"topic_notes.{note.get('topic_id')}",
+            previous_value=note.get("body"),
+        )
+        records[index] = record
+        save_records(records)
+        return {"ok": True, "record_id": record_id, "record": record, "deleted_note_id": note_id}
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
 
 
@@ -7275,6 +7546,7 @@ async def delete_qualitative_review_entry(record_id: str, entry_id: str, request
 
 @app.put("/api/records/{record_id:path}")
 async def update_record(record_id: str, request: Request) -> dict[str, Any]:
+    require_auth_admin(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -7395,6 +7667,8 @@ async def upsert_records(request: Request) -> dict[str, Any]:
                 (existing_record.get("source_report") or {}).get("raw_markdown") or ""
             )
             preserve_dashboard_meta(record, existing_record)
+            if confirmed_reupload and source_report_changed:
+                append_report_reupload_snapshot(record, existing_record, actor_ip=actor_ip)
             reset_at = datetime.now(timezone.utc).isoformat()
             cleared_manual_scoring_overrides = (
                 clear_manual_scoring_overrides_for_rubric_refresh(

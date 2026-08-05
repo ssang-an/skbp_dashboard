@@ -1,6 +1,7 @@
 import { setupThemeToggle } from './theme.js?v=20260802-header-icons-1';
 import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
-import { initAuthUI } from './auth.js?v=20260803-personal-group-1';
+import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260803-personal-group-1';
+import { expandCompactInputRecord, isCompactIngestionRecord } from './compact-ingestion.js?v=20260805-compact-v1';
 
 const API_URL = '/api/records';
 const DASHBOARD_SUMMARY_URL = '/api/dashboard-summary';
@@ -9,7 +10,6 @@ const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.pageSize.v1';
 const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
 const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
-const DASHBOARD_REVIEWER_ID_KEY = 'skbp.detail.commentAuthor';
 const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v3';
 const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v5';
 const VISUAL_DASHBOARD_HIDDEN_KEY = 'skbp.dashboard.visualDashboardHidden.v1';
@@ -153,12 +153,12 @@ const AGENT_INPUT_PLACEHOLDERS = {
 const DATA_UPLOAD_GUIDES = {
   triage: {
     title: 'Fast Triage 실행 가이드',
-    recommendation: 'GPT 모드 High · 권장 10–20개/회',
+    recommendation: 'TAB1 전용 · GPT High · 권장 10–20개/회',
     inputLabel: 'GPT 지침 1 전체 응답',
     placeholder: [
       '새 브라우저 탭에서 GPT를 열고, 오른쪽 Fast Triage 실행 가이드 순서대로 조사를 완료한 뒤 생성된 전체 응답을 그대로 붙여넣으세요.',
       '',
-      '지침 1은 최대 50개까지 처리할 수 있으나, 안정적인 조사와 출력 형식을 위해 10~20개씩 실행하는 것을 권장합니다.'
+      '이 입력란은 Fast Triage 형식만 검증합니다. 지침 1은 최대 50개까지 처리할 수 있으나 안정적인 조사를 위해 10~20개씩 실행하는 것을 권장합니다.'
     ].join('\n'),
     steps: [
       {
@@ -175,7 +175,7 @@ const DATA_UPLOAD_GUIDES = {
       },
       {
         title: '전체 응답 붙여넣기',
-        body: 'GPT가 출력한 답변을 수정하지 않고 {{input}}에 붙여넣습니다.',
+        body: 'GPT가 출력한 Markdown + 구분선 + Compact JSON 배열 전체를 수정하지 않고 {{input}}에 붙여넣습니다. 저장 시 기존 대시보드 구조로 자동 확장됩니다.',
         actions: [
           { token: 'input', kind: 'focus-input', icon: 'clipboard', label: 'GPT 지침 1 전체 응답' }
         ]
@@ -192,12 +192,12 @@ const DATA_UPLOAD_GUIDES = {
   },
   full: {
     title: 'Full Scout 실행 가이드',
-    recommendation: 'GPT 모드 High · 1개/회',
+    recommendation: 'TAB2 전용 · GPT High · 1개/회',
     inputLabel: 'GPT 지침 2 전체 응답',
     placeholder: [
       '새 브라우저 탭에서 GPT를 열고, 오른쪽 Full Scout 실행 가이드 순서대로 심층조사를 완료한 뒤 생성된 전체 응답을 그대로 붙여넣으세요.',
       '',
-      '관련 NCDP 파일이 있다면 GPT 실행 시 GPT 지침 1과 함께 첨부할 수 있습니다.'
+      '이 입력란은 Full Scout 형식만 검증합니다. 관련 NCDP 파일이 있다면 GPT 실행 시 GPT 지침 2와 함께 첨부할 수 있습니다.'
     ].join('\n'),
     steps: [
       {
@@ -218,7 +218,7 @@ const DATA_UPLOAD_GUIDES = {
       },
       {
         title: '전체 응답 붙여넣기 및 저장',
-        body: `GPT가 출력한 전체 응답을 {{input}}에 붙여넣고, {{review}} 후 오류가 없으면 {{save}}을 누릅니다.`,
+        body: `GPT가 출력한 Markdown + 구분선 + Compact JSON 객체 전체를 {{input}}에 붙여넣습니다. 저장 시 기존 대시보드 구조로 자동 확장되며, {{review}} 후 오류가 없으면 {{save}}을 누릅니다.`,
         actions: [
           { token: 'input', kind: 'focus-input', icon: 'clipboard', label: 'GPT 지침 2 전체 응답' },
           { token: 'review', kind: 'review', icon: '✓', label: '입력 검토' },
@@ -262,6 +262,7 @@ const state = {
   dashboardSummaryRequestId: 0,
   dataUploadGuideMode: null,
   dataUploadReview: null,
+  dataUploadDrafts: { triage: '', full: '' },
   query: '',
   stage: 'all',
   theme: 'all',
@@ -414,10 +415,6 @@ const elements = {
   copyPromptTopButton: document.querySelector('#copyPromptTopButton'),
   copyPromptButton: document.querySelector('#copyPromptButton'),
   promptCopyStatus: document.querySelector('#promptCopyStatus'),
-  reviewerIdentityModal: document.querySelector('#reviewerIdentityModal'),
-  reviewerIdentityInput: document.querySelector('#reviewerIdentityInput'),
-  reviewerIdentityCancel: document.querySelector('#reviewerIdentityCancel'),
-  reviewerIdentitySubmit: document.querySelector('#reviewerIdentitySubmit'),
   dataReuploadModal: document.querySelector('#dataReuploadModal'),
   dataReuploadTitle: document.querySelector('#dataReuploadTitle'),
   dataReuploadIdentity: document.querySelector('#dataReuploadIdentity'),
@@ -430,39 +427,12 @@ let promptCopyFeedbackTimer = null;
 let targetContextTooltip = null;
 let targetContextAnchor = null;
 const focusSaveQueues = new Map();
-let reviewerIdentityResolve = null;
 let dataReuploadResolve = null;
 
-function getDashboardReviewerIdentity() {
-  return (sessionStorage.getItem(DASHBOARD_REVIEWER_ID_KEY) || '').trim();
-}
-
-function openReviewerIdentityModal() {
-  if (!elements.reviewerIdentityModal) return Promise.resolve(null);
-  return new Promise((resolve) => {
-    reviewerIdentityResolve = resolve;
-    elements.reviewerIdentityInput.value = getDashboardReviewerIdentity();
-    elements.reviewerIdentityModal.hidden = false;
-    elements.reviewerIdentityInput.focus();
-  });
-}
-
-function closeReviewerIdentityModal(value = null) {
-  if (elements.reviewerIdentityModal) elements.reviewerIdentityModal.hidden = true;
-  const resolve = reviewerIdentityResolve;
-  reviewerIdentityResolve = null;
-  if (resolve) resolve(value);
-}
-
-async function ensureDashboardReviewerIdentity() {
-  const existing = getDashboardReviewerIdentity();
-  if (existing) return existing;
-  const entered = await openReviewerIdentityModal();
-  if (!entered) return null;
-  const identity = String(entered).trim();
-  if (!identity) return null;
-  sessionStorage.setItem(DASHBOARD_REVIEWER_ID_KEY, identity);
-  return identity;
+async function ensureDashboardActorName() {
+  const user = getCurrentUser() || await requireAuth();
+  const actorName = String(user?.name || '').trim();
+  return actorName || null;
 }
 
 function normalizedPipelineIdentityText(value) {
@@ -2975,7 +2945,14 @@ function renderDataUploadGuide(mode = activeTableMode()) {
   const isFocusMode = mode === 'focus';
   elements.dataUploadPanel.hidden = isFocusMode;
   if (state.dataUploadGuideMode === mode) return;
+  const previousMode = state.dataUploadGuideMode;
+  if (['triage', 'full'].includes(previousMode) && elements.gptResponseInput) {
+    state.dataUploadDrafts[previousMode] = elements.gptResponseInput.value;
+  }
   state.dataUploadGuideMode = mode;
+  if (['triage', 'full'].includes(mode) && elements.gptResponseInput) {
+    elements.gptResponseInput.value = state.dataUploadDrafts[mode] || '';
+  }
   resetDataUploadValidationState();
   if (isFocusMode) return;
 
@@ -3799,7 +3776,9 @@ function rubricReevaluationButton(row) {
   const evaluatedAt = get(row.raw, 'meta.rubric_recalculation.recalculated_at', row.generatedAt || '-');
   const isCurrent = String(get(row.raw, 'meta.rubric_recalculation.version', '')) === latestVersion;
   const title = [
-    `최신 ${workflowLabel} 지침으로 다시 평가`,
+    isTriage
+      ? `최신 ${workflowLabel} Rubric으로 배치 GPT 원문을 AI 재채점`
+      : `최신 ${workflowLabel} Rubric으로 GPT 원문과 파트너사 자료를 AI 재채점`,
     `적용 지침: v${appliedVersion}`,
     `평가 날짜: ${formatDateTimeKo(evaluatedAt)}`
   ].join('\n');
@@ -4585,17 +4564,16 @@ async function saveManualReviewEdit(select) {
   }
   const value = ['score', 'total_score'].includes(kind) ? Number(select.value) : select.value;
   if (!recordId || !['status', 'score', 'total_score'].includes(kind)) return;
-  const actorName = await ensureDashboardReviewerIdentity();
+  const actorName = await ensureDashboardActorName();
   if (!actorName) {
     select.value = previousValue;
-    elements.dataStatus.textContent = '수정자 ID 입력이 취소되어 변경하지 않았습니다';
+    elements.dataStatus.textContent = '로그인 사용자 정보를 확인할 수 없어 변경하지 않았습니다';
     return;
   }
 
   const payload = {
     kind,
     value,
-    actor_name: actorName,
     previous_value: ['score', 'total_score'].includes(kind) && previousValue !== ''
       ? Number(previousValue)
       : previousValue
@@ -4652,11 +4630,15 @@ async function recalculateLatestRubric(button) {
 
   try {
     const response = await fetch(
-      `/api/records/${encodeURIComponent(recordId)}/recalculate-rubric`,
+      `/api/records/${encodeURIComponent(recordId)}/refresh-rubric`,
       { method: 'POST' }
     );
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
+    if (data.status !== 'updated') {
+      elements.dataStatus.textContent = data.message || `기존 rubric v${latestVersion} 점수를 유지했습니다.`;
+      return;
+    }
     replaceRecordFromApi(recordId, data.record);
     await refreshDashboardSummary();
     renderFilters();
@@ -4664,11 +4646,13 @@ async function recalculateLatestRubric(button) {
     const clearedFields = Array.isArray(data.cleared_manual_scoring_override_fields)
       ? data.cleared_manual_scoring_override_fields
       : [];
-    elements.dataStatus.textContent = `${workflowLabel} 지침 v${data.rubric_version || latestVersion} 기준 재평가 완료${clearedFields.length ? ' · manual score reset' : ''}`;
+    elements.dataStatus.textContent = data.message
+      || `${workflowLabel} rubric v${data.rubric_version || latestVersion} AI 재채점 완료${clearedFields.length ? ' · manual score reset' : ''}`;
   } catch (error) {
+    elements.dataStatus.textContent = `${workflowLabel} 재평가 실패: ${error.message}`;
+  } finally {
     button.disabled = false;
     button.classList.remove('is-saving');
-    elements.dataStatus.textContent = `${workflowLabel} 재평가 실패: ${error.message}`;
   }
 }
 
@@ -4702,8 +4686,12 @@ async function recalculateLatestOiPartnership(button) {
 
 async function performFocusManagementSave(recordId, payload, control = null) {
   if (!recordId) return false;
-  const actorName = getDashboardReviewerIdentity();
-  if (actorName && !payload.actor_name) payload = { ...payload, actor_name: actorName };
+  const actorName = await ensureDashboardActorName();
+  if (!actorName) {
+    elements.dataStatus.textContent = '로그인 사용자 정보를 확인할 수 없어 변경하지 않았습니다';
+    return false;
+  }
+  if (!payload.actor_name) payload = { ...payload, actor_name: actorName };
   if (control) {
     control.disabled = true;
     control.classList.add('is-saving');
@@ -5514,59 +5502,24 @@ function parseJsonCandidate(text) {
   return { text: cleaned, payload: JSON.parse(cleaned) };
 }
 
-function balancedJsonCandidates(text) {
-  const candidates = [];
-  const source = String(text || '');
+function jsonSyntaxIssue(error, jsonText) {
+  const message = String(error?.message || error || 'Unknown JSON syntax error');
+  const lineColumnMatch = message.match(/line\s+(\d+)\s+column\s+(\d+)/i);
+  const positionMatch = message.match(/position\s+(\d+)/i);
+  let line = lineColumnMatch ? Number(lineColumnMatch[1]) : null;
+  let column = lineColumnMatch ? Number(lineColumnMatch[2]) : null;
 
-  for (let start = 0; start < source.length; start += 1) {
-    if (source[start] !== '{' && source[start] !== '[') continue;
-    const stack = [];
-    let inString = false;
-    let escaped = false;
-
-    for (let index = start; index < source.length; index += 1) {
-      const character = source[index];
-      if (inString) {
-        if (escaped) {
-          escaped = false;
-        } else if (character === '\\') {
-          escaped = true;
-        } else if (character === '"') {
-          inString = false;
-        }
-        continue;
-      }
-
-      if (character === '"') {
-        inString = true;
-        continue;
-      }
-      if (character === '{' || character === '[') {
-        stack.push(character);
-        continue;
-      }
-      if (character !== '}' && character !== ']') continue;
-
-      const opener = stack.pop();
-      const matches = (opener === '{' && character === '}') || (opener === '[' && character === ']');
-      if (!matches) break;
-      if (stack.length) continue;
-
-      const candidateText = source.slice(start, index + 1).trim();
-      try {
-        const parsed = parseJsonCandidate(candidateText);
-        if (parsed) {
-          candidates.push({ ...parsed, start, end: index + 1 });
-          start = index;
-        }
-      } catch (_error) {
-        // Keep searching: Markdown can contain bracketed text before the real JSON.
-      }
-      break;
-    }
+  if ((!line || !column) && positionMatch) {
+    const position = Math.max(0, Number(positionMatch[1]) || 0);
+    const before = String(jsonText || '').slice(0, position);
+    line = before.split(/\r?\n/).length;
+    column = position - Math.max(before.lastIndexOf('\n'), before.lastIndexOf('\r'));
   }
 
-  return candidates;
+  const location = line && column ? ` (${line}행 ${column}열)` : '';
+  const sourceLine = line ? String(jsonText || '').split(/\r?\n/)[line - 1]?.trim() : '';
+  const excerpt = sourceLine ? ` · 문제 줄: ${sourceLine.slice(0, 140)}` : '';
+  return `최상위 JSON 문법 오류${location}: ${message}${excerpt}`;
 }
 
 function normalizeInputRecords(payload) {
@@ -5586,6 +5539,50 @@ function splitCombinedGptResponse(value) {
   }
 
   const blocks = fencedResponseBlocks(text);
+  const separatorPattern = /^--- JSON DATA ---[ \t]*$/gm;
+  const combinedBlocks = blocks.filter((block) => (
+    ['', 'text', 'markdown', 'md'].includes(block.language)
+    && /^--- JSON DATA ---[ \t]*$/m.test(block.content)
+  ));
+  const primarySource = combinedBlocks.length === 1 ? combinedBlocks[0].content : text;
+  const separators = [...primarySource.matchAll(separatorPattern)];
+
+  if (separators.length) {
+    if (combinedBlocks.length > 1 || separators.length > 1) {
+      addInputIssue(errors, 'error', '입력 형식', '--- JSON DATA --- 구분선은 전체 응답에 정확히 한 번만 있어야 합니다.');
+    }
+    const separator = separators[0];
+    const rawMarkdown = primarySource.slice(0, separator.index).trim();
+    const jsonText = primarySource.slice(separator.index + separator[0].length).trim();
+    let payload = null;
+    if (!jsonText) {
+      addInputIssue(errors, 'error', 'JSON', '--- JSON DATA --- 아래에 구조화 JSON이 없습니다.');
+    } else {
+      try {
+        payload = JSON.parse(jsonText);
+      } catch (error) {
+        addInputIssue(errors, 'error', 'JSON', jsonSyntaxIssue(error, jsonText));
+      }
+    }
+    if (!rawMarkdown || !/^#{1,6}\s+/m.test(rawMarkdown)) {
+      addInputIssue(errors, 'error', 'Markdown', '구분선 위에서 제목이 포함된 Markdown 원문을 찾지 못했습니다.');
+    }
+    const records = payload === null ? [] : normalizeInputRecords(payload);
+    if (payload !== null && !records.length) {
+      addInputIssue(errors, 'error', 'JSON', 'JSON 최상위에는 record 객체, record 배열 또는 {"records": [...]}가 필요합니다.');
+    }
+    return {
+      rawMarkdown,
+      jsonText,
+      payload,
+      records,
+      errors,
+      warnings,
+      fenceCount: blocks.length,
+      inputFormat: 'separator'
+    };
+  }
+
   const explicitJsonBlocks = blocks.filter((block) => block.language === 'json');
   const markdownBlocks = blocks.filter((block) => ['markdown', 'md'].includes(block.language));
   const parsedJsonBlocks = [];
@@ -5609,12 +5606,8 @@ function splitCombinedGptResponse(value) {
     });
   }
 
-  if (!parsedJsonBlocks.length && !explicitJsonBlocks.length) {
-    balancedJsonCandidates(text).forEach((candidate) => parsedJsonBlocks.push(candidate));
-  }
-
   if (parsedJsonBlocks.length > 1) {
-    addInputIssue(errors, 'error', 'JSON', `JSON 후보가 ${parsedJsonBlocks.length}개 감지되었습니다. 최종 구조화 JSON은 하나만 출력해야 합니다.`);
+    addInputIssue(errors, 'error', 'JSON', `레거시 JSON 코드블록이 ${parsedJsonBlocks.length}개 감지되었습니다. JSON 코드블록은 하나만 있어야 합니다.`);
   }
 
   const jsonBlock = parsedJsonBlocks[0] || null;
@@ -5624,23 +5617,26 @@ function splitCombinedGptResponse(value) {
   }
 
   if (!rawMarkdown) {
-    const nonJsonBlock = blocks.find((block) => (
-      !explicitJsonBlocks.includes(block)
-      && (!jsonBlock || block.start !== jsonBlock.start || block.end !== jsonBlock.end)
-    ));
-    if (nonJsonBlock) rawMarkdown = nonJsonBlock.content;
+    const nonJsonBlock = blocks.find((block) => !explicitJsonBlocks.includes(block));
+    if (nonJsonBlock) {
+      rawMarkdown = nonJsonBlock.content;
+    }
   }
 
   if (!rawMarkdown && jsonBlock) {
     rawMarkdown = `${text.slice(0, jsonBlock.start)}\n${text.slice(jsonBlock.end)}`.trim();
   }
-  rawMarkdown = rawMarkdown.replace(/^```(?:markdown|md)?\s*/i, '').replace(/```\s*$/i, '').trim();
+  rawMarkdown = rawMarkdown
+    .replace(/^```(?:markdown|md|text)?\s*/i, '')
+    .replace(/\n?--- JSON DATA ---\s*$/i, '')
+    .replace(/```\s*$/i, '')
+    .trim();
 
   if (!rawMarkdown || !/^#{1,6}\s+/m.test(rawMarkdown)) {
     addInputIssue(errors, 'error', 'Markdown', 'Markdown 원문 블록을 찾지 못했습니다. GPT의 전체 응답을 그대로 붙여넣어 주세요.');
   }
   if (!jsonBlock) {
-    addInputIssue(errors, 'error', 'JSON', '파싱 가능한 JSON 블록을 찾지 못했습니다. 출력이 마지막 } 또는 ]까지 완성되었는지 확인해 주세요.');
+    addInputIssue(errors, 'error', 'JSON', '--- JSON DATA --- 구분선 뒤의 JSON을 찾지 못했습니다. 이전 형식은 Markdown 코드블록 1개와 JSON 코드블록 1개만 지원합니다.');
   }
 
   const records = jsonBlock ? normalizeInputRecords(jsonBlock.payload) : [];
@@ -5655,7 +5651,8 @@ function splitCombinedGptResponse(value) {
     records,
     errors,
     warnings,
-    fenceCount: blocks.length
+    fenceCount: blocks.length,
+    inputFormat: 'legacy_fences'
   };
 }
 
@@ -5986,13 +5983,25 @@ function validateInputFullScoutStructures(record, recordPath, issues) {
   }
 }
 
-function validateCombinedInput(value) {
+function validateCombinedInput(value, expectedMode = '') {
   const split = splitCombinedGptResponse(value);
   const errors = [...split.errors];
   const warnings = [...split.warnings];
   const modes = [];
+  const lockedMode = ['triage', 'full'].includes(expectedMode) ? expectedMode : '';
+  const compactInput = split.records.some((record) => isInputObject(record) && isCompactIngestionRecord(record));
+  const records = split.records.map((record) => (
+    isInputObject(record) ? expandCompactInputRecord(record, lockedMode) : record
+  ));
 
-  split.records.forEach((record, index) => {
+  if (split.payload !== null && lockedMode === 'triage' && !Array.isArray(split.payload)) {
+    addInputIssue(errors, 'error', 'JSON 최상위', 'TAB1 Fast Triage는 여러 후보를 일관되게 처리하기 위해 최상위 JSON 배열 [...]이 필요합니다.');
+  }
+  if (split.payload !== null && lockedMode === 'full' && Array.isArray(split.payload) && split.payload.length === 1) {
+    addInputIssue(warnings, 'warning', 'JSON 최상위', 'TAB2 권장 형식은 단일 JSON 객체 {...}입니다. 1개짜리 배열은 호환 입력으로 저장할 수 있습니다.');
+  }
+
+  records.forEach((record, index) => {
     const recordPath = `record[${index}]`;
     if (!isInputObject(record)) {
       addInputIssue(errors, 'error', recordPath, '각 record는 JSON 객체여야 합니다.');
@@ -6001,20 +6010,35 @@ function validateCombinedInput(value) {
     }
 
     const detected = detectInputRecordMode(record);
-    modes.push(detected.mode);
+    const validationMode = lockedMode || detected.mode;
+    modes.push(validationMode);
     if (detected.conflict) {
       addInputIssue(errors, 'error', recordPath, 'Fast Triage와 Full Scout 신호가 한 record에 섞여 있습니다.');
       return;
     }
-    if (detected.mode === 'unknown') {
+    if (lockedMode && detected.mode !== 'unknown' && detected.mode !== lockedMode) {
+      const currentTab = lockedMode === 'triage' ? 'TAB1 Fast Triage' : 'TAB2 Full Scout';
+      const pastedMode = detected.mode === 'triage' ? 'Fast Triage' : 'Full Scout';
+      addInputIssue(errors, 'error', recordPath, `${currentTab} 입력란에는 ${pastedMode} 결과를 저장할 수 없습니다. 올바른 탭으로 이동해 붙여넣어 주세요.`);
+      return;
+    }
+    if (!lockedMode && detected.mode === 'unknown') {
       addInputIssue(errors, 'error', recordPath, '분석 모드를 판별할 수 없습니다. meta.review_type과 scoring 구조를 확인하세요.');
       return;
+    }
+    if (lockedMode && detected.mode === 'unknown') {
+      addInputIssue(
+        errors,
+        'error',
+        recordPath,
+        `${lockedMode === 'triage' ? 'Fast Triage' : 'Full Scout'} 필수 모드 신호를 확인할 수 없습니다. meta.review_type과 scoring 구조를 확인하세요.`
+      );
     }
 
     validateInputFilterFields(record, recordPath, errors, warnings);
     const criteria = isInputObject(record.scoring?.criteria) ? record.scoring.criteria : {};
 
-    if (detected.mode === 'triage') {
+    if (validationMode === 'triage') {
       const hardStatus = String(record.hard_filter?.status || '').trim().toUpperCase();
       const triageStatus = String(record.triage?.status || '').trim().toUpperCase();
       const status = hardStatus || triageStatus;
@@ -6162,12 +6186,12 @@ function validateCombinedInput(value) {
   if (knownModes.length > 1) {
     addInputIssue(errors, 'error', 'records', '한 번의 입력에 Fast Triage와 Full Scout record를 섞을 수 없습니다.');
   }
-  const mode = knownModes[0] || 'unknown';
-  if (mode === 'triage' && split.records.length > 50) {
-    addInputIssue(errors, 'error', 'records', `Fast Triage는 한 번에 최대 50개까지 처리할 수 있습니다. 현재 ${split.records.length}개입니다.`);
+  const mode = lockedMode || knownModes[0] || 'unknown';
+  if (mode === 'triage' && records.length > 50) {
+    addInputIssue(errors, 'error', 'records', `Fast Triage는 한 번에 최대 50개까지 처리할 수 있습니다. 현재 ${records.length}개입니다.`);
   }
-  if (mode === 'full' && split.records.length > 1) {
-    addInputIssue(errors, 'error', 'records', `Full Scout는 한 번에 한 asset만 입력합니다. 현재 ${split.records.length}개입니다.`);
+  if (mode === 'full' && records.length > 1) {
+    addInputIssue(errors, 'error', 'records', `Full Scout는 한 번에 한 asset만 입력합니다. 현재 ${records.length}개입니다.`);
   }
 
   const headingCount = (split.rawMarkdown.match(/^#{1,6}\s+/gm) || []).length;
@@ -6180,12 +6204,12 @@ function validateCombinedInput(value) {
     if (!markdownRows.length) {
       addInputIssue(errors, 'error', 'Markdown.Triage', 'Fast Triage 표의 Triage 상태 열을 찾지 못했습니다.');
     } else {
-      if (markdownRows.length !== split.records.length) {
+      if (markdownRows.length !== records.length) {
         addInputIssue(
           errors,
           'error',
           'Markdown.Triage',
-          `Markdown status row ${markdownRows.length}개와 JSON record ${split.records.length}개가 일치해야 합니다.`
+          `Markdown status row ${markdownRows.length}개와 JSON record ${records.length}개가 일치해야 합니다.`
         );
       }
       markdownRows.forEach((row, index) => {
@@ -6197,7 +6221,7 @@ function validateCombinedInput(value) {
           addInputIssue(errors, 'error', `Markdown.Triage[${index}]`, 'SELECT, REJECT, UNVERIFIED 중 하나만 사용해야 합니다.');
           return;
         }
-        const record = split.records[index];
+        const record = records[index];
         const jsonStatus = String(record?.hard_filter?.status || record?.triage?.status || '').trim().toUpperCase();
         if (record && row.status !== jsonStatus) {
           addInputIssue(
@@ -6216,9 +6240,12 @@ function validateCombinedInput(value) {
 
   return {
     ...split,
+    records,
     errors,
     warnings,
     mode,
+    expectedMode: lockedMode || null,
+    compactInput,
     headingCount,
     tableCount,
     canSave: errors.length === 0
@@ -6237,6 +6264,14 @@ function renderInputValidation(result, { savedMessage = '' } = {}) {
   const badgeText = savedMessage || (result.errors.length ? '저장 불가' : result.warnings.length ? '경고 확인' : '저장 가능');
   const rows = [
     {
+      level: 'ok',
+      label: '고정',
+      path: result.expectedMode === 'triage' ? 'TAB1 입력 계약' : 'TAB2 입력 계약',
+      message: result.expectedMode === 'triage'
+        ? 'Fast Triage 전용 · 최상위 JSON 배열'
+        : 'Full Scout 전용 · 최상위 JSON 객체'
+    },
+    {
       level: result.rawMarkdown ? 'ok' : 'error',
       label: result.rawMarkdown ? '완료' : '오류',
       path: 'Markdown',
@@ -6249,7 +6284,7 @@ function renderInputValidation(result, { savedMessage = '' } = {}) {
       label: result.payload ? '완료' : '오류',
       path: 'JSON',
       message: result.payload
-        ? `구조화 데이터 추출 · ${result.records.length} record`
+        ? `구조화 데이터 추출 · ${result.records.length} record · ${result.compactInput ? 'Compact v1 → 기존 저장 구조 자동 확장' : result.inputFormat === 'separator' ? '기존 전체 JSON 형식' : '레거시 코드블록 형식'}`
         : 'JSON을 추출하지 못했습니다.'
     },
     ...result.errors.map((issue) => ({ ...issue, label: '차단' })),
@@ -6285,7 +6320,8 @@ async function previewPastedReportParsing() {
   setDataUploadStatus('validating');
   elements.previewInputButton.disabled = true;
   await new Promise((resolve) => window.requestAnimationFrame(resolve));
-  const result = validateCombinedInput(elements.gptResponseInput.value);
+  const expectedMode = activeTableMode() === 'triage' ? 'triage' : 'full';
+  const result = validateCombinedInput(elements.gptResponseInput.value, expectedMode);
   if (result.canSave) {
     const matches = findDataReuploadMatches(result.records);
     if (matches.length) {
@@ -6316,7 +6352,8 @@ async function previewPastedReportParsing() {
 }
 
 async function saveStructuredJsonInput() {
-  const validation = validateCombinedInput(elements.gptResponseInput.value);
+  const expectedMode = activeTableMode() === 'triage' ? 'triage' : 'full';
+  const validation = validateCombinedInput(elements.gptResponseInput.value, expectedMode);
   const reviewed = state.dataUploadReview?.input === elements.gptResponseInput.value
     ? state.dataUploadReview
     : null;
@@ -6432,7 +6469,307 @@ Hit Discovery; Lead Optimization; Preclinical Candidate; IND-enabling; Preclinic
 
 Canonicalize only an explicitly confirmed current stage or a completed/started milestone. Do not promote stage from plans, expectations, targets, financing, hiring, or adjacent programs. Generic preclinical -> Preclinical unspecified. Candidate nominated/selected -> Preclinical Candidate. Ongoing GLP tox, IND-directed CMC, or explicit IND-enabling work -> IND-enabling. IND/CTA submitted, filed, accepted, effective, or cleared -> IND filed/cleared. Planned IND submission alone does not establish IND filed/cleared; "preclinical; IND planned" remains Preclinical unspecified. Use Unknown for unresolved or conflicting stage evidence.`;
 
-function buildTriageInstructionPrompt() {
+const COMPACT_TRIAGE_JSON_TEMPLATE = `[
+  {
+    "meta": {
+      "ingestion_format": "compact_v1",
+      "schema_version": "3.2",
+      "instruction_version": "3.2",
+      "rubric_version": "3.2",
+      "review_type": "fast_triage",
+      "generated_at": "YYYY-MM-DD"
+    },
+    "json_summary": {
+      "theme": "Unknown",
+      "cluster": "Unknown"
+    },
+    "structured_table": {
+      "company": "Unknown",
+      "asset_name": "",
+      "target": "Unknown",
+      "moa": "Unknown",
+      "modality_platform": "Unknown",
+      "main_indication": "Unknown",
+      "indication": "Unknown",
+      "development_stage": "Unknown",
+      "company_country": "Unknown"
+    },
+    "hard_filter": {
+      "status": "UNVERIFIED",
+      "reason": "",
+      "flags": []
+    },
+    "triage": {
+      "instruction_version": "3.2",
+      "status": "UNVERIFIED",
+      "identity_verified": false,
+      "active_asset": null,
+      "why": "",
+      "missing_evidence_needed_for_full_scout": []
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 0,
+          "evidence_basis": "no_supporting_basis",
+          "main_line_summary": "TR 0점: ...",
+          "source_ids": [],
+          "uncertain_points": []
+        },
+        "moa_validity": {
+          "score": 0,
+          "evidence_basis": "no_supporting_basis",
+          "main_line_summary": "MOA 0점: ...",
+          "source_ids": [],
+          "uncertain_points": []
+        },
+        "data_maturity": {
+          "score": 0,
+          "evidence_basis": "no_supporting_basis",
+          "main_line_summary": "Data 0점: ...",
+          "source_ids": [],
+          "uncertain_points": []
+        }
+      }
+    },
+    "validation": {
+      "cross_checked_facts": [],
+      "uncertain_points": [],
+      "source_registry": [
+        {
+          "source_id": "S1",
+          "source_title": "",
+          "source_type": "official_company",
+          "source_url": "https://example.com",
+          "verified": true,
+          "evidence_summary": ""
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "",
+      "recommendation": "Verify asset identity",
+      "most_important_diligence_question": ""
+    }
+  }
+]`;
+
+const COMPACT_FULL_SCOUT_JSON_TEMPLATE = `{
+  "meta": {
+    "ingestion_format": "compact_v1",
+    "schema_version": "3.2",
+    "instruction_version": "3.3",
+    "rubric_version": "3.3",
+    "review_type": "full_scout",
+    "generated_at": "YYYY-MM-DD"
+  },
+  "source_report": {
+    "parser_status": "gpt_structured_output"
+  },
+  "company_profile": {
+    "company_name": "",
+    "legal_name": "",
+    "aliases": [],
+    "country": "Unknown",
+    "headquarters": "",
+    "website": "",
+    "founded_year": null,
+    "company_stage": "",
+    "ownership_status": "",
+    "focus_areas": [],
+    "platform_summary": "",
+    "lead_pipeline_summary": "",
+    "financing_or_partnership_signals": [],
+    "official_source_urls": [],
+    "notes": ""
+  },
+  "json_summary": {
+    "theme": "Unknown",
+    "cluster": "Unknown"
+  },
+  "structured_table": {
+    "company": "Unknown",
+    "asset_name": "",
+    "target": "Unknown",
+    "moa": "Unknown",
+    "modality_platform": "Unknown",
+    "main_indication": "Unknown",
+    "indication": "Unknown",
+    "development_stage": "Unknown",
+    "company_country": "Unknown"
+  },
+  "hard_filter": {
+    "status": "FAIL",
+    "reason": "",
+    "flags": []
+  },
+  "scoring": {
+    "criteria": {
+      "target_relevance": {
+        "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
+        "main_line_summary": "",
+        "what_was_checked": [],
+        "source_ids": [],
+        "investigation_note": "",
+        "why_not_higher": "",
+        "uncertain_points": []
+      },
+      "competitive_landscape": {
+        "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
+        "main_line_summary": "",
+        "what_was_checked": [],
+        "source_ids": [],
+        "investigation_note": "",
+        "why_not_higher": "",
+        "uncertain_points": []
+      },
+      "moa_validity": {
+        "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
+        "main_line_summary": "",
+        "what_was_checked": [],
+        "source_ids": [],
+        "investigation_note": "",
+        "why_not_higher": "",
+        "uncertain_points": []
+      },
+      "platform_attractiveness": {
+        "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
+        "main_line_summary": "",
+        "what_was_checked": [],
+        "source_ids": [],
+        "investigation_note": "",
+        "why_not_higher": "",
+        "uncertain_points": []
+      },
+      "expansion_potential": {
+        "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
+        "main_line_summary": "",
+        "what_was_checked": [],
+        "source_ids": [],
+        "investigation_note": "",
+        "why_not_higher": "",
+        "uncertain_points": []
+      },
+      "data_maturity": {
+        "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
+        "main_line_summary": "",
+        "what_was_checked": [],
+        "source_ids": [],
+        "investigation_note": "",
+        "claimed_development_stage": "",
+        "expected_data_for_stage": [],
+        "visible_asset_specific_data": [],
+        "missing_data": [],
+        "stage_data_alignment_judgment": "",
+        "why_not_higher": "",
+        "uncertain_points": []
+      },
+      "marketability": {
+        "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
+        "main_line_summary": "",
+        "what_was_checked": [],
+        "assessment_method": "insufficient_evidence",
+        "score_basis_type": "insufficient_evidence",
+        "assessed_global_peak_sales_musd": null,
+        "calculation_status": "not_performed",
+        "calculated_global_obtainable_peak_sales_musd": null,
+        "external_forecast_source_ids": [],
+        "external_normalized_global_peak_sales_musd": null,
+        "source_ids": [],
+        "calculation": {
+          "commercial_rationale_status": "insufficient_evidence",
+          "commercial_rationale_failure_reason": "",
+          "commercial_rationale_basis": "",
+          "A_targetable_addressable_patient": {
+            "total_patient_pool": null,
+            "diagnosis_rate": null,
+            "eligibility_rate": null,
+            "treatable_subgroup_rate": null,
+            "targetable_addressable_patient": null,
+            "source_ids": []
+          },
+          "B_unrisked_peak_sales": {
+            "tap": null,
+            "annual_net_price": null,
+            "peak_penetration": null,
+            "treatment_duration_factor": null,
+            "unrisked_peak_sales": null,
+            "source_ids": []
+          },
+          "C_obtainable_peak_sales": {
+            "unrisked_peak_sales": null,
+            "competition_haircut": null,
+            "pricing_power_adjustment": null,
+            "obtainable_peak_sales": null,
+            "source_ids": []
+          }
+        },
+        "investigation_note": "",
+        "why_not_higher": "",
+        "uncertain_points": []
+      }
+    }
+  },
+  "competitive_analysis": {
+    "competitive_density": "Unknown",
+    "competitive_search_complete": false,
+    "search_scope_checked": [],
+    "search_limitations": [],
+    "similarity_summary": {
+      "similar_pipeline_count": 0,
+      "high_similarity_count": 0,
+      "medium_similarity_count": 0,
+      "low_similarity_count": 0,
+      "summary": ""
+    },
+    "competitor_table": [],
+    "similar_pipelines": [],
+    "differentiation_points": [],
+    "analysis_summary": ""
+  },
+  "validation": {
+    "cross_checked_facts": [],
+    "uncertain_points": [],
+    "source_registry": [
+      {
+        "source_id": "S1",
+        "source_title": "",
+        "source_type": "official_company",
+        "source_url": "https://example.com",
+        "verified": true,
+        "evidence_summary": ""
+      }
+    ]
+  },
+  "final_insight": {
+    "one_line_summary": "",
+    "recommendation": "Deprioritize",
+    "most_important_diligence_question": ""
+  }
+}`;
+
+function replaceInstructionJsonTemplate(prompt, compactTemplate, finalMarker) {
+  const templateEnd = prompt.lastIndexOf(finalMarker);
+  const templateStart = prompt.lastIndexOf('\n--- JSON DATA ---', templateEnd);
+  if (templateStart < 0 || templateEnd < 0 || templateStart >= templateEnd) return prompt;
+  return `${prompt.slice(0, templateStart)}\n--- JSON DATA ---\n\n${compactTemplate}\n\`\`\`${prompt.slice(templateEnd)}`;
+}
+
+function buildTriageInstructionPromptLegacy() {
   return `You are an expert biotech pipeline scout for SKBP Pipeline Finder.
 
 Mission:
@@ -6533,7 +6870,7 @@ Criterion Evidence Basis:
 - public_source: only public sources that you actually opened and verified were used.
 - user_input_and_public_source: both explicit user input and actually verified public sources were used.
 - no_supporting_basis: neither user input nor verified public sources support the score.
-- evidence_sources must be an array. Each verified item must include source_title, source_type, source_url, verified=true, and a concise evidence_summary. source_url_not_provided, Unknown, blank/null, or verified=false do not count as verified public URLs.
+- In compact_v1, put each verified source once in validation.source_registry with a unique source_id, source_title, source_type, source_url, verified=true, and a concise evidence_summary. Each criterion references it through source_ids. The dashboard materializes criterion evidence_sources before saving. source_url_not_provided, Unknown, blank/null, or verified=false do not count as verified public URLs.
 - public_source and user_input_and_public_source require at least one unique verified http(s) URL. user_input_only and no_supporting_basis must contain zero verified public URLs.
 - score >= 2 cannot use no_supporting_basis. MoA >= 2 and Data >= 2 each require at least one citable, verified public technical/source URL for that criterion. TR may preliminarily score from explicit user input.
 - If verified_public_source_count is included, it must exactly equal the unique verified public URL count after removing duplicates and trailing-slash variants. Source count itself does not determine the score.
@@ -6564,9 +6901,10 @@ Output language:
 Korean. English is allowed for scientific terms.
 
 Final output format:
-The final answer must contain exactly two fenced code blocks:
+The final answer must contain exactly one copyable fenced code block. Inside that single block, put the Markdown report first, then the literal separator "--- JSON DATA ---", then the raw JSON array. Do not create inner Markdown or JSON fences.
+The TAB1 importer splits on that exact separator and parses the entire suffix once. Therefore the JSON suffix must be one complete top-level array, not several JSON objects or partial fragments.
 
-\`\`\`markdown
+\`\`\`text
 # SKBP Fast Triage Result
 
 > Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.
@@ -6580,9 +6918,9 @@ The final answer must contain exactly two fenced code blocks:
 ## Notes
 - Keep notes short.
 - Mention only source uncertainty, duplicate rows, or reason to run Full Scout.
-\`\`\`
 
-\`\`\`json
+--- JSON DATA ---
+
 [
   {
     "meta": {
@@ -6691,21 +7029,35 @@ The final answer must contain exactly two fenced code blocks:
 \`\`\`
 
 Remember:
-- Output only the two fenced code blocks.
-- Do not include prose outside the code blocks.
+- Output only the single fenced code block described above containing both sections.
+- Keep Markdown first and JSON second inside that same block, separated by the exact line "--- JSON DATA ---".
+- Do not include prose outside the single code block and do not add nested fences.
+- The separator must appear exactly once on its own line.
+- The JSON suffix must start with [ and end with ]. Use 2-space indentation; do not minify it.
+- Before answering, parse-check the complete JSON suffix: matched braces/brackets, double-quoted keys and strings, escaped line breaks inside strings, no comments, no trailing commas, no placeholder alternatives, and no truncation.
+- Keep source_report.raw_markdown as an empty string because the dashboard inserts the Markdown portion. Keep JSON summaries concise and do not duplicate full Markdown paragraphs across multiple fields.
 - For one input entry, output a JSON array with one object.
 - For multiple input entries, output one JSON array item per candidate in the original order, up to 50.
 - Do not leave pipe-delimited template choices such as "SELECT | REJECT | UNVERIFIED" in the final JSON; choose exactly one allowed value.
 - Recommendation mapping is exact: SELECT -> "Run Full Scout"; REJECT -> "Do not run Full Scout"; UNVERIFIED -> "Verify asset identity".
-- The user will paste this entire response once into the dashboard. Keep the Markdown block first and the JSON block second so the dashboard can split them automatically.
+- The user will copy this one combined block and paste it once into the dashboard; the dashboard will split the Markdown and JSON automatically.
 - Do not include Full Scout-only criteria, marketability, competitor tables, or peak sales.`;
 }
 
-function buildGptInstructionPrompt() {
+function buildTriageInstructionPrompt() {
+  const prompt = buildTriageInstructionPromptLegacy();
+  return replaceInstructionJsonTemplate(prompt, COMPACT_TRIAGE_JSON_TEMPLATE, '\nRemember:')
+    .replace(
+      'Keep source_report.raw_markdown as an empty string because the dashboard inserts the Markdown portion.',
+      'Use meta.ingestion_format="compact_v1". The dashboard expands omitted boilerplate fields and inserts the Markdown portion without changing the visible result.'
+    );
+}
+
+function buildGptInstructionPromptLegacy() {
   return `You are an expert biotech pipeline scout for SKBP Pipeline Finder.
 
 Mission:
-Evaluate exactly one biotech/pharma pipeline asset through company research, attachment review, public-source verification, competitor search, seven-criterion scoring, and evidence tracking. Return exactly two fenced code blocks: first Markdown, then valid JSON.
+Evaluate exactly one biotech/pharma pipeline asset through company research, attachment review, public-source verification, competitor search, seven-criterion scoring, and evidence tracking. Return exactly one copyable fenced code block containing the Markdown report first and the valid JSON second.
 
 This is GPT instruction 2: Full Scout v3.3. Keep meta.schema_version at 3.2, and set meta.instruction_version and meta.rubric_version to 3.3.
 
@@ -6747,14 +7099,14 @@ Identity Gate / identity-not-verified early stop:
 - If search results are mostly unrelated SKUs, tools, electronics, finance tickers, unrelated abbreviations, or ambiguous non-drug references and no credible source verifies a specific drug-development asset, classify it as identity not verified.
 - If the asset identity is not verified, stop Full Scout and return FAIL / Deprioritize. Also return FAIL regardless of score when a credible source confirms the lifecycle as Discontinued, Terminated, Withdrawn, Inactive, or Clearly failed.
 - Uncertain rights or exact stage alone is REVIEW, not automatic FAIL.
-- In the identity-not-verified case, the final answer must still be exactly two fenced code blocks, but both must be short.
+- In the identity-not-verified case, the final answer must still be exactly one combined fenced code block, but both the Markdown and JSON portions must be short.
 - Identity-not-verified markdown block format:
   - Title: "# Pipeline Scout Result — Asset Identity Not Verified: **[ASSET_NAME]**"
   - One-line conclusion: "Public-source identity check did not verify this as a biotech/pharma pipeline asset."
   - Include only 3 short bullets: what was searched, what was found, what source would be needed to proceed.
   - Include references only for the few sources that explain the non-match or ambiguity.
 - Identity-not-verified JSON block format:
-  - Keep it valid JSON and keep the complete dashboard-required top-level structure.
+- Keep it valid JSON and keep the complete compact_v1 ingestion structure; the dashboard expands omitted boilerplate fields before validation and storage.
   - Set meta.schema_version to "3.2"; set meta.instruction_version and meta.rubric_version to "3.3".
   - Set meta.review_type to "full_scout".
   - Set source_report.parser_status to "asset_identity_not_verified".
@@ -6767,16 +7119,14 @@ Identity Gate / identity-not-verified early stop:
   - structured_table.development_stage must be "Unknown" when stage is not established; never use null, an empty string, or N/A for that field. Use "Unknown", null, or [] as appropriate for other unknown factual fields and sources. Do not invent placeholders.
 
 Non-negotiable rules:
-1. Final answer format must be exactly two fenced code blocks:
-   - Box 1: \`\`\`markdown containing either the complete .md report or the short identity-not-verified markdown block allowed by the Identity Gate.
-   - Box 2: \`\`\`json containing either the complete structured JSON or the short identity-not-verified JSON block allowed by the Identity Gate.
-2. Do not write the Markdown report as normal prose outside the markdown code block.
-3. The final JSON block must be valid JSON: no comments, no trailing commas, no Markdown inside the JSON except string values.
+1. Final answer format must be exactly one \`\`\`text fenced code block. Inside it, place either the complete Markdown report or the short identity-not-verified Markdown first, then the exact separator line "--- JSON DATA ---", then the corresponding structured JSON object. Do not create inner Markdown or JSON fences.
+2. Do not write any report prose outside the single combined code block.
+3. The TAB2 importer splits on the exact separator and parses the complete suffix once. The JSON portion must be exactly one complete top-level object beginning with { and ending with }: no comments, no trailing commas, no extra object, and no Markdown outside JSON string values.
 4. Every factual claim used for scoring must include a source URL or a clear uncertainty note.
-5. Include actual URLs in Markdown reference-link format at the end of the markdown block, and also include source URLs inside the JSON evidence fields.
+5. Include actual URLs in Markdown reference-link format at the end of the markdown block. In compact JSON, register each URL once in validation.source_registry and reference it from criteria or calculation steps through source_ids.
 6. Distinguish official company sources, peer-reviewed papers, regulatory/clinical trial sources, market sources, and news/financing sources.
-7. For every score, include: score, one-line judgment, what was checked, evidence trail, investigation note, uncertain points, and source URLs.
-8. Competitive Landscape must include competitor drugs/assets with company, modality, target/MoA, stage/status, why it matters, similarity level, and source.
+7. For every score in compact JSON, include score, evidence_type, evidence_type_reason, main_line_summary, what_was_checked, source_ids, investigation_note, why_not_higher, and uncertain_points. Keep the full evidence trail in Markdown; the dashboard materializes evidence_sources/evidence_trail and expands the criterion into the existing stored shape.
+8. Competitive Landscape must include competitor drugs/assets with company, modality, target/MoA, stage/status, why it matters, similarity level, and source. In compact_v1 competitor rows, use source_ids; the dashboard materializes source_url and evidence_sources from validation.source_registry.
 9. Marketability may use an internal calculation, an external forecast, both, or insufficient evidence. Show A/B/C only when calculation is performed; show external forecast references when used.
 10. Express every sales output in million USD. In JSON, store sales values as numeric million USD values, not raw USD. Example: USD 1.2B should be 1200.
 11. Hard Filter is canonical: PASS when Total >= 15, Target Relevance >= 2, MoA Validity >= 2, Data Maturity >= 2, asset identity is verified, and an active development program is confirmed. REVIEW when Total is 9-14; or Total >= 15 but a TR/MoA/Data gate is missed; or active status, key evidence, source, rights, or stage uncertainty prevents a firm conclusion. FAIL when Total <= 8, Target Relevance <= 1, asset identity is unverified, or a lifecycle FAIL condition is confirmed.
@@ -6784,6 +7134,7 @@ Non-negotiable rules:
 13. Do not invent URLs. If a URL cannot be verified, write null in JSON and describe the missing source in uncertain_points.
 14. For scoring.criteria.marketability.calculation.commercial_rationale_status, use exactly one of: evidence_based, assumption_based, assumption_based_scenario, established, not_established, or insufficient_evidence. Use not_established or insufficient_evidence only when marketability.score is 0; then set commercial_rationale_failure_reason and leave the A/B/C output values null. For both assumption_based and assumption_based_scenario, also provide commercial_rationale_basis. Do not invent other status values.
 15. The JSON template defaults Marketability to score 0 + insufficient_evidence and null A/B/C outputs. Calculation is not mandatory: a reliable asset-specific external forecast may independently support scores 1-3. Replace every template instruction/placeholder with one final value before output.
+16. Keep source_report.raw_markdown as an empty string because the dashboard inserts the Markdown portion. Keep one-line judgments and JSON summaries concise; do not paste the full Markdown report into JSON or repeat the same narrative across multiple fields.
 
 Scoring v3.3 rules:
 - Each scoring criterion must be scored independently using its own criterion-specific scoring table.
@@ -6854,12 +7205,12 @@ Controlled vocabulary for dashboard filters:
 
 Expected final answer shape:
 
-\`\`\`markdown
+\`\`\`text
 # [Company] Pipeline Scout Report: **[Asset]**
 ...complete report...
-\`\`\`
 
-\`\`\`json
+--- JSON DATA ---
+
 {
   "meta": {
     "schema_version": "3.2",
@@ -6876,7 +7227,7 @@ If the Identity Gate cannot verify the asset identity:
 - structured_table.development_stage must be "Unknown" when stage is not established; never use null, an empty string, or N/A for that field. Use "Unknown", null, or [] as appropriate for other unknown factual fields, sources, and unavailable fields. N/A is not a factual placeholder.
 - Keep only the sources needed to explain the non-match or ambiguity.
 
-Use this exact report structure inside the markdown code block:
+Use this exact report structure inside the Markdown portion of the single combined code block:
 
 # [Company] Pipeline Scout Report: **[Asset]**
 
@@ -7123,11 +7474,10 @@ Most important diligence question:
 Use Markdown reference links:
 [1]: https://example.com "Source title"
 
-End the markdown code block after References.
+End the Markdown portion after References. Immediately after References, write the exact separator line "--- JSON DATA ---" and then the raw JSON object with no inner JSON fence. Fill it with the same facts, scores, reasons, source URLs, competitor evidence, and marketability A/B/C assumptions used in the Markdown report. The user will copy this one combined block and paste it once into the dashboard, which will automatically split the Markdown and JSON portions. Do not add any prose outside the single block.
 
-After the markdown code block, output the second copyable box as a JSON code block. Fill it with the same facts, scores, reasons, source URLs, competitor evidence, and marketability A/B/C assumptions used in the Markdown report. The user will paste the entire response once into the dashboard, which will automatically split the first Markdown block and the second JSON block. Do not add any prose outside those two blocks.
+--- JSON DATA ---
 
-\`\`\`json
 {
   "meta": {
     "schema_version": "3.2",
@@ -7376,7 +7726,6 @@ After the markdown code block, output the second copyable box as a JSON code blo
     "aliases": []
   }
 }
-\`\`\`
 
 Final validation before output:
 - Keep every displayed version unchanged: schema 3.2, instruction 3.3, rubric 3.3.
@@ -7389,7 +7738,23 @@ Final validation before output:
 - Markdown and JSON use identical scores, numeric values, method, and score basis.
 - No conflicting legacy rule or unresolved template placeholder remains.
 
-Remember: output only one markdown fenced code block followed by one JSON fenced code block, with no prose outside them.`;
+Remember:
+- Output only one \`\`\`text fenced code block, with no prose outside it.
+- Keep Markdown first and JSON second inside that same block, separated by the exact line "--- JSON DATA ---".
+- Do not add nested Markdown or JSON fences.
+- The separator must appear exactly once on its own line.
+- The JSON suffix must start with { and end with }. Use 2-space indentation; do not minify it.
+- Before answering, parse-check the complete JSON suffix: matched braces/brackets, double-quoted keys and strings, escaped line breaks inside strings, no comments, no trailing commas, no unresolved placeholders, no extra text after the final }, and no truncation.
+- The dashboard accepts the entire combined response in the single "GPT 지침 2 전체 응답" input and splits both portions automatically.`;
+}
+
+function buildGptInstructionPrompt() {
+  const prompt = buildGptInstructionPromptLegacy();
+  return replaceInstructionJsonTemplate(prompt, COMPACT_FULL_SCOUT_JSON_TEMPLATE, '\nFinal validation before output:')
+    .replace(
+      'Keep source_report.raw_markdown as an empty string because the dashboard inserts the Markdown portion.',
+      'Use meta.ingestion_format="compact_v1". The dashboard expands omitted boilerplate fields, materializes source_ids from validation.source_registry, and inserts the Markdown portion without changing the visible result.'
+    );
 }
 
 function buildGptInstructionPromptCompact() {
@@ -7990,28 +8355,6 @@ document.addEventListener('keydown', (event) => {
 elements.criteriaDrawerButton.addEventListener('click', openCriteriaDrawer);
 elements.criteriaDrawerClose.addEventListener('click', closeCriteriaDrawer);
 elements.criteriaBackdrop.addEventListener('click', closeCriteriaDrawer);
-elements.reviewerIdentitySubmit?.addEventListener('click', () => {
-  const identity = elements.reviewerIdentityInput?.value.trim() || '';
-  if (!identity) {
-    elements.reviewerIdentityInput?.focus();
-    return;
-  }
-  closeReviewerIdentityModal(identity);
-});
-elements.reviewerIdentityCancel?.addEventListener('click', () => closeReviewerIdentityModal(null));
-elements.reviewerIdentityModal?.addEventListener('click', (event) => {
-  if (event.target === elements.reviewerIdentityModal) closeReviewerIdentityModal(null);
-});
-elements.reviewerIdentityInput?.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-    elements.reviewerIdentitySubmit?.click();
-  }
-  if (event.key === 'Escape') {
-    event.preventDefault();
-    closeReviewerIdentityModal(null);
-  }
-});
 elements.dataReuploadConfirm?.addEventListener('click', () => closeDataReuploadModal(true));
 elements.dataReuploadKeepNew?.addEventListener('click', () => closeDataReuploadModal(false));
 elements.dataReuploadModal?.addEventListener('click', (event) => {
@@ -8080,6 +8423,8 @@ elements.previewInputButton.addEventListener('click', previewPastedReportParsing
 elements.saveJsonButton.addEventListener('click', saveStructuredJsonInput);
 elements.clearJsonButton.addEventListener('click', () => {
   elements.gptResponseInput.value = '';
+  const mode = activeTableMode();
+  if (['triage', 'full'].includes(mode)) state.dataUploadDrafts[mode] = '';
   state.dataUploadReview = null;
   elements.previewInputButton.disabled = true;
   elements.saveJsonButton.disabled = true;
@@ -8090,6 +8435,8 @@ elements.clearJsonButton.addEventListener('click', () => {
   }
 });
 elements.gptResponseInput?.addEventListener('input', () => {
+  const mode = activeTableMode();
+  if (['triage', 'full'].includes(mode)) state.dataUploadDrafts[mode] = elements.gptResponseInput.value;
   const hasInput = Boolean(elements.gptResponseInput.value.trim());
   state.dataUploadReview = null;
   elements.previewInputButton.disabled = !hasInput;

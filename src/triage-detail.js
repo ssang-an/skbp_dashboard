@@ -506,6 +506,8 @@ function renderQuickSummary(record) {
   });
   const flags = listValues(record.hard_filter?.flags);
   const lastEditedAt = meta.last_edited_at ? formatTimestamp(meta.last_edited_at) : null;
+  const rescoredAt = meta.rescored_at ? formatTimestamp(meta.rescored_at) : null;
+  const reviewedAt = meta.rubric_reviewed_at ? formatTimestamp(meta.rubric_reviewed_at) : null;
   const rows = [
     ['Triage status', status],
     ['Rubric version', meta.rubric_version || triage.instruction_version || meta.schema_version],
@@ -514,6 +516,18 @@ function renderQuickSummary(record) {
     ['Parser status', sourceReport.parser_status],
     ['Verified public sources', String(verifiedCriterionUrls.size)]
   ];
+  if (rescoredAt && meta.rescored_rubric_version) {
+    rows.push(
+      ['Recalculated at', rescoredAt],
+      ['Rubric used to recalculate', meta.rescored_rubric_version]
+    );
+  } else if (reviewedAt && meta.rubric_reviewed_version) {
+    rows.push(
+      ['Latest rubric reviewed at', reviewedAt],
+      ['Rubric used for review', meta.rubric_reviewed_version],
+      ['Review result', meta.rubric_review_result === 'no_change' ? 'No score change' : 'No applicable score change']
+    );
+  }
   if (lastEditedAt) {
     rows.push(['Last edited', `${lastEditedAt} · ${meta.last_edited_by || 'unknown'}`]);
   }

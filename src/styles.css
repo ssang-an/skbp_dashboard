@@ -1974,6 +1974,7 @@ h2 {
 
 .topbar #aiDrawerButton,
 .topbar #criteriaDrawerButton,
+.topbar #detailReuploadButton,
 .topbar #detailAiButton,
 .topbar #copyTriagePromptTopButton,
 .topbar #copyPromptTopButton,
@@ -2068,6 +2069,18 @@ h2 {
   border-color: rgba(148, 163, 184, 0.28);
   background: rgba(148, 163, 184, 0.12);
   color: rgba(241, 245, 249, 0.9);
+}
+
+.detail-shell .topbar #detailReuploadButton {
+  border-color: rgba(45, 212, 191, 0.34);
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.24), rgba(14, 165, 233, 0.12));
+  color: #ecfeff;
+}
+
+.detail-shell .topbar #detailReuploadButton:hover,
+.detail-shell .topbar #detailReuploadButton:focus-visible {
+  border-color: rgba(45, 212, 191, 0.52);
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.34), rgba(14, 165, 233, 0.18));
 }
 
 .topbar #copyTriagePromptTopButton {
@@ -10394,27 +10407,39 @@ html[data-theme="dark"] .detail-material-panel {
   line-height: 1.6;
 }
 
-.attachment-preview-toolbar {
+.detail-viewer-back-group {
   display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  border-bottom: 1px solid var(--glass-border);
-  padding: 9px 12px;
-  background: var(--readable-soft);
+  align-items: center;
+  gap: 7px;
 }
 
-.attachment-open-link {
-  display: inline-flex;
+.detail-viewer-back-group[hidden] {
+  display: none;
+}
+
+.attachment-original-actions {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--glass-border));
-  border-radius: 8px;
-  background: var(--accent-soft);
-  padding: 7px 10px;
-  color: var(--accent);
-  font-size: 10px;
-  font-weight: 900;
+  gap: 7px;
+}
+
+.attachment-original-actions[hidden] {
+  display: none;
+}
+
+.attachment-original-action {
   text-decoration: none;
+}
+
+@media (max-width: 720px) {
+  .detail-shell .raw-report-panel .panel-header-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .detail-viewer-back-group {
+    flex-basis: auto;
+  }
 }
 
 .report-viewer.showing-attachment {
@@ -17714,7 +17739,7 @@ html[data-theme="dark"] .detail-shell #detailActionDate:focus-visible {
   box-shadow: 0 7px 18px rgba(0, 0, 0, 0.32), 0 1px 3px rgba(0, 0, 0, 0.24);
 }
 
-/* Align the report and review-workspace labels to one shared header baseline. */
+/* Keep the report and review-workspace titles on one shared header baseline. */
 .detail-shell .collaboration-title-row {
   min-height: 0;
   align-items: flex-start;
@@ -17727,15 +17752,12 @@ html[data-theme="dark"] .detail-shell #detailActionDate:focus-visible {
   gap: 3px;
 }
 
-.detail-shell .report-header-copy .eyebrow,
-.detail-shell .collaboration-title-row .eyebrow {
+.detail-shell .detail-primary-panel-title {
   margin: 0;
-  line-height: 1.2;
-}
-
-.detail-shell .report-header-copy h2,
-.detail-shell .collaboration-title-row h2 {
-  line-height: 1.2;
+  font-size: 18px;
+  font-weight: 720;
+  line-height: 30px;
+  letter-spacing: 0.01em;
 }
 
 .detail-shell .collaboration-title-actions {
@@ -17845,12 +17867,36 @@ html[data-theme="dark"] .detail-shell #detailActionDate:focus-visible {
   align-items: flex-start;
 }
 
-.detail-shell .raw-report-panel .panel-header-actions {
+.detail-shell .raw-report-panel .panel-header-actions,
+.detail-shell .collaboration-title-row .collaboration-title-actions {
   align-self: flex-start;
+  height: 30px;
   min-height: 30px;
-  margin-top: 4px;
+  margin-top: 0;
   align-items: center;
   gap: 7px;
+}
+
+.detail-shell .raw-report-panel .report-action-icon,
+.detail-shell .collaboration-title-actions #detailFocusToggle,
+.detail-shell .collaboration-title-actions .comment-count {
+  box-sizing: border-box;
+  height: 30px;
+  min-height: 30px;
+  flex: 0 0 30px;
+  align-self: center;
+  line-height: 1;
+}
+
+.detail-shell .collaboration-title-actions .comment-count {
+  flex: 0 0 auto;
+  min-width: 30px;
+  padding: 0 7px;
+}
+
+.detail-shell .raw-report-panel .report-action-icon svg,
+.detail-shell .collaboration-title-actions #detailFocusToggle svg {
+  display: block;
 }
 
 .detail-shell .raw-report-panel .report-action-icon {
@@ -17879,4 +17925,386 @@ html[data-theme="dark"] .detail-shell #detailActionDate:focus-visible {
   color: color-mix(in srgb, var(--accent) 82%, var(--text));
   outline: none;
   box-shadow: none;
+}
+
+/* Full Scout topic notes and guarded report maintenance */
+.raw-report-panel {
+  position: relative;
+}
+
+.topic-note-panel {
+  display: grid;
+  gap: 7px;
+  margin: 18px 0 28px;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--muted) 22%, transparent);
+  border-radius: 0;
+  background: transparent;
+  padding: 7px 0 0;
+  box-shadow: none;
+}
+
+html[data-theme="dark"] .topic-note-panel {
+  border-top-color: color-mix(in srgb, var(--muted) 30%, transparent);
+  background: transparent;
+}
+
+.topic-note-panel.is-unmatched {
+  border-top-style: dashed;
+  background: transparent;
+}
+
+.topic-note-panel-heading,
+.topic-note-meta,
+.topic-note-item-actions,
+.topic-note-form > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.topic-note-panel-heading strong {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.topic-note-panel-heading > span:last-of-type {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.topic-note-panel.is-empty .topic-note-panel-heading strong,
+.topic-note-panel.is-empty .topic-note-panel-heading > span {
+  visibility: hidden;
+}
+
+.topic-note-panel-heading button {
+  margin-left: auto;
+  border: 0;
+  border-radius: 2px;
+  background: var(--readable-surface);
+  padding: 4px 7px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  box-shadow: none;
+  transition: opacity 120ms ease, color 120ms ease, background 120ms ease;
+}
+
+.topic-note-panel:hover .topic-note-panel-heading button,
+.topic-note-panel:focus-within .topic-note-panel-heading button {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.topic-note-panel-heading button:hover,
+.topic-note-panel-heading button:focus-visible {
+  background: color-mix(in srgb, var(--muted) 8%, var(--readable-surface));
+  color: var(--text);
+  outline: none;
+}
+
+.topic-note-list {
+  display: grid;
+  gap: 8px;
+}
+
+.topic-note-item {
+  border-top: 1px solid color-mix(in srgb, var(--muted) 13%, transparent);
+  padding-top: 8px;
+}
+
+.topic-note-item:first-child {
+  border-top: 0;
+  padding-top: 2px;
+}
+
+.topic-note-meta strong,
+.topic-note-meta span,
+.topic-note-item-actions button,
+.topic-note-form [data-topic-note-status] {
+  font-size: 9px;
+}
+
+.topic-note-meta span {
+  color: var(--muted);
+}
+
+.topic-note-meta strong {
+  color: var(--text);
+}
+
+.topic-note-item p {
+  margin: 5px 0 0;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.topic-note-item-actions {
+  justify-content: flex-end;
+  margin-top: 5px;
+}
+
+.topic-note-item-actions button {
+  border: 0;
+  background: transparent;
+  padding: 2px 4px;
+  color: var(--muted);
+}
+
+.topic-note-form {
+  display: grid;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.topic-note-form[hidden] {
+  display: none;
+}
+
+.topic-note-form textarea {
+  width: 100%;
+  min-height: 72px;
+  resize: vertical;
+  border: 0;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--muted) 4%, var(--readable-surface));
+  padding: 10px 11px;
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.6;
+  outline: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--muted) 18%, transparent);
+}
+
+.topic-note-form textarea:focus {
+  background: var(--readable-surface);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--muted) 34%, transparent),
+    0 0 0 2px color-mix(in srgb, var(--muted) 7%, transparent);
+}
+
+.topic-note-form > div {
+  justify-content: flex-end;
+}
+
+.topic-note-form [data-topic-note-status] {
+  margin-right: auto;
+  color: var(--muted);
+}
+
+.topic-note-form button {
+  border: 0;
+  border-radius: 3px;
+  padding: 5px 9px;
+  font-size: 10px;
+  font-weight: 800;
+  box-shadow: none;
+}
+
+.topic-note-form button[data-topic-note-cancel] {
+  background: transparent;
+  color: var(--muted);
+}
+
+.topic-note-form button[type="submit"] {
+  background: color-mix(in srgb, var(--text) 88%, var(--surface));
+  color: #fff;
+}
+
+.topic-note-form button[type="submit"]:hover,
+.topic-note-form button[type="submit"]:focus-visible {
+  background: var(--text);
+}
+
+@media (hover: none) {
+  .topic-note-panel .topic-note-panel-heading button {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+  }
+}
+
+.json-admin-floating {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 7;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--glass-border));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 86%, #17313a);
+  color: #fff;
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.json-admin-floating[hidden] {
+  display: none;
+}
+
+.json-admin-floating svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.report-reupload-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  display: grid;
+  place-items: center;
+  background: rgba(7, 13, 22, 0.58);
+  padding: 24px;
+  backdrop-filter: blur(7px);
+}
+
+.report-reupload-backdrop[hidden] {
+  display: none;
+}
+
+.report-reupload-modal {
+  display: grid;
+  grid-template-rows: auto auto minmax(280px, 1fr) auto auto;
+  gap: 13px;
+  width: min(920px, 96vw);
+  max-height: 90vh;
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  background: var(--readable-surface);
+  padding: 20px;
+  box-shadow: var(--floating-shadow);
+}
+
+.report-reupload-header,
+.report-reupload-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.report-reupload-header h2,
+.report-reupload-header p,
+.report-reupload-copy {
+  margin: 0;
+}
+
+.report-reupload-header h2 {
+  margin-top: 3px;
+  color: var(--text);
+}
+
+.report-reupload-header > button {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 22px;
+}
+
+.report-reupload-copy,
+.report-reupload-validation {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+#reportReuploadInput,
+#reportReuploadInput:focus,
+#reportReuploadInput:focus-visible {
+  width: 100%;
+  min-height: 280px;
+  resize: vertical;
+  border: 1px solid color-mix(in srgb, var(--line) 86%, var(--muted));
+  border-radius: 12px;
+  outline: none;
+  background: color-mix(in srgb, var(--surface) 96%, var(--surface-soft));
+  padding: 17px 18px;
+  color: var(--text);
+  font: 12px/1.7 Consolas, "Cascadia Code", monospace;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.025);
+  transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+#reportReuploadInput:hover {
+  border-color: color-mix(in srgb, var(--muted) 44%, var(--line));
+}
+
+#reportReuploadInput:focus,
+#reportReuploadInput:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
+  background: var(--surface);
+  box-shadow: 0 5px 14px rgba(15, 23, 42, 0.12), 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.report-reupload-validation {
+  min-height: 21px;
+  border-radius: 8px;
+  background: var(--surface-soft);
+  padding: 8px 10px;
+}
+
+.report-reupload-validation[data-tone="success"] {
+  background: color-mix(in srgb, var(--green) 10%, var(--surface-soft));
+  color: var(--green);
+}
+
+.report-reupload-validation[data-tone="error"] {
+  background: color-mix(in srgb, var(--red) 9%, var(--surface-soft));
+  color: var(--red);
+}
+
+.report-reupload-actions {
+  justify-content: flex-end;
+}
+
+.report-reupload-actions button {
+  padding: 9px 13px;
+  font-weight: 850;
+}
+
+body.report-reupload-open {
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .report-reupload-backdrop {
+    padding: 10px;
+  }
+
+  .report-reupload-modal {
+    width: 100%;
+    max-height: 96vh;
+    padding: 14px;
+  }
+}
+
+/* Attachment navigation mirrors the neutral favorite control until hover. */
+.detail-shell .raw-report-panel .detail-viewer-back-group .report-action-icon {
+  background: var(--surface-soft);
+  color: var(--muted);
+}
+
+.detail-shell .raw-report-panel .detail-viewer-back-group .report-action-icon:hover,
+.detail-shell .raw-report-panel .detail-viewer-back-group .report-action-icon:focus-visible {
+  background: var(--accent-soft);
+  color: var(--accent);
 }

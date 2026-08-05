@@ -864,6 +864,63 @@ class FullScoutFilterTests(unittest.TestCase):
 
 
 class StaticInstructionAndSchemaTests(unittest.TestCase):
+    def test_fast_triage_prompt_uses_one_combined_copy_block(self) -> None:
+        app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
+        start = app_js.index("function buildTriageInstructionPromptLegacy()")
+        end = app_js.index("function buildTriageInstructionPrompt()", start)
+        prompt = app_js[start:end]
+
+        self.assertIn("exactly one copyable fenced code block", prompt)
+        self.assertIn("--- JSON DATA ---", prompt)
+        self.assertIn("Do not create inner Markdown or JSON fences", prompt)
+        self.assertIn("copy this one combined block and paste it once", prompt)
+        self.assertNotIn("exactly two fenced code blocks", prompt)
+        self.assertNotIn("Output only the two fenced code blocks", prompt)
+
+        parser_start = app_js.index("function splitCombinedGptResponse")
+        parser_end = app_js.index("function fastTriageMarkdownStatusRows", parser_start)
+        parser = app_js[parser_start:parser_end]
+        self.assertIn("separatorPattern", parser)
+        self.assertIn("JSON.parse(jsonText)", parser)
+        self.assertIn("inputFormat: 'separator'", parser)
+        self.assertIn("구분선은 전체 응답에 정확히 한 번", parser)
+        self.assertNotIn("balancedJsonCandidates", app_js)
+        self.assertIn("최상위 JSON 문법 오류", app_js)
+        self.assertIn("The JSON suffix must start with [ and end with ]", prompt)
+        self.assertIn("parse-check the complete JSON suffix", prompt)
+        self.assertIn('"ingestion_format": "compact_v1"', app_js)
+        self.assertIn("COMPACT_TRIAGE_JSON_TEMPLATE", app_js)
+        self.assertIn("replaceInstructionJsonTemplate(prompt, COMPACT_TRIAGE_JSON_TEMPLATE", app_js)
+
+    def test_full_scout_prompt_uses_one_combined_copy_block(self) -> None:
+        app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
+        start = app_js.index("function buildGptInstructionPromptLegacy()")
+        end = app_js.index("function buildGptInstructionPrompt()", start)
+        prompt = app_js[start:end]
+
+        self.assertIn("exactly one copyable fenced code block", prompt)
+        self.assertIn("exactly one \\`\\`\\`text fenced code block", prompt)
+        self.assertIn("--- JSON DATA ---", prompt)
+        self.assertIn("copy this one combined block and paste it once", prompt)
+        self.assertIn('single "GPT 지침 2 전체 응답" input', prompt)
+        self.assertIn("Do not create inner Markdown or JSON fences", prompt)
+        self.assertIn("The JSON suffix must start with { and end with }", prompt)
+        self.assertIn("parse-check the complete JSON suffix", prompt)
+        self.assertIn("source_report.raw_markdown as an empty string", prompt)
+        self.assertIn("COMPACT_FULL_SCOUT_JSON_TEMPLATE", app_js)
+        self.assertIn("replaceInstructionJsonTemplate(prompt, COMPACT_FULL_SCOUT_JSON_TEMPLATE", app_js)
+        compact_start = app_js.index("const COMPACT_FULL_SCOUT_JSON_TEMPLATE")
+        compact_end = app_js.index("function replaceInstructionJsonTemplate", compact_start)
+        compact = app_js[compact_start:compact_end]
+        self.assertIn('"source_ids": []', compact)
+        self.assertIn('"source_registry": [', compact)
+        self.assertIn('"source_report": {', compact)
+        self.assertNotIn('"raw_markdown":', compact)
+        self.assertNotIn('"obsidian":', compact)
+        self.assertNotIn("exactly two fenced code blocks", prompt)
+        self.assertNotIn("second copyable box", prompt)
+        self.assertNotIn("one markdown fenced code block followed by one JSON fenced code block", prompt)
+
     def test_shared_prompt_and_versioned_rubric_files(self) -> None:
         app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
         shared_sentence = (

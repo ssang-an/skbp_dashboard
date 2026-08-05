@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260804-attachment-original-download-toolbar-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260805-panel-titles-1" />
   </head>
   <body>
     <div class="app-shell detail-shell">
@@ -36,11 +36,11 @@
               data-tooltip="SKBP 평가 기준, PASS/REVIEW/FAIL 조건, 점수표를 확인합니다."
             ><span aria-hidden="true">?</span><b>판단근거</b></button>
             <button
-              id="editJsonButton"
-              class="help-tooltip"
+              id="detailReuploadButton"
+              class="detail-header-action-pill help-tooltip"
               type="button"
-              data-tooltip="현재 record JSON을 고급 편집기로 확인하고 수정합니다."
-            ><span aria-hidden="true">{ }</span><b>JSON</b></button>
+              data-tooltip="최신 Full Scout Markdown + Compact JSON으로 현재 리포트를 교체합니다."
+            ><span aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 16V4M7.5 8.5 12 4l4.5 4.5"></path><path d="M5 13v6h14v-6"></path></svg></span><b>재업로드</b></button>
           </div>
           <div class="top-action-group top-data-actions" role="group" aria-label="Record actions">
             <button
@@ -122,8 +122,7 @@
         <section class="panel raw-report-panel">
           <div class="panel-header">
             <div class="report-header-copy">
-              <p id="detailViewerEyebrow" class="eyebrow">AI REPORT UPLOADED</p>
-              <h2 id="detailViewerTitle">GPT 원문 리포트</h2>
+              <h2 id="detailViewerTitle" class="detail-primary-panel-title">GPT ORIGINAL REPORT</h2>
               <p id="detailSubtitle" hidden></p>
               <p id="detailMetaInfo" class="detail-meta-info"></p>
             </div>
@@ -136,20 +135,36 @@
               <button id="detailViewerCopyButton" class="report-action-icon help-tooltip" type="button" data-tooltip="복사" aria-label="GPT 원문 리포트 복사">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>
               </button>
-              <button id="detailViewerBackButton" class="secondary-button" type="button" hidden>
-                ← GPT 원문으로
-              </button>
+              <div id="detailViewerBackGroup" class="detail-viewer-back-group" hidden>
+                <button id="detailViewerBackButton" class="report-action-icon help-tooltip" type="button" data-tooltip="GPT 원문으로" aria-label="GPT 원문으로 돌아가기" hidden>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m10 6-6 6 6 6"></path><path d="M4 12h16"></path></svg>
+                </button>
+                <div id="detailAttachmentOriginalActions" class="attachment-original-actions" hidden></div>
+              </div>
             </div>
           </div>
           <div id="sourceReportViewer" class="report-viewer"></div>
+          <button
+            id="editJsonButton"
+            class="json-admin-floating help-tooltip"
+            type="button"
+            data-auth-admin
+            hidden
+            data-tooltip="개발자 전용 JSON 편집"
+            aria-label="개발자 전용 JSON 편집기 열기"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="5" y="7" width="14" height="11" rx="4"></rect>
+              <path d="M9 12h.01M15 12h.01M9 15h6M12 4v3"></path>
+            </svg>
+          </button>
         </section>
 
         <aside id="detailTeamWorkspace" class="panel collaboration-panel" aria-label="팀 코멘트 및 후속 액션">
           <div class="collaboration-header">
             <div class="collaboration-title-row">
               <div>
-                <p class="eyebrow">Review workspace</p>
-                <h2>팀 코멘트</h2>
+                <h2 class="detail-primary-panel-title">TEAM REVIEW WORKSPACE</h2>
               </div>
               <div class="collaboration-title-actions">
                 <a class="secondary-link detail-mobile-jump-link icon-only" href="#sourceReportViewer" aria-label="GPT 원문 리포트로 이동">↑</a>
@@ -668,6 +683,26 @@
     </aside>
 
     <div class="drawer-backdrop" id="editBackdrop" hidden></div>
+
+    <div class="report-reupload-backdrop" id="reportReuploadBackdrop" hidden>
+      <section class="report-reupload-modal" role="dialog" aria-modal="true" aria-labelledby="reportReuploadTitle">
+        <div class="report-reupload-header">
+          <div>
+            <p class="eyebrow">FULL SCOUT REUPLOAD</p>
+            <h2 id="reportReuploadTitle">원문 리포트 재업로드</h2>
+          </div>
+          <button id="reportReuploadClose" type="button" aria-label="재업로드 창 닫기">×</button>
+        </div>
+        <p class="report-reupload-copy">최신에 출력한 지침 2 GPT 응답 전체를 붙여넣으세요. 기존 Topic 메모와 팀 자료는 유지됩니다.</p>
+        <textarea id="reportReuploadInput" spellcheck="false" aria-label="지침 2 GPT 응답 전체 입력" placeholder="지침 2 GPT 응답 전체를 붙여넣으세요."></textarea>
+        <div id="reportReuploadValidation" class="report-reupload-validation" role="status" aria-live="polite">입력 대기 중</div>
+        <div class="report-reupload-actions">
+          <button id="reportReuploadReview" type="button">입력 검토</button>
+          <button id="reportReuploadSave" class="primary-button" type="button" disabled>확인 후 교체</button>
+        </div>
+      </section>
+    </div>
+
     <aside class="ai-drawer json-edit-drawer" id="editDrawer" aria-label="Record data edit drawer" aria-hidden="true" hidden>
       <div class="ai-drawer-header">
         <div>
@@ -692,6 +727,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260804-attachment-original-download-toolbar-1"></script>
+    <script type="module" src="./src/detail.js?v=20260805-panel-titles-1"></script>
   </body>
 </html>
