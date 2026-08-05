@@ -25,36 +25,88 @@
         "partnership_type": "investment",
         "partnership_classification_status": "auto_classified",
         "partnership_classification_source": "auto",
-        "partnership_classified_at": "2026-07-29T05:16:27.849292+00:00",
+        "partnership_classified_at": "2026-08-05T14:15:27.823435+00:00",
         "partner_material_flags": {
           "cdp": false,
           "ncdp": false,
           "admet": false
         },
         "in_vivo_status": "O",
-        "in_vivo_status_source": "auto",
-        "in_vitro_status": "X",
-        "in_vitro_status_source": "auto",
+        "in_vivo_status_source": "deepseek",
+        "in_vitro_status": "O",
+        "in_vitro_status_source": "deepseek",
         "admet_completed": null,
-        "admet_completed_source": "auto",
-        "partnership_evidence_updated_at": "2026-07-29T05:15:45.132786+00:00",
+        "admet_completed_source": "deepseek",
+        "partnership_evidence_updated_at": "2026-08-05T14:14:05.943688+00:00",
         "partnership_auto_suggestion": "investment",
         "partnership_auto_note": "Non-Small Molecule / IND Enabling",
         "partnership_auto_evidence_sources": [
-          "Tab3에 이미 입력된 구조화 데이터",
-          "Tab2 상세 리포트"
+          "Tab2 구조화 데이터"
         ],
         "partnership_classification_criteria_version": "1.0",
         "partnership_note": "Non-Small Molecule / IND Enabling",
         "partnership_evidence_sources": [
-          "Tab3에 이미 입력된 구조화 데이터",
-          "Tab2 상세 리포트"
+          "Tab2 구조화 데이터"
         ],
         "partner_material_flag_overrides": {
           "cdp": false
         },
-        "filter3_document_analyses": [],
-        "filter3_document_analysis_updated_at": "2026-07-29T05:16:27.849202+00:00"
+        "filter3_document_analyses": [
+          {
+            "attachment_id": "3227496d8f2343ceaac0399c72ad9024",
+            "filename": "[Illimis Therapeutics] Company Intro_NCDP_202601_SKBP_share.pdf",
+            "document_id": "b07a1a003f4741dbb68f0facf6c7a1dc",
+            "extraction_method": "native_pdf_text",
+            "result": {
+              "target_indication": {
+                "verdict": "true",
+                "rationale": "The document explicitly focuses on Alzheimer's Disease as a primary target indication.",
+                "evidence": [
+                  {
+                    "page_or_slide": 2,
+                    "location_status": "located",
+                    "text": "Alzheimer’s, Parkinson’s, Amyloidosis, Autoimmunity, etc."
+                  }
+                ]
+              },
+              "small_molecule": {
+                "verdict": "false",
+                "rationale": "The document describes GAIA as a protein-based biologic (fusion protein, antibody-like construct), not a small molecule.",
+                "evidence": []
+              },
+              "ind_enabling": {
+                "verdict": "unknown",
+                "rationale": "The document mentions planned IND-enabling studies and future IND submission but does not explicitly state that IND enabling has been completed.",
+                "evidence": []
+              },
+              "in_vivo_efficacy": {
+                "verdict": "true",
+                "rationale": "The document provides explicit positive in vivo efficacy results in 5xFAD mice, showing significant reduction in Aβ plaque burden.",
+                "evidence": []
+              },
+              "in_vitro_efficacy": {
+                "verdict": "true",
+                "rationale": "The document provides explicit positive in vitro efficacy results using iPSC-derived cells, showing enhanced phagocytosis without pro-inflammatory cytokine release.",
+                "evidence": [
+                  {
+                    "page_or_slide": 27,
+                    "location_status": "located",
+                    "text": "GAIA-Aβ enhanced oligomeric Aβ phagocytosis without triggering pro-inflammatory cytokines (TNF-α and IL-6) compared to a reference antibody"
+                  }
+                ]
+              },
+              "admet_at_least_25": {
+                "verdict": "unknown",
+                "rationale": "The document does not provide any ADMET data or completed ADMET study counts.",
+                "evidence": []
+              },
+              "admet_completed_count": null,
+              "matched_indication": "Alzheimer's Disease",
+              "concise_summary": "Illimis Therapeutics presents a GAIA platform (GAIA-Aβ/ILM01) for Alzheimer’s Disease. The platform is a protein-based biologic (non-small molecule) that targets Aβ via TAM receptor engagement. In vivo efficacy is shown in 5xFAD mice with reduced plaque burden. In vitro efficacy is shown in iPSC-derived cells with enhanced phagocytosis and anti-inflammatory cytokine profile. IND enabling is planned for 2027 but not yet completed. No ADMET data are provided."
+            }
+          }
+        ],
+        "filter3_document_analysis_updated_at": "2026-08-05T14:15:27.823389+00:00"
       },
       "edit_history": [
         {
@@ -648,9 +700,333 @@
           "field": "qualitative_review.efficacy",
           "previous_value": null,
           "new_value": "hello"
+        },
+        {
+          "changed_at": "2026-08-05T14:15:27.823462+00:00",
+          "actor_ip": "192.168.45.192",
+          "actor_name": "",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "[Illimis Therapeutics] Company Intro_NCDP_202601_SKBP_share.pdf"
+        },
+        {
+          "changed_at": "2026-08-05T14:15:28.002811+00:00",
+          "actor_ip": "192.168.45.192",
+          "actor_name": "",
+          "source": "dashboard_comment",
+          "field": "collaboration.comments",
+          "previous_value": null,
+          "new_value": null
+        },
+        {
+          "changed_at": "2026-08-05T14:15:37.940146+00:00",
+          "actor_ip": "192.168.45.192",
+          "actor_name": "",
+          "source": "dashboard_comment",
+          "field": "collaboration.comments",
+          "previous_value": null,
+          "new_value": null
         }
       ],
-      "attachments": [],
+      "attachments": [
+        {
+          "id": "3227496d8f2343ceaac0399c72ad9024",
+          "filename": "[Illimis Therapeutics] Company Intro_NCDP_202601_SKBP_share.pdf",
+          "stored_path": "/attachments/Illimis_Therapeutics_ILM01_20260621/623ca813646741d8aa3abaebd35cb655_[Illimis Therapeutics] Company Intro_NCDP_202601_SKBP_share.pdf",
+          "content_type": "application/pdf",
+          "size_bytes": 12191746,
+          "uploaded_by": "정주원",
+          "uploaded_at": "2026-08-05T14:14:05.943688+00:00",
+          "processing_status": "completed",
+          "document_processing": {
+            "document_id": "b07a1a003f4741dbb68f0facf6c7a1dc",
+            "file_sha256": "ebd964259c1e403b50a137f4536ee89c3176f8f7fcac392245d66dde245c563d",
+            "filename": "[Illimis Therapeutics] Company Intro_NCDP_202601_SKBP_share.pdf",
+            "status": "completed",
+            "extraction": {
+              "method": "native_pdf_text",
+              "pages_or_slides": [
+                {
+                  "number": 1,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nGAIA Platform: For Neuroimmunology & Tolerance Induction\nJan. 2026\nSanghoon Park, Ph.D\nCo-founder & CEO\nIllimis Therapeutics, Inc.\nHarnessing the Power of TAM Biology\nNon-confidential"
+                },
+                {
+                  "number": 2,
+                  "text": "2\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nIllimis Therapeutics\nCOMPANY\nLeadership in TAM (Tyro3/Axl/Mer) biology                                                               \nIn-depth and comprehensive understanding of TAM biology\nPlatform-based company                                                                       \nwith a wide range of therapeutic applications \nPatient-centric approach                                                               \nFocusing on the disease with high therapeutic unmet needs \n- Alzheimer’s, Parkinson’s, Amyloidosis, Autoimmunity, etc.\nFinancial stability \nSeed-to-Series B funding about $70M from renowned venture capitals \nPurpose\nWe translate cutting-edge science into innovative medicine"
+                },
+                {
+                  "number": 3,
+                  "text": "Clearing various toxic amyloid species\nRestoring glial function (phagocytic↑ ,inflammatory↓)\nNormalizing metabolic &  immune function\nAlzheimer’s\nDisease\n3rd Layer\nHOMEOSTASIS\n2nd Layer\nGLIAL DYSFUNCTION\n1st Layer\nAMYLOID & NEURON\nExtracellular Aβ \n(oligomer & plaque)\nTau aggregate\n& propagation\nTau\nTau oligomer\nTau protofibril\nTau\nphosphorylation\nLysosome dysfunction\nMitochondria Dysfunction\nAβ Phagocytosis↓\nInflammatory response\nMicroglia dysfunction\nTREM2\nCD33\nTAM\nTAM\nAstrocyte dysfunction\nGABA\nROS\nCytokines\nNeurotoxicity\nLipid metabolism\n(APOE, etc.)\nNegative \nNeuroinflammation\n(IL-1α, C1q, TNF)\nNegative \nTreg\nT cells\nMonocytes\nNegative \nor Positive?\nAβ\nmonomer\nAβ oligomer\nAβ fibril\nAβ plaque"
+                },
+                {
+                  "number": 4,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n4\nHow to CONQUER Alzheimer’s Disease?\nUNMET NEEDS\n[1st Gen]\nNon-specific\nSymptomatic\nOncology\nNeurology\n[2nd Gen]\nTARGETED THERAPY\nDirect clearance of \nPathogenic cells/proteins\n[3rd Gen]\nIMMUNOTHERAPY\nMicroenvironment\nImmune Cells\nCytotoxic Chemical Drugs\nSevere side effects\nLimited efficacy\nTargeting Cancer Cells (Herceptin)\nEffective, but in limited population\nRelatively tolerable\nCheckpoint Inhibitor (anti-PD1)\nBreakage of immune-tolerance\nCombination with targeted drug\nSymptomatic Drug (Donepezil)\nLimited efficacy & Side effects\nCannot stop disease progress\nTargeting A& Tau\nEffective, but early treat required\nRelatively tolerable\nTargeting Glial Cells\nModulate glial dysfunction\n(Phagocytosis& Inflammation)\nCombination with targeted drug\nCombination of \nTargeted therapy [Amyloid] \n& Immunotherapy [Glia]\n→Disease Modification !"
+                },
+                {
+                  "number": 5,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n5\nAD Drug Development Pipeline (Big Pharma)\nUNMET NEEDS\nEphA4\n: Ephrin type-A receptor 4\nJAK1\n: Janus kinase 1\nNLRP3\n: NOD-like receptor pyrin domain-containing protein 3\nRAGE\n: receptor for advanced glycation end products\nGSM\n: γ-secretase modulator\nPKAR\n: Protein kinase RNA activated\nPDE2     \n: Phosphodiesterase 2\nPSEN\n: Presenilin\nOGA\n: O-GlcNAcase\nEIF2B             : Eukaryotic translation initiation factor 2B\nTrkA\n: Tropomyosin receptor kinase A\nS1P1/S1P5 \n: Sphingosine-1-phosphate receptor-1 and 5\nSV2A\n: Synaptic vesicle glycoprotein 2A\nAZ Anti-Aß\n(MEDI-1814)\nBiogen OGA-i\n(BIIB-113)\nBMS EIF2B activator\n(BMS-986419)\nBoehringer \nIngelheim\nPDE2-i\n(BI-474121)\nEisai\nTrkA (E2511)\nEphA4 \nantagonist\n(E2025)\nLilly\nTau-i \n(ACI-3024, \nLY-3954068)\nMerck Tau-i (MK-2214, \nTa-1505)\nNovartis\nTau-i (NIO-752)\nTREM2 agonist\n(VHB-937)\nS1P1/S1P5 \nagonist\nRoche GSM\n(RO-7185876)\nAbbvie ALLA-1758\nAbbvie SV2A\n(ABBV-552)\nBiogen Tau-i\n(BIIB-080)\nBMS Tau-i\n(BMS-986446)\nJ&J\nCD38\n(daratumumab \n+hyaluronidase) \nTau-i\n(posdinemab,   \nJNJ-2056)\nNovartis Bcr-Abl TKI\n(nilotinib)\nNovo \nNordisk\nGLP1 agonist\n(liraglutide)\nRoche Anti-Aß\n(trontinemab)\nGSM\n(RG-6289)\nUCB Tau-i\n(bepranemab)\nEisai Tau-I (combo)\n(etalanetug)\nLilly Anti-Aß\n(remternetug)\nNovo \nNordisk\nGLP1 agonist\n(NN-6535)\nEisai Anti-Aß\n(lecanemab)\nLilly Anti-Aß\n(donanemab)\nPre-clinical\nPhase I\nPhase II\nPhase III\nMarketed\nAstellas GSM\nBiogen Tau-i\nAnti-Aß (2)\nEisai Anti-Aß\n(BAN-2052)\nTREM2 agonist\nCD33-i\nJ&J Tau-i\nLilly JAK1-i\n(baricitinib) \nMerck PDE2-i\nPSEN1-i\nRoche NLRP3-i\n(MCC-950)\nRAGE\nantagonists\n(MDR-066)\nTau-i\n(ST-501)\nSanofi PKAR-i\n(SAR-489883)"
+                },
+                {
+                  "number": 6,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n6\nApproval of anti-Aβ antibody\nLeqembi and Kisunla approvals ignite the new wave of AD drug development\nUNMET NEEDS\nGeneric/Code\nName\nCompany\nTarget Aβ\nspecies\nIsotype\nDevelopment Stage\nHistory/Current Status\nAducanumab\nAβ Plaque\nIgG1\nDiscontinued\nJan 2024: Phase 4 discontinued & \nall rights returned back to Neurimmune \nLecanemab\nAβ\nOligomer\nIgG1\nMarketed\nJan 2023: FDA accelerated approval\nJul 2023: FDA traditional approval & Medicare coverage\napproved\nDonanemab\nN3pG-Aβ\nIgG1\nMarketed\nJan 2023: Accelerated approval declined, despite the \ncomplete clearance of Aβ observed in 60% of patients\nJul 2024: FDA traditional approval & Medicare coverage\napproved\nGantenerumab\nTrontinemab\nAβ Fibril & \nPlaque\nIgG1\nPhase 3 (Fail)\nPhase 2\nNov 2022: Unsuccessful Gante Phase 3 results announced\nMar 2024: Successful Ph1/2 results of trontinemab announced"
+                },
+                {
+                  "number": 7,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n7\nApproval of Anti-Aβ Antibody : Controversy\nUNMET NEEDS\nBrain Edema, Microhemorrhage, Brain Shrinkage, Death, …\nDespite two formally FDA-approved anti-Aβ mAbs, immunotherapies have been constantly bringing controversies\nregarding its actual benefit in efficacy and safety issue"
+                },
+                {
+                  "number": 8,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n8\nThe MoA of Aβ-targeted antibody\nWhile IgG1-based Aβ antibodies promote the phagocytosis of Aβ through microglial Fcγ receptors, this process also\ninduces inflammation\nUNMET NEEDS\nSource: Panza et al., 2019, Ann Neurol.\nInflammatory cytokine\n& chemokine release\nMicroglia-dependent Aβ phagocytosis by IgG1 Ab\nFcγ receptor-mediated neuroinflammation\nFcγ Receptor\n3. Actin remodeling\nand phagocytosis\n1. FcγR crosslinking by\nIgG immune complexes\n2. ITAM phosphorylation\nand kinase activation\nBournazos et al., 2020, Nature Reviews Immunology"
+                },
+                {
+                  "number": 9,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n9\nFcγR-mediated Neuroinflammation in Brain\nPROBLEM\nIgG1-backbone antibody therapies can trigger pro-inflammatory responses when clearing pathogenic proteins\nThis inflammation leads to detrimental side effects like ARIA and limited improvement in cognitive benefits"
+                },
+                {
+                  "number": 10,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n10\nFcγR-mediated Neuroinflammation in Brain\nPROBLEM\nIgG1-backbone antibody therapies can trigger pro-inflammatory responses when clearing pathogenic proteins\nThis inflammation leads to detrimental side effects like ARIA and limited improvement in cognitive benefits\nSource: Hong et al., 2016, Curr Opin Neurobiol."
+                },
+                {
+                  "number": 11,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n11\nFcγR-mediated Neuroinflammation in Brain\nPROBLEM\nIgG1-backbone antibody therapies can trigger pro-inflammatory responses when clearing pathogenic proteins\nThis inflammation leads to detrimental side effects like ARIA and limited improvement in cognitive benefits\nBournazos et al., 2020, Nature Reviews Immunology\nＴaylor, X., Clark, I.M., Fitzgerald, G.J. et al., 2023, Mol Neurodegeneration\nOverreactive\nglia\nNeurotoxicity\n&\nSynaptic loss\nLimited\nphagocytosis\nImpeded cognitive function improvement\nARIA (Amyloid Related Imaging Abnormalities)\nIncreased burden on healthcare resources\nLimited patient eligibility for drug\nLimited improvement in patients’ QoL, regardless of \namyloid beta clearance\nBrain edema or microhemorrhage which could be fatal\nRegular MRI monitoring requirement because of \nthe elevated risk of ARIA\nAntibody therapies not eligible for high-risk patients\nwith APOE4 or CAA\nPro-\ninflammatory \ncytokines\nAβ plaque\nPerivascular \nmacrophage\nMicroglia\nAstrocyte\nFcγ Receptor\nAntibody-mediated\nneuroinflammation\n“ The Need for Novel Aβ-targeting Approaches ”"
+                },
+                {
+                  "number": 12,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n12\nEfferocytosis: Clearance Without Inflammation\nMacrophages use efferocytosis, unlike phagocytosis, when removing apoptotic cells without inflammation\n▪\nTAM receptor’s ligand, GAS6, is involved in this efferocytosis process and induces phagocytosis while strongly \nsuppressing inflammation\nSOLUTION\nBurstyn-Cohen, T. et al., 2023, Immunological reviews \nEfferocytosis: Homeostasis maintenance\nGAS6-TAM receptor signaling pathway\nAPOPTOTIC\nCELL\nMACROPHAGE\nPhagocytosis\nAnti-inflammatory\ncytokine release\nAPOPTOTIC\nCELL\nPhagocytosis\nAnti-inflammatory response\n(IL-4, IL-10, IL-13, TGF-β) release\nPtdSer\nTAM LIGAND\nGAS6/PROS1\nTAM RECEPTOR\nTYRO3\nAXL\nMERTK\nLIGANDS\nGAS6\nPROS1\nRECEPTOR\nTYRO3\nAXL\nMERTK\nEGF-like domains\nSHBG domain\nGla domain"
+                },
+                {
+                  "number": 13,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n13\nHijacking Efferocytosis via TAM Receptor \nThe GAIA platform is built by optimizing three key components: 1) an A-binding domain, 2) an effectorless Fc domain,\nand 3) an engineered GAS6 (eGAS6)\nThis designed construct to specifically targets Aβ, while simultaneously inducing an anti-inflammatory response\nSOLUTION - GAIA PLATFORM\nStronger Target Clearance\nby various phagocytic cells\nBeneficial Immune Cell Modulation\nby enhancing phagocytic function\nand limiting inflammatory response\nImmunotherapy\nTargeted therapy\n01\n02\nAnti-Target antibody\n(Target binder)\neGAS6\n(TAM binder)\nGAS6-mediated Anti-Inflammatory Adaptor (GAIA) for Phagocytic Clearance\nOur Solution\n“Targeting TAM, not FcγR” \nPhagocytic signal without \ninflammatory response\nExpressed on various innate\nimmune cells\nWell-proven homeostatic \npathway\nOptimized Fc\n(Effectorless)\nTAM Receptor\nImmune cell\n(Glia, Macrophage)\nFcγR\nPathogenic\nprotein"
+                },
+                {
+                  "number": 14,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n14\nTAM Receptor Pathway as a Novel Therapeutic Axis\nEfferocytosis through TAM receptors has been studied for decades and continues to gain attention for its\nrole in neuroinflammation in Alzheimer’s disease\nTAM BIOLOGY\n1991\n2001\n2007\n2021\nTAM receptor MerTK identified \nin microglia, and shown to \nregulate phagocytosis\nNature 2001; 411: 207-211\nScott, R.S., et al. \nWidespread of TAM receptor \nexpression reported in the brain\nNeuron 1991; 6(5): 691-704 \nLai, C. & Lemke, G.\nTAM receptor shown to inhibit \nneuroinflammatory signaling\nCell 2007; 131(6): 1124-1136\nRothlin, C.V., et al. \n2022\nTAM receptors implicated in \nmodulating microglial reactivity in AD \nNature Immunol. 2021; 22(5): 586-594\nHuang, Y., et al.\nUsing GAS6 to drive efferocytosis \nenables Aβ clearance & suppresses \nneuroinflammation in AD\nNature Medicine 2022; 28: 1802-1812\nJung, H., et al. \n2017\nReactive Astrocytes: Production, \nFunction, and Therapeutics \nPotential\nImmunity. 2017; 46(6): 957-967.\nScott, R.S., et al. \nCarla Rothlin, Ph.D\nGreg Lemke, Ph.D"
+                },
+                {
+                  "number": 15,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n15\nGAS6 / TAM Biology \nTAM activation actively triggers anti-inflammatory responses when removing pathogenic proteins and modulates innate \nimmune cells which includes potential immune tolerance induction and autophagy function enhancement\nTAM biology also plays a role in remyelination and APOE homeostasis\nTAM BIOLOGY\nProteostasis (autophagy, lysome, etc.)\nAutophagy. 2016 Dec;12(12):2326-2343\nJ Thorac Oncol. 2020 Jun;15(6):973-999\nAPOE homeostasis\nMol Brain. 2020 May 4;13(1):66.\nPhagocytosis\nCell Death Dis. 2015 Feb 19;6(2):e1646.\nNat Immunol. 2014 Oct;15(10):920-8.\nAnti-inflammation\nPharmacol Ther. 2018 Aug;188:97-117.\nAutophagy. 2016 Dec;12(12):2326-2343.\nGAS6/TAM\nAxis\nTolerance induction\nCells. 2020 Jul 26;9(8):1779.\nRemyelination\nGlia. 2017 Apr;65(4):581-591.\nCells. 2020 Jul 26;9(8):1779."
+                },
+                {
+                  "number": 16,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n16\n(1) Target-engaged clustering and activation of TAM receptors\nGAIA is expected to work specifically in the disease-site\n(1) Target-engaged activation & (2) Disease-site specific induction of Axl expression\nTAM BIOLOGY\nTarget-engaged activation in 2:2 stoichiometry\nHomo-dimer\n(activation)\nHomo-dimer\n(activation)\nSelectivity of GAS6 towards TAM receptors\nGraham et al., 2014. Nat Rev Cancer\nTAM receptors are fully activated when the target (PtdSer) is engaged\nHomo-dimerization in a 2:2 stoichiometry with its ligands is required for activation of TAM receptors\nAlmost no binding & activation of MERTK by GAS6 without target-engaged\nMERTK universally expressed, but minimal binding of GAIA to MERTK expected without target\nBetter\nSafety profile\nof GAIA\nTAM is not fully activated without target-engagement"
+                },
+                {
+                  "number": 17,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n17\n(2) Increased Axl expression under inflammation condition\n▪\nInduction of Axl expression by inflammatory stimuli\nTAM BIOLOGY\nSuggesting disease-site specific activation of \nefferocytosis & immune cell modulation by GAIA\n➔Specific targeting of \n“Inflammatory cells in Inflammatory site”\nZagorska et al., 2014. Nat Immunol \n✓Expression of Axl receptor (highest affinity to GAS6) is \ninduced by inflammatory stimuli\n✓Enhanced expression level of Axl was confirmed in \ninflammatory diseases"
+                },
+                {
+                  "number": 18,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n18\n(3) Increased Axl in plaque-associated microglia in AD patients\n▪\nAxl is expressed specifically in the Aβ plaque region, not in non-plaque region, in AD patients\nTAM BIOLOGY\nRoy et al., 2020. J Clin Invest\nAxl \nIba1 \nAβ\nAβ Plaque Adjacent Region\nAβ Plaque Distant Region\nAxl expression is higher in\nmicroglia adjacent to plaques\nthan those distant from plaques\nRepresentative confocal images of Aβ\nplaque-associated microglia in human AD\ncases (n = 3) expressing Axl. Scale bar: 10\nμm.\nTargeting Axl is highly effective in Aβ\nclearance, and it does not act non-\nspecifically in areas without Aβ\n[ Human AD Patient Brain Slides ]\nTarget-specific effective profile of GAIA"
+                },
+                {
+                  "number": 19,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n19\nTargeting Inflammatory Cells in Inflammatory Site\n1) Inflammatory site-specific activation (safety)\n- Target engagement is required for TAM activation & Axl receptor expression is induced by inflammation\n2) Minimal peripheral sink (PK) – GAIA’s weak binding to TAM receptors without target binding\nGAIA PLATFORM\nNo target antigen & \nLow Axl expression\nWith target antigen & Increased Axl expression on immune cells\nInflammatory sites\nNon-inflammatory sites\nEven with Axl binding, \nno signaling \nwithout target binding\nAntigen uptake & anti-inflammatory signaling"
+                },
+                {
+                  "number": 20,
+                  "text": "GAIA-A(ILM01)"
+                },
+                {
+                  "number": 21,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n21\nOptimization of GAIA Platform Structure\nFor systemic injection, platform structure was optimized by enhancing the productivity and stability of GAS6 through\nprotein engineering (>30-fold increase), and further improving stability and PK by introducing IgG backbone (effectorless\nFc)\nILM01\nCandidate screening using platform technology\nScreening parameters\n•\nProductivity\n•\nPurity\n•\nStability\n•\nTarget engagement\n•\nReceptor activation\n•\nIn vitro efficacy\n•\nPharmacokinetics\n•\nIn vivo efficacy\nILM01 Lead\n(Structure Undisclosed)\nscFv-GAS6(WT)\nscFv-eGAS6\nProtein Format Optimization\nProductivity \n[ ~ 70 mg/L in HCCF]\nStability\n[ > 96% purity after 37°C for 2-weeks study]\nStable PK profile in mice\n[ > 100 hr half-life in mice]\nGAS6 Protein Engineering\nIgG-eGAS6\neffectorless\nFc"
+                },
+                {
+                  "number": 22,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n22\nOptimized ILM01 Construct for Effective and Safe Aβ Removal\nILM01 [GAIA-Aβ]\nThrough optimization of each component of ILM01: amyloid beta-binding domain, Fc domain, and eGAS6 - the construct \nis designed to target amyloid beta effectively without inflammation\nAnti-Amyloid beta(Aβ) Fab\n• Precisely targets oligometic Aβ (oAβ), which is \nknown as the neurotoxic species\n• Minimal to no binding to the soluble monomeric \nform \nEngineered GAS6 (eGAS6)\n▪Efferocytosis\n• Synergistic extracellular Aβ uptake by both \nmicroglia and astrocytes\n• Suppression of neurotoxic cytokine release\n▪Enhanced proteostasis\n• TAM activation enhances autophagy, \nfacilitating degradation of intracellular \naggregates\nOptimized Fc Domain\n▪Enhanced therapeutic profile\n•\nExtended serum half-life achieved through mutation\n•\nMinimized inflammatory response by utilizing \neffector-null Fc\nILM01"
+                },
+                {
+                  "number": 23,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n23\nMechanism of Action\nILM01 [GAIA-Aβ]\nMicroglia\nAstrocyte\nNeuron\n03 Inflammatory cytokine \nAnti-inflammatory cytokine\n05 Suppression of PVM\ninflammation\nFcγ Receptor\nTAM Receptor\nAmyloid-beta\nILM01\nARIA\nPresynaptic \nneuron\nPostsynaptic \nneuron\nBBB\n(Blood brain\nBarrier)\nNeutrophil /\nLeukocyte\n02 Proteostasis\n01 Utilizing, not only microglia,\nastrocytes for phagocytosis\n04 Synaptic loss\nNeuronal functions\n02 Proteostasis\nTAM Receptor\nFcγ Receptor\nPVM\n(Perivascular\nmacrophage)\n[Safety] Significantly reduced ARIA side effects\n(No Fc receptor activation, but TAM receptors on PVM)\n[Efficacy] Enhanced cognitive benefits\n(Markedly reduced neurotoxicity & synaptic loss)"
+                },
+                {
+                  "number": 24,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n24\nPreliminary PoC: Nature Medicine\n▪\nIn 2022, preliminary in-vivo PoC of GAIA-Aβ was published in Nature Medicine, demonstrating a number of potential \nbenefits of the platform\nILM01 [GAIA-Aβ]\nProof-of-Mechanism\n(Jung H et al., 2022, Nat Med)\nMicrohemorrhage\nAβ plaque clearance\nAnti-inflammatory response\nReduced synapse elimination\nAbsence of neurotoxicity\nReduced CAA\nReduced microhemorrhage\nBetter behavior"
+                },
+                {
+                  "number": 25,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n25\nGAIA platform induces strong immune-modulating effect\nGAIA-Aβ suppresses inflammatory gene expression whereas aducanumab shows inflammatory profiles\n(→Strong immune modulation)\nIMMUNE MODULATION\nJung et al., 2022. Nat Med\nMicroglia (DAM)\nAstrocytes\n[scRNA-seq]"
+                },
+                {
+                  "number": 26,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n26\nGAIA-Aβ Promotes Broad Glial Phagocytosis\nGAIA-Aβ engages the TAM receptor to promote Aβ phagocytosis in both microglia and astrocytes\nUnlike Fc-driven antibodies, which mainly act through microglia, GAIA-Aβ enables broader glial clearance\nIn Vitro Evidence\niPSC-derived Microglia\niPSC-derived Astrocyte\n0\n4\n8\n12\n16\n20\n24\n28\n-5×105\n0\n5×105\n1×106\n1.5×106\n2×106\n2.5×106\nTime (h)\nRelative Intensity of A pHrodo\n(RCU x m2/well)\nGAIA-Aβ\nRef Ab\npHrodo only\n0\n4\n8\n12\n16\n20\n24\n28\n0\n1×107\n2×107\n3×107\n4×107\n5×107\nTime (h)\nRelative Intensity of A pHrodo\n(RCU x m2/well)\nGAIA-Aβ\nRef Ab\npHrodo\nBeyond microglia, Astrocytes contribute to Aβ clearance\nRef Ab\nGAIA-Aβ\npHrodo-Conjugated oAβ Uptake Assay"
+                },
+                {
+                  "number": 27,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n27\nGAIA-Aβ Does Not Induce Pro-inflammatory Cytokines\nGAIA-Aβ enhanced oligomeric Aβ phagocytosis without triggering pro-inflammatory cytokines (TNF-α and IL-6)\ncompared to a reference antibody in LPS-primed, Aβ-stimulated iPSC-derived monocytes\nIn Vitro Evidence\nLPS-primed\niPSC-derived \nMonocytes\nInflammatory Cytokine\nMeasurement\n(ELISA)\nAβ Phagocytosis\n& Cytokine Release Assay\nOligomeric Aβ\n(oAβ)\n• Ref Ab\n• GAIA-Aβ\nInflammatory Cytokine\n****p < 0.0001 compared to GAIA-Aβ (One-way ANOVA, Tukey’s test)"
+                },
+                {
+                  "number": 28,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n28\nGAIA-Aβ Preserves Neuronal Integrity\nIn a human iPSC-derived tri-culture of neurons, astrocytes, and microglia, GAIA-Aβ markedly reduced MAP2\nfragmentation, a marker of neuronal damage, compared to reference antibody and untreated controls\nHuman Translational Model (iPSC)\nNeuronal Damage (MAP2 fragmentation)\nNo Treatment\noAβ Only\noAβ + Ref Ab\noAβ + GAIA-Aβ\nNT\noAβ only\nRef Ab\nGAIA-Aβ\n0\n1\n2\n3\n4\nFragmented MAP2\n(Normalized by Total MAP2)\n✱✱\n✱✱\n✱"
+                },
+                {
+                  "number": 29,
+                  "text": "29\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nPharmacokinetics of ILM01 in Mice\nIn CD4-depleted C57BL/6 mice, the serum exposure of ILM01 increased in a dose-dependent manner, and the trough\nlevels following multiple doses were ~30 μg/mL.\nIn 5xFAD mice without CD4-depletion, the serum concentration of ILM01 was declined in a biphasic manner with an\nelimination half-life of ~150 hr; The peak brain-to-serum ratio of ILM01 was estimated to be ~1.5% in 5xFAD mice.\nPHARMACOKINETICS\nParameter\nILM01-25 (mg/kg)\n5\n10\n20\nt1/2 (hr)\n85.0\n139.7\n131.2\nCmax (ug/mL)\n84.3\n199.7\n348.1\nAUC 0-T (ug/mL*hr)\n2973.6\n6526.1\n10269.2\n0\n24\n48\n72\n96\n120\n144\n168\n1\n10\n100\n1000\nTime (hr)\nSerum concentration\n(μg/mL)\n5 mg/kg\n10 mg/kg\n20 mg/kg\nCD4 \ndepletion\n5, 10, 25 mg/kg IV\nPK in WT mice\n0\n1\n10\n100\n1000\nTime (Day)\nSerum concentration\n(μg/mL)\n7\n14\n21\n28\n35\n42\nCD4 \ndepletion\n10 mg/kg \nIV\nPre-dose\nSampling\nSampling\nSampling\nSampling\n10 mg/kg \nIV\n10 mg/kg \nIV\n10 mg/kg \nIV\nPre-dose\nSampling\nPre-dose\nSampling\nDose-dependent PK\nMultiple dose PK\n1\n10\n100\n1000\n0.0\n0.5\n1.0\n1.5\n2.0\nTime (Day)\nSerum concentration\n(μg/mL)\n7\n14\n21\nBrain-to-serum ratio (%)\nSerum concentration (ug/mL)\n20 mg/kg\nIP\nPK in 5xFAD mice\nParameter\nILM01-25 (mg/kg)\n20\nt1/2 (hr)\n147.4\nCmax (ug/mL)\n174.7\nAUC 0-T (ug/mL*hr)\n13538\nSingle dose PK\nCONFIDENTIAL"
+                },
+                {
+                  "number": 30,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n30\nEfficacy study of ILM01 after IV injection in 5xFAD mice\nIn Vivo Efficacy\n01 5xFAD (C57BL/6)\n02 Sex: Female\n03 Age: 7 months (at dosing)\n04 N/group: 8~9 mice\nAnimal model\n01 RoA: Intravenous injection (IV)\n02\n03 Duration: 8 weeks\nDosing Regimen\nFrequency: Once Weekly (QW)\n04 Dose: 10~20 mg/kg\n05 Volume: 5 mL/kg\nJAX MMRRC Stock# 034848\n05\nMouse model: 5xFAD\nOakley et al., 2006. J Neurosci\n1st\n3rd\n5th\n7th\nSacrifice\nTreatment: QW, IV\n2nd\n4th\n6th\n8th\n7 months old\nTreatment Start\n9 months old\nTreatment End\n5xFAD Female\nAnimal experiments in this study were conducted by an independent CRO"
+                },
+                {
+                  "number": 31,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n31\nGAIA-Aβ Reduces Aβ Plaque Burden in 5xFAD Mice\nIntravenous GAIA-Aβ treatment significantly reduced Aβ plaque burden and decreased the proportion of large plaques \ncompared to vehicle and reference antibody\nGAIA-Aβ appeared to exert a capsulating effect, shifting diffuse plaques into more compact forms\nIn Vivo Efficacy\nVehicle\nRef Ab\nGAIA-Aβ\n0.0\n0.5\n1.0\n1.5\nAβ Area\n6E10+ Area (a.u.)\n✱✱\n✱✱✱✱\n<300μm²\n300~1000μm²\n>1000μm²\nVehicle\nRef Ab\nGAIA-Aβ\n0.0\n0.5\n1.0\n1.5\nAβ Area & Size\n6E10+ Area (a.u.)\n✱✱\n✱✱✱✱\nAβ Size\nVehicle\nRef Ab\nGAIA-Aβ\n6E10\nMOAB-2\nThio S"
+                },
+                {
+                  "number": 32,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n32\nGAIA-Aβ Reduces Inflammation in 5xFAD Brain\nGAIA-Aβ treatment increased anti-inflammatory mediators while reducing pro-inflammatory chemokines (q-PCR),\nsupporting its TAM receptor-driven, inflammation-silent mechanism in the 5xFAD model\nIn Vivo Efficacy\nWT\nVehicle\nRef Ab\nGAIA-Aβ\n0\n2\n4\n6\n8\nRelative mRNA level\n(Tgfβ / Gapdh)\n✱✱\n✱✱\n✱\n5xFAD\nWT\nVehicle\nRef Ab\nGAIA-Aβ\n0.0\n0.5\n1.0\n1.5\nRelative mRNA level\n(Il10 / Gapdh)\n✱✱\n✱\n✱✱\n5xFAD\nWT\nVehicle\nRef Ab\nGAIA-Aβ\n0\n2\n4\n6\n8\nRelative mRNA level\n(Ccl7 / Gapdh)\n✱✱✱\n✱✱✱\n✱\n✱\n5xFAD\nWT\nVehicle\nRef Ab\nGAIA-Aβ\n0\n2\n4\n6\n8\n10\nRelative mRNA level\n(Cxcl2 / Gapdh)\n✱✱\n✱✱✱\n✱\n5xFAD\nWT\nVehicle\nRef Ab\nGAIA-Aβ\n0\n1\n2\n3\n4\n5\nRelative mRNA level\n(Cxcl1 / Gapdh)\n✱✱\n✱✱✱\n5xFAD\nIncreased Anti-inflammatory responses\nAnti-inflammatory \nCytokine\nReduced Inflammatory responses\nIL-10\nTGF-β\nCXCL1 (KC)\nCXCL2 (MIP-2)\nCCL7\nCXCL1\nCXCL2\nCCL7\nIL-10\nTGF-β\nLower neurotoxicity\nBBB integrity maintenance2\nAmplified inflammation\nBBB disruption1\nPro-inflammatory\nChemokine\n1. Lee et al., (2025) Journal of neuroinflammation, 22(1), 139\n2. Lin et al., (2018) J. Inflamm 15, 4"
+                },
+                {
+                  "number": 33,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n33\nGAIA-Aβ Reduces Aβ Plaques in Human AD Brain Slices\nPostmortem brain slices from AD donors with THP1-derived macrophages were used for ex vivo analysis\nGAIA-Aβ treatment significantly decreased Aβ plaque area compared to cell only group, supporting its therapeutic \npotential in human AD pathology\nHuman Translational Model (AD Brain Sample)\nHuman AD brain tissues (provided by NDRI) were used for analysis.\nHuman AD\nbrain slice\nTHP-1 derived\nmacrophages"
+                },
+                {
+                  "number": 34,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n34\nPh1 IND in 2027.1H\nDEVELOPMENT TIMELINE\nPipeline\n2025\n2026\n2027\n2028\nQ2\nQ3\nQ4\nQ1\nQ2\nQ3\nQ4\nQ1\nQ2\nQ3\nQ4\nQ1\nQ2\nQ3\nQ4\nILM01\nGAIA-Aβ\nIND Filing\nDC Nomination\nDevelopment stage\nDiscovery\nCMC\nIND-enabling\nLead Evaluation\nIND Submission \nCMC developability\nOff-target binding\nImmunogenicity\nNHP pre-PK\nIn vivo Efficacy Study\nIND-enabling studies\nCMC Development\nCell line development\nProcess development\nMethod development\nGMP production\nTCR, NHP PK \nDRF tox. study\nSafety pharmacology\n4-week tox. study (rodent/NHP) \nPhase 1 (HV)"
+                },
+                {
+                  "number": 35,
+                  "text": "35\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nModular Platform Construct Enabling Broad Target Expansion\nGAIA platform’s protein binder part is interchangeable, enabling broad expansion of pipeline and Ips.\nTARGET EXPANSION\nGAIA Platform \npatents\ntransferred from \nKAIST\nPlatform \noptimization for \nsystemic therapy \nand improved \nproductivity/\nstability\nBroadening of \nplatform patent \ncoverage & \nindividual \npipeline patents \nIP\nPortfolio \nStrategy\nCurrent \nIP Status\n▪3 patent families filed\n-\nFor one of the families, patents have been filed in 15 \ncountries including the US, EU,and JP, with already \ngranted ones in US, Korea and Russia.\n▪Key patent terms valid through 2040+\nExpandable to \nNeurology:\nMisfolded Proteins (Tau, αSyn, TDP43, HTT)\nNovel Targets (APOE4, C1q)\nSystemic Amyloidosis:\nTTR (ATTR amyloidosis),\nAL (AL amyloidosis)\nImmunology (Autoimmunity):\nAutoantigen (for tolerance induction)\nInflammatory Factors (Cytokines, Complements)\nImmune cells (B cells, T cells)\nClearing pathogenic proteins while controlling inflammation\nGAIA Platform Technology\nTarget binder is changeable\nMaintaining\nTolerance\nResolution of\nInflammation\nClearing\nTargets"
+                },
+                {
+                  "number": 36,
+                  "text": "Corporate"
+                },
+                {
+                  "number": 37,
+                  "text": "37\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nFoundation of Illimis Therapeutics\nCOMPANY\n2017~\nGAIA\nPlatform\nstudy\nProf. Won-Suk Chung\nExpertise: Neurology \n(Glia Biology)\nProf. Chan-Hyuk Kim\nExpertise: Immunology \n(Immunotherapy)\n2009~2015\nStanford University\nPostdoctoral fellow\n(Advisor:\nDr. Ben A. Barres) \n2016~\nKAIST Associate Professor\nExpertise in Astrocyte and Phagocytosis of Glia\nAnti-inflammatory clearance of amyloid-β by a\nchimeric Gas6 fusion protein. Nat Med. 2022\nMicroglial MERTK eliminates phosphatidylserine-\ndisplaying inhibitory post-synapses. EMBO J. 2021\nAstrocytes phagocytose adult hippocampal synapses\nfor circuit homeostasis, Nature, 2021\nAstrocytes mediate synapse elimination through\nMEGF10 and MERTK pathways. Nature, 2013\n2009~2012\nThe Scripps\nResearch Institute\nPostdoctoral fellow\n(Advisor:\nDr. Peter G. Schultz) \n2012~2016\nCalifornia Institute for\nBiomedical Research [Calibr]\nPrincipal Investigator\nExpertise in Immunotherapy \nand Synthetic Biology\n2016~2024\nKAIST\nAssociate Professor\n2021.08\nIllimis Therapeutics\nestablished\n2024~\nSeoul National Univ.\nProfessor"
+                },
+                {
+                  "number": 38,
+                  "text": "38\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nCompany Snapshot\nCOMPANY\n2017~ 2021: Platform initial development completed\n2022.01 : Pre-Series A funding ($6.5M)\n2022.08 : In vivo PoC of GAIA published (Nature Medicine)\n2022.09 : US office opened (CIC@Boston)\n2022.10 : Global SAB contract (Dr. Greg Lemke @SALK)\n2023.03 : Series A funding ($20M)\n2023.11 : Winner of Seoul-BMS Innovation2 Challenge\n2024.03 : Global SAB contract (Dr. Morgan Sheng @MIT)\n2024.10 : Joined Johnson & Johnson Innovation\n– JLABS Singapore\n2024.10 : Partnered with Lilly Catalyze360-ExploR&D\n2025.06 : Series B funding ($42M)\n2025.09 : Lilly Gateway Labs (LGL) Boston (Illimis USA)\nCompany\nCEO/President\nScientific co-founder \nFoundation\nLocation\nNo. of Employee\nHistory\nIllimis Therapeutics, Inc.\nSang Hoon Park\nProf. Won-Suk Chung & Prof. Chan Hyuk Kim (KAIST&SNU)\n2021.08.09\nSeoul, Korea / Boston, US\n40 (Ph.D 14, MS 20)\n*As of Sep 2025\nLilly Gateway Labs, Boston\nSeoul, Korea"
+                },
+                {
+                  "number": 39,
+                  "text": "39\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nGlobal Leader in TAM Biology\nTeam with substantial industry & academic experience in Neuroscience and Immunology\nTEAM\nSanghoon Park, Ph.D.\nCEO/President\nFormer: Co-founder of \nAmyloid Solution\nProf. Chan-Hyuk \nKim @ SNU\nExpertise: Immunology \n(Immunotherapy)\nProf. Won-Suk \nChung @ KAIST\nExpertise: Neuroscience \n(Glia Biology)\nScientific Co-Founders & Executives\nExecutives\nScientific Advisory Board (SAB)\nGreg Lemke, Ph.D.\nProfessor Emeritus,\nSalk Institute\nPioneer in TAM Biology\nMorgan Sheng, Ph.D.\nCore Institute Member,\nBroad Institute of MIT\nNeuroscience Guru\nEJ Lee, Ph.D.\nDiscovery Group \nLead\nJK Lee, Ph.D.\nCDO/VP\nExpertise in pre- and\nclinical development\nKH Lee, Ph.D.\nProtein Engineering\nGroup Lead\nIH Lim, Ph.D.\nCMC Group Lead\nJH Kim, Ph.D.\nBusiness & Strategy \nGroup Lead\nSC Jang, Ph.D.\nIllimis Tx. USA\nCEO"
+                },
+                {
+                  "number": 40,
+                  "text": "40\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nScientific Advisory Board\nTEAM\nGreg Lemke, Ph.D.\nCurrent: Professor \nEmeritus, Salk Institute\nPrevious: Professor,\nMolecular biology Lab at \nSalk Institute Françoise\nGilot-Salk Chair\nMorgan Sheng, Ph.D.\nCore Institute Member,\nBroad Institute of MIT \nand Harvard\nProfessor of \nNeuroscience,\nDepartment of Brain\nand Cognitive Sciences\nPioneer in TAM Biology\nNeuroscience Guru"
+                },
+                {
+                  "number": 41,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n41\nPLATFORM EXPANSION\nExpansion of Target, Indication and Modality\n2nd generation\nBest-in-class drug\nAntibody\nGAIA \nplatform\nBetter Efficacy + Better Safety"
+                },
+                {
+                  "number": 42,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n42\nPIPELINE\nTA\nTarget\nIndication\nPipeline\nProof of \nMechanism\nHit-to-\nLead\nLead Opt.\nPreclinical\nClinical\nNeurology\nAβ\nAlzheimer’s Disease\nILM01\nTau\nTauopathies\nILM02\nImmunology\nMyelin Debris\nMultiple Sclerosis\n(Tolerance)\nILM21\nTNFα\nIBD\n(Anti-inflammation)\nILM22\nEarly R&D Collaboration (based on GAIA Platform)\nInhouse Program\nPartner\nTarget\nCollaboration Model\nDesign \nProduction\nIn vitro\nIn vivo\nUndisclosed\nCatalyze360-ExploR&D\nUS Biotech\n2 Targets\n(Neuro, Ophthalmology)\nGAIA + Antibody\n3~4 Targets\n(Neuro, Immunol)\nGAIA + De-novo binder\nMultiple In-House & Externally Collaborated Pipeline\nDavid Baker Lab"
+                },
+                {
+                  "number": 43,
+                  "text": "COPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n43\nPARTNERSHIP\nCollaboration with Prof. David Baker (IPD/UW)"
+                },
+                {
+                  "number": 44,
+                  "text": "Clearing various toxic amyloid species\nRestoring glial function (phagocytic↑ ,inflammatory↓)\nNormalizing metabolic &  immune function\nAlzheimer’s\nDisease\n3rd Layer\nHOMEOSTASIS\n2nd Layer\nGLIAL DYSFUNCTION\n1st Layer\nAMYLOID & NEURON\nExtracellular Aβ \n(oligomer & plaque)\nTau aggregate\n& propagation\nTau\nTau oligomer\nTau protofibril\nTau\nphosphorylation\nLysosome dysfunction\nMitochondria Dysfunction\nAβ Phagocytosis↓\nInflammatory response\nMicroglia dysfunction\nTREM2\nCD33\nTAM\nTAM\nAstrocyte dysfunction\nGABA\nROS\nCytokines\nNeurotoxicity\nLipid metabolism\n(APOE, etc.)\nNegative \nNeuroinflammation\n(IL-1α, C1q, TNF)\nNegative \nTreg\nT cells\nMonocytes\nNegative \nor Positive?\nAβ\nmonomer\nAβ oligomer\nAβ fibril\nAβ plaque\nDual Function (Neuroimmune approach)\n(1) Amyloid Clearance + (2) Glial Modulation"
+                },
+                {
+                  "number": 45,
+                  "text": "45\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nGlobal biotech translating ‘TAM biology’ into innovative medicine\nVISION\n2024\n2027\n2031\n2036\n2041\nBiotech with\nfoundations for \ninnovative drug\ndevelopment\nBiotech with\nsuccess history\n(Ph1 IND & global\nL/O of GAIA-Aβ\n→KOSDAQ IPO)\nSustainable biotech\n(stable cash flow \nthrough multiple\nplatform-based deals,\nIMMUNOLOGY)\nCommercialized\nbiotech\n(continuous cash\nflow through AD\ndrug approval)\nBig biotech\nthrough\nAging Drug\nYear 3\nYear 6\nYear 10\nYear 15\nYear 20\nClearing Targets\nResolution of\nInflammation\nMaintaining\nTolerance\nKey Milestones for ~2027.4Q\nR&D: ILM01 Ph1 study initiation\nBD: Global licensing-out of ILM01\nGAIA-based multiple platform deals\nCORPORATE: KOSDAQ IPO"
+                },
+                {
+                  "number": 46,
+                  "text": "CONFIDENTIAL\n46\nCONFIDENTIAL\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nEra of New Modalities\nIllimis Therapeutics’ GAIA platform\nis a new modality complementing\nANTIBODY therapies targeting neurodegenerative\nand immune diseases\nmRNA, ASO, siRNA\nCRISPR/Cas9\nCAR-T, CAR-NK, CAR-NKT\nTPD (PROTAC, LYTAC, AUTOTAC)\nBispecific, Trispecific\nAntibody-Drug Conjugate (ADC)\nAntibody-Oligo Conjugate (AOC)\nand NEXT?"
+                },
+                {
+                  "number": 47,
+                  "text": "THANK YOU\nWe translate cutting-edge science into innovative medicine\nSanghoon Park, Ph.D\nCo-founder & CEO\nshpark@illimistx.com"
+                }
+              ],
+              "page_or_slide_count": 47,
+              "parsed_text": "[PAGE 1]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nGAIA Platform: For Neuroimmunology & Tolerance Induction\nJan. 2026\nSanghoon Park, Ph.D\nCo-founder & CEO\nIllimis Therapeutics, Inc.\nHarnessing the Power of TAM Biology\nNon-confidential\n\n[PAGE 2]\n2\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nIllimis Therapeutics\nCOMPANY\nLeadership in TAM (Tyro3/Axl/Mer) biology                                                               \nIn-depth and comprehensive understanding of TAM biology\nPlatform-based company                                                                       \nwith a wide range of therapeutic applications \nPatient-centric approach                                                               \nFocusing on the disease with high therapeutic unmet needs \n- Alzheimer’s, Parkinson’s, Amyloidosis, Autoimmunity, etc.\nFinancial stability \nSeed-to-Series B funding about $70M from renowned venture capitals \nPurpose\nWe translate cutting-edge science into innovative medicine\n\n[PAGE 3]\nClearing various toxic amyloid species\nRestoring glial function (phagocytic↑ ,inflammatory↓)\nNormalizing metabolic &  immune function\nAlzheimer’s\nDisease\n3rd Layer\nHOMEOSTASIS\n2nd Layer\nGLIAL DYSFUNCTION\n1st Layer\nAMYLOID & NEURON\nExtracellular Aβ \n(oligomer & plaque)\nTau aggregate\n& propagation\nTau\nTau oligomer\nTau protofibril\nTau\nphosphorylation\nLysosome dysfunction\nMitochondria Dysfunction\nAβ Phagocytosis↓\nInflammatory response\nMicroglia dysfunction\nTREM2\nCD33\nTAM\nTAM\nAstrocyte dysfunction\nGABA\nROS\nCytokines\nNeurotoxicity\nLipid metabolism\n(APOE, etc.)\nNegative \nNeuroinflammation\n(IL-1α, C1q, TNF)\nNegative \nTreg\nT cells\nMonocytes\nNegative \nor Positive?\nAβ\nmonomer\nAβ oligomer\nAβ fibril\nAβ plaque\n\n[PAGE 4]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n4\nHow to CONQUER Alzheimer’s Disease?\nUNMET NEEDS\n[1st Gen]\nNon-specific\nSymptomatic\nOncology\nNeurology\n[2nd Gen]\nTARGETED THERAPY\nDirect clearance of \nPathogenic cells/proteins\n[3rd Gen]\nIMMUNOTHERAPY\nMicroenvironment\nImmune Cells\nCytotoxic Chemical Drugs\nSevere side effects\nLimited efficacy\nTargeting Cancer Cells (Herceptin)\nEffective, but in limited population\nRelatively tolerable\nCheckpoint Inhibitor (anti-PD1)\nBreakage of immune-tolerance\nCombination with targeted drug\nSymptomatic Drug (Donepezil)\nLimited efficacy & Side effects\nCannot stop disease progress\nTargeting A& Tau\nEffective, but early treat required\nRelatively tolerable\nTargeting Glial Cells\nModulate glial dysfunction\n(Phagocytosis& Inflammation)\nCombination with targeted drug\nCombination of \nTargeted therapy [Amyloid] \n& Immunotherapy [Glia]\n→Disease Modification !\n\n[PAGE 5]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n5\nAD Drug Development Pipeline (Big Pharma)\nUNMET NEEDS\nEphA4\n: Ephrin type-A receptor 4\nJAK1\n: Janus kinase 1\nNLRP3\n: NOD-like receptor pyrin domain-containing protein 3\nRAGE\n: receptor for advanced glycation end products\nGSM\n: γ-secretase modulator\nPKAR\n: Protein kinase RNA activated\nPDE2     \n: Phosphodiesterase 2\nPSEN\n: Presenilin\nOGA\n: O-GlcNAcase\nEIF2B             : Eukaryotic translation initiation factor 2B\nTrkA\n: Tropomyosin receptor kinase A\nS1P1/S1P5 \n: Sphingosine-1-phosphate receptor-1 and 5\nSV2A\n: Synaptic vesicle glycoprotein 2A\nAZ Anti-Aß\n(MEDI-1814)\nBiogen OGA-i\n(BIIB-113)\nBMS EIF2B activator\n(BMS-986419)\nBoehringer \nIngelheim\nPDE2-i\n(BI-474121)\nEisai\nTrkA (E2511)\nEphA4 \nantagonist\n(E2025)\nLilly\nTau-i \n(ACI-3024, \nLY-3954068)\nMerck Tau-i (MK-2214, \nTa-1505)\nNovartis\nTau-i (NIO-752)\nTREM2 agonist\n(VHB-937)\nS1P1/S1P5 \nagonist\nRoche GSM\n(RO-7185876)\nAbbvie ALLA-1758\nAbbvie SV2A\n(ABBV-552)\nBiogen Tau-i\n(BIIB-080)\nBMS Tau-i\n(BMS-986446)\nJ&J\nCD38\n(daratumumab \n+hyaluronidase) \nTau-i\n(posdinemab,   \nJNJ-2056)\nNovartis Bcr-Abl TKI\n(nilotinib)\nNovo \nNordisk\nGLP1 agonist\n(liraglutide)\nRoche Anti-Aß\n(trontinemab)\nGSM\n(RG-6289)\nUCB Tau-i\n(bepranemab)\nEisai Tau-I (combo)\n(etalanetug)\nLilly Anti-Aß\n(remternetug)\nNovo \nNordisk\nGLP1 agonist\n(NN-6535)\nEisai Anti-Aß\n(lecanemab)\nLilly Anti-Aß\n(donanemab)\nPre-clinical\nPhase I\nPhase II\nPhase III\nMarketed\nAstellas GSM\nBiogen Tau-i\nAnti-Aß (2)\nEisai Anti-Aß\n(BAN-2052)\nTREM2 agonist\nCD33-i\nJ&J Tau-i\nLilly JAK1-i\n(baricitinib) \nMerck PDE2-i\nPSEN1-i\nRoche NLRP3-i\n(MCC-950)\nRAGE\nantagonists\n(MDR-066)\nTau-i\n(ST-501)\nSanofi PKAR-i\n(SAR-489883)\n\n[PAGE 6]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n6\nApproval of anti-Aβ antibody\nLeqembi and Kisunla approvals ignite the new wave of AD drug development\nUNMET NEEDS\nGeneric/Code\nName\nCompany\nTarget Aβ\nspecies\nIsotype\nDevelopment Stage\nHistory/Current Status\nAducanumab\nAβ Plaque\nIgG1\nDiscontinued\nJan 2024: Phase 4 discontinued & \nall rights returned back to Neurimmune \nLecanemab\nAβ\nOligomer\nIgG1\nMarketed\nJan 2023: FDA accelerated approval\nJul 2023: FDA traditional approval & Medicare coverage\napproved\nDonanemab\nN3pG-Aβ\nIgG1\nMarketed\nJan 2023: Accelerated approval declined, despite the \ncomplete clearance of Aβ observed in 60% of patients\nJul 2024: FDA traditional approval & Medicare coverage\napproved\nGantenerumab\nTrontinemab\nAβ Fibril & \nPlaque\nIgG1\nPhase 3 (Fail)\nPhase 2\nNov 2022: Unsuccessful Gante Phase 3 results announced\nMar 2024: Successful Ph1/2 results of trontinemab announced\n\n[PAGE 7]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n7\nApproval of Anti-Aβ Antibody : Controversy\nUNMET NEEDS\nBrain Edema, Microhemorrhage, Brain Shrinkage, Death, …\nDespite two formally FDA-approved anti-Aβ mAbs, immunotherapies have been constantly bringing controversies\nregarding its actual benefit in efficacy and safety issue\n\n[PAGE 8]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n8\nThe MoA of Aβ-targeted antibody\nWhile IgG1-based Aβ antibodies promote the phagocytosis of Aβ through microglial Fcγ receptors, this process also\ninduces inflammation\nUNMET NEEDS\nSource: Panza et al., 2019, Ann Neurol.\nInflammatory cytokine\n& chemokine release\nMicroglia-dependent Aβ phagocytosis by IgG1 Ab\nFcγ receptor-mediated neuroinflammation\nFcγ Receptor\n3. Actin remodeling\nand phagocytosis\n1. FcγR crosslinking by\nIgG immune complexes\n2. ITAM phosphorylation\nand kinase activation\nBournazos et al., 2020, Nature Reviews Immunology\n\n[PAGE 9]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n9\nFcγR-mediated Neuroinflammation in Brain\nPROBLEM\nIgG1-backbone antibody therapies can trigger pro-inflammatory responses when clearing pathogenic proteins\nThis inflammation leads to detrimental side effects like ARIA and limited improvement in cognitive benefits\n\n[PAGE 10]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n10\nFcγR-mediated Neuroinflammation in Brain\nPROBLEM\nIgG1-backbone antibody therapies can trigger pro-inflammatory responses when clearing pathogenic proteins\nThis inflammation leads to detrimental side effects like ARIA and limited improvement in cognitive benefits\nSource: Hong et al., 2016, Curr Opin Neurobiol.\n\n[PAGE 11]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n11\nFcγR-mediated Neuroinflammation in Brain\nPROBLEM\nIgG1-backbone antibody therapies can trigger pro-inflammatory responses when clearing pathogenic proteins\nThis inflammation leads to detrimental side effects like ARIA and limited improvement in cognitive benefits\nBournazos et al., 2020, Nature Reviews Immunology\nＴaylor, X., Clark, I.M., Fitzgerald, G.J. et al., 2023, Mol Neurodegeneration\nOverreactive\nglia\nNeurotoxicity\n&\nSynaptic loss\nLimited\nphagocytosis\nImpeded cognitive function improvement\nARIA (Amyloid Related Imaging Abnormalities)\nIncreased burden on healthcare resources\nLimited patient eligibility for drug\nLimited improvement in patients’ QoL, regardless of \namyloid beta clearance\nBrain edema or microhemorrhage which could be fatal\nRegular MRI monitoring requirement because of \nthe elevated risk of ARIA\nAntibody therapies not eligible for high-risk patients\nwith APOE4 or CAA\nPro-\ninflammatory \ncytokines\nAβ plaque\nPerivascular \nmacrophage\nMicroglia\nAstrocyte\nFcγ Receptor\nAntibody-mediated\nneuroinflammation\n“ The Need for Novel Aβ-targeting Approaches ”\n\n[PAGE 12]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n12\nEfferocytosis: Clearance Without Inflammation\nMacrophages use efferocytosis, unlike phagocytosis, when removing apoptotic cells without inflammation\n▪\nTAM receptor’s ligand, GAS6, is involved in this efferocytosis process and induces phagocytosis while strongly \nsuppressing inflammation\nSOLUTION\nBurstyn-Cohen, T. et al., 2023, Immunological reviews \nEfferocytosis: Homeostasis maintenance\nGAS6-TAM receptor signaling pathway\nAPOPTOTIC\nCELL\nMACROPHAGE\nPhagocytosis\nAnti-inflammatory\ncytokine release\nAPOPTOTIC\nCELL\nPhagocytosis\nAnti-inflammatory response\n(IL-4, IL-10, IL-13, TGF-β) release\nPtdSer\nTAM LIGAND\nGAS6/PROS1\nTAM RECEPTOR\nTYRO3\nAXL\nMERTK\nLIGANDS\nGAS6\nPROS1\nRECEPTOR\nTYRO3\nAXL\nMERTK\nEGF-like domains\nSHBG domain\nGla domain\n\n[PAGE 13]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n13\nHijacking Efferocytosis via TAM Receptor \nThe GAIA platform is built by optimizing three key components: 1) an A-binding domain, 2) an effectorless Fc domain,\nand 3) an engineered GAS6 (eGAS6)\nThis designed construct to specifically targets Aβ, while simultaneously inducing an anti-inflammatory response\nSOLUTION - GAIA PLATFORM\nStronger Target Clearance\nby various phagocytic cells\nBeneficial Immune Cell Modulation\nby enhancing phagocytic function\nand limiting inflammatory response\nImmunotherapy\nTargeted therapy\n01\n02\nAnti-Target antibody\n(Target binder)\neGAS6\n(TAM binder)\nGAS6-mediated Anti-Inflammatory Adaptor (GAIA) for Phagocytic Clearance\nOur Solution\n“Targeting TAM, not FcγR” \nPhagocytic signal without \ninflammatory response\nExpressed on various innate\nimmune cells\nWell-proven homeostatic \npathway\nOptimized Fc\n(Effectorless)\nTAM Receptor\nImmune cell\n(Glia, Macrophage)\nFcγR\nPathogenic\nprotein\n\n[PAGE 14]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n14\nTAM Receptor Pathway as a Novel Therapeutic Axis\nEfferocytosis through TAM receptors has been studied for decades and continues to gain attention for its\nrole in neuroinflammation in Alzheimer’s disease\nTAM BIOLOGY\n1991\n2001\n2007\n2021\nTAM receptor MerTK identified \nin microglia, and shown to \nregulate phagocytosis\nNature 2001; 411: 207-211\nScott, R.S., et al. \nWidespread of TAM receptor \nexpression reported in the brain\nNeuron 1991; 6(5): 691-704 \nLai, C. & Lemke, G.\nTAM receptor shown to inhibit \nneuroinflammatory signaling\nCell 2007; 131(6): 1124-1136\nRothlin, C.V., et al. \n2022\nTAM receptors implicated in \nmodulating microglial reactivity in AD \nNature Immunol. 2021; 22(5): 586-594\nHuang, Y., et al.\nUsing GAS6 to drive efferocytosis \nenables Aβ clearance & suppresses \nneuroinflammation in AD\nNature Medicine 2022; 28: 1802-1812\nJung, H., et al. \n2017\nReactive Astrocytes: Production, \nFunction, and Therapeutics \nPotential\nImmunity. 2017; 46(6): 957-967.\nScott, R.S., et al. \nCarla Rothlin, Ph.D\nGreg Lemke, Ph.D\n\n[PAGE 15]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n15\nGAS6 / TAM Biology \nTAM activation actively triggers anti-inflammatory responses when removing pathogenic proteins and modulates innate \nimmune cells which includes potential immune tolerance induction and autophagy function enhancement\nTAM biology also plays a role in remyelination and APOE homeostasis\nTAM BIOLOGY\nProteostasis (autophagy, lysome, etc.)\nAutophagy. 2016 Dec;12(12):2326-2343\nJ Thorac Oncol. 2020 Jun;15(6):973-999\nAPOE homeostasis\nMol Brain. 2020 May 4;13(1):66.\nPhagocytosis\nCell Death Dis. 2015 Feb 19;6(2):e1646.\nNat Immunol. 2014 Oct;15(10):920-8.\nAnti-inflammation\nPharmacol Ther. 2018 Aug;188:97-117.\nAutophagy. 2016 Dec;12(12):2326-2343.\nGAS6/TAM\nAxis\nTolerance induction\nCells. 2020 Jul 26;9(8):1779.\nRemyelination\nGlia. 2017 Apr;65(4):581-591.\nCells. 2020 Jul 26;9(8):1779.\n\n[PAGE 16]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n16\n(1) Target-engaged clustering and activation of TAM receptors\nGAIA is expected to work specifically in the disease-site\n(1) Target-engaged activation & (2) Disease-site specific induction of Axl expression\nTAM BIOLOGY\nTarget-engaged activation in 2:2 stoichiometry\nHomo-dimer\n(activation)\nHomo-dimer\n(activation)\nSelectivity of GAS6 towards TAM receptors\nGraham et al., 2014. Nat Rev Cancer\nTAM receptors are fully activated when the target (PtdSer) is engaged\nHomo-dimerization in a 2:2 stoichiometry with its ligands is required for activation of TAM receptors\nAlmost no binding & activation of MERTK by GAS6 without target-engaged\nMERTK universally expressed, but minimal binding of GAIA to MERTK expected without target\nBetter\nSafety profile\nof GAIA\nTAM is not fully activated without target-engagement\n\n[PAGE 17]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n17\n(2) Increased Axl expression under inflammation condition\n▪\nInduction of Axl expression by inflammatory stimuli\nTAM BIOLOGY\nSuggesting disease-site specific activation of \nefferocytosis & immune cell modulation by GAIA\n➔Specific targeting of \n“Inflammatory cells in Inflammatory site”\nZagorska et al., 2014. Nat Immunol \n✓Expression of Axl receptor (highest affinity to GAS6) is \ninduced by inflammatory stimuli\n✓Enhanced expression level of Axl was confirmed in \ninflammatory diseases\n\n[PAGE 18]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n18\n(3) Increased Axl in plaque-associated microglia in AD patients\n▪\nAxl is expressed specifically in the Aβ plaque region, not in non-plaque region, in AD patients\nTAM BIOLOGY\nRoy et al., 2020. J Clin Invest\nAxl \nIba1 \nAβ\nAβ Plaque Adjacent Region\nAβ Plaque Distant Region\nAxl expression is higher in\nmicroglia adjacent to plaques\nthan those distant from plaques\nRepresentative confocal images of Aβ\nplaque-associated microglia in human AD\ncases (n = 3) expressing Axl. Scale bar: 10\nμm.\nTargeting Axl is highly effective in Aβ\nclearance, and it does not act non-\nspecifically in areas without Aβ\n[ Human AD Patient Brain Slides ]\nTarget-specific effective profile of GAIA\n\n[PAGE 19]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n19\nTargeting Inflammatory Cells in Inflammatory Site\n1) Inflammatory site-specific activation (safety)\n- Target engagement is required for TAM activation & Axl receptor expression is induced by inflammation\n2) Minimal peripheral sink (PK) – GAIA’s weak binding to TAM receptors without target binding\nGAIA PLATFORM\nNo target antigen & \nLow Axl expression\nWith target antigen & Increased Axl expression on immune cells\nInflammatory sites\nNon-inflammatory sites\nEven with Axl binding, \nno signaling \nwithout target binding\nAntigen uptake & anti-inflammatory signaling\n\n[PAGE 20]\nGAIA-A(ILM01)\n\n[PAGE 21]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n21\nOptimization of GAIA Platform Structure\nFor systemic injection, platform structure was optimized by enhancing the productivity and stability of GAS6 through\nprotein engineering (>30-fold increase), and further improving stability and PK by introducing IgG backbone (effectorless\nFc)\nILM01\nCandidate screening using platform technology\nScreening parameters\n•\nProductivity\n•\nPurity\n•\nStability\n•\nTarget engagement\n•\nReceptor activation\n•\nIn vitro efficacy\n•\nPharmacokinetics\n•\nIn vivo efficacy\nILM01 Lead\n(Structure Undisclosed)\nscFv-GAS6(WT)\nscFv-eGAS6\nProtein Format Optimization\nProductivity \n[ ~ 70 mg/L in HCCF]\nStability\n[ > 96% purity after 37°C for 2-weeks study]\nStable PK profile in mice\n[ > 100 hr half-life in mice]\nGAS6 Protein Engineering\nIgG-eGAS6\neffectorless\nFc\n\n[PAGE 22]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n22\nOptimized ILM01 Construct for Effective and Safe Aβ Removal\nILM01 [GAIA-Aβ]\nThrough optimization of each component of ILM01: amyloid beta-binding domain, Fc domain, and eGAS6 - the construct \nis designed to target amyloid beta effectively without inflammation\nAnti-Amyloid beta(Aβ) Fab\n• Precisely targets oligometic Aβ (oAβ), which is \nknown as the neurotoxic species\n• Minimal to no binding to the soluble monomeric \nform \nEngineered GAS6 (eGAS6)\n▪Efferocytosis\n• Synergistic extracellular Aβ uptake by both \nmicroglia and astrocytes\n• Suppression of neurotoxic cytokine release\n▪Enhanced proteostasis\n• TAM activation enhances autophagy, \nfacilitating degradation of intracellular \naggregates\nOptimized Fc Domain\n▪Enhanced therapeutic profile\n•\nExtended serum half-life achieved through mutation\n•\nMinimized inflammatory response by utilizing \neffector-null Fc\nILM01\n\n[PAGE 23]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n23\nMechanism of Action\nILM01 [GAIA-Aβ]\nMicroglia\nAstrocyte\nNeuron\n03 Inflammatory cytokine \nAnti-inflammatory cytokine\n05 Suppression of PVM\ninflammation\nFcγ Receptor\nTAM Receptor\nAmyloid-beta\nILM01\nARIA\nPresynaptic \nneuron\nPostsynaptic \nneuron\nBBB\n(Blood brain\nBarrier)\nNeutrophil /\nLeukocyte\n02 Proteostasis\n01 Utilizing, not only microglia,\nastrocytes for phagocytosis\n04 Synaptic loss\nNeuronal functions\n02 Proteostasis\nTAM Receptor\nFcγ Receptor\nPVM\n(Perivascular\nmacrophage)\n[Safety] Significantly reduced ARIA side effects\n(No Fc receptor activation, but TAM receptors on PVM)\n[Efficacy] Enhanced cognitive benefits\n(Markedly reduced neurotoxicity & synaptic loss)\n\n[PAGE 24]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n24\nPreliminary PoC: Nature Medicine\n▪\nIn 2022, preliminary in-vivo PoC of GAIA-Aβ was published in Nature Medicine, demonstrating a number of potential \nbenefits of the platform\nILM01 [GAIA-Aβ]\nProof-of-Mechanism\n(Jung H et al., 2022, Nat Med)\nMicrohemorrhage\nAβ plaque clearance\nAnti-inflammatory response\nReduced synapse elimination\nAbsence of neurotoxicity\nReduced CAA\nReduced microhemorrhage\nBetter behavior\n\n[PAGE 25]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n25\nGAIA platform induces strong immune-modulating effect\nGAIA-Aβ suppresses inflammatory gene expression whereas aducanumab shows inflammatory profiles\n(→Strong immune modulation)\nIMMUNE MODULATION\nJung et al., 2022. Nat Med\nMicroglia (DAM)\nAstrocytes\n[scRNA-seq]\n\n[PAGE 26]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n26\nGAIA-Aβ Promotes Broad Glial Phagocytosis\nGAIA-Aβ engages the TAM receptor to promote Aβ phagocytosis in both microglia and astrocytes\nUnlike Fc-driven antibodies, which mainly act through microglia, GAIA-Aβ enables broader glial clearance\nIn Vitro Evidence\niPSC-derived Microglia\niPSC-derived Astrocyte\n0\n4\n8\n12\n16\n20\n24\n28\n-5×105\n0\n5×105\n1×106\n1.5×106\n2×106\n2.5×106\nTime (h)\nRelative Intensity of A pHrodo\n(RCU x m2/well)\nGAIA-Aβ\nRef Ab\npHrodo only\n0\n4\n8\n12\n16\n20\n24\n28\n0\n1×107\n2×107\n3×107\n4×107\n5×107\nTime (h)\nRelative Intensity of A pHrodo\n(RCU x m2/well)\nGAIA-Aβ\nRef Ab\npHrodo\nBeyond microglia, Astrocytes contribute to Aβ clearance\nRef Ab\nGAIA-Aβ\npHrodo-Conjugated oAβ Uptake Assay\n\n[PAGE 27]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n27\nGAIA-Aβ Does Not Induce Pro-inflammatory Cytokines\nGAIA-Aβ enhanced oligomeric Aβ phagocytosis without triggering pro-inflammatory cytokines (TNF-α and IL-6)\ncompared to a reference antibody in LPS-primed, Aβ-stimulated iPSC-derived monocytes\nIn Vitro Evidence\nLPS-primed\niPSC-derived \nMonocytes\nInflammatory Cytokine\nMeasurement\n(ELISA)\nAβ Phagocytosis\n& Cytokine Release Assay\nOligomeric Aβ\n(oAβ)\n• Ref Ab\n• GAIA-Aβ\nInflammatory Cytokine\n****p < 0.0001 compared to GAIA-Aβ (One-way ANOVA, Tukey’s test)\n\n[PAGE 28]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n28\nGAIA-Aβ Preserves Neuronal Integrity\nIn a human iPSC-derived tri-culture of neurons, astrocytes, and microglia, GAIA-Aβ markedly reduced MAP2\nfragmentation, a marker of neuronal damage, compared to reference antibody and untreated controls\nHuman Translational Model (iPSC)\nNeuronal Damage (MAP2 fragmentation)\nNo Treatment\noAβ Only\noAβ + Ref Ab\noAβ + GAIA-Aβ\nNT\noAβ only\nRef Ab\nGAIA-Aβ\n0\n1\n2\n3\n4\nFragmented MAP2\n(Normalized by Total MAP2)\n✱✱\n✱✱\n✱\n\n[PAGE 29]\n29\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nPharmacokinetics of ILM01 in Mice\nIn CD4-depleted C57BL/6 mice, the serum exposure of ILM01 increased in a dose-dependent manner, and the trough\nlevels following multiple doses were ~30 μg/mL.\nIn 5xFAD mice without CD4-depletion, the serum concentration of ILM01 was declined in a biphasic manner with an\nelimination half-life of ~150 hr; The peak brain-to-serum ratio of ILM01 was estimated to be ~1.5% in 5xFAD mice.\nPHARMACOKINETICS\nParameter\nILM01-25 (mg/kg)\n5\n10\n20\nt1/2 (hr)\n85.0\n139.7\n131.2\nCmax (ug/mL)\n84.3\n199.7\n348.1\nAUC 0-T (ug/mL*hr)\n2973.6\n6526.1\n10269.2\n0\n24\n48\n72\n96\n120\n144\n168\n1\n10\n100\n1000\nTime (hr)\nSerum concentration\n(μg/mL)\n5 mg/kg\n10 mg/kg\n20 mg/kg\nCD4 \ndepletion\n5, 10, 25 mg/kg IV\nPK in WT mice\n0\n1\n10\n100\n1000\nTime (Day)\nSerum concentration\n(μg/mL)\n7\n14\n21\n28\n35\n42\nCD4 \ndepletion\n10 mg/kg \nIV\nPre-dose\nSampling\nSampling\nSampling\nSampling\n10 mg/kg \nIV\n10 mg/kg \nIV\n10 mg/kg \nIV\nPre-dose\nSampling\nPre-dose\nSampling\nDose-dependent PK\nMultiple dose PK\n1\n10\n100\n1000\n0.0\n0.5\n1.0\n1.5\n2.0\nTime (Day)\nSerum concentration\n(μg/mL)\n7\n14\n21\nBrain-to-serum ratio (%)\nSerum concentration (ug/mL)\n20 mg/kg\nIP\nPK in 5xFAD mice\nParameter\nILM01-25 (mg/kg)\n20\nt1/2 (hr)\n147.4\nCmax (ug/mL)\n174.7\nAUC 0-T (ug/mL*hr)\n13538\nSingle dose PK\nCONFIDENTIAL\n\n[PAGE 30]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n30\nEfficacy study of ILM01 after IV injection in 5xFAD mice\nIn Vivo Efficacy\n01 5xFAD (C57BL/6)\n02 Sex: Female\n03 Age: 7 months (at dosing)\n04 N/group: 8~9 mice\nAnimal model\n01 RoA: Intravenous injection (IV)\n02\n03 Duration: 8 weeks\nDosing Regimen\nFrequency: Once Weekly (QW)\n04 Dose: 10~20 mg/kg\n05 Volume: 5 mL/kg\nJAX MMRRC Stock# 034848\n05\nMouse model: 5xFAD\nOakley et al., 2006. J Neurosci\n1st\n3rd\n5th\n7th\nSacrifice\nTreatment: QW, IV\n2nd\n4th\n6th\n8th\n7 months old\nTreatment Start\n9 months old\nTreatment End\n5xFAD Female\nAnimal experiments in this study were conducted by an independent CRO\n\n[PAGE 31]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n31\nGAIA-Aβ Reduces Aβ Plaque Burden in 5xFAD Mice\nIntravenous GAIA-Aβ treatment significantly reduced Aβ plaque burden and decreased the proportion of large plaques \ncompared to vehicle and reference antibody\nGAIA-Aβ appeared to exert a capsulating effect, shifting diffuse plaques into more compact forms\nIn Vivo Efficacy\nVehicle\nRef Ab\nGAIA-Aβ\n0.0\n0.5\n1.0\n1.5\nAβ Area\n6E10+ Area (a.u.)\n✱✱\n✱✱✱✱\n<300μm²\n300~1000μm²\n>1000μm²\nVehicle\nRef Ab\nGAIA-Aβ\n0.0\n0.5\n1.0\n1.5\nAβ Area & Size\n6E10+ Area (a.u.)\n✱✱\n✱✱✱✱\nAβ Size\nVehicle\nRef Ab\nGAIA-Aβ\n6E10\nMOAB-2\nThio S\n\n[PAGE 32]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n32\nGAIA-Aβ Reduces Inflammation in 5xFAD Brain\nGAIA-Aβ treatment increased anti-inflammatory mediators while reducing pro-inflammatory chemokines (q-PCR),\nsupporting its TAM receptor-driven, inflammation-silent mechanism in the 5xFAD model\nIn Vivo Efficacy\nWT\nVehicle\nRef Ab\nGAIA-Aβ\n0\n2\n4\n6\n8\nRelative mRNA level\n(Tgfβ / Gapdh)\n✱✱\n✱✱\n✱\n5xFAD\nWT\nVehicle\nRef Ab\nGAIA-Aβ\n0.0\n0.5\n1.0\n1.5\nRelative mRNA level\n(Il10 / Gapdh)\n✱✱\n✱\n✱✱\n5xFAD\nWT\nVehicle\nRef Ab\nGAIA-Aβ\n0\n2\n4\n6\n8\nRelative mRNA level\n(Ccl7 / Gapdh)\n✱✱✱\n✱✱✱\n✱\n✱\n5xFAD\nWT\nVehicle\nRef Ab\nGAIA-Aβ\n0\n2\n4\n6\n8\n10\nRelative mRNA level\n(Cxcl2 / Gapdh)\n✱✱\n✱✱✱\n✱\n5xFAD\nWT\nVehicle\nRef Ab\nGAIA-Aβ\n0\n1\n2\n3\n4\n5\nRelative mRNA level\n(Cxcl1 / Gapdh)\n✱✱\n✱✱✱\n5xFAD\nIncreased Anti-inflammatory responses\nAnti-inflammatory \nCytokine\nReduced Inflammatory responses\nIL-10\nTGF-β\nCXCL1 (KC)\nCXCL2 (MIP-2)\nCCL7\nCXCL1\nCXCL2\nCCL7\nIL-10\nTGF-β\nLower neurotoxicity\nBBB integrity maintenance2\nAmplified inflammation\nBBB disruption1\nPro-inflammatory\nChemokine\n1. Lee et al., (2025) Journal of neuroinflammation, 22(1), 139\n2. Lin et al., (2018) J. Inflamm 15, 4\n\n[PAGE 33]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n33\nGAIA-Aβ Reduces Aβ Plaques in Human AD Brain Slices\nPostmortem brain slices from AD donors with THP1-derived macrophages were used for ex vivo analysis\nGAIA-Aβ treatment significantly decreased Aβ plaque area compared to cell only group, supporting its therapeutic \npotential in human AD pathology\nHuman Translational Model (AD Brain Sample)\nHuman AD brain tissues (provided by NDRI) were used for analysis.\nHuman AD\nbrain slice\nTHP-1 derived\nmacrophages\n\n[PAGE 34]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n34\nPh1 IND in 2027.1H\nDEVELOPMENT TIMELINE\nPipeline\n2025\n2026\n2027\n2028\nQ2\nQ3\nQ4\nQ1\nQ2\nQ3\nQ4\nQ1\nQ2\nQ3\nQ4\nQ1\nQ2\nQ3\nQ4\nILM01\nGAIA-Aβ\nIND Filing\nDC Nomination\nDevelopment stage\nDiscovery\nCMC\nIND-enabling\nLead Evaluation\nIND Submission \nCMC developability\nOff-target binding\nImmunogenicity\nNHP pre-PK\nIn vivo Efficacy Study\nIND-enabling studies\nCMC Development\nCell line development\nProcess development\nMethod development\nGMP production\nTCR, NHP PK \nDRF tox. study\nSafety pharmacology\n4-week tox. study (rodent/NHP) \nPhase 1 (HV)\n\n[PAGE 35]\n35\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nModular Platform Construct Enabling Broad Target Expansion\nGAIA platform’s protein binder part is interchangeable, enabling broad expansion of pipeline and Ips.\nTARGET EXPANSION\nGAIA Platform \npatents\ntransferred from \nKAIST\nPlatform \noptimization for \nsystemic therapy \nand improved \nproductivity/\nstability\nBroadening of \nplatform patent \ncoverage & \nindividual \npipeline patents \nIP\nPortfolio \nStrategy\nCurrent \nIP Status\n▪3 patent families filed\n-\nFor one of the families, patents have been filed in 15 \ncountries including the US, EU,and JP, with already \ngranted ones in US, Korea and Russia.\n▪Key patent terms valid through 2040+\nExpandable to \nNeurology:\nMisfolded Proteins (Tau, αSyn, TDP43, HTT)\nNovel Targets (APOE4, C1q)\nSystemic Amyloidosis:\nTTR (ATTR amyloidosis),\nAL (AL amyloidosis)\nImmunology (Autoimmunity):\nAutoantigen (for tolerance induction)\nInflammatory Factors (Cytokines, Complements)\nImmune cells (B cells, T cells)\nClearing pathogenic proteins while controlling inflammation\nGAIA Platform Technology\nTarget binder is changeable\nMaintaining\nTolerance\nResolution of\nInflammation\nClearing\nTargets\n\n[PAGE 36]\nCorporate\n\n[PAGE 37]\n37\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nFoundation of Illimis Therapeutics\nCOMPANY\n2017~\nGAIA\nPlatform\nstudy\nProf. Won-Suk Chung\nExpertise: Neurology \n(Glia Biology)\nProf. Chan-Hyuk Kim\nExpertise: Immunology \n(Immunotherapy)\n2009~2015\nStanford University\nPostdoctoral fellow\n(Advisor:\nDr. Ben A. Barres) \n2016~\nKAIST Associate Professor\nExpertise in Astrocyte and Phagocytosis of Glia\nAnti-inflammatory clearance of amyloid-β by a\nchimeric Gas6 fusion protein. Nat Med. 2022\nMicroglial MERTK eliminates phosphatidylserine-\ndisplaying inhibitory post-synapses. EMBO J. 2021\nAstrocytes phagocytose adult hippocampal synapses\nfor circuit homeostasis, Nature, 2021\nAstrocytes mediate synapse elimination through\nMEGF10 and MERTK pathways. Nature, 2013\n2009~2012\nThe Scripps\nResearch Institute\nPostdoctoral fellow\n(Advisor:\nDr. Peter G. Schultz) \n2012~2016\nCalifornia Institute for\nBiomedical Research [Calibr]\nPrincipal Investigator\nExpertise in Immunotherapy \nand Synthetic Biology\n2016~2024\nKAIST\nAssociate Professor\n2021.08\nIllimis Therapeutics\nestablished\n2024~\nSeoul National Univ.\nProfessor\n\n[PAGE 38]\n38\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nCompany Snapshot\nCOMPANY\n2017~ 2021: Platform initial development completed\n2022.01 : Pre-Series A funding ($6.5M)\n2022.08 : In vivo PoC of GAIA published (Nature Medicine)\n2022.09 : US office opened (CIC@Boston)\n2022.10 : Global SAB contract (Dr. Greg Lemke @SALK)\n2023.03 : Series A funding ($20M)\n2023.11 : Winner of Seoul-BMS Innovation2 Challenge\n2024.03 : Global SAB contract (Dr. Morgan Sheng @MIT)\n2024.10 : Joined Johnson & Johnson Innovation\n– JLABS Singapore\n2024.10 : Partnered with Lilly Catalyze360-ExploR&D\n2025.06 : Series B funding ($42M)\n2025.09 : Lilly Gateway Labs (LGL) Boston (Illimis USA)\nCompany\nCEO/President\nScientific co-founder \nFoundation\nLocation\nNo. of Employee\nHistory\nIllimis Therapeutics, Inc.\nSang Hoon Park\nProf. Won-Suk Chung & Prof. Chan Hyuk Kim (KAIST&SNU)\n2021.08.09\nSeoul, Korea / Boston, US\n40 (Ph.D 14, MS 20)\n*As of Sep 2025\nLilly Gateway Labs, Boston\nSeoul, Korea\n\n[PAGE 39]\n39\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nGlobal Leader in TAM Biology\nTeam with substantial industry & academic experience in Neuroscience and Immunology\nTEAM\nSanghoon Park, Ph.D.\nCEO/President\nFormer: Co-founder of \nAmyloid Solution\nProf. Chan-Hyuk \nKim @ SNU\nExpertise: Immunology \n(Immunotherapy)\nProf. Won-Suk \nChung @ KAIST\nExpertise: Neuroscience \n(Glia Biology)\nScientific Co-Founders & Executives\nExecutives\nScientific Advisory Board (SAB)\nGreg Lemke, Ph.D.\nProfessor Emeritus,\nSalk Institute\nPioneer in TAM Biology\nMorgan Sheng, Ph.D.\nCore Institute Member,\nBroad Institute of MIT\nNeuroscience Guru\nEJ Lee, Ph.D.\nDiscovery Group \nLead\nJK Lee, Ph.D.\nCDO/VP\nExpertise in pre- and\nclinical development\nKH Lee, Ph.D.\nProtein Engineering\nGroup Lead\nIH Lim, Ph.D.\nCMC Group Lead\nJH Kim, Ph.D.\nBusiness & Strategy \nGroup Lead\nSC Jang, Ph.D.\nIllimis Tx. USA\nCEO\n\n[PAGE 40]\n40\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nScientific Advisory Board\nTEAM\nGreg Lemke, Ph.D.\nCurrent: Professor \nEmeritus, Salk Institute\nPrevious: Professor,\nMolecular biology Lab at \nSalk Institute Françoise\nGilot-Salk Chair\nMorgan Sheng, Ph.D.\nCore Institute Member,\nBroad Institute of MIT \nand Harvard\nProfessor of \nNeuroscience,\nDepartment of Brain\nand Cognitive Sciences\nPioneer in TAM Biology\nNeuroscience Guru\n\n[PAGE 41]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n41\nPLATFORM EXPANSION\nExpansion of Target, Indication and Modality\n2nd generation\nBest-in-class drug\nAntibody\nGAIA \nplatform\nBetter Efficacy + Better Safety\n\n[PAGE 42]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n42\nPIPELINE\nTA\nTarget\nIndication\nPipeline\nProof of \nMechanism\nHit-to-\nLead\nLead Opt.\nPreclinical\nClinical\nNeurology\nAβ\nAlzheimer’s Disease\nILM01\nTau\nTauopathies\nILM02\nImmunology\nMyelin Debris\nMultiple Sclerosis\n(Tolerance)\nILM21\nTNFα\nIBD\n(Anti-inflammation)\nILM22\nEarly R&D Collaboration (based on GAIA Platform)\nInhouse Program\nPartner\nTarget\nCollaboration Model\nDesign \nProduction\nIn vitro\nIn vivo\nUndisclosed\nCatalyze360-ExploR&D\nUS Biotech\n2 Targets\n(Neuro, Ophthalmology)\nGAIA + Antibody\n3~4 Targets\n(Neuro, Immunol)\nGAIA + De-novo binder\nMultiple In-House & Externally Collaborated Pipeline\nDavid Baker Lab\n\n[PAGE 43]\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\n43\nPARTNERSHIP\nCollaboration with Prof. David Baker (IPD/UW)\n\n[PAGE 44]\nClearing various toxic amyloid species\nRestoring glial function (phagocytic↑ ,inflammatory↓)\nNormalizing metabolic &  immune function\nAlzheimer’s\nDisease\n3rd Layer\nHOMEOSTASIS\n2nd Layer\nGLIAL DYSFUNCTION\n1st Layer\nAMYLOID & NEURON\nExtracellular Aβ \n(oligomer & plaque)\nTau aggregate\n& propagation\nTau\nTau oligomer\nTau protofibril\nTau\nphosphorylation\nLysosome dysfunction\nMitochondria Dysfunction\nAβ Phagocytosis↓\nInflammatory response\nMicroglia dysfunction\nTREM2\nCD33\nTAM\nTAM\nAstrocyte dysfunction\nGABA\nROS\nCytokines\nNeurotoxicity\nLipid metabolism\n(APOE, etc.)\nNegative \nNeuroinflammation\n(IL-1α, C1q, TNF)\nNegative \nTreg\nT cells\nMonocytes\nNegative \nor Positive?\nAβ\nmonomer\nAβ oligomer\nAβ fibril\nAβ plaque\nDual Function (Neuroimmune approach)\n(1) Amyloid Clearance + (2) Glial Modulation\n\n[PAGE 45]\n45\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nGlobal biotech translating ‘TAM biology’ into innovative medicine\nVISION\n2024\n2027\n2031\n2036\n2041\nBiotech with\nfoundations for \ninnovative drug\ndevelopment\nBiotech with\nsuccess history\n(Ph1 IND & global\nL/O of GAIA-Aβ\n→KOSDAQ IPO)\nSustainable biotech\n(stable cash flow \nthrough multiple\nplatform-based deals,\nIMMUNOLOGY)\nCommercialized\nbiotech\n(continuous cash\nflow through AD\ndrug approval)\nBig biotech\nthrough\nAging Drug\nYear 3\nYear 6\nYear 10\nYear 15\nYear 20\nClearing Targets\nResolution of\nInflammation\nMaintaining\nTolerance\nKey Milestones for ~2027.4Q\nR&D: ILM01 Ph1 study initiation\nBD: Global licensing-out of ILM01\nGAIA-based multiple platform deals\nCORPORATE: KOSDAQ IPO\n\n[PAGE 46]\nCONFIDENTIAL\n46\nCONFIDENTIAL\nCOPYRIGHTⓒIllimisTherapeutics, Inc. ALL RIGHTS RESERVED\nEra of New Modalities\nIllimis Therapeutics’ GAIA platform\nis a new modality complementing\nANTIBODY therapies targeting neurodegenerative\nand immune diseases\nmRNA, ASO, siRNA\nCRISPR/Cas9\nCAR-T, CAR-NK, CAR-NKT\nTPD (PROTAC, LYTAC, AUTOTAC)\nBispecific, Trispecific\nAntibody-Drug Conjugate (ADC)\nAntibody-Oligo Conjugate (AOC)\nand NEXT?\n\n[PAGE 47]\nTHANK YOU\nWe translate cutting-edge science into innovative medicine\nSanghoon Park, Ph.D\nCo-founder & CEO\nshpark@illimistx.com",
+              "quality": {
+                "sufficient": true,
+                "quality_score": 6,
+                "character_count": 27308,
+                "corrupted_character_ratio": 0.0,
+                "repeated_character_ratio": 0.00769,
+                "text_unit_ratio": 1.0,
+                "text_units": 47,
+                "total_units": 47,
+                "keyword_hits": [
+                  "animal model",
+                  "efficacy",
+                  "in vitro",
+                  "in vivo",
+                  "in-vivo",
+                  "mice",
+                  "mouse",
+                  "pk",
+                  "tox"
+                ],
+                "reasons": []
+              }
+            },
+            "parser": null,
+            "deepseek_analysis": {
+              "status": "completed",
+              "model": "deepseek/deepseek-v4-flash",
+              "structured_output_supported": true,
+              "structured_output_used": false,
+              "analyzed_at": "2026-08-05T14:15:27.821848+00:00",
+              "result": {
+                "target_indication": {
+                  "verdict": "true",
+                  "rationale": "The document explicitly focuses on Alzheimer's Disease as a primary target indication.",
+                  "evidence": [
+                    {
+                      "page_or_slide": 2,
+                      "location_status": "located",
+                      "text": "Alzheimer’s, Parkinson’s, Amyloidosis, Autoimmunity, etc."
+                    }
+                  ]
+                },
+                "small_molecule": {
+                  "verdict": "false",
+                  "rationale": "The document describes GAIA as a protein-based biologic (fusion protein, antibody-like construct), not a small molecule.",
+                  "evidence": []
+                },
+                "ind_enabling": {
+                  "verdict": "unknown",
+                  "rationale": "The document mentions planned IND-enabling studies and future IND submission but does not explicitly state that IND enabling has been completed.",
+                  "evidence": []
+                },
+                "in_vivo_efficacy": {
+                  "verdict": "true",
+                  "rationale": "The document provides explicit positive in vivo efficacy results in 5xFAD mice, showing significant reduction in Aβ plaque burden.",
+                  "evidence": []
+                },
+                "in_vitro_efficacy": {
+                  "verdict": "true",
+                  "rationale": "The document provides explicit positive in vitro efficacy results using iPSC-derived cells, showing enhanced phagocytosis without pro-inflammatory cytokine release.",
+                  "evidence": [
+                    {
+                      "page_or_slide": 27,
+                      "location_status": "located",
+                      "text": "GAIA-Aβ enhanced oligomeric Aβ phagocytosis without triggering pro-inflammatory cytokines (TNF-α and IL-6) compared to a reference antibody"
+                    }
+                  ]
+                },
+                "admet_at_least_25": {
+                  "verdict": "unknown",
+                  "rationale": "The document does not provide any ADMET data or completed ADMET study counts.",
+                  "evidence": []
+                },
+                "admet_completed_count": null,
+                "matched_indication": "Alzheimer's Disease",
+                "concise_summary": "Illimis Therapeutics presents a GAIA platform (GAIA-Aβ/ILM01) for Alzheimer’s Disease. The platform is a protein-based biologic (non-small molecule) that targets Aβ via TAM receptor engagement. In vivo efficacy is shown in 5xFAD mice with reduced plaque burden. In vitro efficacy is shown in iPSC-derived cells with enhanced phagocytosis and anti-inflammatory cytokine profile. IND enabling is planned for 2027 but not yet completed. No ADMET data are provided."
+              },
+              "error": null
+            },
+            "viewer_conversion": {
+              "status": "not_required",
+              "pdf_path": null,
+              "error": null
+            },
+            "processed_at": "2026-08-05T14:15:27.823335+00:00"
+          },
+          "processing_error": ""
+        }
+      ],
       "qualitative_review": {
         "criteria": {
           "scientific_rigor": {
@@ -753,6 +1129,34 @@
             "target_relevance": 3
           }
         }
+      },
+      "collaboration": {
+        "comments": [
+          {
+            "id": "a2b64c7810ba4f01a672f3bd32765372",
+            "parent_id": null,
+            "author": "정주원",
+            "author_user_id": "9979fce95e884382853e0aed85d6901e",
+            "author_email": "joowon.jung@sk.com",
+            "actor_ip": "192.168.45.192",
+            "body": "bye",
+            "created_at": "2026-08-05T14:15:28.002756+00:00",
+            "updated_at": "2026-08-05T14:15:28.002756+00:00"
+          },
+          {
+            "id": "aaee92d1faed4f57bbe85035a849029f",
+            "parent_id": null,
+            "author": "정주원",
+            "author_user_id": "9979fce95e884382853e0aed85d6901e",
+            "author_email": "joowon.jung@sk.com",
+            "actor_ip": "192.168.45.192",
+            "body": "bye",
+            "created_at": "2026-08-05T14:15:37.940097+00:00",
+            "updated_at": "2026-08-05T14:15:37.940097+00:00"
+          }
+        ],
+        "updated_at": "2026-08-05T14:15:37.940097+00:00",
+        "comment_count": 2
       }
     },
     "input": {
