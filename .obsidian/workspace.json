@@ -1,0 +1,228 @@
+{
+  "main": {
+    "id": "5890eef9a5c74c2f",
+    "type": "split",
+    "children": [
+      {
+        "id": "b4250d71714bc20e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "350795edc033876a",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "그래프 뷰"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "5ed73a30fb90ab7e",
+    "type": "split",
+    "children": [
+      {
+        "id": "2958e8dd0e155d8b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a36c9353bf0e284b",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "파일 탐색기"
+            }
+          },
+          {
+            "id": "c06207291f82b429",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "검색"
+            }
+          },
+          {
+            "id": "ee0cc4cb7a25d2cc",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "북마크"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "73947c581713cebd",
+    "type": "split",
+    "children": [
+      {
+        "id": "bbf970d909f50f4f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b414fb3b7aac7cf7",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "백링크"
+            }
+          },
+          {
+            "id": "8d11a3b26d800552",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "나가는 링크"
+            }
+          },
+          {
+            "id": "f48c35042ca7ee6d",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "태그"
+            }
+          },
+          {
+            "id": "836e9a40ba39e756",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "모든 속성"
+            }
+          },
+          {
+            "id": "d4f5242cc2124c1c",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "개요"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:빠른 전환기 열기": false,
+      "graph:그래프 뷰 열기": false,
+      "canvas:새 캔버스 만들기": false,
+      "daily-notes:오늘의 일일 노트 열기": false,
+      "templates:템플릿 삽입": false,
+      "command-palette:명령어 팔레트 열기": false,
+      "bases:새 베이스 생성하기": false
+    }
+  },
+  "active": "350795edc033876a",
+  "lastOpenFiles": [
+    "skbp_pipeline_wiki/09_Evidence_Sources/Source__Pipeline_-_Amyloid_Solution.md",
+    "skbp_pipeline_wiki/09_Evidence_Sources/Source__Confidential_company_deck.md",
+    "skbp_pipeline_wiki/08_Competitors/Competitor__Novartis_Ionis__NIO752.md",
+    "skbp_pipeline_wiki/08_Competitors/Competitor__Biogen_Ionis__diranersen_(BIIB080).md",
+    "skbp_pipeline_wiki/08_Competitors/Competitor__Genentech_Roche__semorinemab.md",
+    "skbp_pipeline_wiki/08_Competitors/Competitor__TauRx__Hydromethylthionine_mesylate_(HMTM).md",
+    "skbp_pipeline_wiki/10_Scorecards/Scorecard__AS-301__20260715.md",
+    "skbp_pipeline_wiki/02_Assets/Asset__AS-301__Amyloid_Solution_AS-301.md",
+    "skbp_pipeline_wiki/01_Raw_Reports/AmyloidSolution_AS-301_20260715.md",
+    "skbp_pipeline_wiki/09_Evidence_Sources/Source__uniQure_AMT-162_ALS_program.md",
+    "obsidian/Companies/Amyloid Solution.md",
+    "obsidian/Assets/Amyloid Solution AS-301.md",
+    "json/tmp2wngjg_d.tmp",
+    "skbp_pipeline_wiki/11_Themes_Clusters/Cluster__n_a.md",
+    "skbp_pipeline_wiki/09_Evidence_Sources/Source__NCT07401121_—_CTx1000_KOANEWA.md",
+    "skbp_pipeline_wiki/09_Evidence_Sources/Source__Ionis_Q1_2026_pipeline_update.md",
+    "skbp_pipeline_wiki/09_Evidence_Sources/Source__GenixCure_recombinant_AAV_platform_interview.md",
+    "skbp_pipeline_wiki/09_Evidence_Sources/Source__FDA_approval_of_Qalsody_for_SOD1-ALS.md",
+    "skbp_pipeline_wiki/09_Evidence_Sources/Source__Evaluation_of_AAV_transduction_efficiency_via_multiple_delivery_routes.md",
+    "skbp_pipeline_wiki/08_Competitors/Competitor__QurAlis__QRL-201.md",
+    "skbp_pipeline_wiki/08_Competitors/Competitor__Ionis_Otsuka__Ulefnersen_(ION363).md",
+    "obsidian/Companies/GenixCure.md",
+    "json/tmpv0d0kuig.tmp",
+    "skbp_pipeline_wiki/09_Evidence_Sources/Source__Stathmin-2_enhances_motor_axon_regeneration.md",
+    "skbp_pipeline_wiki/09_Evidence_Sources/Source__Mechanism_of_STMN2_cryptic_splice-polyadenylation_and_its_correction.md",
+    "skbp_pipeline_wiki/09_Evidence_Sources/Source__GenixCure_BIO_USA_2025_partnering_update.md",
+    "skbp_pipeline_wiki/01_Raw_Reports/GenixCure_GXC-303_20260713.md",
+    "skbp_pipeline_wiki/10_Scorecards/Scorecard__GXC-303__20260713.md",
+    "json/tmpfyn_j8rg.tmp",
+    "json/tmp23ar16s7.tmp",
+    "json/tmprj_3q_zv.tmp",
+    "SKBP_image_generation_prompts.json",
+    "image_generation_prompts/page_11_Closing_Core_Value.txt",
+    "image_generation_prompts/page_10_7-Minute_Talk_Flow.txt",
+    "image_generation_prompts/page_09_Wiki_Obsidian_Knowledge_Layer.txt",
+    "image_generation_prompts/page_08_Detail_View_AI_Evidence_Agent.txt",
+    "presentation_assets/ppt_render_imagegen/슬라이드11.PNG",
+    "presentation_assets/ppt_render_imagegen/슬라이드10.PNG",
+    "presentation_assets/ppt_render_imagegen/슬라이드9.PNG",
+    "presentation_assets/ppt_render_imagegen/슬라이드8.PNG",
+    "presentation_assets/ppt_render_imagegen/슬라이드7.PNG",
+    "presentation_assets/ppt_render_imagegen/슬라이드6.PNG",
+    "presentation_assets/ppt_render_imagegen/슬라이드5.PNG",
+    "presentation_assets/ppt_render_imagegen/슬라이드4.PNG",
+    "presentation_assets/ppt_render_imagegen/슬라이드3.PNG",
+    "presentation_assets/ppt_render_imagegen/슬라이드2.PNG"
+  ]
+}

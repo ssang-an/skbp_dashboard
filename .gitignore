@@ -11,8 +11,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 .hermes/
-.obsidian/
-attachments/
 node_modules/
 tmp/
 data/users.json
