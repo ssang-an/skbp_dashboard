@@ -8,7 +8,9 @@ Git clone 직후에는 `.venv`가 없으므로 서버 PC에서 한 번 생성합
 
 ```powershell
 py -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --upgrade pip
+
+.\.venv\Scripts\Activate.ps1
+
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
