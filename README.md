@@ -37,10 +37,12 @@ http://localhost:8000
 이 프로젝트는 저장 API를 FastAPI가 제공하므로 Bun 정적 서버가 아니라, Bun이 Uvicorn을
 사내망 모드로 실행합니다. 서버 PC에서 다음 명령을 실행합니다.
 
-1. Bun이 없다면 공식 Windows 설치 스크립트로 한 번 설치하고 터미널을 다시 엽니다.
+1. Bun이 없다면 공식 Windows 설치 스크립트로 한 번 설치하고 터미널을 다시 엽니다. 그리고 현재 터미널에 Path 연결 (복사하여 입력) 합니다. 
 
 ```powershell
 powershell -c "irm bun.sh/install.ps1 | iex"
+
+$env:Path += ";C:\Users\bp10866\.bun\bin"
 ```
 
 2. 프로젝트 폴더에서 공유 서버를 실행합니다.
