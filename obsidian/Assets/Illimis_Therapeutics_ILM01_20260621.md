@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-06T11:45:31"
+generated_at: "2026-08-06T23:55:32"
 record_id: "Illimis_Therapeutics_ILM01_20260621"
 company: "Illimis Therapeutics"
 country: "Republic of Korea"
@@ -337,15 +337,15 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
       "added_at": "2026-07-28T14:52:28.874464+00:00",
       "user_comment": "",
       "due_date": "2026-07-31",
-      "updated_at": "2026-07-29T06:00:23.600986+00:00",
+      "updated_at": "2026-08-06T02:47:01.277116+00:00",
       "updated_source": "dashboard_tab3",
-      "updated_by": "127.0.0.1",
+      "updated_by": "정주원",
       "owner_name": "",
       "action_plan": "",
       "partnership_type": "investment",
       "partnership_classification_status": "auto_classified",
       "partnership_classification_source": "auto",
-      "partnership_classified_at": "2026-08-06T02:45:31.122064+00:00",
+      "partnership_classified_at": "2026-08-06T02:47:01.277185+00:00",
       "partner_material_flags": {
         "cdp": false,
         "ncdp": false,
@@ -426,7 +426,7 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
           }
         }
       ],
-      "filter3_document_analysis_updated_at": "2026-08-06T02:45:31.122029+00:00"
+      "filter3_document_analysis_updated_at": "2026-08-06T02:47:01.277153+00:00"
     },
     "attachments": [
       {
@@ -3171,6 +3171,24 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
         "field": "record",
         "previous_value": null,
         "new_value": null
+      },
+      {
+        "changed_at": "2026-08-06T02:46:50.382434+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.remove",
+        "previous_value": true,
+        "new_value": false
+      },
+      {
+        "changed_at": "2026-08-06T02:47:01.277192+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.add",
+        "previous_value": false,
+        "new_value": true
       }
     ],
     "last_edited_at": "2026-08-06T02:45:19.876062+00:00",
@@ -3372,6 +3390,13 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
             "obtainable_peak_sales": 859.79,
             "sales_unit": "million USD",
             "formula": "US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment; output in million USD"
+          },
+          "D_global_obtainable_peak_sales": {
+            "source_geography": "US",
+            "global_multiplier": 1.5,
+            "global_obtainable_peak_sales": 1289.685,
+            "sales_unit": "million USD",
+            "formula": "Global Obtainable Peak Sales = US Obtainable Peak Sales x 1.5"
           }
         }
       }

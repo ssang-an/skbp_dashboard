@@ -1,10 +1,20 @@
 # Companies
 
-> Generated at `2026-08-06T11:45:31`.
+> Generated at `2026-08-06T23:55:32`.
 
+- [[ADEL]] (1)
+- [[AULBIO Co., Ltd|AULBIO Co., Ltd.]] (1)
 - [[Actio Biosciences]] (2)
+- [[Astrion Co., Ltd|Astrion Co., Ltd.]] (1)
+- [[Astrogen]] (4)
+- [[Astrogen Inc|Astrogen Inc.]] (1)
+- [[AtoGen Co., Ltd|AtoGen Co., Ltd.]] (1)
+- [[Autophagy Science Co., Ltd|Autophagy Science Co., Ltd.]] (1)
+- [[Beijing Hotgen Biotech]] (1)
+- [[Beijing Youngen Biotechnology Co Ltd]] (1)
 - [[Biohaven]] (1)
 - [[Bright Minds Biosciences]] (1)
+- [[CorestemChemon Inc|CorestemChemon Inc.]] (1)
 - [[Encoded Therapeutics]] (1)
 - [[GenixCure]] (1)
 - [[HEC Pharm]] (1)
@@ -17,9 +27,13 @@
 - [[Hebei Normal University]] (1)
 - [[Hefei Huafang Pharmaceutical Sciences and Technology]] (1)
 - [[Humanwell Healthcare Group]] (1)
-- [[Illimis Therapeutics]] (1)
+- [[Hyper Corp Inc]] (1)
+- [[Hyperway Pharmaceutical]] (1)
+- [[Illimis Therapeutics]] (4)
+- [[Illimis Therapeutics Inc]] (1)
 - [[Jazz Pharmaceuticals - Saniona|Jazz Pharmaceuticals / Saniona]] (1)
 - [[Lundbeck - Longboard Pharmaceuticals|Lundbeck / Longboard Pharmaceuticals]] (1)
+- [[Lynk Pharmaceuticals]] (1)
 - [[Lynk Pharmaceuticals Co., Ltd|Lynk Pharmaceuticals Co., Ltd.]] (1)
 - [[META Pharmaceuticals Inc|META Pharmaceuticals Inc.]] (1)
 - [[NeuShen Therapeutics]] (1)
@@ -28,5 +42,6 @@
 - [[Shanghai UniXell Biotechnology Co., Ltd|Shanghai UniXell Biotechnology Co., Ltd.]] (1)
 - [[Shaperon Inc|Shaperon Inc.]] (1)
 - [[Stoke Therapeutics - Biogen|Stoke Therapeutics / Biogen]] (1)
+- [[VASTHERA]] (1)
 - [[VivaVision Biotech]] (1)
 - [[Xenon Pharmaceuticals]] (1)

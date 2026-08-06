@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-06T11:45:31"
+generated_at: "2026-08-06T23:55:32"
 record_id: "Hanyang_University_Lead_compound_fast_triage_20260623"
 company: "Hanyang University"
 country: "Republic of Korea"

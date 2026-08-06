@@ -22,18 +22,18 @@ confidence: "medium"
 |---|---|
 | Company | Eisai / Biogen |
 | Asset | Leqembi (lecanemab) |
-| Target / MoA | Soluble Aβ aggregates/protofibrils; antibody-mediated amyloid clearance |
-| Modality | IgG1 anti-Aβ antibody |
-| Stage | Approved / marketed |
-| Similarity level | High |
+| Target / MoA | Soluble amyloid-beta aggregates/protofibrils |
+| Modality | Antibody |
+| Stage | Approved |
+| Similarity level | Low |
 
 ## Why It Matters
 
-Clinical efficacy, safety, monitoring, and annual price benchmark for early AD; ARIA and infusion burden define the differentiation bar.
+Established disease-modifying efficacy, ARIA monitoring and access benchmark.
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__ILM01_(GAIA-Aβ)|ILM01_(GAIA-Aβ)]]: Clinical efficacy, safety, monitoring, and annual price benchmark for early AD; ARIA and infusion burden define the differentiation bar.
+- [[02_Assets/Asset__VTA-27|VTA-27]]: Established disease-modifying efficacy, ARIA monitoring and access benchmark.
 
 ## Sources
 

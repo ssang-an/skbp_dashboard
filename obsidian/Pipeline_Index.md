@@ -1,6 +1,6 @@
 # Pipeline Index
 
-> Generated from `json/pipeline-records.json` at `2026-08-06T11:45:31`.
+> Generated from `json/pipeline-records.json` at `2026-08-06T23:55:32`.
 
 ## Assets
 
@@ -39,6 +39,27 @@
 | [[Hefei_Huafang_HB018_fast_triage_20260623]] | [[-]] | - | [[Theme - No Theme|No Theme]] | [[Cluster - No mapped SKBP cluster|No mapped SKBP cluster]] | IND-enabling | None / 21 |
 | [[Humanwell_CXJM-66_fast_triage_20260623]] | [[-]] | - | [[Theme - E-I Balance|E/I Balance]] | [[Cluster - Ion Channel|Ion Channel]] | Phase 1 | None / 21 |
 | [[GenixCure_GXC-303_20260713]] | [[-]] | - | [[Theme - No Theme|No Theme]] | [[Cluster - N-A|N/A]] | Lead Optimization | 11 / 21 |
+| [[VASTHERA_VTA-27]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - 교세포 향상성|교세포 향상성]] | IND-enabling | 13 / 21 |
+| [[Astrion Co., Ltd._AON-PP23]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 2 / 9 |
+| [[Astrogen_AST-029]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
+| [[Astrogen_AST-030]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
+| [[Astrogen_AST-008]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 2 / 9 |
+| [[Astrogen_AST-004]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 1 / 9 |
+| [[Astrogen Inc._AST-031]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 2 / 9 |
+| [[AtoGen Co., Ltd._LABthera-003]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 0 / 9 |
+| [[AULBIO Co., Ltd._AUL003]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | IND filed/cleared | 6 / 9 |
+| [[Autophagy Science Co., Ltd._AS-401]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 0 / 9 |
+| [[CorestemChemon Inc._CE223BR17 - Parkinson's Disease Research Program]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 10 / 21 |
+| [[ADEL_ADEL-Y04]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 7 / 9 |
+| [[Beijing Hotgen Biotech_Alzheimer's disease therapy, Beijing Youngen Biotechnology]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Beijing Youngen Biotechnology Co Ltd_Alzheimer's Disease]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Hyper Corp Inc_Drug to Inhibit Tau for Alzheimer's Disease]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Hyperway Pharmaceutical_HBW-015]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 4 / 9 |
+| [[Illimis Therapeutics_ILM02]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Hit Discovery | 2 / 9 |
+| [[Illimis Therapeutics_ILM21]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Illimis Therapeutics_ILM01]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 7 / 9 |
+| [[Illimis Therapeutics Inc_Neurodegenerative Diseases Lilly]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Lynk Pharmaceuticals_LNK01006]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Phase 1 | 6 / 9 |
 
 ## Navigation
 

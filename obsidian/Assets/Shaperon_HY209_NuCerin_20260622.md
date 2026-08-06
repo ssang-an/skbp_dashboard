@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-06T11:45:31"
+generated_at: "2026-08-06T23:55:32"
 record_id: "Shaperon_HY209_NuCerin_20260622"
 company: "Shaperon Inc."
 country: "Republic of Korea"

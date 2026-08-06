@@ -27,7 +27,7 @@
 | **Platform Attractiveness** | 반복 적용 가능한 platform 기술 우위 | 실재/구현 근거 불명확 | claim·이론 중심 | comparator 대비 정량 우위 | human implementation 또는 반복성·외부검증 |
 | **Expansion Potential** | 인접 indication 확장성 | 근거 없음 | 이론적 가능성 | biology 근거 있음 | 복수 indication/pipeline 확인 |
 | **Data Maturity** | stage에 맞는 공개 data의 충분성과 해석 가능성 | asset-specific 결과 없음 | 정성 claim·단편 결과 | 정량 evidence domain 1개 이상 | 상호보완 정량 domain 2개 이상 |
-| **Marketability** | commercial product와 obtainable peak sales 성립성 | rationale/계산 불가 | < USD 1B | USD 1B–2B | ≥ USD 2B + 확장성/가격/차별성 |
+| **Marketability** | commercial product와 Global obtainable peak sales 성립성 | rationale/신뢰 가능한 산출 불가 | Global < USD 1B | Global USD 1B–2B | Global ≥ USD 2B |
 
 ## Parameter Guide
 
@@ -62,6 +62,13 @@ Main indication의 다른 표현은 expansion이 아닙니다. 같은 biology가
 ### Marketability
 
 Commercial rationale이 성립하지 않으면 TAP/peak sales를 억지로 계산하지 않고 0점 처리합니다.
+
+- A. US TAP
+- B. US Unrisked Peak Sales
+- C. US Obtainable Peak Sales
+- D. Global Obtainable Peak Sales = C × 1.5
+
+미국 기준 계산값 또는 미국 기준 외부 forecast에만 `×1.5`를 정확히 한 번 적용합니다. 이미 Global인 forecast에는 재적용하지 않으며, 최종 점수는 assessed Global peak sales를 기준으로 판정합니다.
 
 ## Hard Filter
 

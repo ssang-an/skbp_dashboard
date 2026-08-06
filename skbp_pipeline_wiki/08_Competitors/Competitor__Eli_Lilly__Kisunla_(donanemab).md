@@ -22,18 +22,18 @@ confidence: "medium"
 |---|---|
 | Company | Eli Lilly |
 | Asset | Kisunla (donanemab) |
-| Target / MoA | N-terminal pyroglutamate Aβ plaque; antibody-mediated clearance |
-| Modality | IgG1 anti-Aβ antibody |
-| Stage | Approved / marketed |
-| Similarity level | High |
+| Target / MoA | Amyloid plaque / pyroglutamate amyloid-beta |
+| Modality | Antibody |
+| Stage | Approved |
+| Similarity level | Low |
 
 ## Why It Matters
 
-Once-monthly, limited-duration treatment provides a strong efficacy and convenience comparator while retaining ARIA risk.
+Second approved anti-amyloid DMT that raises the clinical and commercial entry bar.
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__ILM01_(GAIA-Aβ)|ILM01_(GAIA-Aβ)]]: Once-monthly, limited-duration treatment provides a strong efficacy and convenience comparator while retaining ARIA risk.
+- [[02_Assets/Asset__VTA-27|VTA-27]]: Second approved anti-amyloid DMT that raises the clinical and commercial entry bar.
 
 ## Sources
 

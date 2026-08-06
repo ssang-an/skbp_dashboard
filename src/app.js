@@ -268,6 +268,7 @@ const state = {
   dataUploadGuideMode: null,
   dataUploadReview: null,
   dataUploadDrafts: { triage: '', full: '' },
+  dataUploadLlmReparseFields: null,
   query: '',
   stage: 'all',
   theme: 'all',
@@ -413,6 +414,7 @@ const elements = {
   dataUploadGuideSteps: document.querySelector('#dataUploadGuideSteps'),
   inputValidationResults: document.querySelector('#inputValidationResults'),
   previewInputButton: document.querySelector('#previewInputButton'),
+  aiReparseButton: document.querySelector('#aiReparseButton'),
   saveJsonButton: document.querySelector('#saveJsonButton'),
   clearJsonButton: document.querySelector('#clearJsonButton'),
   saveStatus: document.querySelector('#saveStatus'),
@@ -3047,6 +3049,7 @@ function setDataUploadStatus(status, errorCount = 0) {
     waiting: '응답 붙여넣기 대기',
     'review-needed': '입력 검토 필요',
     validating: '검증 중',
+    'ai-reparsing': 'AI 재파싱 중 · LLM 호출 진행 중...',
     valid: '검증 완료 · 저장 가능',
     error: `수정 필요 · 오류 ${Math.max(0, Number(errorCount) || 0)}개`,
     saved: '저장 완료'
@@ -3056,19 +3059,22 @@ function setDataUploadStatus(status, errorCount = 0) {
     waiting: 'waiting',
     'review-needed': 'review',
     validating: 'loader',
+    'ai-reparsing': 'loader',
     valid: 'check',
     error: 'alert',
     saved: 'saved'
   };
   elements.saveStatus.dataset.state = nextStatus;
-  elements.saveStatus.setAttribute('aria-busy', String(nextStatus === 'validating'));
+  elements.saveStatus.setAttribute('aria-busy', String(nextStatus === 'validating' || nextStatus === 'ai-reparsing'));
   elements.saveStatus.innerHTML = `${dataUploadIconMarkup(statusIcons[nextStatus])}<span>${escapeHtml(labels[nextStatus])}</span>`;
 }
 
 function resetDataUploadValidationState() {
   const hasInput = Boolean(elements.gptResponseInput?.value.trim());
   state.dataUploadReview = null;
+  state.dataUploadLlmReparseFields = null;
   if (elements.previewInputButton) elements.previewInputButton.disabled = !hasInput;
+  if (elements.aiReparseButton) elements.aiReparseButton.disabled = true;
   if (elements.saveJsonButton) elements.saveJsonButton.disabled = true;
   if (elements.inputValidationResults) {
     elements.inputValidationResults.hidden = true;
@@ -7037,8 +7043,195 @@ async function previewPastedReportParsing() {
   renderInputValidation(result);
   elements.previewInputButton.disabled = false;
   elements.saveJsonButton.disabled = !result.canSave;
+  if (elements.aiReparseButton) {
+    elements.aiReparseButton.disabled = !(result.rawMarkdown && result.errors.length > 0);
+  }
   setDataUploadStatus(result.canSave ? 'valid' : 'error', result.errors.length);
   return result;
+}
+
+function getNestedValue(obj, path) {
+  const parts = String(path || '').split('.').filter(Boolean);
+  let cursor = obj;
+  for (const part of parts) {
+    if (cursor == null || typeof cursor !== 'object') return undefined;
+    cursor = cursor[part];
+  }
+  return cursor;
+}
+
+function formatDiffValue(value) {
+  if (value === undefined) return '(없음)';
+  if (value === null) return 'null';
+  if (typeof value === 'string') return value.trim() ? value : '(빈 문자열)';
+  try {
+    const text = JSON.stringify(value);
+    return text.length > 160 ? `${text.slice(0, 160)}…` : text;
+  } catch {
+    return String(value);
+  }
+}
+
+function renderAiReparseDiffPanel(beforeRecords, afterRecords, fieldsByIndex) {
+  const entries = Object.entries(fieldsByIndex || {});
+  const rows = entries.flatMap(([indexKey, paths]) => {
+    const index = Number(indexKey);
+    const before = beforeRecords?.[index];
+    const after = afterRecords?.[index];
+    return (Array.isArray(paths) ? paths : []).map((path) => {
+      const oldValue = formatDiffValue(getNestedValue(before, path));
+      const newValue = formatDiffValue(getNestedValue(after, path));
+      return `<li class="ai-reparse-diff-row">
+        <span class="ai-reparse-diff-path">${escapeHtml(path)}</span>
+        <span class="ai-reparse-diff-old">${escapeHtml(oldValue)}</span>
+        <span class="ai-reparse-diff-arrow" aria-hidden="true">→</span>
+        <span class="ai-reparse-diff-new">${escapeHtml(newValue)}</span>
+      </li>`;
+    });
+  });
+  if (!rows.length) return '';
+  return `<div class="ai-reparse-diff-panel">
+    <div class="ai-reparse-diff-title">AI가 수정한 필드 (${rows.length}개)</div>
+    <ul class="ai-reparse-diff-list">${rows.join('')}</ul>
+  </div>`;
+}
+
+async function runAiReparse() {
+  if (!elements.aiReparseButton) return;
+  const expectedMode = activeTableMode() === 'triage' ? 'triage' : 'full';
+  const currentInput = elements.gptResponseInput.value;
+  const currentValidation = validateCombinedInput(currentInput, expectedMode);
+  const split = splitCombinedGptResponse(currentInput);
+  const rawMarkdown = (split.rawMarkdown || currentInput || '').trim();
+  if (!rawMarkdown) {
+    addInputIssue(currentValidation.errors, 'error', 'AI 2차 파싱', 'Markdown 원문을 찾지 못해 AI 재파싱을 실행할 수 없습니다.');
+    renderInputValidation(currentValidation);
+    return;
+  }
+
+  const buttonLabel = elements.aiReparseButton.querySelector('b');
+  const originalButtonLabel = buttonLabel ? buttonLabel.textContent : '';
+  elements.aiReparseButton.disabled = true;
+  elements.aiReparseButton.setAttribute('aria-busy', 'true');
+  if (buttonLabel) buttonLabel.textContent = 'AI 재파싱 중...';
+  elements.gptResponseInput.disabled = true;
+  setDataUploadStatus('ai-reparsing');
+
+  let streamedText = '';
+  const renderStreamProgress = () => {
+    if (!elements.inputValidationResults) return;
+    elements.inputValidationResults.hidden = false;
+    elements.inputValidationResults.innerHTML =
+      '<div class="input-validation-progress" role="status" aria-live="polite">AI(OpenRouter)가 실시간으로 응답을 생성하고 있습니다. 완료되면 입력창이 다시 열립니다...</div>' +
+      `<pre class="input-validation-stream">${escapeHtml(streamedText)}</pre>`;
+    const streamBox = elements.inputValidationResults.querySelector('.input-validation-stream');
+    if (streamBox) streamBox.scrollTop = streamBox.scrollHeight;
+  };
+  renderStreamProgress();
+
+  const restoreInputState = () => {
+    elements.gptResponseInput.disabled = false;
+    elements.aiReparseButton.removeAttribute('aria-busy');
+    if (buttonLabel) buttonLabel.textContent = originalButtonLabel || 'AI 2차 파싱';
+  };
+
+  try {
+    const response = await fetch('/api/records/llm-reparse/stream', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        raw_markdown: rawMarkdown,
+        json_text: split.jsonText || '',
+        mode: expectedMode,
+        issues: [...currentValidation.errors, ...currentValidation.warnings]
+      })
+    });
+    if (!response.ok || !response.body) {
+      const detail = await response.text().catch(() => '');
+      throw new Error(detail || `HTTP ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let data = null;
+    let streamError = null;
+
+    const handleBlock = (block) => {
+      const parsed = parseSseEvent(block);
+      if (!parsed) return;
+      if (parsed.event === 'delta') {
+        streamedText += parsed.data?.text || '';
+        renderStreamProgress();
+      } else if (parsed.event === 'error') {
+        streamError = parsed.data?.message || 'AI 재파싱 실패';
+      } else if (parsed.event === 'done') {
+        data = parsed.data;
+      }
+    };
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const blocks = buffer.split('\n\n');
+      buffer = blocks.pop() || '';
+      for (const block of blocks) handleBlock(block);
+    }
+    if (buffer.trim()) handleBlock(buffer);
+
+    if (streamError) throw new Error(streamError);
+    if (!data || !Array.isArray(data.records) || !data.records.length) {
+      throw new Error('AI가 유효한 record를 반환하지 않았습니다.');
+    }
+
+    const correctedJsonValue = expectedMode === 'triage' ? data.records : data.records[0];
+    const combinedText = `${rawMarkdown}\n\n--- JSON DATA ---\n${JSON.stringify(correctedJsonValue, null, 2)}\n`;
+    elements.gptResponseInput.value = combinedText;
+    if (['triage', 'full'].includes(expectedMode)) {
+      state.dataUploadDrafts[expectedMode] = combinedText;
+    }
+    state.dataUploadLlmReparseFields = {
+      input: combinedText,
+      fieldsByIndex: (data.corrected_fields && typeof data.corrected_fields === 'object') ? data.corrected_fields : {}
+    };
+
+    const result = await previewPastedReportParsing();
+    const correctedCount = Object.values(state.dataUploadLlmReparseFields.fieldsByIndex)
+      .reduce((total, fields) => total + (Array.isArray(fields) ? fields.length : 0), 0);
+    if (correctedCount > 0) {
+      result.warnings.push({
+        level: 'warning',
+        path: 'AI 2차 파싱',
+        message: `AI가 원문 Markdown 기반으로 ${correctedCount}개 필드를 보완했습니다. 저장 시 원문 하단에 부정확할 수 있다는 안내가 자동으로 추가됩니다.`
+      });
+    }
+    if (data.new_warning) {
+      result.warnings.push({
+        level: 'warning',
+        path: 'AI 2차 파싱',
+        message: `이번에 발견된 실수 패턴을 GPT 지침 ${expectedMode === 'triage' ? '1' : '2'} 하단 주의사항에 추가했습니다: "${data.new_warning}"`
+      });
+    }
+    if (correctedCount > 0 || data.new_warning) {
+      renderInputValidation(result);
+    }
+    if (correctedCount > 0 && elements.inputValidationResults) {
+      const diffHtml = renderAiReparseDiffPanel(split.records, data.records, state.dataUploadLlmReparseFields.fieldsByIndex);
+      if (diffHtml) {
+        elements.inputValidationResults.insertAdjacentHTML('beforeend', diffHtml);
+      }
+    }
+  } catch (error) {
+    restoreInputState();
+    const failed = validateCombinedInput(elements.gptResponseInput.value, expectedMode);
+    addInputIssue(failed.errors, 'error', 'AI 2차 파싱', `AI 재파싱 실패: ${String(error?.message || error)}`);
+    renderInputValidation(failed);
+    setDataUploadStatus('error', failed.errors.length);
+    elements.aiReparseButton.disabled = false;
+    return;
+  }
+  restoreInputState();
 }
 
 async function saveStructuredJsonInput() {
@@ -7056,10 +7249,14 @@ async function saveStructuredJsonInput() {
   }
 
   const records = validation.records;
-  records.forEach((record) => {
+  const llmReparseFields = state.dataUploadLlmReparseFields?.input === elements.gptResponseInput.value
+    ? state.dataUploadLlmReparseFields.fieldsByIndex || {}
+    : {};
+  records.forEach((record, index) => {
     const existingSourceReport = isInputObject(record.source_report) ? record.source_report : {};
     const existingRaw = existingSourceReport.raw_markdown;
     const triage = detectInputRecordMode(record).mode === 'triage';
+    const reparsedFields = llmReparseFields[String(index)];
     record.source_report = {
       ...existingSourceReport,
       raw_markdown: isPlaceholderRawMarkdown(existingRaw)
@@ -7067,7 +7264,8 @@ async function saveStructuredJsonInput() {
         : validation.rawMarkdown || existingRaw,
       source_format: existingSourceReport.source_format || (triage ? 'fast_triage_markdown' : 'gpt_markdown_report'),
       parser_status: existingSourceReport.parser_status || (triage ? 'fast_triage' : 'gpt_structured_output'),
-      parser_note: existingSourceReport.parser_note || 'Dashboard unified GPT response input에서 Markdown과 JSON을 자동 분리해 저장함.'
+      parser_note: existingSourceReport.parser_note || 'Dashboard unified GPT response input에서 Markdown과 JSON을 자동 분리해 저장함.',
+      ...(Array.isArray(reparsedFields) && reparsedFields.length ? { llm_reparse_fields: reparsedFields } : {})
     };
   });
 
@@ -7103,6 +7301,7 @@ async function saveStructuredJsonInput() {
     renderInputValidation(validation, { savedMessage: '저장 완료' });
     setDataUploadStatus('saved');
     state.dataUploadReview = null;
+    state.dataUploadLlmReparseFields = null;
     await loadRecords();
   } catch (error) {
     const failed = {
@@ -8391,8 +8590,30 @@ function buildGptInstructionPrompt() {
 function buildGptInstructionPromptCompact() {
   return buildGptInstructionPrompt();
 }
+async function fetchInstructionWarnings() {
+  try {
+    const response = await fetch('/api/instruction-warnings');
+    if (!response.ok) return { triage: [], full: [] };
+    const data = await response.json();
+    return {
+      triage: Array.isArray(data.triage) ? data.triage : [],
+      full: Array.isArray(data.full) ? data.full : []
+    };
+  } catch (error) {
+    return { triage: [], full: [] };
+  }
+}
+
+function appendInstructionWarnings(prompt, warnings) {
+  if (!Array.isArray(warnings) || !warnings.length) return prompt;
+  const lines = warnings.map((text) => `- ${text}`).join('\n');
+  return `${prompt}\n\n## 반복 방지 주의사항 (자동 누적 — 과거 AI 2차 파싱에서 발견된 오류 패턴)\n아래는 과거 붙여넣기에서 실제로 발생했던 단순 파싱/구조 실수입니다. 이번 응답에서 같은 실수를 반복하지 마세요:\n${lines}`;
+}
+
 async function copyPromptToClipboard(kind = 'full') {
-  const prompt = kind === 'triage' ? buildTriageInstructionPrompt() : buildGptInstructionPrompt();
+  const basePrompt = kind === 'triage' ? buildTriageInstructionPrompt() : buildGptInstructionPrompt();
+  const warningsStore = await fetchInstructionWarnings();
+  const prompt = appendInstructionWarnings(basePrompt, kind === 'triage' ? warningsStore.triage : warningsStore.full);
   try {
     await navigator.clipboard.writeText(prompt);
     setPromptCopyFeedback(kind);
@@ -9051,13 +9272,16 @@ window.addEventListener('keydown', (event) => {
 });
 
 elements.previewInputButton.addEventListener('click', previewPastedReportParsing);
+elements.aiReparseButton?.addEventListener('click', runAiReparse);
 elements.saveJsonButton.addEventListener('click', saveStructuredJsonInput);
 elements.clearJsonButton.addEventListener('click', () => {
   elements.gptResponseInput.value = '';
   const mode = activeTableMode();
   if (['triage', 'full'].includes(mode)) state.dataUploadDrafts[mode] = '';
   state.dataUploadReview = null;
+  state.dataUploadLlmReparseFields = null;
   elements.previewInputButton.disabled = true;
+  if (elements.aiReparseButton) elements.aiReparseButton.disabled = true;
   elements.saveJsonButton.disabled = true;
   setDataUploadStatus('waiting');
   if (elements.inputValidationResults) {
@@ -9065,17 +9289,61 @@ elements.clearJsonButton.addEventListener('click', () => {
     elements.inputValidationResults.innerHTML = '';
   }
 });
+function detectPastedInputMode(rawText) {
+  const split = splitCombinedGptResponse(rawText);
+  if (split.payload === null) return null;
+  if (Array.isArray(split.payload)) {
+    if (split.payload.length === 1 && isInputObject(split.payload[0])) {
+      const detected = detectInputRecordMode(split.payload[0]);
+      return detected.mode === 'triage' || detected.mode === 'full' ? detected.mode : null;
+    }
+    return split.payload.length > 1 ? 'triage' : null;
+  }
+  if (isInputObject(split.payload)) {
+    const detected = detectInputRecordMode(split.payload);
+    return detected.mode === 'triage' ? 'triage' : 'full';
+  }
+  return null;
+}
+
+function autoRouteDataUploadTab() {
+  if (!elements.gptResponseInput) return null;
+  const currentMode = activeTableMode();
+  if (currentMode !== 'triage' && currentMode !== 'full') return null;
+  const rawText = elements.gptResponseInput.value;
+  const detectedMode = detectPastedInputMode(rawText);
+  if (!detectedMode || detectedMode === currentMode) return null;
+
+  const previousDraft = state.dataUploadDrafts[currentMode];
+  state.dataUploadDrafts[detectedMode] = rawText;
+  setTableMode(detectedMode);
+  state.dataUploadDrafts[currentMode] = previousDraft;
+  elements.gptResponseInput.value = rawText;
+
+  const fromLabel = currentMode === 'triage' ? 'TAB1 Fast Triage' : 'TAB2 Full Scout';
+  const toLabel = detectedMode === 'triage' ? 'TAB1 Fast Triage' : 'TAB2 Full Scout';
+  return `붙여넣은 내용이 ${toLabel} 형식으로 보여 ${fromLabel}에서 ${toLabel} 탭으로 자동 전환했습니다.`;
+}
+
 elements.gptResponseInput?.addEventListener('input', () => {
+  const switchNotice = autoRouteDataUploadTab();
   const mode = activeTableMode();
   if (['triage', 'full'].includes(mode)) state.dataUploadDrafts[mode] = elements.gptResponseInput.value;
   const hasInput = Boolean(elements.gptResponseInput.value.trim());
   state.dataUploadReview = null;
+  state.dataUploadLlmReparseFields = null;
   elements.previewInputButton.disabled = !hasInput;
+  if (elements.aiReparseButton) elements.aiReparseButton.disabled = true;
   elements.saveJsonButton.disabled = true;
   setDataUploadStatus(hasInput ? 'review-needed' : 'waiting');
   if (elements.inputValidationResults) {
-    elements.inputValidationResults.hidden = true;
-    elements.inputValidationResults.innerHTML = '';
+    if (switchNotice) {
+      elements.inputValidationResults.hidden = false;
+      elements.inputValidationResults.innerHTML = `<div class="input-validation-progress" role="status" aria-live="polite">${escapeHtml(switchNotice)}</div>`;
+    } else {
+      elements.inputValidationResults.hidden = true;
+      elements.inputValidationResults.innerHTML = '';
+    }
   }
 });
 elements.dataUploadGuideSteps?.addEventListener('click', async (event) => {

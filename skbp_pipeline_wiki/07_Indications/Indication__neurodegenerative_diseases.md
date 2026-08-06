@@ -22,6 +22,7 @@ confidence: "medium"
 
 ## Related Assets
 
+- [[02_Assets/Asset__AS-401|AS-401]]
 - [[02_Assets/Asset__HB-03|HB-03]]
 
 ## Related Targets / MoA

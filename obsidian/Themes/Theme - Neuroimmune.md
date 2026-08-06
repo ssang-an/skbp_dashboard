@@ -1,9 +1,10 @@
 # Neuroimmune
 
-> Generated from `json/pipeline-records.json` at `2026-08-06T11:45:31`.
+> Generated from `json/pipeline-records.json` at `2026-08-06T23:55:32`.
 
 ## Linked Assets
 
+- [[ADEL_ADEL-Y04]]
 - [[Hanyang_University_Fusion_Protein_MS_fast_triage_20260623]]
 - [[Hanyang_University_Lead_compound_fast_triage_20260623]]
 - [[HealZen_HZR-061_fast_triage_20260623]]
@@ -11,7 +12,11 @@
 - [[HealthBiome_HB-03_fast_triage_20260623]]
 - [[HealthBiome_HB-05_fast_triage_20260623]]
 - [[Hebei_Normal_University_DFO_nanoparticle_fast_triage_20260623]]
+- [[Illimis Therapeutics_ILM01]]
+- [[Illimis Therapeutics_ILM02]]
 - [[Illimis_Therapeutics_ILM01_20260621]]
+- [[Lynk Pharmaceuticals_LNK01006]]
 - [[Lynk_Pharmaceuticals_LNK01006_20260621]]
 - [[META_Pharmaceuticals_META01_MP5342_20260622]]
 - [[Shaperon_HY209_NuCerin_20260622]]
+- [[VASTHERA_VTA-27]]

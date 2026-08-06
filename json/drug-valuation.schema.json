@@ -38,7 +38,8 @@
         "raw_markdown": { "type": "string" },
         "parser_status": { "type": "string" },
         "revision_history": { "type": "array" },
-        "rubric_recalculation": { "type": "object" }
+        "rubric_recalculation": { "type": "object" },
+        "llm_reparse_fields": { "type": "array", "items": { "type": "string" } }
       },
       "additionalProperties": false
     },

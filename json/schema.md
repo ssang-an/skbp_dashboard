@@ -10,6 +10,10 @@ New GPT instructions emit `meta.ingestion_format: "compact_v2"`. GPT JSON contai
 
 Compact numeric score/count strings are normalized only in known numeric fields; values containing units or commentary are not coerced. During UI ingestion, Compact v2 is projected onto the documented dashboard contract so unsupported extra keys are ignored before strict FastAPI validation; required score/identity fields and dangling or duplicate source IDs still block the save. Source IDs must be unique and resolve to the canonical registry. Home upload and Detail reupload call `/api/records/validate` before enabling save, and the save endpoint repeats validation. Legacy verbose, `compact_v1`, and the earlier persisted `dashboard_minimal_v1` shapes remain readable, including when mixed with hybrid records.
 
+### LLM-assisted second-pass reparsing (manual, structural errors only)
+
+When first-pass paste validation reports JSON syntax errors or missing required objects/keys, the paste panel's "AI 2차 파싱" button (manual, never automatic) calls `POST /api/records/llm-reparse` with the split Markdown, the best-effort JSON text, the active mode, and the current validation issues. The backend sends these to OpenRouter (`OPENROUTER_MODEL`, e.g. `deepseek/deepseek-v4-flash`) with a prompt that grounds every filled value strictly in the pasted Markdown: unresolved fields become `null` (or their documented default), and the model must not recompute or alter `scoring.total_score`, `hard_filter`/`triage` status, or `meta.*_version` fields — those stay server-derived. The response returns corrected `records` plus, per record index, a `corrected_fields` list of the dot-paths it filled in. The frontend re-validates the corrected JSON and, only at save time, stamps each affected record's `source_report.llm_reparse_fields` with that record's corrected-path list. `apply_llm_reparse_disclaimer` (`main.py`, run for every incoming record in `normalize_records`) then appends a small `> 이 정보가 부정확할 수 있습니다.` blockquote to the end of that record's `source_report.raw_markdown` whenever `llm_reparse_fields` is non-empty, so it renders wherever the GPT report Markdown is shown (detail page, report modal, exports) without any separate UI.
+
 ## Hybrid Persistence
 
 Two deliberately large sections remain: `source_report.raw_markdown` is required to render/re-upload the GPT original and to support rubric refresh; dashboard-owned operational `meta` is required for team notes, attachments, manual overrides, audit history, and TAB3. They are not duplicate GPT research fields and are not removed by compaction.
@@ -19,7 +23,7 @@ Every persisted criterion contains `score`, concise hover/detail fields (`eviden
 ## Top-Level Sections
 
 - `meta`: Record identity/version plus dashboard-owned operational state and audit provenance.
-- `source_report`: Preserved GPT Markdown and parser status.
+- `source_report`: Preserved GPT Markdown and parser status. Optional `llm_reparse_fields` (array of dot-paths) records which fields the manual AI 2차 파싱 pass filled in; see "LLM-assisted second-pass reparsing" above.
 - `input`: Original company and asset aliases used only for cross-workflow dashboard grouping.
 - `company_profile`: Full Scout optional-column values only: headquarters, company stage, and platform summary.
 - `json_summary`: Theme, Cluster, and the short description rendered by target cards/popovers.

@@ -22,6 +22,8 @@ confidence: "medium"
 
 ## Related Assets
 
+- [[02_Assets/Asset__AON-PP23|AON-PP23]]
+- [[02_Assets/Asset__AST-029|AST-029]]
 - [[02_Assets/Asset__HEC20002|HEC20002]]
 - [[02_Assets/Asset__Lead_compound|Lead_compound]]
 - [[02_Assets/Asset__glycoprotein_29-modified_deferoxamine|glycoprotein_29-modified_deferoxamine]]
