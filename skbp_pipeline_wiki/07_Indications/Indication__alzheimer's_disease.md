@@ -6,8 +6,8 @@ aliases:
   - "alzheimer's_disease"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,8 +22,8 @@ confidence: "medium"
 
 ## Related Assets
 
+- [[02_Assets/Asset__ADEL-Y04|ADEL-Y04]]
 - [[02_Assets/Asset__AUL003|AUL003]]
-- [[02_Assets/Asset__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]
 - [[02_Assets/Asset__ILM01|ILM01]]
 
 ## Related Targets / MoA

@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-06T23:55:32"
+generated_at: "2026-08-07T00:06:12"
 record_id: "Actio_Biosciences_ABS-1230_20260623"
 company: "Actio Biosciences"
 country: "United States"

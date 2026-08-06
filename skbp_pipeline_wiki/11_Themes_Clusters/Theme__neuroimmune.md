@@ -7,8 +7,8 @@ aliases:
 tags:
   - "skbp/theme"
   - "skbp/taxonomy"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -41,7 +41,9 @@ A cross-disease strategic biology theme used for SKBP Theme-based R&D strategy.
 - [[02_Assets/Asset__ILM01|ILM01]]
 - [[02_Assets/Asset__ILM01_(GAIA-Aβ)|ILM01_(GAIA-Aβ)]]
 - [[02_Assets/Asset__ILM02|ILM02]]
+- [[02_Assets/Asset__ILM21|ILM21]]
 - [[02_Assets/Asset__LNK01006|LNK01006]]
+- [[02_Assets/Asset__LNK01006_(BLKR201)|LNK01006_(BLKR201)]]
 - [[02_Assets/Asset__LNK01006_BLKR201|LNK01006_BLKR201]]
 - [[02_Assets/Asset__Lead_compound|Lead_compound]]
 - [[02_Assets/Asset__META-01_META-1i_MP-5342|META-01_META-1i_MP-5342]]

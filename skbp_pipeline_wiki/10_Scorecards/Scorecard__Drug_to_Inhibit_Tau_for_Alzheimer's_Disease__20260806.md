@@ -5,8 +5,8 @@ title: "Scorecard - Drug to Inhibit Tau for Alzheimer's Disease"
 tags:
   - "pipeline/scorecard"
   - "skbp/scoring"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: "[[01_Raw_Reports/Hyper_Corp_Inc_Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]"
 source_json: "json/pipeline-records.json"
 asset: "[[02_Assets/Asset__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Drug to Inhibit Tau for Alzheimer's Disease]]"
@@ -22,12 +22,12 @@ recommendation: "Verify asset identity"
 
 | Criterion | Score | Evidence Type | One-line Judgment | Why Not Higher |
 |---|---:|---|---|---|
-| Target Relevance | 0 | triage_only | TR 0점: Claimed AD indication is not asset-verified. | - |
+| Target Relevance | 0 | triage_only | TR 0점: 특정 자산 identity가 없어 AD 적응증을 자산에 귀속할 수 없습니다. | 검증 가능한 자산이 필요합니다. |
 | Competitive Landscape | - | - | - | - |
-| MoA Validity | 0 | triage_only | MOA 0점: 'Inhibit tau' is not a confirmed specific mechanism. | - |
+| MoA Validity | 0 | triage_only | MOA 0점: tau inhibition을 뒷받침하는 자산별 근거가 없습니다. | 입력 문구만으로 기전을 확정하지 않았습니다. |
 | Platform Attractiveness | - | - | - | - |
 | Expansion Potential | - | - | - | - |
-| Data Maturity | 0 | triage_only | Data 0점: No asset-specific result found. | - |
+| Data Maturity | 0 | triage_only | Data 0점: 자산별 결과가 없습니다. | 공개 결과가 확인되지 않았습니다. |
 | Marketability | - | - | - | - |
 
 | Total | Value |
@@ -42,9 +42,9 @@ recommendation: "Verify asset identity"
 
 - Score: 0/3
 - Evidence Type: triage_only
-- Reason: TR 0점: Claimed AD indication is not asset-verified.
-- Evidence type reason: TR 0점: Claimed AD indication is not asset-verified.
-- Why not higher: -
+- Reason: TR 0점: 특정 자산 identity가 없어 AD 적응증을 자산에 귀속할 수 없습니다.
+- Evidence type reason: Fast Triage v3.3 예비 평가.
+- Why not higher: 검증 가능한 자산이 필요합니다.
 - Uncertain points:
 - None
 
@@ -62,9 +62,9 @@ recommendation: "Verify asset identity"
 
 - Score: 0/3
 - Evidence Type: triage_only
-- Reason: MOA 0점: 'Inhibit tau' is not a confirmed specific mechanism.
-- Evidence type reason: MOA 0점: 'Inhibit tau' is not a confirmed specific mechanism.
-- Why not higher: -
+- Reason: MOA 0점: tau inhibition을 뒷받침하는 자산별 근거가 없습니다.
+- Evidence type reason: Fast Triage v3.3 예비 평가.
+- Why not higher: 입력 문구만으로 기전을 확정하지 않았습니다.
 - Uncertain points:
 - None
 
@@ -92,9 +92,9 @@ recommendation: "Verify asset identity"
 
 - Score: 0/3
 - Evidence Type: triage_only
-- Reason: Data 0점: No asset-specific result found.
-- Evidence type reason: Data 0점: No asset-specific result found.
-- Why not higher: -
+- Reason: Data 0점: 자산별 결과가 없습니다.
+- Evidence type reason: Fast Triage v3.3 예비 평가.
+- Why not higher: 공개 결과가 확인되지 않았습니다.
 - Uncertain points:
 - None
 
@@ -132,4 +132,4 @@ Commercial rationale status: `-`
 
 ## 6. Final Recommendation
 
-UNVERIFIED: no discrete Hyper Corp tau asset was matched.
+공개적으로 매칭되는 Hyper Corp tau 자산이 없어 UNVERIFIED입니다.

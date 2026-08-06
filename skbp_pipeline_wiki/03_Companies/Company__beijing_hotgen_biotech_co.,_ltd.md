@@ -1,20 +1,20 @@
 ---
 type: "company"
-canonical_id: "company::illimis_therapeutics_inc"
-title: "illimis_therapeutics_inc"
+canonical_id: "company::beijing_hotgen_biotech_co.,_ltd"
+title: "beijing_hotgen_biotech_co.,_ltd"
 aliases:
-  - "illimis_therapeutics_inc"
+  - "beijing_hotgen_biotech_co.,_ltd"
 tags:
   - "pipeline/company"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
 ---
 
-# illimis_therapeutics_inc
+# beijing_hotgen_biotech_co.,_ltd
 
 ## Profile
 
@@ -28,7 +28,7 @@ confidence: "medium"
 
 ## Pipeline Assets
 
-- [[02_Assets/Asset__Neurodegenerative_Diseases_Lilly|Neurodegenerative_Diseases_Lilly]]
+- [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology|Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]
 
 ## Platform / Technology
 

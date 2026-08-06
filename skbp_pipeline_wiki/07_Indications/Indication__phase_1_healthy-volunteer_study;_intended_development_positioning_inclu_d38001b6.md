@@ -6,8 +6,8 @@ aliases:
   - "phase_1_healthy-volunteer_study;_intended_development_positioning_inclu_d38001b6"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

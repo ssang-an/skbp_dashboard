@@ -5,12 +5,12 @@ title: "Scorecard - ILM01"
 tags:
   - "pipeline/scorecard"
   - "skbp/scoring"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
-source_report: "[[01_Raw_Reports/Illimis_Therapeutics_ILM01]]"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
+source_report: "[[01_Raw_Reports/Illimis_Therapeutics,_Inc._ILM01]]"
 source_json: "json/pipeline-records.json"
 asset: "[[02_Assets/Asset__ILM01|ILM01]]"
-company: "[[03_Companies/Company__Illimis_Therapeutics|Illimis Therapeutics]]"
+company: "[[03_Companies/Company__Illimis_Therapeutics,_Inc|Illimis Therapeutics, Inc.]]"
 total_score: 7
 max_score: 9
 recommendation: "Run Full Scout"
@@ -22,12 +22,12 @@ recommendation: "Run Full Scout"
 
 | Criterion | Score | Evidence Type | One-line Judgment | Why Not Higher |
 |---|---:|---|---|---|
-| Target Relevance | 3 | triage_only | TR 3점: AD indication, Aβ target and TAM neuroimmune mechanism are confirmed. | - |
+| Target Relevance | 3 | triage_only | TR 3점: AD 적응증과 Aβ/TAM 직접 질환·기전 연결이 확인됩니다. | 최고점입니다. |
 | Competitive Landscape | - | - | - | - |
-| MoA Validity | 3 | triage_only | MOA 3점: ILM01-specific phagocytosis, lower inflammation and cognitive improvement versus aducanumab are reported; detailed target-engagement data are absent. | - |
+| MoA Validity | 3 | triage_only | MOA 3점: GAIA-Aβ prototype가 phagocytosis/anti-inflammatory 설계와 비교 기능성 PoC를 보였습니다. | 최종 ILM01 후보의 target-engagement 수치는 제한적입니다. |
 | Platform Attractiveness | - | - | - | - |
 | Expansion Potential | - | - | - | - |
-| Data Maturity | 1 | triage_only | Data 1점: Qualitative functional evidence is public but not sufficiently quantitative. | - |
+| Data Maturity | 1 | triage_only | Data 1점: improved efficacy/safety 및 amyloid/neuroinflammation 감소가 정성적으로 공개됐습니다. | 정량 효과크기·PK·안전성 수치가 제한적입니다. |
 | Marketability | - | - | - | - |
 
 | Total | Value |
@@ -42,9 +42,9 @@ recommendation: "Run Full Scout"
 
 - Score: 3/3
 - Evidence Type: triage_only
-- Reason: TR 3점: AD indication, Aβ target and TAM neuroimmune mechanism are confirmed.
-- Evidence type reason: TR 3점: AD indication, Aβ target and TAM neuroimmune mechanism are confirmed.
-- Why not higher: -
+- Reason: TR 3점: AD 적응증과 Aβ/TAM 직접 질환·기전 연결이 확인됩니다.
+- Evidence type reason: Fast Triage v3.3 예비 평가.
+- Why not higher: 최고점입니다.
 - Uncertain points:
 - None
 
@@ -62,11 +62,11 @@ recommendation: "Run Full Scout"
 
 - Score: 3/3
 - Evidence Type: triage_only
-- Reason: MOA 3점: ILM01-specific phagocytosis, lower inflammation and cognitive improvement versus aducanumab are reported; detailed target-engagement data are absent.
-- Evidence type reason: MOA 3점: ILM01-specific phagocytosis, lower inflammation and cognitive improvement versus aducanumab are reported; detailed target-engagement data are absent.
-- Why not higher: -
+- Reason: MOA 3점: GAIA-Aβ prototype가 phagocytosis/anti-inflammatory 설계와 비교 기능성 PoC를 보였습니다.
+- Evidence type reason: Fast Triage v3.3 예비 평가.
+- Why not higher: 최종 ILM01 후보의 target-engagement 수치는 제한적입니다.
 - Uncertain points:
-- None
+- prototype-to-candidate continuity
 
 ### Platform Attractiveness
 
@@ -92,11 +92,11 @@ recommendation: "Run Full Scout"
 
 - Score: 1/3
 - Evidence Type: triage_only
-- Reason: Data 1점: Qualitative functional evidence is public but not sufficiently quantitative.
-- Evidence type reason: Data 1점: Qualitative functional evidence is public but not sufficiently quantitative.
-- Why not higher: -
+- Reason: Data 1점: improved efficacy/safety 및 amyloid/neuroinflammation 감소가 정성적으로 공개됐습니다.
+- Evidence type reason: Fast Triage v3.3 예비 평가.
+- Why not higher: 정량 효과크기·PK·안전성 수치가 제한적입니다.
 - Uncertain points:
-- None
+- 정량 원자료 제한
 
 ### Marketability
 
@@ -132,4 +132,4 @@ Commercial rationale status: `-`
 
 ## 6. Final Recommendation
 
-SELECT: differentiated active AD lead; quantitative validation is the key gap.
+차별화된 Aβ/TAM neuroimmune AD lead로 Full Scout 권고.

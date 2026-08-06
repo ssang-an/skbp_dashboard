@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company_press_release"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company_press_release |
 | Reliability | medium |
 | URL | https://www.catalent.com/catalent-news/catalent-and-s-biomedics-announce-partnership-to-develop-and-manufacture-ted-a9/ |
-| Accessed / generated date | 2026-08-06 |
+| Accessed / generated date | 2026-08-07 |
 
 ## Evidence Summary
 

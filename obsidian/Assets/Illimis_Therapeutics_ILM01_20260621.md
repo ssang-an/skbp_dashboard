@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-06T23:55:32"
+generated_at: "2026-08-07T00:06:12"
 record_id: "Illimis_Therapeutics_ILM01_20260621"
 company: "Illimis Therapeutics"
 country: "Republic of Korea"

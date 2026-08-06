@@ -6,8 +6,8 @@ aliases:
   - "als,_likely_tdp-43_stmn2-deficient_sporadic_als;_exact_biomarker-select_f3022790"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

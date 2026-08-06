@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: "[[01_Raw_Reports/Hyper_Corp_Inc_Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -18,7 +18,7 @@ target: "[[04_Targets/Target__Unknown|Unknown]]"
 moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
 indications:
-  - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
+  - "[[07_Indications/Indication__Unknown|Unknown]]"
 scorecard: "[[10_Scorecards/Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__20260806|Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__20260806]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
@@ -39,7 +39,7 @@ evidence_level: "E0"
 | Target | [[04_Targets/Target__Unknown|Unknown]] |
 | MoA | [[05_MoA/MoA__Unknown|Unknown]] |
 | Modality | [[06_Modalities_Platforms/Modality__Unknown|Unknown]] |
-| Indication | [[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]] |
+| Indication | [[07_Indications/Indication__Unknown|Unknown]] |
 | Stage | Unknown |
 | Theme / Cluster | [[11_Themes_Clusters/Theme__Unknown|Unknown]] / [[11_Themes_Clusters/Cluster__Unknown|Unknown]] |
 | Recommendation | Verify asset identity |
@@ -47,13 +47,13 @@ evidence_level: "E0"
 
 ## 2. One-line Summary
 
-UNVERIFIED: no discrete Hyper Corp tau asset was matched.
+공개적으로 매칭되는 Hyper Corp tau 자산이 없어 UNVERIFIED입니다.
 
 ## 3. Why This Asset Matters
 
-- Strategic relevance: TR 0점: Claimed AD indication is not asset-verified.
-- Scientific rationale: MOA 0점: 'Inhibit tau' is not a confirmed specific mechanism.
-- BD relevance: Which patent, code or source establishes this as a current Hyper Corp asset?
+- Strategic relevance: TR 0점: 특정 자산 identity가 없어 AD 적응증을 자산에 귀속할 수 없습니다.
+- Scientific rationale: MOA 0점: tau inhibition을 뒷받침하는 자산별 근거가 없습니다.
+- BD relevance: 정확한 Hyper Corp 법인명과 tau 자산 코드는 무엇인가?
 
 ## 4. Scorecard
 
@@ -70,18 +70,18 @@ UNVERIFIED: no discrete Hyper Corp tau asset was matched.
 ### Development Context
 - Company: [[03_Companies/Company__Hyper_Corp_Inc|Hyper Corp Inc]]
 - Modality: [[06_Modalities_Platforms/Modality__Unknown|Unknown]]
-- Indication: [[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]
+- Indication: [[07_Indications/Indication__Unknown|Unknown]]
 
 ### Evidence Sources
 - No source notes linked
 
 ## 6. Key Diligence Questions
 
-- Which patent, code or source establishes this as a current Hyper Corp asset?
+- 정확한 Hyper Corp 법인명과 tau 자산 코드는 무엇인가?
 
 ## 7. Evidence Gaps
 
-- May be a patent/database description without a public development code.
+- 회사와 자산 모두 공개 매칭 실패
 
 ## 8. Score History
 

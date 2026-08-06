@@ -7,13 +7,13 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
-source_report: "[[01_Raw_Reports/Beijing_Hotgen_Biotech_Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
+source_report: "[[01_Raw_Reports/Beijing_Hotgen_Biotech_Co.,_Ltd._Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]"
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
-company: "[[03_Companies/Company__Beijing_Hotgen_Biotech|Beijing Hotgen Biotech]]"
+company: "[[03_Companies/Company__Beijing_Hotgen_Biotech_Co.,_Ltd|Beijing Hotgen Biotech Co., Ltd.]]"
 target: "[[04_Targets/Target__Unknown|Unknown]]"
 moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
@@ -34,7 +34,7 @@ evidence_level: "E0"
 
 | Field | Value |
 |---|---|
-| Company | [[03_Companies/Company__Beijing_Hotgen_Biotech|Beijing Hotgen Biotech]] |
+| Company | [[03_Companies/Company__Beijing_Hotgen_Biotech_Co.,_Ltd|Beijing Hotgen Biotech Co., Ltd.]] |
 | Asset | Alzheimer's disease therapy, Beijing Youngen Biotechnology |
 | Target | [[04_Targets/Target__Unknown|Unknown]] |
 | MoA | [[05_MoA/MoA__Unknown|Unknown]] |
@@ -47,13 +47,13 @@ evidence_level: "E0"
 
 ## 2. One-line Summary
 
-UNVERIFIED: generic description cannot be mapped to one asset.
+서로 다른 두 AD 프로그램이 혼합된 입력으로 자산 신원 확인이 우선입니다.
 
 ## 3. Why This Asset Matters
 
-- Strategic relevance: TR 0점: No specific asset identity is verified.
-- Scientific rationale: MOA 0점: Mapping to APP-siRNA or AA001 would be an unsupported substitution.
-- BD relevance: Is this Youngen's APP-siRNA program, Hotgen's AA001, or another coded candidate?
+- Strategic relevance: TR 0점: 특정 자산의 적응증으로 귀속할 수 없습니다.
+- Scientific rationale: MOA 0점: 특정 자산의 표적·기전을 확정할 수 없습니다.
+- BD relevance: 이 행은 Youngen APP-siRNA와 AA001 중 어느 자산을 의미하는가?
 
 ## 4. Scorecard
 
@@ -68,22 +68,21 @@ UNVERIFIED: generic description cannot be mapped to one asset.
 - Cluster: [[11_Themes_Clusters/Cluster__Unknown|Unknown]]
 
 ### Development Context
-- Company: [[03_Companies/Company__Beijing_Hotgen_Biotech|Beijing Hotgen Biotech]]
+- Company: [[03_Companies/Company__Beijing_Hotgen_Biotech_Co.,_Ltd|Beijing Hotgen Biotech Co., Ltd.]]
 - Modality: [[06_Modalities_Platforms/Modality__Unknown|Unknown]]
 - Indication: [[07_Indications/Indication__Unknown|Unknown]]
 
 ### Evidence Sources
-- [[09_Evidence_Sources/Source__Youngen_overview|Youngen overview]]
-- [[09_Evidence_Sources/Source__Youngen_APP-siRNA_AD_patent|Youngen APP-siRNA AD patent]]
-- [[09_Evidence_Sources/Source__Hotgen_AA001_report|Hotgen AA001 report]]
+- [[09_Evidence_Sources/Source__Youngen_APP_siRNA_patent_announcement|Youngen APP siRNA patent announcement]]
+- [[09_Evidence_Sources/Source__Hotgen_announcement_on_AA001_IND_approval|Hotgen announcement on AA001 IND approval]]
 
 ## 6. Key Diligence Questions
 
-- Is this Youngen's APP-siRNA program, Hotgen's AA001, or another coded candidate?
+- 이 행은 Youngen APP-siRNA와 AA001 중 어느 자산을 의미하는가?
 
 ## 7. Evidence Gaps
 
-- Likely a database-generated program description.
+- Youngen APP-siRNA인지 AA001인지 불명확
 
 ## 8. Score History
 
@@ -93,4 +92,4 @@ UNVERIFIED: generic description cannot be mapped to one asset.
 
 ## 9. Raw Report
 
-Source report: [[01_Raw_Reports/Beijing_Hotgen_Biotech_Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology|Beijing_Hotgen_Biotech_Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]
+Source report: [[01_Raw_Reports/Beijing_Hotgen_Biotech_Co.,_Ltd._Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology|Beijing_Hotgen_Biotech_Co.,_Ltd._Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]

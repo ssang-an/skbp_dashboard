@@ -1,21 +1,21 @@
 ---
 type: "source"
-canonical_id: "source::https_www.youngenbiomed.com_pipeline.html"
-title: "Youngen pipeline"
+canonical_id: "source::https_adelpharm.com_en_pipeline"
+title: "ADEL official pipeline status"
 aliases:
-  - "Youngen pipeline"
+  - "ADEL official pipeline status"
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
 ---
 
-# Youngen pipeline
+# ADEL official pipeline status
 
 ## Source Metadata
 
@@ -23,8 +23,8 @@ confidence: "medium"
 |---|---|
 | Source type | other |
 | Reliability | medium |
-| URL | https://www.youngenbiomed.com/pipeline.html |
-| Accessed / generated date | 2026-08-06 |
+| URL | https://adelpharm.com/en/pipeline/ |
+| Accessed / generated date | 2026-08-07 |
 
 ## Evidence Summary
 
@@ -32,8 +32,8 @@ confidence: "medium"
 
 ## Used In
 
-- [[02_Assets/Asset__Alzheimer's_Disease|Asset__Alzheimer's_Disease]]
-- [[10_Scorecards/Scorecard__Alzheimer's_Disease__20260806|Scorecard__Alzheimer's_Disease__20260806]]
+- [[02_Assets/Asset__ADEL-Y04|Asset__ADEL-Y04]]
+- [[10_Scorecards/Scorecard__ADEL-Y04__20260806|Scorecard__ADEL-Y04__20260806]]
 
 ## Extracted Claims
 

@@ -1,6 +1,6 @@
 # Pipeline Index
 
-> Generated from `json/pipeline-records.json` at `2026-08-06T23:55:32`.
+> Generated from `json/pipeline-records.json` at `2026-08-07T00:06:12`.
 
 ## Assets
 
@@ -60,6 +60,13 @@
 | [[Illimis Therapeutics_ILM01]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 7 / 9 |
 | [[Illimis Therapeutics Inc_Neurodegenerative Diseases Lilly]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
 | [[Lynk Pharmaceuticals_LNK01006]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Phase 1 | 6 / 9 |
+| [[ADEL, Inc._ADEL-Y04]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 7 / 9 |
+| [[Beijing Hotgen Biotech Co., Ltd._Alzheimer's disease therapy, Beijing Youngen Biotechnology]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Hyperway Pharmaceutical Co., Ltd._HBW-015]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 4 / 9 |
+| [[Illimis Therapeutics, Inc._ILM02]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Hit Discovery | 2 / 9 |
+| [[Illimis Therapeutics, Inc._ILM21]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Unknown | 4 / 9 |
+| [[Illimis Therapeutics, Inc._ILM01]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 7 / 9 |
+| [[Lynk Pharmaceuticals Co., Ltd._LNK01006 (BLKR201)]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Phase 1 | 6 / 9 |
 
 ## Navigation
 

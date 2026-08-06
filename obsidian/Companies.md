@@ -1,8 +1,9 @@
 # Companies
 
-> Generated at `2026-08-06T23:55:32`.
+> Generated at `2026-08-07T00:06:12`.
 
 - [[ADEL]] (1)
+- [[ADEL, Inc|ADEL, Inc.]] (1)
 - [[AULBIO Co., Ltd|AULBIO Co., Ltd.]] (1)
 - [[Actio Biosciences]] (2)
 - [[Astrion Co., Ltd|Astrion Co., Ltd.]] (1)
@@ -11,7 +12,8 @@
 - [[AtoGen Co., Ltd|AtoGen Co., Ltd.]] (1)
 - [[Autophagy Science Co., Ltd|Autophagy Science Co., Ltd.]] (1)
 - [[Beijing Hotgen Biotech]] (1)
-- [[Beijing Youngen Biotechnology Co Ltd]] (1)
+- [[Beijing Hotgen Biotech Co., Ltd|Beijing Hotgen Biotech Co., Ltd.]] (1)
+- [[Beijing Youngen Biotechnology Co., Ltd|Beijing Youngen Biotechnology Co., Ltd.]] (1)
 - [[Biohaven]] (1)
 - [[Bright Minds Biosciences]] (1)
 - [[CorestemChemon Inc|CorestemChemon Inc.]] (1)
@@ -29,12 +31,13 @@
 - [[Humanwell Healthcare Group]] (1)
 - [[Hyper Corp Inc]] (1)
 - [[Hyperway Pharmaceutical]] (1)
+- [[Hyperway Pharmaceutical Co., Ltd|Hyperway Pharmaceutical Co., Ltd.]] (1)
 - [[Illimis Therapeutics]] (4)
-- [[Illimis Therapeutics Inc]] (1)
+- [[Illimis Therapeutics, Inc|Illimis Therapeutics, Inc.]] (4)
 - [[Jazz Pharmaceuticals - Saniona|Jazz Pharmaceuticals / Saniona]] (1)
 - [[Lundbeck - Longboard Pharmaceuticals|Lundbeck / Longboard Pharmaceuticals]] (1)
 - [[Lynk Pharmaceuticals]] (1)
-- [[Lynk Pharmaceuticals Co., Ltd|Lynk Pharmaceuticals Co., Ltd.]] (1)
+- [[Lynk Pharmaceuticals Co., Ltd|Lynk Pharmaceuticals Co., Ltd.]] (2)
 - [[META Pharmaceuticals Inc|META Pharmaceuticals Inc.]] (1)
 - [[NeuShen Therapeutics]] (1)
 - [[QurAlis]] (1)

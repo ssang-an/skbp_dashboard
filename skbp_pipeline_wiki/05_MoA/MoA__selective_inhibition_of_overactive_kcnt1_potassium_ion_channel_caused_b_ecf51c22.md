@@ -6,8 +6,8 @@ aliases:
   - "selective_inhibition_of_overactive_kcnt1_potassium_ion_channel_caused_b_ecf51c22"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

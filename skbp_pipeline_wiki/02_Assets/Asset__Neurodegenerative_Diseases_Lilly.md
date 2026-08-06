@@ -7,13 +7,13 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: "[[01_Raw_Reports/Illimis_Therapeutics_Inc_Neurodegenerative_Diseases_Lilly]]"
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
-company: "[[03_Companies/Company__Illimis_Therapeutics_Inc|Illimis Therapeutics Inc]]"
+company: "[[03_Companies/Company__Illimis_Therapeutics,_Inc|Illimis Therapeutics, Inc.]]"
 target: "[[04_Targets/Target__Unknown|Unknown]]"
 moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
@@ -34,7 +34,7 @@ evidence_level: "E0"
 
 | Field | Value |
 |---|---|
-| Company | [[03_Companies/Company__Illimis_Therapeutics_Inc|Illimis Therapeutics Inc]] |
+| Company | [[03_Companies/Company__Illimis_Therapeutics,_Inc|Illimis Therapeutics, Inc.]] |
 | Asset | Neurodegenerative Diseases Lilly |
 | Target | [[04_Targets/Target__Unknown|Unknown]] |
 | MoA | [[05_MoA/MoA__Unknown|Unknown]] |
@@ -47,13 +47,13 @@ evidence_level: "E0"
 
 ## 2. One-line Summary
 
-UNVERIFIED: collaboration label, not a verified candidate.
+협력 descriptor로서 개별 자산 identity가 없어 UNVERIFIED입니다.
 
 ## 3. Why This Asset Matters
 
-- Strategic relevance: TR 0점: No asset-specific indication.
-- Scientific rationale: MOA 0점: No asset-specific mechanism.
-- BD relevance: What candidate code emerged, and who owns development rights?
+- Strategic relevance: TR 0점: 협력 분야 설명일 뿐 특정 자산 적응증이 아닙니다.
+- Scientific rationale: MOA 0점: 협력 대상 target이 비공개입니다.
+- BD relevance: Lilly 협력에서 평가 가능한 개별 자산 코드와 target은 무엇인가?
 
 ## 4. Scorecard
 
@@ -68,20 +68,20 @@ UNVERIFIED: collaboration label, not a verified candidate.
 - Cluster: [[11_Themes_Clusters/Cluster__Unknown|Unknown]]
 
 ### Development Context
-- Company: [[03_Companies/Company__Illimis_Therapeutics_Inc|Illimis Therapeutics Inc]]
+- Company: [[03_Companies/Company__Illimis_Therapeutics,_Inc|Illimis Therapeutics, Inc.]]
 - Modality: [[06_Modalities_Platforms/Modality__Unknown|Unknown]]
 - Indication: [[07_Indications/Indication__Unknown|Unknown]]
 
 ### Evidence Sources
-- [[09_Evidence_Sources/Source__Illimis_at_Lilly_Gateway_Labs|Illimis at Lilly Gateway Labs]]
+- [[09_Evidence_Sources/Source__Illimis_financing_and_Lilly_research_collaboration_announcement|Illimis financing and Lilly research collaboration announcement]]
 
 ## 6. Key Diligence Questions
 
-- What candidate code emerged, and who owns development rights?
+- Lilly 협력에서 평가 가능한 개별 자산 코드와 target은 무엇인가?
 
 ## 7. Evidence Gaps
 
-- No public candidate code disclosed.
+- Lilly 협력의 target/asset 비공개
 
 ## 8. Score History
 

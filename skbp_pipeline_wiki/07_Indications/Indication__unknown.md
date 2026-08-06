@@ -6,8 +6,8 @@ aliases:
   - "unknown"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,6 +24,7 @@ confidence: "medium"
 
 - [[02_Assets/Asset__Alzheimer's_Disease|Alzheimer's_Disease]]
 - [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology|Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]
+- [[02_Assets/Asset__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]
 - [[02_Assets/Asset__ILM21|ILM21]]
 - [[02_Assets/Asset__Neurodegenerative_Diseases_Lilly|Neurodegenerative_Diseases_Lilly]]
 

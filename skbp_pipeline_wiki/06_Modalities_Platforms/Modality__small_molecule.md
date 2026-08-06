@@ -6,8 +6,8 @@ aliases:
   - "small_molecule"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -32,6 +32,7 @@ confidence: "medium"
 - [[02_Assets/Asset__AUL003|AUL003]]
 - [[02_Assets/Asset__HBW-015|HBW-015]]
 - [[02_Assets/Asset__LNK01006|LNK01006]]
+- [[02_Assets/Asset__LNK01006_(BLKR201)|LNK01006_(BLKR201)]]
 - [[02_Assets/Asset__VTA-27|VTA-27]]
 
 ## Related Targets / MoA

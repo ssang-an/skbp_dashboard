@@ -7,15 +7,15 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
-source_report: "[[01_Raw_Reports/Illimis_Therapeutics_ILM02]]"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
+source_report: "[[01_Raw_Reports/Illimis_Therapeutics,_Inc._ILM02]]"
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
-company: "[[03_Companies/Company__Illimis_Therapeutics|Illimis Therapeutics]]"
-target: "[[04_Targets/Target__Tau_aggregates_and_TAM_receptors|Tau aggregates and TAM receptors]]"
-moa: "[[05_MoA/MoA__GAIA-tau_fusion_protein_for_TAM-mediated_phagocytosis_with_reduced_inflammation|GAIA-tau fusion protein for TAM-mediated phagocytosis with reduced inflammation]]"
+company: "[[03_Companies/Company__Illimis_Therapeutics,_Inc|Illimis Therapeutics, Inc.]]"
+target: "[[04_Targets/Target__Tau|Tau]]"
+moa: "[[05_MoA/MoA__GAIA_fusion_protein_intended_to_couple_tau_binding_with_TAM-receptor-me_7dc283ce|GAIA fusion protein intended to couple tau binding with TAM-receptor-mediated anti-inflammatory phagocytosis]]"
 modality: "[[06_Modalities_Platforms/Modality__Protein_biologic|Protein biologic]]"
 indications:
   - "[[07_Indications/Indication__Tauopathies|Tauopathies]]"
@@ -34,10 +34,10 @@ evidence_level: "E0"
 
 | Field | Value |
 |---|---|
-| Company | [[03_Companies/Company__Illimis_Therapeutics|Illimis Therapeutics]] |
+| Company | [[03_Companies/Company__Illimis_Therapeutics,_Inc|Illimis Therapeutics, Inc.]] |
 | Asset | ILM02 |
-| Target | [[04_Targets/Target__Tau_aggregates_and_TAM_receptors|Tau aggregates and TAM receptors]] |
-| MoA | [[05_MoA/MoA__GAIA-tau_fusion_protein_for_TAM-mediated_phagocytosis_with_reduced_inflammation|GAIA-tau fusion protein for TAM-mediated phagocytosis with reduced inflammation]] |
+| Target | [[04_Targets/Target__Tau|Tau]] |
+| MoA | [[05_MoA/MoA__GAIA_fusion_protein_intended_to_couple_tau_binding_with_TAM-receptor-me_7dc283ce|GAIA fusion protein intended to couple tau binding with TAM-receptor-mediated anti-inflammatory phagocytosis]] |
 | Modality | [[06_Modalities_Platforms/Modality__Protein_biologic|Protein biologic]] |
 | Indication | [[07_Indications/Indication__Tauopathies|Tauopathies]] |
 | Stage | Hit Discovery |
@@ -47,13 +47,13 @@ evidence_level: "E0"
 
 ## 2. One-line Summary
 
-REJECT: active but too early and insufficiently indication-specific.
+활성 tau 프로그램이나 broad indication·초기 단계·데이터 부재로 REJECT.
 
 ## 3. Why This Asset Matters
 
-- Strategic relevance: TR 1점: Tauopathies are neurodegenerative, but no specific SKBP interest indication is confirmed.
-- Scientific rationale: MOA 1점: Mechanism is described, but public sources only say PoC testing is underway.
-- BD relevance: Which tauopathy leads, and has ILM02 shown quantitative tau clearance without inflammation?
+- Strategic relevance: TR 1점: tauopathies는 신경퇴행성 범위이나 6대 관심 적응증 중 특정 질환으로 확정되지 않았습니다.
+- Scientific rationale: MOA 1점: tau binder와 TAM-mediated anti-inflammatory phagocytosis의 GAIA 설계가 설명됩니다.
+- BD relevance: ILM02의 구체 lead indication과 자산별 tau-clearance 결과는 무엇인가?
 
 ## 4. Scorecard
 
@@ -62,27 +62,29 @@ REJECT: active but too early and insufficiently indication-specific.
 ## 5. Knowledge Links
 
 ### Core Biology
-- Target: [[04_Targets/Target__Tau_aggregates_and_TAM_receptors|Tau aggregates and TAM receptors]]
-- MoA: [[05_MoA/MoA__GAIA-tau_fusion_protein_for_TAM-mediated_phagocytosis_with_reduced_inflammation|GAIA-tau fusion protein for TAM-mediated phagocytosis with reduced inflammation]]
+- Target: [[04_Targets/Target__Tau|Tau]]
+- MoA: [[05_MoA/MoA__GAIA_fusion_protein_intended_to_couple_tau_binding_with_TAM-receptor-me_7dc283ce|GAIA fusion protein intended to couple tau binding with TAM-receptor-mediated anti-inflammatory phagocytosis]]
 - Theme: [[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]
 - Cluster: [[11_Themes_Clusters/Cluster__Unknown|Unknown]]
 
 ### Development Context
-- Company: [[03_Companies/Company__Illimis_Therapeutics|Illimis Therapeutics]]
+- Company: [[03_Companies/Company__Illimis_Therapeutics,_Inc|Illimis Therapeutics, Inc.]]
 - Modality: [[06_Modalities_Platforms/Modality__Protein_biologic|Protein biologic]]
 - Indication: [[07_Indications/Indication__Tauopathies|Tauopathies]]
 
 ### Evidence Sources
-- [[09_Evidence_Sources/Source__Illimis_GAIA_pipeline|Illimis GAIA pipeline]]
-- [[09_Evidence_Sources/Source__ILM-02_record|ILM-02 record]]
+- [[09_Evidence_Sources/Source__Illimis_official_pipeline|Illimis official pipeline]]
+- [[09_Evidence_Sources/Source__Illimis_GAIA_platform_description|Illimis GAIA platform description]]
 
 ## 6. Key Diligence Questions
 
-- Which tauopathy leads, and has ILM02 shown quantitative tau clearance without inflammation?
+- ILM02의 구체 lead indication과 자산별 tau-clearance 결과는 무엇인가?
 
 ## 7. Evidence Gaps
 
-- PSP/AD concepts are not confirmed as the lead indication.
+- 구체 tauopathy
+- stage marker
+- 자산별 기능성 결과
 
 ## 8. Score History
 
@@ -92,4 +94,4 @@ REJECT: active but too early and insufficiently indication-specific.
 
 ## 9. Raw Report
 
-Source report: [[01_Raw_Reports/Illimis_Therapeutics_ILM02|Illimis_Therapeutics_ILM02]]
+Source report: [[01_Raw_Reports/Illimis_Therapeutics,_Inc._ILM02|Illimis_Therapeutics,_Inc._ILM02]]

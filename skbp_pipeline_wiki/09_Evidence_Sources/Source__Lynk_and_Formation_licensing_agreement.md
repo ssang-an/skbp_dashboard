@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/news"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | news |
 | Reliability | high |
 | URL | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-and-formation-bio-enter-exclusive-development-and-licensing-agreement-for-lnk01006-302637950.html |
-| Accessed / generated date | 2026-08-06 |
+| Accessed / generated date | 2026-08-07 |
 
 ## Evidence Summary
 

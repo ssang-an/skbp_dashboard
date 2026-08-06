@@ -5,12 +5,12 @@ title: "Scorecard - Neurodegenerative Diseases Lilly"
 tags:
   - "pipeline/scorecard"
   - "skbp/scoring"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: "[[01_Raw_Reports/Illimis_Therapeutics_Inc_Neurodegenerative_Diseases_Lilly]]"
 source_json: "json/pipeline-records.json"
 asset: "[[02_Assets/Asset__Neurodegenerative_Diseases_Lilly|Neurodegenerative Diseases Lilly]]"
-company: "[[03_Companies/Company__Illimis_Therapeutics_Inc|Illimis Therapeutics Inc]]"
+company: "[[03_Companies/Company__Illimis_Therapeutics,_Inc|Illimis Therapeutics, Inc.]]"
 total_score: 0
 max_score: 9
 recommendation: "Verify asset identity"
@@ -22,12 +22,12 @@ recommendation: "Verify asset identity"
 
 | Criterion | Score | Evidence Type | One-line Judgment | Why Not Higher |
 |---|---:|---|---|---|
-| Target Relevance | 0 | triage_only | TR 0점: No asset-specific indication. | - |
+| Target Relevance | 0 | triage_only | TR 0점: 협력 분야 설명일 뿐 특정 자산 적응증이 아닙니다. | 개별 자산 identity가 필요합니다. |
 | Competitive Landscape | - | - | - | - |
-| MoA Validity | 0 | triage_only | MOA 0점: No asset-specific mechanism. | - |
+| MoA Validity | 0 | triage_only | MOA 0점: 협력 대상 target이 비공개입니다. | GAIA platform 일반 기전을 특정 협력 자산에 귀속할 수 없습니다. |
 | Platform Attractiveness | - | - | - | - |
 | Expansion Potential | - | - | - | - |
-| Data Maturity | 0 | triage_only | Data 0점: No uniquely named asset result. | - |
+| Data Maturity | 0 | triage_only | Data 0점: 협력 자산별 결과가 없습니다. | 연구협력 진행 사실은 자산 데이터가 아닙니다. |
 | Marketability | - | - | - | - |
 
 | Total | Value |
@@ -42,9 +42,9 @@ recommendation: "Verify asset identity"
 
 - Score: 0/3
 - Evidence Type: triage_only
-- Reason: TR 0점: No asset-specific indication.
-- Evidence type reason: TR 0점: No asset-specific indication.
-- Why not higher: -
+- Reason: TR 0점: 협력 분야 설명일 뿐 특정 자산 적응증이 아닙니다.
+- Evidence type reason: Fast Triage v3.3 예비 평가.
+- Why not higher: 개별 자산 identity가 필요합니다.
 - Uncertain points:
 - None
 
@@ -62,9 +62,9 @@ recommendation: "Verify asset identity"
 
 - Score: 0/3
 - Evidence Type: triage_only
-- Reason: MOA 0점: No asset-specific mechanism.
-- Evidence type reason: MOA 0점: No asset-specific mechanism.
-- Why not higher: -
+- Reason: MOA 0점: 협력 대상 target이 비공개입니다.
+- Evidence type reason: Fast Triage v3.3 예비 평가.
+- Why not higher: GAIA platform 일반 기전을 특정 협력 자산에 귀속할 수 없습니다.
 - Uncertain points:
 - None
 
@@ -92,9 +92,9 @@ recommendation: "Verify asset identity"
 
 - Score: 0/3
 - Evidence Type: triage_only
-- Reason: Data 0점: No uniquely named asset result.
-- Evidence type reason: Data 0점: No uniquely named asset result.
-- Why not higher: -
+- Reason: Data 0점: 협력 자산별 결과가 없습니다.
+- Evidence type reason: Fast Triage v3.3 예비 평가.
+- Why not higher: 연구협력 진행 사실은 자산 데이터가 아닙니다.
 - Uncertain points:
 - None
 
@@ -132,4 +132,4 @@ Commercial rationale status: `-`
 
 ## 6. Final Recommendation
 
-UNVERIFIED: collaboration label, not a verified candidate.
+협력 descriptor로서 개별 자산 identity가 없어 UNVERIFIED입니다.

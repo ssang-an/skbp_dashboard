@@ -15073,10 +15073,168 @@
       "rubric_version": "3.3",
       "generated_at": "2026-08-06",
       "output_filename_base": "Beijing Youngen Biotechnology Co Ltd_Alzheimer's Disease",
+      "report_reupload_history": [
+        {
+          "id": "f0a98a94ab9540af806b320d03de97d8",
+          "replaced_at": "2026-08-06T15:06:12.436562+00:00",
+          "actor_ip": "127.0.0.1",
+          "previous_record_id": "Beijing Youngen Biotechnology Co Ltd_Alzheimer's Disease",
+          "previous_rubric_version": "3.3",
+          "previous_source_report": {
+            "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.\n\n중요: 10개 후보 중 ADEL-Y04, ILM01, LNK01006은 SELECT, HBW-015와 ILM02는 REJECT, 나머지 5개는 특정 asset identity 미확인으로 UNVERIFIED입니다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4 antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Active AD program; direct mouse functional evidence, limited quantitative disclosure. | S1-S3 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Cannot map to Youngen APP-siRNA versus Hotgen AA001. | S1-S3 |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Indication used as asset name. | S1-S2 |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Alzheimer's disease | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | No discrete Hyper Corp tau asset matched. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed pathway inhibitor | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | Strong data; generic pain fit, unnamed target and active status unconfirmed. | S1-S3 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Unknown (tauopathies) | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | Active but broad, early and without disclosed result. | S1-S2 |\n| 7 | ILM21 | Illimis Therapeutics | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | No public ILM21 asset. | S1 |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Differentiated active AD lead; qualitative functional evidence. | S1-S3 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Collaboration descriptor, not an asset. | S1 |\n| 10 | LYNK01006 → LNK01006 | Lynk Pharmaceuticals | TYK2 allosteric inhibitor | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | Active Phase 1 BLKR201 with CNS TYK2 rationale. | S1-S3 |\n\n## Notes\n- 입력 순서를 유지했으며, LYNK01006은 검증된 LNK01006/BLKR201로 철자 정규화했습니다.\n- Youngen/Hotgen 및 Hyper tau의 설명형 행은 다른 공개 자산으로 임의 대체하지 않았습니다.\n- 의심해볼 포인트: ADEL-Y04와 ILM01의 MOA 3은 공개된 직접 기능 결과에 기반하지만 정량 원자료가 제한적이므로 Full Scout에서 후보 동일성·통계·노출-반응을 우선 검증해야 합니다.\n- 드릴다운 질문: HBW-015의 타깃·활성·신경병증성 통증 적응증이 공식 확인되면 triage가 바뀌는가? LNK01006의 환자 적응증이 MS로 확정되지 않으면 TR 3을 유지할 수 있는가?\n- 업로드 지침 근거: :contentReference[oaicite:0]{index=0}",
+            "parser_status": "fast_triage"
+          },
+          "previous_record_snapshot": {
+            "meta": {
+              "review_type": "fast_triage",
+              "schema_version": "3.2",
+              "instruction_version": "3.3",
+              "rubric_version": "3.3",
+              "generated_at": "2026-08-06",
+              "output_filename_base": "Beijing Youngen Biotechnology Co Ltd_Alzheimer's Disease",
+              "storage_profile": "dashboard_hybrid_v1"
+            },
+            "source_report": {
+              "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.\n\n중요: 10개 후보 중 ADEL-Y04, ILM01, LNK01006은 SELECT, HBW-015와 ILM02는 REJECT, 나머지 5개는 특정 asset identity 미확인으로 UNVERIFIED입니다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4 antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Active AD program; direct mouse functional evidence, limited quantitative disclosure. | S1-S3 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Cannot map to Youngen APP-siRNA versus Hotgen AA001. | S1-S3 |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Indication used as asset name. | S1-S2 |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Alzheimer's disease | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | No discrete Hyper Corp tau asset matched. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed pathway inhibitor | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | Strong data; generic pain fit, unnamed target and active status unconfirmed. | S1-S3 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Unknown (tauopathies) | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | Active but broad, early and without disclosed result. | S1-S2 |\n| 7 | ILM21 | Illimis Therapeutics | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | No public ILM21 asset. | S1 |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Differentiated active AD lead; qualitative functional evidence. | S1-S3 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Collaboration descriptor, not an asset. | S1 |\n| 10 | LYNK01006 → LNK01006 | Lynk Pharmaceuticals | TYK2 allosteric inhibitor | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | Active Phase 1 BLKR201 with CNS TYK2 rationale. | S1-S3 |\n\n## Notes\n- 입력 순서를 유지했으며, LYNK01006은 검증된 LNK01006/BLKR201로 철자 정규화했습니다.\n- Youngen/Hotgen 및 Hyper tau의 설명형 행은 다른 공개 자산으로 임의 대체하지 않았습니다.\n- 의심해볼 포인트: ADEL-Y04와 ILM01의 MOA 3은 공개된 직접 기능 결과에 기반하지만 정량 원자료가 제한적이므로 Full Scout에서 후보 동일성·통계·노출-반응을 우선 검증해야 합니다.\n- 드릴다운 질문: HBW-015의 타깃·활성·신경병증성 통증 적응증이 공식 확인되면 triage가 바뀌는가? LNK01006의 환자 적응증이 MS로 확정되지 않으면 TR 3을 유지할 수 있는가?\n- 업로드 지침 근거: :contentReference[oaicite:0]{index=0}",
+              "parser_status": "fast_triage"
+            },
+            "input": {
+              "company_input": "Beijing Youngen Biotechnology Co Ltd",
+              "asset_input": "Alzheimer's Disease"
+            },
+            "json_summary": {
+              "theme": "Unknown",
+              "cluster": "Unknown",
+              "target_description": "TR 0점: The indication is not tied to a verified asset."
+            },
+            "structured_table": {
+              "company": "Beijing Youngen Biotechnology Co Ltd",
+              "asset_name": "Alzheimer's Disease",
+              "target": "Unknown",
+              "moa": "Unknown",
+              "modality_platform": "Unknown",
+              "main_indication": "Unknown",
+              "indication": "Unknown",
+              "development_stage": "Unknown",
+              "company_country": "China",
+              "sources": [
+                {
+                  "source_title": "Youngen pipeline",
+                  "source_url": "https://www.youngenbiomed.com/pipeline.html"
+                }
+              ]
+            },
+            "hard_filter": {
+              "status": "UNVERIFIED",
+              "reason": "The asset field is only an indication.",
+              "flags": [
+                "identity_not_verified",
+                "indication_used_as_asset_name"
+              ],
+              "hard_blocker": false,
+              "decision_uncertainty": false
+            },
+            "scoring": {
+              "criteria": {
+                "target_relevance": {
+                  "score": 0,
+                  "evidence_type": "triage_only",
+                  "evidence_type_reason": "TR 0점: The indication is not tied to a verified asset.",
+                  "evidence_basis": "no_supporting_basis",
+                  "main_line_summary": "TR 0점: The indication is not tied to a verified asset.",
+                  "why_not_higher": "",
+                  "investigation_note": "",
+                  "uncertain_points": [],
+                  "source_ids": []
+                },
+                "moa_validity": {
+                  "score": 0,
+                  "evidence_type": "triage_only",
+                  "evidence_type_reason": "MOA 0점: No asset-specific target or MoA.",
+                  "evidence_basis": "no_supporting_basis",
+                  "main_line_summary": "MOA 0점: No asset-specific target or MoA.",
+                  "why_not_higher": "",
+                  "investigation_note": "",
+                  "uncertain_points": [],
+                  "source_ids": []
+                },
+                "data_maturity": {
+                  "score": 0,
+                  "evidence_type": "triage_only",
+                  "evidence_type_reason": "Data 0점: No uniquely attributable result.",
+                  "evidence_basis": "no_supporting_basis",
+                  "main_line_summary": "Data 0점: No uniquely attributable result.",
+                  "why_not_higher": "",
+                  "investigation_note": "",
+                  "uncertain_points": [],
+                  "source_ids": []
+                }
+              },
+              "total_score": 0,
+              "max_score": 9
+            },
+            "validation": {
+              "uncertain_points": [
+                "A non-public code may exist."
+              ],
+              "cross_checked_facts": [
+                "Youngen discloses CNS RNAi work and an APP-siRNA AD patent."
+              ],
+              "source_registry": [
+                {
+                  "source_id": "S1",
+                  "source_title": "Youngen pipeline",
+                  "source_url": "https://www.youngenbiomed.com/pipeline.html",
+                  "source_type": "official_company_pipeline",
+                  "evidence_summary": "Broad CNS pipeline, no asset with this name.",
+                  "verified": true
+                },
+                {
+                  "source_id": "S2",
+                  "source_title": "Youngen APP-siRNA AD patent",
+                  "source_url": "https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html",
+                  "source_type": "official_company_news",
+                  "evidence_summary": "Relevant research, no candidate code/stage.",
+                  "verified": true
+                }
+              ]
+            },
+            "final_insight": {
+              "one_line_summary": "UNVERIFIED: indication label, not a specific asset.",
+              "recommendation": "Verify asset identity",
+              "most_important_diligence_question": "What exact Youngen candidate code is behind this row?"
+            },
+            "triage": {
+              "status": "UNVERIFIED",
+              "identity_verified": false,
+              "active_asset": null,
+              "verified_public_source_count": 0,
+              "why": "Youngen has relevant research, but no unique candidate is named.",
+              "missing_evidence_needed_for_full_scout": [
+                "Asset code",
+                "Target, modality and current stage"
+              ]
+            }
+          }
+        }
+      ],
+      "edit_history": [
+        {
+          "changed_at": "2026-08-06T15:06:12.436590+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "paste_json_upsert",
+          "field": "source_report.raw_markdown",
+          "previous_value": "기존 GPT 원문 리포트",
+          "new_value": "GPT 원문 재업로드"
+        }
+      ],
+      "last_edited_at": "2026-08-06T15:06:12.436590+00:00",
+      "last_edited_by": "127.0.0.1",
       "storage_profile": "dashboard_hybrid_v1"
     },
     "source_report": {
-      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.\n\n중요: 10개 후보 중 ADEL-Y04, ILM01, LNK01006은 SELECT, HBW-015와 ILM02는 REJECT, 나머지 5개는 특정 asset identity 미확인으로 UNVERIFIED입니다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4 antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Active AD program; direct mouse functional evidence, limited quantitative disclosure. | S1-S3 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Cannot map to Youngen APP-siRNA versus Hotgen AA001. | S1-S3 |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Indication used as asset name. | S1-S2 |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Alzheimer's disease | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | No discrete Hyper Corp tau asset matched. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed pathway inhibitor | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | Strong data; generic pain fit, unnamed target and active status unconfirmed. | S1-S3 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Unknown (tauopathies) | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | Active but broad, early and without disclosed result. | S1-S2 |\n| 7 | ILM21 | Illimis Therapeutics | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | No public ILM21 asset. | S1 |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Differentiated active AD lead; qualitative functional evidence. | S1-S3 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Collaboration descriptor, not an asset. | S1 |\n| 10 | LYNK01006 → LNK01006 | Lynk Pharmaceuticals | TYK2 allosteric inhibitor | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | Active Phase 1 BLKR201 with CNS TYK2 rationale. | S1-S3 |\n\n## Notes\n- 입력 순서를 유지했으며, LYNK01006은 검증된 LNK01006/BLKR201로 철자 정규화했습니다.\n- Youngen/Hotgen 및 Hyper tau의 설명형 행은 다른 공개 자산으로 임의 대체하지 않았습니다.\n- 의심해볼 포인트: ADEL-Y04와 ILM01의 MOA 3은 공개된 직접 기능 결과에 기반하지만 정량 원자료가 제한적이므로 Full Scout에서 후보 동일성·통계·노출-반응을 우선 검증해야 합니다.\n- 드릴다운 질문: HBW-015의 타깃·활성·신경병증성 통증 적응증이 공식 확인되면 triage가 바뀌는가? LNK01006의 환자 적응증이 MS로 확정되지 않으면 TR 3을 유지할 수 있는가?\n- 업로드 지침 근거: :contentReference[oaicite:0]{index=0}",
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 10개 중 ADEL-Y04, ILM01, LNK01006/BLKR201은 SELECT입니다. ILM21은 현재 Illimis 공식 파이프라인에서 신원이 확인되어 제공된 임시 UNVERIFIED 판정을 REJECT로 교정했으며, 나머지는 자산 identity 불명확 또는 SKBP fit·MoA·Data·활성 상태 부족으로 REJECT/UNVERIFIED 처리했습니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4-selective antibody | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD 전임상 자산이며 ApoE4 모델에서 기억·시냅스·tau 병리의 직접 기능성 효과가 확인됩니다. 정량 PK/PD 공개는 제한적입니다. | https://adelpharm.com/en/pipeline/<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.088537 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Youngen APP-siRNA와 Hotgen 투자계열 AA001이 혼합된 입력으로 어느 자산인지 특정할 수 없습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html<br>https://www.hotgen.com.cn/detail/683.html |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | 질환명이 자산명으로 입력됐으며 Youngen의 독립 자산 코드와 매칭되지 않습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | 신뢰 가능한 공개자료에서 Hyper Corp의 discrete tau 자산을 확인하지 못했습니다. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed nociceptive ion-channel inhibitor | Small molecule | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | HBW-015-15에서 PK·급성/CCI 효능·selectivity·독성이 공개됐으나 generic Pain, 미공개 표적 및 현재 활동 미확인으로 REJECT입니다. | https://www.tianfulifesciencepark.com/News/Detail?id=2657 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Protein biologic | Unknown | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | 활성 tauopathy 프로그램이나 적응증이 broad하고 ILM02 자산별 기능성 결과가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 7 | ILM21 | Illimis Therapeutics | Myelin debris/TAM GAIA fusion | Protein biologic | Multiple sclerosis / neuroinflammatory disease | Unknown | Republic of Korea | 3 | 1 | 0 | REJECT | 공식 파이프라인에서 MS·myelin debris 자산으로 확인되지만 회사 rationale 외 자산별 기능성·정량 데이터가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Protein biologic | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD lead이며 Aβ/TAM 기반 phagocytosis와 anti-inflammatory signaling의 prototype functional PoC가 확인됩니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Illimis-Lilly 연구협력 descriptor이며 개별 asset name이 아닙니다. | https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1 |\n| 10 | LYNK01006 → LNK01006 (BLKR201) | Lynk Pharmaceuticals | TYK2 JH2 allosteric inhibitor | Small molecule | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | CNS-penetrant TYK2 후보로 MS 모델 효능과 2026년 6월 Phase 1 첫 투여가 확인됩니다. 임상 결과는 아직 없습니다. | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html<br>https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html<br>https://clinicaltrials.gov/study/NCT07501039 |\n\n## Notes\n- #2와 #3은 Youngen의 무코드 APP-siRNA 프로그램과 관련될 수 있으나, 입력 자산명만으로 해당 프로그램을 자동 귀속하지 않았습니다.\n- #5의 공개 데이터는 HBW-015 프로그램의 대표물질로 기재된 HBW-015-15에서 확인됐으며, 2026년 현재 active status는 확인되지 않았습니다.\n- #7 ILM21은 Illimis 공식 파이프라인에 `Myelin Debris / Multiple Sclerosis / ILM21`로 등재되어 있어 identity_verified=true로 교정했습니다. 다만 stage와 자산별 결과는 미확인입니다.\n- #8 ILM01은 prototype GAIA-Aβ 기능성 근거와 최종 ILM01 후보의 연속성을 Full Scout에서 확인해야 합니다.\n- #10의 오기 `LYNK01006`은 `LNK01006`으로 정규화했으며, 2026년 6월부터 BLKR201 명칭으로 Phase 1이 진행 중입니다.",
       "parser_status": "fast_triage"
     },
     "input": {
@@ -15086,10 +15244,10 @@
     "json_summary": {
       "theme": "Unknown",
       "cluster": "Unknown",
-      "target_description": "TR 0점: The indication is not tied to a verified asset."
+      "target_description": "APP-siRNA 관련 프로그램은 있으나 'Alzheimer's Disease'는 특정 자산명이 아님."
     },
     "structured_table": {
-      "company": "Beijing Youngen Biotechnology Co Ltd",
+      "company": "Beijing Youngen Biotechnology Co., Ltd.",
       "asset_name": "Alzheimer's Disease",
       "target": "Unknown",
       "moa": "Unknown",
@@ -15100,17 +15258,17 @@
       "company_country": "China",
       "sources": [
         {
-          "source_title": "Youngen pipeline",
-          "source_url": "https://www.youngenbiomed.com/pipeline.html"
+          "source_title": "Youngen APP siRNA patent announcement",
+          "source_url": "https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html"
         }
       ]
     },
     "hard_filter": {
       "status": "UNVERIFIED",
-      "reason": "The asset field is only an indication.",
+      "reason": "질환명이 asset name으로 입력되어 특정 자산 identity가 확인되지 않습니다.",
       "flags": [
-        "identity_not_verified",
-        "indication_used_as_asset_name"
+        "indication_used_as_asset_name",
+        "no_discrete_asset_code"
       ],
       "hard_blocker": false,
       "decision_uncertainty": false
@@ -15120,33 +15278,33 @@
         "target_relevance": {
           "score": 0,
           "evidence_type": "triage_only",
-          "evidence_type_reason": "TR 0점: The indication is not tied to a verified asset.",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
           "evidence_basis": "no_supporting_basis",
-          "main_line_summary": "TR 0점: The indication is not tied to a verified asset.",
-          "why_not_higher": "",
-          "investigation_note": "",
+          "main_line_summary": "TR 0점: AD라는 질환명만으로 특정 자산의 relevance를 평가할 수 없습니다.",
+          "why_not_higher": "자산 identity가 없습니다.",
+          "investigation_note": "Youngen의 APP-siRNA 특허 프로그램은 확인했으나 이 입력명과 동일한 자산은 아닙니다.",
           "uncertain_points": [],
           "source_ids": []
         },
         "moa_validity": {
           "score": 0,
           "evidence_type": "triage_only",
-          "evidence_type_reason": "MOA 0점: No asset-specific target or MoA.",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
           "evidence_basis": "no_supporting_basis",
-          "main_line_summary": "MOA 0점: No asset-specific target or MoA.",
-          "why_not_higher": "",
-          "investigation_note": "",
+          "main_line_summary": "MOA 0점: 특정 자산의 표적·기전이 없습니다.",
+          "why_not_higher": "APP-siRNA를 이 입력에 자동 귀속하지 않았습니다.",
+          "investigation_note": "정확한 program identifier가 필요합니다.",
           "uncertain_points": [],
           "source_ids": []
         },
         "data_maturity": {
           "score": 0,
           "evidence_type": "triage_only",
-          "evidence_type_reason": "Data 0점: No uniquely attributable result.",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
           "evidence_basis": "no_supporting_basis",
-          "main_line_summary": "Data 0점: No uniquely attributable result.",
-          "why_not_higher": "",
-          "investigation_note": "",
+          "main_line_summary": "Data 0점: 특정 자산별 결과가 없습니다.",
+          "why_not_higher": "자산 identity가 먼저 필요합니다.",
+          "investigation_note": "특허 프로그램의 일반 설명만 확인됩니다.",
           "uncertain_points": [],
           "source_ids": []
         }
@@ -15156,44 +15314,36 @@
     },
     "validation": {
       "uncertain_points": [
-        "A non-public code may exist."
+        "질환명이 자산명으로 사용됨"
       ],
       "cross_checked_facts": [
-        "Youngen discloses CNS RNAi work and an APP-siRNA AD patent."
+        "Youngen의 AD APP-siRNA 특허 프로그램 존재",
+        "동일 명칭 자산 코드 미확인"
       ],
       "source_registry": [
         {
-          "source_id": "S1",
-          "source_title": "Youngen pipeline",
-          "source_url": "https://www.youngenbiomed.com/pipeline.html",
-          "source_type": "official_company_pipeline",
-          "evidence_summary": "Broad CNS pipeline, no asset with this name.",
-          "verified": true
-        },
-        {
-          "source_id": "S2",
-          "source_title": "Youngen APP-siRNA AD patent",
+          "source_id": "YOUNGEN1",
+          "source_title": "Youngen APP siRNA patent announcement",
           "source_url": "https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html",
           "source_type": "official_company_news",
-          "evidence_summary": "Relevant research, no candidate code/stage.",
           "verified": true
         }
       ]
     },
     "final_insight": {
-      "one_line_summary": "UNVERIFIED: indication label, not a specific asset.",
+      "one_line_summary": "AD 질환명만으로는 Youngen의 특정 파이프라인 자산을 식별할 수 없습니다.",
       "recommendation": "Verify asset identity",
-      "most_important_diligence_question": "What exact Youngen candidate code is behind this row?"
+      "most_important_diligence_question": "Youngen의 정확한 자산 코드 또는 patent-linked candidate name은 무엇인가?"
     },
     "triage": {
       "status": "UNVERIFIED",
       "identity_verified": false,
       "active_asset": null,
-      "verified_public_source_count": 0,
-      "why": "Youngen has relevant research, but no unique candidate is named.",
+      "verified_public_source_count": 1,
+      "why": "질환명이 asset name으로 입력됐으며 Youngen의 공개자료에서도 해당 명칭의 독립 자산 코드를 확인하지 못했습니다.",
       "missing_evidence_needed_for_full_scout": [
-        "Asset code",
-        "Target, modality and current stage"
+        "정확한 자산 코드 또는 특허 후보명",
+        "공식 pipeline row"
       ]
     }
   },
@@ -15205,10 +15355,144 @@
       "rubric_version": "3.3",
       "generated_at": "2026-08-06",
       "output_filename_base": "Hyper Corp Inc_Drug to Inhibit Tau for Alzheimer's Disease",
+      "report_reupload_history": [
+        {
+          "id": "5f7fe1d5a34e4534a3c64d38b80c104f",
+          "replaced_at": "2026-08-06T15:06:12.436648+00:00",
+          "actor_ip": "127.0.0.1",
+          "previous_record_id": "Hyper Corp Inc_Drug to Inhibit Tau for Alzheimer's Disease",
+          "previous_rubric_version": "3.3",
+          "previous_source_report": {
+            "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.\n\n중요: 10개 후보 중 ADEL-Y04, ILM01, LNK01006은 SELECT, HBW-015와 ILM02는 REJECT, 나머지 5개는 특정 asset identity 미확인으로 UNVERIFIED입니다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4 antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Active AD program; direct mouse functional evidence, limited quantitative disclosure. | S1-S3 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Cannot map to Youngen APP-siRNA versus Hotgen AA001. | S1-S3 |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Indication used as asset name. | S1-S2 |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Alzheimer's disease | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | No discrete Hyper Corp tau asset matched. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed pathway inhibitor | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | Strong data; generic pain fit, unnamed target and active status unconfirmed. | S1-S3 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Unknown (tauopathies) | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | Active but broad, early and without disclosed result. | S1-S2 |\n| 7 | ILM21 | Illimis Therapeutics | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | No public ILM21 asset. | S1 |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Differentiated active AD lead; qualitative functional evidence. | S1-S3 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Collaboration descriptor, not an asset. | S1 |\n| 10 | LYNK01006 → LNK01006 | Lynk Pharmaceuticals | TYK2 allosteric inhibitor | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | Active Phase 1 BLKR201 with CNS TYK2 rationale. | S1-S3 |\n\n## Notes\n- 입력 순서를 유지했으며, LYNK01006은 검증된 LNK01006/BLKR201로 철자 정규화했습니다.\n- Youngen/Hotgen 및 Hyper tau의 설명형 행은 다른 공개 자산으로 임의 대체하지 않았습니다.\n- 의심해볼 포인트: ADEL-Y04와 ILM01의 MOA 3은 공개된 직접 기능 결과에 기반하지만 정량 원자료가 제한적이므로 Full Scout에서 후보 동일성·통계·노출-반응을 우선 검증해야 합니다.\n- 드릴다운 질문: HBW-015의 타깃·활성·신경병증성 통증 적응증이 공식 확인되면 triage가 바뀌는가? LNK01006의 환자 적응증이 MS로 확정되지 않으면 TR 3을 유지할 수 있는가?\n- 업로드 지침 근거: :contentReference[oaicite:0]{index=0}",
+            "parser_status": "fast_triage"
+          },
+          "previous_record_snapshot": {
+            "meta": {
+              "review_type": "fast_triage",
+              "schema_version": "3.2",
+              "instruction_version": "3.3",
+              "rubric_version": "3.3",
+              "generated_at": "2026-08-06",
+              "output_filename_base": "Hyper Corp Inc_Drug to Inhibit Tau for Alzheimer's Disease",
+              "storage_profile": "dashboard_hybrid_v1"
+            },
+            "source_report": {
+              "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.\n\n중요: 10개 후보 중 ADEL-Y04, ILM01, LNK01006은 SELECT, HBW-015와 ILM02는 REJECT, 나머지 5개는 특정 asset identity 미확인으로 UNVERIFIED입니다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4 antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Active AD program; direct mouse functional evidence, limited quantitative disclosure. | S1-S3 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Cannot map to Youngen APP-siRNA versus Hotgen AA001. | S1-S3 |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Indication used as asset name. | S1-S2 |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Alzheimer's disease | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | No discrete Hyper Corp tau asset matched. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed pathway inhibitor | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | Strong data; generic pain fit, unnamed target and active status unconfirmed. | S1-S3 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Unknown (tauopathies) | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | Active but broad, early and without disclosed result. | S1-S2 |\n| 7 | ILM21 | Illimis Therapeutics | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | No public ILM21 asset. | S1 |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Differentiated active AD lead; qualitative functional evidence. | S1-S3 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Collaboration descriptor, not an asset. | S1 |\n| 10 | LYNK01006 → LNK01006 | Lynk Pharmaceuticals | TYK2 allosteric inhibitor | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | Active Phase 1 BLKR201 with CNS TYK2 rationale. | S1-S3 |\n\n## Notes\n- 입력 순서를 유지했으며, LYNK01006은 검증된 LNK01006/BLKR201로 철자 정규화했습니다.\n- Youngen/Hotgen 및 Hyper tau의 설명형 행은 다른 공개 자산으로 임의 대체하지 않았습니다.\n- 의심해볼 포인트: ADEL-Y04와 ILM01의 MOA 3은 공개된 직접 기능 결과에 기반하지만 정량 원자료가 제한적이므로 Full Scout에서 후보 동일성·통계·노출-반응을 우선 검증해야 합니다.\n- 드릴다운 질문: HBW-015의 타깃·활성·신경병증성 통증 적응증이 공식 확인되면 triage가 바뀌는가? LNK01006의 환자 적응증이 MS로 확정되지 않으면 TR 3을 유지할 수 있는가?\n- 업로드 지침 근거: :contentReference[oaicite:0]{index=0}",
+              "parser_status": "fast_triage"
+            },
+            "input": {
+              "company_input": "Hyper Corp Inc",
+              "asset_input": "Drug to Inhibit Tau for Alzheimer's Disease"
+            },
+            "json_summary": {
+              "theme": "Unknown",
+              "cluster": "Unknown",
+              "target_description": "TR 0점: Claimed AD indication is not asset-verified."
+            },
+            "structured_table": {
+              "company": "Hyper Corp Inc",
+              "asset_name": "Drug to Inhibit Tau for Alzheimer's Disease",
+              "target": "Unknown",
+              "moa": "Unknown",
+              "modality_platform": "Unknown",
+              "main_indication": "Alzheimer's disease",
+              "indication": "Alzheimer's disease",
+              "development_stage": "Unknown",
+              "company_country": "Unknown",
+              "sources": []
+            },
+            "hard_filter": {
+              "status": "UNVERIFIED",
+              "reason": "No public source linked this exact description to a discrete Hyper Corp asset.",
+              "flags": [
+                "identity_not_verified",
+                "generic_asset_description"
+              ],
+              "hard_blocker": false,
+              "decision_uncertainty": false
+            },
+            "scoring": {
+              "criteria": {
+                "target_relevance": {
+                  "score": 0,
+                  "evidence_type": "triage_only",
+                  "evidence_type_reason": "TR 0점: Claimed AD indication is not asset-verified.",
+                  "evidence_basis": "no_supporting_basis",
+                  "main_line_summary": "TR 0점: Claimed AD indication is not asset-verified.",
+                  "why_not_higher": "",
+                  "investigation_note": "",
+                  "uncertain_points": [],
+                  "source_ids": []
+                },
+                "moa_validity": {
+                  "score": 0,
+                  "evidence_type": "triage_only",
+                  "evidence_type_reason": "MOA 0점: 'Inhibit tau' is not a confirmed specific mechanism.",
+                  "evidence_basis": "no_supporting_basis",
+                  "main_line_summary": "MOA 0점: 'Inhibit tau' is not a confirmed specific mechanism.",
+                  "why_not_higher": "",
+                  "investigation_note": "",
+                  "uncertain_points": [],
+                  "source_ids": []
+                },
+                "data_maturity": {
+                  "score": 0,
+                  "evidence_type": "triage_only",
+                  "evidence_type_reason": "Data 0점: No asset-specific result found.",
+                  "evidence_basis": "no_supporting_basis",
+                  "main_line_summary": "Data 0점: No asset-specific result found.",
+                  "why_not_higher": "",
+                  "investigation_note": "",
+                  "uncertain_points": [],
+                  "source_ids": []
+                }
+              },
+              "total_score": 0,
+              "max_score": 9
+            },
+            "validation": {
+              "uncertain_points": [
+                "May be a patent/database description without a public development code."
+              ],
+              "cross_checked_facts": [],
+              "source_registry": []
+            },
+            "final_insight": {
+              "one_line_summary": "UNVERIFIED: no discrete Hyper Corp tau asset was matched.",
+              "recommendation": "Verify asset identity",
+              "most_important_diligence_question": "Which patent, code or source establishes this as a current Hyper Corp asset?"
+            },
+            "triage": {
+              "status": "UNVERIFIED",
+              "identity_verified": false,
+              "active_asset": null,
+              "verified_public_source_count": 0,
+              "why": "A tau concept is stated, but no code, modality or current status is verifiable.",
+              "missing_evidence_needed_for_full_scout": [
+                "Compound or patent code",
+                "Ownership and current status"
+              ]
+            }
+          }
+        }
+      ],
+      "edit_history": [
+        {
+          "changed_at": "2026-08-06T15:06:12.436661+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "paste_json_upsert",
+          "field": "source_report.raw_markdown",
+          "previous_value": "기존 GPT 원문 리포트",
+          "new_value": "GPT 원문 재업로드"
+        }
+      ],
+      "last_edited_at": "2026-08-06T15:06:12.436661+00:00",
+      "last_edited_by": "127.0.0.1",
       "storage_profile": "dashboard_hybrid_v1"
     },
     "source_report": {
-      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.\n\n중요: 10개 후보 중 ADEL-Y04, ILM01, LNK01006은 SELECT, HBW-015와 ILM02는 REJECT, 나머지 5개는 특정 asset identity 미확인으로 UNVERIFIED입니다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4 antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Active AD program; direct mouse functional evidence, limited quantitative disclosure. | S1-S3 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Cannot map to Youngen APP-siRNA versus Hotgen AA001. | S1-S3 |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Indication used as asset name. | S1-S2 |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Alzheimer's disease | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | No discrete Hyper Corp tau asset matched. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed pathway inhibitor | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | Strong data; generic pain fit, unnamed target and active status unconfirmed. | S1-S3 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Unknown (tauopathies) | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | Active but broad, early and without disclosed result. | S1-S2 |\n| 7 | ILM21 | Illimis Therapeutics | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | No public ILM21 asset. | S1 |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Differentiated active AD lead; qualitative functional evidence. | S1-S3 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Collaboration descriptor, not an asset. | S1 |\n| 10 | LYNK01006 → LNK01006 | Lynk Pharmaceuticals | TYK2 allosteric inhibitor | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | Active Phase 1 BLKR201 with CNS TYK2 rationale. | S1-S3 |\n\n## Notes\n- 입력 순서를 유지했으며, LYNK01006은 검증된 LNK01006/BLKR201로 철자 정규화했습니다.\n- Youngen/Hotgen 및 Hyper tau의 설명형 행은 다른 공개 자산으로 임의 대체하지 않았습니다.\n- 의심해볼 포인트: ADEL-Y04와 ILM01의 MOA 3은 공개된 직접 기능 결과에 기반하지만 정량 원자료가 제한적이므로 Full Scout에서 후보 동일성·통계·노출-반응을 우선 검증해야 합니다.\n- 드릴다운 질문: HBW-015의 타깃·활성·신경병증성 통증 적응증이 공식 확인되면 triage가 바뀌는가? LNK01006의 환자 적응증이 MS로 확정되지 않으면 TR 3을 유지할 수 있는가?\n- 업로드 지침 근거: :contentReference[oaicite:0]{index=0}",
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 10개 중 ADEL-Y04, ILM01, LNK01006/BLKR201은 SELECT입니다. ILM21은 현재 Illimis 공식 파이프라인에서 신원이 확인되어 제공된 임시 UNVERIFIED 판정을 REJECT로 교정했으며, 나머지는 자산 identity 불명확 또는 SKBP fit·MoA·Data·활성 상태 부족으로 REJECT/UNVERIFIED 처리했습니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4-selective antibody | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD 전임상 자산이며 ApoE4 모델에서 기억·시냅스·tau 병리의 직접 기능성 효과가 확인됩니다. 정량 PK/PD 공개는 제한적입니다. | https://adelpharm.com/en/pipeline/<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.088537 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Youngen APP-siRNA와 Hotgen 투자계열 AA001이 혼합된 입력으로 어느 자산인지 특정할 수 없습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html<br>https://www.hotgen.com.cn/detail/683.html |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | 질환명이 자산명으로 입력됐으며 Youngen의 독립 자산 코드와 매칭되지 않습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | 신뢰 가능한 공개자료에서 Hyper Corp의 discrete tau 자산을 확인하지 못했습니다. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed nociceptive ion-channel inhibitor | Small molecule | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | HBW-015-15에서 PK·급성/CCI 효능·selectivity·독성이 공개됐으나 generic Pain, 미공개 표적 및 현재 활동 미확인으로 REJECT입니다. | https://www.tianfulifesciencepark.com/News/Detail?id=2657 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Protein biologic | Unknown | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | 활성 tauopathy 프로그램이나 적응증이 broad하고 ILM02 자산별 기능성 결과가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 7 | ILM21 | Illimis Therapeutics | Myelin debris/TAM GAIA fusion | Protein biologic | Multiple sclerosis / neuroinflammatory disease | Unknown | Republic of Korea | 3 | 1 | 0 | REJECT | 공식 파이프라인에서 MS·myelin debris 자산으로 확인되지만 회사 rationale 외 자산별 기능성·정량 데이터가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Protein biologic | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD lead이며 Aβ/TAM 기반 phagocytosis와 anti-inflammatory signaling의 prototype functional PoC가 확인됩니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Illimis-Lilly 연구협력 descriptor이며 개별 asset name이 아닙니다. | https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1 |\n| 10 | LYNK01006 → LNK01006 (BLKR201) | Lynk Pharmaceuticals | TYK2 JH2 allosteric inhibitor | Small molecule | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | CNS-penetrant TYK2 후보로 MS 모델 효능과 2026년 6월 Phase 1 첫 투여가 확인됩니다. 임상 결과는 아직 없습니다. | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html<br>https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html<br>https://clinicaltrials.gov/study/NCT07501039 |\n\n## Notes\n- #2와 #3은 Youngen의 무코드 APP-siRNA 프로그램과 관련될 수 있으나, 입력 자산명만으로 해당 프로그램을 자동 귀속하지 않았습니다.\n- #5의 공개 데이터는 HBW-015 프로그램의 대표물질로 기재된 HBW-015-15에서 확인됐으며, 2026년 현재 active status는 확인되지 않았습니다.\n- #7 ILM21은 Illimis 공식 파이프라인에 `Myelin Debris / Multiple Sclerosis / ILM21`로 등재되어 있어 identity_verified=true로 교정했습니다. 다만 stage와 자산별 결과는 미확인입니다.\n- #8 ILM01은 prototype GAIA-Aβ 기능성 근거와 최종 ILM01 후보의 연속성을 Full Scout에서 확인해야 합니다.\n- #10의 오기 `LYNK01006`은 `LNK01006`으로 정규화했으며, 2026년 6월부터 BLKR201 명칭으로 Phase 1이 진행 중입니다.",
       "parser_status": "fast_triage"
     },
     "input": {
@@ -15218,7 +15502,7 @@
     "json_summary": {
       "theme": "Unknown",
       "cluster": "Unknown",
-      "target_description": "TR 0점: Claimed AD indication is not asset-verified."
+      "target_description": "Hyper Corp와 연결되는 개별 tau 저해 자산을 공개자료에서 확인하지 못함."
     },
     "structured_table": {
       "company": "Hyper Corp Inc",
@@ -15226,18 +15510,17 @@
       "target": "Unknown",
       "moa": "Unknown",
       "modality_platform": "Unknown",
-      "main_indication": "Alzheimer's disease",
-      "indication": "Alzheimer's disease",
+      "main_indication": "Unknown",
+      "indication": "Unknown",
       "development_stage": "Unknown",
       "company_country": "Unknown",
       "sources": []
     },
     "hard_filter": {
       "status": "UNVERIFIED",
-      "reason": "No public source linked this exact description to a discrete Hyper Corp asset.",
+      "reason": "신뢰 가능한 공개자료에서 특정 biotech/pharma asset identity를 확인하지 못했습니다.",
       "flags": [
-        "identity_not_verified",
-        "generic_asset_description"
+        "no_verified_asset_source"
       ],
       "hard_blocker": false,
       "decision_uncertainty": false
@@ -15247,33 +15530,33 @@
         "target_relevance": {
           "score": 0,
           "evidence_type": "triage_only",
-          "evidence_type_reason": "TR 0점: Claimed AD indication is not asset-verified.",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
           "evidence_basis": "no_supporting_basis",
-          "main_line_summary": "TR 0점: Claimed AD indication is not asset-verified.",
-          "why_not_higher": "",
-          "investigation_note": "",
+          "main_line_summary": "TR 0점: 특정 자산 identity가 없어 AD 적응증을 자산에 귀속할 수 없습니다.",
+          "why_not_higher": "검증 가능한 자산이 필요합니다.",
+          "investigation_note": "정확한 명칭과 법인을 재확인해야 합니다.",
           "uncertain_points": [],
           "source_ids": []
         },
         "moa_validity": {
           "score": 0,
           "evidence_type": "triage_only",
-          "evidence_type_reason": "MOA 0점: 'Inhibit tau' is not a confirmed specific mechanism.",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
           "evidence_basis": "no_supporting_basis",
-          "main_line_summary": "MOA 0점: 'Inhibit tau' is not a confirmed specific mechanism.",
-          "why_not_higher": "",
-          "investigation_note": "",
+          "main_line_summary": "MOA 0점: tau inhibition을 뒷받침하는 자산별 근거가 없습니다.",
+          "why_not_higher": "입력 문구만으로 기전을 확정하지 않았습니다.",
+          "investigation_note": "공식 source가 필요합니다.",
           "uncertain_points": [],
           "source_ids": []
         },
         "data_maturity": {
           "score": 0,
           "evidence_type": "triage_only",
-          "evidence_type_reason": "Data 0점: No asset-specific result found.",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
           "evidence_basis": "no_supporting_basis",
-          "main_line_summary": "Data 0점: No asset-specific result found.",
-          "why_not_higher": "",
-          "investigation_note": "",
+          "main_line_summary": "Data 0점: 자산별 결과가 없습니다.",
+          "why_not_higher": "공개 결과가 확인되지 않았습니다.",
+          "investigation_note": "추가 source 없이는 평가 불가합니다.",
           "uncertain_points": [],
           "source_ids": []
         }
@@ -15283,25 +15566,26 @@
     },
     "validation": {
       "uncertain_points": [
-        "May be a patent/database description without a public development code."
+        "회사와 자산 모두 공개 매칭 실패"
       ],
       "cross_checked_facts": [],
       "source_registry": []
     },
     "final_insight": {
-      "one_line_summary": "UNVERIFIED: no discrete Hyper Corp tau asset was matched.",
+      "one_line_summary": "공개적으로 매칭되는 Hyper Corp tau 자산이 없어 UNVERIFIED입니다.",
       "recommendation": "Verify asset identity",
-      "most_important_diligence_question": "Which patent, code or source establishes this as a current Hyper Corp asset?"
+      "most_important_diligence_question": "정확한 Hyper Corp 법인명과 tau 자산 코드는 무엇인가?"
     },
     "triage": {
       "status": "UNVERIFIED",
       "identity_verified": false,
       "active_asset": null,
       "verified_public_source_count": 0,
-      "why": "A tau concept is stated, but no code, modality or current status is verifiable.",
+      "why": "신뢰 가능한 공개자료에서 Hyper Corp의 해당 명칭 또는 별도 코드 tau 자산을 확인하지 못했습니다.",
       "missing_evidence_needed_for_full_scout": [
-        "Compound or patent code",
-        "Ownership and current status"
+        "정확한 법인명",
+        "자산 코드",
+        "공식 pipeline 또는 특허 URL"
       ]
     }
   },
@@ -15881,10 +16165,161 @@
       "rubric_version": "3.3",
       "generated_at": "2026-08-06",
       "output_filename_base": "Illimis Therapeutics Inc_Neurodegenerative Diseases Lilly",
+      "report_reupload_history": [
+        {
+          "id": "f9e44c3b68de4ce1920dc0664e4bb237",
+          "replaced_at": "2026-08-06T15:06:12.436720+00:00",
+          "actor_ip": "127.0.0.1",
+          "previous_record_id": "Illimis Therapeutics Inc_Neurodegenerative Diseases Lilly",
+          "previous_rubric_version": "3.3",
+          "previous_source_report": {
+            "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.\n\n중요: 10개 후보 중 ADEL-Y04, ILM01, LNK01006은 SELECT, HBW-015와 ILM02는 REJECT, 나머지 5개는 특정 asset identity 미확인으로 UNVERIFIED입니다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4 antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Active AD program; direct mouse functional evidence, limited quantitative disclosure. | S1-S3 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Cannot map to Youngen APP-siRNA versus Hotgen AA001. | S1-S3 |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Indication used as asset name. | S1-S2 |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Alzheimer's disease | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | No discrete Hyper Corp tau asset matched. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed pathway inhibitor | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | Strong data; generic pain fit, unnamed target and active status unconfirmed. | S1-S3 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Unknown (tauopathies) | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | Active but broad, early and without disclosed result. | S1-S2 |\n| 7 | ILM21 | Illimis Therapeutics | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | No public ILM21 asset. | S1 |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Differentiated active AD lead; qualitative functional evidence. | S1-S3 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Collaboration descriptor, not an asset. | S1 |\n| 10 | LYNK01006 → LNK01006 | Lynk Pharmaceuticals | TYK2 allosteric inhibitor | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | Active Phase 1 BLKR201 with CNS TYK2 rationale. | S1-S3 |\n\n## Notes\n- 입력 순서를 유지했으며, LYNK01006은 검증된 LNK01006/BLKR201로 철자 정규화했습니다.\n- Youngen/Hotgen 및 Hyper tau의 설명형 행은 다른 공개 자산으로 임의 대체하지 않았습니다.\n- 의심해볼 포인트: ADEL-Y04와 ILM01의 MOA 3은 공개된 직접 기능 결과에 기반하지만 정량 원자료가 제한적이므로 Full Scout에서 후보 동일성·통계·노출-반응을 우선 검증해야 합니다.\n- 드릴다운 질문: HBW-015의 타깃·활성·신경병증성 통증 적응증이 공식 확인되면 triage가 바뀌는가? LNK01006의 환자 적응증이 MS로 확정되지 않으면 TR 3을 유지할 수 있는가?\n- 업로드 지침 근거: :contentReference[oaicite:0]{index=0}",
+            "parser_status": "fast_triage"
+          },
+          "previous_record_snapshot": {
+            "meta": {
+              "review_type": "fast_triage",
+              "schema_version": "3.2",
+              "instruction_version": "3.3",
+              "rubric_version": "3.3",
+              "generated_at": "2026-08-06",
+              "output_filename_base": "Illimis Therapeutics Inc_Neurodegenerative Diseases Lilly",
+              "storage_profile": "dashboard_hybrid_v1"
+            },
+            "source_report": {
+              "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.\n\n중요: 10개 후보 중 ADEL-Y04, ILM01, LNK01006은 SELECT, HBW-015와 ILM02는 REJECT, 나머지 5개는 특정 asset identity 미확인으로 UNVERIFIED입니다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4 antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Active AD program; direct mouse functional evidence, limited quantitative disclosure. | S1-S3 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Cannot map to Youngen APP-siRNA versus Hotgen AA001. | S1-S3 |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Indication used as asset name. | S1-S2 |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Alzheimer's disease | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | No discrete Hyper Corp tau asset matched. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed pathway inhibitor | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | Strong data; generic pain fit, unnamed target and active status unconfirmed. | S1-S3 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Unknown (tauopathies) | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | Active but broad, early and without disclosed result. | S1-S2 |\n| 7 | ILM21 | Illimis Therapeutics | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | No public ILM21 asset. | S1 |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Differentiated active AD lead; qualitative functional evidence. | S1-S3 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Collaboration descriptor, not an asset. | S1 |\n| 10 | LYNK01006 → LNK01006 | Lynk Pharmaceuticals | TYK2 allosteric inhibitor | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | Active Phase 1 BLKR201 with CNS TYK2 rationale. | S1-S3 |\n\n## Notes\n- 입력 순서를 유지했으며, LYNK01006은 검증된 LNK01006/BLKR201로 철자 정규화했습니다.\n- Youngen/Hotgen 및 Hyper tau의 설명형 행은 다른 공개 자산으로 임의 대체하지 않았습니다.\n- 의심해볼 포인트: ADEL-Y04와 ILM01의 MOA 3은 공개된 직접 기능 결과에 기반하지만 정량 원자료가 제한적이므로 Full Scout에서 후보 동일성·통계·노출-반응을 우선 검증해야 합니다.\n- 드릴다운 질문: HBW-015의 타깃·활성·신경병증성 통증 적응증이 공식 확인되면 triage가 바뀌는가? LNK01006의 환자 적응증이 MS로 확정되지 않으면 TR 3을 유지할 수 있는가?\n- 업로드 지침 근거: :contentReference[oaicite:0]{index=0}",
+              "parser_status": "fast_triage"
+            },
+            "input": {
+              "company_input": "Illimis Therapeutics Inc",
+              "asset_input": "Neurodegenerative Diseases Lilly"
+            },
+            "json_summary": {
+              "theme": "Unknown",
+              "cluster": "Unknown",
+              "target_description": "TR 0점: No asset-specific indication."
+            },
+            "structured_table": {
+              "company": "Illimis Therapeutics Inc",
+              "asset_name": "Neurodegenerative Diseases Lilly",
+              "target": "Unknown",
+              "moa": "Unknown",
+              "modality_platform": "Unknown",
+              "main_indication": "Unknown",
+              "indication": "Unknown",
+              "development_stage": "Unknown",
+              "company_country": "Republic of Korea",
+              "sources": [
+                {
+                  "source_title": "Illimis at Lilly Gateway Labs",
+                  "source_url": "https://illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=322&mode=view&page=1"
+                }
+              ]
+            },
+            "hard_filter": {
+              "status": "UNVERIFIED",
+              "reason": "The Illimis-Lilly collaboration is verified, but this is not a discrete asset name.",
+              "flags": [
+                "identity_not_verified",
+                "collaboration_label_not_asset"
+              ],
+              "hard_blocker": false,
+              "decision_uncertainty": false
+            },
+            "scoring": {
+              "criteria": {
+                "target_relevance": {
+                  "score": 0,
+                  "evidence_type": "triage_only",
+                  "evidence_type_reason": "TR 0점: No asset-specific indication.",
+                  "evidence_basis": "no_supporting_basis",
+                  "main_line_summary": "TR 0점: No asset-specific indication.",
+                  "why_not_higher": "",
+                  "investigation_note": "",
+                  "uncertain_points": [],
+                  "source_ids": []
+                },
+                "moa_validity": {
+                  "score": 0,
+                  "evidence_type": "triage_only",
+                  "evidence_type_reason": "MOA 0점: No asset-specific mechanism.",
+                  "evidence_basis": "no_supporting_basis",
+                  "main_line_summary": "MOA 0점: No asset-specific mechanism.",
+                  "why_not_higher": "",
+                  "investigation_note": "",
+                  "uncertain_points": [],
+                  "source_ids": []
+                },
+                "data_maturity": {
+                  "score": 0,
+                  "evidence_type": "triage_only",
+                  "evidence_type_reason": "Data 0점: No uniquely named asset result.",
+                  "evidence_basis": "no_supporting_basis",
+                  "main_line_summary": "Data 0점: No uniquely named asset result.",
+                  "why_not_higher": "",
+                  "investigation_note": "",
+                  "uncertain_points": [],
+                  "source_ids": []
+                }
+              },
+              "total_score": 0,
+              "max_score": 9
+            },
+            "validation": {
+              "uncertain_points": [
+                "No public candidate code disclosed."
+              ],
+              "cross_checked_facts": [
+                "Illimis-Lilly platform collaboration began in October 2024.",
+                "Illimis joined Lilly Gateway Labs in September 2025."
+              ],
+              "source_registry": [
+                {
+                  "source_id": "S1",
+                  "source_title": "Illimis at Lilly Gateway Labs",
+                  "source_url": "https://illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=322&mode=view&page=1",
+                  "source_type": "official_company_news",
+                  "evidence_summary": "Confirms collaboration, not a discrete asset.",
+                  "verified": true
+                }
+              ]
+            },
+            "final_insight": {
+              "one_line_summary": "UNVERIFIED: collaboration label, not a verified candidate.",
+              "recommendation": "Verify asset identity",
+              "most_important_diligence_question": "What candidate code emerged, and who owns development rights?"
+            },
+            "triage": {
+              "status": "UNVERIFIED",
+              "identity_verified": false,
+              "active_asset": null,
+              "verified_public_source_count": 0,
+              "why": "Partnership descriptor should not be scored as a drug.",
+              "missing_evidence_needed_for_full_scout": [
+                "Specific construct/code",
+                "Ownership, target, indication and stage"
+              ]
+            }
+          }
+        }
+      ],
+      "edit_history": [
+        {
+          "changed_at": "2026-08-06T15:06:12.436730+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "paste_json_upsert",
+          "field": "source_report.raw_markdown",
+          "previous_value": "기존 GPT 원문 리포트",
+          "new_value": "GPT 원문 재업로드"
+        }
+      ],
+      "last_edited_at": "2026-08-06T15:06:12.436730+00:00",
+      "last_edited_by": "127.0.0.1",
       "storage_profile": "dashboard_hybrid_v1"
     },
     "source_report": {
-      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.\n\n중요: 10개 후보 중 ADEL-Y04, ILM01, LNK01006은 SELECT, HBW-015와 ILM02는 REJECT, 나머지 5개는 특정 asset identity 미확인으로 UNVERIFIED입니다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4 antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Active AD program; direct mouse functional evidence, limited quantitative disclosure. | S1-S3 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Cannot map to Youngen APP-siRNA versus Hotgen AA001. | S1-S3 |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Indication used as asset name. | S1-S2 |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Alzheimer's disease | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | No discrete Hyper Corp tau asset matched. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed pathway inhibitor | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | Strong data; generic pain fit, unnamed target and active status unconfirmed. | S1-S3 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Unknown (tauopathies) | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | Active but broad, early and without disclosed result. | S1-S2 |\n| 7 | ILM21 | Illimis Therapeutics | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | No public ILM21 asset. | S1 |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Differentiated active AD lead; qualitative functional evidence. | S1-S3 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Collaboration descriptor, not an asset. | S1 |\n| 10 | LYNK01006 → LNK01006 | Lynk Pharmaceuticals | TYK2 allosteric inhibitor | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | Active Phase 1 BLKR201 with CNS TYK2 rationale. | S1-S3 |\n\n## Notes\n- 입력 순서를 유지했으며, LYNK01006은 검증된 LNK01006/BLKR201로 철자 정규화했습니다.\n- Youngen/Hotgen 및 Hyper tau의 설명형 행은 다른 공개 자산으로 임의 대체하지 않았습니다.\n- 의심해볼 포인트: ADEL-Y04와 ILM01의 MOA 3은 공개된 직접 기능 결과에 기반하지만 정량 원자료가 제한적이므로 Full Scout에서 후보 동일성·통계·노출-반응을 우선 검증해야 합니다.\n- 드릴다운 질문: HBW-015의 타깃·활성·신경병증성 통증 적응증이 공식 확인되면 triage가 바뀌는가? LNK01006의 환자 적응증이 MS로 확정되지 않으면 TR 3을 유지할 수 있는가?\n- 업로드 지침 근거: :contentReference[oaicite:0]{index=0}",
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 10개 중 ADEL-Y04, ILM01, LNK01006/BLKR201은 SELECT입니다. ILM21은 현재 Illimis 공식 파이프라인에서 신원이 확인되어 제공된 임시 UNVERIFIED 판정을 REJECT로 교정했으며, 나머지는 자산 identity 불명확 또는 SKBP fit·MoA·Data·활성 상태 부족으로 REJECT/UNVERIFIED 처리했습니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4-selective antibody | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD 전임상 자산이며 ApoE4 모델에서 기억·시냅스·tau 병리의 직접 기능성 효과가 확인됩니다. 정량 PK/PD 공개는 제한적입니다. | https://adelpharm.com/en/pipeline/<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.088537 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Youngen APP-siRNA와 Hotgen 투자계열 AA001이 혼합된 입력으로 어느 자산인지 특정할 수 없습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html<br>https://www.hotgen.com.cn/detail/683.html |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | 질환명이 자산명으로 입력됐으며 Youngen의 독립 자산 코드와 매칭되지 않습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | 신뢰 가능한 공개자료에서 Hyper Corp의 discrete tau 자산을 확인하지 못했습니다. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed nociceptive ion-channel inhibitor | Small molecule | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | HBW-015-15에서 PK·급성/CCI 효능·selectivity·독성이 공개됐으나 generic Pain, 미공개 표적 및 현재 활동 미확인으로 REJECT입니다. | https://www.tianfulifesciencepark.com/News/Detail?id=2657 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Protein biologic | Unknown | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | 활성 tauopathy 프로그램이나 적응증이 broad하고 ILM02 자산별 기능성 결과가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 7 | ILM21 | Illimis Therapeutics | Myelin debris/TAM GAIA fusion | Protein biologic | Multiple sclerosis / neuroinflammatory disease | Unknown | Republic of Korea | 3 | 1 | 0 | REJECT | 공식 파이프라인에서 MS·myelin debris 자산으로 확인되지만 회사 rationale 외 자산별 기능성·정량 데이터가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Protein biologic | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD lead이며 Aβ/TAM 기반 phagocytosis와 anti-inflammatory signaling의 prototype functional PoC가 확인됩니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Illimis-Lilly 연구협력 descriptor이며 개별 asset name이 아닙니다. | https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1 |\n| 10 | LYNK01006 → LNK01006 (BLKR201) | Lynk Pharmaceuticals | TYK2 JH2 allosteric inhibitor | Small molecule | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | CNS-penetrant TYK2 후보로 MS 모델 효능과 2026년 6월 Phase 1 첫 투여가 확인됩니다. 임상 결과는 아직 없습니다. | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html<br>https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html<br>https://clinicaltrials.gov/study/NCT07501039 |\n\n## Notes\n- #2와 #3은 Youngen의 무코드 APP-siRNA 프로그램과 관련될 수 있으나, 입력 자산명만으로 해당 프로그램을 자동 귀속하지 않았습니다.\n- #5의 공개 데이터는 HBW-015 프로그램의 대표물질로 기재된 HBW-015-15에서 확인됐으며, 2026년 현재 active status는 확인되지 않았습니다.\n- #7 ILM21은 Illimis 공식 파이프라인에 `Myelin Debris / Multiple Sclerosis / ILM21`로 등재되어 있어 identity_verified=true로 교정했습니다. 다만 stage와 자산별 결과는 미확인입니다.\n- #8 ILM01은 prototype GAIA-Aβ 기능성 근거와 최종 ILM01 후보의 연속성을 Full Scout에서 확인해야 합니다.\n- #10의 오기 `LYNK01006`은 `LNK01006`으로 정규화했으며, 2026년 6월부터 BLKR201 명칭으로 Phase 1이 진행 중입니다.",
       "parser_status": "fast_triage"
     },
     "input": {
@@ -15894,10 +16329,10 @@
     "json_summary": {
       "theme": "Unknown",
       "cluster": "Unknown",
-      "target_description": "TR 0점: No asset-specific indication."
+      "target_description": "Illimis-Lilly GAIA 연구협력 설명으로 확인되며 개별 자산명은 아님."
     },
     "structured_table": {
-      "company": "Illimis Therapeutics Inc",
+      "company": "Illimis Therapeutics, Inc.",
       "asset_name": "Neurodegenerative Diseases Lilly",
       "target": "Unknown",
       "moa": "Unknown",
@@ -15908,17 +16343,17 @@
       "company_country": "Republic of Korea",
       "sources": [
         {
-          "source_title": "Illimis at Lilly Gateway Labs",
-          "source_url": "https://illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=322&mode=view&page=1"
+          "source_title": "Illimis financing and Lilly research collaboration announcement",
+          "source_url": "https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1"
         }
       ]
     },
     "hard_filter": {
       "status": "UNVERIFIED",
-      "reason": "The Illimis-Lilly collaboration is verified, but this is not a discrete asset name.",
+      "reason": "협력 설명은 확인되지만 특정 biotech/pharma asset identity가 아닙니다.",
       "flags": [
-        "identity_not_verified",
-        "collaboration_label_not_asset"
+        "collaboration_descriptor_not_asset",
+        "undisclosed_collaboration_target"
       ],
       "hard_blocker": false,
       "decision_uncertainty": false
@@ -15928,33 +16363,33 @@
         "target_relevance": {
           "score": 0,
           "evidence_type": "triage_only",
-          "evidence_type_reason": "TR 0점: No asset-specific indication.",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
           "evidence_basis": "no_supporting_basis",
-          "main_line_summary": "TR 0점: No asset-specific indication.",
-          "why_not_higher": "",
-          "investigation_note": "",
+          "main_line_summary": "TR 0점: 협력 분야 설명일 뿐 특정 자산 적응증이 아닙니다.",
+          "why_not_higher": "개별 자산 identity가 필요합니다.",
+          "investigation_note": "협력과 in-house ILM 프로그램을 혼동하지 않았습니다.",
           "uncertain_points": [],
           "source_ids": []
         },
         "moa_validity": {
           "score": 0,
           "evidence_type": "triage_only",
-          "evidence_type_reason": "MOA 0점: No asset-specific mechanism.",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
           "evidence_basis": "no_supporting_basis",
-          "main_line_summary": "MOA 0점: No asset-specific mechanism.",
-          "why_not_higher": "",
-          "investigation_note": "",
+          "main_line_summary": "MOA 0점: 협력 대상 target이 비공개입니다.",
+          "why_not_higher": "GAIA platform 일반 기전을 특정 협력 자산에 귀속할 수 없습니다.",
+          "investigation_note": "개별 construct 공개가 필요합니다.",
           "uncertain_points": [],
           "source_ids": []
         },
         "data_maturity": {
           "score": 0,
           "evidence_type": "triage_only",
-          "evidence_type_reason": "Data 0점: No uniquely named asset result.",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
           "evidence_basis": "no_supporting_basis",
-          "main_line_summary": "Data 0점: No uniquely named asset result.",
-          "why_not_higher": "",
-          "investigation_note": "",
+          "main_line_summary": "Data 0점: 협력 자산별 결과가 없습니다.",
+          "why_not_higher": "연구협력 진행 사실은 자산 데이터가 아닙니다.",
+          "investigation_note": "개별 asset result가 필요합니다.",
           "uncertain_points": [],
           "source_ids": []
         }
@@ -15964,37 +16399,38 @@
     },
     "validation": {
       "uncertain_points": [
-        "No public candidate code disclosed."
+        "Lilly 협력의 target/asset 비공개"
       ],
       "cross_checked_facts": [
-        "Illimis-Lilly platform collaboration began in October 2024.",
-        "Illimis joined Lilly Gateway Labs in September 2025."
+        "Illimis-Lilly 연구협력 존재",
+        "neurodegenerative applications",
+        "개별 asset 미공개"
       ],
       "source_registry": [
         {
-          "source_id": "S1",
-          "source_title": "Illimis at Lilly Gateway Labs",
-          "source_url": "https://illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=322&mode=view&page=1",
+          "source_id": "LILLY1",
+          "source_title": "Illimis financing and Lilly research collaboration announcement",
+          "source_url": "https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1",
           "source_type": "official_company_news",
-          "evidence_summary": "Confirms collaboration, not a discrete asset.",
           "verified": true
         }
       ]
     },
     "final_insight": {
-      "one_line_summary": "UNVERIFIED: collaboration label, not a verified candidate.",
+      "one_line_summary": "협력 descriptor로서 개별 자산 identity가 없어 UNVERIFIED입니다.",
       "recommendation": "Verify asset identity",
-      "most_important_diligence_question": "What candidate code emerged, and who owns development rights?"
+      "most_important_diligence_question": "Lilly 협력에서 평가 가능한 개별 자산 코드와 target은 무엇인가?"
     },
     "triage": {
       "status": "UNVERIFIED",
       "identity_verified": false,
       "active_asset": null,
-      "verified_public_source_count": 0,
-      "why": "Partnership descriptor should not be scored as a drug.",
+      "verified_public_source_count": 1,
+      "why": "공개자료에서 Lilly와의 neurodegenerative-disease 협력은 확인되지만 이 문구는 discrete asset이 아닙니다.",
       "missing_evidence_needed_for_full_scout": [
-        "Specific construct/code",
-        "Ownership, target, indication and stage"
+        "협력 내 개별 자산 코드",
+        "target",
+        "개발 주체와 권리"
       ]
     }
   },
@@ -16147,6 +16583,1040 @@
         "Human CSF exposure/PD",
         "Final patient indication",
         "Phase 1 results"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "fast_triage",
+      "schema_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
+      "generated_at": "2026-08-06",
+      "output_filename_base": "ADEL, Inc._ADEL-Y04",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 10개 중 ADEL-Y04, ILM01, LNK01006/BLKR201은 SELECT입니다. ILM21은 현재 Illimis 공식 파이프라인에서 신원이 확인되어 제공된 임시 UNVERIFIED 판정을 REJECT로 교정했으며, 나머지는 자산 identity 불명확 또는 SKBP fit·MoA·Data·활성 상태 부족으로 REJECT/UNVERIFIED 처리했습니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4-selective antibody | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD 전임상 자산이며 ApoE4 모델에서 기억·시냅스·tau 병리의 직접 기능성 효과가 확인됩니다. 정량 PK/PD 공개는 제한적입니다. | https://adelpharm.com/en/pipeline/<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.088537 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Youngen APP-siRNA와 Hotgen 투자계열 AA001이 혼합된 입력으로 어느 자산인지 특정할 수 없습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html<br>https://www.hotgen.com.cn/detail/683.html |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | 질환명이 자산명으로 입력됐으며 Youngen의 독립 자산 코드와 매칭되지 않습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | 신뢰 가능한 공개자료에서 Hyper Corp의 discrete tau 자산을 확인하지 못했습니다. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed nociceptive ion-channel inhibitor | Small molecule | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | HBW-015-15에서 PK·급성/CCI 효능·selectivity·독성이 공개됐으나 generic Pain, 미공개 표적 및 현재 활동 미확인으로 REJECT입니다. | https://www.tianfulifesciencepark.com/News/Detail?id=2657 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Protein biologic | Unknown | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | 활성 tauopathy 프로그램이나 적응증이 broad하고 ILM02 자산별 기능성 결과가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 7 | ILM21 | Illimis Therapeutics | Myelin debris/TAM GAIA fusion | Protein biologic | Multiple sclerosis / neuroinflammatory disease | Unknown | Republic of Korea | 3 | 1 | 0 | REJECT | 공식 파이프라인에서 MS·myelin debris 자산으로 확인되지만 회사 rationale 외 자산별 기능성·정량 데이터가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Protein biologic | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD lead이며 Aβ/TAM 기반 phagocytosis와 anti-inflammatory signaling의 prototype functional PoC가 확인됩니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Illimis-Lilly 연구협력 descriptor이며 개별 asset name이 아닙니다. | https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1 |\n| 10 | LYNK01006 → LNK01006 (BLKR201) | Lynk Pharmaceuticals | TYK2 JH2 allosteric inhibitor | Small molecule | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | CNS-penetrant TYK2 후보로 MS 모델 효능과 2026년 6월 Phase 1 첫 투여가 확인됩니다. 임상 결과는 아직 없습니다. | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html<br>https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html<br>https://clinicaltrials.gov/study/NCT07501039 |\n\n## Notes\n- #2와 #3은 Youngen의 무코드 APP-siRNA 프로그램과 관련될 수 있으나, 입력 자산명만으로 해당 프로그램을 자동 귀속하지 않았습니다.\n- #5의 공개 데이터는 HBW-015 프로그램의 대표물질로 기재된 HBW-015-15에서 확인됐으며, 2026년 현재 active status는 확인되지 않았습니다.\n- #7 ILM21은 Illimis 공식 파이프라인에 `Myelin Debris / Multiple Sclerosis / ILM21`로 등재되어 있어 identity_verified=true로 교정했습니다. 다만 stage와 자산별 결과는 미확인입니다.\n- #8 ILM01은 prototype GAIA-Aβ 기능성 근거와 최종 ILM01 후보의 연속성을 Full Scout에서 확인해야 합니다.\n- #10의 오기 `LYNK01006`은 `LNK01006`으로 정규화했으며, 2026년 6월부터 BLKR201 명칭으로 Phase 1이 진행 중입니다.",
+      "parser_status": "fast_triage"
+    },
+    "input": {
+      "company_input": "ADEL",
+      "asset_input": "ADEL-Y04"
+    },
+    "json_summary": {
+      "theme": "Others",
+      "cluster": "Others",
+      "target_description": "ApoE4를 선택적으로 표적하는 알츠하이머병 전임상 단클론항체."
+    },
+    "structured_table": {
+      "company": "ADEL, Inc.",
+      "asset_name": "ADEL-Y04",
+      "target": "Apolipoprotein E4 (ApoE4)",
+      "moa": "ApoE4-selective antibody intended to reduce ApoE4-linked tau pathology, synapse loss and cognitive impairment",
+      "modality_platform": "Antibody",
+      "main_indication": "Alzheimer's disease",
+      "indication": "Alzheimer's disease",
+      "development_stage": "Preclinical unspecified",
+      "company_country": "Republic of Korea",
+      "sources": [
+        {
+          "source_title": "ADEL official pipeline status",
+          "source_url": "https://adelpharm.com/en/pipeline/"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "SELECT",
+      "reason": "SELECT 조건 충족: identity와 active status가 확인되고 TR 3점·MOA 3점입니다.",
+      "flags": [
+        "active_preclinical_asset",
+        "interest_indication",
+        "asset_specific_functional_moa"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 3,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "TR 3점: AD 적응증과 ApoE4 직접 표적이 확인됩니다.",
+          "why_not_higher": "최고점입니다.",
+          "investigation_note": "공식 파이프라인과 자산 페이지를 확인했습니다.",
+          "uncertain_points": [],
+          "source_ids": [
+            "ADEL1",
+            "ADEL2"
+          ]
+        },
+        "moa_validity": {
+          "score": 3,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "MOA 3점: ADEL-Y04가 ApoE4 모델에서 기억, 시냅스 및 tau 병리에 직접 기능 효과를 보였습니다.",
+          "why_not_higher": "자산별 target-engagement 수치는 공개되지 않았습니다.",
+          "investigation_note": "학회 초록 수준의 자산별 기능성 검증입니다.",
+          "uncertain_points": [
+            "target engagement 미공개"
+          ],
+          "source_ids": [
+            "ADEL2"
+          ]
+        },
+        "data_maturity": {
+          "score": 1,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "Data 1점: 동물모델의 기억 개선과 synapse/tau 억제가 정성적으로 공개됐습니다.",
+          "why_not_higher": "용량, 효과크기, 통계 및 PK가 공개되지 않았습니다.",
+          "investigation_note": "정량 원자료가 필요합니다.",
+          "uncertain_points": [
+            "정량 결과 제한"
+          ],
+          "source_ids": [
+            "ADEL2"
+          ]
+        }
+      },
+      "total_score": 7,
+      "max_score": 9
+    },
+    "validation": {
+      "uncertain_points": [
+        "정량 세부값",
+        "임상 진입 일정"
+      ],
+      "cross_checked_facts": [
+        "회사-자산 연결",
+        "ApoE4 표적",
+        "AD",
+        "전임상 효능",
+        "동물 기능성 결과"
+      ],
+      "source_registry": [
+        {
+          "source_id": "ADEL1",
+          "source_title": "ADEL official pipeline status",
+          "source_url": "https://adelpharm.com/en/pipeline/",
+          "source_type": "official_company_pipeline",
+          "verified": true
+        },
+        {
+          "source_id": "ADEL2",
+          "source_title": "ApoE4 antibody ameliorates cognitive impairments and synapse loss in ApoE4/Tau-P301S mice",
+          "source_url": "https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.088537",
+          "source_type": "peer_reviewed_conference_abstract",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "직접 ApoE4 기능성 근거가 있는 활성 AD 후보로 Full Scout 권고.",
+      "recommendation": "Run Full Scout",
+      "most_important_diligence_question": "ADEL-Y04의 정량 효능, 뇌 노출 및 target-engagement 자료는 무엇인가?"
+    },
+    "triage": {
+      "status": "SELECT",
+      "identity_verified": true,
+      "active_asset": true,
+      "verified_public_source_count": 2,
+      "why": "활성 AD 전임상 프로그램이며 자산별 동물 기능성 근거로 TR 3점·MOA 3점을 충족합니다.",
+      "missing_evidence_needed_for_full_scout": [
+        "정량 용량-반응 및 통계",
+        "PK/brain exposure",
+        "IND-enabling 진행 상태"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "fast_triage",
+      "schema_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
+      "generated_at": "2026-08-06",
+      "output_filename_base": "Beijing Hotgen Biotech Co., Ltd._Alzheimer's disease therapy, Beijing Youngen Biotechnology",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 10개 중 ADEL-Y04, ILM01, LNK01006/BLKR201은 SELECT입니다. ILM21은 현재 Illimis 공식 파이프라인에서 신원이 확인되어 제공된 임시 UNVERIFIED 판정을 REJECT로 교정했으며, 나머지는 자산 identity 불명확 또는 SKBP fit·MoA·Data·활성 상태 부족으로 REJECT/UNVERIFIED 처리했습니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4-selective antibody | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD 전임상 자산이며 ApoE4 모델에서 기억·시냅스·tau 병리의 직접 기능성 효과가 확인됩니다. 정량 PK/PD 공개는 제한적입니다. | https://adelpharm.com/en/pipeline/<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.088537 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Youngen APP-siRNA와 Hotgen 투자계열 AA001이 혼합된 입력으로 어느 자산인지 특정할 수 없습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html<br>https://www.hotgen.com.cn/detail/683.html |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | 질환명이 자산명으로 입력됐으며 Youngen의 독립 자산 코드와 매칭되지 않습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | 신뢰 가능한 공개자료에서 Hyper Corp의 discrete tau 자산을 확인하지 못했습니다. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed nociceptive ion-channel inhibitor | Small molecule | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | HBW-015-15에서 PK·급성/CCI 효능·selectivity·독성이 공개됐으나 generic Pain, 미공개 표적 및 현재 활동 미확인으로 REJECT입니다. | https://www.tianfulifesciencepark.com/News/Detail?id=2657 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Protein biologic | Unknown | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | 활성 tauopathy 프로그램이나 적응증이 broad하고 ILM02 자산별 기능성 결과가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 7 | ILM21 | Illimis Therapeutics | Myelin debris/TAM GAIA fusion | Protein biologic | Multiple sclerosis / neuroinflammatory disease | Unknown | Republic of Korea | 3 | 1 | 0 | REJECT | 공식 파이프라인에서 MS·myelin debris 자산으로 확인되지만 회사 rationale 외 자산별 기능성·정량 데이터가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Protein biologic | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD lead이며 Aβ/TAM 기반 phagocytosis와 anti-inflammatory signaling의 prototype functional PoC가 확인됩니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Illimis-Lilly 연구협력 descriptor이며 개별 asset name이 아닙니다. | https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1 |\n| 10 | LYNK01006 → LNK01006 (BLKR201) | Lynk Pharmaceuticals | TYK2 JH2 allosteric inhibitor | Small molecule | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | CNS-penetrant TYK2 후보로 MS 모델 효능과 2026년 6월 Phase 1 첫 투여가 확인됩니다. 임상 결과는 아직 없습니다. | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html<br>https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html<br>https://clinicaltrials.gov/study/NCT07501039 |\n\n## Notes\n- #2와 #3은 Youngen의 무코드 APP-siRNA 프로그램과 관련될 수 있으나, 입력 자산명만으로 해당 프로그램을 자동 귀속하지 않았습니다.\n- #5의 공개 데이터는 HBW-015 프로그램의 대표물질로 기재된 HBW-015-15에서 확인됐으며, 2026년 현재 active status는 확인되지 않았습니다.\n- #7 ILM21은 Illimis 공식 파이프라인에 `Myelin Debris / Multiple Sclerosis / ILM21`로 등재되어 있어 identity_verified=true로 교정했습니다. 다만 stage와 자산별 결과는 미확인입니다.\n- #8 ILM01은 prototype GAIA-Aβ 기능성 근거와 최종 ILM01 후보의 연속성을 Full Scout에서 확인해야 합니다.\n- #10의 오기 `LYNK01006`은 `LNK01006`으로 정규화했으며, 2026년 6월부터 BLKR201 명칭으로 Phase 1이 진행 중입니다.",
+      "parser_status": "fast_triage"
+    },
+    "input": {
+      "company_input": "Beijing Hotgen Biotech",
+      "asset_input": "Alzheimer's disease therapy, Beijing Youngen Biotechnology"
+    },
+    "json_summary": {
+      "theme": "Unknown",
+      "cluster": "Unknown",
+      "target_description": "Youngen APP-siRNA와 Hotgen 계열 AA001 중 어느 자산인지 식별되지 않음."
+    },
+    "structured_table": {
+      "company": "Beijing Hotgen Biotech Co., Ltd.",
+      "asset_name": "Alzheimer's disease therapy, Beijing Youngen Biotechnology",
+      "target": "Unknown",
+      "moa": "Unknown",
+      "modality_platform": "Unknown",
+      "main_indication": "Unknown",
+      "indication": "Unknown",
+      "development_stage": "Unknown",
+      "company_country": "China",
+      "sources": [
+        {
+          "source_title": "Youngen APP siRNA patent announcement",
+          "source_url": "https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "UNVERIFIED",
+      "reason": "특정 biotech/pharma asset identity를 확인할 수 없습니다.",
+      "flags": [
+        "company_asset_mismatch",
+        "multiple_possible_assets"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "no_supporting_basis",
+          "main_line_summary": "TR 0점: 특정 자산의 적응증으로 귀속할 수 없습니다.",
+          "why_not_higher": "자산 identity가 먼저 확정돼야 합니다.",
+          "investigation_note": "Youngen APP-siRNA와 Hotgen 계열 AA001을 각각 확인했습니다.",
+          "uncertain_points": [
+            "후보 자산 2개가 충돌"
+          ],
+          "source_ids": []
+        },
+        "moa_validity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "no_supporting_basis",
+          "main_line_summary": "MOA 0점: 특정 자산의 표적·기전을 확정할 수 없습니다.",
+          "why_not_higher": "APP-siRNA와 Aβ 항체는 서로 다른 프로그램입니다.",
+          "investigation_note": "입력 행의 회사·프로그램 조합을 해소해야 합니다.",
+          "uncertain_points": [
+            "프로그램 혼합"
+          ],
+          "source_ids": []
+        },
+        "data_maturity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "no_supporting_basis",
+          "main_line_summary": "Data 0점: 평가 대상 자산 자체가 정해지지 않았습니다.",
+          "why_not_higher": "후보별 데이터는 현재 행에 귀속할 수 없습니다.",
+          "investigation_note": "정확한 자산 식별자가 필요합니다.",
+          "uncertain_points": [],
+          "source_ids": []
+        }
+      },
+      "total_score": 0,
+      "max_score": 9
+    },
+    "validation": {
+      "uncertain_points": [
+        "Youngen APP-siRNA인지 AA001인지 불명확"
+      ],
+      "cross_checked_facts": [
+        "Youngen의 APP-siRNA 특허 프로그램",
+        "Hotgen 투자계열 AA001 존재",
+        "입력 회사·자산 불일치"
+      ],
+      "source_registry": [
+        {
+          "source_id": "YH1",
+          "source_title": "Youngen APP siRNA patent announcement",
+          "source_url": "https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html",
+          "source_type": "official_company_news",
+          "verified": true
+        },
+        {
+          "source_id": "YH2",
+          "source_title": "Hotgen announcement on AA001 IND approval",
+          "source_url": "https://www.hotgen.com.cn/detail/683.html",
+          "source_type": "official_company_news",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "서로 다른 두 AD 프로그램이 혼합된 입력으로 자산 신원 확인이 우선입니다.",
+      "recommendation": "Verify asset identity",
+      "most_important_diligence_question": "이 행은 Youngen APP-siRNA와 AA001 중 어느 자산을 의미하는가?"
+    },
+    "triage": {
+      "status": "UNVERIFIED",
+      "identity_verified": false,
+      "active_asset": null,
+      "verified_public_source_count": 2,
+      "why": "입력 자산명이 Youngen의 무코드 APP-siRNA와 Hotgen 투자계열의 AA001을 혼합해 특정 자산으로 매핑할 수 없습니다.",
+      "missing_evidence_needed_for_full_scout": [
+        "정확한 자산 코드",
+        "원 개발사",
+        "target/modality",
+        "원문 source URL"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "fast_triage",
+      "schema_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
+      "generated_at": "2026-08-06",
+      "output_filename_base": "Hyperway Pharmaceutical Co., Ltd._HBW-015",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 10개 중 ADEL-Y04, ILM01, LNK01006/BLKR201은 SELECT입니다. ILM21은 현재 Illimis 공식 파이프라인에서 신원이 확인되어 제공된 임시 UNVERIFIED 판정을 REJECT로 교정했으며, 나머지는 자산 identity 불명확 또는 SKBP fit·MoA·Data·활성 상태 부족으로 REJECT/UNVERIFIED 처리했습니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4-selective antibody | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD 전임상 자산이며 ApoE4 모델에서 기억·시냅스·tau 병리의 직접 기능성 효과가 확인됩니다. 정량 PK/PD 공개는 제한적입니다. | https://adelpharm.com/en/pipeline/<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.088537 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Youngen APP-siRNA와 Hotgen 투자계열 AA001이 혼합된 입력으로 어느 자산인지 특정할 수 없습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html<br>https://www.hotgen.com.cn/detail/683.html |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | 질환명이 자산명으로 입력됐으며 Youngen의 독립 자산 코드와 매칭되지 않습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | 신뢰 가능한 공개자료에서 Hyper Corp의 discrete tau 자산을 확인하지 못했습니다. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed nociceptive ion-channel inhibitor | Small molecule | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | HBW-015-15에서 PK·급성/CCI 효능·selectivity·독성이 공개됐으나 generic Pain, 미공개 표적 및 현재 활동 미확인으로 REJECT입니다. | https://www.tianfulifesciencepark.com/News/Detail?id=2657 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Protein biologic | Unknown | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | 활성 tauopathy 프로그램이나 적응증이 broad하고 ILM02 자산별 기능성 결과가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 7 | ILM21 | Illimis Therapeutics | Myelin debris/TAM GAIA fusion | Protein biologic | Multiple sclerosis / neuroinflammatory disease | Unknown | Republic of Korea | 3 | 1 | 0 | REJECT | 공식 파이프라인에서 MS·myelin debris 자산으로 확인되지만 회사 rationale 외 자산별 기능성·정량 데이터가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Protein biologic | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD lead이며 Aβ/TAM 기반 phagocytosis와 anti-inflammatory signaling의 prototype functional PoC가 확인됩니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Illimis-Lilly 연구협력 descriptor이며 개별 asset name이 아닙니다. | https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1 |\n| 10 | LYNK01006 → LNK01006 (BLKR201) | Lynk Pharmaceuticals | TYK2 JH2 allosteric inhibitor | Small molecule | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | CNS-penetrant TYK2 후보로 MS 모델 효능과 2026년 6월 Phase 1 첫 투여가 확인됩니다. 임상 결과는 아직 없습니다. | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html<br>https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html<br>https://clinicaltrials.gov/study/NCT07501039 |\n\n## Notes\n- #2와 #3은 Youngen의 무코드 APP-siRNA 프로그램과 관련될 수 있으나, 입력 자산명만으로 해당 프로그램을 자동 귀속하지 않았습니다.\n- #5의 공개 데이터는 HBW-015 프로그램의 대표물질로 기재된 HBW-015-15에서 확인됐으며, 2026년 현재 active status는 확인되지 않았습니다.\n- #7 ILM21은 Illimis 공식 파이프라인에 `Myelin Debris / Multiple Sclerosis / ILM21`로 등재되어 있어 identity_verified=true로 교정했습니다. 다만 stage와 자산별 결과는 미확인입니다.\n- #8 ILM01은 prototype GAIA-Aβ 기능성 근거와 최종 ILM01 후보의 연속성을 Full Scout에서 확인해야 합니다.\n- #10의 오기 `LYNK01006`은 `LNK01006`으로 정규화했으며, 2026년 6월부터 BLKR201 명칭으로 Phase 1이 진행 중입니다.",
+      "parser_status": "fast_triage"
+    },
+    "input": {
+      "company_input": "Hyperway Pharmaceutical",
+      "asset_input": "HBW-015"
+    },
+    "json_summary": {
+      "theme": "Others",
+      "cluster": "Others",
+      "target_description": "표적명이 비공개된 비마약성 진통 저분자 프로그램; HBW-015-15 대표물질 데이터 공개."
+    },
+    "structured_table": {
+      "company": "Hyperway Pharmaceutical Co., Ltd.",
+      "asset_name": "HBW-015",
+      "target": "Undisclosed nociceptive ion channel",
+      "moa": "Inhibitor of an undisclosed nociceptive ion channel",
+      "modality_platform": "Small molecule",
+      "main_indication": "Pain",
+      "indication": "Pain; efficacy tested in acute and CCI neuropathic pain models",
+      "development_stage": "Preclinical unspecified",
+      "company_country": "China",
+      "sources": [
+        {
+          "source_title": "BioTianFu report on Hyperway analgesic HBW-015-15",
+          "source_url": "https://www.tianfulifesciencepark.com/News/Detail?id=2657"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "REJECT",
+      "reason": "identity는 확인되지만 active_asset=null이며 SKBP fit과 MoA 정보가 부족합니다.",
+      "flags": [
+        "generic_pain",
+        "undisclosed_target",
+        "activity_not_confirmed"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 1,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "TR 1점: 통증 프로그램과 CCI 신경병증성 통증 모델은 확인되지만 공식 적응증은 generic Pain입니다.",
+          "why_not_higher": "명시적 neuropathic pain 임상 적응증이 확인되지 않았습니다.",
+          "investigation_note": "동물모델을 임상 적응증으로 승격하지 않았습니다.",
+          "uncertain_points": [
+            "공식 lead pain subtype"
+          ],
+          "source_ids": [
+            "HBW1"
+          ]
+        },
+        "moa_validity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "MOA 0점: 미공개 통증감지 ion channel 억제제로만 설명돼 표적·기전을 충분히 확인할 수 없습니다.",
+          "why_not_higher": "표적명이 공개되지 않았습니다.",
+          "investigation_note": "HBW-015-15의 표적명과 직접 assay가 필요합니다.",
+          "uncertain_points": [
+            "표적 identity"
+          ],
+          "source_ids": [
+            "HBW1"
+          ]
+        },
+        "data_maturity": {
+          "score": 3,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "Data 3점: PK, 급성·CCI 효능, selectivity 및 14일 독성의 다중 정량 도메인이 공개됐습니다.",
+          "why_not_higher": "임상 데이터는 없지만 전임상 단계에서는 최고점 기준을 충족합니다.",
+          "investigation_note": "대표물질 HBW-015-15 데이터가 HBW-015 프로그램에 귀속됩니다.",
+          "uncertain_points": [
+            "정확한 PCC 코드 관계"
+          ],
+          "source_ids": [
+            "HBW1"
+          ]
+        }
+      },
+      "total_score": 4,
+      "max_score": 9
+    },
+    "validation": {
+      "uncertain_points": [
+        "HBW-015와 HBW-015-15의 명명 관계",
+        "2026년 active status",
+        "표적명"
+      ],
+      "cross_checked_facts": [
+        "회사-프로그램 연결",
+        "경구 PK",
+        "급성·CCI 효능",
+        "kinase/ion-channel selectivity",
+        "14일 rat toxicology"
+      ],
+      "source_registry": [
+        {
+          "source_id": "HBW1",
+          "source_title": "BioTianFu report on Hyperway analgesic HBW-015-15",
+          "source_url": "https://www.tianfulifesciencepark.com/News/Detail?id=2657",
+          "source_type": "biotech_park_company_report",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "전임상 데이터는 강하지만 generic Pain·미공개 표적·현재 활동 불확실로 REJECT.",
+      "recommendation": "Do not run Full Scout",
+      "most_important_diligence_question": "HBW-015의 정확한 표적과 2026년 active pipeline status는 무엇인가?"
+    },
+    "triage": {
+      "status": "REJECT",
+      "identity_verified": true,
+      "active_asset": null,
+      "verified_public_source_count": 1,
+      "why": "다중 전임상 데이터는 강하지만 generic Pain이고 표적명이 비공개이며 2026년 현재 활동이 확인되지 않아 REJECT입니다.",
+      "missing_evidence_needed_for_full_scout": [
+        "현재 공식 pipeline status",
+        "표적명",
+        "임상 후보 지정 여부"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "fast_triage",
+      "schema_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
+      "generated_at": "2026-08-06",
+      "output_filename_base": "Illimis Therapeutics, Inc._ILM02",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 10개 중 ADEL-Y04, ILM01, LNK01006/BLKR201은 SELECT입니다. ILM21은 현재 Illimis 공식 파이프라인에서 신원이 확인되어 제공된 임시 UNVERIFIED 판정을 REJECT로 교정했으며, 나머지는 자산 identity 불명확 또는 SKBP fit·MoA·Data·활성 상태 부족으로 REJECT/UNVERIFIED 처리했습니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4-selective antibody | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD 전임상 자산이며 ApoE4 모델에서 기억·시냅스·tau 병리의 직접 기능성 효과가 확인됩니다. 정량 PK/PD 공개는 제한적입니다. | https://adelpharm.com/en/pipeline/<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.088537 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Youngen APP-siRNA와 Hotgen 투자계열 AA001이 혼합된 입력으로 어느 자산인지 특정할 수 없습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html<br>https://www.hotgen.com.cn/detail/683.html |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | 질환명이 자산명으로 입력됐으며 Youngen의 독립 자산 코드와 매칭되지 않습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | 신뢰 가능한 공개자료에서 Hyper Corp의 discrete tau 자산을 확인하지 못했습니다. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed nociceptive ion-channel inhibitor | Small molecule | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | HBW-015-15에서 PK·급성/CCI 효능·selectivity·독성이 공개됐으나 generic Pain, 미공개 표적 및 현재 활동 미확인으로 REJECT입니다. | https://www.tianfulifesciencepark.com/News/Detail?id=2657 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Protein biologic | Unknown | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | 활성 tauopathy 프로그램이나 적응증이 broad하고 ILM02 자산별 기능성 결과가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 7 | ILM21 | Illimis Therapeutics | Myelin debris/TAM GAIA fusion | Protein biologic | Multiple sclerosis / neuroinflammatory disease | Unknown | Republic of Korea | 3 | 1 | 0 | REJECT | 공식 파이프라인에서 MS·myelin debris 자산으로 확인되지만 회사 rationale 외 자산별 기능성·정량 데이터가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Protein biologic | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD lead이며 Aβ/TAM 기반 phagocytosis와 anti-inflammatory signaling의 prototype functional PoC가 확인됩니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Illimis-Lilly 연구협력 descriptor이며 개별 asset name이 아닙니다. | https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1 |\n| 10 | LYNK01006 → LNK01006 (BLKR201) | Lynk Pharmaceuticals | TYK2 JH2 allosteric inhibitor | Small molecule | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | CNS-penetrant TYK2 후보로 MS 모델 효능과 2026년 6월 Phase 1 첫 투여가 확인됩니다. 임상 결과는 아직 없습니다. | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html<br>https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html<br>https://clinicaltrials.gov/study/NCT07501039 |\n\n## Notes\n- #2와 #3은 Youngen의 무코드 APP-siRNA 프로그램과 관련될 수 있으나, 입력 자산명만으로 해당 프로그램을 자동 귀속하지 않았습니다.\n- #5의 공개 데이터는 HBW-015 프로그램의 대표물질로 기재된 HBW-015-15에서 확인됐으며, 2026년 현재 active status는 확인되지 않았습니다.\n- #7 ILM21은 Illimis 공식 파이프라인에 `Myelin Debris / Multiple Sclerosis / ILM21`로 등재되어 있어 identity_verified=true로 교정했습니다. 다만 stage와 자산별 결과는 미확인입니다.\n- #8 ILM01은 prototype GAIA-Aβ 기능성 근거와 최종 ILM01 후보의 연속성을 Full Scout에서 확인해야 합니다.\n- #10의 오기 `LYNK01006`은 `LNK01006`으로 정규화했으며, 2026년 6월부터 BLKR201 명칭으로 Phase 1이 진행 중입니다.",
+      "parser_status": "fast_triage"
+    },
+    "input": {
+      "company_input": "Illimis Therapeutics",
+      "asset_input": "ILM02"
+    },
+    "json_summary": {
+      "theme": "Neuroimmune",
+      "cluster": "Unknown",
+      "target_description": "Tau를 GAIA/TAM 경로로 제거하려는 초기 tauopathy fusion-protein 프로그램."
+    },
+    "structured_table": {
+      "company": "Illimis Therapeutics, Inc.",
+      "asset_name": "ILM02",
+      "target": "Tau",
+      "moa": "GAIA fusion protein intended to couple tau binding with TAM-receptor-mediated anti-inflammatory phagocytosis",
+      "modality_platform": "Protein biologic",
+      "main_indication": "Unknown",
+      "indication": "Tauopathies",
+      "development_stage": "Hit Discovery",
+      "company_country": "Republic of Korea",
+      "sources": [
+        {
+          "source_title": "Illimis official pipeline",
+          "source_url": "https://illimistx.com/en/sub/platform%26pipeline/pipeline.php"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "REJECT",
+      "reason": "TR 1점·MOA 1점·Data 0점으로 Full Scout 우선순위가 낮습니다.",
+      "flags": [
+        "broad_tauopathy",
+        "early_discovery",
+        "no_asset_specific_results"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 1,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "user_input_and_public_source",
+          "main_line_summary": "TR 1점: tauopathies는 신경퇴행성 범위이나 6대 관심 적응증 중 특정 질환으로 확정되지 않았습니다.",
+          "why_not_higher": "AD 등 구체 interest indication이 공식 lead로 확인되지 않았습니다.",
+          "investigation_note": "공식 pipeline의 broad indication을 그대로 적용했습니다.",
+          "uncertain_points": [
+            "구체 lead indication"
+          ],
+          "source_ids": [
+            "ILM02_1"
+          ]
+        },
+        "moa_validity": {
+          "score": 1,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "MOA 1점: tau binder와 TAM-mediated anti-inflammatory phagocytosis의 GAIA 설계가 설명됩니다.",
+          "why_not_higher": "ILM02 자체 기능성 데이터는 공개되지 않았습니다.",
+          "investigation_note": "플랫폼 rationale과 자산별 증거를 구분했습니다.",
+          "uncertain_points": [
+            "ILM02-specific PoC"
+          ],
+          "source_ids": [
+            "ILM02_1",
+            "ILM02_2"
+          ]
+        },
+        "data_maturity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "no_supporting_basis",
+          "main_line_summary": "Data 0점: ILM02 자산별 공개 결과가 확인되지 않았습니다.",
+          "why_not_higher": "platform-level rationale만 있습니다.",
+          "investigation_note": "AAIC 2026 poster 원자료 등 확인이 필요합니다.",
+          "uncertain_points": [],
+          "source_ids": []
+        }
+      },
+      "total_score": 2,
+      "max_score": 9
+    },
+    "validation": {
+      "uncertain_points": [
+        "구체 tauopathy",
+        "stage marker",
+        "자산별 기능성 결과"
+      ],
+      "cross_checked_facts": [
+        "공식 ILM02 listing",
+        "Tau target",
+        "GAIA/TAM platform"
+      ],
+      "source_registry": [
+        {
+          "source_id": "ILM02_1",
+          "source_title": "Illimis official pipeline",
+          "source_url": "https://illimistx.com/en/sub/platform%26pipeline/pipeline.php",
+          "source_type": "official_company_pipeline",
+          "verified": true
+        },
+        {
+          "source_id": "ILM02_2",
+          "source_title": "Illimis GAIA platform description",
+          "source_url": "https://illimistx.com/en/sub/platform%26pipeline/platform.php",
+          "source_type": "official_company_platform",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "활성 tau 프로그램이나 broad indication·초기 단계·데이터 부재로 REJECT.",
+      "recommendation": "Do not run Full Scout",
+      "most_important_diligence_question": "ILM02의 구체 lead indication과 자산별 tau-clearance 결과는 무엇인가?"
+    },
+    "triage": {
+      "status": "REJECT",
+      "identity_verified": true,
+      "active_asset": true,
+      "verified_public_source_count": 2,
+      "why": "현재 공식 파이프라인의 활성 자산이지만 적응증이 broad tauopathies이고 초기 discovery 및 공개 자산별 결과 부재로 REJECT입니다.",
+      "missing_evidence_needed_for_full_scout": [
+        "구체 lead tauopathy",
+        "ILM02-specific functional data",
+        "candidate stage"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "fast_triage",
+      "schema_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
+      "generated_at": "2026-08-06",
+      "output_filename_base": "Illimis Therapeutics, Inc._ILM21",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 10개 중 ADEL-Y04, ILM01, LNK01006/BLKR201은 SELECT입니다. ILM21은 현재 Illimis 공식 파이프라인에서 신원이 확인되어 제공된 임시 UNVERIFIED 판정을 REJECT로 교정했으며, 나머지는 자산 identity 불명확 또는 SKBP fit·MoA·Data·활성 상태 부족으로 REJECT/UNVERIFIED 처리했습니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4-selective antibody | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD 전임상 자산이며 ApoE4 모델에서 기억·시냅스·tau 병리의 직접 기능성 효과가 확인됩니다. 정량 PK/PD 공개는 제한적입니다. | https://adelpharm.com/en/pipeline/<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.088537 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Youngen APP-siRNA와 Hotgen 투자계열 AA001이 혼합된 입력으로 어느 자산인지 특정할 수 없습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html<br>https://www.hotgen.com.cn/detail/683.html |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | 질환명이 자산명으로 입력됐으며 Youngen의 독립 자산 코드와 매칭되지 않습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | 신뢰 가능한 공개자료에서 Hyper Corp의 discrete tau 자산을 확인하지 못했습니다. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed nociceptive ion-channel inhibitor | Small molecule | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | HBW-015-15에서 PK·급성/CCI 효능·selectivity·독성이 공개됐으나 generic Pain, 미공개 표적 및 현재 활동 미확인으로 REJECT입니다. | https://www.tianfulifesciencepark.com/News/Detail?id=2657 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Protein biologic | Unknown | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | 활성 tauopathy 프로그램이나 적응증이 broad하고 ILM02 자산별 기능성 결과가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 7 | ILM21 | Illimis Therapeutics | Myelin debris/TAM GAIA fusion | Protein biologic | Multiple sclerosis / neuroinflammatory disease | Unknown | Republic of Korea | 3 | 1 | 0 | REJECT | 공식 파이프라인에서 MS·myelin debris 자산으로 확인되지만 회사 rationale 외 자산별 기능성·정량 데이터가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Protein biologic | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD lead이며 Aβ/TAM 기반 phagocytosis와 anti-inflammatory signaling의 prototype functional PoC가 확인됩니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Illimis-Lilly 연구협력 descriptor이며 개별 asset name이 아닙니다. | https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1 |\n| 10 | LYNK01006 → LNK01006 (BLKR201) | Lynk Pharmaceuticals | TYK2 JH2 allosteric inhibitor | Small molecule | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | CNS-penetrant TYK2 후보로 MS 모델 효능과 2026년 6월 Phase 1 첫 투여가 확인됩니다. 임상 결과는 아직 없습니다. | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html<br>https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html<br>https://clinicaltrials.gov/study/NCT07501039 |\n\n## Notes\n- #2와 #3은 Youngen의 무코드 APP-siRNA 프로그램과 관련될 수 있으나, 입력 자산명만으로 해당 프로그램을 자동 귀속하지 않았습니다.\n- #5의 공개 데이터는 HBW-015 프로그램의 대표물질로 기재된 HBW-015-15에서 확인됐으며, 2026년 현재 active status는 확인되지 않았습니다.\n- #7 ILM21은 Illimis 공식 파이프라인에 `Myelin Debris / Multiple Sclerosis / ILM21`로 등재되어 있어 identity_verified=true로 교정했습니다. 다만 stage와 자산별 결과는 미확인입니다.\n- #8 ILM01은 prototype GAIA-Aβ 기능성 근거와 최종 ILM01 후보의 연속성을 Full Scout에서 확인해야 합니다.\n- #10의 오기 `LYNK01006`은 `LNK01006`으로 정규화했으며, 2026년 6월부터 BLKR201 명칭으로 Phase 1이 진행 중입니다.",
+      "parser_status": "fast_triage"
+    },
+    "input": {
+      "company_input": "Illimis Therapeutics",
+      "asset_input": "ILM21"
+    },
+    "json_summary": {
+      "theme": "Neuroimmune",
+      "cluster": "Unknown",
+      "target_description": "Multiple sclerosis에서 myelin debris를 표적하는 GAIA/TAM fusion-protein 프로그램."
+    },
+    "structured_table": {
+      "company": "Illimis Therapeutics, Inc.",
+      "asset_name": "ILM21",
+      "target": "Myelin debris",
+      "moa": "GAIA/TAM-receptor-mediated anti-inflammatory phagocytic clearance of myelin debris",
+      "modality_platform": "Protein biologic",
+      "main_indication": "Multiple sclerosis / neuroinflammatory disease",
+      "indication": "Multiple sclerosis",
+      "development_stage": "Unknown",
+      "company_country": "Republic of Korea",
+      "sources": [
+        {
+          "source_title": "Illimis official pipeline",
+          "source_url": "https://illimistx.com/en/sub/platform%26pipeline/pipeline.php"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "REJECT",
+      "reason": "TR 3점이나 MOA 1점·Data 0점으로 SELECT 조건을 충족하지 못합니다.",
+      "flags": [
+        "corrected_from_unverified",
+        "interest_indication",
+        "no_asset_specific_results"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 3,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "TR 3점: Multiple sclerosis와 myelin debris 직접 표적이 공식 파이프라인에서 확인됩니다.",
+          "why_not_higher": "최고점입니다.",
+          "investigation_note": "제공된 UNVERIFIED 임시 판정을 공식 자료로 교정했습니다.",
+          "uncertain_points": [],
+          "source_ids": [
+            "ILM21_1"
+          ]
+        },
+        "moa_validity": {
+          "score": 1,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "MOA 1점: GAIA/TAM 기반 myelin-debris clearance 설계는 확인되지만 회사 rationale 수준입니다.",
+          "why_not_higher": "ILM21 자체 functional assay가 공개되지 않았습니다.",
+          "investigation_note": "플랫폼과 자산별 근거를 분리했습니다.",
+          "uncertain_points": [
+            "ILM21-specific validation"
+          ],
+          "source_ids": [
+            "ILM21_1",
+            "ILM21_2"
+          ]
+        },
+        "data_maturity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "no_supporting_basis",
+          "main_line_summary": "Data 0점: ILM21 자산별 결과가 공개 확인되지 않았습니다.",
+          "why_not_higher": "정량 결과가 없습니다.",
+          "investigation_note": "myelin phagocytosis, neuroinflammation 및 EAE 효능 자료가 필요합니다.",
+          "uncertain_points": [],
+          "source_ids": []
+        }
+      },
+      "total_score": 4,
+      "max_score": 9
+    },
+    "validation": {
+      "uncertain_points": [
+        "현재 stage",
+        "자산별 PoC"
+      ],
+      "cross_checked_facts": [
+        "공식 ILM21 listing",
+        "myelin debris target",
+        "MS indication",
+        "GAIA/TAM platform"
+      ],
+      "source_registry": [
+        {
+          "source_id": "ILM21_1",
+          "source_title": "Illimis official pipeline",
+          "source_url": "https://illimistx.com/en/sub/platform%26pipeline/pipeline.php",
+          "source_type": "official_company_pipeline",
+          "verified": true
+        },
+        {
+          "source_id": "ILM21_2",
+          "source_title": "Illimis GAIA platform description",
+          "source_url": "https://illimistx.com/en/sub/platform%26pipeline/platform.php",
+          "source_type": "official_company_platform",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "MS와 myelin-debris fit은 높지만 자산별 기능성·데이터 부재로 REJECT.",
+      "recommendation": "Do not run Full Scout",
+      "most_important_diligence_question": "ILM21이 myelin debris clearance와 MS 모델 효능을 직접 입증했는가?"
+    },
+    "triage": {
+      "status": "REJECT",
+      "identity_verified": true,
+      "active_asset": true,
+      "verified_public_source_count": 2,
+      "why": "공식 파이프라인에서 자산 identity와 MS 적응증이 확인되지만 기능성 MoA·데이터가 부족해 REJECT입니다.",
+      "missing_evidence_needed_for_full_scout": [
+        "ILM21-specific functional evidence",
+        "정량 myelin-clearance data",
+        "현재 개발 단계"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "fast_triage",
+      "schema_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
+      "generated_at": "2026-08-06",
+      "output_filename_base": "Illimis Therapeutics, Inc._ILM01",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 10개 중 ADEL-Y04, ILM01, LNK01006/BLKR201은 SELECT입니다. ILM21은 현재 Illimis 공식 파이프라인에서 신원이 확인되어 제공된 임시 UNVERIFIED 판정을 REJECT로 교정했으며, 나머지는 자산 identity 불명확 또는 SKBP fit·MoA·Data·활성 상태 부족으로 REJECT/UNVERIFIED 처리했습니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4-selective antibody | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD 전임상 자산이며 ApoE4 모델에서 기억·시냅스·tau 병리의 직접 기능성 효과가 확인됩니다. 정량 PK/PD 공개는 제한적입니다. | https://adelpharm.com/en/pipeline/<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.088537 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Youngen APP-siRNA와 Hotgen 투자계열 AA001이 혼합된 입력으로 어느 자산인지 특정할 수 없습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html<br>https://www.hotgen.com.cn/detail/683.html |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | 질환명이 자산명으로 입력됐으며 Youngen의 독립 자산 코드와 매칭되지 않습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | 신뢰 가능한 공개자료에서 Hyper Corp의 discrete tau 자산을 확인하지 못했습니다. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed nociceptive ion-channel inhibitor | Small molecule | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | HBW-015-15에서 PK·급성/CCI 효능·selectivity·독성이 공개됐으나 generic Pain, 미공개 표적 및 현재 활동 미확인으로 REJECT입니다. | https://www.tianfulifesciencepark.com/News/Detail?id=2657 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Protein biologic | Unknown | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | 활성 tauopathy 프로그램이나 적응증이 broad하고 ILM02 자산별 기능성 결과가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 7 | ILM21 | Illimis Therapeutics | Myelin debris/TAM GAIA fusion | Protein biologic | Multiple sclerosis / neuroinflammatory disease | Unknown | Republic of Korea | 3 | 1 | 0 | REJECT | 공식 파이프라인에서 MS·myelin debris 자산으로 확인되지만 회사 rationale 외 자산별 기능성·정량 데이터가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Protein biologic | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD lead이며 Aβ/TAM 기반 phagocytosis와 anti-inflammatory signaling의 prototype functional PoC가 확인됩니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Illimis-Lilly 연구협력 descriptor이며 개별 asset name이 아닙니다. | https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1 |\n| 10 | LYNK01006 → LNK01006 (BLKR201) | Lynk Pharmaceuticals | TYK2 JH2 allosteric inhibitor | Small molecule | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | CNS-penetrant TYK2 후보로 MS 모델 효능과 2026년 6월 Phase 1 첫 투여가 확인됩니다. 임상 결과는 아직 없습니다. | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html<br>https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html<br>https://clinicaltrials.gov/study/NCT07501039 |\n\n## Notes\n- #2와 #3은 Youngen의 무코드 APP-siRNA 프로그램과 관련될 수 있으나, 입력 자산명만으로 해당 프로그램을 자동 귀속하지 않았습니다.\n- #5의 공개 데이터는 HBW-015 프로그램의 대표물질로 기재된 HBW-015-15에서 확인됐으며, 2026년 현재 active status는 확인되지 않았습니다.\n- #7 ILM21은 Illimis 공식 파이프라인에 `Myelin Debris / Multiple Sclerosis / ILM21`로 등재되어 있어 identity_verified=true로 교정했습니다. 다만 stage와 자산별 결과는 미확인입니다.\n- #8 ILM01은 prototype GAIA-Aβ 기능성 근거와 최종 ILM01 후보의 연속성을 Full Scout에서 확인해야 합니다.\n- #10의 오기 `LYNK01006`은 `LNK01006`으로 정규화했으며, 2026년 6월부터 BLKR201 명칭으로 Phase 1이 진행 중입니다.",
+      "parser_status": "fast_triage"
+    },
+    "input": {
+      "company_input": "Illimis Therapeutics",
+      "asset_input": "ILM01"
+    },
+    "json_summary": {
+      "theme": "Neuroimmune",
+      "cluster": "Unknown",
+      "target_description": "Aβ와 TAM receptor를 연결해 염증을 제한하며 amyloid clearance를 유도하는 GAIA lead."
+    },
+    "structured_table": {
+      "company": "Illimis Therapeutics, Inc.",
+      "asset_name": "ILM01",
+      "target": "Amyloid beta (Aβ) and TAM receptors",
+      "moa": "GAIA fusion protein couples Aβ binding to TAM-receptor-mediated phagocytosis with anti-inflammatory signaling",
+      "modality_platform": "Protein biologic",
+      "main_indication": "Alzheimer's disease",
+      "indication": "Alzheimer's disease",
+      "development_stage": "Preclinical unspecified",
+      "company_country": "Republic of Korea",
+      "sources": [
+        {
+          "source_title": "Illimis official pipeline",
+          "source_url": "https://illimistx.com/en/sub/platform%26pipeline/pipeline.php"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "SELECT",
+      "reason": "SELECT 조건 충족: identity와 active status가 확인되고 TR 3점·MOA 3점입니다.",
+      "flags": [
+        "active_preclinical_asset",
+        "interest_indication",
+        "asset_specific_functional_moa"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 3,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "TR 3점: AD 적응증과 Aβ/TAM 직접 질환·기전 연결이 확인됩니다.",
+          "why_not_higher": "최고점입니다.",
+          "investigation_note": "공식 pipeline과 platform을 확인했습니다.",
+          "uncertain_points": [],
+          "source_ids": [
+            "ILM01_1",
+            "ILM01_2"
+          ]
+        },
+        "moa_validity": {
+          "score": 3,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "MOA 3점: GAIA-Aβ prototype가 phagocytosis/anti-inflammatory 설계와 비교 기능성 PoC를 보였습니다.",
+          "why_not_higher": "최종 ILM01 후보의 target-engagement 수치는 제한적입니다.",
+          "investigation_note": "prototype와 최종 후보의 동일성 범위를 Full Scout에서 확인해야 합니다.",
+          "uncertain_points": [
+            "prototype-to-candidate continuity"
+          ],
+          "source_ids": [
+            "ILM01_2",
+            "ILM01_3"
+          ]
+        },
+        "data_maturity": {
+          "score": 1,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "Data 1점: improved efficacy/safety 및 amyloid/neuroinflammation 감소가 정성적으로 공개됐습니다.",
+          "why_not_higher": "정량 효과크기·PK·안전성 수치가 제한적입니다.",
+          "investigation_note": "학회/공식 설명을 넘어 원자료가 필요합니다.",
+          "uncertain_points": [
+            "정량 원자료 제한"
+          ],
+          "source_ids": [
+            "ILM01_2",
+            "ILM01_3"
+          ]
+        }
+      },
+      "total_score": 7,
+      "max_score": 9
+    },
+    "validation": {
+      "uncertain_points": [
+        "최종 후보와 prototype 관계",
+        "정량 전임상 package",
+        "현재 세부 stage"
+      ],
+      "cross_checked_facts": [
+        "공식 ILM01 listing",
+        "AD",
+        "Aβ target",
+        "GAIA/TAM mechanism",
+        "prototype functional PoC"
+      ],
+      "source_registry": [
+        {
+          "source_id": "ILM01_1",
+          "source_title": "Illimis official pipeline",
+          "source_url": "https://illimistx.com/en/sub/platform%26pipeline/pipeline.php",
+          "source_type": "official_company_pipeline",
+          "verified": true
+        },
+        {
+          "source_id": "ILM01_2",
+          "source_title": "Illimis GAIA platform description",
+          "source_url": "https://illimistx.com/en/sub/platform%26pipeline/platform.php",
+          "source_type": "official_company_platform",
+          "verified": true
+        },
+        {
+          "source_id": "ILM01_3",
+          "source_title": "Anti-inflammatory clearance of amyloid beta by a chimeric Gas6 fusion protein",
+          "source_url": "https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368",
+          "source_type": "peer_reviewed_conference_abstract",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "차별화된 Aβ/TAM neuroimmune AD lead로 Full Scout 권고.",
+      "recommendation": "Run Full Scout",
+      "most_important_diligence_question": "최종 ILM01 후보의 정량 amyloid clearance, ARIA-relevant safety 및 brain exposure는 무엇인가?"
+    },
+    "triage": {
+      "status": "SELECT",
+      "identity_verified": true,
+      "active_asset": true,
+      "verified_public_source_count": 3,
+      "why": "활성 AD lead이며 Aβ/TAM 직접 MoA와 prototype functional PoC가 확인되어 SELECT입니다.",
+      "missing_evidence_needed_for_full_scout": [
+        "ILM01 candidate-specific quantitative package",
+        "PK/brain exposure",
+        "IND-enabling milestones"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "fast_triage",
+      "schema_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
+      "generated_at": "2026-08-06",
+      "output_filename_base": "Lynk Pharmaceuticals Co., Ltd._LNK01006 (BLKR201)",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 10개 중 ADEL-Y04, ILM01, LNK01006/BLKR201은 SELECT입니다. ILM21은 현재 Illimis 공식 파이프라인에서 신원이 확인되어 제공된 임시 UNVERIFIED 판정을 REJECT로 교정했으며, 나머지는 자산 identity 불명확 또는 SKBP fit·MoA·Data·활성 상태 부족으로 REJECT/UNVERIFIED 처리했습니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4-selective antibody | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD 전임상 자산이며 ApoE4 모델에서 기억·시냅스·tau 병리의 직접 기능성 효과가 확인됩니다. 정량 PK/PD 공개는 제한적입니다. | https://adelpharm.com/en/pipeline/<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.088537 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Youngen APP-siRNA와 Hotgen 투자계열 AA001이 혼합된 입력으로 어느 자산인지 특정할 수 없습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html<br>https://www.hotgen.com.cn/detail/683.html |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | 질환명이 자산명으로 입력됐으며 Youngen의 독립 자산 코드와 매칭되지 않습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | 신뢰 가능한 공개자료에서 Hyper Corp의 discrete tau 자산을 확인하지 못했습니다. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed nociceptive ion-channel inhibitor | Small molecule | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | HBW-015-15에서 PK·급성/CCI 효능·selectivity·독성이 공개됐으나 generic Pain, 미공개 표적 및 현재 활동 미확인으로 REJECT입니다. | https://www.tianfulifesciencepark.com/News/Detail?id=2657 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Protein biologic | Unknown | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | 활성 tauopathy 프로그램이나 적응증이 broad하고 ILM02 자산별 기능성 결과가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 7 | ILM21 | Illimis Therapeutics | Myelin debris/TAM GAIA fusion | Protein biologic | Multiple sclerosis / neuroinflammatory disease | Unknown | Republic of Korea | 3 | 1 | 0 | REJECT | 공식 파이프라인에서 MS·myelin debris 자산으로 확인되지만 회사 rationale 외 자산별 기능성·정량 데이터가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Protein biologic | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD lead이며 Aβ/TAM 기반 phagocytosis와 anti-inflammatory signaling의 prototype functional PoC가 확인됩니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Illimis-Lilly 연구협력 descriptor이며 개별 asset name이 아닙니다. | https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1 |\n| 10 | LYNK01006 → LNK01006 (BLKR201) | Lynk Pharmaceuticals | TYK2 JH2 allosteric inhibitor | Small molecule | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | CNS-penetrant TYK2 후보로 MS 모델 효능과 2026년 6월 Phase 1 첫 투여가 확인됩니다. 임상 결과는 아직 없습니다. | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html<br>https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html<br>https://clinicaltrials.gov/study/NCT07501039 |\n\n## Notes\n- #2와 #3은 Youngen의 무코드 APP-siRNA 프로그램과 관련될 수 있으나, 입력 자산명만으로 해당 프로그램을 자동 귀속하지 않았습니다.\n- #5의 공개 데이터는 HBW-015 프로그램의 대표물질로 기재된 HBW-015-15에서 확인됐으며, 2026년 현재 active status는 확인되지 않았습니다.\n- #7 ILM21은 Illimis 공식 파이프라인에 `Myelin Debris / Multiple Sclerosis / ILM21`로 등재되어 있어 identity_verified=true로 교정했습니다. 다만 stage와 자산별 결과는 미확인입니다.\n- #8 ILM01은 prototype GAIA-Aβ 기능성 근거와 최종 ILM01 후보의 연속성을 Full Scout에서 확인해야 합니다.\n- #10의 오기 `LYNK01006`은 `LNK01006`으로 정규화했으며, 2026년 6월부터 BLKR201 명칭으로 Phase 1이 진행 중입니다.",
+      "parser_status": "fast_triage"
+    },
+    "input": {
+      "company_input": "Lynk Pharmaceuticals",
+      "asset_input": "LYNK01006 → LNK01006"
+    },
+    "json_summary": {
+      "theme": "Neuroimmune",
+      "cluster": "Unknown",
+      "target_description": "BLKR201로 재명명된 CNS-penetrant allosteric TYK2 inhibitor; Phase 1 진행."
+    },
+    "structured_table": {
+      "company": "Lynk Pharmaceuticals Co., Ltd.",
+      "asset_name": "LNK01006 (BLKR201)",
+      "target": "TYK2 JH2 domain",
+      "moa": "Selective CNS-penetrant allosteric TYK2 inhibition of IL-12/IL-23 and related inflammatory signaling",
+      "modality_platform": "Small molecule",
+      "main_indication": "Multiple sclerosis / neuroinflammatory disease",
+      "indication": "Multiple sclerosis; broader CNS neuroinflammatory diseases",
+      "development_stage": "Phase 1",
+      "company_country": "China",
+      "sources": [
+        {
+          "source_title": "Lynk announcement of FDA IND approval for LNK01006",
+          "source_url": "https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "SELECT",
+      "reason": "SELECT 조건 충족: identity와 active status가 확인되고 TR 3점·MOA 2점입니다.",
+      "flags": [
+        "alias_normalized",
+        "active_phase1",
+        "interest_indication",
+        "validated_target_class"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 3,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "TR 3점: MS와 CNS neuroinflammation에 직접 연결된 TYK2/IL-12·IL-23 기전이 확인됩니다.",
+          "why_not_higher": "최고점입니다.",
+          "investigation_note": "공식 IND 및 first-dose 발표를 확인했습니다.",
+          "uncertain_points": [],
+          "source_ids": [
+            "LNK1",
+            "LNK2"
+          ]
+        },
+        "moa_validity": {
+          "score": 2,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "MOA 2점: selective allosteric TYK2 inhibition, CNS penetration 및 MS 모델 효능이 확인됩니다.",
+          "why_not_higher": "사람 target engagement 또는 PD는 아직 없습니다.",
+          "investigation_note": "class validation과 자산별 전임상 기능 근거를 반영했습니다.",
+          "uncertain_points": [
+            "human PD 미공개"
+          ],
+          "source_ids": [
+            "LNK1"
+          ]
+        },
+        "data_maturity": {
+          "score": 1,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Fast Triage v3.3 예비 평가.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "Data 1점: robust preclinical efficacy와 Phase 1 개시가 정성적으로 확인됩니다.",
+          "why_not_higher": "정량 전임상 수치와 임상 결과는 아직 없습니다.",
+          "investigation_note": "2027년 초기 readout 예정이나 계획은 점수에 반영하지 않았습니다.",
+          "uncertain_points": [
+            "Phase 1 결과 미공개"
+          ],
+          "source_ids": [
+            "LNK1",
+            "LNK2",
+            "LNK3"
+          ]
+        }
+      },
+      "total_score": 6,
+      "max_score": 9
+    },
+    "validation": {
+      "uncertain_points": [
+        "정식 임상 개발 적응증",
+        "Phase 1 결과",
+        "Greater China 개발 주체"
+      ],
+      "cross_checked_facts": [
+        "LNK01006-BLKR201 alias",
+        "FDA IND clearance",
+        "MS models",
+        "TYK2 JH2 allosteric mechanism",
+        "Phase 1 first participant dosed"
+      ],
+      "source_registry": [
+        {
+          "source_id": "LNK1",
+          "source_title": "Lynk announcement of FDA IND approval for LNK01006",
+          "source_url": "https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html",
+          "source_type": "official_company_press_release",
+          "verified": true
+        },
+        {
+          "source_id": "LNK2",
+          "source_title": "Lynk announcement of first participant dosed in BLKR201 Phase 1",
+          "source_url": "https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html",
+          "source_type": "official_company_press_release",
+          "verified": true
+        },
+        {
+          "source_id": "LNK3",
+          "source_title": "ClinicalTrials.gov NCT07501039",
+          "source_url": "https://clinicaltrials.gov/study/NCT07501039",
+          "source_type": "clinical_trial_registry",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "Phase 1에 진입한 CNS TYK2 neuroinflammation 후보로 Full Scout 권고.",
+      "recommendation": "Run Full Scout",
+      "most_important_diligence_question": "BLKR201의 Phase 1 PK/PD가 CNS TYK2 engagement와 적정 뇌 노출을 입증하는가?"
+    },
+    "triage": {
+      "status": "SELECT",
+      "identity_verified": true,
+      "active_asset": true,
+      "verified_public_source_count": 3,
+      "why": "MS 모델과 CNS TYK2 rationale이 확인되고 2026년 6월 Phase 1 첫 투여가 완료되어 SELECT입니다.",
+      "missing_evidence_needed_for_full_scout": [
+        "Phase 1 PK/PD and safety readout",
+        "clinical indication selection",
+        "human CNS exposure"
       ]
     }
   }

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/peer_reviewed_review"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | peer_reviewed_review |
 | Reliability | medium |
 | URL | https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/trc2.70251 |
-| Accessed / generated date | 2026-08-06 |
+| Accessed / generated date | 2026-08-07 |
 
 ## Evidence Summary
 

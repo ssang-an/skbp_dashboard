@@ -6,8 +6,8 @@ aliases:
   - "multiple_sclerosis"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -23,6 +23,7 @@ confidence: "medium"
 ## Related Assets
 
 - [[02_Assets/Asset__HZR-061|HZR-061]]
+- [[02_Assets/Asset__ILM21|ILM21]]
 
 ## Related Targets / MoA
 

@@ -15,8 +15,8 @@ competitor::roche_trontinemab,Trontinemab,competitor,Competitor__Roche__Trontine
 competitor::acumen_pharmaceuticals_sabirnetug_(acu193),Sabirnetug (ACU193),competitor,Competitor__Acumen_Pharmaceuticals__Sabirnetug_(ACU193),pipeline/competitor,,,
 source::illimis_therapeutics_company_intro_ncdp_202601_skbp_share,Illimis Therapeutics Company Intro_NCDP_202601_SKBP_share,source,Source__Illimis_Therapeutics_Company_Intro_NCDP_202601_SKBP_share,pipeline/source;source/other,,,E3
 source::https_illimistx.com_en,Illimis Therapeutics official website,source,Source__Illimis_Therapeutics_official_website,pipeline/source;source/official_company,,,E3
-source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php,Illimis Therapeutics official pipeline,source,Source__Illimis_Therapeutics_official_pipeline,pipeline/source;source/official_company_pipeline,,,E3
-source::https_illimistx.com_en_sub_platform%26pipeline_platform.php,Illimis Therapeutics GAIA platform,source,Source__Illimis_Therapeutics_GAIA_platform,pipeline/source;source/official_company_platform,,,E3
+source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php,Illimis official pipeline,source,Source__Illimis_official_pipeline,pipeline/source;source/other,,,E0
+source::https_illimistx.com_en_sub_platform%26pipeline_platform.php,Illimis GAIA platform description,source,Source__Illimis_GAIA_platform_description,pipeline/source;source/official_company_platform,,,E0
 source::https_illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=282&mod_5a2ae7b8,Illimis Therapeutics $42M Series B press release,source,Source__Illimis_Therapeutics_$42M_Series_B_press_release,pipeline/source;source/official_company_press_release,,,E3
 source::https_illimistx.com_en_sub_platform%26pipeline_conference.php,Illimis Therapeutics conference presentations,source,Source__Illimis_Therapeutics_conference_presentations,pipeline/source;source/official_company_conference_page,,,E3
 source::https_illimistx.com_data_aaic%202025_abstract_illimistx.pdf,AAIC 2025 GAIA-Aβ abstract,source,Source__AAIC_2025_GAIA-Aβ_abstract,pipeline/source;source/conference_abstract,,,E3
@@ -113,7 +113,7 @@ source::https_www.prnewswire.com_apac_news-releases_lynk-pharmaceuticals-announ_
 source::https_www.formation.bio_press_formation-bio-licenses-phase-1-ready-cns-_be31f330,Formation Bio licensing page,source,Source__Formation_Bio_licensing_page,pipeline/source;source/official_company,,,E3
 source::https_www.prnewswire.com_news-releases_lynk-pharmaceuticals-and-formati_31aa61aa,Lynk and Formation licensing agreement,source,Source__Lynk_and_Formation_licensing_agreement,pipeline/source;source/news,,,E3
 source::https_www.prnewswire.com_news-releases_formation-bio-doses-first-partic_a8856057,Formation first participant dosed,source,Source__Formation_first_participant_dosed,pipeline/source;source/news,,,E3
-source::https_clinicaltrials.gov_study_nct07501039,NCT07501039,source,Source__NCT07501039,pipeline/source;source/clinical_trial_registry,,,E0
+source::https_clinicaltrials.gov_study_nct07501039,ClinicalTrials.gov NCT07501039,source,Source__ClinicalTrials.gov_NCT07501039,pipeline/source;source/clinical_trial_registry,,,E0
 source::https_synapse.patsnap.com_drug_565a5da0689043fb8f26295eeae190fa,Synapse LNK-01006,source,Source__Synapse_LNK-01006,pipeline/source;source/other,,,E3
 source::https_www.lynkpharma.com,Lynk official website,source,Source__Lynk_official_website,pipeline/source;source/official_company,,,E3
 source::https_www.pnas.org_doi_10.1073_pnas.2422172122,Central TYK2 inhibition PNAS,source,Source__Central_TYK2_inhibition_PNAS,pipeline/source;source/publication,,,E3
@@ -445,7 +445,7 @@ company::healzen_therapeutics_co_ltd,HealZen Therapeutics Co Ltd,company,Company
 target::stat3,STAT3,target,Target__STAT3,pipeline/target,,,
 moa::targeted_protein_degradation_of_stat3,Targeted protein degradation of STAT3,moa,MoA__Targeted_protein_degradation_of_STAT3,pipeline/moa,,,
 modality::tpd,TPD,modality,Modality__TPD,pipeline/modality,,,
-indication::multiple_sclerosis,Multiple Sclerosis,indication,Indication__Multiple_Sclerosis,pipeline/indication,,,
+indication::multiple_sclerosis,Multiple sclerosis,indication,Indication__Multiple_sclerosis,pipeline/indication,,,
 scorecard::hzr-061_20260623,Scorecard - HZR-061,scorecard,Scorecard__HZR-061__20260623,pipeline/scorecard,,Do not run Full Scout,E0
 source::https_www.healzentx.com,HealZen official site,source,Source__HealZen_official_site,pipeline/source;source/other,,,E0
 asset::glycoprotein_29-modified_deferoxamine,glycoprotein 29-modified deferoxamine,asset,Asset__glycoprotein_29-modified_deferoxamine,pipeline/asset;theme/neuroimmune,,Run Full Scout,E0
@@ -613,7 +613,7 @@ source::https_unixell.com_en_companynews_info.aspx_itemid=316,FDA IND Clearance 
 source::https_clinicaltrials.gov_study_nct07102342,NouvNeu001 Phase 1/2 Clinical Study,source,Source__NouvNeu001_Phase_1_2_Clinical_Study,pipeline/source;source/clinical_registry,,,E3
 source::https_www.parkinson.org_understanding-parkinsons_statistics,Parkinson's Foundation Statistics,source,Source__Parkinson's_Foundation_Statistics,pipeline/source;source/epidemiology,,,E3
 source::https_www.japantimes.co.jp_news_2026_05_13_japan_science-health_ips-par_78d45d6a,AMCHEPRY Reimbursement Price,source,Source__AMCHEPRY_Reimbursement_Price,pipeline/source;source/pricing_news,,,E3
-asset::adel-y04,ADEL-Y04,asset,Asset__ADEL-Y04,pipeline/asset;theme/neuroimmune,7,Run Full Scout,E0
+asset::adel-y04,ADEL-Y04,asset,Asset__ADEL-Y04,pipeline/asset;theme/others,7,Run Full Scout,E0
 company::adel,ADEL,company,Company__ADEL,pipeline/company,,,
 target::apoe4,ApoE4,target,Target__ApoE4,pipeline/target,,,
 "moa::apoe4-selective_antibody_intended_to_reduce_tau_pathology,_inflammation_aa8a32f4","ApoE4-selective antibody intended to reduce tau pathology, inflammation and synaptic dysfunction",moa,"MoA__ApoE4-selective_antibody_intended_to_reduce_tau_pathology,_inflammation_aa8a32f4",pipeline/moa,,,
@@ -629,16 +629,15 @@ modality::unknown,Unknown,modality,Modality__Unknown,pipeline/modality,,,
 indication::unknown,Unknown,indication,Indication__Unknown,pipeline/indication,,,
 "scorecard::alzheimer's_disease_therapy,_beijing_youngen_biotechnology_20260806","Scorecard - Alzheimer's disease therapy, Beijing Youngen Biotechnology",scorecard,"Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__20260806",pipeline/scorecard,0,Verify asset identity,E0
 source::https_www.youngenbiomed.com,Youngen overview,source,Source__Youngen_overview,pipeline/source;source/other,,,E0
-source::https_www.youngenbiomed.com_youngen-biotechnology-patent-for-small-nucl_873092a8,Youngen APP-siRNA AD patent,source,Source__Youngen_APP-siRNA_AD_patent,pipeline/source;source/official_company_news,,,E0
+source::https_www.youngenbiomed.com_youngen-biotechnology-patent-for-small-nucl_873092a8,Youngen APP siRNA patent announcement,source,Source__Youngen_APP_siRNA_patent_announcement,pipeline/source;source/other,,,E0
 source::https_flcube.com_p=58620,Hotgen AA001 report,source,Source__Hotgen_AA001_report,pipeline/source;source/industry_news,,,E0
 asset::alzheimer's_disease,Alzheimer's Disease,asset,Asset__Alzheimer's_Disease,pipeline/asset;theme/unknown,0,Verify asset identity,E0
-company::beijing_youngen_biotechnology_co_ltd,Beijing Youngen Biotechnology Co Ltd,company,Company__Beijing_Youngen_Biotechnology_Co_Ltd,pipeline/company,,,
+"company::beijing_youngen_biotechnology_co.,_ltd","Beijing Youngen Biotechnology Co., Ltd.",company,"Company__Beijing_Youngen_Biotechnology_Co.,_Ltd",pipeline/company,,,
 scorecard::alzheimer's_disease_20260806,Scorecard - Alzheimer's Disease,scorecard,Scorecard__Alzheimer's_Disease__20260806,pipeline/scorecard,0,Verify asset identity,E0
-source::https_www.youngenbiomed.com_pipeline.html,Youngen pipeline,source,Source__Youngen_pipeline,pipeline/source;source/other,,,E0
 asset::drug_to_inhibit_tau_for_alzheimer's_disease,Drug to Inhibit Tau for Alzheimer's Disease,asset,Asset__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease,pipeline/asset;theme/unknown,0,Verify asset identity,E0
 company::hyper_corp_inc,Hyper Corp Inc,company,Company__Hyper_Corp_Inc,pipeline/company,,,
 scorecard::drug_to_inhibit_tau_for_alzheimer's_disease_20260806,Scorecard - Drug to Inhibit Tau for Alzheimer's Disease,scorecard,Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__20260806,pipeline/scorecard,0,Verify asset identity,E0
-asset::hbw-015,HBW-015,asset,Asset__HBW-015,pipeline/asset;theme/unknown,4,Do not run Full Scout,E0
+asset::hbw-015,HBW-015,asset,Asset__HBW-015,pipeline/asset;theme/others,4,Do not run Full Scout,E0
 company::hyperway_pharmaceutical,Hyperway Pharmaceutical,company,Company__Hyperway_Pharmaceutical,pipeline/company,,,
 moa::inhibitor_of_an_undisclosed_pain-sensing_pathway,Inhibitor of an undisclosed pain-sensing pathway,moa,MoA__Inhibitor_of_an_undisclosed_pain-sensing_pathway,pipeline/moa,,,
 indication::analgesia;_efficacy_reported_in_a_cci_neuropathic-pain_model,Analgesia; efficacy reported in a CCI neuropathic-pain model,indication,Indication__Analgesia;_efficacy_reported_in_a_CCI_neuropathic-pain_model,pipeline/indication,,,
@@ -653,8 +652,8 @@ indication::tauopathies,Tauopathies,indication,Indication__Tauopathies,pipeline/
 scorecard::ilm02_20260806,Scorecard - ILM02,scorecard,Scorecard__ILM02__20260806,pipeline/scorecard,2,Do not run Full Scout,E0
 source::https_illimistx.com_kr_sub_platform%26pipeline_platform.php,Illimis GAIA pipeline,source,Source__Illimis_GAIA_pipeline,pipeline/source;source/other,,,E0
 source::https_synapse.patsnap.com_drug_6e51d0532bd744e1a3694db8fa72e39e,ILM-02 record,source,Source__ILM-02_record,pipeline/source;source/drug_database,,,E0
-asset::ilm21,ILM21,asset,Asset__ILM21,pipeline/asset;theme/unknown,0,Verify asset identity,E0
-scorecard::ilm21_20260806,Scorecard - ILM21,scorecard,Scorecard__ILM21__20260806,pipeline/scorecard,0,Verify asset identity,E0
+asset::ilm21,ILM21,asset,Asset__ILM21,pipeline/asset;theme/neuroimmune,4,Do not run Full Scout,E0
+scorecard::ilm21_20260806,Scorecard - ILM21,scorecard,Scorecard__ILM21__20260806,pipeline/scorecard,4,Do not run Full Scout,E0
 asset::ilm01,ILM01,asset,Asset__ILM01,pipeline/asset;theme/neuroimmune,7,Run Full Scout,E0
 target::amyloid-beta_aggregates_and_tam_receptors,Amyloid-beta aggregates and TAM receptors,target,Target__Amyloid-beta_aggregates_and_TAM_receptors,pipeline/target,,,
 moa::gaia-aβ_fusion_protein_for_tam-mediated_amyloid_phagocytosis_with_reduc_dca873e5,GAIA-Aβ fusion protein for TAM-mediated amyloid phagocytosis with reduced inflammatory signaling,moa,MoA__GAIA-Aβ_fusion_protein_for_TAM-mediated_amyloid_phagocytosis_with_reduc_dca873e5,pipeline/moa,,,
@@ -662,14 +661,39 @@ scorecard::ilm01_20260806,Scorecard - ILM01,scorecard,Scorecard__ILM01__20260806
 source::https_www.koreabiomed.com_news_articleview.html_idxno=29100,ILM01 ARIA-free therapy interview,source,Source__ILM01_ARIA-free_therapy_interview,pipeline/source;source/reputable_biotech_interview,,,E0
 source::https_m.biospectator.com_view_news_view.php_varatcid=25729,Illimis Series B,source,Source__Illimis_Series_B,pipeline/source;source/reputable_biotech_news,,,E0
 asset::neurodegenerative_diseases_lilly,Neurodegenerative Diseases Lilly,asset,Asset__Neurodegenerative_Diseases_Lilly,pipeline/asset;theme/unknown,0,Verify asset identity,E0
-company::illimis_therapeutics_inc,Illimis Therapeutics Inc,company,Company__Illimis_Therapeutics_Inc,pipeline/company,,,
+"company::illimis_therapeutics,_inc","Illimis Therapeutics, Inc.",company,"Company__Illimis_Therapeutics,_Inc",pipeline/company,,,
 scorecard::neurodegenerative_diseases_lilly_20260806,Scorecard - Neurodegenerative Diseases Lilly,scorecard,Scorecard__Neurodegenerative_Diseases_Lilly__20260806,pipeline/scorecard,0,Verify asset identity,E0
-source::https_illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=322&mod_4ab5b469,Illimis at Lilly Gateway Labs,source,Source__Illimis_at_Lilly_Gateway_Labs,pipeline/source;source/other,,,E0
+source::https_www.illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=282_4499f524,Illimis financing and Lilly research collaboration announcement,source,Source__Illimis_financing_and_Lilly_research_collaboration_announcement,pipeline/source;source/other,,,E0
 asset::lnk01006,LNK01006,asset,Asset__LNK01006,pipeline/asset;theme/neuroimmune,6,Run Full Scout,E0
 company::lynk_pharmaceuticals,Lynk Pharmaceuticals,company,Company__Lynk_Pharmaceuticals,pipeline/company,,,
 target::tyk2_jh2_pseudokinase_domain,TYK2 JH2 pseudokinase domain,target,Target__TYK2_JH2_pseudokinase_domain,pipeline/target,,,
 moa::brain-penetrant_selective_allosteric_tyk2_inhibitor_modulating_type_i_i_ac24d75a,Brain-penetrant selective allosteric TYK2 inhibitor modulating type I IFN and IL-12/23 signaling,moa,MoA__Brain-penetrant_selective_allosteric_TYK2_inhibitor_modulating_type_I_I_ac24d75a,pipeline/moa,,,
 indication::cns_inflammatory_diseases_including_multiple_sclerosis;_phase_1_in_heal_f5f066bd,CNS inflammatory diseases including multiple sclerosis; Phase 1 in healthy volunteers,indication,Indication__CNS_inflammatory_diseases_including_multiple_sclerosis;_Phase_1_in_heal_f5f066bd,pipeline/indication,,,
 scorecard::lnk01006_20260806,Scorecard - LNK01006,scorecard,Scorecard__LNK01006__20260806,pipeline/scorecard,6,Run Full Scout,E0
-source::https_www.prnewswire.com_news-releases_lynk-pharmaceuticals-announces-f_00d362e4,LNK01006 FDA clearance,source,Source__LNK01006_FDA_clearance,pipeline/source;source/other,,,E0
+source::https_www.prnewswire.com_news-releases_lynk-pharmaceuticals-announces-f_00d362e4,Lynk announcement of FDA IND approval for LNK01006,source,Source__Lynk_announcement_of_FDA_IND_approval_for_LNK01006,pipeline/source;source/other,,,E0
 source::https_www.formation.bio_press_formation-bio-doses-first-participant-in-_0a942c6c,BLKR201 first participant,source,Source__BLKR201_first_participant,pipeline/source;source/official_partner_press_release,,,E0
+"company::adel,_inc","ADEL, Inc.",company,"Company__ADEL,_Inc",pipeline/company,,,
+target::apolipoprotein_e4_(apoe4),Apolipoprotein E4 (ApoE4),target,Target__Apolipoprotein_E4_(ApoE4),pipeline/target,,,
+"moa::apoe4-selective_antibody_intended_to_reduce_apoe4-linked_tau_pathology,_8db3dfc7","ApoE4-selective antibody intended to reduce ApoE4-linked tau pathology, synapse loss and cognitive impairment",moa,"MoA__ApoE4-selective_antibody_intended_to_reduce_ApoE4-linked_tau_pathology,_8db3dfc7",pipeline/moa,,,
+source::https_adelpharm.com_en_pipeline,ADEL official pipeline status,source,Source__ADEL_official_pipeline_status,pipeline/source;source/other,,,E0
+source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_alz.088537,ApoE4 antibody ameliorates cognitive impairments and synapse loss in ApoE4/Tau-P301S mice,source,Source__ApoE4_antibody_ameliorates_cognitive_impairments_and_synapse_loss_in_Ap_1da93d77,pipeline/source;source/peer_reviewed_conference_abstract,,,E0
+"company::beijing_hotgen_biotech_co.,_ltd","Beijing Hotgen Biotech Co., Ltd.",company,"Company__Beijing_Hotgen_Biotech_Co.,_Ltd",pipeline/company,,,
+source::https_www.hotgen.com.cn_detail_683.html,Hotgen announcement on AA001 IND approval,source,Source__Hotgen_announcement_on_AA001_IND_approval,pipeline/source;source/official_company_news,,,E0
+"company::hyperway_pharmaceutical_co.,_ltd","Hyperway Pharmaceutical Co., Ltd.",company,"Company__Hyperway_Pharmaceutical_Co.,_Ltd",pipeline/company,,,
+target::undisclosed_nociceptive_ion_channel,Undisclosed nociceptive ion channel,target,Target__Undisclosed_nociceptive_ion_channel,pipeline/target,,,
+moa::inhibitor_of_an_undisclosed_nociceptive_ion_channel,Inhibitor of an undisclosed nociceptive ion channel,moa,MoA__Inhibitor_of_an_undisclosed_nociceptive_ion_channel,pipeline/moa,,,
+indication::pain;_efficacy_tested_in_acute_and_cci_neuropathic_pain_models,Pain; efficacy tested in acute and CCI neuropathic pain models,indication,Indication__Pain;_efficacy_tested_in_acute_and_CCI_neuropathic_pain_models,pipeline/indication,,,
+source::https_www.tianfulifesciencepark.com_news_detail_id=2657,BioTianFu report on Hyperway analgesic HBW-015-15,source,Source__BioTianFu_report_on_Hyperway_analgesic_HBW-015-15,pipeline/source;source/other,,,E0
+target::tau,Tau,target,Target__Tau,pipeline/target,,,
+moa::gaia_fusion_protein_intended_to_couple_tau_binding_with_tam-receptor-me_7dc283ce,GAIA fusion protein intended to couple tau binding with TAM-receptor-mediated anti-inflammatory phagocytosis,moa,MoA__GAIA_fusion_protein_intended_to_couple_tau_binding_with_TAM-receptor-me_7dc283ce,pipeline/moa,,,
+target::myelin_debris,Myelin debris,target,Target__Myelin_debris,pipeline/target,,,
+moa::gaia_tam-receptor-mediated_anti-inflammatory_phagocytic_clearance_of_my_6fd23047,GAIA/TAM-receptor-mediated anti-inflammatory phagocytic clearance of myelin debris,moa,MoA__GAIA_TAM-receptor-mediated_anti-inflammatory_phagocytic_clearance_of_my_6fd23047,pipeline/moa,,,
+target::amyloid_beta_(aβ)_and_tam_receptors,Amyloid beta (Aβ) and TAM receptors,target,Target__Amyloid_beta_(Aβ)_and_TAM_receptors,pipeline/target,,,
+moa::gaia_fusion_protein_couples_aβ_binding_to_tam-receptor-mediated_phagocy_e6f770ab,GAIA fusion protein couples Aβ binding to TAM-receptor-mediated phagocytosis with anti-inflammatory signaling,moa,MoA__GAIA_fusion_protein_couples_Aβ_binding_to_TAM-receptor-mediated_phagocy_e6f770ab,pipeline/moa,,,
+source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_alz.072368,Anti-inflammatory clearance of amyloid beta by a chimeric Gas6 fusion protein,source,Source__Anti-inflammatory_clearance_of_amyloid_beta_by_a_chimeric_Gas6_fusion_protein,pipeline/source;source/peer_reviewed_conference_abstract,,,E0
+asset::lnk01006_(blkr201),LNK01006 (BLKR201),asset,Asset__LNK01006_(BLKR201),pipeline/asset;theme/neuroimmune,6,Run Full Scout,E0
+target::tyk2_jh2_domain,TYK2 JH2 domain,target,Target__TYK2_JH2_domain,pipeline/target,,,
+moa::selective_cns-penetrant_allosteric_tyk2_inhibition_of_il-12_il-23_and_r_bb0ba684,Selective CNS-penetrant allosteric TYK2 inhibition of IL-12/IL-23 and related inflammatory signaling,moa,MoA__Selective_CNS-penetrant_allosteric_TYK2_inhibition_of_IL-12_IL-23_and_r_bb0ba684,pipeline/moa,,,
+indication::multiple_sclerosis;_broader_cns_neuroinflammatory_diseases,Multiple sclerosis; broader CNS neuroinflammatory diseases,indication,Indication__Multiple_sclerosis;_broader_CNS_neuroinflammatory_diseases,pipeline/indication,,,
+scorecard::lnk01006_(blkr201)_20260806,Scorecard - LNK01006 (BLKR201),scorecard,Scorecard__LNK01006_(BLKR201)__20260806,pipeline/scorecard,6,Run Full Scout,E0
+source::https_www.prnewswire.com_news-releases_lynk-pharmaceuticals-partner-for_db7c7ef2,Lynk announcement of first participant dosed in BLKR201 Phase 1,source,Source__Lynk_announcement_of_first_participant_dosed_in_BLKR201_Phase_1,pipeline/source;source/official_company_press_release,,,E0

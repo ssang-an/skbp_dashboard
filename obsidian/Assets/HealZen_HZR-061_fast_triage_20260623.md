@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-06T23:55:32"
+generated_at: "2026-08-07T00:06:12"
 record_id: "HealZen_HZR-061_fast_triage_20260623"
 company: "HealZen Therapeutics Co Ltd"
 country: "China"

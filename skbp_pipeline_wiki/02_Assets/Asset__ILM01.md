@@ -7,15 +7,15 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
-source_report: "[[01_Raw_Reports/Illimis_Therapeutics_ILM01]]"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
+source_report: "[[01_Raw_Reports/Illimis_Therapeutics,_Inc._ILM01]]"
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
-company: "[[03_Companies/Company__Illimis_Therapeutics|Illimis Therapeutics]]"
-target: "[[04_Targets/Target__Amyloid-beta_aggregates_and_TAM_receptors|Amyloid-beta aggregates and TAM receptors]]"
-moa: "[[05_MoA/MoA__GAIA-Aβ_fusion_protein_for_TAM-mediated_amyloid_phagocytosis_with_reduc_dca873e5|GAIA-Aβ fusion protein for TAM-mediated amyloid phagocytosis with reduced inflammatory signaling]]"
+company: "[[03_Companies/Company__Illimis_Therapeutics,_Inc|Illimis Therapeutics, Inc.]]"
+target: "[[04_Targets/Target__Amyloid_beta_(Aβ)_and_TAM_receptors|Amyloid beta (Aβ) and TAM receptors]]"
+moa: "[[05_MoA/MoA__GAIA_fusion_protein_couples_Aβ_binding_to_TAM-receptor-mediated_phagocy_e6f770ab|GAIA fusion protein couples Aβ binding to TAM-receptor-mediated phagocytosis with anti-inflammatory signaling]]"
 modality: "[[06_Modalities_Platforms/Modality__Protein_biologic|Protein biologic]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
@@ -34,10 +34,10 @@ evidence_level: "E0"
 
 | Field | Value |
 |---|---|
-| Company | [[03_Companies/Company__Illimis_Therapeutics|Illimis Therapeutics]] |
+| Company | [[03_Companies/Company__Illimis_Therapeutics,_Inc|Illimis Therapeutics, Inc.]] |
 | Asset | ILM01 |
-| Target | [[04_Targets/Target__Amyloid-beta_aggregates_and_TAM_receptors|Amyloid-beta aggregates and TAM receptors]] |
-| MoA | [[05_MoA/MoA__GAIA-Aβ_fusion_protein_for_TAM-mediated_amyloid_phagocytosis_with_reduc_dca873e5|GAIA-Aβ fusion protein for TAM-mediated amyloid phagocytosis with reduced inflammatory signaling]] |
+| Target | [[04_Targets/Target__Amyloid_beta_(Aβ)_and_TAM_receptors|Amyloid beta (Aβ) and TAM receptors]] |
+| MoA | [[05_MoA/MoA__GAIA_fusion_protein_couples_Aβ_binding_to_TAM-receptor-mediated_phagocy_e6f770ab|GAIA fusion protein couples Aβ binding to TAM-receptor-mediated phagocytosis with anti-inflammatory signaling]] |
 | Modality | [[06_Modalities_Platforms/Modality__Protein_biologic|Protein biologic]] |
 | Indication | [[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]] |
 | Stage | Preclinical unspecified |
@@ -47,13 +47,13 @@ evidence_level: "E0"
 
 ## 2. One-line Summary
 
-SELECT: differentiated active AD lead; quantitative validation is the key gap.
+차별화된 Aβ/TAM neuroimmune AD lead로 Full Scout 권고.
 
 ## 3. Why This Asset Matters
 
-- Strategic relevance: TR 3점: AD indication, Aβ target and TAM neuroimmune mechanism are confirmed.
-- Scientific rationale: MOA 3점: ILM01-specific phagocytosis, lower inflammation and cognitive improvement versus aducanumab are reported; detailed target-engagement data are absent.
-- BD relevance: Does ILM01 outperform anti-Aβ antibodies on clearance, cognition and ARIA-relevant inflammation at matched exposure?
+- Strategic relevance: TR 3점: AD 적응증과 Aβ/TAM 직접 질환·기전 연결이 확인됩니다.
+- Scientific rationale: MOA 3점: GAIA-Aβ prototype가 phagocytosis/anti-inflammatory 설계와 비교 기능성 PoC를 보였습니다.
+- BD relevance: 최종 ILM01 후보의 정량 amyloid clearance, ARIA-relevant safety 및 brain exposure는 무엇인가?
 
 ## 4. Scorecard
 
@@ -62,28 +62,30 @@ SELECT: differentiated active AD lead; quantitative validation is the key gap.
 ## 5. Knowledge Links
 
 ### Core Biology
-- Target: [[04_Targets/Target__Amyloid-beta_aggregates_and_TAM_receptors|Amyloid-beta aggregates and TAM receptors]]
-- MoA: [[05_MoA/MoA__GAIA-Aβ_fusion_protein_for_TAM-mediated_amyloid_phagocytosis_with_reduc_dca873e5|GAIA-Aβ fusion protein for TAM-mediated amyloid phagocytosis with reduced inflammatory signaling]]
+- Target: [[04_Targets/Target__Amyloid_beta_(Aβ)_and_TAM_receptors|Amyloid beta (Aβ) and TAM receptors]]
+- MoA: [[05_MoA/MoA__GAIA_fusion_protein_couples_Aβ_binding_to_TAM-receptor-mediated_phagocy_e6f770ab|GAIA fusion protein couples Aβ binding to TAM-receptor-mediated phagocytosis with anti-inflammatory signaling]]
 - Theme: [[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]
 - Cluster: [[11_Themes_Clusters/Cluster__Unknown|Unknown]]
 
 ### Development Context
-- Company: [[03_Companies/Company__Illimis_Therapeutics|Illimis Therapeutics]]
+- Company: [[03_Companies/Company__Illimis_Therapeutics,_Inc|Illimis Therapeutics, Inc.]]
 - Modality: [[06_Modalities_Platforms/Modality__Protein_biologic|Protein biologic]]
 - Indication: [[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]
 
 ### Evidence Sources
-- [[09_Evidence_Sources/Source__Illimis_GAIA_pipeline|Illimis GAIA pipeline]]
-- [[09_Evidence_Sources/Source__ILM01_ARIA-free_therapy_interview|ILM01 ARIA-free therapy interview]]
-- [[09_Evidence_Sources/Source__Illimis_Series_B|Illimis Series B]]
+- [[09_Evidence_Sources/Source__Illimis_official_pipeline|Illimis official pipeline]]
+- [[09_Evidence_Sources/Source__Illimis_GAIA_platform_description|Illimis GAIA platform description]]
+- [[09_Evidence_Sources/Source__Anti-inflammatory_clearance_of_amyloid_beta_by_a_chimeric_Gas6_fusion_protein|Anti-inflammatory clearance of amyloid beta by a chimeric Gas6 fusion protein]]
 
 ## 6. Key Diligence Questions
 
-- Does ILM01 outperform anti-Aβ antibodies on clearance, cognition and ARIA-relevant inflammation at matched exposure?
+- 최종 ILM01 후보의 정량 amyloid clearance, ARIA-relevant safety 및 brain exposure는 무엇인가?
 
 ## 7. Evidence Gaps
 
-- Claims are mainly company-sourced; IND timing is prospective.
+- 최종 후보와 prototype 관계
+- 정량 전임상 package
+- 현재 세부 stage
 
 ## 8. Score History
 
@@ -93,4 +95,4 @@ SELECT: differentiated active AD lead; quantitative validation is the key gap.
 
 ## 9. Raw Report
 
-Source report: [[01_Raw_Reports/Illimis_Therapeutics_ILM01|Illimis_Therapeutics_ILM01]]
+Source report: [[01_Raw_Reports/Illimis_Therapeutics,_Inc._ILM01|Illimis_Therapeutics,_Inc._ILM01]]

@@ -35,9 +35,10 @@
 | [[02_Assets/Asset__ILM01|ILM01]] | 7 | Run Full Scout | E0 |
 | [[02_Assets/Asset__ILM01_(GAIA-Aβ)|ILM01 (GAIA-Aβ)]] | 15 | Shortlist | E3 |
 | [[02_Assets/Asset__ILM02|ILM02]] | 2 | Do not run Full Scout | E0 |
-| [[02_Assets/Asset__ILM21|ILM21]] | 0 | Verify asset identity | E0 |
+| [[02_Assets/Asset__ILM21|ILM21]] | 4 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__LABthera-003|LABthera-003]] | 0 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__LNK01006|LNK01006]] | 6 | Run Full Scout | E0 |
+| [[02_Assets/Asset__LNK01006_(BLKR201)|LNK01006 (BLKR201)]] | 6 | Run Full Scout | E0 |
 | [[02_Assets/Asset__LNK01006_BLKR201|LNK01006 / BLKR201]] | 14 | Shortlist | E3 |
 | [[02_Assets/Asset__Lead_compound|Lead compound]] |  | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__META-01_META-1i_MP-5342|META-01 / META-1i / MP-5342]] | 11 | Watch | E2 |

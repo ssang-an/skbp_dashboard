@@ -1,21 +1,21 @@
 ---
 type: "source"
-canonical_id: "source::https_illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=322&mod_4ab5b469"
-title: "Illimis at Lilly Gateway Labs"
+canonical_id: "source::https_www.illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=282_4499f524"
+title: "Illimis financing and Lilly research collaboration announcement"
 aliases:
-  - "Illimis at Lilly Gateway Labs"
+  - "Illimis financing and Lilly research collaboration announcement"
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
 ---
 
-# Illimis at Lilly Gateway Labs
+# Illimis financing and Lilly research collaboration announcement
 
 ## Source Metadata
 
@@ -23,8 +23,8 @@ confidence: "medium"
 |---|---|
 | Source type | other |
 | Reliability | medium |
-| URL | https://illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=322&mode=view&page=1 |
-| Accessed / generated date | 2026-08-06 |
+| URL | https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1 |
+| Accessed / generated date | 2026-08-07 |
 
 ## Evidence Summary
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/company_interview"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | company_interview |
 | Reliability | medium |
 | URL | https://postbi.jbnu.ac.kr/bbs/postbi/4612/388799/artclView.do |
-| Accessed / generated date | 2026-08-06 |
+| Accessed / generated date | 2026-08-07 |
 
 ## Evidence Summary
 

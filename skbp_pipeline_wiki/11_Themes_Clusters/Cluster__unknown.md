@@ -7,8 +7,8 @@ aliases:
 tags:
   - "skbp/cluster"
   - "skbp/taxonomy"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -48,6 +48,7 @@ A reusable biology axis under a Theme that supports repeated target discovery an
 - [[02_Assets/Asset__ILM21|ILM21]]
 - [[02_Assets/Asset__LABthera-003|LABthera-003]]
 - [[02_Assets/Asset__LNK01006|LNK01006]]
+- [[02_Assets/Asset__LNK01006_(BLKR201)|LNK01006_(BLKR201)]]
 - [[02_Assets/Asset__Neurodegenerative_Diseases_Lilly|Neurodegenerative_Diseases_Lilly]]
 - [[02_Assets/Asset__Next-Generation_Biologics|Next-Generation_Biologics]]
 

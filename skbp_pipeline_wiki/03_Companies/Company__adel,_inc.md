@@ -1,20 +1,20 @@
 ---
 type: "company"
-canonical_id: "company::beijing_youngen_biotechnology_co_ltd"
-title: "beijing_youngen_biotechnology_co_ltd"
+canonical_id: "company::adel,_inc"
+title: "adel,_inc"
 aliases:
-  - "beijing_youngen_biotechnology_co_ltd"
+  - "adel,_inc"
 tags:
   - "pipeline/company"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
 ---
 
-# beijing_youngen_biotechnology_co_ltd
+# adel,_inc
 
 ## Profile
 
@@ -28,7 +28,7 @@ confidence: "medium"
 
 ## Pipeline Assets
 
-- [[02_Assets/Asset__Alzheimer's_Disease|Alzheimer's_Disease]]
+- [[02_Assets/Asset__ADEL-Y04|ADEL-Y04]]
 
 ## Platform / Technology
 

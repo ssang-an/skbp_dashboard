@@ -162,23 +162,23 @@
     },
     {
       "id": "source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php",
-      "label": "Illimis Therapeutics official pipeline",
+      "label": "Illimis official pipeline",
       "type": "source",
-      "title": "Source__Illimis_Therapeutics_official_pipeline",
-      "tags": "pipeline/source;source/official_company_pipeline",
+      "title": "Source__Illimis_official_pipeline",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
-      "evidence_level": "E3"
+      "evidence_level": "E0"
     },
     {
       "id": "source::https_illimistx.com_en_sub_platform%26pipeline_platform.php",
-      "label": "Illimis Therapeutics GAIA platform",
+      "label": "Illimis GAIA platform description",
       "type": "source",
-      "title": "Source__Illimis_Therapeutics_GAIA_platform",
+      "title": "Source__Illimis_GAIA_platform_description",
       "tags": "pipeline/source;source/official_company_platform",
       "score": "",
       "recommendation": "",
-      "evidence_level": "E3"
+      "evidence_level": "E0"
     },
     {
       "id": "source::https_illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=282&mod_5a2ae7b8",
@@ -1142,9 +1142,9 @@
     },
     {
       "id": "source::https_clinicaltrials.gov_study_nct07501039",
-      "label": "NCT07501039",
+      "label": "ClinicalTrials.gov NCT07501039",
       "type": "source",
-      "title": "Source__NCT07501039",
+      "title": "Source__ClinicalTrials.gov_NCT07501039",
       "tags": "pipeline/source;source/clinical_trial_registry",
       "score": "",
       "recommendation": "",
@@ -4462,9 +4462,9 @@
     },
     {
       "id": "indication::multiple_sclerosis",
-      "label": "Multiple Sclerosis",
+      "label": "Multiple sclerosis",
       "type": "indication",
-      "title": "Indication__Multiple_Sclerosis",
+      "title": "Indication__Multiple_sclerosis",
       "tags": "pipeline/indication",
       "score": "",
       "recommendation": "",
@@ -6145,7 +6145,7 @@
       "label": "ADEL-Y04",
       "type": "asset",
       "title": "Asset__ADEL-Y04",
-      "tags": "pipeline/asset;theme/neuroimmune",
+      "tags": "pipeline/asset;theme/others",
       "score": 7,
       "recommendation": "Run Full Scout",
       "evidence_level": "E0"
@@ -6302,10 +6302,10 @@
     },
     {
       "id": "source::https_www.youngenbiomed.com_youngen-biotechnology-patent-for-small-nucl_873092a8",
-      "label": "Youngen APP-siRNA AD patent",
+      "label": "Youngen APP siRNA patent announcement",
       "type": "source",
-      "title": "Source__Youngen_APP-siRNA_AD_patent",
-      "tags": "pipeline/source;source/official_company_news",
+      "title": "Source__Youngen_APP_siRNA_patent_announcement",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -6331,10 +6331,10 @@
       "evidence_level": "E0"
     },
     {
-      "id": "company::beijing_youngen_biotechnology_co_ltd",
-      "label": "Beijing Youngen Biotechnology Co Ltd",
+      "id": "company::beijing_youngen_biotechnology_co.,_ltd",
+      "label": "Beijing Youngen Biotechnology Co., Ltd.",
       "type": "company",
-      "title": "Company__Beijing_Youngen_Biotechnology_Co_Ltd",
+      "title": "Company__Beijing_Youngen_Biotechnology_Co.,_Ltd",
       "tags": "pipeline/company",
       "score": "",
       "recommendation": "",
@@ -6348,16 +6348,6 @@
       "tags": "pipeline/scorecard",
       "score": 0,
       "recommendation": "Verify asset identity",
-      "evidence_level": "E0"
-    },
-    {
-      "id": "source::https_www.youngenbiomed.com_pipeline.html",
-      "label": "Youngen pipeline",
-      "type": "source",
-      "title": "Source__Youngen_pipeline",
-      "tags": "pipeline/source;source/other",
-      "score": "",
-      "recommendation": "",
       "evidence_level": "E0"
     },
     {
@@ -6395,7 +6385,7 @@
       "label": "HBW-015",
       "type": "asset",
       "title": "Asset__HBW-015",
-      "tags": "pipeline/asset;theme/unknown",
+      "tags": "pipeline/asset;theme/others",
       "score": 4,
       "recommendation": "Do not run Full Scout",
       "evidence_level": "E0"
@@ -6545,9 +6535,9 @@
       "label": "ILM21",
       "type": "asset",
       "title": "Asset__ILM21",
-      "tags": "pipeline/asset;theme/unknown",
-      "score": 0,
-      "recommendation": "Verify asset identity",
+      "tags": "pipeline/asset;theme/neuroimmune",
+      "score": 4,
+      "recommendation": "Do not run Full Scout",
       "evidence_level": "E0"
     },
     {
@@ -6556,8 +6546,8 @@
       "type": "scorecard",
       "title": "Scorecard__ILM21__20260806",
       "tags": "pipeline/scorecard",
-      "score": 0,
-      "recommendation": "Verify asset identity",
+      "score": 4,
+      "recommendation": "Do not run Full Scout",
       "evidence_level": "E0"
     },
     {
@@ -6631,10 +6621,10 @@
       "evidence_level": "E0"
     },
     {
-      "id": "company::illimis_therapeutics_inc",
-      "label": "Illimis Therapeutics Inc",
+      "id": "company::illimis_therapeutics,_inc",
+      "label": "Illimis Therapeutics, Inc.",
       "type": "company",
-      "title": "Company__Illimis_Therapeutics_Inc",
+      "title": "Company__Illimis_Therapeutics,_Inc",
       "tags": "pipeline/company",
       "score": "",
       "recommendation": "",
@@ -6651,10 +6641,10 @@
       "evidence_level": "E0"
     },
     {
-      "id": "source::https_illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=322&mod_4ab5b469",
-      "label": "Illimis at Lilly Gateway Labs",
+      "id": "source::https_www.illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=282_4499f524",
+      "label": "Illimis financing and Lilly research collaboration announcement",
       "type": "source",
-      "title": "Source__Illimis_at_Lilly_Gateway_Labs",
+      "title": "Source__Illimis_financing_and_Lilly_research_collaboration_announcement",
       "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
@@ -6722,9 +6712,9 @@
     },
     {
       "id": "source::https_www.prnewswire.com_news-releases_lynk-pharmaceuticals-announces-f_00d362e4",
-      "label": "LNK01006 FDA clearance",
+      "label": "Lynk announcement of FDA IND approval for LNK01006",
       "type": "source",
-      "title": "Source__LNK01006_FDA_clearance",
+      "title": "Source__Lynk_announcement_of_FDA_IND_approval_for_LNK01006",
       "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
@@ -6736,6 +6726,256 @@
       "type": "source",
       "title": "Source__BLKR201_first_participant",
       "tags": "pipeline/source;source/official_partner_press_release",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::adel,_inc",
+      "label": "ADEL, Inc.",
+      "type": "company",
+      "title": "Company__ADEL,_Inc",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::apolipoprotein_e4_(apoe4)",
+      "label": "Apolipoprotein E4 (ApoE4)",
+      "type": "target",
+      "title": "Target__Apolipoprotein_E4_(ApoE4)",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::apoe4-selective_antibody_intended_to_reduce_apoe4-linked_tau_pathology,_8db3dfc7",
+      "label": "ApoE4-selective antibody intended to reduce ApoE4-linked tau pathology, synapse loss and cognitive impairment",
+      "type": "moa",
+      "title": "MoA__ApoE4-selective_antibody_intended_to_reduce_ApoE4-linked_tau_pathology,_8db3dfc7",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "source::https_adelpharm.com_en_pipeline",
+      "label": "ADEL official pipeline status",
+      "type": "source",
+      "title": "Source__ADEL_official_pipeline_status",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_alz.088537",
+      "label": "ApoE4 antibody ameliorates cognitive impairments and synapse loss in ApoE4/Tau-P301S mice",
+      "type": "source",
+      "title": "Source__ApoE4_antibody_ameliorates_cognitive_impairments_and_synapse_loss_in_Ap_1da93d77",
+      "tags": "pipeline/source;source/peer_reviewed_conference_abstract",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::beijing_hotgen_biotech_co.,_ltd",
+      "label": "Beijing Hotgen Biotech Co., Ltd.",
+      "type": "company",
+      "title": "Company__Beijing_Hotgen_Biotech_Co.,_Ltd",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "source::https_www.hotgen.com.cn_detail_683.html",
+      "label": "Hotgen announcement on AA001 IND approval",
+      "type": "source",
+      "title": "Source__Hotgen_announcement_on_AA001_IND_approval",
+      "tags": "pipeline/source;source/official_company_news",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::hyperway_pharmaceutical_co.,_ltd",
+      "label": "Hyperway Pharmaceutical Co., Ltd.",
+      "type": "company",
+      "title": "Company__Hyperway_Pharmaceutical_Co.,_Ltd",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::undisclosed_nociceptive_ion_channel",
+      "label": "Undisclosed nociceptive ion channel",
+      "type": "target",
+      "title": "Target__Undisclosed_nociceptive_ion_channel",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::inhibitor_of_an_undisclosed_nociceptive_ion_channel",
+      "label": "Inhibitor of an undisclosed nociceptive ion channel",
+      "type": "moa",
+      "title": "MoA__Inhibitor_of_an_undisclosed_nociceptive_ion_channel",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::pain;_efficacy_tested_in_acute_and_cci_neuropathic_pain_models",
+      "label": "Pain; efficacy tested in acute and CCI neuropathic pain models",
+      "type": "indication",
+      "title": "Indication__Pain;_efficacy_tested_in_acute_and_CCI_neuropathic_pain_models",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "source::https_www.tianfulifesciencepark.com_news_detail_id=2657",
+      "label": "BioTianFu report on Hyperway analgesic HBW-015-15",
+      "type": "source",
+      "title": "Source__BioTianFu_report_on_Hyperway_analgesic_HBW-015-15",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "target::tau",
+      "label": "Tau",
+      "type": "target",
+      "title": "Target__Tau",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::gaia_fusion_protein_intended_to_couple_tau_binding_with_tam-receptor-me_7dc283ce",
+      "label": "GAIA fusion protein intended to couple tau binding with TAM-receptor-mediated anti-inflammatory phagocytosis",
+      "type": "moa",
+      "title": "MoA__GAIA_fusion_protein_intended_to_couple_tau_binding_with_TAM-receptor-me_7dc283ce",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::myelin_debris",
+      "label": "Myelin debris",
+      "type": "target",
+      "title": "Target__Myelin_debris",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::gaia_tam-receptor-mediated_anti-inflammatory_phagocytic_clearance_of_my_6fd23047",
+      "label": "GAIA/TAM-receptor-mediated anti-inflammatory phagocytic clearance of myelin debris",
+      "type": "moa",
+      "title": "MoA__GAIA_TAM-receptor-mediated_anti-inflammatory_phagocytic_clearance_of_my_6fd23047",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::amyloid_beta_(aβ)_and_tam_receptors",
+      "label": "Amyloid beta (Aβ) and TAM receptors",
+      "type": "target",
+      "title": "Target__Amyloid_beta_(Aβ)_and_TAM_receptors",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::gaia_fusion_protein_couples_aβ_binding_to_tam-receptor-mediated_phagocy_e6f770ab",
+      "label": "GAIA fusion protein couples Aβ binding to TAM-receptor-mediated phagocytosis with anti-inflammatory signaling",
+      "type": "moa",
+      "title": "MoA__GAIA_fusion_protein_couples_Aβ_binding_to_TAM-receptor-mediated_phagocy_e6f770ab",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_alz.072368",
+      "label": "Anti-inflammatory clearance of amyloid beta by a chimeric Gas6 fusion protein",
+      "type": "source",
+      "title": "Source__Anti-inflammatory_clearance_of_amyloid_beta_by_a_chimeric_Gas6_fusion_protein",
+      "tags": "pipeline/source;source/peer_reviewed_conference_abstract",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::lnk01006_(blkr201)",
+      "label": "LNK01006 (BLKR201)",
+      "type": "asset",
+      "title": "Asset__LNK01006_(BLKR201)",
+      "tags": "pipeline/asset;theme/neuroimmune",
+      "score": 6,
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "target::tyk2_jh2_domain",
+      "label": "TYK2 JH2 domain",
+      "type": "target",
+      "title": "Target__TYK2_JH2_domain",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::selective_cns-penetrant_allosteric_tyk2_inhibition_of_il-12_il-23_and_r_bb0ba684",
+      "label": "Selective CNS-penetrant allosteric TYK2 inhibition of IL-12/IL-23 and related inflammatory signaling",
+      "type": "moa",
+      "title": "MoA__Selective_CNS-penetrant_allosteric_TYK2_inhibition_of_IL-12_IL-23_and_r_bb0ba684",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::multiple_sclerosis;_broader_cns_neuroinflammatory_diseases",
+      "label": "Multiple sclerosis; broader CNS neuroinflammatory diseases",
+      "type": "indication",
+      "title": "Indication__Multiple_sclerosis;_broader_CNS_neuroinflammatory_diseases",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::lnk01006_(blkr201)_20260806",
+      "label": "Scorecard - LNK01006 (BLKR201)",
+      "type": "scorecard",
+      "title": "Scorecard__LNK01006_(BLKR201)__20260806",
+      "tags": "pipeline/scorecard",
+      "score": 6,
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_www.prnewswire.com_news-releases_lynk-pharmaceuticals-partner-for_db7c7ef2",
+      "label": "Lynk announcement of first participant dosed in BLKR201 Phase 1",
+      "type": "source",
+      "title": "Source__Lynk_announcement_of_first_participant_dosed_in_BLKR201_Phase_1",
+      "tags": "pipeline/source;source/official_company_press_release",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -14136,7 +14376,7 @@
     },
     {
       "source": "asset::alzheimer's_disease",
-      "target": "company::beijing_youngen_biotechnology_co_ltd",
+      "target": "company::beijing_youngen_biotechnology_co.,_ltd",
       "relationship": "OWNED_BY",
       "evidence_type": "E0",
       "source_note": "Scorecard__Alzheimer's_Disease__20260806"
@@ -14192,31 +14432,17 @@
     },
     {
       "source": "asset::alzheimer's_disease",
-      "target": "source::https_www.youngenbiomed.com_pipeline.html",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E0",
-      "source_note": "Source__Youngen_pipeline"
-    },
-    {
-      "source": "scorecard::alzheimer's_disease_20260806",
-      "target": "source::https_www.youngenbiomed.com_pipeline.html",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E0",
-      "source_note": "Source__Youngen_pipeline"
-    },
-    {
-      "source": "asset::alzheimer's_disease",
       "target": "source::https_www.youngenbiomed.com_youngen-biotechnology-patent-for-small-nucl_873092a8",
       "relationship": "USES_SOURCE",
       "evidence_type": "E0",
-      "source_note": "Source__Youngen_APP-siRNA_AD_patent"
+      "source_note": "Source__Youngen_APP_siRNA_patent_announcement"
     },
     {
       "source": "scorecard::alzheimer's_disease_20260806",
       "target": "source::https_www.youngenbiomed.com_youngen-biotechnology-patent-for-small-nucl_873092a8",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E0",
-      "source_note": "Source__Youngen_APP-siRNA_AD_patent"
+      "source_note": "Source__Youngen_APP_siRNA_patent_announcement"
     },
     {
       "source": "asset::drug_to_inhibit_tau_for_alzheimer's_disease",
@@ -14248,7 +14474,7 @@
     },
     {
       "source": "asset::drug_to_inhibit_tau_for_alzheimer's_disease",
-      "target": "indication::alzheimer's_disease",
+      "target": "indication::unknown",
       "relationship": "HAS_INDICATION",
       "evidence_type": "E0",
       "source_note": "Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__20260806"
@@ -14626,7 +14852,7 @@
     },
     {
       "source": "asset::neurodegenerative_diseases_lilly",
-      "target": "company::illimis_therapeutics_inc",
+      "target": "company::illimis_therapeutics,_inc",
       "relationship": "OWNED_BY",
       "evidence_type": "E0",
       "source_note": "Scorecard__Neurodegenerative_Diseases_Lilly__20260806"
@@ -14682,17 +14908,17 @@
     },
     {
       "source": "asset::neurodegenerative_diseases_lilly",
-      "target": "source::https_illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=322&mod_4ab5b469",
+      "target": "source::https_www.illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=282_4499f524",
       "relationship": "USES_SOURCE",
       "evidence_type": "E0",
-      "source_note": "Source__Illimis_at_Lilly_Gateway_Labs"
+      "source_note": "Source__Illimis_financing_and_Lilly_research_collaboration_announcement"
     },
     {
       "source": "scorecard::neurodegenerative_diseases_lilly_20260806",
-      "target": "source::https_illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=322&mod_4ab5b469",
+      "target": "source::https_www.illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=282_4499f524",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E0",
-      "source_note": "Source__Illimis_at_Lilly_Gateway_Labs"
+      "source_note": "Source__Illimis_financing_and_Lilly_research_collaboration_announcement"
     },
     {
       "source": "asset::lnk01006",
@@ -14791,6 +15017,608 @@
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E0",
       "source_note": "Source__NCT07501039"
+    },
+    {
+      "source": "asset::adel-y04",
+      "target": "company::adel,_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ADEL-Y04__20260806"
+    },
+    {
+      "source": "asset::adel-y04",
+      "target": "target::apolipoprotein_e4_(apoe4)",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ADEL-Y04__20260806"
+    },
+    {
+      "source": "asset::adel-y04",
+      "target": "moa::apoe4-selective_antibody_intended_to_reduce_apoe4-linked_tau_pathology,_8db3dfc7",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ADEL-Y04__20260806"
+    },
+    {
+      "source": "asset::adel-y04",
+      "target": "modality::antibody",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ADEL-Y04__20260806"
+    },
+    {
+      "source": "asset::adel-y04",
+      "target": "indication::alzheimer's_disease",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ADEL-Y04__20260806"
+    },
+    {
+      "source": "asset::adel-y04",
+      "target": "theme::others",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ADEL-Y04__20260806"
+    },
+    {
+      "source": "asset::adel-y04",
+      "target": "cluster::others",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ADEL-Y04__20260806"
+    },
+    {
+      "source": "asset::adel-y04",
+      "target": "scorecard::adel-y04_20260806",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ADEL-Y04__20260806"
+    },
+    {
+      "source": "asset::adel-y04",
+      "target": "source::https_adelpharm.com_en_pipeline",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__ADEL_official_pipeline_status"
+    },
+    {
+      "source": "scorecard::adel-y04_20260806",
+      "target": "source::https_adelpharm.com_en_pipeline",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__ADEL_official_pipeline_status"
+    },
+    {
+      "source": "asset::adel-y04",
+      "target": "source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_alz.088537",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__ApoE4_antibody_ameliorates_cognitive_impairments_and_synapse_loss_in_Ap_1da93d77"
+    },
+    {
+      "source": "scorecard::adel-y04_20260806",
+      "target": "source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_alz.088537",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__ApoE4_antibody_ameliorates_cognitive_impairments_and_synapse_loss_in_Ap_1da93d77"
+    },
+    {
+      "source": "asset::alzheimer's_disease_therapy,_beijing_youngen_biotechnology",
+      "target": "company::beijing_hotgen_biotech_co.,_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__20260806"
+    },
+    {
+      "source": "asset::alzheimer's_disease_therapy,_beijing_youngen_biotechnology",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__20260806"
+    },
+    {
+      "source": "asset::alzheimer's_disease_therapy,_beijing_youngen_biotechnology",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__20260806"
+    },
+    {
+      "source": "asset::alzheimer's_disease_therapy,_beijing_youngen_biotechnology",
+      "target": "modality::unknown",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__20260806"
+    },
+    {
+      "source": "asset::alzheimer's_disease_therapy,_beijing_youngen_biotechnology",
+      "target": "indication::unknown",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__20260806"
+    },
+    {
+      "source": "asset::alzheimer's_disease_therapy,_beijing_youngen_biotechnology",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__20260806"
+    },
+    {
+      "source": "asset::alzheimer's_disease_therapy,_beijing_youngen_biotechnology",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__20260806"
+    },
+    {
+      "source": "asset::alzheimer's_disease_therapy,_beijing_youngen_biotechnology",
+      "target": "scorecard::alzheimer's_disease_therapy,_beijing_youngen_biotechnology_20260806",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__20260806"
+    },
+    {
+      "source": "asset::alzheimer's_disease_therapy,_beijing_youngen_biotechnology",
+      "target": "source::https_www.youngenbiomed.com_youngen-biotechnology-patent-for-small-nucl_873092a8",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Youngen_APP_siRNA_patent_announcement"
+    },
+    {
+      "source": "scorecard::alzheimer's_disease_therapy,_beijing_youngen_biotechnology_20260806",
+      "target": "source::https_www.youngenbiomed.com_youngen-biotechnology-patent-for-small-nucl_873092a8",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Youngen_APP_siRNA_patent_announcement"
+    },
+    {
+      "source": "asset::alzheimer's_disease_therapy,_beijing_youngen_biotechnology",
+      "target": "source::https_www.hotgen.com.cn_detail_683.html",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Hotgen_announcement_on_AA001_IND_approval"
+    },
+    {
+      "source": "scorecard::alzheimer's_disease_therapy,_beijing_youngen_biotechnology_20260806",
+      "target": "source::https_www.hotgen.com.cn_detail_683.html",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Hotgen_announcement_on_AA001_IND_approval"
+    },
+    {
+      "source": "asset::hbw-015",
+      "target": "company::hyperway_pharmaceutical_co.,_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HBW-015__20260806"
+    },
+    {
+      "source": "asset::hbw-015",
+      "target": "target::undisclosed_nociceptive_ion_channel",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HBW-015__20260806"
+    },
+    {
+      "source": "asset::hbw-015",
+      "target": "moa::inhibitor_of_an_undisclosed_nociceptive_ion_channel",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HBW-015__20260806"
+    },
+    {
+      "source": "asset::hbw-015",
+      "target": "modality::small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HBW-015__20260806"
+    },
+    {
+      "source": "asset::hbw-015",
+      "target": "indication::pain;_efficacy_tested_in_acute_and_cci_neuropathic_pain_models",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HBW-015__20260806"
+    },
+    {
+      "source": "asset::hbw-015",
+      "target": "theme::others",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HBW-015__20260806"
+    },
+    {
+      "source": "asset::hbw-015",
+      "target": "cluster::others",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HBW-015__20260806"
+    },
+    {
+      "source": "asset::hbw-015",
+      "target": "scorecard::hbw-015_20260806",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__HBW-015__20260806"
+    },
+    {
+      "source": "asset::hbw-015",
+      "target": "source::https_www.tianfulifesciencepark.com_news_detail_id=2657",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__BioTianFu_report_on_Hyperway_analgesic_HBW-015-15"
+    },
+    {
+      "source": "scorecard::hbw-015_20260806",
+      "target": "source::https_www.tianfulifesciencepark.com_news_detail_id=2657",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__BioTianFu_report_on_Hyperway_analgesic_HBW-015-15"
+    },
+    {
+      "source": "asset::ilm02",
+      "target": "company::illimis_therapeutics,_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM02__20260806"
+    },
+    {
+      "source": "asset::ilm02",
+      "target": "target::tau",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM02__20260806"
+    },
+    {
+      "source": "asset::ilm02",
+      "target": "moa::gaia_fusion_protein_intended_to_couple_tau_binding_with_tam-receptor-me_7dc283ce",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM02__20260806"
+    },
+    {
+      "source": "asset::ilm02",
+      "target": "modality::protein_biologic",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM02__20260806"
+    },
+    {
+      "source": "asset::ilm02",
+      "target": "indication::tauopathies",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM02__20260806"
+    },
+    {
+      "source": "asset::ilm02",
+      "target": "theme::neuroimmune",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM02__20260806"
+    },
+    {
+      "source": "asset::ilm02",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM02__20260806"
+    },
+    {
+      "source": "asset::ilm02",
+      "target": "scorecard::ilm02_20260806",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM02__20260806"
+    },
+    {
+      "source": "asset::ilm02",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Illimis_official_pipeline"
+    },
+    {
+      "source": "scorecard::ilm02_20260806",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Illimis_official_pipeline"
+    },
+    {
+      "source": "asset::ilm02",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_platform.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Illimis_GAIA_platform_description"
+    },
+    {
+      "source": "scorecard::ilm02_20260806",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_platform.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Illimis_GAIA_platform_description"
+    },
+    {
+      "source": "asset::ilm21",
+      "target": "company::illimis_therapeutics,_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM21__20260806"
+    },
+    {
+      "source": "asset::ilm21",
+      "target": "target::myelin_debris",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM21__20260806"
+    },
+    {
+      "source": "asset::ilm21",
+      "target": "moa::gaia_tam-receptor-mediated_anti-inflammatory_phagocytic_clearance_of_my_6fd23047",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM21__20260806"
+    },
+    {
+      "source": "asset::ilm21",
+      "target": "modality::protein_biologic",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM21__20260806"
+    },
+    {
+      "source": "asset::ilm21",
+      "target": "indication::multiple_sclerosis",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM21__20260806"
+    },
+    {
+      "source": "asset::ilm21",
+      "target": "theme::neuroimmune",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM21__20260806"
+    },
+    {
+      "source": "asset::ilm21",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM21__20260806"
+    },
+    {
+      "source": "asset::ilm21",
+      "target": "scorecard::ilm21_20260806",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM21__20260806"
+    },
+    {
+      "source": "asset::ilm21",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Illimis_official_pipeline"
+    },
+    {
+      "source": "scorecard::ilm21_20260806",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Illimis_official_pipeline"
+    },
+    {
+      "source": "asset::ilm21",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_platform.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Illimis_GAIA_platform_description"
+    },
+    {
+      "source": "scorecard::ilm21_20260806",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_platform.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Illimis_GAIA_platform_description"
+    },
+    {
+      "source": "asset::ilm01",
+      "target": "company::illimis_therapeutics,_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM01__20260806"
+    },
+    {
+      "source": "asset::ilm01",
+      "target": "target::amyloid_beta_(aβ)_and_tam_receptors",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM01__20260806"
+    },
+    {
+      "source": "asset::ilm01",
+      "target": "moa::gaia_fusion_protein_couples_aβ_binding_to_tam-receptor-mediated_phagocy_e6f770ab",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM01__20260806"
+    },
+    {
+      "source": "asset::ilm01",
+      "target": "modality::protein_biologic",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM01__20260806"
+    },
+    {
+      "source": "asset::ilm01",
+      "target": "indication::alzheimer's_disease",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM01__20260806"
+    },
+    {
+      "source": "asset::ilm01",
+      "target": "theme::neuroimmune",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM01__20260806"
+    },
+    {
+      "source": "asset::ilm01",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM01__20260806"
+    },
+    {
+      "source": "asset::ilm01",
+      "target": "scorecard::ilm01_20260806",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__ILM01__20260806"
+    },
+    {
+      "source": "asset::ilm01",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Illimis_official_pipeline"
+    },
+    {
+      "source": "scorecard::ilm01_20260806",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Illimis_official_pipeline"
+    },
+    {
+      "source": "asset::ilm01",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_platform.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Illimis_GAIA_platform_description"
+    },
+    {
+      "source": "scorecard::ilm01_20260806",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_platform.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Illimis_GAIA_platform_description"
+    },
+    {
+      "source": "asset::ilm01",
+      "target": "source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_alz.072368",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Anti-inflammatory_clearance_of_amyloid_beta_by_a_chimeric_Gas6_fusion_protein"
+    },
+    {
+      "source": "scorecard::ilm01_20260806",
+      "target": "source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_alz.072368",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Anti-inflammatory_clearance_of_amyloid_beta_by_a_chimeric_Gas6_fusion_protein"
+    },
+    {
+      "source": "asset::lnk01006_(blkr201)",
+      "target": "company::lynk_pharmaceuticals_co.,_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LNK01006_(BLKR201)__20260806"
+    },
+    {
+      "source": "asset::lnk01006_(blkr201)",
+      "target": "target::tyk2_jh2_domain",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LNK01006_(BLKR201)__20260806"
+    },
+    {
+      "source": "asset::lnk01006_(blkr201)",
+      "target": "moa::selective_cns-penetrant_allosteric_tyk2_inhibition_of_il-12_il-23_and_r_bb0ba684",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LNK01006_(BLKR201)__20260806"
+    },
+    {
+      "source": "asset::lnk01006_(blkr201)",
+      "target": "modality::small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LNK01006_(BLKR201)__20260806"
+    },
+    {
+      "source": "asset::lnk01006_(blkr201)",
+      "target": "indication::multiple_sclerosis;_broader_cns_neuroinflammatory_diseases",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LNK01006_(BLKR201)__20260806"
+    },
+    {
+      "source": "asset::lnk01006_(blkr201)",
+      "target": "theme::neuroimmune",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LNK01006_(BLKR201)__20260806"
+    },
+    {
+      "source": "asset::lnk01006_(blkr201)",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LNK01006_(BLKR201)__20260806"
+    },
+    {
+      "source": "asset::lnk01006_(blkr201)",
+      "target": "scorecard::lnk01006_(blkr201)_20260806",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LNK01006_(BLKR201)__20260806"
+    },
+    {
+      "source": "asset::lnk01006_(blkr201)",
+      "target": "source::https_www.prnewswire.com_news-releases_lynk-pharmaceuticals-announces-f_00d362e4",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Lynk_announcement_of_FDA_IND_approval_for_LNK01006"
+    },
+    {
+      "source": "scorecard::lnk01006_(blkr201)_20260806",
+      "target": "source::https_www.prnewswire.com_news-releases_lynk-pharmaceuticals-announces-f_00d362e4",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Lynk_announcement_of_FDA_IND_approval_for_LNK01006"
+    },
+    {
+      "source": "asset::lnk01006_(blkr201)",
+      "target": "source::https_www.prnewswire.com_news-releases_lynk-pharmaceuticals-partner-for_db7c7ef2",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Lynk_announcement_of_first_participant_dosed_in_BLKR201_Phase_1"
+    },
+    {
+      "source": "scorecard::lnk01006_(blkr201)_20260806",
+      "target": "source::https_www.prnewswire.com_news-releases_lynk-pharmaceuticals-partner-for_db7c7ef2",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Lynk_announcement_of_first_participant_dosed_in_BLKR201_Phase_1"
+    },
+    {
+      "source": "asset::lnk01006_(blkr201)",
+      "target": "source::https_clinicaltrials.gov_study_nct07501039",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__ClinicalTrials.gov_NCT07501039"
+    },
+    {
+      "source": "scorecard::lnk01006_(blkr201)_20260806",
+      "target": "source::https_clinicaltrials.gov_study_nct07501039",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__ClinicalTrials.gov_NCT07501039"
     }
   ]
 }

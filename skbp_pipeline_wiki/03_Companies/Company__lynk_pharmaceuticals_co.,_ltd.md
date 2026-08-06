@@ -6,8 +6,8 @@ aliases:
   - "lynk_pharmaceuticals_co.,_ltd"
 tags:
   - "pipeline/company"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -28,6 +28,7 @@ confidence: "medium"
 
 ## Pipeline Assets
 
+- [[02_Assets/Asset__LNK01006_(BLKR201)|LNK01006_(BLKR201)]]
 - [[02_Assets/Asset__LNK01006_BLKR201|LNK01006_BLKR201]]
 
 ## Platform / Technology

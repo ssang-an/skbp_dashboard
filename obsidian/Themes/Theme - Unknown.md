@@ -1,6 +1,6 @@
 # Unknown
 
-> Generated from `json/pipeline-records.json` at `2026-08-06T23:55:32`.
+> Generated from `json/pipeline-records.json` at `2026-08-07T00:06:12`.
 
 ## Linked Assets
 
@@ -11,6 +11,7 @@
 - [[Astrogen_AST-030]]
 - [[AtoGen Co., Ltd._LABthera-003]]
 - [[Autophagy Science Co., Ltd._AS-401]]
+- [[Beijing Hotgen Biotech Co., Ltd._Alzheimer's disease therapy, Beijing Youngen Biotechnology]]
 - [[Beijing Hotgen Biotech_Alzheimer's disease therapy, Beijing Youngen Biotechnology]]
 - [[Beijing Youngen Biotechnology Co Ltd_Alzheimer's Disease]]
 - [[Harbour_BioMed_CNS_XDC_fast_triage_20260623]]

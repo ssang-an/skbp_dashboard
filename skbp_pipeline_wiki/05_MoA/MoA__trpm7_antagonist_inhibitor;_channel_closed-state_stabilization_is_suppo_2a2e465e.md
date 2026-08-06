@@ -6,8 +6,8 @@ aliases:
   - "trpm7_antagonist_inhibitor;_channel_closed-state_stabilization_is_suppo_2a2e465e"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-06"
-updated_at: "2026-08-06"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
