@@ -6,9 +6,9 @@ aliases:
   - "Westan Pharma official site"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,14 +21,14 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
+| Source type | other |
 | Reliability | medium |
 | URL | http://www.westanpharma.com/Default.aspx |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Company identity source; WT-1-2.0 specific evidence not confirmed.
+-
 
 ## Used In
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/publication"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | publication |
 | Reliability | medium |
 | URL | https://aesnet.org/abstractslisting/efficacy-and-tolerability-of-rap-219-a-potential-first-in-class-negative-allosteric-modulator-of-%CE%B38-transmembrane-ampa-receptor-associated-protein-impact-on-rns-long-episodes-and-focal-seizures |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 

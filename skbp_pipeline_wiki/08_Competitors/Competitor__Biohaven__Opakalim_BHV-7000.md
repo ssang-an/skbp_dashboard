@@ -6,8 +6,8 @@ aliases:
   - "Opakalim / BHV-7000"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Second same-target late-stage competitor; tolerability claims may pressure NS-04
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__NS-041__NeuShen_NS-041|NS-041__NeuShen_NS-041]]: Second same-target late-stage competitor; tolerability claims may pressure NS-041 differentiation.
+- [[02_Assets/Asset__NS-041|NS-041]]: Second same-target late-stage competitor; tolerability claims may pressure NS-041 differentiation.
 
 ## Sources
 

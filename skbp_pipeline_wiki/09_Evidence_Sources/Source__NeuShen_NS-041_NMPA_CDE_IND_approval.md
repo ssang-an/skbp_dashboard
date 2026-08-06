@@ -6,9 +6,9 @@ aliases:
   - "NeuShen NS-041 NMPA CDE IND approval"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,18 +21,18 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
-| Reliability | high |
+| Source type | other |
+| Reliability | medium |
 | URL | https://www.neushen.com/news/2024/neushen-therapeutics-granted-nmpa-cde-ind-approval-for-kcnq23-activator-ns-041.html |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Officially identifies NS-041 as highly selective KCNQ2/3 activator.
+-
 
 ## Used In
 
-- [[02_Assets/Asset__NS-041__NeuShen_NS-041|Asset__NS-041__NeuShen_NS-041]]
+- [[02_Assets/Asset__NS-041|Asset__NS-041]]
 - [[10_Scorecards/Scorecard__NS-041__20260623|Scorecard__NS-041__20260623]]
 
 ## Extracted Claims

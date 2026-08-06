@@ -1,7 +1,7 @@
 # Lynk Pharmaceuticals Co., Ltd.
 
-> Generated from `json/pipeline-records.json` at `2026-08-02T02:42:40`.
+> Generated from `json/pipeline-records.json` at `2026-08-06T11:45:31`.
 
 ## Linked Assets
 
-- [[Lynk Pharmaceuticals LNK01006 BLKR201]]
+- [[Lynk_Pharmaceuticals_LNK01006_20260621]]

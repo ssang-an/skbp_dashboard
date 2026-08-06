@@ -6,8 +6,8 @@ aliases:
   - "Dapansutrile / OLT1177"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Downstream NLRP3 competitor biology; supports target class relevance but not dir
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__HY209_NuCerin__HY-209|HY209_NuCerin__HY-209]]: Downstream NLRP3 competitor biology; supports target class relevance but not direct GPCR19 AD competition.
+- [[02_Assets/Asset__HY209_NuCerin|HY209_NuCerin]]: Downstream NLRP3 competitor biology; supports target class relevance but not direct GPCR19 AD competition.
 
 ## Sources
 

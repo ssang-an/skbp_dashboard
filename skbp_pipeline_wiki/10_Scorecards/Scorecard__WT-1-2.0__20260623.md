@@ -5,8 +5,8 @@ title: "Scorecard - WT-1-2.0"
 tags:
   - "pipeline/scorecard"
   - "skbp/scoring"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: "[[01_Raw_Reports/Hangzhou_Vitan_WT-1-2.0_fast_triage_20260623]]"
 source_json: "json/pipeline-records.json"
 asset: "[[02_Assets/Asset__WT-1-2.0|WT-1-2.0]]"
@@ -34,7 +34,7 @@ recommendation: "N/A"
 |---|---:|
 | Total Score | -/21 |
 | Recommendation | N/A |
-| Hard Filter | N/A |
+| Hard Filter | UNVERIFIED |
 
 ## 2. Criterion Details
 

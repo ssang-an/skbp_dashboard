@@ -6,8 +6,8 @@ aliases:
   - "phase_1_healthy-volunteer_study;_intended_development_positioning_inclu_d38001b6"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,7 +22,7 @@ confidence: "medium"
 
 ## Related Assets
 
-- [[02_Assets/Asset__LNK01006_BLKR201__LNK01006|LNK01006_BLKR201__LNK01006]]
+- [[02_Assets/Asset__LNK01006_BLKR201|LNK01006_BLKR201]]
 
 ## Related Targets / MoA
 

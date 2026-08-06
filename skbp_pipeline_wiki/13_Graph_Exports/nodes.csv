@@ -1,41 +1,38 @@
 id,label,type,title,tags,score,recommendation,evidence_level
-asset::ilm01_gaia-aβ,ILM01 / GAIA-Aβ,asset,Asset__ILM01_GAIA-Aβ__GAIA-Aβ,pipeline/asset;theme/neuroimmune,15,Watch,E3
+asset::ilm01_(gaia-aβ),ILM01 (GAIA-Aβ),asset,Asset__ILM01_(GAIA-Aβ),pipeline/asset;theme/neuroimmune,15,Shortlist,E3
 company::illimis_therapeutics,Illimis Therapeutics,company,Company__Illimis_Therapeutics,pipeline/company,,,
-target::aβ_aggregates_with_tam_receptor-mediated_clearance_biology,Aβ aggregates with TAM receptor-mediated clearance biology,target,Target__Aβ_aggregates_with_TAM_receptor-mediated_clearance_biology,pipeline/target,,,
-moa::aβ_binder와_engineered_gas6_tam_receptor_binder를_결합해_aβ_aggregates와_tam_1a0a75c6,Aβ binder와 engineered Gas6 TAM receptor binder를 결합해 Aβ aggregates와 TAM receptors를 동시에 결합하고 microglia/astrocyte phagocytosis를 유도하여 FcγR-mediated inflammation과 ARIA-relevant inflammatory response를 낮추는 전략.,moa,MoA__Aβ_binder와_engineered_Gas6_TAM_receptor_binder를_결합해_Aβ_aggregates와_TAM_1a0a75c6,pipeline/moa,,,
-modality::biologic_bispecific-like_chimeric_fusion_protein;_gaia_platform,Biologic / bispecific-like chimeric fusion protein; GAIA platform,modality,Modality__Biologic_bispecific-like_chimeric_fusion_protein;_GAIA_platform,pipeline/modality,,,
-indication::alzheimer's_disease,Alzheimer's disease,indication,Indication__Alzheimer's_disease,pipeline/indication,,,
+"target::amyloid-β,_especially_oligomeric_aβ;_tam_receptors_tyro3_axl_mertk_as_t_ba5985eb","Amyloid-β, especially oligomeric Aβ; TAM receptors Tyro3/Axl/MerTK as the effector axis",target,"Target__Amyloid-β,_especially_oligomeric_Aβ;_TAM_receptors_Tyro3_Axl_MerTK_as_t_ba5985eb",pipeline/target,,,
+moa::aβ_binding_plus_engineered_gas6-mediated_tam_receptor_clustering_activa_103fe530,Aβ binding plus engineered GAS6-mediated TAM receptor clustering activates efferocytosis/phagocytosis in glia while using an effector-silenced Fc to reduce FcγR-driven inflammatory signaling.,moa,MoA__Aβ_binding_plus_engineered_GAS6-mediated_TAM_receptor_clustering_activa_103fe530,pipeline/moa,,,
+modality::protein_biologic,Protein biologic,modality,Modality__Protein_biologic,pipeline/modality,,,
+indication::early_symptomatic_alzheimer's_disease;_exact_intended_clinical_populati_44d70da0,Early symptomatic Alzheimer's disease; exact intended clinical population has not been publicly finalized,indication,Indication__Early_symptomatic_Alzheimer's_disease;_exact_intended_clinical_populati_44d70da0,pipeline/indication,,,
 theme::neuroimmune,Neuroimmune,theme,Theme__Neuroimmune,skbp/theme,,,
 cluster::교세포_향상성,교세포 향상성,cluster,Cluster__교세포_향상성,skbp/cluster,,,
-scorecard::ilm01_gaia-aβ_20260621,Scorecard - ILM01 / GAIA-Aβ,scorecard,Scorecard__ILM01_GAIA-Aβ__20260621,pipeline/scorecard,15,Watch,E3
-competitor::eisai_biogen_leqembi_lecanemab,Leqembi / lecanemab,competitor,Competitor__Eisai_Biogen__Leqembi_lecanemab,pipeline/competitor,,,
-competitor::eli_lilly_kisunla_donanemab,Kisunla / donanemab,competitor,Competitor__Eli_Lilly__Kisunla_donanemab,pipeline/competitor,,,
-competitor::eli_lilly_remternetug_ly3372993,Remternetug / LY3372993,competitor,Competitor__Eli_Lilly__Remternetug_LY3372993,pipeline/competitor,,,
-competitor::biogen_eisai_historical_program_aduhelm_aducanumab,Aduhelm / aducanumab,competitor,Competitor__Biogen_Eisai_historical_program__Aduhelm_aducanumab,pipeline/competitor,,,
-competitor::inmune_bio_xpro1595_xpro,XPro1595 / XPro,competitor,Competitor__INmune_Bio__XPro1595_XPro,pipeline/competitor,,,
-competitor::biogen_ionis_diranersen_biib080,Diranersen / BIIB080,competitor,Competitor__Biogen_Ionis__Diranersen_BIIB080,pipeline/competitor,,,
-source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php,Illimis official pipeline page,source,Source__Illimis_official_pipeline_page,pipeline/source;source/official_company,,,E3
-source::https_illimistx.com_en_sub_platform%26pipeline_platform.php,Illimis official platform page,source,Source__Illimis_official_platform_page,pipeline/source;source/official_company,,,E3
-source::https_www.nature.com_articles_s41591-022-01926-9,Nature Medicine αAβ-Gas6 paper,source,Source__Nature_Medicine_αAβ-Gas6_paper,pipeline/source;source/publication,,,E3
-source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_ef80b277,AI draft search note,source,Source__AI_draft_search_note,pipeline/source;source/other,,,E3
-source::ai_draft_search_note,AI draft search note,source,Source__AI_draft_search_note,pipeline/source;source/other,,,E3
-source::https_pure.kaist.ac.kr_en_publications_anti-inflammatory-clearance-of-a_4ffde966,KAIST Pure publication record,source,Source__KAIST_Pure_publication_record,pipeline/source;source/publication,,,E3
-source::https_www.illimistx.com_data_poster_illimis_keystone2022.pdf,Illimis Keystone 2022 poster,source,Source__Illimis_Keystone_2022_poster,pipeline/source;source/publication,,,E3
-source::https_www.biospectator.com_news_view_25729,BioSpectator Series B/stage article,source,Source__BioSpectator_Series_B_stage_article,pipeline/source;source/news,,,E3
+scorecard::ilm01_(gaia-aβ)_20260806,Scorecard - ILM01 (GAIA-Aβ),scorecard,Scorecard__ILM01_(GAIA-Aβ)__20260806,pipeline/scorecard,15,Shortlist,E3
+competitor::eisai_biogen_leqembi_(lecanemab),Leqembi (lecanemab),competitor,Competitor__Eisai_Biogen__Leqembi_(lecanemab),pipeline/competitor,,,
+competitor::eli_lilly_kisunla_(donanemab),Kisunla (donanemab),competitor,Competitor__Eli_Lilly__Kisunla_(donanemab),pipeline/competitor,,,
+competitor::eli_lilly_remternetug_(ly3372993),Remternetug (LY3372993),competitor,Competitor__Eli_Lilly__Remternetug_(LY3372993),pipeline/competitor,,,
+competitor::roche_trontinemab,Trontinemab,competitor,Competitor__Roche__Trontinemab,pipeline/competitor,,,
+competitor::acumen_pharmaceuticals_sabirnetug_(acu193),Sabirnetug (ACU193),competitor,Competitor__Acumen_Pharmaceuticals__Sabirnetug_(ACU193),pipeline/competitor,,,
+source::illimis_therapeutics_company_intro_ncdp_202601_skbp_share,Illimis Therapeutics Company Intro_NCDP_202601_SKBP_share,source,Source__Illimis_Therapeutics_Company_Intro_NCDP_202601_SKBP_share,pipeline/source;source/other,,,E3
+source::https_illimistx.com_en,Illimis Therapeutics official website,source,Source__Illimis_Therapeutics_official_website,pipeline/source;source/official_company,,,E3
+source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php,Illimis Therapeutics official pipeline,source,Source__Illimis_Therapeutics_official_pipeline,pipeline/source;source/official_company_pipeline,,,E3
+source::https_illimistx.com_en_sub_platform%26pipeline_platform.php,Illimis Therapeutics GAIA platform,source,Source__Illimis_Therapeutics_GAIA_platform,pipeline/source;source/official_company_platform,,,E3
+source::https_illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=282&mod_5a2ae7b8,Illimis Therapeutics $42M Series B press release,source,Source__Illimis_Therapeutics_$42M_Series_B_press_release,pipeline/source;source/official_company_press_release,,,E3
+source::https_illimistx.com_en_sub_platform%26pipeline_conference.php,Illimis Therapeutics conference presentations,source,Source__Illimis_Therapeutics_conference_presentations,pipeline/source;source/official_company_conference_page,,,E3
+source::https_illimistx.com_data_aaic%202025_abstract_illimistx.pdf,AAIC 2025 GAIA-Aβ abstract,source,Source__AAIC_2025_GAIA-Aβ_abstract,pipeline/source;source/conference_abstract,,,E3
+source::https_www.nature.com_articles_s41591-022-01926-9,Anti-inflammatory clearance of amyloid-β by a chimeric Gas6 fusion protein,source,Source__Anti-inflammatory_clearance_of_amyloid-β_by_a_chimeric_Gas6_fusion_protein,pipeline/source;source/peer_reviewed_publication,,,E3
+source::https_www.biospectator.com_news_view_28887,BioSpectator interview on ILM01 preclinical program and planned 2027 clinical entry,source,Source__BioSpectator_interview_on_ILM01_preclinical_program_and_planned_2027_cl_e077b90f,pipeline/source;source/biotech_news,,,E3
 source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af,FDA Leqembi approval,source,Source__FDA_Leqembi_approval,pipeline/source;source/regulatory,,,E3
 source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc,FDA Kisunla approval,source,Source__FDA_Kisunla_approval,pipeline/source;source/regulatory,,,E3
-source::https_trials.lilly.com_en-us_trial_548297,Lilly Remternetug Phase III trial,source,Source__Lilly_Remternetug_Phase_III_trial,pipeline/source;source/clinical_trial_registry,,,E3
-source::https_www.alz.org_alzheimers-dementia_facts-figures,Alzheimer's Association Facts and Figures,source,Source__Alzheimer's_Association_Facts_and_Figures,pipeline/source;source/market,,,E3
+source::https_trials.lilly.com_en-us_trial_548297,Lilly TRAILRUNNER-ALZ 3 remternetug trial,source,Source__Lilly_TRAILRUNNER-ALZ_3_remternetug_trial,pipeline/source;source/clinical_registry_sponsor,,,E3
+source::https_clinicaltrials.gov_study_nct07169578,ClinicalTrials.gov trontinemab Phase 3 study NCT07169578,source,Source__ClinicalTrials.gov_trontinemab_Phase_3_study_NCT07169578,pipeline/source;source/clinical_registry,,,E3
+source::https_acumenpharm.com_altitude-ad,Acumen ALTITUDE-AD sabirnetug study,source,Source__Acumen_ALTITUDE-AD_sabirnetug_study,pipeline/source;source/official_company_trial_page,,,E3
+source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_trc2.70251,Alzheimer's disease drug development pipeline: 2026,source,Source__Alzheimer's_disease_drug_development_pipeline_2026,pipeline/source;source/peer_reviewed_review,,,E3
+source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_dad2.12497,Estimating prevalence of early symptomatic Alzheimer's disease in the United States,source,Source__Estimating_prevalence_of_early_symptomatic_Alzheimer's_disease_in_the_U_65d8288f,pipeline/source;source/peer_reviewed_epidemiology,,,E3
 source::https_www.eisai.com_news_2023_news202302.html,https://www.eisai.com/news/2023/news202302.html,source,Source__https_www.eisai.com_news_2023_news202302.html,pipeline/source;source/other,,,E3
-source::https_www.biopharmadive.com_news_lilly-alzheimers-drug-fda-approval-kis_3067c15c,Kisunla pricing,source,Source__Kisunla_pricing,pipeline/source;source/market,,,E3
-source::https_investors.biogen.com_news-releases_news-release-details_biogen-re_2170daf2,Aduhelm / aducanumab source,source,Source__Aduhelm_aducanumab_source,pipeline/source;source/other,,,E3
-source::https_www.inmunebio.com_index.php_newsroom_2026-news_muneionnounceslign_d59db4fe,XPro1595 / XPro source,source,Source__XPro1595_XPro_source,pipeline/source;source/other,,,E3
-source::https_investors.biogen.com_news-releases_news-release-details_topline-r_3daa3724,Diranersen / BIIB080 source,source,Source__Diranersen_BIIB080_source,pipeline/source;source/other,,,E3
-source::ai_draft_evidence_note,AI draft evidence note,source,Source__AI_draft_evidence_note,pipeline/source;source/other,,,E3
-source::https_www.koreabiomed.com_news_articleview.html_idxno=29100,https://www.koreabiomed.com/news/articleView.html?idxno=29100,source,Source__https_www.koreabiomed.com_news_articleView.html_idxno=29100,pipeline/source;source/other,,,E3
-source::https_www.mk.co.kr_en_it_11981980,https://www.mk.co.kr/en/it/11981980,source,Source__https_www.mk.co.kr_en_it_11981980,pipeline/source;source/other,,,E3
-source::https_snu.elsevierpure.com_en_publications_eligibility-for-lecanemab-an_9c2ffbd8,https://snu.elsevierpure.com/en/publications/eligibility-for-lecanemab-and-donanemab-in-korea-under-appropriat/,source,Source__https_snu.elsevierpure.com_en_publications_eligibility-for-lecanemab-an_9c2ffbd8,pipeline/source;source/other,,,E3
-asset::wt-1108,WT-1108,asset,Asset__WT-1108__WT1108,pipeline/asset;theme/no_theme,8,Watch,E2
+source::https_investor.lilly.com_news-releases_news-release-details_lillys-kisu_5dbfd133,Lilly Kisunla approval and limited-duration treatment cost,source,Source__Lilly_Kisunla_approval_and_limited-duration_treatment_cost,pipeline/source;source/official_company_pricing,,,E3
+source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_55918ed3,2026 Alzheimer's Disease Facts and Figures,source,Source__2026_Alzheimer's_Disease_Facts_and_Figures,pipeline/source;source/epidemiology_report,,,E3
+asset::wt-1108,WT-1108,asset,Asset__WT-1108,pipeline/asset;theme/no_theme,8,Watch,E2
 "company::hangzhou_westan_pharmaceutical_technology_co.,_ltd","Hangzhou Westan Pharmaceutical Technology Co., Ltd.",company,"Company__Hangzhou_Westan_Pharmaceutical_Technology_Co.,_Ltd",pipeline/company,,,
 target::p2x3_receptor_p2rx3,P2X3 receptor / P2RX3,target,Target__P2X3_receptor_P2RX3,pipeline/target,,,
 moa::selective_p2x3_receptor_antagonism_intended_to_reduce_atp-mediated_airw_a0f471fe,Selective P2X3 receptor antagonism intended to reduce ATP-mediated airway sensory nerve activation and cough hypersensitivity.,moa,MoA__Selective_P2X3_receptor_antagonism_intended_to_reduce_ATP-mediated_airw_a0f471fe,pipeline/moa,,,
@@ -50,7 +47,7 @@ competitor::shionogi_sivopixant_s-600918,Sivopixant / S-600918,competitor,Compet
 competitor::jiangsu_hengrui_guangdong_hengrui_hrs-2261,HRS-2261,competitor,Competitor__Jiangsu_Hengrui_Guangdong_Hengrui__HRS-2261,pipeline/competitor,,,
 competitor::hansoh_pharma_hs-10383,HS-10383,competitor,Competitor__Hansoh_Pharma__HS-10383,pipeline/competitor,,,
 competitor::createrna_langlai_technology_qr052107b_relicpixant,QR052107B / relicpixant,competitor,Competitor__Createrna_Langlai_Technology__QR052107B_relicpixant,pipeline/competitor,,,
-source::https_westanpharma.com_products.aspx,Westan products page,source,Source__Westan_products_page,pipeline/source;source/official_company,,,E2
+source::https_westanpharma.com_products.aspx,Westan products page,source,Source__Westan_products_page,pipeline/source;source/other,,,E2
 source::https_www.changbaicao.cn_trialsdetail-id-20793.html,Changbaicao CTR20254063 trial page,source,Source__Changbaicao_CTR20254063_trial_page,pipeline/source;source/clinical_trial_registry,,,E2
 source::https_synapse.patsnap.com_drug_0b28edb3230146bca084e523c94678b2,Synapse WT-1108,source,Source__Synapse_WT-1108,pipeline/source;source/other,,,E0
 source::https_pubmed.ncbi.nlm.nih.gov_35248186,Lancet COUGH-1/COUGH-2 PubMed record,source,Source__Lancet_COUGH-1_COUGH-2_PubMed_record,pipeline/source;source/publication,,,E2
@@ -72,7 +69,7 @@ source::https_bydrug.pharmcube.com_investgo_company_detail_1b0943a3d0a44519a9d5_
 source::https_www.zhihuiya.com_news_info_2271.html,Zhihuiya WT-1108 news,source,Source__Zhihuiya_WT-1108_news,pipeline/source;source/news,,,E2
 source::https_westanpharma.com_aboutus.aspx,Westan about page,source,Source__Westan_about_page,pipeline/source;source/official_company,,,E2
 source::https_finance.sina.com.cn_stock_aigc_ywsygs_2025-10-11_doc-inftnueu7432084.shtml,Sina WT-1108 Phase IIa news,source,Source__Sina_WT-1108_Phase_IIa_news,pipeline/source;source/news,,,E2
-asset::ux-ep001_uxep-001,UX-EP001 / UXEP-001,asset,Asset__UX-EP001_UXEP-001__UX-EP001,pipeline/asset;theme/e_i_balance,5,Deprioritize,E1
+asset::ux-ep001_uxep-001,UX-EP001 / UXEP-001,asset,Asset__UX-EP001_UXEP-001,pipeline/asset;theme/e_i_balance,5,Deprioritize,E1
 "company::shanghai_unixell_biotechnology_co.,_ltd","Shanghai UniXell Biotechnology Co., Ltd.",company,"Company__Shanghai_UniXell_Biotechnology_Co.,_Ltd",pipeline/company,,,
 target::undisclosed,undisclosed,target,Target__undisclosed,pipeline/target,,,
 "moa::undisclosed_for_ux-ep001._if_confused_with_ux-gip001,_the_moa_would_be_cf2be7de","Undisclosed for UX-EP001. If confused with UX-GIP001, the MoA would be iPSC-derived GABAergic interneuron progenitor replacement to restore inhibitory neural circuitry, but this cannot be assumed without company confirmation.",moa,"MoA__Undisclosed_for_UX-EP001._If_confused_with_UX-GIP001,_the_MoA_would_be_cf2be7de",pipeline/moa,,,
@@ -98,7 +95,7 @@ source::https_www.neuronatherapeutics.com_nte001,Neurona NTE001 study page,sourc
 source::https_www.cell.com_cell-stem-cell_fulltext_s1934-5909%2823%2900044-9,SISBAR Cell Stem Cell paper,source,Source__SISBAR_Cell_Stem_Cell_paper,pipeline/source;source/publication,,,E1
 source::https_www.cell.com_cell-stem-cell_abstract_s1934-5909%2825%2900369-8,SphereDiff Cell Stem Cell paper,source,Source__SphereDiff_Cell_Stem_Cell_paper,pipeline/source;source/publication,,,E1
 source::https_www.innostarbio.com_en_news_693.html,InnoStar UX-GIP001 FDA IND support,source,Source__InnoStar_UX-GIP001_FDA_IND_support,pipeline/source;source/news,,,E1
-asset::lnk01006_blkr201,LNK01006 / BLKR201,asset,Asset__LNK01006_BLKR201__LNK01006,pipeline/asset;theme/neuroimmune,14,Shortlist,E3
+asset::lnk01006_blkr201,LNK01006 / BLKR201,asset,Asset__LNK01006_BLKR201,pipeline/asset;theme/neuroimmune,14,Shortlist,E3
 "company::lynk_pharmaceuticals_co.,_ltd","Lynk Pharmaceuticals Co., Ltd.",company,"Company__Lynk_Pharmaceuticals_Co.,_Ltd",pipeline/company,,,
 target::tyk2,TYK2,target,Target__TYK2,pipeline/target,,,
 moa::oral_allosteric_tyk2_inhibitor_targeting_the_jh2_pseudokinase_regulator_cc811ca3,"Oral allosteric TYK2 inhibitor targeting the JH2 pseudokinase/regulatory domain; designed to inhibit TYK2-mediated IL-12, IL-23 and type I interferon signaling with CNS exposure.",moa,MoA__Oral_allosteric_TYK2_inhibitor_targeting_the_JH2_pseudokinase_regulator_cc811ca3,pipeline/moa,,,
@@ -112,7 +109,7 @@ competitor::bristol_myers_squibb_deucravacitinib_sotyktu,Deucravacitinib / Sotyk
 competitor::takeda_zasocitinib_tak-279,Zasocitinib / TAK-279,competitor,Competitor__Takeda__Zasocitinib_TAK-279,pipeline/competitor,,,
 competitor::roche_fenebrutinib,Fenebrutinib,competitor,Competitor__Roche__Fenebrutinib,pipeline/competitor,,,
 competitor::sanofi_tolebrutinib,Tolebrutinib,competitor,Competitor__Sanofi__Tolebrutinib,pipeline/competitor,,,
-source::https_www.prnewswire.com_apac_news-releases_lynk-pharmaceuticals-announ_9f29a386,Lynk FDA IND announcement,source,Source__Lynk_FDA_IND_announcement,pipeline/source;source/official_company,,,E3
+source::https_www.prnewswire.com_apac_news-releases_lynk-pharmaceuticals-announ_9f29a386,Lynk FDA IND announcement,source,Source__Lynk_FDA_IND_announcement,pipeline/source;source/other,,,E3
 source::https_www.formation.bio_press_formation-bio-licenses-phase-1-ready-cns-_be31f330,Formation Bio licensing page,source,Source__Formation_Bio_licensing_page,pipeline/source;source/official_company,,,E3
 source::https_www.prnewswire.com_news-releases_lynk-pharmaceuticals-and-formati_31aa61aa,Lynk and Formation licensing agreement,source,Source__Lynk_and_Formation_licensing_agreement,pipeline/source;source/news,,,E3
 source::https_www.prnewswire.com_news-releases_formation-bio-doses-first-partic_a8856057,Formation first participant dosed,source,Source__Formation_first_participant_dosed,pipeline/source;source/news,,,E3
@@ -128,7 +125,7 @@ source::https_news.bms.com_news_details_2022_u.s.-food-and-drug-administration-_
 source::https_www.takeda.com_newsroom_newsreleases_2026_zasocitinib-outperforms_b6fb7e68,Zasocitinib / TAK-279 source,source,Source__Zasocitinib_TAK-279_source,pipeline/source;source/other,,,E3
 source::https_www.roche.com_media_releases_med-cor-2026-04-21c,Fenebrutinib source,source,Source__Fenebrutinib_source,pipeline/source;source/other,,,E3
 source::https_www.sanofi.com_en_media-room_press-releases_2025_2025-12-15-06-05_61888b0d,Tolebrutinib source,source,Source__Tolebrutinib_source,pipeline/source;source/other,,,E3
-asset::small_molecules_to_antagonize_trpm7,Small Molecules to Antagonize TRPM7,asset,Asset__Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7,pipeline/asset;theme/e_i_balance,11,Watch,E2
+asset::small_molecules_to_antagonize_trpm7,Small Molecules to Antagonize TRPM7,asset,Asset__Small_Molecules_to_Antagonize_TRPM7,pipeline/asset;theme/e_i_balance,11,Watch,E2
 company::vivavision_biotech,VivaVision Biotech,company,Company__VivaVision_Biotech,pipeline/company,,,
 target::trpm7,TRPM7,target,Target__TRPM7,pipeline/target,,,
 moa::trpm7_antagonist_inhibitor;_channel_closed-state_stabilization_is_suppo_2a2e465e,"TRPM7 antagonist / inhibitor; channel closed-state stabilization is supported at target level for some tool compounds, but asset-level MoA is unverified",moa,MoA__TRPM7_antagonist_inhibitor;_channel_closed-state_stabilization_is_suppo_2a2e465e,pipeline/moa,,,
@@ -143,7 +140,7 @@ competitor::academic_university_research_vpc01091.4_vpc4,VPC01091.4 / VPC4,compe
 competitor::university_of_hawaii_system_academic_natural_product_research_waixenicin_a,Waixenicin A,competitor,Competitor__University_of_Hawaii_System_academic_natural_product_research__Waixenicin_A,pipeline/competitor,,,
 competitor::vivavision_biotech_vvn539,VVN539,competitor,Competitor__VivaVision_Biotech__VVN539,pipeline/competitor,,,
 competitor::genentech_roche_and_others;_device_procedure_ecosystem_alteplase_tenect_30f72285,Alteplase / Tenecteplase / Mechanical thrombectomy,competitor,Competitor__Genentech_Roche_and_others;_device_procedure_ecosystem__Alteplase_Tenecteplase_Mechanical_thrombectomy,pipeline/competitor,,,
-source::https_www.vivabioinnovator.com_portfolio_viva-vision,Viva BioInnovator portfolio: Viva Vision,source,Source__Viva_BioInnovator_portfolio_Viva_Vision,pipeline/source;source/official_company,,,E2
+source::https_www.vivabioinnovator.com_portfolio_viva-vision,Viva BioInnovator portfolio: Viva Vision,source,Source__Viva_BioInnovator_portfolio_Viva_Vision,pipeline/source;source/other,,,E2
 source::https_www.vivabiotech.com_news_789.html,VivaVision Series D2 financing and pipeline summary,source,Source__VivaVision_Series_D2_financing_and_pipeline_summary,pipeline/source;source/official_company,,,E2
 source::https_www.marketresearch.com_global-markets-direct-v3480_glaucoma-drugs_f451f4c7,MarketResearch/GlobalData glaucoma pipeline report,source,Source__MarketResearch_GlobalData_glaucoma_pipeline_report,pipeline/source;source/market,,,E2
 source::https_www.marketresearch.com_global-markets-direct-v3480_stroke-drugs-d_51a7d3b9,MarketResearch/GlobalData stroke pipeline report,source,Source__MarketResearch_GlobalData_stroke_pipeline_report,pipeline/source;source/market,,,E2
@@ -162,7 +159,7 @@ source::https_www.cell.com_cell-reports_fulltext_s2211-1247%2824%2900436-4,CCT12
 source::https_synapse.patsnap.com_drug_fc93832996cf23becaadb14833e7a0a4,Waixenicin A source,source,Source__Waixenicin_A_source,pipeline/source;source/other,,,E2
 source::https_www.mdpi.com_1422-0067_25_2_719,https://www.mdpi.com/1422-0067/25/2/719,source,Source__https_www.mdpi.com_1422-0067_25_2_719,pipeline/source;source/other,,,E2
 source::https_www.ahajournals.org_doi_10.1161_strokeaha.116.015822,https://www.ahajournals.org/doi/10.1161/STROKEAHA.116.015822,source,Source__https_www.ahajournals.org_doi_10.1161_STROKEAHA.116.015822,pipeline/source;source/other,,,E2
-asset::hy209_nucerin,HY209 / NuCerin,asset,Asset__HY209_NuCerin__HY-209,pipeline/asset;theme/neuroimmune,16,Watch,E3
+asset::hy209_nucerin,HY209 / NuCerin,asset,Asset__HY209_NuCerin,pipeline/asset;theme/neuroimmune,16,Watch,E3
 company::shaperon_inc,Shaperon Inc.,company,Company__Shaperon_Inc,pipeline/company,,,
 target::gpcr19_tgr5_with_downstream_p2x7r-nlrp3_inflammasome_modulation,GPCR19 / TGR5 with downstream P2X7R-NLRP3 inflammasome modulation,target,Target__GPCR19_TGR5_with_downstream_P2X7R-NLRP3_inflammasome_modulation,pipeline/target,,,
 "moa::hy209_tdca_activates_gpcr19_tgr5_and_modulates_gpcr19-p2x7_interaction,_4c969749","HY209/TDCA activates GPCR19/TGR5 and modulates GPCR19-P2X7 interaction, suppressing P2X7R-mediated Ca2+ mobilization, NLRP3 activation and IL-1β/IL-18 production in microglia; in AD mouse models it is reported to reduce Aβ plaques, microgliosis and neuronal loss and improve memory.",moa,"MoA__HY209_TDCA_activates_GPCR19_TGR5_and_modulates_GPCR19-P2X7_interaction,_4c969749",pipeline/moa,,,
@@ -170,18 +167,21 @@ modality::oral_small_molecule_gpcr19_tgr5_agonist_inflammasome_modulator,Oral sm
 indication::alzheimer’s_disease,Alzheimer’s disease,indication,Indication__Alzheimer’s_disease,pipeline/indication,,,
 scorecard::hy209_nucerin_20260622,Scorecard - HY209 / NuCerin,scorecard,Scorecard__HY209_NuCerin__20260622,pipeline/scorecard,16,Watch,E3
 competitor::eisai_biogen_bioarctic_leqembi_lecanemab,Leqembi / lecanemab,competitor,Competitor__Eisai_Biogen_BioArctic__Leqembi_lecanemab,pipeline/competitor,,,
+competitor::eli_lilly_kisunla_donanemab,Kisunla / donanemab,competitor,Competitor__Eli_Lilly__Kisunla_donanemab,pipeline/competitor,,,
 competitor::nodthera_nt-0796,NT-0796,competitor,Competitor__NodThera__NT-0796,pipeline/competitor,,,
 competitor::ventyx_biosciences_vtx3232,VTX3232,competitor,Competitor__Ventyx_Biosciences__VTX3232,pipeline/competitor,,,
 competitor::ventus_therapeutics_vent-02,VENT-02,competitor,Competitor__Ventus_Therapeutics__VENT-02,pipeline/competitor,,,
 competitor::olatec_dapansutrile_olt1177,Dapansutrile / OLT1177,competitor,Competitor__Olatec__Dapansutrile_OLT1177,pipeline/competitor,,,
-source::https_shaperon.com_en_sub_pipeline.html,Shaperon official pipeline page,source,Source__Shaperon_official_pipeline_page,pipeline/source;source/official_company,,,E3
+source::https_shaperon.com_en_sub_pipeline.html,Shaperon official pipeline page,source,Source__Shaperon_official_pipeline_page,pipeline/source;source/other,,,E3
 source::https_shaperon.com_en_main_main.html,Shaperon official homepage,source,Source__Shaperon_official_homepage,pipeline/source;source/official_company,,,E3
 source::https_www.frontiersin.org_journals_immunology_articles_10.3389_fimmu.20_fc7b5288,Frontiers Immunology GPCR19/P2X7R/NLRP3 AD mouse paper,source,Source__Frontiers_Immunology_GPCR19_P2X7R_NLRP3_AD_mouse_paper,pipeline/source;source/publication,,,E3
 source::https_www.centerwatch.com_clinical-trials_listings_nct06533878_evaluate_75da78f2,NCT06533878 HY209 Phase 1 listing,source,Source__NCT06533878_HY209_Phase_1_listing,pipeline/source;source/clinical_trial_registry,,,E3
 source::https_app.rndcircle.io_lab_c061ff05-ac82-4bae-93f1-aa04115834c0_papers_aa7299bb,NuCerin oral HY209 AD mouse abstract summary,source,Source__NuCerin_oral_HY209_AD_mouse_abstract_summary,pipeline/source;source/publication,,,E3
+source::ai_draft_search_note,AI draft search note,source,Source__AI_draft_search_note,pipeline/source;source/other,,,E3
 source::https_englishdart.fss.or.kr_dsbc001_selectpopup.ax_selectkey=01387164,DART Shaperon company profile,source,Source__DART_Shaperon_company_profile,pipeline/source;source/company_registry,,,E3
 source::https_www.bio.org_events_bio-international-convention_sessions_2420132,BIO company profile,source,Source__BIO_company_profile,pipeline/source;source/company_profile,,,E3
 source::https_www.who.int_news-room_fact-sheets_detail_dementia,WHO dementia fact sheet,source,Source__WHO_dementia_fact_sheet,pipeline/source;source/market,,,E3
+source::https_www.alz.org_alzheimers-dementia_facts-figures,Alzheimer's Association Facts and Figures,source,Source__Alzheimer's_Association_Facts_and_Figures,pipeline/source;source/market,,,E3
 source::https_www.nodthera.com_news_nodtheras-nlrp3-inhibitor-nt-0796-reverses-_4c6e96b7,NT-0796 source,source,Source__NT-0796_source,pipeline/source;source/other,,,E3
 source::https_clinicaltrials.gov_study_nct06556173,VTX3232 source,source,Source__VTX3232_source,pipeline/source;source/other,,,E3
 source::https_www.ventustx.com_ventus-therapeutics-announces-first-patient-dose_15e90dd2,VENT-02 source,source,Source__VENT-02_source,pipeline/source;source/other,,,E3
@@ -194,7 +194,7 @@ source::https_pmc.ncbi.nlm.nih.gov_articles_pmc11212731,https://pmc.ncbi.nlm.nih
 source::https_doaj.org_article_89f6e0b19a8d46f9b3063ba13be1f0d1,https://doaj.org/article/89f6e0b19a8d46f9b3063ba13be1f0d1,source,Source__https_doaj.org_article_89f6e0b19a8d46f9b3063ba13be1f0d1,pipeline/source;source/other,,,E3
 source::https_www.bioworld.com_articles_518211-bridge-biotherapeutics-inks-30b-_dd0e8f4d,https://www.bioworld.com/articles/518211-bridge-biotherapeutics-inks-30b-deal-with-shaperon-for-gpcr19-agonist,source,Source__https_www.bioworld.com_articles_518211-bridge-biotherapeutics-inks-30b-_dd0e8f4d,pipeline/source;source/other,,,E3
 source::https_link.springer.com_article_10.1186_s12974-021-02087-1,https://link.springer.com/article/10.1186/s12974-021-02087-1,source,Source__https_link.springer.com_article_10.1186_s12974-021-02087-1,pipeline/source;source/other,,,E3
-asset::meta-01_meta-1i_mp-5342,META-01 / META-1i / MP-5342,asset,Asset__META-01_META-1i_MP-5342__META01,pipeline/asset;theme/neuroimmune,11,Watch,E2
+asset::meta-01_meta-1i_mp-5342,META-01 / META-1i / MP-5342,asset,Asset__META-01_META-1i_MP-5342,pipeline/asset;theme/neuroimmune,11,Watch,E2
 company::meta_pharmaceuticals_inc,META Pharmaceuticals Inc.,company,Company__META_Pharmaceuticals_Inc,pipeline/company,,,
 target::ldh_lactate_dehydrogenase;_likely_ldha-focused_but_isoform_selectivity_2955c872,LDH / lactate dehydrogenase; likely LDHA-focused but isoform selectivity is not fully public,target,Target__LDH_lactate_dehydrogenase;_likely_LDHA-focused_but_isoform_selectivity_2955c872,pipeline/target,,,
 moa::oral_small-molecule_ldh_inhibition_intended_to_modulate_immune-cell_glu_8049671b,"Oral small-molecule LDH inhibition intended to modulate immune-cell glucose metabolism and T-cell/B-cell function, restoring immune balance and reducing pathogenic inflammation. CNS relevance is indirect through autoimmune/neuroimmune expansion such as multiple sclerosis.",moa,MoA__Oral_small-molecule_LDH_inhibition_intended_to_modulate_immune-cell_glu_8049671b,pipeline/moa,,,
@@ -210,7 +210,7 @@ competitor::merck_tulisokibart_mk-7240,Tulisokibart / MK-7240,competitor,Competi
 competitor::sanofi_teva_duvakitug_tev-48574,Duvakitug / TEV-48574,competitor,Competitor__Sanofi_Teva__Duvakitug_TEV-48574,pipeline/competitor,,,
 competitor::roche_telavant_rvt-3101_afimkibart,RVT-3101 / afimkibart,competitor,Competitor__Roche_Telavant__RVT-3101_afimkibart,pipeline/competitor,,,
 competitor::academic_tool_compounds_fx11_gsk2837808a-type_ldha_inhibitors,FX11 / GSK2837808A-type LDHA inhibitors,competitor,Competitor__Academic_tool_compounds__FX11_GSK2837808A-type_LDHA_inhibitors,pipeline/competitor,,,
-source::https_en.metabiopharma.com,META Pharmaceuticals official homepage,source,Source__META_Pharmaceuticals_official_homepage,pipeline/source;source/official_company,,,E2
+source::https_en.metabiopharma.com,META Pharmaceuticals official homepage,source,Source__META_Pharmaceuticals_official_homepage,pipeline/source;source/other,,,E2
 source::https_en.metabiopharma.com_index.php_news,META Pharmaceuticals official news,source,Source__META_Pharmaceuticals_official_news,pipeline/source;source/official_company,,,E2
 source::https_metabiopharma.com,META Pharmaceuticals Chinese official site,source,Source__META_Pharmaceuticals_Chinese_official_site,pipeline/source;source/official_company,,,E2
 source::https_synapse.patsnap.com_drug_7196b08c3c4b4dd3bbc0cd3292c675b0,Synapse META-01 profile,source,Source__Synapse_META-01_profile,pipeline/source;source/other,,,E2
@@ -240,7 +240,7 @@ source::https_www.prnewswire.com_news-releases_meta-pharmaceuticals-announces-f_
 source::https_www.rinvoq.com_cost,https://www.rinvoq.com/cost,source,Source__https_www.rinvoq.com_cost,pipeline/source;source/other,,,E2
 source::https_www.skyrizi.com_ulcerative-colitis_cost-and-savings,https://www.skyrizi.com/ulcerative-colitis/cost-and-savings,source,Source__https_www.skyrizi.com_ulcerative-colitis_cost-and-savings,pipeline/source;source/other,,,E2
 source::https_icer.org_news-insights_press-releases_icer-publishes-final-report_8763a14b,https://icer.org/news-insights/press-releases/icer-publishes-final-report-and-policy-recommendations-for-targeted-immune-modulator-therapies-for-ulcerative-colitis/,source,Source__https_icer.org_news-insights_press-releases_icer-publishes-final-report_8763a14b,pipeline/source;source/other,,,E2
-asset::ns-041,NS-041,asset,Asset__NS-041__NeuShen_NS-041,pipeline/asset;theme/e_i_balance,14,Watch,E4
+asset::ns-041,NS-041,asset,Asset__NS-041,pipeline/asset;theme/e_i_balance,14,Watch,E4
 company::neushen_therapeutics,NeuShen Therapeutics,company,Company__NeuShen_Therapeutics,pipeline/company,,,
 target::kcnq2_3_(kv7.2_kv7.3),KCNQ2/3 (Kv7.2/Kv7.3),target,Target__KCNQ2_3_(Kv7.2_Kv7.3),pipeline/target,,,
 "moa::selective_kcnq2_3_activator;_modulates_m-current,_hyperpolarizes_neuron_889f7860","Selective KCNQ2/3 activator; modulates M-current, hyperpolarizes neurons, suppresses repetitive action potential firing and neuronal hyperexcitability.",moa,"MoA__Selective_KCNQ2_3_activator;_modulates_M-current,_hyperpolarizes_neuron_889f7860",pipeline/moa,,,
@@ -254,7 +254,7 @@ competitor::quralis_qrl-101,QRL-101,competitor,Competitor__QurAlis__QRL-101,pipe
 competitor::saniona_jazz_pharmaceuticals_san2355,SAN2355,competitor,Competitor__Saniona_Jazz_Pharmaceuticals__SAN2355,pipeline/competitor,,,
 competitor::praxis_precision_medicines_prax-628,PRAX-628,competitor,Competitor__Praxis_Precision_Medicines__PRAX-628,pipeline/competitor,,,
 competitor::sk_life_science_sk_biopharmaceuticals_cenobamate_xcopri,Cenobamate / XCOPRI,competitor,Competitor__SK_Life_Science_SK_Biopharmaceuticals__Cenobamate_XCOPRI,pipeline/competitor,,,
-source::https_www.neushen.com_news_2024_neushen-therapeutics-granted-nmpa-cde-i_17f201b3,NeuShen NS-041 NMPA CDE IND approval,source,Source__NeuShen_NS-041_NMPA_CDE_IND_approval,pipeline/source;source/official_company,,,E4
+source::https_www.neushen.com_news_2024_neushen-therapeutics-granted-nmpa-cde-i_17f201b3,NeuShen NS-041 NMPA CDE IND approval,source,Source__NeuShen_NS-041_NMPA_CDE_IND_approval,pipeline/source;source/other,,,E4
 source::https_www.neushen.com_our-pipeline.html,NeuShen pipeline,source,Source__NeuShen_pipeline,pipeline/source;source/official_company,,,E4
 source::https_www.neushen.com_news_2023_neushen-therapeutics-announces-poster-p_8287ae4c,NeuShen ACS Fall 2023 poster,source,Source__NeuShen_ACS_Fall_2023_poster,pipeline/source;source/official_company,,,E4
 source::https_www.hkexnews.hk_listedco_listconews_sehk_2025_1221_2025122100017.pdf,HKEX/Livzon depression clinical trial approval,source,Source__HKEX_Livzon_depression_clinical_trial_approval,pipeline/source;source/clinical_trial_registry,,,E4
@@ -264,8 +264,8 @@ source::https_www.chinadrugtrials.org.cn_clinicaltrials.searchlist.dhtml_keywor_
 source::https_www.chinadrugtrials.org.cn_clinicaltrials.searchlist.dhtml_keywor_3bfec74b,China Drug Trials CTR20253838,source,Source__China_Drug_Trials_CTR20253838,pipeline/source;source/clinical_trial_registry,,,E4
 source::https_jamanetwork.com_journals_jamaneurology_fullarticle_2809938,JAMA Neurology XEN1101 Phase 2b trial,source,Source__JAMA_Neurology_XEN1101_Phase_2b_trial,pipeline/source;source/publication,,,E0
 source::https_jamanetwork.com_journals_jamanetworkopen_fullarticle_2834419,JAMA Network Open azetukalner MDD,source,Source__JAMA_Network_Open_azetukalner_MDD,pipeline/source;source/publication,,,E4
-source::https_investor.xenon-pharma.com_news-releases_news-release-details_xeno_dfccb5d1,Xenon Announces Positive Topline Data from Phase 3 X-TOLE2 Study,source,Source__Xenon_Announces_Positive_Topline_Data_from_Phase_3_X-TOLE2_Study,pipeline/source;source/official_company,,,E0
-source::https_www.biohaven.com_pipeline_innovation-engine_kv7,Biohaven Kv7 Ion Channel Modulation Platform,source,Source__Biohaven_Kv7_Ion_Channel_Modulation_Platform,pipeline/source;source/official_company,,,E0
+source::https_investor.xenon-pharma.com_news-releases_news-release-details_xeno_dfccb5d1,Xenon Announces Positive Topline Data from Phase 3 X-TOLE2 Study,source,Source__Xenon_Announces_Positive_Topline_Data_from_Phase_3_X-TOLE2_Study,pipeline/source;source/other,,,E0
+source::https_www.biohaven.com_pipeline_innovation-engine_kv7,Biohaven Kv7 Ion Channel Modulation Platform,source,Source__Biohaven_Kv7_Ion_Channel_Modulation_Platform,pipeline/source;source/other,,,E0
 source::https_www.who.int_news-room_fact-sheets_detail_epilepsy,WHO epilepsy fact sheet,source,Source__WHO_epilepsy_fact_sheet,pipeline/source;source/market,,,E4
 source::https_www.sklifescienceinc.com_pdf_sklsi_connecticut_prescriber_disclos_5d011039,SK Life Science XCOPRI WAC disclosure,source,Source__SK_Life_Science_XCOPRI_WAC_disclosure,pipeline/source;source/market,,,E4
 source::https_www.accessdata.fda.gov_drugsatfda_docs_label_2013_022345s006lbl.pdf,Retigabine / Ezogabine / Potiga / Trobalt source,source,Source__Retigabine_Ezogabine_Potiga_Trobalt_source,pipeline/source;source/other,,,E4
@@ -299,27 +299,27 @@ company::quralis,QurAlis,company,Company__QurAlis,pipeline/company,,,
 moa::selective_kv7.2_kv7.3_ion-channel_opener_intended_to_reduce_neuronal_hy_86d0a748,Selective Kv7.2/Kv7.3 ion-channel opener intended to reduce neuronal hyperexcitability,moa,MoA__Selective_Kv7.2_Kv7.3_ion-channel_opener_intended_to_reduce_neuronal_hy_86d0a748,pipeline/moa,,,
 indication::dee_planning;_als_hyperexcitability_clinical_pom_context,DEE planning; ALS hyperexcitability clinical PoM context,indication,Indication__DEE_planning;_ALS_hyperexcitability_clinical_PoM_context,pipeline/indication,,,
 scorecard::qrl-101_20260623,Scorecard - QRL-101,scorecard,Scorecard__QRL-101__20260623,pipeline/scorecard,,Run Full Scout,E0
-source::https_www.quralis.com_news_quralis-to-present-data-from-its-phase-1-cli_4ee5fefb,QurAlis Phase 1 QRL-101 AES 2025 announcement,source,Source__QurAlis_Phase_1_QRL-101_AES_2025_announcement,pipeline/source;source/official_company,,,E0
+source::https_www.quralis.com_news_quralis-to-present-data-from-its-phase-1-cli_4ee5fefb,QurAlis Phase 1 QRL-101 AES 2025 announcement,source,Source__QurAlis_Phase_1_QRL-101_AES_2025_announcement,pipeline/source;source/other,,,E0
 asset::san2355,SAN2355,asset,Asset__SAN2355,pipeline/asset;theme/e_i_balance,,Run Full Scout,E0
 company::jazz_pharmaceuticals_saniona,Jazz Pharmaceuticals / Saniona,company,Company__Jazz_Pharmaceuticals_Saniona,pipeline/company,,,
 moa::selective_small-molecule_activator_of_kv7.2_kv7.3_potassium_channels,Selective small-molecule activator of Kv7.2/Kv7.3 potassium channels,moa,MoA__Selective_small-molecule_activator_of_Kv7.2_Kv7.3_potassium_channels,pipeline/moa,,,
 scorecard::san2355_20260623,Scorecard - SAN2355,scorecard,Scorecard__SAN2355__20260623,pipeline/scorecard,,Run Full Scout,E0
-source::https_investor.jazzpharma.com_news-releases_news-release-details_jazz-p_cc776602,Jazz Pharmaceuticals enters exclusive licensing agreement for SAN2355,source,Source__Jazz_Pharmaceuticals_enters_exclusive_licensing_agreement_for_SAN2355,pipeline/source;source/official_company,,,E0
+source::https_investor.jazzpharma.com_news-releases_news-release-details_jazz-p_cc776602,Jazz Pharmaceuticals enters exclusive licensing agreement for SAN2355,source,Source__Jazz_Pharmaceuticals_enters_exclusive_licensing_agreement_for_SAN2355,pipeline/source;source/other,,,E0
 asset::rap-219,RAP-219,asset,Asset__RAP-219,pipeline/asset;theme/e_i_balance,,Run Full Scout,E0
 company::rapport_therapeutics,Rapport Therapeutics,company,Company__Rapport_Therapeutics,pipeline/company,,,
 target::tarpγ8-associated_ampa_receptor_modulation,TARPγ8-associated AMPA receptor modulation,target,Target__TARPγ8-associated_AMPA_receptor_modulation,pipeline/target,,,
 moa::tarpγ8-specific_ampar_negative_allosteric_modulator,TARPγ8-specific AMPAR negative allosteric modulator,moa,MoA__TARPγ8-specific_AMPAR_negative_allosteric_modulator,pipeline/moa,,,
 cluster::synaptic_transmission,Synaptic Transmission,cluster,Cluster__Synaptic_Transmission,skbp/cluster,,,
 scorecard::rap-219_20260623,Scorecard - RAP-219,scorecard,Scorecard__RAP-219__20260623,pipeline/scorecard,,Run Full Scout,E0
-source::https_investors.rapportrx.com_news-releases_news-release-details_rappor_bf39c8e4,Rapport RAP-219 Phase 2a follow-up results,source,Source__Rapport_RAP-219_Phase_2a_follow-up_results,pipeline/source;source/official_company,,,E0
+source::https_investors.rapportrx.com_news-releases_news-release-details_rappor_bf39c8e4,Rapport RAP-219 Phase 2a follow-up results,source,Source__Rapport_RAP-219_Phase_2a_follow-up_results,pipeline/source;source/other,,,E0
 source::https_aesnet.org_abstractslisting_efficacy-and-tolerability-of-rap-219-_1a629fcb,AES abstract: RAP-219 TARPγ8 NAM,source,Source__AES_abstract_RAP-219_TARPγ8_NAM,pipeline/source;source/publication,,,E0
-asset::abs-1230,ABS-1230,asset,Asset__ABS-1230__Actio_ABS-1230,pipeline/asset;theme/e_i_balance,15,Shortlist,E4
+asset::abs-1230,ABS-1230,asset,Asset__ABS-1230,pipeline/asset;theme/e_i_balance,15,Shortlist,E4
 company::actio_biosciences,Actio Biosciences,company,Company__Actio_Biosciences,pipeline/company,,,
 target::kcnt1,KCNT1,target,Target__KCNT1,pipeline/target,,,
 moa::selective_kcnt1_ion-channel_inhibitor,Selective KCNT1 ion-channel inhibitor,moa,MoA__Selective_KCNT1_ion-channel_inhibitor,pipeline/moa,,,
 indication::kcnt1-related_epilepsy,KCNT1-related epilepsy,indication,Indication__KCNT1-related_epilepsy,pipeline/indication,,,
 scorecard::abs-1230_20260623,Scorecard - ABS-1230,scorecard,Scorecard__ABS-1230__20260623,pipeline/scorecard,15,Shortlist,E4
-source::https_actiobiosciences.com_actio-biosciences-announces-first-participan_ae820dd4,ABS-1230 first participant dosed Phase 1,source,Source__ABS-1230_first_participant_dosed_Phase_1,pipeline/source;source/other,,,E4
+source::https_actiobiosciences.com_actio-biosciences-announces-first-participan_ae820dd4,ABS-1230 first participant dosed Phase 1,source,Source__ABS-1230_first_participant_dosed_Phase_1,pipeline/source;source/official_company,,,E4
 source::https_www.clinicaltrialsarena.com_news_actio-biosciences-begins-abs-1230-trial,Clinical Trials Arena ABS-1230 Phase Ib/II trial,source,Source__Clinical_Trials_Arena_ABS-1230_Phase_Ib_II_trial,pipeline/source;source/news,,,E0
 asset::zorevunersen_stk-001,Zorevunersen / STK-001,asset,Asset__Zorevunersen_STK-001,pipeline/asset;theme/e_i_balance,,Run Full Scout,E0
 company::stoke_therapeutics_biogen,Stoke Therapeutics / Biogen,company,Company__Stoke_Therapeutics_Biogen,pipeline/company,,,
@@ -328,7 +328,7 @@ moa::aso_intended_to_increase_productive_scn1a_mrna_and_nav1.1_protein_expressio
 modality::antisense_oligonucleotide,Antisense oligonucleotide,modality,Modality__Antisense_oligonucleotide,pipeline/modality,,,
 indication::dravet_syndrome,Dravet syndrome,indication,Indication__Dravet_syndrome,pipeline/indication,,,
 scorecard::zorevunersen_stk-001_20260623,Scorecard - Zorevunersen / STK-001,scorecard,Scorecard__Zorevunersen_STK-001__20260623,pipeline/scorecard,,Run Full Scout,E0
-source::https_investor.stoketherapeutics.com_news-releases_news-release-details_a7bab995,Stoke Phase 3 EMPEROR timeline update,source,Source__Stoke_Phase_3_EMPEROR_timeline_update,pipeline/source;source/official_company,,,E0
+source::https_investor.stoketherapeutics.com_news-releases_news-release-details_a7bab995,Stoke Phase 3 EMPEROR timeline update,source,Source__Stoke_Phase_3_EMPEROR_timeline_update,pipeline/source;source/other,,,E0
 source::https_www.stoketherapeutics.com_patients-families_clinical-studies,Stoke Clinical Studies,source,Source__Stoke_Clinical_Studies,pipeline/source;source/official_company,,,E0
 asset::etx101,ETX101,asset,Asset__ETX101,pipeline/asset;theme/e_i_balance,,Run Full Scout,E0
 company::encoded_therapeutics,Encoded Therapeutics,company,Company__Encoded_Therapeutics,pipeline/company,,,
@@ -337,7 +337,7 @@ moa::aav9_gene_regulation_therapy_intended_to_increase_scn1a_expression,AAV9 gen
 modality::aav9_gene_therapy,AAV9 gene therapy,modality,Modality__AAV9_gene_therapy,pipeline/modality,,,
 indication::scn1a-positive_dravet_syndrome,SCN1A-positive Dravet syndrome,indication,Indication__SCN1A-positive_Dravet_syndrome,pipeline/indication,,,
 scorecard::etx101_20260623,Scorecard - ETX101,scorecard,Scorecard__ETX101__20260623,pipeline/scorecard,,Run Full Scout,E0
-source::https_encoded.com_press-releases_encoded-therapeutics-presents-positive_27f71b38,Encoded ETX101 Phase 1/2 interim data,source,Source__Encoded_ETX101_Phase_1_2_interim_data,pipeline/source;source/official_company,,,E0
+source::https_encoded.com_press-releases_encoded-therapeutics-presents-positive_27f71b38,Encoded ETX101 Phase 1/2 interim data,source,Source__Encoded_ETX101_Phase_1_2_interim_data,pipeline/source;source/other,,,E0
 source::https_clinicaltrials.gov_study_nct05419492,ClinicalTrials.gov ETX101 ENDEAVOR,source,Source__ClinicalTrials.gov_ETX101_ENDEAVOR,pipeline/source;source/clinical_trial_registry,,,E0
 asset::bexicaserin_lp352,Bexicaserin / LP352,asset,Asset__Bexicaserin_LP352,pipeline/asset;theme/e_i_balance,,Run Full Scout,E0
 company::lundbeck_longboard_pharmaceuticals,Lundbeck / Longboard Pharmaceuticals,company,Company__Lundbeck_Longboard_Pharmaceuticals,pipeline/company,,,
@@ -345,14 +345,14 @@ target::5-ht2c_receptor,5-HT2C receptor,target,Target__5-HT2C_receptor,pipeline/
 moa::highly_selective_5-ht2c_receptor_superagonist_for_seizure_reduction_in_dee,Highly selective 5-HT2C receptor superagonist for seizure reduction in DEE,moa,MoA__Highly_selective_5-HT2C_receptor_superagonist_for_seizure_reduction_in_DEE,pipeline/moa,,,
 indication::developmental_and_epileptic_encephalopathies_including_dravet_syndrome_cc97e161,Developmental and epileptic encephalopathies including Dravet syndrome and Lennox-Gastaut syndrome,indication,Indication__Developmental_and_epileptic_encephalopathies_including_Dravet_syndrome_cc97e161,pipeline/indication,,,
 scorecard::bexicaserin_lp352_20260623,Scorecard - Bexicaserin / LP352,scorecard,Scorecard__Bexicaserin_LP352__20260623,pipeline/scorecard,,Run Full Scout,E0
-source::https_www.lundbeck.com_us_newsroom_2025_lundbeck-announces-positive-res_0c6bc5d2,Lundbeck PACIFIC OLE bexicaserin results,source,Source__Lundbeck_PACIFIC_OLE_bexicaserin_results,pipeline/source;source/official_company,,,E0
+source::https_www.lundbeck.com_us_newsroom_2025_lundbeck-announces-positive-res_0c6bc5d2,Lundbeck PACIFIC OLE bexicaserin results,source,Source__Lundbeck_PACIFIC_OLE_bexicaserin_results,pipeline/source;source/other,,,E0
 source::https_pmc.ncbi.nlm.nih.gov_articles_pmc12927688,Bexicaserin PACIFIC trial publication,source,Source__Bexicaserin_PACIFIC_trial_publication,pipeline/source;source/publication,,,E0
 asset::bmb-101,BMB-101,asset,Asset__BMB-101,pipeline/asset;theme/e_i_balance,,Run Full Scout,E0
 company::bright_minds_biosciences,Bright Minds Biosciences,company,Company__Bright_Minds_Biosciences,pipeline/company,,,
 moa::highly_selective_5-ht2c_receptor_agonist_biased_agonist,Highly selective 5-HT2C receptor agonist / biased agonist,moa,MoA__Highly_selective_5-HT2C_receptor_agonist_biased_agonist,pipeline/moa,,,
 indication::classic_absence_epilepsy_and_developmental_epileptic_encephalopathy,Classic absence epilepsy and developmental epileptic encephalopathy,indication,Indication__Classic_absence_epilepsy_and_developmental_epileptic_encephalopathy,pipeline/indication,,,
 scorecard::bmb-101_20260623,Scorecard - BMB-101,scorecard,Scorecard__BMB-101__20260623,pipeline/scorecard,,Run Full Scout,E0
-source::https_brightmindsbio.com_bright-minds-biosciences-initiates-the-breakth_9b2c7dc4,Bright Minds initiates Phase 2 BREAKTHROUGH study,source,Source__Bright_Minds_initiates_Phase_2_BREAKTHROUGH_study,pipeline/source;source/official_company,,,E0
+source::https_brightmindsbio.com_bright-minds-biosciences-initiates-the-breakth_9b2c7dc4,Bright Minds initiates Phase 2 BREAKTHROUGH study,source,Source__Bright_Minds_initiates_Phase_2_BREAKTHROUGH_study,pipeline/source;source/other,,,E0
 source::https_clinicaltrials.gov_study_nct06401538,ClinicalTrials.gov BMB-101 in absence epilepsy and DEE,source,Source__ClinicalTrials.gov_BMB-101_in_absence_epilepsy_and_DEE,pipeline/source;source/clinical_trial_registry,,,E0
 moa::selective_inhibition_of_overactive_kcnt1_potassium_ion_channel_caused_b_ecf51c22,Selective inhibition of overactive KCNT1 potassium ion channel caused by pathogenic gain-of-function variants,moa,MoA__Selective_inhibition_of_overactive_KCNT1_potassium_ion_channel_caused_b_ecf51c22,pipeline/moa,,,
 modality::oral_small_molecule;_genetics-driven_precision_small_molecule_platform,Oral small molecule; genetics-driven precision small molecule platform,modality,Modality__Oral_small_molecule;_genetics-driven_precision_small_molecule_platform,pipeline/modality,,,
@@ -363,26 +363,26 @@ competitor::generic_off-label_quinidine,Quinidine,competitor,Competitor__Generic
 competitor::lundbeck_longboard_pharmaceuticals_bexicaserin_lp352,Bexicaserin / LP352,competitor,Competitor__Lundbeck_Longboard_Pharmaceuticals__Bexicaserin_LP352,pipeline/competitor,,,
 competitor::ucb_fintepla_fenfluramine,FINTEPLA / fenfluramine,competitor,Competitor__UCB__FINTEPLA_fenfluramine,pipeline/competitor,,,
 competitor::marinus_pharmaceuticals_immedica_ztalmy_ganaxolone,ZTALMY / ganaxolone,competitor,Competitor__Marinus_Pharmaceuticals_Immedica__ZTALMY_ganaxolone,pipeline/competitor,,,
-source::https_actiobiosciences.com_programs,Actio Biosciences Programs,source,Source__Actio_Biosciences_Programs,pipeline/source;source/official_company,,,E4
+source::https_actiobiosciences.com_programs,Actio Biosciences Programs,source,Source__Actio_Biosciences_Programs,pipeline/source;source/other,,,E4
 source::https_actiobiosciences.com_actio-biosciences-announces-initiation-of-ky_0641e5f1,Actio KYRON Phase 1b/2 initiation release,source,Source__Actio_KYRON_Phase_1b_2_initiation_release,pipeline/source;source/official_company,,,E4
 source::https_clinicaltrials.gov_study_nct07600736,ClinicalTrials.gov NCT07600736,source,Source__ClinicalTrials.gov_NCT07600736,pipeline/source;source/clinical_trial_registry,,,E4
 source::https_actiobiosciences.com_wp-content_uploads_2026_01_2025-aes-abs1230-_55fb159b,ABS-1230 AES 2025 poster,source,Source__ABS-1230_AES_2025_poster,pipeline/source;source/publication,,,E4
-source::https_actiobiosciences.com,Actio Biosciences homepage,source,Source__Actio_Biosciences_homepage,pipeline/source;source/other,,,E4
-source::https_actiobiosciences.com_about,Actio Biosciences About,source,Source__Actio_Biosciences_About,pipeline/source;source/other,,,E4
-source::https_actiobiosciences.com_approach,Actio Biosciences Approach,source,Source__Actio_Biosciences_Approach,pipeline/source;source/other,,,E4
-source::https_actiobiosciences.com_actio-biosciences-secures-66-million-series-_03b68041,Actio Series B financing,source,Source__Actio_Series_B_financing,pipeline/source;source/other,,,E4
-source::https_actiobiosciences.com_actio-biosciences-announces-55-million-serie_129c9bcd,Actio Series A financing,source,Source__Actio_Series_A_financing,pipeline/source;source/other,,,E4
-source::https_clinicaltrials.gov_study_nct07156201,ClinicalTrials.gov NCT07156201,source,Source__ClinicalTrials.gov_NCT07156201,pipeline/source;source/other,,,E4
+source::https_actiobiosciences.com,Actio Biosciences homepage,source,Source__Actio_Biosciences_homepage,pipeline/source;source/official_company,,,E4
+source::https_actiobiosciences.com_about,Actio Biosciences About,source,Source__Actio_Biosciences_About,pipeline/source;source/official_company,,,E4
+source::https_actiobiosciences.com_approach,Actio Biosciences Approach,source,Source__Actio_Biosciences_Approach,pipeline/source;source/official_company,,,E4
+source::https_actiobiosciences.com_actio-biosciences-secures-66-million-series-_03b68041,Actio Series B financing,source,Source__Actio_Series_B_financing,pipeline/source;source/news,,,E4
+source::https_actiobiosciences.com_actio-biosciences-announces-55-million-serie_129c9bcd,Actio Series A financing,source,Source__Actio_Series_A_financing,pipeline/source;source/news,,,E4
+source::https_clinicaltrials.gov_study_nct07156201,ClinicalTrials.gov NCT07156201,source,Source__ClinicalTrials.gov_NCT07156201,pipeline/source;source/clinical_trial_registry,,,E4
 source::https_www.chop.edu_conditions-diseases_kcnt1-related-epilepsy,CHOP KCNT1-related epilepsy,source,Source__CHOP_KCNT1-related_epilepsy,pipeline/source;source/other,,,E4
-source::https_www.ncbi.nlm.nih.gov_books_nbk525917,GeneReviews KCNT1-related epilepsy,source,Source__GeneReviews_KCNT1-related_epilepsy,pipeline/source;source/other,,,E4
+source::https_www.ncbi.nlm.nih.gov_books_nbk525917,GeneReviews KCNT1-related epilepsy,source,Source__GeneReviews_KCNT1-related_epilepsy,pipeline/source;source/publication,,,E4
 source::https_www.kcnt1epilepsy.org_kcnt1-research-publications,KCNT1 Epilepsy Foundation research page,source,Source__KCNT1_Epilepsy_Foundation_research_page,pipeline/source;source/other,,,E4
-source::https_clinicaltrials.servier.com_trial_a-phase-ib-ii-first-in-human-mul_1e276b62,Servier S230815 KANDLE trial,source,Source__Servier_S230815_KANDLE_trial,pipeline/source;source/other,,,E4
-source::https_www.atalantatx.com_atalanta-therapeutics-publishes-preclinical-da_0dd924c8,Atalanta ATL-201 preclinical data,source,Source__Atalanta_ATL-201_preclinical_data,pipeline/source;source/other,,,E4
-source::https_www.lundbeck.com_us_newsroom_2025_lundbeck-to-present-new-data-on_23efaaab,Lundbeck bexicaserin Phase 3 program,source,Source__Lundbeck_bexicaserin_Phase_3_program,pipeline/source;source/other,,,E4
-source::https_clinicaltrials.gov_study_nct06719141,ClinicalTrials.gov NCT06719141 bexicaserin,source,Source__ClinicalTrials.gov_NCT06719141_bexicaserin,pipeline/source;source/other,,,E4
-source::https_www.ucb-usa.com_sustainability_affordability_fintepla-pricing-info,FINTEPLA pricing information,source,Source__FINTEPLA_pricing_information,pipeline/source;source/other,,,E4
-source::https_icer.org_wp-content_uploads_2025_10_icer_2025_launch-price-and-ac_890db01f,ICER 2025 Launch Price and Access Report,source,Source__ICER_2025_Launch_Price_and_Access_Report,pipeline/source;source/other,,,E4
-source::https_ir.marinuspharma.com_news_news-details_2022_marinus-pharmaceutica_63bf82ac,Marinus ZTALMY FDA approval,source,Source__Marinus_ZTALMY_FDA_approval,pipeline/source;source/other,,,E4
+source::https_clinicaltrials.servier.com_trial_a-phase-ib-ii-first-in-human-mul_1e276b62,Servier S230815 KANDLE trial,source,Source__Servier_S230815_KANDLE_trial,pipeline/source;source/clinical_trial_registry,,,E4
+source::https_www.atalantatx.com_atalanta-therapeutics-publishes-preclinical-da_0dd924c8,Atalanta ATL-201 preclinical data,source,Source__Atalanta_ATL-201_preclinical_data,pipeline/source;source/official_company,,,E4
+source::https_www.lundbeck.com_us_newsroom_2025_lundbeck-to-present-new-data-on_23efaaab,Lundbeck bexicaserin Phase 3 program,source,Source__Lundbeck_bexicaserin_Phase_3_program,pipeline/source;source/news,,,E4
+source::https_clinicaltrials.gov_study_nct06719141,ClinicalTrials.gov NCT06719141 bexicaserin,source,Source__ClinicalTrials.gov_NCT06719141_bexicaserin,pipeline/source;source/clinical_trial_registry,,,E4
+source::https_www.ucb-usa.com_sustainability_affordability_fintepla-pricing-info,FINTEPLA pricing information,source,Source__FINTEPLA_pricing_information,pipeline/source;source/market,,,E4
+source::https_icer.org_wp-content_uploads_2025_10_icer_2025_launch-price-and-ac_890db01f,ICER 2025 Launch Price and Access Report,source,Source__ICER_2025_Launch_Price_and_Access_Report,pipeline/source;source/market,,,E4
+source::https_ir.marinuspharma.com_news_news-details_2022_marinus-pharmaceutica_63bf82ac,Marinus ZTALMY FDA approval,source,Source__Marinus_ZTALMY_FDA_approval,pipeline/source;source/regulatory,,,E4
 source::https_www.ucb.com_newsroom_press-releases_article_us-fda-approves-finte_5547244f,FINTEPLA / fenfluramine source,source,Source__FINTEPLA_fenfluramine_source,pipeline/source;source/other,,,E4
 source::https_actiotrials.com_abs-1230,https://actiotrials.com/abs-1230/,source,Source__https_actiotrials.com_abs-1230,pipeline/source;source/other,,,E4
 source::https_clinicaltrials.gov_study_nct07227857,https://clinicaltrials.gov/study/NCT07227857,source,Source__https_clinicaltrials.gov_study_NCT07227857,pipeline/source;source/other,,,E4
@@ -396,7 +396,7 @@ target::p2x3,P2X3,target,Target__P2X3,pipeline/target,,,
 modality::sm,SM,modality,Modality__SM,pipeline/modality,,,
 indication::pain,Pain,indication,Indication__Pain,pipeline/indication,,,
 scorecard::wt-1-2.0_20260623,Scorecard - WT-1-2.0,scorecard,Scorecard__WT-1-2.0__20260623,pipeline/scorecard,,N/A,E0
-source::http_www.westanpharma.com_default.aspx,Westan Pharma official site,source,Source__Westan_Pharma_official_site,pipeline/source;source/official_company,,,E0
+source::http_www.westanpharma.com_default.aspx,Westan Pharma official site,source,Source__Westan_Pharma_official_site,pipeline/source;source/other,,,E0
 "asset::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_rejection","Fusion Protein for Allergic Asthma, Multiple Sclerosis and Transplant Rejection",asset,"Asset__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection",pipeline/asset;theme/neuroimmune,,Do not run Full Scout,E0
 company::hanyang_university,Hanyang University,company,Company__Hanyang_University,pipeline/company,,,
 target::t_cell,T cell,target,Target__T_cell,pipeline/target,,,
@@ -405,7 +405,7 @@ modality::fusion_protein,Fusion Protein,modality,Modality__Fusion_Protein,pipeli
 indication::multiple_sclerosis;_allergic_asthma;_transplant_rejection,Multiple Sclerosis; allergic asthma; transplant rejection,indication,Indication__Multiple_Sclerosis;_allergic_asthma;_transplant_rejection,pipeline/indication,,,
 cluster::손상_질환_면역조절,손상/질환 면역조절,cluster,Cluster__손상-질환_면역조절,skbp/cluster,,,
 "scorecard::fusion_protein_for_allergic_asthma,_multiple_sclerosis_and_transplant_r_8375f6ea","Scorecard - Fusion Protein for Allergic Asthma, Multiple Sclerosis and Transplant Rejection",scorecard,"Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623",pipeline/scorecard,,Do not run Full Scout,E0
-source::source_url_not_provided,Source URL not provided,source,Source__Source_URL_not_provided,pipeline/source;source/source_url_not_provided,,,E0
+source::source_url_not_provided,Source URL not provided,source,Source__Source_URL_not_provided,pipeline/source;source/other,,,E0
 asset::lead_compound,Lead compound,asset,Asset__Lead_compound,pipeline/asset;theme/neuroimmune,,Do not run Full Scout,E0
 target::microglia,Microglia,target,Target__Microglia,pipeline/target,,,
 moa::unknown_microglia_modulation,Unknown microglia modulation,moa,MoA__Unknown_microglia_modulation,pipeline/moa,,,
@@ -419,7 +419,7 @@ indication::unspecified_central_nervous_system_disorders,Unspecified Central Ner
 theme::unknown,Unknown,theme,Theme__Unknown,skbp/theme,,,
 cluster::unknown,Unknown,cluster,Cluster__Unknown,skbp/cluster,,,
 scorecard::cns_xdc_20260623,Scorecard - CNS XDC,scorecard,Scorecard__CNS_XDC__20260623,pipeline/scorecard,,Do not run Full Scout,E0
-source::https_www.harbourbiomed.com,Harbour BioMed official website,source,Source__Harbour_BioMed_official_website,pipeline/source;source/official_company,,,E0
+source::https_www.harbourbiomed.com,Harbour BioMed official website,source,Source__Harbour_BioMed_official_website,pipeline/source;source/other,,,E0
 asset::next-generation_biologics,Next-Generation Biologics,asset,Asset__Next-Generation_Biologics,pipeline/asset;theme/unknown,,Do not run Full Scout,E0
 moa::undisclosed_bispecific_multispecific_antibody_approach,Undisclosed bispecific/multispecific antibody approach,moa,MoA__Undisclosed_bispecific_multispecific_antibody_approach,pipeline/moa,,,
 modality::bispecific_multi-specific_antibodies,Bispecific/Multi-specific Antibodies,modality,Modality__Bispecific_Multi-specific_Antibodies,pipeline/modality,,,
@@ -431,7 +431,7 @@ moa::live_biotherapeutic_product_targeting_gut-brain_microbiome_axis,Live biothe
 modality::lbp,LBP,modality,Modality__LBP,pipeline/modality,,,
 indication::alzheimer's_disease;_dementia,Alzheimer's Disease; Dementia,indication,Indication__Alzheimer's_Disease;_Dementia,pipeline/indication,,,
 scorecard::hb-02_20260623,Scorecard - HB-02,scorecard,Scorecard__HB-02__20260623,pipeline/scorecard,,Run Full Scout,E0
-source::https_healthbiome.co.kr,HealthBiome official site,source,Source__HealthBiome_official_site,pipeline/source;source/official_company,,,E0
+source::https_healthbiome.co.kr,HealthBiome official site,source,Source__HealthBiome_official_site,pipeline/source;source/other,,,E0
 source::https_synapse.patsnap.com_drug_3877c8e8f53a4437bc903307d8cec6a0,Synapse HB-02,source,Source__Synapse_HB-02,pipeline/source;source/other,,,E0
 asset::hb-03,HB-03,asset,Asset__HB-03,pipeline/asset;theme/neuroimmune,,Do not run Full Scout,E0
 "moa::live_biotherapeutic_product,_details_unknown","Live biotherapeutic product, details unknown",moa,"MoA__Live_biotherapeutic_product,_details_unknown",pipeline/moa,,,
@@ -447,7 +447,7 @@ moa::targeted_protein_degradation_of_stat3,Targeted protein degradation of STAT3
 modality::tpd,TPD,modality,Modality__TPD,pipeline/modality,,,
 indication::multiple_sclerosis,Multiple Sclerosis,indication,Indication__Multiple_Sclerosis,pipeline/indication,,,
 scorecard::hzr-061_20260623,Scorecard - HZR-061,scorecard,Scorecard__HZR-061__20260623,pipeline/scorecard,,Do not run Full Scout,E0
-source::https_www.healzentx.com,HealZen official site,source,Source__HealZen_official_site,pipeline/source;source/official_company,,,E0
+source::https_www.healzentx.com,HealZen official site,source,Source__HealZen_official_site,pipeline/source;source/other,,,E0
 asset::glycoprotein_29-modified_deferoxamine,glycoprotein 29-modified deferoxamine,asset,Asset__glycoprotein_29-modified_deferoxamine,pipeline/asset;theme/neuroimmune,,Run Full Scout,E0
 company::hebei_normal_university,Hebei Normal University,company,Company__Hebei_Normal_University,pipeline/company,,,
 target::brain_iron_overload,Brain iron overload,target,Target__Brain_iron_overload,pipeline/target,,,
@@ -455,13 +455,13 @@ moa::bbb-targeted_deferoxamine_nanoparticle_to_remove_excess_brain_iron,BBB-targ
 modality::nanoparticle,Nanoparticle,modality,Modality__Nanoparticle,pipeline/modality,,,
 cluster::cns_손상_면역반응,CNS 손상 면역반응,cluster,Cluster__CNS_손상_면역반응,skbp/cluster,,,
 scorecard::glycoprotein_29-modified_deferoxamine_20260623,Scorecard - glycoprotein 29-modified deferoxamine,scorecard,Scorecard__glycoprotein_29-modified_deferoxamine__20260623,pipeline/scorecard,,Run Full Scout,E0
-source::https_en.hbnu.edu.cn_main.htm,Hebei Normal University official site,source,Source__Hebei_Normal_University_official_site,pipeline/source;source/official_company,,,E0
+source::https_en.hbnu.edu.cn_main.htm,Hebei Normal University official site,source,Source__Hebei_Normal_University_official_site,pipeline/source;source/other,,,E0
 asset::hec20002,HEC20002,asset,Asset__HEC20002,pipeline/asset;theme/e_i_balance,,Do not run Full Scout,E0
 company::hec_pharm,HEC Pharm,company,Company__HEC_Pharm,pipeline/company,,,
 target::mao-b,MAO-B,target,Target__MAO-B,pipeline/target,,,
 moa::mao-b_inhibitor,MAO-B inhibitor,moa,MoA__MAO-B_inhibitor,pipeline/moa,,,
 scorecard::hec20002_20260623,Scorecard - HEC20002,scorecard,Scorecard__HEC20002__20260623,pipeline/scorecard,,Do not run Full Scout,E0
-source::https_www.hecpharm.com_en,HEC Pharm official site,source,Source__HEC_Pharm_official_site,pipeline/source;source/official_company,,,E0
+source::https_www.hecpharm.com_en,HEC Pharm official site,source,Source__HEC_Pharm_official_site,pipeline/source;source/other,,,E0
 asset::hb018,HB018,asset,Asset__HB018,pipeline/asset;theme/no_theme,,N/A,E0
 company::hefei_huafang_pharmaceutical_sciences_and_technology,Hefei Huafang Pharmaceutical Sciences and Technology,company,Company__Hefei_Huafang_Pharmaceutical_Sciences_and_Technology,pipeline/company,,,
 moa::unknown,Unknown,moa,MoA__Unknown,pipeline/moa,,,
@@ -473,10 +473,10 @@ target::vgscs,VGSCs,target,Target__VGSCs,pipeline/target,,,
 moa::voltage-gated_sodium_channel_modulation_for_surgical_anesthesia_and_pos_17f2679a,Voltage-gated sodium channel modulation for surgical anesthesia and postoperative pain management,moa,MoA__Voltage-gated_sodium_channel_modulation_for_surgical_anesthesia_and_pos_17f2679a,pipeline/moa,,,
 indication::acute_pain;_surgical_anesthesia_and_postoperative_pain_management,Acute pain; surgical anesthesia and postoperative pain management,indication,Indication__Acute_pain;_surgical_anesthesia_and_postoperative_pain_management,pipeline/indication,,,
 scorecard::cxjm-66_injection_20260623,Scorecard - CXJM-66 Injection,scorecard,Scorecard__CXJM-66_Injection__20260623,pipeline/scorecard,,Run Full Scout,E0
-source::https_en.humanwell.com.cn,Humanwell official site,source,Source__Humanwell_official_site,pipeline/source;source/official_company,,,E0
+source::https_en.humanwell.com.cn,Humanwell official site,source,Source__Humanwell_official_site,pipeline/source;source/other,,,E0
 source::https_en.likang-pharma.com_news_213.html,Yichang Renfu CXJM-66 clinical trial approval,source,Source__Yichang_Renfu_CXJM-66_clinical_trial_approval,pipeline/source;source/regulatory,,,E0
 source::https_synapse.patsnap.com_drug_09e0b67b6d02474ea75e89ed532a7df5,Synapse CXJM-66,source,Source__Synapse_CXJM-66,pipeline/source;source/clinical_trial_registry,,,E0
-asset::gxc-303,GXC-303,asset,Asset__GXC-303__GXC303,pipeline/asset;theme/no_theme,11,Deprioritize,E4
+asset::gxc-303,GXC-303,asset,Asset__GXC-303,pipeline/asset;theme/no_theme,11,Deprioritize,E4
 company::genixcure,GenixCure,company,Company__GenixCure,pipeline/company,,,
 target::stmn2_tdp-43–stmn2_axis,STMN2 / TDP-43–STMN2 axis,target,Target__STMN2_TDP-43–STMN2_axis,pipeline/target,,,
 moa::stmn2_발현_회복을_통해_motor-neuron_axonal_maintenance_regeneration을_촉진하려는_유전자_47910c81,STMN2 발현 회복을 통해 motor-neuron axonal maintenance/regeneration을 촉진하려는 유전자치료 접근; 정확한 cargo 설계는 비공개,moa,MoA__STMN2_발현_회복을_통해_motor-neuron_axonal_maintenance_regeneration을_촉진하려는_유전자_47910c81,pipeline/moa,,,

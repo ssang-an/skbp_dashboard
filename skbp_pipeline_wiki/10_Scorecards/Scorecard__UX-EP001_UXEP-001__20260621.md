@@ -5,11 +5,11 @@ title: "Scorecard - UX-EP001 / UXEP-001"
 tags:
   - "pipeline/scorecard"
   - "skbp/scoring"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: "[[01_Raw_Reports/Shanghai_UniXell_UX-EP001_20260621]]"
 source_json: "json/pipeline-records.json"
-asset: "[[02_Assets/Asset__UX-EP001_UXEP-001__UX-EP001|UX-EP001 / UXEP-001]]"
+asset: "[[02_Assets/Asset__UX-EP001_UXEP-001|UX-EP001 / UXEP-001]]"
 company: "[[03_Companies/Company__Shanghai_UniXell_Biotechnology_Co.,_Ltd|Shanghai UniXell Biotechnology Co., Ltd.]]"
 total_score: 5
 max_score: 21
@@ -134,10 +134,10 @@ Commercial rationale status: `established`
 
 ## 5. Data Maturity Stage Alignment
 
-- Claimed stage: Preclinical in China according to Synapse; no official UX-EP001 registry or company page found.
-- Expected data for stage: stage-appropriate asset-specific data package
-- Visible data: Synapse lists UX-EP001 as preclinical and shows no clinical result., No official company page or registry entry for UX-EP001 was found., UX-GIP001 has IND-related evidence, but this is not UX-EP001-specific.
-- Missing data: Need data room, preclinical study reports, IND package or poster for UX-EP001., Need official confirmation whether UX-EP001 has entered IND-enabling studies.
+- Claimed stage: -
+- Expected data for stage: -
+- Visible data: -
+- Missing data: -
 
 ## 6. Final Recommendation
 

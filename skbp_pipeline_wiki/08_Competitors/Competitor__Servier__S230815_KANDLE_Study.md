@@ -6,8 +6,8 @@ aliases:
   - "S230815 / KANDLE Study"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Direct same-target and same-disease clinical competitor; less convenient deliver
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__ABS-1230__Actio_ABS-1230|ABS-1230__Actio_ABS-1230]]: Direct same-target and same-disease clinical competitor; less convenient delivery than oral ABS-1230 but potentially disease-modifying gene-level approach.
+- [[02_Assets/Asset__ABS-1230|ABS-1230]]: Direct same-target and same-disease clinical competitor; less convenient delivery than oral ABS-1230 but potentially disease-modifying gene-level approach.
 
 ## Sources
 

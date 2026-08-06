@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,15 +24,15 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.takeda.com/newsroom/newsreleases/2024/fda-approves-subcutaneous-administration-of-entyvio/ |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Established IBD biologic with strong gut-selective safety positioning.
+-
 
 ## Used In
 
-- [[02_Assets/Asset__META-01_META-1i_MP-5342__META01|Asset__META-01_META-1i_MP-5342__META01]]
+- [[02_Assets/Asset__META-01_META-1i_MP-5342|Asset__META-01_META-1i_MP-5342]]
 - [[10_Scorecards/Scorecard__META-01_META-1i_MP-5342__20260622|Scorecard__META-01_META-1i_MP-5342__20260622]]
 
 ## Extracted Claims

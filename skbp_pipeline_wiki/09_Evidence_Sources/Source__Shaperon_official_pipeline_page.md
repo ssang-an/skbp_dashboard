@@ -6,9 +6,9 @@ aliases:
   - "Shaperon official pipeline page"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,18 +21,18 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
-| Reliability | high |
+| Source type | other |
+| Reliability | medium |
 | URL | https://shaperon.com/en/sub/pipeline.html |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Lists NuCerin as GPCR19 agonist for Alzheimer’s disease and states Phase I Part A completed and Part B ongoing.
+-
 
 ## Used In
 
-- [[02_Assets/Asset__HY209_NuCerin__HY-209|Asset__HY209_NuCerin__HY-209]]
+- [[02_Assets/Asset__HY209_NuCerin|Asset__HY209_NuCerin]]
 - [[10_Scorecards/Scorecard__HY209_NuCerin__20260622|Scorecard__HY209_NuCerin__20260622]]
 
 ## Extracted Claims

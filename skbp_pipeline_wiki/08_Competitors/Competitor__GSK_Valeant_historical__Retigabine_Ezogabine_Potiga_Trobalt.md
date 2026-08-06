@@ -6,8 +6,8 @@ aliases:
   - "Retigabine / Ezogabine / Potiga / Trobalt"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Clinically validates class but highlights retinal/pigmentation and commercial/sa
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__NS-041__NeuShen_NS-041|NS-041__NeuShen_NS-041]]: Clinically validates class but highlights retinal/pigmentation and commercial/safety diligence risks.
+- [[02_Assets/Asset__NS-041|NS-041]]: Clinically validates class but highlights retinal/pigmentation and commercial/safety diligence risks.
 
 ## Sources
 

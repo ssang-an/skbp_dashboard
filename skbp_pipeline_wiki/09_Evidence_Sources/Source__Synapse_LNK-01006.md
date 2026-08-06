@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/565a5da0689043fb8f26295eeae190fa |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
@@ -32,7 +32,7 @@ Lists LNK-01006 synonyms BLKR201/BLKR-201, TYK2 target, Phase 1 status and NCT07
 
 ## Used In
 
-- [[02_Assets/Asset__LNK01006_BLKR201__LNK01006|Asset__LNK01006_BLKR201__LNK01006]]
+- [[02_Assets/Asset__LNK01006_BLKR201|Asset__LNK01006_BLKR201]]
 - [[10_Scorecards/Scorecard__LNK01006_BLKR201__20260621|Scorecard__LNK01006_BLKR201__20260621]]
 
 ## Extracted Claims

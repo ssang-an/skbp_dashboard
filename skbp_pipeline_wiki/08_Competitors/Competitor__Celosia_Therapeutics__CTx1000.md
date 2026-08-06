@@ -6,12 +6,12 @@ aliases:
   - "CTx1000"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
-confidence: "low"
+confidence: "medium"
 ---
 
 # CTx1000
@@ -33,8 +33,8 @@ confidence: "low"
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__GXC-303__GXC303|GXC-303__GXC303]]: 같은 TDP-43 disease axis와 one-time AAV modality로, 2026년 이미 임상 진입한 근접 차별화 benchmark.
+- [[02_Assets/Asset__GXC-303|GXC-303]]: 같은 TDP-43 disease axis와 one-time AAV modality로, 2026년 이미 임상 진입한 근접 차별화 benchmark.
 
 ## Sources
 
-- No URL provided
+- https://clinicaltrials.gov/study/NCT07401121

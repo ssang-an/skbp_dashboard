@@ -6,8 +6,8 @@ aliases:
   - "oral_small_molecule_tablet;_reportedly_developed_using_westanai+_and_pr_1de450e9"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,7 +22,7 @@ confidence: "medium"
 
 ## Related Assets
 
-- [[02_Assets/Asset__WT-1108__WT1108|WT-1108__WT1108]]
+- [[02_Assets/Asset__WT-1108|WT-1108]]
 
 ## Related Targets / MoA
 

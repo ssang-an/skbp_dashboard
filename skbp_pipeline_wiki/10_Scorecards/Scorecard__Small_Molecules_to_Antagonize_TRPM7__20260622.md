@@ -5,11 +5,11 @@ title: "Scorecard - Small Molecules to Antagonize TRPM7"
 tags:
   - "pipeline/scorecard"
   - "skbp/scoring"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: "[[01_Raw_Reports/VivaVision_TRPM7_20260622]]"
 source_json: "json/pipeline-records.json"
-asset: "[[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7|Small Molecules to Antagonize TRPM7]]"
+asset: "[[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7|Small Molecules to Antagonize TRPM7]]"
 company: "[[03_Companies/Company__VivaVision_Biotech|VivaVision Biotech]]"
 total_score: 11
 max_score: 21
@@ -145,10 +145,10 @@ Commercial rationale status: `established`
 
 ## 5. Data Maturity Stage Alignment
 
-- Claimed stage: Uncertain; likely preclinical or dormant; no public TRPM7-specific clinical trial identified
-- Expected data for stage: stage-appropriate asset-specific data package
-- Visible data: TRPM7 structural and functional biology has been published., SE animal model shows TRPM7 knockdown/inhibition effects., VPC01091.4 has mouse inflammation data., No public VivaVision TRPM7 compound package or clinical data was found.
-- Missing data: No public PK/PD, No public GLP tox, No public IND-enabling package, No public human data for TRPM7 asset
+- Claimed stage: -
+- Expected data for stage: -
+- Visible data: -
+- Missing data: -
 
 ## 6. Final Recommendation
 

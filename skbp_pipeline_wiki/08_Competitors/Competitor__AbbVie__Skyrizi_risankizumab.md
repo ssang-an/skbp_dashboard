@@ -6,8 +6,8 @@ aliases:
   - "Skyrizi / risankizumab"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Approved IBD biologic with strong market presence; sets efficacy and access bar.
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__META-01_META-1i_MP-5342__META01|META-01_META-1i_MP-5342__META01]]: Approved IBD biologic with strong market presence; sets efficacy and access bar.
+- [[02_Assets/Asset__META-01_META-1i_MP-5342|META-01_META-1i_MP-5342]]: Approved IBD biologic with strong market presence; sets efficacy and access bar.
 
 ## Sources
 

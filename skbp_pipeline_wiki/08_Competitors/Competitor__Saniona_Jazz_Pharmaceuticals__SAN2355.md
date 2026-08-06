@@ -6,8 +6,8 @@ aliases:
   - "SAN2355"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Future pharma-backed same-target competitor; shows BD interest in Kv7.2/7.3 acti
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__NS-041__NeuShen_NS-041|NS-041__NeuShen_NS-041]]: Future pharma-backed same-target competitor; shows BD interest in Kv7.2/7.3 activation.
+- [[02_Assets/Asset__NS-041|NS-041]]: Future pharma-backed same-target competitor; shows BD interest in Kv7.2/7.3 activation.
 
 ## Sources
 

@@ -6,9 +6,9 @@ aliases:
   - "Westan products page"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,18 +21,18 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
-| Reliability | high |
+| Source type | other |
+| Reliability | medium |
 | URL | https://westanpharma.com/Products.aspx |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Official pipeline page search result lists WT-1108, P2X3 and RCC/UCC indication.
+-
 
 ## Used In
 
-- [[02_Assets/Asset__WT-1108__WT1108|Asset__WT-1108__WT1108]]
+- [[02_Assets/Asset__WT-1108|Asset__WT-1108]]
 - [[10_Scorecards/Scorecard__WT-1108__20260621|Scorecard__WT-1108__20260621]]
 
 ## Extracted Claims

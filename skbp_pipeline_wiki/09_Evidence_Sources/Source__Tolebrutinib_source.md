@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,15 +24,15 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.sanofi.com/en/media-room/press-releases/2025/2025-12-15-06-05-00-3205094 |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Important progressive MS oral CNS-immune benchmark and safety/risk comparator.
+Brain-penetrant BTK inhibitor benchmark and progressive MS risk context.
 
 ## Used In
 
-- [[02_Assets/Asset__LNK01006_BLKR201__LNK01006|Asset__LNK01006_BLKR201__LNK01006]]
+- [[02_Assets/Asset__LNK01006_BLKR201|Asset__LNK01006_BLKR201]]
 - [[10_Scorecards/Scorecard__LNK01006_BLKR201__20260621|Scorecard__LNK01006_BLKR201__20260621]]
 
 ## Extracted Claims

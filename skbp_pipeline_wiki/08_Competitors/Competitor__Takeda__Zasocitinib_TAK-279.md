@@ -6,8 +6,8 @@ aliases:
   - "Zasocitinib / TAK-279"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Raises efficacy/selectivity bar for next-generation TYK2 inhibitors, although no
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__LNK01006_BLKR201__LNK01006|LNK01006_BLKR201__LNK01006]]: Raises efficacy/selectivity bar for next-generation TYK2 inhibitors, although not CNS-focused.
+- [[02_Assets/Asset__LNK01006_BLKR201|LNK01006_BLKR201]]: Raises efficacy/selectivity bar for next-generation TYK2 inhibitors, although not CNS-focused.
 
 ## Sources
 

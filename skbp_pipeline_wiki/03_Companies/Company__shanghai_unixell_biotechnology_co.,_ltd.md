@@ -6,8 +6,8 @@ aliases:
   - "shanghai_unixell_biotechnology_co.,_ltd"
 tags:
   - "pipeline/company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -28,7 +28,7 @@ confidence: "medium"
 
 ## Pipeline Assets
 
-- [[02_Assets/Asset__UX-EP001_UXEP-001__UX-EP001|UX-EP001_UXEP-001__UX-EP001]]
+- [[02_Assets/Asset__UX-EP001_UXEP-001|UX-EP001_UXEP-001]]
 
 ## Platform / Technology
 

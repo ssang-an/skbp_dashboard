@@ -6,8 +6,8 @@ aliases:
   - "QRL-101"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Same target with ALS/biomarker-first positioning; future epilepsy adjacency comp
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__NS-041__NeuShen_NS-041|NS-041__NeuShen_NS-041]]: Same target with ALS/biomarker-first positioning; future epilepsy adjacency competitor.
+- [[02_Assets/Asset__NS-041|NS-041]]: Same target with ALS/biomarker-first positioning; future epilepsy adjacency competitor.
 
 ## Sources
 

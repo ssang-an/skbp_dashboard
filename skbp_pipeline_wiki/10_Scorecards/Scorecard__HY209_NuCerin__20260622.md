@@ -5,11 +5,11 @@ title: "Scorecard - HY209 / NuCerin"
 tags:
   - "pipeline/scorecard"
   - "skbp/scoring"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: "[[01_Raw_Reports/Shaperon_HY209_NuCerin_20260622]]"
 source_json: "json/pipeline-records.json"
-asset: "[[02_Assets/Asset__HY209_NuCerin__HY-209|HY209 / NuCerin]]"
+asset: "[[02_Assets/Asset__HY209_NuCerin|HY209 / NuCerin]]"
 company: "[[03_Companies/Company__Shaperon_Inc|Shaperon Inc.]]"
 total_score: 16
 max_score: 21
@@ -141,10 +141,10 @@ Commercial rationale status: `established`
 
 ## 5. Data Maturity Stage Alignment
 
-- Claimed stage: Phase I in healthy volunteers for HY209/NuCerin; Shaperon official site states Korea Phase I Part A completed and Part B ongoing. CenterWatch lists NCT06533878 as active/enrolling and sponsor as Kukjeon Pharmaceutical.
-- Expected data for stage: stage-appropriate asset-specific data package
-- Visible data: In vitro microglia assays include IL-1β secretion, Ca2+ mobilization, P2X7R expression and NLRP3 activation readouts., In vivo 5xFAD mouse results include Aβ plaque, microgliosis, neuronal loss and memory function endpoints., Oral NuCerin abstract reports 12-week oral dosing in 5xFAD mice and MWM/NOR, Thioflavin-S, NeuN and serum biomarker readouts., NCT06533878 supports Phase I human safety/tolerability evaluation, but public data are not sufficient for AD efficacy.
-- Missing data: HY209 oral Phase I final CSR not public, MAD Part B dose selection rationale not public, AD Phase II design not public, GLP tox and CMC package not public
+- Claimed stage: -
+- Expected data for stage: -
+- Visible data: -
+- Missing data: -
 
 ## 6. Final Recommendation
 

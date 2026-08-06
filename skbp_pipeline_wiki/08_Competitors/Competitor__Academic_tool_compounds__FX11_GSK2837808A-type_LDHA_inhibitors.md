@@ -6,8 +6,8 @@ aliases:
   - "FX11 / GSK2837808A-type LDHA inhibitors"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Supports same-target biological feasibility but is not a clear active clinical I
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__META-01_META-1i_MP-5342__META01|META-01_META-1i_MP-5342__META01]]: Supports same-target biological feasibility but is not a clear active clinical IBD competitor.
+- [[02_Assets/Asset__META-01_META-1i_MP-5342|META-01_META-1i_MP-5342]]: Supports same-target biological feasibility but is not a clear active clinical IBD competitor.
 
 ## Sources
 

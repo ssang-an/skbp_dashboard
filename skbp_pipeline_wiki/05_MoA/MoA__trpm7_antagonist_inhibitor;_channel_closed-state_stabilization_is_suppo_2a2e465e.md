@@ -6,8 +6,8 @@ aliases:
   - "trpm7_antagonist_inhibitor;_channel_closed-state_stabilization_is_suppo_2a2e465e"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,7 +22,7 @@ confidence: "medium"
 
 ## Related Assets
 
-- [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7|Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7]]
+- [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7|Small_Molecules_to_Antagonize_TRPM7]]
 
 ## Related Targets / MoA
 

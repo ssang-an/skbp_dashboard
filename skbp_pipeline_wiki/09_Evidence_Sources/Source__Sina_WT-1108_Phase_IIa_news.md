@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/news"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | news |
 | Reliability | medium |
 | URL | https://finance.sina.com.cn/stock/aigc/ywsygs/2025-10-11/doc-inftnueu7432084.shtml |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
@@ -32,7 +32,7 @@ Reports Phase IIa registration/launch with dose and endpoint context.
 
 ## Used In
 
-- [[02_Assets/Asset__WT-1108__WT1108|Asset__WT-1108__WT1108]]
+- [[02_Assets/Asset__WT-1108|Asset__WT-1108]]
 - [[10_Scorecards/Scorecard__WT-1108__20260621|Scorecard__WT-1108__20260621]]
 
 ## Extracted Claims

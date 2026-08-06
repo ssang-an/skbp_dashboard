@@ -6,9 +6,9 @@ aliases:
   - "META Pharmaceuticals official homepage"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,18 +21,18 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
-| Reliability | high |
+| Source type | other |
+| Reliability | medium |
 | URL | https://en.metabiopharma.com/ |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Official company site describes immunometabolism focus and META-1 small molecule inhibitor program.
+-
 
 ## Used In
 
-- [[02_Assets/Asset__META-01_META-1i_MP-5342__META01|Asset__META-01_META-1i_MP-5342__META01]]
+- [[02_Assets/Asset__META-01_META-1i_MP-5342|Asset__META-01_META-1i_MP-5342]]
 - [[10_Scorecards/Scorecard__META-01_META-1i_MP-5342__20260622|Scorecard__META-01_META-1i_MP-5342__20260622]]
 
 ## Extracted Claims

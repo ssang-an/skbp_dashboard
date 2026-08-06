@@ -6,8 +6,8 @@ aliases:
   - "aav9_gene_therapy"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

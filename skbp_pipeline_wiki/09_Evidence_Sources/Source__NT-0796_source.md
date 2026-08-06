@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,15 +24,15 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.nodthera.com/news/nodtheras-nlrp3-inhibitor-nt-0796-reverses-neuroinflammation-in-parkinsons-disease-phase-ib-iia-trial/ |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Similar oral CNS inflammasome thesis and biomarker-oriented development path; not same upstream GPCR19 target.
+-
 
 ## Used In
 
-- [[02_Assets/Asset__HY209_NuCerin__HY-209|Asset__HY209_NuCerin__HY-209]]
+- [[02_Assets/Asset__HY209_NuCerin|Asset__HY209_NuCerin]]
 - [[10_Scorecards/Scorecard__HY209_NuCerin__20260622|Scorecard__HY209_NuCerin__20260622]]
 
 ## Extracted Claims

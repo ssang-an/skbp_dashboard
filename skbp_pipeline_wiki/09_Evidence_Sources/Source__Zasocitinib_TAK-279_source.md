@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,15 +24,15 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.takeda.com/newsroom/newsreleases/2026/zasocitinib-outperforms-deucravacitinib-study/ |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Raises efficacy/selectivity bar for next-generation TYK2 inhibitors, although not CNS-focused.
+-
 
 ## Used In
 
-- [[02_Assets/Asset__LNK01006_BLKR201__LNK01006|Asset__LNK01006_BLKR201__LNK01006]]
+- [[02_Assets/Asset__LNK01006_BLKR201|Asset__LNK01006_BLKR201]]
 - [[10_Scorecards/Scorecard__LNK01006_BLKR201__20260621|Scorecard__LNK01006_BLKR201__20260621]]
 
 ## Extracted Claims

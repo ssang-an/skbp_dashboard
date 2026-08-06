@@ -6,8 +6,8 @@ aliases:
   - "Sivopixant / S-600918"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Same MoA clinical comparator; Phase 2b result was not clearly strong, illustrati
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__WT-1108__WT1108|WT-1108__WT1108]]: Same MoA clinical comparator; Phase 2b result was not clearly strong, illustrating efficacy risk.
+- [[02_Assets/Asset__WT-1108|WT-1108]]: Same MoA clinical comparator; Phase 2b result was not clearly strong, illustrating efficacy risk.
 
 ## Sources
 

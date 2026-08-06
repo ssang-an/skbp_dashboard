@@ -1,11 +1,10 @@
 # Competitor Map
 
-- asset::ilm01_gaia-aβ -> competitor::eisai_biogen_leqembi_lecanemab
-- asset::ilm01_gaia-aβ -> competitor::eli_lilly_kisunla_donanemab
-- asset::ilm01_gaia-aβ -> competitor::eli_lilly_remternetug_ly3372993
-- asset::ilm01_gaia-aβ -> competitor::biogen_eisai_historical_program_aduhelm_aducanumab
-- asset::ilm01_gaia-aβ -> competitor::inmune_bio_xpro1595_xpro
-- asset::ilm01_gaia-aβ -> competitor::biogen_ionis_diranersen_biib080
+- asset::ilm01_(gaia-aβ) -> competitor::eisai_biogen_leqembi_(lecanemab)
+- asset::ilm01_(gaia-aβ) -> competitor::eli_lilly_kisunla_(donanemab)
+- asset::ilm01_(gaia-aβ) -> competitor::eli_lilly_remternetug_(ly3372993)
+- asset::ilm01_(gaia-aβ) -> competitor::roche_trontinemab
+- asset::ilm01_(gaia-aβ) -> competitor::acumen_pharmaceuticals_sabirnetug_(acu193)
 - asset::wt-1108 -> competitor::merck_&_co._msd_gefapixant_lyfnua
 - asset::wt-1108 -> competitor::gsk_bellus_health_camlipixant_blu-5937
 - asset::wt-1108 -> competitor::shionogi_sivopixant_s-600918

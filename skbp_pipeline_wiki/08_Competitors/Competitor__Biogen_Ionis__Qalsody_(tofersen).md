@@ -6,12 +6,12 @@ aliases:
   - "Qalsody (tofersen)"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
-confidence: "low"
+confidence: "medium"
 ---
 
 # Qalsody (tofersen)
@@ -33,8 +33,8 @@ confidence: "low"
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__GXC-303__GXC303|GXC-303__GXC303]]: 유전자 정의 ALS에서 target engagement biomarker 기반 허가와 반복 척수강 투여의 규제·상업 benchmark.
+- [[02_Assets/Asset__GXC-303|GXC-303]]: 유전자 정의 ALS에서 target engagement biomarker 기반 허가와 반복 척수강 투여의 규제·상업 benchmark.
 
 ## Sources
 
-- No URL provided
+- https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-amyotrophic-lateral-sclerosis-associated-mutation-sod1-gene

@@ -6,8 +6,8 @@ aliases:
   - "NRTX-1001 / rezanecel"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Most advanced regenerative epilepsy cell therapy benchmark with RMAT/PRIME recog
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__UX-EP001_UXEP-001__UX-EP001|UX-EP001_UXEP-001__UX-EP001]]: Most advanced regenerative epilepsy cell therapy benchmark with RMAT/PRIME recognition and major pharma acquisition validation.
+- [[02_Assets/Asset__UX-EP001_UXEP-001|UX-EP001_UXEP-001]]: Most advanced regenerative epilepsy cell therapy benchmark with RMAT/PRIME recognition and major pharma acquisition validation.
 
 ## Sources
 

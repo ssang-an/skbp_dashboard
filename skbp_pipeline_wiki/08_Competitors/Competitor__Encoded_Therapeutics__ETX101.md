@@ -6,8 +6,8 @@ aliases:
   - "ETX101"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Disease-modifying epilepsy competitor, although genetic Dravet segment differs f
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__UX-EP001_UXEP-001__UX-EP001|UX-EP001_UXEP-001__UX-EP001]]: Disease-modifying epilepsy competitor, although genetic Dravet segment differs from MTLE/focal epilepsy.
+- [[02_Assets/Asset__UX-EP001_UXEP-001|UX-EP001_UXEP-001]]: Disease-modifying epilepsy competitor, although genetic Dravet segment differs from MTLE/focal epilepsy.
 
 ## Sources
 

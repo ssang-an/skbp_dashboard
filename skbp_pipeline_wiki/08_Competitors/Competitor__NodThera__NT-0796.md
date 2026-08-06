@@ -6,8 +6,8 @@ aliases:
   - "NT-0796"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Similar oral CNS inflammasome thesis and biomarker-oriented development path; no
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__HY209_NuCerin__HY-209|HY209_NuCerin__HY-209]]: Similar oral CNS inflammasome thesis and biomarker-oriented development path; not same upstream GPCR19 target.
+- [[02_Assets/Asset__HY209_NuCerin|HY209_NuCerin]]: Similar oral CNS inflammasome thesis and biomarker-oriented development path; not same upstream GPCR19 target.
 
 ## Sources
 

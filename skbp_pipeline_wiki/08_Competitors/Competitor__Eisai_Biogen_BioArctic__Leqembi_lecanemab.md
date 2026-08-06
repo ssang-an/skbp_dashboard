@@ -6,8 +6,8 @@ aliases:
   - "Leqembi / lecanemab"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Approved AD disease-modifying benchmark; creates efficacy, biomarker, reimbursem
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__HY209_NuCerin__HY-209|HY209_NuCerin__HY-209]]: Approved AD disease-modifying benchmark; creates efficacy, biomarker, reimbursement and safety comparison bar for NuCerin.
+- [[02_Assets/Asset__HY209_NuCerin|HY209_NuCerin]]: Approved AD disease-modifying benchmark; creates efficacy, biomarker, reimbursement and safety comparison bar for NuCerin.
 
 ## Sources
 

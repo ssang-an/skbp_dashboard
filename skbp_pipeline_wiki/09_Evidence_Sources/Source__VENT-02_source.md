@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,15 +24,15 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.ventustx.com/ventus-therapeutics-announces-first-patient-dosed-in-phase-2a-clinical-trial-evaluating-vent-02-an-oral-brain-penetrant-nlrp3-inhibitor-in-parkinsons-disease/ |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Similar CNS neuroinflammation positioning and oral NLRP3 strategy; adjacent competitor rather than direct GPCR19 competitor.
+-
 
 ## Used In
 
-- [[02_Assets/Asset__HY209_NuCerin__HY-209|Asset__HY209_NuCerin__HY-209]]
+- [[02_Assets/Asset__HY209_NuCerin|Asset__HY209_NuCerin]]
 - [[10_Scorecards/Scorecard__HY209_NuCerin__20260622|Scorecard__HY209_NuCerin__20260622]]
 
 ## Extracted Claims

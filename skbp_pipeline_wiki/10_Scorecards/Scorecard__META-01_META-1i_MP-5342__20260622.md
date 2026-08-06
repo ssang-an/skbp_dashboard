@@ -5,11 +5,11 @@ title: "Scorecard - META-01 / META-1i / MP-5342"
 tags:
   - "pipeline/scorecard"
   - "skbp/scoring"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: "[[01_Raw_Reports/META_Pharmaceuticals_META01_MP5342_20260622]]"
 source_json: "json/pipeline-records.json"
-asset: "[[02_Assets/Asset__META-01_META-1i_MP-5342__META01|META-01 / META-1i / MP-5342]]"
+asset: "[[02_Assets/Asset__META-01_META-1i_MP-5342|META-01 / META-1i / MP-5342]]"
 company: "[[03_Companies/Company__META_Pharmaceuticals_Inc|META Pharmaceuticals Inc.]]"
 total_score: 11
 max_score: 21
@@ -146,10 +146,10 @@ Commercial rationale status: `established`
 
 ## 5. Data Maturity Stage Alignment
 
-- Claimed stage: Preclinical / IND-enabling. MP-5342 PCC nominated; IND and clinical trial initiation expected in H2-Q4 2026. META-01 historical entry is listed as discontinued discovery in Synapse.
-- Expected data for stage: stage-appropriate asset-specific data package
-- Visible data: META official news states MP-5342 completed key PCC testing and is entering regulatory-required preclinical studies., VCBeat 2026 reports IND submission and Phase I after H2 2026., XtalPi annual results state MP-5342 entered IND-enabling and had >600-fold safety window., Synapse lists MP-5342 as preclinical and META-01 as discontinued discovery., No public MP-5342 clinical trial registration or human data were identified.
-- Missing data: IND-enabling tox completion status unknown, GLP tox species/duration/NOAEL unknown, PK/PD and exposure-response data unknown, Clinical registry not identified, META-01 discontinued versus renamed/replaced status unresolved
+- Claimed stage: -
+- Expected data for stage: -
+- Visible data: -
+- Missing data: -
 
 ## 6. Final Recommendation
 

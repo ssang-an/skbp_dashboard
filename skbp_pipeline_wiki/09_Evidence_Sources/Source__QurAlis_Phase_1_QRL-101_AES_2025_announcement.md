@@ -6,9 +6,9 @@ aliases:
   - "QurAlis Phase 1 QRL-101 AES 2025 announcement"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,14 +21,14 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
-| Reliability | high |
+| Source type | other |
+| Reliability | medium |
 | URL | https://www.quralis.com/news/quralis-to-present-data-from-its-phase-1-clinical-trial-of-qrl-101-a-potential-best-in-class-selective-kv7-2-7-3-ion-channel-opener-at-american-epilepsy-society-2025-annual-meeting/ |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-QRL-101 is described as a selective Kv7.2/7.3 opener with Phase 1 data and planned Phase 2 in DEE.
+-
 
 ## Used In
 

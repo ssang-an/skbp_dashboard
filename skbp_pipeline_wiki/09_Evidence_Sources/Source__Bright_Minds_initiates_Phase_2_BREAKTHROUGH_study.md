@@ -6,9 +6,9 @@ aliases:
   - "Bright Minds initiates Phase 2 BREAKTHROUGH study"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,14 +21,14 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
-| Reliability | high |
+| Source type | other |
+| Reliability | medium |
 | URL | https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/ |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Phase 2 open-label trial of BMB-101 in absence epilepsy and DEE.
+-
 
 ## Used In
 

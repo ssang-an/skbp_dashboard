@@ -6,8 +6,8 @@ aliases:
   - "ZTALMY / ganaxolone"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Approved genetic epilepsy comparator for CDKL5 deficiency disorder; symptomatic 
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__ABS-1230__Actio_ABS-1230|ABS-1230__Actio_ABS-1230]]: Approved genetic epilepsy comparator for CDKL5 deficiency disorder; symptomatic antiseizure benchmark, not KCNT1-targeted.
+- [[02_Assets/Asset__ABS-1230|ABS-1230]]: Approved genetic epilepsy comparator for CDKL5 deficiency disorder; symptomatic antiseizure benchmark, not KCNT1-targeted.
 
 ## Sources
 

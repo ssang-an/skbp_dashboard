@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/news"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | news |
 | Reliability | medium |
 | URL | https://www.biospace.com/press-releases/unixell-biotech-receives-ind-clearance-by-fda-for-its-allogeneic-ipsc-derived-cell-therapy-ux-gip001-for-focal-epilepsy |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
@@ -32,7 +32,7 @@ Company press release syndicated by BioSpace; confirms UX-GIP001 FDA IND clearan
 
 ## Used In
 
-- [[02_Assets/Asset__UX-EP001_UXEP-001__UX-EP001|Asset__UX-EP001_UXEP-001__UX-EP001]]
+- [[02_Assets/Asset__UX-EP001_UXEP-001|Asset__UX-EP001_UXEP-001]]
 - [[10_Scorecards/Scorecard__UX-EP001_UXEP-001__20260621|Scorecard__UX-EP001_UXEP-001__20260621]]
 
 ## Extracted Claims

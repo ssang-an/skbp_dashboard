@@ -1,7 +1,7 @@
 # By Target
 
 - [[04_Targets/Target__5-ht2c_receptor|5-ht2c_receptor]]
-- [[04_Targets/Target__aβ_aggregates_with_tam_receptor-mediated_clearance_biology|aβ_aggregates_with_tam_receptor-mediated_clearance_biology]]
+- [[04_Targets/Target__amyloid-β,_especially_oligomeric_aβ;_tam_receptors_tyro3_axl_mertk_as_t_ba5985eb|amyloid-β,_especially_oligomeric_aβ;_tam_receptors_tyro3_axl_mertk_as_t_ba5985eb]]
 - [[04_Targets/Target__brain_iron_overload|brain_iron_overload]]
 - [[04_Targets/Target__gpcr19_tgr5_with_downstream_p2x7r-nlrp3_inflammasome_modulation|gpcr19_tgr5_with_downstream_p2x7r-nlrp3_inflammasome_modulation]]
 - [[04_Targets/Target__gut_microbiome|gut_microbiome]]

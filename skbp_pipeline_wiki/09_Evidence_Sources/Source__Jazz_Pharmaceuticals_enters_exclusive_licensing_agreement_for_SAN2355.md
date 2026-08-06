@@ -6,9 +6,9 @@ aliases:
   - "Jazz Pharmaceuticals enters exclusive licensing agreement for SAN2355"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,14 +21,14 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
-| Reliability | high |
+| Source type | other |
+| Reliability | medium |
 | URL | https://investor.jazzpharma.com/news-releases/news-release-details/jazz-pharmaceuticals-enters-exclusive-licensing-agreement |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-SAN2355 is a preclinical selective small molecule activator of Kv7.2/Kv7.3 potassium channels for epilepsy.
+-
 
 ## Used In
 

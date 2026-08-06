@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/clinical_trial_registry"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | clinical_trial_registry |
 | Reliability | high |
 | URL | https://clinicaltrials.gov/study/NCT06401538 |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 

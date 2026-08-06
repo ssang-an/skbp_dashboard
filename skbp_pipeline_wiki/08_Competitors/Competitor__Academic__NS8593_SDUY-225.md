@@ -6,8 +6,8 @@ aliases:
   - "NS8593 / SDUY-225"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Status epilepticus model evidence directly supports CNS neuroinflammation/epilep
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7|Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7]]: Status epilepticus model evidence directly supports CNS neuroinflammation/epilepsy hypothesis.
+- [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7|Small_Molecules_to_Antagonize_TRPM7]]: Status epilepticus model evidence directly supports CNS neuroinflammation/epilepsy hypothesis.
 
 ## Sources
 

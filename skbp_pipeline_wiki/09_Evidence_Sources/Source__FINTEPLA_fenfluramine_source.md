@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,15 +24,15 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.ucb.com/newsroom/press-releases/article/us-fda-approves-finteplar-vfenfluramine-oral-solution-for-treatment-of-seizures-associated-with-lennox-gastaut-syndrome-lgs |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Approved rare epilepsy comparator for Dravet syndrome and Lennox-Gastaut syndrome; useful for payer and clinical benchmark but not causal KCNT1 therapy.
+-
 
 ## Used In
 
-- [[02_Assets/Asset__ABS-1230__Actio_ABS-1230|Asset__ABS-1230__Actio_ABS-1230]]
+- [[02_Assets/Asset__ABS-1230|Asset__ABS-1230]]
 - [[10_Scorecards/Scorecard__ABS-1230__20260623|Scorecard__ABS-1230__20260623]]
 
 ## Extracted Claims

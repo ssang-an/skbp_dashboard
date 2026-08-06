@@ -5,11 +5,11 @@ title: "Scorecard - GXC-303"
 tags:
   - "pipeline/scorecard"
   - "skbp/scoring"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: "[[01_Raw_Reports/GenixCure_GXC-303_20260713]]"
 source_json: "json/pipeline-records.json"
-asset: "[[02_Assets/Asset__GXC-303__GXC303|GXC-303]]"
+asset: "[[02_Assets/Asset__GXC-303|GXC-303]]"
 company: "[[03_Companies/Company__GenixCure|GenixCure]]"
 total_score: 11
 max_score: 21
@@ -129,10 +129,10 @@ Commercial rationale status: `insufficient_evidence`
 
 ## 5. Data Maturity Stage Alignment
 
-- Claimed stage: In Vivo / preclinical
-- Expected data for stage: blinded quantitative ALS-model efficacy and dose-response, durability, target engagement and biodistribution, immunogenicity/toxicology, CMC and IND timeline
-- Visible data: 회사/언론이 보고한 motor-neuron axonal regrowth, BIO USA 2025 animal-behavior data disclosure announcement, official In Vivo stage
-- Missing data: full poster/deck or publication, model, sample size, controls and statistics, final capsid/cargo/route/dose, PK/PD, biodistribution, tox and CMC
+- Claimed stage: -
+- Expected data for stage: -
+- Visible data: -
+- Missing data: -
 
 ## 6. Final Recommendation
 

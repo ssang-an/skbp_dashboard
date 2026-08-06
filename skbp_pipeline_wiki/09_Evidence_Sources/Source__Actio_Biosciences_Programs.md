@@ -6,9 +6,9 @@ aliases:
   - "Actio Biosciences Programs"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,18 +21,18 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
-| Reliability | high |
+| Source type | other |
+| Reliability | medium |
 | URL | https://actiobiosciences.com/programs/ |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Identifies ABS-1230 as oral small molecule KCNT1 inhibitor for KCNT1-related epilepsy, lists Phase 1b/2 clinical study enrollment and FDA designations.
+-
 
 ## Used In
 
-- [[02_Assets/Asset__ABS-1230__Actio_ABS-1230|Asset__ABS-1230__Actio_ABS-1230]]
+- [[02_Assets/Asset__ABS-1230|Asset__ABS-1230]]
 - [[10_Scorecards/Scorecard__ABS-1230__20260623|Scorecard__ABS-1230__20260623]]
 
 ## Extracted Claims

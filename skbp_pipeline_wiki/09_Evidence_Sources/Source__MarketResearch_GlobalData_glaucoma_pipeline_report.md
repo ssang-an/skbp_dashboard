@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/market"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | market |
 | Reliability | medium |
 | URL | https://www.marketresearch.com/Global-Markets-Direct-v3480/Glaucoma-Drugs-Development-Stages-Target-32060653/ |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
@@ -32,7 +32,7 @@ Snippet lists Small Molecules to Antagonize TRPM7 and VivaVision Biotech in glau
 
 ## Used In
 
-- [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7|Asset__Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7]]
+- [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7|Asset__Small_Molecules_to_Antagonize_TRPM7]]
 - [[10_Scorecards/Scorecard__Small_Molecules_to_Antagonize_TRPM7__20260622|Scorecard__Small_Molecules_to_Antagonize_TRPM7__20260622]]
 
 ## Extracted Claims

@@ -6,9 +6,9 @@ aliases:
   - "Actio first participant dosed in Phase 1 ABS-1230"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,14 +21,14 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
-| Reliability | high |
+| Source type | other |
+| Reliability | medium |
 | URL | https://actiobiosciences.com/actio-biosciences-announces-first-participant-dosed-in-phase-1-clinical-trial-of-abs-1230-a-kcnt1-inhibitor-for-the-treatment-of-kcnt1-related-epilepsy/ |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-ABS-1230 is described as an oral selective KCNT1 inhibitor for KCNT1-related epilepsy.
+-
 
 ## Used In
 

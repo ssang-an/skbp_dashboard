@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/publication"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | publication |
 | Reliability | high |
 | URL | https://jamanetwork.com/journals/jamaneurology/fullarticle/2809938 |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Randomized Phase 2b evidence for XEN1101 in focal-onset seizures.
 ## Used In
 
 - [[02_Assets/Asset__Azetukalner_XEN1101|Asset__Azetukalner_XEN1101]]
-- [[02_Assets/Asset__NS-041__NeuShen_NS-041|Asset__NS-041__NeuShen_NS-041]]
+- [[02_Assets/Asset__NS-041|Asset__NS-041]]
 - [[10_Scorecards/Scorecard__Azetukalner_XEN1101__20260623|Scorecard__Azetukalner_XEN1101__20260623]]
 - [[10_Scorecards/Scorecard__NS-041__20260623|Scorecard__NS-041__20260623]]
 

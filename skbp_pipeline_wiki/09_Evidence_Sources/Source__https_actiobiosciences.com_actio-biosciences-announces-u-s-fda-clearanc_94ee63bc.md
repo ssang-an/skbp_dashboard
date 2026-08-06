@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://actiobiosciences.com/actio-biosciences-announces-u-s-fda-clearance-of-investigational-new-drug-application-and-fast-track-designation-for-abs-1230-a-kcnt1-inhibitor-for-the-treatment-of-kcnt1-related-epilepsy/ |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
@@ -32,7 +32,7 @@ confidence: "medium"
 
 ## Used In
 
-- [[02_Assets/Asset__ABS-1230__Actio_ABS-1230|Asset__ABS-1230__Actio_ABS-1230]]
+- [[02_Assets/Asset__ABS-1230|Asset__ABS-1230]]
 - [[10_Scorecards/Scorecard__ABS-1230__20260623|Scorecard__ABS-1230__20260623]]
 
 ## Extracted Claims

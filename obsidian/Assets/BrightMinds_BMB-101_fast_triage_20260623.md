@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-02T02:42:40"
+generated_at: "2026-08-06T11:45:31"
 record_id: "BrightMinds_BMB-101_fast_triage_20260623"
 company: "Bright Minds Biosciences"
 country: "United States"
@@ -42,12 +42,12 @@ Smaller biotech 5-HT2C epilepsy asset; run Full Scout if comparing 5-HT2C class.
 
 | Criterion | Score | Evidence Type | Rubric Definition | Judgment Reason | Why Not Higher | Evidence Sources |
 |---|---:|---|---|---|---|---|
-| Target Relevance | 2 | triage_only | - | 5-HT2C is relevant to seizure modulation but less direct than ion-channel/root-cause genetic targets. | - | - |
+| Target Relevance | 2 | triage_only | - | 5-HT2C is relevant to seizure modulation but less direct than ion-channel/root-cause genetic targets. |  | Bright Minds initiates Phase 2 BREAKTHROUGH study (https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/) |
 | Competitive Landscape | - | - | - | - | - | - |
-| MoA Validity | 2 | triage_only | - | 5-HT2C agonism has plausible seizure biology and class adjacency, but asset-specific evidence is less mature than bexicaserin. | - | - |
+| MoA Validity | 2 | triage_only | - | 5-HT2C agonism has plausible seizure biology and class adjacency, but asset-specific evidence is less mature than bexicaserin. |  | Bright Minds initiates Phase 2 BREAKTHROUGH study (https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/) |
 | Platform Attractiveness | - | - | - | - | - | - |
 | Expansion Potential | - | - | - | - | - | - |
-| Data Maturity | 2 | triage_only | - | Phase 2 trial identity is visible, but maturity is below Phase 3 assets. | - | - |
+| Data Maturity | 2 | triage_only | - | Phase 2 trial identity is visible, but maturity is below Phase 3 assets. |  | ClinicalTrials.gov BMB-101 in absence epilepsy and DEE (https://clinicaltrials.gov/study/NCT06401538) |
 | Marketability | - | - | - | - | - | - |
 
 ## Detailed Scoring Rationale
@@ -58,11 +58,11 @@ Smaller biotech 5-HT2C epilepsy asset; run Full Scout if comparing 5-HT2C class.
 |---|---|
 | Score | 2 |
 | Evidence Type | triage_only |
-| Evidence Type Reason | - |
+| Evidence Type Reason |  |
 | Rubric Definition | - |
 | Judgment Reason | 5-HT2C is relevant to seizure modulation but less direct than ion-channel/root-cause genetic targets. |
-| Why Not Higher | - |
-| Investigation Note | - |
+| Why Not Higher |  |
+| Investigation Note |  |
 
 #### Conflicting Or Missing Evidence
 
@@ -73,7 +73,7 @@ Smaller biotech 5-HT2C epilepsy asset; run Full Scout if comparing 5-HT2C class.
 
 | Source | Type | Reliability | Supports Score | Evidence Summary | URL |
 |---|---|---|---|---|---|
-| None | - | - | - | - | - |
+| Bright Minds initiates Phase 2 BREAKTHROUGH study | official_company | high | - | Phase 2 open-label trial of BMB-101 in absence epilepsy and DEE. | https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/ |
 
 
 ### Competitive Landscape
@@ -106,11 +106,11 @@ Smaller biotech 5-HT2C epilepsy asset; run Full Scout if comparing 5-HT2C class.
 |---|---|
 | Score | 2 |
 | Evidence Type | triage_only |
-| Evidence Type Reason | - |
+| Evidence Type Reason |  |
 | Rubric Definition | - |
 | Judgment Reason | 5-HT2C agonism has plausible seizure biology and class adjacency, but asset-specific evidence is less mature than bexicaserin. |
-| Why Not Higher | - |
-| Investigation Note | - |
+| Why Not Higher |  |
+| Investigation Note |  |
 
 #### Conflicting Or Missing Evidence
 
@@ -121,7 +121,7 @@ Smaller biotech 5-HT2C epilepsy asset; run Full Scout if comparing 5-HT2C class.
 
 | Source | Type | Reliability | Supports Score | Evidence Summary | URL |
 |---|---|---|---|---|---|
-| None | - | - | - | - | - |
+| Bright Minds initiates Phase 2 BREAKTHROUGH study | official_company | high | - | Phase 2 open-label trial of BMB-101 in absence epilepsy and DEE. | https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/ |
 
 
 ### Platform Attractiveness
@@ -178,11 +178,11 @@ Smaller biotech 5-HT2C epilepsy asset; run Full Scout if comparing 5-HT2C class.
 |---|---|
 | Score | 2 |
 | Evidence Type | triage_only |
-| Evidence Type Reason | - |
+| Evidence Type Reason |  |
 | Rubric Definition | - |
 | Judgment Reason | Phase 2 trial identity is visible, but maturity is below Phase 3 assets. |
-| Why Not Higher | - |
-| Investigation Note | - |
+| Why Not Higher |  |
+| Investigation Note |  |
 
 #### Conflicting Or Missing Evidence
 
@@ -193,7 +193,7 @@ Smaller biotech 5-HT2C epilepsy asset; run Full Scout if comparing 5-HT2C class.
 
 | Source | Type | Reliability | Supports Score | Evidence Summary | URL |
 |---|---|---|---|---|---|
-| None | - | - | - | - | - |
+| ClinicalTrials.gov BMB-101 in absence epilepsy and DEE | clinical_trial_registry | high | - | Clinical trial registry for BMB-101 in absence epilepsy and DEE. | https://clinicaltrials.gov/study/NCT06401538 |
 
 
 ### Marketability
@@ -288,30 +288,21 @@ Smaller biotech 5-HT2C epilepsy asset; run Full Scout if comparing 5-HT2C class.
     "rubric_version": "3.1",
     "review_type": "fast_triage",
     "generated_at": "2026-06-23",
-    "language": "ko",
-    "output_filename_base": "BrightMinds_BMB-101_fast_triage_20260623"
-  },
-  "input": {
-    "company_input": "Bright Minds Biosciences",
-    "asset_input": "BMB-101",
-    "source_type": "fast triage",
-    "notes": "위 10개 약물 fast triage row #10"
+    "output_filename_base": "BrightMinds_BMB-101_fast_triage_20260623",
+    "storage_profile": "dashboard_hybrid_v1"
   },
   "source_report": {
     "raw_markdown": "# SKBP Fast Triage Result\n\n중요: 위 10개 asset은 공개 자료상 모두 biotech/pharma pipeline asset identity가 확인되며, 빠른 triage 기준상 모두 Full Scout v3.1로 넘겨볼 만한 SELECT 후보이나, SELECT는 최종 SKBP recommendation이 아니라 심층검토 진입 신호다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | Azetukalner / XEN1101 | Xenon Pharmaceuticals | Kv7/KCNQ potassium channel opener | Epilepsy / seizure disorders | Phase 3 | Canada | 3 | 3 | 3 | SELECT | NS-041과 동일 Kv7/KCNQ 축의 가장 강한 임상 benchmark. Phase 3 FOS positive topline과 Phase 2b publication이 확인되어 Full Scout 우선순위 높음. | https://investor.xenon-pharma.com/news-releases/news-release-details/xenon-announces-positive-topline-data-phase-3-x-tole2-study<br>https://jamanetwork.com/journals/jamaneurology/fullarticle/2809938 |\n| 2 | Opakalim / BHV-7000 | Biohaven | Selective Kv7.2/Kv7.3 activator | Epilepsy / seizure disorders | Phase 2/3 | United States | 3 | 3 | 3 | SELECT | NS-041과 거의 같은 target/MoA의 same-class competitor. Biohaven 공식 pipeline상 selective Kv7.2/7.3 activator이며 pivotal epilepsy 개발 중. | https://www.biohaven.com/pipeline/innovation-engine/kv7/<br>https://www.prnewswire.com/news-releases/biohaven-reports-new-clinical-data-in-epilepsy-with-opakalim-a-selective-kv7-27-3-activator-highlighting-seizure-control-and-markedly-differentiated-tolerability-profile-302781743.html |\n| 3 | QRL-101 | QurAlis | Selective Kv7.2/Kv7.3 opener | Epilepsy / seizure disorders | Phase 1 | United States | 3 | 2 | 2 | SELECT | Kv7.2/7.3 opener로 NS-041 class 비교 가치가 있음. 현재 ALS hyperexcitability PoM/Phase 1 중심이지만 DEE Phase 2 계획이 보여 triage상 SELECT. | https://www.quralis.com/news/quralis-to-present-data-from-its-phase-1-clinical-trial-of-qrl-101-a-potential-best-in-class-selective-kv7-2-7-3-ion-channel-opener-at-american-epilepsy-society-2025-annual-meeting/ |\n| 4 | SAN2355 | Jazz Pharmaceuticals / Saniona | Selective Kv7.2/Kv7.3 activator | Epilepsy / seizure disorders | IND-enabling | Europe/UK | 3 | 2 | 1 | SELECT | Preclinical이지만 Jazz가 global exclusive license-in한 Kv7.2/7.3 epilepsy asset으로 BD benchmark 가치가 큼. Data maturity는 낮아 Full Scout에서는 자료 부족 가능성 있음. | https://investor.jazzpharma.com/news-releases/news-release-details/jazz-pharmaceuticals-enters-exclusive-licensing-agreement |\n| 5 | RAP-219 | Rapport Therapeutics | TARPγ8-specific AMPAR negative allosteric modulator | Epilepsy / seizure disorders | Phase 2 | United States | 3 | 3 | 3 | SELECT | FOS에서 novel synaptic transmission MoA이며 Phase 2a seizure/biomarker response가 확인됨. NS-041과 다른 E/I Balance approach로 비교 가치 높음. | https://investors.rapportrx.com/news-releases/news-release-details/rapport-therapeutics-presents-rap-219-focal-onset-seizure-phase/<br>https://aesnet.org/abstractslisting/efficacy-and-tolerability-of-rap-219-a-potential-first-in-class-negative-allosteric-modulator-of-%CE%B38-transmembrane-ampa-receptor-associated-protein-impact-on-rns-long-episodes-and-focal-seizures |\n| 6 | ABS-1230 | Actio Biosciences | Oral selective KCNT1 inhibitor | Epilepsy / seizure disorders | Phase 1/2 | United States | 3 | 2 | 2 | SELECT | KCNT1-related epilepsy의 genetically defined ion-channel asset. Phase 1a 및 Phase Ib/II 진입 자료가 있어 early rare-epilepsy scout 후보로 적합. | https://actiobiosciences.com/actio-biosciences-announces-first-participant-dosed-in-phase-1-clinical-trial-of-abs-1230-a-kcnt1-inhibitor-for-the-treatment-of-kcnt1-related-epilepsy/<br>https://www.clinicaltrialsarena.com/news/actio-biosciences-begins-abs-1230-trial/ |\n| 7 | Zorevunersen / STK-001 | Stoke Therapeutics / Biogen | ASO, SCN1A productive mRNA / Nav1.1 expression increase | Epilepsy / seizure disorders | Phase 3 | United States | 3 | 3 | 3 | SELECT | Dravet root-cause ASO로 Phase 3 EMPEROR 진행 및 NEJM/clinical data가 확인됨. Modality 확장성 평가용으로 Full Scout 가치 높음. | https://investor.stoketherapeutics.com/news-releases/news-release-details/stoke-therapeutics-announces-updates-timelines-completion<br>https://www.stoketherapeutics.com/patients-families/clinical-studies/ |\n| 8 | ETX101 | Encoded Therapeutics | AAV9 gene regulation therapy increasing SCN1A expression | Epilepsy / seizure disorders | Phase 1/2 | United States | 3 | 3 | 3 | SELECT | Dravet gene therapy asset로 Phase 1/2 interim efficacy가 확인됨. Zorevunersen과 disease-modifying approach 비교에 적합. | https://encoded.com/press-releases/encoded-therapeutics-presents-positive-interim-efficacy-data-from-initial-dose-levels-of-phase-1-2-trials-evaluating-etx101-gene-therapy-in-dravet-syndrome/<br>https://clinicaltrials.gov/study/NCT05419492 |\n| 9 | Bexicaserin / LP352 | Lundbeck / Longboard Pharmaceuticals | 5-HT2C receptor superagonist | Epilepsy / seizure disorders | Phase 3 | Europe/UK | 2 | 3 | 3 | SELECT | Ion channel 직접 target은 아니지만 DEE seizure에서 Phase 1b/2a 및 OLE data, Phase 3 진행이 확인되어 E/I/network modulation 관점에서 검토 가치 있음. | https://www.lundbeck.com/us/newsroom/2025/lundbeck-announces-positive-results-from-12-month-open-label-ext<br>https://pmc.ncbi.nlm.nih.gov/articles/PMC12927688/ |\n| 10 | BMB-101 | Bright Minds Biosciences | Selective 5-HT2C receptor agonist / biased agonist | Epilepsy / seizure disorders | Phase 2 | United States | 2 | 2 | 2 | SELECT | 5-HT2C seizure-modulation 계열의 smaller biotech asset. Phase 2 absence epilepsy/DEE trial identity가 확인되어 bexicaserin follow-on 비교 대상으로 적합. | https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/<br>https://clinicaltrials.gov/study/NCT06401538 |\n\n## Notes\n- 모든 row는 quick public-source identity check 기준으로 pipeline asset identity가 확인됨.\n- Full Scout 우선순위는 Azetukalner, Opakalim, RAP-219, Zorevunersen, ETX101 순서가 가장 높음.\n- SAN2355는 SELECT이나 preclinical/IND-enabling 단계라 Full Scout에서 data maturity 부족 가능성이 큼.\n- Bexicaserin과 BMB-101은 ion-channel direct target은 아니므로 Target Relevance는 2점으로 낮게 두고, seizure clinical data와 network modulation rationale 때문에 SELECT 처리함.",
-    "source_format": "fast_triage_markdown",
-    "parser_status": "fast_triage",
-    "parser_note": "GPT instruction 1 Fast Triage v3.1 output. Full SKBP v3.1 review has not been run."
+    "parser_status": "fast_triage"
+  },
+  "input": {
+    "company_input": "Bright Minds Biosciences",
+    "asset_input": "BMB-101"
   },
   "json_summary": {
-    "company": "Bright Minds Biosciences",
-    "asset_name": "BMB-101",
-    "target": "5-HT2C receptor",
     "theme": "E/I Balance",
     "cluster": "Network Modulation",
-    "target_relevance_score": 2,
-    "one_line_summary": "BMB-101은 selective 5-HT2C agonist로 absence epilepsy/DEE Phase 2 asset identity가 확인되어 bexicaserin follow-on 비교 대상으로 SELECT 처리한다.",
-    "company_country": "United States"
+    "target_description": "5-HT2C is relevant to seizure modulation but less direct than ion-channel/root-cause genetic targets."
   },
   "structured_table": {
     "company": "Bright Minds Biosciences",
@@ -326,17 +317,7 @@ Smaller biotech 5-HT2C epilepsy asset; run Full Scout if comparing 5-HT2C class.
     "sources": [
       {
         "source_title": "Bright Minds initiates Phase 2 BREAKTHROUGH study",
-        "source_type": "official_company",
-        "source_url": "https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/",
-        "reliability": "high",
-        "evidence_summary": "Phase 2 open-label trial of BMB-101 in absence epilepsy and DEE."
-      },
-      {
-        "source_title": "ClinicalTrials.gov BMB-101 in absence epilepsy and DEE",
-        "source_type": "clinical_trial_registry",
-        "source_url": "https://clinicaltrials.gov/study/NCT06401538",
-        "reliability": "high",
-        "evidence_summary": "Clinical trial registry for BMB-101 in absence epilepsy and DEE."
+        "source_url": "https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/"
       }
     ]
   },
@@ -347,12 +328,98 @@ Smaller biotech 5-HT2C epilepsy asset; run Full Scout if comparing 5-HT2C class.
       "fast_triage_only",
       "phase_2",
       "non_ion_channel_target"
+    ],
+    "hard_blocker": false,
+    "decision_uncertainty": false
+  },
+  "scoring": {
+    "criteria": {
+      "target_relevance": {
+        "score": 2,
+        "evidence_type": "triage_only",
+        "evidence_type_reason": "",
+        "evidence_basis": "",
+        "main_line_summary": "5-HT2C is relevant to seizure modulation but less direct than ion-channel/root-cause genetic targets.",
+        "why_not_higher": "",
+        "investigation_note": "",
+        "uncertain_points": [
+          "SKBP target cluster fit is indirect."
+        ],
+        "source_ids": [
+          "SRC_0a3e6df9ffef"
+        ]
+      },
+      "moa_validity": {
+        "score": 2,
+        "evidence_type": "triage_only",
+        "evidence_type_reason": "",
+        "evidence_basis": "",
+        "main_line_summary": "5-HT2C agonism has plausible seizure biology and class adjacency, but asset-specific evidence is less mature than bexicaserin.",
+        "why_not_higher": "",
+        "investigation_note": "",
+        "uncertain_points": [
+          "Full efficacy data should be checked."
+        ],
+        "source_ids": [
+          "SRC_0a3e6df9ffef"
+        ]
+      },
+      "data_maturity": {
+        "score": 2,
+        "evidence_type": "triage_only",
+        "evidence_type_reason": "",
+        "evidence_basis": "",
+        "main_line_summary": "Phase 2 trial identity is visible, but maturity is below Phase 3 assets.",
+        "why_not_higher": "",
+        "investigation_note": "",
+        "uncertain_points": [
+          "Phase 2 results not fully reviewed in fast triage."
+        ],
+        "source_ids": [
+          "SRC_2ca474cc30c9"
+        ]
+      }
+    },
+    "total_score": null,
+    "max_score": 21
+  },
+  "validation": {
+    "uncertain_points": [
+      "Fast triage did not review detailed efficacy or safety tables."
+    ],
+    "cross_checked_facts": [
+      "BMB-101 is a selective 5-HT2C receptor agonist in Phase 2 for absence epilepsy/DEE.",
+      "ClinicalTrials.gov registry confirms trial identity."
+    ],
+    "source_registry": [
+      {
+        "source_id": "SRC_0a3e6df9ffef",
+        "source_title": "Bright Minds initiates Phase 2 BREAKTHROUGH study",
+        "source_url": "https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/",
+        "source_type": "official_company",
+        "reliability": "high",
+        "evidence_summary": "Phase 2 open-label trial of BMB-101 in absence epilepsy and DEE."
+      },
+      {
+        "source_id": "SRC_2ca474cc30c9",
+        "source_title": "ClinicalTrials.gov BMB-101 in absence epilepsy and DEE",
+        "source_url": "https://clinicaltrials.gov/study/NCT06401538",
+        "source_type": "clinical_trial_registry",
+        "reliability": "high",
+        "evidence_summary": "Clinical trial registry for BMB-101 in absence epilepsy and DEE."
+      }
     ]
   },
+  "final_insight": {
+    "one_line_summary": "Smaller biotech 5-HT2C epilepsy asset; run Full Scout if comparing 5-HT2C class.",
+    "recommendation": "Run Full Scout",
+    "most_important_diligence_question": "Does BMB-101 show enough efficacy and safety differentiation versus bexicaserin to justify deeper BD attention?"
+  },
   "triage": {
-    "instruction_version": "3.1",
     "status": "SELECT",
     "identity_verified": true,
+    "active_asset": null,
+    "verified_public_source_count": 2,
     "why": "BMB-101 is a verified Phase 2 epilepsy/DEE asset with plausible seizure network-modulation MoA.",
     "missing_evidence_needed_for_full_scout": [
       "Topline Phase 2 dataset",
@@ -360,63 +427,6 @@ Smaller biotech 5-HT2C epilepsy asset; run Full Scout if comparing 5-HT2C class.
       "5-HT2C selectivity and safety",
       "Differentiation versus bexicaserin"
     ]
-  },
-  "scoring": {
-    "total_score": null,
-    "max_score": 21,
-    "criteria": {
-      "target_relevance": {
-        "score": 2,
-        "evidence_type": "triage_only",
-        "main_line_summary": "5-HT2C is relevant to seizure modulation but less direct than ion-channel/root-cause genetic targets.",
-        "evidence_sources": [
-          "https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/"
-        ],
-        "uncertain_points": [
-          "SKBP target cluster fit is indirect."
-        ]
-      },
-      "moa_validity": {
-        "score": 2,
-        "evidence_type": "triage_only",
-        "main_line_summary": "5-HT2C agonism has plausible seizure biology and class adjacency, but asset-specific evidence is less mature than bexicaserin.",
-        "evidence_sources": [
-          "https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/"
-        ],
-        "uncertain_points": [
-          "Full efficacy data should be checked."
-        ]
-      },
-      "data_maturity": {
-        "score": 2,
-        "evidence_type": "triage_only",
-        "main_line_summary": "Phase 2 trial identity is visible, but maturity is below Phase 3 assets.",
-        "evidence_sources": [
-          "https://clinicaltrials.gov/study/NCT06401538"
-        ],
-        "uncertain_points": [
-          "Phase 2 results not fully reviewed in fast triage."
-        ]
-      }
-    }
-  },
-  "validation": {
-    "cross_checked_facts": [
-      "BMB-101 is a selective 5-HT2C receptor agonist in Phase 2 for absence epilepsy/DEE.",
-      "ClinicalTrials.gov registry confirms trial identity."
-    ],
-    "uncertain_points": [
-      "Fast triage did not review detailed efficacy or safety tables."
-    ],
-    "source_registry": [
-      "https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/",
-      "https://clinicaltrials.gov/study/NCT06401538"
-    ]
-  },
-  "final_insight": {
-    "one_line_summary": "Smaller biotech 5-HT2C epilepsy asset; run Full Scout if comparing 5-HT2C class.",
-    "recommendation": "Run Full Scout",
-    "most_important_diligence_question": "Does BMB-101 show enough efficacy and safety differentiation versus bexicaserin to justify deeper BD attention?"
   }
 }
 ```

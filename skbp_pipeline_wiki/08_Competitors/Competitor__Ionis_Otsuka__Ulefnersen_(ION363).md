@@ -6,12 +6,12 @@ aliases:
   - "Ulefnersen (ION363)"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
-confidence: "low"
+confidence: "medium"
 ---
 
 # Ulefnersen (ION363)
@@ -33,8 +33,8 @@ confidence: "low"
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__GXC-303__GXC303|GXC-303__GXC303]]: 유전자 정의 ALS의 late-stage 경쟁자이며 2026년 FUSION readout이 예정된 clinical-development benchmark.
+- [[02_Assets/Asset__GXC-303|GXC-303]]: 유전자 정의 ALS의 late-stage 경쟁자이며 2026년 FUSION readout이 예정된 clinical-development benchmark.
 
 ## Sources
 
-- No URL provided
+- https://ir.ionis.com/news-releases/news-release-details/ionis-reports-first-quarter-2026-financial-results-and

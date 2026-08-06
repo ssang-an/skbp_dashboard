@@ -6,9 +6,9 @@ aliases:
   - "Source URL not provided"
 tags:
   - "pipeline/source"
-  - "source/source_url_not_provided"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,14 +21,14 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | source_url_not_provided |
-| Reliability | unknown |
+| Source type | other |
+| Reliability | medium |
 | URL | source_url_not_provided |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-No source URL.
+-
 
 ## Used In
 

@@ -6,8 +6,8 @@ aliases:
   - "als,_likely_tdp-43_stmn2-deficient_sporadic_als;_exact_biomarker-select_f3022790"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,7 +22,7 @@ confidence: "medium"
 
 ## Related Assets
 
-- [[02_Assets/Asset__GXC-303__GXC303|GXC-303__GXC303]]
+- [[02_Assets/Asset__GXC-303|GXC-303]]
 
 ## Related Targets / MoA
 

@@ -6,8 +6,8 @@ aliases:
   - "QR052107B / relicpixant"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Another China-origin P2X3 entrant with reported no taste alteration in healthy v
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__WT-1108__WT1108|WT-1108__WT1108]]: Another China-origin P2X3 entrant with reported no taste alteration in healthy volunteers.
+- [[02_Assets/Asset__WT-1108|WT-1108]]: Another China-origin P2X3 entrant with reported no taste alteration in healthy volunteers.
 
 ## Sources
 

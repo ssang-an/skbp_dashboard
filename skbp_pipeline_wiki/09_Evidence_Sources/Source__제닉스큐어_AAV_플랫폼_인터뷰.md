@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/company_interview"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | company_interview |
 | Reliability | medium |
 | URL | https://postbi.jbnu.ac.kr/bbs/postbi/4612/388799/artclView.do |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
@@ -32,7 +32,7 @@ CARE/InsightMiner, NHP claims, financing and platform expansion.
 
 ## Used In
 
-- [[02_Assets/Asset__GXC-303__GXC303|Asset__GXC-303__GXC303]]
+- [[02_Assets/Asset__GXC-303|Asset__GXC-303]]
 - [[10_Scorecards/Scorecard__GXC-303__20260713|Scorecard__GXC-303__20260713]]
 
 ## Extracted Claims

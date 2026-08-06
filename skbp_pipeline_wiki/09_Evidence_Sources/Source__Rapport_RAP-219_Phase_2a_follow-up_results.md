@@ -6,9 +6,9 @@ aliases:
   - "Rapport RAP-219 Phase 2a follow-up results"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,14 +21,14 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
-| Reliability | high |
+| Source type | other |
+| Reliability | medium |
 | URL | https://investors.rapportrx.com/news-releases/news-release-details/rapport-therapeutics-presents-rap-219-focal-onset-seizure-phase/ |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Phase 2a follow-up results showed sustained seizure and long-episode reductions.
+-
 
 ## Used In
 

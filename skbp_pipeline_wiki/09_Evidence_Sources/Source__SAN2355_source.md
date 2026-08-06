@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,15 +24,15 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.bioworld.com/articles/723481-jazz-gains-rights-to-sanionas-san-2355 |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Future pharma-backed same-target competitor; shows BD interest in Kv7.2/7.3 activation.
+-
 
 ## Used In
 
-- [[02_Assets/Asset__NS-041__NeuShen_NS-041|Asset__NS-041__NeuShen_NS-041]]
+- [[02_Assets/Asset__NS-041|Asset__NS-041]]
 - [[10_Scorecards/Scorecard__NS-041__20260623|Scorecard__NS-041__20260623]]
 
 ## Extracted Claims

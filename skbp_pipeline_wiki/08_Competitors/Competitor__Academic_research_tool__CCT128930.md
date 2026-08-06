@@ -6,8 +6,8 @@ aliases:
   - "CCT128930"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Provides structural proof of selective TRPM7 inhibition and druggable binding po
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7|Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7]]: Provides structural proof of selective TRPM7 inhibition and druggable binding pocket.
+- [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7|Small_Molecules_to_Antagonize_TRPM7]]: Provides structural proof of selective TRPM7 inhibition and druggable binding pocket.
 
 ## Sources
 

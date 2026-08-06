@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/company_registry"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | company_registry |
 | Reliability | medium |
 | URL | https://englishdart.fss.or.kr/dsbc001/selectPopup.ax?selectKey=01387164 |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
@@ -32,7 +32,7 @@ confidence: "medium"
 
 ## Used In
 
-- [[02_Assets/Asset__HY209_NuCerin__HY-209|Asset__HY209_NuCerin__HY-209]]
+- [[02_Assets/Asset__HY209_NuCerin|Asset__HY209_NuCerin]]
 - [[10_Scorecards/Scorecard__HY209_NuCerin__20260622|Scorecard__HY209_NuCerin__20260622]]
 
 ## Extracted Claims

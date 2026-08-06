@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_competitor_pipeline"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_competitor_pipeline |
 | Reliability | medium |
 | URL | https://www.uniqure.com/programs-pipeline/als-sod1 |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
@@ -32,7 +32,7 @@ AAV program discontinued after dose-limiting toxicity.
 
 ## Used In
 
-- [[02_Assets/Asset__GXC-303__GXC303|Asset__GXC-303__GXC303]]
+- [[02_Assets/Asset__GXC-303|Asset__GXC-303]]
 - [[10_Scorecards/Scorecard__GXC-303__20260713|Scorecard__GXC-303__20260713]]
 
 ## Extracted Claims

@@ -6,8 +6,8 @@ aliases:
   - "vivavision_biotech"
 tags:
   - "pipeline/company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -28,7 +28,7 @@ confidence: "medium"
 
 ## Pipeline Assets
 
-- [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7|Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7]]
+- [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7|Small_Molecules_to_Antagonize_TRPM7]]
 
 ## Platform / Technology
 

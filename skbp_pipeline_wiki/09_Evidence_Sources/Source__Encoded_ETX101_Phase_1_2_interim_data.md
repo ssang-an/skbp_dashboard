@@ -6,9 +6,9 @@ aliases:
   - "Encoded ETX101 Phase 1/2 interim data"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,14 +21,14 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
-| Reliability | high |
+| Source type | other |
+| Reliability | medium |
 | URL | https://encoded.com/press-releases/encoded-therapeutics-presents-positive-interim-efficacy-data-from-initial-dose-levels-of-phase-1-2-trials-evaluating-etx101-gene-therapy-in-dravet-syndrome/ |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Positive interim efficacy data from Phase 1/2 trials evaluating ETX101 in Dravet syndrome.
+-
 
 ## Used In
 

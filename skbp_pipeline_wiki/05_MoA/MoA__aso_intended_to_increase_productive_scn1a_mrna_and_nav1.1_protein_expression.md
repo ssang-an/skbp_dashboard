@@ -6,8 +6,8 @@ aliases:
   - "aso_intended_to_increase_productive_scn1a_mrna_and_nav1.1_protein_expression"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

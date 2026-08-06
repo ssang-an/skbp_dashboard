@@ -6,8 +6,8 @@ aliases:
   - "PRAX-628"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Same FOS disease competitor with different ion-channel MoA.
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__NS-041__NeuShen_NS-041|NS-041__NeuShen_NS-041]]: Same FOS disease competitor with different ion-channel MoA.
+- [[02_Assets/Asset__NS-041|NS-041]]: Same FOS disease competitor with different ion-channel MoA.
 
 ## Sources
 

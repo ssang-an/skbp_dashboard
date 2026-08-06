@@ -6,8 +6,8 @@ aliases:
   - "selective_p2x3_receptor_antagonism_intended_to_reduce_atp-mediated_airw_a0f471fe"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,7 +22,7 @@ confidence: "medium"
 
 ## Related Assets
 
-- [[02_Assets/Asset__WT-1108__WT1108|WT-1108__WT1108]]
+- [[02_Assets/Asset__WT-1108|WT-1108]]
 
 ## Related Targets / MoA
 

@@ -6,8 +6,8 @@ aliases:
   - "hy209_tdca_activates_gpcr19_tgr5_and_modulates_gpcr19-p2x7_interaction,_4c969749"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,7 +22,7 @@ confidence: "medium"
 
 ## Related Assets
 
-- [[02_Assets/Asset__HY209_NuCerin__HY-209|HY209_NuCerin__HY-209]]
+- [[02_Assets/Asset__HY209_NuCerin|HY209_NuCerin]]
 
 ## Related Targets / MoA
 

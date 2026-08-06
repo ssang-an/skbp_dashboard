@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,15 +24,15 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://ir.praxismedicines.com/news-releases/news-release-details/praxis-precision-medicines-provides-corporate-update-and-13 |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Same FOS disease competitor with different ion-channel MoA.
+-
 
 ## Used In
 
-- [[02_Assets/Asset__NS-041__NeuShen_NS-041|Asset__NS-041__NeuShen_NS-041]]
+- [[02_Assets/Asset__NS-041|Asset__NS-041]]
 - [[10_Scorecards/Scorecard__NS-041__20260623|Scorecard__NS-041__20260623]]
 
 ## Extracted Claims

@@ -6,8 +6,8 @@ aliases:
   - "Omvoh / mirikizumab"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Approved IL-23 IBD therapy; adds crowding to high-efficacy biologic market.
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__META-01_META-1i_MP-5342__META01|META-01_META-1i_MP-5342__META01]]: Approved IL-23 IBD therapy; adds crowding to high-efficacy biologic market.
+- [[02_Assets/Asset__META-01_META-1i_MP-5342|META-01_META-1i_MP-5342]]: Approved IL-23 IBD therapy; adds crowding to high-efficacy biologic market.
 
 ## Sources
 

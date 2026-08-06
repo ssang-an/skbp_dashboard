@@ -6,9 +6,9 @@ aliases:
   - "Lundbeck PACIFIC OLE bexicaserin results"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,14 +21,14 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
-| Reliability | high |
+| Source type | other |
+| Reliability | medium |
 | URL | https://www.lundbeck.com/us/newsroom/2025/lundbeck-announces-positive-results-from-12-month-open-label-ext |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-12-month open-label extension of PACIFIC showed sustained seizure reduction.
+-
 
 ## Used In
 

@@ -6,8 +6,8 @@ aliases:
   - "selective_kcnq2_3_activator;_modulates_m-current,_hyperpolarizes_neuron_889f7860"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,7 +22,7 @@ confidence: "medium"
 
 ## Related Assets
 
-- [[02_Assets/Asset__NS-041__NeuShen_NS-041|NS-041__NeuShen_NS-041]]
+- [[02_Assets/Asset__NS-041|NS-041]]
 
 ## Related Targets / MoA
 

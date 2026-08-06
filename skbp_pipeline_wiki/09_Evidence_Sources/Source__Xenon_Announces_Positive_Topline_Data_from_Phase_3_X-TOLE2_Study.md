@@ -6,9 +6,9 @@ aliases:
   - "Xenon Announces Positive Topline Data from Phase 3 X-TOLE2 Study"
 tags:
   - "pipeline/source"
-  - "source/official_company"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+  - "source/other"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -21,19 +21,19 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Source type | official_company |
-| Reliability | high |
+| Source type | other |
+| Reliability | medium |
 | URL | https://investor.xenon-pharma.com/news-releases/news-release-details/xenon-announces-positive-topline-data-phase-3-x-tole2-study |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
-Phase 3 X-TOLE2 positive topline data in focal onset seizures.
+-
 
 ## Used In
 
 - [[02_Assets/Asset__Azetukalner_XEN1101|Asset__Azetukalner_XEN1101]]
-- [[02_Assets/Asset__NS-041__NeuShen_NS-041|Asset__NS-041__NeuShen_NS-041]]
+- [[02_Assets/Asset__NS-041|Asset__NS-041]]
 - [[10_Scorecards/Scorecard__Azetukalner_XEN1101__20260623|Scorecard__Azetukalner_XEN1101__20260623]]
 - [[10_Scorecards/Scorecard__NS-041__20260623|Scorecard__NS-041__20260623]]
 

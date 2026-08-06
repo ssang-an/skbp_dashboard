@@ -6,12 +6,12 @@ aliases:
   - "QRL-201"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
-confidence: "low"
+confidence: "medium"
 ---
 
 # QRL-201
@@ -33,8 +33,8 @@ confidence: "low"
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__GXC-303__GXC303|GXC-303__GXC303]]: 유일한 명확한 same-target front-runner로 human target engagement, biomarker 및 ALSFRS-R signal을 공개.
+- [[02_Assets/Asset__GXC-303|GXC-303]]: 유일한 명확한 same-target front-runner로 human target engagement, biomarker 및 ALSFRS-R signal을 공개.
 
 ## Sources
 
-- No URL provided
+- https://www.quralis.com/news/quralis-demonstrates-effects-on-disease-progression-and-target-engagement-in-anqur-clinical-trial-of-qrl-201-a-first-in-class-precision-medicine-in-development-for-sporadic-als/

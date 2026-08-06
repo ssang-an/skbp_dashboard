@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/market"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | market |
 | Reliability | medium |
 | URL | https://www.alz.org/alzheimers-dementia/facts-figures |
-| Accessed / generated date | 2026-08-02 |
+| Accessed / generated date | 2026-08-06 |
 
 ## Evidence Summary
 
@@ -32,10 +32,8 @@ confidence: "medium"
 
 ## Used In
 
-- [[02_Assets/Asset__HY209_NuCerin__HY-209|Asset__HY209_NuCerin__HY-209]]
-- [[02_Assets/Asset__ILM01_GAIA-Aβ__GAIA-Aβ|Asset__ILM01_GAIA-Aβ__GAIA-Aβ]]
+- [[02_Assets/Asset__HY209_NuCerin|Asset__HY209_NuCerin]]
 - [[10_Scorecards/Scorecard__HY209_NuCerin__20260622|Scorecard__HY209_NuCerin__20260622]]
-- [[10_Scorecards/Scorecard__ILM01_GAIA-Aβ__20260621|Scorecard__ILM01_GAIA-Aβ__20260621]]
 
 ## Extracted Claims
 

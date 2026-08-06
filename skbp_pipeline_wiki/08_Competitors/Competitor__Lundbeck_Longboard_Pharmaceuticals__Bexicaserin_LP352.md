@@ -6,8 +6,8 @@ aliases:
   - "Bexicaserin / LP352"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Broader DEE seizure competitor; advanced stage may influence clinical benchmarks
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__ABS-1230__Actio_ABS-1230|ABS-1230__Actio_ABS-1230]]: Broader DEE seizure competitor; advanced stage may influence clinical benchmarks and payer expectations.
+- [[02_Assets/Asset__ABS-1230|ABS-1230]]: Broader DEE seizure competitor; advanced stage may influence clinical benchmarks and payer expectations.
 
 ## Sources
 

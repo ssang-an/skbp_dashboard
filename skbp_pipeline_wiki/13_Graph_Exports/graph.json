@@ -1,13 +1,13 @@
 {
   "nodes": [
     {
-      "id": "asset::ilm01_gaia-aβ",
-      "label": "ILM01 / GAIA-Aβ",
+      "id": "asset::ilm01_(gaia-aβ)",
+      "label": "ILM01 (GAIA-Aβ)",
       "type": "asset",
-      "title": "Asset__ILM01_GAIA-Aβ__GAIA-Aβ",
+      "title": "Asset__ILM01_(GAIA-Aβ)",
       "tags": "pipeline/asset;theme/neuroimmune",
       "score": 15,
-      "recommendation": "Watch",
+      "recommendation": "Shortlist",
       "evidence_level": "E3"
     },
     {
@@ -21,40 +21,40 @@
       "evidence_level": ""
     },
     {
-      "id": "target::aβ_aggregates_with_tam_receptor-mediated_clearance_biology",
-      "label": "Aβ aggregates with TAM receptor-mediated clearance biology",
+      "id": "target::amyloid-β,_especially_oligomeric_aβ;_tam_receptors_tyro3_axl_mertk_as_t_ba5985eb",
+      "label": "Amyloid-β, especially oligomeric Aβ; TAM receptors Tyro3/Axl/MerTK as the effector axis",
       "type": "target",
-      "title": "Target__Aβ_aggregates_with_TAM_receptor-mediated_clearance_biology",
+      "title": "Target__Amyloid-β,_especially_oligomeric_Aβ;_TAM_receptors_Tyro3_Axl_MerTK_as_t_ba5985eb",
       "tags": "pipeline/target",
       "score": "",
       "recommendation": "",
       "evidence_level": ""
     },
     {
-      "id": "moa::aβ_binder와_engineered_gas6_tam_receptor_binder를_결합해_aβ_aggregates와_tam_1a0a75c6",
-      "label": "Aβ binder와 engineered Gas6 TAM receptor binder를 결합해 Aβ aggregates와 TAM receptors를 동시에 결합하고 microglia/astrocyte phagocytosis를 유도하여 FcγR-mediated inflammation과 ARIA-relevant inflammatory response를 낮추는 전략.",
+      "id": "moa::aβ_binding_plus_engineered_gas6-mediated_tam_receptor_clustering_activa_103fe530",
+      "label": "Aβ binding plus engineered GAS6-mediated TAM receptor clustering activates efferocytosis/phagocytosis in glia while using an effector-silenced Fc to reduce FcγR-driven inflammatory signaling.",
       "type": "moa",
-      "title": "MoA__Aβ_binder와_engineered_Gas6_TAM_receptor_binder를_결합해_Aβ_aggregates와_TAM_1a0a75c6",
+      "title": "MoA__Aβ_binding_plus_engineered_GAS6-mediated_TAM_receptor_clustering_activa_103fe530",
       "tags": "pipeline/moa",
       "score": "",
       "recommendation": "",
       "evidence_level": ""
     },
     {
-      "id": "modality::biologic_bispecific-like_chimeric_fusion_protein;_gaia_platform",
-      "label": "Biologic / bispecific-like chimeric fusion protein; GAIA platform",
+      "id": "modality::protein_biologic",
+      "label": "Protein biologic",
       "type": "modality",
-      "title": "Modality__Biologic_bispecific-like_chimeric_fusion_protein;_GAIA_platform",
+      "title": "Modality__Protein_biologic",
       "tags": "pipeline/modality",
       "score": "",
       "recommendation": "",
       "evidence_level": ""
     },
     {
-      "id": "indication::alzheimer's_disease",
-      "label": "Alzheimer's disease",
+      "id": "indication::early_symptomatic_alzheimer's_disease;_exact_intended_clinical_populati_44d70da0",
+      "label": "Early symptomatic Alzheimer's disease; exact intended clinical population has not been publicly finalized",
       "type": "indication",
-      "title": "Indication__Alzheimer's_disease",
+      "title": "Indication__Early_symptomatic_Alzheimer's_disease;_exact_intended_clinical_populati_44d70da0",
       "tags": "pipeline/indication",
       "score": "",
       "recommendation": "",
@@ -81,151 +81,151 @@
       "evidence_level": ""
     },
     {
-      "id": "scorecard::ilm01_gaia-aβ_20260621",
-      "label": "Scorecard - ILM01 / GAIA-Aβ",
+      "id": "scorecard::ilm01_(gaia-aβ)_20260806",
+      "label": "Scorecard - ILM01 (GAIA-Aβ)",
       "type": "scorecard",
-      "title": "Scorecard__ILM01_GAIA-Aβ__20260621",
+      "title": "Scorecard__ILM01_(GAIA-Aβ)__20260806",
       "tags": "pipeline/scorecard",
       "score": 15,
-      "recommendation": "Watch",
+      "recommendation": "Shortlist",
       "evidence_level": "E3"
     },
     {
-      "id": "competitor::eisai_biogen_leqembi_lecanemab",
-      "label": "Leqembi / lecanemab",
+      "id": "competitor::eisai_biogen_leqembi_(lecanemab)",
+      "label": "Leqembi (lecanemab)",
       "type": "competitor",
-      "title": "Competitor__Eisai_Biogen__Leqembi_lecanemab",
+      "title": "Competitor__Eisai_Biogen__Leqembi_(lecanemab)",
       "tags": "pipeline/competitor",
       "score": "",
       "recommendation": "",
       "evidence_level": ""
     },
     {
-      "id": "competitor::eli_lilly_kisunla_donanemab",
-      "label": "Kisunla / donanemab",
+      "id": "competitor::eli_lilly_kisunla_(donanemab)",
+      "label": "Kisunla (donanemab)",
       "type": "competitor",
-      "title": "Competitor__Eli_Lilly__Kisunla_donanemab",
+      "title": "Competitor__Eli_Lilly__Kisunla_(donanemab)",
       "tags": "pipeline/competitor",
       "score": "",
       "recommendation": "",
       "evidence_level": ""
     },
     {
-      "id": "competitor::eli_lilly_remternetug_ly3372993",
-      "label": "Remternetug / LY3372993",
+      "id": "competitor::eli_lilly_remternetug_(ly3372993)",
+      "label": "Remternetug (LY3372993)",
       "type": "competitor",
-      "title": "Competitor__Eli_Lilly__Remternetug_LY3372993",
+      "title": "Competitor__Eli_Lilly__Remternetug_(LY3372993)",
       "tags": "pipeline/competitor",
       "score": "",
       "recommendation": "",
       "evidence_level": ""
     },
     {
-      "id": "competitor::biogen_eisai_historical_program_aduhelm_aducanumab",
-      "label": "Aduhelm / aducanumab",
+      "id": "competitor::roche_trontinemab",
+      "label": "Trontinemab",
       "type": "competitor",
-      "title": "Competitor__Biogen_Eisai_historical_program__Aduhelm_aducanumab",
+      "title": "Competitor__Roche__Trontinemab",
       "tags": "pipeline/competitor",
       "score": "",
       "recommendation": "",
       "evidence_level": ""
     },
     {
-      "id": "competitor::inmune_bio_xpro1595_xpro",
-      "label": "XPro1595 / XPro",
+      "id": "competitor::acumen_pharmaceuticals_sabirnetug_(acu193)",
+      "label": "Sabirnetug (ACU193)",
       "type": "competitor",
-      "title": "Competitor__INmune_Bio__XPro1595_XPro",
+      "title": "Competitor__Acumen_Pharmaceuticals__Sabirnetug_(ACU193)",
       "tags": "pipeline/competitor",
       "score": "",
       "recommendation": "",
       "evidence_level": ""
     },
     {
-      "id": "competitor::biogen_ionis_diranersen_biib080",
-      "label": "Diranersen / BIIB080",
-      "type": "competitor",
-      "title": "Competitor__Biogen_Ionis__Diranersen_BIIB080",
-      "tags": "pipeline/competitor",
+      "id": "source::illimis_therapeutics_company_intro_ncdp_202601_skbp_share",
+      "label": "Illimis Therapeutics Company Intro_NCDP_202601_SKBP_share",
+      "type": "source",
+      "title": "Source__Illimis_Therapeutics_Company_Intro_NCDP_202601_SKBP_share",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
-      "evidence_level": ""
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_illimistx.com_en",
+      "label": "Illimis Therapeutics official website",
+      "type": "source",
+      "title": "Source__Illimis_Therapeutics_official_website",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
     },
     {
       "id": "source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php",
-      "label": "Illimis official pipeline page",
+      "label": "Illimis Therapeutics official pipeline",
       "type": "source",
-      "title": "Source__Illimis_official_pipeline_page",
-      "tags": "pipeline/source;source/official_company",
+      "title": "Source__Illimis_Therapeutics_official_pipeline",
+      "tags": "pipeline/source;source/official_company_pipeline",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
     },
     {
       "id": "source::https_illimistx.com_en_sub_platform%26pipeline_platform.php",
-      "label": "Illimis official platform page",
+      "label": "Illimis Therapeutics GAIA platform",
       "type": "source",
-      "title": "Source__Illimis_official_platform_page",
-      "tags": "pipeline/source;source/official_company",
+      "title": "Source__Illimis_Therapeutics_GAIA_platform",
+      "tags": "pipeline/source;source/official_company_platform",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=282&mod_5a2ae7b8",
+      "label": "Illimis Therapeutics $42M Series B press release",
+      "type": "source",
+      "title": "Source__Illimis_Therapeutics_$42M_Series_B_press_release",
+      "tags": "pipeline/source;source/official_company_press_release",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_illimistx.com_en_sub_platform%26pipeline_conference.php",
+      "label": "Illimis Therapeutics conference presentations",
+      "type": "source",
+      "title": "Source__Illimis_Therapeutics_conference_presentations",
+      "tags": "pipeline/source;source/official_company_conference_page",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_illimistx.com_data_aaic%202025_abstract_illimistx.pdf",
+      "label": "AAIC 2025 GAIA-Aβ abstract",
+      "type": "source",
+      "title": "Source__AAIC_2025_GAIA-Aβ_abstract",
+      "tags": "pipeline/source;source/conference_abstract",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
     },
     {
       "id": "source::https_www.nature.com_articles_s41591-022-01926-9",
-      "label": "Nature Medicine αAβ-Gas6 paper",
+      "label": "Anti-inflammatory clearance of amyloid-β by a chimeric Gas6 fusion protein",
       "type": "source",
-      "title": "Source__Nature_Medicine_αAβ-Gas6_paper",
-      "tags": "pipeline/source;source/publication",
+      "title": "Source__Anti-inflammatory_clearance_of_amyloid-β_by_a_chimeric_Gas6_fusion_protein",
+      "tags": "pipeline/source;source/peer_reviewed_publication",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
     },
     {
-      "id": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_ef80b277",
-      "label": "AI draft search note",
+      "id": "source::https_www.biospectator.com_news_view_28887",
+      "label": "BioSpectator interview on ILM01 preclinical program and planned 2027 clinical entry",
       "type": "source",
-      "title": "Source__AI_draft_search_note",
-      "tags": "pipeline/source;source/other",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::ai_draft_search_note",
-      "label": "AI draft search note",
-      "type": "source",
-      "title": "Source__AI_draft_search_note",
-      "tags": "pipeline/source;source/other",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_pure.kaist.ac.kr_en_publications_anti-inflammatory-clearance-of-a_4ffde966",
-      "label": "KAIST Pure publication record",
-      "type": "source",
-      "title": "Source__KAIST_Pure_publication_record",
-      "tags": "pipeline/source;source/publication",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_www.illimistx.com_data_poster_illimis_keystone2022.pdf",
-      "label": "Illimis Keystone 2022 poster",
-      "type": "source",
-      "title": "Source__Illimis_Keystone_2022_poster",
-      "tags": "pipeline/source;source/publication",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_www.biospectator.com_news_view_25729",
-      "label": "BioSpectator Series B/stage article",
-      "type": "source",
-      "title": "Source__BioSpectator_Series_B_stage_article",
-      "tags": "pipeline/source;source/news",
+      "title": "Source__BioSpectator_interview_on_ILM01_preclinical_program_and_planned_2027_cl_e077b90f",
+      "tags": "pipeline/source;source/biotech_news",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
@@ -252,20 +252,50 @@
     },
     {
       "id": "source::https_trials.lilly.com_en-us_trial_548297",
-      "label": "Lilly Remternetug Phase III trial",
+      "label": "Lilly TRAILRUNNER-ALZ 3 remternetug trial",
       "type": "source",
-      "title": "Source__Lilly_Remternetug_Phase_III_trial",
-      "tags": "pipeline/source;source/clinical_trial_registry",
+      "title": "Source__Lilly_TRAILRUNNER-ALZ_3_remternetug_trial",
+      "tags": "pipeline/source;source/clinical_registry_sponsor",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
     },
     {
-      "id": "source::https_www.alz.org_alzheimers-dementia_facts-figures",
-      "label": "Alzheimer's Association Facts and Figures",
+      "id": "source::https_clinicaltrials.gov_study_nct07169578",
+      "label": "ClinicalTrials.gov trontinemab Phase 3 study NCT07169578",
       "type": "source",
-      "title": "Source__Alzheimer's_Association_Facts_and_Figures",
-      "tags": "pipeline/source;source/market",
+      "title": "Source__ClinicalTrials.gov_trontinemab_Phase_3_study_NCT07169578",
+      "tags": "pipeline/source;source/clinical_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_acumenpharm.com_altitude-ad",
+      "label": "Acumen ALTITUDE-AD sabirnetug study",
+      "type": "source",
+      "title": "Source__Acumen_ALTITUDE-AD_sabirnetug_study",
+      "tags": "pipeline/source;source/official_company_trial_page",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_trc2.70251",
+      "label": "Alzheimer's disease drug development pipeline: 2026",
+      "type": "source",
+      "title": "Source__Alzheimer's_disease_drug_development_pipeline_2026",
+      "tags": "pipeline/source;source/peer_reviewed_review",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_dad2.12497",
+      "label": "Estimating prevalence of early symptomatic Alzheimer's disease in the United States",
+      "type": "source",
+      "title": "Source__Estimating_prevalence_of_early_symptomatic_Alzheimer's_disease_in_the_U_65d8288f",
+      "tags": "pipeline/source;source/peer_reviewed_epidemiology",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
@@ -281,81 +311,21 @@
       "evidence_level": "E3"
     },
     {
-      "id": "source::https_www.biopharmadive.com_news_lilly-alzheimers-drug-fda-approval-kis_3067c15c",
-      "label": "Kisunla pricing",
+      "id": "source::https_investor.lilly.com_news-releases_news-release-details_lillys-kisu_5dbfd133",
+      "label": "Lilly Kisunla approval and limited-duration treatment cost",
       "type": "source",
-      "title": "Source__Kisunla_pricing",
-      "tags": "pipeline/source;source/market",
+      "title": "Source__Lilly_Kisunla_approval_and_limited-duration_treatment_cost",
+      "tags": "pipeline/source;source/official_company_pricing",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
     },
     {
-      "id": "source::https_investors.biogen.com_news-releases_news-release-details_biogen-re_2170daf2",
-      "label": "Aduhelm / aducanumab source",
+      "id": "source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_55918ed3",
+      "label": "2026 Alzheimer's Disease Facts and Figures",
       "type": "source",
-      "title": "Source__Aduhelm_aducanumab_source",
-      "tags": "pipeline/source;source/other",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_www.inmunebio.com_index.php_newsroom_2026-news_muneionnounceslign_d59db4fe",
-      "label": "XPro1595 / XPro source",
-      "type": "source",
-      "title": "Source__XPro1595_XPro_source",
-      "tags": "pipeline/source;source/other",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_investors.biogen.com_news-releases_news-release-details_topline-r_3daa3724",
-      "label": "Diranersen / BIIB080 source",
-      "type": "source",
-      "title": "Source__Diranersen_BIIB080_source",
-      "tags": "pipeline/source;source/other",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::ai_draft_evidence_note",
-      "label": "AI draft evidence note",
-      "type": "source",
-      "title": "Source__AI_draft_evidence_note",
-      "tags": "pipeline/source;source/other",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_www.koreabiomed.com_news_articleview.html_idxno=29100",
-      "label": "https://www.koreabiomed.com/news/articleView.html?idxno=29100",
-      "type": "source",
-      "title": "Source__https_www.koreabiomed.com_news_articleView.html_idxno=29100",
-      "tags": "pipeline/source;source/other",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_www.mk.co.kr_en_it_11981980",
-      "label": "https://www.mk.co.kr/en/it/11981980",
-      "type": "source",
-      "title": "Source__https_www.mk.co.kr_en_it_11981980",
-      "tags": "pipeline/source;source/other",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_snu.elsevierpure.com_en_publications_eligibility-for-lecanemab-an_9c2ffbd8",
-      "label": "https://snu.elsevierpure.com/en/publications/eligibility-for-lecanemab-and-donanemab-in-korea-under-appropriat/",
-      "type": "source",
-      "title": "Source__https_snu.elsevierpure.com_en_publications_eligibility-for-lecanemab-an_9c2ffbd8",
-      "tags": "pipeline/source;source/other",
+      "title": "Source__2026_Alzheimer's_Disease_Facts_and_Figures",
+      "tags": "pipeline/source;source/epidemiology_report",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
@@ -364,7 +334,7 @@
       "id": "asset::wt-1108",
       "label": "WT-1108",
       "type": "asset",
-      "title": "Asset__WT-1108__WT1108",
+      "title": "Asset__WT-1108",
       "tags": "pipeline/asset;theme/no_theme",
       "score": 8,
       "recommendation": "Watch",
@@ -515,7 +485,7 @@
       "label": "Westan products page",
       "type": "source",
       "title": "Source__Westan_products_page",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E2"
@@ -734,7 +704,7 @@
       "id": "asset::ux-ep001_uxep-001",
       "label": "UX-EP001 / UXEP-001",
       "type": "asset",
-      "title": "Asset__UX-EP001_UXEP-001__UX-EP001",
+      "title": "Asset__UX-EP001_UXEP-001",
       "tags": "pipeline/asset;theme/e_i_balance",
       "score": 5,
       "recommendation": "Deprioritize",
@@ -994,7 +964,7 @@
       "id": "asset::lnk01006_blkr201",
       "label": "LNK01006 / BLKR201",
       "type": "asset",
-      "title": "Asset__LNK01006_BLKR201__LNK01006",
+      "title": "Asset__LNK01006_BLKR201",
       "tags": "pipeline/asset;theme/neuroimmune",
       "score": 14,
       "recommendation": "Shortlist",
@@ -1135,7 +1105,7 @@
       "label": "Lynk FDA IND announcement",
       "type": "source",
       "title": "Source__Lynk_FDA_IND_announcement",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
@@ -1294,7 +1264,7 @@
       "id": "asset::small_molecules_to_antagonize_trpm7",
       "label": "Small Molecules to Antagonize TRPM7",
       "type": "asset",
-      "title": "Asset__Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7",
+      "title": "Asset__Small_Molecules_to_Antagonize_TRPM7",
       "tags": "pipeline/asset;theme/e_i_balance",
       "score": 11,
       "recommendation": "Watch",
@@ -1445,7 +1415,7 @@
       "label": "Viva BioInnovator portfolio: Viva Vision",
       "type": "source",
       "title": "Source__Viva_BioInnovator_portfolio_Viva_Vision",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E2"
@@ -1634,7 +1604,7 @@
       "id": "asset::hy209_nucerin",
       "label": "HY209 / NuCerin",
       "type": "asset",
-      "title": "Asset__HY209_NuCerin__HY-209",
+      "title": "Asset__HY209_NuCerin",
       "tags": "pipeline/asset;theme/neuroimmune",
       "score": 16,
       "recommendation": "Watch",
@@ -1711,6 +1681,16 @@
       "evidence_level": ""
     },
     {
+      "id": "competitor::eli_lilly_kisunla_donanemab",
+      "label": "Kisunla / donanemab",
+      "type": "competitor",
+      "title": "Competitor__Eli_Lilly__Kisunla_donanemab",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
       "id": "competitor::nodthera_nt-0796",
       "label": "NT-0796",
       "type": "competitor",
@@ -1755,7 +1735,7 @@
       "label": "Shaperon official pipeline page",
       "type": "source",
       "title": "Source__Shaperon_official_pipeline_page",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
@@ -1801,6 +1781,16 @@
       "evidence_level": "E3"
     },
     {
+      "id": "source::ai_draft_search_note",
+      "label": "AI draft search note",
+      "type": "source",
+      "title": "Source__AI_draft_search_note",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
       "id": "source::https_englishdart.fss.or.kr_dsbc001_selectpopup.ax_selectkey=01387164",
       "label": "DART Shaperon company profile",
       "type": "source",
@@ -1825,6 +1815,16 @@
       "label": "WHO dementia fact sheet",
       "type": "source",
       "title": "Source__WHO_dementia_fact_sheet",
+      "tags": "pipeline/source;source/market",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.alz.org_alzheimers-dementia_facts-figures",
+      "label": "Alzheimer's Association Facts and Figures",
+      "type": "source",
+      "title": "Source__Alzheimer's_Association_Facts_and_Figures",
       "tags": "pipeline/source;source/market",
       "score": "",
       "recommendation": "",
@@ -1954,7 +1954,7 @@
       "id": "asset::meta-01_meta-1i_mp-5342",
       "label": "META-01 / META-1i / MP-5342",
       "type": "asset",
-      "title": "Asset__META-01_META-1i_MP-5342__META01",
+      "title": "Asset__META-01_META-1i_MP-5342",
       "tags": "pipeline/asset;theme/neuroimmune",
       "score": 11,
       "recommendation": "Watch",
@@ -2115,7 +2115,7 @@
       "label": "META Pharmaceuticals official homepage",
       "type": "source",
       "title": "Source__META_Pharmaceuticals_official_homepage",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E2"
@@ -2414,7 +2414,7 @@
       "id": "asset::ns-041",
       "label": "NS-041",
       "type": "asset",
-      "title": "Asset__NS-041__NeuShen_NS-041",
+      "title": "Asset__NS-041",
       "tags": "pipeline/asset;theme/e_i_balance",
       "score": 14,
       "recommendation": "Watch",
@@ -2555,7 +2555,7 @@
       "label": "NeuShen NS-041 NMPA CDE IND approval",
       "type": "source",
       "title": "Source__NeuShen_NS-041_NMPA_CDE_IND_approval",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -2655,7 +2655,7 @@
       "label": "Xenon Announces Positive Topline Data from Phase 3 X-TOLE2 Study",
       "type": "source",
       "title": "Source__Xenon_Announces_Positive_Topline_Data_from_Phase_3_X-TOLE2_Study",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -2665,7 +2665,7 @@
       "label": "Biohaven Kv7 Ion Channel Modulation Platform",
       "type": "source",
       "title": "Source__Biohaven_Kv7_Ion_Channel_Modulation_Platform",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -3005,7 +3005,7 @@
       "label": "QurAlis Phase 1 QRL-101 AES 2025 announcement",
       "type": "source",
       "title": "Source__QurAlis_Phase_1_QRL-101_AES_2025_announcement",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -3055,7 +3055,7 @@
       "label": "Jazz Pharmaceuticals enters exclusive licensing agreement for SAN2355",
       "type": "source",
       "title": "Source__Jazz_Pharmaceuticals_enters_exclusive_licensing_agreement_for_SAN2355",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -3125,7 +3125,7 @@
       "label": "Rapport RAP-219 Phase 2a follow-up results",
       "type": "source",
       "title": "Source__Rapport_RAP-219_Phase_2a_follow-up_results",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -3144,7 +3144,7 @@
       "id": "asset::abs-1230",
       "label": "ABS-1230",
       "type": "asset",
-      "title": "Asset__ABS-1230__Actio_ABS-1230",
+      "title": "Asset__ABS-1230",
       "tags": "pipeline/asset;theme/e_i_balance",
       "score": 15,
       "recommendation": "Shortlist",
@@ -3205,7 +3205,7 @@
       "label": "ABS-1230 first participant dosed Phase 1",
       "type": "source",
       "title": "Source__ABS-1230_first_participant_dosed_Phase_1",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/official_company",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3295,7 +3295,7 @@
       "label": "Stoke Phase 3 EMPEROR timeline update",
       "type": "source",
       "title": "Source__Stoke_Phase_3_EMPEROR_timeline_update",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -3385,7 +3385,7 @@
       "label": "Encoded ETX101 Phase 1/2 interim data",
       "type": "source",
       "title": "Source__Encoded_ETX101_Phase_1_2_interim_data",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -3465,7 +3465,7 @@
       "label": "Lundbeck PACIFIC OLE bexicaserin results",
       "type": "source",
       "title": "Source__Lundbeck_PACIFIC_OLE_bexicaserin_results",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -3535,7 +3535,7 @@
       "label": "Bright Minds initiates Phase 2 BREAKTHROUGH study",
       "type": "source",
       "title": "Source__Bright_Minds_initiates_Phase_2_BREAKTHROUGH_study",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -3645,7 +3645,7 @@
       "label": "Actio Biosciences Programs",
       "type": "source",
       "title": "Source__Actio_Biosciences_Programs",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3685,7 +3685,7 @@
       "label": "Actio Biosciences homepage",
       "type": "source",
       "title": "Source__Actio_Biosciences_homepage",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/official_company",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3695,7 +3695,7 @@
       "label": "Actio Biosciences About",
       "type": "source",
       "title": "Source__Actio_Biosciences_About",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/official_company",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3705,7 +3705,7 @@
       "label": "Actio Biosciences Approach",
       "type": "source",
       "title": "Source__Actio_Biosciences_Approach",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/official_company",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3715,7 +3715,7 @@
       "label": "Actio Series B financing",
       "type": "source",
       "title": "Source__Actio_Series_B_financing",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/news",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3725,7 +3725,7 @@
       "label": "Actio Series A financing",
       "type": "source",
       "title": "Source__Actio_Series_A_financing",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/news",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3735,7 +3735,7 @@
       "label": "ClinicalTrials.gov NCT07156201",
       "type": "source",
       "title": "Source__ClinicalTrials.gov_NCT07156201",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/clinical_trial_registry",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3755,7 +3755,7 @@
       "label": "GeneReviews KCNT1-related epilepsy",
       "type": "source",
       "title": "Source__GeneReviews_KCNT1-related_epilepsy",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/publication",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3775,7 +3775,7 @@
       "label": "Servier S230815 KANDLE trial",
       "type": "source",
       "title": "Source__Servier_S230815_KANDLE_trial",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/clinical_trial_registry",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3785,7 +3785,7 @@
       "label": "Atalanta ATL-201 preclinical data",
       "type": "source",
       "title": "Source__Atalanta_ATL-201_preclinical_data",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/official_company",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3795,7 +3795,7 @@
       "label": "Lundbeck bexicaserin Phase 3 program",
       "type": "source",
       "title": "Source__Lundbeck_bexicaserin_Phase_3_program",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/news",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3805,7 +3805,7 @@
       "label": "ClinicalTrials.gov NCT06719141 bexicaserin",
       "type": "source",
       "title": "Source__ClinicalTrials.gov_NCT06719141_bexicaserin",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/clinical_trial_registry",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3815,7 +3815,7 @@
       "label": "FINTEPLA pricing information",
       "type": "source",
       "title": "Source__FINTEPLA_pricing_information",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/market",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3825,7 +3825,7 @@
       "label": "ICER 2025 Launch Price and Access Report",
       "type": "source",
       "title": "Source__ICER_2025_Launch_Price_and_Access_Report",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/market",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3835,7 +3835,7 @@
       "label": "Marinus ZTALMY FDA approval",
       "type": "source",
       "title": "Source__Marinus_ZTALMY_FDA_approval",
-      "tags": "pipeline/source;source/other",
+      "tags": "pipeline/source;source/regulatory",
       "score": "",
       "recommendation": "",
       "evidence_level": "E4"
@@ -3975,7 +3975,7 @@
       "label": "Westan Pharma official site",
       "type": "source",
       "title": "Source__Westan_Pharma_official_site",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -4065,7 +4065,7 @@
       "label": "Source URL not provided",
       "type": "source",
       "title": "Source__Source_URL_not_provided",
-      "tags": "pipeline/source;source/source_url_not_provided",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -4205,7 +4205,7 @@
       "label": "Harbour BioMed official website",
       "type": "source",
       "title": "Source__Harbour_BioMed_official_website",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -4325,7 +4325,7 @@
       "label": "HealthBiome official site",
       "type": "source",
       "title": "Source__HealthBiome_official_site",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -4485,7 +4485,7 @@
       "label": "HealZen official site",
       "type": "source",
       "title": "Source__HealZen_official_site",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -4565,7 +4565,7 @@
       "label": "Hebei Normal University official site",
       "type": "source",
       "title": "Source__Hebei_Normal_University_official_site",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -4625,7 +4625,7 @@
       "label": "HEC Pharm official site",
       "type": "source",
       "title": "Source__HEC_Pharm_official_site",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -4745,7 +4745,7 @@
       "label": "Humanwell official site",
       "type": "source",
       "title": "Source__Humanwell_official_site",
-      "tags": "pipeline/source;source/official_company",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -4774,7 +4774,7 @@
       "id": "asset::gxc-303",
       "label": "GXC-303",
       "type": "asset",
-      "title": "Asset__GXC-303__GXC303",
+      "title": "Asset__GXC-303",
       "tags": "pipeline/asset;theme/no_theme",
       "score": 11,
       "recommendation": "Deprioritize",
@@ -5083,396 +5083,361 @@
   ],
   "edges": [
     {
-      "source": "asset::ilm01_gaia-aβ",
+      "source": "asset::ilm01_(gaia-aβ)",
       "target": "company::illimis_therapeutics",
       "relationship": "OWNED_BY",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Scorecard__ILM01_(GAIA-Aβ)__20260806"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "target::aβ_aggregates_with_tam_receptor-mediated_clearance_biology",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "target::amyloid-β,_especially_oligomeric_aβ;_tam_receptors_tyro3_axl_mertk_as_t_ba5985eb",
       "relationship": "TARGETS",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Scorecard__ILM01_(GAIA-Aβ)__20260806"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "moa::aβ_binder와_engineered_gas6_tam_receptor_binder를_결합해_aβ_aggregates와_tam_1a0a75c6",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "moa::aβ_binding_plus_engineered_gas6-mediated_tam_receptor_clustering_activa_103fe530",
       "relationship": "HAS_MOA",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Scorecard__ILM01_(GAIA-Aβ)__20260806"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "modality::biologic_bispecific-like_chimeric_fusion_protein;_gaia_platform",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "modality::protein_biologic",
       "relationship": "HAS_MODALITY",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Scorecard__ILM01_(GAIA-Aβ)__20260806"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "indication::alzheimer's_disease",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "indication::early_symptomatic_alzheimer's_disease;_exact_intended_clinical_populati_44d70da0",
       "relationship": "HAS_INDICATION",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Scorecard__ILM01_(GAIA-Aβ)__20260806"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
+      "source": "asset::ilm01_(gaia-aβ)",
       "target": "theme::neuroimmune",
       "relationship": "MAPS_TO_THEME",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Scorecard__ILM01_(GAIA-Aβ)__20260806"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
+      "source": "asset::ilm01_(gaia-aβ)",
       "target": "cluster::교세포_향상성",
       "relationship": "MAPS_TO_CLUSTER",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Scorecard__ILM01_(GAIA-Aβ)__20260806"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "scorecard::ilm01_gaia-aβ_20260621",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "scorecard::ilm01_(gaia-aβ)_20260806",
       "relationship": "HAS_SCORECARD",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Scorecard__ILM01_(GAIA-Aβ)__20260806"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "competitor::eisai_biogen_leqembi_lecanemab",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "competitor::eisai_biogen_leqembi_(lecanemab)",
       "relationship": "HAS_COMPETITOR",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Scorecard__ILM01_(GAIA-Aβ)__20260806"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "competitor::eli_lilly_kisunla_donanemab",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "competitor::eli_lilly_kisunla_(donanemab)",
       "relationship": "HAS_COMPETITOR",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Scorecard__ILM01_(GAIA-Aβ)__20260806"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "competitor::eli_lilly_remternetug_ly3372993",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "competitor::eli_lilly_remternetug_(ly3372993)",
       "relationship": "HAS_COMPETITOR",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Scorecard__ILM01_(GAIA-Aβ)__20260806"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "competitor::biogen_eisai_historical_program_aduhelm_aducanumab",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "competitor::roche_trontinemab",
       "relationship": "HAS_COMPETITOR",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Scorecard__ILM01_(GAIA-Aβ)__20260806"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "competitor::inmune_bio_xpro1595_xpro",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "competitor::acumen_pharmaceuticals_sabirnetug_(acu193)",
       "relationship": "HAS_COMPETITOR",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Scorecard__ILM01_(GAIA-Aβ)__20260806"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "competitor::biogen_ionis_diranersen_biib080",
-      "relationship": "HAS_COMPETITOR",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "source::illimis_therapeutics_company_intro_ncdp_202601_skbp_share",
+      "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Scorecard__ILM01_GAIA-Aβ__20260621"
+      "source_note": "Source__Illimis_Therapeutics_Company_Intro_NCDP_202601_SKBP_share"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
+      "target": "source::illimis_therapeutics_company_intro_ncdp_202601_skbp_share",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Illimis_Therapeutics_Company_Intro_NCDP_202601_SKBP_share"
+    },
+    {
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "source::https_illimistx.com_en",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Illimis_Therapeutics_official_website"
+    },
+    {
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
+      "target": "source::https_illimistx.com_en",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Illimis_Therapeutics_official_website"
+    },
+    {
+      "source": "asset::ilm01_(gaia-aβ)",
       "target": "source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Illimis_official_pipeline_page"
+      "source_note": "Source__Illimis_Therapeutics_official_pipeline"
     },
     {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
       "target": "source::https_illimistx.com_en_sub_platform%26pipeline_pipeline.php",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Illimis_official_pipeline_page"
+      "source_note": "Source__Illimis_Therapeutics_official_pipeline"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
+      "source": "asset::ilm01_(gaia-aβ)",
       "target": "source::https_illimistx.com_en_sub_platform%26pipeline_platform.php",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Illimis_official_platform_page"
+      "source_note": "Source__Illimis_Therapeutics_GAIA_platform"
     },
     {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
       "target": "source::https_illimistx.com_en_sub_platform%26pipeline_platform.php",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Illimis_official_platform_page"
+      "source_note": "Source__Illimis_Therapeutics_GAIA_platform"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "source::https_illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=282&mod_5a2ae7b8",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Illimis_Therapeutics_$42M_Series_B_press_release"
+    },
+    {
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
+      "target": "source::https_illimistx.com_en_sub_investor%26media_news.php_bid=16&idx=282&mod_5a2ae7b8",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Illimis_Therapeutics_$42M_Series_B_press_release"
+    },
+    {
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_conference.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Illimis_Therapeutics_conference_presentations"
+    },
+    {
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
+      "target": "source::https_illimistx.com_en_sub_platform%26pipeline_conference.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Illimis_Therapeutics_conference_presentations"
+    },
+    {
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "source::https_illimistx.com_data_aaic%202025_abstract_illimistx.pdf",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__AAIC_2025_GAIA-Aβ_abstract"
+    },
+    {
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
+      "target": "source::https_illimistx.com_data_aaic%202025_abstract_illimistx.pdf",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__AAIC_2025_GAIA-Aβ_abstract"
+    },
+    {
+      "source": "asset::ilm01_(gaia-aβ)",
       "target": "source::https_www.nature.com_articles_s41591-022-01926-9",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Nature_Medicine_αAβ-Gas6_paper"
+      "source_note": "Source__Anti-inflammatory_clearance_of_amyloid-β_by_a_chimeric_Gas6_fusion_protein"
     },
     {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
       "target": "source::https_www.nature.com_articles_s41591-022-01926-9",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Nature_Medicine_αAβ-Gas6_paper"
+      "source_note": "Source__Anti-inflammatory_clearance_of_amyloid-β_by_a_chimeric_Gas6_fusion_protein"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_ef80b277",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "source::https_www.biospectator.com_news_view_28887",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__AI_draft_search_note"
+      "source_note": "Source__BioSpectator_interview_on_ILM01_preclinical_program_and_planned_2027_cl_e077b90f"
     },
     {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_ef80b277",
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
+      "target": "source::https_www.biospectator.com_news_view_28887",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__AI_draft_search_note"
+      "source_note": "Source__BioSpectator_interview_on_ILM01_preclinical_program_and_planned_2027_cl_e077b90f"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::ai_draft_search_note",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__AI_draft_search_note"
-    },
-    {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::ai_draft_search_note",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__AI_draft_search_note"
-    },
-    {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::https_pure.kaist.ac.kr_en_publications_anti-inflammatory-clearance-of-a_4ffde966",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__KAIST_Pure_publication_record"
-    },
-    {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::https_pure.kaist.ac.kr_en_publications_anti-inflammatory-clearance-of-a_4ffde966",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__KAIST_Pure_publication_record"
-    },
-    {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::https_www.illimistx.com_data_poster_illimis_keystone2022.pdf",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__Illimis_Keystone_2022_poster"
-    },
-    {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::https_www.illimistx.com_data_poster_illimis_keystone2022.pdf",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__Illimis_Keystone_2022_poster"
-    },
-    {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::https_www.biospectator.com_news_view_25729",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__BioSpectator_Series_B_stage_article"
-    },
-    {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::https_www.biospectator.com_news_view_25729",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__BioSpectator_Series_B_stage_article"
-    },
-    {
-      "source": "asset::ilm01_gaia-aβ",
+      "source": "asset::ilm01_(gaia-aβ)",
       "target": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__FDA_Leqembi_approval"
+      "source_note": "Source__FDA_traditional_approval_of_Leqembi"
     },
     {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
       "target": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__FDA_Leqembi_approval"
+      "source_note": "Source__FDA_traditional_approval_of_Leqembi"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
+      "source": "asset::ilm01_(gaia-aβ)",
       "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__FDA_Kisunla_approval"
+      "source_note": "Source__FDA_approval_of_Kisunla"
     },
     {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
       "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__FDA_Kisunla_approval"
+      "source_note": "Source__FDA_approval_of_Kisunla"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
+      "source": "asset::ilm01_(gaia-aβ)",
       "target": "source::https_trials.lilly.com_en-us_trial_548297",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Lilly_Remternetug_Phase_III_trial"
+      "source_note": "Source__Lilly_TRAILRUNNER-ALZ_3_remternetug_trial"
     },
     {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
       "target": "source::https_trials.lilly.com_en-us_trial_548297",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Lilly_Remternetug_Phase_III_trial"
+      "source_note": "Source__Lilly_TRAILRUNNER-ALZ_3_remternetug_trial"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::https_www.alz.org_alzheimers-dementia_facts-figures",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "source::https_clinicaltrials.gov_study_nct07169578",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Alzheimer's_Association_2026_Facts_and_Figures"
+      "source_note": "Source__ClinicalTrials.gov_trontinemab_Phase_3_study_NCT07169578"
     },
     {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::https_www.alz.org_alzheimers-dementia_facts-figures",
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
+      "target": "source::https_clinicaltrials.gov_study_nct07169578",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Alzheimer's_Association_2026_Facts_and_Figures"
+      "source_note": "Source__ClinicalTrials.gov_trontinemab_Phase_3_study_NCT07169578"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "source::https_acumenpharm.com_altitude-ad",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Acumen_ALTITUDE-AD_sabirnetug_study"
+    },
+    {
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
+      "target": "source::https_acumenpharm.com_altitude-ad",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Acumen_ALTITUDE-AD_sabirnetug_study"
+    },
+    {
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_trc2.70251",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Alzheimer's_disease_drug_development_pipeline_2026"
+    },
+    {
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
+      "target": "source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_trc2.70251",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Alzheimer's_disease_drug_development_pipeline_2026"
+    },
+    {
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_dad2.12497",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Estimating_prevalence_of_early_symptomatic_Alzheimer's_disease_in_the_U_65d8288f"
+    },
+    {
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
+      "target": "source::https_alz-journals.onlinelibrary.wiley.com_doi_10.1002_dad2.12497",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Estimating_prevalence_of_early_symptomatic_Alzheimer's_disease_in_the_U_65d8288f"
+    },
+    {
+      "source": "asset::ilm01_(gaia-aβ)",
       "target": "source::https_www.eisai.com_news_2023_news202302.html",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Eisai_Leqembi_pricing"
+      "source_note": "Source__Eisai_U.S._pricing_approach_for_Leqembi"
     },
     {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
       "target": "source::https_www.eisai.com_news_2023_news202302.html",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Eisai_Leqembi_pricing"
+      "source_note": "Source__Eisai_U.S._pricing_approach_for_Leqembi"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::https_www.biopharmadive.com_news_lilly-alzheimers-drug-fda-approval-kis_3067c15c",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "source::https_investor.lilly.com_news-releases_news-release-details_lillys-kisu_5dbfd133",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Kisunla_pricing"
+      "source_note": "Source__Lilly_Kisunla_approval_and_limited-duration_treatment_cost"
     },
     {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::https_www.biopharmadive.com_news_lilly-alzheimers-drug-fda-approval-kis_3067c15c",
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
+      "target": "source::https_investor.lilly.com_news-releases_news-release-details_lillys-kisu_5dbfd133",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Kisunla_pricing"
+      "source_note": "Source__Lilly_Kisunla_approval_and_limited-duration_treatment_cost"
     },
     {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::https_investors.biogen.com_news-releases_news-release-details_biogen-re_2170daf2",
+      "source": "asset::ilm01_(gaia-aβ)",
+      "target": "source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_55918ed3",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Aduhelm_aducanumab_source"
+      "source_note": "Source__2026_Alzheimer's_Disease_Facts_and_Figures"
     },
     {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::https_investors.biogen.com_news-releases_news-release-details_biogen-re_2170daf2",
+      "source": "scorecard::ilm01_(gaia-aβ)_20260806",
+      "target": "source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_55918ed3",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Aduhelm_aducanumab_source"
-    },
-    {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::https_www.inmunebio.com_index.php_newsroom_2026-news_muneionnounceslign_d59db4fe",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__XPro1595_XPro_source"
-    },
-    {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::https_www.inmunebio.com_index.php_newsroom_2026-news_muneionnounceslign_d59db4fe",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__XPro1595_XPro_source"
-    },
-    {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::https_investors.biogen.com_news-releases_news-release-details_topline-r_3daa3724",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__Diranersen_BIIB080_source"
-    },
-    {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::https_investors.biogen.com_news-releases_news-release-details_topline-r_3daa3724",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__Diranersen_BIIB080_source"
-    },
-    {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::ai_draft_evidence_note",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__AI_draft_evidence_note"
-    },
-    {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::ai_draft_evidence_note",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__AI_draft_evidence_note"
-    },
-    {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::https_www.koreabiomed.com_news_articleview.html_idxno=29100",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.koreabiomed.com_news_articleView.html_idxno=29100"
-    },
-    {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::https_www.koreabiomed.com_news_articleview.html_idxno=29100",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.koreabiomed.com_news_articleView.html_idxno=29100"
-    },
-    {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::https_www.mk.co.kr_en_it_11981980",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.mk.co.kr_en_it_11981980"
-    },
-    {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::https_www.mk.co.kr_en_it_11981980",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.mk.co.kr_en_it_11981980"
-    },
-    {
-      "source": "asset::ilm01_gaia-aβ",
-      "target": "source::https_snu.elsevierpure.com_en_publications_eligibility-for-lecanemab-an_9c2ffbd8",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_snu.elsevierpure.com_en_publications_eligibility-for-lecanemab-an_9c2ffbd8"
-    },
-    {
-      "source": "scorecard::ilm01_gaia-aβ_20260621",
-      "target": "source::https_snu.elsevierpure.com_en_publications_eligibility-for-lecanemab-an_9c2ffbd8",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_snu.elsevierpure.com_en_publications_eligibility-for-lecanemab-an_9c2ffbd8"
+      "source_note": "Source__2026_Alzheimer's_Disease_Facts_and_Figures"
     },
     {
       "source": "asset::wt-1108",

@@ -1,6 +1,6 @@
 # CNS 손상 면역반응
 
-> Generated from `json/pipeline-records.json` at `2026-08-02T02:42:40`.
+> Generated from `json/pipeline-records.json` at `2026-08-06T11:45:31`.
 
 ## Linked Assets
 

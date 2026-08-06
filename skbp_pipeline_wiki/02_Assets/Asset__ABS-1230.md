@@ -7,25 +7,25 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
-source_report: "[[01_Raw_Reports/Actio_ABS-1230_fast_triage_20260623]]"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
+source_report: "[[01_Raw_Reports/Actio_Biosciences_ABS-1230_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
 company: "[[03_Companies/Company__Actio_Biosciences|Actio Biosciences]]"
 target: "[[04_Targets/Target__KCNT1|KCNT1]]"
-moa: "[[05_MoA/MoA__Selective_KCNT1_ion-channel_inhibitor|Selective KCNT1 ion-channel inhibitor]]"
-modality: "[[06_Modalities_Platforms/Modality__Oral_small_molecule|Oral small molecule]]"
+moa: "[[05_MoA/MoA__Selective_inhibition_of_overactive_KCNT1_potassium_ion_channel_caused_b_ecf51c22|Selective inhibition of overactive KCNT1 potassium ion channel caused by pathogenic gain-of-function variants]]"
+modality: "[[06_Modalities_Platforms/Modality__Oral_small_molecule;_genetics-driven_precision_small_molecule_platform|Oral small molecule; genetics-driven precision small molecule platform]]"
 indications:
-  - "[[07_Indications/Indication__KCNT1-related_epilepsy|KCNT1-related epilepsy]]"
+  - "[[07_Indications/Indication__KCNT1-related_epilepsy;_pediatric_developmental_and_epileptic_encephalo_b19f0030|KCNT1-related epilepsy; pediatric developmental and epileptic encephalopathy including EIMFS / EOEE phenotype in KYRON eligibility]]"
 scorecard: "[[10_Scorecards/Scorecard__ABS-1230__20260623|Scorecard__ABS-1230__20260623]]"
 theme: "[[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]"
 cluster: "[[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]]"
-total_score: 0
+total_score: 15
 max_score: 21
-recommendation: "Run Full Scout"
-evidence_level: "E0"
+recommendation: "Shortlist"
+evidence_level: "E4"
 ---
 
 # ABS-1230
@@ -37,23 +37,23 @@ evidence_level: "E0"
 | Company | [[03_Companies/Company__Actio_Biosciences|Actio Biosciences]] |
 | Asset | ABS-1230 |
 | Target | [[04_Targets/Target__KCNT1|KCNT1]] |
-| MoA | [[05_MoA/MoA__Selective_KCNT1_ion-channel_inhibitor|Selective KCNT1 ion-channel inhibitor]] |
-| Modality | [[06_Modalities_Platforms/Modality__Oral_small_molecule|Oral small molecule]] |
-| Indication | [[07_Indications/Indication__KCNT1-related_epilepsy|KCNT1-related epilepsy]] |
+| MoA | [[05_MoA/MoA__Selective_inhibition_of_overactive_KCNT1_potassium_ion_channel_caused_b_ecf51c22|Selective inhibition of overactive KCNT1 potassium ion channel caused by pathogenic gain-of-function variants]] |
+| Modality | [[06_Modalities_Platforms/Modality__Oral_small_molecule;_genetics-driven_precision_small_molecule_platform|Oral small molecule; genetics-driven precision small molecule platform]] |
+| Indication | [[07_Indications/Indication__KCNT1-related_epilepsy;_pediatric_developmental_and_epileptic_encephalo_b19f0030|KCNT1-related epilepsy; pediatric developmental and epileptic encephalopathy including EIMFS / EOEE phenotype in KYRON eligibility]] |
 | Stage | Phase 1/2 |
 | Theme / Cluster | [[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]] / [[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]] |
-| Recommendation | Run Full Scout |
-| Total Score | -/21 |
+| Recommendation | Shortlist |
+| Total Score | 15/21 |
 
 ## 2. One-line Summary
 
-Genetically defined rare epilepsy ion-channel asset; run Full Scout.
+ABS-1230 is a high-quality science-first CNS precision medicine asset with strong KCNT1 target/MoA fit and oral small-molecule differentiation, but commercial upside is constrained by ultra-rare prevalence unless broader genetic epilepsy expansion is clinically validated.
 
 ## 3. Why This Asset Matters
 
-- Strategic relevance: KCNT1 is directly linked to genetic epilepsy and ion-channel dysregulation.
-- Scientific rationale: Selective KCNT1 inhibition is plausible for gain-of-function KCNT1-related epilepsy, but patient efficacy is not yet visible.
-- BD relevance: Does ABS-1230 inhibit the clinically relevant KCNT1 variants with a sufficient CNS safety window?
+- Strategic relevance: KCNT1 gain-of-function epilepsy is a direct SKBP E/I Balance / Ion Channel fit.
+- Scientific rationale: MoA is strongly validated preclinically and mechanistically coherent with KCNT1 gain-of-function disease.
+- BD relevance: Can ABS-1230 demonstrate clinically meaningful seizure reduction and neurodevelopmental benefit in KCNT1-related epilepsy patients while maintaining a safe exposure margin in infants and young children?
 
 ## 4. Scorecard
 
@@ -63,33 +63,45 @@ Genetically defined rare epilepsy ion-channel asset; run Full Scout.
 
 ### Core Biology
 - Target: [[04_Targets/Target__KCNT1|KCNT1]]
-- MoA: [[05_MoA/MoA__Selective_KCNT1_ion-channel_inhibitor|Selective KCNT1 ion-channel inhibitor]]
+- MoA: [[05_MoA/MoA__Selective_inhibition_of_overactive_KCNT1_potassium_ion_channel_caused_b_ecf51c22|Selective inhibition of overactive KCNT1 potassium ion channel caused by pathogenic gain-of-function variants]]
 - Theme: [[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]
 - Cluster: [[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]]
 
 ### Development Context
 - Company: [[03_Companies/Company__Actio_Biosciences|Actio Biosciences]]
-- Modality: [[06_Modalities_Platforms/Modality__Oral_small_molecule|Oral small molecule]]
-- Indication: [[07_Indications/Indication__KCNT1-related_epilepsy|KCNT1-related epilepsy]]
+- Modality: [[06_Modalities_Platforms/Modality__Oral_small_molecule;_genetics-driven_precision_small_molecule_platform|Oral small molecule; genetics-driven precision small molecule platform]]
+- Indication: [[07_Indications/Indication__KCNT1-related_epilepsy;_pediatric_developmental_and_epileptic_encephalo_b19f0030|KCNT1-related epilepsy; pediatric developmental and epileptic encephalopathy including EIMFS / EOEE phenotype in KYRON eligibility]]
 
 ### Evidence Sources
-- [[09_Evidence_Sources/Source__Actio_first_participant_dosed_in_Phase_1_ABS-1230|Actio first participant dosed in Phase 1 ABS-1230]]
-- [[09_Evidence_Sources/Source__Clinical_Trials_Arena_ABS-1230_Phase_Ib_II_trial|Clinical Trials Arena ABS-1230 Phase Ib/II trial]]
+- [[09_Evidence_Sources/Source__Actio_Biosciences_Programs|Actio Biosciences Programs]]
+- [[09_Evidence_Sources/Source__Actio_KYRON_Phase_1b_2_initiation_release|Actio KYRON Phase 1b/2 initiation release]]
+- [[09_Evidence_Sources/Source__ClinicalTrials.gov_NCT07600736|ClinicalTrials.gov NCT07600736]]
+- [[09_Evidence_Sources/Source__ABS-1230_AES_2025_poster|ABS-1230 AES 2025 poster]]
+- [[09_Evidence_Sources/Source__Actio_Biosciences_homepage|Actio Biosciences homepage]]
+- [[09_Evidence_Sources/Source__Actio_Biosciences_About|Actio Biosciences About]]
+- [[09_Evidence_Sources/Source__Actio_Biosciences_Approach|Actio Biosciences Approach]]
+- [[09_Evidence_Sources/Source__Actio_Series_B_financing|Actio Series B financing]]
+- [[09_Evidence_Sources/Source__Actio_Series_A_financing|Actio Series A financing]]
+- [[09_Evidence_Sources/Source__ABS-1230_first_participant_dosed_Phase_1|ABS-1230 first participant dosed Phase 1]]
 
 ## 6. Key Diligence Questions
 
-- Does ABS-1230 inhibit the clinically relevant KCNT1 variants with a sufficient CNS safety window?
+- Can ABS-1230 demonstrate clinically meaningful seizure reduction and neurodevelopmental benefit in KCNT1-related epilepsy patients while maintaining a safe exposure margin in infants and young children?
 
 ## 7. Evidence Gaps
 
-- Clinical efficacy has not been verified.
+- No public ABS-1230 patient efficacy readout was identified.
+- Detailed Phase 1a PK/PD and dose selection rationale are not fully public.
+- True global diagnosed/treatable KCNT1 prevalence remains uncertain.
+- S230815 chemistry is not prominently described on official Servier page; ASO classification comes from KCNT1 Foundation clinical trial hub.
+- Marketability uses analyst assumptions for diagnosis rate, eligibility rate, treatable subgroup rate, annual net price, and peak penetration.
 
 ## 8. Score History
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | -/21 | Run Full Scout | [[10_Scorecards/Scorecard__ABS-1230__20260623|Scorecard__ABS-1230__20260623]] |
+| 20260623 | 15/21 | Shortlist | [[10_Scorecards/Scorecard__ABS-1230__20260623|Scorecard__ABS-1230__20260623]] |
 
 ## 9. Raw Report
 
-Source report: [[01_Raw_Reports/Actio_ABS-1230_fast_triage_20260623|Actio_ABS-1230_fast_triage_20260623]]
+Source report: [[01_Raw_Reports/Actio_Biosciences_ABS-1230_20260623|Actio_Biosciences_ABS-1230_20260623]]

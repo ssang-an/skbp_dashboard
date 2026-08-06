@@ -6,8 +6,8 @@ aliases:
   - "synapse_lists_tcr-t_cell_therapy_for_ux-ep001,_but_this_is_not_corrobor_f837809e"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,7 +22,7 @@ confidence: "medium"
 
 ## Related Assets
 
-- [[02_Assets/Asset__UX-EP001_UXEP-001__UX-EP001|UX-EP001_UXEP-001__UX-EP001]]
+- [[02_Assets/Asset__UX-EP001_UXEP-001|UX-EP001_UXEP-001]]
 
 ## Related Targets / MoA
 

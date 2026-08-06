@@ -6,8 +6,8 @@ aliases:
   - "VPC01091.4 / VPC4"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ Shows in vivo anti-inflammatory effects and brain/lung accumulation, but target-
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7|Small_Molecules_to_Antagonize_TRPM7__Small_Molecules_to_Antagonize_TRPM7]]: Shows in vivo anti-inflammatory effects and brain/lung accumulation, but target-specificity caveat remains.
+- [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7|Small_Molecules_to_Antagonize_TRPM7]]: Shows in vivo anti-inflammatory effects and brain/lung accumulation, but target-specificity caveat remains.
 
 ## Sources
 

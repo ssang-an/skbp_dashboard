@@ -6,8 +6,8 @@ aliases:
   - "HRS-2261"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-02"
-updated_at: "2026-08-02"
+created_at: "2026-08-06"
+updated_at: "2026-08-06"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,7 +33,7 @@ China-local same-target competitor and useful Phase I taste/PK benchmark.
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__WT-1108__WT1108|WT-1108__WT1108]]: China-local same-target competitor and useful Phase I taste/PK benchmark.
+- [[02_Assets/Asset__WT-1108|WT-1108]]: China-local same-target competitor and useful Phase I taste/PK benchmark.
 
 ## Sources
 
