@@ -2,7 +2,7 @@ import { setupThemeToggle } from './theme.js';
 
 import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
 import { getCurrentUser, initAuthUI, openAuthModal, requireAuth } from './auth.js?v=20260802-required-login-1';
-import { expandCompactInputRecord } from './compact-ingestion.js?v=20260806-ingestion-compat-2';
+import { expandCompactInputRecord } from './compact-ingestion.js?v=20260806-marketability-d-1';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260805-ingestion-guard-5';
 
 const params = new URLSearchParams(window.location.search);
@@ -587,11 +587,12 @@ function renderMarketabilityCalculation(calculation) {
   const stepA = calculation.A_targetable_addressable_patient || {};
   const stepB = calculation.B_unrisked_peak_sales || {};
   const stepC = calculation.C_obtainable_peak_sales || {};
+  const stepD = calculation.D_global_obtainable_peak_sales || {};
   const entry = stepB.entry_order_share_assumption || {};
 
   return `
     <div class="market-calc">
-      <h4>Marketability A/B/C Calculation</h4>
+      <h4>Marketability A/B/C/D Calculation</h4>
       <div class="calc-step">
         <strong>Commercial Rationale Gate</strong>
         <p>${escapeHtml(calculation.commercial_rationale_status || '-')}</p>
@@ -620,13 +621,22 @@ function renderMarketabilityCalculation(calculation) {
         </dl>
       </div>
       <div class="calc-step">
-        <strong>C. Obtainable Peak Sales</strong>
-        <p>${escapeHtml(stepC.formula || 'Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment')}</p>
+        <strong>C. US Obtainable Peak Sales</strong>
+        <p>${escapeHtml(stepC.formula || 'US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment')}</p>
         <dl>
           <div><dt>Competition haircut</dt><dd>${escapeHtml(formatScore(stepC.competition_haircut))}</dd></div>
           <div><dt>Pricing power</dt><dd>${escapeHtml(formatScore(stepC.pricing_power_adjustment))}</dd></div>
           <div><dt>Expansion capacity</dt><dd>${escapeHtml(formatScore(stepC.expansion_capacity_adjustment))}</dd></div>
           <div><dt>Obtainable sales</dt><dd>${escapeHtml(formatMillionUsd(stepC.obtainable_peak_sales, stepC.sales_unit))}</dd></div>
+        </dl>
+      </div>
+      <div class="calc-step">
+        <strong>D. Global Obtainable Peak Sales</strong>
+        <p>${escapeHtml(stepD.formula || 'Global Obtainable Peak Sales = US Obtainable Peak Sales x 1.5')}</p>
+        <dl>
+          <div><dt>Source geography</dt><dd>${escapeHtml(stepD.source_geography || 'US')}</dd></div>
+          <div><dt>Global multiplier</dt><dd>${escapeHtml(formatScore(stepD.global_multiplier ?? 1.5))}</dd></div>
+          <div><dt>Global obtainable sales</dt><dd>${escapeHtml(formatMillionUsd(stepD.global_obtainable_peak_sales, stepD.sales_unit))}</dd></div>
         </dl>
       </div>
     </div>

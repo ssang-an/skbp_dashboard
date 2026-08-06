@@ -172,18 +172,21 @@ Hard 0 Gate:
 - Annual price 또는 treatment model을 합리적으로 가정할 수 없다.
 - Broad disease market은 크지만 해당 asset이 그 market에 들어갈 논리가 없다.
 
-Commercial rationale이 성립하지 않으면 Marketability는 0점이고 TAP/Unrisked Peak Sales/Obtainable Peak Sales는 `null`이다. 계산 가능할 때:
+Commercial rationale이 성립하지 않으면 Marketability는 0점이고 A/B/C/D 결과는 `null`이다. 계산 가능할 때:
 
-- TAP = Total Patient Pool × Diagnosis Rate × Eligibility Rate × Treatable Subgroup Rate
-- Unrisked Peak Sales = TAP × Annual Net Price × Peak Penetration × Treatment Duration Factor
-- Obtainable Peak Sales = Unrisked Peak Sales × Competition Haircut × Pricing Power Adjustment × Expansion Capacity Adjustment
+- A. US TAP = US Patient Pool × Diagnosis Rate × Eligibility Rate × Treatable Subgroup Rate
+- B. US Unrisked Peak Sales = US TAP × Benchmark Annualized Net Price × Peak Penetration × Treatment Duration Factor
+- C. US Obtainable Peak Sales = US Unrisked Peak Sales × Competition Haircut × Pricing Power Adjustment
+- D. Global Obtainable Peak Sales = C. US Obtainable Peak Sales × 1.5
+
+`×1.5`는 미국 기준 C 또는 미국 기준 외부 peak-sales forecast에 정확히 한 번만 적용한다. 이미 Global인 forecast에는 다시 적용하지 않는다. Expansion Capacity Adjustment는 산식에서 제외하며, 구버전 호환 필드가 있으면 1.0으로 고정하고 점수에 사용하지 않는다.
 
 Score:
 
-- 0점: Commercial rationale 또는 Obtainable Peak Sales를 합리적으로 수립할 수 없음.
-- 1점: Obtainable Peak Sales < USD 1B.
-- 2점: Obtainable Peak Sales >= USD 1B and < USD 2B.
-- 3점: Obtainable Peak Sales >= USD 2B이며 credible expansion, pricing power 또는 differentiation이 있음.
+- 0점: Commercial rationale 또는 신뢰 가능한 Global peak sales를 합리적으로 수립할 수 없음.
+- 1점: Assessed Global Peak Sales < USD 1B.
+- 2점: Assessed Global Peak Sales >= USD 1B and < USD 2B.
+- 3점: Assessed Global Peak Sales >= USD 2B.
 
 Controlled vocabulary:
 
@@ -196,7 +199,7 @@ Controlled vocabulary:
 - `assumption_based_scenario`
 - `insufficient_evidence`
 
-`provisional`, `uncertain`, `partial`, `pending` 같은 값을 쓰지 않는다. 불확실성은 `commercial_rationale_failure_reason`, `investigation_note`, `uncertain_points`에 기록한다. Status가 `not_established` 또는 `insufficient_evidence`면 A/B/C calculated field는 `null`로 두고 이유를 명시한다.
+`provisional`, `uncertain`, `partial`, `pending` 같은 값을 쓰지 않는다. 불확실성은 `commercial_rationale_failure_reason`, `investigation_note`, `uncertain_points`에 기록한다. Status가 `not_established` 또는 `insufficient_evidence`면 A/B/C/D calculated field는 `null`로 두고 이유를 명시한다.
 
 ## 6. Canonical Development Stage
 

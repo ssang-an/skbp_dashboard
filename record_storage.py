@@ -283,13 +283,22 @@ def _minimal_marketability_calculation(value: Any) -> dict[str, Any] | None:
         "A_targetable_addressable_patient": ("targetable_addressable_patient", "formula"),
         "B_unrisked_peak_sales": ("unrisked_peak_sales", "sales_unit", "formula"),
         "C_obtainable_peak_sales": ("obtainable_peak_sales", "sales_unit", "formula"),
+        "D_global_obtainable_peak_sales": (
+            "source_geography",
+            "global_multiplier",
+            "global_obtainable_peak_sales",
+            "sales_unit",
+            "formula",
+        ),
     }
     for step_name, fields in step_fields.items():
         source_step = _object(calculation.get(step_name))
+        if step_name == "D_global_obtainable_peak_sales" and not source_step:
+            continue
         step: dict[str, Any] = {}
         for field in fields:
             value = source_step.get(field)
-            if field in {"formula", "sales_unit"}:
+            if field in {"formula", "sales_unit", "source_geography"}:
                 step[field] = _text(value)
             else:
                 step[field] = value if isinstance(value, (int, float)) and not isinstance(value, bool) else None

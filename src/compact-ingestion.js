@@ -235,6 +235,38 @@ function expandHybridCriterion(value, _lookup, { triage = false } = {}) {
   return criterion;
 }
 
+function marketabilityStepIsUs(step) {
+  const geography = textValue(step?.geography, step?.market_geography, step?.source_geography).toLowerCase();
+  if (['us', 'u.s.', 'u.s', 'united states', 'united states of america'].includes(geography)) return true;
+  return /\b(?:US|U\.S\.|United States)\b/i.test(textValue(step?.formula));
+}
+
+function marketabilityStepIsMillionUsd(step) {
+  const unit = textValue(step?.sales_unit).toLowerCase().replace(/[^a-z]/g, '');
+  return ['millionusd', 'usdmillion', 'musd', 'usdmm'].includes(unit);
+}
+
+function backfillMarketabilityGlobalConversion(value) {
+  const criterion = value && typeof value === 'object' ? value : {};
+  const calculation = { ...objectValue(criterion.calculation) };
+  const stepC = { ...objectValue(calculation.C_obtainable_peak_sales) };
+  const usValue = numericValue(stepC.obtainable_peak_sales);
+  if (!Number.isFinite(usValue) || !marketabilityStepIsUs(stepC) || !marketabilityStepIsMillionUsd(stepC)) {
+    return criterion;
+  }
+  const globalValue = Number((usValue * 1.5).toFixed(6));
+  const stepD = { ...objectValue(calculation.D_global_obtainable_peak_sales) };
+  stepD.source_geography = 'US';
+  stepD.global_multiplier = 1.5;
+  stepD.global_obtainable_peak_sales = globalValue;
+  stepD.sales_unit = 'million USD';
+  stepD.formula = 'Global Obtainable Peak Sales = US Obtainable Peak Sales x 1.5';
+  calculation.C_obtainable_peak_sales = stepC;
+  calculation.D_global_obtainable_peak_sales = stepD;
+  criterion.calculation = calculation;
+  return criterion;
+}
+
 function expandHybridCompetitorRow(value, lookup) {
   const source = objectValue(value);
   const sourceIds = uniqueTextValues(
@@ -313,7 +345,7 @@ function expandMarketability(value, lookup) {
   calculation.B_unrisked_peak_sales = stepB;
   calculation.C_obtainable_peak_sales = stepC;
   criterion.calculation = calculation;
-  return criterion;
+  return backfillMarketabilityGlobalConversion(criterion);
 }
 
 function expandedMeta(record, mode) {
@@ -442,6 +474,9 @@ function expandMinimalCompactInputRecord(inputRecord, requestedMode = '') {
   const criterionIds = triage ? TRIAGE_CRITERIA : FULL_CRITERIA;
   criterionIds.forEach((criterionId) => {
     criteria[criterionId] = expandHybridCriterion(inputCriteria[criterionId], lookup, { triage });
+    if (criterionId === 'marketability') {
+      criteria[criterionId] = backfillMarketabilityGlobalConversion(criteria[criterionId]);
+    }
   });
   const scores = criterionIds.map((criterionId) => criteria[criterionId]?.score);
   const scoreSum = scores.every((score) => Number.isInteger(score))

@@ -299,7 +299,7 @@ class CompactIngestionTests(unittest.TestCase):
     def test_compact_type_preflight_accepts_v1_without_input_but_keeps_v2_strict(self):
         app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
         start = app_js.index("function validateCompactInputTypes")
-        end = app_js.index("function hasMarketabilityAbcExplanation", start)
+        end = app_js.index("function hasMarketabilityAbcdExplanation", start)
         snippet = app_js[start:end]
         module_uri = (ROOT / "src" / "compact-ingestion.js").resolve().as_uri()
         script = f"""
@@ -349,20 +349,20 @@ class CompactIngestionTests(unittest.TestCase):
         self.assertTrue(any(issue["path"].endswith(".input") for issue in payload["invalidV1Issues"]))
         self.assertTrue(any(issue["path"].endswith(".input") for issue in payload["v2Issues"]))
 
-    def test_marketability_markdown_detection_accepts_us_and_global_labels(self):
+    def test_marketability_markdown_detection_requires_abcd_labels(self):
         app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
-        start = app_js.index("function hasMarketabilityAbcExplanation")
+        start = app_js.index("function hasMarketabilityAbcdExplanation")
         end = app_js.index("function validateCombinedInput", start)
         snippet = app_js[start:end]
         script = f"""
           {snippet}
-          const us = '| **A. US TAP** | x |\\n| **B. US Unrisked Peak Sales** | y |\\n| **C. US Obtainable Peak Sales** | z |';
-          const global = 'A. Global TAP\\nB. Global Unrisked Peak Sales\\nC. Global Obtainable Peak Sales';
-          const incomplete = 'A. US TAP\\nB. US Unrisked Peak Sales';
+          const us = '| **A. US TAP** | x |\\n| **B. US Unrisked Peak Sales** | y |\\n| **C. US Obtainable Peak Sales** | z |\\n| **D. Global Obtainable Peak Sales** | z x 1.5 |';
+          const global = 'A. Global TAP\\nB. Global Unrisked Peak Sales\\nC. Global Obtainable Peak Sales\\nD. Global Obtainable Peak Sales';
+          const incomplete = 'A. US TAP\\nB. US Unrisked Peak Sales\\nC. US Obtainable Peak Sales';
           process.stdout.write(JSON.stringify({{
-            us: hasMarketabilityAbcExplanation(us),
-            global: hasMarketabilityAbcExplanation(global),
-            incomplete: hasMarketabilityAbcExplanation(incomplete)
+            us: hasMarketabilityAbcdExplanation(us),
+            global: hasMarketabilityAbcdExplanation(global),
+            incomplete: hasMarketabilityAbcdExplanation(incomplete)
           }}));
         """
         result = subprocess.run(
@@ -802,6 +802,45 @@ format reminder
         with self.assertRaises(Exception):
             main.validate_marketability(established_status_without_method)
 
+    def test_backend_backfills_d_only_for_explicit_us_million_usd_c(self):
+        record = {
+            "scoring": {"criteria": {"marketability": {
+                "score": 2,
+                "calculation": {
+                    "C_obtainable_peak_sales": {
+                        "obtainable_peak_sales": 800,
+                        "sales_unit": "million USD",
+                        "formula": "US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment",
+                    }
+                },
+            }}}
+        }
+        self.assertTrue(main.normalize_marketability_global_conversion(record))
+        step_d = record["scoring"]["criteria"]["marketability"]["calculation"]["D_global_obtainable_peak_sales"]
+        self.assertEqual(step_d["global_multiplier"], 1.5)
+        self.assertEqual(step_d["global_obtainable_peak_sales"], 1200)
+
+        ambiguous = copy.deepcopy(record)
+        ambiguous_calculation = ambiguous["scoring"]["criteria"]["marketability"]["calculation"]
+        ambiguous_calculation.pop("D_global_obtainable_peak_sales")
+        ambiguous_calculation["C_obtainable_peak_sales"]["formula"] = "Obtainable Peak Sales = Unrisked Peak Sales x adjustments"
+        self.assertFalse(main.normalize_marketability_global_conversion(ambiguous))
+        self.assertNotIn("D_global_obtainable_peak_sales", ambiguous_calculation)
+
+    def test_compact_v2_expansion_backfills_d_from_us_c(self):
+        full = self.final_json_template(
+            self.rendered_prompts()["full"],
+            "\nFinal validation before output:",
+        )
+        market = full["scoring"]["criteria"]["marketability"]
+        market["calculation"]["commercial_rationale_status"] = "evidence_based"
+        market["calculation"]["C_obtainable_peak_sales"]["obtainable_peak_sales"] = 900
+        market["calculation"]["D_global_obtainable_peak_sales"]["global_obtainable_peak_sales"] = None
+        expanded = self.expand(full, "full")
+        step_d = expanded["scoring"]["criteria"]["marketability"]["calculation"]["D_global_obtainable_peak_sales"]
+        self.assertEqual(step_d["global_obtainable_peak_sales"], 1350)
+        self.assertEqual(step_d["global_multiplier"], 1.5)
+
     def test_fastapi_boundary_rejects_duplicate_or_dangling_sources_and_boolean_scores(self):
         duplicate_sources = {
             "meta": {"ingestion_format": "compact_v1"},
@@ -866,8 +905,7 @@ format reminder
         self.assertIn("evidence_type_reason", full["scoring"]["criteria"]["target_relevance"])
         self.assertIn("investigation_note", full["scoring"]["criteria"]["target_relevance"])
         self.assertNotIn("what_was_checked", full["scoring"]["criteria"]["target_relevance"])
-        self.assertTrue(all(
-            set(criterion) == {
+        expected_criterion_fields = {
                 "score",
                 "evidence_type",
                 "evidence_type_reason",
@@ -877,10 +915,13 @@ format reminder
                 "investigation_note",
                 "uncertain_points",
                 "source_ids",
-            }
-            for criterion in full["scoring"]["criteria"].values()
-        ))
-        self.assertNotIn("calculation", full["scoring"]["criteria"]["marketability"])
+        }
+        for criterion_id, criterion in full["scoring"]["criteria"].items():
+            expected = expected_criterion_fields | ({"calculation"} if criterion_id == "marketability" else set())
+            self.assertEqual(set(criterion), expected)
+        calculation = full["scoring"]["criteria"]["marketability"]["calculation"]
+        self.assertIn("D_global_obtainable_peak_sales", calculation)
+        self.assertEqual(calculation["D_global_obtainable_peak_sales"]["global_multiplier"], 1.5)
         self.assertEqual(
             set(full["company_profile"]),
             {"headquarters", "company_stage", "platform_summary"},

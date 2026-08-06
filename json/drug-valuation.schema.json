@@ -236,6 +236,24 @@
             "formula": { "type": "string" }
           },
           "additionalProperties": false
+        },
+        "D_global_obtainable_peak_sales": {
+          "type": "object",
+          "required": [
+            "source_geography",
+            "global_multiplier",
+            "global_obtainable_peak_sales",
+            "sales_unit",
+            "formula"
+          ],
+          "properties": {
+            "source_geography": { "const": "US" },
+            "global_multiplier": { "const": 1.5 },
+            "global_obtainable_peak_sales": { "type": ["number", "null"] },
+            "sales_unit": { "const": "million USD" },
+            "formula": { "type": "string" }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

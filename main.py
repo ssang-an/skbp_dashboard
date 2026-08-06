@@ -50,13 +50,57 @@ SCHEMA_FILE = JSON_DIR / "drug-valuation.schema.json"
 OBSIDIAN_DIR = ROOT / "obsidian"
 WIKI_DIR = ROOT / "skbp_pipeline_wiki"
 ATTACHMENTS_DIR = ROOT / "attachments"
-SCORING_CRITERIA_VERSION = "3.3"
-TRIAGE_CRITERIA_VERSION = "3.2"
-TRIAGE_SCHEMA_VERSION = "3.2"
-FULL_SCOUT_SCHEMA_VERSION = "3.2"
-SCORING_CRITERIA_FULL_MD = ROOT / "config" / "scoring_criteria" / "v3_3_full.md"
-SCORING_CRITERIA_TRIAGE_MD = ROOT / "config" / "scoring_criteria" / "v3_2_triage.md"
-SCORING_CRITERIA_DISPLAY_MD = ROOT / "config" / "scoring_criteria" / "v3_3_display.md"
+RUBRIC_RELEASE_FILE = ROOT / "config" / "rubric-release.json"
+
+
+def load_rubric_release_manifest(path: Path = RUBRIC_RELEASE_FILE) -> dict[str, Any]:
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"Cannot load rubric release manifest: {path}") from exc
+    if not isinstance(manifest, dict):
+        raise RuntimeError("Rubric release manifest root must be an object.")
+
+    workflows = manifest.get("workflows")
+    calculations = manifest.get("calculations")
+    if not isinstance(workflows, dict) or not isinstance(calculations, dict):
+        raise RuntimeError("Rubric release manifest requires workflows and calculations objects.")
+    for workflow_id in ("fast_triage", "full_scout"):
+        workflow = workflows.get(workflow_id)
+        if not isinstance(workflow, dict):
+            raise RuntimeError(f"Rubric release manifest is missing workflows.{workflow_id}.")
+        for field in ("instruction_version", "rubric_version", "schema_version", "rubric_file"):
+            if not str(workflow.get(field) or "").strip():
+                raise RuntimeError(f"Rubric release manifest is missing workflows.{workflow_id}.{field}.")
+        if workflow["instruction_version"] != workflow["rubric_version"]:
+            raise RuntimeError(f"{workflow_id} instruction_version and rubric_version must match.")
+        rubric_path = ROOT / str(workflow["rubric_file"])
+        if not rubric_path.is_file():
+            raise RuntimeError(f"Rubric file declared by manifest does not exist: {rubric_path}")
+
+    full_scout = workflows["full_scout"]
+    display_file = str(full_scout.get("display_file") or "").strip()
+    if not display_file or not (ROOT / display_file).is_file():
+        raise RuntimeError("Full Scout display_file declared by rubric release manifest is missing.")
+
+    marketability = calculations.get("marketability")
+    multiplier = marketability.get("global_multiplier") if isinstance(marketability, dict) else None
+    if isinstance(multiplier, bool) or not isinstance(multiplier, (int, float)) or multiplier <= 0:
+        raise RuntimeError("Rubric release manifest requires a positive marketability.global_multiplier.")
+    return manifest
+
+
+RUBRIC_RELEASE = load_rubric_release_manifest()
+RUBRIC_WORKFLOWS = RUBRIC_RELEASE["workflows"]
+TRIAGE_RELEASE = RUBRIC_WORKFLOWS["fast_triage"]
+FULL_SCOUT_RELEASE = RUBRIC_WORKFLOWS["full_scout"]
+SCORING_CRITERIA_VERSION = str(FULL_SCOUT_RELEASE["rubric_version"])
+TRIAGE_CRITERIA_VERSION = str(TRIAGE_RELEASE["rubric_version"])
+TRIAGE_SCHEMA_VERSION = str(TRIAGE_RELEASE["schema_version"])
+FULL_SCOUT_SCHEMA_VERSION = str(FULL_SCOUT_RELEASE["schema_version"])
+SCORING_CRITERIA_FULL_MD = ROOT / str(FULL_SCOUT_RELEASE["rubric_file"])
+SCORING_CRITERIA_TRIAGE_MD = ROOT / str(TRIAGE_RELEASE["rubric_file"])
+SCORING_CRITERIA_DISPLAY_MD = ROOT / str(FULL_SCOUT_RELEASE["display_file"])
 CATEGORY_SYNONYMS_FILE = ROOT / "config" / "category-synonyms.json"
 OPENROUTER_DEFAULT_MODEL = "openrouter/free"
 OPENROUTER_DEFAULT_FALLBACK_MODELS = [
@@ -1239,6 +1283,88 @@ def validate_compact_source_references(record: dict[str, Any], index: int) -> No
     visit(record, f"record[{index}]")
 
 
+MARKETABILITY_GLOBAL_MULTIPLIER = float(
+    RUBRIC_RELEASE["calculations"]["marketability"]["global_multiplier"]
+)
+
+
+def _finite_number(value: Any) -> bool:
+    return not isinstance(value, bool) and isinstance(value, (int, float)) and math.isfinite(value)
+
+
+def _marketability_step_is_us(step: dict[str, Any]) -> bool:
+    geography = str(
+        step.get("geography")
+        or step.get("market_geography")
+        or step.get("source_geography")
+        or ""
+    ).strip()
+    if geography.casefold() in {"us", "u.s.", "u.s", "united states", "united states of america"}:
+        return True
+    formula = str(step.get("formula") or "")
+    return bool(re.search(r"\b(?:US|U\.S\.|United States)\b", formula, flags=re.IGNORECASE))
+
+
+def _marketability_step_is_million_usd(step: dict[str, Any]) -> bool:
+    unit = re.sub(r"[^a-z]", "", str(step.get("sales_unit") or "").casefold())
+    return unit in {"millionusd", "usdmillion", "musd", "usdmm"}
+
+
+def normalize_marketability_global_conversion(record: dict[str, Any]) -> bool:
+    """Backfill D only when C is explicitly a US, million-USD calculation.
+
+    Ambiguous historical C values are deliberately left unchanged. This prevents
+    a legacy Global value or an incorrectly labelled raw-USD value from being
+    multiplied a second time merely because it is stored under step C.
+    """
+    criteria = ((record.get("scoring") or {}).get("criteria") or {})
+    criterion = criteria.get("marketability") if isinstance(criteria, dict) else None
+    if not isinstance(criterion, dict):
+        return False
+    calculation = criterion.get("calculation")
+    if not isinstance(calculation, dict):
+        return False
+    step_c = calculation.get("C_obtainable_peak_sales")
+    if not isinstance(step_c, dict):
+        return False
+    us_value = step_c.get("obtainable_peak_sales")
+    if (
+        not _finite_number(us_value)
+        or not _marketability_step_is_us(step_c)
+        or not _marketability_step_is_million_usd(step_c)
+    ):
+        return False
+
+    expected_global = round(float(us_value) * MARKETABILITY_GLOBAL_MULTIPLIER, 6)
+    changed = False
+    step_d = calculation.get("D_global_obtainable_peak_sales")
+    if not isinstance(step_d, dict):
+        step_d = {}
+        calculation["D_global_obtainable_peak_sales"] = step_d
+        changed = True
+    defaults = {
+        "source_geography": "US",
+        "global_multiplier": MARKETABILITY_GLOBAL_MULTIPLIER,
+        "global_obtainable_peak_sales": expected_global,
+        "sales_unit": "million USD",
+        "formula": "Global Obtainable Peak Sales = US Obtainable Peak Sales x 1.5",
+    }
+    for key, value in defaults.items():
+        if step_d.get(key) != value:
+            step_d[key] = value
+            changed = True
+
+    method = str(criterion.get("assessment_method") or "").strip()
+    if method in {"calculation", "both"}:
+        if criterion.get("calculated_global_obtainable_peak_sales_musd") is None:
+            criterion["calculated_global_obtainable_peak_sales_musd"] = expected_global
+            changed = True
+        if criterion.get("assessed_global_peak_sales_musd") is None:
+            criterion["assessed_global_peak_sales_musd"] = expected_global
+            changed = True
+    return changed
+
+
 def validate_marketability(criterion: dict[str, Any], *, require_method: bool = False) -> None:
     method = str(criterion.get("assessment_method") or "").strip()
     allowed_methods = {"calculation", "external_forecast", "both", "insufficient_evidence"}
@@ -1252,7 +1378,7 @@ def validate_marketability(criterion: dict[str, Any], *, require_method: bool = 
     has_external_forecast = method in {"external_forecast", "both"} if method else None
 
     def is_finite_number(value: Any) -> bool:
-        return not isinstance(value, bool) and isinstance(value, (int, float)) and math.isfinite(value)
+        return _finite_number(value)
 
     if method:
         expected_basis_type = "calculation" if method == "both" else method
@@ -1296,7 +1422,7 @@ def validate_marketability(criterion: dict[str, Any], *, require_method: bool = 
     step_b = calculation.get("B_unrisked_peak_sales") or {}
     step_c = calculation.get("C_obtainable_peak_sales") or {}
     if not all(isinstance(step, dict) for step in [step_a, step_b, step_c]):
-        validation_error("marketability.calculation A/B/C steps must be objects.")
+        validation_error("marketability.calculation A/B/C steps must be objects; D is derived from an explicit US C value.")
 
     if status in insufficient_statuses:
         if criterion.get("score") != 0 or (method and method != "insufficient_evidence"):
@@ -1331,6 +1457,27 @@ def validate_marketability(criterion: dict[str, Any], *, require_method: bool = 
                 validation_error(f"marketability.calculation.{path} is required when commercial rationale is established.")
             elif not is_finite_number(value):
                 validation_error(f"marketability.calculation.{path} must be a finite JSON number.")
+
+    if require_method and has_calculation:
+        if not _marketability_step_is_us(step_c) or not _marketability_step_is_million_usd(step_c):
+            validation_error(
+                "marketability.calculation.C_obtainable_peak_sales must explicitly use US geography "
+                "and million USD before the D Global conversion is applied."
+            )
+        step_d = calculation.get("D_global_obtainable_peak_sales")
+        if not isinstance(step_d, dict):
+            validation_error("marketability.calculation.D_global_obtainable_peak_sales is required for a US calculation.")
+        expected_global = round(float(step_c["obtainable_peak_sales"]) * MARKETABILITY_GLOBAL_MULTIPLIER, 6)
+        actual_global = step_d.get("global_obtainable_peak_sales")
+        if not is_finite_number(actual_global) or not math.isclose(
+            float(actual_global), expected_global, rel_tol=1e-9, abs_tol=1e-6
+        ):
+            validation_error(
+                "marketability.calculation.D_global_obtainable_peak_sales.global_obtainable_peak_sales "
+                "must equal US C x 1.5."
+            )
+        if step_d.get("global_multiplier") != MARKETABILITY_GLOBAL_MULTIPLIER:
+            validation_error("marketability D.global_multiplier must be exactly 1.5.")
 
     if method:
         numeric_requirements = {
@@ -2077,6 +2224,7 @@ def validate_minimal_dashboard_record(record: dict[str, Any], index: int) -> Non
 def validate_records_for_save(records: list[dict[str, Any]]) -> None:
     for index, record in enumerate(records):
         ensure_meta_defaults(record)
+        normalize_marketability_global_conversion(record)
         if is_minimal_dashboard_contract(record):
             validate_minimal_dashboard_record(record, index)
             continue
@@ -3242,11 +3390,14 @@ def load_records() -> list[dict[str, Any]]:
     ensure_data_file()
     records = normalize_records(read_json(DATA_FILE))
     for record in records:
+        normalize_marketability_global_conversion(record)
         synchronize_full_scout_source_revision_metadata(record)
     return records
 
 
 def save_records(records: list[dict[str, Any]]) -> None:
+    for record in records:
+        normalize_marketability_global_conversion(record)
     minimized_records = [minimize_record_for_dashboard_storage(record) for record in records]
     for record in minimized_records:
         synchronize_full_scout_source_revision_metadata(record)
@@ -3412,10 +3563,18 @@ def default_marketability_calculation(existing: dict[str, Any] | None = None) ->
             "unrisked_peak_sales": None,
             "competition_haircut": None,
             "pricing_power_adjustment": None,
-            "expansion_capacity_adjustment": None,
+            "expansion_capacity_adjustment": 1.0,
             "obtainable_peak_sales": None,
-            "formula": "Obtainable Peak Sales = Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment x Expansion Capacity Adjustment",
-            "score_basis_note": "Final score is assigned from obtainable peak sales.",
+            "sales_unit": "million USD",
+            "formula": "US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment",
+            "score_basis_note": "Step C is the US value; step D is the Global score basis.",
+        },
+        "D_global_obtainable_peak_sales": {
+            "source_geography": "US",
+            "global_multiplier": MARKETABILITY_GLOBAL_MULTIPLIER,
+            "global_obtainable_peak_sales": None,
+            "sales_unit": "million USD",
+            "formula": "Global Obtainable Peak Sales = US Obtainable Peak Sales x 1.5",
         },
     }
 
@@ -3428,7 +3587,7 @@ def update_score(record: dict[str, Any], criterion_id: str, score: int, reason: 
 
     if criterion_id == "marketability":
         # A text-only score revision cannot turn a hard-zero commercial gate into
-        # a positive score unless structured A/B/C calculation data was updated too.
+        # a positive score unless structured A/B/C/D calculation data was updated too.
         marketability_candidate = copy.deepcopy(criterion)
         marketability_candidate["score"] = score
         try:
@@ -3436,11 +3595,12 @@ def update_score(record: dict[str, Any], criterion_id: str, score: int, reason: 
         except HTTPException:
             return
 
-    if criterion_id == "marketability" and not all(token in reason for token in ["A.", "B.", "C."]):
+    if criterion_id == "marketability" and not all(token in reason for token in ["A.", "B.", "C.", "D."]):
         reason = (
             "A. TAP: estimate targetable addressable patients from total patient pool, diagnosis, eligibility, biomarker/subgroup assumptions. "
             "B. Unrisked Peak Sales: calculate TAP x annual net price x peak penetration x treatment duration, using entry-order/share assumptions where relevant. "
-            "C. Obtainable Peak Sales: apply competition haircut, pricing power, and expansion capacity to determine the final score. "
+            "C. US Obtainable Peak Sales: apply competition haircut and pricing power. "
+            "D. Global Obtainable Peak Sales: multiply the completed US C value by 1.5 exactly once and use D for the final score. "
             f"User judgment: {reason}"
         )
         criterion["calculation"] = default_marketability_calculation(criterion.get("calculation"))
@@ -8580,6 +8740,9 @@ def get_schema() -> Any:
 @app.get("/api/scoring-criteria")
 def get_scoring_criteria() -> dict[str, Any]:
     return {
+        "release_id": RUBRIC_RELEASE["release_id"],
+        "released_at": RUBRIC_RELEASE["released_at"],
+        "manifest_schema_version": RUBRIC_RELEASE["manifest_schema_version"],
         "version": SCORING_CRITERIA_VERSION,
         "full_scout_version": SCORING_CRITERIA_VERSION,
         "fast_triage_version": TRIAGE_CRITERIA_VERSION,
@@ -8587,6 +8750,7 @@ def get_scoring_criteria() -> dict[str, Any]:
         "full_scout_schema_version": FULL_SCOUT_SCHEMA_VERSION,
         "full_markdown": SCORING_CRITERIA_FULL_MD.read_text(encoding="utf-8"),
         "display_markdown": SCORING_CRITERIA_DISPLAY_MD.read_text(encoding="utf-8"),
+        "calculations": copy.deepcopy(RUBRIC_RELEASE["calculations"]),
         "evidence_type_allowed_values": sorted(EVIDENCE_TYPE_ALLOWED_VALUES),
         "fast_triage_status_allowed_values": sorted(FAST_TRIAGE_STATUS_ALLOWED_VALUES),
         "fast_triage_evidence_basis_allowed_values": sorted(FAST_TRIAGE_EVIDENCE_BASIS_ALLOWED_VALUES),

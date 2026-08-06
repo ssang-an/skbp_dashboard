@@ -5,7 +5,7 @@ import {
   expandCompactInputRecord,
   isCompactIngestionRecord,
   isMinimalCompactIngestionRecord
-} from './compact-ingestion.js?v=20260806-ingestion-compat-2';
+} from './compact-ingestion.js?v=20260806-marketability-d-1';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260805-ingestion-guard-5';
 
 const API_URL = '/api/records';
@@ -3244,12 +3244,14 @@ function scoreTooltipLegacy(label, criterionInfo, max) {
     const a = calc.A_targetable_addressable_patient || {};
     const b = calc.B_unrisked_peak_sales || {};
     const c = calc.C_obtainable_peak_sales || {};
+    const d = calc.D_global_obtainable_peak_sales || {};
     lines.splice(
       3,
       0,
       `A. TAP: ${a.targetable_addressable_patient ?? '-'} (${a.formula || '-'})`,
       `B. Unrisked Peak Sales: ${formatMillionUsd(b.unrisked_peak_sales, b.sales_unit)} (${b.formula || '-'})`,
-      `C. Obtainable Peak Sales: ${formatMillionUsd(c.obtainable_peak_sales, c.sales_unit)} (${c.formula || '-'})`
+      `C. US Obtainable Peak Sales: ${formatMillionUsd(c.obtainable_peak_sales, c.sales_unit)} (${c.formula || '-'})`,
+      `D. Global Obtainable Peak Sales: ${formatMillionUsd(d.global_obtainable_peak_sales, d.sales_unit)} (${d.formula || '-'})`
     );
   }
   return lines.join('\n');
@@ -3286,12 +3288,15 @@ function scoreTooltip(label, criterionInfo, max) {
     const a = calc.A_targetable_addressable_patient || {};
     const b = calc.B_unrisked_peak_sales || {};
     const c = calc.C_obtainable_peak_sales || {};
+    const d = calc.D_global_obtainable_peak_sales || {};
     const aValue = [meaningfulValue(a.targetable_addressable_patient), meaningfulValue(a.formula)].filter(Boolean).join(' | ');
     const bValue = [meaningfulValue(formatMillionUsd(b.unrisked_peak_sales, b.sales_unit)), meaningfulValue(b.formula)].filter(Boolean).join(' | ');
     const cValue = [meaningfulValue(formatMillionUsd(c.obtainable_peak_sales, c.sales_unit)), meaningfulValue(c.formula)].filter(Boolean).join(' | ');
+    const dValue = [meaningfulValue(formatMillionUsd(d.global_obtainable_peak_sales, d.sales_unit)), meaningfulValue(d.formula)].filter(Boolean).join(' | ');
     pushLine(lines, 'A. TAP', aValue);
     pushLine(lines, 'B. Unrisked Peak Sales', bValue);
-    pushLine(lines, 'C. Obtainable Peak Sales', cValue);
+    pushLine(lines, 'C. US Obtainable Peak Sales', cValue);
+    pushLine(lines, 'D. Global Obtainable Peak Sales', dValue);
   }
 
   pushLine(lines, 'Rubric', criterionInfo?.appliedScoreDefinition || criterionInfo?.ruleCriteria);
@@ -6460,13 +6465,14 @@ function validateCompactInputTypes(record, recordPath, issues) {
   }
 }
 
-function hasMarketabilityAbcExplanation(markdown) {
+function hasMarketabilityAbcdExplanation(markdown) {
   const text = String(markdown || '');
   const geography = '(?:(?:US|U\\.S\\.|Global)\\s+)?';
   return [
     new RegExp(`\\bA\\.\\s*${geography}TAP\\b`, 'i'),
     new RegExp(`\\bB\\.\\s*${geography}Unrisked(?:\\s+Peak\\s+Sales)?\\b`, 'i'),
-    new RegExp(`\\bC\\.\\s*${geography}Obtainable(?:\\s+Peak\\s+Sales)?\\b`, 'i')
+    new RegExp(`\\bC\\.\\s*${geography}Obtainable(?:\\s+Peak\\s+Sales)?\\b`, 'i'),
+    /\bD\.\s*Global\s+Obtainable(?:\s+Peak\s+Sales)?\b/i
   ].every((pattern) => pattern.test(text));
 }
 
@@ -6750,8 +6756,8 @@ function validateCombinedInput(value, expectedMode = '') {
       });
     }
   }
-  if (mode === 'full' && split.rawMarkdown && !hasMarketabilityAbcExplanation(split.rawMarkdown)) {
-    addInputIssue(warnings, 'warning', 'Markdown', 'Full Scout 원문에서 Marketability A/B/C 설명을 찾지 못했습니다.');
+  if (mode === 'full' && split.rawMarkdown && !hasMarketabilityAbcdExplanation(split.rawMarkdown)) {
+    addInputIssue(warnings, 'warning', 'Markdown', 'Full Scout 원문에서 Marketability A/B/C/D 설명을 찾지 못했습니다.');
   }
 
   return {
@@ -7205,7 +7211,32 @@ const COMPACT_FULL_SCOUT_JSON_TEMPLATE = `{
         "why_not_higher": "",
         "investigation_note": "",
         "uncertain_points": [],
-        "source_ids": []
+        "source_ids": [],
+        "calculation": {
+          "commercial_rationale_status": "insufficient_evidence",
+          "commercial_rationale_failure_reason": "",
+          "A_targetable_addressable_patient": {
+            "targetable_addressable_patient": null,
+            "formula": "US TAP = US Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate"
+          },
+          "B_unrisked_peak_sales": {
+            "unrisked_peak_sales": null,
+            "sales_unit": "million USD",
+            "formula": "US Unrisked Peak Sales = US TAP x Benchmark Annualized Net Price x Peak Penetration x Treatment Duration Factor"
+          },
+          "C_obtainable_peak_sales": {
+            "obtainable_peak_sales": null,
+            "sales_unit": "million USD",
+            "formula": "US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment"
+          },
+          "D_global_obtainable_peak_sales": {
+            "source_geography": "US",
+            "global_multiplier": 1.5,
+            "global_obtainable_peak_sales": null,
+            "sales_unit": "million USD",
+            "formula": "Global Obtainable Peak Sales = US Obtainable Peak Sales x 1.5"
+          }
+        }
       }
     }
   },
@@ -7585,7 +7616,7 @@ Identity Gate / identity-not-verified early stop:
   - Set hard_filter.status to "FAIL".
   - Set hard_filter.reason to "Asset identity not verified from public biotech/pharma sources."
   - Include all seven scoring.criteria objects with score 0 and the Compact v2 hover/audit fields. Use E0, concise gap/why-not-higher text, empty source_ids when nothing was verified, and keep the full explanation in Markdown.
-  - For Marketability, keep the JSON score at 0 and explain insufficient evidence plus any unavailable A/B/C inputs in Markdown.
+  - For Marketability, keep the JSON score at 0 and explain insufficient evidence plus any unavailable A/B/C/D inputs in Markdown.
   - Set final_insight.recommendation to "Deprioritize".
   - structured_table.development_stage must be "Unknown" when stage is not established; never use null, an empty string, or N/A for that field. Use "Unknown", null, or [] as appropriate for other unknown factual fields and sources. Do not invent placeholders.
 
@@ -7598,14 +7629,14 @@ Non-negotiable rules:
 6. Distinguish official company sources, peer-reviewed papers, regulatory/clinical trial sources, market sources, and news/financing sources.
 7. For every criterion, Compact v2 JSON contains the integer score plus only these concise display/audit fields: evidence_type, evidence_type_reason, evidence_basis, main_line_summary, why_not_higher, investigation_note, uncertain_points, and source_ids. Keep each string short and keep the complete evidence discussion in Markdown.
 8. Competitive Landscape Markdown must include the complete search and analysis. JSON keeps competitive_density, the four similarity counts, competitor_table rows needed by the competitor graph, and similar_pipelines needed by the existing comparison view. competitor_table row keys are competitor_asset, company, modality, target_or_moa, stage, similarity_level, why_it_matters, source_url, and source_ids. similar_pipelines row keys are company, asset_name, similarity_score, matched_dimensions, and shared_data_points.
-9. Marketability may use an internal calculation, an external forecast, both, or insufficient evidence. Show A/B/C only when calculation is performed; show external forecast references when used.
-10. Express every sales output in million USD in Markdown. JSON keeps only the final Marketability score because A/B/C values are not dashboard columns or chart inputs.
+9. Marketability may use an internal calculation, an external forecast, both, or insufficient evidence. Show A/B/C/D when calculation is performed; show external forecast references when used.
+10. Express every sales output in million USD in Markdown. JSON keeps the final Marketability score plus only the minimal A/B/C/D output projection used for score audit and detail display; complete inputs and rationale stay in Markdown.
 11. Hard Filter is canonical: PASS when Total >= 14, Target Relevance >= 3, MoA Validity >= 2, Data Maturity >= 2, asset identity is verified, an active development program is confirmed, and no hard blocker/decision-critical uncertainty remains. REVIEW when Total is 9-13; or a PASS gate is missed without a FAIL rule; or active status, key evidence, source, rights, or stage uncertainty prevents a firm conclusion. FAIL when Total <= 8, Target Relevance <= 1, asset identity is unverified, or a lifecycle FAIL condition is confirmed.
 11a. Set hard_filter.hard_blocker=true only for a confirmed FAIL blocker. Set hard_filter.decision_uncertainty=true only when stage, rights/license/ownership, asset identity, source/registry, sponsor, or active-program uncertainty prevents an otherwise firm decision. These booleans keep Filter 2 deterministic after research prose stays in Markdown.
 11b. Copy the exact assessed company and asset identifiers into input.company_input and input.asset_input. These two aliases are used only to join the Fast Triage and Full Scout rows for the same asset; do not add other input fields.
 12. If the latest stage, ownership, financing, or trial status is unclear, mark it as uncertain and state what source is needed.
 13. Do not invent URLs. If a URL cannot be verified, describe the missing source in Markdown and validation.uncertain_points.
-14. Work out commercial_rationale_status, method, A/B/C, and any external forecast in Markdown, then place only the resulting 0–3 Marketability score in JSON.
+14. Work out commercial_rationale_status, method, A/B/C/D, and any external forecast in Markdown. Put the resulting 0–3 score and the minimal A/B/C/D output projection shown in the Compact v2 template in JSON.
 15. The JSON template defaults Marketability to score 0. A reliable calculation or asset-specific external forecast may support scores 1–3; document the complete method and numbers in Markdown.
 16. Keep source_report.raw_markdown as an empty string because the dashboard inserts the Markdown portion. Do not add keys not present in the Compact v2 template; research details already present in Markdown must not be duplicated in JSON.
 
@@ -7633,17 +7664,17 @@ Criterion-specific scoring (canonical; do not replace with a universal evidence 
 - Platform Attractiveness evaluates a reusable technical system whose common principles/design/manufacturing/delivery can generate multiple candidates/programs or improve performance. Score 0: no reusable structure or verifiable technical advantage; 1: reusable structure with plausible rationale but claim/concept-level differentiation; 2: at least one quantitative result showing technical advantage versus an appropriate comparator; 3: score 2 plus repeated quantitative advantage across multiple conditions or multiple platform-derived assets, or a platform-derived asset has reached First Patient Dosed. FPD alone is insufficient without score-2 quantitative evidence. Do not award points merely for preferred modality, indication expansion, multiple assets, or pipeline breadth.
 - Expansion Potential evaluates only additional indications for the assessed asset beyond its main indication. Score 0: none confirmed; 1: additional indication with biological rationale only; 2: asset-specific early quantitative data in at least one additional indication; 3: at least two distinct additional indications, at least one confirmed as an active asset-specific program, and asset-specific quantitative efficacy, PD, or biomarker data in that additional indication. An active program may be separately listed on the official pipeline or be in preclinical, IND-enabling, trial registration/authorization, or dosing; it is not limited to clinical development. Future opportunity, possible/planned evaluation, an indication list, platform-level expansion not tied to the asset, wording variants of one disease, and patient subgroups are not separate programs/indications. Do not award points for platform reuse, multiple platform assets, or platform breadth.
 
-Marketability method and score (document these items in Markdown; JSON keeps only the final score):
-- assessment_method is exactly calculation, external_forecast, both, or insufficient_evidence. Do not force A/B/C.
+Marketability method and score (document complete inputs in Markdown; JSON keeps the score and minimal A/B/C/D outputs):
+- assessment_method is exactly calculation, external_forecast, both, or insufficient_evidence. Do not force A/B/C/D when no reliable internal calculation exists.
 - score_basis_type must equal calculation for assessment_method calculation or both, external_forecast for external_forecast, and insufficient_evidence for insufficient_evidence. When both exist, calculation is the primary score basis and external forecast is a cross-check.
 - calculation_status is performed for calculation or both, and not_performed for external_forecast or insufficient_evidence.
-- assessed global peak sales determines score: 0 only when neither a reliable calculation nor external forecast exists; 1 when < 1000; 2 when >= 1000 and < 2000; 3 when >= 2000 million USD. Do not use weak-market language, expansion strength, or mandatory A/B/C completeness as alternate thresholds.
+- assessed global peak sales determines score: 0 only when neither a reliable calculation nor external forecast exists; 1 when < 1000; 2 when >= 1000 and < 2000; 3 when >= 2000 million USD. Do not use weak-market language, expansion strength, or mandatory A/B/C/D completeness as alternate thresholds.
 - Internal calculation covers one lead/main indication and uses the United States base: A. US TAP = US Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate; choose prevalence or annual incidence appropriately and state why. B. US Unrisked Peak Sales = US TAP x Benchmark Annualized Net Price x Peak Penetration x Treatment Duration Factor. Annualize benchmark net price by therapy type (chronic annual price; short course price x annual courses; episodic administration price x annual administrations; one-time net price). Use annual incidence or peak-year treatable cohort for one-time therapy when appropriate. Treatment Duration Factor defaults to 1.0 unless persistence/discontinuation/actual duration evidence supports adjustment. C. US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment. Benchmark price is the unadjusted price of the closest approved therapy/standard of care; apply asset-specific efficacy, safety, convenience, frequency, monitoring, or modality premium/discount only in Pricing Power Adjustment, never twice. Competition Haircut reflects competitor count, lead, expected entry order, and asset differentiation.
-- Calculated Global Obtainable Peak Sales = completed US Obtainable Peak Sales x 1.5. This is a user-defined screening policy applied once, never to TAP, price, penetration, or another factor.
+- D. Global Obtainable Peak Sales = completed C. US Obtainable Peak Sales x 1.5. This is a user-defined screening policy applied once, never to TAP, price, penetration, or another factor.
 - Remove Expansion Capacity Adjustment from the formula. If schema compatibility requires the field, fix it at 1.0, mark it deprecated, and never use it in the score. Do not run sensitivity analysis.
 - Record reliable asset-specific external peak-sales forecasts from independent analysts, consensus databases, reputable market research, or a company forecast containing a concrete number. Non-quantitative “blockbuster potential” is not a score basis. In Markdown state source name/type/date, geography, forecast year, peak sales or range, URL, confidence, and normalized Global value. Normalize a US forecast x 1.5 and leave a Global forecast unchanged. For a range, score the midpoint and retain low/high. Explain a material calculation/forecast gap in one sentence.
-- Write every sales value in Markdown as numeric million USD. External-only assessment may state that A/B/C was not performed.
-- For calculation or both, show the complete A/B/C inputs, formulas, units, sources, and outputs in Markdown. Rates and competition haircut must be between 0 and 1. Do not emit those calculation objects in Compact v2 JSON.
+- Write every sales value in Markdown as numeric million USD. External-only assessment may state that A/B/C/D was not performed.
+- For calculation or both, show the complete A/B/C/D inputs, formulas, units, sources, and outputs in Markdown. Rates and competition haircut must be between 0 and 1. Compact v2 JSON emits only the four output values and formulas shown in its minimal calculation object; do not duplicate full calculation inputs there.
 
 For every criterion rationale state compactly: criterion definition, selected score, core selected-score rule, why the asset meets it, key evidence, and key gap/why not higher. Platform technical advantage and assessed-asset Data Maturity are separate; do not double-count one fact with the same meaning.
 
@@ -7866,7 +7897,7 @@ Score basis type:
 Assessed global peak sales (million USD):
 
 What was checked:
-- Internal A/B/C calculation, if performed
+- Internal A/B/C/D calculation, if performed
 - Reliable asset-specific external peak-sales forecast, if available
 - Competition haircut and pricing power without double counting
 
@@ -7877,13 +7908,13 @@ Worksheet:
 | A. US TAP (calculation only) | US Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate | epidemiology source and prevalence/incidence rationale |
 | B. US Unrisked Peak Sales (calculation only) | US TAP x Benchmark Annualized Net Price x Peak Penetration x Treatment Duration Factor | price source and assumptions |
 | C. US Obtainable Peak Sales (calculation only) | US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment | competition and asset-specific pricing evidence |
-| Calculated Global (calculation only) | US Obtainable Peak Sales x 1.5 once | user-defined screening policy |
+| D. Global Obtainable Peak Sales (calculation only) | C. US Obtainable Peak Sales x 1.5 once | user-defined screening policy |
 | External Peak Sales Reference | source, date, geography, year, value/range, normalized global value, confidence | source URL |
 | Final score basis | 0 no reliable method; 1 < 1000; 2 >= 1000 and < 2000; 3 >= 2000 million USD | assessed global value |
 
 Investigation note:
 - Marketability is based on obtainable peak sales, not rNPV.
-- Show A/B/C only when calculation was performed; do not fabricate unavailable analysis.
+- Show A/B/C/D only when calculation was performed; do not fabricate unavailable analysis.
 - When both methods exist, use calculation as the primary score basis and external forecast as a cross-check.
 - All sales outputs must be in million USD.
 
@@ -8197,7 +8228,7 @@ Remember:
 - The JSON suffix must start with { and end with }. Use 2-space indentation; do not minify it.
 - Before answering, parse-check the complete JSON suffix: matched braces/brackets, double-quoted keys and strings, escaped line breaks inside strings, no comments, no trailing commas, no unresolved placeholders, no extra text after the final }, and no truncation.
 - Write every score, count, patient, rate, adjustment, and sales field as a JSON number, never a quoted numeric string. Escape any double quote, backslash, or line break inside JSON string values.
-- Cross-check Marketability in Markdown before output: method, score basis, calculation status, A/B/C or external forecast, assessed value, and the 0/1/2/3 score threshold must agree with the single JSON score.
+- Cross-check Marketability in Markdown before output: method, score basis, calculation status, A/B/C/D or external forecast, assessed value, and the 0/1/2/3 score threshold must agree with the JSON score.
 - The dashboard accepts the entire combined response in the single "GPT 지침 2 전체 응답" input and splits both portions automatically.`;
 }
 

@@ -14,7 +14,7 @@ Compact numeric score/count strings are normalized only in known numeric fields;
 
 Two deliberately large sections remain: `source_report.raw_markdown` is required to render/re-upload the GPT original and to support rubric refresh; dashboard-owned operational `meta` is required for team notes, attachments, manual overrides, audit history, and TAB3. They are not duplicate GPT research fields and are not removed by compaction.
 
-Every persisted criterion contains `score`, concise hover/detail fields (`evidence_type`, `evidence_type_reason`, `evidence_basis`, `main_line_summary`, `why_not_higher`, `investigation_note`, `uncertain_points`), and `source_ids`. Source objects are stored once in `validation.source_registry`; duplicated criterion-level `evidence_sources` are not persisted. Full evidence stays in Markdown. Marketability alone may retain its compact A/B/C display calculation. `hard_filter.hard_blocker` and `hard_filter.decision_uncertainty` remain so Filter 2 stays deterministic.
+Every persisted criterion contains `score`, concise hover/detail fields (`evidence_type`, `evidence_type_reason`, `evidence_basis`, `main_line_summary`, `why_not_higher`, `investigation_note`, `uncertain_points`), and `source_ids`. Source objects are stored once in `validation.source_registry`; duplicated criterion-level `evidence_sources` are not persisted. Full evidence stays in Markdown. Marketability alone may retain its compact A/B/C/D display calculation. `hard_filter.hard_blocker` and `hard_filter.decision_uncertainty` remain so Filter 2 stays deterministic.
 
 ## Top-Level Sections
 
@@ -115,26 +115,28 @@ Allowed evidence types recorded in the Markdown report:
 - `E3_asset_specific_preclinical_or_technical_evidence`
 - `E4_asset_specific_clinical_evidence`
 
-Marketability research in Markdown contains the A/B/C steps:
+Marketability research in Markdown contains the A/B/C/D steps:
 
 - `A_targetable_addressable_patient`: TAP estimate.
 - `B_unrisked_peak_sales`: TAP x annual net price x peak penetration x treatment duration factor.
 - `C_obtainable_peak_sales`: unrisked peak sales adjusted by competition and pricing power.
+- `D_global_obtainable_peak_sales`: completed US C multiplied by 1.5 exactly once.
 
-Marketability should use obtainable peak sales, not rNPV.
+Marketability should use assessed Global peak sales, not rNPV. A US external forecast is also normalized by 1.5; an already-Global forecast is unchanged.
 
 Marketability has a hard 0 gate. If the Markdown assessment finds commercial rationale not established, then:
 
 - `score` must be `0`.
-- TAP, Unrisked Peak Sales, and Obtainable Peak Sales are not asserted.
+- A/B/C/D outputs are not asserted.
 - The Markdown must state the failure reason.
 
-The Marketability Markdown section explicitly mentions all three steps when a calculation is used:
+The Marketability Markdown section explicitly mentions all four steps when a calculation is used:
 
 ```text
-A. TAP: ...
-B. Unrisked Peak Sales: ...
-C. Obtainable Peak Sales: ...
+A. US TAP: ...
+B. US Unrisked Peak Sales: ...
+C. US Obtainable Peak Sales: ...
+D. Global Obtainable Peak Sales: C x 1.5 ...
 ```
 
 Entry-order matrix should be used as a share/penetration reference. For example, in a 3-player market, a 1st entrant may be modeled around 50% share, a 2nd entrant around 30%, and a 3rd entrant around 20%.
@@ -164,13 +166,15 @@ Loosely-typed `meta` sub-objects support detail-page workflows that live outside
 
 ## Rubric Version Management
 
-Current Full Scout rubric definitions live in `config/scoring_criteria/v3_3_full.md` / `v3_3_display.md`, tracked by `main.py`'s `SCORING_CRITERIA_VERSION` constant (`3.3`). Fast Triage v3.2 is documented in `config/scoring_criteria/v3_2_triage.md` and tracked by `TRIAGE_CRITERIA_VERSION` (`3.2`). These are human-managed versioned files — there is no code path that generates or overwrites them automatically.
+`config/rubric-release.json` is the canonical release manifest for the active Fast Triage and Full Scout workflow versions, schema versions, rubric/display file paths, storage contract, and deterministic calculation constants such as the Marketability Global multiplier. `main.py` loads its version constants and rubric paths from this file and refuses to start when required manifest entries or files are missing. Current Full Scout definitions live in the files declared by the manifest (`v3_3_full.md` / `v3_3_display.md`), while Fast Triage uses the declared `v3_2_triage.md`. The release consistency test also checks that the copied GPT guidance and visible frontend version labels match the manifest.
+
+The manifest coordinates a release; it does not infer scoring code from edited prose. A research-only wording change can remain within an instruction file. Any change that can alter a criterion score must update the relevant rubric file and release version, while structural fields or deterministic formulas additionally require the compact contract, schema/parser/storage/render surfaces, and regression tests to change in the same release.
 
 `meta.rubric_version` on a record is the version that was active when its GPT report/score was originally generated ("원본" — the original), and is never overwritten after the fact. `meta.rescored_rubric_version` identifies the latest rubric that actually changed official scores; `meta.rubric_reviewed_version` identifies the latest successfully checked rubric even when no score changed. Prompt-only author/language/output-format boilerplate is not persisted.
 
 When the SKBP team manually revises the rubric definitions:
 
-1. Update `SCORING_CRITERIA_VERSION` (and add new `config/scoring_criteria/v3_x_*.md` files).
+1. Add the new versioned files under `config/scoring_criteria/` and update the corresponding workflow entry in `config/rubric-release.json`.
 2. Keep prior JSON records unchanged unless they are intentionally rescored.
 3. New or rescored assets should use the current rubric version.
 
