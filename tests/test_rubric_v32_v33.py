@@ -184,8 +184,8 @@ def current_triage_record() -> dict[str, object]:
     return {
         "meta": {
             "schema_version": "3.2",
-            "instruction_version": "3.2",
-            "rubric_version": "3.2",
+            "instruction_version": "3.3",
+            "rubric_version": "3.3",
             "review_type": "fast_triage",
             "generated_at": "2026-08-01",
             "output_filename_base": "Acceptance_Test_Asset_fast_triage_20260801",
@@ -209,7 +209,7 @@ def current_triage_record() -> dict[str, object]:
         },
         "hard_filter": {"status": "REJECT", "reason": "SELECT gate 미충족", "flags": []},
         "triage": {
-            "instruction_version": "3.2",
+            "instruction_version": "3.3",
             "status": "REJECT",
             "identity_verified": True,
             "active_asset": True,
@@ -245,12 +245,13 @@ def current_triage_record() -> dict[str, object]:
 
 class VersionAndPolicyTests(unittest.TestCase):
     def test_current_versions(self) -> None:
-        self.assertEqual(main.TRIAGE_CRITERIA_VERSION, "3.2")
+        self.assertEqual(main.TRIAGE_CRITERIA_VERSION, "3.3")
         self.assertEqual(main.TRIAGE_SCHEMA_VERSION, "3.2")
-        self.assertEqual(main.SCORING_CRITERIA_VERSION, "3.3")
+        self.assertEqual(main.SCORING_CRITERIA_VERSION, "3.4")
         self.assertEqual(main.FULL_SCOUT_SCHEMA_VERSION, "3.2")
-        self.assertTrue(main.SCORING_CRITERIA_FULL_MD.name.startswith("v3_3_"))
-        self.assertTrue(main.SCORING_CRITERIA_DISPLAY_MD.name.startswith("v3_3_"))
+        self.assertTrue(main.SCORING_CRITERIA_TRIAGE_MD.name.startswith("v3_3_"))
+        self.assertTrue(main.SCORING_CRITERIA_FULL_MD.name.startswith("v3_4_"))
+        self.assertTrue(main.SCORING_CRITERIA_DISPLAY_MD.name.startswith("v3_4_"))
 
     def test_fast_triage_select_formula_and_identity_gate(self) -> None:
         self.assertEqual(
@@ -543,6 +544,35 @@ class DevelopmentStageTests(unittest.TestCase):
             with self.subTest(source_wording=source_wording):
                 self.assertEqual(main.canonicalize_development_stage(source_wording), expected)
 
+    def test_multi_indication_stage_keeps_confirmed_current_phase(self) -> None:
+        self.assertEqual(
+            main.canonicalize_development_stage(
+                "Phase II recruiting for FOS; MDD Phase II initializing in China; pain stage unclear"
+            ),
+            "Phase 2",
+        )
+        self.assertEqual(main.canonicalize_development_stage("Phase II status unclear"), "Unknown")
+        self.assertEqual(main.canonicalize_development_stage("preclinical status unclear"), "Unknown")
+
+    def test_speculative_or_historical_inactive_text_does_not_override_current_stage(self) -> None:
+        self.assertEqual(
+            main.canonicalize_development_stage(
+                "Uncertain; likely preclinical or dormant; no public trial identified"
+            ),
+            "Unknown",
+        )
+        self.assertEqual(
+            main.canonicalize_development_stage(
+                "Preclinical / IND-enabling. MP-5342 entered IND-enabling studies. "
+                "META-01 historical entry is listed as discontinued discovery."
+            ),
+            "IND-enabling",
+        )
+        self.assertEqual(
+            main.canonicalize_development_stage("The assessed asset was discontinued in 2025"),
+            "Discontinued / inactive",
+        )
+
     def test_exact_stage_vocabulary(self) -> None:
         self.assertEqual(
             list(main.CANONICAL_DEVELOPMENT_STAGES),
@@ -564,6 +594,114 @@ class DevelopmentStageTests(unittest.TestCase):
                 "Unknown",
             ],
         )
+
+
+class ModalityCanonicalizationTests(unittest.TestCase):
+    def test_route_and_formulation_qualifiers_map_to_one_dashboard_label(self) -> None:
+        cases = {
+            "Oral small molecule": "Small molecule",
+            "Oral small-molecule / tablet; CNS discovery platform": "Small molecule",
+            "IV antibody": "Antibody",
+            "topical peptide": "Peptide",
+            "AAV gene therapy": "Gene therapy",
+            "not disclosed": "Unknown",
+            "Unknown": "Unknown",
+        }
+        for source_wording, expected in cases.items():
+            with self.subTest(source_wording=source_wording):
+                self.assertEqual(main.canonicalize_modality(source_wording), expected)
+
+    def test_shared_modality_dictionary_matches_backend_vocabulary(self) -> None:
+        dictionary = json.loads(
+            (ROOT / "config" / "category-synonyms.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(
+            [entry["canonical"] for entry in dictionary["modality"]],
+            list(main.CANONICAL_MODALITIES),
+        )
+
+
+class DashboardCategoryCanonicalizationTests(unittest.TestCase):
+    def test_country_alias_and_legacy_indication_fallbacks_are_canonical(self) -> None:
+        self.assertEqual(main.canonicalize_country("China / United States operations"), "China")
+        self.assertEqual(main.canonicalize_country("United States HQ / China operations"), "United States")
+        self.assertEqual(
+            main.canonicalize_main_indication(
+                "",
+                "Lead disclosed indication: inflammatory bowel disease; expansion potential for MS",
+            ),
+            "Inflammatory bowel disease",
+        )
+        self.assertEqual(
+            main.canonicalize_main_indication(
+                "",
+                "Focal onset seizure; major depressive disorder; pain",
+            ),
+            "Unknown",
+        )
+        self.assertEqual(
+            main.canonicalize_main_indication(
+                "",
+                "CNS hypotheses include acute ischemic stroke and status epilepticus",
+            ),
+            "Unknown",
+        )
+        self.assertEqual(
+            main.canonicalize_main_indication("", "Refractory chronic cough"),
+            "Chronic cough",
+        )
+        self.assertEqual(
+            main.canonicalize_main_indication("Unknown", "Epilepsy; pain"),
+            "Unknown",
+        )
+
+    def test_theme_cluster_legacy_aliases_close_into_dashboard_taxonomy(self) -> None:
+        self.assertEqual(
+            main.canonicalize_theme_cluster("No Theme", "No mapped SKBP cluster"),
+            ("Others", "Others"),
+        )
+        self.assertEqual(
+            main.canonicalize_theme_cluster("Neuroimmune", "Cytokine 신경조절"),
+            ("Neuroimmune", "Cytokine 신경조절"),
+        )
+        self.assertEqual(
+            main.canonicalize_theme_cluster("Unknown", "N/A"),
+            ("Unknown", "Unknown"),
+        )
+        self.assertEqual(
+            main.canonicalize_theme_cluster("Proteostasis", "No mapped cluster"),
+            ("Protein Homeostasis", "Unknown"),
+        )
+        self.assertIn("Protein Homeostasis", main.THEMES)
+        dictionary = json.loads(
+            (ROOT / "config" / "category-synonyms.json").read_text(encoding="utf-8")
+        )
+        theme_values = [entry["canonical"] for entry in dictionary["theme"]]
+        self.assertEqual(
+            theme_values,
+            ["E/I Balance", "Neuroimmune", "Protein Homeostasis", "Others", "Unknown"],
+        )
+
+    def test_save_filter_normalizer_closes_all_filter_facing_categories(self) -> None:
+        record = current_triage_record()
+        record["structured_table"].update({
+            "modality_platform": "Oral small-molecule tablet",
+            "development_stage": "Phase II recruiting",
+            "company_country": "China / United States operations",
+            "main_indication": "",
+            "indication": "Lead indication: inflammatory bowel disease; expansion potential for MS",
+        })
+        record["json_summary"] = {
+            "theme": "No Theme",
+            "cluster": "No mapped SKBP cluster",
+        }
+        main.normalize_current_record_filter_fields(record, 0)
+        self.assertEqual(record["structured_table"]["modality_platform"], "Small molecule")
+        self.assertEqual(record["structured_table"]["development_stage"], "Phase 2")
+        self.assertEqual(record["structured_table"]["company_country"], "China")
+        self.assertEqual(record["structured_table"]["main_indication"], "Inflammatory bowel disease")
+        self.assertEqual(record["json_summary"]["theme"], "Others")
+        self.assertEqual(record["json_summary"]["cluster"], "Others")
 
 
 class EvidenceContractTests(unittest.TestCase):
@@ -731,8 +869,8 @@ class FullScoutFilterTests(unittest.TestCase):
         record = {
             "meta": {
                 "schema_version": "3.1",
-                "instruction_version": "3.3",
-                "rubric_version": "3.3",
+                "instruction_version": "3.4",
+                "rubric_version": "3.4",
                 "review_type": "full_scout",
             },
             "hard_filter": {"status": "FAIL"},
@@ -896,6 +1034,15 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         self.assertNotIn('"ingestion_format": "compact_v1"', app_js)
         self.assertIn("COMPACT_TRIAGE_JSON_TEMPLATE", app_js)
         self.assertIn("replaceInstructionJsonTemplate(prompt, COMPACT_TRIAGE_JSON_TEMPLATE", app_js)
+        self.assertIn(
+            "| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country |",
+            prompt,
+        )
+        self.assertIn("SHARED_CANONICAL_INDICATION_RULE", app_js)
+        self.assertIn("Lead disclosed indication: inflammatory bowel disease; expansion potential for MS", app_js)
+        self.assertIn("['country', 'indication'].includes(kind)", app_js)
+        self.assertIn("Compact v2에서는 main_indication을 생략하거나 비워둘 수 없습니다", app_js)
+        self.assertIn("Protein Homeostasis", app_js)
 
     def test_full_scout_prompt_uses_one_combined_copy_block(self) -> None:
         app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
@@ -945,8 +1092,8 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
             shared_sentence in app_js,
             "The exact shared Evidence Discipline block is missing from src/app.js.",
         )
-        self.assertIn("Fast Triage v3.2", app_js)
-        self.assertIn("Full Scout v3.3", app_js)
+        self.assertIn("Fast Triage v3.3", app_js)
+        self.assertIn("Full Scout v3.4", app_js)
         for stale_or_forbidden in (
             "Fast Triage v3.1",
             "Full Scout v3.2",
@@ -977,10 +1124,10 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         self.assertIn('"source_registry": []', compact)
         self.assertIn('"source_ids": []', compact)
 
-        triage_rules = (ROOT / "config" / "scoring_criteria" / "v3_2_triage.md").read_text(
+        triage_rules = (ROOT / "config" / "scoring_criteria" / "v3_3_triage.md").read_text(
             encoding="utf-8"
         )
-        full_rules = (ROOT / "config" / "scoring_criteria" / "v3_3_full.md").read_text(
+        full_rules = (ROOT / "config" / "scoring_criteria" / "v3_4_full.md").read_text(
             encoding="utf-8"
         )
         for text in (triage_rules, full_rules):

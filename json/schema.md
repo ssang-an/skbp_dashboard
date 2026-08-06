@@ -101,9 +101,21 @@ Both workflows use only asset-specific facts explicitly supplied by the user or 
 - `Discontinued / inactive`
 - `Unknown`
 
-Only explicit stage wording or a completed/started milestone may be canonicalized. A planned or expected IND alone is not `IND-enabling`; use `Unknown` unless another current stage is confirmed. Plain `preclinical` maps to `Preclinical unspecified`, candidate nomination/selection maps to `Preclinical Candidate`, actual GLP toxicology/IND-directed CMC/IND-enabling work maps to `IND-enabling`, and submitted/filed/accepted/effective/cleared IND or CTA maps to `IND filed/cleared`. Trial recruitment/status text stays in source evidence or notes rather than being merged into this field.
+Only explicit stage wording or a completed/started milestone may be canonicalized. A planned or expected IND alone is not `IND-enabling`; use `Unknown` unless another current stage is confirmed. Plain `preclinical` maps to `Preclinical unspecified`, candidate nomination/selection maps to `Preclinical Candidate`, actual GLP toxicology/IND-directed CMC/IND-enabling work maps to `IND-enabling`, and submitted/filed/accepted/effective/cleared IND or CTA maps to `IND filed/cleared`. For a multi-indication asset, the lead/currently most advanced confirmed stage is the single dashboard value; uncertainty limited to another indication does not erase that confirmed stage. Speculative `likely dormant` wording or a different historical alias marked discontinued does not establish the current asset as `Discontinued / inactive`. Trial recruitment, indication-specific status, historical identity detail, and uncertainty stay in source evidence or notes rather than being merged into this field.
+
+## Canonical Modality
+
+`structured_table.modality_platform` uses exactly one of `Small molecule`, `Peptide`, `RNA therapy`, `Cell therapy`, `Gene therapy`, `Antibody`, `Protein biologic`, `Other`, or `Unknown`. Route, dosage form, delivery, and platform qualifiers are removed from this filter-facing field: for example, `Oral small molecule`, `oral small-molecule / tablet`, and a qualified small-molecule discovery-platform phrase all map to `Small molecule`; `IV antibody` maps to `Antibody`; `topical peptide` maps to `Peptide`. The removed detail remains in the Markdown report, MoA, source evidence, platform summary, or notes.
 
 New Compact v2 uploads are normalized to this vocabulary. The storage schema also accepts historical stage display text during one-time minimization so existing table cells are not silently rewritten; a later confirmed reupload or explicit record edit normalizes that value.
+
+## Canonical Country, Main Indication, Theme, and Cluster
+
+`structured_table.company_country` contains one legal-domicile/headquarters label. Operating regions and secondary offices remain in Markdown or notes. Known aliases use `config/category-synonyms.json`; for example, `China / United States operations` maps to `China` when China is the assessed company's stated domicile.
+
+`structured_table.main_indication` is mandatory in new Compact v2 input and contains one dashboard disease bucket from the shared indication dictionary. Blank, null, omitted, `N/A`, and unnormalized values are not allowed; use `Unknown` only after the lead cannot be resolved. Lead selection prioritizes an official lead/primary/initial or sole current indication, then the indication belonging to the single most advanced confirmed active clinical program; ties and conflicting evidence remain `Unknown`. `structured_table.indication` retains the complete disease wording and secondary indications. Legacy records with a blank `main_indication` are backfilled only when an explicit lead clause resolves one indication or the detailed field contains exactly one canonical indication. Multiple unmatched candidates remain `Unknown`; an explicit `Unknown` is never re-guessed.
+
+`json_summary.theme` is one of `E/I Balance`, `Neuroimmune`, `Protein Homeostasis`, `Others`, or `Unknown`. Theme mapping follows researched target/MoA evidence rather than disease association alone. `Protein Homeostasis` requires direct modulation of proteostasis, such as folding/chaperone, ubiquitin-proteasome, autophagy-lysosome, ER stress/UPR, or pathogenic aggregate-clearance biology; its cluster remains `Unknown` until a sub-cluster taxonomy is approved. A recognized cluster must belong to its configured Theme. Legacy `No Theme`, `No mapped SKBP cluster`, and `N/A` aliases close to `Others` or `Unknown` as appropriate instead of creating additional filter categories.
 
 Each persisted scoring criterion has a `score` integer from 0 to 3 plus the concise hybrid display/source-reference fields listed above. The Markdown criterion section carries the complete checks, evidence trail, calculations, rationale, and limitations.
 
@@ -209,15 +221,17 @@ Allowed Theme values:
 
 - `E/I Balance`
 - `Neuroimmune`
-- `Others`: Target/MoA를 확인했지만 E/I Balance 또는 Neuroimmune에 해당하지 않는 경우
+- `Protein Homeostasis`
+- `Others`: Target/MoA를 확인했지만 E/I Balance, Neuroimmune 또는 Protein Homeostasis에 해당하지 않는 경우
 - `Unknown`: 공개자료가 부족해 Target/MoA 기반 Theme을 확정하지 못한 경우
 
-새 조사에서는 `N/A`와 `No Theme`을 Theme/Cluster 분류에 사용하지 않습니다. E/I Balance·Neuroimmune에 속하지 않으면 Theme과 Cluster를 모두 `Others`로 기록합니다. 기존 레코드의 `N/A`·`No Theme`·미매핑 Cluster 값도 대시보드에서 `Others`로 정규화해 표시합니다. JSON Schema의 `No Theme` 허용값은 기존 레코드 호환성만을 위한 legacy 값입니다.
+새 조사에서는 `N/A`와 `No Theme`을 Theme/Cluster 분류에 사용하지 않습니다. 세 R&D Theme에 속하지 않으면 Theme과 Cluster를 모두 `Others`로 기록합니다. Protein Homeostasis는 승인된 하위 Cluster가 아직 없으므로 Cluster를 `Unknown`으로 기록합니다. 기존 레코드의 `N/A`·`No Theme`·미매핑 Cluster 값도 대시보드에서 `Others` 또는 `Unknown`으로 정규화해 표시합니다. JSON Schema의 `No Theme` 허용값은 기존 레코드 호환성만을 위한 legacy 값입니다.
 
 SKBP focus clusters:
 
 - `E/I Balance`: Ion Channel, Inhibitory Tone 강화, Synaptic Transmission, Chloride Homeostasis, Network Modulation
 - `Neuroimmune`: CNS 손상 면역반응, 교세포 향상성, Cytokine 신경조절, 손상/질환 면역조절, 말초 면역기관 연결
+- `Protein Homeostasis`: `Unknown` (하위 Cluster taxonomy 승인 전)
 
 ## Seven Scoring Criteria
 

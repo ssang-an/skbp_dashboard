@@ -39,6 +39,20 @@ function numericValue(value) {
   return /^-?(?:\d+\.?\d*|\.\d+)$/.test(normalized) ? Number(normalized) : value;
 }
 
+function canonicalModalityValue(value) {
+  const text = textValue(value);
+  const normalized = text.toLowerCase().replace(/[\u2010-\u2015]/g, '-').replace(/\s+/g, ' ');
+  if (!text || /^(?:unknown|not known|not available|not disclosed|n\/?a)$/i.test(text)) return 'Unknown';
+  if (/small[\s-]?molecule|\bsm\b|oral compound|chemical compound/.test(normalized)) return 'Small molecule';
+  if (/peptide/.test(normalized)) return 'Peptide';
+  if (/rna|oligonucleotide|antisense|\baso\b|sirna|mirna|mrna/.test(normalized)) return 'RNA therapy';
+  if (/car[- ]?t|tcr[- ]?t|cell therapy|cellular therapy|stem cell/.test(normalized)) return 'Cell therapy';
+  if (/gene therapy|aav|lentiviral|gene editing|crispr/.test(normalized)) return 'Gene therapy';
+  if (/antibody|antibody drug conjugate|\badc\b|bispecific/.test(normalized)) return 'Antibody';
+  if (/protein biologic|recombinant protein|fusion protein|enzyme replacement/.test(normalized)) return 'Protein biologic';
+  return 'Other';
+}
+
 function normalizeNumericFields(object, fields) {
   fields.forEach((field) => {
     if (field in object) object[field] = numericValue(object[field]);
@@ -352,8 +366,8 @@ function expandedMeta(record, mode) {
   const meta = { ...objectValue(record.meta) };
   const triage = mode === 'triage';
   meta.schema_version ||= '3.2';
-  meta.instruction_version ||= triage ? '3.2' : '3.3';
-  meta.rubric_version ||= triage ? '3.2' : '3.3';
+  meta.instruction_version ||= triage ? '3.3' : '3.4';
+  meta.rubric_version ||= triage ? '3.3' : '3.4';
   meta.review_type ||= triage ? 'fast_triage' : 'full_scout';
   meta.language ||= 'ko';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(textValue(meta.generated_at)) || /Y{4}/i.test(textValue(meta.generated_at))) {
@@ -452,7 +466,7 @@ function expandMinimalCompactInputRecord(inputRecord, requestedMode = '') {
     asset_name: textValue(inputTable.asset_name, 'Unknown'),
     target: textValue(inputTable.target, 'Unknown'),
     moa: textValue(inputTable.moa, 'Unknown'),
-    modality_platform: textValue(inputTable.modality_platform, 'Unknown'),
+    modality_platform: canonicalModalityValue(textValue(inputTable.modality_platform, 'Unknown')),
     main_indication: textValue(inputTable.main_indication, 'Unknown'),
     indication: textValue(inputTable.indication, inputTable.main_indication, 'Unknown'),
     development_stage: textValue(inputTable.development_stage, 'Unknown'),
@@ -518,7 +532,7 @@ function expandMinimalCompactInputRecord(inputRecord, requestedMode = '') {
 
   if (triage) {
     record.triage = {
-      instruction_version: '3.2',
+      instruction_version: '3.3',
       status: textValue(record.triage?.status, record.hard_filter.status),
       identity_verified: record.triage?.identity_verified === true,
       active_asset: typeof record.triage?.active_asset === 'boolean'
@@ -600,7 +614,7 @@ export function expandCompactInputRecord(inputRecord, requestedMode = '') {
   table.asset_name = textValue(table.asset_name, 'Unknown');
   table.target = textValue(table.target, 'Unknown');
   table.moa = textValue(table.moa, 'Unknown');
-  table.modality_platform = textValue(table.modality_platform, 'Unknown');
+  table.modality_platform = canonicalModalityValue(textValue(table.modality_platform, 'Unknown'));
   table.main_indication = textValue(table.main_indication, 'Unknown');
   table.indication = textValue(table.indication, table.main_indication, 'Unknown');
   table.development_stage = textValue(table.development_stage, 'Unknown');
@@ -677,7 +691,7 @@ export function expandCompactInputRecord(inputRecord, requestedMode = '') {
 
   if (triage) {
     record.triage = {
-      instruction_version: '3.2',
+      instruction_version: '3.3',
       identity_verified: false,
       active_asset: null,
       missing_evidence_needed_for_full_scout: [],

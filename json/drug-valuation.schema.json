@@ -55,7 +55,7 @@
       "type": "object",
       "required": ["theme", "cluster", "target_description"],
       "properties": {
-        "theme": { "enum": ["E/I Balance", "Neuroimmune", "Others", "Unknown", "N/A", "No Theme"] },
+        "theme": { "enum": ["E/I Balance", "Neuroimmune", "Protein Homeostasis", "Others", "Unknown", "N/A", "No Theme"] },
         "cluster": { "type": "string", "minLength": 1 },
         "target_description": { "type": "string" }
       },

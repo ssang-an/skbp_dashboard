@@ -70,15 +70,15 @@
                 class="help-tooltip"
                 type="button"
                 hidden
-                data-tooltip="GPT Fast Triage v3.2 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / UNVERIFIED로 screening할 때 사용합니다."
-                aria-label="GPT Fast Triage v3.2 지침 복사"
+                data-tooltip="GPT Fast Triage v3.3 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / UNVERIFIED로 screening할 때 사용합니다."
+                aria-label="GPT Fast Triage v3.3 지침 복사"
               ><span aria-hidden="true">GPT</span><b>지침 1</b></button>
               <button
                 id="copyPromptTopButton"
                 class="help-tooltip"
                 type="button"
-                data-tooltip="GPT Full Scout v3.3 지침을 복사합니다. Fast Triage에서 SELECT된 asset을 심층 검토할 때 사용합니다."
-                aria-label="GPT Full Scout v3.3 지침 복사"
+                data-tooltip="GPT Full Scout v3.4 지침을 복사합니다. Fast Triage에서 SELECT된 asset을 심층 검토할 때 사용합니다."
+                aria-label="GPT Full Scout v3.4 지침 복사"
               ><span aria-hidden="true">GPT</span><b>지침 2</b></button>
               <button
                 class="data-utility-segment data-upload-shortcut help-tooltip"
@@ -443,7 +443,7 @@
           <p class="eyebrow" id="criteriaDrawerScopeLabel">AI Champion</p>
           <div class="criteria-drawer-title-row">
             <h2>판단근거</h2>
-            <span id="criteriaDrawerVersionBadge" class="criteria-version-badge">v3.2</span>
+            <span id="criteriaDrawerVersionBadge" class="criteria-version-badge">v3.3</span>
           </div>
           <p id="criteriaDrawerSubtitle" class="criteria-drawer-subtitle">Full Scout 검토 후보를 선별하기 위한 3-point screening 기준</p>
         </div>
@@ -452,7 +452,7 @@
 
       <div class="criteria-drawer-body">
         <section class="criteria-rule criteria-triage-rule" data-criteria-tab="triage">
-          <h3>GPT 지침 1 — Fast Triage · v3.2 기준</h3>
+          <h3>GPT 지침 1 — Fast Triage · v3.3 기준</h3>
           <p>
             지침 1은 여러 후보 중 지침 2 Full Scout로 넘길 대상을 빠르게 고르는 1차 screening입니다.
             <code>Target Relevance</code>, <code>MoA Validity</code>, <code>Data Maturity</code>를 독립적으로 예비 평가하고
@@ -563,6 +563,7 @@
                 <li><strong>SKBP 우선 관심 적응증</strong><span class="criteria-keyword-list"><span>Alzheimer's disease</span><span>Parkinson's disease</span><span>Amyotrophic lateral sclerosis / motor neuron disease</span><span>Multiple sclerosis / neuroinflammatory disease</span><span>Neuropathic pain</span><span>Epilepsy / seizure disorders</span></span></li>
                 <li><strong>R&amp;D Theme 1 · E/I Balance</strong><span class="criteria-keyword-list"><span>Ion Channel</span><span>Inhibitory Tone</span><span>Synaptic Transmission</span><span>Chloride Homeostasis</span><span>Network Modulation</span></span></li>
                 <li><strong>R&amp;D Theme 2 · Neuroimmune</strong><span class="criteria-keyword-list"><span>Glial homeostasis</span><span>CNS injury immune response</span><span>Cytokine neuromodulation</span><span>Disease immune modulation</span></span></li>
+                <li><strong>R&amp;D Theme 3 · Protein Homeostasis</strong><span class="criteria-keyword-list"><span>Protein folding / chaperone</span><span>Ubiquitin-proteasome</span><span>Autophagy-lysosome</span><span>ER stress / UPR</span><span>Aggregate clearance</span></span></li>
               </ul>
             </article>
             <article>
@@ -577,7 +578,7 @@
         </section>
 
         <section class="criteria-rule criteria-full-rule" data-criteria-tab="full">
-          <h3>GPT 지침 2 — Full Scout · v3.3 기준</h3>
+          <h3>GPT 지침 2 — Full Scout · v3.4 기준</h3>
           <p>
             지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
             지침 1에서 예비로 본 TR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
@@ -728,6 +729,7 @@
                 <li><strong>SKBP 우선 관심 적응증</strong><span class="criteria-keyword-list"><span>Alzheimer's disease</span><span>Parkinson's disease</span><span>Amyotrophic lateral sclerosis / motor neuron disease</span><span>Multiple sclerosis / neuroinflammatory disease</span><span>Neuropathic pain</span><span>Epilepsy / seizure disorders</span></span></li>
                 <li><strong>R&amp;D Theme 1 · E/I Balance</strong><span class="criteria-keyword-list"><span>Ion Channel</span><span>Inhibitory Tone</span><span>Synaptic Transmission</span><span>Chloride Homeostasis</span><span>Network Modulation</span></span></li>
                 <li><strong>R&amp;D Theme 2 · Neuroimmune</strong><span class="criteria-keyword-list"><span>Glial homeostasis</span><span>CNS injury immune response</span><span>Cytokine neuromodulation</span><span>Disease immune modulation</span></span></li>
+                <li><strong>R&amp;D Theme 3 · Protein Homeostasis</strong><span class="criteria-keyword-list"><span>Protein folding / chaperone</span><span>Ubiquitin-proteasome</span><span>Autophagy-lysosome</span><span>ER stress / UPR</span><span>Aggregate clearance</span></span></li>
               </ul>
             </article>
             <article class="competitive-parameter-card full-parameter-card">
@@ -943,6 +945,6 @@
       </section>
     </div>
 
-    <script type="module" src="./src/app.js?v=20260806-marketability-d-1"></script>
+    <script type="module" src="./src/app.js?v=20260806-theme-indication-3"></script>
   </body>
 </html>

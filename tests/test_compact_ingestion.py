@@ -5,6 +5,8 @@ import subprocess
 import unittest
 from pathlib import Path
 
+from fastapi import HTTPException
+
 import main
 
 
@@ -119,6 +121,56 @@ class CompactIngestionTests(unittest.TestCase):
             "https://example.com/source",
         )
         main.validate_records_for_save([expanded])
+
+    def test_route_qualified_modality_is_canonicalized_during_expansion(self):
+        compact = {
+            "meta": {"ingestion_format": "compact_v2", "review_type": "full_scout"},
+            "input": {"company_input": "NeuShen Therapeutics", "asset_input": "NS-041"},
+            "structured_table": {
+                "company": "NeuShen Therapeutics",
+                "asset_name": "NS-041",
+                "modality_platform": "Oral small-molecule / tablet; CNS discovery platform",
+                "development_stage": "Phase 2",
+            },
+            "scoring": {"criteria": {}},
+        }
+        expanded = self.expand(compact, "full")
+        self.assertEqual(expanded["structured_table"]["modality_platform"], "Small molecule")
+
+    def test_both_prompts_explain_route_qualified_modality_canonicalization(self):
+        prompts = self.rendered_prompts()
+        dictionary = json.loads(
+            (ROOT / "config" / "category-synonyms.json").read_text(encoding="utf-8")
+        )
+        for mode, prompt in prompts.items():
+            with self.subTest(mode=mode):
+                self.assertIn('"oral small-molecule / tablet"', prompt)
+                self.assertIn('"small-molecule CNS discovery platform" -> Small molecule', prompt)
+                self.assertIn('"IV antibody" -> Antibody', prompt)
+                self.assertIn('"topical peptide" -> Peptide', prompt)
+                self.assertIn('"FOS Phase II recruiting; pain stage unclear" -> Phase 2', prompt)
+                self.assertIn('"China / United States operations" -> China', prompt)
+                self.assertIn('"Lead disclosed indication: inflammatory bowel disease; expansion potential for MS" -> Inflammatory bowel disease', prompt)
+                self.assertIn("main_indication is mandatory", prompt)
+                self.assertIn("single most advanced confirmed active clinical program", prompt)
+                self.assertIn("Never select an indication merely because it appears first", prompt)
+                self.assertIn('"CNS hypotheses include stroke and status epilepticus; no official lead or active trial" -> Unknown', prompt)
+                self.assertIn("Protein Homeostasis", prompt)
+                self.assertIn("The mere presence of protein aggregates in a disease does not establish this Theme", prompt)
+                self.assertIn('use cluster="Unknown" for this Theme', prompt)
+                for entry in dictionary["indication"]:
+                    self.assertIn(entry["canonical"], prompt)
+
+    def test_new_compact_v2_rejects_blank_main_indication(self):
+        full = self.final_json_template(
+            self.rendered_prompts()["full"],
+            "\nFinal validation before output:",
+        )
+        full["structured_table"]["main_indication"] = ""
+        with self.assertRaises(HTTPException) as caught:
+            main.validate_records_for_save([full])
+        self.assertIn("main_indication", str(caught.exception.detail))
+        self.assertIn("Unknown", str(caught.exception.detail))
 
     def test_full_compact_record_preserves_meaningful_fields_and_fills_boilerplate(self):
         criterion_ids = [

@@ -1839,7 +1839,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('id="triageCriteriaDrawerBody"', TRIAGE_DETAIL_HTML)
         self.assertIn('data-active-criteria-tab="triage"', TRIAGE_DETAIL_HTML)
         self.assertIn('class="criteria-drawer-heading"', TRIAGE_DETAIL_HTML)
-        self.assertIn('class="criteria-version-badge">v3.2</span>', TRIAGE_DETAIL_HTML)
+        self.assertIn('class="criteria-version-badge">v3.3</span>', TRIAGE_DETAIL_HTML)
         sync = function_body(TRIAGE_DETAIL_JS, "syncCriteriaDrawerFromDashboard")
         self.assertIn("fetch('/', { cache: 'no-store' })", sync)
         self.assertIn("#criteriaDrawer .criteria-drawer-body", sync)
@@ -1893,7 +1893,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         context = function_body(JS, "buildDashboardAgentContext")
         self.assertIn("scopeRows.length", context)
         self.assertNotIn(".slice(0, 5)", context)
-        self.assertIn("app.js?v=20260806-marketability-d-1", HTML)
+        self.assertIn("app.js?v=20260806-theme-indication-3", HTML)
 
     def test_table_manual_review_uses_authenticated_user_without_identity_modal(self):
         actor = function_body(JS, "ensureDashboardActorName")
@@ -1922,7 +1922,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("state.dataUploadDrafts[mode]", guide)
         self.assertIn("expandCompactInputRecord(record, lockedMode)", validator)
         self.assertIn("isMinimalCompactIngestionRecord(split.records[index])", validator)
-        self.assertIn("compact-ingestion.js?v=20260806-marketability-d-1", JS)
+        self.assertIn("compact-ingestion.js?v=20260806-theme-indication-3", JS)
 
     def test_detail_agent_is_qa_only_without_apply_controls_or_routes(self):
         main_py = (ROOT / "main.py").read_text(encoding="utf-8")
@@ -2147,7 +2147,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn(".detail-material-body::-webkit-scrollbar", layout)
         self.assertIn("width: 6px", layout)
         self.assertIn("border-radius: 999px", layout)
-        self.assertIn("detail.js?v=20260806-marketability-d-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260806-theme-indication-3", DETAIL_HTML)
 
     def test_report_header_matches_review_workspace_and_uses_icon_actions(self):
         report_header = DETAIL_HTML[
@@ -2357,7 +2357,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("detailOiPartnershipNoteOrigin", DETAIL_JS)
         self.assertIn('title="OI 파트너십 분류 근거를 짧게 요약합니다."', note_markup)
         self.assertNotIn("review-reason-edit-icon", note_markup)
-        self.assertIn("detail.js?v=20260806-marketability-d-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260806-theme-indication-3", DETAIL_HTML)
 
     def test_partner_material_body_scrolls_below_fixed_header(self):
         header_index = DETAIL_HTML.index('class="detail-material-header"')

@@ -228,6 +228,17 @@ CANONICAL_DEVELOPMENT_STAGES = (
     "Unknown",
 )
 CANONICAL_DEVELOPMENT_STAGE_SET = set(CANONICAL_DEVELOPMENT_STAGES)
+CANONICAL_MODALITIES = (
+    "Small molecule",
+    "Peptide",
+    "RNA therapy",
+    "Cell therapy",
+    "Gene therapy",
+    "Antibody",
+    "Protein biologic",
+    "Other",
+    "Unknown",
+)
 
 SKBP_INTEREST_INDICATIONS = (
     "Alzheimer's disease",
@@ -259,6 +270,7 @@ RULE_PREFIXES = {
 THEMES = {
     "E/I Balance": {"id": "ei_balance", "name": "E/I Balance"},
     "Neuroimmune": {"id": "neuroimmune", "name": "Neuroimmune"},
+    "Protein Homeostasis": {"id": "protein_homeostasis", "name": "Protein Homeostasis"},
 }
 
 CLUSTERS = {
@@ -543,6 +555,70 @@ def read_json(path: Path) -> Any:
         raise HTTPException(status_code=400, detail=f"Invalid JSON in {path.name}: {exc}") from None
 
 
+_CATEGORY_SYNONYMS_CACHE: dict[str, Any] | None = None
+
+
+def category_synonym_dictionary() -> dict[str, Any]:
+    """Return the shared dashboard category dictionary used by API validation."""
+    global _CATEGORY_SYNONYMS_CACHE
+    if _CATEGORY_SYNONYMS_CACHE is None:
+        payload = read_json(CATEGORY_SYNONYMS_FILE)
+        if not isinstance(payload, dict):
+            raise RuntimeError("category-synonyms.json root must be an object.")
+        _CATEGORY_SYNONYMS_CACHE = payload
+    return _CATEGORY_SYNONYMS_CACHE
+
+
+def category_match_index(text: str, entry: dict[str, Any]) -> int | None:
+    """Find the earliest match for one canonical category entry."""
+    indices: list[int] = []
+    terms = [entry.get("canonical"), *(entry.get("synonyms") or [])]
+    for term in terms:
+        normalized_term = re.sub(r"\s+", " ", str(term or "").strip().casefold())
+        if not normalized_term:
+            continue
+        compact_term = re.sub(r"[^a-z0-9]", "", normalized_term)
+        if len(compact_term) <= 3 and re.fullmatch(r"[a-z0-9]+", compact_term):
+            compact_text = re.sub(r"[^a-z0-9]+", " ", text)
+            match = re.search(rf"(?:^|[^a-z0-9]){re.escape(compact_term)}(?:[^a-z0-9]|$)", compact_text)
+            if match:
+                indices.append(match.start())
+            continue
+        index = text.find(normalized_term)
+        if index >= 0:
+            indices.append(index)
+    for pattern in entry.get("patterns") or []:
+        try:
+            match = re.search(str(pattern), text, flags=re.IGNORECASE)
+        except re.error:
+            continue
+        if match:
+            indices.append(match.start())
+    return min(indices) if indices else None
+
+
+def canonicalize_dictionary_category(kind: str, source_wording: Any, *, earliest: bool = False) -> str | None:
+    raw = re.sub(r"\s+", " ", str(source_wording or "").strip())
+    if not raw:
+        return None
+    text = raw.casefold().replace("’", "'")
+    entries = category_synonym_dictionary().get(kind)
+    if not isinstance(entries, list):
+        return None
+    matches: list[tuple[int, int, str]] = []
+    for order, entry in enumerate(entries):
+        if not isinstance(entry, dict) or not str(entry.get("canonical") or "").strip():
+            continue
+        index = category_match_index(text, entry)
+        if index is not None:
+            matches.append((index, order, str(entry["canonical"])))
+    if not matches:
+        return None
+    if earliest:
+        return min(matches, key=lambda item: (item[0], item[1]))[2]
+    return min(matches, key=lambda item: item[1])[2]
+
+
 def write_json_atomic(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile("w", encoding="utf-8", delete=False, dir=path.parent, suffix=".tmp") as tmp:
@@ -612,11 +688,31 @@ def canonicalize_development_stage(source_wording: Any) -> str:
     text = re.sub(r"[_–—]+", "-", raw.casefold())
     text = re.sub(r"\s+", " ", text).strip()
     if re.search(
-        r"\b(?:conflict(?:ing|ed)?|inconsistent|discrepan(?:t|cy)|unresolved|unclear|uncertain)\b|"
-        r"상충|불일치|해소할\s*수\s*없|불명확|불확실",
+        r"\b(?:conflict(?:ing|ed)?|inconsistent|discrepan(?:t|cy)|unresolved)\b|"
+        r"상충|불일치|해소할\s*수\s*없",
         text,
     ):
         return "Unknown"
+
+    def match_clause(match: re.Match[str]) -> str:
+        separators = (";", ".", "\n", ",", ":")
+        left = max(text.rfind(separator, 0, match.start()) for separator in separators)
+        right_candidates = [
+            position
+            for separator in separators
+            if (position := text.find(separator, match.end())) >= 0
+        ]
+        right = min(right_candidates) if right_candidates else len(text)
+        return text[left + 1 : right]
+
+    def match_is_uncertain(match: re.Match[str]) -> bool:
+        return bool(
+            re.search(
+                r"\b(?:unclear|uncertain|not\s+(?:confirmed|verified|established))\b|불명확|불확실|미확인",
+                match_clause(match),
+            )
+        )
+
     def match_is_planned(match: re.Match[str]) -> bool:
         """Associate planning language with this milestone, not another clause/activity."""
         separators = (";", ".", "\n", ",", ":")
@@ -658,7 +754,15 @@ def canonicalize_development_stage(source_wording: Any) -> str:
     )
     if inactive_match:
         prefix = text[max(0, inactive_match.start() - 16) : inactive_match.start()]
-        if not re.search(r"\b(?:not|isn't|is not|never)\s*$|아니|않", prefix):
+        speculative_or_historical = re.search(
+            r"\b(?:likely|possibly|possible|may|might|could\s+be|historical|former|legacy)\b|"
+            r"추정|가능성|과거|이전",
+            match_clause(inactive_match),
+        )
+        if (
+            not speculative_or_historical
+            and not re.search(r"\b(?:not|isn't|is not|never)\s*$|아니|않", prefix)
+        ):
             return "Discontinued / inactive"
 
     if re.search(
@@ -696,8 +800,14 @@ def canonicalize_development_stage(source_wording: Any) -> str:
     phase_patterns = (phase_patterns[1], phase_patterns[2], phase_patterns[0], phase_patterns[3], phase_patterns[4])
     for canonical, pattern in phase_patterns:
         phase_match = re.search(pattern, text)
-        if phase_match and not match_is_planned(phase_match):
+        if phase_match and not match_is_planned(phase_match) and not match_is_uncertain(phase_match):
             return canonical
+
+    if re.search(
+        r"\b(?:unclear|uncertain|not\s+(?:confirmed|verified|established))\b|불명확|불확실|미확인",
+        text,
+    ):
+        return "Unknown"
 
     if re.search(r"\b(?:development\s+candidate|preclinical\s+candidate)\s+(?:selected|nominated)\b|"
                  r"\bcandidate\s+nominated\b|개발\s*후보(?:물질)?\s*(?:선정|지명)", text):
@@ -727,6 +837,127 @@ def canonicalize_development_stage(source_wording: Any) -> str:
     return "Unknown"
 
 
+def canonicalize_modality(source_wording: Any) -> str:
+    """Map route/formulation-qualified modality wording into one dashboard label."""
+    raw = re.sub(r"\s+", " ", str(source_wording or "").strip())
+    if not raw or raw.casefold() in {
+        "-", "unknown", "not known", "not available", "not disclosed", "n/a", "na"
+    }:
+        return "Unknown"
+    exact = {value.casefold(): value for value in CANONICAL_MODALITIES}
+    if raw.casefold() in exact:
+        return exact[raw.casefold()]
+    from_dictionary = canonicalize_dictionary_category("modality", raw)
+    if from_dictionary:
+        return from_dictionary
+    normalized = raw.casefold()
+    patterns = (
+        ("Small molecule", r"\b(?:small[\s-]?molecule|sm|oral compound|chemical compound)\b"),
+        ("Peptide", r"\bpeptides?\b"),
+        ("RNA therapy", r"\b(?:rna(?: therapy)?|oligonucleotide|antisense|aso|sirna|mirna|mrna)\b"),
+        ("Cell therapy", r"\b(?:car[\s-]?t|tcr[\s-]?t|cell(?:ular)? therapy|stem cell)\b"),
+        ("Gene therapy", r"\b(?:gene therapy|aav|lentiviral|gene editing|crispr)\b"),
+        ("Antibody", r"\b(?:antibod(?:y|ies)|antibody drug conjugate|adc|ab|bispecific|mab)\b"),
+        ("Protein biologic", r"\b(?:protein biologic|recombinant protein|fusion protein|enzyme replacement)\b"),
+    )
+    for label, pattern in patterns:
+        if re.search(pattern, normalized, flags=re.IGNORECASE):
+            return label
+    return "Other"
+
+
+def canonicalize_country(source_wording: Any) -> str:
+    """Normalize known country aliases while retaining a single unknown country label."""
+    raw = re.sub(r"\s+", " ", str(source_wording or "").strip())
+    if not raw or raw.casefold() in {"-", "unknown", "not known", "not available", "n/a", "na"}:
+        return "Unknown"
+    canonical = canonicalize_dictionary_category("country", raw, earliest=True)
+    if canonical:
+        return canonical
+    # The controlled list intentionally groups common sourcing regions, but a new
+    # legal domicile should remain visible rather than being silently changed to Unknown.
+    return raw
+
+
+def canonical_indication_matches(source_wording: Any) -> list[str]:
+    """Return distinct canonical indications in textual order."""
+    text = re.sub(r"\s+", " ", str(source_wording or "").strip()).casefold().replace("’", "'")
+    matches: list[tuple[int, int, str]] = []
+    for order, entry in enumerate(category_synonym_dictionary().get("indication") or []):
+        if not isinstance(entry, dict) or not str(entry.get("canonical") or "").strip():
+            continue
+        index = category_match_index(text, entry)
+        if index is not None:
+            matches.append((index, order, str(entry["canonical"])))
+    values: list[str] = []
+    for _, _, canonical in sorted(matches, key=lambda item: (item[0], item[1])):
+        if canonical not in values:
+            values.append(canonical)
+    return values
+
+
+def explicit_legacy_lead_indication(detailed_indication: Any) -> str | None:
+    """Resolve only a clause that explicitly labels one legacy indication as lead."""
+    text = re.sub(r"\s+", " ", str(detailed_indication or "").strip())
+    if not text:
+        return None
+    lead_marker = re.compile(
+        r"\b(?:lead|primary|initial|first)\s+(?:disclosed\s+|target(?:ed)?\s+)?indication\b|"
+        r"\bindication\s+(?:is|was)\s+(?:explicitly\s+)?(?:lead|primary|initial)\b|"
+        r"(?:대표|주요|주|초기)\s*적응증",
+        flags=re.IGNORECASE,
+    )
+    for clause in re.split(r"[;\n]|(?<=[.!?])\s+", text):
+        if not lead_marker.search(clause):
+            continue
+        matches = canonical_indication_matches(clause)
+        if len(matches) == 1:
+            return matches[0]
+    return None
+
+
+def canonicalize_main_indication(main_indication: Any, detailed_indication: Any = None) -> str:
+    """Return one dashboard indication; legacy blanks are resolved conservatively."""
+    primary = re.sub(r"\s+", " ", str(main_indication or "").strip())
+    if primary.casefold() in {"-", "unknown", "not known", "n/a", "na"}:
+        return "Unknown"
+    if primary:
+        canonical = canonicalize_dictionary_category("indication", primary, earliest=True)
+        return canonical or "Unknown"
+    explicit_lead = explicit_legacy_lead_indication(detailed_indication)
+    if explicit_lead:
+        return explicit_lead
+    matches = canonical_indication_matches(detailed_indication)
+    return matches[0] if len(matches) == 1 else "Unknown"
+
+
+def canonicalize_theme_cluster(theme_wording: Any, cluster_wording: Any) -> tuple[str, str]:
+    """Close legacy Theme/Cluster aliases into the dashboard taxonomy."""
+    raw_theme = re.sub(r"\s+", " ", str(theme_wording or "").strip())
+    raw_cluster = re.sub(r"\s+", " ", str(cluster_wording or "").strip())
+    theme_text = raw_theme.casefold()
+    if re.search(r"e\s*/\s*i\s*balance|excitation.*inhibition", theme_text):
+        theme = "E/I Balance"
+    elif re.search(r"neuro[\s-]*immune", theme_text):
+        theme = "Neuroimmune"
+    elif re.search(r"protein[\s-]*homeostasis|proteostasis", theme_text):
+        theme = "Protein Homeostasis"
+    elif theme_text in {"others", "other", "no theme", "no fit", "out of scope", "n/a", "na"}:
+        theme = "Others"
+    else:
+        theme = "Unknown"
+
+    normalized_cluster = raw_cluster.casefold()
+    for cluster_name, cluster in CLUSTERS.items():
+        if normalized_cluster == cluster_name.casefold():
+            return str(cluster["theme"]), cluster_name
+    if normalized_cluster in {"others", "other", "no cluster", "no mapped skbp cluster", "no mapped", "no fit", "out of scope", "none", "n/a", "na"}:
+        return ("Others", "Others") if theme == "Others" else (theme, "Unknown")
+    if theme == "Others":
+        return "Others", "Others"
+    return theme, "Unknown"
+
+
 def match_skbp_interest_indication(detailed_indication: Any) -> str | None:
     """Return the canonical SKBP interest indication for a confirmed detailed indication."""
     text = re.sub(r"\s+", " ", str(detailed_indication or "").strip().casefold())
@@ -752,7 +983,7 @@ def calculate_target_relevance_score(
     direct_biology_fit: bool = False,
     target_moa_contradiction: bool = False,
 ) -> int:
-    """Pure implementation of the shared v3.2/v3.3 TR decision order."""
+    """Pure implementation of the shared current-release TR decision order."""
     text = str(detailed_indication or "").strip()
     if not text or text.casefold() in {"unknown", "n/a", "na", "none", "undisclosed", "-"}:
         return 0
@@ -781,7 +1012,7 @@ def calculate_moa_validity_score(
     asset_specific_direct_validation: bool = False,
     mechanism_linked_clinical_poc: bool = False,
 ) -> int:
-    """Pure v3.2/v3.3 MoA rule; generic efficacy alone is intentionally absent."""
+    """Pure current-release MoA rule; generic efficacy alone is intentionally absent."""
     if not target_or_moa_confirmed:
         return 0
     if (
@@ -1017,7 +1248,7 @@ def calculate_fast_triage_status(
     active_asset: bool | None = None,
     hard_blocker: bool = False,
 ) -> str:
-    """Return SELECT, REJECT, or UNVERIFIED using the v3.2 Fast Triage gate."""
+    """Return SELECT, REJECT, or UNVERIFIED using the current Fast Triage gate."""
     if identity_verified is not True:
         return "UNVERIFIED"
     if active_asset is not True or hard_blocker:
@@ -1536,7 +1767,7 @@ def validate_marketability(criterion: dict[str, Any], *, require_method: bool = 
 
 
 def validate_stage_specific_fields(criteria: dict[str, Any]) -> None:
-    # v3.3 Full Scout still benefits from these fields, but the dashboard can render
+    # Current Full Scout still benefits from these fields, but the dashboard can render
     # and compare records without requiring them at save time.
     return
 
@@ -1566,7 +1797,8 @@ def is_current_full_scout_contract(record: dict[str, Any]) -> bool:
     )
 
 
-def normalize_current_record_stage(record: dict[str, Any], index: int) -> None:
+def normalize_current_record_filter_fields(record: dict[str, Any], index: int) -> None:
+    """Canonicalize filter-facing fields while preserving detailed wording in Markdown."""
     table = record.get("structured_table")
     if not isinstance(table, dict):
         validation_error(f"record[{index}].structured_table is required and must be an object.")
@@ -1579,6 +1811,20 @@ def normalize_current_record_stage(record: dict[str, Any], index: int) -> None:
         validation_error(
             f"record[{index}].structured_table.development_stage must be a canonical dashboard stage."
         )
+    table["modality_platform"] = canonicalize_modality(table.get("modality_platform"))
+    table["company_country"] = canonicalize_country(table.get("company_country"))
+    table["main_indication"] = canonicalize_main_indication(
+        table.get("main_indication"),
+        table.get("indication"),
+    )
+
+    summary = record.get("json_summary")
+    if isinstance(summary, dict):
+        theme, cluster = canonicalize_theme_cluster(summary.get("theme"), summary.get("cluster"))
+        summary["theme"] = theme
+        summary["cluster"] = cluster
+        if "company_country" in summary:
+            summary["company_country"] = table["company_country"]
 
 
 def fast_triage_record_has_hard_blocker(record: dict[str, Any]) -> bool:
@@ -1627,10 +1873,18 @@ def is_minimal_dashboard_contract(record: dict[str, Any]) -> bool:
 
 def validate_minimal_dashboard_record(record: dict[str, Any], index: int) -> None:
     """Validate score/dashboard data without requiring Markdown-duplicated research prose."""
-    validate_typed_ingestion_contract(record, index)
-    normalize_current_record_stage(record, index)
     meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
     incoming_compact_v2 = str(meta.get("ingestion_format") or "").strip().lower() == "compact_v2"
+    if incoming_compact_v2:
+        table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else {}
+        raw_main_indication = table.get("main_indication")
+        if not isinstance(raw_main_indication, str) or not raw_main_indication.strip():
+            validation_error(
+                f"record[{index}].structured_table.main_indication is required and must be "
+                "one canonical indication or Unknown; blank, null, and omission are not allowed."
+            )
+    validate_typed_ingestion_contract(record, index)
+    normalize_current_record_filter_fields(record, index)
     persisted_profile = str(meta.get("storage_profile") or "").strip().lower()
     persisted_hybrid = persisted_profile == STORAGE_PROFILE.lower()
     if incoming_compact_v2 and persisted_profile:
@@ -2339,7 +2593,7 @@ def validate_records_for_save(records: list[dict[str, Any]]) -> None:
                     validation_error(
                         f"record[{index}].triage.active_asset is required and must be true, false, or null."
                     )
-                normalize_current_record_stage(record, index)
+                normalize_current_record_filter_fields(record, index)
             for criterion_id in ["target_relevance", "moa_validity", "data_maturity"]:
                 if criterion_id not in criteria:
                     validation_error(f"record[{index}].scoring.criteria.{criterion_id} is required for fast triage.")
@@ -2434,7 +2688,7 @@ def validate_records_for_save(records: list[dict[str, Any]]) -> None:
                     f"record[{index}].meta.rubric_version must be {SCORING_CRITERIA_VERSION} for current Full Scout output."
                 )
             validate_typed_ingestion_contract(record, index)
-            normalize_current_record_stage(record, index)
+            normalize_current_record_filter_fields(record, index)
 
         if hard_filter_status not in {"PASS", "REVIEW", "FAIL"}:
             validation_error(
@@ -4139,22 +4393,10 @@ def dashboard_canonical_modality(value: Any) -> str | None:
         "others",
     }:
         return None
-    canonical_patterns = (
-        ("Small molecule", r"\b(?:small[\s-]?molecule|sm|oral compound|chemical compound)\b"),
-        ("Peptide", r"\bpeptides?\b"),
-        ("RNA therapy", r"\b(?:rna(?: therapy)?|oligonucleotide|antisense|aso|sirna|mirna|mrna)\b"),
-        (
-            "CGT",
-            r"\b(?:car[\s-]?t|tcr[\s-]?t|cell(?:ular)? therapy|stem cell|"
-            r"gene therapy|aav|lentiviral|gene editing|crispr)\b",
-        ),
-        ("Antibody", r"\b(?:antibod(?:y|ies)|antibody drug conjugate|adc|ab|mab|bispecific)\b"),
-        ("Protein biologic", r"\b(?:protein biologic|recombinant protein|fusion protein|enzyme replacement)\b"),
-    )
-    for label, pattern in canonical_patterns:
-        if re.search(pattern, normalized, flags=re.IGNORECASE):
-            return label
-    return None
+    canonical = canonicalize_modality(text)
+    if canonical in {"Unknown", "Other"}:
+        return None
+    return "CGT" if canonical in {"Cell therapy", "Gene therapy"} else canonical
 
 
 def dashboard_record_modality(record: dict[str, Any]) -> str | None:

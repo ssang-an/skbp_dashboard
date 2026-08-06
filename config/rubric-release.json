@@ -1,20 +1,20 @@
 {
   "manifest_schema_version": "1.0",
-  "release_id": "skbp-rubric-2026-08-06",
+  "release_id": "skbp-rubric-2026-08-06-protein-homeostasis",
   "released_at": "2026-08-06",
   "workflows": {
     "fast_triage": {
-      "instruction_version": "3.2",
-      "rubric_version": "3.2",
-      "schema_version": "3.2",
-      "rubric_file": "config/scoring_criteria/v3_2_triage.md"
-    },
-    "full_scout": {
       "instruction_version": "3.3",
       "rubric_version": "3.3",
       "schema_version": "3.2",
-      "rubric_file": "config/scoring_criteria/v3_3_full.md",
-      "display_file": "config/scoring_criteria/v3_3_display.md"
+      "rubric_file": "config/scoring_criteria/v3_3_triage.md"
+    },
+    "full_scout": {
+      "instruction_version": "3.4",
+      "rubric_version": "3.4",
+      "schema_version": "3.2",
+      "rubric_file": "config/scoring_criteria/v3_4_full.md",
+      "display_file": "config/scoring_criteria/v3_4_display.md"
     }
   },
   "calculations": {

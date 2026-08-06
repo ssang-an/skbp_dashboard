@@ -5,7 +5,7 @@ import {
   expandCompactInputRecord,
   isCompactIngestionRecord,
   isMinimalCompactIngestionRecord
-} from './compact-ingestion.js?v=20260806-marketability-d-1';
+} from './compact-ingestion.js?v=20260806-theme-indication-3';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260805-ingestion-guard-5';
 
 const API_URL = '/api/records';
@@ -140,11 +140,11 @@ const FOCUS_MIN_COLUMN_WIDTHS = {
 
 const MAX_COLUMN_WIDTH = 720;
 const PROMPT_TOOLTIP =
-  'GPT Full Scout v3.3 지침을 복사합니다. Fast Triage에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
+  'GPT Full Scout v3.4 지침을 복사합니다. Fast Triage에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
 const TRIAGE_PROMPT_TOOLTIP =
-  'GPT Fast Triage v3.2 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / UNVERIFIED로 screening합니다.';
-const LATEST_TRIAGE_RUBRIC_VERSION = '3.2';
-const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.3';
+  'GPT Fast Triage v3.3 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / UNVERIFIED로 screening합니다.';
+const LATEST_TRIAGE_RUBRIC_VERSION = '3.3';
+const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.4';
 const FAST_TRIAGE_SCHEMA_VERSION = '3.2';
 const FULL_SCOUT_SCHEMA_VERSION = '3.2';
 const FULL_SCOUT_AGENT_INPUT_PLACEHOLDER =
@@ -306,7 +306,7 @@ const state = {
   fittedColumnWidths: {},
   agentSessions: [],
   activeAgentSessionId: localStorage.getItem(AGENT_ACTIVE_SESSION_KEY) || '',
-  categorySynonyms: { country: [], stage: [], indication: [] },
+  categorySynonyms: { country: [], stage: [], modality: [], theme: [], indication: [] },
   categorySynonymsLoaded: false,
   latestOiPartnershipCriteriaVersion: '1.0'
 };
@@ -600,6 +600,33 @@ function matchesDictionaryTerm(normalizedText, term) {
   return normalizedText.includes(normalizedTerm);
 }
 
+function dictionaryEntryMatchIndex(normalizedText, entry) {
+  const indices = [];
+  const terms = [entry?.canonical, ...(Array.isArray(entry?.synonyms) ? entry.synonyms : [])];
+  terms.filter(Boolean).forEach((term) => {
+    const normalizedTerm = normalizeCategoryText(term);
+    const compactTerm = normalizedTerm.replace(/[^a-z0-9]/g, '');
+    const isShortToken = compactTerm.length <= 3 && /^[a-z0-9]+$/.test(compactTerm);
+    if (isShortToken) {
+      const compactText = normalizedText.replace(/[^a-z0-9]+/g, ' ');
+      const match = new RegExp(`(^|[^a-z0-9])${escapeRegExp(compactTerm)}([^a-z0-9]|$)`, 'i').exec(compactText);
+      if (match) indices.push(match.index);
+      return;
+    }
+    const index = normalizedText.indexOf(normalizedTerm);
+    if (index >= 0) indices.push(index);
+  });
+  (Array.isArray(entry?.patterns) ? entry.patterns : []).forEach((pattern) => {
+    try {
+      const match = new RegExp(pattern, 'i').exec(normalizedText);
+      if (match) indices.push(match.index);
+    } catch (error) {
+      console.warn(`Invalid category synonym pattern skipped: ${pattern}`, error);
+    }
+  });
+  return indices.length ? Math.min(...indices) : -1;
+}
+
 function orderedDictionaryEntries(kind) {
   const entries = Array.isArray(state.categorySynonyms?.[kind]) ? state.categorySynonyms[kind] : [];
   if (kind !== 'stage') return entries;
@@ -632,7 +659,16 @@ function canonicalFromDictionary(kind, value) {
   const normalized = normalizeCategoryText(text);
   if (!normalized || normalized === '-') return null;
 
-  for (const entry of orderedDictionaryEntries(kind)) {
+  const entries = orderedDictionaryEntries(kind);
+  if (['country', 'indication'].includes(kind)) {
+    const matches = entries
+      .map((entry, order) => ({ entry, order, index: dictionaryEntryMatchIndex(normalized, entry) }))
+      .filter((match) => match.index >= 0)
+      .sort((a, b) => a.index - b.index || a.order - b.order);
+    return matches[0]?.entry?.canonical || null;
+  }
+
+  for (const entry of entries) {
     if (!entry?.canonical) continue;
     if (matchesDictionaryTerm(normalized, entry.canonical)) return entry.canonical;
 
@@ -663,6 +699,8 @@ async function loadCategorySynonyms() {
     state.categorySynonyms = {
       country: Array.isArray(dictionary.country) ? dictionary.country : [],
       stage: Array.isArray(dictionary.stage) ? dictionary.stage : [],
+      modality: Array.isArray(dictionary.modality) ? dictionary.modality : [],
+      theme: Array.isArray(dictionary.theme) ? dictionary.theme : [],
       indication: Array.isArray(dictionary.indication) ? dictionary.indication : []
     };
   } catch (error) {
@@ -688,6 +726,37 @@ function canonicalDashboardIndication(value) {
   if (/pain/.test(normalized)) return 'Pain';
   if (/acute ischemic stroke|stroke/.test(normalized)) return 'Stroke';
   return mainIndicationFrom(text).replace(/[\u2018\u2019\u201A\u201B]/g, "'");
+}
+
+function canonicalIndicationMatches(value) {
+  const normalized = normalizeCategoryText(value);
+  if (!normalized) return [];
+  const matches = (state.categorySynonyms.indication || [])
+    .map((entry, order) => ({ entry, order, index: dictionaryEntryMatchIndex(normalized, entry) }))
+    .filter((match) => match.index >= 0)
+    .sort((a, b) => a.index - b.index || a.order - b.order);
+  return [...new Set(matches.map((match) => match.entry.canonical).filter(Boolean))];
+}
+
+function explicitLegacyLeadIndication(value) {
+  const leadMarker = /\b(?:lead|primary|initial|first)\s+(?:disclosed\s+|target(?:ed)?\s+)?indication\b|\bindication\s+(?:is|was)\s+(?:explicitly\s+)?(?:lead|primary|initial)\b|(?:대표|주요|주|초기)\s*적응증/i;
+  const clauses = String(value || '').split(/[;\n]|(?<=[.!?])\s+/);
+  for (const clause of clauses) {
+    if (!leadMarker.test(clause)) continue;
+    const matches = canonicalIndicationMatches(clause);
+    if (matches.length === 1) return matches[0];
+  }
+  return null;
+}
+
+function canonicalMainIndication(mainIndication, detailedIndication = '') {
+  const primary = String(mainIndication || '').trim();
+  if (/^(?:-|unknown|not known|n\/?a)$/i.test(primary)) return 'Unknown';
+  if (primary) return canonicalFromDictionary('indication', primary) || 'Unknown';
+  const explicitLead = explicitLegacyLeadIndication(detailedIndication);
+  if (explicitLead) return explicitLead;
+  const matches = canonicalIndicationMatches(detailedIndication);
+  return matches.length === 1 ? matches[0] : 'Unknown';
 }
 
 function canonicalCountry(value) {
@@ -752,9 +821,21 @@ function canonicalDevelopmentStage(value) {
   if (exact) return exact;
 
   const text = raw.toLowerCase().replace(/[_–—]+/g, '-').replace(/\s+/g, ' ').trim();
-  if (/\b(?:conflict(?:ing|ed)?|inconsistent|discrepan(?:t|cy)|unresolved|unclear|uncertain)\b|상충|불일치|해소할\s*수\s*없|불명확|불확실/.test(text)) {
+  if (/\b(?:conflict(?:ing|ed)?|inconsistent|discrepan(?:t|cy)|unresolved)\b|상충|불일치|해소할\s*수\s*없/.test(text)) {
     return 'Unknown';
   }
+
+  const matchClause = (match) => {
+    const separators = [';', '.', '\n', ',', ':'];
+    const left = Math.max(...separators.map((separator) => text.lastIndexOf(separator, match.index)));
+    const matchEnd = match.index + match[0].length;
+    const rightCandidates = separators
+      .map((separator) => text.indexOf(separator, matchEnd))
+      .filter((position) => position >= 0);
+    const right = rightCandidates.length ? Math.min(...rightCandidates) : text.length;
+    return text.slice(left + 1, right);
+  };
+  const matchIsUncertain = (match) => /\b(?:unclear|uncertain|not\s+(?:confirmed|verified|established))\b|불명확|불확실|미확인/.test(matchClause(match));
 
   const matchIsPlanned = (match) => {
     const separators = [';', '.', '\n', ',', ':'];
@@ -774,7 +855,8 @@ function canonicalDevelopmentStage(value) {
   const inactiveMatch = text.match(/\b(?:discontinued|inactive|terminated|withdrawn|suspended|dormant|clearly failed)\b|중단|종료|철회|휴면/);
   if (inactiveMatch) {
     const prefix = text.slice(Math.max(0, inactiveMatch.index - 16), inactiveMatch.index);
-    if (!/\b(?:not|isn't|is not|never)\s*$|아니|않/.test(prefix)) return 'Discontinued / inactive';
+    const speculativeOrHistorical = /\b(?:likely|possibly|possible|may|might|could\s+be|historical|former|legacy)\b|추정|가능성|과거|이전/.test(matchClause(inactiveMatch));
+    if (!speculativeOrHistorical && !/\b(?:not|isn't|is not|never)\s*$|아니|않/.test(prefix)) return 'Discontinued / inactive';
   }
 
   if (/\b(?:ind|cta)\s*(?:submitted|filed|accepted|effective|cleared|approved|approval)\b|\b(?:submitted|filed|accepted|effective|cleared|approved)\s+(?:an?\s+)?(?:ind|cta)\b|(?:ind|cta)\s*(?:제출|승인|수리|효력)/.test(text)) {
@@ -796,7 +878,11 @@ function canonicalDevelopmentStage(value) {
   ];
   for (const [canonical, pattern] of phasePatterns) {
     const phaseMatch = text.match(pattern);
-    if (phaseMatch && !matchIsPlanned(phaseMatch)) return canonical;
+    if (phaseMatch && !matchIsPlanned(phaseMatch) && !matchIsUncertain(phaseMatch)) return canonical;
+  }
+
+  if (/\b(?:unclear|uncertain|not\s+(?:confirmed|verified|established))\b|불명확|불확실|미확인/.test(text)) {
+    return 'Unknown';
   }
 
   if (/\b(?:development\s+candidate|preclinical\s+candidate)\s+(?:selected|nominated)\b|\bcandidate\s+nominated\b|개발\s*후보(?:물질)?\s*(?:선정|지명)/.test(text)) {
@@ -829,8 +915,10 @@ function stageSummaryGroup(stage) {
 function canonicalModality(value) {
   const text = String(value || '').trim();
   const normalized = normalizeCategoryText(text);
-  if (!text || text === '-' || /^(unknown|not known|n\/a)$/i.test(text)) return 'Unknown';
-  if (/small molecule|\bsm\b|oral compound|chemical compound/.test(normalized)) return 'Small molecule';
+  const fromDictionary = canonicalFromDictionary('modality', text);
+  if (fromDictionary) return fromDictionary;
+  if (!text || text === '-' || /^(unknown|not known|not available|not disclosed|n\/a)$/i.test(text)) return 'Unknown';
+  if (/small[\s-]?molecule|\bsm\b|oral compound|chemical compound/.test(normalized)) return 'Small molecule';
   if (/peptide/.test(normalized)) return 'Peptide';
   if (/rna|oligonucleotide|antisense|\baso\b|sirna|mirna|mrna/.test(normalized)) return 'RNA therapy';
   if (/car[- ]?t|tcr[- ]?t|cell therapy|cellular therapy|stem cell/.test(normalized)) return 'Cell therapy';
@@ -843,9 +931,12 @@ function canonicalModality(value) {
 function canonicalTheme(value) {
   const text = String(value || '').trim();
   const normalized = normalizeCategoryText(text);
+  const fromDictionary = canonicalFromDictionary('theme', text);
+  if (fromDictionary) return fromDictionary;
   if (!text || text === '-' || /^(unknown|not known|n\/?a)$/i.test(text)) return 'Unknown';
   if (/e\s*\/\s*i\s*balance|excitation.*inhibition/.test(normalized)) return 'E/I Balance';
   if (/neuro[\s-]*immune/.test(normalized)) return 'Neuroimmune';
+  if (/protein homeostasis|proteostasis/.test(normalized)) return 'Protein Homeostasis';
   return 'Others';
 }
 
@@ -854,7 +945,9 @@ function canonicalCluster(value, theme = '') {
   const normalized = normalizeCategoryText(text);
   if (!text || text === '-' || /^(unknown|not known)$/i.test(text)) return 'Unknown';
   if (/^n\/?a$/.test(normalized)) return theme === 'Others' ? 'Others' : 'Unknown';
-  if (/^others?$|no cluster|no mapped|no fit|out of scope|none/.test(normalized)) return 'Others';
+  if (/^others?$|no cluster|no mapped|no fit|out of scope|none/.test(normalized)) {
+    return theme === 'Others' ? 'Others' : 'Unknown';
+  }
   return text;
 }
 
@@ -1452,7 +1545,10 @@ function flattenRecord(record, index) {
     stage: canonicalDevelopmentStage(table.development_stage || '-'),
     indication: table.indication || '-',
     mainIndicationRaw: table.main_indication || table.primary_indication || summary.main_indication || mainIndicationFrom(table.indication),
-    mainIndication: canonicalDashboardIndication(table.main_indication || table.primary_indication || summary.main_indication || table.indication),
+    mainIndication: canonicalMainIndication(
+      table.main_indication || table.primary_indication || summary.main_indication,
+      table.indication
+    ),
     modality: canonicalModality(table.modality_platform),
     targetDescription: String(
       summary.target_description
@@ -2481,7 +2577,7 @@ function distributionDescription(kind, label) {
       return '상위 6개 외 Modality와 Other·Unknown·N/A를 합산한 Summary 차트 전용 그룹입니다.';
     }
     if (kind === 'theme') {
-      return 'E/I Balance·Neuroimmune 외 Theme와 Unknown·N/A를 합산한 차트 전용 그룹입니다.';
+      return 'E/I Balance·Neuroimmune·Protein Homeostasis 외 Theme와 Unknown·N/A를 합산한 차트 전용 그룹입니다.';
     }
     if (kind === 'country') {
       return '상위 3개 국가를 제외한 국가와 Unknown·N/A를 합산한 차트 전용 그룹입니다.';
@@ -2778,9 +2874,10 @@ function themeDistributionEntries(rows) {
     const theme = String(row.theme || '').trim();
     if (/^e\s*\/\s*i\s*balance$/i.test(theme)) return 'E/I Balance';
     if (/^neuro[\s-]*immune$/i.test(theme)) return 'Neuroimmune';
+    if (/^protein[\s-]*homeostasis$/i.test(theme)) return 'Protein Homeostasis';
     return 'Others';
   });
-  return ['E/I Balance', 'Neuroimmune', 'Others']
+  return ['E/I Balance', 'Neuroimmune', 'Protein Homeostasis', 'Others']
     .map((label) => [label, counts[label] || 0])
     .filter(([, count]) => count > 0);
 }
@@ -5544,6 +5641,29 @@ const INPUT_MODALITIES = new Set([
   'Other',
   'Unknown'
 ]);
+const INPUT_INDICATIONS = new Set([
+  "Alzheimer's disease",
+  "Parkinson's disease",
+  'Epilepsy / seizure disorders',
+  'Multiple sclerosis / neuroinflammatory disease',
+  'Amyotrophic lateral sclerosis / motor neuron disease',
+  'Frontotemporal dementia',
+  "Huntington's disease",
+  'Stroke',
+  'Migraine / headache disorders',
+  'Pain',
+  'Major depressive disorder',
+  'Schizophrenia / psychosis',
+  'Bipolar disorder',
+  'Anxiety disorders',
+  'Autism spectrum disorder',
+  'ADHD',
+  'Sleep / wake disorders',
+  'Chronic cough',
+  'Inflammatory bowel disease',
+  'Systemic lupus erythematosus / autoimmune disease',
+  'Unknown'
+]);
 const INPUT_STAGES = new Set(CANONICAL_DEVELOPMENT_STAGES);
 const INPUT_EVIDENCE_BASES = new Set([
   'user_input_only',
@@ -5551,7 +5671,7 @@ const INPUT_EVIDENCE_BASES = new Set([
   'user_input_and_public_source',
   'no_supporting_basis'
 ]);
-const INPUT_THEMES = new Set(['E/I Balance', 'Neuroimmune', 'Others', 'Unknown']);
+const INPUT_THEMES = new Set(['E/I Balance', 'Neuroimmune', 'Protein Homeostasis', 'Others', 'Unknown']);
 
 function isInputObject(value) {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -5943,7 +6063,7 @@ function validateInputScoreCriterion(
     const evidenceBasis = String(criterion.evidence_basis || '').trim();
     const summary = String(criterion.main_line_summary || '').trim();
     if (!summary) {
-      addInputIssue(issues, 'error', `${path}.main_line_summary`, 'Fast Triage v3.2에는 비어 있지 않은 main_line_summary가 필요합니다.');
+      addInputIssue(issues, 'error', `${path}.main_line_summary`, `Fast Triage v${LATEST_TRIAGE_RUBRIC_VERSION}에는 비어 있지 않은 main_line_summary가 필요합니다.`);
     } else if (Number.isInteger(criterion.score)
       && criterion.score >= 0
       && criterion.score <= 3
@@ -6038,7 +6158,7 @@ function validateInputFilterFields(record, recordPath, errors, warnings) {
   }
   const theme = String(record.json_summary?.theme || '').trim();
   if (theme && !INPUT_THEMES.has(theme)) {
-    addInputIssue(warnings, 'warning', `${recordPath}.json_summary.theme`, `"${theme}"는 E/I Balance, Neuroimmune, Others, Unknown 중 하나여야 합니다.`);
+    addInputIssue(warnings, 'warning', `${recordPath}.json_summary.theme`, `"${theme}"는 E/I Balance, Neuroimmune, Protein Homeostasis, Others, Unknown 중 하나여야 합니다.`);
   }
 }
 
@@ -6187,6 +6307,29 @@ function validateInputMarketability(criterion, recordPath, issues, { requireComp
   }
 }
 
+function normalizeExpandedInputFilterFields(record) {
+  if (!isInputObject(record?.structured_table)) return record;
+  const table = record.structured_table;
+  table.modality_platform = canonicalModality(table.modality_platform);
+  table.development_stage = canonicalDevelopmentStage(table.development_stage);
+  table.company_country = canonicalCountry(table.company_country);
+  const canonicalIndication = canonicalMainIndication(table.main_indication, table.indication);
+  const indicationVocabulary = new Set([
+    ...INPUT_INDICATIONS,
+    ...(state.categorySynonyms.indication || []).map((entry) => entry?.canonical).filter(Boolean)
+  ]);
+  table.main_indication = indicationVocabulary.has(canonicalIndication) ? canonicalIndication : 'Unknown';
+  if (isInputObject(record.json_summary)) {
+    const theme = canonicalTheme(record.json_summary.theme);
+    record.json_summary.theme = theme;
+    record.json_summary.cluster = canonicalCluster(record.json_summary.cluster, theme);
+    if (Object.prototype.hasOwnProperty.call(record.json_summary, 'company_country')) {
+      record.json_summary.company_country = table.company_country;
+    }
+  }
+  return record;
+}
+
 function validateInputFullScoutStructures(record, recordPath, issues) {
   const companyProfile = record.company_profile;
   const companyFields = [
@@ -6333,6 +6476,15 @@ function validateCompactInputTypes(record, recordPath, issues) {
         );
       }
     });
+    const rawMainIndication = record.structured_table?.main_indication;
+    if (typeof rawMainIndication !== 'string' || !rawMainIndication.trim()) {
+      addInputIssue(
+        issues,
+        'error',
+        `${recordPath}.structured_table.main_indication`,
+        'Compact v2에서는 main_indication을 생략하거나 비워둘 수 없습니다. 확인할 수 없으면 Unknown을 명시하세요.'
+      );
+    }
     for (const [path, value] of [
       ['structured_table.sources', record.structured_table?.sources],
       ['validation.uncertain_points', record.validation?.uncertain_points],
@@ -6484,7 +6636,9 @@ function validateCombinedInput(value, expectedMode = '') {
   const lockedMode = ['triage', 'full'].includes(expectedMode) ? expectedMode : '';
   const compactInput = split.records.some((record) => isInputObject(record) && isCompactIngestionRecord(record));
   const records = split.records.map((record) => (
-    isInputObject(record) ? expandCompactInputRecord(record, lockedMode) : record
+    isInputObject(record)
+      ? normalizeExpandedInputFilterFields(expandCompactInputRecord(record, lockedMode))
+      : record
   ));
 
   if (split.payload !== null && lockedMode === 'triage' && !Array.isArray(split.payload)) {
@@ -6549,7 +6703,7 @@ function validateCombinedInput(value, expectedMode = '') {
       const triageStatus = String(record.triage?.status || '').trim().toUpperCase();
       const status = hardStatus || triageStatus;
       if (!INPUT_TRIAGE_STATUSES.has(status)) {
-        addInputIssue(errors, 'error', `${recordPath}.hard_filter.status`, 'Fast Triage v3.2 판정은 SELECT, REJECT, UNVERIFIED 중 하나여야 합니다.');
+        addInputIssue(errors, 'error', `${recordPath}.hard_filter.status`, `Fast Triage v${LATEST_TRIAGE_RUBRIC_VERSION} 판정은 SELECT, REJECT, UNVERIFIED 중 하나여야 합니다.`);
       }
       if (hardStatus && triageStatus && hardStatus !== triageStatus) {
         addInputIssue(errors, 'error', `${recordPath}.triage.status`, `hard_filter.status(${hardStatus})와 triage.status(${triageStatus})가 일치해야 합니다.`);
@@ -6572,7 +6726,7 @@ function validateCombinedInput(value, expectedMode = '') {
       };
       Object.entries(expectedVersions).forEach(([field, [actual, expected]]) => {
         if (String(actual || '').trim().replace(/^v/i, '') !== expected) {
-          addInputIssue(errors, 'error', `${recordPath}.${field}`, `Fast Triage v3.2에서는 ${field}=${expected}가 필요합니다.`);
+          addInputIssue(errors, 'error', `${recordPath}.${field}`, `Fast Triage v${LATEST_TRIAGE_RUBRIC_VERSION}에서는 ${field}=${expected}가 필요합니다.`);
         }
       });
 
@@ -6736,7 +6890,7 @@ function validateCombinedInput(value, expectedMode = '') {
       }
       markdownRows.forEach((row, index) => {
         if (['N/A', 'NA'].includes(row.status)) {
-          addInputIssue(errors, 'error', `Markdown.Triage[${index}]`, 'Fast Triage v3.2에서는 legacy N/A 대신 UNVERIFIED를 사용해야 합니다.');
+          addInputIssue(errors, 'error', `Markdown.Triage[${index}]`, `Fast Triage v${LATEST_TRIAGE_RUBRIC_VERSION}에서는 legacy N/A 대신 UNVERIFIED를 사용해야 합니다.`);
           return;
         }
         if (!INPUT_TRIAGE_STATUSES.has(row.status)) {
@@ -6977,7 +7131,7 @@ const SHARED_INTEREST_AND_CORE_RUBRIC = `SKBP Interest Indications:
 
 Use the most specific confirmed indication wording for Target Relevance. Neuropathic pain and explicit neuropathic subtypes/synonyms are interest indications. If only generic Pain is confirmed, the subtype is unknown, or the pain is acute, postoperative, or non-neuropathic, apply the TR 1 rule.
 
-Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.2 and Full Scout v3.3):
+Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.3 and Full Scout v3.4):
 - For Target Relevance, always evaluate in descending order: 3, then 2, then 1, then 0. If more than one rule appears applicable, assign only the single highest applicable score.
 - Target Relevance 0: insufficient information to judge SKBP relevance, or confirmed indication is outside the SKBP-related disease scope.
 - Target Relevance 1: neurologic, neuroimmune, neurodegenerative, or pain-related disease outside the six interest indications; also use 1 when a claimed interest indication clearly contradicts the verified target/MoA.
@@ -7003,7 +7157,18 @@ Evidence domains answer different development questions, such as in vitro activi
 const SHARED_CANONICAL_STAGE_RULE = `Canonical Development Stage — structured_table.development_stage must be exactly one of:
 Hit Discovery; Lead Optimization; Preclinical Candidate; IND-enabling; Preclinical unspecified; IND filed/cleared; Phase 1; Phase 1/2; Phase 2; Phase 2/3; Phase 3; Registration; Approved / marketed; Discontinued / inactive; Unknown.
 
-Canonicalize only an explicitly confirmed current stage or a completed/started milestone. Do not promote stage from plans, expectations, targets, financing, hiring, or adjacent programs. Generic preclinical -> Preclinical unspecified. Candidate nominated/selected -> Preclinical Candidate. Ongoing GLP tox, IND-directed CMC, or explicit IND-enabling work -> IND-enabling. IND/CTA submitted, filed, accepted, effective, or cleared -> IND filed/cleared. Planned IND submission alone does not establish IND filed/cleared; "preclinical; IND planned" remains Preclinical unspecified. Use Unknown for unresolved or conflicting stage evidence.`;
+Canonicalize only an explicitly confirmed current stage or a completed/started milestone. Do not promote stage from plans, expectations, targets, financing, hiring, or adjacent programs. Generic preclinical -> Preclinical unspecified. Candidate nominated/selected -> Preclinical Candidate. Ongoing GLP tox, IND-directed CMC, or explicit IND-enabling work -> IND-enabling. IND/CTA submitted, filed, accepted, effective, or cleared -> IND filed/cleared. Planned IND submission alone does not establish IND filed/cleared; "preclinical; IND planned" remains Preclinical unspecified. For multi-indication assets, use the lead/currently most advanced confirmed stage as the single dashboard value and move indication-specific status detail to evidence or notes; for example, "FOS Phase II recruiting; pain stage unclear" -> Phase 2. Do not map speculative wording such as "likely preclinical or dormant" or a different historical alias marked discontinued to the current asset's Discontinued / inactive status. Use Unknown only when the relevant current stage itself is unresolved or conflicting.`;
+
+const SHARED_CANONICAL_MODALITY_RULE = `Canonical Modality — structured_table.modality_platform must be exactly one of: Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Other, or Unknown.
+Normalize route, dosage-form, and technical qualifiers into that single label. Examples: "Oral small molecule", "oral small-molecule / tablet", and "small-molecule CNS discovery platform" -> Small molecule; "IV antibody" -> Antibody; "topical peptide" -> Peptide. Put oral/IV/topical route, tablet/formulation, delivery system, and platform detail in MoA, source evidence, company_profile.platform_summary, or notes. Never combine multiple labels or retain route/formulation text in modality_platform.`;
+
+const SHARED_CANONICAL_INDICATION_RULE = `Canonical Main Indication — structured_table.main_indication must be exactly one of: Alzheimer's disease; Parkinson's disease; Epilepsy / seizure disorders; Multiple sclerosis / neuroinflammatory disease; Amyotrophic lateral sclerosis / motor neuron disease; Frontotemporal dementia; Huntington's disease; Stroke; Migraine / headache disorders; Pain; Major depressive disorder; Schizophrenia / psychosis; Bipolar disorder; Anxiety disorders; Autism spectrum disorder; ADHD; Sleep / wake disorders; Chronic cough; Inflammatory bowel disease; Systemic lupus erythematosus / autoimmune disease; or Unknown.
+main_indication is mandatory. Never omit the key and never use null, an empty string, N/A, or an unnormalized disease phrase. If the lead can be determined, always write its canonical dashboard bucket. Use Unknown only when the lead genuinely cannot be distinguished after the following priority.
+Lead-indication selection priority: (1) use an indication explicitly identified as lead, primary, initial, or the sole current indication for the assessed asset on an official company pipeline page or current official company material; (2) if no official lead is designated, use the indication targeted by the single most advanced confirmed active clinical program, comparing only registered, started, recruiting, ongoing, or dosed programs; (3) if multiple indications remain tied or evidence conflicts, use Unknown. Never select an indication merely because it appears first in prose or a table. Exclude planned/expected indications, competitor programs, historical or discontinued programs, and platform-expansion claims.
+Keep complete disease wording and all secondary indications in structured_table.indication and Markdown. In Markdown state the source-based reason for the selected lead or for Unknown. Examples: "Lead disclosed indication: inflammatory bowel disease; expansion potential for MS" -> Inflammatory bowel disease; "FOS Phase 2 recruiting; MDD planned; pain stage unclear" -> Epilepsy / seizure disorders; "CNS hypotheses include stroke and status epilepticus; no official lead or active trial" -> Unknown.`;
+
+const SHARED_CANONICAL_THEME_RULE = `Canonical R&D Theme — json_summary.theme must be exactly one of E/I Balance, Neuroimmune, Protein Homeostasis, Others, or Unknown. Determine Theme from researched evidence for the assessed asset's target and MoA, not from disease association alone.
+Use Protein Homeostasis only when the target/MoA directly modulates proteostasis, such as protein folding or chaperone function, ubiquitin-proteasome activity, autophagy-lysosome function, ER stress/UPR, or pathogenic protein aggregate clearance. The mere presence of protein aggregates in a disease does not establish this Theme. Use Others only when the identified target/MoA is confirmed outside all three R&D Themes, and Unknown when target/MoA evidence is insufficient. Because no Protein Homeostasis sub-cluster taxonomy is approved yet, use cluster="Unknown" for this Theme. Never use N/A or No Theme.`;
 
 const COMPACT_TRIAGE_JSON_TEMPLATE = `[
   {
@@ -7276,8 +7441,8 @@ function buildTriageInstructionPromptLegacy() {
 Mission:
 Run FAST TRIAGE on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.3 in-depth review.
 
-This is GPT instruction 1: Fast Triage v3.2.
-Use GPT instruction 2 only after a candidate receives SELECT and needs Full Scout v3.3 review.
+This is GPT instruction 1: Fast Triage v3.3.
+Use GPT instruction 2 only after a candidate receives SELECT and needs Full Scout v3.4 review.
 
 Evidence Discipline (apply to every factual field and every score):
 ${SHARED_EVIDENCE_DISCIPLINE}
@@ -7295,7 +7460,7 @@ Core rule:
 
 Important distinction:
 - Triage status is not a final Full Scout recommendation.
-- SELECT means worth sending to Full Scout v3.3.
+- SELECT means worth sending to Full Scout v3.4.
 - REJECT means not worth full review based on current quick evidence.
 - UNVERIFIED means asset identity itself cannot be verified as a biotech/pharma pipeline asset from credible public sources.
 - A REJECT or UNVERIFIED can change later if better identity, target, MoA, data, company, or source evidence becomes available.
@@ -7355,7 +7520,7 @@ Early stop rules:
 - Early stop never shortens the required dashboard JSON contract: every record must still contain all three TR/MoA/Data criterion score objects. Put evidence basis, score rationale, sources, and limitations in the Markdown table/notes, not in duplicated JSON fields. An inactive asset remains REJECT because of the lifecycle hard blocker regardless of otherwise available preliminary scores.
 
 Triage scoring:
-- Use the same scoring direction as Full Scout v3.3, but only for these three matching criteria:
+- Use the same scoring direction as Full Scout v3.4, but only for these three matching criteria:
   - Full Scout criterion 1: Target Relevance (TR)
   - Full Scout criterion 3: MoA Validity (MOA)
   - Full Scout criterion 6: Data Maturity (Data)
@@ -7393,12 +7558,12 @@ Triage status rule:
 
 Controlled vocabulary:
 - For an identity-verified asset, use Unknown when country, development stage, modality, main indication, target, or another factual field cannot be established. UNVERIFIED is reserved for failure of asset identity itself.
-- company_country must use canonical values such as China, Republic of Korea, Japan, United States, Europe/UK, Taiwan, Singapore, Canada, Australia, Israel, or Unknown.
+- company_country must use exactly one canonical value such as China, Republic of Korea, Japan, United States, Europe/UK, Taiwan, Singapore, Canada, Australia, Israel, or Unknown. Use the assessed company's primary legal domicile/headquarters; for example, "China / United States operations" -> China. Keep secondary offices and operating regions in Markdown notes, not company_country.
 ${SHARED_CANONICAL_STAGE_RULE}
-- modality_platform must use exactly one short dashboard label: Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Other, or Unknown.
-- main_indication remains the dashboard's existing canonical bucket: Alzheimer's disease, Parkinson's disease, Epilepsy / seizure disorders, Multiple sclerosis / neuroinflammatory disease, Amyotrophic lateral sclerosis / motor neuron disease, Frontotemporal dementia, Stroke, Pain, Major depressive disorder, Chronic cough, Inflammatory bowel disease, Systemic lupus erythematosus / autoimmune disease, or Unknown.
+${SHARED_CANONICAL_MODALITY_RULE}
+${SHARED_CANONICAL_INDICATION_RULE}
 - structured_table.indication must preserve the most specific confirmed wording (for example, diabetic peripheral neuropathic pain). Use that detailed indication—not the broader main_indication bucket—for TR and the neuropathic-pain rule.
-- For theme and cluster only: use Others for both fields when an identity-verified asset is confirmed not to fit E/I Balance or Neuroimmune. Use Unknown for both fields when target or MoA evidence is insufficient to map the asset. Do not use N/A or No Theme.
+${SHARED_CANONICAL_THEME_RULE}
 
 Output language:
 Korean. English is allowed for scientific terms.
@@ -7410,13 +7575,13 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
 \`\`\`text
 # SKBP Fast Triage Result
 
-> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.
+> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.
 
 중요: 한 문장으로 triage 결론과 filter rationale을 먼저 씁니다. 예: 공개 자료상 asset identity는 확인되지만 개발 단계가 Discontinued / inactive로 확인되어 REJECT로 처리합니다.
 
-| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |
-|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|
-| 1 |  |  |  |  |  |  |  |  |  | SELECT/REJECT/UNVERIFIED |  |  |
+| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |
+|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|
+| 1 |  |  |  |  |  |  |  |  |  |  | SELECT/REJECT/UNVERIFIED |  |  |
 
 ## Notes
 - Keep notes short.
@@ -7428,8 +7593,8 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
   {
     "meta": {
       "schema_version": "3.2",
-      "instruction_version": "3.2",
-      "rubric_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
       "review_type": "fast_triage",
       "generated_at": "YYYY-MM-DD",
       "language": "ko",
@@ -7445,7 +7610,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
       "raw_markdown": "",
       "source_format": "fast_triage_markdown",
       "parser_status": "fast_triage",
-      "parser_note": "GPT instruction 1 Fast Triage v3.2 output. Full Scout v3.3 review has not been run."
+    "parser_note": "GPT instruction 1 Fast Triage v3.3 output. Full Scout v3.4 review has not been run."
     },
     "json_summary": {
       "company": "Unknown",
@@ -7475,7 +7640,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
       "flags": []
     },
     "triage": {
-      "instruction_version": "3.2",
+      "instruction_version": "3.3",
       "status": "UNVERIFIED",
       "identity_verified": false,
       "active_asset": null,
@@ -7517,7 +7682,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
     },
     "validation": {
       "instruction_version": "3.2",
-      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.2; Full Scout v3.3 not run.",
+      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.3; Full Scout v3.4 not run.",
       "cross_checked_facts": [],
       "uncertain_points": [],
       "source_registry": []
@@ -7564,7 +7729,7 @@ function buildGptInstructionPromptLegacy() {
 Mission:
 Evaluate exactly one biotech/pharma pipeline asset through company research, attachment review, public-source verification, competitor search, seven-criterion scoring, and evidence tracking. Return exactly one copyable fenced code block containing the Markdown report first and the valid JSON second.
 
-This is GPT instruction 2: Full Scout v3.3. State v3.3 in the Markdown report. In compact JSON, do not repeat schema/instruction/rubric version fields; the dashboard adds schema 3.2 and instruction/rubric 3.3 during deterministic expansion.
+This is GPT instruction 2: Full Scout v3.4. State v3.4 in the Markdown report. In compact JSON, do not repeat schema/instruction/rubric version fields; the dashboard adds schema 3.2 and instruction/rubric 3.4 during deterministic expansion.
 
 Evidence Discipline (apply to every factual field and every scoring criterion):
 ${SHARED_EVIDENCE_DISCIPLINE}
@@ -7681,39 +7846,19 @@ For every criterion rationale state compactly: criterion definition, selected sc
 Controlled vocabulary for dashboard filters:
 - Use canonical values for filter-facing fields so the dashboard can group comparable assets.
 - For an identity-verified asset, use Unknown (never N/A) when country, development stage, modality, main indication, target, or another factual field cannot be established from public sources.
-- Never use N/A as a factual, Theme, or Cluster value. For Theme and Cluster, use Others for both when an identity-verified asset is confirmed not to fit E/I Balance or Neuroimmune; use Unknown for both when target or MoA evidence is insufficient to map the asset. Do not use No Theme.
-- json_summary.company_country and structured_table.company_country must use a single canonical country/region label. Examples: China, Republic of Korea, United States, Japan, Europe/UK. Do not write combined labels such as "China / Hong Kong" or "China / United States operations" in these fields; put that nuance in headquarters, company_profile.notes, or validation.uncertain_points.
-- structured_table.main_indication is required and must contain one canonical disease bucket. structured_table.indication can contain the full detailed indication wording.
-- If the asset has many indications, choose the lead/currently most relevant indication as main_indication and keep the rest in indication.
+${SHARED_CANONICAL_THEME_RULE}
+- json_summary.company_country and structured_table.company_country must use a single canonical country/region label based on the assessed company's primary legal domicile/headquarters. Examples: China, Republic of Korea, United States, Japan, Europe/UK. For example, "China / United States operations" -> China. Do not write combined labels in these fields; put secondary offices and operating-region nuance in headquarters, company_profile.notes, or validation.uncertain_points.
+${SHARED_CANONICAL_INDICATION_RULE}
 - structured_table.development_stage must follow the Canonical Development Stage rule above. Put exact raw wording, trial status, indication-specific stage, and future milestone timing in source evidence, notes, or validation.uncertain_points.
 - Map clinical synonyms conservatively: P1/Ph1/Phase I/FIH -> Phase 1 and P2/Ph2/Phase II -> Phase 2 only when the phase is current or started. A future plan must not be promoted to current stage.
-- structured_table.modality_platform must use exactly one short dashboard label: Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Other, or Unknown. Put technical platform detail in structured_table.moa, company_profile.platform_summary, or source evidence; do not combine multiple labels in modality_platform.
-- Standard indication buckets include:
-  - Alzheimer's disease
-  - Parkinson's disease
-  - Epilepsy / seizure disorders
-  - Amyotrophic lateral sclerosis / motor neuron disease
-  - Frontotemporal dementia
-  - Huntington's disease
-  - Chronic cough
-  - Multiple sclerosis / neuroinflammatory disease
-  - Inflammatory bowel disease
-  - Major depressive disorder
-  - Schizophrenia / psychosis
-  - Bipolar disorder
-  - Anxiety disorders
-  - Autism spectrum disorder
-  - ADHD
-  - Migraine / headache disorders
-  - Pain
-  - Stroke
+${SHARED_CANONICAL_MODALITY_RULE}
 - Map synonymous or narrower terms into the same bucket. Examples: partial-onset seizure, focal-onset seizure, epilepsy, and status epilepticus -> Epilepsy / seizure disorders; RCC, UCC, refractory chronic cough, and unexplained chronic cough -> Chronic cough; Crohn's disease and ulcerative colitis -> Inflammatory bowel disease.
 
 Use this exact report structure inside the Markdown portion of the single combined code block:
 
 # [Company] Pipeline Scout Report: **[Asset]**
 
- Briefly state that this report was researched and scored with GPT instruction 2 — Full Scout v3.3 (schema v3.2), and that URLs are included for auditability.
+ Briefly state that this report was researched and scored with GPT instruction 2 — Full Scout v3.4 (schema v3.2), and that URLs are included for auditability.
 
 중요: 한 문장으로 filter/recommendation rationale을 먼저 씁니다. 예: 공개 자료상 active asset명·compound code·임상 단계가 명확히 확인되지 않아 stage/ownership은 uncertain / REVIEW로 처리합니다.
 
@@ -7753,12 +7898,14 @@ Use this exact report structure inside the Markdown portion of the single combin
 Allowed Theme values:
 - E/I Balance
 - Neuroimmune
-- Others (identity-verified asset confirmed outside E/I Balance and Neuroimmune)
+- Protein Homeostasis
+- Others (identity-verified asset confirmed outside E/I Balance, Neuroimmune, and Protein Homeostasis)
 - Unknown (target or MoA evidence insufficient to map)
 
 Allowed clusters:
 - E/I Balance: Ion Channel, Inhibitory Tone 강화, Synaptic Transmission, Chloride Homeostasis, Network Modulation
 - Neuroimmune: CNS 손상 면역반응, 교세포 향상성, Cytokine 신경조절, 손상/질환 면역조절, 말초 면역기관 연결
+- Protein Homeostasis: Unknown (no approved sub-cluster taxonomy yet)
 
 ---
 
@@ -7963,14 +8110,14 @@ End the Markdown portion after References. The next line in this template is the
 {
   "meta": {
     "schema_version": "3.2",
-    "instruction_version": "3.3",
+    "instruction_version": "3.4",
     "review_type": "full_scout",
     "generated_at": "YYYY-MM-DD",
     "language": "ko",
     "analyst_role": "[OIT] PreC Pipeline Shortlister",
     "output_format": ["markdown_report", "json"],
     "output_filename_base": "Company_Asset_YYYYMMDD",
-    "rubric_version": "3.3",
+    "rubric_version": "3.4",
     "rubric_author": "kate"
   },
   "input": {
@@ -7984,7 +8131,7 @@ End the Markdown portion after References. The next line in this template is the
     "raw_markdown": "",
     "source_format": "gpt_markdown_report",
     "parser_status": "gpt_structured_output",
-    "parser_note": "GPT instruction 2 Full Scout v3.3 output using schema v3.2; Markdown report and JSON were generated together from the same evidence set."
+    "parser_note": "GPT instruction 2 Full Scout v3.4 output using schema v3.2; Markdown report and JSON were generated together from the same evidence set."
   },
   "company_profile": {
     "company_name": "",

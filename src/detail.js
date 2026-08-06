@@ -2,7 +2,7 @@ import { setupThemeToggle } from './theme.js';
 
 import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
 import { getCurrentUser, initAuthUI, openAuthModal, requireAuth } from './auth.js?v=20260802-required-login-1';
-import { expandCompactInputRecord } from './compact-ingestion.js?v=20260806-marketability-d-1';
+import { expandCompactInputRecord } from './compact-ingestion.js?v=20260806-theme-indication-3';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260805-ingestion-guard-5';
 
 const params = new URLSearchParams(window.location.search);
@@ -278,6 +278,7 @@ function dashboardThemeLabel(value) {
   if (!text || text === '-' || /^(unknown|not known|n\/?a)$/i.test(text)) return 'Unknown';
   if (/e\s*\/\s*i\s*balance|excitation.*inhibition/i.test(text)) return 'E/I Balance';
   if (/neuro[\s-]*immune/i.test(text)) return 'Neuroimmune';
+  if (/protein[\s-]*homeostasis|proteostasis/i.test(text)) return 'Protein Homeostasis';
   return 'Others';
 }
 
@@ -299,7 +300,7 @@ function isPlaceholderRawMarkdown(value) {
 function getRubricMetadata(record) {
   const meta = record?.meta || {};
   const criteriaReference = record?.scoring?.criteria?.target_relevance?.criteria_reference || null;
-  // New v3.2/v3.3 outputs always carry meta.rubric_version. Keep the historical
+  // Current outputs always carry meta.rubric_version. Keep the historical
   // fallback conservative so a legacy record without provenance is never
   // mislabeled as having been researched under the newest instruction.
   const fallbackVersion = meta.schema_version || '3.1';
@@ -3130,8 +3131,8 @@ async function refreshOiPartnership() {
 
 function aiRevisionInstruction(record) {
   return isFastTriageRecord(record)
-    ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.2 update applied from chat answer.'
-    : 'Detail AI Agent Full Scout v3.3 re-evaluation applied from chat answer.';
+    ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.3 update applied from chat answer.'
+    : 'Detail AI Agent Full Scout v3.4 re-evaluation applied from chat answer.';
 }
 
 function setAiApplyModalStatus(message = '', tone = '') {

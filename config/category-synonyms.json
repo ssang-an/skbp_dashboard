@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "description": "Dashboard canonical category dictionary for filter grouping. Add synonyms here when new source wording should map to an existing category.",
+  "version": "1.2",
+  "description": "Shared frontend/backend canonical category dictionary for dashboard filter grouping. Add synonyms here when new source wording should map to an existing category.",
   "country": [
     {
       "canonical": "China",
@@ -472,6 +472,80 @@
       "patterns": [
         "^unknown$"
       ]
+    }
+  ],
+  "modality": [
+    {
+      "canonical": "Small molecule",
+      "synonyms": ["Small molecule", "Small-molecule", "SM", "Oral compound", "Chemical compound"],
+      "patterns": ["small[\\s-]?molecule", "\\bsm\\b", "oral compound", "chemical compound"]
+    },
+    {
+      "canonical": "Peptide",
+      "synonyms": ["Peptide", "Peptide therapy"],
+      "patterns": ["\\bpeptides?\\b"]
+    },
+    {
+      "canonical": "RNA therapy",
+      "synonyms": ["RNA therapy", "Antisense oligonucleotide", "ASO", "siRNA", "miRNA", "mRNA"],
+      "patterns": ["\\brna(?: therapy)?\\b", "oligonucleotide", "antisense", "\\baso\\b", "\\bsirna\\b", "\\bmirna\\b", "\\bmrna\\b"]
+    },
+    {
+      "canonical": "Cell therapy",
+      "synonyms": ["Cell therapy", "Cellular therapy", "Stem cell", "CAR-T", "TCR-T"],
+      "patterns": ["car[\\s-]?t", "tcr[\\s-]?t", "cell(?:ular)? therapy", "stem cell"]
+    },
+    {
+      "canonical": "Gene therapy",
+      "synonyms": ["Gene therapy", "AAV", "AAV-based gene therapy", "Gene editing", "CRISPR"],
+      "patterns": ["gene therapy", "\\baav(?:\\d+)?\\b", "lentiviral", "gene editing", "crispr"]
+    },
+    {
+      "canonical": "Antibody",
+      "synonyms": ["Antibody", "Ab", "mAb", "Bispecific antibody", "Antibody-drug conjugate", "ADC"],
+      "patterns": ["antibod(?:y|ies)", "\\bmab\\b", "bispecific", "antibody[\\s-]?drug conjugate", "\\badc\\b", "\\bab\\b"]
+    },
+    {
+      "canonical": "Protein biologic",
+      "synonyms": ["Protein biologic", "Fusion protein", "Recombinant protein", "Enzyme replacement"],
+      "patterns": ["protein biologic", "fusion protein", "recombinant protein", "enzyme replacement"]
+    },
+    {
+      "canonical": "Other",
+      "synonyms": ["Other"],
+      "patterns": ["^other$"]
+    },
+    {
+      "canonical": "Unknown",
+      "synonyms": ["Unknown", "Not known", "Not available", "Not disclosed", "N/A"],
+      "patterns": ["^(?:unknown|not known|not available|not disclosed|n/?a)$"]
+    }
+  ],
+  "theme": [
+    {
+      "canonical": "E/I Balance",
+      "synonyms": ["E/I Balance", "Excitation/Inhibition Balance", "Excitatory/Inhibitory Balance"],
+      "patterns": ["e\\s*/\\s*i\\s*balance", "excitation.*inhibition", "excitatory.*inhibitory"]
+    },
+    {
+      "canonical": "Neuroimmune",
+      "synonyms": ["Neuroimmune", "Neuro-immune"],
+      "patterns": ["neuro[\\s-]*immune"]
+    },
+    {
+      "canonical": "Protein Homeostasis",
+      "synonyms": ["Protein Homeostasis", "Proteostasis"],
+      "patterns": ["protein homeostasis", "proteostasis"]
+    },
+    {
+      "canonical": "Others",
+      "synonyms": ["Others", "Other", "No Theme", "No fit", "Out of scope"],
+      "patterns": ["^(?:others?|no theme|no fit|out of scope)$"]
+    },
+    {
+      "canonical": "Unknown",
+      "synonyms": ["Unknown", "Not known"],
+      "patterns": ["^(?:unknown|not known)$"]
     }
   ],
   "indication": [
