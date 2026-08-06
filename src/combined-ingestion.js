@@ -63,51 +63,95 @@ function assertNoDuplicateJsonKeys(value) {
   }
 }
 
-function repairSafeJsonSyntax(value) {
+const SIMPLE_JSON_ESCAPE_CHARS = new Set(['"', '\\', '/', 'b', 'f', 'n', 'r', 't']);
+const NON_JSON_UNICODE_WHITESPACE = /[\u0085\u00a0\u1680\u2000-\u200b\u2028\u2029\u202f\u205f\u2060\u3000\ufeff]/;
+const SIMPLE_ASCII_IDENTIFIER_START = /[A-Za-z_]/;
+const SIMPLE_ASCII_IDENTIFIER_PART = /[A-Za-z0-9_]/;
+
+function escapedJsonControlCharacter(char) {
+  const serialized = JSON.stringify(char);
+  return serialized.slice(1, -1);
+}
+
+function previousNonWhitespace(value, start) {
+  for (let index = start - 1; index >= 0; index -= 1) {
+    if (!/\s/.test(value[index])) return value[index];
+  }
+  return '';
+}
+
+function nextNonWhitespace(value, start) {
+  for (let index = start; index < value.length; index += 1) {
+    if (!/\s/.test(value[index])) return value[index];
+  }
+  return '';
+}
+
+function normalizeConservativeJsonDialect(value) {
   const source = String(value || '');
-  let escapedControls = '';
+  let output = '';
   let inString = false;
   let escaped = false;
-  let escapedControlCount = 0;
+  let pythonLiteralCount = 0;
+  let unquotedKeyCount = 0;
 
+  for (let index = 0; index < source.length;) {
+    const char = source[index];
+    if (inString) {
+      output += char;
+      if (escaped) escaped = false;
+      else if (char === '\\') escaped = true;
+      else if (char === '"') inString = false;
+      index += 1;
+      continue;
+    }
+    if (char === '"') {
+      inString = true;
+      output += char;
+      index += 1;
+      continue;
+    }
+    if (!SIMPLE_ASCII_IDENTIFIER_START.test(char)) {
+      output += char;
+      index += 1;
+      continue;
+    }
+
+    let tokenEnd = index + 1;
+    while (tokenEnd < source.length && SIMPLE_ASCII_IDENTIFIER_PART.test(source[tokenEnd])) {
+      tokenEnd += 1;
+    }
+    const token = source.slice(index, tokenEnd);
+    const previous = previousNonWhitespace(source, index);
+    const next = nextNonWhitespace(source, tokenEnd);
+    if (next === ':' && (previous === '{' || previous === ',')) {
+      output += JSON.stringify(token);
+      unquotedKeyCount += 1;
+    } else if (
+      Object.prototype.hasOwnProperty.call({ True: true, False: false, None: null }, token)
+      && (previous === ':' || previous === '[' || previous === ',')
+    ) {
+      output += ({ True: 'true', False: 'false', None: 'null' })[token];
+      pythonLiteralCount += 1;
+    } else {
+      output += token;
+    }
+    index = tokenEnd;
+  }
+
+  return { text: output, pythonLiteralCount, unquotedKeyCount };
+}
+
+function removeTrailingJsonCommas(value) {
+  const source = String(value || '');
+  let output = '';
+  let inString = false;
+  let escaped = false;
+  let trailingCommaCount = 0;
   for (let index = 0; index < source.length; index += 1) {
     const char = source[index];
     if (inString) {
-      if (escaped) {
-        escaped = false;
-        escapedControls += char;
-        continue;
-      }
-      if (char === '\\') {
-        escaped = true;
-        escapedControls += char;
-        continue;
-      }
-      if (char === '"') {
-        inString = false;
-        escapedControls += char;
-        continue;
-      }
-      if (char === '\n' || char === '\r' || char === '\t') {
-        escapedControls += char === '\n' ? '\\n' : char === '\r' ? '\\r' : '\\t';
-        escapedControlCount += 1;
-        continue;
-      }
-      escapedControls += char;
-      continue;
-    }
-    if (char === '"') inString = true;
-    escapedControls += char;
-  }
-
-  let withoutTrailingCommas = '';
-  inString = false;
-  escaped = false;
-  let trailingCommaCount = 0;
-  for (let index = 0; index < escapedControls.length; index += 1) {
-    const char = escapedControls[index];
-    if (inString) {
-      withoutTrailingCommas += char;
+      output += char;
       if (escaped) escaped = false;
       else if (char === '\\') escaped = true;
       else if (char === '"') inString = false;
@@ -115,29 +159,128 @@ function repairSafeJsonSyntax(value) {
     }
     if (char === '"') {
       inString = true;
-      withoutTrailingCommas += char;
+      output += char;
       continue;
     }
     if (char === ',') {
       let lookahead = index + 1;
-      while (/\s/.test(escapedControls[lookahead] || '')) lookahead += 1;
-      if (escapedControls[lookahead] === '}' || escapedControls[lookahead] === ']') {
+      while (/\s/.test(source[lookahead] || '')) lookahead += 1;
+      if (source[lookahead] === '}' || source[lookahead] === ']') {
         trailingCommaCount += 1;
         continue;
       }
     }
-    withoutTrailingCommas += char;
+    output += char;
+  }
+  return { text: output, trailingCommaCount };
+}
+
+export function safePreprocessJson(value) {
+  const source = String(value || '');
+  let lexical = '';
+  let inString = false;
+  let commentCount = 0;
+  let escapedControlCount = 0;
+  let invalidEscapeCount = 0;
+  let unicodeWhitespaceCount = 0;
+
+  for (let index = 0; index < source.length; index += 1) {
+    const char = source[index];
+    if (inString) {
+      if (char === '"') {
+        inString = false;
+        lexical += char;
+        continue;
+      }
+      if (char === '\\') {
+        const next = source[index + 1];
+        if (SIMPLE_JSON_ESCAPE_CHARS.has(next)) {
+          lexical += `${char}${next}`;
+          index += 1;
+          continue;
+        }
+        if (next === 'u' && /^[0-9a-fA-F]{4}$/.test(source.slice(index + 2, index + 6))) {
+          lexical += source.slice(index, index + 6);
+          index += 5;
+          continue;
+        }
+        if (next === undefined) {
+          lexical += char;
+          continue;
+        }
+        lexical += '\\\\';
+        invalidEscapeCount += 1;
+        continue;
+      }
+      if (char.charCodeAt(0) <= 0x1f) {
+        lexical += escapedJsonControlCharacter(char);
+        escapedControlCount += 1;
+        continue;
+      }
+      lexical += char;
+      continue;
+    }
+
+    if (char === '"') {
+      inString = true;
+      lexical += char;
+      continue;
+    }
+    if (char === '/' && source[index + 1] === '/') {
+      commentCount += 1;
+      lexical += '  ';
+      index += 2;
+      while (index < source.length && source[index] !== '\n' && source[index] !== '\r') {
+        lexical += ' ';
+        index += 1;
+      }
+      index -= 1;
+      continue;
+    }
+    if (char === '/' && source[index + 1] === '*') {
+      commentCount += 1;
+      lexical += '  ';
+      index += 2;
+      let closed = false;
+      while (index < source.length) {
+        if (source[index] === '*' && source[index + 1] === '/') {
+          lexical += '  ';
+          index += 1;
+          closed = true;
+          break;
+        }
+        lexical += source[index] === '\n' || source[index] === '\r' ? source[index] : ' ';
+        index += 1;
+      }
+      if (!closed) throw new SyntaxError('종료되지 않은 JSON block comment가 감지되었습니다.');
+      continue;
+    }
+    if (NON_JSON_UNICODE_WHITESPACE.test(char)) {
+      lexical += ' ';
+      unicodeWhitespaceCount += 1;
+      continue;
+    }
+    lexical += char;
   }
 
+  const dialect = normalizeConservativeJsonDialect(lexical);
+  const withoutTrailingCommas = removeTrailingJsonCommas(dialect.text);
   const actions = [];
-  if (trailingCommaCount) actions.push(`trailing comma ${trailingCommaCount}개 제거`);
+  if (withoutTrailingCommas.trailingCommaCount) {
+    actions.push(`trailing comma ${withoutTrailingCommas.trailingCommaCount}개 제거`);
+  }
   if (escapedControlCount) actions.push(`문자열 제어문자 ${escapedControlCount}개 escape`);
-  return { text: withoutTrailingCommas, actions };
+  if (commentCount) actions.push(`JSON comment ${commentCount}개 제거`);
+  if (invalidEscapeCount) actions.push(`잘못된 문자열 escape ${invalidEscapeCount}개 literal backslash로 보존`);
+  if (unicodeWhitespaceCount) actions.push(`JSON 외부 Unicode 공백 ${unicodeWhitespaceCount}개 정규화`);
+  if (dialect.pythonLiteralCount) actions.push(`Python literal ${dialect.pythonLiteralCount}개 JSON literal로 정규화`);
+  if (dialect.unquotedKeyCount) actions.push(`따옴표 없는 object key ${dialect.unquotedKeyCount}개 보정`);
+  return { text: withoutTrailingCommas.text, actions };
 }
 
 export function parseTopLevelJsonSuffix(value) {
   const source = String(value || '').replace(/^\uFEFF/, '').trim();
-  const rootMatch = /^(?:```json[ \t]*\r?\n)?[ \t]*([\[{])/im.exec(source);
+  const rootMatch = /^(?:```json[^\S\r\n]*\r?\n)?(?:[^\S\r\n]|\u200b|\u2060)*([\[{])/im.exec(source);
   if (!rootMatch) throw new SyntaxError('JSON suffix에서 줄 시작의 최상위 { 또는 [를 찾지 못했습니다.');
 
   const rootIndex = rootMatch.index + rootMatch[0].lastIndexOf(rootMatch[1]);
@@ -148,10 +291,23 @@ export function parseTopLevelJsonSuffix(value) {
   const stack = [];
   let inString = false;
   let escaped = false;
+  let inLineComment = false;
+  let inBlockComment = false;
   let rootEnd = -1;
 
   for (let index = rootIndex; index < source.length; index += 1) {
     const char = source[index];
+    if (inLineComment) {
+      if (char === '\n' || char === '\r') inLineComment = false;
+      continue;
+    }
+    if (inBlockComment) {
+      if (char === '*' && source[index + 1] === '/') {
+        inBlockComment = false;
+        index += 1;
+      }
+      continue;
+    }
     if (inString) {
       if (escaped) escaped = false;
       else if (char === '\\') escaped = true;
@@ -160,6 +316,16 @@ export function parseTopLevelJsonSuffix(value) {
     }
     if (char === '"') {
       inString = true;
+      continue;
+    }
+    if (char === '/' && source[index + 1] === '/') {
+      inLineComment = true;
+      index += 1;
+      continue;
+    }
+    if (char === '/' && source[index + 1] === '*') {
+      inBlockComment = true;
+      index += 1;
       continue;
     }
     if (char === '{' || char === '[') stack.push(char);
@@ -176,6 +342,9 @@ export function parseTopLevelJsonSuffix(value) {
     }
   }
 
+  if (inBlockComment) {
+    throw new SyntaxError('종료되지 않은 JSON block comment가 감지되었습니다.');
+  }
   if (rootEnd < 0 || inString || stack.length) {
     throw new SyntaxError('최상위 JSON이 닫히지 않았거나 문자열 escape가 완성되지 않았습니다.');
   }
@@ -185,18 +354,18 @@ export function parseTopLevelJsonSuffix(value) {
   let payload;
   let repairActions = [];
   try {
-    assertNoDuplicateJsonKeys(jsonText);
     payload = JSON.parse(jsonText);
+    assertNoDuplicateJsonKeys(jsonText);
   } catch (strictError) {
-    const repaired = repairSafeJsonSyntax(jsonText);
+    const repaired = safePreprocessJson(jsonText);
     if (!repaired.actions.length) throw strictError;
     try {
-      assertNoDuplicateJsonKeys(repaired.text);
       payload = JSON.parse(repaired.text);
+      assertNoDuplicateJsonKeys(repaired.text);
       jsonText = repaired.text;
       repairActions = repaired.actions;
-    } catch (_repairError) {
-      throw strictError;
+    } catch (repairError) {
+      throw repairError;
     }
   }
   const trailing = source.slice(rootEnd)
@@ -206,7 +375,14 @@ export function parseTopLevelJsonSuffix(value) {
     throw new SyntaxError(`JSON 뒤의 무시 가능한 설명은 ${MAX_IGNORED_JSON_AFFIX_CHARS.toLocaleString()}자를 초과할 수 없습니다.`);
   }
   const anotherJsonRoot = /(?:\{[ \t\r\n]*(?:["}])|\[[ \t\r\n]*(?:[\[{"\]\d-]|true\b|false\b|null\b))/m;
-  if (JSON_SEPARATOR_LINE_PATTERN.test(trailing) || anotherJsonRoot.test(trailing)) {
+  let trailingForRootCheck = trailing;
+  try {
+    trailingForRootCheck = safePreprocessJson(trailing).text;
+  } catch (_error) {
+    // Trailing prose is not part of the stored JSON. Keep the original text for
+    // the conservative second-root check if it is not independently repairable.
+  }
+  if (JSON_SEPARATOR_LINE_PATTERN.test(trailing) || anotherJsonRoot.test(trailingForRootCheck)) {
     throw new SyntaxError('최상위 JSON 값이 두 개 이상 감지되었습니다.');
   }
   return {

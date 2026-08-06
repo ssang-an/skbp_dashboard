@@ -104,7 +104,7 @@ class TopicNotesAndReuploadTests(unittest.TestCase):
         self.assertIn("expandCompactInputRecord(payload, 'full')", DETAIL_JS)
         self.assertIn("splitAtRecoverableJsonSeparator(value)", DETAIL_JS)
         self.assertIn("형식 보정 ${parsed.recoveryCount}건", DETAIL_JS)
-        self.assertIn("combined-ingestion.js?v=20260805-ingestion-guard-3", DETAIL_JS)
+        self.assertIn("combined-ingestion.js?v=20260805-ingestion-guard-5", DETAIL_JS)
         self.assertIn("confirmed_replacements", DETAIL_JS)
         self.assertIn("Topic 메모", DETAIL_JS)
         self.assertIn("noteStateClass = notes.length ? ' has-notes' : ' is-empty'", DETAIL_JS)

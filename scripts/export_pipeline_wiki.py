@@ -352,6 +352,67 @@ def criterion_rows(record: dict[str, Any]) -> str:
     return "\n".join(rows)
 
 
+def criterion_source_items(record: dict[str, Any], item: Any) -> list[Any]:
+    """Resolve criterion evidence from either embedded sources or source IDs.
+
+    Legacy records keep full objects in ``evidence_sources``. Hybrid compact
+    records may keep a canonical ``validation.source_registry`` and only list
+    ``source_ids`` per criterion. Embedded objects retain precedence, while
+    referenced objects are appended without duplicating the same URL/title/ID.
+    """
+
+    if not isinstance(item, dict):
+        return []
+
+    registry: dict[str, dict[str, Any]] = {}
+    registry_items = get(record, "validation.source_registry", [])
+    if isinstance(registry_items, list):
+        for source in registry_items:
+            if not isinstance(source, dict):
+                continue
+            source_id = source.get("source_id") or source.get("id")
+            if isinstance(source_id, (str, int)) and str(source_id).strip():
+                registry[str(source_id).strip()] = source
+
+    resolved: list[Any] = []
+    seen: set[str] = set()
+
+    def add(source: Any) -> None:
+        if not isinstance(source, (dict, str)):
+            return
+        if isinstance(source, dict):
+            key = str(
+                source.get("source_url")
+                or source.get("url")
+                or source.get("source_id")
+                or source.get("id")
+                or source.get("source_title")
+                or source.get("title")
+                or ""
+            ).strip()
+        else:
+            key = source.strip()
+        if not key or key in seen:
+            return
+        seen.add(key)
+        resolved.append(source)
+
+    embedded = item.get("evidence_sources")
+    if isinstance(embedded, list):
+        for source in embedded:
+            add(source)
+
+    source_ids = item.get("source_ids")
+    if isinstance(source_ids, list):
+        for source_id in source_ids:
+            if not isinstance(source_id, (str, int)):
+                continue
+            source = registry.get(str(source_id).strip())
+            if source is not None:
+                add(source)
+    return resolved
+
+
 def source_items(record: dict[str, Any]) -> list[dict[str, Any]]:
     sources: list[dict[str, Any]] = []
     seen: set[str] = set()
@@ -371,7 +432,7 @@ def source_items(record: dict[str, Any]) -> list[dict[str, Any]]:
         seen.add(key)
         item["source_title"] = title
         item["source_url"] = url
-        item.setdefault("source_type", "other")
+        item["source_type"] = item.get("source_type") or item.get("type") or "other"
         item.setdefault("reliability", "medium" if url else "low")
         sources.append(item)
 
@@ -394,7 +455,7 @@ def source_items(record: dict[str, Any]) -> list[dict[str, Any]]:
         for label, item in criteria.items():
             if not isinstance(item, dict):
                 continue
-            for source in item.get("evidence_sources", []):
+            for source in criterion_source_items(record, item):
                 add(source, f"{label} evidence")
     return sources
 

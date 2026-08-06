@@ -23,6 +23,15 @@ from xml.etree import ElementTree
 import requests
 import urllib3
 import document_pipeline
+from record_storage import (
+    FULL_CRITERION_IDS as STORAGE_FULL_CRITERION_IDS,
+    LEGACY_STORAGE_PROFILES,
+    STORAGE_PROFILE,
+    TRIAGE_CRITERION_IDS as STORAGE_TRIAGE_CRITERION_IDS,
+    full_scout_has_decision_uncertainty as storage_full_scout_has_decision_uncertainty,
+    full_scout_has_hard_blocker as storage_full_scout_has_hard_blocker,
+    minimize_record_for_dashboard_storage,
+)
 from openpyxl import load_workbook
 from pypdf import PdfReader
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
@@ -1460,9 +1469,617 @@ def fast_triage_lifecycle_text_has_hard_blocker(values: Any) -> bool:
     return False
 
 
+def is_minimal_dashboard_contract(record: dict[str, Any]) -> bool:
+    meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+    storage_profile = str(meta.get("storage_profile") or "").strip().lower()
+    return (
+        storage_profile in {profile.lower() for profile in LEGACY_STORAGE_PROFILES}
+        or str(meta.get("ingestion_format") or "").strip().lower() == "compact_v2"
+    )
+
+
+def validate_minimal_dashboard_record(record: dict[str, Any], index: int) -> None:
+    """Validate score/dashboard data without requiring Markdown-duplicated research prose."""
+    validate_typed_ingestion_contract(record, index)
+    normalize_current_record_stage(record, index)
+    meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+    incoming_compact_v2 = str(meta.get("ingestion_format") or "").strip().lower() == "compact_v2"
+    persisted_profile = str(meta.get("storage_profile") or "").strip().lower()
+    persisted_hybrid = persisted_profile == STORAGE_PROFILE.lower()
+    if incoming_compact_v2 and persisted_profile:
+        validation_error(
+            f"record[{index}].meta must not mix ingestion_format=compact_v2 with persisted storage_profile."
+        )
+
+    def reject_extra_keys(value: Any, path: str, allowed: set[str]) -> None:
+        if not incoming_compact_v2 or not isinstance(value, dict):
+            return
+        extras = sorted(set(value) - allowed)
+        if extras:
+            validation_error(
+                f"record[{index}].{path} contains non-dashboard fields: {', '.join(extras)}."
+            )
+
+    def require_string_list(value: Any, path: str, *, non_empty: bool = False) -> None:
+        if not isinstance(value, list):
+            validation_error(f"record[{index}].{path} must be an array.")
+        for item_index, item in enumerate(value):
+            if not isinstance(item, str) or (non_empty and not item.strip()):
+                qualifier = "a non-empty string" if non_empty else "a string"
+                validation_error(f"record[{index}].{path}[{item_index}] must be {qualifier}.")
+
+    if incoming_compact_v2:
+        allowed_top_level = {
+            "meta",
+            "source_report",
+            "input",
+            "json_summary",
+            "structured_table",
+            "hard_filter",
+            "scoring",
+            "validation",
+            "final_insight",
+            "triage",
+            "company_profile",
+            "competitive_analysis",
+        }
+        unexpected = sorted(set(record) - allowed_top_level)
+        if unexpected:
+            validation_error(
+                f"record[{index}] Compact v2 contains non-dashboard fields: {', '.join(unexpected)}."
+            )
+
+        reject_extra_keys(
+            meta,
+            "meta",
+            {
+                "ingestion_format",
+                "review_type",
+                "schema_version",
+                "instruction_version",
+                "rubric_version",
+                "generated_at",
+                "language",
+                "output_filename_base",
+            },
+        )
+        reject_extra_keys(
+            record.get("input"),
+            "input",
+            {"company_input", "asset_input"},
+        )
+        reject_extra_keys(
+            record.get("json_summary"),
+            "json_summary",
+            {"theme", "cluster", "target_description"},
+        )
+        reject_extra_keys(
+            record.get("structured_table"),
+            "structured_table",
+            {
+                "company",
+                "asset_name",
+                "target",
+                "moa",
+                "modality_platform",
+                "main_indication",
+                "indication",
+                "development_stage",
+                "company_country",
+                "sources",
+            },
+        )
+        reject_extra_keys(
+            record.get("hard_filter"),
+            "hard_filter",
+            {"status", "reason", "flags", "hard_blocker", "decision_uncertainty"},
+        )
+        reject_extra_keys(record.get("scoring"), "scoring", {"criteria", "total_score", "max_score"})
+        reject_extra_keys(
+            record.get("validation"),
+            "validation",
+            {"uncertain_points", "cross_checked_facts", "source_registry"},
+        )
+        reject_extra_keys(
+            record.get("final_insight"),
+            "final_insight",
+            {"one_line_summary", "recommendation", "most_important_diligence_question"},
+        )
+        reject_extra_keys(
+            record.get("source_report"),
+            "source_report",
+            {"raw_markdown", "source_format", "parser_status", "parser_note"},
+        )
+        reject_extra_keys(
+            record.get("company_profile"),
+            "company_profile",
+            {"headquarters", "company_stage", "platform_summary"},
+        )
+        reject_extra_keys(
+            record.get("competitive_analysis"),
+            "competitive_analysis",
+            {"competitive_density", "similarity_summary", "competitor_table", "similar_pipelines"},
+        )
+        competitive = record.get("competitive_analysis")
+        similarity = competitive.get("similarity_summary") if isinstance(competitive, dict) else None
+        reject_extra_keys(
+            similarity,
+            "competitive_analysis.similarity_summary",
+            {
+                "similar_pipeline_count",
+                "high_similarity_count",
+                "medium_similarity_count",
+                "low_similarity_count",
+            },
+        )
+        reject_extra_keys(
+            record.get("triage"),
+            "triage",
+            {
+                "instruction_version",
+                "status",
+                "identity_verified",
+                "active_asset",
+                "verified_public_source_count",
+                "why",
+                "missing_evidence_needed_for_full_scout",
+            },
+        )
+
+    allowed_source_fields = {
+        "source_id",
+        "source_title",
+        "source_url",
+        "source_type",
+        "reliability",
+        "evidence_summary",
+        "verified",
+    }
+    validation = record.get("validation")
+    if not isinstance(validation, dict):
+        validation_error(f"record[{index}].validation is required and must be an object.")
+    for field in ("uncertain_points", "cross_checked_facts", "source_registry"):
+        if not isinstance(validation.get(field, []), list):
+            validation_error(f"record[{index}].validation.{field} must be an array.")
+    require_string_list(validation.get("uncertain_points", []), "validation.uncertain_points")
+    for fact_index, fact in enumerate(validation.get("cross_checked_facts", [])):
+        if isinstance(fact, str):
+            continue
+        if not isinstance(fact, dict):
+            validation_error(
+                f"record[{index}].validation.cross_checked_facts[{fact_index}] must be a string or object."
+            )
+        if set(fact) != {"fact", "sources"} or not isinstance(fact.get("fact"), str):
+            validation_error(
+                f"record[{index}].validation.cross_checked_facts[{fact_index}] must contain string fact and sources only."
+            )
+        require_string_list(
+            fact.get("sources"),
+            f"validation.cross_checked_facts[{fact_index}].sources",
+        )
+    registry_ids: set[str] = set()
+    registry_by_id: dict[str, dict[str, Any]] = {}
+    for source_index, source in enumerate(validation.get("source_registry", [])):
+        if not isinstance(source, dict):
+            validation_error(f"record[{index}].validation.source_registry[{source_index}] must be an object.")
+        reject_extra_keys(
+            source,
+            f"validation.source_registry[{source_index}]",
+            allowed_source_fields,
+        )
+        source_id = str(source.get("source_id") or "").strip()
+        if (incoming_compact_v2 or persisted_hybrid) and not source_id:
+            validation_error(
+                f"record[{index}].validation.source_registry[{source_index}].source_id is required."
+            )
+        if source_id in registry_ids:
+            validation_error(
+                f"record[{index}].validation.source_registry[{source_index}].source_id is duplicated."
+            )
+        if source_id:
+            registry_ids.add(source_id)
+            registry_by_id[source_id] = source
+        for field in allowed_source_fields - {"verified"}:
+            if field in source and not isinstance(source[field], str):
+                validation_error(
+                    f"record[{index}].validation.source_registry[{source_index}].{field} must be a string."
+                )
+        if "verified" in source and not isinstance(source["verified"], bool):
+            validation_error(
+                f"record[{index}].validation.source_registry[{source_index}].verified must be true or false."
+            )
+        if incoming_compact_v2 or persisted_hybrid:
+            for field in ("source_title", "source_url"):
+                if field not in source or not isinstance(source[field], str):
+                    validation_error(
+                        f"record[{index}].validation.source_registry[{source_index}].{field} is required and must be a string."
+                    )
+
+    input_data = record.get("input")
+    if not isinstance(input_data, dict):
+        validation_error(f"record[{index}].input is required and must be an object.")
+    for field in ("company_input", "asset_input"):
+        if not isinstance(input_data.get(field), str) or not input_data[field].strip():
+            validation_error(f"record[{index}].input.{field} must be a non-empty string.")
+
+    table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else None
+    if table is None:
+        validation_error(f"record[{index}].structured_table is required and must be an object.")
+    for field in (
+        "company",
+        "asset_name",
+        "target",
+        "moa",
+        "modality_platform",
+        "indication",
+        "development_stage",
+        "company_country",
+    ):
+        if not isinstance(table.get(field), str) or not table[field].strip():
+            validation_error(f"record[{index}].structured_table.{field} must be a non-empty string.")
+    if not isinstance(table.get("main_indication"), str):
+        validation_error(f"record[{index}].structured_table.main_indication must be a string.")
+    sources = table.get("sources", [])
+    if not isinstance(sources, list):
+        validation_error(f"record[{index}].structured_table.sources must be an array.")
+    if incoming_compact_v2 and len(sources) > 1:
+        validation_error(f"record[{index}].structured_table.sources may contain at most one dashboard source.")
+    if incoming_compact_v2:
+        for source_index, source in enumerate(sources):
+            if not isinstance(source, dict):
+                validation_error(
+                    f"record[{index}].structured_table.sources[{source_index}] must be an object."
+                )
+            reject_extra_keys(
+                source,
+                f"structured_table.sources[{source_index}]",
+                {"source_title", "source_url"},
+            )
+            for field in ("source_title", "source_url"):
+                if not isinstance(source.get(field, ""), str):
+                    validation_error(
+                        f"record[{index}].structured_table.sources[{source_index}].{field} must be a string."
+                    )
+
+    summary = record.get("json_summary")
+    if not isinstance(summary, dict):
+        validation_error(f"record[{index}].json_summary is required and must be an object.")
+    for field in ("theme", "cluster"):
+        if not isinstance(summary.get(field), str) or not summary[field].strip():
+            validation_error(f"record[{index}].json_summary.{field} must be a non-empty string.")
+    if not isinstance(summary.get("target_description", ""), str):
+        validation_error(f"record[{index}].json_summary.target_description must be a string.")
+
+    hard_filter = record.get("hard_filter")
+    if not isinstance(hard_filter, dict):
+        validation_error(f"record[{index}].hard_filter is required and must be an object.")
+    if not isinstance(hard_filter.get("reason", ""), str):
+        validation_error(f"record[{index}].hard_filter.reason must be a string.")
+    if not isinstance(hard_filter.get("flags", []), list):
+        validation_error(f"record[{index}].hard_filter.flags must be an array.")
+    require_string_list(hard_filter.get("flags", []), "hard_filter.flags")
+    if not isinstance(hard_filter.get("hard_blocker", False), bool):
+        validation_error(f"record[{index}].hard_filter.hard_blocker must be true or false.")
+    if not isinstance(hard_filter.get("decision_uncertainty", False), bool):
+        validation_error(f"record[{index}].hard_filter.decision_uncertainty must be true or false.")
+
+    final_insight = record.get("final_insight")
+    if not isinstance(final_insight, dict):
+        validation_error(f"record[{index}].final_insight is required and must be an object.")
+    for field in ("one_line_summary", "recommendation", "most_important_diligence_question"):
+        if not isinstance(final_insight.get(field, ""), str):
+            validation_error(f"record[{index}].final_insight.{field} must be a string.")
+
+    scoring = record["scoring"]
+    criteria = scoring["criteria"]
+    triage_record = is_fast_triage_record(record)
+    criterion_ids = STORAGE_TRIAGE_CRITERION_IDS if triage_record else STORAGE_FULL_CRITERION_IDS
+    if incoming_compact_v2:
+        unexpected_criteria = sorted(set(criteria) - set(criterion_ids))
+        if unexpected_criteria:
+            validation_error(
+                f"record[{index}].scoring.criteria contains fields outside the {len(criterion_ids)} dashboard scores: "
+                f"{', '.join(unexpected_criteria)}."
+            )
+    scores: list[int] = []
+    allowed_criterion_fields = {
+        "score",
+        "evidence_type",
+        "evidence_type_reason",
+        "evidence_basis",
+        "main_line_summary",
+        "why_not_higher",
+        "investigation_note",
+        "uncertain_points",
+        "source_ids",
+        "evidence_sources",
+        "calculation",
+    }
+    for criterion_id in criterion_ids:
+        criterion = criteria.get(criterion_id)
+        if not isinstance(criterion, dict):
+            validation_error(f"record[{index}].scoring.criteria.{criterion_id} is required.")
+        reject_extra_keys(
+            criterion,
+            f"scoring.criteria.{criterion_id}",
+            allowed_criterion_fields,
+        )
+        score = criterion.get("score")
+        if isinstance(score, bool) or not isinstance(score, int) or score not in SCORE_ALLOWED_VALUES:
+            validation_error(f"record[{index}].scoring.criteria.{criterion_id}.score must be an integer from 0 to 3.")
+        scores.append(score)
+        for field in (
+            "evidence_type",
+            "evidence_type_reason",
+            "evidence_basis",
+            "main_line_summary",
+            "why_not_higher",
+            "investigation_note",
+        ):
+            if not isinstance(criterion.get(field, ""), str):
+                validation_error(
+                    f"record[{index}].scoring.criteria.{criterion_id}.{field} must be a string."
+                )
+        for field in ("uncertain_points", "source_ids", "evidence_sources"):
+            if not isinstance(criterion.get(field, []), list):
+                validation_error(
+                    f"record[{index}].scoring.criteria.{criterion_id}.{field} must be an array."
+                )
+        require_string_list(
+            criterion.get("uncertain_points", []),
+            f"scoring.criteria.{criterion_id}.uncertain_points",
+        )
+        require_string_list(
+            criterion.get("source_ids", []),
+            f"scoring.criteria.{criterion_id}.source_ids",
+            non_empty=True,
+        )
+        if incoming_compact_v2 or persisted_hybrid:
+            required_display_fields = {
+                "evidence_type",
+                "main_line_summary",
+                "why_not_higher",
+                "uncertain_points",
+                "source_ids",
+            }
+            if triage_record:
+                required_display_fields.add("evidence_basis")
+            missing_display = sorted(required_display_fields - set(criterion))
+            if missing_display:
+                validation_error(
+                    f"record[{index}].scoring.criteria.{criterion_id} is missing hybrid display fields: "
+                    f"{', '.join(missing_display)}."
+                )
+        for source_id in criterion.get("source_ids", []):
+            normalized_id = str(source_id or "").strip()
+            if not normalized_id or normalized_id not in registry_ids:
+                validation_error(
+                    f"record[{index}].scoring.criteria.{criterion_id}.source_ids references unknown source_id {source_id!r}."
+                )
+        for source_index, source in enumerate(criterion.get("evidence_sources", [])):
+            if not isinstance(source, dict):
+                validation_error(
+                    f"record[{index}].scoring.criteria.{criterion_id}.evidence_sources[{source_index}] must be an object."
+                )
+            reject_extra_keys(
+                source,
+                f"scoring.criteria.{criterion_id}.evidence_sources[{source_index}]",
+                allowed_source_fields,
+            )
+        if incoming_compact_v2:
+            if triage_record:
+                if criterion.get("evidence_type") != "triage_only":
+                    validation_error(
+                        f"record[{index}].scoring.criteria.{criterion_id}.evidence_type must be 'triage_only'."
+                    )
+                evidence_basis = str(criterion.get("evidence_basis") or "").strip()
+                if evidence_basis not in FAST_TRIAGE_EVIDENCE_BASIS_ALLOWED_VALUES:
+                    validation_error(
+                        f"record[{index}].scoring.criteria.{criterion_id}.evidence_basis must be one of "
+                        f"{sorted(FAST_TRIAGE_EVIDENCE_BASIS_ALLOWED_VALUES)}."
+                    )
+                transient = copy.deepcopy(criterion)
+                transient["evidence_sources"] = [
+                    registry_by_id[source_id]
+                    for source_id in criterion.get("source_ids", [])
+                    if source_id in registry_by_id
+                ]
+                validate_triage_scoring_criterion(
+                    transient,
+                    criterion_id,
+                    require_evidence_basis=True,
+                )
+                if not fast_triage_summary_has_single_score(
+                    criterion.get("main_line_summary"),
+                    criterion_id,
+                    criterion["score"],
+                ):
+                    validation_error(
+                        f"record[{index}].scoring.criteria.{criterion_id}.main_line_summary must state "
+                        f"the single selected score {criterion['score']}."
+                    )
+            elif criterion.get("evidence_type") not in EVIDENCE_TYPE_ALLOWED_VALUES:
+                validation_error(
+                    f"record[{index}].scoring.criteria.{criterion_id}.evidence_type must be one of "
+                    f"{sorted(EVIDENCE_TYPE_ALLOWED_VALUES)}."
+                )
+    expected_total = sum(scores)
+    expected_max = 9 if triage_record else 21
+    if incoming_compact_v2:
+        if scoring.get("total_score") != expected_total:
+            validation_error(f"record[{index}].scoring.total_score must equal {expected_total}.")
+        if scoring.get("max_score") != expected_max:
+            validation_error(f"record[{index}].scoring.max_score must equal {expected_max}.")
+    else:
+        for field in ("total_score", "max_score"):
+            value = scoring.get(field)
+            if value is not None and (isinstance(value, bool) or not isinstance(value, int)):
+                validation_error(f"record[{index}].scoring.{field} must be an integer or null.")
+
+    status = str(hard_filter.get("status") or "").strip().upper()
+    if triage_record:
+        triage = record.get("triage")
+        if not isinstance(triage, dict):
+            validation_error(f"record[{index}].triage is required for Fast Triage.")
+        triage_status = str(triage.get("status") or "").strip().upper()
+        if status not in FAST_TRIAGE_STATUS_ALLOWED_VALUES or triage_status != status:
+            validation_error(
+                f"record[{index}] Fast Triage hard_filter.status and triage.status must match SELECT, REJECT, or UNVERIFIED."
+            )
+        if not isinstance(triage.get("identity_verified"), bool):
+            validation_error(f"record[{index}].triage.identity_verified must be true or false.")
+        if triage.get("active_asset") is not None and not isinstance(triage.get("active_asset"), bool):
+            validation_error(f"record[{index}].triage.active_asset must be true, false, or null.")
+        if not isinstance(triage.get("why", ""), str):
+            validation_error(f"record[{index}].triage.why must be a string.")
+        if not isinstance(triage.get("missing_evidence_needed_for_full_scout", []), list):
+            validation_error(
+                f"record[{index}].triage.missing_evidence_needed_for_full_scout must be an array."
+            )
+        require_string_list(
+            triage.get("missing_evidence_needed_for_full_scout", []),
+            "triage.missing_evidence_needed_for_full_scout",
+        )
+        source_count = triage.get("verified_public_source_count", 0)
+        if isinstance(source_count, bool) or not isinstance(source_count, int) or source_count < 0:
+            validation_error(
+                f"record[{index}].triage.verified_public_source_count must be a non-negative integer."
+            )
+        if incoming_compact_v2:
+            expected_status = calculate_fast_triage_status(
+                identity_verified=triage["identity_verified"],
+                target_relevance=criteria["target_relevance"]["score"],
+                moa_validity=criteria["moa_validity"]["score"],
+                data_maturity=criteria["data_maturity"]["score"],
+                active_asset=triage.get("active_asset"),
+                hard_blocker=fast_triage_record_has_hard_blocker(record),
+            )
+            if status != expected_status:
+                validation_error(f"record[{index}] Fast Triage status must be {expected_status}; got {status}.")
+            expected_recommendation = {
+                "SELECT": "Run Full Scout",
+                "REJECT": "Do not run Full Scout",
+                "UNVERIFIED": "Verify asset identity",
+            }[status]
+            if str(final_insight.get("recommendation") or "").strip() != expected_recommendation:
+                validation_error(
+                    f"record[{index}].final_insight.recommendation must be {expected_recommendation!r}."
+                )
+        return
+
+    if status not in {"PASS", "REVIEW", "FAIL"}:
+        validation_error(f"record[{index}].hard_filter.status must be PASS, REVIEW, or FAIL.")
+    profile = record.get("company_profile")
+    if not isinstance(profile, dict):
+        validation_error(f"record[{index}].company_profile is required for Full Scout.")
+    competitive = record.get("competitive_analysis")
+    similarity = competitive.get("similarity_summary") if isinstance(competitive, dict) else None
+    if not isinstance(competitive, dict) or not isinstance(similarity, dict):
+        validation_error(f"record[{index}].competitive_analysis.similarity_summary is required.")
+    competitor_rows = competitive.get("competitor_table", [])
+    similar_rows = competitive.get("similar_pipelines", [])
+    if not isinstance(competitor_rows, list):
+        validation_error(f"record[{index}].competitive_analysis.competitor_table must be an array.")
+    if not isinstance(similar_rows, list):
+        validation_error(f"record[{index}].competitive_analysis.similar_pipelines must be an array.")
+    allowed_competitor_fields = {
+        "competitor_asset",
+        "company",
+        "modality",
+        "target_or_moa",
+        "stage",
+        "similarity_level",
+        "why_it_matters",
+        "source_url",
+        "source_ids",
+    }
+    for row_index, row in enumerate(competitor_rows):
+        if not isinstance(row, dict):
+            validation_error(
+                f"record[{index}].competitive_analysis.competitor_table[{row_index}] must be an object."
+            )
+        reject_extra_keys(
+            row,
+            f"competitive_analysis.competitor_table[{row_index}]",
+            allowed_competitor_fields,
+        )
+        for field in allowed_competitor_fields - {"source_ids"}:
+            if not isinstance(row.get(field, ""), str):
+                validation_error(
+                    f"record[{index}].competitive_analysis.competitor_table[{row_index}].{field} must be a string."
+                )
+        if "source_ids" in row and not isinstance(row["source_ids"], list):
+            validation_error(
+                f"record[{index}].competitive_analysis.competitor_table[{row_index}].source_ids must be an array."
+            )
+        require_string_list(
+            row.get("source_ids", []),
+            f"competitive_analysis.competitor_table[{row_index}].source_ids",
+            non_empty=True,
+        )
+        for source_id in row.get("source_ids", []):
+            normalized_id = str(source_id or "").strip()
+            if not normalized_id or normalized_id not in registry_ids:
+                validation_error(
+                    f"record[{index}].competitive_analysis.competitor_table[{row_index}].source_ids "
+                    f"references unknown source_id {source_id!r}."
+                )
+    allowed_similar_fields = {
+        "company",
+        "asset_name",
+        "similarity_score",
+        "matched_dimensions",
+        "shared_data_points",
+    }
+    for row_index, row in enumerate(similar_rows):
+        if not isinstance(row, dict):
+            validation_error(
+                f"record[{index}].competitive_analysis.similar_pipelines[{row_index}] must be an object."
+            )
+        reject_extra_keys(
+            row,
+            f"competitive_analysis.similar_pipelines[{row_index}]",
+            allowed_similar_fields,
+        )
+        for field in ("company", "asset_name"):
+            if not isinstance(row.get(field, ""), str):
+                validation_error(
+                    f"record[{index}].competitive_analysis.similar_pipelines[{row_index}].{field} must be a string."
+                )
+        for field in ("matched_dimensions", "shared_data_points"):
+            if not isinstance(row.get(field, []), list):
+                validation_error(
+                    f"record[{index}].competitive_analysis.similar_pipelines[{row_index}].{field} must be an array."
+                )
+            require_string_list(
+                row.get(field, []),
+                f"competitive_analysis.similar_pipelines[{row_index}].{field}",
+            )
+    for field in (
+        "similar_pipeline_count",
+        "high_similarity_count",
+        "medium_similarity_count",
+        "low_similarity_count",
+    ):
+        count = similarity.get(field)
+        if isinstance(count, bool) or not isinstance(count, int) or count < 0:
+            validation_error(
+                f"record[{index}].competitive_analysis.similarity_summary.{field} must be a non-negative integer."
+            )
+    if incoming_compact_v2:
+        expected_filter = calculate_latest_full_scout_filter(record)
+        if status != expected_filter["status"]:
+            validation_error(
+                f"record[{index}].hard_filter.status must be {expected_filter['status']} from the dashboard scores and flags; got {status}."
+            )
+
+
 def validate_records_for_save(records: list[dict[str, Any]]) -> None:
     for index, record in enumerate(records):
         ensure_meta_defaults(record)
+        if is_minimal_dashboard_contract(record):
+            validate_minimal_dashboard_record(record, index)
+            continue
         validate_compact_source_references(record, index)
         scoring = record.get("scoring")
         if not isinstance(scoring, dict):
@@ -2630,9 +3247,14 @@ def load_records() -> list[dict[str, Any]]:
 
 
 def save_records(records: list[dict[str, Any]]) -> None:
-    for record in records:
+    minimized_records = [minimize_record_for_dashboard_storage(record) for record in records]
+    for record in minimized_records:
         synchronize_full_scout_source_revision_metadata(record)
-    write_json_atomic(DATA_FILE, records)
+    # Validate a copy because canonical-stage validation may normalize legacy display
+    # text in place. The one-time storage migration intentionally preserves those
+    # existing table cells while every new Compact v2 upload is canonicalized earlier.
+    validate_records_for_save(copy.deepcopy(minimized_records))
+    write_json_atomic(DATA_FILE, minimized_records)
 
 
 def run_obsidian_export() -> dict[str, Any]:
@@ -6075,16 +6697,7 @@ FULL_SCOUT_UNCERTAINTY_RE = re.compile(
 
 
 def full_scout_has_hard_blocker(notes: str) -> bool:
-    """Detect an affirmed blocker without treating explicit negation as a blocker."""
-    for match in FULL_SCOUT_HARD_BLOCKER_RE.finditer(notes):
-        prefix = notes[max(0, match.start() - 28) : match.start()]
-        suffix = notes[match.end() : match.end() + 20]
-        if re.search(r"\b(?:not|without|never)\b[^|.;\n]{0,20}$|(?:아니|없)는?\s*$", prefix, re.IGNORECASE):
-            continue
-        if re.match(r"\s*(?:없(?:음|다)?|아님|아니|not\b|false\b)", suffix, re.IGNORECASE):
-            continue
-        return True
-    return False
+    return storage_full_scout_has_hard_blocker(notes)
 
 
 def calculate_latest_full_scout_filter(record: dict[str, Any]) -> dict[str, Any]:
@@ -6095,8 +6708,12 @@ def calculate_latest_full_scout_filter(record: dict[str, Any]) -> dict[str, Any]
     moa_score = score_map.get("moa_validity")
     data_score = score_map.get("data_maturity")
     notes = full_scout_rubric_filter_text(record)
-    fail_blocker = full_scout_has_hard_blocker(notes)
-    review_uncertainty = FULL_SCOUT_UNCERTAINTY_RE.search(notes) is not None
+    hard_filter = record.get("hard_filter") if isinstance(record.get("hard_filter"), dict) else {}
+    fail_blocker = hard_filter.get("hard_blocker") is True or full_scout_has_hard_blocker(notes)
+    review_uncertainty = (
+        hard_filter.get("decision_uncertainty") is True
+        or storage_full_scout_has_decision_uncertainty(notes)
+    )
     reasons: list[str] = []
 
     if total is not None and total <= 8:

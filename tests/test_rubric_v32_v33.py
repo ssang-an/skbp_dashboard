@@ -892,7 +892,8 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         self.assertIn("parse-check the complete JSON suffix", prompt)
         self.assertIn("score/count fields as JSON numbers", prompt)
         self.assertIn("Escape any double quote, backslash, or line break", prompt)
-        self.assertIn('"ingestion_format": "compact_v1"', app_js)
+        self.assertIn('"ingestion_format": "compact_v2"', app_js)
+        self.assertNotIn('"ingestion_format": "compact_v1"', app_js)
         self.assertIn("COMPACT_TRIAGE_JSON_TEMPLATE", app_js)
         self.assertIn("replaceInstructionJsonTemplate(prompt, COMPACT_TRIAGE_JSON_TEMPLATE", app_js)
 
@@ -910,7 +911,7 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         self.assertIn("Do not create inner Markdown or JSON fences", prompt)
         self.assertIn("The JSON suffix must start with { and end with }", prompt)
         self.assertIn("parse-check the complete JSON suffix", prompt)
-        self.assertIn("Cross-check Marketability before output", prompt)
+        self.assertIn("Cross-check Marketability in Markdown before output", prompt)
         self.assertIn("never a quoted numeric string", prompt)
         self.assertIn("source_report.raw_markdown as an empty string", prompt)
         self.assertIn("COMPACT_FULL_SCOUT_JSON_TEMPLATE", app_js)
@@ -918,13 +919,18 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         compact_start = app_js.index("const COMPACT_FULL_SCOUT_JSON_TEMPLATE")
         compact_end = app_js.index("function replaceInstructionJsonTemplate", compact_start)
         compact = app_js[compact_start:compact_end]
+        self.assertIn('"ingestion_format": "compact_v2"', compact)
+        self.assertIn('"hard_blocker": false', compact)
         self.assertIn('"source_ids": []', compact)
         self.assertIn('"source_registry": []', compact)
+        self.assertNotIn('"evidence_sources": []', compact)
+        self.assertIn('"competitor_table": []', compact)
+        self.assertIn('"similar_pipelines": []', compact)
         self.assertNotIn('"source_report": {', compact)
         self.assertNotIn('"raw_markdown":', compact)
         self.assertNotIn('"obsidian":', compact)
-        self.assertNotIn('"evidence_type_reason":', compact)
-        self.assertNotIn('"investigation_note":', compact)
+        self.assertIn('"evidence_type_reason":', compact)
+        self.assertIn('"investigation_note":', compact)
         self.assertNotIn("exactly two fenced code blocks", prompt)
         self.assertNotIn("second copyable box", prompt)
         self.assertNotIn("one markdown fenced code block followed by one JSON fenced code block", prompt)
@@ -955,9 +961,21 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         self.assertIn('legacy N/A 대신 UNVERIFIED', app_js)
         self.assertIn('always evaluate in descending order: 3, then 2, then 1, then 0', app_js)
         self.assertIn('MoA evidence definitions:', app_js)
-        self.assertGreaterEqual(app_js.count('"founded_year": null'), 2)
-        self.assertGreaterEqual(app_js.count('"differentiation_points": []'), 2)
-        self.assertGreaterEqual(app_js.count('"analysis_summary": ""'), 2)
+        compact_start = app_js.index("const COMPACT_FULL_SCOUT_JSON_TEMPLATE")
+        compact_end = app_js.index("function replaceInstructionJsonTemplate", compact_start)
+        compact = app_js[compact_start:compact_end]
+        for research_only_key in (
+            '"founded_year": null',
+            '"differentiation_points": []',
+            '"analysis_summary": ""',
+            '"evidence_sources": []',
+        ):
+            self.assertNotIn(research_only_key, compact)
+        self.assertIn('"headquarters": ""', compact)
+        self.assertIn('"company_stage": ""', compact)
+        self.assertIn('"platform_summary": ""', compact)
+        self.assertIn('"source_registry": []', compact)
+        self.assertIn('"source_ids": []', compact)
 
         triage_rules = (ROOT / "config" / "scoring_criteria" / "v3_2_triage.md").read_text(
             encoding="utf-8"
@@ -983,30 +1001,46 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
             self.assertIn(label, triage_detail_js)
         self.assertNotIn("0 sources", triage_detail_js)
 
-    def test_full_parameter_guide_shows_moa_and_data_operating_details(self) -> None:
+    def test_full_parameter_guide_keeps_the_scoring_tables(self) -> None:
         for filename in ("index.html", "detail.html"):
             markup = (ROOT / filename).read_text(encoding="utf-8")
             with self.subTest(filename=filename):
-                self.assertIn("Same target/class", markup)
-                self.assertIn("Asset-specific", markup)
-                self.assertIn("중복 계산 방지", markup)
-                self.assertIn("program progression", markup)
-                self.assertIn("Human data", markup)
+                self.assertIn("Target Relevance", markup)
+                self.assertIn("asset-specific", markup.lower())
+                self.assertIn("Data Maturity", markup)
+                self.assertIn("Marketability", markup)
 
     def test_json_schema_contains_new_controlled_vocabularies(self) -> None:
         schema = json.loads((ROOT / "json" / "drug-valuation.schema.json").read_text(encoding="utf-8"))
         schema_text = json.dumps(schema, ensure_ascii=False)
         for value in (
             "UNVERIFIED",
-            "user_input_only",
-            "public_source",
-            "user_input_and_public_source",
-            "no_supporting_basis",
             "Preclinical Candidate",
             "Preclinical unspecified",
             "IND filed/cleared",
         ):
             self.assertIn(value, schema_text)
+
+        enum_values: list[object] = []
+
+        def collect_enum_values(value: object) -> None:
+            if isinstance(value, dict):
+                if isinstance(value.get("enum"), list):
+                    enum_values.extend(value["enum"])
+                for child in value.values():
+                    collect_enum_values(child)
+            elif isinstance(value, list):
+                for child in value:
+                    collect_enum_values(child)
+
+        collect_enum_values(schema)
+        for markdown_only_value in (
+            "user_input_only",
+            "public_source",
+            "user_input_and_public_source",
+            "no_supporting_basis",
+        ):
+            self.assertNotIn(markdown_only_value, enum_values)
 
         definitions = schema.get("$defs", {})
         refs: list[str] = []
@@ -1024,9 +1058,31 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
 
         collect_refs(schema)
         self.assertEqual(sorted(set(refs) - set(definitions)), [])
-        full_v33_branch = schema["allOf"][2]["then"]["properties"]["meta"]
-        self.assertEqual(full_v33_branch["properties"]["schema_version"]["const"], "3.2")
-        self.assertIn("schema_version", full_v33_branch["required"])
+        self.assertEqual(
+            schema["properties"]["meta"]["properties"]["storage_profile"]["const"],
+            "dashboard_hybrid_v1",
+        )
+        score_criterion = schema["$defs"]["scoreCriterion"]
+        self.assertEqual(
+            score_criterion["required"],
+            [
+                "score",
+                "evidence_type",
+                "evidence_type_reason",
+                "evidence_basis",
+                "main_line_summary",
+                "why_not_higher",
+                "investigation_note",
+                "uncertain_points",
+                "source_ids",
+            ],
+        )
+        self.assertFalse(score_criterion["additionalProperties"])
+        full_branch = schema["allOf"][0]["else"]
+        self.assertEqual(
+            full_branch["properties"]["scoring"]["properties"]["max_score"]["const"],
+            21,
+        )
 
     def test_stage_synonym_dictionary_uses_only_current_canonical_values(self) -> None:
         dictionary = json.loads(

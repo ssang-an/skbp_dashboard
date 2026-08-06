@@ -232,4 +232,4 @@ SKBP Theme/Cluster direct fit이 없다는 이유만으로 자동 FAIL 처리하
 
 ## 8. Required Output for Each Criterion
 
-각 criterion에는 `score`, `evidence_type`, `evidence_type_reason`, `main_line_summary`, `what_was_checked`, `evidence_trail`, `evidence_sources`, `investigation_note`, `why_not_higher`, `uncertain_points`를 기록한다. 범위형 score를 쓰지 않고, 회사 claim은 명확히 claim으로 표시한다.
+각 criterion의 Markdown section에는 score, evidence type, 핵심 판단, 확인 항목, evidence trail/source, investigation note, why-not-higher, uncertainty를 모두 기록한다. Compact v2 JSON criterion에는 대시보드 표시용 정수 `score`, 짧은 판단/근거/불확실성 필드, 그리고 중앙 `source_registry`를 가리키는 `source_ids`만 저장하며, Markdown의 전체 조사 내용을 중복하지 않는다. `structured_table.sources`는 `[]`로 유지하고 대시보드 Source 열은 `validation.source_registry`에서 파생한다. 범위형 score를 쓰지 않고, 회사 claim은 명확히 claim으로 표시한다.

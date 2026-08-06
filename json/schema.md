@@ -1,41 +1,38 @@
 # SKBP Pipeline Shortlist JSON Structure — Fast Triage v3.2 / Full Scout v3.3
 
-`drug-valuation.schema.json` defines the shared dashboard record contract. New Fast Triage records use `schema_version: "3.2"`, `instruction_version: "3.2"`, and `rubric_version: "3.2"`. Full Scout v3.3 does not change the Full Scout JSON shape, so its existing schema version remains unchanged while `instruction_version` and `rubric_version` advance to `3.3`.
+`drug-valuation.schema.json` defines the persisted `dashboard_hybrid_v1` record. GPT Markdown remains the complete research/audit document. Persisted JSON is a compact display projection: dashboard columns, chart/filter inputs, scores, the small amount of criterion evidence needed by score hover/detail views, source/competitor graph links, the preserved Markdown, and dashboard-owned operational state. New Fast Triage records use instruction/rubric v3.2 and Full Scout records use v3.3.
 
 ## Dashboard GPT Response Ingestion
 
-The primary paste format is one combined response: Markdown first, one `--- JSON DATA ---` line, then one complete JSON value. Each generated instruction contains only one literal separator and one final JSON template, so no legacy sample competes with the actual output contract. The importer matches that marker as a complete line while tolerating indentation, repeated spaces, or letter case. It parses exactly one balanced top-level JSON object/array, never promotes nested fragments, and can safely discard an accidental inner `json` fence or up to 4,000 characters of accidental prose around the closed root value. If the separator is repeated, the final occurrence is authoritative; a broken final suffix is blocked rather than falling back to an earlier sample. Duplicate JSON keys, a second root value, truncation, more than 80 nesting levels, and combined input over 2,000,000 characters are blocking errors. Only semantics-preserving repairs are attempted: trailing commas and raw newline/tab characters inside JSON strings. TAB1 is locked to the Fast Triage contract and requires a top-level record array. TAB2 is locked to the Full Scout contract and prefers one top-level record object; a one-item array remains accepted as a compatibility input. The older two-fence Markdown + JSON response and previous verbose records remain readable.
+The primary paste format is one combined response: Markdown first, one `--- JSON DATA ---` line, then one complete JSON value. Strict JSON parsing runs first. Only after strict parsing fails, conservative `safePreprocessJson` repair may remove comments outside strings, escape raw control characters, preserve invalid literal backslashes, normalize external Unicode whitespace, convert `True`/`False`/`None`, quote simple ASCII object keys, or remove trailing commas. Duplicate keys, multiple roots, truncation, missing comma/colon, single-quoted strings, `NaN`/`Infinity`/`undefined`, excessive depth/size, and ambiguous repairs remain blocking errors. TAB1 requires a top-level Fast Triage array; TAB2 prefers one Full Scout object. Legacy two-fence, verbose, and Compact v1 input remains readable.
 
-New GPT instructions emit `meta.ingestion_format: "compact_v1"`. Compact records retain research-bearing fields but omit derived boilerplate (`input`, `source_report`, schema/instruction/rubric version fields, generated-date default, repeated summary metadata, `evidence_type_reason`, `investigation_note`, `what_was_checked`, empty Marketability A/B/C steps, and Obsidian defaults). Sources are written once in `validation.source_registry`; criteria and Marketability steps reference them through `source_ids`. Before validation and saving, `src/compact-ingestion.js` expands the compact payload into the existing persisted record shape, materializes criterion/step `evidence_sources`, computes omitted totals, and fills compatible defaults. External-forecast-only and insufficient-evidence records omit A/B/C step objects; calculation/both records still provide all numeric calculation components. The persisted structure consumed by dashboard views and exporters therefore remains unchanged, and the importer writes the Markdown portion into `source_report.raw_markdown`.
+New GPT instructions emit `meta.ingestion_format: "compact_v2"`. GPT JSON contains the two `input` identity aliases used to join Fast Triage and Full Scout records, identity/table fields, Theme/Cluster, filter/status fields, the 3 or 7 scores, concise criterion display fields, a canonical `validation.source_registry`, criterion `source_ids`, TAB1 diligence fields, and Full Scout competitor/similarity projections. Complete research narrative, methodology, and citation discussion remain in Markdown. `src/compact-ingestion.js` resolves source IDs for existing consumers, adds version/date/source-report boilerplate, and derives Total/maximum before validation. The save boundary writes `dashboard_hybrid_v1`, preserving `source_report.raw_markdown` plus operational `meta` such as attachments, notes, comments, human overrides, focus management, and audit/reupload history.
 
-For compact input only, plain numeric strings such as `"1500"` or `"1,500"` are normalized to JSON numbers in known score and Marketability numeric fields before validation. Strings containing units or commentary are not coerced. Duplicate `source_id` values and unresolved `source_ids` are blocked. Full Scout Marketability cross-validation requires `assessment_method`, `score_basis_type`, `calculation_status`, commercial-rationale status, A/B/C nullability, numeric/range-valid calculation components, calculated/external normalized values, assessed global peak sales, and the final 0–3 score band to agree. External-forecast-only assessment is valid with null A/B/C values but requires at least one registered forecast `source_id`; calculation and both methods require numeric A/B/C outputs and components. Home upload and Detail reupload both call `/api/records/validate` before enabling save, then the save endpoint runs the same FastAPI/Pydantic and workflow validation again. These ingestion guards do not alter the saved dashboard shape or the visible Markdown report.
+Compact numeric score/count strings are normalized only in known numeric fields; values containing units or commentary are not coerced. During UI ingestion, Compact v2 is projected onto the documented dashboard contract so unsupported extra keys are ignored before strict FastAPI validation; required score/identity fields and dangling or duplicate source IDs still block the save. Source IDs must be unique and resolve to the canonical registry. Home upload and Detail reupload call `/api/records/validate` before enabling save, and the save endpoint repeats validation. Legacy verbose, `compact_v1`, and the earlier persisted `dashboard_minimal_v1` shapes remain readable, including when mixed with hybrid records.
+
+## Hybrid Persistence
+
+Two deliberately large sections remain: `source_report.raw_markdown` is required to render/re-upload the GPT original and to support rubric refresh; dashboard-owned operational `meta` is required for team notes, attachments, manual overrides, audit history, and TAB3. They are not duplicate GPT research fields and are not removed by compaction.
+
+Every persisted criterion contains `score`, concise hover/detail fields (`evidence_type`, `evidence_type_reason`, `evidence_basis`, `main_line_summary`, `why_not_higher`, `investigation_note`, `uncertain_points`), and `source_ids`. Source objects are stored once in `validation.source_registry`; duplicated criterion-level `evidence_sources` are not persisted. Full evidence stays in Markdown. Marketability alone may retain its compact A/B/C display calculation. `hard_filter.hard_blocker` and `hard_filter.decision_uncertainty` remain so Filter 2 stays deterministic.
 
 ## Top-Level Sections
 
-- `meta`: Schema version, generated date, analyst role, output filename, `rubric_version`, and `rubric_author`. Also carries edit-provenance fields — see "Metadata Provenance" below.
-- `input`: Company/asset inputs, source type, and notes.
-- `source_report`: Human-readable GPT report used as the primary raw source for parser-driven extraction.
-- `company_profile`: Basic company information, country, headquarters, website, focus areas, platform summary, financing/partnership signals, and official source URLs.
-- `rubric`: The only place where scoring criteria and score definitions are stored.
-- `json_summary`: Dashboard summary fields, including company country, target, theme, cluster, and target relevance score.
-- `structured_table`: Core pipeline facts such as company, country, asset, target, theme, cluster, MOA, modality, indication, stage, key data, and sources.
+- `meta`: Record identity/version plus dashboard-owned operational state and audit provenance.
+- `source_report`: Preserved GPT Markdown and parser status.
+- `input`: Original company and asset aliases used only for cross-workflow dashboard grouping.
+- `company_profile`: Full Scout optional-column values only: headquarters, company stage, and platform summary.
+- `json_summary`: Theme, Cluster, and the short description rendered by target cards/popovers.
+- `structured_table`: Home/detail identity and grouping columns. New Compact v2 prompts keep `sources` empty; storage derives at most one primary source link from the canonical registry.
 - `hard_filter`: Full Scout uses PASS / REVIEW / FAIL. Fast Triage uses SELECT / REJECT / UNVERIFIED.
-- `scoring`: Seven criterion-level scores and asset-specific judgment results.
-- `competitive_analysis`: Competitor table, similar pipeline counts, similar pipelines, and differentiation points.
-- `validation`: Cross-checked facts, uncertainty, and source registry.
-- `final_insight`: One-line conclusion, key strengths, and key risks.
-- `obsidian`: Note metadata for Obsidian export.
+- `scoring`: Three Fast Triage or seven Full Scout hybrid criterion projections plus stored Total/maximum.
+- `competitive_analysis`: Full Scout density/counts plus the minimal competitor and similar-pipeline rows used by exports/graphs.
+- `validation`: Decision uncertainty, cross-checked facts, and the canonical source registry.
+- `final_insight`: One-line dashboard summary, recommendation, and most important diligence question.
 
 ## Rubric vs Scoring
 
-Use this rule:
-
-```text
-rubric = how to score
-scoring.criteria.* = why this asset received this score
-```
-
-Do not repeat rubric definitions inside scoring reasons.
+Versioned files in `config/scoring_criteria/` define how to score. `scoring.criteria.*.score` stores the result, while the compact sibling fields support existing hover/detail views and graph export. The corresponding Markdown section remains authoritative for the complete reasoning. Do not copy the full report or rubric prose into JSON.
 
 ## Hard Filter Rule
 
@@ -57,24 +54,24 @@ Fast Triage uses three final status values only:
 
 Unknown target, MoA, indication, or development stage does not by itself produce `UNVERIFIED`; write `Unknown` in the factual field and continue scoring. New v3.2 records must use the same status in `hard_filter.status`, `triage.status`, the Markdown result, and the recommendation mapping. Legacy records may retain historical values for read compatibility, but new saves and prompt output use the v3.2 vocabulary.
 
-`triage.active_asset` is required: use `true` only for confirmed active status, `false` for confirmed inactivity, and `null` when current activity cannot be established. `SELECT` requires `true`; an identity-verified record with `null` cannot pass the SELECT gate.
+`triage.active_asset` is required: use `true` only for confirmed active status, `false` for confirmed inactivity, and `null` when current activity cannot be established. `SELECT` requires `true`; an identity-verified record with `null` cannot pass the SELECT gate. `triage.verified_public_source_count` retains the deduplicated count shown in the Quick Summary card while source details remain in Markdown.
 
 The recommendation mapping is fixed: `SELECT` → `Run Full Scout`, `REJECT` → `Do not run Full Scout`, and `UNVERIFIED` → `Verify asset identity`.
 
-Fast Triage evaluates only `target_relevance`, `moa_validity`, and `data_maturity`. If no aggregate score is used, both `scoring.total_score` and `scoring.max_score` are `null`. If an aggregate score is explicitly used, `max_score` is `9`.
+Fast Triage evaluates only `target_relevance`, `moa_validity`, and `data_maturity`. Compact v2 derives their aggregate with `max_score: 9`. Migrated legacy records may retain historical null/maximum values so existing display semantics do not change.
 
-Each Fast Triage criterion requires `evidence_basis`:
+The Fast Triage Markdown judgment identifies one evidence basis:
 
 - `user_input_only`
 - `public_source`
 - `user_input_and_public_source`
 - `no_supporting_basis`
 
-Verified public source count is calculated from unique, actually verified public URLs. In the normal `evidence_sources` array, each counted item must be an object with an http(s) `source_url` and explicit `verified: true`; a bare or user-supplied URL does not count. An optional explicitly named `verified_evidence_sources` list may also be used as the authoritative verified list. Blank URLs, placeholder values, and a URL supplied but not opened/verified do not count.
+Verified public source count is based on unique URLs that were actually opened and support the asset/claim. Complete citation/evidence discussion lives in Markdown. Compact v2 stores each source once in `validation.source_registry` and refers to it with criterion `source_ids`; persisted hybrid records do not duplicate the same object as criterion `evidence_sources`.
 
-Validation rules:
+GPT Markdown quality rules (the Compact v2 JSON validator enforces the score/status structure, while these evidence checks remain visible in the report):
 
-- Every current Fast Triage `main_line_summary` is non-empty and states the criterion's single selected score (for example, `TR 2점`); score ranges are invalid.
+- Every Fast Triage Markdown judgment is non-empty and states one selected score (for example, `TR 2점`); score ranges are invalid.
 - `score >= 2` with `evidence_basis = no_supporting_basis` is invalid.
 - `moa_validity.score >= 2` or `data_maturity.score >= 2` requires at least one verified public source URL.
 - `public_source` and `user_input_and_public_source` require at least one verified public source URL.
@@ -106,20 +103,11 @@ Both workflows use only asset-specific facts explicitly supplied by the user or 
 
 Only explicit stage wording or a completed/started milestone may be canonicalized. A planned or expected IND alone is not `IND-enabling`; use `Unknown` unless another current stage is confirmed. Plain `preclinical` maps to `Preclinical unspecified`, candidate nomination/selection maps to `Preclinical Candidate`, actual GLP toxicology/IND-directed CMC/IND-enabling work maps to `IND-enabling`, and submitted/filed/accepted/effective/cleared IND or CTA maps to `IND filed/cleared`. Trial recruitment/status text stays in source evidence or notes rather than being merged into this field.
 
-Each scoring criterion should contain:
+New Compact v2 uploads are normalized to this vocabulary. The storage schema also accepts historical stage display text during one-time minimization so existing table cells are not silently rewritten; a later confirmed reupload or explicit record edit normalizes that value.
 
-- `score`: Integer from 0 to 3, or null if not scored.
-- `evidence_type`: Audit label showing evidence level.
-- `evidence_type_reason`: Why this evidence type was selected.
-- `main_line_summary`: One-line explanation of why this asset received the score.
-- `what_was_checked`: Checklist of reviewed evidence.
-- `evidence_trail`: Key facts leading to the score.
-- `evidence_sources`: Source-level evidence for the judgment.
-- `investigation_note`: How the analyst/GPT investigated or interpreted the evidence.
-- `why_not_higher`: Why the score was not one point higher.
-- `uncertain_points`: Missing, weak, or conflicting evidence.
+Each persisted scoring criterion has a `score` integer from 0 to 3 plus the concise hybrid display/source-reference fields listed above. The Markdown criterion section carries the complete checks, evidence trail, calculations, rationale, and limitations.
 
-Allowed evidence types:
+Allowed evidence types recorded in the Markdown report:
 
 - `E0_not_found_or_not_assessable`
 - `E1_company_claim_or_scientific_rationale_only`
@@ -127,27 +115,21 @@ Allowed evidence types:
 - `E3_asset_specific_preclinical_or_technical_evidence`
 - `E4_asset_specific_clinical_evidence`
 
-`marketability` additionally contains:
-
-```text
-scoring.criteria.marketability.calculation
-```
-
-with A/B/C steps:
+Marketability research in Markdown contains the A/B/C steps:
 
 - `A_targetable_addressable_patient`: TAP estimate.
 - `B_unrisked_peak_sales`: TAP x annual net price x peak penetration x treatment duration factor.
-- `C_obtainable_peak_sales`: unrisked peak sales adjusted by competition, pricing power, and expansion capacity.
+- `C_obtainable_peak_sales`: unrisked peak sales adjusted by competition and pricing power.
 
 Marketability should use obtainable peak sales, not rNPV.
 
-Marketability has a hard 0 gate. If `commercial_rationale_status` is `not_established`, then:
+Marketability has a hard 0 gate. If the Markdown assessment finds commercial rationale not established, then:
 
 - `score` must be `0`.
-- TAP, Unrisked Peak Sales, and Obtainable Peak Sales outputs must be `null`.
-- `commercial_rationale_failure_reason` is required.
+- TAP, Unrisked Peak Sales, and Obtainable Peak Sales are not asserted.
+- The Markdown must state the failure reason.
 
-Marketability `main_line_summary` must explicitly mention all three steps:
+The Marketability Markdown section explicitly mentions all three steps when a calculation is used:
 
 ```text
 A. TAP: ...
@@ -184,7 +166,7 @@ Loosely-typed `meta` sub-objects support detail-page workflows that live outside
 
 Current Full Scout rubric definitions live in `config/scoring_criteria/v3_3_full.md` / `v3_3_display.md`, tracked by `main.py`'s `SCORING_CRITERIA_VERSION` constant (`3.3`). Fast Triage v3.2 is documented in `config/scoring_criteria/v3_2_triage.md` and tracked by `TRIAGE_CRITERIA_VERSION` (`3.2`). These are human-managed versioned files — there is no code path that generates or overwrites them automatically.
 
-`meta.rubric_version` on a record is the version that was active when its GPT report/score was originally generated ("원본" — the original), and is never overwritten after the fact. `meta.rescored_rubric_version` identifies the latest rubric that actually changed official scores; `meta.rubric_reviewed_version` identifies the latest successfully checked rubric even when no score changed. `meta.rubric_author` defaults to `kate`.
+`meta.rubric_version` on a record is the version that was active when its GPT report/score was originally generated ("원본" — the original), and is never overwritten after the fact. `meta.rescored_rubric_version` identifies the latest rubric that actually changed official scores; `meta.rubric_reviewed_version` identifies the latest successfully checked rubric even when no score changed. Prompt-only author/language/output-format boilerplate is not persisted.
 
 When the SKBP team manually revises the rubric definitions:
 
@@ -211,8 +193,6 @@ Theme and Cluster are sibling fields:
 ```text
 json_summary.theme
 json_summary.cluster
-structured_table.theme
-structured_table.cluster
 ```
 
 When rendering text, combine them as:
@@ -249,23 +229,11 @@ Each criterion is scored from 0 to 3. Total score is 21.
 
 ## Competitive Analysis
 
-Use `competitive_analysis.competitor_table` for the report-style competitor table:
-
-- `competitor_name`
-- `company`
-- `modality`
-- `target_or_moa`
-- `development_stage`
-- `relevance_to_asset`
-- `source`
-
-Use `similarity_summary` and `similar_pipelines` for deeper similarity analysis:
-
-- total similar pipeline count
-- high/medium/low similarity counts
-- matched dimensions
-- shared data points
-- differentiating data points
+Persist only `competitive_analysis.competitive_density` and
+`competitive_analysis.similarity_summary`'s total/high/medium/low counts because
+those values feed dashboard columns and visuals. The report-style competitor table,
+matched dimensions, shared/differentiating data, search scope, and sources belong in
+the preserved Markdown report and are not duplicated in JSON.
 
 ## Files
 

@@ -66,6 +66,78 @@ def million_usd(value: Any, unit: Any = "") -> str:
     return str(value)
 
 
+def criterion_evidence_sources(record: dict[str, Any], item: Any) -> list[Any]:
+    """Return criterion sources for both legacy and canonical-registry records.
+
+    Older records embed full ``evidence_sources`` objects under every criterion.
+    Hybrid compact records may instead keep only ``source_ids`` there and store
+    each source once in ``validation.source_registry``.  Preserve embedded
+    sources first, then append any referenced registry sources not already seen.
+    Malformed or dangling IDs are ignored so one bad criterion cannot break an
+    Obsidian export.
+    """
+
+    if not isinstance(item, dict):
+        return []
+
+    registry: dict[str, Any] = {}
+    registry_items = get(record, "validation.source_registry", [])
+    if isinstance(registry_items, list):
+        for source in registry_items:
+            if not isinstance(source, dict):
+                continue
+            source_id = source.get("source_id") or source.get("id")
+            if isinstance(source_id, (str, int)) and str(source_id).strip():
+                registry[str(source_id).strip()] = source
+
+    resolved: list[Any] = []
+    seen: set[str] = set()
+
+    def add(source: Any) -> None:
+        if not isinstance(source, (dict, str)):
+            return
+        if isinstance(source, dict):
+            normalized = dict(source)
+            title = normalized.get("source_title") or normalized.get("title")
+            url = normalized.get("source_url") or normalized.get("url")
+            source_type = normalized.get("source_type") or normalized.get("type")
+            if title is not None:
+                normalized["source_title"] = title
+            if url is not None:
+                normalized["source_url"] = url
+            if source_type is not None:
+                normalized["source_type"] = source_type
+            key = str(
+                normalized.get("source_url")
+                or normalized.get("source_id")
+                or normalized.get("id")
+                or normalized.get("source_title")
+                or ""
+            ).strip()
+            source = normalized
+        else:
+            key = source.strip()
+        if not key or key in seen:
+            return
+        seen.add(key)
+        resolved.append(source)
+
+    embedded = item.get("evidence_sources")
+    if isinstance(embedded, list):
+        for source in embedded:
+            add(source)
+
+    source_ids = item.get("source_ids")
+    if isinstance(source_ids, list):
+        for source_id in source_ids:
+            if not isinstance(source_id, (str, int)):
+                continue
+            source = registry.get(str(source_id).strip())
+            if source is not None:
+                add(source)
+    return resolved
+
+
 def score_table(record: dict[str, Any]) -> str:
     criteria = get(record, "scoring.criteria", {})
     rubric = get(record, "rubric", {})
@@ -83,7 +155,7 @@ def score_table(record: dict[str, Any]) -> str:
         item = criteria.get(key, {}) if isinstance(criteria, dict) else {}
         definition = rubric.get(key, {}) if isinstance(rubric, dict) else {}
         score = item.get("score") if isinstance(item, dict) else None
-        evidence_sources = item.get("evidence_sources", []) if isinstance(item, dict) else []
+        evidence_sources = criterion_evidence_sources(record, item)
         source_titles = []
         for source in evidence_sources[:3]:
             if isinstance(source, dict):
@@ -206,7 +278,7 @@ def scoring_rationale_sections(record: dict[str, Any]) -> str:
             continue
         definition = rubric.get(key, {}) if isinstance(rubric, dict) else {}
         score = item.get("score")
-        evidence_sources = item.get("evidence_sources", [])
+        evidence_sources = criterion_evidence_sources(record, item)
         marketability_calc = ""
         if key == "marketability":
             marketability_calc = "\n#### Marketability A/B/C Calculation\n\n" + marketability_calculation_table(item.get("calculation", {})) + "\n"
@@ -260,13 +332,22 @@ def competitive_summary(record: dict[str, Any]) -> str:
             "| "
             + " | ".join(
                 [
-                    md_cell(item.get("competitor_name", "-")),
+                    md_cell(
+                        item.get("competitor_asset")
+                        or item.get("competitor_name")
+                        or item.get("asset")
+                        or "-"
+                    ),
                     md_cell(item.get("company", "-")),
                     md_cell(item.get("modality", "-")),
                     md_cell(item.get("target_or_moa", "-")),
-                    md_cell(item.get("development_stage", "-")),
-                    md_cell(item.get("relevance_to_asset", "-")),
-                    md_cell(item.get("source", "-")),
+                    md_cell(item.get("stage") or item.get("development_stage") or "-"),
+                    md_cell(
+                        item.get("why_it_matters")
+                        or item.get("relevance_to_asset")
+                        or "-"
+                    ),
+                    md_cell(item.get("source_url") or item.get("source") or "-"),
                 ]
             )
             + " |"

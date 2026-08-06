@@ -17,6 +17,17 @@ function listValue(value) {
   return Array.isArray(value) ? value : [];
 }
 
+function textListValue(value) {
+  return listValue(value)
+    .filter((item) => typeof item === 'string')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function uniqueTextValues(...values) {
+  return [...new Set(values.flatMap((value) => textListValue(value)))];
+}
+
 function textValue(...values) {
   return values.map((value) => String(value ?? '').trim()).find(Boolean) || '';
 }
@@ -37,6 +48,126 @@ function normalizeNumericFields(object, fields) {
 
 function compactSourceId(source) {
   return textValue(source?.source_id, source?.id, source?.ref_id);
+}
+
+function compactV2Source(source, fallbackId = '') {
+  if (typeof source === 'string') {
+    const value = source.trim();
+    if (!value) return null;
+    source = {
+      source_id: fallbackId,
+      source_title: value,
+      source_url: /^https?:\/\//i.test(value) ? value : ''
+    };
+  }
+  const raw = objectValue(source);
+  if (raw !== source) return null;
+  const sourceId = textValue(compactSourceId(raw), fallbackId);
+  const sourceTitle = textValue(raw.source_title, raw.title, raw.name, raw.source_name);
+  const sourceUrl = textValue(raw.source_url, raw.url, raw.href);
+  if (!sourceId || (!sourceTitle && !sourceUrl)) return null;
+  const normalized = {
+    source_id: sourceId,
+    source_title: sourceTitle || sourceUrl || sourceId,
+    source_url: sourceUrl
+  };
+  for (const [field, aliases] of Object.entries({
+    source_type: ['source_type', 'type'],
+    reliability: ['reliability'],
+    evidence_summary: ['evidence_summary', 'claim_supported']
+  })) {
+    const value = textValue(...aliases.map((alias) => raw[alias]));
+    if (value) normalized[field] = value;
+  }
+  if (typeof raw.verified === 'boolean') normalized.verified = raw.verified;
+  return normalized;
+}
+
+function compactV2SourceRegistry(record) {
+  const directCandidates = [...sourceRegistry(record)];
+  const evidenceCandidates = [];
+  const criteria = objectValue(objectValue(record.scoring).criteria);
+  Object.values(criteria).forEach((criterion) => {
+    evidenceCandidates.push(...listValue(objectValue(criterion).evidence_sources));
+    evidenceCandidates.push(...listValue(objectValue(criterion).verified_evidence_sources));
+  });
+  const competitive = objectValue(record.competitive_analysis);
+  for (const row of listValue(competitive.competitor_table)) {
+    evidenceCandidates.push(...listValue(objectValue(row).evidence_sources));
+  }
+
+  const normalized = directCandidates
+    .map((candidate, index) => compactV2Source(candidate, `SRC_AUTO_${index + 1}`))
+    .filter(Boolean);
+  const byId = new Map();
+  normalized.forEach((source) => {
+    if (!byId.has(source.source_id)) byId.set(source.source_id, source);
+  });
+  evidenceCandidates.forEach((candidate, index) => {
+    const source = compactV2Source(candidate, `SRC_AUTO_EVIDENCE_${index + 1}`);
+    if (!source) return;
+    const existing = byId.get(source.source_id);
+    if (existing) {
+      for (const [field, value] of Object.entries(source)) {
+        if (value !== '' && value !== null && value !== undefined && !existing[field]) {
+          existing[field] = value;
+        }
+      }
+      return;
+    }
+    byId.set(source.source_id, source);
+    normalized.push(source);
+  });
+  return normalized;
+}
+
+function compactV2TableSources(value, lookup) {
+  const normalized = [];
+  for (const candidate of listValue(value)) {
+    const linked = typeof candidate === 'string'
+      ? lookup.get(candidate.trim()) || (/^https?:\/\//i.test(candidate.trim()) ? candidate : null)
+      : candidate;
+    const source = compactV2Source(linked, 'TABLE_SOURCE');
+    if (!source) continue;
+    normalized.push({ source_title: source.source_title, source_url: source.source_url });
+    break;
+  }
+  return normalized;
+}
+
+function compactV2FactSources(value, lookup) {
+  const sources = [];
+  for (const candidate of listValue(value)) {
+    if (typeof candidate === 'string') {
+      const normalized = candidate.trim();
+      if (!normalized) continue;
+      const linked = lookup.get(normalized);
+      sources.push(textValue(linked?.source_url, linked?.source_title, normalized));
+      continue;
+    }
+    const source = compactV2Source(candidate);
+    if (source) sources.push(textValue(source.source_url, source.source_title, source.source_id));
+  }
+  return [...new Set(sources.filter(Boolean))];
+}
+
+function compactV2CrossCheckedFacts(value, lookup) {
+  return listValue(value).flatMap((candidate) => {
+    if (typeof candidate === 'string') {
+      const fact = candidate.trim();
+      return fact ? [fact] : [];
+    }
+    const raw = objectValue(candidate);
+    const fact = textValue(raw.fact);
+    if (!fact) return [];
+    return [{
+      fact,
+      sources: compactV2FactSources(
+        [...listValue(raw.sources), ...listValue(raw.source_ids)],
+        lookup
+      )
+    }];
+  });
 }
 
 function sourceRegistry(record) {
@@ -78,6 +209,67 @@ function expandCriterion(value, lookup) {
     : summaries;
   criterion.investigation_note = textValue(criterion.investigation_note, criterion.why_not_higher);
   return criterion;
+}
+
+function expandHybridCriterion(value, _lookup, { triage = false } = {}) {
+  const source = objectValue(value);
+  const sourceIds = uniqueTextValues(
+    source.source_ids,
+    listValue(source.evidence_sources).map((item) => compactSourceId(item)),
+    listValue(source.verified_evidence_sources).map((item) => compactSourceId(item))
+  );
+  const criterion = {
+    score: numericValue(source.score),
+    evidence_type: textValue(source.evidence_type, triage ? 'triage_only' : ''),
+    evidence_type_reason: textValue(source.evidence_type_reason),
+    evidence_basis: textValue(source.evidence_basis),
+    main_line_summary: textValue(source.main_line_summary, source.reason),
+    why_not_higher: textValue(source.why_not_higher),
+    investigation_note: textValue(source.investigation_note),
+    uncertain_points: textListValue(source.uncertain_points),
+    source_ids: sourceIds
+  };
+  if (objectValue(source.calculation) === source.calculation) {
+    criterion.calculation = { ...source.calculation };
+  }
+  return criterion;
+}
+
+function expandHybridCompetitorRow(value, lookup) {
+  const source = objectValue(value);
+  const sourceIds = uniqueTextValues(
+    source.source_ids,
+    listValue(source.evidence_sources).map((item) => compactSourceId(item))
+  );
+  const linkedSource = sourceIds.map((sourceId) => lookup.get(sourceId)).find(Boolean);
+  return {
+    competitor_asset: textValue(
+      source.competitor_asset,
+      source.asset,
+      source.competitor_name,
+      source.competitor,
+      'Unknown Competitor'
+    ),
+    company: textValue(source.company, 'Unknown Company'),
+    modality: textValue(source.modality),
+    target_or_moa: textValue(source.target_or_moa, source.target_moa, source.target, source.moa),
+    stage: textValue(source.stage, source.stage_status, source.development_stage),
+    similarity_level: textValue(source.similarity_level, source.similarity, 'Unknown'),
+    why_it_matters: textValue(source.why_it_matters, source.relevance_to_asset),
+    source_url: textValue(source.source_url, linkedSource?.source_url),
+    source_ids: sourceIds
+  };
+}
+
+function expandHybridSimilarPipeline(value) {
+  const source = objectValue(value);
+  return {
+    company: textValue(source.company),
+    asset_name: textValue(source.asset_name, source.asset),
+    similarity_score: numericValue(source.similarity_score),
+    matched_dimensions: textListValue(source.matched_dimensions),
+    shared_data_points: textListValue(source.shared_data_points)
+  };
 }
 
 function expandMarketability(value, lookup) {
@@ -199,11 +391,167 @@ function expandedCompetitiveAnalysis(record, lookup) {
 }
 
 export function isCompactIngestionRecord(record) {
-  return textValue(record?.meta?.ingestion_format).toLowerCase() === 'compact_v1';
+  return ['compact_v1', 'compact_v2'].includes(textValue(record?.meta?.ingestion_format).toLowerCase());
+}
+
+export function isMinimalCompactIngestionRecord(record) {
+  return textValue(record?.meta?.ingestion_format).toLowerCase() === 'compact_v2';
+}
+
+function expandMinimalCompactInputRecord(inputRecord, requestedMode = '') {
+  const record = JSON.parse(JSON.stringify(inputRecord));
+  const metaMode = textValue(record.meta?.review_type).toLowerCase();
+  const mode = requestedMode === 'triage' || requestedMode === 'full'
+    ? requestedMode
+    : metaMode.includes('triage') ? 'triage' : 'full';
+  const triage = mode === 'triage';
+  record.meta = expandedMeta(record, mode);
+  const compactRegistry = compactV2SourceRegistry(record);
+  const lookup = new Map(compactRegistry.map((source) => [source.source_id, source]));
+
+  record.input = {
+    company_input: textValue(record.input?.company_input, record.structured_table?.company, 'Unknown'),
+    asset_input: textValue(record.input?.asset_input, record.structured_table?.asset_name, 'Unknown')
+  };
+
+  const inputTable = objectValue(record.structured_table);
+  const table = {
+    company: textValue(inputTable.company, 'Unknown'),
+    asset_name: textValue(inputTable.asset_name, 'Unknown'),
+    target: textValue(inputTable.target, 'Unknown'),
+    moa: textValue(inputTable.moa, 'Unknown'),
+    modality_platform: textValue(inputTable.modality_platform, 'Unknown'),
+    main_indication: textValue(inputTable.main_indication, 'Unknown'),
+    indication: textValue(inputTable.indication, inputTable.main_indication, 'Unknown'),
+    development_stage: textValue(inputTable.development_stage, 'Unknown'),
+    company_country: textValue(inputTable.company_country, 'Unknown'),
+    sources: compactV2TableSources(inputTable.sources, lookup)
+  };
+  record.structured_table = table;
+
+  record.source_report = {
+    raw_markdown: '',
+    source_format: triage ? 'fast_triage_markdown' : 'gpt_markdown_report',
+    parser_status: triage ? 'fast_triage' : 'gpt_structured_output',
+    parser_note: `Dashboard Compact JSON v2 expanded for ${triage ? 'Fast Triage' : 'Full Scout'}.`
+  };
+
+  const inputScoring = objectValue(record.scoring);
+  const inputCriteria = objectValue(inputScoring.criteria);
+  const criteria = {};
+  const criterionIds = triage ? TRIAGE_CRITERIA : FULL_CRITERIA;
+  criterionIds.forEach((criterionId) => {
+    criteria[criterionId] = expandHybridCriterion(inputCriteria[criterionId], lookup, { triage });
+  });
+  const scores = criterionIds.map((criterionId) => criteria[criterionId]?.score);
+  const scoreSum = scores.every((score) => Number.isInteger(score))
+    ? scores.reduce((total, score) => total + score, 0)
+    : null;
+  record.scoring = {
+    criteria,
+    total_score: scoreSum,
+    max_score: scoreSum === null ? null : triage ? 9 : 21
+  };
+
+  record.json_summary = {
+    theme: textValue(record.json_summary?.theme, 'Unknown'),
+    cluster: textValue(record.json_summary?.cluster, 'Unknown'),
+    target_description: textValue(record.json_summary?.target_description)
+  };
+  record.hard_filter = {
+    status: textValue(record.hard_filter?.status),
+    reason: textValue(record.hard_filter?.reason),
+    flags: textListValue(record.hard_filter?.flags),
+    hard_blocker: record.hard_filter?.hard_blocker === true,
+    decision_uncertainty: record.hard_filter?.decision_uncertainty === true
+  };
+  record.validation = {
+    uncertain_points: textListValue(record.validation?.uncertain_points),
+    cross_checked_facts: compactV2CrossCheckedFacts(record.validation?.cross_checked_facts, lookup),
+    source_registry: compactRegistry
+  };
+  record.final_insight = {
+    one_line_summary: textValue(record.final_insight?.one_line_summary),
+    recommendation: textValue(
+      record.final_insight?.recommendation,
+      triage ? 'Verify asset identity' : 'Deprioritize'
+    ),
+    most_important_diligence_question: textValue(
+      record.final_insight?.most_important_diligence_question
+    )
+  };
+
+  if (triage) {
+    record.triage = {
+      instruction_version: '3.2',
+      status: textValue(record.triage?.status, record.hard_filter.status),
+      identity_verified: record.triage?.identity_verified === true,
+      active_asset: typeof record.triage?.active_asset === 'boolean'
+        ? record.triage.active_asset
+        : null,
+      verified_public_source_count: numericValue(record.triage?.verified_public_source_count ?? 0),
+      why: textValue(record.triage?.why),
+      missing_evidence_needed_for_full_scout: textListValue(
+        record.triage?.missing_evidence_needed_for_full_scout
+      )
+    };
+  } else {
+    const profile = objectValue(record.company_profile);
+    record.company_profile = {
+      headquarters: textValue(profile.headquarters),
+      company_stage: textValue(profile.company_stage),
+      platform_summary: textValue(profile.platform_summary)
+    };
+    const competitive = objectValue(record.competitive_analysis);
+    const similarity = objectValue(competitive.similarity_summary);
+    record.competitive_analysis = {
+      competitive_density: textValue(competitive.competitive_density, 'Unknown'),
+      similarity_summary: {
+        similar_pipeline_count: Number(similarity.similar_pipeline_count) || 0,
+        high_similarity_count: Number(similarity.high_similarity_count) || 0,
+        medium_similarity_count: Number(similarity.medium_similarity_count) || 0,
+        low_similarity_count: Number(similarity.low_similarity_count) || 0
+      },
+      competitor_table: listValue(competitive.competitor_table)
+        .map((row) => expandHybridCompetitorRow(row, lookup)),
+      similar_pipelines: listValue(competitive.similar_pipelines)
+        .map((row) => expandHybridSimilarPipeline(row))
+    };
+  }
+  const allowedMetaFields = [
+    'ingestion_format', 'review_type', 'schema_version', 'instruction_version',
+    'rubric_version', 'generated_at', 'language', 'output_filename_base'
+  ];
+  record.meta = Object.fromEntries(
+    allowedMetaFields
+      .filter((field) => Object.prototype.hasOwnProperty.call(record.meta, field))
+      .map((field) => [field, record.meta[field]])
+  );
+  const normalized = {
+    meta: record.meta,
+    source_report: record.source_report,
+    input: record.input,
+    json_summary: record.json_summary,
+    structured_table: record.structured_table,
+    hard_filter: record.hard_filter,
+    scoring: record.scoring,
+    validation: record.validation,
+    final_insight: record.final_insight
+  };
+  if (triage) {
+    normalized.triage = record.triage;
+  } else {
+    normalized.company_profile = record.company_profile;
+    normalized.competitive_analysis = record.competitive_analysis;
+  }
+  return normalized;
 }
 
 export function expandCompactInputRecord(inputRecord, requestedMode = '') {
   if (!isCompactIngestionRecord(inputRecord)) return inputRecord;
+  if (isMinimalCompactIngestionRecord(inputRecord)) {
+    return expandMinimalCompactInputRecord(inputRecord, requestedMode);
+  }
   const record = JSON.parse(JSON.stringify(inputRecord));
   const metaMode = textValue(record.meta?.review_type).toLowerCase();
   const mode = requestedMode === 'triage' || requestedMode === 'full'

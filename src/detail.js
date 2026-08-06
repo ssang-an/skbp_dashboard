@@ -2,8 +2,8 @@ import { setupThemeToggle } from './theme.js';
 
 import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
 import { getCurrentUser, initAuthUI, openAuthModal, requireAuth } from './auth.js?v=20260802-required-login-1';
-import { expandCompactInputRecord } from './compact-ingestion.js?v=20260805-ingestion-guard-3';
-import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260805-ingestion-guard-3';
+import { expandCompactInputRecord } from './compact-ingestion.js?v=20260806-ingestion-compat-2';
+import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260805-ingestion-guard-5';
 
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
@@ -224,6 +224,20 @@ function escapeHtml(value) {
     .replaceAll("'", '&#039;');
 }
 
+function safeDisplayText(value, fallback = '-') {
+  if (!['string', 'number', 'boolean'].includes(typeof value)) return fallback;
+  const text = String(value).trim();
+  return text || fallback;
+}
+
+function safeDisplayTextList(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item) => ['string', 'number', 'boolean'].includes(typeof item))
+    .map((item) => String(item).trim())
+    .filter(Boolean);
+}
+
 function safeHttpUrl(value) {
   try {
     const url = new URL(String(value || '').trim());
@@ -436,7 +450,7 @@ function computeHardFilter(record) {
   const notes = collectHardFilterNotes(record);
   const reasons = [];
 
-  const failBlocker = hasAffirmedHardBlocker(notes);
+  const failBlocker = record.hard_filter?.hard_blocker === true || hasAffirmedHardBlocker(notes);
   const reviewUncertainty = hasScopedFullScoutReviewUncertainty(notes);
 
   if (Number.isFinite(total) && total <= 8) reasons.push(`Total score ${total} <= 8`);
@@ -523,9 +537,31 @@ function renderSourceLink(source, index) {
 function renderSourceList(sources = []) {
   const normalized = Array.isArray(sources) ? sources.filter((source) => source && typeof source === 'object') : [];
   if (!normalized.length) {
-    return '<div class="empty-evidence">연결된 출처 링크가 없습니다. 원문 리포트의 evidence_sources에 URL을 추가하면 여기에 표시됩니다.</div>';
+    return '<div class="empty-evidence">연결된 출처 링크가 없습니다. 원문 리포트에서 근거를 확인해 주세요.</div>';
   }
   return `<ul class="source-link-list">${normalized.map(renderSourceLink).join('')}</ul>`;
+}
+
+function criterionEvidenceSources(record, criterion) {
+  if (!criterion || typeof criterion !== 'object' || Array.isArray(criterion)) return [];
+  if (Array.isArray(criterion.verified_evidence_sources) && criterion.verified_evidence_sources.length) {
+    return criterion.verified_evidence_sources;
+  }
+  if (Array.isArray(criterion.evidence_sources) && criterion.evidence_sources.length) {
+    return criterion.evidence_sources;
+  }
+  if (!Array.isArray(criterion.source_ids)) return [];
+  const registry = Array.isArray(record?.validation?.source_registry)
+    ? record.validation.source_registry
+    : [];
+  const byId = new Map(registry.flatMap((source) => {
+    if (!source || typeof source !== 'object' || Array.isArray(source)) return [];
+    const sourceId = String(source.source_id || source.id || '').trim();
+    return sourceId ? [[sourceId, source]] : [];
+  }));
+  return criterion.source_ids
+    .map((sourceId) => byId.get(String(sourceId ?? '').trim()))
+    .filter(Boolean);
 }
 
 function collectMarkdownReferenceSources(markdown = '') {
@@ -704,8 +740,9 @@ function renderScoreEvidence(record) {
       const item = criteria[key] || {};
       const score = item.score;
       const rubricDefinition = getRubricDefinition(record, key, score);
-      const uncertain = Array.isArray(item.uncertain_points) && item.uncertain_points.length
-        ? item.uncertain_points.map((point) => `<li>${escapeHtml(point)}</li>`).join('')
+      const uncertainPoints = safeDisplayTextList(item.uncertain_points);
+      const uncertain = uncertainPoints.length
+        ? uncertainPoints.map((point) => `<li>${escapeHtml(point)}</li>`).join('')
         : '<li>별도 불확실성 메모 없음</li>';
       return `
         <article class="score-evidence-card">
@@ -718,20 +755,20 @@ function renderScoreEvidence(record) {
           </div>
           <div class="score-evidence-block">
             <h4>Evidence Type</h4>
-            <p>${escapeHtml(item.evidence_type || '-')}</p>
-            <p>${escapeHtml(item.evidence_type_reason || '-')}</p>
+            <p>${escapeHtml(safeDisplayText(item.evidence_type))}</p>
+            <p>${escapeHtml(safeDisplayText(item.evidence_type_reason))}</p>
           </div>
           <div class="score-evidence-block">
             <h4>판단 이유</h4>
-            <p>${escapeHtml(item.main_line_summary || '-')}</p>
+            <p>${escapeHtml(safeDisplayText(item.main_line_summary))}</p>
           </div>
           <div class="score-evidence-block">
             <h4>Why Not Higher</h4>
-            <p>${escapeHtml(item.why_not_higher || '-')}</p>
+            <p>${escapeHtml(safeDisplayText(item.why_not_higher))}</p>
           </div>
           <div class="score-evidence-block">
             <h4>조사 메모</h4>
-            <p>${escapeHtml(item.investigation_note || '-')}</p>
+            <p>${escapeHtml(safeDisplayText(item.investigation_note))}</p>
           </div>
           <div class="score-evidence-block">
             <h4>불확실성 / 확인 필요</h4>
@@ -740,7 +777,7 @@ function renderScoreEvidence(record) {
           ${key === 'marketability' ? renderMarketabilityCalculation(item.calculation) : ''}
           <div class="score-evidence-block">
             <h4>출처 / Evidence 링크</h4>
-            ${renderSourceList(item.evidence_sources)}
+            ${renderSourceList(criterionEvidenceSources(record, item))}
           </div>
         </article>
       `;
@@ -2205,7 +2242,7 @@ function renderRecord(record) {
   elements.title.textContent = `Details : ${assetLabel} · ${companyLabel}`;
   document.title = `${assetLabel} · ${companyLabel} · SKBP`;
   if (elements.chatContextAsset) {
-    elements.chatContextAsset.textContent = `${summary.asset_name || 'Pipeline'} · ${summary.company || '-'}`;
+    elements.chatContextAsset.textContent = `${summary.asset_name || record.structured_table?.asset_name || 'Pipeline'} · ${summary.company || record.structured_table?.company || '-'}`;
   }
   if (elements.chatContextScore) {
     elements.chatContextScore.textContent = `${scoring.total_score ?? '-'} / ${scoring.max_score ?? 21} · ${dashboardThemeLabel(summary.theme)}`;

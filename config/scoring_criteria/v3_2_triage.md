@@ -78,7 +78,7 @@ Evidence domain은 서로 다른 개발 질문에 답하는 데이터 범주다.
 
 ## Criterion Evidence Basis
 
-각 TR/MoA/Data criterion에는 `evidence_basis`를 저장한다.
+각 TR/MoA/Data criterion의 Markdown 판단근거에는 전체 `evidence_basis`와 조사 과정을 기록한다. Compact v2 JSON criterion에는 대시보드 표시용 `score`, `evidence_basis`, 짧은 판단 요약/why-not-higher/불확실성, 그리고 중앙 `source_registry`를 가리키는 `source_ids`만 저장한다.
 
 | Value | Meaning |
 |---|---|
@@ -93,11 +93,11 @@ Evidence domain은 서로 다른 개발 질문에 답하는 데이터 범주다.
 - Source 수 자체는 점수를 결정하지 않는다.
 - `score >= 2`와 `no_supporting_basis`의 조합은 invalid다.
 - `public_source` 또는 `user_input_and_public_source`에는 verified source URL이 있어야 한다.
-- 일반 `evidence_sources`에서 public source로 계산되는 항목은 http(s) `source_url`과 `verified: true`를 명시한 객체여야 한다. Bare URL 또는 열어보지 않은 사용자 제공 URL은 계산하지 않는다.
+- Markdown References에서 public source로 계산되는 항목은 GPT가 실제로 연 http(s) URL이어야 한다. Bare URL 또는 열어보지 않은 사용자 제공 URL은 계산하지 않는다. Compact v2의 `structured_table.sources`는 `[]`로 유지하고, 대시보드 Source 열은 `validation.source_registry`에서 파생한다.
 
 ## Summary Rule
 
-각 criterion의 `main_line_summary`는 확인된 asset-specific 사실, 그 사실과 점수의 연결, 핵심 제한점을 1~2문장으로 쓴다. 일반 disease biology만으로 점수를 설명하지 않는다. `user_input_only`라면 사용자 입력에 없는 target, cell type, MoA 또는 data를 추가하지 않는다. 반드시 단일 점수를 `2점`처럼 명시하고 범위형 점수를 쓰지 않는다.
+Markdown의 각 criterion 판단 요약은 확인된 asset-specific 사실, 그 사실과 점수의 연결, 핵심 제한점을 1~2문장으로 쓴다. 일반 disease biology만으로 점수를 설명하지 않는다. `user_input_only`라면 사용자 입력에 없는 target, cell type, MoA 또는 data를 추가하지 않는다. 반드시 단일 점수를 `2점`처럼 명시하고 범위형 점수를 쓰지 않는다.
 
 ## Canonical Development Stage
 

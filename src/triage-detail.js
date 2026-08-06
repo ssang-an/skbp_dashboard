@@ -81,6 +81,19 @@ function displayValue(value, fallback = 'Unknown') {
   return text || fallback;
 }
 
+function textValue(value, fallback = '') {
+  if (!['string', 'number', 'boolean'].includes(typeof value)) return fallback;
+  return displayValue(value, fallback);
+}
+
+function firstTextValue(values, fallback = '') {
+  for (const value of values) {
+    const text = textValue(value, '');
+    if (text) return text;
+  }
+  return fallback;
+}
+
 function dashboardThemeLabel(value) {
   const text = displayValue(value);
   if (/^(unknown|not known|n\/?a)$/i.test(text)) return 'Unknown';
@@ -110,8 +123,29 @@ function formatTimestamp(value) {
   }).format(date);
 }
 
+function objectValue(value) {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+}
+
+function arrayValue(value) {
+  return Array.isArray(value) ? value : [];
+}
+
 function listValues(value) {
-  return Array.isArray(value) ? value.map((item) => displayValue(item, '')).filter(Boolean) : [];
+  const items = Array.isArray(value)
+    ? value
+    : value === null || value === undefined || value === ''
+      ? []
+      : [value];
+  return items
+    .map((item) => {
+      if (!item || typeof item !== 'object') return displayValue(item, '');
+      return displayValue(
+        item.fact || item.summary || item.text || item.message || item.reason || item.title || item.name,
+        ''
+      );
+    })
+    .filter(Boolean);
 }
 
 function safeHttpUrl(value) {
@@ -125,6 +159,169 @@ function hostnameFor(url) {
   } catch {
     return 'Source';
   }
+}
+
+function normalizeMarkdownSourceUrl(value) {
+  let text = String(value || '').trim().replace(/^<|>$/g, '');
+  text = text.replace(/[.,;:!?]+$/g, '');
+  while (text.endsWith(')') && (text.match(/\(/g) || []).length < (text.match(/\)/g) || []).length) {
+    text = text.slice(0, -1);
+  }
+  while (text.endsWith(']') && (text.match(/\[/g) || []).length < (text.match(/\]/g) || []).length) {
+    text = text.slice(0, -1);
+  }
+
+  try {
+    const parsed = new URL(text);
+    if (!['http:', 'https:'].includes(parsed.protocol)) return '';
+    if (parsed.username || parsed.password) return '';
+    const hostname = parsed.hostname.toLowerCase();
+    if (!hostname || ['localhost', 'localhost.', '127.0.0.1', '::1', '[::1]', '0.0.0.0'].includes(hostname)) return '';
+    parsed.hash = '';
+    return parsed.href.replace(/\/$/, '');
+  } catch {
+    return '';
+  }
+}
+
+function markdownAssetVariants(value) {
+  const cleaned = repairMojibake(value)
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[*_`]/g, '')
+    .normalize('NFKC')
+    .toLowerCase()
+    .replace(/[‐‑‒–—]/g, '-')
+    .replace(/\s*\/\s*/g, '/')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!cleaned) return [];
+  return [...new Set([cleaned, ...cleaned.split('/').map((part) => part.trim()).filter(Boolean)])];
+}
+
+function recordAssetVariants(record) {
+  const table = objectValue(record?.structured_table);
+  const summary = objectValue(record?.json_summary);
+  const input = objectValue(record?.input);
+  return [...new Set([
+    table.asset_name,
+    summary.asset_name,
+    input.asset_input
+  ].flatMap(markdownAssetVariants))];
+}
+
+function markdownAssetMatches(value, expectedVariants) {
+  const actualVariants = markdownAssetVariants(value).flatMap((variant) => [
+    variant,
+    variant.replace(/^(?:\d+[.)]\s*|asset(?:\s+name)?\s*:\s*)/i, '').trim()
+  ]);
+  return actualVariants.some((actual) => expectedVariants.some((expected) => (
+    actual === expected
+      || actual.endsWith(`: ${expected}`)
+      || actual.endsWith(` - ${expected}`)
+      || actual.startsWith(`${expected} - `)
+  )));
+}
+
+function markdownTableCells(line) {
+  const trimmed = String(line || '').trim();
+  if (!trimmed.startsWith('|')) return [];
+  const body = trimmed.endsWith('|') ? trimmed.slice(1, -1) : trimmed.slice(1);
+  return body.split('|').map((cell) => cell.trim());
+}
+
+function assetScopedMarkdownFragments(markdown, record) {
+  const text = repairMojibake(markdown).replace(/\r\n/g, '\n');
+  const lines = text.split('\n');
+  const expectedVariants = recordAssetVariants(record);
+  if (!expectedVariants.length) return [];
+
+  const fragments = [];
+  let foundAssetTable = false;
+  for (let index = 0; index < lines.length; index += 1) {
+    const headings = markdownTableCells(lines[index]);
+    const normalizedHeadings = headings.map((heading) => markdownAssetVariants(heading)[0] || '');
+    const assetIndex = normalizedHeadings.findIndex((heading) => /^(?:asset|asset name|pipeline|drug)$/.test(heading));
+    const sourceIndex = normalizedHeadings.findIndex((heading) => /^(?:source|sources|reference|references)$/.test(heading));
+    if (assetIndex < 0 || sourceIndex < 0) continue;
+    foundAssetTable = true;
+
+    for (let rowIndex = index + 1; rowIndex < lines.length; rowIndex += 1) {
+      const cells = markdownTableCells(lines[rowIndex]);
+      if (!cells.length) break;
+      if (cells.every((cell) => /^:?-{3,}:?$/.test(cell.replace(/\s+/g, '')))) continue;
+      if (cells.length <= Math.max(assetIndex, sourceIndex)) continue;
+      if (markdownAssetMatches(cells[assetIndex], expectedVariants)) fragments.push(cells[sourceIndex]);
+    }
+  }
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const heading = lines[index].match(/^\s*(#{1,6})\s+(.+?)\s*$/);
+    if (!heading || !markdownAssetMatches(heading[2], expectedVariants)) continue;
+    const level = heading[1].length;
+    let end = index + 1;
+    while (end < lines.length) {
+      const nextHeading = lines[end].match(/^\s*(#{1,6})\s+/);
+      if (nextHeading && nextHeading[1].length <= level) break;
+      end += 1;
+    }
+    fragments.push(lines.slice(index, end).join('\n'));
+  }
+
+  if (!fragments.length && !foundAssetTable) {
+    const firstHeading = lines.find((line) => /^\s*#{1,2}\s+/.test(line));
+    if (firstHeading && markdownAssetMatches(firstHeading.replace(/^\s*#{1,2}\s+/, ''), expectedVariants)) {
+      fragments.push(text);
+    }
+  }
+  return [...new Set(fragments.map((fragment) => fragment.trim()).filter(Boolean))];
+}
+
+function collectMarkdownSources(markdown, record) {
+  const text = repairMojibake(markdown).replace(/\r\n/g, '\n');
+  const fragments = assetScopedMarkdownFragments(text, record);
+  if (!fragments.length) return [];
+  const sources = [];
+  const referenceDefinitions = new Map();
+  const add = (urlValue, title = '') => {
+    const sourceUrl = normalizeMarkdownSourceUrl(urlValue);
+    if (!sourceUrl) return;
+    const source = {
+      source_url: sourceUrl,
+      source_type: 'GPT Original Report citation'
+    };
+    const sourceTitle = String(title || '').trim();
+    if (sourceTitle && !/^\d+$/.test(sourceTitle)) source.source_title = sourceTitle;
+    sources.push(source);
+  };
+
+  const referencePattern = /^\s*\[([^\]\n]+)\]:\s*<?(https?:\/\/[^\s>]+)>?(?:\s+(?:"([^"\n]+)"|'([^'\n]+)'|\(([^)\n]+)\)))?\s*$/gim;
+  for (const match of text.matchAll(referencePattern)) {
+    referenceDefinitions.set(String(match[1]).trim().toLowerCase(), {
+      url: match[2],
+      title: match[3] || match[4] || match[5] || match[1]
+    });
+  }
+
+  const inlinePattern = /\[([^\]\n]+)\]\(\s*<?(https?:\/\/[^\s)>]+)>?(?:\s+(?:"[^"\n]*"|'[^'\n]*'))?\s*\)/gi;
+  const referenceUsePattern = /\[([^\]\n]+)\](?!\s*\()/g;
+  const bareUrlPattern = /https?:\/\/[^\s<>"'`]+/gi;
+  fragments.forEach((fragment) => {
+    for (const match of fragment.matchAll(inlinePattern)) add(match[2], match[1]);
+    for (const match of fragment.matchAll(referenceUsePattern)) {
+      const reference = referenceDefinitions.get(String(match[1]).trim().toLowerCase());
+      if (reference) add(reference.url, reference.title);
+    }
+    for (const match of fragment.matchAll(bareUrlPattern)) add(match[0]);
+  });
+
+  const deduplicated = new Map();
+  sources.forEach((source) => {
+    const key = source.source_url.toLowerCase();
+    const existing = deduplicated.get(key);
+    deduplicated.set(key, existing ? { ...source, ...existing } : source);
+  });
+  return [...deduplicated.values()];
 }
 
 function renderInlineMarkdown(value) {
@@ -290,24 +487,40 @@ function renderIdentity(record) {
 }
 
 function isCurrentFastTriageContract(record) {
-  const meta = record?.meta || {};
+  const meta = objectValue(record?.meta);
   const schemaVersion = String(meta.schema_version || '').trim().replace(/^v/i, '');
   const instructionVersion = String(meta.instruction_version || '').trim().replace(/^v/i, '');
   const triageStatus = String(record?.triage?.status || '').trim().toUpperCase();
-  const criteria = record?.scoring?.criteria || {};
+  const criteria = objectValue(objectValue(record?.scoring).criteria);
   return schemaVersion === '3.2'
     || instructionVersion === '3.2'
     || triageStatus === 'UNVERIFIED'
     || Object.values(criteria).some((item) => item && typeof item === 'object' && 'evidence_basis' in item);
 }
 
-function criterionSources(criterion, { requireExplicitVerification = false } = {}) {
-  const explicitVerifiedList = Array.isArray(criterion?.verified_evidence_sources);
-  const preferredSources = explicitVerifiedList
-    ? criterion.verified_evidence_sources
-    : Array.isArray(criterion?.evidence_sources)
-      ? criterion.evidence_sources
+function sourceRegistryLookup(record) {
+  const lookup = new Map();
+  arrayValue(objectValue(record?.validation).source_registry).forEach((sourceValue) => {
+    const source = objectValue(sourceValue);
+    const sourceId = textValue(source.source_id ?? source.id, '');
+    if (sourceId && !lookup.has(sourceId)) lookup.set(sourceId, source);
+  });
+  return lookup;
+}
+
+function criterionSources(criterion, { requireExplicitVerification = false, registry = new Map() } = {}) {
+  const item = objectValue(criterion);
+  const explicitVerifiedList = Array.isArray(item.verified_evidence_sources);
+  let preferredSources = explicitVerifiedList
+    ? item.verified_evidence_sources
+    : Array.isArray(item.evidence_sources)
+      ? item.evidence_sources
       : [];
+  if (!explicitVerifiedList && !preferredSources.length) {
+    preferredSources = arrayValue(item.source_ids)
+      .map((sourceId) => registry.get(textValue(sourceId, '')))
+      .filter(Boolean);
+  }
   const uniqueSources = new Map();
   preferredSources.forEach((source) => {
     if (source && typeof source === 'object') {
@@ -353,13 +566,35 @@ function evidenceBasisLabel(criterion, verifiedSourceCount) {
 
 function renderScores(record) {
   const requireExplicitVerification = isCurrentFastTriageContract(record);
+  const criteria = objectValue(objectValue(record?.scoring).criteria);
+  const registry = sourceRegistryLookup(record);
   elements.scoreGrid.innerHTML = scoreDefinitions.map((definition) => {
-    const criterion = record?.scoring?.criteria?.[definition.key] || {};
+    const criterion = objectValue(criteria[definition.key]);
     const score = scoreFor(record, definition.key);
-    const evidenceSources = criterionSources(criterion, { requireExplicitVerification });
-    const evidenceBasis = evidenceBasisLabel(criterion, evidenceSources.length);
-    const uncertainties = listValues(criterion.uncertain_points);
+    const evidenceSources = criterionSources(criterion, { requireExplicitVerification, registry });
+    const evidenceBasisValue = textValue(criterion.evidence_basis, '');
+    const hasEvidenceMetadata = Boolean(evidenceBasisValue || evidenceSources.length);
+    const evidenceBasis = hasEvidenceMetadata
+      ? evidenceBasisLabel({ ...criterion, evidence_basis: evidenceBasisValue }, evidenceSources.length)
+      : '';
+    const evidenceType = textValue(criterion.evidence_type, '');
+    const evidenceTypeReason = textValue(criterion.evidence_type_reason, '');
+    const rationale = objectValue(criterion.score_rationale);
+    const uncertainties = listValues(
+      criterion.uncertain_points ?? rationale.conflicting_or_missing_evidence
+    );
+    const whyNotHigher = textValue(criterion.why_not_higher, '');
     const scoreLabel = score === null ? '미평가' : `${score}점`;
+    const judgment = firstTextValue(
+      [
+        criterion.main_line_summary,
+        criterion.reason,
+        rationale.decision_summary,
+        criterion.investigation_note
+      ],
+      '상세 판단근거는 GPT ORIGINAL REPORT에서 확인하세요.'
+    );
+    const evidenceMetadata = [evidenceType, evidenceBasis].filter(Boolean);
     return `
       <article class="triage-score-card score-${score ?? 'unknown'}">
         <div class="triage-score-card-header">
@@ -373,10 +608,14 @@ function renderScores(record) {
           ${[1, 2, 3].map((step) => `<i class="${score >= step ? 'filled' : ''}"></i>`).join('')}
         </div>
         <p class="triage-score-definition">${definition.description}</p>
-        <p class="triage-score-judgment">${escapeHtml(displayValue(criterion.main_line_summary || criterion.reason, '판단 요약 없음'))}</p>
-        <div class="triage-score-meta">
-          <span>${escapeHtml(evidenceBasis)}</span>
-        </div>
+        <p class="triage-score-judgment">${escapeHtml(judgment)}</p>
+        ${whyNotHigher ? `<p class="triage-score-judgment triage-score-why"><b>Why not higher</b> · ${escapeHtml(whyNotHigher)}</p>` : ''}
+        ${evidenceMetadata.length ? `
+          <div class="triage-score-meta">
+            ${evidenceMetadata.map((value) => `<span>${escapeHtml(value)}</span>`).join('')}
+          </div>
+        ` : ''}
+        ${evidenceTypeReason ? `<p class="triage-score-definition">${escapeHtml(evidenceTypeReason)}</p>` : ''}
         ${uncertainties.length ? `
           <div class="triage-score-uncertainty">
             <b>확인 필요</b>
@@ -398,18 +637,20 @@ function collectSources(record) {
   const add = (source) => {
     if (!source) return;
     if (typeof source === 'string') {
-      const url = safeHttpUrl(source);
+      const url = normalizeMarkdownSourceUrl(source);
       if (url) sources.push({ source_url: url });
       return;
     }
+    if (typeof source !== 'object' || Array.isArray(source)) return;
     if (source.verified === false) return;
-    const url = safeHttpUrl(source.source_url || source.url);
+    const url = normalizeMarkdownSourceUrl(source.source_url || source.url);
     if (url) sources.push({ ...source, source_url: url });
   };
 
-  (record?.structured_table?.sources || []).forEach(add);
-  (record?.validation?.source_registry || []).forEach(add);
-  Object.values(record?.scoring?.criteria || {}).forEach((criterion) => {
+  arrayValue(objectValue(record?.structured_table).sources).forEach(add);
+  arrayValue(objectValue(record?.validation).source_registry).forEach(add);
+  Object.values(objectValue(objectValue(record?.scoring).criteria)).forEach((criterionValue) => {
+    const criterion = objectValue(criterionValue);
     const criterionEvidence = Array.isArray(criterion?.verified_evidence_sources)
       ? criterion.verified_evidence_sources
       : Array.isArray(criterion?.evidence_sources)
@@ -417,12 +658,21 @@ function collectSources(record) {
         : [];
     criterionEvidence.forEach(add);
   });
+  collectMarkdownSources(objectValue(record?.source_report).raw_markdown || '', record).forEach(add);
 
   const deduplicated = new Map();
   sources.forEach((source) => {
     const dedupeKey = source.source_url.replace(/\/+$/, '').toLowerCase();
-    const existing = deduplicated.get(dedupeKey) || {};
-    deduplicated.set(dedupeKey, { ...existing, ...source });
+    const existing = deduplicated.get(dedupeKey);
+    if (!existing) {
+      deduplicated.set(dedupeKey, source);
+      return;
+    }
+    const merged = { ...source, ...existing };
+    Object.entries(source).forEach(([key, value]) => {
+      if ((merged[key] === null || merged[key] === undefined || merged[key] === '') && value) merged[key] = value;
+    });
+    deduplicated.set(dedupeKey, merged);
   });
   return [...deduplicated.values()];
 }
@@ -430,15 +680,15 @@ function collectSources(record) {
 function renderSources(record) {
   const sources = collectSources(record);
   if (!sources.length) {
-    elements.sourceList.innerHTML = '<div class="triage-empty">연결된 공개 출처가 없습니다.</div>';
+    elements.sourceList.innerHTML = '<div class="triage-empty">공개 출처 정보 없음 · 상세 내용은 GPT ORIGINAL REPORT에서 확인하세요.</div>';
     return;
   }
   elements.sourceList.innerHTML = sources.map((source, index) => {
     const url = source.source_url;
-    const title = displayValue(source.source_title, hostnameFor(url));
-    const sourceType = displayValue(source.source_type, 'public source');
-    const reliability = displayValue(source.reliability, 'reliability unknown');
-    const summary = displayValue(source.evidence_summary, '출처 링크에서 세부 내용을 확인하세요.');
+    const title = textValue(source.source_title, hostnameFor(url));
+    const sourceType = textValue(source.source_type, 'public source');
+    const reliability = textValue(source.reliability, 'reliability unknown');
+    const summary = textValue(source.evidence_summary, '출처 링크에서 세부 내용을 확인하세요.');
     return `
       <a class="triage-source-card" href="${escapeHtml(url)}" target="_blank" rel="noreferrer">
         <span class="triage-source-index">${index + 1}</span>
@@ -464,14 +714,14 @@ function renderListBlock(title, items, tone = '') {
 }
 
 function renderDiligence(record) {
-  const triage = record.triage || {};
-  const validation = record.validation || {};
-  const finalInsight = record.final_insight || {};
+  const triage = objectValue(record?.triage);
+  const validation = objectValue(record?.validation);
+  const finalInsight = objectValue(record?.final_insight);
   const missing = listValues(triage.missing_evidence_needed_for_full_scout);
   const verified = listValues(validation.cross_checked_facts);
   const uncertain = listValues(validation.uncertain_points);
-  const question = displayValue(finalInsight.most_important_diligence_question, '');
-  const recommendation = displayValue(finalInsight.recommendation, '');
+  const question = textValue(finalInsight.most_important_diligence_question, '');
+  const recommendation = textValue(finalInsight.recommendation, '');
   elements.diligence.innerHTML = `
     ${recommendation ? `
       <div class="triage-next-action">
@@ -489,7 +739,7 @@ function renderDiligence(record) {
     ${renderListBlock('교차 확인된 사실', verified, 'verified')}
     ${renderListBlock('현재 불확실한 부분', uncertain, 'uncertain')}
     ${!missing.length && !verified.length && !uncertain.length && !question
-      ? '<div class="triage-empty">추가 diligence 항목이 기록되지 않았습니다.</div>'
+      ? '<div class="triage-empty">추가 diligence 정보 없음 · 상세 판단은 GPT ORIGINAL REPORT에서 확인하세요.</div>'
       : ''}
   `;
 }
@@ -500,9 +750,10 @@ function renderQuickSummary(record) {
   const triage = record.triage || {};
   const status = reviewStatus(record);
   const requireExplicitVerification = isCurrentFastTriageContract(record);
+  const registry = sourceRegistryLookup(record);
   const verifiedCriterionUrls = new Set();
   Object.values(record?.scoring?.criteria || {}).forEach((criterion) => {
-    criterionSources(criterion, { requireExplicitVerification }).forEach((url) => verifiedCriterionUrls.add(url));
+    criterionSources(criterion, { requireExplicitVerification, registry }).forEach((url) => verifiedCriterionUrls.add(url));
   });
   const flags = listValues(record.hard_filter?.flags);
   const lastEditedAt = meta.last_edited_at ? formatTimestamp(meta.last_edited_at) : null;
@@ -514,7 +765,12 @@ function renderQuickSummary(record) {
     ['Generated at', meta.generated_at],
     ['Identity verified', identityIsVerified(record) ? 'Yes' : 'Needs review'],
     ['Parser status', sourceReport.parser_status],
-    ['Verified public sources', String(verifiedCriterionUrls.size)]
+    [
+      'Verified public sources',
+      String(Number.isInteger(triage.verified_public_source_count)
+        ? triage.verified_public_source_count
+        : verifiedCriterionUrls.size)
+    ]
   ];
   if (rescoredAt && meta.rescored_rubric_version) {
     rows.push(

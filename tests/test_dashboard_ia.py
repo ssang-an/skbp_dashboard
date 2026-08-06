@@ -350,23 +350,23 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("font-size: clamp(15px, 1.4vw, 18px)", title_rule.group(1))
         self.assertIn("align-items: center", CSS[CSS.index(".topbar-home-link {"):])
 
-    def test_filter_order_and_removed_common_filters(self):
+    def test_filter_order_and_only_due_date_removed_from_common_filters(self):
         controls = re.search(r'<div class="controls">(.*?)</div>\s*</section>', HTML, re.S)
         self.assertIsNotNone(controls)
         block = controls.group(1)
         expected = [
             "searchInput",
-            "indicationFilter",
+            "countryFilter",
             "modalityFilter",
             "themeFilter",
             "clusterFilter",
-            "countryFilter",
+            "indicationFilter",
+            "stageFilter",
             "passFilter",
             "resetFiltersButton",
         ]
         positions = [block.index(f'id="{element_id}"') for element_id in expected]
         self.assertEqual(positions, sorted(positions))
-        self.assertNotIn('id="stageFilter"', block)
         self.assertNotIn('id="dueDateFilter"', block)
 
     def test_summary_has_exactly_the_three_workflow_surfaces(self):
@@ -396,13 +396,19 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn('class="criteria-rule target-theme-note"', HTML)
         self.assertNotIn('class="criteria-theme-grid"', HTML)
         self.assertNotIn("Target Relevance — Theme / Cluster 근거", HTML)
-        self.assertEqual(HTML.count("Fast Triage Parameter Guide"), 1)
+        start = HTML.index('class="criteria-parameter-guide triage-parameter-guide')
+        end = HTML.index('class="criteria-rule criteria-full-rule"', start)
+        triage_parameter = HTML[start:end]
+        self.assertEqual(triage_parameter.count("<h3>Parameter Guide</h3>"), 1)
+        self.assertEqual(triage_parameter.count('class="criteria-parameter-heading criteria-parameter-title-row"'), 3)
+        self.assertEqual(triage_parameter.count("R&amp;D Theme 1 · E/I Balance"), 1)
 
     def test_parameter_guides_label_rd_themes_and_clusters(self):
         self.assertEqual(HTML.count("R&amp;D Theme 1 · E/I Balance"), 2)
         self.assertEqual(HTML.count("R&amp;D Theme 2 · Neuroimmune"), 2)
-        self.assertEqual(HTML.count("Cluster: Ion Channel"), 2)
-        self.assertEqual(HTML.count("Cluster: Glial homeostasis"), 2)
+        self.assertEqual(HTML.count("<span>Ion Channel</span>"), 2)
+        self.assertEqual(HTML.count("<span>Glial homeostasis</span>"), 2)
+        self.assertGreaterEqual(HTML.count('class="criteria-keyword-list"'), 4)
 
     def test_triage_moa_and_data_parameter_cards_share_row_height(self):
         self.assertRegex(CSS, r"\.triage-parameter-grid > article\s*\{[^}]*align-self: stretch;")
@@ -470,11 +476,15 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("Team Review 변경 이력", team_body)
         self.assertNotIn(".slice(-10)", team_body)
 
-    def test_full_scout_source_report_header_omits_theme_and_cluster(self):
+    def test_full_scout_source_report_header_is_title_only_without_theme_and_cluster(self):
         detail_js = (ROOT / "src" / "detail.js").read_text(encoding="utf-8")
         source_report = function_body(detail_js, "renderSourceReport")
 
-        self.assertIn("summary.target || record.structured_table?.target || '-'", source_report)
+        self.assertIn("elements.detailViewerTitle.textContent = 'GPT ORIGINAL REPORT'", source_report)
+        self.assertIn("elements.subtitle.textContent = ''", source_report)
+        self.assertIn("elements.subtitle.hidden = true", source_report)
+        self.assertIn("rawMarkdown", source_report)
+        self.assertIn("buildReadableSourceReport(record)", source_report)
         self.assertNotIn("dashboardThemeLabel(summary.theme)", source_report)
         self.assertNotIn("dashboardClusterLabel(summary.cluster", source_report)
 
@@ -750,9 +760,13 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             HTML,
             re.S,
         ).group(0)
-        self.assertIn('criteria-framed-section', full_status)
-        self.assertIn('criteria-framed-section', records)
-        self.assertIn('.criteria-drawer-body .criteria-framed-section', CSS)
+        self.assertIn('criteria-pass-grid full-status-grid criteria-guide-section', full_status)
+        self.assertIn('criteria-rule criteria-other-header criteria-guide-section', records)
+        shared_outline = CSS[CSS.index("/* Judgment card outlines mirror") : CSS.index("/* OI Partnership option boxes")]
+        self.assertIn('.criteria-drawer-body > .criteria-pass-grid', shared_outline)
+        self.assertIn('.criteria-drawer-body > .criteria-rule', shared_outline)
+        self.assertIn("border-radius: 14px", shared_outline)
+        self.assertIn("background: var(--readable-surface)", shared_outline)
 
     def test_fast_triage_judgment_guide_is_a_dashboard_native_reference(self):
         triage_start = HTML.index('class="criteria-rule criteria-triage-rule"')
@@ -821,7 +835,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("border-radius: 50%", CSS[CSS.index(".criteria-guide-step-number {"):])
         self.assertNotIn('class="criteria-guide-section-icon"', HTML)
         self.assertIn(".criteria-scoring-helpers", CSS)
-        self.assertIn(".criteria-checkpoint-list", CSS)
+        self.assertIn(".criteria-record-pairs", CSS)
+        self.assertIn('.criteria-focus-section[data-criteria-tab="focus"]', CSS)
 
     def test_judgment_cards_match_gpt_response_outline_without_status_top_rules(self):
         outline = CSS[CSS.index("/* Judgment card outlines mirror") :]
@@ -912,16 +927,17 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         styles = CSS[CSS.index("/* Full Scout scoring table shares") :]
 
         self.assertNotIn("criteria-full-scoring-helpers", full)
-        for criterion in (
-            "Target Relevance",
-            "Competitive Landscape",
-            "MoA Validity",
-            "Platform Attractiveness",
-            "Expansion Potential",
-            "Data Maturity",
-            "Marketability",
+        self.assertEqual(full.count('class="criteria-table-criterion"'), 7)
+        for abbreviation, criterion in (
+            ("TR", "Target Relevance"),
+            ("COMP", "Competitive Landscape"),
+            ("MoA", "MoA Validity"),
+            ("PLATFORM", "Platform Attractiveness"),
+            ("EXPANSION", "Expansion Potential"),
+            ("DATA", "Data Maturity"),
+            ("MARKET", "Marketability"),
         ):
-            self.assertIn(f"<th>{criterion}</th>", full)
+            self.assertIn(f"<b>{abbreviation}</b>{criterion}</span>", full)
         self.assertIn('.criteria-scoring-section[data-criteria-tab="full"] .criteria-table-wrap', styles)
         self.assertIn("border-radius: 10px", styles)
         self.assertIn("padding: 12px", styles)
@@ -974,9 +990,17 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             self.assertLess(mutation.index("await refreshDashboardSummary()"), mutation.index("render()"))
 
     def test_export_flags_and_responsive_summary_contract(self):
+        export_table = function_body(JS, "exportPipelineTable")
         self.assertIn('class="excel-export-button help-tooltip"', HTML)
-        self.assertIn("countryDisplayMarkup(row.country)", JS)
+        self.assertIn("countryDisplayMarkup(row.countryRaw || row.country)", JS)
+        self.assertIn("function countryFlagSvg(country)", JS)
+        self.assertIn("function countryTableCode(country)", JS)
         self.assertIn("record_asset_identities", JS)
+        self.assertIn("'Target Relevance Score'", export_table)
+        self.assertIn("'Market Score'", export_table)
+        self.assertIn("'Target Relevance Evidence Type'", export_table)
+        self.assertIn("'Market Why Not Higher'", export_table)
+        self.assertIn("'Data Sources'", export_table)
         self.assertIn(".workflow-summary-grid.visual-grid { grid-template-columns: repeat(3", CSS)
         self.assertIn("@media (max-width: 1100px)", CSS)
         self.assertIn("@media (max-width: 720px)", CSS)
@@ -994,15 +1018,23 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             CSS,
             r"\.app-shell:not\(\.detail-shell\).*?> \.topbar\s*\{\s*position: sticky;\s*top: 0;",
         )
-        navigation_rule = re.search(
-            r"> \.topbar \.workflow-navigation-shell\s*\{(.*?)\n\}", CSS, re.S
-        )
-        self.assertIsNotNone(navigation_rule)
-        self.assertIn("position: relative", navigation_rule.group(1))
-        self.assertIn("top: auto", navigation_rule.group(1))
-        self.assertIn("border-radius: 0", navigation_rule.group(1))
-        self.assertIn("background: transparent", navigation_rule.group(1))
-        self.assertIn("box-shadow: none", navigation_rule.group(1))
+        final_header_start = CSS.index("/* Final dashboard data utility cascade")
+        final_header_end = CSS.index("/* Soft-bright semantic header palette", final_header_start)
+        final_header = CSS[final_header_start:final_header_end]
+        desktop_start = final_header.index("@media (min-width: 1281px)")
+        desktop_end = final_header.index("@media (max-width: 1280px) and (min-width: 721px)", desktop_start)
+        desktop_navigation = final_header[desktop_start:desktop_end]
+        self.assertIn("position: absolute", desktop_navigation)
+        self.assertIn("left: 50%", desktop_navigation)
+        self.assertIn("transform: translateX(-50%)", desktop_navigation)
+
+        tablet_start = desktop_end
+        tablet_end = final_header.index("@media (max-width: 720px)", tablet_start)
+        tablet_navigation = final_header[tablet_start:tablet_end]
+        self.assertIn("position: relative", tablet_navigation)
+        self.assertIn("grid-row: 2", tablet_navigation)
+        self.assertIn("justify-self: center", tablet_navigation)
+        self.assertIn("transform: none", tablet_navigation)
         self.assertIn("min-height: 38px", CSS)
         self.assertIn("min-height: 72px", CSS)
         barless = CSS[CSS.index("/* Keep workflow selection clear without underline"):]
@@ -1094,8 +1126,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('id="dataUploadGuideSteps"', HTML)
         self.assertRegex(HTML, r'id="previewInputButton"[^>]* disabled')
         self.assertRegex(HTML, r'id="saveJsonButton"[^>]* disabled')
-        self.assertIn("GPT 모드 High · 권장 10–20개/회", JS)
-        self.assertIn("GPT 모드 High · 1개/회", JS)
+        self.assertIn("TAB1 전용 · GPT High · 권장 10–20개/회", JS)
+        self.assertIn("TAB2 전용 · GPT High · 1개/회", JS)
         self.assertEqual(JS.count("새 GPT 창 열기 및 모드 선택"), 2)
         self.assertEqual(JS.count("새 브라우저 탭에서 GPT를 열고 High 이상의 추론 모드를 선택합니다."), 2)
         self.assertIn("지침 1은 최대 50개까지 처리할 수 있으나", JS)
@@ -1106,7 +1138,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("응답을 아래에 그대로", JS)
         self.assertNotIn("응답을 아래에 그대로", HTML)
         self.assertNotIn("생성된 Markdown + JSON 전체 응답", JS)
-        self.assertIn("관련 NCDP 파일이 있다면 GPT 실행 시 GPT 지침 1과 함께 첨부할 수 있습니다.", JS)
+        self.assertIn("관련 NCDP 파일이 있다면 GPT 실행 시 GPT 지침 2와 함께 첨부할 수 있습니다.", JS)
+        self.assertNotIn("관련 NCDP 파일이 있다면 GPT 실행 시 GPT 지침 1과 함께 첨부할 수 있습니다.", JS)
         self.assertIn("{{prompt}} 입력 후, 심층 검토할 Asset명을 1개 입력합니다. 회사명을 함께 입력하면 더 좋습니다.", JS)
         self.assertNotIn("GPT 검색창에", JS)
         self.assertIn("promptKind: 'triage'", JS)
@@ -1116,6 +1149,10 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("kind: 'focus-input', icon: 'clipboard', label: 'GPT 지침 1 전체 응답'", JS)
         self.assertIn("kind: 'focus-input', icon: 'clipboard', label: 'GPT 지침 2 전체 응답'", JS)
         self.assertIn("{{input}}에 붙여넣습니다.", JS)
+        self.assertIn("Compact JSON 배열 전체", JS)
+        self.assertIn("Compact JSON 객체 전체", JS)
+        self.assertIn('\"ingestion_format\": \"compact_v2\"', JS)
+        self.assertIn("Put complete citations and evidence detail in Markdown.", JS)
         self.assertIn("action.kind === 'focus-input'", step_body)
         self.assertIn("dataUploadIconMarkup(action.kind === 'focus-input'", step_body)
         self.assertIn('class="data-upload-prompt-chip data-upload-guide-action-chip"', JS)
@@ -1358,7 +1395,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn(".criteria-focus-priority-formula strong", priority_pills)
         self.assertIn(".criteria-focus-priority-formula span:last-child", priority_pills)
         self.assertIn("border-radius: 999px", priority_pills)
-        self.assertIn("var(--focus-card-accent) 6%", priority_pills)
+        self.assertIn("var(--focus-card-accent) 12%", priority_pills)
         self.assertIn("font-weight: 450", priority_pills)
         self.assertIn("span:first-of-type", priority_pills)
         self.assertIn("SKBP 우선 관심 적응증 경우에는 해당하지만, 아래 분류에 대한 값을 확인하지 못한 경우입니다.", focus)
@@ -1498,12 +1535,16 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         end = HTML.index('class="criteria-rule criteria-focus-rule"', start)
         records = HTML[start:end]
         self.assertIn("<h3>경쟁사 유사도</h3>", records)
-        self.assertIn("비교 대상과 차별성을 같은 기준으로 정리합니다.", records)
-        self.assertIn("유사도 수준과 일치 요소", records)
-        self.assertIn("공통·차별 데이터", records)
-        self.assertIn("판단을 뒷받침하는 출처", records)
+        self.assertIn("유사도와 검색 범위·제약을 같은 기준으로 정리합니다.", records)
+        self.assertIn("동일 indication + target/MoA + 유사 modality", records)
+        self.assertIn("동일 indication + pathway/biology", records)
+        self.assertIn("검색 범위 및 limitation", records)
+        self.assertIn("판단 근거 출처", records)
         self.assertNotIn("유사도 수준, 일치 요소, 공통·차별 데이터와 출처를 기록합니다.", records)
         self.assertNotIn("similar_pipeline_count", records)
+        self.assertIn("<h3>근거 보존 원칙</h3>", DETAIL_HTML)
+        self.assertIn("점수 근거, 출처, 조사 과정과 why-not-higher는 Markdown 리포트에 보존합니다.", DETAIL_HTML)
+        self.assertIn("테이블·시각화·필터에 쓰는 값과 criterion 점수만 저장합니다.", DETAIL_HTML)
 
     def test_full_scout_scoring_table_has_no_preliminary_application_note(self):
         start = HTML.index('class="criteria-scoring-section criteria-guide-section" data-criteria-tab="full"')
@@ -1642,7 +1683,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         evidence_end = HTML.index("</dl>", evidence_start)
         evidence = HTML[evidence_start:evidence_end]
         self.assertEqual(evidence.count("<dd><ul>"), 3)
-        self.assertEqual(evidence.count("<li>"), 7)
+        self.assertEqual(evidence.count("<li>"), 6)
+        self.assertEqual(evidence.count("<li>"), evidence.count("<dd><ul>") * 2)
         self.assertNotIn("<br>", evidence)
         bullet_styles = CSS[CSS.index("Evidence Level card copy is a consistent") :]
         self.assertIn("padding-left: 17px", bullet_styles)
@@ -1734,6 +1776,65 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("width: 22px", styles)
         self.assertIn("border-radius: 50%", styles)
 
+    def test_minimal_json_score_views_point_to_the_original_report(self):
+        tooltip = function_body(JS, "scoreTooltip")
+        score_editor = function_body(JS, "scoreEditSelect")
+        triage_scores = function_body(TRIAGE_DETAIL_JS, "renderScores")
+
+        fallback = "상세 판단근거는 GPT ORIGINAL REPORT에서 확인하세요."
+        self.assertIn("if (lines.length === scoreLineCount)", tooltip)
+        self.assertIn(fallback, tooltip)
+        self.assertIn("const tooltip = scoreTooltip", score_editor)
+        self.assertIn("수동으로 0–3점 수정할 수 있습니다.", score_editor)
+        self.assertIn(fallback, triage_scores)
+        self.assertIn("const hasEvidenceMetadata", triage_scores)
+        self.assertIn("const evidenceType", triage_scores)
+        self.assertIn("const whyNotHigher", triage_scores)
+        self.assertIn("${evidenceMetadata.length ? `", triage_scores)
+        self.assertNotIn("판단 요약 없음", triage_scores)
+
+    def test_triage_sources_recover_only_asset_scoped_safe_links(self):
+        normalizer = function_body(TRIAGE_DETAIL_JS, "normalizeMarkdownSourceUrl")
+        markdown_sources = function_body(TRIAGE_DETAIL_JS, "collectMarkdownSources")
+        collect_sources = function_body(TRIAGE_DETAIL_JS, "collectSources")
+
+        self.assertIn("new URL(text)", normalizer)
+        self.assertIn("parsed.username || parsed.password", normalizer)
+        self.assertIn("localhost", normalizer)
+        self.assertIn("parsed.hash = ''", normalizer)
+        self.assertIn("assetScopedMarkdownFragments(text, record)", markdown_sources)
+        self.assertIn("if (!fragments.length) return []", markdown_sources)
+        self.assertIn("text.matchAll(referencePattern)", markdown_sources)
+        for source_pattern in ("inlinePattern", "referenceUsePattern", "bareUrlPattern"):
+            self.assertIn(f"fragment.matchAll({source_pattern})", markdown_sources)
+        self.assertIn("source_type: 'GPT Original Report citation'", markdown_sources)
+        self.assertIn("function assetScopedMarkdownFragments(markdown, record)", TRIAGE_DETAIL_JS)
+        self.assertIn("markdownAssetMatches(cells[assetIndex], expectedVariants)", TRIAGE_DETAIL_JS)
+        markdown_call = "collectMarkdownSources(objectValue(record?.source_report).raw_markdown || '', record).forEach(add)"
+        self.assertIn(markdown_call, collect_sources)
+        self.assertLess(collect_sources.index("structured_table).sources"), collect_sources.index(markdown_call))
+
+    def test_triage_minimal_renderers_tolerate_missing_or_wrong_field_types(self):
+        list_values = function_body(TRIAGE_DETAIL_JS, "listValues")
+        scores = function_body(TRIAGE_DETAIL_JS, "renderScores")
+        sources = function_body(TRIAGE_DETAIL_JS, "collectSources")
+        diligence = function_body(TRIAGE_DETAIL_JS, "renderDiligence")
+
+        self.assertIn("value === null || value === undefined", list_values)
+        self.assertIn("objectValue(criteria[definition.key])", scores)
+        self.assertIn("objectValue(criterion.score_rationale)", scores)
+        self.assertIn("firstTextValue", scores)
+        self.assertIn("typeof source !== 'object' || Array.isArray(source)", sources)
+        self.assertIn("arrayValue(objectValue(record?.structured_table).sources)", sources)
+        self.assertIn("const triage = objectValue(record?.triage)", diligence)
+        self.assertIn("추가 diligence 정보 없음", diligence)
+        self.assertIn("GPT ORIGINAL REPORT", diligence)
+
+    def test_full_filter_honors_persisted_decision_uncertainty(self):
+        hard_filter = function_body(JS, "computeHardFilter")
+        self.assertIn("record.hard_filter?.decision_uncertainty === true", hard_filter)
+        self.assertIn("|| hasScopedFullScoutReviewUncertainty(notes)", hard_filter)
+
     def test_triage_detail_criteria_drawer_syncs_current_dashboard_tab_one(self):
         self.assertIn('id="triageCriteriaDrawerBody"', TRIAGE_DETAIL_HTML)
         self.assertIn('data-active-criteria-tab="triage"', TRIAGE_DETAIL_HTML)
@@ -1792,7 +1893,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         context = function_body(JS, "buildDashboardAgentContext")
         self.assertIn("scopeRows.length", context)
         self.assertNotIn(".slice(0, 5)", context)
-        self.assertIn("app.js?v=20260805-ingestion-guard-3", HTML)
+        self.assertIn("app.js?v=20260806-ingestion-compat-2", HTML)
 
     def test_table_manual_review_uses_authenticated_user_without_identity_modal(self):
         actor = function_body(JS, "ensureDashboardActorName")
@@ -1820,7 +1921,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("state.dataUploadDrafts[previousMode]", guide)
         self.assertIn("state.dataUploadDrafts[mode]", guide)
         self.assertIn("expandCompactInputRecord(record, lockedMode)", validator)
-        self.assertIn("compact-ingestion.js?v=20260805-ingestion-guard-3", JS)
+        self.assertIn("isMinimalCompactIngestionRecord(split.records[index])", validator)
+        self.assertIn("compact-ingestion.js?v=20260806-ingestion-compat-2", JS)
 
     def test_detail_agent_is_qa_only_without_apply_controls_or_routes(self):
         main_py = (ROOT / "main.py").read_text(encoding="utf-8")
@@ -2045,7 +2147,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn(".detail-material-body::-webkit-scrollbar", layout)
         self.assertIn("width: 6px", layout)
         self.assertIn("border-radius: 999px", layout)
-        self.assertIn("detail.js?v=20260805-ingestion-guard-3", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260806-ingestion-compat-2", DETAIL_HTML)
 
     def test_report_header_matches_review_workspace_and_uses_icon_actions(self):
         report_header = DETAIL_HTML[
@@ -2255,7 +2357,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("detailOiPartnershipNoteOrigin", DETAIL_JS)
         self.assertIn('title="OI 파트너십 분류 근거를 짧게 요약합니다."', note_markup)
         self.assertNotIn("review-reason-edit-icon", note_markup)
-        self.assertIn("detail.js?v=20260805-ingestion-guard-3", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260806-ingestion-compat-2", DETAIL_HTML)
 
     def test_partner_material_body_scrolls_below_fixed_header(self):
         header_index = DETAIL_HTML.index('class="detail-material-header"')
@@ -2282,7 +2384,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("overflow: visible", list_style)
         for filename in ("index.html", "detail.html", "triage_detail.html", "wiki_view.html", "user_admin.html"):
             markup = (ROOT / filename).read_text(encoding="utf-8")
-            self.assertIn('./src/styles.css?v=20260805-topic-notes-1', markup)
+            self.assertRegex(markup, r'\./src/styles\.css\?v=20260805-[a-z0-9-]+')
+        self.assertIn('./src/styles.css?v=20260805-panel-titles-1', DETAIL_HTML)
 
     def test_data_upload_reviews_same_company_asset_before_replacing_existing_record(self):
         finder = function_body(JS, "findDataReuploadMatches")

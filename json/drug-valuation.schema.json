@@ -1,12 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://skbp.local/schemas/pipeline-shortlist-analysis.schema.json",
-  "title": "SKBP PreC Pipeline Shortlist Analysis",
+  "$id": "https://skbp.local/schemas/dashboard-hybrid-record.schema.json",
+  "title": "SKBP Dashboard Hybrid Persisted Record",
+  "description": "Dashboard columns, chart/filter values, scores, compact display evidence, graph projections, preserved GPT Markdown, and dashboard-owned operational state.",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "meta",
-    "input",
     "source_report",
+    "input",
     "json_summary",
     "structured_table",
     "hard_filter",
@@ -14,1399 +16,188 @@
     "validation",
     "final_insight"
   ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["storage_profile", "review_type", "generated_at", "output_filename_base"],
+      "properties": {
+        "storage_profile": { "const": "dashboard_hybrid_v1" },
+        "review_type": { "enum": ["fast_triage", "full_scout"] },
+        "generated_at": { "type": "string" },
+        "output_filename_base": { "type": "string", "minLength": 1 },
+        "schema_version": { "type": "string" },
+        "instruction_version": { "type": "string" },
+        "rubric_version": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "source_report": {
+      "type": "object",
+      "required": ["raw_markdown", "parser_status"],
+      "properties": {
+        "raw_markdown": { "type": "string" },
+        "parser_status": { "type": "string" },
+        "revision_history": { "type": "array" },
+        "rubric_recalculation": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "input": {
+      "type": "object",
+      "required": ["company_input", "asset_input"],
+      "properties": {
+        "company_input": { "type": "string", "minLength": 1 },
+        "asset_input": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "json_summary": {
+      "type": "object",
+      "required": ["theme", "cluster", "target_description"],
+      "properties": {
+        "theme": { "enum": ["E/I Balance", "Neuroimmune", "Others", "Unknown", "N/A", "No Theme"] },
+        "cluster": { "type": "string", "minLength": 1 },
+        "target_description": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "structured_table": { "$ref": "#/$defs/structuredTable" },
+    "hard_filter": { "$ref": "#/$defs/hardFilter" },
+    "scoring": { "$ref": "#/$defs/scoring" },
+    "validation": {
+      "type": "object",
+      "required": ["uncertain_points", "cross_checked_facts", "source_registry"],
+      "properties": {
+        "uncertain_points": { "type": "array", "items": { "type": "string" } },
+        "cross_checked_facts": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "type": "string" },
+              {
+                "type": "object",
+                "required": ["fact", "sources"],
+                "properties": {
+                  "fact": { "type": "string" },
+                  "sources": { "type": "array", "items": { "type": "string" } }
+                },
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "source_registry": { "type": "array", "items": { "$ref": "#/$defs/evidenceSource" } }
+      },
+      "additionalProperties": false
+    },
+    "final_insight": {
+      "type": "object",
+      "required": ["one_line_summary", "recommendation", "most_important_diligence_question"],
+      "properties": {
+        "one_line_summary": { "type": "string" },
+        "recommendation": { "type": "string" },
+        "most_important_diligence_question": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "triage": { "$ref": "#/$defs/triage" },
+    "company_profile": { "$ref": "#/$defs/companyProfile" },
+    "competitive_analysis": { "$ref": "#/$defs/competitiveAnalysis" },
+    "ai_revision_draft": { "type": "object" }
+  },
   "allOf": [
     {
       "if": {
+        "properties": { "meta": { "properties": { "review_type": { "const": "fast_triage" } } } }
+      },
+      "then": {
+        "required": ["triage"],
         "properties": {
-          "meta": {
+          "hard_filter": { "properties": { "status": { "enum": ["SELECT", "REJECT", "UNVERIFIED"] } } },
+          "scoring": {
             "properties": {
-              "review_type": { "const": "fast_triage" }
-            },
-            "required": ["review_type"]
+              "max_score": { "type": ["integer", "null"] },
+              "criteria": {
+                "required": ["target_relevance", "moa_validity", "data_maturity"],
+                "properties": {
+                  "competitive_landscape": false,
+                  "platform_attractiveness": false,
+                  "expansion_potential": false,
+                  "marketability": false
+                }
+              }
+            }
           }
         }
       },
-      "then": {
-        "required": ["triage"]
-      },
       "else": {
-        "required": ["company_profile", "competitive_analysis", "obsidian"]
-      }
-    },
-    {
-      "if": {
-        "required": ["meta"],
+        "required": ["company_profile", "competitive_analysis"],
         "properties": {
-          "meta": {
+          "hard_filter": { "properties": { "status": { "enum": ["PASS", "REVIEW", "FAIL"] } } },
+          "scoring": {
             "properties": {
-              "review_type": { "const": "fast_triage" }
-            },
-            "required": ["review_type"]
-          }
-        },
-        "anyOf": [
-          {
-            "properties": {
-              "meta": {
-                "properties": { "schema_version": { "const": "3.2" } },
-                "required": ["schema_version"]
+              "max_score": { "const": 21 },
+              "criteria": {
+                "required": [
+                  "target_relevance",
+                  "competitive_landscape",
+                  "moa_validity",
+                  "platform_attractiveness",
+                  "expansion_potential",
+                  "data_maturity",
+                  "marketability"
+                ]
               }
-            }
-          },
-          {
-            "properties": {
-              "meta": {
-                "properties": { "instruction_version": { "type": "string", "pattern": "^3\\.2(?:-r[0-9]+)?$" } },
-                "required": ["instruction_version"]
-              }
-            }
-          },
-          {
-            "properties": {
-              "scoring": {
-                "properties": {
-                  "criteria": {
-                    "anyOf": [
-                      {
-                        "properties": { "target_relevance": { "required": ["evidence_basis"] } },
-                        "required": ["target_relevance"]
-                      },
-                      {
-                        "properties": { "moa_validity": { "required": ["evidence_basis"] } },
-                        "required": ["moa_validity"]
-                      },
-                      {
-                        "properties": { "data_maturity": { "required": ["evidence_basis"] } },
-                        "required": ["data_maturity"]
-                      }
-                    ]
-                  }
-                },
-                "required": ["criteria"]
-              }
-            },
-            "required": ["scoring"]
-          },
-          {
-            "properties": {
-              "triage": {
-                "properties": { "status": { "const": "UNVERIFIED" } },
-                "required": ["status"]
-              }
-            },
-            "required": ["triage"]
-          }
-        ]
-      },
-      "then": {
-        "properties": {
-          "meta": {
-            "properties": {
-              "schema_version": { "const": "3.2" },
-              "instruction_version": { "type": "string", "pattern": "^3\\.2(?:-r[0-9]+)?$" },
-              "rubric_version": { "type": "string", "pattern": "^3\\.2(?:-r[0-9]+)?$" }
-            },
-            "required": ["schema_version", "instruction_version", "rubric_version"]
-          },
-          "structured_table": {
-            "properties": {
-              "development_stage": { "$ref": "#/$defs/canonical_development_stage" }
-            }
-          },
-          "hard_filter": {
-            "properties": {
-              "status": { "enum": ["SELECT", "REJECT", "UNVERIFIED"] }
-            }
-          },
-          "triage": { "$ref": "#/$defs/current_triage" },
-          "scoring": { "$ref": "#/$defs/current_triage_scoring" },
-          "final_insight": {
-            "properties": {
-              "recommendation": {
-                "enum": ["Run Full Scout", "Do not run Full Scout", "Verify asset identity"]
-              }
-            },
-            "required": ["recommendation"]
-          }
-        },
-        "allOf": [
-          {
-            "if": {
-              "properties": {
-                "hard_filter": {
-                  "properties": { "status": { "const": "SELECT" } },
-                  "required": ["status"]
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "final_insight": {
-                  "properties": { "recommendation": { "const": "Run Full Scout" } },
-                  "required": ["recommendation"]
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "hard_filter": {
-                  "properties": { "status": { "const": "REJECT" } },
-                  "required": ["status"]
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "final_insight": {
-                  "properties": { "recommendation": { "const": "Do not run Full Scout" } },
-                  "required": ["recommendation"]
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "hard_filter": {
-                  "properties": { "status": { "const": "UNVERIFIED" } },
-                  "required": ["status"]
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "final_insight": {
-                  "properties": { "recommendation": { "const": "Verify asset identity" } },
-                  "required": ["recommendation"]
-                }
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "if": {
-        "required": ["meta"],
-        "anyOf": [
-          {
-            "properties": {
-              "meta": {
-                "properties": { "instruction_version": { "const": "3.3" } },
-                "required": ["instruction_version"]
-              }
-            }
-          },
-          {
-            "properties": {
-              "meta": {
-                "properties": { "rubric_version": { "const": "3.3" } },
-                "required": ["rubric_version"],
-                "not": { "required": ["rubric_recalculation"] }
-              }
-            }
-          }
-        ]
-      },
-      "then": {
-        "properties": {
-          "meta": {
-            "properties": {
-              "schema_version": { "const": "3.2" },
-              "instruction_version": { "const": "3.3" },
-              "rubric_version": { "const": "3.3" }
-            },
-            "required": ["schema_version", "instruction_version", "rubric_version"]
-          },
-          "structured_table": {
-            "properties": {
-              "development_stage": { "$ref": "#/$defs/canonical_development_stage" }
-            }
-          },
-          "hard_filter": {
-            "properties": {
-              "status": { "enum": ["PASS", "REVIEW", "FAIL"] }
             }
           }
         }
       }
     }
   ],
-  "additionalProperties": false,
-  "properties": {
-    "meta": {
-      "$ref": "#/$defs/meta"
-    },
-    "input": {
-      "$ref": "#/$defs/input"
-    },
-    "rubric": {
-      "$ref": "#/$defs/rubric"
-    },
-    "json_summary": {
-      "$ref": "#/$defs/json_summary"
-    },
-    "structured_table": {
-      "$ref": "#/$defs/structured_table_union"
-    },
-    "hard_filter": {
-      "$ref": "#/$defs/hard_filter"
-    },
-    "triage": {
-      "$ref": "#/$defs/triage"
-    },
-    "scoring": {
-      "$ref": "#/$defs/scoring"
-    },
-    "competitive_analysis": {
-      "$ref": "#/$defs/competitive_analysis"
-    },
-    "validation": {
-      "$ref": "#/$defs/validation_union"
-    },
-    "final_insight": {
-      "$ref": "#/$defs/final_insight"
-    },
-    "obsidian": {
-      "$ref": "#/$defs/obsidian"
-    },
-    "source_report": {
-      "$ref": "#/$defs/source_report"
-    },
-    "company_profile": {
-      "$ref": "#/$defs/company_profile"
-    }
-  },
   "$defs": {
-    "nullable_string": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "string_array": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "canonical_development_stage": {
-      "type": "string",
-      "enum": [
-        "Hit Discovery",
-        "Lead Optimization",
-        "Preclinical Candidate",
-        "IND-enabling",
-        "Preclinical unspecified",
-        "IND filed/cleared",
-        "Phase 1",
-        "Phase 1/2",
-        "Phase 2",
-        "Phase 2/3",
-        "Phase 3",
-        "Registration",
-        "Approved / marketed",
-        "Discontinued / inactive",
-        "Unknown"
-      ],
-      "description": "Canonical dashboard classification. Confirmed current wording/milestones may be normalized; plans, expectations, financing, hiring, and adjacent programs must not be promoted to a current stage."
-    },
-    "meta": {
+    "scoreCriterion": {
       "type": "object",
       "required": [
-        "schema_version",
-        "generated_at",
-        "language",
-        "output_filename_base",
-        "rubric_version"
+        "score",
+        "evidence_type",
+        "evidence_type_reason",
+        "evidence_basis",
+        "main_line_summary",
+        "why_not_higher",
+        "investigation_note",
+        "uncertain_points",
+        "source_ids"
       ],
-      "additionalProperties": true,
-      "properties": {
-        "schema_version": {
-          "type": "string",
-          "enum": ["3.0", "3.1", "3.2"],
-          "description": "Fast Triage v3.2 output must use 3.2. Full Scout retains its existing schema version because its JSON shape did not change. Older values remain readable for stored legacy records."
-        },
-        "instruction_version": {
-          "type": "string",
-          "description": "3.2 for current Fast Triage output; 3.3 for current Full Scout output."
-        },
-        "review_type": {
-          "type": "string",
-          "enum": ["fast_triage", "full_scout"]
-        },
-        "generated_at": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "format": "date",
-          "description": "Date the underlying GPT report/search was produced. Defaults to today (UTC) on save if missing."
-        },
-        "language": {
-          "type": "string",
-          "enum": [
-            "ko",
-            "en"
-          ]
-        },
-        "analyst_role": {
-          "type": "string"
-        },
-        "output_format": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "json",
-              "markdown",
-              "markdown_report"
-            ]
-          },
-          "minItems": 1
-        },
-        "output_filename_base": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "rubric_version": {
-          "type": "string",
-          "description": "Rubric/guideline version used to score this record (full-scout or fast-triage rubric depending on workflow)."
-        },
-        "rubric_author": {
-          "type": "string",
-          "default": "kate"
-        },
-        "rescored_rubric_version": {
-          "type": "string",
-          "description": "Set only by the detail page's 'Score 기준 갱신' button (POST /api/records/{id}/refresh-rubric) when OpenRouter finds clear evidence to update this single record's scores. rubric_version above always stays the original GPT-search-time version; this field chains forward from it (or from the previous rescored_rubric_version) via next_minor_version, e.g. 3.1 -> 3.2 -> 3.3. v1 scope: single-record only — does not bump SCORING_CRITERIA_VERSION or other records."
-        },
-        "rescored_at": {
-          "type": ["string", "null"],
-          "description": "ISO 8601 UTC timestamp of the most recent successful rubric refresh."
-        },
-        "rescored_by": {
-          "type": ["string", "null"],
-          "description": "Actor IP of the most recent successful rubric refresh (temporary stand-in for user identity, same convention as last_edited_by)."
-        },
-        "rubric_reviewed_version": {
-          "type": "string",
-          "description": "Latest rubric version against which the stored scores were successfully reviewed, whether or not a score changed."
-        },
-        "rubric_reviewed_at": {
-          "type": ["string", "null"],
-          "description": "ISO 8601 UTC timestamp of the latest valid, non-conflicting rubric review."
-        },
-        "rubric_reviewed_by": {
-          "type": ["string", "null"],
-          "description": "Actor IP of the latest valid, non-conflicting rubric review."
-        },
-        "rubric_review_result": {
-          "type": "string",
-          "enum": ["updated", "no_change", "no_score_changes"],
-          "description": "Whether the latest successful rubric review changed official scores or retained them."
-        },
-        "rubric_refresh_history": {
-          "type": "array",
-          "description": "Append-only log of valid, non-conflicting rubric reviews on this record, newest last and capped at 20 entries.",
-          "items": {
-            "type": "object",
-            "additionalProperties": true,
-            "properties": {
-              "version": { "type": "string" },
-              "changed_at": { "type": "string" },
-              "reviewed_at": { "type": "string" },
-              "result": { "type": "string", "enum": ["updated", "no_change", "no_score_changes"] },
-              "actor_ip": { "type": "string" },
-              "reason": { "type": "string" },
-              "changes": { "type": "array", "items": { "type": "string" } }
-            }
-          }
-        },
-        "last_edited_at": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Derived ISO 8601 UTC timestamp of the newest edit_history event whose field is exactly source_report.raw_markdown. Full Scout load/save normalization removes stale values when no such event exists; general Team Review activity never updates this field."
-        },
-        "last_edited_by": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Derived identifier from the newest source_report.raw_markdown audit event. actor_name is preferred and actor_ip remains the technical fallback until SSO is wired up; the UI presents loopback IPs as Local workspace and rubric recalculation events as the rubric version."
-        },
-        "edit_history": {
-          "type": "array",
-          "description": "Append-only log of human/dashboard edits, newest last and capped at 200 entries server-side. Exact source_report.raw_markdown events drive GPT source/score revision metadata; all other entries are shown in the Team Review workspace history.",
-          "items": {
-            "type": "object",
-            "additionalProperties": true,
-            "required": [
-              "changed_at",
-              "actor_ip",
-              "source"
-            ],
-            "properties": {
-              "changed_at": {
-                "type": "string",
-                "description": "ISO 8601 UTC timestamp."
-              },
-              "actor_ip": {
-                "type": "string",
-                "description": "Requester IP address, temporary stand-in for user identity until SSO is available."
-              },
-              "actor_name": {
-                "type": "string",
-                "description": "Reviewer-entered name or employee ID. Preferred for the visible audit trail when present; actor_ip remains as a technical fallback."
-              },
-              "source": {
-                "type": "string",
-                "description": "Which UI/endpoint made the change, e.g. detail_json_editor, dashboard_table_manual_review, dashboard_tab3_focus_management, dashboard_comment, dashboard_attachment_upload, dashboard_attachment_delete, dashboard_qualitative_review, paste_json_upsert."
-              },
-              "field": {
-                "type": "string"
-              },
-              "previous_value": {},
-              "new_value": {}
-            }
-          }
-        },
-        "human_review": {
-          "type": "object",
-          "description": "Manual score/status overrides layered on top of AI baseline values. overrides.status_reason stores the editable one-line human rationale shown beside Review status; both status and rationale changes are audit-logged.",
-          "additionalProperties": true
-        },
-        "focus_management": {
-          "type": "object",
-          "description": "TAB3/full-scout review workspace state. OI Partnership v1.0 stores an auto-classified or human-overridden partnership_type (investment|value_up|joint_research|n_a|unknown), partnership_note, evidence sources, source/status, and the auto suggestion. Also supports partner material flags and the in_vivo_status/in_vitro_status/admet_completed evidence-summary triple.",
-          "additionalProperties": true,
-          "properties": {
-            "partnership_type": {
-              "type": "string",
-              "enum": ["", "investment", "value_up", "joint_research", "n_a", "unknown"],
-              "description": "Final Filter 3 value. Automatic rules use target indication, modality, stage, in-vivo/in-vitro outcome, ADMET score, and Platform Attractiveness. A human selection takes precedence until Auto is selected again. Empty is accepted only for legacy/untracked records before classification."
-            },
-            "partnership_note": {
-              "type": "string",
-              "description": "Applied rule, overlap, missing-field list, or N/A reason shown immediately to the right of Filter 3."
-            },
-            "partnership_evidence_sources": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "description": "Tab3 structured data, Tab2 report, and uploaded filenames used for the final classification."
-            },
-            "partnership_classification_source": {
-              "type": "string",
-              "enum": ["auto", "manual", "unclassified"]
-            },
-            "partnership_classification_status": {
-              "type": "string",
-              "enum": ["auto_classified", "manual_override", "pending_criteria"]
-            },
-            "partnership_classification_criteria_version": {
-              "type": "string"
-            },
-            "partnership_auto_suggestion": {
-              "type": "string",
-              "enum": ["investment", "value_up", "joint_research", "n_a", "unknown"],
-              "description": "Latest v1.0 automatic suggestion retained even when the final partnership_type is manually overridden."
-            },
-            "partnership_auto_note": {
-              "type": "string"
-            },
-            "partnership_auto_evidence_sources": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "partner_material_flags": {
-              "type": "object",
-              "description": "Human-maintained availability indicators for CDP, NCDP, and ADMET partner materials. The detail UI also derives effective active states only from standalone CDP, NCDP, or ADMET tokens in uploaded attachment filenames; an automatic match does not overwrite these manual booleans.",
-              "additionalProperties": false,
-              "properties": {
-                "cdp": {
-                  "type": "boolean"
-                },
-                "ncdp": {
-                  "type": "boolean"
-                },
-                "admet": {
-                  "type": "boolean"
-                }
-              }
-            },
-            "partner_material_flag_overrides": {
-              "type": "object",
-              "description": "Explicit human overrides for CDP, NCDP, and ADMET availability. When a boolean exists for a key, it takes precedence over filename auto-detection so a user can manually switch the indicator on or off.",
-              "additionalProperties": false,
-              "properties": {
-                "cdp": {
-                  "type": "boolean"
-                },
-                "ncdp": {
-                  "type": "boolean"
-                },
-                "admet": {
-                  "type": "boolean"
-                }
-              }
-            },
-            "in_vivo_status": {
-              "type": "string",
-              "enum": ["O", "X", "N/A"],
-              "description": "Whether an explicit in-vivo outcome was found in the GPT report + uploaded attachments. O requires positive efficacy/activity wording, X requires negative/failure wording, and N/A means absent or outcome unclear. A mere statement that an experiment was performed is not O."
-            },
-            "in_vivo_status_source": {
-              "type": "string",
-              "enum": ["auto", "manual"],
-              "description": "Whether in_vivo_status was last set by the keyword heuristic (main.py's classify_evidence_presence) or overridden by a reviewer in the TAB3 table."
-            },
-            "in_vitro_status": {
-              "type": "string",
-              "enum": ["O", "X", "N/A"],
-              "description": "Same detection as in_vivo_status, for in-vitro efficacy evidence."
-            },
-            "in_vitro_status_source": {
-              "type": "string",
-              "enum": ["auto", "manual"]
-            },
-            "admet_completed": {
-              "type": ["integer", "null"],
-              "minimum": 0,
-              "maximum": 50,
-              "description": "Count of 'Completed' occurrences found in attachments whose filename contains 'admet', out of a fixed denominator of 50 (main.py's count_admet_completed). Null when no admet-named attachment has been uploaded yet."
-            },
-            "admet_completed_source": {
-              "type": "string",
-              "enum": ["auto", "manual"]
-            }
-          }
-        },
-        "collaboration": {
-          "type": "object",
-          "description": "Threaded reviewer comments attached to this record.",
-          "additionalProperties": true
-        },
-        "attachments": {
-          "type": "array",
-          "description": "Original source files (PPT/PPTX/PDF/TXT/Word/Excel) uploaded from the detail page's partner-material dropzone. Each item: {id, filename, stored_path, content_type, size_bytes, uploaded_by, uploaded_at}.",
-          "items": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        },
-        "qualitative_review": {
-          "type": "object",
-          "description": "Researcher opinions keyed by qualitative-review criterion id (see config/qualitative_review_criteria.md), each with an entries array of {id, author, body, is_ai, created_at}. Entries with is_ai=true and author='AI' are genuine OpenRouter-generated first drafts (grounded in source_report.raw_markdown and uploaded attachments) produced via the 'AI 생성' button, shown in the UI with an [AI] badge. Entries authored 'AI (초안)' are legacy rule-based placeholders kept for data compatibility but hidden from the UI. custom_criteria is an array of user-registered additional criteria: {id, label, description, created_by, created_at}, id prefixed 'custom_'. Criteria imported from another record may additionally store imported_from_record_id and imported_from_criterion_id; only the definition is copied, never opinion entries.",
-          "additionalProperties": true
-        }
-      }
-    },
-    "input": {
-      "type": "object",
-      "required": [
-        "company_input",
-        "asset_input",
-        "source_type",
-        "notes"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "company_input": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "asset_input": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "source_text": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "source_type": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "notes": {
-          "$ref": "#/$defs/nullable_string"
-        }
-      }
-    },
-    "rubric": {
-      "type": "object",
-      "description": "기준 설명 전용 섹션. scoring의 main_line_summary에는 이 기준 문구를 반복하지 않는다.",
-      "required": [
-        "target_relevance",
-        "competitive_landscape",
-        "moa_validity",
-        "platform_attractiveness",
-        "expansion_potential",
-        "data_maturity",
-        "marketability"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "target_relevance": {
-          "$ref": "#/$defs/rubric_criterion"
-        },
-        "competitive_landscape": {
-          "$ref": "#/$defs/rubric_criterion"
-        },
-        "moa_validity": {
-          "$ref": "#/$defs/rubric_criterion"
-        },
-        "platform_attractiveness": {
-          "$ref": "#/$defs/rubric_criterion"
-        },
-        "expansion_potential": {
-          "$ref": "#/$defs/rubric_criterion"
-        },
-        "data_maturity": {
-          "$ref": "#/$defs/rubric_criterion"
-        },
-        "marketability": {
-          "$ref": "#/$defs/rubric_criterion"
-        }
-      }
-    },
-    "rubric_criterion": {
-      "type": "object",
-      "required": [
-        "description",
-        "score_definitions"
-      ],
-      "additionalProperties": true,
-      "properties": {
-        "description": {
-          "type": "string"
-        },
-        "score_definitions": {
-          "type": "object",
-          "required": [
-            "0",
-            "1",
-            "2",
-            "3"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "0": {
-              "type": "string"
-            },
-            "1": {
-              "type": "string"
-            },
-            "2": {
-              "type": "string"
-            },
-            "3": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
-    "json_summary": {
-      "type": "object",
-      "required": [
-        "company",
-        "company_country",
-        "asset_name",
-        "target",
-        "theme",
-        "cluster",
-        "target_relevance_score",
-        "one_line_summary"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "company": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "company_country": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "asset_name": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "target": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "theme": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "enum": [
-            "E/I Balance",
-            "Neuroimmune",
-            "Others",
-            "Unknown",
-            "No Theme",
-            null
-          ]
-        },
-        "cluster": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "target_relevance_score": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "minimum": 0,
-          "maximum": 3
-        },
-        "one_line_summary": {
-          "$ref": "#/$defs/nullable_string"
-        }
-      }
-    },
-    "structured_table_union": {
-      "anyOf": [
-        { "$ref": "#/$defs/structured_table" },
-        { "$ref": "#/$defs/triage_structured_table" }
-      ]
-    },
-    "triage_structured_table": {
-      "type": "object",
-      "required": [
-        "company",
-        "company_country",
-        "asset_name",
-        "target",
-        "moa",
-        "modality_platform",
-        "main_indication",
-        "indication",
-        "development_stage",
-        "sources"
-      ],
-      "additionalProperties": true,
-      "properties": {
-        "company": { "$ref": "#/$defs/nullable_string" },
-        "company_country": { "$ref": "#/$defs/nullable_string" },
-        "asset_name": { "$ref": "#/$defs/nullable_string" },
-        "target": { "$ref": "#/$defs/nullable_string" },
-        "moa": { "$ref": "#/$defs/nullable_string" },
-        "modality_platform": { "$ref": "#/$defs/nullable_string" },
-        "main_indication": { "$ref": "#/$defs/nullable_string" },
-        "indication": { "$ref": "#/$defs/nullable_string" },
-        "development_stage": { "$ref": "#/$defs/nullable_string" },
-        "theme": { "$ref": "#/$defs/nullable_string" },
-        "cluster": { "$ref": "#/$defs/nullable_string" },
-        "sources": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/triage_evidence_source" }
-        }
-      }
-    },
-    "triage_evidence_source": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "source_title": { "$ref": "#/$defs/nullable_string" },
-        "source_type": { "$ref": "#/$defs/nullable_string" },
-        "source_url": { "$ref": "#/$defs/nullable_string" },
-        "reliability": {
-          "type": ["string", "null"],
-          "enum": ["high", "medium", "low", "unknown", "High", "Medium", "Low", "Unclear", null]
-        },
-        "evidence_summary": { "$ref": "#/$defs/nullable_string" },
-        "verified": { "type": "boolean" }
-      }
-    },
-    "verified_triage_evidence_source": {
-      "allOf": [
-        { "$ref": "#/$defs/triage_evidence_source" },
-        {
-          "required": ["source_url", "verified"],
-          "properties": {
-            "source_url": { "type": "string", "pattern": "^https?://" },
-            "verified": { "const": true }
-          }
-        }
-      ]
-    },
-    "structured_table": {
-      "type": "object",
-      "required": [
-        "company",
-        "company_country",
-        "asset_name",
-        "target",
-        "theme",
-        "cluster",
-        "target_mapping_rationale",
-        "moa",
-        "modality_platform",
-        "indication",
-        "development_stage",
-        "key_data",
-        "sources"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "company": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "company_country": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "asset_name": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "target": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "theme": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "enum": [
-            "E/I Balance",
-            "Neuroimmune",
-            "Others",
-            "Unknown",
-            "No Theme",
-            null
-          ]
-        },
-        "cluster": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "target_mapping_rationale": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "moa": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "modality_platform": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "indication": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "development_stage": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "key_data": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/key_data_item"
-          }
-        },
-        "sources": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/basic_source"
-          }
-        }
-      }
-    },
-    "key_data_item": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "data_type",
-        "summary",
-        "details"
-      ],
-      "properties": {
-        "data_type": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "summary": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "details": {
-          "$ref": "#/$defs/nullable_string"
-        }
-      }
-    },
-    "basic_source": {
-      "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "source_id",
-        "source_title",
-        "source_url",
-        "source_excerpt"
-      ],
-      "properties": {
-        "source_id": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "source_title": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "source_url": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "source_excerpt": {
-          "$ref": "#/$defs/nullable_string"
-        }
-      }
-    },
-    "hard_filter": {
-      "type": "object",
-      "required": [
-        "status",
-        "reason",
-        "flags"
-      ],
-      "properties": {
-        "status": {
-          "type": "string",
-          "enum": [
-            "PASS",
-            "REVIEW",
-            "FAIL",
-            "SELECT",
-            "REJECT",
-            "UNVERIFIED",
-            "N/A",
-            "Unclear"
-          ],
-          "description": "Full Scout uses PASS/REVIEW/FAIL; absence of direct Theme/Cluster fit alone is not an automatic FAIL. Fast Triage v3.2 uses SELECT/REJECT/UNVERIFIED, where UNVERIFIED is limited to an asset identity that cannot be verified from credible public sources. N/A and Unclear are legacy-read compatibility values and are not valid for new v3.2 Fast Triage output."
-        },
-        "reason": {
-          "type": "string"
-        },
-        "flags": {
-          "$ref": "#/$defs/string_array"
-        },
-        "within_target_ta": {
-          "$ref": "#/$defs/filter_answer"
-        },
-        "relevant_biological_target": {
-          "$ref": "#/$defs/filter_answer"
-        },
-        "stage_preclinical_to_ind": {
-          "$ref": "#/$defs/filter_answer"
-        },
-        "overall_result": {
-          "type": "string",
-          "enum": [
-            "PASS",
-            "FAIL",
-            "REVIEW",
-            "Unclear"
-          ]
-        },
-        "fail_reasons": {
-          "$ref": "#/$defs/string_array"
-        }
-      }
-    },
-    "filter_answer": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "answer",
-        "reason"
-      ],
-      "properties": {
-        "answer": {
-          "type": "string",
-          "enum": [
-            "Yes",
-            "No",
-            "Unclear",
-            "Unknown"
-          ]
-        },
-        "reason": {
-          "$ref": "#/$defs/nullable_string"
-        }
-      }
-    },
-    "scoring": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "total_score",
-        "max_score",
-        "criteria"
-      ],
-      "properties": {
-        "status": {
-          "type": "string",
-          "enum": [
-            "not_scored",
-            "scored",
-            "partial",
-            "needs_review"
-          ]
-        },
-        "total_score": {
-          "type": [
-            "integer",
-            "number",
-            "null"
-          ],
-          "minimum": 0,
-          "maximum": 21
-        },
-        "max_score": {
-          "type": ["integer", "null"],
-          "enum": [9, 21, null],
-          "description": "Full Scout uses 21. Fast Triage uses 9 only when total_score is used; otherwise both total_score and max_score are null."
-        },
-        "criteria": {
-          "$ref": "#/$defs/scoring_criteria_union"
-        }
-      }
-    },
-    "scoring_criteria_union": {
-      "oneOf": [
-        { "$ref": "#/$defs/scoring_criteria" },
-        { "$ref": "#/$defs/triage_scoring_criteria" }
-      ]
-    },
-    "scoring_criteria": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "target_relevance",
-        "competitive_landscape",
-        "moa_validity",
-        "platform_attractiveness",
-        "expansion_potential",
-        "data_maturity",
-        "marketability"
-      ],
-      "properties": {
-        "target_relevance": {
-          "$ref": "#/$defs/scoring_criterion"
-        },
-        "competitive_landscape": {
-          "$ref": "#/$defs/scoring_criterion"
-        },
-        "moa_validity": {
-          "$ref": "#/$defs/scoring_criterion"
-        },
-        "platform_attractiveness": {
-          "$ref": "#/$defs/scoring_criterion"
-        },
-        "expansion_potential": {
-          "$ref": "#/$defs/scoring_criterion"
-        },
-        "data_maturity": {
-          "$ref": "#/$defs/scoring_criterion"
-        },
-        "marketability": {
-          "$ref": "#/$defs/marketability_criterion"
-        }
-      }
-    },
-    "triage": {
-      "type": "object",
-      "additionalProperties": true,
-      "required": ["instruction_version", "status", "identity_verified"],
-      "properties": {
-        "instruction_version": { "type": "string" },
-        "status": {
-          "type": "string",
-          "enum": ["SELECT", "REJECT", "UNVERIFIED", "N/A"],
-          "description": "N/A is accepted only for stored Fast Triage v3.1 compatibility. New v3.2 output uses UNVERIFIED."
-        },
-        "identity_verified": { "type": "boolean" },
-        "active_asset": {
-          "type": ["boolean", "null"],
-          "description": "Required in Fast Triage v3.2: true only when active status is confirmed, false when inactive is confirmed, and null when activity cannot be established. SELECT requires true; identity failure uses UNVERIFIED."
-        },
-        "why": { "$ref": "#/$defs/nullable_string" },
-        "missing_evidence_needed_for_full_scout": { "$ref": "#/$defs/string_array" }
-      }
-    },
-    "current_triage": {
-      "allOf": [
-        { "$ref": "#/$defs/triage" },
-        {
-          "required": ["instruction_version", "status", "identity_verified", "active_asset"],
-          "properties": {
-            "instruction_version": { "type": "string", "pattern": "^3\\.2(?:-r[0-9]+)?$" },
-            "status": { "enum": ["SELECT", "REJECT", "UNVERIFIED"] }
-          }
-        }
-      ]
-    },
-    "triage_scoring_criteria": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["target_relevance", "moa_validity", "data_maturity"],
-      "properties": {
-        "target_relevance": { "$ref": "#/$defs/triage_scoring_criterion" },
-        "moa_validity": { "$ref": "#/$defs/triage_scoring_criterion" },
-        "data_maturity": { "$ref": "#/$defs/triage_scoring_criterion" }
-      }
-    },
-    "current_triage_scoring_criteria": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["target_relevance", "moa_validity", "data_maturity"],
-      "properties": {
-        "target_relevance": { "$ref": "#/$defs/current_triage_scoring_criterion" },
-        "moa_validity": { "$ref": "#/$defs/current_triage_scoring_criterion" },
-        "data_maturity": { "$ref": "#/$defs/current_triage_scoring_criterion" }
-      }
-    },
-    "triage_scoring_criterion": {
-      "type": "object",
-      "additionalProperties": true,
-      "required": ["score"],
       "properties": {
         "score": { "type": "integer", "minimum": 0, "maximum": 3 },
-        "main_line_summary": { "$ref": "#/$defs/nullable_string" },
-        "evidence_basis": {
-          "type": "string",
-          "enum": [
-            "user_input_only",
-            "public_source",
-            "user_input_and_public_source",
-            "no_supporting_basis"
-          ]
-        },
-        "evidence_sources": {
-          "type": "array",
-          "description": "Fast Triage v3.2: only http(s) sources whose contents were actually opened and verified for this criterion. A user-supplied URL that was not opened is not verified evidence.",
-          "items": {
-            "anyOf": [
-              { "type": "string", "format": "uri" },
-              { "$ref": "#/$defs/triage_evidence_source" }
-            ]
-          }
-        },
-        "verified_evidence_sources": {
-          "type": "array",
-          "description": "Optional explicit verified-source list. When present it is authoritative for verified source count instead of evidence_sources.",
-          "items": {
-            "anyOf": [
-              { "type": "string", "format": "uri" },
-              { "$ref": "#/$defs/triage_evidence_source" }
-            ]
-          }
-        },
-        "verified_source_count": { "type": "integer", "minimum": 0 },
-        "verified_public_source_count": { "type": "integer", "minimum": 0 },
-        "uncertain_points": { "$ref": "#/$defs/string_array" }
-      }
-    },
-    "current_triage_scoring_criterion": {
-      "allOf": [
-        { "$ref": "#/$defs/triage_scoring_criterion" },
-        {
-          "required": ["score", "main_line_summary", "evidence_basis", "evidence_sources", "uncertain_points"],
-          "properties": {
-            "evidence_sources": {
-              "type": "array",
-              "description": "Current Fast Triage evidence requires an opened/checked http(s) URL and explicit verified=true; unverified user-supplied URLs do not count.",
-              "items": { "$ref": "#/$defs/verified_triage_evidence_source" }
-            }
-          }
-        }
-      ]
-    },
-    "current_triage_scoring": {
-      "type": "object",
-      "required": ["total_score", "max_score", "criteria"],
-      "properties": {
-        "total_score": { "type": ["integer", "null"], "minimum": 0, "maximum": 9 },
-        "max_score": { "type": ["integer", "null"], "enum": [9, null] },
-        "criteria": { "$ref": "#/$defs/current_triage_scoring_criteria" }
+        "evidence_type": { "type": "string" },
+        "evidence_type_reason": { "type": "string" },
+        "evidence_basis": { "type": "string" },
+        "main_line_summary": { "type": "string" },
+        "why_not_higher": { "type": "string" },
+        "investigation_note": { "type": "string" },
+        "uncertain_points": { "type": "array", "items": { "type": "string" } },
+        "source_ids": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "calculation": { "$ref": "#/$defs/marketabilityDisplayCalculation" }
       },
-      "oneOf": [
-        {
-          "properties": {
-            "total_score": { "const": null },
-            "max_score": { "const": null }
-          }
-        },
-        {
-          "properties": {
-            "total_score": { "type": "integer", "minimum": 0, "maximum": 9 },
-            "max_score": { "const": 9 }
-          }
-        }
-      ]
+      "additionalProperties": false
     },
-    "scoring_criterion": {
+    "evidenceSource": {
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "score",
-        "evidence_type",
-        "main_line_summary",
-        "why_not_higher",
-        "uncertain_points"
-      ],
+      "required": ["source_id", "source_title", "source_url"],
       "properties": {
-        "score": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 3
-        },
-        "evidence_type": {
-          "$ref": "#/$defs/evidence_type"
-        },
-        "evidence_type_reason": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "main_line_summary": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "reason": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "source_ids": {
-          "$ref": "#/$defs/string_array"
-        },
-        "what_was_checked": {
-          "$ref": "#/$defs/string_array"
-        },
-        "evidence_trail": {
-          "$ref": "#/$defs/string_array"
-        },
-        "evidence_sources": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/evidence_source"
-          }
-        },
-        "investigation_note": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "why_not_higher": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "uncertain_points": {
-          "$ref": "#/$defs/string_array"
-        },
-        "same_target_same_moa_front_runner_count": {
-          "type": [
-            "number",
-            "string",
-            "null"
-          ]
-        },
-        "broader_same_disease_competitor_count": {
-          "type": [
-            "number",
-            "string",
-            "null"
-          ]
-        },
-        "fic_bic_late_follower_classification": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "competitor_table": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        },
-        "proposed_moa": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "functional_readout": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "target_engagement_to_disease_phenotype_linkage": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "modality_platform_identity": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "claimed_or_inferred_differentiation": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "differentiation_support": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "claimed_development_stage": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "expected_data_for_stage": {
-          "$ref": "#/$defs/string_array"
-        },
-        "visible_asset_specific_data": {
-          "$ref": "#/$defs/string_array"
-        },
-        "missing_data": {
-          "$ref": "#/$defs/string_array"
-        },
-        "stage_data_alignment_judgment": {
-          "$ref": "#/$defs/nullable_string"
-        }
-      }
+        "source_id": { "type": "string", "minLength": 1 },
+        "source_title": { "type": "string" },
+        "source_url": { "type": "string" },
+        "source_type": { "type": "string" },
+        "reliability": { "type": "string" },
+        "evidence_summary": { "type": "string" },
+        "verified": { "type": "boolean" }
+      },
+      "additionalProperties": false
     },
-    "marketability_criterion": {
+    "marketabilityDisplayCalculation": {
       "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "score",
-        "evidence_type",
-        "main_line_summary",
-        "calculation",
-        "why_not_higher",
-        "uncertain_points"
-      ],
-      "properties": {
-        "score": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 3
-        },
-        "evidence_type": {
-          "$ref": "#/$defs/evidence_type"
-        },
-        "evidence_type_reason": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "main_line_summary": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "source_ids": {
-          "$ref": "#/$defs/string_array"
-        },
-        "what_was_checked": {
-          "$ref": "#/$defs/string_array"
-        },
-        "evidence_trail": {
-          "$ref": "#/$defs/string_array"
-        },
-        "evidence_sources": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/evidence_source"
-          }
-        },
-        "investigation_note": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "why_not_higher": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "uncertain_points": {
-          "$ref": "#/$defs/string_array"
-        },
-        "calculation": {
-          "$ref": "#/$defs/marketability_calculation"
-        }
-      }
-    },
-    "marketability_calculation": {
-      "type": "object",
-      "additionalProperties": true,
       "required": [
         "commercial_rationale_status",
         "commercial_rationale_failure_reason",
@@ -1415,670 +206,232 @@
         "C_obtainable_peak_sales"
       ],
       "properties": {
-        "commercial_rationale_status": {
-          "type": "string",
-          "enum": [
-            "evidence_based",
-            "assumption_based",
-            "assumption_based_scenario",
-            "established",
-            "not_established",
-            "insufficient_evidence"
-          ]
-        },
-        "commercial_model_type": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "commercial_model_confidence": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "commercial_rationale_basis": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "assumptions": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        },
-        "sensitivity": {
-          "type": "object",
-          "additionalProperties": true
-        },
-        "commercial_rationale_failure_reason": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
+        "commercial_rationale_status": { "type": "string" },
+        "commercial_rationale_failure_reason": { "type": "string" },
         "A_targetable_addressable_patient": {
           "type": "object",
-          "description": "A. Targetable Addressable Patient (TAP): estimate the actually treatable patient pool.",
-          "additionalProperties": true,
-          "required": [
-            "total_patient_pool",
-            "diagnosis_rate",
-            "eligibility_rate",
-            "biomarker_positive_rate",
-            "treatable_subgroup_rate",
-            "targetable_addressable_patient",
-            "formula"
-          ],
+          "required": ["targetable_addressable_patient", "formula"],
           "properties": {
-            "total_patient_pool": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "diagnosis_rate": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "eligibility_rate": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "biomarker_positive_rate": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "treatable_subgroup_rate": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "targetable_addressable_patient": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "formula": {
-              "type": "string"
-            },
-            "assumption_note": {
-              "type": [
-                "string",
-                "null"
-              ]
-            }
-          }
+            "targetable_addressable_patient": { "type": ["number", "null"] },
+            "formula": { "type": "string" }
+          },
+          "additionalProperties": false
         },
         "B_unrisked_peak_sales": {
           "type": "object",
-          "description": "B. Unrisked Peak Sales: theoretical peak sales before full competition and execution risk adjustment. Sales output should be expressed in million USD.",
-          "additionalProperties": true,
-          "required": [
-            "tap",
-            "annual_net_price",
-            "peak_penetration",
-            "treatment_duration_factor",
-            "entry_order_share_assumption",
-            "unrisked_peak_sales",
-            "formula"
-          ],
+          "required": ["unrisked_peak_sales", "sales_unit", "formula"],
           "properties": {
-            "tap": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "annual_net_price": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "peak_penetration": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "treatment_duration_factor": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "sales_unit": {
-              "type": "string",
-              "const": "million USD",
-              "description": "Preferred display and storage unit for sales outputs."
-            },
-            "entry_order_share_assumption": {
-              "type": "object",
-              "additionalProperties": true,
-              "required": [
-                "expected_entry_order",
-                "matrix_share_reference"
-              ],
-              "properties": {
-                "market_player_count": {
-                  "type": [
-                    "number",
-                    "string",
-                    "null"
-                  ]
-                },
-                "competitor_count": {
-                  "type": [
-                    "number",
-                    "string",
-                    "null"
-                  ]
-                },
-                "expected_entry_order": {
-                  "type": [
-                    "number",
-                    "string",
-                    "null"
-                  ]
-                },
-                "matrix_share_reference": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "assumption_note": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
-              }
-            },
-            "unrisked_peak_sales": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "formula": {
-              "type": "string"
-            },
-            "assumption_note": {
-              "type": [
-                "string",
-                "null"
-              ]
-            }
-          }
+            "unrisked_peak_sales": { "type": ["number", "null"] },
+            "sales_unit": { "type": "string" },
+            "formula": { "type": "string" }
+          },
+          "additionalProperties": false
         },
         "C_obtainable_peak_sales": {
           "type": "object",
-          "description": "C. Obtainable Peak Sales: realistic commercial opportunity after competition, pricing power, and expansion adjustments. Sales output should be expressed in million USD.",
-          "additionalProperties": true,
-          "required": [
-            "unrisked_peak_sales",
-            "competition_haircut",
-            "pricing_power_adjustment",
-            "expansion_capacity_adjustment",
-            "obtainable_peak_sales",
-            "formula"
-          ],
+          "required": ["obtainable_peak_sales", "sales_unit", "formula"],
           "properties": {
-            "unrisked_peak_sales": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "competition_haircut": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "pricing_power_adjustment": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "expansion_capacity_adjustment": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "sales_unit": {
-              "type": "string",
-              "const": "million USD",
-              "description": "Preferred display and storage unit for sales outputs."
-            },
-            "obtainable_peak_sales": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "formula": {
-              "type": "string"
-            },
-            "score_basis_note": {
-              "type": [
-                "string",
-                "null"
-              ]
-            }
-          }
+            "obtainable_peak_sales": { "type": ["number", "null"] },
+            "sales_unit": { "type": "string" },
+            "formula": { "type": "string" }
+          },
+          "additionalProperties": false
         }
-      }
+      },
+      "additionalProperties": false
     },
-    "evidence_source": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "source_id": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "source_title": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "source_url": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "source_type": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "published_at": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "accessed_at": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "evidence_summary": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "relevance_to_assessment": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "supports_score": {
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "reliability": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "enum": [
-            "High",
-            "Medium",
-            "Low",
-            "Unclear",
-            null
-          ]
-        }
-      }
-    },
-    "evidence_type": {
-      "type": "string",
-      "enum": [
-        "E0_not_found_or_not_assessable",
-        "E1_company_claim_or_scientific_rationale_only",
-        "E2_indirect_or_class_level_evidence",
-        "E3_asset_specific_preclinical_or_technical_evidence",
-        "E4_asset_specific_clinical_evidence"
-      ]
-    },
-    "competitive_analysis": {
+    "structuredTable": {
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "competitive_density",
-        "competitor_table",
-        "similarity_summary",
-        "similar_pipelines",
-        "differentiation_points",
-        "analysis_summary"
+        "company",
+        "asset_name",
+        "target",
+        "moa",
+        "modality_platform",
+        "main_indication",
+        "indication",
+        "development_stage",
+        "company_country",
+        "sources"
       ],
       "properties": {
-        "competitive_density": {
-          "$ref": "#/$defs/nullable_string"
+        "company": { "type": "string", "minLength": 1 },
+        "asset_name": { "type": "string", "minLength": 1 },
+        "target": { "type": "string", "minLength": 1 },
+        "moa": { "type": "string", "minLength": 1 },
+        "modality_platform": { "type": "string", "minLength": 1 },
+        "main_indication": { "type": "string" },
+        "indication": { "type": "string", "minLength": 1 },
+        "development_stage": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Compact v2 input uses a canonical value. Migrated historical records may retain their prior display text so migration does not silently alter a dashboard cell.",
+          "examples": [
+            "Hit Discovery",
+            "Lead Optimization",
+            "Preclinical Candidate",
+            "IND-enabling",
+            "Preclinical unspecified",
+            "IND filed/cleared",
+            "Phase 1",
+            "Phase 1/2",
+            "Phase 2",
+            "Phase 2/3",
+            "Phase 3",
+            "Registration",
+            "Approved / marketed",
+            "Discontinued / inactive",
+            "Unknown"
+          ]
         },
-        "competitor_table": {
+        "company_country": { "type": "string", "minLength": 1 },
+        "sources": {
           "type": "array",
+          "maxItems": 1,
           "items": {
-            "$ref": "#/$defs/competitor_row"
+            "type": "object",
+            "required": ["source_title", "source_url"],
+            "properties": {
+              "source_title": { "type": "string" },
+              "source_url": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "hardFilter": {
+      "type": "object",
+      "required": ["status", "reason", "flags", "hard_blocker", "decision_uncertainty"],
+      "properties": {
+        "status": { "type": "string" },
+        "reason": { "type": "string" },
+        "flags": { "type": "array", "items": { "type": "string" } },
+        "hard_blocker": { "type": "boolean" },
+        "decision_uncertainty": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "scoring": {
+      "type": "object",
+      "required": ["criteria", "total_score", "max_score"],
+      "properties": {
+        "criteria": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "target_relevance": { "$ref": "#/$defs/scoreCriterion" },
+            "competitive_landscape": { "$ref": "#/$defs/scoreCriterion" },
+            "moa_validity": { "$ref": "#/$defs/scoreCriterion" },
+            "platform_attractiveness": { "$ref": "#/$defs/scoreCriterion" },
+            "expansion_potential": { "$ref": "#/$defs/scoreCriterion" },
+            "data_maturity": { "$ref": "#/$defs/scoreCriterion" },
+            "marketability": { "$ref": "#/$defs/scoreCriterion" }
           }
         },
-        "similarity_summary": {
-          "type": "object",
-          "additionalProperties": true
+        "total_score": { "type": ["integer", "null"] },
+        "max_score": { "type": ["integer", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "triage": {
+      "type": "object",
+      "required": [
+        "status",
+        "identity_verified",
+        "active_asset",
+        "verified_public_source_count",
+        "why",
+        "missing_evidence_needed_for_full_scout"
+      ],
+      "properties": {
+        "status": { "enum": ["SELECT", "REJECT", "UNVERIFIED"] },
+        "identity_verified": { "type": "boolean" },
+        "active_asset": { "type": ["boolean", "null"] },
+        "verified_public_source_count": { "type": "integer", "minimum": 0 },
+        "why": { "type": "string" },
+        "missing_evidence_needed_for_full_scout": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "companyProfile": {
+      "type": "object",
+      "required": ["headquarters", "company_stage", "platform_summary"],
+      "properties": {
+        "headquarters": { "type": "string" },
+        "company_stage": { "type": "string" },
+        "platform_summary": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "competitiveAnalysis": {
+      "type": "object",
+      "required": ["competitive_density", "similarity_summary", "competitor_table", "similar_pipelines"],
+      "properties": {
+        "competitive_density": { "type": "string" },
+        "competitor_table": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/competitorRow" }
         },
         "similar_pipelines": {
           "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": true
+          "items": { "$ref": "#/$defs/similarPipelineRow" }
+        },
+        "similarity_summary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "similar_pipeline_count",
+            "high_similarity_count",
+            "medium_similarity_count",
+            "low_similarity_count"
+          ],
+          "properties": {
+            "similar_pipeline_count": { "type": "integer", "minimum": 0 },
+            "high_similarity_count": { "type": "integer", "minimum": 0 },
+            "medium_similarity_count": { "type": "integer", "minimum": 0 },
+            "low_similarity_count": { "type": "integer", "minimum": 0 }
           }
-        },
-        "differentiation_points": {
-          "$ref": "#/$defs/string_array"
-        },
-        "analysis_summary": {
-          "$ref": "#/$defs/nullable_string"
         }
-      }
+      },
+      "additionalProperties": false
     },
-    "competitor_row": {
+    "competitorRow": {
       "type": "object",
-      "additionalProperties": false,
       "required": [
-        "competitor_name",
+        "competitor_asset",
         "company",
         "modality",
         "target_or_moa",
-        "development_stage",
-        "relevance_to_asset",
-        "source"
+        "stage",
+        "similarity_level",
+        "why_it_matters",
+        "source_url"
       ],
       "properties": {
-        "competitor_name": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "company": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "modality": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "target_or_moa": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "development_stage": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "relevance_to_asset": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "source": {
-          "$ref": "#/$defs/nullable_string"
-        }
-      }
+        "competitor_asset": { "type": "string" },
+        "company": { "type": "string" },
+        "modality": { "type": "string" },
+        "target_or_moa": { "type": "string" },
+        "stage": { "type": "string" },
+        "similarity_level": { "type": "string" },
+        "why_it_matters": { "type": "string" },
+        "source_url": { "type": "string" }
+      },
+      "additionalProperties": false
     },
-    "validation_union": {
-      "anyOf": [
-        { "$ref": "#/$defs/validation" },
-        { "$ref": "#/$defs/triage_validation" }
-      ]
-    },
-    "triage_validation": {
+    "similarPipelineRow": {
       "type": "object",
-      "additionalProperties": true,
-      "required": ["cross_checked_facts", "uncertain_points", "source_registry"],
+      "required": ["company", "asset_name", "similarity_score", "matched_dimensions", "shared_data_points"],
       "properties": {
-        "cross_checked_facts": {
-          "type": "array",
-          "items": {
-            "anyOf": [
-              { "type": "string" },
-              { "type": "object", "additionalProperties": true }
-            ]
-          }
-        },
-        "uncertain_points": { "$ref": "#/$defs/string_array" },
-        "source_registry": {
-          "type": "array",
-          "items": {
-            "anyOf": [
-              { "type": "string", "format": "uri" },
-              { "type": "object", "additionalProperties": true }
-            ]
-          }
-        }
-      }
-    },
-    "validation": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "cross_checked_facts",
-        "uncertain_points",
-        "source_registry"
-      ],
-      "properties": {
-        "identity_verification_scope": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "cross_checked_facts": {
-          "type": "array",
-          "items": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "object",
-                "additionalProperties": true
-              }
-            ]
-          }
-        },
-        "uncertain_points": {
-          "$ref": "#/$defs/string_array"
-        },
-        "source_registry": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        }
-      }
-    },
-    "final_insight": {
-      "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "one_line_summary"
-      ],
-      "properties": {
-        "one_line_summary": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "recommendation": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "most_important_diligence_question": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "key_strengths": {
-          "$ref": "#/$defs/string_array"
-        },
-        "key_risks": {
-          "$ref": "#/$defs/string_array"
-        }
-      }
-    },
-    "obsidian": {
-      "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "note_title",
-        "aliases",
-        "tags"
-      ],
-      "properties": {
-        "note_title": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "note_type": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "aliases": {
-          "$ref": "#/$defs/string_array"
-        },
-        "tags": {
-          "$ref": "#/$defs/string_array"
-        },
-        "wikilink_entities": {
-          "$ref": "#/$defs/string_array"
-        }
-      }
-    },
-    "source_report": {
-      "type": "object",
-      "description": "Human-readable GPT report used as the primary raw source for downstream schema parsing.",
-      "required": [
-        "raw_markdown",
-        "source_format",
-        "parser_status",
-        "parser_note"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "raw_markdown": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "source_format": {
-          "type": "string",
-          "enum": [
-            "markdown",
-            "plain_text",
-            "unknown",
-            "gpt_markdown_report",
-            "compact_gpt_markdown_report",
-            "balanced_gpt_markdown_report",
-            "fast_triage_markdown"
-          ]
-        },
-        "parser_status": {
-          "type": "string",
-          "enum": [
-            "not_parsed",
-            "mock_parsed",
-            "parsed",
-            "needs_review",
-            "gpt_structured_output",
-            "fast_triage",
-            "asset_identity_not_verified"
-          ]
-        },
-        "parser_note": {
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      }
-    },
-    "company_profile": {
-      "type": "object",
-      "description": "Basic company information and verification sources used before asset-level scoring.",
-      "required": [
-        "company_name",
-        "legal_name",
-        "aliases",
-        "country",
-        "headquarters",
-        "website",
-        "founded_year",
-        "company_stage",
-        "ownership_status",
-        "focus_areas",
-        "platform_summary",
-        "lead_pipeline_summary",
-        "financing_or_partnership_signals",
-        "official_source_urls",
-        "notes"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "company_name": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "legal_name": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "aliases": {
-          "$ref": "#/$defs/string_array"
-        },
-        "country": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "headquarters": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "website": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "founded_year": {
-          "type": [
-            "integer",
-            "string",
-            "null"
-          ]
-        },
-        "company_stage": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "ownership_status": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "focus_areas": {
-          "$ref": "#/$defs/string_array"
-        },
-        "platform_summary": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "lead_pipeline_summary": {
-          "$ref": "#/$defs/nullable_string"
-        },
-        "financing_or_partnership_signals": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        },
-        "official_source_urls": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/evidence_source"
-          }
-        },
-        "notes": {
-          "$ref": "#/$defs/nullable_string"
-        }
-      }
+        "company": { "type": "string" },
+        "asset_name": { "type": "string" },
+        "similarity_score": { "type": ["number", "string", "null"] },
+        "matched_dimensions": { "type": "array", "items": { "type": "string" } },
+        "shared_data_points": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
     }
   }
 }

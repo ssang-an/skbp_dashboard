@@ -644,13 +644,13 @@
         </section>
 
         <section class="criteria-rule criteria-other-card" data-criteria-tab="full">
-          <h3>근거 기록 규칙</h3>
+          <h3>근거 보존 원칙</h3>
           <ul class="criteria-subbullet-list">
             <li><strong>Rubric</strong><span>기준 설명은 <code>rubric</code> 섹션에만 남깁니다.</span></li>
-            <li><strong>main_line_summary</strong><span>각 scoring 항목에서 왜 그 점수가 나왔는지만 한 줄로 기록합니다.</span></li>
-            <li><strong>evidence_sources</strong><span>점수 판단에 사용한 출처 URL과 핵심 근거를 분리합니다.</span></li>
-            <li><strong>investigation_note</strong><span>조사 과정, 확인한 항목, 판단 경계를 짧게 남깁니다.</span></li>
-            <li><strong>uncertain_points</strong><span>자료 부족, 모호한 claim, 추가 확인 필요사항을 따로 기록합니다.</span></li>
+            <li><strong>GPT 원문</strong><span>점수 근거, 출처, 조사 과정과 why-not-higher는 Markdown 리포트에 보존합니다.</span></li>
+            <li><strong>Compact JSON</strong><span>테이블·시각화·필터에 쓰는 값과 criterion 점수만 저장합니다.</span></li>
+            <li><strong>대표 Source</strong><span>테이블 링크에 필요한 대표 source만 최대 1개 저장합니다.</span></li>
+            <li><strong>Uncertainty</strong><span>의사결정에 직접 필요한 불확실성만 대시보드 필드에 유지합니다.</span></li>
           </ul>
         </section>
 
@@ -658,8 +658,8 @@
           <h3>경쟁사 유사도 기록</h3>
           <p>
             경쟁 pipeline은 <code>similar_pipeline_count</code>, high/medium/low similarity 개수,
-            각 유사 pipeline의 matched dimensions, shared data points, differentiating data points,
-            evidence source를 함께 기록합니다.
+            high/medium/low count는 대시보드 JSON에 저장하고, 각 pipeline의 matched dimensions,
+            shared/differentiating data와 evidence source는 GPT 원문 Markdown에 기록합니다.
           </p>
         </section>
 
@@ -727,6 +727,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260805-ingestion-guard-3"></script>
+    <script type="module" src="./src/detail.js?v=20260806-ingestion-compat-2"></script>
   </body>
 </html>
