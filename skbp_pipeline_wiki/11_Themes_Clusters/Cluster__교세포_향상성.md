@@ -33,7 +33,6 @@ A reusable biology axis under a Theme that supports repeated target discovery an
 
 - [[02_Assets/Asset__ILM01_(GAIA-Aβ)|ILM01_(GAIA-Aβ)]]
 - [[02_Assets/Asset__Lead_compound|Lead_compound]]
-- [[02_Assets/Asset__VTA-27|VTA-27]]
 
 ## Notes
 

@@ -1,6 +1,6 @@
 # Neuroimmune
 
-> Generated from `json/pipeline-records.json` at `2026-08-07T00:06:12`.
+> Generated from `json/pipeline-records.json` at `2026-08-07T23:02:38`.
 
 ## Linked Assets
 
@@ -23,4 +23,3 @@
 - [[Lynk_Pharmaceuticals_LNK01006_20260621]]
 - [[META_Pharmaceuticals_META01_MP5342_20260622]]
 - [[Shaperon_HY209_NuCerin_20260622]]
-- [[VASTHERA_VTA-27]]

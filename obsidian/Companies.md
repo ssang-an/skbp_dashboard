@@ -1,6 +1,6 @@
 # Companies
 
-> Generated at `2026-08-07T00:06:12`.
+> Generated at `2026-08-07T23:02:38`.
 
 - [[ADEL]] (1)
 - [[ADEL, Inc|ADEL, Inc.]] (1)
@@ -16,6 +16,15 @@
 - [[Beijing Youngen Biotechnology Co., Ltd|Beijing Youngen Biotechnology Co., Ltd.]] (1)
 - [[Biohaven]] (1)
 - [[Bright Minds Biosciences]] (1)
+- [[CELLTIUM]] (1)
+- [[Cellapeutics Bio Co., Ltd|Cellapeutics Bio Co., Ltd.]] (3)
+- [[CellapeuticsBio]] (2)
+- [[Cellatoz Therapeutics, Inc|Cellatoz Therapeutics, Inc.]] (1)
+- [[Celliaz Co., Ltd|Celliaz Co., Ltd.]] (1)
+- [[CellionBioMed Inc]] (1)
+- [[Cellivery Therapeutics, Inc|Cellivery Therapeutics, Inc.]] (3)
+- [[Cellprotek Pharmaceutical]] (2)
+- [[Celltrion, Inc|Celltrion, Inc.]] (1)
 - [[CorestemChemon Inc|CorestemChemon Inc.]] (1)
 - [[Encoded Therapeutics]] (1)
 - [[GenixCure]] (1)
@@ -45,6 +54,6 @@
 - [[Shanghai UniXell Biotechnology Co., Ltd|Shanghai UniXell Biotechnology Co., Ltd.]] (1)
 - [[Shaperon Inc|Shaperon Inc.]] (1)
 - [[Stoke Therapeutics - Biogen|Stoke Therapeutics / Biogen]] (1)
-- [[VASTHERA]] (1)
+- [[Threebrooks Therapeutics]] (1)
 - [[VivaVision Biotech]] (1)
 - [[Xenon Pharmaceuticals]] (1)

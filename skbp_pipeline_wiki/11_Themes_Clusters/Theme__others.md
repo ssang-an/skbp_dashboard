@@ -35,6 +35,9 @@ A cross-disease strategic biology theme used for SKBP Theme-based R&D strategy.
 - [[02_Assets/Asset__AST-031|AST-031]]
 - [[02_Assets/Asset__AUL003|AUL003]]
 - [[02_Assets/Asset__CE223BR17_Parkinson's_Disease_Research_Program|CE223BR17_Parkinson's_Disease_Research_Program]]
+- [[02_Assets/Asset__CLZ003|CLZ003]]
+- [[02_Assets/Asset__CV-06|CV-06]]
+- [[02_Assets/Asset__CV-14|CV-14]]
 - [[02_Assets/Asset__HBW-015|HBW-015]]
 
 ## Notes

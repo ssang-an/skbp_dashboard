@@ -1,6 +1,6 @@
 # Pipeline Index
 
-> Generated from `json/pipeline-records.json` at `2026-08-07T00:06:12`.
+> Generated from `json/pipeline-records.json` at `2026-08-07T23:02:38`.
 
 ## Assets
 
@@ -39,7 +39,6 @@
 | [[Hefei_Huafang_HB018_fast_triage_20260623]] | [[-]] | - | [[Theme - No Theme|No Theme]] | [[Cluster - No mapped SKBP cluster|No mapped SKBP cluster]] | IND-enabling | None / 21 |
 | [[Humanwell_CXJM-66_fast_triage_20260623]] | [[-]] | - | [[Theme - E-I Balance|E/I Balance]] | [[Cluster - Ion Channel|Ion Channel]] | Phase 1 | None / 21 |
 | [[GenixCure_GXC-303_20260713]] | [[-]] | - | [[Theme - No Theme|No Theme]] | [[Cluster - N-A|N/A]] | Lead Optimization | 11 / 21 |
-| [[VASTHERA_VTA-27]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - 교세포 향상성|교세포 향상성]] | IND-enabling | 13 / 21 |
 | [[Astrion Co., Ltd._AON-PP23]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 2 / 9 |
 | [[Astrogen_AST-029]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
 | [[Astrogen_AST-030]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
@@ -67,6 +66,22 @@
 | [[Illimis Therapeutics, Inc._ILM21]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Unknown | 4 / 9 |
 | [[Illimis Therapeutics, Inc._ILM01]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 7 / 9 |
 | [[Lynk Pharmaceuticals Co., Ltd._LNK01006 (BLKR201)]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Phase 1 | 6 / 9 |
+| [[Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)]] | [[-]] | - | [[Theme - E-I Balance|E/I Balance]] | [[Cluster - Ion Channel|Ion Channel]] | IND-enabling | 17 / 21 |
+| [[Cellapeutics Bio Co., Ltd._CPB-101]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 4 / 9 |
+| [[Cellapeutics Bio Co., Ltd._CPB-105]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 2 / 9 |
+| [[Cellapeutics Bio Co., Ltd._CPB-106]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 2 / 9 |
+| [[CellapeuticsBio_CPB103]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[CellapeuticsBio_CPB102]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Cellatoz Therapeutics, Inc._CLZ-2002]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Phase 1 | 1 / 9 |
+| [[Celliaz Co., Ltd._CLZ003]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Unknown | 1 / 9 |
+| [[CellionBioMed Inc_CBM-951]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
+| [[Cellivery Therapeutics, Inc._CV-06]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 8 / 9 |
+| [[Cellivery Therapeutics, Inc._CV-14]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 2 / 9 |
+| [[Cellivery Therapeutics, Inc._CV-17]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
+| [[Cellprotek Pharmaceutical_YC-5 Injection]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 4 / 9 |
+| [[Cellprotek Pharmaceutical_YC-6]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Phase 2 | 6 / 9 |
+| [[CELLTIUM_Neurological Disorder Research Program]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Celltrion, Inc._LC-PC01]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
 
 ## Navigation
 

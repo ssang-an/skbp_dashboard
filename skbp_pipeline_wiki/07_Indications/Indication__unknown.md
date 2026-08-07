@@ -24,9 +24,12 @@ confidence: "medium"
 
 - [[02_Assets/Asset__Alzheimer's_Disease|Alzheimer's_Disease]]
 - [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology|Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]
+- [[02_Assets/Asset__CPB102|CPB102]]
+- [[02_Assets/Asset__CPB103|CPB103]]
 - [[02_Assets/Asset__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]
 - [[02_Assets/Asset__ILM21|ILM21]]
 - [[02_Assets/Asset__Neurodegenerative_Diseases_Lilly|Neurodegenerative_Diseases_Lilly]]
+- [[02_Assets/Asset__Neurological_Disorder_Research_Program|Neurological_Disorder_Research_Program]]
 
 ## Related Targets / MoA
 

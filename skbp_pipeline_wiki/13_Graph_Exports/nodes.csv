@@ -22,8 +22,8 @@ source::https_illimistx.com_en_sub_platform%26pipeline_conference.php,Illimis Th
 source::https_illimistx.com_data_aaic%202025_abstract_illimistx.pdf,AAIC 2025 GAIA-Aβ abstract,source,Source__AAIC_2025_GAIA-Aβ_abstract,pipeline/source;source/conference_abstract,,,E3
 source::https_www.nature.com_articles_s41591-022-01926-9,Anti-inflammatory clearance of amyloid-β by a chimeric Gas6 fusion protein,source,Source__Anti-inflammatory_clearance_of_amyloid-β_by_a_chimeric_Gas6_fusion_protein,pipeline/source;source/peer_reviewed_publication,,,E3
 source::https_www.biospectator.com_news_view_28887,BioSpectator interview on ILM01 preclinical program and planned 2027 clinical entry,source,Source__BioSpectator_interview_on_ILM01_preclinical_program_and_planned_2027_cl_e077b90f,pipeline/source;source/biotech_news,,,E3
-source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af,https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval,source,Source__https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af,pipeline/source;source/regulatory,,,E3
-source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc,https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease,source,Source__https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc,pipeline/source;source/regulatory,,,E3
+source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af,FDA Leqembi approval,source,Source__FDA_Leqembi_approval,pipeline/source;source/regulatory,,,E3
+source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc,FDA approves Kisunla (donanemab) for adults with Alzheimer's disease,source,Source__FDA_approves_Kisunla_(donanemab)_for_adults_with_Alzheimer's_disease,pipeline/source;source/regulatory,,,E3
 source::https_trials.lilly.com_en-us_trial_548297,Lilly TRAILRUNNER-ALZ 3 remternetug trial,source,Source__Lilly_TRAILRUNNER-ALZ_3_remternetug_trial,pipeline/source;source/clinical_registry_sponsor,,,E3
 source::https_clinicaltrials.gov_study_nct07169578,ClinicalTrials.gov trontinemab Phase 3 study NCT07169578,source,Source__ClinicalTrials.gov_trontinemab_Phase_3_study_NCT07169578,pipeline/source;source/clinical_registry,,,E3
 source::https_acumenpharm.com_altitude-ad,Acumen ALTITUDE-AD sabirnetug study,source,Source__Acumen_ALTITUDE-AD_sabirnetug_study,pipeline/source;source/official_company_trial_page,,,E3
@@ -507,35 +507,10 @@ source::https_ir.ionis.com_news-releases_news-release-details_ionis-reports-fir_
 source::https_www.uniqure.com_programs-pipeline_als-sod1,uniQure AMT-162 ALS program,source,Source__uniQure_AMT-162_ALS_program,pipeline/source;source/official_competitor_pipeline,,,E4
 source::https_doi.org_10.1016_j.neuroscience.2025.03.026,Evaluation of AAV transduction efficiency via multiple delivery routes,source,Source__Evaluation_of_AAV_transduction_efficiency_via_multiple_delivery_routes,pipeline/source;source/peer_reviewed_publication,,,E4
 source::https_pharm.edaily.co.kr_news_read_newsid=01626886638852512,GenixCure recombinant AAV platform interview,source,Source__GenixCure_recombinant_AAV_platform_interview,pipeline/source;source/reputable_biotech_news,,,E4
-asset::vta-27,VTA-27,asset,Asset__VTA-27,pipeline/asset;theme/neuroimmune,13,Watch,E3
-company::vasthera,VASTHERA,company,Company__VASTHERA,pipeline/company,,,
-target::peroxiredoxin_redox_homeostasis_astrocytic_stat3_signaling,Peroxiredoxin redox homeostasis / astrocytic STAT3 signaling,target,Target__Peroxiredoxin_redox_homeostasis_astrocytic_STAT3_signaling,pipeline/target,,,
-moa::prx-mimetic_redox_modulation_that_suppresses_astrocytic_stat3_phosphory_09bab40c,PRX-mimetic redox modulation that suppresses astrocytic STAT3 phosphorylation/reactivation and is intended to protect neurons.,moa,MoA__PRX-mimetic_redox_modulation_that_suppresses_astrocytic_STAT3_phosphory_09bab40c,pipeline/moa,,,
-modality::small_molecule,Small molecule,modality,Modality__Small_molecule,pipeline/modality,,,
-indication::mild-to-moderate_alzheimer's_disease;_parkinson's_disease_is_only_a_pot_8b9f0f09,Mild-to-moderate Alzheimer's disease; Parkinson's disease is only a potential expansion concept.,indication,Indication__Mild-to-moderate_Alzheimer's_disease;_Parkinson's_disease_is_only_a_pot_8b9f0f09,pipeline/indication,,,
-scorecard::vta-27_20260806,Scorecard - VTA-27,scorecard,Scorecard__VTA-27__20260806,pipeline/scorecard,13,Watch,E3
-competitor::biogen_ionis_diranersen_(biib080),Diranersen (BIIB080),competitor,Competitor__Biogen_Ionis__Diranersen_(BIIB080),pipeline/competitor,,,
-competitor::sanofi_former_vigil_neuroscience_sar448851_vg-3927,SAR448851 / VG-3927,competitor,Competitor__Sanofi_former_Vigil_Neuroscience__SAR448851_VG-3927,pipeline/competitor,,,
-competitor::ac_immune_aci-19764,ACI-19764,competitor,Competitor__AC_Immune__ACI-19764,pipeline/competitor,,,
-competitor::alector_al002,AL002,competitor,Competitor__Alector__AL002,pipeline/competitor,,,
-source::https_www.vasthera.com_about_about.php,https://www.vasthera.com/about/about.php,source,Source__https_www.vasthera.com_about_about.php,pipeline/source;source/other,,,E3
-source::https_www.vasthera.com_technology_platform.php,https://www.vasthera.com/technology/platform.php,source,Source__https_www.vasthera.com_technology_platform.php,pipeline/source;source/official_company,,,E3
-source::https_www.vasthera.com_technology_pipeline.php,https://www.vasthera.com/technology/pipeline.php,source,Source__https_www.vasthera.com_technology_pipeline.php,pipeline/source;source/official_company,,,E3
-source::https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view,https://www.vasthera.com/investors/news.php?code=news&idx=124&ptype=view,source,Source__https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view,pipeline/source;source/official_company_news,,,E3
-source::https_link.springer.com_article_10.15252_emmm.201809665,https://link.springer.com/article/10.15252/emmm.201809665,source,Source__https_link.springer.com_article_10.15252_emmm.201809665,pipeline/source;source/peer_reviewed_publication,,,E3
-source::https_pubmed.ncbi.nlm.nih.gov_41875826,https://pubmed.ncbi.nlm.nih.gov/41875826/,source,Source__https_pubmed.ncbi.nlm.nih.gov_41875826,pipeline/source;source/peer_reviewed_review,,,E3
-source::https_clinicaltrials.gov_study_nct05399888,https://clinicaltrials.gov/study/NCT05399888,source,Source__https_clinicaltrials.gov_study_NCT05399888,pipeline/source;source/clinical_registry,,,E3
-source::https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9,https://www.sanofi.com/assets/dotcom/pressreleases/2025/2025-05-21-23-15-31-3086232-en.pdf,source,Source__https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9,pipeline/source;source/official_company_news,,,E3
-source::https_ichgcp.net_ko_clinical-trials-registry_nct07688213,https://ichgcp.net/ko/clinical-trials-registry/NCT07688213,source,Source__https_ichgcp.net_ko_clinical-trials-registry_NCT07688213,pipeline/source;source/clinical_registry_mirror,,,E3
-source::https_clinicaltrials.gov_study_nct07463196,https://clinicaltrials.gov/study/NCT07463196,source,Source__https_clinicaltrials.gov_study_NCT07463196,pipeline/source;source/clinical_registry,,,E3
-source::https_clinicaltrials.gov_study_nct04592874,https://clinicaltrials.gov/study/NCT04592874,source,Source__https_clinicaltrials.gov_study_NCT04592874,pipeline/source;source/clinical_registry,,,E3
-source::https_www.nature.com_articles_s41591-026-04273-1,https://www.nature.com/articles/s41591-026-04273-1,source,Source__https_www.nature.com_articles_s41591-026-04273-1,pipeline/source;source/peer_reviewed_publication,,,E3
-source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756,https://www.alz.org/getmedia/ef8f48f9-ad36-48ea-87f9-b74034635c1e/alzheimersfacts-%20and-figures.pdf,source,Source__https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756,pipeline/source;source/epidemiology_report,,,E3
-source::https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a,https://www.precisionmedicineonline.com/business-news/eli-lilly-posts-strong-kisunla-growth-124m-q1,source,Source__https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a,pipeline/source;source/market_news,,,E3
-source::https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c,https://synapse.patsnap.com/drug/1e188d0bdf794df49d00edb2a1d03d3c,source,Source__https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c,pipeline/source;source/commercial_database_profile,,,E3
 asset::aon-pp23,AON-PP23,asset,Asset__AON-PP23,pipeline/asset;theme/unknown,2,Do not run Full Scout,E0
 "company::astrion_co.,_ltd","Astrion Co., Ltd.",company,"Company__Astrion_Co.,_Ltd",pipeline/company,,,
 target::unknown,Unknown,target,Target__Unknown,pipeline/target,,,
+modality::small_molecule,Small molecule,modality,Modality__Small_molecule,pipeline/modality,,,
 scorecard::aon-pp23_20260806,Scorecard - AON-PP23,scorecard,Scorecard__AON-PP23__20260806,pipeline/scorecard,2,Do not run Full Scout,E0
 source::https_www.lifescienceweek.com_eng_about_search_ex_view.asp_midx=1729,Korea Life Science Week — Astrion,source,Source__Korea_Life_Science_Week_—_Astrion,pipeline/source;source/other,,,E0
 source::https_www.oimarket.kr_partners_startup_501,OI Market — Astrion,source,Source__OI_Market_—_Astrion,pipeline/source;source/company_ecosystem_profile,,,E0
@@ -697,3 +672,103 @@ moa::selective_cns-penetrant_allosteric_tyk2_inhibition_of_il-12_il-23_and_r_bb0
 indication::multiple_sclerosis;_broader_cns_neuroinflammatory_diseases,Multiple sclerosis; broader CNS neuroinflammatory diseases,indication,Indication__Multiple_sclerosis;_broader_CNS_neuroinflammatory_diseases,pipeline/indication,,,
 scorecard::lnk01006_(blkr201)_20260806,Scorecard - LNK01006 (BLKR201),scorecard,Scorecard__LNK01006_(BLKR201)__20260806,pipeline/scorecard,6,Run Full Scout,E0
 source::https_www.prnewswire.com_news-releases_lynk-pharmaceuticals-partner-for_db7c7ef2,Lynk announcement of first participant dosed in BLKR201 Phase 1,source,Source__Lynk_announcement_of_first_participant_dosed_in_BLKR201_Phase_1,pipeline/source;source/official_company_press_release,,,E0
+asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115),3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115),asset,Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115),pipeline/asset;theme/e_i_balance,17,Shortlist,E3
+company::threebrooks_therapeutics,Threebrooks Therapeutics,company,Company__Threebrooks_Therapeutics,pipeline/company,,,
+target::trpml1_(mcoln1),TRPML1 (MCOLN1),target,Target__TRPML1_(MCOLN1),pipeline/target,,,
+moa::small-molecule_trpml1_agonism_to_trigger_lysosomal_ca2+_release_and_enh_41716d8e,"Small-molecule TRPML1 agonism to trigger lysosomal Ca2+ release and enhance autophagy-lysosome function, intracellular aggregate/mitochondrial clearance, and downstream neuroinflammation reduction",moa,MoA__Small-molecule_TRPML1_agonism_to_trigger_lysosomal_Ca2+_release_and_enh_41716d8e,pipeline/moa,,,
+indication::early_alzheimer's_disease;_parkinson's_disease_expansion_supported_by_c_56c9e561,Early Alzheimer's disease; Parkinson's disease expansion supported by company preclinical data,indication,Indication__Early_Alzheimer's_disease;_Parkinson's_disease_expansion_supported_by_c_56c9e561,pipeline/indication,,,
+scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807,Scorecard - 3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115),scorecard,Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807,pipeline/scorecard,17,Shortlist,E3
+competitor::lysoway_therapeutics_lw-1017,LW-1017,competitor,Competitor__Lysoway_Therapeutics__LW-1017,pipeline/competitor,,,
+competitor::casma_therapeutics_csm-101,CSM-101,competitor,Competitor__Casma_Therapeutics__CSM-101,pipeline/competitor,,,
+competitor::libra_therapeutics_lbr-2950,LBR-2950,competitor,Competitor__Libra_Therapeutics__LBR-2950,pipeline/competitor,,,
+competitor::nine_square_therapeutics_nine_square_trpml1_program,Nine Square TRPML1 program,competitor,Competitor__Nine_Square_Therapeutics__Nine_Square_TRPML1_program,pipeline/competitor,,,
+competitor::samsara_therapeutics_sam001,SAM001,competitor,Competitor__Samsara_Therapeutics__SAM001,pipeline/competitor,,,
+source::threebrooks_therapeutics_investor_relations_2026,Threebrooks Therapeutics Investor Relations 2026,source,Source__Threebrooks_Therapeutics_Investor_Relations_2026,pipeline/source;source/other,,,E3
+source::https_www.threebrooks.net_myboard_st_news1,Threebrooks Therapeutics media page,source,Source__Threebrooks_Therapeutics_media_page,pipeline/source;source/official_company,,,E3
+source::https_www.lifescienceweek.com_m_eng_about_search_ex_view.asp_midx=2102,Korea Life Science Week 2026 exhibitor profile — Threebrooks Therapeutics,source,Source__Korea_Life_Science_Week_2026_exhibitor_profile_—_Threebrooks_Therapeutics,pipeline/source;source/industry_event_profile,,,E3
+source::https_magazine.hankyung.com_business_article_202607217243b,Threebrooks Therapeutics joins JLABS global incubator network,source,Source__Threebrooks_Therapeutics_joins_JLABS_global_incubator_network,pipeline/source;source/reputable_biotech_news,,,E3
+source::https_pmc.ncbi.nlm.nih.gov_articles_pmc10112969,TRPML1 reactivation rescues the endosomal-autophagic-lysosomal system in ApoE4 human cortical neurons,source,Source__TRPML1_reactivation_rescues_the_endosomal-autophagic-lysosomal_system_i_b3c8ec41,pipeline/source;source/peer_reviewed_publication,,,E3
+source::https_pmc.ncbi.nlm.nih.gov_articles_pmc9296810,Activated Endolysosomal Cation Channel TRPML1 Facilitates Maturation of alpha-Synuclein-Containing Autophagosomes,source,Source__Activated_Endolysosomal_Cation_Channel_TRPML1_Facilitates_Maturation_of_cb00e9af,pipeline/source;source/peer_reviewed_publication,,,E3
+source::https_www.sciencedirect.com_science_article_pii_s022352342600396x,"Targeting lysosomal dysfunction with small-molecule TRPML1 ligands: Therapeutic opportunities in lysosomal storage disorders, neurodegeneration and beyond",source,Source__Targeting_lysosomal_dysfunction_with_small-molecule_TRPML1_ligands_Ther_d1a30e48,pipeline/source;source/peer_reviewed_review,,,E3
+source::https_www.lysoway.com_companynews_lysoway-therapeutics-announces-phase-_69d531f1,Lysoway announces Phase I dosing of LW-1017,source,Source__Lysoway_announces_Phase_I_dosing_of_LW-1017,pipeline/source;source/official_competitor,,,E3
+source::https_www.casmatx.com_2026_03_10_casma-therapeutics-receives-mjff-suppo_dafb0b52,Casma receives MJFF support for CSM-101,source,Source__Casma_receives_MJFF_support_for_CSM-101,pipeline/source;source/official_competitor,,,E3
+source::https_www.linkedin.com_posts_libra-therapeutics_neurodegenerativediseas_d4943476,Libra Therapeutics update on LBR-2950,source,Source__Libra_Therapeutics_update_on_LBR-2950,pipeline/source;source/official_competitor_social,,,E3
+source::https_ninesquaretx.com_programs,Nine Square Therapeutics — Programs and Pipeline,source,Source__Nine_Square_Therapeutics_—_Programs_and_Pipeline,pipeline/source;source/official_competitor,,,E3
+source::https_samsaratherapeutics.com,Samsara Therapeutics pipeline,source,Source__Samsara_Therapeutics_pipeline,pipeline/source;source/official_competitor,,,E3
+source::https_www.leqembi.com_en_patient-support-program,LEQEMBI patient support — current list prices,source,Source__LEQEMBI_patient_support_—_current_list_prices,pipeline/source;source/official_product,,,E3
+source::https_content.govdelivery.com_accounts_usfda_bulletins_4205a72,FDA notable approval — Leqembi at-home starting dose,source,Source__FDA_notable_approval_—_Leqembi_at-home_starting_dose,pipeline/source;source/regulatory,,,E3
+source::https_pmc.ncbi.nlm.nih.gov_articles_pmc10682565,Estimating prevalence of early symptomatic Alzheimer's disease in the United States,source,Source__Estimating_prevalence_of_early_symptomatic_Alzheimer's_disease_in_the_U_65d8288f,pipeline/source;source/peer_reviewed_publication,,,E3
+source::https_www.fda.gov_drugs_drug-trials-snapshots_drug-trials-snapshots-leqembi,FDA Drug Trials Snapshot: LEQEMBI,source,Source__FDA_Drug_Trials_Snapshot_LEQEMBI,pipeline/source;source/regulatory,,,E3
+asset::cpb-101,CPB-101,asset,Asset__CPB-101,pipeline/asset;theme/unknown,4,Do not run Full Scout,E0
+"company::cellapeutics_bio_co.,_ltd","Cellapeutics Bio Co., Ltd.",company,"Company__Cellapeutics_Bio_Co.,_Ltd",pipeline/company,,,
+moa::cell_replacement_neuroregenerative_glial-cell_therapy,Cell replacement / neuroregenerative glial-cell therapy,moa,MoA__Cell_replacement_neuroregenerative_glial-cell_therapy,pipeline/moa,,,
+indication::parkinson_disease;_spinal_cord_injury;_peripheral_nerve_injury,Parkinson disease; spinal cord injury; peripheral nerve injury,indication,Indication__Parkinson_disease;_spinal_cord_injury;_peripheral_nerve_injury,pipeline/indication,,,
+scorecard::cpb-101_20260807,Scorecard - CPB-101,scorecard,Scorecard__CPB-101__20260807,pipeline/scorecard,4,Do not run Full Scout,E0
+source::https_synapse.patsnap.com_organization_5b3c14b36d7ee321bb9537272e8c260b,Cellapeutics Bio pipeline snapshot,source,Source__Cellapeutics_Bio_pipeline_snapshot,pipeline/source;source/other,,,E0
+source::https_pharm.edaily.co.kr_news_read_mediacodeno=257&newsid=01758086632530312,Pharm Edaily CEO interview on CPB101,source,Source__Pharm_Edaily_CEO_interview_on_CPB101,pipeline/source;source/reputable_biotech_news,,,E0
+asset::cpb-105,CPB-105,asset,Asset__CPB-105,pipeline/asset;theme/unknown,2,Do not run Full Scout,E0
+indication::alzheimer_disease,Alzheimer disease,indication,Indication__Alzheimer_disease,pipeline/indication,,,
+scorecard::cpb-105_20260807,Scorecard - CPB-105,scorecard,Scorecard__CPB-105__20260807,pipeline/scorecard,2,Do not run Full Scout,E0
+asset::cpb-106,CPB-106,asset,Asset__CPB-106,pipeline/asset;theme/unknown,2,Do not run Full Scout,E0
+indication::parkinson_disease,Parkinson disease,indication,Indication__Parkinson_disease,pipeline/indication,,,
+scorecard::cpb-106_20260807,Scorecard - CPB-106,scorecard,Scorecard__CPB-106__20260807,pipeline/scorecard,2,Do not run Full Scout,E0
+asset::cpb103,CPB103,asset,Asset__CPB103,pipeline/asset;theme/unknown,0,Verify asset identity,E0
+company::cellapeuticsbio,CellapeuticsBio,company,Company__CellapeuticsBio,pipeline/company,,,
+scorecard::cpb103_20260807,Scorecard - CPB103,scorecard,Scorecard__CPB103__20260807,pipeline/scorecard,0,Verify asset identity,E0
+asset::cpb102,CPB102,asset,Asset__CPB102,pipeline/asset;theme/unknown,0,Verify asset identity,E0
+scorecard::cpb102_20260807,Scorecard - CPB102,scorecard,Scorecard__CPB102__20260807,pipeline/scorecard,0,Verify asset identity,E0
+asset::clz-2002,CLZ-2002,asset,Asset__CLZ-2002,pipeline/asset;theme/unknown,1,Do not run Full Scout,E0
+"company::cellatoz_therapeutics,_inc","Cellatoz Therapeutics, Inc.",company,"Company__Cellatoz_Therapeutics,_Inc",pipeline/company,,,
+indication::charcot-marie-tooth_disease_type_1,Charcot-Marie-Tooth disease type 1,indication,Indication__Charcot-Marie-Tooth_disease_type_1,pipeline/indication,,,
+scorecard::clz-2002_20260807,Scorecard - CLZ-2002,scorecard,Scorecard__CLZ-2002__20260807,pipeline/scorecard,1,Do not run Full Scout,E0
+source::https_synapse.patsnap.com_drug_4532916bb5014b93b06a2f2320c8fa93,CLZ-2002 overview and NCT05947578,source,Source__CLZ-2002_overview_and_NCT05947578,pipeline/source;source/other,,,E0
+asset::clz003,CLZ003,asset,Asset__CLZ003,pipeline/asset;theme/others,1,Do not run Full Scout,E0
+"company::celliaz_co.,_ltd","Celliaz Co., Ltd.",company,"Company__Celliaz_Co.,_Ltd",pipeline/company,,,
+target::prox1,PROX1,target,Target__PROX1,pipeline/target,,,
+moa::neutralization_of_harmful_prox1_homeoprotein_to_restore_retinal_regeneration,Neutralization of harmful PROX1/homeoprotein to restore retinal regeneration,moa,MoA__Neutralization_of_harmful_PROX1_homeoprotein_to_restore_retinal_regeneration,pipeline/moa,,,
+indication::dry-type_age-related_macular_degeneration,Dry-type age-related macular degeneration,indication,Indication__Dry-type_age-related_macular_degeneration,pipeline/indication,,,
+scorecard::clz003_20260807,Scorecard - CLZ003,scorecard,Scorecard__CLZ003__20260807,pipeline/scorecard,1,Do not run Full Scout,E0
+source::https_celliaz.com_rd-pipelines,Celliaz R&D Pipeline,source,Source__Celliaz_R&D_Pipeline,pipeline/source;source/other,,,E0
+asset::cbm-951,CBM-951,asset,Asset__CBM-951,pipeline/asset;theme/unknown,2,Do not run Full Scout,E0
+company::cellionbiomed_inc,CellionBioMed Inc,company,Company__CellionBioMed_Inc,pipeline/company,,,
+scorecard::cbm-951_20260807,Scorecard - CBM-951,scorecard,Scorecard__CBM-951__20260807,pipeline/scorecard,2,Do not run Full Scout,E0
+source::https_synapse.patsnap.com_drug_cfc95c5d168e4f27a0521a310805b8fc,CBM-951 overview,source,Source__CBM-951_overview,pipeline/source;source/other,,,E0
+asset::cv-06,CV-06,asset,Asset__CV-06,pipeline/asset;theme/others,8,Run Full Scout,E0
+"company::cellivery_therapeutics,_inc","Cellivery Therapeutics, Inc.",company,"Company__Cellivery_Therapeutics,_Inc",pipeline/company,,,
+target::parkin_(prkn_park2),Parkin (PRKN/PARK2),target,Target__Parkin_(PRKN_PARK2),pipeline/target,,,
+moa::intracellular_delivery_replacement_of_cell-permeable_parkin_to_suppress_8570f881,Intracellular delivery/replacement of cell-permeable Parkin to suppress damaged mitochondria and pathological α-synuclein,moa,MoA__Intracellular_delivery_replacement_of_cell-permeable_Parkin_to_suppress_8570f881,pipeline/moa,,,
+scorecard::cv-06_20260807,Scorecard - CV-06,scorecard,Scorecard__CV-06__20260807,pipeline/scorecard,8,Run Full Scout,E0
+source::https_synapse.patsnap.com_drug_14a75c28387e43a581709313cb13f52e,CV-06 overview,source,Source__CV-06_overview,pipeline/source;source/other,,,E0
+source::https_delta.larvol.com_products_productid=d49fdf13-4bea-4829-9946-1125f8cb1e56,"LARVOL CV-06 / Cellivery, Ildong",source,"Source__LARVOL_CV-06_Cellivery,_Ildong",pipeline/source;source/biotech_intelligence_news_aggregation,,,E0
+asset::cv-14,CV-14,asset,Asset__CV-14,pipeline/asset;theme/others,2,Do not run Full Scout,E0
+target::fxn,FXN,target,Target__FXN,pipeline/target,,,
+moa::frataxin_replacement,Frataxin replacement,moa,MoA__Frataxin_replacement,pipeline/moa,,,
+indication::friedreich_ataxia,Friedreich ataxia,indication,Indication__Friedreich_ataxia,pipeline/indication,,,
+scorecard::cv-14_20260807,Scorecard - CV-14,scorecard,Scorecard__CV-14__20260807,pipeline/scorecard,2,Do not run Full Scout,E0
+source::https_data.pharmacodia.com_drugs_details_22122625900035563139,CV-14 / CP-FXN overview,source,Source__CV-14_CP-FXN_overview,pipeline/source;source/other,,,E0
+asset::cv-17,CV-17,asset,Asset__CV-17,pipeline/asset;theme/unknown,2,Do not run Full Scout,E0
+moa::aso_rna_interference;_specific_target_undisclosed,ASO / RNA interference; specific target undisclosed,moa,MoA__ASO_RNA_interference;_specific_target_undisclosed,pipeline/moa,,,
+modality::rna_therapy,RNA therapy,modality,Modality__RNA_therapy,pipeline/modality,,,
+indication::neurodegenerative_diseases_(unspecified),Neurodegenerative diseases (unspecified),indication,Indication__Neurodegenerative_diseases_(unspecified),pipeline/indication,,,
+scorecard::cv-17_20260807,Scorecard - CV-17,scorecard,Scorecard__CV-17__20260807,pipeline/scorecard,2,Do not run Full Scout,E0
+source::https_synapse.patsnap.com_drug_602e117b02008a6730e1f915194b899e,CV-17 overview,source,Source__CV-17_overview,pipeline/source;source/other,,,E0
+source::https_data.pharmacodia.com_drugs_details_22122625900035563141,CV-17 / CP-ASO overview,source,Source__CV-17_CP-ASO_overview,pipeline/source;source/biotech_database,,,E0
+asset::yc-5_injection,YC-5 Injection,asset,Asset__YC-5_Injection,pipeline/asset;theme/unknown,4,Do not run Full Scout,E0
+company::cellprotek_pharmaceutical,Cellprotek Pharmaceutical,company,Company__Cellprotek_Pharmaceutical,pipeline/company,,,
+moa::multi-mechanistic_neuroprotection;_possible_negative_regulation_of_nmda_8b2a1f7e,Multi-mechanistic neuroprotection; possible negative regulation of NMDA/non-NMDA receptors,moa,MoA__Multi-mechanistic_neuroprotection;_possible_negative_regulation_of_NMDA_8b2a1f7e,pipeline/moa,,,
+indication::epileptic_seizures_convulsions,Epileptic seizures / convulsions,indication,Indication__Epileptic_seizures_convulsions,pipeline/indication,,,
+scorecard::yc-5_injection_20260807,Scorecard - YC-5 Injection,scorecard,Scorecard__YC-5_Injection__20260807,pipeline/scorecard,4,Do not run Full Scout,E0
+source::https_patents.google.com_patent_cn101683348b_en,CN101683348B YC-5 neuroprotection patent,source,Source__CN101683348B_YC-5_neuroprotection_patent,pipeline/source;source/other,,,E0
+source::https_www.cellprotek.com_science-and-medicine_rd-pipeline,Cellprotek R&D pipeline,source,Source__Cellprotek_R&D_pipeline,pipeline/source;source/other,,,E0
+asset::yc-6,YC-6,asset,Asset__YC-6,pipeline/asset;theme/unknown,6,Do not run Full Scout,E0
+"moa::multi-pathway_cytoprotection_including_anti-inflammatory,_calcium_acido_6a148d1c","Multi-pathway cytoprotection including anti-inflammatory, calcium/acidosis control, hemoglobin clearance and oxidative-stress modulation",moa,"MoA__Multi-pathway_cytoprotection_including_anti-inflammatory,_calcium_acido_6a148d1c",pipeline/moa,,,
+indication::acute_ischemic_stroke_malignant_cerebral_infarction;_intracerebral_hemorrhage,Acute ischemic stroke / malignant cerebral infarction; intracerebral hemorrhage,indication,Indication__Acute_ischemic_stroke_malignant_cerebral_infarction;_intracerebral_hemorrhage,pipeline/indication,,,
+scorecard::yc-6_20260807,Scorecard - YC-6,scorecard,Scorecard__YC-6__20260807,pipeline/scorecard,6,Do not run Full Scout,E0
+asset::neurological_disorder_research_program,Neurological Disorder Research Program,asset,Asset__Neurological_Disorder_Research_Program,pipeline/asset;theme/unknown,0,Verify asset identity,E0
+company::celltium,CELLTIUM,company,Company__CELLTIUM,pipeline/company,,,
+scorecard::neurological_disorder_research_program_20260807,Scorecard - Neurological Disorder Research Program,scorecard,Scorecard__Neurological_Disorder_Research_Program__20260807,pipeline/scorecard,0,Verify asset identity,E0
+source::https_www.celltium.com_technology,CELLTIUM Technology & Pipeline,source,Source__CELLTIUM_Technology_&_Pipeline,pipeline/source;source/other,,,E0
+asset::lc-pc01,LC-PC01,asset,Asset__LC-PC01,pipeline/asset;theme/unknown,2,Do not run Full Scout,E0
+"company::celltrion,_inc","Celltrion, Inc.",company,"Company__Celltrion,_Inc",pipeline/company,,,
+scorecard::lc-pc01_20260807,Scorecard - LC-PC01,scorecard,Scorecard__LC-PC01__20260807,pipeline/scorecard,2,Do not run Full Scout,E0
+source::https_synapse.patsnap.com_drug_73755749f9254077ae1c4000b1a55508,LB-PC01 overview,source,Source__LB-PC01_overview,pipeline/source;source/other,,,E0

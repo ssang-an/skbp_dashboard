@@ -23,6 +23,10 @@ confidence: "medium"
 ## Related Assets
 
 - [[02_Assets/Asset__CE223BR17_Parkinson's_Disease_Research_Program|CE223BR17_Parkinson's_Disease_Research_Program]]
+- [[02_Assets/Asset__CLZ-2002|CLZ-2002]]
+- [[02_Assets/Asset__CPB-101|CPB-101]]
+- [[02_Assets/Asset__CPB-105|CPB-105]]
+- [[02_Assets/Asset__CPB-106|CPB-106]]
 
 ## Related Targets / MoA
 

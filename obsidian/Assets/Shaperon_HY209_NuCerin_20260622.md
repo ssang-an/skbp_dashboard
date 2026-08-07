@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-07T00:06:12"
+generated_at: "2026-08-07T23:02:38"
 record_id: "Shaperon_HY209_NuCerin_20260622"
 company: "Shaperon Inc."
 country: "Republic of Korea"
@@ -352,9 +352,9 @@ HY209/NuCerin is a strong SKBP Neuroimmune-fit oral GPCR19/TGR5-P2X7/NLRP3 Alzhe
       "added_at": "2026-07-28T14:16:54.916934+00:00",
       "user_comment": "",
       "due_date": "2026-08-05",
-      "updated_at": "2026-08-04T06:35:16.869277+00:00",
+      "updated_at": "2026-08-06T07:13:29.494132+00:00",
       "updated_source": "dashboard_tab3",
-      "updated_by": "127.0.0.1",
+      "updated_by": "정주원",
       "in_vivo_status": "N/A",
       "in_vivo_status_source": "deepseek",
       "in_vitro_status": "N/A",
@@ -382,7 +382,7 @@ HY209/NuCerin is a strong SKBP Neuroimmune-fit oral GPCR19/TGR5-P2X7/NLRP3 Alzhe
       ],
       "partnership_classification_source": "auto",
       "partnership_classification_status": "auto_classified",
-      "partnership_classified_at": "2026-08-04T06:35:16.869735+00:00",
+      "partnership_classified_at": "2026-08-06T07:13:29.506630+00:00",
       "partnership_evidence_updated_at": "2026-08-03T13:35:38.312831+00:00",
       "filter3_document_analyses": [
         {
@@ -545,7 +545,7 @@ HY209/NuCerin is a strong SKBP Neuroimmune-fit oral GPCR19/TGR5-P2X7/NLRP3 Alzhe
           }
         }
       ],
-      "filter3_document_analysis_updated_at": "2026-08-04T06:35:16.869461+00:00",
+      "filter3_document_analysis_updated_at": "2026-08-06T07:13:29.505320+00:00",
       "owner_name": "",
       "action_plan": "",
       "partner_material_flags": {
@@ -908,6 +908,24 @@ HY209/NuCerin is a strong SKBP Neuroimmune-fit oral GPCR19/TGR5-P2X7/NLRP3 Alzhe
         "field": "collaboration.comments",
         "previous_value": null,
         "new_value": null
+      },
+      {
+        "changed_at": "2026-08-06T07:13:28.802046+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.remove",
+        "previous_value": true,
+        "new_value": false
+      },
+      {
+        "changed_at": "2026-08-06T07:13:29.506672+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.add",
+        "previous_value": false,
+        "new_value": true
       }
     ],
     "last_edited_at": "2026-08-01T17:42:40.444352+00:00",

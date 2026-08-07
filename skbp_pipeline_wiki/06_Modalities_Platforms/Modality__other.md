@@ -23,6 +23,7 @@ confidence: "medium"
 ## Related Assets
 
 - [[02_Assets/Asset__LABthera-003|LABthera-003]]
+- [[02_Assets/Asset__LC-PC01|LC-PC01]]
 
 ## Related Targets / MoA
 

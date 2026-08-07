@@ -22,6 +22,7 @@ confidence: "medium"
 
 ## Related Assets
 
+- [[02_Assets/Asset__CBM-951|CBM-951]]
 - [[02_Assets/Asset__HZR-061|HZR-061]]
 - [[02_Assets/Asset__ILM21|ILM21]]
 

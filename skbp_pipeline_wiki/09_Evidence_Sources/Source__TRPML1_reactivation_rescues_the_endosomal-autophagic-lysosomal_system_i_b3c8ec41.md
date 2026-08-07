@@ -1,0 +1,44 @@
+---
+type: "source"
+canonical_id: "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc10112969"
+title: "TRPML1 reactivation rescues the endosomal-autophagic-lysosomal system in ApoE4 human cortical neurons"
+aliases:
+  - "TRPML1 reactivation rescues the endosomal-autophagic-lysosomal system in ApoE4 human cortical neurons"
+tags:
+  - "pipeline/source"
+  - "source/peer_reviewed_publication"
+created_at: "2026-08-07"
+updated_at: "2026-08-07"
+source_report: null
+source_json: "json/pipeline-records.json"
+status: "active"
+confidence: "medium"
+---
+
+# TRPML1 reactivation rescues the endosomal-autophagic-lysosomal system in ApoE4 human cortical neurons
+
+## Source Metadata
+
+| Field | Value |
+|---|---|
+| Source type | peer_reviewed_publication |
+| Reliability | medium |
+| URL | https://pmc.ncbi.nlm.nih.gov/articles/PMC10112969/ |
+| Accessed / generated date | 2026-08-07 |
+
+## Evidence Summary
+
+-
+
+## Used In
+
+- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]
+- [[10_Scorecards/Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807|Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807]]
+
+## Extracted Claims
+
+- -
+
+## Caution / Limitations
+
+- Source note is generated from structured JSON. Verify primary source context before using for investment decisions.

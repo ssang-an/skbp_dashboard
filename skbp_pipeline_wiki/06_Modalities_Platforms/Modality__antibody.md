@@ -23,6 +23,7 @@ confidence: "medium"
 ## Related Assets
 
 - [[02_Assets/Asset__ADEL-Y04|ADEL-Y04]]
+- [[02_Assets/Asset__CLZ003|CLZ003]]
 
 ## Related Targets / MoA
 

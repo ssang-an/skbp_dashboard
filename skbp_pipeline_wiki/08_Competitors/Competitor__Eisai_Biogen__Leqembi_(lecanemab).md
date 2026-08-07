@@ -22,19 +22,19 @@ confidence: "medium"
 |---|---|
 | Company | Eisai / Biogen |
 | Asset | Leqembi (lecanemab) |
-| Target / MoA | Soluble amyloid-beta aggregates/protofibrils |
+| Target / MoA | Amyloid-beta-directed antibody |
 | Modality | Antibody |
-| Stage | Approved |
+| Stage | Approved; subcutaneous at-home starter regimen approved July 2026 |
 | Similarity level | Low |
 
 ## Why It Matters
 
-Established disease-modifying efficacy, ARIA monitoring and access benchmark.
+Approved early-AD DMT and commercial/efficacy benchmark; lower mechanistic similarity but directly competes for the same patients and weakens the old IV-only convenience gap.
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__VTA-27|VTA-27]]: Established disease-modifying efficacy, ARIA monitoring and access benchmark.
+- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]: Approved early-AD DMT and commercial/efficacy benchmark; lower mechanistic similarity but directly competes for the same patients and weakens the old IV-only convenience gap.
 
 ## Sources
 
-- https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval
+- https://content.govdelivery.com/accounts/USFDA/bulletins/4205a72

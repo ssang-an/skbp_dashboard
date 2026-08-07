@@ -22,6 +22,8 @@ confidence: "medium"
 
 ## Related Assets
 
+- [[02_Assets/Asset__CV-06|CV-06]]
+- [[02_Assets/Asset__CV-14|CV-14]]
 - [[02_Assets/Asset__ILM01|ILM01]]
 - [[02_Assets/Asset__ILM01_(GAIA-Aβ)|ILM01_(GAIA-Aβ)]]
 - [[02_Assets/Asset__ILM02|ILM02]]

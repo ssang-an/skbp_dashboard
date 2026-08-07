@@ -1,6 +1,6 @@
 # Unknown
 
-> Generated from `json/pipeline-records.json` at `2026-08-07T00:06:12`.
+> Generated from `json/pipeline-records.json` at `2026-08-07T23:02:38`.
 
 ## Linked Assets
 
@@ -15,6 +15,18 @@
 - [[Beijing Hotgen Biotech Co., Ltd._Alzheimer's disease therapy, Beijing Youngen Biotechnology]]
 - [[Beijing Hotgen Biotech_Alzheimer's disease therapy, Beijing Youngen Biotechnology]]
 - [[Beijing Youngen Biotechnology Co Ltd_Alzheimer's Disease]]
+- [[CELLTIUM_Neurological Disorder Research Program]]
+- [[Cellapeutics Bio Co., Ltd._CPB-101]]
+- [[Cellapeutics Bio Co., Ltd._CPB-105]]
+- [[Cellapeutics Bio Co., Ltd._CPB-106]]
+- [[CellapeuticsBio_CPB102]]
+- [[CellapeuticsBio_CPB103]]
+- [[Cellatoz Therapeutics, Inc._CLZ-2002]]
+- [[CellionBioMed Inc_CBM-951]]
+- [[Cellivery Therapeutics, Inc._CV-17]]
+- [[Cellprotek Pharmaceutical_YC-5 Injection]]
+- [[Cellprotek Pharmaceutical_YC-6]]
+- [[Celltrion, Inc._LC-PC01]]
 - [[Harbour_BioMed_CNS_XDC_fast_triage_20260623]]
 - [[Harbour_BioMed_Next_Generation_Biologics_fast_triage_20260623]]
 - [[Hyper Corp Inc_Drug to Inhibit Tau for Alzheimer's Disease]]

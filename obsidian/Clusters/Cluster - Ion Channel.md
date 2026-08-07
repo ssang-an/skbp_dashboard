@@ -1,6 +1,6 @@
 # Ion Channel
 
-> Generated from `json/pipeline-records.json` at `2026-08-07T00:06:12`.
+> Generated from `json/pipeline-records.json` at `2026-08-07T23:02:38`.
 
 ## Linked Assets
 
@@ -14,5 +14,6 @@
 - [[NeuShen_Therapeutics_NS-041_20260623]]
 - [[QurAlis_QRL-101_fast_triage_20260623]]
 - [[Stoke_Zorevunersen_fast_triage_20260623]]
+- [[Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)]]
 - [[VivaVision_TRPM7_20260622]]
 - [[Xenon_Azetukalner_fast_triage_20260623]]

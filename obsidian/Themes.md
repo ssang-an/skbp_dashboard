@@ -1,9 +1,9 @@
 # Themes
 
-> Generated at `2026-08-07T00:06:12`.
+> Generated at `2026-08-07T23:02:38`.
 
-- [[Theme - E-I Balance|E/I Balance]] (17)
-- [[Theme - Neuroimmune|Neuroimmune]] (20)
+- [[Theme - E-I Balance|E/I Balance]] (18)
+- [[Theme - Neuroimmune|Neuroimmune]] (19)
 - [[Theme - No Theme|No Theme]] (3)
-- [[Theme - Others|Others]] (5)
-- [[Theme - Unknown|Unknown]] (16)
+- [[Theme - Others|Others]] (8)
+- [[Theme - Unknown|Unknown]] (28)

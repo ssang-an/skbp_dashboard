@@ -31,6 +31,7 @@ A cross-disease strategic biology theme used for SKBP Theme-based R&D strategy.
 
 ## Related Assets
 
+- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]
 - [[02_Assets/Asset__ABS-1230|ABS-1230]]
 - [[02_Assets/Asset__Azetukalner_XEN1101|Azetukalner_XEN1101]]
 - [[02_Assets/Asset__BMB-101|BMB-101]]

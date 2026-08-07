@@ -232,9 +232,9 @@
     },
     {
       "id": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af",
-      "label": "https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval",
+      "label": "FDA Leqembi approval",
       "type": "source",
-      "title": "Source__https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af",
+      "title": "Source__FDA_Leqembi_approval",
       "tags": "pipeline/source;source/regulatory",
       "score": "",
       "recommendation": "",
@@ -242,9 +242,9 @@
     },
     {
       "id": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
-      "label": "https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease",
+      "label": "FDA approves Kisunla (donanemab) for adults with Alzheimer's disease",
       "type": "source",
-      "title": "Source__https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
+      "title": "Source__FDA_approves_Kisunla_(donanemab)_for_adults_with_Alzheimer's_disease",
       "tags": "pipeline/source;source/regulatory",
       "score": "",
       "recommendation": "",
@@ -5081,266 +5081,6 @@
       "evidence_level": "E4"
     },
     {
-      "id": "asset::vta-27",
-      "label": "VTA-27",
-      "type": "asset",
-      "title": "Asset__VTA-27",
-      "tags": "pipeline/asset;theme/neuroimmune",
-      "score": 13,
-      "recommendation": "Watch",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "company::vasthera",
-      "label": "VASTHERA",
-      "type": "company",
-      "title": "Company__VASTHERA",
-      "tags": "pipeline/company",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": ""
-    },
-    {
-      "id": "target::peroxiredoxin_redox_homeostasis_astrocytic_stat3_signaling",
-      "label": "Peroxiredoxin redox homeostasis / astrocytic STAT3 signaling",
-      "type": "target",
-      "title": "Target__Peroxiredoxin_redox_homeostasis_astrocytic_STAT3_signaling",
-      "tags": "pipeline/target",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": ""
-    },
-    {
-      "id": "moa::prx-mimetic_redox_modulation_that_suppresses_astrocytic_stat3_phosphory_09bab40c",
-      "label": "PRX-mimetic redox modulation that suppresses astrocytic STAT3 phosphorylation/reactivation and is intended to protect neurons.",
-      "type": "moa",
-      "title": "MoA__PRX-mimetic_redox_modulation_that_suppresses_astrocytic_STAT3_phosphory_09bab40c",
-      "tags": "pipeline/moa",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": ""
-    },
-    {
-      "id": "modality::small_molecule",
-      "label": "Small molecule",
-      "type": "modality",
-      "title": "Modality__Small_molecule",
-      "tags": "pipeline/modality",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": ""
-    },
-    {
-      "id": "indication::mild-to-moderate_alzheimer's_disease;_parkinson's_disease_is_only_a_pot_8b9f0f09",
-      "label": "Mild-to-moderate Alzheimer's disease; Parkinson's disease is only a potential expansion concept.",
-      "type": "indication",
-      "title": "Indication__Mild-to-moderate_Alzheimer's_disease;_Parkinson's_disease_is_only_a_pot_8b9f0f09",
-      "tags": "pipeline/indication",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": ""
-    },
-    {
-      "id": "scorecard::vta-27_20260806",
-      "label": "Scorecard - VTA-27",
-      "type": "scorecard",
-      "title": "Scorecard__VTA-27__20260806",
-      "tags": "pipeline/scorecard",
-      "score": 13,
-      "recommendation": "Watch",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "competitor::biogen_ionis_diranersen_(biib080)",
-      "label": "Diranersen (BIIB080)",
-      "type": "competitor",
-      "title": "Competitor__Biogen_Ionis__Diranersen_(BIIB080)",
-      "tags": "pipeline/competitor",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": ""
-    },
-    {
-      "id": "competitor::sanofi_former_vigil_neuroscience_sar448851_vg-3927",
-      "label": "SAR448851 / VG-3927",
-      "type": "competitor",
-      "title": "Competitor__Sanofi_former_Vigil_Neuroscience__SAR448851_VG-3927",
-      "tags": "pipeline/competitor",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": ""
-    },
-    {
-      "id": "competitor::ac_immune_aci-19764",
-      "label": "ACI-19764",
-      "type": "competitor",
-      "title": "Competitor__AC_Immune__ACI-19764",
-      "tags": "pipeline/competitor",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": ""
-    },
-    {
-      "id": "competitor::alector_al002",
-      "label": "AL002",
-      "type": "competitor",
-      "title": "Competitor__Alector__AL002",
-      "tags": "pipeline/competitor",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": ""
-    },
-    {
-      "id": "source::https_www.vasthera.com_about_about.php",
-      "label": "https://www.vasthera.com/about/about.php",
-      "type": "source",
-      "title": "Source__https_www.vasthera.com_about_about.php",
-      "tags": "pipeline/source;source/other",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_www.vasthera.com_technology_platform.php",
-      "label": "https://www.vasthera.com/technology/platform.php",
-      "type": "source",
-      "title": "Source__https_www.vasthera.com_technology_platform.php",
-      "tags": "pipeline/source;source/official_company",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_www.vasthera.com_technology_pipeline.php",
-      "label": "https://www.vasthera.com/technology/pipeline.php",
-      "type": "source",
-      "title": "Source__https_www.vasthera.com_technology_pipeline.php",
-      "tags": "pipeline/source;source/official_company",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view",
-      "label": "https://www.vasthera.com/investors/news.php?code=news&idx=124&ptype=view",
-      "type": "source",
-      "title": "Source__https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view",
-      "tags": "pipeline/source;source/official_company_news",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_link.springer.com_article_10.15252_emmm.201809665",
-      "label": "https://link.springer.com/article/10.15252/emmm.201809665",
-      "type": "source",
-      "title": "Source__https_link.springer.com_article_10.15252_emmm.201809665",
-      "tags": "pipeline/source;source/peer_reviewed_publication",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_pubmed.ncbi.nlm.nih.gov_41875826",
-      "label": "https://pubmed.ncbi.nlm.nih.gov/41875826/",
-      "type": "source",
-      "title": "Source__https_pubmed.ncbi.nlm.nih.gov_41875826",
-      "tags": "pipeline/source;source/peer_reviewed_review",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_clinicaltrials.gov_study_nct05399888",
-      "label": "https://clinicaltrials.gov/study/NCT05399888",
-      "type": "source",
-      "title": "Source__https_clinicaltrials.gov_study_NCT05399888",
-      "tags": "pipeline/source;source/clinical_registry",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9",
-      "label": "https://www.sanofi.com/assets/dotcom/pressreleases/2025/2025-05-21-23-15-31-3086232-en.pdf",
-      "type": "source",
-      "title": "Source__https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9",
-      "tags": "pipeline/source;source/official_company_news",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_ichgcp.net_ko_clinical-trials-registry_nct07688213",
-      "label": "https://ichgcp.net/ko/clinical-trials-registry/NCT07688213",
-      "type": "source",
-      "title": "Source__https_ichgcp.net_ko_clinical-trials-registry_NCT07688213",
-      "tags": "pipeline/source;source/clinical_registry_mirror",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_clinicaltrials.gov_study_nct07463196",
-      "label": "https://clinicaltrials.gov/study/NCT07463196",
-      "type": "source",
-      "title": "Source__https_clinicaltrials.gov_study_NCT07463196",
-      "tags": "pipeline/source;source/clinical_registry",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_clinicaltrials.gov_study_nct04592874",
-      "label": "https://clinicaltrials.gov/study/NCT04592874",
-      "type": "source",
-      "title": "Source__https_clinicaltrials.gov_study_NCT04592874",
-      "tags": "pipeline/source;source/clinical_registry",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_www.nature.com_articles_s41591-026-04273-1",
-      "label": "https://www.nature.com/articles/s41591-026-04273-1",
-      "type": "source",
-      "title": "Source__https_www.nature.com_articles_s41591-026-04273-1",
-      "tags": "pipeline/source;source/peer_reviewed_publication",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756",
-      "label": "https://www.alz.org/getmedia/ef8f48f9-ad36-48ea-87f9-b74034635c1e/alzheimersfacts-%20and-figures.pdf",
-      "type": "source",
-      "title": "Source__https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756",
-      "tags": "pipeline/source;source/epidemiology_report",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a",
-      "label": "https://www.precisionmedicineonline.com/business-news/eli-lilly-posts-strong-kisunla-growth-124m-q1",
-      "type": "source",
-      "title": "Source__https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a",
-      "tags": "pipeline/source;source/market_news",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c",
-      "label": "https://synapse.patsnap.com/drug/1e188d0bdf794df49d00edb2a1d03d3c",
-      "type": "source",
-      "title": "Source__https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c",
-      "tags": "pipeline/source;source/commercial_database_profile",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
       "id": "asset::aon-pp23",
       "label": "AON-PP23",
       "type": "asset",
@@ -5366,6 +5106,16 @@
       "type": "target",
       "title": "Target__Unknown",
       "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::small_molecule",
+      "label": "Small molecule",
+      "type": "modality",
+      "title": "Modality__Small_molecule",
+      "tags": "pipeline/modality",
       "score": "",
       "recommendation": "",
       "evidence_level": ""
@@ -6976,6 +6726,1006 @@
       "type": "source",
       "title": "Source__Lynk_announcement_of_first_participant_dosed_in_BLKR201_Phase_1",
       "tags": "pipeline/source;source/official_company_press_release",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "label": "3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)",
+      "type": "asset",
+      "title": "Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)",
+      "tags": "pipeline/asset;theme/e_i_balance",
+      "score": 17,
+      "recommendation": "Shortlist",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "company::threebrooks_therapeutics",
+      "label": "Threebrooks Therapeutics",
+      "type": "company",
+      "title": "Company__Threebrooks_Therapeutics",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::trpml1_(mcoln1)",
+      "label": "TRPML1 (MCOLN1)",
+      "type": "target",
+      "title": "Target__TRPML1_(MCOLN1)",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::small-molecule_trpml1_agonism_to_trigger_lysosomal_ca2+_release_and_enh_41716d8e",
+      "label": "Small-molecule TRPML1 agonism to trigger lysosomal Ca2+ release and enhance autophagy-lysosome function, intracellular aggregate/mitochondrial clearance, and downstream neuroinflammation reduction",
+      "type": "moa",
+      "title": "MoA__Small-molecule_TRPML1_agonism_to_trigger_lysosomal_Ca2+_release_and_enh_41716d8e",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::early_alzheimer's_disease;_parkinson's_disease_expansion_supported_by_c_56c9e561",
+      "label": "Early Alzheimer's disease; Parkinson's disease expansion supported by company preclinical data",
+      "type": "indication",
+      "title": "Indication__Early_Alzheimer's_disease;_Parkinson's_disease_expansion_supported_by_c_56c9e561",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "label": "Scorecard - 3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)",
+      "type": "scorecard",
+      "title": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 17,
+      "recommendation": "Shortlist",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "competitor::lysoway_therapeutics_lw-1017",
+      "label": "LW-1017",
+      "type": "competitor",
+      "title": "Competitor__Lysoway_Therapeutics__LW-1017",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::casma_therapeutics_csm-101",
+      "label": "CSM-101",
+      "type": "competitor",
+      "title": "Competitor__Casma_Therapeutics__CSM-101",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::libra_therapeutics_lbr-2950",
+      "label": "LBR-2950",
+      "type": "competitor",
+      "title": "Competitor__Libra_Therapeutics__LBR-2950",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::nine_square_therapeutics_nine_square_trpml1_program",
+      "label": "Nine Square TRPML1 program",
+      "type": "competitor",
+      "title": "Competitor__Nine_Square_Therapeutics__Nine_Square_TRPML1_program",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::samsara_therapeutics_sam001",
+      "label": "SAM001",
+      "type": "competitor",
+      "title": "Competitor__Samsara_Therapeutics__SAM001",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "source::threebrooks_therapeutics_investor_relations_2026",
+      "label": "Threebrooks Therapeutics Investor Relations 2026",
+      "type": "source",
+      "title": "Source__Threebrooks_Therapeutics_Investor_Relations_2026",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.threebrooks.net_myboard_st_news1",
+      "label": "Threebrooks Therapeutics media page",
+      "type": "source",
+      "title": "Source__Threebrooks_Therapeutics_media_page",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.lifescienceweek.com_m_eng_about_search_ex_view.asp_midx=2102",
+      "label": "Korea Life Science Week 2026 exhibitor profile — Threebrooks Therapeutics",
+      "type": "source",
+      "title": "Source__Korea_Life_Science_Week_2026_exhibitor_profile_—_Threebrooks_Therapeutics",
+      "tags": "pipeline/source;source/industry_event_profile",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_magazine.hankyung.com_business_article_202607217243b",
+      "label": "Threebrooks Therapeutics joins JLABS global incubator network",
+      "type": "source",
+      "title": "Source__Threebrooks_Therapeutics_joins_JLABS_global_incubator_network",
+      "tags": "pipeline/source;source/reputable_biotech_news",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc10112969",
+      "label": "TRPML1 reactivation rescues the endosomal-autophagic-lysosomal system in ApoE4 human cortical neurons",
+      "type": "source",
+      "title": "Source__TRPML1_reactivation_rescues_the_endosomal-autophagic-lysosomal_system_i_b3c8ec41",
+      "tags": "pipeline/source;source/peer_reviewed_publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc9296810",
+      "label": "Activated Endolysosomal Cation Channel TRPML1 Facilitates Maturation of alpha-Synuclein-Containing Autophagosomes",
+      "type": "source",
+      "title": "Source__Activated_Endolysosomal_Cation_Channel_TRPML1_Facilitates_Maturation_of_cb00e9af",
+      "tags": "pipeline/source;source/peer_reviewed_publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.sciencedirect.com_science_article_pii_s022352342600396x",
+      "label": "Targeting lysosomal dysfunction with small-molecule TRPML1 ligands: Therapeutic opportunities in lysosomal storage disorders, neurodegeneration and beyond",
+      "type": "source",
+      "title": "Source__Targeting_lysosomal_dysfunction_with_small-molecule_TRPML1_ligands_Ther_d1a30e48",
+      "tags": "pipeline/source;source/peer_reviewed_review",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.lysoway.com_companynews_lysoway-therapeutics-announces-phase-_69d531f1",
+      "label": "Lysoway announces Phase I dosing of LW-1017",
+      "type": "source",
+      "title": "Source__Lysoway_announces_Phase_I_dosing_of_LW-1017",
+      "tags": "pipeline/source;source/official_competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.casmatx.com_2026_03_10_casma-therapeutics-receives-mjff-suppo_dafb0b52",
+      "label": "Casma receives MJFF support for CSM-101",
+      "type": "source",
+      "title": "Source__Casma_receives_MJFF_support_for_CSM-101",
+      "tags": "pipeline/source;source/official_competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.linkedin.com_posts_libra-therapeutics_neurodegenerativediseas_d4943476",
+      "label": "Libra Therapeutics update on LBR-2950",
+      "type": "source",
+      "title": "Source__Libra_Therapeutics_update_on_LBR-2950",
+      "tags": "pipeline/source;source/official_competitor_social",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_ninesquaretx.com_programs",
+      "label": "Nine Square Therapeutics — Programs and Pipeline",
+      "type": "source",
+      "title": "Source__Nine_Square_Therapeutics_—_Programs_and_Pipeline",
+      "tags": "pipeline/source;source/official_competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_samsaratherapeutics.com",
+      "label": "Samsara Therapeutics pipeline",
+      "type": "source",
+      "title": "Source__Samsara_Therapeutics_pipeline",
+      "tags": "pipeline/source;source/official_competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.leqembi.com_en_patient-support-program",
+      "label": "LEQEMBI patient support — current list prices",
+      "type": "source",
+      "title": "Source__LEQEMBI_patient_support_—_current_list_prices",
+      "tags": "pipeline/source;source/official_product",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_content.govdelivery.com_accounts_usfda_bulletins_4205a72",
+      "label": "FDA notable approval — Leqembi at-home starting dose",
+      "type": "source",
+      "title": "Source__FDA_notable_approval_—_Leqembi_at-home_starting_dose",
+      "tags": "pipeline/source;source/regulatory",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc10682565",
+      "label": "Estimating prevalence of early symptomatic Alzheimer's disease in the United States",
+      "type": "source",
+      "title": "Source__Estimating_prevalence_of_early_symptomatic_Alzheimer's_disease_in_the_U_65d8288f",
+      "tags": "pipeline/source;source/peer_reviewed_publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.fda.gov_drugs_drug-trials-snapshots_drug-trials-snapshots-leqembi",
+      "label": "FDA Drug Trials Snapshot: LEQEMBI",
+      "type": "source",
+      "title": "Source__FDA_Drug_Trials_Snapshot_LEQEMBI",
+      "tags": "pipeline/source;source/regulatory",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "asset::cpb-101",
+      "label": "CPB-101",
+      "type": "asset",
+      "title": "Asset__CPB-101",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 4,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::cellapeutics_bio_co.,_ltd",
+      "label": "Cellapeutics Bio Co., Ltd.",
+      "type": "company",
+      "title": "Company__Cellapeutics_Bio_Co.,_Ltd",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::cell_replacement_neuroregenerative_glial-cell_therapy",
+      "label": "Cell replacement / neuroregenerative glial-cell therapy",
+      "type": "moa",
+      "title": "MoA__Cell_replacement_neuroregenerative_glial-cell_therapy",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::parkinson_disease;_spinal_cord_injury;_peripheral_nerve_injury",
+      "label": "Parkinson disease; spinal cord injury; peripheral nerve injury",
+      "type": "indication",
+      "title": "Indication__Parkinson_disease;_spinal_cord_injury;_peripheral_nerve_injury",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::cpb-101_20260807",
+      "label": "Scorecard - CPB-101",
+      "type": "scorecard",
+      "title": "Scorecard__CPB-101__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 4,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_synapse.patsnap.com_organization_5b3c14b36d7ee321bb9537272e8c260b",
+      "label": "Cellapeutics Bio pipeline snapshot",
+      "type": "source",
+      "title": "Source__Cellapeutics_Bio_pipeline_snapshot",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_pharm.edaily.co.kr_news_read_mediacodeno=257&newsid=01758086632530312",
+      "label": "Pharm Edaily CEO interview on CPB101",
+      "type": "source",
+      "title": "Source__Pharm_Edaily_CEO_interview_on_CPB101",
+      "tags": "pipeline/source;source/reputable_biotech_news",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::cpb-105",
+      "label": "CPB-105",
+      "type": "asset",
+      "title": "Asset__CPB-105",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "indication::alzheimer_disease",
+      "label": "Alzheimer disease",
+      "type": "indication",
+      "title": "Indication__Alzheimer_disease",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::cpb-105_20260807",
+      "label": "Scorecard - CPB-105",
+      "type": "scorecard",
+      "title": "Scorecard__CPB-105__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::cpb-106",
+      "label": "CPB-106",
+      "type": "asset",
+      "title": "Asset__CPB-106",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "indication::parkinson_disease",
+      "label": "Parkinson disease",
+      "type": "indication",
+      "title": "Indication__Parkinson_disease",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::cpb-106_20260807",
+      "label": "Scorecard - CPB-106",
+      "type": "scorecard",
+      "title": "Scorecard__CPB-106__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::cpb103",
+      "label": "CPB103",
+      "type": "asset",
+      "title": "Asset__CPB103",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 0,
+      "recommendation": "Verify asset identity",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::cellapeuticsbio",
+      "label": "CellapeuticsBio",
+      "type": "company",
+      "title": "Company__CellapeuticsBio",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::cpb103_20260807",
+      "label": "Scorecard - CPB103",
+      "type": "scorecard",
+      "title": "Scorecard__CPB103__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 0,
+      "recommendation": "Verify asset identity",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::cpb102",
+      "label": "CPB102",
+      "type": "asset",
+      "title": "Asset__CPB102",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 0,
+      "recommendation": "Verify asset identity",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "scorecard::cpb102_20260807",
+      "label": "Scorecard - CPB102",
+      "type": "scorecard",
+      "title": "Scorecard__CPB102__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 0,
+      "recommendation": "Verify asset identity",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::clz-2002",
+      "label": "CLZ-2002",
+      "type": "asset",
+      "title": "Asset__CLZ-2002",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 1,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::cellatoz_therapeutics,_inc",
+      "label": "Cellatoz Therapeutics, Inc.",
+      "type": "company",
+      "title": "Company__Cellatoz_Therapeutics,_Inc",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::charcot-marie-tooth_disease_type_1",
+      "label": "Charcot-Marie-Tooth disease type 1",
+      "type": "indication",
+      "title": "Indication__Charcot-Marie-Tooth_disease_type_1",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::clz-2002_20260807",
+      "label": "Scorecard - CLZ-2002",
+      "type": "scorecard",
+      "title": "Scorecard__CLZ-2002__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 1,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_synapse.patsnap.com_drug_4532916bb5014b93b06a2f2320c8fa93",
+      "label": "CLZ-2002 overview and NCT05947578",
+      "type": "source",
+      "title": "Source__CLZ-2002_overview_and_NCT05947578",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::clz003",
+      "label": "CLZ003",
+      "type": "asset",
+      "title": "Asset__CLZ003",
+      "tags": "pipeline/asset;theme/others",
+      "score": 1,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::celliaz_co.,_ltd",
+      "label": "Celliaz Co., Ltd.",
+      "type": "company",
+      "title": "Company__Celliaz_Co.,_Ltd",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::prox1",
+      "label": "PROX1",
+      "type": "target",
+      "title": "Target__PROX1",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::neutralization_of_harmful_prox1_homeoprotein_to_restore_retinal_regeneration",
+      "label": "Neutralization of harmful PROX1/homeoprotein to restore retinal regeneration",
+      "type": "moa",
+      "title": "MoA__Neutralization_of_harmful_PROX1_homeoprotein_to_restore_retinal_regeneration",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::dry-type_age-related_macular_degeneration",
+      "label": "Dry-type age-related macular degeneration",
+      "type": "indication",
+      "title": "Indication__Dry-type_age-related_macular_degeneration",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::clz003_20260807",
+      "label": "Scorecard - CLZ003",
+      "type": "scorecard",
+      "title": "Scorecard__CLZ003__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 1,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_celliaz.com_rd-pipelines",
+      "label": "Celliaz R&D Pipeline",
+      "type": "source",
+      "title": "Source__Celliaz_R&D_Pipeline",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::cbm-951",
+      "label": "CBM-951",
+      "type": "asset",
+      "title": "Asset__CBM-951",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::cellionbiomed_inc",
+      "label": "CellionBioMed Inc",
+      "type": "company",
+      "title": "Company__CellionBioMed_Inc",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::cbm-951_20260807",
+      "label": "Scorecard - CBM-951",
+      "type": "scorecard",
+      "title": "Scorecard__CBM-951__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_synapse.patsnap.com_drug_cfc95c5d168e4f27a0521a310805b8fc",
+      "label": "CBM-951 overview",
+      "type": "source",
+      "title": "Source__CBM-951_overview",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::cv-06",
+      "label": "CV-06",
+      "type": "asset",
+      "title": "Asset__CV-06",
+      "tags": "pipeline/asset;theme/others",
+      "score": 8,
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::cellivery_therapeutics,_inc",
+      "label": "Cellivery Therapeutics, Inc.",
+      "type": "company",
+      "title": "Company__Cellivery_Therapeutics,_Inc",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::parkin_(prkn_park2)",
+      "label": "Parkin (PRKN/PARK2)",
+      "type": "target",
+      "title": "Target__Parkin_(PRKN_PARK2)",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::intracellular_delivery_replacement_of_cell-permeable_parkin_to_suppress_8570f881",
+      "label": "Intracellular delivery/replacement of cell-permeable Parkin to suppress damaged mitochondria and pathological α-synuclein",
+      "type": "moa",
+      "title": "MoA__Intracellular_delivery_replacement_of_cell-permeable_Parkin_to_suppress_8570f881",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::cv-06_20260807",
+      "label": "Scorecard - CV-06",
+      "type": "scorecard",
+      "title": "Scorecard__CV-06__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 8,
+      "recommendation": "Run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_synapse.patsnap.com_drug_14a75c28387e43a581709313cb13f52e",
+      "label": "CV-06 overview",
+      "type": "source",
+      "title": "Source__CV-06_overview",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_delta.larvol.com_products_productid=d49fdf13-4bea-4829-9946-1125f8cb1e56",
+      "label": "LARVOL CV-06 / Cellivery, Ildong",
+      "type": "source",
+      "title": "Source__LARVOL_CV-06_Cellivery,_Ildong",
+      "tags": "pipeline/source;source/biotech_intelligence_news_aggregation",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::cv-14",
+      "label": "CV-14",
+      "type": "asset",
+      "title": "Asset__CV-14",
+      "tags": "pipeline/asset;theme/others",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "target::fxn",
+      "label": "FXN",
+      "type": "target",
+      "title": "Target__FXN",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::frataxin_replacement",
+      "label": "Frataxin replacement",
+      "type": "moa",
+      "title": "MoA__Frataxin_replacement",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::friedreich_ataxia",
+      "label": "Friedreich ataxia",
+      "type": "indication",
+      "title": "Indication__Friedreich_ataxia",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::cv-14_20260807",
+      "label": "Scorecard - CV-14",
+      "type": "scorecard",
+      "title": "Scorecard__CV-14__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_data.pharmacodia.com_drugs_details_22122625900035563139",
+      "label": "CV-14 / CP-FXN overview",
+      "type": "source",
+      "title": "Source__CV-14_CP-FXN_overview",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::cv-17",
+      "label": "CV-17",
+      "type": "asset",
+      "title": "Asset__CV-17",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "moa::aso_rna_interference;_specific_target_undisclosed",
+      "label": "ASO / RNA interference; specific target undisclosed",
+      "type": "moa",
+      "title": "MoA__ASO_RNA_interference;_specific_target_undisclosed",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::rna_therapy",
+      "label": "RNA therapy",
+      "type": "modality",
+      "title": "Modality__RNA_therapy",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::neurodegenerative_diseases_(unspecified)",
+      "label": "Neurodegenerative diseases (unspecified)",
+      "type": "indication",
+      "title": "Indication__Neurodegenerative_diseases_(unspecified)",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::cv-17_20260807",
+      "label": "Scorecard - CV-17",
+      "type": "scorecard",
+      "title": "Scorecard__CV-17__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_synapse.patsnap.com_drug_602e117b02008a6730e1f915194b899e",
+      "label": "CV-17 overview",
+      "type": "source",
+      "title": "Source__CV-17_overview",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_data.pharmacodia.com_drugs_details_22122625900035563141",
+      "label": "CV-17 / CP-ASO overview",
+      "type": "source",
+      "title": "Source__CV-17_CP-ASO_overview",
+      "tags": "pipeline/source;source/biotech_database",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::yc-5_injection",
+      "label": "YC-5 Injection",
+      "type": "asset",
+      "title": "Asset__YC-5_Injection",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 4,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::cellprotek_pharmaceutical",
+      "label": "Cellprotek Pharmaceutical",
+      "type": "company",
+      "title": "Company__Cellprotek_Pharmaceutical",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::multi-mechanistic_neuroprotection;_possible_negative_regulation_of_nmda_8b2a1f7e",
+      "label": "Multi-mechanistic neuroprotection; possible negative regulation of NMDA/non-NMDA receptors",
+      "type": "moa",
+      "title": "MoA__Multi-mechanistic_neuroprotection;_possible_negative_regulation_of_NMDA_8b2a1f7e",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::epileptic_seizures_convulsions",
+      "label": "Epileptic seizures / convulsions",
+      "type": "indication",
+      "title": "Indication__Epileptic_seizures_convulsions",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::yc-5_injection_20260807",
+      "label": "Scorecard - YC-5 Injection",
+      "type": "scorecard",
+      "title": "Scorecard__YC-5_Injection__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 4,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_patents.google.com_patent_cn101683348b_en",
+      "label": "CN101683348B YC-5 neuroprotection patent",
+      "type": "source",
+      "title": "Source__CN101683348B_YC-5_neuroprotection_patent",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_www.cellprotek.com_science-and-medicine_rd-pipeline",
+      "label": "Cellprotek R&D pipeline",
+      "type": "source",
+      "title": "Source__Cellprotek_R&D_pipeline",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::yc-6",
+      "label": "YC-6",
+      "type": "asset",
+      "title": "Asset__YC-6",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 6,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "moa::multi-pathway_cytoprotection_including_anti-inflammatory,_calcium_acido_6a148d1c",
+      "label": "Multi-pathway cytoprotection including anti-inflammatory, calcium/acidosis control, hemoglobin clearance and oxidative-stress modulation",
+      "type": "moa",
+      "title": "MoA__Multi-pathway_cytoprotection_including_anti-inflammatory,_calcium_acido_6a148d1c",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::acute_ischemic_stroke_malignant_cerebral_infarction;_intracerebral_hemorrhage",
+      "label": "Acute ischemic stroke / malignant cerebral infarction; intracerebral hemorrhage",
+      "type": "indication",
+      "title": "Indication__Acute_ischemic_stroke_malignant_cerebral_infarction;_intracerebral_hemorrhage",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::yc-6_20260807",
+      "label": "Scorecard - YC-6",
+      "type": "scorecard",
+      "title": "Scorecard__YC-6__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 6,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::neurological_disorder_research_program",
+      "label": "Neurological Disorder Research Program",
+      "type": "asset",
+      "title": "Asset__Neurological_Disorder_Research_Program",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 0,
+      "recommendation": "Verify asset identity",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::celltium",
+      "label": "CELLTIUM",
+      "type": "company",
+      "title": "Company__CELLTIUM",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::neurological_disorder_research_program_20260807",
+      "label": "Scorecard - Neurological Disorder Research Program",
+      "type": "scorecard",
+      "title": "Scorecard__Neurological_Disorder_Research_Program__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 0,
+      "recommendation": "Verify asset identity",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_www.celltium.com_technology",
+      "label": "CELLTIUM Technology & Pipeline",
+      "type": "source",
+      "title": "Source__CELLTIUM_Technology_&_Pipeline",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::lc-pc01",
+      "label": "LC-PC01",
+      "type": "asset",
+      "title": "Asset__LC-PC01",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::celltrion,_inc",
+      "label": "Celltrion, Inc.",
+      "type": "company",
+      "title": "Company__Celltrion,_Inc",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::lc-pc01_20260807",
+      "label": "Scorecard - LC-PC01",
+      "type": "scorecard",
+      "title": "Scorecard__LC-PC01__20260807",
+      "tags": "pipeline/scorecard",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_synapse.patsnap.com_drug_73755749f9254077ae1c4000b1a55508",
+      "label": "LB-PC01 overview",
+      "type": "source",
+      "title": "Source__LB-PC01_overview",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
@@ -12765,342 +13515,6 @@
       "source_note": "Source__GenixCure_recombinant_AAV_platform_interview"
     },
     {
-      "source": "asset::vta-27",
-      "target": "company::vasthera",
-      "relationship": "OWNED_BY",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "target::peroxiredoxin_redox_homeostasis_astrocytic_stat3_signaling",
-      "relationship": "TARGETS",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "moa::prx-mimetic_redox_modulation_that_suppresses_astrocytic_stat3_phosphory_09bab40c",
-      "relationship": "HAS_MOA",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "modality::small_molecule",
-      "relationship": "HAS_MODALITY",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "indication::mild-to-moderate_alzheimer's_disease;_parkinson's_disease_is_only_a_pot_8b9f0f09",
-      "relationship": "HAS_INDICATION",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "theme::neuroimmune",
-      "relationship": "MAPS_TO_THEME",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "cluster::교세포_향상성",
-      "relationship": "MAPS_TO_CLUSTER",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "scorecard::vta-27_20260806",
-      "relationship": "HAS_SCORECARD",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "competitor::eisai_biogen_leqembi_(lecanemab)",
-      "relationship": "HAS_COMPETITOR",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "competitor::eli_lilly_kisunla_(donanemab)",
-      "relationship": "HAS_COMPETITOR",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "competitor::biogen_ionis_diranersen_(biib080)",
-      "relationship": "HAS_COMPETITOR",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "competitor::sanofi_former_vigil_neuroscience_sar448851_vg-3927",
-      "relationship": "HAS_COMPETITOR",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "competitor::ac_immune_aci-19764",
-      "relationship": "HAS_COMPETITOR",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "competitor::alector_al002",
-      "relationship": "HAS_COMPETITOR",
-      "evidence_type": "E3",
-      "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_www.vasthera.com_about_about.php",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.vasthera.com_about_about.php"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_www.vasthera.com_about_about.php",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.vasthera.com_about_about.php"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_www.vasthera.com_technology_platform.php",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.vasthera.com_technology_platform.php"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_www.vasthera.com_technology_platform.php",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.vasthera.com_technology_platform.php"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_www.vasthera.com_technology_pipeline.php",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.vasthera.com_technology_pipeline.php"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_www.vasthera.com_technology_pipeline.php",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.vasthera.com_technology_pipeline.php"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_link.springer.com_article_10.15252_emmm.201809665",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_link.springer.com_article_10.15252_emmm.201809665"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_link.springer.com_article_10.15252_emmm.201809665",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_link.springer.com_article_10.15252_emmm.201809665"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_pubmed.ncbi.nlm.nih.gov_41875826",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_pubmed.ncbi.nlm.nih.gov_41875826"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_pubmed.ncbi.nlm.nih.gov_41875826",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_pubmed.ncbi.nlm.nih.gov_41875826"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_clinicaltrials.gov_study_nct05399888",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_clinicaltrials.gov_study_NCT05399888"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_clinicaltrials.gov_study_nct05399888",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_clinicaltrials.gov_study_NCT05399888"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_ichgcp.net_ko_clinical-trials-registry_nct07688213",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_ichgcp.net_ko_clinical-trials-registry_NCT07688213"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_ichgcp.net_ko_clinical-trials-registry_nct07688213",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_ichgcp.net_ko_clinical-trials-registry_NCT07688213"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_clinicaltrials.gov_study_nct07463196",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_clinicaltrials.gov_study_NCT07463196"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_clinicaltrials.gov_study_nct07463196",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_clinicaltrials.gov_study_NCT07463196"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_clinicaltrials.gov_study_nct04592874",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_clinicaltrials.gov_study_NCT04592874"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_clinicaltrials.gov_study_nct04592874",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_clinicaltrials.gov_study_NCT04592874"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_www.nature.com_articles_s41591-026-04273-1",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.nature.com_articles_s41591-026-04273-1"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_www.nature.com_articles_s41591-026-04273-1",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.nature.com_articles_s41591-026-04273-1"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c"
-    },
-    {
       "source": "asset::aon-pp23",
       "target": "company::astrion_co.,_ltd",
       "relationship": "OWNED_BY",
@@ -15619,6 +16033,1455 @@
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E0",
       "source_note": "Source__ClinicalTrials.gov_NCT07501039"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "company::threebrooks_therapeutics",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "target::trpml1_(mcoln1)",
+      "relationship": "TARGETS",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "moa::small-molecule_trpml1_agonism_to_trigger_lysosomal_ca2+_release_and_enh_41716d8e",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "modality::small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "indication::early_alzheimer's_disease;_parkinson's_disease_expansion_supported_by_c_56c9e561",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "theme::e_i_balance",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "cluster::ion_channel",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "competitor::lysoway_therapeutics_lw-1017",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "competitor::casma_therapeutics_csm-101",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "competitor::libra_therapeutics_lbr-2950",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "competitor::nine_square_therapeutics_nine_square_trpml1_program",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "competitor::samsara_therapeutics_sam001",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "competitor::eisai_biogen_leqembi_(lecanemab)",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "competitor::eli_lilly_kisunla_(donanemab)",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::threebrooks_therapeutics_investor_relations_2026",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Threebrooks_Therapeutics_Investor_Relations_2026"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::threebrooks_therapeutics_investor_relations_2026",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Threebrooks_Therapeutics_Investor_Relations_2026"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_www.threebrooks.net_myboard_st_news1",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Threebrooks_Therapeutics_media_page"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_www.threebrooks.net_myboard_st_news1",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Threebrooks_Therapeutics_media_page"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_www.lifescienceweek.com_m_eng_about_search_ex_view.asp_midx=2102",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Korea_Life_Science_Week_2026_exhibitor_profile_—_Threebrooks_Therapeutics"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_www.lifescienceweek.com_m_eng_about_search_ex_view.asp_midx=2102",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Korea_Life_Science_Week_2026_exhibitor_profile_—_Threebrooks_Therapeutics"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_magazine.hankyung.com_business_article_202607217243b",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Threebrooks_Therapeutics_joins_JLABS_global_incubator_network"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_magazine.hankyung.com_business_article_202607217243b",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Threebrooks_Therapeutics_joins_JLABS_global_incubator_network"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc10112969",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__TRPML1_reactivation_rescues_the_endosomal-autophagic-lysosomal_system_i_b3c8ec41"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc10112969",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__TRPML1_reactivation_rescues_the_endosomal-autophagic-lysosomal_system_i_b3c8ec41"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc9296810",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Activated_Endolysosomal_Cation_Channel_TRPML1_Facilitates_Maturation_of_cb00e9af"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc9296810",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Activated_Endolysosomal_Cation_Channel_TRPML1_Facilitates_Maturation_of_cb00e9af"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_www.sciencedirect.com_science_article_pii_s022352342600396x",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Targeting_lysosomal_dysfunction_with_small-molecule_TRPML1_ligands_Ther_d1a30e48"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_www.sciencedirect.com_science_article_pii_s022352342600396x",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Targeting_lysosomal_dysfunction_with_small-molecule_TRPML1_ligands_Ther_d1a30e48"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_www.lysoway.com_companynews_lysoway-therapeutics-announces-phase-_69d531f1",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Lysoway_announces_Phase_I_dosing_of_LW-1017"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_www.lysoway.com_companynews_lysoway-therapeutics-announces-phase-_69d531f1",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Lysoway_announces_Phase_I_dosing_of_LW-1017"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_www.casmatx.com_2026_03_10_casma-therapeutics-receives-mjff-suppo_dafb0b52",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Casma_receives_MJFF_support_for_CSM-101"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_www.casmatx.com_2026_03_10_casma-therapeutics-receives-mjff-suppo_dafb0b52",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Casma_receives_MJFF_support_for_CSM-101"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_www.linkedin.com_posts_libra-therapeutics_neurodegenerativediseas_d4943476",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Libra_Therapeutics_update_on_LBR-2950"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_www.linkedin.com_posts_libra-therapeutics_neurodegenerativediseas_d4943476",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Libra_Therapeutics_update_on_LBR-2950"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_ninesquaretx.com_programs",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Nine_Square_Therapeutics_—_Programs_and_Pipeline"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_ninesquaretx.com_programs",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Nine_Square_Therapeutics_—_Programs_and_Pipeline"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_samsaratherapeutics.com",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Samsara_Therapeutics_pipeline"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_samsaratherapeutics.com",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Samsara_Therapeutics_pipeline"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_approves_Kisunla_(donanemab)_for_adults_with_Alzheimer's_disease"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_approves_Kisunla_(donanemab)_for_adults_with_Alzheimer's_disease"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_www.leqembi.com_en_patient-support-program",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__LEQEMBI_patient_support_—_current_list_prices"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_www.leqembi.com_en_patient-support-program",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__LEQEMBI_patient_support_—_current_list_prices"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_content.govdelivery.com_accounts_usfda_bulletins_4205a72",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_notable_approval_—_Leqembi_at-home_starting_dose"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_content.govdelivery.com_accounts_usfda_bulletins_4205a72",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_notable_approval_—_Leqembi_at-home_starting_dose"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc10682565",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Estimating_prevalence_of_early_symptomatic_Alzheimer's_disease_in_the_U_65d8288f"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc10682565",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Estimating_prevalence_of_early_symptomatic_Alzheimer's_disease_in_the_U_65d8288f"
+    },
+    {
+      "source": "asset::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)",
+      "target": "source::https_www.fda.gov_drugs_drug-trials-snapshots_drug-trials-snapshots-leqembi",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_Drug_Trials_Snapshot_LEQEMBI"
+    },
+    {
+      "source": "scorecard::3bt-1_(trpml1_agonist_program;_pre-candidate_3bt-1-115)_20260807",
+      "target": "source::https_www.fda.gov_drugs_drug-trials-snapshots_drug-trials-snapshots-leqembi",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_Drug_Trials_Snapshot_LEQEMBI"
+    },
+    {
+      "source": "asset::cpb-101",
+      "target": "company::cellapeutics_bio_co.,_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-101__20260807"
+    },
+    {
+      "source": "asset::cpb-101",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-101__20260807"
+    },
+    {
+      "source": "asset::cpb-101",
+      "target": "moa::cell_replacement_neuroregenerative_glial-cell_therapy",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-101__20260807"
+    },
+    {
+      "source": "asset::cpb-101",
+      "target": "modality::cell_therapy",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-101__20260807"
+    },
+    {
+      "source": "asset::cpb-101",
+      "target": "indication::parkinson_disease;_spinal_cord_injury;_peripheral_nerve_injury",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-101__20260807"
+    },
+    {
+      "source": "asset::cpb-101",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-101__20260807"
+    },
+    {
+      "source": "asset::cpb-101",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-101__20260807"
+    },
+    {
+      "source": "asset::cpb-101",
+      "target": "scorecard::cpb-101_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-101__20260807"
+    },
+    {
+      "source": "asset::cpb-101",
+      "target": "source::https_synapse.patsnap.com_organization_5b3c14b36d7ee321bb9537272e8c260b",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellapeutics_Bio_pipeline_snapshot"
+    },
+    {
+      "source": "scorecard::cpb-101_20260807",
+      "target": "source::https_synapse.patsnap.com_organization_5b3c14b36d7ee321bb9537272e8c260b",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellapeutics_Bio_pipeline_snapshot"
+    },
+    {
+      "source": "asset::cpb-101",
+      "target": "source::https_pharm.edaily.co.kr_news_read_mediacodeno=257&newsid=01758086632530312",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Pharm_Edaily_CEO_interview_on_CPB101"
+    },
+    {
+      "source": "scorecard::cpb-101_20260807",
+      "target": "source::https_pharm.edaily.co.kr_news_read_mediacodeno=257&newsid=01758086632530312",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Pharm_Edaily_CEO_interview_on_CPB101"
+    },
+    {
+      "source": "asset::cpb-105",
+      "target": "company::cellapeutics_bio_co.,_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-105__20260807"
+    },
+    {
+      "source": "asset::cpb-105",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-105__20260807"
+    },
+    {
+      "source": "asset::cpb-105",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-105__20260807"
+    },
+    {
+      "source": "asset::cpb-105",
+      "target": "modality::cell_therapy",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-105__20260807"
+    },
+    {
+      "source": "asset::cpb-105",
+      "target": "indication::alzheimer_disease",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-105__20260807"
+    },
+    {
+      "source": "asset::cpb-105",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-105__20260807"
+    },
+    {
+      "source": "asset::cpb-105",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-105__20260807"
+    },
+    {
+      "source": "asset::cpb-105",
+      "target": "scorecard::cpb-105_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-105__20260807"
+    },
+    {
+      "source": "asset::cpb-105",
+      "target": "source::https_synapse.patsnap.com_organization_5b3c14b36d7ee321bb9537272e8c260b",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellapeutics_Bio_pipeline_snapshot"
+    },
+    {
+      "source": "scorecard::cpb-105_20260807",
+      "target": "source::https_synapse.patsnap.com_organization_5b3c14b36d7ee321bb9537272e8c260b",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellapeutics_Bio_pipeline_snapshot"
+    },
+    {
+      "source": "asset::cpb-106",
+      "target": "company::cellapeutics_bio_co.,_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-106__20260807"
+    },
+    {
+      "source": "asset::cpb-106",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-106__20260807"
+    },
+    {
+      "source": "asset::cpb-106",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-106__20260807"
+    },
+    {
+      "source": "asset::cpb-106",
+      "target": "modality::cell_therapy",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-106__20260807"
+    },
+    {
+      "source": "asset::cpb-106",
+      "target": "indication::parkinson_disease",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-106__20260807"
+    },
+    {
+      "source": "asset::cpb-106",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-106__20260807"
+    },
+    {
+      "source": "asset::cpb-106",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-106__20260807"
+    },
+    {
+      "source": "asset::cpb-106",
+      "target": "scorecard::cpb-106_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB-106__20260807"
+    },
+    {
+      "source": "asset::cpb-106",
+      "target": "source::https_synapse.patsnap.com_organization_5b3c14b36d7ee321bb9537272e8c260b",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellapeutics_Bio_pipeline_snapshot"
+    },
+    {
+      "source": "scorecard::cpb-106_20260807",
+      "target": "source::https_synapse.patsnap.com_organization_5b3c14b36d7ee321bb9537272e8c260b",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellapeutics_Bio_pipeline_snapshot"
+    },
+    {
+      "source": "asset::cpb103",
+      "target": "company::cellapeuticsbio",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB103__20260807"
+    },
+    {
+      "source": "asset::cpb103",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB103__20260807"
+    },
+    {
+      "source": "asset::cpb103",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB103__20260807"
+    },
+    {
+      "source": "asset::cpb103",
+      "target": "modality::unknown",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB103__20260807"
+    },
+    {
+      "source": "asset::cpb103",
+      "target": "indication::unknown",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB103__20260807"
+    },
+    {
+      "source": "asset::cpb103",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB103__20260807"
+    },
+    {
+      "source": "asset::cpb103",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB103__20260807"
+    },
+    {
+      "source": "asset::cpb103",
+      "target": "scorecard::cpb103_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB103__20260807"
+    },
+    {
+      "source": "asset::cpb103",
+      "target": "source::https_synapse.patsnap.com_organization_5b3c14b36d7ee321bb9537272e8c260b",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellapeutics_Bio_pipeline_snapshot"
+    },
+    {
+      "source": "scorecard::cpb103_20260807",
+      "target": "source::https_synapse.patsnap.com_organization_5b3c14b36d7ee321bb9537272e8c260b",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellapeutics_Bio_pipeline_snapshot"
+    },
+    {
+      "source": "asset::cpb102",
+      "target": "company::cellapeuticsbio",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB102__20260807"
+    },
+    {
+      "source": "asset::cpb102",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB102__20260807"
+    },
+    {
+      "source": "asset::cpb102",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB102__20260807"
+    },
+    {
+      "source": "asset::cpb102",
+      "target": "modality::unknown",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB102__20260807"
+    },
+    {
+      "source": "asset::cpb102",
+      "target": "indication::unknown",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB102__20260807"
+    },
+    {
+      "source": "asset::cpb102",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB102__20260807"
+    },
+    {
+      "source": "asset::cpb102",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB102__20260807"
+    },
+    {
+      "source": "asset::cpb102",
+      "target": "scorecard::cpb102_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CPB102__20260807"
+    },
+    {
+      "source": "asset::cpb102",
+      "target": "source::https_synapse.patsnap.com_organization_5b3c14b36d7ee321bb9537272e8c260b",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellapeutics_Bio_pipeline_snapshot"
+    },
+    {
+      "source": "scorecard::cpb102_20260807",
+      "target": "source::https_synapse.patsnap.com_organization_5b3c14b36d7ee321bb9537272e8c260b",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellapeutics_Bio_pipeline_snapshot"
+    },
+    {
+      "source": "asset::clz-2002",
+      "target": "company::cellatoz_therapeutics,_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ-2002__20260807"
+    },
+    {
+      "source": "asset::clz-2002",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ-2002__20260807"
+    },
+    {
+      "source": "asset::clz-2002",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ-2002__20260807"
+    },
+    {
+      "source": "asset::clz-2002",
+      "target": "modality::cell_therapy",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ-2002__20260807"
+    },
+    {
+      "source": "asset::clz-2002",
+      "target": "indication::charcot-marie-tooth_disease_type_1",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ-2002__20260807"
+    },
+    {
+      "source": "asset::clz-2002",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ-2002__20260807"
+    },
+    {
+      "source": "asset::clz-2002",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ-2002__20260807"
+    },
+    {
+      "source": "asset::clz-2002",
+      "target": "scorecard::clz-2002_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ-2002__20260807"
+    },
+    {
+      "source": "asset::clz-2002",
+      "target": "source::https_synapse.patsnap.com_drug_4532916bb5014b93b06a2f2320c8fa93",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__CLZ-2002_overview_and_NCT05947578"
+    },
+    {
+      "source": "scorecard::clz-2002_20260807",
+      "target": "source::https_synapse.patsnap.com_drug_4532916bb5014b93b06a2f2320c8fa93",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__CLZ-2002_overview_and_NCT05947578"
+    },
+    {
+      "source": "asset::clz003",
+      "target": "company::celliaz_co.,_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ003__20260807"
+    },
+    {
+      "source": "asset::clz003",
+      "target": "target::prox1",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ003__20260807"
+    },
+    {
+      "source": "asset::clz003",
+      "target": "moa::neutralization_of_harmful_prox1_homeoprotein_to_restore_retinal_regeneration",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ003__20260807"
+    },
+    {
+      "source": "asset::clz003",
+      "target": "modality::antibody",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ003__20260807"
+    },
+    {
+      "source": "asset::clz003",
+      "target": "indication::dry-type_age-related_macular_degeneration",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ003__20260807"
+    },
+    {
+      "source": "asset::clz003",
+      "target": "theme::others",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ003__20260807"
+    },
+    {
+      "source": "asset::clz003",
+      "target": "cluster::others",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ003__20260807"
+    },
+    {
+      "source": "asset::clz003",
+      "target": "scorecard::clz003_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CLZ003__20260807"
+    },
+    {
+      "source": "asset::clz003",
+      "target": "source::https_celliaz.com_rd-pipelines",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Celliaz_R&D_Pipeline"
+    },
+    {
+      "source": "scorecard::clz003_20260807",
+      "target": "source::https_celliaz.com_rd-pipelines",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Celliaz_R&D_Pipeline"
+    },
+    {
+      "source": "asset::cbm-951",
+      "target": "company::cellionbiomed_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CBM-951__20260807"
+    },
+    {
+      "source": "asset::cbm-951",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CBM-951__20260807"
+    },
+    {
+      "source": "asset::cbm-951",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CBM-951__20260807"
+    },
+    {
+      "source": "asset::cbm-951",
+      "target": "modality::small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CBM-951__20260807"
+    },
+    {
+      "source": "asset::cbm-951",
+      "target": "indication::multiple_sclerosis",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CBM-951__20260807"
+    },
+    {
+      "source": "asset::cbm-951",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CBM-951__20260807"
+    },
+    {
+      "source": "asset::cbm-951",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CBM-951__20260807"
+    },
+    {
+      "source": "asset::cbm-951",
+      "target": "scorecard::cbm-951_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CBM-951__20260807"
+    },
+    {
+      "source": "asset::cbm-951",
+      "target": "source::https_synapse.patsnap.com_drug_cfc95c5d168e4f27a0521a310805b8fc",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__CBM-951_overview"
+    },
+    {
+      "source": "scorecard::cbm-951_20260807",
+      "target": "source::https_synapse.patsnap.com_drug_cfc95c5d168e4f27a0521a310805b8fc",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__CBM-951_overview"
+    },
+    {
+      "source": "asset::cv-06",
+      "target": "company::cellivery_therapeutics,_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-06__20260807"
+    },
+    {
+      "source": "asset::cv-06",
+      "target": "target::parkin_(prkn_park2)",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-06__20260807"
+    },
+    {
+      "source": "asset::cv-06",
+      "target": "moa::intracellular_delivery_replacement_of_cell-permeable_parkin_to_suppress_8570f881",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-06__20260807"
+    },
+    {
+      "source": "asset::cv-06",
+      "target": "modality::protein_biologic",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-06__20260807"
+    },
+    {
+      "source": "asset::cv-06",
+      "target": "indication::parkinson_disease",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-06__20260807"
+    },
+    {
+      "source": "asset::cv-06",
+      "target": "theme::others",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-06__20260807"
+    },
+    {
+      "source": "asset::cv-06",
+      "target": "cluster::others",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-06__20260807"
+    },
+    {
+      "source": "asset::cv-06",
+      "target": "scorecard::cv-06_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-06__20260807"
+    },
+    {
+      "source": "asset::cv-06",
+      "target": "source::https_synapse.patsnap.com_drug_14a75c28387e43a581709313cb13f52e",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__CV-06_overview"
+    },
+    {
+      "source": "scorecard::cv-06_20260807",
+      "target": "source::https_synapse.patsnap.com_drug_14a75c28387e43a581709313cb13f52e",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__CV-06_overview"
+    },
+    {
+      "source": "asset::cv-06",
+      "target": "source::https_delta.larvol.com_products_productid=d49fdf13-4bea-4829-9946-1125f8cb1e56",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__LARVOL_CV-06_Cellivery,_Ildong"
+    },
+    {
+      "source": "scorecard::cv-06_20260807",
+      "target": "source::https_delta.larvol.com_products_productid=d49fdf13-4bea-4829-9946-1125f8cb1e56",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__LARVOL_CV-06_Cellivery,_Ildong"
+    },
+    {
+      "source": "asset::cv-14",
+      "target": "company::cellivery_therapeutics,_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-14__20260807"
+    },
+    {
+      "source": "asset::cv-14",
+      "target": "target::fxn",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-14__20260807"
+    },
+    {
+      "source": "asset::cv-14",
+      "target": "moa::frataxin_replacement",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-14__20260807"
+    },
+    {
+      "source": "asset::cv-14",
+      "target": "modality::protein_biologic",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-14__20260807"
+    },
+    {
+      "source": "asset::cv-14",
+      "target": "indication::friedreich_ataxia",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-14__20260807"
+    },
+    {
+      "source": "asset::cv-14",
+      "target": "theme::others",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-14__20260807"
+    },
+    {
+      "source": "asset::cv-14",
+      "target": "cluster::others",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-14__20260807"
+    },
+    {
+      "source": "asset::cv-14",
+      "target": "scorecard::cv-14_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-14__20260807"
+    },
+    {
+      "source": "asset::cv-14",
+      "target": "source::https_data.pharmacodia.com_drugs_details_22122625900035563139",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__CV-14_CP-FXN_overview"
+    },
+    {
+      "source": "scorecard::cv-14_20260807",
+      "target": "source::https_data.pharmacodia.com_drugs_details_22122625900035563139",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__CV-14_CP-FXN_overview"
+    },
+    {
+      "source": "asset::cv-17",
+      "target": "company::cellivery_therapeutics,_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-17__20260807"
+    },
+    {
+      "source": "asset::cv-17",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-17__20260807"
+    },
+    {
+      "source": "asset::cv-17",
+      "target": "moa::aso_rna_interference;_specific_target_undisclosed",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-17__20260807"
+    },
+    {
+      "source": "asset::cv-17",
+      "target": "modality::rna_therapy",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-17__20260807"
+    },
+    {
+      "source": "asset::cv-17",
+      "target": "indication::neurodegenerative_diseases_(unspecified)",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-17__20260807"
+    },
+    {
+      "source": "asset::cv-17",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-17__20260807"
+    },
+    {
+      "source": "asset::cv-17",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-17__20260807"
+    },
+    {
+      "source": "asset::cv-17",
+      "target": "scorecard::cv-17_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__CV-17__20260807"
+    },
+    {
+      "source": "asset::cv-17",
+      "target": "source::https_synapse.patsnap.com_drug_602e117b02008a6730e1f915194b899e",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__CV-17_overview"
+    },
+    {
+      "source": "scorecard::cv-17_20260807",
+      "target": "source::https_synapse.patsnap.com_drug_602e117b02008a6730e1f915194b899e",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__CV-17_overview"
+    },
+    {
+      "source": "asset::cv-17",
+      "target": "source::https_data.pharmacodia.com_drugs_details_22122625900035563141",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__CV-17_CP-ASO_overview"
+    },
+    {
+      "source": "scorecard::cv-17_20260807",
+      "target": "source::https_data.pharmacodia.com_drugs_details_22122625900035563141",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__CV-17_CP-ASO_overview"
+    },
+    {
+      "source": "asset::yc-5_injection",
+      "target": "company::cellprotek_pharmaceutical",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-5_Injection__20260807"
+    },
+    {
+      "source": "asset::yc-5_injection",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-5_Injection__20260807"
+    },
+    {
+      "source": "asset::yc-5_injection",
+      "target": "moa::multi-mechanistic_neuroprotection;_possible_negative_regulation_of_nmda_8b2a1f7e",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-5_Injection__20260807"
+    },
+    {
+      "source": "asset::yc-5_injection",
+      "target": "modality::small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-5_Injection__20260807"
+    },
+    {
+      "source": "asset::yc-5_injection",
+      "target": "indication::epileptic_seizures_convulsions",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-5_Injection__20260807"
+    },
+    {
+      "source": "asset::yc-5_injection",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-5_Injection__20260807"
+    },
+    {
+      "source": "asset::yc-5_injection",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-5_Injection__20260807"
+    },
+    {
+      "source": "asset::yc-5_injection",
+      "target": "scorecard::yc-5_injection_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-5_Injection__20260807"
+    },
+    {
+      "source": "asset::yc-5_injection",
+      "target": "source::https_patents.google.com_patent_cn101683348b_en",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__CN101683348B_YC-5_neuroprotection_patent"
+    },
+    {
+      "source": "scorecard::yc-5_injection_20260807",
+      "target": "source::https_patents.google.com_patent_cn101683348b_en",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__CN101683348B_YC-5_neuroprotection_patent"
+    },
+    {
+      "source": "asset::yc-5_injection",
+      "target": "source::https_www.cellprotek.com_science-and-medicine_rd-pipeline",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellprotek_R&D_pipeline"
+    },
+    {
+      "source": "scorecard::yc-5_injection_20260807",
+      "target": "source::https_www.cellprotek.com_science-and-medicine_rd-pipeline",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellprotek_R&D_pipeline"
+    },
+    {
+      "source": "asset::yc-6",
+      "target": "company::cellprotek_pharmaceutical",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-6__20260807"
+    },
+    {
+      "source": "asset::yc-6",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-6__20260807"
+    },
+    {
+      "source": "asset::yc-6",
+      "target": "moa::multi-pathway_cytoprotection_including_anti-inflammatory,_calcium_acido_6a148d1c",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-6__20260807"
+    },
+    {
+      "source": "asset::yc-6",
+      "target": "modality::small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-6__20260807"
+    },
+    {
+      "source": "asset::yc-6",
+      "target": "indication::acute_ischemic_stroke_malignant_cerebral_infarction;_intracerebral_hemorrhage",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-6__20260807"
+    },
+    {
+      "source": "asset::yc-6",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-6__20260807"
+    },
+    {
+      "source": "asset::yc-6",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-6__20260807"
+    },
+    {
+      "source": "asset::yc-6",
+      "target": "scorecard::yc-6_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__YC-6__20260807"
+    },
+    {
+      "source": "asset::yc-6",
+      "target": "source::https_www.cellprotek.com_science-and-medicine_rd-pipeline",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellprotek_R&D_pipeline"
+    },
+    {
+      "source": "scorecard::yc-6_20260807",
+      "target": "source::https_www.cellprotek.com_science-and-medicine_rd-pipeline",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Cellprotek_R&D_pipeline"
+    },
+    {
+      "source": "asset::neurological_disorder_research_program",
+      "target": "company::celltium",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Neurological_Disorder_Research_Program__20260807"
+    },
+    {
+      "source": "asset::neurological_disorder_research_program",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Neurological_Disorder_Research_Program__20260807"
+    },
+    {
+      "source": "asset::neurological_disorder_research_program",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Neurological_Disorder_Research_Program__20260807"
+    },
+    {
+      "source": "asset::neurological_disorder_research_program",
+      "target": "modality::unknown",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Neurological_Disorder_Research_Program__20260807"
+    },
+    {
+      "source": "asset::neurological_disorder_research_program",
+      "target": "indication::unknown",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Neurological_Disorder_Research_Program__20260807"
+    },
+    {
+      "source": "asset::neurological_disorder_research_program",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Neurological_Disorder_Research_Program__20260807"
+    },
+    {
+      "source": "asset::neurological_disorder_research_program",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Neurological_Disorder_Research_Program__20260807"
+    },
+    {
+      "source": "asset::neurological_disorder_research_program",
+      "target": "scorecard::neurological_disorder_research_program_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__Neurological_Disorder_Research_Program__20260807"
+    },
+    {
+      "source": "asset::neurological_disorder_research_program",
+      "target": "source::https_www.celltium.com_technology",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__CELLTIUM_Technology_&_Pipeline"
+    },
+    {
+      "source": "scorecard::neurological_disorder_research_program_20260807",
+      "target": "source::https_www.celltium.com_technology",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__CELLTIUM_Technology_&_Pipeline"
+    },
+    {
+      "source": "asset::lc-pc01",
+      "target": "company::celltrion,_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LC-PC01__20260807"
+    },
+    {
+      "source": "asset::lc-pc01",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LC-PC01__20260807"
+    },
+    {
+      "source": "asset::lc-pc01",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LC-PC01__20260807"
+    },
+    {
+      "source": "asset::lc-pc01",
+      "target": "modality::other",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LC-PC01__20260807"
+    },
+    {
+      "source": "asset::lc-pc01",
+      "target": "indication::parkinson_disease",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LC-PC01__20260807"
+    },
+    {
+      "source": "asset::lc-pc01",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LC-PC01__20260807"
+    },
+    {
+      "source": "asset::lc-pc01",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LC-PC01__20260807"
+    },
+    {
+      "source": "asset::lc-pc01",
+      "target": "scorecard::lc-pc01_20260807",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__LC-PC01__20260807"
+    },
+    {
+      "source": "asset::lc-pc01",
+      "target": "source::https_synapse.patsnap.com_drug_73755749f9254077ae1c4000b1a55508",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__LB-PC01_overview"
+    },
+    {
+      "source": "scorecard::lc-pc01_20260807",
+      "target": "source::https_synapse.patsnap.com_drug_73755749f9254077ae1c4000b1a55508",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__LB-PC01_overview"
     }
   ]
 }
