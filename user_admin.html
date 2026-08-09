@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SKBP 사용자 관리</title>
-    <link rel="icon" type="image/svg+xml" href="./src/sk-butterfly.svg?v=20260802-1" />
+    <link rel="icon" type="image/svg+xml" href="/src/sk-butterfly.svg?v=20260802-1" />
     <script>
       (() => {
         const stored = localStorage.getItem('skbp.ui.theme');
         document.documentElement.dataset.theme = stored || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260805-topic-notes-1" />
+    <link rel="stylesheet" href="/src/styles.css?v=20260805-topic-notes-1" />
   </head>
   <body>
     <div class="app-shell admin-shell">
@@ -79,6 +79,6 @@
         </section>
       </main>
     </div>
-    <script type="module" src="./src/user-admin.js?v=20260802-user-admin-1"></script>
+    <script type="module" src="/src/user-admin.js?v=20260802-user-admin-1"></script>
   </body>
 </html>
