@@ -51,7 +51,7 @@
 .workflow-navigation-shell .pipeline-table-tabs {
   display: grid;
   width: 100%;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 5px;
   margin: 0;
   padding: 0;
@@ -619,7 +619,7 @@
   .workflow-navigation-shell::-webkit-scrollbar { display: none; }
 
   .workflow-navigation-shell .pipeline-table-tabs {
-    min-width: 550px;
+    min-width: 720px;
   }
 
   .workflow-navigation-shell .pipeline-table-tabs button {
@@ -3757,6 +3757,10 @@ td {
 }
 
 .rubric-refresh-button {
+  color: var(--muted);
+}
+
+.triage-full-copy-button {
   color: var(--muted);
 }
 
@@ -13059,7 +13063,7 @@ html[data-theme="dark"] .obsidian-meta-row {
     display: grid;
     width: 100%;
     max-width: 100%;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 3px;
   }
 
@@ -18415,4 +18419,128 @@ body.report-reupload-open {
 .detail-shell .raw-report-panel .detail-viewer-back-group .report-action-icon:focus-visible {
   background: var(--accent-soft);
   color: var(--accent);
+}
+
+/* Step 0 진척 현황: independent panel, not part of the triage/full/focus tableMode.
+   Reuses .panel/.control-panel/.pipeline-table-panel/.paste-panel/.pipeline-table/.data-upload-*
+   for structural parity with the other 3 tabs; only genuinely new bits are styled here. */
+.step0-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.step0-stat-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 14px 16px 16px;
+}
+
+.step0-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-soft);
+}
+
+.step0-stat-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.step0-stat strong {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+
+.step0-selected-count {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.step0-empty-state {
+  padding: 24px 12px;
+  color: var(--muted);
+  text-align: center;
+  white-space: normal;
+}
+
+.pipeline-table .step0-row-select {
+  accent-color: var(--accent);
+}
+
+.pipeline-table td.step0-asset-cell,
+.pipeline-table td.step0-company-cell {
+  font-weight: 650;
+  white-space: normal;
+}
+
+.pipeline-table td.step0-company-cell {
+  font-weight: 500;
+  color: var(--muted);
+}
+
+/* Step0's table has 7 columns, not the main table's ~17, so it needs its own
+   (wider) column-width proportions instead of .pipeline-col-*. */
+.step0-progress-table .step0-col-select {
+  width: 4%;
+}
+
+.step0-progress-table .step0-col-asset {
+  width: 26%;
+}
+
+.step0-progress-table .step0-col-company {
+  width: 22%;
+}
+
+.step0-progress-table .step0-col-stage {
+  width: 12%;
+}
+
+.step0-status-filter-label {
+  grid-column: span 2;
+}
+
+.step0-status-toggle-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.step0-status-toggle {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.step0-status-toggle:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+  color: var(--text);
+}
+
+.step0-status-toggle.active {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+  color: var(--accent);
+}
+
+@media (max-width: 720px) {
+  .step0-stat-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

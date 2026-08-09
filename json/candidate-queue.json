@@ -1,0 +1,26 @@
+[
+  {
+    "id": "cq_fd6fc649",
+    "asset_input": "AD-302",
+    "company_input": "AddPharma",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-09T03:01:53.873483+00:00"
+  },
+  {
+    "id": "cq_b2421603",
+    "asset_input": "ADEL-Y03",
+    "company_input": "ADEL",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-09T03:01:53.873483+00:00"
+  },
+  {
+    "id": "cq_a232fd51",
+    "asset_input": "ADY-73001 (ADEL-Y07)",
+    "company_input": "ADEL Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-09T03:01:53.873483+00:00"
+  }
+]

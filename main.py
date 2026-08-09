@@ -44,6 +44,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 ROOT = Path(__file__).resolve().parent
 JSON_DIR = ROOT / "json"
 DATA_FILE = JSON_DIR / "pipeline-records.json"
+CANDIDATE_QUEUE_FILE = JSON_DIR / "candidate-queue.json"
 USERS_FILE = ROOT / "data" / "users.json"
 SAMPLE_FILE = JSON_DIR / "drug-valuations.sample.json"
 SCHEMA_FILE = JSON_DIR / "drug-valuation.schema.json"
@@ -3729,6 +3730,21 @@ def save_records(records: list[dict[str, Any]]) -> None:
     write_json_atomic(DATA_FILE, minimized_records)
 
 
+def load_candidate_queue() -> list[dict[str, Any]]:
+    """Load Step 0 pending-candidate queue entries (not part of dashboard_hybrid_v1)."""
+    if not CANDIDATE_QUEUE_FILE.exists():
+        write_json_atomic(CANDIDATE_QUEUE_FILE, [])
+        return []
+    payload = read_json(CANDIDATE_QUEUE_FILE)
+    if not isinstance(payload, list):
+        return []
+    return [entry for entry in payload if isinstance(entry, dict)]
+
+
+def save_candidate_queue(entries: list[dict[str, Any]]) -> None:
+    write_json_atomic(CANDIDATE_QUEUE_FILE, entries)
+
+
 def run_obsidian_export() -> dict[str, Any]:
     script = ROOT / "scripts" / "export_obsidian.py"
     if not script.exists():
@@ -4202,31 +4218,53 @@ def dashboard_normalize_identity_text(value: Any) -> str:
     return re.sub(r"[\W_]+", "", text, flags=re.UNICODE)
 
 
+DASHBOARD_COMPANY_SUFFIX_PATTERN = re.compile(
+    r"\b(?:incorporated|inc|limited|ltd|corporation|corp|company|co|pharmaceuticals?|"
+    r"therapeutics?|biosciences?|biotechnology)\b",
+    flags=re.IGNORECASE,
+)
+
+
+def company_aliases_from_text(raw_value: Any) -> set[str]:
+    """Build normalized company alias variants (incl. legal-suffix-stripped) from one raw string."""
+    aliases: set[str] = set()
+    if not raw_value:
+        return aliases
+    text = unicodedata.normalize("NFKC", str(raw_value)).strip()
+    for part in [text, *re.split(r"\s*(?:/|\||;|,)\s*", text)]:
+        normalized = dashboard_normalize_identity_text(part)
+        if normalized:
+            aliases.add(normalized)
+        without_suffix = dashboard_normalize_identity_text(DASHBOARD_COMPANY_SUFFIX_PATTERN.sub(" ", part))
+        if without_suffix:
+            aliases.add(without_suffix)
+    return aliases
+
+
+def asset_aliases_from_text(raw_value: Any) -> set[str]:
+    """Build normalized asset alias variants from one raw string (excludes generic placeholders)."""
+    aliases: set[str] = set()
+    if not raw_value:
+        return aliases
+    text = unicodedata.normalize("NFKC", str(raw_value)).strip()
+    for part in [text, *re.split(r"\s*(?:/|\||;|,)\s*", text)]:
+        normalized = dashboard_normalize_identity_text(part)
+        if normalized and normalized not in {"unknown", "na", "asset", "tobedetermined"}:
+            aliases.add(normalized)
+    return aliases
+
+
 def dashboard_company_aliases(record: dict[str, Any]) -> set[str]:
     table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else {}
     summary = record.get("json_summary") if isinstance(record.get("json_summary"), dict) else {}
     input_data = record.get("input") if isinstance(record.get("input"), dict) else {}
     aliases: set[str] = set()
-    suffix_pattern = re.compile(
-        r"\b(?:incorporated|inc|limited|ltd|corporation|corp|company|co|pharmaceuticals?|"
-        r"therapeutics?|biosciences?|biotechnology)\b",
-        flags=re.IGNORECASE,
-    )
     for raw_value in (
         table.get("company"),
         summary.get("company"),
         input_data.get("company_input"),
     ):
-        if not raw_value:
-            continue
-        text = unicodedata.normalize("NFKC", str(raw_value)).strip()
-        for part in [text, *re.split(r"\s*(?:/|\||;|,)\s*", text)]:
-            normalized = dashboard_normalize_identity_text(part)
-            if normalized:
-                aliases.add(normalized)
-            without_suffix = dashboard_normalize_identity_text(suffix_pattern.sub(" ", part))
-            if without_suffix:
-                aliases.add(without_suffix)
+        aliases |= company_aliases_from_text(raw_value)
     return aliases
 
 
@@ -4240,13 +4278,7 @@ def dashboard_asset_aliases(record: dict[str, Any]) -> set[str]:
         summary.get("asset_name"),
         input_data.get("asset_input"),
     ):
-        if not raw_value:
-            continue
-        text = unicodedata.normalize("NFKC", str(raw_value)).strip()
-        for part in [text, *re.split(r"\s*(?:/|\||;|,)\s*", text)]:
-            normalized = dashboard_normalize_identity_text(part)
-            if normalized and normalized not in {"unknown", "na", "asset", "tobedetermined"}:
-                aliases.add(normalized)
+        aliases |= asset_aliases_from_text(raw_value)
     if not aliases:
         aliases.add(dashboard_normalize_identity_text(record_key(record)) or "asset")
     return aliases
@@ -4320,6 +4352,58 @@ def dashboard_identity_groups(records: list[dict[str, Any]]) -> list[dict[str, A
         primary_company = min(group["company_aliases"], key=lambda alias: (len(alias), alias), default="unknown")
         group["asset_identity"] = f"{primary_company}::{primary_asset}"
     return groups
+
+
+def find_matching_identity_group(
+    asset_input: str, company_input: str, groups: list[dict[str, Any]]
+) -> dict[str, Any] | None:
+    """Match a raw pasted (asset, company) pair against precomputed identity groups.
+
+    Mirrors the matching predicate inside dashboard_identity_groups so Step 0 candidate-queue
+    dedup uses exactly the same identity rule that already joins Fast Triage/Full Scout records.
+    Read-only: never mutates the given groups.
+    """
+    asset_aliases = asset_aliases_from_text(asset_input)
+    company_aliases = company_aliases_from_text(company_input)
+    for group in groups:
+        shared_assets = asset_aliases & group["asset_aliases"]
+        if not shared_assets:
+            continue
+        companies_match = bool(company_aliases & group["company_aliases"])
+        companies_overlap = any(
+            left in right or right in left
+            for left in company_aliases
+            for right in group["company_aliases"]
+            if left and right
+        )
+        distinctive_asset = any(dashboard_asset_alias_is_distinct(alias) for alias in shared_assets)
+        if companies_match or companies_overlap or distinctive_asset or not company_aliases or not group["company_aliases"]:
+            return group
+    return None
+
+
+def parse_candidate_pair_lines(raw_text: str) -> dict[str, Any]:
+    """Parse pasted Step 0 candidate rows: asset name first, company name last, separated by
+    a tab or 2+ spaces (the same row format already documented to users in the Fast Triage
+    GPT prompt's Asset + Company list spec). Single-segment lines are asset-only.
+    """
+    rows: list[dict[str, str]] = []
+    unparsed: list[str] = []
+    for raw_line in str(raw_text or "").splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        segments = [segment.strip() for segment in re.split(r"\t+| {2,}", line) if segment.strip()]
+        if not segments:
+            unparsed.append(raw_line)
+            continue
+        if len(segments) == 1:
+            rows.append({"asset_input": segments[0], "company_input": "Unknown"})
+            continue
+        company_input = segments[-1]
+        asset_input = " ".join(segments[:-1])
+        rows.append({"asset_input": asset_input, "company_input": company_input})
+    return {"rows": rows, "unparsed": unparsed}
 
 
 def dashboard_parse_datetime(value: Any) -> datetime | None:
@@ -6973,6 +7057,158 @@ def get_records() -> dict[str, Any]:
 def get_dashboard_summary() -> dict[str, Any]:
     """Return unfiltered workflow summaries derived only from persisted records."""
     return build_dashboard_summary(load_records())
+
+
+@app.post("/api/candidate-queue/import")
+async def import_candidate_queue(request: Request) -> dict[str, Any]:
+    """Step 0: bulk-import pasted asset/company rows, excluding ones already researched."""
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected an object with a 'text' field.")
+    raw_text = payload.get("text")
+    if not isinstance(raw_text, str) or not raw_text.strip():
+        raise HTTPException(status_code=400, detail="text is required.")
+
+    parsed = parse_candidate_pair_lines(raw_text)
+    rows = parsed["rows"]
+    groups = dashboard_identity_groups(load_records())
+    queue = load_candidate_queue()
+
+    added_entries: list[dict[str, Any]] = []
+    already_researched_skipped = 0
+    duplicate_in_queue_skipped = 0
+    added_at = datetime.now(timezone.utc).isoformat()
+
+    for row in rows:
+        asset_input = row["asset_input"]
+        company_input = row["company_input"]
+        if find_matching_identity_group(asset_input, company_input, groups) is not None:
+            already_researched_skipped += 1
+            continue
+        queue_pseudo_groups = [
+            {
+                "asset_aliases": asset_aliases_from_text(entry.get("asset_input")),
+                "company_aliases": company_aliases_from_text(entry.get("company_input")),
+            }
+            for entry in queue
+        ]
+        if find_matching_identity_group(asset_input, company_input, queue_pseudo_groups) is not None:
+            duplicate_in_queue_skipped += 1
+            continue
+        entry = {
+            "id": f"cq_{uuid.uuid4().hex[:8]}",
+            "asset_input": asset_input,
+            "company_input": company_input,
+            "status": "pending",
+            "source": "paste_import",
+            "added_at": added_at,
+        }
+        queue.append(entry)
+        added_entries.append(entry)
+
+    if added_entries:
+        save_candidate_queue(queue)
+
+    return {
+        "ok": True,
+        "parsed": len(rows),
+        "added": len(added_entries),
+        "already_researched_skipped": already_researched_skipped,
+        "duplicate_in_queue_skipped": duplicate_in_queue_skipped,
+        "unparsed_lines": parsed["unparsed"],
+        "added_entries": added_entries,
+    }
+
+
+@app.get("/api/candidate-queue/progress")
+def get_candidate_queue_progress() -> dict[str, Any]:
+    """Step 0: unified progress table across pending/Fast Triage/Full Scout/Shortlisting."""
+    groups = dashboard_identity_groups(load_records())
+    queue = load_candidate_queue()
+
+    rows: list[dict[str, Any]] = []
+    stats = {"pending": 0, "fast_triage": 0, "full_scout": 0, "shortlisted": 0}
+    matched_queue_ids: set[str] = set()
+
+    for group in groups:
+        fast_records = [record for record in group["records"] if is_fast_triage_record(record)]
+        full_records = [record for record in group["records"] if not is_fast_triage_record(record)]
+        fast_record = dashboard_latest_record(fast_records) if fast_records else None
+        full_record = dashboard_latest_record(full_records) if full_records else None
+        tracked_full_records = []
+        for record in full_records:
+            meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+            focus = meta.get("focus_management") if isinstance(meta.get("focus_management"), dict) else {}
+            if focus.get("is_tracked") is True:
+                tracked_full_records.append(record)
+        shortlisted_record = dashboard_latest_record(tracked_full_records) if tracked_full_records else None
+
+        representative = full_record or fast_record
+        rep_table = (representative.get("structured_table") if representative else None) or {}
+        rep_summary = (representative.get("json_summary") if representative else None) or {}
+        asset_label = non_empty_text(rep_table.get("asset_name"), rep_summary.get("asset_name"), "Unknown")
+        company_label = non_empty_text(rep_table.get("company"), rep_summary.get("company"), "Unknown")
+
+        for entry in queue:
+            entry_id = entry.get("id")
+            if not isinstance(entry_id, str) or entry_id in matched_queue_ids:
+                continue
+            if find_matching_identity_group(str(entry.get("asset_input") or ""), str(entry.get("company_input") or ""), [group]) is not None:
+                matched_queue_ids.add(entry_id)
+
+        rows.append(
+            {
+                "identity": group["asset_identity"],
+                "asset": asset_label,
+                "company": company_label,
+                "pending": {"done": False, "queue_id": None},
+                "fast_triage": {"done": fast_record is not None, "record_id": record_key(fast_record) if fast_record else None},
+                "full_scout": {"done": full_record is not None, "record_id": record_key(full_record) if full_record else None},
+                "shortlisting": {
+                    "done": shortlisted_record is not None,
+                    "record_id": record_key(shortlisted_record) if shortlisted_record else None,
+                },
+            }
+        )
+        if fast_record is not None:
+            stats["fast_triage"] += 1
+        if full_record is not None:
+            stats["full_scout"] += 1
+        if shortlisted_record is not None:
+            stats["shortlisted"] += 1
+
+    for entry in queue:
+        entry_id = entry.get("id")
+        if isinstance(entry_id, str) and entry_id in matched_queue_ids:
+            continue
+        rows.append(
+            {
+                "identity": f"pending::{entry_id}",
+                "asset": non_empty_text(entry.get("asset_input"), "Unknown"),
+                "company": non_empty_text(entry.get("company_input"), "Unknown"),
+                "pending": {"done": True, "queue_id": entry_id},
+                "fast_triage": {"done": False, "record_id": None},
+                "full_scout": {"done": False, "record_id": None},
+                "shortlisting": {"done": False, "record_id": None},
+            }
+        )
+        stats["pending"] += 1
+
+    return {"ok": True, "stats": stats, "rows": rows}
+
+
+@app.delete("/api/candidate-queue/{queue_id}")
+def delete_candidate_queue_entry(queue_id: str) -> dict[str, Any]:
+    """Step 0: remove a mis-pasted or no-longer-needed pending candidate."""
+    queue = load_candidate_queue()
+    remaining = [entry for entry in queue if entry.get("id") != queue_id]
+    if len(remaining) == len(queue):
+        raise HTTPException(status_code=404, detail=f"Candidate queue entry not found: {queue_id}")
+    save_candidate_queue(remaining)
+    return {"ok": True, "deleted_id": queue_id, "total": len(remaining)}
 
 
 async def preview_ai_revision_for_record(record_id: str, request: Request) -> dict[str, Any]:

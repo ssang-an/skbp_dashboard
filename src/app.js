@@ -289,6 +289,15 @@ const state = {
   page: 1,
   pageSize: storedPageSize(),
   selectedIds: new Set(),
+  step0SelectedPendingIds: new Set(),
+  step0Rows: [],
+  step0Stats: { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 },
+  step0Loaded: false,
+  step0Query: '',
+  step0CompanyFilterValue: 'all',
+  step0StatusFilterValues: new Set(),
+  step0SortKey: null,
+  step0SortDirection: null,
   extraColumns: new Set(readStoredJson(
     'skbp.dashboard.extraColumns',
     [],
@@ -426,7 +435,27 @@ const elements = {
   dataReuploadTitle: document.querySelector('#dataReuploadTitle'),
   dataReuploadIdentity: document.querySelector('#dataReuploadIdentity'),
   dataReuploadKeepNew: document.querySelector('#dataReuploadKeepNew'),
-  dataReuploadConfirm: document.querySelector('#dataReuploadConfirm')
+  dataReuploadConfirm: document.querySelector('#dataReuploadConfirm'),
+  step0Panel: document.querySelector('#step0Panel'),
+  step0PasteInput: document.querySelector('#step0PasteInput'),
+  step0ImportButton: document.querySelector('#step0ImportButton'),
+  step0ClearButton: document.querySelector('#step0ClearButton'),
+  step0ImportSummary: document.querySelector('#step0ImportSummary'),
+  step0SaveStatus: document.querySelector('#step0SaveStatus'),
+  step0GuideSteps: document.querySelector('#step0GuideSteps'),
+  step0StatPending: document.querySelector('#step0StatPending'),
+  step0StatFastTriage: document.querySelector('#step0StatFastTriage'),
+  step0StatFullScout: document.querySelector('#step0StatFullScout'),
+  step0StatShortlisted: document.querySelector('#step0StatShortlisted'),
+  step0SearchInput: document.querySelector('#step0SearchInput'),
+  step0CompanyFilter: document.querySelector('#step0CompanyFilter'),
+  step0StatusToggleButtons: document.querySelectorAll('.step0-status-toggle'),
+  step0ResetFiltersButton: document.querySelector('#step0ResetFiltersButton'),
+  step0TableCount: document.querySelector('#step0TableCount'),
+  step0SelectAllRows: document.querySelector('#step0SelectAllRows'),
+  step0ProgressTableBody: document.querySelector('#step0ProgressTableBody'),
+  step0SelectedCount: document.querySelector('#step0SelectedCount'),
+  step0CopyInstructionsButton: document.querySelector('#step0CopyInstructionsButton')
 };
 
 let activeColumnResize = null;
@@ -3902,40 +3931,6 @@ function focusActionButton(row, location = 'full') {
   `;
 }
 
-function rubricRefreshButton(row) {
-  if (row.isTriage) {
-    const lastVersion = String(get(row.raw, 'meta.rubric_recalculation.version', ''));
-    const isCurrent = lastVersion === LATEST_TRIAGE_RUBRIC_VERSION;
-    const title = `저장된 평가 근거와 TR·MOA·Data 점수를 최신 Fast Triage 지침 v${LATEST_TRIAGE_RUBRIC_VERSION}에 다시 적용합니다.`;
-    return `
-      <button
-        type="button"
-        class="focus-action-button icon-only rubric-refresh-button ${isCurrent ? 'is-current' : ''}"
-        data-rubric-refresh
-        data-review-type="triage"
-        data-record-id="${escapeHtml(row.id)}"
-        title="${escapeHtml(title)}"
-        aria-label="${escapeHtml(`${row.asset} 최신 Fast Triage 지침 재평가`)}"
-      ><span aria-hidden="true">↻</span></button>
-    `;
-  }
-  const currentVersion = String(row.criteriaVersion || '-');
-  const lastVersion = String(get(row.raw, 'meta.rubric_recalculation.version', ''));
-  const isCurrent = lastVersion === LATEST_FULL_SCOUT_RUBRIC_VERSION;
-  return `
-    <button
-      type="button"
-      class="focus-action-button icon-only rubric-refresh-button ${isCurrent ? 'is-current' : ''}"
-      data-rubric-refresh
-      data-record-id="${escapeHtml(row.id)}"
-      title="저장된 7개 자동 점수로 최신 Full Scout Rubric v${LATEST_FULL_SCOUT_RUBRIC_VERSION}의 Total Score와 Filter 2를 재계산합니다. 수동 criterion/Total Score 보정과 붉은 표시는 초기화되며, Human decision과 코멘트는 유지됩니다. 현재 표시 버전: v${escapeHtml(currentVersion)}"
-      aria-label="${escapeHtml(row.asset)} 최신 Rubric v${LATEST_FULL_SCOUT_RUBRIC_VERSION} 재계산"
-    >
-      <span aria-hidden="true">↻</span>
-    </button>
-  `;
-}
-
 function fullScoutRowActions(row) {
   return `
     <div class="full-scout-row-actions">
@@ -3945,8 +3940,18 @@ function fullScoutRowActions(row) {
   `;
 }
 
-function triageRowActions(row) {
-  return `<div class="full-scout-row-actions">${rubricRefreshButton(row)}</div>`;
+function triageFullScoutCopyButton(row) {
+  const title = `GPT 지침 2와 ${row.asset} / ${row.company} Fast Triage 리서치 내용을 함께 복사합니다.`;
+  return `
+    <button
+      type="button"
+      class="focus-action-button icon-only triage-full-copy-button"
+      data-triage-full-copy
+      data-record-id="${escapeHtml(row.id)}"
+      title="${escapeHtml(title)}"
+      aria-label="${escapeHtml(`${row.asset} Full Scout 지침 복사`)}"
+    ><span aria-hidden="true">⧉</span></button>
+  `;
 }
 
 function rubricReevaluationButton(row) {
@@ -3977,7 +3982,7 @@ function rubricReevaluationButton(row) {
 }
 
 function rubricReevaluationCell(row) {
-  return `<div class="full-scout-row-actions">${rubricReevaluationButton(row)}</div>`;
+  return `<div class="full-scout-row-actions">${rubricReevaluationButton(row)}${triageFullScoutCopyButton(row)}</div>`;
 }
 
 function oiPartnershipRefreshButton(row) {
@@ -4833,6 +4838,56 @@ async function recalculateLatestRubric(button) {
       || `${workflowLabel} rubric v${data.rubric_version || latestVersion} AI 재채점 완료${clearedFields.length ? ' · manual score reset' : ''}`;
   } catch (error) {
     elements.dataStatus.textContent = `${workflowLabel} 재평가 실패: ${error.message}`;
+  } finally {
+    button.disabled = false;
+    button.classList.remove('is-saving');
+  }
+}
+
+function triageSourceReportText(record) {
+  const rawMarkdown = String(get(record, 'source_report.raw_markdown', '') || '').trim();
+  if (rawMarkdown) return rawMarkdown;
+  const triageWhy = String(get(record, 'triage.why', '') || '').trim();
+  if (triageWhy) return triageWhy;
+  return 'Fast Triage 조사 내용 없음';
+}
+
+async function copyTriageFullScoutPrompt(button) {
+  const recordId = button?.dataset.recordId;
+  if (!recordId) return;
+  const row = state.rows.find((candidate) => candidate.id === recordId && candidate.isTriage);
+  if (!row) return;
+
+  button.disabled = true;
+  button.classList.add('is-saving');
+  elements.dataStatus.textContent = `${row.asset} Full Scout 지침 복사 중`;
+
+  const buildCopyText = (promptText) => [
+    promptText,
+    '',
+    `Asset name: ${row.asset}`,
+    `Company name: ${row.company}`,
+    '',
+    'Fast Triage researched content:',
+    triageSourceReportText(row.raw)
+  ].join('\n');
+
+  try {
+    const warningsStore = await fetchInstructionWarnings();
+    const fullPrompt = appendInstructionWarnings(buildGptInstructionPrompt(), warningsStore.full);
+    await navigator.clipboard.writeText(buildCopyText(fullPrompt));
+    elements.dataStatus.textContent = `${row.asset} Full Scout 지침을 클립보드에 복사했습니다.`;
+  } catch (error) {
+    const scratch = document.createElement('textarea');
+    scratch.value = buildCopyText(buildGptInstructionPrompt());
+    scratch.setAttribute('readonly', '');
+    scratch.style.position = 'fixed';
+    scratch.style.opacity = '0';
+    document.body.appendChild(scratch);
+    scratch.select();
+    document.execCommand('copy');
+    document.body.removeChild(scratch);
+    elements.dataStatus.textContent = `${row.asset} Full Scout 지침을 클립보드에 복사했습니다.`;
   } finally {
     button.disabled = false;
     button.classList.remove('is-saving');
@@ -8658,6 +8713,415 @@ function setPromptCopyFeedback(kind = 'full') {
   }, 1800);
 }
 
+// --- Step 0 진척 현황 (independent panel, not a real tableMode) ---
+
+const STEP0_GUIDE_STEPS = [
+  {
+    title: 'CSV/스프레드시트에서 약물·회사 목록 복사',
+    body: '후보군 리스트를 다운로드한 CSV나 스프레드시트에서 약물명과 회사명 두 컬럼만 그대로 복사합니다.',
+    example: 'AD-302\tAddPharma\nADEL-Y03\tADEL'
+  },
+  {
+    title: '아래 입력란에 붙여넣기',
+    body: '탭 또는 공백 2칸 이상으로 약물명과 회사명이 구분되어 있으면 됩니다. 약물명만 있어도 됩니다.'
+  },
+  {
+    title: '가져오기',
+    body: '이미 Fast Triage/Full Scout로 조사된 항목은 자동으로 제외되고, 새 항목만 조사 대기 목록에 추가됩니다.'
+  },
+  {
+    title: '조사 대기 항목 선택 후 지침 복사',
+    body: '표에서 조사가 필요한 항목을 최대 10개까지 선택한 뒤 상단 지침 복사 버튼을 누르면 Fast Triage GPT 지침 1에 해당 후보 목록이 포함되어 복사됩니다.'
+  }
+];
+
+function renderStep0Guide() {
+  if (!elements.step0GuideSteps) return;
+  elements.step0GuideSteps.innerHTML = STEP0_GUIDE_STEPS.map((step) => `
+    <li>
+      <span class="data-upload-step-icon" aria-hidden="true">${dataUploadIconMarkup('file-text')}</span>
+      <div class="data-upload-step-copy">
+        <strong>${escapeHtml(step.title)}</strong>
+        <p>${escapeHtml(step.body)}</p>
+        ${step.example ? `<pre><span>${dataUploadIconMarkup('code')}입력 형식 예시</span>${escapeHtml(step.example)}</pre>` : ''}
+      </div>
+    </li>
+  `).join('');
+}
+
+function setStep0SaveStatus(status) {
+  if (!elements.step0SaveStatus) return;
+  const labels = {
+    waiting: '붙여넣기 대기',
+    validating: '가져오는 중',
+    saved: '가져오기 완료',
+    error: '가져오기 실패'
+  };
+  const icons = { waiting: 'waiting', validating: 'loader', saved: 'saved', error: 'alert' };
+  const nextStatus = Object.prototype.hasOwnProperty.call(labels, status) ? status : 'waiting';
+  elements.step0SaveStatus.dataset.state = nextStatus;
+  elements.step0SaveStatus.innerHTML = `${dataUploadIconMarkup(icons[nextStatus])}<span>${escapeHtml(labels[nextStatus])}</span>`;
+}
+
+function showStep0Panel(show) {
+  if (elements.pipelineContent) elements.pipelineContent.style.display = show ? 'none' : '';
+  if (elements.step0Panel) {
+    elements.step0Panel.hidden = !show;
+    elements.step0Panel.style.display = show ? '' : 'none';
+  }
+}
+
+function activateStep0Panel() {
+  elements.pipelineTableTabs?.forEach((tab) => {
+    const isActive = tab.dataset.tableMode === 'step0';
+    tab.classList.toggle('active', isActive);
+    tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    tab.tabIndex = isActive ? 0 : -1;
+  });
+  showStep0Panel(true);
+  renderStep0Guide();
+  loadStep0Progress();
+}
+
+function deactivateStep0Panel() {
+  showStep0Panel(false);
+  renderTableTabs();
+}
+
+function renderStep0ImportSummary(result) {
+  if (!elements.step0ImportSummary || !result) return;
+  const unparsedNote = result.unparsed_lines?.length ? ` · 파싱 실패 ${result.unparsed_lines.length}줄` : '';
+  elements.step0ImportSummary.hidden = false;
+  elements.step0ImportSummary.textContent =
+    `${result.parsed}줄 파싱 · 신규 추가 ${result.added} · 이미 조사됨(제외) ${result.already_researched_skipped} · 중복 ${result.duplicate_in_queue_skipped}${unparsedNote}`;
+}
+
+function showStep0Message(text) {
+  if (!elements.step0ImportSummary) return;
+  elements.step0ImportSummary.hidden = false;
+  elements.step0ImportSummary.textContent = text;
+}
+
+async function importStep0Candidates() {
+  const text = elements.step0PasteInput?.value || '';
+  if (!text.trim()) {
+    showStep0Message('붙여넣은 내용이 없습니다.');
+    return;
+  }
+  if (elements.step0ImportButton) elements.step0ImportButton.disabled = true;
+  setStep0SaveStatus('validating');
+  try {
+    const response = await fetch('/api/candidate-queue/import', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    if (!response.ok) throw new Error(await response.text());
+    const result = await response.json();
+    renderStep0ImportSummary(result);
+    if (elements.step0PasteInput) elements.step0PasteInput.value = '';
+    setStep0SaveStatus('saved');
+    await loadStep0Progress();
+  } catch (error) {
+    showStep0Message(`가져오기 실패: ${error.message}`);
+    setStep0SaveStatus('error');
+  } finally {
+    if (elements.step0ImportButton) elements.step0ImportButton.disabled = false;
+  }
+}
+
+async function loadStep0Progress() {
+  try {
+    const response = await fetch('/api/candidate-queue/progress');
+    if (!response.ok) throw new Error(await response.text());
+    const data = await response.json();
+    state.step0Rows = Array.isArray(data.rows) ? data.rows : [];
+    state.step0Stats = data.stats || { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 };
+    const pendingIds = new Set(
+      state.step0Rows.filter((row) => row.pending?.queue_id).map((row) => row.pending.queue_id)
+    );
+    [...state.step0SelectedPendingIds].forEach((id) => {
+      if (!pendingIds.has(id)) state.step0SelectedPendingIds.delete(id);
+    });
+    state.step0Loaded = true;
+    renderStep0StatStrip();
+    populateStep0CompanyFilter();
+    renderStep0ProgressTable();
+    renderStep0SelectedCount();
+  } catch (error) {
+    if (elements.step0ProgressTableBody) {
+      elements.step0ProgressTableBody.innerHTML =
+        `<tr><td colspan="7" class="step0-empty-state">진척 현황을 불러오지 못했습니다: ${escapeHtml(error.message)}</td></tr>`;
+    }
+  }
+}
+
+function renderStep0StatStrip() {
+  if (elements.step0StatPending) elements.step0StatPending.textContent = String(state.step0Stats.pending ?? 0);
+  if (elements.step0StatFastTriage) elements.step0StatFastTriage.textContent = String(state.step0Stats.fast_triage ?? 0);
+  if (elements.step0StatFullScout) elements.step0StatFullScout.textContent = String(state.step0Stats.full_scout ?? 0);
+  if (elements.step0StatShortlisted) elements.step0StatShortlisted.textContent = String(state.step0Stats.shortlisted ?? 0);
+}
+
+function populateStep0CompanyFilter() {
+  if (!elements.step0CompanyFilter) return;
+  const previous = elements.step0CompanyFilter.value || 'all';
+  const companies = [...new Set(state.step0Rows.map((row) => row.company).filter(Boolean))].sort((a, b) =>
+    a.localeCompare(b, 'ko')
+  );
+  elements.step0CompanyFilter.innerHTML =
+    '<option value="all">전체</option>' +
+    companies.map((company) => `<option value="${escapeHtml(company)}">${escapeHtml(company)}</option>`).join('');
+  elements.step0CompanyFilter.value = companies.includes(previous) ? previous : 'all';
+}
+
+const STEP0_STAGE_LABELS = {
+  fast_triage: 'Fast Triage',
+  full_scout: 'Full Scout',
+  shortlisting: 'Shortlisting'
+};
+
+function step0StageCellHtml(stage, cell) {
+  const done = Boolean(cell?.done);
+  if (stage === 'pending') {
+    return `<span class="pill ${done ? 'review' : 'empty'}">${done ? '대기중' : '-'}</span>`;
+  }
+  const tone = done ? 'pass' : 'empty';
+  const stageLabel = STEP0_STAGE_LABELS[stage] || stage;
+  const label = done ? '<span aria-hidden="true">✓</span>' : '-';
+  const title = done ? ` title="${escapeHtml(`${stageLabel} 완료 · 상세 보기`)}"` : '';
+  if (!done || !cell?.record_id) {
+    return `<span class="pill ${tone}"${title}>${label}</span>`;
+  }
+  const mode = stage === 'fast_triage' ? 'triage' : stage === 'full_scout' ? 'full' : 'focus';
+  const href = recordDetailHref({ id: cell.record_id, isTriage: stage === 'fast_triage' }, mode);
+  return `<a class="pill ${tone}" href="${escapeHtml(href)}"${title}>${label}</a>`;
+}
+
+function step0FilteredSortedRows() {
+  const query = (state.step0Query || '').trim().toLowerCase();
+  const companyFilter = state.step0CompanyFilterValue || 'all';
+  const statusFilters = state.step0StatusFilterValues;
+
+  let rows = state.step0Rows.filter((row) => {
+    if (query) {
+      const haystack = `${row.asset || ''} ${row.company || ''}`.toLowerCase();
+      if (!haystack.includes(query)) return false;
+    }
+    if (companyFilter !== 'all' && row.company !== companyFilter) return false;
+    if (statusFilters.size && ![...statusFilters].some((status) => row[status]?.done)) return false;
+    return true;
+  });
+
+  const { step0SortKey: sortKey, step0SortDirection: sortDirection } = state;
+  if (sortKey && sortDirection) {
+    const direction = sortDirection === 'asc' ? 1 : -1;
+    rows = [...rows].sort((a, b) => {
+      if (sortKey === 'asset' || sortKey === 'company') {
+        return String(a[sortKey] || '').localeCompare(String(b[sortKey] || ''), 'ko') * direction;
+      }
+      const aDone = a[sortKey]?.done ? 1 : 0;
+      const bDone = b[sortKey]?.done ? 1 : 0;
+      return (aDone - bDone) * direction;
+    });
+  }
+  return rows;
+}
+
+function updateStep0SortIndicators() {
+  document.querySelectorAll('button[data-step0-sort]').forEach((button) => {
+    const isActive = Boolean(state.step0SortKey && state.step0SortDirection && button.dataset.step0Sort === state.step0SortKey);
+    button.classList.toggle('sort-active', isActive);
+    button.dataset.sortDirection = isActive ? state.step0SortDirection : '';
+  });
+}
+
+function sortStep0Column(key) {
+  if (state.step0SortKey !== key || !state.step0SortDirection) {
+    state.step0SortKey = key;
+    state.step0SortDirection = 'asc';
+  } else if (state.step0SortDirection === 'asc') {
+    state.step0SortDirection = 'desc';
+  } else {
+    state.step0SortKey = null;
+    state.step0SortDirection = null;
+  }
+  updateStep0SortIndicators();
+  renderStep0ProgressTable();
+}
+
+function renderStep0ProgressTable() {
+  if (!elements.step0ProgressTableBody) return;
+  const rows = step0FilteredSortedRows();
+  if (elements.step0TableCount) elements.step0TableCount.textContent = `${rows.length} items`;
+  state.step0VisiblePendingIds = rows
+    .filter((row) => row.pending?.done && row.pending?.queue_id)
+    .map((row) => row.pending.queue_id);
+  if (!rows.length) {
+    elements.step0ProgressTableBody.innerHTML = state.step0Rows.length
+      ? '<tr><td colspan="7" class="step0-empty-state">현재 필터/검색 조건에 맞는 항목이 없습니다.</td></tr>'
+      : '<tr><td colspan="7" class="step0-empty-state">진척 현황 데이터가 없습니다. 아래에서 후보 목록을 붙여넣어 시작하세요.</td></tr>';
+    updateStep0SelectAllState();
+    return;
+  }
+  elements.step0ProgressTableBody.innerHTML = rows
+    .map((row) => {
+      const queueId = row.pending?.queue_id;
+      const isPending = Boolean(row.pending?.done && queueId);
+      const checked = isPending && state.step0SelectedPendingIds.has(queueId) ? 'checked' : '';
+      const checkboxCell = isPending
+        ? `<input type="checkbox" class="step0-row-select" data-queue-id="${escapeHtml(queueId)}" ${checked} aria-label="${escapeHtml(row.asset)} 선택" />`
+        : '';
+      return `<tr>
+        <td class="select-col">${checkboxCell}</td>
+        <td class="step0-asset-cell">${escapeHtml(row.asset)}</td>
+        <td class="step0-company-cell">${escapeHtml(row.company)}</td>
+        <td>${step0StageCellHtml('pending', row.pending)}</td>
+        <td>${step0StageCellHtml('fast_triage', row.fast_triage)}</td>
+        <td>${step0StageCellHtml('full_scout', row.full_scout)}</td>
+        <td>${step0StageCellHtml('shortlisting', row.shortlisting)}</td>
+      </tr>`;
+    })
+    .join('');
+  updateStep0SelectAllState();
+}
+
+function updateStep0SelectAllState() {
+  if (!elements.step0SelectAllRows) return;
+  const visibleIds = state.step0VisiblePendingIds || [];
+  const checkedCount = visibleIds.filter((id) => state.step0SelectedPendingIds.has(id)).length;
+  elements.step0SelectAllRows.checked = visibleIds.length > 0 && checkedCount === visibleIds.length;
+  elements.step0SelectAllRows.indeterminate = checkedCount > 0 && checkedCount < visibleIds.length;
+  elements.step0SelectAllRows.disabled = visibleIds.length === 0;
+}
+
+function renderStep0SelectedCount() {
+  if (elements.step0SelectedCount) {
+    elements.step0SelectedCount.textContent = `${state.step0SelectedPendingIds.size}/10 선택됨`;
+  }
+  updateStep0SelectAllState();
+}
+
+function resetStep0Filters() {
+  state.step0Query = '';
+  state.step0CompanyFilterValue = 'all';
+  state.step0StatusFilterValues.clear();
+  if (elements.step0SearchInput) elements.step0SearchInput.value = '';
+  if (elements.step0CompanyFilter) elements.step0CompanyFilter.value = 'all';
+  elements.step0StatusToggleButtons?.forEach((button) => {
+    button.classList.remove('active');
+    button.setAttribute('aria-pressed', 'false');
+  });
+  renderStep0ProgressTable();
+}
+
+function toggleStep0StatusFilter(status, button) {
+  if (!status) return;
+  if (state.step0StatusFilterValues.has(status)) {
+    state.step0StatusFilterValues.delete(status);
+    button.classList.remove('active');
+    button.setAttribute('aria-pressed', 'false');
+  } else {
+    state.step0StatusFilterValues.add(status);
+    button.classList.add('active');
+    button.setAttribute('aria-pressed', 'true');
+  }
+  renderStep0ProgressTable();
+}
+
+function buildTriageInstructionPromptWithCandidates(pairs) {
+  const base = buildTriageInstructionPrompt();
+  if (!Array.isArray(pairs) || !pairs.length) return base;
+  const listLines = pairs.map((pair) => `${pair.asset}\t${pair.company}`).join('\n');
+  return `${base}\n\nCandidates to triage now (Asset<TAB>Company, already parsed from a pasted CSV/spreadsheet list):\n${listLines}`;
+}
+
+async function copyTriagePromptWithSelectedCandidates() {
+  const pairs = state.step0Rows
+    .filter((row) => row.pending?.queue_id && state.step0SelectedPendingIds.has(row.pending.queue_id))
+    .map((row) => ({ asset: row.asset, company: row.company }));
+  const warningsStore = await fetchInstructionWarnings();
+  const prompt = appendInstructionWarnings(buildTriageInstructionPromptWithCandidates(pairs), warningsStore.triage);
+  try {
+    await navigator.clipboard.writeText(prompt);
+  } catch (error) {
+    const scratch = document.createElement('textarea');
+    scratch.value = prompt;
+    scratch.setAttribute('readonly', '');
+    scratch.style.position = 'fixed';
+    scratch.style.opacity = '0';
+    document.body.appendChild(scratch);
+    scratch.select();
+    document.execCommand('copy');
+    scratch.remove();
+  }
+  showStep0Message(
+    pairs.length ? `${pairs.length}개 후보 포함 지침 1 복사 완료` : '선택된 후보 없이 지침 1을 복사했습니다.'
+  );
+  const label = elements.step0CopyInstructionsButton?.querySelector('b');
+  if (label) {
+    const idleLabel = label.textContent;
+    label.textContent = '복사됨';
+    window.setTimeout(() => { label.textContent = idleLabel; }, 1800);
+  }
+}
+
+elements.step0ImportButton?.addEventListener('click', importStep0Candidates);
+elements.step0ClearButton?.addEventListener('click', () => {
+  if (elements.step0PasteInput) elements.step0PasteInput.value = '';
+  if (elements.step0ImportSummary) {
+    elements.step0ImportSummary.hidden = true;
+    elements.step0ImportSummary.textContent = '';
+  }
+  setStep0SaveStatus('waiting');
+});
+elements.step0CopyInstructionsButton?.addEventListener('click', copyTriagePromptWithSelectedCandidates);
+elements.step0SearchInput?.addEventListener('input', (event) => {
+  state.step0Query = event.target.value;
+  renderStep0ProgressTable();
+});
+elements.step0CompanyFilter?.addEventListener('change', (event) => {
+  state.step0CompanyFilterValue = event.target.value;
+  renderStep0ProgressTable();
+});
+elements.step0StatusToggleButtons?.forEach((button) => {
+  button.addEventListener('click', () => toggleStep0StatusFilter(button.dataset.step0Status, button));
+});
+elements.step0ResetFiltersButton?.addEventListener('click', resetStep0Filters);
+document.querySelectorAll('button[data-step0-sort]').forEach((button) => {
+  button.addEventListener('click', () => sortStep0Column(button.dataset.step0Sort));
+});
+elements.step0SelectAllRows?.addEventListener('change', (event) => {
+  const visibleIds = state.step0VisiblePendingIds || [];
+  if (event.target.checked) {
+    const toAdd = visibleIds.filter((id) => !state.step0SelectedPendingIds.has(id));
+    const room = Math.max(0, 10 - state.step0SelectedPendingIds.size);
+    toAdd.slice(0, room).forEach((id) => state.step0SelectedPendingIds.add(id));
+    if (toAdd.length > room) showStep0Message('최대 10개까지 선택할 수 있습니다.');
+  } else {
+    visibleIds.forEach((id) => state.step0SelectedPendingIds.delete(id));
+  }
+  renderStep0ProgressTable();
+  renderStep0SelectedCount();
+});
+elements.step0ProgressTableBody?.addEventListener('change', (event) => {
+  const checkbox = event.target.closest('.step0-row-select');
+  if (!checkbox) return;
+  const queueId = checkbox.dataset.queueId;
+  if (!queueId) return;
+  if (checkbox.checked) {
+    if (state.step0SelectedPendingIds.size >= 10) {
+      checkbox.checked = false;
+      showStep0Message('최대 10개까지 선택할 수 있습니다.');
+      return;
+    }
+    state.step0SelectedPendingIds.add(queueId);
+  } else {
+    state.step0SelectedPendingIds.delete(queueId);
+  }
+  renderStep0SelectedCount();
+});
+
 const DESCENDING_FIRST_SORT_KEYS = new Set([
   'targetScore',
   'moaScore',
@@ -8893,6 +9357,11 @@ elements.pipelineTable.addEventListener('click', (event) => {
   const rubricRefresh = event.target.closest('[data-rubric-refresh]');
   if (rubricRefresh) {
     recalculateLatestRubric(rubricRefresh);
+    return;
+  }
+  const triageFullCopy = event.target.closest('[data-triage-full-copy]');
+  if (triageFullCopy) {
+    copyTriageFullScoutPrompt(triageFullCopy);
     return;
   }
   const oiPartnershipRefresh = event.target.closest('[data-oi-partnership-refresh]');
@@ -9133,8 +9602,17 @@ elements.resetFiltersButton?.addEventListener('click', () => {
   renderFilteredDashboard();
 });
 
+function activatePipelineTab(mode) {
+  if (mode === 'step0') {
+    activateStep0Panel();
+    return;
+  }
+  if (elements.step0Panel && !elements.step0Panel.hidden) deactivateStep0Panel();
+  setTableMode(mode);
+}
+
 elements.pipelineTableTabs?.forEach((tab) => {
-  tab.addEventListener('click', () => setTableMode(tab.dataset.tableMode));
+  tab.addEventListener('click', () => activatePipelineTab(tab.dataset.tableMode));
   tab.addEventListener('keydown', (event) => {
     const tabs = [...elements.pipelineTableTabs];
     const currentIndex = tabs.indexOf(tab);
@@ -9146,7 +9624,7 @@ elements.pipelineTableTabs?.forEach((tab) => {
     else return;
     event.preventDefault();
     const nextTab = tabs[nextIndex];
-    setTableMode(nextTab.dataset.tableMode);
+    activatePipelineTab(nextTab.dataset.tableMode);
     nextTab.focus();
   });
 });

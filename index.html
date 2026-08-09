@@ -29,6 +29,10 @@
 
           <nav class="workflow-navigation-shell" aria-label="Pipeline workflow">
             <div class="pipeline-table-tabs" role="tablist" aria-label="Pipeline table mode">
+              <button id="step0Tab" type="button" role="tab" aria-selected="false" aria-controls="step0Panel" tabindex="-1" data-table-mode="step0">
+                <span class="tab-step" aria-hidden="true">0</span>
+                <b>진척 현황</b>
+              </button>
               <button id="fastTriageTableTab" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="triage">
                 <span class="tab-step" aria-hidden="true">1</span>
                 <b>Fast Triage</b>
@@ -105,6 +109,150 @@
         </div>
 
       </header>
+
+      <section id="step0Panel" class="step0-panel" role="tabpanel" aria-labelledby="step0Tab" tabindex="-1" hidden>
+        <section class="panel step0-stat-panel" aria-label="진척 현황 요약">
+          <div class="panel-header">
+            <h2>진척 현황 요약</h2>
+          </div>
+          <div class="step0-stat-strip">
+            <div class="step0-stat" data-stat="pending">
+              <span class="step0-stat-label">조사 대기</span>
+              <strong id="step0StatPending">0</strong>
+            </div>
+            <div class="step0-stat" data-stat="fast_triage">
+              <span class="step0-stat-label">Fast Triage</span>
+              <strong id="step0StatFastTriage">0</strong>
+            </div>
+            <div class="step0-stat" data-stat="full_scout">
+              <span class="step0-stat-label">Full Scout</span>
+              <strong id="step0StatFullScout">0</strong>
+            </div>
+            <div class="step0-stat" data-stat="shortlisted">
+              <span class="step0-stat-label">Shortlisting</span>
+              <strong id="step0StatShortlisted">0</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel control-panel" aria-label="진척 현황 controls">
+          <div class="controls">
+            <label>
+              <span>검색</span>
+              <input id="step0SearchInput" type="search" placeholder="약물명, 회사명 검색" />
+            </label>
+            <label>
+              <span>Company</span>
+              <select id="step0CompanyFilter">
+                <option value="all">전체</option>
+              </select>
+            </label>
+            <label class="step0-status-filter-label">
+              <span>진행 단계</span>
+              <div class="step0-status-toggle-group" role="group" aria-label="진행 단계 필터 (다중 선택)">
+                <button type="button" class="step0-status-toggle" data-step0-status="pending" aria-pressed="false">조사 대기</button>
+                <button type="button" class="step0-status-toggle" data-step0-status="fast_triage" aria-pressed="false">Fast Triage</button>
+                <button type="button" class="step0-status-toggle" data-step0-status="full_scout" aria-pressed="false">Full Scout</button>
+                <button type="button" class="step0-status-toggle" data-step0-status="shortlisting" aria-pressed="false">Shortlisting</button>
+              </div>
+            </label>
+            <button
+              id="step0ResetFiltersButton"
+              class="filter-reset-button help-tooltip"
+              type="button"
+              data-tooltip="진척 현황 필터 초기화"
+              aria-label="진척 현황 필터 초기화"
+            >↻</button>
+          </div>
+        </section>
+
+        <section class="panel pipeline-table-panel">
+          <div class="panel-header">
+            <h2>진척 현황 Table</h2>
+            <div class="panel-actions">
+              <span id="step0TableCount">0 items</span>
+              <span id="step0SelectedCount" class="step0-selected-count">0/10 선택됨</span>
+              <button
+                id="step0CopyInstructionsButton"
+                type="button"
+                class="action-pill header-action-button help-tooltip"
+                data-tooltip="선택한 조사 대기 항목을 포함해 GPT Fast Triage 지침 1을 복사합니다."
+              ><span aria-hidden="true">GPT</span><b>지침 복사</b></button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="pipeline-table step0-progress-table">
+              <colgroup>
+                <col class="step0-col-select" />
+                <col class="step0-col-asset" />
+                <col class="step0-col-company" />
+                <col class="step0-col-stage" />
+                <col class="step0-col-stage" />
+                <col class="step0-col-stage" />
+                <col class="step0-col-stage" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th class="select-col">
+                    <input id="step0SelectAllRows" type="checkbox" aria-label="조사 대기 항목 전체 선택 (최대 10개)" />
+                  </th>
+                  <th><button data-step0-sort="asset" type="button">Asset</button></th>
+                  <th><button data-step0-sort="company" type="button">Company</button></th>
+                  <th><button data-step0-sort="pending" type="button">조사 대기</button></th>
+                  <th><button data-step0-sort="fast_triage" type="button">Fast Triage</button></th>
+                  <th><button data-step0-sort="full_scout" type="button">Full Scout</button></th>
+                  <th><button data-step0-sort="shortlisting" type="button">Shortlisting</button></th>
+                </tr>
+              </thead>
+              <tbody id="step0ProgressTableBody">
+                <tr><td colspan="7" class="step0-empty-state">진척 현황을 불러오는 중입니다...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel paste-panel" id="step0UploadPanel">
+          <div class="panel-header">
+            <div class="data-upload-header-copy">
+              <h2>후보 목록 업로드</h2>
+            </div>
+            <span id="step0SaveStatus" class="data-upload-status" data-state="waiting" role="status" aria-live="polite">
+              <svg class="data-upload-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><circle cx="12" cy="12" r="2" /></svg>
+              <span>붙여넣기 대기</span>
+            </span>
+          </div>
+          <div class="data-upload-layout">
+            <div class="data-upload-workspace">
+              <div class="data-input-grid data-input-grid-single">
+                <label class="data-input-box">
+                  <span class="data-upload-input-label">
+                    <svg class="data-upload-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M8 5.5h8M9 3h6v4H9z" /><path d="M7 5H5.5A1.5 1.5 0 0 0 4 6.5v13A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-13A1.5 1.5 0 0 0 18.5 5H17" /><path d="m9 14 2 2 4-4" /></svg>
+                    <b>약물 / 회사명 목록</b>
+                  </span>
+                  <div class="data-upload-textarea-shell">
+                    <textarea id="step0PasteInput" spellcheck="false" placeholder="CSV/스프레드시트에서 복사한 약물명과 회사명 목록을 그대로 붙여넣으세요.&#10;예) AD-302[Tab]AddPharma"></textarea>
+                  </div>
+                </label>
+              </div>
+              <div id="step0ImportSummary" class="input-validation-results" aria-live="polite" hidden></div>
+              <div class="editor-actions">
+                <button class="action-pill data-upload-clear-button help-tooltip" id="step0ClearButton" type="button" data-tooltip="붙여넣은 내용을 비웁니다."><span aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" /></svg></span><b>비우기</b></button>
+                <button class="action-pill header-action-button primary-button help-tooltip" id="step0ImportButton" type="button" data-tooltip="붙여넣은 목록을 파싱해 조사 대기 목록에 추가합니다."><span class="data-upload-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 20v-6h8v6" /></svg></span><b>가져오기</b></button>
+              </div>
+            </div>
+            <aside class="data-upload-guide" aria-labelledby="step0GuideTitle">
+              <div class="data-upload-guide-header">
+                <div>
+                  <span class="data-upload-guide-eyebrow">QUICK GUIDE</span>
+                  <h3 id="step0GuideTitle">진척 현황 등록 가이드</h3>
+                </div>
+                <span class="data-upload-recommendation">최대 수백 개 · 일괄 처리</span>
+              </div>
+              <ol id="step0GuideSteps" class="data-upload-guide-steps"></ol>
+            </aside>
+          </div>
+        </section>
+      </section>
 
       <main id="pipelineContent" role="tabpanel" aria-labelledby="fullScoutTableTab" tabindex="-1">
         <section id="workflowModeDescription" class="workflow-mode-description" data-workflow-mode="full" role="note" aria-live="polite">
