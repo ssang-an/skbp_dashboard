@@ -478,6 +478,10 @@ function normalizedPipelineIdentityText(value) {
     .replace(/[^\p{L}\p{N}]+/gu, '');
 }
 
+function normalizedPipelineAssetIdentity(value) {
+  return normalizedPipelineIdentityText(value).replace(/(?<=[a-z])0+(?=\d)/g, '');
+}
+
 function dataUploadRecordIdentity(record) {
   const table = isInputObject(record?.structured_table) ? record.structured_table : {};
   const summary = isInputObject(record?.json_summary) ? record.json_summary : {};
@@ -489,7 +493,7 @@ function dataUploadRecordIdentity(record) {
     company,
     asset,
     normalizedCompany: normalizedPipelineIdentityText(company),
-    normalizedAsset: normalizedPipelineIdentityText(asset)
+    normalizedAsset: normalizedPipelineAssetIdentity(asset)
   };
 }
 
@@ -544,10 +548,10 @@ function openDataReuploadModal(match) {
   return new Promise((resolve) => {
     dataReuploadResolve = resolve;
     const workflowLabel = match.mode === 'triage' ? 'Fast Triage' : 'Full Scout';
-    elements.dataReuploadTitle.textContent = `기존 ${workflowLabel} 레코드가 발견되었습니다.`;
+    elements.dataReuploadTitle.textContent = `유사한 기존 ${workflowLabel} 레코드가 발견되었습니다.`;
     elements.dataReuploadIdentity.textContent = `${match.company || 'Unknown company'} · ${match.asset || 'Unknown asset'}`;
     elements.dataReuploadKeepNew.hidden = match.exactRecordId;
-    elements.dataReuploadKeepNew.textContent = '아니요 · 신규로 추가';
+    elements.dataReuploadKeepNew.textContent = '건너뛰기 · 신규로 추가';
     elements.dataReuploadModal.hidden = false;
     elements.dataReuploadConfirm.focus();
   });

@@ -2849,6 +2849,12 @@ def normalized_pipeline_identity_text(value: Any) -> str:
     return "".join(character for character in text if character.isalnum())
 
 
+def normalized_pipeline_asset_identity(value: Any) -> str:
+    """Normalize an asset while treating numeric leading-zero spellings as aliases."""
+    normalized = normalized_pipeline_identity_text(value)
+    return re.sub(r"(?<=[a-z])0+(?=\d)", "", normalized)
+
+
 def pipeline_identity(record: dict[str, Any]) -> tuple[str, str, str]:
     """Return the workflow/company/asset identity used for confirmed reuploads."""
     table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else {}
@@ -2859,7 +2865,7 @@ def pipeline_identity(record: dict[str, Any]) -> tuple[str, str, str]:
     return (
         workflow,
         normalized_pipeline_identity_text(company),
-        normalized_pipeline_identity_text(asset),
+        normalized_pipeline_asset_identity(asset),
     )
 
 
