@@ -355,7 +355,7 @@ ROLE_RANK = {ROLE_USER: 0, ROLE_ADMIN: 1, ROLE_DEVELOPER: 2}
 # compared case-insensitively while allowing the documented skbp/sk domains.
 INITIAL_ADMIN_IDENTITIES = {
     ("주연주", "yeonjoo"), ("허정환", "jeonghwan.hur"), ("이정태", "jeongtae_lee"),
-    ("유택상", "taegsang.you"), ("서지영", "jiyoungseo"), ("정병찬", "alex_jeong"),
+    ("유택상", "taegsang.you"), ("서지영", "jiyoungseo"), ("정영찬", "alex_jeong"),
 }
 INITIAL_DEVELOPER_IDENTITIES = {("정주원", "joowon.jung")}
 
@@ -591,6 +591,25 @@ async def update_admin_user(user_id: str, request: Request):
         user["sessions"] = []
     save_users(users)
     return {"ok": True, "user": admin_user_payload(user)}
+
+
+@app.post("/api/admin/users/{user_id}/reset-password")
+async def reset_admin_user_password(user_id: str, request: Request) -> dict[str, Any]:
+    """Developer-only reset; password material is never readable or returned."""
+    require_auth_developer(request)
+    payload = await request.json()
+    password = str(payload.get("password") or "")
+    if len(password) < 8 or len(password) > 200:
+        raise HTTPException(status_code=400, detail="재설정 비밀번호는 8~200자여야 합니다.")
+    users = load_users()
+    user = next((item for item in users if str(item.get("id") or "") == user_id), None)
+    if not user:
+        raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+    salt, digest = password_hash(password)
+    user["password_salt"], user["password_hash"], user["sessions"] = salt, digest, []
+    user.setdefault("activity_log", []).append({"event": "password_reset", "at": datetime.now(timezone.utc).isoformat(), "actor_ip": get_client_ip(request)})
+    save_users(users)
+    return {"ok": True, "user_id": user_id}
 
 
 @app.post("/api/auth/signout")
@@ -7329,8 +7348,9 @@ def get_candidate_queue_progress() -> dict[str, Any]:
 
 
 @app.delete("/api/candidate-queue/{queue_id}")
-def delete_candidate_queue_entry(queue_id: str) -> dict[str, Any]:
+def delete_candidate_queue_entry(queue_id: str, request: Request) -> dict[str, Any]:
     """Step 0: remove a mis-pasted or no-longer-needed pending candidate."""
+    require_auth_admin(request)
     queue = load_candidate_queue()
     remaining = [entry for entry in queue if entry.get("id") != queue_id]
     if len(remaining) == len(queue):
@@ -7706,6 +7726,7 @@ def get_obsidian_asset(record_id: str) -> dict[str, Any]:
 
 @app.post("/api/records/delete")
 async def delete_records(request: Request) -> dict[str, Any]:
+    require_auth_admin(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -8053,6 +8074,7 @@ def annotate_rubric_recalculation(
 
 @app.post("/api/records/{record_id:path}/recalculate-rubric")
 def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> dict[str, Any]:
+    require_auth_admin(request)
     records = load_records()
     for index, record in enumerate(records):
         if record_key(record) != record_id:
@@ -8182,7 +8204,8 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
 
 
 @app.post("/api/records/{record_id:path}/recalculate-oi-partnership")
-def recalculate_record_oi_partnership(record_id: str) -> dict[str, Any]:
+def recalculate_record_oi_partnership(record_id: str, request: Request) -> dict[str, Any]:
+    require_auth_admin(request)
     records = load_records()
     for index, record in enumerate(records):
         if record_key(record) != record_id:
@@ -8414,6 +8437,7 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
 
 @app.patch("/api/records/{record_id:path}/focus-management")
 async def update_focus_management(record_id: str, request: Request) -> dict[str, Any]:
+    require_auth_admin(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -8990,6 +9014,7 @@ async def preview_record_attachment(attachment_id: str, record_id: str) -> dict[
 
 @app.delete("/api/records/{record_id:path}/attachments/{attachment_id}")
 async def delete_record_attachment(record_id: str, attachment_id: str, request: Request) -> dict[str, Any]:
+    require_auth_admin(request)
     records = load_records()
     for index, record in enumerate(records):
         if record_key(record) != record_id:
@@ -9217,6 +9242,7 @@ def list_qualitative_review_criterion_suggestions(record_id: str) -> dict[str, A
 
 @app.post("/api/records/{record_id:path}/qualitative-review/criteria")
 async def create_qualitative_review_criterion(record_id: str, request: Request) -> dict[str, Any]:
+    require_auth_admin(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -9301,6 +9327,7 @@ async def create_qualitative_review_criterion(record_id: str, request: Request) 
 
 @app.delete("/api/records/{record_id:path}/qualitative-review/criteria/{criterion_id}")
 async def delete_qualitative_review_criterion(record_id: str, criterion_id: str, request: Request) -> dict[str, Any]:
+    require_auth_admin(request)
     if not criterion_id.startswith("custom_"):
         raise HTTPException(status_code=400, detail="기본 평가 항목은 삭제할 수 없습니다.")
 
@@ -9352,6 +9379,7 @@ async def delete_qualitative_review_criterion(record_id: str, criterion_id: str,
 
 @app.post("/api/records/{record_id:path}/qualitative-review/ai-generate")
 async def generate_qualitative_review_ai_entry(record_id: str, request: Request) -> dict[str, Any]:
+    require_auth_admin(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -9604,7 +9632,8 @@ async def update_record(record_id: str, request: Request) -> dict[str, Any]:
 
 
 @app.delete("/api/records/{record_id:path}")
-def delete_record(record_id: str) -> dict[str, Any]:
+def delete_record(record_id: str, request: Request) -> dict[str, Any]:
+    require_auth_admin(request)
     records = load_records()
     kept = [record for record in records if record_key(record) != record_id]
     deleted = len(records) - len(kept)
@@ -9865,6 +9894,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
 
 @app.put("/api/records")
 async def replace_records(request: Request) -> dict[str, Any]:
+    require_auth_admin(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
