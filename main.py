@@ -8879,6 +8879,7 @@ async def upload_record_attachment(
     request: Request,
     file: UploadFile = File(...),
     uploaded_by: str = Form(""),
+    partner_material_category_value: str = Form(""),
 ) -> dict[str, Any]:
     original_name = file.filename or "attachment"
     extension = Path(original_name).suffix.lower()
@@ -8915,7 +8916,10 @@ async def upload_record_attachment(
             "uploaded_at": created_at,
             "processing_status": "processing" if extension in {".pdf", ".ppt", ".pptx"} else "not_applicable",
         }
-        material_category = partner_material_category(original_name)
+        requested_category = str(partner_material_category_value or "").strip().casefold()
+        if requested_category and requested_category not in {"cdp", "ncdp", "admet"}:
+            raise HTTPException(status_code=400, detail="Partner Materials category must be CDP, NCDP, or ADMET.")
+        material_category = requested_category or partner_material_category(original_name)
         if material_category:
             attachment["partner_material_category"] = material_category
 
@@ -9468,6 +9472,7 @@ async def generate_qualitative_review_ai_entry(record_id: str, request: Request)
 
 @app.post("/api/records/{record_id:path}/qualitative-review")
 async def create_qualitative_review_entry(record_id: str, request: Request) -> dict[str, Any]:
+    account = require_authenticated_user(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -9479,7 +9484,7 @@ async def create_qualitative_review_entry(record_id: str, request: Request) -> d
     criterion_id = str(payload.get("criterion_id") or "").strip()
 
     body = str(payload.get("body") or "").strip()
-    author = str(payload.get("author") or "").strip() or "익명"
+    author = str(account.get("name") or "").strip() or "익명"
     if not body:
         raise HTTPException(status_code=400, detail="Opinion body is required.")
     if len(body) > 5000:
@@ -9507,6 +9512,7 @@ async def create_qualitative_review_entry(record_id: str, request: Request) -> d
         user_entry = {
             "id": uuid.uuid4().hex,
             "author": author,
+            "author_id": str(account.get("id") or ""),
             "body": body,
             "is_ai": False,
             "created_at": created_at,
@@ -9535,6 +9541,7 @@ async def create_qualitative_review_entry(record_id: str, request: Request) -> d
 
 @app.delete("/api/records/{record_id:path}/qualitative-review/{entry_id}")
 async def delete_qualitative_review_entry(record_id: str, entry_id: str, request: Request) -> dict[str, Any]:
+    account = require_authenticated_user(request)
     records = load_records()
     for index, record in enumerate(records):
         if record_key(record) != record_id:
@@ -9559,6 +9566,8 @@ async def delete_qualitative_review_entry(record_id: str, entry_id: str, request
 
         if match_entry is None or match_criterion_id is None:
             raise HTTPException(status_code=404, detail=f"Qualitative review entry not found: {entry_id}")
+        if not is_auth_admin(account) and str(match_entry.get("author_id") or "") != str(account.get("id") or ""):
+            raise HTTPException(status_code=403, detail="본인이 작성한 의견만 삭제할 수 있습니다.")
 
         criteria_state[match_criterion_id]["entries"].remove(match_entry)
         qualitative_review["updated_at"] = datetime.now(timezone.utc).isoformat()

@@ -3239,6 +3239,18 @@ th button {
   cursor: progress;
 }
 
+.attachment-material-pill {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--line));
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 800;
+}
+
 .modality-column-cell .single-line-cell {
   color: var(--muted);
   font-size: 11px;

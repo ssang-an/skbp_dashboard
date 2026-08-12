@@ -999,6 +999,11 @@ const partnerMaterialLabels = {
 function detectPartnerMaterialFlags(attachments) {
   const detected = { cdp: false, ncdp: false, admet: false };
   (Array.isArray(attachments) ? attachments : []).forEach((attachment) => {
+    const declaredCategory = String(attachment?.partner_material_category || '').toLowerCase();
+    if (Object.prototype.hasOwnProperty.call(detected, declaredCategory)) {
+      detected[declaredCategory] = true;
+      return;
+    }
     const filename = String(attachment?.filename || '').toLowerCase();
     const isNcdp = /(^|[^a-z0-9])ncdp([^a-z0-9]|$)/.test(filename);
     if (isNcdp) {
@@ -1011,6 +1016,14 @@ function detectPartnerMaterialFlags(attachments) {
     }
   });
   return detected;
+}
+
+function partnerMaterialCategoryForFilename(filename) {
+  const name = String(filename || '').toLowerCase();
+  if (/(^|[^a-z0-9])admet([^a-z0-9]|$)/.test(name)) return 'admet';
+  if (/(^|[^a-z0-9])ncdp([^a-z0-9]|$)/.test(name)) return 'ncdp';
+  if (/(^|[^a-z0-9])cdp([^a-z0-9]|$)/.test(name)) return 'cdp';
+  return '';
 }
 
 function setReviewInfoExpanded(expanded) {
@@ -1377,6 +1390,7 @@ function renderAttachments(record) {
           </button>
           <span class="attachment-meta">
             ${escapeHtml(attachment.uploaded_by || '')} · ${escapeHtml(attachmentProcessingLabel(attachment))}
+            ${attachment.partner_material_category ? `<span class="attachment-material-pill">${escapeHtml(partnerMaterialLabels[attachment.partner_material_category] || attachment.partner_material_category)}</span>` : ''}
           </span>
           <button
             type="button"
@@ -1391,7 +1405,7 @@ function renderAttachments(record) {
     .join('');
 }
 
-async function uploadAttachment(file) {
+async function uploadAttachment(file, materialCategory) {
   if (!file || !currentRecordId) return;
   if (elements.detailAttachmentAddButton) elements.detailAttachmentAddButton.disabled = true;
   setAttachmentStatus('파일 업로드 중…');
@@ -1399,6 +1413,7 @@ async function uploadAttachment(file) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('uploaded_by', getStoredIdentity());
+    formData.append('partner_material_category_value', materialCategory);
     const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/attachments`, {
       method: 'POST',
       body: formData
@@ -1420,7 +1435,17 @@ async function uploadAttachment(file) {
 async function uploadAttachments(files) {
   const queue = [...(files || [])].filter(Boolean);
   for (const file of queue) {
-    await uploadAttachment(file);
+    const materialCategory = partnerMaterialCategoryForFilename(file.name);
+    if (!materialCategory) {
+      setAttachmentStatus(`'${file.name}'은 CDP/NCDP/ADMET 자료로 분류할 수 없습니다. 파일명에 해당 category를 포함한 뒤 다시 선택하세요.`, 'error');
+      continue;
+    }
+    const label = partnerMaterialLabels[materialCategory];
+    if (!window.confirm(`${file.name}\n\nPartner Materials category: ${label}\n이 분류로 업로드할까요?`)) {
+      setAttachmentStatus(`${file.name} 업로드를 취소했습니다.`);
+      continue;
+    }
+    await uploadAttachment(file, materialCategory);
   }
 }
 
@@ -1625,6 +1650,7 @@ function renderQualitativeCriterionSection(criterion, criteriaState) {
   const entries = Array.isArray(criterionState.entries)
     ? criterionState.entries.filter((entry) => entry?.author !== QUALITATIVE_LEGACY_AI_AUTHOR)
     : [];
+  const currentUser = getCurrentUser();
   const entriesHtml = entries.length
     ? entries
         .map(
@@ -1636,12 +1662,12 @@ function renderQualitativeCriterionSection(criterion, criteriaState) {
                   <strong>${escapeHtml(entry.author || '익명')}</strong>
                   <time>${escapeHtml(formatCommentTime(entry.created_at))}</time>
                 </div>
-                <button
+                ${currentUser && (currentUser.is_admin || String(entry.author_id || '') === String(currentUser.id || '')) ? `<button
                   type="button"
                   class="qualitative-entry-delete"
                   data-delete-qualitative-entry-id="${escapeHtml(entry.id)}"
-                  aria-label="의견 삭제"
-                >×</button>
+                  aria-label="Delete opinion"
+                >×</button>` : ''}
               </div>
               <p>${escapeHtml(entry.body || '').replaceAll('\n', '<br>')}</p>
             </article>
