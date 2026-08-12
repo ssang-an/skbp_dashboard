@@ -3337,12 +3337,19 @@ def count_admet_completed(attachments: list[Any]) -> int | None:
         return None
     completed_studies: set[str] = set()
     for attachment in admet_attachments:
+        pending_study = ""
         for line in extract_attachment_text(attachment).splitlines():
-            cells = [cell.strip() for cell in re.split(r"\||\t", line) if cell.strip()]
-            if len(cells) < 2:
+            line = line.strip().lstrip("▪•- ").strip()
+            if not line:
                 continue
-            status = cells[-1]
-            study = cells[-2]
+            cells = [cell.strip() for cell in re.split(r"\||\t", line) if cell.strip()]
+            if len(cells) >= 2:
+                study, status = cells[-2], cells[-1]
+            elif ADMET_COMPLETED_PATTERN.fullmatch(line) or ADMET_NEGATIVE_STATUS_PATTERN.search(line):
+                study, status = pending_study, line
+            else:
+                pending_study = line
+                continue
             normalized_study = re.sub(r"[^a-z0-9]+", "", study.casefold())
             if not normalized_study or study.casefold() in ADMET_CATEGORY_NAMES:
                 continue
