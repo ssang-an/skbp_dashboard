@@ -3730,6 +3730,12 @@ function totalScoreEditCircle(row) {
   `;
 }
 
+function stageEditSelect(row) {
+  const user = getCurrentUser();
+  if (!user?.is_admin) return `<span title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</span>`;
+  return `<select class="table-edit-select stage-edit" data-record-id="${escapeHtml(row.id)}" data-edit-kind="stage" data-previous-value="${escapeHtml(row.stage)}" aria-label="${escapeHtml(row.asset)} stage">${CANONICAL_DEVELOPMENT_STAGES.map((stage) => selectOption(stage, row.stage, stage)).join('')}</select>`;
+}
+
 function pendingScoreBadge(message = `Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} review not run yet`) {
   const safeTooltip = escapeHtml(message);
   return `<span class="score pending" tabindex="0" aria-label="${safeTooltip}" data-tooltip="${safeTooltip}" title="${safeTooltip}">-</span>`;
@@ -3924,7 +3930,7 @@ function renderTableLegacy() {
                 </div>
               </td>
               <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(indicationDisplay(row))}</td>
-              <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</td>
+              <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${stageEditSelect(row)}</td>
               <td class="filter-cell"><span class="${filter1Class}">${escapeHtml(row.filter1)}</span></td>
               <td class="filter-cell"><span class="${filter2Class}">${escapeHtml(row.filter2)}</span></td>
               <td class="score-cell">${scoreBadge(row.targetScore, 3, scoreTooltip('Target Relevance', row.criteria.target, 3))}</td>
@@ -4213,7 +4219,7 @@ function renderFocusTable() {
             <span class="target-context-indicator" aria-hidden="true">i</span>
           </td>
           <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(indicationDisplay(row))}</td>
-          <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</td>
+          <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${stageEditSelect(row)}</td>
           <td class="filter-cell">${statusEditSelect(row, 'filter2')}</td>
           <td class="score-cell total-score-cell">${scoreBadge(
             row.totalScore,
@@ -4394,7 +4400,7 @@ function renderTable() {
                 <span class="target-context-indicator" aria-hidden="true">i</span>
               </td>
               <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(indicationDisplay(row))}</td>
-              <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</td>
+              <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${stageEditSelect(row)}</td>
               <td class="filter-cell">${statusEditSelect(row, filterKey)}</td>
               <td class="score-cell">${mode === 'full'
                 ? scoreEditSelect(row, 'targetScore', 'target_relevance', 'Target Relevance')
@@ -4793,7 +4799,7 @@ async function saveManualReviewEdit(select) {
     return;
   }
   const value = ['score', 'total_score'].includes(kind) ? Number(select.value) : select.value;
-  if (!recordId || !['status', 'score', 'total_score'].includes(kind)) return;
+  if (!recordId || !['status', 'score', 'total_score', 'stage', 'target'].includes(kind)) return;
   const actorName = await ensureDashboardActorName();
   if (!actorName) {
     select.value = previousValue;

@@ -8317,10 +8317,29 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
                     previous = (record.get("scoring") or {}).get("total_score")
                 baseline.setdefault(field_key, previous)
             overrides[field_key] = value
+        elif edit_kind == "stage":
+            value = canonicalize_development_stage(payload.get("value"))
+            if value not in CANONICAL_DEVELOPMENT_STAGE_SET:
+                raise HTTPException(status_code=400, detail="유효한 canonical development stage가 필요합니다.")
+            table = record.setdefault("structured_table", {})
+            previous = table.get("development_stage")
+            table["development_stage"] = value
+            field_key = "structured_table.development_stage"
+        elif edit_kind == "target":
+            value = str(payload.get("value") or "").strip()
+            if not value or len(value) > 250:
+                raise HTTPException(status_code=400, detail="Target은 1~250자로 입력해주세요.")
+            table = record.setdefault("structured_table", {})
+            previous = table.get("target")
+            table["target"] = value
+            summary = record.get("json_summary")
+            if isinstance(summary, dict) and str(summary.get("target") or "").strip().casefold() in {"unknown", "-", ""}:
+                summary["target"] = value
+            field_key = "structured_table.target"
         else:
             raise HTTPException(
                 status_code=400,
-                detail="kind must be status, status_reason, score, or total_score.",
+                detail="kind must be status, status_reason, score, total_score, stage, or target.",
             )
 
         history = human_review.setdefault("history", [])
