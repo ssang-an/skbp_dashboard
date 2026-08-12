@@ -484,6 +484,20 @@ function normalizedPipelineAssetIdentity(value) {
   return normalizedPipelineIdentityText(value).replace(/(?<=[a-z])0+(?=\d)/g, '');
 }
 
+function editDistance(left, right) {
+  const a = String(left || ''); const b = String(right || '');
+  const row = Array.from({ length: b.length + 1 }, (_, index) => index);
+  for (let i = 1; i <= a.length; i += 1) {
+    let previous = row[0]; row[0] = i;
+    for (let j = 1; j <= b.length; j += 1) {
+      const saved = row[j];
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, previous + (a[i - 1] === b[j - 1] ? 0 : 1));
+      previous = saved;
+    }
+  }
+  return row[b.length];
+}
+
 function dataUploadRecordIdentity(record) {
   const table = isInputObject(record?.structured_table) ? record.structured_table : {};
   const summary = isInputObject(record?.json_summary) ? record.json_summary : {};
@@ -515,9 +529,10 @@ function findDataReuploadMatches(records) {
     const candidates = state.rawRecords
       .filter((existingRecord) => {
         const existingIdentity = dataUploadRecordIdentity(existingRecord);
-        return existingIdentity.mode === incomingIdentity.mode
-          && existingIdentity.normalizedCompany === incomingIdentity.normalizedCompany
-          && existingIdentity.normalizedAsset === incomingIdentity.normalizedAsset;
+        if (existingIdentity.mode !== incomingIdentity.mode || existingIdentity.normalizedCompany !== incomingIdentity.normalizedCompany) return false;
+        const distance = editDistance(incomingIdentity.normalizedAsset, existingIdentity.normalizedAsset);
+        const threshold = Math.max(1, Math.floor(Math.max(incomingIdentity.normalizedAsset.length, existingIdentity.normalizedAsset.length) * 0.12));
+        return incomingIdentity.normalizedAsset === existingIdentity.normalizedAsset || distance <= threshold;
       })
       .sort((a, b) => {
         const exactA = Number(recordIdentifier(a) === incomingRecordId);
@@ -540,7 +555,8 @@ function findDataReuploadMatches(records) {
           id: recordIdentifier(candidate),
           asset: identity.asset,
           company: identity.company,
-          stage: String(candidate?.structured_table?.development_stage || 'Unknown')
+          stage: String(candidate?.structured_table?.development_stage || 'Unknown'),
+          similarity: dataUploadRecordIdentity(candidate).normalizedAsset === incomingIdentity.normalizedAsset ? '동일 표기 정규화' : '유사 자산명'
         };
       })
     }];
@@ -563,12 +579,12 @@ function openDataReuploadModal(match) {
     const workflowLabel = match.mode === 'triage' ? 'Fast Triage' : 'Full Scout';
     elements.dataReuploadTitle.textContent = `유사한 기존 ${workflowLabel} 레코드가 발견되었습니다.`;
     const candidateLines = (match.candidates || [])
-      .map((candidate) => `${candidate.asset || 'Unknown asset'} · ${candidate.company || 'Unknown company'} · ${candidate.stage || 'Unknown'}`)
+      .map((candidate) => `${candidate.asset || 'Unknown asset'} · ${candidate.company || 'Unknown company'} · ${candidate.stage || 'Unknown'} · ${candidate.similarity || ''}`)
       .join('\n');
     elements.dataReuploadIdentity.textContent = candidateLines || `${match.company || 'Unknown company'} · ${match.asset || 'Unknown asset'}`;
     if (elements.dataReuploadCandidate) {
       elements.dataReuploadCandidate.innerHTML = (match.candidates || []).map((candidate) =>
-        `<option value="${escapeHtml(candidate.id)}">${escapeHtml(candidate.asset)} · ${escapeHtml(candidate.company)} · ${escapeHtml(candidate.stage)}</option>`
+        `<option value="${escapeHtml(candidate.id)}">${escapeHtml(candidate.asset)} · ${escapeHtml(candidate.company)} · ${escapeHtml(candidate.stage)} · ${escapeHtml(candidate.similarity || '')}</option>`
       ).join('');
       elements.dataReuploadCandidate.value = match.existingRecordId;
       elements.dataReuploadCandidate.hidden = (match.candidates || []).length < 2;

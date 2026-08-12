@@ -2941,6 +2941,13 @@ def pipeline_identity(record: dict[str, Any]) -> tuple[str, str, str]:
     )
 
 
+def pipeline_identities_match(left: tuple[str, str, str], right: tuple[str, str, str]) -> bool:
+    if left[:2] != right[:2]:
+        return False
+    threshold = max(1, math.floor(max(len(left[2]), len(right[2])) * 0.12))
+    return left[2] == right[2] or difflib.SequenceMatcher(None, left[2], right[2]).ratio() >= 1 - (threshold / max(len(left[2]), len(right[2]), 1))
+
+
 def apply_confirmed_reupload_replacements(
     incoming: list[dict[str, Any]],
     existing_records: list[dict[str, Any]],
@@ -2969,7 +2976,7 @@ def apply_confirmed_reupload_replacements(
             raise HTTPException(status_code=409, detail=f"Existing reupload target not found: {existing_id or '(blank)'}")
         if incoming_id in used_incoming_ids:
             raise HTTPException(status_code=409, detail=f"Duplicate reupload decision for: {incoming_id}")
-        if pipeline_identity(incoming_record) != pipeline_identity(existing_record):
+        if not pipeline_identities_match(pipeline_identity(incoming_record), pipeline_identity(existing_record)):
             raise HTTPException(
                 status_code=409,
                 detail="Confirmed reupload target no longer matches the same workflow, company, and asset.",
