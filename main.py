@@ -7425,6 +7425,7 @@ def record_successful_rubric_review(
 
 @app.post("/api/records/{record_id:path}/refresh-rubric")
 async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, Any]:
+    require_auth_admin(request)
     records = load_records()
     for index, record in enumerate(records):
         if record_key(record) != record_id:
@@ -8200,7 +8201,7 @@ def recalculate_record_oi_partnership(record_id: str) -> dict[str, Any]:
 
 @app.patch("/api/records/{record_id:path}/manual-review")
 async def update_manual_review(record_id: str, request: Request) -> dict[str, Any]:
-    account = require_authenticated_user(request)
+    account = require_auth_admin(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
