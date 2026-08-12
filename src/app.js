@@ -3590,7 +3590,7 @@ function partnershipNoteEditor(row) {
 }
 
 const EVIDENCE_STATUS_OPTIONS = ['O', 'X', 'N/A'];
-const ADMET_TOTAL_ITEMS = 50;
+const ADMET_TOTAL_ITEMS = 25;
 const EVIDENCE_FIELD_TO_BACKEND = {
   inVivoStatus: 'in_vivo_status',
   inVitroStatus: 'in_vitro_status',

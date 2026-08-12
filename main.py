@@ -3256,8 +3256,8 @@ EVIDENCE_POSITIVE_CUES = re.compile(
     re.IGNORECASE,
 )
 ADMET_COMPLETED_PATTERN = re.compile(r"완료|\bcompleted\b", re.IGNORECASE)
-ADMET_TOTAL_ITEMS = 26
-OI_PARTNERSHIP_CRITERIA_VERSION = "1.0"
+ADMET_TOTAL_ITEMS = 25
+OI_PARTNERSHIP_CRITERIA_VERSION = "1.1"
 OI_PARTNERSHIP_TYPES = {"value_up", "joint_research", "investment", "n_a", "unknown"}
 OI_PARTNERSHIP_LABELS = {
     "investment": "투자",
@@ -3290,6 +3290,7 @@ OI_NON_SMALL_MOLECULE_PATTERN = re.compile(
     re.IGNORECASE,
 )
 OI_IND_ENABLING_PATTERN = re.compile(r"\bind[\s\-]?enabl(?:ing|ement)\b", re.IGNORECASE)
+OI_INVESTMENT_STAGES = {"IND-enabling", "IND filed/cleared", "Phase 1", "Phase 1/2", "Phase 2", "Phase 2/3", "Phase 3", "Registration", "Approved / marketed"}
 
 
 def classify_evidence_presence(text: str, pattern: re.Pattern[str]) -> str:
@@ -3515,14 +3516,14 @@ def oi_stage_state(
         value = oi_known_text(raw_value)
         if value:
             return (
-                "ind_enabling" if OI_IND_ENABLING_PATTERN.search(value) else "other",
+                "ind_enabling" if canonicalize_development_stage(value) in OI_INVESTMENT_STAGES else "other",
                 value,
                 "Tab2 구조화 데이터",
             )
     for source_label, text in text_sources:
         value = oi_labeled_value(text, ["development stage", "stage", "개발 단계", "개발단계"])
         if value:
-            return ("ind_enabling" if OI_IND_ENABLING_PATTERN.search(value) else "other", value, source_label)
+            return ("ind_enabling" if canonicalize_development_stage(value) in OI_INVESTMENT_STAGES else "other", value, source_label)
     return "unknown", "", ""
 
 
