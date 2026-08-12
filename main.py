@@ -3255,7 +3255,10 @@ EVIDENCE_POSITIVE_CUES = re.compile(
     r"(유효성|효과|효능|활성|입증|확인|개선|감소|억제|양성|통계적\s*유의)",
     re.IGNORECASE,
 )
-ADMET_COMPLETED_PATTERN = re.compile(r"완료|\bcompleted\b", re.IGNORECASE)
+ADMET_COMPLETED_PATTERN = re.compile(r"^(?:y|complete(?:d)?|.*(?:수행\s*)?완료.*)$", re.IGNORECASE)
+ADMET_NEGATIVE_STATUS_PATTERN = re.compile(r"\b(?:not\s+completed|incomplete|n)\b|계획|예정|진행\s*중|필요", re.IGNORECASE)
+ADMET_CATEGORY_NAMES = {"dmpk", "absorption", "distribution", "metabolism", "ddi", "snt", "general toxicity", "genotoxicity", "cv safety"}
+ADMET_OPTIONAL_STUDY_PATTERN = re.compile(r"dog\s+telemetry", re.IGNORECASE)
 ADMET_TOTAL_ITEMS = 25
 OI_PARTNERSHIP_CRITERIA_VERSION = "1.1"
 OI_PARTNERSHIP_TYPES = {"value_up", "joint_research", "investment", "n_a", "unknown"}
@@ -3320,8 +3323,22 @@ def count_admet_completed(attachments: list[Any]) -> int | None:
     ]
     if not admet_attachments:
         return None
-    total = sum(len(ADMET_COMPLETED_PATTERN.findall(extract_attachment_text(item))) for item in admet_attachments)
-    return min(total, ADMET_TOTAL_ITEMS)
+    completed_studies: set[str] = set()
+    for attachment in admet_attachments:
+        for line in extract_attachment_text(attachment).splitlines():
+            cells = [cell.strip() for cell in re.split(r"\||\t", line) if cell.strip()]
+            if len(cells) < 2:
+                continue
+            status = cells[-1]
+            study = cells[-2]
+            normalized_study = re.sub(r"[^a-z0-9]+", "", study.casefold())
+            if not normalized_study or study.casefold() in ADMET_CATEGORY_NAMES:
+                continue
+            if ADMET_OPTIONAL_STUDY_PATTERN.search(study) or ADMET_NEGATIVE_STATUS_PATTERN.search(status):
+                continue
+            if ADMET_COMPLETED_PATTERN.fullmatch(status):
+                completed_studies.add(normalized_study)
+    return min(len(completed_studies), ADMET_TOTAL_ITEMS)
 
 
 def attachment_filter3_analyses(record: dict[str, Any]) -> list[dict[str, Any]]:
@@ -3388,7 +3405,13 @@ def auto_detect_evidence_fields(record: dict[str, Any]) -> dict[str, Any]:
             "admet_completed": max(numeric_admet_counts) if numeric_admet_counts else None,
             "document_analyses": analyses,
         }
-    attachment_texts = [extract_attachment_text(item) for item in attachments if isinstance(item, dict)]
+    # ADMET documents drive only the ADMET numerator; they must never overwrite
+    # Full Scout/CDP/NCDP-derived in-vivo or in-vitro evidence.
+    attachment_texts = [
+        extract_attachment_text(item)
+        for item in attachments
+        if isinstance(item, dict) and "admet" not in str(item.get("filename") or "").casefold()
+    ]
     combined_text = "\n\n".join([report_text, *attachment_texts])
     return {
         "in_vivo_status": classify_evidence_presence(combined_text, IN_VIVO_PATTERN),
@@ -8511,14 +8534,14 @@ async def update_focus_management(record_id: str, request: Request) -> dict[str,
                     if isinstance(raw_value, bool):
                         raise HTTPException(
                             status_code=400,
-                            detail="admet_completed must be an integer between 0 and 50, or empty.",
+                            detail=f"admet_completed must be an integer between 0 and {ADMET_TOTAL_ITEMS}, or empty.",
                         )
                     try:
                         value = int(raw_value)
                     except (TypeError, ValueError):
                         raise HTTPException(
                             status_code=400,
-                            detail="admet_completed must be an integer between 0 and 50, or empty.",
+                            detail=f"admet_completed must be an integer between 0 and {ADMET_TOTAL_ITEMS}, or empty.",
                         ) from None
                     if not 0 <= value <= ADMET_TOTAL_ITEMS:
                         raise HTTPException(
