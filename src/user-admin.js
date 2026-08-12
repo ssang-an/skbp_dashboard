@@ -4,7 +4,7 @@ import { setupThemeToggle } from './theme.js';
 const state = { users: [], query: '', sortKey: 'created_at', sortDirection: -1, selectedId: null };
 const eventLabels = {
   signup: '회원가입', signin: '로그인', signout: '로그아웃', page_view: '페이지 접속',
-  account_activated: '계정 활성화', account_deactivated: '계정 비활성화',
+  account_activated: '계정 활성화', account_deactivated: '계정 비활성화', role_changed: '권한 변경',
 };
 
 const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
@@ -33,13 +33,14 @@ function renderUsers() {
   const body = document.querySelector('#adminUsersBody');
   body.innerHTML = users.length ? users.map((user) => `
     <tr data-user-id="${escapeHtml(user.id)}" class="${user.id === state.selectedId ? 'is-selected' : ''}" tabindex="0">
-      <td><strong>${escapeHtml(user.name)}</strong>${user.is_admin ? '<small class="admin-role">관리자</small>' : ''}</td>
+      <td><strong>${escapeHtml(user.name)}</strong></td>
       <td>${escapeHtml(user.email)}</td>
+      <td><select class="admin-role-select" data-user-role="${escapeHtml(user.id)}"><option value="user" ${user.role === 'user' ? 'selected' : ''}>User</option><option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option><option value="developer" ${user.role === 'developer' ? 'selected' : ''}>Developer</option></select></td>
       <td><span class="admin-state ${user.active ? 'is-active' : 'is-inactive'}">${user.active ? '활성' : '비활성'}</span></td>
       <td>${formatDate(user.created_at)}</td><td>${formatDate(user.last_login_at)}</td><td>${formatDate(user.last_seen_at)}</td>
       <td>${user.activity_count}</td>
       <td><button class="admin-account-toggle secondary-button" type="button" data-user-toggle="${escapeHtml(user.id)}" data-next-active="${!user.active}" ${user.is_admin ? 'disabled title="관리자 계정은 비활성화할 수 없습니다."' : ''}>${user.active ? '비활성화' : '활성화'}</button></td>
-    </tr>`).join('') : '<tr><td colspan="8" class="admin-empty">조건에 맞는 사용자가 없습니다.</td></tr>';
+    </tr>`).join('') : '<tr><td colspan="9" class="admin-empty">조건에 맞는 사용자가 없습니다.</td></tr>';
 }
 
 function renderActivity(user) {
@@ -74,6 +75,13 @@ async function toggleUser(button) {
   await loadUsers();
 }
 
+async function updateRole(select) {
+  const response = await fetch(`/api/admin/users/${encodeURIComponent(select.dataset.userRole)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: select.value }) });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || '권한을 변경하지 못했습니다.');
+  await loadUsers();
+}
+
 function exportCsv() {
   const header = ['이름', '이메일', '권한', '상태', '가입일', '최근 로그인', '최근 접속', '활동 수', '활성 세션'];
   const rows = filteredUsers().map((user) => [user.name, user.email, user.is_admin ? '관리자' : '사용자', user.active ? '활성' : '비활성', user.created_at, user.last_login_at, user.last_seen_at, user.activity_count, user.active_session_count]);
@@ -91,6 +99,12 @@ document.addEventListener('click', async (event) => {
   if (row) renderActivity(state.users.find((user) => user.id === row.dataset.userId));
   const sort = event.target.closest('[data-admin-sort]');
   if (sort) { const key = sort.dataset.adminSort; state.sortDirection = state.sortKey === key ? -state.sortDirection : 1; state.sortKey = key; renderUsers(); }
+});
+document.addEventListener('change', async (event) => {
+  const select = event.target.closest('[data-user-role]');
+  if (!select) return;
+  select.disabled = true;
+  try { await updateRole(select); } catch (error) { document.querySelector('#adminStatus').textContent = error.message; select.disabled = false; }
 });
 document.addEventListener('keydown', (event) => { const row = event.target.closest('[data-user-id]'); if (row && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); renderActivity(state.users.find((user) => user.id === row.dataset.userId)); } });
 document.querySelector('#adminUserSearch').addEventListener('input', (event) => { state.query = event.target.value; renderUsers(); });

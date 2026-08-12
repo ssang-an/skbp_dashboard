@@ -346,7 +346,18 @@ app.mount("/attachments", StaticFiles(directory=ATTACHMENTS_DIR), name="attachme
 
 AUTH_COOKIE_NAME = "skbp_session"
 AUTH_SESSION_DAYS = 30
-AUTH_ADMIN_EMAIL = "joowon.jung@sk.com"
+ROLE_USER = "user"
+ROLE_ADMIN = "admin"
+ROLE_DEVELOPER = "developer"
+ROLE_RANK = {ROLE_USER: 0, ROLE_ADMIN: 1, ROLE_DEVELOPER: 2}
+
+# Initial OI-team role claims. Both identity fields must match; email local parts are
+# compared case-insensitively while allowing the documented skbp/sk domains.
+INITIAL_ADMIN_IDENTITIES = {
+    ("주연주", "yeonjoo"), ("허정환", "jeonghwan.hur"), ("이정태", "jeongtae_lee"),
+    ("유택상", "taegsang.you"), ("서지영", "jiyoungseo"), ("정병찬", "alex_jeong"),
+}
+INITIAL_DEVELOPER_IDENTITIES = {("정주원", "joowon.jung")}
 
 
 def load_users() -> list[dict[str, Any]]:
@@ -366,8 +377,32 @@ def password_hash(password: str, salt_hex: str | None = None) -> tuple[str, str]
     return salt.hex(), digest.hex()
 
 
+def email_local_part(email: Any) -> str:
+    return str(email or "").strip().casefold().split("@", 1)[0]
+
+
+def initial_role_for_identity(name: Any, email: Any) -> str:
+    identity = (str(name or "").strip(), email_local_part(email))
+    if identity in INITIAL_DEVELOPER_IDENTITIES:
+        return ROLE_DEVELOPER
+    if identity in INITIAL_ADMIN_IDENTITIES:
+        return ROLE_ADMIN
+    return ROLE_USER
+
+
+def auth_role(user: dict[str, Any]) -> str:
+    role = str(user.get("role") or "").strip().lower()
+    if role in ROLE_RANK:
+        return role
+    return initial_role_for_identity(user.get("name"), user.get("email"))
+
+
+def has_auth_role(user: dict[str, Any], minimum: str) -> bool:
+    return ROLE_RANK.get(auth_role(user), 0) >= ROLE_RANK[minimum]
+
+
 def is_auth_admin(user: dict[str, Any]) -> bool:
-    return str(user.get("email") or "").strip().lower() == AUTH_ADMIN_EMAIL
+    return has_auth_role(user, ROLE_ADMIN)
 
 
 def public_user(user: dict[str, Any]) -> dict[str, Any]:
@@ -375,7 +410,9 @@ def public_user(user: dict[str, Any]) -> dict[str, Any]:
         "id": str(user.get("id") or ""),
         "name": str(user.get("name") or ""),
         "email": str(user.get("email") or ""),
+        "role": auth_role(user),
         "is_admin": is_auth_admin(user),
+        "is_developer": has_auth_role(user, ROLE_DEVELOPER),
     }
 
 
@@ -411,6 +448,13 @@ def require_auth_admin(request: Request) -> dict[str, Any]:
     return user
 
 
+def require_auth_developer(request: Request) -> dict[str, Any]:
+    user = require_authenticated_user(request)
+    if not has_auth_role(user, ROLE_DEVELOPER):
+        raise HTTPException(status_code=403, detail="개발자 권한이 필요합니다.")
+    return user
+
+
 def start_user_session(user: dict[str, Any]) -> tuple[str, str]:
     token = secrets.token_urlsafe(32)
     expires_at = datetime.now(timezone.utc) + timedelta(days=AUTH_SESSION_DAYS)
@@ -437,7 +481,7 @@ async def signup(request: Request):
         raise HTTPException(status_code=409, detail="이미 가입된 이메일입니다.")
     salt, digest = password_hash(password)
     now = datetime.now(timezone.utc).isoformat()
-    user = {"id": uuid.uuid4().hex, "name": name, "email": email, "password_salt": salt, "password_hash": digest, "created_at": now, "last_login_at": now, "sessions": [], "activity_log": [{"event": "signup", "at": now, "actor_ip": get_client_ip(request)}]}
+    user = {"id": uuid.uuid4().hex, "name": name, "email": email, "role": initial_role_for_identity(name, email), "password_salt": salt, "password_hash": digest, "created_at": now, "last_login_at": now, "sessions": [], "activity_log": [{"event": "signup", "at": now, "actor_ip": get_client_ip(request)}]}
     token, _ = start_user_session(user)
     users.append(user)
     save_users(users)
@@ -510,31 +554,40 @@ def admin_user_payload(user: dict[str, Any]) -> dict[str, Any]:
 
 @app.get("/api/admin/users")
 async def list_admin_users(request: Request):
-    require_auth_admin(request)
+    require_auth_developer(request)
     users = sorted(load_users(), key=lambda item: str(item.get("created_at") or ""), reverse=True)
     return {"users": [admin_user_payload(user) for user in users]}
 
 
 @app.patch("/api/admin/users/{user_id}")
 async def update_admin_user(user_id: str, request: Request):
-    admin = require_auth_admin(request)
+    admin = require_auth_developer(request)
     payload = await request.json()
-    if set(payload) - {"active"} or not isinstance(payload.get("active"), bool):
-        raise HTTPException(status_code=400, detail="active 값만 변경할 수 있습니다.")
-    if user_id == str(admin.get("id") or "") and payload["active"] is False:
+    if set(payload) - {"active", "role"} or not payload:
+        raise HTTPException(status_code=400, detail="active 또는 role만 변경할 수 있습니다.")
+    if "active" in payload and not isinstance(payload.get("active"), bool):
+        raise HTTPException(status_code=400, detail="active 값은 boolean이어야 합니다.")
+    if "role" in payload and payload.get("role") not in ROLE_RANK:
+        raise HTTPException(status_code=400, detail="올바른 role을 선택해주세요.")
+    if user_id == str(admin.get("id") or "") and payload.get("active") is False:
         raise HTTPException(status_code=400, detail="현재 관리자 계정은 비활성화할 수 없습니다.")
+    if user_id == str(admin.get("id") or "") and payload.get("role") not in (None, ROLE_DEVELOPER):
+        raise HTTPException(status_code=400, detail="현재 developer 계정의 권한을 낮출 수 없습니다.")
     users = load_users()
     user = next((item for item in users if str(item.get("id") or "") == user_id), None)
     if not user:
         raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
-    user["active"] = payload["active"]
+    if "active" in payload:
+        user["active"] = payload["active"]
+    if "role" in payload:
+        user["role"] = payload["role"]
     user.setdefault("activity_log", []).append({
-        "event": "account_activated" if payload["active"] else "account_deactivated",
+        "event": "role_changed" if "role" in payload else ("account_activated" if payload["active"] else "account_deactivated"),
         "at": datetime.now(timezone.utc).isoformat(),
         "actor_ip": get_client_ip(request),
         "actor_email": str(admin.get("email") or ""),
     })
-    if not payload["active"]:
+    if payload.get("active") is False:
         user["sessions"] = []
     save_users(users)
     return {"ok": True, "user": admin_user_payload(user)}
@@ -7049,7 +7102,7 @@ def wiki_view() -> FileResponse:
 
 @app.get("/admin/users")
 def user_admin(request: Request) -> FileResponse:
-    require_auth_admin(request)
+    require_auth_developer(request)
     return FileResponse(ROOT / "user_admin.html")
 
 

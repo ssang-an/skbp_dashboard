@@ -49,7 +49,7 @@ function renderAuth() {
   });
   document.querySelectorAll('[data-auth-menu-name]').forEach((node) => { node.textContent = currentUser?.name || ''; });
   document.querySelectorAll('[data-auth-menu-email]').forEach((node) => { node.textContent = currentUser?.email || ''; });
-  document.querySelectorAll('[data-auth-admin]').forEach((node) => { node.hidden = !currentUser?.is_admin; });
+  document.querySelectorAll('[data-auth-admin]').forEach((node) => { node.hidden = !currentUser?.is_developer; });
 }
 
 function setMode(mode) {
