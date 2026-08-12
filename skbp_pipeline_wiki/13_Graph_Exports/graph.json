@@ -232,9 +232,9 @@
     },
     {
       "id": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af",
-      "label": "FDA Leqembi approval",
+      "label": "FDA — Leqembi Traditional Approval",
       "type": "source",
-      "title": "Source__FDA_Leqembi_approval",
+      "title": "Source__FDA_—_Leqembi_Traditional_Approval",
       "tags": "pipeline/source;source/regulatory",
       "score": "",
       "recommendation": "",
@@ -242,9 +242,9 @@
     },
     {
       "id": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
-      "label": "FDA approves Kisunla (donanemab) for adults with Alzheimer's disease",
+      "label": "FDA — Kisunla Approval",
       "type": "source",
-      "title": "Source__FDA_approves_Kisunla_(donanemab)_for_adults_with_Alzheimer's_disease",
+      "title": "Source__FDA_—_Kisunla_Approval",
       "tags": "pipeline/source;source/regulatory",
       "score": "",
       "recommendation": "",
@@ -1822,10 +1822,10 @@
     },
     {
       "id": "source::https_www.alz.org_alzheimers-dementia_facts-figures",
-      "label": "Alzheimer's Association Facts and Figures",
+      "label": "Alzheimer's Association 2026 Facts and Figures",
       "type": "source",
-      "title": "Source__Alzheimer's_Association_Facts_and_Figures",
-      "tags": "pipeline/source;source/market",
+      "title": "Source__Alzheimer's_Association_2026_Facts_and_Figures",
+      "tags": "pipeline/source;source/market_epidemiology",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
@@ -7729,6 +7729,486 @@
       "score": "",
       "recommendation": "",
       "evidence_level": "E0"
+    },
+    {
+      "id": "asset::vta-27",
+      "label": "VTA-27",
+      "type": "asset",
+      "title": "Asset__VTA-27",
+      "tags": "pipeline/asset;theme/neuroimmune",
+      "score": 14,
+      "recommendation": "Shortlist",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "company::vasthera_co.,_ltd",
+      "label": "VASTHERA Co., Ltd.",
+      "type": "company",
+      "title": "Company__VASTHERA_Co.,_Ltd",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::peroxiredoxin_(prx1_prx2)_functional_mimic;_downstream_astrocytic_stat3_03510b30",
+      "label": "Peroxiredoxin (PRX1/PRX2) functional mimic; downstream astrocytic STAT3 redox signaling",
+      "type": "target",
+      "title": "Target__Peroxiredoxin_(PRX1_PRX2)_functional_mimic;_downstream_astrocytic_STAT3_03510b30",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::prx-mimetic_protein_oxidation_modulation_lowers_intracellular_h2o2_and_1e109c14",
+      "label": "PRX-mimetic protein oxidation modulation: lowers intracellular H2O2 and modulates STAT3 redox state to suppress reactive astrogliosis while protecting neurons",
+      "type": "moa",
+      "title": "MoA__PRX-mimetic_protein_oxidation_modulation_lowers_intracellular_H2O2_and_1e109c14",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::alzheimer's_disease;_company_deck_targets_mild-to-moderate_ad._parkinso_6a571b94",
+      "label": "Alzheimer's disease; company deck targets mild-to-moderate AD. Parkinson's disease is mentioned only as a potential expansion, not a confirmed VTA-27 program.",
+      "type": "indication",
+      "title": "Indication__Alzheimer's_disease;_company_deck_targets_mild-to-moderate_AD._Parkinso_6a571b94",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::vta-27_20260812",
+      "label": "Scorecard - VTA-27",
+      "type": "scorecard",
+      "title": "Scorecard__VTA-27__20260812",
+      "tags": "pipeline/scorecard",
+      "score": 14,
+      "recommendation": "Shortlist",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "competitor::neurobiogen_kds2010",
+      "label": "KDS2010",
+      "type": "competitor",
+      "title": "Competitor__NeuroBiogen__KDS2010",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::inmune_bio_xpro1595",
+      "label": "XPro1595",
+      "type": "competitor",
+      "title": "Competitor__INmune_Bio__XPro1595",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::sanofi_(acquired_vigil_neuroscience)_vg-3927",
+      "label": "VG-3927",
+      "type": "competitor",
+      "title": "Competitor__Sanofi_(acquired_Vigil_Neuroscience)__VG-3927",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::alector_al002",
+      "label": "AL002",
+      "type": "competitor",
+      "title": "Competitor__Alector__AL002",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "source::vasthera_vta-27_program_cd_(aug_2026),_user-uploaded_confidential_deck",
+      "label": "VASTHERA VTA-27 Program CD (Aug 2026), user-uploaded confidential deck",
+      "type": "source",
+      "title": "Source__VASTHERA_VTA-27_Program_CD_(Aug_2026),_user-uploaded_confidential_deck",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.vasthera.com_technology_pipeline.php",
+      "label": "VASTHERA official pipeline page",
+      "type": "source",
+      "title": "Source__VASTHERA_official_pipeline_page",
+      "tags": "pipeline/source;source/company_website",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.vasthera.com_technology_platform.php",
+      "label": "VASTHERA Redoxizyme platform page",
+      "type": "source",
+      "title": "Source__VASTHERA_Redoxizyme_platform_page",
+      "tags": "pipeline/source;source/company_website",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view",
+      "label": "VASTHERA news release: Pioneering New Drugs for Rare and Intractable Diseases (2025-12-29)",
+      "type": "source",
+      "title": "Source__VASTHERA_news_release_Pioneering_New_Drugs_for_Rare_and_Intractable_Dis_04261368",
+      "tags": "pipeline/source;source/company_news",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_link.springer.com_article_10.15252_emmm.201809665",
+      "label": "Reichenbach et al. 2019, Inhibition of Stat3-mediated astrogliosis ameliorates pathology in an Alzheimer's disease model",
+      "type": "source",
+      "title": "Source__Reichenbach_et_al._2019,_Inhibition_of_Stat3-mediated_astrogliosis_amel_b6e2fad2",
+      "tags": "pipeline/source;source/peer_reviewed_publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.nature.com_articles_s41593-020-00735-y",
+      "label": "Chun et al. 2020, Severe reactive astrocytes precipitate pathological hallmarks of Alzheimer's disease via H2O2 production",
+      "type": "source",
+      "title": "Source__Chun_et_al._2020,_Severe_reactive_astrocytes_precipitate_pathological_h_52cccc03",
+      "tags": "pipeline/source;source/peer_reviewed_publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct07027072",
+      "label": "ClinicalTrials.gov NCT07027072 — KDS2010 Phase 2a AD",
+      "type": "source",
+      "title": "Source__ClinicalTrials.gov_NCT07027072_—_KDS2010_Phase_2a_AD",
+      "tags": "pipeline/source;source/clinical_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc6426469",
+      "label": "Jo et al. 2019, Newly developed reversible MAO-B inhibitor KDS2010 in Alzheimer's disease",
+      "type": "source",
+      "title": "Source__Jo_et_al._2019,_Newly_developed_reversible_MAO-B_inhibitor_KDS2010_in_A_6c30ad04",
+      "tags": "pipeline/source;source/peer_reviewed_publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct05318976",
+      "label": "ClinicalTrials.gov NCT05318976 — XPro1595 MINDFuL Phase 2",
+      "type": "source",
+      "title": "Source__ClinicalTrials.gov_NCT05318976_—_XPro1595_MINDFuL_Phase_2",
+      "tags": "pipeline/source;source/clinical_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct06343636",
+      "label": "ClinicalTrials.gov NCT06343636 — VG-3927 Phase 1",
+      "type": "source",
+      "title": "Source__ClinicalTrials.gov_NCT06343636_—_VG-3927_Phase_1",
+      "tags": "pipeline/source;source/clinical_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9",
+      "label": "Sanofi press release on acquisition of Vigil and VG-3927",
+      "type": "source",
+      "title": "Source__Sanofi_press_release_on_acquisition_of_Vigil_and_VG-3927",
+      "tags": "pipeline/source;source/company_news",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.nature.com_articles_s41591-026-04273-1",
+      "label": "Mummery et al. 2026, AL002 TREM2 agonist Phase 2 randomized trial",
+      "type": "source",
+      "title": "Source__Mummery_et_al._2026,_AL002_TREM2_agonist_Phase_2_randomized_trial",
+      "tags": "pipeline/source;source/peer_reviewed_clinical_publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.accessdata.fda.gov_drugsatfda_docs_appletter_2025_761269orig1_f401d03a",
+      "label": "FDA Leqembi supplemental approval letter (2025)",
+      "type": "source",
+      "title": "Source__FDA_Leqembi_supplemental_approval_letter_(2025)",
+      "tags": "pipeline/source;source/regulatory",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.alz.org_getmedia_c05f7ba4-9aea-4cb0-8898-5e8bff3f0930_executi_c4e57aef",
+      "label": "Alzheimer's Association 2025 Facts and Figures Executive Summary",
+      "type": "source",
+      "title": "Source__Alzheimer's_Association_2025_Facts_and_Figures_Executive_Summary",
+      "tags": "pipeline/source;source/epidemiology",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_psnet.ahrq.gov_issue_detection-rates-mild-cognitive-impairment-pr_e5d2ab5c",
+      "label": "AHRQ PSNet summary of US MCI/dementia detection rates",
+      "type": "source",
+      "title": "Source__AHRQ_PSNet_summary_of_US_MCI_dementia_detection_rates",
+      "tags": "pipeline/source;source/epidemiology",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_us.eisai.com_-_media_files_useisairedesign_eisaiincpricelist.pdf_acffa182",
+      "label": "Eisai Inc. Product Price List effective July 13, 2026",
+      "type": "source",
+      "title": "Source__Eisai_Inc._Product_Price_List_effective_July_13,_2026",
+      "tags": "pipeline/source;source/manufacturer_price_list",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "asset::cu71",
+      "label": "CU71",
+      "type": "asset",
+      "title": "Asset__CU71",
+      "tags": "pipeline/asset;theme/others",
+      "score": 15,
+      "recommendation": "Shortlist",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "company::curacle_co.,_ltd",
+      "label": "Curacle Co., Ltd.",
+      "type": "company",
+      "title": "Company__Curacle_Co.,_Ltd",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::경구용_bbb_neurovascular_stabilizer_및_endothelial_dysfunction_blocker;_전임상_8d9b4c8c",
+      "label": "경구용 BBB/neurovascular stabilizer 및 endothelial dysfunction blocker; 전임상 AD 모델에서 BBB tight junction 보존, RAGE 관련 신호/수송 감소, glial activation 및 neuroinflammation 감소.",
+      "type": "moa",
+      "title": "MoA__경구용_BBB_neurovascular_stabilizer_및_endothelial_dysfunction_blocker;_전임상_8d9b4c8c",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::alzheimer's_disease;_cerebral_small_vessel_disease_및_vascular_dementia는_76749357",
+      "label": "Alzheimer's disease; cerebral small vessel disease 및 vascular dementia는 잠재적 확장 가능성으로만 제시되었고 별도 active CU71 프로그램은 확인되지 않음.",
+      "type": "indication",
+      "title": "Indication__Alzheimer's_disease;_cerebral_small_vessel_disease_및_vascular_dementia는_76749357",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::cu71_20260812",
+      "label": "Scorecard - CU71",
+      "type": "scorecard",
+      "title": "Scorecard__CU71__20260812",
+      "tags": "pipeline/scorecard",
+      "score": 15,
+      "recommendation": "Shortlist",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "competitor::eisai_biogen_leqembi_(lecanemab-irmb)",
+      "label": "Leqembi (lecanemab-irmb)",
+      "type": "competitor",
+      "title": "Competitor__Eisai_Biogen__Leqembi_(lecanemab-irmb)",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::eli_lilly_kisunla_(donanemab-azbt)",
+      "label": "Kisunla (donanemab-azbt)",
+      "type": "competitor",
+      "title": "Competitor__Eli_Lilly__Kisunla_(donanemab-azbt)",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::vtv_therapeutics_azeliragon_(ttp488)",
+      "label": "Azeliragon (TTP488)",
+      "type": "competitor",
+      "title": "Competitor__vTv_Therapeutics__Azeliragon_(TTP488)",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::annovis_bio_buntanetap_(posiphen)",
+      "label": "Buntanetap (Posiphen)",
+      "type": "competitor",
+      "title": "Competitor__Annovis_Bio__Buntanetap_(Posiphen)",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::alzheon_valiltramiprosate_(alz-801)",
+      "label": "Valiltramiprosate (ALZ-801)",
+      "type": "competitor",
+      "title": "Competitor__Alzheon__Valiltramiprosate_(ALZ-801)",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "source::curacle_corporate_presentation_—_cu71_alzheimer's_disease_update_(june_2025)",
+      "label": "Curacle Corporate Presentation — CU71 Alzheimer's Disease Update (June 2025)",
+      "type": "source",
+      "title": "Source__Curacle_Corporate_Presentation_—_CU71_Alzheimer's_Disease_Update_(June_2025)",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_curacle.com_bbs_content.php_co_id=pipeline",
+      "label": "Curacle Pipeline",
+      "type": "source",
+      "title": "Source__Curacle_Pipeline",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.curacle.com_bbs_content.php_co_id=pipeline&tab_id=cu71",
+      "label": "Curacle CU71 — Alzheimer's Disease",
+      "type": "source",
+      "title": "Source__Curacle_CU71_—_Alzheimer's_Disease",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_kind.krx.co.kr_external_2026_05_15_000418_20260515000834_11013.htm",
+      "label": "Curacle Q1 2026 KRX Filing",
+      "type": "source",
+      "title": "Source__Curacle_Q1_2026_KRX_Filing",
+      "tags": "pipeline/source;source/regulatory",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.curacle.com_bbs_board.php_bo_table=notice_kr&wr_id=29",
+      "label": "Curacle 10th Anniversary Shareholder Letter (May 2026)",
+      "type": "source",
+      "title": "Source__Curacle_10th_Anniversary_Shareholder_Letter_(May_2026)",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.curacle.com_bbs_content.php_co_id=platform",
+      "label": "Curacle SOLVADYS Platform",
+      "type": "source",
+      "title": "Source__Curacle_SOLVADYS_Platform",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_epostersonline.com_aaic2025_poster_100124",
+      "label": "AAIC 2025 CU71 Poster / Abstract",
+      "type": "source",
+      "title": "Source__AAIC_2025_CU71_Poster_Abstract",
+      "tags": "pipeline/source;source/conference",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.nature.com_articles_s41586-020-2247-3",
+      "label": "Montagne et al., Nature 2020 — APOE4 leads to BBB dysfunction predicting cognitive decline",
+      "type": "source",
+      "title": "Source__Montagne_et_al.,_Nature_2020_—_APOE4_leads_to_BBB_dysfunction_predictin_cac61f63",
+      "tags": "pipeline/source;source/peer_reviewed",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct02080364",
+      "label": "ClinicalTrials.gov NCT02080364 — Azeliragon STEADFAST",
+      "type": "source",
+      "title": "Source__ClinicalTrials.gov_NCT02080364_—_Azeliragon_STEADFAST",
+      "tags": "pipeline/source;source/clinical_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct06709014",
+      "label": "ClinicalTrials.gov NCT06709014 — Buntanetap Phase 3",
+      "type": "source",
+      "title": "Source__ClinicalTrials.gov_NCT06709014_—_Buntanetap_Phase_3",
+      "tags": "pipeline/source;source/clinical_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.neurology.org_doi_10.1212_wnl.0000000000217133",
+      "label": "Neurology 2026 — Valiltramiprosate Phase 3 APOLLOE4 topline",
+      "type": "source",
+      "title": "Source__Neurology_2026_—_Valiltramiprosate_Phase_3_APOLLOE4_topline",
+      "tags": "pipeline/source;source/scientific_publication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.eisai.com_news_2023_pdf_enews202302pdf.pdf",
+      "label": "Eisai LEQEMBI U.S. Launch Pricing (2023)",
+      "type": "source",
+      "title": "Source__Eisai_LEQEMBI_U.S._Launch_Pricing_(2023)",
+      "tags": "pipeline/source;source/company_pricing",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
     }
   ],
   "edges": [
@@ -17482,6 +17962,643 @@
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E0",
       "source_note": "Source__LB-PC01_overview"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "company::vasthera_co.,_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "target::peroxiredoxin_(prx1_prx2)_functional_mimic;_downstream_astrocytic_stat3_03510b30",
+      "relationship": "TARGETS",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "moa::prx-mimetic_protein_oxidation_modulation_lowers_intracellular_h2o2_and_1e109c14",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "modality::small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "indication::alzheimer's_disease;_company_deck_targets_mild-to-moderate_ad._parkinso_6a571b94",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "theme::neuroimmune",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "cluster::교세포_향상성",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "scorecard::vta-27_20260812",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "competitor::neurobiogen_kds2010",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "competitor::inmune_bio_xpro1595",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "competitor::sanofi_(acquired_vigil_neuroscience)_vg-3927",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "competitor::alector_al002",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "competitor::eisai_biogen_leqembi_(lecanemab)",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "competitor::eli_lilly_kisunla_(donanemab)",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__VTA-27__20260812"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::vasthera_vta-27_program_cd_(aug_2026),_user-uploaded_confidential_deck",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__VASTHERA_VTA-27_Program_CD_(Aug_2026),_user-uploaded_confidential_deck"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::vasthera_vta-27_program_cd_(aug_2026),_user-uploaded_confidential_deck",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__VASTHERA_VTA-27_Program_CD_(Aug_2026),_user-uploaded_confidential_deck"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_www.vasthera.com_technology_pipeline.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__VASTHERA_official_pipeline_page"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_www.vasthera.com_technology_pipeline.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__VASTHERA_official_pipeline_page"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_www.vasthera.com_technology_platform.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__VASTHERA_Redoxizyme_platform_page"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_www.vasthera.com_technology_platform.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__VASTHERA_Redoxizyme_platform_page"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__VASTHERA_news_release_Pioneering_New_Drugs_for_Rare_and_Intractable_Dis_04261368"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__VASTHERA_news_release_Pioneering_New_Drugs_for_Rare_and_Intractable_Dis_04261368"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_link.springer.com_article_10.15252_emmm.201809665",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Reichenbach_et_al._2019,_Inhibition_of_Stat3-mediated_astrogliosis_amel_b6e2fad2"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_link.springer.com_article_10.15252_emmm.201809665",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Reichenbach_et_al._2019,_Inhibition_of_Stat3-mediated_astrogliosis_amel_b6e2fad2"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_www.nature.com_articles_s41593-020-00735-y",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Chun_et_al._2020,_Severe_reactive_astrocytes_precipitate_pathological_h_52cccc03"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_www.nature.com_articles_s41593-020-00735-y",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Chun_et_al._2020,_Severe_reactive_astrocytes_precipitate_pathological_h_52cccc03"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_clinicaltrials.gov_study_nct07027072",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT07027072_—_KDS2010_Phase_2a_AD"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_clinicaltrials.gov_study_nct07027072",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT07027072_—_KDS2010_Phase_2a_AD"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc6426469",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Jo_et_al._2019,_Newly_developed_reversible_MAO-B_inhibitor_KDS2010_in_A_6c30ad04"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_pmc.ncbi.nlm.nih.gov_articles_pmc6426469",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Jo_et_al._2019,_Newly_developed_reversible_MAO-B_inhibitor_KDS2010_in_A_6c30ad04"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_clinicaltrials.gov_study_nct05318976",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT05318976_—_XPro1595_MINDFuL_Phase_2"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_clinicaltrials.gov_study_nct05318976",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT05318976_—_XPro1595_MINDFuL_Phase_2"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_clinicaltrials.gov_study_nct06343636",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT06343636_—_VG-3927_Phase_1"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_clinicaltrials.gov_study_nct06343636",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT06343636_—_VG-3927_Phase_1"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Sanofi_press_release_on_acquisition_of_Vigil_and_VG-3927"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Sanofi_press_release_on_acquisition_of_Vigil_and_VG-3927"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_www.nature.com_articles_s41591-026-04273-1",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Mummery_et_al._2026,_AL002_TREM2_agonist_Phase_2_randomized_trial"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_www.nature.com_articles_s41591-026-04273-1",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Mummery_et_al._2026,_AL002_TREM2_agonist_Phase_2_randomized_trial"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_approval_notice_for_Kisunla_(donanemab)"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_approval_notice_for_Kisunla_(donanemab)"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_www.accessdata.fda.gov_drugsatfda_docs_appletter_2025_761269orig1_f401d03a",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_Leqembi_supplemental_approval_letter_(2025)"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_www.accessdata.fda.gov_drugsatfda_docs_appletter_2025_761269orig1_f401d03a",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_Leqembi_supplemental_approval_letter_(2025)"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_www.alz.org_getmedia_c05f7ba4-9aea-4cb0-8898-5e8bff3f0930_executi_c4e57aef",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Alzheimer's_Association_2025_Facts_and_Figures_Executive_Summary"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_www.alz.org_getmedia_c05f7ba4-9aea-4cb0-8898-5e8bff3f0930_executi_c4e57aef",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Alzheimer's_Association_2025_Facts_and_Figures_Executive_Summary"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_psnet.ahrq.gov_issue_detection-rates-mild-cognitive-impairment-pr_e5d2ab5c",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__AHRQ_PSNet_summary_of_US_MCI_dementia_detection_rates"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_psnet.ahrq.gov_issue_detection-rates-mild-cognitive-impairment-pr_e5d2ab5c",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__AHRQ_PSNet_summary_of_US_MCI_dementia_detection_rates"
+    },
+    {
+      "source": "asset::vta-27",
+      "target": "source::https_us.eisai.com_-_media_files_useisairedesign_eisaiincpricelist.pdf_acffa182",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Eisai_Inc._Product_Price_List_effective_July_13,_2026"
+    },
+    {
+      "source": "scorecard::vta-27_20260812",
+      "target": "source::https_us.eisai.com_-_media_files_useisairedesign_eisaiincpricelist.pdf_acffa182",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Eisai_Inc._Product_Price_List_effective_July_13,_2026"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "company::curacle_co.,_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__CU71__20260812"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__CU71__20260812"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "moa::경구용_bbb_neurovascular_stabilizer_및_endothelial_dysfunction_blocker;_전임상_8d9b4c8c",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__CU71__20260812"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "modality::small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__CU71__20260812"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "indication::alzheimer's_disease;_cerebral_small_vessel_disease_및_vascular_dementia는_76749357",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__CU71__20260812"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "theme::others",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__CU71__20260812"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "cluster::others",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__CU71__20260812"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "scorecard::cu71_20260812",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__CU71__20260812"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "competitor::eisai_biogen_leqembi_(lecanemab-irmb)",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__CU71__20260812"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "competitor::eli_lilly_kisunla_(donanemab-azbt)",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__CU71__20260812"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "competitor::vtv_therapeutics_azeliragon_(ttp488)",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__CU71__20260812"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "competitor::annovis_bio_buntanetap_(posiphen)",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__CU71__20260812"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "competitor::alzheon_valiltramiprosate_(alz-801)",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__CU71__20260812"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::curacle_corporate_presentation_—_cu71_alzheimer's_disease_update_(june_2025)",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Curacle_Corporate_Presentation_—_CU71_Alzheimer's_Disease_Update_(June_2025)"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::curacle_corporate_presentation_—_cu71_alzheimer's_disease_update_(june_2025)",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Curacle_Corporate_Presentation_—_CU71_Alzheimer's_Disease_Update_(June_2025)"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_curacle.com_bbs_content.php_co_id=pipeline",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Curacle_Pipeline"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_curacle.com_bbs_content.php_co_id=pipeline",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Curacle_Pipeline"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_www.curacle.com_bbs_content.php_co_id=pipeline&tab_id=cu71",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Curacle_CU71_—_Alzheimer's_Disease"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_www.curacle.com_bbs_content.php_co_id=pipeline&tab_id=cu71",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Curacle_CU71_—_Alzheimer's_Disease"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_kind.krx.co.kr_external_2026_05_15_000418_20260515000834_11013.htm",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Curacle_Q1_2026_KRX_Filing"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_kind.krx.co.kr_external_2026_05_15_000418_20260515000834_11013.htm",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Curacle_Q1_2026_KRX_Filing"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_www.curacle.com_bbs_board.php_bo_table=notice_kr&wr_id=29",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Curacle_10th_Anniversary_Shareholder_Letter_(May_2026)"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_www.curacle.com_bbs_board.php_bo_table=notice_kr&wr_id=29",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Curacle_10th_Anniversary_Shareholder_Letter_(May_2026)"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_www.curacle.com_bbs_content.php_co_id=platform",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Curacle_SOLVADYS_Platform"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_www.curacle.com_bbs_content.php_co_id=platform",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Curacle_SOLVADYS_Platform"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_epostersonline.com_aaic2025_poster_100124",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__AAIC_2025_CU71_Poster_Abstract"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_epostersonline.com_aaic2025_poster_100124",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__AAIC_2025_CU71_Poster_Abstract"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_www.nature.com_articles_s41586-020-2247-3",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Montagne_et_al.,_Nature_2020_—_APOE4_leads_to_BBB_dysfunction_predictin_cac61f63"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_www.nature.com_articles_s41586-020-2247-3",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Montagne_et_al.,_Nature_2020_—_APOE4_leads_to_BBB_dysfunction_predictin_cac61f63"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_—_Leqembi_Traditional_Approval"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_—_Leqembi_Traditional_Approval"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_—_Kisunla_Approval"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__FDA_—_Kisunla_Approval"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_clinicaltrials.gov_study_nct02080364",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT02080364_—_Azeliragon_STEADFAST"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_clinicaltrials.gov_study_nct02080364",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT02080364_—_Azeliragon_STEADFAST"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_clinicaltrials.gov_study_nct06709014",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT06709014_—_Buntanetap_Phase_3"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_clinicaltrials.gov_study_nct06709014",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT06709014_—_Buntanetap_Phase_3"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_www.neurology.org_doi_10.1212_wnl.0000000000217133",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Neurology_2026_—_Valiltramiprosate_Phase_3_APOLLOE4_topline"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_www.neurology.org_doi_10.1212_wnl.0000000000217133",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Neurology_2026_—_Valiltramiprosate_Phase_3_APOLLOE4_topline"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_www.alz.org_alzheimers-dementia_facts-figures",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Alzheimer's_Association_2026_Facts_and_Figures"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_www.alz.org_alzheimers-dementia_facts-figures",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Alzheimer's_Association_2026_Facts_and_Figures"
+    },
+    {
+      "source": "asset::cu71",
+      "target": "source::https_www.eisai.com_news_2023_pdf_enews202302pdf.pdf",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Eisai_LEQEMBI_U.S._Launch_Pricing_(2023)"
+    },
+    {
+      "source": "scorecard::cu71_20260812",
+      "target": "source::https_www.eisai.com_news_2023_pdf_enews202302pdf.pdf",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Eisai_LEQEMBI_U.S._Launch_Pricing_(2023)"
     }
   ]
 }

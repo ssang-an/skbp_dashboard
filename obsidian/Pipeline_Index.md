@@ -1,6 +1,6 @@
 # Pipeline Index
 
-> Generated from `json/pipeline-records.json` at `2026-08-07T23:02:38`.
+> Generated from `json/pipeline-records.json` at `2026-08-12T17:01:59`.
 
 ## Assets
 
@@ -82,6 +82,8 @@
 | [[Cellprotek Pharmaceutical_YC-6]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Phase 2 | 6 / 9 |
 | [[CELLTIUM_Neurological Disorder Research Program]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
 | [[Celltrion, Inc._LC-PC01]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
+| [[VASTHERA Co., Ltd._VTA-27]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - 교세포 향상성|교세포 향상성]] | IND-enabling | 14 / 21 |
+| [[Curacle Co., Ltd._CU71]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 15 / 21 |
 
 ## Navigation
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company |
 | Reliability | high |
 | URL | https://www.formation.bio/press/formation-bio-licenses-phase-1-ready-cns-penetrant-tyk2-inhibitor-from-lynk-pharmaceuticals |
-| Accessed / generated date | 2026-08-07 |
+| Accessed / generated date | 2026-08-12 |
 
 ## Evidence Summary
 

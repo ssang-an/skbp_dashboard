@@ -6,8 +6,8 @@ aliases:
   - "aav9_gene_regulation_therapy_intended_to_increase_scn1a_expression"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

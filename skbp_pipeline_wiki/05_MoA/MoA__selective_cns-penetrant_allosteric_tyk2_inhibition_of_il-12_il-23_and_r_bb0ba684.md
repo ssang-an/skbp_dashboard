@@ -6,8 +6,8 @@ aliases:
   - "selective_cns-penetrant_allosteric_tyk2_inhibition_of_il-12_il-23_and_r_bb0ba684"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

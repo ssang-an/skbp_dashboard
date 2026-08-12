@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/target"
   - "theme/no_theme"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -47,6 +47,7 @@ confidence: "medium"
 - [[02_Assets/Asset__CPB-106|CPB-106]]
 - [[02_Assets/Asset__CPB102|CPB102]]
 - [[02_Assets/Asset__CPB103|CPB103]]
+- [[02_Assets/Asset__CU71|CU71]]
 - [[02_Assets/Asset__CV-17|CV-17]]
 - [[02_Assets/Asset__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]
 - [[02_Assets/Asset__HBW-015|HBW-015]]

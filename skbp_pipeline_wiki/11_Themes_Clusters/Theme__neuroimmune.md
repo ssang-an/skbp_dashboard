@@ -7,8 +7,8 @@ aliases:
 tags:
   - "skbp/theme"
   - "skbp/taxonomy"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -47,6 +47,7 @@ A cross-disease strategic biology theme used for SKBP Theme-based R&D strategy.
 - [[02_Assets/Asset__LNK01006_BLKR201|LNK01006_BLKR201]]
 - [[02_Assets/Asset__Lead_compound|Lead_compound]]
 - [[02_Assets/Asset__META-01_META-1i_MP-5342|META-01_META-1i_MP-5342]]
+- [[02_Assets/Asset__VTA-27|VTA-27]]
 - [[02_Assets/Asset__glycoprotein_29-modified_deferoxamine|glycoprotein_29-modified_deferoxamine]]
 
 ## Notes

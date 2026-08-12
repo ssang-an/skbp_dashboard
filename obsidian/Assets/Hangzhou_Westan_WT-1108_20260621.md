@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-07T23:02:38"
+generated_at: "2026-08-12T17:01:59"
 record_id: "Hangzhou_Westan_WT-1108_20260621"
 company: "Hangzhou Westan Pharmaceutical Technology Co., Ltd."
 country: "China"

@@ -28,6 +28,7 @@
 | [[02_Assets/Asset__CPB-106|CPB-106]] | 2 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__CPB102|CPB102]] | 0 | Verify asset identity | E0 |
 | [[02_Assets/Asset__CPB103|CPB103]] | 0 | Verify asset identity | E0 |
+| [[02_Assets/Asset__CU71|CU71]] | 15 | Shortlist | E3 |
 | [[02_Assets/Asset__CV-06|CV-06]] | 8 | Run Full Scout | E0 |
 | [[02_Assets/Asset__CV-14|CV-14]] | 2 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__CV-17|CV-17]] | 2 | Do not run Full Scout | E0 |
@@ -65,6 +66,7 @@
 | [[02_Assets/Asset__SAN2355|SAN2355]] |  | Run Full Scout | E0 |
 | [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7|Small Molecules to Antagonize TRPM7]] | 11 | Watch | E2 |
 | [[02_Assets/Asset__UX-EP001_UXEP-001|UX-EP001 / UXEP-001]] | 5 | Deprioritize | E1 |
+| [[02_Assets/Asset__VTA-27|VTA-27]] | 14 | Shortlist | E3 |
 | [[02_Assets/Asset__WT-1-2.0|WT-1-2.0]] |  | N/A | E0 |
 | [[02_Assets/Asset__WT-1108|WT-1108]] | 8 | Watch | E2 |
 | [[02_Assets/Asset__YC-5_Injection|YC-5 Injection]] | 4 | Do not run Full Scout | E0 |

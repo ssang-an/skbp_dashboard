@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-07T23:02:38"
+generated_at: "2026-08-12T17:01:59"
 record_id: "Astrogen_AST-029"
 company: "Astrogen"
 country: "Republic of Korea"

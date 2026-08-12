@@ -6,8 +6,8 @@ aliases:
   - "Kisunla (donanemab)"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,18 +22,18 @@ confidence: "medium"
 |---|---|
 | Company | Eli Lilly |
 | Asset | Kisunla (donanemab) |
-| Target / MoA | Amyloid-beta-directed antibody |
+| Target / MoA | Anti-amyloid-beta antibody |
 | Modality | Antibody |
-| Stage | Approved |
+| Stage | Approved / marketed |
 | Similarity level | Low |
 
 ## Why It Matters
 
-Approved early-AD DMT with clinical efficacy and ARIA tradeoffs; same indication, different target/MoA/modality.
+Second approved anti-amyloid benchmark increases competition and defines clinical efficacy/safety expectations.
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]: Approved early-AD DMT with clinical efficacy and ARIA tradeoffs; same indication, different target/MoA/modality.
+- [[02_Assets/Asset__VTA-27|VTA-27]]: Second approved anti-amyloid benchmark increases competition and defines clinical efficacy/safety expectations.
 
 ## Sources
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/regulatory"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | regulatory |
 | Reliability | medium |
 | URL | https://content.govdelivery.com/accounts/USFDA/bulletins/4205a72 |
-| Accessed / generated date | 2026-08-07 |
+| Accessed / generated date | 2026-08-12 |
 
 ## Evidence Summary
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/reputable_biotech_news"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | reputable_biotech_news |
 | Reliability | medium |
 | URL | https://dailypharm.com/user/news/2900 |
-| Accessed / generated date | 2026-08-07 |
+| Accessed / generated date | 2026-08-12 |
 
 ## Evidence Summary
 

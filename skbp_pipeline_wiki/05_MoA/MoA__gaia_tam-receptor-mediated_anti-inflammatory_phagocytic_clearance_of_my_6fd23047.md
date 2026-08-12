@@ -6,8 +6,8 @@ aliases:
   - "gaia_tam-receptor-mediated_anti-inflammatory_phagocytic_clearance_of_my_6fd23047"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

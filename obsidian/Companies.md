@@ -1,6 +1,6 @@
 # Companies
 
-> Generated at `2026-08-07T23:02:38`.
+> Generated at `2026-08-12T17:01:59`.
 
 - [[ADEL]] (1)
 - [[ADEL, Inc|ADEL, Inc.]] (1)
@@ -26,6 +26,7 @@
 - [[Cellprotek Pharmaceutical]] (2)
 - [[Celltrion, Inc|Celltrion, Inc.]] (1)
 - [[CorestemChemon Inc|CorestemChemon Inc.]] (1)
+- [[Curacle Co., Ltd|Curacle Co., Ltd.]] (1)
 - [[Encoded Therapeutics]] (1)
 - [[GenixCure]] (1)
 - [[HEC Pharm]] (1)
@@ -55,5 +56,6 @@
 - [[Shaperon Inc|Shaperon Inc.]] (1)
 - [[Stoke Therapeutics - Biogen|Stoke Therapeutics / Biogen]] (1)
 - [[Threebrooks Therapeutics]] (1)
+- [[VASTHERA Co., Ltd|VASTHERA Co., Ltd.]] (1)
 - [[VivaVision Biotech]] (1)
 - [[Xenon Pharmaceuticals]] (1)

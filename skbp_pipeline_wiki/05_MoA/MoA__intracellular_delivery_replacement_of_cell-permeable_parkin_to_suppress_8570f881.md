@@ -6,8 +6,8 @@ aliases:
   - "intracellular_delivery_replacement_of_cell-permeable_parkin_to_suppress_8570f881"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

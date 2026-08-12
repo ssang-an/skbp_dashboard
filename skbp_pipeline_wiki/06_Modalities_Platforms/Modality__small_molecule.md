@@ -6,8 +6,8 @@ aliases:
   - "small_molecule"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -32,9 +32,11 @@ confidence: "medium"
 - [[02_Assets/Asset__AST-031|AST-031]]
 - [[02_Assets/Asset__AUL003|AUL003]]
 - [[02_Assets/Asset__CBM-951|CBM-951]]
+- [[02_Assets/Asset__CU71|CU71]]
 - [[02_Assets/Asset__HBW-015|HBW-015]]
 - [[02_Assets/Asset__LNK01006|LNK01006]]
 - [[02_Assets/Asset__LNK01006_(BLKR201)|LNK01006_(BLKR201)]]
+- [[02_Assets/Asset__VTA-27|VTA-27]]
 - [[02_Assets/Asset__YC-5_Injection|YC-5_Injection]]
 - [[02_Assets/Asset__YC-6|YC-6]]
 

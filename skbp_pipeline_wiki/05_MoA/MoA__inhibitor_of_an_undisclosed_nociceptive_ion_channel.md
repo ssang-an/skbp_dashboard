@@ -6,8 +6,8 @@ aliases:
   - "inhibitor_of_an_undisclosed_nociceptive_ion_channel"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

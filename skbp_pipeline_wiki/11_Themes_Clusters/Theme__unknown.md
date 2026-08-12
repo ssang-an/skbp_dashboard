@@ -7,8 +7,8 @@ aliases:
 tags:
   - "skbp/theme"
   - "skbp/taxonomy"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

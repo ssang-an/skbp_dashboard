@@ -6,8 +6,8 @@ aliases:
   - "oral_small_molecule_gpcr19_tgr5_agonist_inflammasome_modulator"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "skbp/theme"
   - "skbp/taxonomy"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -36,6 +36,7 @@ A cross-disease strategic biology theme used for SKBP Theme-based R&D strategy.
 - [[02_Assets/Asset__AUL003|AUL003]]
 - [[02_Assets/Asset__CE223BR17_Parkinson's_Disease_Research_Program|CE223BR17_Parkinson's_Disease_Research_Program]]
 - [[02_Assets/Asset__CLZ003|CLZ003]]
+- [[02_Assets/Asset__CU71|CU71]]
 - [[02_Assets/Asset__CV-06|CV-06]]
 - [[02_Assets/Asset__CV-14|CV-14]]
 - [[02_Assets/Asset__HBW-015|HBW-015]]

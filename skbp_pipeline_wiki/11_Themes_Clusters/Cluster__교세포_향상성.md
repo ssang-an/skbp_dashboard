@@ -7,8 +7,8 @@ aliases:
 tags:
   - "skbp/cluster"
   - "skbp/taxonomy"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -33,6 +33,7 @@ A reusable biology axis under a Theme that supports repeated target discovery an
 
 - [[02_Assets/Asset__ILM01_(GAIA-Aβ)|ILM01_(GAIA-Aβ)]]
 - [[02_Assets/Asset__Lead_compound|Lead_compound]]
+- [[02_Assets/Asset__VTA-27|VTA-27]]
 
 ## Notes
 

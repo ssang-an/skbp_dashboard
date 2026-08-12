@@ -6,8 +6,8 @@ aliases:
   - "Leqembi (lecanemab)"
 tags:
   - "pipeline/competitor"
-created_at: "2026-08-07"
-updated_at: "2026-08-07"
+created_at: "2026-08-12"
+updated_at: "2026-08-12"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -20,21 +20,21 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Company | Eisai / Biogen |
+| Company | Eisai/Biogen |
 | Asset | Leqembi (lecanemab) |
-| Target / MoA | Amyloid-beta-directed antibody |
+| Target / MoA | Anti-amyloid-beta antibody |
 | Modality | Antibody |
-| Stage | Approved; subcutaneous at-home starter regimen approved July 2026 |
+| Stage | Approved / marketed |
 | Similarity level | Low |
 
 ## Why It Matters
 
-Approved early-AD DMT and commercial/efficacy benchmark; lower mechanistic similarity but directly competes for the same patients and weakens the old IV-only convenience gap.
+Established disease-modifying benchmark and pricing/market-access comparator despite different MoA.
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]: Approved early-AD DMT and commercial/efficacy benchmark; lower mechanistic similarity but directly competes for the same patients and weakens the old IV-only convenience gap.
+- [[02_Assets/Asset__VTA-27|VTA-27]]: Established disease-modifying benchmark and pricing/market-access comparator despite different MoA.
 
 ## Sources
 
-- https://content.govdelivery.com/accounts/USFDA/bulletins/4205a72
+- https://www.accessdata.fda.gov/drugsatfda_docs/appletter/2025/761269Orig1s012%3B%20s015ltr.pdf

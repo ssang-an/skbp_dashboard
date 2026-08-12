@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-07T23:02:38"
+generated_at: "2026-08-12T17:01:59"
 record_id: "Illimis_Therapeutics_ILM01_20260621"
 company: "Illimis Therapeutics"
 country: "Republic of Korea"
@@ -336,12 +336,12 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
       "is_tracked": true,
       "added_at": "2026-07-28T14:52:28.874464+00:00",
       "user_comment": "",
-      "due_date": "2026-07-31",
-      "updated_at": "2026-08-06T02:47:01.277116+00:00",
+      "due_date": "2026-08-27",
+      "updated_at": "2026-08-12T06:07:35.935978+00:00",
       "updated_source": "dashboard_tab3",
-      "updated_by": "정주원",
+      "updated_by": "127.0.0.1",
       "owner_name": "",
-      "action_plan": "",
+      "action_plan": "데이터 요청 예정 ",
       "partnership_type": "investment",
       "partnership_classification_status": "auto_classified",
       "partnership_classification_source": "auto",
@@ -3189,6 +3189,24 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
         "field": "focus_management.add",
         "previous_value": false,
         "new_value": true
+      },
+      {
+        "changed_at": "2026-08-12T06:07:28.461761+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.due_date",
+        "previous_value": "2026-07-31",
+        "new_value": "2026-08-27"
+      },
+      {
+        "changed_at": "2026-08-12T06:07:35.936001+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.action_plan",
+        "previous_value": "",
+        "new_value": "데이터 요청 예정 "
       }
     ],
     "last_edited_at": "2026-08-06T02:45:19.876062+00:00",

@@ -2,10 +2,10 @@
 
 ```json
 {
-  "generated_at": "2026-08-07T23:02:46",
-  "records": 76,
-  "nodes": 773,
-  "edges": 1393,
+  "generated_at": "2026-08-12T17:02:03",
+  "records": 78,
+  "nodes": 821,
+  "edges": 1484,
   "warnings": []
 }
 ```

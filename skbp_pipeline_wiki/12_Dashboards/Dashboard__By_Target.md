@@ -23,6 +23,7 @@
 - [[04_Targets/Target__p2x3|p2x3]]
 - [[04_Targets/Target__p2x3_receptor_p2rx3|p2x3_receptor_p2rx3]]
 - [[04_Targets/Target__parkin_(prkn_park2)|parkin_(prkn_park2)]]
+- [[04_Targets/Target__peroxiredoxin_(prx1_prx2)_functional_mimic;_downstream_astrocytic_stat3_03510b30|peroxiredoxin_(prx1_prx2)_functional_mimic;_downstream_astrocytic_stat3_03510b30]]
 - [[04_Targets/Target__prox1|prox1]]
 - [[04_Targets/Target__scn1a_expression_regulation|scn1a_expression_regulation]]
 - [[04_Targets/Target__scn1a_nav1.1_expression_restoration|scn1a_nav1.1_expression_restoration]]

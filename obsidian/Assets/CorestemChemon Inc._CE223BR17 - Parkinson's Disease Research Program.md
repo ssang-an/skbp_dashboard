@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-07T23:02:38"
+generated_at: "2026-08-12T17:01:59"
 record_id: "CorestemChemon Inc._CE223BR17 / Parkinson's Disease Research Program"
 company: "CorestemChemon Inc."
 country: "Republic of Korea"
