@@ -3281,10 +3281,37 @@ EVIDENCE_POSITIVE_CUES = re.compile(
     r"(유효성|효과|효능|활성|입증|확인|개선|감소|억제|양성|통계적\s*유의)",
     re.IGNORECASE,
 )
-ADMET_COMPLETED_PATTERN = re.compile(r"^(?:y|complete(?:d)?|.*(?:수행\s*)?완료.*)$", re.IGNORECASE)
+ADMET_COMPLETED_PATTERN = re.compile(r"^(?:y(?:\b.*)?|yes(?:\b.*)?|complete(?:d)?\b.*|.*(?:수행\s*)?완료.*)$", re.IGNORECASE)
 ADMET_NEGATIVE_STATUS_PATTERN = re.compile(r"\b(?:not\s+completed|incomplete|n)\b|계획|예정|진행\s*중|필요", re.IGNORECASE)
 ADMET_CATEGORY_NAMES = {"dmpk", "absorption", "distribution", "metabolism", "ddi", "snt", "general toxicity", "genotoxicity", "cv safety"}
 ADMET_OPTIONAL_STUDY_PATTERN = re.compile(r"dog\s+telemetry", re.IGNORECASE)
+ADMET_CANONICAL_STUDY_ALIASES: dict[str, tuple[str, ...]] = {
+    "cell_permeability_pgp": ("cell permeability", "p-gp", "pgp substrate", "pgp efflux"),
+    "mouse_pk": ("mouse pk", "mice pk"),
+    "rat_pk": ("rat pk",),
+    "dog_pk": ("dog pk", "canine pk"),
+    "monkey_pk": ("monkey pk", "primate pk", "nhp pk"),
+    "bbb_penetration": ("bbb penetration", "blood brain barrier", "brain penetration"),
+    "brain_tissue_binding": ("brain tissue binding", "brain binding"),
+    "plasma_protein_binding": ("plasma protein binding", "ppb"),
+    "liver_microsome_stability": ("liver microsome stability", "microsomal stability", "hlm stability"),
+    "hepatocyte_clearance": ("hepatocyte clearance", "hepatocyte stability"),
+    "metabolite_identification": ("metabolite identification", "metabolite id", "met id", "metabolite pf"),
+    "microsomal_protein_binding": ("microsomal protein binding",),
+    "cyp_inhibition_induction": ("cyp inhibition", "cyp induction", "cyp inh", "cyp ind"),
+    "reaction_phenotyping": ("reaction phenotyping", "reaction phenotype"),
+    "human_pk_prediction": ("human pk prediction", "human pk predict"),
+    "rodent_single_dose_toxicity": ("rodent single dose toxicity", "single dose tox"),
+    "rodent_5d_repeat_toxicity": ("rodent 5d repeated dose", "rodent 5-day repeated dose", "5d repeated dose tox"),
+    "rodent_14d_repeat_toxicity": ("rodent 14d repeated dose", "rodent 14-day repeated dose", "14d repeated dose tox"),
+    "nonrodent_dose_escalation_toxicity": ("nonrodent dose escalation", "non-rodent dose escalation"),
+    "ames": ("ames", "bacterial reverse mutation"),
+    "in_vitro_mn_ca": ("in vitro mn", "in vitro ca", "micronucleus", "chromosomal aberration"),
+    "in_vivo_mn": ("in vivo mn", "in vivo micronucleus"),
+    "herg": ("herg",),
+    "cardiac_ion_channel": ("cardiac ion channel", "in silico apd", "apd prediction"),
+    "mea": ("mea", "microelectrode array"),
+}
 
 
 def partner_material_category(filename: Any) -> str | None:
@@ -3297,6 +3324,13 @@ def partner_material_category(filename: Any) -> str | None:
     if re.search(r"(?:^|[^a-z])cdp(?:[^a-z]|$)", text):
         return "cdp"
     return None
+
+
+def attachment_partner_material_category(attachment: Any) -> str | None:
+    if not isinstance(attachment, dict):
+        return None
+    declared = str(attachment.get("partner_material_category") or "").strip().casefold()
+    return declared if declared in {"cdp", "ncdp", "admet"} else partner_material_category(attachment.get("filename"))
 ADMET_TOTAL_ITEMS = 25
 OI_PARTNERSHIP_CRITERIA_VERSION = "1.1"
 OI_PARTNERSHIP_TYPES = {"value_up", "joint_research", "investment", "n_a", "unknown"}
@@ -3353,11 +3387,21 @@ def classify_evidence_presence(text: str, pattern: re.Pattern[str]) -> str:
     return "X" if negative_found else "N/A"
 
 
+def canonical_admet_study_key(study: Any) -> str | None:
+    normalized = re.sub(r"[^a-z0-9]+", " ", str(study or "").casefold()).strip()
+    if not normalized or ADMET_OPTIONAL_STUDY_PATTERN.search(str(study or "")):
+        return None
+    for key, aliases in ADMET_CANONICAL_STUDY_ALIASES.items():
+        if any(re.sub(r"[^a-z0-9]+", " ", alias).strip() in normalized for alias in aliases):
+            return key
+    return None
+
+
 def count_admet_completed(attachments: list[Any]) -> int | None:
     admet_attachments = [
         item
         for item in attachments
-        if isinstance(item, dict) and partner_material_category(item.get("filename")) == "admet"
+        if isinstance(item, dict) and attachment_partner_material_category(item) == "admet"
     ]
     if not admet_attachments:
         return None
@@ -3376,13 +3420,13 @@ def count_admet_completed(attachments: list[Any]) -> int | None:
             else:
                 pending_study = line
                 continue
-            normalized_study = re.sub(r"[^a-z0-9]+", "", study.casefold())
-            if not normalized_study or study.casefold() in ADMET_CATEGORY_NAMES:
+            canonical_study = canonical_admet_study_key(study)
+            if not canonical_study or study.casefold() in ADMET_CATEGORY_NAMES:
                 continue
-            if ADMET_OPTIONAL_STUDY_PATTERN.search(study) or ADMET_NEGATIVE_STATUS_PATTERN.search(status):
+            if ADMET_NEGATIVE_STATUS_PATTERN.search(status):
                 continue
             if ADMET_COMPLETED_PATTERN.fullmatch(status):
-                completed_studies.add(normalized_study)
+                completed_studies.add(canonical_study)
     return min(len(completed_studies), ADMET_TOTAL_ITEMS)
 
 
@@ -3455,7 +3499,7 @@ def auto_detect_evidence_fields(record: dict[str, Any]) -> dict[str, Any]:
     attachment_texts = [
         extract_attachment_text(item)
         for item in attachments
-        if isinstance(item, dict) and "admet" not in str(item.get("filename") or "").casefold()
+        if isinstance(item, dict) and attachment_partner_material_category(item) != "admet"
     ]
     combined_text = "\n\n".join([report_text, *attachment_texts])
     return {
