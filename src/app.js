@@ -274,14 +274,14 @@ const state = {
   theme: 'all',
   cluster: 'all',
   modality: 'all',
-  indication: 'all',
+  indication: [],
   country: 'all',
   pass: 'all',
   duePeriod: 'all',
   filtersByMode: {
-    triage: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: 'all', country: 'all', pass: 'all' },
-    full: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: 'all', country: 'all', pass: 'all' },
-    focus: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: 'all', country: 'all', pass: 'all' }
+    triage: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: [], country: 'all', pass: 'all' },
+    full: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: [], country: 'all', pass: 'all' },
+    focus: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: [], country: 'all', pass: 'all' }
   },
   tableMode: initialTableMode,
   sortKey: initialSort.key,
@@ -788,6 +788,20 @@ function canonicalMainIndication(mainIndication, detailedIndication = '') {
   if (explicitLead) return explicitLead;
   const matches = canonicalIndicationMatches(detailedIndication);
   return matches.length === 1 ? matches[0] : 'Unknown';
+}
+
+function canonicalIndicationList(values, detailedIndication = '', mainIndication = '') {
+  const list = Array.isArray(values) ? values.map((value) => canonicalFromDictionary('indication', value)).filter(Boolean) : [];
+  canonicalIndicationMatches(detailedIndication).forEach((value) => { if (!list.includes(value)) list.push(value); });
+  const lead = canonicalMainIndication(mainIndication, detailedIndication);
+  if (lead !== 'Unknown' && !list.includes(lead)) list.unshift(lead);
+  return [...new Set(list)];
+}
+
+function indicationDisplay(row) {
+  const values = row.indicationList || [];
+  if (!values.length) return 'Unknown';
+  return row.mainIndication !== 'Unknown' ? [row.mainIndication, ...values.filter((value) => value !== row.mainIndication)].join(', ') : values.join(', ');
 }
 
 function canonicalCountry(value) {
@@ -1580,6 +1594,7 @@ function flattenRecord(record, index) {
       table.main_indication || table.primary_indication || summary.main_indication,
       table.indication
     ),
+    indicationList: canonicalIndicationList(table.indication_list, table.indication, table.main_indication || table.primary_indication || summary.main_indication),
     modality: canonicalModality(table.modality_platform),
     targetDescription: String(
       summary.target_description
@@ -2066,6 +2081,7 @@ function dueHalfLabel(period) {
 function getVisibleRows(includeQuery = true) {
   const query = includeQuery ? state.query.trim().toLowerCase() : '';
   const filterKey = activeFilterKey();
+  const selectedIndications = Array.isArray(state.indication) ? state.indication : [];
   const rows = state.rows.filter((row) => {
       const searchable = [
         row.company,
@@ -2091,7 +2107,7 @@ function getVisibleRows(includeQuery = true) {
         (state.theme === 'all' || row.theme === state.theme) &&
         (state.cluster === 'all' || row.cluster === state.cluster) &&
         (state.modality === 'all' || row.modality === state.modality) &&
-        (state.indication === 'all' || row.mainIndication === state.indication) &&
+        (!selectedIndications.length || selectedIndications.some((value) => row.indicationList.includes(value) || (value === 'Unknown' && !row.indicationList.length))) &&
         (state.country === 'all' || row.country === state.country) &&
         (state.stage === 'all' || canonicalDevelopmentStage(row.stage) === state.stage) &&
         (state.pass === 'all' || row[filterKey] === state.pass)
@@ -2119,7 +2135,7 @@ function renderFilters() {
   const clusters = [...new Set(modeRows.map((row) => row.cluster).filter(Boolean))].sort();
   const modalities = [...new Set(modeRows.map((row) => row.modality).filter(Boolean))].sort();
   const countries = [...new Set(modeRows.map((row) => row.country).filter(Boolean))].sort();
-  const indications = [...new Set(modeRows.map((row) => row.mainIndication).filter(Boolean))].sort();
+  const indications = [...new Set(modeRows.flatMap((row) => row.indicationList.length ? row.indicationList : ['Unknown']))].sort();
   const stages = [...new Set(modeRows.map((row) => canonicalDevelopmentStage(row.stage)).filter(Boolean))]
     .sort((a, b) => {
       const aIndex = CANONICAL_DEVELOPMENT_STAGES.indexOf(a);
@@ -2155,7 +2171,7 @@ function renderFilters() {
   resetInvalidSelection('cluster', clusters);
   resetInvalidSelection('modality', modalities);
   resetInvalidSelection('country', countries);
-  resetInvalidSelection('indication', indications);
+  state.indication = (Array.isArray(state.indication) ? state.indication : []).filter((value) => indications.includes(value));
   resetInvalidSelection('stage', stages);
   if (state.pass !== 'all' && !filterStatuses.some((item) => item.value === state.pass)) {
     state.pass = 'all';
@@ -2182,10 +2198,9 @@ function renderFilters() {
   ].join('');
   elements.countryFilter.value = state.country;
   elements.indicationFilter.innerHTML = [
-    '<option value="all">전체</option>',
     ...indications.map(option)
   ].join('');
-  elements.indicationFilter.value = state.indication;
+  [...elements.indicationFilter.options].forEach((optionElement) => { optionElement.selected = state.indication.includes(optionElement.value); });
   elements.stageFilter.innerHTML = [
     '<option value="all">전체</option>',
     ...stages.map(option)
@@ -3881,7 +3896,7 @@ function renderTableLegacy() {
                   <span>Cluster: ${escapeHtml(row.cluster)}</span>
                 </div>
               </td>
-              <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(row.mainIndication)}</td>
+              <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(indicationDisplay(row))}</td>
               <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</td>
               <td class="filter-cell"><span class="${filter1Class}">${escapeHtml(row.filter1)}</span></td>
               <td class="filter-cell"><span class="${filter2Class}">${escapeHtml(row.filter2)}</span></td>
@@ -4170,7 +4185,7 @@ function renderFocusTable() {
             <span class="target-single-line">${escapeHtml(row.target)}</span>
             <span class="target-context-indicator" aria-hidden="true">i</span>
           </td>
-          <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(row.mainIndication)}</td>
+          <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(indicationDisplay(row))}</td>
           <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</td>
           <td class="filter-cell">${statusEditSelect(row, 'filter2')}</td>
           <td class="score-cell total-score-cell">${scoreBadge(
@@ -4351,7 +4366,7 @@ function renderTable() {
                 <span class="target-single-line">${escapeHtml(row.target)}</span>
                 <span class="target-context-indicator" aria-hidden="true">i</span>
               </td>
-              <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(row.mainIndication)}</td>
+              <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(indicationDisplay(row))}</td>
               <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</td>
               <td class="filter-cell">${statusEditSelect(row, filterKey)}</td>
               <td class="score-cell">${mode === 'full'
@@ -4470,7 +4485,7 @@ function activeFilterCount() {
     state.theme !== 'all',
     state.cluster !== 'all',
     state.country !== 'all',
-    state.indication !== 'all',
+    state.indication.length > 0,
     state.stage !== 'all',
     state.pass !== 'all'
   ].filter(Boolean).length;
@@ -4482,7 +4497,7 @@ function activeSummaryFilterCount() {
     state.theme !== 'all',
     state.cluster !== 'all',
     state.country !== 'all',
-    state.indication !== 'all',
+    state.indication.length > 0,
     state.stage !== 'all',
     state.pass !== 'all'
   ].filter(Boolean).length;
@@ -7418,6 +7433,7 @@ Normalize route, dosage-form, and technical qualifiers into that single label. E
 
 const SHARED_CANONICAL_INDICATION_RULE = `Canonical Main Indication — structured_table.main_indication must be exactly one of: Alzheimer's disease; Parkinson's disease; Epilepsy / seizure disorders; Multiple sclerosis / neuroinflammatory disease; Amyotrophic lateral sclerosis / motor neuron disease; Frontotemporal dementia; Huntington's disease; Stroke; Migraine / headache disorders; Pain; Major depressive disorder; Schizophrenia / psychosis; Bipolar disorder; Anxiety disorders; Autism spectrum disorder; ADHD; Sleep / wake disorders; Chronic cough; Inflammatory bowel disease; Systemic lupus erythematosus / autoimmune disease; or Unknown.
 main_indication is mandatory. Never omit the key and never use null, an empty string, N/A, or an unnormalized disease phrase. If the lead can be determined, always write its canonical dashboard bucket. Use Unknown only when the lead genuinely cannot be distinguished after the following priority.
+When several indications are confirmed but no lead can be distinguished, retain every confirmed disease wording in structured_table.indication and provide structured_table.indication_list as its canonical array; do not replace confirmed indications with Unknown.
 Lead-indication selection priority: (1) use an indication explicitly identified as lead, primary, initial, or the sole current indication for the assessed asset on an official company pipeline page or current official company material; (2) if no official lead is designated, use the indication targeted by the single most advanced confirmed active clinical program, comparing only registered, started, recruiting, ongoing, or dosed programs; (3) if multiple indications remain tied or evidence conflicts, use Unknown. Never select an indication merely because it appears first in prose or a table. Exclude planned/expected indications, competitor programs, historical or discontinued programs, and platform-expansion claims.
 Keep complete disease wording and all secondary indications in structured_table.indication and Markdown. In Markdown state the source-based reason for the selected lead or for Unknown. Examples: "Lead disclosed indication: inflammatory bowel disease; expansion potential for MS" -> Inflammatory bowel disease; "FOS Phase 2 recruiting; MDD planned; pain stage unclear" -> Epilepsy / seizure disorders; "CNS hypotheses include stroke and status epilepticus; no official lead or active trial" -> Unknown.`;
 
@@ -9289,7 +9305,7 @@ elements.countryFilter.addEventListener('change', (event) => {
 });
 
 elements.indicationFilter.addEventListener('change', (event) => {
-  state.indication = event.target.value;
+  state.indication = [...event.target.selectedOptions].map((option) => option.value);
   state.page = 1;
   renderFilteredDashboard();
 });
@@ -9592,7 +9608,7 @@ elements.resetFiltersButton?.addEventListener('click', () => {
   state.theme = 'all';
   state.cluster = 'all';
   state.country = 'all';
-  state.indication = 'all';
+  state.indication = [];
   state.stage = 'all';
   state.pass = 'all';
   state.page = 1;

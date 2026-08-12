@@ -999,6 +999,23 @@ def canonicalize_main_indication(main_indication: Any, detailed_indication: Any 
     return matches[0] if len(matches) == 1 else "Unknown"
 
 
+def canonicalize_indication_list(indication_list: Any, detailed_indication: Any, main_indication: Any) -> list[str]:
+    """Preserve every confirmed dashboard indication without changing the single lead bucket."""
+    values: list[str] = []
+    candidates = indication_list if isinstance(indication_list, list) else []
+    for value in candidates:
+        canonical = canonicalize_dictionary_category("indication", value, earliest=True)
+        if canonical and canonical not in values:
+            values.append(canonical)
+    for canonical in canonical_indication_matches(detailed_indication):
+        if canonical not in values:
+            values.append(canonical)
+    lead = canonicalize_main_indication(main_indication, detailed_indication)
+    if lead != "Unknown" and lead not in values:
+        values.insert(0, lead)
+    return values
+
+
 def canonicalize_theme_cluster(theme_wording: Any, cluster_wording: Any) -> tuple[str, str]:
     """Close legacy Theme/Cluster aliases into the dashboard taxonomy."""
     raw_theme = re.sub(r"\s+", " ", str(theme_wording or "").strip())
@@ -1885,6 +1902,9 @@ def normalize_current_record_filter_fields(record: dict[str, Any], index: int) -
         table.get("main_indication"),
         table.get("indication"),
     )
+    table["indication_list"] = canonicalize_indication_list(
+        table.get("indication_list"), table.get("indication"), table["main_indication"]
+    )
 
     summary = record.get("json_summary")
     if isinstance(summary, dict):
@@ -2033,6 +2053,7 @@ def validate_minimal_dashboard_record(record: dict[str, Any], index: int) -> Non
                 "modality_platform",
                 "main_indication",
                 "indication",
+                "indication_list",
                 "development_stage",
                 "company_country",
                 "sources",
@@ -2188,6 +2209,11 @@ def validate_minimal_dashboard_record(record: dict[str, Any], index: int) -> Non
             validation_error(f"record[{index}].structured_table.{field} must be a non-empty string.")
     if not isinstance(table.get("main_indication"), str):
         validation_error(f"record[{index}].structured_table.main_indication must be a string.")
+    if "indication_list" in table and (
+        not isinstance(table["indication_list"], list)
+        or not all(isinstance(value, str) for value in table["indication_list"])
+    ):
+        validation_error(f"record[{index}].structured_table.indication_list must be an array of strings.")
     sources = table.get("sources", [])
     if not isinstance(sources, list):
         validation_error(f"record[{index}].structured_table.sources must be an array.")

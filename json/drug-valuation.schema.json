@@ -282,6 +282,7 @@
         "modality_platform": { "type": "string", "minLength": 1 },
         "main_indication": { "type": "string" },
         "indication": { "type": "string", "minLength": 1 },
+        "indication_list": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
         "development_stage": {
           "type": "string",
           "minLength": 1,
