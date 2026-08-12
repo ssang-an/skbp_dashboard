@@ -531,7 +531,15 @@ function findDataReuploadMatches(records) {
       exactRecordId: incomingRecordId === existingRecordId,
       mode: incomingIdentity.mode,
       company: incomingIdentity.company,
-      asset: incomingIdentity.asset
+      asset: incomingIdentity.asset,
+      candidates: candidates.map((candidate) => {
+        const identity = dataUploadRecordIdentity(candidate);
+        return {
+          asset: identity.asset,
+          company: identity.company,
+          stage: String(candidate?.structured_table?.development_stage || 'Unknown')
+        };
+      })
     }];
   });
 }
@@ -549,7 +557,10 @@ function openDataReuploadModal(match) {
     dataReuploadResolve = resolve;
     const workflowLabel = match.mode === 'triage' ? 'Fast Triage' : 'Full Scout';
     elements.dataReuploadTitle.textContent = `유사한 기존 ${workflowLabel} 레코드가 발견되었습니다.`;
-    elements.dataReuploadIdentity.textContent = `${match.company || 'Unknown company'} · ${match.asset || 'Unknown asset'}`;
+    const candidateLines = (match.candidates || [])
+      .map((candidate) => `${candidate.asset || 'Unknown asset'} · ${candidate.company || 'Unknown company'} · ${candidate.stage || 'Unknown'}`)
+      .join('\n');
+    elements.dataReuploadIdentity.textContent = candidateLines || `${match.company || 'Unknown company'} · ${match.asset || 'Unknown asset'}`;
     elements.dataReuploadKeepNew.hidden = match.exactRecordId;
     elements.dataReuploadKeepNew.textContent = '건너뛰기 · 신규로 추가';
     elements.dataReuploadModal.hidden = false;

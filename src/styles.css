@@ -5632,6 +5632,7 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
 
 .data-reupload-identity {
   display: block;
+  white-space: pre-line;
   border-radius: 9px;
   background: color-mix(in srgb, var(--accent-soft) 55%, var(--surface));
   padding: 10px 12px;
