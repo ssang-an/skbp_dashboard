@@ -433,6 +433,7 @@ const elements = {
   promptCopyStatus: document.querySelector('#promptCopyStatus'),
   dataReuploadModal: document.querySelector('#dataReuploadModal'),
   dataReuploadTitle: document.querySelector('#dataReuploadTitle'),
+  dataReuploadCandidate: document.querySelector('#dataReuploadCandidate'),
   dataReuploadIdentity: document.querySelector('#dataReuploadIdentity'),
   dataReuploadKeepNew: document.querySelector('#dataReuploadKeepNew'),
   dataReuploadConfirm: document.querySelector('#dataReuploadConfirm'),
@@ -464,6 +465,7 @@ let targetContextTooltip = null;
 let targetContextAnchor = null;
 const focusSaveQueues = new Map();
 let dataReuploadResolve = null;
+let activeDataReuploadMatch = null;
 
 async function ensureDashboardActorName() {
   const user = getCurrentUser() || await requireAuth();
@@ -535,6 +537,7 @@ function findDataReuploadMatches(records) {
       candidates: candidates.map((candidate) => {
         const identity = dataUploadRecordIdentity(candidate);
         return {
+          id: recordIdentifier(candidate),
           asset: identity.asset,
           company: identity.company,
           stage: String(candidate?.structured_table?.development_stage || 'Unknown')
@@ -548,19 +551,28 @@ function closeDataReuploadModal(decision = null) {
   if (elements.dataReuploadModal) elements.dataReuploadModal.hidden = true;
   const resolve = dataReuploadResolve;
   dataReuploadResolve = null;
-  if (resolve) resolve(decision);
+  if (resolve) resolve(decision ? { replaceExisting: true, existingRecordId: elements.dataReuploadCandidate?.value || activeDataReuploadMatch?.existingRecordId } : decision);
+  activeDataReuploadMatch = null;
 }
 
 function openDataReuploadModal(match) {
   if (!elements.dataReuploadModal) return Promise.resolve(null);
   return new Promise((resolve) => {
     dataReuploadResolve = resolve;
+    activeDataReuploadMatch = match;
     const workflowLabel = match.mode === 'triage' ? 'Fast Triage' : 'Full Scout';
     elements.dataReuploadTitle.textContent = `유사한 기존 ${workflowLabel} 레코드가 발견되었습니다.`;
     const candidateLines = (match.candidates || [])
       .map((candidate) => `${candidate.asset || 'Unknown asset'} · ${candidate.company || 'Unknown company'} · ${candidate.stage || 'Unknown'}`)
       .join('\n');
     elements.dataReuploadIdentity.textContent = candidateLines || `${match.company || 'Unknown company'} · ${match.asset || 'Unknown asset'}`;
+    if (elements.dataReuploadCandidate) {
+      elements.dataReuploadCandidate.innerHTML = (match.candidates || []).map((candidate) =>
+        `<option value="${escapeHtml(candidate.id)}">${escapeHtml(candidate.asset)} · ${escapeHtml(candidate.company)} · ${escapeHtml(candidate.stage)}</option>`
+      ).join('');
+      elements.dataReuploadCandidate.value = match.existingRecordId;
+      elements.dataReuploadCandidate.hidden = (match.candidates || []).length < 2;
+    }
     elements.dataReuploadKeepNew.hidden = match.exactRecordId;
     elements.dataReuploadKeepNew.textContent = '건너뛰기 · 신규로 추가';
     elements.dataReuploadModal.hidden = false;
@@ -571,9 +583,9 @@ function openDataReuploadModal(match) {
 async function reviewDataReuploadMatches(matches) {
   const decisions = [];
   for (const match of matches) {
-    const replaceExisting = await openDataReuploadModal(match);
-    if (replaceExisting === null) return null;
-    decisions.push({ ...match, replaceExisting });
+    const choice = await openDataReuploadModal(match);
+    if (choice === null) return null;
+    decisions.push({ ...match, ...choice, replaceExisting: Boolean(choice?.replaceExisting) });
   }
   return decisions;
 }
