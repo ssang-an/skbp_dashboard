@@ -3259,6 +3259,18 @@ ADMET_COMPLETED_PATTERN = re.compile(r"^(?:y|complete(?:d)?|.*(?:수행\s*)?완�
 ADMET_NEGATIVE_STATUS_PATTERN = re.compile(r"\b(?:not\s+completed|incomplete|n)\b|계획|예정|진행\s*중|필요", re.IGNORECASE)
 ADMET_CATEGORY_NAMES = {"dmpk", "absorption", "distribution", "metabolism", "ddi", "snt", "general toxicity", "genotoxicity", "cv safety"}
 ADMET_OPTIONAL_STUDY_PATTERN = re.compile(r"dog\s+telemetry", re.IGNORECASE)
+
+
+def partner_material_category(filename: Any) -> str | None:
+    """Classify Partner Materials once so upload, evidence parsing and Filter 3 agree."""
+    text = str(filename or "").casefold()
+    if "admet" in text:
+        return "admet"
+    if re.search(r"(?:^|[^a-z])ncdp(?:[^a-z]|$)", text):
+        return "ncdp"
+    if re.search(r"(?:^|[^a-z])cdp(?:[^a-z]|$)", text):
+        return "cdp"
+    return None
 ADMET_TOTAL_ITEMS = 25
 OI_PARTNERSHIP_CRITERIA_VERSION = "1.1"
 OI_PARTNERSHIP_TYPES = {"value_up", "joint_research", "investment", "n_a", "unknown"}
@@ -3319,7 +3331,7 @@ def count_admet_completed(attachments: list[Any]) -> int | None:
     admet_attachments = [
         item
         for item in attachments
-        if isinstance(item, dict) and "admet" in str(item.get("filename") or "").lower()
+        if isinstance(item, dict) and partner_material_category(item.get("filename")) == "admet"
     ]
     if not admet_attachments:
         return None
@@ -8856,6 +8868,9 @@ async def upload_record_attachment(
             "uploaded_at": created_at,
             "processing_status": "processing" if extension in {".pdf", ".ppt", ".pptx"} else "not_applicable",
         }
+        material_category = partner_material_category(original_name)
+        if material_category:
+            attachment["partner_material_category"] = material_category
 
         meta = record.setdefault("meta", {})
         attachments = meta.setdefault("attachments", [])
@@ -8878,6 +8893,8 @@ async def upload_record_attachment(
                 }
         if not is_fast_triage_record(record):
             focus = meta.setdefault("focus_management", {})
+            if material_category:
+                focus.setdefault("partner_material_flags", {})[material_category] = True
             focus["partnership_classification_status"] = "pending_criteria"
             focus["partnership_evidence_updated_at"] = created_at
             if focus.get("is_tracked"):
