@@ -5823,6 +5823,13 @@ def build_rubric_refresh_prompt(record: dict[str, Any], attachments_text: str) -
     criterion_count = "three Fast Triage" if triage else "seven Full Scout"
     workflow_name = "Fast Triage" if triage else "Full Scout"
     report_text = str((record.get("source_report") or {}).get("raw_markdown") or "")
+    topic_notes = ((record.get("meta") or {}).get("topic_notes") or [])
+    topic_note_lines = [
+        f"- {str(note.get('topic_title') or note.get('topic_id') or 'Team Review')}: {str(note.get('body') or '').strip()}"
+        for note in topic_notes
+        if isinstance(note, dict) and str(note.get("body") or "").strip()
+    ]
+    topic_notes_text = "\n".join(topic_note_lines) or "(no team review notes)"
     system_prompt = (
         "You are re-evaluating a single biotech pipeline asset against the latest SKBP scoring rubric below. "
         "Review every stored score using the existing source report and partner-uploaded attachments, even when "
@@ -5852,8 +5859,10 @@ def build_rubric_refresh_prompt(record: dict[str, Any], attachments_text: str) -
         f"{rubric_refresh_report_excerpt(record, report_text)}\n\n"
         "[User-Uploaded Attachments — newly added evidence, if any]\n"
         f"{attachments_text[:RUBRIC_REFRESH_ATTACHMENTS_LIMIT] if attachments_text else '(no attachments uploaded)'}\n\n"
+        "[Team Review Notes — reviewer context, not authoritative evidence]\n"
+        f"{topic_notes_text[:RUBRIC_REFRESH_ATTACHMENTS_LIMIT]}\n\n"
         f"Task: Re-evaluate all {criterion_count} criterion scores under the latest rubric. Change only criteria for which "
-        "the source report and/or uploaded attachments provide clear, specific support for a different score."
+        "the source report, uploaded attachments, and/or corroborated team-review notes provide clear, specific support for a different score."
     )
     return system_prompt, user_prompt
 

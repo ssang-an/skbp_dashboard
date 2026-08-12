@@ -4231,7 +4231,10 @@ function renderFocusTable() {
             data-description="${escapeHtml(row.targetDescription)}"
             aria-label="${escapeHtml(`${row.target}. Theme ${row.theme}. Cluster ${row.cluster}. Description ${row.targetDescription}`)}"
           >
-            <span class="target-single-line">${escapeHtml(row.target)}</span>
+            <span
+              class="target-single-line${row.target === 'Unknown' && getCurrentUser()?.is_admin ? ' target-unknown-edit' : ''}"
+              ${row.target === 'Unknown' && getCurrentUser()?.is_admin ? `data-unknown-target-edit data-record-id="${escapeHtml(row.id)}" title="관리자: 더블클릭하여 Target 입력"` : ''}
+            >${escapeHtml(row.target)}</span>
             <span class="target-context-indicator" aria-hidden="true">i</span>
           </td>
           <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(indicationDisplay(row))}</td>
@@ -4859,6 +4862,42 @@ async function saveManualReviewEdit(select) {
     select.disabled = false;
     select.classList.remove('is-saving');
     elements.dataStatus.textContent = `Human review save failed: ${error.message}`;
+  }
+}
+
+async function saveUnknownTargetEdit(anchor) {
+  const recordId = anchor?.dataset.recordId;
+  const previousValue = String(anchor?.textContent || '').trim();
+  if (!recordId || previousValue !== 'Unknown' || !getCurrentUser()?.is_admin) return;
+
+  const value = window.prompt('Target 이름을 입력하세요.', '');
+  const nextValue = String(value || '').trim();
+  if (!nextValue) return;
+  if (nextValue.length > 250) {
+    elements.dataStatus.textContent = 'Target은 250자 이하로 입력하세요.';
+    return;
+  }
+
+  const actorName = await ensureDashboardActorName();
+  if (!actorName) return;
+  anchor.classList.add('is-saving');
+  elements.dataStatus.textContent = 'Target human review 저장 중';
+  try {
+    const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/manual-review`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind: 'target', value: nextValue, previous_value: previousValue })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
+    replaceRecordFromApi(recordId, data.record);
+    await refreshDashboardSummary();
+    renderFilters();
+    render();
+    elements.dataStatus.textContent = 'Target human review 저장 완료';
+  } catch (error) {
+    elements.dataStatus.textContent = `Target 저장 실패: ${error.message}`;
+    anchor.classList.remove('is-saving');
   }
 }
 
@@ -9452,6 +9491,14 @@ elements.pipelineTable.addEventListener('click', (event) => {
     return;
   }
   window.location.href = `/detail?id=${encodeURIComponent(recordId)}&tab=${activeTableMode()}`;
+});
+
+elements.pipelineTable.addEventListener('dblclick', (event) => {
+  const target = event.target.closest('[data-unknown-target-edit]');
+  if (!target) return;
+  event.preventDefault();
+  event.stopPropagation();
+  saveUnknownTargetEdit(target);
 });
 
 elements.pipelineTable.addEventListener('change', (event) => {

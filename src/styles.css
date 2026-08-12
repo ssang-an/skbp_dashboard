@@ -3228,6 +3228,17 @@ th button {
   white-space: normal;
 }
 
+.pipeline-table .target-single-line.target-unknown-edit {
+  cursor: text;
+  text-decoration: underline dotted color-mix(in srgb, var(--accent) 58%, transparent);
+  text-underline-offset: 3px;
+}
+
+.pipeline-table .target-single-line.target-unknown-edit.is-saving {
+  opacity: 0.55;
+  cursor: progress;
+}
+
 .modality-column-cell .single-line-cell {
   color: var(--muted);
   font-size: 11px;
