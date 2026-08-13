@@ -351,13 +351,20 @@ ROLE_ADMIN = "admin"
 ROLE_DEVELOPER = "developer"
 ROLE_RANK = {ROLE_USER: 0, ROLE_ADMIN: 1, ROLE_DEVELOPER: 2}
 
-# Initial OI-team role claims. Both identity fields must match; email local parts are
-# compared case-insensitively while allowing the documented skbp/sk domains.
+# Initial OI-team role claims. A name and one of the explicitly approved corporate
+# email addresses must both match. Email comparison is case-insensitive.
 INITIAL_ADMIN_IDENTITIES = {
-    ("주연주", "yeonjoo"), ("허정환", "jeonghwan.hur"), ("이정태", "jeongtae_lee"),
-    ("유택상", "taegsang.you"), ("서지영", "jiyoungseo"), ("정영찬", "alex_jeong"),
+    ("주연주", "yeonjoo@skbp.com"), ("주연주", "yeonjoo@sk.com"),
+    ("허정환", "jeonghwan.hur@skbp.com"), ("허정환", "jeonghwan.hur@sk.com"),
+    ("이정태", "jeongtae_lee@skbp.com"), ("이정태", "jeongtae_lee@sk.com"),
+    ("유택상", "taegsang.you@skbp.com"), ("유택상", "taegsang.you@sk.com"),
+    ("서지영", "jiyoungseo@skbp.com"), ("서지영", "jiyoungseo@sk.com"),
+    ("정영찬", "alex_jeong@skbp.com"), ("정영찬", "alex_jeong@sk.com"),
 }
-INITIAL_DEVELOPER_IDENTITIES = {("정주원", "joowon.jung")}
+INITIAL_DEVELOPER_IDENTITIES = {
+    ("정주원", "joowon.jung@skbp.com"),
+    ("정주원", "joowon.jung@sk.com"),
+}
 
 
 def load_users() -> list[dict[str, Any]]:
@@ -377,12 +384,12 @@ def password_hash(password: str, salt_hex: str | None = None) -> tuple[str, str]
     return salt.hex(), digest.hex()
 
 
-def email_local_part(email: Any) -> str:
-    return str(email or "").strip().casefold().split("@", 1)[0]
+def normalized_identity_email(email: Any) -> str:
+    return str(email or "").strip().casefold()
 
 
 def initial_role_for_identity(name: Any, email: Any) -> str:
-    identity = (str(name or "").strip(), email_local_part(email))
+    identity = (str(name or "").strip(), normalized_identity_email(email))
     if identity in INITIAL_DEVELOPER_IDENTITIES:
         return ROLE_DEVELOPER
     if identity in INITIAL_ADMIN_IDENTITIES:

@@ -47,11 +47,30 @@ class AuthAdminTests(unittest.TestCase):
         main.save_users(users)
         return user, token
 
-    def test_admin_role_is_derived_only_from_designated_email(self):
-        admin, _ = self.create_user("JOOWON.JUNG@SK.COM", "정주원")
-        regular, _ = self.create_user("user@sk.com")
-        self.assertTrue(main.public_user(admin)["is_admin"])
-        self.assertFalse(main.public_user(regular)["is_admin"])
+    def test_approved_admin_roster_requires_exact_name_and_email(self):
+        approved_admins = [
+            ("주연주", "yeonjoo"),
+            ("허정환", "jeonghwan.hur"),
+            ("이정태", "jeongtae_lee"),
+            ("유택상", "taegsang.you"),
+            ("서지영", "jiyoungseo"),
+            ("정영찬", "alex_jeong"),
+        ]
+        for name, local_part in approved_admins:
+            for domain in ("skbp.com", "sk.com"):
+                self.assertEqual(
+                    main.initial_role_for_identity(name, f"{local_part}@{domain}"),
+                    main.ROLE_ADMIN,
+                )
+
+        self.assertEqual(
+            main.initial_role_for_identity("정주원", "JOOWON.JUNG@SK.COM"),
+            main.ROLE_DEVELOPER,
+        )
+        self.assertEqual(main.initial_role_for_identity("정주원", "joowon.jung@outside.com"), main.ROLE_USER)
+        self.assertEqual(main.initial_role_for_identity("주연주", "yeonjoo@skbp.com"), main.ROLE_ADMIN)
+        self.assertEqual(main.initial_role_for_identity("주연쥬", "yeonjoo@skbp.com"), main.ROLE_USER)
+        self.assertEqual(main.initial_role_for_identity("user", "user@sk.com"), main.ROLE_USER)
 
     def test_regular_user_cannot_read_admin_api(self):
         _, token = self.create_user("user@sk.com")
@@ -60,7 +79,7 @@ class AuthAdminTests(unittest.TestCase):
         self.assertEqual(error.exception.status_code, 403)
 
     def test_admin_can_view_activity_and_deactivate_account(self):
-        _, admin_token = self.create_user(main.AUTH_ADMIN_EMAIL, "정주원")
+        _, admin_token = self.create_user("joowon.jung@skbp.com", "정주원")
         regular, regular_token = self.create_user("user@sk.com")
         asyncio.run(main.record_auth_activity(FakeRequest(regular_token, {"path": "/detail?id=asset-1"})))
 
@@ -74,7 +93,7 @@ class AuthAdminTests(unittest.TestCase):
         self.assertEqual(saved["sessions"], [])
 
     def test_admin_cannot_deactivate_self(self):
-        admin, token = self.create_user(main.AUTH_ADMIN_EMAIL, "정주원")
+        admin, token = self.create_user("joowon.jung@skbp.com", "정주원")
         with self.assertRaises(HTTPException) as error:
             asyncio.run(main.update_admin_user(admin["id"], FakeRequest(token, {"active": False})))
         self.assertEqual(error.exception.status_code, 400)
@@ -86,7 +105,7 @@ class AuthAdminTests(unittest.TestCase):
         self.assertEqual(error.exception.status_code, 401)
 
     def test_manual_review_audit_uses_authenticated_name_not_payload_name(self):
-        _, token = self.create_user("reviewer@sk.com", name="Logged In Reviewer")
+        _, token = self.create_user("yeonjoo@skbp.com", name="주연주")
         record = {
             "meta": {},
             "json_summary": {"company": "Test Co", "asset_name": "Asset-1"},
@@ -116,8 +135,8 @@ class AuthAdminTests(unittest.TestCase):
             result = asyncio.run(main.update_manual_review(record_id, request))
 
         human_review = result["record"]["meta"]["human_review"]
-        self.assertEqual(human_review["history"][-1]["actor_name"], "Logged In Reviewer")
-        self.assertEqual(human_review["last_updated_by"], "Logged In Reviewer")
+        self.assertEqual(human_review["history"][-1]["actor_name"], "주연주")
+        self.assertEqual(human_review["last_updated_by"], "주연주")
 
 
 if __name__ == "__main__":
