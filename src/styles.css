@@ -14129,11 +14129,14 @@ html[data-theme="dark"] .admin-state.is-inactive { background: #481d24; color: #
   height: 144px;
 }
 
-.workflow-summary-grid .workflow-priority-list {
+.workflow-summary-grid > .panel > .workflow-priority-list {
   max-height: none;
   gap: 5px;
   padding: 9px;
-  scrollbar-width: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
 }
 
 .workflow-summary-grid .workflow-priority-item {
@@ -14150,6 +14153,12 @@ html[data-theme="dark"] .admin-state.is-inactive { background: #481d24; color: #
   .workflow-summary-grid > .panel > .chart-stack,
   .workflow-summary-grid > .panel > .priority-list {
     overflow: visible;
+  }
+
+  .workflow-summary-grid > .panel > .workflow-priority-list {
+    max-height: 230px;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .workflow-summary-grid .donut-wrap {

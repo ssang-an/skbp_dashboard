@@ -274,14 +274,14 @@ const state = {
   theme: 'all',
   cluster: 'all',
   modality: 'all',
-  indication: [],
+  indication: 'all',
   country: 'all',
   pass: 'all',
   duePeriod: 'all',
   filtersByMode: {
-    triage: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: [], country: 'all', pass: 'all' },
-    full: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: [], country: 'all', pass: 'all' },
-    focus: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: [], country: 'all', pass: 'all' }
+    triage: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: 'all', country: 'all', pass: 'all' },
+    full: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: 'all', country: 'all', pass: 'all' },
+    focus: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: 'all', country: 'all', pass: 'all' }
   },
   tableMode: initialTableMode,
   sortKey: initialSort.key,
@@ -2124,7 +2124,6 @@ function dueHalfLabel(period) {
 function getVisibleRows(includeQuery = true) {
   const query = includeQuery ? state.query.trim().toLowerCase() : '';
   const filterKey = activeFilterKey();
-  const selectedIndications = Array.isArray(state.indication) ? state.indication : [];
   const rows = state.rows.filter((row) => {
       const searchable = [
         row.company,
@@ -2150,7 +2149,7 @@ function getVisibleRows(includeQuery = true) {
         (state.theme === 'all' || row.theme === state.theme) &&
         (state.cluster === 'all' || row.cluster === state.cluster) &&
         (state.modality === 'all' || row.modality === state.modality) &&
-        (!selectedIndications.length || selectedIndications.some((value) => row.indicationList.includes(value) || (value === 'Unknown' && !row.indicationList.length))) &&
+        (state.indication === 'all' || row.indicationList.includes(state.indication) || (state.indication === 'Unknown' && !row.indicationList.length)) &&
         (state.country === 'all' || row.country === state.country) &&
         (state.stage === 'all' || canonicalDevelopmentStage(row.stage) === state.stage) &&
         (state.pass === 'all' || row[filterKey] === state.pass)
@@ -2214,7 +2213,7 @@ function renderFilters() {
   resetInvalidSelection('cluster', clusters);
   resetInvalidSelection('modality', modalities);
   resetInvalidSelection('country', countries);
-  state.indication = (Array.isArray(state.indication) ? state.indication : []).filter((value) => indications.includes(value));
+  if (state.indication !== 'all' && !indications.includes(state.indication)) state.indication = 'all';
   resetInvalidSelection('stage', stages);
   if (state.pass !== 'all' && !filterStatuses.some((item) => item.value === state.pass)) {
     state.pass = 'all';
@@ -2241,9 +2240,10 @@ function renderFilters() {
   ].join('');
   elements.countryFilter.value = state.country;
   elements.indicationFilter.innerHTML = [
+    '<option value="all">전체</option>',
     ...indications.map(option)
   ].join('');
-  [...elements.indicationFilter.options].forEach((optionElement) => { optionElement.selected = state.indication.includes(optionElement.value); });
+  elements.indicationFilter.value = state.indication;
   elements.stageFilter.innerHTML = [
     '<option value="all">전체</option>',
     ...stages.map(option)
@@ -3055,21 +3055,17 @@ function renderWorkflowPriorityList(summary) {
 
   const visibleRows = mode === 'full'
     ? [...rows].sort((a, b) => {
-        const scoreDifference = Number(b.total_score ?? -1) - Number(a.total_score ?? -1);
-        if (scoreDifference) return scoreDifference;
         const bDate = Date.parse(b.completed_at || b.generated_at || '') || 0;
         const aDate = Date.parse(a.completed_at || a.generated_at || '') || 0;
-        return bDate - aDate || String(a.asset || '').localeCompare(String(b.asset || ''), 'en');
+        const scoreDifference = Number(b.total_score ?? -1) - Number(a.total_score ?? -1);
+        return bDate - aDate || scoreDifference || String(a.asset || '').localeCompare(String(b.asset || ''), 'en');
       })
     : mode === 'focus'
       ? [...rows].sort((a, b) => {
-          const rankDifference = Number(a.action_rank ?? 99) - Number(b.action_rank ?? 99);
-          if (rankDifference) return rankDifference;
-          const actionDateDifference = String(a.action_date || '9999-12-31').localeCompare(String(b.action_date || '9999-12-31'));
-          if (actionDateDifference) return actionDateDifference;
           const bDate = Date.parse(b.action_updated_at || b.completed_at || '') || 0;
           const aDate = Date.parse(a.action_updated_at || a.completed_at || '') || 0;
-          return bDate - aDate || String(a.asset || '').localeCompare(String(b.asset || ''), 'en');
+          const rankDifference = Number(a.action_rank ?? 99) - Number(b.action_rank ?? 99);
+          return bDate - aDate || rankDifference || String(a.asset || '').localeCompare(String(b.asset || ''), 'en');
         })
       : rows;
 
@@ -4537,7 +4533,7 @@ function activeFilterCount() {
     state.theme !== 'all',
     state.cluster !== 'all',
     state.country !== 'all',
-    state.indication.length > 0,
+    state.indication !== 'all',
     state.stage !== 'all',
     state.pass !== 'all'
   ].filter(Boolean).length;
@@ -4549,7 +4545,7 @@ function activeSummaryFilterCount() {
     state.theme !== 'all',
     state.cluster !== 'all',
     state.country !== 'all',
-    state.indication.length > 0,
+    state.indication !== 'all',
     state.stage !== 'all',
     state.pass !== 'all'
   ].filter(Boolean).length;
@@ -9393,7 +9389,7 @@ elements.countryFilter.addEventListener('change', (event) => {
 });
 
 elements.indicationFilter.addEventListener('change', (event) => {
-  state.indication = [...event.target.selectedOptions].map((option) => option.value);
+  state.indication = event.target.value;
   state.page = 1;
   renderFilteredDashboard();
 });
@@ -9704,7 +9700,7 @@ elements.resetFiltersButton?.addEventListener('click', () => {
   state.theme = 'all';
   state.cluster = 'all';
   state.country = 'all';
-  state.indication = [];
+  state.indication = 'all';
   state.stage = 'all';
   state.pass = 'all';
   state.page = 1;
