@@ -14362,8 +14362,11 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
 }
 
 .paste-panel #gptResponseInput,
+.paste-panel #step0PasteInput,
 .paste-panel #gptResponseInput:focus,
-.paste-panel #gptResponseInput:focus-visible {
+.paste-panel #step0PasteInput:focus,
+.paste-panel #gptResponseInput:focus-visible,
+.paste-panel #step0PasteInput:focus-visible {
   border: 0;
   outline: none;
   box-shadow: none;
@@ -14372,7 +14375,8 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
   line-height: 1.7;
 }
 
-.paste-panel #gptResponseInput::placeholder {
+.paste-panel #gptResponseInput::placeholder,
+.paste-panel #step0PasteInput::placeholder {
   color: color-mix(in srgb, var(--text) 72%, var(--muted));
   font-size: 16px;
   font-weight: 500;
@@ -14689,8 +14693,11 @@ html[data-workflow-mode="full"] .paste-panel,
 }
 
 .paste-panel #gptResponseInput,
+.paste-panel #step0PasteInput,
 .paste-panel #gptResponseInput:focus,
-.paste-panel #gptResponseInput:focus-visible {
+.paste-panel #step0PasteInput:focus,
+.paste-panel #gptResponseInput:focus-visible,
+.paste-panel #step0PasteInput:focus-visible {
   width: 100%;
   min-height: 356px;
   padding: 17px 18px;
@@ -14702,12 +14709,15 @@ html[data-workflow-mode="full"] .paste-panel,
   transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
 }
 
-.paste-panel #gptResponseInput:hover {
+.paste-panel #gptResponseInput:hover,
+.paste-panel #step0PasteInput:hover {
   border-color: color-mix(in srgb, var(--muted) 44%, var(--line));
 }
 
 .paste-panel #gptResponseInput:focus,
-.paste-panel #gptResponseInput:focus-visible {
+.paste-panel #step0PasteInput:focus,
+.paste-panel #gptResponseInput:focus-visible,
+.paste-panel #step0PasteInput:focus-visible {
   border-color: color-mix(in srgb, var(--data-upload-accent) 68%, var(--line));
   background: var(--surface);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--data-upload-accent) 13%, transparent), 0 8px 20px rgba(15, 23, 42, 0.08);
@@ -14863,8 +14873,11 @@ html[data-theme="dark"] .data-upload-guide {
 }
 
 html[data-theme="dark"] .paste-panel #gptResponseInput,
+html[data-theme="dark"] .paste-panel #step0PasteInput,
 html[data-theme="dark"] .paste-panel #gptResponseInput:focus,
-html[data-theme="dark"] .paste-panel #gptResponseInput:focus-visible {
+html[data-theme="dark"] .paste-panel #step0PasteInput:focus,
+html[data-theme="dark"] .paste-panel #gptResponseInput:focus-visible,
+html[data-theme="dark"] .paste-panel #step0PasteInput:focus-visible {
   background: color-mix(in srgb, var(--surface) 92%, #ffffff 8%);
 }
 
@@ -14896,8 +14909,11 @@ html[data-theme="dark"] .paste-panel #gptResponseInput:focus-visible {
   }
 
   .paste-panel #gptResponseInput,
+  .paste-panel #step0PasteInput,
   .paste-panel #gptResponseInput:focus,
-  .paste-panel #gptResponseInput:focus-visible {
+  .paste-panel #step0PasteInput:focus,
+  .paste-panel #gptResponseInput:focus-visible,
+  .paste-panel #step0PasteInput:focus-visible {
     min-height: 300px;
     padding: 15px;
   }
