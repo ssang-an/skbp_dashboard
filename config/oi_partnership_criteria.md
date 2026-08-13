@@ -1,8 +1,8 @@
 # Tab3 OI Partnership 자동 분류 기준
 
-- Version: 1.0
+- Version: 1.2
 - Scope: Full Scout records tracked in Tab3
-- Evidence priority: Tab3 structured values → Tab2 detailed/raw report → user-uploaded files
+- Evidence priority: Tab3 structured values → Full Scout detailed/raw report → Partner Materials
 - No inference: an absent or unclear value remains unknown.
 
 ## Target indications
@@ -16,8 +16,8 @@ Non-target indications are `n_a` with the note `대상 적응증 아님`.
 
 | Stored value | Display | Rule |
 | --- | --- | --- |
-| `investment` | 투자 | Target indication + Non-Small Molecule + IND Enabling |
-| `value_up` | Value Up | Target indication + Small Molecule + In Vivo O + In Vitro O + ADMET >=25 |
+| `investment` | 투자 | Target indication + Non-Small Molecule + Stage >= IND-enabling |
+| `value_up` | Value Up | Target indication + Small Molecule + Stage < IND-enabling + In Vivo O + In Vitro O + ADMET >=25 |
 | `joint_research` | 공동 연구 | Target indication + Non-Small Molecule + Platform Attractiveness exactly 3 |
 | `unknown` | Unknown | Target indication, but at least one required input is missing or unclear |
 | `n_a` | N/A | Non-target indication, or all required inputs are known but no rule is satisfied |
@@ -30,7 +30,10 @@ If investment and joint research both apply, store `joint_research` and begin th
 - Only an explicit `Small Molecule` label is treated as Small Molecule.
 - Biologic, Antibody, Peptide, Protein, Gene Therapy, Cell Therapy, RNA, ASO, siRNA,
   mRNA, Vaccine, and oligonucleotide labels are Non-Small Molecule.
-- Only an explicit IND Enabling equivalent satisfies the investment stage condition.
+- Investment includes `IND-enabling`, `IND filed/cleared`, and Phase 1 or later canonical stages.
+- Value Up requires a confirmed pre-IND-enabling canonical stage only: `Hit Discovery`,
+  `Lead Optimization`, `Preclinical Candidate`, or `Preclinical unspecified`. `IND-enabling`,
+  `IND filed/cleared`, and Phase 1 or later do not satisfy Value Up.
 - In Vivo/In Vitro `O` requires a stated positive efficacy or activity result.
 - A statement that an experiment was performed, without a result, is not `O`.
 - ADMET is numeric; 25 is included in the Value Up threshold.

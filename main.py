@@ -3339,7 +3339,9 @@ def attachment_partner_material_category(attachment: Any) -> str | None:
     declared = str(attachment.get("partner_material_category") or "").strip().casefold()
     return declared if declared in {"cdp", "ncdp", "admet"} else partner_material_category(attachment.get("filename"))
 ADMET_TOTAL_ITEMS = 25
-OI_PARTNERSHIP_CRITERIA_VERSION = "1.1"
+# v1.2 adds the stage boundary to Value Up. Bumping the version intentionally
+# reclassifies tracked records that were saved under the incomplete v1.1 rule.
+OI_PARTNERSHIP_CRITERIA_VERSION = "1.2"
 OI_PARTNERSHIP_TYPES = {"value_up", "joint_research", "investment", "n_a", "unknown"}
 OI_PARTNERSHIP_LABELS = {
     "investment": "투자",
@@ -3373,6 +3375,7 @@ OI_NON_SMALL_MOLECULE_PATTERN = re.compile(
 )
 OI_IND_ENABLING_PATTERN = re.compile(r"\bind[\s\-]?enabl(?:ing|ement)\b", re.IGNORECASE)
 OI_INVESTMENT_STAGES = {"IND-enabling", "IND filed/cleared", "Phase 1", "Phase 1/2", "Phase 2", "Phase 2/3", "Phase 3", "Registration", "Approved / marketed"}
+OI_VALUE_UP_STAGES = {"Hit Discovery", "Lead Optimization", "Preclinical Candidate", "Preclinical unspecified"}
 
 
 def classify_evidence_presence(text: str, pattern: re.Pattern[str]) -> str:
@@ -3551,7 +3554,7 @@ def oi_text_sources(record: dict[str, Any]) -> list[tuple[str, str]]:
     sources: list[tuple[str, str]] = []
     raw_markdown = str((record.get("source_report") or {}).get("raw_markdown") or "")
     if raw_markdown:
-        sources.append((f"Tab2 원문 리포트: {report_name}", raw_markdown))
+        sources.append((f"Full Scout 원문 리포트: {report_name}", raw_markdown))
     attachments = meta.get("attachments")
     if isinstance(attachments, list):
         for attachment in attachments:
@@ -3560,7 +3563,7 @@ def oi_text_sources(record: dict[str, Any]) -> list[tuple[str, str]]:
             filename = str(attachment.get("filename") or "업로드 파일")
             extracted = extract_attachment_text(attachment)
             if extracted:
-                sources.append((f"사용자 업로드 파일: {filename}", extracted))
+                sources.append((f"Partner Materials: {filename}", extracted))
     return sources
 
 
@@ -3634,15 +3637,29 @@ def oi_stage_state(
     for raw_value in [table.get("development_stage"), summary.get("development_stage")]:
         value = oi_known_text(raw_value)
         if value:
+            canonical_stage = canonicalize_development_stage(value)
             return (
-                "ind_enabling" if canonicalize_development_stage(value) in OI_INVESTMENT_STAGES else "other",
+                (
+                    "investment_eligible" if canonical_stage in OI_INVESTMENT_STAGES
+                    else "value_up_eligible" if canonical_stage in OI_VALUE_UP_STAGES
+                    else "other"
+                ),
                 value,
                 "Tab2 구조화 데이터",
             )
     for source_label, text in text_sources:
         value = oi_labeled_value(text, ["development stage", "stage", "개발 단계", "개발단계"])
         if value:
-            return ("ind_enabling" if canonicalize_development_stage(value) in OI_INVESTMENT_STAGES else "other", value, source_label)
+            canonical_stage = canonicalize_development_stage(value)
+            return (
+                (
+                    "investment_eligible" if canonical_stage in OI_INVESTMENT_STAGES
+                    else "value_up_eligible" if canonical_stage in OI_VALUE_UP_STAGES
+                    else "other"
+                ),
+                value,
+                source_label,
+            )
     return "unknown", "", ""
 
 
@@ -3665,7 +3682,7 @@ def oi_auto_evidence_sources(record: dict[str, Any]) -> list[str]:
     meta = record.get("meta") or {}
     labels: list[str] = []
     if str((record.get("source_report") or {}).get("raw_markdown") or "").strip():
-        labels.append(f"Tab2 원문 리포트: {meta.get('output_filename_base') or '원문 리포트'}")
+        labels.append(f"Full Scout 원문 리포트: {meta.get('output_filename_base') or '원문 리포트'}")
     attachments = meta.get("attachments")
     if isinstance(attachments, list):
         for item in attachments:
@@ -3673,7 +3690,7 @@ def oi_auto_evidence_sources(record: dict[str, Any]) -> list[str]:
                 continue
             filename = str(item.get("filename"))
             if extract_attachment_text(item) or "admet" in filename.lower():
-                labels.append(f"사용자 업로드 파일: {filename}")
+                labels.append(f"Partner Materials: {filename}")
     return labels
 
 
@@ -3715,6 +3732,9 @@ def classify_oi_partnership(record: dict[str, Any], focus: dict[str, Any]) -> di
             "evidence_sources": oi_unique_sources(evidence_sources),
         }
 
+    stage_state, stage, stage_source = oi_stage_state(record, text_sources)
+    evidence_sources.append(stage_source)
+    base["development_stage"] = stage or "Unknown"
     if modality_state == "small_molecule":
         in_vivo = str(focus.get("in_vivo_status") or "N/A").upper()
         in_vitro = str(focus.get("in_vitro_status") or "N/A").upper()
@@ -3726,6 +3746,8 @@ def classify_oi_partnership(record: dict[str, Any], focus: dict[str, Any]) -> di
             missing.append("In Vitro")
         if not isinstance(admet, int) or isinstance(admet, bool):
             missing.append("ADMET Score")
+        if stage_state == "unknown":
+            missing.append("Development Stage")
         if focus.get("in_vivo_status_source") == "manual" or focus.get("in_vitro_status_source") == "manual" or focus.get("admet_completed_source") == "manual":
             evidence_sources.append("Tab3 담당자 수동 입력 (In Vivo/In Vitro/ADMET)")
         evidence_sources.extend(oi_auto_evidence_sources(record))
@@ -3736,11 +3758,18 @@ def classify_oi_partnership(record: dict[str, Any], focus: dict[str, Any]) -> di
                 "note": f"{', '.join(missing)} 확인 불가",
                 "evidence_sources": oi_unique_sources(evidence_sources),
             }
+        if stage_state != "value_up_eligible":
+            return {
+                **base,
+                "partnership_type": "n_a",
+                "note": f"OI Partnership 분류 조건 미충족 / Development Stage {stage} (IND-enabling 미만 아님)",
+                "evidence_sources": oi_unique_sources(evidence_sources),
+            }
         if in_vivo == "O" and in_vitro == "O" and admet >= 25:
             return {
                 **base,
                 "partnership_type": "value_up",
-                "note": f"Small Molecule / In Vivo O / In Vitro O / ADMET {admet}",
+                "note": f"Small Molecule / IND-enabling 미만 / In Vivo O / In Vitro O / ADMET {admet}",
                 "evidence_sources": oi_unique_sources(evidence_sources),
             }
         failed_conditions: list[str] = []
@@ -3757,10 +3786,8 @@ def classify_oi_partnership(record: dict[str, Any], focus: dict[str, Any]) -> di
             "evidence_sources": oi_unique_sources(evidence_sources),
         }
 
-    stage_state, stage, stage_source = oi_stage_state(record, text_sources)
     platform_score, platform_source = oi_effective_platform_score(record)
-    evidence_sources.extend([stage_source, platform_source])
-    base["development_stage"] = stage or "Unknown"
+    evidence_sources.append(platform_source)
     base["platform_attractiveness_score"] = platform_score
     missing = []
     if stage_state == "unknown":
@@ -3774,13 +3801,13 @@ def classify_oi_partnership(record: dict[str, Any], focus: dict[str, Any]) -> di
             "note": f"{' 및 '.join(missing)} 확인 불가",
             "evidence_sources": oi_unique_sources(evidence_sources),
         }
-    is_investment = stage_state == "ind_enabling"
+    is_investment = stage_state == "investment_eligible"
     is_joint_research = platform_score == 3
     if is_investment and is_joint_research:
         return {
             **base,
             "partnership_type": "joint_research",
-            "note": "투자 또한 해당 / Non-Small Molecule / IND Enabling / Platform Attractiveness Score 3",
+            "note": "투자 또한 해당 / Non-Small Molecule / IND-enabling 이상 / Platform Attractiveness Score 3",
             "evidence_sources": oi_unique_sources(evidence_sources),
         }
     if is_joint_research:
@@ -3794,7 +3821,7 @@ def classify_oi_partnership(record: dict[str, Any], focus: dict[str, Any]) -> di
         return {
             **base,
             "partnership_type": "investment",
-            "note": "Non-Small Molecule / IND Enabling",
+            "note": "Non-Small Molecule / IND-enabling 이상",
             "evidence_sources": oi_unique_sources(evidence_sources),
         }
     return {

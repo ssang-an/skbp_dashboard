@@ -1125,7 +1125,7 @@ function renderCollaborationPanel(record) {
   }
   const partnershipNoteIsManual = focus.partnership_classification_source === 'manual';
   if (elements.detailOiPartnershipOrigin) {
-    elements.detailOiPartnershipOrigin.textContent = `OI Partnership v${focus.partnership_classification_criteria_version || '1.0'}`;
+    elements.detailOiPartnershipOrigin.textContent = `OI Partnership v${focus.partnership_classification_criteria_version || '1.2'}`;
     elements.detailOiPartnershipOrigin.classList.toggle('is-human', partnershipNoteIsManual);
   }
   if (elements.detailOiPartnershipNote) {
@@ -3144,7 +3144,7 @@ async function refreshOiPartnership() {
     currentRecord = data.record;
     renderCollaborationPanel(currentRecord);
     setCollaborationStatus(
-      `OI Partnership v${data.oi_partnership_criteria_version || '1.0'} 기준 갱신 완료`,
+      `OI Partnership v${data.oi_partnership_criteria_version || '1.2'} 기준 갱신 완료`,
       'success'
     );
   } catch (error) {

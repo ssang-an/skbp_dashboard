@@ -1331,7 +1331,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("TAB 3 · SHORTLISTING · DECISION GUIDE", JS)
         self.assertIn("Shortlisted 후보의 OI Partnership Type 자동분류 및 후속 관리 기준", JS)
         self.assertIn("state.latestOiPartnershipCriteriaVersion", scope)
-        self.assertIn("Filter 3 — OI Partnership 자동 분류 · v1.0 기준", focus)
+        self.assertIn("Filter 3 — OI Partnership 자동 분류 · v1.2 기준", focus)
         intro = (
             "Tab 3는 Full Scout 검토 후 Shortlisting에 등록된 후보를 대상으로, "
             "SKBP 우선 관심 적응증 여부와 확인된 modality·stage·Platform Attractiveness·"
@@ -1369,7 +1369,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertEqual(focus.count('class="criteria-focus-result"'), 0)
         self.assertNotIn("<b>AND</b>", focus)
         for formula in (
-            "Stage = IND-enabling",
+            "Stage ≥ IND-enabling",
+            "Stage &lt; IND-enabling",
             "In-vivo = O",
             "In-vitro = O",
             "ADMET ≥ 25",
@@ -1383,12 +1384,13 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("canonical stage가 정확히 <code>IND-enabling</code>인 경우만 해당", focus)
         self.assertNotIn("Pipeline이 정확히 <code>IND-enabling</code>인 경우만 해당", focus)
         self.assertNotIn("Stage rank 비교를 사용하지 않음", focus)
-        self.assertIn("IND filed/cleared 및 Phase 1 이상은 포함하지 않음", focus)
+        self.assertIn("IND filed/cleared 및 Phase 1 이상 포함", focus)
         self.assertNotIn("IND-enabling planned 등 향후 계획은 현재 단계로 처리하지 않음", focus)
         self.assertNotIn("충족 시 <strong>→ 투자</strong>", focus)
         self.assertNotIn("충족 시 <strong>→ Value Up</strong>", focus)
         self.assertNotIn("충족 시 <strong>→ 공동연구</strong>", focus)
-        self.assertNotIn("Stage ≥ IND-enabling", focus)
+        self.assertNotIn("Stage = IND-enabling", focus)
+        self.assertIn("Full Scout 및 Partner Materials 정보를 사용", focus)
 
         self.assertIn("공동연구</strong><span>&gt;</span><span>투자", focus)
         priority_pills = CSS[CSS.index(".criteria-focus-priority-formula {") : CSS.index(".criteria-focus-comparison-strip")]
@@ -2248,7 +2250,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('id="rubricRefreshButton" class="criteria-refresh-pill"', workspace)
         self.assertIn('id="oiPartnershipRefreshButton" class="criteria-refresh-pill"', workspace)
         self.assertIn("<span>Score 기준 갱신</span>", workspace)
-        self.assertIn("<span>v1.0 기준 갱신</span>", workspace)
+        self.assertIn("<span>v1.2 기준 갱신</span>", workspace)
         self.assertGreaterEqual(workspace.count('class="metadata-divider"'), 3)
         self.assertIn('<span class="review-info-primary-label">Action Date</span>', workspace)
         self.assertIn("<small>Set by Asset Owner</small>", workspace)

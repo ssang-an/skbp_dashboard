@@ -976,7 +976,7 @@
         </section>
 
         <section class="criteria-rule criteria-focus-rule" data-criteria-tab="focus">
-          <h3>Filter 3 — OI Partnership 자동 분류 · v1.0 기준</h3>
+          <h3>Filter 3 — OI Partnership 자동 분류 · v1.2 기준</h3>
           <p>Tab 3는 Full Scout 검토 후 Shortlisting에 등록된 후보를 대상으로, SKBP 우선 관심 적응증 여부와 확인된 modality·stage·Platform Attractiveness·In-vivo·In-vitro·ADMET 값을 사용해 투자, Value Up, 공동연구, Unknown 또는 N/A로 자동 분류합니다.</p>
         </section>
 
@@ -997,7 +997,7 @@
             </article>
             <article class="criteria-focus-info-card">
               <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 3 5 6v5c0 4.7 2.8 8 7 10 4.2-2 7-5.3 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></svg></span><h4>확인된 정보 사용</h4></div>
-              <p>구조화된 Dashboard 값과 확인된 Full Scout 정보를 사용하며, 확인되지 않은 값은 임의로 추정하지 않습니다.</p>
+              <p>구조화된 Dashboard 값과 확인된 Full Scout 및 Partner Materials 정보를 사용하며, 확인되지 않은 값은 임의로 추정하지 않습니다.</p>
             </article>
           </div>
         </section>
@@ -1011,13 +1011,13 @@
           <div class="criteria-focus-grid criteria-focus-decision-grid">
             <article class="criteria-focus-decision-card" data-focus-decision="investment">
               <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 7V5h8v2M4 9h16v10H4V9Z" /><path d="M4 13h16" /></svg></span><h4>투자</h4></div>
-              <p class="criteria-focus-card-summary">비소분자 자산이 현재 정확히 IND-enabling 단계에 있는 경우 투자 검토 유형으로 분류합니다.</p>
-              <ul class="criteria-focus-condition-list" aria-label="투자 자동분류 조건"><li><strong>Non-small molecule</strong></li><li><strong>Stage = IND-enabling</strong></li><li class="criteria-focus-condition-note">IND filed/cleared 및 Phase 1 이상은 포함하지 않음</li></ul>
+              <p class="criteria-focus-card-summary">비소분자 자산이 IND-enabling 이상 단계에 있는 경우 투자 검토 유형으로 분류합니다.</p>
+              <ul class="criteria-focus-condition-list" aria-label="투자 자동분류 조건"><li><strong>Non-small molecule</strong></li><li><strong>Stage ≥ IND-enabling</strong></li><li class="criteria-focus-condition-note">IND filed/cleared 및 Phase 1 이상 포함</li></ul>
             </article>
             <article class="criteria-focus-decision-card" data-focus-decision="value-up">
               <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m7 14 4-4 3 3 4-5M15 8h3v3" /></svg></span><h4>Value Up</h4></div>
-              <p class="criteria-focus-card-summary">소분자 자산이 추가 개발 지원을 검토할 수 있는 실험 및 ADMET 조건을 충족한 경우입니다.</p>
-              <ul class="criteria-focus-condition-list" aria-label="Value Up 자동분류 조건"><li><strong>Small molecule</strong></li><li class="criteria-focus-condition-inline"><strong>In-vivo = O, In-vitro = O</strong></li><li><strong>ADMET ≥ 25</strong></li></ul>
+              <p class="criteria-focus-card-summary">IND-enabling보다 앞선 전임상 소분자 자산이 추가 개발 지원을 검토할 수 있는 실험 및 ADMET 조건을 충족한 경우입니다.</p>
+              <ul class="criteria-focus-condition-list" aria-label="Value Up 자동분류 조건"><li><strong>Small molecule</strong></li><li><strong>Stage &lt; IND-enabling</strong></li><li class="criteria-focus-condition-inline"><strong>In-vivo = O, In-vitro = O</strong></li><li><strong>ADMET ≥ 25</strong></li></ul>
             </article>
             <article class="criteria-focus-decision-card" data-focus-decision="joint-research">
               <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="7" cy="12" r="3" /><circle cx="17" cy="12" r="3" /><path d="M10 12h4M4 19c.7-2.6 2-4 3-4s2.3 1.4 3 4M14 19c.7-2.6 2-4 3-4s2.3 1.4 3 4" /></svg></span><h4>공동연구</h4></div>
