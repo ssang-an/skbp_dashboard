@@ -1,6 +1,6 @@
 # Tab3 OI Partnership 자동 분류 기준
 
-- Version: 1.2
+- Version: 1.3
 - Scope: Full Scout records tracked in Tab3
 - Evidence priority: Tab3 structured values → Full Scout detailed/raw report → Partner Materials
 - No inference: an absent or unclear value remains unknown.
@@ -17,13 +17,13 @@ Non-target indications are `n_a` with the note `대상 적응증 아님`.
 | Stored value | Display | Rule |
 | --- | --- | --- |
 | `investment` | 투자 | Target indication + Non-Small Molecule + Stage >= IND-enabling |
-| `value_up` | Value Up | Target indication + Small Molecule + Stage < IND-enabling + In Vivo O + In Vitro O + ADMET >=25 |
-| `joint_research` | 공동 연구 | Target indication + Non-Small Molecule + Platform Attractiveness exactly 3 |
+| `value_up` | Value Up | Target indication + Small Molecule + Stage < IND-enabling + In Vivo O + In Vitro O + ADMET uploaded and scored |
+| `joint_research` | 공동 연구 | Target indication + All Modality + Platform Attractiveness exactly 3 |
 | `unknown` | Unknown | Target indication, but at least one required input is missing or unclear |
 | `n_a` | N/A | Non-target indication, or all required inputs are known but no rule is satisfied |
 
-If investment and joint research both apply, store `joint_research` and begin the note with
-`투자 또한 해당`.
+If joint research overlaps another category, store `joint_research`. When it also meets
+investment, begin the note with `투자 또한 해당`.
 
 ## Input interpretation
 
@@ -34,10 +34,12 @@ If investment and joint research both apply, store `joint_research` and begin th
 - Value Up requires a confirmed pre-IND-enabling canonical stage only: `Hit Discovery`,
   `Lead Optimization`, `Preclinical Candidate`, or `Preclinical unspecified`. `IND-enabling`,
   `IND filed/cleared`, and Phase 1 or later do not satisfy Value Up.
+- Value Up requires an uploaded Partner Material categorized as `ADMET` and a numeric ADMET
+  score (including 0); the prior `ADMET >=25` threshold does not apply.
 - In Vivo/In Vitro `O` requires a stated positive efficacy or activity result.
 - A statement that an experiment was performed, without a result, is not `O`.
 - ADMET is numeric; 25 is included in the Value Up threshold.
-- Platform Attractiveness must be exactly 3.
+- Joint research applies to all modalities when Platform Attractiveness is exactly 3.
 
 ## Human override
 

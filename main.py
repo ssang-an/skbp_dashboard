@@ -3339,9 +3339,9 @@ def attachment_partner_material_category(attachment: Any) -> str | None:
     declared = str(attachment.get("partner_material_category") or "").strip().casefold()
     return declared if declared in {"cdp", "ncdp", "admet"} else partner_material_category(attachment.get("filename"))
 ADMET_TOTAL_ITEMS = 25
-# v1.2 adds the stage boundary to Value Up. Bumping the version intentionally
-# reclassifies tracked records that were saved under the incomplete v1.1 rule.
-OI_PARTNERSHIP_CRITERIA_VERSION = "1.2"
+# v1.3 broadens Joint Research to every modality and makes an uploaded, scored
+# ADMET Partner Material (rather than an arbitrary threshold) mandatory for Value Up.
+OI_PARTNERSHIP_CRITERIA_VERSION = "1.3"
 OI_PARTNERSHIP_TYPES = {"value_up", "joint_research", "investment", "n_a", "unknown"}
 OI_PARTNERSHIP_LABELS = {
     "investment": "투자",
@@ -3694,6 +3694,17 @@ def oi_auto_evidence_sources(record: dict[str, Any]) -> list[str]:
     return labels
 
 
+def oi_has_scored_admet_upload(record: dict[str, Any], admet_score: Any) -> bool:
+    """Value Up requires both a real ADMET Partner Material and its numeric score."""
+    if not isinstance(admet_score, int) or isinstance(admet_score, bool):
+        return False
+    attachments = (record.get("meta") or {}).get("attachments")
+    return isinstance(attachments, list) and any(
+        isinstance(item, dict) and attachment_partner_material_category(item) == "admet"
+        for item in attachments
+    )
+
+
 def oi_unique_sources(values: list[str]) -> list[str]:
     return list(dict.fromkeys(value for value in values if value))
 
@@ -3724,6 +3735,29 @@ def classify_oi_partnership(record: dict[str, Any], focus: dict[str, Any]) -> di
     modality_state, modality, modality_source = oi_modality_state(record, text_sources)
     evidence_sources.append(modality_source)
     base["modality"] = modality or "Unknown"
+    stage_state, stage, stage_source = oi_stage_state(record, text_sources)
+    evidence_sources.append(stage_source)
+    base["development_stage"] = stage or "Unknown"
+    platform_score, platform_source = oi_effective_platform_score(record)
+    evidence_sources.append(platform_source)
+    base["platform_attractiveness_score"] = platform_score
+
+    is_investment = (
+        modality_state == "non_small_molecule"
+        and stage_state == "investment_eligible"
+    )
+    if platform_score == 3:
+        return {
+            **base,
+            "partnership_type": "joint_research",
+            "note": (
+                "투자 또한 해당 / Non-Small Molecule / IND-enabling 이상 / Platform Attractiveness Score 3"
+                if is_investment
+                else "All Modality / Platform Attractiveness Score 3"
+            ),
+            "evidence_sources": oi_unique_sources(evidence_sources),
+        }
+
     if modality_state == "unknown":
         return {
             **base,
@@ -3732,9 +3766,6 @@ def classify_oi_partnership(record: dict[str, Any], focus: dict[str, Any]) -> di
             "evidence_sources": oi_unique_sources(evidence_sources),
         }
 
-    stage_state, stage, stage_source = oi_stage_state(record, text_sources)
-    evidence_sources.append(stage_source)
-    base["development_stage"] = stage or "Unknown"
     if modality_state == "small_molecule":
         in_vivo = str(focus.get("in_vivo_status") or "N/A").upper()
         in_vitro = str(focus.get("in_vitro_status") or "N/A").upper()
@@ -3746,6 +3777,8 @@ def classify_oi_partnership(record: dict[str, Any], focus: dict[str, Any]) -> di
             missing.append("In Vitro")
         if not isinstance(admet, int) or isinstance(admet, bool):
             missing.append("ADMET Score")
+        if not oi_has_scored_admet_upload(record, admet):
+            missing.append("ADMET uploaded")
         if stage_state == "unknown":
             missing.append("Development Stage")
         if focus.get("in_vivo_status_source") == "manual" or focus.get("in_vitro_status_source") == "manual" or focus.get("admet_completed_source") == "manual":
@@ -3765,11 +3798,11 @@ def classify_oi_partnership(record: dict[str, Any], focus: dict[str, Any]) -> di
                 "note": f"OI Partnership 분류 조건 미충족 / Development Stage {stage} (IND-enabling 미만 아님)",
                 "evidence_sources": oi_unique_sources(evidence_sources),
             }
-        if in_vivo == "O" and in_vitro == "O" and admet >= 25:
+        if in_vivo == "O" and in_vitro == "O":
             return {
                 **base,
                 "partnership_type": "value_up",
-                "note": f"Small Molecule / IND-enabling 미만 / In Vivo O / In Vitro O / ADMET {admet}",
+                "note": f"Small Molecule / IND-enabling 미만 / In Vivo O / In Vitro O / ADMET uploaded (Score {admet})",
                 "evidence_sources": oi_unique_sources(evidence_sources),
             }
         failed_conditions: list[str] = []
@@ -3777,8 +3810,6 @@ def classify_oi_partnership(record: dict[str, Any], focus: dict[str, Any]) -> di
             failed_conditions.append(f"In Vivo {in_vivo}")
         if in_vitro != "O":
             failed_conditions.append(f"In Vitro {in_vitro}")
-        if admet < 25:
-            failed_conditions.append(f"ADMET {admet} (<25)")
         return {
             **base,
             "partnership_type": "n_a",
@@ -3786,9 +3817,6 @@ def classify_oi_partnership(record: dict[str, Any], focus: dict[str, Any]) -> di
             "evidence_sources": oi_unique_sources(evidence_sources),
         }
 
-    platform_score, platform_source = oi_effective_platform_score(record)
-    evidence_sources.append(platform_source)
-    base["platform_attractiveness_score"] = platform_score
     missing = []
     if stage_state == "unknown":
         missing.append("Development Stage")
@@ -3799,22 +3827,6 @@ def classify_oi_partnership(record: dict[str, Any], focus: dict[str, Any]) -> di
             **base,
             "partnership_type": "unknown",
             "note": f"{' 및 '.join(missing)} 확인 불가",
-            "evidence_sources": oi_unique_sources(evidence_sources),
-        }
-    is_investment = stage_state == "investment_eligible"
-    is_joint_research = platform_score == 3
-    if is_investment and is_joint_research:
-        return {
-            **base,
-            "partnership_type": "joint_research",
-            "note": "투자 또한 해당 / Non-Small Molecule / IND-enabling 이상 / Platform Attractiveness Score 3",
-            "evidence_sources": oi_unique_sources(evidence_sources),
-        }
-    if is_joint_research:
-        return {
-            **base,
-            "partnership_type": "joint_research",
-            "note": "Non-Small Molecule / Platform Attractiveness Score 3",
             "evidence_sources": oi_unique_sources(evidence_sources),
         }
     if is_investment:
