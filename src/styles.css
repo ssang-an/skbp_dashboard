@@ -14130,13 +14130,34 @@ html[data-theme="dark"] .admin-state.is-inactive { background: #481d24; color: #
 }
 
 .workflow-summary-grid > .panel > .workflow-priority-list {
+  align-content: start;
+  min-height: 0;
+  height: 100%;
   max-height: none;
   gap: 5px;
   padding: 9px;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: scroll;
   overscroll-behavior: contain;
-  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--muted) 52%, var(--surface-soft)) var(--surface-soft);
+  scrollbar-gutter: stable;
+  scrollbar-width: auto;
+}
+
+.workflow-summary-grid > .panel > .workflow-priority-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.workflow-summary-grid > .panel > .workflow-priority-list::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: var(--surface-soft);
+}
+
+.workflow-summary-grid > .panel > .workflow-priority-list::-webkit-scrollbar-thumb {
+  min-height: 36px;
+  border: 2px solid var(--surface-soft);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted) 52%, var(--surface-soft));
 }
 
 .workflow-summary-grid .workflow-priority-item {
@@ -14156,9 +14177,10 @@ html[data-theme="dark"] .admin-state.is-inactive { background: #481d24; color: #
   }
 
   .workflow-summary-grid > .panel > .workflow-priority-list {
+    height: 230px;
     max-height: 230px;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll;
   }
 
   .workflow-summary-grid .donut-wrap {

@@ -21,9 +21,13 @@ class DashboardFilterScrollUxTests(unittest.TestCase):
     def test_priority_list_is_the_only_summary_body_with_vertical_scrolling(self):
         source = (main.ROOT / "src" / "styles.css").read_text(encoding="utf-8")
         self.assertIn(".workflow-summary-grid > .panel > .priority-list {\n  min-height: 0;\n  overflow: hidden;", source)
-        self.assertIn(".workflow-summary-grid > .panel > .workflow-priority-list {\n  max-height: none;", source)
-        self.assertIn("overflow-y: auto;", source)
+        self.assertIn(".workflow-summary-grid > .panel > .workflow-priority-list {\n  align-content: start;\n  min-height: 0;\n  height: 100%;", source)
+        self.assertIn("overflow-y: scroll;", source)
+        self.assertIn("scrollbar-gutter: stable;", source)
         self.assertIn("max-height: 230px;", source)
+
+        markup = (main.ROOT / "index.html").read_text(encoding="utf-8")
+        self.assertIn('id="workflowPriorityList" role="region" tabindex="0"', markup)
 
     def test_priority_lists_sort_by_latest_update_before_limiting_to_ten(self):
         source = (main.ROOT / "src" / "app.js").read_text(encoding="utf-8")
