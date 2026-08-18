@@ -8209,6 +8209,566 @@
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
+    },
+    {
+      "id": "asset::kine-501b",
+      "label": "KINE-501B",
+      "type": "asset",
+      "title": "Asset__KINE-501B",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 1,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::kine_sciences",
+      "label": "Kine Sciences",
+      "type": "company",
+      "title": "Company__Kine_Sciences",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::microglia_(target_cell);_molecular_target_unknown",
+      "label": "Microglia (target cell); molecular target Unknown",
+      "type": "target",
+      "title": "Target__Microglia_(target_cell);_molecular_target_Unknown",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "modality::peptide",
+      "label": "Peptide",
+      "type": "modality",
+      "title": "Modality__Peptide",
+      "tags": "pipeline/modality",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::frontotemporal_dementia_(ftd)",
+      "label": "Frontotemporal Dementia (FTD)",
+      "type": "indication",
+      "title": "Indication__Frontotemporal_Dementia_(FTD)",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::kine-501b_20260818",
+      "label": "Scorecard - KINE-501B",
+      "type": "scorecard",
+      "title": "Scorecard__KINE-501B__20260818",
+      "tags": "pipeline/scorecard",
+      "score": 1,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_www.kinesciences.com_m31.php",
+      "label": "Kine Sciences Pipeline",
+      "type": "source",
+      "title": "Source__Kine_Sciences_Pipeline",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_synapse.patsnap.com_drug_fa379a83484c4982992f41e41835858a",
+      "label": "Synapse: KINE-501B",
+      "type": "source",
+      "title": "Source__Synapse_KINE-501B",
+      "tags": "pipeline/source;source/biopharma_database",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::kine-501c",
+      "label": "KINE-501C",
+      "type": "asset",
+      "title": "Asset__KINE-501C",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 1,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "indication::lewy_body_dementia_(lbd)",
+      "label": "Lewy Body Dementia (LBD)",
+      "type": "indication",
+      "title": "Indication__Lewy_Body_Dementia_(LBD)",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::kine-501c_20260818",
+      "label": "Scorecard - KINE-501C",
+      "type": "scorecard",
+      "title": "Scorecard__KINE-501C__20260818",
+      "tags": "pipeline/scorecard",
+      "score": 1,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_synapse.patsnap.com_drug_bcc0e499d38b45db9154b737b344da60",
+      "label": "Synapse: KINE-501C",
+      "type": "source",
+      "title": "Source__Synapse_KINE-501C",
+      "tags": "pipeline/source;source/biopharma_database",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::kine-501d",
+      "label": "KINE-501D",
+      "type": "asset",
+      "title": "Asset__KINE-501D",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "scorecard::kine-501d_20260818",
+      "label": "Scorecard - KINE-501D",
+      "type": "scorecard",
+      "title": "Scorecard__KINE-501D__20260818",
+      "tags": "pipeline/scorecard",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_synapse.patsnap.com_drug_e51eb88adc764dca8d419916642ec2d1",
+      "label": "Synapse: KINE-501D",
+      "type": "source",
+      "title": "Source__Synapse_KINE-501D",
+      "tags": "pipeline/source;source/biopharma_database",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::kine-501e",
+      "label": "KINE-501E",
+      "type": "asset",
+      "title": "Asset__KINE-501E",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "scorecard::kine-501e_20260818",
+      "label": "Scorecard - KINE-501E",
+      "type": "scorecard",
+      "title": "Scorecard__KINE-501E__20260818",
+      "tags": "pipeline/scorecard",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_synapse.patsnap.com_drug_7673acce77814a54b56af0c67e6eb23a",
+      "label": "Synapse: KINE-501E",
+      "type": "source",
+      "title": "Source__Synapse_KINE-501E",
+      "tags": "pipeline/source;source/biopharma_database",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::kp-101",
+      "label": "KP-101",
+      "type": "asset",
+      "title": "Asset__KP-101",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 0,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "company::korea_pharma_co_ltd",
+      "label": "Korea Pharma Co Ltd",
+      "type": "company",
+      "title": "Company__Korea_Pharma_Co_Ltd",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "indication::major_depressive_disorder",
+      "label": "major depressive disorder",
+      "type": "indication",
+      "title": "Indication__major_depressive_disorder",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::kp-101_20260818",
+      "label": "Scorecard - KP-101",
+      "type": "scorecard",
+      "title": "Scorecard__KP-101__20260818",
+      "tags": "pipeline/scorecard",
+      "score": 0,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "source::https_koreapharma.co.kr_eng_sub_research_result.php",
+      "label": "Korea Pharma Research Results",
+      "type": "source",
+      "title": "Source__Korea_Pharma_Research_Results",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::kp-102",
+      "label": "KP-102",
+      "type": "asset",
+      "title": "Asset__KP-102",
+      "tags": "pipeline/asset;theme/unknown",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "indication::alzheimer's_dementia",
+      "label": "Alzheimer's dementia",
+      "type": "indication",
+      "title": "Indication__Alzheimer's_dementia",
+      "tags": "pipeline/indication",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::kp-102_20260818",
+      "label": "Scorecard - KP-102",
+      "type": "scorecard",
+      "title": "Scorecard__KP-102__20260818",
+      "tags": "pipeline/scorecard",
+      "score": 2,
+      "recommendation": "Do not run Full Scout",
+      "evidence_level": "E0"
+    },
+    {
+      "id": "asset::1st-104",
+      "label": "1ST-104",
+      "type": "asset",
+      "title": "Asset__1ST-104",
+      "tags": "pipeline/asset;theme/neuroimmune",
+      "score": 12,
+      "recommendation": "Watch",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "company::1st_biotherapeutics,_inc",
+      "label": "1ST Biotherapeutics, Inc.",
+      "type": "company",
+      "title": "Company__1ST_Biotherapeutics,_Inc",
+      "tags": "pipeline/company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "target::lrrk2_c-abl",
+      "label": "LRRK2 / c-Abl",
+      "type": "target",
+      "title": "Target__LRRK2_c-Abl",
+      "tags": "pipeline/target",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "moa::dual_lrrk2_c-abl_kinase_inhibition_with_prab10_and_pcrkl_suppression_an_0c7d3ba3",
+      "label": "Dual LRRK2/c-Abl kinase inhibition with pRab10 and pCrkL suppression and relative pS935 preservation; c-Abl Type II co-crystal confirmed.",
+      "type": "moa",
+      "title": "MoA__Dual_LRRK2_c-Abl_kinase_inhibition_with_pRab10_and_pCrkL_suppression_an_0c7d3ba3",
+      "tags": "pipeline/moa",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "scorecard::1st-104_20260818",
+      "label": "Scorecard - 1ST-104",
+      "type": "scorecard",
+      "title": "Scorecard__1ST-104__20260818",
+      "tags": "pipeline/scorecard",
+      "score": 12,
+      "recommendation": "Watch",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "competitor::neuron23_neu-411",
+      "label": "NEU-411",
+      "type": "competitor",
+      "title": "Competitor__Neuron23__NEU-411",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::denali_therapeutics_biogen_biib122_dnl151",
+      "label": "BIIB122 / DNL151",
+      "type": "competitor",
+      "title": "Competitor__Denali_Therapeutics_Biogen__BIIB122_DNL151",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::brenig_therapeutics_bt-267",
+      "label": "BT-267",
+      "type": "competitor",
+      "title": "Competitor__Brenig_Therapeutics__BT-267",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::finsnobio_type_ii_lrrk2_program",
+      "label": "Type II LRRK2 program",
+      "type": "competitor",
+      "title": "Competitor__FinsnoBio__Type_II_LRRK2_program",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::arvinas_arv-102",
+      "label": "ARV-102",
+      "type": "competitor",
+      "title": "Competitor__Arvinas__ARV-102",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::ionis_biogen_biib094",
+      "label": "BIIB094",
+      "type": "competitor",
+      "title": "Competitor__Ionis_Biogen__BIIB094",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "competitor::sparc_vodobatinib",
+      "label": "Vodobatinib",
+      "type": "competitor",
+      "title": "Competitor__SPARC__Vodobatinib",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": ""
+    },
+    {
+      "id": "source::https_www.1stbio.com_rd-pipeline",
+      "label": "1ST Biotherapeutics R&D Pipeline",
+      "type": "source",
+      "title": "Source__1ST_Biotherapeutics_R&D_Pipeline",
+      "tags": "pipeline/source;source/other",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.1stbio.com_wp-content_uploads_2025_04_1st-biotherapeutics-joi_5551b584",
+      "label": "1ST Biotherapeutics Joins The Michael J. Fox Foundation LITE Program",
+      "type": "source",
+      "title": "Source__1ST_Biotherapeutics_Joins_The_Michael_J._Fox_Foundation_LITE_Program",
+      "tags": "pipeline/source;source/company_press_release",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::[104]_current_progress_and_key_findings_ncdp.pdf",
+      "label": "[104] Current Progress and Key Findings_NCDP.pdf",
+      "type": "source",
+      "title": "Source__[104]_Current_Progress_and_Key_Findings_NCDP.pdf",
+      "tags": "pipeline/source;source/user_uploaded_file",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.1stbio.com_wp-content_uploads_2026_01_1stbio_series_d_completed.pdf",
+      "label": "1STBIO Series D Financing Announcement",
+      "type": "source",
+      "title": "Source__1STBIO_Series_D_Financing_Announcement",
+      "tags": "pipeline/source;source/company_press_release",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_pubmed.ncbi.nlm.nih.gov_15541309",
+      "label": "Mutations in LRRK2 cause autosomal-dominant parkinsonism with pleomorphic pathology",
+      "type": "source",
+      "title": "Source__Mutations_in_LRRK2_cause_autosomal-dominant_parkinsonism_with_pleomorph_eba53ca5",
+      "tags": "pipeline/source;source/peer_reviewed",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct06680830",
+      "label": "NEU-411 Phase 2 NEULARK - NCT06680830",
+      "type": "source",
+      "title": "Source__NEU-411_Phase_2_NEULARK_-_NCT06680830",
+      "tags": "pipeline/source;source/clinical_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_investors.biogen.com_news-releases_news-release-details_biogen-an_e14318e9",
+      "label": "BIIB122 Phase 2b LUMA Update",
+      "type": "source",
+      "title": "Source__BIIB122_Phase_2b_LUMA_Update",
+      "tags": "pipeline/source;source/company_press_release",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.brenigther.com",
+      "label": "Brenig Therapeutics BT-267 Pipeline",
+      "type": "source",
+      "title": "Source__Brenig_Therapeutics_BT-267_Pipeline",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_ir.arvinas.com_news-releases_news-release-details_arvinas-announc_c587222b",
+      "label": "Arvinas ARV-102 Phase 1 Parkinson's Disease Data",
+      "type": "source",
+      "title": "Source__Arvinas_ARV-102_Phase_1_Parkinson's_Disease_Data",
+      "tags": "pipeline/source;source/company_press_release",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct03976349",
+      "label": "BIIB094 REASON Phase 1 - NCT03976349",
+      "type": "source",
+      "title": "Source__BIIB094_REASON_Phase_1_-_NCT03976349",
+      "tags": "pipeline/source;source/clinical_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.nature.com_articles_s41591-026-04262-4",
+      "label": "LRRK2-targeting antisense oligonucleotide in Parkinson's disease",
+      "type": "source",
+      "title": "Source__LRRK2-targeting_antisense_oligonucleotide_in_Parkinson's_disease",
+      "tags": "pipeline/source;source/peer_reviewed",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.finsnobio.com_pipeline",
+      "label": "FinsnoBio LRRK2 Type II Pipeline",
+      "type": "source",
+      "title": "Source__FinsnoBio_LRRK2_Type_II_Pipeline",
+      "tags": "pipeline/source;source/official_company",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_pubmed.ncbi.nlm.nih.gov_24412932",
+      "label": "c-Abl phosphorylates alpha-synuclein and regulates its degradation",
+      "type": "source",
+      "title": "Source__c-Abl_phosphorylates_alpha-synuclein_and_regulates_its_degradation",
+      "tags": "pipeline/source;source/peer_reviewed",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_pubmed.ncbi.nlm.nih.gov_27474410",
+      "label": "Phos-tag analysis of Rab10 phosphorylation by LRRK2",
+      "type": "source",
+      "title": "Source__Phos-tag_analysis_of_Rab10_phosphorylation_by_LRRK2",
+      "tags": "pipeline/source;source/peer_reviewed",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_pubmed.ncbi.nlm.nih.gov_40465731",
+      "label": "Type II kinase inhibitors that target Parkinson's disease-associated LRRK2",
+      "type": "source",
+      "title": "Source__Type_II_kinase_inhibitors_that_target_Parkinson's_disease-associated_LRRK2",
+      "tags": "pipeline/source;source/peer_reviewed",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.nature.com_articles_s41531-026-01275-1",
+      "label": "Evaluation of c-Abl inhibitor vodobatinib in early Parkinson's disease",
+      "type": "source",
+      "title": "Source__Evaluation_of_c-Abl_inhibitor_vodobatinib_in_early_Parkinson's_disease",
+      "tags": "pipeline/source;source/peer_reviewed",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_www.parkinson.org_understanding-parkinsons_statistics_prevalence-incidence",
+      "label": "Parkinson's Foundation Prevalence and Incidence",
+      "type": "source",
+      "title": "Source__Parkinson's_Foundation_Prevalence_and_Incidence",
+      "tags": "pipeline/source;source/patient_foundation",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct06602193",
+      "label": "BIIB122 Phase 2a BEACON - NCT06602193",
+      "type": "source",
+      "title": "Source__BIIB122_Phase_2a_BEACON_-_NCT06602193",
+      "tags": "pipeline/source;source/clinical_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3"
     }
   ],
   "edges": [
@@ -18599,6 +19159,839 @@
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
       "source_note": "Source__Eisai_LEQEMBI_U.S._Launch_Pricing_(2023)"
+    },
+    {
+      "source": "asset::kine-501b",
+      "target": "company::kine_sciences",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501B__20260818"
+    },
+    {
+      "source": "asset::kine-501b",
+      "target": "target::microglia_(target_cell);_molecular_target_unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501B__20260818"
+    },
+    {
+      "source": "asset::kine-501b",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501B__20260818"
+    },
+    {
+      "source": "asset::kine-501b",
+      "target": "modality::peptide",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501B__20260818"
+    },
+    {
+      "source": "asset::kine-501b",
+      "target": "indication::frontotemporal_dementia_(ftd)",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501B__20260818"
+    },
+    {
+      "source": "asset::kine-501b",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501B__20260818"
+    },
+    {
+      "source": "asset::kine-501b",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501B__20260818"
+    },
+    {
+      "source": "asset::kine-501b",
+      "target": "scorecard::kine-501b_20260818",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501B__20260818"
+    },
+    {
+      "source": "asset::kine-501b",
+      "target": "source::https_www.kinesciences.com_m31.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Kine_Sciences_Pipeline"
+    },
+    {
+      "source": "scorecard::kine-501b_20260818",
+      "target": "source::https_www.kinesciences.com_m31.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Kine_Sciences_Pipeline"
+    },
+    {
+      "source": "asset::kine-501b",
+      "target": "source::https_synapse.patsnap.com_drug_fa379a83484c4982992f41e41835858a",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_KINE-501B"
+    },
+    {
+      "source": "scorecard::kine-501b_20260818",
+      "target": "source::https_synapse.patsnap.com_drug_fa379a83484c4982992f41e41835858a",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_KINE-501B"
+    },
+    {
+      "source": "asset::kine-501c",
+      "target": "company::kine_sciences",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501C__20260818"
+    },
+    {
+      "source": "asset::kine-501c",
+      "target": "target::microglia_(target_cell);_molecular_target_unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501C__20260818"
+    },
+    {
+      "source": "asset::kine-501c",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501C__20260818"
+    },
+    {
+      "source": "asset::kine-501c",
+      "target": "modality::peptide",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501C__20260818"
+    },
+    {
+      "source": "asset::kine-501c",
+      "target": "indication::lewy_body_dementia_(lbd)",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501C__20260818"
+    },
+    {
+      "source": "asset::kine-501c",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501C__20260818"
+    },
+    {
+      "source": "asset::kine-501c",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501C__20260818"
+    },
+    {
+      "source": "asset::kine-501c",
+      "target": "scorecard::kine-501c_20260818",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501C__20260818"
+    },
+    {
+      "source": "asset::kine-501c",
+      "target": "source::https_www.kinesciences.com_m31.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Kine_Sciences_Pipeline"
+    },
+    {
+      "source": "scorecard::kine-501c_20260818",
+      "target": "source::https_www.kinesciences.com_m31.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Kine_Sciences_Pipeline"
+    },
+    {
+      "source": "asset::kine-501c",
+      "target": "source::https_synapse.patsnap.com_drug_bcc0e499d38b45db9154b737b344da60",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_KINE-501C"
+    },
+    {
+      "source": "scorecard::kine-501c_20260818",
+      "target": "source::https_synapse.patsnap.com_drug_bcc0e499d38b45db9154b737b344da60",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_KINE-501C"
+    },
+    {
+      "source": "asset::kine-501d",
+      "target": "company::kine_sciences",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501D__20260818"
+    },
+    {
+      "source": "asset::kine-501d",
+      "target": "target::microglia_(target_cell);_molecular_target_unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501D__20260818"
+    },
+    {
+      "source": "asset::kine-501d",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501D__20260818"
+    },
+    {
+      "source": "asset::kine-501d",
+      "target": "modality::peptide",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501D__20260818"
+    },
+    {
+      "source": "asset::kine-501d",
+      "target": "indication::parkinson's_disease",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501D__20260818"
+    },
+    {
+      "source": "asset::kine-501d",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501D__20260818"
+    },
+    {
+      "source": "asset::kine-501d",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501D__20260818"
+    },
+    {
+      "source": "asset::kine-501d",
+      "target": "scorecard::kine-501d_20260818",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501D__20260818"
+    },
+    {
+      "source": "asset::kine-501d",
+      "target": "source::https_www.kinesciences.com_m31.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Kine_Sciences_Pipeline"
+    },
+    {
+      "source": "scorecard::kine-501d_20260818",
+      "target": "source::https_www.kinesciences.com_m31.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Kine_Sciences_Pipeline"
+    },
+    {
+      "source": "asset::kine-501d",
+      "target": "source::https_synapse.patsnap.com_drug_e51eb88adc764dca8d419916642ec2d1",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_KINE-501D"
+    },
+    {
+      "source": "scorecard::kine-501d_20260818",
+      "target": "source::https_synapse.patsnap.com_drug_e51eb88adc764dca8d419916642ec2d1",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_KINE-501D"
+    },
+    {
+      "source": "asset::kine-501e",
+      "target": "company::kine_sciences",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501E__20260818"
+    },
+    {
+      "source": "asset::kine-501e",
+      "target": "target::microglia_(target_cell);_molecular_target_unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501E__20260818"
+    },
+    {
+      "source": "asset::kine-501e",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501E__20260818"
+    },
+    {
+      "source": "asset::kine-501e",
+      "target": "modality::unknown",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501E__20260818"
+    },
+    {
+      "source": "asset::kine-501e",
+      "target": "indication::multiple_sclerosis",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501E__20260818"
+    },
+    {
+      "source": "asset::kine-501e",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501E__20260818"
+    },
+    {
+      "source": "asset::kine-501e",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501E__20260818"
+    },
+    {
+      "source": "asset::kine-501e",
+      "target": "scorecard::kine-501e_20260818",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KINE-501E__20260818"
+    },
+    {
+      "source": "asset::kine-501e",
+      "target": "source::https_www.kinesciences.com_m31.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Kine_Sciences_Pipeline"
+    },
+    {
+      "source": "scorecard::kine-501e_20260818",
+      "target": "source::https_www.kinesciences.com_m31.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Kine_Sciences_Pipeline"
+    },
+    {
+      "source": "asset::kine-501e",
+      "target": "source::https_synapse.patsnap.com_drug_7673acce77814a54b56af0c67e6eb23a",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_KINE-501E"
+    },
+    {
+      "source": "scorecard::kine-501e_20260818",
+      "target": "source::https_synapse.patsnap.com_drug_7673acce77814a54b56af0c67e6eb23a",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Synapse_KINE-501E"
+    },
+    {
+      "source": "asset::kp-101",
+      "target": "company::korea_pharma_co_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-101__20260818"
+    },
+    {
+      "source": "asset::kp-101",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-101__20260818"
+    },
+    {
+      "source": "asset::kp-101",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-101__20260818"
+    },
+    {
+      "source": "asset::kp-101",
+      "target": "modality::unknown",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-101__20260818"
+    },
+    {
+      "source": "asset::kp-101",
+      "target": "indication::major_depressive_disorder",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-101__20260818"
+    },
+    {
+      "source": "asset::kp-101",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-101__20260818"
+    },
+    {
+      "source": "asset::kp-101",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-101__20260818"
+    },
+    {
+      "source": "asset::kp-101",
+      "target": "scorecard::kp-101_20260818",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-101__20260818"
+    },
+    {
+      "source": "asset::kp-101",
+      "target": "source::https_koreapharma.co.kr_eng_sub_research_result.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Korea_Pharma_Research_Results"
+    },
+    {
+      "source": "scorecard::kp-101_20260818",
+      "target": "source::https_koreapharma.co.kr_eng_sub_research_result.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Korea_Pharma_Research_Results"
+    },
+    {
+      "source": "asset::kp-102",
+      "target": "company::korea_pharma_co_ltd",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-102__20260818"
+    },
+    {
+      "source": "asset::kp-102",
+      "target": "target::unknown",
+      "relationship": "TARGETS",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-102__20260818"
+    },
+    {
+      "source": "asset::kp-102",
+      "target": "moa::unknown",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-102__20260818"
+    },
+    {
+      "source": "asset::kp-102",
+      "target": "modality::unknown",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-102__20260818"
+    },
+    {
+      "source": "asset::kp-102",
+      "target": "indication::alzheimer's_dementia",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-102__20260818"
+    },
+    {
+      "source": "asset::kp-102",
+      "target": "theme::unknown",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-102__20260818"
+    },
+    {
+      "source": "asset::kp-102",
+      "target": "cluster::unknown",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-102__20260818"
+    },
+    {
+      "source": "asset::kp-102",
+      "target": "scorecard::kp-102_20260818",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E0",
+      "source_note": "Scorecard__KP-102__20260818"
+    },
+    {
+      "source": "asset::kp-102",
+      "target": "source::https_koreapharma.co.kr_eng_sub_research_result.php",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E0",
+      "source_note": "Source__Korea_Pharma_Research_Results"
+    },
+    {
+      "source": "scorecard::kp-102_20260818",
+      "target": "source::https_koreapharma.co.kr_eng_sub_research_result.php",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E0",
+      "source_note": "Source__Korea_Pharma_Research_Results"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "company::1st_biotherapeutics,_inc",
+      "relationship": "OWNED_BY",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "target::lrrk2_c-abl",
+      "relationship": "TARGETS",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "moa::dual_lrrk2_c-abl_kinase_inhibition_with_prab10_and_pcrkl_suppression_an_0c7d3ba3",
+      "relationship": "HAS_MOA",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "modality::small_molecule",
+      "relationship": "HAS_MODALITY",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "indication::parkinson's_disease",
+      "relationship": "HAS_INDICATION",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "theme::neuroimmune",
+      "relationship": "MAPS_TO_THEME",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "cluster::cytokine_신경조절",
+      "relationship": "MAPS_TO_CLUSTER",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "scorecard::1st-104_20260818",
+      "relationship": "HAS_SCORECARD",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "competitor::neuron23_neu-411",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "competitor::denali_therapeutics_biogen_biib122_dnl151",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "competitor::brenig_therapeutics_bt-267",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "competitor::finsnobio_type_ii_lrrk2_program",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "competitor::arvinas_arv-102",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "competitor::ionis_biogen_biib094",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "competitor::sparc_vodobatinib",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__1ST-104__20260818"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_www.1stbio.com_rd-pipeline",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__1ST_Biotherapeutics_R&D_Pipeline"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_www.1stbio.com_rd-pipeline",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__1ST_Biotherapeutics_R&D_Pipeline"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_www.1stbio.com_wp-content_uploads_2025_04_1st-biotherapeutics-joi_5551b584",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__1ST_Biotherapeutics_Joins_The_Michael_J._Fox_Foundation_LITE_Program"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_www.1stbio.com_wp-content_uploads_2025_04_1st-biotherapeutics-joi_5551b584",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__1ST_Biotherapeutics_Joins_The_Michael_J._Fox_Foundation_LITE_Program"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::[104]_current_progress_and_key_findings_ncdp.pdf",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__[104]_Current_Progress_and_Key_Findings_NCDP.pdf"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::[104]_current_progress_and_key_findings_ncdp.pdf",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__[104]_Current_Progress_and_Key_Findings_NCDP.pdf"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_www.1stbio.com_wp-content_uploads_2026_01_1stbio_series_d_completed.pdf",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__1STBIO_Series_D_Financing_Announcement"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_www.1stbio.com_wp-content_uploads_2026_01_1stbio_series_d_completed.pdf",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__1STBIO_Series_D_Financing_Announcement"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_pubmed.ncbi.nlm.nih.gov_15541309",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Mutations_in_LRRK2_cause_autosomal-dominant_parkinsonism_with_pleomorph_eba53ca5"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_pubmed.ncbi.nlm.nih.gov_15541309",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Mutations_in_LRRK2_cause_autosomal-dominant_parkinsonism_with_pleomorph_eba53ca5"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_clinicaltrials.gov_study_nct06680830",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__NEU-411_Phase_2_NEULARK_-_NCT06680830"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_clinicaltrials.gov_study_nct06680830",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__NEU-411_Phase_2_NEULARK_-_NCT06680830"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_investors.biogen.com_news-releases_news-release-details_biogen-an_e14318e9",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__BIIB122_Phase_2b_LUMA_Update"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_investors.biogen.com_news-releases_news-release-details_biogen-an_e14318e9",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__BIIB122_Phase_2b_LUMA_Update"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_www.brenigther.com",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Brenig_Therapeutics_BT-267_Pipeline"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_www.brenigther.com",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Brenig_Therapeutics_BT-267_Pipeline"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_ir.arvinas.com_news-releases_news-release-details_arvinas-announc_c587222b",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Arvinas_ARV-102_Phase_1_Parkinson's_Disease_Data"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_ir.arvinas.com_news-releases_news-release-details_arvinas-announc_c587222b",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Arvinas_ARV-102_Phase_1_Parkinson's_Disease_Data"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_clinicaltrials.gov_study_nct03976349",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__BIIB094_REASON_Phase_1_-_NCT03976349"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_clinicaltrials.gov_study_nct03976349",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__BIIB094_REASON_Phase_1_-_NCT03976349"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_www.nature.com_articles_s41591-026-04262-4",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__LRRK2-targeting_antisense_oligonucleotide_in_Parkinson's_disease"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_www.nature.com_articles_s41591-026-04262-4",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__LRRK2-targeting_antisense_oligonucleotide_in_Parkinson's_disease"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_www.finsnobio.com_pipeline",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__FinsnoBio_LRRK2_Type_II_Pipeline"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_www.finsnobio.com_pipeline",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__FinsnoBio_LRRK2_Type_II_Pipeline"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_pubmed.ncbi.nlm.nih.gov_24412932",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__c-Abl_phosphorylates_alpha-synuclein_and_regulates_its_degradation"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_pubmed.ncbi.nlm.nih.gov_24412932",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__c-Abl_phosphorylates_alpha-synuclein_and_regulates_its_degradation"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_pubmed.ncbi.nlm.nih.gov_27474410",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Phos-tag_analysis_of_Rab10_phosphorylation_by_LRRK2"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_pubmed.ncbi.nlm.nih.gov_27474410",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Phos-tag_analysis_of_Rab10_phosphorylation_by_LRRK2"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_pubmed.ncbi.nlm.nih.gov_40465731",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Type_II_kinase_inhibitors_that_target_Parkinson's_disease-associated_LRRK2"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_pubmed.ncbi.nlm.nih.gov_40465731",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Type_II_kinase_inhibitors_that_target_Parkinson's_disease-associated_LRRK2"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_www.nature.com_articles_s41531-026-01275-1",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Evaluation_of_c-Abl_inhibitor_vodobatinib_in_early_Parkinson's_disease"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_www.nature.com_articles_s41531-026-01275-1",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Evaluation_of_c-Abl_inhibitor_vodobatinib_in_early_Parkinson's_disease"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_www.parkinson.org_understanding-parkinsons_statistics_prevalence-incidence",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Parkinson's_Foundation_Prevalence_and_Incidence"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_www.parkinson.org_understanding-parkinsons_statistics_prevalence-incidence",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Parkinson's_Foundation_Prevalence_and_Incidence"
+    },
+    {
+      "source": "asset::1st-104",
+      "target": "source::https_clinicaltrials.gov_study_nct06602193",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__BIIB122_Phase_2a_BEACON_-_NCT06602193"
+    },
+    {
+      "source": "scorecard::1st-104_20260818",
+      "target": "source::https_clinicaltrials.gov_study_nct06602193",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__BIIB122_Phase_2a_BEACON_-_NCT06602193"
     }
   ]
 }

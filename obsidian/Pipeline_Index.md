@@ -1,6 +1,6 @@
 # Pipeline Index
 
-> Generated from `json/pipeline-records.json` at `2026-08-12T17:01:59`.
+> Generated from `json/pipeline-records.json` at `2026-08-18T17:19:09`.
 
 ## Assets
 
@@ -84,6 +84,13 @@
 | [[Celltrion, Inc._LC-PC01]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
 | [[VASTHERA Co., Ltd._VTA-27]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - 교세포 향상성|교세포 향상성]] | IND-enabling | 14 / 21 |
 | [[Curacle Co., Ltd._CU71]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 15 / 21 |
+| [[Kine Sciences_KINE-501B]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Hit Discovery | 1 / 9 |
+| [[Kine Sciences_KINE-501C]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Hit Discovery | 1 / 9 |
+| [[Kine Sciences_KINE-501D]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
+| [[Kine Sciences_KINE-501E]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
+| [[Korea Pharma Co Ltd_KP-101]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Korea Pharma Co Ltd_KP-102]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 2 / 9 |
+| [[1ST Biotherapeutics, Inc._1ST-104]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Cytokine 신경조절|Cytokine 신경조절]] | Lead Optimization | 12 / 21 |
 
 ## Navigation
 

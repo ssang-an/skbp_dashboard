@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-12T17:01:59"
+generated_at: "2026-08-18T17:19:09"
 record_id: "VASTHERA Co., Ltd._VTA-27"
 company: "VASTHERA Co., Ltd."
 country: "Republic of Korea"
@@ -505,31 +505,40 @@ VTA-27 is a differentiated IND-enabling oral PRX-mimetic AD program with strong 
           }
         }
       ],
-      "filter3_document_analysis_updated_at": "2026-08-12T05:16:18.715406+00:00",
+      "filter3_document_analysis_updated_at": "2026-08-18T00:54:54.538307+00:00",
       "partnership_auto_suggestion": "unknown",
-      "partnership_auto_note": "ADMET Score 확인 불가",
+      "partnership_auto_note": "ADMET Score, ADMET uploaded 확인 불가",
       "partnership_auto_evidence_sources": [
         "Tab2 구조화 데이터",
-        "Tab2 원문 리포트: VASTHERA Co., Ltd._VTA-27",
-        "사용자 업로드 파일: List of ADMET studies_VTA-27 (Vasthera).pdf",
-        "사용자 업로드 파일: [VASTHERA] VTA-27 program CD_(Aug 2026).pdf"
+        "Full Scout 원문 리포트: VASTHERA Co., Ltd._VTA-27",
+        "Partner Materials: List of ADMET studies_VTA-27 (Vasthera).pdf",
+        "Partner Materials: [VASTHERA] VTA-27 program CD_(Aug 2026).pdf"
       ],
-      "partnership_classification_criteria_version": "1.0",
-      "partnership_note": "ADMET Score 확인 불가",
+      "partnership_classification_criteria_version": "1.3",
+      "partnership_note": "ADMET Score, ADMET uploaded 확인 불가",
       "partnership_evidence_sources": [
         "Tab2 구조화 데이터",
-        "Tab2 원문 리포트: VASTHERA Co., Ltd._VTA-27",
-        "사용자 업로드 파일: List of ADMET studies_VTA-27 (Vasthera).pdf",
-        "사용자 업로드 파일: [VASTHERA] VTA-27 program CD_(Aug 2026).pdf"
+        "Full Scout 원문 리포트: VASTHERA Co., Ltd._VTA-27",
+        "Partner Materials: List of ADMET studies_VTA-27 (Vasthera).pdf",
+        "Partner Materials: [VASTHERA] VTA-27 program CD_(Aug 2026).pdf"
       ],
       "partnership_classification_source": "auto",
-      "partnership_classified_at": "2026-08-12T05:16:18.715478+00:00",
-      "updated_at": "2026-08-12T05:15:34.809225+00:00",
-      "updated_source": "dashboard_tab3",
+      "partnership_classified_at": "2026-08-18T00:54:54.541271+00:00",
+      "updated_at": "2026-08-18T00:54:54.536083+00:00",
+      "updated_source": "dashboard_tab3_oi_partnership_refresh",
       "updated_by": "10.245.225.100",
       "partnership_evidence_updated_at": "2026-08-12T05:15:55.702205+00:00",
       "partner_material_flag_overrides": {
         "cdp": false
+      },
+      "partnership_recalculation": {
+        "version": "1.3",
+        "previous_version": "1.3",
+        "previous_type": "unknown",
+        "previous_source": "auto",
+        "recalculated_at": "2026-08-18T00:54:54.536083+00:00",
+        "source": "dashboard_tab3_oi_partnership_refresh",
+        "scope": "filter3_and_partnership_note_reset_to_latest_auto_classification"
       }
     },
     "edit_history": [

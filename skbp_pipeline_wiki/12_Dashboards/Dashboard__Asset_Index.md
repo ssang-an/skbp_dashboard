@@ -2,6 +2,7 @@
 
 | Asset | Score | Recommendation | Evidence Level |
 |---|---:|---|---|
+| [[02_Assets/Asset__1ST-104|1ST-104]] | 12 | Watch | E3 |
 | [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)]] | 17 | Shortlist | E3 |
 | [[02_Assets/Asset__ABS-1230|ABS-1230]] | 15 | Shortlist | E4 |
 | [[02_Assets/Asset__ADEL-Y04|ADEL-Y04]] | 7 | Run Full Scout | E0 |
@@ -49,6 +50,12 @@
 | [[02_Assets/Asset__ILM01_(GAIA-Aβ)|ILM01 (GAIA-Aβ)]] | 15 | Shortlist | E3 |
 | [[02_Assets/Asset__ILM02|ILM02]] | 2 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__ILM21|ILM21]] | 4 | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__KINE-501B|KINE-501B]] | 1 | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__KINE-501C|KINE-501C]] | 1 | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__KINE-501D|KINE-501D]] | 2 | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__KINE-501E|KINE-501E]] | 2 | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__KP-101|KP-101]] | 0 | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__KP-102|KP-102]] | 2 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__LABthera-003|LABthera-003]] | 0 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__LC-PC01|LC-PC01]] | 2 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__LNK01006|LNK01006]] | 6 | Run Full Scout | E0 |

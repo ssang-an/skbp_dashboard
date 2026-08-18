@@ -6,8 +6,8 @@ aliases:
   - "early_alzheimer's_disease;_parkinson's_disease_expansion_supported_by_c_56c9e561"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

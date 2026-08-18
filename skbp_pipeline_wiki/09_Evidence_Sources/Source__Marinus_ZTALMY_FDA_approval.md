@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/regulatory"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | regulatory |
 | Reliability | medium |
 | URL | https://ir.marinuspharma.com/news/news-details/2022/Marinus-Pharmaceuticals-Announces-FDA-Approval-of-ZTALMY-ganaxolone-for-CDKL5-Deficiency-Disorder/default.aspx |
-| Accessed / generated date | 2026-08-12 |
+| Accessed / generated date | 2026-08-18 |
 
 ## Evidence Summary
 

@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-12T17:01:59"
+generated_at: "2026-08-18T17:19:09"
 record_id: "NeuShen_Therapeutics_NS-041_20260623"
 company: "NeuShen Therapeutics"
 country: "China / United States operations"
@@ -350,17 +350,19 @@ NS-041은 SKBP E/I Balance–Ion Channel 관점에서 biology fit이 강한 임�
       "partnership_auto_suggestion": "n_a",
       "partnership_auto_note": "대상 적응증 아님",
       "partnership_auto_evidence_sources": [
-        "Tab3에 이미 입력된 구조화 데이터"
+        "Tab2 구조화 데이터"
       ],
-      "partnership_classification_criteria_version": "1.0",
+      "partnership_classification_criteria_version": "1.3",
       "partnership_type": "n_a",
       "partnership_note": "대상 적응증 아님",
       "partnership_evidence_sources": [
-        "Tab3에 이미 입력된 구조화 데이터"
+        "Tab2 구조화 데이터"
       ],
       "partnership_classification_source": "auto",
       "partnership_classification_status": "auto_classified",
-      "partnership_classified_at": "2026-07-29T01:32:22.264711+00:00"
+      "partnership_classified_at": "2026-08-13T01:25:06.042989+00:00",
+      "filter3_document_analyses": [],
+      "filter3_document_analysis_updated_at": "2026-08-13T01:25:06.042958+00:00"
     },
     "edit_history": [
       {

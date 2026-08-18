@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-12T17:01:59"
+generated_at: "2026-08-18T17:19:09"
 record_id: "Hyperway Pharmaceutical Co., Ltd._HBW-015"
 company: "Hyperway Pharmaceutical Co., Ltd."
 country: "China"

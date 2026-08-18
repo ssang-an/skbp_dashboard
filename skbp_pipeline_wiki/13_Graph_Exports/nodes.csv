@@ -820,3 +820,59 @@ source::https_clinicaltrials.gov_study_nct02080364,ClinicalTrials.gov NCT0208036
 source::https_clinicaltrials.gov_study_nct06709014,ClinicalTrials.gov NCT06709014 — Buntanetap Phase 3,source,Source__ClinicalTrials.gov_NCT06709014_—_Buntanetap_Phase_3,pipeline/source;source/clinical_registry,,,E3
 source::https_www.neurology.org_doi_10.1212_wnl.0000000000217133,Neurology 2026 — Valiltramiprosate Phase 3 APOLLOE4 topline,source,Source__Neurology_2026_—_Valiltramiprosate_Phase_3_APOLLOE4_topline,pipeline/source;source/scientific_publication,,,E3
 source::https_www.eisai.com_news_2023_pdf_enews202302pdf.pdf,Eisai LEQEMBI U.S. Launch Pricing (2023),source,Source__Eisai_LEQEMBI_U.S._Launch_Pricing_(2023),pipeline/source;source/company_pricing,,,E3
+asset::kine-501b,KINE-501B,asset,Asset__KINE-501B,pipeline/asset;theme/unknown,1,Do not run Full Scout,E0
+company::kine_sciences,Kine Sciences,company,Company__Kine_Sciences,pipeline/company,,,
+target::microglia_(target_cell);_molecular_target_unknown,Microglia (target cell); molecular target Unknown,target,Target__Microglia_(target_cell);_molecular_target_Unknown,pipeline/target,,,
+modality::peptide,Peptide,modality,Modality__Peptide,pipeline/modality,,,
+indication::frontotemporal_dementia_(ftd),Frontotemporal Dementia (FTD),indication,Indication__Frontotemporal_Dementia_(FTD),pipeline/indication,,,
+scorecard::kine-501b_20260818,Scorecard - KINE-501B,scorecard,Scorecard__KINE-501B__20260818,pipeline/scorecard,1,Do not run Full Scout,E0
+source::https_www.kinesciences.com_m31.php,Kine Sciences Pipeline,source,Source__Kine_Sciences_Pipeline,pipeline/source;source/other,,,E0
+source::https_synapse.patsnap.com_drug_fa379a83484c4982992f41e41835858a,Synapse: KINE-501B,source,Source__Synapse_KINE-501B,pipeline/source;source/biopharma_database,,,E0
+asset::kine-501c,KINE-501C,asset,Asset__KINE-501C,pipeline/asset;theme/unknown,1,Do not run Full Scout,E0
+indication::lewy_body_dementia_(lbd),Lewy Body Dementia (LBD),indication,Indication__Lewy_Body_Dementia_(LBD),pipeline/indication,,,
+scorecard::kine-501c_20260818,Scorecard - KINE-501C,scorecard,Scorecard__KINE-501C__20260818,pipeline/scorecard,1,Do not run Full Scout,E0
+source::https_synapse.patsnap.com_drug_bcc0e499d38b45db9154b737b344da60,Synapse: KINE-501C,source,Source__Synapse_KINE-501C,pipeline/source;source/biopharma_database,,,E0
+asset::kine-501d,KINE-501D,asset,Asset__KINE-501D,pipeline/asset;theme/unknown,2,Do not run Full Scout,E0
+scorecard::kine-501d_20260818,Scorecard - KINE-501D,scorecard,Scorecard__KINE-501D__20260818,pipeline/scorecard,2,Do not run Full Scout,E0
+source::https_synapse.patsnap.com_drug_e51eb88adc764dca8d419916642ec2d1,Synapse: KINE-501D,source,Source__Synapse_KINE-501D,pipeline/source;source/biopharma_database,,,E0
+asset::kine-501e,KINE-501E,asset,Asset__KINE-501E,pipeline/asset;theme/unknown,2,Do not run Full Scout,E0
+scorecard::kine-501e_20260818,Scorecard - KINE-501E,scorecard,Scorecard__KINE-501E__20260818,pipeline/scorecard,2,Do not run Full Scout,E0
+source::https_synapse.patsnap.com_drug_7673acce77814a54b56af0c67e6eb23a,Synapse: KINE-501E,source,Source__Synapse_KINE-501E,pipeline/source;source/biopharma_database,,,E0
+asset::kp-101,KP-101,asset,Asset__KP-101,pipeline/asset;theme/unknown,0,Do not run Full Scout,E0
+company::korea_pharma_co_ltd,Korea Pharma Co Ltd,company,Company__Korea_Pharma_Co_Ltd,pipeline/company,,,
+indication::major_depressive_disorder,major depressive disorder,indication,Indication__major_depressive_disorder,pipeline/indication,,,
+scorecard::kp-101_20260818,Scorecard - KP-101,scorecard,Scorecard__KP-101__20260818,pipeline/scorecard,0,Do not run Full Scout,E0
+source::https_koreapharma.co.kr_eng_sub_research_result.php,Korea Pharma Research Results,source,Source__Korea_Pharma_Research_Results,pipeline/source;source/other,,,E0
+asset::kp-102,KP-102,asset,Asset__KP-102,pipeline/asset;theme/unknown,2,Do not run Full Scout,E0
+indication::alzheimer's_dementia,Alzheimer's dementia,indication,Indication__Alzheimer's_dementia,pipeline/indication,,,
+scorecard::kp-102_20260818,Scorecard - KP-102,scorecard,Scorecard__KP-102__20260818,pipeline/scorecard,2,Do not run Full Scout,E0
+asset::1st-104,1ST-104,asset,Asset__1ST-104,pipeline/asset;theme/neuroimmune,12,Watch,E3
+"company::1st_biotherapeutics,_inc","1ST Biotherapeutics, Inc.",company,"Company__1ST_Biotherapeutics,_Inc",pipeline/company,,,
+target::lrrk2_c-abl,LRRK2 / c-Abl,target,Target__LRRK2_c-Abl,pipeline/target,,,
+moa::dual_lrrk2_c-abl_kinase_inhibition_with_prab10_and_pcrkl_suppression_an_0c7d3ba3,Dual LRRK2/c-Abl kinase inhibition with pRab10 and pCrkL suppression and relative pS935 preservation; c-Abl Type II co-crystal confirmed.,moa,MoA__Dual_LRRK2_c-Abl_kinase_inhibition_with_pRab10_and_pCrkL_suppression_an_0c7d3ba3,pipeline/moa,,,
+scorecard::1st-104_20260818,Scorecard - 1ST-104,scorecard,Scorecard__1ST-104__20260818,pipeline/scorecard,12,Watch,E3
+competitor::neuron23_neu-411,NEU-411,competitor,Competitor__Neuron23__NEU-411,pipeline/competitor,,,
+competitor::denali_therapeutics_biogen_biib122_dnl151,BIIB122 / DNL151,competitor,Competitor__Denali_Therapeutics_Biogen__BIIB122_DNL151,pipeline/competitor,,,
+competitor::brenig_therapeutics_bt-267,BT-267,competitor,Competitor__Brenig_Therapeutics__BT-267,pipeline/competitor,,,
+competitor::finsnobio_type_ii_lrrk2_program,Type II LRRK2 program,competitor,Competitor__FinsnoBio__Type_II_LRRK2_program,pipeline/competitor,,,
+competitor::arvinas_arv-102,ARV-102,competitor,Competitor__Arvinas__ARV-102,pipeline/competitor,,,
+competitor::ionis_biogen_biib094,BIIB094,competitor,Competitor__Ionis_Biogen__BIIB094,pipeline/competitor,,,
+competitor::sparc_vodobatinib,Vodobatinib,competitor,Competitor__SPARC__Vodobatinib,pipeline/competitor,,,
+source::https_www.1stbio.com_rd-pipeline,1ST Biotherapeutics R&D Pipeline,source,Source__1ST_Biotherapeutics_R&D_Pipeline,pipeline/source;source/other,,,E3
+source::https_www.1stbio.com_wp-content_uploads_2025_04_1st-biotherapeutics-joi_5551b584,1ST Biotherapeutics Joins The Michael J. Fox Foundation LITE Program,source,Source__1ST_Biotherapeutics_Joins_The_Michael_J._Fox_Foundation_LITE_Program,pipeline/source;source/company_press_release,,,E3
+source::[104]_current_progress_and_key_findings_ncdp.pdf,[104] Current Progress and Key Findings_NCDP.pdf,source,Source__[104]_Current_Progress_and_Key_Findings_NCDP.pdf,pipeline/source;source/user_uploaded_file,,,E3
+source::https_www.1stbio.com_wp-content_uploads_2026_01_1stbio_series_d_completed.pdf,1STBIO Series D Financing Announcement,source,Source__1STBIO_Series_D_Financing_Announcement,pipeline/source;source/company_press_release,,,E3
+source::https_pubmed.ncbi.nlm.nih.gov_15541309,Mutations in LRRK2 cause autosomal-dominant parkinsonism with pleomorphic pathology,source,Source__Mutations_in_LRRK2_cause_autosomal-dominant_parkinsonism_with_pleomorph_eba53ca5,pipeline/source;source/peer_reviewed,,,E3
+source::https_clinicaltrials.gov_study_nct06680830,NEU-411 Phase 2 NEULARK - NCT06680830,source,Source__NEU-411_Phase_2_NEULARK_-_NCT06680830,pipeline/source;source/clinical_registry,,,E3
+source::https_investors.biogen.com_news-releases_news-release-details_biogen-an_e14318e9,BIIB122 Phase 2b LUMA Update,source,Source__BIIB122_Phase_2b_LUMA_Update,pipeline/source;source/company_press_release,,,E3
+source::https_www.brenigther.com,Brenig Therapeutics BT-267 Pipeline,source,Source__Brenig_Therapeutics_BT-267_Pipeline,pipeline/source;source/official_company,,,E3
+source::https_ir.arvinas.com_news-releases_news-release-details_arvinas-announc_c587222b,Arvinas ARV-102 Phase 1 Parkinson's Disease Data,source,Source__Arvinas_ARV-102_Phase_1_Parkinson's_Disease_Data,pipeline/source;source/company_press_release,,,E3
+source::https_clinicaltrials.gov_study_nct03976349,BIIB094 REASON Phase 1 - NCT03976349,source,Source__BIIB094_REASON_Phase_1_-_NCT03976349,pipeline/source;source/clinical_registry,,,E3
+source::https_www.nature.com_articles_s41591-026-04262-4,LRRK2-targeting antisense oligonucleotide in Parkinson's disease,source,Source__LRRK2-targeting_antisense_oligonucleotide_in_Parkinson's_disease,pipeline/source;source/peer_reviewed,,,E3
+source::https_www.finsnobio.com_pipeline,FinsnoBio LRRK2 Type II Pipeline,source,Source__FinsnoBio_LRRK2_Type_II_Pipeline,pipeline/source;source/official_company,,,E3
+source::https_pubmed.ncbi.nlm.nih.gov_24412932,c-Abl phosphorylates alpha-synuclein and regulates its degradation,source,Source__c-Abl_phosphorylates_alpha-synuclein_and_regulates_its_degradation,pipeline/source;source/peer_reviewed,,,E3
+source::https_pubmed.ncbi.nlm.nih.gov_27474410,Phos-tag analysis of Rab10 phosphorylation by LRRK2,source,Source__Phos-tag_analysis_of_Rab10_phosphorylation_by_LRRK2,pipeline/source;source/peer_reviewed,,,E3
+source::https_pubmed.ncbi.nlm.nih.gov_40465731,Type II kinase inhibitors that target Parkinson's disease-associated LRRK2,source,Source__Type_II_kinase_inhibitors_that_target_Parkinson's_disease-associated_LRRK2,pipeline/source;source/peer_reviewed,,,E3
+source::https_www.nature.com_articles_s41531-026-01275-1,Evaluation of c-Abl inhibitor vodobatinib in early Parkinson's disease,source,Source__Evaluation_of_c-Abl_inhibitor_vodobatinib_in_early_Parkinson's_disease,pipeline/source;source/peer_reviewed,,,E3
+source::https_www.parkinson.org_understanding-parkinsons_statistics_prevalence-incidence,Parkinson's Foundation Prevalence and Incidence,source,Source__Parkinson's_Foundation_Prevalence_and_Incidence,pipeline/source;source/patient_foundation,,,E3
+source::https_clinicaltrials.gov_study_nct06602193,BIIB122 Phase 2a BEACON - NCT06602193,source,Source__BIIB122_Phase_2a_BEACON_-_NCT06602193,pipeline/source;source/clinical_registry,,,E3

@@ -6,8 +6,8 @@ aliases:
   - "unknown"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -28,6 +28,9 @@ confidence: "medium"
 - [[02_Assets/Asset__CPB103|CPB103]]
 - [[02_Assets/Asset__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]
 - [[02_Assets/Asset__ILM21|ILM21]]
+- [[02_Assets/Asset__KINE-501E|KINE-501E]]
+- [[02_Assets/Asset__KP-101|KP-101]]
+- [[02_Assets/Asset__KP-102|KP-102]]
 - [[02_Assets/Asset__Neurodegenerative_Diseases_Lilly|Neurodegenerative_Diseases_Lilly]]
 - [[02_Assets/Asset__Neurological_Disorder_Research_Program|Neurological_Disorder_Research_Program]]
 

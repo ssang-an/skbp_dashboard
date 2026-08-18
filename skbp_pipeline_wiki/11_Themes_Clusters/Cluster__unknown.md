@@ -7,8 +7,8 @@ aliases:
 tags:
   - "skbp/cluster"
   - "skbp/taxonomy"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -54,6 +54,12 @@ A reusable biology axis under a Theme that supports repeated target discovery an
 - [[02_Assets/Asset__ILM01|ILM01]]
 - [[02_Assets/Asset__ILM02|ILM02]]
 - [[02_Assets/Asset__ILM21|ILM21]]
+- [[02_Assets/Asset__KINE-501B|KINE-501B]]
+- [[02_Assets/Asset__KINE-501C|KINE-501C]]
+- [[02_Assets/Asset__KINE-501D|KINE-501D]]
+- [[02_Assets/Asset__KINE-501E|KINE-501E]]
+- [[02_Assets/Asset__KP-101|KP-101]]
+- [[02_Assets/Asset__KP-102|KP-102]]
 - [[02_Assets/Asset__LABthera-003|LABthera-003]]
 - [[02_Assets/Asset__LC-PC01|LC-PC01]]
 - [[02_Assets/Asset__LNK01006|LNK01006]]

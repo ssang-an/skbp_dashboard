@@ -6,8 +6,8 @@ aliases:
   - "multi-pathway_cytoprotection_including_anti-inflammatory,_calcium_acido_6a148d1c"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

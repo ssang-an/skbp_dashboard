@@ -6,8 +6,8 @@ aliases:
   - "경구용_bbb_neurovascular_stabilizer_및_endothelial_dysfunction_blocker;_전임상_8d9b4c8c"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

@@ -12,11 +12,11 @@
         "added_at": "2026-07-28T14:52:28.874464+00:00",
         "user_comment": "",
         "due_date": "2026-08-27",
-        "updated_at": "2026-08-12T06:07:35.935978+00:00",
+        "updated_at": "2026-08-18T07:38:35.021311+00:00",
         "updated_source": "dashboard_tab3",
         "updated_by": "127.0.0.1",
         "owner_name": "",
-        "action_plan": "데이터 요청 예정 ",
+        "action_plan": "동물 데이터 요청 예정 ",
         "partnership_type": "investment",
         "partnership_classification_status": "auto_classified",
         "partnership_classification_source": "auto",
@@ -2882,6 +2882,51 @@
           "field": "focus_management.action_plan",
           "previous_value": "",
           "new_value": "데이터 요청 예정 "
+        },
+        {
+          "changed_at": "2026-08-18T07:37:39.989058+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partner_material_flags.cdp",
+          "previous_value": false,
+          "new_value": true
+        },
+        {
+          "changed_at": "2026-08-18T07:37:41.824800+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partner_material_flags.cdp",
+          "previous_value": true,
+          "new_value": false
+        },
+        {
+          "changed_at": "2026-08-18T07:37:52.889668+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partner_material_flags.cdp",
+          "previous_value": false,
+          "new_value": true
+        },
+        {
+          "changed_at": "2026-08-18T07:37:54.702680+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partner_material_flags.cdp",
+          "previous_value": true,
+          "new_value": false
+        },
+        {
+          "changed_at": "2026-08-18T07:38:35.021370+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.action_plan",
+          "previous_value": "데이터 요청 예정 ",
+          "new_value": "동물 데이터 요청 예정 "
         }
       ],
       "last_edited_at": "2026-08-06T02:45:19.876062+00:00",
@@ -6041,6 +6086,24 @@
           "field": "focus_management.add",
           "previous_value": false,
           "new_value": true
+        },
+        {
+          "changed_at": "2026-08-18T08:14:07.775828+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_table_manual_review",
+          "field": "scores.target_relevance",
+          "previous_value": 3,
+          "new_value": 2
+        },
+        {
+          "changed_at": "2026-08-18T08:14:26.163792+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_table_manual_review",
+          "field": "scores.target_relevance",
+          "previous_value": 2,
+          "new_value": 3
         }
       ],
       "last_edited_at": "2026-08-01T17:42:40.444352+00:00",
@@ -6523,7 +6586,43 @@
         }
       ],
       "review_type": "full_scout",
-      "storage_profile": "dashboard_hybrid_v1"
+      "storage_profile": "dashboard_hybrid_v1",
+      "human_review": {
+        "overrides": {
+          "scores": {
+            "target_relevance": 3
+          }
+        },
+        "ai_baseline": {
+          "scores": {
+            "target_relevance": 3
+          }
+        },
+        "history": [
+          {
+            "changed_at": "2026-08-18T08:14:07.775672+00:00",
+            "actor_ip": "127.0.0.1",
+            "actor_name": "정주원",
+            "source": "dashboard_table",
+            "field": "scores.target_relevance",
+            "previous_value": 3,
+            "new_value": 2
+          },
+          {
+            "changed_at": "2026-08-18T08:14:26.163742+00:00",
+            "actor_ip": "127.0.0.1",
+            "actor_name": "정주원",
+            "source": "dashboard_table",
+            "field": "scores.target_relevance",
+            "previous_value": 2,
+            "new_value": 3
+          }
+        ],
+        "last_updated_at": "2026-08-18T08:14:26.163742+00:00",
+        "last_updated_source": "dashboard_table",
+        "last_updated_by": "정주원",
+        "has_manual_override": true
+      }
     },
     "source_report": {
       "raw_markdown": "# Shaperon Pipeline Scout Report: **HY209 / NuCerin**\n\n> **Recalculated by Full Scout Rubric v3.3:** 2026-08-01 대시보드에서 저장된 7개 criterion score와 최신 v3.3 Filter 2 규칙으로 Total Score 및 결정값을 재계산했습니다. 기존 수동 criterion/Total Score override는 해제했으며 원조사 evidence와 본문, 담당자의 명시적인 Human decision 및 코멘트는 유지했습니다.\n\n본 보고서는 SKBP Pipeline Finder v3.0용으로 작성되었으며, 사용자 제공 SKBP v3.0 템플릿을 기준으로 구성했다. :contentReference[oaicite:0]{index=0}  \n모든 핵심 판단에는 auditability를 위해 URL을 포함했다. HY209는 Shaperon의 GPCR19/TGR5 agonist 계열 물질이며, 본 보고서는 CNS 관점에서 **NuCerin / Alzheimer’s disease** 프로그램을 중심으로 평가한다. NuGel, NuSepin, NuPulin 등 다른 HY209/GPCR19 프로그램은 확장성 근거로만 반영했다.\n\n> **기준 업데이트 (v3.1):** 이 원문은 최초 작성 기준을 보존하되, 2026-06-23 Detail AI Agent 검토를 통해 **SKBP Pipeline Finder v3.1 기준으로 재평가 및 업데이트**되었습니다. 최신 판단은 JSON fields와 아래 Revision Note를 기준으로 봅니다.\n\n---\n\n## 1) Company Profile\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Shaperon Inc. / 샤페론 | [1], [2], [3] |\n| Legal name / aliases | Shaperon Inc.; 주식회사 샤페론; KRX 378800; HY209 aliases: HY-209, taurodeoxycholic acid / sodium taurodeoxycholate, TDCA | [3], [22], [23] |\n| Country | Republic of Korea | [1], [3] |\n| Headquarters | 서울시 강남구 자곡로 174-10, 강남에이스타워 G9 218호 & 606호 | [1], [2] |\n| Website | https://shaperon.com/en/main/main.html | [1] |\n| Company type / stage | KOSDAQ-listed clinical-stage biotech; inflammasome inhibitor and nanobody platform company | [3], [4], [5] |\n| Focus areas | Inflammasome inhibitors, GPCR19-P2X7-NLRP3 modulation, neuroinflammation, dermatology, systemic inflammation, fibrosis, nanobody / NanoMab | [1], [2], [4], [19] |\n| Platform summary | GPCR19 agonist / GPCR19-P2X7 modulation platform designed to suppress inflammasome priming and activation phases and reduce IL-1β, IL-18, IL-6, TNF-α signaling; also has NanoMab and AIDEN AI platform | [1], [2], [19] |\n| Financing / partnership signals | Public company; BIO profile identifies Shaperon as clinical-stage biotech; Bridge Biotherapeutics licensed GPCR19 agonist BBT-209 for IPF in a ₩30B headline-value deal; broader partnership/news validation exists but NuCerin commercial rights need direct diligence | [3], [4], [21] |\n| Lead pipeline summary | NuGel: atopic dermatitis, Korea Phase IIa completed and U.S. Phase IIb Part 1 completed; NuCerin: Alzheimer’s disease, Korea Phase I Part A completed and Part B ongoing per Shaperon; NuSepin: systemic inflammation/COVID/CVA; NuPulin: IPF | [1], [2] |\n\n---\n\n## 2) Pipeline Snapshot\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Shaperon Inc. | [1], [2], [3] |\n| Lead asset | HY209 / NuCerin | [1], [2], [8], [22] |\n| Target | GPCR19 / TGR5; downstream regulation of P2X7R-mediated NLRP3 inflammasome activation in microglia | [5], [19], [22] |\n| Theme / Cluster | Theme: **Neuroimmune** / Cluster: **Cytokine 신경조절** | Internal SKBP mapping + [5], [6], [19] |\n| MoA | TDCA/HY209 activates GPCR19/TGR5, modulates GPCR19-P2X7 interaction, suppresses P2X7R-mediated Ca²⁺ mobilization, NLRP3 inflammasome oligomerization and IL-1β/IL-18 production; in AD mouse models, reported to reduce Aβ plaques, microgliosis, neuronal loss and improve memory | [5], [20] |\n| Modality / Platform | Oral small molecule GPCR19/TGR5 agonist / inflammasome modulator; Shaperon describes NuCerin as oral GPCR19-targeting therapy | [1], [2], [5], [8] |\n| Indication | Alzheimer’s disease, especially early/mild-to-moderate AD positioning; exact clinical label not established | [1], [2], [8], [15] |\n| Stage | AD/NuCerin: Korea Phase I Part A completed and Part B ongoing per Shaperon official site. NCT06533878 is listed as HY209 Phase I healthy-volunteer trial; CenterWatch lists sponsor as Kukjeon Pharmaceutical, creating ownership/operational ambiguity requiring diligence. | [1], [2], [8], [9] |\n| Key data | 2022 Frontiers paper: TDCA inhibited microglial NLRP3 activation and improved AD mouse model endpoints. 2024 Alzheimer’s & Dementia abstract: oral NuCerin 30 mg/kg b.i.d. for 12 weeks in 5xFAD mice improved MWM/NOR cognition, reduced amyloid plaque deposition, preserved NeuN-positive neurons, and identified a serum biomarker candidate. | [5], [20] |\n\nAllowed Theme values:\n- E/I Balance\n- Neuroimmune\n- No Theme\n\nAllowed clusters:\n- E/I Balance: Ion Channel, Inhibitory Tone 강화, Synaptic Transmission, Chloride Homeostasis, Network Modulation\n- Neuroimmune: CNS 손상 면역반응, 교세포 향상성, Cytokine 신경조절, 손상/질환 면역조절, 말초 면역기관 연결\n\n---\n\n## 3) Scorecard Summary\n\n| Criterion | Score | One-line judgment | Evidence used |\n|---|---:|---|---|\n| Target Relevance | 3 / 3 | GPCR19-P2X7-NLRP3 axis is directly aligned with AD neuroinflammation and SKBP Neuroimmune / Cytokine 신경조절 cluster. | [5], [6], [19] |\n| Competitive Landscape | 2 / 3 | Same-MoA GPCR19 AD competitors appear sparse, but AD itself is highly competitive due to approved anti-Aβ mAbs and adjacent oral NLRP3 neuroinflammation assets. | [11], [12], [18], [24], [25], [26] |\n| MoA Validity | 2 / 3 | Strong preclinical mechanistic package exists, but human AD efficacy and CNS target engagement are not yet visible. | [5], [20], [8] |\n| Platform Attractiveness | 2 / 3 | Oral small molecule GPCR19 platform fits SKBP modality preference and has multi-indication human validation signals, but CNS exposure/biomarker differentiation remains insufficiently public. | [1], [2], [10], [19] |\n| Expansion Potential | 3 / 3 | GPCR19 biology is reused across AD, atopic dermatitis, SIRS/COVID/CVA, IPF, DFU and alopecia programs, supporting broad platform expansion. | [1], [2], [21], [24] |\n| Data Maturity | 2 / 3 | In vitro/in vivo AD evidence and Phase I safety/PK signals exist, but no patient efficacy, CSF/brain target engagement or Phase II AD data are public. | [5], [8], [10], [20] |\n| Marketability | 2 / 3 | A. TAP ≈ 3.25M; B. Unrisked Peak Sales ≈ USD 2,959M; C. Obtainable Peak Sales ≈ USD 1,562M after competition/pricing haircuts. | [1], [14], [15], [16], [17] |\n| **Total** | **16 / 21** | Strong watchlist asset; shortlist depends on human PK/CSF biomarker and rights clarity. |  |\n\n---\n\n## 4) Criterion Detail Pages\n\n### 4.1 Target Relevance\nScore: **3 / 3**  \nMain line: **GPCR19/TGR5-P2X7R-NLRP3 axis maps tightly to AD neuroinflammation and SKBP Neuroimmune / Cytokine 신경조절 cluster.**\n\nWhat was checked:\n- Target identity: GPCR19/TGR5 agonist; HY209/TDCA.\n- Disease/biology relevance: microglial P2X7R-mediated NLRP3 inflammasome activation by Aβ.\n- SKBP Theme / Cluster fit: Neuroimmune / Cytokine 신경조절.\n- General neurodegeneration / neuroinflammation / epilepsy relevance: strongest for AD/neuroinflammation; broader NLRP3 relevance across PD/AD/epilepsy is supported by competitor pipelines but HY209’s direct public data are AD-focused.\n\nEvidence trail:\n- Frontiers 2022 paper states that Aβ and/or ATP activate NLRP3 inflammasome via P2X7R in microglia and that TDCA, a GPCR19 ligand, suppressed priming/activation phases and improved AD mouse endpoints. [5]\n- Shaperon describes NuCerin as an oral therapy targeting both Aβ and neuroinflammation, with the development rationale positioned against antibody limitations. [1], [2]\n- Hudson/Shaperon platform description states GPCR19-P2X7 modulation suppresses broad inflammatory cytokines including IL-1β, IL-18, IL-6 and TNF-α. [19]\n- AD/NLRP3 literature supports NLRP3 inflammasome as a relevant pathological node in AD. [6]\n\nInvestigation note:\n- 3점으로 판단한 이유는 target이 단순히 “염증 관련”이 아니라, **Aβ → microglia → P2X7R/NLRP3 → IL-1β/IL-18 → neuroinflammation** 흐름에 직접 연결되어 있으며 SKBP Neuroimmune theme에 정합성이 높기 때문이다.\n- 단, TGR5 biology는 CNS에서 context-dependent할 수 있다는 문헌도 있어, cell-type specific effect와 chronic activation risk는 추가 검증이 필요하다. [27]\n\nUncertain points:\n- Human AD brain/CSF에서 GPCR19 engagement가 실제로 확인되는지 불명확.\n- GPCR19/TGR5 activation이 neuron, astrocyte, microglia에서 동일하게 유리한지 불명확.\n- HY209 oral dosing 후 CNS exposure 및 target occupancy 자료가 공개적으로 충분하지 않음.\n\n### 4.2 Competitive Landscape\nScore: **2 / 3**  \nMain line: **AD 시장은 매우 혼잡하지만, true same-MoA GPCR19 AD front-runner는 명확하지 않아 차별성은 있다. 다만 anti-Aβ mAb와 oral NLRP3 계열이 주요 압박 요인이다.**\n\nWhat was checked:\n- Same disease competitors: approved anti-Aβ therapies and early AD DMTs.\n- Same target competitors: direct GPCR19/TGR5 AD clinical competitor는 확인 제한적.\n- Same or similar MoA competitors: NLRP3 inflammasome inhibitors in neurodegeneration.\n- Front runner count: approved anti-Aβ mAbs 2개 이상; NLRP3 oral CNS assets multiple.\n- Approved / Phase 3 / clinical / preclinical status.\n\nCompetitor table:\n\n| Competitor | Company | Modality | Target / MoA | Stage | Similarity level | Why it matters | Source |\n|---|---|---|---|---|---|---|---|\n| Leqembi / lecanemab | Eisai / Biogen / BioArctic | mAb | Anti-Aβ protofibril antibody | FDA traditional approval for early AD | Low MoA / High disease | First major approved disease-modifying benchmark; IV, ARIA risk, high cost create oral non-amyloid opportunity but also establishes efficacy bar. | [11], [16] |\n| Kisunla / donanemab | Eli Lilly | mAb | Anti-Aβ plaque antibody | FDA approved; EMA also reviewed/authorized in selected early AD population | Low MoA / High disease | Second approved anti-Aβ DMT; reinforces amyloid biomarker and early AD clinical standard; ARIA and infusion burden support oral alternative positioning. | [12], [13], [17] |\n| NT-0796 | NodThera | Oral small molecule | Brain-penetrant NLRP3 inhibitor | Phase Ib/IIa PD biomarker data; Phase II planning | Medium | Similar neuroinflammation / inflammasome biology; not same upstream target but competes for oral CNS inflammasome thesis. | [24], [25] |\n| VTX3232 | Ventyx Biosciences | Oral small molecule | NLRP3 inhibitor | Phase 2a PD / NCT06556173 | Medium | CNS inflammasome clinical competitor; target engagement and clinical biomarker package could set the bar for NuCerin. | [26] |\n| VENT-02 | Ventus Therapeutics | Oral small molecule | Brain-penetrant NLRP3 inhibitor | Phase 2a PD initiated; later status appears uncertain/possibly terminated in secondary sources | Medium | Similar CNS inflammasome positioning; demonstrates active industry pursuit of oral CNS NLRP3 modulation. | [18], [28] |\n| Dapansutrile / OLT1177 | Olatec | Oral small molecule | Selective NLRP3 inhibitor | Human inflammatory disease clinical data; AD evidence mainly preclinical/review-level | Medium-Low | Similar downstream inflammasome node, but not GPCR19 and not clearly active AD clinical competitor. | [6], [29] |\n\nInvestigation note:\n- 경쟁 분석은 “같은 질환 AD”와 “같은 biology neuroinflammation/NLRP3”를 분리해서 봐야 한다.\n- Leqembi/Kisunla는 같은 MoA는 아니지만 AD DMT 시장의 clinical efficacy, biomarker, reimbursement bar를 만든다.\n- NT-0796/VTX3232/VENT-02/OLT1177은 AD 직접 경쟁보다는 “oral CNS inflammasome” thesis의 adjacent competitors이다.\n- 2점인 이유: same-MoA direct crowding은 낮지만, AD 시장의 front-runner와 adjacent NLRP3 경쟁이 모두 존재한다.\n\nUncertain points:\n- GPCR19/TGR5-specific AD competitor landscape는 patent/database 기반 추가 검색 필요.\n- VENT-02의 최신 임상 상태는 공식 trial registry 및 회사 업데이트로 재확인 필요.\n- NuCerin의 expected entry order는 HY209 Phase I 완료 후 AD Phase II 진입 여부에 따라 크게 달라짐.\n\n### 4.3 MoA Validity\nScore: **2 / 3**  \nMain line: **Mechanistic validation은 뚜렷하지만, 아직 human AD PoC가 없어 3점은 아니다.**\n\nWhat was checked:\n- Journal publication / PMID / DOI.\n- Mechanistic consistency.\n- Functional readout.\n- Disease linkage.\n- Safety-relevant signal.\n\nEvidence trail:\n- Frontiers Immunology 2022: TDCA/HY209는 GPCR19 agonist로 사용되었고, Aβ/ATP 자극 microglia에서 IL-1β secretion 억제 IC50 490.6 nM, P2X7R expression 및 Ca²⁺ mobilization 억제, NLRP3 activation 억제를 보였다. [5]\n- 같은 논문에서 TDCA는 5xFAD mouse에서 Aβ plaque, microgliosis, neuronal loss를 줄이고 memory function을 개선했다고 보고했다. [5]\n- 2024 Alzheimer’s & Dementia abstract는 oral NuCerin 30 mg/kg b.i.d. 12주 투여에서 MWM/NOR 개선, amyloid plaque 감소, NeuN-positive neuron preservation을 보고했다. [20]\n- TGR5 activation의 CNS 효과는 긍정/부정 문헌이 공존하므로 cell-type, disease stage, dose duration 검증이 필요하다. [27], [30]\n\nInvestigation note:\n- 2점 이상 조건인 publication/equivalent technical evidence는 충족한다.\n- 3점이 아닌 이유는 AD patient efficacy, CSF biomarker, target engagement, dose-response, chronic safety window가 아직 공개적으로 확인되지 않았기 때문이다.\n\nUncertain points:\n- oral HY209가 사람에서 충분한 brain/CSF exposure를 확보하는지.\n- GPCR19 agonism이 chronic AD setting에서 microglia에 선택적으로 작동하는지.\n- Aβ clearance와 neuroinflammation 억제 중 어느 축이 clinical benefit에 핵심인지.\n\n### 4.4 Platform Attractiveness\nScore: **2 / 3**  \nMain line: **Oral small molecule GPCR19 platform은 매력적이나, CNS-specific differentiation data는 아직 제한적이다.**\n\nWhat was checked:\n- Is the platform real and reproducible?\n- Is differentiation supported by data?\n- Does modality fit SKBP priorities?\n- Preferred modalities: small molecule, ASO, siRNA.\n- Secondary modalities: AOC, antibody, biologic.\n\nEvidence trail:\n- Shaperon은 GPCR19-targeting inflammasome inhibitor platform을 기반으로 NuGel, NuCerin, NuSepin, NuPulin 등 복수 파이프라인을 전개하고 있다. [1], [2]\n- Hudson/Shaperon platform page는 GPCR19-P2X7 modulation이 priming/activation phases를 동시에 조절한다고 설명한다. [19]\n- HY209 IV Phase I safety/PK publication은 sepsis/systemic inflammation indication에서 단회 정맥투여 안전성 및 dose proportional PK를 보고했다. [10]\n- NuGel의 atopic dermatitis clinical progress는 GPCR19 class의 human development experience를 뒷받침하지만, 이는 topical dermatology 프로그램이므로 CNS NuCerin에 직접 전이되는 근거는 제한적이다. [1], [2], [9]\n\nInvestigation note:\n- 2점 이상인 이유는 small molecule, oral 가능성, multi-indication use, human safety experience가 있기 때문이다.\n- 3점이 아닌 이유는 CNS drug-like profile, BBB/CSF penetration, human target engagement, biomarker differentiation이 공개 자료에서 아직 충분하지 않기 때문이다.\n\nUncertain points:\n- HY209 oral tablet의 human PK, food effect, brain penetration, CSF exposure.\n- GPCR19 agonist의 long-term tolerability and off-target bile-acid receptor effects.\n- Kukjeon Pharmaceutical이 sponsor로 표시되는 Phase I trial의 rights/ownership 구조.\n\n### 4.5 Expansion Potential\nScore: **3 / 3**  \nMain line: **같은 GPCR19/inflammasome biology가 AD 외 다수 적응증으로 확장되어 있어 platform expansion 근거가 강하다.**\n\nWhat was checked:\n- Expansion beyond main indication.\n- Same biology/platform reuse.\n- Adjacent indications.\n- Multiple assets from same platform.\n\nEvidence trail:\n- Shaperon pipeline은 GPCR19 agonist 기반으로 NuCerin AD, NuGel atopic dermatitis, NuSepin COVID/SIRS/CVA, NuPulin IPF, NuDifin diabetic foot ulcer, NuAreatin alopecia areata 등 다수 indication을 제시한다. [1], [2]\n- NuSepin은 systemic inflammation, COVID-19, SIRS, ischemic stroke 등으로 확장 가능성이 언급된다. [1], [2]\n- Bridge Biotherapeutics와의 IPF GPCR19 agonist BBT-209 라이선스 사례는 non-CNS fibrosis expansion 가능성을 보여준다. [21]\n- TGR5/GPCR19 neuroinflammation biology는 stroke, PD, AD 등 CNS inflammation axis와 연결된다. [7], [24], [25], [26]\n\nInvestigation note:\n- Adjacent indication이 단순히 AD의 다른 표현이 아니라 dermatology, systemic inflammation, fibrosis, wound healing, stroke 등으로 넓게 확장되어 있으므로 3점으로 판단했다.\n- 다만 이는 “platform breadth” 점수이고, NuCerin 단일 프로그램의 임상 성공 가능성을 의미하지는 않는다.\n\nUncertain points:\n- 각 indication별 compound가 동일 HY209인지, salt/formulation/route 차이가 있는지 확인 필요.\n- Shaperon vs partner별 지역권/적응증권리 분할 여부 확인 필요.\n\n### 4.6 Data Maturity\nScore: **2 / 3**  \nMain line: **전임상 data package는 비교적 탄탄하지만, AD 환자 human PoC는 아직 없다.**\n\nWhat was checked:\n- In vitro data.\n- In vivo data.\n- Quantitative result.\n- Reproducibility.\n- IND-enabling / GLP tox / PK/PD / CMC / human data availability.\n\nEvidence trail:\n- In vitro: microglia Aβ/ATP stimulation model에서 IL-1β secretion, Ca²⁺ mobilization, P2X7R expression, NLRP3 activation readouts가 제시되었다. [5]\n- In vivo: 5xFAD mouse에서 Aβ plaque, microgliosis, neuronal loss, memory function 개선이 보고되었다. [5]\n- Oral NuCerin abstract: 12주 oral dosing, MWM/NOR, Thioflavin-S plaque, NeuN staining, serum LC-MS/MS biomarker 탐색이 보고되었다. [20]\n- Clinical: NCT06533878 Phase I healthy-volunteer HY209 trial이 등록되어 있고, Shaperon은 Korea Phase I Part A completed / Part B ongoing으로 설명한다. [1], [8], [9]\n- HY209 IV Phase I publication은 systemic indication에서 safety/PK를 보고하나, oral CNS indication과는 route/indication이 다르다. [10]\n\nInvestigation note:\n- 이 점수는 시장 hype가 아니라 preclinical experimental evidence와 human safety readiness에 기반했다.\n- 2점인 이유는 in vitro + in vivo + clinical Phase I 진입 근거가 있기 때문이다.\n- 3점이 아닌 이유는 AD patient biomarker/efficacy, CSF exposure, GLP tox/CMC package, Phase II data가 공개적으로 부족하기 때문이다.\n\nUncertain points:\n- HY209 oral AD Phase I 최종 CSR.\n- MAD Part B safety/PK 결과 및 dose selection rationale.\n- AD Phase II design, biomarker inclusion criteria, CSF/plasma inflammatory biomarker plan.\n\n### 4.7 Marketability\nScore: **2 / 3**  \nMain line: **A. TAP ≈ 3.25M, B. Unrisked Peak Sales ≈ USD 2,959M, C. Obtainable Peak Sales ≈ USD 1,562M로 산정되어 2점이다.**\n\nWhat was checked:\n- Targetable addressable patient.\n- Unrisked peak sales.\n- Competition haircut.\n- Pricing power adjustment.\n- Expansion capacity adjustment.\n\nWorksheet:\n\n| Step | What to fill | Evidence / assumption |\n|---|---|---|\n| A. TAP | Global dementia 57M x AD share 65% = AD-estimated pool 37.05M. Diagnosis/access rate 45% x early/mild eligible rate 30% x treatable subgroup rate 65% = **TAP ≈ 3,251,138 patients**. | WHO reports 57M dementia patients in 2021 and AD as 60-70% of dementia cases. Diagnosis/access and eligibility rates are analyst assumptions due no approved label. [15] |\n| B. Unrisked Peak Sales | TAP 3,251,138 x annual net price USD 13,000 x peak penetration 7% x duration factor 1.0 = **USD 2,958.5M**. | Annual net price assumes oral small molecule discount vs Leqembi USD 26,500/year and Kisunla antibody pricing context. [16], [17] |\n| Entry-order matrix | 3-player example: 1st ~50%, 2nd ~30%, 3rd ~20%. NuCerin is assumed to be a later entrant in AD DMT, but differentiated oral neuroimmune MoA may avoid direct same-MoA crowding. | Approved mAbs and oral NLRP3 assets considered. [11], [12], [24], [26] |\n| C. Obtainable Peak Sales | Unrisked USD 2,958.5M x competition haircut 0.55 x pricing power adjustment 0.80 x expansion capacity adjustment 1.20 = **USD 1,562.1M**. | Competition haircut reflects approved mAbs and emerging oral inflammasome competitors; expansion adjustment reflects oral safety/convenience and multi-indication platform. |\n| Final score basis | 0 < weak market, 1 < USD 1,000M obtainable, 2 >= USD 1,000M, 3 >= USD 2,000M + high expansion | Obtainable Peak Sales is > USD 1B but < USD 2B, so 2점. |\n\nInvestigation note:\n- Marketability is based on obtainable peak sales, not rNPV.\n- Always show TAP -> Unrisked Peak Sales -> Obtainable Peak Sales.\n- All sales outputs are in million USD.\n- Shaperon’s own market outlook states global AD treatment market may grow from USD 6.4B in 2025 to USD 31B in 2034; this supports market size but is company-provided, so it was used as directional evidence, not sole basis. [2]\n\nUncertain points:\n- NuCerin’s final label: prodromal AD, MCI due to AD, mild AD, mild-to-moderate AD, or broader AD.\n- Pricing will depend on efficacy, biomarker requirement, monitoring burden, and whether oral therapy can reduce MRI/infusion infrastructure.\n- Global reimbursement and diagnosis/access rates are highly uncertain.\n\n---\n\n## 5) Validation Notes\n\nCross-checked facts:\n- HY209 / NuCerin identity was cross-checked across Shaperon official pipeline, Synapse/Patsnap, AdisInsight, and Frontiers publication. [1], [2], [5], [22], [23]\n- GPCR19/TGR5-P2X7-NLRP3 MoA was cross-checked across Frontiers publication, Shaperon/Hudson platform explanation, and BIO company profile. [4], [5], [19]\n- Clinical stage was cross-checked between Shaperon official site and CenterWatch/NCT06533878 listing; however, sponsor/ownership discrepancy remains. [1], [2], [8], [9]\n- AD market assumptions were grounded using WHO global dementia prevalence, Alzheimer’s Association U.S. prevalence, and approved antibody pricing context. [14], [15], [16], [17]\n\nUncertain points:\n- **Ownership / sponsorship:** NCT06533878 lists Kukjeon Pharmaceutical as sponsor in CenterWatch, while Shaperon lists NuCerin in its pipeline. Need official agreement/IR disclosure clarifying rights.\n- **Clinical status:** Shaperon official says Phase I Part A completed and Part B ongoing; later Korean news suggests completion, but this should be verified against MFDS/ClinicalTrials.gov/CSR.\n- **CNS exposure:** Public data do not yet provide clear oral human brain/CSF exposure or GPCR19 target engagement.\n- **Differentiation vs NLRP3 inhibitors:** HY209 is upstream GPCR19 modulation, not direct NLRP3 inhibition. Need head-to-head or biomarker evidence.\n- **TGR5 biology:** Some literature reports context-dependent or potentially detrimental TGR5 effects in AD models, so chronic dosing risk requires diligence. [27], [30]\n\nSearch log:\n- Official company page: Shaperon homepage and pipeline page. [1], [2]\n- Pipeline page: NuCerin, NuGel, NuSepin, NuPulin sections. [1], [2]\n- Platform page: Shaperon/Hudson GPCR19-P2X7 inflammasome platform. [19]\n- Publications: Frontiers Immunology 2022; Alzheimer’s & Dementia 2024 abstract; HY209 Phase I safety/PK publication. [5], [10], [20]\n- Regulatory / trial registry: NCT06533878 via CenterWatch / ClinicalTrials.gov URL. [8], [9]\n- Competitor sources: FDA Leqembi/Kisunla, NodThera NT-0796, Ventyx VTX3232, Ventus VENT-02, NLRP3 inhibitor review. [11], [12], [18], [24], [26], [29]\n- Market / epidemiology sources: WHO dementia fact sheet, Alzheimer’s Association Facts & Figures, Leqembi/Kisunla pricing context. [14], [15], [16], [17]\n- Financing / partnership sources: BIO profile, Bridge/Shaperon GPCR19 license news. [4], [21]\n\n---\n\n## 6) Final Take\n\nOne-line summary: **HY209/NuCerin은 SKBP Neuroimmune theme에 잘 맞는 oral GPCR19/TGR5-P2X7/NLRP3 AD asset이지만, human CNS target engagement와 AD efficacy가 아직 보이지 않아 “Watch”가 적절하다.**\n\nRecommendation:\n- **Watch**\n\nMost important diligence question:\n- **Oral HY209가 사람에서 충분한 brain/CSF exposure와 GPCR19-P2X7/NLRP3 target engagement를 만들고, AD-relevant biomarker 또는 cognitive signal을 보여줄 수 있는가?**\n\n---\n\n## References\n\n[1]: https://shaperon.com/en/main/main.html \"Shaperon official homepage\"\n[2]: https://shaperon.com/en/sub/pipeline.html \"Shaperon official pipeline page\"\n[3]: https://englishdart.fss.or.kr/dsbc001/selectPopup.ax?selectKey=01387164 \"DART company information: Shaperon Inc.\"\n[4]: https://www.bio.org/events/bio-international-convention/sessions/2420132 \"BIO International Convention company profile: Shaperon\"\n[5]: https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2022.766919/full \"GPCR19 regulates P2X7R-mediated NLRP3 inflammasome activation in AD mouse model\"\n[6]: https://www.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2022.845185/full \"The Role of NLRP3 Inflammasome in Alzheimer's Disease\"\n[7]: https://link.springer.com/article/10.1186/s12974-021-02087-1 \"TGR5 activation attenuates neuroinflammation after MCAO\"\n[8]: https://www.centerwatch.com/clinical-trials/listings/NCT06533878/evaluate-tolerability-and-safety-of-hy209-in-healthy-volunteers \"NCT06533878 HY209 Phase 1 listing\"\n[9]: https://clinicaltrials.gov/study/NCT06533878 \"ClinicalTrials.gov NCT06533878\"\n[10]: https://doaj.org/article/89f6e0b19a8d46f9b3063ba13be1f0d1 \"HY209 IV Phase 1 safety PK publication\"\n[11]: https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval \"FDA Leqembi traditional approval\"\n[12]: https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease \"FDA Kisunla approval\"\n[13]: https://www.ema.europa.eu/en/medicines/human/EPAR/kisunla \"EMA Kisunla overview\"\n[14]: https://www.alz.org/alzheimers-dementia/facts-figures \"Alzheimer's Association Facts and Figures\"\n[15]: https://www.who.int/news-room/fact-sheets/detail/dementia \"WHO dementia fact sheet\"\n[16]: https://www.eisai.com/news/2023/news202302.html \"Eisai U.S. pricing for Leqembi\"\n[17]: https://investor.lilly.com/news-releases/news-release-details/lillys-kisunlatm-donanemab-azbt-approved-fda-treatment-early \"Lilly Kisunla FDA approval and pricing context\"\n[18]: https://www.alzdiscovery.org/uploads/cognitive_vitality_media/NLRP3_Inhibitors_UPDATE_%28drug_in_development%29.pdf \"Cognitive Vitality NLRP3 inhibitors update\"\n[19]: https://hudsontherapeutics.com/inflammasome \"Hudson/Shaperon GPCR19-P2X7 inflammasome platform\"\n[20]: https://app.rndcircle.io/lab/c061ff05-ac82-4bae-93f1-aa04115834c0/papers/f5c5fe56-38a0-4803-a802-1990eccb7e5c \"NuCerin oral HY209 in AD mouse model abstract summary\"\n[21]: https://www.bioworld.com/articles/518211-bridge-biotherapeutics-inks-30b-deal-with-shaperon-for-gpcr19-agonist \"Bridge Biotherapeutics and Shaperon GPCR19 license news\"\n[22]: https://synapse.patsnap.com/drug/d957c5540bf044a1b51095232e982c66 \"Synapse taurodeoxycholic acid / HY209 profile\"\n[23]: https://adisinsight.springer.com/drugs/800051733 \"AdisInsight: taurodeoxycholic acid / HY209\"\n[24]: https://www.nodthera.com/news/nodtheras-nlrp3-inhibitor-nt-0796-reverses-neuroinflammation-in-parkinsons-disease-phase-ib-iia-trial/ \"NodThera NT-0796 Phase Ib/IIa PD data\"\n[25]: https://movementdisorders.onlinelibrary.wiley.com/doi/full/10.1002/mds.30307 \"NT-0796 anti-neuroinflammatory effects publication\"\n[26]: https://clinicaltrials.gov/study/NCT06556173 \"VTX3232 Phase 2a Parkinson's disease clinical trial\"\n[27]: https://www.mdpi.com/1422-0067/25/17/9279 \"Emerging roles of bile acids and TGR5 in CNS\"\n[28]: https://www.ventustx.com/ventus-therapeutics-announces-first-patient-dosed-in-phase-2a-clinical-trial-evaluating-vent-02-an-oral-brain-penetrant-nlrp3-inhibitor-in-parkinsons-disease/ \"Ventus VENT-02 Phase 2a PD trial announcement\"\n[29]: https://www.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2025.1731165/full \"Dapansutrile therapeutic applications review\"\n[30]: https://pmc.ncbi.nlm.nih.gov/articles/PMC11212731/ \"TGR5 deletion effects in AD mouse model\"\n\n---\n\n## AI Agent Revision Note (GPT 지침 2 v3.1, 2026-06-23)\n\n- Revision basis: Detail AI Agent v3.1 re-evaluation applied from chat answer.\n- Version applied: GPT 지침 2 v3.1\n- Applied at: 2026-06-23T10:13:38.578688+00:00\n- Scope: JSON scoring fields and source report amendment generated from detail-page Agent discussion.\n\n### Applied JSON Changes\n\n- structured_table.sources +1\n- source_report.raw_markdown GPT 지침 2 v3.1 update badge\n\n### Agent Discussion Summary Used For Revision\n\nv3.0 → v3.1 변경점과 HY209/NuCerin 반영 방안을 아래에 정리합니다.\n\n---\n\nv3.1에서 달라진 주요 기준 (wiki note 및 scorecard 기반 추론)\nEvidence type 세분화: E1(규제/임상), E2(간접/클래스), E3(자산 특이 전임상/기술)로 명확히 구분. 각 criterion에 evidence_type 필드가 추가됨.\n**“Why not",
@@ -17268,9 +17367,13 @@
         ],
         "partnership_classification_source": "auto",
         "partnership_classified_at": "2026-08-13T01:25:06.044672+00:00",
-        "updated_at": "2026-08-12T05:06:16.998727+00:00",
+        "updated_at": "2026-08-18T08:26:35.179716+00:00",
         "updated_source": "dashboard_tab3",
-        "updated_by": "정영찬"
+        "updated_by": "127.0.0.1",
+        "partner_material_flag_overrides": {
+          "cdp": false,
+          "admet": false
+        }
       },
       "edit_history": [
         {
@@ -17281,6 +17384,64 @@
           "field": "focus_management.add",
           "previous_value": false,
           "new_value": true
+        },
+        {
+          "changed_at": "2026-08-18T07:37:42.545940+00:00",
+          "actor_ip": "10.245.226.6",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partner_material_flags.cdp",
+          "previous_value": false,
+          "new_value": true
+        },
+        {
+          "changed_at": "2026-08-18T07:37:50.732818+00:00",
+          "actor_ip": "10.245.226.6",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partner_material_flags.admet",
+          "previous_value": false,
+          "new_value": true
+        },
+        {
+          "changed_at": "2026-08-18T07:37:54.028515+00:00",
+          "actor_ip": "10.245.226.6",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partner_material_flags.admet",
+          "previous_value": true,
+          "new_value": false
+        },
+        {
+          "changed_at": "2026-08-18T07:39:42.139226+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "detail_topic_note_add",
+          "field": "topic_notes.topic-target-relevance",
+          "previous_value": null,
+          "new_value": "ㅇ란어럄ㅈㄷㄹ"
+        },
+        {
+          "changed_at": "2026-08-18T08:26:35.179789+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partner_material_flags.cdp",
+          "previous_value": true,
+          "new_value": false
+        }
+      ],
+      "topic_notes": [
+        {
+          "id": "b56a34ed86e3449788ec40ca15bb9789",
+          "topic_id": "topic-target-relevance",
+          "topic_key": "target-relevance",
+          "topic_title": "4.1 Target Relevance",
+          "body": "ㅇ란어럄ㅈㄷㄹ",
+          "author_id": "3dd1472cc5bd4f888238b0a6d1776816",
+          "author_name": "정주원",
+          "created_at": "2026-08-18T07:39:42.139049+00:00",
+          "updated_at": "2026-08-18T07:39:42.139049+00:00"
         }
       ]
     },
@@ -19843,7 +20004,7 @@
             }
           }
         ],
-        "filter3_document_analysis_updated_at": "2026-08-13T01:25:06.044820+00:00",
+        "filter3_document_analysis_updated_at": "2026-08-18T00:54:54.538307+00:00",
         "partnership_auto_suggestion": "unknown",
         "partnership_auto_note": "ADMET Score, ADMET uploaded 확인 불가",
         "partnership_auto_evidence_sources": [
@@ -19861,13 +20022,22 @@
           "Partner Materials: [VASTHERA] VTA-27 program CD_(Aug 2026).pdf"
         ],
         "partnership_classification_source": "auto",
-        "partnership_classified_at": "2026-08-13T01:25:06.044852+00:00",
-        "updated_at": "2026-08-12T05:15:34.809225+00:00",
-        "updated_source": "dashboard_tab3",
+        "partnership_classified_at": "2026-08-18T00:54:54.541271+00:00",
+        "updated_at": "2026-08-18T00:54:54.536083+00:00",
+        "updated_source": "dashboard_tab3_oi_partnership_refresh",
         "updated_by": "10.245.225.100",
         "partnership_evidence_updated_at": "2026-08-12T05:15:55.702205+00:00",
         "partner_material_flag_overrides": {
           "cdp": false
+        },
+        "partnership_recalculation": {
+          "version": "1.3",
+          "previous_version": "1.3",
+          "previous_type": "unknown",
+          "previous_source": "auto",
+          "recalculated_at": "2026-08-18T00:54:54.536083+00:00",
+          "source": "dashboard_tab3_oi_partnership_refresh",
+          "scope": "filter3_and_partnership_note_reset_to_latest_auto_classification"
         }
       },
       "edit_history": [
@@ -20906,8 +21076,62 @@
           "field": "qualitative_review.custom_4d24197ab4",
           "previous_value": null,
           "new_value": "CU71의 분자 타겟은 공개되지 않았으며, 기능적 MoA는 BBB/endothelial dysfunction 안정화에 초점을 맞추고 있어 특정 효소나 단백질을 타겟으로 하지 않습니다. 따라서 평가 기준에 따라 Target을 Unknown으로 판단하는 것이 타당합니다. 보고서에서도 Target 항목을 \"Unknown\"으로 기재하고 있으며, 이는 현재 공개된 정보와 일치합니다."
+        },
+        {
+          "changed_at": "2026-08-18T08:18:11.279797+00:00",
+          "actor_ip": "10.245.226.147",
+          "actor_name": "주연주",
+          "source": "dashboard_table_manual_review",
+          "field": "scores.competitive_landscape",
+          "previous_value": 1,
+          "new_value": 2
+        },
+        {
+          "changed_at": "2026-08-18T08:19:07.650226+00:00",
+          "actor_ip": "10.245.226.147",
+          "actor_name": "주연주",
+          "source": "dashboard_table_manual_review",
+          "field": "scores.competitive_landscape",
+          "previous_value": 2,
+          "new_value": 1
         }
-      ]
+      ],
+      "human_review": {
+        "overrides": {
+          "scores": {
+            "competitive_landscape": 1
+          }
+        },
+        "ai_baseline": {
+          "scores": {
+            "competitive_landscape": 1
+          }
+        },
+        "history": [
+          {
+            "changed_at": "2026-08-18T08:18:11.279738+00:00",
+            "actor_ip": "10.245.226.147",
+            "actor_name": "주연주",
+            "source": "dashboard_table",
+            "field": "scores.competitive_landscape",
+            "previous_value": 1,
+            "new_value": 2
+          },
+          {
+            "changed_at": "2026-08-18T08:19:07.650147+00:00",
+            "actor_ip": "10.245.226.147",
+            "actor_name": "주연주",
+            "source": "dashboard_table",
+            "field": "scores.competitive_landscape",
+            "previous_value": 2,
+            "new_value": 1
+          }
+        ],
+        "last_updated_at": "2026-08-18T08:19:07.650147+00:00",
+        "last_updated_source": "dashboard_table",
+        "last_updated_by": "주연주",
+        "has_manual_override": true
+      }
     },
     "source_report": {
       "raw_markdown": "# Curacle Pipeline Scout Report: **CU71**\n\n본 보고서는 업로드 자료 우선 검토, 최신 공개자료 교차확인, 경쟁 파이프라인 검색 및 7개 기준 평가를 통해 **GPT instruction 2 — Full Scout v3.4 (schema v3.2)** 기준으로 작성했으며, auditability를 위해 확인한 URL을 포함합니다. :contentReference[oaicite:0]{index=0}\n\n**중요:** CU71은 실제 active Alzheimer’s disease preclinical asset으로 확인되며 **15/21점, Hard Filter PASS / Shortlist**입니다. 다만 2025년 자료에서 2026 IND/Phase 1을 계획했음에도 2026년 최신 회사·KRX 자료는 여전히 `preclinical`로 기재하고, 2026년 5월에는 CU71 후보군 중 최적 물질을 선별하는 최적화 연구를 언급하므로, 현재 stage는 보수적으로 **Preclinical unspecified**로 처리했습니다. :contentReference[oaicite:1]{index=1}\n\n---\n\n## 1) Company Profile\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Curacle Co., Ltd. | [1], [3] |\n| Legal name / aliases | 주식회사 큐라클 / CURACLE Co., Ltd. | KRX filing; 업로드 deck p.3 :contentReference[oaicite:2]{index=2} |\n| Country | Republic of Korea | [1], [3] |\n| Headquarters | 서울특별시 서초구 효령로 23-1 | KRX filing 및 공식 사이트. :contentReference[oaicite:3]{index=3} |\n| Website | https://www.curacle.com | Official company site |\n| Company type / stage | 코스닥 상장 바이오텍; 2021-07-22 코스닥 상장 | KRX filing. :contentReference[oaicite:4]{index=4} |\n| Focus areas | Vascular/endothelial dysfunction 기반 난치성 질환 신약 | [1], [5] |\n| Platform summary | **SOLVADYS®**: human endothelial cell multi-phenotypic screening → in vivo efficacy → pathomechanistic validation으로 구성된 경구 저분자 플랫폼 | [5]. :contentReference[oaicite:5]{index=5} |\n| Financing / partnership signals | CU71은 추가 전임상 및 전임상 단계 기술이전 추진을 공시. 회사 차원에서는 2026년 MT-103 글로벌 기술이전 실적이 있으나 이는 CU71 직접 evidence로 점수화하지 않음 | [3], [4]. :contentReference[oaicite:6]{index=6} |\n| Lead pipeline summary | 현재 공식 pipeline에서 Rivasterat(CU06) Phase 2a 완료, CU01 Phase 2b, CU71 preclinical 등 확인 | [1]. :contentReference[oaicite:7]{index=7} |\n\n---\n\n## 2) Pipeline Snapshot\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Curacle Co., Ltd. | [1], [3] |\n| Lead asset | CU71 | [1], [2], 업로드 deck |\n| Target | **Unknown — molecular target 미공개.** 기능적 therapeutic target은 BBB/endothelial dysfunction | [2], [3] |\n| Theme / Cluster | **Theme: Others / Cluster: Unknown** | Primary confirmed MoA가 vascular/BBB stabilization이며 공개 분자표적이 E/I Balance, Neuroimmune, Protein Homeostasis로 직접 매핑되지 않음 |\n| MoA | Next-generation endothelial dysfunction blocker / BBB-neurovascular stabilizer. BBB tight junction을 보존하고 RAGE 관련 이상, neuroinflammation 및 glial activation을 감소시키는 기능적 MoA | [2], [3], 업로드 deck pp.11,18–21. :contentReference[oaicite:8]{index=8} :contentReference[oaicite:9]{index=9} |\n| Modality / Platform | **Small molecule**, oral; SOLVADYS-derived | KRX는 chemical synthetic oral drug로 기재. :contentReference[oaicite:10]{index=10} |\n| Indication | **Alzheimer's disease**. Current site는 small vessel disease/vascular dementia도 잠재 적용 가능성으로 언급하나 별도 active program은 확인되지 않음 | [1], [2]. :contentReference[oaicite:11]{index=11} |\n| Stage | **Preclinical unspecified** | 업로드 2025 deck: “Preclinical studies in progress”; 2026 Q1 KRX 및 현재 pipeline도 preclinical. 2026 IND 계획은 완료 사실로 승격하지 않음. :contentReference[oaicite:12]{index=12} :contentReference[oaicite:13]{index=13} |\n| Key data | 5xFAD에서 cognition, Aβ pathology, BBB tight-junction, RAGE, GFAP/Iba1 등 여러 정량 domain 개선 | 업로드 deck pp.13–21; AAIC 2025 [6]. :contentReference[oaicite:14]{index=14} |\n\n**Stage diligence:** 2025 deck p.22에는 GLP tox 4주 rat/dog 및 2026 IND 계획이 표시되지만, 최신 공개자료에서 IND filing/clearance 또는 Phase 1 start를 확인하지 못했습니다. :contentReference[oaicite:15]{index=15} 2026년 5월 회사는 오히려 “CU71 후보물질들 가운데 가장 적합한 물질을 선별하기 위한 최적화 연구”를 진행한다고 설명했습니다. :contentReference[oaicite:16]{index=16}\n\n---\n\n## 3) Scorecard Summary\n\n| Criterion | Score (maximum 3 points each) | One-line judgment | Evidence used |\n|---|---:|---|---|\n| Target Relevance | **3점** | AD는 SKBP 관심 적응증이며 BBB dysfunction은 독립적 인간 AD biology와 직접 연결 | [1]–[3], [7] |\n| Competitive Landscape | **1점** | 새로운 oral neurovascular concept이나 realistic disease-modifying comparator 대비 직접 정량 차별화 부족 | [8]–[12], deck |\n| MoA Validity | **3점** | BBB integrity·RAGE·glial markers·Aβ·cognition의 mechanism-linked functional validation | [2], [3], [6], deck |\n| Platform Attractiveness | **3점** | 재사용 SOLVADYS + CU71/CU06 정량 technical comparison + platform-derived CU06 human dosing/Phase 2a | [1], [5], deck p.28 |\n| Expansion Potential | **0점** | vascular dementia/small-vessel disease는 potential만 확인; 별도 active CU71 program 없음 | [1]–[4] |\n| Data Maturity | **3점** | 행동·병리·BBB·neuroinflammation의 복수 complementary quantitative domains | [3], [6], deck pp.13–21 |\n| Marketability | **2점** | **calculation**, global obtainable peak sales **1716.2 million USD** | [8], [9], [11]–[14] |\n| **Total** | **15점** | Maximum total: 21점 / **Hard Filter PASS** |  |\n\n---\n\n## 4) Criterion Detail Pages\n\n### 4.1 Target Relevance\nScore: **3점**  \nMain line: **확인된 AD 적응증과 CU71의 BBB-stabilizing MoA가 인간 AD neurovascular biology에 직접 연결됩니다.**\n\nWhat was checked:\n- Target identity: 정확한 molecular target은 미공개 → `Unknown`.\n- Disease/biology relevance: AD 및 BBB dysfunction.\n- SKBP Theme / Cluster fit.\n- Neurodegeneration / neuroinflammation relevance.\n\nEvidence trail:\n- 현재 Curacle 공식 pipeline은 CU71을 **AD / PO / next-generation endothelial dysfunction blocker / preclinical**로 명시합니다. :contentReference[oaicite:17]{index=17}\n- CU71 전용 페이지는 BBB stabilization, reduced neuroinflammation, memory improvement 및 partial Aβ reduction을 전임상 evidence로 제시합니다. :contentReference[oaicite:18]{index=18}\n- 독립적 인간 연구인 Montagne et al., *Nature* 2020은 hippocampus/medial temporal BBB breakdown이 cognitive impairment와 연관되고, APOE4 carrier에서 baseline BBB injury biomarker가 이후 인지저하를 예측했다고 보고했습니다. 따라서 BBB dysfunction은 단순 회사 rationale을 넘어 AD/cognitive decline와 직접 연결된 biology입니다. :contentReference[oaicite:19]{index=19}\n\nInvestigation note:\n- AD 자체로 2점 요건을 충족하고, 확인된 MoA가 독립적 인간 disease biology와 직접 연결되어 3점을 부여했습니다.\n- Theme은 **Others**로 보수적 매핑했습니다. Neuroinflammation 감소는 명확하지만 CU71의 primary confirmed intervention point는 vascular endothelial/BBB stabilization이며, 특정 neuroimmune molecular target은 공개되지 않았습니다.\n- 3점이 상한입니다.\n\n### 4.2 Competitive Landscape\nScore: **1점**  \nMain line: **AD 경쟁환경은 매우 치열하고 CU71 concept은 다르지만, 현재 데이터는 승인/후기 disease-modifying competitor 대비 quantitative differentiation을 입증하지 못합니다.**\n\nWhat was checked:\n- Asset/alias: CU71, CU71-2021.\n- Same disease + target/MoA: AD + BBB stabilizer/endothelial dysfunction/RAGE/neurovascular.\n- Same disease + broader pathway: vascular dysfunction, neuroinflammation, amyloid-related biology.\n- Approved, Phase 3, clinical 및 major preclinical 경쟁자.\n- ClinicalTrials.gov, FDA, scientific publication, official pipeline.\n- Exact molecular target가 공개되지 않아 true same-target competitor search에는 구조적 한계가 있음.\n\nCompetitor table:\n\n| Competitor | Company | Modality | Target / MoA | Stage | Why it matters | Source |\n|---|---|---|---|---|---|---|\n| Leqembi (lecanemab) | Eisai / Biogen | Antibody | anti-Aβ | Approved | 현재 disease-modifying efficacy/safety/access benchmark | [8]. :contentReference[oaicite:20]{index=20} |\n| Kisunla (donanemab) | Eli Lilly | Antibody | anti-Aβ | Approved | Early symptomatic AD에서 승인된 DMT benchmark | [9]. :contentReference[oaicite:21]{index=21} |\n| Azeliragon (TTP488) | vTv Therapeutics | Small molecule | **RAGE antagonist** | Phase 3 terminated | CU71이 RAGE 감소를 보인다는 점에서 가장 가까운 역사적 pathway analogue; 5 mg efficacy 부족으로 종료 | [10]. :contentReference[oaicite:22]{index=22} |\n| Buntanetap (Posiphen) | Annovis Bio | Small molecule | Neurotoxic protein translation modulation | Phase 3, active not recruiting | Oral disease-modifying 경쟁축; 760명 규모 Phase 3 | [11]. :contentReference[oaicite:23]{index=23} |\n| Valiltramiprosate (ALZ-801) | Alzheon | Small molecule | Aβ oligomer formation inhibitor | Phase 3 readout | Oral DMT 경쟁자; 전체군 primary/secondary는 유의하지 않았고 prespecified MCI subgroup signal 보고 | [12]. :contentReference[oaicite:24]{index=24} |\n\nSimilarity assessment:\n- High similarity: **0**\n- Medium similarity: **1** — Azeliragon.\n- Low similarity: **4**\n- Competitive density: **High**\n\nInvestigation note:\n- CU71의 donepezil head-to-head mouse study는 asset-specific quantitative evidence입니다. 업로드 deck p.15에서 CU71 10 mg군의 MWM latency/distance 및 probe quadrant 결과가 vehicle 대비 유의하게 개선되었습니다. :contentReference[oaicite:25]{index=25}\n- 그러나 donepezil은 현재 시장에서의 직접 disease-modifying BBB competitor가 아니므로, 이 비교만으로 Competitive Landscape 2점을 부여하지 않았습니다.\n- Azeliragon의 Phase 3 실패는 RAGE-related vascular strategy에 대한 중요한 caution signal이지만, **CU71 자체가 RAGE antagonist라는 증거는 없으므로 같은 target으로 분류하지 않았습니다.**\n- 검증 가능한 active high-similarity BBB-stabilizer를 찾지 못했으나, “없다”는 결론으로 3점을 주지 않았습니다.\n- **2점 미부여 이유:** 적절한 disease-modifying/high-similarity comparator에 대한 CU71 quantitative head-to-head가 없음.\n\n### 4.3 MoA Validity\nScore: **3점**  \nMain line: **정확한 molecular target은 비공개지만 BBB stabilization에 연결된 functional/PD-like biomarker cascade가 asset-specific하게 검증되었습니다.**\n\nWhat was checked:\n- Journal/conference publication.\n- Mechanistic consistency.\n- Functional readout.\n- Disease linkage.\n- Safety-relevant signal.\n\nEvidence trail:\n- 5xFAD study 설계는 3개월령 male 5xFAD, CU71 5/10/20 mg/kg PO QD, n=12, donepezil comparator로 구성되었습니다. :contentReference[oaicite:26]{index=26}\n- MWM에서 CU71 10 mg군의 spatial learning/memory 지표가 개선되었습니다. :contentReference[oaicite:27]{index=27}\n- Hippocampus 및 cortex Aβ deposition은 CU71 dose groups에서 감소했습니다. :contentReference[oaicite:28]{index=28}\n- ZO-1/Claudin-5 tight-junction marker가 증가하여 BBB integrity 회복 방향성을 보였습니다. :contentReference[oaicite:29]{index=29}\n- RAGE protein expression이 정상군 수준 방향으로 감소했습니다. :contentReference[oaicite:30]{index=30}\n- GFAP 및 Iba1 감소로 astrocyte/microglial activation 억제가 관찰되었습니다. :contentReference[oaicite:31]{index=31}\n- AAIC 2025 자료도 CU71이 HBMEC tight-junction integrity를 향상시키고 inflammation을 감소시켰으며 5xFAD에서 BBB/neuroinflammation/cognition을 평가했다고 명시합니다. :contentReference[oaicite:32]{index=32}\n\nInvestigation note:\n- Rubric의 3점 요건인 **assessed-asset mechanism-linked biomarker/direct functional validation**을 충족합니다.\n- 다만 이것은 **E3 preclinical evidence**이며 human target engagement 또는 human efficacy는 아닙니다.\n- Molecular binding target 및 직접 target-engagement assay가 공개되지 않은 것이 핵심 gap입니다.\n- GLP tox/safety 결과 자체는 공개 확인되지 않았습니다.\n- 3점이 상한입니다.\n\n### 4.4 Platform Attractiveness\nScore: **3점**  \nMain line: **SOLVADYS는 실제 재사용 가능한 endothelial small-molecule discovery system이며, 정량적 CU71/CU06 비교와 임상 투약된 platform-derived CU06가 확인됩니다.**\n\nWhat was checked:\n- Reusable technical system 여부.\n- Quantitative differentiation.\n- Multiple candidates/programs에 동일 원리 적용 여부.\n\nEvidence trail:\n- Curacle은 SOLVADYS를 human endothelial cell multi-phenotypic screening, in vivo efficacy testing 및 pathomechanistic validation의 3단계 platform으로 정의합니다. CU06도 이 platform에서 발굴되었고 Phase 2a를 완료했습니다. :contentReference[oaicite:33]{index=33}\n- 업로드 deck p.28의 **CU71-2021 vs CU06-1004** 비교는 cell-survival ATP assay, VEGF-induced permeability assay, IL-1β-induced ICAM1 assay를 정량 그래프로 제시합니다. CU71은 동농도에서 cell-survival efficacy가 더 높은 경향을 보였고 두 compound 모두 permeability와 ICAM1을 억제했습니다. :contentReference[oaicite:34]{index=34}\n- CU06는 U.S. Phase 2a 완료가 확인되어 SOLVADYS-derived asset의 human dosing은 이미 달성되었습니다. :contentReference[oaicite:35]{index=35}\n\nInvestigation note:\n- Score 2에 필요한 quantitative technical comparator evidence가 p.28에 존재합니다.\n- 그 위에 platform-derived CU06의 clinical dosing/Phase 2a가 확인되어 rubric의 대체 Score-3 경로를 적용했습니다.\n- 다만 p.28 superiority는 일부 **trend-level**이고 independent replication이 없어 “반복적 우위” 경로로 3점을 준 것은 아닙니다.\n- Data Maturity와의 double counting을 피하기 위해 Platform 점수에는 p.28 platform/compound-comparison 자료와 CU06 platform validation을 사용하고, CU71 AD in vivo package는 Data Maturity에 사용했습니다.\n\n### 4.5 Expansion Potential\nScore: **0점**  \nMain line: **vascular dementia/small-vessel disease rationale은 있으나 별도 active CU71 development program으로 검증되지 않았습니다.**\n\nWhat was checked:\n- Main indication 외 additional indication.\n- Asset-specific quantitative data.\n- 별도 preclinical/IND-enabling/clinical program.\n\nEvidence trail:\n- 현재 CU71 페이지는 cerebral small vessel disease 및 vascular dementia에 대한 “potential”을 언급합니다. :contentReference[oaicite:36]{index=36}\n- 반면 current pipeline과 2026 KRX 진행표의 확인 가능한 active development는 AD/퇴행성 뇌질환 preclinical로 묶여 있습니다. :contentReference[oaicite:37]{index=37}\n- 2025 deck의 6-month 5xFAD 및 P301S Tau experiments는 AD disease-model 확장이지 별도 indication이 아닙니다. :contentReference[oaicite:38]{index=38}\n\nInvestigation note:\n- Future opportunity 및 broad indication language는 active additional program으로 계산하지 않았습니다.\n- **1점 미부여 이유:** 추가 indication의 별도 CU71 program 자체가 확인되지 않음.\n- 필요한 diligence source: vascular dementia/small-vessel disease가 별도 project code, budget, efficacy package 및 development timeline을 보유하는지 보여주는 current pipeline/BD 자료.\n\n### 4.6 Data Maturity\nScore: **3점**  \nMain line: **CU71은 preclinical asset임에도 cognition, pathology, BBB integrity, neuroinflammation의 여러 독립적 개발 질문을 다루는 quantitative package를 보유합니다.**\n\nWhat was checked:\n- In vitro data.\n- In vivo data.\n- Quantitative results.\n- Reproducibility/complementarity.\n- IND-enabling / GLP tox / PK-PD / CMC / human data availability.\n\nEvidence trail:\n1. **Behavioral efficacy domain:** NOR dose-response trend 및 MWM significant improvement. :contentReference[oaicite:39]{index=39}\n2. **Pathology domain:** hippocampus/cortex Aβ plaque reduction. :contentReference[oaicite:40]{index=40}\n3. **BBB mechanism domain:** ZO-1/Claudin-5 restoration 및 RAGE reduction. :contentReference[oaicite:41]{index=41}\n4. **Neuroinflammation domain:** GFAP 및 Iba1 reduction. :contentReference[oaicite:42]{index=42}\n5. **In vitro endothelial domain:** CU71-2021 cell-survival, permeability, ICAM1 assays. :contentReference[oaicite:43]{index=43}\n6. AAIC 2025 공개 scientific presentation이 핵심 5xFAD/BBB findings를 외부 학술 venue에서 확인시킵니다. :contentReference[oaicite:44]{index=44}\n\nInvestigation note:\n- 서로 다른 development question을 다루는 quantitative domains가 2개를 훨씬 초과하므로 Score 3.\n- 반복된 Aβ endpoints만으로 점수를 높인 것이 아니라 cognition + BBB mechanism + inflammatory/pathological domain을 분리했습니다.\n- Human data는 없음.\n- **핵심 stage gap:** 2025 deck은 2026 IND를 예상했지만, 2026 Q1 KRX와 현재 pipeline은 여전히 `preclinical studies in progress`입니다. :contentReference[oaicite:45]{index=45}\n- 현재 GLP tox completion, CMC readiness, pre-IND interaction 또는 IND filing을 확인할 공개 source가 필요합니다.\n\n### 4.7 Marketability\nScore: **2점**  \nMain line: **Calculation-only screening 기준 Global Obtainable Peak Sales = 1716.2 million USD.**  \nAssessment method: **calculation**  \nScore basis type: **calculation**  \nAssessed global peak sales: **1716.2 million USD**\n\nWhat was checked:\n- Internal A/B/C/D calculation.\n- Asset-specific external peak-sales forecast.\n- Competition haircut.\n- Pricing power adjustment 및 benchmark-price double counting 여부.\n\n**Commercial rationale status:** calculation performed.  \n**External asset-specific peak-sales forecast:** 신뢰 가능한 CU71-specific forecast는 확인하지 못했습니다. 2026 KRX의 AD 전체 시장규모 수치는 asset-specific peak sales가 아니므로 scoring basis에서 제외했습니다.\n\nWorksheet:\n\n| Step | What to fill | Evidence / assumption |\n|---|---|---|\n| A. US TAP | **1,420,800 patients** | 2026 U.S. age 65+ clinical Alzheimer’s dementia **7.4 million** × Diagnosis 0.60 × Eligibility 0.40 × Treatable Subgroup 0.80. Prevalence를 사용한 이유는 AD가 chronic prevalent disease이기 때문. 7.4m은 Alzheimer’s Association 2026 수치. :contentReference[oaicite:46]{index=46} |\n| B. US Unrisked Peak Sales | **3200.4 million USD** | Benchmark: LEQEMBI launch WAC 26,500 USD/year. 공개 net price가 없어 screening용 15% gross-to-net discount를 적용해 **22,525 USD/year net-price proxy** 사용. Peak penetration 0.10, duration factor 1.0. LEQEMBI WAC source: Eisai. :contentReference[oaicite:47]{index=47} |\n| C. US Obtainable Peak Sales | **1144.1 million USD** | B × Competition Haircut **0.55** × Pricing Power Adjustment **0.65**. Approved anti-Aβ therapies와 Phase 3 oral assets를 반영. CU71은 oral convenience가 있으나 human efficacy/safety 미확인 단계라 antibody benchmark 대비 가격 premium이 아니라 35% discount 적용. |\n| D. Global Obtainable Peak Sales | **1716.2 million USD** | C × **1.5** once |\n| External Peak Sales Reference | **Not available** | CU71-specific independent analyst/consensus peak-sales forecast 미확인 |\n| Final score basis | **2점** | 1716.2 million USD는 ≥1000 및 <2000 million USD |\n\nCalculation detail:\n- **A:** 7,400,000 × 0.60 × 0.40 × 0.80 = **1,420,800 patients**\n- Diagnosis Rate **0.60** = analyst screening assumption. CU71-specific diagnosed eligible population 자료 없음.\n- Eligibility Rate **0.40** = analyst assumption. 현재 human target population/label이 확정되지 않아 early symptomatic/treatable disease fraction을 보수적으로 반영.\n- Treatable Subgroup Rate **0.80** = analyst assumption. Oral modality의 practical accessibility는 높지만 contraindication/future label 불명확.\n- Benchmark WAC = **26,500 USD/patient-year**; 공개 net price 부재로 0.85를 곱한 **22,525 USD/patient-year**를 net proxy로 사용. 이는 factual net price가 아니라 analyst assumption입니다. :contentReference[oaicite:48]{index=48}\n- Peak Penetration = **0.10**.\n- Treatment Duration Factor = **1.0**.\n- **B:** 1,420,800 × 22,525 × 0.10 × 1.0 = **3200.4 million USD**\n- Competition Haircut = **0.55**: Leqembi/Kisunla 및 advanced oral DMT 경쟁을 반영. :contentReference[oaicite:49]{index=49}\n- Pricing Power Adjustment = **0.65**: oral convenience는 긍정적이나 preclinical-only 상태와 미확인 human benefit-risk를 더 크게 할인.\n- **C:** 3200.4 × 0.55 × 0.65 = **1144.1 million USD**\n- **D:** 1144.1 × 1.5 = **1716.2 million USD**\n- Expansion Capacity Adjustment는 사용하지 않았고 sensitivity analysis도 수행하지 않았습니다.\n\nInvestigation note:\n- Score 2는 시장 규모 자체가 아니라 위 obtainable peak-sales calculation에 기반합니다.\n- **3점 미부여 이유:** assessed global value **1716.2 million USD < 2000 million USD**.\n- 가장 큰 commercial uncertainty는 향후 CU71 label/treated stage, human efficacy, pricing 및 competitive positioning입니다.\n\n---\n\n## 5) Validation Notes\n\nCross-checked facts:\n- **Identity Gate PASS:** CU71은 Curacle의 실제 oral AD/neurodegenerative preclinical program으로 업로드 deck, 현재 Curacle pipeline, 2026 Q1 KRX filing에서 교차확인되었습니다. :contentReference[oaicite:50]{index=50} :contentReference[oaicite:51]{index=51}\n- BBB stabilizer/endothelial dysfunction MoA와 5xFAD multi-domain data는 업로드 자료와 AAIC 2025 공개 abstract/poster에서 교차확인했습니다. :contentReference[oaicite:52]{index=52}\n- 독립적 인간 disease-biology literature도 BBB breakdown과 cognitive decline의 직접 연관성을 지지합니다. :contentReference[oaicite:53]{index=53}\n- SOLVADYS 재사용성 및 CU06 Phase 2a 완료를 current company platform/pipeline에서 확인했습니다. :contentReference[oaicite:54]{index=54}\n- 2025 deck의 2026 IND/Phase 1은 **plan**으로만 처리했으며, 최신 2026 source의 current preclinical status를 우선했습니다.\n\nUncertain points:\n- CU71의 정확한 molecular target/protein.\n- Direct binding/target-engagement assay.\n- 2026년 5월 기준 후보군 최적화 이후 **final clinical candidate lock** 여부. :contentReference[oaicite:55]{index=55}\n- GLP tox completion, CMC readiness, pre-IND interaction, IND filing/acceptance/clearance.\n- 2025 계획 대비 2026 clinical-start timing 변경 이유.\n- Patent applications 외 정확한 FTO 및 global rights/encumbrance.\n- Vascular dementia/small-vessel disease가 실제 별도 active CU71 expansion program인지 여부.\n- CU71-specific external peak-sales forecast.\n\nSearch log:\n- Official company page: Curacle current pipeline, CU71 page, SOLVADYS platform.\n- Pipeline page: CU71 AD / PO / preclinical 확인.\n- Platform page: SOLVADYS reusability 및 CU06 clinical validation 확인.\n- Publications/conference: AAIC 2025 CU71 poster/abstract; independent BBB-AD human literature.\n- Regulatory / trial registry: KRX Q1 2026; ClinicalTrials.gov for RAGE/oral AD competitors; FDA approvals.\n- Competitor searches: CU71/CU71-2021; AD + BBB stabilizer; AD + endothelial dysfunction; AD + RAGE; AD + neurovascular; approved/Phase 3/oral DMT/preclinical searches.\n- High-similarity active competitor: 공개적으로 충분히 검증 가능한 exact high-similarity asset은 확인되지 않았으나 CU71 target 비공개로 search completeness에 제한.\n- Market / epidemiology: Alzheimer’s Association 2026 prevalence.\n- Pricing: official Eisai LEQEMBI pricing source.\n- Financing / partnership: 2026 KRX filing 및 Curacle shareholder communication.\n\n---\n\n## 6) Final Take\n\nOne-line summary:  \n**CU71은 AD 적합성, oral BBB/neurovascular differentiation, 그리고 cognition–BBB–Aβ–neuroinflammation을 아우르는 강한 전임상 data package가 장점이며, 현재 가장 큰 리스크는 molecular target 미공개, final clinical candidate lock 및 2025 계획 대비 IND execution의 불확실성입니다.**\n\nRecommendation:\n- **Shortlist**\n- Hard Filter: **PASS**\n- Total: **15/21**\n- Positioning: **High scientific interest / early-stage execution diligence required**\n\nMost important diligence question:  \n**Curacle이 최종 CU71 clinical candidate와 molecular target을 lock했는가? 그리고 2026년 최신 공개자료가 여전히 preclinical인 상황에서 GLP tox, CMC, pre-IND 및 IND filing의 실제 완료 milestone과 현재 timeline은 무엇인가?**\n\n---\n\n## References\n\n[1]: https://curacle.com/bbs/content.php?co_id=pipeline \"Curacle Pipeline\"\n[2]: https://www.curacle.com/bbs/content.php?co_id=pipeline&tab_id=cu71 \"Curacle CU71 — Alzheimer's Disease\"\n[3]: https://kind.krx.co.kr/external/2026/05/15/000418/20260515000834/11013.htm \"Curacle Q1 2026 KRX Filing\"\n[4]: https://www.curacle.com/bbs/board.php?bo_table=notice_kr&wr_id=29 \"Curacle 10th Anniversary Shareholder Letter, May 2026\"\n[5]: https://www.curacle.com/bbs/content.php?co_id=platform \"Curacle SOLVADYS Platform\"\n[6]: https://epostersonline.com/aaic2025/poster/100124 \"AAIC 2025 CU71 Poster\"\n[7]: https://www.nature.com/articles/s41586-020-2247-3 \"Montagne et al. Nature 2020 — APOE4 leads to BBB dysfunction predicting cognitive decline\"\n[8]: https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval \"FDA — Leqembi Traditional Approval\"\n[9]: https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease \"FDA — Kisunla Approval\"\n[10]: https://clinicaltrials.gov/study/NCT02080364 \"ClinicalTrials.gov NCT02080364 — Azeliragon\"\n[11]: https://clinicaltrials.gov/study/NCT06709014 \"ClinicalTrials.gov NCT06709014 — Buntanetap\"\n[12]: https://www.neurology.org/doi/10.1212/WNL.0000000000217133 \"Neurology 2026 — Valiltramiprosate APOLLOE4\"\n[13]: https://www.alz.org/alzheimers-dementia/facts-figures \"Alzheimer's Association 2026 Facts and Figures\"\n[14]: https://www.eisai.com/news/2023/pdf/enews202302pdf.pdf \"Eisai LEQEMBI U.S. Launch Pricing\"",
@@ -21372,6 +21596,1379 @@
           "shared_data_points": [
             "Disease-modifying AD treatment",
             "Approved benchmark"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "fast_triage",
+      "schema_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
+      "generated_at": "2026-08-18",
+      "output_filename_base": "Kine Sciences_KINE-501B",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run. 제공된 triage status rule을 적용했습니다. :contentReference[oaicite:0]{index=0}\n\n중요: 6개 자산 모두 현재 회사 R&D/pipeline 등재로 identity와 activity는 확인되지만, KINE-501B/C 및 KP-101은 적응증 fit이 낮고 KINE-501D/E 및 KP-102는 관심 적응증임에도 공개 asset-specific MoA/Data가 부족해 전부 REJECT로 처리합니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | KINE-501B | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Frontotemporal dementia | Hit Discovery | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: FTD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다. MOA 0점: molecular target/MoA 미확인. Data 0점: 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:1]{index=1} |\n| 2 | KINE-501C | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Unknown (LBD) | Hit Discovery | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: LBD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다. MOA 0점: molecular target/MoA 미확인. Data 0점: 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:2]{index=2} |\n| 3 | KINE-501D | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Parkinson's disease | Preclinical unspecified | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: Parkinson's disease는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: Preclinical 표기 외 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:3]{index=3} |\n| 4 | KINE-501E | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Unknown | Multiple sclerosis / neuroinflammatory disease | Preclinical unspecified | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: multiple sclerosis는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: Preclinical 표기 외 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:4]{index=4} |\n| 5 | KP-101 | Korea Pharma Co Ltd | Unknown | Unknown | Major depressive disorder | Unknown | Republic of Korea | 0 | 0 | 0 | REJECT | TR 0점: major depressive disorder는 본 triage의 SKBP 관련 범위 밖이다. MOA 0점. Data 0점: 공식 R&D 등재 외 공개 정량 결과 미확인. | Korea Pharma Research Results :contentReference[oaicite:5]{index=5} |\n| 6 | KP-102 | Korea Pharma Co Ltd | Unknown | Unknown | Alzheimer's disease | Unknown | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: Alzheimer's dementia는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: 공식 R&D 등재 외 공개 정량 결과 미확인. | Korea Pharma Research Results :contentReference[oaicite:6]{index=6} |\n\n## Notes\n- KINE-501B/C의 Discovery는 Hit Discovery, KINE-501D/E의 generic Preclinical은 Preclinical unspecified로 정규화했습니다. :contentReference[oaicite:7]{index=7}\n- KINE-501E는 asset-specific source가 generic “Chemical drugs”까지만 제시해 canonical modality는 Unknown입니다. :contentReference[oaicite:8]{index=8}\n- KP-101/102는 공식 R&D 페이지 텍스트에서 정확한 current stage marker를 신뢰성 있게 판독할 수 없어 stage는 Unknown입니다. :contentReference[oaicite:9]{index=9}",
+      "parser_status": "fast_triage"
+    },
+    "input": {
+      "company_input": "Kine Sciences",
+      "asset_input": "KINE-501B"
+    },
+    "json_summary": {
+      "theme": "Unknown",
+      "cluster": "Unknown",
+      "target_description": "FTD CNS program; Target Cell=Microglial, molecular target undisclosed."
+    },
+    "structured_table": {
+      "company": "Kine Sciences",
+      "asset_name": "KINE-501B",
+      "target": "Microglia (target cell); molecular target Unknown",
+      "moa": "Unknown",
+      "modality_platform": "Peptide",
+      "main_indication": "Frontotemporal dementia",
+      "indication": "Frontotemporal Dementia (FTD)",
+      "development_stage": "Hit Discovery",
+      "company_country": "Republic of Korea",
+      "sources": [
+        {
+          "source_title": "Kine Sciences Pipeline",
+          "source_url": "https://www.kinesciences.com/m31.php"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "REJECT",
+      "reason": "FTD는 관심 적응증 밖이고 공개 MoA/Data가 부족하다.",
+      "flags": [
+        "outside_interest_indication",
+        "insufficient_moa_or_data"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 1,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "TR 1 points: FTD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "TR 1 points: FTD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다.",
+          "why_not_higher": "관심 적응증이 확인되지 않았다.",
+          "investigation_note": "공식 pipeline/Synapse 확인.",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1",
+            "S2"
+          ]
+        },
+        "moa_validity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "MOA 0 points: Microglial target cell만 확인되고 molecular target/MoA는 미확인이다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "MOA 0 points: Microglial target cell만 확인되고 molecular target/MoA는 미확인이다.",
+          "why_not_higher": "확인된 기전이 없다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1",
+            "S2"
+          ]
+        },
+        "data_maturity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Data 0 points: 공개 asset-specific 정량 결과가 확인되지 않았다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "Data 0 points: 공개 asset-specific 정량 결과가 확인되지 않았다.",
+          "why_not_higher": "Discovery 표기만으로는 결과가 아니다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1",
+            "S2"
+          ]
+        }
+      },
+      "total_score": 1,
+      "max_score": 9
+    },
+    "validation": {
+      "uncertain_points": [
+        "Molecular target/MoA 미확인.",
+        "정량 결과 미확인."
+      ],
+      "cross_checked_facts": [
+        "공식 pipeline: KINE-501B/FTD/Microglial.",
+        "Synapse: synthetic peptide, Discovery."
+      ],
+      "source_registry": [
+        {
+          "source_id": "S1",
+          "source_title": "Kine Sciences Pipeline",
+          "source_url": "https://www.kinesciences.com/m31.php",
+          "source_type": "official_company_pipeline",
+          "verified": true
+        },
+        {
+          "source_id": "S2",
+          "source_title": "Synapse: KINE-501B",
+          "source_url": "https://synapse.patsnap.com/drug/fa379a83484c4982992f41e41835858a",
+          "source_type": "biopharma_database",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "FTD fit과 공개 MoA/Data가 부족하다.",
+      "recommendation": "Do not run Full Scout",
+      "most_important_diligence_question": "관심 적응증 또는 비공개 functional package가 있는가?"
+    },
+    "triage": {
+      "status": "REJECT",
+      "identity_verified": true,
+      "active_asset": true,
+      "verified_public_source_count": 2,
+      "why": "현재 등재된 FTD 자산이나 SKBP fit과 공개 MoA/Data가 부족해 REJECT다.",
+      "missing_evidence_needed_for_full_scout": [
+        "SKBP 관심 적응증 연결",
+        "molecular target/MoA",
+        "quantitative results"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "fast_triage",
+      "schema_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
+      "generated_at": "2026-08-18",
+      "output_filename_base": "Kine Sciences_KINE-501C",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run. 제공된 triage status rule을 적용했습니다. :contentReference[oaicite:0]{index=0}\n\n중요: 6개 자산 모두 현재 회사 R&D/pipeline 등재로 identity와 activity는 확인되지만, KINE-501B/C 및 KP-101은 적응증 fit이 낮고 KINE-501D/E 및 KP-102는 관심 적응증임에도 공개 asset-specific MoA/Data가 부족해 전부 REJECT로 처리합니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | KINE-501B | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Frontotemporal dementia | Hit Discovery | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: FTD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다. MOA 0점: molecular target/MoA 미확인. Data 0점: 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:1]{index=1} |\n| 2 | KINE-501C | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Unknown (LBD) | Hit Discovery | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: LBD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다. MOA 0점: molecular target/MoA 미확인. Data 0점: 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:2]{index=2} |\n| 3 | KINE-501D | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Parkinson's disease | Preclinical unspecified | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: Parkinson's disease는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: Preclinical 표기 외 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:3]{index=3} |\n| 4 | KINE-501E | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Unknown | Multiple sclerosis / neuroinflammatory disease | Preclinical unspecified | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: multiple sclerosis는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: Preclinical 표기 외 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:4]{index=4} |\n| 5 | KP-101 | Korea Pharma Co Ltd | Unknown | Unknown | Major depressive disorder | Unknown | Republic of Korea | 0 | 0 | 0 | REJECT | TR 0점: major depressive disorder는 본 triage의 SKBP 관련 범위 밖이다. MOA 0점. Data 0점: 공식 R&D 등재 외 공개 정량 결과 미확인. | Korea Pharma Research Results :contentReference[oaicite:5]{index=5} |\n| 6 | KP-102 | Korea Pharma Co Ltd | Unknown | Unknown | Alzheimer's disease | Unknown | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: Alzheimer's dementia는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: 공식 R&D 등재 외 공개 정량 결과 미확인. | Korea Pharma Research Results :contentReference[oaicite:6]{index=6} |\n\n## Notes\n- KINE-501B/C의 Discovery는 Hit Discovery, KINE-501D/E의 generic Preclinical은 Preclinical unspecified로 정규화했습니다. :contentReference[oaicite:7]{index=7}\n- KINE-501E는 asset-specific source가 generic “Chemical drugs”까지만 제시해 canonical modality는 Unknown입니다. :contentReference[oaicite:8]{index=8}\n- KP-101/102는 공식 R&D 페이지 텍스트에서 정확한 current stage marker를 신뢰성 있게 판독할 수 없어 stage는 Unknown입니다. :contentReference[oaicite:9]{index=9}",
+      "parser_status": "fast_triage"
+    },
+    "input": {
+      "company_input": "Kine Sciences",
+      "asset_input": "KINE-501C"
+    },
+    "json_summary": {
+      "theme": "Unknown",
+      "cluster": "Unknown",
+      "target_description": "LBD CNS program; Target Cell=Microglial, molecular target undisclosed."
+    },
+    "structured_table": {
+      "company": "Kine Sciences",
+      "asset_name": "KINE-501C",
+      "target": "Microglia (target cell); molecular target Unknown",
+      "moa": "Unknown",
+      "modality_platform": "Peptide",
+      "main_indication": "Unknown",
+      "indication": "Lewy Body Dementia (LBD)",
+      "development_stage": "Hit Discovery",
+      "company_country": "Republic of Korea",
+      "sources": [
+        {
+          "source_title": "Kine Sciences Pipeline",
+          "source_url": "https://www.kinesciences.com/m31.php"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "REJECT",
+      "reason": "LBD는 관심 적응증 밖이고 공개 MoA/Data가 부족하다.",
+      "flags": [
+        "outside_interest_indication",
+        "insufficient_moa_or_data"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 1,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "TR 1 points: LBD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "TR 1 points: LBD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다.",
+          "why_not_higher": "관심 적응증이 확인되지 않았다.",
+          "investigation_note": "LBD는 canonical main_indication bucket 부재로 Unknown.",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1",
+            "S2"
+          ]
+        },
+        "moa_validity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "MOA 0 points: Microglial target cell만 확인되고 molecular target/MoA는 미확인이다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "MOA 0 points: Microglial target cell만 확인되고 molecular target/MoA는 미확인이다.",
+          "why_not_higher": "확인된 기전이 없다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1",
+            "S2"
+          ]
+        },
+        "data_maturity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Data 0 points: 공개 asset-specific 정량 결과가 확인되지 않았다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "Data 0 points: 공개 asset-specific 정량 결과가 확인되지 않았다.",
+          "why_not_higher": "Discovery 표기만으로는 결과가 아니다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1",
+            "S2"
+          ]
+        }
+      },
+      "total_score": 1,
+      "max_score": 9
+    },
+    "validation": {
+      "uncertain_points": [
+        "Molecular target/MoA 미확인.",
+        "정량 결과 미확인."
+      ],
+      "cross_checked_facts": [
+        "공식 pipeline: KINE-501C/LBD/Microglial.",
+        "Synapse: synthetic peptide, Discovery."
+      ],
+      "source_registry": [
+        {
+          "source_id": "S1",
+          "source_title": "Kine Sciences Pipeline",
+          "source_url": "https://www.kinesciences.com/m31.php",
+          "source_type": "official_company_pipeline",
+          "verified": true
+        },
+        {
+          "source_id": "S2",
+          "source_title": "Synapse: KINE-501C",
+          "source_url": "https://synapse.patsnap.com/drug/bcc0e499d38b45db9154b737b344da60",
+          "source_type": "biopharma_database",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "LBD fit과 공개 MoA/Data가 부족하다.",
+      "recommendation": "Do not run Full Scout",
+      "most_important_diligence_question": "관심 적응증 또는 비공개 functional package가 있는가?"
+    },
+    "triage": {
+      "status": "REJECT",
+      "identity_verified": true,
+      "active_asset": true,
+      "verified_public_source_count": 2,
+      "why": "현재 등재된 LBD 자산이나 SKBP fit과 공개 MoA/Data가 부족해 REJECT다.",
+      "missing_evidence_needed_for_full_scout": [
+        "SKBP 관심 적응증 연결",
+        "molecular target/MoA",
+        "quantitative results"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "fast_triage",
+      "schema_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
+      "generated_at": "2026-08-18",
+      "output_filename_base": "Kine Sciences_KINE-501D",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run. 제공된 triage status rule을 적용했습니다. :contentReference[oaicite:0]{index=0}\n\n중요: 6개 자산 모두 현재 회사 R&D/pipeline 등재로 identity와 activity는 확인되지만, KINE-501B/C 및 KP-101은 적응증 fit이 낮고 KINE-501D/E 및 KP-102는 관심 적응증임에도 공개 asset-specific MoA/Data가 부족해 전부 REJECT로 처리합니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | KINE-501B | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Frontotemporal dementia | Hit Discovery | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: FTD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다. MOA 0점: molecular target/MoA 미확인. Data 0점: 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:1]{index=1} |\n| 2 | KINE-501C | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Unknown (LBD) | Hit Discovery | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: LBD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다. MOA 0점: molecular target/MoA 미확인. Data 0점: 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:2]{index=2} |\n| 3 | KINE-501D | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Parkinson's disease | Preclinical unspecified | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: Parkinson's disease는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: Preclinical 표기 외 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:3]{index=3} |\n| 4 | KINE-501E | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Unknown | Multiple sclerosis / neuroinflammatory disease | Preclinical unspecified | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: multiple sclerosis는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: Preclinical 표기 외 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:4]{index=4} |\n| 5 | KP-101 | Korea Pharma Co Ltd | Unknown | Unknown | Major depressive disorder | Unknown | Republic of Korea | 0 | 0 | 0 | REJECT | TR 0점: major depressive disorder는 본 triage의 SKBP 관련 범위 밖이다. MOA 0점. Data 0점: 공식 R&D 등재 외 공개 정량 결과 미확인. | Korea Pharma Research Results :contentReference[oaicite:5]{index=5} |\n| 6 | KP-102 | Korea Pharma Co Ltd | Unknown | Unknown | Alzheimer's disease | Unknown | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: Alzheimer's dementia는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: 공식 R&D 등재 외 공개 정량 결과 미확인. | Korea Pharma Research Results :contentReference[oaicite:6]{index=6} |\n\n## Notes\n- KINE-501B/C의 Discovery는 Hit Discovery, KINE-501D/E의 generic Preclinical은 Preclinical unspecified로 정규화했습니다. :contentReference[oaicite:7]{index=7}\n- KINE-501E는 asset-specific source가 generic “Chemical drugs”까지만 제시해 canonical modality는 Unknown입니다. :contentReference[oaicite:8]{index=8}\n- KP-101/102는 공식 R&D 페이지 텍스트에서 정확한 current stage marker를 신뢰성 있게 판독할 수 없어 stage는 Unknown입니다. :contentReference[oaicite:9]{index=9}",
+      "parser_status": "fast_triage"
+    },
+    "input": {
+      "company_input": "Kine Sciences",
+      "asset_input": "KINE-501D"
+    },
+    "json_summary": {
+      "theme": "Unknown",
+      "cluster": "Unknown",
+      "target_description": "Parkinson's disease program; Target Cell=Microglial, molecular target undisclosed."
+    },
+    "structured_table": {
+      "company": "Kine Sciences",
+      "asset_name": "KINE-501D",
+      "target": "Microglia (target cell); molecular target Unknown",
+      "moa": "Unknown",
+      "modality_platform": "Peptide",
+      "main_indication": "Parkinson's disease",
+      "indication": "Parkinson's disease",
+      "development_stage": "Preclinical unspecified",
+      "company_country": "Republic of Korea",
+      "sources": [
+        {
+          "source_title": "Kine Sciences Pipeline",
+          "source_url": "https://www.kinesciences.com/m31.php"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "REJECT",
+      "reason": "관심 적응증은 확인되지만 공개 MoA/Data가 SELECT 기준에 못 미친다.",
+      "flags": [
+        "insufficient_moa_or_data"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 2,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "TR 2 points: Parkinson's disease는 관심 적응증이나 molecular target/MoA는 미확인이다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "TR 2 points: Parkinson's disease는 관심 적응증이나 molecular target/MoA는 미확인이다.",
+          "why_not_higher": "TR 3에 필요한 직접 target/MoA 연결이 없다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1",
+            "S2"
+          ]
+        },
+        "moa_validity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "MOA 0 points: Microglial target cell만 확인되고 molecular target/MoA는 미확인이다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "MOA 0 points: Microglial target cell만 확인되고 molecular target/MoA는 미확인이다.",
+          "why_not_higher": "확인된 기전이 없다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1",
+            "S2"
+          ]
+        },
+        "data_maturity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Data 0 points: 공개 asset-specific 정량 결과가 확인되지 않았다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "Data 0 points: 공개 asset-specific 정량 결과가 확인되지 않았다.",
+          "why_not_higher": "Preclinical 상태 자체는 결과가 아니다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1",
+            "S2"
+          ]
+        }
+      },
+      "total_score": 2,
+      "max_score": 9
+    },
+    "validation": {
+      "uncertain_points": [
+        "Molecular target/MoA 미확인.",
+        "정량 결과 미확인."
+      ],
+      "cross_checked_facts": [
+        "공식 pipeline: KINE-501D/Parkinson's disease/Microglial.",
+        "Synapse: synthetic peptide, Preclinical."
+      ],
+      "source_registry": [
+        {
+          "source_id": "S1",
+          "source_title": "Kine Sciences Pipeline",
+          "source_url": "https://www.kinesciences.com/m31.php",
+          "source_type": "official_company_pipeline",
+          "verified": true
+        },
+        {
+          "source_id": "S2",
+          "source_title": "Synapse: KINE-501D",
+          "source_url": "https://synapse.patsnap.com/drug/e51eb88adc764dca8d419916642ec2d1",
+          "source_type": "biopharma_database",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "TR 2이나 공개 MoA/Data가 부족하다.",
+      "recommendation": "Do not run Full Scout",
+      "most_important_diligence_question": "Target engagement 또는 정량 비임상 데이터는 무엇인가?"
+    },
+    "triage": {
+      "status": "REJECT",
+      "identity_verified": true,
+      "active_asset": true,
+      "verified_public_source_count": 2,
+      "why": "Parkinson's disease fit은 확인되나 molecular MoA/정량 결과가 없어 REJECT다.",
+      "missing_evidence_needed_for_full_scout": [
+        "molecular target/MoA",
+        "interpretable quantitative evidence"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "fast_triage",
+      "schema_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
+      "generated_at": "2026-08-18",
+      "output_filename_base": "Kine Sciences_KINE-501E",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run. 제공된 triage status rule을 적용했습니다. :contentReference[oaicite:0]{index=0}\n\n중요: 6개 자산 모두 현재 회사 R&D/pipeline 등재로 identity와 activity는 확인되지만, KINE-501B/C 및 KP-101은 적응증 fit이 낮고 KINE-501D/E 및 KP-102는 관심 적응증임에도 공개 asset-specific MoA/Data가 부족해 전부 REJECT로 처리합니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | KINE-501B | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Frontotemporal dementia | Hit Discovery | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: FTD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다. MOA 0점: molecular target/MoA 미확인. Data 0점: 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:1]{index=1} |\n| 2 | KINE-501C | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Unknown (LBD) | Hit Discovery | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: LBD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다. MOA 0점: molecular target/MoA 미확인. Data 0점: 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:2]{index=2} |\n| 3 | KINE-501D | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Parkinson's disease | Preclinical unspecified | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: Parkinson's disease는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: Preclinical 표기 외 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:3]{index=3} |\n| 4 | KINE-501E | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Unknown | Multiple sclerosis / neuroinflammatory disease | Preclinical unspecified | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: multiple sclerosis는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: Preclinical 표기 외 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:4]{index=4} |\n| 5 | KP-101 | Korea Pharma Co Ltd | Unknown | Unknown | Major depressive disorder | Unknown | Republic of Korea | 0 | 0 | 0 | REJECT | TR 0점: major depressive disorder는 본 triage의 SKBP 관련 범위 밖이다. MOA 0점. Data 0점: 공식 R&D 등재 외 공개 정량 결과 미확인. | Korea Pharma Research Results :contentReference[oaicite:5]{index=5} |\n| 6 | KP-102 | Korea Pharma Co Ltd | Unknown | Unknown | Alzheimer's disease | Unknown | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: Alzheimer's dementia는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: 공식 R&D 등재 외 공개 정량 결과 미확인. | Korea Pharma Research Results :contentReference[oaicite:6]{index=6} |\n\n## Notes\n- KINE-501B/C의 Discovery는 Hit Discovery, KINE-501D/E의 generic Preclinical은 Preclinical unspecified로 정규화했습니다. :contentReference[oaicite:7]{index=7}\n- KINE-501E는 asset-specific source가 generic “Chemical drugs”까지만 제시해 canonical modality는 Unknown입니다. :contentReference[oaicite:8]{index=8}\n- KP-101/102는 공식 R&D 페이지 텍스트에서 정확한 current stage marker를 신뢰성 있게 판독할 수 없어 stage는 Unknown입니다. :contentReference[oaicite:9]{index=9}",
+      "parser_status": "fast_triage"
+    },
+    "input": {
+      "company_input": "Kine Sciences",
+      "asset_input": "KINE-501E"
+    },
+    "json_summary": {
+      "theme": "Unknown",
+      "cluster": "Unknown",
+      "target_description": "Multiple sclerosis program; Target Cell=Microglial, molecular target undisclosed."
+    },
+    "structured_table": {
+      "company": "Kine Sciences",
+      "asset_name": "KINE-501E",
+      "target": "Microglia (target cell); molecular target Unknown",
+      "moa": "Unknown",
+      "modality_platform": "Unknown",
+      "main_indication": "Multiple sclerosis / neuroinflammatory disease",
+      "indication": "Multiple sclerosis",
+      "development_stage": "Preclinical unspecified",
+      "company_country": "Republic of Korea",
+      "sources": [
+        {
+          "source_title": "Kine Sciences Pipeline",
+          "source_url": "https://www.kinesciences.com/m31.php"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "REJECT",
+      "reason": "관심 적응증은 확인되지만 공개 MoA/Data가 SELECT 기준에 못 미친다.",
+      "flags": [
+        "insufficient_moa_or_data"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 2,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "TR 2 points: Multiple sclerosis는 관심 적응증이나 molecular target/MoA는 미확인이다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "TR 2 points: Multiple sclerosis는 관심 적응증이나 molecular target/MoA는 미확인이다.",
+          "why_not_higher": "TR 3에 필요한 직접 target/MoA 연결이 없다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1",
+            "S2"
+          ]
+        },
+        "moa_validity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "MOA 0 points: Microglial target cell만 확인되고 molecular target/MoA는 미확인이다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "MOA 0 points: Microglial target cell만 확인되고 molecular target/MoA는 미확인이다.",
+          "why_not_higher": "확인된 기전이 없다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1",
+            "S2"
+          ]
+        },
+        "data_maturity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Data 0 points: 공개 asset-specific 정량 결과가 확인되지 않았다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "Data 0 points: 공개 asset-specific 정량 결과가 확인되지 않았다.",
+          "why_not_higher": "Preclinical 상태 자체는 결과가 아니다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1",
+            "S2"
+          ]
+        }
+      },
+      "total_score": 2,
+      "max_score": 9
+    },
+    "validation": {
+      "uncertain_points": [
+        "Molecular target/MoA 미확인.",
+        "정량 결과 미확인.",
+        "Canonical modality 미확정."
+      ],
+      "cross_checked_facts": [
+        "공식 pipeline: KINE-501E/MS/Microglial.",
+        "Synapse: Preclinical; drug type은 generic Chemical drugs."
+      ],
+      "source_registry": [
+        {
+          "source_id": "S1",
+          "source_title": "Kine Sciences Pipeline",
+          "source_url": "https://www.kinesciences.com/m31.php",
+          "source_type": "official_company_pipeline",
+          "verified": true
+        },
+        {
+          "source_id": "S2",
+          "source_title": "Synapse: KINE-501E",
+          "source_url": "https://synapse.patsnap.com/drug/7673acce77814a54b56af0c67e6eb23a",
+          "source_type": "biopharma_database",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "TR 2이나 공개 MoA/Data가 부족하다.",
+      "recommendation": "Do not run Full Scout",
+      "most_important_diligence_question": "Target engagement 또는 정량 비임상 데이터는 무엇인가?"
+    },
+    "triage": {
+      "status": "REJECT",
+      "identity_verified": true,
+      "active_asset": true,
+      "verified_public_source_count": 2,
+      "why": "Multiple sclerosis fit은 확인되나 molecular MoA/정량 결과가 없어 REJECT다.",
+      "missing_evidence_needed_for_full_scout": [
+        "molecular target/MoA",
+        "interpretable quantitative evidence"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "fast_triage",
+      "schema_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
+      "generated_at": "2026-08-18",
+      "output_filename_base": "Korea Pharma Co Ltd_KP-101",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run. 제공된 triage status rule을 적용했습니다. :contentReference[oaicite:0]{index=0}\n\n중요: 6개 자산 모두 현재 회사 R&D/pipeline 등재로 identity와 activity는 확인되지만, KINE-501B/C 및 KP-101은 적응증 fit이 낮고 KINE-501D/E 및 KP-102는 관심 적응증임에도 공개 asset-specific MoA/Data가 부족해 전부 REJECT로 처리합니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | KINE-501B | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Frontotemporal dementia | Hit Discovery | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: FTD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다. MOA 0점: molecular target/MoA 미확인. Data 0점: 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:1]{index=1} |\n| 2 | KINE-501C | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Unknown (LBD) | Hit Discovery | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: LBD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다. MOA 0점: molecular target/MoA 미확인. Data 0점: 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:2]{index=2} |\n| 3 | KINE-501D | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Parkinson's disease | Preclinical unspecified | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: Parkinson's disease는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: Preclinical 표기 외 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:3]{index=3} |\n| 4 | KINE-501E | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Unknown | Multiple sclerosis / neuroinflammatory disease | Preclinical unspecified | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: multiple sclerosis는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: Preclinical 표기 외 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:4]{index=4} |\n| 5 | KP-101 | Korea Pharma Co Ltd | Unknown | Unknown | Major depressive disorder | Unknown | Republic of Korea | 0 | 0 | 0 | REJECT | TR 0점: major depressive disorder는 본 triage의 SKBP 관련 범위 밖이다. MOA 0점. Data 0점: 공식 R&D 등재 외 공개 정량 결과 미확인. | Korea Pharma Research Results :contentReference[oaicite:5]{index=5} |\n| 6 | KP-102 | Korea Pharma Co Ltd | Unknown | Unknown | Alzheimer's disease | Unknown | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: Alzheimer's dementia는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: 공식 R&D 등재 외 공개 정량 결과 미확인. | Korea Pharma Research Results :contentReference[oaicite:6]{index=6} |\n\n## Notes\n- KINE-501B/C의 Discovery는 Hit Discovery, KINE-501D/E의 generic Preclinical은 Preclinical unspecified로 정규화했습니다. :contentReference[oaicite:7]{index=7}\n- KINE-501E는 asset-specific source가 generic “Chemical drugs”까지만 제시해 canonical modality는 Unknown입니다. :contentReference[oaicite:8]{index=8}\n- KP-101/102는 공식 R&D 페이지 텍스트에서 정확한 current stage marker를 신뢰성 있게 판독할 수 없어 stage는 Unknown입니다. :contentReference[oaicite:9]{index=9}",
+      "parser_status": "fast_triage"
+    },
+    "input": {
+      "company_input": "Korea Pharma Co Ltd",
+      "asset_input": "KP-101"
+    },
+    "json_summary": {
+      "theme": "Unknown",
+      "cluster": "Unknown",
+      "target_description": "Major depressive disorder project; target/MoA undisclosed."
+    },
+    "structured_table": {
+      "company": "Korea Pharma Co Ltd",
+      "asset_name": "KP-101",
+      "target": "Unknown",
+      "moa": "Unknown",
+      "modality_platform": "Unknown",
+      "main_indication": "Major depressive disorder",
+      "indication": "major depressive disorder",
+      "development_stage": "Unknown",
+      "company_country": "Republic of Korea",
+      "sources": [
+        {
+          "source_title": "Korea Pharma Research Results",
+          "source_url": "https://koreapharma.co.kr/eng/sub_research/result.php"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "REJECT",
+      "reason": "MDD는 본 triage의 SKBP 관련 범위 밖이고 공개 MoA/Data가 없다.",
+      "flags": [
+        "outside_skbp_scope",
+        "insufficient_moa_or_data"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "TR 0 points: Major depressive disorder는 본 triage의 SKBP 관련 질환 범위 밖이다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "TR 0 points: Major depressive disorder는 본 triage의 SKBP 관련 질환 범위 밖이다.",
+          "why_not_higher": "관심/qualifying neurologic indication이 없다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1"
+          ]
+        },
+        "moa_validity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "MOA 0 points: target 또는 asset-specific MoA가 확인되지 않았다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "MOA 0 points: target 또는 asset-specific MoA가 확인되지 않았다.",
+          "why_not_higher": "기전 근거가 없다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1"
+          ]
+        },
+        "data_maturity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Data 0 points: 공개 asset-specific 정량 결과가 확인되지 않았다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "Data 0 points: 공개 asset-specific 정량 결과가 확인되지 않았다.",
+          "why_not_higher": "Pipeline listing은 결과가 아니다.",
+          "investigation_note": "공식 페이지 텍스트에서 current stage marker도 확정 불가.",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1"
+          ]
+        }
+      },
+      "total_score": 0,
+      "max_score": 9
+    },
+    "validation": {
+      "uncertain_points": [
+        "Target/MoA 미확인.",
+        "Stage 미확정.",
+        "정량 결과 미확인."
+      ],
+      "cross_checked_facts": [
+        "공식 R&D: KP 101/major depressive disorder.",
+        "회사 주소: Seoul, Republic of Korea."
+      ],
+      "source_registry": [
+        {
+          "source_id": "S1",
+          "source_title": "Korea Pharma Research Results",
+          "source_url": "https://koreapharma.co.kr/eng/sub_research/result.php",
+          "source_type": "official_company_rnd",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "MDD는 triage 범위 밖이며 공개 MoA/Data도 없다.",
+      "recommendation": "Do not run Full Scout",
+      "most_important_diligence_question": "관심 적응증 또는 target/MoA package가 있는가?"
+    },
+    "triage": {
+      "status": "REJECT",
+      "identity_verified": true,
+      "active_asset": true,
+      "verified_public_source_count": 1,
+      "why": "현재 R&D 등재는 확인되나 적응증 fit과 공개 MoA/Data가 부족해 REJECT다.",
+      "missing_evidence_needed_for_full_scout": [
+        "SKBP 관심 적응증",
+        "molecular target/MoA",
+        "quantitative results"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "fast_triage",
+      "schema_version": "3.2",
+      "instruction_version": "3.3",
+      "rubric_version": "3.3",
+      "generated_at": "2026-08-18",
+      "output_filename_base": "Korea Pharma Co Ltd_KP-102",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run. 제공된 triage status rule을 적용했습니다. :contentReference[oaicite:0]{index=0}\n\n중요: 6개 자산 모두 현재 회사 R&D/pipeline 등재로 identity와 activity는 확인되지만, KINE-501B/C 및 KP-101은 적응증 fit이 낮고 KINE-501D/E 및 KP-102는 관심 적응증임에도 공개 asset-specific MoA/Data가 부족해 전부 REJECT로 처리합니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | KINE-501B | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Frontotemporal dementia | Hit Discovery | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: FTD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다. MOA 0점: molecular target/MoA 미확인. Data 0점: 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:1]{index=1} |\n| 2 | KINE-501C | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Unknown (LBD) | Hit Discovery | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: LBD는 신경퇴행성 질환이나 6개 관심 적응증 밖이다. MOA 0점: molecular target/MoA 미확인. Data 0점: 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:2]{index=2} |\n| 3 | KINE-501D | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Peptide | Parkinson's disease | Preclinical unspecified | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: Parkinson's disease는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: Preclinical 표기 외 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:3]{index=3} |\n| 4 | KINE-501E | Kine Sciences | Microglial target cell; molecular target/MoA Unknown | Unknown | Multiple sclerosis / neuroinflammatory disease | Preclinical unspecified | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: multiple sclerosis는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: Preclinical 표기 외 공개 정량 결과 미확인. | Kine Sciences pipeline; Synapse :contentReference[oaicite:4]{index=4} |\n| 5 | KP-101 | Korea Pharma Co Ltd | Unknown | Unknown | Major depressive disorder | Unknown | Republic of Korea | 0 | 0 | 0 | REJECT | TR 0점: major depressive disorder는 본 triage의 SKBP 관련 범위 밖이다. MOA 0점. Data 0점: 공식 R&D 등재 외 공개 정량 결과 미확인. | Korea Pharma Research Results :contentReference[oaicite:5]{index=5} |\n| 6 | KP-102 | Korea Pharma Co Ltd | Unknown | Unknown | Alzheimer's disease | Unknown | Republic of Korea | 2 | 0 | 0 | REJECT | TR 2점: Alzheimer's dementia는 관심 적응증이나 molecular target/MoA 미확인. MOA 0점. Data 0점: 공식 R&D 등재 외 공개 정량 결과 미확인. | Korea Pharma Research Results :contentReference[oaicite:6]{index=6} |\n\n## Notes\n- KINE-501B/C의 Discovery는 Hit Discovery, KINE-501D/E의 generic Preclinical은 Preclinical unspecified로 정규화했습니다. :contentReference[oaicite:7]{index=7}\n- KINE-501E는 asset-specific source가 generic “Chemical drugs”까지만 제시해 canonical modality는 Unknown입니다. :contentReference[oaicite:8]{index=8}\n- KP-101/102는 공식 R&D 페이지 텍스트에서 정확한 current stage marker를 신뢰성 있게 판독할 수 없어 stage는 Unknown입니다. :contentReference[oaicite:9]{index=9}",
+      "parser_status": "fast_triage"
+    },
+    "input": {
+      "company_input": "Korea Pharma Co Ltd",
+      "asset_input": "KP-102"
+    },
+    "json_summary": {
+      "theme": "Unknown",
+      "cluster": "Unknown",
+      "target_description": "Alzheimer's dementia project; target/MoA undisclosed."
+    },
+    "structured_table": {
+      "company": "Korea Pharma Co Ltd",
+      "asset_name": "KP-102",
+      "target": "Unknown",
+      "moa": "Unknown",
+      "modality_platform": "Unknown",
+      "main_indication": "Alzheimer's disease",
+      "indication": "Alzheimer's dementia",
+      "development_stage": "Unknown",
+      "company_country": "Republic of Korea",
+      "sources": [
+        {
+          "source_title": "Korea Pharma Research Results",
+          "source_url": "https://koreapharma.co.kr/eng/sub_research/result.php"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "REJECT",
+      "reason": "관심 적응증은 확인되지만 공개 MoA/Data가 SELECT 기준에 못 미친다.",
+      "flags": [
+        "insufficient_moa_or_data"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 2,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "TR 2 points: Alzheimer's dementia는 관심 적응증이나 molecular target/MoA는 미확인이다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "TR 2 points: Alzheimer's dementia는 관심 적응증이나 molecular target/MoA는 미확인이다.",
+          "why_not_higher": "TR 3에 필요한 직접 target/MoA 연결이 없다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1"
+          ]
+        },
+        "moa_validity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "MOA 0 points: target 또는 asset-specific MoA가 확인되지 않았다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "MOA 0 points: target 또는 asset-specific MoA가 확인되지 않았다.",
+          "why_not_higher": "기전 근거가 없다.",
+          "investigation_note": "",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1"
+          ]
+        },
+        "data_maturity": {
+          "score": 0,
+          "evidence_type": "triage_only",
+          "evidence_type_reason": "Data 0 points: 공개 asset-specific 정량 결과가 확인되지 않았다.",
+          "evidence_basis": "public_source",
+          "main_line_summary": "Data 0 points: 공개 asset-specific 정량 결과가 확인되지 않았다.",
+          "why_not_higher": "Pipeline listing은 결과가 아니다.",
+          "investigation_note": "공식 페이지 텍스트에서 current stage marker도 확정 불가.",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1"
+          ]
+        }
+      },
+      "total_score": 2,
+      "max_score": 9
+    },
+    "validation": {
+      "uncertain_points": [
+        "Target/MoA 미확인.",
+        "Stage 미확정.",
+        "정량 결과 미확인."
+      ],
+      "cross_checked_facts": [
+        "공식 R&D: KP 102/Alzheimer's dementia.",
+        "회사 주소: Seoul, Republic of Korea."
+      ],
+      "source_registry": [
+        {
+          "source_id": "S1",
+          "source_title": "Korea Pharma Research Results",
+          "source_url": "https://koreapharma.co.kr/eng/sub_research/result.php",
+          "source_type": "official_company_rnd",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "TR 2이나 공개 MoA/Data가 부족하다.",
+      "recommendation": "Do not run Full Scout",
+      "most_important_diligence_question": "Target/MoA와 정량 asset-specific 데이터는 무엇인가?"
+    },
+    "triage": {
+      "status": "REJECT",
+      "identity_verified": true,
+      "active_asset": true,
+      "verified_public_source_count": 1,
+      "why": "Alzheimer's dementia fit은 확인되나 target/MoA/정량 결과가 없어 REJECT다.",
+      "missing_evidence_needed_for_full_scout": [
+        "molecular target/MoA",
+        "interpretable quantitative evidence"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "full_scout",
+      "schema_version": "3.2",
+      "instruction_version": "3.4",
+      "rubric_version": "3.4",
+      "generated_at": "2026-08-18",
+      "output_filename_base": "1ST Biotherapeutics, Inc._1ST-104",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# 1ST Biotherapeutics Pipeline Scout Report: **1ST-104**\n\n본 보고서는 GPT instruction 2 — Full Scout v3.4 (schema v3.2)에 따라 attachment review, public-source verification, competitor search 및 7개 criterion scoring을 수행했으며, auditability를 위해 확인한 URL을 포함합니다. :contentReference[oaicite:0]{index=0}\n\n**중요: 1ST-104는 공식 pipeline과 제공자료에서 Parkinson's disease용 LRRK2/c-Abl dual inhibitor 프로그램으로 확인되고 active lead-optimization program으로 판단되나, 총점 12/21로 REVIEW / Watch입니다. Preclinical target/PK profile은 흥미롭지만 candidate가 아직 공식 nomination되지 않았고, in vivo efficacy·1ST-104 자체 반복독성·human data가 없으며, 최근 LRRK2 및 c-Abl 임상 실패 사례와 시장성 산정 불확실성이 남아 있습니다.**\n\n---\n\n## 1) Company Profile\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | 1ST Biotherapeutics, Inc. | [1], [3] |\n| Legal name / aliases | 1ST Biotherapeutics, Inc. / 1STBIO / 주식회사 퍼스트바이오테라퓨틱스 | [3] |\n| Country | Republic of Korea | [3] |\n| Headquarters | Yongin-si, Gyeonggi-do, Republic of Korea | [3] |\n| Website | https://www.1stbio.com/ | [3] |\n| Company type / stage | Private, clinical-stage biopharmaceutical company | [2], [3] |\n| Focus areas | Neurodegenerative diseases, oncology, rare diseases | [2] |\n| Platform summary | 1ST-501 AI Drug Discovery Engine을 보유하며, 1ST-104 자료에서는 AI-driven in-house discovery를 활용해 671개 이상의 compound를 합성하고 multiple lead series를 도출했다고 설명. 다만 platform 자체의 quantitative superiority versus conventional discovery는 제시되지 않음. | [1], attachment |\n| Financing / partnership signals | 2026-01 Series D 317억원 조달, 누적 투자금 약 1,080억원. MJFF LITE consortium 참여를 통한 LRRK2 연구 협력도 확인됨. | [2], [4] |\n| Lead pipeline summary | Oncology 및 neurodegeneration에서 clinical/preclinical pipeline을 운영. 1ST-104는 공식 pipeline상 LRRK2/c-Abl → Parkinson's disease program으로 등재됨. | [1] |\n\n1STBIO 공식 홈페이지는 Yongin 소재와 company identity를 확인하며, 공식 pipeline에는 1ST-104가 LRRK2/c-Abl을 표적하는 Parkinson's disease program으로 현재 등재되어 있습니다. :contentReference[oaicite:1]{index=1} 2026년 1월 회사는 317억원 Series D 및 누적 약 1,080억원의 투자 유치를 발표했습니다. :contentReference[oaicite:2]{index=2}\n\nAttachment에서는 671 compounds를 합성하고 multiple lead series가 lead optimization 단계에서 진행되고 있다고 명시합니다. :contentReference[oaicite:3]{index=3}\n\n---\n\n## 2) Pipeline Snapshot\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | 1ST Biotherapeutics, Inc. | [1], [3] |\n| Lead asset | 1ST-104; representative optimized compounds include FB-3538A and FB-4853A. Final development candidate is not yet confirmed in reviewed evidence. | Attachment |\n| Target | LRRK2 / c-Abl | [1], attachment |\n| Theme / Cluster | **Theme: Neuroimmune / Cluster: Cytokine 신경조절** | Asset-specific iPSC-derived microglia target/ cytokine experiments + LRRK2 biology; internal SKBP mapping |\n| MoA | Brain-penetrant dual LRRK2/c-Abl kinase inhibition. Lead series suppresses pRab10 and pCrkL while relatively preserving LRRK2 pS935, supporting a Type II-like LRRK2 pharmacology. Type II binding is structurally confirmed for c-Abl by co-crystal; LRRK2 structural confirmation was still planned. | Attachment, [5]-[8] |\n| Modality / Platform | Small molecule | [1], attachment |\n| Indication | Parkinson's disease | [1] |\n| Stage | **Lead Optimization**. Official public pipeline uses broader “Discovery” labeling; the March 2026 attachment specifically states active lead optimization. Candidate nomination in 3Q 2026 was a plan, not a completed milestone. | [1], attachment |\n| Key data | FB-4853A: LRRK2 biochemical IC50 11.12 nM; c-Abl IC50 0.93 nM; stimulated pRab10 IC50 12.41 nM; unstimulated pRab10 IC50 44.73 nM; pS935 IC50 >5,000 nM. Mouse PO F 62.08%, Kp,brain 0.91, Kp,uu,brain 0.31. hERG IC50 8.75 μM is a liability requiring follow-up. | Attachment |\n\n공식 pipeline에서 1ST-104의 target/indication은 LRRK2/c-Abl 및 Parkinson's disease로 명확히 확인됩니다. :contentReference[oaicite:4]{index=4} 제공자료에서는 candidate selection을 향한 lead optimization이 진행 중이며 candidate nomination은 3Q 2026, Phase I initiation은 3Q 2027의 **계획**으로 표시되어 있어 이를 완료된 milestone으로 취급하지 않았습니다. :contentReference[oaicite:5]{index=5}\n\n대표 compound FB-4853A는 LRRK2 11.12 nM 및 c-Abl 0.93 nM biochemical potency와 12.41 nM stimulated pRab10 potency를 보였습니다. :contentReference[oaicite:6]{index=6} :contentReference[oaicite:7]{index=7} Unstimulated A549 assay에서는 pRab10 IC50 44.73 nM인 반면 pS935 IC50가 >5,000 nM으로 나타나 Type II-like profile을 지지했습니다. :contentReference[oaicite:8]{index=8} :contentReference[oaicite:9]{index=9}\n\nMouse PK에서 FB-4853A는 5 mg/kg PO 기준 F 62.08%, Kp,brain 0.91, Kp,uu,brain 0.31을 보였습니다. :contentReference[oaicite:10]{index=10} 반면 hERG IC50는 8.75 μM으로, 자료 내 자체 기준상 10 μM 미만에 해당하여 development candidate 선정 시 exposure margin 확인이 중요한 safety diligence item입니다. :contentReference[oaicite:11]{index=11}\n\n---\n\n## 3) Scorecard Summary\n\n| Criterion | Score (maximum 3 points each) | One-line judgment | Evidence used |\n|---|---:|---|---|\n| Target Relevance | **3점** | PD는 SKBP interest indication이며 LRRK2는 human genetics로 직접 연결되고, 1ST-104는 LRRK2/c-Abl을 실제 pharmacology로 조절함. | [1], [5]-[7], attachment |\n| Competitive Landscape | **2점** | Type II-like/pS935-preserving profile이라는 quantitative differentiation은 있으나 NEU-411, BIIB122, BT-267 등 clinical LRRK2 competitors가 앞서 있으며 LUMA 및 c-Abl clinical failures가 존재. | [9]-[17], attachment |\n| MoA Validity | **3점** | Asset-specific biochemical potency, pRab10/pCrkL cellular PD, pS935 conformational profile 및 c-Abl co-crystal로 직접 기능 검증. | Attachment, [7], [8] |\n| Platform Attractiveness | **1점** | AI discovery platform과 반복 가능한 chemistry workflow는 확인되나 platform-vs-comparator quantitative advantage는 없음. | [1], attachment |\n| Expansion Potential | **0점** | 1ST-104 자체의 PD 외 추가 active indication/program은 확인되지 않음. | [1], attachment |\n| Data Maturity | **3점** | Biochemical/cellular pharmacology + selectivity/ADME/brain PK + microglia data 등 복수 quantitative domain이 존재. | Attachment |\n| Marketability | **0점** | Asset-specific forecast가 없고, broad PD vs biomarker-selected PD label과 적절한 DMT price benchmark가 확정되지 않아 신뢰 가능한 A/B/C/D 계산을 수행하지 않음. | [10], [18] |\n| **Total** | **12점** | Maximum total: 21점 → **REVIEW** | |\n\n---\n\n## 4) Criterion Detail Pages\n\n### 4.1 Target Relevance\nScore: **3점**\n\nMain line: **Parkinson's disease는 SKBP의 핵심 interest indication이며, LRRK2는 human genetic causality가 가장 강한 PD target 중 하나이고 1ST-104는 LRRK2와 c-Abl을 동시에 실제 pharmacology로 조절합니다.**\n\nWhat was checked:\n- Target identity\n- Disease/biology relevance\n- SKBP Theme / Cluster fit\n- General neurodegeneration / neuroinflammation / epilepsy relevance\n\nEvidence trail:\n- 공식 1STBIO pipeline: 1ST-104 = LRRK2/c-Abl, Parkinson's disease. [1] :contentReference[oaicite:12]{index=12}\n- LRRK2 disease-segregating mutations were originally identified in autosomal-dominant Parkinsonism, providing direct human genetic linkage. [5] :contentReference[oaicite:13]{index=13}\n- c-Abl has experimentally been linked to α-synuclein phosphorylation/degradation and PD-related neurodegeneration. [6] :contentReference[oaicite:14]{index=14}\n- Attachment shows 1ST-104 compounds directly inhibit both LRRK2 and c-Abl and modulate their downstream biomarkers. :contentReference[oaicite:15]{index=15}\n\nInvestigation note:\n- **3점 rule:** SKBP interest indication이 확인되고 target/MoA가 해당 disease biology에 직접 연결됨.\n- PD와 LRRK2의 genetic linkage가 강하며 1ST-104 자체에서도 target modulation이 확인되어 3점.\n- 3점이 최고점. 다만 dual-target에서 c-Abl contribution이 임상적으로 추가 benefit을 제공하는지는 아직 입증되지 않음.\n\n### 4.2 Competitive Landscape\nScore: **2점**\n\nMain line: **1ST-104의 pS935-preserving Type II-like profile은 기존 Type I LRRK2 inhibition과 차별화 가능성이 있으나, clinical-stage LRRK2 경쟁이 이미 상당히 진행되었고 LRRK2 및 c-Abl monotherapy의 최근 efficacy failures가 진입장벽을 높였습니다.**\n\nWhat was checked:\n- Same disease competitors\n- Same target competitors\n- Same or similar MoA competitors\n- Front runner count\n- Approved / Phase 3 / clinical / preclinical status\n- ClinicalTrials.gov, official company pipelines, recent primary clinical publications\n- Type II LRRK2 competitors\n\nCompetitor table:\n\n| Competitor | Company | Modality | Target / MoA | Stage | Why it matters | Source |\n|---|---|---|---|---|---|---|\n| NEU-411 | Neuron23 | Small molecule | Selective LRRK2 inhibitor | Phase 2, recruiting | Most advanced active precision-LRRK2 competitor; genotype-selected LRRK2-driven early PD | [9] |\n| BIIB122 / DNL151 | Denali / Biogen | Small molecule | LRRK2 inhibitor | Phase 2a BEACON active in LRRK2-PD; idiopathic PD program discontinued | Direct target/modality comparator; Phase 2b LUMA failed primary/secondary endpoints in idiopathic PD | [10], [19] |\n| BT-267 | Brenig Therapeutics | Small molecule | Brain-penetrant selective LRRK2 inhibitor | Phase 1 | Direct oral small-molecule LRRK2 competitor with CNS/selectivity positioning | [11] |\n| FinsnoBio Type II LRRK2 program | FinsnoBio | Small molecule | Type II / G2019S-focused LRRK2 inhibition | Preclinical/IND-directed; exact asset stage undisclosed | Particularly relevant to 1ST-104's proposed Type II differentiation | [14] |\n| ARV-102 | Arvinas | PROTAC | LRRK2 degradation | Phase 1 PD data | Different modality but clinically demonstrated CNS LRRK2 modulation; >50% CSF degradation reported | [12] |\n| BIIB094 | Ionis/Biogen | Antisense oligonucleotide | LRRK2 lowering | Phase 1 completed | Clinical human validation of an alternative LRRK2-modulating modality | [13] |\n| Vodobatinib | SPARC | Small molecule | c-Abl inhibitor | Phase 2 completed; negative | Shares c-Abl component of 1ST-104; trial did not show clinical benefit and had tolerability/dropout issues | [17] |\n\nNEU-411 is currently in a randomized Phase 2 trial in genetically selected LRRK2-driven early PD. :contentReference[oaicite:16]{index=16} BIIB122's Phase 2b LUMA study in broader early PD failed its primary and secondary efficacy endpoints in May 2026; development in idiopathic PD was discontinued, although the LRRK2-variant BEACON Phase 2a remains active. :contentReference[oaicite:17]{index=17}\n\nAdditional clinical competition includes Brenig's BT-267 Phase 1 LRRK2 inhibitor and Arvinas' ARV-102, which reported ≥50% LRRK2 reduction in CSF in Phase 1 PD patients. :contentReference[oaicite:18]{index=18} FinsnoBio is independently developing Type II LRRK2 inhibitors, making the \"Type II\" concept itself non-exclusive competitively. :contentReference[oaicite:19]{index=19}\n\nFor c-Abl, the 2026 PROSEEK Phase 2 publication reported that vodobatinib did not demonstrate clinical benefit over placebo; this is relevant because c-Abl is the second pharmacologic component of 1ST-104. :contentReference[oaicite:20]{index=20}\n\nAsset-specific differentiation:\n- Internal DNL151 comparison showed DNL151 pRab10 IC50 46.14 nM and pS935 IC50 66.92 nM, whereas later 1ST-104 compound FB-4853A showed pRab10 IC50 44.73 nM with pS935 IC50 >5,000 nM. This supports substantially greater pS935 preservation at similar cellular pRab10 potency, consistent with Type II-like differentiation. :contentReference[oaicite:21]{index=21} :contentReference[oaicite:22]{index=22}\n- However, this is company-generated preclinical comparison, not externally reproduced or clinical head-to-head evidence.\n\nInvestigation note:\n- **2점 rule:** asset-specific quantitative differentiation versus an appropriate comparator or a credible differentiated entry space.\n- pRab10/pS935 data provide this threshold.\n- **Not 3:** multiple high-similarity clinical competitors are ahead; Type II LRRK2 is not unique; no human data or independent head-to-head evidence exists, and both broad LRRK2 inhibition and c-Abl inhibition have recent negative Phase 2 efficacy precedents.\n\n### 4.3 MoA Validity\nScore: **3점**\n\nMain line: **1ST-104 compounds directly engage both intended kinase pathways and show mechanism-linked cellular PD biomarkers plus a conformationally differentiated LRRK2 profile.**\n\nWhat was checked:\n- Journal publication / PMID / DOI\n- Mechanistic consistency\n- Functional readout\n- Disease linkage\n- Safety-relevant signal\n\nEvidence trail:\n- FB-4853A biochemical LRRK2 IC50 11.12 nM, c-Abl IC50 0.93 nM. :contentReference[oaicite:23]{index=23} :contentReference[oaicite:24]{index=24}\n- Cellular stimulated pRab10 IC50 12.41 nM and pCrkL IC50 0.67 nM. :contentReference[oaicite:25]{index=25} :contentReference[oaicite:26]{index=26}\n- FB-4853A retains 79.9% pS935 level at its pRab10 IC50 and 63.9% at pRab10 IC80, greater preservation than FB-3538A, supporting Type II-like LRRK2 behavior. :contentReference[oaicite:27]{index=27}\n- The deck explicitly summarizes potent pRab10 inhibition with preserved pS935 as a Type II-like binding profile. :contentReference[oaicite:28]{index=28}\n- c-Abl Type II binding was directly demonstrated by X-ray co-crystal; **LRRK2 cryo-EM confirmation was still planned**, so structural confirmation should not be extended from c-Abl to LRRK2. :contentReference[oaicite:29]{index=29}\n- Independent studies validate Rab10 phosphorylation as a direct LRRK2 kinase readout. [7] :contentReference[oaicite:30]{index=30}\n- Independent primary work has characterized Type II inhibitors that stabilize an inactive/open LRRK2 kinase conformation. [8] :contentReference[oaicite:31]{index=31}\n\nInvestigation note:\n- **3점 rule:** assessed-asset target engagement, mechanism-linked PD/biomarker or direct functional validation.\n- 1ST-104 meets this through biochemical LRRK2/c-Abl inhibition and downstream pRab10/pCrkL cellular effects.\n- 3점이 최고점. Remaining diligence is not MoA existence but whether the dual/Type II profile translates to superior in vivo efficacy and safety.\n\n### 4.4 Platform Attractiveness\nScore: **1점**\n\nMain line: **Reusable AI/medicinal-chemistry discovery infrastructure exists, but its claimed advantage has not been quantitatively benchmarked against an appropriate discovery comparator.**\n\nWhat was checked:\n- Is the platform real and reproducible?\n- Is differentiation supported by data?\n- Is the underlying technical system reusable across candidates, programs, or conditions?\n\nEvidence trail:\n- Official pipeline identifies **1ST-501 AI Drug Discovery Engine** as a drug-engineering platform integrating medicinal chemistry and AI. [1] :contentReference[oaicite:32]{index=32}\n- 1ST-104 attachment states that the AI-driven in-house platform contributed to synthesis of >671 compounds and identification of multiple lead series. :contentReference[oaicite:33]{index=33}\n- 671-compound output demonstrates substantial use of the system but does not quantify whether AI improved hit rate, cycle time, potency, selectivity, cost, or candidate success versus a proper comparator.\n\nInvestigation note:\n- **1점 rule:** reusable structure with plausible rationale but claim/concept-level differentiation.\n- **Not 2:** no direct quantitative platform-vs-comparator experiment or metric was provided.\n- The 1ST-104 potency/PK data are counted under Data Maturity and are not double-counted as platform superiority.\n\nPlatform vs Data Maturity separation:\n- Platform Attractiveness = reusable discovery system.\n- Data Maturity = 1ST-104 compound data.\n- The 671-compound campaign establishes platform use but not a quantitative technical advantage.\n\n### 4.5 Expansion Potential\nScore: **0점**\n\nMain line: **Reviewed official and company-supplied evidence confirms Parkinson's disease for 1ST-104 but does not confirm another active asset-specific indication.**\n\nWhat was checked:\n- Expansion beyond main indication\n- Asset-specific quantitative data in additional indications\n- Confirmed asset-specific preclinical, IND-enabling, or clinical development programs\n\nEvidence trail:\n- Official 1STBIO pipeline lists 1ST-104 only under Parkinson's disease. [1] :contentReference[oaicite:34]{index=34}\n- The supplied 1ST-104 development timeline is directed toward PD models and future healthy-volunteer/PD clinical work. :contentReference[oaicite:35]{index=35}\n\nInvestigation note:\n- **0점 rule:** no confirmed additional indication.\n- **Not 1:** biological plausibility for other neurodegenerative indications is not enough; an additional indication explicitly tied to 1ST-104 was not verified.\n- Other 1STBIO assets or historical c-Abl/LRRK2 programs are not treated as expansion of 1ST-104.\n\n### 4.6 Data Maturity\nScore: **3점**\n\nMain line: **Lead-optimization stage에 적절한 quantitative evidence가 biochemical/cellular pharmacology, selectivity, ADME/PK/brain penetration 및 human iPSC-derived microglia 등 여러 독립적 development questions를 커버합니다.**\n\nWhat was checked:\n- In vitro data\n- In vivo data\n- Quantitative result\n- Reproducibility\n- IND-enabling / GLP tox / PK/PD / CMC / human data availability\n\nEvidence trail:\n\n**Domain 1 — Target pharmacology / cellular PD**\n- FB-4853A LRRK2 11.12 nM, c-Abl 0.93 nM.\n- Cellular pRab10 and pCrkL inhibition demonstrated.\n- pRab10 reduction with relative pS935 preservation supports intended Type II-like profile.\n:contentReference[oaicite:36]{index=36} :contentReference[oaicite:37]{index=37}\n\n**Domain 2 — Selectivity**\n- FB-4853A: PDGFRα >2,500 nM, KDR 3,797.8 nM, c-Kit >12,500 nM, LCK 4,314 nM, RIPK2 >5,000 nM.\n- Residual liabilities include DYRK1A 144.1 nM and TRKB 511 nM, which should remain in the selectivity diligence package.\n:contentReference[oaicite:38]{index=38} :contentReference[oaicite:39]{index=39}\n\n**Domain 3 — PK / CNS exposure**\n- FB-4853A 5 mg/kg PO: T1/2 1.37 h, Cmax 1,422.13 ng/mL, AUClast 2,301.69 h·ng/mL, F 62.08%, Kp,brain 0.91, Kp,uu,brain 0.31.\n:contentReference[oaicite:40]{index=40}\n\n**Domain 4 — Human iPSC-derived microglia**\n- PFF/IFN-γ-stimulated healthy iPSC-derived microglia experiments evaluated LRRK2 pS935, Rab10 pT73 and cytokines TNF-α, IL-1β and IL-6 with FB-4853A.\n- Cytokine reduction was described, but the deck explicitly states stimulation-condition optimization was still ongoing, so efficacy strength should not be overstated.\n:contentReference[oaicite:41]{index=41} :contentReference[oaicite:42]{index=42}\n\n**Safety / liability**\n- FB-4853A hERG IC50 8.75 μM. :contentReference[oaicite:43]{index=43}\n- A planned 7-day FB-4853 mouse lung toxicity study is shown, but the reviewed attachment contains the design rather than completed FB-4853 results. :contentReference[oaicite:44]{index=44}\n\nInvestigation note:\n- **3점 rule:** at least two complementary quantitative evidence domains addressing different development questions, with at least one supporting program progression.\n- 1ST-104 clearly exceeds this threshold.\n- 3점이 최고점. Nevertheless, candidate nomination, completed in vivo efficacy/PK-PD, compound-specific repeat-dose lung tox and GLP tox are still required before development risk can be considered low.\n\n### 4.7 Marketability\nScore: **0점**\n\nMain line: **Commercial potential cannot yet be translated into a reliable asset-specific peak-sales estimate without speculative assumptions.**\n\nAssessment method: **insufficient_evidence**\n\nScore basis type: **insufficient_evidence**\n\nCalculation status: **not_performed**\n\nAssessed global peak sales (million USD): **not assessed**\n\nWhat was checked:\n- Internal A/B/C/D calculation\n- Reliable asset-specific external peak-sales forecast\n- Competition haircut and pricing power\n- Current PD epidemiology\n- Likely broad versus biomarker-selected patient positioning after contemporary LRRK2 clinical results\n\nWorksheet:\n\n| Step | What to fill | Evidence / assumption |\n|---|---|---|\n| A. US TAP | Not performed | U.S. PD prevalence is large, but the clinically relevant 1ST-104 population is unresolved: broad idiopathic PD vs genetically/biomarker-selected LRRK2-driven PD. |\n| B. US Unrisked Peak Sales | Not performed | No appropriate approved disease-modifying oral LRRK2/c-Abl benchmark price was identified. Using a symptomatic PD therapy would introduce an arbitrary benchmark. |\n| C. US Obtainable Peak Sales | Not performed | Competition haircut cannot be reliably fixed before intended patient selection, differentiation and timing versus NEU-411/other LRRK2 approaches are established. |\n| D. Global Obtainable Peak Sales | Not performed | C is unavailable; therefore the user-defined 1.5x multiplier is not applied. |\n| External Peak Sales Reference | None verified | No reliable asset-specific 1ST-104 peak-sales forecast was found in reviewed public sources. |\n| Final score basis | 0 | Neither a reliable internal calculation nor asset-specific external forecast exists. |\n\nThe Parkinson's Foundation reports a U.S. disease burden of roughly one million people living with PD and nearly 90,000 new diagnoses annually, confirming a large disease population. :contentReference[oaicite:45]{index=45} However, the May 2026 LUMA failure in broad early-stage PD and continued development of BIIB122 in genetically defined LRRK2-PD make **patient selection a central commercial variable**, rather than a detail that can be safely assumed. :contentReference[oaicite:46]{index=46}\n\nInvestigation note:\n- Marketability is not scored from disease prevalence alone.\n- No A/B/C/D calculation was forced because treatable subgroup, valid benchmark annualized net price and competition haircut would all require unsupported analyst assumptions.\n- **Not 1:** no reliable global obtainable peak-sales estimate below or above USD 1,000 million can currently be established.\n\n---\n\n## 5) Validation Notes\n\nCross-checked facts:\n- **Asset identity:** 1ST-104 is independently visible on 1STBIO's current official pipeline as LRRK2/c-Abl for Parkinson's disease and is also the subject of the supplied March 2026 development deck. [1] :contentReference[oaicite:47]{index=47} :contentReference[oaicite:48]{index=48}\n- **Active program:** the public pipeline remains live, while the supplied deck documents active lead optimization and ongoing planned development work. :contentReference[oaicite:49]{index=49}\n- **LRRK2 target validity:** human genetic evidence links pathogenic LRRK2 mutations directly to Parkinsonism, and multiple independent clinical programs remain directed at LRRK2. [5], [9], [10] :contentReference[oaicite:50]{index=50}\n- **Competitive signal:** NEU-411 Phase 2 status is confirmed by ClinicalTrials.gov; BIIB122 LUMA failure and ongoing BEACON are confirmed by sponsor/registry sources. :contentReference[oaicite:51]{index=51}\n- **Company status:** current official company pages and the 2026 Series D release support Republic of Korea domicile, Yongin HQ and ongoing financing/business activity. :contentReference[oaicite:52]{index=52}\n\nUncertain points:\n- **Development candidate:** FB-3538A and FB-4853A are representative optimized compounds, but no reviewed source confirms which compound has been formally nominated as the 1ST-104 development candidate.\n- **Stage milestone:** candidate nomination in 3Q 2026 was a forward-looking plan in the March deck. No public source reviewed as of 2026-08-18 confirms that nomination has actually occurred.\n- **LRRK2 structural mode:** c-Abl Type II binding is confirmed by co-crystal, while direct LRRK2 Type II structural confirmation by cryo-EM was still planned. Do not equate the two.\n- **In vivo efficacy:** the supplied deck contains planned in vivo biomarker/efficacy studies but not a completed 1ST-104 in vivo efficacy package sufficient to establish disease modification.\n- **Lung safety:** the attachment demonstrates the MLi-2 positive-control lung phenotype and describes a planned FB-4853 comparison; completed FB-4853 repeat-dose lung histopathology is not present in the reviewed deck.\n- **hERG:** FB-4853A IC50 8.75 μM requires exposure-margin assessment once the development candidate and projected human exposure are selected.\n- **Patient-selection strategy:** broad idiopathic PD versus genetically/biomarker-defined LRRK2-driven PD is not established in the reviewed 1ST-104 materials. This is particularly important after the negative BIIB122 LUMA readout.\n- **Commercial forecast:** no credible asset-specific peak-sales forecast was verified.\n\nSearch log:\n- Official company page: checked [3]\n- Pipeline page: checked [1]\n- Platform page: checked platform section of [1]\n- Publications: checked LRRK2 genetics, Rab10 biology, c-Abl/α-synuclein, Type II LRRK2 and c-Abl Phase 2 literature [5]-[8], [17]\n- Regulatory / trial registry: NEU-411, BIIB122, BIIB094 [9], [13], [19]\n- Competitor sources: Neuron23, Biogen/Denali, Brenig, Arvinas, Ionis/Biogen, FinsnoBio and vodobatinib [9]-[17], [19]\n- Market / epidemiology sources: Parkinson's Foundation [18]; no asset-specific external sales forecast found\n- Financing / partnership sources: 1STBIO Series D and MJFF LITE releases [2], [4]\n\n---\n\n## 6) Final Take\n\nOne-line summary:\n\n**1ST-104는 PD target relevance와 preclinical pharmacology/brain PK가 강하고 pRab10 inhibition–pS935 preservation이라는 Type II-like differentiation이 매력적이지만, 아직 candidate nomination·in vivo efficacy·compound-specific repeat-dose safety가 완성되지 않았고, LRRK2/c-Abl 경쟁 및 최근 임상 실패를 감안하면 현재는 Shortlist보다는 Watch가 적절합니다.**\n\nRecommendation:\n- **Watch**\n\nMost important diligence question:\n\n**“최종 candidate에서 충분한 CNS target coverage를 확보하면서 FB-4853 계열의 hERG 및 LRRK2-related lung liability를 해소하고, BIIB122 LUMA와 c-Abl inhibitor Phase 2 failures를 넘어서는 in vivo efficacy/biomarker signal을 보여줄 수 있는가? 또한 개발 대상 환자를 broad idiopathic PD가 아닌 LRRK2-driven biomarker-selected population으로 정의할 것인가?”**\n\n---\n\n## References\n\nAttachment source: **[104] Current Progress and Key Findings_NCDP.pdf, 1ST Biotherapeutics, March 2026.** :contentReference[oaicite:53]{index=53}\n\n[1]: https://www.1stbio.com/rd-pipeline/ \"1ST Biotherapeutics R&D Pipeline\"\n[2]: https://www.1stbio.com/wp-content/uploads/2025/04/1st-biotherapeutics-joins-the-michael-j-fox.pdf \"1ST Biotherapeutics Joins the Michael J. Fox Foundation LITE Program\"\n[3]: https://www.1stbio.com/ \"1ST Biotherapeutics official website\"\n[4]: https://www.1stbio.com/wp-content/uploads/2026/01/1STBIO_Series_D_completed.pdf \"1STBIO Series D financing announcement\"\n[5]: https://pubmed.ncbi.nlm.nih.gov/15541309/ \"Mutations in LRRK2 cause autosomal-dominant parkinsonism\"\n[6]: https://pubmed.ncbi.nlm.nih.gov/24412932/ \"c-Abl phosphorylates alpha-synuclein and regulates its degradation\"\n[7]: https://pubmed.ncbi.nlm.nih.gov/27474410/ \"Phos-tag analysis of Rab10 phosphorylation by LRRK2\"\n[8]: https://pubmed.ncbi.nlm.nih.gov/40465731/ \"Type II kinase inhibitors that target Parkinson's disease-associated LRRK2\"\n[9]: https://clinicaltrials.gov/study/NCT06680830 \"NEU-411 Phase 2 NEULARK\"\n[10]: https://investors.biogen.com/news-releases/news-release-details/biogen-and-denali-therapeutics-provide-update-phase-2b-luma \"BIIB122 Phase 2b LUMA update\"\n[11]: https://www.brenigther.com/ \"Brenig Therapeutics BT-267\"\n[12]: https://ir.arvinas.com/news-releases/news-release-details/arvinas-announces-positive-phase-1-data-arv-102-showing-greater/ \"ARV-102 Phase 1 PD data\"\n[13]: https://www.nature.com/articles/s41591-026-04262-4 \"LRRK2-targeting antisense oligonucleotide in Parkinson's disease\"\n[14]: https://www.finsnobio.com/pipeline \"FinsnoBio LRRK2 Type II program\"\n[15]: https://neuron23.com/pipeline/ \"Neuron23 NEU-411 pipeline\"\n[16]: https://clinicaltrials.gov/study/NCT03976349 \"BIIB094 Phase 1 REASON study\"\n[17]: https://www.nature.com/articles/s41531-026-01275-1 \"Vodobatinib Phase 2 PROSEEK study\"\n[18]: https://www.parkinson.org/understanding-parkinsons/statistics/prevalence-incidence \"Parkinson's Foundation prevalence and incidence\"\n[19]: https://clinicaltrials.gov/study/NCT06602193 \"BIIB122 Phase 2a BEACON study\"",
+      "parser_status": "gpt_structured_output"
+    },
+    "input": {
+      "company_input": "1ST Biotherapeutics",
+      "asset_input": "1ST-104"
+    },
+    "json_summary": {
+      "theme": "Neuroimmune",
+      "cluster": "Cytokine 신경조절",
+      "target_description": "Brain-penetrant small-molecule dual LRRK2/c-Abl inhibition with a Type II-like LRRK2 pharmacology."
+    },
+    "structured_table": {
+      "company": "1ST Biotherapeutics, Inc.",
+      "asset_name": "1ST-104",
+      "target": "LRRK2 / c-Abl",
+      "moa": "Dual LRRK2/c-Abl kinase inhibition with pRab10 and pCrkL suppression and relative pS935 preservation; c-Abl Type II co-crystal confirmed.",
+      "modality_platform": "Small molecule",
+      "main_indication": "Parkinson's disease",
+      "indication": "Parkinson's disease",
+      "development_stage": "Lead Optimization",
+      "company_country": "Republic of Korea",
+      "sources": [
+        {
+          "source_title": "1ST Biotherapeutics R&D Pipeline",
+          "source_url": "https://www.1stbio.com/rd-pipeline/"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "REVIEW",
+      "reason": "Total score is 12/21, within the REVIEW range. Asset identity and active development are verified, but candidate nomination, in vivo efficacy, compound-specific repeat-dose safety and commercial evidence remain immature.",
+      "flags": [
+        "Total score 12/21",
+        "No human data for 1ST-104",
+        "Development candidate not yet verified as nominated",
+        "Marketability not reliably assessable"
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": false
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 3,
+          "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+          "evidence_type_reason": "1ST-104 is confirmed as an LRRK2/c-Abl Parkinson's program with direct asset-specific target pharmacology, supported by independent PD target biology.",
+          "evidence_basis": "Parkinson's disease is an SKBP interest indication; LRRK2 has direct human genetic linkage to PD.",
+          "main_line_summary": "Strong PD fit with genetically validated LRRK2 biology and asset-specific dual-target activity.",
+          "why_not_higher": "Score 3 is the maximum; clinical proof of benefit for the dual-target strategy is still absent.",
+          "investigation_note": "LRRK2 provides the strongest disease-biology anchor; c-Abl adds mechanistic rationale but weaker clinical validation.",
+          "uncertain_points": [
+            "Incremental clinical contribution of c-Abl inhibition is unproven."
+          ],
+          "source_ids": [
+            "S1",
+            "S3",
+            "S5",
+            "S14"
+          ]
+        },
+        "competitive_landscape": {
+          "score": 2,
+          "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+          "evidence_type_reason": "Internal quantitative pRab10/pS935 comparison supports differentiation versus a Type I comparator, while multiple clinical LRRK2 programs define a crowded field.",
+          "evidence_basis": "Comparable pRab10 inhibition with greater pS935 preservation supports a Type II-like differentiated profile.",
+          "main_line_summary": "Quantitative differentiation exists, but several clinical LRRK2 competitors are ahead and recent efficacy failures increase risk.",
+          "why_not_higher": "No clinical or independently replicated head-to-head differentiation; multiple high-similarity programs are ahead.",
+          "investigation_note": "LUMA and vodobatinib failures increase the importance of patient selection and proof that dual/Type II pharmacology changes efficacy.",
+          "uncertain_points": [
+            "Clinical relevance of pS935 preservation is not established.",
+            "Exact entry timing versus Phase 2 competitors depends on candidate nomination and IND progression."
+          ],
+          "source_ids": [
+            "S3",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10",
+            "S11",
+            "S12",
+            "S17",
+            "S19"
+          ]
+        },
+        "moa_validity": {
+          "score": 3,
+          "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+          "evidence_type_reason": "Direct biochemical inhibition and mechanism-linked cellular biomarkers are demonstrated for both LRRK2 and c-Abl.",
+          "evidence_basis": "LRRK2/c-Abl potency, pRab10/pCrkL modulation, pS935 preservation and c-Abl co-crystal provide direct functional validation.",
+          "main_line_summary": "Strong direct preclinical validation of intended dual-target pharmacology.",
+          "why_not_higher": "Score 3 is the maximum; LRRK2 Type II binding itself has not yet been structurally confirmed for the assessed compounds.",
+          "investigation_note": "Do not interpret the c-Abl co-crystal as direct structural proof of the LRRK2 binding mode.",
+          "uncertain_points": [
+            "LRRK2 cryo-EM structural confirmation was planned rather than completed in the reviewed deck."
+          ],
+          "source_ids": [
+            "S3",
+            "S14",
+            "S15",
+            "S16"
+          ]
+        },
+        "platform_attractiveness": {
+          "score": 1,
+          "evidence_type": "E1_company_claim_or_scientific_rationale_only",
+          "evidence_type_reason": "A reusable AI-enabled drug discovery engine is disclosed and used, but quantitative technical superiority is not benchmarked.",
+          "evidence_basis": "1ST-501 and the 671-compound 1ST-104 chemistry campaign demonstrate platform use and scalability.",
+          "main_line_summary": "Reusable AI/medchem infrastructure is credible, but differentiated technical performance is not quantitatively demonstrated.",
+          "why_not_higher": "No platform-vs-comparator quantitative result on hit rate, cycle time, quality or cost.",
+          "investigation_note": "Asset potency and PK are not double-counted as evidence of platform superiority.",
+          "uncertain_points": [
+            "Magnitude of AI contribution versus conventional medicinal chemistry is unknown."
+          ],
+          "source_ids": [
+            "S1",
+            "S3"
+          ]
+        },
+        "expansion_potential": {
+          "score": 0,
+          "evidence_type": "E0_not_found_or_not_assessable",
+          "evidence_type_reason": "No additional active indication tied specifically to 1ST-104 was verified.",
+          "evidence_basis": "Official pipeline and supplied development plan identify Parkinson's disease only.",
+          "main_line_summary": "No confirmed asset-specific indication expansion beyond Parkinson's disease.",
+          "why_not_higher": "No additional indication with explicit 1ST-104 biological rationale or program status was verified.",
+          "investigation_note": "Other 1STBIO neurodegeneration programs are separate assets and cannot be counted as 1ST-104 expansion.",
+          "uncertain_points": [],
+          "source_ids": [
+            "S1",
+            "S3"
+          ]
+        },
+        "data_maturity": {
+          "score": 3,
+          "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+          "evidence_type_reason": "Multiple complementary quantitative domains include target pharmacology, cellular biomarkers, selectivity, ADME and CNS PK.",
+          "evidence_basis": "Lead-optimization evidence spans potency, downstream PD, off-target profile, brain penetration and iPSC-derived microglia.",
+          "main_line_summary": "Broad and quantitative lead-optimization package across several development questions.",
+          "why_not_higher": "Score 3 is the maximum; candidate nomination, completed in vivo efficacy and development-grade toxicology remain outstanding.",
+          "investigation_note": "hERG and lung safety require particular follow-up before candidate selection is considered de-risked.",
+          "uncertain_points": [
+            "No completed 1ST-104 in vivo efficacy package was identified.",
+            "FB-4853 repeat-dose lung toxicity results were not present in the reviewed attachment.",
+            "FB-4853 hERG IC50 is 8.75 micromolar."
+          ],
+          "source_ids": [
+            "S3"
+          ]
+        },
+        "marketability": {
+          "score": 0,
+          "evidence_type": "E0_not_found_or_not_assessable",
+          "evidence_type_reason": "No reliable asset-specific forecast and insufficient evidence for a non-speculative A/B/C/D calculation.",
+          "evidence_basis": "PD population is large, but intended treatable subgroup and an appropriate disease-modifying benchmark price are unresolved.",
+          "main_line_summary": "Commercial opportunity may be large, but asset-specific obtainable peak sales cannot yet be reliably quantified.",
+          "why_not_higher": "No reliable calculation or asset-specific external forecast supports a sales threshold.",
+          "investigation_note": "Broad versus LRRK2-driven patient selection materially changes TAP and competition assumptions after the LUMA result.",
+          "uncertain_points": [
+            "Commercial target population is not defined.",
+            "No appropriate approved disease-modifying benchmark price was identified.",
+            "No asset-specific 1ST-104 peak-sales forecast was verified."
+          ],
+          "source_ids": [
+            "S7",
+            "S18",
+            "S19"
+          ],
+          "calculation": {
+            "commercial_rationale_status": "insufficient_evidence",
+            "commercial_rationale_failure_reason": "Treatable subgroup, valid benchmark annualized net price and asset-specific forecast are insufficiently established.",
+            "A_targetable_addressable_patient": {
+              "targetable_addressable_patient": null,
+              "formula": "US TAP = US Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate"
+            },
+            "B_unrisked_peak_sales": {
+              "unrisked_peak_sales": null,
+              "sales_unit": "million USD",
+              "formula": "US Unrisked Peak Sales = US TAP x Benchmark Annualized Net Price x Peak Penetration x Treatment Duration Factor"
+            },
+            "C_obtainable_peak_sales": {
+              "obtainable_peak_sales": null,
+              "sales_unit": "million USD",
+              "formula": "US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment"
+            },
+            "D_global_obtainable_peak_sales": {
+              "source_geography": "US",
+              "global_multiplier": 1.5,
+              "global_obtainable_peak_sales": null,
+              "sales_unit": "million USD",
+              "formula": "Global Obtainable Peak Sales = US Obtainable Peak Sales x 1.5"
+            }
+          }
+        }
+      },
+      "total_score": 12,
+      "max_score": 21
+    },
+    "validation": {
+      "uncertain_points": [
+        "Formal 1ST-104 development-candidate nomination has not been verified.",
+        "Direct structural confirmation of Type II binding to LRRK2 remains unverified in the supplied evidence.",
+        "Completed asset-specific in vivo efficacy and repeat-dose lung toxicity data were not found in the reviewed deck.",
+        "FB-4853A hERG IC50 of 8.75 micromolar requires exposure-margin assessment.",
+        "Broad versus LRRK2-driven Parkinson's patient-selection strategy is unresolved.",
+        "No reliable asset-specific peak-sales forecast is available."
+      ],
+      "cross_checked_facts": [
+        "1ST-104 identity, LRRK2/c-Abl target and Parkinson's indication are supported by the official 1STBIO pipeline and supplied company deck.",
+        "Active lead-optimization work is documented in the March 2026 company deck while the current public pipeline remains active.",
+        "LRRK2 Parkinson's disease relevance is independently supported by human genetics.",
+        "NEU-411 Phase 2 and BIIB122 Phase 2a competitor statuses were checked against ClinicalTrials.gov and sponsor sources."
+      ],
+      "source_registry": [
+        {
+          "source_id": "S1",
+          "source_title": "1ST Biotherapeutics R&D Pipeline",
+          "source_url": "https://www.1stbio.com/rd-pipeline/",
+          "source_type": "official_company",
+          "verified": true
+        },
+        {
+          "source_id": "S2",
+          "source_title": "1ST Biotherapeutics Joins The Michael J. Fox Foundation LITE Program",
+          "source_url": "https://www.1stbio.com/wp-content/uploads/2025/04/1st-biotherapeutics-joins-the-michael-j-fox.pdf",
+          "source_type": "company_press_release",
+          "verified": true
+        },
+        {
+          "source_id": "S3",
+          "source_title": "[104] Current Progress and Key Findings_NCDP.pdf",
+          "source_url": "",
+          "source_type": "user_uploaded_file",
+          "verified": true
+        },
+        {
+          "source_id": "S4",
+          "source_title": "1STBIO Series D Financing Announcement",
+          "source_url": "https://www.1stbio.com/wp-content/uploads/2026/01/1STBIO_Series_D_completed.pdf",
+          "source_type": "company_press_release",
+          "verified": true
+        },
+        {
+          "source_id": "S5",
+          "source_title": "Mutations in LRRK2 cause autosomal-dominant parkinsonism with pleomorphic pathology",
+          "source_url": "https://pubmed.ncbi.nlm.nih.gov/15541309/",
+          "source_type": "peer_reviewed",
+          "verified": true
+        },
+        {
+          "source_id": "S6",
+          "source_title": "NEU-411 Phase 2 NEULARK - NCT06680830",
+          "source_url": "https://clinicaltrials.gov/study/NCT06680830",
+          "source_type": "clinical_registry",
+          "verified": true
+        },
+        {
+          "source_id": "S7",
+          "source_title": "BIIB122 Phase 2b LUMA Update",
+          "source_url": "https://investors.biogen.com/news-releases/news-release-details/biogen-and-denali-therapeutics-provide-update-phase-2b-luma",
+          "source_type": "company_press_release",
+          "verified": true
+        },
+        {
+          "source_id": "S8",
+          "source_title": "Brenig Therapeutics BT-267 Pipeline",
+          "source_url": "https://www.brenigther.com/",
+          "source_type": "official_company",
+          "verified": true
+        },
+        {
+          "source_id": "S9",
+          "source_title": "Arvinas ARV-102 Phase 1 Parkinson's Disease Data",
+          "source_url": "https://ir.arvinas.com/news-releases/news-release-details/arvinas-announces-positive-phase-1-data-arv-102-showing-greater/",
+          "source_type": "company_press_release",
+          "verified": true
+        },
+        {
+          "source_id": "S10",
+          "source_title": "BIIB094 REASON Phase 1 - NCT03976349",
+          "source_url": "https://clinicaltrials.gov/study/NCT03976349",
+          "source_type": "clinical_registry",
+          "verified": true
+        },
+        {
+          "source_id": "S11",
+          "source_title": "LRRK2-targeting antisense oligonucleotide in Parkinson's disease",
+          "source_url": "https://www.nature.com/articles/s41591-026-04262-4",
+          "source_type": "peer_reviewed",
+          "verified": true
+        },
+        {
+          "source_id": "S12",
+          "source_title": "FinsnoBio LRRK2 Type II Pipeline",
+          "source_url": "https://www.finsnobio.com/pipeline",
+          "source_type": "official_company",
+          "verified": true
+        },
+        {
+          "source_id": "S14",
+          "source_title": "c-Abl phosphorylates alpha-synuclein and regulates its degradation",
+          "source_url": "https://pubmed.ncbi.nlm.nih.gov/24412932/",
+          "source_type": "peer_reviewed",
+          "verified": true
+        },
+        {
+          "source_id": "S15",
+          "source_title": "Phos-tag analysis of Rab10 phosphorylation by LRRK2",
+          "source_url": "https://pubmed.ncbi.nlm.nih.gov/27474410/",
+          "source_type": "peer_reviewed",
+          "verified": true
+        },
+        {
+          "source_id": "S16",
+          "source_title": "Type II kinase inhibitors that target Parkinson's disease-associated LRRK2",
+          "source_url": "https://pubmed.ncbi.nlm.nih.gov/40465731/",
+          "source_type": "peer_reviewed",
+          "verified": true
+        },
+        {
+          "source_id": "S17",
+          "source_title": "Evaluation of c-Abl inhibitor vodobatinib in early Parkinson's disease",
+          "source_url": "https://www.nature.com/articles/s41531-026-01275-1",
+          "source_type": "peer_reviewed",
+          "verified": true
+        },
+        {
+          "source_id": "S18",
+          "source_title": "Parkinson's Foundation Prevalence and Incidence",
+          "source_url": "https://www.parkinson.org/understanding-parkinsons/statistics/prevalence-incidence",
+          "source_type": "patient_foundation",
+          "verified": true
+        },
+        {
+          "source_id": "S19",
+          "source_title": "BIIB122 Phase 2a BEACON - NCT06602193",
+          "source_url": "https://clinicaltrials.gov/study/NCT06602193",
+          "source_type": "clinical_registry",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "1ST-104 combines strong PD target relevance and broad lead-optimization data with a differentiated Type II-like profile, but candidate, efficacy, safety and commercial de-risking remain incomplete in an increasingly challenging LRRK2 field.",
+      "recommendation": "Watch",
+      "most_important_diligence_question": "Can the nominated 1ST-104 candidate demonstrate in vivo efficacy and durable CNS target coverage with adequate hERG and lung safety margins, and what biomarker-defined Parkinson's population will be targeted after the BIIB122 LUMA and c-Abl Phase 2 failures?"
+    },
+    "company_profile": {
+      "headquarters": "Yongin-si, Gyeonggi-do, Republic of Korea",
+      "company_stage": "Private, clinical-stage biopharmaceutical company",
+      "platform_summary": "1ST-501 AI Drug Discovery Engine; 1ST-104 used an AI-driven in-house medicinal chemistry workflow, but quantitative platform superiority versus a comparator is not established."
+    },
+    "competitive_analysis": {
+      "competitive_density": "High",
+      "similarity_summary": {
+        "similar_pipeline_count": 7,
+        "high_similarity_count": 4,
+        "medium_similarity_count": 3,
+        "low_similarity_count": 0
+      },
+      "competitor_table": [
+        {
+          "competitor_asset": "NEU-411",
+          "company": "Neuron23",
+          "modality": "Small molecule",
+          "target_or_moa": "Selective LRRK2 kinase inhibitor",
+          "stage": "Phase 2",
+          "similarity_level": "High",
+          "why_it_matters": "Direct oral LRRK2 competitor in genetically selected LRRK2-driven early Parkinson's disease.",
+          "source_url": "https://clinicaltrials.gov/study/NCT06680830"
+        },
+        {
+          "competitor_asset": "BIIB122 / DNL151",
+          "company": "Denali Therapeutics / Biogen",
+          "modality": "Small molecule",
+          "target_or_moa": "LRRK2 kinase inhibitor",
+          "stage": "Phase 2a BEACON active; idiopathic PD development discontinued after Phase 2b LUMA",
+          "similarity_level": "High",
+          "why_it_matters": "Direct target/modality benchmark and major negative efficacy precedent in broad early PD.",
+          "source_url": "https://investors.biogen.com/news-releases/news-release-details/biogen-and-denali-therapeutics-provide-update-phase-2b-luma"
+        },
+        {
+          "competitor_asset": "BT-267",
+          "company": "Brenig Therapeutics",
+          "modality": "Small molecule",
+          "target_or_moa": "Brain-penetrant selective LRRK2 inhibitor",
+          "stage": "Phase 1",
+          "similarity_level": "High",
+          "why_it_matters": "Direct oral CNS LRRK2 competitor emphasizing selectivity and brain exposure.",
+          "source_url": "https://www.brenigther.com/"
+        },
+        {
+          "competitor_asset": "Type II LRRK2 program",
+          "company": "FinsnoBio",
+          "modality": "Small molecule",
+          "target_or_moa": "Type II and G2019S-focused LRRK2 inhibition",
+          "stage": "Preclinical / IND-directed; exact asset stage undisclosed",
+          "similarity_level": "High",
+          "why_it_matters": "Directly competes with the Type II LRRK2 differentiation concept.",
+          "source_url": "https://www.finsnobio.com/pipeline"
+        },
+        {
+          "competitor_asset": "ARV-102",
+          "company": "Arvinas",
+          "modality": "PROTAC",
+          "target_or_moa": "LRRK2 protein degradation",
+          "stage": "Phase 1 PD data",
+          "similarity_level": "Medium",
+          "why_it_matters": "Alternative LRRK2 modality with demonstrated human CNS target modulation.",
+          "source_url": "https://ir.arvinas.com/news-releases/news-release-details/arvinas-announces-positive-phase-1-data-arv-102-showing-greater/"
+        },
+        {
+          "competitor_asset": "BIIB094",
+          "company": "Ionis / Biogen",
+          "modality": "RNA therapy",
+          "target_or_moa": "LRRK2-targeting antisense oligonucleotide",
+          "stage": "Phase 1 completed",
+          "similarity_level": "Medium",
+          "why_it_matters": "Clinical human evidence for direct LRRK2 lowering through a distinct modality.",
+          "source_url": "https://www.nature.com/articles/s41591-026-04262-4"
+        },
+        {
+          "competitor_asset": "Vodobatinib",
+          "company": "SPARC",
+          "modality": "Small molecule",
+          "target_or_moa": "c-Abl kinase inhibitor",
+          "stage": "Phase 2 completed; negative efficacy",
+          "similarity_level": "Medium",
+          "why_it_matters": "Clinical negative precedent for the c-Abl component of 1ST-104's dual mechanism.",
+          "source_url": "https://www.nature.com/articles/s41531-026-01275-1"
+        }
+      ],
+      "similar_pipelines": [
+        {
+          "company": "Neuron23",
+          "asset_name": "NEU-411",
+          "similarity_score": 3,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "LRRK2",
+            "Small molecule"
+          ],
+          "shared_data_points": [
+            "Brain penetration",
+            "LRRK2 pathway inhibition"
+          ]
+        },
+        {
+          "company": "Denali Therapeutics / Biogen",
+          "asset_name": "BIIB122 / DNL151",
+          "similarity_score": 3,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "LRRK2",
+            "Small molecule"
+          ],
+          "shared_data_points": [
+            "pS935 biomarker",
+            "pRab10 biomarker",
+            "Oral CNS-directed pharmacology"
+          ]
+        },
+        {
+          "company": "Brenig Therapeutics",
+          "asset_name": "BT-267",
+          "similarity_score": 3,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "LRRK2",
+            "Small molecule"
+          ],
+          "shared_data_points": [
+            "Brain penetration",
+            "Kinase selectivity"
+          ]
+        },
+        {
+          "company": "FinsnoBio",
+          "asset_name": "Type II LRRK2 program",
+          "similarity_score": 3,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "LRRK2",
+            "Small molecule",
+            "Type II pharmacology"
+          ],
+          "shared_data_points": [
+            "Type II binding concept",
+            "Potential lung-safety differentiation"
+          ]
+        },
+        {
+          "company": "Arvinas",
+          "asset_name": "ARV-102",
+          "similarity_score": 2,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "LRRK2 pathway"
+          ],
+          "shared_data_points": [
+            "CNS target modulation",
+            "Neuroinflammatory biomarkers"
+          ]
+        },
+        {
+          "company": "Ionis / Biogen",
+          "asset_name": "BIIB094",
+          "similarity_score": 2,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "LRRK2 pathway"
+          ],
+          "shared_data_points": [
+            "Direct LRRK2 modulation"
+          ]
+        },
+        {
+          "company": "SPARC",
+          "asset_name": "Vodobatinib",
+          "similarity_score": 2,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "c-Abl pathway"
+          ],
+          "shared_data_points": [
+            "Brain-penetrant small molecule",
+            "c-Abl inhibition"
           ]
         }
       ]

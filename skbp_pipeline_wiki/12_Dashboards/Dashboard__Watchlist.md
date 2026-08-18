@@ -2,6 +2,7 @@
 
 | Asset | Score | Recommendation | Evidence Level |
 |---|---:|---|---|
+| [[02_Assets/Asset__1ST-104|1ST-104]] | 12 | Watch | E3 |
 | [[02_Assets/Asset__CE223BR17_Parkinson's_Disease_Research_Program|CE223BR17 / Parkinson's Disease Research Program]] | 10 | Watch | E3 |
 | [[02_Assets/Asset__HY209_NuCerin|HY209 / NuCerin]] | 16 | Watch | E3 |
 | [[02_Assets/Asset__META-01_META-1i_MP-5342|META-01 / META-1i / MP-5342]] | 11 | Watch | E2 |

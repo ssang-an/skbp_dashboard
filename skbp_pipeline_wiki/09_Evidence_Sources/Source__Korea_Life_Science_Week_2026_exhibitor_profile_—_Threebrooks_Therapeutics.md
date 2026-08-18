@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/industry_event_profile"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | industry_event_profile |
 | Reliability | medium |
 | URL | https://www.lifescienceweek.com/m/eng/about/search_ex_view.asp?midx=2102 |
-| Accessed / generated date | 2026-08-12 |
+| Accessed / generated date | 2026-08-18 |
 
 ## Evidence Summary
 

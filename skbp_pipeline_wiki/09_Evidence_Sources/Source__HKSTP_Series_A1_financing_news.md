@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/news"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | news |
 | Reliability | medium |
 | URL | https://www.hkstp.org/en/park-life/news-and-events/news/meta-pharm-inc-announces-the-closing-of-series-a1-financing-to-accelerate-ai-driven-drug-development |
-| Accessed / generated date | 2026-08-12 |
+| Accessed / generated date | 2026-08-18 |
 
 ## Evidence Summary
 

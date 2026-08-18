@@ -1,7 +1,8 @@
 # Companies
 
-> Generated at `2026-08-12T17:01:59`.
+> Generated at `2026-08-18T17:19:09`.
 
+- [[1ST Biotherapeutics, Inc|1ST Biotherapeutics, Inc.]] (1)
 - [[ADEL]] (1)
 - [[ADEL, Inc|ADEL, Inc.]] (1)
 - [[AULBIO Co., Ltd|AULBIO Co., Ltd.]] (1)
@@ -45,6 +46,8 @@
 - [[Illimis Therapeutics]] (4)
 - [[Illimis Therapeutics, Inc|Illimis Therapeutics, Inc.]] (4)
 - [[Jazz Pharmaceuticals - Saniona|Jazz Pharmaceuticals / Saniona]] (1)
+- [[Kine Sciences]] (4)
+- [[Korea Pharma Co Ltd]] (2)
 - [[Lundbeck - Longboard Pharmaceuticals|Lundbeck / Longboard Pharmaceuticals]] (1)
 - [[Lynk Pharmaceuticals]] (1)
 - [[Lynk Pharmaceuticals Co., Ltd|Lynk Pharmaceuticals Co., Ltd.]] (2)

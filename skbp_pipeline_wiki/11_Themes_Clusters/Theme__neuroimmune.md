@@ -7,8 +7,8 @@ aliases:
 tags:
   - "skbp/theme"
   - "skbp/taxonomy"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -31,6 +31,7 @@ A cross-disease strategic biology theme used for SKBP Theme-based R&D strategy.
 
 ## Related Assets
 
+- [[02_Assets/Asset__1ST-104|1ST-104]]
 - [[02_Assets/Asset__ADEL-Y04|ADEL-Y04]]
 - [[02_Assets/Asset__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection|Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection]]
 - [[02_Assets/Asset__HB-02|HB-02]]

@@ -6,8 +6,8 @@ aliases:
   - "acute_pain;_surgical_anesthesia_and_postoperative_pain_management"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

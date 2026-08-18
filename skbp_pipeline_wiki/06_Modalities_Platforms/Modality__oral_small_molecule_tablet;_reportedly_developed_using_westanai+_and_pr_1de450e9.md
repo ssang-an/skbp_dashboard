@@ -6,8 +6,8 @@ aliases:
   - "oral_small_molecule_tablet;_reportedly_developed_using_westanai+_and_pr_1de450e9"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

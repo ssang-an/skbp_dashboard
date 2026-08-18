@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/biotech_database"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | biotech database |
 | Reliability | medium |
 | URL | https://data.pharmacodia.com/drugs/details/22122625900035563141 |
-| Accessed / generated date | 2026-08-12 |
+| Accessed / generated date | 2026-08-18 |
 
 ## Evidence Summary
 

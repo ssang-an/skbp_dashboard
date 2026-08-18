@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-12T17:01:59"
+generated_at: "2026-08-18T17:19:09"
 record_id: "Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)"
 company: "Threebrooks Therapeutics"
 country: "Republic of Korea"
@@ -349,7 +349,7 @@ Scientifically differentiated and data-rich preclinical TRPML1 program with curr
       "partnership_type": "unknown",
       "partnership_classification_status": "auto_classified",
       "partner_material_flags": {
-        "cdp": false,
+        "cdp": true,
         "ncdp": false,
         "admet": false
       },
@@ -360,24 +360,28 @@ Scientifically differentiated and data-rich preclinical TRPML1 program with curr
       "admet_completed": null,
       "admet_completed_source": "auto",
       "filter3_document_analyses": [],
-      "filter3_document_analysis_updated_at": "2026-08-12T05:06:17.000092+00:00",
+      "filter3_document_analysis_updated_at": "2026-08-13T01:25:06.044638+00:00",
       "partnership_auto_suggestion": "unknown",
-      "partnership_auto_note": "ADMET Score 확인 불가",
+      "partnership_auto_note": "ADMET Score, ADMET uploaded 확인 불가",
       "partnership_auto_evidence_sources": [
         "Tab2 구조화 데이터",
-        "Tab2 원문 리포트: Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)"
+        "Full Scout 원문 리포트: Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)"
       ],
-      "partnership_classification_criteria_version": "1.0",
-      "partnership_note": "ADMET Score 확인 불가",
+      "partnership_classification_criteria_version": "1.3",
+      "partnership_note": "ADMET Score, ADMET uploaded 확인 불가",
       "partnership_evidence_sources": [
         "Tab2 구조화 데이터",
-        "Tab2 원문 리포트: Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)"
+        "Full Scout 원문 리포트: Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)"
       ],
       "partnership_classification_source": "auto",
-      "partnership_classified_at": "2026-08-12T05:06:17.000480+00:00",
-      "updated_at": "2026-08-12T05:06:16.998727+00:00",
+      "partnership_classified_at": "2026-08-13T01:25:06.044672+00:00",
+      "updated_at": "2026-08-18T07:37:54.028456+00:00",
       "updated_source": "dashboard_tab3",
-      "updated_by": "정영찬"
+      "updated_by": "10.245.226.6",
+      "partner_material_flag_overrides": {
+        "cdp": true,
+        "admet": false
+      }
     },
     "edit_history": [
       {
@@ -388,6 +392,55 @@ Scientifically differentiated and data-rich preclinical TRPML1 program with curr
         "field": "focus_management.add",
         "previous_value": false,
         "new_value": true
+      },
+      {
+        "changed_at": "2026-08-18T07:37:42.545940+00:00",
+        "actor_ip": "10.245.226.6",
+        "actor_name": "",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.partner_material_flags.cdp",
+        "previous_value": false,
+        "new_value": true
+      },
+      {
+        "changed_at": "2026-08-18T07:37:50.732818+00:00",
+        "actor_ip": "10.245.226.6",
+        "actor_name": "",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.partner_material_flags.admet",
+        "previous_value": false,
+        "new_value": true
+      },
+      {
+        "changed_at": "2026-08-18T07:37:54.028515+00:00",
+        "actor_ip": "10.245.226.6",
+        "actor_name": "",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.partner_material_flags.admet",
+        "previous_value": true,
+        "new_value": false
+      },
+      {
+        "changed_at": "2026-08-18T07:39:42.139226+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "detail_topic_note_add",
+        "field": "topic_notes.topic-target-relevance",
+        "previous_value": null,
+        "new_value": "ㅇ란어럄ㅈㄷㄹ"
+      }
+    ],
+    "topic_notes": [
+      {
+        "id": "b56a34ed86e3449788ec40ca15bb9789",
+        "topic_id": "topic-target-relevance",
+        "topic_key": "target-relevance",
+        "topic_title": "4.1 Target Relevance",
+        "body": "ㅇ란어럄ㅈㄷㄹ",
+        "author_id": "3dd1472cc5bd4f888238b0a6d1776816",
+        "author_name": "정주원",
+        "created_at": "2026-08-18T07:39:42.139049+00:00",
+        "updated_at": "2026-08-18T07:39:42.139049+00:00"
       }
     ]
   },

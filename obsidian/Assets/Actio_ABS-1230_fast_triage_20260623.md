@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-12T17:01:59"
+generated_at: "2026-08-18T17:19:09"
 record_id: "Actio_ABS-1230_fast_triage_20260623"
 company: "Actio Biosciences"
 country: "United States"

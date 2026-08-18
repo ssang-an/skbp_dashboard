@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-12T17:01:59"
+generated_at: "2026-08-18T17:19:09"
 record_id: "Illimis_Therapeutics_ILM01_20260621"
 company: "Illimis Therapeutics"
 country: "Republic of Korea"
@@ -337,15 +337,15 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
       "added_at": "2026-07-28T14:52:28.874464+00:00",
       "user_comment": "",
       "due_date": "2026-08-27",
-      "updated_at": "2026-08-12T06:07:35.935978+00:00",
+      "updated_at": "2026-08-18T07:38:35.021311+00:00",
       "updated_source": "dashboard_tab3",
       "updated_by": "127.0.0.1",
       "owner_name": "",
-      "action_plan": "데이터 요청 예정 ",
+      "action_plan": "동물 데이터 요청 예정 ",
       "partnership_type": "investment",
       "partnership_classification_status": "auto_classified",
       "partnership_classification_source": "auto",
-      "partnership_classified_at": "2026-08-06T02:47:01.277185+00:00",
+      "partnership_classified_at": "2026-08-13T01:25:06.035518+00:00",
       "partner_material_flags": {
         "cdp": false,
         "ncdp": false,
@@ -359,12 +359,12 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
       "admet_completed_source": "deepseek",
       "partnership_evidence_updated_at": "2026-08-05T14:14:05.943688+00:00",
       "partnership_auto_suggestion": "investment",
-      "partnership_auto_note": "Non-Small Molecule / IND Enabling",
+      "partnership_auto_note": "Non-Small Molecule / IND-enabling 이상",
       "partnership_auto_evidence_sources": [
         "Tab2 구조화 데이터"
       ],
-      "partnership_classification_criteria_version": "1.0",
-      "partnership_note": "Non-Small Molecule / IND Enabling",
+      "partnership_classification_criteria_version": "1.3",
+      "partnership_note": "Non-Small Molecule / IND-enabling 이상",
       "partnership_evidence_sources": [
         "Tab2 구조화 데이터"
       ],
@@ -426,7 +426,7 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
           }
         }
       ],
-      "filter3_document_analysis_updated_at": "2026-08-06T02:47:01.277153+00:00"
+      "filter3_document_analysis_updated_at": "2026-08-13T01:25:06.035429+00:00"
     },
     "attachments": [
       {
@@ -3207,6 +3207,51 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
         "field": "focus_management.action_plan",
         "previous_value": "",
         "new_value": "데이터 요청 예정 "
+      },
+      {
+        "changed_at": "2026-08-18T07:37:39.989058+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.partner_material_flags.cdp",
+        "previous_value": false,
+        "new_value": true
+      },
+      {
+        "changed_at": "2026-08-18T07:37:41.824800+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.partner_material_flags.cdp",
+        "previous_value": true,
+        "new_value": false
+      },
+      {
+        "changed_at": "2026-08-18T07:37:52.889668+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.partner_material_flags.cdp",
+        "previous_value": false,
+        "new_value": true
+      },
+      {
+        "changed_at": "2026-08-18T07:37:54.702680+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.partner_material_flags.cdp",
+        "previous_value": true,
+        "new_value": false
+      },
+      {
+        "changed_at": "2026-08-18T07:38:35.021370+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.action_plan",
+        "previous_value": "데이터 요청 예정 ",
+        "new_value": "동물 데이터 요청 예정 "
       }
     ],
     "last_edited_at": "2026-08-06T02:45:19.876062+00:00",

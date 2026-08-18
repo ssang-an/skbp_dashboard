@@ -22,5 +22,5141 @@
     "status": "pending",
     "source": "paste_import",
     "added_at": "2026-08-09T03:01:53.873483+00:00"
+  },
+  {
+    "id": "cq_8d99f859",
+    "asset_input": "tertomotide",
+    "company_input": "GemVax & KAEL Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_bfa8a8ad",
+    "asset_input": "paxalisib",
+    "company_input": "SoVarGen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_3e8036f6",
+    "asset_input": "(ascorbic acid + Aptamin C320)",
+    "company_input": "Nexmos Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7ea50c51",
+    "asset_input": "exenatide SR",
+    "company_input": "Peptron Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6623e839",
+    "asset_input": "JBPOS-0101",
+    "company_input": "Bio-Pharm Solutions Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_157e0be0",
+    "asset_input": "KLS-2031",
+    "company_input": "Kolon Life Science Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b230dc89",
+    "asset_input": "meloxicam",
+    "company_input": "Animuscure Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ca9c9325",
+    "asset_input": "METI-101",
+    "company_input": "MetiMedi Pharmaceuticals Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b96ec451",
+    "asset_input": "PAX-1",
+    "company_input": "Komipharm International Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_4ccbaa32",
+    "asset_input": "TEDA-9",
+    "company_input": "S.Biomedics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d1802127",
+    "asset_input": "VVZ-2471",
+    "company_input": "Vivozon Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_4c70795e",
+    "asset_input": "AB-12",
+    "company_input": "Autotac Bio Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_95bbd93f",
+    "asset_input": "ABF-101",
+    "company_input": "AptaBio Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_511d8534",
+    "asset_input": "AS-603",
+    "company_input": "Amyloid Solution Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_8a41cbc6",
+    "asset_input": "CX-213",
+    "company_input": "Cenyx Biotech Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b47abe11",
+    "asset_input": "DA-7503",
+    "company_input": "Dong-A ST Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_3a27f795",
+    "asset_input": "FB-101",
+    "company_input": "1st Bio Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_408d9860",
+    "asset_input": "KNP-502",
+    "company_input": "Oscotec Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_50578d35",
+    "asset_input": "MS-1901",
+    "company_input": "Medinno Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_2d928d44",
+    "asset_input": "MS-2001",
+    "company_input": "Medinno Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_5c4f3899",
+    "asset_input": "OC-514",
+    "company_input": "Korea Pharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_3416df45",
+    "asset_input": "onabotulinumtoxinA",
+    "company_input": "CKD Bio Corp",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_2a4f130d",
+    "asset_input": "PRGA-05",
+    "company_input": "PRG S&Tech Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_5e79690f",
+    "asset_input": "ropivacaine SR",
+    "company_input": "G2GBIO Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c7415483",
+    "asset_input": "tomaralimab",
+    "company_input": "Neuramedy Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_a03383b4",
+    "asset_input": "JBPOS-0501",
+    "company_input": "Bio-Pharm Solutions Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9c29ddd7",
+    "asset_input": "SNE-101",
+    "company_input": "S&E Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_a36b2904",
+    "asset_input": "AB-103",
+    "company_input": "AevisBio Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7a582f92",
+    "asset_input": "AB-14",
+    "company_input": "Autotac Bio Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b41d74f4",
+    "asset_input": "AB-16",
+    "company_input": "Autotac Bio Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7244497f",
+    "asset_input": "AB-19",
+    "company_input": "Autotac Bio Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ba8ed477",
+    "asset_input": "ABX-1901",
+    "company_input": "ISU ABXIS Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_4f76c85a",
+    "asset_input": "ADELY-06",
+    "company_input": "ADEL Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c15a017b",
+    "asset_input": "ALT-001",
+    "company_input": "Altmedical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e0517720",
+    "asset_input": "Alzheimer's Disease Prophylactic Vaccines",
+    "company_input": "Posvax Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_a33cda60",
+    "asset_input": "AR-1002",
+    "company_input": "AriBio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d2874ca0",
+    "asset_input": "AR-1003",
+    "company_input": "AriBio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ed4842c4",
+    "asset_input": "AR-1006",
+    "company_input": "AriBio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f5d14b9f",
+    "asset_input": "ARL-002",
+    "company_input": "Korea Arlico Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d62aff4e",
+    "asset_input": "ATB-1606",
+    "company_input": "Amtixbio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9b0ea069",
+    "asset_input": "ATB-2005A",
+    "company_input": "Autotac Bio Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_67796ce4",
+    "asset_input": "AVI-6110",
+    "company_input": "Avixgen Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7db99bb6",
+    "asset_input": "AX-0076",
+    "company_input": "Axceso Biopharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_61f2c9b6",
+    "asset_input": "BCWPD-010",
+    "company_input": "BCWorld Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f3ab4b24",
+    "asset_input": "BCWPD-012",
+    "company_input": "BCWorld Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_3df70528",
+    "asset_input": "BCWPG-1905",
+    "company_input": "BCWorld Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_2e26baa3",
+    "asset_input": "BDR-731",
+    "company_input": "MDimune Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_13f670b1",
+    "asset_input": "BE-329",
+    "company_input": "Mark Herzen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_58740e12",
+    "asset_input": "BM-107",
+    "company_input": "BioMe Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f9d632c2",
+    "asset_input": "BMD-001",
+    "company_input": "Biorchestra Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_46e43422",
+    "asset_input": "BNH-101",
+    "company_input": "BnH Research",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b51dd624",
+    "asset_input": "BNH-102",
+    "company_input": "BnH Research",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9b837d61",
+    "asset_input": "BP-201",
+    "company_input": "BIOPHARMA Corp",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f3576117",
+    "asset_input": "BRIXELLE-Infla",
+    "company_input": "Bilix Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_056964b7",
+    "asset_input": "BSC-3301",
+    "company_input": "Bisichem Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6e092940",
+    "asset_input": "cannabidiol",
+    "company_input": "Inventage Lab Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_a59cdc41",
+    "asset_input": "CB-201",
+    "company_input": "CentricsBio Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b9e319b9",
+    "asset_input": "celecoxib SR",
+    "company_input": "Upexmed Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_3e2daa99",
+    "asset_input": "ciNSC-2ALS",
+    "company_input": "YJ Cerapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_82944bbb",
+    "asset_input": "ciNSC-2M",
+    "company_input": "YJ Cerapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_104931b6",
+    "asset_input": "ciNSC-5PD",
+    "company_input": "YJ Cerapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d34e6789",
+    "asset_input": "CJRB-301",
+    "company_input": "CJ Bioscience Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_026cc30e",
+    "asset_input": "CJRB-302",
+    "company_input": "CJ Bioscience Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_08b14116",
+    "asset_input": "CKD-513",
+    "company_input": "Archela Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_50404d44",
+    "asset_input": "CKR-492",
+    "company_input": "CK Regeon Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f469becb",
+    "asset_input": "Compound #15",
+    "company_input": "Korea University College of Medicine",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_bace16d6",
+    "asset_input": "CP-010",
+    "company_input": "ChoDang Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_1fc446c6",
+    "asset_input": "CPB-2101",
+    "company_input": "Corepharm Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_cdea0bb6",
+    "asset_input": "CRB-113",
+    "company_input": "Celros Biotech Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_a2424c82",
+    "asset_input": "CRB-611",
+    "company_input": "Celros Biotech Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c3ed0a6a",
+    "asset_input": "CRC-003",
+    "company_input": "Curogen Technology Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ac15a963",
+    "asset_input": "CTXPD-01",
+    "company_input": "CTX Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e2771655",
+    "asset_input": "CUR-202",
+    "company_input": "Curamys Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_3ae6d52d",
+    "asset_input": "CV-04",
+    "company_input": "Cureverse Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_16581303",
+    "asset_input": "DDA-279",
+    "company_input": "HLB Science Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_2267adcb",
+    "asset_input": "dehydroevodiamine hydrochloride",
+    "company_input": "Seoul National University",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_26fe9011",
+    "asset_input": "DM-3100",
+    "company_input": "DigmBio Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ff160f3a",
+    "asset_input": "DM-3159",
+    "company_input": "DigmBio Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_56237ef6",
+    "asset_input": "DM-3190",
+    "company_input": "DigmBio Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c0c66f5a",
+    "asset_input": "donepezil + NDC-060",
+    "company_input": "DR.Noah Biotech Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_edb3509f",
+    "asset_input": "donepezil LA",
+    "company_input": "AULBIO Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_8372fd60",
+    "asset_input": "Drug for Neuropathic Pain",
+    "company_input": "EHL Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_4e58e11b",
+    "asset_input": "DTC-2162",
+    "company_input": "Korea Institute of Science and Technology",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_1fbe4cf8",
+    "asset_input": "DWP-218358",
+    "company_input": "Daewoong Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_13386490",
+    "asset_input": "DWP-219",
+    "company_input": "Daewoong Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9046efde",
+    "asset_input": "edaravone",
+    "company_input": "Theragen Etex Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_0540030e",
+    "asset_input": "EL-400",
+    "company_input": "Elphis Cell Therapeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_efe5eae7",
+    "asset_input": "ESC Astrocyte",
+    "company_input": "Corestemchemon Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c5982ccb",
+    "asset_input": "ETN-103",
+    "company_input": "Etnova Therapeutics Corp",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_37ca1850",
+    "asset_input": "ExoPN-101",
+    "company_input": "LISCure Biosciences Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_cb81635e",
+    "asset_input": "FB-118B1",
+    "company_input": "Frontbio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_45146f60",
+    "asset_input": "fentanyl",
+    "company_input": "Icure Pharmaceutical Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d59ca2c2",
+    "asset_input": "Fetal Origin SC Derived EV for Dementia",
+    "company_input": "TS Cell Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7624e34e",
+    "asset_input": "GB-102",
+    "company_input": "G&P Bioscience Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_22f897e2",
+    "asset_input": "GB-107",
+    "company_input": "G&P Bioscience Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_dd00d263",
+    "asset_input": "Gene Therapy to Inhibit Beta Amyloid for Alzheimer's Disease",
+    "company_input": "Ewha Womans University",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6dbd84ed",
+    "asset_input": "GGT-300",
+    "company_input": "Glugene Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_46f60447",
+    "asset_input": "GM-91466",
+    "company_input": "JD Bioscience Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_fd31b7ed",
+    "asset_input": "GS-100",
+    "company_input": "Genesen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_44624df0",
+    "asset_input": "GTC-31001",
+    "company_input": "Good T Cells Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_73383bb7",
+    "asset_input": "GV-2002",
+    "company_input": "GemVax & KAEL Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7225534f",
+    "asset_input": "GXC-301",
+    "company_input": "Genixcure Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_fe178df3",
+    "asset_input": "GXC-304",
+    "company_input": "Genixcure Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_fa49f334",
+    "asset_input": "HPB-2",
+    "company_input": "CHA University",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_11fde142",
+    "asset_input": "ID-119040338",
+    "company_input": "Yunovia Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_0f869c4a",
+    "asset_input": "IL-21120033",
+    "company_input": "iLEAD Biomedical Science Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_95e576b4",
+    "asset_input": "IMB-002",
+    "company_input": "ImmunoBiome Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_69733342",
+    "asset_input": "iN-1012N17",
+    "company_input": "iN Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_a30c4d95",
+    "asset_input": "iN-1213N17",
+    "company_input": "iN Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_11bb34a3",
+    "asset_input": "INR-301",
+    "company_input": "Imnewrun Bioscience Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6ebf2cf5",
+    "asset_input": "iPB-01",
+    "company_input": "IPS Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e4b8857e",
+    "asset_input": "iPB-04",
+    "company_input": "IPS Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6a41fd41",
+    "asset_input": "IPS-09001",
+    "company_input": "InnoPharmaScreen Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d0843b0e",
+    "asset_input": "IPS-102",
+    "company_input": "Innopeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_2a1e91d3",
+    "asset_input": "iPSC Astrocyte",
+    "company_input": "Corestemchemon Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_09581ef9",
+    "asset_input": "ISU-203",
+    "company_input": "ISU ABXIS Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6d73d17c",
+    "asset_input": "IVL-4002",
+    "company_input": "Inventage Lab Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_a03c44c2",
+    "asset_input": "JBPOS-0254",
+    "company_input": "Bio-Pharm Solutions Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7ff5fc62",
+    "asset_input": "JBPOS-0416",
+    "company_input": "Bio-Pharm Solutions Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_59aaaa03",
+    "asset_input": "JBPOS-0422",
+    "company_input": "Bio-Pharm Solutions Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e5809966",
+    "asset_input": "JBPOS-0451",
+    "company_input": "Bio-Pharm Solutions Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_4c4d2fe8",
+    "asset_input": "JBPOS-0551",
+    "company_input": "Bio-Pharm Solutions Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d14c47a9",
+    "asset_input": "JBPOS-0552",
+    "company_input": "Bio-Pharm Solutions Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7460a9a8",
+    "asset_input": "JBPOS-0604",
+    "company_input": "Bio-Pharm Solutions Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_2a102867",
+    "asset_input": "JBPOS-0607",
+    "company_input": "Bio-Pharm Solutions Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_2a5f4a0c",
+    "asset_input": "JBPOS-0751",
+    "company_input": "Bio-Pharm Solutions Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_360e7488",
+    "asset_input": "JBPOS-0755",
+    "company_input": "Bio-Pharm Solutions Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_21a409f6",
+    "asset_input": "K-2846111",
+    "company_input": "Chungbuk National University",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b35c9131",
+    "asset_input": "KBL-1036",
+    "company_input": "KoBioLabs Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ec3a3ff9",
+    "asset_input": "KBLP-010",
+    "company_input": "KoBioLabs Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_09ad2967",
+    "asset_input": "KHCs",
+    "company_input": "bBHC Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_772bf6f3",
+    "asset_input": "KI-1120",
+    "company_input": "Kuhnil Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_625f3312",
+    "asset_input": "KIMS-003",
+    "company_input": "KIMS Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_55046564",
+    "asset_input": "KINE-501A",
+    "company_input": "Kine Sciences",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7471aa53",
+    "asset_input": "KJ-16002",
+    "company_input": "Kukje Pharmaceutical Industry Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b38950a1",
+    "asset_input": "KP-183",
+    "company_input": "Korea Pharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_74fa4cd1",
+    "asset_input": "LB-P4",
+    "company_input": "LISCure Biosciences Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6a5a4cb4",
+    "asset_input": "LC-PC02",
+    "company_input": "LISCure Biosciences Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e067cb9d",
+    "asset_input": "LSD",
+    "company_input": "Aavatar Therapeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_4fae86ae",
+    "asset_input": "MDH-014",
+    "company_input": "MD Healthcare Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_62a1f948",
+    "asset_input": "MDR-652",
+    "company_input": "Hyper Corp Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_da5b6f81",
+    "asset_input": "METI-204",
+    "company_input": "MetiMedi Pharmaceuticals Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_af0d1708",
+    "asset_input": "MG-PE3",
+    "company_input": "Mepsgen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_844afc9c",
+    "asset_input": "MG-Sh19",
+    "company_input": "Mepsgen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_371f23db",
+    "asset_input": "MGCP",
+    "company_input": "ImmunoBiome Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7572f836",
+    "asset_input": "MIT-003",
+    "company_input": "MitoImmune Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_bb6ab2c5",
+    "asset_input": "Moriah-1000",
+    "company_input": "Ensol Biosciences Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d1aed5f7",
+    "asset_input": "MPT0B-640",
+    "company_input": "J Ints Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_bab3709b",
+    "asset_input": "MS",
+    "company_input": "DR.Noah Biotech Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9b6338df",
+    "asset_input": "MS-2002",
+    "company_input": "Medinno Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_5c57be43",
+    "asset_input": "MSP-306",
+    "company_input": "Medispan Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_80a50e25",
+    "asset_input": "ND-07",
+    "company_input": "GNT Pharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9ece7b2b",
+    "asset_input": "Neurological",
+    "company_input": "Mirae Cell Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_46f1ac09",
+    "asset_input": "Next Generation Peptide Drug",
+    "company_input": "GemVax & KAEL Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b41d807c",
+    "asset_input": "NM-101",
+    "company_input": "Helixmith Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ff12f8b5",
+    "asset_input": "NM-301",
+    "company_input": "Helixmith Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_cbe6eb6e",
+    "asset_input": "NM-302",
+    "company_input": "Helixmith Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_1f495bc0",
+    "asset_input": "NovAD",
+    "company_input": "NovMetaPharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b808eebe",
+    "asset_input": "NP-3031",
+    "company_input": "Novel Pharma Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_31deaed8",
+    "asset_input": "NR-0601",
+    "company_input": "Neurorive Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c2a63c7f",
+    "asset_input": "NR-0602",
+    "company_input": "Neurorive Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e34526c9",
+    "asset_input": "NR-0702",
+    "company_input": "Neurorive Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e3f1b49a",
+    "asset_input": "NRM-120",
+    "company_input": "Neurolmed Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_8a164190",
+    "asset_input": "NRM-331C",
+    "company_input": "Neurolmed Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6da14e48",
+    "asset_input": "NRX-02067",
+    "company_input": "Novorex Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_04993b11",
+    "asset_input": "NRXNGT-002 AD",
+    "company_input": "Novorex Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_8b9aedb0",
+    "asset_input": "NRXNGT-002 PD",
+    "company_input": "Novorex Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_771ee0bf",
+    "asset_input": "NT-1",
+    "company_input": "NeuroTobe Pharmaceutic Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e2c5a706",
+    "asset_input": "NT-3",
+    "company_input": "NeuroTobe Pharmaceutic Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b4c889d9",
+    "asset_input": "NT-5",
+    "company_input": "NeuroTobe Pharmaceutic Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ebfbabc7",
+    "asset_input": "NTESC",
+    "company_input": "CHA Biotech Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_12b89964",
+    "asset_input": "NV-01062",
+    "company_input": "Neuroventi Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9cd58f87",
+    "asset_input": "NV-01A03",
+    "company_input": "Neuroventi Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_5329a54a",
+    "asset_input": "NVPNK-4146",
+    "company_input": "NVP Healthcare Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_19ad4c2f",
+    "asset_input": "NXP-031",
+    "company_input": "Nexmos Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_414789ec",
+    "asset_input": "ocrelizumab biosimilar",
+    "company_input": "Samsung Bioepis Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_26c429e2",
+    "asset_input": "OM-301",
+    "company_input": "OmniaMed Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_8c1cbf5e",
+    "asset_input": "Pain Relief",
+    "company_input": "Caregen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_aa062093",
+    "asset_input": "Parkinson",
+    "company_input": "DR.Noah Biotech Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_1d9e3c0b",
+    "asset_input": "Parkinson's disease",
+    "company_input": "StemLab Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_5b43b2e0",
+    "asset_input": "PB-542",
+    "company_input": "Parenchyma Biotech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_38add48a",
+    "asset_input": "PCGN-001",
+    "company_input": "Epinogen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e3a68609",
+    "asset_input": "PDSTEM",
+    "company_input": "EHL Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_2bc96306",
+    "asset_input": "PF-1802",
+    "company_input": "ImmunoForge Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_02b0e6d4",
+    "asset_input": "pIKO",
+    "company_input": "Helixmith Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_3273da42",
+    "asset_input": "PIN1",
+    "company_input": "Amenis Bioscience",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_48dc3838",
+    "asset_input": "PMC-402",
+    "company_input": "PharmAbcine Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_323e2388",
+    "asset_input": "POL-401",
+    "company_input": "SEASUN THERAPEUTICS Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_2b8c1746",
+    "asset_input": "PR-001",
+    "company_input": "Pharmacorex Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_258f13b5",
+    "asset_input": "PRGA-04",
+    "company_input": "PRG S&Tech Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c730c0fb",
+    "asset_input": "RC-0165",
+    "company_input": "Rudacure Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9b756066",
+    "asset_input": "RCI-002",
+    "company_input": "Rudacure Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ea81d0fe",
+    "asset_input": "RCI-605",
+    "company_input": "Rudacure Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_8f63836e",
+    "asset_input": "RG-101",
+    "company_input": "Regeners Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_587bad92",
+    "asset_input": "RG-111",
+    "company_input": "Regeners Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_a3738ec5",
+    "asset_input": "rivastigmine SR",
+    "company_input": "G2GBIO Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_3d4bf131",
+    "asset_input": "RN-005",
+    "company_input": "Renatus Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ff2c5957",
+    "asset_input": "S and K 201",
+    "company_input": "S&K Therapeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f1e3575c",
+    "asset_input": "SGS-101",
+    "company_input": "SuPine Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_660795ce",
+    "asset_input": "SKL-32276",
+    "company_input": "SK Biopharmaceuticals Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_db70504d",
+    "asset_input": "SKL-34474",
+    "company_input": "SK Biopharmaceuticals Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_97846c61",
+    "asset_input": "Small Molecule to Activate WNT Protein for Central Nervous System Disorders",
+    "company_input": "JW Pharmaceutical Corp",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7f26fcd4",
+    "asset_input": "Small Molecule to Inhibit Dopamine Transporter, Noradrenaline Transporter and Serotonin Transporter for Major Depressive Disorder",
+    "company_input": "Korea Institute of Science and Technology",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9cb0a740",
+    "asset_input": "Small Molecule to Inhibit TSPO for Alzheimer's Disease",
+    "company_input": "Korea Institute of Science and Technology",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c2490593",
+    "asset_input": "Small Molecules to Antagonize P2X3 for Neuropathic Pain",
+    "company_input": "Gwangju Institute of Science and Technology",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ec63d059",
+    "asset_input": "Small Molecules to Target 5-HT7R for Sleep Disorders",
+    "company_input": "Korea Institute of Science and Technology",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c81ceb80",
+    "asset_input": "SNA-002",
+    "company_input": "SN BioScience Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7f5a5d91",
+    "asset_input": "SNE-201",
+    "company_input": "S&E Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c801f028",
+    "asset_input": "SP-NN",
+    "company_input": "Chungbuk National University",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c39dba21",
+    "asset_input": "Spinal Cord Injury Treatment",
+    "company_input": "StemLab Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_aaf2bdbb",
+    "asset_input": "SSC101-iMN",
+    "company_input": "SuPine Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_edd80c90",
+    "asset_input": "SSC101-iOPC",
+    "company_input": "SuPine Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9f82df7a",
+    "asset_input": "SSCA-101LV",
+    "company_input": "SuPine Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b8f96d53",
+    "asset_input": "STUP-002",
+    "company_input": "Stand Up Therapeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_168c1977",
+    "asset_input": "SVG-105",
+    "company_input": "SoVarGen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_15b66b8b",
+    "asset_input": "TED-NA",
+    "company_input": "S.Biomedics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_231dce89",
+    "asset_input": "trametinib",
+    "company_input": "Genuv Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_76f05fd4",
+    "asset_input": "VM-507",
+    "company_input": "Helixmith Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b895838f",
+    "asset_input": "VT-N",
+    "company_input": "VasThera Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_17721e6d",
+    "asset_input": "VTA-1",
+    "company_input": "VasThera Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_1595867f",
+    "asset_input": "VVZ-3416",
+    "company_input": "Vivozon Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_70a621bd",
+    "asset_input": "VVZN-21",
+    "company_input": "Vivozon Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_5649393c",
+    "asset_input": "WIF-2401",
+    "company_input": "Whan In Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9689187f",
+    "asset_input": "WIL-1901",
+    "company_input": "Whan In Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_75bfada3",
+    "asset_input": "WK-5005",
+    "company_input": "Nadian Bio Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_bf1416c8",
+    "asset_input": "WRDP-001",
+    "company_input": "PharmGen Science Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_94eec2ff",
+    "asset_input": "ZCS-1",
+    "company_input": "Zincure Corp",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d2b25fa6",
+    "asset_input": "1ST-103",
+    "company_input": "1st Bio Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_40cd0899",
+    "asset_input": "ABAD-002",
+    "company_input": "Alliad Biopharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f170fdba",
+    "asset_input": "ABASD-003",
+    "company_input": "Alliad Biopharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_cab2ccdf",
+    "asset_input": "ADY-73001",
+    "company_input": "ADEL Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e58885b3",
+    "asset_input": "ADY-74001",
+    "company_input": "ADEL Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b2d51fa2",
+    "asset_input": "AFX-002",
+    "company_input": "AffyXell Therapeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_881ca626",
+    "asset_input": "AIC-105",
+    "company_input": "Sapiens Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_5c6ca808",
+    "asset_input": "AIC-106",
+    "company_input": "Sapiens Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_11a20500",
+    "asset_input": "ALT-003",
+    "company_input": "Altmedical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f901e5ec",
+    "asset_input": "Alzheimer's Treatment",
+    "company_input": "Zincure Corp",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_247f70a0",
+    "asset_input": "AMC Series Parkinson's Disease",
+    "company_input": "Animuscure Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_a24913e0",
+    "asset_input": "AS-301",
+    "company_input": "Amyloid Solution Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_fa091839",
+    "asset_input": "AS-402",
+    "company_input": "Amyloid Solution Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_aa00c66d",
+    "asset_input": "AS-403",
+    "company_input": "Amyloid Solution Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d81b5661",
+    "asset_input": "AS-611",
+    "company_input": "Amyloid Solution Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_82ed553b",
+    "asset_input": "ASK1 Inhibitor",
+    "company_input": "Korea Research Institute of Chemical Technology",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_aefa8dff",
+    "asset_input": "AST-51X",
+    "company_input": "Aston Sci Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_08bab0af",
+    "asset_input": "ATB-1091",
+    "company_input": "Amtixbio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_91f498c6",
+    "asset_input": "ATB-810",
+    "company_input": "Autotelic Bio Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_94eeb65e",
+    "asset_input": "ATC-103",
+    "company_input": "Autotac Bio Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6a52ab53",
+    "asset_input": "Autism Spectrum Disorder",
+    "company_input": "HEM Pharma Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ad4fbc12",
+    "asset_input": "BAB-301",
+    "company_input": "Baobab AiBIO Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6a55abd5",
+    "asset_input": "BCWPD-017",
+    "company_input": "BCWorld Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_73c89ef1",
+    "asset_input": "BCWPD-018",
+    "company_input": "BCWorld Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_8ab8141f",
+    "asset_input": "BCWPD-019",
+    "company_input": "BCWorld Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_2b46d2f5",
+    "asset_input": "BE-629",
+    "company_input": "Mark Herzen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_90db367a",
+    "asset_input": "BIOK-001",
+    "company_input": "Biorchestra Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e8809533",
+    "asset_input": "BIOK-007",
+    "company_input": "Biorchestra Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ee91452b",
+    "asset_input": "BIOK-008",
+    "company_input": "Biorchestra Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_da706120",
+    "asset_input": "Biologic for Alzheimer’s Disease",
+    "company_input": "MDimune Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_3f04dbf0",
+    "asset_input": "BMD-002",
+    "company_input": "Biorchestra Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f355f6f7",
+    "asset_input": "BNH-103",
+    "company_input": "BnH Research",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_810867b5",
+    "asset_input": "BS Candidate 1",
+    "company_input": "Chong Kun Dang Pharmaceutical Corp.",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d266a23f",
+    "asset_input": "CarBio-401",
+    "company_input": "CarBio Therapeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6146b60a",
+    "asset_input": "CMP-3013",
+    "company_input": "CAMP Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6b9bf623",
+    "asset_input": "CNI-01",
+    "company_input": "NAMUICT Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9cd306c3",
+    "asset_input": "CRG-07",
+    "company_input": "CdmoGen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_4b458b50",
+    "asset_input": "CTXPD-02",
+    "company_input": "CTX Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_09dd54cc",
+    "asset_input": "CTXPD-03",
+    "company_input": "CTX Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_5f6c75e0",
+    "asset_input": "CUR-201",
+    "company_input": "Curamys Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_87eacfd0",
+    "asset_input": "CUR-203",
+    "company_input": "Curamys Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c4041df7",
+    "asset_input": "CUR-204",
+    "company_input": "Curamys Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_1c707bbc",
+    "asset_input": "CV-03",
+    "company_input": "Cureverse Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_69fa9d8f",
+    "asset_input": "DA-7505",
+    "company_input": "Dong-A ST Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9c6529ab",
+    "asset_input": "DDA-280",
+    "company_input": "HLB Science Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_4f75edfe",
+    "asset_input": "DGC-601",
+    "company_input": "Deargen Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f4e9f27b",
+    "asset_input": "DKB-17002",
+    "company_input": "DongKoo Bio & Pharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7a055f9a",
+    "asset_input": "Drug for Alzheimer's Disease",
+    "company_input": "DongKoo Bio & Pharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_dbd641d2",
+    "asset_input": "Drug for Parkinson's Disease",
+    "company_input": "DongKoo Bio & Pharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_18330ab8",
+    "asset_input": "Drug to Inhibit IL1B for Alzheimer's Disease",
+    "company_input": "Hyper Corp Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f2ac5415",
+    "asset_input": "Drugs for Mitochondrial Dysfunction",
+    "company_input": "Altmedical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7c812e41",
+    "asset_input": "dtBBB-NNP-Oligo",
+    "company_input": "Shiftbio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_4d5d17dc",
+    "asset_input": "EFL-101",
+    "company_input": "Eflask Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7d12d526",
+    "asset_input": "EST-T-EXO",
+    "company_input": "Exostemtech Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_64fe752f",
+    "asset_input": "FB-2307ST",
+    "company_input": "FromBIO Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_0d260059",
+    "asset_input": "G-2202",
+    "company_input": "BCWorld Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_af8f466b",
+    "asset_input": "GB-110",
+    "company_input": "G&P Bioscience Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_a5555159",
+    "asset_input": "GB-5021",
+    "company_input": "G2GBIO Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_0e5a136e",
+    "asset_input": "GB-5023",
+    "company_input": "G2GBIO Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e69a3200",
+    "asset_input": "Gene Therapy CNS Disease",
+    "company_input": "GenKOre",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_18307be4",
+    "asset_input": "Gene Therapy Neuromuscular Disease",
+    "company_input": "GenKOre",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9ab962aa",
+    "asset_input": "Glutaminyl Cyclase",
+    "company_input": "J Mackem Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b5d60f1a",
+    "asset_input": "GMSP-11",
+    "company_input": "Gifted MS Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c41b2c8f",
+    "asset_input": "GNUV-101",
+    "company_input": "Genuv Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_de838d22",
+    "asset_input": "GXC-302",
+    "company_input": "Genixcure Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_8dabc5e5",
+    "asset_input": "GXC-401",
+    "company_input": "Genixcure Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d7ace4e5",
+    "asset_input": "HLB-1014",
+    "company_input": "Huonslab Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b150fb07",
+    "asset_input": "HN-53011",
+    "company_input": "Hana Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_14cdfc49",
+    "asset_input": "IL-2110",
+    "company_input": "iLEAD Biomedical Science Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_1a10a0a7",
+    "asset_input": "IL-2114",
+    "company_input": "iLEAD Biomedical Science Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_83eb88bf",
+    "asset_input": "ILB-323",
+    "company_input": "ILIAS Biologics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9c8859aa",
+    "asset_input": "iN-3011K23",
+    "company_input": "iN Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_490b7fb9",
+    "asset_input": "iN-3111K23",
+    "company_input": "iN Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_93620b30",
+    "asset_input": "iN-3211K23",
+    "company_input": "iN Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_96bee7e8",
+    "asset_input": "iN-4011KC2",
+    "company_input": "iN Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_43b7a1e4",
+    "asset_input": "iN-4111KC2",
+    "company_input": "iN Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_15e45e1d",
+    "asset_input": "INR-302",
+    "company_input": "Imnewrun Bioscience Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_12f9e9ae",
+    "asset_input": "INR-303",
+    "company_input": "Imnewrun Bioscience Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e0fea7c5",
+    "asset_input": "interferon beta",
+    "company_input": "Pangen Biotech Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_89e6ebd2",
+    "asset_input": "iPB-03",
+    "company_input": "IPS Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_101e6900",
+    "asset_input": "iPB-05",
+    "company_input": "IPS Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d7cde08a",
+    "asset_input": "IVLIMDDM-01",
+    "company_input": "Inventage Lab Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f08890d7",
+    "asset_input": "JLP-1920",
+    "company_input": "Jeil Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ac56091e",
+    "asset_input": "KD-302",
+    "company_input": "Kwang Dong Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b9bc776e",
+    "asset_input": "KD-306",
+    "company_input": "Kwang Dong Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ee311e3c",
+    "asset_input": "KDS-5001",
+    "company_input": "Korea Institute of Science and Technology",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f977db55",
+    "asset_input": "KI-1128",
+    "company_input": "Kuhnil Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_fb897934",
+    "asset_input": "KINE-501B",
+    "company_input": "Kine Sciences",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_65874c41",
+    "asset_input": "KINE-501C",
+    "company_input": "Kine Sciences",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_06d6ff87",
+    "asset_input": "KINE-501D",
+    "company_input": "Kine Sciences",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_0eaf63b3",
+    "asset_input": "KINE-501E",
+    "company_input": "Kine Sciences",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_20ab2bb2",
+    "asset_input": "KP-101",
+    "company_input": "Korea Pharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_254c0bc6",
+    "asset_input": "KP-102",
+    "company_input": "Korea Pharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c797061b",
+    "asset_input": "KP-172",
+    "company_input": "Korea Pharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_375a324e",
+    "asset_input": "KP-173",
+    "company_input": "Korea Pharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_39d671b6",
+    "asset_input": "KP-182",
+    "company_input": "Korea Pharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_f7f47b4f",
+    "asset_input": "KP-202",
+    "company_input": "Korea Pharma Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_c4b508e2",
+    "asset_input": "L and J-LD",
+    "company_input": "L&J Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_06579813",
+    "asset_input": "L and J-PA",
+    "company_input": "L&J Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_5e1e2cf6",
+    "asset_input": "L and J-PD",
+    "company_input": "L&J Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_de1057c7",
+    "asset_input": "Lead Compounds",
+    "company_input": "Kyung Hee University",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ccfe3098",
+    "asset_input": "MBT-002",
+    "company_input": "MVRIX Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b9de7b8a",
+    "asset_input": "MDH-024",
+    "company_input": "MD Healthcare Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6da3b32a",
+    "asset_input": "MDH-111",
+    "company_input": "MD Healthcare Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b4e5422a",
+    "asset_input": "MDH-114",
+    "company_input": "MD Healthcare Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_59d52e53",
+    "asset_input": "MDH-244",
+    "company_input": "MD Healthcare Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_5cb713cb",
+    "asset_input": "MFP-037",
+    "company_input": "HLB Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_2ec6ab11",
+    "asset_input": "MG-RZ",
+    "company_input": "Molgen Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_baa05468",
+    "asset_input": "MG-TA",
+    "company_input": "Molgen Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_8ad2c0e5",
+    "asset_input": "MGTA-205",
+    "company_input": "Molgen Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_5b577cc6",
+    "asset_input": "Microbial Therapies",
+    "company_input": "Yunovia Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_0e9fdd02",
+    "asset_input": "MIURon",
+    "company_input": "YiPSCELL Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_71eb8a38",
+    "asset_input": "Multiple Sclerosis",
+    "company_input": "NA Vaccine Research Institute Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_32289d07",
+    "asset_input": "Neuroimmune Project",
+    "company_input": "SK Biopharmaceuticals Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_a6d19037",
+    "asset_input": "Neurological Disorders",
+    "company_input": "CJ Bioscience Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_dd9630d7",
+    "asset_input": "New Drug",
+    "company_input": "Neurobiogen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_32010708",
+    "asset_input": "New Drug Candidates",
+    "company_input": "Cimplrx Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ccf14062",
+    "asset_input": "Next-Generation RNA Gene Therapies",
+    "company_input": "Rznomics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d799ad92",
+    "asset_input": "NF-1",
+    "company_input": "Yungjin Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_bfbf2324",
+    "asset_input": "NG-201AD",
+    "company_input": "Elisigen Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7e4fa5b1",
+    "asset_input": "NG-201ALS",
+    "company_input": "Elisigen Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_4bed23b3",
+    "asset_input": "NG-201NP",
+    "company_input": "Elisigen Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_4fdd12c2",
+    "asset_input": "NLRP3",
+    "company_input": "J Mackem Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e4a243c7",
+    "asset_input": "NM-201",
+    "company_input": "Neuramedy Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_df325927",
+    "asset_input": "Non-Disclosed 1",
+    "company_input": "Renatus Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ccfc7f47",
+    "asset_input": "Novel Drug Candidate",
+    "company_input": "SK Biopharmaceuticals Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_48d494e9",
+    "asset_input": "NR-0102",
+    "company_input": "Neurorive Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_63897829",
+    "asset_input": "NR-0801",
+    "company_input": "Neurorive Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_faf9651f",
+    "asset_input": "NRARB-001",
+    "company_input": "Neoregen Biotech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b31dd683",
+    "asset_input": "NRXNGT-019",
+    "company_input": "Novorex Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6fa58c23",
+    "asset_input": "NS-101h",
+    "company_input": "Neuracle Science Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_0e5b2010",
+    "asset_input": "NS-150h",
+    "company_input": "Neuracle Science Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6276fafe",
+    "asset_input": "NS-350",
+    "company_input": "Neuracle Science Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_cf7b2793",
+    "asset_input": "Nucleic Acid Therapies",
+    "company_input": "Biorchestra Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_efca17c2",
+    "asset_input": "OGS-101",
+    "company_input": "Orgasis Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_3d8eaf63",
+    "asset_input": "OSP-8201",
+    "company_input": "Oncocross Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9b33ccb0",
+    "asset_input": "OZC-006",
+    "company_input": "Oncozen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_241952ff",
+    "asset_input": "Pain",
+    "company_input": "Threebrooks Therapeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_2d1c6011",
+    "asset_input": "Parkinson's and Alzheimer's Disease TRPML1",
+    "company_input": "Threebrooks Therapeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_af95d169",
+    "asset_input": "Parkinson's Disease TMEM175",
+    "company_input": "Threebrooks Therapeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_03377ce4",
+    "asset_input": "PB-101",
+    "company_input": "PB Immune Therapeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d7167e16",
+    "asset_input": "PB-301",
+    "company_input": "PB Immune Therapeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_4c8d7109",
+    "asset_input": "PCGN-002",
+    "company_input": "Epinogen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7a07af11",
+    "asset_input": "PCGN-003",
+    "company_input": "Epinogen Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_853cd593",
+    "asset_input": "PD Program",
+    "company_input": "Bukwang Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_51f41975",
+    "asset_input": "PKR Inhibitor",
+    "company_input": "Bukwang Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_ab5869ae",
+    "asset_input": "PN-002",
+    "company_input": "RegenInnopharm Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_11cadeec",
+    "asset_input": "POL-402",
+    "company_input": "SEASUN THERAPEUTICS Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6dd133a0",
+    "asset_input": "PRG-CNS-3",
+    "company_input": "PRG S&Tech Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b9f920e2",
+    "asset_input": "PRGCNS-2",
+    "company_input": "PRG S&Tech Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_dbf58cd3",
+    "asset_input": "PRX-20016",
+    "company_input": "Prazer Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b6f2a4b0",
+    "asset_input": "PRX-201",
+    "company_input": "Prazer Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_1ce19eb2",
+    "asset_input": "PRX-302",
+    "company_input": "Prazer Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_27fb1a20",
+    "asset_input": "PRX-303",
+    "company_input": "Prazer Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_fb40d4bb",
+    "asset_input": "PRX-402",
+    "company_input": "Prazer Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_8f628e09",
+    "asset_input": "RNAi Gene Therapy",
+    "company_input": "Yonsei University",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_44030a1a",
+    "asset_input": "rotigotine",
+    "company_input": "HLB Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_63923539",
+    "asset_input": "RZ-003",
+    "company_input": "Rznomics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_fb87a904",
+    "asset_input": "RZ-005",
+    "company_input": "Rznomics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_94f60d04",
+    "asset_input": "S and K 601",
+    "company_input": "S&K Therapeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_02f1c0a1",
+    "asset_input": "SARM1",
+    "company_input": "Checkmate Therapeutics Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6890d5b2",
+    "asset_input": "SBP-201",
+    "company_input": "Spark Biopharma Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_da6e0d7d",
+    "asset_input": "SBP-202",
+    "company_input": "Spark Biopharma Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_9baba786",
+    "asset_input": "SJB-21",
+    "company_input": "Samjin Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_3003ce8b",
+    "asset_input": "SMA",
+    "company_input": "Novel Pharma Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d1e290a5",
+    "asset_input": "Small Molecule for Neuropathy",
+    "company_input": "Lmito Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_653b2b2f",
+    "asset_input": "Small Molecule Inhibitors",
+    "company_input": "Ajou University",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d414e796",
+    "asset_input": "Small Molecule to Inhibit DAPK1 and CSF1R for Tauopathies",
+    "company_input": "Korea Institute of Science and Technology",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_d77d923a",
+    "asset_input": "SNE-202",
+    "company_input": "S&E Bio Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_eab5e624",
+    "asset_input": "SSCA-101-SC",
+    "company_input": "SuPine Therapeutics Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_8599b70d",
+    "asset_input": "Synthetic Peptide to Inhibit APP for Alzheimer's Disease",
+    "company_input": "Ulsan National Institute of Science and Technology",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e529a176",
+    "asset_input": "SYP-2566",
+    "company_input": "Samyang Biopharmaceuticals Corp",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_dbf40724",
+    "asset_input": "TCME-05",
+    "company_input": "TCUBEit Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_536c55f9",
+    "asset_input": "VVZE-21",
+    "company_input": "Vivozon Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_b8826dcc",
+    "asset_input": "VVZN-3",
+    "company_input": "Vivozon Inc",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_626351a0",
+    "asset_input": "WIG-2404",
+    "company_input": "Whan In Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_acccdb8c",
+    "asset_input": "WIL-1903",
+    "company_input": "Whan In Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_8031473b",
+    "asset_input": "WIP-2401",
+    "company_input": "Whan In Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6f77396f",
+    "asset_input": "YDC-103",
+    "company_input": "YD Life Science Co",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_da495676",
+    "asset_input": "YHC-1135",
+    "company_input": "Yuhan Corp",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_6eabebc2",
+    "asset_input": "YHC-1144",
+    "company_input": "Yuhan Corp",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_0f030121",
+    "asset_input": "YHC-2133",
+    "company_input": "Yuhan Corp",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_4e319de5",
+    "asset_input": "YJNSC-5T",
+    "company_input": "YJ Cerapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_94910e64",
+    "asset_input": "YPN-007",
+    "company_input": "Yungjin Pharm Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_e88fa96c",
+    "asset_input": "SS-263",
+    "company_input": "Sinsin Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_0d7a7ec8",
+    "asset_input": "SS-601",
+    "company_input": "Sinsin Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_313ef7c1",
+    "asset_input": "SS-614",
+    "company_input": "Sinsin Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_7c344c47",
+    "asset_input": "SS-631",
+    "company_input": "Sinsin Pharmaceutical Co Ltd",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:28:43.535867+00:00"
+  },
+  {
+    "id": "cq_2dfdb9f2",
+    "asset_input": "AR1001",
+    "company_input": "AriBio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_0323c216",
+    "asset_input": "GV1001",
+    "company_input": "GemVax & KAEL",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_320451fb",
+    "asset_input": "CP-108",
+    "company_input": "Bukwang Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_18e8f5ee",
+    "asset_input": "NG201",
+    "company_input": "Neuracle Science",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_feff26e9",
+    "asset_input": "GO-102",
+    "company_input": "Generoath",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_6a72deff",
+    "asset_input": "VRN04-2",
+    "company_input": "Voronoi",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_087b2385",
+    "asset_input": "NDC-011",
+    "company_input": "Dr. Noah Biotech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_0ee30cf1",
+    "asset_input": "DG-ALS-T1",
+    "company_input": "Deargen",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_60a73a13",
+    "asset_input": "Neurodegenerative Diseases Discovery",
+    "company_input": "GENUV",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_76243b4e",
+    "asset_input": "ZC-P30",
+    "company_input": "Zincure",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_e9dcb05a",
+    "asset_input": "ZC-C10",
+    "company_input": "Zincure",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_30112f4a",
+    "asset_input": "CNS Research Program",
+    "company_input": "Animuscure",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_c7139c72",
+    "asset_input": "AMC9008",
+    "company_input": "Animuscure",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_1440e42f",
+    "asset_input": "L&J-LD",
+    "company_input": "L&J Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_9d42f04e",
+    "asset_input": "MIT-004",
+    "company_input": "MitoImmune Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_a1538352",
+    "asset_input": "NLY02",
+    "company_input": "D&D Pharmatech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_b18f43f1",
+    "asset_input": "YKP10461",
+    "company_input": "SK Biopharmaceuticals",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_87a258c3",
+    "asset_input": "AR1004",
+    "company_input": "AriBio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_d4f01ce5",
+    "asset_input": "LB-PC01",
+    "company_input": "Celltrion",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_83316873",
+    "asset_input": "LB-PC02",
+    "company_input": "Celltrion",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_21311346",
+    "asset_input": "SJP1801",
+    "company_input": "Samjin Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_051c73eb",
+    "asset_input": "Ropinirole XL",
+    "company_input": "GL Pharmtech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_8dfb46b5",
+    "asset_input": "NLY-03",
+    "company_input": "D&D Pharmatech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_0bd31562",
+    "asset_input": "YH36425",
+    "company_input": "Yuhan",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_b8405de1",
+    "asset_input": "Parkinson's Discovery",
+    "company_input": "Bukwang Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_225681a7",
+    "asset_input": "BUK-001",
+    "company_input": "Bukwang Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_b50b75e4",
+    "asset_input": "GO-101",
+    "company_input": "Generoath",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_56708b35",
+    "asset_input": "NRX-NGT-002",
+    "company_input": "Novorex",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_fca30dd3",
+    "asset_input": "VT01",
+    "company_input": "D&D Pharmatech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_62bec535",
+    "asset_input": "WID-2101",
+    "company_input": "WhanIn Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_6bf74407",
+    "asset_input": "AEV003",
+    "company_input": "AevisBio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_4fcbd0b8",
+    "asset_input": "BGN-112",
+    "company_input": "BioGraphene",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_e5eb3cf6",
+    "asset_input": "Tisolagiline",
+    "company_input": "Neurobiogen",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_ae611718",
+    "asset_input": "JIN-001",
+    "company_input": "J INTS BIO",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_c315d20a",
+    "asset_input": "BSC-3201",
+    "company_input": "BiSiChem",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_9edb895d",
+    "asset_input": "DDN-A-0102",
+    "company_input": "Dadang & BIO",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_9902e072",
+    "asset_input": "ZT-200",
+    "company_input": "Zefit",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_32477179",
+    "asset_input": "PN-RS",
+    "company_input": "Paean Biotechnology",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_dfd76c5a",
+    "asset_input": "NTESC-101",
+    "company_input": "CHA Biotech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_8a50df43",
+    "asset_input": "METI-103",
+    "company_input": "MetiMedi Pharmaceuticals",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_d2b02d82",
+    "asset_input": "ADD485002",
+    "company_input": "Bio-Pharm Solutions",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_84bbd16f",
+    "asset_input": "SP001",
+    "company_input": "Standigm",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_0f70fb59",
+    "asset_input": "ANL-103",
+    "company_input": "GenixCure",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_667b53b9",
+    "asset_input": "AXN-1901",
+    "company_input": "Axceso Biopharma",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_83405a9a",
+    "asset_input": "Parkinson’s Disease Research Program",
+    "company_input": "Dr. Noah Biotech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_cd3cb878",
+    "asset_input": "DDN-A-0103",
+    "company_input": "Dadang & BIO",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_6b817e4f",
+    "asset_input": "DDN-A-0105",
+    "company_input": "Dadang & BIO",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_5017f30f",
+    "asset_input": "DDN-A-0106",
+    "company_input": "Dadang & BIO",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_45af7690",
+    "asset_input": "Parkinson's Disease Discovery",
+    "company_input": "KCELLbio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_913a4d7c",
+    "asset_input": "1ST-105",
+    "company_input": "1ST Biotherapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_b8bb4eec",
+    "asset_input": "NT-3, NeuroTobe Pharmaceuticals",
+    "company_input": "HLB",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_53e4e71e",
+    "asset_input": "L&J-PD",
+    "company_input": "L&J Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_18113cf2",
+    "asset_input": "WID-2301",
+    "company_input": "WhanIn Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_0500b944",
+    "asset_input": "KINE-501",
+    "company_input": "Kine Sciences",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_e5780a53",
+    "asset_input": "DR003",
+    "company_input": "Standigm",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_39cc8e6d",
+    "asset_input": "VVZ-E2",
+    "company_input": "Vivozon",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_3a15f91e",
+    "asset_input": "Cerebellar Ataxia Research Program",
+    "company_input": "Corestem",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_9be86307",
+    "asset_input": "EPD-201",
+    "company_input": "Genexine",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_71faac5b",
+    "asset_input": "ARSACS Discovery",
+    "company_input": "Oncocross",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_a82a4399",
+    "asset_input": "Potato Vaccine",
+    "company_input": "Korea Research Institute of Bioscience & Biotechnology",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_595b756c",
+    "asset_input": "BEY4101A",
+    "company_input": "BeyondBio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_b7adae95",
+    "asset_input": "S701",
+    "company_input": "Amyloid Solution",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_a9807cc8",
+    "asset_input": "M801",
+    "company_input": "Amyloid Solution",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_55fa4147",
+    "asset_input": "SNR1611",
+    "company_input": "GENUV",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_b3e82354",
+    "asset_input": "S301",
+    "company_input": "Amyloid Solution",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_0bd41b56",
+    "asset_input": "intractable brain diseases therapy, Dong-AST",
+    "company_input": "Dong-A ST",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_b01036ea",
+    "asset_input": "SRN-008",
+    "company_input": "siRNAgen Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_b170b906",
+    "asset_input": "AB-12 (IV)",
+    "company_input": "AUTOTAC Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_02a099f3",
+    "asset_input": "Alzheimer’s disease vaccine",
+    "company_input": "EuBiologics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_9a584ceb",
+    "asset_input": "OPN-305",
+    "company_input": "Neuramedy",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_841a011d",
+    "asset_input": "Oral HY209",
+    "company_input": "Shaperon",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_37a486c8",
+    "asset_input": "TB-200",
+    "company_input": "Therabest",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_2ea62e85",
+    "asset_input": "DDN-A-0101",
+    "company_input": "Dadang & BIO",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_50876471",
+    "asset_input": "DDN-A-0104",
+    "company_input": "Dadang & BIO",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_3244f98d",
+    "asset_input": "L&J-AD",
+    "company_input": "L&J Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_f19d49b2",
+    "asset_input": "PV002",
+    "company_input": "Posvax",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_9948b32e",
+    "asset_input": "DKF-462",
+    "company_input": "Dongkook Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_4ba93d99",
+    "asset_input": "Autoimmune Inflammatory Disorder Project",
+    "company_input": "Ajou University",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_a1b79ec9",
+    "asset_input": "IVL3003",
+    "company_input": "Chong Kun Dang",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_527d118b",
+    "asset_input": "GB-5112",
+    "company_input": "G2GBIO",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_3b6d6c68",
+    "asset_input": "M802",
+    "company_input": "Amyloid Solution",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_f46c3a03",
+    "asset_input": "SVG501",
+    "company_input": "SoVarGen",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_9a91064b",
+    "asset_input": "Amyloid Solution-Deargen Alzheimer’s Disease Program",
+    "company_input": "Deargen",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_c0b4ba24",
+    "asset_input": "Amyloid Solution-Deargen Alzheimer’s Disease Program",
+    "company_input": "Amyloid Solution",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_bfd8d1e1",
+    "asset_input": "NM-202",
+    "company_input": "Neuramedy",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_3ab81f74",
+    "asset_input": "AXN-1501",
+    "company_input": "Axceso Biopharma",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_03282deb",
+    "asset_input": "N403",
+    "company_input": "Amyloid Solution",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_1f61cfbe",
+    "asset_input": "IVL5003",
+    "company_input": "Inventage Lab",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_bb5beb70",
+    "asset_input": "MFC0104",
+    "company_input": "Medific",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_8ff40f8b",
+    "asset_input": "ADEL-D01",
+    "company_input": "ADEL",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_b4130169",
+    "asset_input": "ATC-101",
+    "company_input": "AUTOTAC Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_dad0b757",
+    "asset_input": "ATC-105",
+    "company_input": "AUTOTAC Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_cd3a0dc7",
+    "asset_input": "ATC-106",
+    "company_input": "AUTOTAC Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_e75975e1",
+    "asset_input": "ATC-107",
+    "company_input": "AUTOTAC Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_fb2a88ee",
+    "asset_input": "MT104",
+    "company_input": "Mthera Pharma",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_9afd1a7a",
+    "asset_input": "ZC-C20",
+    "company_input": "Zincure",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_2836c6ee",
+    "asset_input": "ADEL-Y07",
+    "company_input": "ADEL",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_73f77b68",
+    "asset_input": "S&K201",
+    "company_input": "S&K Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_f81e5a53",
+    "asset_input": "M302",
+    "company_input": "Amyloid Solution",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_3cb995da",
+    "asset_input": "M303",
+    "company_input": "Amyloid Solution",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_73062155",
+    "asset_input": "PRX-301",
+    "company_input": "Prazer Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_1cafea50",
+    "asset_input": "PRX-203",
+    "company_input": "Prazer Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_fffc2660",
+    "asset_input": "NEX3-01",
+    "company_input": "Nexyon Biotech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_c9533caa",
+    "asset_input": "Alzheimer's Disease Discovery",
+    "company_input": "CK Regeon",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_f2b49092",
+    "asset_input": "iN5011-K23",
+    "company_input": "iN Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_ab292c63",
+    "asset_input": "N402",
+    "company_input": "Amyloid Solution",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_0c91957c",
+    "asset_input": "S204",
+    "company_input": "Amyloid Solution",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_2e0774ec",
+    "asset_input": "YDC104",
+    "company_input": "YD Global Life Science",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_ffae0e27",
+    "asset_input": "3BT-1",
+    "company_input": "Threebrooks Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_3ce2bbf1",
+    "asset_input": "Alzheimer Disease Research Program",
+    "company_input": "G2GBIO",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_d441c871",
+    "asset_input": "KD-901",
+    "company_input": "Seoul National University",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_d6dbded4",
+    "asset_input": "AMB001",
+    "company_input": "AimedBio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_2443b891",
+    "asset_input": "DDN-FA-0001",
+    "company_input": "Dadang & BIO",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_5647030f",
+    "asset_input": "Dementia Discovery",
+    "company_input": "Q Genetics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_d5c88b8d",
+    "asset_input": "Dementia Research Program",
+    "company_input": "S&E Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_abc79394",
+    "asset_input": "CINDELCAS",
+    "company_input": "CasCure Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_55c58291",
+    "asset_input": "Rivastigmine Patch",
+    "company_input": "Sinsin Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_22600118",
+    "asset_input": "Dementia Research Program",
+    "company_input": "G2GBIO",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_1ee52816",
+    "asset_input": "NS-101",
+    "company_input": "Neuracle Science",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_3bd5dc4c",
+    "asset_input": "ANL-304",
+    "company_input": "GenixCure",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_adf23e00",
+    "asset_input": "DKF-310",
+    "company_input": "Dongkook Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_30920196",
+    "asset_input": "BMRD-002",
+    "company_input": "Biorchestra",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_8930b6fa",
+    "asset_input": "Frontotemporal Dementia Research Program",
+    "company_input": "iPS Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_2558e124",
+    "asset_input": "EPPS",
+    "company_input": "Korea Pharma",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_9fb2402c",
+    "asset_input": "NM-403",
+    "company_input": "Neuramedy",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_2243b5b2",
+    "asset_input": "Osmotin",
+    "company_input": "Korea Pharma",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_c59a76fe",
+    "asset_input": "SYO-1906",
+    "company_input": "Samyang Holdings",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_c9b9681f",
+    "asset_input": "SPO-1107",
+    "company_input": "Seoul Pharmaceuticals",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_2ff5dc5a",
+    "asset_input": "SPO-1401",
+    "company_input": "Seoul Pharmaceuticals",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_1f330d7c",
+    "asset_input": "DWP-DN31",
+    "company_input": "Daewoo Pharm",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_39a380c1",
+    "asset_input": "ATCC3502",
+    "company_input": "Protox",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_5e800567",
+    "asset_input": "NV01-A02",
+    "company_input": "Neuroventi",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_e121b763",
+    "asset_input": "AR1005",
+    "company_input": "AriBio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_cb98025e",
+    "asset_input": "ANL-102",
+    "company_input": "GenixCure",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_e96eb82b",
+    "asset_input": "Neuromyelitis Optica Research Program",
+    "company_input": "Corestem",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_013c471f",
+    "asset_input": "ABL301",
+    "company_input": "ABL Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_4ca3e157",
+    "asset_input": "JM-012",
+    "company_input": "Bukwang Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_d4554a85",
+    "asset_input": "ATB-501",
+    "company_input": "Autotelic Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_2baca624",
+    "asset_input": "PC31",
+    "company_input": "ProCell Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_4102f91f",
+    "asset_input": "Contera Pharma-HitGen Neurology Discovery",
+    "company_input": "Bukwang Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_32001d02",
+    "asset_input": "CNS Disease Research Program (AAVR)",
+    "company_input": "AAVATAR Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_be09525f",
+    "asset_input": "PH733",
+    "company_input": "BotaMedi",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_7148aa10",
+    "asset_input": "MDimune and VECT-HORUS CNS Discovery",
+    "company_input": "Carus Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_5546a4b2",
+    "asset_input": "NEOK001",
+    "company_input": "ABL Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_b679a940",
+    "asset_input": "NEOK002",
+    "company_input": "ABL Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_79f673b8",
+    "asset_input": "Trineumin",
+    "company_input": "PRG S&Tech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_8143032c",
+    "asset_input": "SiRNA therapy",
+    "company_input": "NIBEC",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_ffe69532",
+    "asset_input": "Stem Cell Derived Exosome Therapy",
+    "company_input": "Exosome Plus",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_f7d93759",
+    "asset_input": "Mesenchymal Stem Cells Project",
+    "company_input": "Chungbuk National University",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_863871b8",
+    "asset_input": "AMB016",
+    "company_input": "AimedBio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_7e25da4a",
+    "asset_input": "ANL-301",
+    "company_input": "GenixCure",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_c728004a",
+    "asset_input": "FB610",
+    "company_input": "1ST Biotherapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_805ba39e",
+    "asset_input": "ABL210",
+    "company_input": "ABL Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_d984977d",
+    "asset_input": "NT-1",
+    "company_input": "HLB",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_f86a4e46",
+    "asset_input": "GO201",
+    "company_input": "Generoath",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_ef8fabc9",
+    "asset_input": "IL2112",
+    "company_input": "iLeadBMS",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_79a2a1a2",
+    "asset_input": "Neurodegenerative therapeutics",
+    "company_input": "ABL Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_36185d7e",
+    "asset_input": "CNS Research Program",
+    "company_input": "ILIAS Biologics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_809a4292",
+    "asset_input": "BMRD-003",
+    "company_input": "Biorchestra",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_b0d68d3c",
+    "asset_input": "ACP-Brain Disease Discovery",
+    "company_input": "Avixgen",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_5529ec64",
+    "asset_input": "LB-P4E",
+    "company_input": "LISCure Biosciences",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_e4b3fdc2",
+    "asset_input": "CNS Diseases Research Program",
+    "company_input": "Cenyx Biotech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_f0844777",
+    "asset_input": "Neurological Disorders Research Program (BDDS)",
+    "company_input": "Biorchestra",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_44002706",
+    "asset_input": "Isu Abxis-Pharmcad Discovery",
+    "company_input": "ISU ABXIS",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_a4c927da",
+    "asset_input": "AMB008",
+    "company_input": "AimedBio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_8db628a2",
+    "asset_input": "CU72",
+    "company_input": "Curacle",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_bfccdaba",
+    "asset_input": "AZBE53206",
+    "company_input": "AZothBio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_c4d326a9",
+    "asset_input": "Cancer therapeutics",
+    "company_input": "Daewoong Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_e321fd9d",
+    "asset_input": "ChongMungTang",
+    "company_input": "Samik Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_e7c94b7f",
+    "asset_input": "Neurodegenerative Disease Discovery",
+    "company_input": "EFIL BioScience",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_f74c4845",
+    "asset_input": "NA-AR-B001",
+    "company_input": "Neoregen Biotech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_034f7fd7",
+    "asset_input": "Autoimmune Disease Discovery",
+    "company_input": "Konkuk University",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_14faf539",
+    "asset_input": "ASK1 Inhibitor Program",
+    "company_input": "BNJ Biopharma",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_95d47e8b",
+    "asset_input": "Neurodegenerative Disorder Discovery",
+    "company_input": "Promedigen",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_a4687e50",
+    "asset_input": "CR-3",
+    "company_input": "Curome BioSciences",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_f5e3c3fc",
+    "asset_input": "CNS Disease Discovery (GEKO)",
+    "company_input": "GenKOre",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_55aed985",
+    "asset_input": "neuromuscular disease therapy, GenKore",
+    "company_input": "GenKOre",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_4d871c13",
+    "asset_input": "OLX-402",
+    "company_input": "OliX Pharmaceuticals",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_9160af7f",
+    "asset_input": "RC-0125",
+    "company_input": "RudaCure",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_f8e72d93",
+    "asset_input": "Oncology Discovery",
+    "company_input": "Pin Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_d258e7ba",
+    "asset_input": "HK-1",
+    "company_input": "Curome BioSciences",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_f08cc194",
+    "asset_input": "DR004",
+    "company_input": "Standigm",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_4797a1e8",
+    "asset_input": "Elocalcitol",
+    "company_input": "BluSpinel",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_cbe90665",
+    "asset_input": "Stem Cell Therapy Research Program",
+    "company_input": "StemLab",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_a8fcac25",
+    "asset_input": "YJ-NSC5-S",
+    "company_input": "YJ Cerapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_fd45f5ad",
+    "asset_input": "STUP-001",
+    "company_input": "Stand Up Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_dceaf63d",
+    "asset_input": "MS-2101",
+    "company_input": "Medinno",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_7cd9bf81",
+    "asset_input": "YY-DPN",
+    "company_input": "Yuyu Pharma",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_78fdac06",
+    "asset_input": "Multiple Sclerosis Discovery",
+    "company_input": "Daewoong Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_360ebf71",
+    "asset_input": "CV-02",
+    "company_input": "Cureverse",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_fac3c411",
+    "asset_input": "J2H-1801",
+    "company_input": "J2H Biotech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_3f7ebd30",
+    "asset_input": "Multiple sclerosis therapy",
+    "company_input": "Medinno",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_2531cbb6",
+    "asset_input": "Chronic Inflammatory Disease Discovery",
+    "company_input": "Bilix",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_86fbebf5",
+    "asset_input": "S&K601",
+    "company_input": "S&K Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_4725c4bf",
+    "asset_input": "TGT-001",
+    "company_input": "ToolGen",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_0c1712c3",
+    "asset_input": "Charcot-Marie-Tooth Disease Discovery",
+    "company_input": "Lmito Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_c1dfc07c",
+    "asset_input": "Spinal muscular atrophy therapy",
+    "company_input": "Novel Pharma",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_511a04bd",
+    "asset_input": "BSC-1101",
+    "company_input": "BiSiChem",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_b0b568a9",
+    "asset_input": "ATB-210",
+    "company_input": "Autotelic Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_2ea2872c",
+    "asset_input": "SII-5001 Tab",
+    "company_input": "Samil Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_3a250af8",
+    "asset_input": "Pain Relief Discovery",
+    "company_input": "Caregen",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_2d0da406",
+    "asset_input": "WRDN001",
+    "company_input": "PharmGen Science",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_a3b985ac",
+    "asset_input": "BMI1008",
+    "company_input": "BMIKOREA",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_b18a69d6",
+    "asset_input": "M-002",
+    "company_input": "Mecox Cure Med",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_e3018b2d",
+    "asset_input": "ADD447011",
+    "company_input": "Bio-Pharm Solutions",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_0ee9f0a1",
+    "asset_input": "ADD422007",
+    "company_input": "Bio-Pharm Solutions",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_d3b3de5b",
+    "asset_input": "ADD457023",
+    "company_input": "Bio-Pharm Solutions",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_e0849399",
+    "asset_input": "Daewoong-GL Discovery",
+    "company_input": "GL Pharmtech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_dc99a868",
+    "asset_input": "Pain Discovery",
+    "company_input": "G2GBIO",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_cf24c055",
+    "asset_input": "Neuropathic Pain Research Program (JEIL)",
+    "company_input": "Jeil Pharma Holdings",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_a9b95f3b",
+    "asset_input": "OLX-401A",
+    "company_input": "OliX Pharmaceuticals",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_190be814",
+    "asset_input": "CP-106",
+    "company_input": "Bukwang Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_abef0405",
+    "asset_input": "Neuropathic Pain Discovery 3",
+    "company_input": "Medifron",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_31e4aae9",
+    "asset_input": "MDR-6013",
+    "company_input": "Medifron",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_bce588e8",
+    "asset_input": "Neuropathic Pain Research Program",
+    "company_input": "EHL Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_251d51fa",
+    "asset_input": "Neuropathic Pain Discovery 2",
+    "company_input": "Medifron",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_243be4f1",
+    "asset_input": "L&J-PA",
+    "company_input": "L&J Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_9ec23fc7",
+    "asset_input": "Exparel",
+    "company_input": "LG Chem",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_39212e52",
+    "asset_input": "YY-3520",
+    "company_input": "Yuyu Pharma",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_5e74c3e3",
+    "asset_input": "SVG101",
+    "company_input": "SoVarGen",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_a430cba8",
+    "asset_input": "SVG102",
+    "company_input": "SoVarGen",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_bbc2db44",
+    "asset_input": "ADD428012",
+    "company_input": "Bio-Pharm Solutions",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_9037a6ed",
+    "asset_input": "ADD532005",
+    "company_input": "Bio-Pharm Solutions",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_a8530361",
+    "asset_input": "ZT 100",
+    "company_input": "Zefit",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_c0c6fce5",
+    "asset_input": "iN4011-K23",
+    "company_input": "iN Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_331d7668",
+    "asset_input": "IVL5005",
+    "company_input": "Yuhan",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_a88bd043",
+    "asset_input": "GZR18",
+    "company_input": "JW Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-18T01:29:17.183393+00:00"
   }
 ]

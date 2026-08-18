@@ -6,8 +6,8 @@ aliases:
   - "parkinson's_disease"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,9 +22,11 @@ confidence: "medium"
 
 ## Related Assets
 
+- [[02_Assets/Asset__1ST-104|1ST-104]]
 - [[02_Assets/Asset__AON-PP23|AON-PP23]]
 - [[02_Assets/Asset__AST-029|AST-029]]
 - [[02_Assets/Asset__HEC20002|HEC20002]]
+- [[02_Assets/Asset__KINE-501D|KINE-501D]]
 - [[02_Assets/Asset__Lead_compound|Lead_compound]]
 - [[02_Assets/Asset__glycoprotein_29-modified_deferoxamine|glycoprotein_29-modified_deferoxamine]]
 

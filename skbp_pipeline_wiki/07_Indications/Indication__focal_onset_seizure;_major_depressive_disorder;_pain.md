@@ -6,8 +6,8 @@ aliases:
   - "focal_onset_seizure;_major_depressive_disorder;_pain"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

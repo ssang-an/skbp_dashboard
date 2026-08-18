@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-12T17:01:59"
+generated_at: "2026-08-18T17:19:09"
 record_id: "Celltrion, Inc._LC-PC01"
 company: "Celltrion, Inc."
 country: "Republic of Korea"

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/target"
   - "theme/no_theme"
-created_at: "2026-08-12"
-updated_at: "2026-08-12"
+created_at: "2026-08-18"
+updated_at: "2026-08-18"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -52,6 +52,8 @@ confidence: "medium"
 - [[02_Assets/Asset__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]
 - [[02_Assets/Asset__HBW-015|HBW-015]]
 - [[02_Assets/Asset__ILM21|ILM21]]
+- [[02_Assets/Asset__KP-101|KP-101]]
+- [[02_Assets/Asset__KP-102|KP-102]]
 - [[02_Assets/Asset__LABthera-003|LABthera-003]]
 - [[02_Assets/Asset__LC-PC01|LC-PC01]]
 - [[02_Assets/Asset__Neurodegenerative_Diseases_Lilly|Neurodegenerative_Diseases_Lilly]]
