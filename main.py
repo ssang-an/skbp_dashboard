@@ -3322,6 +3322,10 @@ ADMET_CANONICAL_STUDY_ALIASES: dict[str, tuple[str, ...]] = {
 }
 
 
+PARTNER_MATERIAL_CATEGORIES = frozenset({"ir", "cdp", "ncdp", "admet", "dd_report"})
+PARTNER_MATERIAL_FLAG_KEYS = ("ir", "cdp", "ncdp", "admet", "dd_report")
+
+
 def partner_material_category(filename: Any) -> str | None:
     """Classify Partner Materials once so upload, evidence parsing and Filter 3 agree."""
     text = str(filename or "").casefold()
@@ -3331,6 +3335,10 @@ def partner_material_category(filename: Any) -> str | None:
         return "ncdp"
     if re.search(r"(?:^|[^a-z])cdp(?:[^a-z]|$)", text):
         return "cdp"
+    if re.search(r"(?:^|[^a-z0-9])dd[ _-]?report(?:[^a-z0-9]|$)", text):
+        return "dd_report"
+    if re.search(r"(?:^|[^a-z0-9])ir(?:[^a-z0-9]|$)", text):
+        return "ir"
     return None
 
 
@@ -3338,7 +3346,7 @@ def attachment_partner_material_category(attachment: Any) -> str | None:
     if not isinstance(attachment, dict):
         return None
     declared = str(attachment.get("partner_material_category") or "").strip().casefold()
-    return declared if declared in {"cdp", "ncdp", "admet"} else partner_material_category(attachment.get("filename"))
+    return declared if declared in PARTNER_MATERIAL_CATEGORIES else partner_material_category(attachment.get("filename"))
 ADMET_TOTAL_ITEMS = 25
 # v1.4 refreshes tracked records after making the canonical Study–Status ADMET
 # parser authoritative whenever an ADMET Partner Material is available.
@@ -8768,7 +8776,7 @@ async def update_focus_management(record_id: str, request: Request) -> dict[str,
             focus.setdefault("partnership_type", "")
             focus.setdefault("partnership_classification_status", "pending_criteria")
             material_flags = focus.setdefault("partner_material_flags", {})
-            for material_key in ("cdp", "ncdp", "admet"):
+            for material_key in PARTNER_MATERIAL_FLAG_KEYS:
                 material_flags.setdefault(material_key, False)
             focus.pop("removed_at", None)
             # Re-adding a record must not erase evidence explicitly entered by a reviewer.
@@ -8851,11 +8859,11 @@ async def update_focus_management(record_id: str, request: Request) -> dict[str,
                 focus["partnership_classified_at"] = changed_at
             elif field == "partner_material_flag":
                 material_key = str(payload.get("value") or "").strip().lower()
-                allowed_material_keys = {"cdp", "ncdp", "admet"}
+                allowed_material_keys = PARTNER_MATERIAL_CATEGORIES
                 if material_key not in allowed_material_keys:
                     raise HTTPException(
                         status_code=400,
-                        detail="partner material key must be cdp, ncdp, or admet.",
+                        detail="partner material key must be IR, CDP, NCDP, ADMET, or DD Report.",
                     )
                 active = payload.get("active")
                 if not isinstance(active, bool):
@@ -9190,8 +9198,8 @@ async def upload_record_attachment(
             "processing_status": "processing" if extension in {".pdf", ".ppt", ".pptx"} else "not_applicable",
         }
         requested_category = str(partner_material_category_value or "").strip().casefold()
-        if requested_category and requested_category not in {"cdp", "ncdp", "admet"}:
-            raise HTTPException(status_code=400, detail="Partner Materials category must be CDP, NCDP, or ADMET.")
+        if requested_category and requested_category not in PARTNER_MATERIAL_CATEGORIES:
+            raise HTTPException(status_code=400, detail="Partner Materials category must be IR, CDP, NCDP, ADMET, or DD Report.")
         material_category = requested_category or partner_material_category(original_name)
         if material_category:
             attachment["partner_material_category"] = material_category

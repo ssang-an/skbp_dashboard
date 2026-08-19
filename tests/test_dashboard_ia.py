@@ -59,6 +59,16 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("closeAttachmentUploadOperation(operation.token)", upload)
         self.assertIn("attachmentUploadCancelButton?.addEventListener('click'", DETAIL_JS)
 
+    def test_shortlisting_material_pills_upload_multiple_forced_categories(self):
+        upload = function_body(DETAIL_JS, "uploadAttachments")
+
+        for key in ("ir", "cdp", "ncdp", "admet", "dd_report"):
+            self.assertIn(f'data-material-key="{key}"', DETAIL_HTML)
+        self.assertIn("choosePartnerMaterialUpload(key)", DETAIL_JS)
+        self.assertIn("fileWithPartnerMaterialSuffix(file, materialCategory)", upload)
+        self.assertIn("selectedCategory || partnerMaterialCategoryForFilename(file.name)", upload)
+        self.assertIn("new File([file], renamed", DETAIL_JS)
+
     def test_header_action_pills_use_restrained_semantic_palette(self):
         palette = CSS[CSS.index("/* Soft-bright semantic header palette") : CSS.index("/* Match response copy/full-view")]
         self.assertIn("#criteriaDrawerButton", palette)
@@ -2256,7 +2266,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn(".detail-material-body::-webkit-scrollbar", layout)
         self.assertIn("width: 6px", layout)
         self.assertIn("border-radius: 999px", layout)
-        self.assertIn("detail.js?v=20260806-theme-indication-3", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260819-material-category-upload-1", DETAIL_HTML)
 
     def test_report_header_matches_review_workspace_and_uses_icon_actions(self):
         report_header = DETAIL_HTML[
@@ -2472,7 +2482,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("detailOiPartnershipNoteOrigin", DETAIL_JS)
         self.assertIn('title="OI 파트너십 분류 근거를 짧게 요약합니다."', note_markup)
         self.assertNotIn("review-reason-edit-icon", note_markup)
-        self.assertIn("detail.js?v=20260806-theme-indication-3", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260819-material-category-upload-1", DETAIL_HTML)
 
     def test_partner_material_body_scrolls_below_fixed_header(self):
         header_index = DETAIL_HTML.index('class="detail-material-header"')

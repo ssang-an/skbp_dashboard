@@ -16,6 +16,14 @@ def admet_attachment(text: str, filename: str = "partner_ADMET.pdf", category: s
 
 
 class AdmetCanonical25Tests(unittest.TestCase):
+    def test_partner_material_category_supports_ir_and_dd_report(self):
+        self.assertEqual(main.partner_material_category("Threebrooks_IR.pdf"), "ir")
+        self.assertEqual(main.partner_material_category("Threebrooks_DD Report.pdf"), "dd_report")
+        self.assertEqual(
+            main.attachment_partner_material_category({"filename": "opaque.pdf", "partner_material_category": "dd_report"}),
+            "dd_report",
+        )
+
     def test_case_a_table_format_counts_each_canonical_study_once(self):
         studies = [
             "Cell permeability / P-gp", "Mouse PK", "Rat PK", "Dog PK", "Monkey PK",

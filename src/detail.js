@@ -216,6 +216,7 @@ let currentRecordId = recordId;
 let activeAttachmentId = '';
 let attachmentPreviewController = null;
 let activeAttachmentUpload = null;
+let pendingPartnerMaterialUploadCategory = '';
 let activeReportJumpHeading = null;
 let reportJumpHighlightTimer = null;
 let chatSessions = [];
@@ -997,29 +998,27 @@ function partnershipLabel(value) {
 }
 
 const partnerMaterialLabels = {
+  ir: 'IR',
   cdp: 'CDP',
   ncdp: 'NCDP',
-  admet: 'ADMET'
+  admet: 'ADMET',
+  dd_report: 'DD Report'
+};
+
+const partnerMaterialFilenameSuffixes = {
+  ir: 'IR',
+  cdp: 'CDP',
+  ncdp: 'NCDP',
+  admet: 'ADMET',
+  dd_report: 'DD Report'
 };
 
 function detectPartnerMaterialFlags(attachments) {
-  const detected = { cdp: false, ncdp: false, admet: false };
+  const detected = Object.fromEntries(Object.keys(partnerMaterialLabels).map((key) => [key, false]));
   (Array.isArray(attachments) ? attachments : []).forEach((attachment) => {
-    const declaredCategory = String(attachment?.partner_material_category || '').toLowerCase();
-    if (Object.prototype.hasOwnProperty.call(detected, declaredCategory)) {
-      detected[declaredCategory] = true;
-      return;
-    }
-    const filename = String(attachment?.filename || '').toLowerCase();
-    const isNcdp = /(^|[^a-z0-9])ncdp([^a-z0-9]|$)/.test(filename);
-    if (isNcdp) {
-      detected.ncdp = true;
-    } else if (/(^|[^a-z0-9])cdp([^a-z0-9]|$)/.test(filename)) {
-      detected.cdp = true;
-    }
-    if (/(^|[^a-z0-9])admet([^a-z0-9]|$)/.test(filename)) {
-      detected.admet = true;
-    }
+    const category = String(attachment?.partner_material_category || '').toLowerCase()
+      || partnerMaterialCategoryForFilename(attachment?.filename);
+    if (Object.prototype.hasOwnProperty.call(detected, category)) detected[category] = true;
   });
   return detected;
 }
@@ -1029,7 +1028,26 @@ function partnerMaterialCategoryForFilename(filename) {
   if (/(^|[^a-z0-9])admet([^a-z0-9]|$)/.test(name)) return 'admet';
   if (/(^|[^a-z0-9])ncdp([^a-z0-9]|$)/.test(name)) return 'ncdp';
   if (/(^|[^a-z0-9])cdp([^a-z0-9]|$)/.test(name)) return 'cdp';
+  if (/(^|[^a-z0-9])dd[ _-]?report([^a-z0-9]|$)/.test(name)) return 'dd_report';
+  if (/(^|[^a-z0-9])ir([^a-z0-9]|$)/.test(name)) return 'ir';
   return '';
+}
+
+function fileWithPartnerMaterialSuffix(file, category) {
+  if (!file || partnerMaterialCategoryForFilename(file.name) || !partnerMaterialFilenameSuffixes[category]) return file;
+  const name = String(file.name || 'attachment');
+  const extensionIndex = name.lastIndexOf('.');
+  const stem = extensionIndex > 0 ? name.slice(0, extensionIndex) : name;
+  const extension = extensionIndex > 0 ? name.slice(extensionIndex) : '';
+  const renamed = `${stem}_${partnerMaterialFilenameSuffixes[category]}${extension}`;
+  return new File([file], renamed, { type: file.type, lastModified: file.lastModified });
+}
+
+function choosePartnerMaterialUpload(category) {
+  if (!partnerMaterialLabels[category] || !elements.detailAttachmentInput) return;
+  pendingPartnerMaterialUploadCategory = category;
+  elements.detailAttachmentInput.value = '';
+  elements.detailAttachmentInput.click();
 }
 
 function setReviewInfoExpanded(expanded) {
@@ -1161,7 +1179,7 @@ function renderCollaborationPanel(record) {
       ? materialOverrides[key] === true
       : materialFlags[key] === true;
     const autoActive = autoMaterialFlags[key] === true;
-    const active = hasManualOverride ? manualActive : (manualActive || autoActive);
+    const active = autoActive || manualActive;
     const label = partnerMaterialLabels[key] || key.toUpperCase();
     button.classList.toggle('is-active', active);
     button.classList.toggle('is-auto', autoActive);
@@ -1172,17 +1190,9 @@ function renderCollaborationPanel(record) {
     button.dataset.autoActive = String(autoActive);
     button.disabled = false;
     button.classList.remove('is-saving');
-    if (hasManualOverride && manualActive) {
-      button.title = `${label} 자료 있음 · 담당자 수동 표시 · 클릭하면 해제`;
-    } else if (hasManualOverride) {
-      button.title = `${label} 자료 없음 · 담당자 수동 해제 · 클릭하면 표시`;
-    } else if (autoActive) {
-      button.title = `${label} 자료 있음 · 파일명 자동 인식`;
-    } else if (manualActive) {
-      button.title = `${label} 자료 있음 · 수동 표시 · 클릭하면 해제`;
-    } else {
-      button.title = `${label} 자료 없음 · 클릭하면 보유로 표시`;
-    }
+    button.title = active
+      ? `${label} 자료 보유 · 추가 파일 업로드`
+      : `${label} 파일 업로드`;
   });
   renderCommentThread(record);
   renderMetaInfoBar(record);
@@ -1518,20 +1528,21 @@ async function uploadAttachment(file, materialCategory) {
   }
 }
 
-async function uploadAttachments(files) {
+async function uploadAttachments(files, selectedCategory = '') {
   const queue = [...(files || [])].filter(Boolean);
   for (const file of queue) {
-    const materialCategory = partnerMaterialCategoryForFilename(file.name);
+    const materialCategory = selectedCategory || partnerMaterialCategoryForFilename(file.name);
     if (!materialCategory) {
-      setAttachmentStatus(`'${file.name}'은 CDP/NCDP/ADMET 자료로 분류할 수 없습니다. 파일명에 해당 category를 포함한 뒤 다시 선택하세요.`, 'error');
+      setAttachmentStatus(`'${file.name}'은 IR/CDP/NCDP/ADMET/DD Report로 분류할 수 없습니다. 자료 보유 pill에서 카테고리를 선택해 업로드하세요.`, 'error');
       continue;
     }
     const label = partnerMaterialLabels[materialCategory];
-    if (!window.confirm(`${file.name}\n\nPartner Materials category: ${label}\n이 분류로 업로드할까요?`)) {
+    const uploadFile = selectedCategory ? fileWithPartnerMaterialSuffix(file, materialCategory) : file;
+    if (!selectedCategory && !window.confirm(`${file.name}\n\nPartner Materials category: ${label}\n이 분류로 업로드할까요?`)) {
       setAttachmentStatus(`${file.name} 업로드를 취소했습니다.`);
       continue;
     }
-    const uploaded = await uploadAttachment(file, materialCategory);
+    const uploaded = await uploadAttachment(uploadFile, materialCategory);
     if (!uploaded) break;
   }
 }
@@ -4084,8 +4095,7 @@ elements.detailOiMaterialFlags?.addEventListener('click', (event) => {
   if (!button || !elements.detailOiMaterialFlags.contains(button) || button.disabled) return;
   event.preventDefault();
   const key = button.dataset.materialKey;
-  const nextActive = !button.classList.contains('is-active');
-  saveDetailMaterialFlag(key, nextActive, button);
+  choosePartnerMaterialUpload(key);
 });
 
 elements.detailDecisionStatus?.addEventListener('change', (event) => {
@@ -4156,12 +4166,15 @@ elements.detailCommentThread?.addEventListener('click', (event) => {
 elements.detailReplyCancel?.addEventListener('click', clearReplyTarget);
 
 elements.detailAttachmentAddButton?.addEventListener('click', () => {
+  pendingPartnerMaterialUploadCategory = '';
   elements.detailAttachmentInput?.click();
 });
 
 elements.detailAttachmentInput?.addEventListener('change', (event) => {
   const files = event.target.files;
-  if (files?.length) uploadAttachments(files);
+  const selectedCategory = pendingPartnerMaterialUploadCategory;
+  pendingPartnerMaterialUploadCategory = '';
+  if (files?.length) uploadAttachments(files, selectedCategory);
 });
 
 elements.attachmentUploadCancelButton?.addEventListener('click', () => {
@@ -4227,14 +4240,17 @@ if (elements.detailAttachmentDropzone) {
   });
   elements.detailAttachmentDropzone.addEventListener('drop', (event) => {
     const files = event.dataTransfer?.files;
+    pendingPartnerMaterialUploadCategory = '';
     if (files?.length) uploadAttachments(files);
   });
   elements.detailAttachmentDropzone.addEventListener('click', () => {
+    pendingPartnerMaterialUploadCategory = '';
     elements.detailAttachmentInput?.click();
   });
   elements.detailAttachmentDropzone.addEventListener('keydown', (event) => {
     if (!['Enter', ' '].includes(event.key)) return;
     event.preventDefault();
+    pendingPartnerMaterialUploadCategory = '';
     elements.detailAttachmentInput?.click();
   });
 }

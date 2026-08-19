@@ -11261,6 +11261,10 @@ html[data-theme="dark"] .detail-material-panel {
   --material-color: var(--blue);
 }
 
+.oi-material-toggle[data-material-key="ir"] {
+  --material-color: #b7791f;
+}
+
 .oi-material-toggle[data-material-key="ncdp"] {
   --material-color: #8b6adf;
 }
