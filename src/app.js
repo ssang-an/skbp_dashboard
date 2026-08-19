@@ -438,6 +438,11 @@ const elements = {
   dataReuploadIdentity: document.querySelector('#dataReuploadIdentity'),
   dataReuploadKeepNew: document.querySelector('#dataReuploadKeepNew'),
   dataReuploadConfirm: document.querySelector('#dataReuploadConfirm'),
+  operationModal: document.querySelector('#operationModal'),
+  operationModalTitle: document.querySelector('#operationModalTitle'),
+  operationModalMessage: document.querySelector('#operationModalMessage'),
+  operationModalStatus: document.querySelector('#operationModalStatus'),
+  operationCancelButton: document.querySelector('#operationCancelButton'),
   step0Panel: document.querySelector('#step0Panel'),
   step0PasteInput: document.querySelector('#step0PasteInput'),
   step0ImportButton: document.querySelector('#step0ImportButton'),
@@ -471,6 +476,48 @@ let targetContextAnchor = null;
 const focusSaveQueues = new Map();
 let dataReuploadResolve = null;
 let activeDataReuploadMatch = null;
+let activeBlockingOperation = null;
+const OPERATION_CANCELLED = Symbol('operation-cancelled');
+
+function openBlockingOperation({
+  title = '잠시만 기다려 주세요',
+  message = '작업이 끝날 때까지 다른 화면으로 이동하지 마세요.',
+  status = '요청을 처리하고 있습니다.'
+} = {}) {
+  const controller = new AbortController();
+  const token = Symbol('blocking-operation');
+  activeBlockingOperation = { token, controller };
+  if (elements.operationModalTitle) elements.operationModalTitle.textContent = title;
+  if (elements.operationModalMessage) elements.operationModalMessage.textContent = message;
+  if (elements.operationModalStatus) elements.operationModalStatus.textContent = status;
+  if (elements.operationCancelButton) {
+    elements.operationCancelButton.disabled = false;
+    elements.operationCancelButton.textContent = '실행 취소';
+  }
+  if (elements.operationModal) elements.operationModal.hidden = false;
+  document.body.classList.add('operation-modal-open');
+  window.setTimeout(() => elements.operationCancelButton?.focus(), 0);
+  return { token, signal: controller.signal };
+}
+
+function closeBlockingOperation(token) {
+  if (!activeBlockingOperation || activeBlockingOperation.token !== token) return;
+  activeBlockingOperation = null;
+  if (elements.operationModal) elements.operationModal.hidden = true;
+  document.body.classList.remove('operation-modal-open');
+}
+
+async function runBlockingOperation(options, operation) {
+  const blockingOperation = openBlockingOperation(options);
+  try {
+    return await operation(blockingOperation.signal);
+  } catch (error) {
+    if (blockingOperation.signal.aborted || error?.name === 'AbortError') return OPERATION_CANCELLED;
+    throw error;
+  } finally {
+    closeBlockingOperation(blockingOperation.token);
+  }
+}
 
 async function ensureDashboardActorName() {
   const user = getCurrentUser() || await requireAuth();
@@ -769,10 +816,11 @@ function canonicalFromDictionary(kind, value) {
   return null;
 }
 
-async function loadCategorySynonyms() {
+async function loadCategorySynonyms(signal) {
   if (state.categorySynonymsLoaded) return;
+  let shouldMarkLoaded = true;
   try {
-    const response = await fetch(CATEGORY_SYNONYMS_URL);
+    const response = await fetch(CATEGORY_SYNONYMS_URL, { signal });
     if (!response.ok) throw new Error(await response.text());
     const dictionary = await response.json();
     state.categorySynonyms = {
@@ -783,9 +831,13 @@ async function loadCategorySynonyms() {
       indication: Array.isArray(dictionary.indication) ? dictionary.indication : []
     };
   } catch (error) {
+    if (signal?.aborted || error?.name === 'AbortError') {
+      shouldMarkLoaded = false;
+      throw error;
+    }
     console.warn('Category synonym dictionary unavailable; using built-in fallback rules.', error);
   } finally {
-    state.categorySynonymsLoaded = true;
+    if (shouldMarkLoaded) state.categorySynonymsLoaded = true;
   }
 }
 
@@ -2579,16 +2631,17 @@ function activeTabSummary() {
   return state.dashboardSummary?.tabs?.[key] || fallbackTabSummary(mode);
 }
 
-async function refreshDashboardSummary() {
+async function refreshDashboardSummary(signal) {
   const requestId = ++state.dashboardSummaryRequestId;
   try {
-    const response = await fetch(DASHBOARD_SUMMARY_URL, { cache: 'no-store' });
+    const response = await fetch(DASHBOARD_SUMMARY_URL, { cache: 'no-store', signal });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const summary = await response.json();
     if (requestId !== state.dashboardSummaryRequestId) return false;
     state.dashboardSummary = summary;
     return true;
   } catch (error) {
+    if (signal?.aborted || error?.name === 'AbortError') throw error;
     if (requestId !== state.dashboardSummaryRequestId) return false;
     console.warn('Dashboard summary refresh failed; using current table data.', error);
     state.dashboardSummary = null;
@@ -4858,12 +4911,12 @@ function exportPipelineTable() {
   elements.dataStatus.textContent = `${rows.length} rows exported`;
 }
 
-async function loadRecords() {
+async function loadRecords({ signal } = {}) {
   elements.dataStatus.textContent = 'Loading';
-  await loadCategorySynonyms();
+  await loadCategorySynonyms(signal);
   const [response] = await Promise.all([
-    fetch(API_URL, { cache: 'no-store' }),
-    refreshDashboardSummary()
+    fetch(API_URL, { cache: 'no-store', signal }),
+    refreshDashboardSummary(signal)
   ]);
   if (!response.ok) throw new Error(await response.text());
   const data = await response.json();
@@ -4992,12 +5045,23 @@ async function recalculateLatestRubric(button) {
   elements.dataStatus.textContent = `${workflowLabel} 지침 v${latestVersion} 재평가 중`;
 
   try {
-    const response = await fetch(
-      `/api/records/${encodeURIComponent(recordId)}/refresh-rubric`,
-      { method: 'POST' }
-    );
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
+    const data = await runBlockingOperation({
+      title: '최신 루브릭으로 재평가 중',
+      message: `${workflowLabel} 원문 리포트와 첨부 자료를 기준으로 점수를 다시 계산하고 있습니다.`,
+      status: '점수와 판단 근거를 갱신하고 있습니다.'
+    }, async (signal) => {
+      const response = await fetch(
+        `/api/records/${encodeURIComponent(recordId)}/refresh-rubric`,
+        { method: 'POST', signal }
+      );
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.detail || `HTTP ${response.status}`);
+      return result;
+    });
+    if (data === OPERATION_CANCELLED) {
+      elements.dataStatus.textContent = `${workflowLabel} 재평가 취소 요청됨`;
+      return;
+    }
     if (!data.record || ['error', 'conflict'].includes(data.status)) {
       elements.dataStatus.textContent = data.message || `기존 rubric v${latestVersion} 점수를 유지했습니다.`;
       return;
@@ -5078,12 +5142,23 @@ async function recalculateLatestOiPartnership(button) {
   elements.dataStatus.textContent = `OI Partnership v${latestVersion} 재분류 중`;
 
   try {
-    const response = await fetch(
-      `/api/records/${encodeURIComponent(recordId)}/recalculate-oi-partnership`,
-      { method: 'POST' }
-    );
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
+    const data = await runBlockingOperation({
+      title: 'Filter 3 분류를 갱신하고 있습니다',
+      message: '현재 Shortlisting 판단 기준으로 파이프라인을 다시 분류하고 있습니다.',
+      status: 'OI Partnership 결과를 계산하고 있습니다.'
+    }, async (signal) => {
+      const response = await fetch(
+        `/api/records/${encodeURIComponent(recordId)}/recalculate-oi-partnership`,
+        { method: 'POST', signal }
+      );
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.detail || `HTTP ${response.status}`);
+      return result;
+    });
+    if (data === OPERATION_CANCELLED) {
+      elements.dataStatus.textContent = 'Filter 3 분류 취소 요청됨';
+      return;
+    }
     replaceRecordFromApi(recordId, data.record);
     renderFilters();
     render();
@@ -5091,9 +5166,10 @@ async function recalculateLatestOiPartnership(button) {
       data.oi_partnership_criteria_version || latestVersion
     }`;
   } catch (error) {
+    elements.dataStatus.textContent = `Filter 3 재분류 실패: ${error.message}`;
+  } finally {
     button.disabled = false;
     button.classList.remove('is-saving');
-    elements.dataStatus.textContent = `Filter 3 재분류 실패: ${error.message}`;
   }
 }
 
@@ -7346,6 +7422,11 @@ async function runAiReparse() {
   if (buttonLabel) buttonLabel.textContent = 'AI 재파싱 중...';
   elements.gptResponseInput.disabled = true;
   setDataUploadStatus('ai-reparsing');
+  const blockingOperation = openBlockingOperation({
+    title: 'AI 2차 파싱 중',
+    message: '업로드한 원문과 구조화 데이터를 비교해 보완하고 있습니다.',
+    status: '처리 중에는 다른 화면으로 이동할 수 없습니다.'
+  });
 
   let streamedText = '';
   const renderStreamProgress = () => {
@@ -7369,6 +7450,7 @@ async function runAiReparse() {
     const response = await fetch('/api/records/llm-reparse/stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      signal: blockingOperation.signal,
       body: JSON.stringify({
         raw_markdown: rawMarkdown,
         json_text: split.jsonText || '',
@@ -7426,6 +7508,7 @@ async function runAiReparse() {
       fieldsByIndex: (data.corrected_fields && typeof data.corrected_fields === 'object') ? data.corrected_fields : {}
     };
 
+    closeBlockingOperation(blockingOperation.token);
     const result = await previewPastedReportParsing();
     const correctedCount = Object.values(state.dataUploadLlmReparseFields.fieldsByIndex)
       .reduce((total, fields) => total + (Array.isArray(fields) ? fields.length : 0), 0);
@@ -7453,7 +7536,13 @@ async function runAiReparse() {
       }
     }
   } catch (error) {
+    closeBlockingOperation(blockingOperation.token);
     restoreInputState();
+    if (blockingOperation.signal.aborted || error?.name === 'AbortError') {
+      setDataUploadStatus('waiting');
+      elements.aiReparseButton.disabled = false;
+      return;
+    }
     const failed = validateCombinedInput(elements.gptResponseInput.value, expectedMode);
     addInputIssue(failed.errors, 'error', 'AI 2차 파싱', `AI 재파싱 실패: ${String(error?.message || error)}`);
     renderInputValidation(failed);
@@ -7461,6 +7550,7 @@ async function runAiReparse() {
     elements.aiReparseButton.disabled = false;
     return;
   }
+  closeBlockingOperation(blockingOperation.token);
   restoreInputState();
 }
 
@@ -7512,22 +7602,34 @@ async function saveStructuredJsonInput() {
   elements.saveJsonButton.disabled = true;
   setDataUploadStatus('validating');
   try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (!response.ok) {
-      const detailText = await response.text();
-      let message = detailText || `HTTP ${response.status}`;
-      try {
-        message = JSON.parse(detailText).detail || message;
-      } catch (_error) {
-        // Keep the raw server response when it is not JSON.
+    const result = await runBlockingOperation({
+      title: '파이프라인을 저장하고 있습니다',
+      message: '업로드한 리포트와 구조화 데이터를 저장하고 대시보드를 갱신합니다.',
+      status: '저장 중에는 다른 화면으로 이동할 수 없습니다.'
+    }, async (signal) => {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal
+      });
+      if (!response.ok) {
+        const detailText = await response.text();
+        let message = detailText || `HTTP ${response.status}`;
+        try {
+          message = JSON.parse(detailText).detail || message;
+        } catch (_error) {
+          // Keep the raw server response when it is not JSON.
+        }
+        throw new Error(message);
       }
-      throw new Error(message);
+      return response.json();
+    });
+    if (result === OPERATION_CANCELLED) {
+      elements.saveJsonButton.disabled = false;
+      setDataUploadStatus('review-needed');
+      return;
     }
-    const result = await response.json();
     renderInputValidation(validation, { savedMessage: '저장 완료' });
     setDataUploadStatus('saved');
     state.dataUploadReview = null;
@@ -9042,13 +9144,24 @@ async function importStep0Candidates() {
   if (elements.step0ImportButton) elements.step0ImportButton.disabled = true;
   setStep0SaveStatus('validating');
   try {
-    const response = await fetch('/api/candidate-queue/import', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
+    const result = await runBlockingOperation({
+      title: '후보 목록을 가져오고 있습니다',
+      message: '붙여 넣은 후보 목록을 확인해 대기열에 반영하고 있습니다.',
+      status: '처리 중에는 다른 화면으로 이동할 수 없습니다.'
+    }, async (signal) => {
+      const response = await fetch('/api/candidate-queue/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+        signal
+      });
+      if (!response.ok) throw new Error(await response.text());
+      return response.json();
     });
-    if (!response.ok) throw new Error(await response.text());
-    const result = await response.json();
+    if (result === OPERATION_CANCELLED) {
+      setStep0SaveStatus('waiting');
+      return;
+    }
     renderStep0ImportSummary(result);
     if (elements.step0PasteInput) elements.step0PasteInput.value = '';
     setStep0SaveStatus('saved');
@@ -9779,7 +9892,13 @@ elements.pipelineTableHead?.addEventListener('change', (event) => {
 });
 
 elements.refreshButton.addEventListener('click', () => {
-  loadRecords().catch((error) => {
+  runBlockingOperation({
+    title: '대시보드를 새로고침하고 있습니다',
+    message: '최신 파이프라인과 요약 정보를 불러오고 있습니다.',
+    status: '불러오기가 끝날 때까지 잠시만 기다려 주세요.'
+  }, (signal) => loadRecords({ signal })).then((result) => {
+    if (result === OPERATION_CANCELLED) elements.dataStatus.textContent = '새로고침 취소 요청됨';
+  }).catch((error) => {
     elements.dataStatus.textContent = 'Load failed';
     elements.saveStatus.textContent = error.message;
   });
@@ -9951,6 +10070,16 @@ elements.dataReuploadModal?.addEventListener('keydown', (event) => {
     event.preventDefault();
     closeDataReuploadModal(null);
   }
+});
+
+elements.operationCancelButton?.addEventListener('click', () => {
+  const operation = activeBlockingOperation;
+  if (!operation) return;
+  if (elements.operationModalStatus) {
+    elements.operationModalStatus.textContent = '실행 취소를 요청했습니다. 서버 저장이 이미 시작된 경우에는 결과가 반영될 수 있습니다.';
+  }
+  if (elements.operationCancelButton) elements.operationCancelButton.disabled = true;
+  operation.controller.abort();
 });
 
 document.querySelectorAll('[data-agent-prompt]').forEach((button) => {

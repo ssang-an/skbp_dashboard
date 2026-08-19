@@ -29,6 +29,26 @@ def function_body(source: str, name: str) -> str:
 
 
 class DashboardInformationArchitectureTests(unittest.TestCase):
+    def test_cancellable_processing_modal_covers_dashboard_operations_but_not_chat(self):
+        self.assertIn('id="operationModal"', HTML)
+        self.assertIn('id="operationCancelButton"', HTML)
+        self.assertIn('.operation-modal-backdrop', CSS)
+        self.assertIn('function runBlockingOperation', JS)
+        self.assertIn("operation.controller.abort()", JS)
+
+        for function_name in (
+            'recalculateLatestRubric',
+            'recalculateLatestOiPartnership',
+            'runAiReparse',
+            'saveStructuredJsonInput',
+            'importStep0Candidates',
+        ):
+            self.assertIn('BlockingOperation', function_body(JS, function_name))
+
+        chat_start = JS.index("elements.agentForm.addEventListener('submit'")
+        chat_end = JS.index("window.addEventListener('keydown'", chat_start)
+        self.assertNotIn('runBlockingOperation', JS[chat_start:chat_end])
+
     def test_header_action_pills_use_restrained_semantic_palette(self):
         palette = CSS[CSS.index("/* Soft-bright semantic header palette") : CSS.index("/* Match response copy/full-view")]
         self.assertIn("#criteriaDrawerButton", palette)
