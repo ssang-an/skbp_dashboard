@@ -11273,6 +11273,10 @@ html[data-theme="dark"] .detail-material-panel {
   --material-color: var(--green);
 }
 
+.oi-material-toggle[data-material-key="dd_report"] {
+  --material-color: #2d7f9d;
+}
+
 .oi-material-toggle:hover,
 .oi-material-toggle:focus-visible {
   border-color: color-mix(in srgb, var(--material-color) 48%, var(--glass-border));
@@ -11356,6 +11360,7 @@ html[data-theme="dark"] .detail-material-panel {
 
 .detail-edit-history-reason p {
   display: grid;
+  flex: 1 1 auto;
   gap: 2px;
   margin: 0;
   color: var(--text);
@@ -11363,6 +11368,12 @@ html[data-theme="dark"] .detail-material-panel {
   font-weight: 600;
   line-height: 1.4;
   white-space: pre-wrap;
+}
+
+.detail-edit-history-reason-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .detail-edit-history-reason p b {
@@ -11382,12 +11393,13 @@ html[data-theme="dark"] .detail-material-panel {
   display: none;
 }
 
-.detail-edit-history-reason p + .detail-edit-history-reason-form {
+.detail-edit-history-reason-summary + .detail-edit-history-reason-form {
   margin-top: 5px;
 }
 
 .detail-edit-history-reason-edit {
-  margin-top: 4px;
+  flex: 0 0 auto;
+  margin-left: auto;
 }
 
 .detail-edit-history-reason textarea {

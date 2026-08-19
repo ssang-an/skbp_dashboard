@@ -1328,7 +1328,9 @@ function renderEditHistory(record) {
       const baseSource = entry?.source === 'paste_json_score_reset' && fieldSource
         ? `${fieldSource} · GPT 원문 재업로드`
         : fieldSource || sourceLabels[entry?.source] || entry?.field || '레코드';
-      const qualitativeCriterionId = isAiQualitativeGeneration ? field.split('.').at(-1) : '';
+      const qualitativeCriterionId = (isAiQualitativeGeneration || isAiQualitativeDeletion)
+        ? field.split('.').at(-1)
+        : '';
       const qualitativeCriterion = [
         ...qualitativeReviewCriteria,
         ...((record?.meta?.qualitative_review?.custom_criteria || []).filter((criterion) => criterion && typeof criterion === 'object'))
@@ -1336,8 +1338,8 @@ function renderEditHistory(record) {
       const source = isAiQualitativeGeneration
         ? `정성평가 ${qualitativeCriterion?.label || qualitativeCriterionId || '항목'} AI 답변 생성 완료`
         : isAiQualitativeDeletion
-          ? 'AI 생성 답변 삭제'
-        : entry?.change_method === 'ai_agent' ? `${baseSource} · AI Agent` : baseSource;
+          ? `정성평가 ${qualitativeCriterion?.label || qualitativeCriterionId || '항목'} AI 답변 삭제`
+          : entry?.change_method === 'ai_agent' ? `${baseSource} · AI Agent` : baseSource;
       const formatAuditValue = (value) => {
         if (value === null || value === undefined || value === '') return 'Auto';
         if (typeof value === 'object') return JSON.stringify(value);
@@ -1360,8 +1362,7 @@ function renderEditHistory(record) {
         : '';
       const reasonMarkup = isManualScoreChange && (existingReason || reasonForm)
         ? `<div class="detail-edit-history-reason">
-            ${existingReason ? `<p><b>변경 사유</b>${escapeHtml(existingReason)}</p>` : ''}
-            ${reasonEditButton}
+            ${existingReason ? `<div class="detail-edit-history-reason-summary"><p><b>변경 사유</b>${escapeHtml(existingReason)}</p>${reasonEditButton}</div>` : ''}
             ${reasonForm}
           </div>`
         : '';
