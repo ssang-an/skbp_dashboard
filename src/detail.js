@@ -1133,7 +1133,7 @@ function renderCollaborationPanel(record) {
         const label = scoringFirstWord[criterionId] || criterionId;
         const isHuman = Object.prototype.hasOwnProperty.call(manualScoreOverrides, criterionId);
         const manualScoreStyle = isHuman
-          ? 'style="border: 2px solid #b54552; outline: 2px solid rgba(181, 69, 82, 0.42); outline-offset: 1px; background: #fff1f2; box-shadow: inset 0 0 0 1px rgba(181, 69, 82, 0.34);"'
+          ? 'style="border: 1px solid color-mix(in srgb, #b9616b 55%, var(--line)); background: color-mix(in srgb, #b9616b 9%, var(--surface)); color: #b9616b;"'
           : '';
         return `
           <button

@@ -12076,25 +12076,23 @@ html[data-theme="dark"] .triage-quick-panel {
   color: #b9616b;
 }
 
-/* Keep the manual-score border visibly above the criterion score tone fills. */
+/* Keep Team Review aligned with the dashboard's single subtle manual-score border. */
 .filter-score-panel .score-chip.is-human {
-  border: 2px solid #b54552;
-  outline: 1px solid color-mix(in srgb, #b54552 42%, transparent);
-  outline-offset: 1px;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, #b54552 36%, transparent), 0 0 0 1px color-mix(in srgb, #b54552 24%, transparent);
+  border: 1px solid color-mix(in srgb, #b9616b 55%, var(--line));
+  outline: none;
+  box-shadow: none;
 }
 
-/* Render from the explicit active override marker so a human edit cannot be visually lost to score-tone styles. */
+/* Render from the explicit active override marker without adding a second border. */
 #detailScoreSequence .score-chip[data-manual-score="true"] {
-  border: 2px solid #b54552 !important;
-  outline: 2px solid color-mix(in srgb, #b54552 52%, transparent) !important;
-  outline-offset: 1px;
-  background: color-mix(in srgb, #b54552 12%, var(--surface)) !important;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, #b54552 42%, transparent), 0 0 0 1px color-mix(in srgb, #b54552 34%, transparent) !important;
+  border: 1px solid color-mix(in srgb, #b9616b 55%, var(--line)) !important;
+  outline: none !important;
+  background: color-mix(in srgb, #b9616b 9%, var(--surface)) !important;
+  box-shadow: none !important;
 }
 
 #detailScoreSequence .score-chip[data-manual-score="true"] .score-chip-value {
-  color: #b54552 !important;
+  color: #b9616b !important;
 }
 
 .score-chip.tone-high {
