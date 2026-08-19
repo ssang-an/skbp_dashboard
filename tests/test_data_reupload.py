@@ -54,6 +54,22 @@ class DataReuploadTests(unittest.TestCase):
         self.assertEqual(confirmed, {"Xenon_Azetukalner_20260801"})
         self.assertEqual(main.record_key(new), "Xenon_Azetukalner_20260801")
 
+    def test_explicit_review_can_replace_same_asset_when_company_differs(self):
+        old = full_record("Legacy_Azetukalner_20260801", company="Legacy Bio")
+        new = full_record("Xenon_Azetukalner_20260803", company="Xenon Pharmaceuticals")
+
+        confirmed = main.apply_confirmed_reupload_replacements(
+            [new],
+            [old],
+            [{
+                "incoming_record_id": "Xenon_Azetukalner_20260803",
+                "existing_record_id": "Legacy_Azetukalner_20260801",
+            }],
+        )
+
+        self.assertEqual(confirmed, {"Legacy_Azetukalner_20260801"})
+        self.assertEqual(main.record_key(new), "Legacy_Azetukalner_20260801")
+
     def test_reupload_clears_active_score_override_and_keeps_audit_values(self):
         record = full_record("Xenon_Azetukalner_20260801")
         original_history = copy.deepcopy(record["meta"]["human_review"]["history"])

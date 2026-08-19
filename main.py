@@ -2949,7 +2949,11 @@ def pipeline_identity(record: dict[str, Any]) -> tuple[str, str, str]:
 
 
 def pipeline_identities_match(left: tuple[str, str, str], right: tuple[str, str, str]) -> bool:
-    if left[:2] != right[:2]:
+    # A user may explicitly confirm a same/similar asset whose company spelling or
+    # ownership has changed. Workflow and a conservative asset-name match remain
+    # mandatory; the client always presents the company comparison before sending
+    # this replacement request.
+    if left[0] != right[0]:
         return False
     threshold = max(1, math.floor(max(len(left[2]), len(right[2])) * 0.12))
     return left[2] == right[2] or difflib.SequenceMatcher(None, left[2], right[2]).ratio() >= 1 - (threshold / max(len(left[2]), len(right[2]), 1))
@@ -2986,7 +2990,7 @@ def apply_confirmed_reupload_replacements(
         if not pipeline_identities_match(pipeline_identity(incoming_record), pipeline_identity(existing_record)):
             raise HTTPException(
                 status_code=409,
-                detail="Confirmed reupload target no longer matches the same workflow, company, and asset.",
+                detail="Confirmed reupload target no longer matches the same workflow and asset name.",
             )
         incoming_meta = incoming_record.get("meta")
         if incoming_meta is not None and not isinstance(incoming_meta, dict):

@@ -2545,20 +2545,28 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             self.assertRegex(markup, r'\./src/styles\.css\?v=20260805-[a-z0-9-]+')
         self.assertIn('./src/styles.css?v=20260805-panel-titles-1', DETAIL_HTML)
 
-    def test_data_upload_reviews_same_company_asset_before_replacing_existing_record(self):
+    def test_data_upload_reviews_exact_and_similar_assets_before_replacing_existing_record(self):
         finder = function_body(JS, "findDataReuploadMatches")
         preview = function_body(JS, "previewPastedReportParsing")
         save = function_body(JS, "saveStructuredJsonInput")
         self.assertIn("normalizedCompany", finder)
         self.assertIn("normalizedAsset", finder)
-        self.assertIn("existingIdentity.mode === incomingIdentity.mode", finder)
+        self.assertIn("existingIdentity.mode !== incomingIdentity.mode", finder)
+        self.assertIn("matchType: exactAsset ? 'exact' : 'similar'", finder)
+        self.assertIn("sameCompany", finder)
         self.assertIn("reviewDataReuploadMatches", preview)
         self.assertIn("confirmed_replacements", save)
+        self.assertIn("skippedIncomingRecordIds", save)
         self.assertIn("incoming_record_id", save)
         self.assertIn("existing_record_id", save)
-        self.assertIn("기존 Full Scout 레코드가 발견되었습니다.", HTML)
-        self.assertIn("네 · 기존 원문 갱신", HTML)
-        self.assertIn("아니요 · 신규로 추가", HTML)
+        self.assertIn('id="dataReuploadList"', HTML)
+        self.assertIn("검토 없이 모두 업로드", HTML)
+        self.assertIn("선택 적용", HTML)
+        self.assertIn("data-reupload-comparison-scroll", JS)
+        self.assertIn(".data-reupload-review-list", CSS)
+        self.assertIn("overflow-y: auto", CSS)
+        self.assertIn(".data-reupload-comparison-scroll", CSS)
+        self.assertIn("overflow-x: auto", CSS)
 
     def test_team_comment_panel_keeps_all_four_corners_rounded(self):
         rounded = CSS[CSS.index("Keep the Team Comments card rounded while only its middle content scrolls") :]
