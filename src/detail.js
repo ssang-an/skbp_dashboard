@@ -1270,6 +1270,10 @@ function renderEditHistory(record) {
     .map((entry) => {
       const when = formatCommentTime(entry?.changed_at);
       const who = teamReviewActorLabel(entry);
+      const field = String(entry?.field || '');
+      const isManualScoreChange = entry?.source === 'dashboard_table_manual_review'
+        && (field.startsWith('scores.') || field === 'total_score');
+      const isAiQualitativeGeneration = entry?.source === 'dashboard_qualitative_review_ai_generate';
       const sourceLabels = {
         dashboard_table_manual_review: 'Review status/점수',
         dashboard_tab3_focus_management: '집중관리 정보',
@@ -1298,19 +1302,42 @@ function renderEditHistory(record) {
         total_score: 'Tab2 Total Score',
         'focus_management.total_score_override': 'Tab3 Total Score'
       };
-      const fieldSource = fieldLabels[entry?.field];
+      const fieldSource = fieldLabels[field];
       const baseSource = entry?.source === 'paste_json_score_reset' && fieldSource
         ? `${fieldSource} · GPT 원문 재업로드`
         : fieldSource || sourceLabels[entry?.source] || entry?.field || '레코드';
-      const source = entry?.change_method === 'ai_agent' ? `${baseSource} · AI Agent` : baseSource;
+      const qualitativeCriterionId = isAiQualitativeGeneration ? field.split('.').at(-1) : '';
+      const qualitativeCriterion = [
+        ...qualitativeReviewCriteria,
+        ...((record?.meta?.qualitative_review?.custom_criteria || []).filter((criterion) => criterion && typeof criterion === 'object'))
+      ].find((criterion) => criterion.id === qualitativeCriterionId || criterion.legacyIds?.includes(qualitativeCriterionId));
+      const source = isAiQualitativeGeneration
+        ? `정성평가 ${qualitativeCriterion?.label || qualitativeCriterionId || '항목'} AI 답변 생성 완료`
+        : entry?.change_method === 'ai_agent' ? `${baseSource} · AI Agent` : baseSource;
       const formatAuditValue = (value) => {
         if (value === null || value === undefined || value === '') return 'Auto';
         if (typeof value === 'object') return JSON.stringify(value);
         return String(value);
       };
-      const change = `${formatAuditValue(entry?.previous_value)} → ${formatAuditValue(entry?.new_value)}`;
+      const change = isAiQualitativeGeneration
+        ? '완료'
+        : `${formatAuditValue(entry?.previous_value)} → ${formatAuditValue(entry?.new_value)}`;
       const humanClass = entry?.actor_name ? ' class="is-human"' : '';
-      return `<li${humanClass}><span>${escapeHtml(when)}</span><strong title="${escapeHtml(source)}">${escapeHtml(source)}</strong><small title="${escapeHtml(`${who} · ${change}`)}">${escapeHtml(who)} · ${escapeHtml(change)}</small></li>`;
+      const existingReason = String(entry?.review_reason || '').trim();
+      const canEditReason = isManualScoreChange && Boolean(getCurrentUser()?.is_admin);
+      const reasonForm = canEditReason
+        ? `<form class="detail-edit-history-reason-form" data-edit-history-reason-form data-history-entry-id="${escapeHtml(entry?.id || '')}" data-history-changed-at="${escapeHtml(entry?.changed_at || '')}" data-history-field="${escapeHtml(field)}" data-previous-reason="${escapeHtml(existingReason)}">
+            <textarea rows="2" maxlength="1000" aria-label="${escapeHtml(source)} 변경 사유" placeholder="점수 변경 사유를 남기세요.">${escapeHtml(existingReason)}</textarea>
+            <button type="submit">사유 저장</button>
+          </form>`
+        : '';
+      const reasonMarkup = isManualScoreChange && (existingReason || reasonForm)
+        ? `<div class="detail-edit-history-reason">
+            ${existingReason ? `<p><b>변경 사유</b>${escapeHtml(existingReason)}</p>` : ''}
+            ${reasonForm}
+          </div>`
+        : '';
+      return `<li${humanClass}><span>${escapeHtml(when)}</span><strong title="${escapeHtml(source)}">${escapeHtml(source)}</strong><small title="${escapeHtml(`${who} · ${change}`)}">${escapeHtml(who)} · ${escapeHtml(change)}</small>${reasonMarkup}</li>`;
     })
     .join('');
   elements.detailEditHistory.innerHTML = `
@@ -2487,6 +2514,45 @@ function renderMarkdown(markdown) {
   }
 
   return blocks.join('');
+}
+
+async function saveEditHistoryReason(form) {
+  if (!currentRecordId || !currentRecord || !form) return;
+  const textarea = form.querySelector('textarea');
+  if (!textarea) return;
+  const reason = String(textarea.value || '').trim();
+  const previousReason = String(form.dataset.previousReason || '');
+  if (reason === previousReason) return;
+
+  const actorName = await ensureIdentity();
+  if (!actorName) return;
+
+  textarea.disabled = true;
+  const submitButton = form.querySelector('button[type="submit"]');
+  if (submitButton) submitButton.disabled = true;
+  setCollaborationStatus('점수 변경 사유 저장 중…');
+  try {
+    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/manual-review-history-reason`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        history_entry_id: form.dataset.historyEntryId || '',
+        changed_at: form.dataset.historyChangedAt || '',
+        field: form.dataset.historyField || '',
+        reason,
+        actor_name: actorName
+      })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '점수 변경 사유를 저장하지 못했습니다.');
+    currentRecord = data.record;
+    renderCollaborationPanel(currentRecord);
+    setCollaborationStatus('점수 변경 사유를 저장했습니다.', 'success');
+  } catch (error) {
+    textarea.disabled = false;
+    if (submitButton) submitButton.disabled = false;
+    setCollaborationStatus(error.message, 'error');
+  }
 }
 
 function normalizedTopicKey(value) {
@@ -3984,6 +4050,13 @@ elements.detailReviewSummary?.addEventListener('keydown', (event) => {
     event.currentTarget.value = event.currentTarget.dataset.previousValue || '';
     event.currentTarget.blur();
   }
+});
+
+elements.detailEditHistory?.addEventListener('submit', (event) => {
+  const form = event.target.closest('[data-edit-history-reason-form]');
+  if (!form || !elements.detailEditHistory.contains(form)) return;
+  event.preventDefault();
+  saveEditHistoryReason(form);
 });
 
 elements.detailCommentForm?.addEventListener('submit', (event) => {

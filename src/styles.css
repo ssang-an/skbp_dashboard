@@ -11341,6 +11341,79 @@ html[data-theme="dark"] .detail-material-panel {
   white-space: nowrap;
 }
 
+.detail-edit-history-reason {
+  grid-column: 2 / -1;
+  margin-top: 1px;
+  padding: 5px 7px;
+  border-left: 2px solid color-mix(in srgb, var(--muted) 26%, transparent);
+  border-radius: 0 6px 6px 0;
+  background: color-mix(in srgb, var(--surface-soft) 72%, transparent);
+}
+
+.detail-edit-history-reason p {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  color: var(--text);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.detail-edit-history-reason p b {
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.detail-edit-history-reason-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 5px;
+  align-items: end;
+}
+
+.detail-edit-history-reason p + .detail-edit-history-reason-form {
+  margin-top: 5px;
+}
+
+.detail-edit-history-reason textarea {
+  min-height: 34px;
+  padding: 5px 6px;
+  border: 1px solid color-mix(in srgb, var(--line) 85%, var(--muted));
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 9px;
+  line-height: 1.35;
+  resize: vertical;
+}
+
+.detail-edit-history-reason textarea:focus {
+  border-color: color-mix(in srgb, var(--muted) 60%, var(--line));
+  outline: 2px solid color-mix(in srgb, var(--muted) 14%, transparent);
+  outline-offset: 1px;
+}
+
+.detail-edit-history-reason button {
+  min-height: 28px;
+  padding: 0 8px;
+  border: 1px solid color-mix(in srgb, var(--line) 78%, var(--muted));
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.detail-edit-history-reason button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--muted) 48%, var(--line));
+  background: var(--surface-soft);
+  color: var(--text);
+}
+
 .oi-partnership-guide {
   border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
   background: color-mix(in srgb, var(--accent-soft) 48%, var(--surface));

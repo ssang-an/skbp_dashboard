@@ -3047,6 +3047,7 @@ def append_edit_history(
         history = list(((old_meta or {}).get("edit_history")) or [])
     changed_at = datetime.now(timezone.utc).isoformat()
     entry = {
+        "id": uuid.uuid4().hex,
         "changed_at": changed_at,
         "actor_ip": actor_ip,
         "actor_name": actor_name,
@@ -8659,6 +8660,66 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
             "human_review": human_review,
             "exports": exports,
         }
+
+    raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
+
+
+@app.patch("/api/records/{record_id:path}/manual-review-history-reason")
+async def update_manual_review_history_reason(record_id: str, request: Request) -> dict[str, Any]:
+    account = require_auth_admin(request)
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected a score-change reason object.")
+
+    reason = str(payload.get("reason") or "").strip()
+    if len(reason) > 1000:
+        raise HTTPException(status_code=400, detail="Score-change reason must be 1,000 characters or fewer.")
+    entry_id = str(payload.get("history_entry_id") or "").strip()
+    changed_at = str(payload.get("changed_at") or "").strip()
+    field = str(payload.get("field") or "").strip()
+    is_score_field = field == "total_score" or (
+        field.startswith("scores.") and field.removeprefix("scores.") in MANUAL_REVIEW_SCORE_FIELDS
+    )
+    if not is_score_field or (not entry_id and not changed_at):
+        raise HTTPException(status_code=400, detail="A valid manual score-change history entry is required.")
+
+    actor_name = str(account.get("name") or "").strip()
+    records = load_records()
+    for index, record in enumerate(records):
+        if record_key(record) != record_id:
+            continue
+
+        history = (record.setdefault("meta", {})).get("edit_history")
+        if not isinstance(history, list):
+            raise HTTPException(status_code=404, detail="No Team Review history was found for this record.")
+
+        match: dict[str, Any] | None = None
+        for entry in reversed(history):
+            if not isinstance(entry, dict):
+                continue
+            if entry.get("source") != "dashboard_table_manual_review" or entry.get("field") != field:
+                continue
+            if entry_id and str(entry.get("id") or "") == entry_id:
+                match = entry
+                break
+            if not entry_id and str(entry.get("changed_at") or "") == changed_at:
+                match = entry
+                break
+        if match is None:
+            raise HTTPException(status_code=404, detail="The selected score-change history entry was not found.")
+
+        # Legacy entries predate edit-history IDs. Give them an ID when first annotated.
+        match.setdefault("id", uuid.uuid4().hex)
+        match["review_reason"] = reason
+        match["review_reason_updated_at"] = datetime.now(timezone.utc).isoformat()
+        match["review_reason_updated_by"] = actor_name or get_client_ip(request)
+        records[index] = record
+        save_records(records)
+        return {"ok": True, "record_id": record_id, "record": record}
 
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
 

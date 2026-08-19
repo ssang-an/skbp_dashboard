@@ -534,6 +534,22 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("Team Review 변경 이력", team_body)
         self.assertNotIn(".slice(-10)", team_body)
 
+    def test_team_review_score_history_can_store_reasons_and_summarizes_ai_qualitative_entries(self):
+        history = function_body(DETAIL_JS, "renderEditHistory")
+        save_reason = function_body(DETAIL_JS, "saveEditHistoryReason")
+        backend = (ROOT / "main.py").read_text(encoding="utf-8")
+
+        self.assertIn("dashboard_table_manual_review", history)
+        self.assertIn("data-edit-history-reason-form", history)
+        self.assertIn("review_reason", history)
+        self.assertIn("dashboard_qualitative_review_ai_generate", history)
+        self.assertIn("정성평가 ${qualitativeCriterion?.label", history)
+        self.assertIn("AI 답변 생성 완료", history)
+        self.assertIn("/manual-review-history-reason", save_reason)
+        self.assertIn('@app.patch("/api/records/{record_id:path}/manual-review-history-reason")', backend)
+        self.assertIn('match["review_reason"] = reason', backend)
+        self.assertIn('"id": uuid.uuid4().hex', backend)
+
     def test_full_scout_source_report_header_is_title_only_without_theme_and_cluster(self):
         detail_js = (ROOT / "src" / "detail.js").read_text(encoding="utf-8")
         source_report = function_body(detail_js, "renderSourceReport")
