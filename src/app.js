@@ -270,18 +270,18 @@ const state = {
   dataUploadDrafts: { triage: '', full: '' },
   dataUploadLlmReparseFields: null,
   query: '',
-  stage: 'all',
-  theme: 'all',
-  cluster: 'all',
-  modality: 'all',
-  indication: 'all',
-  country: 'all',
-  pass: 'all',
+  stage: [],
+  theme: [],
+  cluster: [],
+  modality: [],
+  indication: [],
+  country: [],
+  pass: [],
   duePeriod: 'all',
   filtersByMode: {
-    triage: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: 'all', country: 'all', pass: 'all' },
-    full: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: 'all', country: 'all', pass: 'all' },
-    focus: { query: '', stage: 'all', theme: 'all', cluster: 'all', modality: 'all', indication: 'all', country: 'all', pass: 'all' }
+    triage: { query: '', stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [] },
+    full: { query: '', stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [] },
+    focus: { query: '', stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [] }
   },
   tableMode: initialTableMode,
   sortKey: initialSort.key,
@@ -2126,6 +2126,37 @@ function dueHalfLabel(period) {
   return match ? `${match[1]} ${match[2]}` : period;
 }
 
+const MULTI_FILTER_KEYS = ['theme', 'cluster', 'modality', 'country', 'indication', 'stage', 'pass'];
+
+function selectedFilterValues(value) {
+  if (Array.isArray(value)) return [...new Set(value.filter(Boolean))];
+  return value && value !== 'all' ? [value] : [];
+}
+
+function hasSelectedFilterValues(value) {
+  return selectedFilterValues(value).length > 0;
+}
+
+function selectedFilterMatches(value, candidate) {
+  const selected = selectedFilterValues(value);
+  return !selected.length || selected.includes(candidate);
+}
+
+function cloneFilterValue(value) {
+  return Array.isArray(value) ? [...value] : value;
+}
+
+function closeMultiFilters(except = null) {
+  MULTI_FILTER_KEYS.forEach((key) => {
+    const filter = elements[`${key}Filter`];
+    if (!filter || filter === except) return;
+    filter.classList.remove('is-open');
+    filter.querySelector('.filter-multiselect-trigger')?.setAttribute('aria-expanded', 'false');
+    const menu = filter.querySelector('.filter-multiselect-menu');
+    if (menu) menu.hidden = true;
+  });
+}
+
 function getVisibleRows(includeQuery = true) {
   const query = includeQuery ? state.query.trim().toLowerCase() : '';
   const filterKey = activeFilterKey();
@@ -2151,13 +2182,13 @@ function getVisibleRows(includeQuery = true) {
       return (
         rowMatchesActiveTableMode(row) &&
         (!query || searchable.includes(query)) &&
-        (state.theme === 'all' || row.theme === state.theme) &&
-        (state.cluster === 'all' || row.cluster === state.cluster) &&
-        (state.modality === 'all' || row.modality === state.modality) &&
-        (state.indication === 'all' || row.indicationList.includes(state.indication) || (state.indication === 'Unknown' && !row.indicationList.length)) &&
-        (state.country === 'all' || row.country === state.country) &&
-        (state.stage === 'all' || canonicalDevelopmentStage(row.stage) === state.stage) &&
-        (state.pass === 'all' || row[filterKey] === state.pass)
+        selectedFilterMatches(state.theme, row.theme) &&
+        selectedFilterMatches(state.cluster, row.cluster) &&
+        selectedFilterMatches(state.modality, row.modality) &&
+        (selectedFilterValues(state.indication).length === 0 || selectedFilterValues(state.indication).some((value) => row.indicationList.includes(value) || (value === 'Unknown' && !row.indicationList.length))) &&
+        selectedFilterMatches(state.country, row.country) &&
+        selectedFilterMatches(state.stage, canonicalDevelopmentStage(row.stage)) &&
+        selectedFilterMatches(state.pass, row[filterKey])
       );
     });
 
@@ -2210,56 +2241,51 @@ function renderFilters() {
           { value: 'REVIEW', label: 'REVIEW' },
           { value: 'FAIL', label: 'FAIL' }
         ];
-  const option = (value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`;
-  const resetInvalidSelection = (key, values) => {
-    if (state[key] !== 'all' && !values.includes(state[key])) state[key] = 'all';
+  const resetInvalidSelections = (key, values) => {
+    state[key] = selectedFilterValues(state[key]).filter((value) => values.includes(value));
   };
-  resetInvalidSelection('theme', themes);
-  resetInvalidSelection('cluster', clusters);
-  resetInvalidSelection('modality', modalities);
-  resetInvalidSelection('country', countries);
-  if (state.indication !== 'all' && !indications.includes(state.indication)) state.indication = 'all';
-  resetInvalidSelection('stage', stages);
-  if (state.pass !== 'all' && !filterStatuses.some((item) => item.value === state.pass)) {
-    state.pass = 'all';
-  }
-  elements.themeFilter.innerHTML = [
-    '<option value="all">전체</option>',
-    ...themes.map(option)
-  ].join('');
-  elements.themeFilter.value = state.theme;
-  elements.clusterFilter.innerHTML = [
-    '<option value="all">전체</option>',
-    ...clusters.map(option)
-  ].join('');
-  elements.clusterFilter.value = state.cluster;
-  elements.modalityFilter.innerHTML = [
-    '<option value="all">전체</option>',
-    ...modalities.map(option)
-  ].join('');
-  elements.modalityFilter.value = state.modality;
+  resetInvalidSelections('theme', themes);
+  resetInvalidSelections('cluster', clusters);
+  resetInvalidSelections('modality', modalities);
+  resetInvalidSelections('country', countries);
+  resetInvalidSelections('indication', indications);
+  resetInvalidSelections('stage', stages);
+  resetInvalidSelections('pass', filterStatuses.map((item) => item.value));
 
-  elements.countryFilter.innerHTML = [
-    '<option value="all">전체</option>',
-    ...countries.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`)
-  ].join('');
-  elements.countryFilter.value = state.country;
-  elements.indicationFilter.innerHTML = [
-    '<option value="all">전체</option>',
-    ...indications.map(option)
-  ].join('');
-  elements.indicationFilter.value = state.indication;
-  elements.stageFilter.innerHTML = [
-    '<option value="all">전체</option>',
-    ...stages.map(option)
-  ].join('');
-  elements.stageFilter.value = state.stage;
-  elements.passFilter.innerHTML = [
-    '<option value="all">전체</option>',
-    ...filterStatuses.map((item) => `<option value="${escapeHtml(item.value)}">${escapeHtml(item.label)}</option>`)
-  ].join('');
-  elements.passFilter.value = state.pass;
+  renderMultiFilter(elements.themeFilter, 'theme', themes);
+  renderMultiFilter(elements.clusterFilter, 'cluster', clusters);
+  renderMultiFilter(elements.modalityFilter, 'modality', modalities);
+  renderMultiFilter(elements.countryFilter, 'country', countries);
+  renderMultiFilter(elements.indicationFilter, 'indication', indications);
+  renderMultiFilter(elements.stageFilter, 'stage', stages);
+  renderMultiFilter(elements.passFilter, 'pass', filterStatuses);
   if (elements.passFilterLabel) elements.passFilterLabel.textContent = activeFilterLabel();
+}
+
+function renderMultiFilter(element, key, values) {
+  if (!element) return;
+  const options = values.map((value) => typeof value === 'string' ? { value, label: value } : value);
+  const selected = selectedFilterValues(state[key]);
+  const summary = element.querySelector('[data-multi-filter-summary]');
+  const trigger = element.querySelector('.filter-multiselect-trigger');
+  const menu = element.querySelector('.filter-multiselect-menu');
+  if (!summary || !trigger || !menu) return;
+
+  summary.textContent = selected.length === 0
+    ? '전체'
+    : selected.length === 1
+      ? (options.find((option) => option.value === selected[0])?.label || selected[0])
+      : `${selected.length}개 선택`;
+  trigger.setAttribute('aria-label', `${element.querySelector('.filter-multiselect-label')?.textContent || key}: ${summary.textContent}`);
+  element.classList.toggle('has-selection', selected.length > 0);
+  const allSelected = selected.length === 0;
+  menu.innerHTML = [
+    `<button type="button" class="filter-multiselect-option${allSelected ? ' is-selected' : ''}" data-multi-filter-value="all" role="option" aria-selected="${allSelected}"><span class="filter-multiselect-check" aria-hidden="true">${allSelected ? '✓' : ''}</span><span>전체</span></button>`,
+    ...options.map((option) => {
+      const isSelected = selected.includes(option.value);
+      return `<button type="button" class="filter-multiselect-option${isSelected ? ' is-selected' : ''}" data-multi-filter-value="${escapeHtml(option.value)}" role="option" aria-selected="${isSelected}"><span class="filter-multiselect-check" aria-hidden="true">${isSelected ? '✓' : ''}</span><span>${escapeHtml(option.label)}</span></button>`;
+    })
+  ].join('');
 }
 
 const WORKFLOW_COPY = {
@@ -4542,25 +4568,25 @@ function renderAgentIdentity() {
 function activeFilterCount() {
   return [
     state.query.trim(),
-    state.modality !== 'all',
-    state.theme !== 'all',
-    state.cluster !== 'all',
-    state.country !== 'all',
-    state.indication !== 'all',
-    state.stage !== 'all',
-    state.pass !== 'all'
+    hasSelectedFilterValues(state.modality),
+    hasSelectedFilterValues(state.theme),
+    hasSelectedFilterValues(state.cluster),
+    hasSelectedFilterValues(state.country),
+    hasSelectedFilterValues(state.indication),
+    hasSelectedFilterValues(state.stage),
+    hasSelectedFilterValues(state.pass)
   ].filter(Boolean).length;
 }
 
 function activeSummaryFilterCount() {
   return [
-    state.modality !== 'all',
-    state.theme !== 'all',
-    state.cluster !== 'all',
-    state.country !== 'all',
-    state.indication !== 'all',
-    state.stage !== 'all',
-    state.pass !== 'all'
+    hasSelectedFilterValues(state.modality),
+    hasSelectedFilterValues(state.theme),
+    hasSelectedFilterValues(state.cluster),
+    hasSelectedFilterValues(state.country),
+    hasSelectedFilterValues(state.indication),
+    hasSelectedFilterValues(state.stage),
+    hasSelectedFilterValues(state.pass)
   ].filter(Boolean).length;
 }
 
@@ -8903,22 +8929,70 @@ function deactivateStep0Panel() {
 
 function renderStep0ImportSummary(result) {
   if (!elements.step0ImportSummary || !result) return;
-  const unparsedNote = result.unparsed_lines?.length ? ` · 파싱 실패 ${result.unparsed_lines.length}줄` : '';
+  const unparsedCount = result.unparsed_lines?.length || 0;
   elements.step0ImportSummary.hidden = false;
-  elements.step0ImportSummary.textContent =
-    `${result.parsed}줄 파싱 · 신규 추가 ${result.added} · 이미 조사됨(제외) ${result.already_researched_skipped} · 중복 ${result.duplicate_in_queue_skipped}${unparsedNote}`;
+  const badgeClass = unparsedCount ? 'warning' : '';
+  const badgeText = unparsedCount ? '일부 제외' : '가져오기 완료';
+  const rows = [
+    {
+      level: 'ok',
+      label: '신규',
+      path: '신규 추가',
+      message: `${result.added}건을 대기열에 새로 추가했습니다.`
+    },
+    {
+      level: 'ok',
+      label: '제외',
+      path: '이미 조사됨',
+      message: `${result.already_researched_skipped}건은 기존 조사 결과와 일치해 제외했습니다.`
+    },
+    {
+      level: 'ok',
+      label: '제외',
+      path: '대기열 중복',
+      message: `${result.duplicate_in_queue_skipped}건은 이미 대기열에 있어 제외했습니다.`
+    },
+    ...(unparsedCount ? [{
+      level: 'warning',
+      label: '경고',
+      path: '파싱 실패',
+      message: `${unparsedCount}줄을 파싱하지 못했습니다.`
+    }] : [])
+  ];
+  elements.step0ImportSummary.innerHTML = `
+    <div class="input-validation-summary">
+      <span class="input-validation-badge ${badgeClass}">${escapeHtml(badgeText)}</span>
+      <strong>후보 목록 업로드</strong>
+      <span>${result.parsed}줄 파싱 · 신규 ${result.added} · 제외 ${result.already_researched_skipped} · 중복 ${result.duplicate_in_queue_skipped}</span>
+    </div>
+    <ul class="input-validation-list">
+      ${rows.map((row) => `
+        <li class="${escapeHtml(row.level || '')}">
+          <b>${escapeHtml(row.label || '')}</b>
+          <span><strong>${escapeHtml(row.path || '')}</strong>${row.path ? ' · ' : ''}${escapeHtml(row.message || '')}</span>
+        </li>
+      `).join('')}
+    </ul>
+  `;
 }
 
-function showStep0Message(text) {
+function showStep0Message(text, level = 'ok') {
   if (!elements.step0ImportSummary) return;
   elements.step0ImportSummary.hidden = false;
-  elements.step0ImportSummary.textContent = text;
+  const badgeClass = level === 'error' ? 'error' : level === 'warning' ? 'warning' : '';
+  const badgeText = level === 'error' ? '처리 실패' : level === 'warning' ? '확인 필요' : '완료';
+  elements.step0ImportSummary.innerHTML = `
+    <div class="input-validation-summary">
+      <span class="input-validation-badge ${badgeClass}">${escapeHtml(badgeText)}</span>
+      <span>${escapeHtml(text)}</span>
+    </div>
+  `;
 }
 
 async function importStep0Candidates() {
   const text = elements.step0PasteInput?.value || '';
   if (!text.trim()) {
-    showStep0Message('붙여넣은 내용이 없습니다.');
+    showStep0Message('붙여넣은 내용이 없습니다.', 'warning');
     return;
   }
   if (elements.step0ImportButton) elements.step0ImportButton.disabled = true;
@@ -8936,7 +9010,7 @@ async function importStep0Candidates() {
     setStep0SaveStatus('saved');
     await loadStep0Progress();
   } catch (error) {
-    showStep0Message(`가져오기 실패: ${error.message}`);
+    showStep0Message(`가져오기 실패: ${error.message}`, 'error');
     setStep0SaveStatus('error');
   } finally {
     if (elements.step0ImportButton) elements.step0ImportButton.disabled = false;
@@ -9225,7 +9299,7 @@ elements.step0SelectAllRows?.addEventListener('change', (event) => {
     const toAdd = visibleIds.filter((id) => !state.step0SelectedPendingIds.has(id));
     const room = Math.max(0, 10 - state.step0SelectedPendingIds.size);
     toAdd.slice(0, room).forEach((id) => state.step0SelectedPendingIds.add(id));
-    if (toAdd.length > room) showStep0Message('최대 10개까지 선택할 수 있습니다.');
+    if (toAdd.length > room) showStep0Message('최대 10개까지 선택할 수 있습니다.', 'warning');
   } else {
     visibleIds.forEach((id) => state.step0SelectedPendingIds.delete(id));
   }
@@ -9240,7 +9314,7 @@ elements.step0ProgressTableBody?.addEventListener('change', (event) => {
   if (checkbox.checked) {
     if (state.step0SelectedPendingIds.size >= 10) {
       checkbox.checked = false;
-      showStep0Message('최대 10개까지 선택할 수 있습니다.');
+      showStep0Message('최대 10개까지 선택할 수 있습니다.', 'warning');
       return;
     }
     state.step0SelectedPendingIds.add(queueId);
@@ -9316,7 +9390,7 @@ const TABLE_FILTER_STATE_KEYS = ['query', 'stage', 'theme', 'cluster', 'modality
 
 function captureModeFilters(mode = activeTableMode()) {
   state.filtersByMode[mode] = Object.fromEntries(
-    TABLE_FILTER_STATE_KEYS.map((key) => [key, state[key]])
+    TABLE_FILTER_STATE_KEYS.map((key) => [key, cloneFilterValue(state[key])])
   );
 }
 
@@ -9392,46 +9466,47 @@ elements.searchInput.addEventListener('input', (event) => {
   renderFilteredDashboard();
 });
 
-elements.themeFilter.addEventListener('change', (event) => {
-  state.theme = event.target.value;
+document.querySelector('.controls')?.addEventListener('click', (event) => {
+  const trigger = event.target.closest('.filter-multiselect-trigger');
+  if (trigger) {
+    const filter = trigger.closest('.filter-multiselect');
+    const willOpen = !filter.classList.contains('is-open');
+    closeMultiFilters(filter);
+    filter.classList.toggle('is-open', willOpen);
+    trigger.setAttribute('aria-expanded', String(willOpen));
+    const menu = filter.querySelector('.filter-multiselect-menu');
+    if (menu) menu.hidden = !willOpen;
+    return;
+  }
+
+  const option = event.target.closest('.filter-multiselect-option');
+  if (!option) return;
+  const filter = option.closest('.filter-multiselect');
+  const key = filter?.dataset.filterKey;
+  if (!key) return;
+  const value = option.dataset.multiFilterValue;
+  const selected = new Set(selectedFilterValues(state[key]));
+  if (value === 'all') {
+    selected.clear();
+  } else if (selected.has(value)) {
+    selected.delete(value);
+  } else {
+    selected.add(value);
+  }
+  state[key] = [...selected];
   state.page = 1;
+  captureModeFilters();
+  renderFilters();
   renderFilteredDashboard();
 });
 
-elements.clusterFilter.addEventListener('change', (event) => {
-  state.cluster = event.target.value;
-  state.page = 1;
-  renderFilteredDashboard();
+document.addEventListener('click', (event) => {
+  if (!event.target.closest('.filter-multiselect')) closeMultiFilters();
 });
 
-elements.modalityFilter.addEventListener('change', (event) => {
-  state.modality = event.target.value;
-  state.page = 1;
-  renderFilteredDashboard();
-});
-
-elements.countryFilter.addEventListener('change', (event) => {
-  state.country = event.target.value;
-  state.page = 1;
-  renderFilteredDashboard();
-});
-
-elements.indicationFilter.addEventListener('change', (event) => {
-  state.indication = event.target.value;
-  state.page = 1;
-  renderFilteredDashboard();
-});
-
-elements.stageFilter.addEventListener('change', (event) => {
-  state.stage = event.target.value;
-  state.page = 1;
-  renderFilteredDashboard();
-});
-
-elements.passFilter.addEventListener('change', (event) => {
-  state.pass = event.target.value;
-  state.page = 1;
-  renderFilteredDashboard();
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape') return;
+  closeMultiFilters();
 });
 
 elements.pageSizeSelect?.addEventListener('change', (event) => {
@@ -9724,13 +9799,13 @@ elements.columnSettingsGrid?.addEventListener('change', (event) => {
 
 elements.resetFiltersButton?.addEventListener('click', () => {
   state.query = '';
-  state.modality = 'all';
-  state.theme = 'all';
-  state.cluster = 'all';
-  state.country = 'all';
-  state.indication = 'all';
-  state.stage = 'all';
-  state.pass = 'all';
+  state.modality = [];
+  state.theme = [];
+  state.cluster = [];
+  state.country = [];
+  state.indication = [];
+  state.stage = [];
+  state.pass = [];
   state.page = 1;
   elements.searchInput.value = '';
   captureModeFilters();

@@ -351,9 +351,9 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("align-items: center", CSS[CSS.index(".topbar-home-link {"):])
 
     def test_filter_order_and_only_due_date_removed_from_common_filters(self):
-        controls = re.search(r'<div class="controls">(.*?)</div>\s*</section>', HTML, re.S)
-        self.assertIsNotNone(controls)
-        block = controls.group(1)
+        start = HTML.index('<div class="controls">', HTML.index('aria-label="Dashboard controls"'))
+        end = HTML.index('\n        </section>\n\n        <section class="panel pipeline-table-panel">', start)
+        block = HTML[start:end]
         expected = [
             "searchInput",
             "countryFilter",
@@ -368,6 +368,19 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         positions = [block.index(f'id="{element_id}"') for element_id in expected]
         self.assertEqual(positions, sorted(positions))
         self.assertNotIn('id="dueDateFilter"', block)
+
+    def test_pipeline_filters_support_multi_select_with_visible_option_state(self):
+        start = HTML.index('<div class="controls">', HTML.index('aria-label="Dashboard controls"'))
+        end = HTML.index('\n        </section>\n\n        <section class="panel pipeline-table-panel">', start)
+        block = HTML[start:end]
+        self.assertEqual(block.count('class="filter-multiselect"'), 7)
+        self.assertIn('aria-multiselectable="true"', block)
+        self.assertIn('data-multi-filter-value="all"', JS)
+        self.assertIn('function selectedFilterMatches', JS)
+        self.assertIn('function renderMultiFilter', JS)
+        self.assertIn('selectedFilterValues(state.indication).some', JS)
+        self.assertIn('.filter-multiselect-check', CSS)
+        self.assertIn('border-radius: 50%', CSS)
 
     def test_summary_has_exactly_the_three_workflow_surfaces(self):
         for element_id in ("indicationChart", "modalityChart", "workflowPriorityList"):

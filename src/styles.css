@@ -14353,6 +14353,145 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.34), 0 1px 3px rgba(0, 0, 0, 0.26);
 }
 
+/* Tab1/2 pipeline filters use one compact multi-select pattern with visible selection state. */
+.filter-multiselect {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.filter-multiselect.is-open { z-index: 30; }
+
+.filter-multiselect-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filter-multiselect-trigger {
+  display: flex;
+  width: 100%;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+  padding: 10px 11px 10px 12px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--line) 88%, #8e8e93);
+  border-radius: 10px;
+  background: var(--input-bg);
+  color: var(--text);
+  box-shadow: none;
+  font: inherit;
+  text-align: left;
+  transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.filter-multiselect-trigger > [data-multi-filter-summary] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filter-multiselect-trigger:hover {
+  border-color: color-mix(in srgb, var(--muted) 42%, var(--line));
+  background-color: color-mix(in srgb, var(--input-bg) 96%, #f2f2f7);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.filter-multiselect-trigger:focus-visible {
+  border-color: color-mix(in srgb, var(--line) 88%, #8e8e93);
+  outline: none;
+  box-shadow: 0 5px 14px rgba(15, 23, 42, 0.16), 0 1px 3px rgba(15, 23, 42, 0.1);
+}
+
+.filter-multiselect.has-selection .filter-multiselect-trigger {
+  background-color: color-mix(in srgb, var(--input-bg) 94%, #eaf0f5);
+}
+
+.filter-multiselect-caret {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  transition: transform 150ms ease;
+}
+
+.filter-multiselect.is-open .filter-multiselect-caret { transform: rotate(180deg); }
+
+.filter-multiselect-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: max-content;
+  min-width: 100%;
+  max-width: min(320px, calc(100vw - 32px));
+  max-height: 270px;
+  padding: 5px;
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--line) 92%, #8e8e93);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16), 0 2px 7px rgba(15, 23, 42, 0.08);
+}
+
+.filter-multiselect-option {
+  display: grid;
+  width: 100%;
+  min-height: 33px;
+  grid-template-columns: 16px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.filter-multiselect-option:hover,
+.filter-multiselect-option:focus-visible {
+  outline: none;
+  background: color-mix(in srgb, var(--surface-soft) 72%, #e6ebf0);
+}
+
+.filter-multiselect-check {
+  display: grid;
+  width: 16px;
+  height: 16px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--muted) 42%, var(--line));
+  border-radius: 50%;
+  color: transparent;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.filter-multiselect-option.is-selected .filter-multiselect-check {
+  border-color: #5d7284;
+  background: #64798a;
+  color: #fff;
+}
+
+html[data-theme="dark"] .filter-multiselect-menu {
+  border-color: color-mix(in srgb, var(--line) 84%, #94a3b8);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.38), 0 2px 8px rgba(0, 0, 0, 0.24);
+}
+
+html[data-theme="dark"] .filter-multiselect-trigger:focus-visible {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.34), 0 1px 3px rgba(0, 0, 0, 0.26);
+}
+
 /* Data Upload follows Pipeline Table typography and the same shadow-only focus feedback. */
 .paste-panel,
 .paste-panel textarea,

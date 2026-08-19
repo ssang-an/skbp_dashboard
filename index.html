@@ -328,51 +328,41 @@
               <span>검색</span>
               <input id="searchInput" type="search" placeholder="회사, 자산, 타깃, Theme, Cluster 검색" />
             </label>
-            <label>
-              <span>Country</span>
-              <select id="countryFilter">
-                <option value="all">전체</option>
-              </select>
-            </label>
-            <label>
-              <span>Modality</span>
-              <select id="modalityFilter">
-                <option value="all">전체</option>
-              </select>
-            </label>
-            <label>
-              <span>Theme</span>
-              <select id="themeFilter">
-                <option value="all">전체</option>
-              </select>
-            </label>
-            <label>
-              <span>Cluster</span>
-              <select id="clusterFilter">
-                <option value="all">전체</option>
-              </select>
-            </label>
-            <label>
-              <span>Main indication</span>
-              <select id="indicationFilter" aria-label="Main indication">
-                <option value="all">전체</option>
-              </select>
-            </label>
-            <label>
-              <span>Stage</span>
-              <select id="stageFilter">
-                <option value="all">전체</option>
-              </select>
-            </label>
-            <label>
-              <span id="passFilterLabel">Filter 2</span>
-              <select id="passFilter">
-                <option value="all">전체</option>
-                <option value="PASS">PASS</option>
-                <option value="REVIEW">REVIEW</option>
-                <option value="FAIL">FAIL</option>
-              </select>
-            </label>
+            <div id="countryFilter" class="filter-multiselect" data-filter-key="country">
+              <span class="filter-multiselect-label">Country</span>
+              <button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="countryFilterMenu"><span data-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div id="countryFilterMenu" class="filter-multiselect-menu" role="listbox" aria-label="Country" aria-multiselectable="true" hidden></div>
+            </div>
+            <div id="modalityFilter" class="filter-multiselect" data-filter-key="modality">
+              <span class="filter-multiselect-label">Modality</span>
+              <button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="modalityFilterMenu"><span data-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div id="modalityFilterMenu" class="filter-multiselect-menu" role="listbox" aria-label="Modality" aria-multiselectable="true" hidden></div>
+            </div>
+            <div id="themeFilter" class="filter-multiselect" data-filter-key="theme">
+              <span class="filter-multiselect-label">Theme</span>
+              <button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="themeFilterMenu"><span data-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div id="themeFilterMenu" class="filter-multiselect-menu" role="listbox" aria-label="Theme" aria-multiselectable="true" hidden></div>
+            </div>
+            <div id="clusterFilter" class="filter-multiselect" data-filter-key="cluster">
+              <span class="filter-multiselect-label">Cluster</span>
+              <button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="clusterFilterMenu"><span data-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div id="clusterFilterMenu" class="filter-multiselect-menu" role="listbox" aria-label="Cluster" aria-multiselectable="true" hidden></div>
+            </div>
+            <div id="indicationFilter" class="filter-multiselect" data-filter-key="indication">
+              <span class="filter-multiselect-label">Main indication</span>
+              <button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="indicationFilterMenu"><span data-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div id="indicationFilterMenu" class="filter-multiselect-menu" role="listbox" aria-label="Main indication" aria-multiselectable="true" hidden></div>
+            </div>
+            <div id="stageFilter" class="filter-multiselect" data-filter-key="stage">
+              <span class="filter-multiselect-label">Stage</span>
+              <button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="stageFilterMenu"><span data-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div id="stageFilterMenu" class="filter-multiselect-menu" role="listbox" aria-label="Stage" aria-multiselectable="true" hidden></div>
+            </div>
+            <div id="passFilter" class="filter-multiselect" data-filter-key="pass">
+              <span id="passFilterLabel" class="filter-multiselect-label">Filter 2</span>
+              <button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="passFilterMenu"><span data-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div id="passFilterMenu" class="filter-multiselect-menu" role="listbox" aria-label="Filter 2" aria-multiselectable="true" hidden></div>
+            </div>
             <button
               id="resetFiltersButton"
               class="filter-reset-button help-tooltip"
