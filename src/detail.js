@@ -1016,21 +1016,29 @@ const partnerMaterialFilenameSuffixes = {
 function detectPartnerMaterialFlags(attachments) {
   const detected = Object.fromEntries(Object.keys(partnerMaterialLabels).map((key) => [key, false]));
   (Array.isArray(attachments) ? attachments : []).forEach((attachment) => {
-    const category = String(attachment?.partner_material_category || '').toLowerCase()
-      || partnerMaterialCategoryForFilename(attachment?.filename);
-    if (Object.prototype.hasOwnProperty.call(detected, category)) detected[category] = true;
+    const categories = new Set(partnerMaterialCategoriesForFilename(attachment?.filename));
+    const declaredCategory = String(attachment?.partner_material_category || '').toLowerCase();
+    if (Object.prototype.hasOwnProperty.call(detected, declaredCategory)) categories.add(declaredCategory);
+    categories.forEach((category) => {
+      if (Object.prototype.hasOwnProperty.call(detected, category)) detected[category] = true;
+    });
   });
   return detected;
 }
 
-function partnerMaterialCategoryForFilename(filename) {
+function partnerMaterialCategoriesForFilename(filename) {
   const name = String(filename || '').toLowerCase();
-  if (/(^|[^a-z0-9])admet([^a-z0-9]|$)/.test(name)) return 'admet';
-  if (/(^|[^a-z0-9])ncdp([^a-z0-9]|$)/.test(name)) return 'ncdp';
-  if (/(^|[^a-z0-9])cdp([^a-z0-9]|$)/.test(name)) return 'cdp';
-  if (/(^|[^a-z0-9])dd[ _-]?report([^a-z0-9]|$)/.test(name)) return 'dd_report';
-  if (/(^|[^a-z0-9])ir([^a-z0-9]|$)/.test(name)) return 'ir';
-  return '';
+  return [
+    ['admet', /(^|[^a-z0-9])admet([^a-z0-9]|$)/],
+    ['ncdp', /(^|[^a-z0-9])ncdp([^a-z0-9]|$)/],
+    ['cdp', /(^|[^a-z0-9])cdp([^a-z0-9]|$)/],
+    ['dd_report', /(^|[^a-z0-9])dd[ _-]?report([^a-z0-9]|$)/],
+    ['ir', /(^|[^a-z0-9])ir([^a-z0-9]|$)/]
+  ].filter(([, pattern]) => pattern.test(name)).map(([category]) => category);
+}
+
+function partnerMaterialCategoryForFilename(filename) {
+  return partnerMaterialCategoriesForFilename(filename)[0] || '';
 }
 
 function fileWithPartnerMaterialSuffix(file, category) {
