@@ -1132,11 +1132,15 @@ function renderCollaborationPanel(record) {
         const tone = scoreChipTone(score);
         const label = scoringFirstWord[criterionId] || criterionId;
         const isHuman = Object.prototype.hasOwnProperty.call(manualScoreOverrides, criterionId);
+        const manualScoreStyle = isHuman
+          ? 'style="border: 2px solid #b54552; outline: 2px solid rgba(181, 69, 82, 0.42); outline-offset: 1px; background: #fff1f2; box-shadow: inset 0 0 0 1px rgba(181, 69, 82, 0.34);"'
+          : '';
         return `
           <button
             type="button"
             class="score-chip score-chip-link tone-${tone}${isHuman ? ' is-human' : ''}"
             ${isHuman ? 'data-manual-score="true"' : ''}
+            ${manualScoreStyle}
             data-report-criterion="${escapeHtml(criterionId)}"
             title="${escapeHtml(scoringLabels[criterionId])}: ${escapeHtml(formatCriterionScore(score))} · GPT 원문 근거로 이동"
             aria-label="${escapeHtml(scoringLabels[criterionId])} ${escapeHtml(formatCriterionScore(score))}점, GPT 원문 근거로 이동"
