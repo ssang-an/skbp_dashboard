@@ -2436,6 +2436,22 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         main_py = (ROOT / "main.py").read_text(encoding="utf-8")
         self.assertIn('@app.post("/api/records/{record_id:path}/recalculate-oi-partnership")', main_py)
 
+    def test_home_manual_score_markers_preserve_each_score_tone(self):
+        score_edit = function_body(JS, "scoreEditSelect")
+        total_score = function_body(JS, "totalScoreEditCircle")
+        manual_score_styles = CSS[CSS.index(".score.is-human,") : CSS.index(".table-edit-select.is-saving {")]
+
+        self.assertIn("score-edit ${tone} ${isManual ? 'is-human' : 'is-auto'}", score_edit)
+        self.assertIn("total-score-edit-circle ${tone} ${isManual ? 'is-human' : 'is-auto'}", total_score)
+        self.assertIn(".score.is-human.high", manual_score_styles)
+        self.assertIn(".score.is-human.mid", manual_score_styles)
+        self.assertIn(".score.is-human.low", manual_score_styles)
+        self.assertIn("var(--green) 72%", manual_score_styles)
+        self.assertIn("var(--yellow) 72%", manual_score_styles)
+        self.assertIn("var(--red) 72%", manual_score_styles)
+        self.assertNotIn(".table-edit-select.status-edit.is-human,", manual_score_styles)
+        self.assertIn("styles.css?v=20260819-home-score-tone-1", HTML)
+
     def test_review_workspace_defaults_to_compact_takeaway_summary(self):
         workspace = DETAIL_HTML[
             DETAIL_HTML.index('id="detailReviewInfoStack"') :

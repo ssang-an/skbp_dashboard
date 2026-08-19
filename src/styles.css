@@ -3534,10 +3534,29 @@ td {
   color: var(--yellow);
 }
 
-.score.is-human {
-  border: 1px solid color-mix(in srgb, #b9616b 55%, var(--line));
-  background: color-mix(in srgb, #b9616b 9%, var(--surface));
-  color: #b9616b;
+.score.is-human,
+.table-edit-select.score-edit.is-human,
+.total-score-edit-circle.is-human {
+  border: 1px solid transparent;
+}
+
+/* Manual score changes keep the established score color; only the edge becomes stronger. */
+.score.is-human.high,
+.table-edit-select.score-edit.is-human.high,
+.total-score-edit-circle.is-human.high {
+  border-color: color-mix(in srgb, var(--green) 72%, var(--line));
+}
+
+.score.is-human.mid,
+.table-edit-select.score-edit.is-human.mid,
+.total-score-edit-circle.is-human.mid {
+  border-color: color-mix(in srgb, var(--yellow) 72%, var(--line));
+}
+
+.score.is-human.low,
+.table-edit-select.score-edit.is-human.low,
+.total-score-edit-circle.is-human.low {
+  border-color: color-mix(in srgb, var(--red) 72%, var(--line));
 }
 
 .table-edit-select {
@@ -3590,8 +3609,7 @@ td {
   color: #64748b;
 }
 
-.table-edit-select.status-edit.is-human,
-.table-edit-select.score-edit.is-human {
+.table-edit-select.status-edit.is-human {
   border-color: color-mix(in srgb, #b9616b 55%, var(--line));
   background-color: color-mix(in srgb, #b9616b 9%, var(--surface));
   color: #b9616b;
@@ -3881,12 +3899,6 @@ td {
   border-color: color-mix(in srgb, currentColor 38%, var(--line));
   box-shadow: 0 0 0 3px var(--focus-ring);
   outline: none;
-}
-
-.total-score-edit-circle.is-human {
-  border-color: color-mix(in srgb, #b9616b 55%, var(--line));
-  background: color-mix(in srgb, #b9616b 9%, var(--surface));
-  color: #b9616b;
 }
 
 .total-score-edit-circle.is-saving {
