@@ -1082,15 +1082,17 @@ function renderCollaborationPanel(record) {
     elements.detailTotalScore.textContent = `${formatScore(reviewScores.total)} / ${formatScore(reviewScores.max)}`;
   }
   if (elements.detailScoreSequence) {
+    const manualScoreOverrides = record?.meta?.human_review?.overrides?.scores || {};
     elements.detailScoreSequence.innerHTML = reviewScoreOrder
       .map(([criterionId], index) => {
         const score = reviewScores.scores[index];
         const tone = scoreChipTone(score);
         const label = scoringFirstWord[criterionId] || criterionId;
+        const isHuman = Object.prototype.hasOwnProperty.call(manualScoreOverrides, criterionId);
         return `
           <button
             type="button"
-            class="score-chip score-chip-link tone-${tone}"
+            class="score-chip score-chip-link tone-${tone}${isHuman ? ' is-human' : ''}"
             data-report-criterion="${escapeHtml(criterionId)}"
             title="${escapeHtml(scoringLabels[criterionId])}: ${escapeHtml(formatCriterionScore(score))} · GPT 원문 근거로 이동"
             aria-label="${escapeHtml(scoringLabels[criterionId])} ${escapeHtml(formatCriterionScore(score))}점, GPT 원문 근거로 이동"

@@ -11959,6 +11959,17 @@ html[data-theme="dark"] .triage-quick-panel {
   border-radius: 6px;
 }
 
+/* Mirror the dashboard's human-edited score treatment in Team Review Workspace. */
+.filter-score-panel .score-chip.is-human {
+  border-color: color-mix(in srgb, #b9616b 55%, var(--line));
+  background: color-mix(in srgb, #b9616b 9%, var(--surface));
+  color: #b9616b;
+}
+
+.filter-score-panel .score-chip.is-human .score-chip-value {
+  color: #b9616b;
+}
+
 .score-chip.tone-high {
   background: var(--fluent-green-soft);
 }
