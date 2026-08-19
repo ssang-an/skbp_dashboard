@@ -4735,9 +4735,15 @@ def dashboard_effective_score(record: dict[str, Any], criterion_id: str) -> int 
 
 
 def dashboard_effective_total_score(record: dict[str, Any]) -> int | float | None:
-    override = dashboard_human_overrides(record).get("total_score")
+    overrides = dashboard_human_overrides(record)
+    override = overrides.get("total_score")
     if not isinstance(override, bool) and isinstance(override, (int, float)) and 0 <= override <= 21:
         return override
+    score_overrides = overrides.get("scores") if isinstance(overrides.get("scores"), dict) else {}
+    has_criterion_override = any(criterion_id in score_overrides for criterion_id in CRITERION_IDS)
+    effective_scores = [dashboard_effective_score(record, criterion_id) for criterion_id in CRITERION_IDS]
+    if has_criterion_override and all(score is not None for score in effective_scores):
+        return sum(effective_scores)
     scoring = record.get("scoring") if isinstance(record.get("scoring"), dict) else {}
     score = scoring.get("total_score")
     return score if not isinstance(score, bool) and isinstance(score, (int, float)) else None

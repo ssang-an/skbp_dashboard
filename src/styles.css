@@ -12079,6 +12079,8 @@ html[data-theme="dark"] .triage-quick-panel {
 /* Keep the manual-score border visibly above the criterion score tone fills. */
 .filter-score-panel .score-chip.is-human {
   border: 2px solid #b54552;
+  outline: 1px solid color-mix(in srgb, #b54552 42%, transparent);
+  outline-offset: 1px;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, #b54552 36%, transparent), 0 0 0 1px color-mix(in srgb, #b54552 24%, transparent);
 }
 

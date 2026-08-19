@@ -1653,12 +1653,29 @@ function flattenRecord(record, index) {
     || totalScoreOverrideRaw === ''
     ? null
     : number(totalScoreOverrideRaw);
+  const hasCriterionOverride = Object.keys(humanReviewOverrides(record).scores || {}).some((criterionId) =>
+    ['target_relevance', 'competitive_landscape', 'moa_validity', 'platform_attractiveness', 'expansion_potential', 'data_maturity', 'marketability'].includes(criterionId)
+  );
+  const effectiveCriterionScores = [
+    targetScore,
+    competitiveScore,
+    moaScore,
+    platformScore,
+    expansionScore,
+    dataScore,
+    marketScore
+  ];
+  const derivedTotalScore = effectiveCriterionScores.every((score) => Number.isInteger(score) && score >= 0 && score <= 3)
+    ? effectiveCriterionScores.reduce((sum, score) => sum + score, 0)
+    : null;
   const storedTotalScore = number(scoring.total_score);
   const effectiveTotalScore = Number.isInteger(totalScoreOverride)
     && totalScoreOverride >= 0
     && totalScoreOverride <= 21
     ? totalScoreOverride
-    : storedTotalScore;
+    : hasCriterionOverride && derivedTotalScore !== null
+      ? derivedTotalScore
+      : storedTotalScore;
   const sourceReportEdit = latestSourceReportEdit(record);
 
   const computedHardFilter = computeHardFilter(record, criteria);

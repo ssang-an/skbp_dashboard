@@ -116,6 +116,17 @@ class AiAgentScoreOverrideTests(unittest.TestCase):
         self.assertEqual(updated["scoring"]["criteria"]["marketability"]["score"], 1)
         self.assertEqual(updated["meta"]["human_review"]["overrides"]["scores"]["marketability"], 3)
 
+    def test_manual_criterion_override_updates_effective_total_without_changing_gpt_scores(self):
+        record = full_scout_record()
+        record["meta"]["human_review"] = {
+            "overrides": {"scores": {"target_relevance": 2}},
+        }
+
+        self.assertEqual(main.dashboard_effective_score(record, "target_relevance"), 2)
+        self.assertEqual(main.dashboard_effective_total_score(record), 13)
+        self.assertEqual(record["scoring"]["criteria"]["target_relevance"]["score"], 3)
+        self.assertEqual(record["scoring"]["total_score"], 14)
+
     def test_rubric_refresh_clears_active_score_overrides_but_preserves_history(self):
         record = full_scout_record()
         result = main.build_ai_revision_update(

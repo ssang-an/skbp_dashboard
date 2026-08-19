@@ -977,9 +977,20 @@ function effectiveReviewScores(record) {
       : number(rawValue);
   });
   const totalOverride = reviewOverrides.total_score;
-  const total = totalOverride === null || totalOverride === undefined || totalOverride === ''
-    ? number(record?.scoring?.total_score)
+  const explicitTotal = totalOverride === null || totalOverride === undefined || totalOverride === ''
+    ? null
     : number(totalOverride);
+  const hasCriterionOverride = reviewScoreOrder.some(([criterionId]) =>
+    Object.prototype.hasOwnProperty.call(scoreOverrides, criterionId)
+  );
+  const derivedTotal = scores.every((score) => Number.isInteger(score) && score >= 0 && score <= 3)
+    ? scores.reduce((sum, score) => sum + score, 0)
+    : null;
+  const total = Number.isInteger(explicitTotal) && explicitTotal >= 0 && explicitTotal <= 21
+    ? explicitTotal
+    : hasCriterionOverride && derivedTotal !== null
+      ? derivedTotal
+      : number(record?.scoring?.total_score);
   return {
     scores,
     total,
@@ -1120,8 +1131,7 @@ function renderCollaborationPanel(record) {
         const score = reviewScores.scores[index];
         const tone = scoreChipTone(score);
         const label = scoringFirstWord[criterionId] || criterionId;
-        const isHuman = Object.prototype.hasOwnProperty.call(manualScoreOverrides, criterionId)
-          || hasManualReviewField(record, `scores.${criterionId}`);
+        const isHuman = Object.prototype.hasOwnProperty.call(manualScoreOverrides, criterionId);
         return `
           <button
             type="button"
