@@ -2388,7 +2388,9 @@ function fallbackCommonListItem(row) {
     country: row.country,
     main_indication: row.mainIndication,
     detailed_indication: row.indication,
-    development_stage: row.stage
+    development_stage: row.stage,
+    completed_at: row.completedAt || row.generatedAt || '',
+    generated_at: row.generatedAt || ''
   };
 }
 
@@ -2510,7 +2512,12 @@ function fallbackTabSummary(mode, filteredRows = null) {
   }
   const priority = fullRows
     .filter((row) => row.filter2 !== 'FAIL')
-    .sort((a, b) => (b.totalScore - a.totalScore) || (b.dataScore - a.dataScore) || (b.targetScore - a.targetScore))
+    .sort((a, b) => {
+      const scoreDifference = Number(b.totalScore ?? -1) - Number(a.totalScore ?? -1);
+      const bDate = Date.parse(b.completedAt || b.generatedAt || '') || 0;
+      const aDate = Date.parse(a.completedAt || a.generatedAt || '') || 0;
+      return scoreDifference || bDate - aDate || String(a.asset || '').localeCompare(String(b.asset || ''), 'en');
+    })
     .map((row) => ({
       ...fallbackCommonListItem(row),
       filter2: row.filter2,
@@ -3095,7 +3102,7 @@ function renderWorkflowPriorityList(summary) {
         const bDate = Date.parse(b.completed_at || b.generated_at || '') || 0;
         const aDate = Date.parse(a.completed_at || a.generated_at || '') || 0;
         const scoreDifference = Number(b.total_score ?? -1) - Number(a.total_score ?? -1);
-        return bDate - aDate || scoreDifference || String(a.asset || '').localeCompare(String(b.asset || ''), 'en');
+        return scoreDifference || bDate - aDate || String(a.asset || '').localeCompare(String(b.asset || ''), 'en');
       })
     : mode === 'focus'
       ? [...rows].sort((a, b) => {
@@ -8910,6 +8917,12 @@ function showStep0Panel(show) {
   }
 }
 
+function updateStep0HeaderCount() {
+  if (elements.dataStatus) {
+    elements.dataStatus.textContent = `총 ${state.step0Rows.length}건 로드됨`;
+  }
+}
+
 function activateStep0Panel() {
   elements.pipelineTableTabs?.forEach((tab) => {
     const isActive = tab.dataset.tableMode === 'step0';
@@ -8919,6 +8932,7 @@ function activateStep0Panel() {
   });
   showStep0Panel(true);
   renderStep0Guide();
+  updateStep0HeaderCount();
   loadStep0Progress();
 }
 
@@ -9032,6 +9046,7 @@ async function loadStep0Progress() {
       if (!pendingIds.has(id)) state.step0SelectedPendingIds.delete(id);
     });
     state.step0Loaded = true;
+    updateStep0HeaderCount();
     renderStep0StatStrip();
     populateStep0CompanyFilter();
     renderStep0ProgressTable();

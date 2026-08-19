@@ -6,17 +6,18 @@ import main
 
 
 class DashboardFilterScrollUxTests(unittest.TestCase):
-    def test_main_indication_uses_the_standard_single_select_control(self):
+    def test_main_indication_uses_the_standard_multi_select_control(self):
         markup = (main.ROOT / "index.html").read_text(encoding="utf-8")
-        self.assertIn('<select id="indicationFilter" aria-label="Main indication">', markup)
-        self.assertNotIn('<select id="indicationFilter" multiple', markup)
+        self.assertIn('<div id="indicationFilter" class="filter-multiselect" data-filter-key="indication">', markup)
+        self.assertIn('id="indicationFilterMenu"', markup)
+        self.assertIn('aria-multiselectable="true"', markup)
 
-    def test_indication_filter_keeps_all_option_and_filters_one_selected_value(self):
+    def test_indication_filter_keeps_all_option_and_filters_selected_values(self):
         source = (main.ROOT / "src" / "app.js").read_text(encoding="utf-8")
-        self.assertIn("indication: 'all'", source)
-        self.assertIn("'<option value=\"all\">전체</option>'", source)
-        self.assertIn("state.indication = event.target.value", source)
-        self.assertIn("row.indicationList.includes(state.indication)", source)
+        self.assertIn("indication: []", source)
+        self.assertIn('data-multi-filter-value="all"', source)
+        self.assertIn("selectedFilterValues(state.indication).some", source)
+        self.assertIn("function renderMultiFilter", source)
 
     def test_priority_list_is_the_only_summary_body_with_vertical_scrolling(self):
         source = (main.ROOT / "src" / "styles.css").read_text(encoding="utf-8")

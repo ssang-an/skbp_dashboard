@@ -1543,6 +1543,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         render = function_body(JS, "renderWorkflowPriorityList")
         self.assertIn("Number(b.total_score ?? -1) - Number(a.total_score ?? -1)", render)
         self.assertIn("Date.parse(b.completed_at || b.generated_at || '')", render)
+        self.assertIn("return scoreDifference || bDate - aDate", render)
+        self.assertNotIn("return bDate - aDate || scoreDifference", render)
         self.assertIn("visibleRows.slice(0, 10)", render)
         self.assertNotIn("data-priority-more", render)
         self.assertNotIn("priorityPipelineModal", HTML)
