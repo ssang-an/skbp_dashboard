@@ -386,6 +386,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("▲ +${count}", render)
         self.assertIn(".step0-stat-recent", CSS)
         self.assertIn(".step0-recent-upload-note", CSS)
+        self.assertIn('class="step0-recent-upload-legend"', HTML)
+        self.assertIn(".step0-recent-upload-legend", CSS)
 
     def test_summary_cards_share_geometry_without_internal_scrollbars(self):
         block = CSS[CSS.index("/* Precision-align Summary cards"):CSS.index(".pass-rate-chart .donut-center small")]

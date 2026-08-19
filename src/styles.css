@@ -18561,6 +18561,12 @@ body.report-reupload-open {
   white-space: nowrap;
 }
 
+.step0-recent-upload-legend {
+  color: #c2414d;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
 .step0-selected-count {
   color: var(--muted);
   font-size: 13px;
