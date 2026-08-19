@@ -19215,10 +19215,10 @@ body.report-reupload-open {
   justify-content: center;
   gap: 5px;
   padding: 4px 9px 4px 5px;
-  border: 1px solid color-mix(in srgb, #526b82 30%, var(--line));
+  border: 1px solid color-mix(in srgb, #7794a7 28%, var(--line));
   border-radius: 999px;
-  background: color-mix(in srgb, #526b82 7%, var(--surface));
-  color: #3f586d;
+  background: color-mix(in srgb, #8ba7b8 8%, var(--surface));
+  color: #668297;
   font-size: 10px;
   font-weight: 900;
   white-space: nowrap;
@@ -19240,8 +19240,8 @@ body.report-reupload-open {
   height: 18px;
   place-items: center;
   border-radius: 999px;
-  background: color-mix(in srgb, #526b82 15%, var(--surface-soft));
-  color: #3f586d;
+  background: color-mix(in srgb, #8ba7b8 18%, var(--surface-soft));
+  color: #668297;
   font-size: 8px;
   font-weight: 950;
   letter-spacing: 0.02em;
@@ -19249,9 +19249,9 @@ body.report-reupload-open {
 
 #step0CopyInstructionsButton.step0-copy-instructions-button:hover:not(:disabled),
 #step0CopyInstructionsButton.step0-copy-instructions-button:focus-visible:not(:disabled) {
-  border-color: color-mix(in srgb, #526b82 52%, var(--line));
-  background: color-mix(in srgb, #526b82 12%, var(--surface));
-  color: #2f485d;
+  border-color: color-mix(in srgb, #668297 48%, var(--line));
+  background: color-mix(in srgb, #8ba7b8 15%, var(--surface));
+  color: #527287;
 }
 
 .step0-status-filter-label {
