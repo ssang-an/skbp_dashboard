@@ -375,6 +375,18 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         for removed_id in ("resultChart", "themeChart", "countryChart", "priorityList", "dueDateList"):
             self.assertNotIn(f'id="{removed_id}"', HTML)
 
+    def test_step0_progress_summary_shows_recent_fifteen_day_upload_increases(self):
+        self.assertIn('id="step0RecentUploadNote"', HTML)
+        for element_id in ("step0RecentPending", "step0RecentFastTriage", "step0RecentFullScout", "step0RecentShortlisted"):
+            self.assertIn(f'id="{element_id}"', HTML)
+        render = function_body(JS, "renderStep0StatStrip")
+        load = function_body(JS, "loadStep0Progress")
+        self.assertIn("state.step0RecentStats = data.recent_15_days", load)
+        self.assertIn("최근 15일 신규 업로드", render)
+        self.assertIn("▲ +${count}", render)
+        self.assertIn(".step0-stat-recent", CSS)
+        self.assertIn(".step0-recent-upload-note", CSS)
+
     def test_summary_cards_share_geometry_without_internal_scrollbars(self):
         block = CSS[CSS.index("/* Precision-align Summary cards"):CSS.index(".pass-rate-chart .donut-center small")]
         self.assertRegex(block, r"\.visual-grid\.workflow-summary-grid > \.panel\s*\{[^}]*grid-template-rows: 64px minmax\(0, 1fr\);[^}]*height: 332px;")

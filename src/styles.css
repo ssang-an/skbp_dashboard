@@ -18540,6 +18540,27 @@ body.report-reupload-open {
   font-variant-numeric: tabular-nums;
 }
 
+.step0-stat-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.step0-stat-recent {
+  color: #c2414d;
+  font-size: 12px;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+.step0-recent-upload-note {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .step0-selected-count {
   color: var(--muted);
   font-size: 13px;

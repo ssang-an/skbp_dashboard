@@ -24,6 +24,7 @@
         "storage_profile": { "const": "dashboard_hybrid_v1" },
         "review_type": { "enum": ["fast_triage", "full_scout"] },
         "generated_at": { "type": "string" },
+        "dashboard_uploaded_at": { "type": "string" },
         "output_filename_base": { "type": "string", "minLength": 1 },
         "schema_version": { "type": "string" },
         "instruction_version": { "type": "string" },

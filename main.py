@@ -3915,6 +3915,7 @@ def preserve_dashboard_meta(incoming: dict[str, Any], existing: dict[str, Any]) 
     incoming_meta = incoming.setdefault("meta", {})
     existing_meta = existing.get("meta") or {}
     for key in (
+        "dashboard_uploaded_at",
         "focus_management",
         "attachments",
         "collaboration",
@@ -4687,6 +4688,7 @@ def dashboard_record_completed_at(record: dict[str, Any]) -> str:
     meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
     source_report = record.get("source_report") if isinstance(record.get("source_report"), dict) else {}
     return non_empty_text(
+        meta.get("dashboard_uploaded_at"),
         meta.get("generated_at"),
         source_report.get("generated_at"),
         source_report.get("report_date"),
@@ -7401,6 +7403,18 @@ def get_candidate_queue_progress() -> dict[str, Any]:
 
     rows: list[dict[str, Any]] = []
     stats = {"pending": 0, "fast_triage": 0, "full_scout": 0, "shortlisted": 0}
+    recent_15_days = {"pending": 0, "fast_triage": 0, "full_scout": 0, "shortlisted": 0}
+    now = datetime.now(timezone.utc)
+    recent_cutoff = now - timedelta(days=15)
+
+    def is_recent_upload(value: Any) -> bool:
+        timestamp = dashboard_parse_datetime(value)
+        return timestamp is not None and recent_cutoff <= timestamp <= now
+
+    def record_upload_timestamp(record: dict[str, Any]) -> str:
+        meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+        return non_empty_text(meta.get("dashboard_uploaded_at"), dashboard_record_completed_at(record))
+
     matched_queue_ids: set[str] = set()
 
     for group in groups:
@@ -7445,10 +7459,17 @@ def get_candidate_queue_progress() -> dict[str, Any]:
         )
         if fast_record is not None:
             stats["fast_triage"] += 1
+            if is_recent_upload(record_upload_timestamp(fast_record)):
+                recent_15_days["fast_triage"] += 1
         if full_record is not None:
             stats["full_scout"] += 1
+            if is_recent_upload(record_upload_timestamp(full_record)):
+                recent_15_days["full_scout"] += 1
         if shortlisted_record is not None:
             stats["shortlisted"] += 1
+            focus = (shortlisted_record.get("meta") or {}).get("focus_management") or {}
+            if is_recent_upload(focus.get("added_at")):
+                recent_15_days["shortlisted"] += 1
 
     for entry in queue:
         entry_id = entry.get("id")
@@ -7466,8 +7487,10 @@ def get_candidate_queue_progress() -> dict[str, Any]:
             }
         )
         stats["pending"] += 1
+        if is_recent_upload(entry.get("added_at")):
+            recent_15_days["pending"] += 1
 
-    return {"ok": True, "stats": stats, "rows": rows}
+    return {"ok": True, "stats": stats, "recent_15_days": recent_15_days, "rows": rows}
 
 
 @app.delete("/api/candidate-queue/{queue_id}")
@@ -9957,6 +9980,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
     actor_ip = get_client_ip(request)
     inserted = 0
     updated = 0
+    uploaded_at = datetime.now(timezone.utc).isoformat()
 
     for record in incoming:
         key = record_key(record)
@@ -10003,6 +10027,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
             records[index_by_key[key]] = record
             updated += 1
         else:
+            record.setdefault("meta", {}).setdefault("dashboard_uploaded_at", uploaded_at)
             focus = (record.get("meta") or {}).get("focus_management")
             if isinstance(focus, dict) and focus.get("is_tracked") is True:
                 apply_auto_detected_evidence(focus, record)

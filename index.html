@@ -114,23 +114,24 @@
         <section class="panel step0-stat-panel" aria-label="진척 현황 요약">
           <div class="panel-header">
             <h2>진척 현황 요약</h2>
+            <span id="step0RecentUploadNote" class="step0-recent-upload-note" title="최근 15일 안에 각 workflow에 새로 등록된 pipeline 수입니다. 기존 레코드는 저장된 생성일을 기준으로 계산합니다.">최근 15일 신규 업로드</span>
           </div>
           <div class="step0-stat-strip">
             <div class="step0-stat" data-stat="pending">
               <span class="step0-stat-label">조사 대기</span>
-              <strong id="step0StatPending">0</strong>
+              <span class="step0-stat-value"><strong id="step0StatPending">0</strong><em id="step0RecentPending" class="step0-stat-recent" hidden>▲ +0</em></span>
             </div>
             <div class="step0-stat" data-stat="fast_triage">
               <span class="step0-stat-label">Fast Triage</span>
-              <strong id="step0StatFastTriage">0</strong>
+              <span class="step0-stat-value"><strong id="step0StatFastTriage">0</strong><em id="step0RecentFastTriage" class="step0-stat-recent" hidden>▲ +0</em></span>
             </div>
             <div class="step0-stat" data-stat="full_scout">
               <span class="step0-stat-label">Full Scout</span>
-              <strong id="step0StatFullScout">0</strong>
+              <span class="step0-stat-value"><strong id="step0StatFullScout">0</strong><em id="step0RecentFullScout" class="step0-stat-recent" hidden>▲ +0</em></span>
             </div>
             <div class="step0-stat" data-stat="shortlisted">
               <span class="step0-stat-label">Shortlisting</span>
-              <strong id="step0StatShortlisted">0</strong>
+              <span class="step0-stat-value"><strong id="step0StatShortlisted">0</strong><em id="step0RecentShortlisted" class="step0-stat-recent" hidden>▲ +0</em></span>
             </div>
           </div>
         </section>

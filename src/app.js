@@ -292,6 +292,7 @@ const state = {
   step0SelectedPendingIds: new Set(),
   step0Rows: [],
   step0Stats: { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 },
+  step0RecentStats: { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 },
   step0Loaded: false,
   step0Query: '',
   step0CompanyFilterValue: 'all',
@@ -448,6 +449,10 @@ const elements = {
   step0StatFastTriage: document.querySelector('#step0StatFastTriage'),
   step0StatFullScout: document.querySelector('#step0StatFullScout'),
   step0StatShortlisted: document.querySelector('#step0StatShortlisted'),
+  step0RecentPending: document.querySelector('#step0RecentPending'),
+  step0RecentFastTriage: document.querySelector('#step0RecentFastTriage'),
+  step0RecentFullScout: document.querySelector('#step0RecentFullScout'),
+  step0RecentShortlisted: document.querySelector('#step0RecentShortlisted'),
   step0SearchInput: document.querySelector('#step0SearchInput'),
   step0CompanyFilter: document.querySelector('#step0CompanyFilter'),
   step0StatusToggleButtons: document.querySelectorAll('.step0-status-toggle'),
@@ -8945,6 +8950,7 @@ async function loadStep0Progress() {
     const data = await response.json();
     state.step0Rows = Array.isArray(data.rows) ? data.rows : [];
     state.step0Stats = data.stats || { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 };
+    state.step0RecentStats = data.recent_15_days || { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 };
     const pendingIds = new Set(
       state.step0Rows.filter((row) => row.pending?.queue_id).map((row) => row.pending.queue_id)
     );
@@ -8969,6 +8975,20 @@ function renderStep0StatStrip() {
   if (elements.step0StatFastTriage) elements.step0StatFastTriage.textContent = String(state.step0Stats.fast_triage ?? 0);
   if (elements.step0StatFullScout) elements.step0StatFullScout.textContent = String(state.step0Stats.full_scout ?? 0);
   if (elements.step0StatShortlisted) elements.step0StatShortlisted.textContent = String(state.step0Stats.shortlisted ?? 0);
+  const recent = state.step0RecentStats || {};
+  const recentBadges = [
+    ['pending', elements.step0RecentPending],
+    ['fast_triage', elements.step0RecentFastTriage],
+    ['full_scout', elements.step0RecentFullScout],
+    ['shortlisted', elements.step0RecentShortlisted]
+  ];
+  recentBadges.forEach(([key, badge]) => {
+    if (!badge) return;
+    const count = Number(recent[key] || 0);
+    badge.hidden = count <= 0;
+    badge.textContent = `▲ +${count}`;
+    badge.setAttribute('aria-label', `최근 15일 신규 업로드 ${count}건`);
+  });
 }
 
 function populateStep0CompanyFilter() {
