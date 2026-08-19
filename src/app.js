@@ -13,6 +13,7 @@ const DASHBOARD_SUMMARY_URL = '/api/dashboard-summary';
 const CATEGORY_SYNONYMS_URL = '/api/category-synonyms';
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.pageSize.v1';
+const STEP0_MAX_SELECTED_CANDIDATES = 20;
 const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
 const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
 const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v3';
@@ -9024,7 +9025,7 @@ const STEP0_GUIDE_STEPS = [
   },
   {
     title: '조사 대기 항목 선택 후 지침 복사',
-    body: '표에서 조사가 필요한 항목을 최대 10개까지 선택한 뒤 상단 지침 복사 버튼을 누르면 Fast Triage GPT 지침 1에 해당 후보 목록이 포함되어 복사됩니다.'
+    body: '표에서 조사가 필요한 항목을 최대 20개까지 선택한 뒤 상단 지침 복사 버튼을 누르면 Fast Triage GPT 지침 1에 해당 후보 목록이 포함되어 복사됩니다.'
   }
 ];
 
@@ -9357,7 +9358,7 @@ function updateStep0SelectAllState() {
 
 function renderStep0SelectedCount() {
   if (elements.step0SelectedCount) {
-    elements.step0SelectedCount.textContent = `${state.step0SelectedPendingIds.size}/10 선택됨`;
+    elements.step0SelectedCount.textContent = `${state.step0SelectedPendingIds.size}/${STEP0_MAX_SELECTED_CANDIDATES} 선택됨`;
   }
   updateStep0SelectAllState();
 }
@@ -9449,9 +9450,9 @@ elements.step0SelectAllRows?.addEventListener('change', (event) => {
   const visibleIds = state.step0VisiblePendingIds || [];
   if (event.target.checked) {
     const toAdd = visibleIds.filter((id) => !state.step0SelectedPendingIds.has(id));
-    const room = Math.max(0, 10 - state.step0SelectedPendingIds.size);
+    const room = Math.max(0, STEP0_MAX_SELECTED_CANDIDATES - state.step0SelectedPendingIds.size);
     toAdd.slice(0, room).forEach((id) => state.step0SelectedPendingIds.add(id));
-    if (toAdd.length > room) showStep0Message('최대 10개까지 선택할 수 있습니다.', 'warning');
+    if (toAdd.length > room) showStep0Message(`최대 ${STEP0_MAX_SELECTED_CANDIDATES}개까지 선택할 수 있습니다.`, 'warning');
   } else {
     visibleIds.forEach((id) => state.step0SelectedPendingIds.delete(id));
   }
@@ -9464,9 +9465,9 @@ elements.step0ProgressTableBody?.addEventListener('change', (event) => {
   const queueId = checkbox.dataset.queueId;
   if (!queueId) return;
   if (checkbox.checked) {
-    if (state.step0SelectedPendingIds.size >= 10) {
+    if (state.step0SelectedPendingIds.size >= STEP0_MAX_SELECTED_CANDIDATES) {
       checkbox.checked = false;
-      showStep0Message('최대 10개까지 선택할 수 있습니다.', 'warning');
+      showStep0Message(`최대 ${STEP0_MAX_SELECTED_CANDIDATES}개까지 선택할 수 있습니다.`, 'warning');
       return;
     }
     state.step0SelectedPendingIds.add(queueId);

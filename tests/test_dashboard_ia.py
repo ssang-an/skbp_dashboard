@@ -472,6 +472,9 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("#step0Panel .controls", CSS)
         self.assertIn(".step0-progress-table th.step0-asset-header", CSS)
         self.assertIn("#step0CopyInstructionsButton.step0-copy-instructions-button", CSS)
+        self.assertIn("const STEP0_MAX_SELECTED_CANDIDATES = 20", JS)
+        self.assertIn("/${STEP0_MAX_SELECTED_CANDIDATES} 선택됨", JS)
+        self.assertIn('0/20 선택됨', HTML)
 
     def test_summary_cards_share_geometry_without_internal_scrollbars(self):
         block = CSS[CSS.index("/* Precision-align Summary cards"):CSS.index(".pass-rate-chart .donut-center small")]
