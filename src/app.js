@@ -1385,7 +1385,7 @@ function computeHardFilter(record, criteria) {
     || hasScopedFullScoutReviewUncertainty(notes);
 
   if (Number.isFinite(total) && total <= 8) reasons.push(`Total score ${total} <= 8`);
-  if (Number.isFinite(targetScore) && targetScore <= 1) reasons.push(`Target Relevance ${targetScore} <= 1`);
+  if (Number.isFinite(targetScore) && targetScore <= 1) reasons.push(`Target Area Relevance ${targetScore} <= 1`);
   if (failBlocker) reasons.push('Hard blocker keyword detected');
 
   if (reasons.length) {
@@ -4008,7 +4008,7 @@ function renderTableLegacy() {
               <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${stageEditSelect(row)}</td>
               <td class="filter-cell"><span class="${filter1Class}">${escapeHtml(row.filter1)}</span></td>
               <td class="filter-cell"><span class="${filter2Class}">${escapeHtml(row.filter2)}</span></td>
-              <td class="score-cell">${scoreBadge(row.targetScore, 3, scoreTooltip('Target Relevance', row.criteria.target, 3))}</td>
+              <td class="score-cell">${scoreBadge(row.targetScore, 3, scoreTooltip('Target Area Relevance', row.criteria.target, 3))}</td>
               <td class="score-cell">${scoreBadge(row.moaScore, 3, scoreTooltip('MOA Validity', row.criteria.moa, 3))}</td>
               <td class="score-cell">${scoreBadge(row.dataScore, 3, scoreTooltip('Data Maturity', row.criteria.data, 3))}</td>
               <td class="score-cell">${fullReviewScoreBadge(row, 'competitiveScore', 'competitive', 'Competitive Landscape')}</td>
@@ -4494,8 +4494,8 @@ function renderTable() {
               <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${stageEditSelect(row)}</td>
               <td class="filter-cell">${statusEditSelect(row, filterKey)}</td>
               <td class="score-cell">${mode === 'full'
-                ? scoreEditSelect(row, 'targetScore', 'target_relevance', 'Target Relevance')
-                : scoreBadge(row.targetScore, 3, scoreTooltip('Target Relevance', row.criteria.target, 3))}</td>
+                ? scoreEditSelect(row, 'targetScore', 'target_relevance', 'Target Area Relevance')
+                : scoreBadge(row.targetScore, 3, scoreTooltip('Target Area Relevance', row.criteria.target, 3))}</td>
               <td class="score-cell">${mode === 'full'
                 ? scoreEditSelect(row, 'moaScore', 'moa_validity', 'MOA Validity')
                 : scoreBadge(row.moaScore, 3, scoreTooltip('MOA Validity', row.criteria.moa, 3))}</td>
@@ -4702,20 +4702,20 @@ function exportPipelineTable() {
     'In-vitro',
     'ADMET Completed',
     'Action Date',
-    'Target Relevance Score',
-    'Target Relevance Evidence Type',
-    'Target Relevance Evidence Type Reason',
-    'Target Relevance Rule',
-    'Target Relevance Rule Label',
-    'Target Relevance Applied Criteria',
-    'Target Relevance Reason',
-    'Target Relevance Why Not Higher',
-    'Target Relevance Decision Summary',
-    'Target Relevance Key Factors',
-    'Target Relevance Evidence Summary',
-    'Target Relevance Missing Evidence',
-    'Target Relevance Confidence',
-    'Target Relevance Sources',
+    'Target Area Relevance Score',
+    'Target Area Relevance Evidence Type',
+    'Target Area Relevance Evidence Type Reason',
+    'Target Area Relevance Rule',
+    'Target Area Relevance Rule Label',
+    'Target Area Relevance Applied Criteria',
+    'Target Area Relevance Reason',
+    'Target Area Relevance Why Not Higher',
+    'Target Area Relevance Decision Summary',
+    'Target Area Relevance Key Factors',
+    'Target Area Relevance Evidence Summary',
+    'Target Area Relevance Missing Evidence',
+    'Target Area Relevance Confidence',
+    'Target Area Relevance Sources',
     'Competitive Score',
     'Competitive Evidence Type',
     'Competitive Evidence Type Reason',

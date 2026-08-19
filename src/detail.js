@@ -166,7 +166,7 @@ if (elements.detailBackLink && viewTab) {
 }
 
 const scoringLabels = {
-  target_relevance: 'Target Relevance',
+  target_relevance: 'Target Area Relevance',
   competitive_landscape: 'Competitive Landscape',
   moa_validity: 'MoA Validity',
   platform_attractiveness: 'Platform Attractiveness',
@@ -455,7 +455,7 @@ function computeHardFilter(record) {
   const reviewUncertainty = hasScopedFullScoutReviewUncertainty(notes);
 
   if (Number.isFinite(total) && total <= 8) reasons.push(`Total score ${total} <= 8`);
-  if (Number.isFinite(targetScore) && targetScore <= 1) reasons.push(`Target Relevance ${targetScore} <= 1`);
+  if (Number.isFinite(targetScore) && targetScore <= 1) reasons.push(`Target Area Relevance ${targetScore} <= 1`);
   if (failBlocker) reasons.push('Hard blocker keyword detected');
 
   if (reasons.length) {

@@ -29,7 +29,7 @@ const scoreDefinitions = [
   {
     key: 'target_relevance',
     shortLabel: 'TR',
-    label: 'Target Relevance',
+    label: 'Target Area Relevance',
     description: 'SKBP 우선 관심 적응증 및 R&D Theme/Cluster와의 적합성'
   },
   {

@@ -193,7 +193,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("· 파이차트", JS)
 
     def test_tab1_and_tab2_tr_groups_have_subtle_frames(self):
-        self.assertEqual(HTML.count('aria-label="Target Relevance priority indications and themes"'), 2)
+        self.assertEqual(HTML.count('aria-label="Target Area Relevance priority indications and themes"'), 2)
         tr_group_styles = CSS[CSS.index("Gently frame the three TR indication/theme groups") :]
         self.assertIn(".target-parameter-card > .parameter-evidence-list > li", tr_group_styles)
         self.assertIn("border: 1px solid color-mix", tr_group_styles)
@@ -642,7 +642,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('class="parameter-card-wide marketability-parameter-card parameter-horizontal-card parameter-breakdown-card full-parameter-card"', section)
 
         parameters = (
-            ('TR', 'Target Relevance'),
+            ('TR', 'Target Area Relevance'),
             ('COMP', 'Competitive Landscape'),
             ('MoA', 'MoA Validity'),
             ('PLATFORM', 'Platform Attractiveness'),
@@ -719,7 +719,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         scoring = HTML[start:end]
         self.assertEqual(scoring.count('class="criteria-table-criterion"'), 7)
         for abbreviation, label in (
-            ("TR", "Target Relevance"),
+            ("TR", "Target Area Relevance"),
             ("COMP", "Competitive Landscape"),
             ("MoA", "MoA Validity"),
             ("PLATFORM", "Platform Attractiveness"),
@@ -832,7 +832,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn('class="criteria-score-number"', triage)
         for score in ("0점", "1점", "2점", "3점"):
             self.assertIn(f'<th>{score}</th>', triage)
-        for criterion in ("Target Relevance", "MoA Validity", "Data Maturity"):
+        for criterion in ("Target Area Relevance", "MoA Validity", "Data Maturity"):
             self.assertIn(f'{criterion}</span>', triage)
         self.assertEqual(triage.count('criteria-parameter-title-row'), 3)
         self.assertEqual(evidence.count('<dt><span class="criteria-guide-icon"'), 3)
@@ -932,7 +932,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         styles = CSS[CSS.index("/* Tab 1 Parameter titles mirror") :]
 
         self.assertEqual(parameter.count('class="criteria-parameter-heading criteria-parameter-title-row"'), 3)
-        for short_label, title in (("TR", "Target Relevance"), ("MoA", "MoA Validity"), ("Data", "Data Maturity")):
+        for short_label, title in (("TR", "Target Area Relevance"), ("MoA", "MoA Validity"), ("Data", "Data Maturity")):
             self.assertIn(f'<h3><b>{short_label}</b><span>{title}</span></h3>', parameter)
         self.assertNotIn("1. Target Relevance", parameter)
         self.assertNotIn("2. MoA Validity", parameter)
@@ -967,7 +967,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("criteria-full-scoring-helpers", full)
         self.assertEqual(full.count('class="criteria-table-criterion"'), 7)
         for abbreviation, criterion in (
-            ("TR", "Target Relevance"),
+            ("TR", "Target Area Relevance"),
             ("COMP", "Competitive Landscape"),
             ("MoA", "MoA Validity"),
             ("PLATFORM", "Platform Attractiveness"),
@@ -1035,9 +1035,9 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("function countryFlagSvg(country)", JS)
         self.assertIn("function countryTableCode(country)", JS)
         self.assertIn("record_asset_identities", JS)
-        self.assertIn("'Target Relevance Score'", export_table)
+        self.assertIn("'Target Area Relevance Score'", export_table)
         self.assertIn("'Market Score'", export_table)
-        self.assertIn("'Target Relevance Evidence Type'", export_table)
+        self.assertIn("'Target Area Relevance Evidence Type'", export_table)
         self.assertIn("'Market Why Not Higher'", export_table)
         self.assertIn("'Data Sources'", export_table)
         self.assertIn(".workflow-summary-grid.visual-grid { grid-template-columns: repeat(3", CSS)
@@ -1134,7 +1134,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
 
     def test_scoring_tables_keep_only_criterion_titles_in_first_column(self):
         title_with_description = re.compile(
-            r"<th><span>(Target Relevance|MoA Validity|Data Maturity)</span><small>",
+            r"<th><span>(Target Area Relevance|MoA Validity|Data Maturity)</span><small>",
         )
         for source in (HTML, DETAIL_HTML, TRIAGE_DETAIL_HTML):
             self.assertNotRegex(source, title_with_description)
@@ -1621,6 +1621,13 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
                 ("Total Score ≤ 8", "또는 Target Relevance ≤ 1", "또는 Asset identity not verified", "또는 Discontinued / Terminated / Withdrawn / Inactive / Clearly failed"),
             ),
         }
+        expected = {
+            status: (
+                summary,
+                tuple(bullet.replace("Target Relevance", "Target Area Relevance") for bullet in bullets),
+            )
+            for status, (summary, bullets) in expected.items()
+        }
         for status, (summary, bullets) in expected.items():
             card_start = status_section.index(f'data-full-status="{status}"')
             next_card = status_section.find('data-full-status="', card_start + 1)
@@ -1660,7 +1667,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             "<span>1.5</span>",
             "Evidence Type",
         ):
-            self.assertIn(required, guide)
+            self.assertIn(required.replace("Target Relevance", "Target Area Relevance"), guide)
 
         for removed in (
             "Total Score ≥ 14",
@@ -1676,7 +1683,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             "Calculation · External Forecast · Both · Insufficient Evidence",
             "Public Web · User Uploaded File · User Text",
         ):
-            self.assertNotIn(removed, guide)
+            self.assertNotIn(removed.replace("Target Relevance", "Target Area Relevance"), guide)
 
     def test_full_scout_status_cards_align_summaries_and_bullets_like_triage(self):
         styles = CSS[CSS.rindex("Full Scout Final Status mirrors the Fast Triage card rhythm and alignment") :]
