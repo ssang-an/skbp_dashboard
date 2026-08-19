@@ -1021,7 +1021,7 @@ const partnerMaterialLabels = {
   cdp: 'CDP',
   ncdp: 'NCDP',
   admet: 'ADMET',
-  dd_report: 'DD Report'
+  dd_report: 'DD'
 };
 
 const partnerMaterialFilenameSuffixes = {
@@ -1051,7 +1051,7 @@ function partnerMaterialCategoriesForFilename(filename) {
     ['admet', /(^|[^a-z0-9])admet([^a-z0-9]|$)/],
     ['ncdp', /(^|[^a-z0-9])ncdp([^a-z0-9]|$)/],
     ['cdp', /(^|[^a-z0-9])cdp([^a-z0-9]|$)/],
-    ['dd_report', /(^|[^a-z0-9])dd[ _-]?report([^a-z0-9]|$)/],
+    ['dd_report', /(^|[^a-z0-9])dd(?:[ _-]?report)?([^a-z0-9]|$)/],
     ['ir', /(^|[^a-z0-9])ir([^a-z0-9]|$)/]
   ].filter(([, pattern]) => pattern.test(name)).map(([category]) => category);
 }
@@ -1061,7 +1061,8 @@ function partnerMaterialCategoryForFilename(filename) {
 }
 
 function fileWithPartnerMaterialSuffix(file, category) {
-  if (!file || partnerMaterialCategoryForFilename(file.name) || !partnerMaterialFilenameSuffixes[category]) return file;
+  if (!file || !partnerMaterialFilenameSuffixes[category]) return file;
+  if (partnerMaterialCategoriesForFilename(file.name).includes(category)) return file;
   const name = String(file.name || 'attachment');
   const extensionIndex = name.lastIndexOf('.');
   const stem = extensionIndex > 0 ? name.slice(0, extensionIndex) : name;

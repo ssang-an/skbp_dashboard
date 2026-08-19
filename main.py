@@ -3430,7 +3430,7 @@ def partner_material_category(filename: Any) -> str | None:
         return "ncdp"
     if re.search(r"(?:^|[^a-z])cdp(?:[^a-z]|$)", text):
         return "cdp"
-    if re.search(r"(?:^|[^a-z0-9])dd[ _-]?report(?:[^a-z0-9]|$)", text):
+    if re.search(r"(?:^|[^a-z0-9])dd(?:[ _-]?report)?(?:[^a-z0-9]|$)", text):
         return "dd_report"
     if re.search(r"(?:^|[^a-z0-9])ir(?:[^a-z0-9]|$)", text):
         return "ir"
