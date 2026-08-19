@@ -3811,16 +3811,15 @@ td {
 }
 
 .triage-full-copy-button {
-  width: 30px;
-  min-width: 30px;
-  height: 30px;
-  min-height: 30px;
-  border: 0;
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  min-height: 32px;
+  border: 1px solid var(--line);
   border-radius: 50%;
   padding: 0;
-  background: var(--surface-soft);
+  background: var(--surface);
   color: var(--muted);
-  box-shadow: none;
 }
 
 .triage-full-copy-button .triage-full-copy-icon {
@@ -3836,11 +3835,10 @@ td {
 
 .triage-full-copy-button:hover,
 .triage-full-copy-button:focus-visible {
-  border: 0;
-  background: var(--accent-soft);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
   color: var(--accent);
   outline: none;
-  box-shadow: none;
 }
 
 .triage-full-copy-button:hover .triage-full-copy-icon,
