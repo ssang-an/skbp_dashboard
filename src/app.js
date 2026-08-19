@@ -6070,6 +6070,20 @@ function isInputObject(value) {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
+function normalizeGptOriginalReport(value) {
+  const source = String(value || '');
+  const citationMatches = source.match(/[ \t]*:contentReference\[[^\]\r\n]*\]\{[^}\r\n]*\}|[ \t]*\[?oaicite:[^\]\s}]+\]?/gi) || [];
+  const htmlBreakMatches = source.match(/(?:<|&lt;)\s*br\s*\/?\s*(?:>|&gt;)/gi) || [];
+  return {
+    text: source
+      .replace(/[ \t]*:contentReference\[[^\]\r\n]*\]\{[^}\r\n]*\}/gi, '')
+      .replace(/[ \t]*\[?oaicite:[^\]\s}]+\]?/gi, '')
+      .replace(/(?:<|&lt;)\s*br\s*\/?\s*(?:>|&gt;)/gi, '\n'),
+    citationCount: citationMatches.length,
+    htmlBreakCount: htmlBreakMatches.length
+  };
+}
+
 function addInputIssue(issues, level, path, message) {
   issues.push({ level, path, message });
 }
@@ -6171,7 +6185,8 @@ function splitCombinedGptResponse(value) {
       );
     }
     const separator = selectedSeparator || separators[separators.length - 1];
-    const rawMarkdown = primarySource.slice(0, separator.index).trim();
+    const rawMarkdownResult = normalizeGptOriginalReport(primarySource.slice(0, separator.index));
+    const rawMarkdown = rawMarkdownResult.text.trim();
     const jsonText = parsedSuffix?.text || primarySource.slice(separator.index + separator[0].length).trim();
     const payload = parsedSuffix?.payload ?? null;
     if (!jsonText) {
@@ -6195,6 +6210,17 @@ function splitCombinedGptResponse(value) {
     }
     if (!rawMarkdown || !/^#{1,6}\s+/m.test(rawMarkdown)) {
       addInputIssue(errors, 'error', 'Markdown', '구분선 위에서 제목이 포함된 Markdown 원문을 찾지 못했습니다.');
+    }
+    if (rawMarkdownResult.citationCount || rawMarkdownResult.htmlBreakCount) {
+      const cleanedParts = [];
+      if (rawMarkdownResult.citationCount) cleanedParts.push(`내부 인용 표기 ${rawMarkdownResult.citationCount}개 제거`);
+      if (rawMarkdownResult.htmlBreakCount) cleanedParts.push(`HTML 줄바꿈 ${rawMarkdownResult.htmlBreakCount}개를 Markdown 줄바꿈으로 변환`);
+      addInputIssue(
+        warnings,
+        'warning',
+        '원문 가독성 정리',
+        `${cleanedParts.join(', ')}했습니다. 실제 URL 기반 References와 조사 내용은 유지됩니다.`
+      );
     }
     const records = payload === null ? [] : normalizeInputRecords(payload);
     if (payload !== null && !records.length) {
@@ -6260,9 +6286,22 @@ function splitCombinedGptResponse(value) {
     .replace(/\n?--- JSON DATA ---\s*$/i, '')
     .replace(/```\s*$/i, '')
     .trim();
+  const legacyRawMarkdownResult = normalizeGptOriginalReport(rawMarkdown);
+  rawMarkdown = legacyRawMarkdownResult.text.trim();
 
   if (!rawMarkdown || !/^#{1,6}\s+/m.test(rawMarkdown)) {
     addInputIssue(errors, 'error', 'Markdown', 'Markdown 원문 블록을 찾지 못했습니다. GPT의 전체 응답을 그대로 붙여넣어 주세요.');
+  }
+  if (legacyRawMarkdownResult.citationCount || legacyRawMarkdownResult.htmlBreakCount) {
+    const cleanedParts = [];
+    if (legacyRawMarkdownResult.citationCount) cleanedParts.push(`내부 인용 표기 ${legacyRawMarkdownResult.citationCount}개 제거`);
+    if (legacyRawMarkdownResult.htmlBreakCount) cleanedParts.push(`HTML 줄바꿈 ${legacyRawMarkdownResult.htmlBreakCount}개를 Markdown 줄바꿈으로 변환`);
+    addInputIssue(
+      warnings,
+      'warning',
+      '원문 가독성 정리',
+      `${cleanedParts.join(', ')}했습니다. 실제 URL 기반 References와 조사 내용은 유지됩니다.`
+    );
   }
   if (!jsonBlock) {
     addInputIssue(errors, 'error', 'JSON', '--- JSON DATA --- 구분선 뒤의 JSON을 찾지 못했습니다. 이전 형식은 Markdown 코드블록 1개와 JSON 코드블록 1개만 지원합니다.');
@@ -7743,7 +7782,9 @@ const SHARED_EVIDENCE_DISCIPLINE = `Use only asset-specific facts explicitly pro
 
 Canonicalize confirmed facts into approved dashboard values, but do not infer unconfirmed facts or completed/current status from plans, expectations, financing, hiring activity, adjacent programs, class assumptions, or general scientific knowledge.
 
-General scientific knowledge may only be used to map confirmed facts to the scoring rubric. If a fact cannot be established or conflicting sources cannot be resolved, use Unknown and record the uncertainty.`;
+General scientific knowledge may only be used to map confirmed facts to the scoring rubric. If a fact cannot be established or conflicting sources cannot be resolved, use Unknown and record the uncertainty.
+
+Report readability and citations: never output ChatGPT/OpenAI internal citation tokens such as :contentReference[…], [oaicite:…], browser IDs, or HTML tags such as <br>. Use plain Markdown and actual http(s) URLs only. Put checked public sources in a readable References section using Markdown links or reference links; never substitute an internal citation marker for a URL.`;
 
 const SHARED_INTEREST_AND_CORE_RUBRIC = `SKBP Interest Indications:
 - Alzheimer's disease
@@ -8415,7 +8456,7 @@ Non-negotiable rules:
 2. Do not write any report prose outside the single combined code block.
 3. The TAB2 importer splits on the exact separator and parses the complete suffix once. The JSON portion must be exactly one complete top-level object beginning with { and ending with }: no comments, no trailing commas, no extra object, and no Markdown outside JSON string values.
 4. Every factual claim used for scoring must include a source URL or a clear uncertainty note.
-5. Include actual URLs in Markdown reference-link format at the end of the Markdown block. In Compact v2 JSON, put each checked source once in validation.source_registry with source_id, source_title, source_url, source_type, and verified. Reference it from criteria and competitor rows with source_ids. Do not emit evidence_sources or duplicate source objects. Keep structured_table.sources as []; the dashboard derives its Source column from validation.source_registry.
+5. Include actual URLs in Markdown reference-link format at the end of the Markdown block. Do not emit :contentReference[…], [oaicite:…], browser citation IDs, or HTML tags; internal citation tokens are not usable sources. In Compact v2 JSON, put each checked source once in validation.source_registry with source_id, source_title, source_url, source_type, and verified. Reference it from criteria and competitor rows with source_ids. Do not emit evidence_sources or duplicate source objects. Keep structured_table.sources as []; the dashboard derives its Source column from validation.source_registry.
 6. Distinguish official company sources, peer-reviewed papers, regulatory/clinical trial sources, market sources, and news/financing sources.
 7. For every criterion, Compact v2 JSON contains the integer score plus only these concise display/audit fields: evidence_type, evidence_type_reason, evidence_basis, main_line_summary, why_not_higher, investigation_note, uncertain_points, and source_ids. Keep each string short and keep the complete evidence discussion in Markdown.
 8. Competitive Landscape Markdown must include the complete search and analysis. JSON keeps competitive_density, the four similarity counts, competitor_table rows needed by the competitor graph, and similar_pipelines needed by the existing comparison view. competitor_table row keys are competitor_asset, company, modality, target_or_moa, stage, similarity_level, why_it_matters, source_url, and source_ids. similar_pipelines row keys are company, asset_name, similarity_score, matched_dimensions, and shared_data_points.

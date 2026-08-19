@@ -333,6 +333,13 @@ function renderInlineMarkdown(value) {
     .replace(/&lt;br\s*\/?&gt;/gi, '<br>');
 }
 
+function normalizeGptOriginalReport(value) {
+  return String(value || '')
+    .replace(/[ \t]*:contentReference\[[^\]\r\n]*\]\{[^}\r\n]*\}/gi, '')
+    .replace(/[ \t]*\[?oaicite:[^\]\s}]+\]?/gi, '')
+    .replace(/(?:<|&lt;)\s*br\s*\/?\s*(?:>|&gt;)/gi, '\n');
+}
+
 function renderMarkdownTable(lines, startIndex) {
   const tableLines = [];
   let index = startIndex;
@@ -359,7 +366,7 @@ function renderMarkdownTable(lines, startIndex) {
 }
 
 function renderMarkdown(markdown) {
-  const lines = repairMojibake(markdown).replace(/\r\n/g, '\n').split('\n');
+  const lines = repairMojibake(normalizeGptOriginalReport(markdown)).replace(/\r\n/g, '\n').split('\n');
   const blocks = [];
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index].trim();

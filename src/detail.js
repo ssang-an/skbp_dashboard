@@ -304,6 +304,13 @@ function isPlaceholderRawMarkdown(value) {
     || text === 'Markdown report is provided separately in the MD copy box.';
 }
 
+function normalizeGptOriginalReport(value) {
+  return String(value || '')
+    .replace(/[ \t]*:contentReference\[[^\]\r\n]*\]\{[^}\r\n]*\}/gi, '')
+    .replace(/[ \t]*\[?oaicite:[^\]\s}]+\]?/gi, '')
+    .replace(/(?:<|&lt;)\s*br\s*\/?\s*(?:>|&gt;)/gi, '\n');
+}
+
 function getRubricMetadata(record) {
   const meta = record?.meta || {};
   const criteriaReference = record?.scoring?.criteria?.target_relevance?.criteria_reference || null;
@@ -1584,7 +1591,7 @@ function renderSourceReport(record = currentRecord) {
   attachmentPreviewController = null;
   activeAttachmentId = '';
   const sourceReport = record.source_report || {};
-  const rawMarkdown = isPlaceholderRawMarkdown(sourceReport.raw_markdown) ? '' : sourceReport.raw_markdown;
+  const rawMarkdown = isPlaceholderRawMarkdown(sourceReport.raw_markdown) ? '' : normalizeGptOriginalReport(sourceReport.raw_markdown);
   if (elements.detailViewerTitle) elements.detailViewerTitle.textContent = 'GPT ORIGINAL REPORT';
   if (elements.subtitle) {
     elements.subtitle.textContent = '';
@@ -1601,7 +1608,7 @@ function renderSourceReport(record = currentRecord) {
   if (elements.detailViewerCopyButton) elements.detailViewerCopyButton.hidden = false;
   elements.sourceReportViewer.classList.remove('showing-attachment');
   elements.sourceReportViewer.innerHTML = rawMarkdown
-    ? renderMarkdown(sourceReport.raw_markdown)
+    ? renderMarkdown(rawMarkdown)
     : renderMarkdown(buildReadableSourceReport(record));
   renderTopicNotes(record);
   renderAttachments(record);
@@ -2546,7 +2553,7 @@ function renderWikiLink(rawTarget, rawLabel) {
 }
 
 function renderMarkdown(markdown) {
-  const { frontmatter, body } = parseFrontmatter(markdown);
+  const { frontmatter, body } = parseFrontmatter(normalizeGptOriginalReport(markdown));
   const lines = body.split('\n');
   const blocks = [renderFrontmatter(frontmatter)];
 
@@ -2842,7 +2849,7 @@ function openMarkdownInNewWindow(title, rawMarkdown) {
 function getCurrentSourceMarkdown() {
   if (!currentRecord) return '';
   const sourceReport = currentRecord.source_report || {};
-  const rawMarkdown = isPlaceholderRawMarkdown(sourceReport.raw_markdown) ? '' : sourceReport.raw_markdown;
+  const rawMarkdown = isPlaceholderRawMarkdown(sourceReport.raw_markdown) ? '' : normalizeGptOriginalReport(sourceReport.raw_markdown);
   return rawMarkdown || buildReadableSourceReport(currentRecord);
 }
 
@@ -3713,7 +3720,7 @@ function parseFullScoutReupload(value) {
   if (!recovered.parsedSuffix || !recovered.separator) {
     throw new Error(`JSON 문법 오류: ${recovered.lastError?.message || '유효한 최상위 JSON을 찾지 못했습니다.'}`);
   }
-  const markdown = recovered.markdown;
+  const markdown = normalizeGptOriginalReport(recovered.markdown);
   const jsonText = recovered.parsedSuffix.text;
   if (!markdown || !/^#{1,6}\s+/m.test(markdown)) throw new Error('제목이 포함된 Markdown 원문을 찾지 못했습니다.');
   if (!jsonText) throw new Error('구분선 아래에 Full Scout JSON이 없습니다.');

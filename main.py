@@ -773,7 +773,31 @@ def append_instruction_warning(mode: str, text: str) -> bool:
     return True
 
 
-def normalize_records(payload: Any) -> list[dict[str, Any]]:
+def normalize_source_report_markdown(value: Any) -> Any:
+    """Remove presentation-only AI citation artifacts without changing report facts."""
+    if not isinstance(value, str):
+        return value
+    text = re.sub(
+        r"[ \t]*:contentReference\[[^\]\r\n]*\]\{[^}\r\n]*\}",
+        "",
+        value,
+        flags=re.IGNORECASE,
+    )
+    text = re.sub(r"[ \t]*\[?oaicite:[^\]\s}]+\]?", "", text, flags=re.IGNORECASE)
+    return re.sub(r"(?:<|&lt;)\s*br\s*/?\s*(?:>|&gt;)", "\n", text, flags=re.IGNORECASE)
+
+
+def normalize_record_source_report_markdown(record: dict[str, Any]) -> None:
+    source_report = record.get("source_report")
+    if not isinstance(source_report, dict):
+        return
+    raw_markdown = source_report.get("raw_markdown")
+    cleaned = normalize_source_report_markdown(raw_markdown)
+    if cleaned != raw_markdown:
+        source_report["raw_markdown"] = cleaned
+
+
+def normalize_records(payload: Any, *, sanitize_source_report: bool = False) -> list[dict[str, Any]]:
     if isinstance(payload, list):
         records = payload
     elif isinstance(payload, dict) and isinstance(payload.get("records"), list):
@@ -789,6 +813,8 @@ def normalize_records(payload: Any) -> list[dict[str, Any]]:
     if not all(isinstance(item, dict) for item in records):
         raise HTTPException(status_code=400, detail="Every record must be a JSON object.")
     for record in records:
+        if sanitize_source_report:
+            normalize_record_source_report_markdown(record)
         apply_llm_reparse_disclaimer(record)
     return records
 
@@ -9895,6 +9921,7 @@ async def update_record(record_id: str, request: Request) -> dict[str, Any]:
 
     if not isinstance(payload, dict) or "structured_table" not in payload:
         raise HTTPException(status_code=400, detail="Expected one analysis JSON object.")
+    normalize_record_source_report_markdown(payload)
     payload_meta = payload.get("meta") if isinstance(payload.get("meta"), dict) else {}
     had_explicit_record_key = bool(non_empty_text(payload_meta.get("output_filename_base")))
     validate_records_for_save([payload])
@@ -9984,7 +10011,7 @@ async def llm_reparse_pasted_report(request: Request) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise HTTPException(status_code=400, detail="Request body must be a JSON object.")
 
-    raw_markdown = str(payload.get("raw_markdown") or "").strip()
+    raw_markdown = str(normalize_source_report_markdown(payload.get("raw_markdown")) or "").strip()
     json_text = str(payload.get("json_text") or "").strip()
     mode = str(payload.get("mode") or "").strip().lower()
     mode = mode if mode in {"full", "triage"} else "full"
@@ -10020,7 +10047,7 @@ async def llm_reparse_pasted_report_stream(request: Request) -> StreamingRespons
     if not isinstance(payload, dict):
         raise HTTPException(status_code=400, detail="Request body must be a JSON object.")
 
-    raw_markdown = str(payload.get("raw_markdown") or "").strip()
+    raw_markdown = str(normalize_source_report_markdown(payload.get("raw_markdown")) or "").strip()
     json_text = str(payload.get("json_text") or "").strip()
     mode = str(payload.get("mode") or "").strip().lower()
     mode = mode if mode in {"full", "triage"} else "full"
@@ -10102,7 +10129,7 @@ async def validate_incoming_records(request: Request) -> dict[str, Any]:
         payload = await request.json()
     except json.JSONDecodeError as exc:
         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
-    incoming = copy.deepcopy(normalize_records(payload))
+    incoming = copy.deepcopy(normalize_records(payload, sanitize_source_report=True))
     validate_records_for_save(incoming)
     return {
         "ok": True,
@@ -10119,7 +10146,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
     except json.JSONDecodeError as exc:
         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
 
-    incoming = normalize_records(payload)
+    incoming = normalize_records(payload, sanitize_source_report=True)
     records = load_records()
     confirmed_replacement_ids = apply_confirmed_reupload_replacements(
         incoming,
@@ -10219,7 +10246,7 @@ async def replace_records(request: Request) -> dict[str, Any]:
     except json.JSONDecodeError as exc:
         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
 
-    records = normalize_records(payload)
+    records = normalize_records(payload, sanitize_source_report=True)
     validate_records_for_save(records)
     save_records(records)
     exports = run_markdown_exports()
