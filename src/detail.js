@@ -948,8 +948,9 @@ function resizeReviewReasonInput() {
 function resizeOiPartnershipNoteInput() {
   const input = elements.detailOiPartnershipNote;
   if (!input) return;
-  input.style.height = '34px';
-  input.style.overflowY = input.scrollHeight > 34 ? 'auto' : 'hidden';
+  const fixedHeight = 56;
+  input.style.height = `${fixedHeight}px`;
+  input.style.overflowY = input.scrollHeight > fixedHeight ? 'auto' : 'hidden';
 }
 
 const reviewScoreOrder = [
@@ -2229,15 +2230,6 @@ async function saveDetailActionPlan(value) {
 
 async function saveDetailPartnershipType(value) {
   const control = elements.detailOiPartnershipType;
-  const previousValue = String(currentRecord?.meta?.focus_management?.partnership_type || '');
-  const isAutoCommand = value === '';
-
-  // "↻ 자동 기준으로 재분류"는 저장되는 결과값이 아니라 실행 명령이다.
-  // 요청 중에도 명령 문구 대신 직전 분류 결과를 계속 보여준다.
-  if (isAutoCommand && previousValue && control) {
-    control.value = previousValue;
-  }
-
   const data = await saveDetailFocusField(
     'partnership_type',
     value,
@@ -2250,11 +2242,6 @@ async function saveDetailPartnershipType(value) {
   const resolvedType = String(focus.partnership_type || '');
   if (resolvedType) {
     control.value = resolvedType;
-  }
-
-  if (isAutoCommand) {
-    const resolvedLabel = control.selectedOptions?.[0]?.textContent?.trim() || resolvedType;
-    setCollaborationStatus(`자동 재분류 완료: ${resolvedLabel}`, 'success');
   }
   return data;
 }

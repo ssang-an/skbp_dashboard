@@ -11410,14 +11410,43 @@ html[data-theme="dark"] .detail-material-panel {
   min-width: 0;
 }
 
+.oi-filter3-control-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.oi-filter3-control-row .review-info-label {
+  flex: 1 1 auto;
+}
+
+.oi-filter3-control-row #detailOiPartnershipType {
+  flex: 0 0 126px;
+  width: 126px;
+}
+
 .oi-classification-summary .oi-note-shell {
   grid-column: 1;
 }
 
 .oi-note-shell .review-reason-input {
-  height: 34px;
-  min-height: 34px;
-  max-height: 34px;
+  height: 56px;
+  min-height: 56px;
+  max-height: 56px;
+}
+
+@media (max-width: 520px) {
+  .oi-filter3-control-row {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .oi-filter3-control-row #detailOiPartnershipType {
+    flex: 1 1 132px;
+    width: auto;
+  }
 }
 
 .oi-criteria-grid {
