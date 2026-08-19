@@ -460,6 +460,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertRegex(block, r"\.visual-grid\.workflow-summary-grid > \.panel\s*\{[^}]*grid-template-rows: 64px minmax\(0, 1fr\);[^}]*height: 332px;")
         self.assertRegex(block, r"\.workflow-summary-grid \.donut\s*\{[^}]*width: 144px;[^}]*height: 144px;")
         self.assertRegex(block, r"\.workflow-summary-grid \.donut-wrap\s*\{[^}]*grid-template-columns: 144px minmax\(0, 190px\);[^}]*justify-content: center;")
+        self.assertIn(".workflow-priority-list.is-stage-distribution", block)
+        self.assertIn("align-content: center", block)
         self.assertIn("overflow: hidden", block)
         self.assertNotIn("overflow-y: auto", block)
 

@@ -14348,6 +14348,15 @@ html[data-theme="dark"] .admin-state.is-inactive { background: #481d24; color: #
   padding: 5px 8px;
 }
 
+/* Keep the Full Scout waiting-stage bars on the same vertical center as the donut charts. */
+.workflow-summary-grid > .panel > .workflow-priority-list.is-stage-distribution {
+  align-content: center;
+}
+
+.workflow-summary-grid > .panel > .workflow-priority-list.is-stage-distribution .distribution-bars {
+  align-self: center;
+}
+
 @media (max-width: 720px) {
   .visual-grid.workflow-summary-grid > .panel {
     grid-template-rows: auto auto;
