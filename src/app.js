@@ -2277,7 +2277,7 @@ const WORKFLOW_COPY = {
     description: '즐겨찾기로 등록한 Full Scout 후보의 OI Partnership Type과 후속 Action을 관리합니다.',
     filterLabel: 'Filter 3',
     priorityTitle: 'F/U Action',
-    prioritySubtitle: '최대 10개 · 동점 시 최신 업데이트 순'
+    prioritySubtitle: 'Action date 설정 항목 · 임박 순'
   }
 };
 
@@ -2422,29 +2422,35 @@ function fallbackTabSummary(mode, filteredRows = null) {
     const ongoingFocusRows = focusRows.filter((row) => ongoingPartnershipTypes.includes(row.filter3));
     const now = new Date();
     now.setHours(0, 0, 0, 0);
-    const actionRows = focusRows.map((row) => {
-      const due = row.focusDueDate ? new Date(`${row.focusDueDate}T00:00:00`) : null;
-      const days = due && !Number.isNaN(due.getTime()) ? Math.ceil((due - now) / 86400000) : null;
-      let actionStatus = '';
-      let actionRank = 99;
-      if (days !== null && days < 0) { actionStatus = 'OVERDUE'; actionRank = 0; }
-      else if (days !== null && days <= 30) { actionStatus = 'WITHIN_30_DAYS'; actionRank = 1; }
-      else if (!row.filter3 || row.filter3 === 'unknown') { actionStatus = 'FILTER3_UNKNOWN'; actionRank = 2; }
-      else if (!row.focusDueDate) { actionStatus = 'MISSING_ACTION_DATE'; actionRank = 3; }
-      return {
-        ...fallbackCommonListItem(row),
-        filter2: row.filter2,
-        total_score: row.totalScore,
-        partnership_type: row.filter3 || 'unknown',
-        partnership_label: PARTNERSHIP_LABELS[row.filter3] || row.filter3,
-        partnership_source: row.filter3Source,
-        human_override: row.filter3Source === 'manual',
-        action_date: row.focusDueDate,
-        days_until_due: days,
-        action_status: actionStatus,
-        action_rank: actionRank
-      };
-    }).filter((item) => item.action_status).sort((a, b) => a.action_rank - b.action_rank || (a.days_until_due ?? 99999) - (b.days_until_due ?? 99999));
+    const actionRows = focusRows
+      .filter((row) => {
+        if (!row.focusDueDate) return false;
+        return !Number.isNaN(new Date(`${row.focusDueDate}T00:00:00`).getTime());
+      })
+      .map((row) => {
+        const due = new Date(`${row.focusDueDate}T00:00:00`);
+        const days = Math.ceil((due - now) / 86400000);
+        const actionStatus = days < 0 ? 'OVERDUE' : days <= 30 ? 'WITHIN_30_DAYS' : 'SCHEDULED';
+        return {
+          ...fallbackCommonListItem(row),
+          filter2: row.filter2,
+          total_score: row.totalScore,
+          partnership_type: row.filter3 || 'unknown',
+          partnership_label: PARTNERSHIP_LABELS[row.filter3] || row.filter3,
+          partnership_source: row.filter3Source,
+          human_override: row.filter3Source === 'manual',
+          action_date: row.focusDueDate,
+          days_until_due: days,
+          action_status: actionStatus,
+          action_due_at: due.getTime(),
+          action_updated_at: row.lastEditedAt || row.generatedAt || ''
+        };
+      })
+      .sort((a, b) => (
+        Number(a.action_due_at) - Number(b.action_due_at)
+        || (Date.parse(b.action_updated_at || '') || 0) - (Date.parse(a.action_updated_at || '') || 0)
+        || String(a.asset || '').localeCompare(String(b.asset || ''), 'en')
+      ));
     return {
       kpis: {
         pipelines: focusRows.length,
@@ -3062,10 +3068,11 @@ function renderWorkflowPriorityList(summary) {
       })
     : mode === 'focus'
       ? [...rows].sort((a, b) => {
+          const dueDifference = (Date.parse(a.action_date || '') || Number.MAX_SAFE_INTEGER)
+            - (Date.parse(b.action_date || '') || Number.MAX_SAFE_INTEGER);
           const bDate = Date.parse(b.action_updated_at || b.completed_at || '') || 0;
           const aDate = Date.parse(a.action_updated_at || a.completed_at || '') || 0;
-          const rankDifference = Number(a.action_rank ?? 99) - Number(b.action_rank ?? 99);
-          return bDate - aDate || rankDifference || String(a.asset || '').localeCompare(String(b.asset || ''), 'en');
+          return dueDifference || bDate - aDate || String(a.asset || '').localeCompare(String(b.asset || ''), 'en');
         })
       : rows;
 
@@ -3079,14 +3086,13 @@ function renderWorkflowPriorityList(summary) {
           const actionLabels = {
             OVERDUE: 'Overdue',
             WITHIN_30_DAYS: '30일 이내',
-            FILTER3_UNKNOWN: 'Filter 3 확인',
-            MISSING_ACTION_DATE: '날짜 미등록'
+            SCHEDULED: '예정'
           };
           const actionTone = item.action_status === 'OVERDUE' ? 'fail' : item.action_status === 'WITHIN_30_DAYS' ? 'review' : 'neutral';
           return `
             <button type="button" class="priority-item workflow-priority-item" data-record-id="${escapeHtml(recordId)}">
               <span class="workflow-priority-main"><strong>${escapeHtml(asset)}</strong><small>${escapeHtml(company)}</small></span>
-              <span class="workflow-priority-context">${escapeHtml(PARTNERSHIP_LABELS[item.partnership_type] || item.partnership_label || 'Unknown')} · ${escapeHtml(item.action_date || 'Action date 미등록')}</span>
+              <span class="workflow-priority-context">${escapeHtml(PARTNERSHIP_LABELS[item.partnership_type] || item.partnership_label || 'Unknown')} · ${escapeHtml(item.action_date)}</span>
               <span class="workflow-priority-badges">
                 ${workflowListBadge(actionLabels[item.action_status] || '확인 필요', actionTone)}
                 ${item.human_override || item.partnership_source === 'manual' ? workflowListBadge('HUMAN', 'human') : ''}
