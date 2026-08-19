@@ -18928,12 +18928,72 @@ body.report-reupload-open {
   width: 26%;
 }
 
+/* The shared sortable-header rule truncates overflow; keep Tab0's first Asset label fully visible. */
+.step0-progress-table th.step0-asset-header {
+  min-width: 104px;
+  padding-left: 10px;
+}
+
+.step0-progress-table th.step0-asset-header > button {
+  display: inline-flex;
+  width: auto;
+  min-width: max-content;
+  overflow: visible;
+}
+
 .step0-progress-table .step0-col-company {
   width: 22%;
 }
 
 .step0-progress-table .step0-col-stage {
   width: 12%;
+}
+
+/* Keep Tab0's GPT action in the same compact, quiet pill family as Excel export. */
+#step0CopyInstructionsButton.step0-copy-instructions-button {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 4px 9px 4px 5px;
+  border: 1px solid color-mix(in srgb, #526b82 30%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, #526b82 7%, var(--surface));
+  color: #3f586d;
+  font-size: 10px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+#step0CopyInstructionsButton.step0-copy-instructions-button svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#step0CopyInstructionsButton.step0-copy-instructions-button .step0-copy-gpt {
+  display: inline-grid;
+  min-width: 22px;
+  height: 18px;
+  place-items: center;
+  border-radius: 999px;
+  background: color-mix(in srgb, #526b82 15%, var(--surface-soft));
+  color: #3f586d;
+  font-size: 8px;
+  font-weight: 950;
+  letter-spacing: 0.02em;
+}
+
+#step0CopyInstructionsButton.step0-copy-instructions-button:hover:not(:disabled),
+#step0CopyInstructionsButton.step0-copy-instructions-button:focus-visible:not(:disabled) {
+  border-color: color-mix(in srgb, #526b82 52%, var(--line));
+  background: color-mix(in srgb, #526b82 12%, var(--surface));
+  color: #2f485d;
 }
 
 .step0-status-filter-label {

@@ -462,11 +462,16 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('id="step0SearchInput"', step0_controls)
         self.assertIn('placeholder="약물명, 회사명 검색"', step0_controls)
         self.assertNotIn('step0CompanyFilter', step0_controls)
+        self.assertIn('class="step0-copy-instructions-button help-tooltip"', HTML)
+        self.assertIn('<rect x="8" y="8" width="11" height="12" rx="2"/>', HTML)
+        self.assertIn('class="step0-asset-header"', HTML)
         self.assertNotIn('step0CompanyFilter', JS)
         self.assertIn("`${row.asset || ''} ${row.company || ''}`", step0_filtering)
         self.assertIn("step0-status-toggle", step0_controls)
         self.assertIn('id="step0ResetFiltersButton"', step0_controls)
         self.assertIn("#step0Panel .controls", CSS)
+        self.assertIn(".step0-progress-table th.step0-asset-header", CSS)
+        self.assertIn("#step0CopyInstructionsButton.step0-copy-instructions-button", CSS)
 
     def test_summary_cards_share_geometry_without_internal_scrollbars(self):
         block = CSS[CSS.index("/* Precision-align Summary cards"):CSS.index(".pass-rate-chart .donut-center small")]

@@ -170,9 +170,9 @@
               <button
                 id="step0CopyInstructionsButton"
                 type="button"
-                class="action-pill header-action-button help-tooltip"
+                class="step0-copy-instructions-button help-tooltip"
                 data-tooltip="선택한 조사 대기 항목을 포함해 GPT Fast Triage 지침 1을 복사합니다."
-              ><span aria-hidden="true">GPT</span><b>지침 복사</b></button>
+              ><span class="step0-copy-gpt" aria-hidden="true">GPT</span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></svg><b>지침 복사</b></button>
             </div>
           </div>
           <div class="table-wrap">
@@ -191,7 +191,7 @@
                   <th class="select-col">
                     <input id="step0SelectAllRows" type="checkbox" aria-label="조사 대기 항목 전체 선택 (최대 10개)" />
                   </th>
-                  <th><button data-step0-sort="asset" type="button">Asset</button></th>
+                  <th class="step0-asset-header"><button data-step0-sort="asset" type="button">Asset</button></th>
                   <th><button data-step0-sort="company" type="button">Company</button></th>
                   <th><button data-step0-sort="pending" type="button">조사 대기</button></th>
                   <th><button data-step0-sort="fast_triage" type="button">Fast Triage</button></th>
