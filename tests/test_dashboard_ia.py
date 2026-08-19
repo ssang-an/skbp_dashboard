@@ -382,6 +382,17 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('.filter-multiselect-check', CSS)
         self.assertIn('border-radius: 50%', CSS)
 
+    def test_column_settings_use_workflow_specific_labels_without_json_paths(self):
+        settings = function_body(JS, "renderColumnSettings")
+        self.assertIn("activeExtraColumnDefinitions()", settings)
+        self.assertNotIn("<small>", settings)
+        self.assertIn("FULL_SCOUT_EXTRA_COLUMN_DEFINITIONS", JS)
+        self.assertIn("FAST_TRIAGE_EXTRA_COLUMN_DEFINITIONS", JS)
+        self.assertIn("company_profile.headquarters", JS)
+        self.assertIn("triage.verified_public_source_count", JS)
+        self.assertIn("triage.missing_evidence_needed_for_full_scout", JS)
+        self.assertNotIn("{ key: 'modality'", function_body(JS, "activeExtraColumnDefinitions"))
+
     def test_summary_has_exactly_the_three_workflow_surfaces(self):
         for element_id in ("indicationChart", "modalityChart", "workflowPriorityList"):
             self.assertIn(f'id="{element_id}"', HTML)

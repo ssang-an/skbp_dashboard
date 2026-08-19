@@ -2265,6 +2265,15 @@ h2 {
   font-weight: 900;
 }
 
+.column-option.is-compact {
+  align-items: center;
+}
+
+.column-option.is-compact input {
+  grid-row: auto;
+  margin-top: 0;
+}
+
 .column-option small {
   min-width: 0;
   overflow: hidden;

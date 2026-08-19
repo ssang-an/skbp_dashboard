@@ -1736,10 +1736,8 @@ function triageRowHoverTitle(row) {
   ].join('\n');
 }
 
-const EXTRA_COLUMN_DEFINITIONS = [
+const FULL_SCOUT_EXTRA_COLUMN_DEFINITIONS = [
   { key: 'moa', label: 'MoA', path: 'structured_table.moa' },
-  { key: 'modality', label: 'Modality', path: 'structured_table.modality_platform' },
-  { key: 'indication', label: 'Indication', path: 'structured_table.indication' },
   { key: 'headquarters', label: 'HQ', path: 'company_profile.headquarters' },
   { key: 'companyStage', label: 'Company stage', path: 'company_profile.company_stage' },
   { key: 'platformSummary', label: 'Platform summary', path: 'company_profile.platform_summary' },
@@ -1751,7 +1749,32 @@ const EXTRA_COLUMN_DEFINITIONS = [
   { key: 'uncertainPoints', label: 'Uncertain points', path: 'validation.uncertain_points' }
 ];
 
-function formatExtraColumnValue(value) {
+const FAST_TRIAGE_EXTRA_COLUMN_DEFINITIONS = [
+  { key: 'moa', label: 'MoA', path: 'structured_table.moa' },
+  { key: 'activeAsset', label: 'Active asset', path: 'triage.active_asset' },
+  { key: 'verifiedSourceCount', label: 'Verified sources', path: 'triage.verified_public_source_count' },
+  { key: 'triageWhy', label: 'Triage rationale', path: 'triage.why' },
+  { key: 'fullScoutEvidence', label: 'Full Scout evidence needed', path: 'triage.missing_evidence_needed_for_full_scout' },
+  { key: 'firstSource', label: 'First source URL', path: 'structured_table.sources.0.source_url' },
+  { key: 'uncertainPoints', label: 'Uncertain points', path: 'validation.uncertain_points' }
+];
+
+function activeExtraColumnDefinitions() {
+  if (activeTableMode() === 'triage') return FAST_TRIAGE_EXTRA_COLUMN_DEFINITIONS;
+  if (activeTableMode() === 'full') return FULL_SCOUT_EXTRA_COLUMN_DEFINITIONS;
+  return [];
+}
+
+function formatExtraColumnValue(value, column = null) {
+  if (column?.key === 'activeAsset') {
+    if (value === true) return 'Confirmed active';
+    if (value === false) return 'Inactive';
+    return 'Unconfirmed';
+  }
+  if (column?.key === 'verifiedSourceCount') {
+    const count = Number(value);
+    return Number.isFinite(count) ? `${count} verified` : '-';
+  }
   if (value === null || value === undefined || value === '') return '-';
   if (Array.isArray(value)) {
     return value
@@ -1765,10 +1788,7 @@ function formatExtraColumnValue(value) {
 }
 
 function selectedExtraColumns() {
-  return EXTRA_COLUMN_DEFINITIONS.filter((column) => (
-    state.extraColumns.has(column.key)
-    && !(activeTableMode() === 'full' && column.key === 'modality')
-  ));
+  return activeExtraColumnDefinitions().filter((column) => state.extraColumns.has(column.key));
 }
 
 function persistExtraColumns() {
@@ -3431,18 +3451,15 @@ function renderCharts() {
 
 function renderColumnSettings() {
   if (!elements.columnSettingsGrid) return;
-  elements.columnSettingsGrid.innerHTML = EXTRA_COLUMN_DEFINITIONS.map((column) => {
-    const isBuiltInFullScoutColumn = activeTableMode() === 'full' && column.key === 'modality';
+  elements.columnSettingsGrid.innerHTML = activeExtraColumnDefinitions().map((column) => {
     return `
-      <label class="column-option ${isBuiltInFullScoutColumn ? 'is-built-in' : ''}">
+      <label class="column-option is-compact">
         <input
           type="checkbox"
           value="${escapeHtml(column.key)}"
-          ${isBuiltInFullScoutColumn || state.extraColumns.has(column.key) ? 'checked' : ''}
-          ${isBuiltInFullScoutColumn ? 'disabled' : ''}
+          ${state.extraColumns.has(column.key) ? 'checked' : ''}
         />
         <span>${escapeHtml(column.label)}</span>
-        <small>${isBuiltInFullScoutColumn ? 'TAB2 기본 컬럼' : escapeHtml(column.path)}</small>
       </label>
     `;
   }).join('');
@@ -4000,7 +4017,7 @@ function renderTableLegacy() {
               <td class="score-cell">${fullReviewScoreBadge(row, 'marketScore', 'market', 'Marketability')}</td>
               <td class="score-cell total-score-cell">${row.isTriage ? pendingScoreBadge('Full Scout total score not available for triage rows') : totalScoreEditCircle(row)}</td>
               ${extraColumns.map((column) => {
-                const value = formatExtraColumnValue(get(row.raw, column.path, '-'));
+                const value = formatExtraColumnValue(get(row.raw, column.path, '-'), column);
                 return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
               }).join('')}
             </tr>
@@ -4481,7 +4498,7 @@ function renderTable() {
               ` : ''}
               ${mode === 'triage' ? `<td class="focus-action-cell">${rubricReevaluationCell(row)}</td>` : ''}
               ${extraColumns.map((column) => {
-                const value = formatExtraColumnValue(get(row.raw, column.path, '-'));
+                const value = formatExtraColumnValue(get(row.raw, column.path, '-'), column);
                 return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
               }).join('')}
               ${mode === 'full' ? `<td class="focus-action-cell">${fullScoutRowActions(row)}</td>` : ''}
@@ -4811,7 +4828,7 @@ function exportPipelineTable() {
     row.highSimilarityCount ?? '',
     row.summary,
     row.id,
-    ...extraColumns.map((column) => formatExtraColumnValue(get(row.raw, column.path, '-')))
+    ...extraColumns.map((column) => formatExtraColumnValue(get(row.raw, column.path, '-'), column))
   ]);
 
   const csv = [headers, ...body].map((line) => line.map(csvValue).join(',')).join('\r\n');
