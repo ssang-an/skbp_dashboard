@@ -12262,12 +12262,6 @@ html[data-theme="dark"] .triage-quick-panel {
 /* Mirror the dashboard's human-edited score treatment in Team Review Workspace. */
 .filter-score-panel .score-chip.is-human {
   border-color: color-mix(in srgb, #b9616b 55%, var(--line));
-  background: color-mix(in srgb, #b9616b 9%, var(--surface));
-  color: #b9616b;
-}
-
-.filter-score-panel .score-chip.is-human .score-chip-value {
-  color: #b9616b;
 }
 
 /* Keep Team Review aligned with the dashboard's single subtle manual-score border. */
@@ -12281,12 +12275,7 @@ html[data-theme="dark"] .triage-quick-panel {
 #detailScoreSequence .score-chip[data-manual-score="true"] {
   border: 1px solid color-mix(in srgb, #b9616b 55%, var(--line)) !important;
   outline: none !important;
-  background: color-mix(in srgb, #b9616b 9%, var(--surface)) !important;
   box-shadow: none !important;
-}
-
-#detailScoreSequence .score-chip[data-manual-score="true"] .score-chip-value {
-  color: #b9616b !important;
 }
 
 .score-chip.tone-high {
