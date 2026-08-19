@@ -27,7 +27,7 @@ class OiPartnershipCriteriaTests(unittest.TestCase):
                 result = main.classify_oi_partnership(record(modality="Antibody", stage=stage), {})
                 self.assertEqual(result["partnership_type"], "investment")
                 self.assertIn("IND-enabling 이상", result["note"])
-                self.assertEqual(result["criteria_version"], "1.3")
+                self.assertEqual(result["criteria_version"], "1.4")
 
     def test_value_up_requires_pre_ind_enabling_stage(self):
         evidence = {"in_vivo_status": "O", "in_vitro_status": "O", "admet_completed": 0}
@@ -65,13 +65,13 @@ class OiPartnershipCriteriaTests(unittest.TestCase):
             "partnership_type": "value_up",
             "partnership_classification_source": "auto",
             "partnership_classification_status": "auto_classified",
-            "partnership_classification_criteria_version": "1.2",
+            "partnership_classification_criteria_version": "1.3",
         }
         tracked["meta"]["attachments"] = [{"filename": "candidate_ADMET.pdf"}]
 
         self.assertTrue(main.refresh_tracked_oi_classifications([tracked]))
         focus = tracked["meta"]["focus_management"]
-        self.assertEqual(focus["partnership_classification_criteria_version"], "1.3")
+        self.assertEqual(focus["partnership_classification_criteria_version"], "1.4")
         self.assertEqual(focus["partnership_type"], "n_a")
 
     def test_value_up_requires_an_uploaded_scored_admet_material(self):

@@ -1,6 +1,6 @@
 # Tab3 OI Partnership 자동 분류 기준
 
-- Version: 1.3
+- Version: 1.4
 - Scope: Full Scout records tracked in Tab3
 - Evidence priority: Tab3 structured values → Full Scout detailed/raw report → Partner Materials
 - No inference: an absent or unclear value remains unknown.
@@ -36,9 +36,17 @@ investment, begin the note with `투자 또한 해당`.
   `IND filed/cleared`, and Phase 1 or later do not satisfy Value Up.
 - Value Up requires an uploaded Partner Material categorized as `ADMET` and a numeric ADMET
   score (including 0); the prior `ADMET >=25` threshold does not apply.
+- The ADMET numerator is calculated only from the canonical 25 standard Study names and their
+  matching Status cells. A Status cell of exact `Y`, `Complete`/`Completed` (case-insensitive),
+  or a Korean completion expression containing `완료` counts as complete unless a negative
+  expression (for example `N`, `Not completed`, `Incomplete`, planned, or blank) is present.
+  The denominator is always 25. Optional or additional studies, including Dog Telemetry, are
+  retained as source information but never change the ADMET score.
+- When an ADMET Partner Material contains Study–Status text, that deterministic count is
+  authoritative. A missing or stale document-model count must not clear or replace it.
 - In Vivo/In Vitro `O` requires a stated positive efficacy or activity result.
 - A statement that an experiment was performed, without a result, is not `O`.
-- ADMET is numeric; 25 is included in the Value Up threshold.
+- ADMET is numeric; its fixed display denominator is 25, not a Value Up threshold.
 - Joint research applies to all modalities when Platform Attractiveness is exactly 3.
 
 ## Human override

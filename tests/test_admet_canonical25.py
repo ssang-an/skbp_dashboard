@@ -40,6 +40,16 @@ class AdmetCanonical25Tests(unittest.TestCase):
         ])
         self.assertEqual(main.count_admet_completed([admet_attachment(text)]), 0)
 
+    def test_case_c2_korean_completion_and_negative_precedence(self):
+        text = "\n".join([
+            "Mouse PK | 수행 완료",
+            "Rat PK | 시험 완료. 보고서 작성 중",
+            "Dog PK | COMPLETE",
+            "Monkey PK | Incomplete",
+            "BBB penetration | Not completed",
+        ])
+        self.assertEqual(main.count_admet_completed([admet_attachment(text)]), 3)
+
     def test_case_d_optional_study_is_excluded(self):
         self.assertEqual(main.count_admet_completed([admet_attachment("Dog telemetry | Y")]), 0)
 
@@ -62,6 +72,22 @@ class AdmetCanonical25Tests(unittest.TestCase):
         self.assertEqual(detected["admet_completed"], 1)
         self.assertEqual(detected["in_vivo_status"], "N/A")
         self.assertEqual(detected["in_vitro_status"], "N/A")
+
+    def test_case_h_study_status_count_wins_when_deepseek_count_is_blank(self):
+        attachment = admet_attachment("Mouse PK | Y\nRat PK | Completed")
+        attachment["document_processing"]["deepseek_analysis"] = {
+            "status": "completed",
+            "result": {
+                "in_vivo_efficacy": {"verdict": "unknown"},
+                "in_vitro_efficacy": {"verdict": "unknown"},
+                "admet_completed_count": None,
+            },
+        }
+        detected = main.auto_detect_evidence_fields(
+            {"source_report": {"raw_markdown": ""}, "meta": {"attachments": [attachment]}}
+        )
+        self.assertEqual(detected["admet_completed"], 2)
+        self.assertEqual(detected["admet_completed_source"], "study_status")
 
 
 if __name__ == "__main__":

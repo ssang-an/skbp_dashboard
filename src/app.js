@@ -3628,7 +3628,9 @@ function evidenceToneClass(value) {
 }
 
 function evidenceSourceLabel(source) {
-  return source === 'manual' ? '수동 입력' : '자동 판단 (GPT 원문 리포트 + 첨부파일 키워드 기반, 실험 데이터 확인 필요)';
+  if (source === 'manual') return '수동 입력';
+  if (source === 'study_status') return '업로드 ADMET Study·Status 표 기반';
+  return '자동 판단 (GPT 원문 리포트 + 첨부파일 키워드 기반, 실험 데이터 확인 필요)';
 }
 
 function evidenceEditSelect(row, field, sourceField, label) {

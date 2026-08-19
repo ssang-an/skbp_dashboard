@@ -1331,7 +1331,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("TAB 3 · SHORTLISTING · DECISION GUIDE", JS)
         self.assertIn("Shortlisted 후보의 OI Partnership Type 자동분류 및 후속 관리 기준", JS)
         self.assertIn("state.latestOiPartnershipCriteriaVersion", scope)
-        self.assertIn("Filter 3 — OI Partnership 자동 분류 · v1.3 기준", focus)
+        self.assertIn("Filter 3 — OI Partnership 자동 분류 · v1.4 기준", focus)
         intro = (
             "Tab 3는 Full Scout 검토 후 Shortlisting에 등록된 후보를 대상으로, "
             "SKBP 우선 관심 적응증 여부와 확인된 modality·stage·Platform Attractiveness·"
@@ -1373,7 +1373,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             "Stage &lt; IND-enabling",
             "In-vivo = O",
             "In-vitro = O",
-            "ADMET uploaded + scored",
+            "ADMET uploaded + scored (완료 Study / 25)",
             "Platform Attractiveness = 3",
         ):
             self.assertIn(formula, focus)
@@ -2250,7 +2250,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('id="rubricRefreshButton" class="criteria-refresh-pill"', workspace)
         self.assertIn('id="oiPartnershipRefreshButton" class="criteria-refresh-pill"', workspace)
         self.assertIn("<span>Score 기준 갱신</span>", workspace)
-        self.assertIn("<span>v1.3 기준 갱신</span>", workspace)
+        self.assertIn("<span>v1.4 기준 갱신</span>", workspace)
         self.assertGreaterEqual(workspace.count('class="metadata-divider"'), 3)
         self.assertIn('<span class="review-info-primary-label">Action Date</span>', workspace)
         self.assertIn("<small>Set by Asset Owner</small>", workspace)

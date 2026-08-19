@@ -3339,9 +3339,9 @@ def attachment_partner_material_category(attachment: Any) -> str | None:
     declared = str(attachment.get("partner_material_category") or "").strip().casefold()
     return declared if declared in {"cdp", "ncdp", "admet"} else partner_material_category(attachment.get("filename"))
 ADMET_TOTAL_ITEMS = 25
-# v1.3 broadens Joint Research to every modality and makes an uploaded, scored
-# ADMET Partner Material (rather than an arbitrary threshold) mandatory for Value Up.
-OI_PARTNERSHIP_CRITERIA_VERSION = "1.3"
+# v1.4 refreshes tracked records after making the canonical Study–Status ADMET
+# parser authoritative whenever an ADMET Partner Material is available.
+OI_PARTNERSHIP_CRITERIA_VERSION = "1.4"
 OI_PARTNERSHIP_TYPES = {"value_up", "joint_research", "investment", "n_a", "unknown"}
 OI_PARTNERSHIP_LABELS = {
     "investment": "투자",
@@ -3481,10 +3481,13 @@ def aggregate_document_verdict(analyses: list[dict[str, Any]], criterion: str) -
 
 
 def auto_detect_evidence_fields(record: dict[str, Any]) -> dict[str, Any]:
-    """Prefer DeepSeek document judgments; fall back to conservative keyword checks."""
+    """Use document judgments for efficacy and canonical Study–Status parsing for ADMET."""
     report_text = str((record.get("source_report") or {}).get("raw_markdown") or "")
     attachments = record.get("meta", {}).get("attachments")
     attachments = attachments if isinstance(attachments, list) else []
+    # A tabular ADMET Partner Material is the source of truth for the fixed 25-study
+    # numerator.  Do not let a missing (or stale) LLM-derived number erase it.
+    deterministic_admet_count = count_admet_completed(attachments)
     analyses = attachment_filter3_analyses(record)
     if analyses:
         in_vivo_verdict = aggregate_document_verdict(analyses, "in_vivo_efficacy")
@@ -3501,7 +3504,12 @@ def auto_detect_evidence_fields(record: dict[str, Any]) -> dict[str, Any]:
         return {
             "in_vivo_status": {"true": "O", "false": "X"}.get(in_vivo_verdict, "N/A"),
             "in_vitro_status": {"true": "O", "false": "X"}.get(in_vitro_verdict, "N/A"),
-            "admet_completed": max(numeric_admet_counts) if numeric_admet_counts else None,
+            "admet_completed": (
+                deterministic_admet_count
+                if deterministic_admet_count is not None
+                else max(numeric_admet_counts) if numeric_admet_counts else None
+            ),
+            "admet_completed_source": "study_status" if deterministic_admet_count is not None else "deepseek",
             "document_analyses": analyses,
         }
     # ADMET documents drive only the ADMET numerator; they must never overwrite
@@ -3515,7 +3523,8 @@ def auto_detect_evidence_fields(record: dict[str, Any]) -> dict[str, Any]:
     return {
         "in_vivo_status": classify_evidence_presence(combined_text, IN_VIVO_PATTERN),
         "in_vitro_status": classify_evidence_presence(combined_text, IN_VITRO_PATTERN),
-        "admet_completed": count_admet_completed(attachments),
+        "admet_completed": deterministic_admet_count,
+        "admet_completed_source": "study_status" if deterministic_admet_count is not None else "auto",
         "document_analyses": [],
     }
 
@@ -3527,7 +3536,11 @@ def apply_auto_detected_evidence(focus: dict[str, Any], record: dict[str, Any], 
         if not force and focus.get(source_key) == "manual":
             continue
         focus[field_key] = detected[field_key]
-        focus[source_key] = "deepseek" if detected.get("document_analyses") else "auto"
+        focus[source_key] = (
+            detected.get("admet_completed_source", "auto")
+            if field_key == "admet_completed"
+            else "deepseek" if detected.get("document_analyses") else "auto"
+        )
     focus["filter3_document_analyses"] = detected.get("document_analyses") or []
     focus["filter3_document_analysis_updated_at"] = datetime.now(timezone.utc).isoformat()
 
@@ -3883,6 +3896,10 @@ def refresh_tracked_oi_classifications(records: list[dict[str, Any]]) -> bool:
             focus.get("partnership_classification_criteria_version") != OI_PARTNERSHIP_CRITERIA_VERSION
             or focus.get("partnership_classification_status") in {None, "", "pending_criteria"}
             or not focus.get("partnership_type")
+            or (
+                focus.get("admet_completed_source") == "deepseek"
+                and count_admet_completed((record.get("meta") or {}).get("attachments") or []) is not None
+            )
         )
         if not needs_refresh:
             continue
