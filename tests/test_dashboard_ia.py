@@ -49,6 +49,16 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         chat_end = JS.index("window.addEventListener('keydown'", chat_start)
         self.assertNotIn('runBlockingOperation', JS[chat_start:chat_end])
 
+    def test_full_scout_attachment_upload_uses_the_cancellable_processing_modal(self):
+        upload = function_body(DETAIL_JS, "uploadAttachment")
+
+        self.assertIn('id="attachmentUploadModal"', DETAIL_HTML)
+        self.assertIn('id="attachmentUploadCancelButton"', DETAIL_HTML)
+        self.assertIn("openAttachmentUploadOperation(file.name)", upload)
+        self.assertIn("signal: operation.signal", upload)
+        self.assertIn("closeAttachmentUploadOperation(operation.token)", upload)
+        self.assertIn("attachmentUploadCancelButton?.addEventListener('click'", DETAIL_JS)
+
     def test_header_action_pills_use_restrained_semantic_palette(self):
         palette = CSS[CSS.index("/* Soft-bright semantic header palette") : CSS.index("/* Match response copy/full-view")]
         self.assertIn("#criteriaDrawerButton", palette)

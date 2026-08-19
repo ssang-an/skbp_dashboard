@@ -115,6 +115,11 @@ const elements = {
   detailAttachmentsList: document.querySelector('#detailAttachmentsList'),
   detailAttachmentAiScope: document.querySelector('#detailAttachmentAiScope'),
   detailAttachmentStatus: document.querySelector('#detailAttachmentStatus'),
+  attachmentUploadModal: document.querySelector('#attachmentUploadModal'),
+  attachmentUploadModalTitle: document.querySelector('#attachmentUploadModalTitle'),
+  attachmentUploadModalMessage: document.querySelector('#attachmentUploadModalMessage'),
+  attachmentUploadModalStatus: document.querySelector('#attachmentUploadModalStatus'),
+  attachmentUploadCancelButton: document.querySelector('#attachmentUploadCancelButton'),
   detailViewerTitle: document.querySelector('#detailViewerTitle'),
   detailViewerBackGroup: document.querySelector('#detailViewerBackGroup'),
   detailViewerBackButton: document.querySelector('#detailViewerBackButton'),
@@ -210,6 +215,7 @@ let currentRecord = null;
 let currentRecordId = recordId;
 let activeAttachmentId = '';
 let attachmentPreviewController = null;
+let activeAttachmentUpload = null;
 let activeReportJumpHeading = null;
 let reportJumpHighlightTimer = null;
 let chatSessions = [];
@@ -1361,6 +1367,36 @@ function setAttachmentStatus(message = '', tone = '') {
   elements.detailAttachmentStatus.dataset.tone = tone;
 }
 
+function openAttachmentUploadOperation(fileName = '') {
+  const controller = new AbortController();
+  const token = Symbol('attachment-upload');
+  activeAttachmentUpload = { token, controller };
+  if (elements.attachmentUploadModalTitle) elements.attachmentUploadModalTitle.textContent = '파일을 업로드하고 있습니다';
+  if (elements.attachmentUploadModalMessage) {
+    elements.attachmentUploadModalMessage.textContent = fileName
+      ? `${fileName} 파일을 업로드하고 내용을 확인하고 있습니다.`
+      : '파일을 업로드하고 내용을 확인하고 있습니다.';
+  }
+  if (elements.attachmentUploadModalStatus) {
+    elements.attachmentUploadModalStatus.textContent = '파일 처리 중에는 다른 화면으로 이동하지 마세요.';
+  }
+  if (elements.attachmentUploadCancelButton) {
+    elements.attachmentUploadCancelButton.disabled = false;
+    elements.attachmentUploadCancelButton.textContent = '실행 취소';
+  }
+  if (elements.attachmentUploadModal) elements.attachmentUploadModal.hidden = false;
+  document.body.classList.add('operation-modal-open');
+  window.setTimeout(() => elements.attachmentUploadCancelButton?.focus(), 0);
+  return { token, signal: controller.signal };
+}
+
+function closeAttachmentUploadOperation(token) {
+  if (!activeAttachmentUpload || activeAttachmentUpload.token !== token) return;
+  activeAttachmentUpload = null;
+  if (elements.attachmentUploadModal) elements.attachmentUploadModal.hidden = true;
+  document.body.classList.remove('operation-modal-open');
+}
+
 function attachmentProcessingLabel(attachment) {
   const processing = attachment?.document_processing || {};
   const extraction = processing.extraction || {};
@@ -1438,6 +1474,7 @@ async function uploadAttachment(file, materialCategory) {
   if (!file || !currentRecordId) return;
   if (elements.detailAttachmentAddButton) elements.detailAttachmentAddButton.disabled = true;
   setAttachmentStatus('파일 업로드 중…');
+  const operation = openAttachmentUploadOperation(file.name);
   try {
     const formData = new FormData();
     formData.append('file', file);
@@ -1445,7 +1482,8 @@ async function uploadAttachment(file, materialCategory) {
     formData.append('partner_material_category_value', materialCategory);
     const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/attachments`, {
       method: 'POST',
-      body: formData
+      body: formData,
+      signal: operation.signal
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.detail || '파일 업로드에 실패했습니다.');
@@ -1453,9 +1491,16 @@ async function uploadAttachment(file, materialCategory) {
     renderCollaborationPanel(currentRecord);
     setAttachmentStatus(`${file.name}을(를) 추가했습니다.`, 'success');
     if (data.attachment?.id) await showAttachmentPreview(data.attachment.id);
+    return true;
   } catch (error) {
+    if (operation.signal.aborted || error?.name === 'AbortError') {
+      setAttachmentStatus(`${file.name} 업로드를 취소했습니다.`);
+      return false;
+    }
     setAttachmentStatus(error.message, 'error');
+    return false;
   } finally {
+    closeAttachmentUploadOperation(operation.token);
     if (elements.detailAttachmentAddButton) elements.detailAttachmentAddButton.disabled = false;
     if (elements.detailAttachmentInput) elements.detailAttachmentInput.value = '';
   }
@@ -1474,7 +1519,8 @@ async function uploadAttachments(files) {
       setAttachmentStatus(`${file.name} 업로드를 취소했습니다.`);
       continue;
     }
-    await uploadAttachment(file, materialCategory);
+    const uploaded = await uploadAttachment(file, materialCategory);
+    if (!uploaded) break;
   }
 }
 
@@ -4093,6 +4139,16 @@ elements.detailAttachmentAddButton?.addEventListener('click', () => {
 elements.detailAttachmentInput?.addEventListener('change', (event) => {
   const files = event.target.files;
   if (files?.length) uploadAttachments(files);
+});
+
+elements.attachmentUploadCancelButton?.addEventListener('click', () => {
+  const operation = activeAttachmentUpload;
+  if (!operation) return;
+  if (elements.attachmentUploadModalStatus) {
+    elements.attachmentUploadModalStatus.textContent = '실행 취소를 요청했습니다. 서버 저장이 이미 시작된 경우에는 파일이 추가될 수 있습니다.';
+  }
+  if (elements.attachmentUploadCancelButton) elements.attachmentUploadCancelButton.disabled = true;
+  operation.controller.abort();
 });
 
 elements.detailAttachmentsList?.addEventListener('click', (event) => {

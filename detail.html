@@ -382,6 +382,25 @@
       </div>
     </div>
 
+    <div class="operation-modal-backdrop" id="attachmentUploadModal" hidden>
+      <section class="operation-modal" role="dialog" aria-modal="true" aria-labelledby="attachmentUploadModalTitle" aria-describedby="attachmentUploadModalMessage">
+        <header class="operation-modal-header">
+          <span class="operation-modal-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false"><path d="M7 3h10M7 21h10M8.5 3c0 4 1 5.5 3.5 7.3 2.5-1.8 3.5-3.3 3.5-7.3M8.5 21c0-4 1-5.5 3.5-7.3 2.5 1.8 3.5 3.3 3.5 7.3" /><path d="M9.5 17h5" /></svg>
+          </span>
+          <div>
+            <p class="operation-modal-eyebrow">PROCESSING</p>
+            <h2 id="attachmentUploadModalTitle">잠시만 기다려 주세요</h2>
+          </div>
+        </header>
+        <p class="operation-modal-copy" id="attachmentUploadModalMessage">파일을 업로드하고 있습니다.</p>
+        <p class="operation-modal-status" id="attachmentUploadModalStatus" role="status" aria-live="polite">파일 내용을 확인하고 있습니다.</p>
+        <footer class="operation-modal-actions">
+          <button id="attachmentUploadCancelButton" type="button" class="operation-modal-cancel">실행 취소</button>
+        </footer>
+      </section>
+    </div>
+
     <button
       id="detailAiButton"
       class="floating-agent-launcher"
@@ -728,6 +747,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260806-theme-indication-3"></script>
+    <script type="module" src="./src/detail.js?v=20260819-attachment-upload-modal-1"></script>
   </body>
 </html>
