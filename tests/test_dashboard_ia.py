@@ -2366,6 +2366,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("Object.prototype.hasOwnProperty.call(manualScoreOverrides, criterionId)", collaboration)
         self.assertIn("score-chip score-chip-link tone-${tone}${isHuman ? ' is-human' : ''}", collaboration)
         self.assertIn(".filter-score-panel .score-chip.is-human", CSS)
+        self.assertIn("border-color: #b9616b", CSS)
+        self.assertIn("styles.css?v=20260819-manual-score-chip-2", DETAIL_HTML)
         self.assertNotIn("button.textContent", score_refresh)
         self.assertIn("button.classList.add('is-saving')", score_refresh)
         self.assertIn("/recalculate-oi-partnership", oi_refresh)
