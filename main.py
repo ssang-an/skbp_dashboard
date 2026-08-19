@@ -7623,6 +7623,41 @@ def record_successful_rubric_review(
         meta["rubric_refresh_history"] = history[-20:]
 
 
+def record_has_current_rubric_evaluation(record: dict[str, Any], rubric_version: str) -> bool:
+    """Return whether the stored official scoring has already been checked at this rubric version."""
+    meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+    expected = str(rubric_version or "").strip().lstrip("vV")
+    if not expected:
+        return False
+    recalculation = meta.get("rubric_recalculation")
+    applied_versions = (
+        meta.get("rubric_reviewed_version"),
+        meta.get("rescored_rubric_version"),
+        recalculation.get("version") if isinstance(recalculation, dict) else None,
+        meta.get("rubric_version"),
+    )
+    return any(str(value or "").strip().lstrip("vV") == expected for value in applied_versions)
+
+
+def reset_manual_scoring_overrides_after_rubric_review(
+    record: dict[str, Any],
+    *,
+    cleared_at: str,
+    actor_ip: str,
+) -> dict[str, Any]:
+    """Restore official GPT scores while retaining a reviewable audit trail."""
+    cleared = clear_manual_scoring_overrides_for_rubric_refresh(record, cleared_at)
+    append_scoring_override_reset_history(
+        record,
+        cleared,
+        actor_ip=actor_ip,
+        source="dashboard_rubric_refresh",
+        changed_at=cleared_at,
+        change_method="rubric_refresh",
+    )
+    return cleared
+
+
 @app.post("/api/records/{record_id:path}/refresh-rubric")
 async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, Any]:
     require_auth_admin(request)
@@ -7636,6 +7671,41 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
         current_version = str(
             meta.get("rescored_rubric_version") or meta.get("rubric_version") or latest_rubric_version
         )
+        actor_ip = get_client_ip(request)
+
+        # Dashboard edits are a display-layer override.  If official GPT scoring
+        # is already current, restore it without another identical AI request.
+        if record_has_current_rubric_evaluation(record, latest_rubric_version):
+            reviewed_at = datetime.now(timezone.utc).isoformat()
+            cleared_manual_scoring_overrides = reset_manual_scoring_overrides_after_rubric_review(
+                record,
+                cleared_at=reviewed_at,
+                actor_ip=actor_ip,
+            )
+            record_successful_rubric_review(
+                record,
+                rubric_version=latest_rubric_version,
+                reviewed_at=reviewed_at,
+                actor_ip=actor_ip,
+                result=("manual_override_reset" if cleared_manual_scoring_overrides else "already_current"),
+                reason="Official GPT scoring is already current for this rubric.",
+            )
+            validate_records_for_save([record])
+            records[index] = record
+            save_records(records)
+            return {
+                "ok": True,
+                "status": "manual_override_reset" if cleared_manual_scoring_overrides else "already_current",
+                "message": (
+                    f"Rubric v{latest_rubric_version}의 저장된 GPT 공식 점수로 복원했습니다."
+                    if cleared_manual_scoring_overrides
+                    else f"Rubric v{latest_rubric_version}는 이미 최신 상태입니다."
+                ),
+                "record": record,
+                "rubric_reviewed_version": latest_rubric_version,
+                "rubric_reviewed_at": reviewed_at,
+                "cleared_manual_scoring_override_fields": sorted(cleared_manual_scoring_overrides),
+            }
 
         api_key = os.getenv("OPENROUTER_API_KEY")
         if not api_key:
@@ -7681,12 +7751,17 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
             }
         if not verdict["update_needed"]:
             reviewed_at = datetime.now(timezone.utc).isoformat()
+            cleared_manual_scoring_overrides = reset_manual_scoring_overrides_after_rubric_review(
+                record,
+                cleared_at=reviewed_at,
+                actor_ip=actor_ip,
+            )
             record_successful_rubric_review(
                 record,
                 rubric_version=latest_rubric_version,
                 reviewed_at=reviewed_at,
-                actor_ip=get_client_ip(request),
-                result="no_change",
+                actor_ip=actor_ip,
+                result="manual_override_reset" if cleared_manual_scoring_overrides else "no_change",
                 reason=verdict["reason"],
             )
             validate_records_for_save([record])
@@ -7694,16 +7769,21 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
             save_records(records)
             return {
                 "ok": True,
-                "status": "no_evidence",
+                "status": "manual_override_reset" if cleared_manual_scoring_overrides else "no_evidence",
                 "message": (
-                    f"Fast Triage rubric v{latest_rubric_version} 검토 완료 · 점수 변경 없음"
-                    if triage_workflow
-                    else f"Full Scout rubric v{latest_rubric_version} 검토 완료 · 점수 변경 없음"
+                    f"Rubric v{latest_rubric_version}의 저장된 GPT 공식 점수로 복원했습니다."
+                    if cleared_manual_scoring_overrides
+                    else (
+                        f"Fast Triage rubric v{latest_rubric_version} 검토 완료 · 점수 변경 없음"
+                        if triage_workflow
+                        else f"Full Scout rubric v{latest_rubric_version} 검토 완료 · 점수 변경 없음"
+                    )
                 ),
                 "record": record,
                 "reason": verdict["reason"],
                 "rubric_reviewed_version": latest_rubric_version,
                 "rubric_reviewed_at": reviewed_at,
+                "cleared_manual_scoring_override_fields": sorted(cleared_manual_scoring_overrides),
             }
 
         candidate = copy.deepcopy(record)
@@ -7716,12 +7796,17 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
         candidate.pop("_revision_context", None)
         if not changes:
             reviewed_at = datetime.now(timezone.utc).isoformat()
+            cleared_manual_scoring_overrides = reset_manual_scoring_overrides_after_rubric_review(
+                record,
+                cleared_at=reviewed_at,
+                actor_ip=actor_ip,
+            )
             record_successful_rubric_review(
                 record,
                 rubric_version=latest_rubric_version,
                 reviewed_at=reviewed_at,
-                actor_ip=get_client_ip(request),
-                result="no_score_changes",
+                actor_ip=actor_ip,
+                result="manual_override_reset" if cleared_manual_scoring_overrides else "no_score_changes",
                 reason=verdict["reason"],
             )
             validate_records_for_save([record])
@@ -7729,12 +7814,17 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
             save_records(records)
             return {
                 "ok": True,
-                "status": "no_score_changes",
-                "message": f"Rubric v{latest_rubric_version} 검토 완료 · 실제 점수 변경 없음",
+                "status": "manual_override_reset" if cleared_manual_scoring_overrides else "no_score_changes",
+                "message": (
+                    f"Rubric v{latest_rubric_version}의 저장된 GPT 공식 점수로 복원했습니다."
+                    if cleared_manual_scoring_overrides
+                    else f"Rubric v{latest_rubric_version} 검토 완료 · 실제 점수 변경 없음"
+                ),
                 "record": record,
                 "reason": verdict["reason"],
                 "rubric_reviewed_version": latest_rubric_version,
                 "rubric_reviewed_at": reviewed_at,
+                "cleared_manual_scoring_override_fields": sorted(cleared_manual_scoring_overrides),
             }
 
         recalculate_total_score(candidate)
@@ -7765,9 +7855,10 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
         else:
             synchronize_full_scout_hard_filter(candidate)
         changed_at = datetime.now(timezone.utc).isoformat()
-        cleared_manual_scoring_overrides = clear_manual_scoring_overrides_for_rubric_refresh(
+        cleared_manual_scoring_overrides = reset_manual_scoring_overrides_after_rubric_review(
             candidate,
-            changed_at,
+            cleared_at=changed_at,
+            actor_ip=actor_ip,
         )
         if cleared_manual_scoring_overrides:
             changes.append(
@@ -7775,7 +7866,6 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
             )
         record = candidate
         meta = record.setdefault("meta", {})
-        actor_ip = get_client_ip(request)
         meta["rescored_rubric_version"] = latest_rubric_version
         meta["rescored_at"] = changed_at
         meta["rescored_by"] = actor_ip
@@ -8136,6 +8226,7 @@ def append_scoring_override_reset_history(
     actor_ip: str,
     source: str,
     changed_at: str,
+    change_method: str = "source_reupload",
 ) -> None:
     """Keep cleared Human score values visible while the new official score takes over."""
     if not cleared:
@@ -8163,7 +8254,7 @@ def append_scoring_override_reset_history(
             "actor_ip": actor_ip,
             "actor_name": "",
             "source": source,
-            "change_method": "source_reupload",
+            "change_method": change_method,
             "field": field,
             "previous_value": previous_value,
             "new_value": new_value,
@@ -8176,7 +8267,7 @@ def append_scoring_override_reset_history(
             field=field,
             previous_value=previous_value,
             new_value=new_value,
-            change_method="source_reupload",
+            change_method=change_method,
         )
 
     human_review["last_updated_at"] = changed_at

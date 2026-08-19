@@ -44,6 +44,7 @@ class RubricAiRefreshTests(unittest.TestCase):
             "client": ("127.0.0.1", 12345),
         })
         with (
+            patch.object(main, "require_auth_admin", return_value=None),
             patch.object(main, "load_records", return_value=[copy.deepcopy(record)]),
             patch.object(main, "save_records", side_effect=lambda records: saved.append(copy.deepcopy(records))),
             patch.object(main, "run_markdown_exports", return_value=[]),
@@ -88,6 +89,7 @@ class RubricAiRefreshTests(unittest.TestCase):
             "client": ("127.0.0.1", 12345),
         })
         with (
+            patch.object(main, "require_auth_admin", return_value=None),
             patch.object(main, "load_records", return_value=[copy.deepcopy(record)]),
             patch.object(main, "save_records", side_effect=lambda records: saved.append(copy.deepcopy(records))),
             patch.object(main, "call_openrouter_rubric_refresh", return_value=(answer, None)),
@@ -108,6 +110,40 @@ class RubricAiRefreshTests(unittest.TestCase):
         self.assertIn("Rubric used to recalculate", detail_source)
         self.assertIn("Rubric used for review", detail_source)
 
+    def test_current_rubric_refresh_restores_official_gpt_scores_without_ai_call(self):
+        record = full_scout_record()
+        edited = main.build_ai_revision_update(
+            record,
+            "Marketability: 3 / 3",
+            actor_name="Reviewer Kim",
+            actor_ip="127.0.0.1",
+        )["record"]
+        saved: list[list[dict[str, object]]] = []
+        request = main.Request({
+            "type": "http", "method": "POST", "path": "/", "headers": [],
+            "client": ("127.0.0.1", 12345),
+        })
+
+        with (
+            patch.object(main, "require_auth_admin", return_value=None),
+            patch.object(main, "load_records", return_value=[copy.deepcopy(edited)]),
+            patch.object(main, "save_records", side_effect=lambda records: saved.append(copy.deepcopy(records))),
+            patch.object(main, "call_openrouter_rubric_refresh") as refresh_ai,
+            patch.object(main, "validate_records_for_save", return_value=None),
+        ):
+            result = asyncio.run(main.refresh_record_rubric(main.record_key(edited), request))
+
+        restored = result["record"]
+        self.assertEqual(result["status"], "manual_override_reset")
+        refresh_ai.assert_not_called()
+        self.assertEqual(restored["scoring"]["criteria"]["marketability"]["score"], 1)
+        self.assertEqual(restored["scoring"]["total_score"], 14)
+        self.assertNotIn("scores", restored["meta"]["human_review"]["overrides"])
+        self.assertNotIn("total_score", restored["meta"]["human_review"]["overrides"])
+        self.assertEqual(restored["meta"]["human_review"]["history"][-1]["source"], "dashboard_rubric_refresh")
+        self.assertEqual(restored["meta"]["human_review"]["history"][-1]["change_method"], "rubric_refresh")
+        self.assertEqual(saved[0][0]["scoring"]["total_score"], 14)
+
     def test_fast_triage_excerpt_centers_the_current_asset_in_a_batch_report(self):
         record = {
             "meta": {"review_type": "fast_triage"},
@@ -126,7 +162,7 @@ class RubricAiRefreshTests(unittest.TestCase):
                 "review_type": "fast_triage",
                 "schema_version": main.TRIAGE_SCHEMA_VERSION,
                 "instruction_version": main.TRIAGE_CRITERIA_VERSION,
-                "rubric_version": main.TRIAGE_CRITERIA_VERSION,
+                "rubric_version": "3.2",
                 "generated_at": "2026-08-05",
                 "output_filename_base": "Triage_AI_Refresh_Test",
                 "edit_history": [],
@@ -181,6 +217,7 @@ class RubricAiRefreshTests(unittest.TestCase):
             "client": ("127.0.0.1", 12345),
         })
         with (
+            patch.object(main, "require_auth_admin", return_value=None),
             patch.object(main, "load_records", return_value=[copy.deepcopy(record)]),
             patch.object(main, "save_records", return_value=None),
             patch.object(main, "run_markdown_exports", return_value=[]),

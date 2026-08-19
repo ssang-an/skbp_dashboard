@@ -4081,13 +4081,26 @@ function rubricReevaluationButton(row) {
   const isTriage = row.isTriage;
   const workflowLabel = isTriage ? 'Fast Triage' : 'Full Scout';
   const latestVersion = isTriage ? LATEST_TRIAGE_RUBRIC_VERSION : LATEST_FULL_SCOUT_RUBRIC_VERSION;
-  const appliedVersion = String(get(row.raw, 'meta.rubric_recalculation.version', row.criteriaVersion || '-'));
-  const evaluatedAt = get(row.raw, 'meta.rubric_recalculation.recalculated_at', row.generatedAt || '-');
-  const isCurrent = String(get(row.raw, 'meta.rubric_recalculation.version', '')) === latestVersion;
+  const appliedVersion = String(
+    get(row.raw, 'meta.rubric_reviewed_version', '')
+    || get(row.raw, 'meta.rescored_rubric_version', '')
+    || get(row.raw, 'meta.rubric_recalculation.version', row.criteriaVersion || '-')
+  );
+  const evaluatedAt = get(
+    row.raw,
+    'meta.rubric_reviewed_at',
+    get(row.raw, 'meta.rubric_recalculation.recalculated_at', row.generatedAt || '-')
+  );
+  const hasManualScoreOverride = Object.keys(humanReviewOverrides(row.raw)?.scores || {}).length > 0
+    || hasManualTotalScoreOverride(row.raw);
+  const isCurrent = !hasManualScoreOverride && appliedVersion.replace(/^v/i, '') === latestVersion;
   const title = [
     isTriage
       ? `최신 ${workflowLabel} Rubric으로 배치 GPT 원문을 AI 재채점`
       : `최신 ${workflowLabel} Rubric으로 GPT 원문과 파트너사 자료를 AI 재채점`,
+    hasManualScoreOverride
+      ? '수동 점수는 저장된 GPT 공식 점수로 복원되고, 변경 이력에는 남습니다.'
+      : '',
     `적용 지침: v${appliedVersion}`,
     `평가 날짜: ${formatDateTimeKo(evaluatedAt)}`
   ].join('\n');
@@ -4985,7 +4998,7 @@ async function recalculateLatestRubric(button) {
     );
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
-    if (data.status !== 'updated') {
+    if (!data.record || ['error', 'conflict'].includes(data.status)) {
       elements.dataStatus.textContent = data.message || `기존 rubric v${latestVersion} 점수를 유지했습니다.`;
       return;
     }

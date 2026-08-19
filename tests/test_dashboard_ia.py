@@ -1026,6 +1026,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         for mutation in (manual_save, rubric_recalculation):
             self.assertIn("await refreshDashboardSummary()", mutation)
             self.assertLess(mutation.index("await refreshDashboardSummary()"), mutation.index("render()"))
+        self.assertIn("['error', 'conflict'].includes(data.status)", rubric_recalculation)
 
     def test_export_flags_and_responsive_summary_contract(self):
         export_table = function_body(JS, "exportPipelineTable")
