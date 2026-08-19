@@ -14,3 +14,7 @@
 
 - Tab1·Tab2 판단근거 및 표기 관련 정적 테스트 8건 통과
 - `node --check src/app.js src/detail.js src/triage-detail.js`
+
+## 추가 반영
+
+- Full Scout 원문 보고서의 TABLE OF CONTENTS에서도 `4.1 Target Area Relevance`로 표시한다. 원문 heading과 `target_relevance` 식별자는 변경하지 않는다.

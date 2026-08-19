@@ -2208,6 +2208,9 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("pipeline\\s+scout\\s+report", outline)
         self.assertIn("return !isReportTitle", outline)
         self.assertLess(outline.index(".filter("), outline.index(".slice(0, 14)"))
+        self.assertIn("function detailOutlineLabel", DETAIL_JS)
+        self.assertIn("Target Area Relevance", DETAIL_JS)
+        self.assertIn("detailOutlineLabel(heading.textContent.trim())", outline)
 
     def test_detail_left_rail_shares_space_evenly(self):
         layout = CSS[CSS.index("Share the detail left rail evenly") :]

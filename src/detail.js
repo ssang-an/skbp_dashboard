@@ -2736,6 +2736,10 @@ function closeReportModal() {
   elements.detailViewerOpenWindowButton?.focus();
 }
 
+function detailOutlineLabel(value) {
+  return String(value || '').replace(/\bTarget Relevance\b/gi, 'Target Area Relevance');
+}
+
 function renderDetailOutline() {
   if (!elements.detailOutlineList || !elements.sourceReportViewer) return;
   const headings = [...elements.sourceReportViewer.querySelectorAll('h1, h2, h3')]
@@ -2759,7 +2763,7 @@ function renderDetailOutline() {
   elements.detailOutlineList.innerHTML = headings
     .map((heading) => `
       <button type="button" data-outline-target="${escapeHtml(heading.id)}" class="outline-${heading.tagName.toLowerCase()}">
-        ${escapeHtml(heading.textContent.trim() || 'Section')}
+        ${escapeHtml(detailOutlineLabel(heading.textContent.trim()) || 'Section')}
       </button>
     `)
     .join('');
