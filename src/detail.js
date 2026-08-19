@@ -1136,6 +1136,7 @@ function renderCollaborationPanel(record) {
           <button
             type="button"
             class="score-chip score-chip-link tone-${tone}${isHuman ? ' is-human' : ''}"
+            ${isHuman ? 'data-manual-score="true"' : ''}
             data-report-criterion="${escapeHtml(criterionId)}"
             title="${escapeHtml(scoringLabels[criterionId])}: ${escapeHtml(formatCriterionScore(score))} · GPT 원문 근거로 이동"
             aria-label="${escapeHtml(scoringLabels[criterionId])} ${escapeHtml(formatCriterionScore(score))}점, GPT 원문 근거로 이동"
