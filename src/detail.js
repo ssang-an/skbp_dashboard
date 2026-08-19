@@ -1120,7 +1120,8 @@ function renderCollaborationPanel(record) {
         const score = reviewScores.scores[index];
         const tone = scoreChipTone(score);
         const label = scoringFirstWord[criterionId] || criterionId;
-        const isHuman = Object.prototype.hasOwnProperty.call(manualScoreOverrides, criterionId);
+        const isHuman = Object.prototype.hasOwnProperty.call(manualScoreOverrides, criterionId)
+          || hasManualReviewField(record, `scores.${criterionId}`);
         return `
           <button
             type="button"

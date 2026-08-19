@@ -2269,7 +2269,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn(".detail-material-body::-webkit-scrollbar", layout)
         self.assertIn("width: 6px", layout)
         self.assertIn("border-radius: 999px", layout)
-        self.assertIn("detail.js?v=20260819-material-category-upload-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260819-manual-score-chip-3", DETAIL_HTML)
 
     def test_report_header_matches_review_workspace_and_uses_icon_actions(self):
         report_header = DETAIL_HTML[
@@ -2383,10 +2383,12 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("detailOiPartnershipOrigin.textContent = `OI Partnership v${", collaboration)
         self.assertIn("const manualScoreOverrides = record?.meta?.human_review?.overrides?.scores || {};", collaboration)
         self.assertIn("Object.prototype.hasOwnProperty.call(manualScoreOverrides, criterionId)", collaboration)
+        self.assertIn("hasManualReviewField(record, `scores.${criterionId}`)", collaboration)
         self.assertIn("score-chip score-chip-link tone-${tone}${isHuman ? ' is-human' : ''}", collaboration)
         self.assertIn(".filter-score-panel .score-chip.is-human", CSS)
-        self.assertIn("border-color: #b9616b", CSS)
-        self.assertIn("styles.css?v=20260819-manual-score-chip-2", DETAIL_HTML)
+        self.assertIn("border: 2px solid #b54552", CSS)
+        self.assertIn("styles.css?v=20260819-manual-score-chip-3", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260819-manual-score-chip-3", DETAIL_HTML)
         self.assertNotIn("button.textContent", score_refresh)
         self.assertIn("button.classList.add('is-saving')", score_refresh)
         self.assertIn("/recalculate-oi-partnership", oi_refresh)
@@ -2485,7 +2487,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("detailOiPartnershipNoteOrigin", DETAIL_JS)
         self.assertIn('title="OI 파트너십 분류 근거를 짧게 요약합니다."', note_markup)
         self.assertNotIn("review-reason-edit-icon", note_markup)
-        self.assertIn("detail.js?v=20260819-material-category-upload-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260819-manual-score-chip-3", DETAIL_HTML)
 
     def test_partner_material_body_scrolls_below_fixed_header(self):
         header_index = DETAIL_HTML.index('class="detail-material-header"')
