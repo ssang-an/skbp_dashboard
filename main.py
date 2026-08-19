@@ -8591,13 +8591,8 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
                 baseline.setdefault(field_key, previous)
             overrides[field_key] = value
         elif edit_kind == "score":
-            if is_triage:
-                raise HTTPException(
-                    status_code=400,
-                    detail="Individual score overrides are available only in TAB2 Full Scout.",
-                )
             criterion_id = str(payload.get("criterion") or "").strip()
-            allowed_criteria = MANUAL_REVIEW_SCORE_FIELDS
+            allowed_criteria = TRIAGE_MANUAL_REVIEW_SCORE_FIELDS if is_triage else MANUAL_REVIEW_SCORE_FIELDS
             if criterion_id not in allowed_criteria:
                 raise HTTPException(status_code=400, detail=f"Score field is not editable: {criterion_id}")
             value = payload.get("value")
@@ -8616,20 +8611,27 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
             score_overrides[criterion_id] = value
             field_key = f"scores.{criterion_id}"
         elif edit_kind == "total_score":
-            if is_triage:
-                raise HTTPException(
-                    status_code=400,
-                    detail="Total Score overrides are available only in TAB2 Full Scout.",
-                )
             value = payload.get("value")
-            if isinstance(value, bool) or not isinstance(value, int) or not 0 <= value <= 21:
-                raise HTTPException(status_code=400, detail="Total Score must be an integer from 0 to 21.")
+            max_total_score = 9 if is_triage else 21
+            if isinstance(value, bool) or not isinstance(value, int) or not 0 <= value <= max_total_score:
+                raise HTTPException(status_code=400, detail=f"Total Score must be an integer from 0 to {max_total_score}.")
             field_key = "total_score"
             previous = overrides.get(field_key)
             if previous is None:
                 previous = payload.get("previous_value")
                 if previous is None:
                     previous = (record.get("scoring") or {}).get("total_score")
+                baseline.setdefault(field_key, previous)
+            overrides[field_key] = value
+        elif edit_kind == "final_comment":
+            value = str(payload.get("value") or "").strip()
+            if not value:
+                raise HTTPException(status_code=400, detail="Final comment cannot be empty.")
+            if len(value) > 4000:
+                raise HTTPException(status_code=400, detail="Final comment must be 4,000 characters or fewer.")
+            field_key = "final_comment"
+            previous = str(overrides.get(field_key) or "")
+            if field_key not in overrides:
                 baseline.setdefault(field_key, previous)
             overrides[field_key] = value
         elif edit_kind == "stage":
@@ -8654,7 +8656,7 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
         else:
             raise HTTPException(
                 status_code=400,
-                detail="kind must be status, status_reason, score, total_score, stage, or target.",
+                detail="kind must be status, status_reason, score, total_score, final_comment, stage, or target.",
             )
 
         history = human_review.setdefault("history", [])

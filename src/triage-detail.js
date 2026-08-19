@@ -1,6 +1,6 @@
 import { setupThemeToggle } from './theme.js';
 
-import { initAuthUI } from './auth.js?v=20260802-required-login-1';
+import { getCurrentUser, initAuthUI } from './auth.js?v=20260802-required-login-1';
 
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
@@ -13,6 +13,7 @@ const elements = {
   decisionHero: document.querySelector('#triageDecisionHero'),
   identityGrid: document.querySelector('#triageIdentityGrid'),
   scoreGrid: document.querySelector('#triageScoreGrid'),
+  scoreTotal: document.querySelector('#triageScoreTotal'),
   sourceList: document.querySelector('#triageSourceList'),
   diligence: document.querySelector('#triageDiligence'),
   quickSummary: document.querySelector('#triageQuickSummary'),
@@ -439,6 +440,26 @@ function statusTone(status) {
   return 'na';
 }
 
+function currentUserIsAdmin() {
+  return Boolean(getCurrentUser()?.is_admin);
+}
+
+function scoreHasHumanOverride(record, criterionId) {
+  const overrides = objectValue(objectValue(objectValue(record?.meta).human_review).overrides);
+  return Object.prototype.hasOwnProperty.call(objectValue(overrides.scores), criterionId);
+}
+
+function effectiveTriageTotal(record) {
+  const scores = scoreDefinitions.map((definition) => scoreFor(record, definition.key));
+  return scores.every((score) => Number.isInteger(score))
+    ? scores.reduce((sum, score) => sum + score, 0)
+    : null;
+}
+
+function finalCommentValue(record) {
+  return textValue(objectValue(objectValue(objectValue(record?.meta).human_review).overrides).final_comment, '');
+}
+
 function renderDecision(record) {
   const status = reviewStatus(record);
   const triage = record.triage || {};
@@ -452,6 +473,8 @@ function renderDecision(record) {
     triage.why || record.hard_filter?.reason,
     '판단 근거가 입력되지 않았습니다.'
   );
+  const finalComment = finalCommentValue(record);
+  const canManageFinalComment = currentUserIsAdmin();
   elements.decisionHero.className = `panel triage-decision-hero status-${statusTone(status)}`;
   elements.decisionHero.innerHTML = `
     <div class="triage-decision-topline">
@@ -460,6 +483,18 @@ function renderDecision(record) {
     </div>
     <h2>${escapeHtml(headline)}</h2>
     <p>${escapeHtml(reason)}</p>
+    ${(finalComment || canManageFinalComment) ? `
+      <section class="triage-final-comment${finalComment ? ' has-comment' : ''}" aria-label="Final comment">
+        ${finalComment ? `<p><b>Final comment</b>${escapeHtml(finalComment)}</p>` : ''}
+        ${canManageFinalComment ? `
+          <button type="button" class="triage-note-trigger" data-triage-final-comment-open>${finalComment ? 'Final comment 수정' : '＋ Final comment 입력'}</button>
+          <form class="triage-inline-note-form" data-triage-final-comment-form hidden>
+            <textarea rows="3" maxlength="4000" placeholder="최종 판단에 대한 관리자 의견을 남겨주세요." aria-label="Final comment">${escapeHtml(finalComment)}</textarea>
+            <div><span data-triage-final-comment-status></span><button type="button" data-triage-final-comment-cancel>취소</button><button type="submit">저장</button></div>
+          </form>
+        ` : ''}
+      </section>
+    ` : ''}
   `;
 }
 
@@ -571,6 +606,40 @@ function evidenceBasisLabel(criterion, verifiedSourceCount) {
   return verifiedSourceCount > 0 ? `공개자료 ${verifiedSourceCount}건 확인` : '확인된 판단근거 없음';
 }
 
+function triageScoreTopic(definition) {
+  return {
+    id: `triage-score-${definition.key}`,
+    key: `fast-triage-${definition.key}`,
+    title: `Fast Triage · ${definition.label}`
+  };
+}
+
+function triageScoreNotes(record, definition) {
+  const topic = triageScoreTopic(definition);
+  return arrayValue(objectValue(record?.meta).topic_notes)
+    .filter((note) => objectValue(note).topic_id === topic.id);
+}
+
+function triageScoreNotesMarkup(record, definition) {
+  const topic = triageScoreTopic(definition);
+  const notes = triageScoreNotes(record, definition);
+  return `
+    <section class="triage-score-notes${notes.length ? ' has-notes' : ''}" data-triage-score-notes data-topic-id="${escapeHtml(topic.id)}" data-topic-key="${escapeHtml(topic.key)}" data-topic-title="${escapeHtml(topic.title)}">
+      ${notes.length ? `<div class="triage-score-note-list">${notes.map((note) => `
+        <article class="triage-score-note">
+          <p>${escapeHtml(note.body || '')}</p>
+          <small>${escapeHtml(note.author_name || 'Team member')} · ${escapeHtml(formatTimestamp(note.updated_at || note.created_at))}</small>
+        </article>
+      `).join('')}</div>` : ''}
+      <button type="button" class="triage-note-trigger" data-triage-score-note-open>＋ 코멘트 입력</button>
+      <form class="triage-inline-note-form" data-triage-score-note-form hidden>
+        <textarea rows="3" maxlength="4000" placeholder="이 기준의 판단 근거나 추가 확인 의견을 남겨주세요." aria-label="${escapeHtml(definition.label)} 코멘트"></textarea>
+        <div><span data-triage-score-note-status></span><button type="button" data-triage-score-note-cancel>취소</button><button type="submit">저장</button></div>
+      </form>
+    </section>
+  `;
+}
+
 function renderScores(record) {
   const requireExplicitVerification = isCurrentFastTriageContract(record);
   const criteria = objectValue(objectValue(record?.scoring).criteria);
@@ -585,6 +654,7 @@ function renderScores(record) {
       ? evidenceBasisLabel({ ...criterion, evidence_basis: evidenceBasisValue }, evidenceSources.length)
       : '';
     const evidenceType = textValue(criterion.evidence_type, '');
+    const visibleEvidenceType = evidenceType === 'triage_only' ? '' : evidenceType;
     const evidenceTypeReason = textValue(criterion.evidence_type_reason, '');
     const rationale = objectValue(criterion.score_rationale);
     const uncertainties = listValues(
@@ -601,9 +671,10 @@ function renderScores(record) {
       ],
       '상세 판단근거는 GPT ORIGINAL REPORT에서 확인하세요.'
     );
-    const evidenceMetadata = [evidenceType, evidenceBasis].filter(Boolean);
+    const evidenceMetadata = [visibleEvidenceType, evidenceBasis].filter(Boolean);
+    const isHumanScore = scoreHasHumanOverride(record, definition.key);
     return `
-      <article class="triage-score-card score-${score ?? 'unknown'}">
+      <article class="triage-score-card score-${score ?? 'unknown'}${isHumanScore ? ' is-human-score' : ''}">
         <div class="triage-score-card-header">
           <div>
             <span>${definition.shortLabel}</span>
@@ -611,6 +682,13 @@ function renderScores(record) {
           </div>
           <strong>${escapeHtml(scoreLabel)}<small>최대 3점</small></strong>
         </div>
+        ${currentUserIsAdmin() ? `
+          <label class="triage-score-editor"><span>관리자 점수</span>
+            <select data-triage-score-select data-criterion="${escapeHtml(definition.key)}" aria-label="${escapeHtml(definition.label)} 관리자 점수">
+              ${[0, 1, 2, 3].map((value) => `<option value="${value}" ${score === value ? 'selected' : ''}>${value}점</option>`).join('')}
+            </select>
+          </label>
+        ` : ''}
         <div class="triage-score-track" aria-label="${definition.label} ${score === null ? '미평가' : `${score}점, 최대 3점`}">
           ${[1, 2, 3].map((step) => `<i class="${score >= step ? 'filled' : ''}"></i>`).join('')}
         </div>
@@ -634,9 +712,14 @@ function renderScores(record) {
             ${evidenceSources.map((url, index) => `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer">근거 ${index + 1}</a>`).join('')}
           </div>
         ` : ''}
+        ${triageScoreNotesMarkup(record, definition)}
       </article>
     `;
   }).join('');
+  if (elements.scoreTotal) {
+    const total = effectiveTriageTotal(record);
+    elements.scoreTotal.textContent = `Total ${total === null ? '-' : total} / 9`;
+  }
 }
 
 function collectSources(record) {
@@ -762,7 +845,6 @@ function renderQuickSummary(record) {
   Object.values(record?.scoring?.criteria || {}).forEach((criterion) => {
     criterionSources(criterion, { requireExplicitVerification, registry }).forEach((url) => verifiedCriterionUrls.add(url));
   });
-  const flags = listValues(record.hard_filter?.flags);
   const lastEditedAt = meta.last_edited_at ? formatTimestamp(meta.last_edited_at) : null;
   const rescoredAt = meta.rescored_at ? formatTimestamp(meta.rescored_at) : null;
   const reviewedAt = meta.rubric_reviewed_at ? formatTimestamp(meta.rubric_reviewed_at) : null;
@@ -803,13 +885,54 @@ function renderQuickSummary(record) {
         </div>
       `).join('')}
     </dl>
-    ${flags.length ? `
-      <div class="triage-flag-list">
-        <span>Flags</span>
-        <div>${flags.map((flag) => `<b>${escapeHtml(flag.replaceAll('_', ' '))}</b>`).join('')}</div>
-      </div>
-    ` : ''}
-    ${renderEditHistoryBlock(record)}
+    ${renderTriageReviewHistory(record)}
+  `;
+}
+
+function triageHistoryLabel(entry) {
+  const field = String(entry?.field || '');
+  const labels = {
+    'scores.target_relevance': 'TR 점수',
+    'scores.moa_validity': 'MoA 점수',
+    'scores.data_maturity': 'Data 점수',
+    total_score: 'Total score',
+    final_comment: 'Final comment'
+  };
+  if (labels[field]) return labels[field];
+  if (field.startsWith('topic_notes.triage-score-')) return '기준별 코멘트';
+  if (field === 'filter_status') return 'Triage status';
+  return field || 'Fast Triage 검토';
+}
+
+function triageHistoryValue(value) {
+  if (value === null || value === undefined || value === '') return 'Auto';
+  const text = typeof value === 'object' ? JSON.stringify(value) : String(value);
+  return text.length > 180 ? `${text.slice(0, 177)}…` : text;
+}
+
+function renderTriageReviewHistory(record) {
+  const history = arrayValue(objectValue(record?.meta).edit_history);
+  if (!history.length) return '';
+  const items = history
+    .slice(-20)
+    .reverse()
+    .map((entry) => {
+      const when = formatTimestamp(entry?.changed_at);
+      const who = entry?.actor_name || entry?.actor_ip || 'Local workspace';
+      const label = triageHistoryLabel(entry);
+      const change = `${triageHistoryValue(entry?.previous_value)} → ${triageHistoryValue(entry?.new_value)}`;
+      return `<li${entry?.actor_name ? ' class="is-human"' : ''}>
+        <span>${escapeHtml(when)}</span>
+        <strong>${escapeHtml(label)}</strong>
+        <small>${escapeHtml(who)} · ${escapeHtml(change)}</small>
+      </li>`;
+    })
+    .join('');
+  return `
+    <details class="triage-edit-history">
+      <summary>검토 변경 이력 (${history.length})</summary>
+      <ul>${items}</ul>
+    </details>
   `;
 }
 
@@ -861,6 +984,58 @@ function renderRecord(record) {
   elements.rawReport.innerHTML = rawMarkdown
     ? renderMarkdown(rawMarkdown)
     : '<div class="triage-empty">저장된 Fast Triage 원본 Markdown이 없습니다.</div>';
+}
+
+async function updateTriageManualReview(payload) {
+  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/manual-review`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || '검토 내용을 저장하지 못했습니다.');
+  currentRecord = data.record;
+  renderRecord(currentRecord);
+  return data;
+}
+
+async function saveTriageScore(select) {
+  const criterion = String(select.dataset.criterion || '');
+  const value = Number(select.value);
+  const previousValue = scoreFor(currentRecord, criterion);
+  if (!criterion || !Number.isInteger(value)) return;
+  select.disabled = true;
+  try {
+    await updateTriageManualReview({ kind: 'score', criterion, value, previous_value: previousValue });
+  } catch (error) {
+    window.alert(error.message);
+    select.value = String(previousValue ?? 0);
+  } finally {
+    select.disabled = false;
+  }
+}
+
+async function saveTriageScoreNote(panel, body) {
+  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/topic-notes`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      topic_id: panel.dataset.topicId,
+      topic_key: panel.dataset.topicKey,
+      topic_title: panel.dataset.topicTitle,
+      body
+    })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || '코멘트를 저장하지 못했습니다.');
+  currentRecord = data.record;
+  renderRecord(currentRecord);
+}
+
+function openTriageInlineForm(form) {
+  if (!form) return;
+  form.hidden = false;
+  form.querySelector('textarea')?.focus();
 }
 
 let criteriaDrawerSyncPromise = null;
@@ -959,6 +1134,75 @@ elements.criteriaDrawerButton?.addEventListener('click', openCriteriaDrawer);
 elements.criteriaDrawerClose?.addEventListener('click', closeCriteriaDrawer);
 elements.criteriaBackdrop?.addEventListener('click', closeCriteriaDrawer);
 elements.deleteRecordButton?.addEventListener('click', deleteCurrentRecord);
+elements.scoreGrid?.addEventListener('change', (event) => {
+  const select = event.target.closest('[data-triage-score-select]');
+  if (select && currentUserIsAdmin()) saveTriageScore(select);
+});
+elements.scoreGrid?.addEventListener('click', (event) => {
+  const panel = event.target.closest('[data-triage-score-notes]');
+  if (!panel) return;
+  if (event.target.closest('[data-triage-score-note-open]')) {
+    openTriageInlineForm(panel.querySelector('[data-triage-score-note-form]'));
+    return;
+  }
+  if (event.target.closest('[data-triage-score-note-cancel]')) {
+    const form = panel.querySelector('[data-triage-score-note-form]');
+    if (form) {
+      form.reset();
+      form.hidden = true;
+    }
+  }
+});
+elements.scoreGrid?.addEventListener('submit', async (event) => {
+  const form = event.target.closest('[data-triage-score-note-form]');
+  if (!form) return;
+  event.preventDefault();
+  const panel = form.closest('[data-triage-score-notes]');
+  const body = String(form.querySelector('textarea')?.value || '').trim();
+  const status = form.querySelector('[data-triage-score-note-status]');
+  if (!panel || !body) return;
+  const submit = form.querySelector('button[type="submit"]');
+  if (submit) submit.disabled = true;
+  if (status) status.textContent = '저장 중…';
+  try {
+    await saveTriageScoreNote(panel, body);
+  } catch (error) {
+    if (status) status.textContent = error.message;
+  } finally {
+    if (submit) submit.disabled = false;
+  }
+});
+elements.decisionHero?.addEventListener('click', (event) => {
+  if (event.target.closest('[data-triage-final-comment-open]')) {
+    openTriageInlineForm(elements.decisionHero.querySelector('[data-triage-final-comment-form]'));
+    return;
+  }
+  if (event.target.closest('[data-triage-final-comment-cancel]')) {
+    const form = elements.decisionHero.querySelector('[data-triage-final-comment-form]');
+    if (form) form.hidden = true;
+  }
+});
+elements.decisionHero?.addEventListener('submit', async (event) => {
+  const form = event.target.closest('[data-triage-final-comment-form]');
+  if (!form || !currentUserIsAdmin()) return;
+  event.preventDefault();
+  const value = String(form.querySelector('textarea')?.value || '').trim();
+  const status = form.querySelector('[data-triage-final-comment-status]');
+  const submit = form.querySelector('button[type="submit"]');
+  if (!value) return;
+  if (submit) submit.disabled = true;
+  if (status) status.textContent = '저장 중…';
+  try {
+    await updateTriageManualReview({ kind: 'final_comment', value });
+  } catch (error) {
+    if (status) status.textContent = error.message;
+  } finally {
+    if (submit) submit.disabled = false;
+  }
+});
+window.addEventListener('skbp:authchange', () => {
+  if (currentRecord) renderRecord(currentRecord);
+});
 window.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && elements.criteriaDrawer?.classList.contains('open')) {
     closeCriteriaDrawer();
