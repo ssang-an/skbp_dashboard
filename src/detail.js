@@ -1378,7 +1378,7 @@ function openAttachmentUploadOperation(fileName = '') {
       : '파일을 업로드하고 내용을 확인하고 있습니다.';
   }
   if (elements.attachmentUploadModalStatus) {
-    elements.attachmentUploadModalStatus.textContent = '파일 처리 중에는 다른 화면으로 이동하지 마세요.';
+    elements.attachmentUploadModalStatus.textContent = '파일 내용을 확인하고 있습니다.';
   }
   if (elements.attachmentUploadCancelButton) {
     elements.attachmentUploadCancelButton.disabled = false;
