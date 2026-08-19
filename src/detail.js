@@ -1280,6 +1280,12 @@ function renderEditHistory(record) {
       const isManualScoreChange = entry?.source === 'dashboard_table_manual_review'
         && (field.startsWith('scores.') || field === 'total_score');
       const isAiQualitativeGeneration = entry?.source === 'dashboard_qualitative_review_ai_generate';
+      const isAiQualitativeDeletion = entry?.source === 'dashboard_qualitative_review_delete' && (
+        entry?.qualitative_review_is_ai === true
+        || auditHistory.some((candidate) => candidate?.source === 'dashboard_qualitative_review_ai_generate'
+          && candidate?.field === field
+          && String(candidate?.new_value || '') === String(entry?.previous_value || ''))
+      );
       const sourceLabels = {
         dashboard_table_manual_review: 'Review status/점수',
         dashboard_tab3_focus_management: '집중관리 정보',
@@ -1319,14 +1325,16 @@ function renderEditHistory(record) {
       ].find((criterion) => criterion.id === qualitativeCriterionId || criterion.legacyIds?.includes(qualitativeCriterionId));
       const source = isAiQualitativeGeneration
         ? `정성평가 ${qualitativeCriterion?.label || qualitativeCriterionId || '항목'} AI 답변 생성 완료`
+        : isAiQualitativeDeletion
+          ? 'AI 생성 답변 삭제'
         : entry?.change_method === 'ai_agent' ? `${baseSource} · AI Agent` : baseSource;
       const formatAuditValue = (value) => {
         if (value === null || value === undefined || value === '') return 'Auto';
         if (typeof value === 'object') return JSON.stringify(value);
         return String(value);
       };
-      const change = isAiQualitativeGeneration
-        ? '완료'
+      const change = isAiQualitativeGeneration || isAiQualitativeDeletion
+        ? isAiQualitativeDeletion ? '삭제 완료' : '완료'
         : `${formatAuditValue(entry?.previous_value)} → ${formatAuditValue(entry?.new_value)}`;
       const humanClass = entry?.actor_name ? ' class="is-human"' : '';
       const existingReason = String(entry?.review_reason || '').trim();

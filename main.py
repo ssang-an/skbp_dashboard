@@ -9846,13 +9846,14 @@ async def delete_qualitative_review_entry(record_id: str, entry_id: str, request
         qualitative_review["updated_at"] = datetime.now(timezone.utc).isoformat()
 
         actor_ip = get_client_ip(request)
-        append_edit_history(
+        history_entry = append_edit_history(
             record,
             source="dashboard_qualitative_review_delete",
             actor_ip=actor_ip,
             field=f"qualitative_review.{match_criterion_id}",
             previous_value=match_entry.get("body"),
         )
+        history_entry["qualitative_review_is_ai"] = bool(match_entry.get("is_ai"))
         records[index] = record
         save_records(records)
         return {
