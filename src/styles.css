@@ -18536,8 +18536,6 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
 }
 
 .review-info-stack.is-collapsed #detailReviewReasonShell,
-.review-info-stack.is-collapsed #detailOiPartnershipRow .oi-classification-summary,
-.review-info-stack.is-collapsed #detailOiMaterialFlags,
 .review-info-stack.is-collapsed #detailActionOwner,
 .review-info-stack.is-collapsed #detailActionPlan {
   display: none;
