@@ -68,6 +68,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("fileWithPartnerMaterialSuffix(file, materialCategory)", upload)
         self.assertIn("selectedCategory || partnerMaterialCategoryForFilename(file.name)", upload)
         self.assertIn("partnerMaterialCategoriesForFilename(file.name).includes(category)", DETAIL_JS)
+        for key in ("ir", "cdp", "ncdp", "admet", "dd_report"):
+            self.assertIn(f"{key}: '", DETAIL_JS)
         self.assertIn("partnerMaterialCategoriesForFilename(attachment?.filename)", DETAIL_JS)
         self.assertIn("categories.forEach", DETAIL_JS)
         self.assertIn("new File([file], renamed", DETAIL_JS)

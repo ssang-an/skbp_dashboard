@@ -18,6 +18,9 @@ def admet_attachment(text: str, filename: str = "partner_ADMET.pdf", category: s
 class AdmetCanonical25Tests(unittest.TestCase):
     def test_partner_material_category_supports_ir_and_dd_report(self):
         self.assertEqual(main.partner_material_category("Threebrooks_IR.pdf"), "ir")
+        self.assertEqual(main.partner_material_category("Threebrooks_CDP.pdf"), "cdp")
+        self.assertEqual(main.partner_material_category("Threebrooks_NCDP.pdf"), "ncdp")
+        self.assertEqual(main.partner_material_category("Threebrooks_ADMET.pdf"), "admet")
         self.assertEqual(main.partner_material_category("Threebrooks_DD Report.pdf"), "dd_report")
         self.assertEqual(main.partner_material_category("Threebrooks_DD.pdf"), "dd_report")
         self.assertEqual(
