@@ -19119,6 +19119,13 @@ body.report-reupload-open {
 
 .pipeline-table .step0-row-select {
   accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.step0-progress-table tbody.is-selection-dragging,
+.step0-progress-table tbody.is-selection-dragging * {
+  cursor: cell;
+  user-select: none;
 }
 
 .pipeline-table td.step0-asset-cell,

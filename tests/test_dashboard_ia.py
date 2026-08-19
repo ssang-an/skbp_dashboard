@@ -476,6 +476,19 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("/${STEP0_MAX_SELECTED_CANDIDATES} 선택됨", JS)
         self.assertIn('0/20 선택됨', HTML)
 
+    def test_step0_pending_selection_supports_partial_clear_and_drag_ranges(self):
+        select_all = function_body(JS, "updateStep0SelectAllState")
+
+        self.assertIn("selectAll.indeterminate = checkedCount > 0 && checkedCount < visibleIds.length", select_all)
+        self.assertIn("clearPartialSelection", JS)
+        self.assertIn("step0DragSelection", JS)
+        self.assertIn("applyStep0DragSelection", JS)
+        self.assertIn("pointerover", JS)
+        self.assertIn("state.step0SelectedPendingIds.size >= STEP0_MAX_SELECTED_CANDIDATES", JS)
+        self.assertIn("tbody.is-selection-dragging", CSS)
+        self.assertIn("styles.css?v=20260819-step0-drag-selection-1", HTML)
+        self.assertIn("app.js?v=20260819-step0-drag-selection-1", HTML)
+
     def test_summary_cards_share_geometry_without_internal_scrollbars(self):
         block = CSS[CSS.index("/* Precision-align Summary cards"):CSS.index(".pass-rate-chart .donut-center small")]
         self.assertRegex(block, r"\.visual-grid\.workflow-summary-grid > \.panel\s*\{[^}]*grid-template-rows: 64px minmax\(0, 1fr\);[^}]*height: 332px;")

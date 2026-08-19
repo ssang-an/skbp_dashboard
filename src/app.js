@@ -473,6 +473,7 @@ let activeColumnResize = null;
 let promptCopyFeedbackTimer = null;
 let targetContextTooltip = null;
 let targetContextAnchor = null;
+let step0DragSelection = null;
 const focusSaveQueues = new Map();
 let dataReuploadResolve = null;
 let activeDataReuploadMatches = [];
@@ -9427,9 +9428,17 @@ function updateStep0SelectAllState() {
   if (!elements.step0SelectAllRows) return;
   const visibleIds = state.step0VisiblePendingIds || [];
   const checkedCount = visibleIds.filter((id) => state.step0SelectedPendingIds.has(id)).length;
-  elements.step0SelectAllRows.checked = visibleIds.length > 0 && checkedCount === visibleIds.length;
-  elements.step0SelectAllRows.indeterminate = checkedCount > 0 && checkedCount < visibleIds.length;
-  elements.step0SelectAllRows.disabled = visibleIds.length === 0;
+  const selectAll = elements.step0SelectAllRows;
+  selectAll.checked = visibleIds.length > 0 && checkedCount === visibleIds.length;
+  selectAll.indeterminate = checkedCount > 0 && checkedCount < visibleIds.length;
+  selectAll.disabled = visibleIds.length === 0;
+  const selectionLabel = selectAll.indeterminate
+    ? `현재 페이지에서 선택된 ${checkedCount}개 조사 대기 항목 해제`
+    : selectAll.checked
+      ? '현재 페이지의 조사 대기 항목 전체 선택 해제'
+      : `현재 페이지의 조사 대기 항목 전체 선택 (최대 ${STEP0_MAX_SELECTED_CANDIDATES}개)`;
+  selectAll.setAttribute('aria-label', selectionLabel);
+  selectAll.title = selectionLabel;
 }
 
 function renderStep0SelectedCount() {
@@ -9437,6 +9446,46 @@ function renderStep0SelectedCount() {
     elements.step0SelectedCount.textContent = `${state.step0SelectedPendingIds.size}/${STEP0_MAX_SELECTED_CANDIDATES} 선택됨`;
   }
   updateStep0SelectAllState();
+}
+
+function setStep0PendingSelection(queueId, shouldSelect, { notifyLimit = true } = {}) {
+  if (!queueId) return false;
+  const isSelected = state.step0SelectedPendingIds.has(queueId);
+  if (shouldSelect) {
+    if (isSelected) return true;
+    if (state.step0SelectedPendingIds.size >= STEP0_MAX_SELECTED_CANDIDATES) {
+      if (notifyLimit) showStep0Message(`최대 ${STEP0_MAX_SELECTED_CANDIDATES}개까지 선택할 수 있습니다.`, 'warning');
+      return false;
+    }
+    state.step0SelectedPendingIds.add(queueId);
+    return true;
+  }
+  if (!isSelected) return true;
+  state.step0SelectedPendingIds.delete(queueId);
+  return true;
+}
+
+function syncStep0RowCheckbox(queueId, selected) {
+  elements.step0ProgressTableBody?.querySelectorAll('.step0-row-select').forEach((checkbox) => {
+    if (checkbox.dataset.queueId === queueId) checkbox.checked = selected;
+  });
+}
+
+function applyStep0DragSelection(queueId) {
+  if (!step0DragSelection || !queueId || step0DragSelection.visitedIds.has(queueId)) return;
+  step0DragSelection.visitedIds.add(queueId);
+  const changed = setStep0PendingSelection(queueId, step0DragSelection.shouldSelect, {
+    notifyLimit: !step0DragSelection.limitNotified
+  });
+  if (!changed) step0DragSelection.limitNotified = true;
+  syncStep0RowCheckbox(queueId, state.step0SelectedPendingIds.has(queueId));
+  renderStep0SelectedCount();
+}
+
+function endStep0DragSelection() {
+  if (!step0DragSelection) return;
+  step0DragSelection = null;
+  elements.step0ProgressTableBody?.classList.remove('is-selection-dragging');
 }
 
 function resetStep0Filters() {
@@ -9524,7 +9573,9 @@ document.querySelectorAll('button[data-step0-sort]').forEach((button) => {
 });
 elements.step0SelectAllRows?.addEventListener('change', (event) => {
   const visibleIds = state.step0VisiblePendingIds || [];
-  if (event.target.checked) {
+  const clearPartialSelection = event.target.dataset.clearPartialSelection === 'true';
+  delete event.target.dataset.clearPartialSelection;
+  if (event.target.checked && !clearPartialSelection) {
     const toAdd = visibleIds.filter((id) => !state.step0SelectedPendingIds.has(id));
     const room = Math.max(0, STEP0_MAX_SELECTED_CANDIDATES - state.step0SelectedPendingIds.size);
     toAdd.slice(0, room).forEach((id) => state.step0SelectedPendingIds.add(id));
@@ -9535,23 +9586,47 @@ elements.step0SelectAllRows?.addEventListener('change', (event) => {
   renderStep0ProgressTable();
   renderStep0SelectedCount();
 });
+elements.step0SelectAllRows?.addEventListener('pointerdown', (event) => {
+  event.currentTarget.dataset.clearPartialSelection = String(event.currentTarget.indeterminate);
+});
+elements.step0SelectAllRows?.addEventListener('keydown', (event) => {
+  if (event.key === ' ' || event.key === 'Enter') {
+    event.currentTarget.dataset.clearPartialSelection = String(event.currentTarget.indeterminate);
+  }
+});
 elements.step0ProgressTableBody?.addEventListener('change', (event) => {
   const checkbox = event.target.closest('.step0-row-select');
   if (!checkbox) return;
   const queueId = checkbox.dataset.queueId;
   if (!queueId) return;
-  if (checkbox.checked) {
-    if (state.step0SelectedPendingIds.size >= STEP0_MAX_SELECTED_CANDIDATES) {
-      checkbox.checked = false;
-      showStep0Message(`최대 ${STEP0_MAX_SELECTED_CANDIDATES}개까지 선택할 수 있습니다.`, 'warning');
-      return;
-    }
-    state.step0SelectedPendingIds.add(queueId);
-  } else {
-    state.step0SelectedPendingIds.delete(queueId);
-  }
+  const changed = setStep0PendingSelection(queueId, checkbox.checked);
+  checkbox.checked = changed && state.step0SelectedPendingIds.has(queueId);
   renderStep0SelectedCount();
 });
+elements.step0ProgressTableBody?.addEventListener('pointerdown', (event) => {
+  const checkbox = event.target.closest('.step0-row-select');
+  if (!checkbox || event.button !== 0) return;
+  const queueId = checkbox.dataset.queueId;
+  if (!queueId) return;
+  event.preventDefault();
+  checkbox.focus({ preventScroll: true });
+  step0DragSelection = {
+    shouldSelect: !state.step0SelectedPendingIds.has(queueId),
+    visitedIds: new Set(),
+    limitNotified: false
+  };
+  elements.step0ProgressTableBody.classList.add('is-selection-dragging');
+  applyStep0DragSelection(queueId);
+});
+elements.step0ProgressTableBody?.addEventListener('pointerover', (event) => {
+  if (!step0DragSelection || !(event.buttons & 1)) return;
+  const row = event.target.closest('tr');
+  const checkbox = row?.querySelector('.step0-row-select');
+  if (checkbox) applyStep0DragSelection(checkbox.dataset.queueId);
+});
+window.addEventListener('pointerup', endStep0DragSelection);
+window.addEventListener('pointercancel', endStep0DragSelection);
+window.addEventListener('blur', endStep0DragSelection);
 
 const DESCENDING_FIRST_SORT_KEYS = new Set([
   'targetScore',
