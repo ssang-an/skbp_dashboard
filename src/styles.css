@@ -14864,6 +14864,12 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
 }
 
 /* Tab1/2 pipeline filters use one compact multi-select pattern with visible selection state. */
+.panel.control-panel {
+  position: relative;
+  z-index: 20;
+  overflow: visible;
+}
+
 .filter-multiselect {
   position: relative;
   z-index: 1;
@@ -14936,6 +14942,7 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
 
 .filter-multiselect-menu {
   position: absolute;
+  z-index: 1;
   top: calc(100% + 6px);
   left: 0;
   width: max-content;
