@@ -3811,7 +3811,41 @@ td {
 }
 
 .triage-full-copy-button {
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+  min-height: 30px;
+  border: 0;
+  border-radius: 50%;
+  padding: 0;
+  background: var(--surface-soft);
   color: var(--muted);
+  box-shadow: none;
+}
+
+.triage-full-copy-button .triage-full-copy-icon {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 140ms ease;
+}
+
+.triage-full-copy-button:hover,
+.triage-full-copy-button:focus-visible {
+  border: 0;
+  background: var(--accent-soft);
+  color: var(--accent);
+  outline: none;
+  box-shadow: none;
+}
+
+.triage-full-copy-button:hover .triage-full-copy-icon,
+.triage-full-copy-button:focus-visible .triage-full-copy-icon {
+  transform: scale(1.06);
 }
 
 .rubric-refresh-button.is-current {
