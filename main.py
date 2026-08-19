@@ -5008,19 +5008,12 @@ def build_dashboard_summary(
             due_date = date.fromisoformat(due_text) if due_text else None
         except ValueError:
             due_date = None
-        days_until_due = (due_date - today).days if due_date else None
-        action_status = ""
-        action_rank = 99
-        if due_date and due_date < today:
-            action_status, action_rank = "OVERDUE", 0
-        elif due_date and due_date <= today + timedelta(days=30):
-            action_status, action_rank = "WITHIN_30_DAYS", 1
-        elif partnership_type == "unknown":
-            action_status, action_rank = "FILTER3_UNKNOWN", 2
-        elif due_date is None:
-            action_status, action_rank = "MISSING_ACTION_DATE", 3
-        if not action_status:
+        # F/U Action is a dated follow-up list.  Records without a valid due date
+        # remain in Shortlisting but must not occupy a summary-list slot.
+        if due_date is None:
             continue
+        days_until_due = (due_date - today).days
+        action_status = "OVERDUE" if due_date < today else "WITHIN_30_DAYS" if due_date <= today + timedelta(days=30) else "SCHEDULED"
         item = dashboard_record_item(record, identity)
         item.update(
             {
@@ -5030,18 +5023,16 @@ def build_dashboard_summary(
                 "partnership_label": DASHBOARD_PARTNERSHIP_LABELS[partnership_type],
                 "partnership_source": partnership_source,
                 "human_override": partnership_source == "manual",
-                "action_date": due_date.isoformat() if due_date else None,
+                "action_date": due_date.isoformat(),
                 "action_updated_at": non_empty_text(focus.get("updated_at"), item.get("completed_at"), ""),
                 "days_until_due": days_until_due,
                 "action_status": action_status,
-                "action_rank": action_rank,
             }
         )
         action_required.append(item)
     action_required.sort(
         key=lambda item: (
-            item["action_rank"],
-            item["action_date"] or "9999-12-31",
+            item["action_date"],
             -(dashboard_parse_datetime(item["action_updated_at"]).timestamp() if dashboard_parse_datetime(item["action_updated_at"]) else float("-inf")),
             str(item["asset"]).casefold(),
         )

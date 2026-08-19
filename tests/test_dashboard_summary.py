@@ -355,8 +355,10 @@ class DashboardSummaryTests(unittest.TestCase):
         )
         self.assertEqual(
             [item["action_status"] for item in shortlist["action_required"]],
-            ["OVERDUE", "WITHIN_30_DAYS", "FILTER3_UNKNOWN", "MISSING_ACTION_DATE"],
+            ["OVERDUE", "WITHIN_30_DAYS", "SCHEDULED", "SCHEDULED"],
         )
+        self.assertTrue(all(item["action_date"] for item in shortlist["action_required"]))
+        self.assertNotIn("MISS-1", [item["asset"] for item in shortlist["action_required"]])
         overdue = shortlist["action_required"][0]
         soon = shortlist["action_required"][1]
         self.assertEqual((overdue["partnership_type"], overdue["partnership_source"]), ("investment", "manual"))
