@@ -296,6 +296,7 @@ const state = {
   step0RecentStats: { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 },
   step0Loaded: false,
   step0Query: '',
+  step0SearchTokens: [],
   step0StatusFilterValues: new Set(),
   step0SortKey: null,
   step0SortDirection: null,
@@ -460,6 +461,8 @@ const elements = {
   step0RecentFullScout: document.querySelector('#step0RecentFullScout'),
   step0RecentShortlisted: document.querySelector('#step0RecentShortlisted'),
   step0SearchInput: document.querySelector('#step0SearchInput'),
+  step0AddSearchTokenButton: document.querySelector('#step0AddSearchTokenButton'),
+  step0SearchTokens: document.querySelector('#step0SearchTokens'),
   step0StatusToggleButtons: document.querySelectorAll('.step0-status-toggle'),
   step0ResetFiltersButton: document.querySelector('#step0ResetFiltersButton'),
   step0TableCount: document.querySelector('#step0TableCount'),
@@ -9423,12 +9426,15 @@ function step0StageCellHtml(stage, cell) {
 
 function step0FilteredSortedRows() {
   const query = (state.step0Query || '').trim().toLowerCase();
+  const searchTerms = [...state.step0SearchTokens, query]
+    .map((term) => String(term || '').trim().toLowerCase())
+    .filter(Boolean);
   const statusFilters = state.step0StatusFilterValues;
 
   let rows = state.step0Rows.filter((row) => {
-    if (query) {
+    if (searchTerms.length) {
       const haystack = `${row.asset || ''} ${row.company || ''}`.toLowerCase();
-      if (!haystack.includes(query)) return false;
+      if (!searchTerms.some((term) => haystack.includes(term))) return false;
     }
     if (statusFilters.size && ![...statusFilters].some((status) => row[status]?.done)) return false;
     return true;
@@ -9447,6 +9453,40 @@ function step0FilteredSortedRows() {
     });
   }
   return rows;
+}
+
+function renderStep0SearchTokens() {
+  if (!elements.step0SearchTokens) return;
+  const tokens = state.step0SearchTokens || [];
+  elements.step0SearchTokens.hidden = tokens.length === 0;
+  elements.step0SearchTokens.innerHTML = tokens.map((token) => `
+    <button type="button" class="step0-search-token" data-step0-remove-search-token="${escapeHtml(token)}" aria-label="Remove ${escapeHtml(token)} search condition">
+      <span>${escapeHtml(token)}</span><b aria-hidden="true">&minus;</b>
+    </button>
+  `).join('');
+}
+
+function addStep0SearchToken() {
+  const value = String(elements.step0SearchInput?.value || '').trim();
+  if (!value) {
+    elements.step0SearchInput?.focus();
+    return;
+  }
+  const normalized = value.toLocaleLowerCase('ko');
+  const exists = state.step0SearchTokens.some((token) => token.toLocaleLowerCase('ko') === normalized);
+  if (!exists) state.step0SearchTokens.push(value);
+  if (elements.step0SearchInput) elements.step0SearchInput.value = '';
+  state.step0Query = '';
+  renderStep0SearchTokens();
+  renderStep0ProgressTable();
+  elements.step0SearchInput?.focus();
+}
+
+function removeStep0SearchToken(token) {
+  const normalized = String(token || '').toLocaleLowerCase('ko');
+  state.step0SearchTokens = state.step0SearchTokens.filter((item) => item.toLocaleLowerCase('ko') !== normalized);
+  renderStep0SearchTokens();
+  renderStep0ProgressTable();
 }
 
 function updateStep0SortIndicators() {
@@ -9573,8 +9613,10 @@ function endStep0DragSelection() {
 
 function resetStep0Filters() {
   state.step0Query = '';
+  state.step0SearchTokens = [];
   state.step0StatusFilterValues.clear();
   if (elements.step0SearchInput) elements.step0SearchInput.value = '';
+  renderStep0SearchTokens();
   elements.step0StatusToggleButtons?.forEach((button) => {
     button.classList.remove('active');
     button.setAttribute('aria-pressed', 'false');
@@ -9647,7 +9689,16 @@ elements.step0SearchInput?.addEventListener('input', (event) => {
   state.step0Query = event.target.value;
   renderStep0ProgressTable();
 });
-elements.step0StatusToggleButtons?.forEach((button) => {
+elements.step0SearchInput?.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter' || event.isComposing) return;
+  event.preventDefault();
+  addStep0SearchToken();
+});
+elements.step0AddSearchTokenButton?.addEventListener('click', addStep0SearchToken);
+elements.step0SearchTokens?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-step0-remove-search-token]');
+  if (button) removeStep0SearchToken(button.dataset.step0RemoveSearchToken);
+});
   button.addEventListener('click', () => toggleStep0StatusFilter(button.dataset.step0Status, button));
 });
 elements.step0ResetFiltersButton?.addEventListener('click', resetStep0Filters);

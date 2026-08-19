@@ -479,6 +479,20 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("/${STEP0_MAX_SELECTED_CANDIDATES} 선택됨", JS)
         self.assertIn('0/20 선택됨', HTML)
 
+    def test_step0_search_accepts_multiple_asset_or_company_tokens(self):
+        step0_controls = HTML[HTML.index('aria-label="진척 현황 controls"') : HTML.index('class="panel pipeline-table-panel"')]
+        step0_filtering = function_body(JS, "step0FilteredSortedRows")
+
+        self.assertIn('id="step0AddSearchTokenButton"', step0_controls)
+        self.assertIn('id="step0SearchTokens"', step0_controls)
+        self.assertIn('data-step0-remove-search-token', JS)
+        self.assertIn('state.step0SearchTokens', step0_filtering)
+        self.assertIn('searchTerms.some', step0_filtering)
+        self.assertIn('function addStep0SearchToken()', JS)
+        self.assertIn('function removeStep0SearchToken(token)', JS)
+        self.assertIn('state.step0SearchTokens = []', function_body(JS, "resetStep0Filters"))
+        self.assertIn('.step0-search-token', CSS)
+
     def test_step0_pending_selection_supports_partial_clear_and_drag_ranges(self):
         select_all = function_body(JS, "updateStep0SelectAllState")
 
@@ -489,8 +503,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("pointerover", JS)
         self.assertIn("state.step0SelectedPendingIds.size >= STEP0_MAX_SELECTED_CANDIDATES", JS)
         self.assertIn("tbody.is-selection-dragging", CSS)
-        self.assertIn("styles.css?v=20260819-step0-drag-selection-1", HTML)
-        self.assertIn("app.js?v=20260819-step0-drag-selection-1", HTML)
+        self.assertIn("styles.css?v=20260820-filter-multiselect-fix-1", HTML)
+        self.assertIn("app.js?v=20260820-filter-multiselect-fix-1", HTML)
 
     def test_summary_cards_share_geometry_without_internal_scrollbars(self):
         block = CSS[CSS.index("/* Precision-align Summary cards"):CSS.index(".pass-rate-chart .donut-center small")]

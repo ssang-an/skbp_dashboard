@@ -19371,16 +19371,118 @@ body.report-reupload-open {
 
 /* Tab0 search already covers both Asset and Company, so reserve the released column for it. */
 #step0Panel .controls {
-  grid-template-columns: minmax(280px, 1fr) minmax(0, 1.35fr) 42px;
+  grid-template-columns: minmax(340px, 1.25fr) minmax(0, 1.25fr) 42px;
 }
 
 #step0Panel .controls > label:first-child {
   min-width: 0;
 }
 
+.step0-search-filter-label {
+  min-width: 0;
+}
+
+.step0-search-composer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+}
+
+.step0-search-entry {
+  position: relative;
+  flex: 1 1 178px;
+  min-width: 150px;
+}
+
+.step0-search-entry input {
+  width: 100%;
+  padding-right: 55px;
+}
+
+.step0-add-search-token {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: 30px;
+  display: grid;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  place-items: center;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.step0-add-search-token:hover,
+.step0-add-search-token:focus-visible {
+  background: var(--surface-soft);
+  color: var(--text);
+  outline: none;
+}
+
+.step0-search-tokens {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 100%;
+}
+
+.step0-search-tokens[hidden] {
+  display: none;
+}
+
+.step0-search-token {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 166px;
+  align-items: center;
+  gap: 5px;
+  min-height: 27px;
+  padding: 4px 7px 4px 9px;
+  border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.step0-search-token > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.step0-search-token > b {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.step0-search-token:hover,
+.step0-search-token:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 46%, var(--line));
+  background: color-mix(in srgb, var(--accent) 13%, var(--surface));
+  outline: none;
+}
+
 @media (max-width: 720px) {
   #step0Panel .controls {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .step0-search-entry {
+    flex-basis: 100%;
   }
 
   #step0Panel .filter-reset-button {

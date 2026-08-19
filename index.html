@@ -138,9 +138,15 @@
 
         <section class="panel control-panel" aria-label="진척 현황 controls">
           <div class="controls">
-            <label>
+            <label class="step0-search-filter-label">
               <span>검색</span>
-              <input id="step0SearchInput" type="search" placeholder="약물명, 회사명 검색" />
+              <div class="step0-search-composer">
+                <div class="step0-search-entry">
+                  <input id="step0SearchInput" type="search" placeholder="약물명, 회사명 검색" />
+                  <button id="step0AddSearchTokenButton" class="step0-add-search-token help-tooltip" type="button" data-tooltip="Add search term" aria-label="Add current search term">+</button>
+                </div>
+                <div id="step0SearchTokens" class="step0-search-tokens" aria-label="Selected company and asset filters" aria-live="polite"></div>
+              </div>
             </label>
             <label class="step0-status-filter-label">
               <span>진행 단계</span>
