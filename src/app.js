@@ -7737,7 +7737,7 @@ async function saveStructuredJsonInput() {
     const result = await runBlockingOperation({
       title: '파이프라인을 저장하고 있습니다',
       message: '업로드한 리포트와 구조화 데이터를 저장하고 대시보드를 갱신합니다.',
-      status: '저장 중에는 다른 화면으로 이동할 수 없습니다.'
+      status: '저장이 완료될 때까지 잠시만 기다려 주세요.'
     }, async (signal) => {
       const response = await fetch(API_URL, {
         method: 'POST',
