@@ -4526,6 +4526,21 @@ html[data-theme="dark"] .criteria-table thead th {
   font-size: 11px;
 }
 
+.step0-panel .data-upload-guide-action-chip > .data-upload-action-icon {
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  border-color: color-mix(in srgb, var(--data-upload-accent) 24%, var(--line));
+  background: color-mix(in srgb, var(--data-upload-accent) 10%, var(--surface));
+  color: var(--data-upload-accent-strong);
+}
+
+.step0-panel .data-upload-guide-action-chip > .data-upload-action-icon .data-upload-icon {
+  width: 12px;
+  height: 12px;
+  stroke-width: 1.8;
+}
+
 .data-upload-prompt-chip[data-upload-guide-action="focus-input"] > span,
 .data-upload-prompt-chip[data-upload-guide-action="review"] > span,
 .data-upload-prompt-chip[data-upload-guide-action="save"] > span {

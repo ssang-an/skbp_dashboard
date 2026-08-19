@@ -9153,18 +9153,42 @@ const STEP0_GUIDE_STEPS = [
   },
   {
     title: '조사 대기 항목 선택 후 지침 복사',
-    body: '표에서 조사가 필요한 항목을 최대 20개까지 선택한 뒤 상단 지침 복사 버튼을 누르면 Fast Triage GPT 지침 1에 해당 후보 목록이 포함되어 복사됩니다.'
+    body: '조사 대기 중인 파이프라인을 여러 개 선택한 뒤 {{copy}}를 누르세요. 선택한 후보 목록이 Fast Triage 지침 1에 자동으로 포함됩니다.',
+    actions: [
+      { token: 'copy', kind: 'copy-instructions', icon: 'clipboard', label: 'GPT 지침 복사' }
+    ]
   }
 ];
 
+const STEP0_GUIDE_STEP_ICONS = ['file-text', 'clipboard', 'save', 'clipboard'];
+
+function step0GuideBodyMarkup(step) {
+  let markup = escapeHtml(step.body || '');
+  (Array.isArray(step.actions) ? step.actions : []).forEach((action) => {
+    const token = `{{${action.token}}}`;
+    const title = action.kind === 'copy-instructions'
+      ? '선택한 조사 대기 항목을 포함해 GPT Fast Triage 지침 1을 복사합니다.'
+      : action.label;
+    const pill = `<button
+      type="button"
+      class="data-upload-prompt-chip data-upload-guide-action-chip"
+      data-step0-guide-action="${escapeHtml(action.kind)}"
+      aria-label="${escapeHtml(title)}"
+      title="${escapeHtml(title)}"
+    ><span class="data-upload-action-icon" aria-hidden="true">${dataUploadIconMarkup(action.icon || 'clipboard')}</span><b>${escapeHtml(action.label)}</b></button>`;
+    markup = markup.replaceAll(token, pill);
+  });
+  return markup;
+}
+
 function renderStep0Guide() {
   if (!elements.step0GuideSteps) return;
-  elements.step0GuideSteps.innerHTML = STEP0_GUIDE_STEPS.map((step) => `
+  elements.step0GuideSteps.innerHTML = STEP0_GUIDE_STEPS.map((step, index) => `
     <li>
-      <span class="data-upload-step-icon" aria-hidden="true">${dataUploadIconMarkup('file-text')}</span>
+      <span class="data-upload-step-icon" aria-hidden="true">${dataUploadIconMarkup(STEP0_GUIDE_STEP_ICONS[index] || 'file-text')}</span>
       <div class="data-upload-step-copy">
         <strong>${escapeHtml(step.title)}</strong>
-        <p>${escapeHtml(step.body)}</p>
+        <p>${step0GuideBodyMarkup(step)}</p>
         ${step.example ? `<pre><span>${dataUploadIconMarkup('code')}입력 형식 예시</span>${escapeHtml(step.example)}</pre>` : ''}
       </div>
     </li>
@@ -10461,6 +10485,15 @@ elements.dataUploadGuideSteps?.addEventListener('click', async (event) => {
     button.classList.remove('is-copied');
     if (label) label.textContent = idleLabel;
   }, 1800);
+});
+elements.step0GuideSteps?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-step0-guide-action="copy-instructions"]');
+  if (!button || !elements.step0CopyInstructionsButton) return;
+  if (elements.step0CopyInstructionsButton.disabled) {
+    elements.step0SelectedCount?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    return;
+  }
+  elements.step0CopyInstructionsButton.click();
 });
 if (elements.copyTriagePromptTopButton) {
   elements.copyTriagePromptTopButton.dataset.tooltip = TRIAGE_PROMPT_TOOLTIP;
