@@ -49,7 +49,12 @@
       "required": ["company_input", "asset_input"],
       "properties": {
         "company_input": { "type": "string", "minLength": 1 },
-        "asset_input": { "type": "string", "minLength": 1 }
+        "asset_input": { "type": "string", "minLength": 1 },
+        "user_context": {
+          "type": "string",
+          "maxLength": 6000,
+          "description": "Optional user-provided meeting note or research context. It is not a verified public source."
+        }
       },
       "additionalProperties": false
     },

@@ -158,6 +158,9 @@ class CompactIngestionTests(unittest.TestCase):
                 self.assertIn("Protein Homeostasis", prompt)
                 self.assertIn("The mere presence of protein aggregates in a disease does not establish this Theme", prompt)
                 self.assertIn('use cluster="Unknown" for this Theme', prompt)
+                self.assertIn("Additional user context:", prompt)
+                self.assertIn("input.user_context", prompt)
+                self.assertIn('"user_context": ""', prompt)
                 for entry in dictionary["indication"]:
                     self.assertIn(entry["canonical"], prompt)
 
@@ -246,7 +249,11 @@ class CompactIngestionTests(unittest.TestCase):
             self.rendered_prompts()["full"],
             "\nFinal validation before output:",
         )
-        full["input"] = {"company_input": "Test Co", "asset_input": "H-1"}
+        full["input"] = {
+            "company_input": "Test Co",
+            "asset_input": "H-1",
+            "user_context": "Meeting note: confirm the reported Target A mechanism during research.",
+        }
         full["structured_table"].update({
             "company": "Test Co",
             "asset_name": "H-1",
@@ -286,6 +293,10 @@ class CompactIngestionTests(unittest.TestCase):
 
         self.assertNotIn("evidence_sources", target)
         expanded = self.expand(full, "full")
+        self.assertEqual(
+            expanded["input"]["user_context"],
+            "Meeting note: confirm the reported Target A mechanism during research.",
+        )
         expanded_target = expanded["scoring"]["criteria"]["target_relevance"]
         self.assertEqual(expanded_target["source_ids"], ["S1"])
         self.assertNotIn("evidence_sources", expanded_target)
@@ -942,9 +953,9 @@ format reminder
         self.assertIsInstance(triage, list)
         self.assertEqual(triage[0]["meta"]["ingestion_format"], "compact_v2")
         self.assertNotIn("source_report", triage[0])
-        self.assertEqual(set(triage[0]["input"]), {"company_input", "asset_input"})
+        self.assertEqual(set(triage[0]["input"]), {"company_input", "asset_input", "user_context"})
         self.assertEqual(full["meta"]["ingestion_format"], "compact_v2")
-        self.assertEqual(set(full["input"]), {"company_input", "asset_input"})
+        self.assertEqual(set(full["input"]), {"company_input", "asset_input", "user_context"})
         self.assertNotIn("obsidian", full)
         self.assertNotIn("source_report", full)
         self.assertEqual(

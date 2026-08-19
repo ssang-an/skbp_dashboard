@@ -455,9 +455,11 @@ function expandMinimalCompactInputRecord(inputRecord, requestedMode = '') {
   const compactRegistry = compactV2SourceRegistry(record);
   const lookup = new Map(compactRegistry.map((source) => [source.source_id, source]));
 
+  const userContext = textValue(record.input?.user_context);
   record.input = {
     company_input: textValue(record.input?.company_input, record.structured_table?.company, 'Unknown'),
-    asset_input: textValue(record.input?.asset_input, record.structured_table?.asset_name, 'Unknown')
+    asset_input: textValue(record.input?.asset_input, record.structured_table?.asset_name, 'Unknown'),
+    ...(userContext ? { user_context: userContext } : {})
   };
 
   const inputTable = objectValue(record.structured_table);

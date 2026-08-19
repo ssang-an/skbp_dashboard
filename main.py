@@ -2183,7 +2183,7 @@ def validate_minimal_dashboard_record(record: dict[str, Any], index: int) -> Non
         reject_extra_keys(
             record.get("input"),
             "input",
-            {"company_input", "asset_input"},
+            {"company_input", "asset_input", "user_context"},
         )
         reject_extra_keys(
             record.get("json_summary"),
@@ -2339,6 +2339,12 @@ def validate_minimal_dashboard_record(record: dict[str, Any], index: int) -> Non
     for field in ("company_input", "asset_input"):
         if not isinstance(input_data.get(field), str) or not input_data[field].strip():
             validation_error(f"record[{index}].input.{field} must be a non-empty string.")
+    user_context = input_data.get("user_context")
+    if user_context is not None:
+        if not isinstance(user_context, str):
+            validation_error(f"record[{index}].input.user_context must be a string when provided.")
+        if len(user_context) > 6000:
+            validation_error(f"record[{index}].input.user_context must not exceed 6000 characters.")
 
     table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else None
     if table is None:

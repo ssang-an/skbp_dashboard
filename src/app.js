@@ -6918,6 +6918,10 @@ function validateCompactInputTypes(record, recordPath, issues) {
         );
       }
     });
+    if (Object.prototype.hasOwnProperty.call(record.input || {}, 'user_context')
+      && typeof record.input.user_context !== 'string') {
+      addInputIssue(issues, 'error', `${recordPath}.input.user_context`, 'User context must be a string.');
+    }
     const rawMainIndication = record.structured_table?.main_indication;
     if (typeof rawMainIndication !== 'string' || !rawMainIndication.trim()) {
       addInputIssue(
@@ -7790,6 +7794,8 @@ async function saveStructuredJsonInput() {
 
 const SHARED_EVIDENCE_DISCIPLINE = `Use only asset-specific facts explicitly provided by the user or verified from credible public sources.
 
+Additional user context: the user may append meeting notes, hypotheses, internal observations, or a research request after the candidate list / company-and-asset input. Treat that text as user-provided context (Evidence Origin: user_text), not as verified public evidence. Consider it when choosing what to investigate and when interpreting directly stated facts, but do not treat it as independently confirmed, fabricate a URL, or let it override contradictory verified evidence. If user context is used, preserve it faithfully in input.user_context, add a readable Markdown note labelled "Source: User input (not independently verified)", and use user_input_only or user_input_and_public_source as appropriate. Do not put user input into validation.source_registry or criterion source_ids; those remain reserved for checked public URLs.
+
 Canonicalize confirmed facts into approved dashboard values, but do not infer unconfirmed facts or completed/current status from plans, expectations, financing, hiring activity, adjacent programs, class assumptions, or general scientific knowledge.
 
 General scientific knowledge may only be used to map confirmed facts to the scoring rubric. If a fact cannot be established or conflicting sources cannot be resolved, use Unknown and record the uncertainty.
@@ -7854,7 +7860,8 @@ const COMPACT_TRIAGE_JSON_TEMPLATE = `[
     },
     "input": {
       "company_input": "Unknown",
-      "asset_input": ""
+      "asset_input": "",
+      "user_context": ""
     },
     "json_summary": {
       "theme": "Unknown",
@@ -7944,7 +7951,8 @@ const COMPACT_FULL_SCOUT_JSON_TEMPLATE = `{
   },
   "input": {
     "company_input": "Unknown",
-    "asset_input": ""
+    "asset_input": "",
+    "user_context": ""
   },
   "company_profile": {
     "headquarters": "",
@@ -8217,7 +8225,7 @@ Criterion Evidence Basis:
 - score >= 2 cannot use no_supporting_basis. MoA >= 2 and Data >= 2 each require at least one citable, verified public technical/source URL for that criterion. TR may preliminarily score from explicit user input.
 - Each Compact v2 criterion keeps score, evidence_type="triage_only", evidence_type_reason, evidence_basis, a one-sentence main_line_summary, why_not_higher, investigation_note, uncertain_points, and source_ids. Begin main_line_summary with exactly one matching score label: "TR N points:", "MoA N points:", or "Data N points:" (N must equal that JSON criterion's score). Keep detailed quantitative evidence (percentages, ratios, sample sizes, phases, and asset codes) in Markdown reasoning or investigation_note whenever possible; never state another criterion's score in main_line_summary.
 - triage.verified_public_source_count must exactly equal the unique verified public URL count after removing duplicates and trailing-slash variants. It is retained only for the Quick Summary card; source count itself does not determine the score.
-- Copy the exact user/company identifiers into input.company_input and input.asset_input. These two aliases are used only to join the Fast Triage and Full Scout rows for the same asset; do not add other input fields.
+- Copy the exact user/company identifiers into input.company_input and input.asset_input. These two aliases are used only to join the Fast Triage and Full Scout rows for the same asset. When the user appended relevant free-text context, copy it faithfully into input.user_context; otherwise keep user_context as an empty string.
 
 Summary rule:
 - In the Markdown table/notes, each criterion judgment must be a non-empty 1–2 sentence explanation containing the confirmed asset-specific fact, why it maps to the selected score, and the key limitation.
@@ -8465,7 +8473,7 @@ Non-negotiable rules:
 1. Final answer format must be exactly one \`\`\`text fenced code block. Inside it, place either the complete Markdown report or the short identity-not-verified Markdown first, then the single separator line shown immediately before the final JSON template below, then the corresponding structured JSON object. Do not create inner Markdown or JSON fences.
 2. Do not write any report prose outside the single combined code block.
 3. The TAB2 importer splits on the exact separator and parses the complete suffix once. The JSON portion must be exactly one complete top-level object beginning with { and ending with }: no comments, no trailing commas, no extra object, and no Markdown outside JSON string values.
-4. Every factual claim used for scoring must include a source URL or a clear uncertainty note.
+4. Every factual claim used for scoring must include a checked public source URL, an explicit "Source: User input (not independently verified)" label, or a clear uncertainty note.
 5. Include actual URLs in Markdown reference-link format at the end of the Markdown block. Do not emit :contentReference[…], [oaicite:…], browser citation IDs, or HTML tags; internal citation tokens are not usable sources. In Compact v2 JSON, put each checked source once in validation.source_registry with source_id, source_title, source_url, source_type, and verified. Reference it from criteria and competitor rows with source_ids. Do not emit evidence_sources or duplicate source objects. Keep structured_table.sources as []; the dashboard derives its Source column from validation.source_registry.
 6. Distinguish official company sources, peer-reviewed papers, regulatory/clinical trial sources, market sources, and news/financing sources.
 7. For every criterion, Compact v2 JSON contains the integer score plus only these concise display/audit fields: evidence_type, evidence_type_reason, evidence_basis, main_line_summary, why_not_higher, investigation_note, uncertain_points, and source_ids. Keep each string short and keep the complete evidence discussion in Markdown.
@@ -8474,7 +8482,7 @@ Non-negotiable rules:
 10. Express every sales output in million USD in Markdown. JSON keeps the final Marketability score plus only the minimal A/B/C/D output projection used for score audit and detail display; complete inputs and rationale stay in Markdown.
 11. Hard Filter is canonical: PASS when Total >= 14, Target Relevance >= 3, MoA Validity >= 2, Data Maturity >= 2, asset identity is verified, an active development program is confirmed, and no hard blocker/decision-critical uncertainty remains. REVIEW when Total is 9-13; or a PASS gate is missed without a FAIL rule; or active status, key evidence, source, rights, or stage uncertainty prevents a firm conclusion. FAIL when Total <= 8, Target Relevance <= 1, asset identity is unverified, or a lifecycle FAIL condition is confirmed.
 11a. Set hard_filter.hard_blocker=true only for a confirmed FAIL blocker. Set hard_filter.decision_uncertainty=true only when stage, rights/license/ownership, asset identity, source/registry, sponsor, or active-program uncertainty prevents an otherwise firm decision. These booleans keep Filter 2 deterministic after research prose stays in Markdown.
-11b. Copy the exact assessed company and asset identifiers into input.company_input and input.asset_input. These two aliases are used only to join the Fast Triage and Full Scout rows for the same asset; do not add other input fields.
+11b. Copy the exact assessed company and asset identifiers into input.company_input and input.asset_input. These two aliases are used only to join the Fast Triage and Full Scout rows for the same asset. When the user appended relevant free-text context, copy it faithfully into input.user_context; otherwise keep user_context as an empty string.
 12. If the latest stage, ownership, financing, or trial status is unclear, mark it as uncertain and state what source is needed.
 13. Do not invent URLs. If a URL cannot be verified, describe the missing source in Markdown and validation.uncertain_points.
 14. Work out commercial_rationale_status, method, A/B/C/D, and any external forecast in Markdown. Put the resulting 0–3 score and the minimal A/B/C/D output projection shown in the Compact v2 template in JSON.
