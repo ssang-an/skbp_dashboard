@@ -295,7 +295,6 @@ const state = {
   step0RecentStats: { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 },
   step0Loaded: false,
   step0Query: '',
-  step0CompanyFilterValue: 'all',
   step0StatusFilterValues: new Set(),
   step0SortKey: null,
   step0SortDirection: null,
@@ -459,7 +458,6 @@ const elements = {
   step0RecentFullScout: document.querySelector('#step0RecentFullScout'),
   step0RecentShortlisted: document.querySelector('#step0RecentShortlisted'),
   step0SearchInput: document.querySelector('#step0SearchInput'),
-  step0CompanyFilter: document.querySelector('#step0CompanyFilter'),
   step0StatusToggleButtons: document.querySelectorAll('.step0-status-toggle'),
   step0ResetFiltersButton: document.querySelector('#step0ResetFiltersButton'),
   step0TableCount: document.querySelector('#step0TableCount'),
@@ -9191,7 +9189,6 @@ async function loadStep0Progress() {
     state.step0Loaded = true;
     updateStep0HeaderCount();
     renderStep0StatStrip();
-    populateStep0CompanyFilter();
     renderStep0ProgressTable();
     renderStep0SelectedCount();
   } catch (error) {
@@ -9223,18 +9220,6 @@ function renderStep0StatStrip() {
   });
 }
 
-function populateStep0CompanyFilter() {
-  if (!elements.step0CompanyFilter) return;
-  const previous = elements.step0CompanyFilter.value || 'all';
-  const companies = [...new Set(state.step0Rows.map((row) => row.company).filter(Boolean))].sort((a, b) =>
-    a.localeCompare(b, 'ko')
-  );
-  elements.step0CompanyFilter.innerHTML =
-    '<option value="all">전체</option>' +
-    companies.map((company) => `<option value="${escapeHtml(company)}">${escapeHtml(company)}</option>`).join('');
-  elements.step0CompanyFilter.value = companies.includes(previous) ? previous : 'all';
-}
-
 const STEP0_STAGE_LABELS = {
   fast_triage: 'Fast Triage',
   full_scout: 'Full Scout',
@@ -9260,7 +9245,6 @@ function step0StageCellHtml(stage, cell) {
 
 function step0FilteredSortedRows() {
   const query = (state.step0Query || '').trim().toLowerCase();
-  const companyFilter = state.step0CompanyFilterValue || 'all';
   const statusFilters = state.step0StatusFilterValues;
 
   let rows = state.step0Rows.filter((row) => {
@@ -9268,7 +9252,6 @@ function step0FilteredSortedRows() {
       const haystack = `${row.asset || ''} ${row.company || ''}`.toLowerCase();
       if (!haystack.includes(query)) return false;
     }
-    if (companyFilter !== 'all' && row.company !== companyFilter) return false;
     if (statusFilters.size && ![...statusFilters].some((status) => row[status]?.done)) return false;
     return true;
   });
@@ -9364,10 +9347,8 @@ function renderStep0SelectedCount() {
 
 function resetStep0Filters() {
   state.step0Query = '';
-  state.step0CompanyFilterValue = 'all';
   state.step0StatusFilterValues.clear();
   if (elements.step0SearchInput) elements.step0SearchInput.value = '';
-  if (elements.step0CompanyFilter) elements.step0CompanyFilter.value = 'all';
   elements.step0StatusToggleButtons?.forEach((button) => {
     button.classList.remove('active');
     button.setAttribute('aria-pressed', 'false');
@@ -9438,10 +9419,6 @@ elements.step0ClearButton?.addEventListener('click', () => {
 elements.step0CopyInstructionsButton?.addEventListener('click', copyTriagePromptWithSelectedCandidates);
 elements.step0SearchInput?.addEventListener('input', (event) => {
   state.step0Query = event.target.value;
-  renderStep0ProgressTable();
-});
-elements.step0CompanyFilter?.addEventListener('change', (event) => {
-  state.step0CompanyFilterValue = event.target.value;
   renderStep0ProgressTable();
 });
 elements.step0StatusToggleButtons?.forEach((button) => {

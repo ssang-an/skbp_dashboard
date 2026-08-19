@@ -455,6 +455,19 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('class="step0-recent-upload-legend"', HTML)
         self.assertIn(".step0-recent-upload-legend", CSS)
 
+    def test_step0_uses_one_asset_company_search_instead_of_a_company_dropdown(self):
+        step0_controls = HTML[HTML.index('aria-label="진척 현황 controls"') : HTML.index('class="panel pipeline-table-panel"')]
+        step0_filtering = function_body(JS, "step0FilteredSortedRows")
+
+        self.assertIn('id="step0SearchInput"', step0_controls)
+        self.assertIn('placeholder="약물명, 회사명 검색"', step0_controls)
+        self.assertNotIn('step0CompanyFilter', step0_controls)
+        self.assertNotIn('step0CompanyFilter', JS)
+        self.assertIn("`${row.asset || ''} ${row.company || ''}`", step0_filtering)
+        self.assertIn("step0-status-toggle", step0_controls)
+        self.assertIn('id="step0ResetFiltersButton"', step0_controls)
+        self.assertIn("#step0Panel .controls", CSS)
+
     def test_summary_cards_share_geometry_without_internal_scrollbars(self):
         block = CSS[CSS.index("/* Precision-align Summary cards"):CSS.index(".pass-rate-chart .donut-center small")]
         self.assertRegex(block, r"\.visual-grid\.workflow-summary-grid > \.panel\s*\{[^}]*grid-template-rows: 64px minmax\(0, 1fr\);[^}]*height: 332px;")

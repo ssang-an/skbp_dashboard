@@ -18935,7 +18935,7 @@ body.report-reupload-open {
 }
 
 .step0-status-filter-label {
-  grid-column: span 2;
+  grid-column: auto;
 }
 
 .step0-status-toggle-group {
@@ -18966,6 +18966,25 @@ body.report-reupload-open {
   border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
   background: color-mix(in srgb, var(--accent) 14%, var(--surface));
   color: var(--accent);
+}
+
+/* Tab0 search already covers both Asset and Company, so reserve the released column for it. */
+#step0Panel .controls {
+  grid-template-columns: minmax(280px, 1fr) minmax(0, 1.35fr) 42px;
+}
+
+#step0Panel .controls > label:first-child {
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  #step0Panel .controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #step0Panel .filter-reset-button {
+    justify-self: start;
+  }
 }
 
 @media (max-width: 720px) {
