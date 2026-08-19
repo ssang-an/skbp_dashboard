@@ -1332,14 +1332,18 @@ function renderEditHistory(record) {
       const existingReason = String(entry?.review_reason || '').trim();
       const canEditReason = isManualScoreChange && Boolean(getCurrentUser()?.is_admin);
       const reasonForm = canEditReason
-        ? `<form class="detail-edit-history-reason-form" data-edit-history-reason-form data-history-entry-id="${escapeHtml(entry?.id || '')}" data-history-changed-at="${escapeHtml(entry?.changed_at || '')}" data-history-field="${escapeHtml(field)}" data-previous-reason="${escapeHtml(existingReason)}">
+        ? `<form class="detail-edit-history-reason-form" data-edit-history-reason-form data-history-entry-id="${escapeHtml(entry?.id || '')}" data-history-changed-at="${escapeHtml(entry?.changed_at || '')}" data-history-field="${escapeHtml(field)}" data-previous-reason="${escapeHtml(existingReason)}"${existingReason ? ' hidden' : ''}>
             <textarea rows="2" maxlength="1000" aria-label="${escapeHtml(source)} 변경 사유" placeholder="점수 변경 사유를 남기세요.">${escapeHtml(existingReason)}</textarea>
             <button type="submit">사유 저장</button>
           </form>`
         : '';
+      const reasonEditButton = existingReason && canEditReason
+        ? '<button type="button" class="detail-edit-history-reason-edit" data-edit-history-reason-edit>사유 수정</button>'
+        : '';
       const reasonMarkup = isManualScoreChange && (existingReason || reasonForm)
         ? `<div class="detail-edit-history-reason">
             ${existingReason ? `<p><b>변경 사유</b>${escapeHtml(existingReason)}</p>` : ''}
+            ${reasonEditButton}
             ${reasonForm}
           </div>`
         : '';
@@ -4103,6 +4107,17 @@ elements.detailEditHistory?.addEventListener('submit', (event) => {
   if (!form || !elements.detailEditHistory.contains(form)) return;
   event.preventDefault();
   saveEditHistoryReason(form);
+});
+
+elements.detailEditHistory?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-edit-history-reason-edit]');
+  if (!button || !elements.detailEditHistory.contains(button)) return;
+  const shell = button.closest('.detail-edit-history-reason');
+  const form = shell?.querySelector('[data-edit-history-reason-form]');
+  if (!form) return;
+  form.hidden = false;
+  button.hidden = true;
+  form.querySelector('textarea')?.focus();
 });
 
 elements.detailCommentForm?.addEventListener('submit', (event) => {

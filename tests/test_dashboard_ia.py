@@ -552,6 +552,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("dashboard_table_manual_review", history)
         self.assertIn("data-edit-history-reason-form", history)
         self.assertIn("review_reason", history)
+        self.assertIn("data-edit-history-reason-edit", history)
+        self.assertIn("existingReason ? ' hidden' : ''", history)
         self.assertIn("dashboard_qualitative_review_ai_generate", history)
         self.assertIn("정성평가 ${qualitativeCriterion?.label", history)
         self.assertIn("AI 답변 생성 완료", history)
@@ -559,6 +561,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('@app.patch("/api/records/{record_id:path}/manual-review-history-reason")', backend)
         self.assertIn('match["review_reason"] = reason', backend)
         self.assertIn('"id": uuid.uuid4().hex', backend)
+        self.assertIn("form.hidden = false", DETAIL_JS)
 
     def test_full_scout_source_report_header_is_title_only_without_theme_and_cluster(self):
         detail_js = (ROOT / "src" / "detail.js").read_text(encoding="utf-8")

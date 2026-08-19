@@ -11374,8 +11374,16 @@ html[data-theme="dark"] .detail-material-panel {
   align-items: end;
 }
 
+.detail-edit-history-reason-form[hidden] {
+  display: none;
+}
+
 .detail-edit-history-reason p + .detail-edit-history-reason-form {
   margin-top: 5px;
+}
+
+.detail-edit-history-reason-edit {
+  margin-top: 4px;
 }
 
 .detail-edit-history-reason textarea {
