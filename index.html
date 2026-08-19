@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260820-filter-multiselect-fix-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260820-step0-multisearch-1" />
   </head>
   <body>
     <div class="app-shell">
@@ -172,6 +172,15 @@
             <h2>진척 현황 Table</h2>
             <div class="panel-actions">
               <span id="step0TableCount">0 items</span>
+              <label class="page-size-control">
+                <span>Rows</span>
+                <select id="step0PageSizeSelect" aria-label="한 페이지 표시 행 수">
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="200">200</option>
+                  <option value="500">500</option>
+                </select>
+              </label>
               <span id="step0SelectedCount" class="step0-selected-count">0/20 선택됨</span>
               <button
                 id="step0CopyInstructionsButton"
