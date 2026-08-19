@@ -28,6 +28,27 @@ class AdmetCanonical25Tests(unittest.TestCase):
             "dd_report",
         )
 
+    def test_removing_last_direct_upload_clears_each_material_pill_flag(self):
+        focus = {
+            "partner_material_flags": {key: True for key in main.PARTNER_MATERIAL_FLAG_KEYS},
+            "partner_material_flag_overrides": {"ir": True},
+        }
+        main.clear_removed_partner_material_flags(focus, [])
+
+        flags = focus["partner_material_flags"]
+        for key in ("cdp", "ncdp", "admet", "dd_report"):
+            self.assertFalse(flags[key])
+        self.assertTrue(flags["ir"])
+
+    def test_removing_one_file_keeps_a_pill_on_when_same_category_remains(self):
+        focus = {"partner_material_flags": {"dd_report": True, "ncdp": True}}
+        main.clear_removed_partner_material_flags(
+            focus,
+            [{"filename": "remaining_NCDP.pdf", "partner_material_category": "ncdp"}],
+        )
+        self.assertTrue(focus["partner_material_flags"]["ncdp"])
+        self.assertFalse(focus["partner_material_flags"]["dd_report"])
+
     def test_case_a_table_format_counts_each_canonical_study_once(self):
         studies = [
             "Cell permeability / P-gp", "Mouse PK", "Rat PK", "Dog PK", "Monkey PK",

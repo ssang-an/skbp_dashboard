@@ -3442,6 +3442,29 @@ def attachment_partner_material_category(attachment: Any) -> str | None:
         return None
     declared = str(attachment.get("partner_material_category") or "").strip().casefold()
     return declared if declared in PARTNER_MATERIAL_CATEGORIES else partner_material_category(attachment.get("filename"))
+
+
+def clear_removed_partner_material_flags(focus: dict[str, Any], attachments: list[Any]) -> None:
+    """Turn off upload-derived material flags once their last matching file is removed.
+
+    Legacy manual overrides deliberately remain intact.  A direct upload never creates
+    an override, so its pill follows the actual attachment list after deletion.
+    """
+    material_flags = focus.get("partner_material_flags")
+    if not isinstance(material_flags, dict):
+        return
+    overrides = focus.get("partner_material_flag_overrides")
+    overrides = overrides if isinstance(overrides, dict) else {}
+    remaining_categories = {
+        category
+        for attachment in attachments
+        if (category := attachment_partner_material_category(attachment))
+    }
+    for category in PARTNER_MATERIAL_FLAG_KEYS:
+        if material_flags.get(category) is True and category not in remaining_categories and category not in overrides:
+            material_flags[category] = False
+
+
 ADMET_TOTAL_ITEMS = 25
 # v1.4 refreshes tracked records after making the canonical Study–Status ADMET
 # parser authoritative whenever an ADMET Partner Material is available.
@@ -9450,9 +9473,11 @@ async def delete_record_attachment(record_id: str, attachment_id: str, request: 
 
         attachments.remove(match)
         focus = meta.get("focus_management")
-        if isinstance(focus, dict) and focus.get("is_tracked"):
-            apply_auto_detected_evidence(focus, record)
-            apply_auto_oi_partnership(focus, record)
+        if isinstance(focus, dict):
+            clear_removed_partner_material_flags(focus, attachments)
+            if focus.get("is_tracked"):
+                apply_auto_detected_evidence(focus, record)
+                apply_auto_oi_partnership(focus, record)
         actor_ip = get_client_ip(request)
         append_edit_history(
             record,
