@@ -5699,6 +5699,43 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   padding: 9px 11px;
 }
 
+.data-reupload-inline-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 1px 2px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 3px 7px;
+  vertical-align: middle;
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.data-reupload-inline-action svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.data-reupload-inline-action.is-replace {
+  border-color: color-mix(in srgb, var(--accent) 44%, transparent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.data-reupload-inline-action.is-apply {
+  border-color: color-mix(in srgb, var(--accent) 36%, var(--line));
+  background: color-mix(in srgb, var(--accent-soft) 72%, var(--surface));
+  color: var(--accent);
+}
+
 .data-reupload-review-list {
   min-height: 0;
   overflow-y: auto;

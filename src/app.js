@@ -712,6 +712,12 @@ function openDataReuploadModal(matches) {
     if (elements.dataReuploadSummary) {
       elements.dataReuploadSummary.textContent = `${candidateCount}개의 기존 후보를 새 업로드 데이터와 비교하세요. 유사 이름 또는 회사가 다른 후보는 자동으로 병합되지 않습니다.`;
     }
+    elements.dataReuploadTitle.textContent = `유사한 기존 Pipeline이 ${matches.length}건 있습니다.`;
+    if (elements.dataReuploadSummary) {
+      elements.dataReuploadSummary.innerHTML = `비교 후 각 항목별로
+        <span class="data-reupload-inline-action is-replace"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></svg>덮어쓰기</span>를 선택한 뒤
+        <span class="data-reupload-inline-action is-apply"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" /></svg>선택 적용</span>하면 반영됩니다.`;
+    }
     renderDataReuploadReviewList();
     elements.dataReuploadModal.hidden = false;
     elements.dataReuploadApply?.focus();
