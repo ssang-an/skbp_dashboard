@@ -19222,7 +19222,7 @@ body.report-reupload-open {
   width: 12%;
 }
 
-/* Keep Tab0's GPT action in the same compact, quiet pill family as Excel export. */
+/* Keep Tab0's GPT action aligned with the header GPT lavender palette. */
 #step0CopyInstructionsButton.step0-copy-instructions-button {
   display: inline-flex;
   min-height: 26px;
@@ -19230,10 +19230,10 @@ body.report-reupload-open {
   justify-content: center;
   gap: 5px;
   padding: 4px 9px 4px 5px;
-  border: 1px solid color-mix(in srgb, #7794a7 28%, var(--line));
+  border: 1px solid color-mix(in srgb, #aa97cd 34%, var(--line));
   border-radius: 999px;
-  background: color-mix(in srgb, #8ba7b8 8%, var(--surface));
-  color: #668297;
+  background: color-mix(in srgb, #aa97cd 10%, var(--surface));
+  color: #786493;
   font-size: 10px;
   font-weight: 900;
   white-space: nowrap;
@@ -19255,8 +19255,8 @@ body.report-reupload-open {
   height: 18px;
   place-items: center;
   border-radius: 999px;
-  background: color-mix(in srgb, #8ba7b8 18%, var(--surface-soft));
-  color: #668297;
+  background: color-mix(in srgb, #aa97cd 20%, var(--surface-soft));
+  color: #786493;
   font-size: 8px;
   font-weight: 950;
   letter-spacing: 0.02em;
@@ -19264,9 +19264,9 @@ body.report-reupload-open {
 
 #step0CopyInstructionsButton.step0-copy-instructions-button:hover:not(:disabled),
 #step0CopyInstructionsButton.step0-copy-instructions-button:focus-visible:not(:disabled) {
-  border-color: color-mix(in srgb, #668297 48%, var(--line));
-  background: color-mix(in srgb, #8ba7b8 15%, var(--surface));
-  color: #527287;
+  border-color: color-mix(in srgb, #786493 52%, var(--line));
+  background: color-mix(in srgb, #aa97cd 18%, var(--surface));
+  color: #66517f;
 }
 
 .step0-status-filter-label {
