@@ -12259,23 +12259,31 @@ html[data-theme="dark"] .triage-quick-panel {
   border-radius: 6px;
 }
 
-/* Mirror the dashboard's human-edited score treatment in Team Review Workspace. */
-.filter-score-panel .score-chip.is-human {
-  border-color: color-mix(in srgb, #b9616b 55%, var(--line));
-}
-
-/* Keep Team Review aligned with the dashboard's single subtle manual-score border. */
-.filter-score-panel .score-chip.is-human {
-  border: 1px solid color-mix(in srgb, #b9616b 55%, var(--line));
-  outline: none;
-  box-shadow: none;
-}
-
-/* Render from the explicit active override marker without adding a second border. */
+/* A human change keeps the score tone, using only a darker border in that same tone. */
+.filter-score-panel .score-chip.is-human,
 #detailScoreSequence .score-chip[data-manual-score="true"] {
-  border: 1px solid color-mix(in srgb, #b9616b 55%, var(--line)) !important;
   outline: none !important;
   box-shadow: none !important;
+}
+
+.filter-score-panel .score-chip.is-human.tone-high,
+#detailScoreSequence .score-chip[data-manual-score="true"].tone-high {
+  border-color: color-mix(in srgb, var(--fluent-green) 72%, var(--line)) !important;
+}
+
+.filter-score-panel .score-chip.is-human.tone-mid,
+#detailScoreSequence .score-chip[data-manual-score="true"].tone-mid {
+  border-color: color-mix(in srgb, var(--fluent-amber) 72%, var(--line)) !important;
+}
+
+.filter-score-panel .score-chip.is-human.tone-low,
+#detailScoreSequence .score-chip[data-manual-score="true"].tone-low {
+  border-color: color-mix(in srgb, var(--fluent-red) 72%, var(--line)) !important;
+}
+
+.filter-score-panel .score-chip.is-human.tone-pending,
+#detailScoreSequence .score-chip[data-manual-score="true"].tone-pending {
+  border-color: color-mix(in srgb, #64748b 72%, var(--line)) !important;
 }
 
 .score-chip.tone-high {

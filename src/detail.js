@@ -1132,8 +1132,14 @@ function renderCollaborationPanel(record) {
         const tone = scoreChipTone(score);
         const label = scoringFirstWord[criterionId] || criterionId;
         const isHuman = Object.prototype.hasOwnProperty.call(manualScoreOverrides, criterionId);
+        const manualScoreBorder = {
+          high: 'var(--fluent-green)',
+          mid: 'var(--fluent-amber)',
+          low: 'var(--fluent-red)',
+          pending: '#64748b'
+        }[tone] || 'var(--muted)';
         const manualScoreStyle = isHuman
-          ? 'style="border: 1px solid color-mix(in srgb, #b9616b 55%, var(--line));"'
+          ? `style="border: 1px solid color-mix(in srgb, ${manualScoreBorder} 72%, var(--line));"`
           : '';
         return `
           <button
