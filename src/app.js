@@ -6392,25 +6392,29 @@ function detectInputRecordMode(record) {
 function fastTriageSummaryHasSingleScore(summaryValue, criterionId, expectedScore) {
   const summary = String(summaryValue || '').trim();
   if (!summary || !Number.isInteger(expectedScore) || expectedScore < 0 || expectedScore > 3) return false;
-  if (/(?<!\d)[0-3]\s*(?:점|points?)?\s*(?:\/|~|–|—|-|to)\s*[0-3]\s*(?:점|points?)?/i.test(summary)) {
-    return false;
-  }
-
-  const statedScores = new Set();
-  for (const match of summary.matchAll(/(?<!\d)([0-3])\s*점/gi)) statedScores.add(Number(match[1]));
-  const criterionLabel = ({
-    target_relevance: '(?:TR|Target\\s+Relevance)',
+  const labels = {
+    target_relevance: '(?:TR|Target\\s+(?:Area\\s+)?Relevance)',
     moa_validity: '(?:MoA|Mechanism(?:\\s+of\\s+Action)?(?:\\s+Validity)?)',
     data_maturity: '(?:Data(?:\\s+Maturity)?)'
-  })[criterionId];
-  if (criterionLabel) {
-    const labelPattern = new RegExp(`\\b${criterionLabel}\\b\\s*(?:score\\s*)?(?:is|=|:)?\\s*([0-3])\\b`, 'gi');
-    for (const match of summary.matchAll(labelPattern)) statedScores.add(Number(match[1]));
-  }
-  for (const pattern of [/\bscore\s*(?:is|=|:)?\s*([0-3])\b/gi, /\b([0-3])\s*points?\b/gi]) {
-    for (const match of summary.matchAll(pattern)) statedScores.add(Number(match[1]));
-  }
-  return statedScores.size === 1 && statedScores.has(expectedScore);
+  };
+  const normalized = summary.replace(/[*_`]/g, '');
+  const hasSemanticScoreRange = Object.values(labels).some((label) => {
+    const pattern = new RegExp(`\\b${label}\\b\\s*(?:score\\s*)?(?:is|=|:)?\\s*[0-3]\\s*(?:점|points?\\b)\\s*(?:\\/|~|–|—|-|to)\\s*[0-3]\\s*(?:점|points?\\b)`, 'i');
+    return pattern.test(normalized);
+  });
+  if (hasSemanticScoreRange) return false;
+  const references = [];
+  Object.entries(labels).forEach(([referenceId, label]) => {
+    const pattern = new RegExp(`\\b${label}\\b\\s*(?:score\\s*)?(?:is|=|:)?\\s*([0-3])\\s*(?:점|points?\\b)`, 'gi');
+    for (const match of normalized.matchAll(pattern)) {
+      references.push({ index: match.index, criterionId: referenceId, score: Number(match[1]) });
+    }
+  });
+  references.sort((left, right) => left.index - right.index);
+  const selected = references.filter((reference) => reference.criterionId === criterionId);
+  return selected.length === 1
+    && selected[0].score === expectedScore
+    && references.length === 1;
 }
 
 function validateInputScoreCriterion(
@@ -8211,13 +8215,13 @@ Criterion Evidence Basis:
 - Put complete citations and evidence detail in Markdown. Compact v2 JSON keeps a concise audit projection: put each actually checked source once in validation.source_registry using source_id, source_title, source_url, source_type, and verified; criterion objects reference those entries with source_ids and must not duplicate evidence_sources. Keep structured_table.sources as []; the dashboard derives its Source column from validation.source_registry. source_url_not_provided, Unknown, blank/null, or an unchecked URL do not count as verified public URLs.
 - public_source and user_input_and_public_source require at least one unique verified http(s) URL. user_input_only and no_supporting_basis must contain zero verified public URLs.
 - score >= 2 cannot use no_supporting_basis. MoA >= 2 and Data >= 2 each require at least one citable, verified public technical/source URL for that criterion. TR may preliminarily score from explicit user input.
-- Each Compact v2 criterion keeps score, evidence_type="triage_only", evidence_type_reason, evidence_basis, a one-sentence main_line_summary, why_not_higher, investigation_note, uncertain_points, and source_ids. Keep these concise for score hover/audit display; keep the full reasoning in Markdown.
+- Each Compact v2 criterion keeps score, evidence_type="triage_only", evidence_type_reason, evidence_basis, a one-sentence main_line_summary, why_not_higher, investigation_note, uncertain_points, and source_ids. Begin main_line_summary with exactly one matching score label: "TR N points:", "MoA N points:", or "Data N points:" (N must equal that JSON criterion's score). Keep detailed quantitative evidence (percentages, ratios, sample sizes, phases, and asset codes) in Markdown reasoning or investigation_note whenever possible; never state another criterion's score in main_line_summary.
 - triage.verified_public_source_count must exactly equal the unique verified public URL count after removing duplicates and trailing-slash variants. It is retained only for the Quick Summary card; source count itself does not determine the score.
 - Copy the exact user/company identifiers into input.company_input and input.asset_input. These two aliases are used only to join the Fast Triage and Full Scout rows for the same asset; do not add other input fields.
 
 Summary rule:
 - In the Markdown table/notes, each criterion judgment must be a non-empty 1–2 sentence explanation containing the confirmed asset-specific fact, why it maps to the selected score, and the key limitation.
-- State the single score explicitly (for example, "TR 2점") and never use a score range.
+- State the single score once in a criterion-labelled prefix (for example, "TR 2 points:") and never use a score range. The score prefix must match the JSON score; scientific/clinical numbers in the rest of the sentence are evidence, not scores.
 - General disease biology alone cannot explain an asset score. For user_input_only, do not introduce facts absent from the user input.
 
 Triage status rule:

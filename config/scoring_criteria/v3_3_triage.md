@@ -105,6 +105,10 @@ Evidence domain은 서로 다른 개발 질문에 답하는 데이터 범주다.
 
 ## Summary Rule
 
+### Compact v2 score-prefix validation
+
+`main_line_summary` must state its own selected score exactly once with a criterion label, preferably at the start: `TR N points:`, `MoA N points:`, or `Data N points:`. `N` must match that criterion's JSON `score` (0-3). Do not state another criterion's score in the summary. Quantitative evidence such as asset codes, percentages, ratios, sample sizes, trial phases, or decimal values is not a score and should remain concise here; place detailed evidence in the Markdown reasoning or audit fields.
+
 Markdown의 각 criterion 판단 요약은 확인된 asset-specific 사실, 그 사실과 점수의 연결, 핵심 제한점을 1~2문장으로 쓴다. 일반 disease biology만으로 점수를 설명하지 않는다. `user_input_only`라면 사용자 입력에 없는 target, cell type, MoA 또는 data를 추가하지 않는다. 반드시 단일 점수를 `2점`처럼 명시하고 범위형 점수를 쓰지 않는다.
 
 ## Canonical Development Stage

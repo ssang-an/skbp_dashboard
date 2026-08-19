@@ -459,6 +459,72 @@ class VersionAndPolicyTests(unittest.TestCase):
                     main.fast_triage_summary_has_single_score(summary, "target_relevance", 2)
                 )
 
+    def test_fast_summary_ignores_scientific_numbers_after_the_criterion_score(self) -> None:
+        cases = (
+            ("target_relevance", 3, "TR 3 points: The verified MEK1/2 mechanism supports ALS relevance."),
+            ("data_maturity", 2, "Data 2 points: A study reported 65.4% versus 47.1%, OR 2.12."),
+            ("moa_validity", 1, "MOA 1 points: TTYP-01 is described as a free-radical scavenger."),
+            ("target_relevance", 2, "TR 2 points: AXN-1501 is associated with Alzheimer's disease."),
+        )
+        for criterion_id, score, summary in cases:
+            with self.subTest(summary=summary):
+                self.assertTrue(main.fast_triage_summary_has_single_score(summary, criterion_id, score))
+
+    def test_fast_summary_rejects_only_actual_criterion_score_mismatches(self) -> None:
+        self.assertFalse(
+            main.fast_triage_summary_has_single_score(
+                "TR 2 points: The verified MEK1/2 mechanism supports ALS relevance.",
+                "target_relevance",
+                3,
+            )
+        )
+        self.assertFalse(
+            main.fast_triage_summary_has_single_score(
+                "MOA 3 points: TTYP-01 is described as a free-radical scavenger.",
+                "moa_validity",
+                1,
+            )
+        )
+        self.assertFalse(
+            main.fast_triage_summary_has_single_score(
+                "TR 2 points: Data 1 points were also reported.",
+                "target_relevance",
+                2,
+            )
+        )
+
+    def test_fast_save_accepts_a_compact_summary_with_an_asset_code_number(self) -> None:
+        record = current_triage_record()
+        record["input"]["asset_input"] = "AXN-1501"
+        record["structured_table"]["asset_name"] = "AXN-1501"
+        record["input"]["notes"] = "AXN-1501 is associated with Alzheimer's disease."
+        record["scoring"]["criteria"]["target_relevance"]["main_line_summary"] = (
+            "TR 2 points: AXN-1501 is associated with Alzheimer's disease."
+        )
+
+        main.validate_records_for_save([record])
+
+    def test_fast_save_preserves_existing_criterion_labelled_summaries(self) -> None:
+        main.validate_records_for_save([current_triage_record()])
+
+    def test_fast_save_reports_each_invalid_criterion_score_expression(self) -> None:
+        record = current_triage_record()
+        criteria = record["scoring"]["criteria"]
+        criteria["target_relevance"]["score"] = 3
+        criteria["target_relevance"]["main_line_summary"] = "TR 2 points: MEK1/2 evidence was reviewed."
+        criteria["moa_validity"]["score"] = 1
+        criteria["moa_validity"]["main_line_summary"] = "MOA 3 points: mechanism evidence was reviewed."
+        criteria["data_maturity"]["main_line_summary"] = "Data 1 points: 65.4% was reported."
+
+        with self.assertRaises(HTTPException) as caught:
+            main.validate_records_for_save([record])
+
+        detail = str(caught.exception.detail)
+        self.assertIn("record[0].scoring.criteria.target_relevance.main_line_summary expected score 3", detail)
+        self.assertIn("detected score expression(s): target_relevance=2", detail)
+        self.assertIn("record[0].scoring.criteria.moa_validity.main_line_summary expected score 1", detail)
+        self.assertIn("record[0].scoring.criteria.data_maturity.main_line_summary expected score 0", detail)
+
     def test_fast_save_rejects_missing_or_range_score_summary(self) -> None:
         for summary in ("Parkinson's disease is in scope.", "TR is 2/3 points."):
             record = current_triage_record()

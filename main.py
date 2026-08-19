@@ -1459,47 +1459,90 @@ def validate_score(value: Any, criterion_id: str) -> None:
         validation_error(f"{criterion_id}.score must be one integer among 0, 1, 2, 3. Got: {value!r}")
 
 
-def fast_triage_summary_has_single_score(summary: Any, criterion_id: str, expected_score: int) -> bool:
-    """Return whether a triage summary states exactly its selected score, not a range."""
+FAST_TRIAGE_SUMMARY_SCORE_LABELS = {
+    "target_relevance": r"(?:TR|Target\s+(?:Area\s+)?Relevance)",
+    "moa_validity": r"(?:MoA|Mechanism(?:\s+of\s+Action)?(?:\s+Validity)?)",
+    "data_maturity": r"(?:Data(?:\s+Maturity)?)",
+}
+
+
+def fast_triage_summary_score_references(summary: Any) -> list[tuple[str, int]]:
+    """Return only explicit, criterion-labelled score statements in a triage summary.
+
+    Scientific values such as MEK1/2, 65.4%, OR 2.12, and 0-1 are evidence,
+    not dashboard scores.  The Compact v2 contract therefore recognises a score
+    only when it is attached to TR, MoA, or Data and has a score unit.
+    """
     if not isinstance(summary, str) or not summary.strip():
-        return False
-
-    # A summary is a decision statement, so score ranges such as 2/3 or 2-3
-    # are never valid even if one end happens to match the selected score.
-    if re.search(
-        r"(?<!\d)[0-3]\s*(?:점|points?)?\s*(?:/|~|–|—|-|to)\s*[0-3]\s*(?:점|points?)?",
-        summary,
-        flags=re.IGNORECASE,
-    ):
-        return False
-
-    labels = {
-        "target_relevance": r"(?:TR|Target\s+Relevance)",
-        "moa_validity": r"(?:MoA|Mechanism(?:\s+of\s+Action)?(?:\s+Validity)?)",
-        "data_maturity": r"(?:Data(?:\s+Maturity)?)",
-    }
-    stated_scores = {
-        int(value)
-        for value in re.findall(r"(?<!\d)([0-3])\s*점", summary, flags=re.IGNORECASE)
-    }
-    label = labels.get(criterion_id)
-    if label:
-        stated_scores.update(
-            int(value)
-            for value in re.findall(
-                rf"\b{label}\b\s*(?:score\s*)?(?:is|=|:)?\s*([0-3])\b",
-                summary,
-                flags=re.IGNORECASE,
-            )
+        return []
+    normalized = re.sub(r"[*_`]", "", summary)
+    references: list[tuple[int, str, int]] = []
+    for criterion_id, label in FAST_TRIAGE_SUMMARY_SCORE_LABELS.items():
+        pattern = re.compile(
+            rf"\b{label}\b\s*(?:score\s*)?(?:is|=|:)?\s*([0-3])\s*(?:\uC810|points?\b)",
+            flags=re.IGNORECASE,
         )
-    for pattern in (
-        r"\bscore\s*(?:is|=|:)?\s*([0-3])\b",
-        r"\b([0-3])\s*points?\b",
-    ):
-        stated_scores.update(
-            int(value) for value in re.findall(pattern, summary, flags=re.IGNORECASE)
+        references.extend(
+            (match.start(), criterion_id, int(match.group(1)))
+            for match in pattern.finditer(normalized)
         )
-    return stated_scores == {expected_score}
+    return [(criterion_id, score) for _, criterion_id, score in sorted(references)]
+
+
+def fast_triage_summary_score_validation(
+    summary: Any,
+    criterion_id: str,
+    expected_score: int,
+) -> tuple[bool, str]:
+    """Validate a summary's one semantic score statement and return debug detail."""
+    normalized = re.sub(r"[*_`]", "", summary) if isinstance(summary, str) else ""
+    for label in FAST_TRIAGE_SUMMARY_SCORE_LABELS.values():
+        if re.search(
+            rf"\b{label}\b\s*(?:score\s*)?(?:is|=|:)?\s*[0-3]\s*(?:\uC810|points?\b)"
+            rf"\s*(?:/|~|–|—|-|to)\s*[0-3]\s*(?:\uC810|points?\b)",
+            normalized,
+            flags=re.IGNORECASE,
+        ):
+            return False, "score range"
+    references = fast_triage_summary_score_references(summary)
+    detected = ", ".join(f"{criterion_id}={score}" for criterion_id, score in references) or "none"
+    selected_scores = [score for reference_id, score in references if reference_id == criterion_id]
+    other_scores = [
+        f"{reference_id}={score}"
+        for reference_id, score in references
+        if reference_id != criterion_id
+    ]
+    if len(selected_scores) != 1:
+        return False, detected
+    if selected_scores[0] != expected_score or other_scores:
+        return False, detected
+    return True, detected
+
+
+def fast_triage_summary_has_single_score(summary: Any, criterion_id: str, expected_score: int) -> bool:
+    """Return whether the summary has exactly one matching criterion-labelled score."""
+    valid, _ = fast_triage_summary_score_validation(summary, criterion_id, expected_score)
+    return valid
+
+
+def fast_triage_summary_score_error(
+    record_index: int,
+    criterion_id: str,
+    expected_score: int,
+    summary: Any,
+) -> str:
+    """Build an actionable score-summary error without treating evidence numerals as scores."""
+    _, detected = fast_triage_summary_score_validation(summary, criterion_id, expected_score)
+    label = {
+        "target_relevance": "TR",
+        "moa_validity": "MoA",
+        "data_maturity": "Data",
+    }.get(criterion_id, criterion_id)
+    return (
+        f"record[{record_index}].scoring.criteria.{criterion_id}.main_line_summary expected score "
+        f"{expected_score}; detected score expression(s): {detected}. It must state the single selected score; use exactly one "
+        f"{label} {expected_score} points score statement and do not state other criterion scores."
+    )
 
 
 def parse_fast_triage_markdown_status_rows(markdown: Any) -> list[dict[str, str]]:
@@ -2395,6 +2438,7 @@ def validate_minimal_dashboard_record(record: dict[str, Any], index: int) -> Non
         "evidence_sources",
         "calculation",
     }
+    triage_summary_errors: list[str] = []
     for criterion_id in criterion_ids:
         criterion = criteria.get(criterion_id)
         if not isinstance(criterion, dict):
@@ -2494,15 +2538,21 @@ def validate_minimal_dashboard_record(record: dict[str, Any], index: int) -> Non
                     criterion_id,
                     criterion["score"],
                 ):
-                    validation_error(
-                        f"record[{index}].scoring.criteria.{criterion_id}.main_line_summary must state "
-                        f"the single selected score {criterion['score']}."
+                    triage_summary_errors.append(
+                        fast_triage_summary_score_error(
+                            index,
+                            criterion_id,
+                            criterion["score"],
+                            criterion.get("main_line_summary"),
+                        )
                     )
             elif criterion.get("evidence_type") not in EVIDENCE_TYPE_ALLOWED_VALUES:
                 validation_error(
                     f"record[{index}].scoring.criteria.{criterion_id}.evidence_type must be one of "
                     f"{sorted(EVIDENCE_TYPE_ALLOWED_VALUES)}."
                 )
+    if triage_summary_errors:
+        validation_error("Fast Triage main_line_summary score validation failed:\n" + "\n".join(triage_summary_errors))
     expected_total = sum(scores)
     expected_max = 9 if triage_record else 21
     if incoming_compact_v2:
@@ -2793,6 +2843,7 @@ def validate_records_for_save(records: list[dict[str, Any]]) -> None:
                         f"record[{index}].triage.active_asset is required and must be true, false, or null."
                     )
                 normalize_current_record_filter_fields(record, index)
+            triage_summary_errors: list[str] = []
             for criterion_id in ["target_relevance", "moa_validity", "data_maturity"]:
                 if criterion_id not in criteria:
                     validation_error(f"record[{index}].scoring.criteria.{criterion_id} is required for fast triage.")
@@ -2807,21 +2858,29 @@ def validate_records_for_save(records: list[dict[str, Any]]) -> None:
                         validation_error(
                             f"record[{index}].scoring.criteria.{criterion_id}.main_line_summary is required."
                         )
-                    if not fast_triage_summary_has_single_score(
+                    summary_score_is_valid = fast_triage_summary_has_single_score(
                         summary,
                         criterion_id,
                         criteria[criterion_id]["score"],
-                    ):
-                        validation_error(
-                            f"record[{index}].scoring.criteria.{criterion_id}.main_line_summary must state "
-                            f"the single selected score {criteria[criterion_id]['score']} and must not use a score range."
+                    )
+                    if not summary_score_is_valid:
+                        triage_summary_errors.append(
+                            fast_triage_summary_score_error(
+                                index,
+                                criterion_id,
+                                criteria[criterion_id]["score"],
+                                summary,
+                            )
                         )
-                    unsupported_claims = unsupported_user_input_only_summary_claims(record, criterion_id)
-                    if unsupported_claims:
-                        validation_error(
-                            f"record[{index}].scoring.criteria.{criterion_id}.main_line_summary contains "
-                            f"asset-specific claims not found in user input: {', '.join(unsupported_claims)}."
-                        )
+                    if summary_score_is_valid:
+                        unsupported_claims = unsupported_user_input_only_summary_claims(record, criterion_id)
+                        if unsupported_claims:
+                            validation_error(
+                                f"record[{index}].scoring.criteria.{criterion_id}.main_line_summary contains "
+                                f"asset-specific claims not found in user input: {', '.join(unsupported_claims)}."
+                            )
+            if triage_summary_errors:
+                validation_error("Fast Triage main_line_summary score validation failed:\n" + "\n".join(triage_summary_errors))
             if current_contract:
                 tr_score = criteria["target_relevance"]["score"]
                 moa_score = criteria["moa_validity"]["score"]
