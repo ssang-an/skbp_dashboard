@@ -4636,13 +4636,13 @@ function renderTable() {
               <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(indicationDisplay(row))}</td>
               <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${stageEditSelect(row)}</td>
               <td class="filter-cell">${statusEditSelect(row, filterKey)}</td>
-              <td class="score-cell">${mode === 'full'
+              <td class="score-cell">${mode === 'full' || mode === 'triage'
                 ? scoreEditSelect(row, 'targetScore', 'target_relevance', 'Target Area Relevance')
                 : scoreBadge(row.targetScore, 3, scoreTooltip('Target Area Relevance', row.criteria.target, 3))}</td>
-              <td class="score-cell">${mode === 'full'
+              <td class="score-cell">${mode === 'full' || mode === 'triage'
                 ? scoreEditSelect(row, 'moaScore', 'moa_validity', 'MOA Validity')
                 : scoreBadge(row.moaScore, 3, scoreTooltip('MOA Validity', row.criteria.moa, 3))}</td>
-              <td class="score-cell">${mode === 'full'
+              <td class="score-cell">${mode === 'full' || mode === 'triage'
                 ? scoreEditSelect(row, 'dataScore', 'data_maturity', 'Data Maturity')
                 : scoreBadge(row.dataScore, 3, scoreTooltip('Data Maturity', row.criteria.data, 3))}</td>
               ${mode === 'full' ? `

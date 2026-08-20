@@ -1982,9 +1982,18 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn('triage-score-editor', triage_scores)
         self.assertIn("select.dataset.triageScoreSelect", inline_editor)
         self.assertIn("updateTriageManualReview({ kind: 'score'", TRIAGE_DETAIL_JS)
-        self.assertIn("addEventListener('dblclick'", TRIAGE_DETAIL_JS)
+        self.assertIn("data-triage-score-edit", function_body(TRIAGE_DETAIL_JS, "renderScores"))
+        self.assertIn("elements.scoreGrid?.addEventListener('click'", TRIAGE_DETAIL_JS)
         self.assertIn('.triage-score-value', CSS)
         self.assertIn('.triage-score-inline-select', CSS)
+
+    def test_fast_triage_table_uses_the_same_human_score_editor_as_full_scout(self):
+        table = function_body(JS, "renderTable")
+
+        self.assertEqual(table.count("mode === 'full' || mode === 'triage'"), 3)
+        self.assertIn("scoreEditSelect(row, 'targetScore', 'target_relevance'", table)
+        self.assertIn("scoreEditSelect(row, 'moaScore', 'moa_validity'", table)
+        self.assertIn("scoreEditSelect(row, 'dataScore', 'data_maturity'", table)
 
     def test_triage_sources_recover_only_asset_scoped_safe_links(self):
         normalizer = function_body(TRIAGE_DETAIL_JS, "normalizeMarkdownSourceUrl")

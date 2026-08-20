@@ -674,7 +674,7 @@ function renderScores(record) {
     const evidenceMetadata = [visibleEvidenceType, evidenceBasis].filter(Boolean);
     const isHumanScore = scoreHasHumanOverride(record, definition.key);
     const scoreHeader = currentUserIsAdmin()
-      ? `<button type="button" class="triage-score-value" data-triage-score-edit data-criterion="${escapeHtml(definition.key)}" data-score="${score ?? 0}" aria-label="${escapeHtml(definition.label)} ${escapeHtml(scoreLabel)}. 더블클릭하여 점수 수정" title="더블클릭하여 점수 수정"><span>${escapeHtml(scoreLabel)}</span><small>최대 3점</small></button>`
+      ? `<button type="button" class="triage-score-value" data-triage-score-edit data-criterion="${escapeHtml(definition.key)}" data-score="${score ?? 0}" aria-label="${escapeHtml(definition.label)} ${escapeHtml(scoreLabel)}. 클릭하여 점수 수정" title="클릭하여 점수 수정"><span>${escapeHtml(scoreLabel)}</span><small>최대 3점</small></button>`
       : `<strong>${escapeHtml(scoreLabel)}<small>최대 3점</small></strong>`;
     return `
       <article class="triage-score-card score-${score ?? 'unknown'}${isHumanScore ? ' is-human-score' : ''}">
@@ -1166,7 +1166,7 @@ elements.scoreGrid?.addEventListener('change', (event) => {
   const select = event.target.closest('[data-triage-score-select]');
   if (select && currentUserIsAdmin()) saveTriageScore(select);
 });
-elements.scoreGrid?.addEventListener('dblclick', (event) => {
+elements.scoreGrid?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-triage-score-edit]');
   if (button) openTriageScoreInlineEditor(button);
 });
