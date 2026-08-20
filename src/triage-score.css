@@ -24,6 +24,13 @@
   cursor: pointer;
 }
 
+.triage-score-card-header > .triage-score-value > span {
+  color: inherit;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+}
+
 .triage-score-value:hover {
   background: color-mix(in srgb, var(--triage-score-color) 17%, var(--readable-surface));
 }
