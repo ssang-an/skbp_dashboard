@@ -7847,7 +7847,7 @@ async function runAiReparse() {
   const blockingOperation = openBlockingOperation({
     title: 'AI 2차 파싱 중',
     message: '업로드한 원문과 구조화 데이터를 비교해 보완하고 있습니다.',
-    status: '처리 중에는 다른 화면으로 이동할 수 없습니다.'
+    status: '업로드 준비를 위해 잠시만 기다려 주세요.'
   });
 
   let streamedText = '';
