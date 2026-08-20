@@ -141,8 +141,32 @@ class RubricAiRefreshTests(unittest.TestCase):
         self.assertNotIn("scores", restored["meta"]["human_review"]["overrides"])
         self.assertNotIn("total_score", restored["meta"]["human_review"]["overrides"])
         self.assertEqual(restored["meta"]["human_review"]["history"][-1]["source"], "dashboard_rubric_refresh")
-        self.assertEqual(restored["meta"]["human_review"]["history"][-1]["change_method"], "rubric_refresh")
+        self.assertEqual(
+            restored["meta"]["human_review"]["history"][-1]["change_method"],
+            f"rubric_refresh_existing_v{main.SCORING_CRITERIA_VERSION}",
+        )
         self.assertEqual(saved[0][0]["scoring"]["total_score"], 14)
+
+    def test_rubric_reset_history_marks_latest_version_after_a_version_upgrade(self):
+        record = full_scout_record()
+        record["meta"]["rubric_version"] = "3.1"
+        record["meta"]["human_review"] = {
+            "overrides": {"scores": {"target_relevance": 1}},
+            "ai_baseline": {"scores": {"target_relevance": 3}},
+        }
+
+        main.reset_manual_scoring_overrides_after_rubric_review(
+            record,
+            cleared_at="2026-08-20T01:00:00+00:00",
+            actor_ip="127.0.0.1",
+            rubric_version="3.4",
+            previous_rubric_version="3.1",
+        )
+
+        self.assertEqual(
+            record["meta"]["edit_history"][-1]["change_method"],
+            "rubric_refresh_latest_v3.4",
+        )
 
     def test_fast_triage_excerpt_centers_the_current_asset_in_a_batch_report(self):
         record = {

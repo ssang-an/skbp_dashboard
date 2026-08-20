@@ -909,8 +909,22 @@ function renderQuickSummary(record) {
   `;
 }
 
-function triageHistoryLabel(entry) {
+function triageRubricResetSuffix(record, entry) {
+  const resetMatch = String(entry?.change_method || '').match(/^rubric_refresh_(latest|existing)_v(.+)$/i);
+  if (resetMatch) {
+    return `${resetMatch[1].toLowerCase() === 'latest' ? '최신 루브릭' : '기존 루브릭'} v${resetMatch[2]}으로 초기화`;
+  }
+  if (String(entry?.source || '') !== 'dashboard_rubric_refresh') return '';
+  const meta = objectValue(record?.meta);
+  const targetVersion = textValue(meta.rubric_reviewed_version || meta.rescored_rubric_version || meta.rubric_version, '').replace(/^v/i, '');
+  const originalVersion = textValue(meta.rubric_version, '').replace(/^v/i, '');
+  if (!targetVersion) return '공식 GPT 점수로 초기화';
+  return `${originalVersion && originalVersion !== targetVersion ? '최신 루브릭' : '기존 루브릭'} v${targetVersion}으로 초기화`;
+}
+
+function triageHistoryLabel(record, entry) {
   const field = String(entry?.field || '');
+  const resetSuffix = triageRubricResetSuffix(record, entry);
   const labels = {
     'scores.target_relevance': 'TR 점수',
     'scores.moa_validity': 'MoA 점수',
@@ -918,11 +932,11 @@ function triageHistoryLabel(entry) {
     total_score: 'Total score',
     final_comment: entry?.source === 'detail_final_comment_delete' ? '최종 코멘트 삭제' : '최종 코멘트'
   };
-  if (labels[field]) return labels[field];
+  if (labels[field]) return resetSuffix ? `${labels[field]} · ${resetSuffix}` : labels[field];
   if (field.startsWith('topic_notes.triage-score-')) {
     return entry?.source === 'detail_topic_note_delete' ? '기준별 코멘트 삭제' : '기준별 코멘트 입력';
   }
-  if (field === 'filter_status') return 'Triage status';
+  if (field === 'filter_status') return resetSuffix ? `Triage status · ${resetSuffix}` : 'Triage status';
   return field || 'Fast Triage 검토';
 }
 
@@ -941,7 +955,7 @@ function renderTriageReviewHistory(record) {
     .map((entry) => {
       const when = formatTimestamp(entry?.changed_at);
       const who = entry?.actor_name || entry?.actor_ip || 'Local workspace';
-      const label = triageHistoryLabel(entry);
+      const label = triageHistoryLabel(record, entry);
       const change = `${triageHistoryValue(entry?.previous_value)} → ${triageHistoryValue(entry?.new_value)}`;
       return `<li${entry?.actor_name ? ' class="is-human"' : ''}>
         <span>${escapeHtml(when)}</span>

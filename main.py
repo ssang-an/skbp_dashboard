@@ -7777,16 +7777,26 @@ def reset_manual_scoring_overrides_after_rubric_review(
     *,
     cleared_at: str,
     actor_ip: str,
+    rubric_version: str = "",
+    previous_rubric_version: str = "",
 ) -> dict[str, Any]:
     """Restore official GPT scores while retaining a reviewable audit trail."""
     cleared = clear_manual_scoring_overrides_for_rubric_refresh(record, cleared_at)
+    target_version = str(rubric_version or "").strip().lstrip("vV")
+    previous_version = str(previous_rubric_version or "").strip().lstrip("vV")
+    reset_scope = "existing" if target_version and target_version == previous_version else "latest"
+    change_method = (
+        f"rubric_refresh_{reset_scope}_v{target_version}"
+        if target_version
+        else "rubric_refresh"
+    )
     append_scoring_override_reset_history(
         record,
         cleared,
         actor_ip=actor_ip,
         source="dashboard_rubric_refresh",
         changed_at=cleared_at,
-        change_method="rubric_refresh",
+        change_method=change_method,
     )
     return cleared
 
@@ -7814,6 +7824,8 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
                 record,
                 cleared_at=reviewed_at,
                 actor_ip=actor_ip,
+                rubric_version=latest_rubric_version,
+                previous_rubric_version=current_version,
             )
             record_successful_rubric_review(
                 record,
@@ -7888,6 +7900,8 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
                 record,
                 cleared_at=reviewed_at,
                 actor_ip=actor_ip,
+                rubric_version=latest_rubric_version,
+                previous_rubric_version=current_version,
             )
             record_successful_rubric_review(
                 record,
@@ -7933,6 +7947,8 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
                 record,
                 cleared_at=reviewed_at,
                 actor_ip=actor_ip,
+                rubric_version=latest_rubric_version,
+                previous_rubric_version=current_version,
             )
             record_successful_rubric_review(
                 record,
@@ -7992,6 +8008,8 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
             candidate,
             cleared_at=changed_at,
             actor_ip=actor_ip,
+            rubric_version=latest_rubric_version,
+            previous_rubric_version=current_version,
         )
         if cleared_manual_scoring_overrides:
             changes.append(
