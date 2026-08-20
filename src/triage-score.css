@@ -66,6 +66,10 @@
   margin-top: 14px;
 }
 
+.triage-final-comment.has-comment .triage-note-trigger {
+  margin-top: 10px;
+}
+
 .triage-score-note {
   position: relative;
 }
