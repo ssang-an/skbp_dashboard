@@ -3043,20 +3043,108 @@ def normalized_pipeline_asset_identity(value: Any) -> str:
     return re.sub(r"(?<=[a-z])0+(?=\d)", "", normalized)
 
 
-def pipeline_asset_code_number(value: str) -> str:
-    """Return the numeric identifier of a code-like pipeline asset, if present."""
-    matched = re.fullmatch(r"[a-z]+(\d+)[a-z]*", str(value or ""))
-    return matched.group(1) if matched else ""
+GENERIC_ASSET_WORDS = {"therapy", "drug", "treatment", "research", "project", "program", "pipeline", "disease", "disorder", "candidate", "for", "of", "the", "and"}
+HIGH_CONFIDENCE_ASSET_ALIASES = {"ad": "alzheimer", "alzheimers": "alzheimer", "pd": "parkinson", "parkinsons": "parkinson"}
+
+
+def asset_words(value: Any) -> list[str]:
+    return re.findall(r"[a-z0-9]+", unicodedata.normalize("NFKC", str(value or "")).casefold())
+
+
+def normalized_code_part(part: str) -> str:
+    return part.lstrip("0") or "0" if part.isdigit() else part
+
+
+def pipeline_asset_archetype(value: Any) -> str:
+    raw = str(value or "").strip()
+    if re.fullmatch(r"\d+", raw):
+        return "numeric"
+    if re.fullmatch(r"[A-Za-z0-9]+(?:[-_/][A-Za-z0-9]+)*", raw) and re.search(r"[A-Za-z]", raw) and re.search(r"\d", raw):
+        return "code"
+    if re.fullmatch(r"[^\W\d_]+", raw, flags=re.UNICODE):
+        return "named"
+    return "descriptive"
+
+
+def pipeline_asset_code_signature(value: Any) -> tuple[str, ...]:
+    if pipeline_asset_archetype(value) != "code":
+        return ()
+    raw = unicodedata.normalize("NFKC", str(value or "")).casefold()
+    return tuple(normalized_code_part(part) for part in re.findall(r"[a-z]+|\d+", raw))
+
+
+def pipeline_asset_numeric_core(value: Any) -> tuple[str, ...]:
+    archetype = pipeline_asset_archetype(value)
+    if archetype == "numeric":
+        return (normalized_code_part(str(value).strip()),)
+    if archetype != "code":
+        return ()
+    return tuple(part for part in pipeline_asset_code_signature(value) if part.isdigit())
+
+
+def is_simple_code_with_prefix_and_number(value: Any) -> bool:
+    signature = pipeline_asset_code_signature(value)
+    return len(signature) == 2 and signature[0].isalpha() and signature[1].isdigit()
+
+
+def descriptive_assets_semantically_overlap(left_asset: Any, right_asset: Any) -> bool:
+    def meaningful_tokens(value: Any) -> set[str]:
+        return {
+            HIGH_CONFIDENCE_ASSET_ALIASES.get(word, word)
+            for word in asset_words(value)
+            if word not in GENERIC_ASSET_WORDS
+        }
+    return bool(meaningful_tokens(left_asset) & meaningful_tokens(right_asset))
+
+
+def pipeline_asset_match_reason(
+    left_asset: Any,
+    right_asset: Any,
+    left_company: Any = "",
+    right_company: Any = "",
+) -> tuple[str, str] | None:
+    """Return a conservative overwrite candidate classification and reason."""
+    left_type = pipeline_asset_archetype(left_asset)
+    right_type = pipeline_asset_archetype(right_asset)
+    left_normalized = normalized_pipeline_asset_identity(left_asset)
+    right_normalized = normalized_pipeline_asset_identity(right_asset)
+    left_company_normalized = normalized_pipeline_identity_text(left_company)
+    same_company = bool(left_company_normalized) and left_company_normalized == normalized_pipeline_identity_text(right_company)
+    if not left_normalized or not right_normalized:
+        return None
+    if left_type == right_type == "code":
+        if left_normalized == right_normalized:
+            return "exact", "same development code after separator/leading-zero normalization"
+        if pipeline_asset_code_signature(left_asset) == pipeline_asset_code_signature(right_asset):
+            return "exact", "same structured development code after separator/leading-zero normalization"
+        if (
+            same_company
+            and is_simple_code_with_prefix_and_number(left_asset)
+            and is_simple_code_with_prefix_and_number(right_asset)
+            and pipeline_asset_numeric_core(left_asset) == pipeline_asset_numeric_core(right_asset)
+        ):
+            return "review", "same company and numeric code core; prefix differs"
+        return None
+    if {left_type, right_type} == {"code", "numeric"}:
+        if same_company and pipeline_asset_numeric_core(left_asset) == pipeline_asset_numeric_core(right_asset):
+            return "review", "same company and numeric code core; prefix is missing on one record"
+        return None
+    if left_type == right_type == "named":
+        return ("exact", "identical product/INN name") if left_normalized == right_normalized else None
+    if left_type == right_type == "descriptive" and same_company:
+        if left_normalized == right_normalized:
+            return "exact", "same company and identical descriptive asset name"
+        if descriptive_assets_semantically_overlap(left_asset, right_asset):
+            return "review", "same company and overlapping meaningful descriptive terms"
+    return None
 
 
 def pipeline_asset_identities_match(left_asset: str, right_asset: str) -> bool:
-    """Match formatting aliases without conflating distinct numeric asset codes."""
+    """Keep legacy normalized identity checks safe for structured code conflicts."""
     if left_asset == right_asset:
         return True
-    left_number = pipeline_asset_code_number(left_asset)
-    right_number = pipeline_asset_code_number(right_asset)
-    if left_number and right_number and left_number != right_number:
-        return False
+    if pipeline_asset_archetype(left_asset) == pipeline_asset_archetype(right_asset) == "code":
+        return pipeline_asset_code_signature(left_asset) == pipeline_asset_code_signature(right_asset)
     threshold = max(1, math.floor(max(len(left_asset), len(right_asset)) * 0.12))
     return difflib.SequenceMatcher(None, left_asset, right_asset).ratio() >= 1 - (threshold / max(len(left_asset), len(right_asset), 1))
 
@@ -3083,6 +3171,22 @@ def pipeline_identities_match(left: tuple[str, str, str], right: tuple[str, str,
     if left[0] != right[0]:
         return False
     return pipeline_asset_identities_match(left[2], right[2])
+
+
+def pipeline_records_match(left: dict[str, Any], right: dict[str, Any]) -> bool:
+    """Apply conservative overwrite rules to original asset and company labels."""
+    if pipeline_identity(left)[0] != pipeline_identity(right)[0]:
+        return False
+    left_table = left.get("structured_table") if isinstance(left.get("structured_table"), dict) else {}
+    left_summary = left.get("json_summary") if isinstance(left.get("json_summary"), dict) else {}
+    right_table = right.get("structured_table") if isinstance(right.get("structured_table"), dict) else {}
+    right_summary = right.get("json_summary") if isinstance(right.get("json_summary"), dict) else {}
+    return pipeline_asset_match_reason(
+        non_empty_text(left_table.get("asset_name"), left_summary.get("asset_name")),
+        non_empty_text(right_table.get("asset_name"), right_summary.get("asset_name")),
+        non_empty_text(left_table.get("company"), left_summary.get("company")),
+        non_empty_text(right_table.get("company"), right_summary.get("company")),
+    ) is not None
 
 
 def apply_confirmed_reupload_replacements(
@@ -3113,7 +3217,7 @@ def apply_confirmed_reupload_replacements(
             raise HTTPException(status_code=409, detail=f"Existing reupload target not found: {existing_id or '(blank)'}")
         if incoming_id in used_incoming_ids:
             raise HTTPException(status_code=409, detail=f"Duplicate reupload decision for: {incoming_id}")
-        if not pipeline_identities_match(pipeline_identity(incoming_record), pipeline_identity(existing_record)):
+        if not pipeline_records_match(incoming_record, existing_record):
             raise HTTPException(
                 status_code=409,
                 detail="Confirmed reupload target no longer matches the same workflow and asset name.",

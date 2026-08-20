@@ -68,6 +68,43 @@ class DataReuploadTests(unittest.TestCase):
             main.normalized_pipeline_asset_identity("AS-401"),
         ))
 
+    def test_structured_code_signatures_keep_complex_code_components(self):
+        exact_pairs = [
+            ("CLZ-003", "CLZ003"),
+            ("JBPOS0755", "JBPOS-0755"),
+            ("DDN-A-0101", "DDNA0101"),
+            ("AST-51X", "AST51X"),
+        ]
+        for left, right in exact_pairs:
+            with self.subTest(left=left, right=right):
+                self.assertEqual(main.pipeline_asset_match_reason(left, right, "Same Co", "Same Co")[0], "exact")
+
+    def test_structured_code_conflicts_and_meaningful_suffixes_are_excluded(self):
+        rejected_pairs = [
+            ("AST-003", "AST-004"),
+            ("ATC-101", "ATC-105"),
+            ("ABC101A", "ABC101B"),
+            ("DDN-A-0101", "DDN-FA-0001"),
+        ]
+        for left, right in rejected_pairs:
+            with self.subTest(left=left, right=right):
+                self.assertIsNone(main.pipeline_asset_match_reason(left, right, "Same Co", "Same Co"))
+
+    def test_same_company_code_prefix_gap_or_missing_prefix_is_review_only(self):
+        self.assertEqual(main.pipeline_asset_match_reason("AR1001", "1001", "AriBio", "AriBio")[0], "review")
+        self.assertEqual(main.pipeline_asset_match_reason("ABC101", "XYZ101", "AriBio", "AriBio")[0], "review")
+        self.assertIsNone(main.pipeline_asset_match_reason("AR1001", "1001", "AriBio", "Other Co"))
+
+    def test_descriptive_assets_are_company_scoped_and_semantic(self):
+        self.assertEqual(main.pipeline_asset_match_reason("AD Therapy", "Alzheimer's Disease Therapy", "AriBio", "AriBio")[0], "review")
+        self.assertEqual(main.pipeline_asset_match_reason("CNS Research Program", "CNS Disease Research Program", "AriBio", "AriBio")[0], "review")
+        self.assertIsNone(main.pipeline_asset_match_reason("AD Therapy", "Alzheimer's Disease Therapy", "AriBio", "Other Co"))
+        self.assertIsNone(main.pipeline_asset_match_reason("CNS Research Program", "CNS Research Program", "AriBio", "Other Co"))
+
+    def test_named_assets_can_match_exactly_but_variants_are_not_collapsed(self):
+        self.assertEqual(main.pipeline_asset_match_reason("lecanemab", "Lecanemab", "AriBio", "Other Co")[0], "exact")
+        self.assertIsNone(main.pipeline_asset_match_reason("AB-12", "AB-12 (IV)", "AriBio", "AriBio"))
+
     def test_confirmed_reupload_reuses_existing_record_id(self):
         old = full_record("Xenon_Azetukalner_20260801")
         new = full_record("Xenon_Azetukalner_20260803")

@@ -541,25 +541,87 @@ function normalizedPipelineAssetIdentity(value) {
   return normalizedPipelineIdentityText(value).replace(/(?<=[a-z])0+(?=\d)/g, '');
 }
 
-function pipelineAssetCodeNumber(value) {
-  const matched = String(value || '').match(/^[a-z]+(\d+)[a-z]*$/i);
-  return matched?.[1] || '';
+const GENERIC_ASSET_WORDS = new Set(['therapy', 'drug', 'treatment', 'research', 'project', 'program', 'pipeline', 'disease', 'disorder', 'candidate', 'for', 'of', 'the', 'and']);
+const HIGH_CONFIDENCE_ASSET_ALIASES = new Map([
+  ['ad', 'alzheimer'], ['alzheimers', 'alzheimer'],
+  ['pd', 'parkinson'], ['parkinsons', 'parkinson']
+]);
+
+function assetWords(value) {
+  return String(value || '').normalize('NFKC').toLocaleLowerCase('en')
+    .match(/[\p{L}\p{N}]+/gu) || [];
 }
 
-function assetsHaveConflictingCodeNumbers(left, right) {
-  const leftNumber = pipelineAssetCodeNumber(left);
-  const rightNumber = pipelineAssetCodeNumber(right);
-  return Boolean(leftNumber && rightNumber && leftNumber !== rightNumber);
+function normalizedCodePart(part) {
+  return /^\d+$/.test(part) ? (part.replace(/^0+(?=\d)/, '') || '0') : part;
 }
 
-function areSimilarPipelineAssets(left, right) {
-  if (!left || !right) return false;
-  if (left === right) return true;
-  // Code-like names identify a distinct asset by their numeric component.
-  // Never surface AR1001/AR1002 or AS-301/AS-401 as reupload candidates.
-  if (assetsHaveConflictingCodeNumbers(left, right)) return false;
-  const threshold = Math.max(1, Math.floor(Math.max(left.length, right.length) * 0.12));
-  return editDistance(left, right) <= threshold;
+function pipelineAssetArchetype(value) {
+  const raw = String(value || '').trim();
+  if (/^\d+$/.test(raw)) return 'numeric';
+  if (/^[a-z0-9]+(?:[-_/][a-z0-9]+)*$/i.test(raw) && /[a-z]/i.test(raw) && /\d/.test(raw)) return 'code';
+  if (/^[\p{L}]+$/u.test(raw)) return 'named';
+  return 'descriptive';
+}
+
+function pipelineAssetCodeSignature(value) {
+  if (pipelineAssetArchetype(value) !== 'code') return [];
+  return String(value || '').normalize('NFKC').toLocaleLowerCase('en')
+    .match(/[a-z]+|\d+/g)?.map(normalizedCodePart) || [];
+}
+
+function pipelineAssetNumericCore(value) {
+  const archetype = pipelineAssetArchetype(value);
+  if (archetype === 'numeric') return [normalizedCodePart(String(value).trim())];
+  if (archetype !== 'code') return [];
+  return pipelineAssetCodeSignature(value).filter((part) => /^\d+$/.test(part));
+}
+
+function sameParts(left, right) {
+  return left.length === right.length && left.every((part, index) => part === right[index]);
+}
+
+function isSimpleCodeWithPrefixAndNumber(value) {
+  const signature = pipelineAssetCodeSignature(value);
+  return signature.length === 2 && /^[a-z]+$/.test(signature[0]) && /^\d+$/.test(signature[1]);
+}
+
+function descriptiveAssetsSemanticallyOverlap(left, right) {
+  const meaningfulTokens = (value) => new Set(assetWords(value)
+    .map((word) => HIGH_CONFIDENCE_ASSET_ALIASES.get(word) || word)
+    .filter((word) => !GENERIC_ASSET_WORDS.has(word)));
+  const leftTokens = meaningfulTokens(left);
+  const rightTokens = meaningfulTokens(right);
+  return [...leftTokens].some((token) => rightTokens.has(token));
+}
+
+function comparePipelineAssets(leftIdentity, rightIdentity) {
+  const left = leftIdentity.asset;
+  const right = rightIdentity.asset;
+  const sameCompany = Boolean(leftIdentity.normalizedCompany)
+    && leftIdentity.normalizedCompany === rightIdentity.normalizedCompany;
+  const leftType = pipelineAssetArchetype(left);
+  const rightType = pipelineAssetArchetype(right);
+  if (!leftIdentity.normalizedAsset || !rightIdentity.normalizedAsset) return false;
+  if (leftType === 'code' && rightType === 'code') {
+    if (leftIdentity.normalizedAsset === rightIdentity.normalizedAsset) return true;
+    if (sameParts(pipelineAssetCodeSignature(left), pipelineAssetCodeSignature(right))) return true;
+    return sameCompany
+      && isSimpleCodeWithPrefixAndNumber(left)
+      && isSimpleCodeWithPrefixAndNumber(right)
+      && sameParts(pipelineAssetNumericCore(left), pipelineAssetNumericCore(right));
+  }
+  if ((leftType === 'code' && rightType === 'numeric') || (leftType === 'numeric' && rightType === 'code')) {
+    return sameCompany && sameParts(pipelineAssetNumericCore(left), pipelineAssetNumericCore(right));
+  }
+  if (leftType === 'named' && rightType === 'named') {
+    return leftIdentity.normalizedAsset === rightIdentity.normalizedAsset;
+  }
+  if (leftType === 'descriptive' && rightType === 'descriptive' && sameCompany) {
+    return leftIdentity.normalizedAsset === rightIdentity.normalizedAsset
+      || descriptiveAssetsSemanticallyOverlap(left, right);
+  }
+  return false;
 }
 
 function editDistance(left, right) {
@@ -608,7 +670,7 @@ function findDataReuploadMatches(records) {
       .filter((existingRecord) => {
         const existingIdentity = dataUploadRecordIdentity(existingRecord);
         if (existingIdentity.mode !== incomingIdentity.mode || !existingIdentity.normalizedAsset) return false;
-        return areSimilarPipelineAssets(incomingIdentity.normalizedAsset, existingIdentity.normalizedAsset);
+        return comparePipelineAssets(incomingIdentity, existingIdentity);
       })
       .sort((a, b) => {
         const identityA = dataUploadRecordIdentity(a);
