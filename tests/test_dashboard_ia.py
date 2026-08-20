@@ -2108,6 +2108,27 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("openReviewerIdentityModal", JS)
         self.assertNotIn("DASHBOARD_REVIEWER_ID_KEY", JS)
 
+    def test_tab_one_and_two_identity_fields_share_double_click_editing_and_target_wrapping(self):
+        text_editor = function_body(JS, "tableTextEditValue")
+        modality_editor = function_body(JS, "modalityEditValue")
+        render = function_body(JS, "renderTable")
+        save_select = function_body(JS, "saveManualReviewEdit")
+        text_open = function_body(JS, "openManualTableTextEdit")
+        modal_open = function_body(JS, "openManualTableModalityEdit")
+
+        self.assertIn("Boolean(getCurrentUser()?.is_admin)", JS)
+        self.assertIn("['company', 'asset', 'main_indication', 'target']", text_open)
+        self.assertIn("data-table-modality-edit", modality_editor)
+        self.assertIn("row.modality === 'Unknown'", modality_editor)
+        self.assertIn("CANONICAL_MODALITIES", modal_open)
+        self.assertIn("'modality'", save_select)
+        self.assertIn("tableTextEditValue(row, 'asset'", render)
+        self.assertIn("tableTextEditValue(row, 'target'", render)
+        self.assertIn("modalityEditValue(row)", render)
+        self.assertNotIn('asset-cell"><a href="${escapeHtml(recordDetailHref(row, mode))}', render)
+        self.assertIn(".pipeline-table .target-single-line", CSS)
+        self.assertIn("-webkit-line-clamp: 3", CSS)
+
     def test_data_upload_locks_contract_and_preserves_separate_tab_drafts(self):
         validator = function_body(JS, "validateCombinedInput")
         preview = function_body(JS, "previewPastedReportParsing")

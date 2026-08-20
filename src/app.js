@@ -260,6 +260,17 @@ const initialSort = initialTableMode === 'triage'
   : initialTableMode === 'focus'
     ? { key: 'focusAddedAt', direction: 'desc' }
     : { key: 'totalScore', direction: 'desc' };
+const CANONICAL_MODALITIES = [
+  'Small molecule',
+  'Peptide',
+  'RNA therapy',
+  'Cell therapy',
+  'Gene therapy',
+  'Antibody',
+  'Protein biologic',
+  'Other',
+  'Unknown'
+];
 
 const state = {
   rawRecords: [],
@@ -4130,16 +4141,26 @@ function stageEditSelect(row) {
   return `<select class="table-edit-select stage-edit${isManual ? ' is-human' : ''}" data-record-id="${escapeHtml(row.id)}" data-edit-kind="stage" data-previous-value="${escapeHtml(row.stage)}" aria-label="${escapeHtml(row.asset)} stage">${CANONICAL_DEVELOPMENT_STAGES.map((stage) => selectOption(stage, row.stage, stage)).join('')}</select>`;
 }
 
-function tableTextEditValue(row, kind, value, { title = '', strong = false } = {}) {
+function modalityEditValue(row) {
+  const isManual = hasManualTableFieldEdit(row.raw, 'modality_platform');
+  const editable = row.modality === 'Unknown' && Boolean(getCurrentUser()?.is_admin);
+  const className = `single-line-cell table-manual-text${isManual ? ' is-human' : ''}${editable ? ' is-editable modality-editable' : ''}`;
+  const attributes = editable
+    ? ` data-table-modality-edit data-record-id="${escapeHtml(row.id)}" data-previous-value="${escapeHtml(row.modality)}" role="button" tabindex="0" aria-label="Double-click to select modality"`
+    : '';
+  return `<span class="${className}"${attributes} title="${escapeHtml(editable ? '???: ?????? Modality ??' : row.modality)}">${escapeHtml(row.modality)}</span>`;
+}
+
+function tableTextEditValue(row, kind, value, { title = '', strong = false, className = '' } = {}) {
   const field = kind === 'asset' ? 'asset_name' : kind;
   const isManual = hasManualTableFieldEdit(row.raw, field);
-  const editable = row.isTriage && Boolean(getCurrentUser()?.is_admin);
-  const className = `table-manual-text${isManual ? ' is-human' : ''}${editable ? ' is-editable' : ''}`;
+  const editable = Boolean(getCurrentUser()?.is_admin);
+  const classes = `table-manual-text${isManual ? ' is-human' : ''}${editable ? ' is-editable' : ''}${className ? ` ${className}` : ''}`;
   const attributes = editable
     ? ` data-table-text-edit data-record-id="${escapeHtml(row.id)}" data-edit-kind="${escapeHtml(kind)}" data-previous-value="${escapeHtml(value)}"`
     : '';
   const content = escapeHtml(value || '-');
-  return `<span class="${className}"${attributes} title="${escapeHtml(title || value || '')}"${editable ? ' role="button" tabindex="0" aria-label="Double-click to edit"' : ''}>${strong ? `<strong>${content}</strong>` : content}</span>`;
+  return `<span class="${classes}"${attributes} title="${escapeHtml(title || value || '')}"${editable ? ' role="button" tabindex="0" aria-label="Double-click to edit"' : ''}>${strong ? `<strong>${content}</strong>` : content}</span>`;
 }
 
 function pendingScoreBadge(message = `Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} review not run yet`) {
@@ -4797,7 +4818,7 @@ function renderTable() {
               </td>
               <td class="company-cell">${tableTextEditValue(row, 'company', row.company)}</td>
               <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${countryDisplayMarkup(row.countryRaw || row.country)}</td>
-              <td class="asset-cell"><a href="${escapeHtml(recordDetailHref(row, mode))}">${tableTextEditValue(row, 'asset', row.asset, { strong: true })}</a></td>
+              <td class="asset-cell">${tableTextEditValue(row, 'asset', row.asset, { strong: true })}</td>
               <td
                 class="modality-column-cell"
                 tabindex="0"
@@ -4807,7 +4828,7 @@ function renderTable() {
                 data-description="${escapeHtml(row.targetDescription)}"
                 aria-label="${escapeHtml(`${row.modality}. Theme ${row.theme}. Cluster ${row.cluster}. Description ${row.targetDescription}`)}"
               >
-                <span class="single-line-cell">${escapeHtml(row.modality)}</span>
+                ${modalityEditValue(row)}
               </td>
               <td
                 class="target-column-cell target-context-cell"
@@ -4818,7 +4839,7 @@ function renderTable() {
                 data-description="${escapeHtml(row.targetDescription)}"
                 aria-label="${escapeHtml(`${row.target}. Theme ${row.theme}. Cluster ${row.cluster}. Description ${row.targetDescription}`)}"
               >
-                <span class="target-single-line">${escapeHtml(row.target)}</span>
+                ${tableTextEditValue(row, 'target', row.target, { className: 'target-single-line' })}
                 <span class="target-context-indicator" aria-hidden="true">i</span>
               </td>
               <td class="indication-cell">${tableTextEditValue(row, 'main_indication', row.mainIndication, { title: row.indication })}</td>
@@ -5221,7 +5242,7 @@ async function saveManualReviewEdit(select) {
     return;
   }
   const value = ['score', 'total_score'].includes(kind) ? Number(select.value) : select.value;
-  if (!recordId || !['status', 'score', 'total_score', 'stage', 'target'].includes(kind)) return;
+  if (!recordId || !['status', 'score', 'total_score', 'modality', 'stage', 'target'].includes(kind)) return;
   const actorName = await ensureDashboardActorName();
   if (!actorName) {
     select.value = previousValue;
@@ -5273,13 +5294,13 @@ async function saveManualTableTextEdit(input) {
   const kind = input?.dataset.editKind;
   const previousValue = String(input?.dataset.previousValue || '').trim();
   const value = String(input?.value || '').trim();
-  if (!recordId || !['company', 'asset', 'main_indication'].includes(kind)) return;
+  if (!recordId || !['company', 'asset', 'main_indication', 'target'].includes(kind)) return;
   if (!value || value === previousValue) {
     renderTable();
     return;
   }
   if (value.length > 250) {
-    elements.dataStatus.textContent = 'Company, Asset, and Main indication must be 250 characters or fewer.';
+    elements.dataStatus.textContent = 'Company, Asset, Target, and Main indication must be 250 characters or fewer.';
     input.focus();
     return;
   }
@@ -5321,7 +5342,7 @@ function openManualTableTextEdit(anchor) {
   const recordId = anchor.dataset.recordId;
   const kind = anchor.dataset.editKind;
   const previousValue = String(anchor.dataset.previousValue || '').trim();
-  if (!recordId || !['company', 'asset', 'main_indication'].includes(kind)) return;
+  if (!recordId || !['company', 'asset', 'main_indication', 'target'].includes(kind)) return;
 
   anchor.dataset.editing = 'true';
   const input = document.createElement('input');
@@ -5373,6 +5394,35 @@ async function saveUnknownTargetEdit(anchor) {
   const actorName = await ensureDashboardActorName();
   if (!actorName) return;
   anchor.classList.add('is-saving');
+function openManualTableModalityEdit(anchor) {
+  if (!anchor || !getCurrentUser()?.is_admin || anchor.dataset.editing === 'true') return;
+  const recordId = anchor.dataset.recordId;
+  const previousValue = String(anchor.dataset.previousValue || '').trim();
+  if (!recordId || previousValue !== 'Unknown') return;
+
+  anchor.dataset.editing = 'true';
+  const select = document.createElement('select');
+  select.className = 'table-edit-select stage-edit table-manual-modality-select';
+  select.dataset.recordId = recordId;
+  select.dataset.editKind = 'modality';
+  select.dataset.previousValue = previousValue;
+  select.setAttribute('aria-label', 'Modality select');
+  select.innerHTML = CANONICAL_MODALITIES.map((value) => selectOption(value, previousValue)).join('');
+  anchor.replaceWith(select);
+  select.focus();
+
+  select.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    select.dataset.cancelled = 'true';
+    renderTable();
+  });
+  select.addEventListener('blur', () => {
+    if (select.classList.contains('is-saving') || select.dataset.cancelled === 'true') return;
+    renderTable();
+  }, { once: true });
+}
+
   elements.dataStatus.textContent = 'Target human review 저장 중';
   try {
     const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/manual-review`, {
@@ -10317,7 +10367,7 @@ elements.pipelineTable.addEventListener('click', (event) => {
     );
     return;
   }
-  if (event.target.closest('[data-table-text-edit]')) return;
+  if (event.target.closest('[data-table-text-edit], [data-table-modality-edit]')) return;
   if (event.target.closest('input, select, textarea, button, a, label')) return;
   const rowElement = event.target.closest('[data-record-id]');
   if (!rowElement) return;
@@ -10337,11 +10387,12 @@ elements.pipelineTable.addEventListener('dblclick', (event) => {
     openManualTableTextEdit(textEdit);
     return;
   }
-  const target = event.target.closest('[data-unknown-target-edit]');
-  if (!target) return;
-  event.preventDefault();
-  event.stopPropagation();
-  saveUnknownTargetEdit(target);
+  const modalityEdit = event.target.closest('[data-table-modality-edit]');
+  if (modalityEdit) {
+    event.preventDefault();
+    event.stopPropagation();
+    openManualTableModalityEdit(modalityEdit);
+  }
 });
 
 elements.pipelineTable.addEventListener('change', (event) => {

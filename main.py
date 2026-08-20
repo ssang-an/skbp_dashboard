@@ -9196,6 +9196,17 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
             if isinstance(summary, dict):
                 summary[field_name] = value
             field_key = f"structured_table.{field_name}"
+        elif edit_kind == "modality":
+            value = canonicalize_modality(payload.get("value"))
+            if value not in CANONICAL_MODALITIES:
+                raise HTTPException(status_code=400, detail="A canonical dashboard modality is required.")
+            table = record.setdefault("structured_table", {})
+            previous = table.get("modality_platform")
+            table["modality_platform"] = value
+            summary = record.get("json_summary")
+            if isinstance(summary, dict):
+                summary["modality_platform"] = value
+            field_key = "structured_table.modality_platform"
         elif edit_kind == "target":
             value = str(payload.get("value") or "").strip()
             if not value or len(value) > 250:
@@ -9210,7 +9221,7 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
         else:
             raise HTTPException(
                 status_code=400,
-                detail="kind must be status, status_reason, score, total_score, final_comment, final_comment_delete, stage, or target.",
+                detail="kind must be status, status_reason, score, total_score, final_comment, final_comment_delete, company, asset, main_indication, modality, stage, or target.",
             )
 
         history = human_review.setdefault("history", [])

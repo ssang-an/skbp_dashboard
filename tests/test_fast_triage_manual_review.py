@@ -116,6 +116,34 @@ class FastTriageManualReviewTests(unittest.TestCase):
             ],
         )
 
+    def test_manual_target_and_modality_updates_use_dashboard_fields_and_audit_history(self):
+        record = triage_record()
+        record["structured_table"].update({
+            "target": "Unknown",
+            "modality_platform": "Unknown",
+        })
+        record["json_summary"].update({"target": "Unknown"})
+
+        updated = self.update(record, {
+            "kind": "target",
+            "value": "TRPM1",
+            "previous_value": "Unknown",
+        })["record"]
+        updated = self.update(updated, {
+            "kind": "modality",
+            "value": "Oral small-molecule tablet",
+            "previous_value": "Unknown",
+        })["record"]
+
+        self.assertEqual(updated["structured_table"]["target"], "TRPM1")
+        self.assertEqual(updated["json_summary"]["target"], "TRPM1")
+        self.assertEqual(updated["structured_table"]["modality_platform"], "Small molecule")
+        self.assertEqual(updated["json_summary"]["modality_platform"], "Small molecule")
+        self.assertEqual(
+            [entry["field"] for entry in updated["meta"]["human_review"]["history"][-2:]],
+            ["structured_table.target", "structured_table.modality_platform"],
+        )
+
     def test_final_comment_delete_requires_its_author_and_is_audited(self):
         record = triage_record()
         created = self.update(record, {"kind": "final_comment", "value": "관리자 최종 의견"})["record"]

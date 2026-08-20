@@ -3228,8 +3228,8 @@ th button {
   white-space: nowrap;
 }
 
-/* Full Scout and Shortlisting keep the existing line rhythm while allowing long targets to wrap. */
-.pipeline-table:not(.triage-table) .target-single-line {
+/* Both research tables keep a compact rhythm while showing long targets in full. */
+.pipeline-table .target-single-line {
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
@@ -3820,6 +3820,10 @@ td {
   padding: 0;
   background: var(--surface);
   color: var(--muted);
+}
+
+.modality-column-cell .modality-editable {
+  cursor: pointer;
 }
 
 .triage-full-copy-button .triage-full-copy-icon {
