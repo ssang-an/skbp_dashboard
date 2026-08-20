@@ -8639,6 +8639,7 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
 
     edit_kind = str(payload.get("kind") or "").strip().lower()
     actor_name = str(account.get("name") or "").strip()
+    actor_id = str(account.get("id") or "").strip()
     if not actor_name:
         raise HTTPException(status_code=400, detail="로그인 사용자 이름을 확인할 수 없습니다.")
     records = load_records()
@@ -8722,6 +8723,22 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
             if field_key not in overrides:
                 baseline.setdefault(field_key, previous)
             overrides[field_key] = value
+            human_review["final_comment_author_id"] = actor_id
+            human_review["final_comment_author_name"] = actor_name
+            human_review["final_comment_updated_at"] = changed_at
+        elif edit_kind == "final_comment_delete":
+            field_key = "final_comment"
+            previous = str(overrides.get(field_key) or "")
+            owner_id = str(human_review.get("final_comment_author_id") or "")
+            if not previous:
+                raise HTTPException(status_code=404, detail="Final comment was not found.")
+            if not owner_id or owner_id != actor_id:
+                raise HTTPException(status_code=403, detail="Only the administrator who wrote this final comment can delete it.")
+            value = ""
+            overrides.pop(field_key, None)
+            human_review.pop("final_comment_author_id", None)
+            human_review.pop("final_comment_author_name", None)
+            human_review.pop("final_comment_updated_at", None)
         elif edit_kind == "stage":
             value = canonicalize_development_stage(payload.get("value"))
             if value not in CANONICAL_DEVELOPMENT_STAGE_SET:
@@ -8744,7 +8761,7 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
         else:
             raise HTTPException(
                 status_code=400,
-                detail="kind must be status, status_reason, score, total_score, final_comment, stage, or target.",
+                detail="kind must be status, status_reason, score, total_score, final_comment, final_comment_delete, stage, or target.",
             )
 
         history = human_review.setdefault("history", [])
@@ -8753,7 +8770,7 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
                 "changed_at": changed_at,
                 "actor_ip": actor_ip,
                 "actor_name": actor_name,
-                "source": "dashboard_table",
+                "source": "detail_final_comment_delete" if edit_kind == "final_comment_delete" else "dashboard_table",
                 "field": field_key,
                 "previous_value": previous,
                 "new_value": value,
@@ -8768,7 +8785,7 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
 
         append_edit_history(
             record,
-            source="dashboard_table_manual_review",
+            source="detail_final_comment_delete" if edit_kind == "final_comment_delete" else "dashboard_table_manual_review",
             actor_ip=actor_ip,
             actor_name=actor_name,
             field=field_key,
@@ -9210,6 +9227,10 @@ def can_manage_topic_note(account: dict[str, Any], note: dict[str, Any]) -> bool
     return is_auth_admin(account) or str(note.get("author_id") or "") == str(account.get("id") or "")
 
 
+def can_delete_topic_note(account: dict[str, Any], note: dict[str, Any]) -> bool:
+    return is_auth_admin(account) and str(note.get("author_id") or "") == str(account.get("id") or "")
+
+
 @app.patch("/api/records/{record_id:path}/topic-notes/{note_id}")
 async def update_record_topic_note(record_id: str, note_id: str, request: Request) -> dict[str, Any]:
     account = require_authenticated_user(request)
@@ -9261,8 +9282,8 @@ def delete_record_topic_note(record_id: str, note_id: str, request: Request) -> 
         note = next((item for item in notes if isinstance(item, dict) and item.get("id") == note_id), None)
         if note is None:
             raise HTTPException(status_code=404, detail="Topic 메모를 찾지 못했습니다.")
-        if not can_manage_topic_note(account, note):
-            raise HTTPException(status_code=403, detail="본인이 작성한 메모만 삭제할 수 있습니다.")
+        if not can_delete_topic_note(account, note):
+            raise HTTPException(status_code=403, detail="작성한 관리자만 이 메모를 삭제할 수 있습니다.")
         record.setdefault("meta", {})["topic_notes"] = [
             item for item in notes if not isinstance(item, dict) or item.get("id") != note_id
         ]

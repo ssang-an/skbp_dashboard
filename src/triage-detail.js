@@ -460,6 +460,17 @@ function finalCommentValue(record) {
   return textValue(objectValue(objectValue(objectValue(record?.meta).human_review).overrides).final_comment, '');
 }
 
+function currentUserCanDeleteNote(note) {
+  const user = getCurrentUser();
+  return Boolean(user?.is_admin && note?.author_id && String(note.author_id) === String(user.id || ''));
+}
+
+function canDeleteFinalComment(record) {
+  const user = getCurrentUser();
+  const ownerId = textValue(objectValue(objectValue(record?.meta).human_review).final_comment_author_id, '');
+  return Boolean(user?.is_admin && ownerId && ownerId === String(user.id || ''));
+}
+
 function renderDecision(record) {
   const status = reviewStatus(record);
   const triage = record.triage || {};
@@ -473,8 +484,6 @@ function renderDecision(record) {
     triage.why || record.hard_filter?.reason,
     '판단 근거가 입력되지 않았습니다.'
   );
-  const finalComment = finalCommentValue(record);
-  const canManageFinalComment = currentUserIsAdmin();
   elements.decisionHero.className = `panel triage-decision-hero status-${statusTone(status)}`;
   elements.decisionHero.innerHTML = `
     <div class="triage-decision-topline">
@@ -483,18 +492,6 @@ function renderDecision(record) {
     </div>
     <h2>${escapeHtml(headline)}</h2>
     <p>${escapeHtml(reason)}</p>
-    ${(finalComment || canManageFinalComment) ? `
-      <section class="triage-final-comment${finalComment ? ' has-comment' : ''}" aria-label="Final comment">
-        ${finalComment ? `<p><b>Final comment</b>${escapeHtml(finalComment)}</p>` : ''}
-        ${canManageFinalComment ? `
-          <button type="button" class="triage-note-trigger" data-triage-final-comment-open>${finalComment ? 'Final comment 수정' : '＋ Final comment 입력'}</button>
-          <form class="triage-inline-note-form" data-triage-final-comment-form hidden>
-            <textarea rows="3" maxlength="4000" placeholder="최종 판단에 대한 관리자 의견을 남겨주세요." aria-label="Final comment">${escapeHtml(finalComment)}</textarea>
-            <div><span data-triage-final-comment-status></span><button type="button" data-triage-final-comment-cancel>취소</button><button type="submit">저장</button></div>
-          </form>
-        ` : ''}
-      </section>
-    ` : ''}
   `;
 }
 
@@ -627,6 +624,7 @@ function triageScoreNotesMarkup(record, definition) {
     <section class="triage-score-notes${notes.length ? ' has-notes' : ''}" data-triage-score-notes data-topic-id="${escapeHtml(topic.id)}" data-topic-key="${escapeHtml(topic.key)}" data-topic-title="${escapeHtml(topic.title)}">
       ${notes.length ? `<div class="triage-score-note-list">${notes.map((note) => `
         <article class="triage-score-note">
+          ${currentUserCanDeleteNote(note) ? `<button type="button" class="triage-note-delete" data-triage-score-note-delete data-note-id="${escapeHtml(note.id)}" aria-label="내 코멘트 삭제" title="내 코멘트 삭제">×</button>` : ''}
           <p>${escapeHtml(note.body || '')}</p>
           <small>${escapeHtml(note.author_name || 'Team member')} · ${escapeHtml(formatTimestamp(note.updated_at || note.created_at))}</small>
         </article>
@@ -636,6 +634,31 @@ function triageScoreNotesMarkup(record, definition) {
         <textarea rows="3" maxlength="4000" placeholder="이 기준의 판단 근거나 추가 확인 의견을 남겨주세요." aria-label="${escapeHtml(definition.label)} 코멘트"></textarea>
         <div><span data-triage-score-note-status></span><button type="button" data-triage-score-note-cancel>취소</button><button type="submit">저장</button></div>
       </form>
+    </section>
+  `;
+}
+
+function finalCommentMarkup(record) {
+  const finalComment = finalCommentValue(record);
+  const humanReview = objectValue(objectValue(record?.meta).human_review);
+  const authorName = textValue(humanReview.final_comment_author_name, '관리자');
+  const updatedAt = textValue(humanReview.final_comment_updated_at, '');
+  const canManage = currentUserIsAdmin();
+  if (!finalComment && !canManage) return '';
+  return `
+    <section class="triage-final-comment${finalComment ? ' has-comment' : ''}" aria-label="최종 코멘트">
+      ${finalComment ? `<article class="triage-score-note triage-final-comment-note">
+        ${canDeleteFinalComment(record) ? '<button type="button" class="triage-note-delete" data-triage-final-comment-delete aria-label="내 최종 코멘트 삭제" title="내 최종 코멘트 삭제">×</button>' : ''}
+        <p>${escapeHtml(finalComment)}</p>
+        <small>${escapeHtml(authorName)}${updatedAt ? ` · ${escapeHtml(formatTimestamp(updatedAt))}` : ''}</small>
+      </article>` : ''}
+      ${canManage ? `
+        <button type="button" class="triage-note-trigger" data-triage-final-comment-open>${finalComment ? '최종 코멘트 수정' : '＋ 최종 코멘트 입력'}</button>
+        <form class="triage-inline-note-form" data-triage-final-comment-form hidden>
+          <textarea rows="3" maxlength="4000" placeholder="최종 판단에 대한 관리자 의견을 남겨주세요." aria-label="최종 코멘트">${escapeHtml(finalComment)}</textarea>
+          <div><span data-triage-final-comment-status></span><button type="button" data-triage-final-comment-cancel>취소</button><button type="submit">저장</button></div>
+        </form>
+      ` : ''}
     </section>
   `;
 }
@@ -881,6 +904,7 @@ function renderQuickSummary(record) {
         </div>
       `).join('')}
     </dl>
+    ${finalCommentMarkup(record)}
     ${renderTriageReviewHistory(record)}
   `;
 }
@@ -892,10 +916,12 @@ function triageHistoryLabel(entry) {
     'scores.moa_validity': 'MoA 점수',
     'scores.data_maturity': 'Data 점수',
     total_score: 'Total score',
-    final_comment: 'Final comment'
+    final_comment: entry?.source === 'detail_final_comment_delete' ? '최종 코멘트 삭제' : '최종 코멘트'
   };
   if (labels[field]) return labels[field];
-  if (field.startsWith('topic_notes.triage-score-')) return '기준별 코멘트';
+  if (field.startsWith('topic_notes.triage-score-')) {
+    return entry?.source === 'detail_topic_note_delete' ? '기준별 코멘트 삭제' : '기준별 코멘트 입력';
+  }
   if (field === 'filter_status') return 'Triage status';
   return field || 'Fast Triage 검토';
 }
@@ -1060,6 +1086,16 @@ async function saveTriageScoreNote(panel, body) {
   renderRecord(currentRecord);
 }
 
+async function deleteTriageScoreNote(noteId) {
+  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/topic-notes/${encodeURIComponent(noteId)}`, {
+    method: 'DELETE'
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || '코멘트를 삭제하지 못했습니다.');
+  currentRecord = data.record;
+  renderRecord(currentRecord);
+}
+
 function openTriageInlineForm(form) {
   if (!form) return;
   form.hidden = false;
@@ -1191,6 +1227,12 @@ elements.scoreGrid?.addEventListener('click', (event) => {
       form.hidden = true;
     }
   }
+  const deleteButton = event.target.closest('[data-triage-score-note-delete]');
+  if (deleteButton) {
+    const noteId = String(deleteButton.dataset.noteId || '');
+    if (!noteId || !window.confirm('이 코멘트를 삭제할까요?')) return;
+    deleteTriageScoreNote(noteId).catch((error) => window.alert(error.message));
+  }
 });
 elements.scoreGrid?.addEventListener('submit', async (event) => {
   const form = event.target.closest('[data-triage-score-note-form]');
@@ -1211,17 +1253,21 @@ elements.scoreGrid?.addEventListener('submit', async (event) => {
     if (submit) submit.disabled = false;
   }
 });
-elements.decisionHero?.addEventListener('click', (event) => {
+elements.quickSummary?.addEventListener('click', (event) => {
   if (event.target.closest('[data-triage-final-comment-open]')) {
-    openTriageInlineForm(elements.decisionHero.querySelector('[data-triage-final-comment-form]'));
+    openTriageInlineForm(elements.quickSummary.querySelector('[data-triage-final-comment-form]'));
     return;
   }
   if (event.target.closest('[data-triage-final-comment-cancel]')) {
-    const form = elements.decisionHero.querySelector('[data-triage-final-comment-form]');
+    const form = elements.quickSummary.querySelector('[data-triage-final-comment-form]');
     if (form) form.hidden = true;
   }
+  if (event.target.closest('[data-triage-final-comment-delete]')) {
+    if (!window.confirm('최종 코멘트를 삭제할까요?')) return;
+    updateTriageManualReview({ kind: 'final_comment_delete' }).catch((error) => window.alert(error.message));
+  }
 });
-elements.decisionHero?.addEventListener('submit', async (event) => {
+elements.quickSummary?.addEventListener('submit', async (event) => {
   const form = event.target.closest('[data-triage-final-comment-form]');
   if (!form || !currentUserIsAdmin()) return;
   event.preventDefault();

@@ -40,7 +40,7 @@ class FastTriageManualReviewTests(unittest.TestCase):
     def update(self, record, payload):
         record_id = main.record_key(record)
         with (
-            patch.object(main, "require_auth_admin", return_value={"name": "Review Admin"}),
+            patch.object(main, "require_auth_admin", return_value={"id": "review-admin", "name": "Review Admin"}),
             patch.object(main, "load_records", return_value=[record]),
             patch.object(main, "save_records"),
             patch.object(main, "run_markdown_exports", return_value={}),
@@ -71,8 +71,38 @@ class FastTriageManualReviewTests(unittest.TestCase):
 
         updated = result["record"]
         self.assertEqual(updated["meta"]["human_review"]["overrides"]["final_comment"], "추가 근거 확인 후 Full Scout 진행")
+        self.assertEqual(updated["meta"]["human_review"]["final_comment_author_id"], "review-admin")
         self.assertEqual(updated["meta"]["edit_history"][-1]["field"], "final_comment")
         self.assertEqual(updated["source_report"] if "source_report" in updated else {}, {})
+
+    def test_final_comment_delete_requires_its_author_and_is_audited(self):
+        record = triage_record()
+        created = self.update(record, {"kind": "final_comment", "value": "관리자 최종 의견"})["record"]
+
+        other_admin = {"id": "other-admin", "name": "Other Admin"}
+        with (
+            patch.object(main, "require_auth_admin", return_value=other_admin),
+            patch.object(main, "load_records", return_value=[created]),
+            patch.object(main, "save_records"),
+            patch.object(main, "run_markdown_exports", return_value={}),
+        ):
+            with self.assertRaises(main.HTTPException) as error:
+                asyncio.run(main.update_manual_review(main.record_key(created), FakeRequest({"kind": "final_comment_delete"})))
+        self.assertEqual(error.exception.status_code, 403)
+
+        deleted = self.update(created, {"kind": "final_comment_delete"})["record"]
+
+        self.assertNotIn("final_comment", deleted["meta"]["human_review"]["overrides"])
+        self.assertNotIn("final_comment_author_id", deleted["meta"]["human_review"])
+        self.assertEqual(deleted["meta"]["edit_history"][-1]["field"], "final_comment")
+        self.assertEqual(deleted["meta"]["edit_history"][-1]["source"], "detail_final_comment_delete")
+
+    def test_topic_note_delete_is_limited_to_its_author_admin(self):
+        note = {"author_id": "review-admin"}
+
+        self.assertTrue(main.can_delete_topic_note({"id": "review-admin", "role": "admin"}, note))
+        self.assertFalse(main.can_delete_topic_note({"id": "other-admin", "role": "admin"}, note))
+        self.assertFalse(main.can_delete_topic_note({"id": "review-admin", "role": "user"}, note))
 
 
 if __name__ == "__main__":
