@@ -14942,7 +14942,7 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
 
 .filter-multiselect-menu {
   position: absolute;
-  z-index: 1;
+  z-index: 40;
   top: calc(100% + 6px);
   left: 0;
   width: max-content;

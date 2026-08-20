@@ -427,6 +427,15 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('.filter-multiselect-check', CSS)
         self.assertIn('border-radius: 50%', CSS)
 
+    def test_pipeline_filter_click_handler_is_bound_to_every_control_row(self):
+        handler = function_body(JS, "handleMultiFilterControlsClick")
+
+        self.assertIn("document.querySelectorAll('.controls').forEach", JS)
+        self.assertIn("controls.addEventListener('click', handleMultiFilterControlsClick)", JS)
+        self.assertNotIn("document.querySelector('.controls')?.addEventListener", JS)
+        self.assertIn("menu.hidden = !willOpen", handler)
+        self.assertIn("z-index: 40", CSS[CSS.index('.filter-multiselect-menu {'):])
+
     def test_column_settings_use_workflow_specific_labels_without_json_paths(self):
         settings = function_body(JS, "renderColumnSettings")
         self.assertIn("activeExtraColumnDefinitions()", settings)
@@ -503,8 +512,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("pointerover", JS)
         self.assertIn("state.step0SelectedPendingIds.size >= STEP0_MAX_SELECTED_CANDIDATES", JS)
         self.assertIn("tbody.is-selection-dragging", CSS)
-        self.assertIn("styles.css?v=20260820-filter-multiselect-fix-1", HTML)
-        self.assertIn("app.js?v=20260820-filter-multiselect-fix-1", HTML)
+        self.assertIn("styles.css?v=20260820-filter-menu-event-fix-1", HTML)
+        self.assertIn("app.js?v=20260820-filter-menu-event-fix-1", HTML)
 
     def test_summary_cards_share_geometry_without_internal_scrollbars(self):
         block = CSS[CSS.index("/* Precision-align Summary cards"):CSS.index(".pass-rate-chart .donut-center small")]

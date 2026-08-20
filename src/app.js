@@ -9904,7 +9904,7 @@ elements.searchInput.addEventListener('input', (event) => {
   renderFilteredDashboard();
 });
 
-document.querySelector('.controls')?.addEventListener('click', (event) => {
+function handleMultiFilterControlsClick(event) {
   const trigger = event.target.closest('.filter-multiselect-trigger');
   if (trigger) {
     const filter = trigger.closest('.filter-multiselect');
@@ -9936,7 +9936,7 @@ document.querySelector('.controls')?.addEventListener('click', (event) => {
   captureModeFilters();
   renderFilters();
   renderFilteredDashboard();
-});
+}
 
 document.addEventListener('click', (event) => {
   if (!event.target.closest('.filter-multiselect')) closeMultiFilters();
@@ -10545,6 +10545,10 @@ elements.dataUploadGuideSteps?.addEventListener('click', async (event) => {
     if (label) label.textContent = idleLabel;
   }, 1800);
 });
+document.querySelectorAll('.controls').forEach((controls) => {
+  controls.addEventListener('click', handleMultiFilterControlsClick);
+});
+
 elements.step0GuideSteps?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-step0-guide-action="copy-instructions"]');
   if (!button || !elements.step0CopyInstructionsButton) return;
