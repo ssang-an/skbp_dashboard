@@ -688,7 +688,7 @@ function renderDataReuploadReviewList() {
       return `
         <article class="data-reupload-review-card" data-reupload-incoming="${escapeHtml(match.decisionKey)}">
           <header class="data-reupload-review-card-header">
-            <div><strong>${escapeHtml(match.asset || 'Unknown asset')}</strong><span>이번 업로드 안에서 같은 Pipeline ID로 정규화된 항목</span></div>
+            <div><strong>${escapeHtml(match.asset || 'Unknown asset')}</strong><span>이번 업로드 안에서 동일 Pipeline으로 인식된 항목</span></div>
             <span class="data-reupload-review-state" data-state="${selectedIndex === null ? 'pending' : 'replace'}">${selectedIndex === null ? '선택 필요' : '업로드 항목 선택'}</span>
           </header>
           <div class="data-reupload-candidate-stack">
@@ -700,10 +700,10 @@ function renderDataReuploadReviewList() {
                     <span class="data-reupload-match-badge exact">입력 ${candidate.incomingIndex + 1}번</span>
                     <span class="data-reupload-company-match">${escapeHtml(candidate.company || 'Unknown company')} · ${escapeHtml(candidate.stage || 'Unknown')}</span>
                   </div>
-                  <div class="data-reupload-comparison-scroll" tabindex="0" aria-label="동일 ID로 정규화된 이번 업로드 Pipeline 비교">
+                  <div class="data-reupload-comparison-scroll" tabindex="0" aria-label="동일 Pipeline으로 인식된 이번 업로드 후보 비교">
                     <div class="data-reupload-comparison-grid">
                       ${renderDataReuploadComparisonColumn('이번 업로드 후보', candidate.asset, candidate.company, candidate.stage)}
-                      ${renderDataReuploadComparisonColumn('저장 시 ID', match.incomingRecordId, '동일 ID는 하나만 저장 가능', '검토 후 한 항목 유지')}
+                      ${renderDataReuploadComparisonColumn('검토 안내', '동일 Pipeline 후보', '한 항목만 업로드', '검토 후 한 항목 유지')}
                     </div>
                   </div>
                   <div class="data-reupload-candidate-actions">
@@ -797,11 +797,11 @@ function openDataReuploadModal(matches) {
     const existingMatches = matches.filter((match) => match.kind !== 'incoming-duplicate');
     const candidateCount = matches.reduce((count, match) => count + (match.candidates || []).length, 0);
     elements.dataReuploadTitle.textContent = incomingDuplicateMatches.length
-      ? `이번 업로드 안에 동일 Pipeline이 ${incomingDuplicateMatches.length}건 있습니다.`
+      ? `이번 업로드 안에 동일 Pipeline 후보가 ${incomingDuplicateMatches.length}건 있습니다.`
       : `유사한 기존 Pipeline이 ${existingMatches.length}건 있습니다.`;
     if (elements.dataReuploadSummary) {
       elements.dataReuploadSummary.innerHTML = incomingDuplicateMatches.length
-        ? `같은 저장 ID로 정규화된 조사 결과는 자동 병합하지 않습니다. 각 항목에서 <span class="data-reupload-inline-action is-replace"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" /></svg>이 항목 유지</span>를 하나 선택하면 나머지는 이번 업로드에서 제외됩니다.`
+        ? `동일 Pipeline으로 인식된 조사 결과는 자동 병합하지 않습니다. 각 항목에서 <span class="data-reupload-inline-action is-replace"><svg viewBox="0 0 24" focusable="false" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" /></svg>이 항목 유지</span>를 하나 선택하면 나머지는 이번 업로드에서 제외됩니다.`
         : `비교 후 각 항목별로 <span class="data-reupload-inline-action is-replace"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></svg>덮어쓰기</span>를 선택한 뒤 <span class="data-reupload-inline-action is-apply"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" /></svg>선택 적용</span>하면 반영됩니다.`;
     }
     if (elements.dataReuploadContinue) elements.dataReuploadContinue.hidden = incomingDuplicateMatches.length > 0;
