@@ -737,7 +737,9 @@ function renderScores(record) {
   }).join('');
   if (elements.scoreTotal) {
     const total = effectiveTriageTotal(record);
-    elements.scoreTotal.textContent = `Total ${total === null ? '-' : total} / 9`;
+    const scoreLabel = `${total === null ? '-' : total} / 9`;
+    elements.scoreTotal.setAttribute('aria-label', `Total ${scoreLabel}`);
+    elements.scoreTotal.innerHTML = `<small>Total</small><strong>${escapeHtml(scoreLabel)}</strong>`;
   }
 }
 

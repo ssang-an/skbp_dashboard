@@ -62,6 +62,33 @@
   font-weight: 800;
 }
 
+.triage-section-heading > .triage-score-total {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
+  border-radius: 9px;
+  padding: 6px 9px;
+  background: color-mix(in srgb, var(--accent-soft) 62%, var(--surface));
+  color: var(--accent);
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.triage-score-total small {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.triage-score-total strong {
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: 850;
+  line-height: 1;
+}
+
 .triage-quick-summary .triage-final-comment {
   margin-top: 14px;
 }
