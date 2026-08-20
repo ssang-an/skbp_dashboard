@@ -673,6 +673,9 @@ function renderScores(record) {
     );
     const evidenceMetadata = [visibleEvidenceType, evidenceBasis].filter(Boolean);
     const isHumanScore = scoreHasHumanOverride(record, definition.key);
+    const scoreHeader = currentUserIsAdmin()
+      ? `<button type="button" class="triage-score-value" data-triage-score-edit data-criterion="${escapeHtml(definition.key)}" data-score="${score ?? 0}" aria-label="${escapeHtml(definition.label)} ${escapeHtml(scoreLabel)}. 더블클릭하여 점수 수정" title="더블클릭하여 점수 수정"><span>${escapeHtml(scoreLabel)}</span><small>최대 3점</small></button>`
+      : `<strong>${escapeHtml(scoreLabel)}<small>최대 3점</small></strong>`;
     return `
       <article class="triage-score-card score-${score ?? 'unknown'}${isHumanScore ? ' is-human-score' : ''}">
         <div class="triage-score-card-header">
@@ -680,15 +683,8 @@ function renderScores(record) {
             <span>${definition.shortLabel}</span>
             <h3>${definition.label}</h3>
           </div>
-          <strong>${escapeHtml(scoreLabel)}<small>최대 3점</small></strong>
+          ${scoreHeader}
         </div>
-        ${currentUserIsAdmin() ? `
-          <label class="triage-score-editor"><span>관리자 점수</span>
-            <select data-triage-score-select data-criterion="${escapeHtml(definition.key)}" aria-label="${escapeHtml(definition.label)} 관리자 점수">
-              ${[0, 1, 2, 3].map((value) => `<option value="${value}" ${score === value ? 'selected' : ''}>${value}점</option>`).join('')}
-            </select>
-          </label>
-        ` : ''}
         <div class="triage-score-track" aria-label="${definition.label} ${score === null ? '미평가' : `${score}점, 최대 3점`}">
           ${[1, 2, 3].map((step) => `<i class="${score >= step ? 'filled' : ''}"></i>`).join('')}
         </div>
@@ -1015,6 +1011,38 @@ async function saveTriageScore(select) {
   }
 }
 
+function openTriageScoreInlineEditor(button) {
+  if (!button || !currentUserIsAdmin() || button.dataset.editing === 'true') return;
+  const criterion = String(button.dataset.criterion || '');
+  const currentScore = scoreFor(currentRecord, criterion);
+  if (!criterion || !Number.isInteger(currentScore)) return;
+
+  button.dataset.editing = 'true';
+  button.replaceChildren();
+  const select = document.createElement('select');
+  select.className = 'triage-score-inline-select';
+  select.dataset.triageScoreSelect = '';
+  select.dataset.criterion = criterion;
+  select.setAttribute('aria-label', '관리자 점수 수정');
+  for (const value of [0, 1, 2, 3]) {
+    const option = document.createElement('option');
+    option.value = String(value);
+    option.textContent = `${value}점`;
+    option.selected = value === currentScore;
+    select.append(option);
+  }
+  const maximum = document.createElement('small');
+  maximum.textContent = '최대 3점';
+  button.append(select, maximum);
+  select.addEventListener('change', () => { button.dataset.editing = 'saving'; });
+  select.addEventListener('blur', () => {
+    window.setTimeout(() => {
+      if (button.isConnected && button.dataset.editing === 'true') renderRecord(currentRecord);
+    }, 0);
+  }, { once: true });
+  select.focus();
+}
+
 async function saveTriageScoreNote(panel, body) {
   const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/topic-notes`, {
     method: 'POST',
@@ -1137,6 +1165,17 @@ elements.deleteRecordButton?.addEventListener('click', deleteCurrentRecord);
 elements.scoreGrid?.addEventListener('change', (event) => {
   const select = event.target.closest('[data-triage-score-select]');
   if (select && currentUserIsAdmin()) saveTriageScore(select);
+});
+elements.scoreGrid?.addEventListener('dblclick', (event) => {
+  const button = event.target.closest('[data-triage-score-edit]');
+  if (button) openTriageScoreInlineEditor(button);
+});
+elements.scoreGrid?.addEventListener('keydown', (event) => {
+  if (!['Enter', ' '].includes(event.key)) return;
+  const button = event.target.closest('[data-triage-score-edit]');
+  if (!button) return;
+  event.preventDefault();
+  openTriageScoreInlineEditor(button);
 });
 elements.scoreGrid?.addEventListener('click', (event) => {
   const panel = event.target.closest('[data-triage-score-notes]');

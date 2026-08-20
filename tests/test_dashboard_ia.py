@@ -1974,6 +1974,18 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("${evidenceMetadata.length ? `", triage_scores)
         self.assertNotIn("판단 요약 없음", triage_scores)
 
+    def test_triage_admin_score_is_edited_from_the_score_pill_without_extra_dropdown(self):
+        triage_scores = function_body(TRIAGE_DETAIL_JS, "renderScores")
+        inline_editor = function_body(TRIAGE_DETAIL_JS, "openTriageScoreInlineEditor")
+
+        self.assertIn('data-triage-score-edit', triage_scores)
+        self.assertNotIn('triage-score-editor', triage_scores)
+        self.assertIn("select.dataset.triageScoreSelect", inline_editor)
+        self.assertIn("updateTriageManualReview({ kind: 'score'", TRIAGE_DETAIL_JS)
+        self.assertIn("addEventListener('dblclick'", TRIAGE_DETAIL_JS)
+        self.assertIn('.triage-score-value', CSS)
+        self.assertIn('.triage-score-inline-select', CSS)
+
     def test_triage_sources_recover_only_asset_scoped_safe_links(self):
         normalizer = function_body(TRIAGE_DETAIL_JS, "normalizeMarkdownSourceUrl")
         markdown_sources = function_body(TRIAGE_DETAIL_JS, "collectMarkdownSources")
