@@ -7897,6 +7897,13 @@ async function runAiReparse() {
       if (parsed.event === 'delta') {
         streamedText += parsed.data?.text || '';
         renderStreamProgress();
+      } else if (parsed.event === 'retry') {
+        streamedText = '';
+        renderStreamProgress();
+        if (elements.inputValidationResults) {
+          const progress = elements.inputValidationResults.querySelector('.input-validation-progress');
+          if (progress) progress.textContent = parsed.data?.message || 'AI 재파싱을 한 번 더 보완하고 있습니다.';
+        }
       } else if (parsed.event === 'error') {
         streamError = parsed.data?.message || 'AI 재파싱 실패';
       } else if (parsed.event === 'done') {

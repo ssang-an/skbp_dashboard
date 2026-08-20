@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from fastapi import HTTPException
 
@@ -963,6 +964,35 @@ format reminder
         self.assertIn("Provider temporarily unavailable", message)
         self.assertIn("code=503", message)
         self.assertIsNone(main.describe_openrouter_stream_error({"choices": []}))
+
+    def test_ai_reparse_uses_deepseek_json_mode_and_two_output_ceilings(self):
+        with patch.dict(main.os.environ, {}, clear=False):
+            main.os.environ.pop("OPENROUTER_REPARSE_MODEL", None)
+            main.os.environ.pop("OPENROUTER_REPARSE_FALLBACK_MODELS", None)
+            self.assertEqual(main.openrouter_reparse_models_to_try(), ["deepseek/deepseek-v4-flash"])
+        payload = main.build_openrouter_llm_reparse_payload(
+            "system",
+            "user",
+            max_tokens=8000,
+            stream=True,
+        )
+        self.assertEqual(payload["response_format"], {"type": "json_object"})
+        self.assertEqual(payload["reasoning"], {"effort": "none"})
+        self.assertEqual(payload["stream_options"], {"include_usage": True})
+        self.assertEqual(main.LLM_REPARSE_INITIAL_MAX_TOKENS, 8000)
+        self.assertEqual(main.LLM_REPARSE_RETRY_MAX_TOKENS, 16000)
+
+    def test_ai_reparse_completion_rejects_trailing_or_incomplete_json(self):
+        result = {"records": [{"meta": {}}]}
+        incomplete = main.validate_llm_reparse_completion('{"records": [', result, "triage", "")
+        trailing = main.validate_llm_reparse_completion('{"records": []} commentary', result, "triage", "")
+        self.assertIn("끝까지 닫히지", incomplete)
+        self.assertIn("추가 텍스트", trailing)
+
+    def test_ai_reparse_usage_near_limit_threshold(self):
+        self.assertTrue(main.llm_reparse_usage_is_near_limit({"completion_tokens": 7840}, 8000))
+        self.assertFalse(main.llm_reparse_usage_is_near_limit({"completion_tokens": 7839}, 8000))
+        self.assertFalse(main.llm_reparse_usage_is_near_limit({}, 8000))
 
     def test_home_and_detail_use_fastapi_preflight_before_save(self):
         app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")

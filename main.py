@@ -126,7 +126,7 @@ CHAT_WIKI_LINK_EXPANSION_LIMIT = 16
 LLM_REPARSE_MARKDOWN_CONTEXT_LIMIT = 20000
 LLM_REPARSE_JSON_CONTEXT_LIMIT = 16000
 LLM_REPARSE_WARNING_LINE = "> 이 정보가 부정확할 수 있습니다."
-LLM_REPARSE_DEFAULT_MODEL = "z-ai/glm-5.2"
+LLM_REPARSE_DEFAULT_MODEL = "deepseek/deepseek-v4-flash"
 
 INSTRUCTION_WARNINGS_FILE = ROOT / "config" / "instruction_warnings.json"
 INSTRUCTION_WARNINGS_MAX_PER_MODE = 40
@@ -181,7 +181,11 @@ def load_local_env() -> None:
 load_local_env()
 
 OPENROUTER_MAX_TOKENS = int(os.getenv("OPENROUTER_MAX_TOKENS", "1600"))
-LLM_REPARSE_MAX_TOKENS = int(os.getenv("OPENROUTER_REPARSE_MAX_TOKENS", "6000"))
+LLM_REPARSE_INITIAL_MAX_TOKENS = int(os.getenv("OPENROUTER_REPARSE_MAX_TOKENS", "8000"))
+LLM_REPARSE_RETRY_MAX_TOKENS = max(
+    LLM_REPARSE_INITIAL_MAX_TOKENS,
+    int(os.getenv("OPENROUTER_REPARSE_RETRY_MAX_TOKENS", "16000")),
+)
 
 CRITERION_ALIASES = {
     "target_relevance": ["target_relevance", "target relevance", "타깃", "타겟", "target"],
@@ -6411,7 +6415,7 @@ def build_llm_reparse_prompt(
         "general, imperative caution sentence in Korean (max 150 characters) that a future instruction document can "
         "reuse verbatim; it must generalize the mistake (never mention this specific company, asset, or number). "
         "If the issues are purely missing facts with no identifiable authoring mistake, this must be null. "
-        "Respond with a single ```json fenced code block and nothing else outside it."
+        "Return one complete JSON object only: no Markdown fence, prose, comments, or trailing text."
     )
 
     if patchable:
@@ -6471,15 +6475,42 @@ def build_llm_reparse_prompt(
     return system_prompt, user_prompt
 
 
-def call_openrouter_llm_reparse(system_prompt: str, user_prompt: str, api_key: str) -> tuple[str | None, str | None]:
-    base_payload = {
+def build_openrouter_llm_reparse_payload(
+    system_prompt: str,
+    user_prompt: str,
+    *,
+    max_tokens: int,
+    stream: bool = False,
+) -> dict[str, Any]:
+    """Build the deterministic, JSON-only request used by AI second-pass parsing."""
+    payload: dict[str, Any] = {
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
         "temperature": 0,
-        "max_tokens": LLM_REPARSE_MAX_TOKENS,
+        "max_tokens": max_tokens,
+        "reasoning": {"effort": "none"},
+        "response_format": {"type": "json_object"},
     }
+    if stream:
+        payload["stream"] = True
+        payload["stream_options"] = {"include_usage": True}
+    return payload
+
+
+def call_openrouter_llm_reparse(
+    system_prompt: str,
+    user_prompt: str,
+    api_key: str,
+    *,
+    max_tokens: int = LLM_REPARSE_INITIAL_MAX_TOKENS,
+) -> tuple[str | None, dict[str, Any], str | None]:
+    base_payload = build_openrouter_llm_reparse_payload(
+        system_prompt,
+        user_prompt,
+        max_tokens=max_tokens,
+    )
 
     errors: list[str] = []
     for model in openrouter_reparse_models_to_try():
@@ -6514,23 +6545,33 @@ def call_openrouter_llm_reparse(system_prompt: str, user_prompt: str, api_key: s
             continue
 
         if content:
-            return content, None
+            choice = data["choices"][0] if isinstance(data.get("choices"), list) and data["choices"] else {}
+            metadata = {
+                "model": model,
+                "finish_reason": str(choice.get("finish_reason") or ""),
+                "usage": data.get("usage") if isinstance(data.get("usage"), dict) else {},
+                "max_tokens": max_tokens,
+            }
+            return content, metadata, None
         errors.append(f"{model}: empty response")
 
-    return None, " / ".join(errors[:4]) or "OpenRouter returned no usable response."
+    return None, {}, " / ".join(errors[:4]) or "OpenRouter returned no usable response."
 
 
-def stream_openrouter_llm_reparse(system_prompt: str, user_prompt: str, api_key: str) -> tuple[Any, str | None]:
+def stream_openrouter_llm_reparse(
+    system_prompt: str,
+    user_prompt: str,
+    api_key: str,
+    *,
+    max_tokens: int = LLM_REPARSE_INITIAL_MAX_TOKENS,
+) -> tuple[Any, str | None]:
     """Streaming variant of call_openrouter_llm_reparse so the raw-parsing button can show live tokens."""
-    base_payload = {
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-        "temperature": 0,
-        "max_tokens": LLM_REPARSE_MAX_TOKENS,
-        "stream": True,
-    }
+    base_payload = build_openrouter_llm_reparse_payload(
+        system_prompt,
+        user_prompt,
+        max_tokens=max_tokens,
+        stream=True,
+    )
 
     errors: list[str] = []
     for model in openrouter_reparse_models_to_try():
@@ -6618,15 +6659,81 @@ def parse_llm_reparse_answer(
 
     raw_new_warning = parsed.get("new_warning") if isinstance(parsed, dict) else None
     new_warning = str(raw_new_warning).strip() if isinstance(raw_new_warning, str) else ""
-    warning_stored = append_instruction_warning(mode, new_warning) if new_warning else False
-
     return {
         "ok": True,
         "mode": mode,
         "records": reparsed_records,
         "corrected_fields": corrected_fields,
-        "new_warning": new_warning if warning_stored else None,
+        "new_warning": new_warning or None,
     }, None
+
+
+def validate_llm_reparse_completion(
+    answer: str,
+    result: dict[str, Any],
+    mode: str,
+    raw_markdown: str,
+) -> str | None:
+    """Reject output that parsed only partially or cannot cross the normal save boundary.
+
+    This runs before the frontend replaces the user's pasted text.  It intentionally reuses the
+    save validator rather than maintaining a weaker second parser contract.
+    """
+    candidate = str(answer or "").strip()
+    fence_match = re.fullmatch(r"```(?:json)?\s*\r?\n([\s\S]*?)```", candidate, flags=re.IGNORECASE)
+    if fence_match:
+        candidate = fence_match.group(1).strip()
+    if not candidate.startswith("{"):
+        return "AI 재파싱 응답이 JSON object로 시작하지 않아 완결성을 확인할 수 없습니다."
+    try:
+        _, end_index = json.JSONDecoder().raw_decode(candidate)
+    except json.JSONDecodeError as exc:
+        return f"AI 재파싱 JSON이 끝까지 닫히지 않았습니다: {exc.msg}."
+    if candidate[end_index:].strip():
+        return "AI 재파싱 JSON 뒤에 추가 텍스트가 있어 단일 완결 응답이 아닙니다."
+
+    records = result.get("records") if isinstance(result.get("records"), list) else []
+    if not records or not all(isinstance(record, dict) for record in records):
+        return "AI 재파싱 응답에 완결된 record 배열이 없습니다."
+
+    if mode == "triage":
+        markdown_rows = parse_fast_triage_markdown_status_rows(raw_markdown)
+        if markdown_rows and len(markdown_rows) != len(records):
+            return (
+                f"Fast Triage Markdown status row {len(markdown_rows)}개와 AI JSON record "
+                f"{len(records)}개가 일치하지 않습니다."
+            )
+
+    try:
+        candidate_records = normalize_records(copy.deepcopy(records), sanitize_source_report=True)
+        validate_records_for_save(candidate_records)
+    except HTTPException as exc:
+        return f"AI 재파싱 결과가 저장 스키마 검증을 통과하지 못했습니다: {exc.detail}"
+    return None
+
+
+def llm_reparse_usage_is_near_limit(usage: Any, max_tokens: int) -> bool:
+    """Return true only when the provider reports completion output at least 98% of its ceiling."""
+    if not isinstance(usage, dict) or max_tokens <= 0:
+        return False
+    raw_completion = usage.get("completion_tokens", usage.get("output_tokens"))
+    try:
+        completion_tokens = int(raw_completion)
+    except (TypeError, ValueError):
+        return False
+    return completion_tokens >= max(1, int(max_tokens * 0.98))
+
+
+def finalize_llm_reparse_result(result: dict[str, Any], mode: str, metadata: dict[str, Any]) -> dict[str, Any]:
+    """Store a learned authoring warning only after a complete response passed validation."""
+    new_warning = str(result.get("new_warning") or "").strip()
+    result["new_warning"] = new_warning if new_warning and append_instruction_warning(mode, new_warning) else None
+    result["reparse_attempt"] = {
+        "model": metadata.get("model"),
+        "max_tokens": metadata.get("max_tokens"),
+        "output_near_limit": bool(metadata.get("output_near_limit")),
+    }
+    return result
 
 
 def compact_chat_context(record: dict[str, Any]) -> str:
@@ -7188,9 +7295,13 @@ def openrouter_models_to_try() -> list[str]:
 
 
 def openrouter_reparse_models_to_try() -> list[str]:
-    """Model order for the AI 2차 파싱 (llm-reparse) flow specifically, independent of the chat assistant's OPENROUTER_MODEL."""
+    """Keep AI second-pass parsing on one explicitly configured JSON-capable model.
+
+    A fallback is opt-in only. Switching models mid-repair makes output limits and JSON behaviour
+    unpredictable, so the production default stays on DeepSeek V4 Flash for both attempts.
+    """
     primary = os.getenv("OPENROUTER_REPARSE_MODEL", LLM_REPARSE_DEFAULT_MODEL).strip() or LLM_REPARSE_DEFAULT_MODEL
-    fallback_text = os.getenv("OPENROUTER_REPARSE_FALLBACK_MODELS", ",".join(OPENROUTER_DEFAULT_FALLBACK_MODELS))
+    fallback_text = os.getenv("OPENROUTER_REPARSE_FALLBACK_MODELS", "")
     candidates = [primary] + [item.strip() for item in fallback_text.split(",") if item.strip()]
 
     models: list[str] = []
@@ -10331,14 +10442,31 @@ async def llm_reparse_pasted_report(request: Request) -> dict[str, Any]:
 
     base_records = resolve_llm_reparse_base_records(json_text)
     system_prompt, user_prompt = build_llm_reparse_prompt(raw_markdown, json_text, mode, issues, base_records)
-    answer, error = call_openrouter_llm_reparse(system_prompt, user_prompt, api_key)
-    if error or not answer:
-        raise HTTPException(status_code=502, detail=error or "OpenRouter returned no usable response.")
-
-    result, parse_error = parse_llm_reparse_answer(answer, mode, base_records)
-    if parse_error:
-        raise HTTPException(status_code=502, detail=parse_error)
-    return result
+    attempts = [LLM_REPARSE_INITIAL_MAX_TOKENS, LLM_REPARSE_RETRY_MAX_TOKENS]
+    failure_detail = "OpenRouter returned no usable response."
+    for attempt_index, max_tokens in enumerate(attempts, start=1):
+        answer, metadata, error = call_openrouter_llm_reparse(
+            system_prompt,
+            user_prompt,
+            api_key,
+            max_tokens=max_tokens,
+        )
+        if error or not answer:
+            raise HTTPException(status_code=502, detail=error or failure_detail)
+        metadata["max_tokens"] = max_tokens
+        metadata["output_near_limit"] = llm_reparse_usage_is_near_limit(metadata.get("usage"), max_tokens)
+        result, parse_error = parse_llm_reparse_answer(answer, mode, base_records)
+        completion_error = parse_error or validate_llm_reparse_completion(answer, result or {}, mode, raw_markdown)
+        truncated = str(metadata.get("finish_reason") or "").lower() == "length"
+        if not truncated and not completion_error and result:
+            return finalize_llm_reparse_result(result, mode, metadata)
+        failure_detail = (
+            f"AI 재파싱 {attempt_index}차({max_tokens:,} tokens) 결과가 완결되지 않았습니다: "
+            f"{'provider finish_reason=length' if truncated else completion_error or 'unknown incomplete output'}"
+        )
+        if attempt_index == 1:
+            continue
+    raise HTTPException(status_code=502, detail=f"{failure_detail} 16,000-token 재시도 후에도 저장 가능한 JSON을 만들지 못했습니다.")
 
 
 @app.post("/api/records/llm-reparse/stream")
@@ -10369,68 +10497,94 @@ async def llm_reparse_pasted_report_stream(request: Request) -> StreamingRespons
     system_prompt, user_prompt = build_llm_reparse_prompt(raw_markdown, json_text, mode, issues, base_records)
 
     def event_generator():
-        stream, error = stream_openrouter_llm_reparse(system_prompt, user_prompt, api_key)
-        if error or stream is None:
-            yield sse_event("error", {"message": error or "OpenRouter returned no usable response."})
-            return
-
-        answer = ""
-        stream_finish_reason = ""
-        try:
-            for raw_line in stream:
-                line = raw_line.decode("utf-8", errors="replace").strip()
-                if not line or not line.startswith("data:"):
-                    continue
-                data_text = line.removeprefix("data:").strip()
-                if data_text == "[DONE]":
-                    break
-                try:
-                    data = json.loads(data_text)
-                except json.JSONDecodeError:
-                    continue
-                provider_error_message = describe_openrouter_stream_error(data)
-                if provider_error_message:
-                    yield sse_event("error", {"message": provider_error_message})
-                    return
-                choices = data.get("choices") if isinstance(data, dict) else None
-                choice = choices[0] if isinstance(choices, list) and choices and isinstance(choices[0], dict) else {}
-                finish_reason = choice.get("finish_reason")
-                if finish_reason:
-                    stream_finish_reason = str(finish_reason)
-                delta = choice.get("delta", {}).get("content") if isinstance(choice.get("delta"), dict) else None
-                if not delta and isinstance(choice.get("message"), dict):
-                    delta = choice["message"].get("content")
-                if delta:
-                    answer += delta
-                    yield sse_event("delta", {"text": delta})
-        except Exception as exc:
-            yield sse_event("error", {"message": str(exc)})
-            return
-        finally:
-            close = getattr(stream, "close", None)
-            if callable(close):
-                close()
-
-        if not answer:
-            finish_hint = f" (finish_reason={stream_finish_reason})" if stream_finish_reason else ""
-            yield sse_event(
-                "error",
-                {"message": f"OpenRouter가 재파싱 텍스트를 반환하지 않았습니다{finish_hint}. 재파싱 모델 설정 또는 제공자 상태를 확인해 주세요."},
+        attempts = [LLM_REPARSE_INITIAL_MAX_TOKENS, LLM_REPARSE_RETRY_MAX_TOKENS]
+        final_failure = "OpenRouter returned no usable response."
+        for attempt_index, max_tokens in enumerate(attempts, start=1):
+            if attempt_index > 1:
+                yield sse_event(
+                    "retry",
+                    {
+                        "attempt": attempt_index,
+                        "max_tokens": max_tokens,
+                        "message": "첫 응답의 JSON 완결성을 확인하지 못해 16,000-token 한도로 한 번 더 보완하고 있습니다.",
+                    },
+                )
+            stream, error = stream_openrouter_llm_reparse(
+                system_prompt,
+                user_prompt,
+                api_key,
+                max_tokens=max_tokens,
             )
-            return
+            if error or stream is None:
+                yield sse_event("error", {"message": error or final_failure})
+                return
 
-        if stream_finish_reason == "length":
-            yield sse_event(
-                "error",
-                {"message": f"AI 재파싱 응답이 출력 한도({LLM_REPARSE_MAX_TOKENS} tokens)에 도달해 잘렸습니다. 입력을 나누거나 재파싱 모델의 출력 한도를 확인해 주세요."},
-            )
-            return
+            answer = ""
+            stream_finish_reason = ""
+            stream_usage: dict[str, Any] = {}
+            provider_error_message = ""
+            try:
+                for raw_line in stream:
+                    line = raw_line.decode("utf-8", errors="replace").strip()
+                    if not line or not line.startswith("data:"):
+                        continue
+                    data_text = line.removeprefix("data:").strip()
+                    if data_text == "[DONE]":
+                        break
+                    try:
+                        data = json.loads(data_text)
+                    except json.JSONDecodeError:
+                        continue
+                    provider_error_message = describe_openrouter_stream_error(data) or ""
+                    if provider_error_message:
+                        break
+                    if isinstance(data, dict) and isinstance(data.get("usage"), dict):
+                        stream_usage = data["usage"]
+                    choices = data.get("choices") if isinstance(data, dict) else None
+                    choice = choices[0] if isinstance(choices, list) and choices and isinstance(choices[0], dict) else {}
+                    finish_reason = choice.get("finish_reason")
+                    if finish_reason:
+                        stream_finish_reason = str(finish_reason)
+                    delta = choice.get("delta", {}).get("content") if isinstance(choice.get("delta"), dict) else None
+                    if not delta and isinstance(choice.get("message"), dict):
+                        delta = choice["message"].get("content")
+                    if delta:
+                        answer += delta
+                        yield sse_event("delta", {"text": delta})
+            except Exception as exc:
+                yield sse_event("error", {"message": str(exc)})
+                return
+            finally:
+                close = getattr(stream, "close", None)
+                if callable(close):
+                    close()
 
-        result, parse_error = parse_llm_reparse_answer(answer, mode, base_records)
-        if parse_error:
-            yield sse_event("error", {"message": parse_error})
-            return
-        yield sse_event("done", result)
+            if provider_error_message:
+                yield sse_event("error", {"message": provider_error_message})
+                return
+
+            metadata = {
+                "model": openrouter_reparse_models_to_try()[0],
+                "max_tokens": max_tokens,
+                "finish_reason": stream_finish_reason,
+                "usage": stream_usage,
+                "output_near_limit": llm_reparse_usage_is_near_limit(stream_usage, max_tokens),
+            }
+            result, parse_error = parse_llm_reparse_answer(answer, mode, base_records) if answer else (None, "AI 재파싱 텍스트가 비어 있습니다.")
+            completion_error = parse_error or validate_llm_reparse_completion(answer, result or {}, mode, raw_markdown)
+            truncated = stream_finish_reason.lower() == "length"
+            if not truncated and not completion_error and result:
+                yield sse_event("done", finalize_llm_reparse_result(result, mode, metadata))
+                return
+
+            reason = "provider finish_reason=length" if truncated else completion_error or "unknown incomplete output"
+            final_failure = f"AI 재파싱 {attempt_index}차({max_tokens:,} tokens) 결과가 완결되지 않았습니다: {reason}"
+            if attempt_index == len(attempts):
+                yield sse_event(
+                    "error",
+                    {"message": f"{final_failure}. 16,000-token 재시도 후에도 저장 가능한 JSON을 만들지 못했습니다."},
+                )
+                return
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
