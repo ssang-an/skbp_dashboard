@@ -1361,6 +1361,10 @@ function renderEditHistory(record) {
         'scores.data_maturity': 'Data 점수',
         'scores.marketability': 'Market 점수',
         total_score: 'Tab2 Total Score',
+        'structured_table.company': 'Company',
+        'structured_table.asset_name': 'Asset',
+        'structured_table.main_indication': 'Main indication',
+        'structured_table.development_stage': 'Stage',
         'focus_management.total_score_override': 'Tab3 Total Score'
       };
       const fieldSource = fieldLabels[field];

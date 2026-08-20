@@ -932,6 +932,10 @@ function triageHistoryLabel(record, entry) {
     'scores.moa_validity': 'MoA 점수',
     'scores.data_maturity': 'Data 점수',
     total_score: 'Total score',
+    'structured_table.company': 'Company',
+    'structured_table.asset_name': 'Asset',
+    'structured_table.main_indication': 'Main indication',
+    'structured_table.development_stage': 'Stage',
     final_comment: entry?.source === 'detail_final_comment_delete' ? '최종 코멘트 삭제' : '최종 코멘트'
   };
   if (labels[field]) return resetSuffix ? `${labels[field]} · ${resetSuffix}` : labels[field];

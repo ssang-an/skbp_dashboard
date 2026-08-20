@@ -13166,6 +13166,48 @@ html[data-theme="dark"] .pipeline-table .clickable-row.selected-row:hover > td {
   font-weight: 400;
 }
 
+/* Manual fact corrections keep the normal table palette; weight is the audit cue. */
+.pipeline-table .table-manual-text.is-human,
+.pipeline-table .table-manual-text.is-human strong,
+.pipeline-table .table-edit-select.stage-edit.is-human {
+  font-weight: 800;
+}
+
+.pipeline-table .table-edit-select.stage-edit:not(.is-human) {
+  font-weight: 600;
+}
+
+.pipeline-table .table-manual-text.is-editable {
+  cursor: text;
+}
+
+.pipeline-table .table-manual-text.is-editable:hover,
+.pipeline-table .table-manual-text.is-editable:focus-visible {
+  border-radius: 4px;
+  outline: 1px solid color-mix(in srgb, var(--line) 86%, var(--accent));
+  outline-offset: 2px;
+}
+
+.pipeline-table .table-manual-text-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 78px;
+  height: 28px;
+  border: 1px solid color-mix(in srgb, var(--line) 82%, var(--accent));
+  border-radius: 6px;
+  padding: 3px 7px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+}
+
+.pipeline-table .table-manual-text-input:focus {
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
+  outline: 2px solid color-mix(in srgb, var(--accent) 12%, transparent);
+  outline-offset: 1px;
+}
+
 .pipeline-table th,
 .pipeline-table th button,
 .pipeline-table .score-group-head,

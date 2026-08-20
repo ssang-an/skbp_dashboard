@@ -8904,6 +8904,33 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
             previous = table.get("development_stage")
             table["development_stage"] = value
             field_key = "structured_table.development_stage"
+        elif edit_kind in {"company", "asset", "main_indication"}:
+            raw_value = re.sub(r"\s+", " ", str(payload.get("value") or "").strip())
+            if not raw_value or len(raw_value) > 250:
+                raise HTTPException(status_code=400, detail="Company, Asset, and Main indication must be 1 to 250 characters.")
+
+            table = record.setdefault("structured_table", {})
+            summary = record.setdefault("json_summary", {})
+            if edit_kind == "company":
+                value = raw_value
+                field_name = "company"
+            elif edit_kind == "asset":
+                value = raw_value
+                field_name = "asset_name"
+            else:
+                value = canonicalize_main_indication(raw_value, table.get("indication"))
+                if value == "Unknown" and raw_value.casefold() not in {"unknown", "-"}:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="Main indication must match a supported dashboard indication or Unknown.",
+                    )
+                field_name = "main_indication"
+
+            previous = table.get(field_name)
+            table[field_name] = value
+            if isinstance(summary, dict):
+                summary[field_name] = value
+            field_key = f"structured_table.{field_name}"
         elif edit_kind == "target":
             value = str(payload.get("value") or "").strip()
             if not value or len(value) > 250:

@@ -75,6 +75,47 @@ class FastTriageManualReviewTests(unittest.TestCase):
         self.assertEqual(updated["meta"]["edit_history"][-1]["field"], "final_comment")
         self.assertEqual(updated["source_report"] if "source_report" in updated else {}, {})
 
+    def test_manual_identity_fields_update_dashboard_values_and_audit_history(self):
+        record = triage_record()
+        record["structured_table"].update({
+            "development_stage": "Preclinical",
+            "main_indication": "Alzheimer's disease",
+        })
+        record["json_summary"].update({"main_indication": "Alzheimer's disease"})
+
+        updated = self.update(record, {
+            "kind": "company",
+            "value": "Updated Bio",
+            "previous_value": "Test Bio",
+        })["record"]
+        updated = self.update(updated, {
+            "kind": "asset",
+            "value": "FT-102",
+            "previous_value": "FT-101",
+        })["record"]
+        updated = self.update(updated, {
+            "kind": "main_indication",
+            "value": "Parkinson's disease",
+            "previous_value": "Alzheimer's disease",
+        })["record"]
+
+        table = updated["structured_table"]
+        summary = updated["json_summary"]
+        self.assertEqual(table["company"], "Updated Bio")
+        self.assertEqual(summary["company"], "Updated Bio")
+        self.assertEqual(table["asset_name"], "FT-102")
+        self.assertEqual(summary["asset_name"], "FT-102")
+        self.assertEqual(table["main_indication"], "Parkinson's disease")
+        self.assertEqual(summary["main_indication"], "Parkinson's disease")
+        self.assertEqual(
+            [entry["field"] for entry in updated["meta"]["human_review"]["history"][-3:]],
+            [
+                "structured_table.company",
+                "structured_table.asset_name",
+                "structured_table.main_indication",
+            ],
+        )
+
     def test_final_comment_delete_requires_its_author_and_is_audited(self):
         record = triage_record()
         created = self.update(record, {"kind": "final_comment", "value": "관리자 최종 의견"})["record"]
