@@ -234,7 +234,7 @@ git push
 
 ### 회사 PC stash 데이터 안전 병합
 
-pull 전에 Git stash로 보관한 Pipeline 데이터는 일반적인 `git stash pop`으로 복원하지 않습니다. 현재 원격 JSON을 기준으로 유지하면서, stash에만 있는 Pipeline을 추가하고 같은 record ID의 서로 다른 내용은 차단·보고하는 도구를 사용합니다.
+pull 전에 Git stash로 보관한 Pipeline 데이터는 일반적인 `git stash pop`으로 복원하지 않습니다. 현재 원격 JSON을 기준으로 유지하면서, stash에만 있는 Pipeline을 추가합니다. Git stash의 공통 기준을 확인할 수 있으면 서로 다른 필드 변경(예: 한쪽 점수, 다른 쪽 코멘트)은 3-way 방식으로 자동 결합하고, 같은 필드의 서로 다른 값만 차단·보고합니다.
 
 ```powershell
 # 기본은 비교만 수행합니다. 파일을 바꾸지 않습니다.
@@ -248,7 +248,7 @@ pull 전에 Git stash로 보관한 Pipeline 데이터는 일반적인 `git stash
 .\.venv\Scripts\python.exe .\scripts\export_pipeline_wiki.py
 ```
 
-`--write`는 원본 JSON을 `local-backups/`에 자동 백업한 뒤에만 실행되며, ID 충돌이나 source JSON 내부 중복이 있으면 저장하지 않습니다. 이 경우 report의 `conflicts`를 기준으로 개별 Pipeline의 최신본을 선택해 별도 병합해야 합니다.
+`--write`는 원본 JSON을 `local-backups/`에 자동 백업한 뒤에만 실행되며, 동일 필드 충돌이나 source JSON 내부 중복이 있으면 저장하지 않습니다. 이 경우 report의 `conflicts[].field_paths`를 기준으로 충돌한 Pipeline 필드만 선택해 별도 병합해야 합니다.
 
 GitHub에 올린 뒤 Render, Railway, Fly.io 같은 Python web service에서 실행할 수 있습니다.
 

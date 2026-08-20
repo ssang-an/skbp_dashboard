@@ -1,10 +1,12 @@
 """Safely reconcile dashboard record snapshots from another computer.
 
-The current ``json/pipeline-records.json`` remains authoritative.  A Git stash
-or JSON snapshot may contribute only record IDs that are absent from the
-current data.  Matching IDs with different content are deliberately reported
-and block writing: a line-oriented Git merge is unsafe for the dashboard's
-JSON array and could silently discard manual review data.
+The current ``json/pipeline-records.json`` remains authoritative. A Git stash
+or JSON snapshot may contribute record IDs that are absent from the current
+data. For a Git stash, its first parent is also used as a three-way merge base:
+changes made only in the stash are retained when the current record left that
+field untouched. Matching changes to the same field remain deliberately
+reported and block writing: a line-oriented Git merge is unsafe for the
+dashboard's JSON array and could silently discard manual review data.
 
 Examples (run from the repository root)::
 
@@ -45,11 +47,16 @@ import main  # noqa: E402
 class Snapshot:
     label: str
     records: list[dict[str, Any]]
+    base_records: list[dict[str, Any]] | None = None
+
+
+def canonical_value_bytes(value: Any) -> bytes:
+    """Return a formatting-independent representation for exact comparison."""
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
 
 
 def canonical_record_bytes(record: dict[str, Any]) -> bytes:
-    """Return a formatting-independent representation for exact comparison."""
-    return json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return canonical_value_bytes(record)
 
 
 def record_id(record: dict[str, Any]) -> str:
@@ -76,7 +83,7 @@ def parse_records(raw: bytes, label: str) -> list[dict[str, Any]]:
     return data
 
 
-def load_git_stash(ref: str) -> Snapshot:
+def read_git_json(ref: str) -> list[dict[str, Any]]:
     relative_path = main.DATA_FILE.relative_to(ROOT).as_posix()
     result = subprocess.run(
         ["git", "show", f"{ref}:{relative_path}"],
@@ -87,7 +94,11 @@ def load_git_stash(ref: str) -> Snapshot:
     if result.returncode:
         error = result.stderr.decode("utf-8", errors="replace").strip()
         raise ValueError(f"Could not read {ref}: {error or 'Git object was not found.'}")
-    return Snapshot(label=ref, records=parse_records(result.stdout, ref))
+    return parse_records(result.stdout, ref)
+
+
+def load_git_stash(ref: str) -> Snapshot:
+    return Snapshot(label=ref, records=read_git_json(ref), base_records=read_git_json(f"{ref}^1"))
 
 
 def load_json_snapshot(path_text: str) -> Snapshot:
@@ -99,6 +110,43 @@ def load_json_snapshot(path_text: str) -> Snapshot:
 
 def short_hash(record: dict[str, Any]) -> str:
     return hashlib.sha256(canonical_record_bytes(record)).hexdigest()[:12]
+
+
+MISSING = object()
+
+
+def values_equal(left: Any, right: Any) -> bool:
+    if left is MISSING or right is MISSING:
+        return left is right
+    return canonical_value_bytes(left) == canonical_value_bytes(right)
+
+
+def three_way_merge_value(base: Any, current: Any, snapshot: Any, path: str = "") -> tuple[Any, list[str]]:
+    """Merge a value only when one side left it at the common base.
+
+    Lists are intentionally atomic. Their ordering often has semantic meaning
+    for attachments, history, and sources, so recursively zipping list items
+    would be less safe than reporting a collision.
+    """
+    if values_equal(current, snapshot):
+        return copy.deepcopy(current), []
+    if values_equal(current, base):
+        return copy.deepcopy(snapshot), []
+    if values_equal(snapshot, base):
+        return copy.deepcopy(current), []
+    if isinstance(base, dict) and isinstance(current, dict) and isinstance(snapshot, dict):
+        result: dict[str, Any] = {}
+        conflicts: list[str] = []
+        for key in sorted(set(base) | set(current) | set(snapshot)):
+            child_path = f"{path}.{key}" if path else key
+            value, child_conflicts = three_way_merge_value(
+                base.get(key, MISSING), current.get(key, MISSING), snapshot.get(key, MISSING), child_path
+            )
+            if value is not MISSING:
+                result[key] = value
+            conflicts.extend(child_conflicts)
+        return result, conflicts
+    return copy.deepcopy(current), [path or "(entire record)"]
 
 
 def summarize_record(record: dict[str, Any]) -> dict[str, str]:
@@ -121,11 +169,13 @@ def reconcile(current: list[dict[str, Any]], snapshots: list[Snapshot]) -> tuple
         "sources": [],
         "added": [],
         "identical": [],
+        "automatically_merged": [],
         "conflicts": [],
         "duplicate_record_ids": {"current": current_duplicates, "sources": {}},
     }
     merged = [copy.deepcopy(record) for record in current]
     merged_by_id = {record_id(record): record for record in merged}
+    merged_index_by_id = {record_id(record): index for index, record in enumerate(merged)}
     origin_by_id = {record_id(record): "current" for record in merged}
 
     for snapshot in snapshots:
@@ -133,6 +183,11 @@ def reconcile(current: list[dict[str, Any]], snapshots: list[Snapshot]) -> tuple
         report["sources"].append({"label": snapshot.label, "record_count": len(snapshot.records)})
         if source_duplicates:
             report["duplicate_record_ids"]["sources"][snapshot.label] = source_duplicates
+        base_by_id = {
+            record_id(record): record
+            for record in (snapshot.base_records or [])
+            if record_id(record) not in duplicate_ids(snapshot.base_records or [])
+        }
         for source_record in snapshot.records:
             key = record_id(source_record)
             existing = merged_by_id.get(key)
@@ -140,11 +195,23 @@ def reconcile(current: list[dict[str, Any]], snapshots: list[Snapshot]) -> tuple
                 copied = copy.deepcopy(source_record)
                 merged.append(copied)
                 merged_by_id[key] = copied
+                merged_index_by_id[key] = len(merged) - 1
                 origin_by_id[key] = snapshot.label
                 report["added"].append({"source": snapshot.label, **summarize_record(source_record)})
             elif canonical_record_bytes(existing) == canonical_record_bytes(source_record):
                 report["identical"].append({"source": snapshot.label, "existing_source": origin_by_id[key], **summarize_record(source_record)})
             else:
+                base_record = base_by_id.get(key)
+                if base_record is not None:
+                    resolved, field_conflicts = three_way_merge_value(base_record, existing, source_record)
+                    if not field_conflicts:
+                        merged[merged_index_by_id[key]] = resolved
+                        merged_by_id[key] = resolved
+                        report["automatically_merged"].append(
+                            {"source": snapshot.label, "existing_source": origin_by_id[key], **summarize_record(resolved)}
+                        )
+                        origin_by_id[key] = f"{origin_by_id[key]} + {snapshot.label}"
+                        continue
                 report["conflicts"].append(
                     {
                         "source": snapshot.label,
@@ -152,6 +219,7 @@ def reconcile(current: list[dict[str, Any]], snapshots: list[Snapshot]) -> tuple
                         "record_id": key,
                         "current": summarize_record(existing),
                         "snapshot": summarize_record(source_record),
+                        "field_paths": field_conflicts if base_record is not None else ["(no common Git base available)"],
                     }
                 )
 
@@ -213,6 +281,7 @@ def main_cli(argv: list[str] | None = None) -> int:
         print(f"source={source['label']} records={source['record_count']}")
     print(f"added={len(report['added'])}")
     print(f"identical={len(report['identical'])}")
+    print(f"automatically_merged={len(report['automatically_merged'])}")
     print(f"conflicts={len(report['conflicts'])}")
     duplicate_count = len(report["duplicate_record_ids"]["current"]) + sum(
         len(value) for value in report["duplicate_record_ids"]["sources"].values()

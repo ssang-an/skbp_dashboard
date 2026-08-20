@@ -61,6 +61,37 @@ class PipelineRecordReconciliationTests(unittest.TestCase):
         self.assertEqual(len(merged), 1)
         self.assertEqual(len(report["identical"]), 1)
 
+    def test_three_way_merge_keeps_non_overlapping_current_and_stash_edits(self):
+        base = record("Shared Co", "SH-1", score=1)
+        current = json.loads(json.dumps(base))
+        current["meta"]["human_review"] = {"note": "company PC note"}
+        stash = json.loads(json.dumps(base))
+        stash["scoring"]["total_score"] = 3
+
+        merged, report = reconcile_script.reconcile(
+            [current], [reconcile_script.Snapshot("stash@{0}", [stash], base_records=[base])]
+        )
+
+        self.assertTrue(report["is_safe_to_write"])
+        self.assertEqual(merged[0]["scoring"]["total_score"], 3)
+        self.assertEqual(merged[0]["meta"]["human_review"]["note"], "company PC note")
+        self.assertEqual(len(report["automatically_merged"]), 1)
+
+    def test_three_way_merge_reports_same_field_collision(self):
+        base = record("Shared Co", "SH-1", score=1)
+        current = json.loads(json.dumps(base))
+        current["scoring"]["total_score"] = 2
+        stash = json.loads(json.dumps(base))
+        stash["scoring"]["total_score"] = 3
+
+        merged, report = reconcile_script.reconcile(
+            [current], [reconcile_script.Snapshot("stash@{0}", [stash], base_records=[base])]
+        )
+
+        self.assertFalse(report["is_safe_to_write"])
+        self.assertEqual(merged[0]["scoring"]["total_score"], 2)
+        self.assertEqual(report["conflicts"][0]["field_paths"], ["scoring.total_score"])
+
     def test_write_creates_backup_before_replacing_json(self):
         original_data_file = reconcile_script.main.DATA_FILE
         try:
