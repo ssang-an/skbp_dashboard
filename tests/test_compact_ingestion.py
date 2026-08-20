@@ -994,6 +994,53 @@ format reminder
         self.assertFalse(main.llm_reparse_usage_is_near_limit({"completion_tokens": 7839}, 8000))
         self.assertFalse(main.llm_reparse_usage_is_near_limit({}, 8000))
 
+    def test_only_parsed_large_triage_arrays_are_eligible_for_safe_batch_reparse(self):
+        records = [{"meta": {"index": index}} for index in range(11)]
+        self.assertTrue(main.should_batch_llm_reparse("triage", records))
+        self.assertFalse(main.should_batch_llm_reparse("full", records))
+        self.assertFalse(main.should_batch_llm_reparse("triage", None))
+        self.assertFalse(main.should_batch_llm_reparse("triage", records[:10]))
+
+    def test_triage_batch_reparse_preserves_global_order_and_indices(self):
+        records = [{"meta": {"index": index}} for index in range(11)]
+
+        def fake_attempt(_system, _user, _key, _mode, subset, _markdown, **_kwargs):
+            local_index = len(subset) - 1
+            return ({
+                "records": copy.deepcopy(subset),
+                "corrected_fields": {str(local_index): ["structured_table.asset_name"]},
+                "new_warning": None,
+            }, {"max_tokens": 8000, "output_near_limit": False}, None)
+
+        with (
+            patch.object(main, "run_llm_reparse_attempts", side_effect=fake_attempt) as attempts,
+            patch.object(main, "validate_llm_reparse_completion", return_value=None),
+            patch.object(main, "finalize_llm_reparse_result", side_effect=lambda result, _mode, metadata: {**result, "metadata": metadata}),
+        ):
+            result, error = main.run_llm_reparse_triage_batches("# report", "[]", [], records, "test-key")
+
+        self.assertIsNone(error)
+        self.assertEqual([record["meta"]["index"] for record in result["records"]], list(range(11)))
+        self.assertEqual(result["corrected_fields"], {
+            "9": ["structured_table.asset_name"],
+            "10": ["structured_table.asset_name"],
+        })
+        self.assertEqual(attempts.call_count, 2)
+        self.assertEqual(result["metadata"]["batch_count"], 2)
+
+    def test_ai_reparse_ui_distinguishes_recovery_failure_categories(self):
+        app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
+        self.assertIn("function formatAiReparseFailure", app_js)
+        self.assertIn("OpenRouter 인증/권한", app_js)
+        self.assertIn("OpenRouter 요청 한도", app_js)
+        self.assertIn("AI 제공자 일시 오류", app_js)
+        self.assertIn("parsed.event === 'status'", app_js)
+
+    def test_ai_reparse_server_failure_categories_are_actionable(self):
+        self.assertTrue(main.format_llm_reparse_failure("HTTP 429 rate limit").startswith("OpenRouter 요청 한도"))
+        self.assertTrue(main.format_llm_reparse_failure("finish_reason=length").startswith("출력 한도"))
+        self.assertTrue(main.format_llm_reparse_failure("JSON record count mismatch").startswith("JSON 구조 확인 필요"))
+
     def test_home_and_detail_use_fastapi_preflight_before_save(self):
         app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
         detail_js = (ROOT / "src" / "detail.js").read_text(encoding="utf-8")

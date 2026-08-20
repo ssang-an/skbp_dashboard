@@ -123,8 +123,9 @@ CHAT_WIKI_TOP_K = 5
 CHAT_WIKI_AGENT_SEARCH_TOP_K = 8
 CHAT_WIKI_LINK_EXPANSION_LIMIT = 16
 
-LLM_REPARSE_MARKDOWN_CONTEXT_LIMIT = 20000
-LLM_REPARSE_JSON_CONTEXT_LIMIT = 16000
+LLM_REPARSE_MARKDOWN_CONTEXT_LIMIT = 120000
+LLM_REPARSE_JSON_CONTEXT_LIMIT = 80000
+LLM_REPARSE_TRIAGE_BATCH_SIZE = 10
 LLM_REPARSE_WARNING_LINE = "> 이 정보가 부정확할 수 있습니다."
 LLM_REPARSE_DEFAULT_MODEL = "deepseek/deepseek-v4-flash"
 
@@ -6673,6 +6674,8 @@ def validate_llm_reparse_completion(
     result: dict[str, Any],
     mode: str,
     raw_markdown: str,
+    *,
+    check_markdown_record_count: bool = True,
 ) -> str | None:
     """Reject output that parsed only partially or cannot cross the normal save boundary.
 
@@ -6696,7 +6699,7 @@ def validate_llm_reparse_completion(
     if not records or not all(isinstance(record, dict) for record in records):
         return "AI 재파싱 응답에 완결된 record 배열이 없습니다."
 
-    if mode == "triage":
+    if mode == "triage" and check_markdown_record_count:
         markdown_rows = parse_fast_triage_markdown_status_rows(raw_markdown)
         if markdown_rows and len(markdown_rows) != len(records):
             return (
@@ -6734,6 +6737,149 @@ def finalize_llm_reparse_result(result: dict[str, Any], mode: str, metadata: dic
         "output_near_limit": bool(metadata.get("output_near_limit")),
     }
     return result
+
+
+def run_llm_reparse_attempts(
+    system_prompt: str,
+    user_prompt: str,
+    api_key: str,
+    mode: str,
+    base_records: list[dict[str, Any]] | None,
+    raw_markdown: str,
+    *,
+    check_markdown_record_count: bool = True,
+) -> tuple[dict[str, Any] | None, dict[str, Any], str | None]:
+    """Run only the bounded 8K -> 16K recovery policy and return an unsaved result."""
+    attempts = [LLM_REPARSE_INITIAL_MAX_TOKENS, LLM_REPARSE_RETRY_MAX_TOKENS]
+    failure_detail = "OpenRouter returned no usable response."
+    for attempt_index, max_tokens in enumerate(attempts, start=1):
+        answer, metadata, error = call_openrouter_llm_reparse(
+            system_prompt,
+            user_prompt,
+            api_key,
+            max_tokens=max_tokens,
+        )
+        if error or not answer:
+            return None, {}, format_llm_reparse_failure(error or failure_detail)
+        metadata["max_tokens"] = max_tokens
+        metadata["output_near_limit"] = llm_reparse_usage_is_near_limit(metadata.get("usage"), max_tokens)
+        result, parse_error = parse_llm_reparse_answer(answer, mode, base_records)
+        completion_error = parse_error or validate_llm_reparse_completion(
+            answer,
+            result or {},
+            mode,
+            raw_markdown,
+            check_markdown_record_count=check_markdown_record_count,
+        )
+        truncated = str(metadata.get("finish_reason") or "").lower() == "length"
+        if not truncated and not completion_error and result:
+            return result, metadata, None
+        failure_detail = (
+            f"AI 재파싱 {attempt_index}차({max_tokens:,} tokens) 결과가 완결되지 않았습니다: "
+            f"{'provider finish_reason=length' if truncated else completion_error or 'unknown incomplete output'}"
+        )
+    return None, {}, format_llm_reparse_failure(
+        f"{failure_detail} 16,000-token 재시도 후에도 저장 가능한 JSON을 만들지 못했습니다."
+    )
+
+
+def format_llm_reparse_failure(detail: Any) -> str:
+    """Make AI-reparse failures actionable without exposing a raw provider payload as the only clue."""
+    message = str(detail or "OpenRouter returned no usable response.").strip()
+    lowered = message.lower()
+    if "finish_reason=length" in lowered or "출력 한도" in message or "16,000-token" in message:
+        category = "출력 한도"
+    elif "json" in lowered or "record 수" in message or "status row" in lowered or "markdown" in lowered:
+        category = "JSON 구조 확인 필요"
+    elif "스키마" in message or "schema" in lowered or "validation" in lowered:
+        category = "저장 형식 확인 필요"
+    elif "api key" in lowered or "401" in lowered or "403" in lowered:
+        category = "OpenRouter 인증/권한"
+    elif "rate limit" in lowered or "429" in lowered or "free-models-per-day" in lowered:
+        category = "OpenRouter 요청 한도"
+    elif "provider" in lowered or "http 5" in lowered or "temporarily unavailable" in lowered:
+        category = "AI 제공자 일시 오류"
+    else:
+        category = "AI 재파싱 실패"
+    return f"{category} · {message}"
+
+
+def should_batch_llm_reparse(mode: str, base_records: list[dict[str, Any]] | None) -> bool:
+    """Batch only records whose JSON array is already safely parsed and indexable."""
+    return mode == "triage" and isinstance(base_records, list) and len(base_records) > LLM_REPARSE_TRIAGE_BATCH_SIZE
+
+
+def run_llm_reparse_triage_batches(
+    raw_markdown: str,
+    json_text: str,
+    issues: list[Any],
+    base_records: list[dict[str, Any]],
+    api_key: str,
+) -> tuple[dict[str, Any] | None, str | None]:
+    """Repair an already parsed Fast Triage array in fixed index batches without guessing boundaries."""
+    merged_records: list[dict[str, Any]] = []
+    merged_fields: dict[str, list[str]] = {}
+    warnings: list[str] = []
+    batch_metadata: list[dict[str, Any]] = []
+    for start in range(0, len(base_records), LLM_REPARSE_TRIAGE_BATCH_SIZE):
+        subset = base_records[start : start + LLM_REPARSE_TRIAGE_BATCH_SIZE]
+        system_prompt, user_prompt = build_llm_reparse_prompt(
+            raw_markdown,
+            json_text,
+            "triage",
+            issues,
+            subset,
+        )
+        partial, metadata, error = run_llm_reparse_attempts(
+            system_prompt,
+            user_prompt,
+            api_key,
+            "triage",
+            subset,
+            raw_markdown,
+            check_markdown_record_count=False,
+        )
+        batch_number = start // LLM_REPARSE_TRIAGE_BATCH_SIZE + 1
+        if error or not partial:
+            return None, f"Fast Triage 배치 {batch_number} 재파싱 실패: {error or 'unknown error'}"
+        if len(partial["records"]) != len(subset):
+            return None, (
+                f"Fast Triage 배치 {batch_number}의 record 수가 원본과 다릅니다: "
+                f"expected {len(subset)}, got {len(partial['records'])}."
+            )
+        merged_records.extend(partial["records"])
+        for local_index, fields in (partial.get("corrected_fields") or {}).items():
+            try:
+                global_index = start + int(local_index)
+            except (TypeError, ValueError):
+                continue
+            if isinstance(fields, list):
+                merged_fields[str(global_index)] = fields
+        if partial.get("new_warning"):
+            warnings.append(str(partial["new_warning"]))
+        batch_metadata.append(metadata)
+
+    merged = {
+        "ok": True,
+        "mode": "triage",
+        "records": merged_records,
+        "corrected_fields": merged_fields,
+        "new_warning": next(iter(dict.fromkeys(warnings)), None),
+    }
+    merged_answer = json.dumps({"records": merged_records}, ensure_ascii=False)
+    completion_error = validate_llm_reparse_completion(merged_answer, merged, "triage", raw_markdown)
+    if completion_error:
+        return None, f"Fast Triage 배치 결과 통합 검증 실패: {completion_error}"
+    return finalize_llm_reparse_result(
+        merged,
+        "triage",
+        {
+            "model": openrouter_reparse_models_to_try()[0],
+            "max_tokens": max((item.get("max_tokens", 0) for item in batch_metadata), default=0),
+            "output_near_limit": any(item.get("output_near_limit") for item in batch_metadata),
+            "batch_count": len(batch_metadata),
+        },
+    ), None
 
 
 def compact_chat_context(record: dict[str, Any]) -> str:
@@ -10441,32 +10587,23 @@ async def llm_reparse_pasted_report(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=503, detail="OPENROUTER_API_KEY is not set.")
 
     base_records = resolve_llm_reparse_base_records(json_text)
-    system_prompt, user_prompt = build_llm_reparse_prompt(raw_markdown, json_text, mode, issues, base_records)
-    attempts = [LLM_REPARSE_INITIAL_MAX_TOKENS, LLM_REPARSE_RETRY_MAX_TOKENS]
-    failure_detail = "OpenRouter returned no usable response."
-    for attempt_index, max_tokens in enumerate(attempts, start=1):
-        answer, metadata, error = call_openrouter_llm_reparse(
+    if should_batch_llm_reparse(mode, base_records):
+        result, error = run_llm_reparse_triage_batches(raw_markdown, json_text, issues, base_records, api_key)
+    else:
+        system_prompt, user_prompt = build_llm_reparse_prompt(raw_markdown, json_text, mode, issues, base_records)
+        result, metadata, error = run_llm_reparse_attempts(
             system_prompt,
             user_prompt,
             api_key,
-            max_tokens=max_tokens,
+            mode,
+            base_records,
+            raw_markdown,
         )
-        if error or not answer:
-            raise HTTPException(status_code=502, detail=error or failure_detail)
-        metadata["max_tokens"] = max_tokens
-        metadata["output_near_limit"] = llm_reparse_usage_is_near_limit(metadata.get("usage"), max_tokens)
-        result, parse_error = parse_llm_reparse_answer(answer, mode, base_records)
-        completion_error = parse_error or validate_llm_reparse_completion(answer, result or {}, mode, raw_markdown)
-        truncated = str(metadata.get("finish_reason") or "").lower() == "length"
-        if not truncated and not completion_error and result:
-            return finalize_llm_reparse_result(result, mode, metadata)
-        failure_detail = (
-            f"AI 재파싱 {attempt_index}차({max_tokens:,} tokens) 결과가 완결되지 않았습니다: "
-            f"{'provider finish_reason=length' if truncated else completion_error or 'unknown incomplete output'}"
-        )
-        if attempt_index == 1:
-            continue
-    raise HTTPException(status_code=502, detail=f"{failure_detail} 16,000-token 재시도 후에도 저장 가능한 JSON을 만들지 못했습니다.")
+        if result:
+            result = finalize_llm_reparse_result(result, mode, metadata)
+    if error or not result:
+        raise HTTPException(status_code=502, detail=error or "OpenRouter returned no usable response.")
+    return result
 
 
 @app.post("/api/records/llm-reparse/stream")
@@ -10497,6 +10634,19 @@ async def llm_reparse_pasted_report_stream(request: Request) -> StreamingRespons
     system_prompt, user_prompt = build_llm_reparse_prompt(raw_markdown, json_text, mode, issues, base_records)
 
     def event_generator():
+        if should_batch_llm_reparse(mode, base_records):
+            batch_count = (len(base_records) + LLM_REPARSE_TRIAGE_BATCH_SIZE - 1) // LLM_REPARSE_TRIAGE_BATCH_SIZE
+            yield sse_event(
+                "status",
+                {"message": f"Fast Triage {len(base_records)}건을 안전한 {batch_count}개 배치로 보완하고 있습니다."},
+            )
+            result, error = run_llm_reparse_triage_batches(raw_markdown, json_text, issues, base_records, api_key)
+            if error or not result:
+                yield sse_event("error", {"message": error or "AI 재파싱 배치 결과를 만들지 못했습니다."})
+                return
+            yield sse_event("done", result)
+            return
+
         attempts = [LLM_REPARSE_INITIAL_MAX_TOKENS, LLM_REPARSE_RETRY_MAX_TOKENS]
         final_failure = "OpenRouter returned no usable response."
         for attempt_index, max_tokens in enumerate(attempts, start=1):
@@ -10516,7 +10666,7 @@ async def llm_reparse_pasted_report_stream(request: Request) -> StreamingRespons
                 max_tokens=max_tokens,
             )
             if error or stream is None:
-                yield sse_event("error", {"message": error or final_failure})
+                yield sse_event("error", {"message": format_llm_reparse_failure(error or final_failure)})
                 return
 
             answer = ""
@@ -10560,7 +10710,7 @@ async def llm_reparse_pasted_report_stream(request: Request) -> StreamingRespons
                     close()
 
             if provider_error_message:
-                yield sse_event("error", {"message": provider_error_message})
+                yield sse_event("error", {"message": format_llm_reparse_failure(provider_error_message)})
                 return
 
             metadata = {
@@ -10582,7 +10732,7 @@ async def llm_reparse_pasted_report_stream(request: Request) -> StreamingRespons
             if attempt_index == len(attempts):
                 yield sse_event(
                     "error",
-                    {"message": f"{final_failure}. 16,000-token 재시도 후에도 저장 가능한 JSON을 만들지 못했습니다."},
+                    {"message": format_llm_reparse_failure(f"{final_failure}. 16,000-token 재시도 후에도 저장 가능한 JSON을 만들지 못했습니다.")},
                 )
                 return
 
