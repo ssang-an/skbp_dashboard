@@ -51,6 +51,23 @@ class DataReuploadTests(unittest.TestCase):
 
         self.assertEqual(main.pipeline_identity(old), main.pipeline_identity(new))
 
+    def test_code_formatting_and_leading_zeroes_are_asset_aliases(self):
+        canonical = main.normalized_pipeline_asset_identity("AR1001")
+
+        self.assertEqual(canonical, main.normalized_pipeline_asset_identity("AR-1001"))
+        self.assertEqual(canonical, main.normalized_pipeline_asset_identity("AR01001"))
+        self.assertTrue(main.pipeline_asset_identities_match(canonical, main.normalized_pipeline_asset_identity("AR-1001")))
+
+    def test_distinct_numeric_asset_codes_are_not_reupload_matches(self):
+        self.assertFalse(main.pipeline_asset_identities_match(
+            main.normalized_pipeline_asset_identity("AR1001"),
+            main.normalized_pipeline_asset_identity("AR1002"),
+        ))
+        self.assertFalse(main.pipeline_asset_identities_match(
+            main.normalized_pipeline_asset_identity("AS-301"),
+            main.normalized_pipeline_asset_identity("AS-401"),
+        ))
+
     def test_confirmed_reupload_reuses_existing_record_id(self):
         old = full_record("Xenon_Azetukalner_20260801")
         new = full_record("Xenon_Azetukalner_20260803")

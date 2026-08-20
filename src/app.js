@@ -541,6 +541,27 @@ function normalizedPipelineAssetIdentity(value) {
   return normalizedPipelineIdentityText(value).replace(/(?<=[a-z])0+(?=\d)/g, '');
 }
 
+function pipelineAssetCodeNumber(value) {
+  const matched = String(value || '').match(/^[a-z]+(\d+)[a-z]*$/i);
+  return matched?.[1] || '';
+}
+
+function assetsHaveConflictingCodeNumbers(left, right) {
+  const leftNumber = pipelineAssetCodeNumber(left);
+  const rightNumber = pipelineAssetCodeNumber(right);
+  return Boolean(leftNumber && rightNumber && leftNumber !== rightNumber);
+}
+
+function areSimilarPipelineAssets(left, right) {
+  if (!left || !right) return false;
+  if (left === right) return true;
+  // Code-like names identify a distinct asset by their numeric component.
+  // Never surface AR1001/AR1002 or AS-301/AS-401 as reupload candidates.
+  if (assetsHaveConflictingCodeNumbers(left, right)) return false;
+  const threshold = Math.max(1, Math.floor(Math.max(left.length, right.length) * 0.12));
+  return editDistance(left, right) <= threshold;
+}
+
 function editDistance(left, right) {
   const a = String(left || ''); const b = String(right || '');
   const row = Array.from({ length: b.length + 1 }, (_, index) => index);
@@ -587,9 +608,7 @@ function findDataReuploadMatches(records) {
       .filter((existingRecord) => {
         const existingIdentity = dataUploadRecordIdentity(existingRecord);
         if (existingIdentity.mode !== incomingIdentity.mode || !existingIdentity.normalizedAsset) return false;
-        const distance = editDistance(incomingIdentity.normalizedAsset, existingIdentity.normalizedAsset);
-        const threshold = Math.max(1, Math.floor(Math.max(incomingIdentity.normalizedAsset.length, existingIdentity.normalizedAsset.length) * 0.12));
-        return incomingIdentity.normalizedAsset === existingIdentity.normalizedAsset || distance <= threshold;
+        return areSimilarPipelineAssets(incomingIdentity.normalizedAsset, existingIdentity.normalizedAsset);
       })
       .sort((a, b) => {
         const identityA = dataUploadRecordIdentity(a);

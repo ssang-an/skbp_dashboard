@@ -3043,6 +3043,24 @@ def normalized_pipeline_asset_identity(value: Any) -> str:
     return re.sub(r"(?<=[a-z])0+(?=\d)", "", normalized)
 
 
+def pipeline_asset_code_number(value: str) -> str:
+    """Return the numeric identifier of a code-like pipeline asset, if present."""
+    matched = re.fullmatch(r"[a-z]+(\d+)[a-z]*", str(value or ""))
+    return matched.group(1) if matched else ""
+
+
+def pipeline_asset_identities_match(left_asset: str, right_asset: str) -> bool:
+    """Match formatting aliases without conflating distinct numeric asset codes."""
+    if left_asset == right_asset:
+        return True
+    left_number = pipeline_asset_code_number(left_asset)
+    right_number = pipeline_asset_code_number(right_asset)
+    if left_number and right_number and left_number != right_number:
+        return False
+    threshold = max(1, math.floor(max(len(left_asset), len(right_asset)) * 0.12))
+    return difflib.SequenceMatcher(None, left_asset, right_asset).ratio() >= 1 - (threshold / max(len(left_asset), len(right_asset), 1))
+
+
 def pipeline_identity(record: dict[str, Any]) -> tuple[str, str, str]:
     """Return the workflow/company/asset identity used for confirmed reuploads."""
     table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else {}
@@ -3064,8 +3082,7 @@ def pipeline_identities_match(left: tuple[str, str, str], right: tuple[str, str,
     # this replacement request.
     if left[0] != right[0]:
         return False
-    threshold = max(1, math.floor(max(len(left[2]), len(right[2])) * 0.12))
-    return left[2] == right[2] or difflib.SequenceMatcher(None, left[2], right[2]).ratio() >= 1 - (threshold / max(len(left[2]), len(right[2]), 1))
+    return pipeline_asset_identities_match(left[2], right[2])
 
 
 def apply_confirmed_reupload_replacements(
