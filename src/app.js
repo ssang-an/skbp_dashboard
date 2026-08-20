@@ -2203,6 +2203,17 @@ function activeTableMode() {
   return 'full';
 }
 
+function currentTabRecordCount() {
+  const isStep0Visible = Boolean(elements.step0Panel && !elements.step0Panel.hidden);
+  if (isStep0Visible) return state.step0Rows.length;
+  return state.rows.filter(rowMatchesActiveTableMode).length;
+}
+
+function updateHeaderRecordCount() {
+  if (!elements.dataStatus) return;
+  elements.dataStatus.textContent = `총 ${currentTabRecordCount()}건 로드됨`;
+}
+
 function recordDetailHref(row, mode = activeTableMode()) {
   if (row.isTriage) return `/triage-detail?id=${encodeURIComponent(row.id)}`;
   return `/detail?id=${encodeURIComponent(row.id)}&tab=${encodeURIComponent(mode)}`;
@@ -3645,12 +3656,7 @@ function renderWorkflowMode(summary = activeTabSummary()) {
   if (topDataActions) {
     topDataActions.hidden = mode === 'focus';
   }
-  const pipelineCount = Number(
-    mode === 'focus' ? summary?.kpis?.pipelines : summary?.kpis?.assets
-  );
-  if (elements.dataStatus && Number.isFinite(pipelineCount)) {
-    elements.dataStatus.textContent = `총 ${pipelineCount}건 로드됨`;
-  }
+  updateHeaderRecordCount();
   const copy = WORKFLOW_COPY[mode];
   const distributionAssets = Number(summary?.distribution_population?.assets) || 0;
   if (elements.workflowModeDescription) {
@@ -4709,6 +4715,7 @@ function renderFocusTable() {
 }
 
 function renderTable() {
+  updateHeaderRecordCount();
   hideTargetContextTooltip();
   fitColumnWidthsToTable();
   const mode = activeTableMode();
@@ -5207,7 +5214,7 @@ function exportPipelineTable() {
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
-  elements.dataStatus.textContent = `${rows.length} rows exported`;
+  updateHeaderRecordCount();
 }
 
 async function loadRecords({ signal } = {}) {
@@ -5280,7 +5287,7 @@ async function saveManualReviewEdit(select) {
     await refreshDashboardSummary();
     renderFilters();
     render();
-    elements.dataStatus.textContent = 'Human review saved';
+    updateHeaderRecordCount();
   } catch (error) {
     select.value = previousValue;
     select.disabled = false;
@@ -5327,7 +5334,7 @@ async function saveManualTableTextEdit(input) {
     await refreshDashboardSummary();
     renderFilters();
     render();
-    elements.dataStatus.textContent = 'Human review saved';
+    updateHeaderRecordCount();
   } catch (error) {
     input.disabled = false;
     input.dataset.saving = '';
@@ -5436,7 +5443,7 @@ function openManualTableModalityEdit(anchor) {
     await refreshDashboardSummary();
     renderFilters();
     render();
-    elements.dataStatus.textContent = 'Target human review 저장 완료';
+    updateHeaderRecordCount();
   } catch (error) {
     elements.dataStatus.textContent = `Target 저장 실패: ${error.message}`;
     anchor.classList.remove('is-saving');
@@ -5476,22 +5483,18 @@ async function recalculateLatestRubric(button) {
       return result;
     });
     if (data === OPERATION_CANCELLED) {
-      elements.dataStatus.textContent = `${workflowLabel} 재평가 취소 요청됨`;
+      updateHeaderRecordCount();
       return;
     }
     if (!data.record || ['error', 'conflict'].includes(data.status)) {
-      elements.dataStatus.textContent = data.message || `기존 rubric v${latestVersion} 점수를 유지했습니다.`;
+      updateHeaderRecordCount();
       return;
     }
     replaceRecordFromApi(recordId, data.record);
     await refreshDashboardSummary();
     renderFilters();
     render();
-    const clearedFields = Array.isArray(data.cleared_manual_scoring_override_fields)
-      ? data.cleared_manual_scoring_override_fields
-      : [];
-    elements.dataStatus.textContent = data.message
-      || `${workflowLabel} rubric v${data.rubric_version || latestVersion} AI 재채점 완료${clearedFields.length ? ' · manual score reset' : ''}`;
+    updateHeaderRecordCount();
   } catch (error) {
     elements.dataStatus.textContent = `${workflowLabel} 재평가 실패: ${error.message}`;
   } finally {
@@ -5532,7 +5535,7 @@ async function copyTriageFullScoutPrompt(button) {
     const warningsStore = await fetchInstructionWarnings();
     const fullPrompt = appendInstructionWarnings(buildGptInstructionPrompt(), warningsStore.full);
     await navigator.clipboard.writeText(buildCopyText(fullPrompt));
-    elements.dataStatus.textContent = `${row.asset} Full Scout 지침을 클립보드에 복사했습니다.`;
+    updateHeaderRecordCount();
   } catch (error) {
     const scratch = document.createElement('textarea');
     scratch.value = buildCopyText(buildGptInstructionPrompt());
@@ -5543,7 +5546,7 @@ async function copyTriageFullScoutPrompt(button) {
     scratch.select();
     document.execCommand('copy');
     document.body.removeChild(scratch);
-    elements.dataStatus.textContent = `${row.asset} Full Scout 지침을 클립보드에 복사했습니다.`;
+    updateHeaderRecordCount();
   } finally {
     button.disabled = false;
     button.classList.remove('is-saving');
@@ -5573,15 +5576,13 @@ async function recalculateLatestOiPartnership(button) {
       return result;
     });
     if (data === OPERATION_CANCELLED) {
-      elements.dataStatus.textContent = 'Filter 3 분류 취소 요청됨';
+      updateHeaderRecordCount();
       return;
     }
     replaceRecordFromApi(recordId, data.record);
     renderFilters();
     render();
-    elements.dataStatus.textContent = `Filter 3 recalculated by OI Partnership v${
-      data.oi_partnership_criteria_version || latestVersion
-    }`;
+    updateHeaderRecordCount();
   } catch (error) {
     elements.dataStatus.textContent = `Filter 3 재분류 실패: ${error.message}`;
   } finally {
@@ -5636,11 +5637,7 @@ async function performFocusManagementSave(recordId, payload, control = null) {
       renderFilters();
       render();
     }
-    elements.dataStatus.textContent = payload.action === 'add'
-      ? 'TAB3에 추가했습니다'
-      : payload.action === 'remove'
-        ? 'TAB3에서 제거했습니다'
-        : 'TAB3 내용을 저장했습니다';
+    updateHeaderRecordCount();
     return true;
   } catch (error) {
     if (control) {
@@ -9577,9 +9574,7 @@ function showStep0Panel(show) {
 }
 
 function updateStep0HeaderCount() {
-  if (elements.dataStatus) {
-    elements.dataStatus.textContent = `총 ${state.step0Rows.length}건 로드됨`;
-  }
+  updateHeaderRecordCount();
 }
 
 function activateStep0Panel() {
