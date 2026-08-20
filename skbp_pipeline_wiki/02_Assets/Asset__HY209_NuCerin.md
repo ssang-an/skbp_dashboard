@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: "[[01_Raw_Reports/Shaperon_HY209_NuCerin_20260622]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -16,7 +16,7 @@ confidence: "medium"
 company: "[[03_Companies/Company__Shaperon_Inc|Shaperon Inc.]]"
 target: "[[04_Targets/Target__GPCR19_TGR5_with_downstream_P2X7R-NLRP3_inflammasome_modulation|GPCR19 / TGR5 with downstream P2X7R-NLRP3 inflammasome modulation]]"
 moa: "[[05_MoA/MoA__HY209_TDCA_activates_GPCR19_TGR5_and_modulates_GPCR19-P2X7_interaction,_4c969749|HY209/TDCA activates GPCR19/TGR5 and modulates GPCR19-P2X7 interaction, suppressing P2X7R-mediated Ca2+ mobilization, NLRP3 activation and IL-1β/IL-18 production in microglia; in AD mouse models it is reported to reduce Aβ plaques, microgliosis and neuronal loss and improve memory.]]"
-modality: "[[06_Modalities_Platforms/Modality__Oral_small_molecule_GPCR19_TGR5_agonist_inflammasome_modulator|Oral small molecule GPCR19/TGR5 agonist / inflammasome modulator]]"
+modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer’s_disease|Alzheimer’s disease]]"
 scorecard: "[[10_Scorecards/Scorecard__HY209_NuCerin__20260622|Scorecard__HY209_NuCerin__20260622]]"
@@ -38,9 +38,9 @@ evidence_level: "E3"
 | Asset | HY209 / NuCerin |
 | Target | [[04_Targets/Target__GPCR19_TGR5_with_downstream_P2X7R-NLRP3_inflammasome_modulation|GPCR19 / TGR5 with downstream P2X7R-NLRP3 inflammasome modulation]] |
 | MoA | [[05_MoA/MoA__HY209_TDCA_activates_GPCR19_TGR5_and_modulates_GPCR19-P2X7_interaction,_4c969749|HY209/TDCA activates GPCR19/TGR5 and modulates GPCR19-P2X7 interaction, suppressing P2X7R-mediated Ca2+ mobilization, NLRP3 activation and IL-1β/IL-18 production in microglia; in AD mouse models it is reported to reduce Aβ plaques, microgliosis and neuronal loss and improve memory.]] |
-| Modality | [[06_Modalities_Platforms/Modality__Oral_small_molecule_GPCR19_TGR5_agonist_inflammasome_modulator|Oral small molecule GPCR19/TGR5 agonist / inflammasome modulator]] |
+| Modality | [[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]] |
 | Indication | [[07_Indications/Indication__Alzheimer’s_disease|Alzheimer’s disease]] |
-| Stage | Phase I in healthy volunteers for HY209/NuCerin; Shaperon official site states Korea Phase I Part A completed and Part B ongoing. CenterWatch lists NCT06533878 as active/enrolling and sponsor as Kukjeon Pharmaceutical. |
+| Stage | Phase 1 |
 | Theme / Cluster | [[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]] / [[11_Themes_Clusters/Cluster__Cytokine_신경조절|Cytokine 신경조절]] |
 | Recommendation | Watch |
 | Total Score | 16/21 |
@@ -69,7 +69,7 @@ HY209/NuCerin is a strong SKBP Neuroimmune-fit oral GPCR19/TGR5-P2X7/NLRP3 Alzhe
 
 ### Development Context
 - Company: [[03_Companies/Company__Shaperon_Inc|Shaperon Inc.]]
-- Modality: [[06_Modalities_Platforms/Modality__Oral_small_molecule_GPCR19_TGR5_agonist_inflammasome_modulator|Oral small molecule GPCR19/TGR5 agonist / inflammasome modulator]]
+- Modality: [[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]
 - Indication: [[07_Indications/Indication__Alzheimer’s_disease|Alzheimer’s disease]]
 
 ### Evidence Sources

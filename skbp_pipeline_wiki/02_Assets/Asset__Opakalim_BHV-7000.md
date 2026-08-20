@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: "[[01_Raw_Reports/Biohaven_Opakalim_fast_triage_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -16,7 +16,7 @@ confidence: "medium"
 company: "[[03_Companies/Company__Biohaven|Biohaven]]"
 target: "[[04_Targets/Target__Kv7.2_Kv7.3|Kv7.2/Kv7.3]]"
 moa: "[[05_MoA/MoA__Selective_Kv7.2_Kv7.3_potassium_channel_activator|Selective Kv7.2/Kv7.3 potassium channel activator]]"
-modality: "[[06_Modalities_Platforms/Modality__Oral_small_molecule|Oral small molecule]]"
+modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Focal_epilepsy_and_broader_epilepsy_populations|Focal epilepsy and broader epilepsy populations]]"
 scorecard: "[[10_Scorecards/Scorecard__Opakalim_BHV-7000__20260623|Scorecard__Opakalim_BHV-7000__20260623]]"
@@ -38,7 +38,7 @@ evidence_level: "E0"
 | Asset | Opakalim / BHV-7000 |
 | Target | [[04_Targets/Target__Kv7.2_Kv7.3|Kv7.2/Kv7.3]] |
 | MoA | [[05_MoA/MoA__Selective_Kv7.2_Kv7.3_potassium_channel_activator|Selective Kv7.2/Kv7.3 potassium channel activator]] |
-| Modality | [[06_Modalities_Platforms/Modality__Oral_small_molecule|Oral small molecule]] |
+| Modality | [[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]] |
 | Indication | [[07_Indications/Indication__Focal_epilepsy_and_broader_epilepsy_populations|Focal epilepsy and broader epilepsy populations]] |
 | Stage | Phase 2/3 |
 | Theme / Cluster | [[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]] / [[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]] |
@@ -69,7 +69,7 @@ Strong same-class Kv7.2/7.3 comparator; run Full Scout.
 
 ### Development Context
 - Company: [[03_Companies/Company__Biohaven|Biohaven]]
-- Modality: [[06_Modalities_Platforms/Modality__Oral_small_molecule|Oral small molecule]]
+- Modality: [[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]
 - Indication: [[07_Indications/Indication__Focal_epilepsy_and_broader_epilepsy_populations|Focal epilepsy and broader epilepsy populations]]
 
 ### Evidence Sources

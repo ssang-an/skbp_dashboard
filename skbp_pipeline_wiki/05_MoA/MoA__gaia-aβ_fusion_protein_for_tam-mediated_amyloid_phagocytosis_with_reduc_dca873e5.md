@@ -6,8 +6,8 @@ aliases:
   - "gaia-aβ_fusion_protein_for_tam-mediated_amyloid_phagocytosis_with_reduc_dca873e5"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

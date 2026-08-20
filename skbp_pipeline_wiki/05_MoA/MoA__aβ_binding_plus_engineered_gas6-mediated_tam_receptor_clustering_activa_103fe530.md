@@ -6,8 +6,8 @@ aliases:
   - "aβ_binding_plus_engineered_gas6-mediated_tam_receptor_clustering_activa_103fe530"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

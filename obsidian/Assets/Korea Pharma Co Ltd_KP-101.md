@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-18T17:19:09"
+generated_at: "2026-08-20T15:43:42"
 record_id: "Korea Pharma Co Ltd_KP-101"
 company: "Korea Pharma Co Ltd"
 country: "Republic of Korea"

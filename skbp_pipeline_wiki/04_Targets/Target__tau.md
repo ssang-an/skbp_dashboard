@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/target"
   - "theme/no_theme"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -31,6 +31,7 @@ confidence: "medium"
 
 ## Related Assets
 
+- [[02_Assets/Asset__AS-301|AS-301]]
 - [[02_Assets/Asset__ILM02|ILM02]]
 
 ## Related MoA

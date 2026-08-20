@@ -6,8 +6,8 @@ aliases:
   - "charcot-marie-tooth_disease_type_1"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

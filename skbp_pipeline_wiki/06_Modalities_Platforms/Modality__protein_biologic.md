@@ -6,8 +6,8 @@ aliases:
   - "protein_biologic"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -28,6 +28,7 @@ confidence: "medium"
 - [[02_Assets/Asset__ILM01_(GAIA-Aβ)|ILM01_(GAIA-Aβ)]]
 - [[02_Assets/Asset__ILM02|ILM02]]
 - [[02_Assets/Asset__ILM21|ILM21]]
+- [[02_Assets/Asset__PF1802|PF1802]]
 
 ## Related Targets / MoA
 

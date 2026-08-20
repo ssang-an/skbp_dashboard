@@ -1,8 +1,7 @@
 # No mapped SKBP cluster
 
-> Generated from `json/pipeline-records.json` at `2026-08-18T17:19:09`.
+> Generated from `json/pipeline-records.json` at `2026-08-20T15:43:42`.
 
 ## Linked Assets
 
-- [[Hangzhou_Westan_WT-1108_20260621]]
 - [[Hefei_Huafang_HB018_fast_triage_20260623]]

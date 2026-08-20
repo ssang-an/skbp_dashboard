@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-18T17:19:09"
+generated_at: "2026-08-20T15:43:42"
 record_id: "AtoGen Co., Ltd._LABthera-003"
 company: "AtoGen Co., Ltd."
 country: "Republic of Korea"

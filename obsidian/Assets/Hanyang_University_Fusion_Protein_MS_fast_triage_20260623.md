@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-18T17:19:09"
+generated_at: "2026-08-20T15:43:42"
 record_id: "Hanyang_University_Fusion_Protein_MS_fast_triage_20260623"
 company: "Hanyang University"
 country: "Republic of Korea"

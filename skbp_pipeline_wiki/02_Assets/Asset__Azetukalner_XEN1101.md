@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: "[[01_Raw_Reports/Xenon_Azetukalner_fast_triage_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -16,7 +16,7 @@ confidence: "medium"
 company: "[[03_Companies/Company__Xenon_Pharmaceuticals|Xenon Pharmaceuticals]]"
 target: "[[04_Targets/Target__Kv7_KCNQ_potassium_channels|Kv7/KCNQ potassium channels]]"
 moa: "[[05_MoA/MoA__Potassium_channel_opener_neuronal_hyperexcitability_reduction|Potassium channel opener / neuronal hyperexcitability reduction]]"
-modality: "[[06_Modalities_Platforms/Modality__Oral_small_molecule|Oral small molecule]]"
+modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Focal_onset_seizures|Focal onset seizures]]"
 scorecard: "[[10_Scorecards/Scorecard__Azetukalner_XEN1101__20260623|Scorecard__Azetukalner_XEN1101__20260623]]"
@@ -38,7 +38,7 @@ evidence_level: "E0"
 | Asset | Azetukalner / XEN1101 |
 | Target | [[04_Targets/Target__Kv7_KCNQ_potassium_channels|Kv7/KCNQ potassium channels]] |
 | MoA | [[05_MoA/MoA__Potassium_channel_opener_neuronal_hyperexcitability_reduction|Potassium channel opener / neuronal hyperexcitability reduction]] |
-| Modality | [[06_Modalities_Platforms/Modality__Oral_small_molecule|Oral small molecule]] |
+| Modality | [[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]] |
 | Indication | [[07_Indications/Indication__Focal_onset_seizures|Focal onset seizures]] |
 | Stage | Phase 3 |
 | Theme / Cluster | [[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]] / [[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]] |
@@ -69,7 +69,7 @@ Strong same-target Kv7 benchmark; run Full Scout.
 
 ### Development Context
 - Company: [[03_Companies/Company__Xenon_Pharmaceuticals|Xenon Pharmaceuticals]]
-- Modality: [[06_Modalities_Platforms/Modality__Oral_small_molecule|Oral small molecule]]
+- Modality: [[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]
 - Indication: [[07_Indications/Indication__Focal_onset_seizures|Focal onset seizures]]
 
 ### Evidence Sources

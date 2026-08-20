@@ -6,8 +6,8 @@ aliases:
   - "hangzhou_vitan_pharmaceutical_technology_co_ltd"
 tags:
   - "pipeline/company"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

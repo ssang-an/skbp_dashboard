@@ -188,6 +188,10 @@
                 class="step0-copy-instructions-button help-tooltip"
                 data-tooltip="선택한 조사 대기 항목을 포함해 GPT Fast Triage 지침 1을 복사합니다."
               ><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></svg><span class="step0-copy-gpt" aria-hidden="true">GPT</span><b>지침 복사</b></button>
+              <button id="step0ExportExcelButton" class="excel-export-button help-tooltip" type="button" data-tooltip="현재 필터 결과를 Excel용 CSV로 내보냅니다." disabled>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h5M3 9h9v9H3zM5.5 11.5l4 4m0-4-4 4"/></svg>
+                <span>Excel export</span>
+              </button>
             </div>
           </div>
           <div class="table-wrap">
@@ -219,12 +223,17 @@
               </tbody>
             </table>
           </div>
+          <div class="table-footer">
+            <button id="step0PrevPage" class="help-tooltip" type="button" data-tooltip="이전 페이지로 이동합니다.">이전</button>
+            <span id="step0PageInfo" role="status" aria-live="polite">1 / 1</span>
+            <button id="step0NextPage" class="help-tooltip" type="button" data-tooltip="다음 페이지로 이동합니다.">다음</button>
+          </div>
         </section>
 
         <section class="panel paste-panel" id="step0UploadPanel">
           <div class="panel-header">
             <div class="data-upload-header-copy">
-              <h2>후보 목록 업로드</h2>
+              <h2>후보 목록 Upload</h2>
             </div>
             <span id="step0SaveStatus" class="data-upload-status" data-state="waiting" role="status" aria-live="polite">
               <svg class="data-upload-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><circle cx="12" cy="12" r="2" /></svg>

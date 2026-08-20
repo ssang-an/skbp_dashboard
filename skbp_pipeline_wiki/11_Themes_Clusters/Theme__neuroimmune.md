@@ -7,8 +7,8 @@ aliases:
 tags:
   - "skbp/theme"
   - "skbp/taxonomy"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -31,9 +31,14 @@ A cross-disease strategic biology theme used for SKBP Theme-based R&D strategy.
 
 ## Related Assets
 
+- [[02_Assets/Asset__1ST-103|1ST-103]]
+- [[02_Assets/Asset__1ST-103_(NLY02)|1ST-103_(NLY02)]]
 - [[02_Assets/Asset__1ST-104|1ST-104]]
 - [[02_Assets/Asset__ADEL-Y04|ADEL-Y04]]
+- [[02_Assets/Asset__AS-M801|AS-M801]]
+- [[02_Assets/Asset__BSC-3301|BSC-3301]]
 - [[02_Assets/Asset__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection|Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection]]
+- [[02_Assets/Asset__GV1001|GV1001]]
 - [[02_Assets/Asset__HB-02|HB-02]]
 - [[02_Assets/Asset__HB-03|HB-03]]
 - [[02_Assets/Asset__HB-05|HB-05]]
@@ -43,12 +48,16 @@ A cross-disease strategic biology theme used for SKBP Theme-based R&D strategy.
 - [[02_Assets/Asset__ILM01_(GAIA-Aβ)|ILM01_(GAIA-Aβ)]]
 - [[02_Assets/Asset__ILM02|ILM02]]
 - [[02_Assets/Asset__ILM21|ILM21]]
+- [[02_Assets/Asset__ISU203|ISU203]]
 - [[02_Assets/Asset__LNK01006|LNK01006]]
 - [[02_Assets/Asset__LNK01006_(BLKR201)|LNK01006_(BLKR201)]]
 - [[02_Assets/Asset__LNK01006_BLKR201|LNK01006_BLKR201]]
 - [[02_Assets/Asset__Lead_compound|Lead_compound]]
 - [[02_Assets/Asset__META-01_META-1i_MP-5342|META-01_META-1i_MP-5342]]
+- [[02_Assets/Asset__NLY02_(1ST-103)|NLY02_(1ST-103)]]
+- [[02_Assets/Asset__VRN04-2|VRN04-2]]
 - [[02_Assets/Asset__VTA-27|VTA-27]]
+- [[02_Assets/Asset__YHC2133|YHC2133]]
 - [[02_Assets/Asset__glycoprotein_29-modified_deferoxamine|glycoprotein_29-modified_deferoxamine]]
 
 ## Notes

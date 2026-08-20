@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-18T17:19:09"
+generated_at: "2026-08-20T15:43:42"
 record_id: "Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)"
 company: "Threebrooks Therapeutics"
 country: "Republic of Korea"
@@ -349,39 +349,135 @@ Scientifically differentiated and data-rich preclinical TRPML1 program with curr
       "partnership_type": "unknown",
       "partnership_classification_status": "auto_classified",
       "partner_material_flags": {
-        "cdp": true,
-        "ncdp": false,
-        "admet": false
+        "cdp": false,
+        "ncdp": true,
+        "admet": false,
+        "dd_report": false
       },
       "in_vivo_status": "O",
-      "in_vivo_status_source": "auto",
+      "in_vivo_status_source": "deepseek",
       "in_vitro_status": "O",
-      "in_vitro_status_source": "auto",
+      "in_vitro_status_source": "deepseek",
       "admet_completed": null,
-      "admet_completed_source": "auto",
-      "filter3_document_analyses": [],
-      "filter3_document_analysis_updated_at": "2026-08-13T01:25:06.044638+00:00",
+      "admet_completed_source": "deepseek",
+      "filter3_document_analyses": [
+        {
+          "attachment_id": "da5b175484e1403084075a0d5f9c3051",
+          "filename": "3. IR_쓰리브룩스 NCDP.pdf",
+          "document_id": "6a4430fa0f2b4ff38f52fe55324c8d85",
+          "extraction_method": "native_pdf_text",
+          "result": {
+            "target_indication": {
+              "verdict": "true",
+              "rationale": "The document explicitly states Alzheimer's disease (AD) and Parkinson's disease (PD) as the target indications for the company's drug development pipeline.",
+              "evidence": [
+                {
+                  "page_or_slide": 2,
+                  "location_status": "located",
+                  "text": "알츠하이머 치매/파킨슨신약개발 및 기술수출"
+                }
+              ]
+            },
+            "small_molecule": {
+              "verdict": "true",
+              "rationale": "The document explicitly states that the drug modality is a small molecule compound.",
+              "evidence": [
+                {
+                  "page_or_slide": 2,
+                  "location_status": "located",
+                  "text": "저분자화합물 신약 파이프라인"
+                }
+              ]
+            },
+            "ind_enabling": {
+              "verdict": "false",
+              "rationale": "The document shows the pipeline stage as '선도물질도출' (lead compound) and '후보물질도출' (candidate compound) with nonclinical and Phase 1 planned for 2027-2028, which is pre-IND-enabling.",
+              "evidence": []
+            },
+            "in_vivo_efficacy": {
+              "verdict": "true",
+              "rationale": "The document explicitly states positive in vivo efficacy results in Alzheimer's and Parkinson's animal models.",
+              "evidence": [
+                {
+                  "page_or_slide": 10,
+                  "location_status": "located",
+                  "text": "5XFAD 알츠하이머 마우스 바이오마커 감소 (레켐비 대비 염증 감소 장점) 파킨슨병 동물모델 효능 확인 (레보도파 대비 우수)"
+                },
+                {
+                  "page_or_slide": 14,
+                  "location_status": "located",
+                  "text": "알츠하이머 동물모델에서 단백질응집체 제거와 신경 염증 감소 효능 확인함 (레켐비 대비 효능 우수)"
+                },
+                {
+                  "page_or_slide": 15,
+                  "location_status": "located",
+                  "text": "파킨슨 동물모델에서 도파민수송체 및 운동능력 효능 확인함 (레보도파 대비 효능 우수함)"
+                }
+              ]
+            },
+            "in_vitro_efficacy": {
+              "verdict": "true",
+              "rationale": "The document explicitly states positive in vitro efficacy results including direct TRPML1 activation and lysosomal activity increase.",
+              "evidence": [
+                {
+                  "page_or_slide": 10,
+                  "location_status": "located",
+                  "text": "리소좀 TRPML1 직접 활성화 (리소좀 패치클램프) 리소좀 활성 증가 (LRRK2 저해제보다 우월함) 리소좀 생합성 증가 (LRRK2 저해제보다 우월함) 손상된 미토콘드리아 제거 (PINK1 activator보다 우월함) 아밀로이드베타, 타우 제거"
+                },
+                {
+                  "page_or_slide": 13,
+                  "location_status": "located",
+                  "text": "리소좀 패치클램프를 통하여 직접적인 전류 활성화 확인함"
+                }
+              ]
+            },
+            "admet_at_least_25": {
+              "verdict": "unknown",
+              "rationale": "The document mentions ADME (CYP inhibition, efflux) and Non-GLP toxicity safety confirmation, but does not provide a structured ADMET study list with status counts to calculate a score.",
+              "evidence": [
+                {
+                  "page_or_slide": 10,
+                  "location_status": "located",
+                  "text": "Non-GLP 독성시험 안전성 확인"
+                },
+                {
+                  "page_or_slide": 18,
+                  "location_status": "located",
+                  "text": "ADME (CYP inhibition, efflux…)"
+                }
+              ]
+            },
+            "admet_completed_count": null,
+            "matched_indication": null,
+            "concise_summary": "The document is an investor relations presentation for Threebrooks Therapeutics, a company developing small molecule drugs targeting Alzheimer's disease and Parkinson's disease. The lead compound (3BT-1-115) is a TRPML1 activator currently in the lead optimization/preclinical candidate stage, with positive in vitro and in vivo efficacy data shown. The stage is pre-IND-enabling, and ADMET data is mentioned but not structured for scoring. The document does not contain any ADMET Partner Material with a study-status list, so the ADMET score cannot be determined."
+          }
+        }
+      ],
+      "filter3_document_analysis_updated_at": "2026-08-19T23:48:19.007102+00:00",
       "partnership_auto_suggestion": "unknown",
       "partnership_auto_note": "ADMET Score, ADMET uploaded 확인 불가",
       "partnership_auto_evidence_sources": [
         "Tab2 구조화 데이터",
-        "Full Scout 원문 리포트: Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)"
+        "Full Scout 원문 리포트: Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)",
+        "Partner Materials: 3. IR_쓰리브룩스 NCDP.pdf"
       ],
-      "partnership_classification_criteria_version": "1.3",
+      "partnership_classification_criteria_version": "1.4",
       "partnership_note": "ADMET Score, ADMET uploaded 확인 불가",
       "partnership_evidence_sources": [
         "Tab2 구조화 데이터",
-        "Full Scout 원문 리포트: Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)"
+        "Full Scout 원문 리포트: Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)",
+        "Partner Materials: 3. IR_쓰리브룩스 NCDP.pdf"
       ],
       "partnership_classification_source": "auto",
-      "partnership_classified_at": "2026-08-13T01:25:06.044672+00:00",
-      "updated_at": "2026-08-18T07:37:54.028456+00:00",
+      "partnership_classified_at": "2026-08-19T23:48:19.007162+00:00",
+      "updated_at": "2026-08-19T04:59:31.466131+00:00",
       "updated_source": "dashboard_tab3",
-      "updated_by": "10.245.226.6",
+      "updated_by": "127.0.0.1",
       "partner_material_flag_overrides": {
-        "cdp": true,
+        "cdp": false,
         "admet": false
-      }
+      },
+      "partnership_evidence_updated_at": "2026-08-19T23:46:23.339606+00:00"
     },
     "edit_history": [
       {
@@ -428,6 +524,284 @@ Scientifically differentiated and data-rich preclinical TRPML1 program with curr
         "field": "topic_notes.topic-target-relevance",
         "previous_value": null,
         "new_value": "ㅇ란어럄ㅈㄷㄹ"
+      },
+      {
+        "changed_at": "2026-08-18T08:26:35.179789+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.partner_material_flags.cdp",
+        "previous_value": true,
+        "new_value": false
+      },
+      {
+        "id": "8ab72510680f4f5cbd50c89df637b424",
+        "changed_at": "2026-08-19T04:35:56.129828+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_upload",
+        "field": "attachments",
+        "previous_value": null,
+        "new_value": "3. IR_쓰리브룩스 NCDP.pdf"
+      },
+      {
+        "id": "bd43078396984411a5011c534e2d9939",
+        "changed_at": "2026-08-19T04:37:40.527042+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_delete",
+        "field": "attachments",
+        "previous_value": "3. IR_쓰리브룩스 NCDP.pdf",
+        "new_value": null
+      },
+      {
+        "id": "4c3269a164b94a1ca445d5b78fb877fc",
+        "changed_at": "2026-08-19T04:43:12.584164+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_upload",
+        "field": "attachments",
+        "previous_value": null,
+        "new_value": "3. IR_쓰리브룩스 NCDP.pdf"
+      },
+      {
+        "id": "6185dafbc60240e0b04759108ff1c3b9",
+        "changed_at": "2026-08-19T04:48:37.931447+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_delete",
+        "field": "attachments",
+        "previous_value": "3. IR_쓰리브룩스 NCDP.pdf",
+        "new_value": null
+      },
+      {
+        "id": "bd4ae04bbe304c7b8427c759f04d2de1",
+        "changed_at": "2026-08-19T04:51:32.645126+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_upload",
+        "field": "attachments",
+        "previous_value": null,
+        "new_value": "3. IR_쓰리브룩스 NCDP.pdf"
+      },
+      {
+        "id": "e87ccf8ab596484b98061169d36f4758",
+        "changed_at": "2026-08-19T04:55:57.208142+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_table_manual_review",
+        "field": "scores.target_relevance",
+        "previous_value": 3,
+        "new_value": 2,
+        "review_reason": "사유는 이러해",
+        "review_reason_updated_at": "2026-08-19T04:58:29.503770+00:00",
+        "review_reason_updated_by": "정주원"
+      },
+      {
+        "id": "f3862f263530440a82a3a0243ba1d39a",
+        "changed_at": "2026-08-19T04:57:05.610799+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_qualitative_review_ai_generate",
+        "field": "qualitative_review.efficacy",
+        "previous_value": null,
+        "new_value": "첨부된 IR 자료에는 5XFAD 알츠하이머 마우스 모델에서 3BT-1-115가 레켐비 대비 Aβ 플라크, p-Tau, 신경염증(Iba-1)에서 통계적으로 유의미한 개선을 보였다는 데이터가 제시되어 있습니다. 또한 파킨슨병 동물모델에서 레보도파 대비 운동능력 및 도파민 수송체에서 유의미한 우위를 보인 결과가 포함되어 있습니다. 그러나 정상군 대비 회복율(%)에 대한 구체적인 수치나 SoC 대비 정량적 p-value는 보고서에 명시되어 있지 않습니다. 따라서 in vivo efficacy 데이터는 존재하나, 평가 기준에서 요구하는 정량적 회복율과 통계적 유의성 수치가 부재하여 완전한 판단이 어렵습니다."
+      },
+      {
+        "id": "7748ffe2af554b42aca22736e5af22cb",
+        "changed_at": "2026-08-19T04:57:26.194945+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_qualitative_review_delete",
+        "field": "qualitative_review.efficacy",
+        "previous_value": "첨부된 IR 자료에는 5XFAD 알츠하이머 마우스 모델에서 3BT-1-115가 레켐비 대비 Aβ 플라크, p-Tau, 신경염증(Iba-1)에서 통계적으로 유의미한 개선을 보였다는 데이터가 제시되어 있습니다. 또한 파킨슨병 동물모델에서 레보도파 대비 운동능력 및 도파민 수송체에서 유의미한 우위를 보인 결과가 포함되어 있습니다. 그러나 정상군 대비 회복율(%)에 대한 구체적인 수치나 SoC 대비 정량적 p-value는 보고서에 명시되어 있지 않습니다. 따라서 in vivo efficacy 데이터는 존재하나, 평가 기준에서 요구하는 정량적 회복율과 통계적 유의성 수치가 부재하여 완전한 판단이 어렵습니다.",
+        "new_value": null
+      },
+      {
+        "id": "3d6dc9f79fdd4f5da432138a17bba24d",
+        "changed_at": "2026-08-19T04:59:30.233284+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.partner_material_flags.admet",
+        "previous_value": false,
+        "new_value": true
+      },
+      {
+        "id": "382c66718bf54fd082df77e07c75da74",
+        "changed_at": "2026-08-19T04:59:31.466152+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.partner_material_flags.admet",
+        "previous_value": true,
+        "new_value": false
+      },
+      {
+        "id": "a39d6c78c2334c5798cb2337df5be722",
+        "changed_at": "2026-08-19T05:09:26.042895+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_delete",
+        "field": "attachments",
+        "previous_value": "3. IR_쓰리브룩스 NCDP.pdf",
+        "new_value": null
+      },
+      {
+        "id": "c73dc2d1e1ef428e97e7c92c7968a3bf",
+        "changed_at": "2026-08-19T05:13:43.965269+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_upload",
+        "field": "attachments",
+        "previous_value": null,
+        "new_value": "3. IR_쓰리브룩스 NCDP.pdf"
+      },
+      {
+        "id": "3942d3526ada41c5b5b4474044ce3f93",
+        "changed_at": "2026-08-19T05:32:16.514830+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_rubric_refresh",
+        "field": "scores.target_relevance",
+        "previous_value": 2,
+        "new_value": 3,
+        "change_method": "rubric_refresh"
+      },
+      {
+        "id": "a7d33837d1b340ddae83af257173cf0f",
+        "changed_at": "2026-08-19T05:32:23.046192+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_table_manual_review",
+        "field": "scores.target_relevance",
+        "previous_value": 3,
+        "new_value": 2
+      },
+      {
+        "id": "a21820cffcf84db5bc8bc5362af16ed1",
+        "changed_at": "2026-08-19T05:37:51.884492+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_table_manual_review",
+        "field": "scores.target_relevance",
+        "previous_value": 2,
+        "new_value": 1
+      },
+      {
+        "id": "ea7e92270c2f43f1a0007165d06c8021",
+        "changed_at": "2026-08-19T05:45:40.829111+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_upload",
+        "field": "attachments",
+        "previous_value": null,
+        "new_value": "3. IR_쓰리브룩스 NCDP.pdf"
+      },
+      {
+        "id": "8d097ce89b6d450fbec3bbbd635005b7",
+        "changed_at": "2026-08-19T05:50:21.676051+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_table_manual_review",
+        "field": "scores.platform_attractiveness",
+        "previous_value": 1,
+        "new_value": 3,
+        "review_reason": "ai test",
+        "review_reason_updated_at": "2026-08-19T06:02:40.506655+00:00",
+        "review_reason_updated_by": "정주원"
+      },
+      {
+        "id": "d87f85fc5b4344e1b25d8e1dbdf6a85d",
+        "changed_at": "2026-08-19T06:00:58.219764+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_rubric_refresh",
+        "field": "scores.target_relevance",
+        "previous_value": 1,
+        "new_value": 3,
+        "change_method": "rubric_refresh"
+      },
+      {
+        "id": "40d3b49baa2d49bda27c27de4685d2dd",
+        "changed_at": "2026-08-19T06:00:58.219809+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_rubric_refresh",
+        "field": "scores.platform_attractiveness",
+        "previous_value": 3,
+        "new_value": 1,
+        "change_method": "rubric_refresh"
+      },
+      {
+        "id": "57c1875f186e48be99ab8de8eb295b4b",
+        "changed_at": "2026-08-19T23:35:21.640963+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_upload",
+        "field": "attachments",
+        "previous_value": null,
+        "new_value": "3. IR_쓰리브룩스 NCDP.pdf"
+      },
+      {
+        "id": "a5fae2ce43ac486ca9a394ec7aad54f5",
+        "changed_at": "2026-08-19T23:36:31.889825+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_delete",
+        "field": "attachments",
+        "previous_value": "3. IR_쓰리브룩스 NCDP.pdf",
+        "new_value": null
+      },
+      {
+        "id": "6fe244f91d214197ad956fc59f0afdd8",
+        "changed_at": "2026-08-19T23:36:34.997926+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_delete",
+        "field": "attachments",
+        "previous_value": "3. IR_쓰리브룩스 NCDP.pdf",
+        "new_value": null
+      },
+      {
+        "id": "3e0a90fe65ee4e51a59ec5a4210ba400",
+        "changed_at": "2026-08-19T23:43:42.888855+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_delete",
+        "field": "attachments",
+        "previous_value": "3. IR_쓰리브룩스 NCDP.pdf",
+        "new_value": null
+      },
+      {
+        "id": "0044788b823748fbb3d71cf5b3bc759d",
+        "changed_at": "2026-08-19T23:45:17.574921+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_upload",
+        "field": "attachments",
+        "previous_value": null,
+        "new_value": "3. IR_쓰리브룩스 NCDP_DD Report.pdf"
+      },
+      {
+        "id": "6445db802ca946abb760368a0db41a87",
+        "changed_at": "2026-08-19T23:46:14.075795+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_delete",
+        "field": "attachments",
+        "previous_value": "3. IR_쓰리브룩스 NCDP_DD Report.pdf",
+        "new_value": null
+      },
+      {
+        "id": "73c6153203c34d21bb6a1e6339ed0769",
+        "changed_at": "2026-08-19T23:48:19.007169+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_attachment_upload",
+        "field": "attachments",
+        "previous_value": null,
+        "new_value": "3. IR_쓰리브룩스 NCDP.pdf"
       }
     ],
     "topic_notes": [
@@ -441,6 +815,348 @@ Scientifically differentiated and data-rich preclinical TRPML1 program with curr
         "author_name": "정주원",
         "created_at": "2026-08-18T07:39:42.139049+00:00",
         "updated_at": "2026-08-18T07:39:42.139049+00:00"
+      }
+    ],
+    "attachments": [
+      {
+        "id": "da5b175484e1403084075a0d5f9c3051",
+        "filename": "3. IR_쓰리브룩스 NCDP.pdf",
+        "stored_path": "/attachments/Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)/164d4c88e6bb46bbbc3f205fe8c32189_3. IR_쓰리브룩스 NCDP.pdf",
+        "content_type": "application/pdf",
+        "size_bytes": 3284067,
+        "uploaded_by": "정주원",
+        "uploaded_at": "2026-08-19T23:46:23.339606+00:00",
+        "processing_status": "completed",
+        "partner_material_category": "ncdp",
+        "document_processing": {
+          "document_id": "6a4430fa0f2b4ff38f52fe55324c8d85",
+          "file_sha256": "0a304122e13a486984e0b75e4718272f450e8cde5284c37e09b126d0c8c39762",
+          "filename": "3. IR_쓰리브룩스 NCDP.pdf",
+          "status": "completed",
+          "extraction": {
+            "method": "native_pdf_text",
+            "pages_or_slides": [
+              {
+                "number": 1,
+                "text": "Investor relations 2026  |  www.threebrooks.net\n100세까지 건강한 뇌!\n세포 내 노폐물 제거를 통하여 뇌 건강의 솔루션을 제공하는 기업\n쓰리브룩스테라퓨틱스\nInvestor Relations"
+              },
+              {
+                "number": 2,
+                "text": "2\n회사 현황\nInvestor relations 2026 \nThreebrooks Therapeutics\nBusiness Overview\n저분자화합물 신약 파이프라인\n신약개발\n뇌질환 CRO 서비스\n• 패치클램프 전기생리학\n• 뇌질환 세포모델 평가\n• 뇌질환 ex-vivo/동물모델 평가\n기술서비스\nBusiness model\n1. 알츠하이머 치매/파킨슨신약개발 및 기술수출\n2. 뇌질환 CRO 서비스 제공\n설립일 / 자본금/ 임직원\n2022.12.19 / 0.56억원 / 10명\n주요주주\n김성영(88%), 포스텍홀딩스 (9%)\n주소\n경상북도 포항시 흥해읍 융합기술로 66-1, 320호\n홈페이지\nwww.threebrooks.net\n“ 뇌질환의 예방과 새로운 치료 옵션 제공 ”\n유효물질\n선도물질\n후보물질\n비임상\nTRPML1     \n(알츠하이머)\nTRPML1    \n(파킨슨)\nTMEM175 \n(파킨슨)"
+              },
+              {
+                "number": 3,
+                "text": "3\n회사연혁\nInvestor relations 2026 \nThreebrooks Therapeutics\nCompany History\n~ 2024\n2025\n2026\n22.12\n쓰리브룩스테라퓨틱스(주) 설립\n23.03\n포항 세포막단백질연구소 본사이전\n23.03\n벤처기업 인증\n23.05\n포스텍홀딩스 시드투자 4억원 유치\n23.07\n기업부설연구소 인정\n23.08\n중소벤처기업부 딥테크팁스 선정          \n(3년 15억원)                                            \n- 세포소기관 전기생리학 기술 고도화\n특허출원 4건\n등록 2건\n지식 재산권 현황 (IP)\n55억원\nR&D 과제 수주\n서울바이오허브, 아산병원\n인천지사\n약물합성\n포항본사\n전기생리학 동물실험\n24.01\n인천지사 설립(약물 합성 연구소)\n24.07\n산자부 소재부품기술개발 사업 선정           \n(5년 4.5억)                                               \n- 심장독성평가법 개발\n25.01\n과기부 서울아산병원 Core Facility 구축\n사업 선정 (3년 4.5억원)                            \n- 뇌질환 치료제\n25.06\n대웅제약 오픈이노베이션 사업 선정                           \n- 레켐비 병용투여 효능평가\n25.07\n포항시 예비유망강소기업 지정\n25.07\n중기부 글로벌 협력과제 선정(3년 15억원)                      \n- 보스턴 의대 알츠하이머센터 공동연구\n25.08\nMichael J Fox Foundation \n- PDRx, T2T initiative 협력연구 참여\n25.11\nBMS 이노베이션 챌린지 우승\n26.01\nIBK 창공 혁신창업기업 (대구2기)\n26.03\n서울지사 설립 (서울바이오허브)"
+              },
+              {
+                "number": 4,
+                "text": "4\n팀\nInvestor relations 2026 \nThreebrooks Therapeutics\nTeam\n• 경북대학사/서울대박사\n• (전) 대웅제약이온채널신약팀장\n• (전) 아이엔테라퓨틱스설립자및연구소장\n →  Nav1.7 (Aneratrigine) 원 개발자\nKIST 류훈책임연구원\n• (전) 보스턴의대교수\n• SCI(E)급국제논문편수150편이상\n• 알츠하이머, 파킨슨최고권위자\n• 기전및동물시험공동연구중\n뇌과학전문가\n보스턴의대이정희교수\n• 보스턴의대알츠하이머연구센터PI\n• 보스턴소재바이오텍과다수의협력연구수행\n• 중기부국제협력과제공동수행\n보스턴의대핵심공동연구진\n뇌과학전문가\n• Biology 책임자\n• 서울대박사\n• (전) 한국뇌연구원, 서울대\n최희순Ph.D.\n핵심연구인력\n• 의약화학책임자\n• 연세대박사\n• (전) 포항공과대학교\n최성휘 Ph.D.\n• 전기생리학책임자\n• 충남대석사\n• (전) 한국뇌연구원,\n아이엔테라퓨틱스\n손숙진\n경영/연구개발총괄\nCEO / Founder 김성영Ph.D.\n7,500억원 기술이전  약물 개발 track record 보유 / 이온채널, 전기생리학 최고의 팀 연구역량과 신약개발 전 주기 개발경험 보유\n보스턴 의대 알츠하이머 연구센터 중개연구역량\n포스텍 구조생물학 역량\n포스텍이지오교수\n• 항체구조생물학 최고 전문가\n• 포스텍 석좌교수\n• 세포막단백질연구소장\n• (전) 한국구조생물학회 회장\n구조연구 전문가\n포스텍핵심공동연구진"
+              },
+              {
+                "number": 5,
+                "text": "5\n신약 기술이전 사업화 상황\nInvestor relations 2026 \nThreebrooks Therapeutics\nPlan\n지속적인 BD 를 통한 고객 니즈 기반의 약물 개발 데이터 확보\n존슨앤존슨\n로슈\n사노피\n애브비\n베링거인겔하임\n2025 BMS 이노베이션 챌린지 우승\n세계 최대 파킨슨병 연구재단 마이클제이폭스재단(MJFF) 협력 연구\n•\nPDRx (Parkinson Disease Research Exchange) 참여\n•\nTargets to Therapies Initiatives 타겟 선정 및 참여\n- TRPML1, TMEM175\n•\n글로벌제약사 BMS의 데이터 리뷰를 통\n한 혁신성 및 사업성을 인정받음\n•\n61개 바이오기업 지원 -> 최종 우승\n에자이\nTakeda\nNon confidential level\nCDA level\nB**\nE**\nMTA level\nC**\nDue Diligence level\nU**\n화이자\n국내 바이오제약사 비임상/임상 파트너사 협의\nS**\nI**"
+              },
+              {
+                "number": 6,
+                "text": "6\nInvestor relations 2026 \nThreebrooks Therapeutics\nProblem\n알츠하이머 치매Alzheimer's disease\n• 국내 65세 이상 추정치매 환자수: 현재 약 100만명→ 2040년 217만명\n• 5.2B USD (2024) → 9.2B USD (2030) CAGR 9.9%\n• 알츠하이머 치매가 70%를 차지하며, 기억력 감퇴, 인지기능 이상을 \n동반하며 결국 모든 일상생활 기능을 상실함 \n• 아밀로이드베타 항체가 최초로 근본적인 치료제로 승인됨\n아밀로이드베타 항체 치료제의 문제점\n알츠하이머 치매 문제점\n레켐비\n키순라\nFDA 허가 일자\n2023.05\n2024.07\n투여 횟수\n1회/2주\n1회/1달\n인지능력 저하 속도 효과  \n(투약 후 18개월)\n27%\n35%\nARIA 부작용 \n(뇌부종, 뇌 미세출혈)\nO\nO\n국내 허가\nO\nX (임상3상 중)\n연간 치료비\n26,500달러\n32,000달러\n• 정맥 주사제 (병원 내원 필요) \n• 비싼 약가 (아직 보험이 안됨)\n• ARIA 부작용으로 제한적인 환자\n• 효능이 만족스럽지 않음"
+              },
+              {
+                "number": 7,
+                "text": "7\nInvestor relations 2026 \nThreebrooks Therapeutics\n해결책 \nSolution\n쓰리브룩스는 세포의 청소능을 회복시켜 뇌질환의 원인 노폐물들을 제거하는 혁신신약을 개발함\n(대부분의 회사는 원인 노폐물을 직접 제거하는 약물 개발)"
+              },
+              {
+                "number": 8,
+                "text": "Investor relations 2026 \nThreebrooks Therapeutics\nTRPML1 활성제: 세포 내 오토파지-리소좀 경로 (ALP) 조절의 핵심 타겟\n질병연관성\n• Loss of function 변이시\n리소좀축적질환 발생 \nTRPML1 개발사M&A 사례\n$610M\n$610M\nAmyloid-Beta\nClearance\nDamaged\nMitochondria\nClearance\nTau Clearance\n해결책 \nSolution\nMode of Action\nTRPML1 기능 향상 → 오토파지/리소좀 기능 회복    \n세포 내 노폐물 제거\n• 알츠하이머 환자 뇌에서 \nTRPML1 발현 감소"
+              },
+              {
+                "number": 9,
+                "text": "9\nInvestor relations 2026 \nThreebrooks Therapeutics\nBusiness model\n목표 제품 특성 \n항목\nTPP (목표 제품 특성)\n적응증\n알츠하이머병\n환자군\n65세 이상의 초기 알츠하이머병 \n약물 모달리티\n저분자화합물\n작용기전\n1. TRPML1 단백질에결합하여 활성을 증가시킴\n2. 리소좀을 활성화하여 독성물질을 제거함\n투여경로/횟수\n1. 단독요법: 경구 / 하루 한번 혹은 두번 투여\n2. 레켐비 병용투여\n유효성\n레켐비 대비 동등 이상 효능 확보\n안전성\n장기복용 안전성 확보\n아밀로이드베타/타우 항체의 최적의 병용투여 파트너"
+              },
+              {
+                "number": 10,
+                "text": "10\nInvestor relations 2026 \nThreebrooks Therapeutics\n선도물질 하이라이트\nLead compound highlight\nIn vitro 데이터\nIn vivo 데이터\n리소좀 TRPML1  직접 활성화 (리소좀 패치클램프)\n리소좀 활성 증가 (LRRK2 저해제보다 우월함)\n리소좀 생합성 증가 (LRRK2 저해제보다 우월함)\n손상된 미토콘드리아 제거 (PINK1 activator보다 우월함)\n아밀로이드베타, 타우 제거\n마우스 체내 흡수 및 생체이용률 우수\n약물의 뇌 분포능 우수\n5XFAD 알츠하이머 마우스 바이오마커 감소\n(레켐비 대비 염증 감소 장점)\n파킨슨병 동물모델 효능 확인\n(레보도파 대비 우수)\n신경염증 감소효과\nNon-GLP 독성시험 안전성 확인"
+              },
+              {
+                "number": 11,
+                "text": "11\nInvestor relations 2026 \nThreebrooks Therapeutics\nData\n선도물질 데이터\n알츠하이머 환자 뇌에서 TRPML1의 발현 감소 확인→중요한 임상근거를 제공함\nDR, dentate gyrus; CA1~4, Cornu ammonis 1~4; Ent Cx, entorhinal cortex. \nNPCAD, neuropathological and clinical Alzheimer’s disease; Severe AD, severe Alzheimer’s disease.\nA. RNA seq\nB. 면역염색"
+              },
+              {
+                "number": 12,
+                "text": "12\nInvestor relations 2026 \nThreebrooks Therapeutics\nData\n선도물질 데이터\nCryo-EM을 통하여 3BT-1-115과 TRPML1 결합 구조를 규명함\n→ S5-S6 helices, hydrophobic interaction\nA\nB\nCa2+\n3BT-1"
+              },
+              {
+                "number": 13,
+                "text": "13\nInvestor relations 2026 \nThreebrooks Therapeutics\nData\n선도물질 데이터\n리소좀 패치클램프를 통하여 직접적인 전류 활성화 확인함\nA. 전류-전압 curve\nB. TRPML1 전류 활성화\n-150\n-100\n-50\n50\n-75\n-50\n-25\nBasal\n0.01μM\n0.1μM\n1μM\n10μM\nI (pA/pF)\nV (mV)\nbasal\n0.01\n0.1\n1\n10\n0\n5\n10\n8.45\n3.77\n2.21\n1.49\n1.00\nFold Changes at -120mV\n3BT-1-115 (μM)\n***"
+              },
+              {
+                "number": 14,
+                "text": "14\nInvestor relations 2026 \nThreebrooks Therapeutics\nData\n선도물질 데이터\n알츠하이머 동물모델에서 단백질응집체 제거와 신경 염증 감소 효능 확인함 (레켐비 대비 효능 우수)\nvehicle\nLEQEMBI\n3BT-1-115\n0\n50\n100\n150\n200\nNumber of Aβ plaques\n✱✱✱\n✱\nVehicle\nleqembi 10mg/kg IV\n3BT-1-115 30mg/kg PO\nVehicle\nLEQEMBI\n3BT-1-115\n0.00\n0.01\n0.02\n0.03\n0.04\n0.05\nns\n✱✱✱\nIba1 FITC Area/Classified Area\nVehicle\nLEQEMBI 10mg/kg IV\n3BT-1-115 30mg/kg PO\nAβ\nvehicle\nLEQEMBI\n3BT-1-115\n100㎛\nIba-1\n100㎛\np-Tau\n100㎛\nVehicle\nLEQEMBI\n3BT-1-115\n0\n50\n100\n150\np-Tau relative ratio of MFI\n✱✱✱\n✱✱✱✱\nLEQEMBI 10mg/kg IV\nVehicle\n3BT-1-115 30mg/kg PO"
+              },
+              {
+                "number": 15,
+                "text": "15\nInvestor relations 2026 \nThreebrooks Therapeutics\nData\n선도물질 데이터\n파킨슨 동물모델에서 도파민수송체 및 운동능력 효능 확인함 (레보도파 대비 효능 우수함)\nDopamine PET-CT \nPole test\nvehicle \nvehicle \n3BT-1-115 \nL-dopa \n0\n50\n100\n150\nSpecific Binding Ratio Ratio (%)\nPD model\nSham\nA\nB\nC\nD\nSham \n Veh\n3BT-1-115\nL-DOPA\n0\n100\n200\n300\n400\n500\nLatency to fall(sec)\n**\n**\nns\nRotarod\nSham \n Veh\n3BT-1-115\nL-DOPA\n0\n10\n20\n30\n40\n50\nTime(sec)\n✱✱✱✱\n✱✱✱✱\n✱✱✱✱"
+              },
+              {
+                "number": 16,
+                "text": "16\n파이프라인 향후 일정\nInvestor relations 2026 \nThreebrooks Therapeutics\nPlan\n2026\n2027\n2028\n2029\n2030\n2031\n• PK/PD\n• 안전성\n• 전기생리학 활성\n• GLP 독성시험\n• DMPK\n• 대량생산공정/분석법 확립\n• 안전성\n• 내약성\n• PK\n• 효능\n후보물질도출\n비임상\n임상1상\n임상2상\n선도물질도출\n후보물질도출\n비임상\n임상1상\nPre-A \n40~50억\n시리즈A\n시리즈B\nTRPML1\nTMEM175\n펀딩\n• 타겟 활성평가\n• 동물모델 효능\n• 약물성 평가\n• PK/PD\n• 안전성\n• 전기생리학 활성\n• GLP 독성시험\n• DMPK\n• 대량생산공정/분석법 확립"
+              },
+              {
+                "number": 17,
+                "text": "17\nInvestor relations 2025 \nThreebrooks Therapeutics\nCompetitive companies\nCompany\nPatent Scaffold*\nDev. Stage\nLibra\n• IND enabling\nCasma\n• Based on MK-6-83\n• Nonclinical\nLysoway\n• Based on MK-6-83\n• IND enabling\nMerck  \n(Caraway)\n• Nonclinical\nTenvie\n(Nico)\n• Nonclinical\n경쟁사 현황"
+              },
+              {
+                "number": 18,
+                "text": "18\nInvestor relations 2025 \nThreebrooks Therapeutics\nDifferentiation\n경쟁사 대비 차별점\n차별화 전략 및 진행중인 시험\n1. Pre-candidate 3BT-1-115 profiling\n1) in vivo efficacy in 5XFAD\n- Target engagement (TFEB, p62)\n2) 1-weeks repeat TOX study\n3) ADME (CYP inhibition, efflux…)\n4) off target selectivity\n2. Backup compound discovery\n → TRPML1 + TRPML1/ML3 heterotetramer agonist \n알츠하이머에 특화된 TRPML1\nBest in class\nHeterotetramer 전략의\nFirst in class"
+              },
+              {
+                "number": 19,
+                "text": "19\nInvestor relations 2025 \nThreebrooks Therapeutics\nData\nTRPML1/ML3 heterotetramer screening을 통해 적합한 스캐폴드 확보 및 최적화 진행 중 \n경쟁사 대비 차별점"
+              },
+              {
+                "number": 20,
+                "text": "20\n투자포인트\nInvestor relations 2026 \nThreebrooks Therapeutics\nInvestment highlights\n팀역량\n약물부재\n거대한시장성\n기술이전\n가능성높은타겟\n매출확보\n경쟁사차별성\n1) 7,500억기술이전약물개발경험\n2) 차별화된전기생리학기술\n3) 보스턴대뇌질환공동연구진\n1) 알츠하이머병환자의지속적증가및\n아밀로이드베타항체의명확한한계\n2) 파킨슨병적응증확대\n1) 리소좀이온채널은빅파마의\n기술이전수요가높은타겟임\n2) Michael J Fox Foundation\n우선순위타겟\n1) 차별화된전기생리학실험서비스\n제공\n2) 2025년매출3.5억원달성\n3) 매출30억목표!\n1) TRPML1, ML1+ML3 heteromer\n동시활성화로효능극대화전략\n2) BMS 이노베이션챌린지우승으\n로차별성인정받음\n01\n02\n03\n05\n04"
+              },
+              {
+                "number": 21,
+                "text": "알츠하이머병· 파킨슨병걱정이없는\n행복한노년을만들겠습니다\nInvestor relations 2026\n| \nwww.threebrooks.net"
+              }
+            ],
+            "page_or_slide_count": 21,
+            "parsed_text": "[PAGE 1]\nInvestor relations 2026  |  www.threebrooks.net\n100세까지 건강한 뇌!\n세포 내 노폐물 제거를 통하여 뇌 건강의 솔루션을 제공하는 기업\n쓰리브룩스테라퓨틱스\nInvestor Relations\n\n[PAGE 2]\n2\n회사 현황\nInvestor relations 2026 \nThreebrooks Therapeutics\nBusiness Overview\n저분자화합물 신약 파이프라인\n신약개발\n뇌질환 CRO 서비스\n• 패치클램프 전기생리학\n• 뇌질환 세포모델 평가\n• 뇌질환 ex-vivo/동물모델 평가\n기술서비스\nBusiness model\n1. 알츠하이머 치매/파킨슨신약개발 및 기술수출\n2. 뇌질환 CRO 서비스 제공\n설립일 / 자본금/ 임직원\n2022.12.19 / 0.56억원 / 10명\n주요주주\n김성영(88%), 포스텍홀딩스 (9%)\n주소\n경상북도 포항시 흥해읍 융합기술로 66-1, 320호\n홈페이지\nwww.threebrooks.net\n“ 뇌질환의 예방과 새로운 치료 옵션 제공 ”\n유효물질\n선도물질\n후보물질\n비임상\nTRPML1     \n(알츠하이머)\nTRPML1    \n(파킨슨)\nTMEM175 \n(파킨슨)\n\n[PAGE 3]\n3\n회사연혁\nInvestor relations 2026 \nThreebrooks Therapeutics\nCompany History\n~ 2024\n2025\n2026\n22.12\n쓰리브룩스테라퓨틱스(주) 설립\n23.03\n포항 세포막단백질연구소 본사이전\n23.03\n벤처기업 인증\n23.05\n포스텍홀딩스 시드투자 4억원 유치\n23.07\n기업부설연구소 인정\n23.08\n중소벤처기업부 딥테크팁스 선정          \n(3년 15억원)                                            \n- 세포소기관 전기생리학 기술 고도화\n특허출원 4건\n등록 2건\n지식 재산권 현황 (IP)\n55억원\nR&D 과제 수주\n서울바이오허브, 아산병원\n인천지사\n약물합성\n포항본사\n전기생리학 동물실험\n24.01\n인천지사 설립(약물 합성 연구소)\n24.07\n산자부 소재부품기술개발 사업 선정           \n(5년 4.5억)                                               \n- 심장독성평가법 개발\n25.01\n과기부 서울아산병원 Core Facility 구축\n사업 선정 (3년 4.5억원)                            \n- 뇌질환 치료제\n25.06\n대웅제약 오픈이노베이션 사업 선정                           \n- 레켐비 병용투여 효능평가\n25.07\n포항시 예비유망강소기업 지정\n25.07\n중기부 글로벌 협력과제 선정(3년 15억원)                      \n- 보스턴 의대 알츠하이머센터 공동연구\n25.08\nMichael J Fox Foundation \n- PDRx, T2T initiative 협력연구 참여\n25.11\nBMS 이노베이션 챌린지 우승\n26.01\nIBK 창공 혁신창업기업 (대구2기)\n26.03\n서울지사 설립 (서울바이오허브)\n\n[PAGE 4]\n4\n팀\nInvestor relations 2026 \nThreebrooks Therapeutics\nTeam\n• 경북대학사/서울대박사\n• (전) 대웅제약이온채널신약팀장\n• (전) 아이엔테라퓨틱스설립자및연구소장\n →  Nav1.7 (Aneratrigine) 원 개발자\nKIST 류훈책임연구원\n• (전) 보스턴의대교수\n• SCI(E)급국제논문편수150편이상\n• 알츠하이머, 파킨슨최고권위자\n• 기전및동물시험공동연구중\n뇌과학전문가\n보스턴의대이정희교수\n• 보스턴의대알츠하이머연구센터PI\n• 보스턴소재바이오텍과다수의협력연구수행\n• 중기부국제협력과제공동수행\n보스턴의대핵심공동연구진\n뇌과학전문가\n• Biology 책임자\n• 서울대박사\n• (전) 한국뇌연구원, 서울대\n최희순Ph.D.\n핵심연구인력\n• 의약화학책임자\n• 연세대박사\n• (전) 포항공과대학교\n최성휘 Ph.D.\n• 전기생리학책임자\n• 충남대석사\n• (전) 한국뇌연구원,\n아이엔테라퓨틱스\n손숙진\n경영/연구개발총괄\nCEO / Founder 김성영Ph.D.\n7,500억원 기술이전  약물 개발 track record 보유 / 이온채널, 전기생리학 최고의 팀 연구역량과 신약개발 전 주기 개발경험 보유\n보스턴 의대 알츠하이머 연구센터 중개연구역량\n포스텍 구조생물학 역량\n포스텍이지오교수\n• 항체구조생물학 최고 전문가\n• 포스텍 석좌교수\n• 세포막단백질연구소장\n• (전) 한국구조생물학회 회장\n구조연구 전문가\n포스텍핵심공동연구진\n\n[PAGE 5]\n5\n신약 기술이전 사업화 상황\nInvestor relations 2026 \nThreebrooks Therapeutics\nPlan\n지속적인 BD 를 통한 고객 니즈 기반의 약물 개발 데이터 확보\n존슨앤존슨\n로슈\n사노피\n애브비\n베링거인겔하임\n2025 BMS 이노베이션 챌린지 우승\n세계 최대 파킨슨병 연구재단 마이클제이폭스재단(MJFF) 협력 연구\n•\nPDRx (Parkinson Disease Research Exchange) 참여\n•\nTargets to Therapies Initiatives 타겟 선정 및 참여\n- TRPML1, TMEM175\n•\n글로벌제약사 BMS의 데이터 리뷰를 통\n한 혁신성 및 사업성을 인정받음\n•\n61개 바이오기업 지원 -> 최종 우승\n에자이\nTakeda\nNon confidential level\nCDA level\nB**\nE**\nMTA level\nC**\nDue Diligence level\nU**\n화이자\n국내 바이오제약사 비임상/임상 파트너사 협의\nS**\nI**\n\n[PAGE 6]\n6\nInvestor relations 2026 \nThreebrooks Therapeutics\nProblem\n알츠하이머 치매Alzheimer's disease\n• 국내 65세 이상 추정치매 환자수: 현재 약 100만명→ 2040년 217만명\n• 5.2B USD (2024) → 9.2B USD (2030) CAGR 9.9%\n• 알츠하이머 치매가 70%를 차지하며, 기억력 감퇴, 인지기능 이상을 \n동반하며 결국 모든 일상생활 기능을 상실함 \n• 아밀로이드베타 항체가 최초로 근본적인 치료제로 승인됨\n아밀로이드베타 항체 치료제의 문제점\n알츠하이머 치매 문제점\n레켐비\n키순라\nFDA 허가 일자\n2023.05\n2024.07\n투여 횟수\n1회/2주\n1회/1달\n인지능력 저하 속도 효과  \n(투약 후 18개월)\n27%\n35%\nARIA 부작용 \n(뇌부종, 뇌 미세출혈)\nO\nO\n국내 허가\nO\nX (임상3상 중)\n연간 치료비\n26,500달러\n32,000달러\n• 정맥 주사제 (병원 내원 필요) \n• 비싼 약가 (아직 보험이 안됨)\n• ARIA 부작용으로 제한적인 환자\n• 효능이 만족스럽지 않음\n\n[PAGE 7]\n7\nInvestor relations 2026 \nThreebrooks Therapeutics\n해결책 \nSolution\n쓰리브룩스는 세포의 청소능을 회복시켜 뇌질환의 원인 노폐물들을 제거하는 혁신신약을 개발함\n(대부분의 회사는 원인 노폐물을 직접 제거하는 약물 개발)\n\n[PAGE 8]\nInvestor relations 2026 \nThreebrooks Therapeutics\nTRPML1 활성제: 세포 내 오토파지-리소좀 경로 (ALP) 조절의 핵심 타겟\n질병연관성\n• Loss of function 변이시\n리소좀축적질환 발생 \nTRPML1 개발사M&A 사례\n$610M\n$610M\nAmyloid-Beta\nClearance\nDamaged\nMitochondria\nClearance\nTau Clearance\n해결책 \nSolution\nMode of Action\nTRPML1 기능 향상 → 오토파지/리소좀 기능 회복    \n세포 내 노폐물 제거\n• 알츠하이머 환자 뇌에서 \nTRPML1 발현 감소\n\n[PAGE 9]\n9\nInvestor relations 2026 \nThreebrooks Therapeutics\nBusiness model\n목표 제품 특성 \n항목\nTPP (목표 제품 특성)\n적응증\n알츠하이머병\n환자군\n65세 이상의 초기 알츠하이머병 \n약물 모달리티\n저분자화합물\n작용기전\n1. TRPML1 단백질에결합하여 활성을 증가시킴\n2. 리소좀을 활성화하여 독성물질을 제거함\n투여경로/횟수\n1. 단독요법: 경구 / 하루 한번 혹은 두번 투여\n2. 레켐비 병용투여\n유효성\n레켐비 대비 동등 이상 효능 확보\n안전성\n장기복용 안전성 확보\n아밀로이드베타/타우 항체의 최적의 병용투여 파트너\n\n[PAGE 10]\n10\nInvestor relations 2026 \nThreebrooks Therapeutics\n선도물질 하이라이트\nLead compound highlight\nIn vitro 데이터\nIn vivo 데이터\n리소좀 TRPML1  직접 활성화 (리소좀 패치클램프)\n리소좀 활성 증가 (LRRK2 저해제보다 우월함)\n리소좀 생합성 증가 (LRRK2 저해제보다 우월함)\n손상된 미토콘드리아 제거 (PINK1 activator보다 우월함)\n아밀로이드베타, 타우 제거\n마우스 체내 흡수 및 생체이용률 우수\n약물의 뇌 분포능 우수\n5XFAD 알츠하이머 마우스 바이오마커 감소\n(레켐비 대비 염증 감소 장점)\n파킨슨병 동물모델 효능 확인\n(레보도파 대비 우수)\n신경염증 감소효과\nNon-GLP 독성시험 안전성 확인\n\n[PAGE 11]\n11\nInvestor relations 2026 \nThreebrooks Therapeutics\nData\n선도물질 데이터\n알츠하이머 환자 뇌에서 TRPML1의 발현 감소 확인→중요한 임상근거를 제공함\nDR, dentate gyrus; CA1~4, Cornu ammonis 1~4; Ent Cx, entorhinal cortex. \nNPCAD, neuropathological and clinical Alzheimer’s disease; Severe AD, severe Alzheimer’s disease.\nA. RNA seq\nB. 면역염색\n\n[PAGE 12]\n12\nInvestor relations 2026 \nThreebrooks Therapeutics\nData\n선도물질 데이터\nCryo-EM을 통하여 3BT-1-115과 TRPML1 결합 구조를 규명함\n→ S5-S6 helices, hydrophobic interaction\nA\nB\nCa2+\n3BT-1\n\n[PAGE 13]\n13\nInvestor relations 2026 \nThreebrooks Therapeutics\nData\n선도물질 데이터\n리소좀 패치클램프를 통하여 직접적인 전류 활성화 확인함\nA. 전류-전압 curve\nB. TRPML1 전류 활성화\n-150\n-100\n-50\n50\n-75\n-50\n-25\nBasal\n0.01μM\n0.1μM\n1μM\n10μM\nI (pA/pF)\nV (mV)\nbasal\n0.01\n0.1\n1\n10\n0\n5\n10\n8.45\n3.77\n2.21\n1.49\n1.00\nFold Changes at -120mV\n3BT-1-115 (μM)\n***\n\n[PAGE 14]\n14\nInvestor relations 2026 \nThreebrooks Therapeutics\nData\n선도물질 데이터\n알츠하이머 동물모델에서 단백질응집체 제거와 신경 염증 감소 효능 확인함 (레켐비 대비 효능 우수)\nvehicle\nLEQEMBI\n3BT-1-115\n0\n50\n100\n150\n200\nNumber of Aβ plaques\n✱✱✱\n✱\nVehicle\nleqembi 10mg/kg IV\n3BT-1-115 30mg/kg PO\nVehicle\nLEQEMBI\n3BT-1-115\n0.00\n0.01\n0.02\n0.03\n0.04\n0.05\nns\n✱✱✱\nIba1 FITC Area/Classified Area\nVehicle\nLEQEMBI 10mg/kg IV\n3BT-1-115 30mg/kg PO\nAβ\nvehicle\nLEQEMBI\n3BT-1-115\n100㎛\nIba-1\n100㎛\np-Tau\n100㎛\nVehicle\nLEQEMBI\n3BT-1-115\n0\n50\n100\n150\np-Tau relative ratio of MFI\n✱✱✱\n✱✱✱✱\nLEQEMBI 10mg/kg IV\nVehicle\n3BT-1-115 30mg/kg PO\n\n[PAGE 15]\n15\nInvestor relations 2026 \nThreebrooks Therapeutics\nData\n선도물질 데이터\n파킨슨 동물모델에서 도파민수송체 및 운동능력 효능 확인함 (레보도파 대비 효능 우수함)\nDopamine PET-CT \nPole test\nvehicle \nvehicle \n3BT-1-115 \nL-dopa \n0\n50\n100\n150\nSpecific Binding Ratio Ratio (%)\nPD model\nSham\nA\nB\nC\nD\nSham \n Veh\n3BT-1-115\nL-DOPA\n0\n100\n200\n300\n400\n500\nLatency to fall(sec)\n**\n**\nns\nRotarod\nSham \n Veh\n3BT-1-115\nL-DOPA\n0\n10\n20\n30\n40\n50\nTime(sec)\n✱✱✱✱\n✱✱✱✱\n✱✱✱✱\n\n[PAGE 16]\n16\n파이프라인 향후 일정\nInvestor relations 2026 \nThreebrooks Therapeutics\nPlan\n2026\n2027\n2028\n2029\n2030\n2031\n• PK/PD\n• 안전성\n• 전기생리학 활성\n• GLP 독성시험\n• DMPK\n• 대량생산공정/분석법 확립\n• 안전성\n• 내약성\n• PK\n• 효능\n후보물질도출\n비임상\n임상1상\n임상2상\n선도물질도출\n후보물질도출\n비임상\n임상1상\nPre-A \n40~50억\n시리즈A\n시리즈B\nTRPML1\nTMEM175\n펀딩\n• 타겟 활성평가\n• 동물모델 효능\n• 약물성 평가\n• PK/PD\n• 안전성\n• 전기생리학 활성\n• GLP 독성시험\n• DMPK\n• 대량생산공정/분석법 확립\n\n[PAGE 17]\n17\nInvestor relations 2025 \nThreebrooks Therapeutics\nCompetitive companies\nCompany\nPatent Scaffold*\nDev. Stage\nLibra\n• IND enabling\nCasma\n• Based on MK-6-83\n• Nonclinical\nLysoway\n• Based on MK-6-83\n• IND enabling\nMerck  \n(Caraway)\n• Nonclinical\nTenvie\n(Nico)\n• Nonclinical\n경쟁사 현황\n\n[PAGE 18]\n18\nInvestor relations 2025 \nThreebrooks Therapeutics\nDifferentiation\n경쟁사 대비 차별점\n차별화 전략 및 진행중인 시험\n1. Pre-candidate 3BT-1-115 profiling\n1) in vivo efficacy in 5XFAD\n- Target engagement (TFEB, p62)\n2) 1-weeks repeat TOX study\n3) ADME (CYP inhibition, efflux…)\n4) off target selectivity\n2. Backup compound discovery\n → TRPML1 + TRPML1/ML3 heterotetramer agonist \n알츠하이머에 특화된 TRPML1\nBest in class\nHeterotetramer 전략의\nFirst in class\n\n[PAGE 19]\n19\nInvestor relations 2025 \nThreebrooks Therapeutics\nData\nTRPML1/ML3 heterotetramer screening을 통해 적합한 스캐폴드 확보 및 최적화 진행 중 \n경쟁사 대비 차별점\n\n[PAGE 20]\n20\n투자포인트\nInvestor relations 2026 \nThreebrooks Therapeutics\nInvestment highlights\n팀역량\n약물부재\n거대한시장성\n기술이전\n가능성높은타겟\n매출확보\n경쟁사차별성\n1) 7,500억기술이전약물개발경험\n2) 차별화된전기생리학기술\n3) 보스턴대뇌질환공동연구진\n1) 알츠하이머병환자의지속적증가및\n아밀로이드베타항체의명확한한계\n2) 파킨슨병적응증확대\n1) 리소좀이온채널은빅파마의\n기술이전수요가높은타겟임\n2) Michael J Fox Foundation\n우선순위타겟\n1) 차별화된전기생리학실험서비스\n제공\n2) 2025년매출3.5억원달성\n3) 매출30억목표!\n1) TRPML1, ML1+ML3 heteromer\n동시활성화로효능극대화전략\n2) BMS 이노베이션챌린지우승으\n로차별성인정받음\n01\n02\n03\n05\n04\n\n[PAGE 21]\n알츠하이머병· 파킨슨병걱정이없는\n행복한노년을만들겠습니다\nInvestor relations 2026\n| \nwww.threebrooks.net",
+            "quality": {
+              "sufficient": true,
+              "quality_score": 6,
+              "character_count": 6221,
+              "corrupted_character_ratio": 0.0,
+              "repeated_character_ratio": 0.03038,
+              "text_unit_ratio": 1.0,
+              "text_units": 21,
+              "total_units": 21,
+              "keyword_hits": [
+                "efficacy",
+                "in vitro",
+                "in vivo",
+                "pd",
+                "pk",
+                "tox",
+                "독성",
+                "동물모델",
+                "유효성",
+                "효능"
+              ],
+              "reasons": []
+            }
+          },
+          "parser": null,
+          "deepseek_analysis": {
+            "status": "completed",
+            "model": "deepseek/deepseek-v4-flash",
+            "structured_output_supported": true,
+            "structured_output_used": true,
+            "analyzed_at": "2026-08-19T23:48:19.006344+00:00",
+            "result": {
+              "target_indication": {
+                "verdict": "true",
+                "rationale": "The document explicitly states Alzheimer's disease (AD) and Parkinson's disease (PD) as the target indications for the company's drug development pipeline.",
+                "evidence": [
+                  {
+                    "page_or_slide": 2,
+                    "location_status": "located",
+                    "text": "알츠하이머 치매/파킨슨신약개발 및 기술수출"
+                  }
+                ]
+              },
+              "small_molecule": {
+                "verdict": "true",
+                "rationale": "The document explicitly states that the drug modality is a small molecule compound.",
+                "evidence": [
+                  {
+                    "page_or_slide": 2,
+                    "location_status": "located",
+                    "text": "저분자화합물 신약 파이프라인"
+                  }
+                ]
+              },
+              "ind_enabling": {
+                "verdict": "false",
+                "rationale": "The document shows the pipeline stage as '선도물질도출' (lead compound) and '후보물질도출' (candidate compound) with nonclinical and Phase 1 planned for 2027-2028, which is pre-IND-enabling.",
+                "evidence": []
+              },
+              "in_vivo_efficacy": {
+                "verdict": "true",
+                "rationale": "The document explicitly states positive in vivo efficacy results in Alzheimer's and Parkinson's animal models.",
+                "evidence": [
+                  {
+                    "page_or_slide": 10,
+                    "location_status": "located",
+                    "text": "5XFAD 알츠하이머 마우스 바이오마커 감소 (레켐비 대비 염증 감소 장점) 파킨슨병 동물모델 효능 확인 (레보도파 대비 우수)"
+                  },
+                  {
+                    "page_or_slide": 14,
+                    "location_status": "located",
+                    "text": "알츠하이머 동물모델에서 단백질응집체 제거와 신경 염증 감소 효능 확인함 (레켐비 대비 효능 우수)"
+                  },
+                  {
+                    "page_or_slide": 15,
+                    "location_status": "located",
+                    "text": "파킨슨 동물모델에서 도파민수송체 및 운동능력 효능 확인함 (레보도파 대비 효능 우수함)"
+                  }
+                ]
+              },
+              "in_vitro_efficacy": {
+                "verdict": "true",
+                "rationale": "The document explicitly states positive in vitro efficacy results including direct TRPML1 activation and lysosomal activity increase.",
+                "evidence": [
+                  {
+                    "page_or_slide": 10,
+                    "location_status": "located",
+                    "text": "리소좀 TRPML1 직접 활성화 (리소좀 패치클램프) 리소좀 활성 증가 (LRRK2 저해제보다 우월함) 리소좀 생합성 증가 (LRRK2 저해제보다 우월함) 손상된 미토콘드리아 제거 (PINK1 activator보다 우월함) 아밀로이드베타, 타우 제거"
+                  },
+                  {
+                    "page_or_slide": 13,
+                    "location_status": "located",
+                    "text": "리소좀 패치클램프를 통하여 직접적인 전류 활성화 확인함"
+                  }
+                ]
+              },
+              "admet_at_least_25": {
+                "verdict": "unknown",
+                "rationale": "The document mentions ADME (CYP inhibition, efflux) and Non-GLP toxicity safety confirmation, but does not provide a structured ADMET study list with status counts to calculate a score.",
+                "evidence": [
+                  {
+                    "page_or_slide": 10,
+                    "location_status": "located",
+                    "text": "Non-GLP 독성시험 안전성 확인"
+                  },
+                  {
+                    "page_or_slide": 18,
+                    "location_status": "located",
+                    "text": "ADME (CYP inhibition, efflux…)"
+                  }
+                ]
+              },
+              "admet_completed_count": null,
+              "matched_indication": null,
+              "concise_summary": "The document is an investor relations presentation for Threebrooks Therapeutics, a company developing small molecule drugs targeting Alzheimer's disease and Parkinson's disease. The lead compound (3BT-1-115) is a TRPML1 activator currently in the lead optimization/preclinical candidate stage, with positive in vitro and in vivo efficacy data shown. The stage is pre-IND-enabling, and ADMET data is mentioned but not structured for scoring. The document does not contain any ADMET Partner Material with a study-status list, so the ADMET score cannot be determined."
+            },
+            "error": null
+          },
+          "viewer_conversion": {
+            "status": "not_required",
+            "pdf_path": null,
+            "error": null
+          },
+          "processed_at": "2026-08-19T23:48:19.007044+00:00"
+        },
+        "processing_error": ""
+      }
+    ],
+    "human_review": {
+      "overrides": {},
+      "ai_baseline": {},
+      "history": [
+        {
+          "changed_at": "2026-08-19T04:55:57.208120+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_table",
+          "field": "scores.target_relevance",
+          "previous_value": 3,
+          "new_value": 2
+        },
+        {
+          "changed_at": "2026-08-19T05:32:16.514790+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_rubric_refresh",
+          "change_method": "rubric_refresh",
+          "field": "scores.target_relevance",
+          "previous_value": 2,
+          "new_value": 3
+        },
+        {
+          "changed_at": "2026-08-19T05:32:23.046141+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_table",
+          "field": "scores.target_relevance",
+          "previous_value": 3,
+          "new_value": 2
+        },
+        {
+          "changed_at": "2026-08-19T05:37:51.884464+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_table",
+          "field": "scores.target_relevance",
+          "previous_value": 2,
+          "new_value": 1
+        },
+        {
+          "changed_at": "2026-08-19T05:50:21.675886+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_table",
+          "field": "scores.platform_attractiveness",
+          "previous_value": 1,
+          "new_value": 3
+        },
+        {
+          "changed_at": "2026-08-19T06:00:58.219717+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_rubric_refresh",
+          "change_method": "rubric_refresh",
+          "field": "scores.target_relevance",
+          "previous_value": 1,
+          "new_value": 3
+        },
+        {
+          "changed_at": "2026-08-19T06:00:58.219717+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_rubric_refresh",
+          "change_method": "rubric_refresh",
+          "field": "scores.platform_attractiveness",
+          "previous_value": 3,
+          "new_value": 1
+        }
+      ],
+      "last_updated_at": "2026-08-19T06:00:58.219717+00:00",
+      "last_updated_source": "dashboard_rubric_refresh",
+      "last_updated_by": "127.0.0.1",
+      "has_manual_override": false,
+      "last_scoring_override_reset_at": "2026-08-19T06:00:58.219717+00:00",
+      "last_scoring_override_reset_source": "dashboard_tab2_rubric_refresh"
+    },
+    "qualitative_review": {
+      "criteria": {
+        "efficacy": {
+          "entries": []
+        }
+      },
+      "updated_at": "2026-08-19T04:57:26.194916+00:00"
+    },
+    "rubric_reviewed_version": "3.4",
+    "rubric_reviewed_at": "2026-08-19T06:00:58.219717+00:00",
+    "rubric_reviewed_by": "127.0.0.1",
+    "rubric_review_result": "manual_override_reset",
+    "rubric_refresh_history": [
+      {
+        "version": "3.4",
+        "reviewed_at": "2026-08-19T05:32:16.514790+00:00",
+        "result": "manual_override_reset",
+        "actor_ip": "127.0.0.1",
+        "reason": "기존 점수들은 최신 루브릭 v3.4 기준과 일치하며, 변경을 정당화할 구체적이고 명확한 증거가 없습니다.",
+        "changes": []
+      },
+      {
+        "version": "3.4",
+        "reviewed_at": "2026-08-19T06:00:58.219717+00:00",
+        "result": "manual_override_reset",
+        "actor_ip": "127.0.0.1",
+        "reason": "Official GPT scoring is already current for this rubric.",
+        "changes": []
       }
     ]
   },

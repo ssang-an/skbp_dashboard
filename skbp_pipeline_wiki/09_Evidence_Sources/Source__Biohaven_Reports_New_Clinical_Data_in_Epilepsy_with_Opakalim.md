@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/news"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | news |
 | Reliability | medium |
 | URL | https://www.prnewswire.com/news-releases/biohaven-reports-new-clinical-data-in-epilepsy-with-opakalim-a-selective-kv7-27-3-activator-highlighting-seizure-control-and-markedly-differentiated-tolerability-profile-302781743.html |
-| Accessed / generated date | 2026-08-18 |
+| Accessed / generated date | 2026-08-20 |
 
 ## Evidence Summary
 

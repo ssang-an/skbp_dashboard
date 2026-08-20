@@ -1,17 +1,17 @@
 # Pipeline Index
 
-> Generated from `json/pipeline-records.json` at `2026-08-18T17:19:09`.
+> Generated from `json/pipeline-records.json` at `2026-08-20T15:43:42`.
 
 ## Assets
 
 | Asset | Company | Country | Theme | Cluster | Stage | Score |
 |---|---|---|---|---|---|---:|
 | [[Illimis_Therapeutics_ILM01_20260621]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - 교세포 향상성|교세포 향상성]] | IND-enabling | 15 / 21 |
-| [[Hangzhou_Westan_WT-1108_20260621]] | [[-]] | - | [[Theme - No Theme|No Theme]] | [[Cluster - No mapped SKBP cluster|No mapped SKBP cluster]] | Phase IIa registered/ongoing; China CTR20254063 listed as ongoing/not yet recruiting on 2025-10-11; Phase I CTR20233488 listed as completed in Synapse. | 8 / 21 |
+| [[Hangzhou_Westan_WT-1108_20260621]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Phase 2 | 8 / 21 |
 | [[Shanghai_UniXell_UX-EP001_20260621]] | [[-]] | - | [[Theme - E-I Balance|E/I Balance]] | [[Cluster - Network Modulation|Network Modulation]] | Preclinical in China according to Synapse; no official UX-EP001 registry or company page found. | 5 / 21 |
-| [[Lynk_Pharmaceuticals_LNK01006_20260621]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Cytokine 신경조절|Cytokine 신경조절]] | Phase 1 recruiting / first-in-human dosed in June 2026; early data readout expected early 2027. | 14 / 21 |
+| [[Lynk_Pharmaceuticals_LNK01006_20260621]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Cytokine 신경조절|Cytokine 신경조절]] | Phase 1 | 13 / 21 |
 | [[VivaVision_TRPM7_20260622]] | [[-]] | - | [[Theme - E-I Balance|E/I Balance]] | [[Cluster - Ion Channel|Ion Channel]] | Uncertain; likely preclinical or dormant; no public TRPM7-specific clinical trial identified | 11 / 21 |
-| [[Shaperon_HY209_NuCerin_20260622]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Cytokine 신경조절|Cytokine 신경조절]] | Phase I in healthy volunteers for HY209/NuCerin; Shaperon official site states Korea Phase I Part A completed and Part B ongoing. CenterWatch lists NCT06533878 as active/enrolling and sponsor as Kukjeon Pharmaceutical. | 16 / 21 |
+| [[Shaperon_HY209_NuCerin_20260622]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Cytokine 신경조절|Cytokine 신경조절]] | Phase 1 | 16 / 21 |
 | [[META_Pharmaceuticals_META01_MP5342_20260622]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - 말초 면역기관 연결|말초 면역기관 연결]] | Preclinical / IND-enabling. MP-5342 PCC nominated; IND and clinical trial initiation expected in H2-Q4 2026. META-01 historical entry is listed as discontinued discovery in Synapse. | 11 / 21 |
 | [[NeuShen_Therapeutics_NS-041_20260623]] | [[-]] | - | [[Theme - E-I Balance|E/I Balance]] | [[Cluster - Ion Channel|Ion Channel]] | Phase II recruiting for FOS; MDD Phase II/clinical-trial approval or initializing in China; pain stage unclear | 14 / 21 |
 | [[Xenon_Azetukalner_fast_triage_20260623]] | [[-]] | - | [[Theme - E-I Balance|E/I Balance]] | [[Cluster - Ion Channel|Ion Channel]] | Phase 3 | None / 21 |
@@ -91,6 +91,50 @@
 | [[Korea Pharma Co Ltd_KP-101]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
 | [[Korea Pharma Co Ltd_KP-102]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 2 / 9 |
 | [[1ST Biotherapeutics, Inc._1ST-104]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Cytokine 신경조절|Cytokine 신경조절]] | Lead Optimization | 12 / 21 |
+| [[Astrogen, inc._AST-001 (Speragen)]] | [[-]] | - | [[Theme - E-I Balance|E/I Balance]] | [[Cluster - Ion Channel|Ion Channel]] | Registration | 10 / 21 |
+| [[Helixmith_NM301]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 9 / 9 |
+| [[AriBio_AR1001]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Phase 3 | 9 / 9 |
+| [[GemVax & KAEL_GV1001]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Phase 2 | 9 / 9 |
+| [[1ST Biotherapeutics - D&D Pharmatech_1ST-103]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | IND-enabling | 7 / 9 |
+| [[ImmunoForge_PF1802]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 9 / 9 |
+| [[Bukwang Pharmaceutical - Contera Pharma_CP-108]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 2 / 9 |
+| [[BIORCHESTRA_BMD-002]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 5 / 9 |
+| [[GenixCure_GXC-303]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 7 / 9 |
+| [[Oncocross_OC514]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Phase 1 | 3 / 9 |
+| [[MD Healthcare_MDH-014]] | [[-]] | - | [[Theme - Protein Homeostasis|Protein Homeostasis]] | [[Cluster - Unknown|Unknown]] | IND filed/cleared | 5 / 9 |
+| [[Generoath_GO-102]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 8 / 9 |
+| [[Neuracle Genetics (now Elisigen)_NG201]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
+| [[Voronoi - Anvia Therapeutics_VRN04-2]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 5 / 9 |
+| [[AniMusCure_Meloxicam]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Reyon Pharmaceutical_Meloxicam]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Zincure_ZCS1]] | [[-]] | - | [[Theme - Protein Homeostasis|Protein Homeostasis]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 9 / 9 |
+| [[BiSiChem_BSC-3301]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 5 / 9 |
+| [[Dr. Noah Biotech_NDC-011]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | IND filed/cleared | 9 / 9 |
+| [[Deargen_DG-ALS-T1]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Hit Discovery | 1 / 9 |
+| [[BeyondBio_BEY4101A]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 2 / 9 |
+| [[Samjin Pharmaceutical_SJP1801]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 2 / 9 |
+| [[Amyloid Solution_AS-S701 - AS-701]] | [[-]] | - | [[Theme - Protein Homeostasis|Protein Homeostasis]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 4 / 9 |
+| [[Amyloid Solution_AS-M801]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Unknown | 4 / 9 |
+| [[AriBio_AR1002]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[1ST Biotherapeutics_1ST-103 (NLY02)]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | IND-enabling | 7 / 9 |
+| [[Chong Kun Dang_ACL-513 (CKD-513)]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
+| [[GENUV_SNR1611]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Phase 1/2 | 5 / 9 |
+| [[Amyloid Solution_AS-301]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Hit Discovery | 4 / 9 |
+| [[Yuhan_YHC2133]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Hit Discovery | 3 / 9 |
+| [[Dong-A ST_intractable brain diseases therapy, Dong-AST]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[LISCure Biosciences_LB-P4]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 4 / 9 |
+| [[siRNAgen Therapeutics_SRN-008]] | [[-]] | - | [[Theme - Protein Homeostasis|Protein Homeostasis]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 7 / 9 |
+| [[ISU ABXIS_ISU203]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 8 / 9 |
+| [[Kyungpook National University - ISU ABXIS_ISU203]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 8 / 9 |
+| [[AUTOTAC Bio_AB-12 (IV)]] | [[-]] | - | [[Theme - Protein Homeostasis|Protein Homeostasis]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 8 / 9 |
+| [[EuBiologics_Alzheimer's disease vaccine (PADIVAX+)]] | [[-]] | - | [[Theme - Protein Homeostasis|Protein Homeostasis]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 5 / 9 |
+| [[1ST Biotherapeutics_NLY02 (1ST-103)]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - Unknown|Unknown]] | IND-enabling | 7 / 9 |
+| [[Autotelic Bio_ATB-501]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Auzone Biological Technology_Aukontals]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Registration | 5 / 9 |
+| [[Avixgen_ACP-Brain Disease Research Project]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Axceso Biopharma_AXN-1501]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 3 / 9 |
+| [[Axceso Biopharma_AXN-1901]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 3 / 9 |
+| [[AZothBio_AZBE53206]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
 
 ## Navigation
 

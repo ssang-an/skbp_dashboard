@@ -14,6 +14,10 @@ const CATEGORY_SYNONYMS_URL = '/api/category-synonyms';
 const DEFAULT_PAGE_SIZE = 10;
 const PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.pageSize.v1';
 const STEP0_MAX_SELECTED_CANDIDATES = 20;
+const STEP0_PAGE_SIZE_OPTIONS = [50, 100, 200, 500];
+const STEP0_DEFAULT_PAGE_SIZE = 200;
+const STEP0_PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.step0PageSize.v1';
+const BOM_PREFIX = String.fromCharCode(0xfeff);
 const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
 const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
 const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v3';
@@ -34,6 +38,11 @@ function readStoredJson(key, fallback, validator) {
 function storedPageSize() {
   const value = Number(localStorage.getItem(PAGE_SIZE_STORAGE_KEY));
   return [10, 30, 50, 100].includes(value) ? value : DEFAULT_PAGE_SIZE;
+}
+
+function storedStep0PageSize() {
+  const value = Number(localStorage.getItem(STEP0_PAGE_SIZE_STORAGE_KEY));
+  return STEP0_PAGE_SIZE_OPTIONS.includes(value) ? value : STEP0_DEFAULT_PAGE_SIZE;
 }
 
 const DEFAULT_COLUMN_WIDTHS = {
@@ -251,15 +260,6 @@ const CANONICAL_DEVELOPMENT_STAGES = [
   'Discontinued / inactive',
   'Unknown'
 ];
-const requestedTableMode = new URLSearchParams(window.location.search).get('tab');
-const initialTableMode = ['triage', 'full', 'focus'].includes(requestedTableMode)
-  ? requestedTableMode
-  : 'full';
-const initialSort = initialTableMode === 'triage'
-  ? { key: 'targetScore', direction: 'desc' }
-  : initialTableMode === 'focus'
-    ? { key: 'focusAddedAt', direction: 'desc' }
-    : { key: 'totalScore', direction: 'desc' };
 const CANONICAL_MODALITIES = [
   'Small molecule',
   'Peptide',
@@ -271,6 +271,15 @@ const CANONICAL_MODALITIES = [
   'Other',
   'Unknown'
 ];
+const requestedTableMode = new URLSearchParams(window.location.search).get('tab');
+const initialTableMode = ['triage', 'full', 'focus'].includes(requestedTableMode)
+  ? requestedTableMode
+  : 'full';
+const initialSort = initialTableMode === 'triage'
+  ? { key: 'targetScore', direction: 'desc' }
+  : initialTableMode === 'focus'
+    ? { key: 'focusAddedAt', direction: 'desc' }
+    : { key: 'totalScore', direction: 'desc' };
 
 const state = {
   rawRecords: [],
@@ -311,6 +320,8 @@ const state = {
   step0StatusFilterValues: new Set(),
   step0SortKey: null,
   step0SortDirection: null,
+  step0Page: 1,
+  step0PageSize: storedStep0PageSize(),
   extraColumns: new Set(readStoredJson(
     'skbp.dashboard.extraColumns',
     [],
@@ -477,10 +488,15 @@ const elements = {
   step0StatusToggleButtons: document.querySelectorAll('.step0-status-toggle'),
   step0ResetFiltersButton: document.querySelector('#step0ResetFiltersButton'),
   step0TableCount: document.querySelector('#step0TableCount'),
+  step0PageSizeSelect: document.querySelector('#step0PageSizeSelect'),
   step0SelectAllRows: document.querySelector('#step0SelectAllRows'),
   step0ProgressTableBody: document.querySelector('#step0ProgressTableBody'),
   step0SelectedCount: document.querySelector('#step0SelectedCount'),
-  step0CopyInstructionsButton: document.querySelector('#step0CopyInstructionsButton')
+  step0CopyInstructionsButton: document.querySelector('#step0CopyInstructionsButton'),
+  step0ExportExcelButton: document.querySelector('#step0ExportExcelButton'),
+  step0PrevPage: document.querySelector('#step0PrevPage'),
+  step0PageInfo: document.querySelector('#step0PageInfo'),
+  step0NextPage: document.querySelector('#step0NextPage')
 };
 
 let activeColumnResize = null;
@@ -4164,7 +4180,7 @@ function modalityEditValue(row) {
   const attributes = editable
     ? ` data-table-modality-edit data-record-id="${escapeHtml(row.id)}" data-previous-value="${escapeHtml(row.modality)}" role="button" tabindex="0" aria-label="Double-click to select modality"`
     : '';
-  return `<span class="${className}"${attributes} title="${escapeHtml(editable ? '???: ?????? Modality ??' : row.modality)}">${escapeHtml(row.modality)}</span>`;
+  return `<span class="${className}"${attributes} title="${escapeHtml(editable ? '관리자: 더블클릭하여 Modality 선택' : row.modality)}">${escapeHtml(row.modality)}</span>`;
 }
 
 function tableTextEditValue(row, kind, value, { title = '', strong = false, className = '' } = {}) {
@@ -5395,22 +5411,6 @@ function openManualTableTextEdit(anchor) {
   }, { once: true });
 }
 
-async function saveUnknownTargetEdit(anchor) {
-  const recordId = anchor?.dataset.recordId;
-  const previousValue = String(anchor?.textContent || '').trim();
-  if (!recordId || previousValue !== 'Unknown' || !getCurrentUser()?.is_admin) return;
-
-  const value = window.prompt('Target 이름을 입력하세요.', '');
-  const nextValue = String(value || '').trim();
-  if (!nextValue) return;
-  if (nextValue.length > 250) {
-    elements.dataStatus.textContent = 'Target은 250자 이하로 입력하세요.';
-    return;
-  }
-
-  const actorName = await ensureDashboardActorName();
-  if (!actorName) return;
-  anchor.classList.add('is-saving');
 function openManualTableModalityEdit(anchor) {
   if (!anchor || !getCurrentUser()?.is_admin || anchor.dataset.editing === 'true') return;
   const recordId = anchor.dataset.recordId;
@@ -5440,6 +5440,22 @@ function openManualTableModalityEdit(anchor) {
   }, { once: true });
 }
 
+async function saveUnknownTargetEdit(anchor) {
+  const recordId = anchor?.dataset.recordId;
+  const previousValue = String(anchor?.textContent || '').trim();
+  if (!recordId || previousValue !== 'Unknown' || !getCurrentUser()?.is_admin) return;
+
+  const value = window.prompt('Target 이름을 입력하세요.', '');
+  const nextValue = String(value || '').trim();
+  if (!nextValue) return;
+  if (nextValue.length > 250) {
+    elements.dataStatus.textContent = 'Target은 250자 이하로 입력하세요.';
+    return;
+  }
+
+  const actorName = await ensureDashboardActorName();
+  if (!actorName) return;
+  anchor.classList.add('is-saving');
   elements.dataStatus.textContent = 'Target human review 저장 중';
   try {
     const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/manual-review`, {
@@ -7881,6 +7897,18 @@ function renderAiReparseDiffPanel(beforeRecords, afterRecords, fieldsByIndex) {
   </div>`;
 }
 
+function formatAiReparseFailure(error) {
+  const detail = String(error?.message || error || '').trim();
+  const lowered = detail.toLowerCase();
+  if (/finish_reason=length|출력 한도|16,000-token/.test(detail)) return `출력 한도 · ${detail}`;
+  if (/json|record 배열|record 수|status row|markdown/.test(lowered)) return `JSON 구조 확인 필요 · ${detail}`;
+  if (/스키마|schema|validation/.test(lowered)) return `저장 형식 확인 필요 · ${detail}`;
+  if (/api.?key|\b401\b|\b403\b|인증|권한/.test(lowered)) return `OpenRouter 인증/권한 · ${detail}`;
+  if (/rate.?limit|too many requests|\b429\b/.test(lowered)) return `OpenRouter 요청 한도 · ${detail}`;
+  if (/provider|\b5\d\d\b|temporarily unavailable|network|fetch/.test(lowered)) return `AI 제공자 일시 오류 · ${detail}`;
+  return `AI 재파싱 실패 · ${detail || '응답을 처리하지 못했습니다.'}`;
+}
+
 async function runAiReparse() {
   if (!elements.aiReparseButton) return;
   const expectedMode = activeTableMode() === 'triage' ? 'triage' : 'full';
@@ -7961,6 +7989,11 @@ async function runAiReparse() {
           const progress = elements.inputValidationResults.querySelector('.input-validation-progress');
           if (progress) progress.textContent = parsed.data?.message || 'AI 재파싱을 한 번 더 보완하고 있습니다.';
         }
+      } else if (parsed.event === 'status') {
+        if (elements.inputValidationResults) {
+          const progress = elements.inputValidationResults.querySelector('.input-validation-progress');
+          if (progress) progress.textContent = parsed.data?.message || 'AI 재파싱을 준비하고 있습니다.';
+        }
       } else if (parsed.event === 'error') {
         streamError = parsed.data?.message || 'AI 재파싱 실패';
       } else if (parsed.event === 'done') {
@@ -8030,7 +8063,7 @@ async function runAiReparse() {
       return;
     }
     const failed = validateCombinedInput(elements.gptResponseInput.value, expectedMode);
-    addInputIssue(failed.errors, 'error', 'AI 2차 파싱', `AI 재파싱 실패: ${String(error?.message || error)}`);
+    addInputIssue(failed.errors, 'error', 'AI 2차 파싱', formatAiReparseFailure(error));
     renderInputValidation(failed);
     setDataUploadStatus('error', failed.errors.length);
     elements.aiReparseButton.disabled = false;
@@ -9860,44 +9893,80 @@ function sortStep0Column(key) {
     state.step0SortKey = null;
     state.step0SortDirection = null;
   }
+  state.step0Page = 1;
   updateStep0SortIndicators();
   renderStep0ProgressTable();
 }
 
 function renderStep0ProgressTable() {
   if (!elements.step0ProgressTableBody) return;
+  if (elements.step0PageSizeSelect) elements.step0PageSizeSelect.value = String(state.step0PageSize);
   const rows = step0FilteredSortedRows();
-  if (elements.step0TableCount) elements.step0TableCount.textContent = `${rows.length} items`;
-  state.step0VisiblePendingIds = rows
+  const pageCount = Math.max(1, Math.ceil(rows.length / state.step0PageSize));
+  state.step0Page = Math.min(state.step0Page, pageCount);
+  const start = (state.step0Page - 1) * state.step0PageSize;
+  const pageRows = rows.slice(start, start + state.step0PageSize);
+  if (elements.step0TableCount) {
+    elements.step0TableCount.textContent = `검색 결과 ${rows.length} / 전체 ${state.step0Rows.length} assets`;
+  }
+  if (elements.step0ExportExcelButton) elements.step0ExportExcelButton.disabled = rows.length === 0;
+  state.step0VisiblePendingIds = pageRows
     .filter((row) => row.pending?.done && row.pending?.queue_id)
     .map((row) => row.pending.queue_id);
-  if (!rows.length) {
+  if (!pageRows.length) {
     elements.step0ProgressTableBody.innerHTML = state.step0Rows.length
       ? '<tr><td colspan="7" class="step0-empty-state">현재 필터/검색 조건에 맞는 항목이 없습니다.</td></tr>'
       : '<tr><td colspan="7" class="step0-empty-state">진척 현황 데이터가 없습니다. 아래에서 후보 목록을 붙여넣어 시작하세요.</td></tr>';
-    updateStep0SelectAllState();
-    return;
+  } else {
+    elements.step0ProgressTableBody.innerHTML = pageRows
+      .map((row) => {
+        const queueId = row.pending?.queue_id;
+        const isPending = Boolean(row.pending?.done && queueId);
+        const checked = isPending && state.step0SelectedPendingIds.has(queueId) ? 'checked' : '';
+        const checkboxCell = isPending
+          ? `<input type="checkbox" class="step0-row-select" data-queue-id="${escapeHtml(queueId)}" ${checked} aria-label="${escapeHtml(row.asset)} 선택" />`
+          : '';
+        return `<tr>
+          <td class="select-col">${checkboxCell}</td>
+          <td class="step0-asset-cell">${escapeHtml(row.asset)}</td>
+          <td class="step0-company-cell">${escapeHtml(row.company)}</td>
+          <td>${step0StageCellHtml('pending', row.pending)}</td>
+          <td>${step0StageCellHtml('fast_triage', row.fast_triage)}</td>
+          <td>${step0StageCellHtml('full_scout', row.full_scout)}</td>
+          <td>${step0StageCellHtml('shortlisting', row.shortlisting)}</td>
+        </tr>`;
+      })
+      .join('');
   }
-  elements.step0ProgressTableBody.innerHTML = rows
-    .map((row) => {
-      const queueId = row.pending?.queue_id;
-      const isPending = Boolean(row.pending?.done && queueId);
-      const checked = isPending && state.step0SelectedPendingIds.has(queueId) ? 'checked' : '';
-      const checkboxCell = isPending
-        ? `<input type="checkbox" class="step0-row-select" data-queue-id="${escapeHtml(queueId)}" ${checked} aria-label="${escapeHtml(row.asset)} 선택" />`
-        : '';
-      return `<tr>
-        <td class="select-col">${checkboxCell}</td>
-        <td class="step0-asset-cell">${escapeHtml(row.asset)}</td>
-        <td class="step0-company-cell">${escapeHtml(row.company)}</td>
-        <td>${step0StageCellHtml('pending', row.pending)}</td>
-        <td>${step0StageCellHtml('fast_triage', row.fast_triage)}</td>
-        <td>${step0StageCellHtml('full_scout', row.full_scout)}</td>
-        <td>${step0StageCellHtml('shortlisting', row.shortlisting)}</td>
-      </tr>`;
-    })
-    .join('');
+  if (elements.step0PageInfo) elements.step0PageInfo.textContent = `${state.step0Page} / ${pageCount}`;
+  if (elements.step0PrevPage) elements.step0PrevPage.disabled = state.step0Page <= 1;
+  if (elements.step0NextPage) elements.step0NextPage.disabled = state.step0Page >= pageCount;
   updateStep0SelectAllState();
+}
+
+function exportStep0Table() {
+  const rows = step0FilteredSortedRows();
+  const headers = ['Asset', 'Company', '조사 대기', 'Fast Triage', 'Full Scout', 'Shortlisting'];
+  const body = rows.map((row) => [
+    row.asset,
+    row.company,
+    row.pending?.done ? '대기중' : '',
+    row.fast_triage?.done ? '완료' : '',
+    row.full_scout?.done ? '완료' : '',
+    row.shortlisting?.done ? '완료' : ''
+  ]);
+  const csv = [headers, ...body].map((line) => line.map(csvValue).join(',')).join('\r\n');
+  const blob = new Blob([BOM_PREFIX + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const stamp = new Date().toISOString().slice(0, 10).replaceAll('-', '');
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `skbp_step0_progress_${stamp}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  showStep0Message(`${rows.length} rows exported`);
 }
 
 function updateStep0SelectAllState() {
@@ -9974,6 +10043,7 @@ function resetStep0Filters() {
     button.classList.remove('active');
     button.setAttribute('aria-pressed', 'false');
   });
+  state.step0Page = 1;
   renderStep0ProgressTable();
 }
 
@@ -9988,6 +10058,7 @@ function toggleStep0StatusFilter(status, button) {
     button.classList.add('active');
     button.setAttribute('aria-pressed', 'true');
   }
+  state.step0Page = 1;
   renderStep0ProgressTable();
 }
 
@@ -10038,8 +10109,25 @@ elements.step0ClearButton?.addEventListener('click', () => {
   setStep0SaveStatus('waiting');
 });
 elements.step0CopyInstructionsButton?.addEventListener('click', copyTriagePromptWithSelectedCandidates);
+elements.step0ExportExcelButton?.addEventListener('click', exportStep0Table);
+elements.step0PageSizeSelect?.addEventListener('change', (event) => {
+  const nextSize = Number(event.target.value);
+  state.step0PageSize = STEP0_PAGE_SIZE_OPTIONS.includes(nextSize) ? nextSize : STEP0_DEFAULT_PAGE_SIZE;
+  localStorage.setItem(STEP0_PAGE_SIZE_STORAGE_KEY, String(state.step0PageSize));
+  state.step0Page = 1;
+  renderStep0ProgressTable();
+});
+elements.step0PrevPage?.addEventListener('click', () => {
+  state.step0Page = Math.max(1, state.step0Page - 1);
+  renderStep0ProgressTable();
+});
+elements.step0NextPage?.addEventListener('click', () => {
+  state.step0Page += 1;
+  renderStep0ProgressTable();
+});
 elements.step0SearchInput?.addEventListener('input', (event) => {
   state.step0Query = event.target.value;
+  state.step0Page = 1;
   renderStep0ProgressTable();
 });
 elements.step0SearchInput?.addEventListener('keydown', (event) => {
@@ -10052,6 +10140,7 @@ elements.step0SearchTokens?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-step0-remove-search-token]');
   if (button) removeStep0SearchToken(button.dataset.step0RemoveSearchToken);
 });
+elements.step0StatusToggleButtons?.forEach((button) => {
   button.addEventListener('click', () => toggleStep0StatusFilter(button.dataset.step0Status, button));
 });
 elements.step0ResetFiltersButton?.addEventListener('click', resetStep0Filters);
@@ -10923,10 +11012,10 @@ elements.dataUploadGuideSteps?.addEventListener('click', async (event) => {
     if (label) label.textContent = idleLabel;
   }, 1800);
 });
+
 document.querySelectorAll('.controls').forEach((controls) => {
   controls.addEventListener('click', handleMultiFilterControlsClick);
 });
-
 elements.step0GuideSteps?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-step0-guide-action="copy-instructions"]');
   if (!button || !elements.step0CopyInstructionsButton) return;

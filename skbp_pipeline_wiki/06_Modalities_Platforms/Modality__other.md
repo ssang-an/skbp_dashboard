@@ -6,8 +6,8 @@ aliases:
   - "other"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,8 +22,12 @@ confidence: "medium"
 
 ## Related Assets
 
+- [[02_Assets/Asset__AB-12_(IV)|AB-12_(IV)]]
+- [[02_Assets/Asset__Alzheimer's_disease_vaccine_(PADIVAX+)|Alzheimer's_disease_vaccine_(PADIVAX+)]]
 - [[02_Assets/Asset__LABthera-003|LABthera-003]]
+- [[02_Assets/Asset__LB-P4|LB-P4]]
 - [[02_Assets/Asset__LC-PC01|LC-PC01]]
+- [[02_Assets/Asset__MDH-014|MDH-014]]
 
 ## Related Targets / MoA
 

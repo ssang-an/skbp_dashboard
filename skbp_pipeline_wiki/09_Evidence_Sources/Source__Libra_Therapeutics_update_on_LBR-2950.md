@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_competitor_social"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_competitor_social |
 | Reliability | medium |
 | URL | https://www.linkedin.com/posts/libra-therapeutics_neurodegenerativedisease-neurodegeneration-activity-7358984139888340992-uqvu |
-| Accessed / generated date | 2026-08-18 |
+| Accessed / generated date | 2026-08-20 |
 
 ## Evidence Summary
 

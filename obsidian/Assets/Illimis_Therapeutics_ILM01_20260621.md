@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-18T17:19:09"
+generated_at: "2026-08-20T15:43:42"
 record_id: "Illimis_Therapeutics_ILM01_20260621"
 company: "Illimis Therapeutics"
 country: "Republic of Korea"
@@ -345,7 +345,7 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
       "partnership_type": "investment",
       "partnership_classification_status": "auto_classified",
       "partnership_classification_source": "auto",
-      "partnership_classified_at": "2026-08-13T01:25:06.035518+00:00",
+      "partnership_classified_at": "2026-08-19T00:09:00.388594+00:00",
       "partner_material_flags": {
         "cdp": false,
         "ncdp": false,
@@ -363,7 +363,7 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
       "partnership_auto_evidence_sources": [
         "Tab2 구조화 데이터"
       ],
-      "partnership_classification_criteria_version": "1.3",
+      "partnership_classification_criteria_version": "1.4",
       "partnership_note": "Non-Small Molecule / IND-enabling 이상",
       "partnership_evidence_sources": [
         "Tab2 구조화 데이터"
@@ -426,7 +426,7 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
           }
         }
       ],
-      "filter3_document_analysis_updated_at": "2026-08-13T01:25:06.035429+00:00"
+      "filter3_document_analysis_updated_at": "2026-08-19T00:09:00.388552+00:00"
     },
     "attachments": [
       {

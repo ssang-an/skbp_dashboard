@@ -1,11 +1,12 @@
 # Ion Channel
 
-> Generated from `json/pipeline-records.json` at `2026-08-18T17:19:09`.
+> Generated from `json/pipeline-records.json` at `2026-08-20T15:43:42`.
 
 ## Linked Assets
 
 - [[Actio_ABS-1230_fast_triage_20260623]]
 - [[Actio_Biosciences_ABS-1230_20260623]]
+- [[Astrogen, inc._AST-001 (Speragen)]]
 - [[Biohaven_Opakalim_fast_triage_20260623]]
 - [[Encoded_ETX101_fast_triage_20260623]]
 - [[Hangzhou_Vitan_WT-1-2.0_fast_triage_20260623]]

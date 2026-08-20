@@ -6,26 +6,26 @@ aliases:
 tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
-  - "theme/no_theme"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
-source_report: "[[01_Raw_Reports/GenixCure_GXC-303_20260713]]"
+  - "theme/others"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
+source_report: "[[01_Raw_Reports/GenixCure_GXC-303]]"
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
 company: "[[03_Companies/Company__GenixCure|GenixCure]]"
-target: "[[04_Targets/Target__STMN2_TDP-43–STMN2_axis|STMN2 / TDP-43–STMN2 axis]]"
-moa: "[[05_MoA/MoA__STMN2_발현_회복을_통해_motor-neuron_axonal_maintenance_regeneration을_촉진하려는_유전자_47910c81|STMN2 발현 회복을 통해 motor-neuron axonal maintenance/regeneration을 촉진하려는 유전자치료 접근; 정확한 cargo 설계는 비공개]]"
-modality: "[[06_Modalities_Platforms/Modality__AAV-based_gene_therapy;_CARE_InsightMiner-engineered_CNS_neuron-targete_40de3825|AAV-based gene therapy; CARE/InsightMiner-engineered CNS/neuron-targeted capsid family, exact GXC-303 capsid/version unconfirmed]]"
+target: "[[04_Targets/Target__STMN2|STMN2]]"
+moa: "[[05_MoA/MoA__AAV-mediated_restoration_of_STMN2_to_support_axonal_regeneration|AAV-mediated restoration of STMN2 to support axonal regeneration]]"
+modality: "[[06_Modalities_Platforms/Modality__Gene_therapy|Gene therapy]]"
 indications:
-  - "[[07_Indications/Indication__ALS,_likely_TDP-43_STMN2-deficient_sporadic_ALS;_exact_biomarker-select_f3022790|ALS, likely TDP-43/STMN2-deficient sporadic ALS; exact biomarker-selected population not disclosed]]"
-scorecard: "[[10_Scorecards/Scorecard__GXC-303__20260713|Scorecard__GXC-303__20260713]]"
-theme: "[[11_Themes_Clusters/Theme__No_Theme|No Theme]]"
-cluster: "[[11_Themes_Clusters/Cluster__N-A|N/A]]"
-total_score: 11
-max_score: 21
-recommendation: "Deprioritize"
-evidence_level: "E4"
+  - "[[07_Indications/Indication__Amyotrophic_lateral_sclerosis|Amyotrophic lateral sclerosis]]"
+scorecard: "[[10_Scorecards/Scorecard__GXC-303__20260820|Scorecard__GXC-303__20260820]]"
+theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
+cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
+total_score: 7
+max_score: 9
+recommendation: "Run Full Scout"
+evidence_level: "E0"
 ---
 
 # GXC-303
@@ -36,71 +36,60 @@ evidence_level: "E4"
 |---|---|
 | Company | [[03_Companies/Company__GenixCure|GenixCure]] |
 | Asset | GXC-303 |
-| Target | [[04_Targets/Target__STMN2_TDP-43–STMN2_axis|STMN2 / TDP-43–STMN2 axis]] |
-| MoA | [[05_MoA/MoA__STMN2_발현_회복을_통해_motor-neuron_axonal_maintenance_regeneration을_촉진하려는_유전자_47910c81|STMN2 발현 회복을 통해 motor-neuron axonal maintenance/regeneration을 촉진하려는 유전자치료 접근; 정확한 cargo 설계는 비공개]] |
-| Modality | [[06_Modalities_Platforms/Modality__AAV-based_gene_therapy;_CARE_InsightMiner-engineered_CNS_neuron-targete_40de3825|AAV-based gene therapy; CARE/InsightMiner-engineered CNS/neuron-targeted capsid family, exact GXC-303 capsid/version unconfirmed]] |
-| Indication | [[07_Indications/Indication__ALS,_likely_TDP-43_STMN2-deficient_sporadic_ALS;_exact_biomarker-select_f3022790|ALS, likely TDP-43/STMN2-deficient sporadic ALS; exact biomarker-selected population not disclosed]] |
-| Stage | Lead Optimization |
-| Theme / Cluster | [[11_Themes_Clusters/Theme__No_Theme|No Theme]] / [[11_Themes_Clusters/Cluster__N-A|N/A]] |
-| Recommendation | Deprioritize |
-| Total Score | 11/21 |
+| Target | [[04_Targets/Target__STMN2|STMN2]] |
+| MoA | [[05_MoA/MoA__AAV-mediated_restoration_of_STMN2_to_support_axonal_regeneration|AAV-mediated restoration of STMN2 to support axonal regeneration]] |
+| Modality | [[06_Modalities_Platforms/Modality__Gene_therapy|Gene therapy]] |
+| Indication | [[07_Indications/Indication__Amyotrophic_lateral_sclerosis|Amyotrophic lateral sclerosis]] |
+| Stage | Preclinical unspecified |
+| Theme / Cluster | [[11_Themes_Clusters/Theme__Others|Others]] / [[11_Themes_Clusters/Cluster__Others|Others]] |
+| Recommendation | Run Full Scout |
+| Total Score | 7/21 |
 
 ## 2. One-line Summary
 
-과학적 target rationale와 AAV 차별화 가능성은 있으나, 현 SKBP 전략축 미부합과 공개 asset-specific package 부족 때문에 현재는 Deprioritize가 타당하다.
+STMN2 복원이라는 명확한 ALS 기전 때문에 SELECT입니다.
 
 ## 3. Why This Asset Matters
 
-- Strategic relevance: ALS/TDP-43–STMN2 relevance는 강하지만 현 E/I Balance·Neuroimmune Theme에는 직접 부합하지 않는다.
-- Scientific rationale: TDP-43 loss→STMN2 misprocessing→axon repair defect와 STMN2 restoration rescue는 독립 연구로 지지된다.
-- BD relevance: GXC-303의 최종 capsid/cargo/route/dose를 사용한 ALS disease model에서 blinded, dose-responsive, statistically powered functional·survival efficacy와 CNS biodistribution·target engagement·toxicity를 동시에 입증한 원자료가 있는가?
+- Strategic relevance: TR 3점: GXC-303은 ALS용 AAV gene therapy이며 STMN2 회복을 통해 axonal repair를 겨냥하는 기전이 ALS biology와 직접 연결됩니다.
+- Scientific rationale: MOA 3점: GXC-303 관련 세포실험에서 STMN2 복원과 axonal regrowth의 직접 기능효과가 보고됩니다.
+- BD relevance: GXC-303이 TDP-43 dysfunction 환자군에서 충분한 STMN2 rescue를 달성한다는 in-vivo exposure-response 근거가 있는가?
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__GXC-303__20260713]]
+![[10_Scorecards/Scorecard__GXC-303__20260820]]
 
 ## 5. Knowledge Links
 
 ### Core Biology
-- Target: [[04_Targets/Target__STMN2_TDP-43–STMN2_axis|STMN2 / TDP-43–STMN2 axis]]
-- MoA: [[05_MoA/MoA__STMN2_발현_회복을_통해_motor-neuron_axonal_maintenance_regeneration을_촉진하려는_유전자_47910c81|STMN2 발현 회복을 통해 motor-neuron axonal maintenance/regeneration을 촉진하려는 유전자치료 접근; 정확한 cargo 설계는 비공개]]
-- Theme: [[11_Themes_Clusters/Theme__No_Theme|No Theme]]
-- Cluster: [[11_Themes_Clusters/Cluster__N-A|N/A]]
+- Target: [[04_Targets/Target__STMN2|STMN2]]
+- MoA: [[05_MoA/MoA__AAV-mediated_restoration_of_STMN2_to_support_axonal_regeneration|AAV-mediated restoration of STMN2 to support axonal regeneration]]
+- Theme: [[11_Themes_Clusters/Theme__Others|Others]]
+- Cluster: [[11_Themes_Clusters/Cluster__Others|Others]]
 
 ### Development Context
 - Company: [[03_Companies/Company__GenixCure|GenixCure]]
-- Modality: [[06_Modalities_Platforms/Modality__AAV-based_gene_therapy;_CARE_InsightMiner-engineered_CNS_neuron-targete_40de3825|AAV-based gene therapy; CARE/InsightMiner-engineered CNS/neuron-targeted capsid family, exact GXC-303 capsid/version unconfirmed]]
-- Indication: [[07_Indications/Indication__ALS,_likely_TDP-43_STMN2-deficient_sporadic_ALS;_exact_biomarker-select_f3022790|ALS, likely TDP-43/STMN2-deficient sporadic ALS; exact biomarker-selected population not disclosed]]
+- Modality: [[06_Modalities_Platforms/Modality__Gene_therapy|Gene therapy]]
+- Indication: [[07_Indications/Indication__Amyotrophic_lateral_sclerosis|Amyotrophic lateral sclerosis]]
 
 ### Evidence Sources
-- [[09_Evidence_Sources/Source__S1|S1]]
-- [[09_Evidence_Sources/Source__S2|S2]]
-- [[09_Evidence_Sources/Source__S3|S3]]
-- [[09_Evidence_Sources/Source__S4|S4]]
-- [[09_Evidence_Sources/Source__S13|S13]]
-- [[09_Evidence_Sources/Source__GenixCure_Pipeline|GenixCure Pipeline]]
-- [[09_Evidence_Sources/Source__루게릭병_표적옵션_등장…제약사들,_질환_원인_정조준|루게릭병 표적옵션 등장…제약사들, 질환 원인 정조준]]
-- [[09_Evidence_Sources/Source__GenixCure_BIO_USA_2025_partnering_update|GenixCure BIO USA 2025 partnering update]]
-- [[09_Evidence_Sources/Source__제닉스큐어_AAV_플랫폼_인터뷰|제닉스큐어 AAV 플랫폼 인터뷰]]
-- [[09_Evidence_Sources/Source__Mechanism_of_STMN2_cryptic_splice-polyadenylation_and_its_correction|Mechanism of STMN2 cryptic splice-polyadenylation and its correction]]
+- [[09_Evidence_Sources/Source__GenixCure_current_pipeline|GenixCure current pipeline]]
+- [[09_Evidence_Sources/Source__GXC-303_ALS_program_report|GXC-303 ALS program report]]
 
 ## 6. Key Diligence Questions
 
-- GXC-303의 최종 capsid/cargo/route/dose를 사용한 ALS disease model에서 blinded, dose-responsive, statistically powered functional·survival efficacy와 CNS biodistribution·target engagement·toxicity를 동시에 입증한 원자료가 있는가?
+- GXC-303이 TDP-43 dysfunction 환자군에서 충분한 STMN2 rescue를 달성한다는 in-vivo exposure-response 근거가 있는가?
 
 ## 7. Evidence Gaps
 
-- final capsid/cargo/promoter/route/dose
-- quantitative efficacy, durability, biodistribution, target engagement and tox
-- IND timeline, rights and financing runway
-- all-comer ALS versus biomarker-selected population
+- None
 
 ## 8. Score History
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260713 | 11/21 | Deprioritize | [[10_Scorecards/Scorecard__GXC-303__20260713|Scorecard__GXC-303__20260713]] |
+| 20260820 | 7/21 | Run Full Scout | [[10_Scorecards/Scorecard__GXC-303__20260820|Scorecard__GXC-303__20260820]] |
 
 ## 9. Raw Report
 
-Source report: [[01_Raw_Reports/GenixCure_GXC-303_20260713|GenixCure_GXC-303_20260713]]
+Source report: [[01_Raw_Reports/GenixCure_GXC-303|GenixCure_GXC-303]]

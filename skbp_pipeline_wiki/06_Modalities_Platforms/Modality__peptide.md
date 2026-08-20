@@ -6,8 +6,8 @@ aliases:
   - "peptide"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,9 +22,11 @@ confidence: "medium"
 
 ## Related Assets
 
+- [[02_Assets/Asset__GV1001|GV1001]]
 - [[02_Assets/Asset__KINE-501B|KINE-501B]]
 - [[02_Assets/Asset__KINE-501C|KINE-501C]]
 - [[02_Assets/Asset__KINE-501D|KINE-501D]]
+- [[02_Assets/Asset__ZCS1|ZCS1]]
 
 ## Related Targets / MoA
 

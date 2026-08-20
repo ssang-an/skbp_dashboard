@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-18T17:19:09"
+generated_at: "2026-08-20T15:43:42"
 record_id: "Beijing Youngen Biotechnology Co Ltd_Alzheimer's Disease"
 company: "Beijing Youngen Biotechnology Co., Ltd."
 country: "China"

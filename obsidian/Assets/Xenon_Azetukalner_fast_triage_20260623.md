@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-18T17:19:09"
+generated_at: "2026-08-20T15:43:42"
 record_id: "Xenon_Azetukalner_fast_triage_20260623"
 company: "Xenon Pharmaceuticals"
 country: "Canada"
@@ -30,7 +30,7 @@ tags:
 | Cluster | [[Cluster - Ion Channel|Ion Channel]] |
 | Stage | Phase 3 |
 | Indication | Focal onset seizures |
-| Modality | Oral small molecule |
+| Modality | Small molecule |
 | Hard Filter | SELECT |
 | Total Score | None / 21 |
 
@@ -290,7 +290,193 @@ Strong same-target Kv7 benchmark; run Full Scout.
     "review_type": "fast_triage",
     "generated_at": "2026-06-23",
     "output_filename_base": "Xenon_Azetukalner_fast_triage_20260623",
-    "storage_profile": "dashboard_hybrid_v1"
+    "storage_profile": "dashboard_hybrid_v1",
+    "human_review": {
+      "overrides": {},
+      "ai_baseline": {
+        "final_comment": ""
+      },
+      "history": [
+        {
+          "changed_at": "2026-08-20T01:35:37.589426+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_table",
+          "field": "scores.target_relevance",
+          "previous_value": 3,
+          "new_value": 2
+        },
+        {
+          "changed_at": "2026-08-20T01:40:24.453769+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_rubric_refresh",
+          "change_method": "rubric_refresh",
+          "field": "scores.target_relevance",
+          "previous_value": 2,
+          "new_value": 3
+        },
+        {
+          "changed_at": "2026-08-20T01:43:21.035393+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_table",
+          "field": "final_comment",
+          "previous_value": "",
+          "new_value": "ㅇㄹ"
+        },
+        {
+          "changed_at": "2026-08-20T06:29:35.494951+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_table",
+          "field": "structured_table.company",
+          "previous_value": "Xenon Pharmaceuticals",
+          "new_value": "Xenon Pharma"
+        },
+        {
+          "changed_at": "2026-08-20T06:43:17.264936+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_table",
+          "field": "structured_table.company",
+          "previous_value": "Xenon Pharma",
+          "new_value": "Xenon Pharmaceuiticals"
+        },
+        {
+          "changed_at": "2026-08-20T06:43:28.008565+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "detail_final_comment_delete",
+          "field": "final_comment",
+          "previous_value": "ㅇㄹ",
+          "new_value": ""
+        },
+        {
+          "changed_at": "2026-08-20T06:43:42.207775+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_table",
+          "field": "structured_table.company",
+          "previous_value": "Xenon Pharmaceuiticals",
+          "new_value": "Xenon Pharmaceuticals"
+        }
+      ],
+      "last_updated_at": "2026-08-20T06:43:42.207775+00:00",
+      "last_updated_source": "dashboard_table",
+      "last_updated_by": "정주원",
+      "has_manual_override": true,
+      "last_scoring_override_reset_at": "2026-08-20T01:40:24.453769+00:00",
+      "last_scoring_override_reset_source": "dashboard_tab2_rubric_refresh"
+    },
+    "edit_history": [
+      {
+        "id": "2ec60f0fff4d46e78e4f145c5304dbf5",
+        "changed_at": "2026-08-20T01:35:37.589451+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_table_manual_review",
+        "field": "scores.target_relevance",
+        "previous_value": 3,
+        "new_value": 2
+      },
+      {
+        "id": "f57e0550d38e41e890f586dce5392a9e",
+        "changed_at": "2026-08-20T01:37:26.692913+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "detail_topic_note_add",
+        "field": "topic_notes.triage-score-target_relevance",
+        "previous_value": null,
+        "new_value": "ㅇㄹㅇㄹ"
+      },
+      {
+        "id": "f7c725e253fe44e68e97b05473feb99f",
+        "changed_at": "2026-08-20T01:40:24.453821+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_rubric_refresh",
+        "field": "scores.target_relevance",
+        "previous_value": 2,
+        "new_value": 3,
+        "change_method": "rubric_refresh"
+      },
+      {
+        "id": "80fe19dc384148c9bcb8cc4a84c7c203",
+        "changed_at": "2026-08-20T01:43:21.035417+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_table_manual_review",
+        "field": "final_comment",
+        "previous_value": "",
+        "new_value": "ㅇㄹ"
+      },
+      {
+        "id": "e4a63dc4fe744a3b8d790c77e6c10f9e",
+        "changed_at": "2026-08-20T01:43:29.067728+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "detail_topic_note_delete",
+        "field": "topic_notes.triage-score-target_relevance",
+        "previous_value": "ㅇㄹㅇㄹ",
+        "new_value": null
+      },
+      {
+        "id": "939157bb81624038b959effcaf0bac15",
+        "changed_at": "2026-08-20T06:29:35.494979+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_table_manual_review",
+        "field": "structured_table.company",
+        "previous_value": "Xenon Pharmaceuticals",
+        "new_value": "Xenon Pharma"
+      },
+      {
+        "id": "cbe1b21dac5445b2b4cb8504e1c731cf",
+        "changed_at": "2026-08-20T06:43:17.264984+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_table_manual_review",
+        "field": "structured_table.company",
+        "previous_value": "Xenon Pharma",
+        "new_value": "Xenon Pharmaceuiticals"
+      },
+      {
+        "id": "e55d8982220941e38c7fd2a551fbe44b",
+        "changed_at": "2026-08-20T06:43:28.008593+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "detail_final_comment_delete",
+        "field": "final_comment",
+        "previous_value": "ㅇㄹ",
+        "new_value": ""
+      },
+      {
+        "id": "7389cdfd0f2c4f6980f43804dd2f083d",
+        "changed_at": "2026-08-20T06:43:42.207800+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_table_manual_review",
+        "field": "structured_table.company",
+        "previous_value": "Xenon Pharmaceuiticals",
+        "new_value": "Xenon Pharmaceuticals"
+      }
+    ],
+    "topic_notes": [],
+    "rubric_reviewed_version": "3.3",
+    "rubric_reviewed_at": "2026-08-20T01:40:24.453769+00:00",
+    "rubric_reviewed_by": "127.0.0.1",
+    "rubric_review_result": "manual_override_reset",
+    "rubric_refresh_history": [
+      {
+        "version": "3.3",
+        "reviewed_at": "2026-08-20T01:40:24.453769+00:00",
+        "result": "manual_override_reset",
+        "actor_ip": "127.0.0.1",
+        "reason": "기존 점수는 최신 루브릭 기준과 일치하며, 변경을 지지할 구체적인 증거가 없습니다.",
+        "changes": []
+      }
+    ]
   },
   "source_report": {
     "raw_markdown": "# SKBP Fast Triage Result\n\n중요: 위 10개 asset은 공개 자료상 모두 biotech/pharma pipeline asset identity가 확인되며, 빠른 triage 기준상 모두 Full Scout v3.1로 넘겨볼 만한 SELECT 후보이나, SELECT는 최종 SKBP recommendation이 아니라 심층검토 진입 신호다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | Azetukalner / XEN1101 | Xenon Pharmaceuticals | Kv7/KCNQ potassium channel opener | Epilepsy / seizure disorders | Phase 3 | Canada | 3 | 3 | 3 | SELECT | NS-041과 동일 Kv7/KCNQ 축의 가장 강한 임상 benchmark. Phase 3 FOS positive topline과 Phase 2b publication이 확인되어 Full Scout 우선순위 높음. | https://investor.xenon-pharma.com/news-releases/news-release-details/xenon-announces-positive-topline-data-phase-3-x-tole2-study<br>https://jamanetwork.com/journals/jamaneurology/fullarticle/2809938 |\n| 2 | Opakalim / BHV-7000 | Biohaven | Selective Kv7.2/Kv7.3 activator | Epilepsy / seizure disorders | Phase 2/3 | United States | 3 | 3 | 3 | SELECT | NS-041과 거의 같은 target/MoA의 same-class competitor. Biohaven 공식 pipeline상 selective Kv7.2/7.3 activator이며 pivotal epilepsy 개발 중. | https://www.biohaven.com/pipeline/innovation-engine/kv7/<br>https://www.prnewswire.com/news-releases/biohaven-reports-new-clinical-data-in-epilepsy-with-opakalim-a-selective-kv7-27-3-activator-highlighting-seizure-control-and-markedly-differentiated-tolerability-profile-302781743.html |\n| 3 | QRL-101 | QurAlis | Selective Kv7.2/Kv7.3 opener | Epilepsy / seizure disorders | Phase 1 | United States | 3 | 2 | 2 | SELECT | Kv7.2/7.3 opener로 NS-041 class 비교 가치가 있음. 현재 ALS hyperexcitability PoM/Phase 1 중심이지만 DEE Phase 2 계획이 보여 triage상 SELECT. | https://www.quralis.com/news/quralis-to-present-data-from-its-phase-1-clinical-trial-of-qrl-101-a-potential-best-in-class-selective-kv7-2-7-3-ion-channel-opener-at-american-epilepsy-society-2025-annual-meeting/ |\n| 4 | SAN2355 | Jazz Pharmaceuticals / Saniona | Selective Kv7.2/Kv7.3 activator | Epilepsy / seizure disorders | IND-enabling | Europe/UK | 3 | 2 | 1 | SELECT | Preclinical이지만 Jazz가 global exclusive license-in한 Kv7.2/7.3 epilepsy asset으로 BD benchmark 가치가 큼. Data maturity는 낮아 Full Scout에서는 자료 부족 가능성 있음. | https://investor.jazzpharma.com/news-releases/news-release-details/jazz-pharmaceuticals-enters-exclusive-licensing-agreement |\n| 5 | RAP-219 | Rapport Therapeutics | TARPγ8-specific AMPAR negative allosteric modulator | Epilepsy / seizure disorders | Phase 2 | United States | 3 | 3 | 3 | SELECT | FOS에서 novel synaptic transmission MoA이며 Phase 2a seizure/biomarker response가 확인됨. NS-041과 다른 E/I Balance approach로 비교 가치 높음. | https://investors.rapportrx.com/news-releases/news-release-details/rapport-therapeutics-presents-rap-219-focal-onset-seizure-phase/<br>https://aesnet.org/abstractslisting/efficacy-and-tolerability-of-rap-219-a-potential-first-in-class-negative-allosteric-modulator-of-%CE%B38-transmembrane-ampa-receptor-associated-protein-impact-on-rns-long-episodes-and-focal-seizures |\n| 6 | ABS-1230 | Actio Biosciences | Oral selective KCNT1 inhibitor | Epilepsy / seizure disorders | Phase 1/2 | United States | 3 | 2 | 2 | SELECT | KCNT1-related epilepsy의 genetically defined ion-channel asset. Phase 1a 및 Phase Ib/II 진입 자료가 있어 early rare-epilepsy scout 후보로 적합. | https://actiobiosciences.com/actio-biosciences-announces-first-participant-dosed-in-phase-1-clinical-trial-of-abs-1230-a-kcnt1-inhibitor-for-the-treatment-of-kcnt1-related-epilepsy/<br>https://www.clinicaltrialsarena.com/news/actio-biosciences-begins-abs-1230-trial/ |\n| 7 | Zorevunersen / STK-001 | Stoke Therapeutics / Biogen | ASO, SCN1A productive mRNA / Nav1.1 expression increase | Epilepsy / seizure disorders | Phase 3 | United States | 3 | 3 | 3 | SELECT | Dravet root-cause ASO로 Phase 3 EMPEROR 진행 및 NEJM/clinical data가 확인됨. Modality 확장성 평가용으로 Full Scout 가치 높음. | https://investor.stoketherapeutics.com/news-releases/news-release-details/stoke-therapeutics-announces-updates-timelines-completion<br>https://www.stoketherapeutics.com/patients-families/clinical-studies/ |\n| 8 | ETX101 | Encoded Therapeutics | AAV9 gene regulation therapy increasing SCN1A expression | Epilepsy / seizure disorders | Phase 1/2 | United States | 3 | 3 | 3 | SELECT | Dravet gene therapy asset로 Phase 1/2 interim efficacy가 확인됨. Zorevunersen과 disease-modifying approach 비교에 적합. | https://encoded.com/press-releases/encoded-therapeutics-presents-positive-interim-efficacy-data-from-initial-dose-levels-of-phase-1-2-trials-evaluating-etx101-gene-therapy-in-dravet-syndrome/<br>https://clinicaltrials.gov/study/NCT05419492 |\n| 9 | Bexicaserin / LP352 | Lundbeck / Longboard Pharmaceuticals | 5-HT2C receptor superagonist | Epilepsy / seizure disorders | Phase 3 | Europe/UK | 2 | 3 | 3 | SELECT | Ion channel 직접 target은 아니지만 DEE seizure에서 Phase 1b/2a 및 OLE data, Phase 3 진행이 확인되어 E/I/network modulation 관점에서 검토 가치 있음. | https://www.lundbeck.com/us/newsroom/2025/lundbeck-announces-positive-results-from-12-month-open-label-ext<br>https://pmc.ncbi.nlm.nih.gov/articles/PMC12927688/ |\n| 10 | BMB-101 | Bright Minds Biosciences | Selective 5-HT2C receptor agonist / biased agonist | Epilepsy / seizure disorders | Phase 2 | United States | 2 | 2 | 2 | SELECT | 5-HT2C seizure-modulation 계열의 smaller biotech asset. Phase 2 absence epilepsy/DEE trial identity가 확인되어 bexicaserin follow-on 비교 대상으로 적합. | https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/<br>https://clinicaltrials.gov/study/NCT06401538 |\n\n## Notes\n- 모든 row는 quick public-source identity check 기준으로 pipeline asset identity가 확인됨.\n- Full Scout 우선순위는 Azetukalner, Opakalim, RAP-219, Zorevunersen, ETX101 순서가 가장 높음.\n- SAN2355는 SELECT이나 preclinical/IND-enabling 단계라 Full Scout에서 data maturity 부족 가능성이 큼.\n- Bexicaserin과 BMB-101은 ion-channel direct target은 아니므로 Target Relevance는 2점으로 낮게 두고, seizure clinical data와 network modulation rationale 때문에 SELECT 처리함.",
@@ -310,7 +496,7 @@ Strong same-target Kv7 benchmark; run Full Scout.
     "asset_name": "Azetukalner / XEN1101",
     "target": "Kv7/KCNQ potassium channels",
     "moa": "Potassium channel opener / neuronal hyperexcitability reduction",
-    "modality_platform": "Oral small molecule",
+    "modality_platform": "Small molecule",
     "main_indication": "Epilepsy / seizure disorders",
     "indication": "Focal onset seizures",
     "development_stage": "Phase 3",

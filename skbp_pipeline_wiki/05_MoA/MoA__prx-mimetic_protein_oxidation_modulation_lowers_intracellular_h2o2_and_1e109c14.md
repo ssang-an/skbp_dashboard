@@ -6,8 +6,8 @@ aliases:
   - "prx-mimetic_protein_oxidation_modulation_lowers_intracellular_h2o2_and_1e109c14"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

@@ -6,9 +6,9 @@ aliases:
 tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
-  - "theme/no_theme"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+  - "theme/others"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: "[[01_Raw_Reports/Hangzhou_Westan_WT-1108_20260621]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -16,12 +16,12 @@ confidence: "medium"
 company: "[[03_Companies/Company__Hangzhou_Westan_Pharmaceutical_Technology_Co.,_Ltd|Hangzhou Westan Pharmaceutical Technology Co., Ltd.]]"
 target: "[[04_Targets/Target__P2X3_receptor_P2RX3|P2X3 receptor / P2RX3]]"
 moa: "[[05_MoA/MoA__Selective_P2X3_receptor_antagonism_intended_to_reduce_ATP-mediated_airw_a0f471fe|Selective P2X3 receptor antagonism intended to reduce ATP-mediated airway sensory nerve activation and cough hypersensitivity.]]"
-modality: "[[06_Modalities_Platforms/Modality__Oral_small_molecule_tablet;_reportedly_developed_using_WestanAI+_and_pr_1de450e9|Oral small molecule tablet; reportedly developed using WestanAI+ and proprietary compound library.]]"
+modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Refractory_or_unexplained_chronic_cough_(RCC_UCC)|Refractory or unexplained chronic cough (RCC/UCC)]]"
 scorecard: "[[10_Scorecards/Scorecard__WT-1108__20260621|Scorecard__WT-1108__20260621]]"
-theme: "[[11_Themes_Clusters/Theme__No_Theme|No Theme]]"
-cluster: "[[11_Themes_Clusters/Cluster__No_mapped_SKBP_cluster|No mapped SKBP cluster]]"
+theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
+cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 8
 max_score: 21
 recommendation: "Watch"
@@ -38,10 +38,10 @@ evidence_level: "E2"
 | Asset | WT-1108 |
 | Target | [[04_Targets/Target__P2X3_receptor_P2RX3|P2X3 receptor / P2RX3]] |
 | MoA | [[05_MoA/MoA__Selective_P2X3_receptor_antagonism_intended_to_reduce_ATP-mediated_airw_a0f471fe|Selective P2X3 receptor antagonism intended to reduce ATP-mediated airway sensory nerve activation and cough hypersensitivity.]] |
-| Modality | [[06_Modalities_Platforms/Modality__Oral_small_molecule_tablet;_reportedly_developed_using_WestanAI+_and_pr_1de450e9|Oral small molecule tablet; reportedly developed using WestanAI+ and proprietary compound library.]] |
+| Modality | [[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]] |
 | Indication | [[07_Indications/Indication__Refractory_or_unexplained_chronic_cough_(RCC_UCC)|Refractory or unexplained chronic cough (RCC/UCC)]] |
-| Stage | Phase IIa registered/ongoing; China CTR20254063 listed as ongoing/not yet recruiting on 2025-10-11; Phase I CTR20233488 listed as completed in Synapse. |
-| Theme / Cluster | [[11_Themes_Clusters/Theme__No_Theme|No Theme]] / [[11_Themes_Clusters/Cluster__No_mapped_SKBP_cluster|No mapped SKBP cluster]] |
+| Stage | Phase 2 |
+| Theme / Cluster | [[11_Themes_Clusters/Theme__Others|Others]] / [[11_Themes_Clusters/Cluster__Others|Others]] |
 | Recommendation | Watch |
 | Total Score | 8/21 |
 
@@ -64,12 +64,12 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
 ### Core Biology
 - Target: [[04_Targets/Target__P2X3_receptor_P2RX3|P2X3 receptor / P2RX3]]
 - MoA: [[05_MoA/MoA__Selective_P2X3_receptor_antagonism_intended_to_reduce_ATP-mediated_airw_a0f471fe|Selective P2X3 receptor antagonism intended to reduce ATP-mediated airway sensory nerve activation and cough hypersensitivity.]]
-- Theme: [[11_Themes_Clusters/Theme__No_Theme|No Theme]]
-- Cluster: [[11_Themes_Clusters/Cluster__No_mapped_SKBP_cluster|No mapped SKBP cluster]]
+- Theme: [[11_Themes_Clusters/Theme__Others|Others]]
+- Cluster: [[11_Themes_Clusters/Cluster__Others|Others]]
 
 ### Development Context
 - Company: [[03_Companies/Company__Hangzhou_Westan_Pharmaceutical_Technology_Co.,_Ltd|Hangzhou Westan Pharmaceutical Technology Co., Ltd.]]
-- Modality: [[06_Modalities_Platforms/Modality__Oral_small_molecule_tablet;_reportedly_developed_using_WestanAI+_and_pr_1de450e9|Oral small molecule tablet; reportedly developed using WestanAI+ and proprietary compound library.]]
+- Modality: [[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]
 - Indication: [[07_Indications/Indication__Refractory_or_unexplained_chronic_cough_(RCC_UCC)|Refractory or unexplained chronic cough (RCC/UCC)]]
 
 ### Evidence Sources

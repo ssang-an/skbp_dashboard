@@ -928,13 +928,37 @@
   font-size: 15px;
 }
 
-.triage-score-card-header > strong {
+.triage-score-card-header > strong,
+.triage-score-value {
   color: var(--text);
   font-size: 26px;
   line-height: 1;
 }
 
-.triage-score-card-header > strong small {
+.triage-score-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  border: 0;
+  padding: 2px 3px;
+  border-radius: 7px;
+  background: transparent;
+  font: inherit;
+  text-align: right;
+  cursor: pointer;
+}
+
+.triage-score-value:hover {
+  background: color-mix(in srgb, var(--accent-soft) 60%, transparent);
+}
+
+.triage-score-value:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 46%, transparent);
+  outline-offset: 2px;
+}
+
+.triage-score-card-header > strong small,
+.triage-score-value small {
   color: var(--muted);
   font-size: 11px;
 }
@@ -1161,7 +1185,7 @@
 .triage-diligence-block h3 {
   margin: 0 0 7px;
   color: var(--text);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .triage-diligence-block ul {
@@ -1173,7 +1197,7 @@
 
 .triage-diligence-block li {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -1306,7 +1330,7 @@
 .triage-status-guide h3 {
   margin: 0 0 10px;
   color: var(--text);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .triage-status-guide dl {
@@ -1317,7 +1341,7 @@
 
 .triage-status-guide dl > div {
   display: grid;
-  grid-template-columns: 62px minmax(0, 1fr);
+  grid-template-columns: 74px minmax(0, 1fr);
   gap: 8px;
   align-items: center;
 }
@@ -1325,7 +1349,7 @@
 .triage-status-guide dt {
   border-radius: 5px;
   padding: 4px;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 950;
   text-align: center;
 }
@@ -1349,7 +1373,7 @@
 .triage-status-guide dd {
   margin: 0;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.35;
 }
 
@@ -4634,6 +4658,12 @@ html[data-theme="dark"] .criteria-table thead th {
     color-mix(in srgb, var(--data-upload-accent) 90%, #ffffff),
     color-mix(in srgb, var(--data-upload-accent-light) 90%, #ffffff)
   );
+}
+
+#step0GuideSteps .data-upload-prompt-chip .data-upload-icon {
+  width: 12px;
+  height: 12px;
+  stroke-width: 1.8;
 }
 
 .data-upload-guide-steps pre {
@@ -10102,16 +10132,12 @@ html[data-theme="dark"] .collaboration-panel {
 .triage-decision-hero {
   border-color: var(--glass-border);
   border-left-width: 4px;
-  background:
-    radial-gradient(circle at 94% 14%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 18rem),
-    var(--glass-strong);
+  background: var(--glass-strong);
   box-shadow: var(--floating-shadow);
 }
 
 html[data-theme="dark"] .triage-decision-hero {
-  background:
-    radial-gradient(circle at 94% 14%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 18rem),
-    var(--glass-strong);
+  background: var(--glass-strong);
 }
 
 .triage-detail-section,
@@ -11944,15 +11970,11 @@ body {
 .triage-decision-hero {
   border-left-width: 4px;
   padding: 24px 26px 26px;
-  background:
-    linear-gradient(110deg, color-mix(in srgb, var(--fluent-blue) 6%, transparent), transparent 58%),
-    var(--readable-surface);
+  background: var(--readable-surface);
 }
 
 html[data-theme="dark"] .triage-decision-hero {
-  background:
-    linear-gradient(110deg, color-mix(in srgb, var(--fluent-blue) 9%, transparent), transparent 58%),
-    var(--readable-surface);
+  background: var(--readable-surface);
 }
 
 .triage-decision-hero::after {
@@ -12055,7 +12077,8 @@ html[data-theme="dark"] .triage-decision-hero {
   font-weight: 680;
 }
 
-.triage-score-card-header > strong {
+.triage-score-card-header > strong,
+.triage-score-value {
   display: inline-flex;
   flex-direction: column;
   align-items: flex-end;
@@ -12066,14 +12089,15 @@ html[data-theme="dark"] .triage-decision-hero {
   padding: 6px 7px;
   background: color-mix(in srgb, var(--triage-score-color) 11%, var(--readable-surface));
   color: var(--triage-score-color);
-  font-size: 23px;
+  font-size: 28px;
   white-space: nowrap;
 }
 
-.triage-score-card-header > strong small {
+.triage-score-card-header > strong small,
+.triage-score-value small {
   display: block;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -12138,9 +12162,13 @@ html[data-theme="dark"] .triage-decision-hero {
   font-size: 10px;
 }
 
-.triage-source-copy p,
-.triage-diligence-block li {
+.triage-source-copy p {
   font-size: 11px;
+  line-height: 1.58;
+}
+
+.triage-diligence-block li {
+  font-size: 12px;
   line-height: 1.58;
 }
 
@@ -12183,7 +12211,7 @@ html[data-theme="dark"] .triage-quick-panel {
 }
 
 .triage-status-guide dd {
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.45;
 }
 
@@ -13801,7 +13829,8 @@ html[data-theme="dark"] .obsidian-meta-row {
 
 .visual-grid.workflow-summary-grid > .panel { min-height: 292px; }
 
-#exportExcelButton.excel-export-button {
+#exportExcelButton.excel-export-button,
+#step0ExportExcelButton.excel-export-button {
   display: inline-flex;
   min-height: 26px;
   align-items: center;
@@ -13818,20 +13847,23 @@ html[data-theme="dark"] .obsidian-meta-row {
   white-space: nowrap;
 }
 
-#exportExcelButton.excel-export-button svg {
+#exportExcelButton.excel-export-button svg,
+#step0ExportExcelButton.excel-export-button svg {
   width: 14px;
   height: 14px;
   stroke-width: 2;
 }
 
-#exportExcelButton.excel-export-button:disabled {
+#exportExcelButton.excel-export-button:disabled,
+#step0ExportExcelButton.excel-export-button:disabled {
   border-color: color-mix(in srgb, #2f9b74 20%, var(--line));
   background: color-mix(in srgb, #42b883 6%, var(--surface-soft));
   color: color-mix(in srgb, #247457 68%, var(--muted));
   opacity: 0.7;
 }
 
-#exportExcelButton.excel-export-button:hover:not(:disabled) {
+#exportExcelButton.excel-export-button:hover:not(:disabled),
+#step0ExportExcelButton.excel-export-button:hover:not(:disabled) {
   border-color: color-mix(in srgb, #2f9b74 52%, var(--line));
   background: color-mix(in srgb, #42b883 15%, var(--surface));
   color: #1c684c;
@@ -19581,7 +19613,7 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 /* Fast Triage detail now follows the calmer Full Scout review rhythm. */
 .triage-decision-hero {
   border-left: 1px solid var(--line);
-  background: linear-gradient(135deg, var(--surface), color-mix(in srgb, var(--accent-soft) 32%, var(--surface)));
+  background: var(--surface);
 }
 
 .triage-decision-hero::after {
@@ -19605,31 +19637,16 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 .triage-score-card.is-human-score.score-1,
 .triage-score-card.is-human-score.score-0 { border-color: color-mix(in srgb, var(--red) 66%, var(--line)); }
 
-.triage-score-editor {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin: 12px 0 -2px;
-  border-top: 1px solid var(--line);
-  padding-top: 10px;
-}
-
-.triage-score-editor > span,
-.triage-score-editor select {
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.triage-score-editor > span { color: var(--muted); }
-
-.triage-score-editor select {
+.triage-score-inline-select {
   min-height: 30px;
   border: 1px solid var(--line);
   border-radius: 7px;
   padding: 3px 8px;
   background: var(--surface);
   color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 850;
 }
 
 .triage-score-notes,

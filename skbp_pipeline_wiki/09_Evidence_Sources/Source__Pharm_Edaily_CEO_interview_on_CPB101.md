@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/reputable_biotech_news"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | reputable biotech news |
 | Reliability | medium |
 | URL | https://pharm.edaily.co.kr/news/read?mediaCodeNo=257&newsId=01758086632530312 |
-| Accessed / generated date | 2026-08-18 |
+| Accessed / generated date | 2026-08-20 |
 
 ## Evidence Summary
 

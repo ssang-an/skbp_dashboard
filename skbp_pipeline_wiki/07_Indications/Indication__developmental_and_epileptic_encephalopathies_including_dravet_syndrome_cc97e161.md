@@ -6,8 +6,8 @@ aliases:
   - "developmental_and_epileptic_encephalopathies_including_dravet_syndrome_cc97e161"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

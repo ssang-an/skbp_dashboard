@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-18T17:19:09"
+generated_at: "2026-08-20T15:43:42"
 record_id: "Rapport_RAP-219_fast_triage_20260623"
 company: "Rapport Therapeutics"
 country: "United States"

@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: "[[01_Raw_Reports/Lynk_Pharmaceuticals_LNK01006_20260621]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -16,13 +16,13 @@ confidence: "medium"
 company: "[[03_Companies/Company__Lynk_Pharmaceuticals_Co.,_Ltd|Lynk Pharmaceuticals Co., Ltd.]]"
 target: "[[04_Targets/Target__TYK2|TYK2]]"
 moa: "[[05_MoA/MoA__Oral_allosteric_TYK2_inhibitor_targeting_the_JH2_pseudokinase_regulator_cc811ca3|Oral allosteric TYK2 inhibitor targeting the JH2 pseudokinase/regulatory domain; designed to inhibit TYK2-mediated IL-12, IL-23 and type I interferon signaling with CNS exposure.]]"
-modality: "[[06_Modalities_Platforms/Modality__Oral_small_molecule;_CNS-penetrant_allosteric_TYK2_inhibitor;_developed_458cb9bc|Oral small molecule; CNS-penetrant allosteric TYK2 inhibitor; developed through Lynk medicinal chemistry and Formation/Bleecker clinical development platform.]]"
+modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Phase_1_healthy-volunteer_study;_intended_development_positioning_inclu_d38001b6|Phase 1 healthy-volunteer study; intended development positioning includes MS and broader CNS/neuroinflammatory or autoimmune/inflammatory diseases.]]"
 scorecard: "[[10_Scorecards/Scorecard__LNK01006_BLKR201__20260621|Scorecard__LNK01006_BLKR201__20260621]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__Cytokine_신경조절|Cytokine 신경조절]]"
-total_score: 14
+total_score: 13
 max_score: 21
 recommendation: "Shortlist"
 evidence_level: "E3"
@@ -38,12 +38,12 @@ evidence_level: "E3"
 | Asset | LNK01006 / BLKR201 |
 | Target | [[04_Targets/Target__TYK2|TYK2]] |
 | MoA | [[05_MoA/MoA__Oral_allosteric_TYK2_inhibitor_targeting_the_JH2_pseudokinase_regulator_cc811ca3|Oral allosteric TYK2 inhibitor targeting the JH2 pseudokinase/regulatory domain; designed to inhibit TYK2-mediated IL-12, IL-23 and type I interferon signaling with CNS exposure.]] |
-| Modality | [[06_Modalities_Platforms/Modality__Oral_small_molecule;_CNS-penetrant_allosteric_TYK2_inhibitor;_developed_458cb9bc|Oral small molecule; CNS-penetrant allosteric TYK2 inhibitor; developed through Lynk medicinal chemistry and Formation/Bleecker clinical development platform.]] |
+| Modality | [[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]] |
 | Indication | [[07_Indications/Indication__Phase_1_healthy-volunteer_study;_intended_development_positioning_inclu_d38001b6|Phase 1 healthy-volunteer study; intended development positioning includes MS and broader CNS/neuroinflammatory or autoimmune/inflammatory diseases.]] |
-| Stage | Phase 1 recruiting / first-in-human dosed in June 2026; early data readout expected early 2027. |
+| Stage | Phase 1 |
 | Theme / Cluster | [[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]] / [[11_Themes_Clusters/Cluster__Cytokine_신경조절|Cytokine 신경조절]] |
 | Recommendation | Shortlist |
-| Total Score | 14/21 |
+| Total Score | 13/21 |
 
 ## 2. One-line Summary
 
@@ -69,7 +69,7 @@ LNK01006 / BLKR201 is a strong SKBP Neuroimmune scientific shortlist candidate b
 
 ### Development Context
 - Company: [[03_Companies/Company__Lynk_Pharmaceuticals_Co.,_Ltd|Lynk Pharmaceuticals Co., Ltd.]]
-- Modality: [[06_Modalities_Platforms/Modality__Oral_small_molecule;_CNS-penetrant_allosteric_TYK2_inhibitor;_developed_458cb9bc|Oral small molecule; CNS-penetrant allosteric TYK2 inhibitor; developed through Lynk medicinal chemistry and Formation/Bleecker clinical development platform.]]
+- Modality: [[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]
 - Indication: [[07_Indications/Indication__Phase_1_healthy-volunteer_study;_intended_development_positioning_inclu_d38001b6|Phase 1 healthy-volunteer study; intended development positioning includes MS and broader CNS/neuroinflammatory or autoimmune/inflammatory diseases.]]
 
 ### Evidence Sources
@@ -100,7 +100,7 @@ LNK01006 / BLKR201 is a strong SKBP Neuroimmune scientific shortlist candidate b
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260621 | 14/21 | Shortlist | [[10_Scorecards/Scorecard__LNK01006_BLKR201__20260621|Scorecard__LNK01006_BLKR201__20260621]] |
+| 20260621 | 13/21 | Shortlist | [[10_Scorecards/Scorecard__LNK01006_BLKR201__20260621|Scorecard__LNK01006_BLKR201__20260621]] |
 
 ## 9. Raw Report
 

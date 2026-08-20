@@ -6,8 +6,8 @@ aliases:
   - "oral_small_molecule"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -23,10 +23,8 @@ confidence: "medium"
 ## Related Assets
 
 - [[02_Assets/Asset__ABS-1230|ABS-1230]]
-- [[02_Assets/Asset__Azetukalner_XEN1101|Azetukalner_XEN1101]]
 - [[02_Assets/Asset__BMB-101|BMB-101]]
 - [[02_Assets/Asset__Bexicaserin_LP352|Bexicaserin_LP352]]
-- [[02_Assets/Asset__Opakalim_BHV-7000|Opakalim_BHV-7000]]
 - [[02_Assets/Asset__QRL-101|QRL-101]]
 - [[02_Assets/Asset__RAP-219|RAP-219]]
 - [[02_Assets/Asset__SAN2355|SAN2355]]

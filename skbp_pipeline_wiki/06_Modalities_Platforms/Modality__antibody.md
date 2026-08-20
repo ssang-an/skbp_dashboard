@@ -6,8 +6,8 @@ aliases:
   - "antibody"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -23,7 +23,9 @@ confidence: "medium"
 ## Related Assets
 
 - [[02_Assets/Asset__ADEL-Y04|ADEL-Y04]]
+- [[02_Assets/Asset__AS-M801|AS-M801]]
 - [[02_Assets/Asset__CLZ003|CLZ003]]
+- [[02_Assets/Asset__ISU203|ISU203]]
 
 ## Related Targets / MoA
 

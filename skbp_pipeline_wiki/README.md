@@ -2,7 +2,7 @@
 
 Generated from `json/pipeline-records.json`.
 
-Generated at: `2026-08-18T17:19:19`
+Generated at: `2026-08-20T15:43:46`
 
 ## Entry Points
 
@@ -14,9 +14,9 @@ Generated at: `2026-08-18T17:19:19`
 
 ## Counts
 
-- Records: 85
-- Graph nodes: 877
-- Graph edges: 1603
+- Records: 129
+- Graph nodes: 1176
+- Graph edges: 2195
 
 ## Rule
 

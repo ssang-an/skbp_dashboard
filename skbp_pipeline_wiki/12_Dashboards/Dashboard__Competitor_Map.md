@@ -91,3 +91,7 @@
 - asset::1st-104 -> competitor::arvinas_arv-102
 - asset::1st-104 -> competitor::ionis_biogen_biib094
 - asset::1st-104 -> competitor::sparc_vodobatinib
+- asset::ast-001_(speragen) -> competitor::multiple_academic_industry_programs;_prior_neurochlore_servier_phase_3_e7ae7456
+- asset::ast-001_(speragen) -> competitor::holland_bloorview_kids_rehabilitation_hospital_prior_seaside_program_ar_45e56246
+- asset::ast-001_(speragen) -> competitor::maplight_therapeutics_ml-004
+- asset::ast-001_(speragen) -> competitor::neurotech_international_fenix_innovation_group_nti164

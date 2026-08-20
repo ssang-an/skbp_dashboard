@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-18T17:19:09"
+generated_at: "2026-08-20T15:43:42"
 record_id: "VASTHERA Co., Ltd._VTA-27"
 company: "VASTHERA Co., Ltd."
 country: "Republic of Korea"
@@ -337,7 +337,7 @@ VTA-27 is a differentiated IND-enabling oral PRX-mimetic AD program with strong 
       "due_date": "",
       "owner_name": "",
       "action_plan": "",
-      "partnership_type": "unknown",
+      "partnership_type": "n_a",
       "partnership_classification_status": "auto_classified",
       "partner_material_flags": {
         "cdp": false,
@@ -348,8 +348,8 @@ VTA-27 is a differentiated IND-enabling oral PRX-mimetic AD program with strong 
       "in_vivo_status_source": "deepseek",
       "in_vitro_status": "O",
       "in_vitro_status_source": "deepseek",
-      "admet_completed": null,
-      "admet_completed_source": "deepseek",
+      "admet_completed": 16,
+      "admet_completed_source": "study_status",
       "filter3_document_analyses": [
         {
           "attachment_id": "4924c428e91544b7b5894918e510b565",
@@ -505,17 +505,17 @@ VTA-27 is a differentiated IND-enabling oral PRX-mimetic AD program with strong 
           }
         }
       ],
-      "filter3_document_analysis_updated_at": "2026-08-18T00:54:54.538307+00:00",
-      "partnership_auto_suggestion": "unknown",
-      "partnership_auto_note": "ADMET Score, ADMET uploaded 확인 불가",
+      "filter3_document_analysis_updated_at": "2026-08-19T08:59:06.611656+00:00",
+      "partnership_auto_suggestion": "n_a",
+      "partnership_auto_note": "OI Partnership 분류 조건 미충족 / Development Stage IND-enabling (IND-enabling 미만 아님)",
       "partnership_auto_evidence_sources": [
         "Tab2 구조화 데이터",
         "Full Scout 원문 리포트: VASTHERA Co., Ltd._VTA-27",
         "Partner Materials: List of ADMET studies_VTA-27 (Vasthera).pdf",
         "Partner Materials: [VASTHERA] VTA-27 program CD_(Aug 2026).pdf"
       ],
-      "partnership_classification_criteria_version": "1.3",
-      "partnership_note": "ADMET Score, ADMET uploaded 확인 불가",
+      "partnership_classification_criteria_version": "1.4",
+      "partnership_note": "OI Partnership 분류 조건 미충족 / Development Stage IND-enabling (IND-enabling 미만 아님)",
       "partnership_evidence_sources": [
         "Tab2 구조화 데이터",
         "Full Scout 원문 리포트: VASTHERA Co., Ltd._VTA-27",
@@ -523,8 +523,8 @@ VTA-27 is a differentiated IND-enabling oral PRX-mimetic AD program with strong 
         "Partner Materials: [VASTHERA] VTA-27 program CD_(Aug 2026).pdf"
       ],
       "partnership_classification_source": "auto",
-      "partnership_classified_at": "2026-08-18T00:54:54.541271+00:00",
-      "updated_at": "2026-08-18T00:54:54.536083+00:00",
+      "partnership_classified_at": "2026-08-19T08:59:06.611709+00:00",
+      "updated_at": "2026-08-19T08:59:06.609175+00:00",
       "updated_source": "dashboard_tab3_oi_partnership_refresh",
       "updated_by": "10.245.225.100",
       "partnership_evidence_updated_at": "2026-08-12T05:15:55.702205+00:00",
@@ -532,11 +532,11 @@ VTA-27 is a differentiated IND-enabling oral PRX-mimetic AD program with strong 
         "cdp": false
       },
       "partnership_recalculation": {
-        "version": "1.3",
-        "previous_version": "1.3",
-        "previous_type": "unknown",
+        "version": "1.4",
+        "previous_version": "1.4",
+        "previous_type": "n_a",
         "previous_source": "auto",
-        "recalculated_at": "2026-08-18T00:54:54.536083+00:00",
+        "recalculated_at": "2026-08-19T08:59:06.609175+00:00",
         "source": "dashboard_tab3_oi_partnership_refresh",
         "scope": "filter3_and_partnership_note_reset_to_latest_auto_classification"
       }

@@ -6,8 +6,8 @@ aliases:
   - "refractory_or_unexplained_chronic_cough_(rcc_ucc)"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

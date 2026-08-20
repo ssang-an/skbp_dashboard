@@ -6,8 +6,8 @@ aliases:
   - "selective_p2x3_receptor_antagonism_intended_to_reduce_atp-mediated_airw_a0f471fe"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

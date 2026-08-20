@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/regulatory"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | regulatory |
 | Reliability | medium |
 | URL | https://www.accessdata.fda.gov/drugsatfda_docs/appletter/2025/761269Orig1s012%3B%20s015ltr.pdf |
-| Accessed / generated date | 2026-08-18 |
+| Accessed / generated date | 2026-08-20 |
 
 ## Evidence Summary
 

@@ -6,8 +6,8 @@ aliases:
   - "rna_therapy"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,7 +22,9 @@ confidence: "medium"
 
 ## Related Assets
 
+- [[02_Assets/Asset__BMD-002|BMD-002]]
 - [[02_Assets/Asset__CV-17|CV-17]]
+- [[02_Assets/Asset__SRN-008|SRN-008]]
 
 ## Related Targets / MoA
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/epidemiology"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | epidemiology |
 | Reliability | medium |
 | URL | https://psnet.ahrq.gov/issue/detection-rates-mild-cognitive-impairment-primary-care-united-states-medicare-population |
-| Accessed / generated date | 2026-08-18 |
+| Accessed / generated date | 2026-08-20 |
 
 ## Evidence Summary
 

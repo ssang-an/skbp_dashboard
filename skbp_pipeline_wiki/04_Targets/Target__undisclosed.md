@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/target"
   - "theme/unknown"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -31,6 +31,7 @@ CNS indication is broad; target undisclosed.
 
 ## Related Assets
 
+- [[02_Assets/Asset__BMD-002|BMD-002]]
 - [[02_Assets/Asset__CNS_XDC|CNS_XDC]]
 - [[02_Assets/Asset__HB018|HB018]]
 - [[02_Assets/Asset__Next-Generation_Biologics|Next-Generation_Biologics]]

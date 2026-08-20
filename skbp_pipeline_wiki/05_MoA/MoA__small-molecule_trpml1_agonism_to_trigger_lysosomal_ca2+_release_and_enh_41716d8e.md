@@ -6,8 +6,8 @@ aliases:
   - "small-molecule_trpml1_agonism_to_trigger_lysosomal_ca2+_release_and_enh_41716d8e"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-18"
-updated_at: "2026-08-18"
+created_at: "2026-08-20"
+updated_at: "2026-08-20"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
