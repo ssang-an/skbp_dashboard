@@ -32,6 +32,19 @@ def full_record(record_id: str, company: str = "Xenon Pharmaceuticals", asset: s
 
 
 class DataReuploadTests(unittest.TestCase):
+    def test_duplicate_record_key_groups_preserve_all_input_positions(self):
+        first = full_record("Neuracle Genetics (now Elisigen)_NG201", company="Neuracle Genetics")
+        second = full_record("Neuracle Genetics (now Elisigen)_NG201", company="Neuracle Science")
+        distinct = full_record("Helixmith_NM301", company="Helixmith", asset="NM301")
+
+        self.assertEqual(
+            main.duplicate_record_key_groups([first, second, distinct]),
+            [{
+                "record_id": "Neuracle Genetics (now Elisigen)_NG201",
+                "indexes": [0, 1],
+            }],
+        )
+
     def test_identity_matches_across_dated_record_ids(self):
         old = full_record("Xenon_Azetukalner_20260801")
         new = full_record("Xenon_Azetukalner_20260803", company="Xenon  Pharmaceuticals")

@@ -3014,6 +3014,24 @@ def record_key(record: dict[str, Any]) -> str:
     return f"{company}_{asset}"
 
 
+def duplicate_record_key_groups(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Return stable record-id collisions with their input positions.
+
+    Save remains deliberately strict: two input rows resolving to one stable
+    record id cannot be merged automatically. The validation endpoint exposes
+    these groups so the dashboard can ask the reviewer which incoming row to
+    retain before the save request is made.
+    """
+    indexes_by_key: dict[str, list[int]] = {}
+    for index, record in enumerate(records):
+        indexes_by_key.setdefault(record_key(record), []).append(index)
+    return [
+        {"record_id": key, "indexes": indexes}
+        for key, indexes in indexes_by_key.items()
+        if len(indexes) > 1
+    ]
+
+
 def normalized_pipeline_identity_text(value: Any) -> str:
     text = unicodedata.normalize("NFKC", str(value or "")).casefold()
     return "".join(character for character in text if character.isalnum())
@@ -10266,6 +10284,7 @@ async def validate_incoming_records(request: Request) -> dict[str, Any]:
         "ok": True,
         "record_count": len(incoming),
         "record_ids": [record_key(record) for record in incoming],
+        "duplicate_record_ids": duplicate_record_key_groups(incoming),
         "workflows": ["triage" if is_fast_triage_record(record) else "full" for record in incoming],
     }
 
@@ -10285,15 +10304,9 @@ async def upsert_records(request: Request) -> dict[str, Any]:
         payload.get("confirmed_replacements") if isinstance(payload, dict) else None,
     )
     validate_records_for_save(incoming)
-    seen_incoming_keys: set[str] = set()
-    duplicate_incoming_keys: set[str] = set()
-    for record in incoming:
-        key = record_key(record)
-        if key in seen_incoming_keys:
-            duplicate_incoming_keys.add(key)
-        seen_incoming_keys.add(key)
-    if duplicate_incoming_keys:
-        duplicate_list = ", ".join(sorted(duplicate_incoming_keys))
+    duplicate_incoming_groups = duplicate_record_key_groups(incoming)
+    if duplicate_incoming_groups:
+        duplicate_list = ", ".join(sorted(group["record_id"] for group in duplicate_incoming_groups))
         raise HTTPException(status_code=409, detail=f"Duplicate record ids in request: {duplicate_list}")
 
     index_by_key = {record_key(record): i for i, record in enumerate(records)}

@@ -579,7 +579,7 @@ function dataUploadRecordRecency(record) {
 }
 
 function findDataReuploadMatches(records) {
-  return records.flatMap((incomingRecord) => {
+  return records.flatMap((incomingRecord, incomingIndex) => {
     const incomingIdentity = dataUploadRecordIdentity(incomingRecord);
     if (!incomingIdentity.normalizedAsset) return [];
     const incomingRecordId = recordIdentifier(incomingRecord);
@@ -602,6 +602,9 @@ function findDataReuploadMatches(records) {
       });
     if (!candidates.length) return [];
     return [{
+      kind: 'existing-record',
+      decisionKey: `existing:${incomingIndex}`,
+      incomingIndex,
       incomingRecordId,
       mode: incomingIdentity.mode,
       company: incomingIdentity.company,
@@ -626,8 +629,39 @@ function findDataReuploadMatches(records) {
   });
 }
 
-function dataReuploadDecisionFor(incomingRecordId) {
-  return activeDataReuploadDecisions.get(incomingRecordId) || { action: 'pending' };
+function findIncomingDuplicateMatches(records, duplicateGroups = []) {
+  return duplicateGroups.flatMap((group, groupIndex) => {
+    const indexes = Array.isArray(group?.indexes)
+      ? group.indexes.filter((index) => Number.isInteger(index) && records[index])
+      : [];
+    if (indexes.length < 2) return [];
+    const candidates = indexes.map((incomingIndex) => {
+      const record = records[incomingIndex];
+      const identity = dataUploadRecordIdentity(record);
+      return {
+        incomingIndex,
+        id: String(group.record_id || recordIdentifier(record)),
+        asset: identity.asset,
+        company: identity.company,
+        stage: String(record?.structured_table?.development_stage || 'Unknown')
+      };
+    });
+    const first = candidates[0];
+    return [{
+      kind: 'incoming-duplicate',
+      decisionKey: `incoming-duplicate:${groupIndex}`,
+      incomingRecordId: String(group.record_id || first.id),
+      incomingIndexes: indexes,
+      asset: first.asset,
+      company: first.company,
+      stage: first.stage,
+      candidates
+    }];
+  });
+}
+
+function dataReuploadDecisionFor(decisionKey) {
+  return activeDataReuploadDecisions.get(decisionKey) || { action: 'pending' };
 }
 
 function renderDataReuploadComparisonColumn(title, asset, company, stage) {
@@ -646,10 +680,45 @@ function renderDataReuploadComparisonColumn(title, asset, company, stage) {
 function renderDataReuploadReviewList() {
   if (!elements.dataReuploadList) return;
   elements.dataReuploadList.innerHTML = activeDataReuploadMatches.map((match) => {
-    const decision = dataReuploadDecisionFor(match.incomingRecordId);
+    const decision = dataReuploadDecisionFor(match.decisionKey);
+    if (match.kind === 'incoming-duplicate') {
+      const selectedIndex = Number.isInteger(decision.selectedIncomingIndex)
+        ? decision.selectedIncomingIndex
+        : null;
+      return `
+        <article class="data-reupload-review-card" data-reupload-incoming="${escapeHtml(match.decisionKey)}">
+          <header class="data-reupload-review-card-header">
+            <div><strong>${escapeHtml(match.asset || 'Unknown asset')}</strong><span>이번 업로드 안에서 같은 Pipeline ID로 정규화된 항목</span></div>
+            <span class="data-reupload-review-state" data-state="${selectedIndex === null ? 'pending' : 'replace'}">${selectedIndex === null ? '선택 필요' : '업로드 항목 선택'}</span>
+          </header>
+          <div class="data-reupload-candidate-stack">
+            ${(match.candidates || []).map((candidate) => {
+              const selected = candidate.incomingIndex === selectedIndex;
+              return `
+                <section class="data-reupload-candidate${selected ? ' is-selected' : ''}" data-candidate-id="${escapeHtml(String(candidate.incomingIndex))}">
+                  <div class="data-reupload-candidate-heading">
+                    <span class="data-reupload-match-badge exact">입력 ${candidate.incomingIndex + 1}번</span>
+                    <span class="data-reupload-company-match">${escapeHtml(candidate.company || 'Unknown company')} · ${escapeHtml(candidate.stage || 'Unknown')}</span>
+                  </div>
+                  <div class="data-reupload-comparison-scroll" tabindex="0" aria-label="동일 ID로 정규화된 이번 업로드 Pipeline 비교">
+                    <div class="data-reupload-comparison-grid">
+                      ${renderDataReuploadComparisonColumn('이번 업로드 후보', candidate.asset, candidate.company, candidate.stage)}
+                      ${renderDataReuploadComparisonColumn('저장 시 ID', match.incomingRecordId, '동일 ID는 하나만 저장 가능', '검토 후 한 항목 유지')}
+                    </div>
+                  </div>
+                  <div class="data-reupload-candidate-actions">
+                    <button type="button" class="identity-modal-submit" data-reupload-action="keep-incoming" data-match-key="${escapeHtml(match.decisionKey)}" data-incoming-index="${candidate.incomingIndex}">이 항목 유지</button>
+                  </div>
+                </section>
+              `;
+            }).join('')}
+          </div>
+        </article>
+      `;
+    }
     const isSkipped = decision.action === 'skip';
     return `
-      <article class="data-reupload-review-card${isSkipped ? ' is-skipped' : ''}" data-reupload-incoming="${escapeHtml(match.incomingRecordId)}">
+      <article class="data-reupload-review-card${isSkipped ? ' is-skipped' : ''}" data-reupload-incoming="${escapeHtml(match.decisionKey)}">
         <header class="data-reupload-review-card-header">
           <div><strong>${escapeHtml(match.asset || 'Unknown asset')}</strong><span>${escapeHtml(match.company || 'Unknown company')} · ${escapeHtml(match.stage || 'Unknown')}</span></div>
           <span class="data-reupload-review-state" data-state="${escapeHtml(decision.action)}">${decision.action === 'replace' ? '덮어쓰기 선택' : isSkipped ? '이번 업로드 제외' : '검토 필요'}</span>
@@ -670,8 +739,8 @@ function renderDataReuploadReviewList() {
                   </div>
                 </div>
                 <div class="data-reupload-candidate-actions">
-                  <button type="button" class="identity-modal-submit" data-reupload-action="replace" data-incoming-id="${escapeHtml(match.incomingRecordId)}" data-existing-id="${escapeHtml(candidate.id)}">덮어쓰기</button>
-                  <button type="button" class="identity-modal-cancel" data-reupload-action="skip" data-incoming-id="${escapeHtml(match.incomingRecordId)}">이번 업로드 제외</button>
+                  <button type="button" class="identity-modal-submit" data-reupload-action="replace" data-match-key="${escapeHtml(match.decisionKey)}" data-existing-id="${escapeHtml(candidate.id)}">덮어쓰기</button>
+                  <button type="button" class="identity-modal-cancel" data-reupload-action="skip" data-match-key="${escapeHtml(match.decisionKey)}">이번 업로드 제외</button>
                 </div>
               </section>
             `;
@@ -684,7 +753,20 @@ function renderDataReuploadReviewList() {
 
 function reviewedDataReuploadDecisions(defaultAction = 'continue', applyToAll = false) {
   return activeDataReuploadMatches.map((match) => {
-    const decision = dataReuploadDecisionFor(match.incomingRecordId);
+    const decision = dataReuploadDecisionFor(match.decisionKey);
+    if (match.kind === 'incoming-duplicate') {
+      const selectedIncomingIndex = Number.isInteger(decision.selectedIncomingIndex)
+        ? decision.selectedIncomingIndex
+        : null;
+      return {
+        ...match,
+        selectedIncomingIndex,
+        unresolved: selectedIncomingIndex === null,
+        skipIncomingIndexes: selectedIncomingIndex === null
+          ? []
+          : match.incomingIndexes.filter((index) => index !== selectedIncomingIndex)
+      };
+    }
     const action = applyToAll || decision.action === 'pending' ? defaultAction : decision.action;
     return {
       ...match,
@@ -697,6 +779,7 @@ function reviewedDataReuploadDecisions(defaultAction = 'continue', applyToAll = 
 
 function closeDataReuploadModal(decisions = null) {
   if (elements.dataReuploadModal) elements.dataReuploadModal.hidden = true;
+  if (elements.dataReuploadContinue) elements.dataReuploadContinue.hidden = false;
   const resolve = dataReuploadResolve;
   dataReuploadResolve = null;
   if (resolve) resolve(decisions);
@@ -710,17 +793,18 @@ function openDataReuploadModal(matches) {
     dataReuploadResolve = resolve;
     activeDataReuploadMatches = matches;
     activeDataReuploadDecisions = new Map();
+    const incomingDuplicateMatches = matches.filter((match) => match.kind === 'incoming-duplicate');
+    const existingMatches = matches.filter((match) => match.kind !== 'incoming-duplicate');
     const candidateCount = matches.reduce((count, match) => count + (match.candidates || []).length, 0);
-    elements.dataReuploadTitle.textContent = `기존 Pipeline과 비교가 필요한 항목이 ${matches.length}건 있습니다.`;
+    elements.dataReuploadTitle.textContent = incomingDuplicateMatches.length
+      ? `이번 업로드 안에 동일 Pipeline이 ${incomingDuplicateMatches.length}건 있습니다.`
+      : `유사한 기존 Pipeline이 ${existingMatches.length}건 있습니다.`;
     if (elements.dataReuploadSummary) {
-      elements.dataReuploadSummary.textContent = `${candidateCount}개의 기존 후보를 새 업로드 데이터와 비교하세요. 유사 이름 또는 회사가 다른 후보는 자동으로 병합되지 않습니다.`;
+      elements.dataReuploadSummary.innerHTML = incomingDuplicateMatches.length
+        ? `같은 저장 ID로 정규화된 조사 결과는 자동 병합하지 않습니다. 각 항목에서 <span class="data-reupload-inline-action is-replace"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" /></svg>이 항목 유지</span>를 하나 선택하면 나머지는 이번 업로드에서 제외됩니다.`
+        : `비교 후 각 항목별로 <span class="data-reupload-inline-action is-replace"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></svg>덮어쓰기</span>를 선택한 뒤 <span class="data-reupload-inline-action is-apply"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" /></svg>선택 적용</span>하면 반영됩니다.`;
     }
-    elements.dataReuploadTitle.textContent = `유사한 기존 Pipeline이 ${matches.length}건 있습니다.`;
-    if (elements.dataReuploadSummary) {
-      elements.dataReuploadSummary.innerHTML = `비교 후 각 항목별로
-        <span class="data-reupload-inline-action is-replace"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></svg>덮어쓰기</span>를 선택한 뒤
-        <span class="data-reupload-inline-action is-apply"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" /></svg>선택 적용</span>하면 반영됩니다.`;
-    }
+    if (elements.dataReuploadContinue) elements.dataReuploadContinue.hidden = incomingDuplicateMatches.length > 0;
     renderDataReuploadReviewList();
     elements.dataReuploadModal.hidden = false;
     elements.dataReuploadApply?.focus();
@@ -7458,13 +7542,19 @@ async function previewPastedReportParsing() {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.detail || 'FastAPI 최종 검증에 실패했습니다.');
+      result.incomingDuplicateGroups = Array.isArray(data.duplicate_record_ids)
+        ? data.duplicate_record_ids
+        : [];
     } catch (error) {
       addInputIssue(result.errors, 'error', 'FastAPI 최종 검증', String(error?.message || error));
       result.canSave = false;
     }
   }
   if (result.canSave) {
-    const matches = findDataReuploadMatches(result.records);
+    const matches = [
+      ...findIncomingDuplicateMatches(result.records, result.incomingDuplicateGroups),
+      ...findDataReuploadMatches(result.records)
+    ];
     if (matches.length) {
       const decisions = await reviewDataReuploadMatches(matches);
       if (decisions === null) {
@@ -7707,13 +7797,14 @@ async function saveStructuredJsonInput() {
     return;
   }
 
-  const skippedIncomingRecordIds = new Set(
-    validation.reuploadDecisions
-      .filter((decision) => decision.skipIncoming)
-      .map((decision) => decision.incomingRecordId)
-  );
-  const records = validation.records.filter((record) => !skippedIncomingRecordIds.has(recordIdentifier(record)));
-  if (!records.length) {
+  const skippedIncomingIndexes = new Set(validation.reuploadDecisions.flatMap((decision) => {
+    if (Array.isArray(decision.skipIncomingIndexes)) return decision.skipIncomingIndexes;
+    return decision.skipIncoming && Number.isInteger(decision.incomingIndex) ? [decision.incomingIndex] : [];
+  }));
+  const recordsToSave = validation.records
+    .map((record, inputIndex) => ({ record, inputIndex }))
+    .filter(({ inputIndex }) => !skippedIncomingIndexes.has(inputIndex));
+  if (!recordsToSave.length) {
     elements.saveJsonButton.disabled = true;
     setDataUploadStatus('review-needed');
     return;
@@ -7721,11 +7812,11 @@ async function saveStructuredJsonInput() {
   const llmReparseFields = state.dataUploadLlmReparseFields?.input === elements.gptResponseInput.value
     ? state.dataUploadLlmReparseFields.fieldsByIndex || {}
     : {};
-  records.forEach((record, index) => {
+  recordsToSave.forEach(({ record, inputIndex }) => {
     const existingSourceReport = isInputObject(record.source_report) ? record.source_report : {};
     const existingRaw = existingSourceReport.raw_markdown;
     const triage = detectInputRecordMode(record).mode === 'triage';
-    const reparsedFields = llmReparseFields[String(index)];
+    const reparsedFields = llmReparseFields[String(inputIndex)];
     record.source_report = {
       ...existingSourceReport,
       raw_markdown: isPlaceholderRawMarkdown(existingRaw)
@@ -7739,9 +7830,9 @@ async function saveStructuredJsonInput() {
   });
 
   const payload = {
-    records,
+    records: recordsToSave.map(({ record }) => record),
     confirmed_replacements: validation.reuploadDecisions
-      .filter((decision) => decision.replaceExisting)
+      .filter((decision) => decision.replaceExisting && !skippedIncomingIndexes.has(decision.incomingIndex))
       .map((decision) => ({
         incoming_record_id: decision.incomingRecordId,
         existing_record_id: decision.existingRecordId
@@ -10343,22 +10434,38 @@ elements.criteriaBackdrop.addEventListener('click', closeCriteriaDrawer);
 elements.dataReuploadList?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-reupload-action]');
   if (!button) return;
-  const incomingRecordId = button.dataset.incomingId;
-  if (!incomingRecordId) return;
-  if (button.dataset.reuploadAction === 'replace') {
-    activeDataReuploadDecisions.set(incomingRecordId, {
+  const decisionKey = button.dataset.matchKey;
+  if (!decisionKey) return;
+  if (button.dataset.reuploadAction === 'keep-incoming') {
+    const incomingIndex = Number(button.dataset.incomingIndex);
+    if (!Number.isInteger(incomingIndex)) return;
+    activeDataReuploadDecisions.set(decisionKey, {
+      action: 'keep-incoming',
+      selectedIncomingIndex: incomingIndex
+    });
+  } else if (button.dataset.reuploadAction === 'replace') {
+    activeDataReuploadDecisions.set(decisionKey, {
       action: 'replace',
       existingRecordId: button.dataset.existingId || null
     });
   } else if (button.dataset.reuploadAction === 'skip') {
-    const current = dataReuploadDecisionFor(incomingRecordId);
-    activeDataReuploadDecisions.set(incomingRecordId, {
+    const current = dataReuploadDecisionFor(decisionKey);
+    activeDataReuploadDecisions.set(decisionKey, {
       action: current.action === 'skip' ? 'pending' : 'skip'
     });
   }
   renderDataReuploadReviewList();
 });
-elements.dataReuploadApply?.addEventListener('click', () => closeDataReuploadModal(reviewedDataReuploadDecisions()));
+elements.dataReuploadApply?.addEventListener('click', () => {
+  const decisions = reviewedDataReuploadDecisions();
+  if (decisions.some((decision) => decision.unresolved)) {
+    if (elements.dataReuploadSummary) {
+      elements.dataReuploadSummary.textContent = '이번 업로드에서 유지할 조사 결과를 각 항목별로 하나씩 선택해 주세요.';
+    }
+    return;
+  }
+  closeDataReuploadModal(decisions);
+});
 elements.dataReuploadContinue?.addEventListener('click', () => closeDataReuploadModal(reviewedDataReuploadDecisions('continue', true)));
 elements.dataReuploadCancel?.addEventListener('click', () => closeDataReuploadModal(null));
 elements.dataReuploadModal?.addEventListener('click', (event) => {
