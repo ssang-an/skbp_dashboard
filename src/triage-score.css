@@ -1,0 +1,56 @@
+/* Fast Triage detail: the score is the primary scan target and an inline editor. */
+.triage-score-card-header > strong,
+.triage-score-value {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 78px;
+  gap: 4px;
+  border: 0;
+  border-radius: 8px;
+  padding: 7px 8px;
+  background: color-mix(in srgb, var(--triage-score-color) 11%, var(--readable-surface));
+  color: var(--triage-score-color);
+  font: inherit;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.triage-score-value {
+  cursor: pointer;
+}
+
+.triage-score-value:hover {
+  background: color-mix(in srgb, var(--triage-score-color) 17%, var(--readable-surface));
+}
+
+.triage-score-value:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--triage-score-color) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.triage-score-card-header > strong small,
+.triage-score-value small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.triage-score-inline-select {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 4px 9px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 800;
+}
