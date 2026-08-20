@@ -7225,6 +7225,14 @@ def summarize_openrouter_error(detail: str) -> str:
     return json.dumps(parsed, ensure_ascii=False)[:500]
 
 
+def describe_openrouter_stream_error(payload: Any) -> str | None:
+    """Keep SSE provider failures visible instead of reporting an empty generic response."""
+    if not isinstance(payload, dict) or not payload.get("error"):
+        return None
+    detail = summarize_openrouter_error(json.dumps({"error": payload["error"]}, ensure_ascii=False))
+    return f"OpenRouter 재파싱 응답 오류: {detail}"
+
+
 def call_openrouter_chat(
     record: dict[str, Any],
     message: str,
@@ -10367,6 +10375,7 @@ async def llm_reparse_pasted_report_stream(request: Request) -> StreamingRespons
             return
 
         answer = ""
+        stream_finish_reason = ""
         try:
             for raw_line in stream:
                 line = raw_line.decode("utf-8", errors="replace").strip()
@@ -10379,7 +10388,18 @@ async def llm_reparse_pasted_report_stream(request: Request) -> StreamingRespons
                     data = json.loads(data_text)
                 except json.JSONDecodeError:
                     continue
-                delta = data.get("choices", [{}])[0].get("delta", {}).get("content")
+                provider_error_message = describe_openrouter_stream_error(data)
+                if provider_error_message:
+                    yield sse_event("error", {"message": provider_error_message})
+                    return
+                choices = data.get("choices") if isinstance(data, dict) else None
+                choice = choices[0] if isinstance(choices, list) and choices and isinstance(choices[0], dict) else {}
+                finish_reason = choice.get("finish_reason")
+                if finish_reason:
+                    stream_finish_reason = str(finish_reason)
+                delta = choice.get("delta", {}).get("content") if isinstance(choice.get("delta"), dict) else None
+                if not delta and isinstance(choice.get("message"), dict):
+                    delta = choice["message"].get("content")
                 if delta:
                     answer += delta
                     yield sse_event("delta", {"text": delta})
@@ -10392,7 +10412,18 @@ async def llm_reparse_pasted_report_stream(request: Request) -> StreamingRespons
                 close()
 
         if not answer:
-            yield sse_event("error", {"message": "OpenRouter returned no usable response."})
+            finish_hint = f" (finish_reason={stream_finish_reason})" if stream_finish_reason else ""
+            yield sse_event(
+                "error",
+                {"message": f"OpenRouter가 재파싱 텍스트를 반환하지 않았습니다{finish_hint}. 재파싱 모델 설정 또는 제공자 상태를 확인해 주세요."},
+            )
+            return
+
+        if stream_finish_reason == "length":
+            yield sse_event(
+                "error",
+                {"message": f"AI 재파싱 응답이 출력 한도({LLM_REPARSE_MAX_TOKENS} tokens)에 도달해 잘렸습니다. 입력을 나누거나 재파싱 모델의 출력 한도를 확인해 주세요."},
+            )
             return
 
         result, parse_error = parse_llm_reparse_answer(answer, mode, base_records)

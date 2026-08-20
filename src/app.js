@@ -6,7 +6,7 @@ import {
   isCompactIngestionRecord,
   isMinimalCompactIngestionRecord
 } from './compact-ingestion.js?v=20260806-theme-indication-3';
-import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260805-ingestion-guard-5';
+import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260820-url-repair-6';
 
 const API_URL = '/api/records';
 const DASHBOARD_SUMMARY_URL = '/api/dashboard-summary';
@@ -8679,6 +8679,7 @@ Remember:
 - The separator must appear exactly once on its own line.
 - The JSON suffix must start with [ and end with ]. Use 2-space indentation; do not minify it.
 - Before answering, parse-check the complete JSON suffix: matched braces/brackets, double-quoted keys and strings, escaped line breaks inside strings, no comments, no trailing commas, no placeholder alternatives, and no truncation.
+- Every URL is a JSON string: write "source_url": "https://example.com/path". Never write an unquoted URL such as "source_url": https://example.com/path.
 - Write score/count fields as JSON numbers, never quoted numeric strings. Escape any double quote, backslash, or line break that appears inside a JSON string value.
 - Keep source_report.raw_markdown as an empty string because the dashboard inserts the Markdown portion. Keep JSON summaries concise and do not duplicate full Markdown paragraphs across multiple fields.
 - For one input entry, output a JSON array with one object.
@@ -9350,6 +9351,7 @@ Remember:
 - The separator must appear exactly once on its own line.
 - The JSON suffix must start with { and end with }. Use 2-space indentation; do not minify it.
 - Before answering, parse-check the complete JSON suffix: matched braces/brackets, double-quoted keys and strings, escaped line breaks inside strings, no comments, no trailing commas, no unresolved placeholders, no extra text after the final }, and no truncation.
+- Every URL is a JSON string: write "source_url": "https://example.com/path". Never write an unquoted URL such as "source_url": https://example.com/path.
 - Write every score, count, patient, rate, adjustment, and sales field as a JSON number, never a quoted numeric string. Escape any double quote, backslash, or line break inside JSON string values.
 - Cross-check Marketability in Markdown before output: method, score basis, calculation status, A/B/C/D or external forecast, assessed value, and the 0/1/2/3 score threshold must agree with the JSON score.
 - The dashboard accepts the entire combined response in the single "GPT 지침 2 전체 응답" input and splits both portions automatically.`;

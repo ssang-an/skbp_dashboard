@@ -67,6 +67,7 @@ const SIMPLE_JSON_ESCAPE_CHARS = new Set(['"', '\\', '/', 'b', 'f', 'n', 'r', 't
 const NON_JSON_UNICODE_WHITESPACE = /[\u0085\u00a0\u1680\u2000-\u200b\u2028\u2029\u202f\u205f\u2060\u3000\ufeff]/;
 const SIMPLE_ASCII_IDENTIFIER_START = /[A-Za-z_]/;
 const SIMPLE_ASCII_IDENTIFIER_PART = /[A-Za-z0-9_]/;
+const BARE_URL_STRING_FIELD_NAMES = new Set(['source_url']);
 
 function escapedJsonControlCharacter(char) {
   const serialized = JSON.stringify(char);
@@ -85,6 +86,92 @@ function nextNonWhitespace(value, start) {
     if (!/\s/.test(value[index])) return value[index];
   }
   return '';
+}
+
+function jsonStringTokenEnd(value, start) {
+  let escaped = false;
+  for (let index = start + 1; index < value.length; index += 1) {
+    const char = value[index];
+    if (escaped) escaped = false;
+    else if (char === '\\') escaped = true;
+    else if (char === '"') return index + 1;
+  }
+  return -1;
+}
+
+function knownBareUrlValueEnd(value, start) {
+  for (let index = start; index < value.length; index += 1) {
+    const char = value[index];
+    if (char === '}' || char === ']') return index;
+    if (char !== ',') continue;
+    let lookahead = index + 1;
+    while (/\s/.test(value[lookahead] || '')) lookahead += 1;
+    if (['"', '}', ']'].includes(value[lookahead] || '')) return index;
+  }
+  return value.length;
+}
+
+function quoteKnownBareUrlStringValues(value) {
+  const source = String(value || '');
+  let output = '';
+  let repairedCount = 0;
+
+  for (let index = 0; index < source.length;) {
+    if (source[index] !== '"') {
+      output += source[index];
+      index += 1;
+      continue;
+    }
+
+    const keyEnd = jsonStringTokenEnd(source, index);
+    if (keyEnd < 0) {
+      output += source.slice(index);
+      break;
+    }
+    const keyToken = source.slice(index, keyEnd);
+    output += keyToken;
+
+    let colonIndex = keyEnd;
+    while (/\s/.test(source[colonIndex] || '')) colonIndex += 1;
+    if (source[colonIndex] !== ':') {
+      index = keyEnd;
+      continue;
+    }
+
+    let fieldName;
+    try {
+      fieldName = JSON.parse(keyToken);
+    } catch (_error) {
+      index = keyEnd;
+      continue;
+    }
+    if (!BARE_URL_STRING_FIELD_NAMES.has(fieldName)) {
+      index = keyEnd;
+      continue;
+    }
+
+    let valueStart = colonIndex + 1;
+    while (/\s/.test(source[valueStart] || '')) valueStart += 1;
+    if (!/^https?:\/\//i.test(source.slice(valueStart))) {
+      index = keyEnd;
+      continue;
+    }
+
+    const valueEnd = knownBareUrlValueEnd(source, valueStart);
+    const rawUrl = source.slice(valueStart, valueEnd).trimEnd();
+    if (!/^https?:\/\/\S+$/i.test(rawUrl)) {
+      index = keyEnd;
+      continue;
+    }
+
+    output += source.slice(keyEnd, valueStart);
+    output += JSON.stringify(rawUrl);
+    output += source.slice(valueStart + rawUrl.length, valueEnd);
+    repairedCount += 1;
+    index = valueEnd;
+  }
+
+  return { text: output, repairedCount };
 }
 
 function normalizeConservativeJsonDialect(value) {
@@ -176,7 +263,8 @@ function removeTrailingJsonCommas(value) {
 }
 
 export function safePreprocessJson(value) {
-  const source = String(value || '');
+  const bareUrlRepair = quoteKnownBareUrlStringValues(value);
+  const source = bareUrlRepair.text;
   let lexical = '';
   let inString = false;
   let commentCount = 0;
@@ -275,11 +363,16 @@ export function safePreprocessJson(value) {
   if (unicodeWhitespaceCount) actions.push(`JSON 외부 Unicode 공백 ${unicodeWhitespaceCount}개 정규화`);
   if (dialect.pythonLiteralCount) actions.push(`Python literal ${dialect.pythonLiteralCount}개 JSON literal로 정규화`);
   if (dialect.unquotedKeyCount) actions.push(`따옴표 없는 object key ${dialect.unquotedKeyCount}개 보정`);
+  if (bareUrlRepair.repairedCount) {
+    actions.push(`source_url URL ${bareUrlRepair.repairedCount}개 문자열 따옴표 보정`);
+  }
   return { text: withoutTrailingCommas.text, actions };
 }
 
 export function parseTopLevelJsonSuffix(value) {
-  const source = String(value || '').replace(/^\uFEFF/, '').trim();
+  const rawSource = String(value || '').replace(/^\uFEFF/, '').trim();
+  const initialBareUrlRepair = quoteKnownBareUrlStringValues(rawSource);
+  const source = initialBareUrlRepair.text;
   const rootMatch = /^(?:```json[^\S\r\n]*\r?\n)?(?:[^\S\r\n]|\u200b|\u2060)*([\[{])/im.exec(source);
   if (!rootMatch) throw new SyntaxError('JSON suffix에서 줄 시작의 최상위 { 또는 [를 찾지 못했습니다.');
 
@@ -352,7 +445,9 @@ export function parseTopLevelJsonSuffix(value) {
   const originalJsonText = source.slice(rootIndex, rootEnd);
   let jsonText = originalJsonText;
   let payload;
-  let repairActions = [];
+  let repairActions = initialBareUrlRepair.repairedCount
+    ? [`source_url URL ${initialBareUrlRepair.repairedCount}개 문자열 따옴표 보정`]
+    : [];
   try {
     payload = JSON.parse(jsonText);
     assertNoDuplicateJsonKeys(jsonText);
@@ -363,7 +458,7 @@ export function parseTopLevelJsonSuffix(value) {
       payload = JSON.parse(repaired.text);
       assertNoDuplicateJsonKeys(repaired.text);
       jsonText = repaired.text;
-      repairActions = repaired.actions;
+      repairActions = [...repairActions, ...repaired.actions];
     } catch (repairError) {
       throw repairError;
     }

@@ -603,6 +603,28 @@ format reminder
                 self.assertIsNone(parsed["payload"])
                 self.assertTrue(parsed["errors"])
 
+    def test_parser_repairs_only_known_bare_source_url_values(self):
+        parsed = self.parse_combined(
+            '# Report\n--- JSON DATA ---\n'
+            '[{"validation":{"source_registry":[{'
+            '"source_id":"S1",'
+            '"source_url":https://example.com/report?labels=one,two,'
+            '"source_title":"Example source"'
+            '}]}}]'
+        )
+        self.assertEqual(parsed["errors"], [])
+        self.assertEqual(
+            parsed["payload"][0]["validation"]["source_registry"][0]["source_url"],
+            "https://example.com/report?labels=one,two",
+        )
+        self.assertTrue(any("source_url URL" in issue["message"] for issue in parsed["warnings"]))
+
+        non_url = self.parse_combined(
+            '# Report\n--- JSON DATA ---\n{"source_url":example.com}'
+        )
+        self.assertIsNone(non_url["payload"])
+        self.assertTrue(non_url["errors"])
+
     def test_safe_preprocess_repairs_lossless_lexical_variants_and_is_idempotent(self):
         module_uri = (ROOT / "src" / "combined-ingestion.js").resolve().as_uri()
         script = r"""
@@ -933,6 +955,15 @@ format reminder
         with self.assertRaises(Exception):
             main.validate_typed_ingestion_contract(typed_record, 0)
 
+    def test_ai_reparse_stream_keeps_provider_error_detail(self):
+        message = main.describe_openrouter_stream_error(
+            {"error": {"message": "Provider temporarily unavailable", "code": 503}}
+        )
+        self.assertIn("OpenRouter 재파싱 응답 오류", message)
+        self.assertIn("Provider temporarily unavailable", message)
+        self.assertIn("code=503", message)
+        self.assertIsNone(main.describe_openrouter_stream_error({"choices": []}))
+
     def test_home_and_detail_use_fastapi_preflight_before_save(self):
         app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
         detail_js = (ROOT / "src" / "detail.js").read_text(encoding="utf-8")
@@ -948,6 +979,8 @@ format reminder
         self.assertEqual(prompts["full"].count("--- JSON DATA ---"), 1)
         self.assertNotIn("source_report", prompts["triage"])
         self.assertNotIn("source_report", prompts["full"])
+        self.assertIn('"source_url": "https://example.com/path"', prompts["triage"])
+        self.assertIn('"source_url": "https://example.com/path"', prompts["full"])
         triage = self.final_json_template(prompts["triage"], "\nRemember:")
         full = self.final_json_template(prompts["full"], "\nFinal validation before output:")
         self.assertIsInstance(triage, list)
