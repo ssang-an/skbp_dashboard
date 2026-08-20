@@ -3598,22 +3598,26 @@ function renderWorkflowMode(summary = activeTabSummary()) {
 let dataUploadHighlightTimer = 0;
 
 function scrollToDataUpload() {
-  if (activeTableMode() === 'focus' || !elements.dataUploadPanel || !elements.gptResponseInput) return;
+  const mode = activeTableMode();
+  if (mode === 'focus' || !elements.dataUploadPanel || !elements.gptResponseInput) return;
+  renderDataUploadGuide(mode);
   const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   window.clearTimeout(dataUploadHighlightTimer);
-  elements.dataUploadPanel.classList.remove('is-shortcut-highlighted');
-  void elements.dataUploadPanel.offsetWidth;
-  elements.dataUploadPanel.classList.add('is-shortcut-highlighted');
-  elements.dataUploadPanel.scrollIntoView({
-    behavior: reducedMotion ? 'auto' : 'smooth',
-    block: 'start'
-  });
-  window.setTimeout(() => {
-    elements.gptResponseInput.focus({ preventScroll: true });
-  }, reducedMotion ? 0 : 420);
-  dataUploadHighlightTimer = window.setTimeout(() => {
+  window.requestAnimationFrame(() => {
     elements.dataUploadPanel.classList.remove('is-shortcut-highlighted');
-  }, 1800);
+    void elements.dataUploadPanel.offsetWidth;
+    elements.dataUploadPanel.classList.add('is-shortcut-highlighted');
+    elements.dataUploadPanel.scrollIntoView({
+      behavior: reducedMotion ? 'auto' : 'smooth',
+      block: 'start'
+    });
+    window.setTimeout(() => {
+      elements.gptResponseInput.focus({ preventScroll: true });
+    }, reducedMotion ? 0 : 420);
+    dataUploadHighlightTimer = window.setTimeout(() => {
+      elements.dataUploadPanel.classList.remove('is-shortcut-highlighted');
+    }, 1800);
+  });
 }
 
 function renderCharts() {
@@ -7874,6 +7878,11 @@ async function saveStructuredJsonInput() {
     setDataUploadStatus('saved');
     state.dataUploadReview = null;
     state.dataUploadLlmReparseFields = null;
+    state.dataUploadDrafts[expectedMode] = '';
+    elements.gptResponseInput.value = '';
+    elements.previewInputButton.disabled = true;
+    if (elements.aiReparseButton) elements.aiReparseButton.disabled = true;
+    elements.saveJsonButton.disabled = true;
     await loadRecords();
   } catch (error) {
     const failed = {
