@@ -215,6 +215,41 @@ GET  /wiki/README.md
 
 ## Git Deploy
 
+## 두 컴퓨터에서 데이터 동기화
+
+`json/pipeline-records.json`은 대시보드의 원본 데이터입니다. 회사 PC와 집 PC를 번갈아 사용할 때에는 한 번에 한 컴퓨터에서만 저장 작업을 하고, 작업을 마칠 때마다 원본 JSON과 생성된 vault 변경을 commit/push해야 합니다.
+
+```powershell
+# 작업 시작 전: 변경이 없는지 확인한 뒤 최신 원격 상태를 받습니다.
+git status --short
+git pull --ff-only
+
+# 대시보드 데이터 저장 또는 코드 작업을 마친 뒤
+git add json/pipeline-records.json obsidian skbp_pipeline_wiki
+git commit -m "Update pipeline data"
+git push
+```
+
+`git status --short`에 변경이 보이는 상태에서는 pull하지 않습니다. 먼저 해당 컴퓨터의 변경을 commit/push하거나, 의도하지 않은 변경인지 확인합니다.
+
+### 회사 PC stash 데이터 안전 병합
+
+pull 전에 Git stash로 보관한 Pipeline 데이터는 일반적인 `git stash pop`으로 복원하지 않습니다. 현재 원격 JSON을 기준으로 유지하면서, stash에만 있는 Pipeline을 추가하고 같은 record ID의 서로 다른 내용은 차단·보고하는 도구를 사용합니다.
+
+```powershell
+# 기본은 비교만 수행합니다. 파일을 바꾸지 않습니다.
+.\.venv\Scripts\python.exe .\scripts\reconcile_pipeline_records.py --stash 'stash@{1}' --stash 'stash@{0}' --report .\local-backups\pipeline-reconcile-report.json
+
+# conflicts=0, duplicate_id_groups=0, safe_to_write=yes인 경우에만 실행합니다.
+.\.venv\Scripts\python.exe .\scripts\reconcile_pipeline_records.py --stash 'stash@{1}' --stash 'stash@{0}' --write
+
+# 안전 병합 후 생성 산출물을 다시 만듭니다.
+.\.venv\Scripts\python.exe .\scripts\export_obsidian.py
+.\.venv\Scripts\python.exe .\scripts\export_pipeline_wiki.py
+```
+
+`--write`는 원본 JSON을 `local-backups/`에 자동 백업한 뒤에만 실행되며, ID 충돌이나 source JSON 내부 중복이 있으면 저장하지 않습니다. 이 경우 report의 `conflicts`를 기준으로 개별 Pipeline의 최신본을 선택해 별도 병합해야 합니다.
+
 GitHub에 올린 뒤 Render, Railway, Fly.io 같은 Python web service에서 실행할 수 있습니다.
 
 ### 1. GitHub Push
