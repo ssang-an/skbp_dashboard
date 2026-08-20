@@ -3701,27 +3701,37 @@ function renderWorkflowMode(summary = activeTabSummary()) {
 
 let dataUploadHighlightTimer = 0;
 
-function scrollToDataUpload() {
+function scrollToDataUpload(event) {
+  event?.preventDefault();
   const mode = activeTableMode();
-  if (mode === 'focus' || !elements.dataUploadPanel || !elements.gptResponseInput) return;
+  if (mode === 'focus') return;
   renderDataUploadGuide(mode);
+  const panel = document.querySelector('#dataUploadPanel');
+  const input = panel?.querySelector('#gptResponseInput');
+  if (!panel || !input) return;
+  panel.hidden = false;
   const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   window.clearTimeout(dataUploadHighlightTimer);
-  window.requestAnimationFrame(() => {
-    elements.dataUploadPanel.classList.remove('is-shortcut-highlighted');
-    void elements.dataUploadPanel.offsetWidth;
-    elements.dataUploadPanel.classList.add('is-shortcut-highlighted');
-    elements.dataUploadPanel.scrollIntoView({
+  const moveToUpload = () => {
+    panel.classList.remove('is-shortcut-highlighted');
+    void panel.offsetWidth;
+    panel.classList.add('is-shortcut-highlighted');
+    panel.scrollIntoView({
       behavior: reducedMotion ? 'auto' : 'smooth',
       block: 'start'
     });
     window.setTimeout(() => {
-      elements.gptResponseInput.focus({ preventScroll: true });
+      input.focus({ preventScroll: true });
     }, reducedMotion ? 0 : 420);
     dataUploadHighlightTimer = window.setTimeout(() => {
-      elements.dataUploadPanel.classList.remove('is-shortcut-highlighted');
+      panel.classList.remove('is-shortcut-highlighted');
     }, 1800);
-  });
+  };
+  if (typeof window.requestAnimationFrame === 'function') {
+    window.requestAnimationFrame(moveToUpload);
+  } else {
+    moveToUpload();
+  }
 }
 
 function renderCharts() {
