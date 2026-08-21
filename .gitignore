@@ -13,4 +13,5 @@ Thumbs.db
 .hermes/
 node_modules/
 tmp/
+local-backups/
 data/users.json

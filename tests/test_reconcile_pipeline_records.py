@@ -92,6 +92,41 @@ class PipelineRecordReconciliationTests(unittest.TestCase):
         self.assertEqual(merged[0]["scoring"]["total_score"], 2)
         self.assertEqual(report["conflicts"][0]["field_paths"], ["scoring.total_score"])
 
+    def test_approved_metadata_policy_unions_audit_history(self):
+        base = record("Shared Co", "SH-1", score=1)
+        current = json.loads(json.dumps(base))
+        current["meta"]["edit_history"] = [{"id": "home", "changed_at": "2026-08-20T09:00:00+00:00"}]
+        stash = json.loads(json.dumps(base))
+        stash["meta"]["edit_history"] = [{"id": "company", "changed_at": "2026-08-21T09:00:00+00:00"}]
+
+        merged, report = reconcile_script.reconcile(
+            [current],
+            [reconcile_script.Snapshot("stash@{0}", [stash], base_records=[base])],
+            resolve_metadata_conflicts=True,
+        )
+
+        self.assertTrue(report["is_safe_to_write"])
+        self.assertEqual([entry["id"] for entry in merged[0]["meta"]["edit_history"]], ["home", "company"])
+        self.assertEqual(len(report["policy_resolved"]), 1)
+
+    def test_approved_metadata_policy_keeps_current_primary_without_common_base(self):
+        current = record("Shared Co", "SH-1", score=1)
+        current["meta"]["attachments"] = [{"filename": "home.pdf"}]
+        stash = record("Shared Co", "SH-1", score=3)
+        stash["meta"]["attachments"] = [{"filename": "company.pdf"}]
+
+        merged, report = reconcile_script.reconcile(
+            [current],
+            [reconcile_script.Snapshot("stash@{1}", [stash])],
+            resolve_metadata_conflicts=True,
+        )
+
+        self.assertTrue(report["is_safe_to_write"])
+        self.assertEqual(merged[0]["scoring"]["total_score"], 1)
+        self.assertEqual(
+            [attachment["filename"] for attachment in merged[0]["meta"]["attachments"]], ["home.pdf", "company.pdf"]
+        )
+
     def test_write_creates_backup_before_replacing_json(self):
         original_data_file = reconcile_script.main.DATA_FILE
         try:

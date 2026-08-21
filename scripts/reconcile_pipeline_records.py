@@ -114,6 +114,29 @@ def short_hash(record: dict[str, Any]) -> str:
 
 MISSING = object()
 
+METADATA_UNION_LIST_PATHS = {
+    "meta.attachments",
+    "meta.edit_history",
+    "meta.human_review.history",
+    "meta.focus_management.filter3_document_analyses",
+}
+LATEST_TIMESTAMP_PATHS = {
+    "meta.focus_management.filter3_document_analysis_updated_at",
+    "meta.focus_management.partnership_classified_at",
+    "meta.focus_management.partnership_evidence_updated_at",
+    "meta.human_review.last_scoring_override_reset_at",
+    "meta.human_review.last_updated_at",
+}
+TIMESTAMP_COMPANION_PATHS = {
+    "meta.human_review.last_scoring_override_reset_at": [
+        "meta.human_review.last_scoring_override_reset_source",
+    ],
+    "meta.human_review.last_updated_at": [
+        "meta.human_review.last_updated_by",
+        "meta.human_review.last_updated_source",
+    ],
+}
+
 
 def values_equal(left: Any, right: Any) -> bool:
     if left is MISSING or right is MISSING:
@@ -149,6 +172,97 @@ def three_way_merge_value(base: Any, current: Any, snapshot: Any, path: str = ""
     return copy.deepcopy(current), [path or "(entire record)"]
 
 
+def get_path(value: dict[str, Any], path: str) -> Any:
+    current: Any = value
+    for part in path.split("."):
+        if not isinstance(current, dict) or part not in current:
+            return MISSING
+        current = current[part]
+    return current
+
+
+def set_path(value: dict[str, Any], path: str, replacement: Any) -> None:
+    parts = path.split(".")
+    target: dict[str, Any] = value
+    for part in parts[:-1]:
+        nested = target.get(part)
+        if not isinstance(nested, dict):
+            nested = {}
+            target[part] = nested
+        target = nested
+    if replacement is MISSING:
+        target.pop(parts[-1], None)
+    else:
+        target[parts[-1]] = copy.deepcopy(replacement)
+
+
+def unique_list_union(current: Any, snapshot: Any) -> list[Any]:
+    """Preserve current display order, then append snapshot-only audit items."""
+    merged: list[Any] = []
+    seen: set[bytes] = set()
+    for candidate in (current, snapshot):
+        if not isinstance(candidate, list):
+            continue
+        for item in candidate:
+            signature = canonical_value_bytes(item)
+            if signature not in seen:
+                seen.add(signature)
+                merged.append(copy.deepcopy(item))
+    return merged
+
+
+def latest_timestamp_value(current: Any, snapshot: Any) -> tuple[Any, bool]:
+    """Choose the later parseable timestamp; keep current for unknown ties."""
+    current_parsed = main.dashboard_parse_datetime(current) if current is not MISSING else None
+    snapshot_parsed = main.dashboard_parse_datetime(snapshot) if snapshot is not MISSING else None
+    if snapshot_parsed and (not current_parsed or snapshot_parsed > current_parsed):
+        return snapshot, True
+    if current is MISSING and snapshot is not MISSING:
+        return snapshot, True
+    return current, False
+
+
+def resolve_approved_metadata_conflict(
+    current: dict[str, Any],
+    snapshot: dict[str, Any],
+    candidate: dict[str, Any],
+    field_paths: list[str],
+) -> tuple[dict[str, Any], list[str]]:
+    """Resolve only the user-approved append-only metadata policy.
+
+    The current record remains the primary source for report/scoring content.
+    This is intentionally opt-in because a stash without a common Git parent
+    cannot prove which primary report version should win.
+    """
+    no_common_base = "(no common Git base available)" in field_paths
+    unresolved = [
+        path
+        for path in field_paths
+        if path not in METADATA_UNION_LIST_PATHS
+        and path not in LATEST_TIMESTAMP_PATHS
+        and path not in {companion for values in TIMESTAMP_COMPANION_PATHS.values() for companion in values}
+        and path != "(no common Git base available)"
+    ]
+    if unresolved:
+        return candidate, unresolved
+
+    resolved = copy.deepcopy(candidate)
+    # With no common base, only known additive metadata is imported. All
+    # scoring/source-report fields deliberately remain the current version.
+    list_paths = METADATA_UNION_LIST_PATHS if no_common_base else set(field_paths) & METADATA_UNION_LIST_PATHS
+    timestamp_paths = LATEST_TIMESTAMP_PATHS if no_common_base else set(field_paths) & LATEST_TIMESTAMP_PATHS
+
+    for path in list_paths:
+        set_path(resolved, path, unique_list_union(get_path(current, path), get_path(snapshot, path)))
+    for path in timestamp_paths:
+        selected, selected_snapshot = latest_timestamp_value(get_path(current, path), get_path(snapshot, path))
+        set_path(resolved, path, selected)
+        for companion_path in TIMESTAMP_COMPANION_PATHS.get(path, []):
+            source_record = snapshot if selected_snapshot else current
+            set_path(resolved, companion_path, get_path(source_record, companion_path))
+    return resolved, []
+
+
 def summarize_record(record: dict[str, Any]) -> dict[str, str]:
     table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else {}
     meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
@@ -161,7 +275,9 @@ def summarize_record(record: dict[str, Any]) -> dict[str, str]:
     }
 
 
-def reconcile(current: list[dict[str, Any]], snapshots: list[Snapshot]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def reconcile(
+    current: list[dict[str, Any]], snapshots: list[Snapshot], *, resolve_metadata_conflicts: bool = False
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Build a safe union and a machine-readable report without writing files."""
     current_duplicates = duplicate_ids(current)
     report: dict[str, Any] = {
@@ -170,6 +286,7 @@ def reconcile(current: list[dict[str, Any]], snapshots: list[Snapshot]) -> tuple
         "added": [],
         "identical": [],
         "automatically_merged": [],
+        "policy_resolved": [],
         "conflicts": [],
         "duplicate_record_ids": {"current": current_duplicates, "sources": {}},
     }
@@ -202,6 +319,8 @@ def reconcile(current: list[dict[str, Any]], snapshots: list[Snapshot]) -> tuple
                 report["identical"].append({"source": snapshot.label, "existing_source": origin_by_id[key], **summarize_record(source_record)})
             else:
                 base_record = base_by_id.get(key)
+                resolved = copy.deepcopy(existing)
+                field_conflicts: list[str] = ["(no common Git base available)"]
                 if base_record is not None:
                     resolved, field_conflicts = three_way_merge_value(base_record, existing, source_record)
                     if not field_conflicts:
@@ -212,6 +331,23 @@ def reconcile(current: list[dict[str, Any]], snapshots: list[Snapshot]) -> tuple
                         )
                         origin_by_id[key] = f"{origin_by_id[key]} + {snapshot.label}"
                         continue
+                if resolve_metadata_conflicts:
+                    policy_resolved, policy_conflicts = resolve_approved_metadata_conflict(
+                        existing, source_record, resolved, field_conflicts
+                    )
+                    if not policy_conflicts:
+                        merged[merged_index_by_id[key]] = policy_resolved
+                        merged_by_id[key] = policy_resolved
+                        report["policy_resolved"].append(
+                            {
+                                "source": snapshot.label,
+                                "existing_source": origin_by_id[key],
+                                "policy": "current-primary + metadata-union",
+                                **summarize_record(policy_resolved),
+                            }
+                        )
+                        origin_by_id[key] = f"{origin_by_id[key]} + {snapshot.label} (metadata policy)"
+                        continue
                 report["conflicts"].append(
                     {
                         "source": snapshot.label,
@@ -219,7 +355,7 @@ def reconcile(current: list[dict[str, Any]], snapshots: list[Snapshot]) -> tuple
                         "record_id": key,
                         "current": summarize_record(existing),
                         "snapshot": summarize_record(source_record),
-                        "field_paths": field_conflicts if base_record is not None else ["(no common Git base available)"],
+                        "field_paths": field_conflicts,
                     }
                 )
 
@@ -256,6 +392,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Copied pipeline-records JSON snapshot to inspect; may be repeated.",
     )
     parser.add_argument("--report", type=Path, help="Write the detailed reconciliation report to this JSON path.")
+    parser.add_argument(
+        "--resolve-approved-metadata-conflicts",
+        action="store_true",
+        help=(
+            "Keep current report/scoring content while unioning approved stash metadata "
+            "(attachments and audit histories) and choosing the later metadata timestamp."
+        ),
+    )
     parser.add_argument("--write", action="store_true", help="Atomically write the union only when there are no conflicts or duplicate IDs.")
     parser.add_argument(
         "--backup-dir",
@@ -274,7 +418,7 @@ def main_cli(argv: list[str] | None = None) -> int:
     snapshots = [load_git_stash(ref) for ref in args.stash]
     snapshots.extend(load_json_snapshot(path) for path in args.source_json)
     current = parse_records(main.DATA_FILE.read_bytes(), "current json/pipeline-records.json")
-    merged, report = reconcile(current, snapshots)
+    merged, report = reconcile(current, snapshots, resolve_metadata_conflicts=args.resolve_approved_metadata_conflicts)
 
     print(f"current_records={report['current_record_count']}")
     for source in report["sources"]:
@@ -282,6 +426,7 @@ def main_cli(argv: list[str] | None = None) -> int:
     print(f"added={len(report['added'])}")
     print(f"identical={len(report['identical'])}")
     print(f"automatically_merged={len(report['automatically_merged'])}")
+    print(f"policy_resolved={len(report['policy_resolved'])}")
     print(f"conflicts={len(report['conflicts'])}")
     duplicate_count = len(report["duplicate_record_ids"]["current"]) + sum(
         len(value) for value in report["duplicate_record_ids"]["sources"].values()

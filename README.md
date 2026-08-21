@@ -243,12 +243,18 @@ pull 전에 Git stash로 보관한 Pipeline 데이터는 일반적인 `git stash
 # conflicts=0, duplicate_id_groups=0, safe_to_write=yes인 경우에만 실행합니다.
 .\.venv\Scripts\python.exe .\scripts\reconcile_pipeline_records.py --stash 'stash@{1}' --stash 'stash@{0}' --write
 
+# 승인된 metadata 충돌도 처리할 때: 현재 원격 record를 유지하고 회사 PC의
+# attachments/audit history/Filter 3 document analysis를 union으로 보존합니다.
+.\.venv\Scripts\python.exe .\scripts\reconcile_pipeline_records.py --stash 'stash@{1}' --stash 'stash@{0}' --resolve-approved-metadata-conflicts --write
+
 # 안전 병합 후 생성 산출물을 다시 만듭니다.
 .\.venv\Scripts\python.exe .\scripts\export_obsidian.py
 .\.venv\Scripts\python.exe .\scripts\export_pipeline_wiki.py
 ```
 
 `--write`는 원본 JSON을 `local-backups/`에 자동 백업한 뒤에만 실행되며, 동일 필드 충돌이나 source JSON 내부 중복이 있으면 저장하지 않습니다. 이 경우 report의 `conflicts[].field_paths`를 기준으로 충돌한 Pipeline 필드만 선택해 별도 병합해야 합니다.
+
+`--resolve-approved-metadata-conflicts`는 현재 원격 record의 원문 리포트·점수·점수 override를 유지합니다. 회사 PC stash의 attachment, edit history, human-review history, Filter 3 document analysis는 중복 없이 보존하고, 관련 timestamp는 더 늦은 값을 사용합니다. 이 옵션은 검토·승인된 metadata 충돌에만 사용합니다.
 
 GitHub에 올린 뒤 Render, Railway, Fly.io 같은 Python web service에서 실행할 수 있습니다.
 
