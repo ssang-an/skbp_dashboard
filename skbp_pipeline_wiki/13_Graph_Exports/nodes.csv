@@ -22,8 +22,8 @@ source::https_illimistx.com_en_sub_platform%26pipeline_conference.php,Illimis Th
 source::https_illimistx.com_data_aaic%202025_abstract_illimistx.pdf,AAIC 2025 GAIA-Aβ abstract,source,Source__AAIC_2025_GAIA-Aβ_abstract,pipeline/source;source/conference_abstract,,,E3
 source::https_www.nature.com_articles_s41591-022-01926-9,Anti-inflammatory clearance of amyloid-β by a chimeric Gas6 fusion protein,source,Source__Anti-inflammatory_clearance_of_amyloid-β_by_a_chimeric_Gas6_fusion_protein,pipeline/source;source/peer_reviewed_publication,,,E3
 source::https_www.biospectator.com_news_view_28887,BioSpectator interview on ILM01 preclinical program and planned 2027 clinical entry,source,Source__BioSpectator_interview_on_ILM01_preclinical_program_and_planned_2027_cl_e077b90f,pipeline/source;source/biotech_news,,,E3
-source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af,Evidence source,source,Source__Evidence_source,pipeline/source;source/regulatory,,,E3
-source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc,Evidence source,source,Source__Evidence_source,pipeline/source;source/regulatory,,,E3
+source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af,https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval,source,Source__https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af,pipeline/source;source/regulatory,,,E3
+source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc,https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease,source,Source__https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc,pipeline/source;source/regulatory,,,E3
 source::https_trials.lilly.com_en-us_trial_548297,Lilly TRAILRUNNER-ALZ 3 remternetug trial,source,Source__Lilly_TRAILRUNNER-ALZ_3_remternetug_trial,pipeline/source;source/clinical_registry_sponsor,,,E3
 source::https_clinicaltrials.gov_study_nct07169578,ClinicalTrials.gov trontinemab Phase 3 study NCT07169578,source,Source__ClinicalTrials.gov_trontinemab_Phase_3_study_NCT07169578,pipeline/source;source/clinical_registry,,,E3
 source::https_acumenpharm.com_altitude-ad,Acumen ALTITUDE-AD sabirnetug study,source,Source__Acumen_ALTITUDE-AD_sabirnetug_study,pipeline/source;source/official_company_trial_page,,,E3
@@ -784,17 +784,17 @@ competitor::inmune_bio_xpro1595,XPro1595,competitor,Competitor__INmune_Bio__XPro
 competitor::sanofi_(acquired_vigil_neuroscience)_vg-3927,VG-3927,competitor,Competitor__Sanofi_(acquired_Vigil_Neuroscience)__VG-3927,pipeline/competitor,,,
 competitor::alector_al002,AL002,competitor,Competitor__Alector__AL002,pipeline/competitor,,,
 "source::vasthera_vta-27_program_cd_(aug_2026),_user-uploaded_confidential_deck","VASTHERA VTA-27 Program CD (Aug 2026), user-uploaded confidential deck",source,"Source__VASTHERA_VTA-27_Program_CD_(Aug_2026),_user-uploaded_confidential_deck",pipeline/source;source/other,,,E3
-source::https_www.vasthera.com_technology_pipeline.php,Evidence source,source,Source__Evidence_source,pipeline/source;source/official_company,,,E3
-source::https_www.vasthera.com_technology_platform.php,Evidence source,source,Source__Evidence_source,pipeline/source;source/official_company,,,E3
-source::https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view,Evidence source,source,Source__Evidence_source,pipeline/source;source/official_company_news,,,E3
-source::https_link.springer.com_article_10.15252_emmm.201809665,Evidence source,source,Source__Evidence_source,pipeline/source;source/peer_reviewed_publication,,,E3
+source::https_www.vasthera.com_technology_pipeline.php,https://www.vasthera.com/technology/pipeline.php,source,Source__https_www.vasthera.com_technology_pipeline.php,pipeline/source;source/official_company,,,E3
+source::https_www.vasthera.com_technology_platform.php,https://www.vasthera.com/technology/platform.php,source,Source__https_www.vasthera.com_technology_platform.php,pipeline/source;source/official_company,,,E3
+source::https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view,https://www.vasthera.com/investors/news.php?code=news&idx=124&ptype=view,source,Source__https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view,pipeline/source;source/official_company_news,,,E3
+source::https_link.springer.com_article_10.15252_emmm.201809665,https://link.springer.com/article/10.15252/emmm.201809665,source,Source__https_link.springer.com_article_10.15252_emmm.201809665,pipeline/source;source/peer_reviewed_publication,,,E3
 source::https_www.nature.com_articles_s41593-020-00735-y,"Chun et al. 2020, Severe reactive astrocytes precipitate pathological hallmarks of Alzheimer's disease via H2O2 production",source,"Source__Chun_et_al._2020,_Severe_reactive_astrocytes_precipitate_pathological_h_52cccc03",pipeline/source;source/peer_reviewed_publication,,,E3
 source::https_clinicaltrials.gov_study_nct07027072,ClinicalTrials.gov NCT07027072 — KDS2010 Phase 2a AD,source,Source__ClinicalTrials.gov_NCT07027072_—_KDS2010_Phase_2a_AD,pipeline/source;source/clinical_registry,,,E3
 source::https_pmc.ncbi.nlm.nih.gov_articles_pmc6426469,"Jo et al. 2019, Newly developed reversible MAO-B inhibitor KDS2010 in Alzheimer's disease",source,"Source__Jo_et_al._2019,_Newly_developed_reversible_MAO-B_inhibitor_KDS2010_in_A_6c30ad04",pipeline/source;source/peer_reviewed_publication,,,E3
 source::https_clinicaltrials.gov_study_nct05318976,ClinicalTrials.gov NCT05318976 — XPro1595 MINDFuL Phase 2,source,Source__ClinicalTrials.gov_NCT05318976_—_XPro1595_MINDFuL_Phase_2,pipeline/source;source/clinical_registry,,,E3
 source::https_clinicaltrials.gov_study_nct06343636,ClinicalTrials.gov NCT06343636 — VG-3927 Phase 1,source,Source__ClinicalTrials.gov_NCT06343636_—_VG-3927_Phase_1,pipeline/source;source/clinical_registry,,,E3
-source::https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9,Evidence source,source,Source__Evidence_source,pipeline/source;source/official_company_news,,,E3
-source::https_www.nature.com_articles_s41591-026-04273-1,Evidence source,source,Source__Evidence_source,pipeline/source;source/peer_reviewed_publication,,,E3
+source::https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9,https://www.sanofi.com/assets/dotcom/pressreleases/2025/2025-05-21-23-15-31-3086232-en.pdf,source,Source__https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9,pipeline/source;source/official_company_news,,,E3
+source::https_www.nature.com_articles_s41591-026-04273-1,https://www.nature.com/articles/s41591-026-04273-1,source,Source__https_www.nature.com_articles_s41591-026-04273-1,pipeline/source;source/peer_reviewed_publication,,,E3
 source::https_www.accessdata.fda.gov_drugsatfda_docs_appletter_2025_761269orig1_f401d03a,FDA Leqembi supplemental approval letter (2025),source,Source__FDA_Leqembi_supplemental_approval_letter_(2025),pipeline/source;source/regulatory,,,E3
 source::https_www.alz.org_getmedia_c05f7ba4-9aea-4cb0-8898-5e8bff3f0930_executi_c4e57aef,Alzheimer's Association 2025 Facts and Figures Executive Summary,source,Source__Alzheimer's_Association_2025_Facts_and_Figures_Executive_Summary,pipeline/source;source/epidemiology,,,E3
 source::https_psnet.ahrq.gov_issue_detection-rates-mild-cognitive-impairment-pr_e5d2ab5c,AHRQ PSNet summary of US MCI/dementia detection rates,source,Source__AHRQ_PSNet_summary_of_US_MCI_dementia_detection_rates,pipeline/source;source/epidemiology,,,E3
@@ -1168,29 +1168,18 @@ target::peroxiredoxin_redox_homeostasis_astrocytic_stat3_signaling,Peroxiredoxin
 moa::prx-mimetic_redox_modulation_that_suppresses_astrocytic_stat3_phosphory_09bab40c,PRX-mimetic redox modulation that suppresses astrocytic STAT3 phosphorylation/reactivation and is intended to protect neurons.,moa,MoA__PRX-mimetic_redox_modulation_that_suppresses_astrocytic_STAT3_phosphory_09bab40c,pipeline/moa,,,
 indication::mild-to-moderate_alzheimer's_disease;_parkinson's_disease_is_only_a_pot_8b9f0f09,Mild-to-moderate Alzheimer's disease; Parkinson's disease is only a potential expansion concept.,indication,Indication__Mild-to-moderate_Alzheimer's_disease;_Parkinson's_disease_is_only_a_pot_8b9f0f09,pipeline/indication,,,
 scorecard::vta-27_20260806,Scorecard - VTA-27,scorecard,Scorecard__VTA-27__20260806,pipeline/scorecard,13,Watch,E3
-competitor::eisai_biogen_competitor_eisai_biogen_unknown_competitor,Competitor__Eisai_Biogen__Unknown_Competitor,competitor,Competitor__Eisai_Biogen__Unknown_Competitor,pipeline/competitor,,,
-competitor::eli_lilly_competitor_eli_lilly_unknown_competitor,Competitor__Eli_Lilly__Unknown_Competitor,competitor,Competitor__Eli_Lilly__Unknown_Competitor,pipeline/competitor,,,
-competitor::biogen_ionis_competitor_biogen_ionis_unknown_competitor,Competitor__Biogen_Ionis__Unknown_Competitor,competitor,Competitor__Biogen_Ionis__Unknown_Competitor,pipeline/competitor,,,
-competitor::sanofi_former_vigil_neuroscience_competitor_sanofi_former_vigil_neurosc_2a43d758,Competitor__Sanofi_former_Vigil_Neuroscience__Unknown_Competitor,competitor,Competitor__Sanofi_former_Vigil_Neuroscience__Unknown_Competitor,pipeline/competitor,,,
-competitor::ac_immune_competitor_ac_immune_unknown_competitor,Competitor__AC_Immune__Unknown_Competitor,competitor,Competitor__AC_Immune__Unknown_Competitor,pipeline/competitor,,,
-competitor::alector_competitor_alector_unknown_competitor,Competitor__Alector__Unknown_Competitor,competitor,Competitor__Alector__Unknown_Competitor,pipeline/competitor,,,
-source::evidence_source,Evidence source,source,Source__Evidence_source,pipeline/source;source/company_deck,,,E3
-source::https_www.vasthera.com_about_about.php,Evidence source,source,Source__Evidence_source,pipeline/source;source/official_company,,,E3
-source::https_pubmed.ncbi.nlm.nih.gov_41875826,Evidence source,source,Source__Evidence_source,pipeline/source;source/peer_reviewed_review,,,E3
-source::https_clinicaltrials.gov_study_nct05399888,Evidence source,source,Source__Evidence_source,pipeline/source;source/clinical_registry,,,E3
-source::https_ichgcp.net_ko_clinical-trials-registry_nct07688213,Evidence source,source,Source__Evidence_source,pipeline/source;source/clinical_registry_mirror,,,E3
-source::https_clinicaltrials.gov_study_nct07463196,Evidence source,source,Source__Evidence_source,pipeline/source;source/clinical_registry,,,E3
-source::https_clinicaltrials.gov_study_nct04592874,Evidence source,source,Source__Evidence_source,pipeline/source;source/clinical_registry,,,E3
-source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756,Evidence source,source,Source__Evidence_source,pipeline/source;source/epidemiology_report,,,E3
-source::https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a,Evidence source,source,Source__Evidence_source,pipeline/source;source/market_news,,,E3
-source::https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c,Evidence source,source,Source__Evidence_source,pipeline/source;source/commercial_database_profile,,,E3
-source::target_relevance_evidence,target_relevance evidence,source,Source__target_relevance_evidence,pipeline/source;source/company_deck,,,E3
-source::competitive_landscape_evidence,competitive_landscape evidence,source,Source__competitive_landscape_evidence,pipeline/source;source/company_deck,,,E3
-source::moa_validity_evidence,moa_validity evidence,source,Source__moa_validity_evidence,pipeline/source;source/company_deck,,,E3
-source::platform_attractiveness_evidence,platform_attractiveness evidence,source,Source__platform_attractiveness_evidence,pipeline/source;source/company_deck,,,E3
-source::expansion_potential_evidence,expansion_potential evidence,source,Source__expansion_potential_evidence,pipeline/source;source/company_deck,,,E3
-source::data_maturity_evidence,data_maturity evidence,source,Source__data_maturity_evidence,pipeline/source;source/company_deck,,,E3
-source::marketability_evidence,marketability evidence,source,Source__marketability_evidence,pipeline/source;source/company_deck,,,E3
+competitor::biogen_ionis_diranersen_(biib080),Diranersen (BIIB080),competitor,Competitor__Biogen_Ionis__Diranersen_(BIIB080),pipeline/competitor,,,
+competitor::sanofi_former_vigil_neuroscience_sar448851_vg-3927,SAR448851 / VG-3927,competitor,Competitor__Sanofi_former_Vigil_Neuroscience__SAR448851_VG-3927,pipeline/competitor,,,
+competitor::ac_immune_aci-19764,ACI-19764,competitor,Competitor__AC_Immune__ACI-19764,pipeline/competitor,,,
+source::https_www.vasthera.com_about_about.php,https://www.vasthera.com/about/about.php,source,Source__https_www.vasthera.com_about_about.php,pipeline/source;source/other,,,E3
+source::https_pubmed.ncbi.nlm.nih.gov_41875826,https://pubmed.ncbi.nlm.nih.gov/41875826/,source,Source__https_pubmed.ncbi.nlm.nih.gov_41875826,pipeline/source;source/peer_reviewed_review,,,E3
+source::https_clinicaltrials.gov_study_nct05399888,https://clinicaltrials.gov/study/NCT05399888,source,Source__https_clinicaltrials.gov_study_NCT05399888,pipeline/source;source/clinical_registry,,,E3
+source::https_ichgcp.net_ko_clinical-trials-registry_nct07688213,https://ichgcp.net/ko/clinical-trials-registry/NCT07688213,source,Source__https_ichgcp.net_ko_clinical-trials-registry_NCT07688213,pipeline/source;source/clinical_registry_mirror,,,E3
+source::https_clinicaltrials.gov_study_nct07463196,https://clinicaltrials.gov/study/NCT07463196,source,Source__https_clinicaltrials.gov_study_NCT07463196,pipeline/source;source/clinical_registry,,,E3
+source::https_clinicaltrials.gov_study_nct04592874,https://clinicaltrials.gov/study/NCT04592874,source,Source__https_clinicaltrials.gov_study_NCT04592874,pipeline/source;source/clinical_registry,,,E3
+source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756,https://www.alz.org/getmedia/ef8f48f9-ad36-48ea-87f9-b74034635c1e/alzheimersfacts-%20and-figures.pdf,source,Source__https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756,pipeline/source;source/epidemiology_report,,,E3
+source::https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a,https://www.precisionmedicineonline.com/business-news/eli-lilly-posts-strong-kisunla-growth-124m-q1,source,Source__https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a,pipeline/source;source/market_news,,,E3
+source::https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c,https://synapse.patsnap.com/drug/1e188d0bdf794df49d00edb2a1d03d3c,source,Source__https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c,pipeline/source;source/commercial_database_profile,,,E3
 asset::ab-ad-002,AB-AD-002,asset,Asset__AB-AD-002,pipeline/asset;theme/unknown,0,Verify asset identity,E0
 company::aliadbiopharma,Aliadbiopharma,company,Company__Aliadbiopharma,pipeline/company,,,
 scorecard::ab-ad-002_20260819,Scorecard - AB-AD-002,scorecard,Scorecard__AB-AD-002__20260819,pipeline/scorecard,0,Verify asset identity,E0

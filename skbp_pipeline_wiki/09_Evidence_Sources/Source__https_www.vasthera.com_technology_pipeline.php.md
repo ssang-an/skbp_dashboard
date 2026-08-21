@@ -1,39 +1,40 @@
 ---
 type: "source"
-canonical_id: "source::competitive_landscape_evidence"
-title: "competitive_landscape evidence"
+canonical_id: "source::https_www.vasthera.com_technology_pipeline.php"
+title: "https://www.vasthera.com/technology/pipeline.php"
 aliases:
-  - "competitive_landscape evidence"
+  - "https://www.vasthera.com/technology/pipeline.php"
 tags:
   - "pipeline/source"
-  - "source/company_deck"
+  - "source/official_company"
 created_at: "2026-08-21"
 updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
-confidence: "low"
+confidence: "medium"
 ---
 
-# competitive_landscape evidence
+# https://www.vasthera.com/technology/pipeline.php
 
 ## Source Metadata
 
 | Field | Value |
 |---|---|
-| Source type | company_deck |
-| Reliability | low |
-| URL | No URL provided |
+| Source type | official_company |
+| Reliability | medium |
+| URL | https://www.vasthera.com/technology/pipeline.php |
 | Accessed / generated date | 2026-08-21 |
 
 ## Evidence Summary
 
-Eight-week 5xFAD study with Y-maze, NOR and MWM data at 0.5 and 2 mg/kg.
+-
 
 ## Used In
 
 - [[02_Assets/Asset__VTA-27|Asset__VTA-27]]
 - [[10_Scorecards/Scorecard__VTA-27__20260806|Scorecard__VTA-27__20260806]]
+- [[10_Scorecards/Scorecard__VTA-27__20260812|Scorecard__VTA-27__20260812]]
 
 ## Extracted Claims
 

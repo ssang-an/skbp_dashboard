@@ -1,9 +1,9 @@
 ---
 type: "competitor"
-canonical_id: "competitor::biogen_ionis_unknown_competitor"
-title: "Unknown Competitor"
+canonical_id: "competitor::biogen_ionis_diranersen_(biib080)"
+title: "Diranersen (BIIB080)"
 aliases:
-  - "Unknown Competitor"
+  - "Diranersen (BIIB080)"
 tags:
   - "pipeline/competitor"
 created_at: "2026-08-21"
@@ -14,17 +14,17 @@ status: "active"
 confidence: "medium"
 ---
 
-# Unknown Competitor
+# Diranersen (BIIB080)
 
 ## Competitor Snapshot
 
 | Field | Value |
 |---|---|
 | Company | Biogen / Ionis |
-| Asset | Unknown Competitor |
-| Target / MoA | - |
+| Asset | Diranersen (BIIB080) |
+| Target / MoA | MAPT mRNA lowering and tau reduction |
 | Modality | Antisense oligonucleotide |
-| Stage | - |
+| Stage | Phase 2; active, not recruiting |
 | Similarity level | Low |
 
 ## Why It Matters

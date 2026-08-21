@@ -22,19 +22,19 @@ confidence: "medium"
 |---|---|
 | Company | Alector |
 | Asset | AL002 |
-| Target / MoA | TREM2 agonist / microglial modulation |
+| Target / MoA | TREM2 agonist |
 | Modality | Antibody |
-| Stage | Phase 2 completed; negative primary endpoint |
+| Stage | Phase 2 completed; primary endpoint negative |
 | Similarity level | Medium |
 
 ## Why It Matters
 
-Demonstrates clinical target engagement can fail to translate into efficacy in a neuroimmune AD strategy.
+Demonstrates that glial target engagement may not translate into clinical benefit without the right biology, exposure and patient selection.
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__VTA-27|VTA-27]]: Demonstrates clinical target engagement can fail to translate into efficacy in a neuroimmune AD strategy.
+- [[02_Assets/Asset__VTA-27|VTA-27]]: Demonstrates that glial target engagement may not translate into clinical benefit without the right biology, exposure and patient selection.
 
 ## Sources
 
-- https://www.nature.com/articles/s41591-026-04273-1
+- https://clinicaltrials.gov/study/NCT04592874

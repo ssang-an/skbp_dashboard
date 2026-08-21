@@ -1,12 +1,12 @@
 ---
 type: "source"
-canonical_id: "source::https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c"
-title: "Evidence source"
+canonical_id: "source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756"
+title: "https://www.alz.org/getmedia/ef8f48f9-ad36-48ea-87f9-b74034635c1e/alzheimersfacts-%20and-figures.pdf"
 aliases:
-  - "Evidence source"
+  - "https://www.alz.org/getmedia/ef8f48f9-ad36-48ea-87f9-b74034635c1e/alzheimersfacts-%20and-figures.pdf"
 tags:
   - "pipeline/source"
-  - "source/commercial_database_profile"
+  - "source/epidemiology_report"
 created_at: "2026-08-21"
 updated_at: "2026-08-21"
 source_report: null
@@ -15,15 +15,15 @@ status: "active"
 confidence: "medium"
 ---
 
-# Evidence source
+# https://www.alz.org/getmedia/ef8f48f9-ad36-48ea-87f9-b74034635c1e/alzheimersfacts-%20and-figures.pdf
 
 ## Source Metadata
 
 | Field | Value |
 |---|---|
-| Source type | commercial_database_profile |
+| Source type | epidemiology_report |
 | Reliability | medium |
-| URL | https://synapse.patsnap.com/drug/1e188d0bdf794df49d00edb2a1d03d3c |
+| URL | https://www.alz.org/getmedia/ef8f48f9-ad36-48ea-87f9-b74034635c1e/alzheimersfacts-%20and-figures.pdf |
 | Accessed / generated date | 2026-08-21 |
 
 ## Evidence Summary

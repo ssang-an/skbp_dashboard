@@ -1,34 +1,34 @@
 ---
 type: "source"
-canonical_id: "source::platform_attractiveness_evidence"
-title: "platform_attractiveness evidence"
+canonical_id: "source::https_pubmed.ncbi.nlm.nih.gov_41875826"
+title: "https://pubmed.ncbi.nlm.nih.gov/41875826/"
 aliases:
-  - "platform_attractiveness evidence"
+  - "https://pubmed.ncbi.nlm.nih.gov/41875826/"
 tags:
   - "pipeline/source"
-  - "source/company_deck"
+  - "source/peer_reviewed_review"
 created_at: "2026-08-21"
 updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
-confidence: "low"
+confidence: "medium"
 ---
 
-# platform_attractiveness evidence
+# https://pubmed.ncbi.nlm.nih.gov/41875826/
 
 ## Source Metadata
 
 | Field | Value |
 |---|---|
-| Source type | company_deck |
-| Reliability | low |
-| URL | No URL provided |
+| Source type | peer_reviewed_review |
+| Reliability | medium |
+| URL | https://pubmed.ncbi.nlm.nih.gov/41875826/ |
 | Accessed / generated date | 2026-08-21 |
 
 ## Evidence Summary
 
-Company profile, Redoxizyme platform, pipeline status, VTA-27 AD positioning.
+-
 
 ## Used In
 

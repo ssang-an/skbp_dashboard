@@ -131,10 +131,10 @@ Commercial rationale status: `assumption_based_scenario`
 
 ## 5. Data Maturity Stage Alignment
 
-- Claimed stage: IND-enabling
-- Expected data for stage: Quantitative in vitro potency and mechanism, In vivo efficacy with dose and relevant disease model, PK/ADME and brain exposure, GLP toxicology and safety pharmacology, CMC route, purity and GMP readiness
-- Visible data: Primary astrocyte STAT3 phosphorylation inhibition IC50 162 nM, Eight-week 5xFAD behavioral efficacy across Y-maze, NOR and MWM at 0.5 and 2 mg/kg, Twenty-eight-day repeat-dose toxicology completed in rat and dog, Ames negative and hERG IC50 greater than 200 micromolar, Synthetic route purity greater than 99 percent and total impurities below 0.5 percent, Drug-substance GMP production underway
-- Missing data: Full mouse, rat, dog and monkey PK values, Brain-to-plasma and unbound brain exposure, In vivo PK/PD and target-engagement relationship, NOAEL, toxicokinetics and exposure margins, Blinding, randomization and independent replication details, Drug-product GMP completion and stability package, Human data
+- Claimed stage: -
+- Expected data for stage: -
+- Visible data: -
+- Missing data: -
 
 ## 6. Final Recommendation
 

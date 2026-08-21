@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-21T09:06:05"
+generated_at: "2026-08-21T21:35:53"
 record_id: "Xenon_Azetukalner_fast_triage_20260623"
 company: "Xenon Pharmaceuticals"
 country: "Canada"
@@ -360,9 +360,27 @@ Strong same-target Kv7 benchmark; run Full Scout.
           "field": "structured_table.company",
           "previous_value": "Xenon Pharmaceuiticals",
           "new_value": "Xenon Pharmaceuticals"
+        },
+        {
+          "changed_at": "2026-08-21T05:17:07.585903+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_table",
+          "field": "final_comment",
+          "previous_value": "",
+          "new_value": "dfasds"
+        },
+        {
+          "changed_at": "2026-08-21T06:12:31.436280+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "detail_final_comment_delete",
+          "field": "final_comment",
+          "previous_value": "dfasds",
+          "new_value": ""
         }
       ],
-      "last_updated_at": "2026-08-20T06:43:42.207775+00:00",
+      "last_updated_at": "2026-08-21T06:12:31.436280+00:00",
       "last_updated_source": "dashboard_table",
       "last_updated_by": "정주원",
       "has_manual_override": true,
@@ -460,6 +478,26 @@ Strong same-target Kv7 benchmark; run Full Scout.
         "field": "structured_table.company",
         "previous_value": "Xenon Pharmaceuiticals",
         "new_value": "Xenon Pharmaceuticals"
+      },
+      {
+        "id": "f4849f85edf34ba5b7e022f0d2fa659e",
+        "changed_at": "2026-08-21T05:17:07.585961+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_table_manual_review",
+        "field": "final_comment",
+        "previous_value": "",
+        "new_value": "dfasds"
+      },
+      {
+        "id": "b9ea0a3753d44b448267e5ec25228e34",
+        "changed_at": "2026-08-21T06:12:31.436411+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "detail_final_comment_delete",
+        "field": "final_comment",
+        "previous_value": "dfasds",
+        "new_value": ""
       }
     ],
     "topic_notes": [],

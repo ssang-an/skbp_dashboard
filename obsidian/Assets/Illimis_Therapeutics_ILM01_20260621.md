@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-21T09:06:05"
+generated_at: "2026-08-21T21:35:53"
 record_id: "Illimis_Therapeutics_ILM01_20260621"
 company: "Illimis Therapeutics"
 country: "Republic of Korea"
@@ -337,19 +337,21 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
       "added_at": "2026-07-28T14:52:28.874464+00:00",
       "user_comment": "",
       "due_date": "2026-08-27",
-      "updated_at": "2026-08-18T07:38:35.021311+00:00",
+      "updated_at": "2026-08-21T04:44:18.353366+00:00",
       "updated_source": "dashboard_tab3",
-      "updated_by": "127.0.0.1",
+      "updated_by": "유택상",
       "owner_name": "",
       "action_plan": "동물 데이터 요청 예정 ",
       "partnership_type": "investment",
       "partnership_classification_status": "auto_classified",
       "partnership_classification_source": "auto",
-      "partnership_classified_at": "2026-08-20T23:33:31.396538+00:00",
+      "partnership_classified_at": "2026-08-21T04:44:18.353592+00:00",
       "partner_material_flags": {
         "cdp": false,
         "ncdp": false,
-        "admet": false
+        "admet": false,
+        "ir": false,
+        "dd_report": false
       },
       "in_vivo_status": "O",
       "in_vivo_status_source": "deepseek",
@@ -363,7 +365,7 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
       "partnership_auto_evidence_sources": [
         "Tab2 구조화 데이터"
       ],
-      "partnership_classification_criteria_version": "1.3",
+      "partnership_classification_criteria_version": "1.4",
       "partnership_note": "Non-Small Molecule / IND-enabling 이상",
       "partnership_evidence_sources": [
         "Tab2 구조화 데이터"
@@ -426,7 +428,7 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
           }
         }
       ],
-      "filter3_document_analysis_updated_at": "2026-08-20T23:33:31.395209+00:00"
+      "filter3_document_analysis_updated_at": "2026-08-21T04:44:18.353497+00:00"
     },
     "attachments": [
       {
@@ -3252,6 +3254,66 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
         "field": "focus_management.action_plan",
         "previous_value": "데이터 요청 예정 ",
         "new_value": "동물 데이터 요청 예정 "
+      },
+      {
+        "id": "1b06603d0ba341a4b18f5b80e1adf2e9",
+        "changed_at": "2026-08-21T04:44:08.405914+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.remove",
+        "previous_value": true,
+        "new_value": false
+      },
+      {
+        "id": "681d02574f5e4e898f1c29fec4d6cbe8",
+        "changed_at": "2026-08-21T04:44:10.911338+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.add",
+        "previous_value": false,
+        "new_value": true
+      },
+      {
+        "id": "ac64bc56c0a74f3a862c5eef6ad64c60",
+        "changed_at": "2026-08-21T04:44:12.193722+00:00",
+        "actor_ip": "10.245.226.250",
+        "actor_name": "유택상",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.remove",
+        "previous_value": true,
+        "new_value": false
+      },
+      {
+        "id": "157d50c19fd04ee79dae7c51347d9258",
+        "changed_at": "2026-08-21T04:44:13.717344+00:00",
+        "actor_ip": "10.245.226.250",
+        "actor_name": "유택상",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.add",
+        "previous_value": false,
+        "new_value": true
+      },
+      {
+        "id": "32f6d70308354d399526dbcc97d96eac",
+        "changed_at": "2026-08-21T04:44:15.315746+00:00",
+        "actor_ip": "10.245.226.250",
+        "actor_name": "유택상",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.remove",
+        "previous_value": true,
+        "new_value": false
+      },
+      {
+        "id": "32aff6f2721b471f845d37a48a82efdf",
+        "changed_at": "2026-08-21T04:44:18.353612+00:00",
+        "actor_ip": "10.245.226.250",
+        "actor_name": "유택상",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.add",
+        "previous_value": false,
+        "new_value": true
       }
     ],
     "last_edited_at": "2026-08-06T02:45:19.876062+00:00",

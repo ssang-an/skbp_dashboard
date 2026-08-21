@@ -5158,5 +5158,101 @@
     "status": "pending",
     "source": "paste_import",
     "added_at": "2026-08-18T01:29:17.183393+00:00"
+  },
+  {
+    "id": "cq_5e564042",
+    "asset_input": "PSK-01",
+    "company_input": "PSK Bioscience",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-21T04:39:46.966189+00:00"
+  },
+  {
+    "id": "cq_301fc455",
+    "asset_input": "GenSciP165",
+    "company_input": "Genescience",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-21T04:39:46.966189+00:00"
+  },
+  {
+    "id": "cq_7b57e714",
+    "asset_input": "GenSci155",
+    "company_input": "Genescience",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-21T04:39:46.966189+00:00"
+  },
+  {
+    "id": "cq_93ef6c2a",
+    "asset_input": "GenSci136",
+    "company_input": "Genescience",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-21T04:39:46.966189+00:00"
+  },
+  {
+    "id": "cq_85dff59e",
+    "asset_input": "Ribo-Ab42",
+    "company_input": "Ribo Life Science",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-21T04:39:46.966189+00:00"
+  },
+  {
+    "id": "cq_66bf910b",
+    "asset_input": "SR-131",
+    "company_input": "Ribo Life Science",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-21T04:39:46.966189+00:00"
+  },
+  {
+    "id": "cq_b1428bc0",
+    "asset_input": "FHND-1002",
+    "company_input": "CTFH",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-21T04:39:46.966189+00:00"
+  },
+  {
+    "id": "cq_24567557",
+    "asset_input": "Artvila-RIPK",
+    "company_input": "Artvila Biopharma",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-21T04:39:46.966189+00:00"
+  },
+  {
+    "id": "cq_44c5c41f",
+    "asset_input": "Nutshell-NA",
+    "company_input": "NutShell Therapeutics",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-21T04:39:46.966189+00:00"
+  },
+  {
+    "id": "cq_e480c957",
+    "asset_input": "EN-N001",
+    "company_input": "Enlightmen Biotech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-21T04:39:46.966189+00:00"
+  },
+  {
+    "id": "cq_c53438c3",
+    "asset_input": "EN-N002",
+    "company_input": "Enlightmen Biotech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-21T04:39:46.966189+00:00"
+  },
+  {
+    "id": "cq_319e5ce4",
+    "asset_input": "GW-07",
+    "company_input": "Groovy Medicine",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-21T04:39:46.966189+00:00"
   }
 ]

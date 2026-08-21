@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-21T09:06:05"
+generated_at: "2026-08-21T21:35:53"
 record_id: "Humanwell_CXJM-66_fast_triage_20260623"
 company: "Humanwell Healthcare Group"
 country: "China"

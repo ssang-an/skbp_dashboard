@@ -1,34 +1,34 @@
 ---
 type: "source"
-canonical_id: "source::expansion_potential_evidence"
-title: "expansion_potential evidence"
+canonical_id: "source::https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c"
+title: "https://synapse.patsnap.com/drug/1e188d0bdf794df49d00edb2a1d03d3c"
 aliases:
-  - "expansion_potential evidence"
+  - "https://synapse.patsnap.com/drug/1e188d0bdf794df49d00edb2a1d03d3c"
 tags:
   - "pipeline/source"
-  - "source/company_deck"
+  - "source/commercial_database_profile"
 created_at: "2026-08-21"
 updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
-confidence: "low"
+confidence: "medium"
 ---
 
-# expansion_potential evidence
+# https://synapse.patsnap.com/drug/1e188d0bdf794df49d00edb2a1d03d3c
 
 ## Source Metadata
 
 | Field | Value |
 |---|---|
-| Source type | company_deck |
-| Reliability | low |
-| URL | No URL provided |
+| Source type | commercial_database_profile |
+| Reliability | medium |
+| URL | https://synapse.patsnap.com/drug/1e188d0bdf794df49d00edb2a1d03d3c |
 | Accessed / generated date | 2026-08-21 |
 
 ## Evidence Summary
 
-Company profile, Redoxizyme platform, pipeline status, VTA-27 AD positioning.
+-
 
 ## Used In
 

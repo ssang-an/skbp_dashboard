@@ -1,6 +1,6 @@
 # Neuroimmune
 
-> Generated from `json/pipeline-records.json` at `2026-08-21T09:06:05`.
+> Generated from `json/pipeline-records.json` at `2026-08-21T21:35:53`.
 
 ## Linked Assets
 
@@ -33,6 +33,6 @@
 - [[META_Pharmaceuticals_META01_MP5342_20260622]]
 - [[Shaperon_HY209_NuCerin_20260622]]
 - [[VASTHERA Co., Ltd._VTA-27]]
-- [[VASTHERA VTA-27]]
+- [[VASTHERA_VTA-27]]
 - [[Voronoi - Anvia Therapeutics_VRN04-2]]
 - [[Yuhan_YHC2133]]

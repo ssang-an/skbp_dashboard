@@ -1,39 +1,40 @@
 ---
 type: "source"
-canonical_id: "source::data_maturity_evidence"
-title: "data_maturity evidence"
+canonical_id: "source::https_link.springer.com_article_10.15252_emmm.201809665"
+title: "https://link.springer.com/article/10.15252/emmm.201809665"
 aliases:
-  - "data_maturity evidence"
+  - "https://link.springer.com/article/10.15252/emmm.201809665"
 tags:
   - "pipeline/source"
-  - "source/company_deck"
+  - "source/peer_reviewed_publication"
 created_at: "2026-08-21"
 updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
-confidence: "low"
+confidence: "medium"
 ---
 
-# data_maturity evidence
+# https://link.springer.com/article/10.15252/emmm.201809665
 
 ## Source Metadata
 
 | Field | Value |
 |---|---|
-| Source type | company_deck |
-| Reliability | low |
-| URL | No URL provided |
+| Source type | peer_reviewed_publication |
+| Reliability | medium |
+| URL | https://link.springer.com/article/10.15252/emmm.201809665 |
 | Accessed / generated date | 2026-08-21 |
 
 ## Evidence Summary
 
-Eight-week 5xFAD study with Y-maze, NOR and MWM data at 0.5 and 2 mg/kg.
+-
 
 ## Used In
 
 - [[02_Assets/Asset__VTA-27|Asset__VTA-27]]
 - [[10_Scorecards/Scorecard__VTA-27__20260806|Scorecard__VTA-27__20260806]]
+- [[10_Scorecards/Scorecard__VTA-27__20260812|Scorecard__VTA-27__20260812]]
 
 ## Extracted Claims
 

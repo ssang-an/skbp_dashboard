@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-21T09:06:05"
+generated_at: "2026-08-21T21:35:53"
 record_id: "Corepharm Bio Co., Ltd._CPB2101"
 company: "Corepharm Bio Co., Ltd."
 country: "Republic of Korea"

@@ -232,9 +232,9 @@
     },
     {
       "id": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af",
-      "label": "Evidence source",
+      "label": "https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af",
       "tags": "pipeline/source;source/regulatory",
       "score": "",
       "recommendation": "",
@@ -242,9 +242,9 @@
     },
     {
       "id": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
-      "label": "Evidence source",
+      "label": "https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
       "tags": "pipeline/source;source/regulatory",
       "score": "",
       "recommendation": "",
@@ -7852,9 +7852,9 @@
     },
     {
       "id": "source::https_www.vasthera.com_technology_pipeline.php",
-      "label": "Evidence source",
+      "label": "https://www.vasthera.com/technology/pipeline.php",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_www.vasthera.com_technology_pipeline.php",
       "tags": "pipeline/source;source/official_company",
       "score": "",
       "recommendation": "",
@@ -7862,9 +7862,9 @@
     },
     {
       "id": "source::https_www.vasthera.com_technology_platform.php",
-      "label": "Evidence source",
+      "label": "https://www.vasthera.com/technology/platform.php",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_www.vasthera.com_technology_platform.php",
       "tags": "pipeline/source;source/official_company",
       "score": "",
       "recommendation": "",
@@ -7872,9 +7872,9 @@
     },
     {
       "id": "source::https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view",
-      "label": "Evidence source",
+      "label": "https://www.vasthera.com/investors/news.php?code=news&idx=124&ptype=view",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view",
       "tags": "pipeline/source;source/official_company_news",
       "score": "",
       "recommendation": "",
@@ -7882,9 +7882,9 @@
     },
     {
       "id": "source::https_link.springer.com_article_10.15252_emmm.201809665",
-      "label": "Evidence source",
+      "label": "https://link.springer.com/article/10.15252/emmm.201809665",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_link.springer.com_article_10.15252_emmm.201809665",
       "tags": "pipeline/source;source/peer_reviewed_publication",
       "score": "",
       "recommendation": "",
@@ -7942,9 +7942,9 @@
     },
     {
       "id": "source::https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9",
-      "label": "Evidence source",
+      "label": "https://www.sanofi.com/assets/dotcom/pressreleases/2025/2025-05-21-23-15-31-3086232-en.pdf",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9",
       "tags": "pipeline/source;source/official_company_news",
       "score": "",
       "recommendation": "",
@@ -7952,9 +7952,9 @@
     },
     {
       "id": "source::https_www.nature.com_articles_s41591-026-04273-1",
-      "label": "Evidence source",
+      "label": "https://www.nature.com/articles/s41591-026-04273-1",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_www.nature.com_articles_s41591-026-04273-1",
       "tags": "pipeline/source;source/peer_reviewed_publication",
       "score": "",
       "recommendation": "",
@@ -11691,90 +11691,50 @@
       "evidence_level": "E3"
     },
     {
-      "id": "competitor::eisai_biogen_competitor_eisai_biogen_unknown_competitor",
-      "label": "Competitor__Eisai_Biogen__Unknown_Competitor",
+      "id": "competitor::biogen_ionis_diranersen_(biib080)",
+      "label": "Diranersen (BIIB080)",
       "type": "competitor",
-      "title": "Competitor__Eisai_Biogen__Unknown_Competitor",
+      "title": "Competitor__Biogen_Ionis__Diranersen_(BIIB080)",
       "tags": "pipeline/competitor",
       "score": "",
       "recommendation": "",
       "evidence_level": ""
     },
     {
-      "id": "competitor::eli_lilly_competitor_eli_lilly_unknown_competitor",
-      "label": "Competitor__Eli_Lilly__Unknown_Competitor",
+      "id": "competitor::sanofi_former_vigil_neuroscience_sar448851_vg-3927",
+      "label": "SAR448851 / VG-3927",
       "type": "competitor",
-      "title": "Competitor__Eli_Lilly__Unknown_Competitor",
+      "title": "Competitor__Sanofi_former_Vigil_Neuroscience__SAR448851_VG-3927",
       "tags": "pipeline/competitor",
       "score": "",
       "recommendation": "",
       "evidence_level": ""
     },
     {
-      "id": "competitor::biogen_ionis_competitor_biogen_ionis_unknown_competitor",
-      "label": "Competitor__Biogen_Ionis__Unknown_Competitor",
+      "id": "competitor::ac_immune_aci-19764",
+      "label": "ACI-19764",
       "type": "competitor",
-      "title": "Competitor__Biogen_Ionis__Unknown_Competitor",
+      "title": "Competitor__AC_Immune__ACI-19764",
       "tags": "pipeline/competitor",
       "score": "",
       "recommendation": "",
       "evidence_level": ""
-    },
-    {
-      "id": "competitor::sanofi_former_vigil_neuroscience_competitor_sanofi_former_vigil_neurosc_2a43d758",
-      "label": "Competitor__Sanofi_former_Vigil_Neuroscience__Unknown_Competitor",
-      "type": "competitor",
-      "title": "Competitor__Sanofi_former_Vigil_Neuroscience__Unknown_Competitor",
-      "tags": "pipeline/competitor",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": ""
-    },
-    {
-      "id": "competitor::ac_immune_competitor_ac_immune_unknown_competitor",
-      "label": "Competitor__AC_Immune__Unknown_Competitor",
-      "type": "competitor",
-      "title": "Competitor__AC_Immune__Unknown_Competitor",
-      "tags": "pipeline/competitor",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": ""
-    },
-    {
-      "id": "competitor::alector_competitor_alector_unknown_competitor",
-      "label": "Competitor__Alector__Unknown_Competitor",
-      "type": "competitor",
-      "title": "Competitor__Alector__Unknown_Competitor",
-      "tags": "pipeline/competitor",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": ""
-    },
-    {
-      "id": "source::evidence_source",
-      "label": "Evidence source",
-      "type": "source",
-      "title": "Source__Evidence_source",
-      "tags": "pipeline/source;source/company_deck",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
     },
     {
       "id": "source::https_www.vasthera.com_about_about.php",
-      "label": "Evidence source",
+      "label": "https://www.vasthera.com/about/about.php",
       "type": "source",
-      "title": "Source__Evidence_source",
-      "tags": "pipeline/source;source/official_company",
+      "title": "Source__https_www.vasthera.com_about_about.php",
+      "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
     },
     {
       "id": "source::https_pubmed.ncbi.nlm.nih.gov_41875826",
-      "label": "Evidence source",
+      "label": "https://pubmed.ncbi.nlm.nih.gov/41875826/",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_pubmed.ncbi.nlm.nih.gov_41875826",
       "tags": "pipeline/source;source/peer_reviewed_review",
       "score": "",
       "recommendation": "",
@@ -11782,9 +11742,9 @@
     },
     {
       "id": "source::https_clinicaltrials.gov_study_nct05399888",
-      "label": "Evidence source",
+      "label": "https://clinicaltrials.gov/study/NCT05399888",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_clinicaltrials.gov_study_NCT05399888",
       "tags": "pipeline/source;source/clinical_registry",
       "score": "",
       "recommendation": "",
@@ -11792,9 +11752,9 @@
     },
     {
       "id": "source::https_ichgcp.net_ko_clinical-trials-registry_nct07688213",
-      "label": "Evidence source",
+      "label": "https://ichgcp.net/ko/clinical-trials-registry/NCT07688213",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_ichgcp.net_ko_clinical-trials-registry_NCT07688213",
       "tags": "pipeline/source;source/clinical_registry_mirror",
       "score": "",
       "recommendation": "",
@@ -11802,9 +11762,9 @@
     },
     {
       "id": "source::https_clinicaltrials.gov_study_nct07463196",
-      "label": "Evidence source",
+      "label": "https://clinicaltrials.gov/study/NCT07463196",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_clinicaltrials.gov_study_NCT07463196",
       "tags": "pipeline/source;source/clinical_registry",
       "score": "",
       "recommendation": "",
@@ -11812,9 +11772,9 @@
     },
     {
       "id": "source::https_clinicaltrials.gov_study_nct04592874",
-      "label": "Evidence source",
+      "label": "https://clinicaltrials.gov/study/NCT04592874",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_clinicaltrials.gov_study_NCT04592874",
       "tags": "pipeline/source;source/clinical_registry",
       "score": "",
       "recommendation": "",
@@ -11822,9 +11782,9 @@
     },
     {
       "id": "source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756",
-      "label": "Evidence source",
+      "label": "https://www.alz.org/getmedia/ef8f48f9-ad36-48ea-87f9-b74034635c1e/alzheimersfacts-%20and-figures.pdf",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756",
       "tags": "pipeline/source;source/epidemiology_report",
       "score": "",
       "recommendation": "",
@@ -11832,9 +11792,9 @@
     },
     {
       "id": "source::https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a",
-      "label": "Evidence source",
+      "label": "https://www.precisionmedicineonline.com/business-news/eli-lilly-posts-strong-kisunla-growth-124m-q1",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a",
       "tags": "pipeline/source;source/market_news",
       "score": "",
       "recommendation": "",
@@ -11842,80 +11802,10 @@
     },
     {
       "id": "source::https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c",
-      "label": "Evidence source",
+      "label": "https://synapse.patsnap.com/drug/1e188d0bdf794df49d00edb2a1d03d3c",
       "type": "source",
-      "title": "Source__Evidence_source",
+      "title": "Source__https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c",
       "tags": "pipeline/source;source/commercial_database_profile",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::target_relevance_evidence",
-      "label": "target_relevance evidence",
-      "type": "source",
-      "title": "Source__target_relevance_evidence",
-      "tags": "pipeline/source;source/company_deck",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::competitive_landscape_evidence",
-      "label": "competitive_landscape evidence",
-      "type": "source",
-      "title": "Source__competitive_landscape_evidence",
-      "tags": "pipeline/source;source/company_deck",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::moa_validity_evidence",
-      "label": "moa_validity evidence",
-      "type": "source",
-      "title": "Source__moa_validity_evidence",
-      "tags": "pipeline/source;source/company_deck",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::platform_attractiveness_evidence",
-      "label": "platform_attractiveness evidence",
-      "type": "source",
-      "title": "Source__platform_attractiveness_evidence",
-      "tags": "pipeline/source;source/company_deck",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::expansion_potential_evidence",
-      "label": "expansion_potential evidence",
-      "type": "source",
-      "title": "Source__expansion_potential_evidence",
-      "tags": "pipeline/source;source/company_deck",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::data_maturity_evidence",
-      "label": "data_maturity evidence",
-      "type": "source",
-      "title": "Source__data_maturity_evidence",
-      "tags": "pipeline/source;source/company_deck",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3"
-    },
-    {
-      "id": "source::marketability_evidence",
-      "label": "marketability evidence",
-      "type": "source",
-      "title": "Source__marketability_evidence",
-      "tags": "pipeline/source;source/company_deck",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3"
@@ -27772,395 +27662,283 @@
     },
     {
       "source": "asset::vta-27",
-      "target": "competitor::eisai_biogen_competitor_eisai_biogen_unknown_competitor",
+      "target": "competitor::eisai_biogen_leqembi_(lecanemab)",
       "relationship": "HAS_COMPETITOR",
       "evidence_type": "E3",
       "source_note": "Scorecard__VTA-27__20260806"
     },
     {
       "source": "asset::vta-27",
-      "target": "competitor::eli_lilly_competitor_eli_lilly_unknown_competitor",
+      "target": "competitor::eli_lilly_kisunla_(donanemab)",
       "relationship": "HAS_COMPETITOR",
       "evidence_type": "E3",
       "source_note": "Scorecard__VTA-27__20260806"
     },
     {
       "source": "asset::vta-27",
-      "target": "competitor::biogen_ionis_competitor_biogen_ionis_unknown_competitor",
+      "target": "competitor::biogen_ionis_diranersen_(biib080)",
       "relationship": "HAS_COMPETITOR",
       "evidence_type": "E3",
       "source_note": "Scorecard__VTA-27__20260806"
     },
     {
       "source": "asset::vta-27",
-      "target": "competitor::sanofi_former_vigil_neuroscience_competitor_sanofi_former_vigil_neurosc_2a43d758",
+      "target": "competitor::sanofi_former_vigil_neuroscience_sar448851_vg-3927",
       "relationship": "HAS_COMPETITOR",
       "evidence_type": "E3",
       "source_note": "Scorecard__VTA-27__20260806"
     },
     {
       "source": "asset::vta-27",
-      "target": "competitor::ac_immune_competitor_ac_immune_unknown_competitor",
+      "target": "competitor::ac_immune_aci-19764",
       "relationship": "HAS_COMPETITOR",
       "evidence_type": "E3",
       "source_note": "Scorecard__VTA-27__20260806"
     },
     {
       "source": "asset::vta-27",
-      "target": "competitor::alector_competitor_alector_unknown_competitor",
+      "target": "competitor::alector_al002",
       "relationship": "HAS_COMPETITOR",
       "evidence_type": "E3",
       "source_note": "Scorecard__VTA-27__20260806"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::evidence_source",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::evidence_source",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_www.vasthera.com_about_about.php",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.vasthera.com_about_about.php"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_www.vasthera.com_about_about.php",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.vasthera.com_about_about.php"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_www.vasthera.com_technology_platform.php",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.vasthera.com_technology_platform.php"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_www.vasthera.com_technology_platform.php",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.vasthera.com_technology_platform.php"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_www.vasthera.com_technology_pipeline.php",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.vasthera.com_technology_pipeline.php"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_www.vasthera.com_technology_pipeline.php",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.vasthera.com_technology_pipeline.php"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_link.springer.com_article_10.15252_emmm.201809665",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_link.springer.com_article_10.15252_emmm.201809665"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_link.springer.com_article_10.15252_emmm.201809665",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_link.springer.com_article_10.15252_emmm.201809665"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_pubmed.ncbi.nlm.nih.gov_41875826",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_pubmed.ncbi.nlm.nih.gov_41875826"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_pubmed.ncbi.nlm.nih.gov_41875826",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_pubmed.ncbi.nlm.nih.gov_41875826"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_clinicaltrials.gov_study_nct05399888",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_clinicaltrials.gov_study_NCT05399888"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_clinicaltrials.gov_study_nct05399888",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_clinicaltrials.gov_study_NCT05399888"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_ichgcp.net_ko_clinical-trials-registry_nct07688213",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_ichgcp.net_ko_clinical-trials-registry_NCT07688213"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_ichgcp.net_ko_clinical-trials-registry_nct07688213",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_ichgcp.net_ko_clinical-trials-registry_NCT07688213"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_clinicaltrials.gov_study_nct07463196",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_clinicaltrials.gov_study_NCT07463196"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_clinicaltrials.gov_study_nct07463196",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_clinicaltrials.gov_study_NCT07463196"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_clinicaltrials.gov_study_nct04592874",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_clinicaltrials.gov_study_NCT04592874"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_clinicaltrials.gov_study_nct04592874",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_clinicaltrials.gov_study_NCT04592874"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_www.nature.com_articles_s41591-026-04273-1",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.nature.com_articles_s41591-026-04273-1"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_www.nature.com_articles_s41591-026-04273-1",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.nature.com_articles_s41591-026-04273-1"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.alz.org_getmedia_ef8f48f9-ad36-48ea-87f9-b74034635c1e_alzheim_d436d756"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_www.precisionmedicineonline.com_business-news_eli-lilly-posts-str_888b9d4a"
     },
     {
       "source": "asset::vta-27",
       "target": "source::https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c",
       "relationship": "USES_SOURCE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
+      "source_note": "Source__https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c"
     },
     {
       "source": "scorecard::vta-27_20260806",
       "target": "source::https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c",
       "relationship": "SUPPORTS_SCORE",
       "evidence_type": "E3",
-      "source_note": "Source__Evidence_source"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::target_relevance_evidence",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__target_relevance_evidence"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::target_relevance_evidence",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__target_relevance_evidence"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::competitive_landscape_evidence",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__competitive_landscape_evidence"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::competitive_landscape_evidence",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__competitive_landscape_evidence"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::moa_validity_evidence",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__moa_validity_evidence"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::moa_validity_evidence",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__moa_validity_evidence"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::platform_attractiveness_evidence",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__platform_attractiveness_evidence"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::platform_attractiveness_evidence",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__platform_attractiveness_evidence"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::expansion_potential_evidence",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__expansion_potential_evidence"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::expansion_potential_evidence",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__expansion_potential_evidence"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::data_maturity_evidence",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__data_maturity_evidence"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::data_maturity_evidence",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__data_maturity_evidence"
-    },
-    {
-      "source": "asset::vta-27",
-      "target": "source::marketability_evidence",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E3",
-      "source_note": "Source__marketability_evidence"
-    },
-    {
-      "source": "scorecard::vta-27_20260806",
-      "target": "source::marketability_evidence",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E3",
-      "source_note": "Source__marketability_evidence"
+      "source_note": "Source__https_synapse.patsnap.com_drug_1e188d0bdf794df49d00edb2a1d03d3c"
     },
     {
       "source": "asset::ab-ad-002",

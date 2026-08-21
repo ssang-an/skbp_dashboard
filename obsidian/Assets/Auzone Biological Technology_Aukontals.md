@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-21T09:06:05"
+generated_at: "2026-08-21T21:35:53"
 record_id: "Auzone Biological Technology_Aukontals"
 company: "Auzone Biological Technology"
 country: "China"
@@ -297,7 +297,45 @@ AUKONTALS는 ALS registration-stage asset으로 identity가 확실하고 정량 
     "generated_at": "2026-08-20",
     "output_filename_base": "Auzone Biological Technology_Aukontals",
     "dashboard_uploaded_at": "2026-08-20T06:40:23.283267+00:00",
-    "storage_profile": "dashboard_hybrid_v1"
+    "storage_profile": "dashboard_hybrid_v1",
+    "human_review": {
+      "overrides": {
+        "final_comment": "hgh"
+      },
+      "ai_baseline": {
+        "final_comment": ""
+      },
+      "final_comment_author_id": "3dd1472cc5bd4f888238b0a6d1776816",
+      "final_comment_author_name": "정주원",
+      "final_comment_updated_at": "2026-08-21T12:35:50.803324+00:00",
+      "history": [
+        {
+          "changed_at": "2026-08-21T12:35:50.803324+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_table",
+          "field": "final_comment",
+          "previous_value": "",
+          "new_value": "hgh"
+        }
+      ],
+      "last_updated_at": "2026-08-21T12:35:50.803324+00:00",
+      "last_updated_source": "dashboard_table",
+      "last_updated_by": "정주원",
+      "has_manual_override": true
+    },
+    "edit_history": [
+      {
+        "id": "0735d2194b3b4e2d985a9910336c2f06",
+        "changed_at": "2026-08-21T12:35:50.803472+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_table_manual_review",
+        "field": "final_comment",
+        "previous_value": "",
+        "new_value": "hgh"
+      }
+    ]
   },
   "source_report": {
     "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n> 적용 기준: asset-specific 사실만 사용하고, 불확실한 사실은 추정하지 않는 Fast Triage v3.3 evidence discipline을 적용했습니다.\n\n중요: 6개 후보 중 AUKONTALS만 **SELECT**이며, AXN-1501/AXN-1901은 현재 discontinued 상태로 **REJECT**, ATB-501/ACP-Brain Disease Research Project/AZBE53206은 정확한 asset identity를 공개 근거로 검증하지 못해 **UNVERIFIED**로 처리합니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ATB-501 | Autotelic Bio | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | **TR 0점 (no_supporting_basis):** ATB-501의 확정 indication/target/MoA를 확인하지 못했습니다. **MOA 0점:** target/MoA가 미확인입니다. **Data 0점:** asset-specific 공개 결과가 확인되지 않았습니다. 공식 pipeline에는 ATB-320/720/810/101이 있으나 ATB-501은 없어 identity를 확정할 수 없습니다. | S1 Autotelic Bio official pipeline |\n| 2 | Aukontals | Auzone Biological Technology | Free radicals / free-radical scavenger, antioxidative stress | Small molecule | Amyotrophic lateral sclerosis / motor neuron disease | Registration | China | 2 | 1 | 2 | SELECT | **TR 2점 (public_source):** AUKONTALS는 Shanghai Auzone의 ALS용 edaravone tablet/NDA 219846로 확인되어 interest indication에 해당합니다. **MOA 1점 (public_source):** free-radical scavenger/antioxidative-stress 기전 description은 있으나 asset-specific PD/functional validation은 확인되지 않았고 FDA edaravone label도 ALS therapeutic mechanism을 unknown으로 기술합니다. **Data 2점 (public_source):** TTYP-01은 614명 acute ischemic stroke 연구에서 mRS 0–1 65.4% vs 47.1%, OR 2.12의 정량 outcome을 공개했으나 이는 ALS-specific data가 아니며 두 개 이상의 상보적 정량 domain은 확인되지 않았습니다. | S1 court/regulatory-linked filing; S2 Pharmacodia; S3 LARVOL; S4 FDA edaravone label. |\n| 3 | ACP-Brain Disease Research Project | Avixgen | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | **TR 0점 (no_supporting_basis):** 정확한 입력 asset의 확정 indication을 확인하지 못했습니다. **MOA 0점:** Avixgen의 관련 ACP BBB-delivery platform은 확인되지만 이를 입력 명칭의 확정 MoA로 귀속할 alias 근거가 없습니다. **Data 0점:** ACP platform 동물실험 설명 역시 정확한 입력 asset에 귀속할 수 없습니다. 공식 pipeline은 AVI-6110을 ACP platform으로 기재하지만 “ACP-Brain Disease Research Project”와의 동일성은 검증되지 않았습니다. | S1 Avixgen official pipeline; S2 Avixgen ACP platform page. |\n| 4 | AXN-1501 | Axceso Biopharma | SIRT1 / SIRT1 stimulant | Small molecule | Alzheimer's disease | Discontinued / inactive | Republic of Korea | 2 | 1 | 0 | REJECT | **TR 2점 (public_source):** Alzheimer disease가 확인되어 interest indication에 해당합니다. **MOA 1점 (public_source):** SIRT1 stimulant라는 기전 description은 있으나 asset-specific functional/PD validation을 확인하지 못했습니다. **Data 0점 (public_source):** dedicated record의 clinical result가 No Data이며 별도 asset-specific 결과가 확인되지 않았습니다. 최신 organization pipeline과 dedicated record가 discontinued/inactive를 지지하므로 lifecycle hard blocker로 REJECT입니다. | S1 Synapse Axceso pipeline; S2 Synapse AXN-1501. |\n| 5 | AXN-1901 | Axceso Biopharma | SIRT1 / SIRT1 stimulant | Small molecule | Parkinson's disease | Discontinued / inactive | Republic of Korea | 2 | 1 | 0 | REJECT | **TR 2점 (public_source):** Parkinson disease가 확인되어 interest indication에 해당합니다. **MOA 1점 (public_source):** SIRT1 stimulant 기전 description은 있으나 asset-specific functional/PD validation은 확인되지 않았습니다. **Data 0점 (public_source):** dedicated record는 No Data입니다. 오래된 dedicated page는 preclinical active로 보이지만 2026-08-15 current-project snapshot은 Discontinued이므로 더 최신 상태를 적용해 REJECT했습니다. | S1 Synapse Axceso pipeline; S2 Synapse AXN-1901. |\n| 6 | AZBE53206 | AZothBio | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | **TR 0점 (no_supporting_basis):** AZBE53206의 indication/target/MoA를 확인하지 못했습니다. **MOA 0점:** target/MoA가 미확인입니다. **Data 0점:** asset-specific 공개 결과가 확인되지 않았습니다. 2026-08-18 current-project snapshot에는 AZB101과 AZB102가 보이지만 AZBE53206은 없어 정확한 asset identity를 검증할 수 없습니다. | S1 Synapse AZothBio pipeline. |\n\n## Notes\n- **AUKONTALS:** 2025-10-15 court filing에서는 NDA 219846가 아직 FDA-approved가 아니라고 확인되며, 현재 공개 drug database는 global highest status를 registration으로 표시합니다. 이번 quick triage에서는 최종 FDA decision을 확인하지 못했으므로 Full Scout에서 최신 regulatory status와 ALS-specific data package를 확인하는 것이 핵심입니다.\n- **ACP-Brain Disease Research Project:** Avixgen의 AVI-6110/ACP platform은 존재하지만 입력 명칭과의 공식 alias mapping이 없어 관련 platform 정보를 해당 asset 사실로 합치지 않았습니다.\n- **AXN-1901:** 오래된 dedicated record와 2026-08-15 organization snapshot의 status가 충돌하며, 더 최신 current-project snapshot의 Discontinued를 적용했습니다.\n- **ATB-501 / AZBE53206:** 현재 확인한 회사/public pipeline에 정확한 identifier가 없다는 사실은 “비존재”를 뜻하지 않으므로 REJECT가 아니라 UNVERIFIED로 유지합니다.",

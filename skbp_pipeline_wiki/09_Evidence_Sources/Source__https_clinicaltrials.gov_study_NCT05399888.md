@@ -1,34 +1,34 @@
 ---
 type: "source"
-canonical_id: "source::marketability_evidence"
-title: "marketability evidence"
+canonical_id: "source::https_clinicaltrials.gov_study_nct05399888"
+title: "https://clinicaltrials.gov/study/NCT05399888"
 aliases:
-  - "marketability evidence"
+  - "https://clinicaltrials.gov/study/NCT05399888"
 tags:
   - "pipeline/source"
-  - "source/company_deck"
+  - "source/clinical_registry"
 created_at: "2026-08-21"
 updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
-confidence: "low"
+confidence: "medium"
 ---
 
-# marketability evidence
+# https://clinicaltrials.gov/study/NCT05399888
 
 ## Source Metadata
 
 | Field | Value |
 |---|---|
-| Source type | company_deck |
-| Reliability | low |
-| URL | No URL provided |
+| Source type | clinical_registry |
+| Reliability | medium |
+| URL | https://clinicaltrials.gov/study/NCT05399888 |
 | Accessed / generated date | 2026-08-21 |
 
 ## Evidence Summary
 
-Company profile, Redoxizyme platform, pipeline status, VTA-27 AD positioning.
+-
 
 ## Used In
 

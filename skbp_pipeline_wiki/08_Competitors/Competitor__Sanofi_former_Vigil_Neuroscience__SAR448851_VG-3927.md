@@ -1,9 +1,9 @@
 ---
 type: "competitor"
-canonical_id: "competitor::sanofi_former_vigil_neuroscience_unknown_competitor"
-title: "Unknown Competitor"
+canonical_id: "competitor::sanofi_former_vigil_neuroscience_sar448851_vg-3927"
+title: "SAR448851 / VG-3927"
 aliases:
-  - "Unknown Competitor"
+  - "SAR448851 / VG-3927"
 tags:
   - "pipeline/competitor"
 created_at: "2026-08-21"
@@ -14,17 +14,17 @@ status: "active"
 confidence: "medium"
 ---
 
-# Unknown Competitor
+# SAR448851 / VG-3927
 
 ## Competitor Snapshot
 
 | Field | Value |
 |---|---|
 | Company | Sanofi / former Vigil Neuroscience |
-| Asset | Unknown Competitor |
-| Target / MoA | - |
+| Asset | SAR448851 / VG-3927 |
+| Target / MoA | TREM2 agonist intended to enhance microglial neuroprotection |
 | Modality | Small molecule |
-| Stage | - |
+| Stage | Phase 2 registered; not yet recruiting in reviewed registry mirror |
 | Similarity level | Medium |
 
 ## Why It Matters

@@ -7,8 +7,6 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-  - "pipeline"
-  - "skbp"
 created_at: "2026-08-21"
 updated_at: "2026-08-21"
 source_report: "[[01_Raw_Reports/VASTHERA_VTA-27]]"
@@ -75,16 +73,16 @@ VTA-27 is a differentiated oral PRX-mimetic/astrocyte-STAT3 concept with a credi
 - Indication: [[07_Indications/Indication__Mild-to-moderate_Alzheimer's_disease;_Parkinson's_disease_is_only_a_pot_8b9f0f09|Mild-to-moderate Alzheimer's disease; Parkinson's disease is only a potential expansion concept.]]
 
 ### Evidence Sources
-- [[09_Evidence_Sources/Source__Evidence_source|Evidence source]]
-- [[09_Evidence_Sources/Source__Evidence_source|Evidence source]]
-- [[09_Evidence_Sources/Source__Evidence_source|Evidence source]]
-- [[09_Evidence_Sources/Source__Evidence_source|Evidence source]]
-- [[09_Evidence_Sources/Source__Evidence_source|Evidence source]]
-- [[09_Evidence_Sources/Source__Evidence_source|Evidence source]]
-- [[09_Evidence_Sources/Source__Evidence_source|Evidence source]]
-- [[09_Evidence_Sources/Source__Evidence_source|Evidence source]]
-- [[09_Evidence_Sources/Source__Evidence_source|Evidence source]]
-- [[09_Evidence_Sources/Source__Evidence_source|Evidence source]]
+- [[09_Evidence_Sources/Source__https_www.vasthera.com_about_about.php|https://www.vasthera.com/about/about.php]]
+- [[09_Evidence_Sources/Source__https_www.vasthera.com_technology_platform.php|https://www.vasthera.com/technology/platform.php]]
+- [[09_Evidence_Sources/Source__https_www.vasthera.com_technology_pipeline.php|https://www.vasthera.com/technology/pipeline.php]]
+- [[09_Evidence_Sources/Source__https_www.vasthera.com_investors_news.php_code=news&idx=124&ptype=view|https://www.vasthera.com/investors/news.php?code=news&idx=124&ptype=view]]
+- [[09_Evidence_Sources/Source__https_link.springer.com_article_10.15252_emmm.201809665|https://link.springer.com/article/10.15252/emmm.201809665]]
+- [[09_Evidence_Sources/Source__https_pubmed.ncbi.nlm.nih.gov_41875826|https://pubmed.ncbi.nlm.nih.gov/41875826/]]
+- [[09_Evidence_Sources/Source__https_www.fda.gov_news-events_press-announcements_fda-converts-novel-al_2dfaf7af|https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval]]
+- [[09_Evidence_Sources/Source__https_www.fda.gov_drugs_news-events-human-drugs_fda-approves-treatment-_abbc72bc|https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease]]
+- [[09_Evidence_Sources/Source__https_clinicaltrials.gov_study_NCT05399888|https://clinicaltrials.gov/study/NCT05399888]]
+- [[09_Evidence_Sources/Source__https_www.sanofi.com_assets_dotcom_pressreleases_2025_2025-05-21-23-15-_0405b7c9|https://www.sanofi.com/assets/dotcom/pressreleases/2025/2025-05-21-23-15-31-3086232-en.pdf]]
 
 ## 6. Key Diligence Questions
 

@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-21T09:06:05"
+generated_at: "2026-08-21T21:35:53"
 record_id: "Actio_Biosciences_ABS-1230_20260623"
 company: "Actio Biosciences"
 country: "United States"
@@ -374,21 +374,21 @@ ABS-1230 is a high-quality science-first CNS precision medicine asset with stron
       "admet_completed": null,
       "admet_completed_source": "auto",
       "filter3_document_analyses": [],
-      "filter3_document_analysis_updated_at": "2026-08-20T23:33:31.404812+00:00",
+      "filter3_document_analysis_updated_at": "2026-08-21T00:30:30.112142+00:00",
       "partnership_auto_suggestion": "unknown",
       "partnership_auto_note": "ADMET Score, ADMET uploaded 확인 불가",
       "partnership_auto_evidence_sources": [
         "Tab2 구조화 데이터",
         "Full Scout 원문 리포트: Actio_Biosciences_ABS-1230_20260623"
       ],
-      "partnership_classification_criteria_version": "1.3",
+      "partnership_classification_criteria_version": "1.4",
       "partnership_note": "ADMET Score, ADMET uploaded 확인 불가",
       "partnership_evidence_sources": [
         "Tab2 구조화 데이터",
         "Full Scout 원문 리포트: Actio_Biosciences_ABS-1230_20260623"
       ],
       "partnership_classification_source": "auto",
-      "partnership_classified_at": "2026-08-20T23:33:31.404881+00:00",
+      "partnership_classified_at": "2026-08-21T00:30:30.112201+00:00",
       "updated_at": "2026-08-06T02:46:24.666312+00:00",
       "updated_source": "dashboard_tab3",
       "updated_by": "정주원"

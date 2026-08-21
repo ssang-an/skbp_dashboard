@@ -1,6 +1,6 @@
 # Pipeline Index
 
-> Generated from `json/pipeline-records.json` at `2026-08-21T09:06:05`.
+> Generated from `json/pipeline-records.json` at `2026-08-21T21:35:53`.
 
 ## Assets
 
@@ -135,7 +135,7 @@
 | [[Axceso Biopharma_AXN-1501]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 3 / 9 |
 | [[Axceso Biopharma_AXN-1901]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 3 / 9 |
 | [[AZothBio_AZBE53206]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
-| [[VASTHERA VTA-27|VTA-27]] | [[VASTHERA]] | Republic of Korea | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - 교세포 향상성|교세포 향상성]] | IND-enabling | 13 / 21 |
+| [[VASTHERA_VTA-27]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - 교세포 향상성|교세포 향상성]] | IND-enabling | 13 / 21 |
 | [[Aliadbiopharma_AB-AD-002]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
 | [[Aliad Biopharma, Inc._AB-ASD-003]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 1 / 9 |
 | [[Amyloid Solution Inc_AS-603]] | [[-]] | - | [[Theme - Protein Homeostasis|Protein Homeostasis]] | [[Cluster - Unknown|Unknown]] | Phase 1 | 9 / 9 |
