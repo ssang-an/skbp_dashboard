@@ -127,6 +127,17 @@ class PipelineRecordReconciliationTests(unittest.TestCase):
             [attachment["filename"] for attachment in merged[0]["meta"]["attachments"]], ["home.pdf", "company.pdf"]
         )
 
+    def test_three_way_merge_does_not_serialize_deleted_field_sentinel(self):
+        base = {"removed_later": "legacy", "retained": "base"}
+        current = {"retained": "current"}
+        snapshot = {"removed_later": "legacy", "retained": "base"}
+
+        merged, conflicts = reconcile_script.three_way_merge_value(base, current, snapshot)
+
+        self.assertEqual(conflicts, [])
+        self.assertEqual(merged, {"retained": "current"})
+        self.assertEqual(reconcile_script.canonical_value_bytes(merged), b'{"retained":"current"}')
+
     def test_write_creates_backup_before_replacing_json(self):
         original_data_file = reconcile_script.main.DATA_FILE
         try:

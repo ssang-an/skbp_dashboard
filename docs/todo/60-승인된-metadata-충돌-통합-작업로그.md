@@ -11,3 +11,4 @@
 
 - 8개 회귀 테스트 통과
 - metadata audit history union 및 common-base 없는 primary 유지 검증
+- 삭제된 JSON field의 내부 sentinel이 직렬화되지 않는 회귀 테스트를 추가했다.

@@ -144,6 +144,11 @@ def values_equal(left: Any, right: Any) -> bool:
     return canonical_value_bytes(left) == canonical_value_bytes(right)
 
 
+def copy_merge_value(value: Any) -> Any:
+    """Copy JSON data while preserving the internal missing-value sentinel."""
+    return MISSING if value is MISSING else copy.deepcopy(value)
+
+
 def three_way_merge_value(base: Any, current: Any, snapshot: Any, path: str = "") -> tuple[Any, list[str]]:
     """Merge a value only when one side left it at the common base.
 
@@ -152,11 +157,11 @@ def three_way_merge_value(base: Any, current: Any, snapshot: Any, path: str = ""
     would be less safe than reporting a collision.
     """
     if values_equal(current, snapshot):
-        return copy.deepcopy(current), []
+        return copy_merge_value(current), []
     if values_equal(current, base):
-        return copy.deepcopy(snapshot), []
+        return copy_merge_value(snapshot), []
     if values_equal(snapshot, base):
-        return copy.deepcopy(current), []
+        return copy_merge_value(current), []
     if isinstance(base, dict) and isinstance(current, dict) and isinstance(snapshot, dict):
         result: dict[str, Any] = {}
         conflicts: list[str] = []
