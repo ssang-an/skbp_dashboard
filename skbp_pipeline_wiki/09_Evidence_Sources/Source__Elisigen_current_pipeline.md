@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company_pipeline"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company_pipeline |
 | Reliability | medium |
 | URL | https://www.elisigen.com/en/pipeline/ |
-| Accessed / generated date | 2026-08-20 |
+| Accessed / generated date | 2026-08-21 |
 
 ## Evidence Summary
 

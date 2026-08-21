@@ -6,8 +6,8 @@ aliases:
   - "modulation_of_microglial_migration_phagocytosis,_amyloid_handling_and_n_e8bf572c"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

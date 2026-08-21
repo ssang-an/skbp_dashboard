@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://paragraphfour.com/wp-content/uploads/2023/07/njdc25cv3326A.pdf |
-| Accessed / generated date | 2026-08-20 |
+| Accessed / generated date | 2026-08-21 |
 
 ## Evidence Summary
 

@@ -1,6 +1,6 @@
 # Unknown
 
-> Generated from `json/pipeline-records.json` at `2026-08-20T15:43:42`.
+> Generated from `json/pipeline-records.json` at `2026-08-21T09:06:05`.
 
 ## Linked Assets
 
@@ -10,6 +10,9 @@
 - [[ADEL_ADEL-Y04]]
 - [[AUTOTAC Bio_AB-12 (IV)]]
 - [[AZothBio_AZBE53206]]
+- [[Aliad Biopharma, Inc._AB-ASD-003]]
+- [[Aliadbiopharma_AB-AD-002]]
+- [[Amyloid Solution Inc_AS-603]]
 - [[Amyloid Solution_AS-301]]
 - [[Amyloid Solution_AS-M801]]
 - [[Amyloid Solution_AS-S701 - AS-701]]
@@ -46,6 +49,7 @@
 - [[Cellprotek Pharmaceutical_YC-6]]
 - [[Celltrion, Inc._LC-PC01]]
 - [[Chong Kun Dang_ACL-513 (CKD-513)]]
+- [[Corepharm Bio Co., Ltd._CPB2101]]
 - [[Deargen_DG-ALS-T1]]
 - [[Dong-A ST_intractable brain diseases therapy, Dong-AST]]
 - [[EuBiologics_Alzheimer's disease vaccine (PADIVAX+)]]

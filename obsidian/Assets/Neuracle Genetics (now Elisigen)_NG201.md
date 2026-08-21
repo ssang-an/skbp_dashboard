@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-20T15:43:42"
+generated_at: "2026-08-21T09:06:05"
 record_id: "Neuracle Genetics (now Elisigen)_NG201"
 company: "Neuracle Genetics (now Elisigen)"
 country: "Republic of Korea"

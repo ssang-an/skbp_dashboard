@@ -1,6 +1,6 @@
 # Companies
 
-> Generated at `2026-08-20T15:43:42`.
+> Generated at `2026-08-21T09:06:05`.
 
 - [[1ST Biotherapeutics]] (2)
 - [[1ST Biotherapeutics - D&D Pharmatech|1ST Biotherapeutics / D&D Pharmatech]] (1)
@@ -11,7 +11,10 @@
 - [[AUTOTAC Bio]] (1)
 - [[AZothBio]] (1)
 - [[Actio Biosciences]] (2)
+- [[Aliad Biopharma, Inc|Aliad Biopharma, Inc.]] (1)
+- [[Aliadbiopharma]] (1)
 - [[Amyloid Solution]] (3)
+- [[Amyloid Solution Inc]] (1)
 - [[AniMusCure]] (1)
 - [[AriBio]] (2)
 - [[Astrion Co., Ltd|Astrion Co., Ltd.]] (1)
@@ -34,6 +37,8 @@
 - [[Bright Minds Biosciences]] (1)
 - [[Bukwang Pharmaceutical - Contera Pharma|Bukwang Pharmaceutical / Contera Pharma]] (1)
 - [[CELLTIUM]] (1)
+- [[CK Regeon Inc|CK Regeon Inc.]] (1)
+- [[CTX Inc|CTX Inc.]] (2)
 - [[Cellapeutics Bio Co., Ltd|Cellapeutics Bio Co., Ltd.]] (3)
 - [[CellapeuticsBio]] (2)
 - [[Cellatoz Therapeutics, Inc|Cellatoz Therapeutics, Inc.]] (1)
@@ -43,9 +48,12 @@
 - [[Cellprotek Pharmaceutical]] (2)
 - [[Celltrion, Inc|Celltrion, Inc.]] (1)
 - [[Chong Kun Dang]] (1)
+- [[Corepharm Bio Co., Ltd|Corepharm Bio Co., Ltd.]] (1)
 - [[CorestemChemon Inc|CorestemChemon Inc.]] (1)
 - [[Curacle Co., Ltd|Curacle Co., Ltd.]] (1)
+- [[Curamys Inc|Curamys Inc.]] (1)
 - [[Deargen]] (1)
+- [[DigmBio Inc|DigmBio Inc.]] (2)
 - [[Dong-A ST]] (1)
 - [[Dr. Noah Biotech]] (1)
 - [[Encoded Therapeutics]] (1)
@@ -93,6 +101,7 @@
 - [[Shaperon Inc|Shaperon Inc.]] (1)
 - [[Stoke Therapeutics - Biogen|Stoke Therapeutics / Biogen]] (1)
 - [[Threebrooks Therapeutics]] (1)
+- [[VASTHERA]] (1)
 - [[VASTHERA Co., Ltd|VASTHERA Co., Ltd.]] (1)
 - [[VivaVision Biotech]] (1)
 - [[Voronoi - Anvia Therapeutics|Voronoi / Anvia Therapeutics]] (1)

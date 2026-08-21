@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/biopharma_database"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | biopharma_database |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/e51eb88adc764dca8d419916642ec2d1 |
-| Accessed / generated date | 2026-08-20 |
+| Accessed / generated date | 2026-08-21 |
 
 ## Evidence Summary
 

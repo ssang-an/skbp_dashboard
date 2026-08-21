@@ -6,8 +6,8 @@ aliases:
   - "dual_lrrk2_c-abl_kinase_inhibition_with_prab10_and_pcrkl_suppression_an_0c7d3ba3"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

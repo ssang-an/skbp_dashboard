@@ -6,8 +6,8 @@ aliases:
   - "small_molecule"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -26,10 +26,12 @@ confidence: "medium"
 - [[02_Assets/Asset__1ST-103_(NLY02)|1ST-103_(NLY02)]]
 - [[02_Assets/Asset__1ST-104|1ST-104]]
 - [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]
+- [[02_Assets/Asset__AB-ASD-003|AB-ASD-003]]
 - [[02_Assets/Asset__ACL-513_(CKD-513)|ACL-513_(CKD-513)]]
 - [[02_Assets/Asset__AON-PP23|AON-PP23]]
 - [[02_Assets/Asset__AR1001|AR1001]]
 - [[02_Assets/Asset__AS-401|AS-401]]
+- [[02_Assets/Asset__AS-603|AS-603]]
 - [[02_Assets/Asset__AS-S701_AS-701|AS-S701_AS-701]]
 - [[02_Assets/Asset__AST-001_(Speragen)|AST-001_(Speragen)]]
 - [[02_Assets/Asset__AST-004|AST-004]]
@@ -44,8 +46,12 @@ confidence: "medium"
 - [[02_Assets/Asset__Azetukalner_XEN1101|Azetukalner_XEN1101]]
 - [[02_Assets/Asset__BSC-3301|BSC-3301]]
 - [[02_Assets/Asset__CBM-951|CBM-951]]
+- [[02_Assets/Asset__CKR-492|CKR-492]]
+- [[02_Assets/Asset__CPB2101|CPB2101]]
 - [[02_Assets/Asset__CU71|CU71]]
 - [[02_Assets/Asset__DG-ALS-T1|DG-ALS-T1]]
+- [[02_Assets/Asset__DM3159|DM3159]]
+- [[02_Assets/Asset__DM3190|DM3190]]
 - [[02_Assets/Asset__HBW-015|HBW-015]]
 - [[02_Assets/Asset__HY209_NuCerin|HY209_NuCerin]]
 - [[02_Assets/Asset__LNK01006|LNK01006]]

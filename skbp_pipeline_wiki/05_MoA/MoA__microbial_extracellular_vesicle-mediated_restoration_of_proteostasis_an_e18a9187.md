@@ -6,8 +6,8 @@ aliases:
   - "microbial_extracellular_vesicle-mediated_restoration_of_proteostasis_an_e18a9187"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

@@ -7,15 +7,18 @@
 | [[02_Assets/Asset__1ST-104|1ST-104]] | 12 | Watch | E3 |
 | [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)]] | 17 | Shortlist | E3 |
 | [[02_Assets/Asset__AB-12_(IV)|AB-12 (IV)]] | 8 | Run Full Scout | E0 |
+| [[02_Assets/Asset__AB-AD-002|AB-AD-002]] | 0 | Verify asset identity | E0 |
+| [[02_Assets/Asset__AB-ASD-003|AB-ASD-003]] | 1 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__ABS-1230|ABS-1230]] | 15 | Shortlist | E4 |
 | [[02_Assets/Asset__ACL-513_(CKD-513)|ACL-513 (CKD-513)]] | 2 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__ACP-Brain_Disease_Research_Project|ACP-Brain Disease Research Project]] | 0 | Verify asset identity | E0 |
 | [[02_Assets/Asset__ADEL-Y04|ADEL-Y04]] | 7 | Run Full Scout | E0 |
-| [[02_Assets/Asset__AON-PP23|AON-PP23]] | 2 | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__AON-PP23|AON-PP23]] | 6 | Run Full Scout | E0 |
 | [[02_Assets/Asset__AR1001|AR1001]] | 9 | Run Full Scout | E0 |
 | [[02_Assets/Asset__AR1002|AR1002]] | 0 | Verify asset identity | E0 |
 | [[02_Assets/Asset__AS-301|AS-301]] | 4 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__AS-401|AS-401]] | 0 | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__AS-603|AS-603]] | 9 | Run Full Scout | E0 |
 | [[02_Assets/Asset__AS-M801|AS-M801]] | 4 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__AS-S701_AS-701|AS-S701 / AS-701]] | 4 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__AST-001_(Speragen)|AST-001 (Speragen)]] | 10 | Deprioritize | E4 |
@@ -41,6 +44,7 @@
 | [[02_Assets/Asset__Bexicaserin_LP352|Bexicaserin / LP352]] |  | Run Full Scout | E0 |
 | [[02_Assets/Asset__CBM-951|CBM-951]] | 2 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__CE223BR17_Parkinson's_Disease_Research_Program|CE223BR17 / Parkinson's Disease Research Program]] | 10 | Watch | E3 |
+| [[02_Assets/Asset__CKR-492|CKR-492]] | 5 | Run Full Scout | E0 |
 | [[02_Assets/Asset__CLZ-2002|CLZ-2002]] | 1 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__CLZ003|CLZ003]] | 1 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__CNS_XDC|CNS XDC]] |  | Do not run Full Scout | E0 |
@@ -50,12 +54,18 @@
 | [[02_Assets/Asset__CPB-106|CPB-106]] | 2 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__CPB102|CPB102]] | 0 | Verify asset identity | E0 |
 | [[02_Assets/Asset__CPB103|CPB103]] | 0 | Verify asset identity | E0 |
-| [[02_Assets/Asset__CU71|CU71]] | 15 | Shortlist | E3 |
+| [[02_Assets/Asset__CPB2101|CPB2101]] | 1 | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__CTX-PD01|CTX-PD01]] | 4 | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__CTX-PD02_03|CTX-PD02/03]] | 5 | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__CU71|CU71]] | 8 | Run Full Scout | E0 |
+| [[02_Assets/Asset__CUR202|CUR202]] | 8 | Run Full Scout | E0 |
 | [[02_Assets/Asset__CV-06|CV-06]] | 8 | Run Full Scout | E0 |
 | [[02_Assets/Asset__CV-14|CV-14]] | 2 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__CV-17|CV-17]] | 2 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__CXJM-66_Injection|CXJM-66 Injection]] |  | Run Full Scout | E0 |
 | [[02_Assets/Asset__DG-ALS-T1|DG-ALS-T1]] | 1 | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__DM3159|DM3159]] | 6 | Run Full Scout | E0 |
+| [[02_Assets/Asset__DM3190|DM3190]] | 6 | Run Full Scout | E0 |
 | [[02_Assets/Asset__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Drug to Inhibit Tau for Alzheimer's Disease]] | 0 | Verify asset identity | E0 |
 | [[02_Assets/Asset__ETX101|ETX101]] |  | Run Full Scout | E0 |
 | [[02_Assets/Asset__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection|Fusion Protein for Allergic Asthma, Multiple Sclerosis and Transplant Rejection]] |  | Do not run Full Scout | E0 |
@@ -111,7 +121,7 @@
 | [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7|Small Molecules to Antagonize TRPM7]] | 11 | Watch | E2 |
 | [[02_Assets/Asset__UX-EP001_UXEP-001|UX-EP001 / UXEP-001]] | 5 | Deprioritize | E1 |
 | [[02_Assets/Asset__VRN04-2|VRN04-2]] | 5 | Run Full Scout | E0 |
-| [[02_Assets/Asset__VTA-27|VTA-27]] | 14 | Shortlist | E3 |
+| [[02_Assets/Asset__VTA-27|VTA-27]] | 13 | Watch | E3 |
 | [[02_Assets/Asset__WT-1-2.0|WT-1-2.0]] |  | N/A | E0 |
 | [[02_Assets/Asset__WT-1108|WT-1108]] | 8 | Watch | E2 |
 | [[02_Assets/Asset__YC-5_Injection|YC-5 Injection]] | 4 | Do not run Full Scout | E0 |

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/reputable_business_news"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | reputable_business_news |
 | Reliability | medium |
 | URL | https://www.edaily.co.kr/News/Read?mediaCodeNo=257&newsId=04241046639058168 |
-| Accessed / generated date | 2026-08-20 |
+| Accessed / generated date | 2026-08-21 |
 
 ## Evidence Summary
 

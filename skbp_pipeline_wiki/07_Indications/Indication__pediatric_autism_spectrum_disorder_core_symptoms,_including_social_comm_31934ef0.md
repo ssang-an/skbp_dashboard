@@ -6,8 +6,8 @@ aliases:
   - "pediatric_autism_spectrum_disorder_core_symptoms,_including_social_comm_31934ef0"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

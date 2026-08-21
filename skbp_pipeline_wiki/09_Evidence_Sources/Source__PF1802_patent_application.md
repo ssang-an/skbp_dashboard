@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/patent"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | patent |
 | Reliability | medium |
 | URL | https://patents.justia.com/patent/20250289861 |
-| Accessed / generated date | 2026-08-20 |
+| Accessed / generated date | 2026-08-21 |
 
 ## Evidence Summary
 

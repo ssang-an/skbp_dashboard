@@ -1,14 +1,15 @@
 # Unknown
 
-> Generated from `json/pipeline-records.json` at `2026-08-20T15:43:42`.
+> Generated from `json/pipeline-records.json` at `2026-08-21T09:06:05`.
 
 ## Linked Assets
 
 - [[AZothBio_AZBE53206]]
+- [[Aliad Biopharma, Inc._AB-ASD-003]]
+- [[Aliadbiopharma_AB-AD-002]]
 - [[Amyloid Solution_AS-301]]
 - [[AniMusCure_Meloxicam]]
 - [[AriBio_AR1002]]
-- [[Astrion Co., Ltd._AON-PP23]]
 - [[Astrogen_AST-004]]
 - [[Astrogen_AST-008]]
 - [[Astrogen_AST-029]]
@@ -38,6 +39,7 @@
 - [[Cellprotek Pharmaceutical_YC-6]]
 - [[Celltrion, Inc._LC-PC01]]
 - [[Chong Kun Dang_ACL-513 (CKD-513)]]
+- [[Corepharm Bio Co., Ltd._CPB2101]]
 - [[Deargen_DG-ALS-T1]]
 - [[Dong-A ST_intractable brain diseases therapy, Dong-AST]]
 - [[Harbour_BioMed_CNS_XDC_fast_triage_20260623]]

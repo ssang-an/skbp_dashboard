@@ -6,8 +6,8 @@ aliases:
   - "cell_therapy"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -27,6 +27,9 @@ confidence: "medium"
 - [[02_Assets/Asset__CPB-101|CPB-101]]
 - [[02_Assets/Asset__CPB-105|CPB-105]]
 - [[02_Assets/Asset__CPB-106|CPB-106]]
+- [[02_Assets/Asset__CTX-PD01|CTX-PD01]]
+- [[02_Assets/Asset__CTX-PD02_03|CTX-PD02_03]]
+- [[02_Assets/Asset__CUR202|CUR202]]
 
 ## Related Targets / MoA
 

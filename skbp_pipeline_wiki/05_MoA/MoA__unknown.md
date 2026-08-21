@@ -6,8 +6,8 @@ aliases:
   - "unknown"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,8 +22,9 @@ confidence: "medium"
 
 ## Related Assets
 
+- [[02_Assets/Asset__AB-AD-002|AB-AD-002]]
+- [[02_Assets/Asset__AB-ASD-003|AB-ASD-003]]
 - [[02_Assets/Asset__ACP-Brain_Disease_Research_Project|ACP-Brain_Disease_Research_Project]]
-- [[02_Assets/Asset__AON-PP23|AON-PP23]]
 - [[02_Assets/Asset__AR1002|AR1002]]
 - [[02_Assets/Asset__AS-401|AS-401]]
 - [[02_Assets/Asset__AST-004|AST-004]]
@@ -42,6 +43,7 @@ confidence: "medium"
 - [[02_Assets/Asset__CPB-106|CPB-106]]
 - [[02_Assets/Asset__CPB102|CPB102]]
 - [[02_Assets/Asset__CPB103|CPB103]]
+- [[02_Assets/Asset__CPB2101|CPB2101]]
 - [[02_Assets/Asset__DG-ALS-T1|DG-ALS-T1]]
 - [[02_Assets/Asset__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]
 - [[02_Assets/Asset__HB018|HB018]]

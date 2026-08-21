@@ -6,8 +6,8 @@ aliases:
   - "alzheimer's_disease;_company_deck_targets_mild-to-moderate_ad._parkinso_6a571b94"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

@@ -1,6 +1,6 @@
 # 손상/질환 면역조절
 
-> Generated from `json/pipeline-records.json` at `2026-08-20T15:43:42`.
+> Generated from `json/pipeline-records.json` at `2026-08-21T09:06:05`.
 
 ## Linked Assets
 

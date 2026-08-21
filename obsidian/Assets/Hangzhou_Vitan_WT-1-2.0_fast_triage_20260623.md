@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-20T15:43:42"
+generated_at: "2026-08-21T09:06:05"
 record_id: "Hangzhou_Vitan_WT-1-2.0_fast_triage_20260623"
 company: "Hangzhou Vitan Pharmaceutical Technology Co Ltd"
 country: "China"

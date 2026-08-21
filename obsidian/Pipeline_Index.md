@@ -1,6 +1,6 @@
 # Pipeline Index
 
-> Generated from `json/pipeline-records.json` at `2026-08-20T15:43:42`.
+> Generated from `json/pipeline-records.json` at `2026-08-21T09:06:05`.
 
 ## Assets
 
@@ -39,7 +39,7 @@
 | [[Hefei_Huafang_HB018_fast_triage_20260623]] | [[-]] | - | [[Theme - No Theme|No Theme]] | [[Cluster - No mapped SKBP cluster|No mapped SKBP cluster]] | IND-enabling | None / 21 |
 | [[Humanwell_CXJM-66_fast_triage_20260623]] | [[-]] | - | [[Theme - E-I Balance|E/I Balance]] | [[Cluster - Ion Channel|Ion Channel]] | Phase 1 | None / 21 |
 | [[GenixCure_GXC-303_20260713]] | [[-]] | - | [[Theme - No Theme|No Theme]] | [[Cluster - N-A|N/A]] | Lead Optimization | 11 / 21 |
-| [[Astrion Co., Ltd._AON-PP23]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 2 / 9 |
+| [[Astrion Co., Ltd._AON-PP23]] | [[-]] | - | [[Theme - Protein Homeostasis|Protein Homeostasis]] | [[Cluster - Unknown|Unknown]] | Unknown | 6 / 9 |
 | [[Astrogen_AST-029]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
 | [[Astrogen_AST-030]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
 | [[Astrogen_AST-008]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 2 / 9 |
@@ -83,7 +83,7 @@
 | [[CELLTIUM_Neurological Disorder Research Program]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
 | [[Celltrion, Inc._LC-PC01]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
 | [[VASTHERA Co., Ltd._VTA-27]] | [[-]] | - | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - 교세포 향상성|교세포 향상성]] | IND-enabling | 14 / 21 |
-| [[Curacle Co., Ltd._CU71]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 15 / 21 |
+| [[Curacle Co., Ltd._CU71]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 8 / 9 |
 | [[Kine Sciences_KINE-501B]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Hit Discovery | 1 / 9 |
 | [[Kine Sciences_KINE-501C]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Hit Discovery | 1 / 9 |
 | [[Kine Sciences_KINE-501D]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
@@ -135,6 +135,17 @@
 | [[Axceso Biopharma_AXN-1501]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 3 / 9 |
 | [[Axceso Biopharma_AXN-1901]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 3 / 9 |
 | [[AZothBio_AZBE53206]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[VASTHERA VTA-27|VTA-27]] | [[VASTHERA]] | Republic of Korea | [[Theme - Neuroimmune|Neuroimmune]] | [[Cluster - 교세포 향상성|교세포 향상성]] | IND-enabling | 13 / 21 |
+| [[Aliadbiopharma_AB-AD-002]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Unknown | 0 / 9 |
+| [[Aliad Biopharma, Inc._AB-ASD-003]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 1 / 9 |
+| [[Amyloid Solution Inc_AS-603]] | [[-]] | - | [[Theme - Protein Homeostasis|Protein Homeostasis]] | [[Cluster - Unknown|Unknown]] | Phase 1 | 9 / 9 |
+| [[CK Regeon Inc._CKR-492]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 5 / 9 |
+| [[Corepharm Bio Co., Ltd._CPB2101]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 1 / 9 |
+| [[CTX Inc._CTX-PD02-03]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Hit Discovery | 5 / 9 |
+| [[CTX Inc._CTX-PD01]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 4 / 9 |
+| [[Curamys Inc._CUR202]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Preclinical unspecified | 8 / 9 |
+| [[DigmBio Inc._DM3159]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | IND-enabling | 6 / 9 |
+| [[DigmBio Inc._DM3190]] | [[-]] | - | [[Theme - Others|Others]] | [[Cluster - Others|Others]] | Lead Optimization | 6 / 9 |
 
 ## Navigation
 

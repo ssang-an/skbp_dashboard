@@ -6,8 +6,8 @@ aliases:
   - "parkinson's_disease"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -26,6 +26,9 @@ confidence: "medium"
 - [[02_Assets/Asset__AON-PP23|AON-PP23]]
 - [[02_Assets/Asset__AST-029|AST-029]]
 - [[02_Assets/Asset__AXN-1901|AXN-1901]]
+- [[02_Assets/Asset__CTX-PD01|CTX-PD01]]
+- [[02_Assets/Asset__CTX-PD02_03|CTX-PD02_03]]
+- [[02_Assets/Asset__DM3190|DM3190]]
 - [[02_Assets/Asset__HEC20002|HEC20002]]
 - [[02_Assets/Asset__KINE-501D|KINE-501D]]
 - [[02_Assets/Asset__Lead_compound|Lead_compound]]

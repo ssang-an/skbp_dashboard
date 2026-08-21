@@ -7,8 +7,8 @@ aliases:
 tags:
   - "skbp/cluster"
   - "skbp/taxonomy"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -34,6 +34,8 @@ A reusable biology axis under a Theme that supports repeated target discovery an
 - [[02_Assets/Asset__1ST-103|1ST-103]]
 - [[02_Assets/Asset__1ST-103_(NLY02)|1ST-103_(NLY02)]]
 - [[02_Assets/Asset__AB-12_(IV)|AB-12_(IV)]]
+- [[02_Assets/Asset__AB-AD-002|AB-AD-002]]
+- [[02_Assets/Asset__AB-ASD-003|AB-ASD-003]]
 - [[02_Assets/Asset__ACL-513_(CKD-513)|ACL-513_(CKD-513)]]
 - [[02_Assets/Asset__ACP-Brain_Disease_Research_Project|ACP-Brain_Disease_Research_Project]]
 - [[02_Assets/Asset__ADEL-Y04|ADEL-Y04]]
@@ -41,6 +43,7 @@ A reusable biology axis under a Theme that supports repeated target discovery an
 - [[02_Assets/Asset__AR1002|AR1002]]
 - [[02_Assets/Asset__AS-301|AS-301]]
 - [[02_Assets/Asset__AS-401|AS-401]]
+- [[02_Assets/Asset__AS-603|AS-603]]
 - [[02_Assets/Asset__AS-M801|AS-M801]]
 - [[02_Assets/Asset__AS-S701_AS-701|AS-S701_AS-701]]
 - [[02_Assets/Asset__AST-004|AST-004]]
@@ -66,6 +69,7 @@ A reusable biology axis under a Theme that supports repeated target discovery an
 - [[02_Assets/Asset__CPB-106|CPB-106]]
 - [[02_Assets/Asset__CPB102|CPB102]]
 - [[02_Assets/Asset__CPB103|CPB103]]
+- [[02_Assets/Asset__CPB2101|CPB2101]]
 - [[02_Assets/Asset__CV-17|CV-17]]
 - [[02_Assets/Asset__DG-ALS-T1|DG-ALS-T1]]
 - [[02_Assets/Asset__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]

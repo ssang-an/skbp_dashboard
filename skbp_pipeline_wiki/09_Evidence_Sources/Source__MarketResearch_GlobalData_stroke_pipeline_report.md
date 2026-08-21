@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/market"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | market |
 | Reliability | medium |
 | URL | https://www.marketresearch.com/Global-Markets-Direct-v3480/Stroke-Drugs-Development-Stages-Target-32251891/ |
-| Accessed / generated date | 2026-08-20 |
+| Accessed / generated date | 2026-08-21 |
 
 ## Evidence Summary
 

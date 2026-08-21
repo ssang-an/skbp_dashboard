@@ -1,10 +1,10 @@
 # Themes
 
-> Generated at `2026-08-20T15:43:42`.
+> Generated at `2026-08-21T09:06:05`.
 
 - [[Theme - E-I Balance|E/I Balance]] (19)
-- [[Theme - Neuroimmune|Neuroimmune]] (31)
+- [[Theme - Neuroimmune|Neuroimmune]] (32)
 - [[Theme - No Theme|No Theme]] (2)
-- [[Theme - Others|Others]] (18)
-- [[Theme - Protein Homeostasis|Protein Homeostasis]] (6)
-- [[Theme - Unknown|Unknown]] (53)
+- [[Theme - Others|Others]] (24)
+- [[Theme - Protein Homeostasis|Protein Homeostasis]] (8)
+- [[Theme - Unknown|Unknown]] (55)

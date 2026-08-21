@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-20T15:43:42"
+generated_at: "2026-08-21T09:06:05"
 record_id: "GENUV_SNR1611"
 company: "GENUV"
 country: "Republic of Korea"

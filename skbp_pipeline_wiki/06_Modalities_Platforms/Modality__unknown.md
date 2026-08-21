@@ -6,8 +6,8 @@ aliases:
   - "unknown"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -22,6 +22,7 @@ confidence: "medium"
 
 ## Related Assets
 
+- [[02_Assets/Asset__AB-AD-002|AB-AD-002]]
 - [[02_Assets/Asset__ACP-Brain_Disease_Research_Project|ACP-Brain_Disease_Research_Project]]
 - [[02_Assets/Asset__AR1002|AR1002]]
 - [[02_Assets/Asset__ATB-501|ATB-501]]

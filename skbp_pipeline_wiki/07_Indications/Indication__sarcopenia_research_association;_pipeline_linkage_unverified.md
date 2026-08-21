@@ -6,8 +6,8 @@ aliases:
   - "sarcopenia_research_association;_pipeline_linkage_unverified"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

@@ -6,8 +6,8 @@ aliases:
   - "pain;_efficacy_tested_in_acute_and_cci_neuropathic_pain_models"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-20"
-updated_at: "2026-08-20"
+created_at: "2026-08-21"
+updated_at: "2026-08-21"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

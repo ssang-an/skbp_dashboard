@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-20T15:43:42"
+generated_at: "2026-08-21T09:06:05"
 record_id: "Cellapeutics Bio Co., Ltd._CPB-105"
 company: "Cellapeutics Bio Co., Ltd."
 country: "Republic of Korea"
