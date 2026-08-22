@@ -10198,9 +10198,13 @@ function step0CommentFeed(row) {
   if (entries.length) return entries.filter((entry) => entry && String(entry.body || '').trim());
   const fallback = String(row?.metadata?.comment || '').trim();
   if (fallback) {
+    const author = String(row?.metadata?.comment_author || 'Tab 0 Team Review');
+    const source = row?.metadata?.comment_source === 'team_review_import' || author === 'Tab 0 Team Review'
+      ? 'Tab 0 · Team Comment'
+      : 'Tab 0 · Listing Comment';
     return [{
-      source: 'Listing Comment Post',
-      author: String(row?.metadata?.comment_author || 'Tab 0 Team Review'),
+      source,
+      author,
       created_at: String(row?.metadata?.comment_updated_at || row?.metadata?.comment_created_at || ''),
       body: fallback
     }];
@@ -10496,7 +10500,7 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
       ? commentFeed.map((entry) => {
         const source = escapeHtml(String(entry.source || 'Comment'));
         const author = escapeHtml(String(entry.author || ''));
-        const createdAt = escapeHtml(String(entry.created_at || ''));
+        const createdAt = escapeHtml(formatDateTimeKo(entry.created_at));
         const body = escapeHtml(String(entry.body || '')).replaceAll('\n', '<br>');
         const byline = [author, createdAt].filter(Boolean).join(' · ');
         return `<article class="step0-comment-feed-item"><small>${source}${byline ? ` · ${byline}` : ''}</small><p>${body}</p></article>`;

@@ -5251,7 +5251,13 @@ def pipeline_human_comment_feed(
 
     base_entries = entries[:1] if entries and entries[0].get("source") == "Tab 0 Team Review · Listing Comment" else []
     if base_entries:
-        base_entries[0]["source"] = "Listing Comment Post"
+        comment_source = str((metadata or {}).get("comment_source") or "").strip()
+        comment_author = str((metadata or {}).get("comment_author") or "Tab 0 Team Review").strip()
+        base_entries[0]["source"] = (
+            "Tab 0 · Team Comment"
+            if comment_source == "team_review_import" or comment_author == "Tab 0 Team Review"
+            else "Tab 0 · Listing Comment"
+        )
     operational_entries = entries[len(base_entries):]
     operational_entries.sort(key=lambda item: str(item.get("created_at") or ""))
     return base_entries + operational_entries

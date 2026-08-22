@@ -238,8 +238,19 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(merged["comment_author"], "Admin Kim")
         self.assertEqual(merged["comment_source"], "admin_listing_post")
         feed = main.pipeline_human_comment_feed({}, merged)
-        self.assertEqual(feed[0]["source"], "Listing Comment Post")
+        self.assertEqual(feed[0]["source"], "Tab 0 · Listing Comment")
         self.assertEqual(feed[0]["author"], "Admin Kim")
+
+    def test_bulk_listing_comment_is_labelled_as_team_comment(self) -> None:
+        feed = main.pipeline_human_comment_feed({}, {
+            "comment": "Shared review note",
+            "comment_author": "Tab 0 Team Review",
+            "comment_source": "team_review_import",
+            "comment_created_at": "2026-08-22T09:00:00+00:00",
+        })
+
+        self.assertEqual(feed[0]["source"], "Tab 0 · Team Comment")
+        self.assertEqual(feed[0]["author"], "Tab 0 Team Review")
 
     def test_explicit_edit_can_clear_a_metadata_field(self) -> None:
         merged = main.merge_pipeline_metadata(
