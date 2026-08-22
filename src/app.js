@@ -537,7 +537,7 @@ let targetContextAnchor = null;
 let step0DragSelection = null;
 let activeStep0MetadataPopover = null;
 let activeStep0LockedEditMode = null;
-let step0WorkflowG6Graph = null;
+let step0WorkflowG6Graphs = [];
 const focusSaveQueues = new Map();
 let dataReuploadResolve = null;
 let activeDataReuploadMatches = [];
@@ -10418,12 +10418,6 @@ const STEP0_WORKFLOW_MAP_STAGES = [
   { key: 'shortlisting', label: 'Shortlisting', index: 3 }
 ];
 
-function step0WorkflowStageForRow(row) {
-  return [...STEP0_WORKFLOW_MAP_STAGES]
-    .reverse()
-    .find((stage) => row?.[stage.key]?.done) || STEP0_WORKFLOW_MAP_STAGES[0];
-}
-
 const STEP0_WORKFLOW_NODE_STYLES = {
   pending: { color: '#94a3b8', size: 7 },
   fast_triage: { color: '#5f8fbe', size: 10 },
@@ -10432,9 +10426,8 @@ const STEP0_WORKFLOW_NODE_STYLES = {
 };
 
 function destroyStep0WorkflowGraph() {
-  if (!step0WorkflowG6Graph) return;
-  step0WorkflowG6Graph.destroy?.();
-  step0WorkflowG6Graph = null;
+  step0WorkflowG6Graphs.forEach((graph) => graph?.destroy?.());
+  step0WorkflowG6Graphs = [];
 }
 
 function renderStep0WorkflowMapFallback(message) {
@@ -10448,8 +10441,9 @@ function renderStep0WorkflowMap() {
   elements.step0WorkflowMap.setAttribute('aria-label', `Pipeline Workflow Map · 현재 필터 결과 ${rows.length}건`);
   const groups = new Map(STEP0_WORKFLOW_MAP_STAGES.map((stage) => [stage.key, []]));
   rows.forEach((row) => {
-    const stage = step0WorkflowStageForRow(row);
-    groups.get(stage.key).push(row);
+    STEP0_WORKFLOW_MAP_STAGES.forEach((stage) => {
+      if (stage.key === 'pending' || row?.[stage.key]?.done) groups.get(stage.key).push(row);
+    });
   });
   if (!rows.length) {
     renderStep0WorkflowMapFallback('현재 필터 조건에 맞는 Pipeline이 없습니다.');
@@ -10461,30 +10455,28 @@ function renderStep0WorkflowMap() {
   }
 
   elements.step0WorkflowMap.innerHTML = `
-    <div class="step0-workflow-g6-shell"><div class="step0-workflow-g6" aria-label="필터 결과 Pipeline 원형 node 그래프"></div></div>
-    <div class="step0-workflow-tooltip" hidden></div>
+    <div class="step0-workflow-force-grid">
+      ${STEP0_WORKFLOW_MAP_STAGES.map((stage) => `<div class="step0-workflow-g6-shell" data-workflow-stage="${stage.key}"><div class="step0-workflow-g6" aria-label="${stage.label} Pipeline 원형 node 그래프"></div><div class="step0-workflow-tooltip" hidden></div></div>`).join('')}
+    </div>
   `;
 
-  const container = elements.step0WorkflowMap.querySelector('.step0-workflow-g6');
-  const tooltip = elements.step0WorkflowMap.querySelector('.step0-workflow-tooltip');
-  const width = Math.max(container.clientWidth || elements.step0WorkflowMap.clientWidth || 720, 720);
-  const nodeById = new Map();
-  const nodes = [];
-  const edges = [];
-
-  rows.forEach((row, rowIndex) => {
-    const completedStage = step0WorkflowStageForRow(row);
-    const completedIndex = completedStage.index;
-    let previousNodeId = null;
-    STEP0_WORKFLOW_MAP_STAGES.slice(0, completedIndex + 1).forEach((stage) => {
-      const style = STEP0_WORKFLOW_NODE_STYLES[stage.key];
+  for (const stage of STEP0_WORKFLOW_MAP_STAGES) {
+    const shell = elements.step0WorkflowMap.querySelector(`.step0-workflow-g6-shell[data-workflow-stage="${stage.key}"]`);
+    const container = shell?.querySelector('.step0-workflow-g6');
+    const tooltip = shell?.querySelector('.step0-workflow-tooltip');
+    if (!container) return;
+    const stageRows = groups.get(stage.key) || [];
+    const style = STEP0_WORKFLOW_NODE_STYLES[stage.key];
+    const width = Math.max(container.clientWidth || 180, 180);
+    const nodeById = new Map();
+    const nodes = stageRows.map((row, rowIndex) => {
       const asset = String(row?.asset || 'Unnamed pipeline').trim() || 'Unnamed pipeline';
       const company = String(row?.company || '-').trim() || '-';
       const display = step0DashboardFieldDisplay(row);
-      const id = `pipeline-${rowIndex}-${stage.key}`;
+      const id = `pipeline-${stage.key}-${rowIndex}`;
       const title = `${asset} · ${company} · ${stage.label}${display.stage !== '-' ? ` · ${display.stage}` : ''}`;
       nodeById.set(id, title);
-      nodes.push({
+      return {
         id,
         data: { stage: stage.key, size: style.size },
         style: {
@@ -10494,64 +10486,56 @@ function renderStep0WorkflowMap() {
           lineWidth: 1,
           cursor: 'pointer'
         }
-      });
-      if (previousNodeId) {
-        edges.push({
-          id: `${previousNodeId}->${id}`,
-          source: previousNodeId,
-          target: id,
-          style: { stroke: style.color, opacity: 0.22, lineWidth: 0.8 }
-        });
-      }
-      previousNodeId = id;
+      };
     });
-  });
-  const height = Math.max(300, Math.min(560, 90 + Math.ceil(nodes.length / Math.max(22, Math.floor(width / 17))) * 22));
+    const columns = Math.max(10, Math.floor(width / (style.size + 7)));
+    const height = Math.max(158, Math.min(360, 52 + Math.ceil(nodes.length / columns) * (style.size + 8)));
 
-  try {
-    step0WorkflowG6Graph = new globalThis.G6.Graph({
+    try {
+      const graph = new globalThis.G6.Graph({
       container,
       width,
       height,
       autoResize: true,
       animation: true,
-      data: { nodes, edges },
+      data: { nodes, edges: [] },
       node: { type: 'circle' },
-      edge: { type: 'line' },
       behaviors: ['drag-canvas', 'drag-element-force'],
       layout: {
         type: 'd3-force',
         width,
         height,
-        iterations: 300,
+        iterations: 180,
         animation: true,
-        manyBody: { strength: -26, distanceMax: 160 },
-        link: { distance: 31, strength: 0.46 },
+        manyBody: { strength: -18, distanceMax: 120 },
         collide: {
           radius: (node) => Number(node?.data?.size || 10) / 2 + 4,
           strength: 0.9,
           iterations: 2
         },
-        center: { strength: 0.025 }
+        center: { strength: 0.055 }
       }
     });
-    step0WorkflowG6Graph.render();
-    step0WorkflowG6Graph.on?.('node:pointerenter', (event) => {
+      step0WorkflowG6Graphs.push(graph);
+      graph.render();
+      graph.on?.('node:pointerenter', (event) => {
       const title = nodeById.get(event?.target?.id);
       if (!title || !tooltip) return;
       tooltip.textContent = title;
       tooltip.hidden = false;
     });
-    step0WorkflowG6Graph.on?.('node:pointerleave', () => {
+      graph.on?.('node:pointerleave', () => {
       if (tooltip) tooltip.hidden = true;
     });
-    step0WorkflowG6Graph.on?.('canvas:pointerleave', () => {
+      graph.on?.('canvas:pointerleave', () => {
       if (tooltip) tooltip.hidden = true;
     });
-  } catch (error) {
-    console.warn('G6 Workflow Map render failed.', error);
-    destroyStep0WorkflowGraph();
-    renderStep0WorkflowMapFallback('Workflow Map을 표시하지 못했습니다. 새로고침 후 다시 시도해 주세요.');
+    } catch (error) {
+      console.warn(`G6 ${stage.label} Workflow Map render failed.`, error);
+      destroyStep0WorkflowGraph();
+      renderStep0WorkflowMapFallback('Workflow Map을 표시하지 못했습니다. 새로고침 후 다시 시도해 주세요.');
+      return;
+    }
   }
 }
 

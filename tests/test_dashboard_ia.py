@@ -492,25 +492,26 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
     def test_step0_workflow_map_uses_filtered_rows_and_g6_stage_nodes(self):
         step0 = HTML[HTML.index('id="step0Panel"'):HTML.index('class="panel control-panel"')]
         workflow_map = function_body(JS, "renderStep0WorkflowMap")
-        stage_for_row = function_body(JS, "step0WorkflowStageForRow")
 
         self.assertIn('id="step0WorkflowMap"', step0)
         self.assertNotIn('id="step0WorkflowMapResultCount"', step0)
         self.assertIn('step0FilteredSortedRows()', workflow_map)
-        self.assertIn('step0WorkflowStageForRow(row)', workflow_map)
-        self.assertIn('reverse()', stage_for_row)
+        self.assertIn("stage.key === 'pending' || row?.[stage.key]?.done", workflow_map)
         self.assertIn('globalThis.G6?.Graph', workflow_map)
         self.assertIn('new globalThis.G6.Graph', workflow_map)
         self.assertIn('STEP0_WORKFLOW_NODE_STYLES', JS)
         self.assertIn('shortlisting: { color:', JS)
         self.assertIn('size: 18', JS)
-        self.assertIn('data: { nodes, edges }', workflow_map)
+        self.assertIn('step0-workflow-force-grid', workflow_map)
+        self.assertIn('data: { nodes, edges: [] }', workflow_map)
         self.assertIn("type: 'd3-force'", workflow_map)
         self.assertIn("'drag-element-force'", workflow_map)
         self.assertNotIn('step0-workflow-stage-headings', workflow_map)
+        self.assertNotIn("previousNodeId", workflow_map)
         self.assertIn('step0-workflow-g6-shell', CSS)
+        self.assertIn('step0-workflow-force-grid', CSS)
         self.assertIn('border-radius: 50%;', CSS)
-        self.assertIn('min-width: 720px;', CSS)
+        self.assertIn('grid-template-columns: repeat(4, minmax(180px, 1fr));', CSS)
 
     def test_step0_uses_one_asset_company_search_instead_of_a_company_dropdown(self):
         step0_controls = HTML[HTML.index('aria-label="진척 현황 controls"') : HTML.index('class="panel pipeline-table-panel"')]

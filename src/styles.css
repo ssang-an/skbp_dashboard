@@ -19516,8 +19516,16 @@ button.step0-stat.active {
   min-width: 0;
 }
 
+.step0-workflow-force-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  min-width: 760px;
+  gap: 10px;
+}
+
 .step0-workflow-g6-shell {
-  min-width: 720px;
+  position: relative;
+  min-width: 0;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 11px;
@@ -19526,7 +19534,7 @@ button.step0-stat.active {
 }
 
 .step0-workflow-g6 {
-  min-width: 720px;
+  min-width: 180px;
 }
 
 .step0-workflow-tooltip {
