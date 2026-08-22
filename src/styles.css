@@ -6405,6 +6405,15 @@ body.report-modal-open {
   font-size: 10px;
 }
 
+.comment-thread-heading {
+  padding: 12px 14px 8px;
+}
+
+.comment-thread-heading > .eyebrow,
+.comment-thread-heading > small {
+  font-family: inherit;
+}
+
 .qualitative-pipeline-metadata {
   display: grid;
   gap: 8px;
@@ -18635,6 +18644,10 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
 
 .review-info-stack.is-collapsed .review-info-columns {
   padding-bottom: 6px;
+}
+
+.review-info-stack.is-collapsed .qualitative-review-panel {
+  display: none;
 }
 
 .review-info-stack.is-collapsed .review-info-column {

@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260822-shortlisting-tracking-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260822-team-review-comments-1" />
   </head>
   <body>
     <div class="app-shell detail-shell">
@@ -303,6 +303,7 @@
                   />
                 </section>
               </div>
+              <section id="qualitativeReviewPanel" class="qualitative-review-panel" aria-label="Qualitative review criteria"></section>
               <div class="review-info-toggle-row">
                 <button id="detailReviewInfoToggle" class="review-info-toggle" type="button" aria-expanded="false" aria-controls="detailReviewInfoColumns" aria-label="Review Workspace 세부 정보 표시" title="세부 정보 표시">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"></path></svg>
@@ -316,7 +317,10 @@
           </div>
 
           <div class="collaboration-scroll">
-            <section id="qualitativeReviewPanel" class="qualitative-review-panel" aria-label="정성 평가 기준"></section>
+            <div class="qualitative-panel-heading comment-thread-heading">
+              <p class="eyebrow">Comments</p>
+              <small>OIT Review, Contact History 혹은 방문자 Comments를 기록합니다.</small>
+            </div>
 
             <div id="detailCommentThread" class="comment-thread" aria-live="polite"></div>
           </div>
