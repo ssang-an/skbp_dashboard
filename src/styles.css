@@ -19582,6 +19582,39 @@ button.step0-stat.active {
   color: var(--muted);
 }
 
+.step0-comment-feed {
+  display: grid;
+  max-height: 300px;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-y: auto;
+  padding-right: 3px;
+}
+
+.step0-comment-feed-item {
+  padding: 9px 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 16%, var(--line));
+  border-left: 3px solid color-mix(in srgb, var(--accent) 52%, var(--line));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 4%, var(--surface));
+}
+
+.step0-comment-feed-item small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.step0-comment-feed-item p {
+  margin: 5px 0 0;
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
 .step0-metadata-status {
   min-height: 16px;
   margin: 6px 0 0;

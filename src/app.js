@@ -10126,12 +10126,20 @@ function step0StageCellHtml(stage, cell) {
   return `<a class="pill ${tone}" href="${escapeHtml(href)}"${title}>${label}</a>`;
 }
 
+function step0CommentFeed(row) {
+  const entries = Array.isArray(row?.comment_feed) ? row.comment_feed : [];
+  if (entries.length) return entries.filter((entry) => entry && String(entry.body || '').trim());
+  const fallback = String(row?.metadata?.comment || '').trim();
+  return fallback ? [{ source: 'Tab 0 · Listing Comment', author: '', created_at: '', body: fallback }] : [];
+}
+
 function step0MetadataCellHtml(row, field) {
   const value = String(row.metadata?.[field] || '').trim();
+  const commentFeed = field === 'comment' ? step0CommentFeed(row) : [];
   const owner = row.metadata_owner || {};
   const label = field === 'comment' ? 'Comment' : 'Contact';
   const hasContactHistory = field !== 'contact' || !/^(?:x|[-–—]+)$/i.test(value);
-  const hasValue = Boolean(value) && hasContactHistory;
+  const hasValue = field === 'comment' ? commentFeed.length > 0 : Boolean(value) && hasContactHistory;
   if (!owner.type) return '<span class="pill empty step0-metadata-empty">-</span>';
   if (field === 'contact' && !hasValue) {
     return '<span class="pill empty step0-metadata-empty" aria-label="Contact history not recorded">-</span>';
@@ -10378,6 +10386,7 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
   if (!owner.type) return;
   const label = field === 'comment' ? 'Comment' : 'Contact';
   const value = step0MetadataValue(row, field);
+  const commentFeed = field === 'comment' ? step0CommentFeed(row) : [];
   const popover = document.createElement('section');
   popover.className = 'step0-metadata-popover';
   popover.setAttribute('role', 'dialog');
@@ -10396,6 +10405,23 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
       <p class="step0-metadata-value${value ? '' : ' is-empty'}">${value ? escapeHtml(value).replaceAll('\n', '<br>') : `저장된 ${label}이 없습니다.`}</p>
       <footer><button type="button" class="is-primary" data-step0-metadata-edit>수정</button></footer>
     `;
+  if (!editing && field === 'comment') {
+    const commentCards = commentFeed.length
+      ? commentFeed.map((entry) => {
+        const source = escapeHtml(String(entry.source || 'Comment'));
+        const author = escapeHtml(String(entry.author || ''));
+        const createdAt = escapeHtml(String(entry.created_at || ''));
+        const body = escapeHtml(String(entry.body || '')).replaceAll('\n', '<br>');
+        const byline = [author, createdAt].filter(Boolean).join(' · ');
+        return `<article class="step0-comment-feed-item"><small>${source}${byline ? ` · ${byline}` : ''}</small><p>${body}</p></article>`;
+      }).join('')
+      : '<p class="step0-metadata-value is-empty">No comments recorded.</p>';
+    popover.innerHTML = `
+      <header><strong>Comment</strong><button type="button" class="step0-metadata-close" aria-label="Close">×</button></header>
+      <div class="step0-comment-feed">${commentCards}</div>
+      <footer><button type="button" class="is-primary" data-step0-metadata-edit>Listing Comment edit</button></footer>
+    `;
+  }
   document.body.appendChild(popover);
   activeStep0MetadataPopover = popover;
   positionStep0MetadataPopover(popover, anchor);
@@ -10432,7 +10458,8 @@ function step0FilteredSortedRows() {
     if (searchTerms.length) {
       const details = row.listing_details || {};
       const display = step0DashboardFieldDisplay(row);
-      const haystack = `${row.asset || ''} ${row.company || ''} ${details.country || ''} ${display.country} ${details.modality || ''} ${display.modality} ${details.target || ''} ${details.main_indication || ''} ${display.indication} ${details.stage || ''} ${display.stage} ${details.website || ''} ${row.metadata?.website || ''} ${row.metadata?.comment || ''} ${row.metadata?.contact || ''}`.toLowerCase();
+      const commentFeed = (row.comment_feed || []).map((entry) => entry?.body || '').join(' ');
+      const haystack = `${row.asset || ''} ${row.company || ''} ${details.country || ''} ${display.country} ${details.modality || ''} ${display.modality} ${details.target || ''} ${details.main_indication || ''} ${display.indication} ${details.stage || ''} ${display.stage} ${details.website || ''} ${row.metadata?.website || ''} ${row.metadata?.comment || ''} ${commentFeed} ${row.metadata?.contact || ''}`.toLowerCase();
       if (!searchTerms.some((term) => haystack.includes(term))) return false;
     }
     if (statusFilters.size && ![...statusFilters].some((status) => row[status]?.done)) return false;
@@ -10854,7 +10881,7 @@ elements.step0ProgressTableBody?.addEventListener('click', (event) => {
     const row = state.step0Rows.find((candidate) => candidate.identity === indicator.dataset.step0RowIdentity);
     if (!row || !field) return;
     event.preventDefault();
-    openStep0MetadataPopover(indicator, row, field, { editing: !step0MetadataValue(row, field) });
+    openStep0MetadataPopover(indicator, row, field, { editing: field === 'comment' ? false : !step0MetadataValue(row, field) });
     return;
   }
   const locked = event.target.closest('[data-step0-research-locked]');

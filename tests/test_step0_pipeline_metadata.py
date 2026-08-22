@@ -230,6 +230,36 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(incoming["meta"]["pipeline_metadata"]["comment"], "Keep private")
         self.assertEqual(incoming["meta"]["pipeline_metadata"]["contact"], "owner@acme.test")
 
+    def test_tab0_comment_feed_keeps_listing_and_human_review_comments_separate_from_ai(self) -> None:
+        record = pipeline_record()
+        record["meta"]["human_review"] = {
+            "overrides": {"final_comment": "Proceed after BD confirmation."},
+            "final_comment_author_name": "Admin",
+            "final_comment_updated_at": "2026-08-22T10:00:00+00:00",
+        }
+        record["meta"]["qualitative_review"] = {
+            "criteria": {
+                "efficacy": {
+                    "entries": [
+                        {"author": "Admin", "body": "Check the in-vivo comparator.", "is_ai": False, "created_at": "2026-08-22T11:00:00+00:00"},
+                        {"author": "AI", "body": "This AI response must not appear.", "is_ai": True, "created_at": "2026-08-22T12:00:00+00:00"},
+                    ]
+                }
+            }
+        }
+
+        feed = main.pipeline_human_comment_feed(
+            {"records": [record]},
+            {"comment": "Listing owner note"},
+        )
+
+        self.assertEqual([entry["body"] for entry in feed], [
+            "Listing owner note",
+            "Proceed after BD confirmation.",
+            "Check the in-vivo comparator.",
+        ])
+        self.assertFalse(any("AI response" in entry["body"] for entry in feed))
+
 
 if __name__ == "__main__":
     unittest.main()

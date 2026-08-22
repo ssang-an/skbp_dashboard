@@ -5121,6 +5121,63 @@ def pipeline_metadata_for_group(group: dict[str, Any]) -> dict[str, str]:
     return normalize_pipeline_metadata(metadata)
 
 
+def pipeline_human_comment_feed(
+    group: dict[str, Any], metadata: dict[str, str] | None = None
+) -> list[dict[str, str]]:
+    """Build the Tab 0 operational comment stream without mixing it into GPT evidence."""
+    entries: list[dict[str, str]] = []
+    base_comment = str((metadata or {}).get("comment") or "").strip()
+    if base_comment:
+        entries.append({
+            "source": "Tab 0 · Listing Comment",
+            "author": "",
+            "created_at": "",
+            "body": base_comment,
+        })
+
+    for record in group.get("records") or []:
+        if not isinstance(record, dict):
+            continue
+        source = "Tab 1 · Fast Triage" if is_fast_triage_record(record) else "Tab 2 · Full Scout"
+        meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+        human_review = meta.get("human_review") if isinstance(meta.get("human_review"), dict) else {}
+        overrides = human_review.get("overrides") if isinstance(human_review.get("overrides"), dict) else {}
+        final_comment = str(overrides.get("final_comment") or "").strip()
+        if final_comment:
+            entries.append({
+                "source": f"{source} · Final Comment",
+                "author": str(human_review.get("final_comment_author_name") or "").strip(),
+                "created_at": str(human_review.get("final_comment_updated_at") or "").strip(),
+                "body": final_comment,
+            })
+
+        qualitative = meta.get("qualitative_review") if isinstance(meta.get("qualitative_review"), dict) else {}
+        criteria_state = qualitative.get("criteria") if isinstance(qualitative.get("criteria"), dict) else {}
+        for criterion_id, criterion_state in criteria_state.items():
+            entries_for_criterion = criterion_state.get("entries") if isinstance(criterion_state, dict) else None
+            if not isinstance(entries_for_criterion, list):
+                continue
+            criterion = resolve_qualitative_criterion(record, str(criterion_id)) or {}
+            criterion_label = str(criterion.get("label") or criterion_id or "Qualitative review")
+            for item in entries_for_criterion:
+                if not isinstance(item, dict) or item.get("is_ai") is True:
+                    continue
+                body = str(item.get("body") or "").strip()
+                if not body:
+                    continue
+                entries.append({
+                    "source": f"{source} · Qualitative · {criterion_label}",
+                    "author": str(item.get("author") or "").strip(),
+                    "created_at": str(item.get("created_at") or "").strip(),
+                    "body": body,
+                })
+
+    base_entries = entries[:1] if entries and entries[0].get("source") == "Tab 0 · Listing Comment" else []
+    operational_entries = entries[len(base_entries):]
+    operational_entries.sort(key=lambda item: str(item.get("created_at") or ""))
+    return base_entries + operational_entries
+
+
 def record_matches_candidate_queue_entry(record: dict[str, Any], entry: dict[str, Any]) -> bool:
     return find_matching_identity_group(
         str(entry.get("asset_input") or ""),
@@ -8325,6 +8382,7 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                     "record_id": record_key(shortlisted_record) if shortlisted_record else None,
                 },
                 "metadata": pipeline_metadata,
+                "comment_feed": pipeline_human_comment_feed(group, pipeline_metadata),
                 "metadata_owner": {"type": "record", "record_id": record_key(representative)} if representative else None,
             }
         )
@@ -8363,6 +8421,7 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "full_scout": {"done": False, "record_id": None},
                 "shortlisting": {"done": False, "record_id": None},
                 "metadata": candidate_queue_entry_metadata(entry),
+                "comment_feed": pipeline_human_comment_feed({}, candidate_queue_entry_metadata(entry)),
                 "metadata_owner": {"type": "queue", "queue_id": entry_id},
             }
         )
