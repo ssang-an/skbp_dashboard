@@ -10488,7 +10488,7 @@ function animateStep0WorkflowDots(graph, nodes, stageIndex) {
   const timer = setTimeout(() => {
     const startedAt = performance.now();
     const duration = 520;
-    const settleDuration = 220;
+    const settleDuration = 760;
     const tick = (now) => {
       const elapsed = now - startedAt;
       graph.updateNodeData(nodes.map((node) => {
@@ -10496,13 +10496,15 @@ function animateStep0WorkflowDots(graph, nodes, stageIndex) {
         const motion = step0WorkflowMotionProgress(progress);
         const arc = Math.sin(progress * Math.PI) * (1 - progress * 0.12);
         const settleProgress = Math.max(0, Math.min(1, (elapsed - node.data.entryDelay - duration) / settleDuration));
-        const settleFade = Math.sin(settleProgress * Math.PI) * (1 - settleProgress * 0.16);
-        const settleTime = elapsed / 34 + node.data.settlePhase;
+        const settleRamp = Math.sin(Math.min(1, settleProgress * 2.4) * Math.PI / 2);
+        const settleFade = settleRamp * Math.pow(1 - settleProgress, 1.18);
+        const settleTime = settleProgress * Math.PI * 3.25 + node.data.settlePhase;
+        const settleOvershoot = Math.sin(settleProgress * Math.PI) * (1 - settleProgress * 0.32) * node.data.settleOvershoot;
         return {
           id: node.id,
           style: {
-            x: node.data.entryX + (node.data.targetX - node.data.entryX) * motion + node.data.arcX * arc + Math.sin(settleTime) * node.data.settleX * settleFade,
-            y: node.data.entryY + (node.data.targetY - node.data.entryY) * motion + node.data.arcY * arc + Math.cos(settleTime * 1.17) * node.data.settleY * settleFade
+            x: node.data.entryX + (node.data.targetX - node.data.entryX) * motion + node.data.arcX * arc + node.data.settleDirectionX * settleOvershoot + Math.sin(settleTime) * node.data.settleX * settleFade,
+            y: node.data.entryY + (node.data.targetY - node.data.entryY) * motion + node.data.arcY * arc + node.data.settleDirectionY * settleOvershoot + Math.cos(settleTime * 1.11) * node.data.settleY * settleFade
           }
         };
       }));
@@ -10596,8 +10598,11 @@ function renderStep0WorkflowMap() {
           entryDelay: Math.floor(step0WorkflowSeededUnit(`${id}:stagger`) * 140),
           arcX: (step0WorkflowSeededUnit(`${id}:arc-x`) - 0.5) * Math.min(width * 0.06, 20),
           arcY: (step0WorkflowSeededUnit(`${id}:arc-y`) - 0.5) * Math.min(height * 0.18, 28),
-          settleX: (step0WorkflowSeededUnit(`${id}:settle-x`) + 0.25) * Math.min(width * 0.012, 5),
-          settleY: (step0WorkflowSeededUnit(`${id}:settle-y`) + 0.25) * Math.min(height * 0.035, 7),
+          settleX: (step0WorkflowSeededUnit(`${id}:settle-x`) + 0.2) * Math.min(width * 0.009, 4),
+          settleY: (step0WorkflowSeededUnit(`${id}:settle-y`) + 0.2) * Math.min(height * 0.024, 5),
+          settleOvershoot: (step0WorkflowSeededUnit(`${id}:settle-overshoot`) + 0.32) * Math.min(width * 0.009, 4),
+          settleDirectionX: Math.sign(position.x - entryPosition.x) || 1,
+          settleDirectionY: Math.sign(position.y - entryPosition.y),
           settlePhase: step0WorkflowSeededUnit(`${id}:settle-phase`) * Math.PI * 2
         },
         style: {
