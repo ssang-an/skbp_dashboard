@@ -12,6 +12,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_FILE = ROOT / "json" / "pipeline-records.json"
+CANDIDATE_QUEUE_FILE = ROOT / "json" / "candidate-queue.json"
 VAULT_DIR = ROOT / "skbp_pipeline_wiki"
 SCORING_FULL = ROOT / "config" / "scoring_criteria" / "v3_3_full.md"
 SCORING_DISPLAY = ROOT / "config" / "scoring_criteria" / "v3_3_display.md"
@@ -41,6 +42,7 @@ FOLDERS = {
     "11_Themes_Clusters": "SKBP internal Theme and Cluster taxonomy.",
     "12_Dashboards": "Obsidian dashboard notes and Dataview-friendly index tables.",
     "13_Graph_Exports": "Graph export files for external analysis and UI reuse.",
+    "14_Workflow": "Listing-to-Shortlisting workflow notes, review snapshots, and operating metadata.",
     "90_Templates": "Markdown templates for future agent-generated notes.",
 }
 
@@ -56,6 +58,19 @@ RELATIONSHIPS = {
     "MAPS_TO_THEME",
     "MAPS_TO_CLUSTER",
     "SUPPORTS_SCORE",
+    "REPRESENTS_ASSET",
+    "IN_WORKFLOW_STAGE",
+    "HAS_REVIEW",
+    "HAS_SHORTLISTING_CLASSIFICATION",
+}
+
+WORKFLOW_STAGES = ("Listing", "Fast Triage", "Full Scout", "Shortlisting")
+OI_PARTNERSHIP_LABELS = {
+    "investment": "Investment",
+    "value_up": "Value Up",
+    "joint_research": "Joint Research",
+    "n_a": "Not eligible",
+    "unknown": "Needs verification",
 }
 
 
@@ -83,6 +98,10 @@ class WikiBuilder:
             "score": extra.get("score", ""),
             "recommendation": extra.get("recommendation", ""),
             "evidence_level": extra.get("evidence_level", ""),
+            "workflow_stage": extra.get("workflow_stage", ""),
+            "review_type": extra.get("review_type", ""),
+            "tracking_status": extra.get("tracking_status", ""),
+            "partnership_type": extra.get("partnership_type", ""),
         }
 
     def add_edge(
@@ -201,6 +220,114 @@ def load_records() -> list[dict[str, Any]]:
     raise ValueError("Unsupported pipeline records JSON format.")
 
 
+def load_candidate_queue() -> list[dict[str, Any]]:
+    """Load Listing entries only when they belong to the selected records dataset.
+
+    Tests and one-off exports commonly patch ``DATA_FILE`` to a temporary directory.
+    Resolving the queue beside that file keeps such exports isolated instead of quietly
+    mixing in the workstation's live Listing inventory.
+    """
+
+    queue_path = CANDIDATE_QUEUE_FILE if CANDIDATE_QUEUE_FILE.parent == DATA_FILE.parent else DATA_FILE.with_name("candidate-queue.json")
+    if not queue_path.exists():
+        return []
+    data = json.loads(queue_path.read_text(encoding="utf-8"))
+    if isinstance(data, list):
+        return [item for item in data if isinstance(item, dict)]
+    if isinstance(data, dict) and isinstance(data.get("items"), list):
+        return [item for item in data["items"] if isinstance(item, dict)]
+    raise ValueError("Unsupported candidate queue JSON format.")
+
+
+def compact_identity(value: Any) -> str:
+    """Use the same conservative comparison shape as the dashboard identity matcher."""
+
+    return re.sub(r"[^a-z0-9]+", "", str(value or "").casefold())
+
+
+def identity_aliases(value: Any) -> set[str]:
+    text = str(value or "").strip()
+    pieces = [text, *re.split(r"\s*(?:/|\||;|,)\s*", text)]
+    return {alias for piece in pieces if (alias := compact_identity(piece)) and alias not in {"unknown", "na", "asset"}}
+
+
+def record_identifier(record: dict[str, Any]) -> str:
+    """Return a stable per-review identifier so scorecards never collide by date."""
+
+    value = str(get(record, "meta.output_filename_base") or "").strip()
+    if value:
+        return value
+    canonical = json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return f"record-{hashlib.sha1(canonical.encode('utf-8')).hexdigest()[:12]}"
+
+
+def is_fast_triage(record: dict[str, Any]) -> bool:
+    meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+    source = record.get("source_report") if isinstance(record.get("source_report"), dict) else {}
+    return str(meta.get("review_type") or "").strip().casefold() == "fast_triage" or str(source.get("parser_status") or "").strip().casefold() == "fast_triage"
+
+
+def record_timestamp(record: dict[str, Any]) -> str:
+    return str(
+        get(record, "meta.dashboard_uploaded_at")
+        or get(record, "meta.generated_at")
+        or get(record, "meta.completed_at")
+        or ""
+    )
+
+
+def latest_record(records: list[dict[str, Any]]) -> dict[str, Any] | None:
+    return max(records, key=lambda item: (record_timestamp(item), record_identifier(item)), default=None)
+
+
+def records_identity_groups(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Group only on a shared asset alias plus matching/overlapping company aliases.
+
+    This deliberately does not use loose vector-like similarity: AR-1001 and AR-1002
+    remain distinct, while punctuation-only aliases such as AR1001/AR-1001 join.
+    """
+
+    groups: list[dict[str, Any]] = []
+    for record in records:
+        assets = identity_aliases(asset_title(record))
+        companies = identity_aliases(company_title(record))
+        matches: list[int] = []
+        for index, group in enumerate(groups):
+            if not assets.intersection(group["asset_aliases"]):
+                continue
+            company_match = bool(companies.intersection(group["company_aliases"]))
+            company_overlap = any(left in right or right in left for left in companies for right in group["company_aliases"])
+            if company_match or company_overlap or not companies or not group["company_aliases"]:
+                matches.append(index)
+        if not matches:
+            groups.append({"records": [record], "asset_aliases": set(assets), "company_aliases": set(companies)})
+            continue
+        group = groups[matches[0]]
+        group["records"].append(record)
+        group["asset_aliases"].update(assets)
+        group["company_aliases"].update(companies)
+        for duplicate_index in reversed(matches[1:]):
+            duplicate = groups.pop(duplicate_index)
+            group["records"].extend(duplicate["records"])
+            group["asset_aliases"].update(duplicate["asset_aliases"])
+            group["company_aliases"].update(duplicate["company_aliases"])
+
+    for group in groups:
+        representative = latest_record(group["records"]) or {}
+        group["identity"] = f"{compact_identity(company_title(representative)) or 'unknown'}::{compact_identity(asset_title(representative)) or 'asset'}"
+    return groups
+
+
+def queue_matches_group(entry: dict[str, Any], group: dict[str, Any]) -> bool:
+    assets = identity_aliases(entry.get("asset_input"))
+    companies = identity_aliases(entry.get("company_input"))
+    if not assets.intersection(group["asset_aliases"]):
+        return False
+    return bool(companies.intersection(group["company_aliases"])) or any(
+        left in right or right in left for left in companies for right in group["company_aliases"]
+    ) or not companies or not group["company_aliases"]
+
+
 def record_date(record: dict[str, Any]) -> str:
     raw = display(get(record, "meta.generated_at", date.today().isoformat()))
     match = re.search(r"\d{4}-\d{2}-\d{2}", raw)
@@ -303,7 +430,15 @@ def source_file(title: str, url: str | None = None) -> str:
 
 
 def scorecard_file(record: dict[str, Any]) -> str:
-    return "Scorecard__" + slug(asset_title(record)) + "__" + record_date(record)
+    return "Scorecard__" + slug(asset_title(record)) + "__" + slug(record_identifier(record))
+
+
+def review_file(record: dict[str, Any]) -> str:
+    return "Review__" + slug(record_identifier(record))
+
+
+def workflow_file(identity: str) -> str:
+    return "Workflow__" + slug(identity)
 
 
 def theme_file(name: str) -> str:
@@ -670,6 +805,238 @@ Commercial rationale status: `{md_cell(calculation.get("commercial_rationale_sta
 """
 
 
+def focus_management(record: dict[str, Any]) -> dict[str, Any]:
+    focus = get(record, "meta.focus_management", {})
+    return focus if isinstance(focus, dict) else {}
+
+
+def pipeline_metadata(record: dict[str, Any]) -> dict[str, Any]:
+    metadata = get(record, "meta.pipeline_metadata", {})
+    return metadata if isinstance(metadata, dict) else {}
+
+
+def workflow_comments(records: list[dict[str, Any]], queue_entries: list[dict[str, Any]]) -> list[str]:
+    comments: list[str] = []
+    seen: set[str] = set()
+
+    def add(prefix: str, value: Any) -> None:
+        text = str(value or "").strip()
+        key = re.sub(r"\s+", " ", text).casefold()
+        if text and key not in seen:
+            seen.add(key)
+            comments.append(f"{prefix}: {text}")
+
+    for entry in queue_entries:
+        metadata = entry.get("pipeline_metadata") if isinstance(entry.get("pipeline_metadata"), dict) else {}
+        add("Listing Comment", metadata.get("comment"))
+    for record in records:
+        review_label = "Fast Triage" if is_fast_triage(record) else "Full Scout"
+        add(f"{review_label} Listing Comment", pipeline_metadata(record).get("comment"))
+        collaboration = get(record, "meta.collaboration.comments", [])
+        if isinstance(collaboration, list):
+            for item in collaboration:
+                if isinstance(item, dict) and not item.get("is_ai"):
+                    add(f"{review_label} {display(item.get('author'), 'Comment')}", item.get("body"))
+    return comments
+
+
+def build_workflows(records: list[dict[str, Any]], queue: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    groups = records_identity_groups(records)
+    workflows: list[dict[str, Any]] = []
+    matched_queue_ids: set[str] = set()
+
+    for group in groups:
+        group_records = group["records"]
+        queue_entries = [entry for entry in queue if queue_matches_group(entry, group)]
+        matched_queue_ids.update(str(entry.get("id") or "") for entry in queue_entries)
+        fast_records = [record for record in group_records if is_fast_triage(record)]
+        full_records = [record for record in group_records if not is_fast_triage(record)]
+        fast_record = latest_record(fast_records)
+        full_record = latest_record(full_records)
+        tracked_records = [record for record in full_records if focus_management(record).get("is_tracked") is True]
+        shortlisting_record = latest_record(tracked_records)
+        representative = full_record or fast_record or latest_record(group_records) or {}
+        focus = focus_management(shortlisting_record or full_record or {})
+        metadata = pipeline_metadata(representative)
+        for entry in queue_entries:
+            entry_metadata = entry.get("pipeline_metadata") if isinstance(entry.get("pipeline_metadata"), dict) else {}
+            for field in ("listed_at", "comment", "contact", "website"):
+                if entry_metadata.get(field):
+                    metadata[field] = entry_metadata[field]
+        workflows.append(
+            {
+                "identity": group["identity"],
+                "asset": asset_title(representative),
+                "company": company_title(representative),
+                "records": group_records,
+                "queue_entries": queue_entries,
+                "fast_records": fast_records,
+                "full_records": full_records,
+                "fast_record": fast_record,
+                "full_record": full_record,
+                "shortlisting_record": shortlisting_record,
+                "metadata": metadata,
+                "focus": focus,
+                "comments": workflow_comments(group_records, queue_entries),
+            }
+        )
+
+    for entry in queue:
+        entry_id = str(entry.get("id") or "")
+        if entry_id in matched_queue_ids:
+            continue
+        metadata = entry.get("pipeline_metadata") if isinstance(entry.get("pipeline_metadata"), dict) else {}
+        asset = display(entry.get("asset_input"), "Unknown Asset")
+        company = display(entry.get("company_input"), "Unknown Company")
+        workflows.append(
+            {
+                "identity": f"listing::{entry_id or compact_identity(company + asset)}",
+                "asset": asset,
+                "company": company,
+                "records": [],
+                "queue_entries": [entry],
+                "fast_records": [],
+                "full_records": [],
+                "fast_record": None,
+                "full_record": None,
+                "shortlisting_record": None,
+                "metadata": metadata,
+                "focus": {},
+                "comments": workflow_comments([], [entry]),
+            }
+        )
+    return sorted(workflows, key=lambda item: (item["company"].casefold(), item["asset"].casefold(), item["identity"]))
+
+
+def workflow_stage_flags(workflow: dict[str, Any]) -> dict[str, bool]:
+    return {
+        "Listing": bool(workflow["queue_entries"] or workflow["records"]),
+        "Fast Triage": workflow["fast_record"] is not None,
+        "Full Scout": workflow["full_record"] is not None,
+        "Shortlisting": workflow["shortlisting_record"] is not None,
+    }
+
+
+def render_stage_note(stage: str) -> str:
+    descriptions = {
+        "Listing": "Tab 0 후보 목록에 저장된 pipeline. 조사 전 운영 정보가 포함될 수 있습니다.",
+        "Fast Triage": "Tab 1 Fast Triage의 구조화된 1차 조사 결과입니다.",
+        "Full Scout": "Tab 2 Full Scout의 심화 조사 및 scorecard 결과입니다.",
+        "Shortlisting": "Tab 3에서 추적 중인 OI Partnership 검토 대상입니다.",
+    }
+    return f"""---
+type: \"workflow_stage\"
+title: {yaml_value(stage)}
+tags:
+  - \"pipeline/workflow\"
+  - {yaml_value('workflow/' + slug(stage).lower())}
+---
+
+# {stage}
+
+{descriptions[stage]}
+"""
+
+
+def render_review_note(record: dict[str, Any], raw_file: str) -> str:
+    review_type = "Fast Triage" if is_fast_triage(record) else "Full Scout"
+    asset = asset_title(record)
+    score_file = scorecard_file(record)
+    return f"""---
+type: \"review\"
+record_id: {yaml_value(record_identifier(record))}
+review_type: {yaml_value(review_type)}
+asset: {yaml_value(asset)}
+generated_at: {yaml_value(record_timestamp(record))}
+source_report: {yaml_value(wikilink(note_path('01_Raw_Reports', raw_file[:-3])))}
+scorecard: {yaml_value(wikilink(note_path('10_Scorecards', score_file)))}
+---
+
+# {review_type} Review — {asset}
+
+- Raw report: {wikilink(note_path('01_Raw_Reports', raw_file[:-3]))}
+- Scorecard: {wikilink(note_path('10_Scorecards', score_file))}
+- Total score: {md_cell(get(record, 'scoring.total_score', '-'))}/21
+- Recommendation: {md_cell(get(record, 'final_insight.recommendation', '-'))}
+"""
+
+
+def render_workflow_note(workflow: dict[str, Any]) -> str:
+    flags = workflow_stage_flags(workflow)
+    focus = workflow["focus"]
+    metadata = workflow["metadata"]
+    partnership_type = str(focus.get("partnership_type") or "unknown")
+    partnership_label = OI_PARTNERSHIP_LABELS.get(partnership_type, "Needs verification")
+    tracking_status = "stationary" if focus.get("tracking_status") == "stationary" else "priority" if workflow["shortlisting_record"] else ""
+    materials = focus.get("partner_material_flags") if isinstance(focus.get("partner_material_flags"), dict) else {}
+    material_names = [key for key, active in materials.items() if active]
+    review_links = [
+        wikilink(note_path("14_Workflow", review_file(record)), f"{'Fast Triage' if is_fast_triage(record) else 'Full Scout'} · {record_identifier(record)}")
+        for record in workflow["records"]
+    ]
+    stage_rows = "\n".join(
+        f"| {stage} | {'Complete' if complete else '-'} | {wikilink(note_path('14_Workflow', 'Stage__' + slug(stage)), stage)} |"
+        for stage, complete in flags.items()
+    )
+    comment_lines = "\n".join(f"- {item}" for item in workflow["comments"]) or "- None"
+    return f"""---
+type: \"pipeline_workflow\"
+pipeline_identity: {yaml_value(workflow['identity'])}
+asset: {yaml_value(workflow['asset'])}
+company: {yaml_value(workflow['company'])}
+listing: {yaml_value(flags['Listing'])}
+fast_triage: {yaml_value(flags['Fast Triage'])}
+full_scout: {yaml_value(flags['Full Scout'])}
+shortlisting: {yaml_value(flags['Shortlisting'])}
+tracking_status: {yaml_value(tracking_status)}
+oi_partnership_type: {yaml_value(partnership_type if flags['Shortlisting'] else '')}
+oi_partnership_label: {yaml_value(partnership_label if flags['Shortlisting'] else '')}
+contact: {yaml_value(metadata.get('contact', ''))}
+website: {yaml_value(metadata.get('website', ''))}
+partner_materials: {yaml_value(material_names)}
+tags:
+  - \"pipeline/workflow\"
+---
+
+# Workflow — {workflow['asset']}
+
+## Pipeline identity
+
+| Field | Value |
+|---|---|
+| Company | {md_cell(workflow['company'])} |
+| Asset | {md_cell(workflow['asset'])} |
+| Listing added | {md_cell(metadata.get('listed_at', '-'))} |
+| Website | {md_cell(metadata.get('website', '-'))} |
+| Contact | {md_cell(metadata.get('contact', '-'))} |
+
+## Workflow progress
+
+| Stage | Status | Stage node |
+|---|---|---|
+{stage_rows}
+
+## Shortlisting / OI Partnership
+
+| Field | Value |
+|---|---|
+| Actual Shortlisting status | {md_cell('Tracked' if flags['Shortlisting'] else 'Not tracked')} |
+| OI Partnership classification | {md_cell(partnership_label if flags['Shortlisting'] else '-')} |
+| Tracking status | {md_cell(tracking_status or '-')} |
+| Rationale | {md_cell(focus.get('partnership_note', '-'))} |
+| Owner / due date | {md_cell(focus.get('owner_name', '-'))} / {md_cell(focus.get('due_date', '-'))} |
+| Partner materials | {md_cell(', '.join(material_names) if material_names else '-')} |
+
+## Review history
+
+{bullet_list(review_links, 'No structured review yet')}
+
+## Operating comments
+
+{comment_lines}
+"""
+
+
 def render_company_note(name: str, asset_files: set[str], records: list[dict[str, Any]]) -> str:
     sample = next((record for record in records if company_title(record) == name), {})
     fm = frontmatter(
@@ -1033,9 +1400,9 @@ def write_system_notes() -> None:
         "00_System/Wiki_Generation_Rules.md",
         """# Wiki Generation Rules
 
-1. Treat `json/pipeline-records.json` as the single source of truth.
+1. Treat `json/pipeline-records.json` as the structured-research source and `json/candidate-queue.json` as the Listing source of truth.
 2. Preserve raw Markdown reports in `01_Raw_Reports/`.
-3. Generate separate notes for assets, companies, targets, MoA, modalities, indications, competitors, sources, scorecards, themes, and clusters.
+3. Generate separate notes for assets, companies, targets, MoA, modalities, indications, competitors, sources, scorecards, themes, clusters, and workflow progression.
 4. Use deterministic filenames with entity type prefixes.
 5. Every important relation should be represented as an Obsidian wikilink and as a graph edge.
 6. Do not upgrade evidence type or score without source-level support.
@@ -1056,6 +1423,16 @@ Recommended groups:
 - path:08_Competitors -> Competitor nodes
 - path:09_Evidence_Sources -> Source nodes
 - path:11_Themes_Clusters -> Theme / Cluster nodes
+- path:14_Workflow/Workflow__ -> Pipeline workflow nodes
+- path:14_Workflow/Review__ -> Fast Triage / Full Scout review nodes
+- path:14_Workflow/Stage__ -> Listing, Fast Triage, Full Scout, Shortlisting stage nodes
+- path:14_Workflow/OI_Partnership__ -> Actual Tab 3 OI Partnership classifications
+
+Recommended saved views:
+
+1. **Workflow Progress**: show only `path:14_Workflow` to follow Listing → Fast Triage → Full Scout → Shortlisting.
+2. **Scientific Landscape**: hide `path:14_Workflow`, then focus on Asset, Target, MoA, Indication, Theme, and Cluster notes.
+3. **OI Portfolio**: start from `Dashboard__OI_Shortlisting`; show workflow, Full Scout review, and OI Partnership nodes.
 """,
     )
 
@@ -1129,7 +1506,7 @@ def write_templates() -> None:
         write_note(f"90_Templates/{filename}", content)
 
 
-def write_dashboard_notes(builder: WikiBuilder) -> None:
+def write_dashboard_notes(builder: WikiBuilder, workflows: list[dict[str, Any]]) -> None:
     asset_nodes = [node for node in builder.nodes.values() if node["type"] == "asset"]
     rows = ["| Asset | Score | Recommendation | Evidence Level |", "|---|---:|---|---|"]
     for node in sorted(asset_nodes, key=lambda item: item["label"]):
@@ -1138,8 +1515,13 @@ def write_dashboard_notes(builder: WikiBuilder) -> None:
         )
     write_note("12_Dashboards/Dashboard__Asset_Index.md", "# Asset Index\n\n" + "\n".join(rows))
     write_note(
+        "12_Dashboards/Dashboard__Recommendation_Shortlist.md",
+        "# Recommendation Shortlist\n\nFull Scout recommendation value `Shortlist`. This is separate from Tab 3 OI Shortlisting.\n\n"
+        + "\n".join([rows[0], rows[1]] + [row for row in rows[2:] if "Shortlist" in row]),
+    )
+    write_note(
         "12_Dashboards/Dashboard__Shortlist.md",
-        "# Shortlist\n\n" + "\n".join([rows[0], rows[1]] + [row for row in rows[2:] if "Shortlist" in row]),
+        "# Shortlist\n\nThis legacy entry point is the score recommendation view. See [[12_Dashboards/Dashboard__Recommendation_Shortlist|Recommendation Shortlist]].\n",
     )
     write_note(
         "12_Dashboards/Dashboard__Watchlist.md",
@@ -1174,6 +1556,135 @@ def write_dashboard_notes(builder: WikiBuilder) -> None:
             if edge["relationship"] == "HAS_COMPETITOR"
         ),
     )
+    workflow_rows = [
+        "| Pipeline | Listing | Fast Triage | Full Scout | Shortlisting | OI classification | Tracking |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for workflow in workflows:
+        flags = workflow_stage_flags(workflow)
+        focus = workflow["focus"]
+        shortlisting = flags["Shortlisting"]
+        partnership = OI_PARTNERSHIP_LABELS.get(str(focus.get("partnership_type") or "unknown"), "Needs verification") if shortlisting else "-"
+        tracking = focus.get("tracking_status") or ("priority" if shortlisting else "-")
+        workflow_rows.append(
+            "| "
+            + " | ".join(
+                [
+                    wikilink(note_path("14_Workflow", workflow_file(workflow["identity"])), f"{workflow['asset']} · {workflow['company']}"),
+                    *("✓" if flags[stage] else "-" for stage in WORKFLOW_STAGES),
+                    partnership,
+                    str(tracking),
+                ]
+            )
+            + " |"
+        )
+    write_note(
+        "12_Dashboards/Dashboard__Workflow_Progress.md",
+        "# Workflow Progress\n\nListing → Fast Triage → Full Scout → actual Tab 3 Shortlisting.\n\n" + "\n".join(workflow_rows),
+    )
+    for stage in WORKFLOW_STAGES:
+        rows_for_stage = [workflow_rows[0], workflow_rows[1]]
+        for workflow, row in zip(workflows, workflow_rows[2:]):
+            if workflow_stage_flags(workflow)[stage]:
+                rows_for_stage.append(row)
+        filename = "Dashboard__" + slug(stage)
+        write_note(
+            f"12_Dashboards/{filename}.md",
+            f"# {stage}\n\nWorkflow entries that have reached the {stage} stage.\n\n" + "\n".join(rows_for_stage),
+        )
+    oi_rows = [workflow_rows[0], workflow_rows[1]] + [
+        row for workflow, row in zip(workflows, workflow_rows[2:]) if workflow_stage_flags(workflow)["Shortlisting"]
+    ]
+    write_note(
+        "12_Dashboards/Dashboard__OI_Shortlisting.md",
+        "# OI Shortlisting\n\nActual Tab 3 tracked pipelines and their OI Partnership classification.\n\n" + "\n".join(oi_rows),
+    )
+
+
+def write_workflow_graph(builder: WikiBuilder, workflows: list[dict[str, Any]]) -> None:
+    """Write workflow notes and the corresponding graph projection.
+
+    Workflow nodes intentionally sit alongside (rather than replace) scientific Asset
+    nodes.  This keeps one clear graph for scientific relationships and another for
+    operational progression without treating comments as high-noise graph entities.
+    """
+
+    for stage in WORKFLOW_STAGES:
+        stage_filename = "Stage__" + slug(stage)
+        stage_id = node_id("workflow_stage", stage)
+        builder.add_node(
+            stage_id,
+            stage,
+            "workflow_stage",
+            stage_filename,
+            tags=f"pipeline/workflow;workflow/{slug(stage).lower()}",
+            workflow_stage=stage,
+        )
+        write_note(f"14_Workflow/{stage_filename}.md", render_stage_note(stage))
+
+    used_classifications = {
+        str(workflow["focus"].get("partnership_type") or "unknown")
+        for workflow in workflows
+        if workflow_stage_flags(workflow)["Shortlisting"]
+    }
+    for classification in sorted(used_classifications):
+        label = OI_PARTNERSHIP_LABELS.get(classification, "Needs verification")
+        filename = "OI_Partnership__" + slug(classification)
+        classification_id = node_id("oi_partnership", classification)
+        builder.add_node(
+            classification_id,
+            label,
+            "oi_partnership",
+            filename,
+            tags="pipeline/shortlisting;oi/partnership",
+            partnership_type=classification,
+        )
+        write_note(
+            f"14_Workflow/{filename}.md",
+            f"---\ntype: \"oi_partnership\"\npartnership_type: {yaml_value(classification)}\n---\n\n# OI Partnership — {label}\n\nActual Tab 3 Filter 3 classification.\n",
+        )
+
+    for workflow in workflows:
+        identity = workflow["identity"]
+        filename = workflow_file(identity)
+        workflow_id = node_id("workflow", identity)
+        flags = workflow_stage_flags(workflow)
+        focus = workflow["focus"]
+        tracking_status = "stationary" if focus.get("tracking_status") == "stationary" else "priority" if flags["Shortlisting"] else ""
+        partnership_type = str(focus.get("partnership_type") or "unknown") if flags["Shortlisting"] else ""
+        builder.add_node(
+            workflow_id,
+            f"{workflow['asset']} · {workflow['company']}",
+            "workflow",
+            filename,
+            tags="pipeline/workflow",
+            workflow_stage=",".join(stage for stage, complete in flags.items() if complete),
+            tracking_status=tracking_status,
+            partnership_type=partnership_type,
+        )
+        for stage, complete in flags.items():
+            if complete:
+                builder.add_edge(workflow_id, node_id("workflow_stage", stage), "IN_WORKFLOW_STAGE", source_note=filename)
+        for record in workflow["records"]:
+            review_id = node_id("review", record_identifier(record))
+            builder.add_edge(workflow_id, review_id, "HAS_REVIEW", source_note=filename)
+        representative = workflow["full_record"] or workflow["fast_record"]
+        if representative is not None:
+            builder.add_edge(
+                workflow_id,
+                node_id("asset", asset_title(representative)),
+                "REPRESENTS_ASSET",
+                evidence_level(representative),
+                filename,
+            )
+        if flags["Shortlisting"]:
+            builder.add_edge(
+                workflow_id,
+                node_id("oi_partnership", partnership_type),
+                "HAS_SHORTLISTING_CLASSIFICATION",
+                source_note=filename,
+            )
+        write_note(f"14_Workflow/{filename}.md", render_workflow_note(workflow))
 
 
 def write_graph_exports(builder: WikiBuilder) -> None:
@@ -1182,7 +1693,10 @@ def write_graph_exports(builder: WikiBuilder) -> None:
     with (export_dir / "nodes.csv").open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(
             handle,
-            fieldnames=["id", "label", "type", "title", "tags", "score", "recommendation", "evidence_level"],
+            fieldnames=[
+                "id", "label", "type", "title", "tags", "score", "recommendation", "evidence_level",
+                "workflow_stage", "review_type", "tracking_status", "partnership_type",
+            ],
         )
         writer.writeheader()
         writer.writerows(builder.nodes.values())
@@ -1211,6 +1725,8 @@ def validate_vault(builder: WikiBuilder) -> list[str]:
 
 def generate() -> dict[str, Any]:
     records = load_records()
+    candidate_queue = load_candidate_queue()
+    workflows = build_workflows(records, candidate_queue)
     if VAULT_DIR.exists():
         shutil.rmtree(VAULT_DIR)
     for folder in FOLDERS:
@@ -1235,6 +1751,8 @@ def generate() -> dict[str, Any]:
         cluster = cluster_title(record)
         asset_filename = asset_file(record)
         score_filename = scorecard_file(record)
+        review_filename = review_file(record)
+        review_type = "Fast Triage" if is_fast_triage(record) else "Full Scout"
 
         asset_id = node_id("asset", asset)
         company_id = node_id("company", company)
@@ -1244,7 +1762,8 @@ def generate() -> dict[str, Any]:
         indication_id = node_id("indication", indication)
         theme_id = node_id("theme", theme)
         cluster_id = node_id("cluster", cluster)
-        scorecard_id = node_id("scorecard", f"{asset}::{record_date(record)}")
+        scorecard_id = node_id("scorecard", record_identifier(record))
+        review_id = node_id("review", record_identifier(record))
 
         builder.add_node(
             asset_id,
@@ -1255,6 +1774,18 @@ def generate() -> dict[str, Any]:
             score=get(record, "scoring.total_score", ""),
             recommendation=get(record, "final_insight.recommendation", "Watch"),
             evidence_level=evidence_level(record),
+        )
+        builder.add_node(
+            review_id,
+            f"{review_type} — {asset}",
+            "review",
+            review_filename,
+            tags=f"pipeline/review;workflow/{slug(review_type).lower()}",
+            score=get(record, "scoring.total_score", ""),
+            recommendation=get(record, "final_insight.recommendation", "Watch"),
+            evidence_level=evidence_level(record),
+            review_type=review_type,
+            workflow_stage=review_type,
         )
         builder.add_node(company_id, company, "company", company_file(company), tags="pipeline/company")
         builder.add_node(target_id, target, "target", target_file(target), tags="pipeline/target")
@@ -1283,6 +1814,8 @@ def generate() -> dict[str, Any]:
         builder.add_edge(asset_id, theme_id, "MAPS_TO_THEME", evidence, score_filename)
         builder.add_edge(asset_id, cluster_id, "MAPS_TO_CLUSTER", evidence, score_filename)
         builder.add_edge(asset_id, scorecard_id, "HAS_SCORECARD", evidence, score_filename)
+        builder.add_edge(asset_id, review_id, "HAS_REVIEW", evidence, review_filename)
+        builder.add_edge(review_id, scorecard_id, "HAS_SCORECARD", evidence, score_filename)
 
         builder.asset_links_by_company[company_id].add(asset_filename)
         builder.asset_links_by_target[target_id].add(asset_filename)
@@ -1294,6 +1827,7 @@ def generate() -> dict[str, Any]:
 
         write_note(f"02_Assets/{asset_filename}.md", render_asset_note(record, raw_file))
         write_note(f"10_Scorecards/{score_filename}.md", render_scorecard_note(record, raw_file))
+        write_note(f"14_Workflow/{review_filename}.md", render_review_note(record, raw_file))
 
         for comp in get(record, "competitive_analysis.competitor_table", []):
             if not isinstance(comp, dict):
@@ -1363,12 +1897,15 @@ def generate() -> dict[str, Any]:
         name = key.split("::", 1)[1]
         write_note(f"11_Themes_Clusters/{cluster_file(name)}.md", render_theme_cluster_note("cluster", name, assets))
 
-    write_dashboard_notes(builder)
+    write_workflow_graph(builder, workflows)
+    write_dashboard_notes(builder, workflows)
     write_graph_exports(builder)
     warnings = validate_vault(builder)
     report = {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "records": len(records),
+        "listing_entries": len(candidate_queue),
+        "workflow_pipelines": len(workflows),
         "nodes": len(builder.nodes),
         "edges": len(builder.edges),
         "warnings": warnings,
@@ -1381,13 +1918,16 @@ def generate() -> dict[str, Any]:
         "README.md",
         f"""# SKBP Pipeline Wiki
 
-Generated from `json/pipeline-records.json`.
+Generated from `json/pipeline-records.json` and `json/candidate-queue.json`.
 
 Generated at: `{report["generated_at"]}`
 
 ## Entry Points
 
 - [[12_Dashboards/Dashboard__Asset_Index]]
+- [[12_Dashboards/Dashboard__Workflow_Progress]]
+- [[12_Dashboards/Dashboard__OI_Shortlisting]]
+- [[12_Dashboards/Dashboard__Recommendation_Shortlist]]
 - [[12_Dashboards/Dashboard__By_Target]]
 - [[12_Dashboards/Dashboard__By_Theme]]
 - [[12_Dashboards/Dashboard__Evidence_Gaps]]
@@ -1396,6 +1936,8 @@ Generated at: `{report["generated_at"]}`
 ## Counts
 
 - Records: {report["records"]}
+- Listing entries: {report["listing_entries"]}
+- Workflow pipelines: {report["workflow_pipelines"]}
 - Graph nodes: {report["nodes"]}
 - Graph edges: {report["edges"]}
 
