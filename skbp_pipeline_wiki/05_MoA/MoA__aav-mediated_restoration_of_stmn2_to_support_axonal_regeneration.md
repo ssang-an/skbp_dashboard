@@ -6,8 +6,8 @@ aliases:
   - "aav-mediated_restoration_of_stmn2_to_support_axonal_regeneration"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

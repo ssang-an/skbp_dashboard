@@ -25,7 +25,7 @@ tags:
 |---|---|
 | Company | Illimis Therapeutics |
 | Asset | ILM01 (GAIA-Aβ) |
-| Listing added | 2026-08-22T09:35:50.303315+00:00 |
+| Listing added | 2026-08-22T14:26:05.566828+00:00 |
 | Website | - |
 | Contact | - |
 
@@ -55,5 +55,5 @@ tags:
 
 ## Operating comments
 
-- Full Scout Listing Comment: df
+- Full Scout Listing Comment: ㅇㄹㄴㅇㄹ
 - Full Scout 정주원: bye

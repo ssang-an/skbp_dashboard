@@ -6,8 +6,8 @@ aliases:
   - "selective_kv7.2_kv7.3_potassium_channel_activator"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

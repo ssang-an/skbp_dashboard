@@ -6,8 +6,8 @@ aliases:
   - "lead_disclosed_indication_inflammatory_bowel_disease;_expansion_potenti_5e2ac79e"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

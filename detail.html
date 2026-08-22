@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260822-cross-workflow-comments-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260823-qualitative-workspace-1" />
   </head>
   <body>
     <div class="app-shell detail-shell">
@@ -306,7 +306,6 @@
                   />
                 </section>
               </div>
-              <section id="qualitativeReviewPanel" class="qualitative-review-panel" aria-label="Qualitative review criteria"></section>
               <div class="review-info-toggle-row">
                 <button id="detailReviewInfoToggle" class="review-info-toggle" type="button" aria-expanded="false" aria-controls="detailReviewInfoColumns" aria-label="Review Workspace 세부 정보 표시" title="세부 정보 표시">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"></path></svg>
@@ -320,22 +319,50 @@
           </div>
 
           <div class="collaboration-scroll">
+            <section class="team-qualitative-workspace" aria-labelledby="qualitativeWorkspaceTitle">
+              <div class="qualitative-panel-heading comment-thread-heading">
+                <p class="eyebrow" id="qualitativeWorkspaceTitle">정성 평가</p>
+                <button id="qualitativeReviewToggle" class="review-info-toggle" type="button" aria-expanded="false" aria-controls="qualitativeReviewPanel" aria-label="정성 평가 표시">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"></path></svg>
+                  <span data-qualitative-toggle-label>Show</span>
+                </button>
+                <small>평가 항목별 의견과 검토 근거를 기록합니다.</small>
+              </div>
+              <section id="qualitativeReviewPanel" class="qualitative-review-panel" aria-label="Qualitative review criteria" hidden></section>
+            </section>
+
             <div class="qualitative-panel-heading comment-thread-heading">
               <p class="eyebrow">Comments</p>
-              <small>OIT Review, Contact History 혹은 방문자 Comments를 기록합니다.</small>
+              <small>OIT Review 및 Team Workspace 의견을 기록합니다.</small>
             </div>
 
             <div id="detailCommentThread" class="comment-thread" aria-live="polite"></div>
+
+            <section class="contact-history-workspace" aria-labelledby="detailContactHistoryTitle">
+              <div class="qualitative-panel-heading comment-thread-heading">
+                <p class="eyebrow" id="detailContactHistoryTitle">Contact History</p>
+                <small>해당 Pipeline과 관련해 수행한 미팅·통화·이메일·후속 조치 등 Contact History를 기록하세요.</small>
+              </div>
+              <div id="detailContactHistoryThread" class="comment-thread contact-history-thread" aria-live="polite"></div>
+              <form id="detailContactHistoryForm" class="comment-composer contact-history-composer">
+                <div class="comment-input-row">
+                  <label class="comment-input-field">
+                    <span class="sr-only">Contact History</span>
+                    <textarea id="detailContactHistoryInput" class="message-composer-textarea" maxlength="5000" rows="1" aria-label="Contact History 입력" placeholder="미팅, 통화, 이메일 및 후속 조치를 기록하세요." required></textarea>
+                  </label>
+                  <button id="detailContactHistorySubmit" class="message-send-button contact-history-send-button" type="submit" aria-label="Contact History 저장" title="Contact History 저장" disabled>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 9.6 14.4"></path><path d="m22 2-7.2 20-4.1-8.7L2 9.2Z"></path></svg>
+                  </button>
+                </div>
+                <p class="comment-composer-hint">Enter 전송 · Shift+Enter 줄바꿈</p>
+              </form>
+            </section>
           </div>
 
           <form id="detailCommentForm" class="comment-composer">
             <div id="detailReplyContext" class="reply-context" hidden>
               <span id="detailReplyLabel"></span>
               <button id="detailReplyCancel" type="button" aria-label="답글 취소">취소</button>
-            </div>
-            <div class="comment-identity-bar">
-              <span id="detailCommentIdentity" class="comment-identity"></span>
-              <button id="detailCommentIdentityChange" type="button" class="comment-identity-change">계정 변경</button>
             </div>
             <div class="comment-input-row">
               <label class="comment-input-field">
@@ -777,6 +804,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260822-cross-workflow-comments-1"></script>
+    <script type="module" src="./src/detail.js?v=20260823-comment-progress-1"></script>
   </body>
 </html>

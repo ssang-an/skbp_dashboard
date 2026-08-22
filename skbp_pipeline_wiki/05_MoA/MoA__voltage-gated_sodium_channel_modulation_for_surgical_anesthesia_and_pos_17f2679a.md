@@ -6,8 +6,8 @@ aliases:
   - "voltage-gated_sodium_channel_modulation_for_surgical_anesthesia_and_pos_17f2679a"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

@@ -6,8 +6,8 @@ aliases:
   - "multi-mechanistic_neuroprotection;_possible_negative_regulation_of_nmda_8b2a1f7e"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

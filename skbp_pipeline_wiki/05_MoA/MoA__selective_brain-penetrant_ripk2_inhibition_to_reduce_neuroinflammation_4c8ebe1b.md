@@ -6,8 +6,8 @@ aliases:
   - "selective_brain-penetrant_ripk2_inhibition_to_reduce_neuroinflammation_4c8ebe1b"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

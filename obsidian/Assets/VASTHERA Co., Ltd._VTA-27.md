@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-21T21:35:53"
+generated_at: "2026-08-23T00:16:03"
 record_id: "VASTHERA Co., Ltd._VTA-27"
 company: "VASTHERA Co., Ltd."
 country: "Republic of Korea"
@@ -856,6 +856,26 @@ VTA-27 is a differentiated IND-enabling oral PRX-mimetic AD program with strong 
         "field": "qualitative_review.execution_risk",
         "previous_value": null,
         "new_value": "VTA-27은 IND-enabling 단계로 GLP 반복투여 독성은 완료되었으나, 인간 대상 임상 데이터가 전혀 없어 translational risk가 존재합니다. CMC 및 ADME 일부 항목(뇌조직 결합, 인간 PK 예측, MEA 등)이 아직 진행 중이며, 내부 데이터에서 pSTAT3 IC50 값(131.1 nM vs 162 nM)의 불일치가 확인되어 추가 검증이 필요합니다. hERG 안전성 마진은 충분하나 심장 이온 채널 패널 및 MEA 평가가 미완료되어 CV safety 프로파일이 완전히 확립되지 않았습니다. 파트너십 관점에서는 글로벌 제약사와의 협의가 언급되었으나 구체적인 계약이나 공동개발 확정 사항은 확인되지 않았습니다."
+      },
+      {
+        "id": "38921b2240254e0ca2e8b7d58140d0c1",
+        "changed_at": "2026-08-22T07:18:57.106771+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.remove",
+        "previous_value": true,
+        "new_value": false
+      },
+      {
+        "id": "d1c1216d8e8e4be09cf14a5ad38a1c24",
+        "changed_at": "2026-08-22T07:19:29.228925+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_tab3_focus_management",
+        "field": "focus_management.add",
+        "previous_value": false,
+        "new_value": true
       }
     ],
     "focus_management": {
@@ -870,7 +890,9 @@ VTA-27 is a differentiated IND-enabling oral PRX-mimetic AD program with strong 
       "partner_material_flags": {
         "cdp": false,
         "ncdp": false,
-        "admet": false
+        "admet": false,
+        "ir": false,
+        "dd_report": false
       },
       "in_vivo_status": "O",
       "in_vivo_status_source": "deepseek",
@@ -1033,7 +1055,7 @@ VTA-27 is a differentiated IND-enabling oral PRX-mimetic AD program with strong 
           }
         }
       ],
-      "filter3_document_analysis_updated_at": "2026-08-21T00:30:30.115851+00:00",
+      "filter3_document_analysis_updated_at": "2026-08-22T07:19:29.228866+00:00",
       "partnership_auto_suggestion": "n_a",
       "partnership_auto_note": "OI Partnership 분류 조건 미충족 / Development Stage IND-enabling (IND-enabling 미만 아님)",
       "partnership_auto_evidence_sources": [
@@ -1051,10 +1073,10 @@ VTA-27 is a differentiated IND-enabling oral PRX-mimetic AD program with strong 
         "Partner Materials: [VASTHERA] VTA-27 program CD_(Aug 2026).pdf"
       ],
       "partnership_classification_source": "auto",
-      "partnership_classified_at": "2026-08-21T00:30:30.115897+00:00",
-      "updated_at": "2026-08-19T08:59:06.609175+00:00",
-      "updated_source": "dashboard_tab3_oi_partnership_refresh",
-      "updated_by": "10.245.225.100",
+      "partnership_classified_at": "2026-08-22T07:19:29.228919+00:00",
+      "updated_at": "2026-08-22T07:19:29.226168+00:00",
+      "updated_source": "dashboard_tab3",
+      "updated_by": "정주원",
       "partnership_evidence_updated_at": "2026-08-12T05:15:55.702205+00:00",
       "partner_material_flag_overrides": {
         "cdp": false
@@ -1067,7 +1089,8 @@ VTA-27 is a differentiated IND-enabling oral PRX-mimetic AD program with strong 
         "recalculated_at": "2026-08-19T08:59:06.609175+00:00",
         "source": "dashboard_tab3_oi_partnership_refresh",
         "scope": "filter3_and_partnership_note_reset_to_latest_auto_classification"
-      }
+      },
+      "tracking_status": "priority"
     },
     "generated_at": "2026-08-12",
     "instruction_version": "3.4",

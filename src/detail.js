@@ -73,6 +73,7 @@ const elements = {
   detailFocusToggle: document.querySelector('#detailFocusToggle'),
   detailReviewInfoStack: document.querySelector('#detailReviewInfoStack'),
   detailReviewInfoToggle: document.querySelector('#detailReviewInfoToggle'),
+  qualitativeReviewToggle: document.querySelector('#qualitativeReviewToggle'),
   detailFilter2Row: document.querySelector('#detailFilter2Row'),
   detailActionDate: document.querySelector('#detailActionDate'),
   detailActionOwner: document.querySelector('#detailActionOwner'),
@@ -101,7 +102,9 @@ const elements = {
   detailCollaborationStatus: document.querySelector('#detailCollaborationStatus'),
   detailCommentCount: document.querySelector('#detailCommentCount'),
   detailCommentThread: document.querySelector('#detailCommentThread'),
+  detailContactHistoryThread: document.querySelector('#detailContactHistoryThread'),
   detailCommentForm: document.querySelector('#detailCommentForm'),
+  detailContactHistoryForm: document.querySelector('#detailContactHistoryForm'),
   detailCommentIdentity: document.querySelector('#detailCommentIdentity'),
   detailCommentIdentityChange: document.querySelector('#detailCommentIdentityChange'),
   identityModalBackdrop: document.querySelector('#identityModalBackdrop'),
@@ -110,6 +113,8 @@ const elements = {
   identityModalSubmit: document.querySelector('#identityModalSubmit'),
   detailCommentInput: document.querySelector('#detailCommentInput'),
   detailCommentSubmit: document.querySelector('#detailCommentSubmit'),
+  detailContactHistoryInput: document.querySelector('#detailContactHistoryInput'),
+  detailContactHistorySubmit: document.querySelector('#detailContactHistorySubmit'),
   detailReplyContext: document.querySelector('#detailReplyContext'),
   detailReplyLabel: document.querySelector('#detailReplyLabel'),
   detailReplyParentId: document.querySelector('#detailReplyParentId'),
@@ -845,7 +850,19 @@ function recordReviewStatus(record) {
 
 function collaborationComments(record) {
   const comments = record?.meta?.collaboration?.comments;
-  return Array.isArray(comments) ? comments.filter((comment) => comment && comment.id) : [];
+  return Array.isArray(comments) ? comments.filter((comment) => comment && comment.id && comment.category !== 'contact_history') : [];
+}
+
+function contactHistoryComments(record) {
+  const comments = record?.meta?.collaboration?.comments;
+  return Array.isArray(comments) ? comments.filter((comment) => comment && comment.id && comment.category === 'contact_history') : [];
+}
+
+let activeCommentEditId = null;
+
+function currentUserOwnsComment(comment) {
+  const user = getCurrentUser();
+  return Boolean(user?.id && comment?.author_user_id && String(user.id) === String(comment.author_user_id));
 }
 
 function formatCommentTime(value) {
@@ -867,14 +884,17 @@ function renderCommentNode(comment, childrenByParent, depth = 0, visited = new S
   nextVisited.add(comment.id);
   const replies = childrenByParent.get(comment.id) || [];
   const body = escapeHtml(comment.body || '').replaceAll('\n', '<br>');
-  const canDeleteImported = Boolean(getCurrentUser()?.is_admin && comment.system_import === true);
+  const isOwnComment = !comment.system_import && currentUserOwnsComment(comment);
+  const canDelete = isOwnComment || Boolean(getCurrentUser()?.is_admin && comment.system_import === true);
+  const canDeleteImported = canDelete;
+  const isEditing = activeCommentEditId === String(comment.id);
   return `
-    <article class="comment-card ${depth ? 'is-reply' : ''}" data-comment-id="${escapeHtml(comment.id)}">
+    <article class="comment-card ${depth ? 'is-reply' : ''}${isOwnComment ? ' is-editable' : ''}" data-comment-id="${escapeHtml(comment.id)}"${isOwnComment ? ' data-comment-edit title="두 번 클릭하여 수정"' : ''}>
       <div class="comment-meta">
         <strong>${escapeHtml(comment.author || '익명')}</strong>
         <time datetime="${escapeHtml(comment.created_at || '')}">${escapeHtml(formatCommentTime(comment.created_at))}</time>
       </div>
-      <p>${body}</p>
+      ${isEditing ? `<form class="comment-inline-edit-form" data-comment-edit-form data-comment-id="${escapeHtml(comment.id)}"><textarea rows="3" maxlength="5000" aria-label="코멘트 수정">${escapeHtml(comment.body || '')}</textarea><div><button type="button" data-comment-edit-cancel>취소</button><button type="submit" class="is-primary">저장</button></div></form>` : `<p>${body}</p>`}
       <button
         type="button"
         class="comment-reply-button"
@@ -1053,6 +1073,19 @@ function detectPartnerMaterialFlags(attachments) {
   return detected;
 }
 
+function renderContactHistoryThread(record) {
+  if (!elements.detailContactHistoryThread) return;
+  const comments = contactHistoryComments(record);
+  if (!comments.length) {
+    elements.detailContactHistoryThread.innerHTML = '<div class="comment-empty-state"><span>아직 기록된 Contact History가 없습니다.</span></div>';
+    return;
+  }
+  const emptyChildren = new Map();
+  elements.detailContactHistoryThread.innerHTML = comments
+    .map((comment) => renderCommentNode(comment, emptyChildren))
+    .join('');
+}
+
 function pipelineWebsite(record) {
   return safeHttpUrl(record?.meta?.pipeline_metadata?.website);
 }
@@ -1115,11 +1148,15 @@ async function savePipelineWebsite() {
   }
 }
 
-async function deleteImportedComment(commentId) {
-  if (!currentRecordId || !commentId || !getCurrentUser()?.is_admin) return;
-  if (!window.confirm('이관된 운영 코멘트를 삭제할까요? 원본 Fast Triage/Listing 정보는 삭제되지 않습니다.')) return;
+async function deleteRecordComment(commentId) {
+  if (!currentRecordId || !commentId || !getCurrentUser()) return;
+  if (!await confirmDetailCommentDelete({
+    title: '코멘트를 삭제할까요?',
+    message: '삭제한 코멘트는 복구할 수 없습니다. 원본 Fast Triage/Listing 정보는 유지됩니다.'
+  })) return;
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE' });
+    const closeProgress = showDetailProgress('잠시만 기다려 주세요', '코멘트를 삭제하고 있습니다.');
+    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE' }).finally(closeProgress);
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.detail || '코멘트를 삭제하지 못했습니다.');
     currentRecord = data.record;
@@ -1128,6 +1165,60 @@ async function deleteImportedComment(commentId) {
   } catch (error) {
     setCollaborationStatus(error.message, 'error');
   }
+}
+
+function showDetailProgress(title = '잠시만 기다려 주세요', message = '변경사항을 저장하고 있습니다.') {
+  const backdrop = document.createElement('div');
+  backdrop.className = 'operation-modal-backdrop';
+  backdrop.innerHTML = `<section class="operation-modal" role="status" aria-live="assertive"><header class="operation-modal-header"><span class="operation-modal-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 3v3m0 12v3M4.2 5.2l2.1 2.1m11.4 11.4 2.1 2.1M3 12h3m12 0h3M4.2 18.8l2.1-2.1M17.7 7.3l2.1-2.1"/></svg></span><div><p class="operation-modal-eyebrow">PROCESSING</p><h2>${escapeHtml(title)}</h2></div></header><p class="operation-modal-copy">${escapeHtml(message)}</p></section>`;
+  document.body.appendChild(backdrop);
+  document.body.classList.add('operation-modal-open');
+  return () => { backdrop.remove(); document.body.classList.remove('operation-modal-open'); };
+}
+
+function confirmDetailCommentDelete({ title, message }) {
+  return new Promise((resolve) => {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'operation-modal-backdrop operation-confirm-backdrop';
+    backdrop.innerHTML = `
+      <section class="operation-modal operation-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="detailCommentConfirmTitle">
+        <header class="operation-modal-header">
+          <span class="operation-modal-mark operation-confirm-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 7h16M10 11v6M14 11v6M9 7l1-3h4l1 3M6.5 7l.7 13h9.6l.7-13" /></svg></span>
+          <div><p class="operation-modal-eyebrow">CONFIRM</p><h2 id="detailCommentConfirmTitle">${escapeHtml(title)}</h2></div>
+        </header>
+        <p class="operation-modal-copy">${escapeHtml(message)}</p>
+        <footer class="operation-modal-actions operation-confirm-actions"><button type="button" class="operation-modal-cancel" data-confirm-cancel>취소</button><button type="button" class="operation-modal-confirm" data-confirm-accept>삭제</button></footer>
+      </section>`;
+    const finish = (confirmed) => {
+      document.removeEventListener('keydown', onKeydown);
+      backdrop.remove();
+      document.body.classList.remove('operation-modal-open');
+      resolve(confirmed);
+    };
+    const onKeydown = (event) => { if (event.key === 'Escape') finish(false); };
+    backdrop.addEventListener('click', (event) => { if (event.target === backdrop) finish(false); });
+    backdrop.querySelector('[data-confirm-cancel]')?.addEventListener('click', () => finish(false));
+    backdrop.querySelector('[data-confirm-accept]')?.addEventListener('click', () => finish(true));
+    document.body.appendChild(backdrop);
+    document.body.classList.add('operation-modal-open');
+    document.addEventListener('keydown', onKeydown);
+    backdrop.querySelector('[data-confirm-accept]')?.focus();
+  });
+}
+
+async function updateRecordComment(commentId, body) {
+  const closeProgress = showDetailProgress('잠시만 기다려 주세요', '코멘트를 수정하고 있습니다.');
+  const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/comments/${encodeURIComponent(commentId)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ body })
+  }).finally(closeProgress);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || '코멘트를 수정하지 못했습니다.');
+  currentRecord = data.record;
+  activeCommentEditId = null;
+  renderCollaborationPanel(currentRecord);
+  setCollaborationStatus('코멘트를 수정했습니다.', 'success');
 }
 
 function partnerMaterialCategoriesForFilename(filename) {
@@ -1334,6 +1425,7 @@ function renderCollaborationPanel(record) {
       : `${label} 파일 업로드`;
   });
   renderCommentThread(record);
+  renderContactHistoryThread(record);
   renderMetaInfoBar(record);
   renderEditHistory(record);
   renderAttachments(record);
@@ -1532,6 +1624,17 @@ function setAttachmentStatus(message = '', tone = '') {
   if (!elements.detailAttachmentStatus) return;
   elements.detailAttachmentStatus.textContent = message;
   elements.detailAttachmentStatus.dataset.tone = tone;
+}
+
+function setQualitativeReviewExpanded(expanded) {
+  const isExpanded = expanded === true;
+  if (elements.qualitativeReviewPanel) elements.qualitativeReviewPanel.hidden = !isExpanded;
+  if (!elements.qualitativeReviewToggle) return;
+  elements.qualitativeReviewToggle.setAttribute('aria-expanded', String(isExpanded));
+  elements.qualitativeReviewToggle.setAttribute('aria-label', isExpanded ? '정성 평가 숨기기' : '정성 평가 표시');
+  elements.qualitativeReviewToggle.title = isExpanded ? '정성 평가 숨기기' : '정성 평가 표시';
+  const label = elements.qualitativeReviewToggle.querySelector('[data-qualitative-toggle-label]');
+  if (label) label.textContent = isExpanded ? 'Less' : 'Show';
 }
 
 function openAttachmentUploadOperation(fileName = '') {
@@ -1886,7 +1989,7 @@ function renderQualitativeReview(record) {
   ];
 
   elements.qualitativeReviewPanel.innerHTML = `
-    <div class="qualitative-panel-heading">
+    <div class="qualitative-panel-heading qualitative-panel-inline-actions">
       <p class="eyebrow">정성 평가</p>
       <button
         type="button"
@@ -2737,6 +2840,37 @@ function renderMarkdown(markdown) {
   }
 
   return blocks.join('');
+}
+
+async function submitDetailContactHistory() {
+  const body = elements.detailContactHistoryInput?.value.trim() || '';
+  if (!body || !currentRecordId) return;
+  const author = await ensureIdentity();
+  if (!author) return;
+  if (elements.detailContactHistorySubmit) elements.detailContactHistorySubmit.disabled = true;
+  setCollaborationStatus('Contact History를 저장하고 있습니다.');
+  try {
+    const closeProgress = showDetailProgress('잠시만 기다려 주세요', '댓글을 저장하고 있습니다.');
+    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ author, body, category: 'contact_history' })
+    }).finally(closeProgress);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'Contact History 저장에 실패했습니다.');
+    currentRecord = data.record;
+    elements.detailContactHistoryInput.value = '';
+    syncMessageComposer(elements.detailContactHistoryInput);
+    renderCollaborationPanel(currentRecord);
+    elements.detailContactHistoryThread?.scrollTo({ top: elements.detailContactHistoryThread.scrollHeight, behavior: 'smooth' });
+    setCollaborationStatus('Contact History를 저장했습니다.', 'success');
+  } catch (error) {
+    setCollaborationStatus(error.message, 'error');
+  } finally {
+    if (elements.detailContactHistorySubmit) {
+      elements.detailContactHistorySubmit.disabled = !elements.detailContactHistoryInput?.value.trim();
+    }
+  }
 }
 
 async function saveEditHistoryReason(form) {
@@ -4205,6 +4339,11 @@ elements.detailReviewInfoToggle?.addEventListener('click', () => {
   setReviewInfoExpanded(!expanded);
 });
 
+elements.qualitativeReviewToggle?.addEventListener('click', () => {
+  const expanded = elements.qualitativeReviewToggle.getAttribute('aria-expanded') === 'true';
+  setQualitativeReviewExpanded(!expanded);
+});
+
 elements.detailActionDate?.addEventListener('change', (event) => {
   saveDetailActionDate(event.target.value || '');
 });
@@ -4297,7 +4436,16 @@ elements.detailCommentForm?.addEventListener('submit', (event) => {
   submitDetailComment();
 });
 
+elements.detailContactHistoryForm?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  submitDetailContactHistory();
+});
+
 elements.detailCommentInput?.addEventListener('input', (event) => {
+  syncMessageComposer(event.currentTarget);
+});
+
+elements.detailContactHistoryInput?.addEventListener('input', (event) => {
   syncMessageComposer(event.currentTarget);
 });
 
@@ -4311,7 +4459,12 @@ elements.detailCommentInput?.addEventListener('keydown', (event) => {
 elements.detailCommentThread?.addEventListener('click', (event) => {
   const deleteButton = event.target.closest('[data-delete-comment-id]');
   if (deleteButton) {
-    deleteImportedComment(deleteButton.dataset.deleteCommentId);
+    deleteRecordComment(deleteButton.dataset.deleteCommentId);
+    return;
+  }
+  if (event.target.closest('[data-comment-edit-cancel]')) {
+    activeCommentEditId = null;
+    renderCollaborationPanel(currentRecord);
     return;
   }
   const button = event.target.closest('[data-reply-comment-id]');
@@ -4320,6 +4473,67 @@ elements.detailCommentThread?.addEventListener('click', (event) => {
   elements.detailReplyLabel.textContent = `${button.dataset.replyAuthor || '익명'}님에게 답글 작성 중`;
   elements.detailReplyContext.hidden = false;
   elements.detailCommentInput?.focus();
+});
+
+elements.detailContactHistoryInput?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
+    event.preventDefault();
+    elements.detailContactHistoryForm?.requestSubmit();
+  }
+});
+
+elements.detailCommentThread?.addEventListener('dblclick', (event) => {
+  const card = event.target.closest('[data-comment-edit]');
+  if (!card || event.target.closest('button, textarea')) return;
+  activeCommentEditId = String(card.dataset.commentId || '');
+  renderCollaborationPanel(currentRecord);
+  elements.detailCommentThread?.querySelector(`[data-comment-id="${CSS.escape(activeCommentEditId)}"] textarea`)?.focus();
+});
+
+elements.detailCommentThread?.addEventListener('submit', async (event) => {
+  const form = event.target.closest('[data-comment-edit-form]');
+  if (!form) return;
+  event.preventDefault();
+  const body = String(form.querySelector('textarea')?.value || '').trim();
+  if (!body) return;
+  const submit = form.querySelector('button[type="submit"]');
+  if (submit) submit.disabled = true;
+  try {
+    await updateRecordComment(form.dataset.commentId, body);
+  } catch (error) {
+    if (submit) submit.disabled = false;
+    setCollaborationStatus(error.message, 'error');
+  }
+});
+
+elements.detailContactHistoryThread?.addEventListener('click', (event) => {
+  const deleteButton = event.target.closest('[data-delete-comment-id]');
+  if (deleteButton) deleteRecordComment(deleteButton.dataset.deleteCommentId);
+  if (event.target.closest('[data-comment-edit-cancel]')) {
+    activeCommentEditId = null;
+    renderCollaborationPanel(currentRecord);
+  }
+});
+
+elements.detailContactHistoryThread?.addEventListener('dblclick', (event) => {
+  const card = event.target.closest('[data-comment-edit]');
+  if (!card || event.target.closest('button, textarea')) return;
+  activeCommentEditId = String(card.dataset.commentId || '');
+  renderCollaborationPanel(currentRecord);
+  elements.detailContactHistoryThread?.querySelector(`[data-comment-id="${CSS.escape(activeCommentEditId)}"] textarea`)?.focus();
+});
+
+elements.detailContactHistoryThread?.addEventListener('submit', async (event) => {
+  const form = event.target.closest('[data-comment-edit-form]');
+  if (!form) return;
+  event.preventDefault();
+  const body = String(form.querySelector('textarea')?.value || '').trim();
+  if (!body) return;
+  try {
+    await updateRecordComment(form.dataset.commentId, body);
+  } catch (error) {
+    setCollaborationStatus(error.message, 'error');
+  }
 });
 
 elements.detailReplyCancel?.addEventListener('click', clearReplyTarget);

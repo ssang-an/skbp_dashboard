@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/cfc95c5d168e4f27a0521a310805b8fc |
-| Accessed / generated date | 2026-08-22 |
+| Accessed / generated date | 2026-08-23 |
 
 ## Evidence Summary
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company_press_release"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company_press_release |
 | Reliability | medium |
 | URL | https://corestemchemon.com/eng/pr/media.html?bmain=view&search=%26page%3D2&uid=75 |
-| Accessed / generated date | 2026-08-22 |
+| Accessed / generated date | 2026-08-23 |
 
 ## Evidence Summary
 

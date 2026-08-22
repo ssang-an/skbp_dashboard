@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/regulatory_filing"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | regulatory_filing |
 | Reliability | medium |
 | URL | https://kind.krx.co.kr/external/dst/irReference/18082/%5B%EB%94%94%EC%95%A4%EB%94%94%ED%8C%8C%EB%A7%88%ED%85%8D%5D%20IR%20%EC%9E%90%EB%A3%8C_202602_%ED%95%9C%ED%88%AC%20%ED%95%B4%EC%99%B8IR_EN.pdf |
-| Accessed / generated date | 2026-08-22 |
+| Accessed / generated date | 2026-08-23 |
 
 ## Evidence Summary
 

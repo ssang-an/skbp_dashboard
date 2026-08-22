@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/company_release_syndication"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | company_release_syndication |
 | Reliability | medium |
 | URL | https://www.einpresswire.com/article/930926568/aribio-completes-treatment-phase-of-global-phase-3-polaris-ad-trial-of-ar1001-for-early-alzheimer-s-disease |
-| Accessed / generated date | 2026-08-22 |
+| Accessed / generated date | 2026-08-23 |
 
 ## Evidence Summary
 

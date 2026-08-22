@@ -6,8 +6,8 @@ aliases:
   - "anti-asm_monoclonal_antibody;_neuroinflammation_suppression_and_aβ_plaq_f45e0bc1"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

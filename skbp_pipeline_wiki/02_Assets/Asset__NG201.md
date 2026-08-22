@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: "[[01_Raw_Reports/Neuracle_Genetics_(now_Elisigen)_NG201]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -32,18 +32,18 @@ evidence_level: "E0"
 
 ## 1. Snapshot
 
-| Field           | Value                                                    |                                                   |           |
-| --------------- | -------------------------------------------------------- | ------------------------------------------------- | --------- |
-| Company         | [[03_Companies/Company__Neuracle_Genetics_(now_Elisigen) | Neuracle Genetics (now Elisigen)]]                |           |
-| Asset           | NG201                                                    |                                                   |           |
-| Target          | [[04_Targets/Target__Unknown                             | Unknown]]                                         |           |
-| MoA             | [[05_MoA/MoA__Unknown                                    | Unknown]]                                         |           |
-| Modality        | [[06_Modalities_Platforms/Modality__Gene_therapy         | Gene therapy]]                                    |           |
-| Indication      | [[07_Indications/Indication__Neuropathic_pain            | Neuropathic pain]]                                |           |
-| Stage           | Preclinical unspecified                                  |                                                   |           |
-| Theme / Cluster | [[11_Themes_Clusters/Theme__Unknown                      | Unknown]] / [[11_Themes_Clusters/Cluster__Unknown | Unknown]] |
-| Recommendation  | Do not run Full Scout                                    |                                                   |           |
-| Total Score     | 2/21                                                     |                                                   |           |
+| Field | Value |
+|---|---|
+| Company | [[03_Companies/Company__Neuracle_Genetics_(now_Elisigen)|Neuracle Genetics (now Elisigen)]] |
+| Asset | NG201 |
+| Target | [[04_Targets/Target__Unknown|Unknown]] |
+| MoA | [[05_MoA/MoA__Unknown|Unknown]] |
+| Modality | [[06_Modalities_Platforms/Modality__Gene_therapy|Gene therapy]] |
+| Indication | [[07_Indications/Indication__Neuropathic_pain|Neuropathic pain]] |
+| Stage | Preclinical unspecified |
+| Theme / Cluster | [[11_Themes_Clusters/Theme__Unknown|Unknown]] / [[11_Themes_Clusters/Cluster__Unknown|Unknown]] |
+| Recommendation | Do not run Full Scout |
+| Total Score | 2/21 |
 
 ## 2. One-line Summary
 

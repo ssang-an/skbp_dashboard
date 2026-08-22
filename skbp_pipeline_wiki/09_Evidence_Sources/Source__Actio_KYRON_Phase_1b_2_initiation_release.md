@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company |
 | Reliability | high |
 | URL | https://actiobiosciences.com/actio-biosciences-announces-initiation-of-kyron-phase-1b-2-trial-of-abs-1230-for-the-treatment-of-kcnt1-related-epilepsy-and-acceptance-into-fdas-rare-disease-evidence-principles-process/ |
-| Accessed / generated date | 2026-08-22 |
+| Accessed / generated date | 2026-08-23 |
 
 ## Evidence Summary
 

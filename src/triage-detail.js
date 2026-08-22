@@ -1,6 +1,6 @@
 import { setupThemeToggle } from './theme.js';
 
-import { getCurrentUser, initAuthUI } from './auth.js?v=20260802-required-login-1';
+import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260802-required-login-1';
 
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
@@ -86,6 +86,45 @@ function repairMojibake(value) {
 function displayValue(value, fallback = 'Unknown') {
   const text = repairMojibake(value).trim();
   return text || fallback;
+}
+
+function confirmTriageCommentDelete({ title = '코멘트를 삭제할까요?', message = '삭제한 코멘트는 복구할 수 없습니다.' } = {}) {
+  return new Promise((resolve) => {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'operation-modal-backdrop operation-confirm-backdrop';
+    backdrop.innerHTML = `
+      <section class="operation-modal operation-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="triageCommentConfirmTitle">
+        <header class="operation-modal-header">
+          <span class="operation-modal-mark operation-confirm-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 7h16M10 11v6M14 11v6M9 7l1-3h4l1 3M6.5 7l.7 13h9.6l.7-13" /></svg></span>
+          <div><p class="operation-modal-eyebrow">CONFIRM</p><h2 id="triageCommentConfirmTitle">${escapeHtml(title)}</h2></div>
+        </header>
+        <p class="operation-modal-copy">${escapeHtml(message)}</p>
+        <footer class="operation-modal-actions operation-confirm-actions"><button type="button" class="operation-modal-cancel" data-confirm-cancel>취소</button><button type="button" class="operation-modal-confirm" data-confirm-accept>삭제</button></footer>
+      </section>`;
+    const finish = (confirmed) => {
+      document.removeEventListener('keydown', onKeydown);
+      backdrop.remove();
+      document.body.classList.remove('operation-modal-open');
+      resolve(confirmed);
+    };
+    const onKeydown = (event) => { if (event.key === 'Escape') finish(false); };
+    backdrop.addEventListener('click', (event) => { if (event.target === backdrop) finish(false); });
+    backdrop.querySelector('[data-confirm-cancel]')?.addEventListener('click', () => finish(false));
+    backdrop.querySelector('[data-confirm-accept]')?.addEventListener('click', () => finish(true));
+    document.body.appendChild(backdrop);
+    document.body.classList.add('operation-modal-open');
+    document.addEventListener('keydown', onKeydown);
+    backdrop.querySelector('[data-confirm-accept]')?.focus();
+  });
+}
+
+function showTriageProgress(title = '잠시만 기다려 주세요', message = '변경사항을 저장하고 있습니다.') {
+  const backdrop = document.createElement('div');
+  backdrop.className = 'operation-modal-backdrop';
+  backdrop.innerHTML = `<section class="operation-modal" role="status" aria-live="assertive"><header class="operation-modal-header"><span class="operation-modal-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 3v3m0 12v3M4.2 5.2l2.1 2.1m11.4 11.4 2.1 2.1M3 12h3m12 0h3M4.2 18.8l2.1-2.1M17.7 7.3l2.1-2.1"/></svg></span><div><p class="operation-modal-eyebrow">PROCESSING</p><h2>${escapeHtml(title)}</h2></div></header><p class="operation-modal-copy">${escapeHtml(message)}</p></section>`;
+  document.body.appendChild(backdrop);
+  document.body.classList.add('operation-modal-open');
+  return () => { backdrop.remove(); document.body.classList.remove('operation-modal-open'); };
 }
 
 function textValue(value, fallback = '') {
@@ -538,6 +577,10 @@ function canDeleteFinalComment(record) {
   return Boolean(user?.is_admin && ownerId && ownerId === String(user.id || ''));
 }
 
+function canEditFinalComment(record) {
+  return canDeleteFinalComment(record);
+}
+
 function renderDecision(record) {
   const status = reviewStatus(record);
   const triage = record.triage || {};
@@ -690,7 +733,7 @@ function triageScoreNotesMarkup(record, definition) {
   return `
     <section class="triage-score-notes${notes.length ? ' has-notes' : ''}" data-triage-score-notes data-topic-id="${escapeHtml(topic.id)}" data-topic-key="${escapeHtml(topic.key)}" data-topic-title="${escapeHtml(topic.title)}">
       ${notes.length ? `<div class="triage-score-note-list">${notes.map((note) => `
-        <article class="triage-score-note">
+        <article class="triage-score-note${currentUserCanDeleteNote(note) ? ' is-editable' : ''}"${currentUserCanDeleteNote(note) ? ` data-triage-score-note-edit data-note-id="${escapeHtml(note.id)}" data-note-body="${escapeHtml(note.body || '')}" title="두 번 클릭하여 수정"` : ''}>
           ${currentUserCanDeleteNote(note) ? `<button type="button" class="triage-note-delete" data-triage-score-note-delete data-note-id="${escapeHtml(note.id)}" aria-label="내 코멘트 삭제" title="내 코멘트 삭제">×</button>` : ''}
           <p>${escapeHtml(note.body || '')}</p>
           <small>${escapeHtml(note.author_name || 'Team member')} · ${escapeHtml(formatTimestamp(note.updated_at || note.created_at))}</small>
@@ -710,22 +753,70 @@ function finalCommentMarkup(record) {
   const humanReview = objectValue(objectValue(record?.meta).human_review);
   const authorName = textValue(humanReview.final_comment_author_name, '관리자');
   const updatedAt = textValue(humanReview.final_comment_updated_at, '');
-  const canManage = currentUserIsAdmin();
-  if (!finalComment && !canManage) return '';
+  const canManage = Boolean(getCurrentUser());
+  const canEdit = canEditFinalComment(record);
+  if (!finalComment && !canManage && !getCurrentUser()) return '';
   return `
     <section class="triage-final-comment${finalComment ? ' has-comment' : ''}" aria-label="최종 코멘트">
-      ${finalComment ? `<article class="triage-score-note triage-final-comment-note">
+      ${finalComment ? `<article class="triage-score-note triage-final-comment-note${canEdit ? ' is-editable' : ''}"${canEdit ? ' data-triage-final-comment-edit title="두 번 클릭하여 수정"' : ''}>
         ${canDeleteFinalComment(record) ? '<button type="button" class="triage-note-delete" data-triage-final-comment-delete aria-label="내 최종 코멘트 삭제" title="내 최종 코멘트 삭제">×</button>' : ''}
         <p>${escapeHtml(finalComment)}</p>
         <small>${escapeHtml(authorName)}${updatedAt ? ` · ${escapeHtml(formatTimestamp(updatedAt))}` : ''}</small>
       </article>` : ''}
       ${canManage ? `
-        <button type="button" class="triage-note-trigger" data-triage-final-comment-open>${finalComment ? '최종 코멘트 수정' : '＋ 최종 코멘트 입력'}</button>
+        <button type="button" class="triage-note-trigger" data-triage-final-comment-open>＋ 최종 코멘트 입력</button>
         <form class="triage-inline-note-form" data-triage-final-comment-form hidden>
           <textarea rows="3" maxlength="4000" placeholder="최종 판단에 대한 관리자 의견을 남겨주세요." aria-label="최종 코멘트">${escapeHtml(finalComment)}</textarea>
           <div><span data-triage-final-comment-status></span><button type="button" data-triage-final-comment-cancel>취소</button><button type="submit">저장</button></div>
         </form>
       ` : ''}
+      ${triageContactHistoryTrigger()}
+    </section>
+  `;
+}
+
+function triageContactHistoryTrigger() {
+  if (!getCurrentUser()) return '';
+  return `<button type="button" class="triage-note-trigger triage-contact-history-trigger" data-triage-contact-history-open aria-label="Contact History 입력" title="Contact History 입력">＋ Contact History 입력</button>`;
+}
+
+function triageFinalCommentPostsMarkup(record) {
+  const entries = arrayValue(objectValue(objectValue(record?.meta).collaboration).comments)
+    .filter((entry) => objectValue(entry).category === 'final_comment');
+  if (!entries.length) return '';
+  return `<section class="triage-final-comment-posts" aria-label="Final Comments">${entries.map((entry) => {
+    const isOwn = String(entry.author_user_id || '') === String(getCurrentUser()?.id || '');
+    return `<article class="triage-score-note${isOwn ? ' is-editable' : ''}"${isOwn ? ` data-triage-final-post-edit data-comment-id="${escapeHtml(entry.id)}" title="두 번 클릭하여 수정"` : ''}>
+      ${isOwn ? `<button type="button" class="triage-note-delete" data-triage-final-post-delete data-comment-id="${escapeHtml(entry.id)}" aria-label="내 최종 코멘트 삭제" title="내 최종 코멘트 삭제">×</button>` : ''}
+      <p>${escapeHtml(entry.body || '')}</p><small>${escapeHtml(entry.author || 'Team member')} · ${escapeHtml(formatTimestamp(entry.updated_at || entry.created_at))}</small>
+      ${isOwn ? `<form class="triage-inline-note-form" data-triage-final-post-edit-form data-comment-id="${escapeHtml(entry.id)}" hidden><textarea rows="3" maxlength="5000" aria-label="최종 코멘트 수정">${escapeHtml(entry.body || '')}</textarea><div><span data-triage-final-post-status></span><button type="button" data-triage-final-post-edit-cancel>취소</button><button type="submit">저장</button></div></form>` : ''}
+    </article>`;
+  }).join('')}</section>`;
+}
+
+function triageContactHistoryMarkup(record) {
+  const entries = arrayValue(objectValue(objectValue(record?.meta).collaboration).comments)
+    .filter((entry) => objectValue(entry).category === 'contact_history');
+  const signedIn = Boolean(getCurrentUser());
+  return `
+    <section class="triage-contact-history" aria-label="Contact History">
+      <div class="triage-contact-history-heading">
+        <strong>Contact History</strong>
+        <small>해당 Pipeline과 관련해 수행한 미팅·통화·이메일·후속 조치 등 Contact History를 기록하세요.</small>
+      </div>
+      ${entries.length ? `<div class="triage-score-note-list">${entries.map((entry) => {
+        const isOwn = String(entry.author_user_id || '') === String(getCurrentUser()?.id || '');
+        return `<article class="triage-score-note${isOwn ? ' is-editable' : ''}"${isOwn ? ` data-triage-contact-history-edit data-comment-id="${escapeHtml(entry.id)}" title="두 번 클릭하여 수정"` : ''}>
+          ${isOwn ? `<button type="button" class="triage-note-delete" data-triage-contact-history-delete data-comment-id="${escapeHtml(entry.id)}" aria-label="내 Contact History 삭제" title="내 Contact History 삭제">×</button>` : ''}
+          <p>${escapeHtml(entry.body || '')}</p><small>${escapeHtml(entry.author || 'Team member')} · ${escapeHtml(formatTimestamp(entry.updated_at || entry.created_at))}</small>
+          ${isOwn ? `<form class="triage-inline-note-form" data-triage-contact-history-edit-form data-comment-id="${escapeHtml(entry.id)}" hidden><textarea rows="3" maxlength="5000" aria-label="Contact History 수정">${escapeHtml(entry.body || '')}</textarea><div><span data-triage-contact-history-status></span><button type="button" data-triage-contact-history-edit-cancel>취소</button><button type="submit">저장</button></div></form>` : ''}
+        </article>`;
+      }).join('')}</div>` : ''}
+      ${signedIn ? `<button type="button" class="triage-note-trigger triage-contact-history-trigger" data-triage-contact-history-open>＋ Contact History 입력</button>
+        <form class="triage-inline-note-form triage-contact-history-form" data-triage-contact-history-form hidden>
+          <textarea rows="3" maxlength="5000" placeholder="미팅, 통화, 이메일 및 후속 조치를 기록하세요." aria-label="Contact History 입력"></textarea>
+          <div><span data-triage-contact-history-status></span><button type="button" data-triage-contact-history-cancel>취소</button><button type="submit">저장</button></div>
+        </form>` : ''}
     </section>
   `;
 }
@@ -991,6 +1082,8 @@ function renderQuickSummary(record) {
       `).join('')}
     </dl>
     ${finalCommentMarkup(record)}
+    ${triageFinalCommentPostsMarkup(record)}
+    ${triageContactHistoryMarkup(record)}
     ${pipelineMetadataMarkup(record)}
     ${renderTriageReviewHistory(record)}
   `;
@@ -1127,6 +1220,76 @@ async function updateTriageManualReview(payload) {
   return data;
 }
 
+async function saveTriageContactHistory(body) {
+  const author = await requireAuth();
+  if (!author?.name) throw new Error('로그인 후 Contact History를 입력할 수 있습니다.');
+  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/comments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ author: author.name, body, category: 'contact_history' })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || 'Contact History 저장에 실패했습니다.');
+  currentRecord = data.record;
+  renderRecord(currentRecord);
+}
+
+async function updateTriageContactHistory(commentId, body) {
+  const closeProgress = showTriageProgress('잠시만 기다려 주세요', 'Contact History를 수정하고 있습니다.');
+  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/comments/${encodeURIComponent(commentId)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ body })
+  }).finally(closeProgress);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || 'Contact History 수정에 실패했습니다.');
+  currentRecord = data.record;
+  renderRecord(currentRecord);
+}
+
+async function deleteTriageContactHistory(commentId) {
+  const closeProgress = showTriageProgress('잠시만 기다려 주세요', 'Contact History를 삭제하고 있습니다.');
+  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE' }).finally(closeProgress);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || 'Contact History 삭제에 실패했습니다.');
+  currentRecord = data.record;
+  renderRecord(currentRecord);
+}
+
+async function saveTriageFinalComment(body) {
+  const author = await requireAuth();
+  if (!author?.name) throw new Error('로그인 후 최종 코멘트를 입력할 수 있습니다.');
+  const closeProgress = showTriageProgress('잠시만 기다려 주세요', '최종 코멘트를 저장하고 있습니다.');
+  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/comments`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ author: author.name, body, category: 'final_comment' })
+  }).finally(closeProgress);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || '최종 코멘트 저장에 실패했습니다.');
+  currentRecord = data.record;
+  renderRecord(currentRecord);
+}
+
+async function updateTriageFinalComment(commentId, body) {
+  const closeProgress = showTriageProgress('잠시만 기다려 주세요', '최종 코멘트를 수정하고 있습니다.');
+  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/comments/${encodeURIComponent(commentId)}`, {
+    method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ body })
+  }).finally(closeProgress);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || '최종 코멘트 수정에 실패했습니다.');
+  currentRecord = data.record;
+  renderRecord(currentRecord);
+}
+
+async function deleteTriageFinalComment(commentId) {
+  const closeProgress = showTriageProgress('잠시만 기다려 주세요', '최종 코멘트를 삭제하고 있습니다.');
+  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE' }).finally(closeProgress);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || '최종 코멘트 삭제에 실패했습니다.');
+  currentRecord = data.record;
+  renderRecord(currentRecord);
+}
+
 async function saveTriageScore(select) {
   const criterion = String(select.dataset.criterion || '');
   const value = Number(select.value);
@@ -1175,11 +1338,13 @@ function openTriageScoreInlineEditor(button) {
   select.focus();
 }
 
-async function saveTriageScoreNote(panel, body) {
-  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/topic-notes`, {
-    method: 'POST',
+async function saveTriageScoreNote(panel, body, noteId = '') {
+  const response = await fetch(noteId
+    ? `/api/records/${encodeURIComponent(recordId)}/topic-notes/${encodeURIComponent(noteId)}`
+    : `/api/records/${encodeURIComponent(recordId)}/topic-notes`, {
+    method: noteId ? 'PATCH' : 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+    body: JSON.stringify(noteId ? { body } : {
       topic_id: panel.dataset.topicId,
       topic_key: panel.dataset.topicKey,
       topic_title: panel.dataset.topicTitle,
@@ -1345,7 +1510,9 @@ elements.scoreGrid?.addEventListener('click', (event) => {
   const panel = event.target.closest('[data-triage-score-notes]');
   if (!panel) return;
   if (event.target.closest('[data-triage-score-note-open]')) {
-    openTriageInlineForm(panel.querySelector('[data-triage-score-note-form]'));
+    const form = panel.querySelector('[data-triage-score-note-form]');
+    if (form) delete form.dataset.noteId;
+    openTriageInlineForm(form);
     return;
   }
   if (event.target.closest('[data-triage-score-note-cancel]')) {
@@ -1358,9 +1525,23 @@ elements.scoreGrid?.addEventListener('click', (event) => {
   const deleteButton = event.target.closest('[data-triage-score-note-delete]');
   if (deleteButton) {
     const noteId = String(deleteButton.dataset.noteId || '');
-    if (!noteId || !window.confirm('이 코멘트를 삭제할까요?')) return;
-    deleteTriageScoreNote(noteId).catch((error) => window.alert(error.message));
+    if (!noteId) return;
+    confirmTriageCommentDelete().then((confirmed) => {
+      if (confirmed) deleteTriageScoreNote(noteId).catch((error) => window.alert(error.message));
+    });
   }
+});
+elements.scoreGrid?.addEventListener('dblclick', (event) => {
+  const note = event.target.closest('[data-triage-score-note-edit]');
+  if (!note || event.target.closest('button, textarea')) return;
+  const panel = note.closest('[data-triage-score-notes]');
+  const form = panel?.querySelector('[data-triage-score-note-form]');
+  if (!form) return;
+  event.preventDefault();
+  form.dataset.noteId = note.dataset.noteId || '';
+  const textarea = form.querySelector('textarea');
+  if (textarea) textarea.value = note.dataset.noteBody || '';
+  openTriageInlineForm(form);
 });
 elements.scoreGrid?.addEventListener('submit', async (event) => {
   const form = event.target.closest('[data-triage-score-note-form]');
@@ -1374,7 +1555,7 @@ elements.scoreGrid?.addEventListener('submit', async (event) => {
   if (submit) submit.disabled = true;
   if (status) status.textContent = '저장 중…';
   try {
-    await saveTriageScoreNote(panel, body);
+    await saveTriageScoreNote(panel, body, form.dataset.noteId || '');
   } catch (error) {
     if (status) status.textContent = error.message;
   } finally {
@@ -1382,6 +1563,39 @@ elements.scoreGrid?.addEventListener('submit', async (event) => {
   }
 });
 elements.quickSummary?.addEventListener('click', (event) => {
+  const deleteFinalPost = event.target.closest('[data-triage-final-post-delete]');
+  if (deleteFinalPost) {
+    confirmTriageCommentDelete({ title: '최종 코멘트를 삭제할까요?' }).then((confirmed) => {
+      if (confirmed) deleteTriageFinalComment(deleteFinalPost.dataset.commentId).catch((error) => window.alert(error.message));
+    });
+    return;
+  }
+  if (event.target.closest('[data-triage-final-post-edit-cancel]')) {
+    const form = event.target.closest('[data-triage-final-post-edit-form]');
+    if (form) form.hidden = true;
+    return;
+  }
+  const deleteContact = event.target.closest('[data-triage-contact-history-delete]');
+  if (deleteContact) {
+    confirmTriageCommentDelete({ title: 'Contact History를 삭제할까요?' }).then((confirmed) => {
+      if (confirmed) deleteTriageContactHistory(deleteContact.dataset.commentId).catch((error) => window.alert(error.message));
+    });
+    return;
+  }
+  if (event.target.closest('[data-triage-contact-history-edit-cancel]')) {
+    const form = event.target.closest('[data-triage-contact-history-edit-form]');
+    if (form) form.hidden = true;
+    return;
+  }
+  if (event.target.closest('[data-triage-contact-history-open]')) {
+    openTriageInlineForm(elements.quickSummary.querySelector('[data-triage-contact-history-form]'));
+    return;
+  }
+  if (event.target.closest('[data-triage-contact-history-cancel]')) {
+    const form = elements.quickSummary.querySelector('[data-triage-contact-history-form]');
+    if (form) form.hidden = true;
+    return;
+  }
   if (event.target.closest('[data-triage-final-comment-open]')) {
     openTriageInlineForm(elements.quickSummary.querySelector('[data-triage-final-comment-form]'));
     return;
@@ -1391,11 +1605,79 @@ elements.quickSummary?.addEventListener('click', (event) => {
     if (form) form.hidden = true;
   }
   if (event.target.closest('[data-triage-final-comment-delete]')) {
-    if (!window.confirm('최종 코멘트를 삭제할까요?')) return;
-    updateTriageManualReview({ kind: 'final_comment_delete' }).catch((error) => window.alert(error.message));
+    confirmTriageCommentDelete({ title: '최종 코멘트를 삭제할까요?' }).then((confirmed) => {
+      if (confirmed) updateTriageManualReview({ kind: 'final_comment_delete' }).catch((error) => window.alert(error.message));
+    });
   }
 });
+elements.quickSummary?.addEventListener('dblclick', (event) => {
+  const finalPost = event.target.closest('[data-triage-final-post-edit]');
+  if (finalPost && !event.target.closest('button, textarea, form')) {
+    event.preventDefault();
+    const form = finalPost.querySelector('[data-triage-final-post-edit-form]');
+    if (form) openTriageInlineForm(form);
+    return;
+  }
+  const contact = event.target.closest('[data-triage-contact-history-edit]');
+  if (contact && !event.target.closest('button, textarea, form')) {
+    event.preventDefault();
+    const form = contact.querySelector('[data-triage-contact-history-edit-form]');
+    if (form) openTriageInlineForm(form);
+    return;
+  }
+  const comment = event.target.closest('[data-triage-final-comment-edit]');
+  if (!comment || event.target.closest('button, textarea')) return;
+  event.preventDefault();
+  openTriageInlineForm(elements.quickSummary.querySelector('[data-triage-final-comment-form]'));
+});
 elements.quickSummary?.addEventListener('submit', async (event) => {
+  const editFinalPostForm = event.target.closest('[data-triage-final-post-edit-form]');
+  if (editFinalPostForm) {
+    event.preventDefault();
+    const value = String(editFinalPostForm.querySelector('textarea')?.value || '').trim();
+    const status = editFinalPostForm.querySelector('[data-triage-final-post-status]');
+    if (!value) return;
+    try {
+      await updateTriageFinalComment(editFinalPostForm.dataset.commentId, value);
+    } catch (error) {
+      if (status) status.textContent = error.message;
+    }
+    return;
+  }
+  const editContactForm = event.target.closest('[data-triage-contact-history-edit-form]');
+  if (editContactForm) {
+    event.preventDefault();
+    const value = String(editContactForm.querySelector('textarea')?.value || '').trim();
+    const status = editContactForm.querySelector('[data-triage-contact-history-status]');
+    const submit = editContactForm.querySelector('button[type="submit"]');
+    if (!value) return;
+    if (submit) submit.disabled = true;
+    try {
+      await updateTriageContactHistory(editContactForm.dataset.commentId, value);
+    } catch (error) {
+      if (status) status.textContent = error.message;
+      if (submit) submit.disabled = false;
+    }
+    return;
+  }
+  const contactForm = event.target.closest('[data-triage-contact-history-form]');
+  if (contactForm) {
+    event.preventDefault();
+    const value = String(contactForm.querySelector('textarea')?.value || '').trim();
+    const status = contactForm.querySelector('[data-triage-contact-history-status]');
+    const submit = contactForm.querySelector('button[type="submit"]');
+    if (!value) return;
+    if (submit) submit.disabled = true;
+    if (status) status.textContent = '저장 중…';
+    try {
+      await saveTriageContactHistory(value);
+    } catch (error) {
+      if (status) status.textContent = error.message;
+    } finally {
+      if (submit) submit.disabled = false;
+    }
+    return;
+  }
   const form = event.target.closest('[data-triage-final-comment-form]');
   if (!form || !currentUserIsAdmin()) return;
   event.preventDefault();
@@ -1406,7 +1688,7 @@ elements.quickSummary?.addEventListener('submit', async (event) => {
   if (submit) submit.disabled = true;
   if (status) status.textContent = '저장 중…';
   try {
-    await updateTriageManualReview({ kind: 'final_comment', value });
+    await saveTriageFinalComment(value);
   } catch (error) {
     if (status) status.textContent = error.message;
   } finally {

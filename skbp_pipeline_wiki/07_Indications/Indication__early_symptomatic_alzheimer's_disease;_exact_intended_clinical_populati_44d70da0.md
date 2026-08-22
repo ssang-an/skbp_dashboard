@@ -6,8 +6,8 @@ aliases:
   - "early_symptomatic_alzheimer's_disease;_exact_intended_clinical_populati_44d70da0"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

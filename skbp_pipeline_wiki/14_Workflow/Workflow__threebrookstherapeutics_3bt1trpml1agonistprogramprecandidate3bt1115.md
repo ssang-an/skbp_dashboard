@@ -10,7 +10,7 @@ shortlisting: false
 tracking_status: ""
 oi_partnership_type: ""
 oi_partnership_label: ""
-contact: ""
+contact: "df"
 website: ""
 partner_materials: ["cdp", "ncdp"]
 tags:
@@ -25,9 +25,9 @@ tags:
 |---|---|
 | Company | Threebrooks Therapeutics |
 | Asset | 3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115) |
-| Listing added | - |
+| Listing added | 2026-08-22T15:00:04.055430+00:00 |
 | Website | - |
-| Contact | - |
+| Contact | df |
 
 ## Workflow progress
 
@@ -55,4 +55,4 @@ tags:
 
 ## Operating comments
 
-- None
+- Full Scout 정주원: contact 지난주에 만났음

@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20260822-g6-stage-clouds-1" />
+  <link rel="stylesheet" href="./src/styles.css?v=20260823-stage-filter-height-1" />
   </head>
   <body>
     <div class="app-shell">
@@ -146,28 +146,28 @@
           <section class="panel step0-stat-panel" aria-label="진척 현황 요약">
           <div class="step0-stat-strip">
             <section class="step0-stat-column" data-workflow-stage="pending">
-            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="pending" data-tooltip="Listing에 등록된 Pipeline을 Table에 표시합니다. 이후 조사 단계가 완료된 항목도 포함됩니다." aria-label="Listing Pipeline으로 필터">
+            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="pending" data-tooltip="Listing은 등록만 완료되고 Fast Triage와 Full Scout 조사가 아직 시작되지 않은 '조사 대기' 파이프라인입니다. 클릭하면 해당 목록만 Table에 표시합니다." aria-label="조사 대기 Listing Pipeline으로 필터">
               <span class="step0-stat-label">Listing</span>
               <span class="step0-stat-value"><strong id="step0StatPending">0</strong><em id="step0RecentPending" class="step0-stat-recent" hidden>▲ +0</em></span>
             </button>
             <div class="step0-workflow-card-canvas" data-step0-workflow-map="pending" role="region" tabindex="0" aria-label="Listing Pipeline node graph" aria-live="polite"></div>
             </section>
             <section class="step0-stat-column" data-workflow-stage="fast_triage">
-            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="fast_triage" data-tooltip="Fast Triage가 완료된 Pipeline을 Table에 표시합니다. 이후 단계가 완료된 항목도 포함됩니다." aria-label="Fast Triage 완료 Pipeline으로 필터">
+            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="fast_triage" data-tooltip="Fast Triage는 공개 정보로 후보를 빠르게 1차 선별하는 단계입니다. 클릭하면 Fast Triage가 완료된 모든 파이프라인을 Table에 표시합니다." aria-label="Fast Triage 완료 Pipeline으로 필터">
               <span class="step0-stat-label">Fast Triage</span>
               <span class="step0-stat-value"><strong id="step0StatFastTriage">0</strong><em id="step0RecentFastTriage" class="step0-stat-recent" hidden>▲ +0</em></span>
             </button>
             <div class="step0-workflow-card-canvas" data-step0-workflow-map="fast_triage" role="region" tabindex="0" aria-label="Fast Triage Pipeline node graph" aria-live="polite"></div>
             </section>
             <section class="step0-stat-column" data-workflow-stage="full_scout">
-            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="full_scout" data-tooltip="Full Scout가 완료된 Pipeline을 Table에 표시합니다. Shortlisting 항목도 포함됩니다." aria-label="Full Scout 완료 Pipeline으로 필터">
+            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="full_scout" data-tooltip="Full Scout는 타깃·근거·경쟁 환경·사업성을 심층 검토하는 단계입니다. 클릭하면 Full Scout가 완료된 모든 파이프라인을 Table에 표시합니다." aria-label="Full Scout 완료 Pipeline으로 필터">
               <span class="step0-stat-label">Full Scout</span>
               <span class="step0-stat-value"><strong id="step0StatFullScout">0</strong><em id="step0RecentFullScout" class="step0-stat-recent" hidden>▲ +0</em></span>
             </button>
             <div class="step0-workflow-card-canvas" data-step0-workflow-map="full_scout" role="region" tabindex="0" aria-label="Full Scout Pipeline node graph" aria-live="polite"></div>
             </section>
             <section class="step0-stat-column" data-workflow-stage="shortlisting">
-            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="shortlisting" data-tooltip="Shortlisting으로 추적 중인 Pipeline을 Table에 표시합니다." aria-label="Shortlisting Pipeline으로 필터">
+            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="shortlisting" data-tooltip="Shortlisting은 Full Scout 검토 후 후속 BD 검토 대상으로 추적 중인 파이프라인입니다. 클릭하면 해당 목록만 Table에 표시합니다." aria-label="Shortlisting Pipeline으로 필터">
               <span class="step0-stat-label">Shortlisting</span>
               <span class="step0-stat-value"><strong id="step0StatShortlisted">0</strong><em id="step0RecentShortlisted" class="step0-stat-recent" hidden>▲ +0</em></span>
             </button>
@@ -184,7 +184,7 @@
               <span>검색</span>
               <div class="step0-search-composer">
                 <div class="step0-search-entry">
-                  <input id="step0SearchInput" type="search" placeholder="회사, 자산, 타깃, Theme, Cluster 검색" />
+                  <input id="step0SearchInput" type="search" placeholder="Company · Asset · Target · Modality 등 검색" aria-label="Listing Pipeline Table 검색: Company, Asset, Target, Main indication, Stage, Country, Modality" />
                   <button id="step0AddSearchTokenButton" class="step0-add-search-token help-tooltip" type="button" data-tooltip="Add search term" aria-label="Add current search term">+</button>
                 </div>
                 <div id="step0SearchTokens" class="step0-search-tokens" aria-label="Selected company and asset filters" aria-live="polite"></div>
@@ -344,7 +344,7 @@
                       <col class="step0-entry-col-company" /><col class="step0-entry-col-country" /><col class="step0-entry-col-asset" /><col class="step0-entry-col-modality" /><col class="step0-entry-col-target" /><col class="step0-entry-col-indication" /><col class="step0-entry-col-stage" /><col class="step0-entry-col-comment" /><col class="step0-entry-col-contact" /><col class="step0-entry-col-website" />
                     </colgroup>
                     <thead><tr>
-                      <th>Company <span class="step0-required-badge">Required</span></th><th>Country</th><th>Asset <span class="step0-required-badge">Required</span></th><th>Modality</th><th>Target</th><th>Main indication</th><th>Stage</th><th>Comment <span class="step0-multiline-hint">multi-line</span></th><th>Contact</th><th>Website</th>
+                      <th>Company <span class="step0-required-badge">Required</span></th><th>Country</th><th>Asset <span class="step0-required-badge">Required</span></th><th>Modality</th><th>Target</th><th>Main indication</th><th>Stage</th><th>Comment <span class="step0-required-badge step0-multiline-hint">multi-line</span></th><th>Contact</th><th>Website</th>
                     </tr></thead>
                     <tbody id="step0EntryGridBody"></tbody>
                   </table>
@@ -441,7 +441,13 @@
           <div class="controls">
             <label>
               <span>검색</span>
-              <input id="searchInput" type="search" placeholder="회사, 자산, 타깃, Theme, Cluster 검색" />
+              <div class="step0-search-composer">
+                <div class="step0-search-entry">
+                  <input id="searchInput" type="search" placeholder="Company · Asset · Target · Modality 등 검색" aria-label="Pipeline Table 검색: Company, Asset, Target, Main indication, Stage, Country, Modality" />
+                  <button id="addSearchTokenButton" class="step0-add-search-token help-tooltip" type="button" data-tooltip="검색 조건 추가" aria-label="현재 검색어를 조건으로 추가">+</button>
+                </div>
+                <div id="searchTokens" class="step0-search-tokens" aria-label="Selected Pipeline Table search filters" aria-live="polite"></div>
+              </div>
             </label>
             <div id="countryFilter" class="filter-multiselect" data-filter-key="country">
               <span class="filter-multiselect-label">Country</span>
@@ -617,6 +623,16 @@
           </div>
         </section>
       </main>
+
+      <footer class="dashboard-footer" aria-label="Dashboard information and feedback">
+        <p class="dashboard-footer-credit">Designed &amp; Developed by <strong>OIC AI Champion</strong> <span aria-hidden="true">·</span> Kate Joo Won Jung</p>
+        <p class="dashboard-footer-meta">
+          <span>Have feedback or questions?</span>
+          <a href="mailto:joowon.jung@sk.com">Reach out to joowon.jung@sk.com</a>
+          <span class="dashboard-footer-divider" aria-hidden="true">·</span>
+          <span>© 2026 Open Innovation Center. All rights reserved.</span>
+        </p>
+      </footer>
     </div>
 
     <button
@@ -1219,6 +1235,25 @@
       </section>
     </div>
 
+    <div class="identity-modal-backdrop" id="pipelineWebsiteModal" hidden>
+      <section class="identity-modal pipeline-website-modal" role="dialog" aria-modal="true" aria-labelledby="pipelineWebsiteModalTitle" aria-describedby="pipelineWebsiteModalHint">
+        <div class="data-reupload-modal-heading">
+          <span class="data-reupload-modal-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false"><path d="M10 14 14 10M8.5 7.5H7a3 3 0 0 0-3 3V17a3 3 0 0 0 3-3v-1.5M13 4h7v7M20 4l-9 9"/></svg>
+          </span>
+          <div><h3 id="pipelineWebsiteModalTitle">Pipeline Website 수정</h3></div>
+        </div>
+        <p id="pipelineWebsiteModalHint" class="identity-modal-hint">HTTP(S) 홈페이지 주소를 하나만 입력하세요. 비워두면 등록된 주소가 삭제됩니다.</p>
+        <label class="pipeline-website-modal-label" for="pipelineWebsiteModalInput">Website URL</label>
+        <input id="pipelineWebsiteModalInput" type="url" inputmode="url" autocomplete="url" placeholder="https://example.com" />
+        <p id="pipelineWebsiteModalStatus" class="pipeline-website-modal-status" role="status" aria-live="polite"></p>
+        <div class="identity-modal-actions data-reupload-modal-actions">
+          <button id="pipelineWebsiteModalCancel" type="button" class="identity-modal-cancel">취소</button>
+          <button id="pipelineWebsiteModalSave" type="button" class="identity-modal-submit">저장</button>
+        </div>
+      </section>
+    </div>
+
     <div class="step0-edit-locked-backdrop" id="step0EditLockedModal" hidden>
       <section class="step0-edit-locked-modal" role="dialog" aria-modal="true" aria-labelledby="step0EditLockedTitle" aria-describedby="step0EditLockedMessage">
         <header>
@@ -1237,6 +1272,6 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260822-g6-stage-clouds-1"></script>
+  <script type="module" src="./src/app.js?v=20260823-contact-history-popover-1"></script>
   </body>
 </html>

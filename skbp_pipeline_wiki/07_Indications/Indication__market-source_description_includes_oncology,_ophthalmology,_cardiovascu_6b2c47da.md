@@ -6,8 +6,8 @@ aliases:
   - "market-source_description_includes_oncology,_ophthalmology,_cardiovascu_6b2c47da"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

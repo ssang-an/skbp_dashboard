@@ -6,8 +6,8 @@ aliases:
   - "highly_selective_5-ht2c_receptor_agonist_biased_agonist"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

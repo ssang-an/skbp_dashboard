@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-21T21:35:53"
+generated_at: "2026-08-23T00:16:03"
 record_id: "Astrogen, inc._AST-001 (Speragen)"
 company: "Astrogen, inc."
 country: "Republic of Korea"

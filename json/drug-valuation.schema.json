@@ -48,6 +48,10 @@
             "comment_created_at": { "type": "string" },
             "comment_updated_at": { "type": "string" },
             "contact": { "type": "string", "maxLength": 5000 },
+            "contact_author": { "type": "string", "maxLength": 200 },
+            "contact_source": { "enum": ["", "team_review_import", "admin_contact_post"] },
+            "contact_created_at": { "type": "string" },
+            "contact_updated_at": { "type": "string" },
             "website": { "type": "string", "format": "uri", "maxLength": 2048 },
             "updated_at": { "type": "string" }
           },

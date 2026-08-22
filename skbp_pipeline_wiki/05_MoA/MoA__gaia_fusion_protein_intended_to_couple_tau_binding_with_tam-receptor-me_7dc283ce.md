@@ -6,8 +6,8 @@ aliases:
   - "gaia_fusion_protein_intended_to_couple_tau_binding_with_tam-receptor-me_7dc283ce"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

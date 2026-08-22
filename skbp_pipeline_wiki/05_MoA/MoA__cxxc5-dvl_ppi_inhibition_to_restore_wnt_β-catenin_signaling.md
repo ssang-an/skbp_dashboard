@@ -6,8 +6,8 @@ aliases:
   - "cxxc5-dvl_ppi_inhibition_to_restore_wnt_β-catenin_signaling"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

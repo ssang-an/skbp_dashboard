@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-21T21:35:53"
+generated_at: "2026-08-23T00:16:03"
 record_id: "Amyloid Solution Inc_AS-603"
 company: "Amyloid Solution Inc"
 country: "Republic of Korea"

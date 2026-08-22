@@ -6,8 +6,8 @@ aliases:
   - "kcnt1-related_epilepsy;_pediatric_developmental_and_epileptic_encephalo_b19f0030"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

@@ -6,8 +6,8 @@ aliases:
   - "intrathecal_scaav_expression_of_aimp2-dx2_to_antagonize_pro-apoptotic_a_5bd57d9c"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

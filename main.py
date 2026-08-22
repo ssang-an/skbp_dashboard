@@ -4929,6 +4929,10 @@ LISTING_DETAIL_FIELDS = ("country", "modality", "target", "main_indication", "st
 LISTING_QUEUE_EDITABLE_FIELDS = ("company", "asset", *LISTING_DETAIL_FIELDS)
 CONTACT_HISTORY_ABSENCE_PATTERN = re.compile(r"^(?:x|[-–—]+)$", flags=re.IGNORECASE)
 LISTING_WEBSITE_PATTERN = re.compile(r"https?://[^\s<>'\"]+", flags=re.IGNORECASE)
+LISTING_WEBSITE_HOST_PATTERN = re.compile(
+    r"(?=.{1,2048}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+(?:[a-z]{2,63}|xn--[a-z0-9-]{2,59})(?::\d{2,5})?(?:[/?#][^\s<>'\"]*)?",
+    flags=re.IGNORECASE,
+)
 LISTING_ASSET_PLACEHOLDER_PATTERN = re.compile(r"^(?:-|x|×)$", flags=re.IGNORECASE)
 
 
@@ -4946,11 +4950,16 @@ def normalize_pipeline_contact(value: Any) -> str:
 
 
 def normalize_listing_website(value: Any) -> str:
-    """Keep exactly one safe display URL from a Listing spreadsheet cell."""
-    match = LISTING_WEBSITE_PATTERN.search(str(value or "").strip())
-    if not match:
-        return ""
-    candidate = match.group(0).rstrip(".,;:)]}")
+    """Normalize one HTTP(S), www, or structurally valid bare domain URL to HTTPS."""
+    raw = str(value or "").strip()
+    match = LISTING_WEBSITE_PATTERN.match(raw)
+    if match:
+        candidate = match.group(0).rstrip(".,;:)]}")
+    else:
+        candidate = raw.rstrip(".,;:)]}")
+        if not LISTING_WEBSITE_HOST_PATTERN.fullmatch(candidate):
+            return ""
+        candidate = f"https://{candidate}"
     parsed = urlsplit(candidate)
     if parsed.scheme.lower() not in {"http", "https"} or not parsed.netloc:
         return ""
@@ -4972,6 +4981,10 @@ def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
         "comment_created_at": str(raw.get("comment_created_at") or "").strip(),
         "comment_updated_at": str(raw.get("comment_updated_at") or "").strip(),
         "contact": normalize_pipeline_contact(raw.get("contact")),
+        "contact_author": str(raw.get("contact_author") or "").strip(),
+        "contact_source": str(raw.get("contact_source") or "").strip(),
+        "contact_created_at": str(raw.get("contact_created_at") or "").strip(),
+        "contact_updated_at": str(raw.get("contact_updated_at") or "").strip(),
         "website": normalize_listing_website(raw.get("website")),
         "updated_at": str(raw.get("updated_at") or "").strip(),
     }
@@ -5008,6 +5021,10 @@ def merge_pipeline_metadata(
                 for provenance_field in ("comment_author", "comment_source", "comment_created_at", "comment_updated_at"):
                     if update[provenance_field]:
                         result[provenance_field] = update[provenance_field]
+            if field == "contact" and (update[field] or field in allow_empty_fields):
+                for provenance_field in ("contact_author", "contact_source", "contact_created_at", "contact_updated_at"):
+                    if update[provenance_field]:
+                        result[provenance_field] = update[provenance_field]
     if update["updated_at"]:
         result["updated_at"] = update["updated_at"]
     return result
@@ -5018,6 +5035,34 @@ def candidate_queue_entry_metadata(entry: dict[str, Any]) -> dict[str, str]:
         {"listed_at": entry.get("added_at")},
         entry.get("pipeline_metadata"),
     )
+
+
+def can_edit_listing_comment(metadata: dict[str, str], actor_name: str) -> bool:
+    """Only the named administrator may alter a direct Tab 0 Listing post."""
+    comment = str(metadata.get("comment") or "").strip()
+    if not comment:
+        return True
+    source = str(metadata.get("comment_source") or "").strip()
+    if source == "team_review_import":
+        return True
+    if source != "admin_listing_post":
+        return False
+    author = str(metadata.get("comment_author") or "").strip()
+    return bool(author) and author.casefold() == str(actor_name or "").strip().casefold()
+
+
+def can_edit_listing_contact(metadata: dict[str, str], actor_name: str) -> bool:
+    """Only the named administrator may alter a direct Tab 0 Contact History post."""
+    contact = str(metadata.get("contact") or "").strip()
+    if not contact:
+        return True
+    source = str(metadata.get("contact_source") or "").strip()
+    if source == "team_review_import":
+        return True
+    if source != "admin_contact_post":
+        return False
+    author = str(metadata.get("contact_author") or "").strip()
+    return bool(author) and author.casefold() == str(actor_name or "").strip().casefold()
 
 
 def normalize_listing_details(value: Any) -> dict[str, str]:
@@ -5243,7 +5288,7 @@ def pipeline_human_comment_feed(
             if not body:
                 continue
             entries.append({
-                "source": f"{source} · Team Review Comment",
+                "source": f"{source} · {'Contact History' if str(comment.get('category') or '') == 'contact_history' else 'Team Review Comment'}",
                 "author": str(comment.get("author") or "").strip(),
                 "created_at": str(comment.get("created_at") or "").strip(),
                 "body": body,
@@ -8622,6 +8667,18 @@ def get_candidate_queue_progress() -> dict[str, Any]:
             if find_matching_identity_group(str(entry.get("asset_input") or ""), str(entry.get("company_input") or ""), [group]) is not None:
                 matched_queue_ids.add(entry_id)
 
+        # Full Scout completion includes the three Fast Triage criteria. Keep
+        # record_id empty when no independent Tab 1 source exists so the UI
+        # can show completion without inventing a Fast Triage detail link.
+        fast_triage_done = fast_record is not None or full_record is not None
+        fast_triage_timestamp = (
+            record_upload_timestamp(fast_record)
+            if fast_record is not None
+            else record_upload_timestamp(full_record)
+            if full_record is not None
+            else ""
+        )
+
         rows.append(
             {
                 "identity": group["asset_identity"],
@@ -8634,9 +8691,9 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "listing_manual_fields": {},
                 "pending": {"done": listing_done, "queue_id": None, "completed_at": listing_timestamp},
                 "fast_triage": {
-                    "done": fast_record is not None,
+                    "done": fast_triage_done,
                     "record_id": record_key(fast_record) if fast_record else None,
-                    "completed_at": record_upload_timestamp(fast_record) if fast_record else "",
+                    "completed_at": fast_triage_timestamp,
                 },
                 "full_scout": {
                     "done": full_record is not None,
@@ -8660,9 +8717,9 @@ def get_candidate_queue_progress() -> dict[str, Any]:
             stats["pending"] += 1
             if is_recent_upload(listing_timestamp):
                 recent_15_days["pending"] += 1
-        if fast_record is not None:
+        if fast_triage_done:
             stats["fast_triage"] += 1
-            if is_recent_upload(record_upload_timestamp(fast_record)):
+            if is_recent_upload(fast_triage_timestamp):
                 recent_15_days["fast_triage"] += 1
         if full_record is not None:
             stats["full_scout"] += 1
@@ -8723,6 +8780,8 @@ async def update_candidate_queue_listing_details(request: Request) -> dict[str, 
         raise HTTPException(status_code=400, detail="Unsupported Listing field.")
     if len(value) > 5000:
         raise HTTPException(status_code=400, detail="Listing field values must be 5,000 characters or fewer.")
+    if field == "website" and len(LISTING_WEBSITE_PATTERN.findall(value)) > 1:
+        raise HTTPException(status_code=400, detail="Website는 하나만 입력할 수 있습니다.")
     queue = load_candidate_queue()
     entry = next((item for item in queue if str(item.get("id") or "") == queue_id), None)
     if entry is None:
@@ -8764,8 +8823,11 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
     value = str(payload.get("value") or "").strip()
     if len(value) > 5000:
         raise HTTPException(status_code=400, detail="Pipeline metadata values must be 5,000 characters or fewer.")
-    if field == "website" and value and not normalize_listing_website(value):
-        raise HTTPException(status_code=400, detail="Website must be a valid HTTP(S) URL.")
+    if field == "website":
+        if len(LISTING_WEBSITE_PATTERN.findall(value)) > 1:
+            raise HTTPException(status_code=400, detail="Website는 하나만 입력할 수 있습니다.")
+        if value and not normalize_listing_website(value):
+            raise HTTPException(status_code=400, detail="Website must be a valid HTTP(S) URL.")
     changed_at = datetime.now(timezone.utc).isoformat()
     actor_name = str(account.get("name") or account.get("email") or "Administrator").strip()
     direct_comment_metadata = {
@@ -8773,7 +8835,12 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
         "comment_source": "admin_listing_post",
         "comment_created_at": changed_at,
         "comment_updated_at": changed_at,
-    } if field == "comment" else {}
+    } if field == "comment" else ({
+        "contact_author": actor_name,
+        "contact_source": "admin_contact_post",
+        "contact_created_at": changed_at,
+        "contact_updated_at": changed_at,
+    } if field == "contact" else {})
     owner_type = str(payload.get("owner_type") or "").strip()
 
     if owner_type == "queue":
@@ -8782,6 +8849,10 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
         entry = next((item for item in queue if str(item.get("id") or "") == queue_id), None)
         if entry is None:
             raise HTTPException(status_code=404, detail="Listing entry was not found.")
+        if field == "comment" and not can_edit_listing_comment(candidate_queue_entry_metadata(entry), actor_name):
+            raise HTTPException(status_code=403, detail="Listing Comment는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
+        if field == "contact" and not can_edit_listing_contact(candidate_queue_entry_metadata(entry), actor_name):
+            raise HTTPException(status_code=403, detail="Contact History Post는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
         updated = merge_pipeline_metadata(
             candidate_queue_entry_metadata(entry),
             {field: value, "updated_at": changed_at, **direct_comment_metadata},
@@ -8802,6 +8873,10 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
         )
         if group is None:
             raise HTTPException(status_code=404, detail="Pipeline record was not found.")
+        if field == "comment" and not can_edit_listing_comment(pipeline_metadata_for_group(group), actor_name):
+            raise HTTPException(status_code=403, detail="Listing Comment는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
+        if field == "contact" and not can_edit_listing_contact(pipeline_metadata_for_group(group), actor_name):
+            raise HTTPException(status_code=403, detail="Contact History Post는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
         actor_ip = get_client_ip(request)
         for record in group.get("records") or []:
             previous = record_pipeline_metadata(record).get(field, "")
@@ -9955,6 +10030,9 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
                 raise HTTPException(status_code=400, detail="Final comment must be 4,000 characters or fewer.")
             field_key = "final_comment"
             previous = str(overrides.get(field_key) or "")
+            owner_id = str(human_review.get("final_comment_author_id") or "")
+            if previous and (not owner_id or owner_id != actor_id):
+                raise HTTPException(status_code=403, detail="Only the administrator who wrote this final comment can edit it.")
             if field_key not in overrides:
                 baseline.setdefault(field_key, previous)
             overrides[field_key] = value
@@ -10392,6 +10470,11 @@ async def create_record_comment(record_id: str, request: Request) -> dict[str, A
     body = str(payload.get("body") or "").strip()
     author = str(account.get("name") or "").strip()
     parent_id = str(payload.get("parent_id") or "").strip() or None
+    category = str(payload.get("category") or "comment").strip().lower()
+    if category not in {"comment", "contact_history", "final_comment"}:
+        raise HTTPException(status_code=400, detail="Comment category must be comment, contact_history, or final_comment.")
+    if category in {"contact_history", "final_comment"}:
+        parent_id = None
     if not body:
         raise HTTPException(status_code=400, detail="Comment body is required.")
     if len(body) > 5000:
@@ -10428,6 +10511,7 @@ async def create_record_comment(record_id: str, request: Request) -> dict[str, A
             "body": body,
             "created_at": created_at,
             "updated_at": created_at,
+            "category": category,
         }
         comments.append(comment)
         collaboration["updated_at"] = created_at
@@ -10453,8 +10537,8 @@ async def create_record_comment(record_id: str, request: Request) -> dict[str, A
 
 @app.delete("/api/records/{record_id:path}/comments/{comment_id}")
 def delete_record_comment(record_id: str, comment_id: str, request: Request) -> dict[str, Any]:
-    """Allow administrators to remove a displayed operational comment."""
-    account = require_auth_admin(request)
+    """Authors may remove their own comments; administrators may remove imports."""
+    account = require_authenticated_user(request)
     records = load_records()
     for index, record in enumerate(records):
         if record_key(record) != record_id:
@@ -10466,6 +10550,14 @@ def delete_record_comment(record_id: str, comment_id: str, request: Request) -> 
         target = next((comment for comment in comments if isinstance(comment, dict) and str(comment.get("id") or "") == comment_id), None)
         if target is None:
             raise HTTPException(status_code=404, detail="Comment was not found.")
+        if target.get("system_import") is True:
+            if not is_auth_admin(account):
+                raise HTTPException(status_code=403, detail="Only administrators can remove imported comments.")
+        else:
+            author_id = str(target.get("author_user_id") or "")
+            actor_id = str(account.get("id") or "")
+            if not author_id or author_id != actor_id:
+                raise HTTPException(status_code=403, detail="Only the author can delete this comment.")
         collaboration["comments"] = [comment for comment in comments if comment is not target]
         if target.get("system_import") is True and str(target.get("import_key") or ""):
             deleted_import_keys = collaboration.get("deleted_import_keys")
@@ -10489,6 +10581,49 @@ def delete_record_comment(record_id: str, comment_id: str, request: Request) -> 
         records[index] = record
         save_records(records)
         return {"ok": True, "record_id": record_id, "record": record, "deleted_id": comment_id}
+    raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
+
+
+@app.patch("/api/records/{record_id:path}/comments/{comment_id}")
+async def update_record_comment(record_id: str, comment_id: str, request: Request) -> dict[str, Any]:
+    """Allow a comment's author to revise their own operational post."""
+    account = require_authenticated_user(request)
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected a comment update object.")
+    body = str(payload.get("body") or "").strip()
+    if not body:
+        raise HTTPException(status_code=400, detail="Comment body is required.")
+    if len(body) > 5000:
+        raise HTTPException(status_code=400, detail="Comment must be 5000 characters or fewer.")
+    actor_id = str(account.get("id") or "")
+    actor_name = str(account.get("name") or "").strip()
+    records = load_records()
+    for index, record in enumerate(records):
+        if record_key(record) != record_id:
+            continue
+        collaboration = ((record.get("meta") or {}).get("collaboration") or {})
+        comments = collaboration.get("comments") if isinstance(collaboration, dict) else None
+        if not isinstance(comments, list):
+            raise HTTPException(status_code=404, detail="Comment was not found.")
+        target = next((comment for comment in comments if isinstance(comment, dict) and str(comment.get("id") or "") == comment_id), None)
+        if target is None:
+            raise HTTPException(status_code=404, detail="Comment was not found.")
+        if target.get("system_import") is True:
+            raise HTTPException(status_code=403, detail="Imported comments are read-only.")
+        if not actor_id or str(target.get("author_user_id") or "") != actor_id:
+            raise HTTPException(status_code=403, detail="Only the author can edit this comment.")
+        previous = str(target.get("body") or "")
+        changed_at = datetime.now(timezone.utc).isoformat()
+        target.update({"body": body, "author": actor_name or str(target.get("author") or ""), "updated_at": changed_at})
+        collaboration["updated_at"] = changed_at
+        append_edit_history(record, source="dashboard_comment_edit", actor_ip=get_client_ip(request), actor_name=actor_name, field="collaboration.comments", previous_value=previous, new_value=body)
+        records[index] = record
+        save_records(records)
+        return {"ok": True, "record_id": record_id, "record": record, "comment": target}
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
 
 
@@ -10556,7 +10691,7 @@ async def add_record_topic_note(record_id: str, request: Request) -> dict[str, A
 
 
 def can_manage_topic_note(account: dict[str, Any], note: dict[str, Any]) -> bool:
-    return is_auth_admin(account) or str(note.get("author_id") or "") == str(account.get("id") or "")
+    return is_auth_admin(account) and str(note.get("author_id") or "") == str(account.get("id") or "")
 
 
 def can_delete_topic_note(account: dict[str, Any], note: dict[str, Any]) -> bool:

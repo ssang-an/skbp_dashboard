@@ -6,8 +6,8 @@ aliases:
   - "amyotrophic_lateral_sclerosis_(als);_acute_ischemic_stroke;_early_sympt_a786f38d"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-22"
-updated_at: "2026-08-22"
+created_at: "2026-08-23"
+updated_at: "2026-08-23"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

@@ -305,6 +305,7 @@ const state = {
   dataUploadDrafts: { triage: '', full: '' },
   dataUploadLlmReparseFields: null,
   query: '',
+  searchTokens: [],
   stage: [],
   theme: [],
   cluster: [],
@@ -314,9 +315,9 @@ const state = {
   pass: [],
   duePeriod: 'all',
   filtersByMode: {
-    triage: { query: '', stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [] },
-    full: { query: '', stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [] },
-    focus: { query: '', stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [] }
+    triage: { query: '', searchTokens: [], stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [] },
+    full: { query: '', searchTokens: [], stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [] },
+    focus: { query: '', searchTokens: [], stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [] }
   },
   tableMode: initialTableMode,
   sortKey: initialSort.key,
@@ -429,6 +430,8 @@ const elements = {
   workflowPrioritySubtitle: document.querySelector('#workflowPrioritySubtitle'),
   workflowPriorityList: document.querySelector('#workflowPriorityList'),
   searchInput: document.querySelector('#searchInput'),
+  addSearchTokenButton: document.querySelector('#addSearchTokenButton'),
+  searchTokens: document.querySelector('#searchTokens'),
   themeFilter: document.querySelector('#themeFilter'),
   clusterFilter: document.querySelector('#clusterFilter'),
   modalityFilter: document.querySelector('#modalityFilter'),
@@ -482,6 +485,11 @@ const elements = {
   operationModalMessage: document.querySelector('#operationModalMessage'),
   operationModalStatus: document.querySelector('#operationModalStatus'),
   operationCancelButton: document.querySelector('#operationCancelButton'),
+  pipelineWebsiteModal: document.querySelector('#pipelineWebsiteModal'),
+  pipelineWebsiteModalInput: document.querySelector('#pipelineWebsiteModalInput'),
+  pipelineWebsiteModalStatus: document.querySelector('#pipelineWebsiteModalStatus'),
+  pipelineWebsiteModalCancel: document.querySelector('#pipelineWebsiteModalCancel'),
+  pipelineWebsiteModalSave: document.querySelector('#pipelineWebsiteModalSave'),
   step0Panel: document.querySelector('#step0Panel'),
   step0EntryGrid: document.querySelector('#step0EntryGrid'),
   step0EntryGridBody: document.querySelector('#step0EntryGridBody'),
@@ -546,6 +554,7 @@ let targetContextAnchor = null;
 let step0DragSelection = null;
 let activeStep0MetadataPopover = null;
 let activeStep0LockedEditMode = null;
+let activeStep0LockedRecordId = null;
 let step0WorkflowG6Graphs = [];
 let step0WorkflowG6RenderTimers = [];
 let step0WorkflowG6AnimationFrames = [];
@@ -558,6 +567,8 @@ let dataReuploadResolve = null;
 let activeDataReuploadMatches = [];
 let activeDataReuploadDecisions = new Map();
 let activeBlockingOperation = null;
+let activePipelineWebsiteEditor = null;
+let pipelineWebsiteOpenTimer = null;
 const OPERATION_CANCELLED = Symbol('operation-cancelled');
 
 function openBlockingOperation({
@@ -1207,6 +1218,138 @@ function canonicalMainIndication(mainIndication, detailedIndication = '') {
   // source-ordered canonical indication for the table's primary display.
   // indicationList retains every matching canonical value for OR filtering.
   return matches[0] || 'Unknown';
+}
+
+function confirmDashboardDelete({
+  title = '삭제하시겠습니까?',
+  message = '삭제한 내용은 복구할 수 없습니다.',
+  confirmLabel = '삭제'
+} = {}) {
+  return new Promise((resolve) => {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'operation-modal-backdrop operation-confirm-backdrop';
+    backdrop.innerHTML = `
+      <section class="operation-modal operation-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="operationConfirmTitle">
+        <header class="operation-modal-header">
+          <span class="operation-modal-mark operation-confirm-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false"><path d="M4 7h16M10 11v6M14 11v6M9 7l1-3h4l1 3M6.5 7l.7 13h9.6l.7-13" /></svg>
+          </span>
+          <div><p class="operation-modal-eyebrow">CONFIRM</p><h2 id="operationConfirmTitle">${escapeHtml(title)}</h2></div>
+        </header>
+        <p class="operation-modal-copy">${escapeHtml(message)}</p>
+        <footer class="operation-modal-actions operation-confirm-actions">
+          <button type="button" class="operation-modal-cancel" data-operation-confirm-cancel>취소</button>
+          <button type="button" class="operation-modal-confirm" data-operation-confirm-accept>${escapeHtml(confirmLabel)}</button>
+        </footer>
+      </section>`;
+    const finish = (confirmed) => {
+      document.removeEventListener('keydown', onKeydown);
+      backdrop.remove();
+      document.body.classList.remove('operation-modal-open');
+      resolve(confirmed);
+    };
+    const onKeydown = (event) => { if (event.key === 'Escape') finish(false); };
+    backdrop.addEventListener('click', (event) => { if (event.target === backdrop) finish(false); });
+    backdrop.querySelector('[data-operation-confirm-cancel]')?.addEventListener('click', () => finish(false));
+    backdrop.querySelector('[data-operation-confirm-accept]')?.addEventListener('click', () => finish(true));
+    document.body.appendChild(backdrop);
+    document.body.classList.add('operation-modal-open');
+    document.addEventListener('keydown', onKeydown);
+    backdrop.querySelector('[data-operation-confirm-accept]')?.focus();
+  });
+}
+
+function pipelineWebsiteCandidates(value) {
+  return String(value || '').match(/https?:\/\/[^\s<>'\"]+/gi) || [];
+}
+
+function closePipelineWebsiteEditor() {
+  activePipelineWebsiteEditor = null;
+  if (elements.pipelineWebsiteModal) elements.pipelineWebsiteModal.hidden = true;
+  document.body.classList.remove('pipeline-website-modal-open');
+}
+
+function setPipelineWebsiteEditorStatus(message = '', isError = false) {
+  if (!elements.pipelineWebsiteModalStatus) return;
+  elements.pipelineWebsiteModalStatus.textContent = message;
+  elements.pipelineWebsiteModalStatus.classList.toggle('is-error', isError);
+}
+
+function openPipelineWebsiteEditor(trigger) {
+  const ownerType = String(trigger?.dataset.ownerType || 'record');
+  const ownerId = String(trigger?.dataset.ownerId || trigger?.dataset.recordId || '').trim();
+  if (!ownerId || !['record', 'queue'].includes(ownerType)) return;
+  activePipelineWebsiteEditor = {
+    ownerType,
+    ownerId,
+    asset: String(trigger.dataset.pipelineAsset || '').trim(),
+  };
+  if (elements.pipelineWebsiteModalInput) {
+    elements.pipelineWebsiteModalInput.value = String(trigger.dataset.websiteUrl || '').trim();
+  }
+  setPipelineWebsiteEditorStatus();
+  if (elements.pipelineWebsiteModal) elements.pipelineWebsiteModal.hidden = false;
+  document.body.classList.add('pipeline-website-modal-open');
+  window.setTimeout(() => {
+    elements.pipelineWebsiteModalInput?.focus();
+    elements.pipelineWebsiteModalInput?.select();
+  }, 0);
+}
+
+function openPipelineWebsiteLink(trigger) {
+  const url = String(trigger?.dataset.websiteUrl || '').trim();
+  if (!url) return;
+  window.clearTimeout(pipelineWebsiteOpenTimer);
+  pipelineWebsiteOpenTimer = window.setTimeout(() => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+    pipelineWebsiteOpenTimer = null;
+  }, 220);
+}
+
+async function savePipelineWebsiteEditor() {
+  const context = activePipelineWebsiteEditor;
+  if (!context) return;
+  const value = String(elements.pipelineWebsiteModalInput?.value || '').trim();
+  const candidates = pipelineWebsiteCandidates(value);
+  if (candidates.length > 1) {
+    setPipelineWebsiteEditorStatus('Website는 하나만 입력할 수 있습니다. 한 개의 HTTP(S) 주소만 남겨 주세요.', true);
+    elements.pipelineWebsiteModalInput?.focus();
+    return;
+  }
+  if (value) {
+    try {
+      const parsed = new URL(value);
+      if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error('Invalid protocol');
+    } catch (_) {
+      setPipelineWebsiteEditorStatus('http:// 또는 https://로 시작하는 주소를 입력해 주세요.', true);
+      elements.pipelineWebsiteModalInput?.focus();
+      return;
+    }
+  }
+  const payload = {
+    owner_type: context.ownerType,
+    field: 'website',
+    value,
+    [context.ownerType === 'queue' ? 'queue_id' : 'record_id']: context.ownerId,
+  };
+  const saveButton = elements.pipelineWebsiteModalSave;
+  if (saveButton) saveButton.disabled = true;
+  setPipelineWebsiteEditorStatus('저장 중입니다…');
+  try {
+    const response = await fetch('/api/candidate-queue/metadata', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.detail || 'Website를 저장하지 못했습니다.');
+    closePipelineWebsiteEditor();
+    await Promise.all([loadRecords(), loadStep0Progress()]);
+  } catch (error) {
+    setPipelineWebsiteEditorStatus(error.message || 'Website를 저장하지 못했습니다.', true);
+  } finally {
+    if (saveButton) saveButton.disabled = false;
+  }
 }
 
 function canonicalIndicationList(values, detailedIndication = '', mainIndication = '') {
@@ -2294,6 +2437,7 @@ function updateHeaderRecordCount() {
 }
 
 function recordDetailHref(row, mode = activeTableMode()) {
+  if (row.isVirtualTriage) return `/detail?id=${encodeURIComponent(row.id)}&tab=full`;
   if (row.isTriage) return `/triage-detail?id=${encodeURIComponent(row.id)}`;
   return `/detail?id=${encodeURIComponent(row.id)}&tab=${encodeURIComponent(mode)}`;
 }
@@ -2332,7 +2476,7 @@ function rowMatchesActiveTableMode(row) {
     return !row.isTriage;
   }
   const status = row[activeFilterKey()];
-  return Boolean(status && status !== '-');
+  return Boolean(row.isVirtualTriage || (status && status !== '-'));
 }
 
 const FOCUS_TABLE_COLUMN_KEYS = [
@@ -2593,6 +2737,9 @@ function closeMultiFilters(except = null) {
 
 function getVisibleRows(includeQuery = true) {
   const query = includeQuery ? state.query.trim().toLowerCase() : '';
+  const searchTerms = [...(state.searchTokens || []), query]
+    .map((term) => String(term || '').trim().toLowerCase())
+    .filter(Boolean);
   const filterKey = activeFilterKey();
   const rows = state.rows.filter((row) => {
       const searchable = [
@@ -2615,7 +2762,7 @@ function getVisibleRows(includeQuery = true) {
 
       return (
         rowMatchesActiveTableMode(row) &&
-        (!query || searchable.includes(query)) &&
+        searchTerms.every((term) => searchable.includes(term)) &&
         selectedFilterMatches(state.theme, row.theme) &&
         selectedFilterMatches(state.cluster, row.cluster) &&
         selectedFilterMatches(state.modality, row.modality) &&
@@ -2643,6 +2790,7 @@ function getVisibleRows(includeQuery = true) {
 function renderFilters() {
   const modeRows = state.rows.filter(rowMatchesActiveTableMode);
   if (elements.searchInput) elements.searchInput.value = state.query;
+  renderSearchTokens();
   const themes = [...new Set(modeRows.map((row) => row.theme).filter(Boolean))].sort();
   const clusters = [...new Set(modeRows.map((row) => row.cluster).filter(Boolean))].sort();
   const modalities = [...new Set(modeRows.map((row) => row.modality).filter(Boolean))].sort();
@@ -3452,6 +3600,33 @@ function animateWorkflowBars(container, delay = 0) {
   });
 }
 
+function workflowIdentityKey(row) {
+  const normalize = (value) => String(value || '')
+    .toLocaleLowerCase('en')
+    .replace(/[^\p{L}\p{N}]+/gu, '');
+  return `${normalize(row.company)}::${normalize(row.asset)}`;
+}
+
+function fullScoutTriageAlias(row) {
+  return {
+    ...row,
+    isTriage: true,
+    isVirtualTriage: true,
+    filter1: 'SELECT',
+    hardFilter: 'SELECT',
+    hardFilterReason: 'Full Scout 완료로 Fast Triage 공통 기준(TR, MOA, Data)을 충족한 것으로 표시됩니다.'
+  };
+}
+
+function buildDashboardRows(records) {
+  const rows = records.map(flattenRecord);
+  const triageIdentities = new Set(rows.filter((row) => row.isTriage).map(workflowIdentityKey));
+  const fullScoutAliases = rows
+    .filter((row) => !row.isTriage && !triageIdentities.has(workflowIdentityKey(row)))
+    .map(fullScoutTriageAlias);
+  return [...rows, ...fullScoutAliases];
+}
+
 function modalityDistributionGroup(value) {
   const modality = String(value || 'N/A');
   return /^(cell therapy|gene therapy)$/i.test(modality) ? 'CGT' : modality;
@@ -3915,6 +4090,7 @@ function animateDashboardDonut(container, delay = 0) {
 const STEP0_FILTER_KEYS = ['country', 'modality', 'theme', 'cluster', 'indication', 'stage', 'progress'];
 const STEP0_PROGRESS_FILTER_OPTIONS = [
   { value: 'pending', label: 'Listing' },
+  { value: 'investigation_pending', label: '조사 대기' },
   { value: 'fast_triage', label: 'Fast Triage' },
   { value: 'full_scout', label: 'Full Scout' },
   { value: 'shortlisting', label: 'Shortlisting' }
@@ -4139,6 +4315,9 @@ function selectOption(value, currentValue, label = value) {
 
 function statusEditSelect(row, filterKey) {
   const value = row[filterKey];
+  if (row.isVirtualTriage) {
+    return `<span class="pill pass" title="Full Scout 완료로 표시된 Fast Triage 상태입니다. Tab 2 결과를 엽니다.">${escapeHtml(value)}</span>`;
+  }
   const options = row.isTriage ? ['SELECT', 'REJECT', 'UNVERIFIED'] : ['PASS', 'REVIEW', 'FAIL'];
   const isManual = Object.prototype.hasOwnProperty.call(humanReviewOverrides(row.raw), 'filter_status');
   return `
@@ -4287,6 +4466,9 @@ function admetEditSelect(row) {
 
 function scoreEditSelect(row, scoreKey, criterionId, label) {
   const value = row[scoreKey];
+  if (row.isVirtualTriage) {
+    return scoreBadge(value, 3, `${label}: Tab 2 Full Scout 결과에서 가져온 읽기 전용 점수`);
+  }
   const tone = value >= 3 ? 'high' : value >= 2 ? 'mid' : 'low';
   const isManual = Object.prototype.hasOwnProperty.call(
     humanReviewOverrides(row.raw)?.scores || {},
@@ -4354,13 +4536,14 @@ function totalScoreEditCircle(row) {
 function stageEditSelect(row) {
   const user = getCurrentUser();
   const isManual = hasManualTableFieldEdit(row.raw, 'development_stage');
+  if (row.isVirtualTriage) return `<span class="table-manual-text" title="Tab 2 Full Scout 결과에서 가져온 값">${escapeHtml(row.stage)}</span>`;
   if (!user?.is_admin) return `<span class="table-manual-text${isManual ? ' is-human' : ''}" title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</span>`;
   return `<select class="table-edit-select stage-edit${isManual ? ' is-human' : ''}" data-record-id="${escapeHtml(row.id)}" data-edit-kind="stage" data-previous-value="${escapeHtml(row.stage)}" aria-label="${escapeHtml(row.asset)} stage">${CANONICAL_DEVELOPMENT_STAGES.map((stage) => selectOption(stage, row.stage, stage)).join('')}</select>`;
 }
 
 function modalityEditValue(row) {
   const isManual = hasManualTableFieldEdit(row.raw, 'modality_platform');
-  const editable = row.modality === 'Unknown' && Boolean(getCurrentUser()?.is_admin);
+  const editable = !row.isVirtualTriage && row.modality === 'Unknown' && Boolean(getCurrentUser()?.is_admin);
   const className = `single-line-cell table-manual-text${isManual ? ' is-human' : ''}${editable ? ' is-editable modality-editable' : ''}`;
   const attributes = editable
     ? ` data-table-modality-edit data-record-id="${escapeHtml(row.id)}" data-previous-value="${escapeHtml(row.modality)}" role="button" tabindex="0" aria-label="Double-click to select modality"`
@@ -4371,7 +4554,7 @@ function modalityEditValue(row) {
 function tableTextEditValue(row, kind, value, { title = '', strong = false, className = '' } = {}) {
   const field = kind === 'asset' ? 'asset_name' : kind;
   const isManual = hasManualTableFieldEdit(row.raw, field);
-  const editable = Boolean(getCurrentUser()?.is_admin);
+  const editable = !row.isVirtualTriage && Boolean(getCurrentUser()?.is_admin);
   const classes = `table-manual-text${isManual ? ' is-human' : ''}${editable ? ' is-editable' : ''}${className ? ` ${className}` : ''}`;
   const attributes = editable
     ? ` data-table-text-edit data-record-id="${escapeHtml(row.id)}" data-edit-kind="${escapeHtml(kind)}" data-previous-value="${escapeHtml(value)}"`
@@ -4655,6 +4838,9 @@ function pipelineWebsiteRowButton(row) {
       class="focus-action-button icon-only pipeline-website-row-button${hasUrl ? '' : ' is-unavailable'}"
       data-pipeline-website
       data-record-id="${escapeHtml(row.id)}"
+      data-owner-type="record"
+      data-owner-id="${escapeHtml(row.id)}"
+      data-pipeline-asset="${escapeHtml(row.asset)}"
       data-website-url="${escapeHtml(hasUrl ? url : '')}"
       title="${escapeHtml(hasUrl ? 'Pipeline Website · Tab 0 Listing에서 관리 · 클릭하여 열기' : 'Pipeline Website 미등록 · Tab 0 Listing에서 등록')}"
       aria-label="${escapeHtml(`${row.asset} Pipeline Website ${hasUrl ? '열기' : '미등록'}`)}"
@@ -4718,6 +4904,10 @@ function rubricReevaluationButton(row) {
 }
 
 function rubricReevaluationCell(row) {
+  if (row.isVirtualTriage) {
+    const href = recordDetailHref(row, 'full');
+    return `<div class="full-scout-row-actions"><a class="focus-action-button icon-only" href="${escapeHtml(href)}" title="Tab 2 Full Scout 결과 열기" aria-label="${escapeHtml(`${row.asset} Tab 2 Full Scout 결과 열기`)}"><svg class="pipeline-row-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18 15 12 9 6"/></svg></a>${pipelineWebsiteRowButton(row)}</div>`;
+  }
   return `<div class="full-scout-row-actions">${rubricReevaluationButton(row)}${triageFullScoutCopyButton(row)}${pipelineWebsiteRowButton(row)}</div>`;
 }
 
@@ -5061,11 +5251,10 @@ function renderTable() {
             <tr
               class="clickable-row${mode === 'triage' ? ' triage-preview-row' : ''}${isSelected ? ' selected-row' : ''}"
               data-record-id="${escapeHtml(row.id)}"
+              ${row.isVirtualTriage ? 'data-full-scout-alias="true"' : ''}
               ${mode === 'triage' ? `title="${escapeHtml(rowTitle)}"` : ''}
             >
-              <td class="select-col">
-                <input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} select" ${checked} />
-              </td>
+              <td class="select-col">${row.isVirtualTriage ? '' : `<input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} select" ${checked} />`}</td>
               <td class="company-cell">${tableTextEditValue(row, 'company', row.company)}</td>
               <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${countryDisplayMarkup(row.countryRaw || row.country)}</td>
               <td class="asset-cell">${tableTextEditValue(row, 'asset', row.asset, { strong: true })}</td>
@@ -5132,7 +5321,8 @@ function renderTable() {
 }
 
 function updateSelectionControls(pageRows = null) {
-  const visibleRows = pageRows || getVisibleRows().slice((state.page - 1) * state.pageSize, state.page * state.pageSize);
+  const visibleRows = (pageRows || getVisibleRows().slice((state.page - 1) * state.pageSize, state.page * state.pageSize))
+    .filter((row) => !row.isVirtualTriage);
   const selectedCount = state.selectedIds.size;
   if (elements.deleteSelectedButton) {
     elements.deleteSelectedButton.disabled = selectedCount === 0;
@@ -5207,6 +5397,7 @@ function renderAgentIdentity() {
 function activeFilterCount() {
   return [
     state.query.trim(),
+    (state.searchTokens || []).length,
     hasSelectedFilterValues(state.modality),
     hasSelectedFilterValues(state.theme),
     hasSelectedFilterValues(state.cluster),
@@ -5473,7 +5664,7 @@ async function loadRecords({ signal } = {}) {
     data.oi_partnership_criteria_version || state.latestOiPartnershipCriteriaVersion
   );
   state.rawRecords = Array.isArray(data.records) ? data.records : [];
-  state.rows = state.rawRecords.map(flattenRecord);
+  state.rows = buildDashboardRows(state.rawRecords);
   const availableIds = new Set(state.rows.map((row) => row.id));
   state.selectedIds = new Set([...state.selectedIds].filter((id) => availableIds.has(id)));
   state.page = 1;
@@ -5525,7 +5716,7 @@ async function saveManualReviewEdit(select) {
     const rowIndex = state.rows.findIndex((row) => row.id === recordId);
     if (rowIndex >= 0 && data.record) {
       state.rawRecords[rowIndex] = data.record;
-      state.rows = state.rawRecords.map(flattenRecord);
+      state.rows = buildDashboardRows(state.rawRecords);
     }
     await refreshDashboardSummary();
     renderFilters();
@@ -5697,7 +5888,7 @@ function replaceRecordFromApi(recordId, record) {
   const rowIndex = state.rows.findIndex((row) => row.id === recordId);
   if (rowIndex < 0 || !record) return;
   state.rawRecords[rowIndex] = record;
-  state.rows = state.rawRecords.map(flattenRecord);
+  state.rows = buildDashboardRows(state.rawRecords);
   state.dashboardSummary = null;
 }
 
@@ -10120,6 +10311,14 @@ function showStep0PasteFeedback(message, tone = 'info') {
   elements.step0PasteFeedback.hidden = !message;
   elements.step0PasteFeedback.dataset.tone = tone;
   elements.step0PasteFeedback.textContent = message || '';
+  if (!message) return;
+  window.requestAnimationFrame(() => {
+    elements.step0PasteFeedback?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      block: 'center',
+      inline: 'nearest'
+    });
+  });
 }
 
 function parseStep0ClipboardTable(clipboardText) {
@@ -10201,13 +10400,13 @@ function pasteIntoStep0EntryGrid(event) {
       const target = field ? inputs[STEP0_ENTRY_FIELDS.findIndex((candidate) => candidate.key === field)] : null;
       if (!target) return;
       const incoming = value.trim();
-      if (STEP0_MULTI_VALUE_HEADER_FIELDS.has(field) && assignedFields.has(field) && incoming) {
-        const current = target.value.trim();
-        const existingLines = current.split('\n').map((line) => line.trim()).filter(Boolean);
-        target.value = existingLines.includes(incoming) ? current : [current, incoming].filter(Boolean).join('\n');
-      } else {
-        target.value = incoming;
+      if (STEP0_MULTI_VALUE_HEADER_FIELDS.has(field) && assignedFields.has(field)) {
+        // Repeated Comment/Contact headers are intentionally one logical field.
+        // Later empty spreadsheet cells must never erase an earlier comment.
+        if (incoming) target.value = [target.value.trim(), incoming].filter(Boolean).join('\n');
+        return;
       }
+      target.value = incoming;
       assignedFields.add(field);
     });
   });
@@ -10352,6 +10551,9 @@ function step0FilteredStageStats(rows = step0FilteredSortedRows()) {
     stages.forEach(([statKey, rowKey]) => {
       const cell = row?.[rowKey];
       if (!cell?.done) return;
+      // The Listing card is an operational queue: it counts only candidates
+      // that have not entered either research workflow yet.
+      if (statKey === 'pending' && !step0IsInvestigationPending(row)) return;
       stats[statKey] += 1;
       if (step0IsRecentCompletion(cell.completed_at)) recent[statKey] += 1;
     });
@@ -10410,10 +10612,13 @@ const STEP0_STAGE_LABELS = {
 
 function step0StageCellHtml(stage, cell) {
   const done = Boolean(cell?.done);
-  const tone = done ? 'pass' : 'empty';
+  const isInvestigationPending = stage === 'pending' && step0IsInvestigationPending(cell?.row);
+  const tone = isInvestigationPending ? 'waiting' : done ? 'pass' : 'empty';
   const stageLabel = STEP0_STAGE_LABELS[stage] || stage;
-  const label = done ? '<span aria-hidden="true">✓</span>' : '-';
-  const title = done ? ` title="${escapeHtml(`${stageLabel} 완료 · 상세 보기`)}"` : '';
+  const label = isInvestigationPending ? '<span aria-hidden="true">✓</span>' : done ? '<span aria-hidden="true">✓</span>' : '-';
+  const title = isInvestigationPending
+    ? ` title="${escapeHtml('조사 대기 중 · Fast Triage 및 Full Scout 미수행')}"`
+    : done ? ` title="${escapeHtml(`${stageLabel} 완료 · 상세 보기`)}"` : '';
   if (stage === 'pending' || !done || !cell?.record_id) {
     return `<span class="pill ${tone}"${title}>${label}</span>`;
   }
@@ -10424,7 +10629,7 @@ function step0StageCellHtml(stage, cell) {
 
 function step0CommentFeed(row) {
   const entries = Array.isArray(row?.comment_feed) ? row.comment_feed : [];
-  if (entries.length) return entries.filter((entry) => entry && String(entry.body || '').trim());
+  if (entries.length) return entries.filter((entry) => entry && String(entry.body || '').trim() && !/contact/i.test(String(entry.source || '')));
   const fallback = String(row?.metadata?.comment || '').trim();
   if (fallback) {
     const author = String(row?.metadata?.comment_author || 'Team Review');
@@ -10442,17 +10647,56 @@ function step0CommentFeed(row) {
   return [];
 }
 
+function step0ContactFeed(row) {
+  const entries = Array.isArray(row?.comment_feed) ? row.comment_feed : [];
+  const contactEntries = entries.filter((entry) => entry && String(entry.body || '').trim() && /contact/i.test(String(entry.source || '')));
+  if (contactEntries.length) return contactEntries;
+  const fallback = String(row?.metadata?.contact || '').trim();
+  if (!fallback || /^(?:x|[-–—]+)$/i.test(fallback)) return [];
+  return [{
+    source: 'Tab 0 · Contact History Post',
+    author: String(row?.metadata?.contact_author || 'Team Review'),
+    created_at: String(row?.metadata?.contact_updated_at || row?.metadata?.updated_at || ''),
+    body: fallback
+  }];
+}
+
+function step0ListingCommentCanEdit(row) {
+  const user = getCurrentUser();
+  if (!user?.is_admin) return false;
+  const metadata = row?.metadata || {};
+  const comment = String(metadata.comment || '').trim();
+  if (!comment) return true;
+  const source = String(metadata.comment_source || '').trim();
+  if (source === 'team_review_import') return true;
+  if (source !== 'admin_listing_post') return false;
+  const author = String(metadata.comment_author || '').trim().toLocaleLowerCase('ko');
+  const actor = String(user.name || user.email || '').trim().toLocaleLowerCase('ko');
+  return Boolean(author) && author === actor;
+}
+
+function step0ContactHistoryCanEdit(row) {
+  const user = getCurrentUser();
+  if (!user?.is_admin) return false;
+  const metadata = row?.metadata || {};
+  const contact = String(metadata.contact || '').trim();
+  if (!contact) return true;
+  const source = String(metadata.contact_source || '').trim();
+  if (source === 'team_review_import') return true;
+  if (source !== 'admin_contact_post') return false;
+  const author = String(metadata.contact_author || '').trim().toLocaleLowerCase('ko');
+  const actor = String(user.name || user.email || '').trim().toLocaleLowerCase('ko');
+  return Boolean(author) && author === actor;
+}
+
 function step0MetadataCellHtml(row, field) {
   const value = String(row.metadata?.[field] || '').trim();
-  const commentFeed = field === 'comment' ? step0CommentFeed(row) : [];
+  const metadataFeed = field === 'comment' ? step0CommentFeed(row) : field === 'contact' ? step0ContactFeed(row) : [];
   const owner = row.metadata_owner || {};
   const label = field === 'comment' ? 'Comment' : 'Contact';
   const hasContactHistory = field !== 'contact' || !/^(?:x|[-–—]+)$/i.test(value);
-  const hasValue = field === 'comment' ? commentFeed.length > 0 : Boolean(value) && hasContactHistory;
+  const hasValue = field === 'comment' || field === 'contact' ? metadataFeed.length > 0 : Boolean(value) && hasContactHistory;
   if (!owner.type) return '<span class="pill empty step0-metadata-empty">-</span>';
-  if (field === 'contact' && !hasValue) {
-    return '<span class="pill empty step0-metadata-empty" aria-label="Contact history not recorded">-</span>';
-  }
   const ownerId = owner.type === 'queue' ? owner.queue_id : owner.record_id;
   const title = hasValue ? `${label} 확인 · 두 번 클릭하여 수정` : `${label} 없음 · 두 번 클릭하여 입력`;
   return `<button
@@ -10469,11 +10713,12 @@ function step0MetadataCellHtml(row, field) {
 }
 
 function step0WebsiteCellHtml(row) {
-  const raw = String(row?.listing_details?.website || row?.metadata?.website || '').trim();
-  const queueId = String(row?.pending?.queue_id || '');
-  const researchMode = step0ResearchEditMode(row);
-  const admin = Boolean(getCurrentUser()?.is_admin);
-  if (!/^https?:\/\//i.test(raw)) return '<span class="focus-action-button icon-only pipeline-website-row-button is-unavailable step0-website-empty" aria-label="Website not recorded">-</span>';
+  const raw = String(row?.metadata?.website || row?.listing_details?.website || '').trim();
+  const owner = row?.metadata_owner || {};
+  const ownerType = String(owner.type || '');
+  const ownerId = String(owner.record_id || owner.queue_id || '');
+  const attributes = ` data-pipeline-website data-owner-type="${escapeHtml(ownerType)}" data-owner-id="${escapeHtml(ownerId)}" data-pipeline-asset="${escapeHtml(row.asset || '')}"`;
+  if (!/^https?:\/\//i.test(raw)) return `<button type="button" class="focus-action-button icon-only pipeline-website-row-button is-unavailable step0-website-empty"${attributes} data-website-url="" title="Pipeline Website 미등록 · 두 번 클릭하여 주소 등록" aria-label="Pipeline Website 등록" aria-disabled="true"><svg class="pipeline-row-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 14 14 10M8.5 7.5H7a3 3 0 0 0-3 3V17a3 3 0 0 0 3-3v-1.5M13 4h7v7M20 4l-9 9"/></svg></button>`;
   let safeUrl = '';
   try {
     const parsed = new URL(raw);
@@ -10481,13 +10726,9 @@ function step0WebsiteCellHtml(row) {
   } catch (_) {
     safeUrl = '';
   }
-  if (!safeUrl) return '<span class="focus-action-button icon-only pipeline-website-row-button is-unavailable step0-website-empty" aria-label="Website not recorded">-</span>';
-  const editAttributes = queueId && admin && !researchMode
-    ? ` data-step0-listing-edit data-queue-id="${escapeHtml(queueId)}" data-step0-field="website" data-previous-value="${escapeHtml(raw)}"`
-    : researchMode
-      ? ` data-step0-metadata data-step0-metadata-field="website" data-step0-row-identity="${escapeHtml(row.identity || '')}"`
-      : '';
-  return `<a class="focus-action-button icon-only pipeline-website-row-button step0-website-link"${editAttributes} href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" title="Website · 한 번 클릭하여 열기, 두 번 클릭하여 주소 수정" aria-label="Open website in a new tab">
+  if (!safeUrl) return `<button type="button" class="focus-action-button icon-only pipeline-website-row-button is-unavailable step0-website-empty"${attributes} data-website-url="" title="Pipeline Website 미등록 · 두 번 클릭하여 주소 등록" aria-label="Pipeline Website 등록" aria-disabled="true"><svg class="pipeline-row-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 14 14 10M8.5 7.5H7a3 3 0 0 0-3 3V17a3 3 0 0 0 3-3v-1.5M13 4h7v7M20 4l-9 9"/></svg></button>`;
+  const editAttributes = `${attributes} data-website-url="${escapeHtml(safeUrl)}"`;
+  return `<a class="focus-action-button icon-only pipeline-website-row-button step0-website-link"${editAttributes} href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" title="Website · 한 번 클릭하여 열기, 두 번 클릭하여 주소 수정" aria-label="Open website in a new tab" aria-disabled="false">
     <svg class="pipeline-row-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 14 14 10M8.5 7.5H7a3 3 0 0 0-3 3V17a3 3 0 0 0 3-3v-1.5M13 4h7v7M20 4l-9 9"/></svg>
   </a>`;
 }
@@ -10537,10 +10778,18 @@ function step0RowFilterValues(row, key) {
   if (key === 'cluster') return [step0FilterValue(row?.cluster)];
   if (key === 'indication') return step0IndicationValues(row);
   if (key === 'stage') return [step0FilterValue(display.stage)];
-  if (key === 'progress') return STEP0_PROGRESS_FILTER_OPTIONS
-    .filter((option) => row?.[option.value]?.done)
-    .map((option) => option.value);
+  if (key === 'progress') {
+    const values = STEP0_PROGRESS_FILTER_OPTIONS
+      .filter((option) => option.value !== 'investigation_pending' && row?.[option.value]?.done)
+      .map((option) => option.value);
+    if (step0IsInvestigationPending(row)) values.splice(values.indexOf('pending') + 1, 0, 'investigation_pending');
+    return values;
+  }
   return [];
+}
+
+function step0IsInvestigationPending(row) {
+  return Boolean(row?.pending?.done && !row?.fast_triage?.done && !row?.full_scout?.done);
 }
 
 function step0FilterOptions(key) {
@@ -10705,6 +10954,14 @@ function step0WorkflowNodeSize(stageKey, nodeCount) {
   return Math.round(size * 10) / 10;
 }
 
+function step0WorkflowNodeVariantSize(stageKey, sharedSize, seed) {
+  const range = STEP0_WORKFLOW_NODE_SIZE_RANGES[stageKey] || { min: 4, max: 12 };
+  // Keep the cloud visually layered without turning neighboring nodes into a noisy bubble chart.
+  const variation = 0.86 + step0WorkflowSeededUnit(`${seed}:size`) * 0.28;
+  const size = Math.max(range.min, Math.min(range.max, sharedSize * variation));
+  return Math.round(size * 10) / 10;
+}
+
 function step0WorkflowSeededUnit(seed) {
   let value = 2166136261;
   for (const character of String(seed)) {
@@ -10845,7 +11102,7 @@ function renderStep0WorkflowMap() {
     if (!container) continue;
     const stageRows = groups.get(stage.key) || [];
     const style = STEP0_WORKFLOW_NODE_STYLES[stage.key];
-    const nodeSize = step0WorkflowNodeSize(stage.key, stageRows.length);
+    const sharedNodeSize = step0WorkflowNodeSize(stage.key, stageRows.length);
     const stageColor = step0WorkflowThemeColor(STEP0_WORKFLOW_STAGE_COLOR_VARIABLES[stage.key], style.color);
     const bounds = shell.getBoundingClientRect();
     const width = Math.max(1, Math.floor(bounds.width));
@@ -10856,6 +11113,11 @@ function renderStep0WorkflowMap() {
       const company = String(row?.company || '-').trim() || '-';
       const display = step0DashboardFieldDisplay(row);
       const id = `pipeline-${stage.key}-${rowIndex}`;
+      const nodeSize = step0WorkflowNodeVariantSize(
+        stage.key,
+        sharedNodeSize,
+        `${stage.key}:${asset}:${company}:${display.stage}:${row?.target || ''}`
+      );
       const position = step0WorkflowIrregularPosition(rowIndex, stageRows.length, width, height, nodeSize, id);
       const entryPosition = step0WorkflowEntryPosition(position, width, height, nodeSize, id);
       const title = `${asset} · ${company} · ${stage.label}${display.stage !== '-' ? ` · ${display.stage}` : ''}`;
@@ -10998,17 +11260,25 @@ function step0ListingFieldMarkup(row, field, value, { html = '', title = '', cla
 function closeStep0EditLockedModal() {
   if (elements.step0EditLockedModal) elements.step0EditLockedModal.hidden = true;
   activeStep0LockedEditMode = null;
+  activeStep0LockedRecordId = null;
 }
 
-function openStep0EditLockedModal(mode) {
+function openStep0EditLockedModal(mode, { commentWorkspace = false, recordId = '' } = {}) {
   const targetMode = mode === 'full' ? 'full' : 'triage';
   const label = targetMode === 'full' ? 'Tab 2 · Full Scout' : 'Tab 1 · Fast Triage';
   activeStep0LockedEditMode = targetMode;
-  if (elements.step0EditLockedTitle) elements.step0EditLockedTitle.textContent = `${label}에서 수정하세요`;
-  if (elements.step0EditLockedMessage) {
-    elements.step0EditLockedMessage.textContent = `이미 수행된 ${targetMode === 'full' ? 'Full Scout' : 'Fast Triage'}의 공식 조사값이 Tab 0에 표시되고 있습니다. 원본 조사값 수정은 ${label} Pipeline Table에서 진행합니다.`;
+  activeStep0LockedRecordId = String(recordId || '');
+  if (elements.step0EditLockedTitle) {
+    elements.step0EditLockedTitle.textContent = commentWorkspace
+      ? `${label} Team Workspace에서 수정하세요`
+      : `${label}에서 수정하세요`;
   }
-  if (elements.step0EditLockedGo) elements.step0EditLockedGo.textContent = `${label}로 이동`;
+  if (elements.step0EditLockedMessage) {
+    elements.step0EditLockedMessage.textContent = commentWorkspace
+      ? `Tab 0에는 원본 Team Workspace 코멘트가 읽기 전용으로 표시됩니다. 이 코멘트의 수정 및 삭제는 ${label} Team Workspace에서 진행합니다.`
+      : `이미 수행된 ${targetMode === 'full' ? 'Full Scout' : 'Fast Triage'}의 공식 조사값이 Tab 0에 표시되고 있습니다. 원본 조사값 수정은 ${label} Pipeline Table에서 진행합니다.`;
+  }
+  if (elements.step0EditLockedGo) elements.step0EditLockedGo.textContent = commentWorkspace ? `Tab ${targetMode === 'full' ? '2' : '1'} 상세 페이지로 이동` : `${label}로 이동`;
   if (elements.step0EditLockedModal) elements.step0EditLockedModal.hidden = false;
   elements.step0EditLockedGo?.focus();
 }
@@ -11100,7 +11370,8 @@ function positionStep0MetadataPopover(popover, anchor) {
   const rect = anchor.getBoundingClientRect();
   const width = Math.min(360, Math.max(260, window.innerWidth - 24));
   popover.style.width = `${width}px`;
-  const desiredLeft = Math.min(Math.max(12, rect.right - width), window.innerWidth - width - 12);
+  // Start at the Comment pill itself, so the editor stays with the row rather than jumping to the viewport edge.
+  const desiredLeft = Math.min(Math.max(12, rect.left), window.innerWidth - width - 12);
   popover.style.left = `${desiredLeft}px`;
   popover.style.top = `${Math.min(window.innerHeight - 18, rect.bottom + 8)}px`;
   const popoverHeight = popover.getBoundingClientRect().height;
@@ -11146,9 +11417,10 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
   if (!owner.type) return;
   const admin = Boolean(getCurrentUser()?.is_admin);
   if (editing && !admin) return;
-  const label = field === 'comment' ? 'Listing Comment Post' : field === 'contact' ? 'Contact' : 'Website';
+  if (editing && field === 'comment' && !step0ListingCommentCanEdit(row)) return;
+  const label = field === 'comment' ? 'Listing Comment Post' : field === 'contact' ? 'Contact History Post' : 'Website';
   const value = step0MetadataValue(row, field);
-  const commentFeed = field === 'comment' ? step0CommentFeed(row) : [];
+  const commentFeed = field === 'comment' ? step0CommentFeed(row) : field === 'contact' ? step0ContactFeed(row) : [];
   const popover = document.createElement('section');
   popover.className = 'step0-metadata-popover';
   popover.setAttribute('role', 'dialog');
@@ -11167,7 +11439,10 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
       <p class="step0-metadata-value${value ? '' : ' is-empty'}">${value ? escapeHtml(value).replaceAll('\n', '<br>') : `저장된 ${label}이 없습니다.`}</p>
       ${admin ? '<footer><button type="button" class="is-primary" data-step0-metadata-edit>수정</button></footer>' : ''}
     `;
-  if (!editing && field === 'comment') {
+  if (!editing && (field === 'comment' || field === 'contact')) {
+    const isContactHistory = field === 'contact';
+    const postLabel = isContactHistory ? 'Contact History Post' : 'Listing Comment Post';
+    const canEditListingComment = isContactHistory ? step0ContactHistoryCanEdit(row) : step0ListingCommentCanEdit(row);
     const commentCards = commentFeed.length
       ? commentFeed.map((entry) => {
         const source = escapeHtml(String(entry.source || 'Comment'));
@@ -11175,13 +11450,31 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
         const createdAt = escapeHtml(formatDateTimeKo(entry.created_at));
         const body = escapeHtml(String(entry.body || '')).replaceAll('\n', '<br>');
         const byline = [author, createdAt].filter(Boolean).join(' · ');
-        return `<article class="step0-comment-feed-item"><small>${source}${byline ? ` · ${byline}` : ''}</small><p>${body}</p></article>`;
+        const sourceText = String(entry.source || '');
+        const isEditableListingComment = canEditListingComment && sourceText.includes(isContactHistory ? 'Tab 0 · Contact History Post' : 'Tab 0 · Listing Comment');
+        const sourceWorkspaceMode = sourceText.includes('Tab 2') && sourceText.includes('Full Scout')
+          ? 'full'
+          : sourceText.includes('Tab 1') && sourceText.includes('Fast Triage')
+            ? 'triage'
+            : '';
+        const workspaceMode = sourceWorkspaceMode;
+        const workspaceRecordId = workspaceMode === 'full'
+          ? String(row?.full_scout?.record_id || '')
+          : workspaceMode === 'triage'
+            ? String(row?.fast_triage?.record_id || '')
+            : '';
+        const interaction = isEditableListingComment
+          ? ` data-step0-comment-edit data-step0-comment-field="${field}" title="두 번 클릭하여 수정"`
+          : workspaceMode
+            ? ` data-step0-comment-workspace data-step0-mode="${workspaceMode}" data-step0-record-id="${escapeHtml(workspaceRecordId)}" role="button" tabindex="0" title="두 번 클릭하여 원본 Team Workspace로 이동"`
+            : '';
+        return `<article class="step0-comment-feed-item${isEditableListingComment ? ' is-editable' : ''}${workspaceMode ? ' is-workspace-comment' : ''}"${interaction}><header><small>${source}${byline ? ` · ${byline}` : ''}</small>${isEditableListingComment ? `<button type="button" class="step0-comment-delete" data-step0-comment-delete aria-label="${postLabel} 삭제" title="삭제">×</button>` : ''}</header><p>${body}</p></article>`;
       }).join('')
       : '<p class="step0-metadata-value is-empty">No comments recorded.</p>';
     popover.innerHTML = `
-      <header><strong>Listing Comment Post</strong><button type="button" class="step0-metadata-close" aria-label="Close">×</button></header>
+      <header><strong>${postLabel}</strong><button type="button" class="step0-metadata-close" aria-label="Close">×</button></header>
       <div class="step0-comment-feed">${commentCards}</div>
-      ${admin ? '<footer><button type="button" class="is-primary" data-step0-metadata-edit>Listing Comment Post</button></footer>' : ''}
+      ${canEditListingComment ? `<footer><button type="button" class="is-primary" data-step0-metadata-edit>${postLabel}</button></footer>` : ''}
     `;
   }
   document.body.appendChild(popover);
@@ -11192,6 +11485,35 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
   popover.querySelector('[data-step0-metadata-cancel]')?.addEventListener('click', close);
   popover.querySelector('[data-step0-metadata-edit]')?.addEventListener('click', () => {
     openStep0MetadataPopover(anchor, row, field, { editing: true });
+  });
+  popover.querySelector('[data-step0-comment-edit]')?.addEventListener('dblclick', (event) => {
+    if (event.target.closest('[data-step0-comment-delete]')) return;
+    event.preventDefault();
+    openStep0MetadataPopover(anchor, row, event.currentTarget.dataset.step0CommentField || field, { editing: true });
+  });
+  popover.querySelectorAll('[data-step0-comment-workspace]').forEach((card) => {
+    const openWorkspaceGuidance = (event) => {
+      event.preventDefault();
+      openStep0EditLockedModal(card.dataset.step0Mode, { commentWorkspace: true, recordId: card.dataset.step0RecordId });
+    };
+    card.addEventListener('dblclick', openWorkspaceGuidance);
+    card.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') openWorkspaceGuidance(event);
+    });
+  });
+  popover.querySelector('[data-step0-comment-delete]')?.addEventListener('click', async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const postLabel = field === 'contact' ? 'Contact History Post' : 'Listing Comment';
+    if (!await confirmDashboardDelete({ title: `${postLabel}를 삭제할까요?`, message: `삭제한 ${postLabel}는 복구할 수 없습니다.` })) return;
+    const button = event.currentTarget;
+    button.disabled = true;
+    try {
+      await saveStep0Metadata(row, field, '');
+    } catch (error) {
+      button.disabled = false;
+      showStep0Message(error.message || `${postLabel}를 삭제하지 못했습니다.`, 'warning');
+    }
   });
   popover.querySelector('[data-step0-metadata-form]')?.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -11220,11 +11542,10 @@ function step0FilteredSortedRows() {
     if (searchTerms.length) {
       const details = row.listing_details || {};
       const display = step0DashboardFieldDisplay(row);
-      const commentFeed = (row.comment_feed || []).map((entry) => entry?.body || '').join(' ');
-      const haystack = `${row.asset || ''} ${row.company || ''} ${details.country || ''} ${display.country} ${details.modality || ''} ${display.modality} ${details.target || ''} ${details.main_indication || ''} ${display.indication} ${details.stage || ''} ${display.stage} ${row.theme || ''} ${row.cluster || ''} ${details.website || ''} ${row.metadata?.website || ''} ${row.metadata?.comment || ''} ${commentFeed} ${row.metadata?.contact || ''}`.toLowerCase();
-      if (!searchTerms.some((term) => haystack.includes(term))) return false;
+      const haystack = `${row.asset || ''} ${row.company || ''} ${details.country || ''} ${display.country} ${details.modality || ''} ${display.modality} ${details.target || ''} ${details.main_indication || ''} ${display.indication} ${details.stage || ''} ${display.stage} ${row.theme || ''} ${row.cluster || ''} ${details.website || ''} ${row.metadata?.website || ''} ${row.metadata?.contact || ''}`.toLowerCase();
+      if (!searchTerms.every((term) => haystack.includes(term))) return false;
     }
-    if (statusFilters.size && ![...statusFilters].some((status) => row[status]?.done)) return false;
+    if (statusFilters.size && ![...statusFilters].some((status) => step0RowFilterValues(row, 'progress').includes(status))) return false;
     if (['country', 'modality', 'theme', 'cluster', 'indication', 'stage'].some((key) => {
       const selected = step0SelectedFilterValues(key);
       return selected.length > 0 && !selected.some((value) => step0RowFilterValues(row, key).includes(value));
@@ -11243,6 +11564,13 @@ function step0FilteredSortedRows() {
       const bDone = b[sortKey]?.done ? 1 : 0;
       return (aDone - bDone) * direction;
     });
+  } else {
+    // Keep completed investigations together, followed immediately by the
+    // yellow investigation-waiting queue so it is easy to spot on Tab 0.
+    rows = [...rows].sort((a, b) => {
+      const rank = (row) => step0IsInvestigationPending(row) ? 1 : 0;
+      return rank(a) - rank(b);
+    });
   }
   return rows;
 }
@@ -11256,6 +11584,56 @@ function renderStep0SearchTokens() {
       <span>${escapeHtml(token)}</span><b aria-hidden="true">&minus;</b>
     </button>
   `).join('');
+}
+
+function renderSearchTokens() {
+  if (!elements.searchTokens) return;
+  const tokens = state.searchTokens || [];
+  elements.searchTokens.hidden = tokens.length === 0;
+  elements.searchTokens.innerHTML = tokens.map((token) => `
+    <button type="button" class="step0-search-token" data-remove-search-token="${escapeHtml(token)}" aria-label="Remove ${escapeHtml(token)} search condition">
+      <span>${escapeHtml(token)}</span><b aria-hidden="true">&minus;</b>
+    </button>
+  `).join('');
+}
+
+function placeSearchTokenRows() {
+  const rows = [
+    [elements.step0FilterControls, elements.step0SearchTokens],
+    [elements.searchInput?.closest('.controls'), elements.searchTokens]
+  ];
+  rows.forEach(([controls, tokens]) => {
+    if (!controls || !tokens) return;
+    tokens.classList.add('is-controls-token-row');
+    controls.appendChild(tokens);
+  });
+}
+
+function addSearchToken() {
+  const value = String(elements.searchInput?.value || '').trim();
+  if (!value) {
+    elements.searchInput?.focus();
+    return;
+  }
+  const normalized = value.toLocaleLowerCase('ko');
+  const exists = state.searchTokens.some((token) => token.toLocaleLowerCase('ko') === normalized);
+  if (!exists) state.searchTokens.push(value);
+  state.query = '';
+  if (elements.searchInput) elements.searchInput.value = '';
+  state.page = 1;
+  captureModeFilters();
+  renderSearchTokens();
+  renderFilteredDashboard();
+  elements.searchInput?.focus();
+}
+
+function removeSearchToken(token) {
+  const normalized = String(token || '').toLocaleLowerCase('ko');
+  state.searchTokens = state.searchTokens.filter((item) => item.toLocaleLowerCase('ko') !== normalized);
+  state.page = 1;
+  captureModeFilters();
+  renderSearchTokens();
+  renderFilteredDashboard();
 }
 
 function addStep0SearchToken() {
@@ -11342,7 +11720,7 @@ function renderStep0ProgressTable() {
           <td class="step0-target-cell">${step0ListingFieldMarkup(row, 'target', row.listing_details?.target || '', { className: 'target-single-line' })}</td>
           <td>${step0ListingFieldMarkup(row, 'main_indication', display.indicationRaw, { html: escapeHtml(display.indication), title: display.indicationRaw && display.indicationRaw !== display.indication ? display.indicationRaw : display.indication })}</td>
           <td>${step0ListingFieldMarkup(row, 'stage', display.stageRaw, { html: escapeHtml(display.stage), title: display.stageRaw && display.stageRaw !== display.stage ? display.stageRaw : display.stage })}</td>
-          <td>${step0StageCellHtml('pending', row.pending)}</td>
+          <td>${step0StageCellHtml('pending', { ...row.pending, row })}</td>
           <td>${step0StageCellHtml('fast_triage', row.fast_triage)}</td>
           <td>${step0StageCellHtml('full_scout', row.full_scout)}</td>
           <td>${step0StageCellHtml('shortlisting', row.shortlisting)}</td>
@@ -11487,6 +11865,17 @@ function toggleStep0StatusFilter(status) {
   renderStep0FilteredResults();
 }
 
+function applyStep0SummaryStageFilter(status) {
+  // A Summary card represents one workflow state. Keep all dimensional
+  // filters (including multiple indications) and replace only this stage.
+  const filterValue = status === 'pending' ? 'investigation_pending' : status;
+  state.step0StatusFilterValues = new Set(filterValue ? [filterValue] : []);
+  rememberStep0FilterSelection('progress');
+  state.step0Page = 1;
+  renderStep0FilterControls();
+  renderStep0FilteredResults();
+}
+
 function buildTriageInstructionPromptWithCandidates(pairs) {
   const base = buildTriageInstructionPrompt();
   if (!Array.isArray(pairs) || !pairs.length) return base;
@@ -11599,7 +11988,7 @@ elements.step0FilterControls?.addEventListener('click', (event) => {
   if (key && value) updateStep0MultiFilter(key, value);
 });
 elements.step0StatFilterButtons?.forEach((button) => {
-  button.addEventListener('click', () => toggleStep0StatusFilter(button.dataset.step0StatFilter));
+  button.addEventListener('click', () => applyStep0SummaryStageFilter(button.dataset.step0StatFilter));
 });
 elements.step0ResetFiltersButton?.addEventListener('click', resetStep0Filters);
 document.querySelectorAll('button[data-step0-sort]').forEach((button) => {
@@ -11638,13 +12027,19 @@ elements.step0ProgressTableBody?.addEventListener('change', (event) => {
   renderStep0SelectedCount();
 });
 elements.step0ProgressTableBody?.addEventListener('click', (event) => {
+  const pipelineWebsite = event.target.closest('[data-pipeline-website]');
+  if (pipelineWebsite) {
+    event.preventDefault();
+    openPipelineWebsiteLink(pipelineWebsite);
+    return;
+  }
   const indicator = event.target.closest('[data-step0-metadata]');
   if (indicator) {
     const field = indicator.dataset.step0MetadataField;
     const row = state.step0Rows.find((candidate) => candidate.identity === indicator.dataset.step0RowIdentity);
     if (!row || !field) return;
     event.preventDefault();
-    openStep0MetadataPopover(indicator, row, field, { editing: field === 'comment' ? false : !step0MetadataValue(row, field) });
+    openStep0MetadataPopover(indicator, row, field, { editing: false });
     return;
   }
   const locked = event.target.closest('[data-step0-research-locked]');
@@ -11654,6 +12049,14 @@ elements.step0ProgressTableBody?.addEventListener('click', (event) => {
   }
 });
 elements.step0ProgressTableBody?.addEventListener('dblclick', (event) => {
+  const pipelineWebsite = event.target.closest('[data-pipeline-website]');
+  if (pipelineWebsite) {
+    event.preventDefault();
+    window.clearTimeout(pipelineWebsiteOpenTimer);
+    pipelineWebsiteOpenTimer = null;
+    openPipelineWebsiteEditor(pipelineWebsite);
+    return;
+  }
   const website = event.target.closest('.step0-website-link');
   if (website) {
     if (website.matches('[data-step0-listing-edit]')) {
@@ -11699,8 +12102,13 @@ elements.step0ProgressTableBody?.addEventListener('keydown', (event) => {
 elements.step0EditLockedClose?.addEventListener('click', closeStep0EditLockedModal);
 elements.step0EditLockedGo?.addEventListener('click', () => {
   const mode = activeStep0LockedEditMode;
+  const recordId = activeStep0LockedRecordId;
   closeStep0EditLockedModal();
   if (!mode) return;
+  if (recordId) {
+    window.location.href = recordDetailHref({ id: recordId, isTriage: mode === 'triage' }, mode);
+    return;
+  }
   activatePipelineTab(mode);
   document.querySelector('#pipelineContent')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
@@ -11808,7 +12216,7 @@ function normalizeSortForMode(mode) {
   state.sortDirection = 'desc';
 }
 
-const TABLE_FILTER_STATE_KEYS = ['query', 'stage', 'theme', 'cluster', 'modality', 'indication', 'country', 'pass'];
+const TABLE_FILTER_STATE_KEYS = ['query', 'searchTokens', 'stage', 'theme', 'cluster', 'modality', 'indication', 'country', 'pass'];
 
 function captureModeFilters(mode = activeTableMode()) {
   state.filtersByMode[mode] = Object.fromEntries(
@@ -11886,6 +12294,16 @@ elements.searchInput.addEventListener('input', (event) => {
   state.query = event.target.value;
   state.page = 1;
   renderFilteredDashboard();
+});
+elements.searchInput?.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter' || event.isComposing) return;
+  event.preventDefault();
+  addSearchToken();
+});
+elements.addSearchTokenButton?.addEventListener('click', addSearchToken);
+elements.searchTokens?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-remove-search-token]');
+  if (button) removeSearchToken(button.dataset.removeSearchToken);
 });
 
 function handleMultiFilterControlsClick(event) {
@@ -11987,9 +12405,8 @@ window.addEventListener('resize', () => {
 elements.pipelineTable.addEventListener('click', (event) => {
   const pipelineWebsite = event.target.closest('[data-pipeline-website]');
   if (pipelineWebsite) {
-    const url = String(pipelineWebsite.dataset.websiteUrl || '');
-    if (!url) return;
-    window.open(url, '_blank', 'noopener,noreferrer');
+    event.preventDefault();
+    openPipelineWebsiteLink(pipelineWebsite);
     return;
   }
   const rubricRefresh = event.target.closest('[data-rubric-refresh]');
@@ -12021,6 +12438,10 @@ elements.pipelineTable.addEventListener('click', (event) => {
   const rowElement = event.target.closest('[data-record-id]');
   if (!rowElement) return;
   const recordId = rowElement.dataset.recordId;
+  if (rowElement.dataset.fullScoutAlias === 'true') {
+    window.location.href = `/detail?id=${encodeURIComponent(recordId)}&tab=full`;
+    return;
+  }
   if (activeTableMode() === 'triage') {
     window.location.href = `/triage-detail?id=${encodeURIComponent(recordId)}`;
     return;
@@ -12029,6 +12450,15 @@ elements.pipelineTable.addEventListener('click', (event) => {
 });
 
 elements.pipelineTable.addEventListener('dblclick', (event) => {
+  const pipelineWebsite = event.target.closest('[data-pipeline-website]');
+  if (pipelineWebsite) {
+    event.preventDefault();
+    event.stopPropagation();
+    window.clearTimeout(pipelineWebsiteOpenTimer);
+    pipelineWebsiteOpenTimer = null;
+    openPipelineWebsiteEditor(pipelineWebsite);
+    return;
+  }
   const textEdit = event.target.closest('[data-table-text-edit]');
   if (textEdit) {
     event.preventDefault();
@@ -12124,7 +12554,7 @@ elements.selectPageRows?.addEventListener('change', (event) => {
   state.page = Math.min(state.page, pageCount);
   const start = (state.page - 1) * state.pageSize;
   const pageRows = visibleRows.slice(start, start + state.pageSize);
-  pageRows.forEach((row) => {
+  pageRows.filter((row) => !row.isVirtualTriage).forEach((row) => {
     if (event.target.checked) {
       state.selectedIds.add(row.id);
     } else {
@@ -12274,6 +12704,7 @@ elements.columnSettingsGrid?.addEventListener('change', (event) => {
 
 elements.resetFiltersButton?.addEventListener('click', () => {
   state.query = '';
+  state.searchTokens = [];
   state.modality = [];
   state.theme = [];
   state.cluster = [];
@@ -12426,6 +12857,22 @@ elements.operationCancelButton?.addEventListener('click', () => {
   }
   if (elements.operationCancelButton) elements.operationCancelButton.disabled = true;
   operation.controller.abort();
+});
+
+elements.pipelineWebsiteModalCancel?.addEventListener('click', closePipelineWebsiteEditor);
+elements.pipelineWebsiteModalSave?.addEventListener('click', savePipelineWebsiteEditor);
+elements.pipelineWebsiteModal?.addEventListener('click', (event) => {
+  if (event.target === elements.pipelineWebsiteModal) closePipelineWebsiteEditor();
+});
+elements.pipelineWebsiteModalInput?.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    closePipelineWebsiteEditor();
+  }
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    savePipelineWebsiteEditor();
+  }
 });
 
 document.querySelectorAll('[data-agent-prompt]').forEach((button) => {
@@ -12634,6 +13081,7 @@ renderAgentIdentity();
 setupThemeToggle();
 initAuthUI();
 initializeAgentSessions();
+placeSearchTokenRows();
 renderStep0EntryGrid();
 
 window.addEventListener('load', () => {

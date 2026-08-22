@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-21T21:35:53"
+generated_at: "2026-08-23T00:16:03"
 record_id: "Chong Kun Dang_ACL-513 (CKD-513)"
 company: "Chong Kun Dang"
 country: "Republic of Korea"
