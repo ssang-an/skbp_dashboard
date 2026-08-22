@@ -8181,14 +8181,18 @@ def get_candidate_queue_progress() -> dict[str, Any]:
         listing_details_source = "full_scout" if full_record is not None else "fast_triage" if fast_record is not None else "listing"
         rep_table = (representative.get("structured_table") if representative else None) or {}
         rep_summary = (representative.get("json_summary") if representative else None) or {}
+        full_table = (full_record.get("structured_table") if full_record else None) or {}
+        full_summary = (full_record.get("json_summary") if full_record else None) or {}
+        fast_table = (fast_record.get("structured_table") if fast_record else None) or {}
+        fast_summary = (fast_record.get("json_summary") if fast_record else None) or {}
         asset_label = non_empty_text(rep_table.get("asset_name"), rep_summary.get("asset_name"), "Unknown")
         company_label = non_empty_text(rep_table.get("company"), rep_summary.get("company"), "Unknown")
         listing_details = normalize_listing_details({
-            "country": non_empty_text(rep_table.get("company_country"), rep_table.get("country"), rep_summary.get("country"), rep_summary.get("company_country")),
-            "modality": non_empty_text(rep_table.get("modality_platform"), rep_summary.get("modality")),
-            "target": non_empty_text(rep_table.get("target"), rep_summary.get("target")),
-            "main_indication": non_empty_text(rep_table.get("indication"), rep_table.get("main_indication"), rep_summary.get("main_indication"), rep_summary.get("indication")),
-            "stage": non_empty_text(rep_table.get("development_stage"), rep_summary.get("development_stage"), rep_summary.get("stage")),
+            "country": non_empty_text(full_table.get("company_country"), full_table.get("country"), full_summary.get("country"), full_summary.get("company_country"), fast_table.get("company_country"), fast_table.get("country"), fast_summary.get("country"), fast_summary.get("company_country")),
+            "modality": non_empty_text(full_table.get("modality_platform"), full_summary.get("modality"), fast_table.get("modality_platform"), fast_summary.get("modality")),
+            "target": non_empty_text(full_table.get("target"), full_summary.get("target"), fast_table.get("target"), fast_summary.get("target")),
+            "main_indication": non_empty_text(full_table.get("indication"), full_table.get("main_indication"), full_summary.get("main_indication"), full_summary.get("indication"), fast_table.get("indication"), fast_table.get("main_indication"), fast_summary.get("main_indication"), fast_summary.get("indication")),
+            "stage": non_empty_text(full_table.get("development_stage"), full_summary.get("development_stage"), full_summary.get("stage"), fast_table.get("development_stage"), fast_summary.get("development_stage"), fast_summary.get("stage")),
         })
         pipeline_metadata = pipeline_metadata_for_group(group)
         # Historical Fast/Full records predate the Listing queue. They are already part of

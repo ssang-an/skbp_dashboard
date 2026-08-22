@@ -41,7 +41,7 @@ class Step0RecentUploadTests(unittest.TestCase):
         full["structured_table"].update({
             "company_country": "US",
             "modality_platform": "Biologic",
-            "target": "Target Y",
+            "target": "",
             "main_indication": "Parkinson's disease",
             "development_stage": "Phase 1",
         })
@@ -68,7 +68,7 @@ class Step0RecentUploadTests(unittest.TestCase):
         self.assertEqual(researched["listing_details"], {
             "country": "US",
             "modality": "Biologic",
-            "target": "Target Y",
+            "target": "Target X",
             "main_indication": "Parkinson's disease",
             "stage": "Phase 1",
         })
