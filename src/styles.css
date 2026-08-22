@@ -19520,8 +19520,7 @@ button.step0-stat.active {
   min-width: 0;
   height: calc(100% - 64px);
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--accent) 4%, var(--surface)), var(--surface) 70%);
+  background: color-mix(in srgb, var(--surface) 94%, var(--surface-soft));
 }
 
 .step0-workflow-card-canvas.is-collapsed {

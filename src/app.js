@@ -10422,11 +10422,17 @@ const STEP0_WORKFLOW_MAP_STAGES = [
 ];
 
 const STEP0_WORKFLOW_NODE_STYLES = {
-  pending: { color: '#94a3b8', size: 4, collisionPadding: 0.25, repulsion: -1, collisionStrength: 0.28 },
-  fast_triage: { color: '#5f8fbe', size: 7, collisionPadding: 1.8, repulsion: -7 },
-  full_scout: { color: '#4c9b78', size: 10, collisionPadding: 2.2, repulsion: -10 },
-  shortlisting: { color: '#b8871b', size: 18, collisionPadding: 3.2, repulsion: -16, collisionStrength: 0.9 }
+  pending: { color: '#94a3b8', size: 4, spacing: 2 },
+  fast_triage: { color: '#5f8fbe', size: 7, spacing: 4 },
+  full_scout: { color: '#4c9b78', size: 10, spacing: 6 },
+  shortlisting: { color: '#b8871b', size: 18, spacing: 10 }
 };
+
+function step0WorkflowGridShape(nodeCount, width, height) {
+  const aspectRatio = Math.max(width / Math.max(height, 1), 0.5);
+  const cols = Math.max(1, Math.ceil(Math.sqrt(Math.max(nodeCount, 1) * aspectRatio)));
+  return { cols, rows: Math.max(1, Math.ceil(nodeCount / cols)) };
+}
 
 function destroyStep0WorkflowGraph() {
   step0WorkflowG6Graphs.forEach((graph) => graph?.destroy?.());
@@ -10501,37 +10507,32 @@ function renderStep0WorkflowMap() {
       };
     });
     const height = Math.max(1, Math.floor(bounds.height));
+    const grid = step0WorkflowGridShape(nodes.length, width, height);
 
     try {
       const graph = new globalThis.G6.Graph({
-      container,
-      width,
-      height,
-      autoResize: true,
-      animation: true,
-      data: { nodes, edges: [] },
-      node: { type: 'circle' },
-      behaviors: ['drag-canvas', 'drag-element-force'],
-      layout: {
-        type: 'd3-force',
+        container,
         width,
         height,
-        iterations: 36,
-        animation: true,
-        alphaDecay: 0.2,
-        alphaMin: 0.05,
-        velocityDecay: 0.78,
-        manyBody: { strength: style.repulsion, distanceMax: 70 },
-        collide: {
-          radius: (node) => Number(node?.data?.size || 10) / 2 + style.collisionPadding,
-          strength: style.collisionStrength ?? 0.9,
-          iterations: 2
-        },
-        x: { x: width / 2, strength: 0.18 },
-        y: { y: height / 2, strength: 0.18 },
-        center: { strength: 0.16 }
-      }
-    });
+        autoResize: true,
+        animation: false,
+        data: { nodes, edges: [] },
+        node: { type: 'circle' },
+        behaviors: ['drag-canvas'],
+        layout: {
+          type: 'grid',
+          begin: [0, 0],
+          cols: grid.cols,
+          rows: grid.rows,
+          width,
+          height,
+          condense: false,
+          preventOverlap: false,
+          nodeSize: style.size,
+          nodeSpacing: style.spacing,
+          sortBy: 'id'
+        }
+      });
       step0WorkflowG6Graphs.push(graph);
       graph.render();
       graph.on?.('node:pointerenter', (event) => {
