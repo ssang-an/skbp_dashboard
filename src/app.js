@@ -10165,7 +10165,7 @@ function step0CommentFeed(row) {
   const entries = Array.isArray(row?.comment_feed) ? row.comment_feed : [];
   if (entries.length) return entries.filter((entry) => entry && String(entry.body || '').trim());
   const fallback = String(row?.metadata?.comment || '').trim();
-  return fallback ? [{ source: 'Tab 0 · Listing Comment', author: '', created_at: '', body: fallback }] : [];
+  return fallback ? [{ source: 'Tab 0 Team Review · Listing Comment', author: 'Tab 0 Team Review', created_at: '', body: fallback }] : [];
 }
 
 function step0MetadataCellHtml(row, field) {

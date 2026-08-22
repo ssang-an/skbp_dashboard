@@ -135,6 +135,14 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(main.normalize_listing_website("www.example.com"), "")
         self.assertEqual(main.normalize_listing_website("javascript:alert(1)"), "")
 
+    def test_latest_nonblank_website_replaces_the_previous_operational_url(self) -> None:
+        merged = main.merge_pipeline_metadata(
+            {"website": "https://old.example/pipeline"},
+            {"website": "https://new.example/pipeline"},
+        )
+
+        self.assertEqual(merged["website"], "https://new.example/pipeline")
+
     def test_pending_listing_inline_edit_marks_only_the_changed_field(self) -> None:
         entry = {
             "company_input": "Acme Bio",
@@ -261,11 +269,11 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 4)
         comments = full["meta"]["collaboration"]["comments"]
         self.assertEqual([(item["author"], item["body"]) for item in comments], [
-            ("Tab 0", "Tab 0 meeting note"),
+            ("Tab 0 Team Review", "Tab 0 meeting note"),
             ("Fast Triage · Final Comment", "Proceed after BD confirmation."),
             ("Fast Triage · Target Area Relevance", "Confirm the target genetics evidence."),
         ])
-        self.assertEqual(triage["meta"]["collaboration"]["comments"][0]["author"], "Tab 0")
+        self.assertEqual(triage["meta"]["collaboration"]["comments"][0]["author"], "Tab 0 Team Review")
         self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 0)
         self.assertEqual(len(full["meta"]["collaboration"]["comments"]), 3)
 
@@ -327,6 +335,7 @@ class Step0PipelineMetadataTests(unittest.TestCase):
             "Proceed after BD confirmation.",
             "Check the in-vivo comparator.",
         ])
+        self.assertEqual(feed[0]["author"], "Tab 0 Team Review")
         self.assertFalse(any("AI response" in entry["body"] for entry in feed))
 
 

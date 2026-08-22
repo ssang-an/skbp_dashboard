@@ -5135,8 +5135,8 @@ def pipeline_human_comment_feed(
     base_comment = str((metadata or {}).get("comment") or "").strip()
     if base_comment:
         entries.append({
-            "source": "Tab 0 · Listing Comment",
-            "author": "",
+            "source": "Tab 0 Team Review · Listing Comment",
+            "author": "Tab 0 Team Review",
             "created_at": "",
             "body": base_comment,
         })
@@ -5215,7 +5215,7 @@ def pipeline_human_comment_feed(
                 "body": body,
             })
 
-    base_entries = entries[:1] if entries and entries[0].get("source") == "Tab 0 · Listing Comment" else []
+    base_entries = entries[:1] if entries and entries[0].get("source") == "Tab 0 Team Review · Listing Comment" else []
     operational_entries = entries[len(base_entries):]
     operational_entries.sort(key=lambda item: str(item.get("created_at") or ""))
     return base_entries + operational_entries
@@ -5307,7 +5307,7 @@ def upsert_system_comment(
 def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
     """Promote Listing and Fast Triage human comments into their durable destinations.
 
-    Tab 0 metadata is an operational note, so it becomes a `Tab 0` post on each
+    Tab 0 metadata is an operational note, so it becomes a `Tab 0 Team Review` post on each
     researched record.  Human Fast Triage Final/criterion comments are copied to
     Full Scout's Team Review Workspace as distinct source-labelled posts.  Import
     keys make repeated reuploads idempotent and AI entries are never considered.
@@ -5324,7 +5324,7 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
                 if upsert_system_comment(
                     target,
                     import_key=imported_comment_key("tab0-listing", identity),
-                    author="Tab 0",
+                    author="Tab 0 Team Review",
                     body=listing_comment,
                     source="tab0_listing_comment",
                 ):
@@ -8736,14 +8736,15 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
                 {"listed_at": changed_at, field: value, "updated_at": changed_at},
                 allow_empty_fields={field},
             ):
-                append_edit_history(
-                    record,
-                    source="dashboard_pipeline_metadata",
-                    actor_ip=actor_ip,
-                    field=f"pipeline_metadata.{field}",
-                    previous_value=previous,
-                    new_value=value,
-                )
+                if field != "website":
+                    append_edit_history(
+                        record,
+                        source="dashboard_pipeline_metadata",
+                        actor_ip=actor_ip,
+                        field=f"pipeline_metadata.{field}",
+                        previous_value=previous,
+                        new_value=value,
+                    )
         if field == "comment":
             synchronize_cross_workflow_comments(records)
         save_records(records)
