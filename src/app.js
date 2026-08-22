@@ -543,6 +543,8 @@ let activeStep0LockedEditMode = null;
 let step0WorkflowG6Graphs = [];
 let step0WorkflowG6RenderTimers = [];
 let step0WorkflowG6AnimationFrames = [];
+let step0StatAnimationFrames = [];
+let step0StatAnimationTimers = [];
 const focusSaveQueues = new Map();
 let dataReuploadResolve = null;
 let activeDataReuploadMatches = [];
@@ -10191,23 +10193,43 @@ async function loadStep0Progress() {
 }
 
 function renderStep0StatStrip() {
-  if (elements.step0StatPending) elements.step0StatPending.textContent = String(state.step0Stats.pending ?? 0);
-  if (elements.step0StatFastTriage) elements.step0StatFastTriage.textContent = String(state.step0Stats.fast_triage ?? 0);
-  if (elements.step0StatFullScout) elements.step0StatFullScout.textContent = String(state.step0Stats.full_scout ?? 0);
-  if (elements.step0StatShortlisted) elements.step0StatShortlisted.textContent = String(state.step0Stats.shortlisted ?? 0);
-  const recent = state.step0RecentStats || {};
-  const recentBadges = [
-    ['pending', elements.step0RecentPending],
-    ['fast_triage', elements.step0RecentFastTriage],
-    ['full_scout', elements.step0RecentFullScout],
-    ['shortlisted', elements.step0RecentShortlisted]
+  step0StatAnimationTimers.forEach((timer) => clearTimeout(timer));
+  step0StatAnimationTimers = [];
+  step0StatAnimationFrames.forEach((frame) => cancelAnimationFrame(frame));
+  step0StatAnimationFrames = [];
+  const statEntries = [
+    ['pending', elements.step0StatPending, elements.step0RecentPending],
+    ['fast_triage', elements.step0StatFastTriage, elements.step0RecentFastTriage],
+    ['full_scout', elements.step0StatFullScout, elements.step0RecentFullScout],
+    ['shortlisted', elements.step0StatShortlisted, elements.step0RecentShortlisted]
   ];
-  recentBadges.forEach(([key, badge]) => {
-    if (!badge) return;
-    const count = Number(recent[key] || 0);
-    badge.hidden = count <= 0;
-    badge.textContent = `▲ +${count}`;
-    badge.setAttribute('aria-label', `최근 15일 신규 업로드 ${count}건`);
+  const recent = state.step0RecentStats || {};
+  statEntries.forEach(([key, statElement, badge], index) => {
+    if (statElement) statElement.textContent = '0';
+    if (badge) {
+      badge.hidden = true;
+      badge.textContent = '▲ +0';
+    }
+    const total = Math.max(0, Number(state.step0Stats[key] || 0));
+    const recentCount = Math.max(0, Number(recent[key] || 0));
+    const startDelay = index * STEP0_WORKFLOW_STAGE_STAGGER_MS + 80;
+    const timer = setTimeout(() => {
+      const startedAt = performance.now();
+      const duration = 860;
+      const tick = (now) => {
+        const progress = Math.max(0, Math.min(1, (now - startedAt) / duration));
+        const eased = 1 - Math.pow(1 - progress, 3);
+        if (statElement) statElement.textContent = String(Math.round(total * eased));
+        if (badge && recentCount > 0) {
+          badge.hidden = false;
+          badge.textContent = `▲ +${Math.round(recentCount * eased)}`;
+          badge.setAttribute('aria-label', `최근 15일 신규 업로드 ${recentCount}건`);
+        }
+        if (progress < 1) step0StatAnimationFrames.push(requestAnimationFrame(tick));
+      };
+      step0StatAnimationFrames.push(requestAnimationFrame(tick));
+    }, startDelay);
+    step0StatAnimationTimers.push(timer);
   });
 }
 
@@ -10471,7 +10493,7 @@ function step0WorkflowIrregularPosition(index, nodeCount, width, height, size, s
 
 function step0WorkflowEntryPosition(target, width, height, size, seed) {
   const inset = Math.max(size / 2 + 1, 2);
-  const leftSpread = Math.max(width * 0.10, size * 3);
+  const leftSpread = Math.max(width * 0.05, size * 3);
   const x = inset + step0WorkflowSeededUnit(`${seed}:entry-x`) * leftSpread;
   const yJitter = (step0WorkflowSeededUnit(`${seed}:entry-y`) - 0.5) * height * 0.18;
   return {
