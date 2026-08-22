@@ -9742,14 +9742,23 @@ const STEP0_ENTRY_FIELDS = [
   { key: 'target', label: 'Target' },
   { key: 'main_indication', label: 'Main indication' },
   { key: 'stage', label: 'Stage' },
-  { key: 'comment', label: 'Comment' },
+  { key: 'comment', label: 'Comment', multiline: true },
   { key: 'contact', label: 'Contact' }
 ];
 
 function step0EntryRowMarkup(values = {}) {
   return `<tr>${STEP0_ENTRY_FIELDS.map((field) => `
-    <td><input type="text" data-step0-entry-field="${field.key}" value="${escapeHtml(values[field.key] || '')}" aria-label="${field.label}" /></td>
+    <td>${field.multiline
+      ? `<textarea rows="1" data-step0-entry-field="${field.key}" aria-label="${field.label}">${escapeHtml(values[field.key] || '')}</textarea>`
+      : `<input type="text" data-step0-entry-field="${field.key}" value="${escapeHtml(values[field.key] || '')}" aria-label="${field.label}" />`}
+    </td>
   `).join('')}<td class="step0-entry-remove-cell"><button type="button" data-step0-remove-entry-row aria-label="행 삭제" title="행 삭제">×</button></td></tr>`;
+}
+
+function resizeStep0CommentCell(textarea) {
+  if (!(textarea instanceof HTMLTextAreaElement)) return;
+  textarea.style.height = 'auto';
+  textarea.style.height = `${Math.min(Math.max(textarea.scrollHeight, 36), 150)}px`;
 }
 
 function renderStep0EntryGrid(rows = []) {
@@ -9757,6 +9766,7 @@ function renderStep0EntryGrid(rows = []) {
   const safeRows = Array.isArray(rows) ? rows.filter((row) => row && typeof row === 'object') : [];
   const visibleRows = safeRows.length ? safeRows : Array.from({ length: 6 }, () => ({}));
   elements.step0EntryGridBody.innerHTML = visibleRows.map((row) => step0EntryRowMarkup(row)).join('');
+  elements.step0EntryGridBody.querySelectorAll('textarea[data-step0-entry-field]').forEach(resizeStep0CommentCell);
 }
 
 function appendStep0EntryRows(count = 1) {
@@ -9782,6 +9792,42 @@ function collectStep0EntryRows() {
   return { rows, incomplete };
 }
 
+function parseStep0ClipboardTable(clipboardText) {
+  const text = String(clipboardText || '').replace(/\r\n?/g, '\n');
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let inQuotes = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index];
+    if (character === '"') {
+      if (inQuotes && text[index + 1] === '"') {
+        cell += '"';
+        index += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+    if (character === '\t' && !inQuotes) {
+      row.push(cell);
+      cell = '';
+      continue;
+    }
+    if (character === '\n' && !inQuotes) {
+      row.push(cell);
+      if (row.some((value) => value !== '')) rows.push(row);
+      row = [];
+      cell = '';
+      continue;
+    }
+    cell += character;
+  }
+  row.push(cell);
+  if (row.some((value) => value !== '')) rows.push(row);
+  return rows;
+}
+
 function pasteIntoStep0EntryGrid(event) {
   const input = event.target.closest('[data-step0-entry-field]');
   const clipboardText = event.clipboardData?.getData('text/plain') || '';
@@ -9790,7 +9836,7 @@ function pasteIntoStep0EntryGrid(event) {
   const inputRows = [...elements.step0EntryGridBody.querySelectorAll('tr')];
   const startRow = Math.max(0, inputRows.indexOf(input.closest('tr')));
   const startColumn = Math.max(0, STEP0_ENTRY_FIELDS.findIndex((field) => field.key === input.dataset.step0EntryField));
-  const matrix = clipboardText.replace(/\r/g, '').split('\n').filter((line) => line.length > 0).map((line) => line.split('\t'));
+  const matrix = parseStep0ClipboardTable(clipboardText);
   const normalizedHeader = (value) => String(value || '').toLowerCase().replace(/[\s_.-]/g, '');
   const headerKeys = new Set(STEP0_ENTRY_FIELDS.map((field) => normalizedHeader(field.label)).concat(['companyinput', 'assetinput', 'mainindication']));
   const firstRowIsHeader = matrix[0]?.filter((value) => headerKeys.has(normalizedHeader(value))).length >= 2;
@@ -9805,6 +9851,7 @@ function pasteIntoStep0EntryGrid(event) {
       if (target) target.value = value.trim();
     });
   });
+  elements.step0EntryGridBody.querySelectorAll('textarea[data-step0-entry-field]').forEach(resizeStep0CommentCell);
 }
 
 async function importStep0Candidates() {
@@ -10376,6 +10423,9 @@ elements.step0EntryGridBody?.addEventListener('click', (event) => {
   }
 });
 elements.step0EntryGridBody?.addEventListener('paste', pasteIntoStep0EntryGrid);
+elements.step0EntryGridBody?.addEventListener('input', (event) => {
+  if (event.target.matches('textarea[data-step0-entry-field]')) resizeStep0CommentCell(event.target);
+});
 elements.step0CopyInstructionsButton?.addEventListener('click', copyTriagePromptWithSelectedCandidates);
 elements.step0ExportExcelButton?.addEventListener('click', exportStep0Table);
 elements.step0PageSizeSelect?.addEventListener('change', (event) => {

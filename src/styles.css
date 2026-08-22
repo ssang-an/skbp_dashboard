@@ -20144,7 +20144,8 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 
 .step0-entry-grid td { padding: 0; }
 
-.step0-entry-grid input {
+.step0-entry-grid input,
+.step0-entry-grid textarea {
   box-sizing: border-box;
   width: 100%;
   min-height: 36px;
@@ -20157,7 +20158,14 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
   font-size: 12px;
 }
 
-.step0-entry-grid input:focus {
+.step0-entry-grid textarea {
+  display: block;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.step0-entry-grid input:focus,
+.step0-entry-grid textarea:focus {
   position: relative;
   z-index: 1;
   background: color-mix(in srgb, var(--accent) 5%, var(--surface));
