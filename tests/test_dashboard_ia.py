@@ -488,6 +488,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("skbp.dashboard.step0SummaryDashboardHidden.v1", JS)
         self.assertIn('.step0-summary-dashboard-heading', CSS)
         self.assertIn('.step0-summary-cards.is-collapsed', CSS)
+        self.assertIn('.step0-summary-dashboard {\n  margin: 0;\n  order: 2;', CSS)
 
     def test_step0_uses_one_asset_company_search_instead_of_a_company_dropdown(self):
         step0_controls = HTML[HTML.index('aria-label="진척 현황 controls"') : HTML.index('class="panel pipeline-table-panel"')]

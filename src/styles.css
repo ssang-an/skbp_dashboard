@@ -19366,6 +19366,13 @@ body.report-reupload-open {
 
 .step0-summary-dashboard {
   margin: 0;
+  order: 2;
+}
+
+/* The global workflow cascade gives standalone dashboard blocks the default
+   flex order. Tab 0 deliberately keeps its Listing guide above the dashboard. */
+.step0-panel > .workflow-mode-description[data-workflow-mode="listing"] {
+  order: 1;
 }
 
 .step0-summary-dashboard-heading {
