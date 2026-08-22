@@ -3356,7 +3356,7 @@ function barChart(entries, kind) {
           <span class="distribution-bar-fill"></span>
           <strong class="distribution-bar-percent">${pct}%</strong>
         </span>
-        <b class="distribution-bar-count">${value}</b>
+        <b class="distribution-bar-count" data-bar-count-value="${value}">${value}</b>
       </div>
     `;
   }).join('');
@@ -3413,6 +3413,37 @@ function wireBarHover(container) {
     }
     resetBars();
   }, listenerOptions);
+}
+
+function animateWorkflowBars(container, delay = 0) {
+  if (!container || globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) return;
+  const items = [...container.querySelectorAll('[data-bar-index]')];
+  items.forEach((item, index) => {
+    const track = item.querySelector('.distribution-bar-track');
+    const fill = item.querySelector('.distribution-bar-fill');
+    const countElement = item.querySelector('[data-bar-count-value]');
+    if (!track || !fill || !countElement) return;
+    const targetWidth = track.style.getPropertyValue('--bar-width') || '0%';
+    const targetCount = Math.max(0, Number(countElement.dataset.barCountValue || 0));
+    fill.style.transition = 'none';
+    fill.style.minWidth = '0';
+    fill.style.width = '0%';
+    countElement.textContent = '0';
+    const timer = setTimeout(() => {
+      const startedAt = performance.now();
+      const duration = 680;
+      fill.style.transition = 'width 680ms cubic-bezier(.2, .78, .25, 1)';
+      requestAnimationFrame(() => { fill.style.width = targetWidth; });
+      const tick = (now) => {
+        const progress = Math.max(0, Math.min(1, (now - startedAt) / duration));
+        const eased = 1 - Math.pow(1 - progress, 3);
+        countElement.textContent = String(Math.round(targetCount * eased));
+        if (progress < 1) dashboardDonutAnimationFrames.push(requestAnimationFrame(tick));
+      };
+      dashboardDonutAnimationFrames.push(requestAnimationFrame(tick));
+    }, delay + index * 105);
+    dashboardDonutAnimationTimers.push(timer);
+  });
 }
 
 function modalityDistributionGroup(value) {
@@ -3522,6 +3553,7 @@ function renderWorkflowPriorityList(summary) {
     elements.workflowPriorityList.innerHTML = rows.length
       ? barChart(workflowStageDistribution(rows), 'stage')
       : `<div class="empty-state workflow-empty-state"><span aria-hidden="true">○</span><p>${escapeHtml(emptyMessage)}</p></div>`;
+    animateWorkflowBars(elements.workflowPriorityList, 220);
     wireBarHover(elements.workflowPriorityList);
     return;
   }
