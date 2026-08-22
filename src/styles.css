@@ -20110,10 +20110,21 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 
 .step0-entry-grid {
   width: 100%;
-  min-width: 1090px;
+  min-width: 1183px;
   border-collapse: collapse;
   table-layout: fixed;
 }
+
+.step0-entry-col-company { width: 152px; }
+.step0-entry-col-country { width: 95px; }
+.step0-entry-col-asset { width: 145px; }
+.step0-entry-col-modality { width: 105px; }
+.step0-entry-col-target { width: 120px; }
+.step0-entry-col-indication { width: 150px; }
+.step0-entry-col-stage { width: 105px; }
+.step0-entry-col-comment { width: 150px; }
+.step0-entry-col-contact { width: 125px; }
+.step0-entry-col-remove { width: 36px; }
 
 .step0-entry-grid th,
 .step0-entry-grid td {
