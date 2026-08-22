@@ -518,7 +518,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('x: position.x', workflow_map)
         self.assertIn('y: position.y', workflow_map)
         self.assertNotIn("type: 'grid'", workflow_map)
-        self.assertIn("behaviors: ['drag-canvas']", workflow_map)
+        self.assertIn("behaviors: ['drag-canvas', 'drag-element']", workflow_map)
         self.assertNotIn("'drag-element-force'", workflow_map)
         self.assertNotIn('step0-workflow-stage-headings', workflow_map)
         self.assertNotIn("previousNodeId", workflow_map)
