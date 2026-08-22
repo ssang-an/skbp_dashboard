@@ -9804,7 +9804,7 @@ function step0EntryRowMarkup(values = {}) {
       ? `<textarea rows="1" data-step0-entry-field="${field.key}" aria-label="${field.label}">${escapeHtml(values[field.key] || '')}</textarea>`
       : `<input type="text" data-step0-entry-field="${field.key}" value="${escapeHtml(values[field.key] || '')}" aria-label="${field.label}" />`}
     </td>
-  `).join('')}<td class="step0-entry-remove-cell"><button type="button" data-step0-remove-entry-row aria-label="행 삭제" title="행 삭제">×</button></td></tr>`;
+  `).join('')}</tr>`;
 }
 
 function resizeStep0CommentCell(textarea) {
@@ -9829,6 +9829,7 @@ function appendStep0EntryRows(count = 1) {
 function collectStep0EntryRows() {
   const rows = [];
   const incomplete = [];
+  const invalidAssets = [];
   elements.step0EntryGridBody?.querySelectorAll('tr').forEach((tr, index) => {
     const row = {};
     tr.querySelectorAll('[data-step0-entry-field]').forEach((input) => {
@@ -9839,9 +9840,21 @@ function collectStep0EntryRows() {
       incomplete.push(index + 1);
       return;
     }
+    if (isStep0InvalidAsset(row.asset_input)) {
+      invalidAssets.push(index + 1);
+      return;
+    }
     rows.push(row);
   });
-  return { rows, incomplete };
+  return { rows, incomplete, invalidAssets };
+}
+
+function isStep0AssetPlaceholder(value) {
+  return /^(?:-|x|×)$/i.test(String(value || '').trim());
+}
+
+function isStep0InvalidAsset(value) {
+  return /^(?:-|x|\u00d7|\ud69e)$/i.test(String(value || '').trim());
 }
 
 const STEP0_HEADER_ALIASES = {
@@ -10049,9 +10062,13 @@ function pasteIntoStep0EntryGrid(event) {
 }
 
 async function importStep0Candidates() {
-  const { rows, incomplete } = collectStep0EntryRows();
+  const { rows, incomplete, invalidAssets } = collectStep0EntryRows();
   if (incomplete.length) {
     showStep0Message(`${incomplete.join(', ')}행에는 Company와 Asset이 모두 필요합니다.`, 'warning');
+    return;
+  }
+  if (invalidAssets.length) {
+    showStep0Message(`${invalidAssets.join(', ')}행의 Asset은 빈 값, - 또는 X로 입력할 수 없습니다.`, 'warning');
     return;
   }
   if (!rows.length) {
@@ -10826,16 +10843,6 @@ elements.step0ClearButton?.addEventListener('click', () => {
   setStep0SaveStatus('waiting');
 });
 elements.step0AddEntryRow?.addEventListener('click', () => appendStep0EntryRows());
-elements.step0EntryGridBody?.addEventListener('click', (event) => {
-  const removeButton = event.target.closest('[data-step0-remove-entry-row]');
-  if (!removeButton) return;
-  const row = removeButton.closest('tr');
-  if (elements.step0EntryGridBody.querySelectorAll('tr').length <= 1) {
-    row.querySelectorAll('input').forEach((input) => { input.value = ''; });
-  } else {
-    row.remove();
-  }
-});
 elements.step0EntryGridBody?.addEventListener('paste', pasteIntoStep0EntryGrid);
 elements.step0EntryGridBody?.addEventListener('input', (event) => {
   if (event.target.matches('textarea[data-step0-entry-field]')) resizeStep0CommentCell(event.target);

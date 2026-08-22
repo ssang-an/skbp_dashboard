@@ -99,6 +99,17 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(parsed["rows"], [])
         self.assertEqual(len(parsed["unparsed"]), 2)
 
+    def test_structured_listing_grid_rejects_asset_placeholder_markers(self) -> None:
+        parsed = main.normalize_candidate_queue_rows([
+            {"company_input": "Acme Bio", "asset_input": "-"},
+            {"company_input": "Acme Bio", "asset_input": "X"},
+            {"company_input": "Acme Bio", "asset_input": "×"},
+        ])
+
+        self.assertEqual(parsed["rows"], [])
+        self.assertEqual(len(parsed["unparsed"]), 3)
+        self.assertTrue(main.is_listing_asset_placeholder("\u00d7"))
+
     def test_listing_details_fill_blanks_but_keep_conflicts_from_a_less_complete_duplicate(self) -> None:
         merged = main.merge_listing_details(
             {"country": "KR", "modality": "Small molecule", "target": "Target X"},

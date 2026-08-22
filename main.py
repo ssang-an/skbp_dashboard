@@ -4929,6 +4929,10 @@ LISTING_DETAIL_FIELDS = ("country", "modality", "target", "main_indication", "st
 LISTING_QUEUE_EDITABLE_FIELDS = ("company", "asset", *LISTING_DETAIL_FIELDS)
 CONTACT_HISTORY_ABSENCE_PATTERN = re.compile(r"^(?:x|[-–—]+)$", flags=re.IGNORECASE)
 LISTING_WEBSITE_PATTERN = re.compile(r"https?://[^\s<>'\"]+", flags=re.IGNORECASE)
+LISTING_ASSET_PLACEHOLDER_PATTERN = re.compile(r"^(?:-|x|×)$", flags=re.IGNORECASE)
+
+
+LISTING_ASSET_PLACEHOLDER_PATTERN = re.compile(r"^(?:-|x|\u00d7|\ud69e)$", flags=re.IGNORECASE)
 
 
 def is_pipeline_contact_absence_marker(value: Any) -> bool:
@@ -4951,6 +4955,11 @@ def normalize_listing_website(value: Any) -> str:
     if parsed.scheme.lower() not in {"http", "https"} or not parsed.netloc:
         return ""
     return candidate
+
+
+def is_listing_asset_placeholder(value: Any) -> bool:
+    """Reject spreadsheet placeholders that cannot identify a Pipeline asset."""
+    return bool(LISTING_ASSET_PLACEHOLDER_PATTERN.fullmatch(str(value or "").strip()))
 
 
 def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
@@ -5094,6 +5103,9 @@ def normalize_candidate_queue_rows(raw_rows: Any) -> dict[str, Any]:
             continue
         if not row["company_input"] or not row["asset_input"]:
             unparsed.append(f"row {index}: Company and Asset are required")
+            continue
+        if is_listing_asset_placeholder(row["asset_input"]):
+            unparsed.append(f"row {index}: Asset cannot be blank, -, X, or ×")
             continue
         rows.append(row)
     return {"rows": rows, "unparsed": unparsed}
@@ -5437,7 +5449,7 @@ def parse_candidate_pair_lines(raw_text: str) -> dict[str, Any]:
         if first in {"asset", "asset name", "pipeline"} and second in {"company", "company name"}:
             return
         asset_input = normalized[0] if normalized else ""
-        if not asset_input:
+        if not asset_input or is_listing_asset_placeholder(asset_input):
             unparsed.append(raw_description)
             return
         rows.append({
