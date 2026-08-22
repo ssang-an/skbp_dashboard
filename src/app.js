@@ -9816,9 +9816,13 @@ const STEP0_HEADER_ALIASES = {
   target: ['target', '타깃', '표적'],
   main_indication: ['main indication', 'indication', '주요 적응증', '적응증'],
   stage: ['stage', 'development stage', '개발 단계', '진행 단계'],
-  comment: ['comment', 'comments', '코멘트', '비고', '의견'],
-  contact: ['contact', '담당자', '연락처']
+  comment: ['comment', 'comments', 'priority', 'reason for priority', 'priority reason', 'next step', '코멘트', '비고', '의견'],
+  contact: ['contact', 'meeting history', 'history', '담당자', '연락처', '미팅 이력', '연락 이력']
 };
+
+// A spreadsheet can legitimately carry more than one note/contact context column.
+// These fields concatenate per row; factual identity fields remain one-to-one.
+const STEP0_MULTI_VALUE_HEADER_FIELDS = new Set(['comment', 'contact']);
 
 const STEP0_HEADER_KEYWORD_RULES = {
   company_input: [
@@ -9843,10 +9847,10 @@ const STEP0_HEADER_KEYWORD_RULES = {
     ['development stage', 13], ['clinical stage', 13], ['development status', 11], ['pipeline stage', 11], ['stage', 9], ['phase', 8], ['개발 단계', 13], ['임상 단계', 13], ['진행 단계', 11], ['단계', 9]
   ],
   comment: [
-    ['internal comment', 13], ['review note', 12], ['comment', 9], ['comments', 9], ['note', 7], ['notes', 7], ['memo', 7], ['remark', 7], ['remarks', 7], ['rationale', 6], ['코멘트', 9], ['비고', 7], ['의견', 7], ['메모', 7]
+    ['reason for priority', 14], ['priority reason', 14], ['priority rationale', 13], ['next step', 12], ['internal comment', 13], ['review note', 12], ['comment', 9], ['comments', 9], ['priority', 7], ['note', 7], ['notes', 7], ['memo', 7], ['remark', 7], ['remarks', 7], ['rationale', 6], ['코멘트', 9], ['비고', 7], ['의견', 7], ['메모', 7]
   ],
   contact: [
-    ['contact history', 13], ['contact date', 13], ['contact', 10], ['outreach', 9], ['communication', 8], ['owner', 7], ['email', 7], ['phone', 7], ['담당자', 9], ['연락 이력', 13], ['연락일', 13], ['연락처', 10], ['접촉', 8]
+    ['meeting history', 14], ['meeting date', 13], ['contact history', 13], ['contact date', 13], ['interaction history', 12], ['meeting', 9], ['history', 7], ['contact', 10], ['outreach', 9], ['communication', 8], ['owner', 7], ['email', 7], ['phone', 7], ['담당자', 9], ['미팅 이력', 14], ['연락 이력', 13], ['연락일', 13], ['연락처', 10], ['접촉', 8]
   ]
 };
 
@@ -9878,11 +9882,12 @@ function step0HeaderMappings(cells) {
   const winners = new Map();
   matches.forEach((match, index) => {
     if (!match.field) return;
+    if (STEP0_MULTI_VALUE_HEADER_FIELDS.has(match.field)) return;
     const current = winners.get(match.field);
     if (!current || match.score > current.score) winners.set(match.field, { ...match, index });
   });
   const targets = matches.map((match, index) => (
-    match.field && winners.get(match.field)?.index === index ? match.field : null
+    match.field && (STEP0_MULTI_VALUE_HEADER_FIELDS.has(match.field) || winners.get(match.field)?.index === index) ? match.field : null
   ));
   return {
     targets,
@@ -9976,15 +9981,25 @@ function pasteIntoStep0EntryGrid(event) {
   const tableRows = [...elements.step0EntryGridBody.querySelectorAll('tr')];
   dataMatrix.forEach((cells, rowOffset) => {
     const inputs = [...tableRows[startRow + rowOffset].querySelectorAll('[data-step0-entry-field]')];
+    const assignedFields = new Set();
     cells.forEach((value, columnOffset) => {
       const field = firstRowIsHeader ? headerMapping.targets[columnOffset] : STEP0_ENTRY_FIELDS[startColumn + columnOffset]?.key;
       const target = field ? inputs[STEP0_ENTRY_FIELDS.findIndex((candidate) => candidate.key === field)] : null;
-      if (target) target.value = value.trim();
+      if (!target) return;
+      const incoming = value.trim();
+      if (STEP0_MULTI_VALUE_HEADER_FIELDS.has(field) && assignedFields.has(field) && incoming) {
+        const current = target.value.trim();
+        const existingLines = current.split('\n').map((line) => line.trim()).filter(Boolean);
+        target.value = existingLines.includes(incoming) ? current : [current, incoming].filter(Boolean).join('\n');
+      } else {
+        target.value = incoming;
+      }
+      assignedFields.add(field);
     });
   });
   elements.step0EntryGridBody.querySelectorAll('textarea[data-step0-entry-field]').forEach(resizeStep0CommentCell);
   const labels = firstRowIsHeader
-    ? headerMapping.targets.filter(Boolean).map((key) => STEP0_ENTRY_FIELDS.find((field) => field.key === key)?.label).filter(Boolean).join(' · ')
+    ? [...new Set(headerMapping.targets.filter(Boolean))].map((key) => STEP0_ENTRY_FIELDS.find((field) => field.key === key)?.label).filter(Boolean).join(' · ')
     : STEP0_ENTRY_FIELDS.slice(startColumn, Math.min(STEP0_ENTRY_FIELDS.length, startColumn + Math.max(...dataMatrix.map((cells) => cells.length)))).map((field) => field.label).join(' · ');
   const blankRows = dataMatrix.filter((cells) => cells.every((value) => value === '')).length;
   const headerNote = firstRowIsHeader
