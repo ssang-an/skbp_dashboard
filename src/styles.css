@@ -19540,6 +19540,31 @@ button.step0-stat.active {
   min-width: 0;
 }
 
+.step0-workflow-g6-shell.is-entering .step0-workflow-g6 {
+  animation: step0-workflow-stage-enter 220ms cubic-bezier(.2, .8, .2, 1) both;
+  animation-delay: var(--step0-workflow-enter-delay, 0ms);
+  transform-origin: center;
+  will-change: opacity, transform;
+}
+
+@keyframes step0-workflow-stage-enter {
+  from {
+    opacity: 0;
+    transform: scale(.965);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step0-workflow-g6-shell.is-entering .step0-workflow-g6 {
+    animation: none;
+  }
+}
+
 .step0-workflow-tooltip {
   position: absolute;
   z-index: 2;

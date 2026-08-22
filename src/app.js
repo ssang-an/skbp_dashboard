@@ -10504,7 +10504,8 @@ function renderStep0WorkflowMap() {
   STEP0_WORKFLOW_MAP_STAGES.forEach((stage) => {
     const mapElement = step0WorkflowMapFor(stage.key);
     if (!mapElement) return;
-    mapElement.innerHTML = `<div class="step0-workflow-g6-shell" data-workflow-stage="${stage.key}"><div class="step0-workflow-g6" aria-label="${stage.label} Pipeline 원형 node 그래프"></div><div class="step0-workflow-tooltip" hidden></div></div>`;
+    const enterDelay = stage.index * 300;
+    mapElement.innerHTML = `<div class="step0-workflow-g6-shell is-entering" data-workflow-stage="${stage.key}" style="--step0-workflow-enter-delay:${enterDelay}ms"><div class="step0-workflow-g6" aria-label="${stage.label} Pipeline node 그래프"></div><div class="step0-workflow-tooltip" hidden></div></div>`;
   });
 
   for (const stage of STEP0_WORKFLOW_MAP_STAGES) {
