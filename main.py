@@ -9598,8 +9598,8 @@ async def update_focus_management(record_id: str, request: Request) -> dict[str,
         raise HTTPException(status_code=400, detail="Expected a focus management update object.")
 
     action = str(payload.get("action") or "").strip().lower()
-    if action not in {"add", "remove", "update"}:
-        raise HTTPException(status_code=400, detail="action must be add, remove, or update.")
+    if action not in {"add", "stationary", "remove", "update"}:
+        raise HTTPException(status_code=400, detail="action must be add, stationary, remove, or update.")
 
     actor_name = str(payload.get("actor_name") or "").strip()
     if len(actor_name) > 100:
@@ -9622,6 +9622,7 @@ async def update_focus_management(record_id: str, request: Request) -> dict[str,
         if action == "add":
             previous_value = focus.get("is_tracked", False)
             focus["is_tracked"] = True
+            focus["tracking_status"] = "priority"
             focus.setdefault("added_at", changed_at)
             focus.setdefault("user_comment", "")
             focus.setdefault("due_date", "")
@@ -9637,9 +9638,17 @@ async def update_focus_management(record_id: str, request: Request) -> dict[str,
             apply_auto_detected_evidence(focus, record)
             apply_auto_oi_partnership(focus, record)
             new_value = True
+        elif action == "stationary":
+            history_field = "focus_management.tracking_status"
+            previous_value = focus.get("tracking_status") if focus.get("is_tracked") is True else "untracked"
+            focus["is_tracked"] = True
+            focus["tracking_status"] = "stationary"
+            focus.setdefault("added_at", changed_at)
+            new_value = "stationary"
         elif action == "remove":
             previous_value = focus.get("is_tracked", False)
             focus["is_tracked"] = False
+            focus.pop("tracking_status", None)
             focus["removed_at"] = changed_at
             new_value = False
         else:
@@ -9673,6 +9682,11 @@ async def update_focus_management(record_id: str, request: Request) -> dict[str,
                             detail="Due date must be a valid calendar date in YYYY-MM-DD format.",
                         ) from None
                 focus["due_date"] = value
+            elif field == "tracking_status":
+                value = str(payload.get("value") or "").strip().lower()
+                if value not in {"priority", "stationary"}:
+                    raise HTTPException(status_code=400, detail="tracking_status must be priority or stationary.")
+                focus["tracking_status"] = value
             elif field == "partnership_type":
                 value = str(payload.get("value") or "").strip()
                 allowed_partnership_types = {"", *OI_PARTNERSHIP_TYPES}
@@ -9768,7 +9782,7 @@ async def update_focus_management(record_id: str, request: Request) -> dict[str,
                 raise HTTPException(
                     status_code=400,
                     detail=(
-                        "field must be user_comment, due_date, owner_name, action_plan, partnership_type, partnership_note, "
+                        "field must be user_comment, due_date, owner_name, action_plan, tracking_status, partnership_type, partnership_note, "
                         "partner_material_flag, in_vivo_status, in_vitro_status, or admet_completed."
                     ),
                 )

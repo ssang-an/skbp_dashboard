@@ -3817,6 +3817,18 @@ td {
   background: color-mix(in srgb, var(--yellow) 22%, var(--surface));
 }
 
+.focus-action-button.stationary {
+  border-color: color-mix(in srgb, #34404c 58%, var(--line));
+  background: color-mix(in srgb, #34404c 14%, var(--surface));
+  color: #34404c;
+}
+
+.focus-action-button.stationary:hover {
+  border-color: #34404c;
+  background: color-mix(in srgb, #34404c 22%, var(--surface));
+  color: #26323d;
+}
+
 .focus-action-button.is-saving,
 .focus-due-input.is-saving {
   cursor: wait;
@@ -18808,6 +18820,22 @@ html[data-theme="dark"] .detail-shell #detailActionDate:focus-visible {
 }
 
 .collaboration-title-actions #detailFocusToggle.remove .focus-star-icon {
+  fill: currentColor;
+}
+
+.collaboration-title-actions #detailFocusToggle.stationary {
+  border: 0;
+  background: color-mix(in srgb, #34404c 15%, var(--surface));
+  color: #34404c;
+}
+
+.collaboration-title-actions #detailFocusToggle.stationary:hover,
+.collaboration-title-actions #detailFocusToggle.stationary:focus-visible {
+  background: color-mix(in srgb, #34404c 23%, var(--surface));
+  color: #26323d;
+}
+
+.collaboration-title-actions #detailFocusToggle.stationary .focus-star-icon {
   fill: currentColor;
 }
 /* Match report action icons to the Review workspace header controls. */

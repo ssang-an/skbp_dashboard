@@ -1992,6 +1992,11 @@ function flattenRecord(record, index) {
       || get(record, 'final_insight.one_line_summary', summary.one_line_summary || '-')
     ),
     focusTracked: focusManagement?.is_tracked === true,
+    focusTrackingStatus: focusManagement?.is_tracked === true && focusManagement?.tracking_status === 'stationary'
+      ? 'stationary'
+      : focusManagement?.is_tracked === true
+        ? 'priority'
+        : 'untracked',
     focusComment: String(focusManagement?.user_comment || ''),
     focusDueDate: String(focusManagement?.due_date || ''),
     focusOwner: String(focusManagement?.owner_name || ''),
@@ -4431,20 +4436,33 @@ function renderTableLegacy() {
 
 function focusActionButton(row, location = 'full') {
   const isTracked = row.focusTracked;
-  const action = isTracked ? 'remove' : 'add';
-  const ariaLabel = location === 'focus'
-    ? '즐겨찾기 해제'
-    : isTracked
-      ? '즐겨찾기됨 (클릭 시 해제)'
-      : '즐겨찾기에 추가';
+  const trackingStatus = row.focusTrackingStatus || (isTracked ? 'priority' : 'untracked');
+  const statusCopy = {
+    untracked: {
+      action: 'add',
+      title: 'Shortlisting 미등록 · 클릭하여 우선 검토 대상으로 추가',
+      ariaLabel: 'Shortlisting에 우선 검토 대상으로 추가'
+    },
+    priority: {
+      action: 'stationary',
+      title: 'Shortlisted · Priority review · 클릭하여 Stationary로 변경',
+      ariaLabel: '우선 검토 Shortlisting 상태 · 클릭하여 Stationary로 변경'
+    },
+    stationary: {
+      action: 'remove',
+      title: 'Shortlisted · Stationary (보류 모니터링) · 클릭하여 Shortlisting에서 제거',
+      ariaLabel: 'Stationary 보류 모니터링 상태 · 클릭하여 Shortlisting에서 제거'
+    }
+  }[trackingStatus];
   return `
     <button
       type="button"
-      class="focus-action-button icon-only ${isTracked ? 'remove' : 'add'}"
-      data-focus-action="${action}"
+      class="focus-action-button icon-only ${trackingStatus === 'priority' ? 'remove priority' : trackingStatus === 'stationary' ? 'stationary' : 'add'}"
+      data-focus-action="${statusCopy.action}"
       data-record-id="${escapeHtml(row.id)}"
-      title="${isTracked ? '즐겨찾기(Shortlisting)에서 제거합니다. 작성한 메모는 보존됩니다.' : '이 약물을 즐겨찾기(Shortlisting)에 추가합니다.'}"
-      aria-label="${escapeHtml(ariaLabel)}"
+      data-tracking-status="${trackingStatus}"
+      title="${escapeHtml(statusCopy.title)}"
+      aria-label="${escapeHtml(statusCopy.ariaLabel)}"
     >
       <span aria-hidden="true">${isTracked ? '★' : '☆'}</span>
     </button>

@@ -29,6 +29,14 @@
         "schema_version": { "type": "string" },
         "instruction_version": { "type": "string" },
         "rubric_version": { "type": "string" },
+        "focus_management": {
+          "type": "object",
+          "properties": {
+            "is_tracked": { "type": "boolean" },
+            "tracking_status": { "enum": ["priority", "stationary"] }
+          },
+          "additionalProperties": true
+        },
         "pipeline_metadata": {
           "type": "object",
           "description": "Dashboard-owned internal Listing metadata. It must not affect GPT research, rubric scoring, or source-report content.",

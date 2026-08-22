@@ -1095,21 +1095,36 @@ function setReviewInfoExpanded(expanded) {
 function renderCollaborationPanel(record) {
   const focus = record?.meta?.focus_management || {};
   const tracked = focus.is_tracked === true;
+  const trackingStatus = tracked && focus.tracking_status === 'stationary' ? 'stationary' : tracked ? 'priority' : 'untracked';
+  const trackingCopy = {
+    untracked: {
+      action: 'add',
+      title: 'Shortlisting 미등록 · 클릭하여 우선 검토 대상으로 추가',
+      ariaLabel: 'Shortlisting에 우선 검토 대상으로 추가'
+    },
+    priority: {
+      action: 'stationary',
+      title: 'Shortlisted · Priority review · 클릭하여 Stationary로 변경',
+      ariaLabel: '우선 검토 Shortlisting 상태 · 클릭하여 Stationary로 변경'
+    },
+    stationary: {
+      action: 'remove',
+      title: 'Shortlisted · Stationary (보류 모니터링) · 클릭하여 Shortlisting에서 제거',
+      ariaLabel: 'Stationary 보류 모니터링 상태 · 클릭하여 Shortlisting에서 제거'
+    }
+  }[trackingStatus];
   const attachments = Array.isArray(record?.meta?.attachments) ? record.meta.attachments : [];
   const statusIsHuman = hasManualReviewField(record, 'filter_status');
   const reasonIsHuman = hasManualReviewField(record, 'status_reason');
   const reviewScores = effectiveReviewScores(record);
   if (elements.detailFocusToggle) {
-    elements.detailFocusToggle.dataset.focusAction = tracked ? 'remove' : 'add';
+    elements.detailFocusToggle.dataset.focusAction = trackingCopy.action;
     elements.detailFocusToggle.classList.toggle('add', !tracked);
-    elements.detailFocusToggle.classList.toggle('remove', tracked);
-    elements.detailFocusToggle.title = tracked
-      ? '즐겨찾기(집중 관리)에서 제거합니다.'
-      : '즐겨찾기(집중 관리)에 추가합니다.';
-    elements.detailFocusToggle.setAttribute(
-      'aria-label',
-      tracked ? '즐겨찾기됨 (클릭 시 해제)' : '즐겨찾기에 추가'
-    );
+    elements.detailFocusToggle.classList.toggle('remove', trackingStatus === 'priority');
+    elements.detailFocusToggle.classList.toggle('stationary', trackingStatus === 'stationary');
+    elements.detailFocusToggle.dataset.trackingStatus = trackingStatus;
+    elements.detailFocusToggle.title = trackingCopy.title;
+    elements.detailFocusToggle.setAttribute('aria-label', trackingCopy.ariaLabel);
   }
   if (elements.detailActionDate) {
     elements.detailActionDate.value = String(focus.due_date || '');
@@ -1365,6 +1380,7 @@ function renderEditHistory(record) {
         'structured_table.asset_name': 'Asset',
         'structured_table.main_indication': 'Main indication',
         'structured_table.development_stage': 'Stage',
+        'focus_management.tracking_status': 'Shortlisting 상태',
         'focus_management.total_score_override': 'Tab3 Total Score'
       };
       const fieldSource = fieldLabels[field];
@@ -2193,7 +2209,12 @@ function clearReplyTarget() {
 async function saveDetailFocus(action, trigger = elements.detailFocusToggle) {
   if (!currentRecordId || !currentRecord) return;
   if (trigger) trigger.disabled = true;
-  setCollaborationStatus(action === 'remove' ? 'TAB3에서 제거 중…' : 'TAB3에 반영 중…');
+  const statusCopy = action === 'remove'
+    ? ['Shortlisting에서 제거 중…', 'Shortlisting에서 제거했습니다.']
+    : action === 'stationary'
+      ? ['Stationary 보류 모니터링으로 변경 중…', 'Stationary 보류 모니터링으로 변경했습니다.']
+      : ['우선 검토 Shortlisting에 추가 중…', '우선 검토 Shortlisting에 추가했습니다.'];
+  setCollaborationStatus(statusCopy[0]);
   try {
     const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/focus-management`, {
       method: 'PATCH',
@@ -2204,7 +2225,7 @@ async function saveDetailFocus(action, trigger = elements.detailFocusToggle) {
     if (!response.ok) throw new Error(data.detail || 'TAB3 반영에 실패했습니다.');
     currentRecord = data.record;
     renderCollaborationPanel(currentRecord);
-    setCollaborationStatus(action === 'remove' ? 'TAB3에서 제거했습니다.' : 'TAB3에 추가했습니다.', 'success');
+    setCollaborationStatus(statusCopy[1], 'success');
   } catch (error) {
     setCollaborationStatus(error.message, 'error');
   } finally {
