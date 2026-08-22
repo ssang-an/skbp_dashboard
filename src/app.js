@@ -10478,7 +10478,11 @@ function renderStep0WorkflowMap() {
     if (!container) continue;
     const stageRows = groups.get(stage.key) || [];
     const style = STEP0_WORKFLOW_NODE_STYLES[stage.key];
-    const width = Math.max(container.clientWidth || 180, 180);
+    const bounds = shell.getBoundingClientRect();
+    const graphSize = Math.max(1, Math.floor(Math.min(bounds.width, bounds.height)));
+    container.style.width = `${graphSize}px`;
+    container.style.height = `${graphSize}px`;
+    const width = graphSize;
     const nodeById = new Map();
     const nodes = stageRows.map((row, rowIndex) => {
       const asset = String(row?.asset || 'Unnamed pipeline').trim() || 'Unnamed pipeline';
@@ -10499,7 +10503,7 @@ function renderStep0WorkflowMap() {
         }
       };
     });
-    const height = Math.max(container.clientHeight || 174, 120);
+    const height = graphSize;
 
     try {
       const graph = new globalThis.G6.Graph({
