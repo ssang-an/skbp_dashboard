@@ -10063,6 +10063,10 @@ function pasteIntoStep0EntryGrid(event) {
 }
 
 async function importStep0Candidates() {
+  if (!getCurrentUser()?.is_admin) {
+    showStep0Message('Listing uploads require an administrator account.', 'warning');
+    return;
+  }
   const { rows, incomplete, invalidAssets } = collectStep0EntryRows();
   if (incomplete.length) {
     showStep0Message(`${incomplete.join(', ')}행에는 Company와 Asset이 모두 필요합니다.`, 'warning');
@@ -10183,7 +10187,15 @@ function step0CommentFeed(row) {
   const entries = Array.isArray(row?.comment_feed) ? row.comment_feed : [];
   if (entries.length) return entries.filter((entry) => entry && String(entry.body || '').trim());
   const fallback = String(row?.metadata?.comment || '').trim();
-  return fallback ? [{ source: 'Tab 0 Team Review · Listing Comment', author: 'Tab 0 Team Review', created_at: '', body: fallback }] : [];
+  if (fallback) {
+    return [{
+      source: 'Listing Comment Post',
+      author: String(row?.metadata?.comment_author || 'Tab 0 Team Review'),
+      created_at: String(row?.metadata?.comment_updated_at || row?.metadata?.comment_created_at || ''),
+      body: fallback
+    }];
+  }
+  return [];
 }
 
 function step0MetadataCellHtml(row, field) {
@@ -10446,7 +10458,9 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
   closeStep0MetadataPopover();
   const owner = row?.metadata_owner || {};
   if (!owner.type) return;
-  const label = field === 'comment' ? 'Comment' : field === 'contact' ? 'Contact' : 'Website';
+  const admin = Boolean(getCurrentUser()?.is_admin);
+  if (editing && !admin) return;
+  const label = field === 'comment' ? 'Listing Comment Post' : field === 'contact' ? 'Contact' : 'Website';
   const value = step0MetadataValue(row, field);
   const commentFeed = field === 'comment' ? step0CommentFeed(row) : [];
   const popover = document.createElement('section');
@@ -10465,7 +10479,7 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
     : `
       <header><strong>${label}</strong><button type="button" class="step0-metadata-close" aria-label="닫기">×</button></header>
       <p class="step0-metadata-value${value ? '' : ' is-empty'}">${value ? escapeHtml(value).replaceAll('\n', '<br>') : `저장된 ${label}이 없습니다.`}</p>
-      <footer><button type="button" class="is-primary" data-step0-metadata-edit>수정</button></footer>
+      ${admin ? '<footer><button type="button" class="is-primary" data-step0-metadata-edit>수정</button></footer>' : ''}
     `;
   if (!editing && field === 'comment') {
     const commentCards = commentFeed.length
@@ -10479,9 +10493,9 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
       }).join('')
       : '<p class="step0-metadata-value is-empty">No comments recorded.</p>';
     popover.innerHTML = `
-      <header><strong>Comment</strong><button type="button" class="step0-metadata-close" aria-label="Close">×</button></header>
+      <header><strong>Listing Comment Post</strong><button type="button" class="step0-metadata-close" aria-label="Close">×</button></header>
       <div class="step0-comment-feed">${commentCards}</div>
-      <footer><button type="button" class="is-primary" data-step0-metadata-edit>Listing Comment edit</button></footer>
+      ${admin ? '<footer><button type="button" class="is-primary" data-step0-metadata-edit>Listing Comment Post</button></footer>' : ''}
     `;
   }
   document.body.appendChild(popover);

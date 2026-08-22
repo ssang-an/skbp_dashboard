@@ -43,6 +43,10 @@
           "properties": {
             "listed_at": { "type": "string" },
             "comment": { "type": "string", "maxLength": 5000 },
+            "comment_author": { "type": "string", "maxLength": 200 },
+            "comment_source": { "enum": ["", "team_review_import", "admin_listing_post"] },
+            "comment_created_at": { "type": "string" },
+            "comment_updated_at": { "type": "string" },
             "contact": { "type": "string", "maxLength": 5000 },
             "website": { "type": "string", "format": "uri", "maxLength": 2048 },
             "updated_at": { "type": "string" }

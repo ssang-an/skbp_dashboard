@@ -4967,6 +4967,10 @@ def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
     metadata = {
         "listed_at": str(raw.get("listed_at") or "").strip(),
         "comment": str(raw.get("comment") or "").strip(),
+        "comment_author": str(raw.get("comment_author") or "").strip(),
+        "comment_source": str(raw.get("comment_source") or "").strip(),
+        "comment_created_at": str(raw.get("comment_created_at") or "").strip(),
+        "comment_updated_at": str(raw.get("comment_updated_at") or "").strip(),
         "contact": normalize_pipeline_contact(raw.get("contact")),
         "website": normalize_listing_website(raw.get("website")),
         "updated_at": str(raw.get("updated_at") or "").strip(),
@@ -4974,7 +4978,13 @@ def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
     return metadata
 
 
-def merge_pipeline_metadata(existing: Any, incoming: Any, *, allow_empty_fields: set[str] | None = None) -> dict[str, str]:
+def merge_pipeline_metadata(
+    existing: Any,
+    incoming: Any,
+    *,
+    allow_empty_fields: set[str] | None = None,
+    replace_comment: bool = False,
+) -> dict[str, str]:
     """Merge dashboard-owned pipeline metadata without letting a blank paste erase a note."""
     allow_empty_fields = allow_empty_fields or set()
     incoming_raw = incoming if isinstance(incoming, dict) else {}
@@ -4988,10 +4998,16 @@ def merge_pipeline_metadata(existing: Any, incoming: Any, *, allow_empty_fields:
             if field == "comment" and result[field] and update[field]:
                 existing_normalized = re.sub(r"\s+", " ", result[field]).strip().casefold()
                 incoming_normalized = re.sub(r"\s+", " ", update[field]).strip().casefold()
-                if incoming_normalized not in existing_normalized:
+                if replace_comment:
+                    result[field] = update[field]
+                elif incoming_normalized not in existing_normalized:
                     result[field] = f"{result[field]}\n{update[field]}"
             else:
                 result[field] = update[field]
+            if field == "comment" and (update[field] or field in allow_empty_fields):
+                for provenance_field in ("comment_author", "comment_source", "comment_created_at", "comment_updated_at"):
+                    if update[provenance_field]:
+                        result[provenance_field] = update[provenance_field]
     if update["updated_at"]:
         result["updated_at"] = update["updated_at"]
     return result
@@ -5121,10 +5137,16 @@ def update_record_pipeline_metadata(
     incoming_metadata: Any,
     *,
     allow_empty_fields: set[str] | None = None,
+    replace_comment: bool = False,
 ) -> bool:
     meta = record.setdefault("meta", {})
     current = normalize_pipeline_metadata(meta.get("pipeline_metadata"))
-    merged = merge_pipeline_metadata(current, incoming_metadata, allow_empty_fields=allow_empty_fields)
+    merged = merge_pipeline_metadata(
+        current,
+        incoming_metadata,
+        allow_empty_fields=allow_empty_fields,
+        replace_comment=replace_comment,
+    )
     if current == merged:
         return False
     meta["pipeline_metadata"] = merged
@@ -5148,8 +5170,8 @@ def pipeline_human_comment_feed(
     if base_comment:
         entries.append({
             "source": "Tab 0 Team Review · Listing Comment",
-            "author": "Tab 0 Team Review",
-            "created_at": "",
+            "author": str((metadata or {}).get("comment_author") or "Tab 0 Team Review").strip(),
+            "created_at": str((metadata or {}).get("comment_updated_at") or (metadata or {}).get("comment_created_at") or "").strip(),
             "body": base_comment,
         })
 
@@ -5228,6 +5250,8 @@ def pipeline_human_comment_feed(
             })
 
     base_entries = entries[:1] if entries and entries[0].get("source") == "Tab 0 Team Review · Listing Comment" else []
+    if base_entries:
+        base_entries[0]["source"] = "Listing Comment Post"
     operational_entries = entries[len(base_entries):]
     operational_entries.sort(key=lambda item: str(item.get("created_at") or ""))
     return base_entries + operational_entries
@@ -5336,9 +5360,10 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
                 if upsert_system_comment(
                     target,
                     import_key=imported_comment_key("tab0-listing", identity),
-                    author="Tab 0 Team Review",
+                    author=str(metadata.get("comment_author") or "Tab 0 Team Review"),
                     body=listing_comment,
-                    source="tab0_listing_comment",
+                    source="listing_comment_post",
+                    created_at=str(metadata.get("comment_created_at") or metadata.get("comment_updated_at") or ""),
                 ):
                     append_edit_history(
                         target,
@@ -8406,6 +8431,7 @@ def get_dashboard_summary() -> dict[str, Any]:
 @app.post("/api/candidate-queue/import")
 async def import_candidate_queue(request: Request) -> dict[str, Any]:
     """Step 0: import Listing-grid rows into the Listing queue."""
+    require_auth_admin(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -8439,6 +8465,10 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
         incoming_metadata = {
             "listed_at": added_at,
             "comment": row.get("comment", ""),
+            "comment_author": "Tab 0 Team Review" if row.get("comment", "") else "",
+            "comment_source": "team_review_import" if row.get("comment", "") else "",
+            "comment_created_at": added_at if row.get("comment", "") else "",
+            "comment_updated_at": added_at if row.get("comment", "") else "",
             "contact": row.get("contact", ""),
             "website": row.get("website", ""),
             "updated_at": added_at,
@@ -8697,7 +8727,7 @@ async def update_candidate_queue_listing_details(request: Request) -> dict[str, 
 @app.patch("/api/candidate-queue/metadata")
 async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]:
     """Edit a single internal Comment or Contact value from Tab 0."""
-    account = require_authenticated_user(request)
+    account = require_auth_admin(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -8713,6 +8743,13 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
     if field == "website" and value and not normalize_listing_website(value):
         raise HTTPException(status_code=400, detail="Website must be a valid HTTP(S) URL.")
     changed_at = datetime.now(timezone.utc).isoformat()
+    actor_name = str(account.get("name") or account.get("email") or "Administrator").strip()
+    direct_comment_metadata = {
+        "comment_author": actor_name,
+        "comment_source": "admin_listing_post",
+        "comment_created_at": changed_at,
+        "comment_updated_at": changed_at,
+    } if field == "comment" else {}
     owner_type = str(payload.get("owner_type") or "").strip()
 
     if owner_type == "queue":
@@ -8723,8 +8760,9 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
             raise HTTPException(status_code=404, detail="Listing entry was not found.")
         updated = merge_pipeline_metadata(
             candidate_queue_entry_metadata(entry),
-            {field: value, "updated_at": changed_at},
+            {field: value, "updated_at": changed_at, **direct_comment_metadata},
             allow_empty_fields={field},
+            replace_comment=field == "comment",
         )
         entry["pipeline_metadata"] = updated
         save_candidate_queue(queue)
@@ -8745,8 +8783,9 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
             previous = record_pipeline_metadata(record).get(field, "")
             if update_record_pipeline_metadata(
                 record,
-                {"listed_at": changed_at, field: value, "updated_at": changed_at},
+                {"listed_at": changed_at, field: value, "updated_at": changed_at, **direct_comment_metadata},
                 allow_empty_fields={field},
+                replace_comment=field == "comment",
             ):
                 if field != "website":
                     append_edit_history(
@@ -8765,7 +8804,7 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
             "metadata": pipeline_metadata_for_group(group),
             "owner_type": "record",
             "record_id": record_id,
-            "edited_by": str(account.get("name") or ""),
+            "edited_by": actor_name,
         }
 
     raise HTTPException(status_code=400, detail="owner_type must be queue or record.")

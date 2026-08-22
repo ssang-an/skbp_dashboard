@@ -216,6 +216,31 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         duplicate = main.merge_pipeline_metadata(merged, {"comment": "follow-up   requested"})
         self.assertEqual(duplicate["comment"], "Initial meeting note\nFollow-up requested")
 
+    def test_admin_listing_comment_post_replaces_bulk_comment_and_records_author(self) -> None:
+        merged = main.merge_pipeline_metadata(
+            {
+                "comment": "Bulk team review note",
+                "comment_author": "Tab 0 Team Review",
+                "comment_source": "team_review_import",
+                "comment_created_at": "2026-08-22T09:00:00+00:00",
+            },
+            {
+                "comment": "Administrator follow-up note",
+                "comment_author": "Admin Kim",
+                "comment_source": "admin_listing_post",
+                "comment_created_at": "2026-08-22T10:00:00+00:00",
+                "comment_updated_at": "2026-08-22T10:00:00+00:00",
+            },
+            replace_comment=True,
+        )
+
+        self.assertEqual(merged["comment"], "Administrator follow-up note")
+        self.assertEqual(merged["comment_author"], "Admin Kim")
+        self.assertEqual(merged["comment_source"], "admin_listing_post")
+        feed = main.pipeline_human_comment_feed({}, merged)
+        self.assertEqual(feed[0]["source"], "Listing Comment Post")
+        self.assertEqual(feed[0]["author"], "Admin Kim")
+
     def test_explicit_edit_can_clear_a_metadata_field(self) -> None:
         merged = main.merge_pipeline_metadata(
             {"comment": "Remove me", "contact": "owner@acme.test"},
