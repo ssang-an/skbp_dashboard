@@ -501,7 +501,6 @@ const elements = {
   step0RecentFullScout: document.querySelector('#step0RecentFullScout'),
   step0RecentShortlisted: document.querySelector('#step0RecentShortlisted'),
   step0WorkflowMap: document.querySelector('#step0WorkflowMap'),
-  step0WorkflowMapResultCount: document.querySelector('#step0WorkflowMapResultCount'),
   step0SearchInput: document.querySelector('#step0SearchInput'),
   step0AddSearchTokenButton: document.querySelector('#step0AddSearchTokenButton'),
   step0SearchTokens: document.querySelector('#step0SearchTokens'),
@@ -10425,25 +10424,11 @@ function step0WorkflowStageForRow(row) {
     .find((stage) => row?.[stage.key]?.done) || STEP0_WORKFLOW_MAP_STAGES[0];
 }
 
-function step0WorkflowNodeLabel(row) {
-  const asset = String(row?.asset || 'Unnamed pipeline').trim() || 'Unnamed pipeline';
-  return asset.length > 28 ? `${asset.slice(0, 27)}…` : asset;
-}
-
-function step0WorkflowNodeHref(row, stage) {
-  const recordId = String(row?.[stage.key]?.record_id || '').trim();
-  if (!recordId) return '';
-  if (stage.key === 'fast_triage') return recordDetailHref({ id: recordId, isTriage: true }, 'triage');
-  return recordDetailHref({ id: recordId }, stage.key === 'shortlisting' ? 'focus' : 'full');
-}
-
 function renderStep0WorkflowMap() {
   if (!elements.step0WorkflowMap) return;
   if (step0WorkflowMapAnimationFrame) cancelAnimationFrame(step0WorkflowMapAnimationFrame);
   const rows = step0FilteredSortedRows();
-  if (elements.step0WorkflowMapResultCount) {
-    elements.step0WorkflowMapResultCount.textContent = `현재 필터 결과 ${rows.length}건`;
-  }
+  elements.step0WorkflowMap.setAttribute('aria-label', `Pipeline Workflow Map · 현재 필터 결과 ${rows.length}건`);
   const groups = new Map(STEP0_WORKFLOW_MAP_STAGES.map((stage) => [stage.key, []]));
   rows.forEach((row) => {
     const stage = step0WorkflowStageForRow(row);
@@ -10459,22 +10444,17 @@ function renderStep0WorkflowMap() {
   elements.step0WorkflowMap.innerHTML = STEP0_WORKFLOW_MAP_STAGES.map((stage) => {
     const stageRows = groups.get(stage.key) || [];
     const nodes = stageRows.map((row) => {
-      const label = step0WorkflowNodeLabel(row);
+      const asset = String(row?.asset || 'Unnamed pipeline').trim() || 'Unnamed pipeline';
       const company = String(row?.company || '-').trim() || '-';
       const display = step0DashboardFieldDisplay(row);
-      const href = step0WorkflowNodeHref(row, stage);
       const delay = Math.min(nodeIndex++ * 9 + stage.index * 70, 560);
-      const title = `${label} · ${company} · ${stage.label}${display.stage !== '-' ? ` · ${display.stage}` : ''}`;
-      const content = `<span class="step0-workflow-node-dot" aria-hidden="true"></span><span class="step0-workflow-node-label">${escapeHtml(label)}</span>`;
-      if (href) {
-        return `<a class="step0-workflow-node" data-workflow-stage="${stage.key}" style="--node-delay:${delay}ms" href="${escapeHtml(href)}" title="${escapeHtml(title)}" aria-label="${escapeHtml(`${title} 상세 페이지 열기`)}">${content}</a>`;
-      }
-      return `<button class="step0-workflow-node" data-workflow-stage="${stage.key}" data-step0-workflow-listing-asset="${escapeHtml(row?.asset || '')}" style="--node-delay:${delay}ms" type="button" title="${escapeHtml(`${title} · Table에서 보기`)}" aria-label="${escapeHtml(`${title} Table에서 보기`)}">${content}</button>`;
+      const title = `${asset} · ${company} · ${stage.label}${display.stage !== '-' ? ` · ${display.stage}` : ''}`;
+      return `<span class="step0-workflow-node" data-workflow-stage="${stage.key}" style="--node-delay:${delay}ms" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}" role="img"></span>`;
     }).join('');
     return `
       <section class="step0-workflow-stage" data-workflow-stage="${stage.key}">
         <header><strong>${stage.label}</strong><span>${stageRows.length}</span></header>
-        <div class="step0-workflow-node-list">${nodes || '<p class="step0-workflow-stage-empty">해당 없음</p>'}</div>
+        <div class="step0-workflow-node-list">${nodes || '<p class="step0-workflow-stage-empty">-</p>'}</div>
       </section>
     `;
   }).join('');
@@ -11104,20 +11084,6 @@ elements.step0PrevPage?.addEventListener('click', () => {
 elements.step0NextPage?.addEventListener('click', () => {
   state.step0Page += 1;
   renderStep0ProgressTable();
-});
-elements.step0WorkflowMap?.addEventListener('click', (event) => {
-  const listingNode = event.target.closest('[data-step0-workflow-listing-asset]');
-  if (!listingNode) return;
-  const asset = String(listingNode.dataset.step0WorkflowListingAsset || '').trim();
-  if (!asset) return;
-  const exists = state.step0SearchTokens.some((token) => token.toLocaleLowerCase('ko') === asset.toLocaleLowerCase('ko'));
-  if (!exists) state.step0SearchTokens.push(asset);
-  state.step0Query = '';
-  if (elements.step0SearchInput) elements.step0SearchInput.value = '';
-  state.step0Page = 1;
-  renderStep0SearchTokens();
-  renderStep0ProgressTable();
-  elements.step0ProgressTableBody?.closest('.pipeline-table-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 elements.step0SearchInput?.addEventListener('input', (event) => {
   state.step0Query = event.target.value;

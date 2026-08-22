@@ -489,19 +489,22 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('.step0-summary-cards.is-collapsed', CSS)
         self.assertIn('.step0-summary-dashboard {\n  margin: 0;\n  order: 2;', CSS)
 
-    def test_step0_workflow_map_uses_filtered_rows_and_accessible_pipeline_nodes(self):
+    def test_step0_workflow_map_uses_filtered_rows_and_compact_node_graph(self):
         step0 = HTML[HTML.index('id="step0Panel"'):HTML.index('class="panel control-panel"')]
         workflow_map = function_body(JS, "renderStep0WorkflowMap")
         stage_for_row = function_body(JS, "step0WorkflowStageForRow")
 
         self.assertIn('id="step0WorkflowMap"', step0)
-        self.assertIn('id="step0WorkflowMapResultCount"', step0)
+        self.assertNotIn('id="step0WorkflowMapResultCount"', step0)
         self.assertIn('step0FilteredSortedRows()', workflow_map)
         self.assertIn('step0WorkflowStageForRow(row)', workflow_map)
         self.assertIn('requestAnimationFrame', workflow_map)
         self.assertIn('reverse()', stage_for_row)
-        self.assertIn('data-step0-workflow-listing-asset', workflow_map)
+        self.assertIn('role="img"', workflow_map)
+        self.assertNotIn('data-step0-workflow-listing-asset', workflow_map)
         self.assertIn('step0-workflow-map-columns', CSS)
+        self.assertIn('width: 13px;', CSS)
+        self.assertIn('border-radius: 50%;', CSS)
         self.assertIn('@media (prefers-reduced-motion: reduce)', CSS)
         self.assertIn('@keyframes step0-workflow-node-arrive', CSS)
 
