@@ -10480,26 +10480,30 @@ function step0WorkflowEntryPosition(target, width, height, size, seed) {
 
 function step0WorkflowMotionProgress(progress) {
   const eased = 1 - Math.pow(1 - progress, 3);
-  const rebound = Math.sin(progress * Math.PI * 1.45) * (1 - progress) * 0.045;
-  return Math.min(1.035, eased + rebound);
+  const rebound = Math.sin(progress * Math.PI * 2.15) * (1 - progress) * 0.09;
+  return Math.min(1.075, eased + rebound);
 }
 
 function animateStep0WorkflowDots(graph, nodes, stageIndex) {
   const timer = setTimeout(() => {
     const startedAt = performance.now();
-    const duration = 460;
+    const duration = 520;
     const tick = (now) => {
-      const progress = Math.min(1, (now - startedAt) / duration);
-      const motion = step0WorkflowMotionProgress(progress);
-      graph.updateNodeData(nodes.map((node) => ({
-        id: node.id,
-        style: {
-          x: node.data.entryX + (node.data.targetX - node.data.entryX) * motion,
-          y: node.data.entryY + (node.data.targetY - node.data.entryY) * motion
-        }
-      })));
+      const elapsed = now - startedAt;
+      graph.updateNodeData(nodes.map((node) => {
+        const progress = Math.max(0, Math.min(1, (elapsed - node.data.entryDelay) / duration));
+        const motion = step0WorkflowMotionProgress(progress);
+        const arc = Math.sin(progress * Math.PI) * (1 - progress * 0.12);
+        return {
+          id: node.id,
+          style: {
+            x: node.data.entryX + (node.data.targetX - node.data.entryX) * motion + node.data.arcX * arc,
+            y: node.data.entryY + (node.data.targetY - node.data.entryY) * motion + node.data.arcY * arc
+          }
+        };
+      }));
       graph.draw?.();
-      if (progress < 1) {
+      if (elapsed < duration + 140) {
         step0WorkflowG6AnimationFrames.push(requestAnimationFrame(tick));
       }
     };
@@ -10584,7 +10588,10 @@ function renderStep0WorkflowMap() {
           targetX: position.x,
           targetY: position.y,
           entryX: entryPosition.x,
-          entryY: entryPosition.y
+          entryY: entryPosition.y,
+          entryDelay: Math.floor(step0WorkflowSeededUnit(`${id}:stagger`) * 140),
+          arcX: (step0WorkflowSeededUnit(`${id}:arc-x`) - 0.5) * Math.min(width * 0.06, 20),
+          arcY: (step0WorkflowSeededUnit(`${id}:arc-y`) - 0.5) * Math.min(height * 0.18, 28)
         },
         style: {
           size: style.size,
