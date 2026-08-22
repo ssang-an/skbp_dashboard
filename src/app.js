@@ -10473,6 +10473,17 @@ function step0WorkflowIrregularPosition(index, nodeCount, width, height, size, s
   };
 }
 
+function step0WorkflowEntryPosition(target, width, height, size, seed) {
+  const inset = Math.max(size / 2 + 1, 2);
+  const leftSpread = Math.max(width * 0.22, size * 3);
+  const x = inset + step0WorkflowSeededUnit(`${seed}:entry-x`) * leftSpread;
+  const yJitter = (step0WorkflowSeededUnit(`${seed}:entry-y`) - 0.5) * height * 0.18;
+  return {
+    x: Math.max(inset, Math.min(width - inset, x)),
+    y: Math.max(inset, Math.min(height - inset, target.y + yJitter))
+  };
+}
+
 function destroyStep0WorkflowGraph() {
   step0WorkflowG6RenderTimers.forEach((timer) => clearTimeout(timer));
   step0WorkflowG6RenderTimers = [];
@@ -10537,6 +10548,7 @@ function renderStep0WorkflowMap() {
       const display = step0DashboardFieldDisplay(row);
       const id = `pipeline-${stage.key}-${rowIndex}`;
       const position = step0WorkflowIrregularPosition(rowIndex, stageRows.length, width, height, style.size, id);
+      const entryPosition = step0WorkflowEntryPosition(position, width, height, style.size, id);
       const title = `${asset} · ${company} · ${stage.label}${display.stage !== '-' ? ` · ${display.stage}` : ''}`;
       nodeById.set(id, title);
       return {
@@ -10552,8 +10564,8 @@ function renderStep0WorkflowMap() {
           fill: style.color,
           stroke: 'rgba(15, 23, 42, .18)',
           lineWidth: 1,
-          x: position.x,
-          y: position.y,
+          x: entryPosition.x,
+          y: entryPosition.y,
           cursor: 'pointer'
         }
       };
