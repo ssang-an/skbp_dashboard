@@ -480,6 +480,10 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('class="step0-summary-dashboard-heading"', step0)
         self.assertIn('.workflow-mode-description[data-workflow-mode="listing"]', CSS)
         self.assertIn('.step0-summary-dashboard-heading', CSS)
+        self.assertLess(
+            step0.index('class="step0-summary-dashboard"'),
+            step0.index('data-workflow-mode="listing"'),
+        )
 
     def test_step0_uses_one_asset_company_search_instead_of_a_company_dropdown(self):
         step0_controls = HTML[HTML.index('aria-label="진척 현황 controls"') : HTML.index('class="panel pipeline-table-panel"')]
