@@ -9790,10 +9790,14 @@ function pasteIntoStep0EntryGrid(event) {
   const startRow = Math.max(0, inputRows.indexOf(input.closest('tr')));
   const startColumn = Math.max(0, STEP0_ENTRY_FIELDS.findIndex((field) => field.key === input.dataset.step0EntryField));
   const matrix = clipboardText.replace(/\r/g, '').split('\n').filter((line) => line.length > 0).map((line) => line.split('\t'));
-  if (!matrix.length) return;
-  while (elements.step0EntryGridBody.querySelectorAll('tr').length < startRow + matrix.length) appendStep0EntryRows();
+  const normalizedHeader = (value) => String(value || '').toLowerCase().replace(/[\s_.-]/g, '');
+  const headerKeys = new Set(STEP0_ENTRY_FIELDS.map((field) => normalizedHeader(field.label)).concat(['companyinput', 'assetinput', 'mainindication']));
+  const firstRowIsHeader = matrix[0]?.filter((value) => headerKeys.has(normalizedHeader(value))).length >= 2;
+  const dataMatrix = firstRowIsHeader ? matrix.slice(1) : matrix;
+  if (!dataMatrix.length) return;
+  while (elements.step0EntryGridBody.querySelectorAll('tr').length < startRow + dataMatrix.length) appendStep0EntryRows();
   const tableRows = [...elements.step0EntryGridBody.querySelectorAll('tr')];
-  matrix.forEach((cells, rowOffset) => {
+  dataMatrix.forEach((cells, rowOffset) => {
     const inputs = [...tableRows[startRow + rowOffset].querySelectorAll('[data-step0-entry-field]')];
     cells.forEach((value, columnOffset) => {
       const target = inputs[startColumn + columnOffset];
