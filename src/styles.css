@@ -20080,20 +20080,20 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 
 /* Tab 0 Listing grid and grouped progress columns. */
 .step0-progress-table {
-  min-width: 1550px;
+  min-width: 1866px;
 }
 
-.step0-progress-table .step0-col-select { width: 3%; }
-.step0-progress-table .step0-col-company { width: 10%; }
-.step0-progress-table .step0-col-country { width: 6%; }
-.step0-progress-table .step0-col-asset { width: 11%; }
-.step0-progress-table .step0-col-modality { width: 8%; }
-.step0-progress-table .step0-col-target { width: 10%; }
-.step0-progress-table .step0-col-indication { width: 11%; }
-.step0-progress-table .step0-col-stage-name { width: 7%; }
-.step0-progress-table .step0-col-stage,
-.step0-progress-table .step0-col-metadata { width: 5.7%; }
-.step0-progress-table .step0-col-website { width: 5.2%; }
+.step0-progress-table .step0-col-select { width: 46px; }
+.step0-progress-table .step0-col-company { width: 175px; }
+.step0-progress-table .step0-col-country { width: 85px; }
+.step0-progress-table .step0-col-asset { width: 165px; }
+.step0-progress-table .step0-col-modality { width: 120px; }
+.step0-progress-table .step0-col-target { width: 175px; }
+.step0-progress-table .step0-col-indication { width: 180px; }
+.step0-progress-table .step0-col-stage-name { width: 120px; }
+.step0-progress-table .step0-col-stage { width: 92px; }
+.step0-progress-table .step0-col-metadata { width: 80px; }
+.step0-progress-table .step0-col-website { width: 70px; }
 
 .step0-progress-table .step0-progress-group {
   color: var(--muted);
@@ -20107,8 +20107,21 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 .step0-progress-table th,
 .step0-progress-table th button {
   color: var(--muted);
-  font-size: 12px;
-  font-weight: 900;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.step0-progress-table .step0-progress-group {
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.step0-progress-table .step0-company-cell .step0-table-value {
+  display: block;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .step0-progress-table .step0-table-value {
@@ -20283,6 +20296,33 @@ html[data-theme="dark"] .step0-edit-locked-modal { background: #0f1828; }
   align-items: center;
   gap: 7px;
   margin-bottom: 9px;
+}
+
+.step0-entry-grid-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+
+.step0-entry-grid-toolbar .step0-entry-grid-label {
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.step0-entry-clear-button {
+  flex: 0 0 auto;
+  min-height: 30px;
+  margin-left: auto;
+}
+
+.step0-import-summary.input-validation-results {
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--accent) 4%, var(--surface));
 }
 
 .step0-entry-grid-label > span {

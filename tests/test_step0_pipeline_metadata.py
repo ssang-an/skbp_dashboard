@@ -187,6 +187,16 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(merged["comment"], "Keep this note")
         self.assertEqual(merged["contact"], "owner@acme.test")
 
+    def test_reimported_listing_comments_accumulate_without_duplicate_blocks(self) -> None:
+        merged = main.merge_pipeline_metadata(
+            {"comment": "Initial meeting note"},
+            {"comment": "Follow-up requested"},
+        )
+        self.assertEqual(merged["comment"], "Initial meeting note\nFollow-up requested")
+
+        duplicate = main.merge_pipeline_metadata(merged, {"comment": "follow-up   requested"})
+        self.assertEqual(duplicate["comment"], "Initial meeting note\nFollow-up requested")
+
     def test_explicit_edit_can_clear_a_metadata_field(self) -> None:
         merged = main.merge_pipeline_metadata(
             {"comment": "Remove me", "contact": "owner@acme.test"},

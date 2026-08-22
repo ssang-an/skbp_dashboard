@@ -9713,6 +9713,24 @@ function renderStep0ImportSummary(result) {
       path: '대기열 중복',
       message: `${result.duplicate_in_queue_skipped}건은 이미 Listing에 있어 제외했습니다.`
     },
+    ...(result.duplicate_in_queue_enriched ? [{
+      level: 'ok',
+      label: '보완',
+      path: '대기열 중복',
+      message: `기존 빈 필드 ${result.duplicate_in_queue_enriched}건을 새 입력값으로 보완했습니다.`
+    }] : []),
+    ...(result.duplicate_in_queue_richer_replaced ? [{
+      level: 'ok',
+      label: '갱신',
+      path: '대기열 중복',
+      message: `새 행의 입력 항목이 더 많은 ${result.duplicate_in_queue_richer_replaced}건은 Listing 정보로 갱신했습니다.`
+    }] : []),
+    ...(result.metadata_updated ? [{
+      level: 'ok',
+      label: '메모',
+      path: '운영 정보',
+      message: `Comment·Contact·Website ${result.metadata_updated}건을 누적 또는 보완했습니다.`
+    }] : []),
     ...(unparsedCount ? [{
       level: 'warning',
       label: '경고',
@@ -10779,10 +10797,6 @@ elements.step0ImportButton?.addEventListener('click', importStep0Candidates);
 elements.step0ClearButton?.addEventListener('click', () => {
   renderStep0EntryGrid();
   showStep0PasteFeedback('');
-  if (elements.step0ImportSummary) {
-    elements.step0ImportSummary.hidden = true;
-    elements.step0ImportSummary.textContent = '';
-  }
   setStep0SaveStatus('waiting');
 });
 elements.step0AddEntryRow?.addEventListener('click', () => appendStep0EntryRows());

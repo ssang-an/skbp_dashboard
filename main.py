@@ -4976,7 +4976,13 @@ def merge_pipeline_metadata(existing: Any, incoming: Any, *, allow_empty_fields:
     for field in PIPELINE_METADATA_FIELDS:
         explicit_contact_absence = field == "contact" and is_pipeline_contact_absence_marker(incoming_raw.get("contact"))
         if update[field] or field in allow_empty_fields or explicit_contact_absence:
-            result[field] = update[field]
+            if field == "comment" and result[field] and update[field]:
+                existing_normalized = re.sub(r"\s+", " ", result[field]).strip().casefold()
+                incoming_normalized = re.sub(r"\s+", " ", update[field]).strip().casefold()
+                if incoming_normalized not in existing_normalized:
+                    result[field] = f"{result[field]}\n{update[field]}"
+            else:
+                result[field] = update[field]
     if update["updated_at"]:
         result["updated_at"] = update["updated_at"]
     return result

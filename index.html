@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20260822-listing-company-width-1" />
+  <link rel="stylesheet" href="./src/styles.css?v=20260822-tab0-table-upload-refine-1" />
   </head>
   <body>
     <div class="app-shell">
@@ -262,10 +262,14 @@
           <div class="data-upload-layout">
             <div class="data-upload-workspace">
               <div class="step0-entry-grid-panel" aria-label="Listing 입력 표">
-                <div class="data-upload-input-label step0-entry-grid-label">
+                <div class="step0-entry-grid-toolbar">
+                  <div class="data-upload-input-label step0-entry-grid-label">
                   <svg class="data-upload-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M8 5.5h8M9 3h6v4H9z" /><path d="M7 5H5.5A1.5 1.5 0 0 0 4 6.5v13A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-13A1.5 1.5 0 0 0 18.5 5H17" /><path d="m9 14 2 2 4-4" /></svg>
                   <b>Listing input</b><span>Company와 Asset은 필수 · 나머지는 선택</span>
+                  </div>
+                  <button class="action-pill data-upload-clear-button help-tooltip step0-entry-clear-button" id="step0ClearButton" type="button" data-tooltip="붙여넣은 내용을 비웁니다."><span aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" /></svg></span><b>비우기</b></button>
                 </div>
+                <div id="step0ImportSummary" class="input-validation-results step0-import-summary" aria-live="polite" hidden></div>
                 <div class="step0-entry-grid-wrap">
                   <table class="step0-entry-grid" id="step0EntryGrid">
                     <colgroup>
@@ -280,9 +284,7 @@
                 <button id="step0AddEntryRow" type="button" class="step0-add-entry-row">+ 행 추가</button>
                 <p id="step0PasteFeedback" class="step0-paste-feedback" role="status" aria-live="polite" hidden></p>
               </div>
-              <div id="step0ImportSummary" class="input-validation-results" aria-live="polite" hidden></div>
               <div class="editor-actions">
-                <button class="action-pill data-upload-clear-button help-tooltip" id="step0ClearButton" type="button" data-tooltip="붙여넣은 내용을 비웁니다."><span aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" /></svg></span><b>비우기</b></button>
                 <button class="action-pill header-action-button primary-button help-tooltip" id="step0ImportButton" type="button" data-tooltip="붙여넣은 목록을 파싱해 Listing 목록에 추가합니다."><span class="data-upload-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 20v-6h8v6" /></svg></span><b>가져오기</b></button>
               </div>
             </div>
@@ -1166,6 +1168,6 @@
       </section>
     </div>
 
-  <script type="module" src="./src/app.js?v=20260822-tab0-comment-feed-1"></script>
+  <script type="module" src="./src/app.js?v=20260822-tab0-table-upload-refine-1"></script>
   </body>
 </html>
