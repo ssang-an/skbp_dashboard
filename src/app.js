@@ -20,8 +20,8 @@ const STEP0_PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.step0PageSize.v1';
 const BOM_PREFIX = String.fromCharCode(0xfeff);
 const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
 const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
-const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v3';
-const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v5';
+const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v4';
+const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v6';
 const VISUAL_DASHBOARD_HIDDEN_KEY = 'skbp.dashboard.visualDashboardHidden.v1';
 
 function readStoredJson(key, fallback, validator) {
@@ -47,14 +47,14 @@ function storedStep0PageSize() {
 
 const DEFAULT_COLUMN_WIDTHS = {
   select: 34,
-  company: 108,
-  country: 78,
-  asset: 86,
-  modality: 96,
-  target: 220,
-  mainIndication: 140,
-  stage: 78,
-  filter1: 72,
+  company: 100,
+  country: 70,
+  asset: 80,
+  modality: 84,
+  target: 180,
+  mainIndication: 120,
+  stage: 70,
+  filter1: 64,
   filter2: 72,
   filter3: 72,
   filter3Note: 280,
@@ -66,8 +66,8 @@ const DEFAULT_COLUMN_WIDTHS = {
   dataScore: 50,
   marketScore: 56,
   totalScore: 52,
-  focusAction: 108,
-  rubricAction: 108,
+  focusAction: 106,
+  rubricAction: 106,
   inVivo: 74,
   inVitro: 74,
   admet: 84,
@@ -112,13 +112,13 @@ const MIN_COLUMN_WIDTHS = {
 const FOCUS_DEFAULT_COLUMN_WIDTHS = {
   ...DEFAULT_COLUMN_WIDTHS,
   select: 34,
-  company: 94,
-  country: 74,
-  asset: 86,
-  modality: 80,
-  target: 200,
-  mainIndication: 116,
-  stage: 86,
+  company: 90,
+  country: 68,
+  asset: 78,
+  modality: 70,
+  target: 170,
+  mainIndication: 108,
+  stage: 76,
   filter2: 62,
   totalScore: 62,
   filter3: 82,
@@ -126,7 +126,7 @@ const FOCUS_DEFAULT_COLUMN_WIDTHS = {
   inVitro: 56,
   admet: 60,
   focusDueDate: 108,
-  focusManage: 76
+  focusManage: 106
 };
 
 const FOCUS_MIN_COLUMN_WIDTHS = {
@@ -4633,6 +4633,7 @@ function focusRowActions(row) {
     <div class="full-scout-row-actions">
       ${oiPartnershipRefreshButton(row)}
       ${focusActionButton(row, 'focus')}
+      ${pipelineWebsiteRowButton(row)}
     </div>
   `;
 }
@@ -10271,7 +10272,7 @@ function step0WebsiteCellHtml(row) {
   const queueId = String(row?.pending?.queue_id || '');
   const researchMode = step0ResearchEditMode(row);
   const admin = Boolean(getCurrentUser()?.is_admin);
-  if (!/^https?:\/\//i.test(raw)) return '<span class="pill empty step0-website-empty" aria-label="Website not recorded">-</span>';
+  if (!/^https?:\/\//i.test(raw)) return '<span class="focus-action-button icon-only pipeline-website-row-button is-unavailable step0-website-empty" aria-label="Website not recorded">-</span>';
   let safeUrl = '';
   try {
     const parsed = new URL(raw);
@@ -10279,14 +10280,14 @@ function step0WebsiteCellHtml(row) {
   } catch (_) {
     safeUrl = '';
   }
-  if (!safeUrl) return '<span class="pill empty step0-website-empty" aria-label="Website not recorded">-</span>';
+  if (!safeUrl) return '<span class="focus-action-button icon-only pipeline-website-row-button is-unavailable step0-website-empty" aria-label="Website not recorded">-</span>';
   const editAttributes = queueId && admin && !researchMode
     ? ` data-step0-listing-edit data-queue-id="${escapeHtml(queueId)}" data-step0-field="website" data-previous-value="${escapeHtml(raw)}"`
     : researchMode
       ? ` data-step0-metadata data-step0-metadata-field="website" data-step0-row-identity="${escapeHtml(row.identity || '')}"`
       : '';
-  return `<a class="pill pass step0-website-link"${editAttributes} href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" title="Website · 한 번 클릭하여 열기, 두 번 클릭하여 주소 수정" aria-label="Open website in a new tab">
-    <span aria-hidden="true">&#10003;</span>
+  return `<a class="focus-action-button icon-only pipeline-website-row-button step0-website-link"${editAttributes} href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" title="Website · 한 번 클릭하여 열기, 두 번 클릭하여 주소 수정" aria-label="Open website in a new tab">
+    <svg class="pipeline-row-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 14 14 10M8.5 7.5H7a3 3 0 0 0-3 3V17a3 3 0 0 0 3-3v-1.5M13 4h7v7M20 4l-9 9"/></svg>
   </a>`;
 }
 

@@ -20152,20 +20152,20 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 
 /* Tab 0 Listing grid and grouped progress columns. */
 .step0-progress-table {
-  min-width: 1866px;
+  min-width: 1780px;
 }
 
 .step0-progress-table .step0-col-select { width: 46px; }
-.step0-progress-table .step0-col-company { width: 175px; }
-.step0-progress-table .step0-col-country { width: 85px; }
-.step0-progress-table .step0-col-asset { width: 165px; }
-.step0-progress-table .step0-col-modality { width: 120px; }
-.step0-progress-table .step0-col-target { width: 175px; }
-.step0-progress-table .step0-col-indication { width: 180px; }
-.step0-progress-table .step0-col-stage-name { width: 120px; }
-.step0-progress-table .step0-col-stage { width: 92px; }
-.step0-progress-table .step0-col-metadata { width: 80px; }
-.step0-progress-table .step0-col-website { width: 70px; }
+.step0-progress-table .step0-col-company { width: 150px; }
+.step0-progress-table .step0-col-country { width: 78px; }
+.step0-progress-table .step0-col-asset { width: 145px; }
+.step0-progress-table .step0-col-modality { width: 108px; }
+.step0-progress-table .step0-col-target { width: 165px; }
+.step0-progress-table .step0-col-indication { width: 165px; }
+.step0-progress-table .step0-col-stage-name { width: 102px; }
+.step0-progress-table .step0-col-stage { width: 86px; }
+.step0-progress-table .step0-col-metadata { width: 74px; }
+.step0-progress-table .step0-col-website { width: 52px; }
 
 .step0-progress-table .step0-progress-group.score-group-head {
   background: color-mix(in srgb, var(--accent) 12%, var(--surface-soft));
@@ -20241,25 +20241,31 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 }
 
 .step0-website-cell { text-align: center; }
-.step0-website-link.pill,
-.step0-website-empty.pill {
+.step0-website-link.focus-action-button,
+.step0-website-empty.focus-action-button {
   display: inline-flex;
   min-width: 30px;
-  min-height: 24px;
+  width: 30px;
+  height: 30px;
+  min-height: 30px;
   align-items: center;
   justify-content: center;
-  padding: 3px 8px;
+  padding: 0;
 }
-.step0-website-link.pill {
-  color: var(--accent-strong);
-  font-size: 13px;
-  font-weight: 900;
-  line-height: 1;
+.step0-website-link.focus-action-button {
   text-decoration: none;
 }
-.step0-website-link.pill:hover,
-.step0-website-link.pill:focus-visible { transform: translateY(-1px); outline: none; }
+.step0-website-link.focus-action-button:hover,
+.step0-website-link.focus-action-button:focus-visible { transform: translateY(-1px); outline: none; }
 .step0-website-link svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Three compact utility actions (refresh/copy-or-star/website) stay inside their table cell. */
+.full-scout-row-actions .focus-action-button.icon-only {
+  min-width: 30px;
+  width: 30px;
+  height: 30px;
+  min-height: 30px;
+}
 
 .step0-edit-locked-backdrop {
   position: fixed;
