@@ -489,7 +489,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('.step0-summary-cards.is-collapsed', CSS)
         self.assertIn('.step0-summary-dashboard {\n  margin: 0;\n  order: 2;', CSS)
 
-    def test_step0_workflow_map_uses_filtered_rows_and_compact_node_graph(self):
+    def test_step0_workflow_map_uses_filtered_rows_and_g6_stage_nodes(self):
         step0 = HTML[HTML.index('id="step0Panel"'):HTML.index('class="panel control-panel"')]
         workflow_map = function_body(JS, "renderStep0WorkflowMap")
         stage_for_row = function_body(JS, "step0WorkflowStageForRow")
@@ -498,15 +498,15 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn('id="step0WorkflowMapResultCount"', step0)
         self.assertIn('step0FilteredSortedRows()', workflow_map)
         self.assertIn('step0WorkflowStageForRow(row)', workflow_map)
-        self.assertIn('requestAnimationFrame', workflow_map)
         self.assertIn('reverse()', stage_for_row)
-        self.assertIn('role="img"', workflow_map)
-        self.assertNotIn('data-step0-workflow-listing-asset', workflow_map)
-        self.assertIn('step0-workflow-map-columns', CSS)
-        self.assertIn('width: 13px;', CSS)
+        self.assertIn('globalThis.G6?.Graph', workflow_map)
+        self.assertIn('new globalThis.G6.Graph', workflow_map)
+        self.assertIn('STEP0_WORKFLOW_NODE_STYLES', JS)
+        self.assertIn('shortlisting: { color:', JS)
+        self.assertIn('size: 16', JS)
+        self.assertIn('step0-workflow-g6-shell', CSS)
         self.assertIn('border-radius: 50%;', CSS)
-        self.assertIn('@media (prefers-reduced-motion: reduce)', CSS)
-        self.assertIn('@keyframes step0-workflow-node-arrive', CSS)
+        self.assertIn('min-width: 720px;', CSS)
 
     def test_step0_uses_one_asset_company_search_instead_of_a_company_dropdown(self):
         step0_controls = HTML[HTML.index('aria-label="진척 현황 controls"') : HTML.index('class="panel pipeline-table-panel"')]

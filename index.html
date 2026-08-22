@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20260822-table-visual-consistency-1" />
+  <link rel="stylesheet" href="./src/styles.css?v=20260822-g6-workflow-map-1" />
   </head>
   <body>
     <div class="app-shell">
@@ -163,7 +163,7 @@
             </button>
           </div>
           <section class="step0-workflow-map" aria-label="Pipeline 진행 단계 node graph">
-            <div id="step0WorkflowMap" class="step0-workflow-map-columns" role="region" tabindex="0" aria-label="Pipeline Workflow Map" aria-live="polite"></div>
+            <div id="step0WorkflowMap" class="step0-workflow-map-canvas" role="region" tabindex="0" aria-label="Pipeline Workflow Map" aria-live="polite"></div>
           </section>
         </section>
         </section>
@@ -1227,6 +1227,7 @@
       </section>
     </div>
 
-  <script type="module" src="./src/app.js?v=20260822-table-visual-consistency-1"></script>
+  <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
+  <script type="module" src="./src/app.js?v=20260822-g6-workflow-map-1"></script>
   </body>
 </html>
