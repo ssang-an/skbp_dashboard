@@ -519,7 +519,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('entryDelay', workflow_map)
         self.assertIn('arcX', workflow_map)
         self.assertIn('arcY', workflow_map)
-        self.assertIn('const settleDuration = 760', JS)
+        self.assertIn('const settleDuration = 1500', JS)
         self.assertIn('const settleFade =', JS)
         self.assertIn('settleOvershoot', workflow_map)
         self.assertIn('settlePhase', workflow_map)

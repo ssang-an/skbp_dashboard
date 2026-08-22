@@ -10488,7 +10488,7 @@ function animateStep0WorkflowDots(graph, nodes, stageIndex) {
   const timer = setTimeout(() => {
     const startedAt = performance.now();
     const duration = 520;
-    const settleDuration = 760;
+    const settleDuration = 1500;
     const tick = (now) => {
       const elapsed = now - startedAt;
       graph.updateNodeData(nodes.map((node) => {
