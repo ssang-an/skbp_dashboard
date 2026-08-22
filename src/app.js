@@ -471,6 +471,7 @@ const elements = {
   step0EntryGrid: document.querySelector('#step0EntryGrid'),
   step0EntryGridBody: document.querySelector('#step0EntryGridBody'),
   step0AddEntryRow: document.querySelector('#step0AddEntryRow'),
+  step0PasteFeedback: document.querySelector('#step0PasteFeedback'),
   step0ImportButton: document.querySelector('#step0ImportButton'),
   step0ClearButton: document.querySelector('#step0ClearButton'),
   step0ImportSummary: document.querySelector('#step0ImportSummary'),
@@ -9792,6 +9793,35 @@ function collectStep0EntryRows() {
   return { rows, incomplete };
 }
 
+const STEP0_HEADER_ALIASES = {
+  company_input: ['company', 'company name', '회사', '회사명', '기업'],
+  country: ['country', '국가'],
+  asset_input: ['asset', 'asset name', 'pipeline', 'pipeline name', '자산', '파이프라인', '약물명'],
+  modality: ['modality', 'modality platform', '모달리티'],
+  target: ['target', '타깃', '표적'],
+  main_indication: ['main indication', 'indication', '주요 적응증', '적응증'],
+  stage: ['stage', 'development stage', '개발 단계', '진행 단계'],
+  comment: ['comment', 'comments', '코멘트', '비고', '의견'],
+  contact: ['contact', '담당자', '연락처']
+};
+
+function normalizeStep0Header(value) {
+  return String(value || '').toLocaleLowerCase('ko').replace(/[\s_.()\-]/g, '');
+}
+
+function step0HeaderField(value) {
+  const normalized = normalizeStep0Header(value);
+  return STEP0_ENTRY_FIELDS.find((field) => (STEP0_HEADER_ALIASES[field.key] || [field.label])
+    .some((alias) => normalizeStep0Header(alias) === normalized))?.key || null;
+}
+
+function showStep0PasteFeedback(message, tone = 'info') {
+  if (!elements.step0PasteFeedback) return;
+  elements.step0PasteFeedback.hidden = !message;
+  elements.step0PasteFeedback.dataset.tone = tone;
+  elements.step0PasteFeedback.textContent = message || '';
+}
+
 function parseStep0ClipboardTable(clipboardText) {
   const text = String(clipboardText || '').replace(/\r\n?/g, '\n');
   const rows = [];
@@ -9804,8 +9834,12 @@ function parseStep0ClipboardTable(clipboardText) {
       if (inQuotes && text[index + 1] === '"') {
         cell += '"';
         index += 1;
-      } else {
+      } else if (inQuotes && (index + 1 === text.length || ['\t', '\n'].includes(text[index + 1]))) {
         inQuotes = !inQuotes;
+      } else if (!inQuotes && cell.length === 0) {
+        inQuotes = true;
+      } else {
+        cell += character;
       }
       continue;
     }
@@ -9816,16 +9850,20 @@ function parseStep0ClipboardTable(clipboardText) {
     }
     if (character === '\n' && !inQuotes) {
       row.push(cell);
-      if (row.some((value) => value !== '')) rows.push(row);
+      rows.push(row);
       row = [];
       cell = '';
       continue;
     }
     cell += character;
   }
-  row.push(cell);
-  if (row.some((value) => value !== '')) rows.push(row);
-  return rows;
+  if (cell !== '' || row.length) {
+    row.push(cell);
+    rows.push(row);
+  }
+  // A final line break is a clipboard terminator, not an additional selected Excel row.
+  if (text.endsWith('\n') && rows[rows.length - 1]?.every((value) => value === '')) rows.pop();
+  return { rows, unclosedQuote: inQuotes };
 }
 
 function pasteIntoStep0EntryGrid(event) {
@@ -9836,12 +9874,23 @@ function pasteIntoStep0EntryGrid(event) {
   const inputRows = [...elements.step0EntryGridBody.querySelectorAll('tr')];
   const startRow = Math.max(0, inputRows.indexOf(input.closest('tr')));
   const startColumn = Math.max(0, STEP0_ENTRY_FIELDS.findIndex((field) => field.key === input.dataset.step0EntryField));
-  const matrix = parseStep0ClipboardTable(clipboardText);
-  const normalizedHeader = (value) => String(value || '').toLowerCase().replace(/[\s_.-]/g, '');
-  const headerKeys = new Set(STEP0_ENTRY_FIELDS.map((field) => normalizedHeader(field.label)).concat(['companyinput', 'assetinput', 'mainindication']));
-  const firstRowIsHeader = matrix[0]?.filter((value) => headerKeys.has(normalizedHeader(value))).length >= 2;
+  const parsed = parseStep0ClipboardTable(clipboardText);
+  if (parsed.unclosedQuote) {
+    showStep0PasteFeedback('닫히지 않은 큰따옴표가 있어 Excel 셀 경계를 확인할 수 없습니다. 붙여넣지 않았습니다.', 'error');
+    return;
+  }
+  const matrix = parsed.rows;
+  const firstRowFields = (matrix[0] || []).map(step0HeaderField).filter(Boolean);
+  const firstRowIsHeader = firstRowFields.length >= 2
+    || (matrix[0]?.length === 1 && firstRowFields[0] === STEP0_ENTRY_FIELDS[startColumn]?.key);
   const dataMatrix = firstRowIsHeader ? matrix.slice(1) : matrix;
   if (!dataMatrix.length) return;
+  const availableColumns = STEP0_ENTRY_FIELDS.length - startColumn;
+  const overflowingRow = dataMatrix.find((cells) => cells.length > availableColumns && cells.slice(availableColumns).some((value) => String(value).trim()));
+  if (overflowingRow) {
+    showStep0PasteFeedback(`붙여넣기 범위가 ${availableColumns}개 입력 열을 넘습니다. 초과 값이 사라지는 것을 막기 위해 붙여넣지 않았습니다.`, 'error');
+    return;
+  }
   while (elements.step0EntryGridBody.querySelectorAll('tr').length < startRow + dataMatrix.length) appendStep0EntryRows();
   const tableRows = [...elements.step0EntryGridBody.querySelectorAll('tr')];
   dataMatrix.forEach((cells, rowOffset) => {
@@ -9852,6 +9901,10 @@ function pasteIntoStep0EntryGrid(event) {
     });
   });
   elements.step0EntryGridBody.querySelectorAll('textarea[data-step0-entry-field]').forEach(resizeStep0CommentCell);
+  const endColumn = Math.min(STEP0_ENTRY_FIELDS.length, startColumn + Math.max(...dataMatrix.map((cells) => cells.length)));
+  const labels = STEP0_ENTRY_FIELDS.slice(startColumn, endColumn).map((field) => field.label).join(' · ');
+  const blankRows = dataMatrix.filter((cells) => cells.every((value) => value === '')).length;
+  showStep0PasteFeedback(`${dataMatrix.length}행 × ${Math.max(...dataMatrix.map((cells) => cells.length))}열을 ${labels}에 입력했습니다.${firstRowIsHeader ? ' 열 제목 행은 제외했습니다.' : ''}${blankRows ? ` 빈 행 ${blankRows}개도 유지했습니다.` : ''}`, 'success');
 }
 
 async function importStep0Candidates() {
@@ -9887,6 +9940,7 @@ async function importStep0Candidates() {
     }
     renderStep0ImportSummary(result);
     renderStep0EntryGrid();
+    showStep0PasteFeedback('');
     setStep0SaveStatus('saved');
     await loadStep0Progress();
   } catch (error) {
@@ -10405,6 +10459,7 @@ async function copyTriagePromptWithSelectedCandidates() {
 elements.step0ImportButton?.addEventListener('click', importStep0Candidates);
 elements.step0ClearButton?.addEventListener('click', () => {
   renderStep0EntryGrid();
+  showStep0PasteFeedback('');
   if (elements.step0ImportSummary) {
     elements.step0ImportSummary.hidden = true;
     elements.step0ImportSummary.textContent = '';

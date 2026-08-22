@@ -20187,6 +20187,16 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 .step0-entry-remove-cell button:hover,
 .step0-add-entry-row:hover { border-color: color-mix(in srgb, var(--accent) 42%, var(--line)); color: var(--accent-strong); }
 
+.step0-paste-feedback {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.step0-paste-feedback[data-tone="success"] { color: var(--accent-strong); }
+.step0-paste-feedback[data-tone="error"] { color: var(--red); }
+
 @media (max-width: 720px) {
   .step0-entry-grid-panel { padding: 9px; }
   .step0-entry-grid-label { align-items: flex-start; flex-direction: column; gap: 3px; }
