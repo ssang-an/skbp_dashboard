@@ -472,6 +472,15 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('class="step0-recent-upload-legend"', HTML)
         self.assertIn(".step0-recent-upload-legend", CSS)
 
+    def test_step0_uses_the_shared_workflow_intro_and_summary_dashboard_hierarchy(self):
+        step0 = HTML[HTML.index('id="step0Panel"'):HTML.index('class="panel control-panel"')]
+        self.assertIn('data-workflow-mode="listing"', step0)
+        self.assertIn('Summary Dashboard', step0)
+        self.assertIn('class="step0-summary-dashboard"', step0)
+        self.assertIn('class="step0-summary-dashboard-heading"', step0)
+        self.assertIn('.workflow-mode-description[data-workflow-mode="listing"]', CSS)
+        self.assertIn('.step0-summary-dashboard-heading', CSS)
+
     def test_step0_uses_one_asset_company_search_instead_of_a_company_dropdown(self):
         step0_controls = HTML[HTML.index('aria-label="진척 현황 controls"') : HTML.index('class="panel pipeline-table-panel"')]
         step0_filtering = function_body(JS, "step0FilteredSortedRows")

@@ -212,6 +212,12 @@
   color: #b77908;
 }
 
+.workflow-mode-description[data-workflow-mode="listing"] .workflow-description-icon {
+  border-color: color-mix(in srgb, #4f7fc5 30%, var(--line));
+  background: color-mix(in srgb, #7ea8e6 13%, var(--surface));
+  color: #3f6fae;
+}
+
 .workflow-description-copy {
   display: flex;
   min-width: 0;
@@ -19358,6 +19364,45 @@ body.report-reupload-open {
   overflow: visible;
 }
 
+.step0-summary-dashboard {
+  margin: 0;
+}
+
+.step0-summary-dashboard-heading {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 12px 18px;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  background: var(--surface);
+}
+
+.step0-summary-dashboard-title {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 5px 10px;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+
+.step0-summary-dashboard-title small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.step0-summary-dashboard .step0-stat-panel {
+  margin: 0;
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+}
+
 .step0-stat-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -19455,6 +19500,13 @@ button.step0-stat.active {
   color: #c2414d;
   font-variant-numeric: tabular-nums;
   font-weight: 800;
+}
+
+@media (max-width: 640px) {
+  .step0-summary-dashboard-heading {
+    min-height: 50px;
+    padding: 11px 14px;
+  }
 }
 
 .step0-selected-count {
