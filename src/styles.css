@@ -20441,21 +20441,21 @@ html[data-theme="dark"] .step0-edit-locked-modal { background: #0f1828; }
 
 .step0-entry-grid {
   width: 100%;
-  min-width: 1284px;
+  min-width: 0;
   border-collapse: collapse;
   table-layout: fixed;
 }
 
-.step0-entry-col-company { width: 152px; }
-.step0-entry-col-country { width: 95px; }
-.step0-entry-col-asset { width: 145px; }
-.step0-entry-col-modality { width: 105px; }
-.step0-entry-col-target { width: 120px; }
-.step0-entry-col-indication { width: 150px; }
-.step0-entry-col-stage { width: 105px; }
-.step0-entry-col-comment { width: 150px; }
-.step0-entry-col-contact { width: 125px; }
-.step0-entry-col-website { width: 140px; }
+.step0-entry-col-company { width: 13%; }
+.step0-entry-col-country { width: 6%; }
+.step0-entry-col-asset { width: 12%; }
+.step0-entry-col-modality { width: 9%; }
+.step0-entry-col-target { width: 10%; }
+.step0-entry-col-indication { width: 13%; }
+.step0-entry-col-stage { width: 9%; }
+.step0-entry-col-comment { width: 12%; }
+.step0-entry-col-contact { width: 9%; }
+.step0-entry-col-website { width: 7%; }
 
 .step0-entry-grid th,
 .step0-entry-grid td {
@@ -20468,20 +20468,25 @@ html[data-theme="dark"] .step0-edit-locked-modal { background: #0f1828; }
 .step0-entry-grid tbody tr:last-child td { border-bottom: 0; }
 
 .step0-entry-grid th {
-  padding: 8px 9px;
+  padding: 7px 6px;
   background: var(--surface-soft);
   color: var(--muted);
   font-size: 10px;
   font-weight: 850;
   text-align: left;
-  white-space: nowrap;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
-.step0-entry-grid th em {
-  margin-left: 3px;
-  color: var(--accent-strong);
+.step0-multiline-hint {
+  display: inline;
+  margin-left: 2px;
+  color: #2d6fa7;
   font-size: 9px;
-  font-style: normal;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .step0-required-badge {
@@ -20556,4 +20561,5 @@ html[data-theme="dark"] .step0-edit-locked-modal { background: #0f1828; }
 @media (max-width: 720px) {
   .step0-entry-grid-panel { padding: 9px; }
   .step0-entry-grid-label { align-items: flex-start; flex-direction: column; gap: 3px; }
+  .step0-entry-grid { min-width: 760px; }
 }
