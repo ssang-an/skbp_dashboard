@@ -9814,14 +9814,80 @@ const STEP0_HEADER_ALIASES = {
   contact: ['contact', '담당자', '연락처']
 };
 
+const STEP0_HEADER_KEYWORD_RULES = {
+  company_input: [
+    ['company name', 12], ['company', 5], ['organization', 8], ['organisation', 8], ['corporate', 6], ['sponsor', 6], ['developer', 5], ['manufacturer', 5], ['회사명', 12], ['회사', 5], ['기업', 7]
+  ],
+  country: [
+    ['company geography', 14], ['geography', 11], ['geographic', 11], ['country', 10], ['location', 8], ['region', 7], ['headquarters', 8], ['headquarter', 8], ['hq', 7], ['nation', 8], ['국가', 10], ['지역', 7], ['소재지', 9], ['본사', 8]
+  ],
+  asset_input: [
+    ['asset name', 13], ['pipeline name', 13], ['drug name', 12], ['program name', 11], ['asset', 8], ['pipeline', 8], ['drug', 8], ['candidate', 7], ['compound', 7], ['product', 6], ['program', 6], ['자산명', 13], ['파이프라인명', 13], ['후보물질', 9], ['자산', 8], ['파이프라인', 8]
+  ],
+  modality: [
+    ['modality platform', 13], ['modality', 10], ['drug type', 8], ['therapy type', 8], ['platform', 5], ['모달리티', 10], ['약물 유형', 8], ['치료 유형', 8]
+  ],
+  target: [
+    ['target moa', 13], ['target', 10], ['gene', 7], ['protein', 7], ['receptor', 7], ['mechanism', 5], ['moa', 7], ['타깃', 10], ['표적', 10], ['유전자', 7], ['수용체', 7], ['기전', 5]
+  ],
+  main_indication: [
+    ['main indication', 13], ['primary indication', 13], ['therapeutic area', 11], ['disease area', 11], ['indication', 10], ['disease', 7], ['condition', 7], ['disorder', 7], ['주요 적응증', 13], ['적응증', 10], ['질환 영역', 11], ['치료 영역', 11], ['질환', 7]
+  ],
+  stage: [
+    ['development stage', 13], ['clinical stage', 13], ['development status', 11], ['pipeline stage', 11], ['stage', 9], ['phase', 8], ['개발 단계', 13], ['임상 단계', 13], ['진행 단계', 11], ['단계', 9]
+  ],
+  comment: [
+    ['internal comment', 13], ['review note', 12], ['comment', 9], ['comments', 9], ['note', 7], ['notes', 7], ['memo', 7], ['remark', 7], ['remarks', 7], ['rationale', 6], ['코멘트', 9], ['비고', 7], ['의견', 7], ['메모', 7]
+  ],
+  contact: [
+    ['contact history', 13], ['contact date', 13], ['contact', 10], ['outreach', 9], ['communication', 8], ['owner', 7], ['email', 7], ['phone', 7], ['담당자', 9], ['연락 이력', 13], ['연락일', 13], ['연락처', 10], ['접촉', 8]
+  ]
+};
+
 function normalizeStep0Header(value) {
   return String(value || '').toLocaleLowerCase('ko').replace(/[\s_.()\-]/g, '');
 }
 
-function step0HeaderField(value) {
+function step0HeaderMatch(value) {
   const normalized = normalizeStep0Header(value);
-  return STEP0_ENTRY_FIELDS.find((field) => (STEP0_HEADER_ALIASES[field.key] || [field.label])
-    .some((alias) => normalizeStep0Header(alias) === normalized))?.key || null;
+  if (!normalized) return { field: null, score: 0, reason: 'empty' };
+  const exactField = STEP0_ENTRY_FIELDS.find((field) => (STEP0_HEADER_ALIASES[field.key] || [field.label])
+    .some((alias) => normalizeStep0Header(alias) === normalized));
+  if (exactField) return { field: exactField.key, score: 100, reason: 'exact' };
+  const candidates = STEP0_ENTRY_FIELDS.map((field) => {
+    const score = (STEP0_HEADER_KEYWORD_RULES[field.key] || []).reduce((total, [keyword, weight]) => (
+      normalized.includes(normalizeStep0Header(keyword)) ? total + weight : total
+    ), 0);
+    return { field: field.key, score };
+  }).filter((candidate) => candidate.score > 0).sort((a, b) => b.score - a.score);
+  if (!candidates.length) return { field: null, score: 0, reason: 'unrecognized' };
+  if (candidates.length > 1 && candidates[0].score === candidates[1].score) {
+    return { field: null, score: candidates[0].score, reason: 'ambiguous' };
+  }
+  return { ...candidates[0], reason: 'keyword' };
+}
+
+function step0HeaderMappings(cells) {
+  const matches = cells.map(step0HeaderMatch);
+  const winners = new Map();
+  matches.forEach((match, index) => {
+    if (!match.field) return;
+    const current = winners.get(match.field);
+    if (!current || match.score > current.score) winners.set(match.field, { ...match, index });
+  });
+  const targets = matches.map((match, index) => (
+    match.field && winners.get(match.field)?.index === index ? match.field : null
+  ));
+  return {
+    targets,
+    recognized: targets.filter(Boolean).length,
+    ignored: matches.filter((match, index) => !targets[index] && String(cells[index] || '').trim()).length,
+    duplicateCount: matches.filter((match, index) => match.field && !targets[index]).length
+  };
+}
+
+function step0HeaderField(value) {
+  return step0HeaderMatch(value).field;
 }
 
 function showStep0PasteFeedback(message, tone = 'info') {
@@ -9889,12 +9955,12 @@ function pasteIntoStep0EntryGrid(event) {
     return;
   }
   const matrix = parsed.rows;
-  const firstRowFields = (matrix[0] || []).map(step0HeaderField).filter(Boolean);
-  const firstRowIsHeader = firstRowFields.length >= 2
-    || (matrix[0]?.length === 1 && firstRowFields[0] === STEP0_ENTRY_FIELDS[startColumn]?.key);
+  const headerMapping = step0HeaderMappings(matrix[0] || []);
+  const firstRowIsHeader = headerMapping.recognized >= 2
+    || (matrix[0]?.length === 1 && headerMapping.recognized === 1);
   const dataMatrix = firstRowIsHeader ? matrix.slice(1) : matrix;
   if (!dataMatrix.length) return;
-  const availableColumns = STEP0_ENTRY_FIELDS.length - startColumn;
+  const availableColumns = firstRowIsHeader ? headerMapping.targets.length : STEP0_ENTRY_FIELDS.length - startColumn;
   const overflowingRow = dataMatrix.find((cells) => cells.length > availableColumns && cells.slice(availableColumns).some((value) => String(value).trim()));
   if (overflowingRow) {
     showStep0PasteFeedback(`붙여넣기 범위가 ${availableColumns}개 입력 열을 넘습니다. 초과 값이 사라지는 것을 막기 위해 붙여넣지 않았습니다.`, 'error');
@@ -9905,15 +9971,20 @@ function pasteIntoStep0EntryGrid(event) {
   dataMatrix.forEach((cells, rowOffset) => {
     const inputs = [...tableRows[startRow + rowOffset].querySelectorAll('[data-step0-entry-field]')];
     cells.forEach((value, columnOffset) => {
-      const target = inputs[startColumn + columnOffset];
+      const field = firstRowIsHeader ? headerMapping.targets[columnOffset] : STEP0_ENTRY_FIELDS[startColumn + columnOffset]?.key;
+      const target = field ? inputs[STEP0_ENTRY_FIELDS.findIndex((candidate) => candidate.key === field)] : null;
       if (target) target.value = value.trim();
     });
   });
   elements.step0EntryGridBody.querySelectorAll('textarea[data-step0-entry-field]').forEach(resizeStep0CommentCell);
-  const endColumn = Math.min(STEP0_ENTRY_FIELDS.length, startColumn + Math.max(...dataMatrix.map((cells) => cells.length)));
-  const labels = STEP0_ENTRY_FIELDS.slice(startColumn, endColumn).map((field) => field.label).join(' · ');
+  const labels = firstRowIsHeader
+    ? headerMapping.targets.filter(Boolean).map((key) => STEP0_ENTRY_FIELDS.find((field) => field.key === key)?.label).filter(Boolean).join(' · ')
+    : STEP0_ENTRY_FIELDS.slice(startColumn, Math.min(STEP0_ENTRY_FIELDS.length, startColumn + Math.max(...dataMatrix.map((cells) => cells.length)))).map((field) => field.label).join(' · ');
   const blankRows = dataMatrix.filter((cells) => cells.every((value) => value === '')).length;
-  showStep0PasteFeedback(`${dataMatrix.length}행 × ${Math.max(...dataMatrix.map((cells) => cells.length))}열을 ${labels}에 입력했습니다.${firstRowIsHeader ? ' 열 제목 행은 제외했습니다.' : ''}${blankRows ? ` 빈 행 ${blankRows}개도 유지했습니다.` : ''}`, 'success');
+  const headerNote = firstRowIsHeader
+    ? ` 열 제목 행을 ${headerMapping.recognized}개 열로 매핑했습니다.${headerMapping.ignored ? ` 인식하지 못했거나 중복된 header ${headerMapping.ignored}개는 건너뛰었습니다.` : ''}`
+    : '';
+  showStep0PasteFeedback(`${dataMatrix.length}행 × ${Math.max(...dataMatrix.map((cells) => cells.length))}열을 ${labels}에 입력했습니다.${headerNote}${blankRows ? ` 빈 행 ${blankRows}개도 유지했습니다.` : ''}`, headerMapping.ignored ? 'warning' : 'success');
 }
 
 async function importStep0Candidates() {
