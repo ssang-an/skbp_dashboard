@@ -10054,6 +10054,36 @@ function step0MetadataCellHtml(row, field) {
   >${hasValue ? '<span aria-hidden="true">✓</span>' : '-'}</button>`;
 }
 
+function step0DashboardFieldDisplay(row) {
+  const details = row?.listing_details || {};
+  const rawCountry = String(details.country || '').trim();
+  const rawModality = String(details.modality || '').trim();
+  const rawIndication = String(details.main_indication || '').trim();
+  const rawStage = String(details.stage || '').trim();
+  const indicationList = rawIndication
+    ? canonicalIndicationList([], rawIndication, '')
+    : [];
+
+  return {
+    country: rawCountry ? canonicalCountry(rawCountry) : '-',
+    countryRaw: rawCountry,
+    modality: rawModality ? canonicalModality(rawModality) : '-',
+    modalityRaw: rawModality,
+    indication: rawIndication
+      ? (indicationList.length ? indicationList.join(', ') : canonicalMainIndication('', rawIndication))
+      : '-',
+    indicationRaw: rawIndication,
+    stage: rawStage ? canonicalDevelopmentStage(rawStage) : '-',
+    stageRaw: rawStage
+  };
+}
+
+function step0FieldTitle(rawValue, displayValue) {
+  const raw = String(rawValue || '').trim();
+  const display = String(displayValue || '').trim();
+  return raw && raw !== display ? ` title="${escapeHtml(raw)}"` : '';
+}
+
 function closeStep0MetadataPopover() {
   activeStep0MetadataPopover?.remove();
   activeStep0MetadataPopover = null;
@@ -10161,7 +10191,8 @@ function step0FilteredSortedRows() {
   let rows = state.step0Rows.filter((row) => {
     if (searchTerms.length) {
       const details = row.listing_details || {};
-      const haystack = `${row.asset || ''} ${row.company || ''} ${details.country || ''} ${details.modality || ''} ${details.target || ''} ${details.main_indication || ''} ${details.stage || ''} ${row.metadata?.comment || ''} ${row.metadata?.contact || ''}`.toLowerCase();
+      const display = step0DashboardFieldDisplay(row);
+      const haystack = `${row.asset || ''} ${row.company || ''} ${details.country || ''} ${display.country} ${details.modality || ''} ${display.modality} ${details.target || ''} ${details.main_indication || ''} ${display.indication} ${details.stage || ''} ${display.stage} ${row.metadata?.comment || ''} ${row.metadata?.contact || ''}`.toLowerCase();
       if (!searchTerms.some((term) => haystack.includes(term))) return false;
     }
     if (statusFilters.size && ![...statusFilters].some((status) => row[status]?.done)) return false;
@@ -10265,18 +10296,19 @@ function renderStep0ProgressTable() {
         const queueId = row.pending?.queue_id;
         const isPending = Boolean(row.pending?.done && queueId);
         const checked = isPending && state.step0SelectedPendingIds.has(queueId) ? 'checked' : '';
+        const display = step0DashboardFieldDisplay(row);
         const checkboxCell = isPending
           ? `<input type="checkbox" class="step0-row-select" data-queue-id="${escapeHtml(queueId)}" ${checked} aria-label="${escapeHtml(row.asset)} 선택" />`
           : '';
         return `<tr>
           <td class="select-col">${checkboxCell}</td>
           <td class="step0-company-cell">${escapeHtml(row.company)}</td>
-          <td>${escapeHtml(row.listing_details?.country || '-')}</td>
+          <td${step0FieldTitle(display.countryRaw, display.country)}>${display.country === '-' ? '-' : countryDisplayMarkup(display.country)}</td>
           <td class="step0-asset-cell">${escapeHtml(row.asset)}</td>
-          <td>${escapeHtml(row.listing_details?.modality || '-')}</td>
+          <td${step0FieldTitle(display.modalityRaw, display.modality)}>${escapeHtml(display.modality)}</td>
           <td class="step0-target-cell">${escapeHtml(row.listing_details?.target || '-')}</td>
-          <td>${escapeHtml(row.listing_details?.main_indication || '-')}</td>
-          <td>${escapeHtml(row.listing_details?.stage || '-')}</td>
+          <td${step0FieldTitle(display.indicationRaw, display.indication)}>${escapeHtml(display.indication)}</td>
+          <td${step0FieldTitle(display.stageRaw, display.stage)}>${escapeHtml(display.stage)}</td>
           <td>${step0StageCellHtml('pending', row.pending)}</td>
           <td>${step0StageCellHtml('fast_triage', row.fast_triage)}</td>
           <td>${step0StageCellHtml('full_scout', row.full_scout)}</td>
@@ -10296,21 +10328,24 @@ function renderStep0ProgressTable() {
 function exportStep0Table() {
   const rows = step0FilteredSortedRows();
   const headers = ['Company', 'Country', 'Asset', 'Modality', 'Target', 'Main indication', 'Stage', 'Listing', 'Fast Triage', 'Full Scout', 'Shortlisting', 'Comment', 'Contact'];
-  const body = rows.map((row) => [
-    row.company,
-    row.listing_details?.country || '',
-    row.asset,
-    row.listing_details?.modality || '',
-    row.listing_details?.target || '',
-    row.listing_details?.main_indication || '',
-    row.listing_details?.stage || '',
-    row.pending?.done ? '✓' : '',
-    row.fast_triage?.done ? '완료' : '',
-    row.full_scout?.done ? '완료' : '',
-    row.shortlisting?.done ? '완료' : '',
-    row.metadata?.comment || '',
-    row.metadata?.contact || ''
-  ]);
+  const body = rows.map((row) => {
+    const display = step0DashboardFieldDisplay(row);
+    return [
+      row.company,
+      display.country === '-' ? '' : display.country,
+      row.asset,
+      display.modality === '-' ? '' : display.modality,
+      row.listing_details?.target || '',
+      display.indication === '-' ? '' : display.indication,
+      display.stage === '-' ? '' : display.stage,
+      row.pending?.done ? '✓' : '',
+      row.fast_triage?.done ? '완료' : '',
+      row.full_scout?.done ? '완료' : '',
+      row.shortlisting?.done ? '완료' : '',
+      row.metadata?.comment || '',
+      row.metadata?.contact || ''
+    ];
+  });
   const csv = [headers, ...body].map((line) => line.map(csvValue).join(',')).join('\r\n');
   const blob = new Blob([BOM_PREFIX + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
