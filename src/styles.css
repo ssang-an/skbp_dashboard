@@ -3847,6 +3847,19 @@ td {
   color: var(--muted);
 }
 
+.pipeline-website-row-button.is-unavailable {
+  border-style: dashed;
+  color: color-mix(in srgb, var(--muted) 62%, var(--line));
+  opacity: 0.78;
+}
+
+.pipeline-website-row-button.is-unavailable:hover,
+.pipeline-website-row-button.is-unavailable:focus-visible {
+  border-color: color-mix(in srgb, var(--muted) 56%, var(--line));
+  background: color-mix(in srgb, var(--muted) 5%, var(--surface));
+  color: var(--muted);
+}
+
 .modality-column-cell .modality-editable {
   cursor: pointer;
 }
@@ -20129,12 +20142,14 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 .step0-progress-table .step0-col-metadata { width: 80px; }
 .step0-progress-table .step0-col-website { width: 70px; }
 
-.step0-progress-table .step0-progress-group {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 900;
+.step0-progress-table .step0-progress-group.score-group-head {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-soft));
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 950;
   letter-spacing: 0;
   text-align: center;
+  text-transform: uppercase;
 }
 
 /* Tab 0 reuses the same compact, neutral table typography as Fast Triage/Full Scout. */
@@ -20145,10 +20160,6 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
   font-weight: 700;
 }
 
-.step0-progress-table .step0-progress-group {
-  font-size: 11px;
-  font-weight: 800;
-}
 
 .step0-progress-table .step0-company-cell .step0-table-value {
   display: block;
@@ -20214,7 +20225,13 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
   justify-content: center;
   padding: 3px 8px;
 }
-.step0-website-link.pill { color: var(--accent-strong); text-decoration: none; }
+.step0-website-link.pill {
+  color: var(--accent-strong);
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  text-decoration: none;
+}
 .step0-website-link.pill:hover,
 .step0-website-link.pill:focus-visible { transform: translateY(-1px); outline: none; }
 .step0-website-link svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }

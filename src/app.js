@@ -4348,7 +4348,7 @@ function renderTableLegacy() {
         <th rowspan="2"><button data-sort="stage" type="button">Stage</button></th>
         <th rowspan="2"><button data-sort="filter1" type="button">Filter 1</button></th>
         <th rowspan="2"><button data-sort="filter2" type="button">Filter 2</button></th>
-        <th class="score-group-head" colspan="3">Triage Core</th>
+        <th class="score-group-head" colspan="3">Fast Triage</th>
         <th class="score-group-head" colspan="5">Full Scout only</th>
         ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
       </tr>
@@ -4381,7 +4381,7 @@ function renderTableLegacy() {
         ${sortableHeader('Stage', 'stage', 'stage', 'rowspan="2"')}
         ${sortableHeader('Filter 1', 'filter1', 'filter1', 'rowspan="2"')}
         ${sortableHeader('Filter 2', 'filter2', 'filter2', 'rowspan="2"')}
-        <th class="score-group-head" colspan="3">Triage Core</th>
+        <th class="score-group-head" colspan="3">Fast Triage</th>
         <th class="score-group-head" colspan="5">Full Scout only</th>
         ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
       </tr>
@@ -4500,16 +4500,17 @@ function fullScoutRowActions(row) {
 
 function pipelineWebsiteRowButton(row) {
   const url = String(get(row?.raw, 'meta.pipeline_metadata.website', '') || '').trim();
-  if (!/^https?:\/\//i.test(url)) return '';
+  const hasUrl = /^https?:\/\//i.test(url);
   return `
     <button
       type="button"
-      class="focus-action-button icon-only pipeline-website-row-button"
+      class="focus-action-button icon-only pipeline-website-row-button${hasUrl ? '' : ' is-unavailable'}"
       data-pipeline-website
       data-record-id="${escapeHtml(row.id)}"
-      data-website-url="${escapeHtml(url)}"
-      title="Pipeline Website · 한 번 클릭하여 열기, 두 번 클릭하여 주소 수정"
-      aria-label="${escapeHtml(`${row.asset} Pipeline Website 열기`)}"
+      data-website-url="${escapeHtml(hasUrl ? url : '')}"
+      title="${escapeHtml(hasUrl ? 'Pipeline Website · 한 번 클릭하여 열기, 두 번 클릭하여 주소 수정' : 'Pipeline Website 미등록 · 관리자 더블클릭으로 주소 입력')}"
+      aria-label="${escapeHtml(`${row.asset} Pipeline Website ${hasUrl ? '열기' : '미등록'}`)}"
+      aria-disabled="${hasUrl ? 'false' : 'true'}"
     ><svg class="pipeline-row-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 14 14 10M8.5 7.5H7a3 3 0 0 0-3 3V17a3 3 0 0 0 3-3v-1.5M13 4h7v7M20 4l-9 9"/></svg></button>
   `;
 }
@@ -4884,8 +4885,8 @@ function renderTable() {
         ${sortableHeader('Stage', 'stage', 'stage', 'rowspan="2"')}
         ${sortableHeader(filterLabel, filterKey, filterKey, 'rowspan="2"')}
         ${mode === 'triage'
-          ? '<th class="score-group-head" colspan="3">Fast Triage Core</th>'
-          : '<th class="score-group-head" colspan="3">Triage Core</th><th class="score-group-head" colspan="5">Full Scout only</th>'}
+          ? '<th class="score-group-head" colspan="3">Fast Triage</th>'
+          : '<th class="score-group-head" colspan="3">Fast Triage</th><th class="score-group-head" colspan="5">Full Scout only</th>'}
         ${mode === 'triage' ? plainHeader('재평가', 'rubricAction', 'focus-action-head', 'rowspan="2"') : ''}
         ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
         ${mode === 'full' ? plainHeader('관리', 'focusAction', 'focus-action-head', 'rowspan="2"') : ''}
@@ -10231,7 +10232,7 @@ function step0WebsiteCellHtml(row) {
       ? ` data-step0-metadata data-step0-metadata-field="website" data-step0-row-identity="${escapeHtml(row.identity || '')}"`
       : '';
   return `<a class="pill pass step0-website-link"${editAttributes} href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" title="Website · 한 번 클릭하여 열기, 두 번 클릭하여 주소 수정" aria-label="Open website in a new tab">
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 14 14 10M8.5 7.5H7a3 3 0 0 0-3 3V17a3 3 0 0 0 3 3h6.5a3 3 0 0 0 3-3v-1.5M13 4h7v7M20 4l-9 9" /></svg>
+    <span aria-hidden="true">&#10003;</span>
   </a>`;
 }
 
@@ -10634,7 +10635,7 @@ function renderStep0ProgressTable() {
           <td>${step0ListingFieldMarkup(row, 'country', display.countryRaw, { html: display.country === '-' ? '-' : countryDisplayMarkup(display.country), title: display.countryRaw && display.countryRaw !== display.country ? display.countryRaw : display.country })}</td>
           <td class="step0-asset-cell">${step0ListingFieldMarkup(row, 'asset', row.asset, { className: 'single-line-cell' })}</td>
           <td>${step0ListingFieldMarkup(row, 'modality', display.modalityRaw, { html: escapeHtml(display.modality), title: display.modalityRaw && display.modalityRaw !== display.modality ? display.modalityRaw : display.modality, className: 'single-line-cell' })}</td>
-          <td class="step0-target-cell">${step0ListingFieldMarkup(row, 'target', row.listing_details?.target || '')}</td>
+          <td class="step0-target-cell">${step0ListingFieldMarkup(row, 'target', row.listing_details?.target || '', { className: 'target-single-line' })}</td>
           <td>${step0ListingFieldMarkup(row, 'main_indication', display.indicationRaw, { html: escapeHtml(display.indication), title: display.indicationRaw && display.indicationRaw !== display.indication ? display.indicationRaw : display.indication })}</td>
           <td>${step0ListingFieldMarkup(row, 'stage', display.stageRaw, { html: escapeHtml(display.stage), title: display.stageRaw && display.stageRaw !== display.stage ? display.stageRaw : display.stage })}</td>
           <td>${step0StageCellHtml('pending', row.pending)}</td>
