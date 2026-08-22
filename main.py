@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import csv
+from io import StringIO
 import copy
 import difflib
 import hashlib
@@ -4200,6 +4202,13 @@ def preserve_dashboard_meta(incoming: dict[str, Any], existing: dict[str, Any]) 
     ):
         if key in existing_meta:
             incoming_meta[key] = copy.deepcopy(existing_meta[key])
+    existing_pipeline_metadata = existing_meta.get("pipeline_metadata")
+    incoming_pipeline_metadata = incoming_meta.get("pipeline_metadata")
+    if isinstance(existing_pipeline_metadata, dict) or isinstance(incoming_pipeline_metadata, dict):
+        incoming_meta["pipeline_metadata"] = merge_pipeline_metadata(
+            existing_pipeline_metadata,
+            incoming_pipeline_metadata,
+        )
 
 
 def append_report_reupload_snapshot(
@@ -4915,27 +4924,154 @@ def find_matching_identity_group(
     return None
 
 
+PIPELINE_METADATA_FIELDS = ("comment", "contact")
+
+
+def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
+    raw = value if isinstance(value, dict) else {}
+    metadata = {
+        "listed_at": str(raw.get("listed_at") or "").strip(),
+        "comment": str(raw.get("comment") or "").strip(),
+        "contact": str(raw.get("contact") or "").strip(),
+        "updated_at": str(raw.get("updated_at") or "").strip(),
+    }
+    return metadata
+
+
+def merge_pipeline_metadata(existing: Any, incoming: Any, *, allow_empty_fields: set[str] | None = None) -> dict[str, str]:
+    """Merge dashboard-owned pipeline metadata without letting a blank paste erase a note."""
+    allow_empty_fields = allow_empty_fields or set()
+    result = normalize_pipeline_metadata(existing)
+    update = normalize_pipeline_metadata(incoming)
+    if update["listed_at"]:
+        result["listed_at"] = update["listed_at"]
+    for field in PIPELINE_METADATA_FIELDS:
+        if update[field] or field in allow_empty_fields:
+            result[field] = update[field]
+    if update["updated_at"]:
+        result["updated_at"] = update["updated_at"]
+    return result
+
+
+def candidate_queue_entry_metadata(entry: dict[str, Any]) -> dict[str, str]:
+    return merge_pipeline_metadata(
+        {"listed_at": entry.get("added_at")},
+        entry.get("pipeline_metadata"),
+    )
+
+
+def record_pipeline_metadata(record: dict[str, Any]) -> dict[str, str]:
+    meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+    return normalize_pipeline_metadata(meta.get("pipeline_metadata"))
+
+
+def update_record_pipeline_metadata(
+    record: dict[str, Any],
+    incoming_metadata: Any,
+    *,
+    allow_empty_fields: set[str] | None = None,
+) -> bool:
+    meta = record.setdefault("meta", {})
+    current = normalize_pipeline_metadata(meta.get("pipeline_metadata"))
+    merged = merge_pipeline_metadata(current, incoming_metadata, allow_empty_fields=allow_empty_fields)
+    if current == merged:
+        return False
+    meta["pipeline_metadata"] = merged
+    return True
+
+
+def pipeline_metadata_for_group(group: dict[str, Any]) -> dict[str, str]:
+    metadata: dict[str, str] = {}
+    for record in group.get("records") or []:
+        if isinstance(record, dict):
+            metadata = merge_pipeline_metadata(metadata, record_pipeline_metadata(record))
+    return normalize_pipeline_metadata(metadata)
+
+
+def record_matches_candidate_queue_entry(record: dict[str, Any], entry: dict[str, Any]) -> bool:
+    return find_matching_identity_group(
+        str(entry.get("asset_input") or ""),
+        str(entry.get("company_input") or ""),
+        dashboard_identity_groups([record]),
+    ) is not None
+
+
+def hydrate_records_pipeline_metadata_from_existing(incoming: list[dict[str, Any]], records: list[dict[str, Any]]) -> None:
+    """Carry Tab 0 metadata across Fast Triage and Full Scout records in one identity group."""
+    groups = dashboard_identity_groups(records)
+    for record in incoming:
+        table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else {}
+        summary = record.get("json_summary") if isinstance(record.get("json_summary"), dict) else {}
+        input_data = record.get("input") if isinstance(record.get("input"), dict) else {}
+        asset = non_empty_text(table.get("asset_name"), summary.get("asset_name"), input_data.get("asset_input"))
+        company = non_empty_text(table.get("company"), summary.get("company"), input_data.get("company_input"))
+        group = find_matching_identity_group(asset, company, groups)
+        if group is not None:
+            update_record_pipeline_metadata(record, pipeline_metadata_for_group(group))
+
+
+def promote_candidate_queue_metadata(incoming: list[dict[str, Any]], queue: list[dict[str, Any]]) -> set[str]:
+    """Move a queued Listing note onto its canonical Fast Triage/Full Scout record once saved."""
+    consumed_queue_ids: set[str] = set()
+    for record in incoming:
+        for entry in queue:
+            entry_id = entry.get("id")
+            if not isinstance(entry_id, str) or not entry_id or not record_matches_candidate_queue_entry(record, entry):
+                continue
+            update_record_pipeline_metadata(record, candidate_queue_entry_metadata(entry))
+            consumed_queue_ids.add(entry_id)
+    return consumed_queue_ids
+
+
 def parse_candidate_pair_lines(raw_text: str) -> dict[str, Any]:
-    """Parse pasted Step 0 candidate rows: asset name first, company name last, separated by
-    a tab or 2+ spaces (the same row format already documented to users in the Fast Triage
-    GPT prompt's Asset + Company list spec). Single-segment lines are asset-only.
+    """Parse Step 0 Asset/Company/Comment/Contact rows while preserving blank Excel cells.
+
+    The normal format is tab-delimited (Excel copy/paste) and supports RFC-style quoted,
+    multi-line cells. The historical two-column 2+ spaces format remains supported.
     """
     rows: list[dict[str, str]] = []
     unparsed: list[str] = []
-    for raw_line in str(raw_text or "").splitlines():
-        line = raw_line.strip()
-        if not line:
-            continue
-        segments = [segment.strip() for segment in re.split(r"\t+| {2,}", line) if segment.strip()]
-        if not segments:
-            unparsed.append(raw_line)
-            continue
-        if len(segments) == 1:
-            rows.append({"asset_input": segments[0], "company_input": "Unknown"})
-            continue
-        company_input = segments[-1]
-        asset_input = " ".join(segments[:-1])
-        rows.append({"asset_input": asset_input, "company_input": company_input})
+
+    def append_cells(cells: list[str], raw_description: str) -> None:
+        normalized = [str(cell or "").strip() for cell in cells]
+        if not any(normalized):
+            return
+        first = normalized[0].lower() if normalized else ""
+        second = normalized[1].lower() if len(normalized) > 1 else ""
+        if first in {"asset", "asset name", "pipeline"} and second in {"company", "company name"}:
+            return
+        asset_input = normalized[0] if normalized else ""
+        if not asset_input:
+            unparsed.append(raw_description)
+            return
+        rows.append({
+            "asset_input": asset_input,
+            "company_input": normalized[1] if len(normalized) > 1 and normalized[1] else "Unknown",
+            "comment": normalized[2] if len(normalized) > 2 else "",
+            "contact": "\t".join(normalized[3:]).strip() if len(normalized) > 3 else "",
+        })
+
+    text = str(raw_text or "")
+    if "\t" in text:
+        try:
+            for cells in csv.reader(StringIO(text), delimiter="\t"):
+                append_cells(cells, "\t".join(cells))
+        except csv.Error:
+            unparsed.extend(line for line in text.splitlines() if line.strip())
+    else:
+        for raw_line in text.splitlines():
+            line = raw_line.strip()
+            if not line:
+                continue
+            # Legacy input: Asset<2+ spaces>Company. Keep it for existing users.
+            segments = [segment.strip() for segment in re.split(r" {2,}", line) if segment.strip()]
+            if not segments:
+                unparsed.append(raw_line)
+                continue
+            if len(segments) == 1:
+                append_cells([segments[0], "Unknown"], raw_line)
+                continue
+            append_cells([" ".join(segments[:-1]), segments[-1]], raw_line)
     return {"rows": rows, "unparsed": unparsed}
 
 
@@ -7861,7 +7997,7 @@ def get_dashboard_summary() -> dict[str, Any]:
 
 @app.post("/api/candidate-queue/import")
 async def import_candidate_queue(request: Request) -> dict[str, Any]:
-    """Step 0: bulk-import pasted asset/company rows, excluding ones already researched."""
+    """Step 0: import Asset/Company/Comment/Contact rows into the Listing queue."""
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -7874,29 +8010,54 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
 
     parsed = parse_candidate_pair_lines(raw_text)
     rows = parsed["rows"]
-    groups = dashboard_identity_groups(load_records())
+    records = load_records()
+    groups = dashboard_identity_groups(records)
     queue = load_candidate_queue()
 
     added_entries: list[dict[str, Any]] = []
     already_researched_skipped = 0
     duplicate_in_queue_skipped = 0
+    metadata_updated = 0
+    records_updated = False
     added_at = datetime.now(timezone.utc).isoformat()
 
     for row in rows:
         asset_input = row["asset_input"]
         company_input = row["company_input"]
-        if find_matching_identity_group(asset_input, company_input, groups) is not None:
+        incoming_metadata = {
+            "listed_at": added_at,
+            "comment": row.get("comment", ""),
+            "contact": row.get("contact", ""),
+            "updated_at": added_at,
+        }
+        existing_group = find_matching_identity_group(asset_input, company_input, groups)
+        if existing_group is not None:
             already_researched_skipped += 1
+            for existing_record in existing_group.get("records") or []:
+                if isinstance(existing_record, dict) and update_record_pipeline_metadata(existing_record, incoming_metadata):
+                    records_updated = True
+                    metadata_updated += 1
             continue
-        queue_pseudo_groups = [
-            {
-                "asset_aliases": asset_aliases_from_text(entry.get("asset_input")),
-                "company_aliases": company_aliases_from_text(entry.get("company_input")),
-            }
-            for entry in queue
-        ]
-        if find_matching_identity_group(asset_input, company_input, queue_pseudo_groups) is not None:
+        existing_entry = next(
+            (
+                entry for entry in queue
+                if find_matching_identity_group(
+                    asset_input,
+                    company_input,
+                    [{
+                        "asset_aliases": asset_aliases_from_text(entry.get("asset_input")),
+                        "company_aliases": company_aliases_from_text(entry.get("company_input")),
+                    }],
+                ) is not None
+            ),
+            None,
+        )
+        if existing_entry is not None:
             duplicate_in_queue_skipped += 1
+            merged = merge_pipeline_metadata(candidate_queue_entry_metadata(existing_entry), incoming_metadata)
+            if candidate_queue_entry_metadata(existing_entry) != merged:
+                existing_entry["pipeline_metadata"] = merged
+                metadata_updated += 1
             continue
         entry = {
             "id": f"cq_{uuid.uuid4().hex[:8]}",
@@ -7905,12 +8066,15 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             "status": "pending",
             "source": "paste_import",
             "added_at": added_at,
+            "pipeline_metadata": incoming_metadata,
         }
         queue.append(entry)
         added_entries.append(entry)
 
-    if added_entries:
+    if added_entries or metadata_updated:
         save_candidate_queue(queue)
+    if records_updated:
+        save_records(records)
 
     return {
         "ok": True,
@@ -7918,6 +8082,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
         "added": len(added_entries),
         "already_researched_skipped": already_researched_skipped,
         "duplicate_in_queue_skipped": duplicate_in_queue_skipped,
+        "metadata_updated": metadata_updated,
         "unparsed_lines": parsed["unparsed"],
         "added_entries": added_entries,
     }
@@ -7963,6 +8128,12 @@ def get_candidate_queue_progress() -> dict[str, Any]:
         rep_summary = (representative.get("json_summary") if representative else None) or {}
         asset_label = non_empty_text(rep_table.get("asset_name"), rep_summary.get("asset_name"), "Unknown")
         company_label = non_empty_text(rep_table.get("company"), rep_summary.get("company"), "Unknown")
+        pipeline_metadata = pipeline_metadata_for_group(group)
+        # Historical Fast/Full records predate the Listing queue. They are already part of
+        # the pipeline inventory, so render Listing as complete instead of showing a broken
+        # "- → Fast Triage" sequence; new Listing timestamps remain explicit metadata.
+        listing_done = bool(pipeline_metadata.get("listed_at") or representative)
+        listing_timestamp = non_empty_text(pipeline_metadata.get("listed_at"), record_upload_timestamp(representative))
 
         for entry in queue:
             entry_id = entry.get("id")
@@ -7976,15 +8147,21 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "identity": group["asset_identity"],
                 "asset": asset_label,
                 "company": company_label,
-                "pending": {"done": False, "queue_id": None},
+                "pending": {"done": listing_done, "queue_id": None},
                 "fast_triage": {"done": fast_record is not None, "record_id": record_key(fast_record) if fast_record else None},
                 "full_scout": {"done": full_record is not None, "record_id": record_key(full_record) if full_record else None},
                 "shortlisting": {
                     "done": shortlisted_record is not None,
                     "record_id": record_key(shortlisted_record) if shortlisted_record else None,
                 },
+                "metadata": pipeline_metadata,
+                "metadata_owner": {"type": "record", "record_id": record_key(representative)} if representative else None,
             }
         )
+        if listing_done:
+            stats["pending"] += 1
+            if is_recent_upload(listing_timestamp):
+                recent_15_days["pending"] += 1
         if fast_record is not None:
             stats["fast_triage"] += 1
             if is_recent_upload(record_upload_timestamp(fast_record)):
@@ -8012,6 +8189,8 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "fast_triage": {"done": False, "record_id": None},
                 "full_scout": {"done": False, "record_id": None},
                 "shortlisting": {"done": False, "record_id": None},
+                "metadata": candidate_queue_entry_metadata(entry),
+                "metadata_owner": {"type": "queue", "queue_id": entry_id},
             }
         )
         stats["pending"] += 1
@@ -8019,6 +8198,78 @@ def get_candidate_queue_progress() -> dict[str, Any]:
             recent_15_days["pending"] += 1
 
     return {"ok": True, "stats": stats, "recent_15_days": recent_15_days, "rows": rows}
+
+
+@app.patch("/api/candidate-queue/metadata")
+async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]:
+    """Edit a single internal Comment or Contact value from Tab 0."""
+    account = require_authenticated_user(request)
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected metadata update object.")
+    field = str(payload.get("field") or "").strip().lower()
+    if field not in PIPELINE_METADATA_FIELDS:
+        raise HTTPException(status_code=400, detail="field must be comment or contact.")
+    value = str(payload.get("value") or "").strip()
+    if len(value) > 5000:
+        raise HTTPException(status_code=400, detail="Comment and Contact values must be 5,000 characters or fewer.")
+    changed_at = datetime.now(timezone.utc).isoformat()
+    owner_type = str(payload.get("owner_type") or "").strip()
+
+    if owner_type == "queue":
+        queue_id = str(payload.get("queue_id") or "").strip()
+        queue = load_candidate_queue()
+        entry = next((item for item in queue if str(item.get("id") or "") == queue_id), None)
+        if entry is None:
+            raise HTTPException(status_code=404, detail="Listing entry was not found.")
+        updated = merge_pipeline_metadata(
+            candidate_queue_entry_metadata(entry),
+            {field: value, "updated_at": changed_at},
+            allow_empty_fields={field},
+        )
+        entry["pipeline_metadata"] = updated
+        save_candidate_queue(queue)
+        return {"ok": True, "metadata": updated, "owner_type": "queue", "queue_id": queue_id}
+
+    if owner_type == "record":
+        record_id = str(payload.get("record_id") or "").strip()
+        records = load_records()
+        groups = dashboard_identity_groups(records)
+        group = next(
+            (candidate for candidate in groups if any(record_key(record) == record_id for record in candidate.get("records") or [])),
+            None,
+        )
+        if group is None:
+            raise HTTPException(status_code=404, detail="Pipeline record was not found.")
+        actor_ip = get_client_ip(request)
+        for record in group.get("records") or []:
+            previous = record_pipeline_metadata(record).get(field, "")
+            if update_record_pipeline_metadata(
+                record,
+                {"listed_at": changed_at, field: value, "updated_at": changed_at},
+                allow_empty_fields={field},
+            ):
+                append_edit_history(
+                    record,
+                    source="dashboard_pipeline_metadata",
+                    actor_ip=actor_ip,
+                    field=f"pipeline_metadata.{field}",
+                    previous_value=previous,
+                    new_value=value,
+                )
+        save_records(records)
+        return {
+            "ok": True,
+            "metadata": pipeline_metadata_for_group(group),
+            "owner_type": "record",
+            "record_id": record_id,
+            "edited_by": str(account.get("name") or ""),
+        }
+
+    raise HTTPException(status_code=400, detail="owner_type must be queue or record.")
 
 
 @app.delete("/api/candidate-queue/{queue_id}")
@@ -10792,6 +11043,9 @@ async def upsert_records(request: Request) -> dict[str, Any]:
 
     incoming = normalize_records(payload, sanitize_source_report=True)
     records = load_records()
+    queue = load_candidate_queue()
+    hydrate_records_pipeline_metadata_from_existing(incoming, records)
+    consumed_listing_ids = promote_candidate_queue_metadata(incoming, queue)
     confirmed_replacement_ids = apply_confirmed_reupload_replacements(
         incoming,
         records,
@@ -10864,12 +11118,15 @@ async def upsert_records(request: Request) -> dict[str, Any]:
             inserted += 1
 
     save_records(records)
+    if consumed_listing_ids:
+        save_candidate_queue([entry for entry in queue if entry.get("id") not in consumed_listing_ids])
     exports = run_markdown_exports()
     return {
         "ok": True,
         "inserted": inserted,
         "updated": updated,
         "confirmed_reuploads": len(confirmed_replacement_ids),
+        "promoted_listing_metadata": len(consumed_listing_ids),
         "total": len(records),
         "data_file": str(DATA_FILE.relative_to(ROOT)).replace("\\", "/"),
         "exports": exports,
@@ -10885,8 +11142,12 @@ async def replace_records(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
 
     records = normalize_records(payload, sanitize_source_report=True)
+    queue = load_candidate_queue()
+    consumed_listing_ids = promote_candidate_queue_metadata(records, queue)
     validate_records_for_save(records)
     save_records(records)
+    if consumed_listing_ids:
+        save_candidate_queue([entry for entry in queue if entry.get("id") not in consumed_listing_ids])
     exports = run_markdown_exports()
     return {
         "ok": True,

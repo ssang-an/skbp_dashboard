@@ -1,0 +1,111 @@
+from __future__ import annotations
+
+import unittest
+
+import main
+
+
+def pipeline_record(asset: str = "AX-101", company: str = "Acme Bio") -> dict:
+    return {
+        "meta": {
+            "review_type": "fast_triage",
+            "generated_at": "2026-08-22",
+            "output_filename_base": f"{company}_{asset}",
+        },
+        "input": {"asset_input": asset, "company_input": company},
+        "structured_table": {"asset_name": asset, "company": company},
+        "json_summary": {"asset_name": asset, "company": company},
+    }
+
+
+class Step0PipelineMetadataTests(unittest.TestCase):
+    def test_tab_delimited_four_columns_keep_blank_cells_and_multiline_comment(self) -> None:
+        parsed = main.parse_candidate_pair_lines(
+            'Asset\tCompany\tComment\tContact\n'
+            'AX-101\tAcme Bio\t"Call before review\nNeeds deck"\towner@acme.test\n'
+            'BX-2\tBeta\t\tDr. Kim\n'
+        )
+
+        self.assertEqual(parsed["unparsed"], [])
+        self.assertEqual(parsed["rows"], [
+            {
+                "asset_input": "AX-101",
+                "company_input": "Acme Bio",
+                "comment": "Call before review\nNeeds deck",
+                "contact": "owner@acme.test",
+            },
+            {
+                "asset_input": "BX-2",
+                "company_input": "Beta",
+                "comment": "",
+                "contact": "Dr. Kim",
+            },
+        ])
+
+    def test_legacy_two_column_paste_remains_supported(self) -> None:
+        parsed = main.parse_candidate_pair_lines("AX-101  Acme Bio\nBX-2  Beta\nAsset with  internal spacing  Gamma")
+
+        self.assertEqual([(row["asset_input"], row["company_input"], row["comment"], row["contact"]) for row in parsed["rows"]], [
+            ("AX-101", "Acme Bio", "", ""),
+            ("BX-2", "Beta", "", ""),
+            ("Asset with internal spacing", "Gamma", "", ""),
+        ])
+
+    def test_blank_import_values_never_erase_existing_metadata(self) -> None:
+        existing = {
+            "listed_at": "2026-08-01T00:00:00+00:00",
+            "comment": "Keep this note",
+            "contact": "owner@acme.test",
+            "updated_at": "2026-08-01T00:00:00+00:00",
+        }
+        merged = main.merge_pipeline_metadata(existing, {"comment": "", "contact": ""})
+
+        self.assertEqual(merged["comment"], "Keep this note")
+        self.assertEqual(merged["contact"], "owner@acme.test")
+
+    def test_explicit_edit_can_clear_a_metadata_field(self) -> None:
+        merged = main.merge_pipeline_metadata(
+            {"comment": "Remove me", "contact": "owner@acme.test"},
+            {"comment": "", "updated_at": "2026-08-22T00:00:00+00:00"},
+            allow_empty_fields={"comment"},
+        )
+
+        self.assertEqual(merged["comment"], "")
+        self.assertEqual(merged["contact"], "owner@acme.test")
+
+    def test_listing_metadata_promotes_to_matching_research_record(self) -> None:
+        record = pipeline_record()
+        queue = [{
+            "id": "cq_ax101",
+            "asset_input": "AX101",
+            "company_input": "Acme Bio",
+            "added_at": "2026-08-20T00:00:00+00:00",
+            "pipeline_metadata": {"comment": "Discuss rights", "contact": "J. Lee"},
+        }]
+
+        consumed = main.promote_candidate_queue_metadata([record], queue)
+
+        self.assertEqual(consumed, {"cq_ax101"})
+        self.assertEqual(record["meta"]["pipeline_metadata"]["comment"], "Discuss rights")
+        self.assertEqual(record["meta"]["pipeline_metadata"]["contact"], "J. Lee")
+        self.assertEqual(record["meta"]["pipeline_metadata"]["listed_at"], "2026-08-20T00:00:00+00:00")
+
+    def test_existing_metadata_hydrates_a_new_full_scout_record(self) -> None:
+        existing = pipeline_record()
+        existing["meta"]["pipeline_metadata"] = {
+            "listed_at": "2026-08-20T00:00:00+00:00",
+            "comment": "Keep private",
+            "contact": "owner@acme.test",
+            "updated_at": "2026-08-21T00:00:00+00:00",
+        }
+        incoming = pipeline_record()
+        incoming["meta"]["review_type"] = "full_scout"
+
+        main.hydrate_records_pipeline_metadata_from_existing([incoming], [existing])
+
+        self.assertEqual(incoming["meta"]["pipeline_metadata"]["comment"], "Keep private")
+        self.assertEqual(incoming["meta"]["pipeline_metadata"]["contact"], "owner@acme.test")
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -6393,6 +6393,37 @@ body.report-modal-open {
   font-size: 10px;
 }
 
+.qualitative-pipeline-metadata {
+  display: grid;
+  gap: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 23%, var(--line));
+  border-radius: 10px;
+  padding: 10px;
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+}
+
+.qualitative-pipeline-metadata > strong {
+  color: var(--accent);
+  font-size: 10px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.qualitative-pipeline-metadata dl {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.qualitative-pipeline-metadata dl > div {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.qualitative-pipeline-metadata dt { color: var(--muted); font-size: 11px; }
+.qualitative-pipeline-metadata dd { margin: 0; color: var(--text); font-size: 12px; line-height: 1.55; overflow-wrap: anywhere; }
+
 .qualitative-criterion {
   display: grid;
   gap: 8px;
@@ -19326,14 +19357,14 @@ body.report-reupload-open {
   color: var(--muted);
 }
 
-/* Step0's table has 7 columns, not the main table's ~17, so it needs its own
+/* Step0's table has 9 columns, not the main table's ~17, so it needs its own
    (wider) column-width proportions instead of .pipeline-col-*. */
 .step0-progress-table .step0-col-select {
   width: 4%;
 }
 
 .step0-progress-table .step0-col-asset {
-  width: 26%;
+  width: 21%;
 }
 
 /* The shared sortable-header rule truncates overflow; keep Tab0's first Asset label fully visible. */
@@ -19350,11 +19381,160 @@ body.report-reupload-open {
 }
 
 .step0-progress-table .step0-col-company {
-  width: 22%;
+  width: 17%;
 }
 
 .step0-progress-table .step0-col-stage {
-  width: 12%;
+  width: 9.5%;
+}
+
+.step0-progress-table .step0-col-metadata {
+  width: 10%;
+}
+
+.step0-metadata-cell {
+  text-align: center;
+}
+
+.step0-metadata-indicator {
+  display: inline-grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color .16s ease, background .16s ease, color .16s ease, transform .16s ease;
+}
+
+.step0-metadata-indicator svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.step0-metadata-indicator.has-value {
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--accent-strong);
+}
+
+.step0-metadata-indicator:hover,
+.step0-metadata-indicator:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 64%, var(--line));
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+  color: var(--accent-strong);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.step0-metadata-popover {
+  position: fixed;
+  z-index: 120;
+  box-sizing: border-box;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--line) 82%, var(--accent));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 96%, #fff 4%);
+  box-shadow: 0 18px 42px rgba(27, 42, 58, .18);
+}
+
+.step0-metadata-popover header,
+.step0-metadata-popover footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.step0-metadata-popover header strong {
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.step0-metadata-popover header button,
+.step0-metadata-popover footer button {
+  min-height: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.step0-metadata-popover header button {
+  width: 28px;
+  padding: 0;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.step0-metadata-popover footer {
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.step0-metadata-popover footer button {
+  padding: 5px 10px;
+}
+
+.step0-metadata-popover footer button.is-primary {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  background: color-mix(in srgb, var(--accent) 13%, var(--surface));
+  color: var(--accent-strong);
+}
+
+.step0-metadata-popover textarea {
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 10px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  resize: vertical;
+  background: var(--surface-soft);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.step0-metadata-popover textarea:focus {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.step0-metadata-value {
+  max-height: 180px;
+  margin: 10px 0 0;
+  overflow: auto;
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.step0-metadata-value.is-empty,
+.step0-metadata-status {
+  color: var(--muted);
+}
+
+.step0-metadata-status {
+  min-height: 16px;
+  margin: 6px 0 0;
+  font-size: 11px;
 }
 
 /* Keep Tab0's GPT action aligned with the header GPT lavender palette. */
@@ -19641,7 +19821,8 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 }
 
 .triage-score-notes,
-.triage-final-comment {
+.triage-final-comment,
+.triage-pipeline-metadata {
   margin-top: 14px;
 }
 
@@ -19736,6 +19917,37 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 .triage-score-note small { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; }
 .triage-final-comment > p { margin-bottom: 9px; white-space: pre-wrap; }
 .triage-final-comment > p b { display: block; margin-bottom: 4px; color: var(--accent); font-size: 10px; letter-spacing: .04em; text-transform: uppercase; }
+
+.triage-pipeline-metadata {
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
+  border-radius: 9px;
+  padding: 9px 10px;
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+}
+
+.triage-pipeline-metadata > p {
+  margin: 0 0 7px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.triage-pipeline-metadata dl {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.triage-pipeline-metadata dl > div {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.triage-pipeline-metadata dt { color: var(--muted); font-size: 11px; }
+.triage-pipeline-metadata dd { margin: 0; color: var(--text); font-size: 11px; line-height: 1.55; overflow-wrap: anywhere; }
 
 .triage-edit-history {
   margin: 14px -15px -4px;

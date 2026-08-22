@@ -663,6 +663,23 @@ function finalCommentMarkup(record) {
   `;
 }
 
+function pipelineMetadataMarkup(record) {
+  const metadata = objectValue(objectValue(record?.meta).pipeline_metadata);
+  const comment = textValue(metadata.comment, '');
+  const contact = textValue(metadata.contact, '');
+  if (!comment && !contact) return '';
+  const rows = [
+    ['Comment', comment],
+    ['Contact', contact]
+  ].filter(([, value]) => value);
+  return `
+    <section class="triage-pipeline-metadata" aria-label="Internal pipeline metadata">
+      <p>Internal pipeline metadata</p>
+      <dl>${rows.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value).replaceAll('\n', '<br>')}</dd></div>`).join('')}</dl>
+    </section>
+  `;
+}
+
 function renderScores(record) {
   const requireExplicitVerification = isCurrentFastTriageContract(record);
   const criteria = objectValue(objectValue(record?.scoring).criteria);
@@ -907,6 +924,7 @@ function renderQuickSummary(record) {
       `).join('')}
     </dl>
     ${finalCommentMarkup(record)}
+    ${pipelineMetadataMarkup(record)}
     ${renderTriageReviewHistory(record)}
   `;
 }

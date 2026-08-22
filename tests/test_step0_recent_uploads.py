@@ -45,5 +45,7 @@ class Step0RecentUploadTests(unittest.TestCase):
         ):
             progress = main.get_candidate_queue_progress()
 
-        self.assertEqual(progress["stats"], {"pending": 1, "fast_triage": 1, "full_scout": 1, "shortlisted": 1})
-        self.assertEqual(progress["recent_15_days"], {"pending": 1, "fast_triage": 1, "full_scout": 1, "shortlisted": 1})
+        # A historical researched record is already in the Listing inventory even when it
+        # predates `pipeline_metadata.listed_at`; the pending queue contributes one more.
+        self.assertEqual(progress["stats"], {"pending": 2, "fast_triage": 1, "full_scout": 1, "shortlisted": 1})
+        self.assertEqual(progress["recent_15_days"], {"pending": 2, "fast_triage": 1, "full_scout": 1, "shortlisted": 1})

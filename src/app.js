@@ -504,6 +504,7 @@ let promptCopyFeedbackTimer = null;
 let targetContextTooltip = null;
 let targetContextAnchor = null;
 let step0DragSelection = null;
+let activeStep0MetadataPopover = null;
 const focusSaveQueues = new Map();
 let dataReuploadResolve = null;
 let activeDataReuploadMatches = [];
@@ -9550,21 +9551,21 @@ function setPromptCopyFeedback(kind = 'full') {
 
 const STEP0_GUIDE_STEPS = [
   {
-    title: 'CSV/스프레드시트에서 약물·회사 목록 복사',
-    body: '후보군 리스트를 다운로드한 CSV나 스프레드시트에서 약물명과 회사명 두 컬럼만 그대로 복사합니다.',
-    example: 'AD-302\tAddPharma\nADEL-Y03\tADEL'
+    title: 'Excel에서 4개 열을 순서대로 복사',
+    body: '기본 형식은 Asset · Company · Comment · Contact입니다. Comment 또는 Contact가 비어 있어도 빈 셀을 유지한 채 복사합니다.',
+    example: 'AD-302\tAddPharma\tBD 검토 필요\t8/20 담당자 연락\nADEL-Y03\tADEL\t\tContacted'
   },
   {
     title: '아래 입력란에 붙여넣기',
-    body: '탭 또는 공백 2칸 이상으로 약물명과 회사명이 구분되어 있으면 됩니다. 약물명만 있어도 됩니다.'
+    body: 'Excel의 탭 구분을 그대로 붙여넣으면 빈 Comment/Contact 칸의 위치도 유지됩니다. 기존 Asset · Company 2열 형식도 계속 사용할 수 있습니다.'
   },
   {
     title: '가져오기',
-    body: '이미 Fast Triage/Full Scout로 조사된 항목은 자동으로 제외되고, 새 항목만 조사 대기 목록에 추가됩니다.'
+    body: '새 후보는 Listing에 추가됩니다. 이미 조사된 동일 Pipeline에 Comment/Contact를 입력한 경우에는 기존 Pipeline의 내부 메타데이터만 안전하게 보완합니다.'
   },
   {
-    title: '조사 대기 항목 선택 후 지침 복사',
-    body: '조사 대기 중인 파이프라인을 여러 개 선택한 뒤 {{copy}}를 누르세요. 선택한 후보 목록이 Fast Triage 지침 1에 자동으로 포함됩니다.',
+    title: 'Listing 항목 선택 후 지침 복사',
+    body: 'Listing 중인 파이프라인을 여러 개 선택한 뒤 {{copy}}를 누르세요. 선택한 후보 목록이 Fast Triage 지침 1에 자동으로 포함됩니다.',
     actions: [
       { token: 'copy', kind: 'copy-instructions', icon: 'clipboard', label: 'GPT 지침 복사' }
     ]
@@ -9578,7 +9579,7 @@ function step0GuideBodyMarkup(step) {
   (Array.isArray(step.actions) ? step.actions : []).forEach((action) => {
     const token = `{{${action.token}}}`;
     const title = action.kind === 'copy-instructions'
-      ? '선택한 조사 대기 항목을 포함해 GPT Fast Triage 지침 1을 복사합니다.'
+      ? '선택한 Listing 항목을 포함해 GPT Fast Triage 지침 1을 복사합니다.'
       : action.label;
     const pill = `<button
       type="button"
@@ -9661,19 +9662,19 @@ function renderStep0ImportSummary(result) {
       level: 'ok',
       label: '신규',
       path: '신규 추가',
-      message: `${result.added}건을 대기열에 새로 추가했습니다.`
+      message: `${result.added}건을 Listing에 새로 추가했습니다.`
     },
     {
       level: 'ok',
       label: '제외',
       path: '이미 조사됨',
-      message: `${result.already_researched_skipped}건은 기존 조사 결과와 일치해 제외했습니다.`
+      message: `${result.already_researched_skipped}건은 기존 조사 결과와 일치했습니다. 입력된 Comment/Contact는 빈 값이 아닌 경우에만 보완했습니다.`
     },
     {
       level: 'ok',
       label: '제외',
       path: '대기열 중복',
-      message: `${result.duplicate_in_queue_skipped}건은 이미 대기열에 있어 제외했습니다.`
+      message: `${result.duplicate_in_queue_skipped}건은 이미 Listing에 있어 제외했습니다.`
     },
     ...(unparsedCount ? [{
       level: 'warning',
@@ -9723,7 +9724,7 @@ async function importStep0Candidates() {
   try {
     const result = await runBlockingOperation({
       title: '후보 목록을 가져오고 있습니다',
-      message: '붙여 넣은 후보 목록을 확인해 대기열에 반영하고 있습니다.',
+      message: '붙여 넣은 후보 목록과 내부 Comment/Contact 정보를 확인해 Listing에 반영하고 있습니다.',
       status: '처리 중에는 다른 화면으로 이동할 수 없습니다.'
     }, async (signal) => {
       const response = await fetch('/api/candidate-queue/import', {
@@ -9773,7 +9774,7 @@ async function loadStep0Progress() {
   } catch (error) {
     if (elements.step0ProgressTableBody) {
       elements.step0ProgressTableBody.innerHTML =
-        `<tr><td colspan="7" class="step0-empty-state">진척 현황을 불러오지 못했습니다: ${escapeHtml(error.message)}</td></tr>`;
+        `<tr><td colspan="9" class="step0-empty-state">진척 현황을 불러오지 못했습니다: ${escapeHtml(error.message)}</td></tr>`;
     }
   }
 }
@@ -9800,6 +9801,7 @@ function renderStep0StatStrip() {
 }
 
 const STEP0_STAGE_LABELS = {
+  pending: 'Listing',
   fast_triage: 'Fast Triage',
   full_scout: 'Full Scout',
   shortlisting: 'Shortlisting'
@@ -9807,19 +9809,133 @@ const STEP0_STAGE_LABELS = {
 
 function step0StageCellHtml(stage, cell) {
   const done = Boolean(cell?.done);
-  if (stage === 'pending') {
-    return `<span class="pill ${done ? 'review' : 'empty'}">${done ? '대기중' : '-'}</span>`;
-  }
   const tone = done ? 'pass' : 'empty';
   const stageLabel = STEP0_STAGE_LABELS[stage] || stage;
   const label = done ? '<span aria-hidden="true">✓</span>' : '-';
   const title = done ? ` title="${escapeHtml(`${stageLabel} 완료 · 상세 보기`)}"` : '';
-  if (!done || !cell?.record_id) {
+  if (stage === 'pending' || !done || !cell?.record_id) {
     return `<span class="pill ${tone}"${title}>${label}</span>`;
   }
   const mode = stage === 'fast_triage' ? 'triage' : stage === 'full_scout' ? 'full' : 'focus';
   const href = recordDetailHref({ id: cell.record_id, isTriage: stage === 'fast_triage' }, mode);
   return `<a class="pill ${tone}" href="${escapeHtml(href)}"${title}>${label}</a>`;
+}
+
+function step0MetadataCellHtml(row, field) {
+  const value = String(row.metadata?.[field] || '').trim();
+  const owner = row.metadata_owner || {};
+  const label = field === 'comment' ? 'Comment' : 'Contact';
+  if (!owner.type) return '<span class="step0-metadata-empty">-</span>';
+  const ownerId = owner.type === 'queue' ? owner.queue_id : owner.record_id;
+  const title = value ? `${label} 확인 · 두 번 클릭하여 수정` : `${label} 없음 · 두 번 클릭하여 입력`;
+  return `<button
+    type="button"
+    class="step0-metadata-indicator ${value ? 'has-value' : 'is-empty'}"
+    data-step0-metadata
+    data-step0-metadata-field="${escapeHtml(field)}"
+    data-step0-row-identity="${escapeHtml(row.identity || '')}"
+    data-owner-type="${escapeHtml(owner.type)}"
+    data-owner-id="${escapeHtml(ownerId || '')}"
+    aria-label="${escapeHtml(title)}"
+    title="${escapeHtml(title)}"
+  >${value ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7.4" /></svg>' : '-'}</button>`;
+}
+
+function closeStep0MetadataPopover() {
+  activeStep0MetadataPopover?.remove();
+  activeStep0MetadataPopover = null;
+}
+
+function positionStep0MetadataPopover(popover, anchor) {
+  const rect = anchor.getBoundingClientRect();
+  const width = Math.min(360, Math.max(260, window.innerWidth - 24));
+  popover.style.width = `${width}px`;
+  const desiredLeft = Math.min(Math.max(12, rect.right - width), window.innerWidth - width - 12);
+  popover.style.left = `${desiredLeft}px`;
+  popover.style.top = `${Math.min(window.innerHeight - 18, rect.bottom + 8)}px`;
+  const popoverHeight = popover.getBoundingClientRect().height;
+  if (rect.bottom + 8 + popoverHeight > window.innerHeight - 12 && rect.top - popoverHeight - 8 > 12) {
+    popover.style.top = `${rect.top - popoverHeight - 8}px`;
+  }
+}
+
+function step0MetadataValue(row, field) {
+  return String(row?.metadata?.[field] || '').trim();
+}
+
+async function saveStep0Metadata(row, field, value, status) {
+  const owner = row?.metadata_owner || {};
+  const payload = {
+    owner_type: owner.type,
+    field,
+    value: String(value || '').trim()
+  };
+  if (owner.type === 'queue') payload.queue_id = owner.queue_id;
+  if (owner.type === 'record') payload.record_id = owner.record_id;
+  if (!payload.owner_type || (!payload.queue_id && !payload.record_id)) {
+    throw new Error('저장할 Listing 항목을 찾지 못했습니다.');
+  }
+  if (status) status.textContent = '저장 중…';
+  const response = await fetch('/api/candidate-queue/metadata', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || 'Comment 또는 Contact 저장에 실패했습니다.');
+  row.metadata = { ...(row.metadata || {}), ...(data.metadata || {}), [field]: payload.value };
+  closeStep0MetadataPopover();
+  await loadStep0Progress();
+  showStep0Message(`${field === 'comment' ? 'Comment' : 'Contact'}를 저장했습니다.`, 'success');
+}
+
+function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) {
+  closeStep0MetadataPopover();
+  const owner = row?.metadata_owner || {};
+  if (!owner.type) return;
+  const label = field === 'comment' ? 'Comment' : 'Contact';
+  const value = step0MetadataValue(row, field);
+  const popover = document.createElement('section');
+  popover.className = 'step0-metadata-popover';
+  popover.setAttribute('role', 'dialog');
+  popover.setAttribute('aria-label', `${row.asset || 'Pipeline'} ${label}`);
+  popover.innerHTML = editing
+    ? `
+      <header><strong>${label}</strong><button type="button" class="step0-metadata-close" aria-label="닫기">×</button></header>
+      <form data-step0-metadata-form>
+        <textarea rows="4" maxlength="5000" aria-label="${label} 입력" placeholder="${label}을 입력하세요.">${escapeHtml(value)}</textarea>
+        <p class="step0-metadata-status" aria-live="polite"></p>
+        <footer><button type="button" data-step0-metadata-cancel>취소</button><button type="submit" class="is-primary">저장</button></footer>
+      </form>
+    `
+    : `
+      <header><strong>${label}</strong><button type="button" class="step0-metadata-close" aria-label="닫기">×</button></header>
+      <p class="step0-metadata-value${value ? '' : ' is-empty'}">${value ? escapeHtml(value).replaceAll('\n', '<br>') : `저장된 ${label}이 없습니다.`}</p>
+      <footer><button type="button" class="is-primary" data-step0-metadata-edit>수정</button></footer>
+    `;
+  document.body.appendChild(popover);
+  activeStep0MetadataPopover = popover;
+  positionStep0MetadataPopover(popover, anchor);
+  const close = () => closeStep0MetadataPopover();
+  popover.querySelector('.step0-metadata-close')?.addEventListener('click', close);
+  popover.querySelector('[data-step0-metadata-cancel]')?.addEventListener('click', close);
+  popover.querySelector('[data-step0-metadata-edit]')?.addEventListener('click', () => {
+    openStep0MetadataPopover(anchor, row, field, { editing: true });
+  });
+  popover.querySelector('[data-step0-metadata-form]')?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const textarea = form.querySelector('textarea');
+    const status = form.querySelector('.step0-metadata-status');
+    form.querySelectorAll('button').forEach((button) => { button.disabled = true; });
+    try {
+      await saveStep0Metadata(row, field, textarea?.value || '', status);
+    } catch (error) {
+      if (status) status.textContent = error.message;
+      form.querySelectorAll('button').forEach((button) => { button.disabled = false; });
+    }
+  });
+  if (editing) popover.querySelector('textarea')?.focus();
 }
 
 function step0FilteredSortedRows() {
@@ -9831,7 +9947,7 @@ function step0FilteredSortedRows() {
 
   let rows = state.step0Rows.filter((row) => {
     if (searchTerms.length) {
-      const haystack = `${row.asset || ''} ${row.company || ''}`.toLowerCase();
+      const haystack = `${row.asset || ''} ${row.company || ''} ${row.metadata?.comment || ''} ${row.metadata?.contact || ''}`.toLowerCase();
       if (!searchTerms.some((term) => haystack.includes(term))) return false;
     }
     if (statusFilters.size && ![...statusFilters].some((status) => row[status]?.done)) return false;
@@ -9927,8 +10043,8 @@ function renderStep0ProgressTable() {
     .map((row) => row.pending.queue_id);
   if (!pageRows.length) {
     elements.step0ProgressTableBody.innerHTML = state.step0Rows.length
-      ? '<tr><td colspan="7" class="step0-empty-state">현재 필터/검색 조건에 맞는 항목이 없습니다.</td></tr>'
-      : '<tr><td colspan="7" class="step0-empty-state">진척 현황 데이터가 없습니다. 아래에서 후보 목록을 붙여넣어 시작하세요.</td></tr>';
+      ? '<tr><td colspan="9" class="step0-empty-state">현재 필터/검색 조건에 맞는 항목이 없습니다.</td></tr>'
+      : '<tr><td colspan="9" class="step0-empty-state">진척 현황 데이터가 없습니다. 아래에서 후보 목록을 붙여넣어 시작하세요.</td></tr>';
   } else {
     elements.step0ProgressTableBody.innerHTML = pageRows
       .map((row) => {
@@ -9946,6 +10062,8 @@ function renderStep0ProgressTable() {
           <td>${step0StageCellHtml('fast_triage', row.fast_triage)}</td>
           <td>${step0StageCellHtml('full_scout', row.full_scout)}</td>
           <td>${step0StageCellHtml('shortlisting', row.shortlisting)}</td>
+          <td class="step0-metadata-cell">${step0MetadataCellHtml(row, 'comment')}</td>
+          <td class="step0-metadata-cell">${step0MetadataCellHtml(row, 'contact')}</td>
         </tr>`;
       })
       .join('');
@@ -9958,14 +10076,16 @@ function renderStep0ProgressTable() {
 
 function exportStep0Table() {
   const rows = step0FilteredSortedRows();
-  const headers = ['Asset', 'Company', '조사 대기', 'Fast Triage', 'Full Scout', 'Shortlisting'];
+  const headers = ['Asset', 'Company', 'Listing', 'Fast Triage', 'Full Scout', 'Shortlisting', 'Comment', 'Contact'];
   const body = rows.map((row) => [
     row.asset,
     row.company,
-    row.pending?.done ? '대기중' : '',
+    row.pending?.done ? '✓' : '',
     row.fast_triage?.done ? '완료' : '',
     row.full_scout?.done ? '완료' : '',
-    row.shortlisting?.done ? '완료' : ''
+    row.shortlisting?.done ? '완료' : '',
+    row.metadata?.comment || '',
+    row.metadata?.contact || ''
   ]);
   const csv = [headers, ...body].map((line) => line.map(csvValue).join(',')).join('\r\n');
   const blob = new Blob([BOM_PREFIX + csv], { type: 'text/csv;charset=utf-8;' });
@@ -9990,10 +10110,10 @@ function updateStep0SelectAllState() {
   selectAll.indeterminate = checkedCount > 0 && checkedCount < visibleIds.length;
   selectAll.disabled = visibleIds.length === 0;
   const selectionLabel = selectAll.indeterminate
-    ? `현재 페이지에서 선택된 ${checkedCount}개 조사 대기 항목 해제`
+    ? `현재 페이지에서 선택된 ${checkedCount}개 Listing 항목 해제`
     : selectAll.checked
-      ? '현재 페이지의 조사 대기 항목 전체 선택 해제'
-      : `현재 페이지의 조사 대기 항목 전체 선택 (최대 ${STEP0_MAX_SELECTED_CANDIDATES}개)`;
+      ? '현재 페이지의 Listing 항목 전체 선택 해제'
+      : `현재 페이지의 Listing 항목 전체 선택 (최대 ${STEP0_MAX_SELECTED_CANDIDATES}개)`;
   selectAll.setAttribute('aria-label', selectionLabel);
   selectAll.title = selectionLabel;
 }
@@ -10191,7 +10311,26 @@ elements.step0ProgressTableBody?.addEventListener('change', (event) => {
   checkbox.checked = changed && state.step0SelectedPendingIds.has(queueId);
   renderStep0SelectedCount();
 });
+elements.step0ProgressTableBody?.addEventListener('click', (event) => {
+  const indicator = event.target.closest('[data-step0-metadata]');
+  if (!indicator) return;
+  const field = indicator.dataset.step0MetadataField;
+  const row = state.step0Rows.find((candidate) => candidate.identity === indicator.dataset.step0RowIdentity);
+  if (!row || !field) return;
+  event.preventDefault();
+  openStep0MetadataPopover(indicator, row, field, { editing: !step0MetadataValue(row, field) });
+});
+elements.step0ProgressTableBody?.addEventListener('dblclick', (event) => {
+  const indicator = event.target.closest('[data-step0-metadata]');
+  if (!indicator) return;
+  const field = indicator.dataset.step0MetadataField;
+  const row = state.step0Rows.find((candidate) => candidate.identity === indicator.dataset.step0RowIdentity);
+  if (!row || !field) return;
+  event.preventDefault();
+  openStep0MetadataPopover(indicator, row, field, { editing: true });
+});
 elements.step0ProgressTableBody?.addEventListener('pointerdown', (event) => {
+  if (event.target.closest('[data-step0-metadata]')) return;
   const checkbox = event.target.closest('.step0-row-select');
   if (!checkbox || event.button !== 0) return;
   const queueId = checkbox.dataset.queueId;
@@ -10215,6 +10354,16 @@ elements.step0ProgressTableBody?.addEventListener('pointerover', (event) => {
 window.addEventListener('pointerup', endStep0DragSelection);
 window.addEventListener('pointercancel', endStep0DragSelection);
 window.addEventListener('blur', endStep0DragSelection);
+document.addEventListener('pointerdown', (event) => {
+  if (!activeStep0MetadataPopover) return;
+  if (activeStep0MetadataPopover.contains(event.target) || event.target.closest('[data-step0-metadata]')) return;
+  closeStep0MetadataPopover();
+});
+window.addEventListener('resize', closeStep0MetadataPopover);
+window.addEventListener('scroll', closeStep0MetadataPopover, true);
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeStep0MetadataPopover();
+});
 
 const DESCENDING_FIRST_SORT_KEYS = new Set([
   'targetScore',

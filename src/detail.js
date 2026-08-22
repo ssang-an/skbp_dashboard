@@ -1751,6 +1751,22 @@ async function deleteAttachment(attachmentId) {
 const QUALITATIVE_LEGACY_AI_AUTHOR = 'AI (초안)';
 let isGeneratingAllQualitativeOpinions = false;
 
+function renderPipelineMetadata(record) {
+  const metadata = record?.meta?.pipeline_metadata;
+  if (!metadata || typeof metadata !== 'object') return '';
+  const rows = [
+    ['Comment', safeDisplayText(metadata.comment, '')],
+    ['Contact', safeDisplayText(metadata.contact, '')]
+  ].filter(([, value]) => value);
+  if (!rows.length) return '';
+  return `
+    <section class="qualitative-pipeline-metadata" aria-label="Internal pipeline metadata">
+      <strong>Internal pipeline metadata</strong>
+      <dl>${rows.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value).replaceAll('\n', '<br>')}</dd></div>`).join('')}</dl>
+    </section>
+  `;
+}
+
 function renderQualitativeReview(record) {
   if (!elements.qualitativeReviewPanel) return;
   const qualitativeState = record?.meta?.qualitative_review || {};
@@ -1781,6 +1797,7 @@ function renderQualitativeReview(record) {
       <small>담당자가 직접 작성하거나, 'AI 생성' 버튼으로 원문·업로드 자료 기반 1차 초안을 받아 검토·수정할 수 있습니다.</small>
     </div>
     ${allCriteria.map((criterion) => renderQualitativeCriterionSection(criterion, criteriaState)).join('')}
+    ${renderPipelineMetadata(record)}
     ${renderQualitativeAddCriterionSection()}
   `;
 }

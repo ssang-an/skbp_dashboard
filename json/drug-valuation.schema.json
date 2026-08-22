@@ -28,7 +28,18 @@
         "output_filename_base": { "type": "string", "minLength": 1 },
         "schema_version": { "type": "string" },
         "instruction_version": { "type": "string" },
-        "rubric_version": { "type": "string" }
+        "rubric_version": { "type": "string" },
+        "pipeline_metadata": {
+          "type": "object",
+          "description": "Dashboard-owned internal Listing metadata. It must not affect GPT research, rubric scoring, or source-report content.",
+          "properties": {
+            "listed_at": { "type": "string" },
+            "comment": { "type": "string", "maxLength": 5000 },
+            "contact": { "type": "string", "maxLength": 5000 },
+            "updated_at": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
       },
       "additionalProperties": true
     },

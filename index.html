@@ -118,7 +118,7 @@
           </div>
           <div class="step0-stat-strip">
             <div class="step0-stat" data-stat="pending">
-              <span class="step0-stat-label">조사 대기</span>
+              <span class="step0-stat-label">Listing</span>
               <span class="step0-stat-value"><strong id="step0StatPending">0</strong><em id="step0RecentPending" class="step0-stat-recent" hidden>▲ +0</em></span>
             </div>
             <div class="step0-stat" data-stat="fast_triage">
@@ -151,7 +151,7 @@
             <label class="step0-status-filter-label">
               <span>진행 단계</span>
               <div class="step0-status-toggle-group" role="group" aria-label="진행 단계 필터 (다중 선택)">
-                <button type="button" class="step0-status-toggle" data-step0-status="pending" aria-pressed="false">조사 대기</button>
+                <button type="button" class="step0-status-toggle" data-step0-status="pending" aria-pressed="false">Listing</button>
                 <button type="button" class="step0-status-toggle" data-step0-status="fast_triage" aria-pressed="false">Fast Triage</button>
                 <button type="button" class="step0-status-toggle" data-step0-status="full_scout" aria-pressed="false">Full Scout</button>
                 <button type="button" class="step0-status-toggle" data-step0-status="shortlisting" aria-pressed="false">Shortlisting</button>
@@ -186,7 +186,7 @@
                 id="step0CopyInstructionsButton"
                 type="button"
                 class="step0-copy-instructions-button help-tooltip"
-                data-tooltip="선택한 조사 대기 항목을 포함해 GPT Fast Triage 지침 1을 복사합니다."
+                data-tooltip="선택한 Listing 항목을 포함해 GPT Fast Triage 지침 1을 복사합니다."
               ><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></svg><span class="step0-copy-gpt" aria-hidden="true">GPT</span><b>지침 복사</b></button>
               <button id="step0ExportExcelButton" class="excel-export-button help-tooltip" type="button" data-tooltip="현재 필터 결과를 Excel용 CSV로 내보냅니다." disabled>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h5M3 9h9v9H3zM5.5 11.5l4 4m0-4-4 4"/></svg>
@@ -204,22 +204,26 @@
                 <col class="step0-col-stage" />
                 <col class="step0-col-stage" />
                 <col class="step0-col-stage" />
+                <col class="step0-col-metadata" />
+                <col class="step0-col-metadata" />
               </colgroup>
               <thead>
                 <tr>
                   <th class="select-col">
-                    <input id="step0SelectAllRows" type="checkbox" aria-label="조사 대기 항목 전체 선택 (최대 20개)" />
+                    <input id="step0SelectAllRows" type="checkbox" aria-label="Listing 항목 전체 선택 (최대 20개)" />
                   </th>
                   <th class="step0-asset-header"><button data-step0-sort="asset" type="button">Asset</button></th>
                   <th><button data-step0-sort="company" type="button">Company</button></th>
-                  <th><button data-step0-sort="pending" type="button">조사 대기</button></th>
+                  <th><button data-step0-sort="pending" type="button">Listing</button></th>
                   <th><button data-step0-sort="fast_triage" type="button">Fast Triage</button></th>
                   <th><button data-step0-sort="full_scout" type="button">Full Scout</button></th>
                   <th><button data-step0-sort="shortlisting" type="button">Shortlisting</button></th>
+                  <th>Comment</th>
+                  <th>Contact</th>
                 </tr>
               </thead>
               <tbody id="step0ProgressTableBody">
-                <tr><td colspan="7" class="step0-empty-state">진척 현황을 불러오는 중입니다...</td></tr>
+                <tr><td colspan="9" class="step0-empty-state">진척 현황을 불러오는 중입니다...</td></tr>
               </tbody>
             </table>
           </div>
@@ -246,17 +250,17 @@
                 <label class="data-input-box">
                   <span class="data-upload-input-label">
                     <svg class="data-upload-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M8 5.5h8M9 3h6v4H9z" /><path d="M7 5H5.5A1.5 1.5 0 0 0 4 6.5v13A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-13A1.5 1.5 0 0 0 18.5 5H17" /><path d="m9 14 2 2 4-4" /></svg>
-                    <b>약물 / 회사명 목록</b>
+                    <b>Asset / Company / Comment / Contact</b>
                   </span>
                   <div class="data-upload-textarea-shell">
-                    <textarea id="step0PasteInput" spellcheck="false" placeholder="CSV/스프레드시트에서 복사한 약물명과 회사명 목록을 그대로 붙여넣으세요.&#10;예) AD-302[Tab]AddPharma"></textarea>
+                    <textarea id="step0PasteInput" spellcheck="false" placeholder="Excel에서 Asset · Company · Comment · Contact 순서의 4개 열을 그대로 붙여넣으세요. 빈 Comment/Contact 칸도 유지됩니다.&#10;예) AD-302[Tab]AddPharma[Tab]BD 검토 필요[Tab]8/20 담당자 연락&#10;기존 2열(Asset · Company) 형식도 계속 사용할 수 있습니다."></textarea>
                   </div>
                 </label>
               </div>
               <div id="step0ImportSummary" class="input-validation-results" aria-live="polite" hidden></div>
               <div class="editor-actions">
                 <button class="action-pill data-upload-clear-button help-tooltip" id="step0ClearButton" type="button" data-tooltip="붙여넣은 내용을 비웁니다."><span aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" /></svg></span><b>비우기</b></button>
-                <button class="action-pill header-action-button primary-button help-tooltip" id="step0ImportButton" type="button" data-tooltip="붙여넣은 목록을 파싱해 조사 대기 목록에 추가합니다."><span class="data-upload-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 20v-6h8v6" /></svg></span><b>가져오기</b></button>
+                <button class="action-pill header-action-button primary-button help-tooltip" id="step0ImportButton" type="button" data-tooltip="붙여넣은 목록을 파싱해 Listing 목록에 추가합니다."><span class="data-upload-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 20v-6h8v6" /></svg></span><b>가져오기</b></button>
               </div>
             </div>
             <aside class="data-upload-guide" aria-labelledby="step0GuideTitle">
@@ -1122,6 +1126,6 @@
       </section>
     </div>
 
-    <script type="module" src="./src/app.js?v=20260822-triage-row-actions-1"></script>
+    <script type="module" src="./src/app.js?v=20260822-listing-metadata-1"></script>
   </body>
 </html>
