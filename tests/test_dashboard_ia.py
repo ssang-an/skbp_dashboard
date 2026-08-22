@@ -493,7 +493,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         step0 = HTML[HTML.index('id="step0Panel"'):HTML.index('class="panel control-panel"')]
         workflow_map = function_body(JS, "renderStep0WorkflowMap")
 
-        self.assertIn('id="step0WorkflowMap"', step0)
+        self.assertEqual(step0.count('data-step0-workflow-map='), 4)
+        self.assertIn('class="step0-workflow-card-canvas"', step0)
         self.assertNotIn('id="step0WorkflowMapResultCount"', step0)
         self.assertIn('step0FilteredSortedRows()', workflow_map)
         self.assertIn("stage.key === 'pending' || row?.[stage.key]?.done", workflow_map)
@@ -501,17 +502,18 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('new globalThis.G6.Graph', workflow_map)
         self.assertIn('STEP0_WORKFLOW_NODE_STYLES', JS)
         self.assertIn('shortlisting: { color:', JS)
-        self.assertIn('size: 18', JS)
-        self.assertIn('step0-workflow-force-grid', workflow_map)
+        self.assertIn('size: 13', JS)
+        self.assertIn('step0WorkflowMapFor(stage.key)', workflow_map)
         self.assertIn('data: { nodes, edges: [] }', workflow_map)
         self.assertIn("type: 'd3-force'", workflow_map)
         self.assertIn("'drag-element-force'", workflow_map)
         self.assertNotIn('step0-workflow-stage-headings', workflow_map)
         self.assertNotIn("previousNodeId", workflow_map)
         self.assertIn('step0-workflow-g6-shell', CSS)
-        self.assertIn('step0-workflow-force-grid', CSS)
+        self.assertIn('.step0-workflow-card-canvas', CSS)
+        self.assertIn('height: 174px;', CSS)
         self.assertIn('border-radius: 50%;', CSS)
-        self.assertIn('grid-template-columns: repeat(4, minmax(180px, 1fr));', CSS)
+        self.assertIn('grid-template-columns: repeat(4, minmax(0, 1fr));', CSS)
 
     def test_step0_uses_one_asset_company_search_instead_of_a_company_dropdown(self):
         step0_controls = HTML[HTML.index('aria-label="진척 현황 controls"') : HTML.index('class="panel pipeline-table-panel"')]

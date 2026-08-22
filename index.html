@@ -145,26 +145,35 @@
           <section id="step0SummaryCards" class="step0-summary-cards" aria-label="진척 현황 요약">
           <section class="panel step0-stat-panel" aria-label="진척 현황 요약">
           <div class="step0-stat-strip">
+            <section class="step0-stat-column" data-workflow-stage="pending">
             <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="pending" data-tooltip="Listing에 등록된 Pipeline을 Table에 표시합니다. 이후 조사 단계가 완료된 항목도 포함됩니다." aria-label="Listing Pipeline으로 필터">
               <span class="step0-stat-label">Listing</span>
               <span class="step0-stat-value"><strong id="step0StatPending">0</strong><em id="step0RecentPending" class="step0-stat-recent" hidden>▲ +0</em></span>
             </button>
+            <div class="step0-workflow-card-canvas" data-step0-workflow-map="pending" role="region" tabindex="0" aria-label="Listing Pipeline node graph" aria-live="polite"></div>
+            </section>
+            <section class="step0-stat-column" data-workflow-stage="fast_triage">
             <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="fast_triage" data-tooltip="Fast Triage가 완료된 Pipeline을 Table에 표시합니다. 이후 단계가 완료된 항목도 포함됩니다." aria-label="Fast Triage 완료 Pipeline으로 필터">
               <span class="step0-stat-label">Fast Triage</span>
               <span class="step0-stat-value"><strong id="step0StatFastTriage">0</strong><em id="step0RecentFastTriage" class="step0-stat-recent" hidden>▲ +0</em></span>
             </button>
+            <div class="step0-workflow-card-canvas" data-step0-workflow-map="fast_triage" role="region" tabindex="0" aria-label="Fast Triage Pipeline node graph" aria-live="polite"></div>
+            </section>
+            <section class="step0-stat-column" data-workflow-stage="full_scout">
             <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="full_scout" data-tooltip="Full Scout가 완료된 Pipeline을 Table에 표시합니다. Shortlisting 항목도 포함됩니다." aria-label="Full Scout 완료 Pipeline으로 필터">
               <span class="step0-stat-label">Full Scout</span>
               <span class="step0-stat-value"><strong id="step0StatFullScout">0</strong><em id="step0RecentFullScout" class="step0-stat-recent" hidden>▲ +0</em></span>
             </button>
+            <div class="step0-workflow-card-canvas" data-step0-workflow-map="full_scout" role="region" tabindex="0" aria-label="Full Scout Pipeline node graph" aria-live="polite"></div>
+            </section>
+            <section class="step0-stat-column" data-workflow-stage="shortlisting">
             <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="shortlisting" data-tooltip="Shortlisting으로 추적 중인 Pipeline을 Table에 표시합니다." aria-label="Shortlisting Pipeline으로 필터">
               <span class="step0-stat-label">Shortlisting</span>
               <span class="step0-stat-value"><strong id="step0StatShortlisted">0</strong><em id="step0RecentShortlisted" class="step0-stat-recent" hidden>▲ +0</em></span>
             </button>
+            <div class="step0-workflow-card-canvas" data-step0-workflow-map="shortlisting" role="region" tabindex="0" aria-label="Shortlisting Pipeline node graph" aria-live="polite"></div>
+            </section>
           </div>
-          <section class="step0-workflow-map" aria-label="Pipeline 진행 단계 node graph">
-            <div id="step0WorkflowMap" class="step0-workflow-map-canvas" role="region" tabindex="0" aria-label="Pipeline Workflow Map" aria-live="polite"></div>
-          </section>
         </section>
         </section>
         </section>

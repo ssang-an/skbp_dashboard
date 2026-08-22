@@ -500,7 +500,8 @@ const elements = {
   step0RecentFastTriage: document.querySelector('#step0RecentFastTriage'),
   step0RecentFullScout: document.querySelector('#step0RecentFullScout'),
   step0RecentShortlisted: document.querySelector('#step0RecentShortlisted'),
-  step0WorkflowMap: document.querySelector('#step0WorkflowMap'),
+  step0WorkflowMap: document.querySelector('[data-step0-workflow-map="pending"]'),
+  step0WorkflowMaps: document.querySelectorAll('[data-step0-workflow-map]'),
   step0SearchInput: document.querySelector('#step0SearchInput'),
   step0AddSearchTokenButton: document.querySelector('#step0AddSearchTokenButton'),
   step0SearchTokens: document.querySelector('#step0SearchTokens'),
@@ -10419,10 +10420,10 @@ const STEP0_WORKFLOW_MAP_STAGES = [
 ];
 
 const STEP0_WORKFLOW_NODE_STYLES = {
-  pending: { color: '#94a3b8', size: 7 },
-  fast_triage: { color: '#5f8fbe', size: 10 },
-  full_scout: { color: '#4c9b78', size: 14 },
-  shortlisting: { color: '#b8871b', size: 18 }
+  pending: { color: '#94a3b8', size: 4, collisionPadding: 1.3, repulsion: -4 },
+  fast_triage: { color: '#5f8fbe', size: 7, collisionPadding: 1.8, repulsion: -7 },
+  full_scout: { color: '#4c9b78', size: 10, collisionPadding: 2.2, repulsion: -10 },
+  shortlisting: { color: '#b8871b', size: 13, collisionPadding: 2.8, repulsion: -13 }
 };
 
 function destroyStep0WorkflowGraph() {
@@ -10430,12 +10431,19 @@ function destroyStep0WorkflowGraph() {
   step0WorkflowG6Graphs = [];
 }
 
+function step0WorkflowMapFor(stageKey) {
+  return [...(elements.step0WorkflowMaps || [])]
+    .find((element) => element.dataset.step0WorkflowMap === stageKey) || null;
+}
+
 function renderStep0WorkflowMapFallback(message) {
-  elements.step0WorkflowMap.innerHTML = `<p class="step0-workflow-map-empty">${escapeHtml(message)}</p>`;
+  [...(elements.step0WorkflowMaps || [])].forEach((element) => {
+    element.innerHTML = `<p class="step0-workflow-map-empty">${escapeHtml(message)}</p>`;
+  });
 }
 
 function renderStep0WorkflowMap() {
-  if (!elements.step0WorkflowMap) return;
+  if (!elements.step0WorkflowMaps?.length) return;
   destroyStep0WorkflowGraph();
   const rows = step0FilteredSortedRows();
   elements.step0WorkflowMap.setAttribute('aria-label', `Pipeline Workflow Map · 현재 필터 결과 ${rows.length}건`);
@@ -10454,17 +10462,18 @@ function renderStep0WorkflowMap() {
     return;
   }
 
-  elements.step0WorkflowMap.innerHTML = `
-    <div class="step0-workflow-force-grid">
-      ${STEP0_WORKFLOW_MAP_STAGES.map((stage) => `<div class="step0-workflow-g6-shell" data-workflow-stage="${stage.key}"><div class="step0-workflow-g6" aria-label="${stage.label} Pipeline 원형 node 그래프"></div><div class="step0-workflow-tooltip" hidden></div></div>`).join('')}
-    </div>
-  `;
+  STEP0_WORKFLOW_MAP_STAGES.forEach((stage) => {
+    const mapElement = step0WorkflowMapFor(stage.key);
+    if (!mapElement) return;
+    mapElement.innerHTML = `<div class="step0-workflow-g6-shell" data-workflow-stage="${stage.key}"><div class="step0-workflow-g6" aria-label="${stage.label} Pipeline 원형 node 그래프"></div><div class="step0-workflow-tooltip" hidden></div></div>`;
+  });
 
   for (const stage of STEP0_WORKFLOW_MAP_STAGES) {
-    const shell = elements.step0WorkflowMap.querySelector(`.step0-workflow-g6-shell[data-workflow-stage="${stage.key}"]`);
+    const mapElement = step0WorkflowMapFor(stage.key);
+    const shell = mapElement?.querySelector(`.step0-workflow-g6-shell[data-workflow-stage="${stage.key}"]`);
     const container = shell?.querySelector('.step0-workflow-g6');
     const tooltip = shell?.querySelector('.step0-workflow-tooltip');
-    if (!container) return;
+    if (!container) continue;
     const stageRows = groups.get(stage.key) || [];
     const style = STEP0_WORKFLOW_NODE_STYLES[stage.key];
     const width = Math.max(container.clientWidth || 180, 180);
@@ -10488,8 +10497,7 @@ function renderStep0WorkflowMap() {
         }
       };
     });
-    const columns = Math.max(10, Math.floor(width / (style.size + 7)));
-    const height = Math.max(158, Math.min(360, 52 + Math.ceil(nodes.length / columns) * (style.size + 8)));
+    const height = 174;
 
     try {
       const graph = new globalThis.G6.Graph({
@@ -10507,13 +10515,15 @@ function renderStep0WorkflowMap() {
         height,
         iterations: 180,
         animation: true,
-        manyBody: { strength: -18, distanceMax: 120 },
+        manyBody: { strength: style.repulsion, distanceMax: 70 },
         collide: {
-          radius: (node) => Number(node?.data?.size || 10) / 2 + 4,
+          radius: (node) => Number(node?.data?.size || 10) / 2 + style.collisionPadding,
           strength: 0.9,
           iterations: 2
         },
-        center: { strength: 0.055 }
+        x: { x: width / 2, strength: 0.18 },
+        y: { y: height / 2, strength: 0.18 },
+        center: { strength: 0.16 }
       }
     });
       step0WorkflowG6Graphs.push(graph);
