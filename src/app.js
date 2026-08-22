@@ -541,6 +541,7 @@ let step0DragSelection = null;
 let activeStep0MetadataPopover = null;
 let activeStep0LockedEditMode = null;
 let step0WorkflowG6Graphs = [];
+let step0WorkflowG6RenderTimers = [];
 const focusSaveQueues = new Map();
 let dataReuploadResolve = null;
 let activeDataReuploadMatches = [];
@@ -10428,6 +10429,13 @@ const STEP0_WORKFLOW_NODE_STYLES = {
   shortlisting: { color: '#b8871b', size: 18 }
 };
 
+const STEP0_WORKFLOW_FORCE_SETTINGS = {
+  pending: { repulsion: -1, collisionPadding: 0.35 },
+  fast_triage: { repulsion: -4, collisionPadding: 1.2 },
+  full_scout: { repulsion: -6, collisionPadding: 1.8 },
+  shortlisting: { repulsion: -8, collisionPadding: 2.8 }
+};
+
 function step0WorkflowGridShape(nodeCount, width, height) {
   const aspectRatio = Math.max(width / Math.max(height, 1), 0.5);
   const cols = Math.max(1, Math.ceil(Math.sqrt(Math.max(nodeCount, 1) * aspectRatio)));
@@ -10466,6 +10474,8 @@ function step0WorkflowIrregularPosition(index, nodeCount, width, height, size, s
 }
 
 function destroyStep0WorkflowGraph() {
+  step0WorkflowG6RenderTimers.forEach((timer) => clearTimeout(timer));
+  step0WorkflowG6RenderTimers = [];
   step0WorkflowG6Graphs.forEach((graph) => graph?.destroy?.());
   step0WorkflowG6Graphs = [];
 }
@@ -10516,6 +10526,7 @@ function renderStep0WorkflowMap() {
     if (!container) continue;
     const stageRows = groups.get(stage.key) || [];
     const style = STEP0_WORKFLOW_NODE_STYLES[stage.key];
+    const force = STEP0_WORKFLOW_FORCE_SETTINGS[stage.key];
     const bounds = shell.getBoundingClientRect();
     const width = Math.max(1, Math.floor(bounds.width));
     const height = Math.max(1, Math.floor(bounds.height));
@@ -10530,7 +10541,12 @@ function renderStep0WorkflowMap() {
       nodeById.set(id, title);
       return {
         id,
-        data: { stage: stage.key, size: style.size },
+        data: {
+          stage: stage.key,
+          size: style.size,
+          anchorX: position.x,
+          anchorY: position.y
+        },
         style: {
           size: style.size,
           fill: style.color,
@@ -10551,10 +10567,32 @@ function renderStep0WorkflowMap() {
         animation: false,
         data: { nodes, edges: [] },
         node: { type: 'circle' },
-        behaviors: ['drag-canvas', 'drag-element']
+        behaviors: ['drag-canvas', 'drag-element'],
+        layout: {
+          type: 'd3-force',
+          width,
+          height,
+          iterations: 26,
+          animation: true,
+          alphaDecay: 0.18,
+          alphaMin: 0.06,
+          velocityDecay: 0.8,
+          manyBody: { strength: force.repulsion, distanceMax: 56 },
+          collide: {
+            radius: (node) => Number(node?.data?.size || 10) / 2 + force.collisionPadding,
+            strength: 0.54,
+            iterations: 1
+          },
+          x: { x: (node) => Number(node?.data?.anchorX || width / 2), strength: 0.56 },
+          y: { y: (node) => Number(node?.data?.anchorY || height / 2), strength: 0.56 },
+          center: { strength: 0 }
+        }
       });
       step0WorkflowG6Graphs.push(graph);
-      graph.render();
+      const renderTimer = setTimeout(() => {
+        if (!graph?.destroyed) graph.render();
+      }, stage.index * 300);
+      step0WorkflowG6RenderTimers.push(renderTimer);
       graph.on?.('node:pointerenter', (event) => {
       const title = nodeById.get(event?.target?.id);
       if (!title || !tooltip) return;
