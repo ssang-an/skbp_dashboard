@@ -479,7 +479,11 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('step0-summary-dashboard-heading', step0)
         self.assertIn('id="step0SummaryDashboardToggleButton"', step0)
         self.assertIn('id="step0SummaryCards"', step0)
-        self.assertNotIn('data-workflow-mode="listing"', step0)
+        self.assertIn('data-workflow-mode="listing"', step0)
+        self.assertLess(
+            step0.index('data-workflow-mode="listing"'),
+            step0.index('class="step0-summary-dashboard"'),
+        )
         self.assertIn('function applyStep0SummaryDashboardHidden', JS)
         self.assertIn("skbp.dashboard.step0SummaryDashboardHidden.v1", JS)
         self.assertIn('.step0-summary-dashboard-heading', CSS)
