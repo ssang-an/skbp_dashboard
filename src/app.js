@@ -1152,20 +1152,29 @@ function explicitLegacyLeadIndication(value) {
 
 function canonicalMainIndication(mainIndication, detailedIndication = '') {
   const primary = String(mainIndication || '').trim();
-  if (/^(?:-|unknown|not known|n\/?a)$/i.test(primary)) return 'Unknown';
-  if (primary) return canonicalFromDictionary('indication', primary) || 'Unknown';
+  if (primary && !/^(?:-|unknown|not known|n\/?a)$/i.test(primary)) {
+    const canonical = canonicalFromDictionary('indication', primary);
+    if (canonical) return canonical;
+  }
   const explicitLead = explicitLegacyLeadIndication(detailedIndication);
   if (explicitLead) return explicitLead;
   const matches = canonicalIndicationMatches(detailedIndication);
-  return matches.length === 1 ? matches[0] : 'Unknown';
+  // When multiple confirmed indications have no declared lead, use the first
+  // source-ordered canonical indication for the table's primary display.
+  // indicationList retains every matching canonical value for OR filtering.
+  return matches[0] || 'Unknown';
 }
 
 function canonicalIndicationList(values, detailedIndication = '', mainIndication = '') {
-  const list = Array.isArray(values) ? values.map((value) => canonicalFromDictionary('indication', value)).filter(Boolean) : [];
-  canonicalIndicationMatches(detailedIndication).forEach((value) => { if (!list.includes(value)) list.push(value); });
+  const list = canonicalIndicationMatches(detailedIndication);
+  (Array.isArray(values) ? values : [])
+    .map((value) => canonicalFromDictionary('indication', value))
+    .filter(Boolean)
+    .forEach((value) => { if (!list.includes(value)) list.push(value); });
   const lead = canonicalMainIndication(mainIndication, detailedIndication);
-  if (lead !== 'Unknown' && !list.includes(lead)) list.unshift(lead);
-  return [...new Set(list)];
+  return lead !== 'Unknown'
+    ? [lead, ...list.filter((value) => value !== lead)]
+    : [...new Set(list)];
 }
 
 function indicationDisplay(row) {
@@ -8269,9 +8278,9 @@ Normalize route, dosage-form, and technical qualifiers into that single label. E
 
 const SHARED_CANONICAL_INDICATION_RULE = `Canonical Main Indication — structured_table.main_indication must be exactly one of: Alzheimer's disease; Parkinson's disease; Epilepsy / seizure disorders; Multiple sclerosis / neuroinflammatory disease; Amyotrophic lateral sclerosis / motor neuron disease; Frontotemporal dementia; Huntington's disease; Stroke; Migraine / headache disorders; Pain; Major depressive disorder; Schizophrenia / psychosis; Bipolar disorder; Anxiety disorders; Autism spectrum disorder; ADHD; Sleep / wake disorders; Chronic cough; Inflammatory bowel disease; Systemic lupus erythematosus / autoimmune disease; or Unknown.
 main_indication is mandatory. Never omit the key and never use null, an empty string, N/A, or an unnormalized disease phrase. If the lead can be determined, always write its canonical dashboard bucket. Use Unknown only when the lead genuinely cannot be distinguished after the following priority.
-When several indications are confirmed but no lead can be distinguished, retain every confirmed disease wording in structured_table.indication and provide structured_table.indication_list as its canonical array; do not replace confirmed indications with Unknown.
-Lead-indication selection priority: (1) use an indication explicitly identified as lead, primary, initial, or the sole current indication for the assessed asset on an official company pipeline page or current official company material; (2) if no official lead is designated, use the indication targeted by the single most advanced confirmed active clinical program, comparing only registered, started, recruiting, ongoing, or dosed programs; (3) if multiple indications remain tied or evidence conflicts, use Unknown. Never select an indication merely because it appears first in prose or a table. Exclude planned/expected indications, competitor programs, historical or discontinued programs, and platform-expansion claims.
-Keep complete disease wording and all secondary indications in structured_table.indication and Markdown. In Markdown state the source-based reason for the selected lead or for Unknown. Examples: "Lead disclosed indication: inflammatory bowel disease; expansion potential for MS" -> Inflammatory bowel disease; "FOS Phase 2 recruiting; MDD planned; pain stage unclear" -> Epilepsy / seizure disorders; "CNS hypotheses include stroke and status epilepticus; no official lead or active trial" -> Unknown.`;
+When several indications are confirmed, retain every confirmed disease wording in structured_table.indication and provide structured_table.indication_list as its canonical array; do not replace confirmed indications with Unknown.
+Lead-indication selection priority: (1) use an indication explicitly identified as lead, primary, initial, or the sole current indication for the assessed asset on an official company pipeline page or current official company material; (2) if no official lead is designated, use the indication targeted by the single most advanced confirmed active clinical program, comparing only registered, started, recruiting, ongoing, or dosed programs; (3) if no lead can still be established but one or more confirmed indications are listed, set main_indication to the first canonical indication in the source's textual/listed order and preserve every canonical indication in indication_list. Use Unknown only when no confirmed canonical indication is available. Exclude planned/expected indications, competitor programs, historical or discontinued programs, and platform-expansion claims.
+Keep complete disease wording and all secondary indications in structured_table.indication and Markdown. In Markdown state the source-based reason for the selected lead or source-order fallback. Examples: "Lead disclosed indication: inflammatory bowel disease; expansion potential for MS" -> Inflammatory bowel disease; "FOS Phase 2 recruiting; MDD planned; pain stage unclear" -> Epilepsy / seizure disorders; "CNS hypotheses include stroke and status epilepticus; no official lead or active trial" -> Stroke with indication_list also containing Epilepsy / seizure disorders.`;
 
 const SHARED_CANONICAL_THEME_RULE = `Canonical R&D Theme — json_summary.theme must be exactly one of E/I Balance, Neuroimmune, Protein Homeostasis, Others, or Unknown. Determine Theme from researched evidence for the assessed asset's target and MoA, not from disease association alone.
 Use Protein Homeostasis only when the target/MoA directly modulates proteostasis, such as protein folding or chaperone function, ubiquitin-proteasome activity, autophagy-lysosome function, ER stress/UPR, or pathogenic protein aggregate clearance. The mere presence of protein aggregates in a disease does not establish this Theme. Use Others only when the identified target/MoA is confirmed outside all three R&D Themes, and Unknown when target/MoA evidence is insufficient. Because no Protein Homeostasis sub-cluster taxonomy is approved yet, use cluster="Unknown" for this Theme. Never use N/A or No Theme.`;

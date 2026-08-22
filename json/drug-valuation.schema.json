@@ -305,7 +305,7 @@
         "target": { "type": "string", "minLength": 1 },
         "moa": { "type": "string", "minLength": 1 },
         "modality_platform": { "type": "string", "minLength": 1 },
-        "main_indication": { "type": "string" },
+        "main_indication": { "type": "string", "description": "One canonical dashboard indication. When several confirmed indications have no declared lead, use the first canonical indication in source order; use Unknown only when none is confirmed." },
         "indication": { "type": "string", "minLength": 1 },
         "indication_list": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
         "development_stage": {

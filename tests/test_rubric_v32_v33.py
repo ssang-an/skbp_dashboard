@@ -703,14 +703,14 @@ class DashboardCategoryCanonicalizationTests(unittest.TestCase):
                 "",
                 "Focal onset seizure; major depressive disorder; pain",
             ),
-            "Unknown",
+            "Epilepsy / seizure disorders",
         )
         self.assertEqual(
             main.canonicalize_main_indication(
                 "",
                 "CNS hypotheses include acute ischemic stroke and status epilepticus",
             ),
-            "Unknown",
+            "Stroke",
         )
         self.assertEqual(
             main.canonicalize_main_indication("", "Refractory chronic cough"),
@@ -718,7 +718,36 @@ class DashboardCategoryCanonicalizationTests(unittest.TestCase):
         )
         self.assertEqual(
             main.canonicalize_main_indication("Unknown", "Epilepsy; pain"),
-            "Unknown",
+            "Epilepsy / seizure disorders",
+        )
+        self.assertEqual(
+            main.canonicalize_indication_list(
+                [],
+                "Focal onset seizure; major depressive disorder; pain",
+                "Unknown",
+            ),
+            ["Epilepsy / seizure disorders", "Major depressive disorder", "Pain"],
+        )
+
+    def test_multi_indication_normalization_uses_source_order_when_lead_is_unknown(self) -> None:
+        record = {
+            "structured_table": {
+                "development_stage": "Preclinical",
+                "modality_platform": "Small molecule",
+                "company_country": "Republic of Korea",
+                "main_indication": "Unknown",
+                "indication": "Focal onset seizure; major depressive disorder; pain",
+                "indication_list": [],
+            }
+        }
+
+        main.normalize_current_record_filter_fields(record, 0)
+
+        table = record["structured_table"]
+        self.assertEqual(table["main_indication"], "Epilepsy / seizure disorders")
+        self.assertEqual(
+            table["indication_list"],
+            ["Epilepsy / seizure disorders", "Major depressive disorder", "Pain"],
         )
 
     def test_theme_cluster_legacy_aliases_close_into_dashboard_taxonomy(self) -> None:

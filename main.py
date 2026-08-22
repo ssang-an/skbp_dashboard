@@ -1097,34 +1097,34 @@ def explicit_legacy_lead_indication(detailed_indication: Any) -> str | None:
 
 
 def canonicalize_main_indication(main_indication: Any, detailed_indication: Any = None) -> str:
-    """Return one dashboard indication; legacy blanks are resolved conservatively."""
+    """Return the canonical dashboard lead, falling back to source order when needed."""
     primary = re.sub(r"\s+", " ", str(main_indication or "").strip())
-    if primary.casefold() in {"-", "unknown", "not known", "n/a", "na"}:
-        return "Unknown"
-    if primary:
+    if primary and primary.casefold() not in {"-", "unknown", "not known", "n/a", "na"}:
         canonical = canonicalize_dictionary_category("indication", primary, earliest=True)
-        return canonical or "Unknown"
+        if canonical:
+            return canonical
     explicit_lead = explicit_legacy_lead_indication(detailed_indication)
     if explicit_lead:
         return explicit_lead
     matches = canonical_indication_matches(detailed_indication)
-    return matches[0] if len(matches) == 1 else "Unknown"
+    # A source may confirm several indications without naming a lead.  The
+    # dashboard still needs a stable primary display value: preserve the first
+    # confirmed canonical indication in the source's textual order, while the
+    # complete canonical set remains in indication_list for filters and audit.
+    return matches[0] if matches else "Unknown"
 
 
 def canonicalize_indication_list(indication_list: Any, detailed_indication: Any, main_indication: Any) -> list[str]:
-    """Preserve every confirmed dashboard indication without changing the single lead bucket."""
-    values: list[str] = []
+    """Preserve every confirmed dashboard indication in source order."""
+    values: list[str] = list(canonical_indication_matches(detailed_indication))
     candidates = indication_list if isinstance(indication_list, list) else []
     for value in candidates:
         canonical = canonicalize_dictionary_category("indication", value, earliest=True)
         if canonical and canonical not in values:
             values.append(canonical)
-    for canonical in canonical_indication_matches(detailed_indication):
-        if canonical not in values:
-            values.append(canonical)
     lead = canonicalize_main_indication(main_indication, detailed_indication)
-    if lead != "Unknown" and lead not in values:
-        values.insert(0, lead)
+    if lead != "Unknown":
+        values = [lead, *[value for value in values if value != lead]]
     return values
 
 
