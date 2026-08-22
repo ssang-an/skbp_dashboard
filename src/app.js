@@ -10423,6 +10423,8 @@ const STEP0_WORKFLOW_MAP_STAGES = [
   { key: 'shortlisting', label: 'Shortlisting', index: 3 }
 ];
 
+const STEP0_WORKFLOW_STAGE_STAGGER_MS = 420;
+
 const STEP0_WORKFLOW_NODE_STYLES = {
   pending: { color: '#94a3b8', size: 4 },
   fast_triage: { color: '#5f8fbe', size: 7 },
@@ -10469,7 +10471,7 @@ function step0WorkflowIrregularPosition(index, nodeCount, width, height, size, s
 
 function step0WorkflowEntryPosition(target, width, height, size, seed) {
   const inset = Math.max(size / 2 + 1, 2);
-  const leftSpread = Math.max(width * 0.22, size * 3);
+  const leftSpread = Math.max(width * 0.10, size * 3);
   const x = inset + step0WorkflowSeededUnit(`${seed}:entry-x`) * leftSpread;
   const yJitter = (step0WorkflowSeededUnit(`${seed}:entry-y`) - 0.5) * height * 0.18;
   return {
@@ -10487,7 +10489,7 @@ function step0WorkflowMotionProgress(progress) {
 function animateStep0WorkflowDots(graph, nodes, stageIndex) {
   const timer = setTimeout(() => {
     const startedAt = performance.now();
-    const duration = 520;
+    const duration = 720;
     const maxSettleDuration = 3000;
     const tick = (now) => {
       const elapsed = now - startedAt;
@@ -10514,7 +10516,7 @@ function animateStep0WorkflowDots(graph, nodes, stageIndex) {
       }
     };
     step0WorkflowG6AnimationFrames.push(requestAnimationFrame(tick));
-  }, stageIndex * 300);
+  }, stageIndex * STEP0_WORKFLOW_STAGE_STAGGER_MS);
   step0WorkflowG6RenderTimers.push(timer);
 }
 
@@ -10561,7 +10563,7 @@ function renderStep0WorkflowMap() {
   STEP0_WORKFLOW_MAP_STAGES.forEach((stage) => {
     const mapElement = step0WorkflowMapFor(stage.key);
     if (!mapElement) return;
-    const enterDelay = stage.index * 300;
+    const enterDelay = stage.index * STEP0_WORKFLOW_STAGE_STAGGER_MS;
     mapElement.innerHTML = `<div class="step0-workflow-g6-shell is-entering" data-workflow-stage="${stage.key}" style="--step0-workflow-enter-delay:${enterDelay}ms"><div class="step0-workflow-g6" aria-label="${stage.label} Pipeline node 그래프"></div><div class="step0-workflow-tooltip" hidden></div></div>`;
   });
 
@@ -10595,7 +10597,7 @@ function renderStep0WorkflowMap() {
           targetY: position.y,
           entryX: entryPosition.x,
           entryY: entryPosition.y,
-          entryDelay: Math.floor(step0WorkflowSeededUnit(`${id}:stagger`) * 140),
+          entryDelay: Math.floor(step0WorkflowSeededUnit(`${id}:stagger`) * 240),
           arcX: (step0WorkflowSeededUnit(`${id}:arc-x`) - 0.5) * Math.min(width * 0.06, 20),
           arcY: (step0WorkflowSeededUnit(`${id}:arc-y`) - 0.5) * Math.min(height * 0.18, 28),
           settleDuration: 1500 + Math.floor(step0WorkflowSeededUnit(`${id}:settle-duration`) * 1501),

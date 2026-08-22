@@ -19541,7 +19541,7 @@ button.step0-stat.active {
 }
 
 .step0-workflow-g6-shell.is-entering .step0-workflow-g6 {
-  animation: step0-workflow-stage-enter 220ms cubic-bezier(.2, .8, .2, 1) both;
+  animation: step0-workflow-stage-enter 360ms cubic-bezier(.18, .78, .24, 1) both;
   animation-delay: var(--step0-workflow-enter-delay, 0ms);
   transform-origin: center;
   will-change: opacity, transform;
