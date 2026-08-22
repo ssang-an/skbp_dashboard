@@ -3830,19 +3830,8 @@ td {
   gap: 8px;
 }
 
-.rubric-refresh-button {
-  color: var(--muted);
-}
-
+.rubric-refresh-button,
 .triage-full-copy-button {
-  width: 32px;
-  min-width: 32px;
-  height: 32px;
-  min-height: 32px;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  padding: 0;
-  background: var(--surface);
   color: var(--muted);
 }
 
@@ -3850,7 +3839,7 @@ td {
   cursor: pointer;
 }
 
-.triage-full-copy-button .triage-full-copy-icon {
+.pipeline-row-action-icon {
   width: 17px;
   height: 17px;
   fill: none;
@@ -3869,8 +3858,10 @@ td {
   outline: none;
 }
 
-.triage-full-copy-button:hover .triage-full-copy-icon,
-.triage-full-copy-button:focus-visible .triage-full-copy-icon {
+.rubric-refresh-button:hover .pipeline-row-action-icon,
+.rubric-refresh-button:focus-visible .pipeline-row-action-icon,
+.triage-full-copy-button:hover .pipeline-row-action-icon,
+.triage-full-copy-button:focus-visible .pipeline-row-action-icon {
   transform: scale(1.06);
 }
 
@@ -3879,7 +3870,7 @@ td {
   color: var(--accent);
 }
 
-.rubric-refresh-button.is-saving span {
+.rubric-refresh-button.is-saving .pipeline-row-action-icon {
   animation: rubric-refresh-spin 0.8s linear infinite;
 }
 

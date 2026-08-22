@@ -595,6 +595,16 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("mode === 'full' ? plainHeader('관리'", table)
         self.assertIn("mode === 'full' ? `<td class=\"focus-action-cell\">${fullScoutRowActions(row)}</td>`", table)
 
+    def test_triage_reassessment_uses_the_same_svg_utility_icon_system_as_refresh(self):
+        refresh = function_body(JS, "rubricReevaluationButton")
+        copy = function_body(JS, "triageFullScoutCopyButton")
+
+        self.assertIn('class="pipeline-row-action-icon"', refresh)
+        self.assertIn('<path d="M20 11a8 8 0 1 0-2.3 5.7"', refresh)
+        self.assertIn('class="pipeline-row-action-icon"', copy)
+        self.assertIn('.pipeline-row-action-icon {', CSS)
+        self.assertIn('.rubric-refresh-button.is-saving .pipeline-row-action-icon', CSS)
+
     def test_sortable_headers_cycle_back_to_original_row_order(self):
         sort_body = function_body(JS, "sortByColumn")
         rows_body = function_body(JS, "getVisibleRows")

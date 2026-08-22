@@ -4469,7 +4469,7 @@ function triageFullScoutCopyButton(row) {
       data-record-id="${escapeHtml(row.id)}"
       title="${escapeHtml(title)}"
       aria-label="${escapeHtml(`${row.asset} Full Scout 지침 복사`)}"
-    ><svg class="triage-full-copy-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></svg></button>
+    ><svg class="pipeline-row-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></svg></button>
   `;
 }
 
@@ -4509,7 +4509,7 @@ function rubricReevaluationButton(row) {
       data-record-id="${escapeHtml(row.id)}"
       title="${escapeHtml(title)}"
       aria-label="${escapeHtml(`${row.asset} ${workflowLabel} 최신 지침으로 재평가`)}"
-    ><span aria-hidden="true">↻</span></button>
+    ><svg class="pipeline-row-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></svg></button>
   `;
 }
 
