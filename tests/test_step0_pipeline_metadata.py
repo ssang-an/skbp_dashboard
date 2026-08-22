@@ -51,6 +51,44 @@ class Step0PipelineMetadataTests(unittest.TestCase):
             ("Asset with internal spacing", "Gamma", "", ""),
         ])
 
+    def test_structured_listing_grid_keeps_optional_context(self) -> None:
+        parsed = main.normalize_candidate_queue_rows([{
+            "company_input": "Acme Bio",
+            "country": "KR",
+            "asset_input": "AX-101",
+            "modality": "Small molecule",
+            "target": "Target X",
+            "main_indication": "ALS",
+            "stage": "Preclinical",
+            "comment": "BD review",
+            "contact": "owner@acme.test",
+        }])
+
+        self.assertEqual(parsed["unparsed"], [])
+        self.assertEqual(parsed["rows"][0]["company_input"], "Acme Bio")
+        self.assertEqual(parsed["rows"][0]["asset_input"], "AX-101")
+        self.assertEqual(parsed["rows"][0]["main_indication"], "ALS")
+        self.assertEqual(parsed["rows"][0]["contact"], "owner@acme.test")
+
+    def test_structured_listing_grid_requires_company_and_asset(self) -> None:
+        parsed = main.normalize_candidate_queue_rows([
+            {"company_input": "Acme Bio", "asset_input": ""},
+            {"company_input": "", "asset_input": "AX-101"},
+        ])
+
+        self.assertEqual(parsed["rows"], [])
+        self.assertEqual(len(parsed["unparsed"]), 2)
+
+    def test_listing_details_keep_existing_value_when_a_later_cell_is_blank(self) -> None:
+        merged = main.merge_listing_details(
+            {"country": "KR", "modality": "Small molecule", "target": "Target X"},
+            {"country": "", "modality": "Biologic", "target": ""},
+        )
+
+        self.assertEqual(merged["country"], "KR")
+        self.assertEqual(merged["modality"], "Biologic")
+        self.assertEqual(merged["target"], "Target X")
+
     def test_blank_import_values_never_erase_existing_metadata(self) -> None:
         existing = {
             "listed_at": "2026-08-01T00:00:00+00:00",

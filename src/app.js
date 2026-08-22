@@ -468,7 +468,9 @@ const elements = {
   operationModalStatus: document.querySelector('#operationModalStatus'),
   operationCancelButton: document.querySelector('#operationCancelButton'),
   step0Panel: document.querySelector('#step0Panel'),
-  step0PasteInput: document.querySelector('#step0PasteInput'),
+  step0EntryGrid: document.querySelector('#step0EntryGrid'),
+  step0EntryGridBody: document.querySelector('#step0EntryGridBody'),
+  step0AddEntryRow: document.querySelector('#step0AddEntryRow'),
   step0ImportButton: document.querySelector('#step0ImportButton'),
   step0ClearButton: document.querySelector('#step0ClearButton'),
   step0ImportSummary: document.querySelector('#step0ImportSummary'),
@@ -3731,7 +3733,7 @@ function scrollToDataUpload(event) {
   if (!isStep0Visible) renderDataUploadGuide(mode);
 
   const panelSelector = isStep0Visible ? '#step0UploadPanel' : '#dataUploadPanel';
-  const inputSelector = isStep0Visible ? '#step0PasteInput' : '#gptResponseInput';
+  const inputSelector = isStep0Visible ? '#step0EntryGridBody input[data-step0-entry-field]' : '#gptResponseInput';
   const panel = document.querySelector(panelSelector);
   const input = panel?.querySelector(inputSelector);
   if (!panel || !input) return;
@@ -9569,21 +9571,21 @@ function setPromptCopyFeedback(kind = 'full') {
 
 const STEP0_GUIDE_STEPS = [
   {
-    title: 'Excel에서 4개 열을 순서대로 복사',
-    body: '기본 형식은 Asset · Company · Comment · Contact입니다. Comment 또는 Contact가 비어 있어도 빈 셀을 유지한 채 복사합니다.',
-    example: 'AD-302\tAddPharma\tBD 검토 필요\t8/20 담당자 연락\nADEL-Y03\tADEL\t\tContacted'
+    title: '표의 각 칸에 Listing 정보를 입력',
+    body: 'Company와 Asset은 필수입니다. Country · Modality · Target · Main indication · Stage · Comment · Contact는 선택 입력이며, 아래 표의 첫 칸에서 Excel 열을 그대로 붙여넣을 수 있습니다.',
+    example: 'AddPharma\tKR\tAD-302\tSmall molecule\tTarget X\tALS\tPreclinical\tBD 검토 필요\t8/20 담당자 연락'
   },
   {
-    title: '아래 입력란에 붙여넣기',
-    body: 'Excel의 탭 구분을 그대로 붙여넣으면 빈 Comment/Contact 칸의 위치도 유지됩니다. 기존 Asset · Company 2열 형식도 계속 사용할 수 있습니다.'
+    title: 'Excel처럼 여러 행·열을 한 번에 붙여넣기',
+    body: '행과 열의 순서가 Company · Country · Asset · Modality · Target · Main indication · Stage · Comment · Contact와 같으면 각 셀로 바로 나뉩니다. 필요한 행은 + 행 추가로 더 만들 수 있습니다.'
   },
   {
     title: '가져오기',
-    body: '새 후보는 Listing에 추가됩니다. 이미 조사된 동일 Pipeline에 Comment/Contact를 입력한 경우에는 기존 Pipeline의 내부 메타데이터만 안전하게 보완합니다.'
+    body: '새 후보를 Listing에 추가합니다. Tab 0의 보조 정보는 Listing 관리용이며, Fast Triage·Full Scout의 공식 조사 값이나 점수를 변경하지 않습니다.'
   },
   {
     title: 'Listing 항목 선택 후 지침 복사',
-    body: 'Listing 중인 파이프라인을 여러 개 선택한 뒤 {{copy}}를 누르세요. 선택한 후보 목록이 Fast Triage 지침 1에 자동으로 포함됩니다.',
+    body: 'Listing 중인 파이프라인을 여러 개 선택한 뒤 {{copy}}를 누르세요. 선택한 후보 목록과 입력된 Modality·Target 등의 보조 정보가 Fast Triage 지침 1에 함께 포함됩니다.',
     actions: [
       { token: 'copy', kind: 'copy-instructions', icon: 'clipboard', label: 'GPT 지침 복사' }
     ]
@@ -9731,10 +9733,83 @@ function showStep0Message(text, level = 'ok') {
   `;
 }
 
+const STEP0_ENTRY_FIELDS = [
+  { key: 'company_input', label: 'Company', required: true },
+  { key: 'country', label: 'Country' },
+  { key: 'asset_input', label: 'Asset', required: true },
+  { key: 'modality', label: 'Modality' },
+  { key: 'target', label: 'Target' },
+  { key: 'main_indication', label: 'Main indication' },
+  { key: 'stage', label: 'Stage' },
+  { key: 'comment', label: 'Comment' },
+  { key: 'contact', label: 'Contact' }
+];
+
+function step0EntryRowMarkup(values = {}) {
+  return `<tr>${STEP0_ENTRY_FIELDS.map((field) => `
+    <td><input type="text" data-step0-entry-field="${field.key}" value="${escapeHtml(values[field.key] || '')}" aria-label="${field.label}" /></td>
+  `).join('')}<td class="step0-entry-remove-cell"><button type="button" data-step0-remove-entry-row aria-label="행 삭제" title="행 삭제">×</button></td></tr>`;
+}
+
+function renderStep0EntryGrid(rows = []) {
+  if (!elements.step0EntryGridBody) return;
+  const safeRows = Array.isArray(rows) ? rows.filter((row) => row && typeof row === 'object') : [];
+  const visibleRows = safeRows.length ? safeRows : Array.from({ length: 6 }, () => ({}));
+  elements.step0EntryGridBody.innerHTML = visibleRows.map((row) => step0EntryRowMarkup(row)).join('');
+}
+
+function appendStep0EntryRows(count = 1) {
+  if (!elements.step0EntryGridBody) return;
+  elements.step0EntryGridBody.insertAdjacentHTML('beforeend', Array.from({ length: Math.max(1, count) }, () => step0EntryRowMarkup()).join(''));
+}
+
+function collectStep0EntryRows() {
+  const rows = [];
+  const incomplete = [];
+  elements.step0EntryGridBody?.querySelectorAll('tr').forEach((tr, index) => {
+    const row = {};
+    tr.querySelectorAll('[data-step0-entry-field]').forEach((input) => {
+      row[input.dataset.step0EntryField] = input.value.trim();
+    });
+    if (!Object.values(row).some(Boolean)) return;
+    if (!row.company_input || !row.asset_input) {
+      incomplete.push(index + 1);
+      return;
+    }
+    rows.push(row);
+  });
+  return { rows, incomplete };
+}
+
+function pasteIntoStep0EntryGrid(event) {
+  const input = event.target.closest('[data-step0-entry-field]');
+  const clipboardText = event.clipboardData?.getData('text/plain') || '';
+  if (!input || !clipboardText || (!clipboardText.includes('\t') && !clipboardText.includes('\n'))) return;
+  event.preventDefault();
+  const inputRows = [...elements.step0EntryGridBody.querySelectorAll('tr')];
+  const startRow = Math.max(0, inputRows.indexOf(input.closest('tr')));
+  const startColumn = Math.max(0, STEP0_ENTRY_FIELDS.findIndex((field) => field.key === input.dataset.step0EntryField));
+  const matrix = clipboardText.replace(/\r/g, '').split('\n').filter((line) => line.length > 0).map((line) => line.split('\t'));
+  if (!matrix.length) return;
+  while (elements.step0EntryGridBody.querySelectorAll('tr').length < startRow + matrix.length) appendStep0EntryRows();
+  const tableRows = [...elements.step0EntryGridBody.querySelectorAll('tr')];
+  matrix.forEach((cells, rowOffset) => {
+    const inputs = [...tableRows[startRow + rowOffset].querySelectorAll('[data-step0-entry-field]')];
+    cells.forEach((value, columnOffset) => {
+      const target = inputs[startColumn + columnOffset];
+      if (target) target.value = value.trim();
+    });
+  });
+}
+
 async function importStep0Candidates() {
-  const text = elements.step0PasteInput?.value || '';
-  if (!text.trim()) {
-    showStep0Message('붙여넣은 내용이 없습니다.', 'warning');
+  const { rows, incomplete } = collectStep0EntryRows();
+  if (incomplete.length) {
+    showStep0Message(`${incomplete.join(', ')}행에는 Company와 Asset이 모두 필요합니다.`, 'warning');
+    return;
+  }
+  if (!rows.length) {
+    showStep0Message('입력된 Listing 항목이 없습니다.', 'warning');
     return;
   }
   if (elements.step0ImportButton) elements.step0ImportButton.disabled = true;
@@ -9748,7 +9823,7 @@ async function importStep0Candidates() {
       const response = await fetch('/api/candidate-queue/import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ rows }),
         signal
       });
       if (!response.ok) throw new Error(await response.text());
@@ -9759,7 +9834,7 @@ async function importStep0Candidates() {
       return;
     }
     renderStep0ImportSummary(result);
-    if (elements.step0PasteInput) elements.step0PasteInput.value = '';
+    renderStep0EntryGrid();
     setStep0SaveStatus('saved');
     await loadStep0Progress();
   } catch (error) {
@@ -9792,7 +9867,7 @@ async function loadStep0Progress() {
   } catch (error) {
     if (elements.step0ProgressTableBody) {
       elements.step0ProgressTableBody.innerHTML =
-        `<tr><td colspan="9" class="step0-empty-state">진척 현황을 불러오지 못했습니다: ${escapeHtml(error.message)}</td></tr>`;
+        `<tr><td colspan="14" class="step0-empty-state">진척 현황을 불러오지 못했습니다: ${escapeHtml(error.message)}</td></tr>`;
     }
   }
 }
@@ -9848,7 +9923,7 @@ function step0MetadataCellHtml(row, field) {
   const title = value ? `${label} 확인 · 두 번 클릭하여 수정` : `${label} 없음 · 두 번 클릭하여 입력`;
   return `<button
     type="button"
-    class="step0-metadata-indicator ${value ? 'has-value' : 'is-empty'}"
+    class="pill ${value ? 'pass has-value' : 'empty is-empty'} step0-metadata-indicator"
     data-step0-metadata
     data-step0-metadata-field="${escapeHtml(field)}"
     data-step0-row-identity="${escapeHtml(row.identity || '')}"
@@ -9856,7 +9931,7 @@ function step0MetadataCellHtml(row, field) {
     data-owner-id="${escapeHtml(ownerId || '')}"
     aria-label="${escapeHtml(title)}"
     title="${escapeHtml(title)}"
-  >${value ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7.4" /></svg>' : '-'}</button>`;
+  >${value ? '<span aria-hidden="true">✓</span>' : '-'}</button>`;
 }
 
 function closeStep0MetadataPopover() {
@@ -9965,7 +10040,8 @@ function step0FilteredSortedRows() {
 
   let rows = state.step0Rows.filter((row) => {
     if (searchTerms.length) {
-      const haystack = `${row.asset || ''} ${row.company || ''} ${row.metadata?.comment || ''} ${row.metadata?.contact || ''}`.toLowerCase();
+      const details = row.listing_details || {};
+      const haystack = `${row.asset || ''} ${row.company || ''} ${details.country || ''} ${details.modality || ''} ${details.target || ''} ${details.main_indication || ''} ${details.stage || ''} ${row.metadata?.comment || ''} ${row.metadata?.contact || ''}`.toLowerCase();
       if (!searchTerms.some((term) => haystack.includes(term))) return false;
     }
     if (statusFilters.size && ![...statusFilters].some((status) => row[status]?.done)) return false;
@@ -10061,8 +10137,8 @@ function renderStep0ProgressTable() {
     .map((row) => row.pending.queue_id);
   if (!pageRows.length) {
     elements.step0ProgressTableBody.innerHTML = state.step0Rows.length
-      ? '<tr><td colspan="9" class="step0-empty-state">현재 필터/검색 조건에 맞는 항목이 없습니다.</td></tr>'
-      : '<tr><td colspan="9" class="step0-empty-state">진척 현황 데이터가 없습니다. 아래에서 후보 목록을 붙여넣어 시작하세요.</td></tr>';
+      ? '<tr><td colspan="14" class="step0-empty-state">현재 필터/검색 조건에 맞는 항목이 없습니다.</td></tr>'
+      : '<tr><td colspan="14" class="step0-empty-state">진척 현황 데이터가 없습니다. 아래에서 후보 목록을 입력해 시작하세요.</td></tr>';
   } else {
     elements.step0ProgressTableBody.innerHTML = pageRows
       .map((row) => {
@@ -10074,8 +10150,13 @@ function renderStep0ProgressTable() {
           : '';
         return `<tr>
           <td class="select-col">${checkboxCell}</td>
-          <td class="step0-asset-cell">${escapeHtml(row.asset)}</td>
           <td class="step0-company-cell">${escapeHtml(row.company)}</td>
+          <td>${escapeHtml(row.listing_details?.country || '-')}</td>
+          <td class="step0-asset-cell">${escapeHtml(row.asset)}</td>
+          <td>${escapeHtml(row.listing_details?.modality || '-')}</td>
+          <td class="step0-target-cell">${escapeHtml(row.listing_details?.target || '-')}</td>
+          <td>${escapeHtml(row.listing_details?.main_indication || '-')}</td>
+          <td>${escapeHtml(row.listing_details?.stage || '-')}</td>
           <td>${step0StageCellHtml('pending', row.pending)}</td>
           <td>${step0StageCellHtml('fast_triage', row.fast_triage)}</td>
           <td>${step0StageCellHtml('full_scout', row.full_scout)}</td>
@@ -10094,10 +10175,15 @@ function renderStep0ProgressTable() {
 
 function exportStep0Table() {
   const rows = step0FilteredSortedRows();
-  const headers = ['Asset', 'Company', 'Listing', 'Fast Triage', 'Full Scout', 'Shortlisting', 'Comment', 'Contact'];
+  const headers = ['Company', 'Country', 'Asset', 'Modality', 'Target', 'Main indication', 'Stage', 'Listing', 'Fast Triage', 'Full Scout', 'Shortlisting', 'Comment', 'Contact'];
   const body = rows.map((row) => [
-    row.asset,
     row.company,
+    row.listing_details?.country || '',
+    row.asset,
+    row.listing_details?.modality || '',
+    row.listing_details?.target || '',
+    row.listing_details?.main_indication || '',
+    row.listing_details?.stage || '',
     row.pending?.done ? '✓' : '',
     row.fast_triage?.done ? '완료' : '',
     row.full_scout?.done ? '완료' : '',
@@ -10215,14 +10301,24 @@ function toggleStep0StatusFilter(status, button) {
 function buildTriageInstructionPromptWithCandidates(pairs) {
   const base = buildTriageInstructionPrompt();
   if (!Array.isArray(pairs) || !pairs.length) return base;
-  const listLines = pairs.map((pair) => `${pair.asset}\t${pair.company}`).join('\n');
-  return `${base}\n\nCandidates to triage now (Asset<TAB>Company, already parsed from a pasted CSV/spreadsheet list):\n${listLines}`;
+  const listLines = pairs.map((pair) => {
+    const details = pair.listing_details || {};
+    const context = [
+      ['Country', details.country],
+      ['Modality', details.modality],
+      ['Target', details.target],
+      ['Main indication', details.main_indication],
+      ['Stage', details.stage]
+    ].filter(([, value]) => String(value || '').trim()).map(([label, value]) => `${label}: ${String(value).trim()}`).join('; ');
+    return `${pair.asset}\t${pair.company}${context ? `\tListing context: ${context}` : ''}`;
+  }).join('\n');
+  return `${base}\n\nCandidates to triage now (Asset<TAB>Company<TAB>optional Listing context):\n${listLines}\n\nUse optional Listing context only to identify and retrieve the correct pipeline. Treat it as user-provided context, independently verify it, and do not treat it as rubric evidence unless confirmed by a source.`;
 }
 
 async function copyTriagePromptWithSelectedCandidates() {
   const pairs = state.step0Rows
     .filter((row) => row.pending?.queue_id && state.step0SelectedPendingIds.has(row.pending.queue_id))
-    .map((row) => ({ asset: row.asset, company: row.company }));
+    .map((row) => ({ asset: row.asset, company: row.company, listing_details: row.listing_details || {} }));
   const warningsStore = await fetchInstructionWarnings();
   const prompt = appendInstructionWarnings(buildTriageInstructionPromptWithCandidates(pairs), warningsStore.triage);
   try {
@@ -10251,13 +10347,25 @@ async function copyTriagePromptWithSelectedCandidates() {
 
 elements.step0ImportButton?.addEventListener('click', importStep0Candidates);
 elements.step0ClearButton?.addEventListener('click', () => {
-  if (elements.step0PasteInput) elements.step0PasteInput.value = '';
+  renderStep0EntryGrid();
   if (elements.step0ImportSummary) {
     elements.step0ImportSummary.hidden = true;
     elements.step0ImportSummary.textContent = '';
   }
   setStep0SaveStatus('waiting');
 });
+elements.step0AddEntryRow?.addEventListener('click', () => appendStep0EntryRows());
+elements.step0EntryGridBody?.addEventListener('click', (event) => {
+  const removeButton = event.target.closest('[data-step0-remove-entry-row]');
+  if (!removeButton) return;
+  const row = removeButton.closest('tr');
+  if (elements.step0EntryGridBody.querySelectorAll('tr').length <= 1) {
+    row.querySelectorAll('input').forEach((input) => { input.value = ''; });
+  } else {
+    row.remove();
+  }
+});
+elements.step0EntryGridBody?.addEventListener('paste', pasteIntoStep0EntryGrid);
 elements.step0CopyInstructionsButton?.addEventListener('click', copyTriagePromptWithSelectedCandidates);
 elements.step0ExportExcelButton?.addEventListener('click', exportStep0Table);
 elements.step0PageSizeSelect?.addEventListener('change', (event) => {
@@ -11233,6 +11341,7 @@ renderAgentIdentity();
 setupThemeToggle();
 initAuthUI();
 initializeAgentSessions();
+renderStep0EntryGrid();
 
 loadRecords().catch((error) => {
   elements.dataStatus.textContent = 'Load failed';

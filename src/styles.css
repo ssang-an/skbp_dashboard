@@ -20008,3 +20008,155 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 
 .triage-raw-panel summary::marker { color: var(--accent); }
 .triage-raw-panel .report-viewer { border-top: 1px solid var(--line); }
+
+/* Tab 0 Listing grid and grouped progress columns. */
+.step0-progress-table {
+  min-width: 1480px;
+}
+
+.step0-progress-table .step0-col-select { width: 3%; }
+.step0-progress-table .step0-col-company { width: 10%; }
+.step0-progress-table .step0-col-country { width: 6%; }
+.step0-progress-table .step0-col-asset { width: 11%; }
+.step0-progress-table .step0-col-modality { width: 8%; }
+.step0-progress-table .step0-col-target { width: 10%; }
+.step0-progress-table .step0-col-indication { width: 11%; }
+.step0-progress-table .step0-col-stage-name { width: 7%; }
+.step0-progress-table .step0-col-stage,
+.step0-progress-table .step0-col-metadata { width: 5.7%; }
+
+.step0-progress-table .step0-progress-group {
+  color: var(--accent-strong);
+  font-size: 11px;
+  letter-spacing: .03em;
+  text-align: center;
+}
+
+.step0-progress-table td.step0-target-cell,
+.step0-progress-table td:not(.select-col):not(.step0-metadata-cell) {
+  overflow-wrap: anywhere;
+}
+
+.step0-metadata-indicator.pill {
+  display: inline-flex;
+  width: auto;
+  height: auto;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 24px;
+  padding: 3px 8px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.step0-metadata-indicator.pill:hover,
+.step0-metadata-indicator.pill:focus-visible {
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.step0-entry-grid-panel {
+  min-width: 0;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 3%, var(--surface));
+  padding: 12px;
+}
+
+.step0-entry-grid-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 9px;
+}
+
+.step0-entry-grid-label > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.step0-entry-grid-wrap {
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+}
+
+.step0-entry-grid {
+  width: 100%;
+  min-width: 1090px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.step0-entry-grid th,
+.step0-entry-grid td {
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.step0-entry-grid th:last-child,
+.step0-entry-grid td:last-child { border-right: 0; }
+.step0-entry-grid tbody tr:last-child td { border-bottom: 0; }
+
+.step0-entry-grid th {
+  padding: 8px 9px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 850;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.step0-entry-grid th em {
+  margin-left: 3px;
+  color: var(--accent-strong);
+  font-size: 9px;
+  font-style: normal;
+}
+
+.step0-entry-grid td { padding: 0; }
+
+.step0-entry-grid input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 36px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  padding: 8px 9px;
+  font: inherit;
+  font-size: 12px;
+}
+
+.step0-entry-grid input:focus {
+  position: relative;
+  z-index: 1;
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent) 48%, transparent);
+}
+
+.step0-entry-remove-cell { width: 32px; text-align: center; }
+.step0-entry-remove-cell button,
+.step0-add-entry-row {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  font-weight: 750;
+}
+.step0-entry-remove-cell button { width: 24px; height: 24px; padding: 0; font-size: 16px; line-height: 1; }
+.step0-add-entry-row { margin-top: 9px; padding: 6px 10px; font-size: 11px; }
+.step0-entry-remove-cell button:hover,
+.step0-add-entry-row:hover { border-color: color-mix(in srgb, var(--accent) 42%, var(--line)); color: var(--accent-strong); }
+
+@media (max-width: 720px) {
+  .step0-entry-grid-panel { padding: 9px; }
+  .step0-entry-grid-label { align-items: flex-start; flex-direction: column; gap: 3px; }
+}

@@ -198,8 +198,13 @@
             <table class="pipeline-table step0-progress-table">
               <colgroup>
                 <col class="step0-col-select" />
-                <col class="step0-col-asset" />
                 <col class="step0-col-company" />
+                <col class="step0-col-country" />
+                <col class="step0-col-asset" />
+                <col class="step0-col-modality" />
+                <col class="step0-col-target" />
+                <col class="step0-col-indication" />
+                <col class="step0-col-stage-name" />
                 <col class="step0-col-stage" />
                 <col class="step0-col-stage" />
                 <col class="step0-col-stage" />
@@ -209,11 +214,19 @@
               </colgroup>
               <thead>
                 <tr>
-                  <th class="select-col">
+                  <th class="select-col" rowspan="2">
                     <input id="step0SelectAllRows" type="checkbox" aria-label="Listing 항목 전체 선택 (최대 20개)" />
                   </th>
-                  <th class="step0-asset-header"><button data-step0-sort="asset" type="button">Asset</button></th>
-                  <th><button data-step0-sort="company" type="button">Company</button></th>
+                  <th rowspan="2"><button data-step0-sort="company" type="button">Company</button></th>
+                  <th rowspan="2">Country</th>
+                  <th class="step0-asset-header" rowspan="2"><button data-step0-sort="asset" type="button">Asset</button></th>
+                  <th rowspan="2">Modality</th>
+                  <th rowspan="2">Target</th>
+                  <th rowspan="2">Main indication</th>
+                  <th rowspan="2">Stage</th>
+                  <th class="step0-progress-group" colspan="6">Evaluation Progress</th>
+                </tr>
+                <tr>
                   <th><button data-step0-sort="pending" type="button">Listing</button></th>
                   <th><button data-step0-sort="fast_triage" type="button">Fast Triage</button></th>
                   <th><button data-step0-sort="full_scout" type="button">Full Scout</button></th>
@@ -223,7 +236,7 @@
                 </tr>
               </thead>
               <tbody id="step0ProgressTableBody">
-                <tr><td colspan="9" class="step0-empty-state">진척 현황을 불러오는 중입니다...</td></tr>
+                <tr><td colspan="14" class="step0-empty-state">진척 현황을 불러오는 중입니다...</td></tr>
               </tbody>
             </table>
           </div>
@@ -246,16 +259,20 @@
           </div>
           <div class="data-upload-layout">
             <div class="data-upload-workspace">
-              <div class="data-input-grid data-input-grid-single">
-                <label class="data-input-box">
-                  <span class="data-upload-input-label">
-                    <svg class="data-upload-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M8 5.5h8M9 3h6v4H9z" /><path d="M7 5H5.5A1.5 1.5 0 0 0 4 6.5v13A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-13A1.5 1.5 0 0 0 18.5 5H17" /><path d="m9 14 2 2 4-4" /></svg>
-                    <b>Asset / Company / Comment / Contact</b>
-                  </span>
-                  <div class="data-upload-textarea-shell">
-                    <textarea id="step0PasteInput" spellcheck="false" placeholder="Excel에서 Asset · Company · Comment · Contact 순서의 4개 열을 그대로 붙여넣으세요. 빈 Comment/Contact 칸도 유지됩니다.&#10;예) AD-302[Tab]AddPharma[Tab]BD 검토 필요[Tab]8/20 담당자 연락&#10;기존 2열(Asset · Company) 형식도 계속 사용할 수 있습니다."></textarea>
-                  </div>
-                </label>
+              <div class="step0-entry-grid-panel" aria-label="Listing 입력 표">
+                <div class="data-upload-input-label step0-entry-grid-label">
+                  <svg class="data-upload-icon" viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M8 5.5h8M9 3h6v4H9z" /><path d="M7 5H5.5A1.5 1.5 0 0 0 4 6.5v13A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-13A1.5 1.5 0 0 0 18.5 5H17" /><path d="m9 14 2 2 4-4" /></svg>
+                  <b>Listing input</b><span>Company와 Asset은 필수 · 나머지는 선택</span>
+                </div>
+                <div class="step0-entry-grid-wrap">
+                  <table class="step0-entry-grid" id="step0EntryGrid">
+                    <thead><tr>
+                      <th>Company <em>required</em></th><th>Country</th><th>Asset <em>required</em></th><th>Modality</th><th>Target</th><th>Main indication</th><th>Stage</th><th>Comment</th><th>Contact</th><th aria-label="행 삭제"></th>
+                    </tr></thead>
+                    <tbody id="step0EntryGridBody"></tbody>
+                  </table>
+                </div>
+                <button id="step0AddEntryRow" type="button" class="step0-add-entry-row">+ 행 추가</button>
               </div>
               <div id="step0ImportSummary" class="input-validation-results" aria-live="polite" hidden></div>
               <div class="editor-actions">

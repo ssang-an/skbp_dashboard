@@ -4925,6 +4925,7 @@ def find_matching_identity_group(
 
 
 PIPELINE_METADATA_FIELDS = ("comment", "contact")
+LISTING_DETAIL_FIELDS = ("country", "modality", "target", "main_indication", "stage")
 
 
 def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
@@ -4958,6 +4959,51 @@ def candidate_queue_entry_metadata(entry: dict[str, Any]) -> dict[str, str]:
         {"listed_at": entry.get("added_at")},
         entry.get("pipeline_metadata"),
     )
+
+
+def normalize_listing_details(value: Any) -> dict[str, str]:
+    """Tab 0-only context. It must not overwrite researched record fields."""
+    raw = value if isinstance(value, dict) else {}
+    return {field: str(raw.get(field) or "").strip() for field in LISTING_DETAIL_FIELDS}
+
+
+def merge_listing_details(existing: Any, incoming: Any) -> dict[str, str]:
+    """Keep previously entered Listing context when a later paste leaves a cell blank."""
+    result = normalize_listing_details(existing)
+    for field, value in normalize_listing_details(incoming).items():
+        if value:
+            result[field] = value
+    return result
+
+
+def candidate_queue_entry_details(entry: dict[str, Any]) -> dict[str, str]:
+    return normalize_listing_details(entry.get("listing_details"))
+
+
+def normalize_candidate_queue_rows(raw_rows: Any) -> dict[str, Any]:
+    """Validate the structured Listing grid payload without changing the legacy paste contract."""
+    if not isinstance(raw_rows, list):
+        return {"rows": [], "unparsed": []}
+    rows: list[dict[str, str]] = []
+    unparsed: list[str] = []
+    for index, raw in enumerate(raw_rows, start=1):
+        if not isinstance(raw, dict):
+            unparsed.append(f"row {index}")
+            continue
+        row = {
+            "company_input": str(raw.get("company_input") or raw.get("company") or "").strip(),
+            "asset_input": str(raw.get("asset_input") or raw.get("asset") or "").strip(),
+            "comment": str(raw.get("comment") or "").strip(),
+            "contact": str(raw.get("contact") or "").strip(),
+            **normalize_listing_details(raw),
+        }
+        if not any(row.values()):
+            continue
+        if not row["company_input"] or not row["asset_input"]:
+            unparsed.append(f"row {index}: Company and Asset are required")
+            continue
+        rows.append(row)
+    return {"rows": rows, "unparsed": unparsed}
 
 
 def record_pipeline_metadata(record: dict[str, Any]) -> dict[str, str]:
@@ -7997,18 +8043,20 @@ def get_dashboard_summary() -> dict[str, Any]:
 
 @app.post("/api/candidate-queue/import")
 async def import_candidate_queue(request: Request) -> dict[str, Any]:
-    """Step 0: import Asset/Company/Comment/Contact rows into the Listing queue."""
+    """Step 0: import Listing-grid rows into the Listing queue."""
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
     if not isinstance(payload, dict):
-        raise HTTPException(status_code=400, detail="Expected an object with a 'text' field.")
-    raw_text = payload.get("text")
-    if not isinstance(raw_text, str) or not raw_text.strip():
-        raise HTTPException(status_code=400, detail="text is required.")
-
-    parsed = parse_candidate_pair_lines(raw_text)
+        raise HTTPException(status_code=400, detail="Expected a Listing grid payload.")
+    if isinstance(payload.get("rows"), list):
+        parsed = normalize_candidate_queue_rows(payload.get("rows"))
+    else:
+        raw_text = payload.get("text")
+        if not isinstance(raw_text, str) or not raw_text.strip():
+            raise HTTPException(status_code=400, detail="rows or text is required.")
+        parsed = parse_candidate_pair_lines(raw_text)
     rows = parsed["rows"]
     records = load_records()
     groups = dashboard_identity_groups(records)
@@ -8030,6 +8078,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             "contact": row.get("contact", ""),
             "updated_at": added_at,
         }
+        incoming_details = normalize_listing_details(row)
         existing_group = find_matching_identity_group(asset_input, company_input, groups)
         if existing_group is not None:
             already_researched_skipped += 1
@@ -8058,6 +8107,10 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             if candidate_queue_entry_metadata(existing_entry) != merged:
                 existing_entry["pipeline_metadata"] = merged
                 metadata_updated += 1
+            merged_details = merge_listing_details(candidate_queue_entry_details(existing_entry), incoming_details)
+            if candidate_queue_entry_details(existing_entry) != merged_details:
+                existing_entry["listing_details"] = merged_details
+                metadata_updated += 1
             continue
         entry = {
             "id": f"cq_{uuid.uuid4().hex[:8]}",
@@ -8067,6 +8120,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             "source": "paste_import",
             "added_at": added_at,
             "pipeline_metadata": incoming_metadata,
+            "listing_details": incoming_details,
         }
         queue.append(entry)
         added_entries.append(entry)
@@ -8128,6 +8182,13 @@ def get_candidate_queue_progress() -> dict[str, Any]:
         rep_summary = (representative.get("json_summary") if representative else None) or {}
         asset_label = non_empty_text(rep_table.get("asset_name"), rep_summary.get("asset_name"), "Unknown")
         company_label = non_empty_text(rep_table.get("company"), rep_summary.get("company"), "Unknown")
+        listing_details = normalize_listing_details({
+            "country": non_empty_text(rep_table.get("company_country"), rep_table.get("country"), rep_summary.get("country"), rep_summary.get("company_country")),
+            "modality": non_empty_text(rep_table.get("modality_platform"), rep_summary.get("modality")),
+            "target": non_empty_text(rep_table.get("target"), rep_summary.get("target")),
+            "main_indication": non_empty_text(rep_table.get("indication"), rep_table.get("main_indication"), rep_summary.get("main_indication"), rep_summary.get("indication")),
+            "stage": non_empty_text(rep_table.get("development_stage"), rep_summary.get("development_stage"), rep_summary.get("stage")),
+        })
         pipeline_metadata = pipeline_metadata_for_group(group)
         # Historical Fast/Full records predate the Listing queue. They are already part of
         # the pipeline inventory, so render Listing as complete instead of showing a broken
@@ -8147,6 +8208,7 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "identity": group["asset_identity"],
                 "asset": asset_label,
                 "company": company_label,
+                "listing_details": listing_details,
                 "pending": {"done": listing_done, "queue_id": None},
                 "fast_triage": {"done": fast_record is not None, "record_id": record_key(fast_record) if fast_record else None},
                 "full_scout": {"done": full_record is not None, "record_id": record_key(full_record) if full_record else None},
@@ -8185,6 +8247,7 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "identity": f"pending::{entry_id}",
                 "asset": non_empty_text(entry.get("asset_input"), "Unknown"),
                 "company": non_empty_text(entry.get("company_input"), "Unknown"),
+                "listing_details": candidate_queue_entry_details(entry),
                 "pending": {"done": True, "queue_id": entry_id},
                 "fast_triage": {"done": False, "record_id": None},
                 "full_scout": {"done": False, "record_id": None},
