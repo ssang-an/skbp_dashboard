@@ -53,7 +53,7 @@ const DEFAULT_COLUMN_WIDTHS = {
   modality: 96,
   target: 220,
   mainIndication: 140,
-  stage: 112,
+  stage: 78,
   filter1: 72,
   filter2: 72,
   filter3: 72,
@@ -66,8 +66,8 @@ const DEFAULT_COLUMN_WIDTHS = {
   dataScore: 50,
   marketScore: 56,
   totalScore: 52,
-  focusAction: 96,
-  rubricAction: 68,
+  focusAction: 108,
+  rubricAction: 108,
   inVivo: 74,
   inVitro: 74,
   admet: 84,
@@ -85,7 +85,7 @@ const MIN_COLUMN_WIDTHS = {
   modality: 76,
   target: 170,
   mainIndication: 105,
-  stage: 88,
+  stage: 68,
   filter1: 62,
   filter2: 62,
   filter3: 62,
@@ -98,8 +98,8 @@ const MIN_COLUMN_WIDTHS = {
   dataScore: 44,
   marketScore: 48,
   totalScore: 46,
-  focusAction: 84,
-  rubricAction: 60,
+  focusAction: 96,
+  rubricAction: 96,
   inVivo: 64,
   inVitro: 64,
   admet: 70,
@@ -281,6 +281,20 @@ const initialSort = initialTableMode === 'triage'
     ? { key: 'focusAddedAt', direction: 'desc' }
     : { key: 'totalScore', direction: 'desc' };
 
+function storedMainColumnWidths() {
+  const widths = readStoredJson(
+    COLUMN_WIDTH_STORAGE_KEY,
+    {},
+    (value) => value && typeof value === 'object' && !Array.isArray(value)
+  );
+  // The Website utility makes the action group wider; reclaim that space from
+  // the formerly over-wide Stage column even for users with an older saved layout.
+  if (Number(widths.stage) > DEFAULT_COLUMN_WIDTHS.stage) {
+    widths.stage = DEFAULT_COLUMN_WIDTHS.stage;
+  }
+  return widths;
+}
+
 const state = {
   rawRecords: [],
   rows: [],
@@ -327,11 +341,7 @@ const state = {
     [],
     (value) => Array.isArray(value) && value.every((item) => typeof item === 'string')
   )),
-  columnWidths: readStoredJson(
-    COLUMN_WIDTH_STORAGE_KEY,
-    {},
-    (value) => value && typeof value === 'object' && !Array.isArray(value)
-  ),
+  columnWidths: storedMainColumnWidths(),
   focusColumnWidths: readStoredJson(
     FOCUS_COLUMN_WIDTH_STORAGE_KEY,
     {},
@@ -4492,8 +4502,8 @@ function fullScoutRowActions(row) {
   return `
     <div class="full-scout-row-actions">
       ${rubricReevaluationButton(row)}
-      ${pipelineWebsiteRowButton(row)}
       ${focusActionButton(row, 'full')}
+      ${pipelineWebsiteRowButton(row)}
     </div>
   `;
 }
@@ -4508,7 +4518,7 @@ function pipelineWebsiteRowButton(row) {
       data-pipeline-website
       data-record-id="${escapeHtml(row.id)}"
       data-website-url="${escapeHtml(hasUrl ? url : '')}"
-      title="${escapeHtml(hasUrl ? 'Pipeline Website · 한 번 클릭하여 열기, 두 번 클릭하여 주소 수정' : 'Pipeline Website 미등록 · 관리자 더블클릭으로 주소 입력')}"
+      title="${escapeHtml(hasUrl ? 'Pipeline Website · Tab 0 Listing에서 관리 · 클릭하여 열기' : 'Pipeline Website 미등록 · Tab 0 Listing에서 등록')}"
       aria-label="${escapeHtml(`${row.asset} Pipeline Website ${hasUrl ? '열기' : '미등록'}`)}"
       aria-disabled="${hasUrl ? 'false' : 'true'}"
     ><svg class="pipeline-row-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 14 14 10M8.5 7.5H7a3 3 0 0 0-3 3V17a3 3 0 0 0 3-3v-1.5M13 4h7v7M20 4l-9 9"/></svg></button>
@@ -4570,7 +4580,7 @@ function rubricReevaluationButton(row) {
 }
 
 function rubricReevaluationCell(row) {
-  return `<div class="full-scout-row-actions">${rubricReevaluationButton(row)}${pipelineWebsiteRowButton(row)}${triageFullScoutCopyButton(row)}</div>`;
+  return `<div class="full-scout-row-actions">${rubricReevaluationButton(row)}${triageFullScoutCopyButton(row)}${pipelineWebsiteRowButton(row)}</div>`;
 }
 
 function oiPartnershipRefreshButton(row) {
@@ -11277,18 +11287,12 @@ window.addEventListener('resize', () => {
   applyColumnWidths();
 });
 
-let dashboardWebsiteOpenTimer = null;
-
 elements.pipelineTable.addEventListener('click', (event) => {
   const pipelineWebsite = event.target.closest('[data-pipeline-website]');
   if (pipelineWebsite) {
     const url = String(pipelineWebsite.dataset.websiteUrl || '');
     if (!url) return;
-    if (dashboardWebsiteOpenTimer) window.clearTimeout(dashboardWebsiteOpenTimer);
-    dashboardWebsiteOpenTimer = window.setTimeout(() => {
-      dashboardWebsiteOpenTimer = null;
-      window.open(url, '_blank', 'noopener,noreferrer');
-    }, 220);
+    window.open(url, '_blank', 'noopener,noreferrer');
     return;
   }
   const rubricRefresh = event.target.closest('[data-rubric-refresh]');
@@ -11325,22 +11329,6 @@ elements.pipelineTable.addEventListener('click', (event) => {
     return;
   }
   window.location.href = `/detail?id=${encodeURIComponent(recordId)}&tab=${activeTableMode()}`;
-});
-
-elements.pipelineTable.addEventListener('dblclick', (event) => {
-  const pipelineWebsite = event.target.closest('[data-pipeline-website]');
-  if (!pipelineWebsite || !getCurrentUser()?.is_admin) return;
-  event.preventDefault();
-  if (dashboardWebsiteOpenTimer) window.clearTimeout(dashboardWebsiteOpenTimer);
-  dashboardWebsiteOpenTimer = null;
-  const recordId = String(pipelineWebsite.dataset.recordId || '');
-  const row = state.rows.find((candidate) => candidate.id === recordId);
-  if (!row) return;
-  openStep0MetadataPopover(pipelineWebsite, {
-    asset: row.asset,
-    metadata: get(row.raw, 'meta.pipeline_metadata', {}),
-    metadata_owner: { type: 'record', record_id: row.id }
-  }, 'website', { editing: true });
 });
 
 elements.pipelineTable.addEventListener('dblclick', (event) => {
