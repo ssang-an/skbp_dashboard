@@ -4926,6 +4926,7 @@ def find_matching_identity_group(
 
 PIPELINE_METADATA_FIELDS = ("comment", "contact")
 LISTING_DETAIL_FIELDS = ("country", "modality", "target", "main_indication", "stage")
+LISTING_QUEUE_EDITABLE_FIELDS = ("company", "asset", *LISTING_DETAIL_FIELDS)
 CONTACT_HISTORY_ABSENCE_PATTERN = re.compile(r"^(?:x|[-–—]+)$", flags=re.IGNORECASE)
 
 
@@ -4991,6 +4992,57 @@ def merge_listing_details(existing: Any, incoming: Any) -> dict[str, str]:
 
 def candidate_queue_entry_details(entry: dict[str, Any]) -> dict[str, str]:
     return normalize_listing_details(entry.get("listing_details"))
+
+
+def candidate_queue_manual_fields(entry: dict[str, Any]) -> dict[str, dict[str, str]]:
+    """Return the audit markers used to visually distinguish Listing-only edits."""
+    raw = entry.get("manual_fields") if isinstance(entry.get("manual_fields"), dict) else {}
+    result: dict[str, dict[str, str]] = {}
+    for field in LISTING_QUEUE_EDITABLE_FIELDS:
+        marker = raw.get(field)
+        if not isinstance(marker, dict):
+            continue
+        result[field] = {
+            "updated_at": str(marker.get("updated_at") or "").strip(),
+            "edited_by": str(marker.get("edited_by") or "").strip(),
+        }
+    return result
+
+
+def update_candidate_queue_listing_field(
+    entry: dict[str, Any],
+    field: str,
+    value: Any,
+    *,
+    edited_by: str,
+    changed_at: str,
+) -> bool:
+    """Apply an admin Listing correction without affecting researched record data."""
+    if field not in LISTING_QUEUE_EDITABLE_FIELDS:
+        raise ValueError(f"Unsupported Listing field: {field}")
+    normalized = str(value or "").strip()
+    if field in {"company", "asset"} and not normalized:
+        raise ValueError(f"{field.title()} is required.")
+
+    if field in {"company", "asset"}:
+        storage_key = "company_input" if field == "company" else "asset_input"
+        previous = str(entry.get(storage_key) or "").strip()
+        if previous == normalized:
+            return False
+        entry[storage_key] = normalized
+    else:
+        details = candidate_queue_entry_details(entry)
+        previous = details.get(field, "")
+        if previous == normalized:
+            return False
+        details[field] = normalized
+        entry["listing_details"] = details
+
+    markers = candidate_queue_manual_fields(entry)
+    markers[field] = {"updated_at": changed_at, "edited_by": edited_by}
+    entry["manual_fields"] = markers
+    entry["updated_at"] = changed_at
+    return True
 
 
 def normalize_candidate_queue_rows(raw_rows: Any) -> dict[str, Any]:
@@ -8228,6 +8280,7 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "company": company_label,
                 "listing_details": listing_details,
                 "listing_details_source": listing_details_source,
+                "listing_manual_fields": {},
                 "pending": {"done": listing_done, "queue_id": None},
                 "fast_triage": {"done": fast_record is not None, "record_id": record_key(fast_record) if fast_record else None},
                 "full_scout": {"done": full_record is not None, "record_id": record_key(full_record) if full_record else None},
@@ -8268,6 +8321,7 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "company": non_empty_text(entry.get("company_input"), "Unknown"),
                 "listing_details": candidate_queue_entry_details(entry),
                 "listing_details_source": "listing",
+                "listing_manual_fields": candidate_queue_manual_fields(entry),
                 "pending": {"done": True, "queue_id": entry_id},
                 "fast_triage": {"done": False, "record_id": None},
                 "full_scout": {"done": False, "record_id": None},
@@ -8281,6 +8335,50 @@ def get_candidate_queue_progress() -> dict[str, Any]:
             recent_15_days["pending"] += 1
 
     return {"ok": True, "stats": stats, "recent_15_days": recent_15_days, "rows": rows}
+
+
+@app.patch("/api/candidate-queue/listing-details")
+async def update_candidate_queue_listing_details(request: Request) -> dict[str, Any]:
+    """Admin-only inline edits for a pending Listing row in Tab 0."""
+    account = require_auth_admin(request)
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected Listing field update object.")
+    queue_id = str(payload.get("queue_id") or "").strip()
+    field = str(payload.get("field") or "").strip().lower()
+    value = str(payload.get("value") or "").strip()
+    if not queue_id:
+        raise HTTPException(status_code=400, detail="queue_id is required.")
+    if field not in LISTING_QUEUE_EDITABLE_FIELDS:
+        raise HTTPException(status_code=400, detail="Unsupported Listing field.")
+    if len(value) > 5000:
+        raise HTTPException(status_code=400, detail="Listing field values must be 5,000 characters or fewer.")
+    queue = load_candidate_queue()
+    entry = next((item for item in queue if str(item.get("id") or "") == queue_id), None)
+    if entry is None:
+        raise HTTPException(status_code=404, detail="Listing entry was not found.")
+    try:
+        changed = update_candidate_queue_listing_field(
+            entry,
+            field,
+            value,
+            edited_by=str(account.get("name") or account.get("email") or "Admin"),
+            changed_at=datetime.now(timezone.utc).isoformat(),
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from None
+    if changed:
+        save_candidate_queue(queue)
+    return {
+        "ok": True,
+        "changed": changed,
+        "queue_id": queue_id,
+        "listing_details": candidate_queue_entry_details(entry),
+        "manual_fields": candidate_queue_manual_fields(entry),
+    }
 
 
 @app.patch("/api/candidate-queue/metadata")

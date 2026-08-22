@@ -107,6 +107,46 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(merged["modality"], "Biologic")
         self.assertEqual(merged["target"], "Target X")
 
+    def test_pending_listing_inline_edit_marks_only_the_changed_field(self) -> None:
+        entry = {
+            "company_input": "Acme Bio",
+            "asset_input": "AX-101",
+            "listing_details": {"country": "KR", "stage": "Preclinical"},
+        }
+
+        changed = main.update_candidate_queue_listing_field(
+            entry,
+            "stage",
+            "IND-enabling",
+            edited_by="Admin",
+            changed_at="2026-08-22T00:00:00+00:00",
+        )
+
+        self.assertTrue(changed)
+        self.assertEqual(main.candidate_queue_entry_details(entry)["stage"], "IND-enabling")
+        self.assertEqual(main.candidate_queue_manual_fields(entry)["stage"], {
+            "updated_at": "2026-08-22T00:00:00+00:00",
+            "edited_by": "Admin",
+        })
+        self.assertFalse(main.update_candidate_queue_listing_field(
+            entry,
+            "stage",
+            "IND-enabling",
+            edited_by="Admin",
+            changed_at="2026-08-22T00:05:00+00:00",
+        ))
+
+    def test_pending_listing_inline_edit_keeps_company_and_asset_required(self) -> None:
+        entry = {"company_input": "Acme Bio", "asset_input": "AX-101"}
+        with self.assertRaises(ValueError):
+            main.update_candidate_queue_listing_field(
+                entry,
+                "asset",
+                "",
+                edited_by="Admin",
+                changed_at="2026-08-22T00:00:00+00:00",
+            )
+
     def test_blank_import_values_never_erase_existing_metadata(self) -> None:
         existing = {
             "listed_at": "2026-08-01T00:00:00+00:00",

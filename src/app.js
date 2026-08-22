@@ -500,7 +500,12 @@ const elements = {
   step0ExportExcelButton: document.querySelector('#step0ExportExcelButton'),
   step0PrevPage: document.querySelector('#step0PrevPage'),
   step0PageInfo: document.querySelector('#step0PageInfo'),
-  step0NextPage: document.querySelector('#step0NextPage')
+  step0NextPage: document.querySelector('#step0NextPage'),
+  step0EditLockedModal: document.querySelector('#step0EditLockedModal'),
+  step0EditLockedTitle: document.querySelector('#step0EditLockedTitle'),
+  step0EditLockedMessage: document.querySelector('#step0EditLockedMessage'),
+  step0EditLockedClose: document.querySelector('#step0EditLockedClose'),
+  step0EditLockedGo: document.querySelector('#step0EditLockedGo')
 };
 
 let activeColumnResize = null;
@@ -509,6 +514,7 @@ let targetContextTooltip = null;
 let targetContextAnchor = null;
 let step0DragSelection = null;
 let activeStep0MetadataPopover = null;
+let activeStep0LockedEditMode = null;
 const focusSaveQueues = new Map();
 let dataReuploadResolve = null;
 let activeDataReuploadMatches = [];
@@ -10106,9 +10112,9 @@ function step0MetadataCellHtml(row, field) {
   const label = field === 'comment' ? 'Comment' : 'Contact';
   const hasContactHistory = field !== 'contact' || !/^(?:x|[-–—]+)$/i.test(value);
   const hasValue = Boolean(value) && hasContactHistory;
-  if (!owner.type) return '<span class="step0-metadata-empty">-</span>';
+  if (!owner.type) return '<span class="pill empty step0-metadata-empty">-</span>';
   if (field === 'contact' && !hasValue) {
-    return '<span class="step0-metadata-empty" aria-label="Contact history not recorded">-</span>';
+    return '<span class="pill empty step0-metadata-empty" aria-label="Contact history not recorded">-</span>';
   }
   const ownerId = owner.type === 'queue' ? owner.queue_id : owner.record_id;
   const title = hasValue ? `${label} 확인 · 두 번 클릭하여 수정` : `${label} 없음 · 두 번 클릭하여 입력`;
@@ -10153,6 +10159,133 @@ function step0FieldTitle(rawValue, displayValue) {
   const raw = String(rawValue || '').trim();
   const display = String(displayValue || '').trim();
   return raw && raw !== display ? ` title="${escapeHtml(raw)}"` : '';
+}
+
+function step0ResearchEditMode(row) {
+  if (row?.full_scout?.done) return 'full';
+  if (row?.fast_triage?.done) return 'triage';
+  return null;
+}
+
+function step0ListingFieldMarkup(row, field, value, { html = '', title = '', className = '' } = {}) {
+  const queueId = String(row?.pending?.queue_id || '');
+  const isManual = Boolean(row?.listing_manual_fields?.[field]);
+  const researchMode = step0ResearchEditMode(row);
+  const admin = Boolean(getCurrentUser()?.is_admin);
+  const editable = Boolean(queueId && admin && !researchMode);
+  const locked = Boolean(researchMode && admin);
+  const classes = [
+    'step0-table-value',
+    'table-manual-text',
+    isManual ? 'is-human' : '',
+    editable ? 'is-editable' : '',
+    locked ? 'is-research-locked' : '',
+    className
+  ].filter(Boolean).join(' ');
+  const attributes = editable
+    ? ` data-step0-listing-edit data-queue-id="${escapeHtml(queueId)}" data-step0-field="${escapeHtml(field)}" data-previous-value="${escapeHtml(value || '')}" role="button" tabindex="0" aria-label="Double-click to edit ${escapeHtml(field)}"`
+    : locked
+      ? ` data-step0-research-locked data-step0-mode="${escapeHtml(researchMode)}" role="button" tabindex="0" aria-label="Open ${researchMode} Dashboard editing guidance"`
+      : '';
+  const manualTitle = isManual ? 'Human manual edit' : '';
+  const safeTitle = title || manualTitle || String(value || '');
+  return `<span class="${classes}"${attributes}${safeTitle ? ` title="${escapeHtml(safeTitle)}"` : ''}>${html || escapeHtml(value || '-')}</span>`;
+}
+
+function closeStep0EditLockedModal() {
+  if (elements.step0EditLockedModal) elements.step0EditLockedModal.hidden = true;
+  activeStep0LockedEditMode = null;
+}
+
+function openStep0EditLockedModal(mode) {
+  const targetMode = mode === 'full' ? 'full' : 'triage';
+  const label = targetMode === 'full' ? 'Tab 2 · Full Scout' : 'Tab 1 · Fast Triage';
+  activeStep0LockedEditMode = targetMode;
+  if (elements.step0EditLockedTitle) elements.step0EditLockedTitle.textContent = `${label}에서 수정하세요`;
+  if (elements.step0EditLockedMessage) {
+    elements.step0EditLockedMessage.textContent = `이미 수행된 ${targetMode === 'full' ? 'Full Scout' : 'Fast Triage'}의 공식 조사값이 Tab 0에 표시되고 있습니다. 원본 조사값 수정은 ${label} Pipeline Table에서 진행합니다.`;
+  }
+  if (elements.step0EditLockedGo) elements.step0EditLockedGo.textContent = `${label}로 이동`;
+  if (elements.step0EditLockedModal) elements.step0EditLockedModal.hidden = false;
+  elements.step0EditLockedGo?.focus();
+}
+
+async function saveStep0ListingFieldEdit(input) {
+  const queueId = String(input?.dataset.queueId || '');
+  const field = String(input?.dataset.step0Field || '');
+  const previousValue = String(input?.dataset.previousValue || '').trim();
+  const value = String(input?.value || '').trim();
+  if (!queueId || !['company', 'asset', 'country', 'modality', 'target', 'main_indication', 'stage'].includes(field)) return;
+  if (value === previousValue) {
+    renderStep0ProgressTable();
+    return;
+  }
+  if ((field === 'company' || field === 'asset') && !value) {
+    showStep0Message('Company와 Asset은 필수 항목입니다.', 'warning');
+    input.focus();
+    return;
+  }
+  input.dataset.saving = 'true';
+  input.disabled = true;
+  try {
+    const response = await fetch('/api/candidate-queue/listing-details', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ queue_id: queueId, field, value })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
+    await loadStep0Progress();
+    showStep0Message(`${field.replaceAll('_', ' ')}를 수정했습니다.`, 'success');
+  } catch (error) {
+    input.disabled = false;
+    input.dataset.saving = '';
+    showStep0Message(`수정하지 못했습니다: ${error.message}`, 'error');
+    input.focus();
+  }
+}
+
+function openStep0ListingFieldEdit(anchor) {
+  if (!anchor || !getCurrentUser()?.is_admin || anchor.dataset.editing === 'true') return;
+  const queueId = String(anchor.dataset.queueId || '');
+  const field = String(anchor.dataset.step0Field || '');
+  const previousValue = String(anchor.dataset.previousValue || '').trim();
+  if (!queueId || !['company', 'asset', 'country', 'modality', 'target', 'main_indication', 'stage'].includes(field)) return;
+  anchor.dataset.editing = 'true';
+  const isStage = field === 'stage';
+  const input = document.createElement(isStage ? 'select' : 'input');
+  input.className = isStage ? 'table-edit-select stage-edit step0-listing-edit-select' : 'table-manual-text-input step0-listing-edit-input';
+  if (!isStage) {
+    input.type = 'text';
+    input.maxLength = 5000;
+    input.value = previousValue;
+  } else {
+    input.innerHTML = CANONICAL_DEVELOPMENT_STAGES.map((stage) => selectOption(stage, canonicalDevelopmentStage(previousValue) || 'Unknown', stage)).join('');
+  }
+  input.dataset.queueId = queueId;
+  input.dataset.step0Field = field;
+  input.dataset.previousValue = previousValue;
+  input.setAttribute('aria-label', `${field} edit`);
+  anchor.replaceWith(input);
+  input.focus();
+  if (!isStage) input.select();
+  const cancel = () => renderStep0ProgressTable();
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      input.dataset.cancelled = 'true';
+      cancel();
+    }
+    if (!isStage && event.key === 'Enter') {
+      event.preventDefault();
+      saveStep0ListingFieldEdit(input);
+    }
+  });
+  if (isStage) input.addEventListener('change', () => saveStep0ListingFieldEdit(input), { once: true });
+  else input.addEventListener('blur', () => {
+    if (input.dataset.saving === 'true' || input.dataset.cancelled === 'true') return;
+    saveStep0ListingFieldEdit(input);
+  }, { once: true });
 }
 
 function closeStep0MetadataPopover() {
@@ -10373,13 +10506,13 @@ function renderStep0ProgressTable() {
           : '';
         return `<tr>
           <td class="select-col">${checkboxCell}</td>
-          <td class="step0-company-cell">${escapeHtml(row.company)}</td>
-          <td${step0FieldTitle(display.countryRaw, display.country)}>${display.country === '-' ? '-' : countryDisplayMarkup(display.country)}</td>
-          <td class="step0-asset-cell">${escapeHtml(row.asset)}</td>
-          <td${step0FieldTitle(display.modalityRaw, display.modality)}>${escapeHtml(display.modality)}</td>
-          <td class="step0-target-cell">${escapeHtml(row.listing_details?.target || '-')}</td>
-          <td${step0FieldTitle(display.indicationRaw, display.indication)}>${escapeHtml(display.indication)}</td>
-          <td${step0FieldTitle(display.stageRaw, display.stage)}>${escapeHtml(display.stage)}</td>
+          <td class="step0-company-cell">${step0ListingFieldMarkup(row, 'company', row.company, { className: 'single-line-cell' })}</td>
+          <td>${step0ListingFieldMarkup(row, 'country', display.countryRaw, { html: display.country === '-' ? '-' : countryDisplayMarkup(display.country), title: display.countryRaw && display.countryRaw !== display.country ? display.countryRaw : display.country })}</td>
+          <td class="step0-asset-cell">${step0ListingFieldMarkup(row, 'asset', row.asset, { className: 'single-line-cell' })}</td>
+          <td>${step0ListingFieldMarkup(row, 'modality', display.modalityRaw, { html: escapeHtml(display.modality), title: display.modalityRaw && display.modalityRaw !== display.modality ? display.modalityRaw : display.modality, className: 'single-line-cell' })}</td>
+          <td class="step0-target-cell">${step0ListingFieldMarkup(row, 'target', row.listing_details?.target || '')}</td>
+          <td>${step0ListingFieldMarkup(row, 'main_indication', display.indicationRaw, { html: escapeHtml(display.indication), title: display.indicationRaw && display.indicationRaw !== display.indication ? display.indicationRaw : display.indication })}</td>
+          <td>${step0ListingFieldMarkup(row, 'stage', display.stageRaw, { html: escapeHtml(display.stage), title: display.stageRaw && display.stageRaw !== display.stage ? display.stageRaw : display.stage })}</td>
           <td>${step0StageCellHtml('pending', row.pending)}</td>
           <td>${step0StageCellHtml('fast_triage', row.fast_triage)}</td>
           <td>${step0StageCellHtml('full_scout', row.full_scout)}</td>
@@ -10677,21 +10810,55 @@ elements.step0ProgressTableBody?.addEventListener('change', (event) => {
 });
 elements.step0ProgressTableBody?.addEventListener('click', (event) => {
   const indicator = event.target.closest('[data-step0-metadata]');
-  if (!indicator) return;
-  const field = indicator.dataset.step0MetadataField;
-  const row = state.step0Rows.find((candidate) => candidate.identity === indicator.dataset.step0RowIdentity);
-  if (!row || !field) return;
-  event.preventDefault();
-  openStep0MetadataPopover(indicator, row, field, { editing: !step0MetadataValue(row, field) });
+  if (indicator) {
+    const field = indicator.dataset.step0MetadataField;
+    const row = state.step0Rows.find((candidate) => candidate.identity === indicator.dataset.step0RowIdentity);
+    if (!row || !field) return;
+    event.preventDefault();
+    openStep0MetadataPopover(indicator, row, field, { editing: !step0MetadataValue(row, field) });
+    return;
+  }
+  const locked = event.target.closest('[data-step0-research-locked]');
+  if (locked) {
+    event.preventDefault();
+    openStep0EditLockedModal(locked.dataset.step0Mode);
+  }
 });
 elements.step0ProgressTableBody?.addEventListener('dblclick', (event) => {
   const indicator = event.target.closest('[data-step0-metadata]');
-  if (!indicator) return;
-  const field = indicator.dataset.step0MetadataField;
-  const row = state.step0Rows.find((candidate) => candidate.identity === indicator.dataset.step0RowIdentity);
-  if (!row || !field) return;
+  if (indicator) {
+    const field = indicator.dataset.step0MetadataField;
+    const row = state.step0Rows.find((candidate) => candidate.identity === indicator.dataset.step0RowIdentity);
+    if (!row || !field) return;
+    event.preventDefault();
+    openStep0MetadataPopover(indicator, row, field, { editing: true });
+    return;
+  }
+  const editable = event.target.closest('[data-step0-listing-edit]');
+  if (editable) {
+    event.preventDefault();
+    openStep0ListingFieldEdit(editable);
+  }
+});
+elements.step0ProgressTableBody?.addEventListener('keydown', (event) => {
+  const editable = event.target.closest('[data-step0-listing-edit]');
+  const locked = event.target.closest('[data-step0-research-locked]');
+  if (!editable && !locked) return;
+  if (event.key !== 'Enter' && event.key !== ' ') return;
   event.preventDefault();
-  openStep0MetadataPopover(indicator, row, field, { editing: true });
+  if (editable) openStep0ListingFieldEdit(editable);
+  else openStep0EditLockedModal(locked.dataset.step0Mode);
+});
+elements.step0EditLockedClose?.addEventListener('click', closeStep0EditLockedModal);
+elements.step0EditLockedGo?.addEventListener('click', () => {
+  const mode = activeStep0LockedEditMode;
+  closeStep0EditLockedModal();
+  if (!mode) return;
+  activatePipelineTab(mode);
+  document.querySelector('#pipelineContent')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+elements.step0EditLockedModal?.addEventListener('click', (event) => {
+  if (event.target === elements.step0EditLockedModal) closeStep0EditLockedModal();
 });
 elements.step0ProgressTableBody?.addEventListener('pointerdown', (event) => {
   if (event.target.closest('[data-step0-metadata]')) return;
@@ -10726,7 +10893,10 @@ document.addEventListener('pointerdown', (event) => {
 window.addEventListener('resize', closeStep0MetadataPopover);
 window.addEventListener('scroll', closeStep0MetadataPopover, true);
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') closeStep0MetadataPopover();
+  if (event.key === 'Escape') {
+    closeStep0MetadataPopover();
+    closeStep0EditLockedModal();
+  }
 });
 
 const DESCENDING_FIRST_SORT_KEYS = new Set([
