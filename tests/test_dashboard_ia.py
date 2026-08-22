@@ -512,6 +512,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('shortlisting: { color:', JS)
         self.assertIn('data: { nodes, edges: [] }', workflow_map)
         self.assertIn("type: 'd3-force'", workflow_map)
+        self.assertIn('iterations: 36', workflow_map)
+        self.assertIn('alphaDecay: 0.2', workflow_map)
         self.assertIn("'drag-element-force'", workflow_map)
         self.assertNotIn('step0-workflow-stage-headings', workflow_map)
         self.assertNotIn("previousNodeId", workflow_map)

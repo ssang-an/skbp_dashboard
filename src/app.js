@@ -10516,8 +10516,11 @@ function renderStep0WorkflowMap() {
         type: 'd3-force',
         width,
         height,
-        iterations: 180,
+        iterations: 36,
         animation: true,
+        alphaDecay: 0.2,
+        alphaMin: 0.05,
+        velocityDecay: 0.78,
         manyBody: { strength: style.repulsion, distanceMax: 70 },
         collide: {
           radius: (node) => Number(node?.data?.size || 10) / 2 + style.collisionPadding,
