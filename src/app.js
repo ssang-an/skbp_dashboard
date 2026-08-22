@@ -10425,10 +10425,10 @@ function step0WorkflowStageForRow(row) {
 }
 
 const STEP0_WORKFLOW_NODE_STYLES = {
-  pending: { color: '#94a3b8', size: 8 },
+  pending: { color: '#94a3b8', size: 7 },
   fast_triage: { color: '#5f8fbe', size: 10 },
-  full_scout: { color: '#4c9b78', size: 13 },
-  shortlisting: { color: '#b8871b', size: 16 }
+  full_scout: { color: '#4c9b78', size: 14 },
+  shortlisting: { color: '#b8871b', size: 18 }
 };
 
 function destroyStep0WorkflowGraph() {
@@ -10460,13 +10460,7 @@ function renderStep0WorkflowMap() {
     return;
   }
 
-  const stageHeaders = STEP0_WORKFLOW_MAP_STAGES.map((stage) => `
-    <div class="step0-workflow-stage-heading" data-workflow-stage="${stage.key}">
-      <strong>${stage.label}</strong><span>${groups.get(stage.key).length}</span>
-    </div>
-  `).join('');
   elements.step0WorkflowMap.innerHTML = `
-    <div class="step0-workflow-stage-headings" aria-hidden="true">${stageHeaders}</div>
     <div class="step0-workflow-g6-shell"><div class="step0-workflow-g6" aria-label="필터 결과 Pipeline 원형 node 그래프"></div></div>
     <div class="step0-workflow-tooltip" hidden></div>
   `;
@@ -10474,33 +10468,26 @@ function renderStep0WorkflowMap() {
   const container = elements.step0WorkflowMap.querySelector('.step0-workflow-g6');
   const tooltip = elements.step0WorkflowMap.querySelector('.step0-workflow-tooltip');
   const width = Math.max(container.clientWidth || elements.step0WorkflowMap.clientWidth || 720, 720);
-  const stageWidth = width / STEP0_WORKFLOW_MAP_STAGES.length;
-  const maxRows = Math.max(...STEP0_WORKFLOW_MAP_STAGES.map((stage) => {
-    const size = STEP0_WORKFLOW_NODE_STYLES[stage.key].size;
-    const columns = Math.max(1, Math.floor((stageWidth - 24) / (size + 7)));
-    return Math.ceil(groups.get(stage.key).length / columns);
-  }));
-  const height = Math.max(220, Math.min(500, 32 + maxRows * 24));
   const nodeById = new Map();
   const nodes = [];
+  const edges = [];
 
-  STEP0_WORKFLOW_MAP_STAGES.forEach((stage) => {
-    const stageRows = groups.get(stage.key) || [];
-    const style = STEP0_WORKFLOW_NODE_STYLES[stage.key];
-    const columns = Math.max(1, Math.floor((stageWidth - 24) / (style.size + 7)));
-    const xStart = stage.index * stageWidth + (stageWidth - Math.min(stageRows.length, columns) * (style.size + 7)) / 2 + style.size / 2;
-    stageRows.forEach((row, index) => {
+  rows.forEach((row, rowIndex) => {
+    const completedStage = step0WorkflowStageForRow(row);
+    const completedIndex = completedStage.index;
+    let previousNodeId = null;
+    STEP0_WORKFLOW_MAP_STAGES.slice(0, completedIndex + 1).forEach((stage) => {
+      const style = STEP0_WORKFLOW_NODE_STYLES[stage.key];
       const asset = String(row?.asset || 'Unnamed pipeline').trim() || 'Unnamed pipeline';
       const company = String(row?.company || '-').trim() || '-';
       const display = step0DashboardFieldDisplay(row);
-      const id = `${stage.key}-${index}-${asset}`;
+      const id = `pipeline-${rowIndex}-${stage.key}`;
       const title = `${asset} · ${company} · ${stage.label}${display.stage !== '-' ? ` · ${display.stage}` : ''}`;
       nodeById.set(id, title);
       nodes.push({
         id,
+        data: { stage: stage.key, size: style.size },
         style: {
-          x: xStart + (index % columns) * (style.size + 7),
-          y: 20 + Math.floor(index / columns) * 24 + style.size / 2,
           size: style.size,
           fill: style.color,
           stroke: 'rgba(15, 23, 42, .18)',
@@ -10508,8 +10495,18 @@ function renderStep0WorkflowMap() {
           cursor: 'pointer'
         }
       });
+      if (previousNodeId) {
+        edges.push({
+          id: `${previousNodeId}->${id}`,
+          source: previousNodeId,
+          target: id,
+          style: { stroke: style.color, opacity: 0.22, lineWidth: 0.8 }
+        });
+      }
+      previousNodeId = id;
     });
   });
+  const height = Math.max(300, Math.min(560, 90 + Math.ceil(nodes.length / Math.max(22, Math.floor(width / 17))) * 22));
 
   try {
     step0WorkflowG6Graph = new globalThis.G6.Graph({
@@ -10518,9 +10515,25 @@ function renderStep0WorkflowMap() {
       height,
       autoResize: true,
       animation: true,
-      data: { nodes, edges: [] },
+      data: { nodes, edges },
       node: { type: 'circle' },
-      behaviors: ['zoom-canvas', 'drag-canvas']
+      edge: { type: 'line' },
+      behaviors: ['drag-canvas', 'drag-element-force'],
+      layout: {
+        type: 'd3-force',
+        width,
+        height,
+        iterations: 300,
+        animation: true,
+        manyBody: { strength: -26, distanceMax: 160 },
+        link: { distance: 31, strength: 0.46 },
+        collide: {
+          radius: (node) => Number(node?.data?.size || 10) / 2 + 4,
+          strength: 0.9,
+          iterations: 2
+        },
+        center: { strength: 0.025 }
+      }
     });
     step0WorkflowG6Graph.render();
     step0WorkflowG6Graph.on?.('node:pointerenter', (event) => {
@@ -10530,6 +10543,9 @@ function renderStep0WorkflowMap() {
       tooltip.hidden = false;
     });
     step0WorkflowG6Graph.on?.('node:pointerleave', () => {
+      if (tooltip) tooltip.hidden = true;
+    });
+    step0WorkflowG6Graph.on?.('canvas:pointerleave', () => {
       if (tooltip) tooltip.hidden = true;
     });
   } catch (error) {

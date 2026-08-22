@@ -19516,65 +19516,13 @@ button.step0-stat.active {
   min-width: 0;
 }
 
-.step0-workflow-stage-headings {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  min-width: 720px;
-  margin-bottom: 8px;
-}
-
-.step0-workflow-stage-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  min-height: 36px;
-  padding: 8px 10px;
-  border: 1px solid var(--line);
-  border-radius: 11px;
-  background: var(--surface);
-}
-
-.step0-workflow-stage-heading strong {
-  overflow: hidden;
-  color: var(--text);
-  font-size: 11px;
-  font-weight: 800;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.step0-workflow-stage-heading span {
-  display: inline-grid;
-  min-width: 21px;
-  min-height: 21px;
-  padding: 0 5px;
-  place-items: center;
-  border-radius: 999px;
-  background: var(--surface-soft);
-  color: var(--muted);
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-  font-weight: 800;
-}
-
-.step0-workflow-stage-heading[data-workflow-stage="pending"] { border-top: 2px solid #94a3b8; }
-.step0-workflow-stage-heading[data-workflow-stage="fast_triage"] { border-top: 2px solid #5f8fbe; }
-.step0-workflow-stage-heading[data-workflow-stage="full_scout"] { border-top: 2px solid #4c9b78; }
-.step0-workflow-stage-heading[data-workflow-stage="shortlisting"] { border-top: 2px solid #b8871b; }
-
 .step0-workflow-g6-shell {
   min-width: 720px;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 11px;
   background:
-    linear-gradient(90deg,
-      color-mix(in srgb, #94a3b8 8%, var(--surface)) 0 25%,
-      color-mix(in srgb, #5f8fbe 8%, var(--surface)) 25% 50%,
-      color-mix(in srgb, #4c9b78 8%, var(--surface)) 50% 75%,
-      color-mix(in srgb, #b8871b 9%, var(--surface)) 75% 100%);
+    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--accent) 4%, var(--surface)), var(--surface) 68%);
 }
 
 .step0-workflow-g6 {
