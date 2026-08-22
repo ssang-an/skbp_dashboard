@@ -22,14 +22,20 @@ def function_body(source: str, name: str) -> str:
 
 
 class UploadShortcutTests(unittest.TestCase):
-    def test_tab_one_upload_shortcut_resolves_the_live_upload_panel_before_scrolling(self):
+    def test_upload_shortcut_targets_the_active_tab_upload_panel_and_scrolls_the_document(self):
         body = function_body(JS, "scrollToDataUpload")
         self.assertIn("event?.preventDefault()", body)
-        self.assertIn("renderDataUploadGuide(mode)", body)
-        self.assertIn("document.querySelector('#dataUploadPanel')", body)
-        self.assertIn("panel?.querySelector('#gptResponseInput')", body)
+        self.assertIn("const isStep0Visible", body)
+        self.assertIn("!isStep0Visible && mode === 'focus'", body)
+        self.assertIn("if (!isStep0Visible) renderDataUploadGuide(mode)", body)
+        self.assertIn("const panelSelector = isStep0Visible ? '#step0UploadPanel' : '#dataUploadPanel'", body)
+        self.assertIn("const inputSelector = isStep0Visible ? '#step0PasteInput' : '#gptResponseInput'", body)
+        self.assertIn("document.querySelector(panelSelector)", body)
+        self.assertIn("panel?.querySelector(inputSelector)", body)
         self.assertIn("panel.hidden = false", body)
         self.assertIn("panel.scrollIntoView", body)
+        self.assertIn("window.scrollTo", body)
+        self.assertIn("document.querySelector('.topbar')", body)
         self.assertIn("input.focus({ preventScroll: true })", body)
         self.assertIn("typeof window.requestAnimationFrame === 'function'", body)
         self.assertIn("elements.dataUploadShortcutButton?.addEventListener('click', scrollToDataUpload)", JS)

@@ -440,7 +440,7 @@ const elements = {
   prevPage: document.querySelector('#prevPage'),
   nextPage: document.querySelector('#nextPage'),
   gptResponseInput: document.querySelector('#gptResponseInput'),
-  dataUploadPanel: document.querySelector('.paste-panel'),
+  dataUploadPanel: document.querySelector('#dataUploadPanel'),
   dataUploadInputLabel: document.querySelector('#dataUploadInputLabel'),
   dataUploadGuideTitle: document.querySelector('#dataUploadGuideTitle'),
   dataUploadRecommendation: document.querySelector('#dataUploadRecommendation'),
@@ -3719,11 +3719,15 @@ let dataUploadHighlightTimer = 0;
 
 function scrollToDataUpload(event) {
   event?.preventDefault();
+  const isStep0Visible = Boolean(elements.step0Panel && !elements.step0Panel.hidden);
   const mode = activeTableMode();
-  if (mode === 'focus') return;
-  renderDataUploadGuide(mode);
-  const panel = document.querySelector('#dataUploadPanel');
-  const input = panel?.querySelector('#gptResponseInput');
+  if (!isStep0Visible && mode === 'focus') return;
+  if (!isStep0Visible) renderDataUploadGuide(mode);
+
+  const panelSelector = isStep0Visible ? '#step0UploadPanel' : '#dataUploadPanel';
+  const inputSelector = isStep0Visible ? '#step0PasteInput' : '#gptResponseInput';
+  const panel = document.querySelector(panelSelector);
+  const input = panel?.querySelector(inputSelector);
   if (!panel || !input) return;
   panel.hidden = false;
   const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -3735,6 +3739,14 @@ function scrollToDataUpload(event) {
     panel.scrollIntoView({
       behavior: reducedMotion ? 'auto' : 'smooth',
       block: 'start'
+    });
+    // Tab 0 lives in its own panel and the sticky header can make scrollIntoView
+    // appear to do nothing. Align the document viewport explicitly as well.
+    const topbarBottom = document.querySelector('.topbar')?.getBoundingClientRect().bottom || 0;
+    const targetTop = Math.max(0, window.scrollY + panel.getBoundingClientRect().top - topbarBottom - 16);
+    window.scrollTo({
+      top: targetTop,
+      behavior: reducedMotion ? 'auto' : 'smooth'
     });
     window.setTimeout(() => {
       input.focus({ preventScroll: true });
