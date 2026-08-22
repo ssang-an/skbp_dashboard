@@ -10488,14 +10488,14 @@ function animateStep0WorkflowDots(graph, nodes, stageIndex) {
   const timer = setTimeout(() => {
     const startedAt = performance.now();
     const duration = 520;
-    const settleDuration = 1500;
+    const maxSettleDuration = 2000;
     const tick = (now) => {
       const elapsed = now - startedAt;
       graph.updateNodeData(nodes.map((node) => {
         const progress = Math.max(0, Math.min(1, (elapsed - node.data.entryDelay) / duration));
         const motion = step0WorkflowMotionProgress(progress);
         const arc = Math.sin(progress * Math.PI) * (1 - progress * 0.12);
-        const settleProgress = Math.max(0, Math.min(1, (elapsed - node.data.entryDelay - duration) / settleDuration));
+        const settleProgress = Math.max(0, Math.min(1, (elapsed - node.data.entryDelay - duration) / node.data.settleDuration));
         const settleRamp = Math.sin(Math.min(1, settleProgress * 2.4) * Math.PI / 2);
         const settleFade = settleRamp * Math.pow(1 - settleProgress, 1.18);
         const settleTime = settleProgress * Math.PI * 3.25 + node.data.settlePhase;
@@ -10509,7 +10509,7 @@ function animateStep0WorkflowDots(graph, nodes, stageIndex) {
         };
       }));
       graph.draw?.();
-      if (elapsed < duration + 140 + settleDuration) {
+      if (elapsed < duration + 140 + maxSettleDuration) {
         step0WorkflowG6AnimationFrames.push(requestAnimationFrame(tick));
       }
     };
@@ -10598,6 +10598,7 @@ function renderStep0WorkflowMap() {
           entryDelay: Math.floor(step0WorkflowSeededUnit(`${id}:stagger`) * 140),
           arcX: (step0WorkflowSeededUnit(`${id}:arc-x`) - 0.5) * Math.min(width * 0.06, 20),
           arcY: (step0WorkflowSeededUnit(`${id}:arc-y`) - 0.5) * Math.min(height * 0.18, 28),
+          settleDuration: 1000 + Math.floor(step0WorkflowSeededUnit(`${id}:settle-duration`) * 1001),
           settleX: (step0WorkflowSeededUnit(`${id}:settle-x`) + 0.2) * Math.min(width * 0.009, 4),
           settleY: (step0WorkflowSeededUnit(`${id}:settle-y`) + 0.2) * Math.min(height * 0.024, 5),
           settleOvershoot: (step0WorkflowSeededUnit(`${id}:settle-overshoot`) + 0.32) * Math.min(width * 0.009, 4),
