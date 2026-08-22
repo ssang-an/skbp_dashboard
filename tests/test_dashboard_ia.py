@@ -489,6 +489,22 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('.step0-summary-cards.is-collapsed', CSS)
         self.assertIn('.step0-summary-dashboard {\n  margin: 0;\n  order: 2;', CSS)
 
+    def test_step0_workflow_map_uses_filtered_rows_and_accessible_pipeline_nodes(self):
+        step0 = HTML[HTML.index('id="step0Panel"'):HTML.index('class="panel control-panel"')]
+        workflow_map = function_body(JS, "renderStep0WorkflowMap")
+        stage_for_row = function_body(JS, "step0WorkflowStageForRow")
+
+        self.assertIn('id="step0WorkflowMap"', step0)
+        self.assertIn('id="step0WorkflowMapResultCount"', step0)
+        self.assertIn('step0FilteredSortedRows()', workflow_map)
+        self.assertIn('step0WorkflowStageForRow(row)', workflow_map)
+        self.assertIn('requestAnimationFrame', workflow_map)
+        self.assertIn('reverse()', stage_for_row)
+        self.assertIn('data-step0-workflow-listing-asset', workflow_map)
+        self.assertIn('step0-workflow-map-columns', CSS)
+        self.assertIn('@media (prefers-reduced-motion: reduce)', CSS)
+        self.assertIn('@keyframes step0-workflow-node-arrive', CSS)
+
     def test_step0_uses_one_asset_company_search_instead_of_a_company_dropdown(self):
         step0_controls = HTML[HTML.index('aria-label="진척 현황 controls"') : HTML.index('class="panel pipeline-table-panel"')]
         step0_filtering = function_body(JS, "step0FilteredSortedRows")
