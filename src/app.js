@@ -10748,7 +10748,7 @@ function renderStep0WorkflowMap() {
         animation: false,
         data: { nodes, edges: [] },
         node: { type: 'circle' },
-        behaviors: ['drag-canvas', 'drag-element']
+      behaviors: ['drag-element']
       });
       step0WorkflowG6Graphs.push(graph);
       graph.render();
