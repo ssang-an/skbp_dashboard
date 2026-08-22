@@ -458,19 +458,18 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         for removed_id in ("resultChart", "themeChart", "countryChart", "priorityList", "dueDateList"):
             self.assertNotIn(f'id="{removed_id}"', HTML)
 
-    def test_step0_progress_summary_shows_recent_fifteen_day_upload_increases(self):
-        self.assertIn('id="step0RecentUploadNote"', HTML)
+    def test_step0_progress_summary_shows_recent_fifteen_day_upload_increases_on_cards_only(self):
+        self.assertNotIn('id="step0RecentUploadNote"', HTML)
+        self.assertNotIn('최근 15일 신규 업로드</span>', HTML)
         for element_id in ("step0RecentPending", "step0RecentFastTriage", "step0RecentFullScout", "step0RecentShortlisted"):
             self.assertIn(f'id="{element_id}"', HTML)
         render = function_body(JS, "renderStep0StatStrip")
         load = function_body(JS, "loadStep0Progress")
         self.assertIn("state.step0RecentStats = data.recent_15_days", load)
-        self.assertIn("최근 15일 신규 업로드", render)
         self.assertIn("▲ +${count}", render)
         self.assertIn(".step0-stat-recent", CSS)
-        self.assertIn(".step0-recent-upload-note", CSS)
-        self.assertIn('class="step0-recent-upload-legend"', HTML)
-        self.assertIn(".step0-recent-upload-legend", CSS)
+        self.assertNotIn(".step0-recent-upload-note", CSS)
+        self.assertNotIn(".step0-recent-upload-legend", CSS)
 
     def test_step0_summary_dashboard_uses_the_shared_show_hide_pattern(self):
         step0 = HTML[HTML.index('id="step0Panel"'):HTML.index('class="panel control-panel"')]

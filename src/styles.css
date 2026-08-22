@@ -19502,19 +19502,6 @@ button.step0-stat.active {
   font-weight: 800;
 }
 
-.step0-recent-upload-note {
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.step0-recent-upload-legend {
-  color: #c2414d;
-  font-variant-numeric: tabular-nums;
-  font-weight: 800;
-}
-
 @media (max-width: 640px) {
   .step0-summary-dashboard-heading {
     min-height: 50px;
