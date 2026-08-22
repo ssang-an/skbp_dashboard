@@ -472,18 +472,18 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('class="step0-recent-upload-legend"', HTML)
         self.assertIn(".step0-recent-upload-legend", CSS)
 
-    def test_step0_uses_the_shared_workflow_intro_and_summary_dashboard_hierarchy(self):
+    def test_step0_summary_dashboard_uses_the_shared_show_hide_pattern(self):
         step0 = HTML[HTML.index('id="step0Panel"'):HTML.index('class="panel control-panel"')]
-        self.assertIn('data-workflow-mode="listing"', step0)
         self.assertIn('Summary Dashboard', step0)
         self.assertIn('class="step0-summary-dashboard"', step0)
-        self.assertIn('class="step0-summary-dashboard-heading"', step0)
-        self.assertIn('.workflow-mode-description[data-workflow-mode="listing"]', CSS)
+        self.assertIn('step0-summary-dashboard-heading', step0)
+        self.assertIn('id="step0SummaryDashboardToggleButton"', step0)
+        self.assertIn('id="step0SummaryCards"', step0)
+        self.assertNotIn('data-workflow-mode="listing"', step0)
+        self.assertIn('function applyStep0SummaryDashboardHidden', JS)
+        self.assertIn("skbp.dashboard.step0SummaryDashboardHidden.v1", JS)
         self.assertIn('.step0-summary-dashboard-heading', CSS)
-        self.assertLess(
-            step0.index('class="step0-summary-dashboard"'),
-            step0.index('data-workflow-mode="listing"'),
-        )
+        self.assertIn('.step0-summary-cards.is-collapsed', CSS)
 
     def test_step0_uses_one_asset_company_search_instead_of_a_company_dropdown(self):
         step0_controls = HTML[HTML.index('aria-label="진척 현황 controls"') : HTML.index('class="panel pipeline-table-panel"')]

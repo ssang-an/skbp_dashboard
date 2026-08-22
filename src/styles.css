@@ -19369,14 +19369,16 @@ body.report-reupload-open {
 }
 
 .step0-summary-dashboard-heading {
-  display: flex;
-  align-items: center;
   min-height: 56px;
   padding: 12px 18px;
-  border: 1px solid var(--line);
+  margin: 0;
   border-bottom: 0;
   border-radius: 10px 10px 0 0;
-  background: var(--surface);
+}
+
+.step0-summary-dashboard-heading[aria-expanded="false"] {
+  border-bottom: 1px solid var(--line);
+  border-radius: 10px;
 }
 
 .step0-summary-dashboard-title {
@@ -19401,6 +19403,10 @@ body.report-reupload-open {
   margin: 0;
   border-top: 0;
   border-radius: 0 0 10px 10px;
+}
+
+.step0-summary-cards.is-collapsed {
+  display: none;
 }
 
 .step0-stat-strip {

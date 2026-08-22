@@ -112,13 +112,24 @@
 
       <section id="step0Panel" class="step0-panel" role="tabpanel" aria-labelledby="step0Tab" tabindex="-1" hidden>
         <section class="step0-summary-dashboard" aria-labelledby="step0SummaryDashboardTitle">
-          <div class="step0-summary-dashboard-heading">
-            <span class="step0-summary-dashboard-title" id="step0SummaryDashboardTitle">
+          <button
+            id="step0SummaryDashboardToggleButton"
+            class="visual-dashboard-toggle-bar step0-summary-dashboard-heading"
+            type="button"
+            aria-expanded="true"
+            aria-controls="step0SummaryCards"
+          >
+            <span class="visual-dashboard-toggle-title step0-summary-dashboard-title" id="step0SummaryDashboardTitle">
               Summary Dashboard
               <small>전체 Pipeline 기준</small>
             </span>
-          </div>
-        <section class="panel step0-stat-panel" aria-label="진척 현황 요약">
+            <span class="visual-dashboard-toggle-action">
+              <span id="step0SummaryDashboardToggleLabel">접기</span>
+              <span class="visual-dashboard-toggle-icon" aria-hidden="true">⌃</span>
+            </span>
+          </button>
+          <section id="step0SummaryCards" class="step0-summary-cards" aria-label="진척 현황 요약">
+          <section class="panel step0-stat-panel" aria-label="진척 현황 요약">
           <div class="panel-header">
             <h2>진척 현황 요약</h2>
             <span id="step0RecentUploadNote" class="step0-recent-upload-note" title="빨간 ▲ 숫자는 최근 15일 안에 각 workflow에 새로 등록된 pipeline 수입니다. 기존 레코드는 저장된 생성일을 기준으로 계산합니다."><span class="step0-recent-upload-legend" aria-hidden="true">▲ +N</span> 최근 15일 신규 업로드</span>
@@ -143,19 +154,6 @@
           </div>
         </section>
         </section>
-
-        <section class="workflow-mode-description" data-workflow-mode="listing" role="note" aria-label="Listing workflow guide">
-          <span class="workflow-description-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 10.75v5.5M12 7.75h.01" />
-            </svg>
-          </span>
-          <span class="workflow-description-copy">
-            <strong>후보 목록 관리<span class="workflow-description-separator" aria-hidden="true">·</span></strong>
-            <span>후보 목록을 등록하고 Fast Triage·Full Scout·Shortlisting까지의 조사 진척을 한 곳에서 확인합니다.</span>
-          </span>
-          <span class="workflow-description-filter">Listing</span>
         </section>
 
         <section class="panel control-panel" aria-label="진척 현황 controls">

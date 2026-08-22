@@ -488,6 +488,9 @@ const elements = {
   step0ImportSummary: document.querySelector('#step0ImportSummary'),
   step0SaveStatus: document.querySelector('#step0SaveStatus'),
   step0GuideSteps: document.querySelector('#step0GuideSteps'),
+  step0SummaryCards: document.querySelector('#step0SummaryCards'),
+  step0SummaryDashboardToggleButton: document.querySelector('#step0SummaryDashboardToggleButton'),
+  step0SummaryDashboardToggleLabel: document.querySelector('#step0SummaryDashboardToggleLabel'),
   step0StatPending: document.querySelector('#step0StatPending'),
   step0StatFastTriage: document.querySelector('#step0StatFastTriage'),
   step0StatFullScout: document.querySelector('#step0StatFullScout'),
@@ -11691,12 +11694,32 @@ function applyVisualDashboardHidden(hidden) {
   }
 }
 
+function applyStep0SummaryDashboardHidden(hidden) {
+  if (elements.step0SummaryCards) elements.step0SummaryCards.classList.toggle('is-collapsed', hidden);
+  if (elements.step0SummaryDashboardToggleButton) {
+    elements.step0SummaryDashboardToggleButton.setAttribute('aria-expanded', String(!hidden));
+    elements.step0SummaryDashboardToggleButton.setAttribute(
+      'aria-label',
+      hidden ? '진척 현황 Summary Dashboard 펼치기' : '진척 현황 Summary Dashboard 접기'
+    );
+  }
+  if (elements.step0SummaryDashboardToggleLabel) {
+    elements.step0SummaryDashboardToggleLabel.textContent = hidden ? '펼치기' : '접기';
+  }
+}
+
 applyVisualDashboardHidden(localStorage.getItem(VISUAL_DASHBOARD_HIDDEN_KEY) === 'true');
+applyStep0SummaryDashboardHidden(localStorage.getItem('skbp.dashboard.step0SummaryDashboardHidden.v1') === 'true');
 
 elements.visualDashboardToggleButton?.addEventListener('click', () => {
   const hidden = !elements.visualGrid?.classList.contains('is-collapsed');
   applyVisualDashboardHidden(hidden);
   localStorage.setItem(VISUAL_DASHBOARD_HIDDEN_KEY, String(hidden));
+});
+elements.step0SummaryDashboardToggleButton?.addEventListener('click', () => {
+  const hidden = !elements.step0SummaryCards?.classList.contains('is-collapsed');
+  applyStep0SummaryDashboardHidden(hidden);
+  localStorage.setItem('skbp.dashboard.step0SummaryDashboardHidden.v1', String(hidden));
 });
 elements.columnSettingsGrid?.addEventListener('change', (event) => {
   const checkbox = event.target.closest('input[type="checkbox"]');
