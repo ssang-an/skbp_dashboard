@@ -20142,6 +20142,24 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
   font-style: normal;
 }
 
+.step0-required-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 5px;
+  padding: 2px 5px;
+  border: 1px solid color-mix(in srgb, #b35a68 34%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, #b35a68 10%, var(--surface));
+  color: #9f3e4e;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.045em;
+  line-height: 1.15;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
 .step0-entry-grid td { padding: 0; }
 
 .step0-entry-grid input,
