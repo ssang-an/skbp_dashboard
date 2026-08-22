@@ -19367,6 +19367,14 @@ body.report-reupload-open {
 .step0-summary-dashboard {
   margin: 0;
   order: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.step0-summary-cards {
+  margin: 0;
+  padding: 0;
 }
 
 /* The global workflow cascade gives standalone dashboard blocks the default
@@ -19385,8 +19393,9 @@ body.report-reupload-open {
 }
 
 .step0-summary-dashboard-heading[aria-expanded="false"] {
-  border-bottom: 1px solid var(--line);
-  border-radius: 10px;
+  margin-bottom: 0;
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
 }
 
 .step0-summary-dashboard-title {
@@ -19408,7 +19417,7 @@ body.report-reupload-open {
 }
 
 .step0-summary-dashboard .step0-stat-panel {
-  margin: 0;
+  margin: 0 !important;
   border-top: 0;
   border-radius: 0 0 10px 10px;
 }
