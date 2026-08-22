@@ -545,6 +545,8 @@ let step0WorkflowG6RenderTimers = [];
 let step0WorkflowG6AnimationFrames = [];
 let step0StatAnimationFrames = [];
 let step0StatAnimationTimers = [];
+let dashboardDonutAnimationFrames = [];
+let dashboardDonutAnimationTimers = [];
 const focusSaveQueues = new Map();
 let dataReuploadResolve = null;
 let activeDataReuploadMatches = [];
@@ -3231,7 +3233,7 @@ function donutChart(entries, kind) {
             <b class="legend-dot" style="background:${segmentColor(label, index)}"></b>
             <span class="donut-legend-text">${escapeHtml(displayLabel)}</span>
           </span>
-          <em>${value}</em>
+          <em data-donut-legend-value="${value}">${value}</em>
         </span>
       `;
     })
@@ -3817,6 +3819,61 @@ function scrollToDataUpload(event) {
   }
 }
 
+function cancelDashboardDonutAnimations() {
+  dashboardDonutAnimationTimers.forEach((timer) => clearTimeout(timer));
+  dashboardDonutAnimationTimers = [];
+  dashboardDonutAnimationFrames.forEach((frame) => cancelAnimationFrame(frame));
+  dashboardDonutAnimationFrames = [];
+}
+
+function animateDashboardDonut(container, delay = 0) {
+  if (!container || globalThis.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) return;
+  const donut = container.querySelector('.donut');
+  const valueElement = donut?.querySelector('.donut-value');
+  if (!donut || !valueElement) return;
+  const segments = [...donut.querySelectorAll('.donut-segment')];
+  const legendValues = [...container.querySelectorAll('[data-donut-legend-value]')];
+  const defaultValue = String(donut.dataset.defaultValue || valueElement.textContent || '');
+  const centerMatch = defaultValue.match(/^(\d+)(%)?$/);
+  const animationDuration = 760;
+
+  segments.forEach((segment, index) => {
+    const finalDasharray = segment.getAttribute('stroke-dasharray');
+    if (!finalDasharray || typeof segment.animate !== 'function') return;
+    const segmentAnimation = segment.animate([
+      { strokeDasharray: `0 ${DONUT_CIRCUMFERENCE}`, opacity: 0.35 },
+      { strokeDasharray: finalDasharray, opacity: 1 }
+    ], {
+      duration: 620,
+      delay: delay + index * 70,
+      easing: 'cubic-bezier(.2, .78, .25, 1)',
+      fill: 'both'
+    });
+    segmentAnimation.finished?.then(() => segmentAnimation.cancel()).catch(() => {});
+  });
+
+  const animateNumber = (element, target, suffix = '', startDelay = delay, duration = animationDuration) => {
+    if (!element || !Number.isFinite(target)) return;
+    element.textContent = `0${suffix}`;
+    const timer = setTimeout(() => {
+      const startedAt = performance.now();
+      const tick = (now) => {
+        const progress = Math.max(0, Math.min(1, (now - startedAt) / duration));
+        const eased = 1 - Math.pow(1 - progress, 3);
+        element.textContent = `${Math.round(target * eased)}${suffix}`;
+        if (progress < 1) dashboardDonutAnimationFrames.push(requestAnimationFrame(tick));
+      };
+      dashboardDonutAnimationFrames.push(requestAnimationFrame(tick));
+    }, startDelay);
+    dashboardDonutAnimationTimers.push(timer);
+  };
+
+  if (centerMatch) animateNumber(valueElement, Number(centerMatch[1]), centerMatch[2] || '');
+  legendValues.forEach((element, index) => {
+    animateNumber(element, Number(element.dataset.donutLegendValue || 0), '', delay + index * 70, 520);
+  });
+}
+
 const STEP0_FILTER_KEYS = ['country', 'modality', 'theme', 'cluster', 'indication', 'stage', 'progress'];
 const STEP0_PROGRESS_FILTER_OPTIONS = [
   { value: 'pending', label: 'Listing' },
@@ -3837,16 +3894,19 @@ function closeStep0MultiFilters(except = null) {
 }
 
 function renderCharts() {
+  cancelDashboardDonutAnimations();
   const summary = activeTabSummary();
   const indicationEntries = summaryDistributionPairs(summary.indication_distribution)
     .sort((a, b) => b[1] - a[1]
       || Number(/^Others$/i.test(a[0])) - Number(/^Others$/i.test(b[0]))
       || a[0].localeCompare(b[0], 'ko'));
   elements.indicationChart.innerHTML = donutChart(indicationEntries, 'interest-indication');
+  animateDashboardDonut(elements.indicationChart, 0);
   wireDonutHover(elements.indicationChart);
 
   const modalityEntries = summaryDistributionPairs(summary.modality_distribution);
   elements.modalityChart.innerHTML = donutChart(modalityEntries, 'modality-summary');
+  animateDashboardDonut(elements.modalityChart, 90);
   wireDonutHover(elements.modalityChart);
 
   if (elements.passRateChart) {
@@ -3877,6 +3937,7 @@ function renderCharts() {
       value.textContent = defaultValue;
     }
     if (center) center.insertAdjacentHTML('beforeend', `<small>${mode === 'focus' ? 'ONGOING' : leadLabel}</small>`);
+    animateDashboardDonut(elements.passRateChart, 180);
     if (elements.workflowStatusTitle) {
       elements.workflowStatusTitle.textContent = mode === 'triage'
         ? 'SELECT Rate'
