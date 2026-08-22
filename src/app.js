@@ -10497,7 +10497,7 @@ function renderStep0WorkflowMap() {
         }
       };
     });
-    const height = 174;
+    const height = Math.max(container.clientHeight || 174, 120);
 
     try {
       const graph = new globalThis.G6.Graph({

@@ -511,7 +511,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("previousNodeId", workflow_map)
         self.assertIn('step0-workflow-g6-shell', CSS)
         self.assertIn('.step0-workflow-card-canvas', CSS)
-        self.assertIn('height: 174px;', CSS)
+        self.assertIn('height: 332px;', CSS)
+        self.assertIn('height: calc(100% - 64px);', CSS)
         self.assertIn('border-radius: 50%;', CSS)
         self.assertIn('grid-template-columns: repeat(4, minmax(0, 1fr));', CSS)
 
