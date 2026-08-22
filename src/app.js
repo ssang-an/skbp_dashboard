@@ -9583,7 +9583,7 @@ function setPromptCopyFeedback(kind = 'full') {
 const STEP0_GUIDE_STEPS = [
   {
     title: '표의 각 칸에 Listing 정보를 입력',
-    body: 'Company와 Asset은 필수입니다. Country · Modality · Target · Main indication · Stage · Comment · Contact는 선택 입력이며, 아래 표의 첫 칸에서 Excel 열을 그대로 붙여넣을 수 있습니다.',
+    body: 'Company와 Asset은 필수입니다. Country · Modality · Target · Main indication · Stage · Comment · Contact는 선택 입력이며, 아래 표의 첫 칸에서 Excel 열을 그대로 붙여넣을 수 있습니다. Contact는 O·날짜·연락 메모를 입력하면 체크되며, X·-·빈칸은 연락 이력 없음으로 표시됩니다.',
     example: 'AddPharma\tKR\tAD-302\tSmall molecule\tTarget X\tALS\tPreclinical\tBD 검토 필요\t8/20 담당자 연락'
   },
   {
@@ -10033,12 +10033,17 @@ function step0MetadataCellHtml(row, field) {
   const value = String(row.metadata?.[field] || '').trim();
   const owner = row.metadata_owner || {};
   const label = field === 'comment' ? 'Comment' : 'Contact';
+  const hasContactHistory = field !== 'contact' || !/^(?:x|[-–—]+)$/i.test(value);
+  const hasValue = Boolean(value) && hasContactHistory;
   if (!owner.type) return '<span class="step0-metadata-empty">-</span>';
+  if (field === 'contact' && !hasValue) {
+    return '<span class="step0-metadata-empty" aria-label="Contact history not recorded">-</span>';
+  }
   const ownerId = owner.type === 'queue' ? owner.queue_id : owner.record_id;
-  const title = value ? `${label} 확인 · 두 번 클릭하여 수정` : `${label} 없음 · 두 번 클릭하여 입력`;
+  const title = hasValue ? `${label} 확인 · 두 번 클릭하여 수정` : `${label} 없음 · 두 번 클릭하여 입력`;
   return `<button
     type="button"
-    class="pill ${value ? 'pass has-value' : 'empty is-empty'} step0-metadata-indicator"
+    class="pill ${hasValue ? 'pass has-value' : 'empty is-empty'} step0-metadata-indicator"
     data-step0-metadata
     data-step0-metadata-field="${escapeHtml(field)}"
     data-step0-row-identity="${escapeHtml(row.identity || '')}"
@@ -10046,7 +10051,7 @@ function step0MetadataCellHtml(row, field) {
     data-owner-id="${escapeHtml(ownerId || '')}"
     aria-label="${escapeHtml(title)}"
     title="${escapeHtml(title)}"
-  >${value ? '<span aria-hidden="true">✓</span>' : '-'}</button>`;
+  >${hasValue ? '<span aria-hidden="true">✓</span>' : '-'}</button>`;
 }
 
 function closeStep0MetadataPopover() {
@@ -10091,7 +10096,7 @@ async function saveStep0Metadata(row, field, value, status) {
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.detail || 'Comment 또는 Contact 저장에 실패했습니다.');
-  row.metadata = { ...(row.metadata || {}), ...(data.metadata || {}), [field]: payload.value };
+  row.metadata = { ...(row.metadata || {}), [field]: payload.value, ...(data.metadata || {}) };
   closeStep0MetadataPopover();
   await loadStep0Progress();
   showStep0Message(`${field === 'comment' ? 'Comment' : 'Contact'}를 저장했습니다.`, 'success');

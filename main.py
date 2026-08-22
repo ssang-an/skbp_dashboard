@@ -4926,6 +4926,17 @@ def find_matching_identity_group(
 
 PIPELINE_METADATA_FIELDS = ("comment", "contact")
 LISTING_DETAIL_FIELDS = ("country", "modality", "target", "main_indication", "stage")
+CONTACT_HISTORY_ABSENCE_PATTERN = re.compile(r"^(?:x|[-–—]+)$", flags=re.IGNORECASE)
+
+
+def is_pipeline_contact_absence_marker(value: Any) -> bool:
+    return bool(CONTACT_HISTORY_ABSENCE_PATTERN.fullmatch(str(value or "").strip()))
+
+
+def normalize_pipeline_contact(value: Any) -> str:
+    """Keep useful Contact history text while treating spreadsheet absence markers as empty."""
+    text = str(value or "").strip()
+    return "" if is_pipeline_contact_absence_marker(text) else text
 
 
 def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
@@ -4933,7 +4944,7 @@ def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
     metadata = {
         "listed_at": str(raw.get("listed_at") or "").strip(),
         "comment": str(raw.get("comment") or "").strip(),
-        "contact": str(raw.get("contact") or "").strip(),
+        "contact": normalize_pipeline_contact(raw.get("contact")),
         "updated_at": str(raw.get("updated_at") or "").strip(),
     }
     return metadata
@@ -4942,12 +4953,14 @@ def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
 def merge_pipeline_metadata(existing: Any, incoming: Any, *, allow_empty_fields: set[str] | None = None) -> dict[str, str]:
     """Merge dashboard-owned pipeline metadata without letting a blank paste erase a note."""
     allow_empty_fields = allow_empty_fields or set()
+    incoming_raw = incoming if isinstance(incoming, dict) else {}
     result = normalize_pipeline_metadata(existing)
     update = normalize_pipeline_metadata(incoming)
     if update["listed_at"]:
         result["listed_at"] = update["listed_at"]
     for field in PIPELINE_METADATA_FIELDS:
-        if update[field] or field in allow_empty_fields:
+        explicit_contact_absence = field == "contact" and is_pipeline_contact_absence_marker(incoming_raw.get("contact"))
+        if update[field] or field in allow_empty_fields or explicit_contact_absence:
             result[field] = update[field]
     if update["updated_at"]:
         result["updated_at"] = update["updated_at"]

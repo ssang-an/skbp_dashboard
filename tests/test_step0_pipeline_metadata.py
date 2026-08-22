@@ -19,6 +19,24 @@ def pipeline_record(asset: str = "AX-101", company: str = "Acme Bio") -> dict:
 
 
 class Step0PipelineMetadataTests(unittest.TestCase):
+    def test_contact_absence_markers_normalize_but_notes_and_dates_remain_history(self) -> None:
+        self.assertEqual(main.normalize_pipeline_metadata({"contact": "X"})["contact"], "")
+        self.assertEqual(main.normalize_pipeline_metadata({"contact": " - "})["contact"], "")
+        self.assertEqual(main.normalize_pipeline_metadata({"contact": "O"})["contact"], "O")
+        self.assertEqual(main.normalize_pipeline_metadata({"contact": "2026-08-22"})["contact"], "2026-08-22")
+        self.assertEqual(
+            main.normalize_pipeline_metadata({"contact": "담당자에게 자료를 전달하고 회신 대기"})["contact"],
+            "담당자에게 자료를 전달하고 회신 대기",
+        )
+        self.assertEqual(
+            main.merge_pipeline_metadata({"contact": "2026-08-20 contacted"}, {"contact": "X"})["contact"],
+            "",
+        )
+        self.assertEqual(
+            main.merge_pipeline_metadata({"contact": "2026-08-20 contacted"}, {"contact": ""})["contact"],
+            "2026-08-20 contacted",
+        )
+
     def test_tab_delimited_four_columns_keep_blank_cells_and_multiline_comment(self) -> None:
         parsed = main.parse_candidate_pair_lines(
             'Asset\tCompany\tComment\tContact\n'
