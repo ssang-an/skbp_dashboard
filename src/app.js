@@ -10512,11 +10512,13 @@ function animateStep0WorkflowDots(graph, nodes, stageIndex) {
   const timer = setTimeout(() => {
     const startedAt = performance.now();
     const duration = 720;
+    const maxEntryDelay = 720;
     const maxSettleDuration = 3000;
     const tick = (now) => {
       const elapsed = now - startedAt;
       graph.updateNodeData(nodes.map((node) => {
         const progress = Math.max(0, Math.min(1, (elapsed - node.data.entryDelay) / duration));
+        const entryReveal = Math.max(0, Math.min(1, (elapsed - node.data.entryDelay) / 170));
         const motion = step0WorkflowMotionProgress(progress);
         const arc = Math.sin(progress * Math.PI) * (1 - progress * 0.12);
         const settleProgress = Math.max(0, Math.min(1, (elapsed - node.data.entryDelay - duration) / node.data.settleDuration));
@@ -10528,12 +10530,13 @@ function animateStep0WorkflowDots(graph, nodes, stageIndex) {
           id: node.id,
           style: {
             x: node.data.entryX + (node.data.targetX - node.data.entryX) * motion + node.data.arcX * arc + node.data.settleDirectionX * settleOvershoot + Math.sin(settleTime) * node.data.settleX * settleFade,
-            y: node.data.entryY + (node.data.targetY - node.data.entryY) * motion + node.data.arcY * arc + node.data.settleDirectionY * settleOvershoot + Math.cos(settleTime * 1.11) * node.data.settleY * settleFade
+            y: node.data.entryY + (node.data.targetY - node.data.entryY) * motion + node.data.arcY * arc + node.data.settleDirectionY * settleOvershoot + Math.cos(settleTime * 1.11) * node.data.settleY * settleFade,
+            opacity: entryReveal
           }
         };
       }));
       graph.draw?.();
-      if (elapsed < duration + 140 + maxSettleDuration) {
+      if (elapsed < duration + maxEntryDelay + maxSettleDuration) {
         step0WorkflowG6AnimationFrames.push(requestAnimationFrame(tick));
       }
     };
@@ -10619,7 +10622,7 @@ function renderStep0WorkflowMap() {
           targetY: position.y,
           entryX: entryPosition.x,
           entryY: entryPosition.y,
-          entryDelay: Math.floor(step0WorkflowSeededUnit(`${id}:stagger`) * 240),
+          entryDelay: Math.floor(step0WorkflowSeededUnit(`${id}:stagger`) * 721),
           arcX: (step0WorkflowSeededUnit(`${id}:arc-x`) - 0.5) * Math.min(width * 0.06, 20),
           arcY: (step0WorkflowSeededUnit(`${id}:arc-y`) - 0.5) * Math.min(height * 0.18, 28),
           settleDuration: 1500 + Math.floor(step0WorkflowSeededUnit(`${id}:settle-duration`) * 1501),
@@ -10633,6 +10636,7 @@ function renderStep0WorkflowMap() {
         style: {
           size: style.size,
           fill: style.color,
+          opacity: 0,
           stroke: 'rgba(15, 23, 42, .18)',
           lineWidth: 1,
           x: entryPosition.x,
