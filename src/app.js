@@ -10422,16 +10422,47 @@ const STEP0_WORKFLOW_MAP_STAGES = [
 ];
 
 const STEP0_WORKFLOW_NODE_STYLES = {
-  pending: { color: '#94a3b8', size: 4, spacing: 2 },
-  fast_triage: { color: '#5f8fbe', size: 7, spacing: 4 },
-  full_scout: { color: '#4c9b78', size: 10, spacing: 6 },
-  shortlisting: { color: '#b8871b', size: 18, spacing: 10 }
+  pending: { color: '#94a3b8', size: 4 },
+  fast_triage: { color: '#5f8fbe', size: 7 },
+  full_scout: { color: '#4c9b78', size: 10 },
+  shortlisting: { color: '#b8871b', size: 18 }
 };
 
 function step0WorkflowGridShape(nodeCount, width, height) {
   const aspectRatio = Math.max(width / Math.max(height, 1), 0.5);
   const cols = Math.max(1, Math.ceil(Math.sqrt(Math.max(nodeCount, 1) * aspectRatio)));
   return { cols, rows: Math.max(1, Math.ceil(nodeCount / cols)) };
+}
+
+function step0WorkflowSeededUnit(seed) {
+  let value = 2166136261;
+  for (const character of String(seed)) {
+    value ^= character.charCodeAt(0);
+    value = Math.imul(value, 16777619);
+  }
+  value += value << 13;
+  value ^= value >>> 7;
+  value += value << 3;
+  value ^= value >>> 17;
+  value += value << 5;
+  return (value >>> 0) / 4294967296;
+}
+
+function step0WorkflowIrregularPosition(index, nodeCount, width, height, size, seed) {
+  const grid = step0WorkflowGridShape(nodeCount, width, height);
+  const slotWidth = width / grid.cols;
+  const slotHeight = height / grid.rows;
+  const col = index % grid.cols;
+  const row = Math.floor(index / grid.cols);
+  const inset = Math.max(size / 2 + 1, 2);
+  const jitterX = (step0WorkflowSeededUnit(`${seed}:x`) - 0.5) * slotWidth * 0.76;
+  const jitterY = (step0WorkflowSeededUnit(`${seed}:y`) - 0.5) * slotHeight * 0.76;
+  const x = slotWidth * (col + 0.5) + jitterX;
+  const y = slotHeight * (row + 0.5) + jitterY;
+  return {
+    x: Math.max(inset, Math.min(width - inset, x)),
+    y: Math.max(inset, Math.min(height - inset, y))
+  };
 }
 
 function destroyStep0WorkflowGraph() {
@@ -10486,12 +10517,14 @@ function renderStep0WorkflowMap() {
     const style = STEP0_WORKFLOW_NODE_STYLES[stage.key];
     const bounds = shell.getBoundingClientRect();
     const width = Math.max(1, Math.floor(bounds.width));
+    const height = Math.max(1, Math.floor(bounds.height));
     const nodeById = new Map();
     const nodes = stageRows.map((row, rowIndex) => {
       const asset = String(row?.asset || 'Unnamed pipeline').trim() || 'Unnamed pipeline';
       const company = String(row?.company || '-').trim() || '-';
       const display = step0DashboardFieldDisplay(row);
       const id = `pipeline-${stage.key}-${rowIndex}`;
+      const position = step0WorkflowIrregularPosition(rowIndex, stageRows.length, width, height, style.size, id);
       const title = `${asset} · ${company} · ${stage.label}${display.stage !== '-' ? ` · ${display.stage}` : ''}`;
       nodeById.set(id, title);
       return {
@@ -10502,13 +10535,12 @@ function renderStep0WorkflowMap() {
           fill: style.color,
           stroke: 'rgba(15, 23, 42, .18)',
           lineWidth: 1,
+          x: position.x,
+          y: position.y,
           cursor: 'pointer'
         }
       };
     });
-    const height = Math.max(1, Math.floor(bounds.height));
-    const grid = step0WorkflowGridShape(nodes.length, width, height);
-
     try {
       const graph = new globalThis.G6.Graph({
         container,
@@ -10518,20 +10550,7 @@ function renderStep0WorkflowMap() {
         animation: false,
         data: { nodes, edges: [] },
         node: { type: 'circle' },
-        behaviors: ['drag-canvas'],
-        layout: {
-          type: 'grid',
-          begin: [0, 0],
-          cols: grid.cols,
-          rows: grid.rows,
-          width,
-          height,
-          condense: false,
-          preventOverlap: false,
-          nodeSize: style.size,
-          nodeSpacing: style.spacing,
-          sortBy: 'id'
-        }
+        behaviors: ['drag-canvas']
       });
       step0WorkflowG6Graphs.push(graph);
       graph.render();
