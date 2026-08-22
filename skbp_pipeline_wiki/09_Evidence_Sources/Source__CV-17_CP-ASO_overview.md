@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/biotech_database"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | biotech database |
 | Reliability | medium |
 | URL | https://data.pharmacodia.com/drugs/details/22122625900035563141 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ CV-17 alias CP-ASO, ASO/RNA interference program임을 확인.
 ## Used In
 
 - [[02_Assets/Asset__CV-17|Asset__CV-17]]
-- [[10_Scorecards/Scorecard__CV-17__20260807|Scorecard__CV-17__20260807]]
+- [[10_Scorecards/Scorecard__CV-17__Cellivery_Therapeutics,_Inc._CV-17|Scorecard__CV-17__Cellivery_Therapeutics,_Inc._CV-17]]
 
 ## Extracted Claims
 

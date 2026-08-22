@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/protein_homeostasis"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/EuBiologics_Alzheimer's_disease_vaccine_(PADIVAX+)]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Active_immunization_against_amyloid_tau_antigens|Active immu
 modality: "[[06_Modalities_Platforms/Modality__Other|Other]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__Alzheimer's_disease_vaccine_(PADIVAX+)__20260820|Scorecard__Alzheimer's_disease_vaccine_(PADIVAX+)__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__Alzheimer's_disease_vaccine_(PADIVAX+)__EuBiologics_Alzheimer's_disease_vaccine_(PADIVAX+)|Scorecard__Alzheimer's_disease_vaccine_(PADIVAX+)__EuBiologics_Alzheimer's_disease_vaccine_(PADIVAX+)]]"
 theme: "[[11_Themes_Clusters/Theme__Protein_Homeostasis|Protein Homeostasis]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 5
@@ -57,7 +57,7 @@ Relevant AD vaccine, but public evidence maturity is insufficient for SELECT.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__Alzheimer's_disease_vaccine_(PADIVAX+)__20260820]]
+![[10_Scorecards/Scorecard__Alzheimer's_disease_vaccine_(PADIVAX+)__EuBiologics_Alzheimer's_disease_vaccine_(PADIVAX+)]]
 
 ## 5. Knowledge Links
 
@@ -89,7 +89,7 @@ Relevant AD vaccine, but public evidence maturity is insufficient for SELECT.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 5/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__Alzheimer's_disease_vaccine_(PADIVAX+)__20260820|Scorecard__Alzheimer's_disease_vaccine_(PADIVAX+)__20260820]] |
+| 20260820 | 5/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__Alzheimer's_disease_vaccine_(PADIVAX+)__EuBiologics_Alzheimer's_disease_vaccine_(PADIVAX+)|Scorecard__Alzheimer's_disease_vaccine_(PADIVAX+)__EuBiologics_Alzheimer's_disease_vaccine_(PADIVAX+)]] |
 
 ## 9. Raw Report
 

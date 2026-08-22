@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/user_uploaded_file"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "low"
 | Source type | user_uploaded_file |
 | Reliability | low |
 | URL | No URL provided |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "low"
 ## Used In
 
 - [[02_Assets/Asset__1ST-104|Asset__1ST-104]]
-- [[10_Scorecards/Scorecard__1ST-104__20260818|Scorecard__1ST-104__20260818]]
+- [[10_Scorecards/Scorecard__1ST-104__1ST_Biotherapeutics,_Inc._1ST-104|Scorecard__1ST-104__1ST_Biotherapeutics,_Inc._1ST-104]]
 
 ## Extracted Claims
 

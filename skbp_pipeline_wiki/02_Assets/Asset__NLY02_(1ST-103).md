@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/1ST_Biotherapeutics_NLY02_(1ST-103)]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__RIPK2_inhibitor|RIPK2 inhibitor]]"
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Parkinson's_disease;_Alzheimer's_disease;_Multiple_sclerosis_neuroinfla_dc2a50e6|Parkinson's disease; Alzheimer's disease; Multiple sclerosis / neuroinflammatory disease]]"
-scorecard: "[[10_Scorecards/Scorecard__NLY02_(1ST-103)__20260820|Scorecard__NLY02_(1ST-103)__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__NLY02_(1ST-103)__1ST_Biotherapeutics_NLY02_(1ST-103)|Scorecard__NLY02_(1ST-103)__1ST_Biotherapeutics_NLY02_(1ST-103)]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 7
@@ -57,7 +57,7 @@ Same SELECT-worthy RIPK2 program as 1ST-103.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__NLY02_(1ST-103)__20260820]]
+![[10_Scorecards/Scorecard__NLY02_(1ST-103)__1ST_Biotherapeutics_NLY02_(1ST-103)]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ Same SELECT-worthy RIPK2 program as 1ST-103.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 7/21 | Run Full Scout | [[10_Scorecards/Scorecard__NLY02_(1ST-103)__20260820|Scorecard__NLY02_(1ST-103)__20260820]] |
+| 20260820 | 7/21 | Run Full Scout | [[10_Scorecards/Scorecard__NLY02_(1ST-103)__1ST_Biotherapeutics_NLY02_(1ST-103)|Scorecard__NLY02_(1ST-103)__1ST_Biotherapeutics_NLY02_(1ST-103)]] |
 
 ## 9. Raw Report
 

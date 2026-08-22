@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/VivaVision_TRPM7_20260622]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__TRPM7_antagonist_inhibitor;_channel_closed-state_stabilizati
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule;_exact_compound_and_platform_undisclosed|Small molecule; exact compound and platform undisclosed]]"
 indications:
   - "[[07_Indications/Indication__Market-source_description_includes_oncology,_ophthalmology,_cardiovascu_6b2c47da|Market-source description includes oncology, ophthalmology, cardiovascular and CNS disorders; SKBP-relevant CNS hypotheses include acute ischemic stroke and status epilepticus]]"
-scorecard: "[[10_Scorecards/Scorecard__Small_Molecules_to_Antagonize_TRPM7__20260622|Scorecard__Small_Molecules_to_Antagonize_TRPM7__20260622]]"
+scorecard: "[[10_Scorecards/Scorecard__Small_Molecules_to_Antagonize_TRPM7__VivaVision_TRPM7_20260622|Scorecard__Small_Molecules_to_Antagonize_TRPM7__VivaVision_TRPM7_20260622]]"
 theme: "[[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]"
 cluster: "[[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]]"
 total_score: 11
@@ -57,7 +57,7 @@ TRPM7 has credible CNS ion-channel biology, but the VivaVision TRPM7 antagonist 
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__Small_Molecules_to_Antagonize_TRPM7__20260622]]
+![[10_Scorecards/Scorecard__Small_Molecules_to_Antagonize_TRPM7__VivaVision_TRPM7_20260622]]
 
 ## 5. Knowledge Links
 
@@ -100,7 +100,7 @@ TRPM7 has credible CNS ion-channel biology, but the VivaVision TRPM7 antagonist 
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260622 | 11/21 | Watch | [[10_Scorecards/Scorecard__Small_Molecules_to_Antagonize_TRPM7__20260622|Scorecard__Small_Molecules_to_Antagonize_TRPM7__20260622]] |
+| 20260622 | 11/21 | Watch | [[10_Scorecards/Scorecard__Small_Molecules_to_Antagonize_TRPM7__VivaVision_TRPM7_20260622|Scorecard__Small_Molecules_to_Antagonize_TRPM7__VivaVision_TRPM7_20260622]] |
 
 ## 9. Raw Report
 

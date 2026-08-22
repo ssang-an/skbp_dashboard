@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/cfc95c5d168e4f27a0521a310805b8fc |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__CBM-951|Asset__CBM-951]]
-- [[10_Scorecards/Scorecard__CBM-951__20260807|Scorecard__CBM-951__20260807]]
+- [[10_Scorecards/Scorecard__CBM-951__CellionBioMed_Inc_CBM-951|Scorecard__CBM-951__CellionBioMed_Inc_CBM-951]]
 
 ## Extracted Claims
 

@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Encoded_ETX101_fast_triage_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__AAV9_gene_regulation_therapy_intended_to_increase_SCN1A_expr
 modality: "[[06_Modalities_Platforms/Modality__AAV9_gene_therapy|AAV9 gene therapy]]"
 indications:
   - "[[07_Indications/Indication__SCN1A-positive_Dravet_syndrome|SCN1A-positive Dravet syndrome]]"
-scorecard: "[[10_Scorecards/Scorecard__ETX101__20260623|Scorecard__ETX101__20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__ETX101__Encoded_ETX101_fast_triage_20260623|Scorecard__ETX101__Encoded_ETX101_fast_triage_20260623]]"
 theme: "[[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]"
 cluster: "[[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]]"
 total_score: 0
@@ -57,7 +57,7 @@ High-relevance Dravet gene therapy; run Full Scout.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__ETX101__20260623]]
+![[10_Scorecards/Scorecard__ETX101__Encoded_ETX101_fast_triage_20260623]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ High-relevance Dravet gene therapy; run Full Scout.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | -/21 | Run Full Scout | [[10_Scorecards/Scorecard__ETX101__20260623|Scorecard__ETX101__20260623]] |
+| 20260623 | -/21 | Run Full Scout | [[10_Scorecards/Scorecard__ETX101__Encoded_ETX101_fast_triage_20260623|Scorecard__ETX101__Encoded_ETX101_fast_triage_20260623]] |
 
 ## 9. Raw Report
 

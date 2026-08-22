@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/biopharma_database"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | biopharma_database |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/e51eb88adc764dca8d419916642ec2d1 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__KINE-501D|Asset__KINE-501D]]
-- [[10_Scorecards/Scorecard__KINE-501D__20260818|Scorecard__KINE-501D__20260818]]
+- [[10_Scorecards/Scorecard__KINE-501D__Kine_Sciences_KINE-501D|Scorecard__KINE-501D__Kine_Sciences_KINE-501D]]
 
 ## Extracted Claims
 

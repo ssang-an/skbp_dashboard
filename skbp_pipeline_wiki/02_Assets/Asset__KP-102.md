@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Korea_Pharma_Co_Ltd_KP-102]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_dementia|Alzheimer's dementia]]"
-scorecard: "[[10_Scorecards/Scorecard__KP-102__20260818|Scorecard__KP-102__20260818]]"
+scorecard: "[[10_Scorecards/Scorecard__KP-102__Korea_Pharma_Co_Ltd_KP-102|Scorecard__KP-102__Korea_Pharma_Co_Ltd_KP-102]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 2
@@ -57,7 +57,7 @@ TR 2이나 공개 MoA/Data가 부족하다.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__KP-102__20260818]]
+![[10_Scorecards/Scorecard__KP-102__Korea_Pharma_Co_Ltd_KP-102]]
 
 ## 5. Knowledge Links
 
@@ -89,7 +89,7 @@ TR 2이나 공개 MoA/Data가 부족하다.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260818 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__KP-102__20260818|Scorecard__KP-102__20260818]] |
+| 20260818 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__KP-102__Korea_Pharma_Co_Ltd_KP-102|Scorecard__KP-102__Korea_Pharma_Co_Ltd_KP-102]] |
 
 ## 9. Raw Report
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company |
 | Reliability | high |
 | URL | https://www.unixell.com/en/AboutTheJump/index.aspx |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Company history, location, financing and platform summary.
 ## Used In
 
 - [[02_Assets/Asset__UX-EP001_UXEP-001|Asset__UX-EP001_UXEP-001]]
-- [[10_Scorecards/Scorecard__UX-EP001_UXEP-001__20260621|Scorecard__UX-EP001_UXEP-001__20260621]]
+- [[10_Scorecards/Scorecard__UX-EP001_UXEP-001__Shanghai_UniXell_UX-EP001_20260621|Scorecard__UX-EP001_UXEP-001__Shanghai_UniXell_UX-EP001_20260621]]
 
 ## Extracted Claims
 

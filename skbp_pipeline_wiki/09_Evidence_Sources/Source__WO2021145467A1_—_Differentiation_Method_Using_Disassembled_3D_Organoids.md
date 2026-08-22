@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/patent"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | patent |
 | Reliability | medium |
 | URL | https://patents.google.com/patent/WO2021145467A1/ko |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__CE223BR17_Parkinson's_Disease_Research_Program|Asset__CE223BR17_Parkinson's_Disease_Research_Program]]
-- [[10_Scorecards/Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__20260806|Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__20260806]]
+- [[10_Scorecards/Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_Disease_Research_Program|Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_Disease_Research_Program]]
 
 ## Extracted Claims
 

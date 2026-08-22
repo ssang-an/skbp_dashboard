@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/b5030398be0c470ea07ac49251fde808 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__AS-301|Asset__AS-301]]
-- [[10_Scorecards/Scorecard__AS-301__20260820|Scorecard__AS-301__20260820]]
+- [[10_Scorecards/Scorecard__AS-301__Amyloid_Solution_AS-301|Scorecard__AS-301__Amyloid_Solution_AS-301]]
 
 ## Extracted Claims
 

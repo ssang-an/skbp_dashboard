@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/7c6b684bb82a4c1f818605485eedb5e2 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__AS-401|Asset__AS-401]]
-- [[10_Scorecards/Scorecard__AS-401__20260806|Scorecard__AS-401__20260806]]
+- [[10_Scorecards/Scorecard__AS-401__Autophagy_Science_Co.,_Ltd._AS-401|Scorecard__AS-401__Autophagy_Science_Co.,_Ltd._AS-401]]
 
 ## Extracted Claims
 

@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/protein_homeostasis"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/siRNAgen_Therapeutics_SRN-008]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Dual_RNAi_knockdown_using_Glut-SAMiRNA|Dual RNAi knockdown u
 modality: "[[06_Modalities_Platforms/Modality__RNA_therapy|RNA therapy]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__SRN-008__20260820|Scorecard__SRN-008__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__SRN-008__siRNAgen_Therapeutics_SRN-008|Scorecard__SRN-008__siRNAgen_Therapeutics_SRN-008]]"
 theme: "[[11_Themes_Clusters/Theme__Protein_Homeostasis|Protein Homeostasis]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 7
@@ -57,7 +57,7 @@ Strong mechanistic triage signal; warrants Full Scout extraction of patent/precl
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__SRN-008__20260820]]
+![[10_Scorecards/Scorecard__SRN-008__siRNAgen_Therapeutics_SRN-008]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ Strong mechanistic triage signal; warrants Full Scout extraction of patent/precl
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 7/21 | Run Full Scout | [[10_Scorecards/Scorecard__SRN-008__20260820|Scorecard__SRN-008__20260820]] |
+| 20260820 | 7/21 | Run Full Scout | [[10_Scorecards/Scorecard__SRN-008__siRNAgen_Therapeutics_SRN-008|Scorecard__SRN-008__siRNAgen_Therapeutics_SRN-008]] |
 
 ## 9. Raw Report
 

@@ -81,3 +81,6 @@ class Step0RecentUploadTests(unittest.TestCase):
         self.assertEqual(researched["listing_details_source"], "full_scout")
         self.assertEqual(researched["theme"], "E/I Balance")
         self.assertEqual(researched["cluster"], "Ion channel")
+        self.assertEqual(researched["fast_triage"]["completed_at"], recent)
+        self.assertTrue(researched["full_scout"]["completed_at"])
+        self.assertEqual(researched["shortlisting"]["completed_at"], recent)

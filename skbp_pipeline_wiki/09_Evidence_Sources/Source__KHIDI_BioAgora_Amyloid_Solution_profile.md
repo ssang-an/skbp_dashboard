@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://bioagora.khidi.or.kr/mps/startupCompany/view?menuId=MENU00300&userid=9sqzRFmD40Rar7WvqqiAJg |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -34,8 +34,8 @@ confidence: "medium"
 
 - [[02_Assets/Asset__AS-M801|Asset__AS-M801]]
 - [[02_Assets/Asset__AS-S701_AS-701|Asset__AS-S701_AS-701]]
-- [[10_Scorecards/Scorecard__AS-M801__20260820|Scorecard__AS-M801__20260820]]
-- [[10_Scorecards/Scorecard__AS-S701_AS-701__20260820|Scorecard__AS-S701_AS-701__20260820]]
+- [[10_Scorecards/Scorecard__AS-M801__Amyloid_Solution_AS-M801|Scorecard__AS-M801__Amyloid_Solution_AS-M801]]
+- [[10_Scorecards/Scorecard__AS-S701_AS-701__Amyloid_Solution_AS-S701_AS-701|Scorecard__AS-S701_AS-701__Amyloid_Solution_AS-S701_AS-701]]
 
 ## Extracted Claims
 

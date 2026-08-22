@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Cellapeutics_Bio_Co.,_Ltd._CPB-106]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Cell_therapy|Cell therapy]]"
 indications:
   - "[[07_Indications/Indication__Parkinson_disease|Parkinson disease]]"
-scorecard: "[[10_Scorecards/Scorecard__CPB-106__20260807|Scorecard__CPB-106__20260807]]"
+scorecard: "[[10_Scorecards/Scorecard__CPB-106__Cellapeutics_Bio_Co.,_Ltd._CPB-106|Scorecard__CPB-106__Cellapeutics_Bio_Co.,_Ltd._CPB-106]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 2
@@ -57,7 +57,7 @@ PD fit은 있으나 공개 target/MoA와 data가 없어 Fast Triage에서는 REJ
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__CPB-106__20260807]]
+![[10_Scorecards/Scorecard__CPB-106__Cellapeutics_Bio_Co.,_Ltd._CPB-106]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ PD fit은 있으나 공개 target/MoA와 data가 없어 Fast Triage에서는 REJ
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260807 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CPB-106__20260807|Scorecard__CPB-106__20260807]] |
+| 20260807 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CPB-106__Cellapeutics_Bio_Co.,_Ltd._CPB-106|Scorecard__CPB-106__Cellapeutics_Bio_Co.,_Ltd._CPB-106]] |
 
 ## 9. Raw Report
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://clinicaltrials.gov/study/NCT05531526 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__AR1001|Asset__AR1001]]
-- [[10_Scorecards/Scorecard__AR1001__20260820|Scorecard__AR1001__20260820]]
+- [[10_Scorecards/Scorecard__AR1001__AriBio_AR1001|Scorecard__AR1001__AriBio_AR1001]]
 
 ## Extracted Claims
 

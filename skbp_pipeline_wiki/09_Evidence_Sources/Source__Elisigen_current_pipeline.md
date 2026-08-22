@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company_pipeline"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company_pipeline |
 | Reliability | medium |
 | URL | https://www.elisigen.com/en/pipeline/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__NG201|Asset__NG201]]
-- [[10_Scorecards/Scorecard__NG201__20260820|Scorecard__NG201__20260820]]
+- [[10_Scorecards/Scorecard__NG201__Neuracle_Genetics_(now_Elisigen)_NG201|Scorecard__NG201__Neuracle_Genetics_(now_Elisigen)_NG201]]
 
 ## Extracted Claims
 

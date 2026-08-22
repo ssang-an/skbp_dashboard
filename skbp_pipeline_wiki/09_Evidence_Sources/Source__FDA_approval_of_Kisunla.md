@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/regulatory"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | regulatory |
 | Reliability | medium |
 | URL | https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__ILM01_(GAIA-Aβ)|Asset__ILM01_(GAIA-Aβ)]]
-- [[10_Scorecards/Scorecard__ILM01_(GAIA-Aβ)__20260806|Scorecard__ILM01_(GAIA-Aβ)__20260806]]
+- [[10_Scorecards/Scorecard__ILM01_(GAIA-Aβ)__Illimis_Therapeutics_ILM01_20260621|Scorecard__ILM01_(GAIA-Aβ)__Illimis_Therapeutics_ILM01_20260621]]
 
 ## Extracted Claims
 

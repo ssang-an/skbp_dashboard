@@ -329,10 +329,14 @@ const state = {
   step0Stats: { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 },
   step0RecentStats: { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 },
   step0Loaded: false,
+  step0ProgressLoadRequestId: 0,
+  step0ProgressSnapshot: '',
   step0Query: '',
   step0SearchTokens: [],
   step0StatusFilterValues: new Set(),
   step0Filters: { country: [], modality: [], theme: [], cluster: [], indication: [], stage: [] },
+  step0ColorByFilter: '',
+  step0FilterSelectionOrder: [],
   step0SortKey: null,
   step0SortDirection: null,
   step0Page: 1,
@@ -488,7 +492,9 @@ const elements = {
   step0ImportSummary: document.querySelector('#step0ImportSummary'),
   step0SaveStatus: document.querySelector('#step0SaveStatus'),
   step0GuideSteps: document.querySelector('#step0GuideSteps'),
+  step0SummaryDashboard: document.querySelector('.step0-summary-dashboard'),
   step0SummaryCards: document.querySelector('#step0SummaryCards'),
+  step0SummaryScopeNote: document.querySelector('#step0SummaryScopeNote'),
   step0SummaryDashboardToggleButton: document.querySelector('#step0SummaryDashboardToggleButton'),
   step0SummaryDashboardToggleLabel: document.querySelector('#step0SummaryDashboardToggleLabel'),
   step0WorkflowCardCanvases: document.querySelectorAll('.step0-workflow-card-canvas'),
@@ -9841,6 +9847,17 @@ function activateStep0Panel() {
   showStep0Panel(true);
   renderStep0Guide();
   updateStep0HeaderCount();
+  if (state.step0Loaded) {
+    // Rebuild the cached graph synchronously after the panel becomes visible.
+    // The refresh below only repaints when data actually changed, preventing the
+    // previous static graph from flashing before the left-to-right entry motion.
+    renderStep0StatStrip();
+    renderStep0FilterControls();
+    renderStep0ProgressTable();
+    renderStep0SelectedCount();
+    loadStep0Progress({ renderOnlyWhenChanged: true });
+    return;
+  }
   loadStep0Progress();
 }
 
@@ -10257,14 +10274,27 @@ async function importStep0Candidates() {
   }
 }
 
-async function loadStep0Progress() {
+function step0ProgressSnapshot(rows, stats, recentStats) {
+  return JSON.stringify({ rows, stats, recentStats });
+}
+
+async function loadStep0Progress({ renderOnlyWhenChanged = false } = {}) {
+  const requestId = (state.step0ProgressLoadRequestId || 0) + 1;
+  state.step0ProgressLoadRequestId = requestId;
   try {
     const response = await fetch('/api/candidate-queue/progress');
     if (!response.ok) throw new Error(await response.text());
     const data = await response.json();
-    state.step0Rows = Array.isArray(data.rows) ? data.rows : [];
-    state.step0Stats = data.stats || { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 };
-    state.step0RecentStats = data.recent_15_days || { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 };
+    if (requestId !== state.step0ProgressLoadRequestId) return;
+    const nextRows = Array.isArray(data.rows) ? data.rows : [];
+    const nextStats = data.stats || { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 };
+    const nextRecentStats = data.recent_15_days || { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 };
+    const nextSnapshot = step0ProgressSnapshot(nextRows, nextStats, nextRecentStats);
+    const hasChanged = !state.step0Loaded || nextSnapshot !== state.step0ProgressSnapshot;
+    state.step0Rows = nextRows;
+    state.step0Stats = nextStats;
+    state.step0RecentStats = nextRecentStats;
+    state.step0ProgressSnapshot = nextSnapshot;
     const pendingIds = new Set(
       state.step0Rows.filter((row) => row.pending?.queue_id).map((row) => row.pending.queue_id)
     );
@@ -10273,16 +10303,60 @@ async function loadStep0Progress() {
     });
     state.step0Loaded = true;
     updateStep0HeaderCount();
+    if (renderOnlyWhenChanged && !hasChanged) return;
     renderStep0StatStrip();
     renderStep0FilterControls();
     renderStep0ProgressTable();
     renderStep0SelectedCount();
   } catch (error) {
+    // A quiet re-entry refresh must not replace the cached dashboard with an
+    // error state when the user already has usable progress data on screen.
+    if (renderOnlyWhenChanged && state.step0Loaded) return;
     if (elements.step0ProgressTableBody) {
       elements.step0ProgressTableBody.innerHTML =
         `<tr><td colspan="14" class="step0-empty-state">진척 현황을 불러오지 못했습니다: ${escapeHtml(error.message)}</td></tr>`;
     }
   }
+}
+
+function step0HasActiveFilters() {
+  return Boolean(
+    String(state.step0Query || '').trim()
+    || (state.step0SearchTokens || []).length
+    || state.step0StatusFilterValues?.size
+    || Object.values(state.step0Filters || {}).some((values) => selectedFilterValues(values).length)
+  );
+}
+
+function applyStep0SummaryFilterTone() {
+  if (elements.step0SummaryScopeNote) {
+    elements.step0SummaryScopeNote.textContent = step0HasActiveFilters() ? '현재 필터 기준' : '전체 Pipeline 기준';
+  }
+}
+
+function step0IsRecentCompletion(value) {
+  const timestamp = Date.parse(String(value || ''));
+  return Number.isFinite(timestamp) && timestamp >= (Date.now() - (15 * 24 * 60 * 60 * 1000)) && timestamp <= Date.now();
+}
+
+function step0FilteredStageStats(rows = step0FilteredSortedRows()) {
+  const stats = { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 };
+  const recent = { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 };
+  const stages = [
+    ['pending', 'pending'],
+    ['fast_triage', 'fast_triage'],
+    ['full_scout', 'full_scout'],
+    ['shortlisted', 'shortlisting']
+  ];
+  rows.forEach((row) => {
+    stages.forEach(([statKey, rowKey]) => {
+      const cell = row?.[rowKey];
+      if (!cell?.done) return;
+      stats[statKey] += 1;
+      if (step0IsRecentCompletion(cell.completed_at)) recent[statKey] += 1;
+    });
+  });
+  return { stats, recent };
 }
 
 function renderStep0StatStrip() {
@@ -10296,14 +10370,15 @@ function renderStep0StatStrip() {
     ['full_scout', elements.step0StatFullScout, elements.step0RecentFullScout],
     ['shortlisted', elements.step0StatShortlisted, elements.step0RecentShortlisted]
   ];
-  const recent = state.step0RecentStats || {};
+  const { stats, recent } = step0FilteredStageStats();
+  applyStep0SummaryFilterTone();
   statEntries.forEach(([key, statElement, badge], index) => {
     if (statElement) statElement.textContent = '0';
     if (badge) {
       badge.hidden = true;
       badge.textContent = '▲ +0';
     }
-    const total = Math.max(0, Number(state.step0Stats[key] || 0));
+    const total = Math.max(0, Number(stats[key] || 0));
     const recentCount = Math.max(0, Number(recent[key] || 0));
     const startDelay = index * STEP0_WORKFLOW_STAGE_STAGGER_MS + 80;
     const timer = setTimeout(() => {
@@ -10541,16 +10616,93 @@ const STEP0_WORKFLOW_MAP_STAGES = [
 const STEP0_WORKFLOW_STAGE_STAGGER_MS = 420;
 
 const STEP0_WORKFLOW_NODE_STYLES = {
-  pending: { color: '#94a3b8', size: 4 },
-  fast_triage: { color: '#5f8fbe', size: 7 },
-  full_scout: { color: '#4c9b78', size: 10 },
-  shortlisting: { color: '#b8871b', size: 18 }
+  pending: { color: '#c7d0dc', size: 4 },
+  fast_triage: { color: '#2a78d6', size: 7 },
+  full_scout: { color: '#1baf7a', size: 13 },
+  shortlisting: { color: '#b7791f', size: 22 }
 };
+
+const STEP0_WORKFLOW_STAGE_COLOR_VARIABLES = {
+  pending: '--chart-other',
+  fast_triage: '--chart-1',
+  full_scout: '--chart-3',
+  shortlisting: '--chart-5'
+};
+
+const STEP0_WORKFLOW_NODE_SIZE_RANGES = {
+  pending: { referenceCount: 450, min: 3, max: 7 },
+  fast_triage: { referenceCount: 100, min: 4, max: 11 },
+  full_scout: { referenceCount: 20, min: 8, max: 20 },
+  shortlisting: { referenceCount: 8, min: 12, max: 28 }
+};
+
+const STEP0_WORKFLOW_FILTER_COLOR_VARIABLES = ['--chart-1', '--chart-2', '--chart-3', '--chart-4', '--chart-5', '--chart-6'];
+const STEP0_WORKFLOW_FILTER_COLORS = ['#2a78d6', '#eb6834', '#1baf7a', '#4a3aa7', '#b7791f', '#8b5cf6'];
+const STEP0_FILTER_COLOR_KEYS = ['indication', 'theme', 'cluster', 'modality', 'country', 'stage', 'progress'];
+
+function step0WorkflowThemeColor(variable, fallback) {
+  const value = typeof document !== 'undefined'
+    ? getComputedStyle(document.documentElement).getPropertyValue(variable).trim()
+    : '';
+  return value || fallback;
+}
+
+function step0WorkflowFilterColors() {
+  return STEP0_WORKFLOW_FILTER_COLOR_VARIABLES.map((variable, index) => (
+    step0WorkflowThemeColor(variable, STEP0_WORKFLOW_FILTER_COLORS[index])
+  ));
+}
+
+function step0FilterHasSelection(key) {
+  return key === 'progress'
+    ? Boolean(state.step0StatusFilterValues?.size)
+    : step0SelectedFilterValues(key).length > 0;
+}
+
+function rememberStep0FilterSelection(key, { colorAllCategories = false } = {}) {
+  const order = (state.step0FilterSelectionOrder || []).filter((item) => item !== key);
+  if (step0FilterHasSelection(key) || colorAllCategories) order.push(key);
+  state.step0FilterSelectionOrder = order;
+  state.step0ColorByFilter = order[order.length - 1] || '';
+}
+
+function step0ActiveColorFilter() {
+  const orderedActive = [...(state.step0FilterSelectionOrder || [])]
+    .reverse()
+    .find((key) => STEP0_FILTER_COLOR_KEYS.includes(key) && (step0FilterHasSelection(key) || state.step0ColorByFilter === key));
+  if (orderedActive) return orderedActive;
+  const requested = String(state.step0ColorByFilter || '');
+  if (STEP0_FILTER_COLOR_KEYS.includes(requested)) return requested;
+  return STEP0_FILTER_COLOR_KEYS.find((key) => step0FilterHasSelection(key)) || '';
+}
+
+function step0WorkflowNodeColor(row, stageKey, defaultColor) {
+  const filterKey = step0ActiveColorFilter();
+  if (!filterKey || filterKey === 'progress') return defaultColor;
+  const values = step0RowFilterValues(row, filterKey);
+  const selected = step0SelectedFilterValues(filterKey);
+  const category = selected.find((value) => values.includes(value)) || values[0] || stageKey;
+  if (/^(?:unknown|others?|n\/?a)$/i.test(String(category).trim())) {
+    return step0WorkflowThemeColor('--chart-other', '#c7d0dc');
+  }
+  const colors = step0WorkflowFilterColors();
+  const colorIndex = Math.floor(step0WorkflowSeededUnit(`${filterKey}:${category}`) * colors.length);
+  return colors[Math.min(colors.length - 1, colorIndex)];
+}
 
 function step0WorkflowGridShape(nodeCount, width, height) {
   const aspectRatio = Math.max(width / Math.max(height, 1), 0.5);
   const cols = Math.max(1, Math.ceil(Math.sqrt(Math.max(nodeCount, 1) * aspectRatio)));
   return { cols, rows: Math.max(1, Math.ceil(nodeCount / cols)) };
+}
+
+function step0WorkflowNodeSize(stageKey, nodeCount) {
+  const base = STEP0_WORKFLOW_NODE_STYLES[stageKey]?.size || 6;
+  const range = STEP0_WORKFLOW_NODE_SIZE_RANGES[stageKey] || { referenceCount: 50, min: 4, max: 12 };
+  const count = Math.max(1, Number(nodeCount) || 1);
+  const scale = Math.pow(range.referenceCount / count, 0.22);
+  const size = Math.max(range.min, Math.min(range.max, base * scale));
+  return Math.round(size * 10) / 10;
 }
 
 function step0WorkflowSeededUnit(seed) {
@@ -10693,6 +10845,8 @@ function renderStep0WorkflowMap() {
     if (!container) continue;
     const stageRows = groups.get(stage.key) || [];
     const style = STEP0_WORKFLOW_NODE_STYLES[stage.key];
+    const nodeSize = step0WorkflowNodeSize(stage.key, stageRows.length);
+    const stageColor = step0WorkflowThemeColor(STEP0_WORKFLOW_STAGE_COLOR_VARIABLES[stage.key], style.color);
     const bounds = shell.getBoundingClientRect();
     const width = Math.max(1, Math.floor(bounds.width));
     const height = Math.max(1, Math.floor(bounds.height));
@@ -10702,15 +10856,15 @@ function renderStep0WorkflowMap() {
       const company = String(row?.company || '-').trim() || '-';
       const display = step0DashboardFieldDisplay(row);
       const id = `pipeline-${stage.key}-${rowIndex}`;
-      const position = step0WorkflowIrregularPosition(rowIndex, stageRows.length, width, height, style.size, id);
-      const entryPosition = step0WorkflowEntryPosition(position, width, height, style.size, id);
+      const position = step0WorkflowIrregularPosition(rowIndex, stageRows.length, width, height, nodeSize, id);
+      const entryPosition = step0WorkflowEntryPosition(position, width, height, nodeSize, id);
       const title = `${asset} · ${company} · ${stage.label}${display.stage !== '-' ? ` · ${display.stage}` : ''}`;
       nodeById.set(id, title);
       return {
         id,
         data: {
           stage: stage.key,
-          size: style.size,
+          size: nodeSize,
           targetX: position.x,
           targetY: position.y,
           entryX: entryPosition.x,
@@ -10727,11 +10881,11 @@ function renderStep0WorkflowMap() {
           settlePhase: step0WorkflowSeededUnit(`${id}:settle-phase`) * Math.PI * 2
         },
         style: {
-          size: style.size,
-          fill: style.color,
+          size: nodeSize,
+          fill: step0WorkflowNodeColor(row, stage.key, stageColor),
           opacity: 0,
-          stroke: 'rgba(15, 23, 42, .18)',
-          lineWidth: 1,
+          stroke: 'transparent',
+          lineWidth: 0,
           x: entryPosition.x,
           y: entryPosition.y,
           cursor: 'pointer'
@@ -10788,8 +10942,19 @@ function updateStep0MultiFilter(key, value) {
     else if (options.includes(value)) selected.add(value);
     state.step0Filters[key] = [...selected];
   }
+  if (value === 'all' && key === 'progress') {
+    state.step0FilterSelectionOrder = [];
+    state.step0ColorByFilter = '';
+  } else {
+    rememberStep0FilterSelection(key, { colorAllCategories: value === 'all' });
+  }
   state.step0Page = 1;
   renderStep0FilterControls();
+  renderStep0FilteredResults();
+}
+
+function renderStep0FilteredResults() {
+  renderStep0StatStrip();
   renderStep0ProgressTable();
 }
 
@@ -11105,7 +11270,7 @@ function addStep0SearchToken() {
   if (elements.step0SearchInput) elements.step0SearchInput.value = '';
   state.step0Query = '';
   renderStep0SearchTokens();
-  renderStep0ProgressTable();
+  renderStep0FilteredResults();
   elements.step0SearchInput?.focus();
 }
 
@@ -11113,7 +11278,7 @@ function removeStep0SearchToken(token) {
   const normalized = String(token || '').toLocaleLowerCase('ko');
   state.step0SearchTokens = state.step0SearchTokens.filter((item) => item.toLocaleLowerCase('ko') !== normalized);
   renderStep0SearchTokens();
-  renderStep0ProgressTable();
+  renderStep0FilteredResults();
 }
 
 function updateStep0SortIndicators() {
@@ -11300,11 +11465,13 @@ function resetStep0Filters() {
   state.step0SearchTokens = [];
   state.step0StatusFilterValues.clear();
   state.step0Filters = { country: [], modality: [], theme: [], cluster: [], indication: [], stage: [] };
+  state.step0ColorByFilter = '';
+  state.step0FilterSelectionOrder = [];
   if (elements.step0SearchInput) elements.step0SearchInput.value = '';
   renderStep0SearchTokens();
   renderStep0FilterControls();
   state.step0Page = 1;
-  renderStep0ProgressTable();
+  renderStep0FilteredResults();
 }
 
 function toggleStep0StatusFilter(status) {
@@ -11314,9 +11481,10 @@ function toggleStep0StatusFilter(status) {
   } else {
     state.step0StatusFilterValues.add(status);
   }
+  rememberStep0FilterSelection('progress');
   state.step0Page = 1;
   renderStep0FilterControls();
-  renderStep0ProgressTable();
+  renderStep0FilteredResults();
 }
 
 function buildTriageInstructionPromptWithCandidates(pairs) {
@@ -11398,7 +11566,7 @@ elements.step0NextPage?.addEventListener('click', () => {
 elements.step0SearchInput?.addEventListener('input', (event) => {
   state.step0Query = event.target.value;
   state.step0Page = 1;
-  renderStep0ProgressTable();
+  renderStep0FilteredResults();
 });
 elements.step0SearchInput?.addEventListener('keydown', (event) => {
   if (event.key !== 'Enter' || event.isComposing) return;

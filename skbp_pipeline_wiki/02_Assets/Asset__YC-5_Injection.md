@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Cellprotek_Pharmaceutical_YC-5_Injection]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Multi-mechanistic_neuroprotection;_possible_negative_regulat
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Epileptic_seizures_convulsions|Epileptic seizures / convulsions]]"
-scorecard: "[[10_Scorecards/Scorecard__YC-5_Injection__20260807|Scorecard__YC-5_Injection__20260807]]"
+scorecard: "[[10_Scorecards/Scorecard__YC-5_Injection__Cellprotek_Pharmaceutical_YC-5_Injection|Scorecard__YC-5_Injection__Cellprotek_Pharmaceutical_YC-5_Injection]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 4
@@ -57,7 +57,7 @@ Interest indication 가능성은 있으나 current active status가 핵심 block
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__YC-5_Injection__20260807]]
+![[10_Scorecards/Scorecard__YC-5_Injection__Cellprotek_Pharmaceutical_YC-5_Injection]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ Interest indication 가능성은 있으나 current active status가 핵심 block
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260807 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__YC-5_Injection__20260807|Scorecard__YC-5_Injection__20260807]] |
+| 20260807 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__YC-5_Injection__Cellprotek_Pharmaceutical_YC-5_Injection|Scorecard__YC-5_Injection__Cellprotek_Pharmaceutical_YC-5_Injection]] |
 
 ## 9. Raw Report
 

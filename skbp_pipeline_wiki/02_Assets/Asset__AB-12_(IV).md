@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/protein_homeostasis"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/AUTOTAC_Bio_AB-12_(IV)]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__AUTOTAC-mediated_tau_aggregate_degradation|AUTOTAC-mediated 
 modality: "[[06_Modalities_Platforms/Modality__Other|Other]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__AB-12_(IV)__20260820|Scorecard__AB-12_(IV)__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__AB-12_(IV)__AUTOTAC_Bio_AB-12_(IV)|Scorecard__AB-12_(IV)__AUTOTAC_Bio_AB-12_(IV)]]"
 theme: "[[11_Themes_Clusters/Theme__Protein_Homeostasis|Protein Homeostasis]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 8
@@ -57,7 +57,7 @@ Compelling tau-proteostasis program; prioritize Full Scout.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__AB-12_(IV)__20260820]]
+![[10_Scorecards/Scorecard__AB-12_(IV)__AUTOTAC_Bio_AB-12_(IV)]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ Compelling tau-proteostasis program; prioritize Full Scout.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 8/21 | Run Full Scout | [[10_Scorecards/Scorecard__AB-12_(IV)__20260820|Scorecard__AB-12_(IV)__20260820]] |
+| 20260820 | 8/21 | Run Full Scout | [[10_Scorecards/Scorecard__AB-12_(IV)__AUTOTAC_Bio_AB-12_(IV)|Scorecard__AB-12_(IV)__AUTOTAC_Bio_AB-12_(IV)]] |
 
 ## 9. Raw Report
 

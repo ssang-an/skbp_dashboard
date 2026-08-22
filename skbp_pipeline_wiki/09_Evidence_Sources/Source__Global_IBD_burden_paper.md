@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/market"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | market |
 | Reliability | high |
 | URL | https://pmc.ncbi.nlm.nih.gov/articles/PMC10069527/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Reports global IBD estimated cases of 4.90 million in 2019.
 ## Used In
 
 - [[02_Assets/Asset__META-01_META-1i_MP-5342|Asset__META-01_META-1i_MP-5342]]
-- [[10_Scorecards/Scorecard__META-01_META-1i_MP-5342__20260622|Scorecard__META-01_META-1i_MP-5342__20260622]]
+- [[10_Scorecards/Scorecard__META-01_META-1i_MP-5342__META_Pharmaceuticals_META01_MP5342_20260622|Scorecard__META-01_META-1i_MP-5342__META_Pharmaceuticals_META01_MP5342_20260622]]
 
 ## Extracted Claims
 

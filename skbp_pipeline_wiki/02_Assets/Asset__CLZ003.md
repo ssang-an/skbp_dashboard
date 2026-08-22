@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Celliaz_Co.,_Ltd._CLZ003]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Neutralization_of_harmful_PROX1_homeoprotein_to_restore_reti
 modality: "[[06_Modalities_Platforms/Modality__Antibody|Antibody]]"
 indications:
   - "[[07_Indications/Indication__Dry-type_age-related_macular_degeneration|Dry-type age-related macular degeneration]]"
-scorecard: "[[10_Scorecards/Scorecard__CLZ003__20260807|Scorecard__CLZ003__20260807]]"
+scorecard: "[[10_Scorecards/Scorecard__CLZ003__Celliaz_Co.,_Ltd._CLZ003|Scorecard__CLZ003__Celliaz_Co.,_Ltd._CLZ003]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 1
@@ -57,7 +57,7 @@ Identity와 mechanism concept은 명확하지만 indication이 SKBP scope 밖.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__CLZ003__20260807]]
+![[10_Scorecards/Scorecard__CLZ003__Celliaz_Co.,_Ltd._CLZ003]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ Identity와 mechanism concept은 명확하지만 indication이 SKBP scope 밖.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260807 | 1/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CLZ003__20260807|Scorecard__CLZ003__20260807]] |
+| 20260807 | 1/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CLZ003__Celliaz_Co.,_Ltd._CLZ003|Scorecard__CLZ003__Celliaz_Co.,_Ltd._CLZ003]] |
 
 ## 9. Raw Report
 

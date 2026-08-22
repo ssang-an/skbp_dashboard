@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/VASTHERA_VTA-27]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__PRX-mimetic_redox_modulation_that_suppresses_astrocytic_STAT
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Mild-to-moderate_Alzheimer's_disease;_Parkinson's_disease_is_only_a_pot_8b9f0f09|Mild-to-moderate Alzheimer's disease; Parkinson's disease is only a potential expansion concept.]]"
-scorecard: "[[10_Scorecards/Scorecard__VTA-27__20260806|Scorecard__VTA-27__20260806]]"
+scorecard: "[[10_Scorecards/Scorecard__VTA-27__VASTHERA_VTA-27|Scorecard__VTA-27__VASTHERA_VTA-27]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__교세포_향상성|교세포 향상성]]"
 total_score: 13
@@ -57,7 +57,7 @@ VTA-27 is a differentiated oral PRX-mimetic/astrocyte-STAT3 concept with a credi
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__VTA-27__20260806]]
+![[10_Scorecards/Scorecard__VTA-27__VASTHERA_VTA-27]]
 
 ## 5. Knowledge Links
 
@@ -102,7 +102,7 @@ VTA-27 is a differentiated oral PRX-mimetic/astrocyte-STAT3 concept with a credi
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260806 | 13/21 | Watch | [[10_Scorecards/Scorecard__VTA-27__20260806|Scorecard__VTA-27__20260806]] |
+| 20260806 | 13/21 | Watch | [[10_Scorecards/Scorecard__VTA-27__VASTHERA_VTA-27|Scorecard__VTA-27__VASTHERA_VTA-27]] |
 
 ## 9. Raw Report
 

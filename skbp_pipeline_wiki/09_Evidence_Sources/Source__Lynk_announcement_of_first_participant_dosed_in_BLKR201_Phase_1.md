@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company_press_release"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company_press_release |
 | Reliability | medium |
 | URL | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__LNK01006_(BLKR201)|Asset__LNK01006_(BLKR201)]]
-- [[10_Scorecards/Scorecard__LNK01006_(BLKR201)__20260806|Scorecard__LNK01006_(BLKR201)__20260806]]
+- [[10_Scorecards/Scorecard__LNK01006_(BLKR201)__Lynk_Pharmaceuticals_Co.,_Ltd._LNK01006_(BLKR201)|Scorecard__LNK01006_(BLKR201)__Lynk_Pharmaceuticals_Co.,_Ltd._LNK01006_(BLKR201)]]
 
 ## Extracted Claims
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/publication"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | publication |
 | Reliability | medium |
 | URL | https://actiobiosciences.com/wp-content/uploads/2026/01/2025-AES-ABS1230-poster-v2.pdf |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Company/AES poster reports nM KCNT1 potency, broad pathogenic mutant inhibition,
 ## Used In
 
 - [[02_Assets/Asset__ABS-1230|Asset__ABS-1230]]
-- [[10_Scorecards/Scorecard__ABS-1230__20260623|Scorecard__ABS-1230__20260623]]
+- [[10_Scorecards/Scorecard__ABS-1230__Actio_Biosciences_ABS-1230_20260623|Scorecard__ABS-1230__Actio_Biosciences_ABS-1230_20260623]]
 
 ## Extracted Claims
 

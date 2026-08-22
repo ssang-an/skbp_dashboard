@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Corepharm_Bio_Co.,_Ltd._CPB2101]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Pain;_non-narcotic_analgesic,_neuropathic_subtype_not_confirmed|Pain; non-narcotic analgesic, neuropathic subtype not confirmed]]"
-scorecard: "[[10_Scorecards/Scorecard__CPB2101__20260819|Scorecard__CPB2101__20260819]]"
+scorecard: "[[10_Scorecards/Scorecard__CPB2101__Corepharm_Bio_Co.,_Ltd._CPB2101|Scorecard__CPB2101__Corepharm_Bio_Co.,_Ltd._CPB2101]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 1
@@ -57,7 +57,7 @@ generic Pain + target/MoA/Data 공백으로 REJECT입니다.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__CPB2101__20260819]]
+![[10_Scorecards/Scorecard__CPB2101__Corepharm_Bio_Co.,_Ltd._CPB2101]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ generic Pain + target/MoA/Data 공백으로 REJECT입니다.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260819 | 1/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CPB2101__20260819|Scorecard__CPB2101__20260819]] |
+| 20260819 | 1/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CPB2101__Corepharm_Bio_Co.,_Ltd._CPB2101|Scorecard__CPB2101__Corepharm_Bio_Co.,_Ltd._CPB2101]] |
 
 ## 9. Raw Report
 

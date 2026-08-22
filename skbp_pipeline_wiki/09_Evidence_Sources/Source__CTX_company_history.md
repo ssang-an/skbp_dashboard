@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company_history"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company_history |
 | Reliability | medium |
 | URL | https://www.cell-tx.com/en/sub/company/history.php |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__CTX-PD01|Asset__CTX-PD01]]
-- [[10_Scorecards/Scorecard__CTX-PD01__20260819|Scorecard__CTX-PD01__20260819]]
+- [[10_Scorecards/Scorecard__CTX-PD01__CTX_Inc._CTX-PD01|Scorecard__CTX-PD01__CTX_Inc._CTX-PD01]]
 
 ## Extracted Claims
 

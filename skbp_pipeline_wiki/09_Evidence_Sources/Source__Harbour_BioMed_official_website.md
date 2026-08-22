@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.harbourbiomed.com/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -34,8 +34,8 @@ confidence: "medium"
 
 - [[02_Assets/Asset__CNS_XDC|Asset__CNS_XDC]]
 - [[02_Assets/Asset__Next-Generation_Biologics|Asset__Next-Generation_Biologics]]
-- [[10_Scorecards/Scorecard__CNS_XDC__20260623|Scorecard__CNS_XDC__20260623]]
-- [[10_Scorecards/Scorecard__Next-Generation_Biologics__20260623|Scorecard__Next-Generation_Biologics__20260623]]
+- [[10_Scorecards/Scorecard__CNS_XDC__Harbour_BioMed_CNS_XDC_fast_triage_20260623|Scorecard__CNS_XDC__Harbour_BioMed_CNS_XDC_fast_triage_20260623]]
+- [[10_Scorecards/Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fast_triage_20260623|Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fast_triage_20260623]]
 
 ## Extracted Claims
 

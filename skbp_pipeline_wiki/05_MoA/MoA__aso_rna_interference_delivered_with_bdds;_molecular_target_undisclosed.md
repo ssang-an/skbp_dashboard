@@ -6,8 +6,8 @@ aliases:
   - "aso_rna_interference_delivered_with_bdds;_molecular_target_undisclosed"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Chong_Kun_Dang_ACL-513_(CKD-513)]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__HDAC6_inhibitor|HDAC6 inhibitor]]"
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Neurological_disease|Neurological disease]]"
-scorecard: "[[10_Scorecards/Scorecard__ACL-513_(CKD-513)__20260820|Scorecard__ACL-513_(CKD-513)__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__ACL-513_(CKD-513)__Chong_Kun_Dang_ACL-513_(CKD-513)|Scorecard__ACL-513_(CKD-513)__Chong_Kun_Dang_ACL-513_(CKD-513)]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 2
@@ -57,7 +57,7 @@ Active HDAC6 program, but indication and data fit are too broad/early.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__ACL-513_(CKD-513)__20260820]]
+![[10_Scorecards/Scorecard__ACL-513_(CKD-513)__Chong_Kun_Dang_ACL-513_(CKD-513)]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ Active HDAC6 program, but indication and data fit are too broad/early.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__ACL-513_(CKD-513)__20260820|Scorecard__ACL-513_(CKD-513)__20260820]] |
+| 20260820 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__ACL-513_(CKD-513)__Chong_Kun_Dang_ACL-513_(CKD-513)|Scorecard__ACL-513_(CKD-513)__Chong_Kun_Dang_ACL-513_(CKD-513)]] |
 
 ## 9. Raw Report
 

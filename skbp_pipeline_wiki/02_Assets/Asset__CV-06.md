@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Cellivery_Therapeutics,_Inc._CV-06]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Intracellular_delivery_replacement_of_cell-permeable_Parkin_
 modality: "[[06_Modalities_Platforms/Modality__Protein_biologic|Protein biologic]]"
 indications:
   - "[[07_Indications/Indication__Parkinson_disease|Parkinson disease]]"
-scorecard: "[[10_Scorecards/Scorecard__CV-06__20260807|Scorecard__CV-06__20260807]]"
+scorecard: "[[10_Scorecards/Scorecard__CV-06__Cellivery_Therapeutics,_Inc._CV-06|Scorecard__CV-06__Cellivery_Therapeutics,_Inc._CV-06]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 8
@@ -57,7 +57,7 @@ evidence_level: "E0"
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__CV-06__20260807]]
+![[10_Scorecards/Scorecard__CV-06__Cellivery_Therapeutics,_Inc._CV-06]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ evidence_level: "E0"
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260807 | 8/21 | Run Full Scout | [[10_Scorecards/Scorecard__CV-06__20260807|Scorecard__CV-06__20260807]] |
+| 20260807 | 8/21 | Run Full Scout | [[10_Scorecards/Scorecard__CV-06__Cellivery_Therapeutics,_Inc._CV-06|Scorecard__CV-06__Cellivery_Therapeutics,_Inc._CV-06]] |
 
 ## 9. Raw Report
 

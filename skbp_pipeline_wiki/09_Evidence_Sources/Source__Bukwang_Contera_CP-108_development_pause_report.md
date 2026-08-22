@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.ceoscoredaily.com/page/view/2026031616221966120 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__CP-108|Asset__CP-108]]
-- [[10_Scorecards/Scorecard__CP-108__20260820|Scorecard__CP-108__20260820]]
+- [[10_Scorecards/Scorecard__CP-108__Bukwang_Pharmaceutical_Contera_Pharma_CP-108|Scorecard__CP-108__Bukwang_Pharmaceutical_Contera_Pharma_CP-108]]
 
 ## Extracted Claims
 

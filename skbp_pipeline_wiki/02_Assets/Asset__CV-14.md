@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Cellivery_Therapeutics,_Inc._CV-14]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Frataxin_replacement|Frataxin replacement]]"
 modality: "[[06_Modalities_Platforms/Modality__Protein_biologic|Protein biologic]]"
 indications:
   - "[[07_Indications/Indication__Friedreich_ataxia|Friedreich ataxia]]"
-scorecard: "[[10_Scorecards/Scorecard__CV-14__20260807|Scorecard__CV-14__20260807]]"
+scorecard: "[[10_Scorecards/Scorecard__CV-14__Cellivery_Therapeutics,_Inc._CV-14|Scorecard__CV-14__Cellivery_Therapeutics,_Inc._CV-14]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 2
@@ -57,7 +57,7 @@ Mechanism은 비교적 명확하지만 indication fit이 낮음.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__CV-14__20260807]]
+![[10_Scorecards/Scorecard__CV-14__Cellivery_Therapeutics,_Inc._CV-14]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ Mechanism은 비교적 명확하지만 indication fit이 낮음.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260807 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CV-14__20260807|Scorecard__CV-14__20260807]] |
+| 20260807 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CV-14__Cellivery_Therapeutics,_Inc._CV-14|Scorecard__CV-14__Cellivery_Therapeutics,_Inc._CV-14]] |
 
 ## 9. Raw Report
 

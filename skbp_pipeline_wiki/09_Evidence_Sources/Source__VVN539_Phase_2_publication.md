@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/publication"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | publication |
 | Reliability | high |
 | URL | https://pubmed.ncbi.nlm.nih.gov/38192683/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7|Asset__Small_Molecules_to_Antagonize_TRPM7]]
-- [[10_Scorecards/Scorecard__Small_Molecules_to_Antagonize_TRPM7__20260622|Scorecard__Small_Molecules_to_Antagonize_TRPM7__20260622]]
+- [[10_Scorecards/Scorecard__Small_Molecules_to_Antagonize_TRPM7__VivaVision_TRPM7_20260622|Scorecard__Small_Molecules_to_Antagonize_TRPM7__VivaVision_TRPM7_20260622]]
 
 ## Extracted Claims
 

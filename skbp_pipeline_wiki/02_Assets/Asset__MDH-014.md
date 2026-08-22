@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/protein_homeostasis"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/MD_Healthcare_MDH-014]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Microbial_extracellular_vesicle-mediated_restoration_of_prot
 modality: "[[06_Modalities_Platforms/Modality__Other|Other]]"
 indications:
   - "[[07_Indications/Indication__Parkinson's_disease|Parkinson's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__MDH-014__20260820|Scorecard__MDH-014__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__MDH-014__MD_Healthcare_MDH-014|Scorecard__MDH-014__MD_Healthcare_MDH-014]]"
 theme: "[[11_Themes_Clusters/Theme__Protein_Homeostasis|Protein Homeostasis]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 5
@@ -57,7 +57,7 @@ evidence_level: "E0"
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__MDH-014__20260820]]
+![[10_Scorecards/Scorecard__MDH-014__MD_Healthcare_MDH-014]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ evidence_level: "E0"
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 5/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__MDH-014__20260820|Scorecard__MDH-014__20260820]] |
+| 20260820 | 5/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__MDH-014__MD_Healthcare_MDH-014|Scorecard__MDH-014__MD_Healthcare_MDH-014]] |
 
 ## 9. Raw Report
 

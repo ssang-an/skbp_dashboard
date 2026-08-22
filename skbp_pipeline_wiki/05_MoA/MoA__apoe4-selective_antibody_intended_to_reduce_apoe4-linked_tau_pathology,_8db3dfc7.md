@@ -6,8 +6,8 @@ aliases:
   - "apoe4-selective_antibody_intended_to_reduce_apoe4-linked_tau_pathology,_8db3dfc7"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

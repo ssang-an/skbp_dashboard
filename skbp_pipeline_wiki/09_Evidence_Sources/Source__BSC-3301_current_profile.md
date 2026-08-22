@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.zhihuiya.com/drug/d8ab8e06d2e34992aba307aaf032e5b2 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__BSC-3301|Asset__BSC-3301]]
-- [[10_Scorecards/Scorecard__BSC-3301__20260820|Scorecard__BSC-3301__20260820]]
+- [[10_Scorecards/Scorecard__BSC-3301__BiSiChem_BSC-3301|Scorecard__BSC-3301__BiSiChem_BSC-3301]]
 
 ## Extracted Claims
 

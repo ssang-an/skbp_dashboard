@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Aliad_Biopharma,_Inc._AB-ASD-003]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Autism_spectrum_disorder|Autism spectrum disorder]]"
-scorecard: "[[10_Scorecards/Scorecard__AB-ASD-003__20260819|Scorecard__AB-ASD-003__20260819]]"
+scorecard: "[[10_Scorecards/Scorecard__AB-ASD-003__Aliad_Biopharma,_Inc._AB-ASD-003|Scorecard__AB-ASD-003__Aliad_Biopharma,_Inc._AB-ASD-003]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 1
@@ -57,7 +57,7 @@ evidence_level: "E0"
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__AB-ASD-003__20260819]]
+![[10_Scorecards/Scorecard__AB-ASD-003__Aliad_Biopharma,_Inc._AB-ASD-003]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ evidence_level: "E0"
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260819 | 1/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__AB-ASD-003__20260819|Scorecard__AB-ASD-003__20260819]] |
+| 20260819 | 1/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__AB-ASD-003__Aliad_Biopharma,_Inc._AB-ASD-003|Scorecard__AB-ASD-003__Aliad_Biopharma,_Inc._AB-ASD-003]] |
 
 ## 9. Raw Report
 

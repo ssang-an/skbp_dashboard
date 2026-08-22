@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/4532916bb5014b93b06a2f2320c8fa93 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__CLZ-2002|Asset__CLZ-2002]]
-- [[10_Scorecards/Scorecard__CLZ-2002__20260807|Scorecard__CLZ-2002__20260807]]
+- [[10_Scorecards/Scorecard__CLZ-2002__Cellatoz_Therapeutics,_Inc._CLZ-2002|Scorecard__CLZ-2002__Cellatoz_Therapeutics,_Inc._CLZ-2002]]
 
 ## Extracted Claims
 

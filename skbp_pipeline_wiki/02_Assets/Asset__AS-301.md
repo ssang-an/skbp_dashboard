@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Amyloid_Solution_AS-301]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__TAU_inhibitor|TAU inhibitor]]"
 modality: "[[06_Modalities_Platforms/Modality__Gene_therapy|Gene therapy]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__AS-301__20260820|Scorecard__AS-301__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__AS-301__Amyloid_Solution_AS-301|Scorecard__AS-301__Amyloid_Solution_AS-301]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 4
@@ -57,7 +57,7 @@ Relevant tau/AD discovery asset, but evidence maturity is insufficient.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__AS-301__20260820]]
+![[10_Scorecards/Scorecard__AS-301__Amyloid_Solution_AS-301]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ Relevant tau/AD discovery asset, but evidence maturity is insufficient.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__AS-301__20260820|Scorecard__AS-301__20260820]] |
+| 20260820 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__AS-301__Amyloid_Solution_AS-301|Scorecard__AS-301__Amyloid_Solution_AS-301]] |
 
 ## 9. Raw Report
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.biohaven.com/pipeline/innovation-engine/kv7/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -34,8 +34,8 @@ confidence: "medium"
 
 - [[02_Assets/Asset__NS-041|Asset__NS-041]]
 - [[02_Assets/Asset__Opakalim_BHV-7000|Asset__Opakalim_BHV-7000]]
-- [[10_Scorecards/Scorecard__NS-041__20260623|Scorecard__NS-041__20260623]]
-- [[10_Scorecards/Scorecard__Opakalim_BHV-7000__20260623|Scorecard__Opakalim_BHV-7000__20260623]]
+- [[10_Scorecards/Scorecard__NS-041__NeuShen_Therapeutics_NS-041_20260623|Scorecard__NS-041__NeuShen_Therapeutics_NS-041_20260623]]
+- [[10_Scorecards/Scorecard__Opakalim_BHV-7000__Biohaven_Opakalim_fast_triage_20260623|Scorecard__Opakalim_BHV-7000__Biohaven_Opakalim_fast_triage_20260623]]
 
 ## Extracted Claims
 

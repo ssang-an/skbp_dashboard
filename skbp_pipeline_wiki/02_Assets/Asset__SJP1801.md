@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Samjin_Pharmaceutical_SJP1801]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
 indications:
   - "[[07_Indications/Indication__Dementia;_Parkinson's_disease|Dementia; Parkinson's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__SJP1801__20260820|Scorecard__SJP1801__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__SJP1801__Samjin_Pharmaceutical_SJP1801|Scorecard__SJP1801__Samjin_Pharmaceutical_SJP1801]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 2
@@ -57,7 +57,7 @@ Historical PD/dementia program with a lifecycle hard blocker.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__SJP1801__20260820]]
+![[10_Scorecards/Scorecard__SJP1801__Samjin_Pharmaceutical_SJP1801]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ Historical PD/dementia program with a lifecycle hard blocker.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__SJP1801__20260820|Scorecard__SJP1801__20260820]] |
+| 20260820 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__SJP1801__Samjin_Pharmaceutical_SJP1801|Scorecard__SJP1801__Samjin_Pharmaceutical_SJP1801]] |
 
 ## 9. Raw Report
 

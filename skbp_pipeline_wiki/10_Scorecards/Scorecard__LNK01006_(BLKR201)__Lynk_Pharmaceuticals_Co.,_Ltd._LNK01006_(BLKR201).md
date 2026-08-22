@@ -1,0 +1,135 @@
+---
+type: "scorecard"
+canonical_id: "scorecard::lnk01006_(blkr201)_20260806"
+title: "Scorecard - LNK01006 (BLKR201)"
+tags:
+  - "pipeline/scorecard"
+  - "skbp/scoring"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
+source_report: "[[01_Raw_Reports/Lynk_Pharmaceuticals_Co.,_Ltd._LNK01006_(BLKR201)]]"
+source_json: "json/pipeline-records.json"
+asset: "[[02_Assets/Asset__LNK01006_(BLKR201)|LNK01006 (BLKR201)]]"
+company: "[[03_Companies/Company__Lynk_Pharmaceuticals_Co.,_Ltd|Lynk Pharmaceuticals Co., Ltd.]]"
+total_score: 6
+max_score: 9
+recommendation: "Run Full Scout"
+---
+
+# Scorecard - LNK01006 (BLKR201)
+
+## 1. Score Summary
+
+| Criterion | Score | Evidence Type | One-line Judgment | Why Not Higher |
+|---|---:|---|---|---|
+| Target Relevance | 3 | triage_only | TR 3점: MS와 CNS neuroinflammation에 직접 연결된 TYK2/IL-12·IL-23 기전이 확인됩니다. | 최고점입니다. |
+| Competitive Landscape | - | - | - | - |
+| MoA Validity | 2 | triage_only | MOA 2점: selective allosteric TYK2 inhibition, CNS penetration 및 MS 모델 효능이 확인됩니다. | 사람 target engagement 또는 PD는 아직 없습니다. |
+| Platform Attractiveness | - | - | - | - |
+| Expansion Potential | - | - | - | - |
+| Data Maturity | 1 | triage_only | Data 1점: robust preclinical efficacy와 Phase 1 개시가 정성적으로 확인됩니다. | 정량 전임상 수치와 임상 결과는 아직 없습니다. |
+| Marketability | - | - | - | - |
+
+| Total | Value |
+|---|---:|
+| Total Score | 6/21 |
+| Recommendation | Run Full Scout |
+| Hard Filter | SELECT |
+
+## 2. Criterion Details
+
+### Target Relevance
+
+- Score: 3/3
+- Evidence Type: triage_only
+- Reason: TR 3점: MS와 CNS neuroinflammation에 직접 연결된 TYK2/IL-12·IL-23 기전이 확인됩니다.
+- Evidence type reason: Fast Triage v3.3 예비 평가.
+- Why not higher: 최고점입니다.
+- Uncertain points:
+- None
+
+### Competitive Landscape
+
+- Score: -/3
+- Evidence Type: -
+- Reason: -
+- Evidence type reason: -
+- Why not higher: -
+- Uncertain points:
+- None
+
+### MoA Validity
+
+- Score: 2/3
+- Evidence Type: triage_only
+- Reason: MOA 2점: selective allosteric TYK2 inhibition, CNS penetration 및 MS 모델 효능이 확인됩니다.
+- Evidence type reason: Fast Triage v3.3 예비 평가.
+- Why not higher: 사람 target engagement 또는 PD는 아직 없습니다.
+- Uncertain points:
+- human PD 미공개
+
+### Platform Attractiveness
+
+- Score: -/3
+- Evidence Type: -
+- Reason: -
+- Evidence type reason: -
+- Why not higher: -
+- Uncertain points:
+- None
+
+### Expansion Potential
+
+- Score: -/3
+- Evidence Type: -
+- Reason: -
+- Evidence type reason: -
+- Why not higher: -
+- Uncertain points:
+- None
+
+### Data Maturity
+
+- Score: 1/3
+- Evidence Type: triage_only
+- Reason: Data 1점: robust preclinical efficacy와 Phase 1 개시가 정성적으로 확인됩니다.
+- Evidence type reason: Fast Triage v3.3 예비 평가.
+- Why not higher: 정량 전임상 수치와 임상 결과는 아직 없습니다.
+- Uncertain points:
+- Phase 1 결과 미공개
+
+### Marketability
+
+- Score: -/3
+- Evidence Type: -
+- Reason: -
+- Evidence type reason: -
+- Why not higher: -
+- Uncertain points:
+- None
+
+
+## 3. Evidence Types
+
+Linked criteria: [[00_System/Evidence_Type_Guide|Evidence Type Guide]]
+
+## 4. Marketability Calculation
+
+| Step | Formula / Inputs | Output |
+|---|---|---:|
+| A. TAP | - | - |
+| B. Unrisked Peak Sales | - | - million USD |
+| C. Obtainable Peak Sales | - | - million USD |
+
+Commercial rationale status: `-`
+
+## 5. Data Maturity Stage Alignment
+
+- Claimed stage: -
+- Expected data for stage: -
+- Visible data: -
+- Missing data: -
+
+## 6. Final Recommendation
+
+Phase 1에 진입한 CNS TYK2 neuroinflammation 후보로 Full Scout 권고.

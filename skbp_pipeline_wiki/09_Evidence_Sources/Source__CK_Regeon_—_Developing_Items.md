@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company_pipeline_science"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company_pipeline_science |
 | Reliability | medium |
 | URL | https://ckregeon.com/ko/developing-items-ko/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__CKR-492|Asset__CKR-492]]
-- [[10_Scorecards/Scorecard__CKR-492__20260819|Scorecard__CKR-492__20260819]]
+- [[10_Scorecards/Scorecard__CKR-492__CK_Regeon_Inc._CKR-492|Scorecard__CKR-492__CK_Regeon_Inc._CKR-492]]
 
 ## Extracted Claims
 

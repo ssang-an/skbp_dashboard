@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
 indications:
   - "[[07_Indications/Indication__Unknown|Unknown]]"
-scorecard: "[[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__20260820|Scorecard__intractable_brain_diseases_therapy,_Dong-AST__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST|Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 0
@@ -57,7 +57,7 @@ Generic collaboration topic; exact asset identity is missing.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__20260820]]
+![[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ Generic collaboration topic; exact asset identity is missing.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 0/21 | Verify asset identity | [[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__20260820|Scorecard__intractable_brain_diseases_therapy,_Dong-AST__20260820]] |
+| 20260820 | 0/21 | Verify asset identity | [[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST|Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST]] |
 
 ## 9. Raw Report
 

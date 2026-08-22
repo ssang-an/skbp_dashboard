@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/reputable_biotech_news"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | reputable_biotech_news |
 | Reliability | medium |
 | URL | https://www.biospectator.com/news/view/29005 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Confirms active preclinical development.
 ## Used In
 
 - [[02_Assets/Asset__ADEL-Y04|Asset__ADEL-Y04]]
-- [[10_Scorecards/Scorecard__ADEL-Y04__20260806|Scorecard__ADEL-Y04__20260806]]
+- [[10_Scorecards/Scorecard__ADEL-Y04__ADEL_ADEL-Y04|Scorecard__ADEL-Y04__ADEL_ADEL-Y04]]
 
 ## Extracted Claims
 

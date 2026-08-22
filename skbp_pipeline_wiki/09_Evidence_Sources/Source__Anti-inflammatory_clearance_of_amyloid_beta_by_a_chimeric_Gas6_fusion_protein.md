@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/peer_reviewed_conference_abstract"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | peer_reviewed_conference_abstract |
 | Reliability | medium |
 | URL | https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__ILM01|Asset__ILM01]]
-- [[10_Scorecards/Scorecard__ILM01__20260806|Scorecard__ILM01__20260806]]
+- [[10_Scorecards/Scorecard__ILM01__Illimis_Therapeutics,_Inc._ILM01|Scorecard__ILM01__Illimis_Therapeutics,_Inc._ILM01]]
 
 ## Extracted Claims
 

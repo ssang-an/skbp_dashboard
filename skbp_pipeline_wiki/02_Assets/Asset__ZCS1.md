@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/protein_homeostasis"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Zincure_ZCS1]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Peptide-driven_lysosome_activation_and_autophagic_clearance_
 modality: "[[06_Modalities_Platforms/Modality__Peptide|Peptide]]"
 indications:
   - "[[07_Indications/Indication__Amyotrophic_lateral_sclerosis|Amyotrophic lateral sclerosis]]"
-scorecard: "[[10_Scorecards/Scorecard__ZCS1__20260820|Scorecard__ZCS1__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__ZCS1__Zincure_ZCS1|Scorecard__ZCS1__Zincure_ZCS1]]"
 theme: "[[11_Themes_Clusters/Theme__Protein_Homeostasis|Protein Homeostasis]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 9
@@ -57,7 +57,7 @@ Protein Homeostasis 중심 ALS 자산으로 기전·데이터가 모두 강해 S
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__ZCS1__20260820]]
+![[10_Scorecards/Scorecard__ZCS1__Zincure_ZCS1]]
 
 ## 5. Knowledge Links
 
@@ -90,7 +90,7 @@ Protein Homeostasis 중심 ALS 자산으로 기전·데이터가 모두 강해 S
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__ZCS1__20260820|Scorecard__ZCS1__20260820]] |
+| 20260820 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__ZCS1__Zincure_ZCS1|Scorecard__ZCS1__Zincure_ZCS1]] |
 
 ## 9. Raw Report
 

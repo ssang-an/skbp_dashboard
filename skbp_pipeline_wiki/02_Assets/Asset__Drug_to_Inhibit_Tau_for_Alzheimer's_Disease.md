@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Hyper_Corp_Inc_Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
 indications:
   - "[[07_Indications/Indication__Unknown|Unknown]]"
-scorecard: "[[10_Scorecards/Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__20260806|Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__20260806]]"
+scorecard: "[[10_Scorecards/Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__Hyper_Corp_Inc_Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__Hyper_Corp_Inc_Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 0
@@ -57,7 +57,7 @@ evidence_level: "E0"
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__20260806]]
+![[10_Scorecards/Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__Hyper_Corp_Inc_Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ evidence_level: "E0"
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260806 | 0/21 | Verify asset identity | [[10_Scorecards/Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__20260806|Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__20260806]] |
+| 20260806 | 0/21 | Verify asset identity | [[10_Scorecards/Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__Hyper_Corp_Inc_Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Scorecard__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease__Hyper_Corp_Inc_Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]] |
 
 ## 9. Raw Report
 

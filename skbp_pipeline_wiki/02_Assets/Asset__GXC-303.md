@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/GenixCure_GXC-303]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__AAV-mediated_restoration_of_STMN2_to_support_axonal_regenera
 modality: "[[06_Modalities_Platforms/Modality__Gene_therapy|Gene therapy]]"
 indications:
   - "[[07_Indications/Indication__Amyotrophic_lateral_sclerosis|Amyotrophic lateral sclerosis]]"
-scorecard: "[[10_Scorecards/Scorecard__GXC-303__20260820|Scorecard__GXC-303__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__GXC-303__GenixCure_GXC-303|Scorecard__GXC-303__GenixCure_GXC-303]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 7
@@ -57,7 +57,7 @@ STMN2 복원이라는 명확한 ALS 기전 때문에 SELECT입니다.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__GXC-303__20260820]]
+![[10_Scorecards/Scorecard__GXC-303__GenixCure_GXC-303]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ STMN2 복원이라는 명확한 ALS 기전 때문에 SELECT입니다.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 7/21 | Run Full Scout | [[10_Scorecards/Scorecard__GXC-303__20260820|Scorecard__GXC-303__20260820]] |
+| 20260820 | 7/21 | Run Full Scout | [[10_Scorecards/Scorecard__GXC-303__GenixCure_GXC-303|Scorecard__GXC-303__GenixCure_GXC-303]] |
 
 ## 9. Raw Report
 

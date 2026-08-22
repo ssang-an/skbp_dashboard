@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Actio_Biosciences_ABS-1230_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Selective_inhibition_of_overactive_KCNT1_potassium_ion_chann
 modality: "[[06_Modalities_Platforms/Modality__Oral_small_molecule;_genetics-driven_precision_small_molecule_platform|Oral small molecule; genetics-driven precision small molecule platform]]"
 indications:
   - "[[07_Indications/Indication__KCNT1-related_epilepsy;_pediatric_developmental_and_epileptic_encephalo_b19f0030|KCNT1-related epilepsy; pediatric developmental and epileptic encephalopathy including EIMFS / EOEE phenotype in KYRON eligibility]]"
-scorecard: "[[10_Scorecards/Scorecard__ABS-1230__20260623|Scorecard__ABS-1230__20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__ABS-1230__Actio_Biosciences_ABS-1230_20260623|Scorecard__ABS-1230__Actio_Biosciences_ABS-1230_20260623]]"
 theme: "[[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]"
 cluster: "[[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]]"
 total_score: 15
@@ -57,7 +57,7 @@ ABS-1230 is a high-quality science-first CNS precision medicine asset with stron
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__ABS-1230__20260623]]
+![[10_Scorecards/Scorecard__ABS-1230__Actio_Biosciences_ABS-1230_20260623]]
 
 ## 5. Knowledge Links
 
@@ -100,7 +100,7 @@ ABS-1230 is a high-quality science-first CNS precision medicine asset with stron
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | 15/21 | Shortlist | [[10_Scorecards/Scorecard__ABS-1230__20260623|Scorecard__ABS-1230__20260623]] |
+| 20260623 | 15/21 | Shortlist | [[10_Scorecards/Scorecard__ABS-1230__Actio_Biosciences_ABS-1230_20260623|Scorecard__ABS-1230__Actio_Biosciences_ABS-1230_20260623]] |
 
 ## 9. Raw Report
 

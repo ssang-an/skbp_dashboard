@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://koreapharma.co.kr/eng/sub_research/result.php |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -34,8 +34,8 @@ confidence: "medium"
 
 - [[02_Assets/Asset__KP-101|Asset__KP-101]]
 - [[02_Assets/Asset__KP-102|Asset__KP-102]]
-- [[10_Scorecards/Scorecard__KP-101__20260818|Scorecard__KP-101__20260818]]
-- [[10_Scorecards/Scorecard__KP-102__20260818|Scorecard__KP-102__20260818]]
+- [[10_Scorecards/Scorecard__KP-101__Korea_Pharma_Co_Ltd_KP-101|Scorecard__KP-101__Korea_Pharma_Co_Ltd_KP-101]]
+- [[10_Scorecards/Scorecard__KP-102__Korea_Pharma_Co_Ltd_KP-102|Scorecard__KP-102__Korea_Pharma_Co_Ltd_KP-102]]
 
 ## Extracted Claims
 

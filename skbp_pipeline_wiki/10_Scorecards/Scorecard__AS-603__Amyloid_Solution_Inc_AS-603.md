@@ -1,0 +1,135 @@
+---
+type: "scorecard"
+canonical_id: "scorecard::as-603_20260819"
+title: "Scorecard - AS-603"
+tags:
+  - "pipeline/scorecard"
+  - "skbp/scoring"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
+source_report: "[[01_Raw_Reports/Amyloid_Solution_Inc_AS-603]]"
+source_json: "json/pipeline-records.json"
+asset: "[[02_Assets/Asset__AS-603|AS-603]]"
+company: "[[03_Companies/Company__Amyloid_Solution_Inc|Amyloid Solution Inc]]"
+total_score: 9
+max_score: 9
+recommendation: "Run Full Scout"
+---
+
+# Scorecard - AS-603
+
+## 1. Score Summary
+
+| Criterion | Score | Evidence Type | One-line Judgment | Why Not Higher |
+|---|---:|---|---|---|
+| Target Relevance | 3 | triage_only | TR 3점: AS-603는 Alzheimer's disease 적응증이며 Aβ/tau aggregate를 직접 분해하는 자산별 MoA가 확인됩니다. | TR 최고점 기준을 충족합니다. |
+| Competitive Landscape | - | - | - | - |
+| MoA Validity | 3 | triage_only | MOA 3점: AS-S603 자체가 Aβ/tau oligomer·plaque·tangle dissociation, binding/MoA 분석 및 amyloid-PET 변화를 보였습니다. | 공개 근거가 학회 초록 중심이고 독립 재현성은 제한적입니다. |
+| Platform Attractiveness | - | - | - | - |
+| Expansion Potential | - | - | - | - |
+| Data Maturity | 3 | triage_only | Data 3점: 자산별 in vivo cognition, amyloid-PET, biochemical/biophysical MoA 및 safety-readiness 등 두 개 이상의 상보적 정량/단계 적합 evidence domain이 공개됐고 Phase 1이 진행 중입니다. | 임상 결과 자체는 아직 게시되지 않았습니다. |
+| Marketability | - | - | - | - |
+
+| Total | Value |
+|---|---:|
+| Total Score | 9/21 |
+| Recommendation | Run Full Scout |
+| Hard Filter | SELECT |
+
+## 2. Criterion Details
+
+### Target Relevance
+
+- Score: 3/3
+- Evidence Type: triage_only
+- Reason: TR 3점: AS-603는 Alzheimer's disease 적응증이며 Aβ/tau aggregate를 직접 분해하는 자산별 MoA가 확인됩니다.
+- Evidence type reason: Fast Triage v3.3.
+- Why not higher: TR 최고점 기준을 충족합니다.
+- Uncertain points:
+- None
+
+### Competitive Landscape
+
+- Score: -/3
+- Evidence Type: -
+- Reason: -
+- Evidence type reason: -
+- Why not higher: -
+- Uncertain points:
+- None
+
+### MoA Validity
+
+- Score: 3/3
+- Evidence Type: triage_only
+- Reason: MOA 3점: AS-S603 자체가 Aβ/tau oligomer·plaque·tangle dissociation, binding/MoA 분석 및 amyloid-PET 변화를 보였습니다.
+- Evidence type reason: Fast Triage v3.3.
+- Why not higher: 공개 근거가 학회 초록 중심이고 독립 재현성은 제한적입니다.
+- Uncertain points:
+- Much of the detailed preclinical evidence is conference-abstract level
+
+### Platform Attractiveness
+
+- Score: -/3
+- Evidence Type: -
+- Reason: -
+- Evidence type reason: -
+- Why not higher: -
+- Uncertain points:
+- None
+
+### Expansion Potential
+
+- Score: -/3
+- Evidence Type: -
+- Reason: -
+- Evidence type reason: -
+- Why not higher: -
+- Uncertain points:
+- None
+
+### Data Maturity
+
+- Score: 3/3
+- Evidence Type: triage_only
+- Reason: Data 3점: 자산별 in vivo cognition, amyloid-PET, biochemical/biophysical MoA 및 safety-readiness 등 두 개 이상의 상보적 정량/단계 적합 evidence domain이 공개됐고 Phase 1이 진행 중입니다.
+- Evidence type reason: Fast Triage v3.3.
+- Why not higher: 임상 결과 자체는 아직 게시되지 않았습니다.
+- Uncertain points:
+- No posted Phase 1 results yet
+
+### Marketability
+
+- Score: -/3
+- Evidence Type: -
+- Reason: -
+- Evidence type reason: -
+- Why not higher: -
+- Uncertain points:
+- None
+
+
+## 3. Evidence Types
+
+Linked criteria: [[00_System/Evidence_Type_Guide|Evidence Type Guide]]
+
+## 4. Marketability Calculation
+
+| Step | Formula / Inputs | Output |
+|---|---|---:|
+| A. TAP | - | - |
+| B. Unrisked Peak Sales | - | - million USD |
+| C. Obtainable Peak Sales | - | - million USD |
+
+Commercial rationale status: `-`
+
+## 5. Data Maturity Stage Alignment
+
+- Claimed stage: -
+- Expected data for stage: -
+- Visible data: -
+- Missing data: -
+
+## 6. Final Recommendation
+
+AD + dual aggregate disaggregation + Phase 1/strong preclinical package로 SELECT입니다.

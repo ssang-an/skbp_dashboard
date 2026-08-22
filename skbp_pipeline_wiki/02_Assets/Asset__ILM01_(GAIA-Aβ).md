@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Illimis_Therapeutics_ILM01_20260621]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Aβ_binding_plus_engineered_GAS6-mediated_TAM_receptor_clust
 modality: "[[06_Modalities_Platforms/Modality__Protein_biologic|Protein biologic]]"
 indications:
   - "[[07_Indications/Indication__Early_symptomatic_Alzheimer's_disease;_exact_intended_clinical_populati_44d70da0|Early symptomatic Alzheimer's disease; exact intended clinical population has not been publicly finalized]]"
-scorecard: "[[10_Scorecards/Scorecard__ILM01_(GAIA-Aβ)__20260806|Scorecard__ILM01_(GAIA-Aβ)__20260806]]"
+scorecard: "[[10_Scorecards/Scorecard__ILM01_(GAIA-Aβ)__Illimis_Therapeutics_ILM01_20260621|Scorecard__ILM01_(GAIA-Aβ)__Illimis_Therapeutics_ILM01_20260621]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__교세포_향상성|교세포 향상성]]"
 total_score: 15
@@ -57,7 +57,7 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__ILM01_(GAIA-Aβ)__20260806]]
+![[10_Scorecards/Scorecard__ILM01_(GAIA-Aβ)__Illimis_Therapeutics_ILM01_20260621]]
 
 ## 5. Knowledge Links
 
@@ -102,7 +102,7 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260806 | 15/21 | Shortlist | [[10_Scorecards/Scorecard__ILM01_(GAIA-Aβ)__20260806|Scorecard__ILM01_(GAIA-Aβ)__20260806]] |
+| 20260806 | 15/21 | Shortlist | [[10_Scorecards/Scorecard__ILM01_(GAIA-Aβ)__Illimis_Therapeutics_ILM01_20260621|Scorecard__ILM01_(GAIA-Aβ)__Illimis_Therapeutics_ILM01_20260621]] |
 
 ## 9. Raw Report
 

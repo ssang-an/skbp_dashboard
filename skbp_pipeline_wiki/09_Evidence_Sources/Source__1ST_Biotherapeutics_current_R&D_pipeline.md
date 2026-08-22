@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.1stbio.com/rd-pipeline/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -36,10 +36,10 @@ confidence: "medium"
 - [[02_Assets/Asset__1ST-103_(NLY02)|Asset__1ST-103_(NLY02)]]
 - [[02_Assets/Asset__1ST-104|Asset__1ST-104]]
 - [[02_Assets/Asset__NLY02_(1ST-103)|Asset__NLY02_(1ST-103)]]
-- [[10_Scorecards/Scorecard__1ST-103_(NLY02)__20260820|Scorecard__1ST-103_(NLY02)__20260820]]
-- [[10_Scorecards/Scorecard__1ST-103__20260820|Scorecard__1ST-103__20260820]]
-- [[10_Scorecards/Scorecard__1ST-104__20260818|Scorecard__1ST-104__20260818]]
-- [[10_Scorecards/Scorecard__NLY02_(1ST-103)__20260820|Scorecard__NLY02_(1ST-103)__20260820]]
+- [[10_Scorecards/Scorecard__1ST-103_(NLY02)__1ST_Biotherapeutics_1ST-103_(NLY02)|Scorecard__1ST-103_(NLY02)__1ST_Biotherapeutics_1ST-103_(NLY02)]]
+- [[10_Scorecards/Scorecard__1ST-103__1ST_Biotherapeutics_D&D_Pharmatech_1ST-103|Scorecard__1ST-103__1ST_Biotherapeutics_D&D_Pharmatech_1ST-103]]
+- [[10_Scorecards/Scorecard__1ST-104__1ST_Biotherapeutics,_Inc._1ST-104|Scorecard__1ST-104__1ST_Biotherapeutics,_Inc._1ST-104]]
+- [[10_Scorecards/Scorecard__NLY02_(1ST-103)__1ST_Biotherapeutics_NLY02_(1ST-103)|Scorecard__NLY02_(1ST-103)__1ST_Biotherapeutics_NLY02_(1ST-103)]]
 
 ## Extracted Claims
 

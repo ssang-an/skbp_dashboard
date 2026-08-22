@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company |
 | Reliability | high |
 | URL | https://en.metabiopharma.com/index.php/news/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Official news states MP-5342 was nominated as IBD PCC, targets LDH, and is prepa
 ## Used In
 
 - [[02_Assets/Asset__META-01_META-1i_MP-5342|Asset__META-01_META-1i_MP-5342]]
-- [[10_Scorecards/Scorecard__META-01_META-1i_MP-5342__20260622|Scorecard__META-01_META-1i_MP-5342__20260622]]
+- [[10_Scorecards/Scorecard__META-01_META-1i_MP-5342__META_Pharmaceuticals_META01_MP5342_20260622|Scorecard__META-01_META-1i_MP-5342__META_Pharmaceuticals_META01_MP5342_20260622]]
 
 ## Extracted Claims
 

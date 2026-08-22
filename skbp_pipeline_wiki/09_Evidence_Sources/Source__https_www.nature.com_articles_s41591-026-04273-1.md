@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/peer_reviewed_publication"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | peer_reviewed_publication |
 | Reliability | medium |
 | URL | https://www.nature.com/articles/s41591-026-04273-1 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,8 +33,8 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__VTA-27|Asset__VTA-27]]
-- [[10_Scorecards/Scorecard__VTA-27__20260806|Scorecard__VTA-27__20260806]]
-- [[10_Scorecards/Scorecard__VTA-27__20260812|Scorecard__VTA-27__20260812]]
+- [[10_Scorecards/Scorecard__VTA-27__VASTHERA_Co.,_Ltd._VTA-27|Scorecard__VTA-27__VASTHERA_Co.,_Ltd._VTA-27]]
+- [[10_Scorecards/Scorecard__VTA-27__VASTHERA_VTA-27|Scorecard__VTA-27__VASTHERA_VTA-27]]
 
 ## Extracted Claims
 

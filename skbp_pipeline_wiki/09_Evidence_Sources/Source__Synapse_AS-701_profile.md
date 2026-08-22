@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/industry_database"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | industry_database |
 | Reliability | medium |
 | URL | https://synapse.zhihuiya.com/drug/c0f1b272885049559150beb07e3ef128 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__AS-S701_AS-701|Asset__AS-S701_AS-701]]
-- [[10_Scorecards/Scorecard__AS-S701_AS-701__20260820|Scorecard__AS-S701_AS-701__20260820]]
+- [[10_Scorecards/Scorecard__AS-S701_AS-701__Amyloid_Solution_AS-S701_AS-701|Scorecard__AS-S701_AS-701__Amyloid_Solution_AS-S701_AS-701]]
 
 ## Extracted Claims
 

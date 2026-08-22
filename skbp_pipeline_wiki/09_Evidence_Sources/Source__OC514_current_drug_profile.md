@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/f188cf3357124d1bb39f81ea058fca83 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__OC514|Asset__OC514]]
-- [[10_Scorecards/Scorecard__OC514__20260820|Scorecard__OC514__20260820]]
+- [[10_Scorecards/Scorecard__OC514__Oncocross_OC514|Scorecard__OC514__Oncocross_OC514]]
 
 ## Extracted Claims
 

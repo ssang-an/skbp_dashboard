@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/patent"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | patent |
 | Reliability | medium |
 | URL | https://patents.google.com/patent/EP4221759A1/en |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__GO-102|Asset__GO-102]]
-- [[10_Scorecards/Scorecard__GO-102__20260820|Scorecard__GO-102__20260820]]
+- [[10_Scorecards/Scorecard__GO-102__Generoath_GO-102|Scorecard__GO-102__Generoath_GO-102]]
 
 ## Extracted Claims
 

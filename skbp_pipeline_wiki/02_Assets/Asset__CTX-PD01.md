@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/CTX_Inc._CTX-PD01]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Autologous_iPSC-derived_mDAP_mDAN_transplantation|Autologous
 modality: "[[06_Modalities_Platforms/Modality__Cell_therapy|Cell therapy]]"
 indications:
   - "[[07_Indications/Indication__Parkinson's_disease|Parkinson's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__CTX-PD01__20260819|Scorecard__CTX-PD01__20260819]]"
+scorecard: "[[10_Scorecards/Scorecard__CTX-PD01__CTX_Inc._CTX-PD01|Scorecard__CTX-PD01__CTX_Inc._CTX-PD01]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 4
@@ -57,7 +57,7 @@ PD 세포치료 자산은 확인되나 공개 functional/data 근거가 부족�
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__CTX-PD01__20260819]]
+![[10_Scorecards/Scorecard__CTX-PD01__CTX_Inc._CTX-PD01]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ PD 세포치료 자산은 확인되나 공개 functional/data 근거가 부족�
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260819 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CTX-PD01__20260819|Scorecard__CTX-PD01__20260819]] |
+| 20260819 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CTX-PD01__CTX_Inc._CTX-PD01|Scorecard__CTX-PD01__CTX_Inc._CTX-PD01]] |
 
 ## 9. Raw Report
 

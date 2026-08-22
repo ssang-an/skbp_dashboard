@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Yuhan_YHC2133]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Immune-response_modulation_against_CNS_disease-causing_facto
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__YHC2133__20260820|Scorecard__YHC2133__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__YHC2133__Yuhan_YHC2133|Scorecard__YHC2133__Yuhan_YHC2133]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 3
@@ -57,7 +57,7 @@ AD-relevant discovery program; target disclosure is the key gating item.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__YHC2133__20260820]]
+![[10_Scorecards/Scorecard__YHC2133__Yuhan_YHC2133]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ AD-relevant discovery program; target disclosure is the key gating item.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 3/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__YHC2133__20260820|Scorecard__YHC2133__20260820]] |
+| 20260820 | 3/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__YHC2133__Yuhan_YHC2133|Scorecard__YHC2133__Yuhan_YHC2133]] |
 
 ## 9. Raw Report
 

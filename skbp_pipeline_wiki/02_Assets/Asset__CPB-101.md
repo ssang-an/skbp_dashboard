@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Cellapeutics_Bio_Co.,_Ltd._CPB-101]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Cell_replacement_neuroregenerative_glial-cell_therapy|Cell r
 modality: "[[06_Modalities_Platforms/Modality__Cell_therapy|Cell therapy]]"
 indications:
   - "[[07_Indications/Indication__Parkinson_disease;_spinal_cord_injury;_peripheral_nerve_injury|Parkinson disease; spinal cord injury; peripheral nerve injury]]"
-scorecard: "[[10_Scorecards/Scorecard__CPB-101__20260807|Scorecard__CPB-101__20260807]]"
+scorecard: "[[10_Scorecards/Scorecard__CPB-101__Cellapeutics_Bio_Co.,_Ltd._CPB-101|Scorecard__CPB-101__Cellapeutics_Bio_Co.,_Ltd._CPB-101]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 4
@@ -57,7 +57,7 @@ Interest-indication fit은 있으나 공개 MoA/Data가 SELECT threshold에 미�
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__CPB-101__20260807]]
+![[10_Scorecards/Scorecard__CPB-101__Cellapeutics_Bio_Co.,_Ltd._CPB-101]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ Interest-indication fit은 있으나 공개 MoA/Data가 SELECT threshold에 미�
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260807 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CPB-101__20260807|Scorecard__CPB-101__20260807]] |
+| 20260807 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CPB-101__Cellapeutics_Bio_Co.,_Ltd._CPB-101|Scorecard__CPB-101__Cellapeutics_Bio_Co.,_Ltd._CPB-101]] |
 
 ## 9. Raw Report
 

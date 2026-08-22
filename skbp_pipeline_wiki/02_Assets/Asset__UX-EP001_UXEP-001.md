@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Shanghai_UniXell_UX-EP001_20260621]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Undisclosed_for_UX-EP001._If_confused_with_UX-GIP001,_the_Mo
 modality: "[[06_Modalities_Platforms/Modality__Synapse_lists_TCR-T_Cell_therapy_for_UX-EP001,_but_this_is_not_corrobor_f837809e|Synapse lists TCR-T Cell therapy for UX-EP001, but this is not corroborated by official UniXell sources. Company platform is hPSC/iPSC-derived neural cell therapy based on reprogramming, differentiation, SISBAR lineage tracing and gene editing.]]"
 indications:
   - "[[07_Indications/Indication__Epilepsy|Epilepsy]]"
-scorecard: "[[10_Scorecards/Scorecard__UX-EP001_UXEP-001__20260621|Scorecard__UX-EP001_UXEP-001__20260621]]"
+scorecard: "[[10_Scorecards/Scorecard__UX-EP001_UXEP-001__Shanghai_UniXell_UX-EP001_20260621|Scorecard__UX-EP001_UXEP-001__Shanghai_UniXell_UX-EP001_20260621]]"
 theme: "[[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]"
 cluster: "[[11_Themes_Clusters/Cluster__Network_Modulation|Network Modulation]]"
 total_score: 5
@@ -57,7 +57,7 @@ Exact-match UX-EP001 is too under-disclosed for prioritization; if the intended 
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__UX-EP001_UXEP-001__20260621]]
+![[10_Scorecards/Scorecard__UX-EP001_UXEP-001__Shanghai_UniXell_UX-EP001_20260621]]
 
 ## 5. Knowledge Links
 
@@ -100,7 +100,7 @@ Exact-match UX-EP001 is too under-disclosed for prioritization; if the intended 
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260621 | 5/21 | Deprioritize | [[10_Scorecards/Scorecard__UX-EP001_UXEP-001__20260621|Scorecard__UX-EP001_UXEP-001__20260621]] |
+| 20260621 | 5/21 | Deprioritize | [[10_Scorecards/Scorecard__UX-EP001_UXEP-001__Shanghai_UniXell_UX-EP001_20260621|Scorecard__UX-EP001_UXEP-001__Shanghai_UniXell_UX-EP001_20260621]] |
 
 ## 9. Raw Report
 

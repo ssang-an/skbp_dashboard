@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Oncocross_OC514]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Undisclosed_drug-drug_combination_mechanism|Undisclosed drug
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
 indications:
   - "[[07_Indications/Indication__Sarcopenia;_amyotrophic_lateral_sclerosis;_muscular_dystrophy|Sarcopenia; amyotrophic lateral sclerosis; muscular dystrophy]]"
-scorecard: "[[10_Scorecards/Scorecard__OC514__20260820|Scorecard__OC514__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__OC514__Oncocross_OC514|Scorecard__OC514__Oncocross_OC514]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 3
@@ -57,7 +57,7 @@ ALS 표시는 있으나 자산 기전·데이터 투명성이 낮아 REJECT입�
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__OC514__20260820]]
+![[10_Scorecards/Scorecard__OC514__Oncocross_OC514]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ ALS 표시는 있으나 자산 기전·데이터 투명성이 낮아 REJECT입�
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 3/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__OC514__20260820|Scorecard__OC514__20260820]] |
+| 20260820 | 3/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__OC514__Oncocross_OC514|Scorecard__OC514__Oncocross_OC514]] |
 
 ## 9. Raw Report
 

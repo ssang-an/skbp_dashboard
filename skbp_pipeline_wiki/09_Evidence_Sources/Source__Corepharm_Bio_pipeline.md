@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.corepharm.com/eng/product/pipeline.php |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__CPB2101|Asset__CPB2101]]
-- [[10_Scorecards/Scorecard__CPB2101__20260819|Scorecard__CPB2101__20260819]]
+- [[10_Scorecards/Scorecard__CPB2101__Corepharm_Bio_Co.,_Ltd._CPB2101|Scorecard__CPB2101__Corepharm_Bio_Co.,_Ltd._CPB2101]]
 
 ## Extracted Claims
 

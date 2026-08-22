@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/peer_reviewed_review"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | peer_reviewed_review |
 | Reliability | medium |
 | URL | https://www.sciencedirect.com/science/article/pii/S022352342600396X |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]
-- [[10_Scorecards/Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807|Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807]]
+- [[10_Scorecards/Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__Threebrooks_Therapeutics_3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__Threebrooks_Therapeutics_3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]
 
 ## Extracted Claims
 

@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Kine_Sciences_KINE-501B]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Peptide|Peptide]]"
 indications:
   - "[[07_Indications/Indication__Frontotemporal_Dementia_(FTD)|Frontotemporal Dementia (FTD)]]"
-scorecard: "[[10_Scorecards/Scorecard__KINE-501B__20260818|Scorecard__KINE-501B__20260818]]"
+scorecard: "[[10_Scorecards/Scorecard__KINE-501B__Kine_Sciences_KINE-501B|Scorecard__KINE-501B__Kine_Sciences_KINE-501B]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 1
@@ -57,7 +57,7 @@ FTD fit과 공개 MoA/Data가 부족하다.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__KINE-501B__20260818]]
+![[10_Scorecards/Scorecard__KINE-501B__Kine_Sciences_KINE-501B]]
 
 ## 5. Knowledge Links
 
@@ -89,7 +89,7 @@ FTD fit과 공개 MoA/Data가 부족하다.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260818 | 1/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__KINE-501B__20260818|Scorecard__KINE-501B__20260818]] |
+| 20260818 | 1/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__KINE-501B__Kine_Sciences_KINE-501B|Scorecard__KINE-501B__Kine_Sciences_KINE-501B]] |
 
 ## 9. Raw Report
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company_product_page"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company_product_page |
 | Reliability | medium |
 | URL | https://www.reyonpharm.co.kr/en/product/productList.do |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__Meloxicam|Asset__Meloxicam]]
-- [[10_Scorecards/Scorecard__Meloxicam__20260820|Scorecard__Meloxicam__20260820]]
+- [[10_Scorecards/Scorecard__Meloxicam__Reyon_Pharmaceutical_Meloxicam|Scorecard__Meloxicam__Reyon_Pharmaceutical_Meloxicam]]
 
 ## Extracted Claims
 

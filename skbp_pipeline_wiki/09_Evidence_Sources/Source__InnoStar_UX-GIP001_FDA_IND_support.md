@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/news"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | news |
 | Reliability | medium |
 | URL | https://www.innostarbio.com/en/news/693.html |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ GLP nonclinical safety support exists for UX-GIP001, not confirmed for UX-EP001.
 ## Used In
 
 - [[02_Assets/Asset__UX-EP001_UXEP-001|Asset__UX-EP001_UXEP-001]]
-- [[10_Scorecards/Scorecard__UX-EP001_UXEP-001__20260621|Scorecard__UX-EP001_UXEP-001__20260621]]
+- [[10_Scorecards/Scorecard__UX-EP001_UXEP-001__Shanghai_UniXell_UX-EP001_20260621|Scorecard__UX-EP001_UXEP-001__Shanghai_UniXell_UX-EP001_20260621]]
 
 ## Extracted Claims
 

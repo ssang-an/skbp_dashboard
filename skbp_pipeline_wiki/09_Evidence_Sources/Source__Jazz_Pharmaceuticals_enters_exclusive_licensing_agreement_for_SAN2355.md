@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://investor.jazzpharma.com/news-releases/news-release-details/jazz-pharmaceuticals-enters-exclusive-licensing-agreement |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__SAN2355|Asset__SAN2355]]
-- [[10_Scorecards/Scorecard__SAN2355__20260623|Scorecard__SAN2355__20260623]]
+- [[10_Scorecards/Scorecard__SAN2355__Jazz_Saniona_SAN2355_fast_triage_20260623|Scorecard__SAN2355__Jazz_Saniona_SAN2355_fast_triage_20260623]]
 
 ## Extracted Claims
 

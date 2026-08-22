@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/company_representative_public_update"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | company_representative_public_update |
 | Reliability | medium |
 | URL | https://www.linkedin.com/posts/david-c-oxley_epilepsy-jpm25-lennoxgastautsyndrome-activity-7284760194851512320-kjPq |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__BMD-002|Asset__BMD-002]]
-- [[10_Scorecards/Scorecard__BMD-002__20260820|Scorecard__BMD-002__20260820]]
+- [[10_Scorecards/Scorecard__BMD-002__BIORCHESTRA_BMD-002|Scorecard__BMD-002__BIORCHESTRA_BMD-002]]
 
 ## Extracted Claims
 

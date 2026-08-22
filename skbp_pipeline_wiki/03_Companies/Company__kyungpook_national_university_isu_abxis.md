@@ -6,8 +6,8 @@ aliases:
   - "kyungpook_national_university_isu_abxis"
 tags:
   - "pipeline/company"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

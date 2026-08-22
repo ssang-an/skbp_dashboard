@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/company_news"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | company_news |
 | Reliability | medium |
 | URL | https://www.sanofi.com/assets/dotcom/pressreleases/2025/2025-05-21-23-15-31-3086232-en.pdf |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__VTA-27|Asset__VTA-27]]
-- [[10_Scorecards/Scorecard__VTA-27__20260812|Scorecard__VTA-27__20260812]]
+- [[10_Scorecards/Scorecard__VTA-27__VASTHERA_Co.,_Ltd._VTA-27|Scorecard__VTA-27__VASTHERA_Co.,_Ltd._VTA-27]]
 
 ## Extracted Claims
 

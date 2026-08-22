@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/no_theme"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Hefei_Huafang_HB018_fast_triage_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__SM|SM]]"
 indications:
   - "[[07_Indications/Indication__Schizophrenia|Schizophrenia]]"
-scorecard: "[[10_Scorecards/Scorecard__HB018__20260623|Scorecard__HB018__20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__HB018__Hefei_Huafang_HB018_fast_triage_20260623|Scorecard__HB018__Hefei_Huafang_HB018_fast_triage_20260623]]"
 theme: "[[11_Themes_Clusters/Theme__No_Theme|No Theme]]"
 cluster: "[[11_Themes_Clusters/Cluster__No_mapped_SKBP_cluster|No mapped SKBP cluster]]"
 total_score: 0
@@ -57,7 +57,7 @@ N/A: identity not verified.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__HB018__20260623]]
+![[10_Scorecards/Scorecard__HB018__Hefei_Huafang_HB018_fast_triage_20260623]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ N/A: identity not verified.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | -/21 | N/A | [[10_Scorecards/Scorecard__HB018__20260623|Scorecard__HB018__20260623]] |
+| 20260623 | -/21 | N/A | [[10_Scorecards/Scorecard__HB018__Hefei_Huafang_HB018_fast_triage_20260623|Scorecard__HB018__Hefei_Huafang_HB018_fast_triage_20260623]] |
 
 ## 9. Raw Report
 

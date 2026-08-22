@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_partner_press_release"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_partner_press_release |
 | Reliability | medium |
 | URL | https://www.formation.bio/press/formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-a-cns-penetrant-tyk2-inhibitor |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Rename/licensing and June 2026 dosing.
 ## Used In
 
 - [[02_Assets/Asset__LNK01006|Asset__LNK01006]]
-- [[10_Scorecards/Scorecard__LNK01006__20260806|Scorecard__LNK01006__20260806]]
+- [[10_Scorecards/Scorecard__LNK01006__Lynk_Pharmaceuticals_LNK01006|Scorecard__LNK01006__Lynk_Pharmaceuticals_LNK01006]]
 
 ## Extracted Claims
 

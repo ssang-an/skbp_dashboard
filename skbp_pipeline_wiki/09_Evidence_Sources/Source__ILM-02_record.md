@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/drug_database"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | drug_database |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/6e51d0532bd744e1a3694db8fa72e39e |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Discovery-stage tauopathy record.
 ## Used In
 
 - [[02_Assets/Asset__ILM02|Asset__ILM02]]
-- [[10_Scorecards/Scorecard__ILM02__20260806|Scorecard__ILM02__20260806]]
+- [[10_Scorecards/Scorecard__ILM02__Illimis_Therapeutics_ILM02|Scorecard__ILM02__Illimis_Therapeutics_ILM02]]
 
 ## Extracted Claims
 

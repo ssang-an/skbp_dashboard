@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/NeuShen_Therapeutics_NS-041_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Selective_KCNQ2_3_activator;_modulates_M-current,_hyperpolar
 modality: "[[06_Modalities_Platforms/Modality__Oral_small-molecule_tablet;_NeuShen_small-molecule_CNS_discovery_platform|Oral small-molecule / tablet; NeuShen small-molecule CNS discovery platform]]"
 indications:
   - "[[07_Indications/Indication__Focal_onset_seizure;_major_depressive_disorder;_pain|Focal onset seizure; major depressive disorder; pain]]"
-scorecard: "[[10_Scorecards/Scorecard__NS-041__20260623|Scorecard__NS-041__20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__NS-041__NeuShen_Therapeutics_NS-041_20260623|Scorecard__NS-041__NeuShen_Therapeutics_NS-041_20260623]]"
 theme: "[[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]"
 cluster: "[[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]]"
 total_score: 14
@@ -57,7 +57,7 @@ NS-041은 SKBP E/I Balance–Ion Channel 관점에서 biology fit이 강한 임�
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__NS-041__20260623]]
+![[10_Scorecards/Scorecard__NS-041__NeuShen_Therapeutics_NS-041_20260623]]
 
 ## 5. Knowledge Links
 
@@ -100,7 +100,7 @@ NS-041은 SKBP E/I Balance–Ion Channel 관점에서 biology fit이 강한 임�
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | 14/21 | Watch | [[10_Scorecards/Scorecard__NS-041__20260623|Scorecard__NS-041__20260623]] |
+| 20260623 | 14/21 | Watch | [[10_Scorecards/Scorecard__NS-041__NeuShen_Therapeutics_NS-041_20260623|Scorecard__NS-041__NeuShen_Therapeutics_NS-041_20260623]] |
 
 ## 9. Raw Report
 

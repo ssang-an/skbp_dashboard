@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/GemVax_&_KAEL_GV1001]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Modulation_of_microglial_migration_phagocytosis,_amyloid_han
 modality: "[[06_Modalities_Platforms/Modality__Peptide|Peptide]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__GV1001__20260820|Scorecard__GV1001__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__GV1001__GemVax_&_KAEL_GV1001|Scorecard__GV1001__GemVax_&_KAEL_GV1001]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 9
@@ -57,7 +57,7 @@ Data maturity는 높지만 Phase 2 primary endpoint 리스크를 정밀 해석�
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__GV1001__20260820]]
+![[10_Scorecards/Scorecard__GV1001__GemVax_&_KAEL_GV1001]]
 
 ## 5. Knowledge Links
 
@@ -90,7 +90,7 @@ Data maturity는 높지만 Phase 2 primary endpoint 리스크를 정밀 해석�
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__GV1001__20260820|Scorecard__GV1001__20260820]] |
+| 20260820 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__GV1001__GemVax_&_KAEL_GV1001|Scorecard__GV1001__GemVax_&_KAEL_GV1001]] |
 
 ## 9. Raw Report
 

@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/CK_Regeon_Inc._CKR-492]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__CXXC5-Dvl_PPI_inhibition_to_restore_Wnt_β-catenin_signaling
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__CKR-492__20260819|Scorecard__CKR-492__20260819]]"
+scorecard: "[[10_Scorecards/Scorecard__CKR-492__CK_Regeon_Inc._CKR-492|Scorecard__CKR-492__CK_Regeon_Inc._CKR-492]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 5
@@ -57,7 +57,7 @@ AD 적합성과 same-class functional MoA 검증으로 SELECT하되 CKR-492 자�
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__CKR-492__20260819]]
+![[10_Scorecards/Scorecard__CKR-492__CK_Regeon_Inc._CKR-492]]
 
 ## 5. Knowledge Links
 
@@ -90,7 +90,7 @@ AD 적합성과 same-class functional MoA 검증으로 SELECT하되 CKR-492 자�
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260819 | 5/21 | Run Full Scout | [[10_Scorecards/Scorecard__CKR-492__20260819|Scorecard__CKR-492__20260819]] |
+| 20260819 | 5/21 | Run Full Scout | [[10_Scorecards/Scorecard__CKR-492__CK_Regeon_Inc._CKR-492|Scorecard__CKR-492__CK_Regeon_Inc._CKR-492]] |
 
 ## 9. Raw Report
 

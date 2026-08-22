@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/biotech_intelligence_news_aggregation"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | biotech intelligence/news aggregation |
 | Reliability | medium |
 | URL | https://delta.larvol.com/Products/?ProductId=d49fdf13-4bea-4829-9946-1125f8cb1e56 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ iCP-Parkin mechanism과 BBB 5.6%, PD motor recovery 92% conference results를 �
 ## Used In
 
 - [[02_Assets/Asset__CV-06|Asset__CV-06]]
-- [[10_Scorecards/Scorecard__CV-06__20260807|Scorecard__CV-06__20260807]]
+- [[10_Scorecards/Scorecard__CV-06__Cellivery_Therapeutics,_Inc._CV-06|Scorecard__CV-06__Cellivery_Therapeutics,_Inc._CV-06]]
 
 ## Extracted Claims
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://brightmindsbio.com/bright-minds-biosciences-initiates-the-breakthrough-study-a-phase-2-trial-of-bmb-101-in-absence-epilepsy-and-developmental-epileptic-encephalopathy/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__BMB-101|Asset__BMB-101]]
-- [[10_Scorecards/Scorecard__BMB-101__20260623|Scorecard__BMB-101__20260623]]
+- [[10_Scorecards/Scorecard__BMB-101__BrightMinds_BMB-101_fast_triage_20260623|Scorecard__BMB-101__BrightMinds_BMB-101_fast_triage_20260623]]
 
 ## Extracted Claims
 

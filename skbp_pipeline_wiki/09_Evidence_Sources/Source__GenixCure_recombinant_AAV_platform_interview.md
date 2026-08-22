@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/reputable_biotech_news"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | reputable_biotech_news |
 | Reliability | medium |
 | URL | https://pharm.edaily.co.kr/news/read?newsId=01626886638852512 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Early GXC-303 status and XOB-031 re-engineering.
 ## Used In
 
 - [[02_Assets/Asset__GXC-303|Asset__GXC-303]]
-- [[10_Scorecards/Scorecard__GXC-303__20260713|Scorecard__GXC-303__20260713]]
+- [[10_Scorecards/Scorecard__GXC-303__GenixCure_GXC-303_20260713|Scorecard__GXC-303__GenixCure_GXC-303_20260713]]
 
 ## Extracted Claims
 

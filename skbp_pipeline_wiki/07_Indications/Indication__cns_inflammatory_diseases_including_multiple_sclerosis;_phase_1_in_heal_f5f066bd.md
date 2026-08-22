@@ -6,8 +6,8 @@ aliases:
   - "cns_inflammatory_diseases_including_multiple_sclerosis;_phase_1_in_heal_f5f066bd"
 tags:
   - "pipeline/indication"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

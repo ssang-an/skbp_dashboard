@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/CELLTIUM_Neurological_Disorder_Research_Program]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
 indications:
   - "[[07_Indications/Indication__Unknown|Unknown]]"
-scorecard: "[[10_Scorecards/Scorecard__Neurological_Disorder_Research_Program__20260807|Scorecard__Neurological_Disorder_Research_Program__20260807]]"
+scorecard: "[[10_Scorecards/Scorecard__Neurological_Disorder_Research_Program__CELLTIUM_Neurological_Disorder_Research_Program|Scorecard__Neurological_Disorder_Research_Program__CELLTIUM_Neurological_Disorder_Research_Program]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 0
@@ -57,7 +57,7 @@ Specific asset identity 확인이 선행되어야 함.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__Neurological_Disorder_Research_Program__20260807]]
+![[10_Scorecards/Scorecard__Neurological_Disorder_Research_Program__CELLTIUM_Neurological_Disorder_Research_Program]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ Specific asset identity 확인이 선행되어야 함.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260807 | 0/21 | Verify asset identity | [[10_Scorecards/Scorecard__Neurological_Disorder_Research_Program__20260807|Scorecard__Neurological_Disorder_Research_Program__20260807]] |
+| 20260807 | 0/21 | Verify asset identity | [[10_Scorecards/Scorecard__Neurological_Disorder_Research_Program__CELLTIUM_Neurological_Disorder_Research_Program|Scorecard__Neurological_Disorder_Research_Program__CELLTIUM_Neurological_Disorder_Research_Program]] |
 
 ## 9. Raw Report
 

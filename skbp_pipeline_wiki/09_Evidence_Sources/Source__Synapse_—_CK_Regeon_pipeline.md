@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/organization/da31af23213025f08e00c752ce41a5b8 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__CKR-492|Asset__CKR-492]]
-- [[10_Scorecards/Scorecard__CKR-492__20260819|Scorecard__CKR-492__20260819]]
+- [[10_Scorecards/Scorecard__CKR-492__CK_Regeon_Inc._CKR-492|Scorecard__CKR-492__CK_Regeon_Inc._CKR-492]]
 
 ## Extracted Claims
 

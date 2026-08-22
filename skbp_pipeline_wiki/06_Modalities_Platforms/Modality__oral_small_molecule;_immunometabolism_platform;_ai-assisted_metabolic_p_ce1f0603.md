@@ -6,8 +6,8 @@ aliases:
   - "oral_small_molecule;_immunometabolism_platform;_ai-assisted_metabolic_p_ce1f0603"
 tags:
   - "pipeline/modality"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

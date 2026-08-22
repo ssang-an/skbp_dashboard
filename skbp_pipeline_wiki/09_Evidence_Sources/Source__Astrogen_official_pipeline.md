@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.astrogen.co.kr/subpages/rnd/pipeline.html |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -36,10 +36,10 @@ confidence: "medium"
 - [[02_Assets/Asset__AST-029|Asset__AST-029]]
 - [[02_Assets/Asset__AST-030|Asset__AST-030]]
 - [[02_Assets/Asset__AST-031|Asset__AST-031]]
-- [[10_Scorecards/Scorecard__AST-004__20260806|Scorecard__AST-004__20260806]]
-- [[10_Scorecards/Scorecard__AST-029__20260806|Scorecard__AST-029__20260806]]
-- [[10_Scorecards/Scorecard__AST-030__20260806|Scorecard__AST-030__20260806]]
-- [[10_Scorecards/Scorecard__AST-031__20260806|Scorecard__AST-031__20260806]]
+- [[10_Scorecards/Scorecard__AST-004__Astrogen_AST-004|Scorecard__AST-004__Astrogen_AST-004]]
+- [[10_Scorecards/Scorecard__AST-029__Astrogen_AST-029|Scorecard__AST-029__Astrogen_AST-029]]
+- [[10_Scorecards/Scorecard__AST-030__Astrogen_AST-030|Scorecard__AST-030__Astrogen_AST-030]]
+- [[10_Scorecards/Scorecard__AST-031__Astrogen_Inc._AST-031|Scorecard__AST-031__Astrogen_Inc._AST-031]]
 
 ## Extracted Claims
 

@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Korea_Pharma_Co_Ltd_KP-101]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
 indications:
   - "[[07_Indications/Indication__major_depressive_disorder|major depressive disorder]]"
-scorecard: "[[10_Scorecards/Scorecard__KP-101__20260818|Scorecard__KP-101__20260818]]"
+scorecard: "[[10_Scorecards/Scorecard__KP-101__Korea_Pharma_Co_Ltd_KP-101|Scorecard__KP-101__Korea_Pharma_Co_Ltd_KP-101]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 0
@@ -57,7 +57,7 @@ MDD는 triage 범위 밖이며 공개 MoA/Data도 없다.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__KP-101__20260818]]
+![[10_Scorecards/Scorecard__KP-101__Korea_Pharma_Co_Ltd_KP-101]]
 
 ## 5. Knowledge Links
 
@@ -89,7 +89,7 @@ MDD는 triage 범위 밖이며 공개 MoA/Data도 없다.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260818 | 0/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__KP-101__20260818|Scorecard__KP-101__20260818]] |
+| 20260818 | 0/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__KP-101__Korea_Pharma_Co_Ltd_KP-101|Scorecard__KP-101__Korea_Pharma_Co_Ltd_KP-101]] |
 
 ## 9. Raw Report
 

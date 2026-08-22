@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Generoath_GO-102]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Intrathecal_scAAV_expression_of_AIMP2-DX2_to_antagonize_pro-
 modality: "[[06_Modalities_Platforms/Modality__Gene_therapy|Gene therapy]]"
 indications:
   - "[[07_Indications/Indication__Amyotrophic_lateral_sclerosis|Amyotrophic lateral sclerosis]]"
-scorecard: "[[10_Scorecards/Scorecard__GO-102__20260820|Scorecard__GO-102__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__GO-102__Generoath_GO-102|Scorecard__GO-102__Generoath_GO-102]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 8
@@ -57,7 +57,7 @@ AIMP2-DX2 기반 ALS gene therapy로 기전·데이터가 좋아 SELECT입니다
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__GO-102__20260820]]
+![[10_Scorecards/Scorecard__GO-102__Generoath_GO-102]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ AIMP2-DX2 기반 ALS gene therapy로 기전·데이터가 좋아 SELECT입니다
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 8/21 | Run Full Scout | [[10_Scorecards/Scorecard__GO-102__20260820|Scorecard__GO-102__20260820]] |
+| 20260820 | 8/21 | Run Full Scout | [[10_Scorecards/Scorecard__GO-102__Generoath_GO-102|Scorecard__GO-102__Generoath_GO-102]] |
 
 ## 9. Raw Report
 

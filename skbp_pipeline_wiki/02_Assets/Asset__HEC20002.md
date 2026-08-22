@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/HEC_Pharm_HEC20002_fast_triage_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__MAO-B_inhibitor|MAO-B inhibitor]]"
 modality: "[[06_Modalities_Platforms/Modality__SM|SM]]"
 indications:
   - "[[07_Indications/Indication__Parkinson's_Disease|Parkinson's Disease]]"
-scorecard: "[[10_Scorecards/Scorecard__HEC20002__20260623|Scorecard__HEC20002__20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__HEC20002__HEC_Pharm_HEC20002_fast_triage_20260623|Scorecard__HEC20002__HEC_Pharm_HEC20002_fast_triage_20260623]]"
 theme: "[[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]"
 cluster: "[[11_Themes_Clusters/Cluster__Synaptic_Transmission|Synaptic Transmission]]"
 total_score: 0
@@ -57,7 +57,7 @@ REJECT: not enough differentiation.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__HEC20002__20260623]]
+![[10_Scorecards/Scorecard__HEC20002__HEC_Pharm_HEC20002_fast_triage_20260623]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ REJECT: not enough differentiation.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | -/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__HEC20002__20260623|Scorecard__HEC20002__20260623]] |
+| 20260623 | -/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__HEC20002__HEC_Pharm_HEC20002_fast_triage_20260623|Scorecard__HEC20002__HEC_Pharm_HEC20002_fast_triage_20260623]] |
 
 ## 9. Raw Report
 

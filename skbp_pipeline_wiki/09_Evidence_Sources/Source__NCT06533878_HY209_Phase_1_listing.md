@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/clinical_trial_registry"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | clinical_trial_registry |
 | Reliability | medium |
 | URL | https://www.centerwatch.com/clinical-trials/listings/NCT06533878/evaluate-tolerability-and-safety-of-hy209-in-healthy-volunteers |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Lists HY209 Phase I trial in healthy volunteers; sponsor listed as Kukjeon Pharm
 ## Used In
 
 - [[02_Assets/Asset__HY209_NuCerin|Asset__HY209_NuCerin]]
-- [[10_Scorecards/Scorecard__HY209_NuCerin__20260622|Scorecard__HY209_NuCerin__20260622]]
+- [[10_Scorecards/Scorecard__HY209_NuCerin__Shaperon_HY209_NuCerin_20260622|Scorecard__HY209_NuCerin__Shaperon_HY209_NuCerin_20260622]]
 
 ## Extracted Claims
 

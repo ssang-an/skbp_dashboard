@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Illimis_Therapeutics,_Inc._ILM01]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__GAIA_fusion_protein_couples_Aβ_binding_to_TAM-receptor-medi
 modality: "[[06_Modalities_Platforms/Modality__Protein_biologic|Protein biologic]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__ILM01__20260806|Scorecard__ILM01__20260806]]"
+scorecard: "[[10_Scorecards/Scorecard__ILM01__Illimis_Therapeutics,_Inc._ILM01|Scorecard__ILM01__Illimis_Therapeutics,_Inc._ILM01]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 7
@@ -57,7 +57,7 @@ evidence_level: "E0"
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__ILM01__20260806]]
+![[10_Scorecards/Scorecard__ILM01__Illimis_Therapeutics,_Inc._ILM01]]
 
 ## 5. Knowledge Links
 
@@ -91,7 +91,7 @@ evidence_level: "E0"
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260806 | 7/21 | Run Full Scout | [[10_Scorecards/Scorecard__ILM01__20260806|Scorecard__ILM01__20260806]] |
+| 20260806 | 7/21 | Run Full Scout | [[10_Scorecards/Scorecard__ILM01__Illimis_Therapeutics,_Inc._ILM01|Scorecard__ILM01__Illimis_Therapeutics,_Inc._ILM01]] |
 
 ## 9. Raw Report
 

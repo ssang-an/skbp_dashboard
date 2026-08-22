@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Hangzhou_Vitan_WT-1-2.0_fast_triage_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__P2X3_antagonist_follow-on,_unverified_for_WT-1-2.0|P2X3 anta
 modality: "[[06_Modalities_Platforms/Modality__SM|SM]]"
 indications:
   - "[[07_Indications/Indication__Pain|Pain]]"
-scorecard: "[[10_Scorecards/Scorecard__WT-1-2.0__20260623|Scorecard__WT-1-2.0__20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__WT-1-2.0__Hangzhou_Vitan_WT-1-2.0_fast_triage_20260623|Scorecard__WT-1-2.0__Hangzhou_Vitan_WT-1-2.0_fast_triage_20260623]]"
 theme: "[[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]"
 cluster: "[[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]]"
 total_score: 0
@@ -57,7 +57,7 @@ N/A: WT-1-2.0 identity needs confirmation before full scout.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__WT-1-2.0__20260623]]
+![[10_Scorecards/Scorecard__WT-1-2.0__Hangzhou_Vitan_WT-1-2.0_fast_triage_20260623]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ N/A: WT-1-2.0 identity needs confirmation before full scout.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | -/21 | N/A | [[10_Scorecards/Scorecard__WT-1-2.0__20260623|Scorecard__WT-1-2.0__20260623]] |
+| 20260623 | -/21 | N/A | [[10_Scorecards/Scorecard__WT-1-2.0__Hangzhou_Vitan_WT-1-2.0_fast_triage_20260623|Scorecard__WT-1-2.0__Hangzhou_Vitan_WT-1-2.0_fast_triage_20260623]] |
 
 ## 9. Raw Report
 

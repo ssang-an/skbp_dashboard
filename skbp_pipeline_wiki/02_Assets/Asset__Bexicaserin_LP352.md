@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Lundbeck_Bexicaserin_fast_triage_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Highly_selective_5-HT2C_receptor_superagonist_for_seizure_re
 modality: "[[06_Modalities_Platforms/Modality__Oral_small_molecule|Oral small molecule]]"
 indications:
   - "[[07_Indications/Indication__Developmental_and_epileptic_encephalopathies_including_Dravet_syndrome_cc97e161|Developmental and epileptic encephalopathies including Dravet syndrome and Lennox-Gastaut syndrome]]"
-scorecard: "[[10_Scorecards/Scorecard__Bexicaserin_LP352__20260623|Scorecard__Bexicaserin_LP352__20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__Bexicaserin_LP352__Lundbeck_Bexicaserin_fast_triage_20260623|Scorecard__Bexicaserin_LP352__Lundbeck_Bexicaserin_fast_triage_20260623]]"
 theme: "[[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]"
 cluster: "[[11_Themes_Clusters/Cluster__Network_Modulation|Network Modulation]]"
 total_score: 0
@@ -57,7 +57,7 @@ High-data DEE seizure asset outside ion-channel core; run Full Scout.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__Bexicaserin_LP352__20260623]]
+![[10_Scorecards/Scorecard__Bexicaserin_LP352__Lundbeck_Bexicaserin_fast_triage_20260623]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ High-data DEE seizure asset outside ion-channel core; run Full Scout.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | -/21 | Run Full Scout | [[10_Scorecards/Scorecard__Bexicaserin_LP352__20260623|Scorecard__Bexicaserin_LP352__20260623]] |
+| 20260623 | -/21 | Run Full Scout | [[10_Scorecards/Scorecard__Bexicaserin_LP352__Lundbeck_Bexicaserin_fast_triage_20260623|Scorecard__Bexicaserin_LP352__Lundbeck_Bexicaserin_fast_triage_20260623]] |
 
 ## 9. Raw Report
 

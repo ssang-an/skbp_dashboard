@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/news"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | news |
 | Reliability | medium |
 | URL | https://www.clinicaltrialsarena.com/news/actio-biosciences-begins-abs-1230-trial/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ KYRON Phase Ib/II trial of ABS-1230 in KCNT1-related epilepsy reported.
 ## Used In
 
 - [[02_Assets/Asset__ABS-1230|Asset__ABS-1230]]
-- [[10_Scorecards/Scorecard__ABS-1230__20260623|Scorecard__ABS-1230__20260623]]
+- [[10_Scorecards/Scorecard__ABS-1230__Actio_ABS-1230_fast_triage_20260623|Scorecard__ABS-1230__Actio_ABS-1230_fast_triage_20260623]]
 
 ## Extracted Claims
 

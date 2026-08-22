@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.celltium.com/technology |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__Neurological_Disorder_Research_Program|Asset__Neurological_Disorder_Research_Program]]
-- [[10_Scorecards/Scorecard__Neurological_Disorder_Research_Program__20260807|Scorecard__Neurological_Disorder_Research_Program__20260807]]
+- [[10_Scorecards/Scorecard__Neurological_Disorder_Research_Program__CELLTIUM_Neurological_Disorder_Research_Program|Scorecard__Neurological_Disorder_Research_Program__CELLTIUM_Neurological_Disorder_Research_Program]]
 
 ## Extracted Claims
 

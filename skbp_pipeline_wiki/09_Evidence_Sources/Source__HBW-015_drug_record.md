@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/drug_database"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | drug_database |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/33fb9f9fba8f4d5cb534113ca25760aa |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Preclinical analgesia record, May 2025.
 ## Used In
 
 - [[02_Assets/Asset__HBW-015|Asset__HBW-015]]
-- [[10_Scorecards/Scorecard__HBW-015__20260806|Scorecard__HBW-015__20260806]]
+- [[10_Scorecards/Scorecard__HBW-015__Hyperway_Pharmaceutical_HBW-015|Scorecard__HBW-015__Hyperway_Pharmaceutical_HBW-015]]
 
 ## Extracted Claims
 

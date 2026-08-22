@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://healthbiome.co.kr/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -35,9 +35,9 @@ confidence: "medium"
 - [[02_Assets/Asset__HB-02|Asset__HB-02]]
 - [[02_Assets/Asset__HB-03|Asset__HB-03]]
 - [[02_Assets/Asset__HB-05|Asset__HB-05]]
-- [[10_Scorecards/Scorecard__HB-02__20260623|Scorecard__HB-02__20260623]]
-- [[10_Scorecards/Scorecard__HB-03__20260623|Scorecard__HB-03__20260623]]
-- [[10_Scorecards/Scorecard__HB-05__20260623|Scorecard__HB-05__20260623]]
+- [[10_Scorecards/Scorecard__HB-02__HealthBiome_HB-02_fast_triage_20260623|Scorecard__HB-02__HealthBiome_HB-02_fast_triage_20260623]]
+- [[10_Scorecards/Scorecard__HB-03__HealthBiome_HB-03_fast_triage_20260623|Scorecard__HB-03__HealthBiome_HB-03_fast_triage_20260623]]
+- [[10_Scorecards/Scorecard__HB-05__HealthBiome_HB-05_fast_triage_20260623|Scorecard__HB-05__HealthBiome_HB-05_fast_triage_20260623]]
 
 ## Extracted Claims
 

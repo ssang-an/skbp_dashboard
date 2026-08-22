@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/biopharma_intelligence_database"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | biopharma intelligence database |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/237c58bbaef74d41827f938aad50a873 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__AXN-1501|Asset__AXN-1501]]
-- [[10_Scorecards/Scorecard__AXN-1501__20260820|Scorecard__AXN-1501__20260820]]
+- [[10_Scorecards/Scorecard__AXN-1501__Axceso_Biopharma_AXN-1501|Scorecard__AXN-1501__Axceso_Biopharma_AXN-1501]]
 
 ## Extracted Claims
 

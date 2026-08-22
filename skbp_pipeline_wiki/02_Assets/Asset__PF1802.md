@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/ImmunoForge_PF1802]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Dual-ligand_Fc-fusion_agonism_of_GLP-1R_IGF-1R_signaling|Dua
 modality: "[[06_Modalities_Platforms/Modality__Protein_biologic|Protein biologic]]"
 indications:
   - "[[07_Indications/Indication__Amyotrophic_lateral_sclerosis|Amyotrophic lateral sclerosis]]"
-scorecard: "[[10_Scorecards/Scorecard__PF1802__20260820|Scorecard__PF1802__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__PF1802__ImmunoForge_PF1802|Scorecard__PF1802__ImmunoForge_PF1802]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 9
@@ -57,7 +57,7 @@ ALS dual-receptor biologic로 자산특이 비임상 데이터가 강해 SELECT�
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__PF1802__20260820]]
+![[10_Scorecards/Scorecard__PF1802__ImmunoForge_PF1802]]
 
 ## 5. Knowledge Links
 
@@ -89,7 +89,7 @@ ALS dual-receptor biologic로 자산특이 비임상 데이터가 강해 SELECT�
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__PF1802__20260820|Scorecard__PF1802__20260820]] |
+| 20260820 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__PF1802__ImmunoForge_PF1802|Scorecard__PF1802__ImmunoForge_PF1802]] |
 
 ## 9. Raw Report
 

@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Helixmith_NM301]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__AAV9-mediated_expression_of_HGF_isoforms_for_neuroprotection
 modality: "[[06_Modalities_Platforms/Modality__Gene_therapy|Gene therapy]]"
 indications:
   - "[[07_Indications/Indication__Amyotrophic_lateral_sclerosis|Amyotrophic lateral sclerosis]]"
-scorecard: "[[10_Scorecards/Scorecard__NM301__20260820|Scorecard__NM301__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__NM301__Helixmith_NM301|Scorecard__NM301__Helixmith_NM301]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 9
@@ -57,7 +57,7 @@ ALS AAV-HGF 프로그램으로 기전과 전임상 데이터가 모두 강해 SE
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__NM301__20260820]]
+![[10_Scorecards/Scorecard__NM301__Helixmith_NM301]]
 
 ## 5. Knowledge Links
 
@@ -89,7 +89,7 @@ ALS AAV-HGF 프로그램으로 기전과 전임상 데이터가 모두 강해 SE
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__NM301__20260820|Scorecard__NM301__20260820]] |
+| 20260820 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__NM301__Helixmith_NM301|Scorecard__NM301__Helixmith_NM301]] |
 
 ## 9. Raw Report
 

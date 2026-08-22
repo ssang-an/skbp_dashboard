@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.asiae.co.kr/en/article/2025082209351631429 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__intractable_brain_diseases_therapy,_Dong-AST|Asset__intractable_brain_diseases_therapy,_Dong-AST]]
-- [[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__20260820|Scorecard__intractable_brain_diseases_therapy,_Dong-AST__20260820]]
+- [[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST|Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST]]
 
 ## Extracted Claims
 

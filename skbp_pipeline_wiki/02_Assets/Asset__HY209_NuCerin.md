@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Shaperon_HY209_NuCerin_20260622]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__HY209_TDCA_activates_GPCR19_TGR5_and_modulates_GPCR19-P2X7_i
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer’s_disease|Alzheimer’s disease]]"
-scorecard: "[[10_Scorecards/Scorecard__HY209_NuCerin__20260622|Scorecard__HY209_NuCerin__20260622]]"
+scorecard: "[[10_Scorecards/Scorecard__HY209_NuCerin__Shaperon_HY209_NuCerin_20260622|Scorecard__HY209_NuCerin__Shaperon_HY209_NuCerin_20260622]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__Cytokine_신경조절|Cytokine 신경조절]]"
 total_score: 16
@@ -57,7 +57,7 @@ HY209/NuCerin is a strong SKBP Neuroimmune-fit oral GPCR19/TGR5-P2X7/NLRP3 Alzhe
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__HY209_NuCerin__20260622]]
+![[10_Scorecards/Scorecard__HY209_NuCerin__Shaperon_HY209_NuCerin_20260622]]
 
 ## 5. Knowledge Links
 
@@ -100,7 +100,7 @@ HY209/NuCerin is a strong SKBP Neuroimmune-fit oral GPCR19/TGR5-P2X7/NLRP3 Alzhe
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260622 | 16/21 | Watch | [[10_Scorecards/Scorecard__HY209_NuCerin__20260622|Scorecard__HY209_NuCerin__20260622]] |
+| 20260622 | 16/21 | Watch | [[10_Scorecards/Scorecard__HY209_NuCerin__Shaperon_HY209_NuCerin_20260622|Scorecard__HY209_NuCerin__Shaperon_HY209_NuCerin_20260622]] |
 
 ## 9. Raw Report
 

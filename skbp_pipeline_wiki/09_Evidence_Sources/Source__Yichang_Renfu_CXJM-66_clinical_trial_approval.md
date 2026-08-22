@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/regulatory"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | regulatory |
 | Reliability | medium |
 | URL | https://en.likang-pharma.com/news/213.html |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Reports NMPA approval for clinical trials of CXJM-66 injection for surgical anes
 ## Used In
 
 - [[02_Assets/Asset__CXJM-66_Injection|Asset__CXJM-66_Injection]]
-- [[10_Scorecards/Scorecard__CXJM-66_Injection__20260623|Scorecard__CXJM-66_Injection__20260623]]
+- [[10_Scorecards/Scorecard__CXJM-66_Injection__Humanwell_CXJM-66_fast_triage_20260623|Scorecard__CXJM-66_Injection__Humanwell_CXJM-66_fast_triage_20260623]]
 
 ## Extracted Claims
 

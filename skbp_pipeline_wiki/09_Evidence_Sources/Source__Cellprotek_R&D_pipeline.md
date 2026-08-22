@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.cellprotek.com/science-and-medicine/rd-pipeline/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -34,8 +34,8 @@ confidence: "medium"
 
 - [[02_Assets/Asset__YC-5_Injection|Asset__YC-5_Injection]]
 - [[02_Assets/Asset__YC-6|Asset__YC-6]]
-- [[10_Scorecards/Scorecard__YC-5_Injection__20260807|Scorecard__YC-5_Injection__20260807]]
-- [[10_Scorecards/Scorecard__YC-6__20260807|Scorecard__YC-6__20260807]]
+- [[10_Scorecards/Scorecard__YC-5_Injection__Cellprotek_Pharmaceutical_YC-5_Injection|Scorecard__YC-5_Injection__Cellprotek_Pharmaceutical_YC-5_Injection]]
+- [[10_Scorecards/Scorecard__YC-6__Cellprotek_Pharmaceutical_YC-6|Scorecard__YC-6__Cellprotek_Pharmaceutical_YC-6]]
 
 ## Extracted Claims
 

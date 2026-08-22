@@ -6,8 +6,8 @@ aliases:
   - "therapeutic_cell_fusion_using_engineered_stem_cells_to_restore_diseased_dff3bf62"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

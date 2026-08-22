@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Threebrooks_Therapeutics_3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Small-molecule_TRPML1_agonism_to_trigger_lysosomal_Ca2+_rele
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Early_Alzheimer's_disease;_Parkinson's_disease_expansion_supported_by_c_56c9e561|Early Alzheimer's disease; Parkinson's disease expansion supported by company preclinical data]]"
-scorecard: "[[10_Scorecards/Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807|Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807]]"
+scorecard: "[[10_Scorecards/Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__Threebrooks_Therapeutics_3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__Threebrooks_Therapeutics_3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]"
 theme: "[[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]"
 cluster: "[[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]]"
 total_score: 17
@@ -57,7 +57,7 @@ Scientifically differentiated and data-rich preclinical TRPML1 program with curr
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807]]
+![[10_Scorecards/Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__Threebrooks_Therapeutics_3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]
 
 ## 5. Knowledge Links
 
@@ -101,7 +101,7 @@ Scientifically differentiated and data-rich preclinical TRPML1 program with curr
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260807 | 17/21 | Shortlist | [[10_Scorecards/Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807|Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__20260807]] |
+| 20260807 | 17/21 | Shortlist | [[10_Scorecards/Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__Threebrooks_Therapeutics_3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__Threebrooks_Therapeutics_3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]] |
 
 ## 9. Raw Report
 

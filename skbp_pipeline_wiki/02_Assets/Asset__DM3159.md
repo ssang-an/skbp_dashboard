@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/DigmBio_Inc._DM3159]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__TAS1R3_agonism_activating_signaling_for_neuroprotection_and_
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__DM3159__20260819|Scorecard__DM3159__20260819]]"
+scorecard: "[[10_Scorecards/Scorecard__DM3159__DigmBio_Inc._DM3159|Scorecard__DM3159__DigmBio_Inc._DM3159]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 6
@@ -57,7 +57,7 @@ TAS1R3-AD 축의 기능성 동물근거와 진행 중인 IND-enabling work로 SE
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__DM3159__20260819]]
+![[10_Scorecards/Scorecard__DM3159__DigmBio_Inc._DM3159]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ TAS1R3-AD 축의 기능성 동물근거와 진행 중인 IND-enabling work로 SE
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260819 | 6/21 | Run Full Scout | [[10_Scorecards/Scorecard__DM3159__20260819|Scorecard__DM3159__20260819]] |
+| 20260819 | 6/21 | Run Full Scout | [[10_Scorecards/Scorecard__DM3159__DigmBio_Inc._DM3159|Scorecard__DM3159__DigmBio_Inc._DM3159]] |
 
 ## 9. Raw Report
 

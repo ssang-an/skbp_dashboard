@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/137f0d83ed1e4d5abbb58d228a6133e6 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__AB-ASD-003|Asset__AB-ASD-003]]
-- [[10_Scorecards/Scorecard__AB-ASD-003__20260819|Scorecard__AB-ASD-003__20260819]]
+- [[10_Scorecards/Scorecard__AB-ASD-003__Aliad_Biopharma,_Inc._AB-ASD-003|Scorecard__AB-ASD-003__Aliad_Biopharma,_Inc._AB-ASD-003]]
 
 ## Extracted Claims
 

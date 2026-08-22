@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/publication"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | publication |
 | Reliability | medium |
 | URL | https://aesnet.org/abstractslisting/efficacy-and-tolerability-of-rap-219-a-potential-first-in-class-negative-allosteric-modulator-of-%CE%B38-transmembrane-ampa-receptor-associated-protein-impact-on-rns-long-episodes-and-focal-seizures |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ RAP-219 is described as a selective TARPγ8 AMPAR NAM in focal seizures.
 ## Used In
 
 - [[02_Assets/Asset__RAP-219|Asset__RAP-219]]
-- [[10_Scorecards/Scorecard__RAP-219__20260623|Scorecard__RAP-219__20260623]]
+- [[10_Scorecards/Scorecard__RAP-219__Rapport_RAP-219_fast_triage_20260623|Scorecard__RAP-219__Rapport_RAP-219_fast_triage_20260623]]
 
 ## Extracted Claims
 

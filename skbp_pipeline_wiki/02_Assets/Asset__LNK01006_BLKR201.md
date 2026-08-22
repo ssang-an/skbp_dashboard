@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Lynk_Pharmaceuticals_LNK01006_20260621]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Oral_allosteric_TYK2_inhibitor_targeting_the_JH2_pseudokinas
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Phase_1_healthy-volunteer_study;_intended_development_positioning_inclu_d38001b6|Phase 1 healthy-volunteer study; intended development positioning includes MS and broader CNS/neuroinflammatory or autoimmune/inflammatory diseases.]]"
-scorecard: "[[10_Scorecards/Scorecard__LNK01006_BLKR201__20260621|Scorecard__LNK01006_BLKR201__20260621]]"
+scorecard: "[[10_Scorecards/Scorecard__LNK01006_BLKR201__Lynk_Pharmaceuticals_LNK01006_20260621|Scorecard__LNK01006_BLKR201__Lynk_Pharmaceuticals_LNK01006_20260621]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__Cytokine_신경조절|Cytokine 신경조절]]"
 total_score: 13
@@ -57,7 +57,7 @@ LNK01006 / BLKR201 is a strong SKBP Neuroimmune scientific shortlist candidate b
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__LNK01006_BLKR201__20260621]]
+![[10_Scorecards/Scorecard__LNK01006_BLKR201__Lynk_Pharmaceuticals_LNK01006_20260621]]
 
 ## 5. Knowledge Links
 
@@ -100,7 +100,7 @@ LNK01006 / BLKR201 is a strong SKBP Neuroimmune scientific shortlist candidate b
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260621 | 13/21 | Shortlist | [[10_Scorecards/Scorecard__LNK01006_BLKR201__20260621|Scorecard__LNK01006_BLKR201__20260621]] |
+| 20260621 | 13/21 | Shortlist | [[10_Scorecards/Scorecard__LNK01006_BLKR201__Lynk_Pharmaceuticals_LNK01006_20260621|Scorecard__LNK01006_BLKR201__Lynk_Pharmaceuticals_LNK01006_20260621]] |
 
 ## 9. Raw Report
 

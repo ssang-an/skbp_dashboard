@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/META_Pharmaceuticals_META01_MP5342_20260622]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Oral_small-molecule_LDH_inhibition_intended_to_modulate_immu
 modality: "[[06_Modalities_Platforms/Modality__Oral_small_molecule;_immunometabolism_platform;_AI-assisted_metabolic_p_ce1f0603|Oral small molecule; immunometabolism platform; AI-assisted metabolic pathway target discovery with XtalPi AI/FEP/robotic synthesis support]]"
 indications:
   - "[[07_Indications/Indication__Lead_disclosed_indication_inflammatory_bowel_disease;_expansion_potenti_5e2ac79e|Lead disclosed indication: inflammatory bowel disease; expansion potential claimed for MS, PBC and atopic dermatitis]]"
-scorecard: "[[10_Scorecards/Scorecard__META-01_META-1i_MP-5342__20260622|Scorecard__META-01_META-1i_MP-5342__20260622]]"
+scorecard: "[[10_Scorecards/Scorecard__META-01_META-1i_MP-5342__META_Pharmaceuticals_META01_MP5342_20260622|Scorecard__META-01_META-1i_MP-5342__META_Pharmaceuticals_META01_MP5342_20260622]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__말초_면역기관_연결|말초 면역기관 연결]]"
 total_score: 11
@@ -57,7 +57,7 @@ META-01 appears to be a historical/discontinued discovery entry, while the curre
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__META-01_META-1i_MP-5342__20260622]]
+![[10_Scorecards/Scorecard__META-01_META-1i_MP-5342__META_Pharmaceuticals_META01_MP5342_20260622]]
 
 ## 5. Knowledge Links
 
@@ -101,7 +101,7 @@ META-01 appears to be a historical/discontinued discovery entry, while the curre
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260622 | 11/21 | Watch | [[10_Scorecards/Scorecard__META-01_META-1i_MP-5342__20260622|Scorecard__META-01_META-1i_MP-5342__20260622]] |
+| 20260622 | 11/21 | Watch | [[10_Scorecards/Scorecard__META-01_META-1i_MP-5342__META_Pharmaceuticals_META01_MP5342_20260622|Scorecard__META-01_META-1i_MP-5342__META_Pharmaceuticals_META01_MP5342_20260622]] |
 
 ## 9. Raw Report
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://voronoi.io/en/pipeline.html |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__VRN04-2|Asset__VRN04-2]]
-- [[10_Scorecards/Scorecard__VRN04-2__20260820|Scorecard__VRN04-2__20260820]]
+- [[10_Scorecards/Scorecard__VRN04-2__Voronoi_Anvia_Therapeutics_VRN04-2|Scorecard__VRN04-2__Voronoi_Anvia_Therapeutics_VRN04-2]]
 
 ## Extracted Claims
 

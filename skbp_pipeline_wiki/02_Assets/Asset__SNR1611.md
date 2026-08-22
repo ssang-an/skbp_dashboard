@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/GENUV_SNR1611]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__MEK1_2_inhibitor;_neuroprotective_neuroregenerative_program|
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Amyotrophic_lateral_sclerosis;_Alzheimer's_disease|Amyotrophic lateral sclerosis; Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__SNR1611__20260820|Scorecard__SNR1611__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__SNR1611__GENUV_SNR1611|Scorecard__SNR1611__GENUV_SNR1611]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 5
@@ -57,7 +57,7 @@ Clinical-stage ALS program merits Full Scout despite limited public human data.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__SNR1611__20260820]]
+![[10_Scorecards/Scorecard__SNR1611__GENUV_SNR1611]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ Clinical-stage ALS program merits Full Scout despite limited public human data.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 5/21 | Run Full Scout | [[10_Scorecards/Scorecard__SNR1611__20260820|Scorecard__SNR1611__20260820]] |
+| 20260820 | 5/21 | Run Full Scout | [[10_Scorecards/Scorecard__SNR1611__GENUV_SNR1611|Scorecard__SNR1611__GENUV_SNR1611]] |
 
 ## 9. Raw Report
 

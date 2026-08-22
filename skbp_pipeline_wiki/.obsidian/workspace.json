@@ -1,0 +1,197 @@
+{
+  "main": {
+    "id": "ef64674fef3dfabd",
+    "type": "split",
+    "children": [
+      {
+        "id": "fdaad472595c7b5f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8e866f6e76e919e5",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "그래프 뷰"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "f150d511338f82d5",
+    "type": "split",
+    "children": [
+      {
+        "id": "937c7a78899c1101",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a34f764823d27701",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "파일 탐색기"
+            }
+          },
+          {
+            "id": "e06f10d3560e7589",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "검색"
+            }
+          },
+          {
+            "id": "364d3bc9d748c769",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "북마크"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "right": {
+    "id": "a4d88d48aa3e6bb5",
+    "type": "split",
+    "children": [
+      {
+        "id": "9dd1601bac3bec2b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "474c83f348e23e6e",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": true,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "백링크"
+            }
+          },
+          {
+            "id": "fc9bcca931aa43bf",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "나가는 링크"
+            }
+          },
+          {
+            "id": "9d48eb393a2945be",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "태그"
+            }
+          },
+          {
+            "id": "22bf6066a9ed8410",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "모든 속성"
+            }
+          },
+          {
+            "id": "7a3dd4da8e4883c6",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "개요"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:빠른 전환기 열기": false,
+      "graph:그래프 뷰 열기": false,
+      "canvas:새 캔버스 만들기": false,
+      "daily-notes:오늘의 일일 노트 열기": false,
+      "templates:템플릿 삽입": false,
+      "command-palette:명령어 팔레트 열기": false,
+      "bases:새 베이스 생성하기": false
+    }
+  },
+  "active": "8e866f6e76e919e5",
+  "lastOpenFiles": [
+    "11_Themes_Clusters/Theme__neuroimmune.md",
+    "02_Assets/Asset__NG201.md",
+    "02_Assets/Asset__Alzheimer's_disease_vaccine_(PADIVAX+).md",
+    "02_Assets/Asset__ABS-1230.md",
+    "14_Workflow/Workflow__illimistherapeutics_ilm01.md",
+    "02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7.md",
+    "11_Themes_Clusters/Theme__unknown.md",
+    "07_Indications/Indication__alzheimer's_disease.md",
+    "14_Workflow/Workflow__aribio_ar1002.md",
+    "02_Assets/Asset__WT-1108.md",
+    "09_Evidence_Sources/Source__LRRK2-targeting_antisense_oligonucleotide_in_Parkinson's_disease.md",
+    "06_Modalities_Platforms/Modality__small_molecule.md",
+    "02_Assets/Asset__DM3190.md",
+    "14_Workflow/Workflow__listing_cq_edb3509f.md",
+    "03_Companies/Company__md_healthcare.md"
+  ]
+}

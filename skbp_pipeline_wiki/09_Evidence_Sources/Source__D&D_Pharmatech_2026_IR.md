@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/regulatory_filing"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | regulatory_filing |
 | Reliability | medium |
 | URL | https://kind.krx.co.kr/external/dst/irReference/18082/%5B%EB%94%94%EC%95%A4%EB%94%94%ED%8C%8C%EB%A7%88%ED%85%8D%5D%20IR%20%EC%9E%90%EB%A3%8C_202602_%ED%95%9C%ED%88%AC%20%ED%95%B4%EC%99%B8IR_EN.pdf |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -34,8 +34,8 @@ confidence: "medium"
 
 - [[02_Assets/Asset__1ST-103_(NLY02)|Asset__1ST-103_(NLY02)]]
 - [[02_Assets/Asset__NLY02_(1ST-103)|Asset__NLY02_(1ST-103)]]
-- [[10_Scorecards/Scorecard__1ST-103_(NLY02)__20260820|Scorecard__1ST-103_(NLY02)__20260820]]
-- [[10_Scorecards/Scorecard__NLY02_(1ST-103)__20260820|Scorecard__NLY02_(1ST-103)__20260820]]
+- [[10_Scorecards/Scorecard__1ST-103_(NLY02)__1ST_Biotherapeutics_1ST-103_(NLY02)|Scorecard__1ST-103_(NLY02)__1ST_Biotherapeutics_1ST-103_(NLY02)]]
+- [[10_Scorecards/Scorecard__NLY02_(1ST-103)__1ST_Biotherapeutics_NLY02_(1ST-103)|Scorecard__NLY02_(1ST-103)__1ST_Biotherapeutics_NLY02_(1ST-103)]]
 
 ## Extracted Claims
 

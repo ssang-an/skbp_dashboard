@@ -6,8 +6,8 @@ aliases:
   - "live_biotherapeutic_product_targeting_gut-brain_microbiome_axis"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

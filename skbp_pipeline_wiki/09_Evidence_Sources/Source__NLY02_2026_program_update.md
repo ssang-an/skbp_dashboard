@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/reputable_biotech_news"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | reputable_biotech_news |
 | Reliability | medium |
 | URL | https://www.hankyung.com/article/202603063094i |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__1ST-103|Asset__1ST-103]]
-- [[10_Scorecards/Scorecard__1ST-103__20260820|Scorecard__1ST-103__20260820]]
+- [[10_Scorecards/Scorecard__1ST-103__1ST_Biotherapeutics_D&D_Pharmatech_1ST-103|Scorecard__1ST-103__1ST_Biotherapeutics_D&D_Pharmatech_1ST-103]]
 
 ## Extracted Claims
 

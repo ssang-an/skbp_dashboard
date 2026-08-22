@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.youngenbiomed.com/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology|Asset__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]
-- [[10_Scorecards/Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__20260806|Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__20260806]]
+- [[10_Scorecards/Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__Beijing_Hotgen_Biotech_Alzheimer's_disease_therapy,_Beijing_Youngen_Bio_7dc0ea1a|Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__Beijing_Hotgen_Biotech_Alzheimer's_disease_therapy,_Beijing_Youngen_Bio_7dc0ea1a]]
 
 ## Extracted Claims
 

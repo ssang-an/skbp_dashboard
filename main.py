@@ -8632,12 +8632,24 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "theme": non_empty_text(full_summary.get("theme"), fast_summary.get("theme")),
                 "cluster": non_empty_text(full_summary.get("cluster"), fast_summary.get("cluster")),
                 "listing_manual_fields": {},
-                "pending": {"done": listing_done, "queue_id": None},
-                "fast_triage": {"done": fast_record is not None, "record_id": record_key(fast_record) if fast_record else None},
-                "full_scout": {"done": full_record is not None, "record_id": record_key(full_record) if full_record else None},
+                "pending": {"done": listing_done, "queue_id": None, "completed_at": listing_timestamp},
+                "fast_triage": {
+                    "done": fast_record is not None,
+                    "record_id": record_key(fast_record) if fast_record else None,
+                    "completed_at": record_upload_timestamp(fast_record) if fast_record else "",
+                },
+                "full_scout": {
+                    "done": full_record is not None,
+                    "record_id": record_key(full_record) if full_record else None,
+                    "completed_at": record_upload_timestamp(full_record) if full_record else "",
+                },
                 "shortlisting": {
                     "done": shortlisted_record is not None,
                     "record_id": record_key(shortlisted_record) if shortlisted_record else None,
+                    "completed_at": non_empty_text(
+                        ((shortlisted_record.get("meta") or {}).get("focus_management") or {}).get("added_at")
+                        if shortlisted_record else ""
+                    ),
                 },
                 "metadata": pipeline_metadata,
                 "comment_feed": pipeline_human_comment_feed(group, pipeline_metadata),
@@ -8676,10 +8688,10 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "theme": "",
                 "cluster": "",
                 "listing_manual_fields": candidate_queue_manual_fields(entry),
-                "pending": {"done": True, "queue_id": entry_id},
-                "fast_triage": {"done": False, "record_id": None},
-                "full_scout": {"done": False, "record_id": None},
-                "shortlisting": {"done": False, "record_id": None},
+                "pending": {"done": True, "queue_id": entry_id, "completed_at": str(entry.get("added_at") or "")},
+                "fast_triage": {"done": False, "record_id": None, "completed_at": ""},
+                "full_scout": {"done": False, "record_id": None, "completed_at": ""},
+                "shortlisting": {"done": False, "record_id": None, "completed_at": ""},
                 "metadata": candidate_queue_entry_metadata(entry),
                 "comment_feed": pipeline_human_comment_feed({}, candidate_queue_entry_metadata(entry)),
                 "metadata_owner": {"type": "queue", "queue_id": entry_id},

@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/HealthBiome_HB-03_fast_triage_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Live_biotherapeutic_product,_details_unknown|Live biotherape
 modality: "[[06_Modalities_Platforms/Modality__LBP|LBP]]"
 indications:
   - "[[07_Indications/Indication__Neurodegenerative_Diseases|Neurodegenerative Diseases]]"
-scorecard: "[[10_Scorecards/Scorecard__HB-03__20260623|Scorecard__HB-03__20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__HB-03__HealthBiome_HB-03_fast_triage_20260623|Scorecard__HB-03__HealthBiome_HB-03_fast_triage_20260623]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__말초_면역기관_연결|말초 면역기관 연결]]"
 total_score: 0
@@ -57,7 +57,7 @@ REJECT: HB-02 is better full scout candidate within same company.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__HB-03__20260623]]
+![[10_Scorecards/Scorecard__HB-03__HealthBiome_HB-03_fast_triage_20260623]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ REJECT: HB-02 is better full scout candidate within same company.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | -/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__HB-03__20260623|Scorecard__HB-03__20260623]] |
+| 20260623 | -/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__HB-03__HealthBiome_HB-03_fast_triage_20260623|Scorecard__HB-03__HealthBiome_HB-03_fast_triage_20260623]] |
 
 ## 9. Raw Report
 

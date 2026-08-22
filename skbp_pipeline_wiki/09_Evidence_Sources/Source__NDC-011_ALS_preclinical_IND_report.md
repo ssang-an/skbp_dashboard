@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/disease_news"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | disease_news |
 | Reliability | medium |
 | URL | https://alsnewstoday.com/news/phase-1-testing-ndc-011-dual-combination-als-therapy-cleared-fda/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__NDC-011|Asset__NDC-011]]
-- [[10_Scorecards/Scorecard__NDC-011__20260820|Scorecard__NDC-011__20260820]]
+- [[10_Scorecards/Scorecard__NDC-011__Dr._Noah_Biotech_NDC-011|Scorecard__NDC-011__Dr._Noah_Biotech_NDC-011]]
 
 ## Extracted Claims
 

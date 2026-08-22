@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/0b28edb3230146bca084e523c94678b2 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Lists WT-1108 as small molecule P2X3 antagonist, highest phase Phase 2, Phase I 
 ## Used In
 
 - [[02_Assets/Asset__WT-1108|Asset__WT-1108]]
-- [[10_Scorecards/Scorecard__WT-1108__20260621|Scorecard__WT-1108__20260621]]
+- [[10_Scorecards/Scorecard__WT-1108__Hangzhou_Westan_WT-1108_20260621|Scorecard__WT-1108__Hangzhou_Westan_WT-1108_20260621]]
 
 ## Extracted Claims
 

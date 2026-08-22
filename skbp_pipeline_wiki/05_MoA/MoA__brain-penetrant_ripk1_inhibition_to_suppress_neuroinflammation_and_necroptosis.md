@@ -6,8 +6,8 @@ aliases:
   - "brain-penetrant_ripk1_inhibition_to_suppress_neuroinflammation_and_necroptosis"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/company_release_syndication"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | company_release_syndication |
 | Reliability | medium |
 | URL | https://pr.taosnews.com/article/DRNOAH-BIOTECHs-AI-driven-ALS-Medicine-Receives-US-FDA-Approval-for-Phase-1-Clinical-Trial-IND?storyId=66d59f0d692db2d3a70f443c |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__NDC-011|Asset__NDC-011]]
-- [[10_Scorecards/Scorecard__NDC-011__20260820|Scorecard__NDC-011__20260820]]
+- [[10_Scorecards/Scorecard__NDC-011__Dr._Noah_Biotech_NDC-011|Scorecard__NDC-011__Dr._Noah_Biotech_NDC-011]]
 
 ## Extracted Claims
 

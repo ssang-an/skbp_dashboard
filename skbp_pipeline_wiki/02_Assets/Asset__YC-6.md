@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Cellprotek_Pharmaceutical_YC-6]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Multi-pathway_cytoprotection_including_anti-inflammatory,_ca
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Acute_ischemic_stroke_malignant_cerebral_infarction;_intracerebral_hemorrhage|Acute ischemic stroke / malignant cerebral infarction; intracerebral hemorrhage]]"
-scorecard: "[[10_Scorecards/Scorecard__YC-6__20260807|Scorecard__YC-6__20260807]]"
+scorecard: "[[10_Scorecards/Scorecard__YC-6__Cellprotek_Pharmaceutical_YC-6|Scorecard__YC-6__Cellprotek_Pharmaceutical_YC-6]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 6
@@ -57,7 +57,7 @@ Data quality는 상대적으로 강하지만 current indication fit이 낮아 RE
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__YC-6__20260807]]
+![[10_Scorecards/Scorecard__YC-6__Cellprotek_Pharmaceutical_YC-6]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ Data quality는 상대적으로 강하지만 current indication fit이 낮아 RE
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260807 | 6/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__YC-6__20260807|Scorecard__YC-6__20260807]] |
+| 20260807 | 6/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__YC-6__Cellprotek_Pharmaceutical_YC-6|Scorecard__YC-6__Cellprotek_Pharmaceutical_YC-6]] |
 
 ## 9. Raw Report
 

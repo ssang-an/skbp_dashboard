@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/drug_intelligence_database"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | drug intelligence database |
 | Reliability | medium |
 | URL | https://data.pharmacodia.com/drugs/details/1887768664359305240 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__Aukontals|Asset__Aukontals]]
-- [[10_Scorecards/Scorecard__Aukontals__20260820|Scorecard__Aukontals__20260820]]
+- [[10_Scorecards/Scorecard__Aukontals__Auzone_Biological_Technology_Aukontals|Scorecard__Aukontals__Auzone_Biological_Technology_Aukontals]]
 
 ## Extracted Claims
 

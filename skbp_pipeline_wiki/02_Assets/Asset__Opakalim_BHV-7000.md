@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Biohaven_Opakalim_fast_triage_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Selective_Kv7.2_Kv7.3_potassium_channel_activator|Selective 
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Focal_epilepsy_and_broader_epilepsy_populations|Focal epilepsy and broader epilepsy populations]]"
-scorecard: "[[10_Scorecards/Scorecard__Opakalim_BHV-7000__20260623|Scorecard__Opakalim_BHV-7000__20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__Opakalim_BHV-7000__Biohaven_Opakalim_fast_triage_20260623|Scorecard__Opakalim_BHV-7000__Biohaven_Opakalim_fast_triage_20260623]]"
 theme: "[[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]"
 cluster: "[[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]]"
 total_score: 0
@@ -57,7 +57,7 @@ Strong same-class Kv7.2/7.3 comparator; run Full Scout.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__Opakalim_BHV-7000__20260623]]
+![[10_Scorecards/Scorecard__Opakalim_BHV-7000__Biohaven_Opakalim_fast_triage_20260623]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ Strong same-class Kv7.2/7.3 comparator; run Full Scout.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | -/21 | Run Full Scout | [[10_Scorecards/Scorecard__Opakalim_BHV-7000__20260623|Scorecard__Opakalim_BHV-7000__20260623]] |
+| 20260623 | -/21 | Run Full Scout | [[10_Scorecards/Scorecard__Opakalim_BHV-7000__Biohaven_Opakalim_fast_triage_20260623|Scorecard__Opakalim_BHV-7000__Biohaven_Opakalim_fast_triage_20260623]] |
 
 ## 9. Raw Report
 

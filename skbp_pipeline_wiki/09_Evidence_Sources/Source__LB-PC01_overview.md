@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/73755749f9254077ae1c4000b1a55508 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__LC-PC01|Asset__LC-PC01]]
-- [[10_Scorecards/Scorecard__LC-PC01__20260807|Scorecard__LC-PC01__20260807]]
+- [[10_Scorecards/Scorecard__LC-PC01__Celltrion,_Inc._LC-PC01|Scorecard__LC-PC01__Celltrion,_Inc._LC-PC01]]
 
 ## Extracted Claims
 

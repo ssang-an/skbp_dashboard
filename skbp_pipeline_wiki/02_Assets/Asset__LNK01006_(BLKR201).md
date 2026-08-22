@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Lynk_Pharmaceuticals_Co.,_Ltd._LNK01006_(BLKR201)]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Selective_CNS-penetrant_allosteric_TYK2_inhibition_of_IL-12_
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Multiple_sclerosis;_broader_CNS_neuroinflammatory_diseases|Multiple sclerosis; broader CNS neuroinflammatory diseases]]"
-scorecard: "[[10_Scorecards/Scorecard__LNK01006_(BLKR201)__20260806|Scorecard__LNK01006_(BLKR201)__20260806]]"
+scorecard: "[[10_Scorecards/Scorecard__LNK01006_(BLKR201)__Lynk_Pharmaceuticals_Co.,_Ltd._LNK01006_(BLKR201)|Scorecard__LNK01006_(BLKR201)__Lynk_Pharmaceuticals_Co.,_Ltd._LNK01006_(BLKR201)]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 6
@@ -57,7 +57,7 @@ Phase 1에 진입한 CNS TYK2 neuroinflammation 후보로 Full Scout 권고.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__LNK01006_(BLKR201)__20260806]]
+![[10_Scorecards/Scorecard__LNK01006_(BLKR201)__Lynk_Pharmaceuticals_Co.,_Ltd._LNK01006_(BLKR201)]]
 
 ## 5. Knowledge Links
 
@@ -91,7 +91,7 @@ Phase 1에 진입한 CNS TYK2 neuroinflammation 후보로 Full Scout 권고.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260806 | 6/21 | Run Full Scout | [[10_Scorecards/Scorecard__LNK01006_(BLKR201)__20260806|Scorecard__LNK01006_(BLKR201)__20260806]] |
+| 20260806 | 6/21 | Run Full Scout | [[10_Scorecards/Scorecard__LNK01006_(BLKR201)__Lynk_Pharmaceuticals_Co.,_Ltd._LNK01006_(BLKR201)|Scorecard__LNK01006_(BLKR201)__Lynk_Pharmaceuticals_Co.,_Ltd._LNK01006_(BLKR201)]] |
 
 ## 9. Raw Report
 

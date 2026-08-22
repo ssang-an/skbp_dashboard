@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Kine_Sciences_KINE-501D]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Peptide|Peptide]]"
 indications:
   - "[[07_Indications/Indication__Parkinson's_disease|Parkinson's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__KINE-501D__20260818|Scorecard__KINE-501D__20260818]]"
+scorecard: "[[10_Scorecards/Scorecard__KINE-501D__Kine_Sciences_KINE-501D|Scorecard__KINE-501D__Kine_Sciences_KINE-501D]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 2
@@ -57,7 +57,7 @@ TR 2이나 공개 MoA/Data가 부족하다.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__KINE-501D__20260818]]
+![[10_Scorecards/Scorecard__KINE-501D__Kine_Sciences_KINE-501D]]
 
 ## 5. Knowledge Links
 
@@ -89,7 +89,7 @@ TR 2이나 공개 MoA/Data가 부족하다.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260818 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__KINE-501D__20260818|Scorecard__KINE-501D__20260818]] |
+| 20260818 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__KINE-501D__Kine_Sciences_KINE-501D|Scorecard__KINE-501D__Kine_Sciences_KINE-501D]] |
 
 ## 9. Raw Report
 

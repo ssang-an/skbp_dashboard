@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/BIORCHESTRA_BMD-002]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__ASO_RNA_interference_delivered_with_BDDS;_molecular_target_u
 modality: "[[06_Modalities_Platforms/Modality__RNA_therapy|RNA therapy]]"
 indications:
   - "[[07_Indications/Indication__Epilepsy;_drug-resistant_epilepsy_including_LGS_Dravet_positioning|Epilepsy; drug-resistant epilepsy including LGS/Dravet positioning]]"
-scorecard: "[[10_Scorecards/Scorecard__BMD-002__20260820|Scorecard__BMD-002__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__BMD-002__BIORCHESTRA_BMD-002|Scorecard__BMD-002__BIORCHESTRA_BMD-002]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 5
@@ -57,7 +57,7 @@ Target 비공개 리스크는 있으나 정량 전임상 신호로 SELECT입니�
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__BMD-002__20260820]]
+![[10_Scorecards/Scorecard__BMD-002__BIORCHESTRA_BMD-002]]
 
 ## 5. Knowledge Links
 
@@ -89,7 +89,7 @@ Target 비공개 리스크는 있으나 정량 전임상 신호로 SELECT입니�
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 5/21 | Run Full Scout | [[10_Scorecards/Scorecard__BMD-002__20260820|Scorecard__BMD-002__20260820]] |
+| 20260820 | 5/21 | Run Full Scout | [[10_Scorecards/Scorecard__BMD-002__BIORCHESTRA_BMD-002|Scorecard__BMD-002__BIORCHESTRA_BMD-002]] |
 
 ## 9. Raw Report
 

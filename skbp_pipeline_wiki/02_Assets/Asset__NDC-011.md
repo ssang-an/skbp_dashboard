@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Dr._Noah_Biotech_NDC-011]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Combination_therapy_producing_PI3K-dependent_neuronal_protec
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Amyotrophic_lateral_sclerosis|Amyotrophic lateral sclerosis]]"
-scorecard: "[[10_Scorecards/Scorecard__NDC-011__20260820|Scorecard__NDC-011__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__NDC-011__Dr._Noah_Biotech_NDC-011|Scorecard__NDC-011__Dr._Noah_Biotech_NDC-011]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 9
@@ -57,7 +57,7 @@ IND-cleared ALS combination으로 기전·데이터가 강해 SELECT입니다.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__NDC-011__20260820]]
+![[10_Scorecards/Scorecard__NDC-011__Dr._Noah_Biotech_NDC-011]]
 
 ## 5. Knowledge Links
 
@@ -90,7 +90,7 @@ IND-cleared ALS combination으로 기전·데이터가 강해 SELECT입니다.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__NDC-011__20260820|Scorecard__NDC-011__20260820]] |
+| 20260820 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__NDC-011__Dr._Noah_Biotech_NDC-011|Scorecard__NDC-011__Dr._Noah_Biotech_NDC-011]] |
 
 ## 9. Raw Report
 

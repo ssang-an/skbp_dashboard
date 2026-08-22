@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/pipeline_database"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | pipeline_database |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/b00cbe607d104b6c8a5e7a7db02340af |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__AST-030|Asset__AST-030]]
-- [[10_Scorecards/Scorecard__AST-030__20260806|Scorecard__AST-030__20260806]]
+- [[10_Scorecards/Scorecard__AST-030__Astrogen_AST-030|Scorecard__AST-030__Astrogen_AST-030]]
 
 ## Extracted Claims
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_company_pipeline"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_company_pipeline |
 | Reliability | medium |
 | URL | https://atogen.kr/en/research/pipeline/overview/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__LABthera-003|Asset__LABthera-003]]
-- [[10_Scorecards/Scorecard__LABthera-003__20260806|Scorecard__LABthera-003__20260806]]
+- [[10_Scorecards/Scorecard__LABthera-003__AtoGen_Co.,_Ltd._LABthera-003|Scorecard__LABthera-003__AtoGen_Co.,_Ltd._LABthera-003]]
 
 ## Extracted Claims
 

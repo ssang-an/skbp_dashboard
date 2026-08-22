@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/protein_homeostasis"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Amyloid_Solution_Inc_AS-603]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Direct_chemical_dissociation_clearance_of_Aβ_and_tau_aggreg
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__AS-603__20260819|Scorecard__AS-603__20260819]]"
+scorecard: "[[10_Scorecards/Scorecard__AS-603__Amyloid_Solution_Inc_AS-603|Scorecard__AS-603__Amyloid_Solution_Inc_AS-603]]"
 theme: "[[11_Themes_Clusters/Theme__Protein_Homeostasis|Protein Homeostasis]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 9
@@ -57,7 +57,7 @@ AD + dual aggregate disaggregation + Phase 1/strong preclinical package로 SELEC
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__AS-603__20260819]]
+![[10_Scorecards/Scorecard__AS-603__Amyloid_Solution_Inc_AS-603]]
 
 ## 5. Knowledge Links
 
@@ -89,7 +89,7 @@ AD + dual aggregate disaggregation + Phase 1/strong preclinical package로 SELEC
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260819 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__AS-603__20260819|Scorecard__AS-603__20260819]] |
+| 20260819 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__AS-603__Amyloid_Solution_Inc_AS-603|Scorecard__AS-603__Amyloid_Solution_Inc_AS-603]] |
 
 ## 9. Raw Report
 

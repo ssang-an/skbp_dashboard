@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Kyungpook_National_University___ISU_ABXIS_ISU203]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Anti-ASM_monoclonal_antibody;_neuroinflammation_suppression_
 modality: "[[06_Modalities_Platforms/Modality__Antibody|Antibody]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__ISU203__20260820|Scorecard__ISU203__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__ISU203__Kyungpook_National_University_ISU_ABXIS_ISU203|Scorecard__ISU203__Kyungpook_National_University_ISU_ABXIS_ISU203]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 8
@@ -57,7 +57,7 @@ Same SELECT-worthy ISU203 program; ownership/collaboration mapping should be cla
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__ISU203__20260820]]
+![[10_Scorecards/Scorecard__ISU203__Kyungpook_National_University_ISU_ABXIS_ISU203]]
 
 ## 5. Knowledge Links
 
@@ -89,7 +89,7 @@ Same SELECT-worthy ISU203 program; ownership/collaboration mapping should be cla
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 8/21 | Run Full Scout | [[10_Scorecards/Scorecard__ISU203__20260820|Scorecard__ISU203__20260820]] |
+| 20260820 | 8/21 | Run Full Scout | [[10_Scorecards/Scorecard__ISU203__Kyungpook_National_University_ISU_ABXIS_ISU203|Scorecard__ISU203__Kyungpook_National_University_ISU_ABXIS_ISU203]] |
 
 ## 9. Raw Report
 

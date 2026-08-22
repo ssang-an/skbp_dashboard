@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Hanyang_University_Fusion_Protein_MS_fast_triage_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Fusion_protein_immunomodulation,_details_unknown|Fusion prot
 modality: "[[06_Modalities_Platforms/Modality__Fusion_Protein|Fusion Protein]]"
 indications:
   - "[[07_Indications/Indication__Multiple_Sclerosis;_allergic_asthma;_transplant_rejection|Multiple Sclerosis; allergic asthma; transplant rejection]]"
-scorecard: "[[10_Scorecards/Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623|Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__Hanyang_University_Fusion_Protein_MS_fast_triage_20260623|Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__Hanyang_University_Fusion_Protein_MS_fast_triage_20260623]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__손상-질환_면역조절|손상/질환 면역조절]]"
 total_score: 0
@@ -57,7 +57,7 @@ REJECT: source evidence too thin for full scout now.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623]]
+![[10_Scorecards/Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__Hanyang_University_Fusion_Protein_MS_fast_triage_20260623]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ REJECT: source evidence too thin for full scout now.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | -/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623|Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623]] |
+| 20260623 | -/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__Hanyang_University_Fusion_Protein_MS_fast_triage_20260623|Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__Hanyang_University_Fusion_Protein_MS_fast_triage_20260623]] |
 
 ## 9. Raw Report
 

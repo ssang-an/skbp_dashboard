@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/LISCure_Biosciences_LB-P4]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Microbiome_microbial-metabolite_based_CNS_modulation|Microbi
 modality: "[[06_Modalities_Platforms/Modality__Other|Other]]"
 indications:
   - "[[07_Indications/Indication__Parkinson's_disease;_Alzheimer's_disease|Parkinson's disease; Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__LB-P4__20260820|Scorecard__LB-P4__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__LB-P4__LISCure_Biosciences_LB-P4|Scorecard__LB-P4__LISCure_Biosciences_LB-P4]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 4
@@ -57,7 +57,7 @@ Interest-indication fit is present, but mechanistic/data maturity is insufficien
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__LB-P4__20260820]]
+![[10_Scorecards/Scorecard__LB-P4__LISCure_Biosciences_LB-P4]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ Interest-indication fit is present, but mechanistic/data maturity is insufficien
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__LB-P4__20260820|Scorecard__LB-P4__20260820]] |
+| 20260820 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__LB-P4__LISCure_Biosciences_LB-P4|Scorecard__LB-P4__LISCure_Biosciences_LB-P4]] |
 
 ## 9. Raw Report
 

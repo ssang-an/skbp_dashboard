@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/drug/14a75c28387e43a581709313cb13f52e |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__CV-06|Asset__CV-06]]
-- [[10_Scorecards/Scorecard__CV-06__20260807|Scorecard__CV-06__20260807]]
+- [[10_Scorecards/Scorecard__CV-06__Cellivery_Therapeutics,_Inc._CV-06|Scorecard__CV-06__Cellivery_Therapeutics,_Inc._CV-06]]
 
 ## Extracted Claims
 

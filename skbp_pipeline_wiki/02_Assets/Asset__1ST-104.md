@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/1ST_Biotherapeutics,_Inc._1ST-104]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Dual_LRRK2_c-Abl_kinase_inhibition_with_pRab10_and_pCrkL_sup
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Parkinson's_disease|Parkinson's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__1ST-104__20260818|Scorecard__1ST-104__20260818]]"
+scorecard: "[[10_Scorecards/Scorecard__1ST-104__1ST_Biotherapeutics,_Inc._1ST-104|Scorecard__1ST-104__1ST_Biotherapeutics,_Inc._1ST-104]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__Cytokine_신경조절|Cytokine 신경조절]]"
 total_score: 12
@@ -57,7 +57,7 @@ evidence_level: "E3"
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__1ST-104__20260818]]
+![[10_Scorecards/Scorecard__1ST-104__1ST_Biotherapeutics,_Inc._1ST-104]]
 
 ## 5. Knowledge Links
 
@@ -101,7 +101,7 @@ evidence_level: "E3"
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260818 | 12/21 | Watch | [[10_Scorecards/Scorecard__1ST-104__20260818|Scorecard__1ST-104__20260818]] |
+| 20260818 | 12/21 | Watch | [[10_Scorecards/Scorecard__1ST-104__1ST_Biotherapeutics,_Inc._1ST-104|Scorecard__1ST-104__1ST_Biotherapeutics,_Inc._1ST-104]] |
 
 ## 9. Raw Report
 

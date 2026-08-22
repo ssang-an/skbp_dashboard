@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Hyperway_Pharmaceutical_Co.,_Ltd._HBW-015]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Inhibitor_of_an_undisclosed_nociceptive_ion_channel|Inhibito
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Pain;_efficacy_tested_in_acute_and_CCI_neuropathic_pain_models|Pain; efficacy tested in acute and CCI neuropathic pain models]]"
-scorecard: "[[10_Scorecards/Scorecard__HBW-015__20260806|Scorecard__HBW-015__20260806]]"
+scorecard: "[[10_Scorecards/Scorecard__HBW-015__Hyperway_Pharmaceutical_Co.,_Ltd._HBW-015|Scorecard__HBW-015__Hyperway_Pharmaceutical_Co.,_Ltd._HBW-015]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 4
@@ -57,7 +57,7 @@ evidence_level: "E0"
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__HBW-015__20260806]]
+![[10_Scorecards/Scorecard__HBW-015__Hyperway_Pharmaceutical_Co.,_Ltd._HBW-015]]
 
 ## 5. Knowledge Links
 
@@ -89,7 +89,7 @@ evidence_level: "E0"
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260806 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__HBW-015__20260806|Scorecard__HBW-015__20260806]] |
+| 20260806 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__HBW-015__Hyperway_Pharmaceutical_Co.,_Ltd._HBW-015|Scorecard__HBW-015__Hyperway_Pharmaceutical_Co.,_Ltd._HBW-015]] |
 
 ## 9. Raw Report
 

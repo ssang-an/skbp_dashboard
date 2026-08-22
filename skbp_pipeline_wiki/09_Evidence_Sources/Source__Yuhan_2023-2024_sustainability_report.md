@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/regulatory_filing"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | regulatory_filing |
 | Reliability | medium |
 | URL | https://kind.krx.co.kr/external/2024/06/28/001185/20240628002143/%EC%9C%A0%ED%95%9C%EC%96%91%ED%96%89%20%EC%A7%80%EC%86%8D%EA%B0%80%EB%8A%A5%EA%B2%BD%EC%98%81%EB%B3%B4%EA%B3%A0%EC%84%9C%202023-2024.pdf |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__YHC2133|Asset__YHC2133]]
-- [[10_Scorecards/Scorecard__YHC2133__20260820|Scorecard__YHC2133__20260820]]
+- [[10_Scorecards/Scorecard__YHC2133__Yuhan_YHC2133|Scorecard__YHC2133__Yuhan_YHC2133]]
 
 ## Extracted Claims
 

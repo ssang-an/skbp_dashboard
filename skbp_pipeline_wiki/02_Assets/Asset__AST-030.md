@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Astrogen_AST-030]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Parkinson's_disease;_pulmonary_fibrosis|Parkinson's disease; pulmonary fibrosis]]"
-scorecard: "[[10_Scorecards/Scorecard__AST-030__20260806|Scorecard__AST-030__20260806]]"
+scorecard: "[[10_Scorecards/Scorecard__AST-030__Astrogen_AST-030|Scorecard__AST-030__Astrogen_AST-030]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 2
@@ -57,7 +57,7 @@ evidence_level: "E0"
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__AST-030__20260806]]
+![[10_Scorecards/Scorecard__AST-030__Astrogen_AST-030]]
 
 ## 5. Knowledge Links
 
@@ -90,7 +90,7 @@ evidence_level: "E0"
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260806 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__AST-030__20260806|Scorecard__AST-030__20260806]] |
+| 20260806 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__AST-030__Astrogen_AST-030|Scorecard__AST-030__Astrogen_AST-030]] |
 
 ## 9. Raw Report
 

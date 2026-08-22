@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Curamys_Inc._CUR202]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Therapeutic_cell_fusion_using_engineered_stem_cells_to_resto
 modality: "[[06_Modalities_Platforms/Modality__Cell_therapy|Cell therapy]]"
 indications:
   - "[[07_Indications/Indication__Amyotrophic_lateral_sclerosis_(Lou_Gehrig's_disease)|Amyotrophic lateral sclerosis (Lou Gehrig's disease)]]"
-scorecard: "[[10_Scorecards/Scorecard__CUR202__20260819|Scorecard__CUR202__20260819]]"
+scorecard: "[[10_Scorecards/Scorecard__CUR202__Curamys_Inc._CUR202|Scorecard__CUR202__Curamys_Inc._CUR202]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 8
@@ -57,7 +57,7 @@ ALS 관심 적응증 + 자산별 기능검증 + 35% 생존연장으로 SELECT입
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__CUR202__20260819]]
+![[10_Scorecards/Scorecard__CUR202__Curamys_Inc._CUR202]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ ALS 관심 적응증 + 자산별 기능검증 + 35% 생존연장으로 SELECT입
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260819 | 8/21 | Run Full Scout | [[10_Scorecards/Scorecard__CUR202__20260819|Scorecard__CUR202__20260819]] |
+| 20260819 | 8/21 | Run Full Scout | [[10_Scorecards/Scorecard__CUR202__Curamys_Inc._CUR202|Scorecard__CUR202__Curamys_Inc._CUR202]] |
 
 ## 9. Raw Report
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/publication"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | publication |
 | Reliability | high |
 | URL | https://pmc.ncbi.nlm.nih.gov/articles/PMC12927688/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Phase 1b/2a clinical trial of bexicaserin in DEE.
 ## Used In
 
 - [[02_Assets/Asset__Bexicaserin_LP352|Asset__Bexicaserin_LP352]]
-- [[10_Scorecards/Scorecard__Bexicaserin_LP352__20260623|Scorecard__Bexicaserin_LP352__20260623]]
+- [[10_Scorecards/Scorecard__Bexicaserin_LP352__Lundbeck_Bexicaserin_fast_triage_20260623|Scorecard__Bexicaserin_LP352__Lundbeck_Bexicaserin_fast_triage_20260623]]
 
 ## Extracted Claims
 

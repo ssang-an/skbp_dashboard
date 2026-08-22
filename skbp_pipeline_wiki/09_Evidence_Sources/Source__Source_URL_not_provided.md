@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | source_url_not_provided |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -35,9 +35,9 @@ confidence: "medium"
 - [[02_Assets/Asset__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection|Asset__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection]]
 - [[02_Assets/Asset__HB018|Asset__HB018]]
 - [[02_Assets/Asset__Lead_compound|Asset__Lead_compound]]
-- [[10_Scorecards/Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623|Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__20260623]]
-- [[10_Scorecards/Scorecard__HB018__20260623|Scorecard__HB018__20260623]]
-- [[10_Scorecards/Scorecard__Lead_compound__20260623|Scorecard__Lead_compound__20260623]]
+- [[10_Scorecards/Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__Hanyang_University_Fusion_Protein_MS_fast_triage_20260623|Scorecard__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection__Hanyang_University_Fusion_Protein_MS_fast_triage_20260623]]
+- [[10_Scorecards/Scorecard__HB018__Hefei_Huafang_HB018_fast_triage_20260623|Scorecard__HB018__Hefei_Huafang_HB018_fast_triage_20260623]]
+- [[10_Scorecards/Scorecard__Lead_compound__Hanyang_University_Lead_compound_fast_triage_20260623|Scorecard__Lead_compound__Hanyang_University_Lead_compound_fast_triage_20260623]]
 
 ## Extracted Claims
 

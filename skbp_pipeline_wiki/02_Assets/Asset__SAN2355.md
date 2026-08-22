@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Jazz_Saniona_SAN2355_fast_triage_20260623]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Selective_small-molecule_activator_of_Kv7.2_Kv7.3_potassium_
 modality: "[[06_Modalities_Platforms/Modality__Oral_small_molecule|Oral small molecule]]"
 indications:
   - "[[07_Indications/Indication__Epilepsy|Epilepsy]]"
-scorecard: "[[10_Scorecards/Scorecard__SAN2355__20260623|Scorecard__SAN2355__20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__SAN2355__Jazz_Saniona_SAN2355_fast_triage_20260623|Scorecard__SAN2355__Jazz_Saniona_SAN2355_fast_triage_20260623]]"
 theme: "[[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]"
 cluster: "[[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]]"
 total_score: 0
@@ -57,7 +57,7 @@ Early Kv7.2/7.3 asset with BD benchmark value; run Full Scout if mapping Kv7 dea
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__SAN2355__20260623]]
+![[10_Scorecards/Scorecard__SAN2355__Jazz_Saniona_SAN2355_fast_triage_20260623]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ Early Kv7.2/7.3 asset with BD benchmark value; run Full Scout if mapping Kv7 dea
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | -/21 | Run Full Scout | [[10_Scorecards/Scorecard__SAN2355__20260623|Scorecard__SAN2355__20260623]] |
+| 20260623 | -/21 | Run Full Scout | [[10_Scorecards/Scorecard__SAN2355__Jazz_Saniona_SAN2355_fast_triage_20260623|Scorecard__SAN2355__Jazz_Saniona_SAN2355_fast_triage_20260623]] |
 
 ## 9. Raw Report
 

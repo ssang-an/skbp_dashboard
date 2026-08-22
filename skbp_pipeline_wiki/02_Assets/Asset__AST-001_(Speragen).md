@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/e_i_balance"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Astrogen,_inc._AST-001_(Speragen)]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__L-serine-based_modulation_inhibition_of_SK-channel_current_i
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Pediatric_autism_spectrum_disorder_core_symptoms,_including_social_comm_31934ef0|Pediatric autism spectrum disorder core symptoms, including social communication/social interaction]]"
-scorecard: "[[10_Scorecards/Scorecard__AST-001_(Speragen)__20260819|Scorecard__AST-001_(Speragen)__20260819]]"
+scorecard: "[[10_Scorecards/Scorecard__AST-001_(Speragen)__Astrogen,_inc._AST-001_(Speragen)|Scorecard__AST-001_(Speragen)__Astrogen,_inc._AST-001_(Speragen)]]"
 theme: "[[11_Themes_Clusters/Theme__E-I_Balance|E/I Balance]]"
 cluster: "[[11_Themes_Clusters/Cluster__Ion_Channel|Ion Channel]]"
 total_score: 10
@@ -57,7 +57,7 @@ AST-001 is a clinically mature, registration-stage ASD core-symptom candidate wi
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__AST-001_(Speragen)__20260819]]
+![[10_Scorecards/Scorecard__AST-001_(Speragen)__Astrogen,_inc._AST-001_(Speragen)]]
 
 ## 5. Knowledge Links
 
@@ -99,7 +99,7 @@ AST-001 is a clinically mature, registration-stage ASD core-symptom candidate wi
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260819 | 10/21 | Deprioritize | [[10_Scorecards/Scorecard__AST-001_(Speragen)__20260819|Scorecard__AST-001_(Speragen)__20260819]] |
+| 20260819 | 10/21 | Deprioritize | [[10_Scorecards/Scorecard__AST-001_(Speragen)__Astrogen,_inc._AST-001_(Speragen)|Scorecard__AST-001_(Speragen)__Astrogen,_inc._AST-001_(Speragen)]] |
 
 ## 9. Raw Report
 

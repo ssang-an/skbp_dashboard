@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://patents.google.com/patent/WO2023230099A1/en |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__SRN-008|Asset__SRN-008]]
-- [[10_Scorecards/Scorecard__SRN-008__20260820|Scorecard__SRN-008__20260820]]
+- [[10_Scorecards/Scorecard__SRN-008__siRNAgen_Therapeutics_SRN-008|Scorecard__SRN-008__siRNAgen_Therapeutics_SRN-008]]
 
 ## Extracted Claims
 

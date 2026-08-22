@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Hangzhou_Westan_WT-1108_20260621]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Selective_P2X3_receptor_antagonism_intended_to_reduce_ATP-me
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Refractory_or_unexplained_chronic_cough_(RCC_UCC)|Refractory or unexplained chronic cough (RCC/UCC)]]"
-scorecard: "[[10_Scorecards/Scorecard__WT-1108__20260621|Scorecard__WT-1108__20260621]]"
+scorecard: "[[10_Scorecards/Scorecard__WT-1108__Hangzhou_Westan_WT-1108_20260621|Scorecard__WT-1108__Hangzhou_Westan_WT-1108_20260621]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 8
@@ -57,7 +57,7 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__WT-1108__20260621]]
+![[10_Scorecards/Scorecard__WT-1108__Hangzhou_Westan_WT-1108_20260621]]
 
 ## 5. Knowledge Links
 
@@ -100,7 +100,7 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260621 | 8/21 | Watch | [[10_Scorecards/Scorecard__WT-1108__20260621|Scorecard__WT-1108__20260621]] |
+| 20260621 | 8/21 | Watch | [[10_Scorecards/Scorecard__WT-1108__Hangzhou_Westan_WT-1108_20260621|Scorecard__WT-1108__Hangzhou_Westan_WT-1108_20260621]] |
 
 ## 9. Raw Report
 

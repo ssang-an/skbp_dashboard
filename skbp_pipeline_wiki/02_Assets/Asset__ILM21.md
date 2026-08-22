@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Illimis_Therapeutics,_Inc._ILM21]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__GAIA_TAM-receptor-mediated_anti-inflammatory_phagocytic_clea
 modality: "[[06_Modalities_Platforms/Modality__Protein_biologic|Protein biologic]]"
 indications:
   - "[[07_Indications/Indication__Multiple_sclerosis|Multiple sclerosis]]"
-scorecard: "[[10_Scorecards/Scorecard__ILM21__20260806|Scorecard__ILM21__20260806]]"
+scorecard: "[[10_Scorecards/Scorecard__ILM21__Illimis_Therapeutics,_Inc._ILM21|Scorecard__ILM21__Illimis_Therapeutics,_Inc._ILM21]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 4
@@ -57,7 +57,7 @@ MS와 myelin-debris fit은 높지만 자산별 기능성·데이터 부재로 RE
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__ILM21__20260806]]
+![[10_Scorecards/Scorecard__ILM21__Illimis_Therapeutics,_Inc._ILM21]]
 
 ## 5. Knowledge Links
 
@@ -89,7 +89,7 @@ MS와 myelin-debris fit은 높지만 자산별 기능성·데이터 부재로 RE
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260806 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__ILM21__20260806|Scorecard__ILM21__20260806]] |
+| 20260806 | 4/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__ILM21__Illimis_Therapeutics,_Inc._ILM21|Scorecard__ILM21__Illimis_Therapeutics,_Inc._ILM21]] |
 
 ## 9. Raw Report
 

@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -34,8 +34,8 @@ confidence: "medium"
 
 - [[02_Assets/Asset__LNK01006|Asset__LNK01006]]
 - [[02_Assets/Asset__LNK01006_(BLKR201)|Asset__LNK01006_(BLKR201)]]
-- [[10_Scorecards/Scorecard__LNK01006_(BLKR201)__20260806|Scorecard__LNK01006_(BLKR201)__20260806]]
-- [[10_Scorecards/Scorecard__LNK01006__20260806|Scorecard__LNK01006__20260806]]
+- [[10_Scorecards/Scorecard__LNK01006_(BLKR201)__Lynk_Pharmaceuticals_Co.,_Ltd._LNK01006_(BLKR201)|Scorecard__LNK01006_(BLKR201)__Lynk_Pharmaceuticals_Co.,_Ltd._LNK01006_(BLKR201)]]
+- [[10_Scorecards/Scorecard__LNK01006__Lynk_Pharmaceuticals_LNK01006|Scorecard__LNK01006__Lynk_Pharmaceuticals_LNK01006]]
 
 ## Extracted Claims
 

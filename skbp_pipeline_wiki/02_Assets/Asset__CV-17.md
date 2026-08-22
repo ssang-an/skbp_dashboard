@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Cellivery_Therapeutics,_Inc._CV-17]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__ASO_RNA_interference;_specific_target_undisclosed|ASO / RNA 
 modality: "[[06_Modalities_Platforms/Modality__RNA_therapy|RNA therapy]]"
 indications:
   - "[[07_Indications/Indication__Neurodegenerative_diseases_(unspecified)|Neurodegenerative diseases (unspecified)]]"
-scorecard: "[[10_Scorecards/Scorecard__CV-17__20260807|Scorecard__CV-17__20260807]]"
+scorecard: "[[10_Scorecards/Scorecard__CV-17__Cellivery_Therapeutics,_Inc._CV-17|Scorecard__CV-17__Cellivery_Therapeutics,_Inc._CV-17]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 2
@@ -57,7 +57,7 @@ Broad CNS label만으로는 Full Scout 우선순위가 낮음.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__CV-17__20260807]]
+![[10_Scorecards/Scorecard__CV-17__Cellivery_Therapeutics,_Inc._CV-17]]
 
 ## 5. Knowledge Links
 
@@ -88,7 +88,7 @@ Broad CNS label만으로는 Full Scout 우선순위가 낮음.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260807 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CV-17__20260807|Scorecard__CV-17__20260807]] |
+| 20260807 | 2/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__CV-17__Cellivery_Therapeutics,_Inc._CV-17|Scorecard__CV-17__Cellivery_Therapeutics,_Inc._CV-17]] |
 
 ## 9. Raw Report
 

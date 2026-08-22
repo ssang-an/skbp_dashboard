@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://www.lundbeck.com/us/newsroom/2025/lundbeck-announces-positive-results-from-12-month-open-label-ext |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__Bexicaserin_LP352|Asset__Bexicaserin_LP352]]
-- [[10_Scorecards/Scorecard__Bexicaserin_LP352__20260623|Scorecard__Bexicaserin_LP352__20260623]]
+- [[10_Scorecards/Scorecard__Bexicaserin_LP352__Lundbeck_Bexicaserin_fast_triage_20260623|Scorecard__Bexicaserin_LP352__Lundbeck_Bexicaserin_fast_triage_20260623]]
 
 ## Extracted Claims
 

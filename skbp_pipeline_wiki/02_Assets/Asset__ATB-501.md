@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/unknown"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/Autotelic_Bio_ATB-501]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
 indications:
   - "[[07_Indications/Indication__Unknown|Unknown]]"
-scorecard: "[[10_Scorecards/Scorecard__ATB-501__20260820|Scorecard__ATB-501__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__ATB-501__Autotelic_Bio_ATB-501|Scorecard__ATB-501__Autotelic_Bio_ATB-501]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 0
@@ -57,7 +57,7 @@ ATB-501은 제공된 회사와의 정확한 asset identity가 공개 근거로 �
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__ATB-501__20260820]]
+![[10_Scorecards/Scorecard__ATB-501__Autotelic_Bio_ATB-501]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ ATB-501은 제공된 회사와의 정확한 asset identity가 공개 근거로 �
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 0/21 | Verify asset identity | [[10_Scorecards/Scorecard__ATB-501__20260820|Scorecard__ATB-501__20260820]] |
+| 20260820 | 0/21 | Verify asset identity | [[10_Scorecards/Scorecard__ATB-501__Autotelic_Bio_ATB-501|Scorecard__ATB-501__Autotelic_Bio_ATB-501]] |
 
 ## 9. Raw Report
 

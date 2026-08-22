@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/peer_reviewed_publication_abstract"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | peer_reviewed_publication_abstract |
 | Reliability | medium |
 | URL | https://pmc.ncbi.nlm.nih.gov/articles/PMC11713033/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ Asset-specific memory, synapse and tau findings.
 ## Used In
 
 - [[02_Assets/Asset__ADEL-Y04|Asset__ADEL-Y04]]
-- [[10_Scorecards/Scorecard__ADEL-Y04__20260806|Scorecard__ADEL-Y04__20260806]]
+- [[10_Scorecards/Scorecard__ADEL-Y04__ADEL_ADEL-Y04|Scorecard__ADEL-Y04__ADEL_ADEL-Y04]]
 
 ## Extracted Claims
 

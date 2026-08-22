@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/AriBio_AR1001]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__PDE5_inhibition_with_cGMP-pathway_modulation_and_downstream_
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Early_Alzheimer's_disease|Early Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__AR1001__20260820|Scorecard__AR1001__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__AR1001__AriBio_AR1001|Scorecard__AR1001__AriBio_AR1001]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 9
@@ -57,7 +57,7 @@ evidence_level: "E0"
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__AR1001__20260820]]
+![[10_Scorecards/Scorecard__AR1001__AriBio_AR1001]]
 
 ## 5. Knowledge Links
 
@@ -91,7 +91,7 @@ evidence_level: "E0"
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__AR1001__20260820|Scorecard__AR1001__20260820]] |
+| 20260820 | 9/21 | Run Full Scout | [[10_Scorecards/Scorecard__AR1001__AriBio_AR1001|Scorecard__AR1001__AriBio_AR1001]] |
 
 ## 9. Raw Report
 

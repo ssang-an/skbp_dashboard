@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/government_medical_source"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | government_medical_source |
 | Reliability | medium |
 | URL | https://www.nia.nih.gov/health/alzheimers-treatment/how-alzheimers-disease-treated |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__AUL003|Asset__AUL003]]
-- [[10_Scorecards/Scorecard__AUL003__20260806|Scorecard__AUL003__20260806]]
+- [[10_Scorecards/Scorecard__AUL003__AULBIO_Co.,_Ltd._AUL003|Scorecard__AUL003__AULBIO_Co.,_Ltd._AUL003]]
 
 ## Extracted Claims
 

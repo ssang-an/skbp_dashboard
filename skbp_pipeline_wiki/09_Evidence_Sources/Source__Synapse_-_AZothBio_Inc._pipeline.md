@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/other"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | other |
 | Reliability | medium |
 | URL | https://synapse.patsnap.com/organization/8e13cd3c07e71715c6da726e023d66ee |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__AZBE53206|Asset__AZBE53206]]
-- [[10_Scorecards/Scorecard__AZBE53206__20260820|Scorecard__AZBE53206__20260820]]
+- [[10_Scorecards/Scorecard__AZBE53206__AZothBio_AZBE53206|Scorecard__AZBE53206__AZothBio_AZBE53206]]
 
 ## Extracted Claims
 

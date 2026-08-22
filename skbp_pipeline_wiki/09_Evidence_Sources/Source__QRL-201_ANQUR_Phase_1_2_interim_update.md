@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/official_competitor_news"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | official_competitor_news |
 | Reliability | medium |
 | URL | https://www.quralis.com/news/quralis-demonstrates-effects-on-disease-progression-and-target-engagement-in-anqur-clinical-trial-of-qrl-201-a-first-in-class-precision-medicine-in-development-for-sporadic-als/ |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -33,7 +33,7 @@ STMN2 target engagement, biomarkers and ALSFRS-R signal.
 ## Used In
 
 - [[02_Assets/Asset__GXC-303|Asset__GXC-303]]
-- [[10_Scorecards/Scorecard__GXC-303__20260713|Scorecard__GXC-303__20260713]]
+- [[10_Scorecards/Scorecard__GXC-303__GenixCure_GXC-303_20260713|Scorecard__GXC-303__GenixCure_GXC-303_20260713]]
 
 ## Extracted Claims
 

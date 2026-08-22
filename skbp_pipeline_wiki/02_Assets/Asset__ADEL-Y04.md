@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/others"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/ADEL,_Inc._ADEL-Y04]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__ApoE4-selective_antibody_intended_to_reduce_ApoE4-linked_tau
 modality: "[[06_Modalities_Platforms/Modality__Antibody|Antibody]]"
 indications:
   - "[[07_Indications/Indication__Alzheimer's_disease|Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__ADEL-Y04__20260806|Scorecard__ADEL-Y04__20260806]]"
+scorecard: "[[10_Scorecards/Scorecard__ADEL-Y04__ADEL,_Inc._ADEL-Y04|Scorecard__ADEL-Y04__ADEL,_Inc._ADEL-Y04]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 7
@@ -57,7 +57,7 @@ evidence_level: "E0"
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__ADEL-Y04__20260806]]
+![[10_Scorecards/Scorecard__ADEL-Y04__ADEL,_Inc._ADEL-Y04]]
 
 ## 5. Knowledge Links
 
@@ -89,7 +89,7 @@ evidence_level: "E0"
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260806 | 7/21 | Run Full Scout | [[10_Scorecards/Scorecard__ADEL-Y04__20260806|Scorecard__ADEL-Y04__20260806]] |
+| 20260806 | 7/21 | Run Full Scout | [[10_Scorecards/Scorecard__ADEL-Y04__ADEL,_Inc._ADEL-Y04|Scorecard__ADEL-Y04__ADEL,_Inc._ADEL-Y04]] |
 
 ## 9. Raw Report
 

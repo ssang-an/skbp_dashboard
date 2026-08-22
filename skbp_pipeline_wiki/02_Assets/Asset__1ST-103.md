@@ -7,8 +7,8 @@ tags:
   - "pipeline/asset"
   - "skbp/pipeline_finder"
   - "theme/neuroimmune"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: "[[01_Raw_Reports/1ST_Biotherapeutics___D&D_Pharmatech_1ST-103]]"
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Selective_brain-penetrant_RIPK2_inhibition_to_reduce_neuroin
 modality: "[[06_Modalities_Platforms/Modality__Small_molecule|Small molecule]]"
 indications:
   - "[[07_Indications/Indication__Parkinson's_disease;_Alzheimer's_disease|Parkinson's disease; Alzheimer's disease]]"
-scorecard: "[[10_Scorecards/Scorecard__1ST-103__20260820|Scorecard__1ST-103__20260820]]"
+scorecard: "[[10_Scorecards/Scorecard__1ST-103__1ST_Biotherapeutics_D&D_Pharmatech_1ST-103|Scorecard__1ST-103__1ST_Biotherapeutics_D&D_Pharmatech_1ST-103]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 7
@@ -57,7 +57,7 @@ RIPK2 기반 neuroimmune 자산으로 기전 점수가 높아 SELECT입니다.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__1ST-103__20260820]]
+![[10_Scorecards/Scorecard__1ST-103__1ST_Biotherapeutics_D&D_Pharmatech_1ST-103]]
 
 ## 5. Knowledge Links
 
@@ -90,7 +90,7 @@ RIPK2 기반 neuroimmune 자산으로 기전 점수가 높아 SELECT입니다.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 7/21 | Run Full Scout | [[10_Scorecards/Scorecard__1ST-103__20260820|Scorecard__1ST-103__20260820]] |
+| 20260820 | 7/21 | Run Full Scout | [[10_Scorecards/Scorecard__1ST-103__1ST_Biotherapeutics_D&D_Pharmatech_1ST-103|Scorecard__1ST-103__1ST_Biotherapeutics_D&D_Pharmatech_1ST-103]] |
 
 ## 9. Raw Report
 

@@ -19377,6 +19377,16 @@ body.report-reupload-open {
   padding: 0;
 }
 
+/* Match the generic dashboard cascade specificity: the shared toggle class
+   otherwise receives `order: 3` and moves below the un-ordered card group. */
+.app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) .step0-summary-dashboard > .step0-summary-dashboard-heading {
+  order: 0;
+}
+
+.app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) .step0-summary-dashboard > .step0-summary-cards {
+  order: 1;
+}
+
 /* The global workflow cascade gives standalone dashboard blocks the default
    flex order. Tab 0 deliberately keeps its Listing guide above the dashboard. */
 .step0-panel > .workflow-mode-description[data-workflow-mode="listing"] {
@@ -19420,6 +19430,9 @@ body.report-reupload-open {
   margin: 0 !important;
   border-top: 0;
   border-radius: 0 0 10px 10px;
+  /* This panel sits directly under the toggle header. Its shared panel shadow
+     reads as a dark top shade, so keep this dashboard surface flat. */
+  box-shadow: none;
 }
 
 .step0-stat-strip {
@@ -19492,6 +19505,16 @@ button.step0-stat:focus-visible {
   box-shadow: 0 5px 12px rgba(15, 23, 42, .07);
   outline: none;
   transform: translateY(-1px);
+}
+
+/* Keep the workflow-card colour acknowledgement, but without the elevated
+   top shade or shadow: colour is the only hover feedback. */
+.step0-summary-dashboard button.step0-stat:hover,
+.step0-summary-dashboard button.step0-stat:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 48%, var(--line));
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  box-shadow: none;
+  transform: none;
 }
 
 button.step0-stat.active {

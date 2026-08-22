@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/clinical_trial_registry"
-created_at: "2026-08-21"
-updated_at: "2026-08-21"
+created_at: "2026-08-22"
+updated_at: "2026-08-22"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | clinical_trial_registry |
 | Reliability | medium |
 | URL | https://clinicaltrials.gov/study/NCT07501039 |
-| Accessed / generated date | 2026-08-21 |
+| Accessed / generated date | 2026-08-22 |
 
 ## Evidence Summary
 
@@ -34,8 +34,8 @@ Recruiting Phase 1 SAD/MAD study.
 
 - [[02_Assets/Asset__LNK01006|Asset__LNK01006]]
 - [[02_Assets/Asset__LNK01006_BLKR201|Asset__LNK01006_BLKR201]]
-- [[10_Scorecards/Scorecard__LNK01006_BLKR201__20260621|Scorecard__LNK01006_BLKR201__20260621]]
-- [[10_Scorecards/Scorecard__LNK01006__20260806|Scorecard__LNK01006__20260806]]
+- [[10_Scorecards/Scorecard__LNK01006_BLKR201__Lynk_Pharmaceuticals_LNK01006_20260621|Scorecard__LNK01006_BLKR201__Lynk_Pharmaceuticals_LNK01006_20260621]]
+- [[10_Scorecards/Scorecard__LNK01006__Lynk_Pharmaceuticals_LNK01006|Scorecard__LNK01006__Lynk_Pharmaceuticals_LNK01006]]
 
 ## Extracted Claims
 
