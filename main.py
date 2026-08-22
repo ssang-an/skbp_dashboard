@@ -5170,7 +5170,7 @@ def pipeline_human_comment_feed(
     if base_comment:
         entries.append({
             "source": "Tab 0 Team Review · Listing Comment",
-            "author": str((metadata or {}).get("comment_author") or "Tab 0 Team Review").strip(),
+            "author": str((metadata or {}).get("comment_author") or "Team Review").strip(),
             "created_at": str((metadata or {}).get("comment_updated_at") or (metadata or {}).get("comment_created_at") or "").strip(),
             "body": base_comment,
         })
@@ -5252,12 +5252,11 @@ def pipeline_human_comment_feed(
     base_entries = entries[:1] if entries and entries[0].get("source") == "Tab 0 Team Review · Listing Comment" else []
     if base_entries:
         comment_source = str((metadata or {}).get("comment_source") or "").strip()
-        comment_author = str((metadata or {}).get("comment_author") or "Tab 0 Team Review").strip()
-        base_entries[0]["source"] = (
-            "Tab 0 · Team Comment"
-            if comment_source == "team_review_import" or comment_author == "Tab 0 Team Review"
-            else "Tab 0 · Listing Comment"
-        )
+        comment_author = str((metadata or {}).get("comment_author") or "Team Review").strip()
+        is_bulk_import = comment_source == "team_review_import" or comment_author in {"Tab 0 Team Review", "Team Review"}
+        base_entries[0]["source"] = "일괄 Excel 업로드: Tab 0 · Listing Comment" if is_bulk_import else "Tab 0 · Listing Comment"
+        if is_bulk_import:
+            base_entries[0]["author"] = "Team Review"
     operational_entries = entries[len(base_entries):]
     operational_entries.sort(key=lambda item: str(item.get("created_at") or ""))
     return base_entries + operational_entries
@@ -5349,7 +5348,7 @@ def upsert_system_comment(
 def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
     """Promote Listing and Fast Triage human comments into their durable destinations.
 
-    Tab 0 metadata is an operational note, so it becomes a `Tab 0 Team Review` post on each
+    Tab 0 metadata is an operational note, so it becomes a source-labelled Team Review post on each
     researched record.  Human Fast Triage Final/criterion comments are copied to
     Full Scout's Team Review Workspace as distinct source-labelled posts.  Import
     keys make repeated reuploads idempotent and AI entries are never considered.
@@ -5362,11 +5361,14 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
         identity = str(group.get("asset_identity") or "")
 
         if listing_comment:
+            listing_author = str(metadata.get("comment_author") or "Team Review").strip()
+            if str(metadata.get("comment_source") or "").strip() == "team_review_import" or listing_author in {"Tab 0 Team Review", "Team Review"}:
+                listing_author = "Team Review"
             for target in group_records:
                 if upsert_system_comment(
                     target,
                     import_key=imported_comment_key("tab0-listing", identity),
-                    author=str(metadata.get("comment_author") or "Tab 0 Team Review"),
+                    author=listing_author,
                     body=listing_comment,
                     source="listing_comment_post",
                     created_at=str(metadata.get("comment_created_at") or metadata.get("comment_updated_at") or ""),
@@ -8471,7 +8473,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
         incoming_metadata = {
             "listed_at": added_at,
             "comment": row.get("comment", ""),
-            "comment_author": "Tab 0 Team Review" if row.get("comment", "") else "",
+            "comment_author": "Team Review" if row.get("comment", "") else "",
             "comment_source": "team_review_import" if row.get("comment", "") else "",
             "comment_created_at": added_at if row.get("comment", "") else "",
             "comment_updated_at": added_at if row.get("comment", "") else "",

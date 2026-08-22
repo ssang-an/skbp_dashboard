@@ -249,8 +249,8 @@ class Step0PipelineMetadataTests(unittest.TestCase):
             "comment_created_at": "2026-08-22T09:00:00+00:00",
         })
 
-        self.assertEqual(feed[0]["source"], "Tab 0 · Team Comment")
-        self.assertEqual(feed[0]["author"], "Tab 0 Team Review")
+        self.assertEqual(feed[0]["source"], "일괄 Excel 업로드: Tab 0 · Listing Comment")
+        self.assertEqual(feed[0]["author"], "Team Review")
 
     def test_explicit_edit_can_clear_a_metadata_field(self) -> None:
         merged = main.merge_pipeline_metadata(
@@ -316,11 +316,11 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 4)
         comments = full["meta"]["collaboration"]["comments"]
         self.assertEqual([(item["author"], item["body"]) for item in comments], [
-            ("Tab 0 Team Review", "Tab 0 meeting note"),
+            ("Team Review", "Tab 0 meeting note"),
             ("Fast Triage · Final Comment", "Proceed after BD confirmation."),
             ("Fast Triage · Target Area Relevance", "Confirm the target genetics evidence."),
         ])
-        self.assertEqual(triage["meta"]["collaboration"]["comments"][0]["author"], "Tab 0 Team Review")
+        self.assertEqual(triage["meta"]["collaboration"]["comments"][0]["author"], "Team Review")
         self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 0)
         self.assertEqual(len(full["meta"]["collaboration"]["comments"]), 3)
 
@@ -382,7 +382,7 @@ class Step0PipelineMetadataTests(unittest.TestCase):
             "Proceed after BD confirmation.",
             "Check the in-vivo comparator.",
         ])
-        self.assertEqual(feed[0]["author"], "Tab 0 Team Review")
+        self.assertEqual(feed[0]["author"], "Team Review")
         self.assertFalse(any("AI response" in entry["body"] for entry in feed))
 
 

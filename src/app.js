@@ -10227,13 +10227,14 @@ function step0CommentFeed(row) {
   if (entries.length) return entries.filter((entry) => entry && String(entry.body || '').trim());
   const fallback = String(row?.metadata?.comment || '').trim();
   if (fallback) {
-    const author = String(row?.metadata?.comment_author || 'Tab 0 Team Review');
-    const source = row?.metadata?.comment_source === 'team_review_import' || author === 'Tab 0 Team Review'
-      ? 'Tab 0 · Team Comment'
+    const author = String(row?.metadata?.comment_author || 'Team Review');
+    const isBulkImport = row?.metadata?.comment_source === 'team_review_import' || ['Tab 0 Team Review', 'Team Review'].includes(author);
+    const source = isBulkImport
+      ? '일괄 Excel 업로드: Tab 0 · Listing Comment'
       : 'Tab 0 · Listing Comment';
     return [{
       source,
-      author,
+      author: isBulkImport ? 'Team Review' : author,
       created_at: String(row?.metadata?.comment_updated_at || row?.metadata?.comment_created_at || ''),
       body: fallback
     }];
