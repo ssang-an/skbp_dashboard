@@ -4924,10 +4924,11 @@ def find_matching_identity_group(
     return None
 
 
-PIPELINE_METADATA_FIELDS = ("comment", "contact")
-LISTING_DETAIL_FIELDS = ("country", "modality", "target", "main_indication", "stage")
+PIPELINE_METADATA_FIELDS = ("comment", "contact", "website")
+LISTING_DETAIL_FIELDS = ("country", "modality", "target", "main_indication", "stage", "website")
 LISTING_QUEUE_EDITABLE_FIELDS = ("company", "asset", *LISTING_DETAIL_FIELDS)
 CONTACT_HISTORY_ABSENCE_PATTERN = re.compile(r"^(?:x|[-–—]+)$", flags=re.IGNORECASE)
+LISTING_WEBSITE_PATTERN = re.compile(r"https?://[^\s<>'\"]+", flags=re.IGNORECASE)
 
 
 def is_pipeline_contact_absence_marker(value: Any) -> bool:
@@ -4940,12 +4941,25 @@ def normalize_pipeline_contact(value: Any) -> str:
     return "" if is_pipeline_contact_absence_marker(text) else text
 
 
+def normalize_listing_website(value: Any) -> str:
+    """Keep exactly one safe display URL from a Listing spreadsheet cell."""
+    match = LISTING_WEBSITE_PATTERN.search(str(value or "").strip())
+    if not match:
+        return ""
+    candidate = match.group(0).rstrip(".,;:)]}")
+    parsed = urlsplit(candidate)
+    if parsed.scheme.lower() not in {"http", "https"} or not parsed.netloc:
+        return ""
+    return candidate
+
+
 def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
     raw = value if isinstance(value, dict) else {}
     metadata = {
         "listed_at": str(raw.get("listed_at") or "").strip(),
         "comment": str(raw.get("comment") or "").strip(),
         "contact": normalize_pipeline_contact(raw.get("contact")),
+        "website": normalize_listing_website(raw.get("website")),
         "updated_at": str(raw.get("updated_at") or "").strip(),
     }
     return metadata
@@ -4978,14 +4992,22 @@ def candidate_queue_entry_metadata(entry: dict[str, Any]) -> dict[str, str]:
 def normalize_listing_details(value: Any) -> dict[str, str]:
     """Tab 0-only context. It must not overwrite researched record fields."""
     raw = value if isinstance(value, dict) else {}
-    return {field: str(raw.get(field) or "").strip() for field in LISTING_DETAIL_FIELDS}
+    result = {field: str(raw.get(field) or "").strip() for field in LISTING_DETAIL_FIELDS}
+    result["website"] = normalize_listing_website(raw.get("website"))
+    return result
+
+
+def listing_details_completeness(value: Any) -> int:
+    return sum(bool(item) for item in normalize_listing_details(value).values())
 
 
 def merge_listing_details(existing: Any, incoming: Any) -> dict[str, str]:
-    """Keep previously entered Listing context when a later paste leaves a cell blank."""
+    """Fill omitted fields, and replace conflicts only when the new row is richer."""
     result = normalize_listing_details(existing)
-    for field, value in normalize_listing_details(incoming).items():
-        if value:
+    update = normalize_listing_details(incoming)
+    incoming_is_richer = listing_details_completeness(update) > listing_details_completeness(result)
+    for field, value in update.items():
+        if value and (not result.get(field) or incoming_is_richer):
             result[field] = value
     return result
 
@@ -5020,7 +5042,7 @@ def update_candidate_queue_listing_field(
     """Apply an admin Listing correction without affecting researched record data."""
     if field not in LISTING_QUEUE_EDITABLE_FIELDS:
         raise ValueError(f"Unsupported Listing field: {field}")
-    normalized = str(value or "").strip()
+    normalized = normalize_listing_website(value) if field == "website" else str(value or "").strip()
     if field in {"company", "asset"} and not normalized:
         raise ValueError(f"{field.title()} is required.")
 
@@ -8130,6 +8152,8 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
     added_entries: list[dict[str, Any]] = []
     already_researched_skipped = 0
     duplicate_in_queue_skipped = 0
+    duplicate_in_queue_enriched = 0
+    duplicate_in_queue_richer_replaced = 0
     metadata_updated = 0
     records_updated = False
     added_at = datetime.now(timezone.utc).isoformat()
@@ -8141,6 +8165,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             "listed_at": added_at,
             "comment": row.get("comment", ""),
             "contact": row.get("contact", ""),
+            "website": row.get("website", ""),
             "updated_at": added_at,
         }
         incoming_details = normalize_listing_details(row)
@@ -8172,10 +8197,16 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             if candidate_queue_entry_metadata(existing_entry) != merged:
                 existing_entry["pipeline_metadata"] = merged
                 metadata_updated += 1
-            merged_details = merge_listing_details(candidate_queue_entry_details(existing_entry), incoming_details)
+            existing_details = candidate_queue_entry_details(existing_entry)
+            incoming_is_richer = listing_details_completeness(incoming_details) > listing_details_completeness(existing_details)
+            merged_details = merge_listing_details(existing_details, incoming_details)
             if candidate_queue_entry_details(existing_entry) != merged_details:
                 existing_entry["listing_details"] = merged_details
                 metadata_updated += 1
+                if incoming_is_richer:
+                    duplicate_in_queue_richer_replaced += 1
+                else:
+                    duplicate_in_queue_enriched += 1
             continue
         entry = {
             "id": f"cq_{uuid.uuid4().hex[:8]}",
@@ -8201,6 +8232,8 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
         "added": len(added_entries),
         "already_researched_skipped": already_researched_skipped,
         "duplicate_in_queue_skipped": duplicate_in_queue_skipped,
+        "duplicate_in_queue_enriched": duplicate_in_queue_enriched,
+        "duplicate_in_queue_richer_replaced": duplicate_in_queue_richer_replaced,
         "metadata_updated": metadata_updated,
         "unparsed_lines": parsed["unparsed"],
         "added_entries": added_entries,
@@ -8250,6 +8283,8 @@ def get_candidate_queue_progress() -> dict[str, Any]:
         full_summary = (full_record.get("json_summary") if full_record else None) or {}
         fast_table = (fast_record.get("structured_table") if fast_record else None) or {}
         fast_summary = (fast_record.get("json_summary") if fast_record else None) or {}
+        full_profile = (full_record.get("company_profile") if full_record else None) or {}
+        fast_profile = (fast_record.get("company_profile") if fast_record else None) or {}
         asset_label = non_empty_text(rep_table.get("asset_name"), rep_summary.get("asset_name"), "Unknown")
         company_label = non_empty_text(rep_table.get("company"), rep_summary.get("company"), "Unknown")
         listing_details = normalize_listing_details({
@@ -8258,6 +8293,7 @@ def get_candidate_queue_progress() -> dict[str, Any]:
             "target": non_empty_text(full_table.get("target"), full_summary.get("target"), fast_table.get("target"), fast_summary.get("target")),
             "main_indication": non_empty_text(full_table.get("indication"), full_table.get("main_indication"), full_summary.get("main_indication"), full_summary.get("indication"), fast_table.get("indication"), fast_table.get("main_indication"), fast_summary.get("main_indication"), fast_summary.get("indication")),
             "stage": non_empty_text(full_table.get("development_stage"), full_summary.get("development_stage"), full_summary.get("stage"), fast_table.get("development_stage"), fast_summary.get("development_stage"), fast_summary.get("stage")),
+            "website": non_empty_text(full_profile.get("website"), full_profile.get("company_website"), fast_profile.get("website"), fast_profile.get("company_website"), pipeline_metadata_for_group(group).get("website")),
         })
         pipeline_metadata = pipeline_metadata_for_group(group)
         # Historical Fast/Full records predate the Listing queue. They are already part of

@@ -211,6 +211,7 @@
                 <col class="step0-col-stage" />
                 <col class="step0-col-metadata" />
                 <col class="step0-col-metadata" />
+                <col class="step0-col-website" />
               </colgroup>
               <thead>
                 <tr>
@@ -224,7 +225,7 @@
                   <th rowspan="2">Target</th>
                   <th rowspan="2">Main indication</th>
                   <th rowspan="2">Stage</th>
-                  <th class="step0-progress-group" colspan="6">Evaluation Progress</th>
+                  <th class="step0-progress-group" colspan="7">Evaluation Progress</th>
                 </tr>
                 <tr>
                   <th><button data-step0-sort="pending" type="button">Listing</button></th>
@@ -233,10 +234,11 @@
                   <th><button data-step0-sort="shortlisting" type="button">Shortlisting</button></th>
                   <th>Comment</th>
                   <th>Contact</th>
+                  <th>Website</th>
                 </tr>
               </thead>
               <tbody id="step0ProgressTableBody">
-                <tr><td colspan="14" class="step0-empty-state">진척 현황을 불러오는 중입니다...</td></tr>
+                <tr><td colspan="15" class="step0-empty-state">진척 현황을 불러오는 중입니다...</td></tr>
               </tbody>
             </table>
           </div>
@@ -267,10 +269,10 @@
                 <div class="step0-entry-grid-wrap">
                   <table class="step0-entry-grid" id="step0EntryGrid">
                     <colgroup>
-                      <col class="step0-entry-col-company" /><col class="step0-entry-col-country" /><col class="step0-entry-col-asset" /><col class="step0-entry-col-modality" /><col class="step0-entry-col-target" /><col class="step0-entry-col-indication" /><col class="step0-entry-col-stage" /><col class="step0-entry-col-comment" /><col class="step0-entry-col-contact" /><col class="step0-entry-col-remove" />
+                      <col class="step0-entry-col-company" /><col class="step0-entry-col-country" /><col class="step0-entry-col-asset" /><col class="step0-entry-col-modality" /><col class="step0-entry-col-target" /><col class="step0-entry-col-indication" /><col class="step0-entry-col-stage" /><col class="step0-entry-col-comment" /><col class="step0-entry-col-contact" /><col class="step0-entry-col-website" /><col class="step0-entry-col-remove" />
                     </colgroup>
                     <thead><tr>
-                      <th>Company <span class="step0-required-badge">Required</span></th><th>Country</th><th>Asset <span class="step0-required-badge">Required</span></th><th>Modality</th><th>Target</th><th>Main indication</th><th>Stage</th><th>Comment <em>multi-line</em></th><th>Contact</th><th aria-label="행 삭제"></th>
+                      <th>Company <span class="step0-required-badge">Required</span></th><th>Country</th><th>Asset <span class="step0-required-badge">Required</span></th><th>Modality</th><th>Target</th><th>Main indication</th><th>Stage</th><th>Comment <em>multi-line</em></th><th>Contact</th><th>Website</th><th aria-label="행 삭제"></th>
                     </tr></thead>
                     <tbody id="step0EntryGridBody"></tbody>
                   </table>
@@ -1164,6 +1166,6 @@
       </section>
     </div>
 
-  <script type="module" src="./src/app.js?v=20260822-listing-header-notes-1"></script>
+  <script type="module" src="./src/app.js?v=20260822-listing-website-1"></script>
   </body>
 </html>

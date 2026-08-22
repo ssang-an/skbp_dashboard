@@ -20034,7 +20034,7 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 
 /* Tab 0 Listing grid and grouped progress columns. */
 .step0-progress-table {
-  min-width: 1480px;
+  min-width: 1550px;
 }
 
 .step0-progress-table .step0-col-select { width: 3%; }
@@ -20047,6 +20047,7 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 .step0-progress-table .step0-col-stage-name { width: 7%; }
 .step0-progress-table .step0-col-stage,
 .step0-progress-table .step0-col-metadata { width: 5.7%; }
+.step0-progress-table .step0-col-website { width: 5.2%; }
 
 .step0-progress-table .step0-progress-group {
   color: var(--muted);
@@ -20109,6 +20110,21 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
   justify-content: center;
   padding: 3px 8px;
 }
+
+.step0-website-cell { text-align: center; }
+.step0-website-link.pill,
+.step0-website-empty.pill {
+  display: inline-flex;
+  min-width: 30px;
+  min-height: 24px;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+}
+.step0-website-link.pill { color: var(--accent-strong); text-decoration: none; }
+.step0-website-link.pill:hover,
+.step0-website-link.pill:focus-visible { transform: translateY(-1px); outline: none; }
+.step0-website-link svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 
 .step0-edit-locked-backdrop {
   position: fixed;
@@ -20238,7 +20254,7 @@ html[data-theme="dark"] .step0-edit-locked-modal { background: #0f1828; }
 
 .step0-entry-grid {
   width: 100%;
-  min-width: 1183px;
+  min-width: 1320px;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -20252,6 +20268,7 @@ html[data-theme="dark"] .step0-edit-locked-modal { background: #0f1828; }
 .step0-entry-col-stage { width: 105px; }
 .step0-entry-col-comment { width: 150px; }
 .step0-entry-col-contact { width: 125px; }
+.step0-entry-col-website { width: 140px; }
 .step0-entry-col-remove { width: 36px; }
 
 .step0-entry-grid th,

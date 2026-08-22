@@ -80,6 +80,7 @@ class Step0PipelineMetadataTests(unittest.TestCase):
             "stage": "Preclinical",
             "comment": "BD review",
             "contact": "owner@acme.test",
+            "website": "https://acme.test/company",
         }])
 
         self.assertEqual(parsed["unparsed"], [])
@@ -87,6 +88,7 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(parsed["rows"][0]["asset_input"], "AX-101")
         self.assertEqual(parsed["rows"][0]["main_indication"], "ALS")
         self.assertEqual(parsed["rows"][0]["contact"], "owner@acme.test")
+        self.assertEqual(parsed["rows"][0]["website"], "https://acme.test/company")
 
     def test_structured_listing_grid_requires_company_and_asset(self) -> None:
         parsed = main.normalize_candidate_queue_rows([
@@ -97,15 +99,41 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(parsed["rows"], [])
         self.assertEqual(len(parsed["unparsed"]), 2)
 
-    def test_listing_details_keep_existing_value_when_a_later_cell_is_blank(self) -> None:
+    def test_listing_details_fill_blanks_but_keep_conflicts_from_a_less_complete_duplicate(self) -> None:
         merged = main.merge_listing_details(
             {"country": "KR", "modality": "Small molecule", "target": "Target X"},
-            {"country": "", "modality": "Biologic", "target": ""},
+            {"country": "", "modality": "Biologic", "target": "", "website": "https://acme.test"},
         )
 
         self.assertEqual(merged["country"], "KR")
-        self.assertEqual(merged["modality"], "Biologic")
+        self.assertEqual(merged["modality"], "Small molecule")
         self.assertEqual(merged["target"], "Target X")
+        self.assertEqual(merged["website"], "https://acme.test")
+
+    def test_richer_duplicate_listing_replaces_conflicting_details(self) -> None:
+        merged = main.merge_listing_details(
+            {"country": "KR", "modality": "Small molecule"},
+            {
+                "country": "CN",
+                "modality": "RNA",
+                "target": "SOD1",
+                "main_indication": "ALS",
+                "stage": "Preclinical",
+                "website": "https://psk.example/path",
+            },
+        )
+
+        self.assertEqual(merged["country"], "CN")
+        self.assertEqual(merged["modality"], "RNA")
+        self.assertEqual(merged["website"], "https://psk.example/path")
+
+    def test_listing_website_keeps_only_first_valid_http_url(self) -> None:
+        self.assertEqual(
+            main.normalize_listing_website("See https://first.example/a and https://second.example/b"),
+            "https://first.example/a",
+        )
+        self.assertEqual(main.normalize_listing_website("www.example.com"), "")
+        self.assertEqual(main.normalize_listing_website("javascript:alert(1)"), "")
 
     def test_pending_listing_inline_edit_marks_only_the_changed_field(self) -> None:
         entry = {

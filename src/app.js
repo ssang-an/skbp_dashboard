@@ -9759,7 +9759,8 @@ const STEP0_ENTRY_FIELDS = [
   { key: 'main_indication', label: 'Main indication' },
   { key: 'stage', label: 'Stage' },
   { key: 'comment', label: 'Comment', multiline: true },
-  { key: 'contact', label: 'Contact' }
+  { key: 'contact', label: 'Contact' },
+  { key: 'website', label: 'Website' }
 ];
 
 function step0EntryRowMarkup(values = {}) {
@@ -9817,7 +9818,8 @@ const STEP0_HEADER_ALIASES = {
   main_indication: ['main indication', 'indication', '주요 적응증', '적응증'],
   stage: ['stage', 'development stage', '개발 단계', '진행 단계'],
   comment: ['comment', 'comments', 'priority', 'reason for priority', 'priority reason', 'next step', '코멘트', '비고', '의견'],
-  contact: ['contact', 'meeting history', 'history', '담당자', '연락처', '미팅 이력', '연락 이력']
+  contact: ['contact', 'meeting history', 'history', '담당자', '연락처', '미팅 이력', '연락 이력'],
+  website: ['website', 'website url', 'company website', 'official website', 'homepage', 'home page', 'url', '웹사이트', '홈페이지']
 };
 
 // A spreadsheet can legitimately carry more than one note/contact context column.
@@ -9851,6 +9853,9 @@ const STEP0_HEADER_KEYWORD_RULES = {
   ],
   contact: [
     ['meeting history', 14], ['meeting date', 13], ['contact history', 13], ['contact date', 13], ['interaction history', 12], ['meeting', 9], ['history', 7], ['contact', 10], ['outreach', 9], ['communication', 8], ['owner', 7], ['email', 7], ['phone', 7], ['담당자', 9], ['미팅 이력', 14], ['연락 이력', 13], ['연락일', 13], ['연락처', 10], ['접촉', 8]
+  ],
+  website: [
+    ['company website', 14], ['official website', 14], ['website url', 13], ['homepage', 12], ['home page', 12], ['website', 10], ['url', 7], ['웹사이트', 10], ['홈페이지', 12]
   ]
 };
 
@@ -10146,6 +10151,22 @@ function step0MetadataCellHtml(row, field) {
   >${hasValue ? '<span aria-hidden="true">✓</span>' : '-'}</button>`;
 }
 
+function step0WebsiteCellHtml(row) {
+  const raw = String(row?.listing_details?.website || row?.metadata?.website || '').trim();
+  if (!/^https?:\/\//i.test(raw)) return '<span class="pill empty step0-website-empty" aria-label="Website not recorded">-</span>';
+  let safeUrl = '';
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') safeUrl = parsed.href;
+  } catch (_) {
+    safeUrl = '';
+  }
+  if (!safeUrl) return '<span class="pill empty step0-website-empty" aria-label="Website not recorded">-</span>';
+  return `<a class="pill pass step0-website-link" href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" title="Open website" aria-label="Open website in a new tab">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 14 14 10M8.5 7.5H7a3 3 0 0 0-3 3V17a3 3 0 0 0 3 3h6.5a3 3 0 0 0 3-3v-1.5M13 4h7v7M20 4l-9 9" /></svg>
+  </a>`;
+}
+
 function step0DashboardFieldDisplay(row) {
   const details = row?.listing_details || {};
   const rawCountry = String(details.country || '').trim();
@@ -10230,7 +10251,7 @@ async function saveStep0ListingFieldEdit(input) {
   const field = String(input?.dataset.step0Field || '');
   const previousValue = String(input?.dataset.previousValue || '').trim();
   const value = String(input?.value || '').trim();
-  if (!queueId || !['company', 'asset', 'country', 'modality', 'target', 'main_indication', 'stage'].includes(field)) return;
+  if (!queueId || !['company', 'asset', 'country', 'modality', 'target', 'main_indication', 'stage', 'website'].includes(field)) return;
   if (value === previousValue) {
     renderStep0ProgressTable();
     return;
@@ -10265,7 +10286,7 @@ function openStep0ListingFieldEdit(anchor) {
   const queueId = String(anchor.dataset.queueId || '');
   const field = String(anchor.dataset.step0Field || '');
   const previousValue = String(anchor.dataset.previousValue || '').trim();
-  if (!queueId || !['company', 'asset', 'country', 'modality', 'target', 'main_indication', 'stage'].includes(field)) return;
+  if (!queueId || !['company', 'asset', 'country', 'modality', 'target', 'main_indication', 'stage', 'website'].includes(field)) return;
   anchor.dataset.editing = 'true';
   const isStage = field === 'stage';
   const input = document.createElement(isStage ? 'select' : 'input');
@@ -10411,7 +10432,7 @@ function step0FilteredSortedRows() {
     if (searchTerms.length) {
       const details = row.listing_details || {};
       const display = step0DashboardFieldDisplay(row);
-      const haystack = `${row.asset || ''} ${row.company || ''} ${details.country || ''} ${display.country} ${details.modality || ''} ${display.modality} ${details.target || ''} ${details.main_indication || ''} ${display.indication} ${details.stage || ''} ${display.stage} ${row.metadata?.comment || ''} ${row.metadata?.contact || ''}`.toLowerCase();
+      const haystack = `${row.asset || ''} ${row.company || ''} ${details.country || ''} ${display.country} ${details.modality || ''} ${display.modality} ${details.target || ''} ${details.main_indication || ''} ${display.indication} ${details.stage || ''} ${display.stage} ${details.website || ''} ${row.metadata?.website || ''} ${row.metadata?.comment || ''} ${row.metadata?.contact || ''}`.toLowerCase();
       if (!searchTerms.some((term) => haystack.includes(term))) return false;
     }
     if (statusFilters.size && ![...statusFilters].some((status) => row[status]?.done)) return false;
@@ -10507,8 +10528,8 @@ function renderStep0ProgressTable() {
     .map((row) => row.pending.queue_id);
   if (!pageRows.length) {
     elements.step0ProgressTableBody.innerHTML = state.step0Rows.length
-      ? '<tr><td colspan="14" class="step0-empty-state">현재 필터/검색 조건에 맞는 항목이 없습니다.</td></tr>'
-      : '<tr><td colspan="14" class="step0-empty-state">진척 현황 데이터가 없습니다. 아래에서 후보 목록을 입력해 시작하세요.</td></tr>';
+      ? '<tr><td colspan="15" class="step0-empty-state">현재 필터/검색 조건에 맞는 항목이 없습니다.</td></tr>'
+      : '<tr><td colspan="15" class="step0-empty-state">진척 현황 데이터가 없습니다. 아래에서 후보 목록을 입력해 시작하세요.</td></tr>';
   } else {
     elements.step0ProgressTableBody.innerHTML = pageRows
       .map((row) => {
@@ -10534,6 +10555,7 @@ function renderStep0ProgressTable() {
           <td>${step0StageCellHtml('shortlisting', row.shortlisting)}</td>
           <td class="step0-metadata-cell">${step0MetadataCellHtml(row, 'comment')}</td>
           <td class="step0-metadata-cell">${step0MetadataCellHtml(row, 'contact')}</td>
+          <td class="step0-website-cell">${step0WebsiteCellHtml(row)}</td>
         </tr>`;
       })
       .join('');
@@ -10546,7 +10568,7 @@ function renderStep0ProgressTable() {
 
 function exportStep0Table() {
   const rows = step0FilteredSortedRows();
-  const headers = ['Company', 'Country', 'Asset', 'Modality', 'Target', 'Main indication', 'Stage', 'Listing', 'Fast Triage', 'Full Scout', 'Shortlisting', 'Comment', 'Contact'];
+  const headers = ['Company', 'Country', 'Asset', 'Modality', 'Target', 'Main indication', 'Stage', 'Listing', 'Fast Triage', 'Full Scout', 'Shortlisting', 'Comment', 'Contact', 'Website'];
   const body = rows.map((row) => {
     const display = step0DashboardFieldDisplay(row);
     return [
@@ -10562,7 +10584,8 @@ function exportStep0Table() {
       row.full_scout?.done ? '완료' : '',
       row.shortlisting?.done ? '완료' : '',
       row.metadata?.comment || '',
-      row.metadata?.contact || ''
+      row.metadata?.contact || '',
+      row.listing_details?.website || row.metadata?.website || ''
     ];
   });
   const csv = [headers, ...body].map((line) => line.map(csvValue).join(',')).join('\r\n');
@@ -10687,7 +10710,8 @@ function buildTriageInstructionPromptWithCandidates(pairs) {
       ['Modality', details.modality],
       ['Target', details.target],
       ['Main indication', details.main_indication],
-      ['Stage', details.stage]
+      ['Stage', details.stage],
+      ['Website', details.website]
     ].filter(([, value]) => String(value || '').trim()).map(([label, value]) => `${label}: ${String(value).trim()}`).join('; ');
     return `${pair.asset}\t${pair.company}${context ? `\tListing context: ${context}` : ''}`;
   }).join('\n');

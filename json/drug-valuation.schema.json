@@ -44,6 +44,7 @@
             "listed_at": { "type": "string" },
             "comment": { "type": "string", "maxLength": 5000 },
             "contact": { "type": "string", "maxLength": 5000 },
+            "website": { "type": "string", "format": "uri", "maxLength": 2048 },
             "updated_at": { "type": "string" }
           },
           "additionalProperties": false

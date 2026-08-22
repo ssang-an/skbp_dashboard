@@ -71,5 +71,6 @@ class Step0RecentUploadTests(unittest.TestCase):
             "target": "Target X",
             "main_indication": "Parkinson's disease",
             "stage": "Phase 1",
+            "website": "",
         })
         self.assertEqual(researched["listing_details_source"], "full_scout")
