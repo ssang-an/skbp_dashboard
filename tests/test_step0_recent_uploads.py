@@ -28,7 +28,12 @@ def pipeline_record(*, review_type: str, uploaded_at: str | None = None, focus_a
             "main_indication": "ALS",
             "development_stage": "Preclinical",
         },
-        "json_summary": {"asset_name": "Recent Asset", "company": "Recent Bio"},
+        "json_summary": {
+            "asset_name": "Recent Asset",
+            "company": "Recent Bio",
+            "theme": "E/I Balance",
+            "cluster": "Ion channel",
+        },
     }
 
 
@@ -74,3 +79,5 @@ class Step0RecentUploadTests(unittest.TestCase):
             "website": "",
         })
         self.assertEqual(researched["listing_details_source"], "full_scout")
+        self.assertEqual(researched["theme"], "E/I Balance")
+        self.assertEqual(researched["cluster"], "Ion channel")

@@ -142,21 +142,47 @@
               <span>검색</span>
               <div class="step0-search-composer">
                 <div class="step0-search-entry">
-                  <input id="step0SearchInput" type="search" placeholder="약물명, 회사명 검색" />
+                  <input id="step0SearchInput" type="search" placeholder="회사, 자산, 타깃, Theme, Cluster 검색" />
                   <button id="step0AddSearchTokenButton" class="step0-add-search-token help-tooltip" type="button" data-tooltip="Add search term" aria-label="Add current search term">+</button>
                 </div>
                 <div id="step0SearchTokens" class="step0-search-tokens" aria-label="Selected company and asset filters" aria-live="polite"></div>
               </div>
             </label>
-            <label class="step0-status-filter-label">
-              <span>진행 단계</span>
-              <div class="step0-status-toggle-group" role="group" aria-label="진행 단계 필터 (다중 선택)">
-                <button type="button" class="step0-status-toggle" data-step0-status="pending" aria-pressed="false">Listing</button>
-                <button type="button" class="step0-status-toggle" data-step0-status="fast_triage" aria-pressed="false">Fast Triage</button>
-                <button type="button" class="step0-status-toggle" data-step0-status="full_scout" aria-pressed="false">Full Scout</button>
-                <button type="button" class="step0-status-toggle" data-step0-status="shortlisting" aria-pressed="false">Shortlisting</button>
-              </div>
-            </label>
+            <div id="step0CountryFilter" class="filter-multiselect step0-filter-multiselect" data-step0-filter-key="country">
+              <span class="filter-multiselect-label">Country</span>
+              <button type="button" class="filter-multiselect-trigger" aria-expanded="false"><span data-step0-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div class="filter-multiselect-menu" role="listbox" aria-label="Country filters" hidden></div>
+            </div>
+            <div id="step0ModalityFilter" class="filter-multiselect step0-filter-multiselect" data-step0-filter-key="modality">
+              <span class="filter-multiselect-label">Modality</span>
+              <button type="button" class="filter-multiselect-trigger" aria-expanded="false"><span data-step0-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div class="filter-multiselect-menu" role="listbox" aria-label="Modality filters" hidden></div>
+            </div>
+            <div id="step0ThemeFilter" class="filter-multiselect step0-filter-multiselect" data-step0-filter-key="theme">
+              <span class="filter-multiselect-label">Theme</span>
+              <button type="button" class="filter-multiselect-trigger" aria-expanded="false"><span data-step0-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div class="filter-multiselect-menu" role="listbox" aria-label="Theme filters" hidden></div>
+            </div>
+            <div id="step0ClusterFilter" class="filter-multiselect step0-filter-multiselect" data-step0-filter-key="cluster">
+              <span class="filter-multiselect-label">Cluster</span>
+              <button type="button" class="filter-multiselect-trigger" aria-expanded="false"><span data-step0-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div class="filter-multiselect-menu" role="listbox" aria-label="Cluster filters" hidden></div>
+            </div>
+            <div id="step0IndicationFilter" class="filter-multiselect step0-filter-multiselect" data-step0-filter-key="indication">
+              <span class="filter-multiselect-label">Main indication</span>
+              <button type="button" class="filter-multiselect-trigger" aria-expanded="false"><span data-step0-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div class="filter-multiselect-menu" role="listbox" aria-label="Main indication filters" hidden></div>
+            </div>
+            <div id="step0StageFilter" class="filter-multiselect step0-filter-multiselect" data-step0-filter-key="stage">
+              <span class="filter-multiselect-label">Stage</span>
+              <button type="button" class="filter-multiselect-trigger" aria-expanded="false"><span data-step0-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div class="filter-multiselect-menu" role="listbox" aria-label="Stage filters" hidden></div>
+            </div>
+            <div id="step0ProgressFilter" class="filter-multiselect step0-filter-multiselect" data-step0-filter-key="progress">
+              <span class="filter-multiselect-label">진행 단계</span>
+              <button type="button" class="filter-multiselect-trigger" aria-expanded="false"><span data-step0-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div class="filter-multiselect-menu" role="listbox" aria-label="진행 단계 filters" hidden></div>
+            </div>
             <button
               id="step0ResetFiltersButton"
               class="filter-reset-button help-tooltip"

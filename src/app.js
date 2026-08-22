@@ -332,6 +332,7 @@ const state = {
   step0Query: '',
   step0SearchTokens: [],
   step0StatusFilterValues: new Set(),
+  step0Filters: { country: [], modality: [], theme: [], cluster: [], indication: [], stage: [] },
   step0SortKey: null,
   step0SortDirection: null,
   step0Page: 1,
@@ -499,7 +500,14 @@ const elements = {
   step0SearchInput: document.querySelector('#step0SearchInput'),
   step0AddSearchTokenButton: document.querySelector('#step0AddSearchTokenButton'),
   step0SearchTokens: document.querySelector('#step0SearchTokens'),
-  step0StatusToggleButtons: document.querySelectorAll('.step0-status-toggle'),
+  step0FilterControls: document.querySelector('#step0Panel .control-panel .controls'),
+  step0CountryFilter: document.querySelector('#step0CountryFilter'),
+  step0ModalityFilter: document.querySelector('#step0ModalityFilter'),
+  step0ThemeFilter: document.querySelector('#step0ThemeFilter'),
+  step0ClusterFilter: document.querySelector('#step0ClusterFilter'),
+  step0IndicationFilter: document.querySelector('#step0IndicationFilter'),
+  step0StageFilter: document.querySelector('#step0StageFilter'),
+  step0ProgressFilter: document.querySelector('#step0ProgressFilter'),
   step0ResetFiltersButton: document.querySelector('#step0ResetFiltersButton'),
   step0TableCount: document.querySelector('#step0TableCount'),
   step0PageSizeSelect: document.querySelector('#step0PageSizeSelect'),
@@ -3795,6 +3803,25 @@ function scrollToDataUpload(event) {
   } else {
     moveToUpload();
   }
+}
+
+const STEP0_FILTER_KEYS = ['country', 'modality', 'theme', 'cluster', 'indication', 'stage', 'progress'];
+const STEP0_PROGRESS_FILTER_OPTIONS = [
+  { value: 'pending', label: 'Listing' },
+  { value: 'fast_triage', label: 'Fast Triage' },
+  { value: 'full_scout', label: 'Full Scout' },
+  { value: 'shortlisting', label: 'Shortlisting' }
+];
+
+function closeStep0MultiFilters(except = null) {
+  STEP0_FILTER_KEYS.forEach((key) => {
+    const filter = elements[`step0${key[0].toUpperCase()}${key.slice(1)}Filter`];
+    if (!filter || filter === except) return;
+    filter.classList.remove('is-open');
+    filter.querySelector('.filter-multiselect-trigger')?.setAttribute('aria-expanded', 'false');
+    const menu = filter.querySelector('.filter-multiselect-menu');
+    if (menu) menu.hidden = true;
+  });
 }
 
 function renderCharts() {
@@ -10141,6 +10168,7 @@ async function loadStep0Progress() {
     state.step0Loaded = true;
     updateStep0HeaderCount();
     renderStep0StatStrip();
+    renderStep0FilterControls();
     renderStep0ProgressTable();
     renderStep0SelectedCount();
   } catch (error) {
@@ -10284,6 +10312,115 @@ function step0DashboardFieldDisplay(row) {
     stage: rawStage ? canonicalDevelopmentStage(rawStage) : '-',
     stageRaw: rawStage
   };
+}
+
+function step0FilterValue(value) {
+  const normalized = String(value || '').trim();
+  return normalized && normalized !== '-' ? normalized : 'Unknown';
+}
+
+function step0IndicationValues(row) {
+  const display = step0DashboardFieldDisplay(row);
+  const values = display.indicationRaw
+    ? canonicalIndicationList([], display.indicationRaw, '')
+    : [];
+  return values.length ? values : [step0FilterValue(display.indication)];
+}
+
+function step0RowFilterValues(row, key) {
+  const display = step0DashboardFieldDisplay(row);
+  if (key === 'country') return [step0FilterValue(display.country)];
+  if (key === 'modality') return [step0FilterValue(display.modality)];
+  if (key === 'theme') return [step0FilterValue(row?.theme)];
+  if (key === 'cluster') return [step0FilterValue(row?.cluster)];
+  if (key === 'indication') return step0IndicationValues(row);
+  if (key === 'stage') return [step0FilterValue(display.stage)];
+  if (key === 'progress') return STEP0_PROGRESS_FILTER_OPTIONS
+    .filter((option) => row?.[option.value]?.done)
+    .map((option) => option.value);
+  return [];
+}
+
+function step0FilterOptions(key) {
+  if (key === 'progress') return STEP0_PROGRESS_FILTER_OPTIONS;
+  const values = [...new Set(state.step0Rows.flatMap((row) => step0RowFilterValues(row, key)))];
+  if (key === 'stage') {
+    return values.sort((a, b) => {
+      const aIndex = CANONICAL_DEVELOPMENT_STAGES.indexOf(a);
+      const bIndex = CANONICAL_DEVELOPMENT_STAGES.indexOf(b);
+      const aRank = aIndex < 0 ? CANONICAL_DEVELOPMENT_STAGES.length : aIndex;
+      const bRank = bIndex < 0 ? CANONICAL_DEVELOPMENT_STAGES.length : bIndex;
+      return aRank - bRank || a.localeCompare(b, 'en');
+    });
+  }
+  return values.sort((a, b) => a.localeCompare(b, 'ko'));
+}
+
+function step0SelectedFilterValues(key) {
+  return key === 'progress'
+    ? [...state.step0StatusFilterValues]
+    : selectedFilterValues(state.step0Filters?.[key]);
+}
+
+function renderStep0MultiFilter(element, key, values) {
+  if (!element) return;
+  const options = values.map((value) => typeof value === 'string' ? { value, label: value } : value);
+  const selected = step0SelectedFilterValues(key);
+  const summary = element.querySelector('[data-step0-multi-filter-summary]');
+  const trigger = element.querySelector('.filter-multiselect-trigger');
+  const menu = element.querySelector('.filter-multiselect-menu');
+  if (!summary || !trigger || !menu) return;
+  summary.textContent = selected.length === 0
+    ? '전체'
+    : selected.length === 1
+      ? (options.find((option) => option.value === selected[0])?.label || selected[0])
+      : `${selected.length}개 선택`;
+  trigger.setAttribute('aria-label', `${element.querySelector('.filter-multiselect-label')?.textContent || key}: ${summary.textContent}`);
+  element.classList.toggle('has-selection', selected.length > 0);
+  menu.innerHTML = [
+    `<button type="button" class="filter-multiselect-option${selected.length === 0 ? ' is-selected' : ''}" data-step0-multi-filter-value="all" role="option" aria-selected="${selected.length === 0}"><span class="filter-multiselect-check" aria-hidden="true">${selected.length === 0 ? '✓' : ''}</span><span>전체</span></button>`,
+    ...options.map((option) => {
+      const isSelected = selected.includes(option.value);
+      return `<button type="button" class="filter-multiselect-option${isSelected ? ' is-selected' : ''}" data-step0-multi-filter-value="${escapeHtml(option.value)}" role="option" aria-selected="${isSelected}"><span class="filter-multiselect-check" aria-hidden="true">${isSelected ? '✓' : ''}</span><span>${escapeHtml(option.label)}</span></button>`;
+    })
+  ].join('');
+}
+
+function renderStep0FilterControls() {
+  const selected = state.step0StatusFilterValues;
+  elements.step0StatFilterButtons?.forEach((button) => {
+    const isActive = selected.has(button.dataset.step0StatFilter);
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
+  STEP0_FILTER_KEYS.forEach((key) => {
+    const element = elements[`step0${key[0].toUpperCase()}${key.slice(1)}Filter`];
+    const options = step0FilterOptions(key);
+    if (key !== 'progress') {
+      state.step0Filters[key] = selectedFilterValues(state.step0Filters[key])
+        .filter((value) => options.includes(value));
+    }
+    renderStep0MultiFilter(element, key, options);
+  });
+}
+
+function updateStep0MultiFilter(key, value) {
+  const options = step0FilterOptions(key);
+  if (value === 'all') {
+    if (key === 'progress') state.step0StatusFilterValues.clear();
+    else state.step0Filters[key] = [];
+  } else if (key === 'progress') {
+    if (state.step0StatusFilterValues.has(value)) state.step0StatusFilterValues.delete(value);
+    else state.step0StatusFilterValues.add(value);
+  } else {
+    const selected = new Set(step0SelectedFilterValues(key));
+    if (selected.has(value)) selected.delete(value);
+    else if (options.includes(value)) selected.add(value);
+    state.step0Filters[key] = [...selected];
+  }
+  state.step0Page = 1;
+  renderStep0FilterControls();
+  renderStep0ProgressTable();
 }
 
 function step0FieldTitle(rawValue, displayValue) {
@@ -10549,10 +10686,14 @@ function step0FilteredSortedRows() {
       const details = row.listing_details || {};
       const display = step0DashboardFieldDisplay(row);
       const commentFeed = (row.comment_feed || []).map((entry) => entry?.body || '').join(' ');
-      const haystack = `${row.asset || ''} ${row.company || ''} ${details.country || ''} ${display.country} ${details.modality || ''} ${display.modality} ${details.target || ''} ${details.main_indication || ''} ${display.indication} ${details.stage || ''} ${display.stage} ${details.website || ''} ${row.metadata?.website || ''} ${row.metadata?.comment || ''} ${commentFeed} ${row.metadata?.contact || ''}`.toLowerCase();
+      const haystack = `${row.asset || ''} ${row.company || ''} ${details.country || ''} ${display.country} ${details.modality || ''} ${display.modality} ${details.target || ''} ${details.main_indication || ''} ${display.indication} ${details.stage || ''} ${display.stage} ${row.theme || ''} ${row.cluster || ''} ${details.website || ''} ${row.metadata?.website || ''} ${row.metadata?.comment || ''} ${commentFeed} ${row.metadata?.contact || ''}`.toLowerCase();
       if (!searchTerms.some((term) => haystack.includes(term))) return false;
     }
     if (statusFilters.size && ![...statusFilters].some((status) => row[status]?.done)) return false;
+    if (['country', 'modality', 'theme', 'cluster', 'indication', 'stage'].some((key) => {
+      const selected = step0SelectedFilterValues(key);
+      return selected.length > 0 && !selected.some((value) => step0RowFilterValues(row, key).includes(value));
+    })) return false;
     return true;
   });
 
@@ -10787,25 +10928,15 @@ function resetStep0Filters() {
   state.step0Query = '';
   state.step0SearchTokens = [];
   state.step0StatusFilterValues.clear();
+  state.step0Filters = { country: [], modality: [], theme: [], cluster: [], indication: [], stage: [] };
   if (elements.step0SearchInput) elements.step0SearchInput.value = '';
   renderStep0SearchTokens();
-  renderStep0StatusFilterControls();
+  renderStep0FilterControls();
   state.step0Page = 1;
   renderStep0ProgressTable();
 }
 
-function renderStep0StatusFilterControls() {
-  const selected = state.step0StatusFilterValues;
-  const syncButtons = (buttons, attribute) => buttons?.forEach((button) => {
-    const isActive = selected.has(button.dataset[attribute]);
-    button.classList.toggle('active', isActive);
-    button.setAttribute('aria-pressed', String(isActive));
-  });
-  syncButtons(elements.step0StatusToggleButtons, 'step0Status');
-  syncButtons(elements.step0StatFilterButtons, 'step0StatFilter');
-}
-
-function toggleStep0StatusFilter(status, button) {
+function toggleStep0StatusFilter(status) {
   if (!status) return;
   if (state.step0StatusFilterValues.has(status)) {
     state.step0StatusFilterValues.delete(status);
@@ -10813,7 +10944,7 @@ function toggleStep0StatusFilter(status, button) {
     state.step0StatusFilterValues.add(status);
   }
   state.step0Page = 1;
-  renderStep0StatusFilterControls();
+  renderStep0FilterControls();
   renderStep0ProgressTable();
 }
 
@@ -10908,11 +11039,28 @@ elements.step0SearchTokens?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-step0-remove-search-token]');
   if (button) removeStep0SearchToken(button.dataset.step0RemoveSearchToken);
 });
-elements.step0StatusToggleButtons?.forEach((button) => {
-  button.addEventListener('click', () => toggleStep0StatusFilter(button.dataset.step0Status, button));
+elements.step0FilterControls?.addEventListener('click', (event) => {
+  const trigger = event.target.closest('.step0-filter-multiselect .filter-multiselect-trigger');
+  if (trigger) {
+    const filter = trigger.closest('.step0-filter-multiselect');
+    const willOpen = !filter.classList.contains('is-open');
+    closeMultiFilters();
+    closeStep0MultiFilters(filter);
+    filter.classList.toggle('is-open', willOpen);
+    trigger.setAttribute('aria-expanded', String(willOpen));
+    const menu = filter.querySelector('.filter-multiselect-menu');
+    if (menu) menu.hidden = !willOpen;
+    return;
+  }
+  const option = event.target.closest('.step0-filter-multiselect .filter-multiselect-option');
+  if (!option) return;
+  const filter = option.closest('.step0-filter-multiselect');
+  const key = filter?.dataset.step0FilterKey;
+  const value = option.dataset.step0MultiFilterValue;
+  if (key && value) updateStep0MultiFilter(key, value);
 });
 elements.step0StatFilterButtons?.forEach((button) => {
-  button.addEventListener('click', () => toggleStep0StatusFilter(button.dataset.step0StatFilter, button));
+  button.addEventListener('click', () => toggleStep0StatusFilter(button.dataset.step0StatFilter));
 });
 elements.step0ResetFiltersButton?.addEventListener('click', resetStep0Filters);
 document.querySelectorAll('button[data-step0-sort]').forEach((button) => {
@@ -11205,6 +11353,7 @@ function handleMultiFilterControlsClick(event) {
   const trigger = event.target.closest('.filter-multiselect-trigger');
   if (trigger) {
     const filter = trigger.closest('.filter-multiselect');
+    if (filter?.dataset.step0FilterKey) return;
     const willOpen = !filter.classList.contains('is-open');
     closeMultiFilters(filter);
     filter.classList.toggle('is-open', willOpen);
@@ -11217,6 +11366,7 @@ function handleMultiFilterControlsClick(event) {
   const option = event.target.closest('.filter-multiselect-option');
   if (!option) return;
   const filter = option.closest('.filter-multiselect');
+  if (filter?.dataset.step0FilterKey) return;
   const key = filter?.dataset.filterKey;
   if (!key) return;
   const value = option.dataset.multiFilterValue;
@@ -11236,12 +11386,16 @@ function handleMultiFilterControlsClick(event) {
 }
 
 document.addEventListener('click', (event) => {
-  if (!event.target.closest('.filter-multiselect')) closeMultiFilters();
+  if (!event.target.closest('.filter-multiselect')) {
+    closeMultiFilters();
+    closeStep0MultiFilters();
+  }
 });
 
 document.addEventListener('keydown', (event) => {
   if (event.key !== 'Escape') return;
   closeMultiFilters();
+  closeStep0MultiFilters();
 });
 
 elements.pageSizeSelect?.addEventListener('change', (event) => {
