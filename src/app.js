@@ -10488,22 +10488,26 @@ function animateStep0WorkflowDots(graph, nodes, stageIndex) {
   const timer = setTimeout(() => {
     const startedAt = performance.now();
     const duration = 520;
+    const settleDuration = 220;
     const tick = (now) => {
       const elapsed = now - startedAt;
       graph.updateNodeData(nodes.map((node) => {
         const progress = Math.max(0, Math.min(1, (elapsed - node.data.entryDelay) / duration));
         const motion = step0WorkflowMotionProgress(progress);
         const arc = Math.sin(progress * Math.PI) * (1 - progress * 0.12);
+        const settleProgress = Math.max(0, Math.min(1, (elapsed - node.data.entryDelay - duration) / settleDuration));
+        const settleFade = Math.sin(settleProgress * Math.PI) * (1 - settleProgress * 0.16);
+        const settleTime = elapsed / 34 + node.data.settlePhase;
         return {
           id: node.id,
           style: {
-            x: node.data.entryX + (node.data.targetX - node.data.entryX) * motion + node.data.arcX * arc,
-            y: node.data.entryY + (node.data.targetY - node.data.entryY) * motion + node.data.arcY * arc
+            x: node.data.entryX + (node.data.targetX - node.data.entryX) * motion + node.data.arcX * arc + Math.sin(settleTime) * node.data.settleX * settleFade,
+            y: node.data.entryY + (node.data.targetY - node.data.entryY) * motion + node.data.arcY * arc + Math.cos(settleTime * 1.17) * node.data.settleY * settleFade
           }
         };
       }));
       graph.draw?.();
-      if (elapsed < duration + 140) {
+      if (elapsed < duration + 140 + settleDuration) {
         step0WorkflowG6AnimationFrames.push(requestAnimationFrame(tick));
       }
     };
@@ -10591,7 +10595,10 @@ function renderStep0WorkflowMap() {
           entryY: entryPosition.y,
           entryDelay: Math.floor(step0WorkflowSeededUnit(`${id}:stagger`) * 140),
           arcX: (step0WorkflowSeededUnit(`${id}:arc-x`) - 0.5) * Math.min(width * 0.06, 20),
-          arcY: (step0WorkflowSeededUnit(`${id}:arc-y`) - 0.5) * Math.min(height * 0.18, 28)
+          arcY: (step0WorkflowSeededUnit(`${id}:arc-y`) - 0.5) * Math.min(height * 0.18, 28),
+          settleX: (step0WorkflowSeededUnit(`${id}:settle-x`) + 0.25) * Math.min(width * 0.012, 5),
+          settleY: (step0WorkflowSeededUnit(`${id}:settle-y`) + 0.25) * Math.min(height * 0.035, 7),
+          settlePhase: step0WorkflowSeededUnit(`${id}:settle-phase`) * Math.PI * 2
         },
         style: {
           size: style.size,
