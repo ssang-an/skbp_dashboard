@@ -491,6 +491,8 @@ const elements = {
   step0SummaryCards: document.querySelector('#step0SummaryCards'),
   step0SummaryDashboardToggleButton: document.querySelector('#step0SummaryDashboardToggleButton'),
   step0SummaryDashboardToggleLabel: document.querySelector('#step0SummaryDashboardToggleLabel'),
+  step0WorkflowCardCanvases: document.querySelectorAll('.step0-workflow-card-canvas'),
+  step0WorkflowStatColumns: document.querySelectorAll('.step0-stat-column'),
   step0StatPending: document.querySelector('#step0StatPending'),
   step0StatFastTriage: document.querySelector('#step0StatFastTriage'),
   step0StatFullScout: document.querySelector('#step0StatFullScout'),
@@ -11836,7 +11838,12 @@ function applyVisualDashboardHidden(hidden) {
 }
 
 function applyStep0SummaryDashboardHidden(hidden) {
-  if (elements.step0SummaryCards) elements.step0SummaryCards.classList.toggle('is-collapsed', hidden);
+  [...(elements.step0WorkflowCardCanvases || [])].forEach((canvas) => {
+    canvas.classList.toggle('is-collapsed', hidden);
+  });
+  [...(elements.step0WorkflowStatColumns || [])].forEach((column) => {
+    column.classList.toggle('is-graph-collapsed', hidden);
+  });
   if (elements.step0SummaryDashboardToggleButton) {
     elements.step0SummaryDashboardToggleButton.setAttribute('aria-expanded', String(!hidden));
     elements.step0SummaryDashboardToggleButton.setAttribute(
@@ -11858,7 +11865,7 @@ elements.visualDashboardToggleButton?.addEventListener('click', () => {
   localStorage.setItem(VISUAL_DASHBOARD_HIDDEN_KEY, String(hidden));
 });
 elements.step0SummaryDashboardToggleButton?.addEventListener('click', () => {
-  const hidden = !elements.step0SummaryCards?.classList.contains('is-collapsed');
+  const hidden = !elements.step0WorkflowCardCanvases?.[0]?.classList.contains('is-collapsed');
   applyStep0SummaryDashboardHidden(hidden);
   localStorage.setItem('skbp.dashboard.step0SummaryDashboardHidden.v1', String(hidden));
 });

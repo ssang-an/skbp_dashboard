@@ -19357,7 +19357,7 @@ body.report-reupload-open {
 .step0-panel {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
 }
 
 .step0-stat-panel {
@@ -19373,6 +19373,7 @@ body.report-reupload-open {
    flex order. Tab 0 deliberately keeps its Listing guide above the dashboard. */
 .step0-panel > .workflow-mode-description[data-workflow-mode="listing"] {
   order: 1;
+  margin-bottom: 0;
 }
 
 .step0-summary-dashboard-heading {
@@ -19412,10 +19413,6 @@ body.report-reupload-open {
   border-radius: 0 0 10px 10px;
 }
 
-.step0-summary-cards.is-collapsed {
-  display: none;
-}
-
 .step0-stat-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -19431,6 +19428,10 @@ body.report-reupload-open {
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--surface-soft);
+}
+
+.step0-stat-column.is-graph-collapsed {
+  height: 64px;
 }
 
 .step0-stat {
@@ -19521,6 +19522,10 @@ button.step0-stat.active {
   overflow: hidden;
   background:
     radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--accent) 4%, var(--surface)), var(--surface) 70%);
+}
+
+.step0-workflow-card-canvas.is-collapsed {
+  display: none;
 }
 
 .step0-workflow-g6-shell {

@@ -486,7 +486,9 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('function applyStep0SummaryDashboardHidden', JS)
         self.assertIn("skbp.dashboard.step0SummaryDashboardHidden.v1", JS)
         self.assertIn('.step0-summary-dashboard-heading', CSS)
-        self.assertIn('.step0-summary-cards.is-collapsed', CSS)
+        self.assertIn('step0WorkflowCardCanvases', JS)
+        self.assertIn('.step0-workflow-card-canvas.is-collapsed', CSS)
+        self.assertIn('.step0-stat-column.is-graph-collapsed', CSS)
         self.assertIn('.step0-summary-dashboard {\n  margin: 0;\n  order: 2;', CSS)
 
     def test_step0_workflow_map_uses_filtered_rows_and_g6_stage_nodes(self):
