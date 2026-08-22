@@ -10488,7 +10488,7 @@ function animateStep0WorkflowDots(graph, nodes, stageIndex) {
   const timer = setTimeout(() => {
     const startedAt = performance.now();
     const duration = 520;
-    const maxSettleDuration = 2000;
+    const maxSettleDuration = 3000;
     const tick = (now) => {
       const elapsed = now - startedAt;
       graph.updateNodeData(nodes.map((node) => {
@@ -10598,7 +10598,7 @@ function renderStep0WorkflowMap() {
           entryDelay: Math.floor(step0WorkflowSeededUnit(`${id}:stagger`) * 140),
           arcX: (step0WorkflowSeededUnit(`${id}:arc-x`) - 0.5) * Math.min(width * 0.06, 20),
           arcY: (step0WorkflowSeededUnit(`${id}:arc-y`) - 0.5) * Math.min(height * 0.18, 28),
-          settleDuration: 1000 + Math.floor(step0WorkflowSeededUnit(`${id}:settle-duration`) * 1001),
+          settleDuration: 1500 + Math.floor(step0WorkflowSeededUnit(`${id}:settle-duration`) * 1501),
           settleX: (step0WorkflowSeededUnit(`${id}:settle-x`) + 0.2) * Math.min(width * 0.009, 4),
           settleY: (step0WorkflowSeededUnit(`${id}:settle-y`) + 0.2) * Math.min(height * 0.024, 5),
           settleOvershoot: (step0WorkflowSeededUnit(`${id}:settle-overshoot`) + 0.32) * Math.min(width * 0.009, 4),
