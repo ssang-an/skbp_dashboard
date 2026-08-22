@@ -10425,7 +10425,7 @@ const STEP0_WORKFLOW_NODE_STYLES = {
   pending: { color: '#94a3b8', size: 4, collisionPadding: 1.3, repulsion: -4 },
   fast_triage: { color: '#5f8fbe', size: 7, collisionPadding: 1.8, repulsion: -7 },
   full_scout: { color: '#4c9b78', size: 10, collisionPadding: 2.2, repulsion: -10 },
-  shortlisting: { color: '#b8871b', size: 13, collisionPadding: 2.8, repulsion: -13 }
+  shortlisting: { color: '#b8871b', size: 13, collisionPadding: 0.25, repulsion: -1, collisionStrength: 0.28 }
 };
 
 function destroyStep0WorkflowGraph() {
@@ -10479,10 +10479,7 @@ function renderStep0WorkflowMap() {
     const stageRows = groups.get(stage.key) || [];
     const style = STEP0_WORKFLOW_NODE_STYLES[stage.key];
     const bounds = shell.getBoundingClientRect();
-    const graphSize = Math.max(1, Math.floor(Math.min(bounds.width, bounds.height)));
-    container.style.width = `${graphSize}px`;
-    container.style.height = `${graphSize}px`;
-    const width = graphSize;
+    const width = Math.max(1, Math.floor(bounds.width));
     const nodeById = new Map();
     const nodes = stageRows.map((row, rowIndex) => {
       const asset = String(row?.asset || 'Unnamed pipeline').trim() || 'Unnamed pipeline';
@@ -10503,7 +10500,7 @@ function renderStep0WorkflowMap() {
         }
       };
     });
-    const height = graphSize;
+    const height = Math.max(1, Math.floor(bounds.height));
 
     try {
       const graph = new globalThis.G6.Graph({
@@ -10524,7 +10521,7 @@ function renderStep0WorkflowMap() {
         manyBody: { strength: style.repulsion, distanceMax: 70 },
         collide: {
           radius: (node) => Number(node?.data?.size || 10) / 2 + style.collisionPadding,
-          strength: 0.9,
+          strength: style.collisionStrength ?? 0.9,
           iterations: 2
         },
         x: { x: width / 2, strength: 0.18 },
