@@ -4492,8 +4492,25 @@ function fullScoutRowActions(row) {
   return `
     <div class="full-scout-row-actions">
       ${rubricReevaluationButton(row)}
+      ${pipelineWebsiteRowButton(row)}
       ${focusActionButton(row, 'full')}
     </div>
+  `;
+}
+
+function pipelineWebsiteRowButton(row) {
+  const url = String(get(row?.raw, 'meta.pipeline_metadata.website', '') || '').trim();
+  if (!/^https?:\/\//i.test(url)) return '';
+  return `
+    <button
+      type="button"
+      class="focus-action-button icon-only pipeline-website-row-button"
+      data-pipeline-website
+      data-record-id="${escapeHtml(row.id)}"
+      data-website-url="${escapeHtml(url)}"
+      title="Pipeline Website · 한 번 클릭하여 열기, 두 번 클릭하여 주소 수정"
+      aria-label="${escapeHtml(`${row.asset} Pipeline Website 열기`)}"
+    ><svg class="pipeline-row-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 14 14 10M8.5 7.5H7a3 3 0 0 0-3 3V17a3 3 0 0 0 3-3v-1.5M13 4h7v7M20 4l-9 9"/></svg></button>
   `;
 }
 
@@ -4552,7 +4569,7 @@ function rubricReevaluationButton(row) {
 }
 
 function rubricReevaluationCell(row) {
-  return `<div class="full-scout-row-actions">${rubricReevaluationButton(row)}${triageFullScoutCopyButton(row)}</div>`;
+  return `<div class="full-scout-row-actions">${rubricReevaluationButton(row)}${pipelineWebsiteRowButton(row)}${triageFullScoutCopyButton(row)}</div>`;
 }
 
 function oiPartnershipRefreshButton(row) {
@@ -10179,6 +10196,9 @@ function step0MetadataCellHtml(row, field) {
 
 function step0WebsiteCellHtml(row) {
   const raw = String(row?.listing_details?.website || row?.metadata?.website || '').trim();
+  const queueId = String(row?.pending?.queue_id || '');
+  const researchMode = step0ResearchEditMode(row);
+  const admin = Boolean(getCurrentUser()?.is_admin);
   if (!/^https?:\/\//i.test(raw)) return '<span class="pill empty step0-website-empty" aria-label="Website not recorded">-</span>';
   let safeUrl = '';
   try {
@@ -10188,7 +10208,12 @@ function step0WebsiteCellHtml(row) {
     safeUrl = '';
   }
   if (!safeUrl) return '<span class="pill empty step0-website-empty" aria-label="Website not recorded">-</span>';
-  return `<a class="pill pass step0-website-link" href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" title="Open website" aria-label="Open website in a new tab">
+  const editAttributes = queueId && admin && !researchMode
+    ? ` data-step0-listing-edit data-queue-id="${escapeHtml(queueId)}" data-step0-field="website" data-previous-value="${escapeHtml(raw)}"`
+    : researchMode
+      ? ` data-step0-metadata data-step0-metadata-field="website" data-step0-row-identity="${escapeHtml(row.identity || '')}"`
+      : '';
+  return `<a class="pill pass step0-website-link"${editAttributes} href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" title="Website · 한 번 클릭하여 열기, 두 번 클릭하여 주소 수정" aria-label="Open website in a new tab">
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 14 14 10M8.5 7.5H7a3 3 0 0 0-3 3V17a3 3 0 0 0 3 3h6.5a3 3 0 0 0 3-3v-1.5M13 4h7v7M20 4l-9 9" /></svg>
   </a>`;
 }
@@ -10395,14 +10420,15 @@ async function saveStep0Metadata(row, field, value, status) {
   row.metadata = { ...(row.metadata || {}), [field]: payload.value, ...(data.metadata || {}) };
   closeStep0MetadataPopover();
   await loadStep0Progress();
-  showStep0Message(`${field === 'comment' ? 'Comment' : 'Contact'}를 저장했습니다.`, 'success');
+  const savedLabel = field === 'comment' ? 'Comment' : field === 'contact' ? 'Contact' : 'Website';
+  showStep0Message(`${savedLabel}를 저장했습니다.`, 'success');
 }
 
 function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) {
   closeStep0MetadataPopover();
   const owner = row?.metadata_owner || {};
   if (!owner.type) return;
-  const label = field === 'comment' ? 'Comment' : 'Contact';
+  const label = field === 'comment' ? 'Comment' : field === 'contact' ? 'Contact' : 'Website';
   const value = step0MetadataValue(row, field);
   const commentFeed = field === 'comment' ? step0CommentFeed(row) : [];
   const popover = document.createElement('section');
@@ -10905,6 +10931,24 @@ elements.step0ProgressTableBody?.addEventListener('click', (event) => {
   }
 });
 elements.step0ProgressTableBody?.addEventListener('dblclick', (event) => {
+  const website = event.target.closest('.step0-website-link');
+  if (website) {
+    if (website.matches('[data-step0-listing-edit]')) {
+      event.preventDefault();
+      openStep0ListingFieldEdit(website);
+      return;
+    }
+    const indicator = website.closest('[data-step0-metadata]');
+    if (indicator) {
+      const field = indicator.dataset.step0MetadataField;
+      const row = state.step0Rows.find((candidate) => candidate.identity === indicator.dataset.step0RowIdentity);
+      if (row && field) {
+        event.preventDefault();
+        openStep0MetadataPopover(indicator, row, field, { editing: true });
+      }
+    }
+    return;
+  }
   const indicator = event.target.closest('[data-step0-metadata]');
   if (indicator) {
     const field = indicator.dataset.step0MetadataField;
@@ -11211,7 +11255,20 @@ window.addEventListener('resize', () => {
   applyColumnWidths();
 });
 
+let dashboardWebsiteOpenTimer = null;
+
 elements.pipelineTable.addEventListener('click', (event) => {
+  const pipelineWebsite = event.target.closest('[data-pipeline-website]');
+  if (pipelineWebsite) {
+    const url = String(pipelineWebsite.dataset.websiteUrl || '');
+    if (!url) return;
+    if (dashboardWebsiteOpenTimer) window.clearTimeout(dashboardWebsiteOpenTimer);
+    dashboardWebsiteOpenTimer = window.setTimeout(() => {
+      dashboardWebsiteOpenTimer = null;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }, 220);
+    return;
+  }
   const rubricRefresh = event.target.closest('[data-rubric-refresh]');
   if (rubricRefresh) {
     recalculateLatestRubric(rubricRefresh);
@@ -11246,6 +11303,22 @@ elements.pipelineTable.addEventListener('click', (event) => {
     return;
   }
   window.location.href = `/detail?id=${encodeURIComponent(recordId)}&tab=${activeTableMode()}`;
+});
+
+elements.pipelineTable.addEventListener('dblclick', (event) => {
+  const pipelineWebsite = event.target.closest('[data-pipeline-website]');
+  if (!pipelineWebsite || !getCurrentUser()?.is_admin) return;
+  event.preventDefault();
+  if (dashboardWebsiteOpenTimer) window.clearTimeout(dashboardWebsiteOpenTimer);
+  dashboardWebsiteOpenTimer = null;
+  const recordId = String(pipelineWebsite.dataset.recordId || '');
+  const row = state.rows.find((candidate) => candidate.id === recordId);
+  if (!row) return;
+  openStep0MetadataPopover(pipelineWebsite, {
+    asset: row.asset,
+    metadata: get(row.raw, 'meta.pipeline_metadata', {}),
+    metadata_owner: { type: 'record', record_id: row.id }
+  }, 'website', { editing: true });
 });
 
 elements.pipelineTable.addEventListener('dblclick', (event) => {

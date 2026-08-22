@@ -240,6 +240,65 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(incoming["meta"]["pipeline_metadata"]["comment"], "Keep private")
         self.assertEqual(incoming["meta"]["pipeline_metadata"]["contact"], "owner@acme.test")
 
+    def test_cross_workflow_comment_sync_promotes_listing_and_fast_triage_human_notes_once(self) -> None:
+        triage = pipeline_record("AX-101", "Acme Bio")
+        triage["meta"]["pipeline_metadata"] = {"comment": "Tab 0 meeting note", "website": "https://acme.example"}
+        triage["meta"]["human_review"] = {
+            "overrides": {"final_comment": "Proceed after BD confirmation."},
+            "final_comment_updated_at": "2026-08-22T10:00:00+00:00",
+        }
+        triage["meta"]["topic_notes"] = [{
+            "id": "target-note-1",
+            "topic_id": "triage-score-target_relevance",
+            "topic_title": "Fast Triage · Target Area Relevance",
+            "body": "Confirm the target genetics evidence.",
+            "author_name": "Admin",
+            "created_at": "2026-08-22T11:00:00+00:00",
+        }]
+        full = pipeline_record("AX101", "Acme Bio")
+        full["meta"]["review_type"] = "full_scout"
+
+        self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 4)
+        comments = full["meta"]["collaboration"]["comments"]
+        self.assertEqual([(item["author"], item["body"]) for item in comments], [
+            ("Tab 0", "Tab 0 meeting note"),
+            ("Fast Triage · Final Comment", "Proceed after BD confirmation."),
+            ("Fast Triage · Target Area Relevance", "Confirm the target genetics evidence."),
+        ])
+        self.assertEqual(triage["meta"]["collaboration"]["comments"][0]["author"], "Tab 0")
+        self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 0)
+        self.assertEqual(len(full["meta"]["collaboration"]["comments"]), 3)
+
+    def test_cross_workflow_comment_sync_excludes_ai_qualitative_entries(self) -> None:
+        triage = pipeline_record("AX-101", "Acme Bio")
+        triage["meta"]["topic_notes"] = [{
+            "id": "ai-note",
+            "topic_id": "triage-score-target_relevance",
+            "body": "AI generated copy",
+            "is_ai": True,
+        }]
+        full = pipeline_record("AX101", "Acme Bio")
+        full["meta"]["review_type"] = "full_scout"
+
+        self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 0)
+        self.assertNotIn("collaboration", full["meta"])
+
+    def test_deleted_import_key_prevents_a_comment_from_returning_on_later_sync(self) -> None:
+        record = pipeline_record()
+        import_key = main.imported_comment_key("Tab 0", "AX-101", "Listing note")
+        record["meta"]["collaboration"] = {"deleted_import_keys": [import_key]}
+
+        changed = main.upsert_system_comment(
+            record,
+            import_key=import_key,
+            author="Tab 0",
+            body="Listing note",
+            source="tab0_listing_comment",
+        )
+
+        self.assertFalse(changed)
+        self.assertEqual(record["meta"]["collaboration"].get("comments", []), [])
+
     def test_tab0_comment_feed_keeps_listing_and_human_review_comments_separate_from_ai(self) -> None:
         record = pipeline_record()
         record["meta"]["human_review"] = {

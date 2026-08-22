@@ -6405,6 +6405,23 @@ body.report-modal-open {
   font-size: 10px;
 }
 
+.comment-delete-button {
+  margin-left: 10px;
+  border: 0;
+  padding: 3px 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.comment-delete-button:hover,
+.comment-delete-button:focus-visible {
+  color: var(--fluent-red);
+  outline: none;
+}
+
 .comment-thread-heading {
   padding: 12px 14px 8px;
 }
@@ -11481,6 +11498,23 @@ html[data-theme="dark"] .detail-material-panel {
   display: grid;
   gap: 3px;
   min-width: 0;
+}
+
+.website-action-pill {
+  --criteria-refresh-accent: var(--fluent-purple);
+  width: 24px;
+  justify-content: center;
+  padding-inline: 0;
+}
+
+.top-data-actions .website-action-pill {
+  min-height: 32px;
+  width: 32px;
+  border-radius: 9px;
+}
+
+.pipeline-website-modal {
+  width: min(430px, 100%);
 }
 
 .oi-filter3-control-row {

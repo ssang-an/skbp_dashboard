@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260822-shortlisting-tracking-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260822-cross-workflow-comments-1" />
     <link rel="stylesheet" href="./src/triage-score.css?v=20260820-score-pill-readable-1" />
   </head>
   <body>
@@ -38,6 +38,14 @@
             ><span aria-hidden="true">?</span><b>판단근거</b></button>
           </div>
           <div class="top-action-group top-data-actions" role="group" aria-label="Fast Triage 레코드 상태">
+            <button
+              id="triageWebsiteButton"
+              class="criteria-refresh-pill website-action-pill"
+              type="button"
+              hidden
+              aria-label="Pipeline Website 열기"
+              title="Pipeline Website · 한 번 클릭하여 열기, 두 번 클릭하여 주소 수정"
+            ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14 14 10M8.5 7.5H7a3 3 0 0 0-3 3V17a3 3 0 0 0 3-3v-1.5M13 4h7v7M20 4l-9 9"></path></svg></button>
             <button
               id="triageDeleteRecordButton"
               class="detail-header-action-pill detail-header-delete-pill danger-button help-tooltip"
@@ -328,6 +336,19 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/triage-detail.js?v=20260822-listing-metadata-1"></script>
+    <div id="pipelineWebsiteModal" class="identity-modal-backdrop" hidden>
+      <section class="identity-modal pipeline-website-modal" role="dialog" aria-modal="true" aria-labelledby="pipelineWebsiteModalTitle">
+        <h3 id="pipelineWebsiteModalTitle">Pipeline Website</h3>
+        <p class="identity-modal-hint">한 번 클릭하면 새 탭으로 열리고, 관리자만 주소를 수정할 수 있습니다.</p>
+        <input id="pipelineWebsiteInput" type="url" inputmode="url" maxlength="2000" placeholder="https://example.com" aria-label="Pipeline Website URL" />
+        <p id="pipelineWebsiteStatus" class="identity-modal-hint" aria-live="polite"></p>
+        <div class="identity-modal-actions">
+          <button id="pipelineWebsiteCancel" class="identity-modal-cancel" type="button">취소</button>
+          <button id="pipelineWebsiteSave" class="identity-modal-submit" type="button">저장</button>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="./src/triage-detail.js?v=20260822-cross-workflow-comments-1"></script>
   </body>
 </html>

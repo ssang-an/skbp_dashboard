@@ -80,6 +80,12 @@ const elements = {
   detailDecisionStatus: document.querySelector('#detailDecisionStatus'),
   detailDecisionOrigin: document.querySelector('#detailDecisionOrigin'),
   rubricRefreshButton: document.querySelector('#rubricRefreshButton'),
+  detailWebsiteButton: document.querySelector('#detailWebsiteButton'),
+  pipelineWebsiteModal: document.querySelector('#pipelineWebsiteModal'),
+  pipelineWebsiteInput: document.querySelector('#pipelineWebsiteInput'),
+  pipelineWebsiteStatus: document.querySelector('#pipelineWebsiteStatus'),
+  pipelineWebsiteCancel: document.querySelector('#pipelineWebsiteCancel'),
+  pipelineWebsiteSave: document.querySelector('#pipelineWebsiteSave'),
   detailTotalScore: document.querySelector('#detailTotalScore'),
   detailScoreSequence: document.querySelector('#detailScoreSequence'),
   detailReviewSummary: document.querySelector('#detailReviewSummary'),
@@ -861,6 +867,7 @@ function renderCommentNode(comment, childrenByParent, depth = 0, visited = new S
   nextVisited.add(comment.id);
   const replies = childrenByParent.get(comment.id) || [];
   const body = escapeHtml(comment.body || '').replaceAll('\n', '<br>');
+  const canDeleteImported = Boolean(getCurrentUser()?.is_admin && comment.system_import === true);
   return `
     <article class="comment-card ${depth ? 'is-reply' : ''}" data-comment-id="${escapeHtml(comment.id)}">
       <div class="comment-meta">
@@ -874,6 +881,7 @@ function renderCommentNode(comment, childrenByParent, depth = 0, visited = new S
         data-reply-comment-id="${escapeHtml(comment.id)}"
         data-reply-author="${escapeHtml(comment.author || '익명')}"
       >답글</button>
+      ${canDeleteImported ? `<button type="button" class="comment-delete-button" data-delete-comment-id="${escapeHtml(comment.id)}" aria-label="이관 코멘트 삭제" title="이관 코멘트 삭제">×</button>` : ''}
       ${replies.length ? `<div class="comment-replies">${replies.map((reply) => renderCommentNode(reply, childrenByParent, depth + 1, nextVisited)).join('')}</div>` : ''}
     </article>
   `;
@@ -1043,6 +1051,83 @@ function detectPartnerMaterialFlags(attachments) {
     });
   });
   return detected;
+}
+
+function pipelineWebsite(record) {
+  return safeHttpUrl(record?.meta?.pipeline_metadata?.website);
+}
+
+function renderPipelineWebsiteAction(record) {
+  const button = elements.detailWebsiteButton;
+  if (!button) return;
+  const url = pipelineWebsite(record);
+  button.hidden = !url;
+  button.dataset.websiteUrl = url;
+  button.title = url
+    ? `Pipeline Website: ${url}\n한 번 클릭하여 열기 · 두 번 클릭하여 주소 수정`
+    : 'Pipeline Website가 등록되지 않았습니다.';
+}
+
+let websiteOpenTimer = null;
+
+function closePipelineWebsiteModal() {
+  if (elements.pipelineWebsiteModal) elements.pipelineWebsiteModal.hidden = true;
+  if (elements.pipelineWebsiteStatus) elements.pipelineWebsiteStatus.textContent = '';
+}
+
+function openPipelineWebsiteModal() {
+  if (!currentRecord || !currentRecordId || !getCurrentUser()?.is_admin) return;
+  if (websiteOpenTimer) window.clearTimeout(websiteOpenTimer);
+  websiteOpenTimer = null;
+  if (elements.pipelineWebsiteInput) elements.pipelineWebsiteInput.value = pipelineWebsite(currentRecord);
+  if (elements.pipelineWebsiteStatus) elements.pipelineWebsiteStatus.textContent = '';
+  if (elements.pipelineWebsiteModal) elements.pipelineWebsiteModal.hidden = false;
+  elements.pipelineWebsiteInput?.focus();
+  elements.pipelineWebsiteInput?.select();
+}
+
+async function savePipelineWebsite() {
+  if (!currentRecordId || !currentRecord || !getCurrentUser()?.is_admin) return;
+  const value = String(elements.pipelineWebsiteInput?.value || '').trim();
+  if (value && !safeHttpUrl(value)) {
+    if (elements.pipelineWebsiteStatus) elements.pipelineWebsiteStatus.textContent = 'http:// 또는 https:// 주소를 입력해 주세요.';
+    elements.pipelineWebsiteInput?.focus();
+    return;
+  }
+  if (elements.pipelineWebsiteSave) elements.pipelineWebsiteSave.disabled = true;
+  if (elements.pipelineWebsiteStatus) elements.pipelineWebsiteStatus.textContent = '저장 중…';
+  try {
+    const response = await fetch('/api/candidate-queue/metadata', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ owner_type: 'record', record_id: currentRecordId, field: 'website', value })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'Website를 저장하지 못했습니다.');
+    currentRecord.meta = currentRecord.meta || {};
+    currentRecord.meta.pipeline_metadata = { ...(currentRecord.meta.pipeline_metadata || {}), ...(data.metadata || {}), website: data.metadata?.website || value };
+    renderPipelineWebsiteAction(currentRecord);
+    closePipelineWebsiteModal();
+  } catch (error) {
+    if (elements.pipelineWebsiteStatus) elements.pipelineWebsiteStatus.textContent = error.message;
+  } finally {
+    if (elements.pipelineWebsiteSave) elements.pipelineWebsiteSave.disabled = false;
+  }
+}
+
+async function deleteImportedComment(commentId) {
+  if (!currentRecordId || !commentId || !getCurrentUser()?.is_admin) return;
+  if (!window.confirm('이관된 운영 코멘트를 삭제할까요? 원본 Fast Triage/Listing 정보는 삭제되지 않습니다.')) return;
+  try {
+    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE' });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '코멘트를 삭제하지 못했습니다.');
+    currentRecord = data.record;
+    renderCollaborationPanel(currentRecord);
+    setCollaborationStatus('이관 코멘트를 삭제했습니다.', 'success');
+  } catch (error) {
+    setCollaborationStatus(error.message, 'error');
+  }
 }
 
 function partnerMaterialCategoriesForFilename(filename) {
@@ -2444,6 +2529,7 @@ function renderRecord(record) {
   const companyLabel = summary.company || record.structured_table?.company || '-';
   elements.title.textContent = `Details : ${assetLabel} · ${companyLabel}`;
   document.title = `${assetLabel} · ${companyLabel} · SKBP`;
+  renderPipelineWebsiteAction(record);
   if (elements.chatContextAsset) {
     elements.chatContextAsset.textContent = `${summary.asset_name || record.structured_table?.asset_name || 'Pipeline'} · ${summary.company || record.structured_table?.company || '-'}`;
   }
@@ -4223,6 +4309,11 @@ elements.detailCommentInput?.addEventListener('keydown', (event) => {
 });
 
 elements.detailCommentThread?.addEventListener('click', (event) => {
+  const deleteButton = event.target.closest('[data-delete-comment-id]');
+  if (deleteButton) {
+    deleteImportedComment(deleteButton.dataset.deleteCommentId);
+    return;
+  }
   const button = event.target.closest('[data-reply-comment-id]');
   if (!button) return;
   elements.detailReplyParentId.value = button.dataset.replyCommentId;
@@ -4236,6 +4327,29 @@ elements.detailReplyCancel?.addEventListener('click', clearReplyTarget);
 elements.detailAttachmentAddButton?.addEventListener('click', () => {
   pendingPartnerMaterialUploadCategory = '';
   elements.detailAttachmentInput?.click();
+});
+
+elements.detailWebsiteButton?.addEventListener('click', () => {
+  const url = String(elements.detailWebsiteButton.dataset.websiteUrl || '');
+  if (!url) return;
+  if (websiteOpenTimer) window.clearTimeout(websiteOpenTimer);
+  websiteOpenTimer = window.setTimeout(() => {
+    websiteOpenTimer = null;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }, 220);
+});
+elements.detailWebsiteButton?.addEventListener('dblclick', (event) => {
+  event.preventDefault();
+  openPipelineWebsiteModal();
+});
+elements.pipelineWebsiteCancel?.addEventListener('click', closePipelineWebsiteModal);
+elements.pipelineWebsiteSave?.addEventListener('click', savePipelineWebsite);
+elements.pipelineWebsiteModal?.addEventListener('click', (event) => {
+  if (event.target === elements.pipelineWebsiteModal) closePipelineWebsiteModal();
+});
+elements.pipelineWebsiteInput?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') { event.preventDefault(); savePipelineWebsite(); }
+  if (event.key === 'Escape') closePipelineWebsiteModal();
 });
 
 elements.detailAttachmentInput?.addEventListener('change', (event) => {

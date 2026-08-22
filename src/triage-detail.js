@@ -23,7 +23,13 @@ const elements = {
   criteriaBackdrop: document.querySelector('#triageCriteriaBackdrop'),
   criteriaDrawerClose: document.querySelector('#triageCriteriaDrawerClose'),
   criteriaDrawerBody: document.querySelector('#triageCriteriaDrawerBody'),
-  deleteRecordButton: document.querySelector('#triageDeleteRecordButton')
+  deleteRecordButton: document.querySelector('#triageDeleteRecordButton'),
+  websiteButton: document.querySelector('#triageWebsiteButton'),
+  pipelineWebsiteModal: document.querySelector('#pipelineWebsiteModal'),
+  pipelineWebsiteInput: document.querySelector('#pipelineWebsiteInput'),
+  pipelineWebsiteStatus: document.querySelector('#pipelineWebsiteStatus'),
+  pipelineWebsiteCancel: document.querySelector('#pipelineWebsiteCancel'),
+  pipelineWebsiteSave: document.querySelector('#pipelineWebsiteSave')
 };
 
 const scoreDefinitions = [
@@ -159,6 +165,67 @@ function hostnameFor(url) {
     return new URL(url).hostname.replace(/^www\./, '');
   } catch {
     return 'Source';
+  }
+}
+
+function pipelineWebsite(record) {
+  return safeHttpUrl(objectValue(objectValue(record?.meta).pipeline_metadata).website);
+}
+
+function renderPipelineWebsiteAction(record) {
+  const button = elements.websiteButton;
+  if (!button) return;
+  const url = pipelineWebsite(record);
+  button.hidden = !url;
+  button.dataset.websiteUrl = url;
+  button.title = url
+    ? `Pipeline Website: ${url}\n한 번 클릭하여 열기 · 두 번 클릭하여 주소 수정`
+    : 'Pipeline Website가 등록되지 않았습니다.';
+}
+
+let websiteOpenTimer = null;
+
+function closePipelineWebsiteModal() {
+  if (elements.pipelineWebsiteModal) elements.pipelineWebsiteModal.hidden = true;
+  if (elements.pipelineWebsiteStatus) elements.pipelineWebsiteStatus.textContent = '';
+}
+
+function openPipelineWebsiteModal() {
+  if (!currentRecord || !recordId || !currentUserIsAdmin()) return;
+  if (websiteOpenTimer) window.clearTimeout(websiteOpenTimer);
+  websiteOpenTimer = null;
+  if (elements.pipelineWebsiteInput) elements.pipelineWebsiteInput.value = pipelineWebsite(currentRecord);
+  if (elements.pipelineWebsiteStatus) elements.pipelineWebsiteStatus.textContent = '';
+  if (elements.pipelineWebsiteModal) elements.pipelineWebsiteModal.hidden = false;
+  elements.pipelineWebsiteInput?.focus();
+  elements.pipelineWebsiteInput?.select();
+}
+
+async function savePipelineWebsite() {
+  if (!currentRecord || !recordId || !currentUserIsAdmin()) return;
+  const value = String(elements.pipelineWebsiteInput?.value || '').trim();
+  if (value && !safeHttpUrl(value)) {
+    if (elements.pipelineWebsiteStatus) elements.pipelineWebsiteStatus.textContent = 'http:// 또는 https:// 주소를 입력해 주세요.';
+    return;
+  }
+  if (elements.pipelineWebsiteSave) elements.pipelineWebsiteSave.disabled = true;
+  if (elements.pipelineWebsiteStatus) elements.pipelineWebsiteStatus.textContent = '저장 중…';
+  try {
+    const response = await fetch('/api/candidate-queue/metadata', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ owner_type: 'record', record_id: recordId, field: 'website', value })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'Website를 저장하지 못했습니다.');
+    currentRecord.meta = currentRecord.meta || {};
+    currentRecord.meta.pipeline_metadata = { ...(currentRecord.meta.pipeline_metadata || {}), ...(data.metadata || {}), website: data.metadata?.website || value };
+    renderPipelineWebsiteAction(currentRecord);
+    closePipelineWebsiteModal();
+  } catch (error) {
+    if (elements.pipelineWebsiteStatus) elements.pipelineWebsiteStatus.textContent = error.message;
+  } finally {
+    if (elements.pipelineWebsiteSave) elements.pipelineWebsiteSave.disabled = false;
   }
 }
 
@@ -1033,6 +1100,7 @@ function renderRecord(record) {
   elements.title.textContent = `Fast Triage : ${asset}`;
   elements.subtitle.textContent = `${company} · ${displayValue(table.development_stage)} · ${theme} / ${cluster}`;
   document.title = `${asset} · Fast Triage`;
+  renderPipelineWebsiteAction(record);
   renderDecision(record);
   renderIdentity(record);
   renderScores(record);
@@ -1236,6 +1304,28 @@ elements.criteriaDrawerButton?.addEventListener('click', openCriteriaDrawer);
 elements.criteriaDrawerClose?.addEventListener('click', closeCriteriaDrawer);
 elements.criteriaBackdrop?.addEventListener('click', closeCriteriaDrawer);
 elements.deleteRecordButton?.addEventListener('click', deleteCurrentRecord);
+elements.websiteButton?.addEventListener('click', () => {
+  const url = String(elements.websiteButton.dataset.websiteUrl || '');
+  if (!url) return;
+  if (websiteOpenTimer) window.clearTimeout(websiteOpenTimer);
+  websiteOpenTimer = window.setTimeout(() => {
+    websiteOpenTimer = null;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }, 220);
+});
+elements.websiteButton?.addEventListener('dblclick', (event) => {
+  event.preventDefault();
+  openPipelineWebsiteModal();
+});
+elements.pipelineWebsiteCancel?.addEventListener('click', closePipelineWebsiteModal);
+elements.pipelineWebsiteSave?.addEventListener('click', savePipelineWebsite);
+elements.pipelineWebsiteModal?.addEventListener('click', (event) => {
+  if (event.target === elements.pipelineWebsiteModal) closePipelineWebsiteModal();
+});
+elements.pipelineWebsiteInput?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') { event.preventDefault(); savePipelineWebsite(); }
+  if (event.key === 'Escape') closePipelineWebsiteModal();
+});
 elements.scoreGrid?.addEventListener('change', (event) => {
   const select = event.target.closest('[data-triage-score-select]');
   if (select && currentUserIsAdmin()) saveTriageScore(select);

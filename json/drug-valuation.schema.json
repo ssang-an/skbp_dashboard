@@ -48,6 +48,17 @@
             "updated_at": { "type": "string" }
           },
           "additionalProperties": false
+        },
+        "collaboration": {
+          "type": "object",
+          "description": "Dashboard operational comment thread. System-imported Listing and Fast Triage posts retain source provenance separately from GPT evidence.",
+          "properties": {
+            "comments": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+            "deleted_import_keys": { "type": "array", "items": { "type": "string" } },
+            "updated_at": { "type": "string" },
+            "comment_count": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": true
         }
       },
       "additionalProperties": true

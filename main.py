@@ -5178,10 +5178,210 @@ def pipeline_human_comment_feed(
                     "body": body,
                 })
 
+        # Fast Triage criterion comments live in topic_notes, not in the Full
+        # Scout qualitative-review structure.  They are human-written operating
+        # notes and belong in the Tab 0 feed, but AI-generated content does not.
+        for note in meta.get("topic_notes") if isinstance(meta.get("topic_notes"), list) else []:
+            if not isinstance(note, dict) or note.get("is_ai") is True:
+                continue
+            topic_id = str(note.get("topic_id") or "")
+            if not topic_id.startswith("triage-score-"):
+                continue
+            body = str(note.get("body") or "").strip()
+            if not body:
+                continue
+            criterion_label = triage_comment_criterion_label(note)
+            entries.append({
+                "source": f"{source} · {criterion_label}",
+                "author": str(note.get("author_name") or note.get("author") or "").strip(),
+                "created_at": str(note.get("created_at") or note.get("updated_at") or "").strip(),
+                "body": body,
+            })
+
+        # Team Review Workspace comments are normal operational posts. Imported
+        # Listing/Fast Triage posts are deliberately excluded here because their
+        # originating entry above is already shown in the feed.
+        collaboration = meta.get("collaboration") if isinstance(meta.get("collaboration"), dict) else {}
+        for comment in collaboration.get("comments") if isinstance(collaboration.get("comments"), list) else []:
+            if not isinstance(comment, dict) or comment.get("system_import") is True:
+                continue
+            body = str(comment.get("body") or "").strip()
+            if not body:
+                continue
+            entries.append({
+                "source": f"{source} · Team Review Comment",
+                "author": str(comment.get("author") or "").strip(),
+                "created_at": str(comment.get("created_at") or "").strip(),
+                "body": body,
+            })
+
     base_entries = entries[:1] if entries and entries[0].get("source") == "Tab 0 · Listing Comment" else []
     operational_entries = entries[len(base_entries):]
     operational_entries.sort(key=lambda item: str(item.get("created_at") or ""))
     return base_entries + operational_entries
+
+
+TRIAGE_COMMENT_CRITERION_LABELS = {
+    "target_relevance": "Target Area Relevance",
+    "competitive_landscape": "Competitive Landscape",
+    "moa_validity": "MoA Validity",
+    "platform_attractiveness": "Platform Attractiveness",
+    "expansion_potential": "Expansion Potential",
+    "data_maturity": "Data Maturity",
+    "marketability": "Marketability",
+}
+
+
+def triage_comment_criterion_label(note: dict[str, Any]) -> str:
+    """Give Fast Triage score notes a stable, user-facing source label."""
+    title = str(note.get("topic_title") or "").strip()
+    if title:
+        title = re.sub(r"^Fast Triage\s*[·:-]\s*", "", title, flags=re.IGNORECASE).strip()
+        if title:
+            return title
+    criterion_id = str(note.get("topic_id") or "").removeprefix("triage-score-")
+    return TRIAGE_COMMENT_CRITERION_LABELS.get(criterion_id, "Criterion Comment")
+
+
+def imported_comment_key(*parts: Any) -> str:
+    source = "\x1f".join(str(part or "").strip() for part in parts)
+    return hashlib.sha256(source.encode("utf-8")).hexdigest()
+
+
+def upsert_system_comment(
+    record: dict[str, Any],
+    *,
+    import_key: str,
+    author: str,
+    body: str,
+    source: str,
+    created_at: str = "",
+) -> bool:
+    """Create/update a durable cross-workflow comment without duplicate posts."""
+    body = str(body or "").strip()
+    if not body:
+        return False
+    meta = record.setdefault("meta", {})
+    collaboration = meta.setdefault("collaboration", {})
+    comments = collaboration.setdefault("comments", [])
+    if not isinstance(comments, list):
+        comments = []
+        collaboration["comments"] = comments
+    deleted_import_keys = collaboration.get("deleted_import_keys")
+    if isinstance(deleted_import_keys, list) and import_key in {str(key) for key in deleted_import_keys}:
+        return False
+    now = datetime.now(timezone.utc).isoformat()
+    existing = next(
+        (
+            comment for comment in comments
+            if isinstance(comment, dict) and str(comment.get("import_key") or "") == import_key
+        ),
+        None,
+    )
+    if existing is not None:
+        changed = existing.get("author") != author or existing.get("body") != body or existing.get("source") != source
+        if not changed:
+            return False
+        existing.update({"author": author, "body": body, "source": source, "updated_at": now, "system_import": True})
+    else:
+        comments.append({
+            "id": uuid.uuid4().hex,
+            "parent_id": None,
+            "author": author,
+            "author_user_id": "",
+            "author_email": "",
+            "actor_ip": "system",
+            "body": body,
+            "created_at": created_at or now,
+            "updated_at": now,
+            "source": source,
+            "import_key": import_key,
+            "system_import": True,
+        })
+        changed = True
+    collaboration["updated_at"] = now
+    collaboration["comment_count"] = len(comments)
+    return changed
+
+
+def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
+    """Promote Listing and Fast Triage human comments into their durable destinations.
+
+    Tab 0 metadata is an operational note, so it becomes a `Tab 0` post on each
+    researched record.  Human Fast Triage Final/criterion comments are copied to
+    Full Scout's Team Review Workspace as distinct source-labelled posts.  Import
+    keys make repeated reuploads idempotent and AI entries are never considered.
+    """
+    changed_count = 0
+    for group in dashboard_identity_groups(records):
+        group_records = [record for record in group.get("records") or [] if isinstance(record, dict)]
+        metadata = pipeline_metadata_for_group(group)
+        listing_comment = str(metadata.get("comment") or "").strip()
+        identity = str(group.get("asset_identity") or "")
+
+        if listing_comment:
+            for target in group_records:
+                if upsert_system_comment(
+                    target,
+                    import_key=imported_comment_key("tab0-listing", identity),
+                    author="Tab 0",
+                    body=listing_comment,
+                    source="tab0_listing_comment",
+                ):
+                    append_edit_history(
+                        target,
+                        source="cross_workflow_comment_sync",
+                        actor_ip="system",
+                        field="collaboration.comments.tab0_listing",
+                    )
+                    changed_count += 1
+
+        fast_triage_records = [record for record in group_records if is_fast_triage_record(record)]
+        full_scout_records = [record for record in group_records if not is_fast_triage_record(record)]
+        if not fast_triage_records or not full_scout_records:
+            continue
+
+        for triage_record in fast_triage_records:
+            triage_key = record_key(triage_record)
+            triage_meta = triage_record.get("meta") if isinstance(triage_record.get("meta"), dict) else {}
+            human_review = triage_meta.get("human_review") if isinstance(triage_meta.get("human_review"), dict) else {}
+            overrides = human_review.get("overrides") if isinstance(human_review.get("overrides"), dict) else {}
+            final_comment = str(overrides.get("final_comment") or "").strip()
+            if final_comment:
+                for target in full_scout_records:
+                    if upsert_system_comment(
+                        target,
+                        import_key=imported_comment_key("fast-triage-final", triage_key),
+                        author="Fast Triage · Final Comment",
+                        body=final_comment,
+                        source="fast_triage_final_comment",
+                        created_at=str(human_review.get("final_comment_updated_at") or ""),
+                    ):
+                        append_edit_history(target, source="cross_workflow_comment_sync", actor_ip="system", field="collaboration.comments.fast_triage_final")
+                        changed_count += 1
+
+            notes = triage_meta.get("topic_notes") if isinstance(triage_meta.get("topic_notes"), list) else []
+            for note in notes:
+                if not isinstance(note, dict) or note.get("is_ai") is True:
+                    continue
+                topic_id = str(note.get("topic_id") or "")
+                body = str(note.get("body") or "").strip()
+                if not topic_id.startswith("triage-score-") or not body:
+                    continue
+                note_key = str(note.get("id") or imported_comment_key(topic_id, body))
+                label = triage_comment_criterion_label(note)
+                for target in full_scout_records:
+                    if upsert_system_comment(
+                        target,
+                        import_key=imported_comment_key("fast-triage-criterion", triage_key, note_key),
+                        author=f"Fast Triage · {label}",
+                        body=body,
+                        source="fast_triage_criterion_comment",
+                        created_at=str(note.get("created_at") or note.get("updated_at") or ""),
+                    ):
+                        append_edit_history(target, source="cross_workflow_comment_sync", actor_ip="system", field=f"collaboration.comments.fast_triage_{topic_id}")
+                        changed_count += 1
+    return changed_count
 
 
 def record_matches_candidate_queue_entry(record: dict[str, Any], entry: dict[str, Any]) -> bool:
@@ -8494,10 +8694,12 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
         raise HTTPException(status_code=400, detail="Expected metadata update object.")
     field = str(payload.get("field") or "").strip().lower()
     if field not in PIPELINE_METADATA_FIELDS:
-        raise HTTPException(status_code=400, detail="field must be comment or contact.")
+        raise HTTPException(status_code=400, detail="field must be comment, contact, or website.")
     value = str(payload.get("value") or "").strip()
     if len(value) > 5000:
-        raise HTTPException(status_code=400, detail="Comment and Contact values must be 5,000 characters or fewer.")
+        raise HTTPException(status_code=400, detail="Pipeline metadata values must be 5,000 characters or fewer.")
+    if field == "website" and value and not normalize_listing_website(value):
+        raise HTTPException(status_code=400, detail="Website must be a valid HTTP(S) URL.")
     changed_at = datetime.now(timezone.utc).isoformat()
     owner_type = str(payload.get("owner_type") or "").strip()
 
@@ -8542,6 +8744,8 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
                     previous_value=previous,
                     new_value=value,
                 )
+        if field == "comment":
+            synchronize_cross_workflow_comments(records)
         save_records(records)
         return {
             "ok": True,
@@ -9862,6 +10066,8 @@ async def update_manual_review_history_reason(record_id: str, request: Request) 
         match["review_reason_updated_at"] = datetime.now(timezone.utc).isoformat()
         match["review_reason_updated_by"] = actor_name or get_client_ip(request)
         records[index] = record
+        if is_triage and edit_kind in {"final_comment", "final_comment_delete"}:
+            synchronize_cross_workflow_comments(records)
         save_records(records)
         return {"ok": True, "record_id": record_id, "record": record}
 
@@ -10169,6 +10375,47 @@ async def create_record_comment(record_id: str, request: Request) -> dict[str, A
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
 
 
+@app.delete("/api/records/{record_id:path}/comments/{comment_id}")
+def delete_record_comment(record_id: str, comment_id: str, request: Request) -> dict[str, Any]:
+    """Allow administrators to remove a displayed operational comment."""
+    account = require_auth_admin(request)
+    records = load_records()
+    for index, record in enumerate(records):
+        if record_key(record) != record_id:
+            continue
+        collaboration = ((record.get("meta") or {}).get("collaboration") or {})
+        comments = collaboration.get("comments") if isinstance(collaboration, dict) else None
+        if not isinstance(comments, list):
+            raise HTTPException(status_code=404, detail="Comment was not found.")
+        target = next((comment for comment in comments if isinstance(comment, dict) and str(comment.get("id") or "") == comment_id), None)
+        if target is None:
+            raise HTTPException(status_code=404, detail="Comment was not found.")
+        collaboration["comments"] = [comment for comment in comments if comment is not target]
+        if target.get("system_import") is True and str(target.get("import_key") or ""):
+            deleted_import_keys = collaboration.get("deleted_import_keys")
+            if not isinstance(deleted_import_keys, list):
+                deleted_import_keys = []
+            import_key = str(target["import_key"])
+            if import_key not in deleted_import_keys:
+                deleted_import_keys.append(import_key)
+            collaboration["deleted_import_keys"] = deleted_import_keys[-200:]
+        collaboration["comment_count"] = len(collaboration["comments"])
+        collaboration["updated_at"] = datetime.now(timezone.utc).isoformat()
+        append_edit_history(
+            record,
+            source="dashboard_comment_delete",
+            actor_ip=get_client_ip(request),
+            actor_name=str(account.get("name") or ""),
+            field="collaboration.comments",
+            previous_value=str(target.get("body") or ""),
+            new_value="deleted",
+        )
+        records[index] = record
+        save_records(records)
+        return {"ok": True, "record_id": record_id, "record": record, "deleted_id": comment_id}
+    raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
+
+
 def normalized_topic_note_key(value: Any) -> str:
     text = unicodedata.normalize("NFKC", str(value or "")).casefold().strip()
     text = re.sub(r"^\s*(?:section\s+)?\d+(?:\.\d+)*[.)\-:]?\s*", "", text)
@@ -10225,6 +10472,8 @@ async def add_record_topic_note(record_id: str, request: Request) -> dict[str, A
             new_value=body,
         )
         records[index] = record
+        if is_fast_triage_record(record):
+            synchronize_cross_workflow_comments(records)
         save_records(records)
         return {"ok": True, "record_id": record_id, "record": record, "note": note}
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
@@ -10273,6 +10522,8 @@ async def update_record_topic_note(record_id: str, note_id: str, request: Reques
             new_value=body,
         )
         records[index] = record
+        if is_fast_triage_record(record):
+            synchronize_cross_workflow_comments(records)
         save_records(records)
         return {"ok": True, "record_id": record_id, "record": record, "note": note}
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
@@ -10303,6 +10554,8 @@ def delete_record_topic_note(record_id: str, note_id: str, request: Request) -> 
             previous_value=note.get("body"),
         )
         records[index] = record
+        if is_fast_triage_record(record):
+            synchronize_cross_workflow_comments(records)
         save_records(records)
         return {"ok": True, "record_id": record_id, "record": record, "deleted_note_id": note_id}
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
@@ -11413,6 +11666,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
             records.append(record)
             inserted += 1
 
+    synchronize_cross_workflow_comments(records)
     save_records(records)
     if consumed_listing_ids:
         save_candidate_queue([entry for entry in queue if entry.get("id") not in consumed_listing_ids])
@@ -11441,6 +11695,7 @@ async def replace_records(request: Request) -> dict[str, Any]:
     queue = load_candidate_queue()
     consumed_listing_ids = promote_candidate_queue_metadata(records, queue)
     validate_records_for_save(records)
+    synchronize_cross_workflow_comments(records)
     save_records(records)
     if consumed_listing_ids:
         save_candidate_queue([entry for entry in queue if entry.get("id") not in consumed_listing_ids])
