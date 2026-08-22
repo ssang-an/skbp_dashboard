@@ -19311,6 +19311,29 @@ body.report-reupload-open {
   background: var(--surface-soft);
 }
 
+button.step0-stat {
+  width: 100%;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+button.step0-stat:hover,
+button.step0-stat:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 44%, var(--line));
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+  box-shadow: 0 5px 12px rgba(15, 23, 42, .07);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+button.step0-stat.active {
+  border-color: color-mix(in srgb, var(--accent) 62%, var(--line));
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+}
+
 .step0-stat-label {
   color: var(--muted);
   font-size: 12px;

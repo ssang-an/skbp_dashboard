@@ -480,6 +480,7 @@ const elements = {
   step0StatFastTriage: document.querySelector('#step0StatFastTriage'),
   step0StatFullScout: document.querySelector('#step0StatFullScout'),
   step0StatShortlisted: document.querySelector('#step0StatShortlisted'),
+  step0StatFilterButtons: document.querySelectorAll('[data-step0-stat-filter]'),
   step0RecentPending: document.querySelector('#step0RecentPending'),
   step0RecentFastTriage: document.querySelector('#step0RecentFastTriage'),
   step0RecentFullScout: document.querySelector('#step0RecentFullScout'),
@@ -10279,26 +10280,31 @@ function resetStep0Filters() {
   state.step0StatusFilterValues.clear();
   if (elements.step0SearchInput) elements.step0SearchInput.value = '';
   renderStep0SearchTokens();
-  elements.step0StatusToggleButtons?.forEach((button) => {
-    button.classList.remove('active');
-    button.setAttribute('aria-pressed', 'false');
-  });
+  renderStep0StatusFilterControls();
   state.step0Page = 1;
   renderStep0ProgressTable();
+}
+
+function renderStep0StatusFilterControls() {
+  const selected = state.step0StatusFilterValues;
+  const syncButtons = (buttons, attribute) => buttons?.forEach((button) => {
+    const isActive = selected.has(button.dataset[attribute]);
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
+  syncButtons(elements.step0StatusToggleButtons, 'step0Status');
+  syncButtons(elements.step0StatFilterButtons, 'step0StatFilter');
 }
 
 function toggleStep0StatusFilter(status, button) {
   if (!status) return;
   if (state.step0StatusFilterValues.has(status)) {
     state.step0StatusFilterValues.delete(status);
-    button.classList.remove('active');
-    button.setAttribute('aria-pressed', 'false');
   } else {
     state.step0StatusFilterValues.add(status);
-    button.classList.add('active');
-    button.setAttribute('aria-pressed', 'true');
   }
   state.step0Page = 1;
+  renderStep0StatusFilterControls();
   renderStep0ProgressTable();
 }
 
@@ -10404,6 +10410,9 @@ elements.step0SearchTokens?.addEventListener('click', (event) => {
 });
 elements.step0StatusToggleButtons?.forEach((button) => {
   button.addEventListener('click', () => toggleStep0StatusFilter(button.dataset.step0Status, button));
+});
+elements.step0StatFilterButtons?.forEach((button) => {
+  button.addEventListener('click', () => toggleStep0StatusFilter(button.dataset.step0StatFilter, button));
 });
 elements.step0ResetFiltersButton?.addEventListener('click', resetStep0Filters);
 document.querySelectorAll('button[data-step0-sort]').forEach((button) => {

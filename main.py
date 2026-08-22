@@ -8178,6 +8178,7 @@ def get_candidate_queue_progress() -> dict[str, Any]:
         shortlisted_record = dashboard_latest_record(tracked_full_records) if tracked_full_records else None
 
         representative = full_record or fast_record
+        listing_details_source = "full_scout" if full_record is not None else "fast_triage" if fast_record is not None else "listing"
         rep_table = (representative.get("structured_table") if representative else None) or {}
         rep_summary = (representative.get("json_summary") if representative else None) or {}
         asset_label = non_empty_text(rep_table.get("asset_name"), rep_summary.get("asset_name"), "Unknown")
@@ -8209,6 +8210,7 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "asset": asset_label,
                 "company": company_label,
                 "listing_details": listing_details,
+                "listing_details_source": listing_details_source,
                 "pending": {"done": listing_done, "queue_id": None},
                 "fast_triage": {"done": fast_record is not None, "record_id": record_key(fast_record) if fast_record else None},
                 "full_scout": {"done": full_record is not None, "record_id": record_key(full_record) if full_record else None},
@@ -8248,6 +8250,7 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "asset": non_empty_text(entry.get("asset_input"), "Unknown"),
                 "company": non_empty_text(entry.get("company_input"), "Unknown"),
                 "listing_details": candidate_queue_entry_details(entry),
+                "listing_details_source": "listing",
                 "pending": {"done": True, "queue_id": entry_id},
                 "fast_triage": {"done": False, "record_id": None},
                 "full_scout": {"done": False, "record_id": None},

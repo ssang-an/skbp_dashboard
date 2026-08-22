@@ -38,6 +38,13 @@ class Step0RecentUploadTests(unittest.TestCase):
         fast = pipeline_record(review_type="fast_triage", uploaded_at=recent)
         # Legacy Full Scout records do not have an upload timestamp, so generated_at is used.
         full = pipeline_record(review_type="full_scout", focus_added_at=recent)
+        full["structured_table"].update({
+            "company_country": "US",
+            "modality_platform": "Biologic",
+            "target": "Target Y",
+            "main_indication": "Parkinson's disease",
+            "development_stage": "Phase 1",
+        })
         group = {
             "asset_identity": "recent-bio::recent-asset",
             "asset_aliases": {"recent asset"},
@@ -59,9 +66,10 @@ class Step0RecentUploadTests(unittest.TestCase):
         self.assertEqual(progress["recent_15_days"], {"pending": 2, "fast_triage": 1, "full_scout": 1, "shortlisted": 1})
         researched = next(row for row in progress["rows"] if row["identity"] == "recent-bio::recent-asset")
         self.assertEqual(researched["listing_details"], {
-            "country": "KR",
-            "modality": "Small molecule",
-            "target": "Target X",
-            "main_indication": "ALS",
-            "stage": "Preclinical",
+            "country": "US",
+            "modality": "Biologic",
+            "target": "Target Y",
+            "main_indication": "Parkinson's disease",
+            "stage": "Phase 1",
         })
+        self.assertEqual(researched["listing_details_source"], "full_scout")
