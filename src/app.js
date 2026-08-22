@@ -10422,10 +10422,10 @@ const STEP0_WORKFLOW_MAP_STAGES = [
 ];
 
 const STEP0_WORKFLOW_NODE_STYLES = {
-  pending: { color: '#94a3b8', size: 4, collisionPadding: 1.3, repulsion: -4 },
+  pending: { color: '#94a3b8', size: 4, collisionPadding: 0.25, repulsion: -1, collisionStrength: 0.28 },
   fast_triage: { color: '#5f8fbe', size: 7, collisionPadding: 1.8, repulsion: -7 },
   full_scout: { color: '#4c9b78', size: 10, collisionPadding: 2.2, repulsion: -10 },
-  shortlisting: { color: '#b8871b', size: 13, collisionPadding: 0.25, repulsion: -1, collisionStrength: 0.28 }
+  shortlisting: { color: '#b8871b', size: 18, collisionPadding: 3.2, repulsion: -16, collisionStrength: 0.9 }
 };
 
 function destroyStep0WorkflowGraph() {
