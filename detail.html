@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260823-evidence-anchor-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260823-qualitative-status-pills-1" />
   </head>
   <body>
     <div class="app-shell detail-shell">
@@ -336,9 +336,9 @@
                 </div>
                 <div id="qualitativeCriterionStatusPills" class="qualitative-criterion-status-pills" role="group" aria-label="Due Diligence 평가 항목 의견 상태">
                   <span class="qualitative-criterion-status-label">의견 상태</span>
-                  <button type="button" data-qualitative-jump="efficacy" aria-pressed="false" title="Efficacy 의견 입력란으로 이동"><span aria-hidden="true"></span>Efficacy <b>0</b></button>
-                  <button type="button" data-qualitative-jump="commercial_appeal" aria-pressed="false" title="Commercial 의견 입력란으로 이동"><span aria-hidden="true"></span>Commercial <b>0</b></button>
-                  <button type="button" data-qualitative-jump="execution_risk" aria-pressed="false" title="Dev. & Partnership Risk 의견 입력란으로 이동"><span aria-hidden="true"></span>Dev. &amp; Risk <b>0</b></button>
+                  <button type="button" data-qualitative-jump="efficacy" aria-pressed="false" title="Efficacy 의견 입력란으로 이동"><i aria-hidden="true"></i><span class="qualitative-criterion-status-value">Efficacy<b>0</b></span></button>
+                  <button type="button" data-qualitative-jump="commercial_appeal" aria-pressed="false" title="Commercial 의견 입력란으로 이동"><i aria-hidden="true"></i><span class="qualitative-criterion-status-value">Commercial<b>0</b></span></button>
+                  <button type="button" data-qualitative-jump="execution_risk" aria-pressed="false" title="Dev. & Partnership Risk 의견 입력란으로 이동"><i aria-hidden="true"></i><span class="qualitative-criterion-status-value">Dev. &amp; Risk<b>0</b></span></button>
                 </div>
                 <div class="qualitative-panel-heading-actions">
                   <button
@@ -531,8 +531,8 @@
           <strong id="chatContextAsset">-</strong>
         </div>
         <div>
-          <span>Score Context</span>
-          <strong id="chatContextScore">-</strong>
+          <span>Knowledge Mode</span>
+          <strong>JSON + Wiki + Files</strong>
         </div>
       </div>
 
@@ -860,6 +860,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260823-evidence-anchor-1"></script>
+    <script type="module" src="./src/detail.js?v=20260823-qualitative-status-pills-1"></script>
   </body>
 </html>

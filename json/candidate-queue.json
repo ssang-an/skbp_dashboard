@@ -5165,7 +5165,32 @@
     "company_input": "PSK Bioscience",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-21T04:39:46.966189+00:00"
+    "added_at": "2026-08-21T04:39:46.966189+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "Delivery RBP mediated\nIND Date 4Q2027\nProfile - 10 days post dosing, 60% knockdown achieved \n- B/P ratio = ~2.0\n- Nasal administration, Q3D\nPlatform: SGRL-Exo",
+      "comment_author": "Team Review",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment_updated_at": "2026-08-23T13:23:26.405832+00:00",
+      "contact": "ChinaBio 2026",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "PSK-01",
+      "company_aliases": "PSK Bioscience",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "RNA",
+      "target": "Sod1, bace",
+      "main_indication": "ALS, AD",
+      "stage": "Preclinical, IIT (CN)",
+      "website": ""
+    }
   },
   {
     "id": "cq_301fc455",
@@ -5173,7 +5198,32 @@
     "company_input": "Genescience",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-21T04:39:46.966189+00:00"
+    "added_at": "2026-08-21T04:39:46.966189+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "Delivery VHH",
+      "comment_author": "Team Review",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment_updated_at": "2026-08-23T13:23:26.405832+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "GenSciP165",
+      "company_aliases": "Genescience",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "AOC",
+      "target": "APP-TfR1",
+      "main_indication": "AD",
+      "stage": "PCC",
+      "website": ""
+    }
   },
   {
     "id": "cq_7b57e714",
@@ -5181,7 +5231,32 @@
     "company_input": "Genescience",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-21T04:39:46.966189+00:00"
+    "added_at": "2026-08-21T04:39:46.966189+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "GenSci155",
+      "company_aliases": "Genescience",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "Peptide conjugate",
+      "target": "IFG-1R?",
+      "main_indication": "AIS, BPD, sPIGHD",
+      "stage": "IND submitted",
+      "website": ""
+    }
   },
   {
     "id": "cq_93ef6c2a",
@@ -5189,7 +5264,32 @@
     "company_input": "Genescience",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-21T04:39:46.966189+00:00"
+    "added_at": "2026-08-21T04:39:46.966189+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "GenSci136",
+      "company_aliases": "Genescience",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "Fusion protein",
+      "target": "APRIL/BAFF",
+      "main_indication": "MG",
+      "stage": "Ph1",
+      "website": ""
+    }
   },
   {
     "id": "cq_85dff59e",
@@ -5197,7 +5297,32 @@
     "company_input": "Ribo Life Science",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-21T04:39:46.966189+00:00"
+    "added_at": "2026-08-21T04:39:46.966189+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "Delivery IT\nPlatform:  RiboPepSTAR",
+      "comment_author": "Team Review",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment_updated_at": "2026-08-23T13:23:26.405832+00:00",
+      "contact": "ChinaBio 2026",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "Ribo-Ab42",
+      "company_aliases": "Ribo Life Science",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "siRNA",
+      "target": "Ab42",
+      "main_indication": "AD",
+      "stage": "",
+      "website": ""
+    }
   },
   {
     "id": "cq_66bf910b",
@@ -5205,7 +5330,32 @@
     "company_input": "Ribo Life Science",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-21T04:39:46.966189+00:00"
+    "added_at": "2026-08-21T04:39:46.966189+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "SR-131",
+      "company_aliases": "Ribo Life Science",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "siRNA",
+      "target": "undisclosed",
+      "main_indication": "Pain",
+      "stage": "Preclinical",
+      "website": ""
+    }
   },
   {
     "id": "cq_b1428bc0",
@@ -5213,7 +5363,32 @@
     "company_input": "CTFH",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-21T04:39:46.966189+00:00"
+    "added_at": "2026-08-21T04:39:46.966189+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "IND Date 3Q2024\nEstablished Year1997\nNCDP Review",
+      "comment_author": "Team Review",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment_updated_at": "2026-08-23T13:23:26.405832+00:00",
+      "contact": "ChinaBio 2026",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "FHND-1002",
+      "company_aliases": "CTFH",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "Small Moledule",
+      "target": "α-Syn, p-α-Syn",
+      "main_indication": "ALS, IS, PD",
+      "stage": "Ph2 (ALS & PD CN)",
+      "website": ""
+    }
   },
   {
     "id": "cq_24567557",
@@ -5221,7 +5396,32 @@
     "company_input": "Artvila Biopharma",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-21T04:39:46.966189+00:00"
+    "added_at": "2026-08-21T04:39:46.966189+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "Platform:  ArtChat, ArtMol, ArtDDr\nSeries A\nInvestment raised $15M\nTotal raised $57M\nIPO ('27)",
+      "comment_author": "Team Review",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment_updated_at": "2026-08-23T13:23:26.405832+00:00",
+      "contact": "ChinaBio 2026",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "Artvila-RIPK",
+      "company_aliases": "Artvila Biopharma",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "ASO",
+      "target": "RIPK",
+      "main_indication": "AD",
+      "stage": "PCC Completion",
+      "website": ""
+    }
   },
   {
     "id": "cq_44c5c41f",
@@ -5229,7 +5429,32 @@
     "company_input": "NutShell Therapeutics",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-21T04:39:46.966189+00:00"
+    "added_at": "2026-08-21T04:39:46.966189+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "Nutshell-NA",
+      "company_aliases": "NutShell Therapeutics",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "Small Moledule",
+      "target": "undisclosed",
+      "main_indication": "AD",
+      "stage": "Lead optimization",
+      "website": ""
+    }
   },
   {
     "id": "cq_e480c957",
@@ -5237,7 +5462,32 @@
     "company_input": "Enlightmen Biotech",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-21T04:39:46.966189+00:00"
+    "added_at": "2026-08-21T04:39:46.966189+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "EN-N001",
+      "company_aliases": "Enlightmen Biotech",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "Small Moledule",
+      "target": "DYRK1A",
+      "main_indication": "AD",
+      "stage": "Lead optimization",
+      "website": ""
+    }
   },
   {
     "id": "cq_c53438c3",
@@ -5245,7 +5495,32 @@
     "company_input": "Enlightmen Biotech",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-21T04:39:46.966189+00:00"
+    "added_at": "2026-08-21T04:39:46.966189+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "EN-N002",
+      "company_aliases": "Enlightmen Biotech",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "Small Moledule",
+      "target": "MAPK8(JNK1)",
+      "main_indication": "AD",
+      "stage": "Lead optimization",
+      "website": ""
+    }
   },
   {
     "id": "cq_319e5ce4",
@@ -5253,6 +5528,700 @@
     "company_input": "Groovy Medicine",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-21T04:39:46.966189+00:00"
+    "added_at": "2026-08-21T04:39:46.966189+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "Platform:  AIDD platform featuring molecular simulation engines, predictive modeling, compound screening systems, and target validation modules. Primary focus on treating major diseases like cancer and neurodegenerative disorders\nEst Year 2022\nSeries A\nInvestment raised $several millions\nDiscuss with OIC",
+      "comment_author": "Team Review",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment_updated_at": "2026-08-23T13:23:26.405832+00:00",
+      "contact": "Via agency, 202606",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "GW-07",
+      "company_aliases": "Groovy Medicine",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "Small Moledule",
+      "target": "APP-SIMAR1",
+      "main_indication": "AD",
+      "stage": "pre-PCC",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_c6c39b62",
+    "asset_input": "Braegen-03",
+    "company_input": "Braegen Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "20260702- conference",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "Braegen-03",
+      "company_aliases": "Braegen Pharmaceutical",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Small Moledule",
+      "target": "AEP",
+      "main_indication": "AD, PD",
+      "stage": "PCC",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_36ccaf0a",
+    "asset_input": "RW51",
+    "company_input": "Riboway",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "Delivery IT\nPlatform:  - Focused on AI-powered ASO design platform for CNS. Riboway shared case studies about their advantage on undruggable targets, e.g. transcription factors.\n - Highlight of their AI model is that it is trained with multiple models of data, incl. genomic, transcriptomic, proteomic, and different targets will be addressed in a precision way according to its own biology.",
+      "comment_author": "Team Review",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment_updated_at": "2026-08-23T13:23:26.405832+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "RW51",
+      "company_aliases": "Riboway",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "ASO",
+      "target": "ATXN2",
+      "main_indication": "SCA2, ALS",
+      "stage": "IND enabling",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_89159a1e",
+    "asset_input": "RW01",
+    "company_input": "Riboway",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "Delivery IT\nOngoing",
+      "comment_author": "Team Review",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment_updated_at": "2026-08-23T13:23:26.405832+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "RW01",
+      "company_aliases": "Riboway",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "ASO",
+      "target": "Not disclosed",
+      "main_indication": "ALS, HD",
+      "stage": "Lead optimization",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_8d97aceb",
+    "asset_input": "AN2008",
+    "company_input": "AstraNeura",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "Est. Year 2023",
+      "comment_author": "Team Review",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment_updated_at": "2026-08-23T13:23:26.405832+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "AN2008",
+      "company_aliases": "AstraNeura",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "Small Moledule",
+      "target": "PDE4/X dual targeting",
+      "main_indication": "AD, CIAS, MDD",
+      "stage": "Lead optimization",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_3f745499",
+    "asset_input": "NSP-1003",
+    "company_input": "Novostar",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "NSP-1003",
+      "company_aliases": "Novostar",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "CN",
+      "modality": "Small Moledule",
+      "target": "MNK",
+      "main_indication": "Chronic pain",
+      "stage": "IND enabling",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_2267c453",
+    "asset_input": "SP-HQ0013",
+    "company_input": "Space Peptide",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "IND Date Mid 2027",
+      "comment_author": "Team Review",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment_updated_at": "2026-08-23T13:23:26.405832+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "SP-HQ0013",
+      "company_aliases": "Space Peptide",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Small Moledule",
+      "target": "α7 nAChR",
+      "main_indication": "AD, CIAS",
+      "stage": "Preclinical",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_f06b0403",
+    "asset_input": "GPR120",
+    "company_input": "Prof. Huang Zhuo (PKU)",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "GPR120",
+      "company_aliases": "Prof. Huang Zhuo (PKU)",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Small Moledule",
+      "target": "GABAA",
+      "main_indication": "Epilepsy",
+      "stage": "Lead optimization",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_60905163",
+    "asset_input": "PDR-001 (Pep)",
+    "company_input": "Prodegre",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "PDR-001 (Pep)\nPDR-001",
+      "company_aliases": "Prodegre",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Peptide",
+      "target": "a-synuclein",
+      "main_indication": "PD, MSA, DLB",
+      "stage": "Lead optimization",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_3254fb07",
+    "asset_input": "Prodegre-NEK7",
+    "company_input": "Prodegre",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "Prodegre-NEK7",
+      "company_aliases": "Prodegre",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Small Moledule",
+      "target": "NEK7",
+      "main_indication": "PD",
+      "stage": "Lead optimization",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_9dc76124",
+    "asset_input": "Prodegre-STAT6",
+    "company_input": "Prodegre",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "Prodegre-STAT6",
+      "company_aliases": "Prodegre",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Small Moledule",
+      "target": "STAT6",
+      "main_indication": "PD",
+      "stage": "Lead optimization",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_64e49a73",
+    "asset_input": "Mindrank-1",
+    "company_input": "MindRank",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "Mindrank-1",
+      "company_aliases": "MindRank",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Small Moledule",
+      "target": "undisclosed (autophagy)",
+      "main_indication": "AD",
+      "stage": "Lead optimization",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_a7f1fa4b",
+    "asset_input": "Anlong-APP",
+    "company_input": "Anlong Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "Anlong-APP",
+      "company_aliases": "Anlong Bio",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "siRNA",
+      "target": "APP",
+      "main_indication": "AD",
+      "stage": "pre-PCC",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_beeaaa7a",
+    "asset_input": "Anlong-KCNT",
+    "company_input": "Anlong Bio",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "Anlong-KCNT",
+      "company_aliases": "Anlong Bio",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "siRNA",
+      "target": "KCNT",
+      "main_indication": "Seizures",
+      "stage": "pre-PCC",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_33d2e371",
+    "asset_input": "Wangdandan-fudan-1",
+    "company_input": "Prof. Wang Dandan (Fudan Univ.)",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "Wangdandan-fudan-1",
+      "company_aliases": "Prof. Wang Dandan (Fudan Univ.)",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Peptide",
+      "target": "undisclosed",
+      "main_indication": "Neurodegeneration",
+      "stage": "Lead optimization",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_b34cfb9d",
+    "asset_input": "Nashat-TRPM7",
+    "company_input": "Prof. Nashat Abumaria (Fudan Univ.)",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T12:06:25.096946+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "contact_author": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "",
+      "asset_aliases": "Nashat-TRPM7",
+      "company_aliases": "Prof. Nashat Abumaria (Fudan Univ.)",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Small Moledule",
+      "target": "TRPM7",
+      "main_indication": "AD",
+      "stage": "Lead optimization",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_1c552427",
+    "asset_input": "Z05",
+    "company_input": "Prof. Huang Zhuo (PKU)",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T13:23:26.405832+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "website": "",
+      "asset_aliases": "Z05",
+      "company_aliases": "Prof. Huang Zhuo (PKU)",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Small Moledule",
+      "target": "KCNT1",
+      "main_indication": "KCNT1 M267T Epilepsy",
+      "stage": "Marketed drug Repurposing (Carvedilol)",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_2c73e790",
+    "asset_input": "Braegen-01",
+    "company_input": "Braegen Pharmaceutical",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T13:23:26.405832+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "20260702- conference",
+      "website": "",
+      "asset_aliases": "Braegen-01",
+      "company_aliases": "Braegen Pharmaceutical",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Small Moledule",
+      "target": "TrkB",
+      "main_indication": "AD, PD, ALS, Depression, Schizophrenia",
+      "stage": "ph1 for AD (FDA, NMPA)",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_4e030ea6",
+    "asset_input": "SP-SZPR-52",
+    "company_input": "Space Peptide",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T13:23:26.405832+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "website": "",
+      "asset_aliases": "SP-SZPR-52",
+      "company_aliases": "Space Peptide",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Peptide",
+      "target": "D2 Receptor",
+      "main_indication": "Schizophrenia",
+      "stage": "PCC",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_f7d2553e",
+    "asset_input": "ATL001",
+    "company_input": "Darwin Biotech",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T13:23:26.405832+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "website": "",
+      "asset_aliases": "ATL001",
+      "company_aliases": "Darwin Biotech",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Protein complex",
+      "target": "Multiple targets",
+      "main_indication": "ALS, AD",
+      "stage": "Ph1 China, IND approval USAD still early stage",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_0126dddb",
+    "asset_input": "PDR-001 (AAV)",
+    "company_input": "Prodegre",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T13:23:26.405832+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "Q4 2026",
+      "comment_author": "Team Review",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment_updated_at": "2026-08-23T13:23:26.405832+00:00",
+      "contact": "",
+      "website": "",
+      "asset_aliases": "PDR-001 (AAV)",
+      "company_aliases": "Prodegre",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "AAV",
+      "target": "a-synuclein",
+      "main_indication": "PD, MSA, DLB",
+      "stage": "IIT in Chna, FDA IND-enabling",
+      "website": ""
+    }
+  },
+  {
+    "id": "cq_2395e3dc",
+    "asset_input": "Prodegre-LRRK2",
+    "company_input": "Prodegre",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-23T13:23:26.405832+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-23T13:23:26.405832+00:00",
+      "comment": "",
+      "comment_author": "",
+      "comment_source": "",
+      "comment_created_at": "",
+      "comment_updated_at": "",
+      "contact": "",
+      "website": "",
+      "asset_aliases": "Prodegre-LRRK2",
+      "company_aliases": "Prodegre",
+      "updated_at": "2026-08-23T13:23:26.405832+00:00"
+    },
+    "listing_details": {
+      "country": "",
+      "modality": "Small Moledule",
+      "target": "LRRK2",
+      "main_indication": "PD",
+      "stage": "Hit screening",
+      "website": ""
+    }
   }
 ]

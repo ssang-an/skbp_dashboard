@@ -30,10 +30,10 @@ investment, begin the note with `투자 또한 해당`.
 - Only an explicit `Small Molecule` label is treated as Small Molecule.
 - Biologic, Antibody, Peptide, Protein, Gene Therapy, Cell Therapy, RNA, ASO, siRNA,
   mRNA, Vaccine, and oligonucleotide labels are Non-Small Molecule.
-- Investment includes `IND-enabling`, `IND filed/cleared`, and Phase 1 or later canonical stages.
+- Investment includes `IND-enabling`, `IND filed/cleared`, `Clinical unspecified`, and Phase 1 or later canonical stages.
 - Value Up requires a confirmed pre-IND-enabling canonical stage only: `Hit Discovery`,
   `Lead Optimization`, `Preclinical Candidate`, or `Preclinical unspecified`. `IND-enabling`,
-  `IND filed/cleared`, and Phase 1 or later do not satisfy Value Up.
+  `IND filed/cleared`, `Clinical unspecified`, and Phase 1 or later do not satisfy Value Up.
 - Value Up requires an uploaded Partner Material categorized as `ADMET` and a numeric ADMET
   score (including 0); the prior `ADMET >=25` threshold does not apply.
 - The ADMET numerator is calculated only from the canonical 25 standard Study names and their

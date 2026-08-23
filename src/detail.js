@@ -171,7 +171,6 @@ const elements = {
   aiDrawer: document.querySelector('#aiDrawer'),
   aiDrawerClose: document.querySelector('#aiDrawerClose'),
   chatContextAsset: document.querySelector('#chatContextAsset'),
-  chatContextScore: document.querySelector('#chatContextScore'),
   chatSessionSelect: document.querySelector('#chatSessionSelect'),
   chatNewSessionButton: document.querySelector('#chatNewSessionButton'),
   chatDeleteSessionButton: document.querySelector('#chatDeleteSessionButton'),
@@ -2801,7 +2800,6 @@ async function submitDetailComment() {
 
 function renderRecord(record) {
   const summary = record.json_summary || {};
-  const scoring = record.scoring || {};
   const assetLabel = summary.asset_name || record.structured_table?.asset_name || 'Pipeline';
   const companyLabel = summary.company || record.structured_table?.company || '-';
   elements.title.textContent = `Details : ${assetLabel} · ${companyLabel}`;
@@ -2809,9 +2807,6 @@ function renderRecord(record) {
   renderPipelineWebsiteAction(record);
   if (elements.chatContextAsset) {
     elements.chatContextAsset.textContent = `${summary.asset_name || record.structured_table?.asset_name || 'Pipeline'} · ${summary.company || record.structured_table?.company || '-'}`;
-  }
-  if (elements.chatContextScore) {
-    elements.chatContextScore.textContent = `${scoring.total_score ?? '-'} / ${scoring.max_score ?? 21} · ${dashboardThemeLabel(summary.theme)}`;
   }
   renderSourceReport(record);
   renderCollaborationPanel(record);

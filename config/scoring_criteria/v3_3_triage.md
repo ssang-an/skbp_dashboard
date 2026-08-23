@@ -19,7 +19,7 @@ General scientific knowledge may only be used to map confirmed facts to the scor
 | Status | Rule |
 |---|---|
 | **SELECT** | `identity_verified = true`, active asset, `TR >= 2`, 그리고 `MoA >= 2` 또는 `Data >= 2` |
-| **REJECT** | Identity는 확인됐지만 SELECT 조건을 충족하지 못했거나 inactive/discontinued/terminated/withdrawn/suspended/dormant/clearly failed hard blocker가 확인됨 |
+| **REJECT** | Identity는 확인됐지만 SELECT 조건을 충족하지 못했거나 inactive/discontinued/terminated/withdrawn/dormant/abandoned/clearly failed terminal hard blocker가 확인됨. suspended/halted만으로는 자동 REJECT하지 않음 |
 | **UNVERIFIED** | 공개 자료에서 특정 biotech/pharma pipeline asset으로 identity를 확인할 수 없음 |
 
 Target, MoA, indication 또는 stage만 미확인인 경우에는 해당 field를 `Unknown`으로 기록하고 scoring을 계속한다. Target/MoA와 indication의 relevance 문제는 UNVERIFIED가 아니라 Target Relevance 기준으로 평가한다.
@@ -121,6 +121,7 @@ Markdown의 각 criterion 판단 요약은 확인된 asset-specific 사실, 그 
 - IND-enabling
 - Preclinical unspecified
 - IND filed/cleared
+- Clinical unspecified
 - Phase 1
 - Phase 1/2
 - Phase 2
@@ -131,4 +132,4 @@ Markdown의 각 criterion 판단 요약은 확인된 asset-specific 사실, 그 
 - Discontinued / inactive
 - Unknown
 
-확인된 명시적 stage 표현 또는 완료·착수된 milestone만 canonicalize한다. 계획·예상·목표, 투자 유치, 채용공고만으로 현재 stage를 추론하지 않는다. `preclinical`만 확인되면 `Preclinical unspecified`, candidate nominated/selected면 `Preclinical Candidate`, 실제 GLP tox/IND-directed CMC/IND-enabling study가 진행 중이면 `IND-enabling`, IND/CTA가 submitted/filed/accepted/effective/cleared면 `IND filed/cleared`를 쓴다. Stage를 확인할 수 없거나 상충을 해소할 수 없으면 `Unknown`과 uncertainty를 기록한다.
+확인된 명시적 stage 표현 또는 완료·착수된 milestone만 canonicalize한다. 계획·예상·목표, 투자 유치, 채용공고만으로 현재 stage를 추론하지 않는다. `preclinical`만 확인되면 `Preclinical unspecified`, candidate nominated/selected면 `Preclinical Candidate`, 실제 GLP tox/IND-directed CMC/IND-enabling study가 진행 중이면 `IND-enabling`, IND/CTA가 submitted/filed/accepted/effective/cleared면 `IND filed/cleared`를 쓴다. 시작·진행 중인 clinical/pivotal/registrational trial에서 phase가 확인되지 않으면 `Clinical unspecified`이며, pivotal/registrational만으로 `Phase 3`를 추론하지 않는다. `suspended`/`halted`는 pause signal이므로 영구 비활성이 확인되기 전까지 `active_asset=null`과 pause note를 남긴다. Stage를 확인할 수 없거나 상충을 해소할 수 없으면 `Unknown`과 uncertainty를 기록한다.

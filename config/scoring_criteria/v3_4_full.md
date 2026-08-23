@@ -219,6 +219,7 @@ Controlled vocabulary:
 - IND-enabling
 - Preclinical unspecified
 - IND filed/cleared
+- Clinical unspecified
 - Phase 1
 - Phase 1/2
 - Phase 2
@@ -229,7 +230,7 @@ Controlled vocabulary:
 - Discontinued / inactive
 - Unknown
 
-확인된 명시적 stage 또는 완료·착수 milestone만 canonicalize한다. 계획·예상·목표, 투자 유치, 채용공고로 현재 stage를 추론하지 않는다. `preclinical`만 있으면 `Preclinical unspecified`, candidate nominated/selected면 `Preclinical Candidate`, 실제 GLP tox/IND-directed CMC/IND-enabling study 진행은 `IND-enabling`, IND/CTA submitted/filed/accepted/effective/cleared는 `IND filed/cleared`다. 임상 synonym은 확인된 표현을 canonical bucket으로 mapping하고 trial status는 source evidence/notes에 보존한다. 상충을 해소할 수 없으면 `Unknown`과 uncertainty를 기록한다.
+확인된 명시적 stage 또는 완료·착수 milestone만 canonicalize한다. 계획·예상·목표, 투자 유치, 채용공고로 현재 stage를 추론하지 않는다. `Hit ID`/`hit identification`은 `Hit Discovery`, `FIH`/`Ph1`/`Ph1a`/`Ph1b`는 `Phase 1`, 확인된 `Ph1b/2a`는 `Phase 1/2`, `FDA approved`는 `Approved / marketed`, `pre-PCC`는 `Lead Optimization`이다. `Phase 2 planned` 또는 `Phase 2/3 planned`는 해당 phase를 확정하지 않으므로 명시적으로 확인된 이전 current phase가 없으면 `Unknown`이다. `preclinical`만 있으면 `Preclinical unspecified`, candidate nominated/selected면 `Preclinical Candidate`, 실제 GLP tox/IND-directed CMC/IND-enabling study 진행은 `IND-enabling`, IND/CTA submitted/filed/accepted/effective/cleared는 `IND filed/cleared`다. 시작·진행 중인 clinical/pivotal/registrational trial에서 phase가 없으면 `Clinical unspecified`이며, pivotal/registrational만으로 `Phase 3`를 추론하지 않는다. 명시적으로 확인된 `discontinued`, `terminated`, `withdrawn`, `inactive`, `dormant`, `abandoned`만 `Discontinued / inactive`다. `suspended`/`halted`는 pause signal이므로 영구 비활성이 확인되기 전까지 FAIL로 처리하지 않고 REVIEW와 pause note를 남긴다. 임상 synonym은 확인된 표현을 canonical bucket으로 mapping하고 trial status는 source evidence/notes에 보존한다. 상충을 해소할 수 없으면 `Unknown`과 uncertainty를 기록한다.
 
 ## 7. Full Scout Hard Filter
 
@@ -240,6 +241,8 @@ Controlled vocabulary:
 - **FAIL:** 기존 total/TR/hard-blocker threshold를 유지한다.
 
 SKBP Theme/Cluster direct fit이 없다는 이유만으로 자동 FAIL 처리하지 않는다. `no SKBP Theme / Cluster fit`은 FAIL condition이 아니다.
+
+신뢰할 수 있는 출처에서 lifecycle 중단이 확인되면 Full Scout는 짧은 lifecycle FAIL로 조기 종료한다. Asset identity와 중단 상태·근거 URL·알려진 중단 사유/시점만 확인하고, 경쟁 환경·시장성·확장성·추가 소스 조사는 수행하지 않는다. Compact v2 JSON의 필수 구조는 유지하되 `development_stage`는 `Discontinued / inactive`, `hard_filter.status`는 `FAIL`, `hard_filter.hard_blocker`는 `true`, `final_insight.recommendation`은 `Deprioritize`로 기록한다.
 
 ## 8. Required Output for Each Criterion
 

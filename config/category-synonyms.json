@@ -1,5 +1,5 @@
 {
-  "version": "1.2",
+  "version": "1.4",
   "description": "Shared frontend/backend canonical category dictionary for dashboard filter grouping. Add synonyms here when new source wording should map to an existing category.",
   "country": [
     {
@@ -204,6 +204,9 @@
         "Preclinical candidate nominated",
         "DC selected",
         "DC nominated",
+        "PCC",
+        "PCC completion",
+        "PCC completed",
         "PCC selected",
         "PCC nominated",
         "Candidate selected",
@@ -211,7 +214,7 @@
       ],
       "patterns": [
         "(?:development|preclinical) candidate (?:selected|nominated)",
-        "\\b(?:dc|pcc) (?:selected|nominated)\\b",
+        "\\b(?:dc|pcc)(?: (?:selected|nominated|completion|completed))?\\b",
         "candidate (?:selected|nominated)"
       ]
     },
@@ -224,6 +227,8 @@
         "Lead-op",
         "LO",
         "Hit-to-lead",
+        "pre-PCC",
+        "pre PCC",
         "Lead selection ongoing",
         "Candidate selection ongoing",
         "Optimization",
@@ -234,6 +239,7 @@
         "lead optimization",
         "lead optimisation",
         "hit[- ]?to[- ]?lead",
+        "\\bpre[- ]?pcc\\b",
         "(?:lead|candidate) selection (?:ongoing|underway|in progress)",
         "\\blo\\b"
       ]
@@ -383,17 +389,31 @@
         "Ph 3",
         "Phase 3",
         "Phase III",
-        "Pivotal trial",
-        "Registrational trial",
         "3상"
       ],
       "patterns": [
         "\\bp\\s*-?\\s*3\\b",
         "\\bph\\s*-?\\s*3\\b",
         "phase\\s*-?\\s*(3|iii)\\b",
-        "pivotal",
-        "registrational trial",
         "3\\s*상"
+      ]
+    },
+    {
+      "canonical": "Clinical unspecified",
+      "synonyms": [
+        "Clinical development",
+        "Clinical stage",
+        "Clinical trial",
+        "Clinical study",
+        "Pivotal trial",
+        "Pivotal study",
+        "Registrational trial",
+        "Registrational study"
+      ],
+      "patterns": [
+        "clinical[\\s-](?:development|stage|trial|study)",
+        "pivotal(?:[\\s-](?:trial|study))?",
+        "registrational(?:[\\s-](?:trial|study))?"
       ]
     },
     {
@@ -450,18 +470,18 @@
         "Discontinued",
         "Terminated",
         "Withdrawn",
-        "Suspended",
         "Inactive",
         "Dormant",
+        "Abandoned",
         "No longer active"
       ],
       "patterns": [
         "discontinued",
         "terminated",
         "withdrawn",
-        "suspended",
         "inactive",
-        "dormant"
+        "dormant",
+        "abandoned"
       ]
     },
     {
@@ -475,6 +495,16 @@
     }
   ],
   "modality": [
+    {
+      "canonical": "Targeted protein degrader",
+      "synonyms": ["Targeted protein degrader", "Targeted protein degradation", "TPD", "Protein degrader", "PROTAC", "Proteolysis-targeting chimera", "Molecular glue", "Molecular glue degrader", "SNIPER", "AUTOTAC", "LYTAC"],
+      "patterns": ["targeted protein degrad", "\\btpd\\b", "\\bprotac\\b", "proteolysis[\\s-]?targeting chimera", "molecular[\\s-]?glue", "\\bsniper\\b", "\\bautotac\\b", "\\blytac\\b"]
+    },
+    {
+      "canonical": "Oncolytic virus",
+      "synonyms": ["Oncolytic virus", "Oncolytic viral therapy", "Oncolytic virotherapy"],
+      "patterns": ["oncolytic (?:virus|viral|virotherapy)"]
+    },
     {
       "canonical": "Small molecule",
       "synonyms": ["Small molecule", "Small-molecule", "SM", "Oral compound", "Chemical compound"],
@@ -492,18 +522,18 @@
     },
     {
       "canonical": "Cell therapy",
-      "synonyms": ["Cell therapy", "Cellular therapy", "Stem cell", "CAR-T", "TCR-T"],
-      "patterns": ["car[\\s-]?t", "tcr[\\s-]?t", "cell(?:ular)? therapy", "stem cell"]
+      "synonyms": ["Cell therapy", "Cellular therapy", "Stem cell", "CAR-T", "TCR-T", "CAR-NK", "CAR-NKT", "iPSC therapy"],
+      "patterns": ["car[\\s-]?(?:t|nk|nkt)", "tcr[\\s-]?t", "cell(?:ular)? therapy", "stem cell", "\\bipsc\\b"]
     },
     {
       "canonical": "Gene therapy",
-      "synonyms": ["Gene therapy", "AAV", "AAV-based gene therapy", "Gene editing", "CRISPR"],
+      "synonyms": ["Gene therapy", "AAV", "AAV-based gene therapy", "Gene editing", "CRISPR", "Lentiviral gene therapy"],
       "patterns": ["gene therapy", "\\baav(?:\\d+)?\\b", "lentiviral", "gene editing", "crispr"]
     },
     {
       "canonical": "Antibody",
-      "synonyms": ["Antibody", "Ab", "mAb", "Bispecific antibody", "Antibody-drug conjugate", "ADC"],
-      "patterns": ["antibod(?:y|ies)", "\\bmab\\b", "bispecific", "antibody[\\s-]?drug conjugate", "\\badc\\b", "\\bab\\b"]
+      "synonyms": ["Antibody", "Ab", "mAb", "Bispecific antibody", "Antibody-drug conjugate", "ADC", "Antibody-oligonucleotide conjugate", "AOC"],
+      "patterns": ["antibod(?:y|ies)", "\\bmab\\b", "bispecific", "antibody[\\s-]?(?:drug|oligonucleotide) conjugate", "\\b(?:adc|aoc)\\b", "\\bab\\b"]
     },
     {
       "canonical": "Protein biologic",
@@ -511,9 +541,24 @@
       "patterns": ["protein biologic", "fusion protein", "recombinant protein", "enzyme replacement"]
     },
     {
-      "canonical": "Other",
-      "synonyms": ["Other"],
-      "patterns": ["^other$"]
+      "canonical": "Microbiome therapy",
+      "synonyms": ["Microbiome therapy", "Live biotherapeutic product", "LBP", "Microbial consortia", "Fecal microbiota transplant", "FMT"],
+      "patterns": ["microbiome", "live biotherapeutic", "\\blbp\\b", "microbial consorti", "fecal microbiota", "\\bfmt\\b"]
+    },
+    {
+      "canonical": "Vaccine",
+      "synonyms": ["Vaccine", "Therapeutic vaccine", "DNA vaccine", "mRNA vaccine"],
+      "patterns": ["\\bvaccine\\b", "immunization"]
+    },
+    {
+      "canonical": "Radiopharmaceutical",
+      "synonyms": ["Radiopharmaceutical", "Radioligand therapy", "Radioisotope therapy", "Radiotherapeutic"],
+      "patterns": ["radiopharmaceutical", "radioligand", "radioisotope", "radiotherapeutic"]
+    },
+    {
+      "canonical": "Others",
+      "synonyms": ["Others", "Other"],
+      "patterns": ["^others?$"]
     },
     {
       "canonical": "Unknown",
@@ -575,15 +620,23 @@
         "Parkinson disease",
         "Parkinson's",
         "PD",
-        "Lewy body disease",
-        "Dementia with Lewy bodies",
-        "DLB",
         "Parkinson's disease dementia",
         "PDD"
       ],
       "patterns": [
         "parkinson",
-        "\\bpd\\b",
+        "\\bpd\\b"
+      ]
+    },
+    {
+      "canonical": "Lewy body dementia",
+      "synonyms": [
+        "Lewy body dementia",
+        "Lewy body disease",
+        "Dementia with Lewy bodies",
+        "DLB"
+      ],
+      "patterns": [
         "lewy body",
         "\\bdlb\\b"
       ]
@@ -881,17 +934,25 @@
       ]
     },
     {
-      "canonical": "Systemic lupus erythematosus / autoimmune disease",
+      "canonical": "Systemic lupus erythematosus",
       "synonyms": [
         "Systemic lupus erythematosus",
         "SLE",
-        "Lupus",
-        "Autoimmune disease",
-        "Autoimmune disorder"
+        "Lupus"
       ],
       "patterns": [
         "lupus",
-        "\\bsle\\b",
+        "\\bsle\\b"
+      ]
+    },
+    {
+      "canonical": "Other autoimmune / inflammatory disease",
+      "synonyms": [
+        "Autoimmune disease",
+        "Autoimmune disorder",
+        "Inflammatory disease"
+      ],
+      "patterns": [
         "autoimmune"
       ]
     }

@@ -235,6 +235,7 @@ CANONICAL_DEVELOPMENT_STAGES = (
     "IND-enabling",
     "Preclinical unspecified",
     "IND filed/cleared",
+    "Clinical unspecified",
     "Phase 1",
     "Phase 1/2",
     "Phase 2",
@@ -247,6 +248,8 @@ CANONICAL_DEVELOPMENT_STAGES = (
 )
 CANONICAL_DEVELOPMENT_STAGE_SET = set(CANONICAL_DEVELOPMENT_STAGES)
 CANONICAL_MODALITIES = (
+    "Targeted protein degrader",
+    "Oncolytic virus",
     "Small molecule",
     "Peptide",
     "RNA therapy",
@@ -254,7 +257,10 @@ CANONICAL_MODALITIES = (
     "Gene therapy",
     "Antibody",
     "Protein biologic",
-    "Other",
+    "Microbiome therapy",
+    "Vaccine",
+    "Radiopharmaceutical",
+    "Others",
     "Unknown",
 )
 
@@ -928,8 +934,8 @@ def canonicalize_development_stage(source_wording: Any) -> str:
         return bool(planned_before or planned_after)
 
     inactive_match = re.search(
-        r"\b(?:discontinued|inactive|terminated|withdrawn|suspended|dormant|clearly failed)\b|"
-        r"중단|종료|철회|휴면",
+        r"\b(?:discontinued|inactive|terminated|withdrawn|dormant|abandoned|clearly failed)\b|"
+        r"종료|철회|휴면|포기",
         text,
     )
     if inactive_match:
@@ -960,6 +966,7 @@ def canonicalize_development_stage(source_wording: Any) -> str:
         return "Registration"
     if re.search(
         r"^(?:approved|marketed|commercial(?:ized|ised))$|"
+        r"\b(?:fda|ema|nmpa)\s+approved\b|"
         r"\b(?:nda|bla|maa)\s+(?:approved|approval)\b|"
         r"\b(?:approved|marketed|commercial(?:ized|ised))\s+(?:drug|medicine|product|therapy|therapeutic|asset)\b|"
         r"\b(?:drug|medicine|product|therapy|therapeutic|asset)\s+(?:approved|marketed|commercial(?:ized|ised))\b|"
@@ -970,11 +977,11 @@ def canonicalize_development_stage(source_wording: Any) -> str:
         return "Approved / marketed"
 
     phase_patterns = (
-        ("Phase 3", r"\b(?:phase\s*(?:iii|3)(?!\s*/)|p3)\b"),
-        ("Phase 2/3", r"\b(?:phase\s*(?:ii\s*/\s*iii|2\s*/\s*3)|p2\s*/\s*p?3)\b"),
-        ("Phase 1/2", r"\b(?:phase\s*(?:i\s*/\s*ii|1\s*/\s*2)|p1\s*/\s*p?2)\b"),
-        ("Phase 2", r"\b(?:phase\s*(?:ii|2)(?:a|b)?|p2(?:a|b)?)\b"),
-        ("Phase 1", r"\b(?:phase\s*(?:i|1)(?:a|b)?|p1(?:a|b)?|fih|sad\s*/\s*mad)\b"),
+        ("Phase 3", r"\b(?:ph(?:ase)?\s*(?:iii|3)(?!\s*/)|p3)\b"),
+        ("Phase 2/3", r"\b(?:ph(?:ase)?\s*(?:ii|2)(?:a|b)?\s*/\s*(?:iii|3)(?:a|b)?|p2(?:a|b)?\s*/\s*p?3(?:a|b)?)\b"),
+        ("Phase 1/2", r"\b(?:ph(?:ase)?\s*(?:i|1)(?:a|b)?\s*/\s*(?:ii|2)(?:a|b)?|p1(?:a|b)?\s*/\s*p?2(?:a|b)?)\b"),
+        ("Phase 2", r"\b(?:ph(?:ase)?\s*(?:ii|2)(?:a|b)?(?!\s*/)|p2(?:a|b)?(?!\s*/))\b"),
+        ("Phase 1", r"\b(?:ph(?:ase)?\s*(?:i|1)(?:a|b)?(?!\s*/)|p1(?:a|b)?(?!\s*/)|fih|sad\s*/\s*mad)\b"),
     )
     # Combined phases must be tested before their component phases.
     phase_patterns = (phase_patterns[1], phase_patterns[2], phase_patterns[0], phase_patterns[3], phase_patterns[4])
@@ -982,21 +989,30 @@ def canonicalize_development_stage(source_wording: Any) -> str:
         phase_match = re.search(pattern, text)
         if phase_match and not match_is_planned(phase_match) and not match_is_uncertain(phase_match):
             return canonical
-
+    clinical_match = re.search(
+        r"\b(?:clinical development|clinical[- ]stage|clinical trial|clinical study|"
+        r"pivotal(?: trial| study)?|registrational(?: trial| study)?)\b",
+        text,
+    )
+    if clinical_match and not match_is_planned(clinical_match) and not match_is_uncertain(clinical_match):
+        return "Clinical unspecified"
     if re.search(
         r"\b(?:unclear|uncertain|not\s+(?:confirmed|verified|established))\b|불명확|불확실|미확인",
         text,
     ):
         return "Unknown"
 
+    pre_pcc_match = re.search(r"\bpre[-\s]?pcc\b", text)
+    if pre_pcc_match and not match_is_planned(pre_pcc_match):
+        return "Lead Optimization"
     if re.search(r"\b(?:development\s+candidate|preclinical\s+candidate)\s+(?:selected|nominated)\b|"
-                 r"\bcandidate\s+nominated\b|개발\s*후보(?:물질)?\s*(?:선정|지명)", text):
+                 r"\bcandidate\s+nominated\b|\b(?:pcc|dc)(?:\s+(?:selected|nominated|completion|completed))?\b|개발\s*후보(?:물질)?\s*(?:선정|지명)", text):
         return "Preclinical Candidate"
     lead_match = re.search(r"\b(?:candidate|lead)\s+selection\s+(?:ongoing|underway|in progress)\b|"
                            r"\blead\s+optimization\b|리드\s*최적화", text)
     if lead_match and not match_is_planned(lead_match):
         return "Lead Optimization"
-    hit_match = re.search(r"\b(?:hit\s+discovery|hit\s+identification|early\s+screening)\b|히트\s*(?:발굴|탐색)", text)
+    hit_match = re.search(r"\b(?:hit\s+discovery|hit\s+identification|hit\s*id|early\s+screening)\b|히트\s*(?:발굴|탐색)", text)
     if hit_match and not match_is_planned(hit_match):
         return "Hit Discovery"
 
@@ -1032,6 +1048,8 @@ def canonicalize_modality(source_wording: Any) -> str:
         return from_dictionary
     normalized = raw.casefold()
     patterns = (
+        ("Targeted protein degrader", r"\b(?:targeted protein degrad(?:er|ation)?|tpd|protac|proteolysis[- ]?targeting chimera|molecular[- ]?glue(?: degrader)?|sniper|autotac|lytac)\b"),
+        ("Oncolytic virus", r"\boncolytic (?:virus|viral|virotherapy)\b"),
         ("Small molecule", r"\b(?:small[\s-]?molecule|sm|oral compound|chemical compound)\b"),
         ("Peptide", r"\bpeptides?\b"),
         ("RNA therapy", r"\b(?:rna(?: therapy)?|oligonucleotide|antisense|aso|sirna|mirna|mrna)\b"),
@@ -1039,11 +1057,35 @@ def canonicalize_modality(source_wording: Any) -> str:
         ("Gene therapy", r"\b(?:gene therapy|aav|lentiviral|gene editing|crispr)\b"),
         ("Antibody", r"\b(?:antibod(?:y|ies)|antibody drug conjugate|adc|ab|bispecific|mab)\b"),
         ("Protein biologic", r"\b(?:protein biologic|recombinant protein|fusion protein|enzyme replacement)\b"),
+        ("Microbiome therapy", r"\b(?:microbiome|live biotherapeutic|lbp|microbial consorti|fecal microbiota|fmt)\b"),
+        ("Vaccine", r"\b(?:vaccine|immunization)\b"),
+        ("Radiopharmaceutical", r"\b(?:radiopharmaceutical|radioligand|radioisotope|radiotherapeutic)\b"),
     )
     for label, pattern in patterns:
         if re.search(pattern, normalized, flags=re.IGNORECASE):
             return label
-    return "Other"
+    return "Others"
+
+
+def canonicalize_modality_tags(source_wording: Any, primary: str = "") -> list[str]:
+    """Return supported canonical modality tags without ever retaining raw labels."""
+    raw = re.sub(r"\s+", " ", str(source_wording or "").strip())
+    if not raw:
+        return []
+    normalized = raw.casefold()
+    tags: list[str] = []
+    for entry in category_synonym_dictionary().get("modality") or []:
+        if not isinstance(entry, dict):
+            continue
+        canonical = str(entry.get("canonical") or "").strip()
+        if canonical in {"", "Others", "Unknown"} or canonical not in CANONICAL_MODALITIES:
+            continue
+        if category_match_index(normalized, entry) is not None and canonical not in tags:
+            tags.append(canonical)
+    resolved_primary = primary or canonicalize_modality(raw)
+    if resolved_primary not in {"Others", "Unknown"} and resolved_primary in CANONICAL_MODALITIES:
+        tags.insert(0, resolved_primary)
+    return list(dict.fromkeys(tags))
 
 
 def canonicalize_country(source_wording: Any) -> str:
@@ -2076,16 +2118,23 @@ def normalize_current_record_filter_fields(record: dict[str, Any], index: int) -
     table = record.get("structured_table")
     if not isinstance(table, dict):
         validation_error(f"record[{index}].structured_table is required and must be an object.")
-    raw_stage = table.get("development_stage")
+    raw_stage = table.get("development_stage_source") or table.get("development_stage")
     if raw_stage is None:
         validation_error(f"record[{index}].structured_table.development_stage is required.")
+    raw_stage = re.sub(r"\s+", " ", str(raw_stage)).strip()
+    if raw_stage:
+        table["development_stage_source"] = raw_stage
     canonical = canonicalize_development_stage(raw_stage)
     table["development_stage"] = canonical
     if canonical not in CANONICAL_DEVELOPMENT_STAGE_SET:  # Defensive: helper contract must stay closed.
         validation_error(
             f"record[{index}].structured_table.development_stage must be a canonical dashboard stage."
         )
-    table["modality_platform"] = canonicalize_modality(table.get("modality_platform"))
+    raw_modality = re.sub(r"\s+", " ", str(table.get("modality_source") or table.get("modality_platform") or "").strip())
+    if raw_modality:
+        table["modality_source"] = raw_modality
+    table["modality_platform"] = canonicalize_modality(raw_modality)
+    table["modality_tags"] = canonicalize_modality_tags(raw_modality, table["modality_platform"])
     table["company_country"] = canonicalize_country(table.get("company_country"))
     table["main_indication"] = canonicalize_main_indication(
         table.get("main_indication"),
@@ -2117,8 +2166,8 @@ def fast_triage_record_has_hard_blocker(record: dict[str, Any]) -> bool:
 
 
 FAST_TRIAGE_LIFECYCLE_BLOCKER_RE = re.compile(
-    r"\b(?:inactive|discontinued|terminated|withdrawn|suspended|dormant|clearly[\s_-]+failed|hard[\s_-]*blocker)\b|"
-    r"(?:개발|프로그램|임상)\s*(?:이\s*)?(?:중단|종료|철회|휴면|비활성)",
+    r"\b(?:inactive|discontinued|terminated|withdrawn|dormant|abandoned|clearly[\s_-]+failed|hard[\s_-]*blocker)\b|"
+    r"(?:개발|프로그램|임상)\s*(?:이\s*)?(?:종료|철회|휴면|비활성|포기)",
     flags=re.IGNORECASE,
 )
 
@@ -2240,10 +2289,13 @@ def validate_minimal_dashboard_record(record: dict[str, Any], index: int) -> Non
                 "target",
                 "moa",
                 "modality_platform",
+                "modality_source",
+                "modality_tags",
                 "main_indication",
                 "indication",
                 "indication_list",
                 "development_stage",
+                "development_stage_source",
                 "company_country",
                 "sources",
             },
@@ -3128,14 +3180,17 @@ def is_simple_code_with_prefix_and_number(value: Any) -> bool:
     return len(signature) == 2 and signature[0].isalpha() and signature[1].isdigit()
 
 
-def descriptive_assets_semantically_overlap(left_asset: Any, right_asset: Any) -> bool:
+def descriptive_assets_semantically_overlap(left_asset: Any, right_asset: Any, company: Any = "") -> bool:
+    """Require an Asset-specific overlap, not merely a shared company prefix."""
     def meaningful_tokens(value: Any) -> set[str]:
         return {
             HIGH_CONFIDENCE_ASSET_ALIASES.get(word, word)
             for word in asset_words(value)
             if word not in GENERIC_ASSET_WORDS
         }
-    return bool(meaningful_tokens(left_asset) & meaningful_tokens(right_asset))
+    company_tokens = meaningful_tokens(company)
+    shared_tokens = meaningful_tokens(left_asset) & meaningful_tokens(right_asset)
+    return bool(shared_tokens - company_tokens)
 
 
 def pipeline_asset_match_reason(
@@ -3175,7 +3230,7 @@ def pipeline_asset_match_reason(
     if left_type == right_type == "descriptive" and same_company:
         if left_normalized == right_normalized:
             return "exact", "same company and identical descriptive asset name"
-        if descriptive_assets_semantically_overlap(left_asset, right_asset):
+        if descriptive_assets_semantically_overlap(left_asset, right_asset, left_company):
             return "review", "same company and overlapping meaningful descriptive terms"
     return None
 
@@ -3681,7 +3736,7 @@ OI_NON_SMALL_MOLECULE_PATTERN = re.compile(
     re.IGNORECASE,
 )
 OI_IND_ENABLING_PATTERN = re.compile(r"\bind[\s\-]?enabl(?:ing|ement)\b", re.IGNORECASE)
-OI_INVESTMENT_STAGES = {"IND-enabling", "IND filed/cleared", "Phase 1", "Phase 1/2", "Phase 2", "Phase 2/3", "Phase 3", "Registration", "Approved / marketed"}
+OI_INVESTMENT_STAGES = {"IND-enabling", "IND filed/cleared", "Clinical unspecified", "Phase 1", "Phase 1/2", "Phase 2", "Phase 2/3", "Phase 3", "Registration", "Approved / marketed"}
 OI_VALUE_UP_STAGES = {"Hit Discovery", "Lead Optimization", "Preclinical Candidate", "Preclinical unspecified"}
 
 
@@ -4807,7 +4862,7 @@ def company_aliases_from_text(raw_value: Any) -> set[str]:
     if not raw_value:
         return aliases
     text = unicodedata.normalize("NFKC", str(raw_value)).strip()
-    for part in [text, *re.split(r"\s*(?:/|\||;|,)\s*", text)]:
+    for part in [text, *re.split(r"\s*(?:[\n/|;,()\[\]])\s*", text)]:
         normalized = dashboard_normalize_identity_text(part)
         if normalized:
             aliases.add(normalized)
@@ -4823,7 +4878,7 @@ def asset_aliases_from_text(raw_value: Any) -> set[str]:
     if not raw_value:
         return aliases
     text = unicodedata.normalize("NFKC", str(raw_value)).strip()
-    for part in [text, *re.split(r"\s*(?:/|\||;|,)\s*", text)]:
+    for part in [text, *re.split(r"\s*(?:[\n/|;,()\[\]])\s*", text)]:
         normalized = dashboard_normalize_identity_text(part)
         if normalized and normalized not in {"unknown", "na", "asset", "tobedetermined"}:
             aliases.add(normalized)
@@ -4839,6 +4894,7 @@ def dashboard_company_aliases(record: dict[str, Any]) -> set[str]:
         table.get("company"),
         summary.get("company"),
         input_data.get("company_input"),
+        ((record.get("meta") or {}).get("pipeline_metadata") or {}).get("company_aliases"),
     ):
         aliases |= company_aliases_from_text(raw_value)
     return aliases
@@ -4853,6 +4909,7 @@ def dashboard_asset_aliases(record: dict[str, Any]) -> set[str]:
         table.get("asset_name"),
         summary.get("asset_name"),
         input_data.get("asset_input"),
+        ((record.get("meta") or {}).get("pipeline_metadata") or {}).get("asset_aliases"),
     ):
         aliases |= asset_aliases_from_text(raw_value)
     if not aliases:
@@ -5020,9 +5077,25 @@ def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
         "contact_created_at": str(raw.get("contact_created_at") or "").strip(),
         "contact_updated_at": str(raw.get("contact_updated_at") or "").strip(),
         "website": normalize_listing_website(raw.get("website")),
+        "asset_aliases": str(raw.get("asset_aliases") or "").strip(),
+        "company_aliases": str(raw.get("company_aliases") or "").strip(),
         "updated_at": str(raw.get("updated_at") or "").strip(),
     }
     return metadata
+
+
+def merge_pipeline_metadata_aliases(existing: str, incoming: str) -> str:
+    """Retain raw previous/current names once, for search and identity matching only."""
+    values: list[str] = []
+    seen: set[str] = set()
+    for raw_value in (existing, incoming):
+        for item in str(raw_value or "").splitlines():
+            value = item.strip()
+            identity = normalized_pipeline_identity_text(value)
+            if value and identity and identity not in seen:
+                values.append(value)
+                seen.add(identity)
+    return "\n".join(values)
 
 
 def merge_pipeline_metadata(
@@ -5059,6 +5132,8 @@ def merge_pipeline_metadata(
                 for provenance_field in ("contact_author", "contact_source", "contact_created_at", "contact_updated_at"):
                     if update[provenance_field]:
                         result[provenance_field] = update[provenance_field]
+    for field in ("asset_aliases", "company_aliases"):
+        result[field] = merge_pipeline_metadata_aliases(result[field], update[field])
     if update["updated_at"]:
         result["updated_at"] = update["updated_at"]
     return result
@@ -5204,6 +5279,72 @@ def normalize_candidate_queue_rows(raw_rows: Any) -> dict[str, Any]:
             continue
         rows.append(row)
     return {"rows": rows, "unparsed": unparsed}
+
+
+def listing_import_record_candidate(record: dict[str, Any]) -> dict[str, str]:
+    """Return the representative fields shown when a Listing row needs review."""
+    table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else {}
+    summary = record.get("json_summary") if isinstance(record.get("json_summary"), dict) else {}
+    return {
+        "target": f"record:{record_key(record)}",
+        "target_type": "record",
+        "asset": non_empty_text(table.get("asset_name"), summary.get("asset_name"), "Unknown"),
+        "company": non_empty_text(table.get("company"), summary.get("company"), "Unknown"),
+        "stage": non_empty_text(table.get("development_stage"), summary.get("development_stage"), "Unknown"),
+        "workflow": "Fast Triage" if is_fast_triage_record(record) else "Full Scout",
+    }
+
+
+def listing_import_review_matches(
+    rows: list[dict[str, str]], records: list[dict[str, Any]], queue: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """Find only ambiguous Listing matches; exact matches remain automatic."""
+    candidates_by_row: list[dict[str, Any]] = []
+    for row_index, row in enumerate(rows):
+        asset = str(row.get("asset_input") or "")
+        company = str(row.get("company_input") or "")
+        candidates: list[dict[str, str]] = []
+        seen_targets: set[str] = set()
+        for group in dashboard_identity_groups(records):
+            group_records = [record for record in group.get("records") or [] if isinstance(record, dict)]
+            full_records = [record for record in group_records if not is_fast_triage_record(record)]
+            fast_records = [record for record in group_records if is_fast_triage_record(record)]
+            representative = dashboard_latest_record(full_records) if full_records else dashboard_latest_record(fast_records)
+            if representative is None:
+                continue
+            candidate = listing_import_record_candidate(representative)
+            match = pipeline_asset_match_reason(asset, candidate["asset"], company, candidate["company"])
+            if not match or match[0] != "review" or candidate["target"] in seen_targets:
+                continue
+            candidate["reason"] = match[1]
+            candidates.append(candidate)
+            seen_targets.add(candidate["target"])
+        for entry in queue:
+            candidate_asset = str(entry.get("asset_input") or "Unknown")
+            candidate_company = str(entry.get("company_input") or "Unknown")
+            match = pipeline_asset_match_reason(asset, candidate_asset, company, candidate_company)
+            target = f"queue:{entry.get('id') or ''}"
+            if not match or match[0] != "review" or not entry.get("id") or target in seen_targets:
+                continue
+            candidates.append({
+                "target": target,
+                "target_type": "queue",
+                "asset": candidate_asset,
+                "company": candidate_company,
+                "stage": candidate_queue_entry_details(entry).get("stage") or "Unknown",
+                "workflow": "Listing",
+                "reason": match[1],
+            })
+            seen_targets.add(target)
+        if candidates:
+            candidates_by_row.append({
+                "row_index": row_index,
+                "asset": asset,
+                "company": company,
+                "stage": str(row.get("stage") or "Unknown"),
+                "candidates": candidates,
+            })
+    return candidates_by_row
 
 
 def record_pipeline_metadata(record: dict[str, Any]) -> dict[str, str]:
@@ -5741,7 +5882,7 @@ def dashboard_canonical_modality(value: Any) -> str | None:
     }:
         return None
     canonical = canonicalize_modality(text)
-    if canonical in {"Unknown", "Other"}:
+    if canonical in {"Unknown", "Others"}:
         return None
     return "CGT" if canonical in {"Cell therapy", "Gene therapy"} else canonical
 
@@ -8515,6 +8656,27 @@ def get_dashboard_summary() -> dict[str, Any]:
     return build_dashboard_summary(load_records())
 
 
+@app.post("/api/candidate-queue/import/preview")
+async def preview_candidate_queue_import(request: Request) -> dict[str, Any]:
+    """Return ambiguous Listing matches before any Tab 0 import is persisted."""
+    require_auth_admin(request)
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected a Listing grid payload.")
+    parsed = normalize_candidate_queue_rows(payload.get("rows"))
+    return {
+        "ok": True,
+        "parsed": len(parsed["rows"]),
+        "unparsed_lines": parsed["unparsed"],
+        "review_matches": listing_import_review_matches(
+            parsed["rows"], load_records(), load_candidate_queue()
+        ),
+    }
+
+
 @app.post("/api/candidate-queue/import")
 async def import_candidate_queue(request: Request) -> dict[str, Any]:
     """Step 0: import Listing-grid rows into the Listing queue."""
@@ -8536,6 +8698,36 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
     records = load_records()
     groups = dashboard_identity_groups(records)
     queue = load_candidate_queue()
+    review_candidates = {
+        int(match["row_index"]): {str(candidate["target"]) for candidate in match["candidates"]}
+        for match in listing_import_review_matches(rows, records, queue)
+    }
+    raw_decisions = payload.get("review_decisions", [])
+    if raw_decisions is None:
+        raw_decisions = []
+    if not isinstance(raw_decisions, list):
+        raise HTTPException(status_code=400, detail="review_decisions must be an array.")
+    review_decisions: dict[int, dict[str, str]] = {}
+    for raw_decision in raw_decisions:
+        if not isinstance(raw_decision, dict):
+            raise HTTPException(status_code=400, detail="Each Listing review decision must be an object.")
+        row_index = raw_decision.get("row_index")
+        if not isinstance(row_index, int) or row_index not in review_candidates or row_index in review_decisions:
+            raise HTTPException(status_code=400, detail="Listing review decision does not match an ambiguous import row.")
+        action = str(raw_decision.get("action") or "").strip()
+        target = str(raw_decision.get("target") or "").strip()
+        if action not in {"merge", "new", "skip"}:
+            raise HTTPException(status_code=400, detail="Listing review action must be merge, new, or skip.")
+        if action == "merge" and target not in review_candidates[row_index]:
+            raise HTTPException(status_code=400, detail="Listing review target is not a current candidate.")
+        review_decisions[row_index] = {
+            "action": action,
+            "target": target,
+            "representative": "incoming" if raw_decision.get("representative") == "incoming" else "existing",
+        }
+    missing_review_decisions = set(review_candidates) - set(review_decisions)
+    if missing_review_decisions:
+        raise HTTPException(status_code=409, detail="Select an action for every similar Listing Pipeline before importing.")
 
     added_entries: list[dict[str, Any]] = []
     already_researched_skipped = 0
@@ -8544,11 +8736,17 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
     duplicate_in_queue_richer_replaced = 0
     metadata_updated = 0
     records_updated = False
+    user_skipped = 0
     added_at = datetime.now(timezone.utc).isoformat()
+    actor_ip = get_client_ip(request)
 
-    for row in rows:
+    for row_index, row in enumerate(rows):
         asset_input = row["asset_input"]
         company_input = row["company_input"]
+        decision = review_decisions.get(row_index)
+        if decision and decision["action"] == "skip":
+            user_skipped += 1
+            continue
         incoming_metadata = {
             "listed_at": added_at,
             "comment": row.get("comment", ""),
@@ -8558,31 +8756,62 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             "comment_updated_at": added_at if row.get("comment", "") else "",
             "contact": row.get("contact", ""),
             "website": row.get("website", ""),
+            # Tab 0 names are operational identifiers.  Keep them searchable on
+            # researched records without changing the official report labels.
+            "asset_aliases": asset_input,
+            "company_aliases": company_input,
             "updated_at": added_at,
         }
         incoming_details = normalize_listing_details(row)
         existing_group = find_matching_identity_group(asset_input, company_input, groups)
+        existing_entry = None
+        if decision and decision["action"] == "new":
+            existing_group = None
+        elif decision and decision["action"] == "merge":
+            target = decision["target"]
+            if target.startswith("record:"):
+                target_record_id = target.removeprefix("record:")
+                existing_group = next(
+                    (group for group in groups if any(record_key(record) == target_record_id for record in group.get("records") or [])),
+                    None,
+                )
+                if existing_group is None:
+                    raise HTTPException(status_code=409, detail="Selected researched Pipeline is no longer available.")
+            elif target.startswith("queue:"):
+                target_queue_id = target.removeprefix("queue:")
+                existing_entry = next((entry for entry in queue if entry.get("id") == target_queue_id), None)
+                if existing_entry is None:
+                    raise HTTPException(status_code=409, detail="Selected Listing Pipeline is no longer available.")
+                existing_group = None
         if existing_group is not None:
             already_researched_skipped += 1
             for existing_record in existing_group.get("records") or []:
                 if isinstance(existing_record, dict) and update_record_pipeline_metadata(existing_record, incoming_metadata):
+                    append_edit_history(
+                        existing_record,
+                        source="tab0_listing_import_metadata_sync",
+                        actor_ip=actor_ip,
+                        field="meta.pipeline_metadata",
+                        new_value="Tab 0 Listing metadata and searchable Asset/Company aliases synchronized",
+                    )
                     records_updated = True
                     metadata_updated += 1
             continue
-        existing_entry = next(
-            (
-                entry for entry in queue
-                if find_matching_identity_group(
-                    asset_input,
-                    company_input,
-                    [{
-                        "asset_aliases": asset_aliases_from_text(entry.get("asset_input")),
-                        "company_aliases": company_aliases_from_text(entry.get("company_input")),
-                    }],
-                ) is not None
-            ),
-            None,
-        )
+        if existing_entry is None and not (decision and decision["action"] == "new"):
+            existing_entry = next(
+                (
+                    entry for entry in queue
+                    if find_matching_identity_group(
+                        asset_input,
+                        company_input,
+                        [{
+                            "asset_aliases": asset_aliases_from_text(entry.get("asset_input")),
+                            "company_aliases": company_aliases_from_text(entry.get("company_input")),
+                        }],
+                    ) is not None
+                ),
+                None,
+            )
         if existing_entry is not None:
             duplicate_in_queue_skipped += 1
             merged = merge_pipeline_metadata(candidate_queue_entry_metadata(existing_entry), incoming_metadata)
@@ -8599,6 +8828,9 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
                     duplicate_in_queue_richer_replaced += 1
                 else:
                     duplicate_in_queue_enriched += 1
+            if decision and decision["representative"] == "incoming":
+                existing_entry["asset_input"] = asset_input
+                existing_entry["company_input"] = company_input
             continue
         entry = {
             "id": f"cq_{uuid.uuid4().hex[:8]}",
@@ -8623,6 +8855,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
         "parsed": len(rows),
         "added": len(added_entries),
         "already_researched_skipped": already_researched_skipped,
+        "user_skipped": user_skipped,
         "duplicate_in_queue_skipped": duplicate_in_queue_skipped,
         "duplicate_in_queue_enriched": duplicate_in_queue_enriched,
         "duplicate_in_queue_richer_replaced": duplicate_in_queue_richer_replaced,
@@ -9557,10 +9790,10 @@ FULL_SCOUT_HARD_BLOCKER_RE = re.compile(
     r"\bno\s+public\s+target\b|"
     r"\bno\b[^|.;\n]{0,48}\btarget\s*/\s*moa\b|"
     r"\basset\s+identity\s+(?:is\s+)?(?:not\s+verified|unverified)\b|"
-    r"\b(?:discontinued|terminated|withdrawn|suspended|dormant|inactive|clearly\s+failed)\b|"
+    r"\b(?:discontinued|terminated|withdrawn|dormant|inactive|abandoned|clearly\s+failed)\b|"
     r"(?:관심\s*)?(?:질환|적응증|치료\s*영역)\s*범위\s*밖|"
     r"자산\s*식별\s*불가|"
-    r"(?:개발|프로그램|임상)\s*(?:이\s*)?중단",
+    r"(?:개발|프로그램|임상)\s*(?:이\s*)?(?:종료|철회|휴면|비활성|포기)",
     flags=re.IGNORECASE,
 )
 

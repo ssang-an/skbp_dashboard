@@ -2139,6 +2139,14 @@ h2 {
   transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
+:root {
+  --dashboard-tooltip-radius: 10px;
+  --dashboard-tooltip-border: 1px solid rgba(148, 163, 184, 0.32);
+  --dashboard-tooltip-surface: #0f172a;
+  --dashboard-tooltip-text: #f8fafc;
+  --dashboard-tooltip-shadow: 0 18px 44px rgba(2, 6, 23, 0.28);
+}
+
 .help-tooltip {
   position: relative;
 }
@@ -2150,11 +2158,11 @@ h2 {
   top: calc(100% + 10px);
   z-index: 30;
   width: min(420px, 82vw);
-  border: 1px solid rgba(148, 163, 184, 0.32);
-  border-radius: 10px;
-  background: #0f172a;
-  color: #f8fafc;
-  box-shadow: 0 18px 44px rgba(2, 6, 23, 0.28);
+  border: var(--dashboard-tooltip-border);
+  border-radius: var(--dashboard-tooltip-radius);
+  background: var(--dashboard-tooltip-surface);
+  color: var(--dashboard-tooltip-text);
+  box-shadow: var(--dashboard-tooltip-shadow);
   font-size: 12px;
   font-weight: 700;
   line-height: 1.55;
@@ -3561,10 +3569,11 @@ td {
   bottom: calc(100% + 10px);
   z-index: 10;
   width: min(360px, 70vw);
-  border: 1px solid #cfd7e2;
-  border-radius: 8px;
-  background: #101722;
-  color: #ffffff;
+  border: var(--dashboard-tooltip-border);
+  border-radius: var(--dashboard-tooltip-radius);
+  background: var(--dashboard-tooltip-surface);
+  color: var(--dashboard-tooltip-text);
+  box-shadow: var(--dashboard-tooltip-shadow);
   content: attr(data-tooltip);
   font-size: 12px;
   font-weight: 650;
@@ -6309,35 +6318,58 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   box-sizing: border-box;
   width: 100%;
   padding: 0 0 28px;
+  font-family: inherit;
+  letter-spacing: inherit;
 }
 
 .knowledge-map-panel[hidden] { display: none !important; }
 
+/* Keep the graph workspace on the same type scale and 14px spacing rhythm as
+   the dashboard tabs. Sigma labels receive the same font in sigma_graph.js. */
+.knowledge-map-panel :is(button, input, select, textarea) {
+  font-family: inherit;
+  letter-spacing: inherit;
+}
+
+.knowledge-map-panel > .knowledge-map-description,
 .knowledge-map-panel > .sg-commandbar,
 .knowledge-map-panel > .kg-controls,
 .knowledge-map-panel > .kg-workspace {
   box-sizing: border-box;
-  width: calc(100% - 44px);
-  margin-right: 22px;
-  margin-left: 22px;
+  width: 100%;
+  margin-right: 0;
+  margin-left: 0;
 }
 
 .knowledge-map-panel.sg-shell > .kg-controls {
   box-sizing: border-box;
-  width: calc(100% - 44px);
-  margin: 0 22px 10px;
+  width: 100%;
+  margin: 0 0 14px;
 }
 
-.knowledge-map-panel .kg-graph-card {
+.knowledge-map-panel.sg-shell .kg-graph-card {
   box-sizing: border-box;
   width: 100%;
+  padding: 14px;
 }
 
-.knowledge-map-panel .kg-side {
-  right: auto;
-  left: 26px;
-  width: min(640px, calc(100% - 52px));
+.knowledge-map-panel.sg-shell .kg-graph-card .kg-card-head {
+  min-height: 24px;
+  margin: 0 2px 10px;
 }
+
+.knowledge-map-panel.sg-shell .kg-graph-card .kg-card-head > p {
+  font-family: inherit;
+  font-size: .75rem;
+  line-height: 1.45;
+}
+
+.knowledge-map-panel.sg-shell .kg-side {
+  position: static;
+  width: auto;
+}
+
+.knowledge-map-panel.sg-shell .kg-side .kg-card { padding: 16px; }
 
 .knowledge-map-panel .kg-legend .sg-legend-filter {
   display: inline-flex !important;
@@ -6371,11 +6403,6 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   flex: 0 0 auto;
 }
 
-.knowledge-map-panel #sgReset {
-  min-height: 38px;
-  padding: 0 13px;
-}
-
 .knowledge-map-panel .sg-inline-stats {
   display: flex;
   align-items: end;
@@ -6407,6 +6434,13 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   min-width: 184px;
 }
 
+/* Atlas uses the same second-line additive-filter rhythm as the Pipeline tabs. */
+.knowledge-map-panel .sg-keyword-filter {
+  display: grid;
+  min-width: min(100%, 300px);
+  gap: 5px;
+}
+
 .knowledge-map-panel .kg-legend {
   display: flex;
   align-items: center;
@@ -6428,6 +6462,433 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   font-weight: 800;
   letter-spacing: .025em;
   white-space: nowrap;
+}
+
+.knowledge-map-panel .atlas-agent-shortcut {
+  min-height: 32px;
+  justify-self: end;
+  padding: 5px 10px 5px 6px;
+  border-color: color-mix(in srgb, #7657c9 35%, var(--line));
+  background: color-mix(in srgb, #7657c9 10%, var(--surface));
+  color: color-mix(in srgb, #52358f 84%, var(--text));
+  white-space: nowrap;
+}
+
+.knowledge-map-panel .atlas-agent-shortcut:hover,
+.knowledge-map-panel .atlas-agent-shortcut:focus-visible {
+  border-color: color-mix(in srgb, #7657c9 58%, var(--line));
+  background: color-mix(in srgb, #7657c9 17%, var(--surface));
+}
+
+.knowledge-map-panel .atlas-agent-shortcut > span {
+  background: color-mix(in srgb, #7657c9 16%, var(--surface));
+  color: #6748b6;
+}
+
+.knowledge-map-panel .atlas-agent-shortcut svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+/* Atlas follows the dashboard filter-panel rhythm with one clean control row
+   and no duplicated explanatory header. */
+.knowledge-map-panel.sg-shell .atlas-filter-panel {
+  display: grid !important;
+  gap: 0;
+  align-items: stretch;
+  padding: 14px 16px;
+  overflow: visible;
+}
+
+.knowledge-map-panel .atlas-filter-heading {
+  display: flex;
+  min-height: 38px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 86%, transparent);
+}
+
+.knowledge-map-panel .atlas-filter-intro > span,
+.knowledge-map-panel .atlas-card-eyebrow {
+  display: block;
+  color: var(--green);
+  font-size: .64rem;
+  font-weight: 850;
+  letter-spacing: .09em;
+  line-height: 1.2;
+}
+
+.knowledge-map-panel :is(.atlas-filter-intro, .atlas-selected-node-head) p {
+  margin: 4px 0 0;
+  color: var(--text);
+  font-size: .82rem;
+  font-weight: 680;
+  line-height: 1.35;
+}
+
+.knowledge-map-panel .atlas-filter-fields {
+  display: grid;
+  grid-template-columns: minmax(190px, 1.25fr) minmax(250px, 1.7fr) minmax(108px, .78fr) minmax(168px, 1.12fr) minmax(126px, .88fr) minmax(126px, .88fr) minmax(104px, .7fr) 42px;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.knowledge-map-panel .atlas-filter-fields > label,
+.knowledge-map-panel .atlas-filter-fields > .filter-multiselect {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+
+.knowledge-map-panel .atlas-filter-fields > .sg-explorer-view {
+  min-width: 0;
+}
+
+.knowledge-map-panel .atlas-filter-fields > .sg-keyword-filter {
+  min-width: 0;
+  gap: 7px;
+}
+
+/* Search pills live on their own full-width row, so adding a condition never
+   changes the height or vertical alignment of the primary filter controls. */
+.knowledge-map-panel .atlas-filter-fields > .sg-keyword-pills {
+  grid-column: 2 / span 1;
+  align-self: start;
+  justify-self: stretch;
+  padding-top: 1px;
+}
+
+.knowledge-map-panel .atlas-filter-fields > .sg-indication-filter {
+  min-width: 0;
+}
+
+.knowledge-map-panel .atlas-filter-fields :is(label > span, .filter-multiselect-label, .sg-keyword-filter > label) {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: .025em;
+}
+
+.knowledge-map-panel .atlas-filter-fields :is(select, input, .filter-multiselect-trigger) {
+  min-height: 42px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+/* Atlas uses the same plain option list as Tab 0~2. The menu is one surface;
+   individual values are not secondary cards. */
+.knowledge-map-panel .atlas-filter-fields .filter-multiselect-option-group {
+  padding: 1px 0 4px;
+}
+
+.knowledge-map-panel .atlas-filter-fields .filter-multiselect-option {
+  border: 0 !important;
+  border-radius: 7px;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.knowledge-map-panel .atlas-filter-fields .filter-multiselect-option:hover,
+.knowledge-map-panel .atlas-filter-fields .filter-multiselect-option:focus-visible {
+  background: color-mix(in srgb, var(--surface-soft) 72%, #e6ebf0) !important;
+}
+
+.knowledge-map-panel .atlas-filter-fields #sgReset {
+  margin: 0 0 1px;
+  justify-self: end;
+}
+
+.knowledge-map-panel .atlas-filter-fields #sgReset:hover,
+.knowledge-map-panel .atlas-filter-fields #sgReset:focus-visible {
+  color: var(--accent);
+}
+
+.knowledge-map-panel .atlas-filter-heading .sg-inline-stats {
+  flex: 0 0 auto;
+  align-items: flex-start;
+}
+
+.knowledge-map-panel .atlas-filter-heading .sg-inline-stats span {
+  min-width: 82px;
+  min-height: 38px;
+  border-radius: 9px;
+}
+
+.knowledge-map-panel.sg-shell .kg-side {
+  position: static;
+  width: auto;
+}
+
+/* Atlas is graph-first: node details open as a movable overlay rather than
+   permanently consuming a second column of the map workspace. */
+.knowledge-map-panel.sg-shell .kg-workspace {
+  display: block;
+}
+
+.knowledge-map-panel.sg-shell .kg-graph-card,
+.knowledge-map-panel.sg-shell .kg-side,
+.knowledge-map-panel.sg-shell .kg-side > .kg-card {
+  min-width: 0;
+}
+
+.knowledge-map-panel.sg-shell .kg-graph-card { height: clamp(640px, calc(100vh - 300px), 820px); }
+
+.knowledge-map-panel.sg-shell .kg-graph-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.knowledge-map-panel.sg-shell .atlas-graph-stage,
+.knowledge-map-panel.sg-shell .atlas-graph-stage .kg-canvas {
+  min-height: 0;
+  height: 100%;
+}
+
+.knowledge-map-panel.sg-shell .atlas-node-popover > .kg-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.knowledge-map-panel.sg-shell .atlas-node-popover #sgInspector {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding-right: 3px;
+}
+
+.knowledge-map-panel.sg-shell .atlas-node-popover {
+  position: absolute;
+  z-index: 20;
+  top: 58px;
+  left: 14px;
+  right: auto;
+  width: min(390px, calc(100% - 28px));
+  height: min(590px, calc(100% - 72px));
+  margin: 0;
+}
+
+.knowledge-map-panel.sg-shell .atlas-node-popover[hidden] { display: none; }
+
+.knowledge-map-panel.sg-shell .atlas-node-popover > .kg-card {
+  height: 100%;
+  padding: 14px 15px;
+  border-color: color-mix(in srgb, var(--line) 84%, #8ea1b1);
+  background: color-mix(in srgb, var(--surface) 96%, #f4f7fa);
+  box-shadow: 0 18px 46px rgba(15, 23, 42, .22), 0 2px 8px rgba(15, 23, 42, .10);
+}
+
+.knowledge-map-panel.sg-shell .atlas-node-popover.is-dragging,
+.knowledge-map-panel.sg-shell .atlas-node-popover.is-dragging * { cursor: grabbing !important; user-select: none; }
+
+.knowledge-map-panel .atlas-graph-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 30px;
+}
+
+.knowledge-map-panel .atlas-graph-head > h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 780;
+  letter-spacing: -0.015em;
+}
+
+.knowledge-map-panel .atlas-graph-head > #sgScope {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.35;
+  text-align: right;
+}
+
+.knowledge-map-panel .atlas-selected-node-head {
+  align-items: flex-start;
+  min-height: 51px;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 86%, transparent);
+}
+
+.knowledge-map-panel .atlas-node-popover .atlas-selected-node-head { cursor: grab; touch-action: none; }
+
+.knowledge-map-panel .atlas-inspector-back {
+  flex: 0 0 auto;
+  min-height: 28px;
+  margin-top: 1px;
+  padding: 4px 9px 4px 5px;
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+  color: var(--accent);
+  box-shadow: none;
+  white-space: nowrap;
+}
+
+.knowledge-map-panel .atlas-inspector-back > span {
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+}
+
+.knowledge-map-panel .atlas-inspector-back svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.knowledge-map-panel .atlas-inspector-back b {
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.knowledge-map-panel .atlas-inspector-close {
+  display: grid;
+  flex: 0 0 auto;
+  width: 27px;
+  height: 27px;
+  margin-top: 1px;
+  place-items: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.knowledge-map-panel .atlas-inspector-close:hover,
+.knowledge-map-panel .atlas-inspector-close:focus-visible {
+  background: var(--surface-soft);
+  color: var(--text);
+  outline: none;
+}
+
+.knowledge-map-panel .atlas-inspector-back:hover,
+.knowledge-map-panel .atlas-inspector-back:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 46%, var(--line));
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  outline: none;
+}
+
+.knowledge-map-panel .atlas-selected-node-head p { max-width: 360px; }
+
+.knowledge-map-panel .atlas-graph-stage {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 10px;
+}
+
+.knowledge-map-panel.sg-shell .atlas-graph-stage .kg-canvas {
+  grid-row: 2;
+  height: auto;
+}
+
+.knowledge-map-panel .atlas-graph-legend {
+  position: static;
+  z-index: 8;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  max-width: none;
+  padding: 7px 9px;
+  border: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, .10);
+  backdrop-filter: blur(10px);
+}
+
+.knowledge-map-panel .atlas-graph-legend .sg-legend-group {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+}
+
+.knowledge-map-panel .atlas-graph-legend .sg-legend-group > span {
+  margin: 0;
+  font-size: .58rem;
+}
+
+.knowledge-map-panel .atlas-graph-legend .sg-legend-group + .sg-legend-group {
+  padding-left: 10px;
+  border-left: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+}
+
+.knowledge-map-panel .atlas-graph-legend .sg-legend-options {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1px;
+  white-space: nowrap;
+}
+
+.knowledge-map-panel .atlas-graph-legend .sg-legend-filter {
+  gap: 3px;
+  padding: 2px 3px;
+  font-size: .6rem;
+}
+
+html[data-theme="dark"] .knowledge-map-panel .atlas-filter-heading,
+html[data-theme="dark"] .knowledge-map-panel .atlas-selected-node-head {
+  border-color: #31415b;
+}
+
+@media (max-width: 1120px) {
+  .knowledge-map-panel.sg-shell .kg-side {
+    position: static;
+    width: auto;
+  }
+
+  .knowledge-map-panel .atlas-filter-fields {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .knowledge-map-panel .atlas-filter-fields > .sg-keyword-filter {
+    grid-column: span 2;
+  }
+
+  .knowledge-map-panel .atlas-filter-fields > .sg-keyword-pills {
+    grid-column: 2 / span 2;
+  }
+
+  .knowledge-map-panel .atlas-filter-fields #sgReset { justify-self: end; }
+}
+
+@media (max-width: 900px) {
+  .knowledge-map-panel.sg-shell .kg-graph-card { height: clamp(560px, 72vh, 720px); }
+
+  .knowledge-map-panel.sg-shell .atlas-node-popover {
+    width: min(390px, calc(100% - 24px));
+    height: min(520px, calc(100% - 68px));
+    top: 56px;
+    left: 12px;
+    right: auto;
+  }
 }
 
 html[data-theme="dark"] .knowledge-map-panel .kg-controls,
@@ -6453,22 +6914,14 @@ html[data-theme="dark"] .knowledge-map-panel .kg-legend .sg-legend-filter:hover 
   background: #17243a;
 }
 
-html[data-theme="dark"] .knowledge-map-panel #sgReset {
-  border-color: #3b4d69;
-  background: #17243a;
-  color: #e7edf7;
-}
-
-html[data-theme="dark"] .knowledge-map-panel #sgReset:hover,
-html[data-theme="dark"] .knowledge-map-panel #sgReset:focus-visible {
-  border-color: #6478a0;
-  background: #213454;
-  color: #ffffff;
-  outline: none;
-}
-
 html[data-theme="dark"] .knowledge-map-panel .kg-legend .sg-legend-filter {
   color: #aebdd0;
+}
+
+html[data-theme="dark"] .knowledge-map-panel .atlas-graph-legend {
+  border-color: #3b4d69;
+  background: rgba(16, 26, 43, .92);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .28);
 }
 
 html[data-theme="dark"] .knowledge-map-panel .kg-graph-card .kg-card-head > p {
@@ -6500,6 +6953,14 @@ html[data-theme="dark"] .knowledge-map-panel .kg-graph-card .kg-card-head > p {
   font-size: .73rem;
   line-height: 1.35;
   text-align: left;
+}
+
+/* Tabs 1~3 and Atlas use the default 16px handoff from the guide to their
+   first major workspace block. Tab 0 reaches the same total through its
+   12px flex gap plus the local 4px margin below. */
+#pipelineContent > .workflow-mode-description,
+.knowledge-map-panel.sg-shell > .knowledge-map-description {
+  margin-bottom: 16px;
 }
 
 .knowledge-map-panel .sg-agent-prompts button:hover {
@@ -6614,7 +7075,8 @@ html[data-theme="dark"] .knowledge-map-panel .kg-graph-card .kg-card-head > p {
   position: fixed;
   z-index: 80;
   top: 94px;
-  right: 32px;
+  left: 32px;
+  right: auto;
   display: grid;
   width: min(720px, calc(100vw - 48px));
   max-height: min(760px, calc(100vh - 118px));
@@ -6663,22 +7125,47 @@ html[data-theme="dark"] .knowledge-map-panel .kg-graph-card .kg-card-head > p {
 .knowledge-map-note-modal-body code { padding: 2px 5px; border-radius: 4px; background: var(--code-bg); font-size: .78rem; }
 
 @media (max-width: 780px) {
+  .knowledge-map-panel > .knowledge-map-description,
   .knowledge-map-panel > .sg-commandbar,
   .knowledge-map-panel > .kg-controls,
   .knowledge-map-panel > .kg-workspace {
-    width: calc(100% - 24px);
-    margin-right: 12px;
-    margin-left: 12px;
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
   }
 
   .knowledge-map-panel.sg-shell > .kg-controls {
-    width: calc(100% - 24px);
-    margin: 0 12px 10px;
+    width: 100%;
+    margin: 0 0 10px;
   }
 
   .knowledge-map-panel .kg-side {
     right: auto;
     left: auto;
+  }
+
+  .knowledge-map-panel .atlas-filter-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .knowledge-map-panel .atlas-filter-fields > :is(label, .filter-multiselect, .sg-keyword-filter) {
+    min-width: 100%;
+    flex-basis: 100%;
+  }
+
+  .knowledge-map-panel .atlas-filter-fields > .sg-keyword-pills { grid-column: 1 / -1; }
+
+  .knowledge-map-panel .atlas-graph-legend {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .knowledge-map-panel .atlas-graph-legend .sg-legend-group + .sg-legend-group {
+    padding-top: 5px;
+    padding-left: 0;
+    border-top: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+    border-left: 0;
   }
 }
 
@@ -6717,6 +7204,11 @@ html[data-theme="dark"] .knowledge-map-panel .kg-graph-card .kg-card-head > p {
   padding: 0 10px;
   border-radius: 999px;
   font-size: 10px;
+}
+
+.data-reupload-candidate-actions button:disabled {
+  cursor: not-allowed;
+  opacity: .42;
 }
 
 .step0-import-representative-choice button.is-active {
@@ -7191,11 +7683,6 @@ body.report-modal-open {
   padding-top: 8px;
 }
 
-.qualitative-criterion-status-pills button {
-  flex: 1 1 0;
-  justify-content: center;
-}
-
 .qualitative-criterion-status-label {
   margin-right: 2px;
   color: var(--muted);
@@ -7207,29 +7694,42 @@ body.report-modal-open {
   --qualitative-status-color: var(--accent);
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
   gap: 5px;
   min-height: 27px;
   border: 1px solid color-mix(in srgb, var(--muted) 26%, var(--glass-border));
   border-radius: 999px;
   background: color-mix(in srgb, var(--muted) 7%, var(--readable-surface));
-  padding: 4px 8px;
+  padding: 4px 9px;
   color: color-mix(in srgb, var(--muted) 78%, var(--text));
   font-size: 9px;
-  font-weight: 850;
-  letter-spacing: 0.01em;
+  font-weight: 900;
+  letter-spacing: 0.025em;
   cursor: pointer;
   transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
 }
 
-.qualitative-criterion-status-pills button span {
+.qualitative-criterion-status-pills button > i {
   width: 6px;
   height: 6px;
   flex: 0 0 auto;
   border-radius: 50%;
   background: color-mix(in srgb, var(--muted) 48%, var(--surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--muted) 30%, transparent);
 }
 
-.qualitative-criterion-status-pills button b { font-size: 9px; }
+.qualitative-criterion-status-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+  font-style: normal;
+}
+
+.qualitative-criterion-status-pills button b {
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
 
 .qualitative-criterion-status-pills button:hover,
 .qualitative-criterion-status-pills button:focus-visible {
@@ -7244,7 +7744,7 @@ body.report-modal-open {
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--qualitative-status-color) 12%, transparent);
 }
 
-.qualitative-criterion-status-pills button.is-active span {
+.qualitative-criterion-status-pills button.is-active > i {
   background: currentColor;
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--qualitative-status-color) 14%, transparent);
 }
@@ -9662,6 +10162,7 @@ body.agent-response-modal-open { overflow: hidden; }
 .floating-agent-launcher {
   position: fixed;
   right: 24px;
+  left: auto;
   bottom: max(24px, env(safe-area-inset-bottom));
   z-index: 64;
   display: inline-flex;
@@ -9722,7 +10223,8 @@ body.agent-response-modal-open { overflow: hidden; }
 /* One AI-launcher-sized orb holds both page-end shortcuts. */
 .page-jump-controls {
   position: fixed;
-  right: 28px;
+  right: 24px;
+  left: auto;
   bottom: max(96px, calc(env(safe-area-inset-bottom) + 82px));
   z-index: 63;
   width: 58px;
@@ -9738,6 +10240,7 @@ body.agent-response-modal-open { overflow: hidden; }
    an empty gap, so the corner position stays consistent across pages. */
 .page-jump-controls.page-jump-controls-solo {
   right: 24px;
+  left: auto;
   bottom: max(24px, env(safe-area-inset-bottom));
 }
 
@@ -9797,12 +10300,14 @@ body.agent-response-modal-open { overflow: hidden; }
 
 @media (max-width: 720px) {
   .page-jump-controls {
-    right: 17px;
+    right: 16px;
+    left: auto;
     bottom: max(82px, calc(env(safe-area-inset-bottom) + 68px));
   }
 
   .page-jump-controls.page-jump-controls-solo {
     right: 16px;
+    left: auto;
     bottom: max(16px, env(safe-area-inset-bottom));
   }
 }
@@ -14992,6 +15497,7 @@ html[data-theme="dark"] .obsidian-meta-row {
 
   .floating-agent-launcher {
     right: 16px;
+    left: auto;
     bottom: max(16px, env(safe-area-inset-bottom));
     min-height: 52px;
     padding: 7px;
@@ -16433,6 +16939,68 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16), 0 2px 7px rgba(15, 23, 42, 0.08);
 }
 
+.filter-multiselect-menu-topbar {
+  position: sticky;
+  z-index: 1;
+  top: -5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: -5px -5px 6px;
+  padding: 6px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 76%, transparent);
+  background: var(--surface);
+}
+
+.filter-multiselect-menu-topbar .filter-multiselect-all-option {
+  display: grid;
+  flex: 0 0 auto;
+  width: auto;
+  min-height: 31px;
+  grid-template-columns: 14px auto;
+  gap: 4px;
+  padding: 5px 7px;
+  white-space: nowrap;
+}
+
+.filter-multiselect-menu-search {
+  display: block;
+  flex: 1 1 110px;
+  min-width: 84px;
+}
+
+.filter-multiselect-menu-search input {
+  width: 100%;
+  min-height: 30px;
+  box-sizing: border-box;
+  border: 1px solid color-mix(in srgb, var(--line) 88%, #b9c3cd);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--input-bg) 94%, var(--surface));
+  padding: 5px 8px;
+  color: var(--text);
+  font: inherit;
+  font-size: 11px;
+  outline: none;
+}
+
+.filter-multiselect-menu-search input:focus {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.filter-multiselect-option-group { padding: 1px 0 4px; }
+
+.filter-multiselect-option-group > p {
+  margin: 4px 8px 3px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+
+.filter-multiselect-option.is-canonical > span:last-child { font-weight: 850; }
+
 .filter-multiselect-option {
   display: grid;
   width: 100%;
@@ -16498,7 +17066,7 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
 }
 
 .app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .pipeline-table-tabs button + .workflow-knowledge-map-link {
-  border-left-color: transparent;
+  border-left: 1px solid rgba(255, 255, 255, 0.11);
 }
 
 .app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .workflow-knowledge-map-link.active::after {
@@ -16511,12 +17079,12 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
 
 .workflow-knowledge-map-link b {
   color: inherit;
-  font-size: 13px;
-  font-weight: 850;
+  font-size: 14px;
+  font-weight: 800;
   white-space: nowrap;
 }
 
-/* Knowledge Map keeps a distinct indigo insight marker, like Shortlisting's gold star. */
+/* Atlas keeps its original Gemini-style indigo insight marker. */
 .topbar-top .workflow-knowledge-map-link .knowledge-map-icon,
 .topbar-top .workflow-knowledge-map-link:hover .knowledge-map-icon,
 .topbar-top .workflow-knowledge-map-link.active .knowledge-map-icon {
@@ -16537,7 +17105,7 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
 
   .app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .workflow-navigation-shell .pipeline-table-tabs {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 0;
   }
 
@@ -16566,10 +17134,10 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
   min-width: 54px;
   min-height: 28px;
   padding: 5px 11px;
-  border: 1px solid #64798a;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
   border-radius: 7px;
-  background: #64798a;
-  color: #fff;
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+  color: color-mix(in srgb, var(--accent) 76%, var(--text));
   font: inherit;
   font-size: 11px;
   font-weight: 850;
@@ -16578,9 +17146,9 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
 
 .filter-multiselect-done:hover,
 .filter-multiselect-done:focus-visible {
-  border-color: #516474;
+  border-color: color-mix(in srgb, var(--accent) 48%, var(--line));
   outline: none;
-  background: #516474;
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
 }
 
 html[data-theme="dark"] .filter-multiselect-menu {
@@ -16834,6 +17402,11 @@ html[data-theme="dark"] .workflow-description-separator {
   .workflow-description-copy {
     display: grid;
     gap: 2px;
+  }
+
+  .knowledge-map-panel .atlas-agent-shortcut {
+    grid-column: 2 / -1;
+    justify-self: start;
   }
 
 }
@@ -20821,6 +21394,60 @@ body.report-reupload-open {
   gap: 0;
 }
 
+/* Tab 0 starts with its analytical anchor visible. While records are being
+   prepared, a single scan line travels through the existing graph cards rather
+   than replacing the dashboard with a generic spinner. */
+.step0-summary-dashboard.is-loading {
+  position: relative;
+}
+
+.step0-summary-loading-note {
+  display: none;
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0;
+}
+
+.step0-summary-dashboard.is-loading .step0-summary-loading-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.step0-summary-dashboard.is-loading .step0-summary-loading-note::before {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 14%, transparent);
+  content: "";
+}
+
+.step0-summary-dashboard.is-loading .step0-stat-value strong {
+  min-width: 30px;
+  color: transparent;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--line) 66%, var(--surface));
+  animation: step0-summary-skeleton 1.15s ease-in-out infinite alternate;
+}
+
+.step0-summary-dashboard.is-loading .step0-workflow-card-canvas {
+  opacity: .2;
+  filter: saturate(.35);
+}
+
+@keyframes step0-summary-skeleton {
+  from { opacity: .52; }
+  to { opacity: .92; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step0-summary-dashboard.is-loading .step0-stat-value strong {
+    animation: none;
+  }
+}
+
 .step0-summary-cards {
   margin: 0;
   padding: 0;
@@ -20840,7 +21467,8 @@ body.report-reupload-open {
    flex order. Tab 0 deliberately keeps its Listing guide above the dashboard. */
 .step0-panel > .workflow-mode-description[data-workflow-mode="listing"] {
   order: 1;
-  margin-bottom: 0;
+  /* The Step 0 flex gap is 12px; this retains the shared 16px guide spacing. */
+  margin-bottom: 4px;
 }
 
 .step0-summary-dashboard-heading {
@@ -21924,6 +22552,28 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
   outline: none;
 }
 
+/* Search-plus guidance is intentionally brief and opens upward so a compact
+   filter row never pushes the tooltip outside the dashboard viewport. */
+.step0-add-search-token.help-tooltip::after {
+  top: auto;
+  right: auto;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  width: max-content;
+  max-width: min(150px, calc(100vw - 24px));
+  padding: 6px 8px;
+  border-radius: 7px;
+  font-size: 10px;
+  line-height: 1.3;
+  text-align: center;
+  transform: translate(-50%, 4px);
+}
+
+.step0-add-search-token.help-tooltip:hover::after,
+.step0-add-search-token.help-tooltip:focus-visible::after {
+  transform: translate(-50%, 0);
+}
+
 .step0-search-tokens {
   display: flex;
   flex: 0 0 100%;
@@ -21939,7 +22589,16 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
 .step0-search-tokens.is-controls-token-row {
   grid-column: 1 / -1;
   align-self: start;
+  justify-self: stretch;
   padding-top: 1px;
+}
+
+/* On the desktop Pipeline tabs, added search conditions must not reflow the
+   search input or any dropdown in the primary filter row. */
+@media (min-width: 1201px) {
+  .app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) .controls > .step0-search-tokens.is-controls-token-row {
+    grid-row: 2;
+  }
 }
 
 .step0-search-token {

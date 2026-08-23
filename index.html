@@ -12,12 +12,9 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20260823-country-multi-1" />
-  <link rel="stylesheet" href="./src/knowledge_graph.css" />
+  <link rel="stylesheet" href="./src/styles.css?v=20260823-summary-loading-calm-1" />
+  <link rel="stylesheet" href="./src/knowledge_graph.css?v=20260823-atlas-search-pill-alignment-1" />
   <link rel="stylesheet" href="./src/sigma_graph.css" />
-  <style>
-    .knowledge-map-panel.sg-shell .kg-side { width: min(640px, calc(100% - 52px)); }
-  </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/graphology/0.25.4/graphology.umd.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" defer></script>
@@ -37,19 +34,19 @@
 
           <nav class="workflow-navigation-shell" aria-label="Pipeline workflow">
             <div class="pipeline-table-tabs" role="tablist" aria-label="Pipeline table mode">
-              <button class="active" id="step0Tab" type="button" role="tab" aria-selected="true" aria-controls="step0Panel" tabindex="0" data-table-mode="step0">
+              <button class="active help-tooltip" id="step0Tab" type="button" role="tab" aria-selected="true" aria-controls="step0Panel" tabindex="0" data-table-mode="step0" data-tooltip="Listing 후보 목록과 조사 진척을 확인합니다.">
                 <span class="tab-step" aria-hidden="true">0</span>
                 <b>진척 현황</b>
               </button>
-              <button id="fastTriageTableTab" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="triage">
+              <button id="fastTriageTableTab" class="help-tooltip" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="triage" data-tooltip="Fast Triage 결과로 후보를 빠르게 1차 선별합니다.">
                 <span class="tab-step" aria-hidden="true">1</span>
                 <b>Fast Triage</b>
               </button>
-              <button id="fullScoutTableTab" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="full">
+              <button id="fullScoutTableTab" class="help-tooltip" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="full" data-tooltip="Full Scout의 심층 조사와 평가 결과를 확인합니다.">
                 <span class="tab-step" aria-hidden="true">2</span>
                 <b>Full Scout</b>
               </button>
-              <button id="focusManagementTableTab" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="focus">
+              <button id="focusManagementTableTab" class="help-tooltip" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="focus" data-tooltip="후속 BD 검토 대상으로 추적 중인 Shortlisting 목록입니다.">
                 <span class="tab-step tab-step-star" aria-hidden="true">
                   <svg viewBox="0 0 24 24" focusable="false">
                     <path d="m12 2.75 2.78 5.64 6.22.9-4.5 4.39 1.06 6.2L12 16.95l-5.56 2.93 1.06-6.2L3 9.29l6.22-.9L12 2.75Z" />
@@ -57,9 +54,9 @@
                 </span>
                 <b>Shortlisting</b>
               </button>
-              <a id="knowledgeMapTab" class="workflow-knowledge-map-link" href="/?tab=map" role="tab" aria-controls="knowledgeMapPanel" aria-label="Knowledge Map 열기">
+              <a id="knowledgeMapTab" class="workflow-knowledge-map-link help-tooltip" href="/?tab=map" role="tab" aria-controls="knowledgeMapPanel" aria-label="Atlas 열기" data-tooltip="Pipeline과 Company·Target·MoA·근거의 연결을 탐색합니다.">
                 <span class="tab-step knowledge-map-icon" aria-hidden="true">✦</span>
-                <b>Knowledge Map</b>
+                <b>Atlas</b>
               </a>
             </div>
           </nav>
@@ -137,7 +134,7 @@
           <span class="workflow-description-filter">진행 단계</span>
         </section>
 
-        <section class="step0-summary-dashboard" aria-labelledby="step0SummaryDashboardTitle">
+        <section class="step0-summary-dashboard is-loading" aria-labelledby="step0SummaryDashboardTitle" aria-busy="true">
           <button
             id="step0SummaryDashboardToggleButton"
             class="visual-dashboard-toggle-bar step0-summary-dashboard-heading"
@@ -148,6 +145,7 @@
             <span class="visual-dashboard-toggle-title step0-summary-dashboard-title" id="step0SummaryDashboardTitle">
               Summary Dashboard
               <small id="step0SummaryScopeNote">진행 단계 색상</small>
+              <span class="step0-summary-loading-note" aria-live="polite">Pipeline 데이터를 정리하고 있습니다</span>
             </span>
             <span class="visual-dashboard-toggle-action">
               <em id="step0SummaryRecentUpload" class="step0-summary-recent-upload" hidden>▲ 최근 15일간 0 증가</em>
@@ -198,7 +196,7 @@
               <div class="step0-search-composer">
                 <div class="step0-search-entry">
                   <input id="step0SearchInput" type="search" placeholder="Company · Asset · Target · Modality 등 검색" aria-label="Listing Pipeline Table 검색: Company, Asset, Target, Main indication, Stage, Country, Modality" />
-                  <button id="step0AddSearchTokenButton" class="step0-add-search-token help-tooltip" type="button" data-tooltip="Add search term" aria-label="Add current search term">+</button>
+                  <button id="step0AddSearchTokenButton" class="step0-add-search-token help-tooltip" type="button" data-tooltip="검색 조건 추가" aria-label="현재 검색어를 조건으로 추가">+</button>
                 </div>
                 <div id="step0SearchTokens" class="step0-search-tokens" aria-label="Selected company and asset filters" aria-live="polite"></div>
               </div>
@@ -366,6 +364,7 @@
                 <div id="step0PasteFeedback" class="step0-paste-feedback input-validation-results" role="status" aria-live="polite" hidden></div>
               </div>
               <div class="editor-actions">
+                <button class="action-pill data-upload-clear-button help-tooltip" id="step0ClearBottomButton" type="button" data-tooltip="입력한 Listing 행을 모두 비웁니다."><span aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" /></svg></span><b>비우기</b></button>
                 <button class="action-pill header-action-button primary-button help-tooltip" id="step0ImportButton" type="button" data-tooltip="붙여넣은 목록을 파싱해 Listing 목록에 추가합니다."><span class="data-upload-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 20v-6h8v6" /></svg></span><b>가져오기</b></button>
               </div>
             </div>
@@ -638,30 +637,46 @@
       </main>
 
       <section id="knowledgeMapPanel" class="knowledge-map-panel sg-shell" role="tabpanel" aria-labelledby="knowledgeMapTab" hidden>
-        <section class="workflow-mode-description knowledge-map-description" data-workflow-mode="map" role="note" aria-label="Knowledge Map 안내">
+        <section class="workflow-mode-description knowledge-map-description" data-workflow-mode="map" role="note" aria-label="Atlas 안내">
           <span class="workflow-description-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 10.75v5.5M12 7.75h.01" /></svg></span>
-          <span class="workflow-description-copy"><strong>Knowledge Map<span class="workflow-description-separator" aria-hidden="true">·</span></strong><span>Pipeline과 Company·Target·MoA·근거 간 연결을 탐색하고, 선택한 노드 맥락으로 All Pipelines Agent와 대화합니다.</span></span>
-          <span class="workflow-description-filter">Knowledge Graph</span>
+          <span class="workflow-description-copy"><strong>Atlas<span class="workflow-description-separator" aria-hidden="true">·</span></strong><span>Filter로 관심 영역을 좁히고 그래프에서 노드를 선택해 연결 맥락을 확인한 뒤, 그 맥락을 바탕으로 All Pipelines Agent에 질문하세요.</span></span>
+          <button id="sgAgentLink" class="action-pill atlas-agent-shortcut help-tooltip" type="button" data-tooltip="선택 노드가 있으면 해당 연결 맥락을 함께 전달합니다." aria-label="All Pipelines Agent에 질문하기">
+            <span aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 3 1.55 5.45L19 10l-5.45 1.55L12 17l-1.55-5.45L5 10l5.45-1.55L12 3Z"/><path d="m18.5 15 .65 2.35L21.5 18l-2.35.65L18.5 21l-.65-2.35L15.5 18l2.35-.65L18.5 15Z"/></svg></span><b>Agent에 질문하기</b>
+          </button>
         </section>
-        <section class="kg-controls">
-          <label class="sg-explorer-view"><span>탐색 시작점</span><select id="sgView"><option value="overview" selected>Overview · 핵심 연결</option><option value="all">전체 지식 맵</option></select></label>
-          <label class="kg-search"><span>검색</span><input id="sgSearch" type="search" placeholder="Asset · Company · Target · MoA 검색" /></label>
-          <label><span>Theme</span><select id="sgTheme"><option value="">전체</option></select></label>
-          <label><span>Node type</span><select id="sgType"><option value="">전체</option></select></label>
-          <label><span>Stage</span><select id="sgStage"><option value="">전체</option></select></label>
-          <label><span>연결 범위</span><select id="sgDepth"><option value="1" selected>1 hop</option><option value="2">2 hop</option><option value="3">3 hop</option></select></label>
-          <button id="sgReset" type="button">초기화</button>
-          <div class="sg-inline-stats" aria-label="Knowledge Map graph counts"><span>Nodes <b id="sgNodeCount">0</b></span><span>Links <b id="sgEdgeCount">0</b></span></div>
+        <section class="kg-controls atlas-filter-panel" aria-label="Atlas filters">
+          <div class="atlas-filter-fields">
+            <label class="sg-explorer-view"><span>탐색 시작점</span><select id="sgView"><option value="overview" selected>Overview · 핵심 연결</option><option value="all">전체 지식 맵</option></select></label>
+            <label class="sg-keyword-filter">
+              <span>키워드 찾기</span>
+              <div class="step0-search-composer">
+                <div class="step0-search-entry">
+                <input id="sgSearch" type="search" placeholder="Pipeline · Company · Target · MoA" autocomplete="off" />
+                  <button id="sgSearchAdd" type="button" class="step0-add-search-token help-tooltip" data-tooltip="검색 조건 추가" aria-label="현재 검색어를 조건으로 추가">+</button>
+                </div>
+              </div>
+            </label>
+            <div id="sgThemeFilter" class="filter-multiselect" aria-label="Theme filter"><span class="filter-multiselect-label">관심 Theme</span><button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false"><span data-sg-theme-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button><div class="filter-multiselect-menu" role="listbox" aria-label="관심 Theme" aria-multiselectable="true" hidden></div></div>
+            <div id="sgIndicationFilter" class="filter-multiselect sg-indication-filter" aria-label="Main indication filter">
+              <span class="filter-multiselect-label">Main indication</span>
+              <button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false"><span data-sg-indication-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <div class="filter-multiselect-menu" role="listbox" aria-label="Main indication" aria-multiselectable="true" hidden></div>
+            </div>
+            <div id="sgTypeFilter" class="filter-multiselect" aria-label="Entity type filter"><span class="filter-multiselect-label">표시할 항목</span><button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false"><span data-sg-type-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button><div class="filter-multiselect-menu" role="listbox" aria-label="표시할 항목" aria-multiselectable="true" hidden></div></div>
+            <div id="sgStageFilter" class="filter-multiselect" aria-label="Pipeline stage filter"><span class="filter-multiselect-label">Pipeline 단계</span><button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false"><span data-sg-stage-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button><div class="filter-multiselect-menu" role="listbox" aria-label="Pipeline 단계" aria-multiselectable="true" hidden></div></div>
+            <div id="sgDepthFilter" class="filter-multiselect sg-depth-filter" aria-label="Connection range filter"><span class="filter-multiselect-label">연결 범위</span><button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false"><span data-sg-depth-summary>1 hop</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button><div class="filter-multiselect-menu" role="radiogroup" aria-label="연결 범위" hidden></div></div>
+            <button id="sgReset" class="filter-reset-button help-tooltip" type="button" data-tooltip="Atlas 필터 초기화" aria-label="Atlas 필터 초기화">↻</button>
+            <div id="sgKeywordPills" class="step0-search-tokens is-controls-token-row sg-keyword-pills" aria-label="추가된 검색 조건" hidden></div>
+          </div>
         </section>
         <section class="kg-workspace">
-          <section class="kg-card kg-graph-card"><div class="kg-card-head"><p id="sgScope">Knowledge Map을 준비 중입니다…</p><div id="sgLegend" class="kg-legend"></div></div><div id="sgCanvas" class="kg-canvas"></div></section>
-          <aside class="kg-side"><section class="kg-card"><div class="kg-card-head"><h2>Selected node</h2></div><div id="sgInspector" class="kg-empty">노드를 클릭하면 연결 노드와 Agent 질문을 표시합니다.</div></section></aside>
+          <section class="kg-card kg-graph-card"><div class="kg-card-head atlas-graph-head"><h2>Knowledge Map</h2><p id="sgScope">Knowledge Map을 준비 중입니다…</p></div><div class="atlas-graph-stage"><div id="sgCanvas" class="kg-canvas"></div><div id="sgLegend" class="kg-legend atlas-graph-legend" aria-label="그래프 표시 범례"></div><aside id="sgInspectorPanel" class="kg-side atlas-node-popover" role="dialog" aria-label="Selected node details" hidden><section class="kg-card"><div id="sgInspectorDrag" class="kg-card-head atlas-selected-node-head" tabindex="0" aria-label="Selected node 창 이동"><div><span class="atlas-card-eyebrow">SELECTED NODE</span><p>선택한 노드와 직접 연결된 정보·원문을 확인하세요. Agent가 이를 우선 검토할 예정입니다.</p></div><button id="sgInspectorBack" class="atlas-inspector-close" type="button" aria-label="선택 해제">×</button></div><div id="sgInspector" class="kg-empty">노드를 클릭하면 연결 노드와 Agent 질문을 표시합니다.</div></section></aside></div></section>
         </section>
       </section>
 
       <section id="knowledgeMapNoteModal" class="knowledge-map-note-modal" role="dialog" aria-modal="false" aria-labelledby="knowledgeMapNoteModalTitle" hidden>
         <header id="knowledgeMapNoteModalDrag" class="knowledge-map-note-modal-header" tabindex="0" aria-label="Markdown 노트 창 이동">
-          <div><span>Knowledge Note</span><h2 id="knowledgeMapNoteModalTitle">Selected node note</h2></div>
+          <div><span>Selected node · Full Markdown</span><h2 id="knowledgeMapNoteModalTitle">Selected node note</h2></div>
           <button id="knowledgeMapNoteModalClose" type="button" aria-label="노트 창 닫기">×</button>
         </header>
         <div id="knowledgeMapNoteModalBody" class="knowledge-map-note-modal-body"></div>
@@ -1337,7 +1352,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260823-step0-dark-summary-1"></script>
-  <script src="./src/sigma_graph.js?v=20260823-dark-palette-1" defer></script>
+  <script type="module" src="./src/app.js?v=20260823-summary-loading-scan-1"></script>
+  <script src="./src/sigma_graph.js?v=20260823-overview-filter-scope-1" defer></script>
   </body>
 </html>

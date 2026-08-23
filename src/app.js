@@ -252,6 +252,7 @@ const CANONICAL_DEVELOPMENT_STAGES = [
   'IND-enabling',
   'Preclinical unspecified',
   'IND filed/cleared',
+  'Clinical unspecified',
   'Phase 1',
   'Phase 1/2',
   'Phase 2',
@@ -263,6 +264,8 @@ const CANONICAL_DEVELOPMENT_STAGES = [
   'Unknown'
 ];
 const CANONICAL_MODALITIES = [
+  'Targeted protein degrader',
+  'Oncolytic virus',
   'Small molecule',
   'Peptide',
   'RNA therapy',
@@ -270,7 +273,10 @@ const CANONICAL_MODALITIES = [
   'Gene therapy',
   'Antibody',
   'Protein biologic',
-  'Other',
+  'Microbiome therapy',
+  'Vaccine',
+  'Radiopharmaceutical',
+  'Others',
   'Unknown'
 ];
 const CANONICAL_COUNTRIES = [
@@ -524,6 +530,7 @@ const elements = {
   step0PasteFeedback: document.querySelector('#step0PasteFeedback'),
   step0ImportButton: document.querySelector('#step0ImportButton'),
   step0ClearButton: document.querySelector('#step0ClearButton'),
+  step0ClearBottomButton: document.querySelector('#step0ClearBottomButton'),
   step0ImportSummary: document.querySelector('#step0ImportSummary'),
   step0SaveStatus: document.querySelector('#step0SaveStatus'),
   step0GuideSteps: document.querySelector('#step0GuideSteps'),
@@ -659,6 +666,19 @@ function normalizedPipelineIdentityText(value) {
 
 function normalizedPipelineAssetIdentity(value) {
   return normalizedPipelineIdentityText(value).replace(/(?<=[a-z])0+(?=\d)/g, '');
+}
+
+// Search treats code punctuation, spacing, case, and Unicode-width variants as
+// non-semantic, so Meta01 and Meta-01 resolve to the same dashboard result.
+function normalizedDashboardSearchText(value) {
+  return String(value || '')
+    .normalize('NFKC')
+    .toLocaleLowerCase('ko')
+    .replace(/[^\p{L}\p{N}]+/gu, '')
+    // Match the safe code-only import equivalence: ABL-001 and ABL1 have
+    // the same alphabetic prefix and numeric core. This does not reorder or
+    // fuzzy-match digits, words, aliases, or company names.
+    .replace(/(?<=[a-z])0+(?=\d)/g, '');
 }
 
 const GENERIC_ASSET_WORDS = new Set(['therapy', 'drug', 'treatment', 'research', 'project', 'program', 'pipeline', 'disease', 'disorder', 'candidate', 'for', 'of', 'the', 'and']);
@@ -1048,7 +1068,7 @@ function renderStep0ImportReviewList() {
       <article class="data-reupload-review-card${isNew || isSkipped ? ' is-skipped' : ''}">
         <header class="data-reupload-review-card-header">
           <div><strong>${escapeHtml(match.asset || 'Unknown asset')}</strong><span>${escapeHtml(match.company || 'Unknown company')} · ${escapeHtml(match.stage || 'Unknown')}</span></div>
-          <span class="data-reupload-review-state" data-state="${escapeHtml(decision.action)}">${decision.action === 'merge' ? '같은 Pipeline으로 연결' : isNew ? '별도 신규 Pipeline' : isSkipped ? '이번 행 제외' : '선택 필요'}</span>
+          <span class="data-reupload-review-state" data-state="${escapeHtml(decision.action)}">${decision.action === 'merge' ? '같은 Pipeline으로 연결' : isNew ? '별도 신규 Pipeline' : isSkipped ? '등록하지 않음' : '선택 필요'}</span>
         </header>
         <div class="data-reupload-candidate-stack">
           ${(match.candidates || []).map((candidate) => {
@@ -1066,7 +1086,7 @@ function renderStep0ImportReviewList() {
                 <div class="data-reupload-comparison-scroll" tabindex="0">
                   <div class="data-reupload-comparison-grid">
                     ${renderDataReuploadComparisonColumn('이번 가져오기', match.asset, match.company, match.stage)}
-                    ${renderDataReuploadComparisonColumn('기존 Pipeline', candidate.asset, candidate.company, candidate.workflow)}
+                    ${renderDataReuploadComparisonColumn('기존 Pipeline', candidate.asset, candidate.company, candidate.stage)}
                   </div>
                 </div>
                 <div class="data-reupload-candidate-actions">
@@ -1086,8 +1106,8 @@ function renderStep0ImportReviewList() {
             `;
           }).join('')}
           <div class="data-reupload-candidate-actions">
-            <button type="button" class="identity-modal-cancel" data-step0-import-review-action="new" data-row-index="${match.row_index}">별도 신규 Pipeline으로 추가</button>
-            <button type="button" class="identity-modal-cancel" data-step0-import-review-action="skip" data-row-index="${match.row_index}">이번 행 제외</button>
+            <button type="button" class="identity-modal-cancel" data-step0-import-review-action="new" data-row-index="${match.row_index}"${decision.action === 'merge' ? ' disabled title="같은 Pipeline 연결을 선택했습니다."' : ''}>별도 신규 Pipeline으로 추가</button>
+            <button type="button" class="identity-modal-cancel" data-step0-import-review-action="skip" data-row-index="${match.row_index}"${decision.action === 'merge' ? ' disabled title="같은 Pipeline 연결을 선택했습니다."' : ''}>등록하지 않기</button>
           </div>
           ${decision.action === 'merge' ? `
             <div class="step0-import-alias-guidance">
@@ -1238,6 +1258,7 @@ function orderedDictionaryEntries(kind) {
     'Phase 2': 80,
     'Phase 1/2': 75,
     'Phase 1': 70,
+    'Clinical unspecified': 68,
     'IND filed/cleared': 65,
     'IND-enabling': 60,
     'Preclinical Candidate': 55,
@@ -1321,9 +1342,12 @@ function canonicalDashboardIndication(value) {
   const normalized = normalizeCategoryText(text);
   if (!text || text === '-' || /^n\/?a$/i.test(text)) return 'Unknown';
   if (/alzheimer|ad\b/.test(normalized)) return "Alzheimer's disease";
+  if (/lewy body|\bdlb\b/.test(normalized)) return 'Lewy body dementia';
   if (/epilep|seizure|focal onset|partial onset|status epilepticus/.test(normalized)) return 'Epilepsy / seizure disorders';
   if (/chronic cough|rcc|ucc|refractory cough|unexplained cough/.test(normalized)) return 'Chronic cough';
-  if (/multiple sclerosis|\bms\b|neuroinflamm|autoimmune/.test(normalized)) return 'Multiple sclerosis / neuroinflammatory disease';
+  if (/multiple sclerosis|\bms\b|neuroinflamm/.test(normalized)) return 'Multiple sclerosis / neuroinflammatory disease';
+  if (/lupus|\bsle\b/.test(normalized)) return 'Systemic lupus erythematosus';
+  if (/autoimmune|inflammatory disease/.test(normalized)) return 'Other autoimmune / inflammatory disease';
   if (/inflammatory bowel|\bibd\b|crohn|ulcerative colitis/.test(normalized)) return 'Inflammatory bowel disease';
   if (/major depressive|depression|\bmdd\b/.test(normalized)) return 'Major depressive disorder';
   if (/pain/.test(normalized)) return 'Pain';
@@ -1512,9 +1536,16 @@ function canonicalIndicationList(values, detailedIndication = '', mainIndication
 }
 
 function indicationDisplay(row) {
-  const values = row.indicationList || [];
-  if (!values.length) return 'Unknown';
-  return row.mainIndication !== 'Unknown' ? [row.mainIndication, ...values.filter((value) => value !== row.mainIndication)].join(', ') : values.join(', ');
+  const canonical = String(row?.mainIndication || '').trim() || 'Unknown';
+  // The table is a comparison surface, so it shows one concise canonical
+  // lead indication. The full researched/source wording remains in the cell
+  // title and record detail; preserve a confirmed non-library source value
+  // only when the canonicalizer genuinely cannot classify it yet.
+  return canonicalDisplayWithRawFallback(
+    row?.indication || row?.mainIndicationRaw || '',
+    canonical,
+    ['Unknown']
+  );
 }
 
 function canonicalCountry(value) {
@@ -1630,7 +1661,7 @@ function canonicalDevelopmentStage(value) {
     return plannedBefore || plannedAfter;
   };
 
-  const inactiveMatch = text.match(/\b(?:discontinued|inactive|terminated|withdrawn|suspended|dormant|clearly failed)\b|중단|종료|철회|휴면/);
+  const inactiveMatch = text.match(/\b(?:discontinued|inactive|terminated|withdrawn|dormant|abandoned|clearly failed)\b|종료|철회|휴면|포기/);
   if (inactiveMatch) {
     const prefix = text.slice(Math.max(0, inactiveMatch.index - 16), inactiveMatch.index);
     const speculativeOrHistorical = /\b(?:likely|possibly|possible|may|might|could\s+be|historical|former|legacy)\b|추정|가능성|과거|이전/.test(matchClause(inactiveMatch));
@@ -1643,32 +1674,35 @@ function canonicalDevelopmentStage(value) {
   if (/\b(?:registration|nda|bla|maa)\s+(?:submitted|filed|accepted|review|under review)\b|\b(?:submitted|filed|accepted)\s+(?:an?\s+)?(?:nda|bla|maa)\b|허가\s*(?:신청|제출|심사)/.test(text)) {
     return 'Registration';
   }
-  if (/^(?:approved|marketed|commercial(?:ized|ised))$|\b(?:nda|bla|maa)\s+(?:approved|approval)\b|\b(?:approved|marketed|commercial(?:ized|ised))\s+(?:drug|medicine|product|therapy|therapeutic|asset)\b|\b(?:drug|medicine|product|therapy|therapeutic|asset)\s+(?:approved|marketed|commercial(?:ized|ised))\b|\b(?:marketed|commercial(?:ized|ised))\b|(?:품목\s*)?허가\s*(?:승인|완료)?|시판/.test(text)) {
+  if (/^(?:approved|marketed|commercial(?:ized|ised))$|\b(?:fda|ema|nmpa)\s+approved\b|\b(?:nda|bla|maa)\s+(?:approved|approval)\b|\b(?:approved|marketed|commercial(?:ized|ised))\s+(?:drug|medicine|product|therapy|therapeutic|asset)\b|\b(?:drug|medicine|product|therapy|therapeutic|asset)\s+(?:approved|marketed|commercial(?:ized|ised))\b|\b(?:marketed|commercial(?:ized|ised))\b|(?:품목\s*)?허가\s*(?:승인|완료)?|시판/.test(text)) {
     return 'Approved / marketed';
   }
 
   const phasePatterns = [
-    ['Phase 2/3', /\b(?:phase\s*(?:ii\s*\/\s*iii|2\s*\/\s*3)|p2\s*\/\s*p?3)\b/],
-    ['Phase 1/2', /\b(?:phase\s*(?:i\s*\/\s*ii|1\s*\/\s*2)|p1\s*\/\s*p?2)\b/],
-    ['Phase 3', /\b(?:phase\s*(?:iii|3)(?!\s*\/)|p3)\b/],
-    ['Phase 2', /\b(?:phase\s*(?:ii|2)(?:a|b)?|p2(?:a|b)?)\b/],
-    ['Phase 1', /\b(?:phase\s*(?:i|1)(?:a|b)?|p1(?:a|b)?|fih|sad\s*\/\s*mad)\b/]
+    ['Phase 2/3', /\b(?:ph(?:ase)?\s*(?:ii|2)(?:a|b)?\s*\/\s*(?:iii|3)(?:a|b)?|p2(?:a|b)?\s*\/\s*p?3(?:a|b)?)\b/],
+    ['Phase 1/2', /\b(?:ph(?:ase)?\s*(?:i|1)(?:a|b)?\s*\/\s*(?:ii|2)(?:a|b)?|p1(?:a|b)?\s*\/\s*p?2(?:a|b)?)\b/],
+    ['Phase 3', /\b(?:ph(?:ase)?\s*(?:iii|3)(?!\s*\/)|p3)\b/],
+    ['Phase 2', /\b(?:ph(?:ase)?\s*(?:ii|2)(?:a|b)?(?!\s*\/)|p2(?:a|b)?(?!\s*\/))\b/],
+    ['Phase 1', /\b(?:ph(?:ase)?\s*(?:i|1)(?:a|b)?(?!\s*\/)|p1(?:a|b)?(?!\s*\/)|fih|sad\s*\/\s*mad)\b/]
   ];
   for (const [canonical, pattern] of phasePatterns) {
     const phaseMatch = text.match(pattern);
     if (phaseMatch && !matchIsPlanned(phaseMatch) && !matchIsUncertain(phaseMatch)) return canonical;
   }
-
+  const clinicalMatch = text.match(/\b(?:clinical development|clinical[- ]stage|clinical trial|clinical study|pivotal(?: trial| study)?|registrational(?: trial| study)?)\b/);
+  if (clinicalMatch && !matchIsPlanned(clinicalMatch) && !matchIsUncertain(clinicalMatch)) return 'Clinical unspecified';
   if (/\b(?:unclear|uncertain|not\s+(?:confirmed|verified|established))\b|불명확|불확실|미확인/.test(text)) {
     return 'Unknown';
   }
 
-  if (/\b(?:development\s+candidate|preclinical\s+candidate)\s+(?:selected|nominated)\b|\bcandidate\s+nominated\b|개발\s*후보(?:물질)?\s*(?:선정|지명)/.test(text)) {
+  const prePccMatch = text.match(/\bpre[-\s]?pcc\b/);
+  if (prePccMatch && !matchIsPlanned(prePccMatch)) return 'Lead Optimization';
+  if (/\b(?:development\s+candidate|preclinical\s+candidate)\s+(?:selected|nominated)\b|\bcandidate\s+nominated\b|\b(?:pcc|dc)(?:\s+(?:selected|nominated|completion|completed))?\b|개발\s*후보(?:물질)?\s*(?:선정|지명)/.test(text)) {
     return 'Preclinical Candidate';
   }
   const leadMatch = text.match(/\b(?:candidate|lead)\s+selection\s+(?:ongoing|underway|in progress)\b|\blead\s+optimization\b|리드\s*최적화/);
   if (leadMatch && !matchIsPlanned(leadMatch)) return 'Lead Optimization';
-  const hitMatch = text.match(/\b(?:hit\s+discovery|hit\s+identification|early\s+screening)\b|히트\s*(?:발굴|탐색)/);
+  const hitMatch = text.match(/\b(?:hit\s+discovery|hit\s+identification|hit\s*id|early\s+screening)\b|히트\s*(?:발굴|탐색)/);
   if (hitMatch && !matchIsPlanned(hitMatch)) return 'Hit Discovery';
   const indEnablingMatch = text.match(/\bind[- ]?enabling(?:\s+stud(?:y|ies))?\b|\bglp\s+(?:toxicology|tox)\b|\bind[- ]directed\s+cmc\b|\bind\s+preparation\b|\bpreparing\s+(?:an?\s+)?ind\b|ind\s*준비|glp\s*독성/);
   if (indEnablingMatch && !matchIsPlanned(indEnablingMatch)) return 'IND-enabling';
@@ -1696,6 +1730,8 @@ function canonicalModality(value) {
   const fromDictionary = canonicalFromDictionary('modality', text);
   if (fromDictionary) return fromDictionary;
   if (!text || text === '-' || /^(unknown|not known|not available|not disclosed|n\/a)$/i.test(text)) return 'Unknown';
+  if (/targeted protein degrad|\btpd\b|\bprotac\b|proteolysis[\s-]?targeting chimera|molecular[\s-]?glue|\bsniper\b|\bautotac\b|\blytac\b/.test(normalized)) return 'Targeted protein degrader';
+  if (/oncolytic (?:virus|viral|virotherapy)/.test(normalized)) return 'Oncolytic virus';
   if (/small[\s-]?molecule|\bsm\b|oral compound|chemical compound/.test(normalized)) return 'Small molecule';
   if (/peptide/.test(normalized)) return 'Peptide';
   if (/rna|oligonucleotide|antisense|\baso\b|sirna|mirna|mrna/.test(normalized)) return 'RNA therapy';
@@ -1703,7 +1739,10 @@ function canonicalModality(value) {
   if (/gene therapy|aav|lentiviral|gene editing|crispr/.test(normalized)) return 'Gene therapy';
   if (/antibody|antibody drug conjugate|\badc\b|bispecific/.test(normalized)) return 'Antibody';
   if (/protein biologic|recombinant protein|fusion protein|enzyme replacement/.test(normalized)) return 'Protein biologic';
-  return 'Other';
+  if (/microbiome|live biotherapeutic|\blbp\b|microbial consorti|fecal microbiota|\bfmt\b/.test(normalized)) return 'Microbiome therapy';
+  if (/\bvaccine\b|immunization/.test(normalized)) return 'Vaccine';
+  if (/radiopharmaceutical|radioligand|radioisotope|radiotherapeutic/.test(normalized)) return 'Radiopharmaceutical';
+  return 'Others';
 }
 
 function canonicalModalityTags(value, primary = '') {
@@ -1713,19 +1752,24 @@ function canonicalModalityTags(value, primary = '') {
   const values = (state.categorySynonyms.modality || [])
     .filter((entry) => dictionaryEntryMatchIndex(normalized, entry) >= 0)
     .map((entry) => entry.canonical)
-    .filter((value) => value && !['Other', 'Unknown'].includes(value));
+    .filter((value) => value && !['Others', 'Unknown'].includes(value));
   const patterns = [
+    ['Targeted protein degrader', /targeted protein degrad|\btpd\b|\bprotac\b|proteolysis[\s-]?targeting chimera|molecular[\s-]?glue|\bsniper\b|\bautotac\b|\blytac\b/],
+    ['Oncolytic virus', /oncolytic (?:virus|viral|virotherapy)/],
     ['Small molecule', /small[\s-]?molecule|\bsm\b|oral compound|chemical compound/],
     ['Peptide', /peptide/],
     ['RNA therapy', /rna|oligonucleotide|antisense|\baso\b|sirna|mirna|mrna/],
     ['Cell therapy', /car[- ]?t|tcr[- ]?t|cell therapy|cellular therapy|stem cell/],
     ['Gene therapy', /gene therapy|aav|lentiviral|gene editing|crispr/],
     ['Antibody', /antibody|antibody drug conjugate|\badc\b|bispecific/],
-    ['Protein biologic', /protein biologic|recombinant protein|fusion protein|enzyme replacement/]
+    ['Protein biologic', /protein biologic|recombinant protein|fusion protein|enzyme replacement/],
+    ['Microbiome therapy', /microbiome|live biotherapeutic|\blbp\b|microbial consorti|fecal microbiota|\bfmt\b/],
+    ['Vaccine', /\bvaccine\b|immunization/],
+    ['Radiopharmaceutical', /radiopharmaceutical|radioligand|radioisotope|radiotherapeutic/]
   ];
   patterns.forEach(([label, pattern]) => { if (pattern.test(normalized)) values.push(label); });
   const resolvedPrimary = primary || canonicalModality(text);
-  if (!['Other', 'Unknown'].includes(resolvedPrimary)) values.unshift(resolvedPrimary);
+  if (!['Others', 'Unknown'].includes(resolvedPrimary)) values.unshift(resolvedPrimary);
   return [...new Set(values)];
 }
 
@@ -2024,7 +2068,7 @@ function collectHardFilterNotes(record) {
 }
 
 function hasAffirmedHardBlocker(notes) {
-  const blockerPattern = /(\boutside\s+(?:the\s+)?(?:primary\s+)?(?:therapeutic\s+area|indication|disease)\s+scope\b|\bout\s+of\s+(?:therapeutic|indication|disease)\s+scope\b|\bno\s+public\s+target\b|\bno\b[^|.;\n]{0,48}\btarget\s*\/\s*moa\b|\basset\s+identity\s+(?:is\s+)?(?:not\s+verified|unverified)\b|\b(?:discontinued|terminated|withdrawn|suspended|dormant|inactive|clearly\s+failed)\b|(?:관심\s*)?(?:질환|적응증|치료\s*영역)\s*범위\s*밖|자산\s*식별\s*불가|(?:개발|프로그램|임상)\s*(?:이\s*)?(?:중단|종료|철회|휴면|비활성))/i;
+  const blockerPattern = /(\boutside\s+(?:the\s+)?(?:primary\s+)?(?:therapeutic\s+area|indication|disease)\s+scope\b|\bout\s+of\s+(?:therapeutic|indication|disease)\s+scope\b|\bno\s+public\s+target\b|\bno\b[^|.;\n]{0,48}\btarget\s*\/\s*moa\b|\basset\s+identity\s+(?:is\s+)?(?:not\s+verified|unverified)\b|\b(?:discontinued|terminated|withdrawn|dormant|inactive|abandoned|clearly\s+failed)\b|(?:관심\s*)?(?:질환|적응증|치료\s*영역)\s*범위\s*밖|자산\s*식별\s*불가|(?:개발|프로그램|임상)\s*(?:이\s*)?(?:종료|철회|휴면|비활성|포기))/i;
   return String(notes || '').split('|').some((segment) => {
     const match = blockerPattern.exec(segment);
     if (!match) return false;
@@ -2037,7 +2081,7 @@ function hasAffirmedHardBlocker(notes) {
 }
 
 function hasAffirmedLifecycleBlocker(values) {
-  const blockerPattern = /\b(?:inactive|discontinued|terminated|withdrawn|suspended|dormant|clearly[\s_-]+failed|hard[\s_-]*blocker)\b|(?:개발|프로그램|임상)\s*(?:이\s*)?(?:중단|종료|철회|휴면|비활성)/gi;
+  const blockerPattern = /\b(?:inactive|discontinued|terminated|withdrawn|dormant|abandoned|clearly[\s_-]+failed|hard[\s_-]*blocker)\b|(?:개발|프로그램|임상)\s*(?:이\s*)?(?:종료|철회|휴면|비활성|포기)/gi;
   const items = Array.isArray(values) ? values : [values];
   return items.some((value) => {
     const text = String(value || '');
@@ -2390,14 +2434,13 @@ function flattenRecord(record, index) {
     ),
     indicationList: canonicalIndicationList(table.indication_list, table.indication, table.main_indication || table.primary_indication || summary.main_indication),
     modalityRaw: table.modality_source || table.modality_platform || '-',
+    modalityCanonical: canonicalModality(table.modality_source || table.modality_platform),
     modality: canonicalDisplayWithRawFallback(
       table.modality_source || table.modality_platform || '-',
       canonicalModality(table.modality_source || table.modality_platform),
-      ['Other', 'Unknown']
+      ['Others', 'Unknown']
     ),
-    modalityTags: Array.isArray(table.modality_tags) && table.modality_tags.length
-      ? table.modality_tags
-      : canonicalModalityTags(table.modality_source || table.modality_platform, table.modality_platform),
+    modalityTags: canonicalModalityTags(table.modality_source || table.modality_platform, canonicalModality(table.modality_source || table.modality_platform)),
     targetDescription: String(
       summary.target_description
       || targetCriterion.main_line_summary
@@ -2640,13 +2683,18 @@ function activeTableMode() {
 
 function currentTabRecordCount() {
   const isStep0Visible = Boolean(elements.step0Panel && !elements.step0Panel.hidden);
-  if (isStep0Visible) return state.step0Rows.length;
+  const isKnowledgeMapVisible = Boolean(elements.knowledgeMapPanel && !elements.knowledgeMapPanel.hidden);
+  // Atlas is a cross-workflow view, so its header count must retain the
+  // Pipeline Table's global total rather than the workflow tab visited before it.
+  if (isStep0Visible || isKnowledgeMapVisible) {
+    return state.step0Loaded ? state.step0Rows.length : state.rawRecords.length;
+  }
   return state.rows.filter(rowMatchesActiveTableMode).length;
 }
 
 function updateHeaderRecordCount() {
   if (!elements.dataStatus) return;
-  elements.dataStatus.textContent = `총 ${currentTabRecordCount()}건 로드됨`;
+  elements.dataStatus.textContent = `전체 ${currentTabRecordCount()}건 로드됨`;
 }
 
 function recordDetailHref(row, mode = activeTableMode()) {
@@ -2948,6 +2996,7 @@ function closeMultiFilters(except = null) {
     const filter = elements[`${key}Filter`];
     if (!filter || filter === except) return;
     filter.classList.remove('is-open');
+    delete filter.dataset.filterSearchQuery;
     filter.querySelector('.filter-multiselect-trigger')?.setAttribute('aria-expanded', 'false');
     const menu = filter.querySelector('.filter-multiselect-menu');
     if (menu) menu.hidden = true;
@@ -2955,9 +3004,9 @@ function closeMultiFilters(except = null) {
 }
 
 function getVisibleRows(includeQuery = true) {
-  const query = includeQuery ? state.query.trim().toLowerCase() : '';
+  const query = includeQuery ? state.query.trim() : '';
   const searchTerms = [...(state.searchTokens || []), query]
-    .map((term) => String(term || '').trim().toLowerCase())
+    .map(normalizedDashboardSearchText)
     .filter(Boolean);
   const filterKey = activeFilterKey();
   const rows = state.rows.filter((row) => {
@@ -2978,8 +3027,8 @@ function getVisibleRows(includeQuery = true) {
         row.indication,
         row.modality
       ]
-        .join(' ')
-        .toLowerCase();
+        .map(normalizedDashboardSearchText)
+        .join(' ');
 
       return (
         rowMatchesActiveTableMode(row) &&
@@ -2987,7 +3036,7 @@ function getVisibleRows(includeQuery = true) {
         selectedFilterMatches(state.theme, row.theme) &&
         selectedFilterMatches(state.cluster, row.cluster) &&
         (selectedFilterValues(state.modality).length === 0 || selectedFilterValues(state.modality).some((value) => (
-          row.modalityTags?.includes(value) || row.modality === value
+          row.modalityTags?.includes(value) || row.modalityCanonical === value
         ))) &&
         (selectedFilterValues(state.indication).length === 0 || selectedFilterValues(state.indication).some((value) => row.indicationList.includes(value) || (value === 'Unknown' && !row.indicationList.length))) &&
         selectedCountryFilterMatches(state.country, row.country) &&
@@ -3023,7 +3072,7 @@ function renderFilters() {
   renderSearchTokens();
   const themes = [...new Set(modeRows.map((row) => row.theme).filter(Boolean))].sort();
   const clusters = [...new Set(modeRows.map((row) => row.cluster).filter(Boolean))].sort();
-  const modalities = [...new Set(modeRows.flatMap((row) => row.modalityTags?.length ? row.modalityTags : [row.modality]).filter(Boolean))].sort();
+  const modalities = [...new Set(modeRows.flatMap((row) => row.modalityTags?.length ? row.modalityTags : [row.modalityCanonical]).filter(Boolean))].sort();
   const countries = [...new Set(modeRows.flatMap((row) => canonicalCountryValues(row.country)).filter(Boolean))].sort();
   const indications = [...new Set(modeRows.flatMap((row) => row.indicationList.length ? row.indicationList : ['Unknown']))].sort();
   const stages = [...new Set(modeRows.map((row) => row.stage).filter(Boolean))]
@@ -3074,6 +3123,59 @@ function renderFilters() {
   if (elements.passFilterLabel) elements.passFilterLabel.textContent = activeFilterLabel();
 }
 
+function canonicalFilterOrder(key) {
+  const dictionaryValues = (state.categorySynonyms?.[key] || [])
+    .map((entry) => String(entry?.canonical || '').trim())
+    .filter(Boolean);
+  if (key === 'indication') return [...new Set([...dictionaryValues, ...INPUT_INDICATIONS])];
+  return [...new Set(dictionaryValues)];
+}
+
+function multiFilterMenuMarkup(key, options, selected, valueAttribute, query = '') {
+  const byValue = new Map(options.map((option) => [option.value, option]));
+  const canonicalOrder = canonicalFilterOrder(key);
+  const canonicalValues = new Set(canonicalOrder);
+  const hasCanonicalLibrary = canonicalOrder.length > 0;
+  const canonicalOptions = hasCanonicalLibrary
+    ? canonicalOrder.map((value) => byValue.get(value)).filter(Boolean)
+    : options;
+  const additionalOptions = options
+    .filter((option) => !canonicalValues.has(option.value))
+    .sort((a, b) => a.label.localeCompare(b.label, 'en'));
+  const optionMarkup = (option, isCanonical) => {
+    const isSelected = selected.includes(option.value);
+    return `<button type="button" class="filter-multiselect-option${isSelected ? ' is-selected' : ''}${isCanonical ? ' is-canonical' : ''}" ${valueAttribute}="${escapeHtml(option.value)}" data-filter-menu-option role="option" aria-selected="${isSelected}"><span class="filter-multiselect-check" aria-hidden="true">${isSelected ? '✓' : ''}</span><span>${escapeHtml(option.label)}</span></button>`;
+  };
+  const groupMarkup = (label, group, isCanonical) => group.length
+    ? `<div class="filter-multiselect-option-group" data-filter-menu-group><p>${label}</p>${group.map((option) => optionMarkup(option, isCanonical)).join('')}</div>`
+    : '';
+  return [
+    `<div class="filter-multiselect-menu-topbar"><button type="button" class="filter-multiselect-option filter-multiselect-all-option${selected.length === 0 ? ' is-selected' : ''}" ${valueAttribute}="all" role="option" aria-selected="${selected.length === 0}"><span class="filter-multiselect-check" aria-hidden="true">${selected.length === 0 ? '✓' : ''}</span><span>전체</span></button><label class="filter-multiselect-menu-search"><span class="sr-only">${escapeHtml(key)} 검색</span><input type="search" data-filter-menu-search value="${escapeHtml(query)}" placeholder="검색" autocomplete="off" /></label></div>`,
+    groupMarkup(hasCanonicalLibrary ? 'Canonical Library' : 'Available values', canonicalOptions, hasCanonicalLibrary),
+    groupMarkup('Source values', additionalOptions, false)
+  ];
+}
+
+function filterMultiMenuOptions(menu, query = '') {
+  if (!menu) return;
+  const normalized = normalizedDashboardSearchText(query);
+  menu.querySelectorAll('[data-filter-menu-option]').forEach((option) => {
+    option.hidden = Boolean(normalized) && !normalizedDashboardSearchText(option.textContent).includes(normalized);
+  });
+  menu.querySelectorAll('[data-filter-menu-group]').forEach((group) => {
+    group.hidden = [...group.querySelectorAll('[data-filter-menu-option]')].every((option) => option.hidden);
+  });
+}
+
+function handleMultiMenuSearch(event) {
+  const input = event.target.closest?.('[data-filter-menu-search]');
+  if (!input) return;
+  const filter = input.closest('.filter-multiselect');
+  if (!filter) return;
+  filter.dataset.filterSearchQuery = input.value;
+  filterMultiMenuOptions(filter.querySelector('.filter-multiselect-menu'), input.value);
+}
+
 function renderMultiFilter(element, key, values) {
   if (!element) return;
   const options = values.map((value) => typeof value === 'string' ? { value, label: value } : value);
@@ -3091,15 +3193,12 @@ function renderMultiFilter(element, key, values) {
       : `${selected.length}개 선택`;
   trigger.setAttribute('aria-label', `${element.querySelector('.filter-multiselect-label')?.textContent || key}: ${summary.textContent}`);
   element.classList.toggle('has-selection', selected.length > 0);
-  const allSelected = selected.length === 0;
+  const searchQuery = element.dataset.filterSearchQuery || '';
   menu.innerHTML = [
-    `<button type="button" class="filter-multiselect-option${allSelected ? ' is-selected' : ''}" data-multi-filter-value="all" role="option" aria-selected="${allSelected}"><span class="filter-multiselect-check" aria-hidden="true">${allSelected ? '✓' : ''}</span><span>전체</span></button>`,
-    ...options.map((option) => {
-      const isSelected = selected.includes(option.value);
-      return `<button type="button" class="filter-multiselect-option${isSelected ? ' is-selected' : ''}" data-multi-filter-value="${escapeHtml(option.value)}" role="option" aria-selected="${isSelected}"><span class="filter-multiselect-check" aria-hidden="true">${isSelected ? '✓' : ''}</span><span>${escapeHtml(option.label)}</span></button>`;
-    }),
+    ...multiFilterMenuMarkup(key, options, selected, 'data-multi-filter-value', searchQuery),
     '<div class="filter-multiselect-menu-actions"><button type="button" class="filter-multiselect-done" data-multi-filter-done>완료</button></div>'
   ].join('');
+  filterMultiMenuOptions(menu, searchQuery);
   menu.hidden = !isOpen;
   trigger.setAttribute('aria-expanded', String(isOpen));
 }
@@ -3524,7 +3623,7 @@ function distributionDescription(kind, label) {
       return 'SKBP 우선 관심 적응증 6개에 포함되지 않은 적응증과 Unknown을 합산한 그룹입니다.';
     }
     if (kind === 'modality-summary') {
-      return '상위 6개 외 Modality와 Other·Unknown·N/A를 합산한 Summary 차트 전용 그룹입니다.';
+      return '상위 6개 외 Modality와 Others·Unknown·N/A를 합산한 Summary 차트 전용 그룹입니다.';
     }
     if (kind === 'theme') {
       return 'E/I Balance·Neuroimmune·Protein Homeostasis 외 Theme와 Unknown·N/A를 합산한 차트 전용 그룹입니다.';
@@ -3532,7 +3631,7 @@ function distributionDescription(kind, label) {
     if (kind === 'country') {
       return '상위 3개 국가를 제외한 국가와 Unknown·N/A를 합산한 차트 전용 그룹입니다.';
     }
-    return '빈도 상위 5개에 포함되지 않은 항목과 Other·Unknown·N/A를 합산한 그룹입니다.';
+    return '빈도 상위 5개에 포함되지 않은 항목과 Others·Unknown·N/A를 합산한 그룹입니다.';
   }
   if (value === 'Unknown') {
     return kind === 'theme'
@@ -4161,6 +4260,39 @@ function renderDataUploadGuide(mode = activeTableMode()) {
   }
 }
 
+function setDataUploadShortcutVisibility(visible) {
+  const shouldShow = Boolean(visible);
+  if (elements.dataUploadShortcutButton) {
+    elements.dataUploadShortcutButton.hidden = !shouldShow;
+  }
+  const topDataActions = elements.dataUploadShortcutButton?.closest('.top-data-actions');
+  if (topDataActions) {
+    topDataActions.hidden = !shouldShow;
+  }
+}
+
+function setTopPromptShortcutVisibility({ triage = false, full = false } = {}) {
+  if (elements.copyTriagePromptTopButton) {
+    elements.copyTriagePromptTopButton.hidden = !triage;
+  }
+  if (elements.copyPromptTopButton) {
+    elements.copyPromptTopButton.hidden = !full;
+  }
+}
+
+function syncTopDataActionsForVisibleTab() {
+  const isStep0Visible = Boolean(elements.step0Panel && !elements.step0Panel.hidden);
+  if (isStep0Visible) {
+    setDataUploadShortcutVisibility(true);
+    setTopPromptShortcutVisibility({ triage: true, full: true });
+    return;
+  }
+
+  const mode = activeTableMode();
+  setDataUploadShortcutVisibility(mode !== 'focus');
+  setTopPromptShortcutVisibility({ triage: mode === 'triage', full: mode === 'full' });
+}
+
 function renderWorkflowMode(summary = activeTabSummary()) {
   const mode = activeTableMode();
   if (elements.agentInput) {
@@ -4169,19 +4301,7 @@ function renderWorkflowMode(summary = activeTabSummary()) {
     elements.agentInput.rows = 2;
   }
   renderDataUploadGuide(mode);
-  if (elements.dataUploadShortcutButton) {
-    elements.dataUploadShortcutButton.hidden = mode === 'focus';
-  }
-  if (elements.copyTriagePromptTopButton) {
-    elements.copyTriagePromptTopButton.hidden = mode !== 'triage';
-  }
-  if (elements.copyPromptTopButton) {
-    elements.copyPromptTopButton.hidden = mode !== 'full';
-  }
-  const topDataActions = elements.dataUploadShortcutButton?.closest('.top-data-actions');
-  if (topDataActions) {
-    topDataActions.hidden = mode === 'focus';
-  }
+  syncTopDataActionsForVisibleTab();
   updateHeaderRecordCount();
   const copy = WORKFLOW_COPY[mode];
   const distributionAssets = Number(summary?.distribution_population?.assets) || 0;
@@ -4341,6 +4461,7 @@ function closeStep0MultiFilters(except = null) {
     const filter = elements[`step0${key[0].toUpperCase()}${key.slice(1)}Filter`];
     if (!filter || filter === except) return;
     filter.classList.remove('is-open');
+    delete filter.dataset.filterSearchQuery;
     filter.querySelector('.filter-multiselect-trigger')?.setAttribute('aria-expanded', 'false');
     const menu = filter.querySelector('.filter-multiselect-menu');
     if (menu) menu.hidden = true;
@@ -4794,8 +4915,13 @@ function modalityEditValue(row) {
   const isManual = hasManualTableFieldEdit(row.raw, 'modality_platform');
   const editable = !row.isVirtualTriage && row.modality === 'Unknown' && Boolean(getCurrentUser()?.is_admin);
   const className = `single-line-cell table-manual-text${isManual ? ' is-human' : ''}${editable ? ' is-editable modality-editable' : ''}`;
-  const tags = Array.isArray(row.modalityTags) ? row.modalityTags.filter((tag) => tag && tag !== row.modality) : [];
-  const label = tags.length ? `${row.modality} · Tags: ${tags.join(', ')}` : row.modality;
+  const tags = Array.isArray(row.modalityTags) ? row.modalityTags.filter((tag) => tag && tag !== row.modalityCanonical) : [];
+  const source = String(row.modalityRaw || '').trim();
+  const label = [
+    `Canonical: ${row.modalityCanonical || row.modality}`,
+    source && normalizedDashboardSearchText(source) !== normalizedDashboardSearchText(row.modalityCanonical || row.modality) ? `Source: ${source}` : '',
+    tags.length ? `Tags: ${tags.join(', ')}` : ''
+  ].filter(Boolean).join(' · ');
   const attributes = editable
     ? ` data-table-modality-edit data-record-id="${escapeHtml(row.id)}" data-previous-value="${escapeHtml(row.modality)}" role="button" tabindex="0" aria-label="Double-click to select modality"`
     : '';
@@ -5685,7 +5811,9 @@ function renderTableTabs() {
 }
 
 function renderAgentIdentity() {
-  const isAvailable = activeTableMode() !== 'triage';
+  // The All Pipelines Agent is a workspace-level tool, so its launcher stays
+  // available in the same place across Listing, Fast Triage, Full Scout, and Shortlisting.
+  const isAvailable = true;
   const title = 'All Pipelines Agent';
   if (elements.aiDrawerButton) {
     elements.aiDrawerButton.hidden = !isAvailable;
@@ -5961,26 +6089,38 @@ function exportPipelineTable() {
   updateHeaderRecordCount();
 }
 
+function setStep0SummaryLoading(isLoading) {
+  const dashboard = elements.step0SummaryDashboard;
+  if (!dashboard) return;
+  dashboard.classList.toggle('is-loading', isLoading);
+  dashboard.setAttribute('aria-busy', String(isLoading));
+}
+
 async function loadRecords({ signal } = {}) {
+  setStep0SummaryLoading(true);
   elements.dataStatus.textContent = 'Loading';
-  await loadCategorySynonyms(signal);
-  const [response] = await Promise.all([
-    fetch(API_URL, { cache: 'no-store', signal }),
-    refreshDashboardSummary(signal)
-  ]);
-  if (!response.ok) throw new Error(await response.text());
-  const data = await response.json();
-  state.latestOiPartnershipCriteriaVersion = String(
-    data.oi_partnership_criteria_version || state.latestOiPartnershipCriteriaVersion
-  );
-  state.rawRecords = Array.isArray(data.records) ? data.records : [];
-  state.rows = buildDashboardRows(state.rawRecords);
-  const availableIds = new Set(state.rows.map((row) => row.id));
-  state.selectedIds = new Set([...state.selectedIds].filter((id) => availableIds.has(id)));
-  state.page = 1;
-  renderFilters();
-  render();
-  elements.agentContextCount.textContent = `${state.rows.length} pipelines`;
+  try {
+    await loadCategorySynonyms(signal);
+    const [response] = await Promise.all([
+      fetch(API_URL, { cache: 'no-store', signal }),
+      refreshDashboardSummary(signal)
+    ]);
+    if (!response.ok) throw new Error(await response.text());
+    const data = await response.json();
+    state.latestOiPartnershipCriteriaVersion = String(
+      data.oi_partnership_criteria_version || state.latestOiPartnershipCriteriaVersion
+    );
+    state.rawRecords = Array.isArray(data.records) ? data.records : [];
+    state.rows = buildDashboardRows(state.rawRecords);
+    const availableIds = new Set(state.rows.map((row) => row.id));
+    state.selectedIds = new Set([...state.selectedIds].filter((id) => availableIds.has(id)));
+    state.page = 1;
+    renderFilters();
+    render();
+    elements.agentContextCount.textContent = `${state.rows.length} pipelines`;
+  } finally {
+    setStep0SummaryLoading(false);
+  }
 }
 
 async function saveManualReviewEdit(select) {
@@ -7135,20 +7275,13 @@ const INPUT_MARKETABILITY_STATUSES = new Set([
 ]);
 const INPUT_TRIAGE_STATUSES = new Set(['SELECT', 'REJECT', 'UNVERIFIED']);
 const INPUT_FULL_STATUSES = new Set(['PASS', 'REVIEW', 'FAIL']);
-const INPUT_MODALITIES = new Set([
-  'Small molecule',
-  'Peptide',
-  'RNA therapy',
-  'Cell therapy',
-  'Gene therapy',
-  'Antibody',
-  'Protein biologic',
-  'Other',
-  'Unknown'
-]);
+// Keep manual-entry validation on the same Canonical Modality Library used by
+// imports, tables, and filters. Raw source wording is preserved separately.
+const INPUT_MODALITIES = new Set(CANONICAL_MODALITIES);
 const INPUT_INDICATIONS = new Set([
   "Alzheimer's disease",
   "Parkinson's disease",
+  'Lewy body dementia',
   'Epilepsy / seizure disorders',
   'Multiple sclerosis / neuroinflammatory disease',
   'Amyotrophic lateral sclerosis / motor neuron disease',
@@ -7166,7 +7299,8 @@ const INPUT_INDICATIONS = new Set([
   'Sleep / wake disorders',
   'Chronic cough',
   'Inflammatory bowel disease',
-  'Systemic lupus erythematosus / autoimmune disease',
+  'Systemic lupus erythematosus',
+  'Other autoimmune / inflammatory disease',
   'Unknown'
 ]);
 const INPUT_STAGES = new Set(CANONICAL_DEVELOPMENT_STAGES);
@@ -9003,14 +9137,14 @@ MoA evidence definitions:
 Evidence domains answer different development questions, such as in vitro activity/selectivity, target engagement/PD, in vivo efficacy, PK/PD, safety/tolerability, or clinical outcome. Endpoints, doses, figures, or repeated sources from the same underlying experiment count as one domain. Potency and selectivity count as one in vitro characterization domain. One source may support two domains when it reports distinct development questions, such as in vivo efficacy and PK/PD. Human data are not required.`;
 
 const SHARED_CANONICAL_STAGE_RULE = `Canonical Development Stage — structured_table.development_stage must be exactly one of:
-Hit Discovery; Lead Optimization; Preclinical Candidate; IND-enabling; Preclinical unspecified; IND filed/cleared; Phase 1; Phase 1/2; Phase 2; Phase 2/3; Phase 3; Registration; Approved / marketed; Discontinued / inactive; Unknown.
+Hit Discovery; Lead Optimization; Preclinical Candidate; IND-enabling; Preclinical unspecified; IND filed/cleared; Clinical unspecified; Phase 1; Phase 1/2; Phase 2; Phase 2/3; Phase 3; Registration; Approved / marketed; Discontinued / inactive; Unknown.
 
-Canonicalize only an explicitly confirmed current stage or a completed/started milestone. Do not promote stage from plans, expectations, targets, financing, hiring, or adjacent programs. Generic preclinical -> Preclinical unspecified. Candidate nominated/selected -> Preclinical Candidate. Ongoing GLP tox, IND-directed CMC, or explicit IND-enabling work -> IND-enabling. IND/CTA submitted, filed, accepted, effective, or cleared -> IND filed/cleared. Planned IND submission alone does not establish IND filed/cleared; "preclinical; IND planned" remains Preclinical unspecified. For multi-indication assets, use the lead/currently most advanced confirmed stage as the single dashboard value and move indication-specific status detail to evidence or notes; for example, "FOS Phase II recruiting; pain stage unclear" -> Phase 2. Do not map speculative wording such as "likely preclinical or dormant" or a different historical alias marked discontinued to the current asset's Discontinued / inactive status. Use Unknown only when the relevant current stage itself is unresolved or conflicting.`;
+Canonicalize only an explicitly confirmed current stage or a completed/started milestone. Do not promote stage from plans, expectations, targets, financing, hiring, or adjacent programs. Generic preclinical -> Preclinical unspecified. Candidate nominated/selected -> Preclinical Candidate. Ongoing GLP tox, IND-directed CMC, or explicit IND-enabling work -> IND-enabling. IND/CTA submitted, filed, accepted, effective, or cleared -> IND filed/cleared. An explicitly ongoing clinical/pivotal/registrational trial with no phase -> Clinical unspecified; never infer Phase 3 from "pivotal" or "registrational" alone. Hit ID/hit identification -> Hit Discovery; FIH, Ph1, Ph1a, or Ph1b -> Phase 1; a confirmed Ph1b/2a -> Phase 1/2; FDA/EMA/NMPA approved -> Approved / marketed. Planned IND submission alone does not establish IND filed/cleared; "preclinical; IND planned" remains Preclinical unspecified. A planned Phase 2 or Phase 2/3 trial does not establish that phase: retain an explicitly confirmed earlier current phase, otherwise use Unknown. For multi-indication assets, use the lead/currently most advanced confirmed stage as the single dashboard value and move indication-specific status detail to evidence or notes; for example, "FOS Phase II recruiting; pain stage unclear" -> Phase 2. Map only explicitly confirmed discontinued, terminated, withdrawn, inactive, dormant, or abandoned programs to Discontinued / inactive. A suspended or halted program is not automatically terminal: retain the confirmed stage when available, record the pause in hard_filter.flags/notes, and set triage.active_asset=null unless inactivity is independently confirmed. Do not map speculative wording such as "likely preclinical or dormant" or a different historical alias marked discontinued to the current asset's Discontinued / inactive status. Use Unknown only when the relevant current stage itself is unresolved or conflicting.`;
 
-const SHARED_CANONICAL_MODALITY_RULE = `Canonical Modality — structured_table.modality_platform must be exactly one of: Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Other, or Unknown.
-Normalize route, dosage-form, and technical qualifiers into that single label. Examples: "Oral small molecule", "oral small-molecule / tablet", and "small-molecule CNS discovery platform" -> Small molecule; "IV antibody" -> Antibody; "topical peptide" -> Peptide. Put oral/IV/topical route, tablet/formulation, delivery system, and platform detail in MoA, source evidence, company_profile.platform_summary, or notes. Never combine multiple labels or retain route/formulation text in modality_platform.`;
+const SHARED_CANONICAL_MODALITY_RULE = `Canonical Modality — structured_table.modality_platform must be exactly one of: Targeted protein degrader, Oncolytic virus, Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Microbiome therapy, Vaccine, Radiopharmaceutical, Others, or Unknown.
+Preserve the researched wording in structured_table.modality_source and use the canonical label in modality_platform. Examples: "TPD", "PROTAC", "molecular glue degrader", "SNIPER", "AUTOTAC", and "LYTAC" -> Targeted protein degrader; "oral small molecule" -> Small molecule; "IV antibody" -> Antibody; "live biotherapeutic product" -> Microbiome therapy. Route, dosage form, and technical qualifiers belong in MoA, source evidence, company_profile.platform_summary, or notes. modality_tags may contain multiple supported canonical labels only when the source explicitly evidences a hybrid format (for example, an antibody-targeted degrader can carry Antibody and Targeted protein degrader); never place raw labels such as TPD or PROTAC in modality_tags.`;
 
-const SHARED_CANONICAL_INDICATION_RULE = `Canonical Main Indication — structured_table.main_indication must be exactly one of: Alzheimer's disease; Parkinson's disease; Epilepsy / seizure disorders; Multiple sclerosis / neuroinflammatory disease; Amyotrophic lateral sclerosis / motor neuron disease; Frontotemporal dementia; Huntington's disease; Stroke; Migraine / headache disorders; Pain; Major depressive disorder; Schizophrenia / psychosis; Bipolar disorder; Anxiety disorders; Autism spectrum disorder; ADHD; Sleep / wake disorders; Chronic cough; Inflammatory bowel disease; Systemic lupus erythematosus / autoimmune disease; or Unknown.
+const SHARED_CANONICAL_INDICATION_RULE = `Canonical Main Indication — structured_table.main_indication must be exactly one of: Alzheimer's disease; Parkinson's disease; Lewy body dementia; Epilepsy / seizure disorders; Multiple sclerosis / neuroinflammatory disease; Amyotrophic lateral sclerosis / motor neuron disease; Frontotemporal dementia; Huntington's disease; Stroke; Migraine / headache disorders; Pain; Major depressive disorder; Schizophrenia / psychosis; Bipolar disorder; Anxiety disorders; Autism spectrum disorder; ADHD; Sleep / wake disorders; Chronic cough; Inflammatory bowel disease; Systemic lupus erythematosus; Other autoimmune / inflammatory disease; or Unknown.
 main_indication is mandatory. Never omit the key and never use null, an empty string, N/A, or an unnormalized disease phrase. If the lead can be determined, always write its canonical dashboard bucket. Use Unknown only when the lead genuinely cannot be distinguished after the following priority.
 When several indications are confirmed, retain every confirmed disease wording in structured_table.indication and provide structured_table.indication_list as its canonical array; do not replace confirmed indications with Unknown.
 Lead-indication selection priority: (1) use an indication explicitly identified as lead, primary, initial, or the sole current indication for the assessed asset on an official company pipeline page or current official company material; (2) if no official lead is designated, use the indication targeted by the single most advanced confirmed active clinical program, comparing only registered, started, recruiting, ongoing, or dosed programs; (3) if no lead can still be established but one or more confirmed indications are listed, set main_indication to the first canonical indication in the source's textual/listed order and preserve every canonical indication in indication_list. Use Unknown only when no confirmed canonical indication is available. Exclude planned/expected indications, competitor programs, historical or discontinued programs, and platform-expansion claims.
@@ -9366,7 +9500,7 @@ Research rules:
 
 Early stop rules:
 - Apply UNVERIFIED before scoring only when the asset identity itself cannot be verified as a biotech/pharma pipeline asset. Missing target, MoA, indication, or stage alone does not make an asset UNVERIFIED; use Unknown and continue scoring.
-- Apply REJECT before scoring if the development stage is Discontinued / inactive, terminated, withdrawn, suspended, dormant, or clearly failed. This means the pipeline is not an active review candidate.
+- Apply REJECT before scoring only if the development stage is Discontinued / inactive or credible evidence confirms terminated, withdrawn, inactive, dormant, abandoned, or clearly failed. A suspended or halted program needs a pause-status note and active-status confirmation; it is not an automatic REJECT.
 - For UNVERIFIED or Discontinued / inactive cases, keep the markdown and research depth short. Do not perform full diligence, marketability, competitor landscaping, or extended source chasing.
 - Early stop never shortens the required dashboard JSON contract: every record must still contain all three TR/MoA/Data criterion score objects. Put evidence basis, score rationale, sources, and limitations in the Markdown table/notes, not in duplicated JSON fields. An inactive asset remains REJECT because of the lifecycle hard blocker regardless of otherwise available preliminary scores.
 
@@ -9403,7 +9537,7 @@ Triage status rule:
 - active_asset is required and must be true, false, or null: true only when current activity is confirmed, false when inactivity is confirmed, and null when activity cannot be established.
 - SELECT only if identity_verified=true, active_asset=true, TR >= 2, and either MoA >= 2 or Data >= 2.
 - REJECT if asset identity is verified but active_asset is false/null, or SKBP fit, MoA, or Data is too weak for Full Scout priority.
-- REJECT if development_stage is Discontinued / inactive, terminated, withdrawn, suspended, dormant, or clearly failed, even if target/MoA look interesting.
+- REJECT if development_stage is Discontinued / inactive or evidence confirms terminated, withdrawn, inactive, dormant, abandoned, or clearly failed, even if target/MoA look interesting. Do not reject solely because a program is suspended or halted.
 - UNVERIFIED if asset identity itself is not verified as a biotech/pharma pipeline asset.
 - If unsure between SELECT and REJECT, choose REJECT and explain the missing evidence needed.
 
@@ -9619,7 +9753,8 @@ Identity Gate / identity-not-verified early stop:
 - Use only a short identity check at this gate. Check for at least one credible biotech source type: official company/pipeline page, clinical trial registry, regulatory source, peer-reviewed publication, reputable biotech news, company presentation, patent/source that clearly links the asset to a drug target or indication.
 - Fail this gate only when the named asset itself cannot be verified as a specific biotech/pharma pipeline asset from credible public sources. Missing target, MoA, modality, indication, stage, country, or ownership does not fail the gate; write Unknown for that factual field, record the uncertainty, and continue the full review and scoring.
 - If search results are mostly unrelated SKUs, tools, electronics, finance tickers, unrelated abbreviations, or ambiguous non-drug references and no credible source verifies a specific drug-development asset, classify it as identity not verified.
-- If the asset identity is not verified, stop Full Scout and return FAIL / Deprioritize. Also return FAIL regardless of score when a credible source confirms the lifecycle as Discontinued, Terminated, Withdrawn, Inactive, or Clearly failed.
+- If the asset identity is not verified, stop Full Scout and return FAIL / Deprioritize. Also return FAIL regardless of score when a credible source confirms the lifecycle as Discontinued, Terminated, Withdrawn, Abandoned, Inactive, Dormant, or Clearly failed. Suspended or Halted alone is a pause signal, not a terminal lifecycle conclusion.
+- Lifecycle-confirmed early stop: after verifying the asset identity and one credible terminal lifecycle source, stop the Full Scout. Keep the Markdown short: state the confirmed inactive status, source, and any known stop reason/date. Do not perform competitive landscaping, marketability, expansion, or extended source chasing. Keep the required Compact v2 JSON contract with structured_table.development_stage="Discontinued / inactive", hard_filter.status="FAIL", hard_filter.hard_blocker=true, final_insight.recommendation="Deprioritize", and concise zero-score/uncertainty entries where deeper diligence was intentionally skipped. For a suspended/halted program, continue only enough to establish whether inactivity is confirmed; otherwise use REVIEW and document the pause.
 - Uncertain rights or exact stage alone is REVIEW, not automatic FAIL.
 - In the identity-not-verified case, the final answer must still be exactly one combined fenced code block, but both the Markdown and JSON portions must be short.
 - Identity-not-verified markdown block format:
@@ -10315,7 +10450,8 @@ const STEP0_GUIDE_STEPS = [
     headerMappings: [
       ['Drug Name / Pipeline Code', 'Asset'],
       ['Geography / Location', 'Country'],
-      ['Company Name', 'Company'],
+      ['Company Name / Organization', 'Company'],
+      ['Pipeline / Drug / Asset name', 'Asset'],
       ['Development Stage', 'Stage']
     ]
   },
@@ -10439,6 +10575,8 @@ function activateKnowledgeMapPanel() {
     elements.pipelineContent.style.display = 'none';
   }
   showKnowledgeMapPanel(true);
+  syncTopDataActionsForVisibleTab();
+  updateHeaderRecordCount();
   elements.pipelineTableTabs?.forEach((tab) => {
     tab.classList.remove('active');
     tab.setAttribute('aria-selected', 'false');
@@ -10463,6 +10601,9 @@ function activateStep0Panel() {
     tab.tabIndex = isActive ? 0 : -1;
   });
   showStep0Panel(true);
+  // Reapply the visible-tab contract immediately; this prevents a prior tab
+  // or delayed dashboard render from leaking its header state into Listing.
+  syncTopDataActionsForVisibleTab();
   renderStep0Guide();
   updateStep0HeaderCount();
   if (state.step0Loaded) {
@@ -10481,6 +10622,7 @@ function activateStep0Panel() {
 
 function deactivateStep0Panel() {
   showStep0Panel(false);
+  syncTopDataActionsForVisibleTab();
   renderTableTabs();
 }
 
@@ -10648,6 +10790,15 @@ const STEP0_HEADER_ALIASES = {
   contact: ['contact', 'meeting history', 'history', '담당자', '연락처', '미팅 이력', '연락 이력'],
   website: ['website', 'website url', 'company website', 'official website', 'homepage', 'home page', 'url', '웹사이트', '홈페이지']
 };
+
+// Exact aliases are deliberately broad for external pipeline spreadsheets.
+// Keyword rules below still handle longer headers such as "Lead Organization".
+STEP0_HEADER_ALIASES.company_input.push('organization', 'organisation', 'corporate', 'sponsor', 'developer', 'manufacturer');
+STEP0_HEADER_ALIASES.asset_input.push(
+  'pipeline code', 'drug', 'drug name', 'drug name / pipeline code',
+  'program', 'program name', 'candidate', 'compound', 'compound name',
+  'product', 'product name', 'molecule'
+);
 
 // A spreadsheet can legitimately carry more than one note/contact context column.
 // These fields concatenate per row; factual identity fields remain one-to-one.
@@ -11343,17 +11494,17 @@ function step0DashboardFieldDisplay(row) {
   const rawModality = String(details.modality || '').trim();
   const rawIndication = String(details.main_indication || '').trim();
   const rawStage = String(details.stage || '').trim();
-  const indicationList = step0ListingIndicationValues(rawIndication);
+  const canonicalIndication = canonicalMainIndication('', rawIndication);
 
   return {
     country: rawCountry ? canonicalListingCountry(rawCountry) : '-',
     countryRaw: rawCountry,
     modality: rawModality
-      ? step0CanonicalDisplay(rawModality, canonicalModality(rawModality), ['Other', 'Unknown'])
+      ? step0CanonicalDisplay(rawModality, canonicalModality(rawModality), ['Others', 'Unknown'])
       : '-',
     modalityRaw: rawModality,
     indication: rawIndication
-      ? (indicationList.join(', ') || rawIndication)
+      ? step0CanonicalDisplay(rawIndication, canonicalIndication, ['Unknown'])
       : '-',
     indicationRaw: rawIndication,
     stage: rawStage
@@ -11432,13 +11583,12 @@ function renderStep0MultiFilter(element, key, values) {
       : `${selected.length}개 선택`;
   trigger.setAttribute('aria-label', `${element.querySelector('.filter-multiselect-label')?.textContent || key}: ${summary.textContent}`);
   element.classList.toggle('has-selection', selected.length > 0);
+  const searchQuery = element.dataset.filterSearchQuery || '';
   menu.innerHTML = [
-    `<button type="button" class="filter-multiselect-option${selected.length === 0 ? ' is-selected' : ''}" data-step0-multi-filter-value="all" role="option" aria-selected="${selected.length === 0}"><span class="filter-multiselect-check" aria-hidden="true">${selected.length === 0 ? '✓' : ''}</span><span>전체</span></button>`,
-    ...options.map((option) => {
-      const isSelected = selected.includes(option.value);
-      return `<button type="button" class="filter-multiselect-option${isSelected ? ' is-selected' : ''}" data-step0-multi-filter-value="${escapeHtml(option.value)}" role="option" aria-selected="${isSelected}"><span class="filter-multiselect-check" aria-hidden="true">${isSelected ? '✓' : ''}</span><span>${escapeHtml(option.label)}</span></button>`;
-    })
+    ...multiFilterMenuMarkup(key, options, selected, 'data-step0-multi-filter-value', searchQuery),
+    '<div class="filter-multiselect-menu-actions"><button type="button" class="filter-multiselect-done" data-step0-multi-filter-done>완료</button></div>'
   ].join('');
+  filterMultiMenuOptions(menu, searchQuery);
 }
 
 function renderStep0FilterControls() {
@@ -12224,9 +12374,9 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
 }
 
 function step0FilteredSortedRows() {
-  const query = (state.step0Query || '').trim().toLowerCase();
+  const query = (state.step0Query || '').trim();
   const searchTerms = [...state.step0SearchTokens, query]
-    .map((term) => String(term || '').trim().toLowerCase())
+    .map(normalizedDashboardSearchText)
     .filter(Boolean);
   const statusFilters = state.step0StatusFilterValues;
 
@@ -12234,7 +12384,14 @@ function step0FilteredSortedRows() {
     if (searchTerms.length) {
       const details = row.listing_details || {};
       const display = step0DashboardFieldDisplay(row);
-      const haystack = `${row.asset || ''} ${row.assetAliases || ''} ${row.company || ''} ${row.companyAliases || ''} ${details.country || ''} ${display.country} ${details.modality || ''} ${display.modality} ${details.target || ''} ${details.main_indication || ''} ${display.indication} ${details.stage || ''} ${display.stage} ${row.theme || ''} ${row.cluster || ''} ${details.website || ''} ${row.metadata?.website || ''} ${row.metadata?.contact || ''} ${row.metadata?.asset_aliases || ''} ${row.metadata?.company_aliases || ''}`.toLowerCase();
+      const haystack = [
+        row.asset, row.assetAliases, row.company, row.companyAliases,
+        details.country, display.country, details.modality, display.modality,
+        details.target, details.main_indication, display.indication,
+        details.stage, display.stage, row.theme, row.cluster,
+        details.website, row.metadata?.website, row.metadata?.contact,
+        row.metadata?.asset_aliases, row.metadata?.company_aliases
+      ].map(normalizedDashboardSearchText).join(' ');
       if (!searchTerms.every((term) => haystack.includes(term))) return false;
     }
     if (statusFilters.size && ![...statusFilters].some((status) => step0RowFilterValues(row, 'progress').includes(status))) return false;
@@ -12307,8 +12464,8 @@ function addSearchToken() {
     elements.searchInput?.focus();
     return;
   }
-  const normalized = value.toLocaleLowerCase('ko');
-  const exists = state.searchTokens.some((token) => token.toLocaleLowerCase('ko') === normalized);
+  const normalized = normalizedDashboardSearchText(value);
+  const exists = state.searchTokens.some((token) => normalizedDashboardSearchText(token) === normalized);
   if (!exists) state.searchTokens.push(value);
   state.query = '';
   if (elements.searchInput) elements.searchInput.value = '';
@@ -12320,8 +12477,8 @@ function addSearchToken() {
 }
 
 function removeSearchToken(token) {
-  const normalized = String(token || '').toLocaleLowerCase('ko');
-  state.searchTokens = state.searchTokens.filter((item) => item.toLocaleLowerCase('ko') !== normalized);
+  const normalized = normalizedDashboardSearchText(token);
+  state.searchTokens = state.searchTokens.filter((item) => normalizedDashboardSearchText(item) !== normalized);
   state.page = 1;
   captureModeFilters();
   renderSearchTokens();
@@ -12334,8 +12491,8 @@ function addStep0SearchToken() {
     elements.step0SearchInput?.focus();
     return;
   }
-  const normalized = value.toLocaleLowerCase('ko');
-  const exists = state.step0SearchTokens.some((token) => token.toLocaleLowerCase('ko') === normalized);
+  const normalized = normalizedDashboardSearchText(value);
+  const exists = state.step0SearchTokens.some((token) => normalizedDashboardSearchText(token) === normalized);
   if (!exists) state.step0SearchTokens.push(value);
   if (elements.step0SearchInput) elements.step0SearchInput.value = '';
   state.step0Query = '';
@@ -12345,8 +12502,8 @@ function addStep0SearchToken() {
 }
 
 function removeStep0SearchToken(token) {
-  const normalized = String(token || '').toLocaleLowerCase('ko');
-  state.step0SearchTokens = state.step0SearchTokens.filter((item) => item.toLocaleLowerCase('ko') !== normalized);
+  const normalized = normalizedDashboardSearchText(token);
+  state.step0SearchTokens = state.step0SearchTokens.filter((item) => normalizedDashboardSearchText(item) !== normalized);
   renderStep0SearchTokens();
   renderStep0FilteredResults();
 }
@@ -12637,11 +12794,13 @@ async function copyTriagePromptWithSelectedCandidates() {
 }
 
 elements.step0ImportButton?.addEventListener('click', importStep0Candidates);
-elements.step0ClearButton?.addEventListener('click', () => {
+function clearStep0ListingInput() {
   renderStep0EntryGrid();
   showStep0PasteFeedback('');
   setStep0SaveStatus('waiting');
-});
+}
+elements.step0ClearButton?.addEventListener('click', clearStep0ListingInput);
+elements.step0ClearBottomButton?.addEventListener('click', clearStep0ListingInput);
 elements.step0AddEntryRow?.addEventListener('click', () => appendStep0EntryRows());
 elements.step0EntryGridBody?.addEventListener('paste', pasteIntoStep0EntryGrid);
 elements.step0EntryGridBody?.addEventListener('input', (event) => {
@@ -12686,10 +12845,20 @@ elements.step0FilterControls?.addEventListener('click', (event) => {
     const willOpen = !filter.classList.contains('is-open');
     closeMultiFilters();
     closeStep0MultiFilters(filter);
+    if (willOpen) delete filter.dataset.filterSearchQuery;
     filter.classList.toggle('is-open', willOpen);
     trigger.setAttribute('aria-expanded', String(willOpen));
     const menu = filter.querySelector('.filter-multiselect-menu');
     if (menu) menu.hidden = !willOpen;
+    if (willOpen) requestAnimationFrame(() => menu?.querySelector('[data-filter-menu-search]')?.focus());
+    return;
+  }
+  const doneButton = event.target.closest('[data-step0-multi-filter-done]');
+  if (doneButton) {
+    const filter = doneButton.closest('.step0-filter-multiselect');
+    event.stopPropagation();
+    closeStep0MultiFilters();
+    filter?.querySelector('.filter-multiselect-trigger')?.focus();
     return;
   }
   const option = event.target.closest('.step0-filter-multiselect .filter-multiselect-option');
@@ -12699,6 +12868,7 @@ elements.step0FilterControls?.addEventListener('click', (event) => {
   const value = option.dataset.step0MultiFilterValue;
   if (key && value) updateStep0MultiFilter(key, value);
 });
+elements.step0FilterControls?.addEventListener('input', handleMultiMenuSearch);
 elements.step0StatFilterButtons?.forEach((button) => {
   button.addEventListener('click', () => applyStep0SummaryStageFilter(button.dataset.step0StatFilter));
 });
@@ -13065,10 +13235,12 @@ function handleMultiFilterControlsClick(event) {
     event.stopPropagation();
     const willOpen = !filter.classList.contains('is-open');
     closeMultiFilters(filter);
+    if (willOpen) delete filter.dataset.filterSearchQuery;
     filter.classList.toggle('is-open', willOpen);
     trigger.setAttribute('aria-expanded', String(willOpen));
     const menu = filter.querySelector('.filter-multiselect-menu');
     if (menu) menu.hidden = !willOpen;
+    if (willOpen) requestAnimationFrame(() => menu?.querySelector('[data-filter-menu-search]')?.focus());
     return;
   }
 
@@ -13703,7 +13875,7 @@ elements.step0ImportReviewList?.addEventListener('click', (event) => {
 elements.step0ImportReviewApply?.addEventListener('click', () => {
   const decisions = reviewedStep0ImportDecisions();
   if (decisions.some((decision) => decision.action === 'pending')) {
-    if (elements.step0ImportReviewSummary) elements.step0ImportReviewSummary.textContent = '각 유사 Pipeline에서 연결, 별도 신규 추가 또는 이번 행 제외 중 하나를 선택해 주세요.';
+    if (elements.step0ImportReviewSummary) elements.step0ImportReviewSummary.textContent = '각 유사 Pipeline에서 연결, 별도 신규 추가 또는 등록하지 않기 중 하나를 선택해 주세요.';
     return;
   }
   closeStep0ImportReviewModal(decisions);
@@ -13915,6 +14087,7 @@ elements.dataUploadGuideSteps?.addEventListener('click', async (event) => {
 
 document.querySelectorAll('.controls').forEach((controls) => {
   controls.addEventListener('click', handleMultiFilterControlsClick);
+  controls.addEventListener('input', handleMultiMenuSearch);
 });
 elements.step0GuideSteps?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-step0-guide-action="copy-instructions"]');
@@ -13925,6 +14098,8 @@ elements.step0GuideSteps?.addEventListener('click', (event) => {
   }
   elements.step0CopyInstructionsButton.click();
 });
+const step0CopyInstructionsLabel = elements.step0CopyInstructionsButton?.querySelector('b');
+if (step0CopyInstructionsLabel) step0CopyInstructionsLabel.textContent = '지침 1 복사';
 if (elements.copyTriagePromptTopButton) {
   elements.copyTriagePromptTopButton.dataset.tooltip = TRIAGE_PROMPT_TOOLTIP;
 }
@@ -13945,7 +14120,7 @@ floatingAgentController = initFloatingAgent({
   maximizeButton: elements.aiDrawer.querySelector('[data-floating-agent-maximize]'),
   dragHandle: elements.aiDrawer.querySelector('[data-floating-agent-drag]'),
   resizeHandle: elements.aiDrawer.querySelector('[data-floating-agent-resize]'),
-  storageKey: 'skbp.dashboard.floatingAgentGeometry.v1',
+  storageKey: 'skbp.dashboard.floatingAgentGeometry.v3',
   initialWidth: 560,
   initialHeight: 680,
   focusTarget: elements.agentInput
