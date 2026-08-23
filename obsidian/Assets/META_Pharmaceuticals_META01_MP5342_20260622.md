@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T00:16:03"
+generated_at: "2026-08-23T11:53:17"
 record_id: "META_Pharmaceuticals_META01_MP5342_20260622"
 company: "META Pharmaceuticals Inc."
 country: "China / Hong Kong"

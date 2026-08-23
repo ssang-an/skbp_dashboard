@@ -12,7 +12,15 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20260823-stage-filter-height-1" />
+  <link rel="stylesheet" href="./src/styles.css?v=20260823-country-multi-1" />
+  <link rel="stylesheet" href="./src/knowledge_graph.css" />
+  <link rel="stylesheet" href="./src/sigma_graph.css" />
+  <style>
+    .knowledge-map-panel.sg-shell .kg-side { width: min(640px, calc(100% - 52px)); }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/graphology/0.25.4/graphology.umd.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js" defer></script>
   </head>
   <body>
     <div class="app-shell">
@@ -29,7 +37,7 @@
 
           <nav class="workflow-navigation-shell" aria-label="Pipeline workflow">
             <div class="pipeline-table-tabs" role="tablist" aria-label="Pipeline table mode">
-              <button id="step0Tab" type="button" role="tab" aria-selected="false" aria-controls="step0Panel" tabindex="-1" data-table-mode="step0">
+              <button class="active" id="step0Tab" type="button" role="tab" aria-selected="true" aria-controls="step0Panel" tabindex="0" data-table-mode="step0">
                 <span class="tab-step" aria-hidden="true">0</span>
                 <b>진척 현황</b>
               </button>
@@ -37,7 +45,7 @@
                 <span class="tab-step" aria-hidden="true">1</span>
                 <b>Fast Triage</b>
               </button>
-              <button class="active" id="fullScoutTableTab" type="button" role="tab" aria-selected="true" aria-controls="pipelineContent" tabindex="0" data-table-mode="full">
+              <button id="fullScoutTableTab" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="full">
                 <span class="tab-step" aria-hidden="true">2</span>
                 <b>Full Scout</b>
               </button>
@@ -49,6 +57,10 @@
                 </span>
                 <b>Shortlisting</b>
               </button>
+              <a id="knowledgeMapTab" class="workflow-knowledge-map-link" href="/?tab=map" role="tab" aria-controls="knowledgeMapPanel" aria-label="Knowledge Map 열기">
+                <span class="tab-step knowledge-map-icon" aria-hidden="true">✦</span>
+                <b>Knowledge Map</b>
+              </a>
             </div>
           </nav>
 
@@ -58,7 +70,7 @@
                 class="data-utility-segment data-refresh-action help-tooltip"
                 id="refreshButton"
                 type="button"
-                data-tooltip="저장된 파이프라인 JSON을 다시 불러와 대시보드를 갱신합니다."
+                data-tooltip="저장된 Pipeline JSON을 다시 불러와 대시보드를 갱신합니다."
                 aria-label="새로고침"
               ><span class="data-utility-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></svg></span><b class="data-refresh-label">새로고침</b></button>
               <button
@@ -110,7 +122,7 @@
 
       </header>
 
-      <section id="step0Panel" class="step0-panel" role="tabpanel" aria-labelledby="step0Tab" tabindex="-1" hidden>
+      <section id="step0Panel" class="step0-panel" role="tabpanel" aria-labelledby="step0Tab" tabindex="-1">
         <section class="workflow-mode-description" data-workflow-mode="listing" role="note" aria-label="Listing workflow guide">
           <span class="workflow-description-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false">
@@ -122,7 +134,7 @@
             <strong>후보 목록 관리<span class="workflow-description-separator" aria-hidden="true">·</span></strong>
             <span>후보 목록을 등록하고 Fast Triage·Full Scout·Shortlisting까지의 조사 진척을 한 곳에서 확인합니다.</span>
           </span>
-          <span class="workflow-description-filter">Listing</span>
+          <span class="workflow-description-filter">진행 단계</span>
         </section>
 
         <section class="step0-summary-dashboard" aria-labelledby="step0SummaryDashboardTitle">
@@ -135,9 +147,10 @@
           >
             <span class="visual-dashboard-toggle-title step0-summary-dashboard-title" id="step0SummaryDashboardTitle">
               Summary Dashboard
-              <small id="step0SummaryScopeNote">전체 Pipeline 기준</small>
+              <small id="step0SummaryScopeNote">진행 단계 색상</small>
             </span>
             <span class="visual-dashboard-toggle-action">
+              <em id="step0SummaryRecentUpload" class="step0-summary-recent-upload" hidden>▲ 최근 15일간 0 증가</em>
               <span id="step0SummaryDashboardToggleLabel">접기</span>
               <span class="visual-dashboard-toggle-icon" aria-hidden="true">⌃</span>
             </span>
@@ -146,30 +159,30 @@
           <section class="panel step0-stat-panel" aria-label="진척 현황 요약">
           <div class="step0-stat-strip">
             <section class="step0-stat-column" data-workflow-stage="pending">
-            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="pending" data-tooltip="Listing은 등록만 완료되고 Fast Triage와 Full Scout 조사가 아직 시작되지 않은 '조사 대기' 파이프라인입니다. 클릭하면 해당 목록만 Table에 표시합니다." aria-label="조사 대기 Listing Pipeline으로 필터">
+            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="pending" data-tooltip="클릭 시 Listing 완료된 Pipeline List 중 조사 대기 중인 Pipeline을 표시합니다." aria-label="조사 대기 Listing Pipeline으로 필터">
               <span class="step0-stat-label">Listing</span>
-              <span class="step0-stat-value"><strong id="step0StatPending">0</strong><em id="step0RecentPending" class="step0-stat-recent" hidden>▲ +0</em></span>
+              <span class="step0-stat-value"><strong id="step0StatPending">0</strong><em id="step0RecentPending" class="step0-stat-recent" hidden>▲ 0</em></span>
             </button>
             <div class="step0-workflow-card-canvas" data-step0-workflow-map="pending" role="region" tabindex="0" aria-label="Listing Pipeline node graph" aria-live="polite"></div>
             </section>
             <section class="step0-stat-column" data-workflow-stage="fast_triage">
-            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="fast_triage" data-tooltip="Fast Triage는 공개 정보로 후보를 빠르게 1차 선별하는 단계입니다. 클릭하면 Fast Triage가 완료된 모든 파이프라인을 Table에 표시합니다." aria-label="Fast Triage 완료 Pipeline으로 필터">
+            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="fast_triage" data-tooltip="Fast Triage는 공개 정보로 후보를 빠르게 1차 선별하는 단계입니다. 클릭하면 Fast Triage가 완료된 모든 Pipeline을 Table에 표시합니다." aria-label="Fast Triage 완료 Pipeline으로 필터">
               <span class="step0-stat-label">Fast Triage</span>
-              <span class="step0-stat-value"><strong id="step0StatFastTriage">0</strong><em id="step0RecentFastTriage" class="step0-stat-recent" hidden>▲ +0</em></span>
+              <span class="step0-stat-value"><strong id="step0StatFastTriage">0</strong><em id="step0RecentFastTriage" class="step0-stat-recent" hidden>▲ 0</em></span>
             </button>
             <div class="step0-workflow-card-canvas" data-step0-workflow-map="fast_triage" role="region" tabindex="0" aria-label="Fast Triage Pipeline node graph" aria-live="polite"></div>
             </section>
             <section class="step0-stat-column" data-workflow-stage="full_scout">
-            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="full_scout" data-tooltip="Full Scout는 타깃·근거·경쟁 환경·사업성을 심층 검토하는 단계입니다. 클릭하면 Full Scout가 완료된 모든 파이프라인을 Table에 표시합니다." aria-label="Full Scout 완료 Pipeline으로 필터">
+            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="full_scout" data-tooltip="Full Scout는 타깃·근거·경쟁 환경·사업성을 심층 검토하는 단계입니다. 클릭하면 Full Scout가 완료된 모든 Pipeline을 Table에 표시합니다." aria-label="Full Scout 완료 Pipeline으로 필터">
               <span class="step0-stat-label">Full Scout</span>
-              <span class="step0-stat-value"><strong id="step0StatFullScout">0</strong><em id="step0RecentFullScout" class="step0-stat-recent" hidden>▲ +0</em></span>
+              <span class="step0-stat-value"><strong id="step0StatFullScout">0</strong><em id="step0RecentFullScout" class="step0-stat-recent" hidden>▲ 0</em></span>
             </button>
             <div class="step0-workflow-card-canvas" data-step0-workflow-map="full_scout" role="region" tabindex="0" aria-label="Full Scout Pipeline node graph" aria-live="polite"></div>
             </section>
             <section class="step0-stat-column" data-workflow-stage="shortlisting">
-            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="shortlisting" data-tooltip="Shortlisting은 Full Scout 검토 후 후속 BD 검토 대상으로 추적 중인 파이프라인입니다. 클릭하면 해당 목록만 Table에 표시합니다." aria-label="Shortlisting Pipeline으로 필터">
+            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="shortlisting" data-tooltip="Shortlisting은 Full Scout 검토 후 후속 BD 검토 대상으로 추적 중인 Pipeline입니다. 클릭하면 해당 목록만 Table에 표시합니다." aria-label="Shortlisting Pipeline으로 필터">
               <span class="step0-stat-label">Shortlisting</span>
-              <span class="step0-stat-value"><strong id="step0StatShortlisted">0</strong><em id="step0RecentShortlisted" class="step0-stat-recent" hidden>▲ +0</em></span>
+              <span class="step0-stat-value"><strong id="step0StatShortlisted">0</strong><em id="step0RecentShortlisted" class="step0-stat-recent" hidden>▲ 0</em></span>
             </button>
             <div class="step0-workflow-card-canvas" data-step0-workflow-map="shortlisting" role="region" tabindex="0" aria-label="Shortlisting Pipeline node graph" aria-live="polite"></div>
             </section>
@@ -350,7 +363,7 @@
                   </table>
                 </div>
                 <button id="step0AddEntryRow" type="button" class="step0-add-entry-row">+ 행 추가</button>
-                <p id="step0PasteFeedback" class="step0-paste-feedback" role="status" aria-live="polite" hidden></p>
+                <div id="step0PasteFeedback" class="step0-paste-feedback input-validation-results" role="status" aria-live="polite" hidden></div>
               </div>
               <div class="editor-actions">
                 <button class="action-pill header-action-button primary-button help-tooltip" id="step0ImportButton" type="button" data-tooltip="붙여넣은 목록을 파싱해 Listing 목록에 추가합니다."><span class="data-upload-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 20v-6h8v6" /></svg></span><b>가져오기</b></button>
@@ -370,7 +383,7 @@
         </section>
       </section>
 
-      <main id="pipelineContent" role="tabpanel" aria-labelledby="fullScoutTableTab" tabindex="-1">
+      <main id="pipelineContent" role="tabpanel" aria-labelledby="fullScoutTableTab" tabindex="-1" hidden>
         <section id="workflowModeDescription" class="workflow-mode-description" data-workflow-mode="full" role="note" aria-live="polite">
           <span class="workflow-description-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false">
@@ -510,7 +523,7 @@
                 </select>
               </label>
               <button id="columnSettingsButton" class="help-tooltip" type="button" data-tooltip="테이블에 표시할 추가 JSON 컬럼을 선택합니다.">컬럼 설정</button>
-              <button id="deleteSelectedButton" class="danger-link-button help-tooltip" type="button" data-tooltip="체크한 파이프라인 레코드를 삭제합니다." disabled>선택 삭제</button>
+              <button id="deleteSelectedButton" class="danger-link-button help-tooltip" type="button" data-tooltip="체크한 Pipeline 레코드를 삭제합니다." disabled>선택 삭제</button>
               <button id="exportExcelButton" class="excel-export-button help-tooltip" type="button" data-tooltip="현재 필터 결과를 Excel용 CSV로 내보냅니다." disabled>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h5M3 9h9v9H3zM5.5 11.5l4 4m0-4-4 4"/></svg>
                 <span>Excel export</span>
@@ -624,6 +637,36 @@
         </section>
       </main>
 
+      <section id="knowledgeMapPanel" class="knowledge-map-panel sg-shell" role="tabpanel" aria-labelledby="knowledgeMapTab" hidden>
+        <section class="workflow-mode-description knowledge-map-description" data-workflow-mode="map" role="note" aria-label="Knowledge Map 안내">
+          <span class="workflow-description-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 10.75v5.5M12 7.75h.01" /></svg></span>
+          <span class="workflow-description-copy"><strong>Knowledge Map<span class="workflow-description-separator" aria-hidden="true">·</span></strong><span>Pipeline과 Company·Target·MoA·근거 간 연결을 탐색하고, 선택한 노드 맥락으로 All Pipelines Agent와 대화합니다.</span></span>
+          <span class="workflow-description-filter">Knowledge Graph</span>
+        </section>
+        <section class="kg-controls">
+          <label class="sg-explorer-view"><span>탐색 시작점</span><select id="sgView"><option value="overview" selected>Overview · 핵심 연결</option><option value="all">전체 지식 맵</option></select></label>
+          <label class="kg-search"><span>검색</span><input id="sgSearch" type="search" placeholder="Asset · Company · Target · MoA 검색" /></label>
+          <label><span>Theme</span><select id="sgTheme"><option value="">전체</option></select></label>
+          <label><span>Node type</span><select id="sgType"><option value="">전체</option></select></label>
+          <label><span>Stage</span><select id="sgStage"><option value="">전체</option></select></label>
+          <label><span>연결 범위</span><select id="sgDepth"><option value="1" selected>1 hop</option><option value="2">2 hop</option><option value="3">3 hop</option></select></label>
+          <button id="sgReset" type="button">초기화</button>
+          <div class="sg-inline-stats" aria-label="Knowledge Map graph counts"><span>Nodes <b id="sgNodeCount">0</b></span><span>Links <b id="sgEdgeCount">0</b></span></div>
+        </section>
+        <section class="kg-workspace">
+          <section class="kg-card kg-graph-card"><div class="kg-card-head"><p id="sgScope">Knowledge Map을 준비 중입니다…</p><div id="sgLegend" class="kg-legend"></div></div><div id="sgCanvas" class="kg-canvas"></div></section>
+          <aside class="kg-side"><section class="kg-card"><div class="kg-card-head"><h2>Selected node</h2></div><div id="sgInspector" class="kg-empty">노드를 클릭하면 연결 노드와 Agent 질문을 표시합니다.</div></section></aside>
+        </section>
+      </section>
+
+      <section id="knowledgeMapNoteModal" class="knowledge-map-note-modal" role="dialog" aria-modal="false" aria-labelledby="knowledgeMapNoteModalTitle" hidden>
+        <header id="knowledgeMapNoteModalDrag" class="knowledge-map-note-modal-header" tabindex="0" aria-label="Markdown 노트 창 이동">
+          <div><span>Knowledge Note</span><h2 id="knowledgeMapNoteModalTitle">Selected node note</h2></div>
+          <button id="knowledgeMapNoteModalClose" type="button" aria-label="노트 창 닫기">×</button>
+        </header>
+        <div id="knowledgeMapNoteModalBody" class="knowledge-map-note-modal-body"></div>
+      </section>
+
       <footer class="dashboard-footer" aria-label="Dashboard information and feedback">
         <p class="dashboard-footer-credit">Designed &amp; Developed by <strong>OIC AI Champion</strong> <span aria-hidden="true">·</span> Kate Joo Won Jung</p>
         <p class="dashboard-footer-meta">
@@ -669,6 +712,10 @@
           <span>Knowledge Mode</span>
           <strong>JSON + Wiki + Files</strong>
         </div>
+        <div id="agentKnowledgeNodeContext" class="agent-knowledge-node-context" hidden>
+          <span>Active Knowledge Node</span>
+          <strong id="agentKnowledgeNodeLabel"></strong>
+        </div>
       </div>
 
       <div class="agent-sessionbar">
@@ -680,7 +727,7 @@
         <button id="agentDeleteSessionButton" type="button">삭제</button>
       </div>
 
-      <div class="agent-suggestions">
+      <div class="agent-suggestions" id="agentSuggestions">
         <button type="button" data-agent-prompt="E/I Balance 후보 중 platform fit과 Data Maturity 기준으로 가장 우선순위가 높은 asset을 골라줘.">E/I 우선순위</button>
         <button type="button" data-agent-prompt="Neuroimmune 후보를 Data Maturity, Marketability, 경쟁강도 기준으로 비교해줘.">Neuroimmune 비교</button>
         <button type="button" data-agent-prompt="score는 괜찮지만 evidence gap이나 source 불확실성이 큰 후보를 찾아줘.">근거 gap 탐색</button>
@@ -1199,6 +1246,24 @@
       </section>
     </div>
 
+    <div class="identity-modal-backdrop" id="step0ImportReviewModal" hidden>
+      <section class="identity-modal data-reupload-modal" role="dialog" aria-modal="true" aria-labelledby="step0ImportReviewTitle">
+        <div class="data-reupload-modal-heading">
+          <span class="data-reupload-modal-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></svg>
+          </span>
+          <div><h3 id="step0ImportReviewTitle">유사한 Listing Pipeline을 확인해 주세요.</h3></div>
+        </div>
+        <p id="step0ImportReviewSummary" class="identity-modal-hint data-reupload-summary"></p>
+        <p class="identity-modal-hint data-reupload-modal-hint">정확히 일치하는 코드만 자동 덮어쓰기합니다. 괄호 안 별칭·회사명 변경·유사 코드는 기존 Pipeline에 덮어쓸지, 별도 신규 Pipeline으로 추가할지 직접 선택해 주세요.</p>
+        <div id="step0ImportReviewList" class="data-reupload-review-list" aria-live="polite"></div>
+        <div class="identity-modal-actions data-reupload-modal-actions">
+          <button id="step0ImportReviewCancel" type="button" class="identity-modal-cancel">취소</button>
+          <button id="step0ImportReviewApply" type="button" class="identity-modal-submit">선택 적용 후 가져오기</button>
+        </div>
+      </section>
+    </div>
+
     <div class="agent-response-modal-backdrop" id="agentResponseModal" hidden>
       <section class="agent-response-modal" role="dialog" aria-modal="true" aria-labelledby="agentResponseModalTitle">
         <header class="agent-response-modal-header">
@@ -1272,6 +1337,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260823-contact-history-popover-1"></script>
+  <script type="module" src="./src/app.js?v=20260823-step0-dark-summary-1"></script>
+  <script src="./src/sigma_graph.js?v=20260823-dark-palette-1" defer></script>
   </body>
 </html>

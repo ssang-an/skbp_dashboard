@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260823-qualitative-workspace-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260823-evidence-anchor-1" />
   </head>
   <body>
     <div class="app-shell detail-shell">
@@ -103,6 +103,7 @@
                   <span class="attachment-ai-scope-detail">첨부 추출 텍스트 합산 최대 <b>9,000자</b> 활용 가능</span>
                 </span>
               </div>
+              <p id="detailPartnerMaterialPermissionNote" class="attachment-permission-note" hidden>Partner Materials 업로드·삭제는 관리자만 가능합니다.</p>
               <button id="detailAttachmentAddButton" class="secondary-button material-add-button" type="button">
                 내 컴퓨터에서 파일 선택
               </button>
@@ -320,80 +321,135 @@
 
           <div class="collaboration-scroll">
             <section class="team-qualitative-workspace" aria-labelledby="qualitativeWorkspaceTitle">
-              <div class="qualitative-panel-heading comment-thread-heading">
-                <p class="eyebrow" id="qualitativeWorkspaceTitle">정성 평가</p>
-                <button id="qualitativeReviewToggle" class="review-info-toggle" type="button" aria-expanded="false" aria-controls="qualitativeReviewPanel" aria-label="정성 평가 표시">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"></path></svg>
-                  <span data-qualitative-toggle-label>Show</span>
-                </button>
-                <small>평가 항목별 의견과 검토 근거를 기록합니다.</small>
+                <div class="qualitative-panel-heading comment-thread-heading">
+                  <div class="qualitative-panel-heading-title">
+                    <p class="eyebrow" id="qualitativeWorkspaceTitle">DUE DILIGENCE</p>
+                  <button
+                    type="button"
+                    class="panel-icon-button workspace-upload-button help-tooltip"
+                    id="detailDDReportUploadButton"
+                    data-tooltip="DD 리포트 파일 업로드 (최대 30MB)"
+                    aria-label="DD 리포트 파일 업로드"
+                  ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7.5 8.5 12 4l4.5 4.5"></path><path d="M5 13v6h14v-6"></path></svg></button>
+                  <span id="detailDDReportFileCount" class="workspace-upload-count" aria-label="DD 리포트 첨부 파일 개수" hidden>0</span>
+                  <input id="detailDDReportAttachmentInput" type="file" accept=".ppt,.pptx,.pdf,.txt,.doc,.docx,.xls,.xlsx" hidden />
+                </div>
+                <div id="qualitativeCriterionStatusPills" class="qualitative-criterion-status-pills" role="group" aria-label="Due Diligence 평가 항목 의견 상태">
+                  <span class="qualitative-criterion-status-label">의견 상태</span>
+                  <button type="button" data-qualitative-jump="efficacy" aria-pressed="false" title="Efficacy 의견 입력란으로 이동"><span aria-hidden="true"></span>Efficacy <b>0</b></button>
+                  <button type="button" data-qualitative-jump="commercial_appeal" aria-pressed="false" title="Commercial 의견 입력란으로 이동"><span aria-hidden="true"></span>Commercial <b>0</b></button>
+                  <button type="button" data-qualitative-jump="execution_risk" aria-pressed="false" title="Dev. & Partnership Risk 의견 입력란으로 이동"><span aria-hidden="true"></span>Dev. &amp; Risk <b>0</b></button>
+                </div>
+                <div class="qualitative-panel-heading-actions">
+                  <button
+                    type="button"
+                    class="qualitative-ai-generate-all-button help-tooltip"
+                    id="qualitativeAiGenerateAllButton"
+                    data-tooltip="아래 정성평가 항목에 대해 AI 답변을 생성합니다."
+                    aria-label="전체 AI 생성"
+                  ><span aria-hidden="true">✨</span></button>
+                  <button id="qualitativeReviewToggle" class="review-info-toggle" type="button" aria-expanded="false" aria-controls="qualitativeReviewPanel" aria-label="정성 평가 표시">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"></path></svg>
+                    <span data-qualitative-toggle-label>Show</span>
+                  </button>
+                </div>
               </div>
+              <div id="detailDDReportFilesList" class="attachment-file-list" hidden></div>
+              <p id="detailDDReportAttachmentStatus" class="attachment-status" aria-live="polite"></p>
               <section id="qualitativeReviewPanel" class="qualitative-review-panel" aria-label="Qualitative review criteria" hidden></section>
             </section>
 
             <div class="qualitative-panel-heading comment-thread-heading">
               <p class="eyebrow">Comments</p>
-              <small>OIT Review 및 Team Workspace 의견을 기록합니다.</small>
+              <div class="qualitative-panel-heading-actions">
+                <button id="detailCommentsToggle" class="review-info-toggle" type="button" aria-expanded="false" aria-controls="detailCommentThread" aria-label="Comments 표시">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"></path></svg>
+                  <span data-comments-toggle-label>Show</span>
+                </button>
+              </div>
             </div>
 
-            <div id="detailCommentThread" class="comment-thread" aria-live="polite"></div>
+            <div id="detailCommentThread" class="comment-thread" aria-live="polite" hidden></div>
+
+            <form id="detailCommentForm" class="comment-composer">
+              <div id="detailReplyContext" class="reply-context" hidden>
+                <span id="detailReplyLabel"></span>
+                <button id="detailReplyCancel" type="button" aria-label="답글 취소">취소</button>
+              </div>
+              <div class="comment-input-row">
+                <label class="comment-input-field">
+                  <span class="sr-only">코멘트</span>
+                  <textarea
+                    id="detailCommentInput"
+                    class="message-composer-textarea"
+                    maxlength="5000"
+                    rows="1"
+                    aria-label="팀 의견 입력"
+                    placeholder="검토 의견이나 다음 액션을 남겨주세요."
+                    required
+                  ></textarea>
+                  <span class="composer-inline-hint" aria-hidden="true">Enter 전송 · Shift+Enter 줄바꿈</span>
+                </label>
+                <button
+                  id="detailCommentSubmit"
+                  class="message-send-button"
+                  type="submit"
+                  aria-label="의견 보내기"
+                  title="의견 보내기"
+                  disabled
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M22 2 9.6 14.4"></path>
+                    <path d="m22 2-7.2 20-4.1-8.7L2 9.2Z"></path>
+                  </svg>
+                </button>
+              </div>
+              <input id="detailReplyParentId" type="hidden" />
+            </form>
 
             <section class="contact-history-workspace" aria-labelledby="detailContactHistoryTitle">
               <div class="qualitative-panel-heading comment-thread-heading">
-                <p class="eyebrow" id="detailContactHistoryTitle">Contact History</p>
-                <small>해당 Pipeline과 관련해 수행한 미팅·통화·이메일·후속 조치 등 Contact History를 기록하세요.</small>
+                <div class="qualitative-panel-heading-title">
+                  <p class="eyebrow" id="detailContactHistoryTitle">Contact History</p>
+                  <button
+                    type="button"
+                    class="panel-icon-button workspace-upload-button help-tooltip"
+                    id="detailContactHistoryUploadButton"
+                    data-tooltip="회의록 파일 업로드 (최대 30MB)"
+                    aria-label="회의록 파일 업로드"
+                  ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7.5 8.5 12 4l4.5 4.5"></path><path d="M5 13v6h14v-6"></path></svg></button>
+                  <span id="detailContactHistoryFileCount" class="workspace-upload-count" aria-label="Contact History 첨부 파일 개수" hidden>0</span>
+                  <input
+                    id="detailContactHistoryAttachmentInput"
+                    type="file"
+                    accept=".ppt,.pptx,.pdf,.txt,.doc,.docx,.xls,.xlsx"
+                    hidden
+                  />
+                </div>
+                <div class="qualitative-panel-heading-actions">
+                  <button id="detailContactHistoryToggle" class="review-info-toggle" type="button" aria-expanded="false" aria-controls="detailContactHistoryThread" aria-label="Contact History 표시">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"></path></svg>
+                    <span data-contact-history-toggle-label>Show</span>
+                  </button>
+                </div>
               </div>
-              <div id="detailContactHistoryThread" class="comment-thread contact-history-thread" aria-live="polite"></div>
+              <div id="detailContactHistoryFilesList" class="attachment-file-list" hidden></div>
+              <p id="detailContactHistoryAttachmentStatus" class="attachment-status" aria-live="polite"></p>
+              <div id="detailContactHistoryThread" class="comment-thread contact-history-thread" aria-live="polite" hidden></div>
               <form id="detailContactHistoryForm" class="comment-composer contact-history-composer">
                 <div class="comment-input-row">
                   <label class="comment-input-field">
                     <span class="sr-only">Contact History</span>
-                    <textarea id="detailContactHistoryInput" class="message-composer-textarea" maxlength="5000" rows="1" aria-label="Contact History 입력" placeholder="미팅, 통화, 이메일 및 후속 조치를 기록하세요." required></textarea>
+                    <textarea id="detailContactHistoryInput" class="message-composer-textarea" maxlength="5000" rows="1" aria-label="Contact History 입력" placeholder="미팅, 통화, 이메일 연락 여부 및 내용을 남겨주세요." required></textarea>
+                    <span class="composer-inline-hint" aria-hidden="true">Enter 전송 · Shift+Enter 줄바꿈</span>
                   </label>
                   <button id="detailContactHistorySubmit" class="message-send-button contact-history-send-button" type="submit" aria-label="Contact History 저장" title="Contact History 저장" disabled>
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 9.6 14.4"></path><path d="m22 2-7.2 20-4.1-8.7L2 9.2Z"></path></svg>
                   </button>
                 </div>
-                <p class="comment-composer-hint">Enter 전송 · Shift+Enter 줄바꿈</p>
               </form>
             </section>
           </div>
-
-          <form id="detailCommentForm" class="comment-composer">
-            <div id="detailReplyContext" class="reply-context" hidden>
-              <span id="detailReplyLabel"></span>
-              <button id="detailReplyCancel" type="button" aria-label="답글 취소">취소</button>
-            </div>
-            <div class="comment-input-row">
-              <label class="comment-input-field">
-                <span class="sr-only">코멘트</span>
-                <textarea
-                  id="detailCommentInput"
-                  class="message-composer-textarea"
-                  maxlength="5000"
-                  rows="1"
-                  aria-label="팀 의견 입력"
-                  placeholder="검토 의견이나 다음 액션을 남겨주세요…"
-                  required
-                ></textarea>
-              </label>
-              <button
-                id="detailCommentSubmit"
-                class="message-send-button"
-                type="submit"
-                aria-label="의견 보내기"
-                title="의견 보내기"
-                disabled
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M22 2 9.6 14.4"></path>
-                  <path d="m22 2-7.2 20-4.1-8.7L2 9.2Z"></path>
-                </svg>
-              </button>
-            </div>
-            <p class="comment-composer-hint">Enter 전송 · Shift+Enter 줄바꿈</p>
-            <input id="detailReplyParentId" type="hidden" />
-          </form>
         </aside>
       </main>
     </div>
@@ -804,6 +860,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260823-comment-progress-1"></script>
+    <script type="module" src="./src/detail.js?v=20260823-evidence-anchor-1"></script>
   </body>
 </html>

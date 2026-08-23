@@ -1047,13 +1047,47 @@ def canonicalize_modality(source_wording: Any) -> str:
 
 
 def canonicalize_country(source_wording: Any) -> str:
-    """Normalize known country aliases while retaining a single unknown country label."""
+    """Normalize every explicitly stated known country while retaining unknown wording."""
     raw = re.sub(r"\s+", " ", str(source_wording or "").strip())
     if not raw or raw.casefold() in {"-", "unknown", "not known", "not available", "n/a", "na"}:
         return "Unknown"
-    canonical = canonicalize_dictionary_category("country", raw, earliest=True)
-    if canonical:
-        return canonical
+    entries = category_synonym_dictionary().get("country") or []
+    normalized_raw = raw.casefold()
+    comma_parts = [part.strip().casefold() for part in raw.split(",") if part.strip()]
+    explicit_country_part = re.compile(
+        r"^(?:china|prc|hong kong|(?:republic of |south )?korea|rok|kor|japan|jp|"
+        r"united states(?: of america)?|usa|u\.?s\.?|europe(?:an union)?|united kingdom|u\.?k\.?|"
+        r"taiwan|tw|singapore|sg|canada|ca|australia|au|israel|il)$",
+        flags=re.IGNORECASE,
+    )
+    # City, Country addresses resolve to the right-most exact country component;
+    # slash-separated wording intentionally retains every stated country.
+    if (
+        len(comma_parts) > 1
+        and not re.search(r"[/;&]", raw)
+        and not all(explicit_country_part.fullmatch(part) for part in comma_parts)
+    ):
+        rightmost = comma_parts[-1]
+        for entry in entries:
+            if not isinstance(entry, dict):
+                continue
+            terms = [entry.get("canonical"), *(entry.get("synonyms") or [])]
+            if any(str(term or "").strip().casefold() == rightmost for term in terms):
+                return str(entry.get("canonical") or "Unknown")
+    matches: list[tuple[int, int, str]] = []
+    for order, entry in enumerate(entries):
+        if not isinstance(entry, dict) or not str(entry.get("canonical") or "").strip():
+            continue
+        index = category_match_index(normalized_raw, entry)
+        if index is not None:
+            matches.append((index, order, str(entry["canonical"])))
+    if matches:
+        matches.sort(key=lambda item: (item[0], item[1]))
+        countries: list[str] = []
+        for _, _, country in matches:
+            if country not in countries:
+                countries.append(country)
+        return " / ".join(countries[:2])
     # The controlled list intentionally groups common sourcing regions, but a new
     # legal domicile should remain visible rather than being silently changed to Unknown.
     return raw
@@ -10060,6 +10094,18 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
             previous = table.get("development_stage")
             table["development_stage"] = value
             field_key = "structured_table.development_stage"
+        elif edit_kind == "country":
+            raw_value = re.sub(r"\s+", " ", str(payload.get("value") or "").strip())
+            if not raw_value or len(raw_value) > 250:
+                raise HTTPException(status_code=400, detail="Country must be 1 to 250 characters.")
+            value = canonicalize_country(raw_value)
+            table = record.setdefault("structured_table", {})
+            summary = record.setdefault("json_summary", {})
+            previous = table.get("company_country")
+            table["company_country"] = value
+            if isinstance(summary, dict):
+                summary["company_country"] = value
+            field_key = "structured_table.company_country"
         elif edit_kind in {"company", "asset", "main_indication"}:
             raw_value = re.sub(r"\s+", " ", str(payload.get("value") or "").strip())
             if not raw_value or len(raw_value) > 250:
@@ -10112,7 +10158,7 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
         else:
             raise HTTPException(
                 status_code=400,
-                detail="kind must be status, status_reason, score, total_score, final_comment, final_comment_delete, company, asset, main_indication, modality, stage, or target.",
+                detail="kind must be status, status_reason, score, total_score, final_comment, final_comment_delete, company, asset, main_indication, modality, stage, country, or target.",
             )
 
         history = human_review.setdefault("history", [])

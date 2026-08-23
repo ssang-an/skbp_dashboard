@@ -53,6 +53,8 @@
             "contact_created_at": { "type": "string" },
             "contact_updated_at": { "type": "string" },
             "website": { "type": "string", "format": "uri", "maxLength": 2048 },
+            "asset_aliases": { "type": "string", "maxLength": 2000, "description": "Search-only prior/current asset code aliases retained after a reviewer-approved overwrite." },
+            "company_aliases": { "type": "string", "maxLength": 2000, "description": "Search-only prior/current company name aliases retained after a reviewer-approved overwrite." },
             "updated_at": { "type": "string" }
           },
           "additionalProperties": false
@@ -325,6 +327,8 @@
         "target": { "type": "string", "minLength": 1 },
         "moa": { "type": "string", "minLength": 1 },
         "modality_platform": { "type": "string", "minLength": 1 },
+        "modality_source": { "type": "string", "description": "Original researched modality wording, retained for audit and fallback display." },
+        "modality_tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true, "description": "All supported canonical modality tags evidenced by the original wording." },
         "main_indication": { "type": "string", "description": "One canonical dashboard indication. When several confirmed indications have no declared lead, use the first canonical indication in source order; use Unknown only when none is confirmed." },
         "indication": { "type": "string", "minLength": 1 },
         "indication_list": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
@@ -350,6 +354,7 @@
             "Unknown"
           ]
         },
+        "development_stage_source": { "type": "string", "description": "Original researched stage wording, retained for audit and fallback display." },
         "company_country": { "type": "string", "minLength": 1 },
         "sources": {
           "type": "array",

@@ -1,6 +1,7 @@
 import { setupThemeToggle } from './theme.js';
 
 import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
+import { initPageJumpControls } from './page-jump.js?v=20260823-page-jump-1';
 import { getCurrentUser, initAuthUI, openAuthModal, requireAuth } from './auth.js?v=20260802-required-login-1';
 import { expandCompactInputRecord } from './compact-ingestion.js?v=20260806-theme-indication-3';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260805-ingestion-guard-5';
@@ -74,6 +75,8 @@ const elements = {
   detailReviewInfoStack: document.querySelector('#detailReviewInfoStack'),
   detailReviewInfoToggle: document.querySelector('#detailReviewInfoToggle'),
   qualitativeReviewToggle: document.querySelector('#qualitativeReviewToggle'),
+  qualitativeAiGenerateAllButton: document.querySelector('#qualitativeAiGenerateAllButton'),
+  qualitativeCriterionStatusPills: document.querySelector('#qualitativeCriterionStatusPills'),
   detailFilter2Row: document.querySelector('#detailFilter2Row'),
   detailActionDate: document.querySelector('#detailActionDate'),
   detailActionOwner: document.querySelector('#detailActionOwner'),
@@ -100,9 +103,22 @@ const elements = {
   detailOiMaterialFlags: document.querySelector('#detailOiMaterialFlags'),
   detailOiMaterialButtons: document.querySelectorAll('.oi-material-toggle[data-material-key]'),
   detailCollaborationStatus: document.querySelector('#detailCollaborationStatus'),
+  collaborationScroll: document.querySelector('.collaboration-scroll'),
   detailCommentCount: document.querySelector('#detailCommentCount'),
   detailCommentThread: document.querySelector('#detailCommentThread'),
+  detailCommentsToggle: document.querySelector('#detailCommentsToggle'),
   detailContactHistoryThread: document.querySelector('#detailContactHistoryThread'),
+  detailContactHistoryToggle: document.querySelector('#detailContactHistoryToggle'),
+  detailContactHistoryUploadButton: document.querySelector('#detailContactHistoryUploadButton'),
+  detailContactHistoryAttachmentInput: document.querySelector('#detailContactHistoryAttachmentInput'),
+  detailContactHistoryAttachmentStatus: document.querySelector('#detailContactHistoryAttachmentStatus'),
+  detailContactHistoryFilesList: document.querySelector('#detailContactHistoryFilesList'),
+  detailContactHistoryFileCount: document.querySelector('#detailContactHistoryFileCount'),
+  detailDDReportUploadButton: document.querySelector('#detailDDReportUploadButton'),
+  detailDDReportAttachmentInput: document.querySelector('#detailDDReportAttachmentInput'),
+  detailDDReportAttachmentStatus: document.querySelector('#detailDDReportAttachmentStatus'),
+  detailDDReportFilesList: document.querySelector('#detailDDReportFilesList'),
+  detailDDReportFileCount: document.querySelector('#detailDDReportFileCount'),
   detailCommentForm: document.querySelector('#detailCommentForm'),
   detailContactHistoryForm: document.querySelector('#detailContactHistoryForm'),
   detailCommentIdentity: document.querySelector('#detailCommentIdentity'),
@@ -125,6 +141,7 @@ const elements = {
   detailAttachmentCount: document.querySelector('#detailAttachmentCount'),
   detailAttachmentsList: document.querySelector('#detailAttachmentsList'),
   detailAttachmentAiScope: document.querySelector('#detailAttachmentAiScope'),
+  detailPartnerMaterialPermissionNote: document.querySelector('#detailPartnerMaterialPermissionNote'),
   detailAttachmentStatus: document.querySelector('#detailAttachmentStatus'),
   attachmentUploadModal: document.querySelector('#attachmentUploadModal'),
   attachmentUploadModalTitle: document.querySelector('#attachmentUploadModalTitle'),
@@ -855,7 +872,8 @@ function collaborationComments(record) {
 
 function contactHistoryComments(record) {
   const comments = record?.meta?.collaboration?.comments;
-  return Array.isArray(comments) ? comments.filter((comment) => comment && comment.id && comment.category === 'contact_history') : [];
+  // Attachment-linked posts render in the dedicated files list above the thread instead.
+  return Array.isArray(comments) ? comments.filter((comment) => comment && comment.id && comment.category === 'contact_history' && !comment.attachment_id) : [];
 }
 
 let activeCommentEditId = null;
@@ -878,31 +896,48 @@ function formatCommentTime(value) {
   }).format(date);
 }
 
-function renderCommentNode(comment, childrenByParent, depth = 0, visited = new Set()) {
+function renderCommentNode(comment, childrenByParent, depth = 0, visited = new Set(), defaultBreadcrumb = 'Tab 2 · Full Scout · Comments') {
   if (visited.has(comment.id) || depth > 8) return '';
   const nextVisited = new Set(visited);
   nextVisited.add(comment.id);
   const replies = childrenByParent.get(comment.id) || [];
+  const attachmentId = comment.attachment_id ? String(comment.attachment_id) : '';
   const body = escapeHtml(comment.body || '').replaceAll('\n', '<br>');
-  const isOwnComment = !comment.system_import && currentUserOwnsComment(comment);
-  const canDelete = isOwnComment || Boolean(getCurrentUser()?.is_admin && comment.system_import === true);
+  const isOwnAuthor = !comment.system_import && currentUserOwnsComment(comment);
+  const isOwnComment = isOwnAuthor && !attachmentId;
+  const canDelete = isOwnAuthor || Boolean(getCurrentUser()?.is_admin && comment.system_import === true);
   const canDeleteImported = canDelete;
   const isEditing = activeCommentEditId === String(comment.id);
+  const breadcrumb = comment.label || defaultBreadcrumb;
+  const attachmentChip = attachmentId
+    ? `<button type="button" class="comment-attachment-chip" data-comment-attachment-id="${escapeHtml(attachmentId)}" title="미리보기">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"></path><path d="M14 3v4h4"></path></svg>
+        <span>${escapeHtml(comment.body || '첨부파일')}</span>
+      </button>`
+    : '';
+  const bodyMarkup = isEditing
+    ? `<form class="comment-inline-edit-form" data-comment-edit-form data-comment-id="${escapeHtml(comment.id)}"><textarea rows="3" maxlength="5000" aria-label="코멘트 수정">${escapeHtml(comment.body || '')}</textarea><div><button type="button" data-comment-edit-cancel>취소</button><button type="submit" class="is-primary">저장</button></div></form>`
+    : attachmentId
+      ? attachmentChip
+      : `<p>${body}</p>`;
   return `
     <article class="comment-card ${depth ? 'is-reply' : ''}${isOwnComment ? ' is-editable' : ''}" data-comment-id="${escapeHtml(comment.id)}"${isOwnComment ? ' data-comment-edit title="두 번 클릭하여 수정"' : ''}>
       <div class="comment-meta">
-        <strong>${escapeHtml(comment.author || '익명')}</strong>
+        <span class="comment-meta-identity">
+          <span class="comment-source-label">${escapeHtml(breadcrumb)}</span>
+          <strong>${escapeHtml(comment.author || '익명')}</strong>
+        </span>
         <time datetime="${escapeHtml(comment.created_at || '')}">${escapeHtml(formatCommentTime(comment.created_at))}</time>
       </div>
-      ${isEditing ? `<form class="comment-inline-edit-form" data-comment-edit-form data-comment-id="${escapeHtml(comment.id)}"><textarea rows="3" maxlength="5000" aria-label="코멘트 수정">${escapeHtml(comment.body || '')}</textarea><div><button type="button" data-comment-edit-cancel>취소</button><button type="submit" class="is-primary">저장</button></div></form>` : `<p>${body}</p>`}
-      <button
+      ${bodyMarkup}
+      ${attachmentId ? '' : `<button
         type="button"
         class="comment-reply-button"
         data-reply-comment-id="${escapeHtml(comment.id)}"
         data-reply-author="${escapeHtml(comment.author || '익명')}"
-      >답글</button>
+      >답글</button>`}
       ${canDeleteImported ? `<button type="button" class="comment-delete-button" data-delete-comment-id="${escapeHtml(comment.id)}" aria-label="이관 코멘트 삭제" title="이관 코멘트 삭제">×</button>` : ''}
-      ${replies.length ? `<div class="comment-replies">${replies.map((reply) => renderCommentNode(reply, childrenByParent, depth + 1, nextVisited)).join('')}</div>` : ''}
+      ${replies.length ? `<div class="comment-replies">${replies.map((reply) => renderCommentNode(reply, childrenByParent, depth + 1, nextVisited, defaultBreadcrumb)).join('')}</div>` : ''}
     </article>
   `;
 }
@@ -1082,7 +1117,7 @@ function renderContactHistoryThread(record) {
   }
   const emptyChildren = new Map();
   elements.detailContactHistoryThread.innerHTML = comments
-    .map((comment) => renderCommentNode(comment, emptyChildren))
+    .map((comment) => renderCommentNode(comment, emptyChildren, 0, undefined, 'Tab 2 · Full Scout · Contact History'))
     .join('');
 }
 
@@ -1248,10 +1283,23 @@ function fileWithPartnerMaterialSuffix(file, category) {
 }
 
 function choosePartnerMaterialUpload(category) {
+  if (!getCurrentUser()?.is_admin) {
+    setAttachmentStatus('Partner Materials 업로드는 관리자만 가능합니다.', 'error');
+    return;
+  }
   if (!partnerMaterialLabels[category] || !elements.detailAttachmentInput) return;
   pendingPartnerMaterialUploadCategory = category;
   elements.detailAttachmentInput.value = '';
   elements.detailAttachmentInput.click();
+}
+
+function renderPartnerMaterialPermissions() {
+  const canManage = Boolean(getCurrentUser()?.is_admin);
+  if (elements.detailAttachmentDropzone) elements.detailAttachmentDropzone.hidden = !canManage;
+  if (elements.detailAttachmentAddButton) elements.detailAttachmentAddButton.hidden = !canManage;
+  if (elements.detailPartnerMaterialPermissionNote) elements.detailPartnerMaterialPermissionNote.hidden = canManage;
+  if (elements.detailDDReportUploadButton) elements.detailDDReportUploadButton.hidden = !canManage;
+  return canManage;
 }
 
 function setReviewInfoExpanded(expanded) {
@@ -1289,10 +1337,12 @@ function renderCollaborationPanel(record) {
       ariaLabel: 'Stationary 보류 모니터링 상태 · 클릭하여 Shortlisting에서 제거'
     }
   }[trackingStatus];
-  const attachments = Array.isArray(record?.meta?.attachments) ? record.meta.attachments : [];
+  const attachments = (Array.isArray(record?.meta?.attachments) ? record.meta.attachments : [])
+    .filter((attachment) => attachment?.source !== 'contact_history');
   const statusIsHuman = hasManualReviewField(record, 'filter_status');
   const reasonIsHuman = hasManualReviewField(record, 'status_reason');
   const reviewScores = effectiveReviewScores(record);
+  const canManagePartnerMaterials = renderPartnerMaterialPermissions();
   if (elements.detailFocusToggle) {
     elements.detailFocusToggle.dataset.focusAction = trackingCopy.action;
     elements.detailFocusToggle.classList.toggle('add', !tracked);
@@ -1418,17 +1468,20 @@ function renderCollaborationPanel(record) {
     button.dataset.manualActive = String(manualActive);
     button.dataset.hasManualOverride = String(hasManualOverride);
     button.dataset.autoActive = String(autoActive);
-    button.disabled = false;
+    button.disabled = !canManagePartnerMaterials;
+    button.classList.toggle('is-read-only', !canManagePartnerMaterials);
     button.classList.remove('is-saving');
-    button.title = active
-      ? `${label} 자료 보유 · 추가 파일 업로드`
-      : `${label} 파일 업로드`;
+    button.title = canManagePartnerMaterials
+      ? (active ? `${label} 자료 보유 · 추가 파일 업로드` : `${label} 파일 업로드`)
+      : (active ? `${label} 자료 보유 · 관리자만 업로드 가능` : `${label} 자료 없음 · 관리자만 업로드 가능`);
   });
   renderCommentThread(record);
   renderContactHistoryThread(record);
   renderMetaInfoBar(record);
   renderEditHistory(record);
   renderAttachments(record);
+  renderContactHistoryFilesList(record);
+  renderDDReportFilesList(record);
   renderQualitativeReview(record);
 }
 
@@ -1626,6 +1679,12 @@ function setAttachmentStatus(message = '', tone = '') {
   elements.detailAttachmentStatus.dataset.tone = tone;
 }
 
+function setContactHistoryAttachmentStatus(message = '', tone = '') {
+  if (!elements.detailContactHistoryAttachmentStatus) return;
+  elements.detailContactHistoryAttachmentStatus.textContent = message;
+  elements.detailContactHistoryAttachmentStatus.dataset.tone = tone;
+}
+
 function setQualitativeReviewExpanded(expanded) {
   const isExpanded = expanded === true;
   if (elements.qualitativeReviewPanel) elements.qualitativeReviewPanel.hidden = !isExpanded;
@@ -1635,9 +1694,40 @@ function setQualitativeReviewExpanded(expanded) {
   elements.qualitativeReviewToggle.title = isExpanded ? '정성 평가 숨기기' : '정성 평가 표시';
   const label = elements.qualitativeReviewToggle.querySelector('[data-qualitative-toggle-label]');
   if (label) label.textContent = isExpanded ? 'Less' : 'Show';
+  syncCollaborationScrollState();
 }
 
-function openAttachmentUploadOperation(fileName = '') {
+function setCommentsExpanded(expanded) {
+  const isExpanded = expanded === true;
+  if (elements.detailCommentThread) elements.detailCommentThread.hidden = !isExpanded;
+  if (!elements.detailCommentsToggle) return;
+  elements.detailCommentsToggle.setAttribute('aria-expanded', String(isExpanded));
+  elements.detailCommentsToggle.setAttribute('aria-label', isExpanded ? 'Comments 숨기기' : 'Comments 표시');
+  elements.detailCommentsToggle.title = isExpanded ? 'Comments 숨기기' : 'Comments 표시';
+  const label = elements.detailCommentsToggle.querySelector('[data-comments-toggle-label]');
+  if (label) label.textContent = isExpanded ? 'Less' : 'Show';
+  syncCollaborationScrollState();
+}
+
+function setContactHistoryExpanded(expanded) {
+  const isExpanded = expanded === true;
+  if (elements.detailContactHistoryThread) elements.detailContactHistoryThread.hidden = !isExpanded;
+  if (!elements.detailContactHistoryToggle) return;
+  elements.detailContactHistoryToggle.setAttribute('aria-expanded', String(isExpanded));
+  elements.detailContactHistoryToggle.setAttribute('aria-label', isExpanded ? 'Contact History 숨기기' : 'Contact History 표시');
+  elements.detailContactHistoryToggle.title = isExpanded ? 'Contact History 숨기기' : 'Contact History 표시';
+  const label = elements.detailContactHistoryToggle.querySelector('[data-contact-history-toggle-label]');
+  if (label) label.textContent = isExpanded ? 'Less' : 'Show';
+  syncCollaborationScrollState();
+}
+
+function syncCollaborationScrollState() {
+  const hasExpandedSection = [elements.qualitativeReviewToggle, elements.detailCommentsToggle, elements.detailContactHistoryToggle]
+    .some((toggle) => toggle?.getAttribute('aria-expanded') === 'true');
+  elements.collaborationScroll?.classList.toggle('is-scrollable', hasExpandedSection);
+}
+
+function openAttachmentUploadOperation(fileName = '', { aiEvidence = false, evidenceLabel = 'Partner Materials' } = {}) {
   const controller = new AbortController();
   const token = Symbol('attachment-upload');
   activeAttachmentUpload = { token, controller };
@@ -1648,7 +1738,9 @@ function openAttachmentUploadOperation(fileName = '') {
       : '파일을 업로드하고 내용을 확인하고 있습니다.';
   }
   if (elements.attachmentUploadModalStatus) {
-    elements.attachmentUploadModalStatus.textContent = '파일 내용을 확인하고 있습니다.';
+    elements.attachmentUploadModalStatus.textContent = aiEvidence
+      ? `${evidenceLabel}로 등록되며, AI Agent 답변 생성 시 참고 근거로 활용됩니다.`
+      : '파일 내용을 확인하고 있습니다.';
   }
   if (elements.attachmentUploadCancelButton) {
     elements.attachmentUploadCancelButton.disabled = false;
@@ -1694,7 +1786,9 @@ function attachmentProcessingLabel(attachment) {
 
 function renderAttachments(record) {
   if (!elements.detailAttachmentsList) return;
-  const attachments = Array.isArray(record?.meta?.attachments) ? record.meta.attachments : [];
+  const canDelete = Boolean(getCurrentUser()?.is_admin);
+  const attachments = (Array.isArray(record?.meta?.attachments) ? record.meta.attachments : [])
+    .filter((attachment) => attachment?.source !== 'contact_history' && attachment?.partner_material_category !== 'dd_report');
   if (elements.detailAttachmentAiScope) {
     elements.detailAttachmentAiScope.hidden = attachments.length > 0;
   }
@@ -1727,12 +1821,12 @@ function renderAttachments(record) {
             ${escapeHtml(attachment.uploaded_by || '')} · ${escapeHtml(attachmentProcessingLabel(attachment))}
             ${attachment.partner_material_category ? `<span class="attachment-material-pill">${escapeHtml(partnerMaterialLabels[attachment.partner_material_category] || attachment.partner_material_category)}</span>` : ''}
           </span>
-          <button
+          ${canDelete ? `<button
             type="button"
             class="attachment-delete-button"
             data-delete-attachment-id="${escapeHtml(attachment.id)}"
             aria-label="첨부파일 삭제"
-          >×</button>
+          >×</button>` : ''}
         </div>
       `;
       }
@@ -1740,11 +1834,69 @@ function renderAttachments(record) {
     .join('');
 }
 
+function contactHistoryAttachments(record) {
+  const attachments = record?.meta?.attachments;
+  return Array.isArray(attachments) ? attachments.filter((item) => item && item.id && item.source === 'contact_history') : [];
+}
+
+function ddReportAttachments(record) {
+  const attachments = record?.meta?.attachments;
+  return Array.isArray(attachments) ? attachments.filter((item) => item && item.id && item.partner_material_category === 'dd_report') : [];
+}
+
+function renderAttachmentFileList(container, attachments, countBadge) {
+  if (!container) return;
+  const canDelete = Boolean(getCurrentUser()?.is_admin);
+  container.hidden = !attachments.length;
+  if (countBadge) {
+    countBadge.hidden = !attachments.length;
+    countBadge.textContent = String(attachments.length);
+  }
+  container.innerHTML = attachments
+    .map((attachment) => {
+      const activeClass = String(attachment.id) === activeAttachmentId ? ' is-active' : '';
+      return `
+        <div class="attachment-row compact-attachment-row${activeClass}" data-attachment-id="${escapeHtml(attachment.id)}">
+          <button
+            type="button"
+            class="attachment-preview-button"
+            data-preview-attachment-id="${escapeHtml(attachment.id)}"
+            title="${escapeHtml(attachment.filename || 'attachment')}"
+          >
+            <span class="attachment-copy">
+              <strong>${escapeHtml(attachment.filename || 'attachment')}</strong>
+              <small>${escapeHtml(formatFileSize(attachment.size_bytes))} · ${escapeHtml(formatCommentTime(attachment.uploaded_at))}</small>
+            </span>
+          </button>
+          ${canDelete ? `<button
+            type="button"
+            class="attachment-delete-button"
+            data-delete-attachment-id="${escapeHtml(attachment.id)}"
+            aria-label="첨부파일 삭제"
+          >×</button>` : ''}
+        </div>
+      `;
+    })
+    .join('');
+}
+
+function renderContactHistoryFilesList(record) {
+  renderAttachmentFileList(elements.detailContactHistoryFilesList, contactHistoryAttachments(record), elements.detailContactHistoryFileCount);
+}
+
+function renderDDReportFilesList(record) {
+  renderAttachmentFileList(elements.detailDDReportFilesList, ddReportAttachments(record), elements.detailDDReportFileCount);
+}
+
 async function uploadAttachment(file, materialCategory) {
+  if (!getCurrentUser()?.is_admin) {
+    setAttachmentStatus('Partner Materials 업로드는 관리자만 가능합니다.', 'error');
+    return false;
+  }
   if (!file || !currentRecordId) return;
   if (elements.detailAttachmentAddButton) elements.detailAttachmentAddButton.disabled = true;
   setAttachmentStatus('파일 업로드 중…');
-  const operation = openAttachmentUploadOperation(file.name);
+  const operation = openAttachmentUploadOperation(file.name, { aiEvidence: true });
   try {
     const formData = new FormData();
     formData.append('file', file);
@@ -1989,30 +2141,49 @@ function renderQualitativeReview(record) {
   ];
 
   elements.qualitativeReviewPanel.innerHTML = `
-    <div class="qualitative-panel-heading qualitative-panel-inline-actions">
-      <p class="eyebrow">정성 평가</p>
-      <button
-        type="button"
-        class="qualitative-ai-generate-all-button help-tooltip"
-        id="qualitativeAiGenerateAllButton"
-        data-tooltip="전체 AI 생성"
-        aria-label="전체 AI 생성"
-      ><span aria-hidden="true">✨</span></button>
-      <small>담당자가 직접 작성하거나, 'AI 생성' 버튼으로 원문·업로드 자료 기반 1차 초안을 받아 검토·수정할 수 있습니다.</small>
-    </div>
     ${allCriteria.map((criterion) => renderQualitativeCriterionSection(criterion, criteriaState)).join('')}
-    ${renderPipelineMetadata(record)}
     ${renderQualitativeAddCriterionSection()}
   `;
+  renderQualitativeCriterionStatusPills(criteriaState);
 }
 
-function renderQualitativeCriterionSection(criterion, criteriaState) {
+function qualitativeEntriesForCriterion(criterion, criteriaState) {
   const criterionState = criteriaState[criterion.id]
     || (criterion.legacyIds || []).map((id) => criteriaState[id]).find(Boolean)
     || {};
-  const entries = Array.isArray(criterionState.entries)
+  return Array.isArray(criterionState.entries)
     ? criterionState.entries.filter((entry) => entry?.author !== QUALITATIVE_LEGACY_AI_AUTHOR)
     : [];
+}
+
+function renderQualitativeCriterionStatusPills(criteriaState) {
+  elements.qualitativeCriterionStatusPills?.querySelectorAll('[data-qualitative-jump]').forEach((button) => {
+    const criterion = qualitativeReviewCriteria.find((item) => item.id === button.dataset.qualitativeJump);
+    const count = criterion ? qualitativeEntriesForCriterion(criterion, criteriaState).length : 0;
+    const active = count > 0;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', String(active));
+    button.querySelector('b').textContent = count;
+    button.title = active
+      ? `${criterion.label} 의견 ${count}건 · 해당 입력란으로 이동`
+      : `${criterion.label} 의견 입력란으로 이동`;
+  });
+}
+
+function jumpToQualitativeCriterion(criterionId) {
+  setQualitativeReviewExpanded(true);
+  window.requestAnimationFrame(() => {
+    const criterion = elements.qualitativeReviewPanel?.querySelector(`[data-criterion-id="${CSS.escape(criterionId)}"]`);
+    if (!criterion) return;
+    criterion.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    criterion.classList.add('is-navigation-target');
+    window.setTimeout(() => criterion.classList.remove('is-navigation-target'), 1500);
+    window.setTimeout(() => criterion.querySelector('textarea')?.focus({ preventScroll: true }), 260);
+  });
+}
+
+function renderQualitativeCriterionSection(criterion, criteriaState) {
+  const entries = qualitativeEntriesForCriterion(criterion, criteriaState);
   const currentUser = getCurrentUser();
   const entriesHtml = entries.length
     ? entries
@@ -2037,7 +2208,7 @@ function renderQualitativeCriterionSection(criterion, criteriaState) {
           `
         )
         .join('')
-    : '<p class="qualitative-empty">아직 등록된 의견이 없습니다.</p>';
+    : '';
 
   return `
     <section class="qualitative-criterion" data-criterion-id="${escapeHtml(criterion.id)}">
@@ -2066,14 +2237,17 @@ function renderQualitativeCriterionSection(criterion, criteriaState) {
       </header>
       <div class="qualitative-entries">${entriesHtml}</div>
       <form class="qualitative-form" data-criterion-id="${escapeHtml(criterion.id)}">
-        <textarea
-          class="message-composer-textarea"
-          rows="1"
-          maxlength="5000"
-          aria-label="${escapeHtml(criterion.label)} 의견 입력"
-          placeholder="의견을 추가하세요…"
-          required
-        ></textarea>
+        <label class="comment-input-field">
+          <span class="sr-only">${escapeHtml(criterion.label)} 의견 입력</span>
+          <textarea
+            class="message-composer-textarea"
+            rows="1"
+            maxlength="5000"
+            placeholder="의견을 입력해 주세요."
+            required
+          ></textarea>
+          <span class="composer-inline-hint" aria-hidden="true">Enter 전송 · Shift+Enter 줄바꿈</span>
+        </label>
         <button
           class="message-send-button"
           type="submit"
@@ -2758,6 +2932,7 @@ function renderInlineMarkdown(text) {
     .replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, (_, target, label) => renderWikiLink(target, label))
     .replace(/\[\[([^\]]+)\]\]/g, (_, target) => renderWikiLink(target, target))
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
+    .replace(/\[(\d+)\](?!\s*\()/g, '<a class="evidence-inline-reference" href="#evidence-reference-$1" title="Evidence [$1] 위치로 이동">[$1]</a>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>')
     .replace(/`([^`]+)`/g, '<code>$1</code>');
@@ -2779,6 +2954,17 @@ function renderMarkdown(markdown) {
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index].trim();
     if (!line) continue;
+
+    const referenceDefinition = line.match(/^\[(\d+)\]:\s*(https?:\/\/\S+)(?:\s+.*)?$/i);
+    if (referenceDefinition) {
+      blocks.push(`<p id="evidence-reference-${referenceDefinition[1]}" class="evidence-reference-target">${renderInlineMarkdown(line)}</p>`);
+      continue;
+    }
+
+    // Drop standalone markdown horizontal-rule dividers: the report body
+    // already gets visual separation from headings and topic-note panels,
+    // so a literal "---" line just reads as unstyled dashes.
+    if (/^(-{3,}|\*{3,}|_{3,})$/.test(line)) continue;
 
     if (line.startsWith('```')) {
       const language = line.slice(3).trim() || 'code';
@@ -2873,6 +3059,105 @@ async function submitDetailContactHistory() {
   }
 }
 
+async function uploadContactHistoryAttachment(file) {
+  if (!file || !currentRecordId) return;
+  const author = await ensureIdentity();
+  if (!author) return;
+  if (elements.detailContactHistoryUploadButton) elements.detailContactHistoryUploadButton.disabled = true;
+  setContactHistoryAttachmentStatus('회의록 업로드 중…');
+  const operation = openAttachmentUploadOperation(file.name);
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('uploaded_by', author);
+    formData.append('attachment_source', 'contact_history');
+    const uploadResponse = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/attachments`, {
+      method: 'POST',
+      body: formData,
+      signal: operation.signal
+    });
+    const uploadData = await uploadResponse.json().catch(() => ({}));
+    if (!uploadResponse.ok) throw new Error(uploadData.detail || '파일 업로드에 실패했습니다.');
+    currentRecord = uploadData.record;
+
+    const commentResponse = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        author,
+        body: file.name,
+        category: 'contact_history',
+        attachment_id: uploadData.attachment?.id || ''
+      }),
+      signal: operation.signal
+    });
+    const commentData = await commentResponse.json().catch(() => ({}));
+    if (!commentResponse.ok) throw new Error(commentData.detail || 'Contact History 기록에 실패했습니다.');
+    currentRecord = commentData.record;
+
+    setContactHistoryExpanded(true);
+    renderCollaborationPanel(currentRecord);
+    elements.detailContactHistoryThread?.scrollTo({ top: elements.detailContactHistoryThread.scrollHeight, behavior: 'smooth' });
+    setContactHistoryAttachmentStatus(`${file.name}을(를) 추가했습니다.`, 'success');
+  } catch (error) {
+    if (operation.signal.aborted || error?.name === 'AbortError') {
+      setContactHistoryAttachmentStatus(`${file.name} 업로드를 취소했습니다.`);
+      return;
+    }
+    setContactHistoryAttachmentStatus(error.message, 'error');
+  } finally {
+    closeAttachmentUploadOperation(operation.token);
+    if (elements.detailContactHistoryUploadButton) elements.detailContactHistoryUploadButton.disabled = false;
+    if (elements.detailContactHistoryAttachmentInput) elements.detailContactHistoryAttachmentInput.value = '';
+  }
+}
+
+async function uploadDDReportAttachment(file) {
+  if (!getCurrentUser()?.is_admin) {
+    if (elements.detailDDReportAttachmentStatus) elements.detailDDReportAttachmentStatus.textContent = 'DD Report 업로드는 관리자만 가능합니다.';
+    return;
+  }
+  if (!file || !currentRecordId) return;
+  if (elements.detailDDReportUploadButton) elements.detailDDReportUploadButton.disabled = true;
+  if (elements.detailDDReportAttachmentStatus) {
+    elements.detailDDReportAttachmentStatus.textContent = 'DD 리포트 업로드 중…';
+    elements.detailDDReportAttachmentStatus.dataset.tone = '';
+  }
+  const operation = openAttachmentUploadOperation(file.name, { aiEvidence: true, evidenceLabel: 'DD Report' });
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('uploaded_by', getStoredIdentity());
+    formData.append('partner_material_category_value', 'dd_report');
+    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/attachments`, {
+      method: 'POST',
+      body: formData,
+      signal: operation.signal
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '파일 업로드에 실패했습니다.');
+    currentRecord = data.record;
+    renderCollaborationPanel(currentRecord);
+    if (elements.detailDDReportAttachmentStatus) {
+      elements.detailDDReportAttachmentStatus.textContent = `${file.name}을(를) 추가했습니다.`;
+      elements.detailDDReportAttachmentStatus.dataset.tone = 'success';
+    }
+  } catch (error) {
+    if (operation.signal.aborted || error?.name === 'AbortError') {
+      if (elements.detailDDReportAttachmentStatus) elements.detailDDReportAttachmentStatus.textContent = `${file.name} 업로드를 취소했습니다.`;
+      return;
+    }
+    if (elements.detailDDReportAttachmentStatus) {
+      elements.detailDDReportAttachmentStatus.textContent = error.message;
+      elements.detailDDReportAttachmentStatus.dataset.tone = 'error';
+    }
+  } finally {
+    closeAttachmentUploadOperation(operation.token);
+    if (elements.detailDDReportUploadButton) elements.detailDDReportUploadButton.disabled = false;
+    if (elements.detailDDReportAttachmentInput) elements.detailDDReportAttachmentInput.value = '';
+  }
+}
+
 async function saveEditHistoryReason(form) {
   if (!currentRecordId || !currentRecord || !form) return;
   const textarea = form.querySelector('textarea');
@@ -2943,7 +3228,7 @@ function reportTopicDescriptors() {
 
 function currentUserCanManageTopicNote(note) {
   const user = getCurrentUser();
-  return Boolean(user && (user.is_admin || String(note?.author_id || '') === String(user.id || '')));
+  return Boolean(user?.is_admin && String(note?.author_id || '') === String(user.id || ''));
 }
 
 function topicNoteMarkup(note) {
@@ -2967,15 +3252,16 @@ function topicNoteMarkup(note) {
 
 function topicNotePanelMarkup(topic, notes, unmatched = false) {
   const noteStateClass = notes.length ? ' has-notes' : ' is-empty';
+  const canAdd = Boolean(getCurrentUser()?.is_admin);
   return `
     <section class="topic-note-panel${unmatched ? ' is-unmatched' : ''}${noteStateClass}" data-topic-note-panel data-topic-id="${escapeHtml(topic.topicId)}" data-topic-key="${escapeHtml(topic.key)}" data-topic-title="${escapeHtml(topic.title)}">
       <div class="topic-note-panel-heading">
         <strong>${unmatched ? '이전 리포트 미매칭 메모' : 'Topic 메모'}</strong>
         <span>${notes.length}</span>
-        ${unmatched ? '' : '<button type="button" data-topic-note-add>＋ 메모 추가</button>'}
+        ${unmatched || !canAdd ? '' : '<button type="button" data-topic-note-add>＋ 메모 추가</button>'}
       </div>
       <div class="topic-note-list">${notes.map(topicNoteMarkup).join('')}</div>
-      ${unmatched ? '' : `
+      ${unmatched || !canAdd ? '' : `
         <form class="topic-note-form" data-topic-note-form hidden>
           <textarea maxlength="4000" rows="3" placeholder="이 Topic에 대한 정성 의견이나 확인할 내용을 남겨주세요." aria-label="${escapeHtml(topic.title)} Topic 메모"></textarea>
           <div><span data-topic-note-status></span><button type="button" data-topic-note-cancel>취소</button><button type="submit">저장</button></div>
@@ -4344,6 +4630,22 @@ elements.qualitativeReviewToggle?.addEventListener('click', () => {
   setQualitativeReviewExpanded(!expanded);
 });
 
+elements.qualitativeCriterionStatusPills?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-qualitative-jump]');
+  if (!button) return;
+  jumpToQualitativeCriterion(button.dataset.qualitativeJump);
+});
+
+elements.detailCommentsToggle?.addEventListener('click', () => {
+  const expanded = elements.detailCommentsToggle.getAttribute('aria-expanded') === 'true';
+  setCommentsExpanded(!expanded);
+});
+
+elements.detailContactHistoryToggle?.addEventListener('click', () => {
+  const expanded = elements.detailContactHistoryToggle.getAttribute('aria-expanded') === 'true';
+  setContactHistoryExpanded(!expanded);
+});
+
 elements.detailActionDate?.addEventListener('change', (event) => {
   saveDetailActionDate(event.target.value || '');
 });
@@ -4507,6 +4809,11 @@ elements.detailCommentThread?.addEventListener('submit', async (event) => {
 });
 
 elements.detailContactHistoryThread?.addEventListener('click', (event) => {
+  const attachmentChip = event.target.closest('[data-comment-attachment-id]');
+  if (attachmentChip) {
+    showAttachmentPreview(attachmentChip.dataset.commentAttachmentId);
+    return;
+  }
   const deleteButton = event.target.closest('[data-delete-comment-id]');
   if (deleteButton) deleteRecordComment(deleteButton.dataset.deleteCommentId);
   if (event.target.closest('[data-comment-edit-cancel]')) {
@@ -4651,6 +4958,48 @@ if (elements.detailAttachmentDropzone) {
   });
 }
 
+elements.detailContactHistoryAttachmentInput?.addEventListener('change', (event) => {
+  const [file] = event.target.files || [];
+  if (file) uploadContactHistoryAttachment(file);
+});
+
+elements.detailContactHistoryUploadButton?.addEventListener('click', (event) => {
+  event.preventDefault();
+  if (elements.detailContactHistoryAttachmentInput) elements.detailContactHistoryAttachmentInput.value = '';
+  elements.detailContactHistoryAttachmentInput?.click();
+});
+
+elements.detailDDReportAttachmentInput?.addEventListener('change', (event) => {
+  const [file] = event.target.files || [];
+  if (file) uploadDDReportAttachment(file);
+});
+
+elements.detailDDReportUploadButton?.addEventListener('click', (event) => {
+  event.preventDefault();
+  if (elements.detailDDReportAttachmentInput) elements.detailDDReportAttachmentInput.value = '';
+  elements.detailDDReportAttachmentInput?.click();
+});
+
+elements.detailContactHistoryFilesList?.addEventListener('click', (event) => {
+  const previewButton = event.target.closest('[data-preview-attachment-id]');
+  if (previewButton) {
+    showAttachmentPreview(previewButton.dataset.previewAttachmentId);
+    return;
+  }
+  const deleteButton = event.target.closest('[data-delete-attachment-id]');
+  if (deleteButton) deleteAttachment(deleteButton.dataset.deleteAttachmentId);
+});
+
+elements.detailDDReportFilesList?.addEventListener('click', (event) => {
+  const previewButton = event.target.closest('[data-preview-attachment-id]');
+  if (previewButton) {
+    showAttachmentPreview(previewButton.dataset.previewAttachmentId);
+    return;
+  }
+  const deleteButton = event.target.closest('[data-delete-attachment-id]');
+  if (deleteButton) deleteAttachment(deleteButton.dataset.deleteAttachmentId);
+});
+
 elements.qualitativeReviewPanel?.addEventListener('submit', (event) => {
   const form = event.target.closest('.qualitative-form');
   if (form) {
@@ -4677,12 +5026,11 @@ elements.qualitativeReviewPanel?.addEventListener('keydown', (event) => {
   textarea.closest('form')?.requestSubmit();
 });
 
+elements.qualitativeAiGenerateAllButton?.addEventListener('click', () => {
+  generateAllQualitativeAiOpinions(elements.qualitativeAiGenerateAllButton);
+});
+
 elements.qualitativeReviewPanel?.addEventListener('click', (event) => {
-  const aiGenerateAllButton = event.target.closest('#qualitativeAiGenerateAllButton');
-  if (aiGenerateAllButton) {
-    generateAllQualitativeAiOpinions(aiGenerateAllButton);
-    return;
-  }
   const deleteButton = event.target.closest('[data-delete-qualitative-entry-id]');
   if (deleteButton) {
     deleteQualitativeOpinion(deleteButton.dataset.deleteQualitativeEntryId);
@@ -4850,9 +5198,16 @@ floatingAgentController = initFloatingAgent({
   focusTarget: elements.input
 });
 setupThemeToggle();
+initPageJumpControls();
 initAuthUI();
 renderCommentIdentity();
-window.addEventListener('skbp:authchange', renderCommentIdentity);
+window.addEventListener('skbp:authchange', () => {
+  renderCommentIdentity();
+  if (currentRecord) {
+    renderCollaborationPanel(currentRecord);
+    renderSourceReport(currentRecord);
+  }
+});
 
 elements.identityModalSubmit?.addEventListener('click', () => {
   const value = elements.identityModalInput?.value.trim() || '';

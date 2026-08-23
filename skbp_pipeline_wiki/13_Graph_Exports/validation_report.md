@@ -2,12 +2,12 @@
 
 ```json
 {
-  "generated_at": "2026-08-23T00:16:17",
-  "records": 140,
+  "generated_at": "2026-08-23T11:53:27",
+  "records": 139,
   "listing_entries": 657,
   "workflow_pipelines": 742,
-  "nodes": 2142,
-  "edges": 3769,
+  "nodes": 2124,
+  "edges": 3718,
   "warnings": []
 }
 ```

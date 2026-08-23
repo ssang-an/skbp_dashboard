@@ -22,18 +22,18 @@ confidence: "medium"
 |---|---|
 | Company | Eli Lilly |
 | Asset | Kisunla (donanemab) |
-| Target / MoA | Amyloid plaque / pyroglutamate amyloid-beta |
+| Target / MoA | Anti-amyloid-beta antibody |
 | Modality | Antibody |
-| Stage | Approved |
+| Stage | Approved / marketed |
 | Similarity level | Low |
 
 ## Why It Matters
 
-Second approved anti-amyloid DMT that raises the clinical and commercial entry bar.
+Second approved anti-amyloid benchmark increases competition and defines clinical efficacy/safety expectations.
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__VTA-27|VTA-27]]: Second approved anti-amyloid DMT that raises the clinical and commercial entry bar.
+- [[02_Assets/Asset__VTA-27|VTA-27]]: Second approved anti-amyloid benchmark increases competition and defines clinical efficacy/safety expectations.
 
 ## Sources
 

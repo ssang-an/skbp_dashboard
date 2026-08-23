@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T00:16:03"
+generated_at: "2026-08-23T11:53:17"
 record_id: "Hangzhou_Westan_WT-1108_20260621"
 company: "Hangzhou Westan Pharmaceutical Technology Co., Ltd."
 country: "China"
@@ -395,6 +395,26 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
         "field": "collaboration.comments.tab0_listing",
         "previous_value": null,
         "new_value": null
+      },
+      {
+        "id": "1624cf8b95b14aad8ce86fbcb5462e90",
+        "changed_at": "2026-08-23T01:41:03.818547+00:00",
+        "actor_ip": "system",
+        "actor_name": "",
+        "source": "cross_workflow_comment_sync",
+        "field": "collaboration.comments.tab0_listing",
+        "previous_value": null,
+        "new_value": null
+      },
+      {
+        "id": "3d594e601c4a45d9b1e702dbe7f28618",
+        "changed_at": "2026-08-23T02:53:16.747278+00:00",
+        "actor_ip": "system",
+        "actor_name": "",
+        "source": "cross_workflow_comment_sync",
+        "field": "collaboration.comments.tab0_listing",
+        "previous_value": null,
+        "new_value": null
       }
     ],
     "collaboration": {
@@ -402,19 +422,21 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
         {
           "id": "d356645d30b84ce2824307ed724b23ca",
           "parent_id": null,
-          "author": "Team Review",
+          "author": "Team",
           "author_user_id": "",
           "author_email": "",
           "actor_ip": "system",
           "body": "df",
           "created_at": "2026-08-22T09:14:13.020965+00:00",
-          "updated_at": "2026-08-22T14:25:56.587900+00:00",
+          "updated_at": "2026-08-23T02:53:16.747263+00:00",
           "source": "listing_comment_post",
           "import_key": "8f7d7db4d063b90ff0370d7059bab1e74f06e5639b8dc3b4bf9791e6df852bdf",
-          "system_import": true
+          "system_import": true,
+          "label": "Tab 0 · Listing Comment",
+          "category": ""
         }
       ],
-      "updated_at": "2026-08-22T14:25:56.587900+00:00",
+      "updated_at": "2026-08-23T02:53:16.747263+00:00",
       "comment_count": 1
     }
   },

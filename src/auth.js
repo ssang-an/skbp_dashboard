@@ -1,6 +1,54 @@
 let currentUser = null;
 let authReady = null;
 let pendingAuthResolve = null;
+let activityHeartbeatTimer = null;
+let activityLastSentAt = 0;
+let activityLastEngagedAt = 0;
+const ACTIVITY_HEARTBEAT_MS = 60_000;
+const ACTIVITY_ENGAGEMENT_WINDOW_MS = 120_000;
+
+function activityPath() {
+  return `${location.pathname}${location.search}`;
+}
+
+function postAuthActivity(activeSeconds = 0, { keepalive = false } = {}) {
+  if (!currentUser) return;
+  fetch('/api/auth/activity', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: activityPath(), active_seconds: activeSeconds }),
+    keepalive,
+  }).catch(() => {});
+}
+
+function recordEngagement() {
+  activityLastEngagedAt = Date.now();
+}
+
+function sendActiveHeartbeat({ force = false, keepalive = false } = {}) {
+  if (!currentUser || (document.hidden && !force)) return;
+  const now = Date.now();
+  if (!force && now - activityLastEngagedAt > ACTIVITY_ENGAGEMENT_WINDOW_MS) return;
+  const elapsedSeconds = Math.floor((now - activityLastSentAt) / 1000);
+  if (elapsedSeconds < 5) return;
+  activityLastSentAt = now;
+  postAuthActivity(Math.min(elapsedSeconds, 120), { keepalive });
+}
+
+function startActivityTracking() {
+  recordEngagement();
+  activityLastSentAt = Date.now();
+  if (activityHeartbeatTimer) return;
+  ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach((eventName) => {
+    window.addEventListener(eventName, recordEngagement, { passive: true });
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) sendActiveHeartbeat({ force: true });
+    else { recordEngagement(); activityLastSentAt = Date.now(); }
+  });
+  window.addEventListener('pagehide', () => sendActiveHeartbeat({ force: true, keepalive: true }));
+  activityHeartbeatTimer = window.setInterval(() => sendActiveHeartbeat(), ACTIVITY_HEARTBEAT_MS);
+}
 
 function authMarkup() {
   return `
@@ -112,11 +160,8 @@ async function loadCurrentUser() {
     const data = await response.json();
     currentUser = data.authenticated ? data.user : null;
     if (currentUser) {
-      fetch('/api/auth/activity', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: `${location.pathname}${location.search}` }),
-      }).catch(() => {});
+      postAuthActivity();
+      startActivityTracking();
     }
   } catch (_) {
     currentUser = null;
@@ -180,7 +225,8 @@ export function initAuthUI() {
       emitAuthChange();
       form.reset();
       closeAuthModal(currentUser);
-      fetch('/api/auth/activity', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ path: `${location.pathname}${location.search}` }) }).catch(() => {});
+      postAuthActivity();
+      startActivityTracking();
     } catch (error) {
       status.textContent = error.message;
     } finally {

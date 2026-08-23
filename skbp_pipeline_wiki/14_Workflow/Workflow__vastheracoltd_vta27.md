@@ -52,7 +52,6 @@ tags:
 ## Review history
 
 - [[14_Workflow/Review__VASTHERA_Co.,_Ltd._VTA-27|Full Scout · VASTHERA Co., Ltd._VTA-27]]
-- [[14_Workflow/Review__VASTHERA_VTA-27|Full Scout · VASTHERA_VTA-27]]
 
 ## Operating comments
 

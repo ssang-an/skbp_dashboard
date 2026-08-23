@@ -1,5 +1,7 @@
 import { setupThemeToggle } from './theme.js?v=20260802-header-icons-1';
 import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
+import { initPageJumpControls } from './page-jump.js?v=20260823-page-jump-1';
+import { initPipelineHeaderFreeze } from './table-header-freeze.js?v=20260823-1';
 import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260803-personal-group-1';
 import {
   expandCompactInputRecord,
@@ -53,7 +55,7 @@ const DEFAULT_COLUMN_WIDTHS = {
   modality: 84,
   target: 180,
   mainIndication: 120,
-  stage: 70,
+  stage: 94,
   filter1: 64,
   filter2: 72,
   filter3: 72,
@@ -85,7 +87,7 @@ const MIN_COLUMN_WIDTHS = {
   modality: 76,
   target: 170,
   mainIndication: 105,
-  stage: 68,
+  stage: 86,
   filter1: 62,
   filter2: 62,
   filter3: 62,
@@ -118,7 +120,7 @@ const FOCUS_DEFAULT_COLUMN_WIDTHS = {
   modality: 70,
   target: 170,
   mainIndication: 108,
-  stage: 76,
+  stage: 92,
   filter2: 62,
   totalScore: 62,
   filter3: 82,
@@ -137,7 +139,7 @@ const FOCUS_MIN_COLUMN_WIDTHS = {
   modality: 64,
   target: 160,
   mainIndication: 96,
-  stage: 72,
+  stage: 84,
   filter2: 54,
   totalScore: 52,
   filter3: 66,
@@ -271,10 +273,25 @@ const CANONICAL_MODALITIES = [
   'Other',
   'Unknown'
 ];
+const CANONICAL_COUNTRIES = [
+  'China',
+  'Republic of Korea',
+  'Japan',
+  'United States',
+  'Europe/UK',
+  'Taiwan',
+  'Singapore',
+  'Canada',
+  'Australia',
+  'Israel',
+  'Unknown'
+];
 const requestedTableMode = new URLSearchParams(window.location.search).get('tab');
-const initialTableMode = ['triage', 'full', 'focus'].includes(requestedTableMode)
+// With no explicit ?tab=, land on Tab 0 진척 현황.
+const initialViewMode = ['step0', 'triage', 'full', 'focus', 'map'].includes(requestedTableMode)
   ? requestedTableMode
-  : 'full';
+  : 'step0';
+const initialTableMode = ['step0', 'map'].includes(initialViewMode) ? 'full' : initialViewMode;
 const initialSort = initialTableMode === 'triage'
   ? { key: 'targetScore', direction: 'desc' }
   : initialTableMode === 'focus'
@@ -287,9 +304,9 @@ function storedMainColumnWidths() {
     {},
     (value) => value && typeof value === 'object' && !Array.isArray(value)
   );
-  // The Website utility makes the action group wider; reclaim that space from
-  // the formerly over-wide Stage column even for users with an older saved layout.
-  if (Number(widths.stage) > DEFAULT_COLUMN_WIDTHS.stage) {
+  // Guarantee Stage is wide enough to wrap long labels (e.g. "Preclinical unspecified")
+  // onto two lines, even for a narrower width saved under an older, smaller default.
+  if (Number.isFinite(Number(widths.stage)) && Number(widths.stage) < DEFAULT_COLUMN_WIDTHS.stage) {
     widths.stage = DEFAULT_COLUMN_WIDTHS.stage;
   }
   return widths;
@@ -378,6 +395,9 @@ const elements = {
   criteriaDrawerVersionBadge: document.querySelector('#criteriaDrawerVersionBadge'),
   criteriaDrawerSubtitle: document.querySelector('#criteriaDrawerSubtitle'),
   agentContextCount: document.querySelector('#agentContextCount'),
+  agentKnowledgeNodeContext: document.querySelector('#agentKnowledgeNodeContext'),
+  agentKnowledgeNodeLabel: document.querySelector('#agentKnowledgeNodeLabel'),
+  agentSuggestions: document.querySelector('#agentSuggestions'),
   agentMessages: document.querySelector('#agentMessages'),
   agentForm: document.querySelector('#agentForm'),
   agentInput: document.querySelector('#agentInput'),
@@ -447,6 +467,8 @@ const elements = {
   columnSettingsPanel: document.querySelector('#columnSettingsPanel'),
   columnSettingsGrid: document.querySelector('#columnSettingsGrid'),
   pipelineTableTabs: document.querySelectorAll('[data-table-mode]'),
+  knowledgeMapTab: document.querySelector('#knowledgeMapTab'),
+  knowledgeMapPanel: document.querySelector('#knowledgeMapPanel'),
   focusTabCount: document.querySelector('#focusTabCount'),
   pipelineTableHead: document.querySelector('#pipelineTableHead'),
   pipelineHeaderRow: document.querySelector('#pipelineHeaderRow'),
@@ -480,6 +502,11 @@ const elements = {
   dataReuploadCancel: document.querySelector('#dataReuploadCancel'),
   dataReuploadContinue: document.querySelector('#dataReuploadContinue'),
   dataReuploadApply: document.querySelector('#dataReuploadApply'),
+  step0ImportReviewModal: document.querySelector('#step0ImportReviewModal'),
+  step0ImportReviewSummary: document.querySelector('#step0ImportReviewSummary'),
+  step0ImportReviewList: document.querySelector('#step0ImportReviewList'),
+  step0ImportReviewCancel: document.querySelector('#step0ImportReviewCancel'),
+  step0ImportReviewApply: document.querySelector('#step0ImportReviewApply'),
   operationModal: document.querySelector('#operationModal'),
   operationModalTitle: document.querySelector('#operationModalTitle'),
   operationModalMessage: document.querySelector('#operationModalMessage'),
@@ -502,9 +529,10 @@ const elements = {
   step0GuideSteps: document.querySelector('#step0GuideSteps'),
   step0SummaryDashboard: document.querySelector('.step0-summary-dashboard'),
   step0SummaryCards: document.querySelector('#step0SummaryCards'),
-  step0SummaryScopeNote: document.querySelector('#step0SummaryScopeNote'),
   step0SummaryDashboardToggleButton: document.querySelector('#step0SummaryDashboardToggleButton'),
   step0SummaryDashboardToggleLabel: document.querySelector('#step0SummaryDashboardToggleLabel'),
+  step0SummaryScopeNote: document.querySelector('#step0SummaryScopeNote'),
+  step0SummaryRecentUpload: document.querySelector('#step0SummaryRecentUpload'),
   step0WorkflowCardCanvases: document.querySelectorAll('.step0-workflow-card-canvas'),
   step0WorkflowStatColumns: document.querySelectorAll('.step0-stat-column'),
   step0StatPending: document.querySelector('#step0StatPending'),
@@ -552,11 +580,13 @@ let promptCopyFeedbackTimer = null;
 let targetContextTooltip = null;
 let targetContextAnchor = null;
 let step0DragSelection = null;
+let pipelineDragSelection = null;
 let activeStep0MetadataPopover = null;
 let activeStep0LockedEditMode = null;
 let activeStep0LockedRecordId = null;
 let step0WorkflowG6Graphs = [];
 let step0WorkflowG6RenderTimers = [];
+let step0WorkflowG6RetryTimer = null;
 let step0WorkflowG6AnimationFrames = [];
 let step0StatAnimationFrames = [];
 let step0StatAnimationTimers = [];
@@ -566,6 +596,9 @@ const focusSaveQueues = new Map();
 let dataReuploadResolve = null;
 let activeDataReuploadMatches = [];
 let activeDataReuploadDecisions = new Map();
+let step0ImportReviewResolve = null;
+let activeStep0ImportReviewMatches = [];
+let activeStep0ImportReviewDecisions = new Map();
 let activeBlockingOperation = null;
 let activePipelineWebsiteEditor = null;
 let pipelineWebsiteOpenTimer = null;
@@ -748,6 +781,21 @@ function dataUploadRecordRecency(record) {
   return idDate ? Date.parse(`${idDate.slice(0, 4)}-${idDate.slice(4, 6)}-${idDate.slice(6, 8)}`) || 0 : 0;
 }
 
+function parentheticalPipelineAliases(value) {
+  return new Set(String(value || '').normalize('NFKC')
+    .split(/\s*(?:[()\[\]]|\/|\||;|,)\s*/u)
+    .map((part) => normalizedPipelineIdentityText(part))
+    .filter(Boolean));
+}
+
+function hasConfirmedPipelineAliasOverlap(leftIdentity, rightIdentity) {
+  if (leftIdentity.mode !== rightIdentity.mode) return false;
+  const rightAssetAliases = parentheticalPipelineAliases(rightIdentity.asset);
+  const rightCompanyAliases = parentheticalPipelineAliases(rightIdentity.company);
+  return [...parentheticalPipelineAliases(leftIdentity.asset)].some((alias) => rightAssetAliases.has(alias))
+    && [...parentheticalPipelineAliases(leftIdentity.company)].some((alias) => rightCompanyAliases.has(alias));
+}
+
 function findDataReuploadMatches(records) {
   return records.flatMap((incomingRecord, incomingIndex) => {
     const incomingIdentity = dataUploadRecordIdentity(incomingRecord);
@@ -757,7 +805,8 @@ function findDataReuploadMatches(records) {
       .filter((existingRecord) => {
         const existingIdentity = dataUploadRecordIdentity(existingRecord);
         if (existingIdentity.mode !== incomingIdentity.mode || !existingIdentity.normalizedAsset) return false;
-        return comparePipelineAssets(incomingIdentity, existingIdentity);
+        return comparePipelineAssets(incomingIdentity, existingIdentity)
+          || hasConfirmedPipelineAliasOverlap(incomingIdentity, existingIdentity);
       })
       .sort((a, b) => {
         const identityA = dataUploadRecordIdentity(a);
@@ -908,11 +957,16 @@ function renderDataReuploadReviewList() {
                 </div>
                 <div class="data-reupload-candidate-actions">
                   <button type="button" class="identity-modal-submit" data-reupload-action="replace" data-match-key="${escapeHtml(match.decisionKey)}" data-existing-id="${escapeHtml(candidate.id)}">덮어쓰기</button>
-                  <button type="button" class="identity-modal-cancel" data-reupload-action="skip" data-match-key="${escapeHtml(match.decisionKey)}">이번 업로드 제외</button>
+                  <button type="button" class="identity-modal-cancel" data-reupload-action="skip" data-match-key="${escapeHtml(match.decisionKey)}" data-existing-id="${escapeHtml(candidate.id)}">이번 업로드 제외</button>
                 </div>
               </section>
             `;
           }).join('')}
+          ${['replace', 'skip'].includes(decision.action) ? `
+            <div class="step0-import-alias-guidance">
+              <span>기존·변경 Asset/Company 이름을 검색용 메타데이터로 함께 저장할 수 있습니다.</span>
+              <button type="button" class="identity-modal-cancel${decision.preserveAssetAliases ? ' is-active' : ''}" data-reupload-action="preserve-aliases" data-match-key="${escapeHtml(match.decisionKey)}">${decision.preserveAssetAliases ? '유사 Asset / Company 이름 저장됨' : '유사 Asset / Company 이름도 함께 저장'}</button>
+            </div>` : ''}
         </div>
       </article>
     `;
@@ -940,7 +994,8 @@ function reviewedDataReuploadDecisions(defaultAction = 'continue', applyToAll = 
       ...match,
       existingRecordId: decision.existingRecordId || null,
       replaceExisting: action === 'replace',
-      skipIncoming: action === 'skip'
+      skipIncoming: action === 'skip',
+      preserveAssetAliases: decision.preserveAssetAliases === true
     };
   });
 }
@@ -981,6 +1036,98 @@ function openDataReuploadModal(matches) {
 
 async function reviewDataReuploadMatches(matches) {
   return openDataReuploadModal(matches);
+}
+
+function renderStep0ImportReviewList() {
+  if (!elements.step0ImportReviewList) return;
+  elements.step0ImportReviewList.innerHTML = activeStep0ImportReviewMatches.map((match) => {
+    const decision = activeStep0ImportReviewDecisions.get(match.row_index) || { action: 'pending' };
+    const isNew = decision.action === 'new';
+    const isSkipped = decision.action === 'skip';
+    return `
+      <article class="data-reupload-review-card${isNew || isSkipped ? ' is-skipped' : ''}">
+        <header class="data-reupload-review-card-header">
+          <div><strong>${escapeHtml(match.asset || 'Unknown asset')}</strong><span>${escapeHtml(match.company || 'Unknown company')} · ${escapeHtml(match.stage || 'Unknown')}</span></div>
+          <span class="data-reupload-review-state" data-state="${escapeHtml(decision.action)}">${decision.action === 'merge' ? '같은 Pipeline으로 연결' : isNew ? '별도 신규 Pipeline' : isSkipped ? '이번 행 제외' : '선택 필요'}</span>
+        </header>
+        <div class="data-reupload-candidate-stack">
+          ${(match.candidates || []).map((candidate) => {
+            const selected = decision.action === 'merge' && decision.target === candidate.target;
+            const labelsDiffer = String(match.asset || '').trim() !== String(candidate.asset || '').trim()
+              || String(match.company || '').trim() !== String(candidate.company || '').trim();
+            const canChooseRepresentative = selected && candidate.target_type === 'queue' && labelsDiffer;
+            const representative = decision.representative === 'incoming' ? 'incoming' : 'existing';
+            return `
+              <section class="data-reupload-candidate${selected ? ' is-selected' : ''}">
+                <div class="data-reupload-candidate-heading">
+                  <span class="data-reupload-match-badge similar">유사 후보</span>
+                  <span class="data-reupload-company-match">${escapeHtml(candidate.workflow || 'Listing')} · ${escapeHtml(candidate.reason || '유사한 이름')}</span>
+                </div>
+                <div class="data-reupload-comparison-scroll" tabindex="0">
+                  <div class="data-reupload-comparison-grid">
+                    ${renderDataReuploadComparisonColumn('이번 가져오기', match.asset, match.company, match.stage)}
+                    ${renderDataReuploadComparisonColumn('기존 Pipeline', candidate.asset, candidate.company, candidate.workflow)}
+                  </div>
+                </div>
+                <div class="data-reupload-candidate-actions">
+                  <button type="button" class="identity-modal-submit" data-step0-import-review-action="merge" data-row-index="${match.row_index}" data-target="${escapeHtml(candidate.target)}">같은 Pipeline으로 연결</button>
+                </div>
+                ${canChooseRepresentative ? `
+                  <fieldset class="step0-import-representative-choice">
+                    <legend>표에 표시할 대표 이름</legend>
+                    <p>나머지 Listing 정보는 보완 규칙으로 합쳐집니다.</p>
+                    <div>
+                      <button type="button" class="identity-modal-cancel${representative === 'existing' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="existing">기존 대표 표기 유지</button>
+                      <button type="button" class="identity-modal-cancel${representative === 'incoming' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="incoming">새 입력값을 대표 표기로 적용</button>
+                    </div>
+                  </fieldset>` : selected && candidate.target_type === 'record' ? `
+                  <p class="step0-import-alias-guidance">Fast Triage·Full Scout의 공식 Asset·Company 표기는 유지됩니다. 이번 Listing의 이름은 검색용 별칭으로 자동 보존됩니다.</p>` : ''}
+              </section>
+            `;
+          }).join('')}
+          <div class="data-reupload-candidate-actions">
+            <button type="button" class="identity-modal-cancel" data-step0-import-review-action="new" data-row-index="${match.row_index}">별도 신규 Pipeline으로 추가</button>
+            <button type="button" class="identity-modal-cancel" data-step0-import-review-action="skip" data-row-index="${match.row_index}">이번 행 제외</button>
+          </div>
+          ${decision.action === 'merge' ? `
+            <div class="step0-import-alias-guidance">
+              <span>기존·신규 Asset/Company명은 검색·후속 중복 감지용 별칭 메타데이터에 자동 보존됩니다.</span>
+            </div>` : ''}
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function closeStep0ImportReviewModal(decisions = null) {
+  if (elements.step0ImportReviewModal) elements.step0ImportReviewModal.hidden = true;
+  const resolve = step0ImportReviewResolve;
+  step0ImportReviewResolve = null;
+  activeStep0ImportReviewMatches = [];
+  activeStep0ImportReviewDecisions = new Map();
+  if (resolve) resolve(decisions);
+}
+
+function openStep0ImportReviewModal(matches) {
+  if (!elements.step0ImportReviewModal) return Promise.resolve(null);
+  return new Promise((resolve) => {
+    step0ImportReviewResolve = resolve;
+    activeStep0ImportReviewMatches = matches;
+    activeStep0ImportReviewDecisions = new Map();
+    if (elements.step0ImportReviewSummary) {
+      elements.step0ImportReviewSummary.textContent = `${matches.length}개 Listing이 기존 Pipeline과 유사합니다. 선택 전에는 어떤 데이터도 저장되지 않습니다.`;
+    }
+    renderStep0ImportReviewList();
+    elements.step0ImportReviewModal.hidden = false;
+    elements.step0ImportReviewApply?.focus();
+  });
+}
+
+function reviewedStep0ImportDecisions() {
+  return activeStep0ImportReviewMatches.map((match) => {
+    const decision = activeStep0ImportReviewDecisions.get(match.row_index) || { action: 'pending' };
+    return { row_index: match.row_index, action: decision.action, target: decision.target || '', representative: decision.representative === 'incoming' ? 'incoming' : 'existing' };
+  });
 }
 
 function get(record, path, fallback = '') {
@@ -1372,15 +1519,35 @@ function indicationDisplay(row) {
 
 function canonicalCountry(value) {
   const text = String(value || '').trim();
-  const fromDictionary = canonicalFromDictionary('country', text);
-  if (fromDictionary) return fromDictionary;
+  return canonicalCountryValues(text).join(' / ');
+}
 
-  const lowered = normalizeCategoryText(text);
-  if (!text || text === '-' || /^n\/?a$/i.test(text)) return 'Unknown';
-  if (/china|hong kong|prc|mainland/.test(lowered)) return 'China';
-  if (/korea|republic of korea|south korea/.test(lowered)) return 'Republic of Korea';
-  if (/united states|usa|u\.s\.|us\b/.test(lowered)) return 'United States';
-  return text;
+function isExplicitCountryInputPart(value) {
+  return /^(?:china|prc|hong kong|(?:republic of |south )?korea|rok|kor|japan|jp|united states(?: of america)?|usa|u\.?s\.?|europe(?:an union)?|united kingdom|u\.?k\.?|taiwan|tw|singapore|sg|canada|ca|australia|au|israel|il)$/i
+    .test(String(value || '').trim());
+}
+
+function canonicalCountryValues(value) {
+  const text = String(value || '').trim();
+  if (!text || text === '-' || /^n\/?a$/i.test(text)) return ['Unknown'];
+  const entries = orderedDictionaryEntries('country');
+  const commaParts = text.split(',').map((part) => part.trim()).filter(Boolean);
+  // In an address such as "Cambridge, UK", the right-most exact country
+  // component is authoritative. A slash-separated phrase means multiple
+  // explicitly stated operating countries and therefore retains all matches.
+  if (commaParts.length > 1 && !/[\/;&]/.test(text) && !commaParts.every(isExplicitCountryInputPart)) {
+    const rightMost = normalizeCategoryText(commaParts[commaParts.length - 1]);
+    const direct = entries.find((entry) => [entry?.canonical, ...(entry?.synonyms || [])]
+      .some((term) => normalizeCategoryText(term) === rightMost));
+    if (direct?.canonical) return [direct.canonical];
+  }
+  const matches = entries
+    .map((entry, order) => ({ entry, order, index: dictionaryEntryMatchIndex(normalizeCategoryText(text), entry) }))
+    .filter((match) => match.index >= 0)
+    .sort((a, b) => a.index - b.index || a.order - b.order)
+    .map((match) => match.entry.canonical)
+    .filter((country, index, countries) => countries.indexOf(country) === index);
+  return matches.length ? matches.slice(0, 2) : [text];
 }
 
 function countryDisplayLabel(country) {
@@ -1537,6 +1704,36 @@ function canonicalModality(value) {
   if (/antibody|antibody drug conjugate|\badc\b|bispecific/.test(normalized)) return 'Antibody';
   if (/protein biologic|recombinant protein|fusion protein|enzyme replacement/.test(normalized)) return 'Protein biologic';
   return 'Other';
+}
+
+function canonicalModalityTags(value, primary = '') {
+  const text = String(value || '').trim();
+  if (!text || /^(unknown|not known|not available|not disclosed|n\/?a|-)$/i.test(text)) return [];
+  const normalized = normalizeCategoryText(text);
+  const values = (state.categorySynonyms.modality || [])
+    .filter((entry) => dictionaryEntryMatchIndex(normalized, entry) >= 0)
+    .map((entry) => entry.canonical)
+    .filter((value) => value && !['Other', 'Unknown'].includes(value));
+  const patterns = [
+    ['Small molecule', /small[\s-]?molecule|\bsm\b|oral compound|chemical compound/],
+    ['Peptide', /peptide/],
+    ['RNA therapy', /rna|oligonucleotide|antisense|\baso\b|sirna|mirna|mrna/],
+    ['Cell therapy', /car[- ]?t|tcr[- ]?t|cell therapy|cellular therapy|stem cell/],
+    ['Gene therapy', /gene therapy|aav|lentiviral|gene editing|crispr/],
+    ['Antibody', /antibody|antibody drug conjugate|\badc\b|bispecific/],
+    ['Protein biologic', /protein biologic|recombinant protein|fusion protein|enzyme replacement/]
+  ];
+  patterns.forEach(([label, pattern]) => { if (pattern.test(normalized)) values.push(label); });
+  const resolvedPrimary = primary || canonicalModality(text);
+  if (!['Other', 'Unknown'].includes(resolvedPrimary)) values.unshift(resolvedPrimary);
+  return [...new Set(values)];
+}
+
+function canonicalDisplayWithRawFallback(rawValue, canonicalValue, fallbackValues = ['Unknown']) {
+  const raw = String(rawValue || '').trim();
+  if (!raw) return canonicalValue || 'Unknown';
+  if (fallbackValues.includes(canonicalValue) && !/^(?:-|unknown|not known|not available|not disclosed|n\/?a)$/i.test(raw)) return raw;
+  return canonicalValue || raw;
 }
 
 function canonicalTheme(value) {
@@ -2036,6 +2233,9 @@ function recordFilter1Status(record) {
   return { status: '-', reason: '' };
 }
 
+const FILTER1_SORT_RANK = { SELECT: 0, REJECT: 1, UNVERIFIED: 2 };
+const FILTER2_SORT_RANK = { PASS: 0, REVIEW: 1, FAIL: 2 };
+
 function recordFilter2Status(record, computedHardFilter) {
   if (isTriageRecord(record)) {
     return { status: '-', reason: `Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} not run yet` };
@@ -2167,16 +2367,21 @@ function flattenRecord(record, index) {
   return {
     id: recordIdentifier(record, index),
     company: summary.company || table.company || '-',
+    companyAliases: String(get(record, 'meta.pipeline_metadata.company_aliases', '')),
     countryRaw: summary.company_country || table.company_country || '-',
     country: canonicalCountry(summary.company_country || table.company_country || '-'),
     asset: summary.asset_name || table.asset_name || '-',
+    assetAliases: String(get(record, 'meta.pipeline_metadata.asset_aliases', '')),
     target: summary.target || table.target || '-',
     theme,
     cluster: identityUnverified
       ? 'Unknown'
       : canonicalCluster(summary.cluster || get(champion, 'matched_cluster.name', '-'), theme),
-    stageRaw: table.development_stage || '-',
-    stage: canonicalDevelopmentStage(table.development_stage || '-'),
+    stageRaw: table.development_stage_source || table.development_stage || '-',
+    stage: canonicalDisplayWithRawFallback(
+      table.development_stage_source || table.development_stage || '-',
+      canonicalDevelopmentStage(table.development_stage_source || table.development_stage || '-'),
+    ),
     indication: table.indication || '-',
     mainIndicationRaw: table.main_indication || table.primary_indication || summary.main_indication || mainIndicationFrom(table.indication),
     mainIndication: canonicalMainIndication(
@@ -2184,7 +2389,15 @@ function flattenRecord(record, index) {
       table.indication
     ),
     indicationList: canonicalIndicationList(table.indication_list, table.indication, table.main_indication || table.primary_indication || summary.main_indication),
-    modality: canonicalModality(table.modality_platform),
+    modalityRaw: table.modality_source || table.modality_platform || '-',
+    modality: canonicalDisplayWithRawFallback(
+      table.modality_source || table.modality_platform || '-',
+      canonicalModality(table.modality_source || table.modality_platform),
+      ['Other', 'Unknown']
+    ),
+    modalityTags: Array.isArray(table.modality_tags) && table.modality_tags.length
+      ? table.modality_tags
+      : canonicalModalityTags(table.modality_source || table.modality_platform, table.modality_platform),
     targetDescription: String(
       summary.target_description
       || targetCriterion.main_line_summary
@@ -2720,6 +2933,12 @@ function selectedFilterMatches(value, candidate) {
   return !selected.length || selected.includes(candidate);
 }
 
+function selectedCountryFilterMatches(value, candidate) {
+  const selected = selectedFilterValues(value);
+  const countries = canonicalCountryValues(candidate);
+  return !selected.length || selected.some((country) => countries.includes(country));
+}
+
 function cloneFilterValue(value) {
   return Array.isArray(value) ? [...value] : value;
 }
@@ -2744,9 +2963,11 @@ function getVisibleRows(includeQuery = true) {
   const rows = state.rows.filter((row) => {
       const searchable = [
         row.company,
+        row.companyAliases,
         row.country,
         row.countryRaw,
         row.asset,
+        row.assetAliases,
         row.target,
         row.theme,
         row.cluster,
@@ -2765,10 +2986,12 @@ function getVisibleRows(includeQuery = true) {
         searchTerms.every((term) => searchable.includes(term)) &&
         selectedFilterMatches(state.theme, row.theme) &&
         selectedFilterMatches(state.cluster, row.cluster) &&
-        selectedFilterMatches(state.modality, row.modality) &&
+        (selectedFilterValues(state.modality).length === 0 || selectedFilterValues(state.modality).some((value) => (
+          row.modalityTags?.includes(value) || row.modality === value
+        ))) &&
         (selectedFilterValues(state.indication).length === 0 || selectedFilterValues(state.indication).some((value) => row.indicationList.includes(value) || (value === 'Unknown' && !row.indicationList.length))) &&
-        selectedFilterMatches(state.country, row.country) &&
-        selectedFilterMatches(state.stage, canonicalDevelopmentStage(row.stage)) &&
+        selectedCountryFilterMatches(state.country, row.country) &&
+        selectedFilterMatches(state.stage, row.stage) &&
         selectedFilterMatches(state.pass, row[filterKey])
       );
     });
@@ -2779,6 +3002,13 @@ function getVisibleRows(includeQuery = true) {
       const av = a[state.sortKey];
       const bv = b[state.sortKey];
       const direction = state.sortDirection === 'asc' ? 1 : -1;
+
+      if (state.sortKey === 'filter1' || state.sortKey === 'filter2') {
+        const rankMap = state.sortKey === 'filter1' ? FILTER1_SORT_RANK : FILTER2_SORT_RANK;
+        const aRank = rankMap[av] ?? Number.MAX_SAFE_INTEGER;
+        const bRank = rankMap[bv] ?? Number.MAX_SAFE_INTEGER;
+        return (aRank - bRank) * direction;
+      }
 
       if (typeof av === 'number' || typeof bv === 'number') {
         return ((av ?? -Infinity) - (bv ?? -Infinity)) * direction;
@@ -2793,10 +3023,10 @@ function renderFilters() {
   renderSearchTokens();
   const themes = [...new Set(modeRows.map((row) => row.theme).filter(Boolean))].sort();
   const clusters = [...new Set(modeRows.map((row) => row.cluster).filter(Boolean))].sort();
-  const modalities = [...new Set(modeRows.map((row) => row.modality).filter(Boolean))].sort();
-  const countries = [...new Set(modeRows.map((row) => row.country).filter(Boolean))].sort();
+  const modalities = [...new Set(modeRows.flatMap((row) => row.modalityTags?.length ? row.modalityTags : [row.modality]).filter(Boolean))].sort();
+  const countries = [...new Set(modeRows.flatMap((row) => canonicalCountryValues(row.country)).filter(Boolean))].sort();
   const indications = [...new Set(modeRows.flatMap((row) => row.indicationList.length ? row.indicationList : ['Unknown']))].sort();
-  const stages = [...new Set(modeRows.map((row) => canonicalDevelopmentStage(row.stage)).filter(Boolean))]
+  const stages = [...new Set(modeRows.map((row) => row.stage).filter(Boolean))]
     .sort((a, b) => {
       const aIndex = CANONICAL_DEVELOPMENT_STAGES.indexOf(a);
       const bIndex = CANONICAL_DEVELOPMENT_STAGES.indexOf(b);
@@ -2852,6 +3082,7 @@ function renderMultiFilter(element, key, values) {
   const trigger = element.querySelector('.filter-multiselect-trigger');
   const menu = element.querySelector('.filter-multiselect-menu');
   if (!summary || !trigger || !menu) return;
+  const isOpen = element.classList.contains('is-open');
 
   summary.textContent = selected.length === 0
     ? '전체'
@@ -2866,8 +3097,11 @@ function renderMultiFilter(element, key, values) {
     ...options.map((option) => {
       const isSelected = selected.includes(option.value);
       return `<button type="button" class="filter-multiselect-option${isSelected ? ' is-selected' : ''}" data-multi-filter-value="${escapeHtml(option.value)}" role="option" aria-selected="${isSelected}"><span class="filter-multiselect-check" aria-hidden="true">${isSelected ? '✓' : ''}</span><span>${escapeHtml(option.label)}</span></button>`;
-    })
+    }),
+    '<div class="filter-multiselect-menu-actions"><button type="button" class="filter-multiselect-done" data-multi-filter-done>완료</button></div>'
   ].join('');
+  menu.hidden = !isOpen;
+  trigger.setAttribute('aria-expanded', String(isOpen));
 }
 
 const WORKFLOW_COPY = {
@@ -3600,11 +3834,14 @@ function animateWorkflowBars(container, delay = 0) {
   });
 }
 
-function workflowIdentityKey(row) {
+function workflowIdentityKeys(row) {
+  const splitAliases = (value) => String(value || '').split(/[\n,;|]+/).map((item) => item.trim()).filter(Boolean);
+  const companies = [...new Set([row.company, ...splitAliases(row.companyAliases)])];
+  const assets = [...new Set([row.asset, ...splitAliases(row.assetAliases)])];
   const normalize = (value) => String(value || '')
     .toLocaleLowerCase('en')
     .replace(/[^\p{L}\p{N}]+/gu, '');
-  return `${normalize(row.company)}::${normalize(row.asset)}`;
+  return new Set(companies.flatMap((company) => assets.map((asset) => `${normalize(company)}::${normalize(asset)}`)));
 }
 
 function fullScoutTriageAlias(row) {
@@ -3620,11 +3857,14 @@ function fullScoutTriageAlias(row) {
 
 function buildDashboardRows(records) {
   const rows = records.map(flattenRecord);
-  const triageIdentities = new Set(rows.filter((row) => row.isTriage).map(workflowIdentityKey));
+  const fullScoutIdentities = new Set(rows.filter((row) => !row.isTriage).flatMap((row) => [...workflowIdentityKeys(row)]));
+  // Once a Full Scout exists, its shared TR/MoA/Data assessment is the
+  // canonical Fast Triage view as well.  Keep no competing Tab 1 detail row.
+  const triageRows = rows.filter((row) => !row.isTriage || ![...workflowIdentityKeys(row)].some((identity) => fullScoutIdentities.has(identity)));
   const fullScoutAliases = rows
-    .filter((row) => !row.isTriage && !triageIdentities.has(workflowIdentityKey(row)))
+    .filter((row) => !row.isTriage)
     .map(fullScoutTriageAlias);
-  return [...rows, ...fullScoutAliases];
+  return [...triageRows, ...fullScoutAliases];
 }
 
 function modalityDistributionGroup(value) {
@@ -3657,14 +3897,14 @@ function themeDistributionEntries(rows) {
 }
 
 function countryDistributionEntries(rows) {
-  const counts = countBy(rows, (row) => row.country || 'Unknown');
+  const counts = countBy(rows.flatMap((row) => canonicalCountryValues(row.country)), (country) => country || 'Unknown');
   const isOtherCountry = (label) => /^(unknown|n\/?a|others?|-)?$/i.test(String(label).trim());
   const knownCountries = Object.entries(counts)
     .filter(([label]) => !isOtherCountry(label))
     .sort((a, b) => b[1] - a[1])
     .slice(0, 3);
   const visibleTotal = knownCountries.reduce((sum, [, count]) => sum + count, 0);
-  const othersTotal = rows.length - visibleTotal;
+  const othersTotal = Object.values(counts).reduce((sum, count) => sum + count, 0) - visibleTotal;
   if (othersTotal > 0) knownCountries.push(['Others', othersTotal]);
   return knownCountries;
 }
@@ -4538,17 +4778,53 @@ function stageEditSelect(row) {
   const isManual = hasManualTableFieldEdit(row.raw, 'development_stage');
   if (row.isVirtualTriage) return `<span class="table-manual-text" title="Tab 2 Full Scout 결과에서 가져온 값">${escapeHtml(row.stage)}</span>`;
   if (!user?.is_admin) return `<span class="table-manual-text${isManual ? ' is-human' : ''}" title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</span>`;
-  return `<select class="table-edit-select stage-edit${isManual ? ' is-human' : ''}" data-record-id="${escapeHtml(row.id)}" data-edit-kind="stage" data-previous-value="${escapeHtml(row.stage)}" aria-label="${escapeHtml(row.asset)} stage">${CANONICAL_DEVELOPMENT_STAGES.map((stage) => selectOption(stage, row.stage, stage)).join('')}</select>`;
+  return `<span
+    class="table-manual-text${isManual ? ' is-human' : ''} is-editable"
+    data-table-stage-edit
+    data-record-id="${escapeHtml(row.id)}"
+    data-previous-value="${escapeHtml(row.stage)}"
+    role="button"
+    tabindex="0"
+    title="${escapeHtml(row.stageRaw)} (더블클릭하여 Stage 선택)"
+    aria-label="${escapeHtml(row.asset)} stage: double-click to edit"
+  >${escapeHtml(row.stage)}</span>`;
 }
 
 function modalityEditValue(row) {
   const isManual = hasManualTableFieldEdit(row.raw, 'modality_platform');
   const editable = !row.isVirtualTriage && row.modality === 'Unknown' && Boolean(getCurrentUser()?.is_admin);
   const className = `single-line-cell table-manual-text${isManual ? ' is-human' : ''}${editable ? ' is-editable modality-editable' : ''}`;
+  const tags = Array.isArray(row.modalityTags) ? row.modalityTags.filter((tag) => tag && tag !== row.modality) : [];
+  const label = tags.length ? `${row.modality} · Tags: ${tags.join(', ')}` : row.modality;
   const attributes = editable
     ? ` data-table-modality-edit data-record-id="${escapeHtml(row.id)}" data-previous-value="${escapeHtml(row.modality)}" role="button" tabindex="0" aria-label="Double-click to select modality"`
     : '';
-  return `<span class="${className}"${attributes} title="${escapeHtml(editable ? '관리자: 더블클릭하여 Modality 선택' : row.modality)}">${escapeHtml(row.modality)}</span>`;
+  return `<span class="${className}"${attributes} title="${escapeHtml(editable ? '관리자: 더블클릭하여 Modality 선택' : label)}">${escapeHtml(row.modality)}</span>`;
+}
+
+function countryEditValue(row) {
+  const isManual = hasManualTableFieldEdit(row.raw, 'company_country');
+  const editable = !row.isVirtualTriage && Boolean(getCurrentUser()?.is_admin);
+  const value = row.country || 'Unknown';
+  const classes = `table-manual-text country-cell-content${isManual ? ' is-human' : ''}${editable ? ' is-editable' : ''}`;
+  const attributes = editable
+    ? ` data-table-country-edit data-record-id="${escapeHtml(row.id)}" data-previous-value="${escapeHtml(value)}" role="button" tabindex="0" aria-label="Double-click to edit Country"`
+    : '';
+  return `<span class="${classes}"${attributes} title="${escapeHtml(editable ? '관리자: 더블클릭하여 Country 입력' : row.countryRaw || value)}">${countryDisplayMarkup(value)}</span>`;
+}
+
+function focusOfficialFieldValue(row, value, label, { html = '', className = '', title = '' } = {}) {
+  const editable = Boolean(getCurrentUser()?.is_admin);
+  const classes = ['table-manual-text', 'focus-official-field', className, editable ? 'is-research-locked' : '']
+    .filter(Boolean)
+    .join(' ');
+  const attributes = editable
+    ? ` data-focus-official-locked data-record-id="${escapeHtml(row.id)}" role="button" tabindex="0" aria-label="${escapeHtml(label)}: open Full Scout editing guidance"`
+    : '';
+  const tooltip = editable
+    ? `더블클릭하여 Tab 2 · Full Scout에서 ${label} 수정 안내 보기`
+    : (title || value || '');
+  return `<span class="${classes}"${attributes} title="${escapeHtml(tooltip)}">${html || escapeHtml(value || '-')}</span>`;
 }
 
 function tableTextEditValue(row, kind, value, { title = '', strong = false, className = '' } = {}) {
@@ -4746,7 +5022,7 @@ function renderTableLegacy() {
                 <input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} 선택" ${checked} />
               </td>
               <td class="company-cell">${escapeHtml(row.company)}</td>
-              <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${countryDisplayMarkup(row.countryRaw || row.country)}</td>
+              <td class="country-cell">${countryEditValue(row)}</td>
               <td class="asset-cell"><a href="${escapeHtml(recordDetailHref(row, row.isTriage ? 'triage' : 'full'))}"><strong>${escapeHtml(row.asset)}</strong></a></td>
               <td class="target-column-cell">
                 <div class="target-cell">
@@ -4988,8 +5264,9 @@ function countryFlagSvg(country) {
 
 function countryDisplayMarkup(country) {
   const label = String(country || 'Unknown').trim() || 'Unknown';
-  const displayLabel = countryTableCode(label);
-  return `<span class="country-cell-content" aria-label="${escapeHtml(label)}">${countryFlagSvg(label)}<span>${escapeHtml(displayLabel)}</span></span>`;
+  const countries = canonicalCountryValues(label).slice(0, 2);
+  const displayLabel = countryTableCode(countries.join(' / '));
+  return `<span class="country-cell-content" aria-label="${escapeHtml(countries.join(' / '))}">${countryFlagSvg(countries[0])}<span>${escapeHtml(displayLabel)}</span></span>`;
 }
 
 function renderFocusTable() {
@@ -5071,9 +5348,9 @@ function renderFocusTable() {
           <td class="select-col">
             <input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} 선택" ${checked} />
           </td>
-          <td class="company-cell">${escapeHtml(row.company)}</td>
-          <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${countryDisplayMarkup(row.countryRaw || row.country)}</td>
-          <td class="asset-cell"><a href="${escapeHtml(recordDetailHref(row, 'focus'))}"><strong>${escapeHtml(row.asset)}</strong></a></td>
+          <td class="company-cell">${focusOfficialFieldValue(row, row.company, 'Company')}</td>
+          <td class="country-cell">${focusOfficialFieldValue(row, row.countryRaw || row.country, 'Country', { html: countryDisplayMarkup(row.countryRaw || row.country) })}</td>
+          <td class="asset-cell">${focusOfficialFieldValue(row, row.asset, 'Asset', { html: `<strong>${escapeHtml(row.asset)}</strong>` })}</td>
           <td
             class="modality-column-cell"
             tabindex="0"
@@ -5083,7 +5360,7 @@ function renderFocusTable() {
             data-description="${escapeHtml(row.targetDescription)}"
             aria-label="${escapeHtml(`${row.modality}. Theme ${row.theme}. Cluster ${row.cluster}. Description ${row.targetDescription}`)}"
           >
-            <span class="single-line-cell">${escapeHtml(row.modality)}</span>
+            ${focusOfficialFieldValue(row, row.modality, 'Modality', { className: 'single-line-cell' })}
           </td>
           <td
             class="target-column-cell target-context-cell"
@@ -5094,21 +5371,13 @@ function renderFocusTable() {
             data-description="${escapeHtml(row.targetDescription)}"
             aria-label="${escapeHtml(`${row.target}. Theme ${row.theme}. Cluster ${row.cluster}. Description ${row.targetDescription}`)}"
           >
-            <span
-              class="target-single-line${row.target === 'Unknown' && getCurrentUser()?.is_admin ? ' target-unknown-edit' : ''}"
-              ${row.target === 'Unknown' && getCurrentUser()?.is_admin ? `data-unknown-target-edit data-record-id="${escapeHtml(row.id)}" title="관리자: 더블클릭하여 Target 입력"` : ''}
-            >${escapeHtml(row.target)}</span>
+            ${focusOfficialFieldValue(row, row.target, 'Target', { className: 'target-single-line' })}
             <span class="target-context-indicator" aria-hidden="true">i</span>
           </td>
-          <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(indicationDisplay(row))}</td>
-          <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${stageEditSelect(row)}</td>
+          <td class="indication-cell">${focusOfficialFieldValue(row, indicationDisplay(row), 'Main indication', { title: row.indication })}</td>
+          <td class="stage-cell">${focusOfficialFieldValue(row, row.stage, 'Stage', { title: row.stageRaw })}</td>
           <td class="filter-cell">${statusEditSelect(row, 'filter2')}</td>
-          <td class="score-cell total-score-cell">${scoreBadge(
-            row.totalScore,
-            row.maxScore,
-            `Tab2 Total Score: ${row.totalScore ?? '-'}${hasManualTotalScoreOverride(row.raw) ? ' · Human edited' : ''}`,
-            hasManualTotalScoreOverride(row.raw) ? 'is-human' : ''
-          )}</td>
+          <td class="score-cell total-score-cell">${totalScoreEditCircle(row)}</td>
           <td class="focus-status-cell">${partnershipEditSelect(row)}</td>
           <td class="focus-status-cell">${evidenceEditSelect(row, 'inVivoStatus', 'inVivoSource', 'In-vivo efficacy')}</td>
           <td class="focus-status-cell">${evidenceEditSelect(row, 'inVitroStatus', 'inVitroSource', 'In-vitro efficacy')}</td>
@@ -5256,7 +5525,7 @@ function renderTable() {
             >
               <td class="select-col">${row.isVirtualTriage ? '' : `<input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} select" ${checked} />`}</td>
               <td class="company-cell">${tableTextEditValue(row, 'company', row.company)}</td>
-              <td class="country-cell" title="${escapeHtml(row.countryRaw)}">${countryDisplayMarkup(row.countryRaw || row.country)}</td>
+              <td class="country-cell">${countryEditValue(row)}</td>
               <td class="asset-cell">${tableTextEditValue(row, 'asset', row.asset, { strong: true })}</td>
               <td
                 class="modality-column-cell"
@@ -5337,6 +5606,41 @@ function updateSelectionControls(pageRows = null) {
   }
 }
 
+function applyPipelineDragSelection(id) {
+  if (!pipelineDragSelection || !id || pipelineDragSelection.visitedIds.has(id)) return;
+  pipelineDragSelection.visitedIds.add(id);
+  if (pipelineDragSelection.shouldSelect) {
+    state.selectedIds.add(id);
+  } else {
+    state.selectedIds.delete(id);
+  }
+  const checkbox = elements.pipelineTable.querySelector(`.row-select[data-record-id="${CSS.escape(id)}"]`);
+  if (checkbox) {
+    checkbox.checked = pipelineDragSelection.shouldSelect;
+    checkbox.closest('tr')?.classList.toggle('selected-row', pipelineDragSelection.shouldSelect);
+    // A checkbox still fires its native click/change after pointerdown's
+    // preventDefault(), flipping `checked` back before `change` sees it.
+    // Flag this element so the change handler below skips its own
+    // (stale, would-cancel-this-toggle) update for this interaction.
+    checkbox.dataset.pointerHandled = 'true';
+  }
+  updateSelectionControls();
+}
+
+function endPipelineDragSelection() {
+  if (!pipelineDragSelection) return;
+  const visitedIds = pipelineDragSelection.visitedIds;
+  pipelineDragSelection = null;
+  elements.pipelineTable.classList.remove('is-selection-dragging');
+  // Native checkbox click/change events follow pointerup. Keep the guard for
+  // that event sequence, then clear it before the next user interaction.
+  window.setTimeout(() => {
+    elements.pipelineTable.querySelectorAll('.row-select').forEach((checkbox) => {
+      if (visitedIds.has(checkbox.dataset.recordId)) delete checkbox.dataset.pointerHandled;
+    });
+  }, 0);
+}
+
 async function deleteSelectedRecords() {
   const ids = [...state.selectedIds];
   if (!ids.length) return;
@@ -5361,12 +5665,18 @@ async function deleteSelectedRecords() {
   }
 }
 
+function currentDisplayedTabMode() {
+  if (elements.knowledgeMapPanel && !elements.knowledgeMapPanel.hidden) return 'map';
+  if (elements.step0Panel && !elements.step0Panel.hidden) return 'step0';
+  return activeTableMode();
+}
+
 function renderTableTabs() {
   if (elements.focusTabCount) {
     elements.focusTabCount.textContent = String(state.rows.filter((row) => !row.isTriage && row.focusTracked).length);
   }
   elements.pipelineTableTabs?.forEach((tab) => {
-    const isActive = tab.dataset.tableMode === activeTableMode();
+    const isActive = tab.dataset.tableMode === currentDisplayedTabMode();
     tab.classList.toggle('active', isActive);
     tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
     tab.tabIndex = isActive ? 0 : -1;
@@ -5677,13 +5987,17 @@ async function saveManualReviewEdit(select) {
   const recordId = select.dataset.recordId;
   const kind = select.dataset.editKind;
   const previousValue = select.dataset.previousValue;
+  if (kind === 'country' && String(select.value || '').trim() === String(previousValue || '').trim()) {
+    renderTable();
+    return;
+  }
   if (kind === 'total_score' && select.value.trim() === '') {
     select.value = previousValue;
     elements.dataStatus.textContent = 'Total Score는 0~21 정수로 입력해주세요';
     return;
   }
   const value = ['score', 'total_score'].includes(kind) ? Number(select.value) : select.value;
-  if (!recordId || !['status', 'score', 'total_score', 'modality', 'stage', 'target'].includes(kind)) return;
+  if (!recordId || !['status', 'score', 'total_score', 'modality', 'stage', 'country', 'target'].includes(kind)) return;
   const actorName = await ensureDashboardActorName();
   if (!actorName) {
     select.value = previousValue;
@@ -5833,6 +6147,35 @@ function openManualTableModalityEdit(anchor) {
   select.dataset.previousValue = previousValue;
   select.setAttribute('aria-label', 'Modality select');
   select.innerHTML = CANONICAL_MODALITIES.map((value) => selectOption(value, previousValue)).join('');
+  anchor.replaceWith(select);
+  select.focus();
+
+  select.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    select.dataset.cancelled = 'true';
+    renderTable();
+  });
+  select.addEventListener('blur', () => {
+    if (select.classList.contains('is-saving') || select.dataset.cancelled === 'true') return;
+    renderTable();
+  }, { once: true });
+}
+
+function openManualTableStageEdit(anchor) {
+  if (!anchor || !getCurrentUser()?.is_admin || anchor.dataset.editing === 'true') return;
+  const recordId = anchor.dataset.recordId;
+  const previousValue = String(anchor.dataset.previousValue || '').trim();
+  if (!recordId) return;
+
+  anchor.dataset.editing = 'true';
+  const select = document.createElement('select');
+  select.className = 'table-edit-select stage-edit';
+  select.dataset.recordId = recordId;
+  select.dataset.editKind = 'stage';
+  select.dataset.previousValue = previousValue;
+  select.setAttribute('aria-label', 'Stage select');
+  select.innerHTML = CANONICAL_DEVELOPMENT_STAGES.map((stage) => selectOption(stage, previousValue, stage)).join('');
   anchor.replaceWith(select);
   select.focus();
 
@@ -6100,6 +6443,8 @@ function saveFocusManagement(recordId, payload, control = null) {
 }
 
 let floatingAgentController = null;
+let activeKnowledgeMapNodeContext = null;
+const defaultAgentSuggestionsMarkup = document.querySelector('#agentSuggestions')?.innerHTML || '';
 
 const CRITERIA_DRAWER_SCOPE_LABELS = {
   triage: 'TAB 1 · FAST TRIAGE · SCORING GUIDE',
@@ -7513,8 +7858,13 @@ function validateInputMarketability(criterion, recordPath, issues, { requireComp
 function normalizeExpandedInputFilterFields(record) {
   if (!isInputObject(record?.structured_table)) return record;
   const table = record.structured_table;
-  table.modality_platform = canonicalModality(table.modality_platform);
-  table.development_stage = canonicalDevelopmentStage(table.development_stage);
+  const rawModality = String(table.modality_source || table.modality_platform || '').trim();
+  const rawStage = String(table.development_stage_source || table.development_stage || '').trim();
+  table.modality_source = rawModality;
+  table.modality_platform = canonicalModality(rawModality);
+  table.modality_tags = canonicalModalityTags(rawModality, table.modality_platform);
+  table.development_stage_source = rawStage;
+  table.development_stage = canonicalDevelopmentStage(rawStage);
   table.company_country = canonicalCountry(table.company_country);
   const canonicalIndication = canonicalMainIndication(table.main_indication, table.indication);
   const indicationVocabulary = new Set([
@@ -8502,7 +8852,16 @@ async function saveStructuredJsonInput() {
   const recordsToSave = validation.records
     .map((record, inputIndex) => ({ record, inputIndex }))
     .filter(({ inputIndex }) => !skippedIncomingIndexes.has(inputIndex));
-  if (!recordsToSave.length) {
+  const preservedAliases = validation.reuploadDecisions
+    .filter((decision) => decision.skipIncoming && decision.preserveAssetAliases && decision.existingRecordId)
+    .map((decision) => ({
+      existing_record_id: decision.existingRecordId,
+      asset: decision.asset || '',
+      company: decision.company || '',
+      preserve_asset_aliases: true
+    }));
+  const hasSkippedReupload = validation.reuploadDecisions.some((decision) => decision.skipIncoming);
+  if (!recordsToSave.length && !preservedAliases.length) {
     elements.saveJsonButton.disabled = true;
     setDataUploadStatus('review-needed');
     return;
@@ -8533,8 +8892,10 @@ async function saveStructuredJsonInput() {
       .filter((decision) => decision.replaceExisting && !skippedIncomingIndexes.has(decision.incomingIndex))
       .map((decision) => ({
         incoming_record_id: decision.incomingRecordId,
-        existing_record_id: decision.existingRecordId
-      }))
+        existing_record_id: decision.existingRecordId,
+        preserve_asset_aliases: decision.preserveAssetAliases === true
+      })),
+    preserved_aliases: preservedAliases
   };
 
   elements.saveJsonButton.disabled = true;
@@ -8543,7 +8904,16 @@ async function saveStructuredJsonInput() {
     const result = await runBlockingOperation({
       title: '파이프라인을 저장하고 있습니다',
       message: '업로드한 리포트와 구조화 데이터를 저장하고 대시보드를 갱신합니다.',
-      status: '저장이 완료될 때까지 잠시만 기다려 주세요.'
+      status: '저장이 완료될 때까지 잠시만 기다려 주세요.',
+      ...(payload.confirmed_replacements.length ? {
+        title: '기존 Pipeline을 덮어쓰고 있습니다',
+        message: '웹 서칭 조사 내용을 최신 내용으로 덮어쓰기하는 중입니다.',
+        status: '기존에 업로드된 파일과 Comments·Contact History 기록은 그대로 유지됩니다. Tab 0의 Comment·Contact History는 Full Scout가 있으면 Tab 2, 없으면 Tab 1에 추가됩니다.'
+      } : hasSkippedReupload ? {
+        title: '기존 Pipeline을 유지하고 있습니다',
+        message: '이번 조사 결과는 저장하지 않고, 선택한 기존 Pipeline을 유지합니다.',
+        status: `${payload.preserved_aliases.length ? '유사 Asset·Company 이름은 검색용 메타데이터로 저장됩니다. ' : ''}Tab 0의 Comment·Contact History는 Full Scout가 있으면 Tab 2, 없으면 Tab 1에 추가됩니다.`
+      } : {})
     }, async (signal) => {
       const response = await fetch(API_URL, {
         method: 'POST',
@@ -9039,7 +9409,7 @@ Triage status rule:
 
 Controlled vocabulary:
 - For an identity-verified asset, use Unknown when country, development stage, modality, main indication, target, or another factual field cannot be established. UNVERIFIED is reserved for failure of asset identity itself.
-- company_country must use exactly one canonical value such as China, Republic of Korea, Japan, United States, Europe/UK, Taiwan, Singapore, Canada, Australia, Israel, or Unknown. Use the assessed company's primary legal domicile/headquarters; for example, "China / United States operations" -> China. Keep secondary offices and operating regions in Markdown notes, not company_country.
+- company_country may contain up to two explicitly stated canonical countries, separated by ` / `. For example, "China / United States operations" -> "China / United States". If no canonical country can be identified, retain the original wording rather than replacing it with Unknown.
 ${SHARED_CANONICAL_STAGE_RULE}
 ${SHARED_CANONICAL_MODALITY_RULE}
 ${SHARED_CANONICAL_INDICATION_RULE}
@@ -9329,7 +9699,7 @@ Controlled vocabulary for dashboard filters:
 - Use canonical values for filter-facing fields so the dashboard can group comparable assets.
 - For an identity-verified asset, use Unknown (never N/A) when country, development stage, modality, main indication, target, or another factual field cannot be established from public sources.
 ${SHARED_CANONICAL_THEME_RULE}
-- json_summary.company_country and structured_table.company_country must use a single canonical country/region label based on the assessed company's primary legal domicile/headquarters. Examples: China, Republic of Korea, United States, Japan, Europe/UK. For example, "China / United States operations" -> China. Do not write combined labels in these fields; put secondary offices and operating-region nuance in headquarters, company_profile.notes, or validation.uncertain_points.
+- json_summary.company_country and structured_table.company_country may retain up to two explicitly stated canonical countries/regions, separated by ` / `. Examples: China, Republic of Korea, United States, Japan, Europe/UK; "China / United States operations" -> "China / United States". Preserve unrecognized country wording rather than replacing it with Unknown.
 ${SHARED_CANONICAL_INDICATION_RULE}
 - structured_table.development_stage must follow the Canonical Development Stage rule above. Put exact raw wording, trial status, indication-specific stage, and future milestone timing in source evidence, notes, or validation.uncertain_points.
 - Map clinical synonyms conservatively: P1/Ph1/Phase I/FIH -> Phase 1 and P2/Ph2/Phase II -> Phase 2 only when the phase is current or started. A future plan must not be promoted to current stage.
@@ -9343,8 +9713,6 @@ Use this exact report structure inside the Markdown portion of the single combin
  Briefly state that this report was researched and scored with GPT instruction 2 — Full Scout v3.4 (schema v3.2), and that URLs are included for auditability.
 
 중요: 한 문장으로 filter/recommendation rationale을 먼저 씁니다. 예: 공개 자료상 active asset명·compound code·임상 단계가 명확히 확인되지 않아 stage/ownership은 uncertain / REVIEW로 처리합니다.
-
----
 
 ## 1) Company Profile
 
@@ -9360,8 +9728,6 @@ Use this exact report structure inside the Markdown portion of the single combin
 | Platform summary |  | platform page / publication |
 | Financing / partnership signals |  | press release / investor news |
 | Lead pipeline summary |  | official pipeline page |
-
----
 
 ## 2) Pipeline Snapshot
 
@@ -9389,8 +9755,6 @@ Allowed clusters:
 - Neuroimmune: CNS 손상 면역반응, 교세포 향상성, Cytokine 신경조절, 손상/질환 면역조절, 말초 면역기관 연결
 - Protein Homeostasis: Unknown (no approved sub-cluster taxonomy yet)
 
----
-
 ## 3) Scorecard Summary
 
 | Criterion | Score (maximum 3 points each) | One-line judgment | Evidence used |
@@ -9403,8 +9767,6 @@ Allowed clusters:
 | Data Maturity | [single score]점 |  | URL/source |
 | Marketability | [single score]점 | State method, score basis, and assessed global peak sales | URL/source |
 | **Total** | **[total]점** | Maximum total: 21점 |  |
-
----
 
 ## 4) Criterion Detail Pages
 
@@ -9547,8 +9909,6 @@ Investigation note:
 - When both methods exist, use calculation as the primary score basis and external forecast as a cross-check.
 - All sales outputs must be in million USD.
 
----
-
 ## 5) Validation Notes
 
 Cross-checked facts:
@@ -9567,8 +9927,6 @@ Search log:
 - Market / epidemiology sources:
 - Financing / partnership sources:
 
----
-
 ## 6) Final Take
 
 One-line summary:
@@ -9577,8 +9935,6 @@ Recommendation:
 - Shortlist / Watch / Deprioritize
 
 Most important diligence question:
-
----
 
 ## References
 
@@ -9946,21 +10302,30 @@ function setPromptCopyFeedback(kind = 'full') {
 
 const STEP0_GUIDE_STEPS = [
   {
-    title: '표의 각 칸에 Listing 정보를 입력',
-    body: 'Company와 Asset은 필수입니다. Country · Modality · Target · Main indication · Stage · Comment · Contact는 선택 입력이며, 아래 표의 첫 칸에서 Excel 열을 그대로 붙여넣을 수 있습니다. Contact는 O·날짜·연락 메모를 입력하면 체크되며, X·-·빈칸은 연락 이력 없음으로 표시됩니다.',
-    example: 'AddPharma\tKR\tAD-302\tSmall molecule\tTarget X\tALS\tPreclinical\tBD 검토 필요\t8/20 담당자 연락'
+    title: 'Listing input 관련 정보 Collect',
+    body: 'Company와 Asset은 필수입니다. 그 외 추가 정보가 있다면 엑셀 표에 정리해 주세요.',
+    example: 'AddPharma\tKR\tAD-302\tSmall molecule\tTarget X\tALS\tPreclinical\tBD 검토 필요\t8/20 담당자 연락',
+    afterExample: 'Contact의 경우 O, 날짜가 있을 경우 체크되며, X·-·빈칸은 연락 이력 없음으로 표시됩니다.'
   },
   {
-    title: 'Excel처럼 여러 행·열을 한 번에 붙여넣기',
-    body: '행과 열의 순서가 Company · Country · Asset · Modality · Target · Main indication · Stage · Comment · Contact와 같으면 각 셀로 바로 나뉩니다. 필요한 행은 + 행 추가로 더 만들 수 있습니다.'
+    title: 'Listing Input 관련 Excel 정보 여러 행·열을 한 번에 붙여넣기',
+    intro: '엑셀 표 첫 행은 Listing input table의 Column Title 내용을 포함해 주세요. (예: Company, Country, Asset, Modality 등)',
+    outro: '엑셀 표 첫 행(Column Title)과 함께 Pipeline list 표 전체를 그대로 복사 붙여넣기 하면, Listing input의 각 셀에 맞는 정보로 매칭됩니다.',
+    excelIllustration: true,
+    headerMappings: [
+      ['Drug Name / Pipeline Code', 'Asset'],
+      ['Geography / Location', 'Country'],
+      ['Company Name', 'Company'],
+      ['Development Stage', 'Stage']
+    ]
   },
   {
     title: '가져오기',
-    body: '새 후보를 Listing에 추가합니다. Tab 0의 보조 정보는 Listing 관리용이며, Fast Triage·Full Scout의 공식 조사 값이나 점수를 변경하지 않습니다.'
+    body: '신규 Pipeline을 Listing 합니다. 가져오는 중 특정 Pipeline이 이미 Fast Triage나 Full Scout가 수행되었다면, 기존 서칭 기록을 유지합니다. Comment·Contact History는 따로 추가됩니다.'
   },
   {
-    title: 'Listing 항목 선택 후 지침 복사',
-    body: 'Listing 중인 파이프라인을 여러 개 선택한 뒤 {{copy}}를 누르세요. 선택한 후보 목록과 입력된 Modality·Target 등의 보조 정보가 Fast Triage 지침 1에 함께 포함됩니다.',
+    title: '조사 대기 항목 GPT 1 Fast Triage 웹서칭 준비',
+    body: '조사 대기중인 파이프라인을 여러 개 선택한 뒤 {{copy}}를 누르세요. 선택한 후보 목록과 입력된 Modality·Target 등의 보조 정보가 Fast Triage 지침 1에 함께 포함됩니다.',
     actions: [
       { token: 'copy', kind: 'copy-instructions', icon: 'clipboard', label: 'GPT 지침 복사' }
     ]
@@ -9970,7 +10335,7 @@ const STEP0_GUIDE_STEPS = [
 const STEP0_GUIDE_STEP_ICONS = ['file-text', 'clipboard', 'save', 'clipboard'];
 
 function step0GuideBodyMarkup(step) {
-  let markup = escapeHtml(step.body || '');
+  let markup = escapeHtml(step.body || '').replaceAll('\n', '<br>');
   (Array.isArray(step.actions) ? step.actions : []).forEach((action) => {
     const token = `{{${action.token}}}`;
     const title = action.kind === 'copy-instructions'
@@ -9988,6 +10353,37 @@ function step0GuideBodyMarkup(step) {
   return markup;
 }
 
+function step0GuideExcelIllustrationMarkup() {
+  return `
+    <div class="step0-guide-excel-illustration" aria-label="Excel 표를 드래그하여 Listing Input에 붙여넣는 예시">
+      <div class="step0-guide-sheet">
+        <span class="step0-guide-sheet-label">Excel</span>
+        <div class="step0-guide-sheet-selection">
+          <div><b>Company</b><b>Asset</b><b>Country</b><b>Modality</b></div>
+          <div><span>Example Bio</span><span>EX-101</span><span>KR</span><span>ASO</span></div>
+          <div><span>Next Pharma</span><span>NP-02</span><span>US</span><span>Small molecule</span></div>
+        </div>
+      </div>
+      <span class="step0-guide-copy-flow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false"><path d="M5 12h12M13 7l5 5-5 5" /></svg>
+        <em>drag · copy · paste</em>
+      </span>
+      <div class="step0-guide-input-preview">
+        <span>Listing Input</span>
+        <i>Company&nbsp;&nbsp;Asset&nbsp;&nbsp;Country&nbsp;&nbsp;Modality</i>
+      </div>
+    </div>
+  `;
+}
+
+function step0GuideHeaderMappingsMarkup(mappings) {
+  if (!Array.isArray(mappings) || !mappings.length) return '';
+  return `<div class="step0-guide-header-mappings" aria-label="Excel header 매핑 예시">
+    <span class="step0-guide-mapping-caption">대표 Header 매핑 예시</span>
+    ${mappings.map(([source, destination]) => `<div><code>${escapeHtml(source)}</code><span aria-hidden="true">→</span><b>${escapeHtml(destination)}</b></div>`).join('')}
+  </div>`;
+}
+
 function renderStep0Guide() {
   if (!elements.step0GuideSteps) return;
   elements.step0GuideSteps.innerHTML = STEP0_GUIDE_STEPS.map((step, index) => `
@@ -9995,8 +10391,11 @@ function renderStep0Guide() {
       <span class="data-upload-step-icon" aria-hidden="true">${dataUploadIconMarkup(STEP0_GUIDE_STEP_ICONS[index] || 'file-text')}</span>
       <div class="data-upload-step-copy">
         <strong>${escapeHtml(step.title)}</strong>
-        <p>${step0GuideBodyMarkup(step)}</p>
+        ${step.excelIllustration
+          ? `<p>${escapeHtml(step.intro || '')}</p>${step0GuideExcelIllustrationMarkup()}<p class="step0-guide-outro">${escapeHtml(step.outro || '')}</p>${step0GuideHeaderMappingsMarkup(step.headerMappings)}`
+          : `<p>${step0GuideBodyMarkup(step)}</p>`}
         ${step.example ? `<pre><span>${dataUploadIconMarkup('code')}입력 형식 예시</span>${escapeHtml(step.example)}</pre>` : ''}
+        ${step.afterExample ? `<p class="step0-guide-example-note">${escapeHtml(step.afterExample)}</p>` : ''}
       </div>
     </li>
   `).join('');
@@ -10017,11 +10416,38 @@ function setStep0SaveStatus(status) {
 }
 
 function showStep0Panel(show) {
-  if (elements.pipelineContent) elements.pipelineContent.style.display = show ? 'none' : '';
+  if (elements.pipelineContent) {
+    elements.pipelineContent.hidden = show;
+    elements.pipelineContent.style.display = show ? 'none' : '';
+  }
   if (elements.step0Panel) {
     elements.step0Panel.hidden = !show;
     elements.step0Panel.style.display = show ? '' : 'none';
   }
+}
+
+function showKnowledgeMapPanel(show) {
+  if (!elements.knowledgeMapPanel) return;
+  elements.knowledgeMapPanel.hidden = !show;
+  elements.knowledgeMapPanel.style.display = show ? '' : 'none';
+}
+
+function activateKnowledgeMapPanel() {
+  showStep0Panel(false);
+  if (elements.pipelineContent) {
+    elements.pipelineContent.hidden = true;
+    elements.pipelineContent.style.display = 'none';
+  }
+  showKnowledgeMapPanel(true);
+  elements.pipelineTableTabs?.forEach((tab) => {
+    tab.classList.remove('active');
+    tab.setAttribute('aria-selected', 'false');
+    tab.tabIndex = -1;
+  });
+  elements.knowledgeMapTab?.classList.add('active');
+  elements.knowledgeMapTab?.setAttribute('aria-selected', 'true');
+  requestAnimationFrame(() => window.restartKnowledgeMapPhysics?.());
+  renderAgentIdentity();
 }
 
 function updateStep0HeaderCount() {
@@ -10029,6 +10455,7 @@ function updateStep0HeaderCount() {
 }
 
 function activateStep0Panel() {
+  showKnowledgeMapPanel(false);
   elements.pipelineTableTabs?.forEach((tab) => {
     const isActive = tab.dataset.tableMode === 'step0';
     tab.classList.toggle('active', isActive);
@@ -10042,9 +10469,9 @@ function activateStep0Panel() {
     // Rebuild the cached graph synchronously after the panel becomes visible.
     // The refresh below only repaints when data actually changed, preventing the
     // previous static graph from flashing before the left-to-right entry motion.
-    renderStep0StatStrip();
     renderStep0FilterControls();
     renderStep0ProgressTable();
+    renderStep0StatStrip();
     renderStep0SelectedCount();
     loadStep0Progress({ renderOnlyWhenChanged: true });
     return;
@@ -10306,12 +10733,32 @@ function step0HeaderField(value) {
   return step0HeaderMatch(value).field;
 }
 
-function showStep0PasteFeedback(message, tone = 'info') {
+function renderStep0PasteFeedback(rows, { summary = '' } = {}) {
   if (!elements.step0PasteFeedback) return;
-  elements.step0PasteFeedback.hidden = !message;
-  elements.step0PasteFeedback.dataset.tone = tone;
-  elements.step0PasteFeedback.textContent = message || '';
-  if (!message) return;
+  if (!rows.length) {
+    elements.step0PasteFeedback.hidden = true;
+    elements.step0PasteFeedback.innerHTML = '';
+    return;
+  }
+  elements.step0PasteFeedback.hidden = false;
+  const hasError = rows.some((row) => row.level === 'error');
+  const hasWarning = rows.some((row) => row.level === 'warning');
+  const badgeClass = hasError ? 'error' : hasWarning ? 'warning' : '';
+  const badgeText = hasError ? '입력 실패' : hasWarning ? '일부 확인 필요' : '입력 완료';
+  elements.step0PasteFeedback.innerHTML = `
+    <div class="input-validation-summary">
+      <span class="input-validation-badge ${badgeClass}">${escapeHtml(badgeText)}</span>
+      ${summary ? `<span>${escapeHtml(summary)}</span>` : ''}
+    </div>
+    <ul class="input-validation-list">
+      ${rows.map((row) => `
+        <li class="${escapeHtml(row.level || '')}">
+          <b>${escapeHtml(row.label || '')}</b>
+          <span>${row.path ? `<strong>${escapeHtml(row.path)}</strong> · ` : ''}${escapeHtml(row.message || '')}</span>
+        </li>
+      `).join('')}
+    </ul>
+  `;
   window.requestAnimationFrame(() => {
     elements.step0PasteFeedback?.scrollIntoView({
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
@@ -10319,6 +10766,16 @@ function showStep0PasteFeedback(message, tone = 'info') {
       inline: 'nearest'
     });
   });
+}
+
+function showStep0PasteFeedback(message, tone = 'info') {
+  if (!message) {
+    renderStep0PasteFeedback([]);
+    return;
+  }
+  const level = tone === 'error' ? 'error' : tone === 'warning' ? 'warning' : 'ok';
+  const label = tone === 'error' ? '오류' : tone === 'warning' ? '경고' : '완료';
+  renderStep0PasteFeedback([{ level, label, message }]);
 }
 
 function parseStep0ClipboardTable(clipboardText) {
@@ -10415,10 +10872,36 @@ function pasteIntoStep0EntryGrid(event) {
     ? [...new Set(headerMapping.targets.filter(Boolean))].map((key) => STEP0_ENTRY_FIELDS.find((field) => field.key === key)?.label).filter(Boolean).join(' · ')
     : STEP0_ENTRY_FIELDS.slice(startColumn, Math.min(STEP0_ENTRY_FIELDS.length, startColumn + Math.max(...dataMatrix.map((cells) => cells.length)))).map((field) => field.label).join(' · ');
   const blankRows = dataMatrix.filter((cells) => cells.every((value) => value === '')).length;
-  const headerNote = firstRowIsHeader
-    ? ` 열 제목 행을 ${headerMapping.recognized}개 열로 매핑했습니다.${headerMapping.ignored ? ` 인식하지 못했거나 중복된 header ${headerMapping.ignored}개는 건너뛰었습니다.` : ''}`
-    : '';
-  showStep0PasteFeedback(`${dataMatrix.length}행 × ${Math.max(...dataMatrix.map((cells) => cells.length))}열을 ${labels}에 입력했습니다.${headerNote}${blankRows ? ` 빈 행 ${blankRows}개도 유지했습니다.` : ''}`, headerMapping.ignored ? 'warning' : 'success');
+  const columnCount = Math.max(...dataMatrix.map((cells) => cells.length));
+  const rows = [
+    {
+      level: 'ok',
+      label: '입력',
+      path: `${dataMatrix.length}행 × ${columnCount}열`,
+      message: `${labels}에 입력했습니다.`
+    },
+    ...(firstRowIsHeader ? [{
+      level: 'ok',
+      label: '매핑',
+      path: '헤더 인식',
+      message: `열 제목 행을 ${headerMapping.recognized}개 열로 매핑했습니다.`
+    }] : []),
+    ...(firstRowIsHeader && headerMapping.ignored ? [{
+      level: 'warning',
+      label: '제외',
+      path: '헤더 건너뜀',
+      message: `인식하지 못했거나 중복된 header ${headerMapping.ignored}개를 건너뛰었습니다.`
+    }] : []),
+    ...(blankRows ? [{
+      level: 'ok',
+      label: '유지',
+      path: '빈 행',
+      message: `빈 행 ${blankRows}개도 유지했습니다.`
+    }] : [])
+  ];
+  renderStep0PasteFeedback(rows, {
+    summary: `${dataMatrix.length}행 · ${columnCount}열 · 필드 ${firstRowIsHeader ? headerMapping.recognized : columnCount}개`
+  });
 }
 
 async function importStep0Candidates() {
@@ -10442,6 +10925,37 @@ async function importStep0Candidates() {
   if (elements.step0ImportButton) elements.step0ImportButton.disabled = true;
   setStep0SaveStatus('validating');
   try {
+    const preview = await runBlockingOperation({
+      title: '가져오기 항목을 확인하고 있습니다',
+      message: '정확한 Pipeline 일치 여부와 유사한 Asset·Company 표기를 먼저 점검합니다.',
+      status: '확인 단계에서는 아직 어떤 Listing도 저장되지 않습니다.'
+    }, async (signal) => {
+      const response = await fetch('/api/candidate-queue/import/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rows }),
+        signal
+      });
+      if (!response.ok) throw new Error(await response.text());
+      return response.json();
+    });
+    if (preview === OPERATION_CANCELLED) {
+      setStep0SaveStatus('waiting');
+      return;
+    }
+    let reviewDecisions = [];
+    if (Array.isArray(preview.review_matches) && preview.review_matches.length) {
+      reviewDecisions = await openStep0ImportReviewModal(preview.review_matches);
+      if (!reviewDecisions) {
+        setStep0SaveStatus('waiting');
+        return;
+      }
+      if (reviewDecisions.some((decision) => decision.action === 'pending')) {
+        showStep0Message('유사한 Pipeline마다 기존 항목 덮어쓰기 또는 별도 신규 Pipeline 추가 중 하나를 선택해 주세요.', 'warning');
+        setStep0SaveStatus('waiting');
+        return;
+      }
+    }
     const result = await runBlockingOperation({
       title: '후보 목록을 가져오고 있습니다',
       message: '붙여 넣은 후보 목록과 내부 Comment/Contact 정보를 확인해 Listing에 반영하고 있습니다.',
@@ -10450,7 +10964,7 @@ async function importStep0Candidates() {
       const response = await fetch('/api/candidate-queue/import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rows }),
+        body: JSON.stringify({ rows, review_decisions: reviewDecisions }),
         signal
       });
       if (!response.ok) throw new Error(await response.text());
@@ -10503,9 +11017,9 @@ async function loadStep0Progress({ renderOnlyWhenChanged = false } = {}) {
     state.step0Loaded = true;
     updateStep0HeaderCount();
     if (renderOnlyWhenChanged && !hasChanged) return;
-    renderStep0StatStrip();
     renderStep0FilterControls();
     renderStep0ProgressTable();
+    renderStep0StatStrip();
     renderStep0SelectedCount();
   } catch (error) {
     // A quiet re-entry refresh must not replace the cached dashboard with an
@@ -10515,21 +11029,6 @@ async function loadStep0Progress({ renderOnlyWhenChanged = false } = {}) {
       elements.step0ProgressTableBody.innerHTML =
         `<tr><td colspan="14" class="step0-empty-state">진척 현황을 불러오지 못했습니다: ${escapeHtml(error.message)}</td></tr>`;
     }
-  }
-}
-
-function step0HasActiveFilters() {
-  return Boolean(
-    String(state.step0Query || '').trim()
-    || (state.step0SearchTokens || []).length
-    || state.step0StatusFilterValues?.size
-    || Object.values(state.step0Filters || {}).some((values) => selectedFilterValues(values).length)
-  );
-}
-
-function applyStep0SummaryFilterTone() {
-  if (elements.step0SummaryScopeNote) {
-    elements.step0SummaryScopeNote.textContent = step0HasActiveFilters() ? '현재 필터 기준' : '전체 Pipeline 기준';
   }
 }
 
@@ -10551,9 +11050,9 @@ function step0FilteredStageStats(rows = step0FilteredSortedRows()) {
     stages.forEach(([statKey, rowKey]) => {
       const cell = row?.[rowKey];
       if (!cell?.done) return;
-      // The Listing card is an operational queue: it counts only candidates
-      // that have not entered either research workflow yet.
-      if (statKey === 'pending' && !step0IsInvestigationPending(row)) return;
+      // The Listing card shows every pipeline currently in the table
+      // (Fast Triage/Full Scout/Shortlisting completion included). Clicking
+      // it still filters down to the "조사 대기" subset separately.
       stats[statKey] += 1;
       if (step0IsRecentCompletion(cell.completed_at)) recent[statKey] += 1;
     });
@@ -10566,33 +11065,63 @@ function renderStep0StatStrip() {
   step0StatAnimationTimers = [];
   step0StatAnimationFrames.forEach((frame) => cancelAnimationFrame(frame));
   step0StatAnimationFrames = [];
+  if (elements.step0SummaryScopeNote) {
+    elements.step0SummaryScopeNote.textContent = step0SummaryColorScopeLabel();
+  }
   const statEntries = [
     ['pending', elements.step0StatPending, elements.step0RecentPending],
     ['fast_triage', elements.step0StatFastTriage, elements.step0RecentFastTriage],
     ['full_scout', elements.step0StatFullScout, elements.step0RecentFullScout],
     ['shortlisted', elements.step0StatShortlisted, elements.step0RecentShortlisted]
   ];
-  const { stats, recent } = step0FilteredStageStats();
-  applyStep0SummaryFilterTone();
+  const filteredRows = step0FilteredSortedRows();
+  const { stats, recent } = step0FilteredStageStats(filteredRows);
+  const recentPipelineCount = filteredRows.filter((row) => [
+    row?.pending,
+    row?.fast_triage,
+    row?.full_scout,
+    row?.shortlisting
+  ].some((cell) => cell?.done && step0IsRecentCompletion(cell.completed_at))).length;
+  if (elements.step0SummaryRecentUpload) {
+    elements.step0SummaryRecentUpload.hidden = recentPipelineCount === 0;
+    elements.step0SummaryRecentUpload.textContent = '▲ 최근 15일간 0 증가';
+    elements.step0SummaryRecentUpload.setAttribute('aria-label', `현재 Tab Filter 기준 최근 15일 신규 Pipeline ${recentPipelineCount}건`);
+    if (recentPipelineCount > 0) {
+      const recentTimer = setTimeout(() => {
+        const startedAt = performance.now();
+        const duration = 1280;
+        const tick = (now) => {
+          const progress = Math.max(0, Math.min(1, (now - startedAt) / duration));
+          const eased = 1 - Math.pow(1 - progress, 3);
+          elements.step0SummaryRecentUpload.textContent = `▲ 최근 15일간 ${Math.round(recentPipelineCount * eased)} 증가`;
+          if (progress < 1) step0StatAnimationFrames.push(requestAnimationFrame(tick));
+        };
+        step0StatAnimationFrames.push(requestAnimationFrame(tick));
+      }, 220);
+      step0StatAnimationTimers.push(recentTimer);
+    }
+  }
   statEntries.forEach(([key, statElement, badge], index) => {
     if (statElement) statElement.textContent = '0';
     if (badge) {
       badge.hidden = true;
-      badge.textContent = '▲ +0';
+      badge.textContent = '▲ 0';
     }
     const total = Math.max(0, Number(stats[key] || 0));
     const recentCount = Math.max(0, Number(recent[key] || 0));
-    const startDelay = index * STEP0_WORKFLOW_STAGE_STAGGER_MS + 80;
+    // Start after this card's first dot wave has entered; the count then grows
+    // alongside the staggered 720ms dot arrival instead of preceding it.
+    const startDelay = index * STEP0_WORKFLOW_STAGE_STAGGER_MS + 220;
     const timer = setTimeout(() => {
       const startedAt = performance.now();
-      const duration = 860;
+      const duration = 1120;
       const tick = (now) => {
         const progress = Math.max(0, Math.min(1, (now - startedAt) / duration));
         const eased = 1 - Math.pow(1 - progress, 3);
         if (statElement) statElement.textContent = String(Math.round(total * eased));
         if (badge && recentCount > 0) {
           badge.hidden = false;
-          badge.textContent = `▲ +${Math.round(recentCount * eased)}`;
+          badge.textContent = `▲ ${Math.round(recentCount * eased)}`;
           badge.setAttribute('aria-label', `최근 15일 신규 업로드 ${recentCount}건`);
         }
         if (progress < 1) step0StatAnimationFrames.push(requestAnimationFrame(tick));
@@ -10610,7 +11139,7 @@ const STEP0_STAGE_LABELS = {
   shortlisting: 'Shortlisting'
 };
 
-function step0StageCellHtml(stage, cell) {
+function step0StageCellHtml(stage, cell, fullScoutCell = null) {
   const done = Boolean(cell?.done);
   const isInvestigationPending = stage === 'pending' && step0IsInvestigationPending(cell?.row);
   const tone = isInvestigationPending ? 'waiting' : done ? 'pass' : 'empty';
@@ -10622,8 +11151,9 @@ function step0StageCellHtml(stage, cell) {
   if (stage === 'pending' || !done || !cell?.record_id) {
     return `<span class="pill ${tone}"${title}>${label}</span>`;
   }
-  const mode = stage === 'fast_triage' ? 'triage' : stage === 'full_scout' ? 'full' : 'focus';
-  const href = recordDetailHref({ id: cell.record_id, isTriage: stage === 'fast_triage' }, mode);
+  const fullScoutRedirect = stage === 'fast_triage' && fullScoutCell?.done && fullScoutCell?.record_id;
+  const mode = fullScoutRedirect ? 'full' : stage === 'fast_triage' ? 'triage' : stage === 'full_scout' ? 'full' : 'focus';
+  const href = recordDetailHref({ id: fullScoutRedirect ? fullScoutCell.record_id : cell.record_id, isTriage: stage === 'fast_triage' && !fullScoutRedirect }, mode);
   return `<a class="pill ${tone}" href="${escapeHtml(href)}"${title}>${label}</a>`;
 }
 
@@ -10639,7 +11169,7 @@ function step0CommentFeed(row) {
       : 'Tab 0 · Listing Comment';
     return [{
       source,
-      author: isBulkImport ? 'Team Review' : author,
+      author: isBulkImport ? 'Team' : author,
       created_at: String(row?.metadata?.comment_updated_at || row?.metadata?.comment_created_at || ''),
       body: fallback
     }];
@@ -10733,26 +11263,102 @@ function step0WebsiteCellHtml(row) {
   </a>`;
 }
 
+function openManualTableCountryEdit(anchor) {
+  if (!anchor || !getCurrentUser()?.is_admin || anchor.dataset.editing === 'true') return;
+  const recordId = anchor.dataset.recordId;
+  const previousValue = String(anchor.dataset.previousValue || '').trim() || 'Unknown';
+  if (!recordId) return;
+
+  anchor.dataset.editing = 'true';
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.maxLength = 250;
+  input.className = 'table-manual-text-input table-edit-select country-edit';
+  input.value = previousValue;
+  input.dataset.recordId = recordId;
+  input.dataset.editKind = 'country';
+  input.dataset.previousValue = previousValue;
+  input.setAttribute('aria-label', 'Country edit');
+  input.title = 'Enter to save. Known countries are canonicalized; unrecognized wording is retained.';
+  anchor.replaceWith(input);
+  input.focus();
+  input.select();
+
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      saveManualReviewEdit(input);
+      return;
+    }
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    input.dataset.cancelled = 'true';
+    renderTable();
+  });
+  input.addEventListener('blur', () => {
+    if (input.classList.contains('is-saving') || input.dataset.cancelled === 'true') return;
+    saveManualReviewEdit(input);
+  }, { once: true });
+}
+
+function isExplicitUnknownListingValue(value) {
+  return /^(?:-|unknown|not known|not available|not disclosed|n\/?a)$/i.test(String(value || '').trim());
+}
+
+function step0CanonicalDisplay(rawValue, canonicalValue, fallbackValues = []) {
+  const raw = String(rawValue || '').trim();
+  if (!raw) return '-';
+  if (fallbackValues.includes(canonicalValue) && !isExplicitUnknownListingValue(raw)) return raw;
+  return canonicalValue || raw;
+}
+
+function canonicalListingCountry(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return 'Unknown';
+  return canonicalCountry(raw);
+}
+
+function step0ListingIndicationValues(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return [];
+  const canonicalValues = canonicalIndicationList([], raw, '');
+  if (!canonicalValues.length) {
+    return [step0CanonicalDisplay(raw, canonicalMainIndication('', raw), ['Unknown'])];
+  }
+  // Preserve an unclassified indication when it shares a Listing cell with a
+  // recognized one (for example, "AD, rare neurodegenerative disease").
+  const rawParts = raw
+    .split(/\s*(?:;|\||,|\band\b)\s*/i)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  const unclassifiedParts = rawParts.filter((part) => (
+    !isExplicitUnknownListingValue(part) && canonicalIndicationMatches(part).length === 0
+  ));
+  return [...canonicalValues, ...unclassifiedParts.filter((part) => !canonicalValues.includes(part))];
+}
+
 function step0DashboardFieldDisplay(row) {
   const details = row?.listing_details || {};
   const rawCountry = String(details.country || '').trim();
   const rawModality = String(details.modality || '').trim();
   const rawIndication = String(details.main_indication || '').trim();
   const rawStage = String(details.stage || '').trim();
-  const indicationList = rawIndication
-    ? canonicalIndicationList([], rawIndication, '')
-    : [];
+  const indicationList = step0ListingIndicationValues(rawIndication);
 
   return {
-    country: rawCountry ? canonicalCountry(rawCountry) : '-',
+    country: rawCountry ? canonicalListingCountry(rawCountry) : '-',
     countryRaw: rawCountry,
-    modality: rawModality ? canonicalModality(rawModality) : '-',
+    modality: rawModality
+      ? step0CanonicalDisplay(rawModality, canonicalModality(rawModality), ['Other', 'Unknown'])
+      : '-',
     modalityRaw: rawModality,
     indication: rawIndication
-      ? (indicationList.length ? indicationList.join(', ') : canonicalMainIndication('', rawIndication))
+      ? (indicationList.join(', ') || rawIndication)
       : '-',
     indicationRaw: rawIndication,
-    stage: rawStage ? canonicalDevelopmentStage(rawStage) : '-',
+    stage: rawStage
+      ? step0CanonicalDisplay(rawStage, canonicalDevelopmentStage(rawStage), ['Unknown'])
+      : '-',
     stageRaw: rawStage
   };
 }
@@ -10764,15 +11370,13 @@ function step0FilterValue(value) {
 
 function step0IndicationValues(row) {
   const display = step0DashboardFieldDisplay(row);
-  const values = display.indicationRaw
-    ? canonicalIndicationList([], display.indicationRaw, '')
-    : [];
+  const values = step0ListingIndicationValues(display.indicationRaw);
   return values.length ? values : [step0FilterValue(display.indication)];
 }
 
 function step0RowFilterValues(row, key) {
   const display = step0DashboardFieldDisplay(row);
-  if (key === 'country') return [step0FilterValue(display.country)];
+  if (key === 'country') return canonicalCountryValues(display.country).map(step0FilterValue);
   if (key === 'modality') return [step0FilterValue(display.modality)];
   if (key === 'theme') return [step0FilterValue(row?.theme)];
   if (key === 'cluster') return [step0FilterValue(row?.cluster)];
@@ -10840,9 +11444,19 @@ function renderStep0MultiFilter(element, key, values) {
 function renderStep0FilterControls() {
   const selected = state.step0StatusFilterValues;
   elements.step0StatFilterButtons?.forEach((button) => {
-    const isActive = selected.has(button.dataset.step0StatFilter);
+    const statKey = button.dataset.step0StatFilter;
+    // The pending stat card filters to 'investigation_pending', not 'pending' — match that stored value.
+    const isActive = selected.has(statKey === 'pending' ? 'investigation_pending' : statKey);
     button.classList.toggle('active', isActive);
+    button.closest('.step0-stat-column')?.classList.toggle('is-active', isActive);
     button.setAttribute('aria-pressed', String(isActive));
+    if (statKey === 'pending') {
+      const labelEl = button.querySelector('.step0-stat-label');
+      if (labelEl) labelEl.textContent = isActive ? '조사 대기' : 'Listing';
+      button.setAttribute('data-tooltip', isActive
+        ? '클릭 시 현재 Tab0에 업로드된 모든 Pipeline List 수를 나타냅니다.'
+        : '클릭 시 Listing 완료된 Pipeline List 중 조사 대기 중인 Pipeline을 표시합니다.');
+    }
   });
   STEP0_FILTER_KEYS.forEach((key) => {
     const element = elements[`step0${key[0].toUpperCase()}${key.slice(1)}Filter`];
@@ -10923,6 +11537,30 @@ function step0ActiveColorFilter() {
   const requested = String(state.step0ColorByFilter || '');
   if (STEP0_FILTER_COLOR_KEYS.includes(requested)) return requested;
   return STEP0_FILTER_COLOR_KEYS.find((key) => step0FilterHasSelection(key)) || '';
+}
+
+const STEP0_COLOR_FILTER_LABELS = {
+  country: 'Country',
+  modality: 'Modality',
+  theme: 'Theme',
+  cluster: 'Cluster',
+  indication: 'Indication',
+  stage: 'Stage',
+  progress: '진척 현황'
+};
+
+function step0SummaryColorScopeLabel() {
+  const colorFilter = step0ActiveColorFilter();
+  if (!colorFilter || colorFilter === 'progress') {
+    const progressValues = step0SelectedFilterValues('progress');
+    return progressValues.length
+      ? `진행 단계 색상 · ${progressValues.length === 1 ? progressValues[0] : `${progressValues.length}개 Filter`} 선택`
+      : '진행 단계 색상';
+  }
+  const label = STEP0_COLOR_FILTER_LABELS[colorFilter] || colorFilter;
+  const selected = step0SelectedFilterValues(colorFilter);
+  if (!selected.length) return `${label} 색상 · 전체`;
+  return `${label} 색상 · ${selected.length === 1 ? selected[0] : `${selected.length}개 선택`}`;
 }
 
 function step0WorkflowNodeColor(row, stageKey, defaultColor) {
@@ -11015,7 +11653,7 @@ function animateStep0WorkflowDots(graph, nodes, stageIndex) {
     const startedAt = performance.now();
     const duration = 720;
     const maxEntryDelay = 720;
-    const maxSettleDuration = 5000;
+    const maxSettleDuration = 60000;
     const tick = (now) => {
       const elapsed = now - startedAt;
       graph.updateNodeData(nodes.map((node) => {
@@ -11028,11 +11666,14 @@ function animateStep0WorkflowDots(graph, nodes, stageIndex) {
         const settleFade = settleRamp * Math.pow(1 - settleProgress, 1.18);
         const settleTime = settleProgress * Math.PI * 3.25 + node.data.settlePhase;
         const settleOvershoot = Math.sin(settleProgress * Math.PI) * (1 - settleProgress * 0.32) * node.data.settleOvershoot;
+        const ambientTime = elapsed * 0.00115 + node.data.settlePhase;
+        const ambientX = Math.sin(ambientTime) * Math.min(width * 0.0035, 1.8);
+        const ambientY = Math.cos(ambientTime * 0.9) * Math.min(height * 0.006, 2.2);
         return {
           id: node.id,
           style: {
-            x: node.data.entryX + (node.data.targetX - node.data.entryX) * motion + node.data.arcX * arc + node.data.settleDirectionX * settleOvershoot + Math.sin(settleTime) * node.data.settleX * settleFade,
-            y: node.data.entryY + (node.data.targetY - node.data.entryY) * motion + node.data.arcY * arc + node.data.settleDirectionY * settleOvershoot + Math.cos(settleTime * 1.11) * node.data.settleY * settleFade,
+            x: node.data.entryX + (node.data.targetX - node.data.entryX) * motion + node.data.arcX * arc + node.data.settleDirectionX * settleOvershoot + Math.sin(settleTime) * node.data.settleX * settleFade + ambientX,
+            y: node.data.entryY + (node.data.targetY - node.data.entryY) * motion + node.data.arcY * arc + node.data.settleDirectionY * settleOvershoot + Math.cos(settleTime * 1.11) * node.data.settleY * settleFade + ambientY,
             opacity: entryReveal
           }
         };
@@ -11067,6 +11708,44 @@ function renderStep0WorkflowMapFallback(message) {
   });
 }
 
+function renderStep0WorkflowDotCloud(groups) {
+  STEP0_WORKFLOW_MAP_STAGES.forEach((stage) => {
+    const mapElement = step0WorkflowMapFor(stage.key);
+    if (!mapElement) return;
+    const stageRows = groups.get(stage.key) || [];
+    const style = STEP0_WORKFLOW_NODE_STYLES[stage.key];
+    const sharedSize = step0WorkflowNodeSize(stage.key, stageRows.length);
+    const stageColor = step0WorkflowThemeColor(STEP0_WORKFLOW_STAGE_COLOR_VARIABLES[stage.key], style.color);
+    const dots = stageRows.map((row, rowIndex) => {
+      const asset = String(row?.asset || 'Unnamed pipeline').trim() || 'Unnamed pipeline';
+      const company = String(row?.company || '-').trim() || '-';
+      const display = step0DashboardFieldDisplay(row);
+      const dotColor = step0WorkflowNodeColor(row, stage.key, stageColor);
+      const seed = `${stage.key}:${asset}:${company}:${display.stage}:${row?.target || ''}:${rowIndex}`;
+      const size = step0WorkflowNodeVariantSize(stage.key, sharedSize, seed);
+      const position = step0WorkflowIrregularPosition(rowIndex, stageRows.length, 100, 100, 0, seed);
+      const title = `${asset} · ${company} · ${stage.label}${display.stage !== '-' ? ` · ${display.stage}` : ''}`;
+      // Match the v0.7 graph motion: each stage starts in sequence, each dot
+      // arrives over 720ms, then settles once for an individually varied 1.5–5s.
+      const entryPosition = step0WorkflowEntryPosition(position, 100, 100, 0, seed);
+      const entryDelay = stage.index * STEP0_WORKFLOW_STAGE_STAGGER_MS
+        + Math.floor(step0WorkflowSeededUnit(`${seed}:entry`) * 721);
+      const settleDelay = entryDelay + 720;
+      const settleDuration = 1500 + Math.floor(step0WorkflowSeededUnit(`${seed}:settle-duration`) * 3501);
+      const settleDirectionX = Math.sign(position.x - entryPosition.x) || 1;
+      const settleDirectionY = Math.sign(position.y - entryPosition.y) || 1;
+      const settleX = (settleDirectionX * (step0WorkflowSeededUnit(`${seed}:settle-x`) + 0.2) * 3.5).toFixed(2);
+      const settleY = (settleDirectionY * (step0WorkflowSeededUnit(`${seed}:settle-y`) + 0.2) * 4.5).toFixed(2);
+      const settleReturnX = (-Number(settleX) * 0.42).toFixed(2);
+      const settleReturnY = (-Number(settleY) * 0.42).toFixed(2);
+      const settleFinalX = (Number(settleX) * 0.18).toFixed(2);
+      const settleFinalY = (Number(settleY) * 0.18).toFixed(2);
+      return `<button class="step0-workflow-dot" type="button" tabindex="0" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}" style="--step0-dot-x:${position.x.toFixed(2)}%;--step0-dot-y:${position.y.toFixed(2)}%;--step0-dot-entry-x:${entryPosition.x.toFixed(2)}%;--step0-dot-entry-y:${entryPosition.y.toFixed(2)}%;--step0-dot-size:${size}px;--step0-dot-color:${dotColor};--step0-dot-entry-delay:${entryDelay}ms;--step0-dot-settle-delay:${settleDelay}ms;--step0-dot-settle-duration:${settleDuration}ms;--step0-dot-settle-x:${settleX}px;--step0-dot-settle-y:${settleY}px;--step0-dot-settle-return-x:${settleReturnX}px;--step0-dot-settle-return-y:${settleReturnY}px;--step0-dot-settle-final-x:${settleFinalX}px;--step0-dot-settle-final-y:${settleFinalY}px"></button>`;
+    }).join('');
+    mapElement.innerHTML = `<div class="step0-workflow-dot-cloud" aria-label="${escapeHtml(stage.label)} Pipeline 점 분포">${dots}</div>`;
+  });
+}
+
 function renderStep0WorkflowMap() {
   if (!elements.step0WorkflowMaps?.length) return;
   destroyStep0WorkflowGraph();
@@ -11082,11 +11761,20 @@ function renderStep0WorkflowMap() {
     renderStep0WorkflowMapFallback('현재 필터 조건에 맞는 Pipeline이 없습니다.');
     return;
   }
+  // Render with regular DOM nodes, rather than depending on an externally loaded
+  // chart library. This is the original dot-field interaction and remains visible
+  // even when a corporate network blocks the G6 CDN.
+  renderStep0WorkflowDotCloud(groups);
+  return;
   if (!globalThis.G6?.Graph) {
+    window.clearTimeout(step0WorkflowG6RetryTimer);
+    step0WorkflowG6RetryTimer = window.setTimeout(renderStep0WorkflowMap, 350);
     renderStep0WorkflowMapFallback('Workflow Map을 불러오는 중입니다. 잠시 후 다시 확인해 주세요.');
     return;
   }
 
+  window.clearTimeout(step0WorkflowG6RetryTimer);
+  step0WorkflowG6RetryTimer = null;
   STEP0_WORKFLOW_MAP_STAGES.forEach((stage) => {
     const mapElement = step0WorkflowMapFor(stage.key);
     if (!mapElement) return;
@@ -11216,8 +11904,8 @@ function updateStep0MultiFilter(key, value) {
 }
 
 function renderStep0FilteredResults() {
-  renderStep0StatStrip();
   renderStep0ProgressTable();
+  renderStep0StatStrip();
 }
 
 function step0FieldTitle(rawValue, displayValue) {
@@ -11263,22 +11951,26 @@ function closeStep0EditLockedModal() {
   activeStep0LockedRecordId = null;
 }
 
-function openStep0EditLockedModal(mode, { commentWorkspace = false, recordId = '' } = {}) {
+function openStep0EditLockedModal(mode, { commentWorkspace = false, recordId = '', shortlisting = false } = {}) {
   const targetMode = mode === 'full' ? 'full' : 'triage';
   const label = targetMode === 'full' ? 'Tab 2 · Full Scout' : 'Tab 1 · Fast Triage';
   activeStep0LockedEditMode = targetMode;
   activeStep0LockedRecordId = String(recordId || '');
   if (elements.step0EditLockedTitle) {
-    elements.step0EditLockedTitle.textContent = commentWorkspace
+    elements.step0EditLockedTitle.textContent = shortlisting
+      ? `${label}에서 수정하세요`
+      : commentWorkspace
       ? `${label} Team Workspace에서 수정하세요`
       : `${label}에서 수정하세요`;
   }
   if (elements.step0EditLockedMessage) {
-    elements.step0EditLockedMessage.textContent = commentWorkspace
+    elements.step0EditLockedMessage.textContent = shortlisting
+      ? 'Shortlisting에는 Full Scout의 공식 Pipeline 정보가 읽기 전용으로 표시됩니다. Company·Country·Asset·Modality·Target·Main indication·Stage 수정은 Tab 2 · Full Scout에서 진행합니다.'
+      : commentWorkspace
       ? `Tab 0에는 원본 Team Workspace 코멘트가 읽기 전용으로 표시됩니다. 이 코멘트의 수정 및 삭제는 ${label} Team Workspace에서 진행합니다.`
       : `이미 수행된 ${targetMode === 'full' ? 'Full Scout' : 'Fast Triage'}의 공식 조사값이 Tab 0에 표시되고 있습니다. 원본 조사값 수정은 ${label} Pipeline Table에서 진행합니다.`;
   }
-  if (elements.step0EditLockedGo) elements.step0EditLockedGo.textContent = commentWorkspace ? `Tab ${targetMode === 'full' ? '2' : '1'} 상세 페이지로 이동` : `${label}로 이동`;
+  if (elements.step0EditLockedGo) elements.step0EditLockedGo.textContent = commentWorkspace || shortlisting ? `Tab ${targetMode === 'full' ? '2' : '1'} 상세 페이지로 이동` : `${label}로 이동`;
   if (elements.step0EditLockedModal) elements.step0EditLockedModal.hidden = false;
   elements.step0EditLockedGo?.focus();
 }
@@ -11542,7 +12234,7 @@ function step0FilteredSortedRows() {
     if (searchTerms.length) {
       const details = row.listing_details || {};
       const display = step0DashboardFieldDisplay(row);
-      const haystack = `${row.asset || ''} ${row.company || ''} ${details.country || ''} ${display.country} ${details.modality || ''} ${display.modality} ${details.target || ''} ${details.main_indication || ''} ${display.indication} ${details.stage || ''} ${display.stage} ${row.theme || ''} ${row.cluster || ''} ${details.website || ''} ${row.metadata?.website || ''} ${row.metadata?.contact || ''}`.toLowerCase();
+      const haystack = `${row.asset || ''} ${row.assetAliases || ''} ${row.company || ''} ${row.companyAliases || ''} ${details.country || ''} ${display.country} ${details.modality || ''} ${display.modality} ${details.target || ''} ${details.main_indication || ''} ${display.indication} ${details.stage || ''} ${display.stage} ${row.theme || ''} ${row.cluster || ''} ${details.website || ''} ${row.metadata?.website || ''} ${row.metadata?.contact || ''} ${row.metadata?.asset_aliases || ''} ${row.metadata?.company_aliases || ''}`.toLowerCase();
       if (!searchTerms.every((term) => haystack.includes(term))) return false;
     }
     if (statusFilters.size && ![...statusFilters].some((status) => step0RowFilterValues(row, 'progress').includes(status))) return false;
@@ -11706,12 +12398,13 @@ function renderStep0ProgressTable() {
       .map((row) => {
         const queueId = row.pending?.queue_id;
         const isPending = Boolean(row.pending?.done && queueId);
-        const checked = isPending && state.step0SelectedPendingIds.has(queueId) ? 'checked' : '';
+        const isRowSelected = isPending && state.step0SelectedPendingIds.has(queueId);
+        const checked = isRowSelected ? 'checked' : '';
         const display = step0DashboardFieldDisplay(row);
         const checkboxCell = isPending
           ? `<input type="checkbox" class="step0-row-select" data-queue-id="${escapeHtml(queueId)}" ${checked} aria-label="${escapeHtml(row.asset)} 선택" />`
           : '';
-        return `<tr>
+        return `<tr class="${isRowSelected ? 'selected-row' : ''}">
           <td class="select-col">${checkboxCell}</td>
           <td class="step0-company-cell">${step0ListingFieldMarkup(row, 'company', row.company, { className: 'single-line-cell' })}</td>
           <td>${step0ListingFieldMarkup(row, 'country', display.countryRaw, { html: display.country === '-' ? '-' : countryDisplayMarkup(display.country), title: display.countryRaw && display.countryRaw !== display.country ? display.countryRaw : display.country })}</td>
@@ -11721,7 +12414,7 @@ function renderStep0ProgressTable() {
           <td>${step0ListingFieldMarkup(row, 'main_indication', display.indicationRaw, { html: escapeHtml(display.indication), title: display.indicationRaw && display.indicationRaw !== display.indication ? display.indicationRaw : display.indication })}</td>
           <td>${step0ListingFieldMarkup(row, 'stage', display.stageRaw, { html: escapeHtml(display.stage), title: display.stageRaw && display.stageRaw !== display.stage ? display.stageRaw : display.stage })}</td>
           <td>${step0StageCellHtml('pending', { ...row.pending, row })}</td>
-          <td>${step0StageCellHtml('fast_triage', row.fast_triage)}</td>
+          <td>${step0StageCellHtml('fast_triage', row.fast_triage, row.full_scout)}</td>
           <td>${step0StageCellHtml('full_scout', row.full_scout)}</td>
           <td>${step0StageCellHtml('shortlisting', row.shortlisting)}</td>
           <td class="step0-metadata-cell">${step0MetadataCellHtml(row, 'comment')}</td>
@@ -11817,7 +12510,14 @@ function setStep0PendingSelection(queueId, shouldSelect, { notifyLimit = true } 
 
 function syncStep0RowCheckbox(queueId, selected) {
   elements.step0ProgressTableBody?.querySelectorAll('.step0-row-select').forEach((checkbox) => {
-    if (checkbox.dataset.queueId === queueId) checkbox.checked = selected;
+    if (checkbox.dataset.queueId !== queueId) return;
+    checkbox.checked = selected;
+    checkbox.closest('tr')?.classList.toggle('selected-row', selected);
+    // A checkbox still fires its native click/change after pointerdown's
+    // preventDefault(), flipping `checked` back before `change` sees it.
+    // Flag this element so the change handler skips its own (stale,
+    // would-cancel-this-toggle) update for this interaction.
+    checkbox.dataset.pointerHandled = 'true';
   });
 }
 
@@ -11834,8 +12534,16 @@ function applyStep0DragSelection(queueId) {
 
 function endStep0DragSelection() {
   if (!step0DragSelection) return;
+  const visitedIds = step0DragSelection.visitedIds;
   step0DragSelection = null;
   elements.step0ProgressTableBody?.classList.remove('is-selection-dragging');
+  // Native checkbox click/change events follow pointerup. Keep the guard for
+  // that event sequence, then clear it before the next user interaction.
+  window.setTimeout(() => {
+    elements.step0ProgressTableBody?.querySelectorAll('.step0-row-select').forEach((checkbox) => {
+      if (visitedIds.has(checkbox.dataset.queueId)) delete checkbox.dataset.pointerHandled;
+    });
+  }, 0);
 }
 
 function resetStep0Filters() {
@@ -11869,7 +12577,11 @@ function applyStep0SummaryStageFilter(status) {
   // A Summary card represents one workflow state. Keep all dimensional
   // filters (including multiple indications) and replace only this stage.
   const filterValue = status === 'pending' ? 'investigation_pending' : status;
-  state.step0StatusFilterValues = new Set(filterValue ? [filterValue] : []);
+  // Clicking the already-active pending card again clears the filter back to Listing (all pipelines).
+  const isAlreadyActive = filterValue
+    && state.step0StatusFilterValues.size === 1
+    && state.step0StatusFilterValues.has(filterValue);
+  state.step0StatusFilterValues = new Set((filterValue && !isAlreadyActive) ? [filterValue] : []);
   rememberStep0FilterSelection('progress');
   state.step0Page = 1;
   renderStep0FilterControls();
@@ -11990,6 +12702,14 @@ elements.step0FilterControls?.addEventListener('click', (event) => {
 elements.step0StatFilterButtons?.forEach((button) => {
   button.addEventListener('click', () => applyStep0SummaryStageFilter(button.dataset.step0StatFilter));
 });
+elements.step0WorkflowStatColumns?.forEach((column) => {
+  column.addEventListener('click', (event) => {
+    // The metric itself keeps its normal button behavior; dots retain hover-only
+    // inspection. A click on the open canvas remains a convenient stage filter.
+    if (event.target.closest('[data-step0-stat-filter], .step0-workflow-dot')) return;
+    applyStep0SummaryStageFilter(column.dataset.workflowStage);
+  });
+});
 elements.step0ResetFiltersButton?.addEventListener('click', resetStep0Filters);
 document.querySelectorAll('button[data-step0-sort]').forEach((button) => {
   button.addEventListener('click', () => sortStep0Column(button.dataset.step0Sort));
@@ -12020,10 +12740,18 @@ elements.step0SelectAllRows?.addEventListener('keydown', (event) => {
 elements.step0ProgressTableBody?.addEventListener('change', (event) => {
   const checkbox = event.target.closest('.step0-row-select');
   if (!checkbox) return;
+  if (checkbox.dataset.pointerHandled === 'true') {
+    delete checkbox.dataset.pointerHandled;
+    const selected = state.step0SelectedPendingIds.has(checkbox.dataset.queueId);
+    checkbox.checked = selected;
+    checkbox.closest('tr')?.classList.toggle('selected-row', selected);
+    return;
+  }
   const queueId = checkbox.dataset.queueId;
   if (!queueId) return;
   const changed = setStep0PendingSelection(queueId, checkbox.checked);
   checkbox.checked = changed && state.step0SelectedPendingIds.has(queueId);
+  checkbox.closest('tr')?.classList.toggle('selected-row', checkbox.checked);
   renderStep0SelectedCount();
 });
 elements.step0ProgressTableBody?.addEventListener('click', (event) => {
@@ -12140,6 +12868,29 @@ elements.step0ProgressTableBody?.addEventListener('pointerover', (event) => {
 window.addEventListener('pointerup', endStep0DragSelection);
 window.addEventListener('pointercancel', endStep0DragSelection);
 window.addEventListener('blur', endStep0DragSelection);
+elements.pipelineTable.addEventListener('pointerdown', (event) => {
+  const checkbox = event.target.closest('.row-select');
+  if (!checkbox || event.button !== 0) return;
+  const id = checkbox.dataset.recordId;
+  if (!id) return;
+  event.preventDefault();
+  checkbox.focus({ preventScroll: true });
+  pipelineDragSelection = {
+    shouldSelect: !state.selectedIds.has(id),
+    visitedIds: new Set()
+  };
+  elements.pipelineTable.classList.add('is-selection-dragging');
+  applyPipelineDragSelection(id);
+});
+elements.pipelineTable.addEventListener('pointerover', (event) => {
+  if (!pipelineDragSelection || !(event.buttons & 1)) return;
+  const row = event.target.closest('tr');
+  const checkbox = row?.querySelector('.row-select');
+  if (checkbox) applyPipelineDragSelection(checkbox.dataset.recordId);
+});
+window.addEventListener('pointerup', endPipelineDragSelection);
+window.addEventListener('pointercancel', endPipelineDragSelection);
+window.addEventListener('blur', endPipelineDragSelection);
 document.addEventListener('pointerdown', (event) => {
   if (!activeStep0MetadataPopover) return;
   if (activeStep0MetadataPopover.contains(event.target) || event.target.closest('[data-step0-metadata]')) return;
@@ -12311,6 +13062,7 @@ function handleMultiFilterControlsClick(event) {
   if (trigger) {
     const filter = trigger.closest('.filter-multiselect');
     if (filter?.dataset.step0FilterKey) return;
+    event.stopPropagation();
     const willOpen = !filter.classList.contains('is-open');
     closeMultiFilters(filter);
     filter.classList.toggle('is-open', willOpen);
@@ -12320,10 +13072,21 @@ function handleMultiFilterControlsClick(event) {
     return;
   }
 
+  const doneButton = event.target.closest('[data-multi-filter-done]');
+  if (doneButton) {
+    const filter = doneButton.closest('.filter-multiselect');
+    if (filter?.dataset.step0FilterKey) return;
+    event.stopPropagation();
+    closeMultiFilters();
+    filter?.querySelector('.filter-multiselect-trigger')?.focus();
+    return;
+  }
+
   const option = event.target.closest('.filter-multiselect-option');
   if (!option) return;
   const filter = option.closest('.filter-multiselect');
   if (filter?.dataset.step0FilterKey) return;
+  event.stopPropagation();
   const key = filter?.dataset.filterKey;
   if (!key) return;
   const value = option.dataset.multiFilterValue;
@@ -12433,7 +13196,7 @@ elements.pipelineTable.addEventListener('click', (event) => {
     );
     return;
   }
-  if (event.target.closest('[data-table-text-edit], [data-table-modality-edit]')) return;
+  if (event.target.closest('[data-table-text-edit], [data-table-modality-edit], [data-table-stage-edit], [data-table-country-edit], [data-focus-official-locked]')) return;
   if (event.target.closest('input, select, textarea, button, a, label')) return;
   const rowElement = event.target.closest('[data-record-id]');
   if (!rowElement) return;
@@ -12471,6 +13234,30 @@ elements.pipelineTable.addEventListener('dblclick', (event) => {
     event.preventDefault();
     event.stopPropagation();
     openManualTableModalityEdit(modalityEdit);
+    return;
+  }
+  const stageEdit = event.target.closest('[data-table-stage-edit]');
+  if (stageEdit) {
+    event.preventDefault();
+    event.stopPropagation();
+    openManualTableStageEdit(stageEdit);
+    return;
+  }
+  const countryEdit = event.target.closest('[data-table-country-edit]');
+  if (countryEdit) {
+    event.preventDefault();
+    event.stopPropagation();
+    openManualTableCountryEdit(countryEdit);
+    return;
+  }
+  const focusOfficialField = event.target.closest('[data-focus-official-locked]');
+  if (focusOfficialField) {
+    event.preventDefault();
+    event.stopPropagation();
+    openStep0EditLockedModal('full', {
+      recordId: focusOfficialField.dataset.recordId,
+      shortlisting: true
+    });
   }
 });
 
@@ -12537,6 +13324,13 @@ elements.pipelineTable.addEventListener('change', (event) => {
 
   const checkbox = event.target.closest('.row-select');
   if (!checkbox) return;
+  if (checkbox.dataset.pointerHandled === 'true') {
+    delete checkbox.dataset.pointerHandled;
+    const selected = state.selectedIds.has(checkbox.dataset.recordId);
+    checkbox.checked = selected;
+    checkbox.closest('tr')?.classList.toggle('selected-row', selected);
+    return;
+  }
   const id = checkbox.dataset.recordId;
   if (!id) return;
   if (checkbox.checked) {
@@ -12689,6 +13483,13 @@ elements.step0SummaryDashboardToggleButton?.addEventListener('click', () => {
   const hidden = !elements.step0WorkflowCardCanvases?.[0]?.classList.contains('is-collapsed');
   applyStep0SummaryDashboardHidden(hidden);
   localStorage.setItem('skbp.dashboard.step0SummaryDashboardHidden.v1', String(hidden));
+  if (!hidden) {
+    // Rebuild from scratch so re-expanding replays the same staggered
+    // entry animation as the first Tab 0 load, instead of resuming
+    // whatever mid-flight animation state the graphs were left in.
+    renderStep0WorkflowMap();
+    renderStep0StatStrip();
+  }
 });
 elements.columnSettingsGrid?.addEventListener('change', (event) => {
   const checkbox = event.target.closest('input[type="checkbox"]');
@@ -12720,12 +13521,23 @@ elements.resetFiltersButton?.addEventListener('click', () => {
 });
 
 function activatePipelineTab(mode) {
+  if (mode === 'map') {
+    activateKnowledgeMapPanel();
+    return;
+  }
+  const wasKnowledgeMapVisible = Boolean(elements.knowledgeMapPanel && !elements.knowledgeMapPanel.hidden);
+  showKnowledgeMapPanel(false);
   if (mode === 'step0') {
     activateStep0Panel();
     return;
   }
+  if (wasKnowledgeMapVisible && elements.pipelineContent) {
+    elements.pipelineContent.hidden = false;
+    elements.pipelineContent.style.display = '';
+  }
   if (elements.step0Panel && !elements.step0Panel.hidden) deactivateStep0Panel();
   setTableMode(mode);
+  if (wasKnowledgeMapVisible) renderTableTabs();
 }
 
 elements.pipelineTableTabs?.forEach((tab) => {
@@ -12744,6 +13556,12 @@ elements.pipelineTableTabs?.forEach((tab) => {
     activatePipelineTab(nextTab.dataset.tableMode);
     nextTab.focus();
   });
+});
+
+elements.knowledgeMapTab?.addEventListener('click', (event) => {
+  event.preventDefault();
+  window.history.replaceState(null, '', '/?tab=map');
+  activatePipelineTab('map');
 });
 
 elements.agentSessionSelect?.addEventListener('change', (event) => {
@@ -12819,10 +13637,19 @@ elements.dataReuploadList?.addEventListener('click', (event) => {
       action: 'replace',
       existingRecordId: button.dataset.existingId || null
     });
+  } else if (button.dataset.reuploadAction === 'preserve-aliases') {
+    const current = dataReuploadDecisionFor(decisionKey);
+    if (!['replace', 'skip'].includes(current.action)) return;
+    activeDataReuploadDecisions.set(decisionKey, {
+      ...current,
+      preserveAssetAliases: !current.preserveAssetAliases
+    });
   } else if (button.dataset.reuploadAction === 'skip') {
     const current = dataReuploadDecisionFor(decisionKey);
     activeDataReuploadDecisions.set(decisionKey, {
-      action: current.action === 'skip' ? 'pending' : 'skip'
+      action: current.action === 'skip' ? 'pending' : 'skip',
+      existingRecordId: button.dataset.existingId || current.existingRecordId || null,
+      preserveAssetAliases: current.action === 'skip' ? false : current.preserveAssetAliases === true
     });
   }
   renderDataReuploadReviewList();
@@ -12846,6 +13673,49 @@ elements.dataReuploadModal?.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     event.preventDefault();
     closeDataReuploadModal(null);
+  }
+});
+
+elements.step0ImportReviewList?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-step0-import-review-action]');
+  if (!button) return;
+  const rowIndex = Number(button.dataset.rowIndex);
+  if (!Number.isInteger(rowIndex)) return;
+  if (button.dataset.step0ImportReviewAction === 'representative') {
+    const current = activeStep0ImportReviewDecisions.get(rowIndex) || { action: 'pending', target: '' };
+    if (current.action !== 'merge') return;
+    activeStep0ImportReviewDecisions.set(rowIndex, {
+      ...current,
+      representative: button.dataset.representative === 'incoming' ? 'incoming' : 'existing'
+    });
+    renderStep0ImportReviewList();
+    return;
+  }
+  activeStep0ImportReviewDecisions.set(rowIndex, {
+    action: button.dataset.step0ImportReviewAction === 'merge'
+      ? 'merge'
+      : button.dataset.step0ImportReviewAction === 'skip' ? 'skip' : 'new',
+    target: button.dataset.target || '',
+    representative: 'existing'
+  });
+  renderStep0ImportReviewList();
+});
+elements.step0ImportReviewApply?.addEventListener('click', () => {
+  const decisions = reviewedStep0ImportDecisions();
+  if (decisions.some((decision) => decision.action === 'pending')) {
+    if (elements.step0ImportReviewSummary) elements.step0ImportReviewSummary.textContent = '각 유사 Pipeline에서 연결, 별도 신규 추가 또는 이번 행 제외 중 하나를 선택해 주세요.';
+    return;
+  }
+  closeStep0ImportReviewModal(decisions);
+});
+elements.step0ImportReviewCancel?.addEventListener('click', () => closeStep0ImportReviewModal(null));
+elements.step0ImportReviewModal?.addEventListener('click', (event) => {
+  if (event.target === elements.step0ImportReviewModal) closeStep0ImportReviewModal(null);
+});
+elements.step0ImportReviewModal?.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    closeStep0ImportReviewModal(null);
   }
 });
 
@@ -12875,11 +13745,11 @@ elements.pipelineWebsiteModalInput?.addEventListener('keydown', (event) => {
   }
 });
 
-document.querySelectorAll('[data-agent-prompt]').forEach((button) => {
-  button.addEventListener('click', () => {
-    elements.agentInput.value = button.dataset.agentPrompt;
-    elements.agentInput.focus();
-  });
+elements.agentSuggestions?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-agent-prompt]');
+  if (!button) return;
+  elements.agentInput.value = button.dataset.agentPrompt;
+  elements.agentInput.focus();
 });
 
 elements.agentInput.addEventListener('keydown', (event) => {
@@ -12891,11 +13761,14 @@ elements.agentInput.addEventListener('keydown', (event) => {
 elements.agentForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   if (activeTableMode() === 'triage') return;
-  const question = elements.agentInput.value.trim();
-  if (!question) return;
+  const userQuestion = elements.agentInput.value.trim();
+  if (!userQuestion) return;
+  const question = activeKnowledgeMapNodeContext?.context && !userQuestion.includes('[선택 노드:')
+    ? `${activeKnowledgeMapNodeContext.context}\n\n[사용자 질문]\n${userQuestion}`
+    : userQuestion;
   elements.agentInput.value = '';
-  retitleActiveSessionFromQuestion(question);
-  addAgentMessage('user', question);
+  retitleActiveSessionFromQuestion(userQuestion);
+  addAgentMessage('user', userQuestion);
   const submitButton = elements.agentForm.querySelector('button[type="submit"]');
   const submitButtonContent = submitButton?.innerHTML;
   if (submitButton) {
@@ -13076,17 +13949,73 @@ floatingAgentController = initFloatingAgent({
   initialWidth: 560,
   initialHeight: 680,
   focusTarget: elements.agentInput
-});
-renderAgentIdentity();
+  });
+  const isMapActive = currentDisplayedTabMode() === 'map';
+  elements.knowledgeMapTab?.classList.toggle('active', isMapActive);
+  elements.knowledgeMapTab?.setAttribute('aria-selected', isMapActive ? 'true' : 'false');
+  renderAgentIdentity();
 setupThemeToggle();
+initPageJumpControls();
+initPipelineHeaderFreeze();
 initAuthUI();
 initializeAgentSessions();
+function renderActiveKnowledgeNodeContext() {
+  const context = activeKnowledgeMapNodeContext;
+  if (!elements.agentKnowledgeNodeContext || !elements.agentKnowledgeNodeLabel) return;
+  elements.agentKnowledgeNodeContext.hidden = !context;
+  elements.agentKnowledgeNodeLabel.textContent = context
+    ? `${context.type} · ${context.label} · 연결 ${context.neighborCount}개`
+    : '';
+}
+
+function renderAgentSuggestions() {
+  if (!elements.agentSuggestions) return;
+  const prompts = activeKnowledgeMapNodeContext?.prompts || [];
+  if (!prompts.length) {
+    elements.agentSuggestions.innerHTML = defaultAgentSuggestionsMarkup;
+    return;
+  }
+  elements.agentSuggestions.replaceChildren(...prompts.map((item) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.agentPrompt = item.prompt;
+    button.textContent = item.label;
+    return button;
+  }));
+}
+window.addEventListener('skbp:knowledge-node-selected', (event) => {
+  const detail = event.detail;
+  activeKnowledgeMapNodeContext = detail?.label ? {
+    label: String(detail.label), type: String(detail.type || 'node'), neighborCount: Number(detail.neighborCount || 0), context: String(detail.context || ''),
+    prompts: Array.isArray(detail.prompts) ? detail.prompts.filter((item) => item?.label && item?.prompt).slice(0, 3) : []
+  } : null;
+  renderActiveKnowledgeNodeContext();
+  renderAgentSuggestions();
+});
+window.addEventListener('skbp:open-agent', (event) => {
+  const prompt = String(event.detail?.prompt || '').trim();
+  if (prompt && elements.agentInput) elements.agentInput.value = prompt;
+  renderActiveKnowledgeNodeContext();
+  floatingAgentController?.open();
+});
+const agentLaunchParams = new URLSearchParams(window.location.search);
+if (agentLaunchParams.get('openAgent') === '1') {
+  const graphPrompt = 'Physics Graph에서 탐색한 Pipeline 지식 관계를 분석해줘.';
+  if (elements.agentInput && !elements.agentInput.value.trim()) {
+    elements.agentInput.value = agentLaunchParams.get('agentPrompt') || graphPrompt;
+  }
+  floatingAgentController?.open();
+}
 placeSearchTokenRows();
 renderStep0EntryGrid();
 
-window.addEventListener('load', () => {
-  if (activeTableMode() === 'step0') renderStep0ProgressTable();
-}, { once: true });
+if (initialViewMode === 'map') {
+  activateKnowledgeMapPanel();
+} else if (initialViewMode === 'step0') {
+  activatePipelineTab('step0');
+} else if (elements.step0Panel && !elements.step0Panel.hidden) {
+  deactivateStep0Panel();
+}
 
 loadRecords().catch((error) => {
   elements.dataStatus.textContent = 'Load failed';

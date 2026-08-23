@@ -44,7 +44,6 @@
 - [[04_Targets/Target__parkin_(prkn_park2)|parkin_(prkn_park2)]]
 - [[04_Targets/Target__pde5|pde5]]
 - [[04_Targets/Target__peroxiredoxin_(prx1_prx2)_functional_mimic;_downstream_astrocytic_stat3_03510b30|peroxiredoxin_(prx1_prx2)_functional_mimic;_downstream_astrocytic_stat3_03510b30]]
-- [[04_Targets/Target__peroxiredoxin_redox_homeostasis_astrocytic_stat3_signaling|peroxiredoxin_redox_homeostasis_astrocytic_stat3_signaling]]
 - [[04_Targets/Target__proteostasis_ampk-associated_organelle_homeostasis|proteostasis_ampk-associated_organelle_homeostasis]]
 - [[04_Targets/Target__prox1|prox1]]
 - [[04_Targets/Target__ripk1|ripk1]]

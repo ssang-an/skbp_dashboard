@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T00:16:03"
+generated_at: "2026-08-23T11:53:17"
 record_id: "GenixCure_GXC-303_20260713"
 company: "GenixCure"
 country: "Republic of Korea"

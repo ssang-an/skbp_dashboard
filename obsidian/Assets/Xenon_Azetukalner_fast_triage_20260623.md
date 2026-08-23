@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T00:16:03"
+generated_at: "2026-08-23T11:53:17"
 record_id: "Xenon_Azetukalner_fast_triage_20260623"
 company: "Xenon Pharmaceuticals"
 country: "Canada"
@@ -546,6 +546,36 @@ Strong same-target Kv7 benchmark; run Full Scout.
         "field": "final_comment",
         "previous_value": "dfd",
         "new_value": ""
+      },
+      {
+        "id": "5fef0cf4e0d345fba8291557cc789df3",
+        "changed_at": "2026-08-22T15:16:17.407994+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "정주원",
+        "source": "dashboard_comment_delete",
+        "field": "collaboration.comments",
+        "previous_value": "df",
+        "new_value": "deleted"
+      },
+      {
+        "id": "7205046e92314868a9494610b0a1a343",
+        "changed_at": "2026-08-22T15:17:48.689969+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_comment",
+        "field": "collaboration.comments",
+        "previous_value": null,
+        "new_value": null
+      },
+      {
+        "id": "f667264a0206400a99e49a84a21b0f40",
+        "changed_at": "2026-08-22T15:17:54.683885+00:00",
+        "actor_ip": "127.0.0.1",
+        "actor_name": "",
+        "source": "dashboard_comment",
+        "field": "collaboration.comments",
+        "previous_value": null,
+        "new_value": null
       }
     ],
     "topic_notes": [],
@@ -566,20 +596,32 @@ Strong same-target Kv7 benchmark; run Full Scout.
     "collaboration": {
       "comments": [
         {
-          "id": "e5b8de2266d04cdc8f3e4dc08ec8c92d",
+          "id": "742b295705504bd5bfecd84bc7262f6f",
           "parent_id": null,
           "author": "정주원",
           "author_user_id": "9979fce95e884382853e0aed85d6901e",
           "author_email": "joowon.jung@sk.com",
           "actor_ip": "127.0.0.1",
           "body": "df",
-          "created_at": "2026-08-22T15:14:12.011990+00:00",
-          "updated_at": "2026-08-22T15:14:12.011990+00:00",
+          "created_at": "2026-08-22T15:17:48.689908+00:00",
+          "updated_at": "2026-08-22T15:17:48.689908+00:00",
+          "category": "contact_history"
+        },
+        {
+          "id": "bc2aeec7e34542db892cd9bd204bc391",
+          "parent_id": null,
+          "author": "정주원",
+          "author_user_id": "9979fce95e884382853e0aed85d6901e",
+          "author_email": "joowon.jung@sk.com",
+          "actor_ip": "127.0.0.1",
+          "body": "df",
+          "created_at": "2026-08-22T15:17:54.683786+00:00",
+          "updated_at": "2026-08-22T15:17:54.683786+00:00",
           "category": "contact_history"
         }
       ],
-      "updated_at": "2026-08-22T15:14:12.011990+00:00",
-      "comment_count": 1
+      "updated_at": "2026-08-22T15:17:54.683786+00:00",
+      "comment_count": 2
     }
   },
   "source_report": {

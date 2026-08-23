@@ -32,6 +32,12 @@ http://127.0.0.1:8000
 http://localhost:8000
 ```
 
+## 역할 및 접근 권한
+
+대시보드 역할은 `user < admin < developer` 순서로 상속됩니다. GPT 원문리포트 Topic 메모와 Partner Materials/DD Report 업로드·삭제는 관리자 이상만 가능하며, 사용자 관리는 개발자 전용입니다. 전체 권한표와 적용 원칙은 [docs/access-control.md](docs/access-control.md)를 참고하세요.
+
+Tab 0 Excel Listing 가져오기에서 유사 Pipeline을 연결·분리·제외하는 기준과 대표 표기/별칭/Listing 정보 병합 규칙은 [docs/listing-import-guide.md](docs/listing-import-guide.md)를 참고하세요.
+
 ## 사내망에서 여러 PC가 함께 접속
 
 이 프로젝트는 저장 API를 FastAPI가 제공하므로 Bun 정적 서버가 아니라, Bun이 Uvicorn을

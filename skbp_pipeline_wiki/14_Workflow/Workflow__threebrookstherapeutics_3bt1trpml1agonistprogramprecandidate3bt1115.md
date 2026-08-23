@@ -56,3 +56,4 @@ tags:
 ## Operating comments
 
 - Full Scout 정주원: contact 지난주에 만났음
+- Full Scout 정주원: df

@@ -1,5 +1,6 @@
 import { setupThemeToggle } from './theme.js';
 
+import { initPageJumpControls } from './page-jump.js?v=20260823-page-jump-1';
 import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260802-required-login-1';
 
 const params = new URLSearchParams(window.location.search);
@@ -167,6 +168,11 @@ function formatTimestamp(value) {
     hour: '2-digit',
     minute: '2-digit'
   }).format(date);
+}
+
+function commentByline(breadcrumb, author, dateText) {
+  const identity = [breadcrumb, author || 'Team member'].filter(Boolean).join(' · ');
+  return dateText ? `${identity} · ${dateText}` : identity;
 }
 
 function objectValue(value) {
@@ -434,6 +440,7 @@ function collectMarkdownSources(markdown, record) {
 function renderInlineMarkdown(value) {
   return escapeHtml(repairMojibake(value))
     .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
+    .replace(/\[(\d+)\](?!\s*\()/g, '<a class="evidence-inline-reference" href="#evidence-reference-$1" title="Evidence [$1] 위치로 이동">[$1]</a>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>')
     .replace(/`([^`]+)`/g, '<code>$1</code>')
@@ -478,6 +485,11 @@ function renderMarkdown(markdown) {
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index].trim();
     if (!line) continue;
+    const referenceDefinition = line.match(/^\[(\d+)\]:\s*(https?:\/\/\S+)(?:\s+.*)?$/i);
+    if (referenceDefinition) {
+      blocks.push(`<p id="evidence-reference-${referenceDefinition[1]}" class="evidence-reference-target">${renderInlineMarkdown(line)}</p>`);
+      continue;
+    }
     if (line.startsWith('|')) {
       const table = renderMarkdownTable(lines, index);
       blocks.push(table.html);
@@ -736,7 +748,7 @@ function triageScoreNotesMarkup(record, definition) {
         <article class="triage-score-note${currentUserCanDeleteNote(note) ? ' is-editable' : ''}"${currentUserCanDeleteNote(note) ? ` data-triage-score-note-edit data-note-id="${escapeHtml(note.id)}" data-note-body="${escapeHtml(note.body || '')}" title="두 번 클릭하여 수정"` : ''}>
           ${currentUserCanDeleteNote(note) ? `<button type="button" class="triage-note-delete" data-triage-score-note-delete data-note-id="${escapeHtml(note.id)}" aria-label="내 코멘트 삭제" title="내 코멘트 삭제">×</button>` : ''}
           <p>${escapeHtml(note.body || '')}</p>
-          <small>${escapeHtml(note.author_name || 'Team member')} · ${escapeHtml(formatTimestamp(note.updated_at || note.created_at))}</small>
+          <small>${escapeHtml(commentByline(`Tab 1 · Fast Triage · ${definition.label}`, note.author_name, formatTimestamp(note.updated_at || note.created_at)))}</small>
         </article>
       `).join('')}</div>` : ''}
       <button type="button" class="triage-note-trigger" data-triage-score-note-open>＋ 코멘트 입력</button>
@@ -761,7 +773,7 @@ function finalCommentMarkup(record) {
       ${finalComment ? `<article class="triage-score-note triage-final-comment-note${canEdit ? ' is-editable' : ''}"${canEdit ? ' data-triage-final-comment-edit title="두 번 클릭하여 수정"' : ''}>
         ${canDeleteFinalComment(record) ? '<button type="button" class="triage-note-delete" data-triage-final-comment-delete aria-label="내 최종 코멘트 삭제" title="내 최종 코멘트 삭제">×</button>' : ''}
         <p>${escapeHtml(finalComment)}</p>
-        <small>${escapeHtml(authorName)}${updatedAt ? ` · ${escapeHtml(formatTimestamp(updatedAt))}` : ''}</small>
+        <small>${escapeHtml(commentByline('Tab 1 · Fast Triage · Comment', authorName, updatedAt ? formatTimestamp(updatedAt) : ''))}</small>
       </article>` : ''}
       ${canManage ? `
         <button type="button" class="triage-note-trigger" data-triage-final-comment-open>＋ 최종 코멘트 입력</button>
@@ -788,7 +800,7 @@ function triageFinalCommentPostsMarkup(record) {
     const isOwn = String(entry.author_user_id || '') === String(getCurrentUser()?.id || '');
     return `<article class="triage-score-note${isOwn ? ' is-editable' : ''}"${isOwn ? ` data-triage-final-post-edit data-comment-id="${escapeHtml(entry.id)}" title="두 번 클릭하여 수정"` : ''}>
       ${isOwn ? `<button type="button" class="triage-note-delete" data-triage-final-post-delete data-comment-id="${escapeHtml(entry.id)}" aria-label="내 최종 코멘트 삭제" title="내 최종 코멘트 삭제">×</button>` : ''}
-      <p>${escapeHtml(entry.body || '')}</p><small>${escapeHtml(entry.author || 'Team member')} · ${escapeHtml(formatTimestamp(entry.updated_at || entry.created_at))}</small>
+      <p>${escapeHtml(entry.body || '')}</p><small>${escapeHtml(commentByline('Tab 1 · Fast Triage · Comment', entry.author, formatTimestamp(entry.updated_at || entry.created_at)))}</small>
       ${isOwn ? `<form class="triage-inline-note-form" data-triage-final-post-edit-form data-comment-id="${escapeHtml(entry.id)}" hidden><textarea rows="3" maxlength="5000" aria-label="최종 코멘트 수정">${escapeHtml(entry.body || '')}</textarea><div><span data-triage-final-post-status></span><button type="button" data-triage-final-post-edit-cancel>취소</button><button type="submit">저장</button></div></form>` : ''}
     </article>`;
   }).join('')}</section>`;
@@ -808,13 +820,13 @@ function triageContactHistoryMarkup(record) {
         const isOwn = String(entry.author_user_id || '') === String(getCurrentUser()?.id || '');
         return `<article class="triage-score-note${isOwn ? ' is-editable' : ''}"${isOwn ? ` data-triage-contact-history-edit data-comment-id="${escapeHtml(entry.id)}" title="두 번 클릭하여 수정"` : ''}>
           ${isOwn ? `<button type="button" class="triage-note-delete" data-triage-contact-history-delete data-comment-id="${escapeHtml(entry.id)}" aria-label="내 Contact History 삭제" title="내 Contact History 삭제">×</button>` : ''}
-          <p>${escapeHtml(entry.body || '')}</p><small>${escapeHtml(entry.author || 'Team member')} · ${escapeHtml(formatTimestamp(entry.updated_at || entry.created_at))}</small>
+          <p>${escapeHtml(entry.body || '')}</p><small>${escapeHtml(commentByline('Tab 1 · Fast Triage · Contact History', entry.author, formatTimestamp(entry.updated_at || entry.created_at)))}</small>
           ${isOwn ? `<form class="triage-inline-note-form" data-triage-contact-history-edit-form data-comment-id="${escapeHtml(entry.id)}" hidden><textarea rows="3" maxlength="5000" aria-label="Contact History 수정">${escapeHtml(entry.body || '')}</textarea><div><span data-triage-contact-history-status></span><button type="button" data-triage-contact-history-edit-cancel>취소</button><button type="submit">저장</button></div></form>` : ''}
         </article>`;
       }).join('')}</div>` : ''}
       ${signedIn ? `<button type="button" class="triage-note-trigger triage-contact-history-trigger" data-triage-contact-history-open>＋ Contact History 입력</button>
         <form class="triage-inline-note-form triage-contact-history-form" data-triage-contact-history-form hidden>
-          <textarea rows="3" maxlength="5000" placeholder="미팅, 통화, 이메일 및 후속 조치를 기록하세요." aria-label="Contact History 입력"></textarea>
+          <textarea rows="3" maxlength="5000" placeholder="미팅, 통화, 이메일 등 연락 여부 및 연락 내용을 기록하세요." aria-label="Contact History 입력"></textarea>
           <div><span data-triage-contact-history-status></span><button type="button" data-triage-contact-history-cancel>취소</button><button type="submit">저장</button></div>
         </form>` : ''}
     </section>
@@ -1705,6 +1717,7 @@ window.addEventListener('keydown', (event) => {
 });
 
 setupThemeToggle();
+initPageJumpControls();
 initAuthUI();
 syncCriteriaDrawerFromDashboard().catch((error) => {
   console.warn('Dashboard 판단근거 사전 로드 실패:', error);

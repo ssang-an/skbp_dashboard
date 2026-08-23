@@ -1,6 +1,6 @@
 # Companies
 
-> Generated at `2026-08-23T00:16:03`.
+> Generated at `2026-08-23T11:53:17`.
 
 - [[1ST Biotherapeutics]] (2)
 - [[1ST Biotherapeutics - D&D Pharmatech|1ST Biotherapeutics / D&D Pharmatech]] (1)
@@ -101,7 +101,6 @@
 - [[Shaperon Inc|Shaperon Inc.]] (1)
 - [[Stoke Therapeutics - Biogen|Stoke Therapeutics / Biogen]] (1)
 - [[Threebrooks Therapeutics]] (1)
-- [[VASTHERA]] (1)
 - [[VASTHERA Co., Ltd|VASTHERA Co., Ltd.]] (1)
 - [[VivaVision Biotech]] (1)
 - [[Voronoi - Anvia Therapeutics|Voronoi / Anvia Therapeutics]] (1)

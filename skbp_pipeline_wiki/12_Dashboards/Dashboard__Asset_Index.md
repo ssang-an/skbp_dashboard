@@ -121,7 +121,7 @@
 | [[02_Assets/Asset__Small_Molecules_to_Antagonize_TRPM7|Small Molecules to Antagonize TRPM7]] | 11 | Watch | E2 |
 | [[02_Assets/Asset__UX-EP001_UXEP-001|UX-EP001 / UXEP-001]] | 5 | Deprioritize | E1 |
 | [[02_Assets/Asset__VRN04-2|VRN04-2]] | 5 | Run Full Scout | E0 |
-| [[02_Assets/Asset__VTA-27|VTA-27]] | 13 | Watch | E3 |
+| [[02_Assets/Asset__VTA-27|VTA-27]] | 14 | Shortlist | E3 |
 | [[02_Assets/Asset__WT-1-2.0|WT-1-2.0]] |  | N/A | E0 |
 | [[02_Assets/Asset__WT-1108|WT-1108]] | 8 | Watch | E2 |
 | [[02_Assets/Asset__YC-5_Injection|YC-5 Injection]] | 4 | Do not run Full Scout | E0 |

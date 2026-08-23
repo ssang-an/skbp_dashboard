@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T00:16:03"
+generated_at: "2026-08-23T11:53:17"
 record_id: "Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)"
 company: "Threebrooks Therapeutics"
 country: "Republic of Korea"
@@ -1154,6 +1154,16 @@ Scientifically differentiated and data-rich preclinical TRPML1 program with curr
         "field": "pipeline_metadata.contact",
         "previous_value": "",
         "new_value": "df"
+      },
+      {
+        "id": "2c0a4799c73f46419375b60f1cbd9e3b",
+        "changed_at": "2026-08-23T01:41:03.819551+00:00",
+        "actor_ip": "system",
+        "actor_name": "",
+        "source": "cross_workflow_comment_sync",
+        "field": "collaboration.comments.tab0_contact",
+        "previous_value": null,
+        "new_value": null
       }
     ],
     "focus_management": {
@@ -1551,10 +1561,26 @@ Scientifically differentiated and data-rich preclinical TRPML1 program with curr
           "body": "contact 지난주에 만났음",
           "created_at": "2026-08-22T14:57:13.783836+00:00",
           "updated_at": "2026-08-22T14:57:13.783836+00:00"
+        },
+        {
+          "id": "faedac1eca7e4b3e9e0ffb9d62f08fb5",
+          "parent_id": null,
+          "author": "정주원",
+          "author_user_id": "",
+          "author_email": "",
+          "actor_ip": "system",
+          "body": "df",
+          "created_at": "2026-08-22T15:00:04.055430+00:00",
+          "updated_at": "2026-08-23T01:41:03.819539+00:00",
+          "source": "listing_contact_post",
+          "label": "Tab 0 · Contact History Post",
+          "category": "contact_history",
+          "import_key": "2ecd7b9c461bb0f0b34717a2cdc9f334e502db23df6df0237ec362e590d78ed0",
+          "system_import": true
         }
       ],
-      "updated_at": "2026-08-22T14:57:13.783836+00:00",
-      "comment_count": 1
+      "updated_at": "2026-08-23T01:41:03.819539+00:00",
+      "comment_count": 2
     },
     "pipeline_metadata": {
       "listed_at": "2026-08-22T15:00:04.055430+00:00",

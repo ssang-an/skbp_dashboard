@@ -20,21 +20,21 @@ confidence: "medium"
 
 | Field | Value |
 |---|---|
-| Company | Eisai / Biogen |
+| Company | Eisai/Biogen |
 | Asset | Leqembi (lecanemab) |
-| Target / MoA | Soluble amyloid-beta aggregates/protofibrils |
+| Target / MoA | Anti-amyloid-beta antibody |
 | Modality | Antibody |
-| Stage | Approved |
+| Stage | Approved / marketed |
 | Similarity level | Low |
 
 ## Why It Matters
 
-Established disease-modifying efficacy, ARIA monitoring and access benchmark.
+Established disease-modifying benchmark and pricing/market-access comparator despite different MoA.
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__VTA-27|VTA-27]]: Established disease-modifying efficacy, ARIA monitoring and access benchmark.
+- [[02_Assets/Asset__VTA-27|VTA-27]]: Established disease-modifying benchmark and pricing/market-access comparator despite different MoA.
 
 ## Sources
 
-- https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval
+- https://www.accessdata.fda.gov/drugsatfda_docs/appletter/2025/761269Orig1s012%3B%20s015ltr.pdf
