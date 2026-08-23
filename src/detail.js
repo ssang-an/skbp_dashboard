@@ -895,7 +895,7 @@ function formatCommentTime(value) {
   }).format(date);
 }
 
-function renderCommentNode(comment, childrenByParent, depth = 0, visited = new Set(), defaultBreadcrumb = 'Tab 2 · Full Scout · Comments') {
+function renderCommentNode(comment, childrenByParent, depth = 0, visited = new Set(), defaultBreadcrumb = 'Tab 2 · Full Scout · Comment') {
   if (visited.has(comment.id) || depth > 8) return '';
   const nextVisited = new Set(visited);
   nextVisited.add(comment.id);

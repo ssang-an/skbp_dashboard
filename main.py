@@ -5426,7 +5426,7 @@ def pipeline_human_comment_feed(
                 if not body:
                     continue
                 entries.append({
-                    "source": f"{source} · Qualitative · {criterion_label}",
+                    "source": f"{source} · DD · {criterion_label}",
                     "author": str(item.get("author") or "").strip(),
                     "created_at": str(item.get("created_at") or "").strip(),
                     "body": body,
@@ -5463,7 +5463,7 @@ def pipeline_human_comment_feed(
             if not body:
                 continue
             entries.append({
-                "source": f"{source} · {'Contact History' if str(comment.get('category') or '') == 'contact_history' else 'Team Review Comment'}",
+                "source": f"{source} · {'Contact History' if str(comment.get('category') or '') == 'contact_history' else 'Comment'}",
                 "author": str(comment.get("author") or "").strip(),
                 "created_at": str(comment.get("created_at") or "").strip(),
                 "body": body,
@@ -5474,9 +5474,9 @@ def pipeline_human_comment_feed(
         comment_source = str((metadata or {}).get("comment_source") or "").strip()
         comment_author = str((metadata or {}).get("comment_author") or "Team Review").strip()
         is_bulk_import = comment_source == "team_review_import" or comment_author in {"Tab 0 Team Review", "Team Review"}
-        base_entries[0]["source"] = "일괄 Excel 업로드: Tab 0 · Listing Comment" if is_bulk_import else "Tab 0 · Listing Comment"
+        base_entries[0]["source"] = "일괄 업로드: Tab 0 · Comment" if is_bulk_import else "Tab 0 · Comment"
         if is_bulk_import:
-            base_entries[0]["author"] = "Team Review"
+            base_entries[0]["author"] = "Team"
     operational_entries = entries[len(base_entries):]
     operational_entries.sort(key=lambda item: str(item.get("created_at") or ""))
     return base_entries + operational_entries
@@ -9119,7 +9119,7 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
         if field == "comment" and not can_edit_listing_comment(candidate_queue_entry_metadata(entry), actor_name):
             raise HTTPException(status_code=403, detail="Listing Comment는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
         if field == "contact" and not can_edit_listing_contact(candidate_queue_entry_metadata(entry), actor_name):
-            raise HTTPException(status_code=403, detail="Contact History Post는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
+            raise HTTPException(status_code=403, detail="Contact History는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
         updated = merge_pipeline_metadata(
             candidate_queue_entry_metadata(entry),
             {field: value, "updated_at": changed_at, **direct_comment_metadata},
@@ -9143,7 +9143,7 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
         if field == "comment" and not can_edit_listing_comment(pipeline_metadata_for_group(group), actor_name):
             raise HTTPException(status_code=403, detail="Listing Comment는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
         if field == "contact" and not can_edit_listing_contact(pipeline_metadata_for_group(group), actor_name):
-            raise HTTPException(status_code=403, detail="Contact History Post는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
+            raise HTTPException(status_code=403, detail="Contact History는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
         actor_ip = get_client_ip(request)
         for record in group.get("records") or []:
             previous = record_pipeline_metadata(record).get(field, "")

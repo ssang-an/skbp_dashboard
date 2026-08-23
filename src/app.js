@@ -483,8 +483,10 @@ const elements = {
   pipelineTable: document.querySelector('#pipelineTable'),
   pipelineColGroup: document.querySelector('#pipelineColGroup'),
   pageInfo: document.querySelector('#pageInfo'),
+  firstPage: document.querySelector('#firstPage'),
   prevPage: document.querySelector('#prevPage'),
   nextPage: document.querySelector('#nextPage'),
+  lastPage: document.querySelector('#lastPage'),
   gptResponseInput: document.querySelector('#gptResponseInput'),
   dataUploadPanel: document.querySelector('#dataUploadPanel'),
   dataUploadInputLabel: document.querySelector('#dataUploadInputLabel'),
@@ -572,9 +574,11 @@ const elements = {
   step0SelectedCount: document.querySelector('#step0SelectedCount'),
   step0CopyInstructionsButton: document.querySelector('#step0CopyInstructionsButton'),
   step0ExportExcelButton: document.querySelector('#step0ExportExcelButton'),
+  step0FirstPage: document.querySelector('#step0FirstPage'),
   step0PrevPage: document.querySelector('#step0PrevPage'),
   step0PageInfo: document.querySelector('#step0PageInfo'),
   step0NextPage: document.querySelector('#step0NextPage'),
+  step0LastPage: document.querySelector('#step0LastPage'),
   step0EditLockedModal: document.querySelector('#step0EditLockedModal'),
   step0EditLockedTitle: document.querySelector('#step0EditLockedTitle'),
   step0EditLockedMessage: document.querySelector('#step0EditLockedMessage'),
@@ -4281,6 +4285,15 @@ function setTopPromptShortcutVisibility({ triage = false, full = false } = {}) {
 }
 
 function syncTopDataActionsForVisibleTab() {
+  const isKnowledgeMapVisible = Boolean(elements.knowledgeMapPanel && !elements.knowledgeMapPanel.hidden);
+  // Atlas is an exploration workspace, not a research-input workflow. Do not
+  // inherit the last table tab's upload or GPT-instruction actions on entry.
+  if (isKnowledgeMapVisible) {
+    setDataUploadShortcutVisibility(false);
+    setTopPromptShortcutVisibility();
+    return;
+  }
+
   const isStep0Visible = Boolean(elements.step0Panel && !elements.step0Panel.hidden);
   if (isStep0Visible) {
     setDataUploadShortcutVisibility(true);
@@ -4983,6 +4996,14 @@ function filterToneClass(status) {
   return 'review';
 }
 
+function updatePipelinePagination(pageCount) {
+  if (elements.pageInfo) elements.pageInfo.textContent = `${state.page} / ${pageCount}`;
+  if (elements.firstPage) elements.firstPage.disabled = state.page <= 1;
+  if (elements.prevPage) elements.prevPage.disabled = state.page <= 1;
+  if (elements.nextPage) elements.nextPage.disabled = state.page >= pageCount;
+  if (elements.lastPage) elements.lastPage.disabled = state.page >= pageCount;
+}
+
 function renderTableLegacy() {
   const visibleRows = getVisibleRows();
   const pageCount = Math.max(1, Math.ceil(visibleRows.length / state.pageSize));
@@ -5180,9 +5201,7 @@ function renderTableLegacy() {
         .join('')
     : `<tr><td colspan="${17 + extraColumns.length}" class="empty-cell">조건에 맞는 데이터가 없습니다.</td></tr>`;
 
-  elements.pageInfo.textContent = `${state.page} / ${pageCount}`;
-  elements.prevPage.disabled = state.page <= 1;
-  elements.nextPage.disabled = state.page >= pageCount;
+  updatePipelinePagination(pageCount);
   updateSelectionControls(pageRows);
 }
 
@@ -5534,9 +5553,7 @@ function renderFocusTable() {
       </tr>
     `;
 
-  elements.pageInfo.textContent = `${state.page} / ${pageCount}`;
-  elements.prevPage.disabled = state.page <= 1;
-  elements.nextPage.disabled = state.page >= pageCount;
+  updatePipelinePagination(pageCount);
   updateSelectionControls(pageRows);
   updateFrozenColumnOffsets();
   updateSortIndicators();
@@ -5707,9 +5724,7 @@ function renderTable() {
         .join('')
     : `<tr><td colspan="${10 + scoreColumns.length + extraColumns.length}" class="empty-cell">현재 조건에 맞는 ${modeLabel} asset이 없습니다. 필터를 조정하거나 초기화해 주세요.</td></tr>`;
 
-  elements.pageInfo.textContent = `${state.page} / ${pageCount}`;
-  elements.prevPage.disabled = state.page <= 1;
-  elements.nextPage.disabled = state.page >= pageCount;
+  updatePipelinePagination(pageCount);
   updateSelectionControls(pageRows);
   updateFrozenColumnOffsets();
   updateSortIndicators();
@@ -11316,8 +11331,8 @@ function step0CommentFeed(row) {
     const author = String(row?.metadata?.comment_author || 'Team Review');
     const isBulkImport = row?.metadata?.comment_source === 'team_review_import' || ['Tab 0 Team Review', 'Team Review'].includes(author);
     const source = isBulkImport
-      ? '일괄 Excel 업로드: Tab 0 · Listing Comment'
-      : 'Tab 0 · Listing Comment';
+      ? '일괄 업로드: Tab 0 · Comment'
+      : 'Tab 0 · Comment';
     return [{
       source,
       author: isBulkImport ? 'Team' : author,
@@ -11335,7 +11350,7 @@ function step0ContactFeed(row) {
   const fallback = String(row?.metadata?.contact || '').trim();
   if (!fallback || /^(?:x|[-–—]+)$/i.test(fallback)) return [];
   return [{
-    source: 'Tab 0 · Contact History Post',
+    source: 'Tab 0 · Contact History',
     author: String(row?.metadata?.contact_author || 'Team Review'),
     created_at: String(row?.metadata?.contact_updated_at || row?.metadata?.updated_at || ''),
     body: fallback
@@ -12260,7 +12275,7 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
   const admin = Boolean(getCurrentUser()?.is_admin);
   if (editing && !admin) return;
   if (editing && field === 'comment' && !step0ListingCommentCanEdit(row)) return;
-  const label = field === 'comment' ? 'Listing Comment Post' : field === 'contact' ? 'Contact History Post' : 'Website';
+  const label = field === 'comment' ? 'Listing Comment Post' : field === 'contact' ? 'Contact History' : 'Website';
   const value = step0MetadataValue(row, field);
   const commentFeed = field === 'comment' ? step0CommentFeed(row) : field === 'contact' ? step0ContactFeed(row) : [];
   const popover = document.createElement('section');
@@ -12283,7 +12298,7 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
     `;
   if (!editing && (field === 'comment' || field === 'contact')) {
     const isContactHistory = field === 'contact';
-    const postLabel = isContactHistory ? 'Contact History Post' : 'Listing Comment Post';
+    const postLabel = isContactHistory ? 'Contact History' : 'Listing Comment Post';
     const canEditListingComment = isContactHistory ? step0ContactHistoryCanEdit(row) : step0ListingCommentCanEdit(row);
     const commentCards = commentFeed.length
       ? commentFeed.map((entry) => {
@@ -12293,7 +12308,7 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
         const body = escapeHtml(String(entry.body || '')).replaceAll('\n', '<br>');
         const byline = [author, createdAt].filter(Boolean).join(' · ');
         const sourceText = String(entry.source || '');
-        const isEditableListingComment = canEditListingComment && sourceText.includes(isContactHistory ? 'Tab 0 · Contact History Post' : 'Tab 0 · Listing Comment');
+        const isEditableListingComment = canEditListingComment && sourceText.includes(isContactHistory ? 'Tab 0 · Contact History' : 'Tab 0 · Comment');
         const sourceWorkspaceMode = sourceText.includes('Tab 2') && sourceText.includes('Full Scout')
           ? 'full'
           : sourceText.includes('Tab 1') && sourceText.includes('Fast Triage')
@@ -12346,7 +12361,7 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
   popover.querySelector('[data-step0-comment-delete]')?.addEventListener('click', async (event) => {
     event.preventDefault();
     event.stopPropagation();
-    const postLabel = field === 'contact' ? 'Contact History Post' : 'Listing Comment';
+    const postLabel = field === 'contact' ? 'Contact History' : 'Listing Comment';
     if (!await confirmDashboardDelete({ title: `${postLabel}를 삭제할까요?`, message: `삭제한 ${postLabel}는 복구할 수 없습니다.` })) return;
     const button = event.currentTarget;
     button.disabled = true;
@@ -12582,8 +12597,10 @@ function renderStep0ProgressTable() {
       .join('');
   }
   if (elements.step0PageInfo) elements.step0PageInfo.textContent = `${state.step0Page} / ${pageCount}`;
+  if (elements.step0FirstPage) elements.step0FirstPage.disabled = state.step0Page <= 1;
   if (elements.step0PrevPage) elements.step0PrevPage.disabled = state.step0Page <= 1;
   if (elements.step0NextPage) elements.step0NextPage.disabled = state.step0Page >= pageCount;
+  if (elements.step0LastPage) elements.step0LastPage.disabled = state.step0Page >= pageCount;
   updateStep0SelectAllState();
   renderStep0WorkflowMap();
 }
@@ -12815,12 +12832,21 @@ elements.step0PageSizeSelect?.addEventListener('change', (event) => {
   state.step0Page = 1;
   renderStep0ProgressTable();
 });
+elements.step0FirstPage?.addEventListener('click', () => {
+  state.step0Page = 1;
+  renderStep0ProgressTable();
+});
 elements.step0PrevPage?.addEventListener('click', () => {
   state.step0Page = Math.max(1, state.step0Page - 1);
   renderStep0ProgressTable();
 });
 elements.step0NextPage?.addEventListener('click', () => {
   state.step0Page += 1;
+  renderStep0ProgressTable();
+});
+elements.step0LastPage?.addEventListener('click', () => {
+  const pageCount = Math.max(1, Math.ceil(step0FilteredSortedRows().length / state.step0PageSize));
+  state.step0Page = pageCount;
   renderStep0ProgressTable();
 });
 elements.step0SearchInput?.addEventListener('input', (event) => {
@@ -13298,6 +13324,10 @@ elements.pageSizeSelect?.addEventListener('change', (event) => {
   renderTable();
 });
 
+elements.firstPage?.addEventListener('click', () => {
+  state.page = 1;
+  renderTable();
+});
 elements.prevPage.addEventListener('click', () => {
   state.page = Math.max(1, state.page - 1);
   renderTable();
@@ -13305,6 +13335,11 @@ elements.prevPage.addEventListener('click', () => {
 
 elements.nextPage.addEventListener('click', () => {
   state.page += 1;
+  renderTable();
+});
+elements.lastPage?.addEventListener('click', () => {
+  const pageCount = Math.max(1, Math.ceil(getVisibleRows().length / state.pageSize));
+  state.page = pageCount;
   renderTable();
 });
 

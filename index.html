@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20260823-summary-loading-calm-1" />
+  <link rel="stylesheet" href="./src/styles.css?v=20260824-table-pagination-soft-1" />
   <link rel="stylesheet" href="./src/knowledge_graph.css?v=20260823-atlas-search-pill-alignment-1" />
   <link rel="stylesheet" href="./src/sigma_graph.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js" defer></script>
@@ -322,9 +322,11 @@
             </table>
           </div>
           <div class="table-footer">
-            <button id="step0PrevPage" class="help-tooltip" type="button" data-tooltip="이전 페이지로 이동합니다.">이전</button>
+            <button id="step0FirstPage" class="table-pagination-button help-tooltip" type="button" data-tooltip="첫 페이지로 이동합니다." aria-label="첫 페이지로 이동">«</button>
+            <button id="step0PrevPage" class="table-pagination-button help-tooltip" type="button" data-tooltip="이전 페이지로 이동합니다." aria-label="이전 페이지로 이동">‹</button>
             <span id="step0PageInfo" role="status" aria-live="polite">1 / 1</span>
-            <button id="step0NextPage" class="help-tooltip" type="button" data-tooltip="다음 페이지로 이동합니다.">다음</button>
+            <button id="step0NextPage" class="table-pagination-button help-tooltip" type="button" data-tooltip="다음 페이지로 이동합니다." aria-label="다음 페이지로 이동">›</button>
+            <button id="step0LastPage" class="table-pagination-button help-tooltip" type="button" data-tooltip="마지막 페이지로 이동합니다." aria-label="마지막 페이지로 이동">»</button>
           </div>
         </section>
 
@@ -585,9 +587,11 @@
             </table>
           </div>
           <div class="table-footer">
-            <button id="prevPage" class="help-tooltip" type="button" data-tooltip="이전 페이지로 이동합니다.">이전</button>
+            <button id="firstPage" class="table-pagination-button help-tooltip" type="button" data-tooltip="첫 페이지로 이동합니다." aria-label="첫 페이지로 이동">«</button>
+            <button id="prevPage" class="table-pagination-button help-tooltip" type="button" data-tooltip="이전 페이지로 이동합니다." aria-label="이전 페이지로 이동">‹</button>
             <span id="pageInfo" role="status" aria-live="polite">1 / 1</span>
-            <button id="nextPage" class="help-tooltip" type="button" data-tooltip="다음 페이지로 이동합니다.">다음</button>
+            <button id="nextPage" class="table-pagination-button help-tooltip" type="button" data-tooltip="다음 페이지로 이동합니다." aria-label="다음 페이지로 이동">›</button>
+            <button id="lastPage" class="table-pagination-button help-tooltip" type="button" data-tooltip="마지막 페이지로 이동합니다." aria-label="마지막 페이지로 이동">»</button>
           </div>
         </section>
 
@@ -1352,7 +1356,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260823-summary-loading-scan-1"></script>
+  <script type="module" src="./src/app.js?v=20260824-atlas-header-actions-1"></script>
   <script src="./src/sigma_graph.js?v=20260823-overview-filter-scope-1" defer></script>
   </body>
 </html>

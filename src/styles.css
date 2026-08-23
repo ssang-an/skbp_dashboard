@@ -4469,6 +4469,58 @@ html[data-theme="dark"] .criteria-table thead th {
   font-weight: 800;
 }
 
+.table-footer .table-pagination-button {
+  display: inline-grid;
+  width: 34px;
+  min-width: 34px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0;
+  place-items: center;
+  border-color: color-mix(in srgb, var(--line) 88%, var(--accent) 12%);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--surface) 94%, var(--surface-soft));
+  color: var(--muted);
+  box-shadow: none;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.table-footer .table-pagination-button:hover:not(:disabled),
+.table-footer .table-pagination-button:focus-visible:not(:disabled) {
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+  color: var(--accent);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.table-footer .table-pagination-button:focus-visible:not(:disabled) {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.table-footer .table-pagination-button:disabled {
+  border-color: color-mix(in srgb, var(--line) 72%, transparent);
+  background: color-mix(in srgb, var(--surface-soft) 62%, transparent);
+  color: color-mix(in srgb, var(--muted) 72%, transparent);
+  opacity: .68;
+}
+
+.table-footer > [role="status"] {
+  min-width: 42px;
+  padding: 7px 8px;
+  border: 1px solid color-mix(in srgb, var(--line) 76%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--surface-soft) 56%, var(--surface));
+  color: var(--muted);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
 .action-pill {
   display: inline-flex;
   align-items: center;
@@ -16986,6 +17038,14 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
 .filter-multiselect-menu-search input:focus {
   border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+/* Tab 0's denser filter row benefits from the slimmer search field used in
+   the Fast Triage and Full Scout filter menus. Keep the change local so the
+   shared trigger and option spacing remain untouched. */
+.step0-filter-multiselect .filter-multiselect-menu-search input {
+  min-height: 28px;
+  padding-block: 4px;
 }
 
 .filter-multiselect-option-group { padding: 1px 0 4px; }
