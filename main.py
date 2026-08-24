@@ -402,6 +402,22 @@ def normalized_identity_email(email: Any) -> str:
     return str(email or "").strip().casefold()
 
 
+def comment_owned_by_account(comment: dict[str, Any], account: dict[str, Any]) -> bool:
+    """Match a normal comment to its author across an ID migration on another workspace.
+
+    Account ID remains authoritative.  A verified, exact email match is a compatibility
+    fallback for old comments created before home/company workspaces shared user IDs.
+    Display names are deliberately never used for authorization.
+    """
+    author_id = str(comment.get("author_user_id") or "")
+    account_id = str(account.get("id") or "")
+    if author_id and account_id and author_id == account_id:
+        return True
+    author_email = normalized_identity_email(comment.get("author_email"))
+    account_email = normalized_identity_email(account.get("email"))
+    return bool(author_email and account_email and author_email == account_email)
+
+
 def initial_role_for_identity(name: Any, email: Any) -> str:
     identity = (str(name or "").strip(), normalized_identity_email(email))
     if identity in INITIAL_DEVELOPER_IDENTITIES:
@@ -5526,7 +5542,10 @@ def pipeline_human_comment_feed(
     if base_entries:
         comment_source = str((metadata or {}).get("comment_source") or "").strip()
         comment_author = str((metadata or {}).get("comment_author") or "Team Review").strip()
-        is_bulk_import = comment_source == "team_review_import" or comment_author in {"Tab 0 Team Review", "Team Review"}
+        # Only an explicit Excel import is labelled as a bulk upload.  Older direct
+        # Tab 0 posts may not have a stored author, but must not be misrepresented
+        # as an import merely because their legacy fallback author is Team Review.
+        is_bulk_import = comment_source == "team_review_import"
         base_entries[0]["source"] = "일괄 업로드: Tab 0 · Comment" if is_bulk_import else "Tab 0 · Comment"
         if is_bulk_import:
             base_entries[0]["author"] = "Team"
@@ -11019,9 +11038,7 @@ def delete_record_comment(record_id: str, comment_id: str, request: Request) -> 
             if not is_auth_admin(account):
                 raise HTTPException(status_code=403, detail="Only administrators can remove imported comments.")
         else:
-            author_id = str(target.get("author_user_id") or "")
-            actor_id = str(account.get("id") or "")
-            if not author_id or author_id != actor_id:
+            if not comment_owned_by_account(target, account):
                 raise HTTPException(status_code=403, detail="Only the author can delete this comment.")
         collaboration["comments"] = [comment for comment in comments if comment is not target]
         if target.get("system_import") is True and str(target.get("import_key") or ""):
@@ -11081,7 +11098,7 @@ async def update_record_comment(record_id: str, comment_id: str, request: Reques
             raise HTTPException(status_code=404, detail="Comment was not found.")
         if target.get("system_import") is True:
             raise HTTPException(status_code=403, detail="Imported comments are read-only.")
-        if not actor_id or str(target.get("author_user_id") or "") != actor_id:
+        if not comment_owned_by_account(target, account):
             raise HTTPException(status_code=403, detail="Only the author can edit this comment.")
         previous = str(target.get("body") or "")
         changed_at = datetime.now(timezone.utc).isoformat()

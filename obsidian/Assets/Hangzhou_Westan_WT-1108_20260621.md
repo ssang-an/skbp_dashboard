@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T11:53:17"
+generated_at: "2026-08-24T19:06:21"
 record_id: "Hangzhou_Westan_WT-1108_20260621"
 company: "Hangzhou Westan Pharmaceutical Technology Co., Ltd."
 country: "China"
@@ -415,6 +415,16 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
         "field": "collaboration.comments.tab0_listing",
         "previous_value": null,
         "new_value": null
+      },
+      {
+        "id": "71f5d814a1f943c2ab6dda7954d03394",
+        "changed_at": "2026-08-24T10:06:20.356955+00:00",
+        "actor_ip": "system",
+        "actor_name": "",
+        "source": "cross_workflow_comment_sync",
+        "field": "collaboration.comments.tab0_listing",
+        "previous_value": null,
+        "new_value": null
       }
     ],
     "collaboration": {
@@ -422,13 +432,13 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
         {
           "id": "d356645d30b84ce2824307ed724b23ca",
           "parent_id": null,
-          "author": "Team",
+          "author": "Team Review",
           "author_user_id": "",
           "author_email": "",
           "actor_ip": "system",
           "body": "df",
           "created_at": "2026-08-22T09:14:13.020965+00:00",
-          "updated_at": "2026-08-23T02:53:16.747263+00:00",
+          "updated_at": "2026-08-24T10:06:20.356947+00:00",
           "source": "listing_comment_post",
           "import_key": "8f7d7db4d063b90ff0370d7059bab1e74f06e5639b8dc3b4bf9791e6df852bdf",
           "system_import": true,
@@ -436,7 +446,7 @@ WT-1108 is a clinically staged P2X3 chronic cough asset with validated class bio
           "category": ""
         }
       ],
-      "updated_at": "2026-08-23T02:53:16.747263+00:00",
+      "updated_at": "2026-08-24T10:06:20.356947+00:00",
       "comment_count": 1
     }
   },

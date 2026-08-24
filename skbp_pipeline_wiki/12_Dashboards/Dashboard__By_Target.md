@@ -4,6 +4,7 @@
 - [[04_Targets/Target__acetylcholinesterase_(ache)|acetylcholinesterase_(ache)]]
 - [[04_Targets/Target__acid_sphingomyelinase_(asm)|acid_sphingomyelinase_(asm)]]
 - [[04_Targets/Target__aimp2_pathway_via_aimp2-dx2|aimp2_pathway_via_aimp2-dx2]]
+- [[04_Targets/Target__alpha-synuclein_aggregates|alpha-synuclein_aggregates]]
 - [[04_Targets/Target__amyloid-beta_aggregates_and_tam_receptors|amyloid-beta_aggregates_and_tam_receptors]]
 - [[04_Targets/Target__amyloid-β,_especially_oligomeric_aβ;_tam_receptors_tyro3_axl_mertk_as_t_ba5985eb|amyloid-β,_especially_oligomeric_aβ;_tam_receptors_tyro3_axl_mertk_as_t_ba5985eb]]
 - [[04_Targets/Target__amyloid_and_tau_antigens|amyloid_and_tau_antigens]]
@@ -73,4 +74,3 @@
 - [[04_Targets/Target__unknown|unknown]]
 - [[04_Targets/Target__v-atpase_lysosomal_acidification_axis|v-atpase_lysosomal_acidification_axis]]
 - [[04_Targets/Target__vgscs|vgscs]]
-- [[04_Targets/Target__α-synuclein_oligomer_aggregates|α-synuclein_oligomer_aggregates]]

@@ -175,6 +175,37 @@ function commentByline(breadcrumb, author, dateText) {
   return dateText ? `${identity} · ${dateText}` : identity;
 }
 
+function currentUserOwnsOperationalComment(comment) {
+  const user = getCurrentUser();
+  const sameId = user?.id && comment?.author_user_id && String(user.id) === String(comment.author_user_id);
+  const sameEmail = user?.email && comment?.author_email
+    && String(user.email).trim().toLowerCase() === String(comment.author_email).trim().toLowerCase();
+  return Boolean(sameId || sameEmail);
+}
+
+function listingCommentDisplay(record, entry) {
+  const metadata = objectValue(objectValue(record?.meta).pipeline_metadata);
+  const isBulk = String(metadata.comment_source || '') === 'team_review_import';
+  return {
+    breadcrumb: isBulk ? '일괄 업로드: Tab 0 · Comment' : 'Tab 0 · Comment',
+    author: isBulk ? 'Team' : textValue(metadata.comment_author, textValue(entry.author, 'Team Review')),
+    timestamp: textValue(metadata.comment_updated_at, textValue(metadata.comment_created_at, textValue(entry.created_at, '')))
+  };
+}
+
+function contactHistoryDisplay(record, entry) {
+  if (String(entry?.source || '') !== 'listing_contact_history') {
+    return { breadcrumb: 'Tab 1 · Fast Triage · Contact History', author: entry.author, timestamp: entry.updated_at || entry.created_at };
+  }
+  const metadata = objectValue(objectValue(record?.meta).pipeline_metadata);
+  const isBulk = String(metadata.contact_source || '') === 'team_review_import';
+  return {
+    breadcrumb: isBulk ? '일괄 업로드: Tab 0 · Contact History' : 'Tab 0 · Contact History',
+    author: isBulk ? 'Team' : textValue(metadata.contact_author, textValue(entry.author, 'Team Review')),
+    timestamp: textValue(metadata.contact_updated_at, textValue(metadata.contact_created_at, textValue(entry.created_at, '')))
+  };
+}
+
 function objectValue(value) {
   return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
 }
@@ -797,12 +828,22 @@ function triageFinalCommentPostsMarkup(record) {
     .filter((entry) => objectValue(entry).category === 'final_comment');
   if (!entries.length) return '';
   return `<section class="triage-final-comment-posts" aria-label="Final Comments">${entries.map((entry) => {
-    const isOwn = String(entry.author_user_id || '') === String(getCurrentUser()?.id || '');
+    const isOwn = currentUserOwnsOperationalComment(entry);
     return `<article class="triage-score-note${isOwn ? ' is-editable' : ''}"${isOwn ? ` data-triage-final-post-edit data-comment-id="${escapeHtml(entry.id)}" title="두 번 클릭하여 수정"` : ''}>
       ${isOwn ? `<button type="button" class="triage-note-delete" data-triage-final-post-delete data-comment-id="${escapeHtml(entry.id)}" aria-label="내 최종 코멘트 삭제" title="내 최종 코멘트 삭제">×</button>` : ''}
       <p>${escapeHtml(entry.body || '')}</p><small>${escapeHtml(commentByline('Tab 1 · Fast Triage · Comment', entry.author, formatTimestamp(entry.updated_at || entry.created_at)))}</small>
       ${isOwn ? `<form class="triage-inline-note-form" data-triage-final-post-edit-form data-comment-id="${escapeHtml(entry.id)}" hidden><textarea rows="3" maxlength="5000" aria-label="최종 코멘트 수정">${escapeHtml(entry.body || '')}</textarea><div><span data-triage-final-post-status></span><button type="button" data-triage-final-post-edit-cancel>취소</button><button type="submit">저장</button></div></form>` : ''}
     </article>`;
+  }).join('')}</section>`;
+}
+
+function triageSyncedListingCommentsMarkup(record) {
+  const entries = arrayValue(objectValue(objectValue(record?.meta).collaboration).comments)
+    .filter((entry) => String(entry?.source || '') === 'listing_comment_post');
+  if (!entries.length) return '';
+  return `<section class="triage-final-comment-posts" aria-label="Listing Comments">${entries.map((entry) => {
+    const display = listingCommentDisplay(record, entry);
+    return `<article class="triage-score-note"><p>${escapeHtml(entry.body || '')}</p><small>${escapeHtml(commentByline(display.breadcrumb, display.author, formatTimestamp(display.timestamp)))}</small></article>`;
   }).join('')}</section>`;
 }
 
@@ -817,10 +858,11 @@ function triageContactHistoryMarkup(record) {
         <small>해당 Pipeline과 관련해 수행한 미팅·통화·이메일·후속 조치 등 Contact History를 기록하세요.</small>
       </div>
       ${entries.length ? `<div class="triage-score-note-list">${entries.map((entry) => {
-        const isOwn = String(entry.author_user_id || '') === String(getCurrentUser()?.id || '');
+        const isOwn = currentUserOwnsOperationalComment(entry);
+        const display = contactHistoryDisplay(record, entry);
         return `<article class="triage-score-note${isOwn ? ' is-editable' : ''}"${isOwn ? ` data-triage-contact-history-edit data-comment-id="${escapeHtml(entry.id)}" title="두 번 클릭하여 수정"` : ''}>
           ${isOwn ? `<button type="button" class="triage-note-delete" data-triage-contact-history-delete data-comment-id="${escapeHtml(entry.id)}" aria-label="내 Contact History 삭제" title="내 Contact History 삭제">×</button>` : ''}
-          <p>${escapeHtml(entry.body || '')}</p><small>${escapeHtml(commentByline('Tab 1 · Fast Triage · Contact History', entry.author, formatTimestamp(entry.updated_at || entry.created_at)))}</small>
+          <p>${escapeHtml(entry.body || '')}</p><small>${escapeHtml(commentByline(display.breadcrumb, display.author, formatTimestamp(display.timestamp)))}</small>
           ${isOwn ? `<form class="triage-inline-note-form" data-triage-contact-history-edit-form data-comment-id="${escapeHtml(entry.id)}" hidden><textarea rows="3" maxlength="5000" aria-label="Contact History 수정">${escapeHtml(entry.body || '')}</textarea><div><span data-triage-contact-history-status></span><button type="button" data-triage-contact-history-edit-cancel>취소</button><button type="submit">저장</button></div></form>` : ''}
         </article>`;
       }).join('')}</div>` : ''}
@@ -1094,9 +1136,9 @@ function renderQuickSummary(record) {
       `).join('')}
     </dl>
     ${finalCommentMarkup(record)}
+    ${triageSyncedListingCommentsMarkup(record)}
     ${triageFinalCommentPostsMarkup(record)}
     ${triageContactHistoryMarkup(record)}
-    ${pipelineMetadataMarkup(record)}
     ${renderTriageReviewHistory(record)}
   `;
 }

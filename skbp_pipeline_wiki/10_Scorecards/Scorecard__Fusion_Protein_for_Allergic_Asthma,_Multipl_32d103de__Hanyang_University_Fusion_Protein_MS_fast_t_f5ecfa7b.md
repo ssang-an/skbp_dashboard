@@ -5,8 +5,8 @@ title: "Scorecard - Fusion Protein for Allergic Asthma, Multiple Sclerosis and T
 tags:
   - "pipeline/scorecard"
   - "skbp/scoring"
-created_at: "2026-08-23"
-updated_at: "2026-08-23"
+created_at: "2026-08-24"
+updated_at: "2026-08-24"
 source_report: "[[01_Raw_Reports/Hanyang_University_Fusion_Protein_MS_fast_triage_20260623]]"
 source_json: "json/pipeline-records.json"
 asset: "[[02_Assets/Asset__Fusion_Protein_for_Allergic_Asthma,_Multipl_32d103de|Fusion Protein for Allergic Asthma, Multiple Sclerosis and Transplant Rejection]]"

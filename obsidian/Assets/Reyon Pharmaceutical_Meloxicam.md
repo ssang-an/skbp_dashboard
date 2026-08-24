@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T11:53:17"
+generated_at: "2026-08-24T19:06:21"
 record_id: "Reyon Pharmaceutical_Meloxicam"
 company: "Reyon Pharmaceutical"
 country: "Republic of Korea"

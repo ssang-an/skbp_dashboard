@@ -1,6 +1,6 @@
 # Pipeline Index
 
-> Generated from `json/pipeline-records.json` at `2026-08-23T11:53:17`.
+> Generated from `json/pipeline-records.json` at `2026-08-24T19:06:21`.
 
 ## Assets
 
@@ -39,7 +39,7 @@
 | [[Hefei_Huafang_HB018_fast_triage_20260623]] | [[-]] | - | [[Theme - No Theme|No Theme]] | [[Cluster - No mapped SKBP cluster|No mapped SKBP cluster]] | IND-enabling | None / 21 |
 | [[Humanwell_CXJM-66_fast_triage_20260623]] | [[-]] | - | [[Theme - E-I Balance|E/I Balance]] | [[Cluster - Ion Channel|Ion Channel]] | Phase 1 | None / 21 |
 | [[GenixCure_GXC-303_20260713]] | [[-]] | - | [[Theme - No Theme|No Theme]] | [[Cluster - N-A|N/A]] | Lead Optimization | 11 / 21 |
-| [[Astrion Co., Ltd._AON-PP23]] | [[-]] | - | [[Theme - Protein Homeostasis|Protein Homeostasis]] | [[Cluster - Unknown|Unknown]] | Unknown | 6 / 9 |
+| [[Astrion Co., Ltd._AON-PP23]] | [[-]] | - | [[Theme - Protein Homeostasis|Protein Homeostasis]] | [[Cluster - Unknown|Unknown]] | Lead Optimization | 11 / 21 |
 | [[Astrogen_AST-029]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
 | [[Astrogen_AST-030]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Preclinical unspecified | 2 / 9 |
 | [[Astrogen_AST-008]] | [[-]] | - | [[Theme - Unknown|Unknown]] | [[Cluster - Unknown|Unknown]] | Discontinued / inactive | 2 / 9 |

@@ -1,20 +1,20 @@
 ---
 type: "moa"
-canonical_id: "moa::direct_degradation_of_α-synuclein_oligomers_via_pnac-screened_small_molecules"
-title: "direct_degradation_of_α-synuclein_oligomers_via_pnac-screened_small_molecules"
+canonical_id: "moa::alpha-synuclein_aggregation_inhibition_disaggregation"
+title: "alpha-synuclein_aggregation_inhibition_disaggregation"
 aliases:
-  - "direct_degradation_of_α-synuclein_oligomers_via_pnac-screened_small_molecules"
+  - "alpha-synuclein_aggregation_inhibition_disaggregation"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-23"
-updated_at: "2026-08-23"
+created_at: "2026-08-24"
+updated_at: "2026-08-24"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
 ---
 
-# direct_degradation_of_α-synuclein_oligomers_via_pnac-screened_small_molecules
+# alpha-synuclein_aggregation_inhibition_disaggregation
 
 ## Mechanism Summary
 

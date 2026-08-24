@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T11:53:17"
+generated_at: "2026-08-24T19:06:21"
 record_id: "AUTOTAC Bio_AB-12 (IV)"
 company: "AUTOTAC Bio"
 country: "Republic of Korea"

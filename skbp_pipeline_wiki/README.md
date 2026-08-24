@@ -2,7 +2,7 @@
 
 Generated from `json/pipeline-records.json` and `json/candidate-queue.json`.
 
-Generated at: `2026-08-24T10:29:26`
+Generated at: `2026-08-24T19:07:48`
 
 ## Entry Points
 
@@ -20,8 +20,8 @@ Generated at: `2026-08-24T10:29:26`
 - Records: 139
 - Listing entries: 678
 - Workflow pipelines: 763
-- Graph nodes: 2145
-- Graph edges: 3739
+- Graph nodes: 2158
+- Graph edges: 3762
 
 ## Rule
 

@@ -5335,8 +5335,7 @@ function rubricReevaluationButton(row) {
 
 function rubricReevaluationCell(row) {
   if (row.isVirtualTriage) {
-    const href = recordDetailHref(row, 'full');
-    return `<div class="full-scout-row-actions"><a class="focus-action-button icon-only" href="${escapeHtml(href)}" title="Tab 2 Full Scout 결과 열기" aria-label="${escapeHtml(`${row.asset} Tab 2 Full Scout 결과 열기`)}"><svg class="pipeline-row-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 18 15 12 9 6"/></svg></a>${pipelineWebsiteRowButton(row)}</div>`;
+    return `<div class="full-scout-row-actions">${pipelineWebsiteRowButton(row)}</div>`;
   }
   return `<div class="full-scout-row-actions">${rubricReevaluationButton(row)}${triageFullScoutCopyButton(row)}${pipelineWebsiteRowButton(row)}</div>`;
 }
@@ -11360,6 +11359,10 @@ function step0StageCellHtml(stage, cell, fullScoutCell = null) {
   const tone = isInvestigationPending ? 'waiting' : done ? 'pass' : 'empty';
   const stageLabel = STEP0_STAGE_LABELS[stage] || stage;
   const label = isInvestigationPending ? '<span aria-hidden="true">✓</span>' : done ? '<span aria-hidden="true">✓</span>' : '-';
+  const fullScoutCoversFastTriage = stage === 'fast_triage' && Boolean(fullScoutCell?.done);
+  if (fullScoutCoversFastTriage) {
+    return `<span class="pill pass" title="Full Scout 완료 · Fast Triage는 완료 표시만 제공합니다. Tab 1 행을 선택하면 Full Scout 상세를 엽니다.">${label}</span>`;
+  }
   const title = isInvestigationPending
     ? ` title="${escapeHtml('조사 대기 중 · Fast Triage 및 Full Scout 미수행')}"`
     : done ? ` title="${escapeHtml(`${stageLabel} 완료 · 상세 보기`)}"` : '';
@@ -11378,7 +11381,7 @@ function step0CommentFeed(row) {
   const fallback = String(row?.metadata?.comment || '').trim();
   if (fallback) {
     const author = String(row?.metadata?.comment_author || 'Team Review');
-    const isBulkImport = row?.metadata?.comment_source === 'team_review_import' || ['Tab 0 Team Review', 'Team Review'].includes(author);
+    const isBulkImport = row?.metadata?.comment_source === 'team_review_import';
     const source = isBulkImport
       ? '일괄 업로드: Tab 0 · Comment'
       : 'Tab 0 · Comment';

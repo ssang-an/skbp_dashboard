@@ -6,8 +6,8 @@ aliases:
   - "aav9-mediated_expression_of_hgf_isoforms_for_neuroprotection,_axonal_re_c494c166"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-23"
-updated_at: "2026-08-23"
+created_at: "2026-08-24"
+updated_at: "2026-08-24"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

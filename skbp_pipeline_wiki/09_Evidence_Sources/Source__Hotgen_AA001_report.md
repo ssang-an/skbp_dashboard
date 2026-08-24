@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/industry_news"
-created_at: "2026-08-23"
-updated_at: "2026-08-23"
+created_at: "2026-08-24"
+updated_at: "2026-08-24"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | industry_news |
 | Reliability | medium |
 | URL | https://flcube.com/?p=58620 |
-| Accessed / generated date | 2026-08-23 |
+| Accessed / generated date | 2026-08-24 |
 
 ## Evidence Summary
 

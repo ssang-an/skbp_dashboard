@@ -80,7 +80,7 @@ Workflow entries that have reached the Listing stage.
 | [[14_Workflow/Workflow__listing_cq_24567557|Artvila-RIPK · Artvila Biopharma]] | ✓ | - | - | - | - | - |
 | [[14_Workflow/Workflow__listing_cq_aefa8dff|AST-51X · Aston Sci Inc]] | ✓ | - | - | - | - | - |
 | [[14_Workflow/Workflow__listing_cq_8d97aceb|AN2008 · AstraNeura]] | ✓ | - | - | - | - | - |
-| [[14_Workflow/Workflow__astrioncoltd_aonpp23|AON-PP23 · Astrion Co., Ltd.]] | ✓ | ✓ | - | - | - | - |
+| [[14_Workflow/Workflow__astrioncoltd_aonpp23|AON-PP23 · Astrion Co., Ltd.]] | ✓ | - | ✓ | - | - | - |
 | [[14_Workflow/Workflow__astrogen_ast004|AST-004 · Astrogen]] | ✓ | ✓ | - | - | - | - |
 | [[14_Workflow/Workflow__astrogen_ast008|AST-008 · Astrogen]] | ✓ | ✓ | - | - | - | - |
 | [[14_Workflow/Workflow__astrogen_ast029|AST-029 · Astrogen]] | ✓ | ✓ | - | - | - | - |

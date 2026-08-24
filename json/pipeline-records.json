@@ -442,10 +442,24 @@
             "system_import": true,
             "label": "Tab 0 · Listing Comment",
             "category": ""
+          },
+          {
+            "id": "058e56d7c9764730bd9018649ce24dee",
+            "parent_id": null,
+            "author": "정주원",
+            "author_user_id": "",
+            "author_email": "",
+            "actor_ip": "system",
+            "body": "ㅇㄹㄴㅇㄹ",
+            "created_at": "2026-08-22T14:26:05.566828+00:00",
+            "updated_at": "2026-08-24T10:06:20.356782+00:00",
+            "source": "listing_comment_post",
+            "import_key": "427ab3db7b535a36ba805b61d44a12a2fb3da21c81577763fc23d18fd10d616e",
+            "system_import": true
           }
         ],
-        "updated_at": "2026-08-23T01:41:03.818435+00:00",
-        "comment_count": 3
+        "updated_at": "2026-08-24T10:06:20.356782+00:00",
+        "comment_count": 4
       },
       "qualitative_review": {
         "criteria": {
@@ -3065,6 +3079,16 @@
           "field": "collaboration.comments.tab0_listing",
           "previous_value": null,
           "new_value": null
+        },
+        {
+          "id": "0c275ecbd97d42ca8949a5c4fc4eb4c1",
+          "changed_at": "2026-08-24T10:06:20.356837+00:00",
+          "actor_ip": "system",
+          "actor_name": "",
+          "source": "cross_workflow_comment_sync",
+          "field": "collaboration.comments.tab0_listing",
+          "previous_value": null,
+          "new_value": null
         }
       ],
       "last_edited_at": "2026-08-06T02:45:19.876062+00:00",
@@ -3615,6 +3639,16 @@
           "field": "collaboration.comments.tab0_listing",
           "previous_value": null,
           "new_value": null
+        },
+        {
+          "id": "71f5d814a1f943c2ab6dda7954d03394",
+          "changed_at": "2026-08-24T10:06:20.356955+00:00",
+          "actor_ip": "system",
+          "actor_name": "",
+          "source": "cross_workflow_comment_sync",
+          "field": "collaboration.comments.tab0_listing",
+          "previous_value": null,
+          "new_value": null
         }
       ],
       "collaboration": {
@@ -3622,13 +3656,13 @@
           {
             "id": "d356645d30b84ce2824307ed724b23ca",
             "parent_id": null,
-            "author": "Team",
+            "author": "Team Review",
             "author_user_id": "",
             "author_email": "",
             "actor_ip": "system",
             "body": "df",
             "created_at": "2026-08-22T09:14:13.020965+00:00",
-            "updated_at": "2026-08-23T02:53:16.747263+00:00",
+            "updated_at": "2026-08-24T10:06:20.356947+00:00",
             "source": "listing_comment_post",
             "import_key": "8f7d7db4d063b90ff0370d7059bab1e74f06e5639b8dc3b4bf9791e6df852bdf",
             "system_import": true,
@@ -3636,7 +3670,7 @@
             "category": ""
           }
         ],
-        "updated_at": "2026-08-23T02:53:16.747263+00:00",
+        "updated_at": "2026-08-24T10:06:20.356947+00:00",
         "comment_count": 1
       }
     },
@@ -13048,11 +13082,11 @@
   },
   {
     "meta": {
-      "review_type": "fast_triage",
+      "review_type": "full_scout",
       "schema_version": "3.2",
-      "instruction_version": "3.3",
-      "rubric_version": "3.3",
-      "generated_at": "2026-08-19",
+      "instruction_version": "3.4",
+      "rubric_version": "3.4",
+      "generated_at": "2026-08-24",
       "output_filename_base": "Astrion Co., Ltd._AON-PP23",
       "report_reupload_history": [
         {
@@ -13216,46 +13250,61 @@
           "field": "source_report.raw_markdown",
           "previous_value": "기존 GPT 원문 리포트",
           "new_value": "GPT 원문 재업로드"
+        },
+        {
+          "id": "6837d713e1c14fa6b65ed69f18901a20",
+          "changed_at": "2026-08-24T10:06:20.350469+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "paste_json_upsert",
+          "field": "source_report.raw_markdown",
+          "previous_value": "기존 GPT 원문 리포트",
+          "new_value": "GPT 원문 재업로드"
         }
       ],
-      "last_edited_at": "2026-08-19T00:02:51.525247+00:00",
-      "last_edited_by": "10.145.144.188",
+      "last_edited_at": "2026-08-24T10:06:20.350469+00:00",
+      "last_edited_by": "127.0.0.1",
       "storage_profile": "dashboard_hybrid_v1"
     },
     "source_report": {
-      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run. :contentReference[oaicite:0]{index=0}\n\n중요: 공개 quick-check 기준으로 SELECT 7건, REJECT 4건, UNVERIFIED 1건입니다. SELECT는 Full Scout v3.4로 보낼 우선 후보이며, REJECT/UNVERIFIED는 현재 확인된 근거만으로는 우선순위가 낮거나 exact asset identity가 확인되지 않은 경우입니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | AB-AD-002 | Aliadbiopharma | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | TR 0점: AB-AD-002의 자산별 적응증이 확인되지 않았습니다. [no_supporting_basis] Aliad의 일반 AD 프로그램을 이 코드에 귀속할 수 없습니다. MOA 0점: AB-AD-002의 자산별 target/MoA가 확인되지 않았습니다. [no_supporting_basis] Aliad의 mTORC2 플랫폼 정보를 특정 코드에 자동 매핑하지 않았습니다. Data 0점: AB-AD-002의 자산별 결과가 확인되지 않았습니다. [no_supporting_basis] 회사 플랫폼/인접 프로그램 데이터는 해당 자산 데이터가 아닙니다. | Exact-code supporting public source not verified |\n| 2 | AB-ASD-003 | Aliadbiopharma | Unknown | Small molecule | Autism spectrum disorder | Preclinical unspecified | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: AB-ASD-003의 확인 적응증은 autism spectrum disorder로 신경계 질환이지만 SKBP 6대 관심 적응증에는 포함되지 않습니다. [public_source] Interest indication이 아니므로 TR 2 이상이 아닙니다. MOA 0점: AB-ASD-003 exact record에는 target, action, mechanism이 공개되지 않았습니다. [public_source] 회사 차원의 mTORC2 프로그램을 exact asset에 직접 귀속할 근거가 없습니다. Data 0점: AB-ASD-003의 공개 asset-specific 결과가 확인되지 않았습니다. [public_source] Preclinical stage 표기만으로 데이터 성숙도를 올릴 수 없습니다. | [S1](https://synapse.patsnap.com/drug/137f0d83ed1e4d5abbb58d228a6133e6); [S2](https://www.aliadbiopharma.com/page/rs02) |\n| 3 | AS-603 | Amyloid Solution Inc | Aβ and tau aggregates / Direct chemical dissociation/clearance of Aβ and tau aggregates | Small molecule | Alzheimer's disease | Phase 1 | Republic of Korea | 3 | 3 | 3 | SELECT | TR 3점: AS-603는 Alzheimer's disease 적응증이며 Aβ/tau aggregate를 직접 분해하는 자산별 MoA가 확인됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: AS-S603 자체가 Aβ/tau oligomer·plaque·tangle dissociation, binding/MoA 분석 및 amyloid-PET 변화를 보였습니다. [public_source] 공개 근거가 학회 초록 중심이고 독립 재현성은 제한적입니다. Data 3점: 자산별 in vivo cognition, amyloid-PET, biochemical/biophysical MoA 및 safety-readiness 등 두 개 이상의 상보적 정량/단계 적합 evidence domain이 공개됐고 Phase 1이 진행 중입니다. [public_source] 임상 결과 자체는 아직 게시되지 않았습니다. | [S1](https://clinicaltrials.gov/study/NCT06786676); [S2](https://pmc.ncbi.nlm.nih.gov/articles/PMC12740438/); [S3](https://synapse.patsnap.com/drug/5898c8800e4142b6bdc035b718d6a7cc) |\n| 4 | AONPP-23 | Astrion Co Ltd | α-synuclein oligomer aggregates / Direct degradation of α-synuclein oligomers via PNAC-screened small molecules | Small molecule | Parkinson's disease | Unknown | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: AON-PP23는 Parkinson's disease 프로그램이며 α-synuclein oligomer를 직접 분해하는 MoA가 확인됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: PNAC platform의 α-synuclein oligomer-degrading functional screening과 동일 mechanism-class 연구가 확인됩니다. [public_source] AON-PP23 최종 자산 자체의 target engagement/PD 데이터는 공개되지 않았습니다. Data 1점: 약 10개 유도체 후보군과 분해 기능에 대한 정성적 공개가 있으나 AON-PP23 자산별 해석 가능한 정량 결과는 부족합니다. [public_source] 정량 efficacy, PK/PD, safety domain이 공개되지 않았습니다. | [S1](https://www.astrion.co.kr/en/board/board.php?bo_table=press&idx=16); [S2](https://www.astrion.co.kr/en/m31.php); [S3](https://www.astrion.co.kr/en/m43.php) |\n| 5 | CKR-492 | CK Regeon Inc | CXXC5-Dvl PPI / Wnt-β-catenin pathway / CXXC5-Dvl PPI inhibition to restore Wnt/β-catenin signaling | Small molecule | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 2 | 0 | SELECT | TR 3점: CKR-492는 Alzheimer's disease 자산으로 확인되고 CXXC5-Dvl/Wnt restoration 프로그램에 연결됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: 동일 CXXC5-Dvl inhibitor class에서 Wnt restoration과 5xFAD AD phenotype rescue의 functional validation이 확인됩니다. [public_source] CKR-492 자체의 target engagement/PD는 공개되지 않았습니다. Data 0점: CKR-492 코드 자체의 공개 asset-specific 결과는 확인되지 않았습니다. [public_source] 관련 KY-series/class 데이터는 CKR-492의 데이터로 대체할 수 없습니다. | [S1](https://synapse.patsnap.com/organization/da31af23213025f08e00c752ce41a5b8); [S2](https://ckregeon.com/ko/developing-items-ko/); [S3](https://ckregeon.com/pressrelease/?mod=document&uid=72); [S4](https://www.hkn24.com/news/articleView.html?idxno=346280) |\n| 6 | CPB-2101 | Corepharm Bio Co Ltd | Unknown | Small molecule | Pain | Preclinical unspecified | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: 확인 적응증은 generic Pain/non-narcotic analgesic이며 neuropathic subtype이 확인되지 않았습니다. [public_source] 규칙상 generic Pain은 TR 1입니다. MOA 0점: CPB2101의 target/MoA가 공개 근거에서 확인되지 않았습니다. [public_source] 비마약성 진통제라는 분류만으로 기전을 추정할 수 없습니다. Data 0점: CPB2101의 공개 asset-specific 결과가 확인되지 않았습니다. [public_source] Preclinical stage 표기만으로 Data 점수를 올릴 수 없습니다. | [S1](https://www.corepharm.com/eng/product/pipeline.php); [S2](https://synapse.patsnap.com/drug/0c00a1fab8214d978981ef3d50d834fd) |\n| 7 | CTX-PD02/03 | CTX | Unknown / Combinatorial iPSC-based cell therapy to improve transplanted-neuron recovery and integration | Cell therapy | Parkinson's disease | Hit Discovery | Republic of Korea | 3 | 1 | 1 | REJECT | TR 3점: CTX-PD02/03는 Parkinson's disease이며 transplanted-neuron functional recovery/integration을 직접 겨냥합니다. [public_source] TR 최고점 기준을 충족합니다. MOA 1점: neuroinflammation 완화, neural-circuit integration, transplanted-neuron survival 향상이라는 mechanism description이 있으나 회사의 정성적 claim 수준입니다. [public_source] 자산 자체의 공개 direct functional/PD 검증이 부족합니다. Data 1점: selected candidates가 promise를 보였다는 정성적 결과만 있고 해석 가능한 정량값이 없습니다. [public_source] 정량 stage-appropriate evidence domain이 없어 Data 2가 아닙니다. | [S1](https://cell-tx.com/en/sub/pipe/pipe.php) |\n| 8 | CTXPD-01 | CTX Inc | Midbrain dopaminergic cell replacement / Autologous iPSC-derived mDAP/mDAN transplantation | Cell therapy | Parkinson's disease | Preclinical unspecified | Republic of Korea | 3 | 1 | 0 | REJECT | TR 3점: CTX-PD01는 Parkinson's disease에 mDAP/mDAN dopaminergic cell replacement를 적용하는 자산입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 1점: 환자유래 iPSC를 중뇌 도파민 계열로 분화해 이식하는 mechanism은 명확하지만 공개된 자산별 functional validation 결과가 없습니다. [public_source] target engagement 또는 direct functional outcome이 공개되지 않아 MOA 2 이상이 아닙니다. Data 0점: 현재 공개 페이지는 safety/efficacy를 in vivo에서 평가 중이라고만 밝히며 자산별 결과를 제시하지 않습니다. [public_source] 정성적 결과조차 제시되지 않아 Data 1도 부여하지 않았습니다. | [S1](https://cell-tx.com/en/sub/pipe/pipe.php); [S2](https://www.cell-tx.com/en/sub/company/history.php) |\n| 9 | CU-71 | Curacle Co Ltd | BBB dysfunction / neurovascular instability / BBB stabilization with reduced neuroinflammation and vascular leakage | Small molecule | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 2 | SELECT | TR 3점: CU71은 Alzheimer's disease 적응증이며 BBB dysfunction/neuroinflammation을 직접 겨냥하는 neurovascular stabilizer입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: CU71 자체가 HBMEC tight-junction/vascular integrity 개선과 5XFAD에서 BBB·neuroinflammation 관련 biomarker/functional 변화를 보였습니다. [public_source] 분자적 primary target은 아직 공개되지 않았습니다. Data 2점: 5XFAD에서 5·10 mg/kg 6개월 투여, NOR/MWM cognition 및 multiple biomarker assays라는 해석 가능한 stage-appropriate in vivo evidence domain이 공개됐습니다. [public_source] 보도된 초록은 완전한 effect-size table을 제공하지 않아 Data 3 근거는 부족합니다. | [S1](https://www.curacle.com/bbs/content.php?co_id=pipeline&tab_id=cu71); [S2](https://pmc.ncbi.nlm.nih.gov/articles/PMC12742527/) |\n| 10 | CUR-202 | Curamys Co Ltd | Motor-neuron/tissue restoration via cell fusion / Therapeutic cell fusion using engineered stem cells to restore diseased cells and sustain protein expression | Cell therapy | Amyotrophic lateral sclerosis / motor neuron disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 2 | SELECT | TR 3점: CUR202는 ALS 적응증이며 손상 motor-neuron/tissue function을 세포융합으로 회복시키는 직접 치료전략입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: CUR202/ALS model에서 motor-neuron death가 느려지고 생존이 연장되는 자산별 direct functional validation이 공개됐습니다. [public_source] 세부 molecular PD와 독립 재현성은 제한적입니다. Data 2점: ALS 동물모델에서 평균 생존 35% 연장이라는 해석 가능한 정량 in vivo efficacy 결과가 공개됐습니다. [public_source] 두 개의 상보적 정량 evidence domain이 확인되지 않아 Data 3은 아닙니다. | [S1](https://www.curamys.com/); [S2](https://www.dongascience.com/ko/news/73348) |\n| 11 | DM-3159 | DigmBio Inc | TAS1R3 / TAS1R3 agonism activating signaling for neuroprotection and functional recovery | Small molecule | Alzheimer's disease | IND-enabling | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: DM3159는 Alzheimer's disease 적응증이고 TAS1R3 agonism을 통해 neuroprotection/functional recovery를 노립니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: DM3159를 투여한 AD mouse model에서 cognition 개선과 neuroinflammation/pathology 감소라는 functional effect가 확인됩니다. [public_source] TAS1R3 target engagement 또는 mechanism-linked PD가 직접 측정됐다는 공개 근거는 부족합니다. Data 1점: 자산별 in vivo 효과가 공개됐지만 quick-check 출처에는 명확한 effect size/통계값이 제시되지 않았습니다. [public_source] 정량 stage-appropriate 결과가 부족해 Data 2가 아닙니다. | [S1](https://digmbio.com/bbs/content.php?co_id=Pipeline); [S2](https://m.biospectator.com/view/news_view.php?varAtcId=29483) |\n| 12 | DM-3190 | DigmBio Inc | TAS2R GPCR / TAS2R GPCR modulation in Parkinson's disease | Small molecule | Parkinson's disease | Lead Optimization | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: DM3190은 Parkinson's disease 적응증이며 TAS2R GPCR을 치료표적으로 개발 중입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: TAS2R GPCR PD project가 α-synuclein/PFF model에서 행동개선 functional evidence를 보였고 DM3190가 해당 초기 후보군으로 확인됩니다. [public_source] 공개 표현은 project-level이어서 DM3190 자체 target engagement/PD로 단정할 수 없습니다. Data 1점: PD model 행동개선이 정성적으로 공개됐지만 DM3190 자산별 정량 결과는 확인되지 않았습니다. [public_source] 정량 asset-specific evidence가 부족해 Data 2가 아닙니다. | [S1](https://digmbio.com/bbs/content.php?co_id=Pipeline); [S2](https://www.digmbio.co.kr/bbs/board.php?bo_table=online&wr_id=28); [S3](https://m.biospectator.com/view/news_view.php?varAtcId=27178) |\n\n## Notes\n- AB-AD-002: Aliad의 일반 AD/mTORC2 프로그램은 확인되지만 exact code 자체를 특정 pipeline asset으로 연결하는 공개 근거는 확인하지 못해 UNVERIFIED로 유지했습니다.\n- 표기 정규화: AS-603 ↔ AS-S603, AONPP-23 ↔ AON-PP23, CTXPD-01 ↔ CTX-PD01, CU-71 ↔ CU71은 공개 자료상 동일 자산/표기 변형으로 연결했습니다.\n- AON-PP23는 현재 PD program/후보군 활동성은 확인되나, 과거의 향후 preclinical 계획을 완료된 단계로 승격하지 않아 development stage는 Unknown으로 유지했습니다.\n- CKR-492는 exact asset identity와 active preclinical AD status는 확인되지만, CXXC5-Dvl/Wnt 근거는 program/class 연결이 강하고 CKR-492 자체 quantitative dataset은 확인되지 않았습니다.\n- DM3159는 2026-08 공개 자료에서 진행 중인 GLP tox가 확인되어 canonical stage rule에 따라 IND-enabling으로 분류했습니다.",
-      "parser_status": "fast_triage"
+      "raw_markdown": "# Astrion Pipeline Scout Report: **AON-PP23**\n\n본 보고서는 GPT instruction 2 — Full Scout v3.4 (schema v3.2)에 따라 user-uploaded company material을 먼저 검토하고, 공개 회사/산학협력 자료, patent, peer-reviewed literature, clinical registry 및 경쟁 pipeline을 교차검증하여 평가했다. 검증 가능한 공개 URL은 auditability를 위해 References와 JSON source registry에 포함했다.\n\n**중요:** AON-PP23는 Astrion의 Parkinson's disease용 α-synuclein aggregation/disaggregation 프로그램으로 identity와 active development는 확인되며, 2026년 7월 자료상 **Lead Optimization** 단계로 판단된다. 다만 BBB/brain PK·in vivo efficacy·DMPK·toxicity가 아직 완료 데이터로 제시되지 않았고, 임상 선행 경쟁군 대비 정량적 차별화와 derivative composition-of-matter IP가 불명확하여 **REVIEW / Watch**로 평가한다.\n\n## 1) Company Profile\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Astrion Co., Ltd. / ㈜에스트리온 | Public exhibitor profile에서 Astrion과 AON-PP23의 PD 개발 목적 확인 [1]. |\n| Legal name / aliases | Astrion Co., Ltd.; Astrion Inc.; ㈜에스트리온 | Public profile + company deck |\n| Country | Republic of Korea | Public profile은 South Korea, Seoul 소재를 명시 [1]. |\n| Headquarters | 2nd floor, 47 Gaeunsa-gil, Seongbuk-gu, Seoul 02842, Republic of Korea | 2026년 7월 company deck. |\n| Website | http://www.astrion.co.kr | Company deck 및 public exhibitor profile. |\n| Company type / stage | Private early-stage biotech; 합성의약품 개발 중심 | 회사 자료상 2021년 8월 설립, 합성의약품 개발 사업을 기재. |\n| Focus areas | Oncology 및 intractable/neurodegenerative brain disease | AON-MG23 oncology programs와 AON-PP23 PD program 보유. |\n| Platform summary | PNAC α-synuclein/gold-nanoparticle drug-screening platform + AI/PPI 및 BIOVIA/Discovery Studio 기반 medicinal-chemistry workflow | PNAC는 pathological protein aggregate를 이용한 screening architecture로 설명됨. Korea University TLO도 α-synuclein–gold nanoparticle system을 이용하여 후보물질 효과를 absorbance 변화로 정량 분석하는 기술을 공개한다 [2,3]. |\n| Financing / partnership signals | 2025 global corporate collaboration program, Dassault Systèmes collaboration; Kolon Pharma와 별도 oncology 공동개발 이력 | Company deck은 2025 global-corporate collaboration selection을 기록. Kolon/Astrion 공동개발도 공개 보도됨 [11]. |\n| Lead pipeline summary | AON-MG23 oncology program과 AON-PP23 PD program. 본 평가 대상 AON-PP23는 2026년 Lead Optimization | Current pipeline slide에 α-Synuclein aggregates / AON-PP23 / Parkinson's disease를 명시. |\n\n## 2) Pipeline Snapshot\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Astrion Co., Ltd. | Public profile [1]. |\n| Lead asset | AON-PP23 | Astrion deck 및 public company profile에서 PD candidate로 확인. |\n| Target | Pathological **α-Synuclein aggregates** | Current pipeline slide. |\n| Theme / Cluster | **Theme: Protein Homeostasis / Cluster: Unknown** | α-Synuclein aggregation/disaggregation을 직접 조절하므로 Protein Homeostasis에 해당. 승인된 세부 cluster taxonomy는 없어 Unknown. 독립 review도 pathological α-synuclein의 aggregation, oligomerization, fibrillization 및 PD neurodegeneration과의 연결을 정리한다 [4]. |\n| MoA | α-Synuclein aggregation inhibition / disaggregation | Company deck의 stated PoC와 biochemical/cellular assays. Protein-clearance의 구체적 pathway는 아직 proposed mechanism으로만 취급. |\n| Modality / Platform | **Small molecule** / PNAC-derived screening and derivative optimization | Company material은 저분자 후보 및 derivative-design approach로 설명. |\n| Indication | Parkinson's disease | AON-PP23의 단일 확인 indication. |\n| Pipeline Stage | **Lead Optimization** | 2026 milestone에서 derivative screening, DMPK, BBB/in vivo efficacy, TOP3 finalization을 Lead Optimization으로 배치. Candidate finalization은 2027 이후 milestone이므로 현재 단계로 승격하지 않음. |\n| Key data | Parent screening hit A308/AON-PP23에서 α-syn disaggregation signal을 확인하고, 후속 M2/M8 series에서 dose-response/ThT/CD 및 cellular α-syn reduction/viability 데이터를 제시 | Page 6의 screening table/plots 및 page 10의 cell assay panel. 모두 **user-uploaded company-generated evidence**이며 independent reproduction은 확인되지 않았다. |\n\n### Asset identity clarification\n\nCompany slide의 초기 hit table은 **A308 / CAS 565-63-9 / AON-PP23**를 연결하고 있으며, CAS 565-63-9는 공개 chemical reference상 angelic acid로 확인된다 [12]. 다만 이후 개발은 M2/M8를 포함하는 새로운 derivative series로 진행되고 있어, 현재 개발 candidate의 구조가 초기 A308과 동일하다고 해석해서는 안 된다. M2/M8 및 향후 TOP3 structures는 공개되지 않았다.\n\n## 3) Scorecard Summary\n\n| Criterion | Score (maximum 3 points each) | One-line judgment | Evidence used |\n|---|---:|---|---|\n| Target Relevance | **3점** | SKBP interest indication인 PD이며 pathological α-syn aggregation이라는 disease-linked Protein Homeostasis mechanism을 직접 타깃 | Company deck + Nature Reviews Neurology [4] |\n| Competitive Landscape | **1점** | α-syn direct competitors가 임상 3상까지 존재하지만 AON-PP23의 competitor 대비 정량적 differentiation은 아직 없음 | ClinicalTrials.gov, UCB, AC Immune, ABrain [5–9] |\n| MoA Validity | **3점** | Asset-specific biochemical/cellular disaggregation functional data와 independent α-syn disease biology가 모두 존재 | Uploaded company deck + [4] |\n| Platform Attractiveness | **1점** | PNAC의 reusable architecture와 patent는 확인되지만 적절한 screening comparator 대비 정량적 technical advantage가 없음 | Uploaded deck + Korea University TLO/patent [2,3] |\n| Expansion Potential | **0점** | AON-PP23 자체의 PD 외 추가 active indication program/data 미확인 | No qualifying evidence |\n| Data Maturity | **3점** | Lead Optimization 단계에 적합한 두 complementary quantitative domains가 존재 | Uploaded deck pp.6, 10 |\n| Marketability | **0점** | **insufficient_evidence**; reliable A/B/C/D calculation 또는 asset-specific peak-sales forecast 없음 | PD epidemiology [10], but commercial inputs insufficient |\n| **Total** | **11점** | **REVIEW band; Maximum total: 21점** |  |\n\n## 4) Criterion Detail Pages\n\n### 4.1 Target Relevance\n\n**Score: 3점**\n\n**Main line:** Parkinson's disease는 SKBP six-interest indication이며 AON-PP23가 직접 targeting하는 pathological α-synuclein aggregation은 PD disease biology와 연결되므로 최고점에 해당한다.\n\n**What was checked**\n- Target identity: α-Synuclein aggregates\n- Disease/biology relevance: Parkinson's disease\n- SKBP Theme / Cluster fit: Protein Homeostasis / Unknown\n- General neurodegeneration relevance\n- Asset identity와 indication의 public verification\n\n**Evidence trail**\n- Astrion 자료는 AON-PP23를 “A Novel Therapeutic Candidate for Parkinson’s Disease”로 제시하고 α-synuclein aggregation inhibition을 PoC로 명시한다. **Source: User-uploaded company deck; company-generated, not independent.**\n- Current-pipeline slide도 Target=`α-Synuclein aggregates`, Pipeline=`AON-PP23`, Indication=`Parkinson's Disease`로 연결한다.\n- 독립적인 Nature Reviews Neurology review는 α-synuclein이 pathological aggregate/oligomer/fibril을 형성하며 PD-related neurodegeneration 및 therapeutic opportunity와 연결됨을 정리한다 [4].\n\n**Investigation note**\n- 2점이 아니라 3점인 이유는 단순히 “PD indication”에 그치지 않고, 확인된 target/MoA가 pathogenic protein aggregation이라는 PD biology 및 Protein Homeostasis theme에 직접 연결되기 때문이다.\n- 3점이 최고점이다. 다만 어떤 α-syn species/epitope/conformation에 M2/M8가 직접 결합하는지는 아직 불명확하다.\n\n### 4.2 Competitive Landscape\n\n**Score: 1점**\n\n**Main line:** α-synuclein-directed disease-modifying competition은 이미 Phase 3까지 진입했으며, 특히 small-molecule aggregation approaches의 임상 선례가 존재한다. AON-PP23에는 아직 적절한 competitor 대비 asset-specific quantitative head-to-head differentiation이 없어 1점이다.\n\n**What was checked**\n- Exact asset name AON-PP23 및 공개 aliases\n- PD + α-synuclein aggregation/misfolding\n- Small-molecule α-syn approaches\n- Antibody / active immunotherapy / gene-therapy α-syn competitors\n- ClinicalTrials.gov\n- Phase 3 / Phase 2 / completed clinical / major early-stage programs\n- Historical failure signal\n- M2/M8 structure는 undisclosed이므로 exact chemical-similarity search에는 한계가 있음\n\n**Competitor table**\n\n| Competitor | Company | Modality | Target / MoA | Pipeline Stage | Why it matters | Source |\n|---|---|---|---|---|---|---|\n| Minzasolmin (UCB0599) | UCB / Novartis | Small molecule | Intracellular α-syn misfolding inhibitor | Phase 2a completed; termination initiated | **High similarity**: PD + α-syn aggregation biology + small molecule. ORCHESTRA가 primary/secondary endpoints를 충족하지 못해 target/class risk의 핵심 negative benchmark | [6] |\n| Anle138b (emrusolmin) | MODAG | Small molecule | Toxic α-syn oligomer-binding / aggregation modulator | PD Phase 1b completed | **High similarity**: PD + aggregation-directed small molecule; human exposure experience 존재 | [7] |\n| Prasinezumab | Roche / Prothena | Antibody | α-Synuclein C-terminus | **Phase 3 recruiting** | **Medium similarity**: modality는 다르지만 PD + α-syn disease-modification의 가장 advanced benchmark 중 하나. NCT07174310은 2026-08-06 update 기준 recruiting | [5] |\n| ACI-7104 | AC Immune | Vaccine / active immunotherapy | Pathological α-synuclein | Phase 2 ongoing | **Medium similarity**: 같은 disease/target biology. 2026-08-05 update에서 VacSYn Phase 2 ongoing 확인 | [8] |\n| AB103 | ABrain | Gene therapy | AAV-based α-syn aggregation inhibition | Lead development | **Medium similarity**: 같은 PD + α-syn aggregation biology이나 modality가 AAV로 다름 | [9] |\n\n**Investigation note**\n- Direct/high-similarity set은 minzasolmin과 anle138b이다.\n- Prasinezumab, ACI-7104, AB103은 같은 PD + α-syn biology이나 modality가 달라 Medium으로 분류했다.\n- Minzasolmin의 Phase 2 실패는 “α-syn aggregation을 타깃하면 자동으로 clinical validation이 성립한다”는 해석을 경계하게 한다. 반면 prasinezumab은 Phase 3까지 진행돼 α-syn therapeutic thesis 자체가 폐기된 상황도 아니다.\n- AON-PP23가 page 10에서 cellular α-syn reduction을 보여주지만, 임상/비임상 competitor와 동일 assay 또는 benchmark compound를 사용한 head-to-head comparison이 아니므로 score 2 요건을 충족하지 않는다.\n- 따라서 competitor count 자체가 아니라 **verified differentiation 부재**를 근거로 1점이다.\n\n### 4.3 MoA Validity\n\n**Score: 3점**\n\n**Main line:** AON-PP23에는 직접적인 α-syn disaggregation-related functional readout이 있고, disease-level α-syn biology도 독립적으로 검증되어 있어 MoA Validity 3점에 해당한다.\n\n**What was checked**\n- Independent α-synuclein disease biology\n- Direct aggregation/disaggregation functional assays\n- Dose-response\n- Thioflavin-T / circular dichroism\n- Cellular α-synuclein signal\n- Cell viability\n- Proposed binding/clearance mechanism\n- Safety/translational gaps\n\n**Evidence trail**\n- Page 6의 PNAC screening 결과에서 A308/AON-PP23가 quantitative disaggregation screening signal을 보이며, 우측 panel은 AON-PP23 dose-response, ThT 및 CD/fibril analysis를 제시한다. **Source: User-uploaded company deck; company-generated, E3 asset-specific technical evidence.**\n- Page 10의 Tet-On α-Syn(+) SH-SY5Y model은 M2/M8 후보에서 concentration-series cell viability와 α-syn Western blot/immunofluorescence reduction을 보여준다. 이는 direct functional validation으로 해석 가능하나 independent reproduction은 아니다.\n- Independent review는 pathological α-synuclein aggregation과 PD neurodegeneration의 biological linkage를 지지한다 [4].\n- Page 13의 detailed binding/protein-clearance pathway는 “proposed process” 및 future efficacy-test design에 해당하므로 이미 입증된 세부 MoA로 승격하지 않았다.\n\n**Investigation note**\n- Score 3의 핵심은 company claim만 존재하는 것이 아니라 assessed asset에서 biochemical/cellular direct functional evidence가 있다는 점이다.\n- 최고점이므로 상위 점수는 없다.\n- 다만 clinical translation 관점에서 **brain target engagement, exact binding site/species, downstream PD biomarker, in vivo mechanism-linked evidence**가 다음 gating evidence이다.\n\n### 4.4 Platform Attractiveness\n\n**Score: 1점**\n\n**Main line:** PNAC는 실제 reusable screening architecture 및 patent 기반이 확인되지만, 다른 α-syn screening technology에 비해 얼마나 우수한지를 보여주는 적절한 quantitative comparator experiment가 없어 1점이다.\n\n**What was checked**\n- Reusable technical system 여부\n- Platform IP\n- Quantitative assay concept\n- Speed/cost claims\n- Alternative screening comparator 대비 evidence\n- Multiple-candidate generation capability\n\n**Evidence trail**\n- Company deck은 α-synuclein aggregate-coated gold nanoparticle를 이용한 colorimetric/absorbance screening, cell validation 및 concentration-response workflow를 설명한다.\n- Korea University TLO는 α-synuclein/gold nanoparticle complexes를 이용해 low-concentration toxic oligomer complex를 빠르게 만들고 후보 약물 처리 후 absorbance 변화로 실시간 정량분석하는 기술을 공개한다 [2].\n- Public TLO record는 application 1020210071894, registration 1025131160000 및 Korea University Research and Business Foundation을 권리 기관으로 명시한다 [2].\n- 관련 Korean patent KR102513116B1도 확인했다 [3].\n\n**Investigation note**\n- Reusability와 patentability는 확인되므로 0점은 아니다.\n- 그러나 “12시간”, “비용/시간 절감” 등의 설명만으로 다른 적절한 screening platform 대비 정량적인 superiority가 입증된 것은 아니다. 따라서 2점 요건을 충족하지 않는다.\n- 특히 deck page 5는 해당 특허를 Astrion 보유특허처럼 표시하지만, page 20은 2025-12-08 in-licensing으로 기재하고, public TLO는 Korea University Research and Business Foundation을 권리자 조직으로 표시한다. licensing scope/exclusivity 확인이 필요하다.\n\n### 4.5 Expansion Potential\n\n**Score: 0점**\n\n**Main line:** Parkinson's disease 외에 **AON-PP23 자체**로 확인되는 additional indication program이나 asset-specific quantitative dataset은 없다.\n\n**What was checked**\n- Lewy body dementia\n- Multiple system atrophy\n- Other synucleinopathies/neurodegenerative diseases\n- Company pipeline listings\n- Asset-specific additional indication data\n- Active secondary development programs\n\n**Evidence trail**\n- PNAC platform은 여러 neurodegenerative protein-aggregation diseases에 활용될 수 있는 reusable concept으로 설명되지만 이는 **platform breadth**이며 AON-PP23 indication expansion이 아니다 [2].\n- AON-PP23 current pipeline row는 Parkinson's disease만 명시한다.\n- Company commercialization slide가 향후 indication expansion을 언급하더라도 future opportunity이며 active asset-specific program의 근거가 아니다.\n\n**Investigation note**\n- LBD/MSA가 α-syn biology상 논리적인 hypothesis라는 이유만으로 1점을 부여하지 않았다.\n- 실제로 별도 AON-PP23 efficacy dataset 또는 active program이 확인되어야 점수가 올라간다.\n\n### 4.6 Data Maturity\n\n**Score: 3점**\n\n**Main line:** Lead Optimization 단계에서 요구되는 서로 다른 development question을 다루는 **두 complementary quantitative domains**가 확인되어 3점이다.\n\n**What was checked**\n- Biochemical/biophysical aggregation data\n- Dose-response\n- Cell viability\n- Cellular target reduction\n- Candidate-selection progression\n- BBB / brain PK\n- in vivo PD efficacy\n- DMPK\n- Toxicity\n- Reproducibility / raw statistics\n\n**Evidence trail**\n\n**Domain 1 — biochemical/biophysical efficacy**\n- Page 6은 약 3,000-compound natural-product library에서 A308/AON-PP23를 도출한 screening 결과를 제시하며, visual table에서는 A308의 disaggregation screening effect가 **53.62%**로 표시된다.\n- 같은 page에 concentration-dependent response, ThT analysis, CD 및 fibril morphology comparison이 제시된다.\n- **Evidence Origin: user_uploaded_file / source_nature: company_generated / Evidence Type: E3.**\n\n**Domain 2 — cellular tolerability / mechanism-linked readout**\n- Page 10에서는 M2/M8 candidate의 concentration-series cell viability와 Tet-On α-Syn(+) SH-SY5Y cells의 α-syn Western blot 및 immunofluorescence 감소가 제시된다.\n- 이는 biochemical assay와 다른 development question인 cellular activity/tolerability를 다룬다.\n- **Evidence Origin: user_uploaded_file / source_nature: company_generated / Evidence Type: E3.**\n\n**Program-progression linkage**\n- M2/M8를 출발점으로 추가 derivatives를 생성하여 lead screening으로 전환하는 계획과 50개 이상의 derivative generation 목표가 명시되어 있다.\n\n**Important gaps**\n- BBB permeability, brain:blood ratio, acute toxicity, B6-hSNCA-A53T in vivo efficacy, TH+ 및 behavior tests는 page 14에서 **test plan/goals**로 제시되어 있으며 완료 데이터로 처리하지 않았다.\n- 2026 milestone 역시 BBB/in vivo, DMPK 및 TOP3 finalization을 Lead Optimization workstream으로 보여준다.\n\n**Investigation note**\n- Source count가 아니라 biochemical/biophysical와 cellular라는 두 complementary domains가 존재하기 때문에 3점이다.\n- 3점이 최고점이나, 이는 “IND-ready”를 뜻하지 않는다. 현재 가장 큰 translational gap은 BBB/brain exposure → in vivo efficacy → DMPK/toxicity sequence이다.\n\n### 4.7 Marketability\n\n**Score: 0점**\n\n**Main line:** Parkinson's disease 자체는 대규모 시장이지만, AON-PP23의 **obtainable peak sales**를 계산하거나 신뢰성 있는 외부 forecast로 대체할 수 있는 자산별 commercial evidence가 부족하다.\n\n**Assessment method:** `insufficient_evidence`\n\n**Score basis type:** `insufficient_evidence`\n\n**Calculation status:** `not_performed`\n\n**Assessed global peak sales (million USD):** not calculated; no sales value assigned\n\n**What was checked**\n- US PD patient pool\n- Disease-modifying α-syn competitor landscape\n- Eligible/treatable subgroup\n- Comparable approved benchmark price\n- Peak penetration\n- Competition haircut\n- Pricing power\n- Asset-specific external peak-sales forecast\n- Company commercial projections\n\n**Market context**\n- Parkinson's Foundation은 미국 PD 환자를 1.1 million명 이상, 신규 진단을 연간 약 90,000명으로 추정한다 [10]. 따라서 population scale 자체가 부족한 것은 아니다.\n\n**Worksheet**\n- **A/B/C/D internal calculation:** 수행하지 않음. 적절한 disease-modifying α-syn small-molecule benchmark net price, AON-PP23-specific eligibility/treatable subgroup, defensible peak penetration, competition haircut 및 pricing-power adjustment를 확립할 수 없다.\n- **External Peak Sales Reference:** reliable asset-specific independent/consensus forecast를 확인하지 못했다.\n- **Company forecast check:** company deck에는 향후 launch-sales aspiration이 있으나 geography가 정의되지 않고 “global peak sales”인지도 명확하지 않아 scoring basis에서 제외했다.\n- **Final score basis:** reliable calculation도 qualifying external forecast도 없으므로 0점.\n\n**Investigation note**\n- 큰 PD prevalence만으로 score 1–3을 부여하지 않았다.\n- 향후 candidate profile이 정해지고 brain exposure, efficacy, dosing, safety 및 likely competitive entry order가 확인되면 A/B/C/D를 다시 계산하는 것이 적절하다.\n\n## 5) Validation Notes\n\n### Attachment evidence register\n\n| File | Location | Evidence summary | Supported criterion | Evidence type | Evidence origin | Source nature |\n|---|---|---|---|---|---|---|\n| AON-PP23(PD치료후보) non-confidential data_에스트리온 260714.pdf | p.1 | AON-PP23 PD candidate, α-syn aggregation inhibitor, current derivative/efficacy work | Target Relevance / identity | E3 | user_uploaded_file | company_generated |\n| Same file | p.5 | PNAC gold-nanoparticle/α-syn screening platform and patent description | Platform Attractiveness | E1 | user_uploaded_file | company_generated |\n| Same file | p.6 | A308/AON-PP23 screening hit, quantitative disaggregation result, dose-response/ThT/CD | MoA Validity / Data Maturity | E3 | user_uploaded_file | company_generated |\n| Same file | p.10 | M2/M8 cell viability, α-syn Western blot and immunofluorescence | MoA Validity / Data Maturity | E3 | user_uploaded_file | company_generated |\n| Same file | pp.12–15 | Derivative design and lead-optimization workstream; BBB/in vivo/DMPK/tox activities | Stage / Data Maturity | E3 for completed data; planned studies not evidence | user_uploaded_file | company_generated |\n| Same file | p.16 | Commercialization timeline and compound-patent plan | Marketability / IP diligence | E1 | user_uploaded_file | company_generated |\n| Same file | p.20 | Current pipeline target/indication and patent table | Identity / Stage / IP | E1–E3 depending claim | user_uploaded_file | company_generated |\n\n### Cross-checked facts\n\n- **Asset identity:** uploaded July 2026 company deck와 public Korea Life Science Week profile 모두 Astrion이 AON-PP23를 PD 치료 프로그램으로 개발한다고 확인한다.\n- **Target/biology:** company deck의 α-syn aggregation target은 independent Nature review의 PD biology와 정합적이다.\n- **PNAC patent:** deck에서 제시한 KR registration number는 Korea University TLO의 public record와 연결된다 [2,3]. 다만 ownership/license 표현은 서로 달라 계약 확인이 필요하다.\n- **Current stage:** 2026-07 deck은 명확하게 Lead Optimization workstream을 보여주며, 과거 public exhibitor copy의 “discovery” wording보다 최신 asset-specific evidence로 판단했다. 미래 2027 candidate finalization 또는 2028/2029 IND 계획을 현재 단계로 승격하지 않았다.\n\n### Uncertain points\n\n- **Canonical molecule identity:** AON-PP23가 현재 단일 compound code인지 development program/series code인지 명확하지 않다. 초기 A308와 후속 M2/M8/Top3 후보의 구조적 관계를 확인해야 한다.\n- **Derivative structures:** M2/M8 및 현재 최우선 derivative structures가 undisclosed여서 exact chemical similarity, novelty 및 FTO를 검증할 수 없다.\n- **Compound IP:** page 20의 PD composition patent table에는 과거 filing plan이 남아 있는 반면 page 16은 derivative design/validation 후 별도 filing 계획을 제시한다. 최신 composition-of-matter filing number/priority date/ownership이 필요하다.\n- **Platform rights:** public TLO는 PNAC-related patent organization을 Korea University Research and Business Foundation으로 표시하고 company deck은 in-licensing을 언급하므로 license exclusivity, field, territory, sublicensing rights를 확인해야 한다.\n- **Translational package:** completed BBB/brain PK, in vivo PD efficacy, DMPK, preliminary tox 결과가 아직 제시되지 않았다.\n- **Publication:** AON-PP23-specific peer-reviewed publication을 확인하지 못했다.\n- **Clinical registry:** AON-PP23-specific ClinicalTrials.gov record를 확인하지 못했으며 현 단계상 예상 가능한 결과이다.\n- **Commercial:** reliable asset-specific peak-sales forecast 또는 완전한 A/B/C/D input set이 없다.\n\n### Search log\n\n- **Official company page:** `http://www.astrion.co.kr` 확인 시도; public exhibitor records가 URL을 확인하나 이번 web retrieval에서는 company site 자체가 정상 fetch되지 않아 내용 evidence로 사용하지 않음.\n- **Pipeline / identity:** Korea Life Science Week Astrion exhibitor profile [1].\n- **Platform:** Korea University TLO PNAC-related technology page [2].\n- **Patent:** KR102513116B1 [3].\n- **Publications:** AON-PP23 exact-name publication search; asset-specific peer-reviewed paper 미확인. Independent α-syn target biology는 Nature Reviews Neurology [4].\n- **Regulatory / trial registry:** AON-PP23 exact-name registry search에서 clinical record 미확인. Competitor trials는 ClinicalTrials.gov [5,7].\n- **Competitor sources:** Roche/Prothena prasinezumab, UCB minzasolmin, MODAG anle138b, AC Immune ACI-7104, ABrain AB103 [5–9].\n- **Market / epidemiology:** Parkinson's Foundation US/global PD statistics [10].\n- **Financing / partnership:** company deck의 national/global collaboration programs 및 Kolon Pharma/Astrion public partnership report [11].\n- **Chemical identity check:** deck에 기재된 parent-hit CAS 565-63-9를 public chemical reference [12]와 cross-check.\n\n## 6) Final Take\n\n**One-line summary:** AON-PP23는 **PD × α-synuclein × Protein Homeostasis** 전략 적합성과 초기 biochemical/cellular PoC는 강하지만, 현재는 Lead Optimization 단계로서 brain exposure/in vivo efficacy/toxicity, competitor 대비 differentiation 및 compound IP가 아직 BD-grade로 완성되지 않았다.\n\n**Recommendation: Watch**\n\n**Hard Filter: REVIEW**\n- Total = **11/21**\n- Target Relevance = 3\n- MoA Validity = 3\n- Data Maturity = 3\n- Identity verified = Yes\n- Active program confirmed = Yes\n- Lifecycle FAIL signal = No\n- 그러나 Total이 9–13 REVIEW range이며, competition/platform/expansion/marketability의 evidence gap이 남아 있다.\n\n**Most important diligence question:**\n\n현재 M2/M8/Top3 중 실제 development candidate의 구조와 composition-of-matter IP status를 공개하고, 동일 candidate에 대한 **BBB/brain PK → in vivo PD efficacy → DMPK/toxicity → mechanism-linked target engagement** raw package를 일관된 compound identity로 연결해 제시할 수 있는가?\n\n## References\n\n[1]: https://www.lifescienceweek.com/eng/about/search_ex_view.asp?midx=1729 \"KOREA LIFE SCIENCE WEEK — Astrion Co., Ltd. exhibitor profile\"\n[2]: https://tlo.korea.ac.kr/en/tech-transfer/4682 \"Korea University TLO — Development of Rapid Drug Screening Utilizing Alpha-Synuclein Gold Nanoparticle Complexes\"\n[3]: https://patentimages.storage.googleapis.com/b3/3a/bc/7f9e6396b3fb27/KR102513116B1.pdf \"KR102513116B1 — Alpha-Synuclein–Gold Nanoparticle Conjugate and Drug Screening Method\"\n[4]: https://www.nature.com/articles/s41582-024-01043-w \"Nature Reviews Neurology — alpha-Synuclein pathology as a target in neurodegenerative diseases\"\n[5]: https://clinicaltrials.gov/study/NCT07174310 \"ClinicalTrials.gov — Prasinezumab PARAISO Phase 3\"\n[6]: https://www.ucb.com/newsroom/press-releases/article/findings-from-minzasolmin-proof-of-concept-orchestra-study-shape-next-steps-in-ucb-parkinson-s-research-program \"UCB — Minzasolmin ORCHESTRA findings\"\n[7]: https://clinicaltrials.gov/study/NCT04685265 \"ClinicalTrials.gov — Anle138b in Parkinson's disease\"\n[8]: https://ir.acimmune.com/news-releases/news-release-details/ac-immune-first-half-2026-financial-and-corporate-update \"AC Immune — First Half 2026 Financial and Corporate Update\"\n[9]: https://www.newswire.co.kr/newsRead.php?no=1037368 \"ABrain AB103 Parkinson's gene-therapy program\"\n[10]: https://www.parkinson.org/understanding-parkinsons/statistics \"Parkinson's Foundation — Statistics\"\n[11]: https://www.yna.co.kr/view/AKR20240311122700017 \"Yonhap — Kolon Pharma and Astrion joint R&D agreement\"\n[12]: https://www.fishersci.com/us/en/browse/cas/565-63-9 \"Fisher Scientific — CAS 565-63-9\"",
+      "parser_status": "gpt_structured_output"
     },
     "input": {
-      "company_input": "Astrion Co Ltd",
-      "asset_input": "AONPP-23"
+      "company_input": "Astrion",
+      "asset_input": "AON-PP23"
     },
     "json_summary": {
       "theme": "Protein Homeostasis",
       "cluster": "Unknown",
-      "target_description": "α-synuclein oligomer degrader program"
+      "target_description": "Pathological alpha-synuclein aggregation/disaggregation in Parkinson's disease"
     },
     "structured_table": {
       "company": "Astrion Co., Ltd.",
       "asset_name": "AON-PP23",
-      "target": "α-synuclein oligomer aggregates",
-      "moa": "Direct degradation of α-synuclein oligomers via PNAC-screened small molecules",
+      "target": "alpha-Synuclein aggregates",
+      "moa": "alpha-Synuclein aggregation inhibition / disaggregation",
       "modality_platform": "Small molecule",
       "main_indication": "Parkinson's disease",
       "indication": "Parkinson's disease",
-      "development_stage": "Unknown",
+      "development_stage": "Lead Optimization",
       "company_country": "Republic of Korea",
       "sources": [
         {
-          "source_title": "Astrion press release — AON-PP23",
-          "source_url": "https://www.astrion.co.kr/en/board/board.php?bo_table=press&idx=16"
+          "source_title": "KOREA LIFE SCIENCE WEEK — Astrion Co., Ltd. exhibitor profile",
+          "source_url": "https://www.lifescienceweek.com/eng/about/search_ex_view.asp?midx=1729"
         }
       ]
     },
     "hard_filter": {
-      "status": "SELECT",
-      "reason": "Fast Triage SELECT criteria met.",
-      "flags": [],
+      "status": "REVIEW",
+      "reason": "Total 11/21 is in the REVIEW band. Asset identity and an active Lead Optimization program are confirmed, but competitive differentiation, platform benchmarking, expansion evidence and commercial peak-sales support are insufficient, with remaining translational and IP gaps.",
+      "flags": [
+        "Completed BBB, in vivo efficacy, DMPK and toxicity package not disclosed",
+        "AON-PP23 derivative/composition-of-matter IP filing status unresolved",
+        "No asset-specific peer-reviewed publication or clinical registry record found",
+        "No reliable peak-sales basis for Marketability"
+      ],
       "hard_blocker": false,
       "decision_uncertainty": false
     },
@@ -13263,96 +13312,379 @@
       "criteria": {
         "target_relevance": {
           "score": 3,
-          "evidence_type": "triage_only",
-          "evidence_type_reason": "Fast Triage v3.3.",
-          "evidence_basis": "public_source",
-          "main_line_summary": "TR 3점: AON-PP23는 Parkinson's disease 프로그램이며 α-synuclein oligomer를 직접 분해하는 MoA가 확인됩니다.",
-          "why_not_higher": "TR 최고점 기준을 충족합니다.",
-          "investigation_note": "Full Scout에서 핵심 자산별 근거를 확인합니다.",
-          "uncertain_points": [],
+          "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+          "evidence_type_reason": "AON-PP23 is explicitly a Parkinson's disease alpha-synuclein aggregation program with asset-specific preclinical functional data.",
+          "evidence_basis": "Parkinson's disease is an SKBP interest indication; independent literature links pathological alpha-synuclein aggregation to PD biology.",
+          "main_line_summary": "Direct PD fit plus disease-linked alpha-synuclein proteostasis mechanism supports maximum relevance.",
+          "why_not_higher": "Maximum score; no higher score exists.",
+          "investigation_note": "Protein Homeostasis is assigned because the confirmed MoA directly modulates pathogenic protein aggregation.",
+          "uncertain_points": [
+            "Exact derivative structure and binding site are undisclosed"
+          ],
           "source_ids": [
             "S1",
-            "S2"
+            "S4"
+          ]
+        },
+        "competitive_landscape": {
+          "score": 1,
+          "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+          "evidence_type_reason": "Asset-specific preclinical data exist, but no quantitative head-to-head comparison against an appropriate alpha-synuclein competitor was found.",
+          "evidence_basis": "Direct and pathway competitors span small molecules, antibody, vaccine and gene therapy, including clinical-stage programs.",
+          "main_line_summary": "Competitive set is well populated, while AON-PP23 differentiation remains non-comparative.",
+          "why_not_higher": "No asset-specific quantitative differentiation versus a realistic competitor or benchmark.",
+          "investigation_note": "Two high-similarity small-molecule programs and three medium-similarity alpha-synuclein programs were prioritized.",
+          "uncertain_points": [
+            "M2/M8 structures are masked, limiting exact chemical-similarity searching"
+          ],
+          "source_ids": [
+            "S5",
+            "S6",
+            "S7",
+            "S8",
+            "S9"
           ]
         },
         "moa_validity": {
-          "score": 2,
-          "evidence_type": "triage_only",
-          "evidence_type_reason": "Fast Triage v3.3.",
-          "evidence_basis": "public_source",
-          "main_line_summary": "MOA 2점: PNAC platform의 α-synuclein oligomer-degrading functional screening과 동일 mechanism-class 연구가 확인됩니다.",
-          "why_not_higher": "AON-PP23 최종 자산 자체의 target engagement/PD 데이터는 공개되지 않았습니다.",
-          "investigation_note": "최종 후보물질별 direct functional validation이 필요합니다.",
+          "score": 3,
+          "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+          "evidence_type_reason": "Company-generated asset data show direct alpha-synuclein disaggregation-related functional readouts in biochemical and cell systems.",
+          "evidence_basis": "AON-PP23/A308 and derivative candidates show aggregation/disaggregation readouts, while independent literature validates alpha-synuclein pathology in PD.",
+          "main_line_summary": "Direct functional disaggregation evidence plus independent disease biology supports maximum MoA validity.",
+          "why_not_higher": "Maximum score; no higher score exists.",
+          "investigation_note": "Binding site, target engagement in brain and in vivo mechanism-linked biomarker data remain to be demonstrated.",
           "uncertain_points": [
-            "AON-PP23 may still represent a candidate-series/program code"
+            "Proposed protein-clearance mechanism is not yet established in vivo"
           ],
           "source_ids": [
-            "S1",
+            "S4"
+          ]
+        },
+        "platform_attractiveness": {
+          "score": 1,
+          "evidence_type": "E1_company_claim_or_scientific_rationale_only",
+          "evidence_type_reason": "PNAC is a real reusable screening system, but a quantitative technical advantage versus an appropriate platform comparator was not verified.",
+          "evidence_basis": "The alpha-synuclein/gold-nanoparticle screening method is described by Korea University TLO and a Korean patent.",
+          "main_line_summary": "Reusable patented screening architecture is credible, but benchmarked differentiation is not yet demonstrated.",
+          "why_not_higher": "No quantitative head-to-head technical advantage versus an appropriate screening comparator.",
+          "investigation_note": "Patent ownership/licensing characterization should be reconciled between the deck and public TLO records.",
+          "uncertain_points": [
+            "Current exclusive licensing scope and freedom-to-operate were not independently verified"
+          ],
+          "source_ids": [
+            "S2",
             "S3"
           ]
         },
+        "expansion_potential": {
+          "score": 0,
+          "evidence_type": "E0_not_found_or_not_assessable",
+          "evidence_type_reason": "No additional indication-specific AON-PP23 program or quantitative dataset was confirmed beyond Parkinson's disease.",
+          "evidence_basis": "Platform-wide synucleinopathy opportunities do not count as asset-specific expansion.",
+          "main_line_summary": "No confirmed AON-PP23 expansion program beyond Parkinson's disease.",
+          "why_not_higher": "No asset-specific additional indication with biological-development evidence.",
+          "investigation_note": "Potential Lewy body dementia or MSA use would require a separately confirmed AON-PP23 program.",
+          "uncertain_points": [],
+          "source_ids": []
+        },
         "data_maturity": {
-          "score": 1,
-          "evidence_type": "triage_only",
-          "evidence_type_reason": "Fast Triage v3.3.",
-          "evidence_basis": "public_source",
-          "main_line_summary": "Data 1점: 약 10개 유도체 후보군과 분해 기능에 대한 정성적 공개가 있으나 AON-PP23 자산별 해석 가능한 정량 결과는 부족합니다.",
-          "why_not_higher": "정량 efficacy, PK/PD, safety domain이 공개되지 않았습니다.",
-          "investigation_note": "후보 확정 후 자산별 데이터 패키지를 확인해야 합니다.",
+          "score": 3,
+          "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+          "evidence_type_reason": "The uploaded July 2026 company deck contains two complementary quantitative domains appropriate to Lead Optimization.",
+          "evidence_basis": "Biochemical/biophysical aggregation-disaggregation data and cellular viability/alpha-synuclein reduction data support progression into derivative optimization.",
+          "main_line_summary": "Two complementary asset-specific quantitative domains support maximum stage-adjusted data maturity.",
+          "why_not_higher": "Maximum score; no higher score exists, although translational in vivo/PK/toxicity gaps remain.",
+          "investigation_note": "BBB, DMPK, rodent efficacy and toxicity are described as ongoing/planned rather than completed.",
           "uncertain_points": [
-            "Exact candidate-specific dataset not public"
+            "Raw replicate statistics and independent reproduction were not provided",
+            "Completed in vivo efficacy, BBB exposure and toxicology results were not provided"
+          ],
+          "source_ids": []
+        },
+        "marketability": {
+          "score": 0,
+          "evidence_type": "E0_not_found_or_not_assessable",
+          "evidence_type_reason": "No reliable internal A/B/C/D calculation or asset-specific peak-sales forecast could be established.",
+          "evidence_basis": "US PD prevalence is available, but eligibility, treatable subgroup, benchmark net price, penetration, competition haircut and pricing power are not defensibly established.",
+          "main_line_summary": "Insufficient evidence; assessed global peak sales were not calculated.",
+          "why_not_higher": "No reliable global peak-sales value is available.",
+          "investigation_note": "A company launch-sales aspiration was excluded because geography and peak-sales definition are unclear.",
+          "uncertain_points": [
+            "No validated benchmark annualized net price for a comparable disease-modifying small-molecule alpha-synuclein therapy",
+            "No defensible asset-specific peak penetration or competition haircut"
           ],
           "source_ids": [
-            "S1"
-          ]
+            "S10"
+          ],
+          "calculation": {
+            "commercial_rationale_status": "insufficient_evidence",
+            "commercial_rationale_failure_reason": "Critical A/B/C/D inputs and a reliable asset-specific external peak-sales forecast are unavailable.",
+            "A_targetable_addressable_patient": {
+              "targetable_addressable_patient": null,
+              "formula": "US TAP = US Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate"
+            },
+            "B_unrisked_peak_sales": {
+              "unrisked_peak_sales": null,
+              "sales_unit": "million USD",
+              "formula": "US Unrisked Peak Sales = US TAP x Benchmark Annualized Net Price x Peak Penetration x Treatment Duration Factor"
+            },
+            "C_obtainable_peak_sales": {
+              "obtainable_peak_sales": null,
+              "sales_unit": "million USD",
+              "formula": "US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment"
+            },
+            "D_global_obtainable_peak_sales": {
+              "source_geography": "US",
+              "global_multiplier": 1.5,
+              "global_obtainable_peak_sales": null,
+              "sales_unit": "million USD",
+              "formula": "Global Obtainable Peak Sales = US Obtainable Peak Sales x 1.5"
+            }
+          }
         }
       },
-      "total_score": 6,
-      "max_score": 9
+      "total_score": 11,
+      "max_score": 21
     },
     "validation": {
       "uncertain_points": [
-        "2025 material planned later preclinical work; plans were not used to promote the current stage."
+        "The exact M2/M8/Top3 derivative structures and which molecule is the canonical development candidate under AON-PP23 are not publicly disclosed.",
+        "Completed BBB, brain exposure, in vivo Parkinson's efficacy, DMPK and toxicity results were not provided; the July 2026 deck describes these as ongoing or planned.",
+        "AON-PP23 composition-of-matter patent filing/ownership status is inconsistent within the deck and was not independently verified.",
+        "No asset-specific peer-reviewed publication or clinical-trial registry record was found in the searches performed.",
+        "No reliable asset-specific peak-sales forecast or complete A/B/C/D commercial input set was identified."
       ],
-      "cross_checked_facts": [],
+      "cross_checked_facts": [
+        "AON-PP23 is an Astrion Parkinson's disease program: confirmed by the uploaded July 2026 company deck and public Korea Life Science Week profile.",
+        "PNAC screening patent KR102513116B1 is publicly verifiable, while public Korea University TLO records indicate university ownership and the company deck describes in-licensing.",
+        "Pathological alpha-synuclein aggregation is independently linked to Parkinson's disease and synucleinopathy biology.",
+        "Current company-deck status is Lead Optimization; older public exhibitor copy describing discovery appears stale."
+      ],
       "source_registry": [
         {
           "source_id": "S1",
-          "source_title": "Astrion press release — AON-PP23",
-          "source_url": "https://www.astrion.co.kr/en/board/board.php?bo_table=press&idx=16",
-          "source_type": "official_company_press_release",
+          "source_title": "KOREA LIFE SCIENCE WEEK — Astrion Co., Ltd. exhibitor profile",
+          "source_url": "https://www.lifescienceweek.com/eng/about/search_ex_view.asp?midx=1729",
+          "source_type": "industry_exhibitor_profile",
           "verified": true
         },
         {
           "source_id": "S2",
-          "source_title": "Astrion pipeline",
-          "source_url": "https://www.astrion.co.kr/en/m31.php",
-          "source_type": "official_company_pipeline",
+          "source_title": "Korea University TLO — Development of Rapid Drug Screening Utilizing Alpha-Synuclein Gold Nanoparticle Complexes",
+          "source_url": "https://tlo.korea.ac.kr/en/tech-transfer/4682",
+          "source_type": "technology_transfer_office",
           "verified": true
         },
         {
           "source_id": "S3",
-          "source_title": "Astrion R&D/publications",
-          "source_url": "https://www.astrion.co.kr/en/m43.php",
-          "source_type": "official_company_rnd",
+          "source_title": "KR102513116B1 — Alpha-Synuclein–Gold Nanoparticle Conjugate and Drug Screening Method",
+          "source_url": "https://patentimages.storage.googleapis.com/b3/3a/bc/7f9e6396b3fb27/KR102513116B1.pdf",
+          "source_type": "patent",
+          "verified": true
+        },
+        {
+          "source_id": "S4",
+          "source_title": "Nature Reviews Neurology — alpha-Synuclein pathology as a target in neurodegenerative diseases",
+          "source_url": "https://www.nature.com/articles/s41582-024-01043-w",
+          "source_type": "peer_reviewed_review",
+          "verified": true
+        },
+        {
+          "source_id": "S5",
+          "source_title": "ClinicalTrials.gov NCT07174310 — Prasinezumab PARAISO Phase 3",
+          "source_url": "https://clinicaltrials.gov/study/NCT07174310",
+          "source_type": "clinical_registry",
+          "verified": true
+        },
+        {
+          "source_id": "S6",
+          "source_title": "UCB — Minzasolmin ORCHESTRA findings and program termination",
+          "source_url": "https://www.ucb.com/newsroom/press-releases/article/findings-from-minzasolmin-proof-of-concept-orchestra-study-shape-next-steps-in-ucb-parkinson-s-research-program",
+          "source_type": "company_press_release",
+          "verified": true
+        },
+        {
+          "source_id": "S7",
+          "source_title": "ClinicalTrials.gov NCT04685265 — Anle138b in Parkinson's disease",
+          "source_url": "https://clinicaltrials.gov/study/NCT04685265",
+          "source_type": "clinical_registry",
+          "verified": true
+        },
+        {
+          "source_id": "S8",
+          "source_title": "AC Immune — First Half 2026 Financial and Corporate Update",
+          "source_url": "https://ir.acimmune.com/news-releases/news-release-details/ac-immune-first-half-2026-financial-and-corporate-update",
+          "source_type": "company_press_release",
+          "verified": true
+        },
+        {
+          "source_id": "S9",
+          "source_title": "NewsWire Korea — ABrain AB103 selected for KDDF Parkinson's gene-therapy project",
+          "source_url": "https://www.newswire.co.kr/newsRead.php?no=1037368",
+          "source_type": "company_press_release_distribution",
+          "verified": true
+        },
+        {
+          "source_id": "S10",
+          "source_title": "Parkinson's Foundation — Parkinson's disease statistics",
+          "source_url": "https://www.parkinson.org/understanding-parkinsons/statistics",
+          "source_type": "epidemiology_nonprofit",
+          "verified": true
+        },
+        {
+          "source_id": "S11",
+          "source_title": "Yonhap News — Kolon Pharma and Astrion joint R&D agreement",
+          "source_url": "https://www.yna.co.kr/view/AKR20240311122700017",
+          "source_type": "news",
+          "verified": true
+        },
+        {
+          "source_id": "S12",
+          "source_title": "Fisher Scientific — CAS 565-63-9 chemical reference",
+          "source_url": "https://www.fishersci.com/us/en/browse/cas/565-63-9",
+          "source_type": "chemical_reference",
           "verified": true
         }
       ]
     },
     "final_insight": {
-      "one_line_summary": "PD/α-synuclein aggregate degradation 프로그램으로 MoA 신호가 충분해 SELECT합니다.",
-      "recommendation": "Run Full Scout",
-      "most_important_diligence_question": "AON-PP23가 현재 확정된 단일 후보물질인지, 그리고 자산별 PK/PD·α-synuclein 감소량 데이터가 있는가?"
+      "one_line_summary": "AON-PP23 has strong PD/alpha-synuclein proteostasis fit and early biochemical/cellular PoC, but remains a lead-optimization program without completed translational in vivo/PK/toxicity, quantitative competitor differentiation or clear compound IP.",
+      "recommendation": "Watch",
+      "most_important_diligence_question": "Can Astrion provide the current M2/M8/Top3 candidate identities and composition-of-matter IP status together with raw BBB/brain PK, in vivo PD efficacy, DMPK/toxicity and mechanism-linked target-engagement data?"
     },
-    "triage": {
-      "status": "SELECT",
-      "identity_verified": true,
-      "active_asset": true,
-      "verified_public_source_count": 3,
-      "why": "AON-PP23는 Astrion의 현재 PD 프로그램으로 확인되고 α-synuclein oligomer 직접 분해 전략과 기능성 screening platform 근거가 있어 SELECT하되, exact development stage와 최종 후보물질 확정 여부는 불명확합니다.",
-      "missing_evidence_needed_for_full_scout": [
-        "Current exact development stage",
-        "AON-PP23-specific quantitative efficacy/PK/safety data"
+    "company_profile": {
+      "headquarters": "2nd floor, 47 Gaeunsa-gil, Seongbuk-gu, Seoul 02842, Republic of Korea",
+      "company_stage": "Private early-stage biotech with lead-optimization CNS program and preclinical oncology programs",
+      "platform_summary": "PNAC alpha-synuclein/gold-nanoparticle screening with in silico/BIOVIA-supported medicinal chemistry"
+    },
+    "competitive_analysis": {
+      "competitive_density": "High",
+      "similarity_summary": {
+        "similar_pipeline_count": 5,
+        "high_similarity_count": 2,
+        "medium_similarity_count": 3,
+        "low_similarity_count": 0
+      },
+      "competitor_table": [
+        {
+          "competitor_asset": "Minzasolmin (UCB0599)",
+          "company": "UCB / Novartis",
+          "modality": "Small molecule",
+          "target_or_moa": "Intracellular alpha-synuclein misfolding inhibitor",
+          "stage": "Phase 2a completed; program termination initiated",
+          "similarity_level": "High",
+          "why_it_matters": "Same PD indication, same alpha-synuclein aggregation biology and similar small-molecule modality; clinical failure is a key target-risk benchmark.",
+          "source_url": "https://www.ucb.com/newsroom/press-releases/article/findings-from-minzasolmin-proof-of-concept-orchestra-study-shape-next-steps-in-ucb-parkinson-s-research-program"
+        },
+        {
+          "competitor_asset": "Anle138b (emrusolmin)",
+          "company": "MODAG",
+          "modality": "Small molecule",
+          "target_or_moa": "Toxic alpha-synuclein oligomer-binding / aggregation modulator",
+          "stage": "Phase 1b Parkinson's disease completed",
+          "similarity_level": "High",
+          "why_it_matters": "Same PD indication, alpha-synuclein aggregation target and oral small-molecule concept with human exposure experience.",
+          "source_url": "https://clinicaltrials.gov/study/NCT04685265"
+        },
+        {
+          "competitor_asset": "Prasinezumab",
+          "company": "Roche / Prothena",
+          "modality": "Antibody",
+          "target_or_moa": "alpha-Synuclein C-terminus",
+          "stage": "Phase 3 recruiting",
+          "similarity_level": "Medium",
+          "why_it_matters": "Same PD and alpha-synuclein disease biology; Phase 3 establishes a late-stage efficacy and biomarker benchmark despite different modality.",
+          "source_url": "https://clinicaltrials.gov/study/NCT07174310"
+        },
+        {
+          "competitor_asset": "ACI-7104",
+          "company": "AC Immune",
+          "modality": "Vaccine",
+          "target_or_moa": "Active immunotherapy targeting pathological alpha-synuclein",
+          "stage": "Phase 2 ongoing",
+          "similarity_level": "Medium",
+          "why_it_matters": "Same PD and pathological alpha-synuclein biology with active Phase 2 biomarker and clinical readouts.",
+          "source_url": "https://ir.acimmune.com/news-releases/news-release-details/ac-immune-first-half-2026-financial-and-corporate-update"
+        },
+        {
+          "competitor_asset": "AB103",
+          "company": "ABrain",
+          "modality": "Gene therapy",
+          "target_or_moa": "AAV-based alpha-synuclein aggregation inhibition",
+          "stage": "Lead development",
+          "similarity_level": "Medium",
+          "why_it_matters": "Same PD and alpha-synuclein aggregation biology at an early development stage, but with a distinct AAV modality.",
+          "source_url": "https://www.newswire.co.kr/newsRead.php?no=1037368"
+        }
+      ],
+      "similar_pipelines": [
+        {
+          "company": "UCB / Novartis",
+          "asset_name": "Minzasolmin (UCB0599)",
+          "similarity_score": 95,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "alpha-Synuclein aggregation biology",
+            "Small molecule"
+          ],
+          "shared_data_points": [
+            "Disease-modifying intent",
+            "Clinical efficacy test completed"
+          ]
+        },
+        {
+          "company": "MODAG",
+          "asset_name": "Anle138b (emrusolmin)",
+          "similarity_score": 92,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "alpha-Synuclein oligomer/aggregation biology",
+            "Small molecule"
+          ],
+          "shared_data_points": [
+            "Brain-penetrant small-molecule concept",
+            "Patient Phase 1b completed"
+          ]
+        },
+        {
+          "company": "Roche / Prothena",
+          "asset_name": "Prasinezumab",
+          "similarity_score": 78,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "alpha-Synuclein pathology"
+          ],
+          "shared_data_points": [
+            "Disease-modifying intent",
+            "Phase 3 benchmark"
+          ]
+        },
+        {
+          "company": "AC Immune",
+          "asset_name": "ACI-7104",
+          "similarity_score": 74,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "Pathological alpha-Synuclein"
+          ],
+          "shared_data_points": [
+            "Disease-modifying intent",
+            "Phase 2 biomarker/clinical benchmark"
+          ]
+        },
+        {
+          "company": "ABrain",
+          "asset_name": "AB103",
+          "similarity_score": 70,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "alpha-Synuclein aggregation inhibition"
+          ],
+          "shared_data_points": [
+            "Early-stage development",
+            "Aggregation-directed mechanism"
+          ]
+        }
       ]
     }
   },
@@ -16181,7 +16513,39 @@
       "rubric_version": "3.3",
       "generated_at": "2026-08-06",
       "output_filename_base": "Illimis Therapeutics_ILM01",
-      "storage_profile": "dashboard_hybrid_v1"
+      "storage_profile": "dashboard_hybrid_v1",
+      "collaboration": {
+        "comments": [
+          {
+            "id": "e444f4d940c9494986efe49aa36d1e0a",
+            "parent_id": null,
+            "author": "정주원",
+            "author_user_id": "",
+            "author_email": "",
+            "actor_ip": "system",
+            "body": "ㅇㄹㄴㅇㄹ",
+            "created_at": "2026-08-22T14:26:05.566828+00:00",
+            "updated_at": "2026-08-24T10:06:20.356856+00:00",
+            "source": "listing_comment_post",
+            "import_key": "427ab3db7b535a36ba805b61d44a12a2fb3da21c81577763fc23d18fd10d616e",
+            "system_import": true
+          }
+        ],
+        "updated_at": "2026-08-24T10:06:20.356856+00:00",
+        "comment_count": 1
+      },
+      "edit_history": [
+        {
+          "id": "1c620bb9b491487dbb79e5fa46bd9b70",
+          "changed_at": "2026-08-24T10:06:20.356864+00:00",
+          "actor_ip": "system",
+          "actor_name": "",
+          "source": "cross_workflow_comment_sync",
+          "field": "collaboration.comments.tab0_listing",
+          "previous_value": null,
+          "new_value": null
+        }
+      ]
     },
     "source_report": {
       "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.\n\n중요: 10개 후보 중 ADEL-Y04, ILM01, LNK01006은 SELECT, HBW-015와 ILM02는 REJECT, 나머지 5개는 특정 asset identity 미확인으로 UNVERIFIED입니다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4 antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Active AD program; direct mouse functional evidence, limited quantitative disclosure. | S1-S3 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Cannot map to Youngen APP-siRNA versus Hotgen AA001. | S1-S3 |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Indication used as asset name. | S1-S2 |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Alzheimer's disease | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | No discrete Hyper Corp tau asset matched. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed pathway inhibitor | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | Strong data; generic pain fit, unnamed target and active status unconfirmed. | S1-S3 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Unknown (tauopathies) | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | Active but broad, early and without disclosed result. | S1-S2 |\n| 7 | ILM21 | Illimis Therapeutics | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | No public ILM21 asset. | S1 |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Differentiated active AD lead; qualitative functional evidence. | S1-S3 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Collaboration descriptor, not an asset. | S1 |\n| 10 | LYNK01006 → LNK01006 | Lynk Pharmaceuticals | TYK2 allosteric inhibitor | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | Active Phase 1 BLKR201 with CNS TYK2 rationale. | S1-S3 |\n\n## Notes\n- 입력 순서를 유지했으며, LYNK01006은 검증된 LNK01006/BLKR201로 철자 정규화했습니다.\n- Youngen/Hotgen 및 Hyper tau의 설명형 행은 다른 공개 자산으로 임의 대체하지 않았습니다.\n- 의심해볼 포인트: ADEL-Y04와 ILM01의 MOA 3은 공개된 직접 기능 결과에 기반하지만 정량 원자료가 제한적이므로 Full Scout에서 후보 동일성·통계·노출-반응을 우선 검증해야 합니다.\n- 드릴다운 질문: HBW-015의 타깃·활성·신경병증성 통증 적응증이 공식 확인되면 triage가 바뀌는가? LNK01006의 환자 적응증이 MS로 확정되지 않으면 TR 3을 유지할 수 있는가?\n- 업로드 지침 근거: :contentReference[oaicite:0]{index=0}\n\n> 이 정보가 부정확할 수 있습니다.\n",
@@ -17474,7 +17838,39 @@
       "rubric_version": "3.3",
       "generated_at": "2026-08-06",
       "output_filename_base": "Illimis Therapeutics, Inc._ILM01",
-      "storage_profile": "dashboard_hybrid_v1"
+      "storage_profile": "dashboard_hybrid_v1",
+      "collaboration": {
+        "comments": [
+          {
+            "id": "01b1c329b89e4b85bbb3dc4f392d428f",
+            "parent_id": null,
+            "author": "정주원",
+            "author_user_id": "",
+            "author_email": "",
+            "actor_ip": "system",
+            "body": "ㅇㄹㄴㅇㄹ",
+            "created_at": "2026-08-22T14:26:05.566828+00:00",
+            "updated_at": "2026-08-24T10:06:20.356873+00:00",
+            "source": "listing_comment_post",
+            "import_key": "427ab3db7b535a36ba805b61d44a12a2fb3da21c81577763fc23d18fd10d616e",
+            "system_import": true
+          }
+        ],
+        "updated_at": "2026-08-24T10:06:20.356873+00:00",
+        "comment_count": 1
+      },
+      "edit_history": [
+        {
+          "id": "59d39b64c14641ea80a0f289f733dd90",
+          "changed_at": "2026-08-24T10:06:20.356879+00:00",
+          "actor_ip": "system",
+          "actor_name": "",
+          "source": "cross_workflow_comment_sync",
+          "field": "collaboration.comments.tab0_listing",
+          "previous_value": null,
+          "new_value": null
+        }
+      ]
     },
     "source_report": {
       "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 10개 중 ADEL-Y04, ILM01, LNK01006/BLKR201은 SELECT입니다. ILM21은 현재 Illimis 공식 파이프라인에서 신원이 확인되어 제공된 임시 UNVERIFIED 판정을 REJECT로 교정했으며, 나머지는 자산 identity 불명확 또는 SKBP fit·MoA·Data·활성 상태 부족으로 REJECT/UNVERIFIED 처리했습니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4-selective antibody | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD 전임상 자산이며 ApoE4 모델에서 기억·시냅스·tau 병리의 직접 기능성 효과가 확인됩니다. 정량 PK/PD 공개는 제한적입니다. | https://adelpharm.com/en/pipeline/<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.088537 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Youngen APP-siRNA와 Hotgen 투자계열 AA001이 혼합된 입력으로 어느 자산인지 특정할 수 없습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html<br>https://www.hotgen.com.cn/detail/683.html |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | 질환명이 자산명으로 입력됐으며 Youngen의 독립 자산 코드와 매칭되지 않습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | 신뢰 가능한 공개자료에서 Hyper Corp의 discrete tau 자산을 확인하지 못했습니다. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed nociceptive ion-channel inhibitor | Small molecule | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | HBW-015-15에서 PK·급성/CCI 효능·selectivity·독성이 공개됐으나 generic Pain, 미공개 표적 및 현재 활동 미확인으로 REJECT입니다. | https://www.tianfulifesciencepark.com/News/Detail?id=2657 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Protein biologic | Unknown | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | 활성 tauopathy 프로그램이나 적응증이 broad하고 ILM02 자산별 기능성 결과가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 7 | ILM21 | Illimis Therapeutics | Myelin debris/TAM GAIA fusion | Protein biologic | Multiple sclerosis / neuroinflammatory disease | Unknown | Republic of Korea | 3 | 1 | 0 | REJECT | 공식 파이프라인에서 MS·myelin debris 자산으로 확인되지만 회사 rationale 외 자산별 기능성·정량 데이터가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Protein biologic | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD lead이며 Aβ/TAM 기반 phagocytosis와 anti-inflammatory signaling의 prototype functional PoC가 확인됩니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Illimis-Lilly 연구협력 descriptor이며 개별 asset name이 아닙니다. | https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1 |\n| 10 | LYNK01006 → LNK01006 (BLKR201) | Lynk Pharmaceuticals | TYK2 JH2 allosteric inhibitor | Small molecule | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | CNS-penetrant TYK2 후보로 MS 모델 효능과 2026년 6월 Phase 1 첫 투여가 확인됩니다. 임상 결과는 아직 없습니다. | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html<br>https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html<br>https://clinicaltrials.gov/study/NCT07501039 |\n\n## Notes\n- #2와 #3은 Youngen의 무코드 APP-siRNA 프로그램과 관련될 수 있으나, 입력 자산명만으로 해당 프로그램을 자동 귀속하지 않았습니다.\n- #5의 공개 데이터는 HBW-015 프로그램의 대표물질로 기재된 HBW-015-15에서 확인됐으며, 2026년 현재 active status는 확인되지 않았습니다.\n- #7 ILM21은 Illimis 공식 파이프라인에 `Myelin Debris / Multiple Sclerosis / ILM21`로 등재되어 있어 identity_verified=true로 교정했습니다. 다만 stage와 자산별 결과는 미확인입니다.\n- #8 ILM01은 prototype GAIA-Aβ 기능성 근거와 최종 ILM01 후보의 연속성을 Full Scout에서 확인해야 합니다.\n- #10의 오기 `LYNK01006`은 `LNK01006`으로 정규화했으며, 2026년 6월부터 BLKR201 명칭으로 Phase 1이 진행 중입니다.",

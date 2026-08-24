@@ -6,8 +6,8 @@ aliases:
   - "brain-penetrant_selective_allosteric_tyk2_inhibitor_modulating_type_i_i_ac24d75a"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-23"
-updated_at: "2026-08-23"
+created_at: "2026-08-24"
+updated_at: "2026-08-24"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

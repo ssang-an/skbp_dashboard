@@ -7,8 +7,8 @@ aliases:
 tags:
   - "pipeline/source"
   - "source/company_database"
-created_at: "2026-08-23"
-updated_at: "2026-08-23"
+created_at: "2026-08-24"
+updated_at: "2026-08-24"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
@@ -24,7 +24,7 @@ confidence: "medium"
 | Source type | company_database |
 | Reliability | medium |
 | URL | https://www.preqin.com/data/profile/asset/deargen-inc-/469138 |
-| Accessed / generated date | 2026-08-23 |
+| Accessed / generated date | 2026-08-24 |
 
 ## Evidence Summary
 

@@ -1,30 +1,30 @@
 ---
 type: "source"
-canonical_id: "source::https_www.astrion.co.kr_en_m43.php"
-title: "Astrion R&D/publications"
+canonical_id: "source::https_clinicaltrials.gov_study_nct04685265"
+title: "ClinicalTrials.gov NCT04685265 — Anle138b in Parkinson's disease"
 aliases:
-  - "Astrion R&D/publications"
+  - "ClinicalTrials.gov NCT04685265 — Anle138b in Parkinson's disease"
 tags:
   - "pipeline/source"
-  - "source/official_company_rnd"
-created_at: "2026-08-23"
-updated_at: "2026-08-23"
+  - "source/clinical_registry"
+created_at: "2026-08-24"
+updated_at: "2026-08-24"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
 ---
 
-# Astrion R&D/publications
+# ClinicalTrials.gov NCT04685265 — Anle138b in Parkinson's disease
 
 ## Source Metadata
 
 | Field | Value |
 |---|---|
-| Source type | official_company_rnd |
+| Source type | clinical_registry |
 | Reliability | medium |
-| URL | https://www.astrion.co.kr/en/m43.php |
-| Accessed / generated date | 2026-08-23 |
+| URL | https://clinicaltrials.gov/study/NCT04685265 |
+| Accessed / generated date | 2026-08-24 |
 
 ## Evidence Summary
 

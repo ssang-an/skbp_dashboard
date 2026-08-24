@@ -6,8 +6,8 @@ aliases:
   - "bbb_stabilization_with_reduced_neuroinflammation_and_vascular_leakage"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-23"
-updated_at: "2026-08-23"
+created_at: "2026-08-24"
+updated_at: "2026-08-24"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

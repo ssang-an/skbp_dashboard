@@ -1,6 +1,6 @@
 # Companies
 
-> Generated at `2026-08-23T11:53:17`.
+> Generated at `2026-08-24T19:06:21`.
 
 - [[1ST Biotherapeutics]] (2)
 - [[1ST Biotherapeutics - D&D Pharmatech|1ST Biotherapeutics / D&D Pharmatech]] (1)

@@ -56,4 +56,4 @@ tags:
 
 ## Operating comments
 
-- None
+- Fast Triage 정주원: ㅇㄹㄴㅇㄹ

@@ -1,21 +1,21 @@
 ---
 type: "target"
-canonical_id: "target::α-synuclein_oligomer_aggregates"
-title: "α-synuclein_oligomer_aggregates"
+canonical_id: "target::alpha-synuclein_aggregates"
+title: "alpha-synuclein_aggregates"
 aliases:
-  - "α-synuclein_oligomer_aggregates"
+  - "alpha-synuclein_aggregates"
 tags:
   - "pipeline/target"
   - "theme/no_theme"
-created_at: "2026-08-23"
-updated_at: "2026-08-23"
+created_at: "2026-08-24"
+updated_at: "2026-08-24"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
 ---
 
-# α-synuclein_oligomer_aggregates
+# alpha-synuclein_aggregates
 
 ## Biology Summary
 

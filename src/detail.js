@@ -879,7 +879,10 @@ let activeCommentEditId = null;
 
 function currentUserOwnsComment(comment) {
   const user = getCurrentUser();
-  return Boolean(user?.id && comment?.author_user_id && String(user.id) === String(comment.author_user_id));
+  const sameId = user?.id && comment?.author_user_id && String(user.id) === String(comment.author_user_id);
+  const sameEmail = user?.email && comment?.author_email
+    && String(user.email).trim().toLowerCase() === String(comment.author_email).trim().toLowerCase();
+  return Boolean(sameId || sameEmail);
 }
 
 function formatCommentTime(value) {
@@ -895,6 +898,27 @@ function formatCommentTime(value) {
   }).format(date);
 }
 
+function syncedCommentDisplay(comment, fallbackBreadcrumb) {
+  const metadata = currentRecord?.meta?.pipeline_metadata || {};
+  if (String(comment?.source || '') === 'listing_comment_post') {
+    const isBulk = String(metadata.comment_source || '') === 'team_review_import';
+    return {
+      breadcrumb: isBulk ? '일괄 업로드: Tab 0 · Comment' : 'Tab 0 · Comment',
+      author: isBulk ? 'Team' : (metadata.comment_author || comment.author || 'Team Review'),
+      createdAt: metadata.comment_updated_at || metadata.comment_created_at || comment.created_at
+    };
+  }
+  if (String(comment?.source || '') === 'listing_contact_history') {
+    const isBulk = String(metadata.contact_source || '') === 'team_review_import';
+    return {
+      breadcrumb: isBulk ? '일괄 업로드: Tab 0 · Contact History' : 'Tab 0 · Contact History',
+      author: isBulk ? 'Team' : (metadata.contact_author || comment.author || 'Team Review'),
+      createdAt: metadata.contact_updated_at || metadata.contact_created_at || comment.created_at
+    };
+  }
+  return { breadcrumb: comment.label || fallbackBreadcrumb, author: comment.author || '익명', createdAt: comment.created_at };
+}
+
 function renderCommentNode(comment, childrenByParent, depth = 0, visited = new Set(), defaultBreadcrumb = 'Tab 2 · Full Scout · Comment') {
   if (visited.has(comment.id) || depth > 8) return '';
   const nextVisited = new Set(visited);
@@ -907,7 +931,7 @@ function renderCommentNode(comment, childrenByParent, depth = 0, visited = new S
   const canDelete = isOwnAuthor || Boolean(getCurrentUser()?.is_admin && comment.system_import === true);
   const canDeleteImported = canDelete;
   const isEditing = activeCommentEditId === String(comment.id);
-  const breadcrumb = comment.label || defaultBreadcrumb;
+  const display = syncedCommentDisplay(comment, defaultBreadcrumb);
   const attachmentChip = attachmentId
     ? `<button type="button" class="comment-attachment-chip" data-comment-attachment-id="${escapeHtml(attachmentId)}" title="미리보기">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"></path><path d="M14 3v4h4"></path></svg>
@@ -923,10 +947,10 @@ function renderCommentNode(comment, childrenByParent, depth = 0, visited = new S
     <article class="comment-card ${depth ? 'is-reply' : ''}${isOwnComment ? ' is-editable' : ''}" data-comment-id="${escapeHtml(comment.id)}"${isOwnComment ? ' data-comment-edit title="두 번 클릭하여 수정"' : ''}>
       <div class="comment-meta">
         <span class="comment-meta-identity">
-          <span class="comment-source-label">${escapeHtml(breadcrumb)}</span>
-          <strong>${escapeHtml(comment.author || '익명')}</strong>
+          <span class="comment-source-label">${escapeHtml(display.breadcrumb)}</span>
+          <strong>${escapeHtml(display.author)}</strong>
         </span>
-        <time datetime="${escapeHtml(comment.created_at || '')}">${escapeHtml(formatCommentTime(comment.created_at))}</time>
+        <time datetime="${escapeHtml(display.createdAt || '')}">${escapeHtml(formatCommentTime(display.createdAt))}</time>
       </div>
       ${bodyMarkup}
       ${attachmentId ? '' : `<button

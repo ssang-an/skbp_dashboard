@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T11:53:17"
+generated_at: "2026-08-24T19:06:21"
 record_id: "Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)"
 company: "Threebrooks Therapeutics"
 country: "Republic of Korea"

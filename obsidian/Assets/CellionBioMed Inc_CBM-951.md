@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T11:53:17"
+generated_at: "2026-08-24T19:06:21"
 record_id: "CellionBioMed Inc_CBM-951"
 company: "CellionBioMed Inc"
 country: "Republic of Korea"

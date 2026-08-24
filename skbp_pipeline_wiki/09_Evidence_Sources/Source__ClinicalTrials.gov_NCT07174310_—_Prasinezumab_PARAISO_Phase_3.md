@@ -1,30 +1,30 @@
 ---
 type: "source"
-canonical_id: "source::https_www.astrion.co.kr_en_board_board.php_bo_table=press&idx=16"
-title: "Astrion press release — AON-PP23"
+canonical_id: "source::https_clinicaltrials.gov_study_nct07174310"
+title: "ClinicalTrials.gov NCT07174310 — Prasinezumab PARAISO Phase 3"
 aliases:
-  - "Astrion press release — AON-PP23"
+  - "ClinicalTrials.gov NCT07174310 — Prasinezumab PARAISO Phase 3"
 tags:
   - "pipeline/source"
-  - "source/other"
-created_at: "2026-08-23"
-updated_at: "2026-08-23"
+  - "source/clinical_registry"
+created_at: "2026-08-24"
+updated_at: "2026-08-24"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
 ---
 
-# Astrion press release — AON-PP23
+# ClinicalTrials.gov NCT07174310 — Prasinezumab PARAISO Phase 3
 
 ## Source Metadata
 
 | Field | Value |
 |---|---|
-| Source type | other |
+| Source type | clinical_registry |
 | Reliability | medium |
-| URL | https://www.astrion.co.kr/en/board/board.php?bo_table=press&idx=16 |
-| Accessed / generated date | 2026-08-23 |
+| URL | https://clinicaltrials.gov/study/NCT07174310 |
+| Accessed / generated date | 2026-08-24 |
 
 ## Evidence Summary
 

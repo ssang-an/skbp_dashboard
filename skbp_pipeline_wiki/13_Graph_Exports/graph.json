@@ -7594,9 +7594,9 @@
       "type": "asset",
       "title": "Asset__AON-PP23",
       "tags": "pipeline/asset;theme/protein_homeostasis",
-      "score": 6,
-      "recommendation": "Run Full Scout",
-      "evidence_level": "E0",
+      "score": 11,
+      "recommendation": "Watch",
+      "evidence_level": "E3",
       "workflow_stage": "",
       "review_type": "",
       "tracking_status": "",
@@ -7604,15 +7604,15 @@
     },
     {
       "id": "review::astrion_co.,_ltd._aon-pp23",
-      "label": "Fast Triage — AON-PP23",
+      "label": "Full Scout — AON-PP23",
       "type": "review",
       "title": "Review__Astrion_Co.,_Ltd._AON-PP23",
-      "tags": "pipeline/review;workflow/fast_triage",
-      "score": 6,
-      "recommendation": "Run Full Scout",
-      "evidence_level": "E0",
-      "workflow_stage": "Fast Triage",
-      "review_type": "Fast Triage",
+      "tags": "pipeline/review;workflow/full_scout",
+      "score": 11,
+      "recommendation": "Watch",
+      "evidence_level": "E3",
+      "workflow_stage": "Full Scout",
+      "review_type": "Full Scout",
       "tracking_status": "",
       "partnership_type": ""
     },
@@ -7631,10 +7631,10 @@
       "partnership_type": ""
     },
     {
-      "id": "target::α-synuclein_oligomer_aggregates",
-      "label": "α-synuclein oligomer aggregates",
+      "id": "target::alpha-synuclein_aggregates",
+      "label": "alpha-Synuclein aggregates",
       "type": "target",
-      "title": "Target__α-synuclein_oligomer_aggregates",
+      "title": "Target__alpha-Synuclein_aggregates",
       "tags": "pipeline/target",
       "score": "",
       "recommendation": "",
@@ -7645,10 +7645,10 @@
       "partnership_type": ""
     },
     {
-      "id": "moa::direct_degradation_of_α-synuclein_oligomers_via_pnac-screened_small_molecules",
-      "label": "Direct degradation of α-synuclein oligomers via PNAC-screened small molecules",
+      "id": "moa::alpha-synuclein_aggregation_inhibition_disaggregation",
+      "label": "alpha-Synuclein aggregation inhibition / disaggregation",
       "type": "moa",
-      "title": "MoA__Direct_degradation_of_α-synuclein_oligomers_via_PNAC-screened_small_molecules",
+      "title": "MoA__alpha-Synuclein_aggregation_inhibition_disaggregation",
       "tags": "pipeline/moa",
       "score": "",
       "recommendation": "",
@@ -7678,51 +7678,247 @@
       "type": "scorecard",
       "title": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23",
       "tags": "pipeline/scorecard",
-      "score": 6,
-      "recommendation": "Run Full Scout",
-      "evidence_level": "E0",
+      "score": 11,
+      "recommendation": "Watch",
+      "evidence_level": "E3",
       "workflow_stage": "",
       "review_type": "",
       "tracking_status": "",
       "partnership_type": ""
     },
     {
-      "id": "source::https_www.astrion.co.kr_en_board_board.php_bo_table=press&idx=16",
-      "label": "Astrion press release — AON-PP23",
+      "id": "competitor::ucb_novartis_minzasolmin_(ucb0599)",
+      "label": "Minzasolmin (UCB0599)",
+      "type": "competitor",
+      "title": "Competitor__UCB_Novartis__Minzasolmin_(UCB0599)",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "competitor::modag_anle138b_(emrusolmin)",
+      "label": "Anle138b (emrusolmin)",
+      "type": "competitor",
+      "title": "Competitor__MODAG__Anle138b_(emrusolmin)",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "competitor::roche_prothena_prasinezumab",
+      "label": "Prasinezumab",
+      "type": "competitor",
+      "title": "Competitor__Roche_Prothena__Prasinezumab",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "competitor::ac_immune_aci-7104",
+      "label": "ACI-7104",
+      "type": "competitor",
+      "title": "Competitor__AC_Immune__ACI-7104",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "competitor::abrain_ab103",
+      "label": "AB103",
+      "type": "competitor",
+      "title": "Competitor__ABrain__AB103",
+      "tags": "pipeline/competitor",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "source::https_www.lifescienceweek.com_eng_about_search_ex_view.asp_midx=1729",
+      "label": "KOREA LIFE SCIENCE WEEK — Astrion Co., Ltd. exhibitor profile",
       "type": "source",
-      "title": "Source__Astrion_press_release_—_AON-PP23",
+      "title": "Source__KOREA_LIFE_SCIENCE_WEEK_—_Astrion_Co.,_Ltd._exhibitor_profile",
       "tags": "pipeline/source;source/other",
       "score": "",
       "recommendation": "",
-      "evidence_level": "E0",
+      "evidence_level": "E3",
       "workflow_stage": "",
       "review_type": "",
       "tracking_status": "",
       "partnership_type": ""
     },
     {
-      "id": "source::https_www.astrion.co.kr_en_m31.php",
-      "label": "Astrion pipeline",
+      "id": "source::https_tlo.korea.ac.kr_en_tech-transfer_4682",
+      "label": "Korea University TLO — Development of Rapid Drug Screening Utilizing Alpha-Synuclein Gold Nanoparticle Complexes",
       "type": "source",
-      "title": "Source__Astrion_pipeline",
-      "tags": "pipeline/source;source/official_company_pipeline",
+      "title": "Source__Korea_University_TLO_—_Development_of_Rapid_Drug_Screening_Utilizing_Al_f37dcb74",
+      "tags": "pipeline/source;source/technology_transfer_office",
       "score": "",
       "recommendation": "",
-      "evidence_level": "E0",
+      "evidence_level": "E3",
       "workflow_stage": "",
       "review_type": "",
       "tracking_status": "",
       "partnership_type": ""
     },
     {
-      "id": "source::https_www.astrion.co.kr_en_m43.php",
-      "label": "Astrion R&D/publications",
+      "id": "source::https_patentimages.storage.googleapis.com_b3_3a_bc_7f9e6396b3fb27_kr102_6c714b57",
+      "label": "KR102513116B1 — Alpha-Synuclein–Gold Nanoparticle Conjugate and Drug Screening Method",
       "type": "source",
-      "title": "Source__Astrion_R&D_publications",
-      "tags": "pipeline/source;source/official_company_rnd",
+      "title": "Source__KR102513116B1_—_Alpha-Synuclein–Gold_Nanoparticle_Conjugate_and_Drug_Sc_c43ca744",
+      "tags": "pipeline/source;source/patent",
       "score": "",
       "recommendation": "",
-      "evidence_level": "E0",
+      "evidence_level": "E3",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "source::https_www.nature.com_articles_s41582-024-01043-w",
+      "label": "Nature Reviews Neurology — alpha-Synuclein pathology as a target in neurodegenerative diseases",
+      "type": "source",
+      "title": "Source__Nature_Reviews_Neurology_—_alpha-Synuclein_pathology_as_a_target_in_neu_ffa146d1",
+      "tags": "pipeline/source;source/peer_reviewed_review",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct07174310",
+      "label": "ClinicalTrials.gov NCT07174310 — Prasinezumab PARAISO Phase 3",
+      "type": "source",
+      "title": "Source__ClinicalTrials.gov_NCT07174310_—_Prasinezumab_PARAISO_Phase_3",
+      "tags": "pipeline/source;source/clinical_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "source::https_www.ucb.com_newsroom_press-releases_article_findings-from-minzaso_12c63b27",
+      "label": "UCB — Minzasolmin ORCHESTRA findings and program termination",
+      "type": "source",
+      "title": "Source__UCB_—_Minzasolmin_ORCHESTRA_findings_and_program_termination",
+      "tags": "pipeline/source;source/company_press_release",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "source::https_clinicaltrials.gov_study_nct04685265",
+      "label": "ClinicalTrials.gov NCT04685265 — Anle138b in Parkinson's disease",
+      "type": "source",
+      "title": "Source__ClinicalTrials.gov_NCT04685265_—_Anle138b_in_Parkinson's_disease",
+      "tags": "pipeline/source;source/clinical_registry",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "source::https_ir.acimmune.com_news-releases_news-release-details_ac-immune-firs_05078161",
+      "label": "AC Immune — First Half 2026 Financial and Corporate Update",
+      "type": "source",
+      "title": "Source__AC_Immune_—_First_Half_2026_Financial_and_Corporate_Update",
+      "tags": "pipeline/source;source/company_press_release",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "source::https_www.newswire.co.kr_newsread.php_no=1037368",
+      "label": "NewsWire Korea — ABrain AB103 selected for KDDF Parkinson's gene-therapy project",
+      "type": "source",
+      "title": "Source__NewsWire_Korea_—_ABrain_AB103_selected_for_KDDF_Parkinson's_gene-therapy_project",
+      "tags": "pipeline/source;source/company_press_release_distribution",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "source::https_www.parkinson.org_understanding-parkinsons_statistics",
+      "label": "Parkinson's Foundation Statistics",
+      "type": "source",
+      "title": "Source__Parkinson's_Foundation_Statistics",
+      "tags": "pipeline/source;source/epidemiology",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "source::https_www.yna.co.kr_view_akr20240311122700017",
+      "label": "Yonhap News — Kolon Pharma and Astrion joint R&D agreement",
+      "type": "source",
+      "title": "Source__Yonhap_News_—_Kolon_Pharma_and_Astrion_joint_R&D_agreement",
+      "tags": "pipeline/source;source/news",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3",
+      "workflow_stage": "",
+      "review_type": "",
+      "tracking_status": "",
+      "partnership_type": ""
+    },
+    {
+      "id": "source::https_www.fishersci.com_us_en_browse_cas_565-63-9",
+      "label": "Fisher Scientific — CAS 565-63-9 chemical reference",
+      "type": "source",
+      "title": "Source__Fisher_Scientific_—_CAS_565-63-9_chemical_reference",
+      "tags": "pipeline/source;source/chemical_reference",
+      "score": "",
+      "recommendation": "",
+      "evidence_level": "E3",
       "workflow_stage": "",
       "review_type": "",
       "tracking_status": "",
@@ -8840,20 +9036,6 @@
       "type": "source",
       "title": "Source__NouvNeu001_Phase_1_2_Clinical_Study",
       "tags": "pipeline/source;source/clinical_registry",
-      "score": "",
-      "recommendation": "",
-      "evidence_level": "E3",
-      "workflow_stage": "",
-      "review_type": "",
-      "tracking_status": "",
-      "partnership_type": ""
-    },
-    {
-      "id": "source::https_www.parkinson.org_understanding-parkinsons_statistics",
-      "label": "Parkinson's Foundation Statistics",
-      "type": "source",
-      "title": "Source__Parkinson's_Foundation_Statistics",
-      "tags": "pipeline/source;source/epidemiology",
       "score": "",
       "recommendation": "",
       "evidence_level": "E3",
@@ -20421,7 +20603,7 @@
       "score": "",
       "recommendation": "",
       "evidence_level": "",
-      "workflow_stage": "Listing,Fast Triage",
+      "workflow_stage": "Listing,Full Scout",
       "review_type": "",
       "tracking_status": "",
       "partnership_type": ""
@@ -36280,113 +36462,274 @@
       "source": "asset::aon-pp23",
       "target": "company::astrion_co.,_ltd",
       "relationship": "OWNED_BY",
-      "evidence_type": "E0",
+      "evidence_type": "E3",
       "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
     },
     {
       "source": "asset::aon-pp23",
-      "target": "target::α-synuclein_oligomer_aggregates",
+      "target": "target::alpha-synuclein_aggregates",
       "relationship": "TARGETS",
-      "evidence_type": "E0",
+      "evidence_type": "E3",
       "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
     },
     {
       "source": "asset::aon-pp23",
-      "target": "moa::direct_degradation_of_α-synuclein_oligomers_via_pnac-screened_small_molecules",
+      "target": "moa::alpha-synuclein_aggregation_inhibition_disaggregation",
       "relationship": "HAS_MOA",
-      "evidence_type": "E0",
+      "evidence_type": "E3",
       "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
     },
     {
       "source": "asset::aon-pp23",
       "target": "modality::small_molecule",
       "relationship": "HAS_MODALITY",
-      "evidence_type": "E0",
+      "evidence_type": "E3",
       "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
     },
     {
       "source": "asset::aon-pp23",
       "target": "indication::parkinson's_disease",
       "relationship": "HAS_INDICATION",
-      "evidence_type": "E0",
+      "evidence_type": "E3",
       "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
     },
     {
       "source": "asset::aon-pp23",
       "target": "theme::protein_homeostasis",
       "relationship": "MAPS_TO_THEME",
-      "evidence_type": "E0",
+      "evidence_type": "E3",
       "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
     },
     {
       "source": "asset::aon-pp23",
       "target": "cluster::unknown",
       "relationship": "MAPS_TO_CLUSTER",
-      "evidence_type": "E0",
+      "evidence_type": "E3",
       "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
     },
     {
       "source": "asset::aon-pp23",
       "target": "scorecard::astrion_co.,_ltd._aon-pp23",
       "relationship": "HAS_SCORECARD",
-      "evidence_type": "E0",
+      "evidence_type": "E3",
       "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
     },
     {
       "source": "asset::aon-pp23",
       "target": "review::astrion_co.,_ltd._aon-pp23",
       "relationship": "HAS_REVIEW",
-      "evidence_type": "E0",
+      "evidence_type": "E3",
       "source_note": "Review__Astrion_Co.,_Ltd._AON-PP23"
     },
     {
       "source": "review::astrion_co.,_ltd._aon-pp23",
       "target": "scorecard::astrion_co.,_ltd._aon-pp23",
       "relationship": "HAS_SCORECARD",
-      "evidence_type": "E0",
+      "evidence_type": "E3",
       "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
     },
     {
       "source": "asset::aon-pp23",
-      "target": "source::https_www.astrion.co.kr_en_board_board.php_bo_table=press&idx=16",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E0",
-      "source_note": "Source__Astrion_press_release_—_AON-PP23"
-    },
-    {
-      "source": "scorecard::astrion_co.,_ltd._aon-pp23",
-      "target": "source::https_www.astrion.co.kr_en_board_board.php_bo_table=press&idx=16",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E0",
-      "source_note": "Source__Astrion_press_release_—_AON-PP23"
+      "target": "competitor::ucb_novartis_minzasolmin_(ucb0599)",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
     },
     {
       "source": "asset::aon-pp23",
-      "target": "source::https_www.astrion.co.kr_en_m31.php",
-      "relationship": "USES_SOURCE",
-      "evidence_type": "E0",
-      "source_note": "Source__Astrion_pipeline"
-    },
-    {
-      "source": "scorecard::astrion_co.,_ltd._aon-pp23",
-      "target": "source::https_www.astrion.co.kr_en_m31.php",
-      "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E0",
-      "source_note": "Source__Astrion_pipeline"
+      "target": "competitor::modag_anle138b_(emrusolmin)",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
     },
     {
       "source": "asset::aon-pp23",
-      "target": "source::https_www.astrion.co.kr_en_m43.php",
+      "target": "competitor::roche_prothena_prasinezumab",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "competitor::ac_immune_aci-7104",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "competitor::abrain_ab103",
+      "relationship": "HAS_COMPETITOR",
+      "evidence_type": "E3",
+      "source_note": "Scorecard__AON-PP23__Astrion_Co.,_Ltd._AON-PP23"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "source::https_www.lifescienceweek.com_eng_about_search_ex_view.asp_midx=1729",
       "relationship": "USES_SOURCE",
-      "evidence_type": "E0",
-      "source_note": "Source__Astrion_R&D_publications"
+      "evidence_type": "E3",
+      "source_note": "Source__KOREA_LIFE_SCIENCE_WEEK_—_Astrion_Co.,_Ltd._exhibitor_profile"
     },
     {
       "source": "scorecard::astrion_co.,_ltd._aon-pp23",
-      "target": "source::https_www.astrion.co.kr_en_m43.php",
+      "target": "source::https_www.lifescienceweek.com_eng_about_search_ex_view.asp_midx=1729",
       "relationship": "SUPPORTS_SCORE",
-      "evidence_type": "E0",
-      "source_note": "Source__Astrion_R&D_publications"
+      "evidence_type": "E3",
+      "source_note": "Source__KOREA_LIFE_SCIENCE_WEEK_—_Astrion_Co.,_Ltd._exhibitor_profile"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "source::https_tlo.korea.ac.kr_en_tech-transfer_4682",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Korea_University_TLO_—_Development_of_Rapid_Drug_Screening_Utilizing_Al_f37dcb74"
+    },
+    {
+      "source": "scorecard::astrion_co.,_ltd._aon-pp23",
+      "target": "source::https_tlo.korea.ac.kr_en_tech-transfer_4682",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Korea_University_TLO_—_Development_of_Rapid_Drug_Screening_Utilizing_Al_f37dcb74"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "source::https_patentimages.storage.googleapis.com_b3_3a_bc_7f9e6396b3fb27_kr102_6c714b57",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__KR102513116B1_—_Alpha-Synuclein–Gold_Nanoparticle_Conjugate_and_Drug_Sc_c43ca744"
+    },
+    {
+      "source": "scorecard::astrion_co.,_ltd._aon-pp23",
+      "target": "source::https_patentimages.storage.googleapis.com_b3_3a_bc_7f9e6396b3fb27_kr102_6c714b57",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__KR102513116B1_—_Alpha-Synuclein–Gold_Nanoparticle_Conjugate_and_Drug_Sc_c43ca744"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "source::https_www.nature.com_articles_s41582-024-01043-w",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Nature_Reviews_Neurology_—_alpha-Synuclein_pathology_as_a_target_in_neu_ffa146d1"
+    },
+    {
+      "source": "scorecard::astrion_co.,_ltd._aon-pp23",
+      "target": "source::https_www.nature.com_articles_s41582-024-01043-w",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Nature_Reviews_Neurology_—_alpha-Synuclein_pathology_as_a_target_in_neu_ffa146d1"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "source::https_clinicaltrials.gov_study_nct07174310",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT07174310_—_Prasinezumab_PARAISO_Phase_3"
+    },
+    {
+      "source": "scorecard::astrion_co.,_ltd._aon-pp23",
+      "target": "source::https_clinicaltrials.gov_study_nct07174310",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT07174310_—_Prasinezumab_PARAISO_Phase_3"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "source::https_www.ucb.com_newsroom_press-releases_article_findings-from-minzaso_12c63b27",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__UCB_—_Minzasolmin_ORCHESTRA_findings_and_program_termination"
+    },
+    {
+      "source": "scorecard::astrion_co.,_ltd._aon-pp23",
+      "target": "source::https_www.ucb.com_newsroom_press-releases_article_findings-from-minzaso_12c63b27",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__UCB_—_Minzasolmin_ORCHESTRA_findings_and_program_termination"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "source::https_clinicaltrials.gov_study_nct04685265",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT04685265_—_Anle138b_in_Parkinson's_disease"
+    },
+    {
+      "source": "scorecard::astrion_co.,_ltd._aon-pp23",
+      "target": "source::https_clinicaltrials.gov_study_nct04685265",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__ClinicalTrials.gov_NCT04685265_—_Anle138b_in_Parkinson's_disease"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "source::https_ir.acimmune.com_news-releases_news-release-details_ac-immune-firs_05078161",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__AC_Immune_—_First_Half_2026_Financial_and_Corporate_Update"
+    },
+    {
+      "source": "scorecard::astrion_co.,_ltd._aon-pp23",
+      "target": "source::https_ir.acimmune.com_news-releases_news-release-details_ac-immune-firs_05078161",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__AC_Immune_—_First_Half_2026_Financial_and_Corporate_Update"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "source::https_www.newswire.co.kr_newsread.php_no=1037368",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__NewsWire_Korea_—_ABrain_AB103_selected_for_KDDF_Parkinson's_gene-therapy_project"
+    },
+    {
+      "source": "scorecard::astrion_co.,_ltd._aon-pp23",
+      "target": "source::https_www.newswire.co.kr_newsread.php_no=1037368",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__NewsWire_Korea_—_ABrain_AB103_selected_for_KDDF_Parkinson's_gene-therapy_project"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "source::https_www.parkinson.org_understanding-parkinsons_statistics",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Parkinson's_Foundation_—_Parkinson's_disease_statistics"
+    },
+    {
+      "source": "scorecard::astrion_co.,_ltd._aon-pp23",
+      "target": "source::https_www.parkinson.org_understanding-parkinsons_statistics",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Parkinson's_Foundation_—_Parkinson's_disease_statistics"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "source::https_www.yna.co.kr_view_akr20240311122700017",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Yonhap_News_—_Kolon_Pharma_and_Astrion_joint_R&D_agreement"
+    },
+    {
+      "source": "scorecard::astrion_co.,_ltd._aon-pp23",
+      "target": "source::https_www.yna.co.kr_view_akr20240311122700017",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Yonhap_News_—_Kolon_Pharma_and_Astrion_joint_R&D_agreement"
+    },
+    {
+      "source": "asset::aon-pp23",
+      "target": "source::https_www.fishersci.com_us_en_browse_cas_565-63-9",
+      "relationship": "USES_SOURCE",
+      "evidence_type": "E3",
+      "source_note": "Source__Fisher_Scientific_—_CAS_565-63-9_chemical_reference"
+    },
+    {
+      "source": "scorecard::astrion_co.,_ltd._aon-pp23",
+      "target": "source::https_www.fishersci.com_us_en_browse_cas_565-63-9",
+      "relationship": "SUPPORTS_SCORE",
+      "evidence_type": "E3",
+      "source_note": "Source__Fisher_Scientific_—_CAS_565-63-9_chemical_reference"
     },
     {
       "source": "asset::ast-029",
@@ -48885,7 +49228,7 @@
     },
     {
       "source": "workflow::astrioncoltd_aonpp23",
-      "target": "workflow_stage::fast_triage",
+      "target": "workflow_stage::full_scout",
       "relationship": "IN_WORKFLOW_STAGE",
       "evidence_type": "",
       "source_note": "Workflow__astrioncoltd_aonpp23"
@@ -48901,7 +49244,7 @@
       "source": "workflow::astrioncoltd_aonpp23",
       "target": "asset::aon-pp23",
       "relationship": "REPRESENTS_ASSET",
-      "evidence_type": "E0",
+      "evidence_type": "E3",
       "source_note": "Workflow__astrioncoltd_aonpp23"
     },
     {

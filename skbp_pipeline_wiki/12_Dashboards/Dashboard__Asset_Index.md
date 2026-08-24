@@ -13,7 +13,7 @@
 | [[02_Assets/Asset__ACL-513_(CKD-513)|ACL-513 (CKD-513)]] | 2 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__ACP-Brain_Disease_Research_Project|ACP-Brain Disease Research Project]] | 0 | Verify asset identity | E0 |
 | [[02_Assets/Asset__ADEL-Y04|ADEL-Y04]] | 7 | Run Full Scout | E0 |
-| [[02_Assets/Asset__AON-PP23|AON-PP23]] | 6 | Run Full Scout | E0 |
+| [[02_Assets/Asset__AON-PP23|AON-PP23]] | 11 | Watch | E3 |
 | [[02_Assets/Asset__AR1001|AR1001]] | 9 | Run Full Scout | E0 |
 | [[02_Assets/Asset__AR1002|AR1002]] | 0 | Verify asset identity | E0 |
 | [[02_Assets/Asset__AS-301|AS-301]] | 4 | Do not run Full Scout | E0 |

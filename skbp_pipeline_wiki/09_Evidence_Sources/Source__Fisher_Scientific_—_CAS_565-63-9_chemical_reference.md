@@ -1,30 +1,30 @@
 ---
 type: "source"
-canonical_id: "source::https_www.astrion.co.kr_en_m31.php"
-title: "Astrion pipeline"
+canonical_id: "source::https_www.fishersci.com_us_en_browse_cas_565-63-9"
+title: "Fisher Scientific — CAS 565-63-9 chemical reference"
 aliases:
-  - "Astrion pipeline"
+  - "Fisher Scientific — CAS 565-63-9 chemical reference"
 tags:
   - "pipeline/source"
-  - "source/official_company_pipeline"
-created_at: "2026-08-23"
-updated_at: "2026-08-23"
+  - "source/chemical_reference"
+created_at: "2026-08-24"
+updated_at: "2026-08-24"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"
 confidence: "medium"
 ---
 
-# Astrion pipeline
+# Fisher Scientific — CAS 565-63-9 chemical reference
 
 ## Source Metadata
 
 | Field | Value |
 |---|---|
-| Source type | official_company_pipeline |
+| Source type | chemical_reference |
 | Reliability | medium |
-| URL | https://www.astrion.co.kr/en/m31.php |
-| Accessed / generated date | 2026-08-23 |
+| URL | https://www.fishersci.com/us/en/browse/cas/565-63-9 |
+| Accessed / generated date | 2026-08-24 |
 
 ## Evidence Summary
 

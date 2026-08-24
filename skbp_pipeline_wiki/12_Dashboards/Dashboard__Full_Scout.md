@@ -6,6 +6,7 @@ Workflow entries that have reached the Full Scout stage.
 |---|---|---|---|---|---|---|
 | [[14_Workflow/Workflow__1stbiotherapeuticsinc_1st104|1ST-104 · 1ST Biotherapeutics, Inc.]] | ✓ | - | ✓ | - | - | - |
 | [[14_Workflow/Workflow__actiobiosciences_abs1230|ABS-1230 · Actio Biosciences]] | ✓ | ✓ | ✓ | ✓ | Needs verification | priority |
+| [[14_Workflow/Workflow__astrioncoltd_aonpp23|AON-PP23 · Astrion Co., Ltd.]] | ✓ | - | ✓ | - | - | - |
 | [[14_Workflow/Workflow__astrogeninc_ast001speragen|AST-001 (Speragen) · Astrogen, inc.]] | ✓ | - | ✓ | - | - | - |
 | [[14_Workflow/Workflow__corestemchemoninc_ce223br17parkinsonsdiseaseresearchprogram|CE223BR17 / Parkinson's Disease Research Program · CorestemChemon Inc.]] | ✓ | - | ✓ | - | - | - |
 | [[14_Workflow/Workflow__genixcure_gxc303|GXC-303 · GenixCure]] | ✓ | ✓ | ✓ | - | - | - |

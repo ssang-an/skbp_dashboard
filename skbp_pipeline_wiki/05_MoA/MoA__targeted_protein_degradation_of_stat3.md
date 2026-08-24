@@ -6,8 +6,8 @@ aliases:
   - "targeted_protein_degradation_of_stat3"
 tags:
   - "pipeline/moa"
-created_at: "2026-08-23"
-updated_at: "2026-08-23"
+created_at: "2026-08-24"
+updated_at: "2026-08-24"
 source_report: null
 source_json: "json/pipeline-records.json"
 status: "active"

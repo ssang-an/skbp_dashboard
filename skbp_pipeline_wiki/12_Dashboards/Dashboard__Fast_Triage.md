@@ -18,7 +18,6 @@ Workflow entries that have reached the Fast Triage stage.
 | [[14_Workflow/Workflow__animuscure_meloxicam|Meloxicam · AniMusCure]] | ✓ | ✓ | - | - | - | - |
 | [[14_Workflow/Workflow__aribio_ar1001|AR1001 · AriBio]] | ✓ | ✓ | - | - | - | - |
 | [[14_Workflow/Workflow__aribio_ar1002|AR1002 · AriBio]] | ✓ | ✓ | - | - | - | - |
-| [[14_Workflow/Workflow__astrioncoltd_aonpp23|AON-PP23 · Astrion Co., Ltd.]] | ✓ | ✓ | - | - | - | - |
 | [[14_Workflow/Workflow__astrogen_ast004|AST-004 · Astrogen]] | ✓ | ✓ | - | - | - | - |
 | [[14_Workflow/Workflow__astrogen_ast008|AST-008 · Astrogen]] | ✓ | ✓ | - | - | - | - |
 | [[14_Workflow/Workflow__astrogen_ast029|AST-029 · Astrogen]] | ✓ | ✓ | - | - | - | - |

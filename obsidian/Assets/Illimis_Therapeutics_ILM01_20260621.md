@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T11:53:17"
+generated_at: "2026-08-24T19:06:21"
 record_id: "Illimis_Therapeutics_ILM01_20260621"
 company: "Illimis Therapeutics"
 country: "Republic of Korea"
@@ -767,10 +767,24 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
           "system_import": true,
           "label": "Tab 0 · Listing Comment",
           "category": ""
+        },
+        {
+          "id": "058e56d7c9764730bd9018649ce24dee",
+          "parent_id": null,
+          "author": "정주원",
+          "author_user_id": "",
+          "author_email": "",
+          "actor_ip": "system",
+          "body": "ㅇㄹㄴㅇㄹ",
+          "created_at": "2026-08-22T14:26:05.566828+00:00",
+          "updated_at": "2026-08-24T10:06:20.356782+00:00",
+          "source": "listing_comment_post",
+          "import_key": "427ab3db7b535a36ba805b61d44a12a2fb3da21c81577763fc23d18fd10d616e",
+          "system_import": true
         }
       ],
-      "updated_at": "2026-08-23T01:41:03.818435+00:00",
-      "comment_count": 3
+      "updated_at": "2026-08-24T10:06:20.356782+00:00",
+      "comment_count": 4
     },
     "qualitative_review": {
       "criteria": {
@@ -3384,6 +3398,16 @@ ILM01 is a scientifically differentiated, active IND-enabling Alzheimer's biolog
       {
         "id": "a4f570f7ddc9421e88747ba7bd246fc9",
         "changed_at": "2026-08-23T01:41:03.818460+00:00",
+        "actor_ip": "system",
+        "actor_name": "",
+        "source": "cross_workflow_comment_sync",
+        "field": "collaboration.comments.tab0_listing",
+        "previous_value": null,
+        "new_value": null
+      },
+      {
+        "id": "0c275ecbd97d42ca8949a5c4fc4eb4c1",
+        "changed_at": "2026-08-24T10:06:20.356837+00:00",
         "actor_ip": "system",
         "actor_name": "",
         "source": "cross_workflow_comment_sync",
