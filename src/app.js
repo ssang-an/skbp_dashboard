@@ -10400,6 +10400,42 @@ function appendInstructionWarnings(prompt, warnings) {
   return `${prompt}\n\n## 반복 방지 주의사항 (자동 누적 — 과거 AI 2차 파싱에서 발견된 오류 패턴)\n아래는 과거 붙여넣기에서 실제로 발생했던 단순 파싱/구조 실수입니다. 이번 응답에서 같은 실수를 반복하지 마세요:\n${lines}`;
 }
 
+let instructionWarningsCache = { triage: [], full: [] };
+let instructionWarningsRequest = null;
+
+function refreshInstructionWarnings() {
+  if (instructionWarningsRequest) return instructionWarningsRequest;
+  instructionWarningsRequest = fetchInstructionWarnings()
+    .then((warnings) => {
+      instructionWarningsCache = warnings;
+      return warnings;
+    })
+    .finally(() => { instructionWarningsRequest = null; });
+  return instructionWarningsRequest;
+}
+
+async function copyTextDuringUserGesture(text) {
+  try {
+    // This call is deliberately made before awaiting any network request.
+    await navigator.clipboard.writeText(text);
+    return;
+  } catch (clipboardError) {
+    const scratch = document.createElement('textarea');
+    scratch.value = text;
+    scratch.setAttribute('readonly', '');
+    scratch.style.position = 'fixed';
+    scratch.style.opacity = '0';
+    document.body.appendChild(scratch);
+    try {
+      scratch.select();
+      const copied = document.execCommand('copy');
+      if (!copied) throw clipboardError;
+    } finally {
+      scratch.remove();
+    }
+  }
+}
+
 async function copyPromptToClipboard(kind = 'full') {
   const button = kind === 'triage' ? elements.copyTriagePromptTopButton : elements.copyPromptTopButton;
   const idleLabel = kind === 'triage' ? '지침 1' : '지침 2';
@@ -10407,22 +10443,10 @@ async function copyPromptToClipboard(kind = 'full') {
   if (label) label.textContent = '복사 중…';
   try {
     const basePrompt = kind === 'triage' ? buildTriageInstructionPrompt() : buildGptInstructionPrompt();
-    const warningsStore = await fetchInstructionWarnings();
-    const prompt = appendInstructionWarnings(basePrompt, kind === 'triage' ? warningsStore.triage : warningsStore.full);
-    try {
-      await navigator.clipboard.writeText(prompt);
-    } catch (error) {
-      const scratch = document.createElement('textarea');
-      scratch.value = prompt;
-      scratch.setAttribute('readonly', '');
-      scratch.style.position = 'fixed';
-      scratch.style.opacity = '0';
-      document.body.appendChild(scratch);
-      scratch.select();
-      document.execCommand('copy');
-      scratch.remove();
-    }
+    const prompt = appendInstructionWarnings(basePrompt, kind === 'triage' ? instructionWarningsCache.triage : instructionWarningsCache.full);
+    await copyTextDuringUserGesture(prompt);
     setPromptCopyFeedback(kind);
+    void refreshInstructionWarnings();
     return true;
   } catch (error) {
     if (label) label.textContent = '복사 실패';
@@ -12805,21 +12829,8 @@ async function copyTriagePromptWithSelectedCandidates() {
     const pairs = state.step0Rows
       .filter((row) => row.pending?.queue_id && state.step0SelectedPendingIds.has(row.pending.queue_id))
       .map((row) => ({ asset: row.asset, company: row.company, listing_details: row.listing_details || {} }));
-    const warningsStore = await fetchInstructionWarnings();
-    const prompt = appendInstructionWarnings(buildTriageInstructionPromptWithCandidates(pairs), warningsStore.triage);
-    try {
-      await navigator.clipboard.writeText(prompt);
-    } catch (error) {
-      const scratch = document.createElement('textarea');
-      scratch.value = prompt;
-      scratch.setAttribute('readonly', '');
-      scratch.style.position = 'fixed';
-      scratch.style.opacity = '0';
-      document.body.appendChild(scratch);
-      scratch.select();
-      document.execCommand('copy');
-      scratch.remove();
-    }
+    const prompt = appendInstructionWarnings(buildTriageInstructionPromptWithCandidates(pairs), instructionWarningsCache.triage);
+    await copyTextDuringUserGesture(prompt);
     showStep0Message(
       pairs.length ? `${pairs.length}개 후보 포함 지침 1 복사 완료` : '선택된 후보 없이 지침 1을 복사했습니다.'
     );
@@ -12827,6 +12838,7 @@ async function copyTriagePromptWithSelectedCandidates() {
       label.textContent = '복사됨';
       window.setTimeout(() => { label.textContent = idleLabel; }, 3000);
     }
+    void refreshInstructionWarnings();
     return true;
   } catch (error) {
     showStep0Message('지침 복사 실패');
@@ -14247,6 +14259,7 @@ if (agentLaunchParams.get('openAgent') === '1') {
 }
 placeSearchTokenRows();
 renderStep0EntryGrid();
+void refreshInstructionWarnings();
 
 if (initialViewMode === 'map') {
   activateKnowledgeMapPanel();
