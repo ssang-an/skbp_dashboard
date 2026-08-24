@@ -9558,7 +9558,7 @@ Triage status rule:
 
 Controlled vocabulary:
 - For an identity-verified asset, use Unknown when country, Pipeline Stage, modality, main indication, target, or another factual field cannot be established. UNVERIFIED is reserved for failure of asset identity itself.
-- company_country may contain up to two explicitly stated canonical countries, separated by ` / `. For example, "China / United States operations" -> "China / United States". If no canonical country can be identified, retain the original wording rather than replacing it with Unknown.
+- company_country may contain up to two explicitly stated canonical countries, separated by \` / \`. For example, "China / United States operations" -> "China / United States". If no canonical country can be identified, retain the original wording rather than replacing it with Unknown.
 ${SHARED_CANONICAL_STAGE_RULE}
 ${SHARED_CANONICAL_MODALITY_RULE}
 ${SHARED_CANONICAL_INDICATION_RULE}
@@ -9849,7 +9849,7 @@ Controlled vocabulary for dashboard filters:
 - Use canonical values for filter-facing fields so the dashboard can group comparable assets.
 - For an identity-verified asset, use Unknown (never N/A) when country, Pipeline Stage, modality, main indication, target, or another factual field cannot be established from public sources.
 ${SHARED_CANONICAL_THEME_RULE}
-- json_summary.company_country and structured_table.company_country may retain up to two explicitly stated canonical countries/regions, separated by ` / `. Examples: China, Republic of Korea, United States, Japan, Europe/UK; "China / United States operations" -> "China / United States". Preserve unrecognized country wording rather than replacing it with Unknown.
+- json_summary.company_country and structured_table.company_country may retain up to two explicitly stated canonical countries/regions, separated by \` / \`. Examples: China, Republic of Korea, United States, Japan, Europe/UK; "China / United States operations" -> "China / United States". Preserve unrecognized country wording rather than replacing it with Unknown.
 ${SHARED_CANONICAL_INDICATION_RULE}
 - structured_table.development_stage must follow the Canonical Pipeline Stage rule above. Put exact raw wording, trial status, indication-specific stage, and future milestone timing in source evidence, notes, or validation.uncertain_points.
 - Map clinical synonyms conservatively: P1/Ph1/Phase I/FIH -> Phase 1 and P2/Ph2/Phase II -> Phase 2 only when the phase is current or started. A future plan must not be promoted to current stage.
@@ -10472,8 +10472,6 @@ function setPromptCopyFeedback(kind = 'full') {
   if (label) {
     label.textContent = '복사됨';
   }
-  button.classList.add('is-copied');
-  button.classList.remove('is-copy-failed');
   button.dataset.tooltip = kind === 'triage'
     ? `GPT Fast Triage v${LATEST_TRIAGE_RUBRIC_VERSION} 지침을 복사했습니다.`
     : `GPT Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} 지침을 복사했습니다.`;
@@ -10483,7 +10481,6 @@ function setPromptCopyFeedback(kind = 'full') {
     if (label) {
       label.textContent = idleLabel;
     }
-    button.classList.remove('is-copied', 'is-copy-failed');
     button.dataset.tooltip = idleTooltip;
   }, 3000);
 }
@@ -14129,11 +14126,9 @@ async function copyDataUploadGuidePrompt(button) {
   button.disabled = true;
   if (label) label.textContent = '복사 중…';
   const copied = await copyPromptToClipboard(kind);
-  button.classList.toggle('is-copied', copied);
   if (label) label.textContent = copied ? '복사됨' : '복사 실패';
   window.setTimeout(() => {
     button.disabled = false;
-    button.classList.remove('is-copied');
     if (label) label.textContent = idleLabel;
   }, 3000);
 }
@@ -14201,6 +14196,12 @@ if (elements.copyPromptTopButton) {
 function bindClipboardCopyGesture(button, action) {
   if (!button) return;
   let handledByPointer = false;
+  button.addEventListener('pointerdown', () => {
+    // A docked DevTools pane or a remote-desktop focus transition can leave
+    // the page unfocused until after the pointer event. Restore it before the
+    // pointerup copy gesture runs.
+    if (!document.hasFocus()) window.focus();
+  });
   button.addEventListener('pointerup', (event) => {
     if (event.button !== 0) return;
     // The browser has focused the document by pointerup, while this is still

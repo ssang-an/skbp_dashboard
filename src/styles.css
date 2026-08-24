@@ -22945,15 +22945,6 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
   outline: none;
 }
 
-.topbar #copyTriagePromptTopButton.is-copied,
-.topbar #copyPromptTopButton.is-copied,
-#step0CopyInstructionsButton.step0-copy-instructions-button.is-copied {
-  border-color: color-mix(in srgb, #2fbf8f 62%, var(--line));
-  background: color-mix(in srgb, #2fbf8f 18%, var(--surface));
-  color: #157458;
-}
-
-
 /* Search-plus guidance is intentionally brief and opens upward so a compact
    filter row never pushes the tooltip outside the dashboard viewport. */
 .step0-add-search-token.help-tooltip::after {
