@@ -17456,6 +17456,15 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
   white-space: nowrap;
 }
 
+/* Match Wiki Map's inactive/active label contrast to the workflow tabs. */
+.topbar-top .workflow-knowledge-map-link b {
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.topbar-top .workflow-knowledge-map-link.active b {
+  color: #ffffff;
+}
+
 /* Atlas keeps its original Gemini-style indigo insight marker. */
 .topbar-top .workflow-knowledge-map-link .knowledge-map-icon,
 .topbar-top .workflow-knowledge-map-link:hover .knowledge-map-icon,
@@ -22934,6 +22943,22 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
   background: var(--surface-soft);
   color: var(--text);
   outline: none;
+}
+
+.topbar #copyTriagePromptTopButton.is-copied,
+.topbar #copyPromptTopButton.is-copied,
+#step0CopyInstructionsButton.step0-copy-instructions-button.is-copied {
+  border-color: color-mix(in srgb, #2fbf8f 62%, var(--line));
+  background: color-mix(in srgb, #2fbf8f 18%, var(--surface));
+  color: #157458;
+}
+
+.topbar #copyTriagePromptTopButton.is-copy-failed,
+.topbar #copyPromptTopButton.is-copy-failed,
+#step0CopyInstructionsButton.step0-copy-instructions-button.is-copy-failed {
+  border-color: color-mix(in srgb, #d66a6a 56%, var(--line));
+  background: color-mix(in srgb, #d66a6a 12%, var(--surface));
+  color: #a13c3c;
 }
 
 /* Search-plus guidance is intentionally brief and opens upward so a compact

@@ -296,7 +296,7 @@ const requestedTableMode = new URLSearchParams(window.location.search).get('tab'
 // With no explicit ?tab=, land on Tab 0 진척 현황.
 const initialViewMode = ['step0', 'triage', 'full', 'focus', 'map'].includes(requestedTableMode)
   ? requestedTableMode
-  : 'step0';
+  : 'focus';
 const initialTableMode = ['step0', 'map'].includes(initialViewMode) ? 'full' : initialViewMode;
 const initialSort = initialTableMode === 'triage'
   ? { key: 'targetScore', direction: 'desc' }
@@ -10400,24 +10400,72 @@ function appendInstructionWarnings(prompt, warnings) {
   return `${prompt}\n\n## 반복 방지 주의사항 (자동 누적 — 과거 AI 2차 파싱에서 발견된 오류 패턴)\n아래는 과거 붙여넣기에서 실제로 발생했던 단순 파싱/구조 실수입니다. 이번 응답에서 같은 실수를 반복하지 마세요:\n${lines}`;
 }
 
+let instructionWarningsCache = { triage: [], full: [] };
+let instructionWarningsRequest = null;
+
+function refreshInstructionWarnings() {
+  if (instructionWarningsRequest) return instructionWarningsRequest;
+  instructionWarningsRequest = fetchInstructionWarnings()
+    .then((warnings) => {
+      instructionWarningsCache = warnings;
+      return warnings;
+    })
+    .finally(() => {
+      instructionWarningsRequest = null;
+    });
+  return instructionWarningsRequest;
+}
+
+async function writeTextToClipboard(text) {
+  // Internal HTTP deployments do not expose navigator.clipboard. Keep the
+  // user-gesture fallback synchronous and surface actual copy failures.
+  if (navigator.clipboard?.writeText && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  const scratch = document.createElement('textarea');
+  scratch.value = text;
+  scratch.setAttribute('readonly', '');
+  scratch.style.position = 'fixed';
+  scratch.style.opacity = '0';
+  scratch.style.pointerEvents = 'none';
+  document.body.appendChild(scratch);
+  scratch.focus({ preventScroll: true });
+  scratch.select();
+  const copied = document.execCommand('copy');
+  scratch.remove();
+  if (!copied) throw new Error('Clipboard copy was blocked by this browser.');
+}
+
+function setCopyButtonState(button, labelText, { failed = false } = {}) {
+  if (!button) return;
+  const label = button.querySelector('b');
+  if (label) label.textContent = labelText;
+  button.classList.toggle('is-copied', labelText === '복사됨');
+  button.classList.toggle('is-copy-failed', failed);
+}
+
 async function copyPromptToClipboard(kind = 'full') {
-  const basePrompt = kind === 'triage' ? buildTriageInstructionPrompt() : buildGptInstructionPrompt();
-  const warningsStore = await fetchInstructionWarnings();
-  const prompt = appendInstructionWarnings(basePrompt, kind === 'triage' ? warningsStore.triage : warningsStore.full);
+  const button = kind === 'triage' ? elements.copyTriagePromptTopButton : elements.copyPromptTopButton;
+  // Synchronous feedback confirms the live click handler ran even if a
+  // browser later rejects clipboard access on an internal HTTP address.
+  setCopyButtonState(button, '복사 중…');
   try {
-    await navigator.clipboard.writeText(prompt);
+    const basePrompt = kind === 'triage' ? buildTriageInstructionPrompt() : buildGptInstructionPrompt();
+    // Awaiting a network request here loses the click permission required by
+    // internal HTTP clipboard fallbacks. Use the preloaded cache instead.
+    const prompt = appendInstructionWarnings(basePrompt, kind === 'triage' ? instructionWarningsCache.triage : instructionWarningsCache.full);
+    await writeTextToClipboard(prompt);
     setPromptCopyFeedback(kind);
+    void refreshInstructionWarnings();
+    return true;
   } catch (error) {
-    const scratch = document.createElement('textarea');
-    scratch.value = prompt;
-    scratch.setAttribute('readonly', '');
-    scratch.style.position = 'fixed';
-    scratch.style.opacity = '0';
-    document.body.appendChild(scratch);
-    scratch.select();
-    document.execCommand('copy');
-    scratch.remove();
-    setPromptCopyFeedback(kind);
+    if (elements.promptCopyStatus) elements.promptCopyStatus.textContent = 'Clipboard copy failed';
+    setCopyButtonState(button, '복사 실패', { failed: true });
+    window.setTimeout(() => {
+      setCopyButtonState(button, kind === 'triage' ? '지침 1' : '지침 2');
+    }, 2400);
+    return false;
   }
 }
 
@@ -10435,6 +10483,8 @@ function setPromptCopyFeedback(kind = 'full') {
   if (label) {
     label.textContent = '복사됨';
   }
+  button.classList.add('is-copied');
+  button.classList.remove('is-copy-failed');
   button.dataset.tooltip = kind === 'triage'
     ? `GPT Fast Triage v${LATEST_TRIAGE_RUBRIC_VERSION} 지침을 복사했습니다.`
     : `GPT Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} 지침을 복사했습니다.`;
@@ -10444,6 +10494,7 @@ function setPromptCopyFeedback(kind = 'full') {
     if (label) {
       label.textContent = idleLabel;
     }
+    button.classList.remove('is-copied', 'is-copy-failed');
     button.dataset.tooltip = idleTooltip;
   }, 1800);
 }
@@ -12781,23 +12832,20 @@ function buildTriageInstructionPromptWithCandidates(pairs) {
 }
 
 async function copyTriagePromptWithSelectedCandidates() {
-  const pairs = state.step0Rows
-    .filter((row) => row.pending?.queue_id && state.step0SelectedPendingIds.has(row.pending.queue_id))
-    .map((row) => ({ asset: row.asset, company: row.company, listing_details: row.listing_details || {} }));
-  const warningsStore = await fetchInstructionWarnings();
-  const prompt = appendInstructionWarnings(buildTriageInstructionPromptWithCandidates(pairs), warningsStore.triage);
+  const copyButton = elements.step0CopyInstructionsButton;
+  setCopyButtonState(copyButton, '복사 중…');
+  let pairs = [];
   try {
-    await navigator.clipboard.writeText(prompt);
+    pairs = state.step0Rows
+      .filter((row) => row.pending?.queue_id && state.step0SelectedPendingIds.has(row.pending.queue_id))
+      .map((row) => ({ asset: row.asset, company: row.company, listing_details: row.listing_details || {} }));
+    const prompt = appendInstructionWarnings(buildTriageInstructionPromptWithCandidates(pairs), instructionWarningsCache.triage);
+    await writeTextToClipboard(prompt);
   } catch (error) {
-    const scratch = document.createElement('textarea');
-    scratch.value = prompt;
-    scratch.setAttribute('readonly', '');
-    scratch.style.position = 'fixed';
-    scratch.style.opacity = '0';
-    document.body.appendChild(scratch);
-    scratch.select();
-    document.execCommand('copy');
-    scratch.remove();
+    showStep0Message('Clipboard copy failed');
+    setCopyButtonState(copyButton, '복사 실패', { failed: true });
+    window.setTimeout(() => { setCopyButtonState(copyButton, '지침 1 복사'); }, 2400);
+    return;
   }
   showStep0Message(
     pairs.length ? `${pairs.length}개 후보 포함 지침 1 복사 완료` : '선택된 후보 없이 지침 1을 복사했습니다.'
@@ -12808,6 +12856,10 @@ async function copyTriagePromptWithSelectedCandidates() {
     label.textContent = '복사됨';
     window.setTimeout(() => { label.textContent = idleLabel; }, 1800);
   }
+  copyButton?.classList.add('is-copied');
+  copyButton?.classList.remove('is-copy-failed');
+  window.setTimeout(() => { copyButton?.classList.remove('is-copied', 'is-copy-failed'); }, 1800);
+  void refreshInstructionWarnings();
 }
 
 elements.step0ImportButton?.addEventListener('click', importStep0Candidates);
@@ -14110,9 +14162,11 @@ elements.dataUploadGuideSteps?.addEventListener('click', async (event) => {
   const label = button.querySelector('b');
   const idleLabel = kind === 'triage' ? '지침 1' : '지침 2';
   button.disabled = true;
-  await copyPromptToClipboard(kind);
-  button.classList.add('is-copied');
-  if (label) label.textContent = '복사됨';
+  const copied = await copyPromptToClipboard(kind);
+  if (copied) {
+    button.classList.add('is-copied');
+    if (label) label.textContent = '복사됨';
+  }
   window.setTimeout(() => {
     button.disabled = false;
     button.classList.remove('is-copied');
@@ -14218,6 +14272,9 @@ if (agentLaunchParams.get('openAgent') === '1') {
 }
 placeSearchTokenRows();
 renderStep0EntryGrid();
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  void refreshInstructionWarnings();
+}
 
 if (initialViewMode === 'map') {
   activateKnowledgeMapPanel();
