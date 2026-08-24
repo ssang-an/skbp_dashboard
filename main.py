@@ -2197,7 +2197,12 @@ def is_minimal_dashboard_contract(record: dict[str, Any]) -> bool:
     )
 
 
-def validate_minimal_dashboard_record(record: dict[str, Any], index: int) -> None:
+def validate_minimal_dashboard_record(
+    record: dict[str, Any],
+    index: int,
+    *,
+    allow_server_owned_pipeline_metadata: bool = False,
+) -> None:
     """Validate score/dashboard data without requiring Markdown-duplicated research prose."""
     meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
     incoming_compact_v2 = str(meta.get("ingestion_format") or "").strip().lower() == "compact_v2"
@@ -2256,20 +2261,22 @@ def validate_minimal_dashboard_record(record: dict[str, Any], index: int) -> Non
                 f"record[{index}] Compact v2 contains non-dashboard fields: {', '.join(unexpected)}."
             )
 
-        reject_extra_keys(
-            meta,
-            "meta",
-            {
-                "ingestion_format",
-                "review_type",
-                "schema_version",
-                "instruction_version",
-                "rubric_version",
-                "generated_at",
-                "language",
-                "output_filename_base",
-            },
-        )
+        allowed_compact_meta_fields = {
+            "ingestion_format",
+            "review_type",
+            "schema_version",
+            "instruction_version",
+            "rubric_version",
+            "generated_at",
+            "language",
+            "output_filename_base",
+        }
+        # AI-provided Compact v2 JSON cannot supply Listing operational fields.
+        # The save endpoint can add this dashboard-owned value only after the
+        # external input has passed its contract validation.
+        if allow_server_owned_pipeline_metadata:
+            allowed_compact_meta_fields.add("pipeline_metadata")
+        reject_extra_keys(meta, "meta", allowed_compact_meta_fields)
         reject_extra_keys(
             record.get("input"),
             "input",
@@ -2823,12 +2830,20 @@ def validate_minimal_dashboard_record(record: dict[str, Any], index: int) -> Non
             )
 
 
-def validate_records_for_save(records: list[dict[str, Any]]) -> None:
+def validate_records_for_save(
+    records: list[dict[str, Any]],
+    *,
+    allow_server_owned_pipeline_metadata: bool = False,
+) -> None:
     for index, record in enumerate(records):
         ensure_meta_defaults(record)
         normalize_marketability_global_conversion(record)
         if is_minimal_dashboard_contract(record):
-            validate_minimal_dashboard_record(record, index)
+            validate_minimal_dashboard_record(
+                record,
+                index,
+                allow_server_owned_pipeline_metadata=allow_server_owned_pipeline_metadata,
+            )
             continue
         validate_compact_source_references(record, index)
         scoring = record.get("scoring")
@@ -12081,6 +12096,9 @@ async def upsert_records(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
 
     incoming = normalize_records(payload, sanitize_source_report=True)
+    # Keep the Compact v2 contract strict for the external GPT response before
+    # adding Dashboard-owned Listing fields from a matching Pipeline or queue.
+    validate_records_for_save(incoming)
     records = load_records()
     queue = load_candidate_queue()
     hydrate_records_pipeline_metadata_from_existing(incoming, records)
@@ -12090,7 +12108,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
         records,
         payload.get("confirmed_replacements") if isinstance(payload, dict) else None,
     )
-    validate_records_for_save(incoming)
+    validate_records_for_save(incoming, allow_server_owned_pipeline_metadata=True)
     duplicate_incoming_groups = duplicate_record_key_groups(incoming)
     if duplicate_incoming_groups:
         duplicate_list = ", ".join(sorted(group["record_id"] for group in duplicate_incoming_groups))
@@ -12182,9 +12200,10 @@ async def replace_records(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
 
     records = normalize_records(payload, sanitize_source_report=True)
+    validate_records_for_save(records)
     queue = load_candidate_queue()
     consumed_listing_ids = promote_candidate_queue_metadata(records, queue)
-    validate_records_for_save(records)
+    validate_records_for_save(records, allow_server_owned_pipeline_metadata=True)
     synchronize_cross_workflow_comments(records)
     save_records(records)
     if consumed_listing_ids:

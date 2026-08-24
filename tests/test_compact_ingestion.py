@@ -176,6 +176,40 @@ class CompactIngestionTests(unittest.TestCase):
         self.assertIn("main_indication", str(caught.exception.detail))
         self.assertIn("Unknown", str(caught.exception.detail))
 
+    def test_server_owned_listing_metadata_can_follow_validated_compact_upload(self):
+        """Listing metadata is added after—not accepted as part of—the GPT contract."""
+        prompts = self.rendered_prompts()
+        cases = [
+            ("triage", self.final_json_template(prompts["triage"], "\nRemember:")),
+            ("full", self.final_json_template(prompts["full"], "\nFinal validation before output:")),
+        ]
+        for mode, compact in cases:
+            with self.subTest(mode=mode):
+                compact_record = compact[0] if isinstance(compact, list) else compact
+                incoming = self.expand(compact_record, mode)
+                main.validate_records_for_save([copy.deepcopy(incoming)])
+
+                listing_metadata = {
+                    "comment": "Listing BD note",
+                    "contact": "BD owner",
+                    "website": "https://example.com",
+                    "asset_aliases": "Prior asset code",
+                }
+                main.update_record_pipeline_metadata(incoming, listing_metadata)
+
+                with self.assertRaises(HTTPException) as caught:
+                    main.validate_records_for_save([copy.deepcopy(incoming)])
+                self.assertIn("pipeline_metadata", str(caught.exception.detail))
+
+                main.validate_records_for_save(
+                    [incoming],
+                    allow_server_owned_pipeline_metadata=True,
+                )
+                metadata = incoming["meta"]["pipeline_metadata"]
+                self.assertEqual(metadata["comment"], "Listing BD note")
+                self.assertEqual(metadata["contact"], "BD owner")
+                self.assertEqual(metadata["website"], "https://example.com")
+
     def test_full_compact_record_preserves_meaningful_fields_and_fills_boilerplate(self):
         criterion_ids = [
             "target_relevance", "competitive_landscape", "moa_validity", "platform_attractiveness",
