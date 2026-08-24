@@ -10401,23 +10401,36 @@ function appendInstructionWarnings(prompt, warnings) {
 }
 
 async function copyPromptToClipboard(kind = 'full') {
-  const basePrompt = kind === 'triage' ? buildTriageInstructionPrompt() : buildGptInstructionPrompt();
-  const warningsStore = await fetchInstructionWarnings();
-  const prompt = appendInstructionWarnings(basePrompt, kind === 'triage' ? warningsStore.triage : warningsStore.full);
+  const button = kind === 'triage' ? elements.copyTriagePromptTopButton : elements.copyPromptTopButton;
+  const idleLabel = kind === 'triage' ? '지침 1' : '지침 2';
+  const label = button?.querySelector('b');
+  if (label) label.textContent = '복사 중…';
   try {
-    await navigator.clipboard.writeText(prompt);
+    const basePrompt = kind === 'triage' ? buildTriageInstructionPrompt() : buildGptInstructionPrompt();
+    const warningsStore = await fetchInstructionWarnings();
+    const prompt = appendInstructionWarnings(basePrompt, kind === 'triage' ? warningsStore.triage : warningsStore.full);
+    try {
+      await navigator.clipboard.writeText(prompt);
+    } catch (error) {
+      const scratch = document.createElement('textarea');
+      scratch.value = prompt;
+      scratch.setAttribute('readonly', '');
+      scratch.style.position = 'fixed';
+      scratch.style.opacity = '0';
+      document.body.appendChild(scratch);
+      scratch.select();
+      document.execCommand('copy');
+      scratch.remove();
+    }
     setPromptCopyFeedback(kind);
+    return true;
   } catch (error) {
-    const scratch = document.createElement('textarea');
-    scratch.value = prompt;
-    scratch.setAttribute('readonly', '');
-    scratch.style.position = 'fixed';
-    scratch.style.opacity = '0';
-    document.body.appendChild(scratch);
-    scratch.select();
-    document.execCommand('copy');
-    scratch.remove();
-    setPromptCopyFeedback(kind);
+    if (label) label.textContent = '복사 실패';
+    if (elements.promptCopyStatus) elements.promptCopyStatus.textContent = '지침 복사 실패';
+    window.setTimeout(() => {
+      if (label) label.textContent = idleLabel;
+    }, 3000);
+    return false;
   }
 }
 
@@ -10448,7 +10461,7 @@ function setPromptCopyFeedback(kind = 'full') {
     }
     button.classList.remove('is-copied', 'is-copy-failed');
     button.dataset.tooltip = idleTooltip;
-  }, 1800);
+  }, 3000);
 }
 
 // --- Step 0 진척 현황 (independent panel, not a real tableMode) ---
@@ -12784,32 +12797,44 @@ function buildTriageInstructionPromptWithCandidates(pairs) {
 }
 
 async function copyTriagePromptWithSelectedCandidates() {
-  const pairs = state.step0Rows
-    .filter((row) => row.pending?.queue_id && state.step0SelectedPendingIds.has(row.pending.queue_id))
-    .map((row) => ({ asset: row.asset, company: row.company, listing_details: row.listing_details || {} }));
-  const warningsStore = await fetchInstructionWarnings();
-  const prompt = appendInstructionWarnings(buildTriageInstructionPromptWithCandidates(pairs), warningsStore.triage);
+  const button = elements.step0CopyInstructionsButton;
+  const label = button?.querySelector('b');
+  const idleLabel = label?.textContent || '지침 1 복사';
+  if (label) label.textContent = '복사 중…';
   try {
-    await navigator.clipboard.writeText(prompt);
+    const pairs = state.step0Rows
+      .filter((row) => row.pending?.queue_id && state.step0SelectedPendingIds.has(row.pending.queue_id))
+      .map((row) => ({ asset: row.asset, company: row.company, listing_details: row.listing_details || {} }));
+    const warningsStore = await fetchInstructionWarnings();
+    const prompt = appendInstructionWarnings(buildTriageInstructionPromptWithCandidates(pairs), warningsStore.triage);
+    try {
+      await navigator.clipboard.writeText(prompt);
+    } catch (error) {
+      const scratch = document.createElement('textarea');
+      scratch.value = prompt;
+      scratch.setAttribute('readonly', '');
+      scratch.style.position = 'fixed';
+      scratch.style.opacity = '0';
+      document.body.appendChild(scratch);
+      scratch.select();
+      document.execCommand('copy');
+      scratch.remove();
+    }
+    showStep0Message(
+      pairs.length ? `${pairs.length}개 후보 포함 지침 1 복사 완료` : '선택된 후보 없이 지침 1을 복사했습니다.'
+    );
+    if (label) {
+      label.textContent = '복사됨';
+      window.setTimeout(() => { label.textContent = idleLabel; }, 3000);
+    }
+    return true;
   } catch (error) {
-    const scratch = document.createElement('textarea');
-    scratch.value = prompt;
-    scratch.setAttribute('readonly', '');
-    scratch.style.position = 'fixed';
-    scratch.style.opacity = '0';
-    document.body.appendChild(scratch);
-    scratch.select();
-    document.execCommand('copy');
-    scratch.remove();
-  }
-  showStep0Message(
-    pairs.length ? `${pairs.length}개 후보 포함 지침 1 복사 완료` : '선택된 후보 없이 지침 1을 복사했습니다.'
-  );
-  const label = elements.step0CopyInstructionsButton?.querySelector('b');
-  if (label) {
-    const idleLabel = label.textContent;
-    label.textContent = '복사됨';
-    window.setTimeout(() => { label.textContent = idleLabel; }, 1800);
+    showStep0Message('지침 복사 실패');
+    if (label) {
+      label.textContent = '복사 실패';
+      window.setTimeout(() => { label.textContent = idleLabel; }, 3000);
+    }
+    return false;
   }
 }
 
@@ -14113,14 +14138,15 @@ elements.dataUploadGuideSteps?.addEventListener('click', async (event) => {
   const label = button.querySelector('b');
   const idleLabel = kind === 'triage' ? '지침 1' : '지침 2';
   button.disabled = true;
-  await copyPromptToClipboard(kind);
-  button.classList.add('is-copied');
-  if (label) label.textContent = '복사됨';
+  if (label) label.textContent = '복사 중…';
+  const copied = await copyPromptToClipboard(kind);
+  button.classList.toggle('is-copied', copied);
+  if (label) label.textContent = copied ? '복사됨' : '복사 실패';
   window.setTimeout(() => {
     button.disabled = false;
     button.classList.remove('is-copied');
     if (label) label.textContent = idleLabel;
-  }, 1800);
+  }, 3000);
 });
 
 document.querySelectorAll('.controls').forEach((controls) => {
