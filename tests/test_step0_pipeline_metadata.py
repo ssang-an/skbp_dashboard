@@ -60,6 +60,43 @@ class Step0PipelineMetadataTests(unittest.TestCase):
             },
         ])
 
+    def test_excel_contact_rules_keep_history_but_move_x_prefixed_note_to_comment(self) -> None:
+        parsed = main.parse_candidate_pair_lines(
+            "Asset\tCompany\tComment\tContact\n"
+            "AX-101\tAcme Bio\tInitial note\tX: Do not contact before legal review\n"
+            "BX-2\tBeta\t\t2026-08-24 · Introductory call completed\n"
+            "CX-3\tCore Bio\t\tSent deck; reply pending\n"
+            "DX-4\tDelta\t\tO\n"
+        )
+
+        self.assertEqual(parsed["unparsed"], [])
+        self.assertEqual(parsed["rows"], [
+            {
+                "asset_input": "AX-101",
+                "company_input": "Acme Bio",
+                "comment": "Initial note\nDo not contact before legal review",
+                "contact": "X",
+            },
+            {
+                "asset_input": "BX-2",
+                "company_input": "Beta",
+                "comment": "",
+                "contact": "2026-08-24 · Introductory call completed",
+            },
+            {
+                "asset_input": "CX-3",
+                "company_input": "Core Bio",
+                "comment": "",
+                "contact": "Sent deck; reply pending",
+            },
+            {
+                "asset_input": "DX-4",
+                "company_input": "Delta",
+                "comment": "",
+                "contact": "O",
+            },
+        ])
+
     def test_legacy_two_column_paste_remains_supported(self) -> None:
         parsed = main.parse_candidate_pair_lines("AX-101  Acme Bio\nBX-2  Beta\nAsset with  internal spacing  Gamma")
 
@@ -89,6 +126,18 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(parsed["rows"][0]["main_indication"], "ALS")
         self.assertEqual(parsed["rows"][0]["contact"], "owner@acme.test")
         self.assertEqual(parsed["rows"][0]["website"], "https://acme.test/company")
+
+    def test_structured_listing_grid_moves_x_prefixed_contact_note_to_comment(self) -> None:
+        parsed = main.normalize_candidate_queue_rows([{
+            "company_input": "Acme Bio",
+            "asset_input": "AX-101",
+            "comment": "Initial note",
+            "contact": "X · wait for internal approval",
+        }])
+
+        self.assertEqual(parsed["unparsed"], [])
+        self.assertEqual(parsed["rows"][0]["comment"], "Initial note\nwait for internal approval")
+        self.assertEqual(parsed["rows"][0]["contact"], "X")
 
     def test_structured_listing_grid_requires_company_and_asset(self) -> None:
         parsed = main.normalize_candidate_queue_rows([
@@ -313,16 +362,50 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         full = pipeline_record("AX101", "Acme Bio")
         full["meta"]["review_type"] = "full_scout"
 
-        self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 4)
+        self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 3)
         comments = full["meta"]["collaboration"]["comments"]
         self.assertEqual([(item["author"], item["body"]) for item in comments], [
             ("Team Review", "Tab 0 meeting note"),
             ("Fast Triage · Final Comment", "Proceed after BD confirmation."),
             ("Fast Triage · Target Area Relevance", "Confirm the target genetics evidence."),
         ])
-        self.assertEqual(triage["meta"]["collaboration"]["comments"][0]["author"], "Team Review")
+        self.assertNotIn("collaboration", triage["meta"])
         self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 0)
         self.assertEqual(len(full["meta"]["collaboration"]["comments"]), 3)
+
+    def test_contact_history_syncs_to_full_scout_and_x_clears_only_listing_contact(self) -> None:
+        triage = pipeline_record("AX-101", "Acme Bio")
+        triage["meta"]["pipeline_metadata"] = {
+            "contact": "2026-08-24 · BD call completed",
+            "contact_author": "Team",
+            "contact_source": "team_review_import",
+        }
+        triage["meta"]["collaboration"] = {
+            "comments": [{
+                "id": "contact-1",
+                "author": "J. Lee",
+                "body": "Sent NDA and awaiting reply.",
+                "created_at": "2026-08-24T10:00:00+00:00",
+                "category": "contact_history",
+            }]
+        }
+        full = pipeline_record("AX101", "Acme Bio")
+        full["meta"]["review_type"] = "full_scout"
+
+        self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 2)
+        contacts = full["meta"]["collaboration"]["comments"]
+        self.assertEqual([(item["category"], item["label"], item["body"]) for item in contacts], [
+            ("contact_history", "Tab 0 · Contact History", "2026-08-24 · BD call completed"),
+            ("contact_history", "Tab 1 · Fast Triage · Contact History", "Sent NDA and awaiting reply."),
+        ])
+
+        triage["meta"]["pipeline_metadata"] = main.merge_pipeline_metadata(
+            triage["meta"]["pipeline_metadata"], {"contact": "X"}
+        )
+        self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 1)
+        contacts = full["meta"]["collaboration"]["comments"]
+        self.assertEqual(len(contacts), 1)
+        self.assertEqual(contacts[0]["body"], "Sent NDA and awaiting reply.")
 
     def test_cross_workflow_comment_sync_excludes_ai_qualitative_entries(self) -> None:
         triage = pipeline_record("AX-101", "Acme Bio")

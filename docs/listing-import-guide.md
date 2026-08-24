@@ -16,7 +16,7 @@
 | Website | `https://`, `http://`, `www.`, 또는 일반 도메인 형식만 활성 링크로 저장. 표시명만 있는 Excel 하이퍼링크는 일반 붙여넣기에서 URL을 읽을 수 없음 |
 | 원문 보존 | 붙여넣은 상세 문구는 Listing 원문으로 보존. Dashboard/Filter의 Canonical 표기는 별도 규칙으로 변환될 수 있음 |
 
-빈 Comment·Contact·Website 셀은 기존 값을 지우지 않습니다. Contact의 명시적 `X`, `-`, `–`, `—`만 “기록 없음”으로 처리합니다.
+빈 Comment·Contact·Website 셀은 기존 값을 지우지 않습니다. Contact에 `O`, 날짜, 담당자·이메일·미팅 내용 또는 별도 상세 문구가 있으면 Contact History가 있는 것으로 처리합니다. 명시적 `X`, `-`, `–`, `—`만 “기록 없음”으로 처리합니다. 단, Contact 셀이 `X: 사유`처럼 `X` 뒤에 문구를 함께 포함하면 그 문구는 Contact History로 저장하지 않고 Comment에 다음 줄로 누적합니다.
 
 화면의 `Pipeline Stage`는 Asset의 개발 단계(예: Lead Optimization, Phase 1)를 뜻합니다. `Listing`, `Fast Triage`, `Full Scout`, `Shortlisting`은 개발 단계가 아니라 별도의 `조사 진행 단계`입니다. Excel 열 이름은 기존 호환성을 위해 `Stage`도 계속 인식합니다.
 
@@ -143,6 +143,10 @@ Tab 0~3 Pipeline Table 검색과 Tab 4 Knowledge Wiki Map 키워드 검색은 **
 | Fast Triage와 Full Scout 모두 존재 | Full Scout가 공식 Workspace. Tab 1 운영 메모도 Tab 2로 동기화 |
 
 Comment와 Contact History는 같은 Pipeline으로 **연결한 경우에만** 서로 누적됩니다. `별도 신규 Pipeline으로 추가`와 `등록하지 않기`는 기존 Pipeline으로 어떤 메모도 이동시키지 않습니다.
+
+Contact 열의 `O`, 날짜, 담당자·이메일·미팅 내용은 Contact History가 있음을 뜻하며 Tab 0의 Contact 표식이 활성화됩니다. `O`가 없어도 상세 문구가 있으면 동일하게 Contact History로 기록합니다. `X`, `-`, `–`, `—`만 있는 셀은 **이번 Listing Contact 정보 없음**이라는 명시값으로, Excel에서 온 Contact 요약값만 비웁니다. `X` 뒤에 메모가 있으면 Contact History를 만들지 않고 그 메모를 Comment에 다음 줄로 누적합니다. 이미 Tab 1·2에 사람이 작성한 Contact History 글이나 일반 Comment를 지우거나 다른 분류로 옮기지는 않습니다.
+
+Contact History의 기준 Workspace는 Full Scout가 있으면 Tab 2, 없으면 Tab 1입니다. Tab 0 Excel Contact와 Tab 1 Contact History 글은 기준 Workspace의 Contact History에도 출처와 작성자를 유지한 채 동기화됩니다. Tab 2의 기준 Workspace 글은 Tab 1에 역복제하지 않으며, Tab 1 표와 상세 이동은 Tab 2 기준 화면으로 연결됩니다.
 
 ## 7. 공식 조사 결과 보호 원칙
 

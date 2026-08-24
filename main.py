@@ -5055,6 +5055,28 @@ def normalize_pipeline_contact(value: Any) -> str:
     return "" if is_pipeline_contact_absence_marker(text) else text
 
 
+def normalize_listing_contact_import(comment: Any, contact: Any) -> tuple[str, str]:
+    """Apply the Excel-only Contact marker rule before Listing metadata is created.
+
+    `X` alone means no Contact History.  When a spreadsheet cell starts with an
+    explicit `X` marker but also contains a note, the note is an operational
+    Comment rather than a contradictory Contact History entry.
+    """
+    comment_text = str(comment or "").strip()
+    contact_text = str(contact or "").strip()
+    marker_with_note = re.match(r"^\s*x(?=$|[\s:;,/|\-–—])(.*)$", contact_text, flags=re.IGNORECASE | re.DOTALL)
+    if marker_with_note is None or is_pipeline_contact_absence_marker(contact_text):
+        return comment_text, contact_text
+    note = marker_with_note.group(1).strip(" \t\r\n:;,/|·•-–—")
+    if not note:
+        return comment_text, "X"
+    existing_normalized = re.sub(r"\s+", " ", comment_text).strip().casefold()
+    note_normalized = re.sub(r"\s+", " ", note).strip().casefold()
+    if note_normalized and note_normalized not in existing_normalized:
+        comment_text = f"{comment_text}\n{note}" if comment_text else note
+    return comment_text, "X"
+
+
 def normalize_listing_website(value: Any) -> str:
     """Normalize one HTTP(S), www, or structurally valid bare domain URL to HTTPS."""
     raw = str(value or "").strip()
@@ -5119,6 +5141,7 @@ def merge_pipeline_metadata(
     *,
     allow_empty_fields: set[str] | None = None,
     replace_comment: bool = False,
+    replace_contact: bool = False,
 ) -> dict[str, str]:
     """Merge dashboard-owned pipeline metadata without letting a blank paste erase a note."""
     allow_empty_fields = allow_empty_fields or set()
@@ -5130,10 +5153,10 @@ def merge_pipeline_metadata(
     for field in PIPELINE_METADATA_FIELDS:
         explicit_contact_absence = field == "contact" and is_pipeline_contact_absence_marker(incoming_raw.get("contact"))
         if update[field] or field in allow_empty_fields or explicit_contact_absence:
-            if field == "comment" and result[field] and update[field]:
+            if field in {"comment", "contact"} and result[field] and update[field]:
                 existing_normalized = re.sub(r"\s+", " ", result[field]).strip().casefold()
                 incoming_normalized = re.sub(r"\s+", " ", update[field]).strip().casefold()
-                if replace_comment:
+                if (field == "comment" and replace_comment) or (field == "contact" and replace_contact):
                     result[field] = update[field]
                 elif incoming_normalized not in existing_normalized:
                     result[field] = f"{result[field]}\n{update[field]}"
@@ -5277,11 +5300,12 @@ def normalize_candidate_queue_rows(raw_rows: Any) -> dict[str, Any]:
         if not isinstance(raw, dict):
             unparsed.append(f"row {index}")
             continue
+        comment, contact = normalize_listing_contact_import(raw.get("comment"), raw.get("contact"))
         row = {
             "company_input": str(raw.get("company_input") or raw.get("company") or "").strip(),
             "asset_input": str(raw.get("asset_input") or raw.get("asset") or "").strip(),
-            "comment": str(raw.get("comment") or "").strip(),
-            "contact": str(raw.get("contact") or "").strip(),
+            "comment": comment,
+            "contact": contact,
             **normalize_listing_details(raw),
         }
         if not any(row.values()):
@@ -5532,6 +5556,8 @@ def upsert_system_comment(
     body: str,
     source: str,
     created_at: str = "",
+    category: str = "comment",
+    label: str = "",
 ) -> bool:
     """Create/update a durable cross-workflow comment without duplicate posts."""
     body = str(body or "").strip()
@@ -5555,10 +5581,24 @@ def upsert_system_comment(
         None,
     )
     if existing is not None:
-        changed = existing.get("author") != author or existing.get("body") != body or existing.get("source") != source
+        changed = (
+            existing.get("author") != author
+            or existing.get("body") != body
+            or existing.get("source") != source
+            or existing.get("category") != category
+            or existing.get("label") != label
+        )
         if not changed:
             return False
-        existing.update({"author": author, "body": body, "source": source, "updated_at": now, "system_import": True})
+        existing.update({
+            "author": author,
+            "body": body,
+            "source": source,
+            "category": category,
+            "label": label,
+            "updated_at": now,
+            "system_import": True,
+        })
     else:
         comments.append({
             "id": uuid.uuid4().hex,
@@ -5573,6 +5613,8 @@ def upsert_system_comment(
             "source": source,
             "import_key": import_key,
             "system_import": True,
+            "category": category,
+            "label": label,
         })
         changed = True
     collaboration["updated_at"] = now
@@ -5580,26 +5622,51 @@ def upsert_system_comment(
     return changed
 
 
+def remove_system_comment(record: dict[str, Any], import_key: str) -> bool:
+    """Remove one derived post when its source Contact History has been cleared/deleted."""
+    meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+    collaboration = meta.get("collaboration") if isinstance(meta.get("collaboration"), dict) else {}
+    comments = collaboration.get("comments") if isinstance(collaboration.get("comments"), list) else []
+    remaining = [
+        comment for comment in comments
+        if not (isinstance(comment, dict) and str(comment.get("import_key") or "") == import_key)
+    ]
+    if len(remaining) == len(comments):
+        return False
+    collaboration["comments"] = remaining
+    collaboration["comment_count"] = len(remaining)
+    collaboration["updated_at"] = datetime.now(timezone.utc).isoformat()
+    meta["collaboration"] = collaboration
+    record["meta"] = meta
+    return True
+
+
 def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
-    """Promote Listing and Fast Triage human comments into their durable destinations.
+    """Promote Listing and Fast Triage human notes into their durable destinations.
 
     Tab 0 metadata is an operational note, so it becomes a source-labelled Team Review post on each
-    researched record.  Human Fast Triage Final/criterion comments are copied to
-    Full Scout's Team Review Workspace as distinct source-labelled posts.  Import
-    keys make repeated reuploads idempotent and AI entries are never considered.
+    canonical researched workspace (Full Scout first, otherwise Fast Triage). Human Fast Triage
+    Final/criterion comments and Contact History posts are copied to Full Scout's Team Review
+    Workspace as distinct source-labelled posts. Import keys make repeated reuploads idempotent
+    and AI entries are never considered.
     """
     changed_count = 0
     for group in dashboard_identity_groups(records):
         group_records = [record for record in group.get("records") or [] if isinstance(record, dict)]
         metadata = pipeline_metadata_for_group(group)
         listing_comment = str(metadata.get("comment") or "").strip()
+        listing_contact = str(metadata.get("contact") or "").strip()
         identity = str(group.get("asset_identity") or "")
+
+        fast_triage_records = [record for record in group_records if is_fast_triage_record(record)]
+        full_scout_records = [record for record in group_records if not is_fast_triage_record(record)]
+        canonical_workspace_records = full_scout_records or fast_triage_records
 
         if listing_comment:
             listing_author = str(metadata.get("comment_author") or "Team Review").strip()
             if str(metadata.get("comment_source") or "").strip() == "team_review_import" or listing_author in {"Tab 0 Team Review", "Team Review"}:
                 listing_author = "Team Review"
-            for target in group_records:
+            for target in canonical_workspace_records:
                 if upsert_system_comment(
                     target,
                     import_key=imported_comment_key("tab0-listing", identity),
@@ -5616,8 +5683,40 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
                     )
                     changed_count += 1
 
-        fast_triage_records = [record for record in group_records if is_fast_triage_record(record)]
-        full_scout_records = [record for record in group_records if not is_fast_triage_record(record)]
+        listing_contact_key = imported_comment_key("tab0-contact", identity)
+        if listing_contact:
+            listing_author = str(metadata.get("contact_author") or "Team Review").strip()
+            if str(metadata.get("contact_source") or "").strip() == "team_review_import" or listing_author in {"Tab 0 Team Review", "Team Review"}:
+                listing_author = "Team"
+            for target in canonical_workspace_records:
+                if upsert_system_comment(
+                    target,
+                    import_key=listing_contact_key,
+                    author=listing_author,
+                    body=listing_contact,
+                    source="listing_contact_history",
+                    created_at=str(metadata.get("contact_created_at") or metadata.get("contact_updated_at") or ""),
+                    category="contact_history",
+                    label="Tab 0 · Contact History",
+                ):
+                    append_edit_history(
+                        target,
+                        source="cross_workflow_contact_sync",
+                        actor_ip="system",
+                        field="collaboration.comments.tab0_contact",
+                    )
+                    changed_count += 1
+        else:
+            for target in canonical_workspace_records:
+                if remove_system_comment(target, listing_contact_key):
+                    append_edit_history(
+                        target,
+                        source="cross_workflow_contact_sync",
+                        actor_ip="system",
+                        field="collaboration.comments.tab0_contact",
+                    )
+                    changed_count += 1
+
         if not fast_triage_records or not full_scout_records:
             continue
 
@@ -5660,6 +5759,51 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
                         created_at=str(note.get("created_at") or note.get("updated_at") or ""),
                     ):
                         append_edit_history(target, source="cross_workflow_comment_sync", actor_ip="system", field=f"collaboration.comments.fast_triage_{topic_id}")
+                        changed_count += 1
+
+            contact_comments = (
+                ((triage_record.get("meta") or {}).get("collaboration") or {}).get("comments") or []
+            )
+            desired_contact_import_keys: set[str] = set()
+            for comment in contact_comments:
+                if (
+                    not isinstance(comment, dict)
+                    or comment.get("system_import") is True
+                    or str(comment.get("category") or "") != "contact_history"
+                ):
+                    continue
+                body = str(comment.get("body") or "").strip()
+                if not body:
+                    continue
+                comment_key = str(comment.get("id") or imported_comment_key(body, comment.get("created_at")))
+                import_key = imported_comment_key("fast-triage-contact", triage_key, comment_key)
+                desired_contact_import_keys.add(import_key)
+                for target in full_scout_records:
+                    if upsert_system_comment(
+                        target,
+                        import_key=import_key,
+                        author=str(comment.get("author") or "").strip() or "Fast Triage",
+                        body=body,
+                        source=f"fast_triage_contact_history:{triage_key}",
+                        created_at=str(comment.get("created_at") or comment.get("updated_at") or ""),
+                        category="contact_history",
+                        label="Tab 1 · Fast Triage · Contact History",
+                    ):
+                        append_edit_history(target, source="cross_workflow_contact_sync", actor_ip="system", field="collaboration.comments.fast_triage_contact")
+                        changed_count += 1
+
+            for target in full_scout_records:
+                collaboration = ((target.get("meta") or {}).get("collaboration") or {})
+                imported_contacts = [
+                    str(item.get("import_key") or "")
+                    for item in (collaboration.get("comments") or [])
+                    if isinstance(item, dict)
+                    and item.get("system_import") is True
+                    and item.get("source") == f"fast_triage_contact_history:{triage_key}"
+                ]
+                for import_key in imported_contacts:
+                    if import_key not in desired_contact_import_keys and remove_system_comment(target, import_key):
+                        append_edit_history(target, source="cross_workflow_contact_sync", actor_ip="system", field="collaboration.comments.fast_triage_contact")
                         changed_count += 1
     return changed_count
 
@@ -5720,11 +5864,15 @@ def parse_candidate_pair_lines(raw_text: str) -> dict[str, Any]:
         if not asset_input or is_listing_asset_placeholder(asset_input):
             unparsed.append(raw_description)
             return
+        comment, contact = normalize_listing_contact_import(
+            normalized[2] if len(normalized) > 2 else "",
+            "\t".join(normalized[3:]).strip() if len(normalized) > 3 else "",
+        )
         rows.append({
             "asset_input": asset_input,
             "company_input": normalized[1] if len(normalized) > 1 and normalized[1] else "Unknown",
-            "comment": normalized[2] if len(normalized) > 2 else "",
-            "contact": "\t".join(normalized[3:]).strip() if len(normalized) > 3 else "",
+            "comment": comment,
+            "contact": contact,
         })
 
     text = str(raw_text or "")
@@ -8770,6 +8918,10 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             "comment_created_at": added_at if row.get("comment", "") else "",
             "comment_updated_at": added_at if row.get("comment", "") else "",
             "contact": row.get("contact", ""),
+            "contact_author": "Team" if normalize_pipeline_contact(row.get("contact", "")) else "",
+            "contact_source": "team_review_import" if normalize_pipeline_contact(row.get("contact", "")) else "",
+            "contact_created_at": added_at if normalize_pipeline_contact(row.get("contact", "")) else "",
+            "contact_updated_at": added_at if normalize_pipeline_contact(row.get("contact", "")) else "",
             "website": row.get("website", ""),
             # Tab 0 names are operational identifiers.  Keep them searchable on
             # researched records without changing the official report labels.
@@ -8863,6 +9015,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
     if added_entries or metadata_updated:
         save_candidate_queue(queue)
     if records_updated:
+        synchronize_cross_workflow_comments(records)
         save_records(records)
 
     return {
@@ -9140,6 +9293,7 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
             {field: value, "updated_at": changed_at, **direct_comment_metadata},
             allow_empty_fields={field},
             replace_comment=field == "comment",
+            replace_contact=field == "contact",
         )
         entry["pipeline_metadata"] = updated
         save_candidate_queue(queue)
@@ -9167,6 +9321,7 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
                 {"listed_at": changed_at, field: value, "updated_at": changed_at, **direct_comment_metadata},
                 allow_empty_fields={field},
                 replace_comment=field == "comment",
+                replace_contact=field == "contact",
             ):
                 if field != "website":
                     append_edit_history(
@@ -9177,7 +9332,7 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
                         previous_value=previous,
                         new_value=value,
                     )
-        if field == "comment":
+        if field in {"comment", "contact"}:
             synchronize_cross_workflow_comments(records)
         save_records(records)
         return {
@@ -10817,6 +10972,8 @@ async def create_record_comment(record_id: str, request: Request) -> dict[str, A
             field="collaboration.comments",
         )
         records[index] = record
+        if category == "contact_history" and is_fast_triage_record(record):
+            synchronize_cross_workflow_comments(records)
         save_records(records)
         return {
             "ok": True,
@@ -10873,6 +11030,8 @@ def delete_record_comment(record_id: str, comment_id: str, request: Request) -> 
             new_value="deleted",
         )
         records[index] = record
+        if str(target.get("category") or "") == "contact_history" and is_fast_triage_record(record):
+            synchronize_cross_workflow_comments(records)
         save_records(records)
         return {"ok": True, "record_id": record_id, "record": record, "deleted_id": comment_id}
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
@@ -10916,6 +11075,8 @@ async def update_record_comment(record_id: str, comment_id: str, request: Reques
         collaboration["updated_at"] = changed_at
         append_edit_history(record, source="dashboard_comment_edit", actor_ip=get_client_ip(request), actor_name=actor_name, field="collaboration.comments", previous_value=previous, new_value=body)
         records[index] = record
+        if str(target.get("category") or "") == "contact_history" and is_fast_triage_record(record):
+            synchronize_cross_workflow_comments(records)
         save_records(records)
         return {"ok": True, "record_id": record_id, "record": record, "comment": target}
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
