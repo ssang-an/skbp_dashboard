@@ -12863,7 +12863,7 @@ elements.step0EntryGridBody?.addEventListener('paste', pasteIntoStep0EntryGrid);
 elements.step0EntryGridBody?.addEventListener('input', (event) => {
   if (event.target.matches('textarea[data-step0-entry-field]')) resizeStep0CommentCell(event.target);
 });
-elements.step0CopyInstructionsButton?.addEventListener('click', copyTriagePromptWithSelectedCandidates);
+bindClipboardCopyGesture(elements.step0CopyInstructionsButton, copyTriagePromptWithSelectedCandidates);
 elements.step0ExportExcelButton?.addEventListener('click', exportStep0Table);
 elements.step0PageSizeSelect?.addEventListener('change', (event) => {
   const nextSize = Number(event.target.value);
@@ -14122,9 +14122,35 @@ elements.gptResponseInput?.addEventListener('input', () => {
     }
   }
 });
+async function copyDataUploadGuidePrompt(button) {
+  const kind = button.dataset.promptKind === 'triage' ? 'triage' : 'full';
+  const label = button.querySelector('b');
+  const idleLabel = kind === 'triage' ? '지침 1' : '지침 2';
+  button.disabled = true;
+  if (label) label.textContent = '복사 중…';
+  const copied = await copyPromptToClipboard(kind);
+  button.classList.toggle('is-copied', copied);
+  if (label) label.textContent = copied ? '복사됨' : '복사 실패';
+  window.setTimeout(() => {
+    button.disabled = false;
+    button.classList.remove('is-copied');
+    if (label) label.textContent = idleLabel;
+  }, 3000);
+}
+
+elements.dataUploadGuideSteps?.addEventListener('pointerup', (event) => {
+  const button = event.target.closest('[data-upload-guide-action="copy-prompt"]');
+  if (!button || event.button !== 0) return;
+  button.dataset.pointerCopyHandled = 'true';
+  void copyDataUploadGuidePrompt(button);
+});
 elements.dataUploadGuideSteps?.addEventListener('click', async (event) => {
   const button = event.target.closest('[data-upload-guide-action]');
   if (!button) return;
+  if (button.dataset.pointerCopyHandled === 'true') {
+    delete button.dataset.pointerCopyHandled;
+    return;
+  }
   const action = button.dataset.uploadGuideAction;
   if (action === 'focus-input') {
     scrollToDataUpload();
@@ -14146,19 +14172,7 @@ elements.dataUploadGuideSteps?.addEventListener('click', async (event) => {
     elements.saveJsonButton.click();
     return;
   }
-  const kind = button.dataset.promptKind === 'triage' ? 'triage' : 'full';
-  const label = button.querySelector('b');
-  const idleLabel = kind === 'triage' ? '지침 1' : '지침 2';
-  button.disabled = true;
-  if (label) label.textContent = '복사 중…';
-  const copied = await copyPromptToClipboard(kind);
-  button.classList.toggle('is-copied', copied);
-  if (label) label.textContent = copied ? '복사됨' : '복사 실패';
-  window.setTimeout(() => {
-    button.disabled = false;
-    button.classList.remove('is-copied');
-    if (label) label.textContent = idleLabel;
-  }, 3000);
+  await copyDataUploadGuidePrompt(button);
 });
 
 document.querySelectorAll('.controls').forEach((controls) => {
@@ -14184,9 +14198,27 @@ if (elements.copyPromptTopButton) {
   if (label) label.textContent = '지침 2';
   elements.copyPromptTopButton.dataset.tooltip = PROMPT_TOOLTIP;
 }
-elements.copyPromptButton?.addEventListener('click', () => copyPromptToClipboard('full'));
-elements.copyTriagePromptTopButton?.addEventListener('click', () => copyPromptToClipboard('triage'));
-elements.copyPromptTopButton?.addEventListener('click', () => copyPromptToClipboard('full'));
+function bindClipboardCopyGesture(button, action) {
+  if (!button) return;
+  let handledByPointer = false;
+  button.addEventListener('pointerup', (event) => {
+    if (event.button !== 0) return;
+    // The browser has focused the document by pointerup, while this is still
+    // a trusted user gesture for Clipboard API permission purposes.
+    handledByPointer = true;
+    void action();
+    window.setTimeout(() => { handledByPointer = false; }, 0);
+  });
+  button.addEventListener('click', () => {
+    if (handledByPointer) return;
+    // Keyboard activation (Enter/Space) has no pointerup event.
+    void action();
+  });
+}
+
+bindClipboardCopyGesture(elements.copyPromptButton, () => copyPromptToClipboard('full'));
+bindClipboardCopyGesture(elements.copyTriagePromptTopButton, () => copyPromptToClipboard('triage'));
+bindClipboardCopyGesture(elements.copyPromptTopButton, () => copyPromptToClipboard('full'));
 
 floatingAgentController = initFloatingAgent({
   launcher: elements.aiDrawerButton,
