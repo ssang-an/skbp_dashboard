@@ -10417,23 +10417,69 @@ function refreshInstructionWarnings() {
 }
 
 async function writeTextToClipboard(text) {
-  // Internal HTTP deployments do not expose navigator.clipboard. Keep the
-  // user-gesture fallback synchronous and surface actual copy failures.
+  // Do not await a rejected Clipboard API call on HTTP: that microtask loses
+  // the original click's user activation before the legacy fallback runs.
+  // Intranet HTTP therefore goes straight to the synchronous path below.
   if (navigator.clipboard?.writeText && window.isSecureContext) {
-    await navigator.clipboard.writeText(text);
-    return;
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch (error) {
+      // A secure-context rejection can still fall through to the legacy path.
+    }
   }
+
+  // Intranet HTTP deployments commonly require execCommand. Keep the element
+  // visible enough for older Edge/Chrome engines to select it, but off-screen
+  // so the user never sees the temporary prompt text.
   const scratch = document.createElement('textarea');
   scratch.value = text;
   scratch.setAttribute('readonly', '');
   scratch.style.position = 'fixed';
-  scratch.style.opacity = '0';
+  scratch.style.top = '0';
+  scratch.style.left = '0';
+  scratch.style.width = '1px';
+  scratch.style.height = '1px';
+  scratch.style.padding = '0';
+  scratch.style.border = '0';
+  scratch.style.outline = '0';
+  scratch.style.opacity = '0.01';
   scratch.style.pointerEvents = 'none';
+  scratch.style.zIndex = '-1';
   document.body.appendChild(scratch);
-  scratch.focus({ preventScroll: true });
-  scratch.select();
-  const copied = document.execCommand('copy');
-  scratch.remove();
+  const priorFocus = document.activeElement;
+  let copied = false;
+  const onCopy = (event) => {
+    // Some managed Chromium sessions report execCommand() as false even
+    // though they permit a user-gesture copy event. Supplying the text here
+    // makes that route deterministic.
+    if (!event.clipboardData) return;
+    event.clipboardData.setData('text/plain', text);
+    event.preventDefault();
+    copied = true;
+  };
+  document.addEventListener('copy', onCopy, true);
+  try {
+    try {
+      scratch.focus({ preventScroll: true });
+    } catch (error) {
+      scratch.focus();
+    }
+    scratch.select();
+    scratch.setSelectionRange(0, scratch.value.length);
+    const commandCopied = typeof document.execCommand === 'function' && document.execCommand('copy');
+    copied = copied || commandCopied;
+  } finally {
+    document.removeEventListener('copy', onCopy, true);
+    scratch.remove();
+    if (priorFocus instanceof HTMLElement) {
+      try {
+        priorFocus.focus({ preventScroll: true });
+      } catch (error) {
+        priorFocus.focus();
+      }
+    }
+  }
   if (!copied) throw new Error('Clipboard copy was blocked by this browser.');
 }
 
@@ -10445,16 +10491,48 @@ function setCopyButtonState(button, labelText, { failed = false } = {}) {
   button.classList.toggle('is-copy-failed', failed);
 }
 
+function offerManualClipboardCopy(text) {
+  const previousFocus = document.activeElement;
+  const dialog = document.createElement('section');
+  dialog.className = 'clipboard-manual-copy-dialog';
+  dialog.setAttribute('role', 'dialog');
+  dialog.setAttribute('aria-modal', 'true');
+  dialog.setAttribute('aria-label', 'GPT 지침 수동 복사');
+  const title = document.createElement('strong');
+  title.textContent = '자동 복사가 차단되었습니다';
+  const hint = document.createElement('p');
+  hint.textContent = '아래 내용이 선택되어 있습니다. Ctrl+C를 누른 뒤 닫기를 선택하세요.';
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.readOnly = true;
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.textContent = '닫기';
+  const dismiss = () => {
+    dialog.remove();
+    if (previousFocus instanceof HTMLElement) previousFocus.focus?.();
+  };
+  close.addEventListener('click', dismiss);
+  dialog.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') dismiss();
+  });
+  dialog.append(title, hint, textarea, close);
+  document.body.appendChild(dialog);
+  textarea.focus();
+  textarea.select();
+}
+
 async function copyPromptToClipboard(kind = 'full') {
   const button = kind === 'triage' ? elements.copyTriagePromptTopButton : elements.copyPromptTopButton;
   // Synchronous feedback confirms the live click handler ran even if a
   // browser later rejects clipboard access on an internal HTTP address.
   setCopyButtonState(button, '복사 중…');
+  let prompt = '';
   try {
     const basePrompt = kind === 'triage' ? buildTriageInstructionPrompt() : buildGptInstructionPrompt();
     // Awaiting a network request here loses the click permission required by
     // internal HTTP clipboard fallbacks. Use the preloaded cache instead.
-    const prompt = appendInstructionWarnings(basePrompt, kind === 'triage' ? instructionWarningsCache.triage : instructionWarningsCache.full);
+    prompt = appendInstructionWarnings(basePrompt, kind === 'triage' ? instructionWarningsCache.triage : instructionWarningsCache.full);
     await writeTextToClipboard(prompt);
     setPromptCopyFeedback(kind);
     void refreshInstructionWarnings();
@@ -10462,6 +10540,7 @@ async function copyPromptToClipboard(kind = 'full') {
   } catch (error) {
     if (elements.promptCopyStatus) elements.promptCopyStatus.textContent = 'Clipboard copy failed';
     setCopyButtonState(button, '복사 실패', { failed: true });
+    if (prompt) offerManualClipboardCopy(prompt);
     window.setTimeout(() => {
       setCopyButtonState(button, kind === 'triage' ? '지침 1' : '지침 2');
     }, 2400);
@@ -12835,15 +12914,17 @@ async function copyTriagePromptWithSelectedCandidates() {
   const copyButton = elements.step0CopyInstructionsButton;
   setCopyButtonState(copyButton, '복사 중…');
   let pairs = [];
+  let prompt = '';
   try {
     pairs = state.step0Rows
       .filter((row) => row.pending?.queue_id && state.step0SelectedPendingIds.has(row.pending.queue_id))
       .map((row) => ({ asset: row.asset, company: row.company, listing_details: row.listing_details || {} }));
-    const prompt = appendInstructionWarnings(buildTriageInstructionPromptWithCandidates(pairs), instructionWarningsCache.triage);
+    prompt = appendInstructionWarnings(buildTriageInstructionPromptWithCandidates(pairs), instructionWarningsCache.triage);
     await writeTextToClipboard(prompt);
   } catch (error) {
     showStep0Message('Clipboard copy failed');
     setCopyButtonState(copyButton, '복사 실패', { failed: true });
+    if (prompt) offerManualClipboardCopy(prompt);
     window.setTimeout(() => { setCopyButtonState(copyButton, '지침 1 복사'); }, 2400);
     return;
   }
