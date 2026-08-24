@@ -22953,39 +22953,6 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
   color: #157458;
 }
 
-.topbar #copyTriagePromptTopButton.is-copy-failed,
-.topbar #copyPromptTopButton.is-copy-failed,
-#step0CopyInstructionsButton.step0-copy-instructions-button.is-copy-failed {
-  border-color: color-mix(in srgb, #d66a6a 56%, var(--line));
-  background: color-mix(in srgb, #d66a6a 12%, var(--surface));
-  color: #a13c3c;
-}
-
-.clipboard-manual-copy-dialog {
-  position: fixed;
-  z-index: 1200;
-  inset: 50% auto auto 50%;
-  display: grid;
-  gap: 10px;
-  width: min(620px, calc(100vw - 32px));
-  max-height: min(560px, calc(100vh - 32px));
-  padding: 18px;
-  transform: translate(-50%, -50%);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--surface);
-  box-shadow: 0 22px 52px rgba(15, 23, 42, 0.26);
-}
-
-.clipboard-manual-copy-dialog strong { color: var(--heading); }
-.clipboard-manual-copy-dialog p { margin: 0; color: var(--muted); font-size: 13px; }
-.clipboard-manual-copy-dialog textarea {
-  width: 100%;
-  min-height: 230px;
-  resize: vertical;
-  font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-}
-.clipboard-manual-copy-dialog button { justify-self: end; }
 
 /* Search-plus guidance is intentionally brief and opens upward so a compact
    filter row never pushes the tooltip outside the dashboard viewport. */
