@@ -52,6 +52,7 @@ SAMPLE_FILE = JSON_DIR / "drug-valuations.sample.json"
 SCHEMA_FILE = JSON_DIR / "drug-valuation.schema.json"
 OBSIDIAN_DIR = ROOT / "obsidian"
 WIKI_DIR = ROOT / "skbp_pipeline_wiki"
+WIKI_GRAPH_FILE = WIKI_DIR / "13_Graph_Exports" / "graph.json"
 ATTACHMENTS_DIR = ROOT / "attachments"
 RUBRIC_RELEASE_FILE = ROOT / "config" / "rubric-release.json"
 
@@ -4449,6 +4450,19 @@ def run_markdown_exports() -> dict[str, Any]:
     return {
         "obsidian": run_obsidian_export(),
         "wiki": run_wiki_export(),
+    }
+
+
+def deferred_markdown_exports() -> dict[str, Any]:
+    """Describe an intentionally deferred derived-file refresh.
+
+    Record JSON is the source of truth. Rebuilding both Markdown vaults writes thousands
+    of files and used to keep a report-upload request open long after its data was safe.
+    The Wiki Map refresh action now performs the Wiki export explicitly instead.
+    """
+    return {
+        "deferred": True,
+        "message": "저장은 완료되었습니다. Knowledge Wiki Map은 Wiki Map에서 새로고침하면 최신화됩니다.",
     }
 
 
@@ -9437,7 +9451,7 @@ async def apply_ai_revision_to_record(record_id: str, request: Request) -> dict[
         updated_record = result["record"]
         records[index] = updated_record
         save_records(records)
-        exports = run_markdown_exports()
+        exports = deferred_markdown_exports()
         return {
             "ok": True,
             "record": updated_record,
@@ -9779,7 +9793,7 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
         validate_records_for_save([record])
         records[index] = record
         save_records(records)
-        exports = run_markdown_exports()
+        exports = deferred_markdown_exports()
         return {
             "ok": True,
             "status": "updated",
@@ -9861,7 +9875,7 @@ async def delete_records(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=404, detail="No matching records found.")
 
     save_records(kept)
-    exports = run_markdown_exports()
+    exports = deferred_markdown_exports()
     return {
         "ok": True,
         "deleted": len(deleted_ids),
@@ -10235,7 +10249,7 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
             source_report["rubric_recalculation"] = copy.deepcopy(meta["rubric_recalculation"])
             records[index] = record
             save_records(records)
-            exports = run_markdown_exports()
+            exports = deferred_markdown_exports()
             return {
                 "ok": True,
                 "record_id": record_id,
@@ -10295,7 +10309,7 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
 
         records[index] = record
         save_records(records)
-        exports = run_markdown_exports()
+        exports = deferred_markdown_exports()
         return {
             "ok": True,
             "record_id": record_id,
@@ -10355,7 +10369,7 @@ def recalculate_record_oi_partnership(record_id: str, request: Request) -> dict[
 
         records[index] = record
         save_records(records)
-        exports = run_markdown_exports()
+        exports = deferred_markdown_exports()
         return {
             "ok": True,
             "record_id": record_id,
@@ -10603,7 +10617,7 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
 
         records[index] = record
         save_records(records)
-        exports = run_markdown_exports()
+        exports = deferred_markdown_exports()
         return {
             "ok": True,
             "record_id": record_id,
@@ -12003,7 +12017,7 @@ async def update_record(record_id: str, request: Request) -> dict[str, Any]:
             )
             records[index] = payload
             save_records(records)
-            exports = run_markdown_exports()
+            exports = deferred_markdown_exports()
             return {
                 "ok": True,
                 "record_id": record_key(payload),
@@ -12024,7 +12038,7 @@ def delete_record(record_id: str, request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
 
     save_records(kept)
-    exports = run_markdown_exports()
+    exports = deferred_markdown_exports()
     return {
         "ok": True,
         "deleted": deleted,
@@ -12339,7 +12353,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
     save_records(records)
     if consumed_listing_ids:
         save_candidate_queue([entry for entry in queue if entry.get("id") not in consumed_listing_ids])
-    exports = run_markdown_exports()
+    exports = deferred_markdown_exports()
     return {
         "ok": True,
         "inserted": inserted,
@@ -12369,7 +12383,7 @@ async def replace_records(request: Request) -> dict[str, Any]:
     save_records(records)
     if consumed_listing_ids:
         save_candidate_queue([entry for entry in queue if entry.get("id") not in consumed_listing_ids])
-    exports = run_markdown_exports()
+    exports = deferred_markdown_exports()
     return {
         "ok": True,
         "replaced": len(records),
@@ -12456,13 +12470,25 @@ def export_pipeline_wiki() -> dict[str, Any]:
     if result.returncode != 0:
         raise HTTPException(status_code=500, detail=result.stderr or result.stdout)
 
-    files = [str(path.relative_to(ROOT)).replace("\\", "/") for path in WIKI_DIR.rglob("*") if path.is_file()]
+    file_count = sum(1 for path in WIKI_DIR.rglob("*") if path.is_file())
     return {
         "ok": True,
         "message": "Pipeline wiki regenerated from json/pipeline-records.json",
         "summary": json.loads(result.stdout) if result.stdout.strip().startswith("{") else result.stdout,
-        "files": files,
-        "count": len(files),
+        "count": file_count,
+    }
+
+
+@app.get("/api/wiki/status")
+def get_pipeline_wiki_status() -> dict[str, Any]:
+    """Report whether derived Wiki Map data is older than the JSON source of truth."""
+    data_mtime = DATA_FILE.stat().st_mtime if DATA_FILE.exists() else None
+    graph_mtime = WIKI_GRAPH_FILE.stat().st_mtime if WIKI_GRAPH_FILE.exists() else None
+    return {
+        "ok": True,
+        "stale": graph_mtime is None or (data_mtime is not None and data_mtime > graph_mtime),
+        "data_updated_at": datetime.fromtimestamp(data_mtime, timezone.utc).isoformat() if data_mtime else None,
+        "wiki_updated_at": datetime.fromtimestamp(graph_mtime, timezone.utc).isoformat() if graph_mtime else None,
     }
 
 

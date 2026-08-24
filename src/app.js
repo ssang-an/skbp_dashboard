@@ -4289,9 +4289,18 @@ function syncTopDataActionsForVisibleTab() {
   // Atlas is an exploration workspace, not a research-input workflow. Do not
   // inherit the last table tab's upload or GPT-instruction actions on entry.
   if (isKnowledgeMapVisible) {
+    if (elements.refreshButton) {
+      elements.refreshButton.dataset.tooltip = '저장된 Pipeline으로 Knowledge Wiki Map을 최신화합니다.';
+      elements.refreshButton.setAttribute('aria-label', 'Knowledge Wiki Map 최신화');
+    }
     setDataUploadShortcutVisibility(false);
     setTopPromptShortcutVisibility();
     return;
+  }
+
+  if (elements.refreshButton) {
+    elements.refreshButton.dataset.tooltip = '저장된 Pipeline JSON을 다시 불러와 대시보드를 갱신합니다.';
+    elements.refreshButton.setAttribute('aria-label', '새로고침');
   }
 
   const isStep0Visible = Boolean(elements.step0Panel && !elements.step0Panel.hidden);
@@ -9053,7 +9062,7 @@ async function saveStructuredJsonInput() {
     const result = await runBlockingOperation({
       title: '파이프라인을 저장하고 있습니다',
       message: '업로드한 리포트와 구조화 데이터를 저장하고 대시보드를 갱신합니다.',
-      status: '저장이 완료될 때까지 잠시만 기다려 주세요.',
+      status: '저장 뒤 Knowledge Wiki Map은 해당 탭의 새로고침으로 최신화할 수 있습니다.',
       ...(payload.confirmed_replacements.length ? {
         title: '기존 Pipeline을 덮어쓰고 있습니다',
         message: '웹 서칭 조사 내용을 최신 내용으로 덮어쓰기하는 중입니다.',
@@ -9087,7 +9096,10 @@ async function saveStructuredJsonInput() {
       setDataUploadStatus('review-needed');
       return;
     }
-    renderInputValidation(validation, { savedMessage: '저장 완료' });
+    const savedMessage = result?.exports?.deferred
+      ? '저장 완료 · Wiki Map 새로고침 필요'
+      : '저장 완료';
+    renderInputValidation(validation, { savedMessage });
     setDataUploadStatus('saved');
     state.dataUploadReview = null;
     state.dataUploadLlmReparseFields = null;
@@ -13646,6 +13658,18 @@ elements.pipelineTableHead?.addEventListener('change', (event) => {
 });
 
 elements.refreshButton.addEventListener('click', () => {
+  const isKnowledgeMapVisible = Boolean(elements.knowledgeMapPanel && !elements.knowledgeMapPanel.hidden);
+  if (isKnowledgeMapVisible && typeof window.refreshKnowledgeMap === 'function') {
+    runBlockingOperation({
+      title: 'Knowledge Wiki Map을 최신화하고 있습니다',
+      message: '저장된 Pipeline을 기준으로 연결 노트와 그래프를 다시 만들고 있습니다.',
+      status: '최신화가 끝나면 현재 필터를 유지한 채 그래프를 다시 표시합니다.'
+    }, (signal) => window.refreshKnowledgeMap({ signal })).catch((error) => {
+      elements.dataStatus.textContent = 'Wiki Map 최신화 실패';
+      elements.saveStatus.textContent = error.message;
+    });
+    return;
+  }
   runBlockingOperation({
     title: '대시보드를 새로고침하고 있습니다',
     message: '최신 파이프라인과 요약 정보를 불러오고 있습니다.',

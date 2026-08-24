@@ -55,6 +55,7 @@ let stageByAsset = new Map();
 let renderer;
 let simulation;
 let loadPromise;
+let wikiRefreshPromise;
 let noteRequestId = 0;
 let activeWikiNote = null;
 const selectedIndications = new Set();
@@ -759,17 +760,38 @@ function buildGraph() {
   renderer.on('clickStage', clearSelection);
 }
 
-async function load() {
+async function refreshWikiStatus() {
+  try {
+    const response = await fetch('/api/wiki/status', { cache: 'no-store' });
+    if (!response.ok) return;
+    const status = await response.json();
+    if (!ui.status) return;
+    const base = `${raw.nodes.length.toLocaleString()} nodes · WebGL physics`;
+    ui.status.textContent = status.stale
+      ? `${base} · 저장 후 최신화 필요 · 상단 새로고침`
+      : `${base} · 최신화됨`;
+  } catch (_error) {
+    // The graph remains usable even when the optional freshness indicator is unavailable.
+  }
+}
+
+async function load({ force = false } = {}) {
+  if (force) loadPromise = null;
   if (loadPromise) return loadPromise;
   loadPromise = (async () => {
-  const response = await fetch('/wiki/13_Graph_Exports/graph.json');
+  const response = await fetch('/wiki/13_Graph_Exports/graph.json', { cache: 'no-store' });
   if (!response.ok) throw Error('graph.json 파일을 찾을 수 없습니다.');
   raw = await response.json();
   prepare();
   buildGraph();
-  if (ui.status) ui.status.textContent = `${raw.nodes.length.toLocaleString()} nodes · WebGL physics`;
+  await refreshWikiStatus();
   })();
-  return loadPromise;
+  try {
+    return await loadPromise;
+  } catch (error) {
+    loadPromise = null;
+    throw error;
+  }
 }
 
 ui.view?.addEventListener('change', () => {
@@ -946,6 +968,19 @@ window.initKnowledgeMap = () => load().catch(error => {
   if (ui.status) ui.status.textContent = 'Unavailable';
   ui.canvas.textContent = error.message;
 });
+window.refreshKnowledgeMap = ({ signal } = {}) => {
+  if (wikiRefreshPromise) return wikiRefreshPromise;
+  wikiRefreshPromise = (async () => {
+    if (ui.scope) ui.scope.textContent = '저장된 Pipeline으로 Knowledge Wiki Map을 최신화하고 있습니다.';
+    const response = await fetch('/api/wiki/export', { method: 'POST', signal });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw Error(data.detail || 'Knowledge Wiki Map 최신화에 실패했습니다.');
+    await load({ force: true });
+    if (ui.scope) ui.scope.textContent = '최신 저장 데이터를 반영했습니다.';
+    return data;
+  })();
+  return wikiRefreshPromise.finally(() => { wikiRefreshPromise = null; });
+};
 window.restartKnowledgeMapPhysics = () => {
   if (!loadPromise) return window.initKnowledgeMap();
   buildGraph();
