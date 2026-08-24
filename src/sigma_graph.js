@@ -85,7 +85,7 @@ function syncMapResetButton() {
 
 function syncExplorerViewTooltip() {
   if (!ui.view) return;
-  const tooltip = '처음에는 핵심 연결만 보며 원하는 Node를 찾으세요. 더 넓게 비교하려면 전체 지식 맵 · 넓게 보기를 선택하세요.';
+  const tooltip = 'Node 선택 편의성을 위해 핵심 연결만 보며 관심 영역을 좁히세요. 더 많은 Node를 보려면 전체 지식 맵 · 넓게 보기를 선택하세요.';
   const tooltipHost = ui.view.closest('.sg-explorer-view');
   if (tooltipHost) tooltipHost.dataset.tooltip = tooltip;
   ui.view.removeAttribute('title');
@@ -159,7 +159,7 @@ function activeMapFilterContext() {
   if (selectedIndications.size) parts.push(`Main indication: ${[...selectedIndications].join(', ')}`);
   if (selectedTypes.size) parts.push(`표시할 항목: ${[...selectedTypes].map(type => TYPE_FILTER_LABEL[type] || type).join(', ')}`);
   if (selectedStages.size) parts.push(`조사 진행 단계: ${[...selectedStages].map(stage => STAGE_LABEL[stage] || stage).join(', ')}`);
-  parts.push(`연결 범위: ${depthValue} hop`);
+  parts.push(`Node 연결 범위: ${depthValue} hop`);
   return `[Knowledge Wiki Map 필터: ${parts.join(' · ')}]\n`;
 }
 

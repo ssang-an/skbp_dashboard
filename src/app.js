@@ -5221,8 +5221,8 @@ function focusActionButton(row, location = 'full') {
     },
     stationary: {
       action: 'remove',
-      title: 'Shortlisted · Stationary (보류 모니터링) · 클릭하여 Shortlisting에서 제거',
-      ariaLabel: 'Stationary 보류 모니터링 상태 · 클릭하여 Shortlisting에서 제거'
+      title: 'Shortlisting에는 적절하나, 현재 Partnership 검토를 보류할 제약이 있습니다. 클릭하여 Shortlisting에서 제거',
+      ariaLabel: 'Shortlisting 유지 · Partnership 검토 보류 상태 · 클릭하여 Shortlisting에서 제거'
     }
   }[trackingStatus];
   return `

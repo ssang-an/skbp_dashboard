@@ -650,7 +650,7 @@
         </section>
         <section class="kg-controls atlas-filter-panel" aria-label="Knowledge Wiki Map filters">
           <div class="atlas-filter-fields">
-            <label class="sg-explorer-view help-tooltip map-explorer-view-help" data-tooltip="처음에는 핵심 연결만 보며 원하는 Node를 찾으세요. 더 넓게 비교하려면 전체 지식 맵 · 넓게 보기를 선택하세요."><span>Map Display 조정</span><select id="sgView"><option value="overview" selected>Overview · 핵심 연결</option><option value="all">전체 지식 맵 · 넓게 보기</option></select></label>
+            <label class="sg-explorer-view help-tooltip map-explorer-view-help" data-tooltip="Node 선택 편의성을 위해 핵심 연결만 보며 관심 영역을 좁히세요. 더 많은 Node를 보려면 전체 지식 맵 · 넓게 보기를 선택하세요."><span>Map Display 조정</span><select id="sgView"><option value="overview" selected>Overview · 핵심 연결</option><option value="all">전체 지식 맵 · 넓게 보기</option></select></label>
             <label class="sg-keyword-filter">
               <span class="help-tooltip map-filter-label-help" tabindex="0" data-tooltip="구조화된 MoA 예: P2X3 receptor antagonism · TRPM7 antagonist · KCNQ2/3 activator. 원문에만 있는 표현은 검색되지 않을 수 있습니다.">검색</span>
               <div class="step0-search-composer">
@@ -668,7 +668,7 @@
             </div>
             <div id="sgTypeFilter" class="filter-multiselect" aria-label="Entity type filter"><span class="filter-multiselect-label help-tooltip map-filter-label-help" tabindex="0" data-tooltip="그래프를 시작할 정보 종류를 고릅니다. 예: Company를 고르면 회사와 연결된 정보를 중심으로 봅니다.">표시할 항목</span><button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false"><span data-sg-type-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button><div class="filter-multiselect-menu" role="listbox" aria-label="표시할 항목" aria-multiselectable="true" hidden></div></div>
             <div id="sgStageFilter" class="filter-multiselect" aria-label="조사 진행 단계 filter"><span class="filter-multiselect-label">조사 진행 단계</span><button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false"><span data-sg-stage-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button><div class="filter-multiselect-menu" role="listbox" aria-label="조사 진행 단계" aria-multiselectable="true" hidden></div></div>
-            <div id="sgDepthFilter" class="filter-multiselect sg-depth-filter" aria-label="Connection range filter"><span class="filter-multiselect-label help-tooltip map-filter-label-help" tabindex="0" data-tooltip="시작점에서 몇 단계까지 연결을 펼칠지 정합니다. 1 hop은 직접 연결만 보여줍니다.">연결 범위</span><button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false"><span data-sg-depth-summary>1 hop</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button><div class="filter-multiselect-menu" role="radiogroup" aria-label="연결 범위" hidden></div></div>
+            <div id="sgDepthFilter" class="filter-multiselect sg-depth-filter" aria-label="Node 연결 범위 filter"><span class="filter-multiselect-label help-tooltip map-filter-label-help" tabindex="0" data-tooltip="조건에 맞는 Pipeline 주변 Node 연결을 몇 단계까지 보여줄지 정합니다. 1 hop은 직접 연결입니다.">Node 연결 범위</span><button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false"><span data-sg-depth-summary>1 hop</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button><div class="filter-multiselect-menu" role="radiogroup" aria-label="Node 연결 범위" hidden></div></div>
             <button id="sgReset" class="filter-reset-button help-tooltip" type="button" data-tooltip="Knowledge Wiki Map 필터 초기화" aria-label="Knowledge Wiki Map 필터 초기화" disabled>↻</button>
             <div id="sgKeywordPills" class="step0-search-tokens is-controls-token-row sg-keyword-pills" aria-label="추가된 검색 조건" hidden></div>
           </div>
@@ -1390,7 +1390,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260824-stage-terminology-1"></script>
-  <script src="./src/sigma_graph.js?v=20260824-map-display-friendly-help-1" defer></script>
+  <script type="module" src="./src/app.js?v=20260824-shortlisting-stationary-tooltip-1"></script>
+  <script src="./src/sigma_graph.js?v=20260824-node-connection-range-1" defer></script>
   </body>
 </html>
