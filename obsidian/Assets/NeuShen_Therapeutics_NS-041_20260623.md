@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T11:53:17"
+generated_at: "2026-08-24T18:37:35"
 record_id: "NeuShen_Therapeutics_NS-041_20260623"
 company: "NeuShen Therapeutics"
 country: "China / United States operations"

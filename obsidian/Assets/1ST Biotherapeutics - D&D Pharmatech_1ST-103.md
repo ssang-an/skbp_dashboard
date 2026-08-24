@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T11:53:17"
+generated_at: "2026-08-24T18:37:35"
 record_id: "1ST Biotherapeutics / D&D Pharmatech_1ST-103"
 company: "1ST Biotherapeutics / D&D Pharmatech"
 country: "Republic of Korea"

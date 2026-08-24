@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-23T11:53:17"
+generated_at: "2026-08-24T18:37:35"
 record_id: "Threebrooks Therapeutics_3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)"
 company: "Threebrooks Therapeutics"
 country: "Republic of Korea"
@@ -1164,6 +1164,16 @@ Scientifically differentiated and data-rich preclinical TRPML1 program with curr
         "field": "collaboration.comments.tab0_contact",
         "previous_value": null,
         "new_value": null
+      },
+      {
+        "id": "48bed2b34e68420799e2cacba5fba26c",
+        "changed_at": "2026-08-24T09:37:33.933740+00:00",
+        "actor_ip": "system",
+        "actor_name": "",
+        "source": "cross_workflow_contact_sync",
+        "field": "collaboration.comments.tab0_contact",
+        "previous_value": null,
+        "new_value": null
       }
     ],
     "focus_management": {
@@ -1577,10 +1587,26 @@ Scientifically differentiated and data-rich preclinical TRPML1 program with curr
           "category": "contact_history",
           "import_key": "2ecd7b9c461bb0f0b34717a2cdc9f334e502db23df6df0237ec362e590d78ed0",
           "system_import": true
+        },
+        {
+          "id": "a35d5f1cd5a84a999170777ba768d3df",
+          "parent_id": null,
+          "author": "정주원",
+          "author_user_id": "",
+          "author_email": "",
+          "actor_ip": "system",
+          "body": "df",
+          "created_at": "2026-08-22T15:00:04.055430+00:00",
+          "updated_at": "2026-08-24T09:37:33.933670+00:00",
+          "source": "listing_contact_history",
+          "import_key": "9d0c1d689f72c177f2e77ad3f80b1c6a94b0039136b30204646289c2a0195218",
+          "system_import": true,
+          "category": "contact_history",
+          "label": "Tab 0 · Contact History"
         }
       ],
-      "updated_at": "2026-08-23T01:41:03.819539+00:00",
-      "comment_count": 2
+      "updated_at": "2026-08-24T09:37:33.933670+00:00",
+      "comment_count": 3
     },
     "pipeline_metadata": {
       "listed_at": "2026-08-22T15:00:04.055430+00:00",
