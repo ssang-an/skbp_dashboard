@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__BBB-targeted_deferoxamine_nanoparticle_to_remove_excess_brai
 modality: "[[06_Modalities_Platforms/Modality__Nanoparticle|Nanoparticle]]"
 indications:
   - "[[07_Indications/Indication__Parkinson's_Disease|Parkinson's Disease]]"
-scorecard: "[[10_Scorecards/Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fast_triage_20260623|Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fast_triage_20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fa_c92a4a95|Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fa_c92a4a95]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__CNS_손상_면역반응|CNS 손상 면역반응]]"
 total_score: 0
@@ -57,7 +57,7 @@ SELECT: full scout only if publication/patent exists.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fast_triage_20260623]]
+![[10_Scorecards/Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fa_c92a4a95]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ SELECT: full scout only if publication/patent exists.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | -/21 | Run Full Scout | [[10_Scorecards/Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fast_triage_20260623|Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fast_triage_20260623]] |
+| 20260623 | -/21 | Run Full Scout | [[10_Scorecards/Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fa_c92a4a95|Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fa_c92a4a95]] |
 
 ## 9. Raw Report
 

@@ -10,7 +10,7 @@ shortlisting: false
 tracking_status: ""
 oi_partnership_type: ""
 oi_partnership_label: ""
-contact: ""
+contact: "ChinaBio 2026"
 website: ""
 partner_materials: []
 tags:
@@ -25,9 +25,9 @@ tags:
 |---|---|
 | Company | CTFH |
 | Asset | FHND-1002 |
-| Listing added | - |
+| Listing added | 2026-08-23T13:23:26.405832+00:00 |
 | Website | - |
-| Contact | - |
+| Contact | ChinaBio 2026 |
 
 ## Workflow progress
 
@@ -55,4 +55,6 @@ tags:
 
 ## Operating comments
 
-- None
+- Listing Comment: IND Date 3Q2024
+Established Year1997
+NCDP Review

@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Transplantation_of_iPSC-_or_ESC-derived_neural_stem_cells_an
 modality: "[[06_Modalities_Platforms/Modality__Cell_therapy|Cell therapy]]"
 indications:
   - "[[07_Indications/Indication__Parkinson's_disease_and_broadly_described_degenerative_neurological_disease|Parkinson's disease and broadly described degenerative neurological disease]]"
-scorecard: "[[10_Scorecards/Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_Disease_Research_Program|Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_Disease_Research_Program]]"
+scorecard: "[[10_Scorecards/Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_D_6002e6c2|Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_D_6002e6c2]]"
 theme: "[[11_Themes_Clusters/Theme__Others|Others]]"
 cluster: "[[11_Themes_Clusters/Cluster__Others|Others]]"
 total_score: 10
@@ -57,7 +57,7 @@ CE223BR17 is an identity-verified active preclinical Parkinson's cell-therapy pr
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_Disease_Research_Program]]
+![[10_Scorecards/Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_D_6002e6c2]]
 
 ## 5. Knowledge Links
 
@@ -106,7 +106,7 @@ CE223BR17 is an identity-verified active preclinical Parkinson's cell-therapy pr
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260806 | 10/21 | Watch | [[10_Scorecards/Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_Disease_Research_Program|Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_Disease_Research_Program]] |
+| 20260806 | 10/21 | Watch | [[10_Scorecards/Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_D_6002e6c2|Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_D_6002e6c2]] |
 
 ## 9. Raw Report
 

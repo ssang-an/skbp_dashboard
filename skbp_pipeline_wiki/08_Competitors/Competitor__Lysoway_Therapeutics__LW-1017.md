@@ -33,7 +33,7 @@ Closest public competitor: same target/MoA, brain-penetrant small molecule, and 
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]: Closest public competitor: same target/MoA, brain-penetrant small molecule, and AD/PD positioning; clinical first mover.
+- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9|3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9]]: Closest public competitor: same target/MoA, brain-penetrant small molecule, and AD/PD positioning; clinical first mover.
 
 ## Sources
 

@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Undisclosed_bispecific_multispecific_antibody_approach|Undis
 modality: "[[06_Modalities_Platforms/Modality__Bispecific_Multi-specific_Antibodies|Bispecific/Multi-specific Antibodies]]"
 indications:
   - "[[07_Indications/Indication__Unspecified_Central_Nervous_System_Disorders|Unspecified Central Nervous System Disorders]]"
-scorecard: "[[10_Scorecards/Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fast_triage_20260623|Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fast_triage_20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fa_248fc074|Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fa_248fc074]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 0
@@ -57,7 +57,7 @@ REJECT: broad non-specific platform row.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fast_triage_20260623]]
+![[10_Scorecards/Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fa_248fc074]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ REJECT: broad non-specific platform row.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | -/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fast_triage_20260623|Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fast_triage_20260623]] |
+| 20260623 | -/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fa_248fc074|Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fa_248fc074]] |
 
 ## 9. Raw Report
 

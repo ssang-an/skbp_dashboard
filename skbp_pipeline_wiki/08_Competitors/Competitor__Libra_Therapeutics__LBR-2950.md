@@ -33,7 +33,7 @@ Same target/MoA and PD/ALS neurodegeneration positioning; shows a crowded late-p
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]: Same target/MoA and PD/ALS neurodegeneration positioning; shows a crowded late-preclinical TRPML1 field.
+- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9|3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9]]: Same target/MoA and PD/ALS neurodegeneration positioning; shows a crowded late-preclinical TRPML1 field.
 
 ## Sources
 

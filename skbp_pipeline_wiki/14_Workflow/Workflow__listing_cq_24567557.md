@@ -10,7 +10,7 @@ shortlisting: false
 tracking_status: ""
 oi_partnership_type: ""
 oi_partnership_label: ""
-contact: ""
+contact: "ChinaBio 2026"
 website: ""
 partner_materials: []
 tags:
@@ -25,9 +25,9 @@ tags:
 |---|---|
 | Company | Artvila Biopharma |
 | Asset | Artvila-RIPK |
-| Listing added | - |
+| Listing added | 2026-08-23T13:23:26.405832+00:00 |
 | Website | - |
-| Contact | - |
+| Contact | ChinaBio 2026 |
 
 ## Workflow progress
 
@@ -55,4 +55,8 @@ tags:
 
 ## Operating comments
 
-- None
+- Listing Comment: Platform:  ArtChat, ArtMol, ArtDDr
+Series A
+Investment raised $15M
+Total raised $57M
+IPO ('27)

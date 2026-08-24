@@ -32,8 +32,8 @@ confidence: "medium"
 
 ## Used In
 
-- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]
-- [[10_Scorecards/Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__Threebrooks_Therapeutics_3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__Threebrooks_Therapeutics_3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]
+- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9|Asset__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9]]
+- [[10_Scorecards/Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9__Threebrooks_Therapeutics_3BT-1_(TRPML1_agon_5bac4bf3|Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9__Threebrooks_Therapeutics_3BT-1_(TRPML1_agon_5bac4bf3]]
 
 ## Extracted Claims
 

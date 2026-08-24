@@ -10,7 +10,7 @@ shortlisting: false
 tracking_status: ""
 oi_partnership_type: ""
 oi_partnership_label: ""
-contact: ""
+contact: "ChinaBio 2026"
 website: ""
 partner_materials: []
 tags:
@@ -25,9 +25,9 @@ tags:
 |---|---|
 | Company | PSK Bioscience |
 | Asset | PSK-01 |
-| Listing added | - |
+| Listing added | 2026-08-23T13:23:26.405832+00:00 |
 | Website | - |
-| Contact | - |
+| Contact | ChinaBio 2026 |
 
 ## Workflow progress
 
@@ -55,4 +55,9 @@ tags:
 
 ## Operating comments
 
-- None
+- Listing Comment: Delivery RBP mediated
+IND Date 4Q2027
+Profile - 10 days post dosing, 60% knockdown achieved
+- B/P ratio = ~2.0
+- Nasal administration, Q3D
+Platform: SGRL-Exo

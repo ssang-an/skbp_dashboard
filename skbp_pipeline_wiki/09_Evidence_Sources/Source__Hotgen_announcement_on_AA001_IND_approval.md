@@ -32,8 +32,8 @@ confidence: "medium"
 
 ## Used In
 
-- [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology|Asset__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]
-- [[10_Scorecards/Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__Beijing_Hotgen_Biotech_Co.,_Ltd._Alzheimer's_disease_therapy,_Beijing_Y_380acfa6|Scorecard__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology__Beijing_Hotgen_Biotech_Co.,_Ltd._Alzheimer's_disease_therapy,_Beijing_Y_380acfa6]]
+- [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Younge_9dedbd5d|Asset__Alzheimer's_disease_therapy,_Beijing_Younge_9dedbd5d]]
+- [[10_Scorecards/Scorecard__Alzheimer's_disease_therapy,_Beijing_Younge_9dedbd5d__Beijing_Hotgen_Biotech_Co.,_Ltd._Alzheimer'_380acfa6|Scorecard__Alzheimer's_disease_therapy,_Beijing_Younge_9dedbd5d__Beijing_Hotgen_Biotech_Co.,_Ltd._Alzheimer'_380acfa6]]
 
 ## Extracted Claims
 

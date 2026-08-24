@@ -10,7 +10,7 @@ shortlisting: false
 tracking_status: ""
 oi_partnership_type: ""
 oi_partnership_label: ""
-contact: ""
+contact: "Via agency, 202606"
 website: ""
 partner_materials: []
 tags:
@@ -25,9 +25,9 @@ tags:
 |---|---|
 | Company | Groovy Medicine |
 | Asset | GW-07 |
-| Listing added | - |
+| Listing added | 2026-08-23T13:23:26.405832+00:00 |
 | Website | - |
-| Contact | - |
+| Contact | Via agency, 202606 |
 
 ## Workflow progress
 
@@ -55,4 +55,8 @@ tags:
 
 ## Operating comments
 
-- None
+- Listing Comment: Platform:  AIDD platform featuring molecular simulation engines, predictive modeling, compound screening systems, and target validation modules. Primary focus on treating major diseases like cancer and neurodegenerative disorders
+Est Year 2022
+Series A
+Investment raised $several millions
+Discuss with OIC

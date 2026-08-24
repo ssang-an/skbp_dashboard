@@ -55,7 +55,7 @@ A reusable biology axis under a Theme that supports repeated target discovery an
 - [[02_Assets/Asset__AXN-1901|AXN-1901]]
 - [[02_Assets/Asset__AZBE53206|AZBE53206]]
 - [[02_Assets/Asset__Alzheimer's_Disease|Alzheimer's_Disease]]
-- [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology|Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]
+- [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Younge_9dedbd5d|Alzheimer's_disease_therapy,_Beijing_Younge_9dedbd5d]]
 - [[02_Assets/Asset__Alzheimer's_disease_vaccine_(PADIVAX+)|Alzheimer's_disease_vaccine_(PADIVAX+)]]
 - [[02_Assets/Asset__BEY4101A|BEY4101A]]
 - [[02_Assets/Asset__BMD-002|BMD-002]]

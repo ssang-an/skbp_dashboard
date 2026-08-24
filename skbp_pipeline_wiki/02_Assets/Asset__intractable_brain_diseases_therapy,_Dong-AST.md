@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
 indications:
   - "[[07_Indications/Indication__Unknown|Unknown]]"
-scorecard: "[[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST|Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST]]"
+scorecard: "[[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therap_673c8e95|Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therap_673c8e95]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 0
@@ -57,7 +57,7 @@ Generic collaboration topic; exact asset identity is missing.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST]]
+![[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therap_673c8e95]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ Generic collaboration topic; exact asset identity is missing.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260820 | 0/21 | Verify asset identity | [[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST|Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST]] |
+| 20260820 | 0/21 | Verify asset identity | [[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therap_673c8e95|Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therap_673c8e95]] |
 
 ## 9. Raw Report
 

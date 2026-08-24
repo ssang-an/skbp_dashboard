@@ -35,7 +35,7 @@ confidence: "medium"
 - [[02_Assets/Asset__CNS_XDC|Asset__CNS_XDC]]
 - [[02_Assets/Asset__Next-Generation_Biologics|Asset__Next-Generation_Biologics]]
 - [[10_Scorecards/Scorecard__CNS_XDC__Harbour_BioMed_CNS_XDC_fast_triage_20260623|Scorecard__CNS_XDC__Harbour_BioMed_CNS_XDC_fast_triage_20260623]]
-- [[10_Scorecards/Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fast_triage_20260623|Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fast_triage_20260623]]
+- [[10_Scorecards/Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fa_248fc074|Scorecard__Next-Generation_Biologics__Harbour_BioMed_Next_Generation_Biologics_fa_248fc074]]
 
 ## Extracted Claims
 

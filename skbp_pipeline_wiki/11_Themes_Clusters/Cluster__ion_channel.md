@@ -31,7 +31,7 @@ A reusable biology axis under a Theme that supports repeated target discovery an
 
 ## Related Assets
 
-- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]
+- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9|3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9]]
 - [[02_Assets/Asset__ABS-1230|ABS-1230]]
 - [[02_Assets/Asset__AST-001_(Speragen)|AST-001_(Speragen)]]
 - [[02_Assets/Asset__Azetukalner_XEN1101|Azetukalner_XEN1101]]

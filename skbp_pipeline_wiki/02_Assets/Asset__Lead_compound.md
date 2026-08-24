@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown_microglia_modulation|Unknown microglia modulation]]"
 modality: "[[06_Modalities_Platforms/Modality__Fusion_Protein|Fusion Protein]]"
 indications:
   - "[[07_Indications/Indication__Parkinson's_Disease|Parkinson's Disease]]"
-scorecard: "[[10_Scorecards/Scorecard__Lead_compound__Hanyang_University_Lead_compound_fast_triage_20260623|Scorecard__Lead_compound__Hanyang_University_Lead_compound_fast_triage_20260623]]"
+scorecard: "[[10_Scorecards/Scorecard__Lead_compound__Hanyang_University_Lead_compound_fast_triag_e0a52b68|Scorecard__Lead_compound__Hanyang_University_Lead_compound_fast_triag_e0a52b68]]"
 theme: "[[11_Themes_Clusters/Theme__Neuroimmune|Neuroimmune]]"
 cluster: "[[11_Themes_Clusters/Cluster__교세포_향상성|교세포 향상성]]"
 total_score: 0
@@ -57,7 +57,7 @@ REJECT: generic identity and sparse evidence.
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__Lead_compound__Hanyang_University_Lead_compound_fast_triage_20260623]]
+![[10_Scorecards/Scorecard__Lead_compound__Hanyang_University_Lead_compound_fast_triag_e0a52b68]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ REJECT: generic identity and sparse evidence.
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260623 | -/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__Lead_compound__Hanyang_University_Lead_compound_fast_triage_20260623|Scorecard__Lead_compound__Hanyang_University_Lead_compound_fast_triage_20260623]] |
+| 20260623 | -/21 | Do not run Full Scout | [[10_Scorecards/Scorecard__Lead_compound__Hanyang_University_Lead_compound_fast_triag_e0a52b68|Scorecard__Lead_compound__Hanyang_University_Lead_compound_fast_triag_e0a52b68]] |
 
 ## 9. Raw Report
 

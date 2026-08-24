@@ -28,7 +28,7 @@ confidence: "medium"
 - [[02_Assets/Asset__ATB-501|ATB-501]]
 - [[02_Assets/Asset__AZBE53206|AZBE53206]]
 - [[02_Assets/Asset__Alzheimer's_Disease|Alzheimer's_Disease]]
-- [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology|Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]
+- [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Younge_9dedbd5d|Alzheimer's_disease_therapy,_Beijing_Younge_9dedbd5d]]
 - [[02_Assets/Asset__CPB102|CPB102]]
 - [[02_Assets/Asset__CPB103|CPB103]]
 - [[02_Assets/Asset__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Drug_to_Inhibit_Tau_for_Alzheimer's_Disease]]

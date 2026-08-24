@@ -37,7 +37,7 @@ A cross-disease strategic biology theme used for SKBP Theme-based R&D strategy.
 - [[02_Assets/Asset__ADEL-Y04|ADEL-Y04]]
 - [[02_Assets/Asset__AS-M801|AS-M801]]
 - [[02_Assets/Asset__BSC-3301|BSC-3301]]
-- [[02_Assets/Asset__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection|Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection]]
+- [[02_Assets/Asset__Fusion_Protein_for_Allergic_Asthma,_Multipl_32d103de|Fusion_Protein_for_Allergic_Asthma,_Multipl_32d103de]]
 - [[02_Assets/Asset__GV1001|GV1001]]
 - [[02_Assets/Asset__HB-02|HB-02]]
 - [[02_Assets/Asset__HB-03|HB-03]]

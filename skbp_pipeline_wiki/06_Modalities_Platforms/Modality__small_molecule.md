@@ -25,7 +25,7 @@ confidence: "medium"
 - [[02_Assets/Asset__1ST-103|1ST-103]]
 - [[02_Assets/Asset__1ST-103_(NLY02)|1ST-103_(NLY02)]]
 - [[02_Assets/Asset__1ST-104|1ST-104]]
-- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]
+- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9|3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9]]
 - [[02_Assets/Asset__AB-ASD-003|AB-ASD-003]]
 - [[02_Assets/Asset__ACL-513_(CKD-513)|ACL-513_(CKD-513)]]
 - [[02_Assets/Asset__AON-PP23|AON-PP23]]

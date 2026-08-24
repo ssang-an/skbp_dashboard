@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__CE223BR17_Parkinson's_Disease_Research_Program|Asset__CE223BR17_Parkinson's_Disease_Research_Program]]
-- [[10_Scorecards/Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_Disease_Research_Program|Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_Disease_Research_Program]]
+- [[10_Scorecards/Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_D_6002e6c2|Scorecard__CE223BR17_Parkinson's_Disease_Research_Program__CorestemChemon_Inc._CE223BR17_Parkinson's_D_6002e6c2]]
 
 ## Extracted Claims
 

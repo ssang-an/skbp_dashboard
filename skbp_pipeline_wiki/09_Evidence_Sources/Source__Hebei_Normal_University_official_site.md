@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__glycoprotein_29-modified_deferoxamine|Asset__glycoprotein_29-modified_deferoxamine]]
-- [[10_Scorecards/Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fast_triage_20260623|Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fast_triage_20260623]]
+- [[10_Scorecards/Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fa_c92a4a95|Scorecard__glycoprotein_29-modified_deferoxamine__Hebei_Normal_University_DFO_nanoparticle_fa_c92a4a95]]
 
 ## Extracted Claims
 

@@ -5,7 +5,7 @@
 | [[02_Assets/Asset__1ST-103|1ST-103]] | 7 | Run Full Scout | E0 |
 | [[02_Assets/Asset__1ST-103_(NLY02)|1ST-103 (NLY02)]] | 7 | Run Full Scout | E0 |
 | [[02_Assets/Asset__1ST-104|1ST-104]] | 12 | Watch | E3 |
-| [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)]] | 17 | Shortlist | E3 |
+| [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9|3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)]] | 17 | Shortlist | E3 |
 | [[02_Assets/Asset__AB-12_(IV)|AB-12 (IV)]] | 8 | Run Full Scout | E0 |
 | [[02_Assets/Asset__AB-AD-002|AB-AD-002]] | 0 | Verify asset identity | E0 |
 | [[02_Assets/Asset__AB-ASD-003|AB-ASD-003]] | 1 | Do not run Full Scout | E0 |
@@ -33,7 +33,7 @@
 | [[02_Assets/Asset__AXN-1901|AXN-1901]] | 3 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__AZBE53206|AZBE53206]] | 0 | Verify asset identity | E0 |
 | [[02_Assets/Asset__Alzheimer's_Disease|Alzheimer's Disease]] | 0 | Verify asset identity | E0 |
-| [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology|Alzheimer's disease therapy, Beijing Youngen Biotechnology]] | 0 | Verify asset identity | E0 |
+| [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Younge_9dedbd5d|Alzheimer's disease therapy, Beijing Youngen Biotechnology]] | 0 | Verify asset identity | E0 |
 | [[02_Assets/Asset__Alzheimer's_disease_vaccine_(PADIVAX+)|Alzheimer's disease vaccine (PADIVAX+)]] | 5 | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__Aukontals|Aukontals]] | 5 | Run Full Scout | E0 |
 | [[02_Assets/Asset__Azetukalner_XEN1101|Azetukalner / XEN1101]] |  | Run Full Scout | E0 |
@@ -68,7 +68,7 @@
 | [[02_Assets/Asset__DM3190|DM3190]] | 6 | Run Full Scout | E0 |
 | [[02_Assets/Asset__Drug_to_Inhibit_Tau_for_Alzheimer's_Disease|Drug to Inhibit Tau for Alzheimer's Disease]] | 0 | Verify asset identity | E0 |
 | [[02_Assets/Asset__ETX101|ETX101]] |  | Run Full Scout | E0 |
-| [[02_Assets/Asset__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection|Fusion Protein for Allergic Asthma, Multiple Sclerosis and Transplant Rejection]] |  | Do not run Full Scout | E0 |
+| [[02_Assets/Asset__Fusion_Protein_for_Allergic_Asthma,_Multipl_32d103de|Fusion Protein for Allergic Asthma, Multiple Sclerosis and Transplant Rejection]] |  | Do not run Full Scout | E0 |
 | [[02_Assets/Asset__GO-102|GO-102]] | 8 | Run Full Scout | E0 |
 | [[02_Assets/Asset__GV1001|GV1001]] | 9 | Run Full Scout | E0 |
 | [[02_Assets/Asset__GXC-303|GXC-303]] | 7 | Run Full Scout | E0 |

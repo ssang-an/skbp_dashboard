@@ -7,10 +7,10 @@ tags:
   - "skbp/scoring"
 created_at: "2026-08-23"
 updated_at: "2026-08-23"
-source_report: "[[01_Raw_Reports/Beijing_Hotgen_Biotech_Co.,_Ltd._Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]"
+source_report: "[[01_Raw_Reports/Beijing_Hotgen_Biotech_Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]"
 source_json: "json/pipeline-records.json"
-asset: "[[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology|Alzheimer's disease therapy, Beijing Youngen Biotechnology]]"
-company: "[[03_Companies/Company__Beijing_Hotgen_Biotech_Co.,_Ltd|Beijing Hotgen Biotech Co., Ltd.]]"
+asset: "[[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Younge_9dedbd5d|Alzheimer's disease therapy, Beijing Youngen Biotechnology]]"
+company: "[[03_Companies/Company__Beijing_Hotgen_Biotech|Beijing Hotgen Biotech]]"
 total_score: 0
 max_score: 9
 recommendation: "Verify asset identity"
@@ -22,12 +22,12 @@ recommendation: "Verify asset identity"
 
 | Criterion | Score | Evidence Type | One-line Judgment | Why Not Higher |
 |---|---:|---|---|---|
-| Target Relevance | 0 | triage_only | TR 0점: 특정 자산의 적응증으로 귀속할 수 없습니다. | 자산 identity가 먼저 확정돼야 합니다. |
+| Target Relevance | 0 | triage_only | TR 0점: No specific asset identity is verified. | - |
 | Competitive Landscape | - | - | - | - |
-| MoA Validity | 0 | triage_only | MOA 0점: 특정 자산의 표적·기전을 확정할 수 없습니다. | APP-siRNA와 Aβ 항체는 서로 다른 프로그램입니다. |
+| MoA Validity | 0 | triage_only | MOA 0점: Mapping to APP-siRNA or AA001 would be an unsupported substitution. | - |
 | Platform Attractiveness | - | - | - | - |
 | Expansion Potential | - | - | - | - |
-| Data Maturity | 0 | triage_only | Data 0점: 평가 대상 자산 자체가 정해지지 않았습니다. | 후보별 데이터는 현재 행에 귀속할 수 없습니다. |
+| Data Maturity | 0 | triage_only | Data 0점: No result is tied to this exact label. | - |
 | Marketability | - | - | - | - |
 
 | Total | Value |
@@ -42,11 +42,11 @@ recommendation: "Verify asset identity"
 
 - Score: 0/3
 - Evidence Type: triage_only
-- Reason: TR 0점: 특정 자산의 적응증으로 귀속할 수 없습니다.
-- Evidence type reason: Fast Triage v3.3 예비 평가.
-- Why not higher: 자산 identity가 먼저 확정돼야 합니다.
+- Reason: TR 0점: No specific asset identity is verified.
+- Evidence type reason: TR 0점: No specific asset identity is verified.
+- Why not higher: -
 - Uncertain points:
-- 후보 자산 2개가 충돌
+- None
 
 ### Competitive Landscape
 
@@ -62,11 +62,11 @@ recommendation: "Verify asset identity"
 
 - Score: 0/3
 - Evidence Type: triage_only
-- Reason: MOA 0점: 특정 자산의 표적·기전을 확정할 수 없습니다.
-- Evidence type reason: Fast Triage v3.3 예비 평가.
-- Why not higher: APP-siRNA와 Aβ 항체는 서로 다른 프로그램입니다.
+- Reason: MOA 0점: Mapping to APP-siRNA or AA001 would be an unsupported substitution.
+- Evidence type reason: MOA 0점: Mapping to APP-siRNA or AA001 would be an unsupported substitution.
+- Why not higher: -
 - Uncertain points:
-- 프로그램 혼합
+- None
 
 ### Platform Attractiveness
 
@@ -92,9 +92,9 @@ recommendation: "Verify asset identity"
 
 - Score: 0/3
 - Evidence Type: triage_only
-- Reason: Data 0점: 평가 대상 자산 자체가 정해지지 않았습니다.
-- Evidence type reason: Fast Triage v3.3 예비 평가.
-- Why not higher: 후보별 데이터는 현재 행에 귀속할 수 없습니다.
+- Reason: Data 0점: No result is tied to this exact label.
+- Evidence type reason: Data 0점: No result is tied to this exact label.
+- Why not higher: -
 - Uncertain points:
 - None
 
@@ -132,4 +132,4 @@ Commercial rationale status: `-`
 
 ## 6. Final Recommendation
 
-서로 다른 두 AD 프로그램이 혼합된 입력으로 자산 신원 확인이 우선입니다.
+UNVERIFIED: generic description cannot be mapped to one asset.

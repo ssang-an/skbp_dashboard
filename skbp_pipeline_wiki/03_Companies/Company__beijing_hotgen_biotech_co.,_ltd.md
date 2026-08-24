@@ -28,7 +28,7 @@ confidence: "medium"
 
 ## Pipeline Assets
 
-- [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology|Alzheimer's_disease_therapy,_Beijing_Youngen_Biotechnology]]
+- [[02_Assets/Asset__Alzheimer's_disease_therapy,_Beijing_Younge_9dedbd5d|Alzheimer's_disease_therapy,_Beijing_Younge_9dedbd5d]]
 
 ## Platform / Technology
 

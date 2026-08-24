@@ -19,7 +19,7 @@ moa: "[[05_MoA/MoA__Unknown|Unknown]]"
 modality: "[[06_Modalities_Platforms/Modality__Unknown|Unknown]]"
 indications:
   - "[[07_Indications/Indication__Unknown|Unknown]]"
-scorecard: "[[10_Scorecards/Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_Diseases_Lilly|Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_Diseases_Lilly]]"
+scorecard: "[[10_Scorecards/Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_9e279b02|Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_9e279b02]]"
 theme: "[[11_Themes_Clusters/Theme__Unknown|Unknown]]"
 cluster: "[[11_Themes_Clusters/Cluster__Unknown|Unknown]]"
 total_score: 0
@@ -57,7 +57,7 @@ evidence_level: "E0"
 
 ## 4. Scorecard
 
-![[10_Scorecards/Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_Diseases_Lilly]]
+![[10_Scorecards/Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_9e279b02]]
 
 ## 5. Knowledge Links
 
@@ -87,7 +87,7 @@ evidence_level: "E0"
 
 | Date | Total Score | Recommendation | Scorecard |
 |---|---:|---|---|
-| 20260806 | 0/21 | Verify asset identity | [[10_Scorecards/Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_Diseases_Lilly|Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_Diseases_Lilly]] |
+| 20260806 | 0/21 | Verify asset identity | [[10_Scorecards/Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_9e279b02|Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_9e279b02]] |
 
 ## 9. Raw Report
 

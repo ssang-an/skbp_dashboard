@@ -25,7 +25,7 @@ tags:
 |---|---|
 | Company | Genescience |
 | Asset | GenSciP165 |
-| Listing added | - |
+| Listing added | 2026-08-23T13:23:26.405832+00:00 |
 | Website | - |
 | Contact | - |
 
@@ -55,4 +55,4 @@ tags:
 
 ## Operating comments
 
-- None
+- Listing Comment: Delivery VHH

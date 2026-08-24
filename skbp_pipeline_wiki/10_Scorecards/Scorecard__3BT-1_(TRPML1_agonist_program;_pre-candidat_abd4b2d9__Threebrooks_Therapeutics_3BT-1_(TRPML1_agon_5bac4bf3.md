@@ -9,7 +9,7 @@ created_at: "2026-08-23"
 updated_at: "2026-08-23"
 source_report: "[[01_Raw_Reports/Threebrooks_Therapeutics_3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]"
 source_json: "json/pipeline-records.json"
-asset: "[[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)]]"
+asset: "[[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9|3BT-1 (TRPML1 agonist program; pre-candidate 3BT-1-115)]]"
 company: "[[03_Companies/Company__Threebrooks_Therapeutics|Threebrooks Therapeutics]]"
 total_score: 17
 max_score: 21

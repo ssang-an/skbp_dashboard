@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__intractable_brain_diseases_therapy,_Dong-AST|Asset__intractable_brain_diseases_therapy,_Dong-AST]]
-- [[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST|Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therapy,_Dong-AST]]
+- [[10_Scorecards/Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therap_673c8e95|Scorecard__intractable_brain_diseases_therapy,_Dong-AST__Dong-A_ST_intractable_brain_diseases_therap_673c8e95]]
 
 ## Extracted Claims
 

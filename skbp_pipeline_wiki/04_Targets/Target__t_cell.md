@@ -31,7 +31,7 @@ confidence: "medium"
 
 ## Related Assets
 
-- [[02_Assets/Asset__Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection|Fusion_Protein_for_Allergic_Asthma,_Multiple_Sclerosis_and_Transplant_Rejection]]
+- [[02_Assets/Asset__Fusion_Protein_for_Allergic_Asthma,_Multipl_32d103de|Fusion_Protein_for_Allergic_Asthma,_Multipl_32d103de]]
 
 ## Related MoA
 

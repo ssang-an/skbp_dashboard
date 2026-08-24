@@ -32,10 +32,10 @@ confidence: "medium"
 
 ## Used In
 
-- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]
+- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9|Asset__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9]]
 - [[02_Assets/Asset__HY209_NuCerin|Asset__HY209_NuCerin]]
 - [[02_Assets/Asset__ILM01_(GAIA-Aβ)|Asset__ILM01_(GAIA-Aβ)]]
-- [[10_Scorecards/Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__Threebrooks_Therapeutics_3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)__Threebrooks_Therapeutics_3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]
+- [[10_Scorecards/Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9__Threebrooks_Therapeutics_3BT-1_(TRPML1_agon_5bac4bf3|Scorecard__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9__Threebrooks_Therapeutics_3BT-1_(TRPML1_agon_5bac4bf3]]
 - [[10_Scorecards/Scorecard__HY209_NuCerin__Shaperon_HY209_NuCerin_20260622|Scorecard__HY209_NuCerin__Shaperon_HY209_NuCerin_20260622]]
 - [[10_Scorecards/Scorecard__ILM01_(GAIA-Aβ)__Illimis_Therapeutics_ILM01_20260621|Scorecard__ILM01_(GAIA-Aβ)__Illimis_Therapeutics_ILM01_20260621]]
 

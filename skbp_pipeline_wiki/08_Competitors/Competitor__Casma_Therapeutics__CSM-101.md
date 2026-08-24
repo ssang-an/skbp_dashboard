@@ -33,7 +33,7 @@ Oral CNS-penetrant same-target program with PD overlap and translational biomark
 
 ## Similarity to Reviewed Assets
 
-- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)|3BT-1_(TRPML1_agonist_program;_pre-candidate_3BT-1-115)]]: Oral CNS-penetrant same-target program with PD overlap and translational biomarker/IND-enabling work supported by MJFF.
+- [[02_Assets/Asset__3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9|3BT-1_(TRPML1_agonist_program;_pre-candidat_abd4b2d9]]: Oral CNS-penetrant same-target program with PD overlap and translational biomarker/IND-enabling work supported by MJFF.
 
 ## Sources
 

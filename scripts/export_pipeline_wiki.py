@@ -147,8 +147,10 @@ def display(value: Any, fallback: str = "-") -> str:
     if value is None or value == "":
         return fallback
     if isinstance(value, list):
-        return ", ".join(str(item) for item in value) if value else fallback
-    return str(value)
+        text = ", ".join(str(item) for item in value)
+    else:
+        text = str(value)
+    return text.strip() or fallback
 
 
 def get(record: dict[str, Any], path: str, fallback: Any = "") -> Any:
@@ -339,6 +341,17 @@ def record_date(record: dict[str, Any]) -> str:
     return date.today().strftime("%Y%m%d")
 
 
+def export_date() -> str:
+    """Use the source dataset's modified date for stable repeated local exports.
+
+    Using today's date made an otherwise unchanged vault appear fully modified on
+    every export.  The source JSON timestamp keeps the generated-note provenance
+    stable while the same working dataset is being reviewed.
+    """
+
+    return datetime.fromtimestamp(DATA_FILE.stat().st_mtime).date().isoformat()
+
+
 def asset_title(record: dict[str, Any]) -> str:
     return display(
         get(record, "json_summary.asset_name")
@@ -396,8 +409,8 @@ def asset_file(record: dict[str, Any]) -> str:
     aliases = get(record, "obsidian.aliases", [])
     alias_suffix = ""
     if isinstance(aliases, list) and len(aliases) > 1:
-        alias_suffix = "__" + slug(aliases[1])
-    return "Asset__" + slug(asset_title(record)) + alias_suffix
+        alias_suffix = "__" + slug(aliases[1], max_length=36)
+    return "Asset__" + slug(asset_title(record), max_length=52) + alias_suffix
 
 
 def company_file(name: str) -> str:
@@ -421,7 +434,10 @@ def indication_file(name: str) -> str:
 
 
 def competitor_file(company: str, asset: str) -> str:
-    return "Competitor__" + slug(company) + "__" + slug(asset)
+    # These two user-supplied labels can both be lengthy. Keep the combined
+    # filename comfortably below Windows' path limit while retaining a stable
+    # hash suffix whenever either segment is shortened.
+    return "Competitor__" + slug(company, max_length=52) + "__" + slug(asset, max_length=52)
 
 
 def source_file(title: str, url: str | None = None) -> str:
@@ -430,7 +446,10 @@ def source_file(title: str, url: str | None = None) -> str:
 
 
 def scorecard_file(record: dict[str, Any]) -> str:
-    return "Scorecard__" + slug(asset_title(record)) + "__" + slug(record_identifier(record))
+    # Scorecards combine an Asset title and review identifier, so using the
+    # generic 80-character slug twice produced filenames that fail checkout on
+    # standard Windows installations.
+    return "Scorecard__" + slug(asset_title(record), max_length=52) + "__" + slug(record_identifier(record), max_length=52)
 
 
 def review_file(record: dict[str, Any]) -> str:
@@ -630,8 +649,8 @@ def render_asset_note(record: dict[str, Any], raw_file: str) -> str:
             "title": asset,
             "aliases": aliases,
             "tags": ["pipeline/asset", "skbp/pipeline_finder", f"theme/{slug(theme).lower()}"] + tags,
-            "created_at": date.today().isoformat(),
-            "updated_at": date.today().isoformat(),
+            "created_at": export_date(),
+            "updated_at": export_date(),
             "source_report": wikilink(note_path("01_Raw_Reports", raw_file[:-3])),
             "source_json": "json/pipeline-records.json",
             "status": "active",
@@ -749,8 +768,8 @@ def render_scorecard_note(record: dict[str, Any], raw_file: str) -> str:
             "canonical_id": node_id("scorecard", f"{asset}::{record_date(record)}"),
             "title": f"Scorecard - {asset}",
             "tags": ["pipeline/scorecard", "skbp/scoring"],
-            "created_at": date.today().isoformat(),
-            "updated_at": date.today().isoformat(),
+            "created_at": export_date(),
+            "updated_at": export_date(),
             "source_report": wikilink(note_path("01_Raw_Reports", raw_file[:-3])),
             "source_json": "json/pipeline-records.json",
             "asset": wikilink(note_path("02_Assets", asset_file(record)), asset),
@@ -978,7 +997,10 @@ def render_workflow_note(workflow: dict[str, Any]) -> str:
         f"| {stage} | {'Complete' if complete else '-'} | {wikilink(note_path('14_Workflow', 'Stage__' + slug(stage)), stage)} |"
         for stage, complete in flags.items()
     )
-    comment_lines = "\n".join(f"- {item}" for item in workflow["comments"]) or "- None"
+    comment_lines = "\n".join(
+        f"- {chr(10).join(line.rstrip() for line in str(item).strip().splitlines())}"
+        for item in workflow["comments"]
+    ) or "- None"
     return f"""---
 type: \"pipeline_workflow\"
 pipeline_identity: {yaml_value(workflow['identity'])}
@@ -1046,8 +1068,8 @@ def render_company_note(name: str, asset_files: set[str], records: list[dict[str
             "title": name,
             "aliases": [name],
             "tags": ["pipeline/company"],
-            "created_at": date.today().isoformat(),
-            "updated_at": date.today().isoformat(),
+            "created_at": export_date(),
+            "updated_at": export_date(),
             "source_report": None,
             "source_json": "json/pipeline-records.json",
             "status": "active",
@@ -1101,8 +1123,8 @@ def render_target_note(name: str, asset_files: set[str], records: list[dict[str,
             "title": name,
             "aliases": [name],
             "tags": ["pipeline/target", f"theme/{slug(theme).lower()}"],
-            "created_at": date.today().isoformat(),
-            "updated_at": date.today().isoformat(),
+            "created_at": export_date(),
+            "updated_at": export_date(),
             "source_report": None,
             "source_json": "json/pipeline-records.json",
             "status": "active",
@@ -1167,8 +1189,8 @@ def render_simple_entity_note(kind: str, name: str, asset_files: set[str], recor
             "title": name,
             "aliases": [name],
             "tags": [f"pipeline/{kind}"],
-            "created_at": date.today().isoformat(),
-            "updated_at": date.today().isoformat(),
+            "created_at": export_date(),
+            "updated_at": export_date(),
             "source_report": None,
             "source_json": "json/pipeline-records.json",
             "status": "active",
@@ -1214,8 +1236,8 @@ def render_competitor_note(comp: dict[str, Any], reviewed_asset_file: str) -> tu
             "title": asset,
             "aliases": [asset],
             "tags": ["pipeline/competitor"],
-            "created_at": date.today().isoformat(),
-            "updated_at": date.today().isoformat(),
+            "created_at": export_date(),
+            "updated_at": export_date(),
             "source_report": None,
             "source_json": "json/pipeline-records.json",
             "status": "active",
@@ -1263,8 +1285,8 @@ def render_source_note(source: dict[str, Any], used_in: set[str]) -> tuple[str, 
             "title": title,
             "aliases": [title],
             "tags": ["pipeline/source", f"source/{slug(source.get('source_type', 'other')).lower()}"],
-            "created_at": date.today().isoformat(),
-            "updated_at": date.today().isoformat(),
+            "created_at": export_date(),
+            "updated_at": export_date(),
             "source_report": None,
             "source_json": "json/pipeline-records.json",
             "status": "active",
@@ -1282,7 +1304,7 @@ def render_source_note(source: dict[str, Any], used_in: set[str]) -> tuple[str, 
 | Source type | {md_cell(source.get("source_type", "other"))} |
 | Reliability | {md_cell(source.get("reliability", "medium" if url else "low"))} |
 | URL | {md_cell(url or "No URL provided")} |
-| Accessed / generated date | {date.today().isoformat()} |
+| Accessed / generated date | {export_date()} |
 
 ## Evidence Summary
 
@@ -1311,8 +1333,8 @@ def render_theme_cluster_note(kind: str, name: str, asset_files: set[str]) -> st
             "title": name,
             "aliases": [name],
             "tags": [f"skbp/{kind}", "skbp/taxonomy"],
-            "created_at": date.today().isoformat(),
-            "updated_at": date.today().isoformat(),
+            "created_at": export_date(),
+            "updated_at": export_date(),
             "source_report": None,
             "source_json": "json/pipeline-records.json",
             "status": "active",

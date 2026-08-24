@@ -33,7 +33,7 @@ confidence: "medium"
 ## Used In
 
 - [[02_Assets/Asset__Neurodegenerative_Diseases_Lilly|Asset__Neurodegenerative_Diseases_Lilly]]
-- [[10_Scorecards/Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_Diseases_Lilly|Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_Diseases_Lilly]]
+- [[10_Scorecards/Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_9e279b02|Scorecard__Neurodegenerative_Diseases_Lilly__Illimis_Therapeutics_Inc_Neurodegenerative_9e279b02]]
 
 ## Extracted Claims
 
