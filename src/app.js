@@ -912,7 +912,7 @@ function renderDataReuploadComparisonColumn(title, asset, company, stage) {
       <dl>
         <div><dt>Asset</dt><dd>${escapeHtml(asset || 'Unknown asset')}</dd></div>
         <div><dt>Company</dt><dd>${escapeHtml(company || 'Unknown company')}</dd></div>
-        <div><dt>Stage</dt><dd>${escapeHtml(stage || 'Unknown')}</dd></div>
+        <div><dt>Pipeline Stage</dt><dd>${escapeHtml(stage || 'Unknown')}</dd></div>
       </dl>
     </section>
   `;
@@ -2170,7 +2170,7 @@ function computeHardFilter(record, criteria) {
     reasons.push(`PASS score gate 미충족: Total ${total ?? '-'}, TR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
   }
   if (reviewUncertainty) {
-    reasons.push('stage/rights/asset identity/source 불확실성 확인 필요');
+    reasons.push('Pipeline Stage/rights/asset identity/source 불확실성 확인 필요');
   }
 
   return { status: 'REVIEW', reason: reasons.join('; ') || '추가 diligence 필요' };
@@ -3213,7 +3213,7 @@ const WORKFLOW_COPY = {
     description: '관심 적응증과 공개 근거를 기준으로 Full Scout 검토 후보를 빠르게 선별합니다.',
     filterLabel: 'Filter 1',
     priorityTitle: 'Full Scout 대기 후보',
-    prioritySubtitle: 'SELECT 후보 · Stage 분포'
+    prioritySubtitle: 'SELECT 후보 · Pipeline Stage 분포'
   },
   full: {
     stage: '2차 정밀 분석',
@@ -4919,8 +4919,8 @@ function stageEditSelect(row) {
     data-previous-value="${escapeHtml(row.stage)}"
     role="button"
     tabindex="0"
-    title="${escapeHtml(row.stageRaw)} (더블클릭하여 Stage 선택)"
-    aria-label="${escapeHtml(row.asset)} stage: double-click to edit"
+    title="${escapeHtml(row.stageRaw)} (더블클릭하여 Pipeline Stage 선택)"
+    aria-label="${escapeHtml(row.asset)} Pipeline Stage: double-click to edit"
   >${escapeHtml(row.stage)}</span>`;
 }
 
@@ -5072,7 +5072,7 @@ function renderTableLegacy() {
       <th><button data-sort="asset" type="button">Asset</button></th>
       <th><button data-sort="target" type="button">Target / Modality / Theme / Cluster</button></th>
       <th><button data-sort="mainIndication" type="button">Main indication</button></th>
-      <th><button data-sort="stage" type="button">Stage</button></th>
+      <th><button data-sort="stage" type="button">Pipeline Stage</button></th>
       <th><button data-sort="filter1" type="button">Filter 1</button></th>
       <th><button data-sort="filter2" type="button">Filter 2</button></th>
       <th><button data-sort="targetScore" type="button">TR</button></th>
@@ -5099,7 +5099,7 @@ function renderTableLegacy() {
         <th rowspan="2"><button data-sort="asset" type="button">Asset</button></th>
         <th rowspan="2"><button data-sort="target" type="button">Target / Modality / Theme / Cluster</button></th>
         <th rowspan="2"><button data-sort="mainIndication" type="button">Main indication</button></th>
-        <th rowspan="2"><button data-sort="stage" type="button">Stage</button></th>
+        <th rowspan="2"><button data-sort="stage" type="button">Pipeline Stage</button></th>
         <th rowspan="2"><button data-sort="filter1" type="button">Filter 1</button></th>
         <th rowspan="2"><button data-sort="filter2" type="button">Filter 2</button></th>
         <th class="score-group-head" colspan="3">Fast Triage</th>
@@ -5132,7 +5132,7 @@ function renderTableLegacy() {
         ${sortableHeader('Asset', 'asset', 'asset', 'rowspan="2"')}
         ${sortableHeader('Target / Modality / Theme / Cluster', 'target', 'target', 'rowspan="2"')}
         ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
-        ${sortableHeader('Stage', 'stage', 'stage', 'rowspan="2"')}
+        ${sortableHeader('Pipeline Stage', 'stage', 'stage', 'rowspan="2"')}
         ${sortableHeader('Filter 1', 'filter1', 'filter1', 'rowspan="2"')}
         ${sortableHeader('Filter 2', 'filter2', 'filter2', 'rowspan="2"')}
         <th class="score-group-head" colspan="3">Fast Triage</th>
@@ -5463,7 +5463,7 @@ function renderFocusTable() {
         ${sortableHeader('Modality', 'modality', 'modality', 'rowspan="2"')}
         ${sortableHeader('Target', 'target', 'target', 'rowspan="2"')}
         ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
-        ${sortableHeader('Stage', 'stage', 'stage', 'rowspan="2"')}
+        ${sortableHeader('Pipeline Stage', 'stage', 'stage', 'rowspan="2"')}
         <th class="score-group-head focus-group-head" colspan="2">Full Scout</th>
         <th class="score-group-head focus-group-head" colspan="5">Shortlisting</th>
         ${plainHeader('관리', 'focusManage', 'focus-action-head', 'rowspan="2"')}
@@ -5520,7 +5520,7 @@ function renderFocusTable() {
             <span class="target-context-indicator" aria-hidden="true">i</span>
           </td>
           <td class="indication-cell">${focusOfficialFieldValue(row, indicationDisplay(row), 'Main indication', { title: row.indication })}</td>
-          <td class="stage-cell">${focusOfficialFieldValue(row, row.stage, 'Stage', { title: row.stageRaw })}</td>
+          <td class="stage-cell">${focusOfficialFieldValue(row, row.stage, 'Pipeline Stage', { title: row.stageRaw })}</td>
           <td class="filter-cell">${statusEditSelect(row, 'filter2')}</td>
           <td class="score-cell total-score-cell">${totalScoreEditCircle(row)}</td>
           <td class="focus-status-cell">${partnershipEditSelect(row)}</td>
@@ -5633,7 +5633,7 @@ function renderTable() {
         ${sortableHeader('Modality', 'modality', 'modality', 'rowspan="2"')}
         ${sortableHeader('Target', 'target', 'target', 'rowspan="2"')}
         ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
-        ${sortableHeader('Stage', 'stage', 'stage', 'rowspan="2"')}
+        ${sortableHeader('Pipeline Stage', 'stage', 'stage', 'rowspan="2"')}
         ${sortableHeader(filterLabel, filterKey, filterKey, 'rowspan="2"')}
         ${mode === 'triage'
           ? '<th class="score-group-head" colspan="3">Fast Triage</th>'
@@ -5937,7 +5937,7 @@ function exportPipelineTable() {
     'Theme',
     'Cluster',
     'Main Indication',
-    'Stage',
+    'Pipeline Stage',
     'Indication',
     'Modality',
     'Filter 1',
@@ -6329,7 +6329,7 @@ function openManualTableStageEdit(anchor) {
   select.dataset.recordId = recordId;
   select.dataset.editKind = 'stage';
   select.dataset.previousValue = previousValue;
-  select.setAttribute('aria-label', 'Stage select');
+  select.setAttribute('aria-label', 'Pipeline Stage select');
   select.innerHTML = CANONICAL_DEVELOPMENT_STAGES.map((stage) => selectOption(stage, previousValue, stage)).join('');
   anchor.replaceWith(select);
   select.focus();
@@ -7851,7 +7851,7 @@ function validateInputFilterFields(record, recordPath, errors, warnings) {
   if (!stage) {
     addInputIssue(errors, 'error', `${recordPath}.structured_table.development_stage`, 'canonical development_stage가 필요합니다. 확인할 수 없으면 Unknown을 사용하세요.');
   } else if (!INPUT_STAGES.has(stage)) {
-    addInputIssue(errors, 'error', `${recordPath}.structured_table.development_stage`, `"${stage}"는 허용된 canonical 개발단계가 아닙니다.`);
+    addInputIssue(errors, 'error', `${recordPath}.structured_table.development_stage`, `"${stage}"는 허용된 canonical Pipeline Stage가 아닙니다.`);
   }
   const theme = String(record.json_summary?.theme || '').trim();
   if (theme && !INPUT_THEMES.has(theme)) {
@@ -9151,7 +9151,7 @@ MoA evidence definitions:
 
 Evidence domains answer different development questions, such as in vitro activity/selectivity, target engagement/PD, in vivo efficacy, PK/PD, safety/tolerability, or clinical outcome. Endpoints, doses, figures, or repeated sources from the same underlying experiment count as one domain. Potency and selectivity count as one in vitro characterization domain. One source may support two domains when it reports distinct development questions, such as in vivo efficacy and PK/PD. Human data are not required.`;
 
-const SHARED_CANONICAL_STAGE_RULE = `Canonical Development Stage — structured_table.development_stage must be exactly one of:
+const SHARED_CANONICAL_STAGE_RULE = `Canonical Pipeline Stage — structured_table.development_stage must be exactly one of:
 Hit Discovery; Lead Optimization; Preclinical Candidate; IND-enabling; Preclinical unspecified; IND filed/cleared; Clinical unspecified; Phase 1; Phase 1/2; Phase 2; Phase 2/3; Phase 3; Registration; Approved / marketed; Discontinued / inactive; Unknown.
 
 Canonicalize only an explicitly confirmed current stage or a completed/started milestone. Do not promote stage from plans, expectations, targets, financing, hiring, or adjacent programs. Generic preclinical -> Preclinical unspecified. Candidate nominated/selected -> Preclinical Candidate. Ongoing GLP tox, IND-directed CMC, or explicit IND-enabling work -> IND-enabling. IND/CTA submitted, filed, accepted, effective, or cleared -> IND filed/cleared. An explicitly ongoing clinical/pivotal/registrational trial with no phase -> Clinical unspecified; never infer Phase 3 from "pivotal" or "registrational" alone. Hit ID/hit identification -> Hit Discovery; FIH, Ph1, Ph1a, or Ph1b -> Phase 1; a confirmed Ph1b/2a -> Phase 1/2; FDA/EMA/NMPA approved -> Approved / marketed. Planned IND submission alone does not establish IND filed/cleared; "preclinical; IND planned" remains Preclinical unspecified. A planned Phase 2 or Phase 2/3 trial does not establish that phase: retain an explicitly confirmed earlier current phase, otherwise use Unknown. For multi-indication assets, use the lead/currently most advanced confirmed stage as the single dashboard value and move indication-specific status detail to evidence or notes; for example, "FOS Phase II recruiting; pain stage unclear" -> Phase 2. Map only explicitly confirmed discontinued, terminated, withdrawn, inactive, dormant, or abandoned programs to Discontinued / inactive. A suspended or halted program is not automatically terminal: retain the confirmed stage when available, record the pause in hard_filter.flags/notes, and set triage.active_asset=null unless inactivity is independently confirmed. Do not map speculative wording such as "likely preclinical or dormant" or a different historical alias marked discontinued to the current asset's Discontinued / inactive status. Use Unknown only when the relevant current stage itself is unresolved or conflicting.`;
@@ -9467,7 +9467,7 @@ Important distinction:
 
 Input:
 The user may provide structured rows copied from Excel/TSV/CSV/plain text or a simple asset list.
-Each entry may include asset name, target, MoA, company, therapeutic area, indication, development stage, region/country, notes, and source URL.
+Each entry may include asset name, target, MoA, company, therapeutic area, indication, Pipeline Stage, region/country, notes, and source URL.
 The input may contain 1 to 50 entries. If more than 50 entries are provided, process only the first 50 and state this in the markdown block.
 If no candidate entry is provided, ask for an asset list and do not invent records.
 
@@ -9515,7 +9515,7 @@ Research rules:
 
 Early stop rules:
 - Apply UNVERIFIED before scoring only when the asset identity itself cannot be verified as a biotech/pharma pipeline asset. Missing target, MoA, indication, or stage alone does not make an asset UNVERIFIED; use Unknown and continue scoring.
-- Apply REJECT before scoring only if the development stage is Discontinued / inactive or credible evidence confirms terminated, withdrawn, inactive, dormant, abandoned, or clearly failed. A suspended or halted program needs a pause-status note and active-status confirmation; it is not an automatic REJECT.
+- Apply REJECT before scoring only if the Pipeline Stage is Discontinued / inactive or credible evidence confirms terminated, withdrawn, inactive, dormant, abandoned, or clearly failed. A suspended or halted program needs a pause-status note and active-status confirmation; it is not an automatic REJECT.
 - For UNVERIFIED or Discontinued / inactive cases, keep the markdown and research depth short. Do not perform full diligence, marketability, competitor landscaping, or extended source chasing.
 - Early stop never shortens the required dashboard JSON contract: every record must still contain all three TR/MoA/Data criterion score objects. Put evidence basis, score rationale, sources, and limitations in the Markdown table/notes, not in duplicated JSON fields. An inactive asset remains REJECT because of the lifecycle hard blocker regardless of otherwise available preliminary scores.
 
@@ -9557,7 +9557,7 @@ Triage status rule:
 - If unsure between SELECT and REJECT, choose REJECT and explain the missing evidence needed.
 
 Controlled vocabulary:
-- For an identity-verified asset, use Unknown when country, development stage, modality, main indication, target, or another factual field cannot be established. UNVERIFIED is reserved for failure of asset identity itself.
+- For an identity-verified asset, use Unknown when country, Pipeline Stage, modality, main indication, target, or another factual field cannot be established. UNVERIFIED is reserved for failure of asset identity itself.
 - company_country may contain up to two explicitly stated canonical countries, separated by ` / `. For example, "China / United States operations" -> "China / United States". If no canonical country can be identified, retain the original wording rather than replacing it with Unknown.
 ${SHARED_CANONICAL_STAGE_RULE}
 ${SHARED_CANONICAL_MODALITY_RULE}
@@ -9579,7 +9579,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
 
 중요: 한 문장으로 triage 결론과 filter rationale을 먼저 씁니다. 예: 공개 자료상 asset identity는 확인되지만 개발 단계가 Discontinued / inactive로 확인되어 REJECT로 처리합니다.
 
-| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |
+| # | Asset | Company | Target/MoA | Modality | Main indication | Pipeline Stage | Country | TR | MOA | Data | Triage | Why | Source |
 |---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|
 | 1 |  |  |  |  |  |  |  |  |  |  | SELECT/REJECT/UNVERIFIED |  |  |
 
@@ -9847,11 +9847,11 @@ For every criterion rationale state compactly: criterion definition, selected sc
 
 Controlled vocabulary for dashboard filters:
 - Use canonical values for filter-facing fields so the dashboard can group comparable assets.
-- For an identity-verified asset, use Unknown (never N/A) when country, development stage, modality, main indication, target, or another factual field cannot be established from public sources.
+- For an identity-verified asset, use Unknown (never N/A) when country, Pipeline Stage, modality, main indication, target, or another factual field cannot be established from public sources.
 ${SHARED_CANONICAL_THEME_RULE}
 - json_summary.company_country and structured_table.company_country may retain up to two explicitly stated canonical countries/regions, separated by ` / `. Examples: China, Republic of Korea, United States, Japan, Europe/UK; "China / United States operations" -> "China / United States". Preserve unrecognized country wording rather than replacing it with Unknown.
 ${SHARED_CANONICAL_INDICATION_RULE}
-- structured_table.development_stage must follow the Canonical Development Stage rule above. Put exact raw wording, trial status, indication-specific stage, and future milestone timing in source evidence, notes, or validation.uncertain_points.
+- structured_table.development_stage must follow the Canonical Pipeline Stage rule above. Put exact raw wording, trial status, indication-specific stage, and future milestone timing in source evidence, notes, or validation.uncertain_points.
 - Map clinical synonyms conservatively: P1/Ph1/Phase I/FIH -> Phase 1 and P2/Ph2/Phase II -> Phase 2 only when the phase is current or started. A future plan must not be promoted to current stage.
 ${SHARED_CANONICAL_MODALITY_RULE}
 - Map synonymous or narrower terms into the same bucket. Examples: partial-onset seizure, focal-onset seizure, epilepsy, and status epilepticus -> Epilepsy / seizure disorders; RCC, UCC, refractory chronic cough, and unexplained chronic cough -> Chronic cough; Crohn's disease and ulcerative colitis -> Inflammatory bowel disease.
@@ -9890,7 +9890,7 @@ Use this exact report structure inside the Markdown portion of the single combin
 | MoA |  | publication / company page URL |
 | Modality / Platform |  | platform page URL |
 | Indication |  | pipeline page URL |
-| Stage |  | official pipeline page, clinical trial registry, company deck, or uncertainty note |
+| Pipeline Stage |  | official pipeline page, clinical trial registry, company deck, or uncertainty note |
 | Key data |  | paper / abstract / poster / company page URL |
 
 Allowed Theme values:
@@ -9949,7 +9949,7 @@ What was checked:
 
 Competitor table:
 
-| Competitor | Company | Modality | Target / MoA | Stage | Why it matters | Source |
+| Competitor | Company | Modality | Target / MoA | Pipeline Stage | Why it matters | Source |
 |---|---|---|---|---|---|---|
 
 Investigation note:
@@ -10728,7 +10728,7 @@ const STEP0_ENTRY_FIELDS = [
   { key: 'modality', label: 'Modality' },
   { key: 'target', label: 'Target' },
   { key: 'main_indication', label: 'Main indication' },
-  { key: 'stage', label: 'Stage' },
+  { key: 'stage', label: 'Pipeline Stage' },
   { key: 'comment', label: 'Comment', multiline: true },
   { key: 'contact', label: 'Contact' },
   { key: 'website', label: 'Website' }
@@ -11232,7 +11232,7 @@ function renderStep0StatStrip() {
   step0StatAnimationFrames.forEach((frame) => cancelAnimationFrame(frame));
   step0StatAnimationFrames = [];
   if (elements.step0SummaryScopeNote) {
-    elements.step0SummaryScopeNote.textContent = step0SummaryColorScopeLabel();
+    elements.step0SummaryScopeNote.textContent = '현재 Tab·Filter 기준';
   }
   const statEntries = [
     ['pending', elements.step0StatPending, elements.step0RecentPending],
@@ -11710,7 +11710,7 @@ const STEP0_COLOR_FILTER_LABELS = {
   theme: 'Theme',
   cluster: 'Cluster',
   indication: 'Indication',
-  stage: 'Stage',
+  stage: 'Pipeline Stage',
   progress: '진척 현황'
 };
 
@@ -11719,8 +11719,8 @@ function step0SummaryColorScopeLabel() {
   if (!colorFilter || colorFilter === 'progress') {
     const progressValues = step0SelectedFilterValues('progress');
     return progressValues.length
-      ? `진행 단계 색상 · ${progressValues.length === 1 ? progressValues[0] : `${progressValues.length}개 Filter`} 선택`
-      : '진행 단계 색상';
+      ? `조사 진행 단계 색상 · ${progressValues.length === 1 ? progressValues[0] : `${progressValues.length}개 Filter`} 선택`
+      : '조사 진행 단계 색상';
   }
   const label = STEP0_COLOR_FILTER_LABELS[colorFilter] || colorFilter;
   const selected = step0SelectedFilterValues(colorFilter);
@@ -12130,7 +12130,7 @@ function openStep0EditLockedModal(mode, { commentWorkspace = false, recordId = '
   }
   if (elements.step0EditLockedMessage) {
     elements.step0EditLockedMessage.textContent = shortlisting
-      ? 'Shortlisting에는 Full Scout의 공식 Pipeline 정보가 읽기 전용으로 표시됩니다. Company·Country·Asset·Modality·Target·Main indication·Stage 수정은 Tab 2 · Full Scout에서 진행합니다.'
+      ? 'Shortlisting에는 Full Scout의 공식 Pipeline 정보가 읽기 전용으로 표시됩니다. Company·Country·Asset·Modality·Target·Main indication·Pipeline Stage 수정은 Tab 2 · Full Scout에서 진행합니다.'
       : commentWorkspace
       ? `Tab 0에는 원본 Team Workspace 코멘트가 읽기 전용으로 표시됩니다. 이 코멘트의 수정 및 삭제는 ${label} Team Workspace에서 진행합니다.`
       : `이미 수행된 ${targetMode === 'full' ? 'Full Scout' : 'Fast Triage'}의 공식 조사값이 Tab 0에 표시되고 있습니다. 원본 조사값 수정은 ${label} Pipeline Table에서 진행합니다.`;
@@ -12607,7 +12607,7 @@ function renderStep0ProgressTable() {
 
 function exportStep0Table() {
   const rows = step0FilteredSortedRows();
-  const headers = ['Company', 'Country', 'Asset', 'Modality', 'Target', 'Main indication', 'Stage', 'Listing', 'Fast Triage', 'Full Scout', 'Shortlisting', 'Comment', 'Contact', 'Website'];
+  const headers = ['Company', 'Country', 'Asset', 'Modality', 'Target', 'Main indication', 'Pipeline Stage', 'Listing', 'Fast Triage', 'Full Scout', 'Shortlisting', 'Comment', 'Contact', 'Website'];
   const body = rows.map((row) => {
     const display = step0DashboardFieldDisplay(row);
     return [
@@ -12772,7 +12772,7 @@ function buildTriageInstructionPromptWithCandidates(pairs) {
       ['Modality', details.modality],
       ['Target', details.target],
       ['Main indication', details.main_indication],
-      ['Stage', details.stage],
+      ['Pipeline Stage', details.stage],
       ['Website', details.website]
     ].filter(([, value]) => String(value || '').trim()).map(([label, value]) => `${label}: ${String(value).trim()}`).join('; ');
     return `${pair.asset}\t${pair.company}${context ? `\tListing context: ${context}` : ''}`;

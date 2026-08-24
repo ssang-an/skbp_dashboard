@@ -218,6 +218,13 @@
   color: #3f6fae;
 }
 
+/* Wiki Map keeps its graph/agent identity distinct from the workflow guides. */
+.knowledge-map-panel .knowledge-map-description .workflow-description-icon {
+  border-color: color-mix(in srgb, #7657c9 34%, var(--line));
+  background: color-mix(in srgb, #8f70d7 14%, var(--surface));
+  color: #6748b6;
+}
+
 .workflow-description-copy {
   display: flex;
   min-width: 0;
@@ -2179,6 +2186,77 @@ h2 {
 .help-tooltip:focus-visible::after {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Wiki Map filter labels use short, above-control guidance so the hint stays
+   in view without covering the graph or neighbouring filter controls. */
+.knowledge-map-panel .atlas-filter-fields .map-filter-label-help {
+  width: max-content;
+  cursor: help;
+}
+
+.knowledge-map-panel .atlas-filter-fields .map-filter-label-help::after {
+  top: auto;
+  right: auto;
+  bottom: calc(100% + 7px);
+  left: 0;
+  width: max-content;
+  max-width: min(230px, calc(100vw - 32px));
+  padding: 7px 9px;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.35;
+  text-align: left;
+  transform: translate(0, 4px);
+}
+
+.knowledge-map-panel .atlas-filter-fields .map-filter-label-help:hover::after,
+.knowledge-map-panel .atlas-filter-fields .map-filter-label-help:focus-visible::after {
+  transform: translate(0, 0);
+}
+
+/* The explorer scope is the first field in the row, so anchor its guidance
+   inward instead of centering it beyond the left edge of the dashboard. */
+.knowledge-map-panel .atlas-filter-fields .sg-explorer-view .map-filter-label-help::after {
+  left: 0;
+  text-align: left;
+  transform: translate(0, 4px);
+}
+
+.knowledge-map-panel .atlas-filter-fields .sg-explorer-view .map-filter-label-help:hover::after,
+.knowledge-map-panel .atlas-filter-fields .sg-explorer-view .map-filter-label-help:focus-visible::after {
+  transform: translate(0, 0);
+}
+
+/* Native select options cannot reliably expose an in-dashboard tooltip. Put
+   the value-specific hint on the select's label so hovering either the label
+   or its selected value always shows the same, in-view guidance. */
+.knowledge-map-panel .atlas-filter-fields .map-explorer-view-help::after {
+  top: auto;
+  right: auto;
+  bottom: calc(100% + 7px);
+  left: 0;
+  width: min(224px, calc(100vw - 28px));
+  text-align: left;
+  transform: translate(0, 4px);
+}
+
+.knowledge-map-panel .atlas-filter-fields .map-explorer-view-help:hover::after,
+.knowledge-map-panel .atlas-filter-fields .map-explorer-view-help:focus-within::after {
+  transform: translate(0, 0);
+}
+
+/* The range control sits at the right edge of the filter row; keep its hint
+   inside the viewport as the row wraps at narrower dashboard widths. */
+.knowledge-map-panel .atlas-filter-fields #sgDepthFilter .map-filter-label-help::after {
+  right: 0;
+  left: auto;
+  transform: translate(0, 4px);
+}
+
+.knowledge-map-panel .atlas-filter-fields #sgDepthFilter .map-filter-label-help:hover::after,
+.knowledge-map-panel .atlas-filter-fields #sgDepthFilter .map-filter-label-help:focus-visible::after {
+  transform: translate(0, 0);
 }
 
 .panel-actions .help-tooltip::after,
@@ -6652,16 +6730,6 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   background: color-mix(in srgb, var(--surface-soft) 72%, #e6ebf0) !important;
 }
 
-.knowledge-map-panel .atlas-filter-fields #sgReset {
-  margin: 0 0 1px;
-  justify-self: end;
-}
-
-.knowledge-map-panel .atlas-filter-fields #sgReset:hover,
-.knowledge-map-panel .atlas-filter-fields #sgReset:focus-visible {
-  color: var(--accent);
-}
-
 .knowledge-map-panel .atlas-filter-heading .sg-inline-stats {
   flex: 0 0 auto;
   align-items: flex-start;
@@ -6684,13 +6752,157 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   display: block;
 }
 
+/* Keep the map graph primary while reserving a quiet one-fifth column for the
+   same compact Quick Guide pattern used by the workflow tabs. */
+@media (min-width: 1181px) {
+  .knowledge-map-panel.sg-shell .kg-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 0.25fr);
+    gap: 14px;
+    align-items: stretch;
+  }
+
+  .knowledge-map-panel.sg-shell .wiki-map-quick-guide {
+    box-sizing: border-box;
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+    align-self: stretch;
+  }
+
+  .knowledge-map-panel.sg-shell .kg-graph-card {
+    align-self: stretch;
+  }
+}
+
+.knowledge-map-panel .wiki-map-quick-guide {
+  --data-upload-accent: var(--accent);
+  --data-upload-accent-strong: var(--accent);
+  align-self: stretch;
+}
+
+.knowledge-map-panel .wiki-map-quick-guide .data-upload-guide-header {
+  padding: 16px 15px 12px;
+}
+
+.knowledge-map-panel .wiki-map-quick-guide .data-upload-guide-steps {
+  padding-bottom: 14px;
+}
+
+.knowledge-map-panel .wiki-map-quick-guide .data-upload-guide-steps li {
+  grid-template-columns: 23px 27px minmax(0, 1fr);
+  gap: 7px;
+  padding: 10px;
+}
+
+.knowledge-map-panel .wiki-map-quick-guide .data-upload-step-icon {
+  width: 25px;
+  height: 25px;
+}
+
+.knowledge-map-panel .wiki-map-quick-guide .data-upload-step-icon .data-upload-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.knowledge-map-panel .wiki-map-quick-guide .data-upload-guide-steps strong {
+  font-size: 12px;
+}
+
+.knowledge-map-panel .wiki-map-quick-guide .data-upload-guide-steps p {
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.knowledge-map-panel .wiki-map-question-example {
+  margin-top: 7px !important;
+  padding: 7px 8px !important;
+  font-size: 10px !important;
+  line-height: 1.48 !important;
+}
+
+.knowledge-map-panel .wiki-map-question-example span {
+  color: var(--accent) !important;
+}
+
+.knowledge-map-panel .wiki-map-question-note {
+  margin-top: 6px !important;
+  color: color-mix(in srgb, var(--muted) 88%, transparent) !important;
+  font-size: 10px !important;
+}
+
+.knowledge-map-panel .wiki-map-node-marker {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin: 0 0 1px 3px;
+  border: 2px solid color-mix(in srgb, var(--green) 38%, var(--surface));
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--green) 12%, transparent);
+  vertical-align: middle;
+}
+
+.knowledge-map-panel .wiki-map-legend-guide {
+  margin: 2px 11px 14px;
+  padding: 11px;
+  border: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--surface-soft) 66%, var(--surface));
+}
+
+.knowledge-map-panel .wiki-map-legend-guide-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  gap: 8px;
+}
+
+.knowledge-map-panel .wiki-map-legend-guide-heading > span {
+  color: var(--green);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.knowledge-map-panel .wiki-map-legend-guide-heading > small {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  white-space: nowrap;
+}
+
+.knowledge-map-panel .wiki-map-legend-guide p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10.5px;
+  line-height: 1.5;
+}
+
+.knowledge-map-panel .wiki-map-legend-guide p + p {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+}
+
+.knowledge-map-panel .wiki-map-legend-guide b,
+.knowledge-map-panel .wiki-map-legend-guide strong {
+  color: var(--text);
+  font-weight: 800;
+}
+
 .knowledge-map-panel.sg-shell .kg-graph-card,
 .knowledge-map-panel.sg-shell .kg-side,
 .knowledge-map-panel.sg-shell .kg-side > .kg-card {
   min-width: 0;
 }
 
-.knowledge-map-panel.sg-shell .kg-graph-card { height: clamp(640px, calc(100vh - 300px), 820px); }
+.knowledge-map-panel.sg-shell .kg-graph-card {
+  height: auto;
+  min-height: clamp(640px, calc(100vh - 300px), 820px);
+}
 
 .knowledge-map-panel.sg-shell .kg-graph-card {
   display: grid;
@@ -6873,16 +7085,52 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
 }
 
 .knowledge-map-panel .atlas-graph-legend .sg-legend-group {
-  display: grid;
+  display: flex;
   min-width: 0;
-  grid-template-columns: max-content minmax(0, 1fr);
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
 }
 
 .knowledge-map-panel .atlas-graph-legend .sg-legend-group > span {
   margin: 0;
-  font-size: .58rem;
+  font-size: .67rem;
+}
+
+.knowledge-map-panel .atlas-graph-legend .sg-legend-heading {
+  position: relative;
+  z-index: 1;
+  cursor: help;
+}
+
+.knowledge-map-panel .atlas-graph-legend .sg-legend-heading:hover,
+.knowledge-map-panel .atlas-graph-legend .sg-legend-heading:focus-visible {
+  z-index: 40;
+  outline: none;
+}
+
+.knowledge-map-panel .atlas-graph-legend .sg-legend-group:first-child .sg-legend-heading::after {
+  left: 0;
+  transform: translate(0, -4px);
+  text-align: left;
+}
+
+.knowledge-map-panel .atlas-graph-legend .sg-legend-group:first-child .sg-legend-heading:hover::after,
+.knowledge-map-panel .atlas-graph-legend .sg-legend-group:first-child .sg-legend-heading:focus-visible::after {
+  transform: translate(0, 0);
+}
+
+.knowledge-map-panel .atlas-graph-legend .sg-legend-group:last-child .sg-legend-heading::after {
+  right: 0;
+  left: auto;
+  transform: translate(0, -4px);
+  text-align: left;
+}
+
+.knowledge-map-panel .atlas-graph-legend .sg-legend-group:last-child .sg-legend-heading:hover::after,
+.knowledge-map-panel .atlas-graph-legend .sg-legend-group:last-child .sg-legend-heading:focus-visible::after {
+  transform: translate(0, 0);
 }
 
 .knowledge-map-panel .atlas-graph-legend .sg-legend-group + .sg-legend-group {
@@ -6894,15 +7142,43 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   display: flex;
   min-width: 0;
   align-items: center;
-  justify-content: flex-start;
-  gap: 1px;
+  justify-content: center;
+  gap: 2px;
   white-space: nowrap;
 }
 
 .knowledge-map-panel .atlas-graph-legend .sg-legend-filter {
-  gap: 3px;
-  padding: 2px 3px;
-  font-size: .6rem;
+  position: relative;
+  z-index: 1;
+  gap: 4px;
+  padding: 3px 4px;
+  font-size: .68rem;
+}
+
+.knowledge-map-panel .atlas-graph-legend .sg-legend-filter:hover,
+.knowledge-map-panel .atlas-graph-legend .sg-legend-filter:focus-visible {
+  z-index: 40;
+}
+
+/* Legend help stays compact and overlays the graph instead of extending past
+   the page edge like the general-purpose dashboard tooltip. */
+.knowledge-map-panel .atlas-graph-legend .help-tooltip::after {
+  top: calc(100% + 7px);
+  right: auto;
+  left: 50%;
+  width: max-content;
+  max-width: min(210px, calc(100vw - 32px));
+  padding: 7px 9px;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.35;
+  text-align: center;
+  transform: translate(-50%, -4px);
+}
+
+.knowledge-map-panel .atlas-graph-legend .help-tooltip:hover::after,
+.knowledge-map-panel .atlas-graph-legend .help-tooltip:focus-visible::after {
+  transform: translate(-50%, 0);
 }
 
 html[data-theme="dark"] .knowledge-map-panel .atlas-filter-heading,
@@ -6928,7 +7204,6 @@ html[data-theme="dark"] .knowledge-map-panel .atlas-selected-node-head {
     grid-column: 2 / span 2;
   }
 
-  .knowledge-map-panel .atlas-filter-fields #sgReset { justify-self: end; }
 }
 
 @media (max-width: 900px) {
@@ -7154,7 +7429,7 @@ html[data-theme="dark"] .knowledge-map-panel .kg-graph-card .kg-card-head > p {
   user-select: none;
 }
 
-.knowledge-map-note-modal-header span { color: var(--muted); font-size: .65rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.knowledge-map-note-modal-header .atlas-card-eyebrow { display: block; color: var(--green); font-size: .64rem; font-weight: 850; letter-spacing: .09em; line-height: 1.2; }
 .knowledge-map-note-modal-header h2 { margin: 3px 0 0; color: var(--text); font-size: .96rem; }
 .knowledge-map-note-modal-header button { width: 30px; height: 30px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; font-size: 1.45rem; line-height: 1; }
 .knowledge-map-note-modal-header button:hover { background: var(--surface); color: var(--text); }
@@ -15006,6 +15281,34 @@ html[data-theme="dark"] .pipeline-table .clickable-row.selected-row:hover > td {
   color: var(--accent);
 }
 
+/* Tab 0 keeps its reset usable at rest, while Tabs 1~4 disable it until a
+   filter is active. Keep the shared control visually identical either way;
+   only clickability changes. */
+.filter-reset-button:disabled {
+  opacity: 1;
+  color: var(--muted);
+}
+
+/* knowledge_graph.css loads after this file and otherwise restyles every
+   .kg-controls button. Pin Wiki Map's reset to the exact shared filter-row
+   control geometry used by Tab 0~3. */
+.knowledge-map-panel .atlas-filter-fields #sgReset {
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  min-height: 42px;
+  padding: 0;
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.knowledge-map-panel .atlas-filter-fields #sgReset:not(:disabled):hover,
+.knowledge-map-panel .atlas-filter-fields #sgReset:not(:disabled):focus-visible {
+  color: var(--accent);
+}
+
 .visual-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -17048,6 +17351,15 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
   padding-block: 4px;
 }
 
+/* Wiki Map uses the same compact menu-search control as Tab 1/2 rather than
+   inheriting the taller shared default. */
+.knowledge-map-panel .atlas-filter-fields .filter-multiselect-menu-search input {
+  height: 28px;
+  min-height: 28px;
+  padding: 3px 8px;
+  line-height: 14px;
+}
+
 .filter-multiselect-option-group { padding: 1px 0 4px; }
 
 .filter-multiselect-option-group > p {
@@ -17445,6 +17757,12 @@ html[data-theme="dark"] .workflow-mode-description {
 html[data-theme="dark"] .workflow-description-icon,
 html[data-theme="dark"] .workflow-description-separator {
   color: #5eead4;
+}
+
+html[data-theme="dark"] .knowledge-map-panel .knowledge-map-description .workflow-description-icon {
+  color: #b9a2f3;
+  border-color: color-mix(in srgb, #aa8cf0 45%, var(--line));
+  background: color-mix(in srgb, #8f70d7 20%, var(--surface));
 }
 
 @media (max-width: 720px) {
@@ -21544,10 +21862,16 @@ body.report-reupload-open {
   background: var(--surface);
 }
 
-.step0-summary-dashboard-heading[aria-expanded="false"] {
-  margin-bottom: 0;
+.step0-summary-dashboard-heading[aria-expanded="true"] {
+  border: 1px solid color-mix(in srgb, var(--line) 84%, #dfe5e9);
   border-bottom: 0;
   border-radius: 10px 10px 0 0;
+}
+
+.step0-summary-dashboard-heading[aria-expanded="false"] {
+  margin-bottom: 0;
+  border: 1px solid color-mix(in srgb, var(--line) 84%, #dfe5e9);
+  border-radius: 10px;
 }
 
 .step0-summary-dashboard-title {

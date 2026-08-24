@@ -18,6 +18,8 @@
 
 빈 Comment·Contact·Website 셀은 기존 값을 지우지 않습니다. Contact의 명시적 `X`, `-`, `–`, `—`만 “기록 없음”으로 처리합니다.
 
+화면의 `Pipeline Stage`는 Asset의 개발 단계(예: Lead Optimization, Phase 1)를 뜻합니다. `Listing`, `Fast Triage`, `Full Scout`, `Shortlisting`은 개발 단계가 아니라 별도의 `조사 진행 단계`입니다. Excel 열 이름은 기존 호환성을 위해 `Stage`도 계속 인식합니다.
+
 `Others`는 원문 값이 확인되었지만 해당 필드의 Canonical Library에 아직 없는 경우의 분류값입니다. 원문은 계속 보존되어 검색·상세 확인에 사용할 수 있습니다. `Unknown`은 원문에도 판단 근거가 없거나 미공개인 경우에만 사용합니다.
 
 Main indication은 Tab 0~3 Pipeline Table에서 하나의 Canonical 대표값으로 표시합니다. Excel·조사 원문(`indication`)은 보존되며, 해당 셀에 마우스를 올리면 그대로 확인할 수 있습니다. 여러 적응증은 필터·검색에서 계속 인식되지만 테이블의 기본 표기에는 나열하지 않습니다. Library에 아직 없는 확인된 원문만 예외적으로 기본 표기에 남기며, 원문이 없는 경우에만 `Unknown`을 표시합니다.
@@ -88,7 +90,7 @@ Canonical Library는 반복 비교·집계할 상위 치료 플랫폼만 포함�
 
 ### 검색용 식별자 정규화와 사용자 판단
 
-Tab 0~3 Pipeline Table 검색과 Tab 4 Atlas 키워드 검색은 **저장값을 바꾸거나 Pipeline을 연결하지 않는 발견용 기능**입니다. 다음의 표기 차이만 자동으로 같은 검색어로 취급합니다.
+Tab 0~3 Pipeline Table 검색과 Tab 4 Knowledge Wiki Map 키워드 검색은 **저장값을 바꾸거나 Pipeline을 연결하지 않는 발견용 기능**입니다. 다음의 표기 차이만 자동으로 같은 검색어로 취급합니다.
 
 | 자동으로 같은 검색어로 보는 규칙 | 예시 |
 | --- | --- |

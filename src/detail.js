@@ -518,7 +518,7 @@ function computeHardFilter(record) {
     reasons.push(`PASS score gate 미충족: Total ${total ?? '-'}, TR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
   }
   if (reviewUncertainty) {
-    reasons.push('stage/rights/asset identity/source 불확실성 확인 필요');
+    reasons.push('Pipeline Stage/rights/asset identity/source 불확실성 확인 필요');
   }
 
   return { status: 'REVIEW', reason: reasons.join('; ') || '추가 diligence 필요' };
@@ -1608,7 +1608,7 @@ function renderEditHistory(record) {
         'structured_table.company': 'Company',
         'structured_table.asset_name': 'Asset',
         'structured_table.main_indication': 'Main indication',
-        'structured_table.development_stage': 'Stage',
+        'structured_table.development_stage': 'Pipeline Stage',
         'focus_management.tracking_status': 'Shortlisting 상태',
         'focus_management.total_score_override': 'Tab3 Total Score'
       };
@@ -2839,7 +2839,7 @@ function buildReadableSourceReport(record) {
 | 적응증 | ${table.indication || '-'} |
 | Target | ${summary.target || table.target || '-'} |
 | Modality | ${table.modality_platform || '-'} |
-| 개발 단계 | ${table.development_stage || '-'} |
+| Pipeline Stage | ${table.development_stage || '-'} |
 | Theme fit | ${dashboardThemeLabel(summary.theme || table.theme)} |
 | Cluster | ${dashboardClusterLabel(summary.cluster || table.cluster, summary.theme || table.theme)} |
 

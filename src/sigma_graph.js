@@ -12,14 +12,24 @@ const DARK_TYPE_COLOR = {
 const DARK_STAGE_COLOR = { listing: '#9aaabd', fast_triage: '#63bfe5', full_scout: '#a78bfa', shortlisting: '#efb45a' };
 const STAGE_LABEL = { listing: 'Listing', fast_triage: 'Fast Triage', full_scout: 'Full Scout', shortlisting: 'Shortlisting' };
 const TYPE_LEGEND_LABEL = {
-  review: '조사 기록', company: 'company', target: 'target', moa: 'moa', modality: 'modality'
+  review: '조사 기록', company: 'company', target: 'target', moa: 'MoA', modality: 'modality'
+};
+const TYPE_FILTER_LABEL = {
+  asset: 'Asset', review: '조사 기록', company: 'Company', target: 'Target', moa: 'MoA', modality: 'Modality',
+  indication: 'Main indication', theme: 'Theme', cluster: 'Cluster', competitor: 'Competitor', source: 'Source', scorecard: 'Scorecard', workflow: '조사 진행 단계'
+};
+const STAGE_LEGEND_TOOLTIP = {
+  listing: 'Tab 0에 등록된 후보입니다. 클릭하면 Listing Asset을 그래프에서만 숨기거나 다시 표시합니다.',
+  fast_triage: 'Fast Triage 1차 조사가 완료된 후보입니다. 클릭하면 해당 Asset을 그래프에서만 숨기거나 다시 표시합니다.',
+  full_scout: 'Full Scout 심층 조사가 완료된 후보입니다. 클릭하면 해당 Asset을 그래프에서만 숨기거나 다시 표시합니다.',
+  shortlisting: '우선 검토 대상으로 관리 중인 후보입니다. 클릭하면 해당 Asset을 그래프에서만 숨기거나 다시 표시합니다.'
 };
 const TYPE_LEGEND_TOOLTIP = {
-  review: 'Fast Triage 또는 Full Scout가 수행된 개별 조사 기록입니다.',
-  company: 'Pipeline을 개발·보유하거나 권리를 가진 회사입니다.',
-  target: 'Pipeline이 직접 겨냥하는 생물학적 표적입니다.',
-  moa: 'Pipeline이 표적에 작용하는 기전입니다.',
-  modality: '치료 플랫폼의 Canonical 분류입니다.'
+  review: 'Fast Triage 또는 Full Scout가 수행된 개별 조사 기록입니다. 클릭하면 조사 기록 노드를 그래프에서만 숨기거나 다시 표시합니다.',
+  company: 'Pipeline을 개발·보유하거나 권리를 가진 회사입니다. 클릭하면 회사 노드를 그래프에서만 숨기거나 다시 표시합니다.',
+  target: 'Pipeline이 직접 겨냥하는 생물학적 표적입니다. 클릭하면 Target 노드를 그래프에서만 숨기거나 다시 표시합니다.',
+  moa: 'Pipeline이 표적에 작용하는 기전입니다. 클릭하면 MoA 노드를 그래프에서만 숨기거나 다시 표시합니다.',
+  modality: '치료 플랫폼의 Canonical 분류입니다. 클릭하면 Modality 노드를 그래프에서만 숨기거나 다시 표시합니다.'
 };
 const CANONICAL_INDICATIONS = [
   "Alzheimer's disease", "Parkinson's disease", 'Lewy body dementia', 'Epilepsy / seizure disorders',
@@ -58,6 +68,28 @@ const searchKeywords = [];
 
 const clean = value => String(value ?? '').trim();
 const escapeHtml = value => clean(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+function syncMapResetButton() {
+  if (!ui.reset) return;
+  const hasActiveFilters = Boolean(
+    searchKeywords.length
+    || selectedIndications.size
+    || selectedThemes.size
+    || selectedTypes.size
+    || selectedStages.size
+    || hiddenLegendFilters.size
+    || depthValue !== '1'
+    || ui.view?.value !== 'overview'
+  );
+  ui.reset.disabled = !hasActiveFilters;
+}
+
+function syncExplorerViewTooltip() {
+  if (!ui.view) return;
+  const tooltip = '처음에는 핵심 연결만 보며 원하는 Node를 찾으세요. 더 넓게 비교하려면 전체 지식 맵 · 넓게 보기를 선택하세요.';
+  const tooltipHost = ui.view.closest('.sg-explorer-view');
+  if (tooltipHost) tooltipHost.dataset.tooltip = tooltip;
+  ui.view.removeAttribute('title');
+}
 const nodeMap = () => new Map(raw.nodes.map(node => [node.id, node]));
 const isDarkTheme = () => document.documentElement.dataset.theme === 'dark';
 const graphTypeColor = (type) => (isDarkTheme() ? DARK_TYPE_COLOR : TYPE_COLOR)[type] || (isDarkTheme() ? '#9aa8b9' : '#64748b');
@@ -120,6 +152,17 @@ function setAgentPrompt(prompt = '') {
   ui.agentLink.dataset.tooltip = prompt ? '선택 노드와 직접 연결된 맥락을 함께 전달합니다.' : '노드를 선택하면 해당 연결 맥락을 함께 전달합니다.';
 }
 
+function activeMapFilterContext() {
+  const parts = [`탐색 시작점: ${ui.view?.value === 'all' ? '전체 지식 맵' : 'Overview · 핵심 연결'}`];
+  if (searchKeywords.length) parts.push(`키워드: ${searchKeywords.join(', ')}`);
+  if (selectedThemes.size) parts.push(`Theme: ${[...selectedThemes].join(', ')}`);
+  if (selectedIndications.size) parts.push(`Main indication: ${[...selectedIndications].join(', ')}`);
+  if (selectedTypes.size) parts.push(`표시할 항목: ${[...selectedTypes].map(type => TYPE_FILTER_LABEL[type] || type).join(', ')}`);
+  if (selectedStages.size) parts.push(`조사 진행 단계: ${[...selectedStages].map(stage => STAGE_LABEL[stage] || stage).join(', ')}`);
+  parts.push(`연결 범위: ${depthValue} hop`);
+  return `[Knowledge Wiki Map 필터: ${parts.join(' · ')}]\n`;
+}
+
 function launchAgent(prompt = '') {
   if (ui.mapPanel) {
     window.dispatchEvent(new CustomEvent('skbp:open-agent', { detail: { prompt } }));
@@ -132,7 +175,7 @@ function publishActiveKnowledgeNode(node, neighbors, prompts = []) {
   if (!ui.mapPanel) return;
   const label = clean(node.label) || node.id;
   const related = neighbors.slice(0, 8).map(item => clean(item.label)).filter(Boolean).join(', ') || '직접 연결된 노드 없음';
-  const context = `[선택 노드: ${node.type} · ${label}]\n[직접 연결: ${related}]`;
+  const context = `${activeMapFilterContext()}[선택 노드: ${node.type} · ${label}]\n[직접 연결: ${related}]`;
   window.dispatchEvent(new CustomEvent('skbp:knowledge-node-selected', {
     detail: { label, type: node.type, neighborCount: neighbors.length, context, prompts }
   }));
@@ -263,9 +306,9 @@ async function renderSelectedNodeNote(node, container) {
 function recommendedPrompts(node, neighbors) {
   const label = clean(node.label) || node.id;
   const related = neighbors.slice(0, 8).map(item => clean(item.label)).filter(Boolean).join(', ') || '직접 연결된 노드';
-  const context = `[선택 노드: ${node.type} · ${label}]\n[직접 연결: ${related}]\n\n`;
+  const context = `${activeMapFilterContext()}[선택 노드: ${node.type} · ${label}]\n[직접 연결: ${related}]\n\n`;
   const typePrompt = {
-    asset: `${label}의 개발 단계, 경쟁 환경, 근거 수준을 종합해 우선순위와 다음 검토 액션을 제안해줘.`,
+    asset: `${label}의 Pipeline Stage, 경쟁 환경, 근거 수준을 종합해 우선순위와 다음 검토 액션을 제안해줘.`,
     company: `${label}의 연결 파이프라인을 비교해 회사의 핵심 강점과 포트폴리오 리스크를 설명해줘.`,
     target: `${label} 타깃의 작용 기전, 적응증 연결성, 경쟁 리스크를 정리해줘.`,
     moa: `${label} 기전의 차별성, 검증 근거, translational risk를 평가해줘.`,
@@ -352,7 +395,8 @@ const MAP_MULTI_FILTERS = {
 function mapMultiFilterOptions(key) {
   const config = MAP_MULTI_FILTERS[key];
   if (!config) return { canonical: [], other: [], hasCanonical: false };
-  const options = [...new Set(config.values().map(clean).filter(Boolean))].map(value => ({ value, label: value }));
+  const options = [...new Set(config.values().map(clean).filter(Boolean))]
+    .map(value => ({ value, label: key === 'type' ? (TYPE_FILTER_LABEL[value] || value) : value }));
   const canonicalValues = new Set(config.canonical.map(normalizedSearchKeyword));
   const byNormalizedValue = new Map(options.map(option => [normalizedSearchKeyword(option.value), option]));
   const canonical = config.canonical.map(value => byNormalizedValue.get(normalizedSearchKeyword(value))).filter(Boolean);
@@ -383,7 +427,11 @@ function renderMapMultiFilter(key) {
   const selected = config.selected;
   const option = (item, canonicalItem) => `<button type="button" class="filter-multiselect-option${selected.has(item.value) ? ' is-selected' : ''}${canonicalItem ? ' is-canonical' : ''}" data-sg-multi-option="${key}" data-sg-multi-value="${escapeHtml(item.value)}" role="option" aria-selected="${selected.has(item.value)}"><span class="filter-multiselect-check" aria-hidden="true">${selected.has(item.value) ? '✓' : ''}</span><span>${escapeHtml(item.label)}</span></button>`;
   const group = (label, items, canonicalItem) => items.length ? `<div class="filter-multiselect-option-group" data-sg-multi-group="${key}"><p>${label}</p>${items.map(item => option(item, canonicalItem)).join('')}</div>` : '';
-  summary.textContent = selected.size === 0 ? '전체' : selected.size === 1 ? [...selected][0] : `${selected.size}개 선택`;
+  summary.textContent = selected.size === 0
+    ? '전체'
+    : selected.size === 1
+      ? (key === 'type' ? (TYPE_FILTER_LABEL[[...selected][0]] || [...selected][0]) : [...selected][0])
+      : `${selected.size}개 선택`;
   filter.classList.toggle('has-selection', selected.size > 0);
   menu.innerHTML = [
     `<div class="filter-multiselect-menu-topbar"><button type="button" class="filter-multiselect-option filter-multiselect-all-option${selected.size === 0 ? ' is-selected' : ''}" data-sg-multi-all="${key}" role="option" aria-selected="${selected.size === 0}"><span class="filter-multiselect-check" aria-hidden="true">${selected.size === 0 ? '✓' : ''}</span><span>전체</span></button><label class="filter-multiselect-menu-search"><span class="sr-only">${escapeHtml(key)} 검색</span><input type="search" data-sg-multi-search="${key}" value="${escapeHtml(multiFilterQueries[key])}" placeholder="검색" autocomplete="off" /></label></div>`,
@@ -479,12 +527,13 @@ function prepare() {
     const caption = element?.closest('label')?.querySelector('span');
     if (caption) caption.textContent = label;
   };
-  setFilterLabel(ui.search, '키워드 찾기');
-  setFilterLabel(ui.theme, '관심 Theme');
-  setFilterLabel(ui.type, '중심 엔터티');
-  setFilterLabel(ui.stage, 'Pipeline 단계');
-  if (ui.search) ui.search.placeholder = 'Pipeline · Company · Target · MoA 검색';
-  const stageLegend = Object.keys(STAGE_COLOR).map(key => `<button type="button" class="sg-legend-filter help-tooltip" data-legend-kind="stage" data-legend-value="${key}" aria-pressed="true" aria-label="${STAGE_LABEL[key]} 노드 표시 또는 숨기기" data-tooltip="${STAGE_LABEL[key]} 노드 표시/숨기기"><i style="--c:${graphStageColor(key)}"></i>${STAGE_LABEL[key]}</button>`).join('');
+  setFilterLabel(ui.search, '검색');
+  setFilterLabel(ui.theme, 'Theme');
+  setFilterLabel(ui.type, '표시할 항목');
+  setFilterLabel(ui.stage, '조사 진행 단계');
+  syncExplorerViewTooltip();
+  if (ui.search) ui.search.placeholder = 'Company · Asset · Target · MoA 등 검색';
+  const stageLegend = Object.keys(STAGE_COLOR).map(key => `<button type="button" class="sg-legend-filter help-tooltip" data-legend-kind="stage" data-legend-value="${key}" aria-pressed="true" aria-label="${STAGE_LABEL[key]} 노드 표시 또는 숨기기" data-tooltip="${STAGE_LEGEND_TOOLTIP[key]}"><i style="--c:${graphStageColor(key)}"></i>${STAGE_LABEL[key]}</button>`).join('');
   const featuredConnectionTypes = ['review', 'company', 'target', 'moa', 'modality'];
   const typeLegend = featuredConnectionTypes.filter(type => raw.nodes.some(node => node.type === type))
     .map(type => {
@@ -492,7 +541,7 @@ function prepare() {
       const tooltip = TYPE_LEGEND_TOOLTIP[type] || `${label} 노드 표시/숨기기`;
       return `<button type="button" class="sg-legend-filter help-tooltip" data-legend-kind="type" data-legend-value="${escapeHtml(type)}" aria-pressed="true" aria-label="${escapeHtml(label)} 노드 표시 또는 숨기기" data-tooltip="${escapeHtml(tooltip)}"><i style="--c:${graphTypeColor(type)}"></i>${escapeHtml(label)}</button>`;
     }).join('');
-  ui.legend.innerHTML = `<div class="sg-legend-group"><span>Pipeline 단계 · 색상</span><div class="sg-legend-options">${stageLegend}</div></div><div class="sg-legend-group"><span>연결 대상 · 표시</span><div class="sg-legend-options">${typeLegend}</div></div>`;
+  ui.legend.innerHTML = `<div class="sg-legend-group"><span class="sg-legend-heading help-tooltip" tabindex="0" data-tooltip="Asset의 조사 진행 상태를 색으로 보여줍니다. 아래 상태를 클릭하면 해당 Asset을 그래프에서만 숨기거나 다시 표시합니다.">조사 진행 단계 · 색상/표시</span><div class="sg-legend-options">${stageLegend}</div></div><div class="sg-legend-group"><span class="sg-legend-heading help-tooltip" tabindex="0" data-tooltip="그래프 노드 종류의 색상 안내입니다. 아래 항목을 클릭하면 해당 종류의 노드를 그래프에서만 숨기거나 다시 표시합니다.">연결 대상 · 표시</span><div class="sg-legend-options">${typeLegend}</div></div>`;
   ui.legend.querySelectorAll('.sg-legend-filter').forEach(button => button.addEventListener('click', () => {
     const key = `${button.dataset.legendKind}:${button.dataset.legendValue}`;
     if (hiddenLegendFilters.has(key)) hiddenLegendFilters.delete(key);
@@ -626,6 +675,7 @@ function inspectNode(id) {
 }
 
 function buildGraph() {
+  syncMapResetButton();
   const data = selectedGraph();
   const layout = seedNodes(data.nodes);
   const positions = new Map(layout.map(node => [node.id, node]));
@@ -722,7 +772,10 @@ async function load() {
   return loadPromise;
 }
 
-ui.view?.addEventListener('change', buildGraph);
+ui.view?.addEventListener('change', () => {
+  syncExplorerViewTooltip();
+  buildGraph();
+});
 ui.search?.addEventListener('keydown', event => {
   if (event.key !== 'Enter') return;
   event.preventDefault();
@@ -870,8 +923,10 @@ ui.reset.addEventListener('click', () => {
   selectedThemes.clear();
   selectedTypes.clear();
   selectedStages.clear();
+  hiddenLegendFilters.clear();
   depthValue = '1';
   if (ui.view) ui.view.value = 'overview';
+  syncExplorerViewTooltip();
   selectedIndications.clear();
   indicationQuery = '';
   renderSearchKeywordPills();
