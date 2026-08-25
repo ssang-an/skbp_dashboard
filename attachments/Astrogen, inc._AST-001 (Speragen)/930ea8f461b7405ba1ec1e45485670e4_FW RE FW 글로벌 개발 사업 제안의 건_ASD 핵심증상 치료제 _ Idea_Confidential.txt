@@ -1,0 +1,272 @@
+보낸 사람:	유택상(TAEGSANG YOU)/Open Innovation팀/SKBP
+보낸 날짜:	2026년 4월 6일 월요일 오전 9:35
+받는 사람:	정주원(JOOWON JUNG)/Open Innovation팀/SKBP
+제목:	FW: RE: FW: 글로벌 개발 사업 제안의 건_ASD 핵심증상 치료제 _ 
+Idea_Confidential
+첨부 파일:	AST001_GP_Proposal.pptx
+
+
+
+From: 황선관(SUNGWAN HWANG)/신약연구부문/SKBP <sungwan.hwang@skbp.com>  
+Sent: Friday, April 3, 2026 8:38 PM 
+To: 박희은(HEEEUN PARK)/사업개발2팀/SKBP <ellypark@skbp.com>; 유택상(TAEGSANG YOU)/Open 
+Innovation팀/SKBP <taegsang.you@skbp.com>; 김동규(DONGKYU KIM)/전략팀/SKBP 
+<dongkyu@skbp.com> 
+Cc: 유창호(CHANGHO YU)/전략부문/SKBP <changho.yu@skbp.com>; 나경은(KYUNG EUN 
+NA)/사업개발2팀/SKBP <kyungeun_na@skbp.com>; 이인규(INKYU LEE)/사업개발2팀/SKBP 
+<inkyu_lee@skbp.com>; 서지영(JIYOUNG SEO)/Open Innovation팀/SKBP <jiyoungseO@skbp.com>; 
+이정태(JEONGTAE RHEE)/Open Innovation팀/SKBP <jeongtae_lee@skbp.com>; 강호원(HOWON 
+KANG)/Discovery Project/SKBP <kangh5@skbp.com> 
+Subject: RE: RE: FW: 글로벌 개발 사업 제안의 건_ASD 핵심증상 치료제 _ Idea_Confidential
+
+박 팀장님
+
+오늘 제가 다른 미팅이 있어 늦게 들어가서 죄송합니다.
+관련해서 과거에 제가 prodrug 형태로 L-serine으로 연구소에 보낸 메일이 있었는데, 찾을 수가 
+없어서
+AI로 정말 30초 컷으로 만들 자료 첨부 드립니다. (개념, 아이디어 7줄 프롬프트 주면 이제 이정
+도 30초로 만들어 줍니다 ^^)
+
+너무 단순한 아이디어인데, ADHD/ASD에서 L-Serine 보다 좋을 가능성이 있어서.. 한참 지난 아
+이디어를 다시 꺼내 봅니다. (Astrogen에 이야기 하시면 어쩌면 바로 특허 거실지도 ^^.. 지금 
+걸면 20년 보장)
+강 PL님 과거 저희 Pshcyi 하지 않아서 버렸던 idea인데.. 혹시 2~3달 합성/시험해서 특허 거실 
+지 확인 주셔요.
+
+평온한 저녁 되십시오.
+
+황선관 드림.
+
+From: 박희은(HEEEUN PARK)/사업개발2팀/SKBP <ellypark@skbp.com>  
+Sent: Wednesday, March 18, 2026 8:08 PM 
+To: 유택상(TAEGSANG YOU)/Open Innovation팀/SKBP <taegsang.you@skbp.com>; 김동규(DONGKYU 
+KIM)/전략팀/SKBP <dongkyu@skbp.com> 
+Cc: 황선관(SUNGWAN HWANG)/신약연구부문/SKBP <sungwan.hwang@skbp.com>; 
+유창호(CHANGHO YU)/전략부문/SKBP <changho.yu@skbp.com>; 나경은(KYUNG EUN 
+NA)/사업개발2팀/SKBP <kyungeun_na@skbp.com>; 이인규(INKYU LEE)/사업개발2팀/SKBP 
+<inkyu_lee@skbp.com> 
+Subject: FW: RE: FW: 글로벌 개발 사업 제안의 건_ASD 핵심증상 치료제 
+
+유택상 팀장님, 김동규 팀장님, 안녕하세요? 
+
+황 부문장님 통해서 소개 받은 Astrogen이라는 국내 CNS Biotech 회사와 판교 본사에서 F2F 미팅을 진
+행하고자 합니다. 
+저희 팀에서 진행한 간단한 리뷰 상으로 (Autism 치료제)는 late stage fit 상으로 psychiatric이어서 100% 
+맞지는 않는 분야이지만, Rett syndrome, ADHD 약물도 개발하고 계셔서, 
+CNS asset 개발사로써 양사 간에 시너지 혹은 투자 측면으로도 검토해 볼 만하다고 생각이 됩니다. 
+
+4/3일 오후2시로 미팅을 arrange 하고자 하온데, 참석해 주시면 감사 드리겠습니다. 
+
+[Disease]
+-	With unknown reason, ASD has synaptic dysfunction with many symptoms, such as 
+irritability, repetitive behavior, depression, social avoidance, sleep and so on. 
+-	Currently approved products (Risperdal, Abilify) are only targeting “irritability” symptom and 
+there are many off label drugs used for these patients.
+-	US Market landscape (expect to reach #3B in 2030)
+-	 
+
+[AST-001]
+-	P2 (n=151, 12 weeks, placebo controlled, double blind): Positive result (improvement of more 
+behaviors, K-VABS-II-ABC, 1.4 point difference, p value: 0.042, 삼성서울병원, 아산병원 등 한국
+의 major medical centers) --> For clinically meaningful improvement for ASD patients, at 
+least 4~8 point difference is required. Clinch B, et al. (2023)
+-	P3 (n=169, ~’25.12) 결과 확인 필요 
+-	MFDS NDA filing (’25.12)
+
+[분석 결과] 
+-	AST-001 proved proof of concept in ASD from Korea clinical study and is targeting different 
+/ important symptom (social, communication, others) of ASD.
+-	For US market, another P3 study may be required 
+-	Interon INT-016 (discovery stage, collaboration with Harvard University) is also targeting 
+social avoidance of Autism. 
+-	However, ASD itself, call point, is psychiatrist in US, so does not match with late stage target 
+of SKBP/LSI.  
+-	And for clinically meaningful improvement for ASD patients, at least 4-8 points improvement 
+is required. (not enough efficacy is expected). 
+
+감사합니다.
+박희은 드림
+
+From: 문지영 <jymoon82@astrogen.co.kr>  
+Sent: Wednesday, March 18, 2026 2:07 PM 
+To: 박희은(HEEEUN PARK)/사업개발2팀/SKBP <ellypark@skbp.com> 
+Cc: PRIYANTO BILLY <billyp@astrogen.co.kr>; 황수경 <skhwang@astrogen.co.kr>; 유창호(CHANGHO 
+YU)/전략부문/SKBP <changho.yu@skbp.com> 
+Subject: Re: RE: FW: 글로벌 개발 사업 제안의 건_ASD 핵심증상 치료제 
+
+안녕하세요 박희은 팀장님,
+
+저희가 귀사에 방문하도록 하겠습니다.
+
+일정은 4월 1일 수요일 혹은 4월 3일 금요일이 좋을 것 같습니다. 편하신 시간을 안내해 주시면 미팅 시간을 
+확정하도록 하겠습니다.
+
+감사합니다.
+문지영 드림 
+
+ 
+ 
+
+Jiyoung Moon / Vice President, CSO 
+4th floor, 443, Bongeunsa-ro, 
+Gangnam-gu, Seoul, Republic of Korea
+Mobile 82.10.4147.2380 
+www.astrogen.co.kr
+Disclaimer: This message, and any   attachments, is merely for the sole use of the   intended recipient(s) and may contain information that 
+is privileged, confidential,   and/or proprietary. Any unauthorized review, copying, use, disclosure, or distribution of this email including any attachments 
+thereto is strictly prohibited. If you are not the intended recipient, please replying to this email and destroying all copies of the original email. 
+
+
+
+
+ 
+
+보내는사람: 박희은(HEEEUN PARK)/사업개발2팀/SKBP<ellypark@sk.com>
+
+받는사람 : 문지영 <jymoon82@astrogen.co.kr>
+
+참조 : PRIYANTO BILLY <billyp@astrogen.co.kr>,황수경<skhwang@astrogen.co.kr>,유창호(CHANGHO 
+YU)/전략부문/SKBP<changho.yu@sk.com>
+
+보낸 날짜 : 2026-03-17 19:03
+
+
+
+제목 : RE: FW: 글로벌 개발 사업 제안의 건_ASD 핵심증상 치료제
+
+
+
+문지영 부사장님, 안녕하세요? 
+  
+보내 주신 자료는 잘 검토하였습니다. 
+CNS 질환영역에 promising한 여러 asset/pipeline 들을 개발하고 계셔서, 뇌전증약 치료제 및 CNS 
+치료제를 개발해온 저희 회사로서는 많은 부분 공감이 되고, 또 추가적으로 말씀을 나눌 수 있으면 
+좋겠다고 생각이 됩니다. 
+  
+F2F 미팅을 제안 드리고 싶은데요. 
+저희 회사로 방문을 주셔도 좋고, 저희가 귀사로 방문 드릴 수 있사오니, 편하신 방법으로 말씀 부탁 
+드립니다. 
+사업개발 외에도 연구팀, 전략팀 등 관련 부서에서 Astrogen 회사 및 Asset에 대한 설명을 들을 수 있는 
+기회가 되면 좋을 것 같습니다. 
+  
+3월 마지막주 (3/30일 ~ 4/3일) 혹은 그 이후 중에서, 가능하신 일정이 있으시다면 편하게 말씀 부탁 
+드립니다. 
+  
+감사드립니다. 
+박희은 드림 
+  
+Elly, Hee Eun Park. Pharmacist 
+Director 
+Strategy & Investment Division / Corporate Development, BD2 Team 
+Mobile: +82-10-8500-8886 
+E-Mail: ellypark@sk.com 
+ 
+This email message is for the sole use of the intended recipient and may contain confidential and privileged 
+information. 
+Any unauthorized review, use, disclosure or distribution of this information is prohibited. 
+If you are not the intended recipient, please contact the sender by reply email and destroy the original message 
+and all of its copies. 
+상기 메시지는 의도된 수신자만 이용하도록 전송되었으며, 비밀정보와 특권정보가 포함되어 있을 수 있습니다. 권한 없이 이 
+정보들을 열람, 사용, 공개,배포하는 것은 금지되어 있습니다. 만일 귀하가 의도된 수신자가 아닌 경우, 회신 메일로 송신자에게 
+연락을 취해주시고 원본 메시지와 모든 사본을 폐기하여 주시기 바랍니다. 
+  
+From: 문지영 <jymoon82@astrogen.co.kr> 
+Sent: Thursday, March 12, 2026 5:36 PM 
+To: 문지영 <jymoon82@astrogen.co.kr>; 박희은(HEEEUN PARK)/사업개발2팀/SKBP 
+<ellypark@skbp.com> 
+Cc: PRIYANTO BILLY <billyp@astrogen.co.kr>; 황수경 <skhwang@astrogen.co.kr>; 유창호(CHANGHO 
+YU)/전략부문/SKBP <changho.yu@skbp.com> 
+Subject: Re: FW: 글로벌 개발 사업 제안의 건_ASD 핵심증상 치료제 
+  
+안녕하세요 박희은 팀장님, 
+ 
+회신주셔서 감사합니다. 그럼 자료 리뷰 하신 뒤 편하게 연락 부탁 드립니다. 
+ 
+감사합니다. 
+문지영 드림 
+ 
+ 
+
+Jiyoung Moon / Vice President, CSO 
+4th floor, 443, Bongeunsa-ro,  
+Gangnam-gu, Seoul, Republic of Korea 
+Mobile 82.10.4147.2380 
+www.astrogen.co.kr 
+Disclaimer: This message, and any   attachments, is merely for the sole use of the   intended recipient(s) and may contain information that 
+is privileged, confidential,   and/or proprietary. Any unauthorized review, copying, use, disclosure, or distribution of this email including any attachments 
+thereto is strictly prohibited. If you are not the intended recipient, please replying to this email and destroying all copies of the original email.  
+ 
+ 
+ 
+======================================== 
+보낸사람 : 박희은(HEEEUN PARK)/사업개발2팀/SKBP 
+받은사람 : jymoon82@astrogen.co.kr 
+참조 : PRIYANTO BILLY ,황수경,유창호(CHANGHO YU)/전략부문/SKBP 
+보낸일시 : 2026-03-11 19:48 
+제목 : FW: 글로벌 개발 사업 제안의 건_ASD 핵심증상 치료제 
+문지영 부사장님, 안녕하세요? 
+SK바이오팜 박희은 입니다. 
+  
+처음 인사 드립니다. 저는 사업개발본부에서 근무하고 있습니다. 
+황선관 부문장님으로부터도 말씀을 전해 들었습니다. 저희 쪽에 자료와 함께 연락을 주셔서 대단히 감사 
+드립니다. 
+저희 팀 내에서 보내 주신 자료를 검토해서, 궁금한 사항이나, 또는 회의를 요청 드릴 수 있도록 
+하겠습니다. 
+  
+감사드립니다. 
+박희은 드림 
+  
+Elly, Hee Eun Park. Pharmacist 
+Director 
+Strategy & Investment Division / Corporate Development, BD2 Team 
+Mobile: +82-10-8500-8886 
+E-Mail: ellypark@sk.com 
+ 
+This email message is for the sole use of the intended recipient and may contain confidential and privileged 
+information. 
+Any unauthorized review, use, disclosure or distribution of this information is prohibited. 
+If you are not the intended recipient, please contact the sender by reply email and destroy the original message 
+and all of its copies. 
+상기 메시지는 의도된 수신자만 이용하도록 전송되었으며, 비밀정보와 특권정보가 포함되어 있을 수 있습니다. 권한 없이 이 
+정보들을 열람, 사용, 공개,배포하는 것은 금지되어 있습니다. 만일 귀하가 의도된 수신자가 아닌 경우, 회신 메일로 송신자에게 
+연락을 취해주시고 원본 메시지와 모든 사본을 폐기하여 주시기 바랍니다. 
+  
+From: 문지영 <jymoon82@astrogen.co.kr> 
+Sent: Friday, March 6, 2026 5:14 PM 
+To: 박희은(HEEEUN PARK)/사업개발2팀/SKBP <ellypark@skbp.com> 
+Cc: PRIYANTO BILLY <billyp@astrogen.co.kr>; 황수경 <skhwang@astrogen.co.kr> 
+Subject: 글로벌 개발 사업 제안의 건_ASD 핵심증상 치료제 
+  
+안녕하세요 박희은 팀장님,  
+ 
+메일로 처음 인사를 드리게 되었습니다. 아스트로젠 문지영입니다.  
+ 
+저희는 난치성 소아 CNS 질환을 연구하고 있는 바이오벤처입니다. 메인 파이프라인으로는 자폐 스펙트럼 장애의 
+핵심 증상 치료제의 임상을 완료하고 작년 한국의 식약처에 NDA 제출을 완료했으며 글로벌 진출을 위한 전략을 
+고민 중에 있습니다. 
+ 
+SK바이오팜이 해외에서의 개발과 세일즈에 강력한 인프라 확보와 성공경험이 있으셔서 미국 진출에 대한 자문 및 
+협력을 제안드리고자 황선관 부사장님 통해 연락처를 받아 연락을 드립니다. 
+ 
+간단한 회사와 파이프라인 소개 자료를 첨부해 드리니 살펴보시고 시간이 되시면 한 번 찾아뵙고 더 구체적인 
+사항을 논의 드리고 싶습니다.  
+ 
+그럼 자료를 살펴봐 주시고 편하신 시간에 이메일, 유선(010-4147-2380) 편하신 방법으로 연락을 한 번 주시면 
+감사하겠습니다. 
+ 
+문지영 드림  
+  
+  
+ 
+ 
+
+Jiyoung Moon / Vice President, CSO 
+4th floor, 443, Bongeunsa-ro,  
+Gangnam-gu, Seoul, Republic of Korea 
+Mobile 82.10.4147.2380 
+www.astrogen.co.kr 
+Disclaimer: This message, and any   attachments, is merely for the sole use of the   intended recipient(s) and may contain information that 
+is privileged, confidential,   and/or proprietary. Any unauthorized review, copying, use, disclosure, or distribution of this email including any attachments 
+thereto is strictly prohibited. If you are not the intended recipient, please replying to this email and destroying all copies of the original email.  
+  
+  
