@@ -1,112 +1,8 @@
 [
   {
-    "id": "cq_fd6fc649",
-    "asset_input": "AD-302",
-    "company_input": "AddPharma",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-09T03:01:53.873483+00:00"
-  },
-  {
-    "id": "cq_b2421603",
-    "asset_input": "ADEL-Y03",
-    "company_input": "ADEL",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-09T03:01:53.873483+00:00"
-  },
-  {
-    "id": "cq_a232fd51",
-    "asset_input": "ADY-73001 (ADEL-Y07)",
-    "company_input": "ADEL Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-09T03:01:53.873483+00:00"
-  },
-  {
-    "id": "cq_8d99f859",
-    "asset_input": "tertomotide",
-    "company_input": "GemVax & KAEL Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_bfa8a8ad",
-    "asset_input": "paxalisib",
-    "company_input": "SoVarGen Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_3e8036f6",
-    "asset_input": "(ascorbic acid + Aptamin C320)",
-    "company_input": "Nexmos Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_7ea50c51",
-    "asset_input": "exenatide SR",
-    "company_input": "Peptron Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_6623e839",
-    "asset_input": "JBPOS-0101",
-    "company_input": "Bio-Pharm Solutions Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_157e0be0",
-    "asset_input": "KLS-2031",
-    "company_input": "Kolon Life Science Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
     "id": "cq_b230dc89",
     "asset_input": "meloxicam",
     "company_input": "Animuscure Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_ca9c9325",
-    "asset_input": "METI-101",
-    "company_input": "MetiMedi Pharmaceuticals Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_b96ec451",
-    "asset_input": "PAX-1",
-    "company_input": "Komipharm International Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_4ccbaa32",
-    "asset_input": "TEDA-9",
-    "company_input": "S.Biomedics Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_d1802127",
-    "asset_input": "VVZ-2471",
-    "company_input": "Vivozon Inc",
     "status": "pending",
     "source": "paste_import",
     "added_at": "2026-08-18T01:28:43.535867+00:00"
@@ -120,14 +16,6 @@
     "added_at": "2026-08-18T01:28:43.535867+00:00"
   },
   {
-    "id": "cq_95bbd93f",
-    "asset_input": "ABF-101",
-    "company_input": "AptaBio Therapeutics Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
     "id": "cq_511d8534",
     "asset_input": "AS-603",
     "company_input": "Amyloid Solution Inc",
@@ -136,169 +24,9 @@
     "added_at": "2026-08-18T01:28:43.535867+00:00"
   },
   {
-    "id": "cq_8a41cbc6",
-    "asset_input": "CX-213",
-    "company_input": "Cenyx Biotech Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_b47abe11",
-    "asset_input": "DA-7503",
-    "company_input": "Dong-A ST Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_3a27f795",
-    "asset_input": "FB-101",
-    "company_input": "1st Bio Therapeutics Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_408d9860",
-    "asset_input": "KNP-502",
-    "company_input": "Oscotec Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_50578d35",
-    "asset_input": "MS-1901",
-    "company_input": "Medinno Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_2d928d44",
-    "asset_input": "MS-2001",
-    "company_input": "Medinno Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
     "id": "cq_5c4f3899",
     "asset_input": "OC-514",
     "company_input": "Korea Pharma Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_3416df45",
-    "asset_input": "onabotulinumtoxinA",
-    "company_input": "CKD Bio Corp",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_2a4f130d",
-    "asset_input": "PRGA-05",
-    "company_input": "PRG S&Tech Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_5e79690f",
-    "asset_input": "ropivacaine SR",
-    "company_input": "G2GBIO Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_c7415483",
-    "asset_input": "tomaralimab",
-    "company_input": "Neuramedy Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_a03383b4",
-    "asset_input": "JBPOS-0501",
-    "company_input": "Bio-Pharm Solutions Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_9c29ddd7",
-    "asset_input": "SNE-101",
-    "company_input": "S&E Bio Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_a36b2904",
-    "asset_input": "AB-103",
-    "company_input": "AevisBio Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_7a582f92",
-    "asset_input": "AB-14",
-    "company_input": "Autotac Bio Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_b41d74f4",
-    "asset_input": "AB-16",
-    "company_input": "Autotac Bio Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_7244497f",
-    "asset_input": "AB-19",
-    "company_input": "Autotac Bio Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_ba8ed477",
-    "asset_input": "ABX-1901",
-    "company_input": "ISU ABXIS Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_4f76c85a",
-    "asset_input": "ADELY-06",
-    "company_input": "ADEL Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_c15a017b",
-    "asset_input": "ALT-001",
-    "company_input": "Altmedical Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_e0517720",
-    "asset_input": "Alzheimer's Disease Prophylactic Vaccines",
-    "company_input": "Posvax Co Ltd",
     "status": "pending",
     "source": "paste_import",
     "added_at": "2026-08-18T01:28:43.535867+00:00"
@@ -1856,14 +1584,6 @@
     "added_at": "2026-08-18T01:28:43.535867+00:00"
   },
   {
-    "id": "cq_cab2ccdf",
-    "asset_input": "ADY-73001",
-    "company_input": "ADEL Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
     "id": "cq_e58885b3",
     "asset_input": "ADY-74001",
     "company_input": "ADEL Inc",
@@ -3344,14 +3064,6 @@
     "added_at": "2026-08-18T01:29:17.183393+00:00"
   },
   {
-    "id": "cq_0323c216",
-    "asset_input": "GV1001",
-    "company_input": "GemVax & KAEL",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:29:17.183393+00:00"
-  },
-  {
     "id": "cq_320451fb",
     "asset_input": "CP-108",
     "company_input": "Bukwang Pharmaceutical",
@@ -4099,14 +3811,6 @@
     "id": "cq_9afd1a7a",
     "asset_input": "ZC-C20",
     "company_input": "Zincure",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:29:17.183393+00:00"
-  },
-  {
-    "id": "cq_2836c6ee",
-    "asset_input": "ADEL-Y07",
-    "company_input": "ADEL",
     "status": "pending",
     "source": "paste_import",
     "added_at": "2026-08-18T01:29:17.183393+00:00"
