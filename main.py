@@ -1029,7 +1029,12 @@ def canonicalize_development_stage(source_wording: Any) -> str:
                            r"\blead\s+optimization\b|리드\s*최적화", text)
     if lead_match and not match_is_planned(lead_match):
         return "Lead Optimization"
-    hit_match = re.search(r"\b(?:hit\s+discovery|hit\s+identification|hit\s*id|early\s+screening)\b|히트\s*(?:발굴|탐색)", text)
+    hit_match = re.search(
+        r"\b(?:hit\s+discovery|hit\s+identification|hit\s*id|early\s+screening|"
+        r"research\s+(?:program|project)|discovery\s+(?:program|project))\b|"
+        r"(?:히트\s*(?:발굴|탐색)|연구\s*(?:프로그램|프로젝트))",
+        text,
+    )
     if hit_match and not match_is_planned(hit_match):
         return "Hit Discovery"
 
@@ -5188,9 +5193,9 @@ def normalize_pipeline_contact(value: Any) -> str:
 def normalize_listing_contact_import(comment: Any, contact: Any) -> tuple[str, str]:
     """Apply the Excel-only Contact marker rule before Listing metadata is created.
 
-    `X` alone means no Contact History.  When a spreadsheet cell starts with an
-    explicit `X` marker but also contains a note, the note is an operational
-    Comment rather than a contradictory Contact History entry.
+    `X` alone means no Contact History. When a spreadsheet cell starts with an
+    explicit `X` marker but also contains a note, retain the `X` absence marker
+    and move the note into Comment with a clear Contact source label.
     """
     comment_text = str(comment or "").strip()
     contact_text = str(contact or "").strip()
@@ -5201,9 +5206,10 @@ def normalize_listing_contact_import(comment: Any, contact: Any) -> tuple[str, s
     if not note:
         return comment_text, "X"
     existing_normalized = re.sub(r"\s+", " ", comment_text).strip().casefold()
-    note_normalized = re.sub(r"\s+", " ", note).strip().casefold()
+    comment_note = f"Contact: {note}"
+    note_normalized = re.sub(r"\s+", " ", comment_note).strip().casefold()
     if note_normalized and note_normalized not in existing_normalized:
-        comment_text = f"{comment_text}\n{note}" if comment_text else note
+        comment_text = f"{comment_text}\n{comment_note}" if comment_text else comment_note
     return comment_text, "X"
 
 

@@ -1706,7 +1706,7 @@ function canonicalDevelopmentStage(value) {
   }
   const leadMatch = text.match(/\b(?:candidate|lead)\s+selection\s+(?:ongoing|underway|in progress)\b|\blead\s+optimization\b|리드\s*최적화/);
   if (leadMatch && !matchIsPlanned(leadMatch)) return 'Lead Optimization';
-  const hitMatch = text.match(/\b(?:hit\s+discovery|hit\s+identification|hit\s*id|early\s+screening)\b|히트\s*(?:발굴|탐색)/);
+  const hitMatch = text.match(/\b(?:hit\s+discovery|hit\s+identification|hit\s*id|early\s+screening|research\s+(?:program|project)|discovery\s+(?:program|project))\b|(?:히트\s*(?:발굴|탐색)|연구\s*(?:프로그램|프로젝트))/);
   if (hitMatch && !matchIsPlanned(hitMatch)) return 'Hit Discovery';
   const indEnablingMatch = text.match(/\bind[- ]?enabling(?:\s+stud(?:y|ies))?\b|\bglp\s+(?:toxicology|tox)\b|\bind[- ]directed\s+cmc\b|\bind\s+preparation\b|\bpreparing\s+(?:an?\s+)?ind\b|ind\s*준비|glp\s*독성/);
   if (indEnablingMatch && !matchIsPlanned(indEnablingMatch)) return 'IND-enabling';
@@ -4956,9 +4956,9 @@ function countryEditValue(row) {
   const value = row.country || 'Unknown';
   const classes = `table-manual-text country-cell-content${isManual ? ' is-human' : ''}${editable ? ' is-editable' : ''}`;
   const attributes = editable
-    ? ` data-table-country-edit data-record-id="${escapeHtml(row.id)}" data-previous-value="${escapeHtml(value)}" role="button" tabindex="0" aria-label="Double-click to edit Country"`
+    ? ` data-table-country-edit data-record-id="${escapeHtml(row.id)}" data-previous-value="${escapeHtml(value)}" role="button" tabindex="0" aria-label="Double-click to edit Location"`
     : '';
-  return `<span class="${classes}"${attributes} title="${escapeHtml(editable ? '관리자: 더블클릭하여 Country 입력' : row.countryRaw || value)}">${countryDisplayMarkup(value)}</span>`;
+  return `<span class="${classes}"${attributes} title="${escapeHtml(editable ? '관리자: 더블클릭하여 Location 입력' : row.countryRaw || value)}">${countryDisplayMarkup(value)}</span>`;
 }
 
 function focusOfficialFieldValue(row, value, label, { html = '', className = '', title = '' } = {}) {
@@ -5077,7 +5077,7 @@ function renderTableLegacy() {
         <input id="selectPageRows" type="checkbox" aria-label="현재 페이지 전체 선택" />
       </th>
       <th><button data-sort="company" type="button">Company</button></th>
-      <th><button data-sort="country" type="button">Country</button></th>
+      <th><button data-sort="country" type="button">Location</button></th>
       <th><button data-sort="asset" type="button">Asset</button></th>
       <th><button data-sort="target" type="button">Target / Modality / Theme / Cluster</button></th>
       <th><button data-sort="mainIndication" type="button">Main indication</button></th>
@@ -5104,7 +5104,7 @@ function renderTableLegacy() {
           <input id="selectPageRows" type="checkbox" aria-label="현재 페이지 전체 선택" />
         </th>
         <th rowspan="2"><button data-sort="company" type="button">Company</button></th>
-        <th rowspan="2"><button data-sort="country" type="button">Country</button></th>
+        <th rowspan="2"><button data-sort="country" type="button">Location</button></th>
         <th rowspan="2"><button data-sort="asset" type="button">Asset</button></th>
         <th rowspan="2"><button data-sort="target" type="button">Target / Modality / Theme / Cluster</button></th>
         <th rowspan="2"><button data-sort="mainIndication" type="button">Main indication</button></th>
@@ -5137,7 +5137,7 @@ function renderTableLegacy() {
           <input id="selectPageRows" type="checkbox" aria-label="현재 페이지 전체 선택" />
         </th>
         ${sortableHeader('Company', 'company', 'company', 'rowspan="2"')}
-        ${sortableHeader('Country', 'country', 'country', 'rowspan="2"')}
+        ${sortableHeader('Location', 'country', 'country', 'rowspan="2"')}
         ${sortableHeader('Asset', 'asset', 'asset', 'rowspan="2"')}
         ${sortableHeader('Target / Modality / Theme / Cluster', 'target', 'target', 'rowspan="2"')}
         ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
@@ -5466,7 +5466,7 @@ function renderFocusTable() {
           <input id="selectPageRows" type="checkbox" aria-label="현재 페이지 전체 선택" />
         </th>
         ${sortableHeader('Company', 'company', 'company', 'rowspan="2"')}
-        ${sortableHeader('Country', 'country', 'country', 'rowspan="2"')}
+        ${sortableHeader('Location', 'country', 'country', 'rowspan="2"')}
         ${sortableHeader('Asset', 'asset', 'asset', 'rowspan="2"')}
         ${sortableHeader('Modality', 'modality', 'modality', 'rowspan="2"')}
         ${sortableHeader('Target', 'target', 'target', 'rowspan="2"')}
@@ -5502,7 +5502,7 @@ function renderFocusTable() {
             <input class="row-select" type="checkbox" data-record-id="${escapeHtml(row.id)}" aria-label="${escapeHtml(row.asset)} 선택" ${checked} />
           </td>
           <td class="company-cell">${focusOfficialFieldValue(row, row.company, 'Company')}</td>
-          <td class="country-cell">${focusOfficialFieldValue(row, row.countryRaw || row.country, 'Country', { html: countryDisplayMarkup(row.countryRaw || row.country) })}</td>
+          <td class="country-cell">${focusOfficialFieldValue(row, row.countryRaw || row.country, 'Location', { html: countryDisplayMarkup(row.countryRaw || row.country) })}</td>
           <td class="asset-cell">${focusOfficialFieldValue(row, row.asset, 'Asset', { html: `<strong>${escapeHtml(row.asset)}</strong>` })}</td>
           <td
             class="modality-column-cell"
@@ -5636,7 +5636,7 @@ function renderTable() {
           <input id="selectPageRows" type="checkbox" aria-label="Select visible page rows" />
         </th>
         ${sortableHeader('Company', 'company', 'company', 'rowspan="2"')}
-        ${sortableHeader('Country', 'country', 'country', 'rowspan="2"')}
+        ${sortableHeader('Location', 'country', 'country', 'rowspan="2"')}
         ${sortableHeader('Asset', 'asset', 'asset', 'rowspan="2"')}
         ${sortableHeader('Modality', 'modality', 'modality', 'rowspan="2"')}
         ${sortableHeader('Target', 'target', 'target', 'rowspan="2"')}
@@ -5939,7 +5939,7 @@ function exportPipelineTable() {
   const extraColumns = selectedExtraColumns();
   const headers = [
     'Company',
-    'Country',
+    'Location',
     'Asset',
     'Target',
     'Theme',
@@ -9185,7 +9185,7 @@ Evidence domains answer different development questions, such as in vitro activi
 const SHARED_CANONICAL_STAGE_RULE = `Canonical Pipeline Stage — structured_table.development_stage must be exactly one of:
 Hit Discovery; Lead Optimization; Preclinical Candidate; IND-enabling; Preclinical unspecified; IND filed/cleared; Clinical unspecified; Phase 1; Phase 1/2; Phase 2; Phase 2/3; Phase 3; Registration; Approved / marketed; Discontinued / inactive; Unknown.
 
-Canonicalize only an explicitly confirmed current stage or a completed/started milestone. Do not promote stage from plans, expectations, targets, financing, hiring, or adjacent programs. Generic preclinical -> Preclinical unspecified. Candidate nominated/selected -> Preclinical Candidate. Ongoing GLP tox, IND-directed CMC, or explicit IND-enabling work -> IND-enabling. IND/CTA submitted, filed, accepted, effective, or cleared -> IND filed/cleared. An explicitly ongoing clinical/pivotal/registrational trial with no phase -> Clinical unspecified; never infer Phase 3 from "pivotal" or "registrational" alone. Hit ID/hit identification -> Hit Discovery; FIH, Ph1, Ph1a, or Ph1b -> Phase 1; a confirmed Ph1b/2a -> Phase 1/2; FDA/EMA/NMPA approved -> Approved / marketed. Planned IND submission alone does not establish IND filed/cleared; "preclinical; IND planned" remains Preclinical unspecified. A planned Phase 2 or Phase 2/3 trial does not establish that phase: retain an explicitly confirmed earlier current phase, otherwise use Unknown. For multi-indication assets, use the lead/currently most advanced confirmed stage as the single dashboard value and move indication-specific status detail to evidence or notes; for example, "FOS Phase II recruiting; pain stage unclear" -> Phase 2. Map only explicitly confirmed discontinued, terminated, withdrawn, inactive, dormant, or abandoned programs to Discontinued / inactive. A suspended or halted program is not automatically terminal: retain the confirmed stage when available, record the pause in hard_filter.flags/notes, and set triage.active_asset=null unless inactivity is independently confirmed. Do not map speculative wording such as "likely preclinical or dormant" or a different historical alias marked discontinued to the current asset's Discontinued / inactive status. Use Unknown only when the relevant current stage itself is unresolved or conflicting.`;
+Canonicalize only an explicitly confirmed current stage or a completed/started milestone. Do not promote stage from plans, expectations, targets, financing, hiring, or adjacent programs. Generic preclinical -> Preclinical unspecified. Candidate nominated/selected -> Preclinical Candidate. Ongoing GLP tox, IND-directed CMC, or explicit IND-enabling work -> IND-enabling. IND/CTA submitted, filed, accepted, effective, or cleared -> IND filed/cleared. An explicitly ongoing clinical/pivotal/registrational trial with no phase -> Clinical unspecified; never infer Phase 3 from "pivotal" or "registrational" alone. Hit ID/hit identification, an explicit research program/project, or an explicit discovery program/project -> Hit Discovery; FIH, Ph1, Ph1a, or Ph1b -> Phase 1; a confirmed Ph1b/2a -> Phase 1/2; FDA/EMA/NMPA approved -> Approved / marketed. Planned IND submission alone does not establish IND filed/cleared; "preclinical; IND planned" remains Preclinical unspecified. A planned Phase 2 or Phase 2/3 trial does not establish that phase: retain an explicitly confirmed earlier current phase, otherwise use Unknown. For multi-indication assets, use the lead/currently most advanced confirmed stage as the single dashboard value and move indication-specific status detail to evidence or notes; for example, "FOS Phase II recruiting; pain stage unclear" -> Phase 2. Map only explicitly confirmed discontinued, terminated, withdrawn, inactive, dormant, or abandoned programs to Discontinued / inactive. A suspended or halted program is not automatically terminal: retain the confirmed stage when available, record the pause in hard_filter.flags/notes, and set triage.active_asset=null unless inactivity is independently confirmed. Do not map speculative wording such as "likely preclinical or dormant" or a different historical alias marked discontinued to the current asset's Discontinued / inactive status. Use Unknown only when the relevant current stage itself is unresolved or conflicting.`;
 
 const SHARED_CANONICAL_MODALITY_RULE = `Canonical Modality — structured_table.modality_platform must be exactly one of: Targeted protein degrader, Oncolytic virus, Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Microbiome therapy, Vaccine, Radiopharmaceutical, Others, or Unknown.
 Preserve the researched wording in structured_table.modality_source and use the canonical label in modality_platform. Examples: "TPD", "PROTAC", "molecular glue degrader", "SNIPER", "AUTOTAC", and "LYTAC" -> Targeted protein degrader; "oral small molecule" -> Small molecule; "IV antibody" -> Antibody; "live biotherapeutic product" -> Microbiome therapy. Route, dosage form, and technical qualifiers belong in MoA, source evidence, company_profile.platform_summary, or notes. modality_tags may contain multiple supported canonical labels only when the source explicitly evidences a hybrid format (for example, an antibody-targeted degrader can carry Antibody and Targeted protein degrader); never place raw labels such as TPD or PROTAC in modality_tags.`;
@@ -9589,7 +9589,7 @@ Triage status rule:
 
 Controlled vocabulary:
 - For an identity-verified asset, use Unknown when country, Pipeline Stage, modality, main indication, target, or another factual field cannot be established. UNVERIFIED is reserved for failure of asset identity itself.
-- company_country may contain up to two explicitly stated canonical countries, separated by \` / \`. For example, "China / United States operations" -> "China / United States". If no canonical country can be identified, retain the original wording rather than replacing it with Unknown.
+- company_country is the company's HQ / official company location, never the drug, sales, market, trial, or launch geography. It may contain up to two explicitly stated canonical countries, separated by \` / \`. For example, "China / United States operations" -> "China / United States". If no canonical country can be identified, retain the original wording rather than replacing it with Unknown.
 ${SHARED_CANONICAL_STAGE_RULE}
 ${SHARED_CANONICAL_MODALITY_RULE}
 ${SHARED_CANONICAL_INDICATION_RULE}
@@ -9610,7 +9610,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
 
 중요: 한 문장으로 triage 결론과 filter rationale을 먼저 씁니다. 예: 공개 자료상 asset identity는 확인되지만 개발 단계가 Discontinued / inactive로 확인되어 REJECT로 처리합니다.
 
-| # | Asset | Company | Target/MoA | Modality | Main indication | Pipeline Stage | Country | TR | MOA | Data | Triage | Why | Source |
+| # | Asset | Company | Target/MoA | Modality | Main indication | Pipeline Stage | Location | TR | MOA | Data | Triage | Why | Source |
 |---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|
 | 1 |  |  |  |  |  |  |  |  |  |  | SELECT/REJECT/UNVERIFIED |  |  |
 
@@ -9880,7 +9880,7 @@ Controlled vocabulary for dashboard filters:
 - Use canonical values for filter-facing fields so the dashboard can group comparable assets.
 - For an identity-verified asset, use Unknown (never N/A) when country, Pipeline Stage, modality, main indication, target, or another factual field cannot be established from public sources.
 ${SHARED_CANONICAL_THEME_RULE}
-- json_summary.company_country and structured_table.company_country may retain up to two explicitly stated canonical countries/regions, separated by \` / \`. Examples: China, Republic of Korea, United States, Japan, Europe/UK; "China / United States operations" -> "China / United States". Preserve unrecognized country wording rather than replacing it with Unknown.
+- json_summary.company_country and structured_table.company_country mean the company's HQ / official company location, not a drug, sales, market, trial, or launch geography. They may retain up to two explicitly stated canonical countries/regions, separated by \` / \`. Examples: China, Republic of Korea, United States, Japan, Europe/UK; "China / United States operations" -> "China / United States". Preserve unrecognized country wording rather than replacing it with Unknown.
 ${SHARED_CANONICAL_INDICATION_RULE}
 - structured_table.development_stage must follow the Canonical Pipeline Stage rule above. Put exact raw wording, trial status, indication-specific stage, and future milestone timing in source evidence, notes, or validation.uncertain_points.
 - Map clinical synonyms conservatively: P1/Ph1/Phase I/FIH -> Phase 1 and P2/Ph2/Phase II -> Phase 2 only when the phase is current or started. A future plan must not be promoted to current stage.
@@ -9901,7 +9901,7 @@ Use this exact report structure inside the Markdown portion of the single combin
 |---|---|---|
 | Company |  | Official company site URL |
 | Legal name / aliases |  | Official company site or registry |
-| Country |  | Official company site / company profile |
+| Location (company HQ) |  | Official company site / company profile |
 | Headquarters |  | Official company site / company profile |
 | Website |  | URL |
 | Company type / stage | private/public, biotech stage | company page, financing, news |
@@ -10527,12 +10527,13 @@ const STEP0_GUIDE_STEPS = [
   },
   {
     title: 'Listing Input 관련 Excel 정보 여러 행·열을 한 번에 붙여넣기',
-    intro: '엑셀 표 첫 행은 Listing input table의 Column Title 내용을 포함해 주세요. (예: Company, Country, Asset, Modality 등)',
+    intro: '엑셀 표 첫 행은 Listing input table의 Column Title 내용을 포함해 주세요. (예: Company, Location, Asset, Modality 등)',
     outro: '엑셀 표 첫 행(Column Title)과 함께 Pipeline list 표 전체를 그대로 복사 붙여넣기 하면, Listing input의 각 셀에 맞는 정보로 매칭됩니다.',
     excelIllustration: true,
     headerMappings: [
       ['Drug Name / Pipeline Code', 'Asset'],
-      ['Geography / Location', 'Country'],
+      ['Company Geography / Location / Country', 'Location'],
+      ['Drug Geography / Sales Geography', '제외'],
       ['Company Name / Organization', 'Company'],
       ['Pipeline / Drug / Asset name', 'Asset'],
       ['Development Stage', 'Stage']
@@ -10578,7 +10579,7 @@ function step0GuideExcelIllustrationMarkup() {
       <div class="step0-guide-sheet">
         <span class="step0-guide-sheet-label">Excel</span>
         <div class="step0-guide-sheet-selection">
-          <div><b>Company</b><b>Asset</b><b>Country</b><b>Modality</b></div>
+          <div><b>Company</b><b>Asset</b><b>Location</b><b>Modality</b></div>
           <div><span>Example Bio</span><span>EX-101</span><span>KR</span><span>ASO</span></div>
           <div><span>Next Pharma</span><span>NP-02</span><span>US</span><span>Small molecule</span></div>
         </div>
@@ -10589,7 +10590,7 @@ function step0GuideExcelIllustrationMarkup() {
       </span>
       <div class="step0-guide-input-preview">
         <span>Listing Input</span>
-        <i>Company&nbsp;&nbsp;Asset&nbsp;&nbsp;Country&nbsp;&nbsp;Modality</i>
+        <i>Company&nbsp;&nbsp;Asset&nbsp;&nbsp;Location&nbsp;&nbsp;Modality</i>
       </div>
     </div>
   `;
@@ -10791,7 +10792,7 @@ function showStep0Message(text, level = 'ok') {
 
 const STEP0_ENTRY_FIELDS = [
   { key: 'company_input', label: 'Company', required: true },
-  { key: 'country', label: 'Country' },
+  { key: 'country', label: 'Location' },
   { key: 'asset_input', label: 'Asset', required: true },
   { key: 'modality', label: 'Modality' },
   { key: 'target', label: 'Target' },
@@ -10863,7 +10864,7 @@ function isStep0InvalidAsset(value) {
 
 const STEP0_HEADER_ALIASES = {
   company_input: ['company', 'company name', '회사', '회사명', '기업'],
-  country: ['country', '국가'],
+  country: ['location', 'country', 'company country', 'company geography', 'company location', 'co location', 'hq', 'headquarters', 'headquarter', '국가', '회사 국가', '회사 소재지', '본사 소재지'],
   asset_input: ['asset', 'asset name', 'pipeline', 'pipeline name', '자산', '파이프라인', '약물명'],
   modality: ['modality', 'modality platform', '모달리티'],
   target: ['target', '타깃', '표적'],
@@ -10887,12 +10888,21 @@ STEP0_HEADER_ALIASES.asset_input.push(
 // These fields concatenate per row; factual identity fields remain one-to-one.
 const STEP0_MULTI_VALUE_HEADER_FIELDS = new Set(['comment', 'contact']);
 
+// `country` is the company HQ / official company location field. A drug's
+// geography or a sales/market geography is not a company location and must
+// never be imported into it merely because it contains a geography keyword.
+function isStep0ExcludedCountryHeader(value) {
+  const normalized = normalizeStep0Header(value);
+  return /(?:drug|asset|pipeline|product|sales|commercial|market|launch|patient|trial|clinical)(?:geography|geographic|location|region|country)/.test(normalized)
+    || /(?:drug|sales)(?:geo|location|region|country)/.test(normalized);
+}
+
 const STEP0_HEADER_KEYWORD_RULES = {
   company_input: [
     ['company name', 12], ['company', 5], ['organization', 8], ['organisation', 8], ['corporate', 6], ['sponsor', 6], ['developer', 5], ['manufacturer', 5], ['회사명', 12], ['회사', 5], ['기업', 7]
   ],
   country: [
-    ['company geography', 14], ['geography', 11], ['geographic', 11], ['country', 10], ['location', 8], ['region', 7], ['headquarters', 8], ['headquarter', 8], ['hq', 7], ['nation', 8], ['국가', 10], ['지역', 7], ['소재지', 9], ['본사', 8]
+    ['company geography', 15], ['company geographic', 15], ['company location', 15], ['company country', 15], ['company hq', 15], ['headquarters', 10], ['headquarter', 10], ['hq', 9], ['company', 5], ['location', 10], ['country', 10], ['nation', 8], ['회사 국가', 15], ['회사 소재지', 15], ['본사 소재지', 15], ['국가', 10], ['소재지', 9], ['본사', 9]
   ],
   asset_input: [
     ['asset name', 13], ['pipeline name', 13], ['drug name', 12], ['program name', 11], ['asset', 8], ['pipeline', 8], ['drug', 8], ['candidate', 7], ['compound', 7], ['product', 6], ['program', 6], ['자산명', 13], ['파이프라인명', 13], ['후보물질', 9], ['자산', 8], ['파이프라인', 8]
@@ -10927,6 +10937,10 @@ function normalizeStep0Header(value) {
 function step0HeaderMatch(value) {
   const normalized = normalizeStep0Header(value);
   if (!normalized) return { field: null, score: 0, reason: 'empty' };
+  if (isStep0ExcludedCountryHeader(value)) return { field: null, score: 0, reason: 'excluded-company-location' };
+  if (/^(?:moa|mechanismofaction|기전)$/.test(normalized)) {
+    return { field: 'comment', score: 110, reason: 'moa-comment', prefix: 'MoA: ' };
+  }
   const exactField = STEP0_ENTRY_FIELDS.find((field) => (STEP0_HEADER_ALIASES[field.key] || [field.label])
     .some((alias) => normalizeStep0Header(alias) === normalized));
   if (exactField) return { field: exactField.key, score: 100, reason: 'exact' };
@@ -10957,6 +10971,7 @@ function step0HeaderMappings(cells) {
   ));
   return {
     targets,
+    transforms: matches.map((match, index) => (targets[index] ? { field: targets[index], prefix: match.prefix || '' } : null)),
     recognized: targets.filter(Boolean).length,
     ignored: matches.filter((match, index) => !targets[index] && String(cells[index] || '').trim()).length,
     duplicateCount: matches.filter((match, index) => match.field && !targets[index]).length
@@ -11087,10 +11102,12 @@ function pasteIntoStep0EntryGrid(event) {
     const inputs = [...tableRows[startRow + rowOffset].querySelectorAll('[data-step0-entry-field]')];
     const assignedFields = new Set();
     cells.forEach((value, columnOffset) => {
-      const field = firstRowIsHeader ? headerMapping.targets[columnOffset] : STEP0_ENTRY_FIELDS[startColumn + columnOffset]?.key;
+      const mapping = firstRowIsHeader ? headerMapping.transforms?.[columnOffset] : null;
+      const field = mapping?.field || (firstRowIsHeader ? headerMapping.targets[columnOffset] : STEP0_ENTRY_FIELDS[startColumn + columnOffset]?.key);
       const target = field ? inputs[STEP0_ENTRY_FIELDS.findIndex((candidate) => candidate.key === field)] : null;
       if (!target) return;
-      const incoming = value.trim();
+      const rawIncoming = value.trim();
+      const incoming = rawIncoming && mapping?.prefix ? `${mapping.prefix}${rawIncoming}` : rawIncoming;
       if (STEP0_MULTI_VALUE_HEADER_FIELDS.has(field) && assignedFields.has(field)) {
         // Repeated Comment/Contact headers are intentionally one logical field.
         // Later empty spreadsheet cells must never erase an earlier comment.
@@ -11564,7 +11581,7 @@ function openManualTableCountryEdit(anchor) {
   input.dataset.recordId = recordId;
   input.dataset.editKind = 'country';
   input.dataset.previousValue = previousValue;
-  input.setAttribute('aria-label', 'Country edit');
+  input.setAttribute('aria-label', 'Location edit');
   input.title = 'Enter to save. Known countries are canonicalized; unrecognized wording is retained.';
   anchor.replaceWith(input);
   input.focus();
@@ -11825,7 +11842,7 @@ function step0ActiveColorFilter() {
 }
 
 const STEP0_COLOR_FILTER_LABELS = {
-  country: 'Country',
+  country: 'Location',
   modality: 'Modality',
   theme: 'Theme',
   cluster: 'Cluster',
@@ -12250,7 +12267,7 @@ function openStep0EditLockedModal(mode, { commentWorkspace = false, recordId = '
   }
   if (elements.step0EditLockedMessage) {
     elements.step0EditLockedMessage.textContent = shortlisting
-      ? 'Shortlisting에는 Full Scout의 공식 Pipeline 정보가 읽기 전용으로 표시됩니다. Company·Country·Asset·Modality·Target·Main indication·Pipeline Stage 수정은 Tab 2 · Full Scout에서 진행합니다.'
+      ? 'Shortlisting에는 Full Scout의 공식 Pipeline 정보가 읽기 전용으로 표시됩니다. Company·Location·Asset·Modality·Target·Main indication·Pipeline Stage 수정은 Tab 2 · Full Scout에서 진행합니다.'
       : commentWorkspace
       ? `Tab 0에는 원본 Team Workspace 코멘트가 읽기 전용으로 표시됩니다. 이 코멘트의 수정 및 삭제는 ${label} Team Workspace에서 진행합니다.`
       : `이미 수행된 ${targetMode === 'full' ? 'Full Scout' : 'Fast Triage'}의 공식 조사값이 Tab 0에 표시되고 있습니다. 원본 조사값 수정은 ${label} Pipeline Table에서 진행합니다.`;
@@ -12727,7 +12744,7 @@ function renderStep0ProgressTable() {
 
 function exportStep0Table() {
   const rows = step0FilteredSortedRows();
-  const headers = ['Company', 'Country', 'Asset', 'Modality', 'Target', 'Main indication', 'Pipeline Stage', 'Listing', 'Fast Triage', 'Full Scout', 'Shortlisting', 'Comment', 'Contact', 'Website'];
+  const headers = ['Company', 'Location', 'Asset', 'Modality', 'Target', 'Main indication', 'Pipeline Stage', 'Listing', 'Fast Triage', 'Full Scout', 'Shortlisting', 'Comment', 'Contact', 'Website'];
   const body = rows.map((row) => {
     const display = step0DashboardFieldDisplay(row);
     return [
@@ -12888,7 +12905,7 @@ function buildTriageInstructionPromptWithCandidates(pairs) {
   const listLines = pairs.map((pair) => {
     const details = pair.listing_details || {};
     const context = [
-      ['Country', details.country],
+      ['Location', details.country],
       ['Modality', details.modality],
       ['Target', details.target],
       ['Main indication', details.main_indication],

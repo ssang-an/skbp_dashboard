@@ -195,16 +195,16 @@
               <span>검색</span>
               <div class="step0-search-composer">
                 <div class="step0-search-entry">
-                  <input id="step0SearchInput" type="search" placeholder="Company · Asset · Target · Modality 등 검색" aria-label="Listing Pipeline Table 검색: Company, Asset, Target, Main indication, Pipeline Stage, Country, Modality" />
+                  <input id="step0SearchInput" type="search" placeholder="Company · Asset · Target · Modality 등 검색" aria-label="Listing Pipeline Table 검색: Company, Asset, Target, Main indication, Pipeline Stage, Location, Modality" />
                   <button id="step0AddSearchTokenButton" class="step0-add-search-token help-tooltip" type="button" data-tooltip="검색 조건 추가" aria-label="현재 검색어를 조건으로 추가">+</button>
                 </div>
                 <div id="step0SearchTokens" class="step0-search-tokens" aria-label="Selected company and asset filters" aria-live="polite"></div>
               </div>
             </label>
             <div id="step0CountryFilter" class="filter-multiselect step0-filter-multiselect" data-step0-filter-key="country">
-              <span class="filter-multiselect-label">Country</span>
+              <span class="filter-multiselect-label">Location</span>
               <button type="button" class="filter-multiselect-trigger" aria-expanded="false"><span data-step0-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
-              <div class="filter-multiselect-menu" role="listbox" aria-label="Country filters" hidden></div>
+              <div class="filter-multiselect-menu" role="listbox" aria-label="Location filters" hidden></div>
             </div>
             <div id="step0ModalityFilter" class="filter-multiselect step0-filter-multiselect" data-step0-filter-key="modality">
               <span class="filter-multiselect-label">Modality</span>
@@ -298,7 +298,7 @@
                     <input id="step0SelectAllRows" type="checkbox" aria-label="Listing 항목 전체 선택 (최대 20개)" />
                   </th>
                   <th rowspan="2"><button data-step0-sort="company" type="button">Company</button></th>
-                  <th rowspan="2">Country</th>
+                  <th rowspan="2">Location</th>
                   <th class="step0-asset-header" rowspan="2"><button data-step0-sort="asset" type="button">Asset</button></th>
                   <th rowspan="2">Modality</th>
                   <th rowspan="2">Target</th>
@@ -357,7 +357,7 @@
                       <col class="step0-entry-col-company" /><col class="step0-entry-col-country" /><col class="step0-entry-col-asset" /><col class="step0-entry-col-modality" /><col class="step0-entry-col-target" /><col class="step0-entry-col-indication" /><col class="step0-entry-col-stage" /><col class="step0-entry-col-comment" /><col class="step0-entry-col-contact" /><col class="step0-entry-col-website" />
                     </colgroup>
                     <thead><tr>
-                      <th>Company <span class="step0-required-badge">Required</span></th><th>Country</th><th>Asset <span class="step0-required-badge">Required</span></th><th>Modality</th><th>Target</th><th>Main indication</th><th>Pipeline Stage</th><th>Comment <span class="step0-required-badge step0-multiline-hint">multi-line</span></th><th>Contact</th><th>Website</th>
+                      <th>Company <span class="step0-required-badge">Required</span></th><th>Location</th><th>Asset <span class="step0-required-badge">Required</span></th><th>Modality</th><th>Target</th><th>Main indication</th><th>Pipeline Stage</th><th>Comment <span class="step0-required-badge step0-multiline-hint">multi-line</span></th><th>Contact</th><th>Website</th>
                     </tr></thead>
                     <tbody id="step0EntryGridBody"></tbody>
                   </table>
@@ -457,16 +457,16 @@
               <span>검색</span>
               <div class="step0-search-composer">
                 <div class="step0-search-entry">
-                  <input id="searchInput" type="search" placeholder="Company · Asset · Target · Modality 등 검색" aria-label="Pipeline Table 검색: Company, Asset, Target, Main indication, Pipeline Stage, Country, Modality" />
+                  <input id="searchInput" type="search" placeholder="Company · Asset · Target · Modality 등 검색" aria-label="Pipeline Table 검색: Company, Asset, Target, Main indication, Pipeline Stage, Location, Modality" />
                   <button id="addSearchTokenButton" class="step0-add-search-token help-tooltip" type="button" data-tooltip="검색 조건 추가" aria-label="현재 검색어를 조건으로 추가">+</button>
                 </div>
                 <div id="searchTokens" class="step0-search-tokens" aria-label="Selected Pipeline Table search filters" aria-live="polite"></div>
               </div>
             </label>
             <div id="countryFilter" class="filter-multiselect" data-filter-key="country">
-              <span class="filter-multiselect-label">Country</span>
+              <span class="filter-multiselect-label">Location</span>
               <button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false" aria-controls="countryFilterMenu"><span data-multi-filter-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
-              <div id="countryFilterMenu" class="filter-multiselect-menu" role="listbox" aria-label="Country" aria-multiselectable="true" hidden></div>
+              <div id="countryFilterMenu" class="filter-multiselect-menu" role="listbox" aria-label="Location" aria-multiselectable="true" hidden></div>
             </div>
             <div id="modalityFilter" class="filter-multiselect" data-filter-key="modality">
               <span class="filter-multiselect-label">Modality</span>
@@ -565,7 +565,7 @@
                     <input id="selectPageRows" type="checkbox" aria-label="현재 페이지 전체 선택" />
                   </th>
                   <th><button data-sort="company" type="button">Company</button></th>
-                <th><button data-sort="country" type="button">Country</button></th>
+                <th><button data-sort="country" type="button">Location</button></th>
                 <th><button data-sort="asset" type="button">Asset</button></th>
                 <th><button data-sort="target" type="button">Target / Modality / Theme / Cluster</button></th>
                 <th><button data-sort="modality" type="button">Modality</button></th>
@@ -1390,7 +1390,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260825-ai-reparse-gate-1"></script>
+  <script type="module" src="./src/app.js?v=20260825-location-moa-stage-1"></script>
   <script src="./src/sigma_graph.js?v=20260824-deferred-wiki-export-1" defer></script>
   </body>
 </html>

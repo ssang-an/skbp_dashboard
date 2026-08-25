@@ -10,13 +10,26 @@
 | 구분 | 규칙 |
 | --- | --- |
 | 필수 열 | Company: `Company`, `Company Name`, `Organization` 등 / Asset: `Asset`, `Asset Name`, `Pipeline`, `Pipeline Code`, `Drug`, `Drug Name` 등 |
-| 보조 Listing 정보 | Country, Modality, Target, Main indication, Stage, Website |
+| 보조 Listing 정보 | Location (회사 HQ), Modality, Target, Main indication, Stage, Website |
 | 운영 메모 | `Comment`, `Priority`, `Reason for Priority`, `Next Step` 등 Comment 성격 열은 줄바꿈으로 누적 |
 | Contact | `Meeting History`, `Contact History` 등은 Contact History로 누적 |
 | Website | `https://`, `http://`, `www.`, 또는 일반 도메인 형식만 활성 링크로 저장. 표시명만 있는 Excel 하이퍼링크는 일반 붙여넣기에서 URL을 읽을 수 없음 |
 | 원문 보존 | 붙여넣은 상세 문구는 Listing 원문으로 보존. Dashboard/Filter의 Canonical 표기는 별도 규칙으로 변환될 수 있음 |
 
-빈 Comment·Contact·Website 셀은 기존 값을 지우지 않습니다. Contact에 `O`, 날짜, 담당자·이메일·미팅 내용 또는 별도 상세 문구가 있으면 Contact History가 있는 것으로 처리합니다. 명시적 `X`, `-`, `–`, `—`만 “기록 없음”으로 처리합니다. 단, Contact 셀이 `X: 사유`처럼 `X` 뒤에 문구를 함께 포함하면 그 문구는 Contact History로 저장하지 않고 Comment에 다음 줄로 누적합니다.
+빈 Comment·Contact·Website 셀은 기존 값을 지우지 않습니다. Contact에 `O`, 날짜, 담당자·이메일·미팅 내용 또는 별도 상세 문구가 있으면 Contact History가 있는 것으로 처리합니다. 명시적 `X`, `-`, `–`, `—`만 “기록 없음”으로 처리합니다. 단, Contact 셀이 `X: 사유`처럼 `X` 뒤에 문구를 함께 포함하면 Contact 표시는 `-`로 유지하고, 그 문구는 Contact History로 저장하지 않고 Comment에 `Contact: 사유` 형식의 다음 줄로 누적합니다.
+
+### Location 열: 회사 HQ만 입력
+
+화면의 `Location`과 내부 `country` 값은 **Company의 본사 또는 공식 회사 소재 국가/지역**을 뜻합니다. 기존 Excel 호환성을 위해 `Country`라는 열 이름도 계속 인식합니다.
+
+| Excel Header | Location 매칭 처리 |
+| --- | --- |
+| `Location`, `Company Geography`, `Company Location`, `Company Country`, `HQ`, `Headquarters`, `Country` | Company HQ/공식 소재지로 인식하여 `Location`에 저장 |
+| `Drug Geography`, `Drug Location`, `Sales Geography`, `Sales Location`, `Market Geography`, `Commercial Geography` | **매칭 제외**. Drug의 개발·판매 지역, 시장·상업 지역은 Company HQ가 아니므로 `Location`에 저장하지 않음 |
+
+단독 `Location`과 `Country` 열은 기존 Listing Excel의 관례에 따라 Company Location으로 읽습니다. 단독 `Geography`·`Region`은 회사 정보인지 확실하지 않아 자동 매칭하지 않습니다.
+
+Excel에 `MoA`, `Mechanism of Action`, `기전` 열이 있으면 Target으로 추정하지 않고 Comment에 `MoA: 원문` 형식으로 줄바꿈 누적합니다.
 
 화면의 `Pipeline Stage`는 Asset의 개발 단계(예: Lead Optimization, Phase 1)를 뜻합니다. `Listing`, `Fast Triage`, `Full Scout`, `Shortlisting`은 개발 단계가 아니라 별도의 `조사 진행 단계`입니다. Excel 열 이름은 기존 호환성을 위해 `Stage`도 계속 인식합니다.
 
@@ -108,7 +121,7 @@ Tab 0~3 Pipeline Table 검색과 Tab 4 Knowledge Wiki Map 키워드 검색은 **
 
 비교 대상 6개 필드:
 
-1. Country
+1. Location (회사 HQ)
 2. Modality
 3. Target
 4. Main indication
@@ -127,7 +140,7 @@ Tab 0~3 Pipeline Table 검색과 Tab 4 Knowledge Wiki Map 키워드 검색은 **
 
 | 기존 Listing | 신규 Listing | 결과 |
 | --- | --- | --- |
-| Country, Target, Stage, Website = 4개 | Country, Modality, Target, Main indication, Stage = 5개 | 신규의 Country·Modality·Target·Main indication·Stage 적용, 기존 Website는 유지 |
+| Location, Target, Stage, Website = 4개 | Location, Modality, Target, Main indication, Stage = 5개 | 신규의 Location·Modality·Target·Main indication·Stage 적용, 기존 Website는 유지 |
 | Stage=`Preclinical`, 신규 Stage=`Phase 2 planned`, 총 입력 수 동일 | 동일 | 기존 Stage 유지 |
 | 기존 Target이 비어 있음, 신규 Target 있음 | 신규 입력 수가 같거나 적음 | 신규 Target만 보완 |
 
@@ -173,6 +186,7 @@ Tab 1·2에 보이는 Tab 0 유래 Comment·Contact History는 별도 편집본�
 - `Phase 2 planned` 또는 `Phase 2/3 planned`처럼 계획만 명시된 경우에는 해당 임상 단계로 승격하지 않습니다. 이미 확인된 이전 현재 단계가 있으면 그 단계를 유지하고, 없으면 Dashboard Canonical Stage는 `Unknown`으로 표시합니다. 원문 표현은 Listing 원문으로 유지됩니다.
 - `pre-PCC`는 PCC(Preclinical Candidate) 선정 이전을 뜻하므로 Dashboard Canonical Stage에서는 `Lead Optimization`으로 분류합니다. `Listing`은 개발단계가 아니라 Tab 0의 조사 워크플로 상태입니다.
 - `PCC`, `PCC completion`, `PCC selected`는 Dashboard Canonical Stage에서 `Preclinical Candidate`로 분류합니다.
+- 명시적인 `research program`, `research project`, `discovery program`, `discovery project`는 Dashboard Canonical Stage에서 `Hit Discovery`로 분류합니다. 계획 표현만 있는 경우에는 현재 단계를 승격하지 않습니다.
 - 시작·진행 중인 임상/피보탈/registrational trial인데 phase가 명시되지 않은 경우에는 `Clinical unspecified`으로 분류합니다. `pivotal` 또는 `registrational`이라는 단어만으로 `Phase 3`로 올리지 않습니다.
 - 명시적으로 확인된 `discontinued`, `terminated`, `withdrawn`, `inactive`, `dormant`, `abandoned`만 Dashboard Canonical Stage에서 `Discontinued / inactive`로 분류합니다. `suspended`, `halted`는 일시 중단일 수 있으므로 기존에 확인된 Stage는 유지하고, 원문·중단 사유는 운영 메모/Flag에 남깁니다. Fast Triage에서는 영구 비활성이 독립 확인되기 전까지 `active_asset`을 `null`로 둡니다.
 - 같은 Company명 또는 Asset의 Company 접두어만 겹치는 경우에는 유사 Pipeline 확인 대상으로 올리지 않습니다. 예: `Anlong-APP`와 `Anlong-KCNT`는 별도 Pipeline입니다.

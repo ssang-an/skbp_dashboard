@@ -179,19 +179,25 @@
         "Hit discovery",
         "Hit finding",
         "Primary screening",
-        "High-throughput screening",
-        "HTS",
-        "Early screening",
-        "Hit identification",
-        "Hit ID"
+          "High-throughput screening",
+          "HTS",
+          "Early screening",
+          "Hit identification",
+          "Hit ID",
+          "Research program",
+          "Research project",
+          "Discovery program",
+          "Discovery project"
       ],
       "patterns": [
         "hit[- ]?discovery",
         "hit[- ]?finding",
         "(?:early|primary|high-throughput) screening",
-        "\\bhts\\b",
-        "hit[- ]?identification",
-        "early screening"
+          "\\bhts\\b",
+          "hit[- ]?identification",
+          "early screening",
+          "research (?:program|project)",
+          "discovery (?:program|project)"
       ]
     },
     {
