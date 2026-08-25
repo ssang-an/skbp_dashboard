@@ -444,7 +444,7 @@
             "category": ""
           },
           {
-            "id": "058e56d7c9764730bd9018649ce24dee",
+            "id": "99edac24f55d44d1aa7332d2e1214d0f",
             "parent_id": null,
             "author": "정주원",
             "author_user_id": "",
@@ -452,13 +452,15 @@
             "actor_ip": "system",
             "body": "ㅇㄹㄴㅇㄹ",
             "created_at": "2026-08-22T14:26:05.566828+00:00",
-            "updated_at": "2026-08-24T10:06:20.356782+00:00",
+            "updated_at": "2026-08-24T09:37:33.929245+00:00",
             "source": "listing_comment_post",
             "import_key": "427ab3db7b535a36ba805b61d44a12a2fb3da21c81577763fc23d18fd10d616e",
-            "system_import": true
+            "system_import": true,
+            "category": "comment",
+            "label": ""
           }
         ],
-        "updated_at": "2026-08-24T10:06:20.356782+00:00",
+        "updated_at": "2026-08-24T09:37:33.929245+00:00",
         "comment_count": 4
       },
       "qualitative_review": {
@@ -3081,8 +3083,8 @@
           "new_value": null
         },
         {
-          "id": "0c275ecbd97d42ca8949a5c4fc4eb4c1",
-          "changed_at": "2026-08-24T10:06:20.356837+00:00",
+          "id": "c4c7bc1dfc224fa9a560f6b80d357c24",
+          "changed_at": "2026-08-24T09:37:33.929406+00:00",
           "actor_ip": "system",
           "actor_name": "",
           "source": "cross_workflow_comment_sync",
@@ -3641,8 +3643,8 @@
           "new_value": null
         },
         {
-          "id": "71f5d814a1f943c2ab6dda7954d03394",
-          "changed_at": "2026-08-24T10:06:20.356955+00:00",
+          "id": "8499522628f0427db187432ba0dfe4f7",
+          "changed_at": "2026-08-24T09:37:33.929668+00:00",
           "actor_ip": "system",
           "actor_name": "",
           "source": "cross_workflow_comment_sync",
@@ -3662,15 +3664,15 @@
             "actor_ip": "system",
             "body": "df",
             "created_at": "2026-08-22T09:14:13.020965+00:00",
-            "updated_at": "2026-08-24T10:06:20.356947+00:00",
+            "updated_at": "2026-08-24T09:37:33.929640+00:00",
             "source": "listing_comment_post",
             "import_key": "8f7d7db4d063b90ff0370d7059bab1e74f06e5639b8dc3b4bf9791e6df852bdf",
             "system_import": true,
-            "label": "Tab 0 · Listing Comment",
-            "category": ""
+            "label": "",
+            "category": "comment"
           }
         ],
-        "updated_at": "2026-08-24T10:06:20.356947+00:00",
+        "updated_at": "2026-08-24T09:37:33.929640+00:00",
         "comment_count": 1
       }
     },
@@ -13252,8 +13254,8 @@
           "new_value": "GPT 원문 재업로드"
         },
         {
-          "id": "6837d713e1c14fa6b65ed69f18901a20",
-          "changed_at": "2026-08-24T10:06:20.350469+00:00",
+          "id": "d77b1544ce554f15b25cf1d604fdde4c",
+          "changed_at": "2026-08-24T09:37:33.910311+00:00",
           "actor_ip": "127.0.0.1",
           "actor_name": "",
           "source": "paste_json_upsert",
@@ -13262,7 +13264,7 @@
           "new_value": "GPT 원문 재업로드"
         }
       ],
-      "last_edited_at": "2026-08-24T10:06:20.350469+00:00",
+      "last_edited_at": "2026-08-24T09:37:33.910311+00:00",
       "last_edited_by": "127.0.0.1",
       "storage_profile": "dashboard_hybrid_v1"
     },
@@ -16513,39 +16515,7 @@
       "rubric_version": "3.3",
       "generated_at": "2026-08-06",
       "output_filename_base": "Illimis Therapeutics_ILM01",
-      "storage_profile": "dashboard_hybrid_v1",
-      "collaboration": {
-        "comments": [
-          {
-            "id": "e444f4d940c9494986efe49aa36d1e0a",
-            "parent_id": null,
-            "author": "정주원",
-            "author_user_id": "",
-            "author_email": "",
-            "actor_ip": "system",
-            "body": "ㅇㄹㄴㅇㄹ",
-            "created_at": "2026-08-22T14:26:05.566828+00:00",
-            "updated_at": "2026-08-24T10:06:20.356856+00:00",
-            "source": "listing_comment_post",
-            "import_key": "427ab3db7b535a36ba805b61d44a12a2fb3da21c81577763fc23d18fd10d616e",
-            "system_import": true
-          }
-        ],
-        "updated_at": "2026-08-24T10:06:20.356856+00:00",
-        "comment_count": 1
-      },
-      "edit_history": [
-        {
-          "id": "1c620bb9b491487dbb79e5fa46bd9b70",
-          "changed_at": "2026-08-24T10:06:20.356864+00:00",
-          "actor_ip": "system",
-          "actor_name": "",
-          "source": "cross_workflow_comment_sync",
-          "field": "collaboration.comments.tab0_listing",
-          "previous_value": null,
-          "new_value": null
-        }
-      ]
+      "storage_profile": "dashboard_hybrid_v1"
     },
     "source_report": {
       "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.2. Full Scout v3.3 has not been run.\n\n중요: 10개 후보 중 ADEL-Y04, ILM01, LNK01006은 SELECT, HBW-015와 ILM02는 REJECT, 나머지 5개는 특정 asset identity 미확인으로 UNVERIFIED입니다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4 antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Active AD program; direct mouse functional evidence, limited quantitative disclosure. | S1-S3 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Cannot map to Youngen APP-siRNA versus Hotgen AA001. | S1-S3 |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Indication used as asset name. | S1-S2 |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Alzheimer's disease | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | No discrete Hyper Corp tau asset matched. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed pathway inhibitor | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | Strong data; generic pain fit, unnamed target and active status unconfirmed. | S1-S3 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Unknown (tauopathies) | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | Active but broad, early and without disclosed result. | S1-S2 |\n| 7 | ILM21 | Illimis Therapeutics | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | No public ILM21 asset. | S1 |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Differentiated active AD lead; qualitative functional evidence. | S1-S3 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Collaboration descriptor, not an asset. | S1 |\n| 10 | LYNK01006 → LNK01006 | Lynk Pharmaceuticals | TYK2 allosteric inhibitor | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | Active Phase 1 BLKR201 with CNS TYK2 rationale. | S1-S3 |\n\n## Notes\n- 입력 순서를 유지했으며, LYNK01006은 검증된 LNK01006/BLKR201로 철자 정규화했습니다.\n- Youngen/Hotgen 및 Hyper tau의 설명형 행은 다른 공개 자산으로 임의 대체하지 않았습니다.\n- 의심해볼 포인트: ADEL-Y04와 ILM01의 MOA 3은 공개된 직접 기능 결과에 기반하지만 정량 원자료가 제한적이므로 Full Scout에서 후보 동일성·통계·노출-반응을 우선 검증해야 합니다.\n- 드릴다운 질문: HBW-015의 타깃·활성·신경병증성 통증 적응증이 공식 확인되면 triage가 바뀌는가? LNK01006의 환자 적응증이 MS로 확정되지 않으면 TR 3을 유지할 수 있는가?\n- 업로드 지침 근거: :contentReference[oaicite:0]{index=0}\n\n> 이 정보가 부정확할 수 있습니다.\n",
@@ -17838,39 +17808,7 @@
       "rubric_version": "3.3",
       "generated_at": "2026-08-06",
       "output_filename_base": "Illimis Therapeutics, Inc._ILM01",
-      "storage_profile": "dashboard_hybrid_v1",
-      "collaboration": {
-        "comments": [
-          {
-            "id": "01b1c329b89e4b85bbb3dc4f392d428f",
-            "parent_id": null,
-            "author": "정주원",
-            "author_user_id": "",
-            "author_email": "",
-            "actor_ip": "system",
-            "body": "ㅇㄹㄴㅇㄹ",
-            "created_at": "2026-08-22T14:26:05.566828+00:00",
-            "updated_at": "2026-08-24T10:06:20.356873+00:00",
-            "source": "listing_comment_post",
-            "import_key": "427ab3db7b535a36ba805b61d44a12a2fb3da21c81577763fc23d18fd10d616e",
-            "system_import": true
-          }
-        ],
-        "updated_at": "2026-08-24T10:06:20.356873+00:00",
-        "comment_count": 1
-      },
-      "edit_history": [
-        {
-          "id": "59d39b64c14641ea80a0f289f733dd90",
-          "changed_at": "2026-08-24T10:06:20.356879+00:00",
-          "actor_ip": "system",
-          "actor_name": "",
-          "source": "cross_workflow_comment_sync",
-          "field": "collaboration.comments.tab0_listing",
-          "previous_value": null,
-          "new_value": null
-        }
-      ]
+      "storage_profile": "dashboard_hybrid_v1"
     },
     "source_report": {
       "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 10개 중 ADEL-Y04, ILM01, LNK01006/BLKR201은 SELECT입니다. ILM21은 현재 Illimis 공식 파이프라인에서 신원이 확인되어 제공된 임시 UNVERIFIED 판정을 REJECT로 교정했으며, 나머지는 자산 identity 불명확 또는 SKBP fit·MoA·Data·활성 상태 부족으로 REJECT/UNVERIFIED 처리했습니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | ADEL-Y04 | ADEL | ApoE4-selective antibody | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD 전임상 자산이며 ApoE4 모델에서 기억·시냅스·tau 병리의 직접 기능성 효과가 확인됩니다. 정량 PK/PD 공개는 제한적입니다. | https://adelpharm.com/en/pipeline/<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.088537 |\n| 2 | Alzheimer's disease therapy, Beijing Youngen Biotechnology | Beijing Hotgen Biotech | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | Youngen APP-siRNA와 Hotgen 투자계열 AA001이 혼합된 입력으로 어느 자산인지 특정할 수 없습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html<br>https://www.hotgen.com.cn/detail/683.html |\n| 3 | Alzheimer's Disease | Beijing Youngen Biotechnology Co Ltd | Unknown | Unknown | Unknown | Unknown | China | 0 | 0 | 0 | UNVERIFIED | 질환명이 자산명으로 입력됐으며 Youngen의 독립 자산 코드와 매칭되지 않습니다. | https://www.youngenbiomed.com/youngen-biotechnology-patent-for-small-nucleic-acid-therapeutic-drugs-for-alzheimers-disease-granted.html |\n| 4 | Drug to Inhibit Tau for Alzheimer's Disease | Hyper Corp Inc | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | 신뢰 가능한 공개자료에서 Hyper Corp의 discrete tau 자산을 확인하지 못했습니다. | No verified asset source |\n| 5 | HBW-015 | Hyperway Pharmaceutical | Undisclosed nociceptive ion-channel inhibitor | Small molecule | Pain | Preclinical unspecified | China | 1 | 0 | 3 | REJECT | HBW-015-15에서 PK·급성/CCI 효능·selectivity·독성이 공개됐으나 generic Pain, 미공개 표적 및 현재 활동 미확인으로 REJECT입니다. | https://www.tianfulifesciencepark.com/News/Detail?id=2657 |\n| 6 | ILM02 | Illimis Therapeutics | Tau/TAM GAIA fusion | Protein biologic | Unknown | Hit Discovery | Republic of Korea | 1 | 1 | 0 | REJECT | 활성 tauopathy 프로그램이나 적응증이 broad하고 ILM02 자산별 기능성 결과가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 7 | ILM21 | Illimis Therapeutics | Myelin debris/TAM GAIA fusion | Protein biologic | Multiple sclerosis / neuroinflammatory disease | Unknown | Republic of Korea | 3 | 1 | 0 | REJECT | 공식 파이프라인에서 MS·myelin debris 자산으로 확인되지만 회사 rationale 외 자산별 기능성·정량 데이터가 없습니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php |\n| 8 | ILM01 | Illimis Therapeutics | Aβ/TAM GAIA fusion | Protein biologic | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | 활성 AD lead이며 Aβ/TAM 기반 phagocytosis와 anti-inflammatory signaling의 prototype functional PoC가 확인됩니다. | https://illimistx.com/en/sub/platform%26pipeline/pipeline.php<br>https://illimistx.com/en/sub/platform%26pipeline/platform.php<br>https://alz-journals.onlinelibrary.wiley.com/doi/10.1002/alz.072368 |\n| 9 | Neurodegenerative Diseases Lilly | Illimis Therapeutics Inc | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | Illimis-Lilly 연구협력 descriptor이며 개별 asset name이 아닙니다. | https://www.illimistx.com/en/sub/investor%26media/news.php?bid=16&idx=282&mode=view&page=1 |\n| 10 | LYNK01006 → LNK01006 (BLKR201) | Lynk Pharmaceuticals | TYK2 JH2 allosteric inhibitor | Small molecule | Multiple sclerosis / neuroinflammatory disease | Phase 1 | China | 3 | 2 | 1 | SELECT | CNS-penetrant TYK2 후보로 MS 모델 효능과 2026년 6월 Phase 1 첫 투여가 확인됩니다. 임상 결과는 아직 없습니다. | https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-announces-fda-ind-approval-of-its-allosteric-tyk2-inhibitor-lnk01006-302629050.html<br>https://www.prnewswire.com/news-releases/lynk-pharmaceuticals-partner-formation-bio-doses-first-participant-in-phase-1-trial-of-blkr201-originally-designated-as-lnk01006-a-cns-penetrant-tyk2-inhibitor-302795362.html<br>https://clinicaltrials.gov/study/NCT07501039 |\n\n## Notes\n- #2와 #3은 Youngen의 무코드 APP-siRNA 프로그램과 관련될 수 있으나, 입력 자산명만으로 해당 프로그램을 자동 귀속하지 않았습니다.\n- #5의 공개 데이터는 HBW-015 프로그램의 대표물질로 기재된 HBW-015-15에서 확인됐으며, 2026년 현재 active status는 확인되지 않았습니다.\n- #7 ILM21은 Illimis 공식 파이프라인에 `Myelin Debris / Multiple Sclerosis / ILM21`로 등재되어 있어 identity_verified=true로 교정했습니다. 다만 stage와 자산별 결과는 미확인입니다.\n- #8 ILM01은 prototype GAIA-Aβ 기능성 근거와 최종 ILM01 후보의 연속성을 Full Scout에서 확인해야 합니다.\n- #10의 오기 `LYNK01006`은 `LNK01006`으로 정규화했으며, 2026년 6월부터 BLKR201 명칭으로 Phase 1이 진행 중입니다.",
@@ -19013,6 +18951,16 @@
           "field": "collaboration.comments.tab0_contact",
           "previous_value": null,
           "new_value": null
+        },
+        {
+          "id": "48bed2b34e68420799e2cacba5fba26c",
+          "changed_at": "2026-08-24T09:37:33.933740+00:00",
+          "actor_ip": "system",
+          "actor_name": "",
+          "source": "cross_workflow_contact_sync",
+          "field": "collaboration.comments.tab0_contact",
+          "previous_value": null,
+          "new_value": null
         }
       ],
       "focus_management": {
@@ -19426,10 +19374,26 @@
             "category": "contact_history",
             "import_key": "2ecd7b9c461bb0f0b34717a2cdc9f334e502db23df6df0237ec362e590d78ed0",
             "system_import": true
+          },
+          {
+            "id": "a35d5f1cd5a84a999170777ba768d3df",
+            "parent_id": null,
+            "author": "정주원",
+            "author_user_id": "",
+            "author_email": "",
+            "actor_ip": "system",
+            "body": "df",
+            "created_at": "2026-08-22T15:00:04.055430+00:00",
+            "updated_at": "2026-08-24T09:37:33.933670+00:00",
+            "source": "listing_contact_history",
+            "import_key": "9d0c1d689f72c177f2e77ad3f80b1c6a94b0039136b30204646289c2a0195218",
+            "system_import": true,
+            "category": "contact_history",
+            "label": "Tab 0 · Contact History"
           }
         ],
-        "updated_at": "2026-08-23T01:41:03.819539+00:00",
-        "comment_count": 2
+        "updated_at": "2026-08-24T09:37:33.933670+00:00",
+        "comment_count": 3
       },
       "pipeline_metadata": {
         "listed_at": "2026-08-22T15:00:04.055430+00:00",
@@ -32142,7 +32106,94 @@
       "rubric_version": "3.3",
       "generated_at": "2026-08-19",
       "output_filename_base": "Aliadbiopharma_AB-AD-002",
-      "storage_profile": "dashboard_hybrid_v1"
+      "storage_profile": "dashboard_hybrid_v1",
+      "pipeline_metadata": {
+        "listed_at": "2026-08-24T15:42:56.104351+00:00",
+        "comment": "21년 설립된 신생 기업으로 현재 Lead opt. 수준으로 표기되어있음.\n24년 휴온스그룹 OI 공모전에서 애드벤처 챌린지 1기에 최종 선정.\nmTORC2 target이 Neuroimmunology axis라기 보다는 Neuro-immunometabolism에 가까움.\n공개 된 특허 상 구조를 보았을때 Doxepinone 기반의 구조로 mTORC2 target 구조로는 알려진 구조가 아님.",
+        "comment_author": "Team Review",
+        "comment_source": "team_review_import",
+        "comment_created_at": "2026-08-24T15:42:56.104351+00:00",
+        "comment_updated_at": "2026-08-24T15:42:56.104351+00:00",
+        "contact": "O (6/8), BioUSA에서 만나기로 한 회사, NCDP 요청메일 보냈으나 답장 없음",
+        "contact_author": "Team",
+        "contact_source": "team_review_import",
+        "contact_created_at": "2026-08-24T15:42:56.104351+00:00",
+        "contact_updated_at": "2026-08-24T15:42:56.104351+00:00",
+        "website": "",
+        "asset_aliases": "AB-AD-002",
+        "company_aliases": "Aliadbiopharma",
+        "updated_at": "2026-08-24T15:42:56.104351+00:00"
+      },
+      "edit_history": [
+        {
+          "id": "5b8ddcb3d2574782b26cf81fef99ae41",
+          "changed_at": "2026-08-24T15:42:56.104776+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "tab0_listing_import_metadata_sync",
+          "field": "meta.pipeline_metadata",
+          "previous_value": null,
+          "new_value": "Tab 0 Listing metadata and searchable Asset/Company aliases synchronized"
+        },
+        {
+          "id": "c01be04250a34c3ab9cd17c36a48c2a7",
+          "changed_at": "2026-08-24T15:42:56.172161+00:00",
+          "actor_ip": "system",
+          "actor_name": "",
+          "source": "cross_workflow_comment_sync",
+          "field": "collaboration.comments.tab0_listing",
+          "previous_value": null,
+          "new_value": null
+        },
+        {
+          "id": "48eb1379f4f743f4970c92a709f5b327",
+          "changed_at": "2026-08-24T15:42:56.172316+00:00",
+          "actor_ip": "system",
+          "actor_name": "",
+          "source": "cross_workflow_contact_sync",
+          "field": "collaboration.comments.tab0_contact",
+          "previous_value": null,
+          "new_value": null
+        }
+      ],
+      "collaboration": {
+        "comments": [
+          {
+            "id": "fb245e467ed24e8ca69f70bc7e94952e",
+            "parent_id": null,
+            "author": "Team Review",
+            "author_user_id": "",
+            "author_email": "",
+            "actor_ip": "system",
+            "body": "21년 설립된 신생 기업으로 현재 Lead opt. 수준으로 표기되어있음.\n24년 휴온스그룹 OI 공모전에서 애드벤처 챌린지 1기에 최종 선정.\nmTORC2 target이 Neuroimmunology axis라기 보다는 Neuro-immunometabolism에 가까움.\n공개 된 특허 상 구조를 보았을때 Doxepinone 기반의 구조로 mTORC2 target 구조로는 알려진 구조가 아님.",
+            "created_at": "2026-08-24T15:42:56.104351+00:00",
+            "updated_at": "2026-08-24T15:42:56.171009+00:00",
+            "source": "listing_comment_post",
+            "import_key": "7a3550a65a0e26d4369be2919e477825710fc9b6dc22b4b945dbd1a6d37bf36e",
+            "system_import": true,
+            "category": "comment",
+            "label": ""
+          },
+          {
+            "id": "4b5c181933d94be8b11de7de1258f48c",
+            "parent_id": null,
+            "author": "Team",
+            "author_user_id": "",
+            "author_email": "",
+            "actor_ip": "system",
+            "body": "O (6/8), BioUSA에서 만나기로 한 회사, NCDP 요청메일 보냈으나 답장 없음",
+            "created_at": "2026-08-24T15:42:56.104351+00:00",
+            "updated_at": "2026-08-24T15:42:56.172277+00:00",
+            "source": "listing_contact_history",
+            "import_key": "13afb18125a879f3dd1de86a2ae9b8e71fc1a4bf674ac681b9e15dd06a1dbf6b",
+            "system_import": true,
+            "category": "contact_history",
+            "label": "Tab 0 · Contact History"
+          }
+        ],
+        "updated_at": "2026-08-24T15:42:56.172277+00:00",
+        "comment_count": 2
+      }
     },
     "source_report": {
       "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run. :contentReference[oaicite:0]{index=0}\n\n중요: 공개 quick-check 기준으로 SELECT 7건, REJECT 4건, UNVERIFIED 1건입니다. SELECT는 Full Scout v3.4로 보낼 우선 후보이며, REJECT/UNVERIFIED는 현재 확인된 근거만으로는 우선순위가 낮거나 exact asset identity가 확인되지 않은 경우입니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | AB-AD-002 | Aliadbiopharma | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | TR 0점: AB-AD-002의 자산별 적응증이 확인되지 않았습니다. [no_supporting_basis] Aliad의 일반 AD 프로그램을 이 코드에 귀속할 수 없습니다. MOA 0점: AB-AD-002의 자산별 target/MoA가 확인되지 않았습니다. [no_supporting_basis] Aliad의 mTORC2 플랫폼 정보를 특정 코드에 자동 매핑하지 않았습니다. Data 0점: AB-AD-002의 자산별 결과가 확인되지 않았습니다. [no_supporting_basis] 회사 플랫폼/인접 프로그램 데이터는 해당 자산 데이터가 아닙니다. | Exact-code supporting public source not verified |\n| 2 | AB-ASD-003 | Aliadbiopharma | Unknown | Small molecule | Autism spectrum disorder | Preclinical unspecified | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: AB-ASD-003의 확인 적응증은 autism spectrum disorder로 신경계 질환이지만 SKBP 6대 관심 적응증에는 포함되지 않습니다. [public_source] Interest indication이 아니므로 TR 2 이상이 아닙니다. MOA 0점: AB-ASD-003 exact record에는 target, action, mechanism이 공개되지 않았습니다. [public_source] 회사 차원의 mTORC2 프로그램을 exact asset에 직접 귀속할 근거가 없습니다. Data 0점: AB-ASD-003의 공개 asset-specific 결과가 확인되지 않았습니다. [public_source] Preclinical stage 표기만으로 데이터 성숙도를 올릴 수 없습니다. | [S1](https://synapse.patsnap.com/drug/137f0d83ed1e4d5abbb58d228a6133e6); [S2](https://www.aliadbiopharma.com/page/rs02) |\n| 3 | AS-603 | Amyloid Solution Inc | Aβ and tau aggregates / Direct chemical dissociation/clearance of Aβ and tau aggregates | Small molecule | Alzheimer's disease | Phase 1 | Republic of Korea | 3 | 3 | 3 | SELECT | TR 3점: AS-603는 Alzheimer's disease 적응증이며 Aβ/tau aggregate를 직접 분해하는 자산별 MoA가 확인됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: AS-S603 자체가 Aβ/tau oligomer·plaque·tangle dissociation, binding/MoA 분석 및 amyloid-PET 변화를 보였습니다. [public_source] 공개 근거가 학회 초록 중심이고 독립 재현성은 제한적입니다. Data 3점: 자산별 in vivo cognition, amyloid-PET, biochemical/biophysical MoA 및 safety-readiness 등 두 개 이상의 상보적 정량/단계 적합 evidence domain이 공개됐고 Phase 1이 진행 중입니다. [public_source] 임상 결과 자체는 아직 게시되지 않았습니다. | [S1](https://clinicaltrials.gov/study/NCT06786676); [S2](https://pmc.ncbi.nlm.nih.gov/articles/PMC12740438/); [S3](https://synapse.patsnap.com/drug/5898c8800e4142b6bdc035b718d6a7cc) |\n| 4 | AONPP-23 | Astrion Co Ltd | α-synuclein oligomer aggregates / Direct degradation of α-synuclein oligomers via PNAC-screened small molecules | Small molecule | Parkinson's disease | Unknown | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: AON-PP23는 Parkinson's disease 프로그램이며 α-synuclein oligomer를 직접 분해하는 MoA가 확인됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: PNAC platform의 α-synuclein oligomer-degrading functional screening과 동일 mechanism-class 연구가 확인됩니다. [public_source] AON-PP23 최종 자산 자체의 target engagement/PD 데이터는 공개되지 않았습니다. Data 1점: 약 10개 유도체 후보군과 분해 기능에 대한 정성적 공개가 있으나 AON-PP23 자산별 해석 가능한 정량 결과는 부족합니다. [public_source] 정량 efficacy, PK/PD, safety domain이 공개되지 않았습니다. | [S1](https://www.astrion.co.kr/en/board/board.php?bo_table=press&idx=16); [S2](https://www.astrion.co.kr/en/m31.php); [S3](https://www.astrion.co.kr/en/m43.php) |\n| 5 | CKR-492 | CK Regeon Inc | CXXC5-Dvl PPI / Wnt-β-catenin pathway / CXXC5-Dvl PPI inhibition to restore Wnt/β-catenin signaling | Small molecule | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 2 | 0 | SELECT | TR 3점: CKR-492는 Alzheimer's disease 자산으로 확인되고 CXXC5-Dvl/Wnt restoration 프로그램에 연결됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: 동일 CXXC5-Dvl inhibitor class에서 Wnt restoration과 5xFAD AD phenotype rescue의 functional validation이 확인됩니다. [public_source] CKR-492 자체의 target engagement/PD는 공개되지 않았습니다. Data 0점: CKR-492 코드 자체의 공개 asset-specific 결과는 확인되지 않았습니다. [public_source] 관련 KY-series/class 데이터는 CKR-492의 데이터로 대체할 수 없습니다. | [S1](https://synapse.patsnap.com/organization/da31af23213025f08e00c752ce41a5b8); [S2](https://ckregeon.com/ko/developing-items-ko/); [S3](https://ckregeon.com/pressrelease/?mod=document&uid=72); [S4](https://www.hkn24.com/news/articleView.html?idxno=346280) |\n| 6 | CPB-2101 | Corepharm Bio Co Ltd | Unknown | Small molecule | Pain | Preclinical unspecified | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: 확인 적응증은 generic Pain/non-narcotic analgesic이며 neuropathic subtype이 확인되지 않았습니다. [public_source] 규칙상 generic Pain은 TR 1입니다. MOA 0점: CPB2101의 target/MoA가 공개 근거에서 확인되지 않았습니다. [public_source] 비마약성 진통제라는 분류만으로 기전을 추정할 수 없습니다. Data 0점: CPB2101의 공개 asset-specific 결과가 확인되지 않았습니다. [public_source] Preclinical stage 표기만으로 Data 점수를 올릴 수 없습니다. | [S1](https://www.corepharm.com/eng/product/pipeline.php); [S2](https://synapse.patsnap.com/drug/0c00a1fab8214d978981ef3d50d834fd) |\n| 7 | CTX-PD02/03 | CTX | Unknown / Combinatorial iPSC-based cell therapy to improve transplanted-neuron recovery and integration | Cell therapy | Parkinson's disease | Hit Discovery | Republic of Korea | 3 | 1 | 1 | REJECT | TR 3점: CTX-PD02/03는 Parkinson's disease이며 transplanted-neuron functional recovery/integration을 직접 겨냥합니다. [public_source] TR 최고점 기준을 충족합니다. MOA 1점: neuroinflammation 완화, neural-circuit integration, transplanted-neuron survival 향상이라는 mechanism description이 있으나 회사의 정성적 claim 수준입니다. [public_source] 자산 자체의 공개 direct functional/PD 검증이 부족합니다. Data 1점: selected candidates가 promise를 보였다는 정성적 결과만 있고 해석 가능한 정량값이 없습니다. [public_source] 정량 stage-appropriate evidence domain이 없어 Data 2가 아닙니다. | [S1](https://cell-tx.com/en/sub/pipe/pipe.php) |\n| 8 | CTXPD-01 | CTX Inc | Midbrain dopaminergic cell replacement / Autologous iPSC-derived mDAP/mDAN transplantation | Cell therapy | Parkinson's disease | Preclinical unspecified | Republic of Korea | 3 | 1 | 0 | REJECT | TR 3점: CTX-PD01는 Parkinson's disease에 mDAP/mDAN dopaminergic cell replacement를 적용하는 자산입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 1점: 환자유래 iPSC를 중뇌 도파민 계열로 분화해 이식하는 mechanism은 명확하지만 공개된 자산별 functional validation 결과가 없습니다. [public_source] target engagement 또는 direct functional outcome이 공개되지 않아 MOA 2 이상이 아닙니다. Data 0점: 현재 공개 페이지는 safety/efficacy를 in vivo에서 평가 중이라고만 밝히며 자산별 결과를 제시하지 않습니다. [public_source] 정성적 결과조차 제시되지 않아 Data 1도 부여하지 않았습니다. | [S1](https://cell-tx.com/en/sub/pipe/pipe.php); [S2](https://www.cell-tx.com/en/sub/company/history.php) |\n| 9 | CU-71 | Curacle Co Ltd | BBB dysfunction / neurovascular instability / BBB stabilization with reduced neuroinflammation and vascular leakage | Small molecule | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 2 | SELECT | TR 3점: CU71은 Alzheimer's disease 적응증이며 BBB dysfunction/neuroinflammation을 직접 겨냥하는 neurovascular stabilizer입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: CU71 자체가 HBMEC tight-junction/vascular integrity 개선과 5XFAD에서 BBB·neuroinflammation 관련 biomarker/functional 변화를 보였습니다. [public_source] 분자적 primary target은 아직 공개되지 않았습니다. Data 2점: 5XFAD에서 5·10 mg/kg 6개월 투여, NOR/MWM cognition 및 multiple biomarker assays라는 해석 가능한 stage-appropriate in vivo evidence domain이 공개됐습니다. [public_source] 보도된 초록은 완전한 effect-size table을 제공하지 않아 Data 3 근거는 부족합니다. | [S1](https://www.curacle.com/bbs/content.php?co_id=pipeline&tab_id=cu71); [S2](https://pmc.ncbi.nlm.nih.gov/articles/PMC12742527/) |\n| 10 | CUR-202 | Curamys Co Ltd | Motor-neuron/tissue restoration via cell fusion / Therapeutic cell fusion using engineered stem cells to restore diseased cells and sustain protein expression | Cell therapy | Amyotrophic lateral sclerosis / motor neuron disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 2 | SELECT | TR 3점: CUR202는 ALS 적응증이며 손상 motor-neuron/tissue function을 세포융합으로 회복시키는 직접 치료전략입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: CUR202/ALS model에서 motor-neuron death가 느려지고 생존이 연장되는 자산별 direct functional validation이 공개됐습니다. [public_source] 세부 molecular PD와 독립 재현성은 제한적입니다. Data 2점: ALS 동물모델에서 평균 생존 35% 연장이라는 해석 가능한 정량 in vivo efficacy 결과가 공개됐습니다. [public_source] 두 개의 상보적 정량 evidence domain이 확인되지 않아 Data 3은 아닙니다. | [S1](https://www.curamys.com/); [S2](https://www.dongascience.com/ko/news/73348) |\n| 11 | DM-3159 | DigmBio Inc | TAS1R3 / TAS1R3 agonism activating signaling for neuroprotection and functional recovery | Small molecule | Alzheimer's disease | IND-enabling | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: DM3159는 Alzheimer's disease 적응증이고 TAS1R3 agonism을 통해 neuroprotection/functional recovery를 노립니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: DM3159를 투여한 AD mouse model에서 cognition 개선과 neuroinflammation/pathology 감소라는 functional effect가 확인됩니다. [public_source] TAS1R3 target engagement 또는 mechanism-linked PD가 직접 측정됐다는 공개 근거는 부족합니다. Data 1점: 자산별 in vivo 효과가 공개됐지만 quick-check 출처에는 명확한 effect size/통계값이 제시되지 않았습니다. [public_source] 정량 stage-appropriate 결과가 부족해 Data 2가 아닙니다. | [S1](https://digmbio.com/bbs/content.php?co_id=Pipeline); [S2](https://m.biospectator.com/view/news_view.php?varAtcId=29483) |\n| 12 | DM-3190 | DigmBio Inc | TAS2R GPCR / TAS2R GPCR modulation in Parkinson's disease | Small molecule | Parkinson's disease | Lead Optimization | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: DM3190은 Parkinson's disease 적응증이며 TAS2R GPCR을 치료표적으로 개발 중입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: TAS2R GPCR PD project가 α-synuclein/PFF model에서 행동개선 functional evidence를 보였고 DM3190가 해당 초기 후보군으로 확인됩니다. [public_source] 공개 표현은 project-level이어서 DM3190 자체 target engagement/PD로 단정할 수 없습니다. Data 1점: PD model 행동개선이 정성적으로 공개됐지만 DM3190 자산별 정량 결과는 확인되지 않았습니다. [public_source] 정량 asset-specific evidence가 부족해 Data 2가 아닙니다. | [S1](https://digmbio.com/bbs/content.php?co_id=Pipeline); [S2](https://www.digmbio.co.kr/bbs/board.php?bo_table=online&wr_id=28); [S3](https://m.biospectator.com/view/news_view.php?varAtcId=27178) |\n\n## Notes\n- AB-AD-002: Aliad의 일반 AD/mTORC2 프로그램은 확인되지만 exact code 자체를 특정 pipeline asset으로 연결하는 공개 근거는 확인하지 못해 UNVERIFIED로 유지했습니다.\n- 표기 정규화: AS-603 ↔ AS-S603, AONPP-23 ↔ AON-PP23, CTXPD-01 ↔ CTX-PD01, CU-71 ↔ CU71은 공개 자료상 동일 자산/표기 변형으로 연결했습니다.\n- AON-PP23는 현재 PD program/후보군 활동성은 확인되나, 과거의 향후 preclinical 계획을 완료된 단계로 승격하지 않아 development stage는 Unknown으로 유지했습니다.\n- CKR-492는 exact asset identity와 active preclinical AD status는 확인되지만, CXXC5-Dvl/Wnt 근거는 program/class 연결이 강하고 CKR-492 자체 quantitative dataset은 확인되지 않았습니다.\n- DM3159는 2026-08 공개 자료에서 진행 중인 GLP tox가 확인되어 canonical stage rule에 따라 IND-enabling으로 분류했습니다.",
@@ -32255,7 +32306,94 @@
       "rubric_version": "3.3",
       "generated_at": "2026-08-19",
       "output_filename_base": "Aliad Biopharma, Inc._AB-ASD-003",
-      "storage_profile": "dashboard_hybrid_v1"
+      "storage_profile": "dashboard_hybrid_v1",
+      "pipeline_metadata": {
+        "listed_at": "2026-08-24T15:42:56.104351+00:00",
+        "comment": "AB-AD-002에 비해 조금 더 early stage로 보임",
+        "comment_author": "Team Review",
+        "comment_source": "team_review_import",
+        "comment_created_at": "2026-08-24T15:42:56.104351+00:00",
+        "comment_updated_at": "2026-08-24T15:42:56.104351+00:00",
+        "contact": "O (6/8), BioUSA에서 만나기로 한 회사, NCDP 요청메일 보냈으나 답장 없음",
+        "contact_author": "Team",
+        "contact_source": "team_review_import",
+        "contact_created_at": "2026-08-24T15:42:56.104351+00:00",
+        "contact_updated_at": "2026-08-24T15:42:56.104351+00:00",
+        "website": "",
+        "asset_aliases": "AB-ASD-003",
+        "company_aliases": "Aliadbiopharma",
+        "updated_at": "2026-08-24T15:42:56.104351+00:00"
+      },
+      "edit_history": [
+        {
+          "id": "da619f4d8c4a458abf15a04448ebd5e9",
+          "changed_at": "2026-08-24T15:42:56.105130+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "tab0_listing_import_metadata_sync",
+          "field": "meta.pipeline_metadata",
+          "previous_value": null,
+          "new_value": "Tab 0 Listing metadata and searchable Asset/Company aliases synchronized"
+        },
+        {
+          "id": "bd1fd4341eb0400b82db05be3cb73851",
+          "changed_at": "2026-08-24T15:42:56.172490+00:00",
+          "actor_ip": "system",
+          "actor_name": "",
+          "source": "cross_workflow_comment_sync",
+          "field": "collaboration.comments.tab0_listing",
+          "previous_value": null,
+          "new_value": null
+        },
+        {
+          "id": "8fa6fa6a14d742a4b2618f569c4647a1",
+          "changed_at": "2026-08-24T15:42:56.172688+00:00",
+          "actor_ip": "system",
+          "actor_name": "",
+          "source": "cross_workflow_contact_sync",
+          "field": "collaboration.comments.tab0_contact",
+          "previous_value": null,
+          "new_value": null
+        }
+      ],
+      "collaboration": {
+        "comments": [
+          {
+            "id": "e559bfe8cc044d2fb6998e5a7bc61cc2",
+            "parent_id": null,
+            "author": "Team Review",
+            "author_user_id": "",
+            "author_email": "",
+            "actor_ip": "system",
+            "body": "AB-AD-002에 비해 조금 더 early stage로 보임",
+            "created_at": "2026-08-24T15:42:56.104351+00:00",
+            "updated_at": "2026-08-24T15:42:56.172459+00:00",
+            "source": "listing_comment_post",
+            "import_key": "580f90532620ea6a195be918f29d8333de3b7560f9765c80f9f53ef98e8d3e0f",
+            "system_import": true,
+            "category": "comment",
+            "label": ""
+          },
+          {
+            "id": "7e78e0edba0140fbac99423a472ea2ff",
+            "parent_id": null,
+            "author": "Team",
+            "author_user_id": "",
+            "author_email": "",
+            "actor_ip": "system",
+            "body": "O (6/8), BioUSA에서 만나기로 한 회사, NCDP 요청메일 보냈으나 답장 없음",
+            "created_at": "2026-08-24T15:42:56.104351+00:00",
+            "updated_at": "2026-08-24T15:42:56.172642+00:00",
+            "source": "listing_contact_history",
+            "import_key": "093bb12a786d21363f36a5b33ec2a71469625e3494c5d7addc2d6c977f5010bd",
+            "system_import": true,
+            "category": "contact_history",
+            "label": "Tab 0 · Contact History"
+          }
+        ],
+        "updated_at": "2026-08-24T15:42:56.172642+00:00",
+        "comment_count": 2
+      }
     },
     "source_report": {
       "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run. :contentReference[oaicite:0]{index=0}\n\n중요: 공개 quick-check 기준으로 SELECT 7건, REJECT 4건, UNVERIFIED 1건입니다. SELECT는 Full Scout v3.4로 보낼 우선 후보이며, REJECT/UNVERIFIED는 현재 확인된 근거만으로는 우선순위가 낮거나 exact asset identity가 확인되지 않은 경우입니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | AB-AD-002 | Aliadbiopharma | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | TR 0점: AB-AD-002의 자산별 적응증이 확인되지 않았습니다. [no_supporting_basis] Aliad의 일반 AD 프로그램을 이 코드에 귀속할 수 없습니다. MOA 0점: AB-AD-002의 자산별 target/MoA가 확인되지 않았습니다. [no_supporting_basis] Aliad의 mTORC2 플랫폼 정보를 특정 코드에 자동 매핑하지 않았습니다. Data 0점: AB-AD-002의 자산별 결과가 확인되지 않았습니다. [no_supporting_basis] 회사 플랫폼/인접 프로그램 데이터는 해당 자산 데이터가 아닙니다. | Exact-code supporting public source not verified |\n| 2 | AB-ASD-003 | Aliadbiopharma | Unknown | Small molecule | Autism spectrum disorder | Preclinical unspecified | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: AB-ASD-003의 확인 적응증은 autism spectrum disorder로 신경계 질환이지만 SKBP 6대 관심 적응증에는 포함되지 않습니다. [public_source] Interest indication이 아니므로 TR 2 이상이 아닙니다. MOA 0점: AB-ASD-003 exact record에는 target, action, mechanism이 공개되지 않았습니다. [public_source] 회사 차원의 mTORC2 프로그램을 exact asset에 직접 귀속할 근거가 없습니다. Data 0점: AB-ASD-003의 공개 asset-specific 결과가 확인되지 않았습니다. [public_source] Preclinical stage 표기만으로 데이터 성숙도를 올릴 수 없습니다. | [S1](https://synapse.patsnap.com/drug/137f0d83ed1e4d5abbb58d228a6133e6); [S2](https://www.aliadbiopharma.com/page/rs02) |\n| 3 | AS-603 | Amyloid Solution Inc | Aβ and tau aggregates / Direct chemical dissociation/clearance of Aβ and tau aggregates | Small molecule | Alzheimer's disease | Phase 1 | Republic of Korea | 3 | 3 | 3 | SELECT | TR 3점: AS-603는 Alzheimer's disease 적응증이며 Aβ/tau aggregate를 직접 분해하는 자산별 MoA가 확인됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: AS-S603 자체가 Aβ/tau oligomer·plaque·tangle dissociation, binding/MoA 분석 및 amyloid-PET 변화를 보였습니다. [public_source] 공개 근거가 학회 초록 중심이고 독립 재현성은 제한적입니다. Data 3점: 자산별 in vivo cognition, amyloid-PET, biochemical/biophysical MoA 및 safety-readiness 등 두 개 이상의 상보적 정량/단계 적합 evidence domain이 공개됐고 Phase 1이 진행 중입니다. [public_source] 임상 결과 자체는 아직 게시되지 않았습니다. | [S1](https://clinicaltrials.gov/study/NCT06786676); [S2](https://pmc.ncbi.nlm.nih.gov/articles/PMC12740438/); [S3](https://synapse.patsnap.com/drug/5898c8800e4142b6bdc035b718d6a7cc) |\n| 4 | AONPP-23 | Astrion Co Ltd | α-synuclein oligomer aggregates / Direct degradation of α-synuclein oligomers via PNAC-screened small molecules | Small molecule | Parkinson's disease | Unknown | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: AON-PP23는 Parkinson's disease 프로그램이며 α-synuclein oligomer를 직접 분해하는 MoA가 확인됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: PNAC platform의 α-synuclein oligomer-degrading functional screening과 동일 mechanism-class 연구가 확인됩니다. [public_source] AON-PP23 최종 자산 자체의 target engagement/PD 데이터는 공개되지 않았습니다. Data 1점: 약 10개 유도체 후보군과 분해 기능에 대한 정성적 공개가 있으나 AON-PP23 자산별 해석 가능한 정량 결과는 부족합니다. [public_source] 정량 efficacy, PK/PD, safety domain이 공개되지 않았습니다. | [S1](https://www.astrion.co.kr/en/board/board.php?bo_table=press&idx=16); [S2](https://www.astrion.co.kr/en/m31.php); [S3](https://www.astrion.co.kr/en/m43.php) |\n| 5 | CKR-492 | CK Regeon Inc | CXXC5-Dvl PPI / Wnt-β-catenin pathway / CXXC5-Dvl PPI inhibition to restore Wnt/β-catenin signaling | Small molecule | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 2 | 0 | SELECT | TR 3점: CKR-492는 Alzheimer's disease 자산으로 확인되고 CXXC5-Dvl/Wnt restoration 프로그램에 연결됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: 동일 CXXC5-Dvl inhibitor class에서 Wnt restoration과 5xFAD AD phenotype rescue의 functional validation이 확인됩니다. [public_source] CKR-492 자체의 target engagement/PD는 공개되지 않았습니다. Data 0점: CKR-492 코드 자체의 공개 asset-specific 결과는 확인되지 않았습니다. [public_source] 관련 KY-series/class 데이터는 CKR-492의 데이터로 대체할 수 없습니다. | [S1](https://synapse.patsnap.com/organization/da31af23213025f08e00c752ce41a5b8); [S2](https://ckregeon.com/ko/developing-items-ko/); [S3](https://ckregeon.com/pressrelease/?mod=document&uid=72); [S4](https://www.hkn24.com/news/articleView.html?idxno=346280) |\n| 6 | CPB-2101 | Corepharm Bio Co Ltd | Unknown | Small molecule | Pain | Preclinical unspecified | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: 확인 적응증은 generic Pain/non-narcotic analgesic이며 neuropathic subtype이 확인되지 않았습니다. [public_source] 규칙상 generic Pain은 TR 1입니다. MOA 0점: CPB2101의 target/MoA가 공개 근거에서 확인되지 않았습니다. [public_source] 비마약성 진통제라는 분류만으로 기전을 추정할 수 없습니다. Data 0점: CPB2101의 공개 asset-specific 결과가 확인되지 않았습니다. [public_source] Preclinical stage 표기만으로 Data 점수를 올릴 수 없습니다. | [S1](https://www.corepharm.com/eng/product/pipeline.php); [S2](https://synapse.patsnap.com/drug/0c00a1fab8214d978981ef3d50d834fd) |\n| 7 | CTX-PD02/03 | CTX | Unknown / Combinatorial iPSC-based cell therapy to improve transplanted-neuron recovery and integration | Cell therapy | Parkinson's disease | Hit Discovery | Republic of Korea | 3 | 1 | 1 | REJECT | TR 3점: CTX-PD02/03는 Parkinson's disease이며 transplanted-neuron functional recovery/integration을 직접 겨냥합니다. [public_source] TR 최고점 기준을 충족합니다. MOA 1점: neuroinflammation 완화, neural-circuit integration, transplanted-neuron survival 향상이라는 mechanism description이 있으나 회사의 정성적 claim 수준입니다. [public_source] 자산 자체의 공개 direct functional/PD 검증이 부족합니다. Data 1점: selected candidates가 promise를 보였다는 정성적 결과만 있고 해석 가능한 정량값이 없습니다. [public_source] 정량 stage-appropriate evidence domain이 없어 Data 2가 아닙니다. | [S1](https://cell-tx.com/en/sub/pipe/pipe.php) |\n| 8 | CTXPD-01 | CTX Inc | Midbrain dopaminergic cell replacement / Autologous iPSC-derived mDAP/mDAN transplantation | Cell therapy | Parkinson's disease | Preclinical unspecified | Republic of Korea | 3 | 1 | 0 | REJECT | TR 3점: CTX-PD01는 Parkinson's disease에 mDAP/mDAN dopaminergic cell replacement를 적용하는 자산입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 1점: 환자유래 iPSC를 중뇌 도파민 계열로 분화해 이식하는 mechanism은 명확하지만 공개된 자산별 functional validation 결과가 없습니다. [public_source] target engagement 또는 direct functional outcome이 공개되지 않아 MOA 2 이상이 아닙니다. Data 0점: 현재 공개 페이지는 safety/efficacy를 in vivo에서 평가 중이라고만 밝히며 자산별 결과를 제시하지 않습니다. [public_source] 정성적 결과조차 제시되지 않아 Data 1도 부여하지 않았습니다. | [S1](https://cell-tx.com/en/sub/pipe/pipe.php); [S2](https://www.cell-tx.com/en/sub/company/history.php) |\n| 9 | CU-71 | Curacle Co Ltd | BBB dysfunction / neurovascular instability / BBB stabilization with reduced neuroinflammation and vascular leakage | Small molecule | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 2 | SELECT | TR 3점: CU71은 Alzheimer's disease 적응증이며 BBB dysfunction/neuroinflammation을 직접 겨냥하는 neurovascular stabilizer입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: CU71 자체가 HBMEC tight-junction/vascular integrity 개선과 5XFAD에서 BBB·neuroinflammation 관련 biomarker/functional 변화를 보였습니다. [public_source] 분자적 primary target은 아직 공개되지 않았습니다. Data 2점: 5XFAD에서 5·10 mg/kg 6개월 투여, NOR/MWM cognition 및 multiple biomarker assays라는 해석 가능한 stage-appropriate in vivo evidence domain이 공개됐습니다. [public_source] 보도된 초록은 완전한 effect-size table을 제공하지 않아 Data 3 근거는 부족합니다. | [S1](https://www.curacle.com/bbs/content.php?co_id=pipeline&tab_id=cu71); [S2](https://pmc.ncbi.nlm.nih.gov/articles/PMC12742527/) |\n| 10 | CUR-202 | Curamys Co Ltd | Motor-neuron/tissue restoration via cell fusion / Therapeutic cell fusion using engineered stem cells to restore diseased cells and sustain protein expression | Cell therapy | Amyotrophic lateral sclerosis / motor neuron disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 2 | SELECT | TR 3점: CUR202는 ALS 적응증이며 손상 motor-neuron/tissue function을 세포융합으로 회복시키는 직접 치료전략입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: CUR202/ALS model에서 motor-neuron death가 느려지고 생존이 연장되는 자산별 direct functional validation이 공개됐습니다. [public_source] 세부 molecular PD와 독립 재현성은 제한적입니다. Data 2점: ALS 동물모델에서 평균 생존 35% 연장이라는 해석 가능한 정량 in vivo efficacy 결과가 공개됐습니다. [public_source] 두 개의 상보적 정량 evidence domain이 확인되지 않아 Data 3은 아닙니다. | [S1](https://www.curamys.com/); [S2](https://www.dongascience.com/ko/news/73348) |\n| 11 | DM-3159 | DigmBio Inc | TAS1R3 / TAS1R3 agonism activating signaling for neuroprotection and functional recovery | Small molecule | Alzheimer's disease | IND-enabling | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: DM3159는 Alzheimer's disease 적응증이고 TAS1R3 agonism을 통해 neuroprotection/functional recovery를 노립니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: DM3159를 투여한 AD mouse model에서 cognition 개선과 neuroinflammation/pathology 감소라는 functional effect가 확인됩니다. [public_source] TAS1R3 target engagement 또는 mechanism-linked PD가 직접 측정됐다는 공개 근거는 부족합니다. Data 1점: 자산별 in vivo 효과가 공개됐지만 quick-check 출처에는 명확한 effect size/통계값이 제시되지 않았습니다. [public_source] 정량 stage-appropriate 결과가 부족해 Data 2가 아닙니다. | [S1](https://digmbio.com/bbs/content.php?co_id=Pipeline); [S2](https://m.biospectator.com/view/news_view.php?varAtcId=29483) |\n| 12 | DM-3190 | DigmBio Inc | TAS2R GPCR / TAS2R GPCR modulation in Parkinson's disease | Small molecule | Parkinson's disease | Lead Optimization | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: DM3190은 Parkinson's disease 적응증이며 TAS2R GPCR을 치료표적으로 개발 중입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: TAS2R GPCR PD project가 α-synuclein/PFF model에서 행동개선 functional evidence를 보였고 DM3190가 해당 초기 후보군으로 확인됩니다. [public_source] 공개 표현은 project-level이어서 DM3190 자체 target engagement/PD로 단정할 수 없습니다. Data 1점: PD model 행동개선이 정성적으로 공개됐지만 DM3190 자산별 정량 결과는 확인되지 않았습니다. [public_source] 정량 asset-specific evidence가 부족해 Data 2가 아닙니다. | [S1](https://digmbio.com/bbs/content.php?co_id=Pipeline); [S2](https://www.digmbio.co.kr/bbs/board.php?bo_table=online&wr_id=28); [S3](https://m.biospectator.com/view/news_view.php?varAtcId=27178) |\n\n## Notes\n- AB-AD-002: Aliad의 일반 AD/mTORC2 프로그램은 확인되지만 exact code 자체를 특정 pipeline asset으로 연결하는 공개 근거는 확인하지 못해 UNVERIFIED로 유지했습니다.\n- 표기 정규화: AS-603 ↔ AS-S603, AONPP-23 ↔ AON-PP23, CTXPD-01 ↔ CTX-PD01, CU-71 ↔ CU71은 공개 자료상 동일 자산/표기 변형으로 연결했습니다.\n- AON-PP23는 현재 PD program/후보군 활동성은 확인되나, 과거의 향후 preclinical 계획을 완료된 단계로 승격하지 않아 development stage는 Unknown으로 유지했습니다.\n- CKR-492는 exact asset identity와 active preclinical AD status는 확인되지만, CXXC5-Dvl/Wnt 근거는 program/class 연결이 강하고 CKR-492 자체 quantitative dataset은 확인되지 않았습니다.\n- DM3159는 2026-08 공개 자료에서 진행 중인 GLP tox가 확인되어 canonical stage rule에 따라 IND-enabling으로 분류했습니다.",
@@ -32394,7 +32532,68 @@
       "rubric_version": "3.3",
       "generated_at": "2026-08-19",
       "output_filename_base": "Amyloid Solution Inc_AS-603",
-      "storage_profile": "dashboard_hybrid_v1"
+      "storage_profile": "dashboard_hybrid_v1",
+      "pipeline_metadata": {
+        "listed_at": "2026-08-24T15:42:56.104351+00:00",
+        "comment": "이미 형성된 Aβ aggregate, Tau aggregate에 직접 결합하여 분해하는 컨셉\n이미 국내 Phase1 진입 약물이라 협업포인트 있을지 판단이 어렵고, 나머지 asset들은 early stage라 컨택포인트 찾기 어려움\nBioUSA에서 만나기로 한 회사",
+        "comment_author": "Team Review",
+        "comment_source": "team_review_import",
+        "comment_created_at": "2026-08-24T15:42:56.104351+00:00",
+        "comment_updated_at": "2026-08-24T15:42:56.104351+00:00",
+        "contact": "",
+        "contact_author": "",
+        "contact_source": "",
+        "contact_created_at": "",
+        "contact_updated_at": "",
+        "website": "",
+        "asset_aliases": "AS-603",
+        "company_aliases": "Amyloid Solution Inc",
+        "updated_at": "2026-08-24T15:42:56.104351+00:00"
+      },
+      "edit_history": [
+        {
+          "id": "b5defec9498145ea969fa812d50d21b9",
+          "changed_at": "2026-08-24T15:42:56.105327+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "tab0_listing_import_metadata_sync",
+          "field": "meta.pipeline_metadata",
+          "previous_value": null,
+          "new_value": "Tab 0 Listing metadata and searchable Asset/Company aliases synchronized"
+        },
+        {
+          "id": "a351309174c6449e986523bfce4346db",
+          "changed_at": "2026-08-24T15:42:56.172853+00:00",
+          "actor_ip": "system",
+          "actor_name": "",
+          "source": "cross_workflow_comment_sync",
+          "field": "collaboration.comments.tab0_listing",
+          "previous_value": null,
+          "new_value": null
+        }
+      ],
+      "collaboration": {
+        "comments": [
+          {
+            "id": "ebe8f432e1d841b1bced4157f3e3b3c0",
+            "parent_id": null,
+            "author": "Team Review",
+            "author_user_id": "",
+            "author_email": "",
+            "actor_ip": "system",
+            "body": "이미 형성된 Aβ aggregate, Tau aggregate에 직접 결합하여 분해하는 컨셉\n이미 국내 Phase1 진입 약물이라 협업포인트 있을지 판단이 어렵고, 나머지 asset들은 early stage라 컨택포인트 찾기 어려움\nBioUSA에서 만나기로 한 회사",
+            "created_at": "2026-08-24T15:42:56.104351+00:00",
+            "updated_at": "2026-08-24T15:42:56.172826+00:00",
+            "source": "listing_comment_post",
+            "import_key": "ae34b74c85058fe0c202c091353fc96711485111e49e2df0463ed4141856953a",
+            "system_import": true,
+            "category": "comment",
+            "label": ""
+          }
+        ],
+        "updated_at": "2026-08-24T15:42:56.172826+00:00",
+        "comment_count": 1
+      }
     },
     "source_report": {
       "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run. :contentReference[oaicite:0]{index=0}\n\n중요: 공개 quick-check 기준으로 SELECT 7건, REJECT 4건, UNVERIFIED 1건입니다. SELECT는 Full Scout v3.4로 보낼 우선 후보이며, REJECT/UNVERIFIED는 현재 확인된 근거만으로는 우선순위가 낮거나 exact asset identity가 확인되지 않은 경우입니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | AB-AD-002 | Aliadbiopharma | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | TR 0점: AB-AD-002의 자산별 적응증이 확인되지 않았습니다. [no_supporting_basis] Aliad의 일반 AD 프로그램을 이 코드에 귀속할 수 없습니다. MOA 0점: AB-AD-002의 자산별 target/MoA가 확인되지 않았습니다. [no_supporting_basis] Aliad의 mTORC2 플랫폼 정보를 특정 코드에 자동 매핑하지 않았습니다. Data 0점: AB-AD-002의 자산별 결과가 확인되지 않았습니다. [no_supporting_basis] 회사 플랫폼/인접 프로그램 데이터는 해당 자산 데이터가 아닙니다. | Exact-code supporting public source not verified |\n| 2 | AB-ASD-003 | Aliadbiopharma | Unknown | Small molecule | Autism spectrum disorder | Preclinical unspecified | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: AB-ASD-003의 확인 적응증은 autism spectrum disorder로 신경계 질환이지만 SKBP 6대 관심 적응증에는 포함되지 않습니다. [public_source] Interest indication이 아니므로 TR 2 이상이 아닙니다. MOA 0점: AB-ASD-003 exact record에는 target, action, mechanism이 공개되지 않았습니다. [public_source] 회사 차원의 mTORC2 프로그램을 exact asset에 직접 귀속할 근거가 없습니다. Data 0점: AB-ASD-003의 공개 asset-specific 결과가 확인되지 않았습니다. [public_source] Preclinical stage 표기만으로 데이터 성숙도를 올릴 수 없습니다. | [S1](https://synapse.patsnap.com/drug/137f0d83ed1e4d5abbb58d228a6133e6); [S2](https://www.aliadbiopharma.com/page/rs02) |\n| 3 | AS-603 | Amyloid Solution Inc | Aβ and tau aggregates / Direct chemical dissociation/clearance of Aβ and tau aggregates | Small molecule | Alzheimer's disease | Phase 1 | Republic of Korea | 3 | 3 | 3 | SELECT | TR 3점: AS-603는 Alzheimer's disease 적응증이며 Aβ/tau aggregate를 직접 분해하는 자산별 MoA가 확인됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: AS-S603 자체가 Aβ/tau oligomer·plaque·tangle dissociation, binding/MoA 분석 및 amyloid-PET 변화를 보였습니다. [public_source] 공개 근거가 학회 초록 중심이고 독립 재현성은 제한적입니다. Data 3점: 자산별 in vivo cognition, amyloid-PET, biochemical/biophysical MoA 및 safety-readiness 등 두 개 이상의 상보적 정량/단계 적합 evidence domain이 공개됐고 Phase 1이 진행 중입니다. [public_source] 임상 결과 자체는 아직 게시되지 않았습니다. | [S1](https://clinicaltrials.gov/study/NCT06786676); [S2](https://pmc.ncbi.nlm.nih.gov/articles/PMC12740438/); [S3](https://synapse.patsnap.com/drug/5898c8800e4142b6bdc035b718d6a7cc) |\n| 4 | AONPP-23 | Astrion Co Ltd | α-synuclein oligomer aggregates / Direct degradation of α-synuclein oligomers via PNAC-screened small molecules | Small molecule | Parkinson's disease | Unknown | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: AON-PP23는 Parkinson's disease 프로그램이며 α-synuclein oligomer를 직접 분해하는 MoA가 확인됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: PNAC platform의 α-synuclein oligomer-degrading functional screening과 동일 mechanism-class 연구가 확인됩니다. [public_source] AON-PP23 최종 자산 자체의 target engagement/PD 데이터는 공개되지 않았습니다. Data 1점: 약 10개 유도체 후보군과 분해 기능에 대한 정성적 공개가 있으나 AON-PP23 자산별 해석 가능한 정량 결과는 부족합니다. [public_source] 정량 efficacy, PK/PD, safety domain이 공개되지 않았습니다. | [S1](https://www.astrion.co.kr/en/board/board.php?bo_table=press&idx=16); [S2](https://www.astrion.co.kr/en/m31.php); [S3](https://www.astrion.co.kr/en/m43.php) |\n| 5 | CKR-492 | CK Regeon Inc | CXXC5-Dvl PPI / Wnt-β-catenin pathway / CXXC5-Dvl PPI inhibition to restore Wnt/β-catenin signaling | Small molecule | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 2 | 0 | SELECT | TR 3점: CKR-492는 Alzheimer's disease 자산으로 확인되고 CXXC5-Dvl/Wnt restoration 프로그램에 연결됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: 동일 CXXC5-Dvl inhibitor class에서 Wnt restoration과 5xFAD AD phenotype rescue의 functional validation이 확인됩니다. [public_source] CKR-492 자체의 target engagement/PD는 공개되지 않았습니다. Data 0점: CKR-492 코드 자체의 공개 asset-specific 결과는 확인되지 않았습니다. [public_source] 관련 KY-series/class 데이터는 CKR-492의 데이터로 대체할 수 없습니다. | [S1](https://synapse.patsnap.com/organization/da31af23213025f08e00c752ce41a5b8); [S2](https://ckregeon.com/ko/developing-items-ko/); [S3](https://ckregeon.com/pressrelease/?mod=document&uid=72); [S4](https://www.hkn24.com/news/articleView.html?idxno=346280) |\n| 6 | CPB-2101 | Corepharm Bio Co Ltd | Unknown | Small molecule | Pain | Preclinical unspecified | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: 확인 적응증은 generic Pain/non-narcotic analgesic이며 neuropathic subtype이 확인되지 않았습니다. [public_source] 규칙상 generic Pain은 TR 1입니다. MOA 0점: CPB2101의 target/MoA가 공개 근거에서 확인되지 않았습니다. [public_source] 비마약성 진통제라는 분류만으로 기전을 추정할 수 없습니다. Data 0점: CPB2101의 공개 asset-specific 결과가 확인되지 않았습니다. [public_source] Preclinical stage 표기만으로 Data 점수를 올릴 수 없습니다. | [S1](https://www.corepharm.com/eng/product/pipeline.php); [S2](https://synapse.patsnap.com/drug/0c00a1fab8214d978981ef3d50d834fd) |\n| 7 | CTX-PD02/03 | CTX | Unknown / Combinatorial iPSC-based cell therapy to improve transplanted-neuron recovery and integration | Cell therapy | Parkinson's disease | Hit Discovery | Republic of Korea | 3 | 1 | 1 | REJECT | TR 3점: CTX-PD02/03는 Parkinson's disease이며 transplanted-neuron functional recovery/integration을 직접 겨냥합니다. [public_source] TR 최고점 기준을 충족합니다. MOA 1점: neuroinflammation 완화, neural-circuit integration, transplanted-neuron survival 향상이라는 mechanism description이 있으나 회사의 정성적 claim 수준입니다. [public_source] 자산 자체의 공개 direct functional/PD 검증이 부족합니다. Data 1점: selected candidates가 promise를 보였다는 정성적 결과만 있고 해석 가능한 정량값이 없습니다. [public_source] 정량 stage-appropriate evidence domain이 없어 Data 2가 아닙니다. | [S1](https://cell-tx.com/en/sub/pipe/pipe.php) |\n| 8 | CTXPD-01 | CTX Inc | Midbrain dopaminergic cell replacement / Autologous iPSC-derived mDAP/mDAN transplantation | Cell therapy | Parkinson's disease | Preclinical unspecified | Republic of Korea | 3 | 1 | 0 | REJECT | TR 3점: CTX-PD01는 Parkinson's disease에 mDAP/mDAN dopaminergic cell replacement를 적용하는 자산입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 1점: 환자유래 iPSC를 중뇌 도파민 계열로 분화해 이식하는 mechanism은 명확하지만 공개된 자산별 functional validation 결과가 없습니다. [public_source] target engagement 또는 direct functional outcome이 공개되지 않아 MOA 2 이상이 아닙니다. Data 0점: 현재 공개 페이지는 safety/efficacy를 in vivo에서 평가 중이라고만 밝히며 자산별 결과를 제시하지 않습니다. [public_source] 정성적 결과조차 제시되지 않아 Data 1도 부여하지 않았습니다. | [S1](https://cell-tx.com/en/sub/pipe/pipe.php); [S2](https://www.cell-tx.com/en/sub/company/history.php) |\n| 9 | CU-71 | Curacle Co Ltd | BBB dysfunction / neurovascular instability / BBB stabilization with reduced neuroinflammation and vascular leakage | Small molecule | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 2 | SELECT | TR 3점: CU71은 Alzheimer's disease 적응증이며 BBB dysfunction/neuroinflammation을 직접 겨냥하는 neurovascular stabilizer입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: CU71 자체가 HBMEC tight-junction/vascular integrity 개선과 5XFAD에서 BBB·neuroinflammation 관련 biomarker/functional 변화를 보였습니다. [public_source] 분자적 primary target은 아직 공개되지 않았습니다. Data 2점: 5XFAD에서 5·10 mg/kg 6개월 투여, NOR/MWM cognition 및 multiple biomarker assays라는 해석 가능한 stage-appropriate in vivo evidence domain이 공개됐습니다. [public_source] 보도된 초록은 완전한 effect-size table을 제공하지 않아 Data 3 근거는 부족합니다. | [S1](https://www.curacle.com/bbs/content.php?co_id=pipeline&tab_id=cu71); [S2](https://pmc.ncbi.nlm.nih.gov/articles/PMC12742527/) |\n| 10 | CUR-202 | Curamys Co Ltd | Motor-neuron/tissue restoration via cell fusion / Therapeutic cell fusion using engineered stem cells to restore diseased cells and sustain protein expression | Cell therapy | Amyotrophic lateral sclerosis / motor neuron disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 2 | SELECT | TR 3점: CUR202는 ALS 적응증이며 손상 motor-neuron/tissue function을 세포융합으로 회복시키는 직접 치료전략입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: CUR202/ALS model에서 motor-neuron death가 느려지고 생존이 연장되는 자산별 direct functional validation이 공개됐습니다. [public_source] 세부 molecular PD와 독립 재현성은 제한적입니다. Data 2점: ALS 동물모델에서 평균 생존 35% 연장이라는 해석 가능한 정량 in vivo efficacy 결과가 공개됐습니다. [public_source] 두 개의 상보적 정량 evidence domain이 확인되지 않아 Data 3은 아닙니다. | [S1](https://www.curamys.com/); [S2](https://www.dongascience.com/ko/news/73348) |\n| 11 | DM-3159 | DigmBio Inc | TAS1R3 / TAS1R3 agonism activating signaling for neuroprotection and functional recovery | Small molecule | Alzheimer's disease | IND-enabling | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: DM3159는 Alzheimer's disease 적응증이고 TAS1R3 agonism을 통해 neuroprotection/functional recovery를 노립니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: DM3159를 투여한 AD mouse model에서 cognition 개선과 neuroinflammation/pathology 감소라는 functional effect가 확인됩니다. [public_source] TAS1R3 target engagement 또는 mechanism-linked PD가 직접 측정됐다는 공개 근거는 부족합니다. Data 1점: 자산별 in vivo 효과가 공개됐지만 quick-check 출처에는 명확한 effect size/통계값이 제시되지 않았습니다. [public_source] 정량 stage-appropriate 결과가 부족해 Data 2가 아닙니다. | [S1](https://digmbio.com/bbs/content.php?co_id=Pipeline); [S2](https://m.biospectator.com/view/news_view.php?varAtcId=29483) |\n| 12 | DM-3190 | DigmBio Inc | TAS2R GPCR / TAS2R GPCR modulation in Parkinson's disease | Small molecule | Parkinson's disease | Lead Optimization | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: DM3190은 Parkinson's disease 적응증이며 TAS2R GPCR을 치료표적으로 개발 중입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: TAS2R GPCR PD project가 α-synuclein/PFF model에서 행동개선 functional evidence를 보였고 DM3190가 해당 초기 후보군으로 확인됩니다. [public_source] 공개 표현은 project-level이어서 DM3190 자체 target engagement/PD로 단정할 수 없습니다. Data 1점: PD model 행동개선이 정성적으로 공개됐지만 DM3190 자산별 정량 결과는 확인되지 않았습니다. [public_source] 정량 asset-specific evidence가 부족해 Data 2가 아닙니다. | [S1](https://digmbio.com/bbs/content.php?co_id=Pipeline); [S2](https://www.digmbio.co.kr/bbs/board.php?bo_table=online&wr_id=28); [S3](https://m.biospectator.com/view/news_view.php?varAtcId=27178) |\n\n## Notes\n- AB-AD-002: Aliad의 일반 AD/mTORC2 프로그램은 확인되지만 exact code 자체를 특정 pipeline asset으로 연결하는 공개 근거는 확인하지 못해 UNVERIFIED로 유지했습니다.\n- 표기 정규화: AS-603 ↔ AS-S603, AONPP-23 ↔ AON-PP23, CTXPD-01 ↔ CTX-PD01, CU-71 ↔ CU71은 공개 자료상 동일 자산/표기 변형으로 연결했습니다.\n- AON-PP23는 현재 PD program/후보군 활동성은 확인되나, 과거의 향후 preclinical 계획을 완료된 단계로 승격하지 않아 development stage는 Unknown으로 유지했습니다.\n- CKR-492는 exact asset identity와 active preclinical AD status는 확인되지만, CXXC5-Dvl/Wnt 근거는 program/class 연결이 강하고 CKR-492 자체 quantitative dataset은 확인되지 않았습니다.\n- DM3159는 2026-08 공개 자료에서 진행 중인 GLP tox가 확인되어 canonical stage rule에 따라 IND-enabling으로 분류했습니다.",
@@ -32533,32 +32732,63 @@
   },
   {
     "meta": {
-      "review_type": "fast_triage",
+      "review_type": "full_scout",
       "schema_version": "3.2",
-      "instruction_version": "3.3",
-      "rubric_version": "3.3",
-      "generated_at": "2026-08-19",
+      "instruction_version": "3.4",
+      "rubric_version": "3.4",
+      "generated_at": "2026-08-24",
       "output_filename_base": "CK Regeon Inc._CKR-492",
+      "pipeline_metadata": {
+        "listed_at": "2026-08-18T01:28:43.535867+00:00",
+        "comment": "",
+        "comment_author": "",
+        "comment_source": "",
+        "comment_created_at": "",
+        "comment_updated_at": "",
+        "contact": "",
+        "contact_author": "",
+        "contact_source": "",
+        "contact_created_at": "",
+        "contact_updated_at": "",
+        "website": "",
+        "asset_aliases": "",
+        "company_aliases": "",
+        "updated_at": ""
+      },
+      "edit_history": [
+        {
+          "id": "c91f4c5593b744f3ae8cfa6e012df86c",
+          "changed_at": "2026-08-24T10:14:33.699396+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "paste_json_upsert",
+          "field": "source_report.raw_markdown",
+          "previous_value": "기존 GPT 원문 리포트",
+          "new_value": "GPT 원문 재업로드"
+        }
+      ],
+      "last_edited_at": "2026-08-24T10:14:33.699396+00:00",
+      "last_edited_by": "127.0.0.1",
       "storage_profile": "dashboard_hybrid_v1"
     },
     "source_report": {
-      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run. :contentReference[oaicite:0]{index=0}\n\n중요: 공개 quick-check 기준으로 SELECT 7건, REJECT 4건, UNVERIFIED 1건입니다. SELECT는 Full Scout v3.4로 보낼 우선 후보이며, REJECT/UNVERIFIED는 현재 확인된 근거만으로는 우선순위가 낮거나 exact asset identity가 확인되지 않은 경우입니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | AB-AD-002 | Aliadbiopharma | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | TR 0점: AB-AD-002의 자산별 적응증이 확인되지 않았습니다. [no_supporting_basis] Aliad의 일반 AD 프로그램을 이 코드에 귀속할 수 없습니다. MOA 0점: AB-AD-002의 자산별 target/MoA가 확인되지 않았습니다. [no_supporting_basis] Aliad의 mTORC2 플랫폼 정보를 특정 코드에 자동 매핑하지 않았습니다. Data 0점: AB-AD-002의 자산별 결과가 확인되지 않았습니다. [no_supporting_basis] 회사 플랫폼/인접 프로그램 데이터는 해당 자산 데이터가 아닙니다. | Exact-code supporting public source not verified |\n| 2 | AB-ASD-003 | Aliadbiopharma | Unknown | Small molecule | Autism spectrum disorder | Preclinical unspecified | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: AB-ASD-003의 확인 적응증은 autism spectrum disorder로 신경계 질환이지만 SKBP 6대 관심 적응증에는 포함되지 않습니다. [public_source] Interest indication이 아니므로 TR 2 이상이 아닙니다. MOA 0점: AB-ASD-003 exact record에는 target, action, mechanism이 공개되지 않았습니다. [public_source] 회사 차원의 mTORC2 프로그램을 exact asset에 직접 귀속할 근거가 없습니다. Data 0점: AB-ASD-003의 공개 asset-specific 결과가 확인되지 않았습니다. [public_source] Preclinical stage 표기만으로 데이터 성숙도를 올릴 수 없습니다. | [S1](https://synapse.patsnap.com/drug/137f0d83ed1e4d5abbb58d228a6133e6); [S2](https://www.aliadbiopharma.com/page/rs02) |\n| 3 | AS-603 | Amyloid Solution Inc | Aβ and tau aggregates / Direct chemical dissociation/clearance of Aβ and tau aggregates | Small molecule | Alzheimer's disease | Phase 1 | Republic of Korea | 3 | 3 | 3 | SELECT | TR 3점: AS-603는 Alzheimer's disease 적응증이며 Aβ/tau aggregate를 직접 분해하는 자산별 MoA가 확인됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: AS-S603 자체가 Aβ/tau oligomer·plaque·tangle dissociation, binding/MoA 분석 및 amyloid-PET 변화를 보였습니다. [public_source] 공개 근거가 학회 초록 중심이고 독립 재현성은 제한적입니다. Data 3점: 자산별 in vivo cognition, amyloid-PET, biochemical/biophysical MoA 및 safety-readiness 등 두 개 이상의 상보적 정량/단계 적합 evidence domain이 공개됐고 Phase 1이 진행 중입니다. [public_source] 임상 결과 자체는 아직 게시되지 않았습니다. | [S1](https://clinicaltrials.gov/study/NCT06786676); [S2](https://pmc.ncbi.nlm.nih.gov/articles/PMC12740438/); [S3](https://synapse.patsnap.com/drug/5898c8800e4142b6bdc035b718d6a7cc) |\n| 4 | AONPP-23 | Astrion Co Ltd | α-synuclein oligomer aggregates / Direct degradation of α-synuclein oligomers via PNAC-screened small molecules | Small molecule | Parkinson's disease | Unknown | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: AON-PP23는 Parkinson's disease 프로그램이며 α-synuclein oligomer를 직접 분해하는 MoA가 확인됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: PNAC platform의 α-synuclein oligomer-degrading functional screening과 동일 mechanism-class 연구가 확인됩니다. [public_source] AON-PP23 최종 자산 자체의 target engagement/PD 데이터는 공개되지 않았습니다. Data 1점: 약 10개 유도체 후보군과 분해 기능에 대한 정성적 공개가 있으나 AON-PP23 자산별 해석 가능한 정량 결과는 부족합니다. [public_source] 정량 efficacy, PK/PD, safety domain이 공개되지 않았습니다. | [S1](https://www.astrion.co.kr/en/board/board.php?bo_table=press&idx=16); [S2](https://www.astrion.co.kr/en/m31.php); [S3](https://www.astrion.co.kr/en/m43.php) |\n| 5 | CKR-492 | CK Regeon Inc | CXXC5-Dvl PPI / Wnt-β-catenin pathway / CXXC5-Dvl PPI inhibition to restore Wnt/β-catenin signaling | Small molecule | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 2 | 0 | SELECT | TR 3점: CKR-492는 Alzheimer's disease 자산으로 확인되고 CXXC5-Dvl/Wnt restoration 프로그램에 연결됩니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: 동일 CXXC5-Dvl inhibitor class에서 Wnt restoration과 5xFAD AD phenotype rescue의 functional validation이 확인됩니다. [public_source] CKR-492 자체의 target engagement/PD는 공개되지 않았습니다. Data 0점: CKR-492 코드 자체의 공개 asset-specific 결과는 확인되지 않았습니다. [public_source] 관련 KY-series/class 데이터는 CKR-492의 데이터로 대체할 수 없습니다. | [S1](https://synapse.patsnap.com/organization/da31af23213025f08e00c752ce41a5b8); [S2](https://ckregeon.com/ko/developing-items-ko/); [S3](https://ckregeon.com/pressrelease/?mod=document&uid=72); [S4](https://www.hkn24.com/news/articleView.html?idxno=346280) |\n| 6 | CPB-2101 | Corepharm Bio Co Ltd | Unknown | Small molecule | Pain | Preclinical unspecified | Republic of Korea | 1 | 0 | 0 | REJECT | TR 1점: 확인 적응증은 generic Pain/non-narcotic analgesic이며 neuropathic subtype이 확인되지 않았습니다. [public_source] 규칙상 generic Pain은 TR 1입니다. MOA 0점: CPB2101의 target/MoA가 공개 근거에서 확인되지 않았습니다. [public_source] 비마약성 진통제라는 분류만으로 기전을 추정할 수 없습니다. Data 0점: CPB2101의 공개 asset-specific 결과가 확인되지 않았습니다. [public_source] Preclinical stage 표기만으로 Data 점수를 올릴 수 없습니다. | [S1](https://www.corepharm.com/eng/product/pipeline.php); [S2](https://synapse.patsnap.com/drug/0c00a1fab8214d978981ef3d50d834fd) |\n| 7 | CTX-PD02/03 | CTX | Unknown / Combinatorial iPSC-based cell therapy to improve transplanted-neuron recovery and integration | Cell therapy | Parkinson's disease | Hit Discovery | Republic of Korea | 3 | 1 | 1 | REJECT | TR 3점: CTX-PD02/03는 Parkinson's disease이며 transplanted-neuron functional recovery/integration을 직접 겨냥합니다. [public_source] TR 최고점 기준을 충족합니다. MOA 1점: neuroinflammation 완화, neural-circuit integration, transplanted-neuron survival 향상이라는 mechanism description이 있으나 회사의 정성적 claim 수준입니다. [public_source] 자산 자체의 공개 direct functional/PD 검증이 부족합니다. Data 1점: selected candidates가 promise를 보였다는 정성적 결과만 있고 해석 가능한 정량값이 없습니다. [public_source] 정량 stage-appropriate evidence domain이 없어 Data 2가 아닙니다. | [S1](https://cell-tx.com/en/sub/pipe/pipe.php) |\n| 8 | CTXPD-01 | CTX Inc | Midbrain dopaminergic cell replacement / Autologous iPSC-derived mDAP/mDAN transplantation | Cell therapy | Parkinson's disease | Preclinical unspecified | Republic of Korea | 3 | 1 | 0 | REJECT | TR 3점: CTX-PD01는 Parkinson's disease에 mDAP/mDAN dopaminergic cell replacement를 적용하는 자산입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 1점: 환자유래 iPSC를 중뇌 도파민 계열로 분화해 이식하는 mechanism은 명확하지만 공개된 자산별 functional validation 결과가 없습니다. [public_source] target engagement 또는 direct functional outcome이 공개되지 않아 MOA 2 이상이 아닙니다. Data 0점: 현재 공개 페이지는 safety/efficacy를 in vivo에서 평가 중이라고만 밝히며 자산별 결과를 제시하지 않습니다. [public_source] 정성적 결과조차 제시되지 않아 Data 1도 부여하지 않았습니다. | [S1](https://cell-tx.com/en/sub/pipe/pipe.php); [S2](https://www.cell-tx.com/en/sub/company/history.php) |\n| 9 | CU-71 | Curacle Co Ltd | BBB dysfunction / neurovascular instability / BBB stabilization with reduced neuroinflammation and vascular leakage | Small molecule | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 2 | SELECT | TR 3점: CU71은 Alzheimer's disease 적응증이며 BBB dysfunction/neuroinflammation을 직접 겨냥하는 neurovascular stabilizer입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: CU71 자체가 HBMEC tight-junction/vascular integrity 개선과 5XFAD에서 BBB·neuroinflammation 관련 biomarker/functional 변화를 보였습니다. [public_source] 분자적 primary target은 아직 공개되지 않았습니다. Data 2점: 5XFAD에서 5·10 mg/kg 6개월 투여, NOR/MWM cognition 및 multiple biomarker assays라는 해석 가능한 stage-appropriate in vivo evidence domain이 공개됐습니다. [public_source] 보도된 초록은 완전한 effect-size table을 제공하지 않아 Data 3 근거는 부족합니다. | [S1](https://www.curacle.com/bbs/content.php?co_id=pipeline&tab_id=cu71); [S2](https://pmc.ncbi.nlm.nih.gov/articles/PMC12742527/) |\n| 10 | CUR-202 | Curamys Co Ltd | Motor-neuron/tissue restoration via cell fusion / Therapeutic cell fusion using engineered stem cells to restore diseased cells and sustain protein expression | Cell therapy | Amyotrophic lateral sclerosis / motor neuron disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 2 | SELECT | TR 3점: CUR202는 ALS 적응증이며 손상 motor-neuron/tissue function을 세포융합으로 회복시키는 직접 치료전략입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 3점: CUR202/ALS model에서 motor-neuron death가 느려지고 생존이 연장되는 자산별 direct functional validation이 공개됐습니다. [public_source] 세부 molecular PD와 독립 재현성은 제한적입니다. Data 2점: ALS 동물모델에서 평균 생존 35% 연장이라는 해석 가능한 정량 in vivo efficacy 결과가 공개됐습니다. [public_source] 두 개의 상보적 정량 evidence domain이 확인되지 않아 Data 3은 아닙니다. | [S1](https://www.curamys.com/); [S2](https://www.dongascience.com/ko/news/73348) |\n| 11 | DM-3159 | DigmBio Inc | TAS1R3 / TAS1R3 agonism activating signaling for neuroprotection and functional recovery | Small molecule | Alzheimer's disease | IND-enabling | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: DM3159는 Alzheimer's disease 적응증이고 TAS1R3 agonism을 통해 neuroprotection/functional recovery를 노립니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: DM3159를 투여한 AD mouse model에서 cognition 개선과 neuroinflammation/pathology 감소라는 functional effect가 확인됩니다. [public_source] TAS1R3 target engagement 또는 mechanism-linked PD가 직접 측정됐다는 공개 근거는 부족합니다. Data 1점: 자산별 in vivo 효과가 공개됐지만 quick-check 출처에는 명확한 effect size/통계값이 제시되지 않았습니다. [public_source] 정량 stage-appropriate 결과가 부족해 Data 2가 아닙니다. | [S1](https://digmbio.com/bbs/content.php?co_id=Pipeline); [S2](https://m.biospectator.com/view/news_view.php?varAtcId=29483) |\n| 12 | DM-3190 | DigmBio Inc | TAS2R GPCR / TAS2R GPCR modulation in Parkinson's disease | Small molecule | Parkinson's disease | Lead Optimization | Republic of Korea | 3 | 2 | 1 | SELECT | TR 3점: DM3190은 Parkinson's disease 적응증이며 TAS2R GPCR을 치료표적으로 개발 중입니다. [public_source] TR 최고점 기준을 충족합니다. MOA 2점: TAS2R GPCR PD project가 α-synuclein/PFF model에서 행동개선 functional evidence를 보였고 DM3190가 해당 초기 후보군으로 확인됩니다. [public_source] 공개 표현은 project-level이어서 DM3190 자체 target engagement/PD로 단정할 수 없습니다. Data 1점: PD model 행동개선이 정성적으로 공개됐지만 DM3190 자산별 정량 결과는 확인되지 않았습니다. [public_source] 정량 asset-specific evidence가 부족해 Data 2가 아닙니다. | [S1](https://digmbio.com/bbs/content.php?co_id=Pipeline); [S2](https://www.digmbio.co.kr/bbs/board.php?bo_table=online&wr_id=28); [S3](https://m.biospectator.com/view/news_view.php?varAtcId=27178) |\n\n## Notes\n- AB-AD-002: Aliad의 일반 AD/mTORC2 프로그램은 확인되지만 exact code 자체를 특정 pipeline asset으로 연결하는 공개 근거는 확인하지 못해 UNVERIFIED로 유지했습니다.\n- 표기 정규화: AS-603 ↔ AS-S603, AONPP-23 ↔ AON-PP23, CTXPD-01 ↔ CTX-PD01, CU-71 ↔ CU71은 공개 자료상 동일 자산/표기 변형으로 연결했습니다.\n- AON-PP23는 현재 PD program/후보군 활동성은 확인되나, 과거의 향후 preclinical 계획을 완료된 단계로 승격하지 않아 development stage는 Unknown으로 유지했습니다.\n- CKR-492는 exact asset identity와 active preclinical AD status는 확인되지만, CXXC5-Dvl/Wnt 근거는 program/class 연결이 강하고 CKR-492 자체 quantitative dataset은 확인되지 않았습니다.\n- DM3159는 2026-08 공개 자료에서 진행 중인 GLP tox가 확인되어 canonical stage rule에 따라 IND-enabling으로 분류했습니다.",
-      "parser_status": "fast_triage"
+      "raw_markdown": "# CK Regeon Inc. Pipeline Scout Report: CKR-492\n\n본 보고서는 GPT instruction 2 — Full Scout v3.4 (schema v3.2)에 따라 attachment 우선 검토, 공개자료 cross-check, competitor search, 7개 기준 scoring 및 evidence tracking을 수행했으며, auditability를 위해 확인한 URL을 References에 포함했습니다.\n\n**중요:** CKR-492는 공개 DB와 바이오 뉴스에서 CK Regeon의 Alzheimer’s disease용 경구 CXXC5–Dvl PPI 전임상 asset으로 확인되지만, 2026년 회사 제공 자료는 CKR-334/CKR-519를 중심으로 기술하고 CKR-492를 명시하지 않아 최신 asset lineage와 asset-specific data가 불명확하며, 총점 8점으로 **FAIL / Deprioritize** 처리합니다.\n\n## 1) Company Profile\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | CK Regeon Inc. | 2026 company brief는 2016년 10월 설립, WNT signaling/regenerative medicine 기반 회사로 설명. |\n| Official company site URL | `https://ckregeon.com`으로 public company profiles에 기재되어 있으나, 이번 직접 fetch는 timeout으로 content verification 불가 | LinkedIn/Saramin public profile. |\n| Legal name / aliases | CK Regeon Inc.; public Korean company profile에는 former name으로 CK Biotech Inc.가 기재됨 | Saramin public profile. |\n| Country | Republic of Korea | Company brief와 public profiles가 Seoul, South Korea를 일관되게 기재. |\n| Headquarters | Seoul, Republic of Korea | Company brief: Seoul, South Korea. |\n| Website | `https://ckregeon.com` reported; direct fetch timeout | LinkedIn/Saramin. |\n| Company type / stage | Private biotech, founded 2016 | LinkedIn: privately held, founded 2016; company brief corroborates founding. |\n| Focus areas | CXXC5–Dvl PPI inhibition, regenerative Wnt/β-catenin restoration; metabolic disease, wound/hair, AD | Company brief and public profile. |\n| Platform summary | Reusable small-molecule CXXC5–Dvl PPI screening/optimization system intended to restore suppressed Wnt/β-catenin signaling | Company AD deck describes a CXXC5–Dvl PPI screening platform, ~8,000-compound primary screen and >300 synthesized derivatives. |\n| Financing / partnership signals | Series A 60억원 and Series B 135억원 are reported; sources differ on Series B year (2020 vs 2021). CEO interview reports discussions/data sharing with BioAge, Lilly, and Boehringer Ingelheim, but no executed CKR-492 deal was verified. | Internal meeting minutes report 2018/2021 rounds; Saramin/HKN24 corroborate amounts but differ on year. |\n| Lead pipeline summary | Public Synapse still lists CKR-492 as a current preclinical AD project, while 2026 company materials emphasize CKR-519 as the next-generation NCE and do not name CKR-492. | Current public pipeline snapshot vs company-supplied 2026 files. |\n\n## 2) Pipeline Snapshot\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | CK Regeon Inc. | [1], [2], [12] |\n| Lead asset | CKR-492 (assessed asset; company-wide “lead” designation not verified) | Synapse asset record and CK Regeon interview verify the asset name. |\n| Target | CXXC5 | Pharmacodia maps CKR-492 to CXXC5; biotech-news interview states CKR-492 belongs to the same CXXC5–Dvl inhibitor mechanism family. |\n| Theme / Cluster | Theme: **Others** / Cluster: **Unknown** | Confirmed mechanism is CXXC5–Dvl/Wnt pathway restoration, which is not directly an approved E/I Balance, Neuroimmune, or Protein Homeostasis mechanism. |\n| MoA | CXXC5–Dvl protein–protein interaction inhibition, restoring pathologically suppressed Wnt/β-catenin signaling | Public CKR-492 mechanism mapping plus peer-reviewed CXXC5 AD biology. |\n| Modality / Platform | **Small molecule**; oral CXXC5–Dvl PPI inhibitor | HKN24 identifies CKR-492 as oral; Pharmacodia classifies it as a chemical drug. |\n| Indication | Alzheimer’s disease | Synapse/HKN24/Pharmacodia. |\n| Stage | **Preclinical unspecified** | Synapse records CKR-492 as preclinical and CK Regeon organization snapshot still lists it as a current project; however, 2026 company materials omit CKR-492, so current code-lineage remains uncertain. |\n| Key data | **No CKR-492-specific result verified.** CXXC5/KY19334 target-class data and CKR-334/CKR-519 company data exist, but were not transferred to CKR-492. | Peer-reviewed KY19334 paper and uploaded CKR-519 materials are non-CKR-492 evidence. |\n\n### Attachment identity/lineage cross-check\n\n| File / location | Evidence summary | Supported criterion / use | Evidence Type | Evidence Origin | Source nature |\n|---|---|---|---|---|---|\n| `Alzheimer's Program-CK Regeon-26-7-16.pdf`, pp. 9, 12–15 | Deck names CKR-334 and CKR-519 as drug candidates; CKR-519 has 5xFAD efficacy narrative, but CKR-492 is not named. | Lineage uncertainty; CKR-492 Data Maturity exclusion | E3 for CKR-519 only; **not transferable to CKR-492** | user_uploaded_file | company_generated |\n| `CK Regeon Alzheimers Disease vs Current Therapeutics.pdf`, p. 1 | Platform-level CXXC5–Dvl PPI / Wnt-restoration positioning; no asset code. | Target/platform context only | E1_company_claim_or_scientific_rationale_only | user_uploaded_file | company_generated |\n| `CKRegeon_회의록.pdf`, pp. 1–3 | Meeting covers CKR-334/CKR-519; CKR-519 described as next-generation candidate, pre-GLP-tox/IND-entry preparation; CKR-492 not named. | Current-lineage uncertainty; no CKR-492 score uplift | E3 for CKR-519 content; not CKR-492 | user_uploaded_file | analyst_generated meeting record of company statements |\n| `List of ADMET studies (CKRegeon).pptx`, slide 2 | Mouse PK, BBB, PPB, microsome, Ames, in vivo MN, hERG statuses are shown, but no assessed asset code is identified. | CKR-492 ADMET cannot be established | E0_not_found_or_not_assessable for CKR-492 | user_uploaded_file | analyst_generated / asset attribution unclear |\n| `CK Regeon Inc. Company Brief 2026.pdf`, p. 1 | Lists CKR-051/CKR-334 and CKR-519, not CKR-492. | Lineage/current-program uncertainty | E1_company_claim_or_scientific_rationale_only | user_uploaded_file | company_generated |\n\n## 3) Scorecard Summary\n\n| Criterion | Score (maximum 3 points each) | One-line judgment | Evidence used |\n|---|---:|---|---|\n| Target Relevance | **3점** | AD is an SKBP interest indication and the confirmed CXXC5–Dvl/Wnt mechanism is directly linked to AD biology. | [1]–[4] |\n| Competitive Landscape | **1점** | Search scope is sufficient and the field is crowded, but CKR-492 has no asset-specific quantitative differentiation. | [4], [6]–[10] |\n| MoA Validity | **2점** | CXXC5 genetic/pharmacologic functional validation exists at target/class level, not CKR-492 level. | [2]–[4] |\n| Platform Attractiveness | **2점** | Reusable PPI platform plus quantitative low-nanomolar platform-derivative activity supports technical attractiveness. | [5] and uploaded platform files |\n| Expansion Potential | **0점** | No additional CKR-492 indication beyond AD is confirmed. | [1]–[3] |\n| Data Maturity | **0점** | No CKR-492-specific experimental result was found; other compound data were excluded. | [1], [2], uploaded 2026 files |\n| Marketability | **0점** | `insufficient_evidence`; no reliable asset-specific forecast and no compliant A/B/C/D calculation. | [6], [7], [11] |\n| **Total** | **8점** | Maximum total: 21점 | Hard Filter: **FAIL** because Total ≤ 8 |\n\n## 4) Criterion Detail Pages\n\n### 4.1 Target Relevance\n\n**Score: 3점**\n\n**Main line:** CKR-492의 confirmed indication은 Alzheimer’s disease이며, confirmed CXXC5–Dvl/Wnt mechanism은 AD disease biology와 직접 연결되어 SKBP relevance가 높습니다.\n\n**What was checked:**\n- Target identity: CXXC5\n- Disease/biology relevance: Alzheimer’s disease\n- SKBP Theme / Cluster fit: Others / Unknown\n- General neurodegeneration / neuroinflammation / epilepsy relevance: AD 자체가 SKBP interest indication\n\n**Evidence trail:**\n- CKR-492는 Synapse에서 CK Regeon의 Alzheimer’s disease preclinical drug로 기록됩니다.\n- HKN24 인터뷰는 CKR-492를 경구 CXXC5–Dvl inhibitor family의 AD program으로 설명합니다.\n- Pharmacodia는 CKR-492 target을 CXXC5, mechanism을 CXXC5 inhibition/Wnt modulation으로 매핑합니다.\n- 2023 Pharmacological Research 논문은 AD patient/5xFAD brain에서 CXXC5 증가와 Wnt suppression을 보고하고, Cxxc5 knockout 및 KY19334에 의한 AD phenotype rescue를 제시합니다. 이 논문은 CKR-492 자체가 아니라 **same-target/class biology**입니다.\n\n**Investigation note:** Target Relevance 3점의 핵심 규칙은 “SKBP interest indication + verified target/MoA의 disease-biology linkage”입니다. AD와 CXXC5–Dvl/Wnt linkage는 확인되므로 3점이며, 이는 최대점수입니다. Evidence Type은 CKR-492-specific efficacy가 아니라 target/class-level validation이므로 **E2**입니다.\n\n### 4.2 Competitive Landscape\n\n**Score: 1점**\n\n**Main line:** Direct same-target clinical competitor는 검색에서 확인되지 않았지만, AD 시장은 approved/Phase 3와 Wnt-pathway 개발 프로그램까지 포함해 진입 경쟁이 높고, CKR-492의 quantitative differentiation은 없습니다.\n\n**What was checked:**\n- Same disease competitors\n- Same target competitors\n- Same or similar MoA competitors\n- Front runner count\n- Approved / Phase 3 / clinical / preclinical status\n- Trial registries and recent Wnt/AD publications\n\n**Competitor table:**\n\n| Competitor | Company | Modality | Target / MoA | Stage | Similarity | Why it matters | Source |\n|---|---|---|---|---|---|---|---|\n| W2A-28 | Mayo Clinic research group | Small molecule | HDAC1/2/3 inhibition + LRP6 stabilization / Wnt activation | Preclinical | Medium | Same AD + Wnt biology + small molecule, but different direct target | [9] |\n| RB-ADSC | Regeneration Biomedical | Cell therapy | Wnt-activated autologous adipose-derived stem cells | Phase 2a registry, not yet recruiting | Medium | Same AD + regenerative Wnt biology; different modality/mechanism | [10] |\n| Leqembi (lecanemab) | Eisai / Biogen | Antibody | Amyloid-β-directed antibody | Approved / marketed | Low | Approved DMT benchmark and entrenched standard | [6] |\n| Kisunla (donanemab) | Eli Lilly | Antibody | Amyloid-β-directed plaque antibody | Approved / marketed | Low | Approved DMT with statistically significant slowing of decline | [7] |\n| Buntanetap (posiphen) | Annovis Bio | Small molecule | Distinct oral AD mechanism | Phase 3 | Low | Late-stage oral competitor relevant to future entry timing/convenience | [8] |\n\n**Search scope/result:**\n- Exact asset searches: `CKR-492`, `CKR 492`, `CKR-492 CXXC5`, `CKR-492 Alzheimer`.\n- Same target/MoA: CXXC5, CXXC5–Dvl, Wnt/β-catenin.\n- Same pathway: Wnt-activated small molecules and Wnt-activated cell therapy.\n- Approved/Phase 3: lecanemab, donanemab, buntanetap.\n- Major preclinical: W2A-28.\n- Registry: ClinicalTrials.gov records for buntanetap and RB-ADSC.\n- No non-CK Regeon **High-similarity** same indication + same CXXC5–Dvl target + similar modality clinical program was verified; this is not interpreted as proof that none exists.\n\n**Investigation note:** Score 2 requires asset-specific quantitative differentiation versus an appropriate comparator or realistic entry-space benchmark. CKR-492에는 그런 비교가 없어 1점입니다. “직접 경쟁자가 적다”는 사실만으로 3점을 부여하지 않았습니다.\n\n### 4.3 MoA Validity\n\n**Score: 2점**\n\n**Main line:** CXXC5–Dvl inhibition → restorative Wnt/β-catenin activation은 genetic and pharmacologic functional evidence로 뒷받침되지만, CKR-492-specific TE/PD가 없습니다.\n\n**What was checked:**\n- Journal publication / PMID / DOI\n- Mechanistic consistency\n- Functional readout\n- Disease linkage\n- Safety-relevant signal\n\n**Evidence trail:**\n- DOI 10.1016/j.phrs.2023.106836 논문은 AD patient/5xFAD에서 CXXC5 overexpression과 Wnt suppression을 보고합니다.\n- Cxxc5 knockout in 5xFAD와 KY19334 CXXC5–Dvl blockade 모두 AD-related phenotypes를 개선해 functional target validation을 제공합니다.\n- CKR-492가 해당 mechanism family라는 public linkage는 HKN24/Pharmacodia에서 확인됩니다.\n- 다만 uploaded 2026 deck의 efficacy/PK discussion은 CKR-334/CKR-519이고, CKR-492로 귀속할 수 없습니다.\n\n**Investigation note:** 2점은 functional same-target evidence가 있으므로 충족합니다. 3점에 필요한 CKR-492 자체의 target engagement, mechanism-linked PD/biomarker, direct functional validation은 확인되지 않았습니다.\n\n### 4.4 Platform Attractiveness\n\n**Score: 2점**\n\n**Main line:** CXXC5–Dvl PPI discovery/optimization system은 reusable platform으로 확인되고, platform-derived indoline examples의 quantitative PPI potency advantage가 있습니다.\n\n**What was checked:**\n- Is the platform real and reproducible?\n- Is differentiation supported by data?\n- Is the underlying technical system reusable across candidates/programs or conditions?\n\n**Evidence trail:**\n- Company AD deck는 PTD-DBM을 출발점으로 CXXC5–Dvl PPI screening system을 구축하고 약 8,000 compounds를 screen한 뒤 >300 derivatives를 반복적으로 합성/평가했다고 설명합니다.\n- 2026 EPO patent EP4674839A1은 indoline examples 1–15의 CXXC5–Dvl binding inhibition IC50를 약 **2.649×10^-9 M ~ 4.516×10^-8 M** 범위로 제시하며, controls인 indirubin **5.386×10^-5 M**, CK090 **4.217×10^-6 M**, 5-cyanoindirubin **1.109×10^-5 M**보다 우수한 activity를 보고합니다. 이는 platform-level quantitative technical advantage입니다.\n- 해당 patent/deck data는 CKR-492 code에 직접 연결되지 않으므로 CKR-492 Data Maturity에는 반영하지 않았습니다.\n\n**Investigation note:** 2점 요건인 “appropriate comparator 대비 quantitative technical advantage”는 충족합니다. 3점은 multiple development assets/conditions의 반복 quantitative advantage 또는 cleanly linked FPD가 필요합니다. 2026 company brief의 CKR-051 Phase I 완료 문구는 존재하지만, public 자료의 CKR-501 표기와 code-lineage ambiguity가 있어 3점 근거로 사용하지 않았습니다.\n\n**Platform vs Data Maturity separation:** Platform score는 platform-derived chemistry/patent data를 사용했고, Data Maturity는 CKR-492-specific evidence만 평가했습니다.\n\n### 4.5 Expansion Potential\n\n**Score: 0점**\n\n**Main line:** CKR-492에 대해 Alzheimer’s disease 외 추가 indication이 확인되지 않았습니다.\n\n**What was checked:**\n- Expansion beyond main indication\n- Asset-specific quantitative data in additional indications\n- Confirmed asset-specific preclinical, IND-enabling, or clinical development programs\n\n**Evidence trail:**\n- Synapse와 HKN24는 CKR-492의 indication을 AD로 기록합니다.\n- CK Regeon platform은 obesity/MASH/wound/hair 등으로 확장되어 있으나, 이들은 CKR-492 additional indication으로 확인되지 않았습니다.\n\n**Investigation note:** Platform breadth나 다른 compound의 indication을 CKR-492 expansion으로 계산하지 않았습니다. 1점에 필요한 CKR-492-specific secondary-indication rationale도 확인되지 않았습니다.\n\n### 4.6 Data Maturity\n\n**Score: 0점**\n\n**Main line:** CKR-492 자체의 공개/attachment experimental result를 확인하지 못했습니다.\n\n**What was checked:**\n- In vitro data\n- In vivo data\n- Quantitative result\n- Reproducibility\n- IND-enabling / GLP tox / PK/PD / CMC / human data availability\n\n**Evidence trail:**\n- Public sources verify CKR-492 identity, AD indication, and preclinical status, but do not provide CKR-492-specific efficacy/PK/PD datasets.\n- Peer-reviewed AD pharmacology uses **KY19334**, not CKR-492.\n- Uploaded 2026 AD program deck and meeting minutes discuss **CKR-334/CKR-519**; CKR-519 shows 5xFAD behavioral/pathology data and pre-GLP-tox status, but these cannot be canonicalized to CKR-492.\n- Uploaded ADMET checklist contains Mouse PK, BBB, Ames, hERG etc. status but no asset code, so it is not CKR-492 evidence.\n\n**Investigation note:** Data Maturity 1점도 “qualitative claim or fragmentary result”가 **assessed asset-specific**이어야 합니다. CKR-492-specific result가 없으므로 0점이며, preclinical stage label 자체는 result가 아닙니다.\n\n### 4.7 Marketability\n\n**Score: 0점**\n\n**Main line:** Disease market is large, but CKR-492-specific commercial inputs are insufficient for a reliable peak-sales assessment.\n\n**Assessment method:** `insufficient_evidence`\n\n**Score basis type:** `insufficient_evidence`\n\n**Calculation status:** `not_performed`\n\n**Assessed global peak sales (million USD):** **Unknown**\n\n**What was checked:**\n- Internal A/B/C/D calculation, if supportable\n- Reliable asset-specific external peak-sales forecast\n- Competition haircut and pricing power without double counting\n- US AD epidemiology and current DMT competitive context\n\n**Market context:**\n- Alzheimer’s Association reports an estimated **7.4 million** Americans age 65+ living with clinical Alzheimer’s dementia in 2026. This is broad disease prevalence, not CKR-492 TAP.\n- FDA-approved disease-modifying competitors include lecanemab and donanemab.\n\n**Worksheet:**\n\n| Step | What to fill | Evidence / assumption |\n|---|---|---|\n| A. US TAP | Not performed | CKR-492-specific diagnosable/eligible/treatable subgroup is not established. |\n| B. US Unrisked Peak Sales | Not performed | Reliable CKR-492 benchmark annualized net price, penetration and treatment duration are unavailable. |\n| C. US Obtainable Peak Sales | Not performed | Asset-specific competitive positioning, entry order, efficacy/safety differentiation and pricing power are unavailable. |\n| D. Global Obtainable Peak Sales | Not performed | C was not calculated; x1.5 was therefore not applied. |\n| External Peak Sales Reference | None verified | No reliable CKR-492-specific analyst/consensus/company numeric forecast found. |\n| Final score basis | 0 because no reliable method | No assessed global peak-sales value. |\n\nThe rubric requires a reliable US Patient Pool → TAP mapping, benchmark annualized net price, peak penetration, competition haircut, and pricing-power adjustment. For CKR-492, current clinical positioning, eligible disease stage, biomarker requirements, dosing/duration, expected entry timing, and asset-specific efficacy/safety differentiation are not established; using generic AD prevalence and antibody list prices would introduce decision-driving assumptions rather than evidence.\n\n**Investigation note:** Marketability는 rNPV가 아니라 obtainable peak sales 기준입니다. No A/B/C/D value and no external forecast means score 0 by rule; large disease prevalence alone does not create a Marketability score.\n\n## 5) Validation Notes\n\n### Cross-checked facts\n- **Asset identity / indication / stage:** Synapse + HKN24 + Pharmacodia verify CKR-492 as a CK Regeon AD preclinical asset; the CK Regeon organization snapshot still lists it as current.\n- **Target/MoA:** HKN24 and Pharmacodia link CKR-492 to the CXXC5–Dvl/Wnt mechanism; peer-reviewed biology validates the target/class in AD, not CKR-492 itself.\n- **Company location/founding:** 2026 company brief and public profiles agree on Seoul / 2016.\n- **2026 lineage discrepancy:** current company-supplied materials repeatedly name CKR-519 but not CKR-492.\n\n### Uncertain points\n- CKR-492가 CKR-519로 **renamed/replaced/superseded** 되었는지, 아니면 별도 active asset인지 확인되지 않았습니다.\n- CKR-492의 최신 공식 stage, candidate-nomination date, IND-enabling status를 보여주는 dated official pipeline/development record가 필요합니다.\n- CKR-492-specific efficacy, PK/BBB, ADMET, safety, target-engagement/PD package가 필요합니다.\n- CKR-492의 current rights/license/ownership은 public database상 CK Regeon originator/active organization으로 보이지만, executed licensing agreement 여부는 별도 확인이 필요합니다.\n- Marketability를 위해 lead clinical positioning, target population, dosing/duration, entry timing, benchmark net price, penetration/competition assumptions 또는 credible asset-specific forecast가 필요합니다.\n\n### Search log\n\n| Search area | What was checked | Result / limitation |\n|---|---|---|\n| Official company page | `ckregeon.com` | Public profiles report the URL, but direct fetch timed out in this review; no current official CKR-492 pipeline page was retrieved. |\n| Pipeline page | CKR-492 exact-name and CK Regeon pipeline searches | Synapse current organization snapshot lists CKR-492 as preclinical AD; asset profile is older. |\n| Platform page / patent | CXXC5–Dvl PPI, Wnt platform, CK Regeon patent | EP4674839A1 provides quantitative PPI inhibition for newer indoline derivatives; no CKR-492 code mapping. |\n| Publications | CXXC5 Alzheimer, CXXC5–Dvl, Wnt/β-catenin AD | 2023 Pharmacological Research paper found; compound is KY19334, not CKR-492. |\n| Regulatory / trial registry | CKR-492 exact-name; competitor ClinicalTrials.gov | No verified CKR-492 trial record found; competitor registries used for buntanetap/RB-ADSC. |\n| Competitor sources | Same indication + same target/MoA + Wnt pathway + approved + Phase 3 + preclinical | 0 verified High-similarity non-CK Regeon clinical competitor; 2 Medium pathway competitors and 3 Low broader AD competitors retained. |\n| Market / epidemiology sources | 2026 US AD prevalence and current approved DMTs | Large disease burden confirmed; insufficient to construct CKR-492-specific A/B/C/D. |\n| Financing / partnership sources | Public company profile and biotech-news interview | Funding amounts corroborated; partnership discussions are signals, not verified executed CKR-492 transactions. |\n\n## 6) Final Take\n\n**One-line summary:** CXXC5–Dvl/Wnt biology와 reusable platform은 차별화 포인트가 있으나, **CKR-492 자체 data가 없고 2026 CKR-519와의 asset lineage가 unresolved**되어 현재 단계에서는 deal-grade evidence가 부족합니다.\n\n**Recommendation:** **Deprioritize**\n\n**Most important diligence question:** **“CKR-492와 CKR-519의 정확한 compound/program lineage는 무엇인가?”** — dated code-mapping 문서와 함께 CKR-492-specific efficacy, PK/BBB, ADMET, current stage/ownership 자료를 받아야 재평가할 수 있습니다.\n\n## References\n\n[1]: [https://synapse.patsnap.com/drug/87cca7dde78f4d11b128429a9df43921](https://synapse.patsnap.com/drug/87cca7dde78f4d11b128429a9df43921) \"Synapse — CKR-492 drug profile\"\n[2]: [https://www.hkn24.com/news/articleView.html?idxno=346280](https://www.hkn24.com/news/articleView.html?idxno=346280) \"헬스코리아뉴스 — CK Regeon regenerative drug pipeline interview\"\n[3]: [https://data.pharmacodia.com/drugs/details/1686634550442066790](https://data.pharmacodia.com/drugs/details/1686634550442066790) \"Pharmacodia — CKR-492 profile\"\n[4]: [https://www.sciencedirect.com/science/article/pii/S1043661823001925](https://www.sciencedirect.com/science/article/pii/S1043661823001925) \"Pharmacological Research — Inhibition of CXXC5 function rescues Alzheimer’s disease phenotypes\"\n[5]: [https://data.epo.org/publication-server/rest/v1.2/publication-dates/2026-01-07/patents/EP4674839NWA1/document.pdf](https://data.epo.org/publication-server/rest/v1.2/publication-dates/2026-01-07/patents/EP4674839NWA1/document.pdf) \"EPO EP4674839A1 — Novel indoline derivative and use thereof\"\n[6]: [https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval](https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval) \"FDA — Leqembi traditional approval\"\n[7]: [https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease](https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease) \"FDA — Kisunla approval\"\n[8]: [https://clinicaltrials.gov/study/NCT06709014](https://clinicaltrials.gov/study/NCT06709014) \"ClinicalTrials.gov — Buntanetap Phase 3 early AD\"\n[9]: [https://pubmed.ncbi.nlm.nih.gov/42508295/](https://pubmed.ncbi.nlm.nih.gov/42508295/) \"PubMed — W2A-28 dual HDAC/Wnt modulator for AD\"\n[10]: [https://clinicaltrials.gov/study/NCT07205601](https://clinicaltrials.gov/study/NCT07205601) \"ClinicalTrials.gov — RB-ADSC Phase 2a AD\"\n[11]: [https://www.alz.org/alzheimers-dementia/facts-figures](https://www.alz.org/alzheimers-dementia/facts-figures) \"Alzheimer’s Association — 2026 Facts and Figures\"\n[12]: [https://www.saramin.co.kr/zf_user/company-info/view/csn/TXAvMk00aUtOMnJWMGZFeGxBWFdodz09/company_nm/%28%EC%A3%BC%29%EC%94%A8%EC%BC%80%EC%9D%B4%EB%A6%AC%EC%A0%9C%EC%98%A8](https://www.saramin.co.kr/zf_user/company-info/view/csn/TXAvMk00aUtOMnJWMGZFeGxBWFdodz09/company_nm/%28%EC%A3%BC%29%EC%94%A8%EC%BC%80%EC%9D%B4%EB%A6%AC%EC%A0%9C%EC%98%A8) \"Saramin — CK Regeon company profile\"\n[13]: [https://www.linkedin.com/company/ckregeon](https://www.linkedin.com/company/ckregeon) \"LinkedIn — CK Regeon company profile\"\n[14]: [https://synapse.patsnap.com/organization/da31af23213025f08e00c752ce41a5b8](https://synapse.patsnap.com/organization/da31af23213025f08e00c752ce41a5b8) \"Synapse — CK Regeon organization pipeline snapshot\"",
+      "parser_status": "gpt_structured_output"
     },
     "input": {
-      "company_input": "CK Regeon Inc",
+      "company_input": "CK Regeon Inc.",
       "asset_input": "CKR-492"
     },
     "json_summary": {
       "theme": "Others",
       "cluster": "Others",
-      "target_description": "CXXC5-Dvl PPI inhibitor AD program"
+      "target_description": "CXXC5–Dvl PPI inhibition to restore pathologically suppressed Wnt/β-catenin signaling in Alzheimer’s disease."
     },
     "structured_table": {
       "company": "CK Regeon Inc.",
       "asset_name": "CKR-492",
-      "target": "CXXC5-Dvl PPI / Wnt-β-catenin pathway",
-      "moa": "CXXC5-Dvl PPI inhibition to restore Wnt/β-catenin signaling",
+      "target": "CXXC5",
+      "moa": "CXXC5–Dvl PPI inhibition with restorative activation of Wnt/β-catenin signaling",
       "modality_platform": "Small molecule",
       "main_indication": "Alzheimer's disease",
       "indication": "Alzheimer's disease",
@@ -32566,47 +32796,73 @@
       "company_country": "Republic of Korea",
       "sources": [
         {
-          "source_title": "Synapse — CK Regeon pipeline",
-          "source_url": "https://synapse.patsnap.com/organization/da31af23213025f08e00c752ce41a5b8"
+          "source_title": "Synapse — CKR-492 drug profile / CK Regeon pipeline",
+          "source_url": "https://synapse.patsnap.com/drug/87cca7dde78f4d11b128429a9df43921"
         }
       ]
     },
     "hard_filter": {
-      "status": "SELECT",
-      "reason": "Fast Triage SELECT criteria met.",
-      "flags": [],
+      "status": "FAIL",
+      "reason": "Total score is 8 (FAIL rule <=8); CKR-492 identity is verified, but no CKR-492-specific efficacy/PK data were found and 2026 company materials do not resolve its relationship to CKR-519.",
+      "flags": [
+        "TOTAL_SCORE_FAIL_RULE",
+        "ASSET_LINEAGE_UNCERTAINTY",
+        "NO_ASSET_SPECIFIC_DATA"
+      ],
       "hard_blocker": false,
-      "decision_uncertainty": false
+      "decision_uncertainty": true
     },
     "scoring": {
       "criteria": {
         "target_relevance": {
           "score": 3,
-          "evidence_type": "triage_only",
-          "evidence_type_reason": "Fast Triage v3.3.",
-          "evidence_basis": "public_source",
-          "main_line_summary": "TR 3점: CKR-492는 Alzheimer's disease 자산으로 확인되고 CXXC5-Dvl/Wnt restoration 프로그램에 연결됩니다.",
-          "why_not_higher": "TR 최고점 기준을 충족합니다.",
-          "investigation_note": "Full Scout에서 disease-biology linkage를 확인합니다.",
+          "evidence_type": "E2_indirect_or_class_level_evidence",
+          "evidence_type_reason": "CKR-492 is publicly linked to Alzheimer’s disease and the CXXC5–Dvl mechanism; disease-biology validation is target/class-level rather than CKR-492-specific.",
+          "evidence_basis": "AD is an SKBP interest indication, and peer-reviewed CXXC5/Wnt evidence directly links the confirmed mechanism to AD biology.",
+          "main_line_summary": "AD fit plus CXXC5–Dvl/Wnt disease-biology linkage supports the maximum relevance score.",
+          "why_not_higher": "Maximum score reached.",
+          "investigation_note": "Asset identity/indication were cross-checked separately from target/class biology.",
           "uncertain_points": [
-            "Exact CKR-492 molecular identity is not public"
+            "No CKR-492-specific target-engagement dataset was found."
           ],
           "source_ids": [
             "S1",
             "S2",
-            "S4"
+            "S3",
+            "S4",
+            "S14"
+          ]
+        },
+        "competitive_landscape": {
+          "score": 1,
+          "evidence_type": "E2_indirect_or_class_level_evidence",
+          "evidence_type_reason": "A broad AD and Wnt-pathway competitor set was verified, but no CKR-492-specific quantitative head-to-head differentiation was found.",
+          "evidence_basis": "Approved anti-amyloid therapies, a Phase 3 oral program, and Wnt-pathway clinical/preclinical programs establish a crowded entry space.",
+          "main_line_summary": "Search was sufficient to define competitors, but differentiation remains conceptual.",
+          "why_not_higher": "No asset-specific quantitative comparison versus an appropriate competitor or benchmark.",
+          "investigation_note": "No non-CK Regeon same-target CXXC5–Dvl AD clinical program was verified in the searches performed.",
+          "uncertain_points": [
+            "Patent-only or undisclosed same-target programs may not be visible in public sources."
+          ],
+          "source_ids": [
+            "S4",
+            "S6",
+            "S7",
+            "S8",
+            "S9",
+            "S10"
           ]
         },
         "moa_validity": {
           "score": 2,
-          "evidence_type": "triage_only",
-          "evidence_type_reason": "Fast Triage v3.3.",
-          "evidence_basis": "public_source",
-          "main_line_summary": "MOA 2점: 동일 CXXC5-Dvl inhibitor class에서 Wnt restoration과 5xFAD AD phenotype rescue의 functional validation이 확인됩니다.",
-          "why_not_higher": "CKR-492 자체의 target engagement/PD는 공개되지 않았습니다.",
-          "investigation_note": "CKR-492-specific biochemical and in vivo validation을 확보해야 합니다.",
+          "evidence_type": "E2_indirect_or_class_level_evidence",
+          "evidence_type_reason": "Independent/peer-reviewed same-target evidence supports CXXC5–Dvl inhibition and Wnt restoration in AD models, but it uses KY19334 rather than CKR-492.",
+          "evidence_basis": "CXXC5 upregulation, genetic knockout rescue, and pharmacologic CXXC5–Dvl inhibition support functional target validity.",
+          "main_line_summary": "Mechanism has strong target/class preclinical validation but no CKR-492-specific mechanistic readout.",
+          "why_not_higher": "No CKR-492 target engagement, mechanism-linked PD biomarker, or direct functional validation was found.",
+          "investigation_note": "KY19334/CKR-334/CKR-519 evidence was not canonicalized as CKR-492 evidence.",
           "uncertain_points": [
-            "Mechanism evidence is largely program/class-level rather than CKR-492-specific"
+            "Whether CKR-492 shares a compound lineage with KY19334, CKR-334, or CKR-519 is unverified."
           ],
           "source_ids": [
             "S2",
@@ -32614,75 +32870,392 @@
             "S4"
           ]
         },
-        "data_maturity": {
-          "score": 0,
-          "evidence_type": "triage_only",
-          "evidence_type_reason": "Fast Triage v3.3.",
-          "evidence_basis": "public_source",
-          "main_line_summary": "Data 0점: CKR-492 코드 자체의 공개 asset-specific 결과는 확인되지 않았습니다.",
-          "why_not_higher": "관련 KY-series/class 데이터는 CKR-492의 데이터로 대체할 수 없습니다.",
-          "investigation_note": "CKR-492-specific quantitative result가 필요합니다.",
+        "platform_attractiveness": {
+          "score": 2,
+          "evidence_type": "E2_indirect_or_class_level_evidence",
+          "evidence_type_reason": "Platform-derived indoline examples show quantitative CXXC5–Dvl inhibition advantages, but the data are not CKR-492-specific.",
+          "evidence_basis": "The company’s reusable CXXC5–Dvl screening chemistry produced multiple derivatives with low-nanomolar PPI IC50 values versus micromolar controls.",
+          "main_line_summary": "Reusable platform plus quantitative technical advantage supports score 2.",
+          "why_not_higher": "Repeated quantitative advantage across clearly distinct development assets/conditions, or a cleanly linked FPD asset, was not established without code-lineage ambiguity.",
+          "investigation_note": "Platform evidence was kept separate from CKR-492 Data Maturity.",
           "uncertain_points": [
-            "No public CKR-492-specific result located"
+            "2026 materials use CKR-051/CKR-519 while older public materials use CKR-501/CKR-492; platform-asset lineage needs confirmation."
           ],
           "source_ids": [
-            "S1"
+            "S5",
+            "F1",
+            "F2",
+            "F4"
           ]
+        },
+        "expansion_potential": {
+          "score": 0,
+          "evidence_type": "E0_not_found_or_not_assessable",
+          "evidence_type_reason": "No additional CKR-492 indication beyond Alzheimer’s disease was verified.",
+          "evidence_basis": "Public CKR-492 records identify Alzheimer’s disease; broader platform indications belong to other compounds/programs.",
+          "main_line_summary": "No asset-specific expansion program is confirmed.",
+          "why_not_higher": "No second CKR-492 indication with biological rationale or active development evidence was found.",
+          "investigation_note": "Platform breadth was not counted as CKR-492 expansion.",
+          "uncertain_points": [
+            "An official current CKR-492 pipeline card is needed to exclude undisclosed secondary indications."
+          ],
+          "source_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S14"
+          ]
+        },
+        "data_maturity": {
+          "score": 0,
+          "evidence_type": "E0_not_found_or_not_assessable",
+          "evidence_type_reason": "No CKR-492-specific quantitative or qualitative experimental result was found in public sources or the uploaded files.",
+          "evidence_basis": "Preclinical status is reported, but available efficacy, PK/BBB, ADMET, and 5xFAD details in 2026 files are labeled CKR-334/CKR-519 or are platform-level.",
+          "main_line_summary": "Stage is visible, but assessed-asset data are not.",
+          "why_not_higher": "A CKR-492-specific experimental result is required even for score 1.",
+          "investigation_note": "Data from KY19334, CKR-334, and CKR-519 were explicitly excluded from CKR-492 Data Maturity.",
+          "uncertain_points": [
+            "Need a dated CKR-492 data package with compound identity, efficacy, PK/BBB, and ADMET results."
+          ],
+          "source_ids": [
+            "S1",
+            "S2",
+            "F1",
+            "F3",
+            "F4",
+            "S14"
+          ]
+        },
+        "marketability": {
+          "score": 0,
+          "evidence_type": "E0_not_found_or_not_assessable",
+          "evidence_type_reason": "No reliable CKR-492-specific external peak-sales forecast was found, and a compliant A/B/C/D calculation could not be supported without major asset-specific assumptions.",
+          "evidence_basis": "AD burden is large, but CKR-492 treatable positioning, net-price benchmark translation, penetration, competition haircut, and pricing power are not sufficiently evidenced.",
+          "main_line_summary": "Assessment method is insufficient_evidence; no assessed global peak-sales value.",
+          "why_not_higher": "Score 1 requires a reliable calculated or forecast global peak-sales value below 1000 million USD.",
+          "investigation_note": "A/B/C/D was not performed; no sensitivity analysis was used.",
+          "uncertain_points": [
+            "Need CKR-492 target population, clinical positioning, dosing/duration, expected entry timing, and pricing assumptions or a credible asset-specific forecast."
+          ],
+          "source_ids": [
+            "S6",
+            "S7",
+            "S11"
+          ],
+          "calculation": {
+            "commercial_rationale_status": "insufficient_evidence",
+            "commercial_rationale_failure_reason": "No reliable CKR-492-specific forecast and insufficient evidence for a compliant internal calculation.",
+            "A_targetable_addressable_patient": {
+              "targetable_addressable_patient": null,
+              "formula": "US TAP = US Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate"
+            },
+            "B_unrisked_peak_sales": {
+              "unrisked_peak_sales": null,
+              "sales_unit": "million USD",
+              "formula": "US Unrisked Peak Sales = US TAP x Benchmark Annualized Net Price x Peak Penetration x Treatment Duration Factor"
+            },
+            "C_obtainable_peak_sales": {
+              "obtainable_peak_sales": null,
+              "sales_unit": "million USD",
+              "formula": "US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment"
+            },
+            "D_global_obtainable_peak_sales": {
+              "source_geography": "US",
+              "global_multiplier": 1.5,
+              "global_obtainable_peak_sales": null,
+              "sales_unit": "million USD",
+              "formula": "Global Obtainable Peak Sales = US Obtainable Peak Sales x 1.5"
+            }
+          }
         }
       },
-      "total_score": 5,
-      "max_score": 9
+      "total_score": 8,
+      "max_score": 21
     },
     "validation": {
       "uncertain_points": [
-        "CKR-492 exact target field is blank in Synapse; target assignment relies on program-family linkage from company/industry sources."
+        "Current asset lineage is unresolved: public sources still list CKR-492 as an active preclinical AD asset, whereas multiple 2026 company-supplied materials discuss CKR-334/CKR-519 and do not name CKR-492.",
+        "Whether CKR-492 was renamed, replaced, or superseded by CKR-519 is not verified.",
+        "CKR-492-specific efficacy, PK/BBB, ADMET, safety, and target-engagement data were not found.",
+        "Current licensing/ownership rights beyond CK Regeon originator/active-organization listings were not independently confirmed.",
+        "No reliable CKR-492-specific peak-sales forecast was found."
       ],
-      "cross_checked_facts": [],
+      "cross_checked_facts": [
+        "CKR-492 identity, Alzheimer’s disease indication, and preclinical status are supported by Synapse and a Korean biotech-news interview; Pharmacodia independently maps CKR-492 to CXXC5/Wnt.",
+        "CXXC5–Dvl/Wnt relevance to AD is supported by a peer-reviewed Pharmacological Research paper using genetic knockout and KY19334 pharmacology.",
+        "CK Regeon is Seoul-based and privately held/founded in 2016 according to company-supplied material and public company profiles.",
+        "Uploaded 2026 materials consistently emphasize CKR-519 as the next-generation candidate, creating a specific lineage discrepancy with public CKR-492 records."
+      ],
       "source_registry": [
         {
           "source_id": "S1",
-          "source_title": "Synapse — CK Regeon pipeline",
-          "source_url": "https://synapse.patsnap.com/organization/da31af23213025f08e00c752ce41a5b8",
+          "source_title": "Synapse — CKR-492 drug profile / CK Regeon pipeline",
+          "source_url": "https://synapse.patsnap.com/drug/87cca7dde78f4d11b128429a9df43921",
           "source_type": "drug_database",
           "verified": true
         },
         {
           "source_id": "S2",
-          "source_title": "CK Regeon — Developing Items",
-          "source_url": "https://ckregeon.com/ko/developing-items-ko/",
-          "source_type": "official_company_pipeline_science",
+          "source_title": "헬스코리아뉴스 — CK Regeon regenerative drug pipeline interview",
+          "source_url": "https://www.hkn24.com/news/articleView.html?idxno=346280",
+          "source_type": "reputable_biotech_news",
           "verified": true
         },
         {
           "source_id": "S3",
-          "source_title": "CK Regeon — Alzheimer patent/program update",
-          "source_url": "https://ckregeon.com/pressrelease/?mod=document&uid=72",
-          "source_type": "official_company_press_release",
+          "source_title": "Pharmacodia — CKR-492 profile",
+          "source_url": "https://data.pharmacodia.com/drugs/details/1686634550442066790",
+          "source_type": "drug_database",
           "verified": true
         },
         {
           "source_id": "S4",
-          "source_title": "Health Korea News — CKR-492 pipeline",
-          "source_url": "https://www.hkn24.com/news/articleView.html?idxno=346280",
-          "source_type": "reputable_biotech_news",
+          "source_title": "Pharmacological Research — Inhibition of CXXC5 function rescues Alzheimer’s disease phenotypes",
+          "source_url": "https://www.sciencedirect.com/science/article/pii/S1043661823001925",
+          "source_type": "peer_reviewed_publication",
+          "verified": true
+        },
+        {
+          "source_id": "S5",
+          "source_title": "EPO EP4674839A1 — Novel indoline derivative and use thereof",
+          "source_url": "https://data.epo.org/publication-server/rest/v1.2/publication-dates/2026-01-07/patents/EP4674839NWA1/document.pdf",
+          "source_type": "patent",
+          "verified": true
+        },
+        {
+          "source_id": "S6",
+          "source_title": "FDA — Leqembi traditional approval",
+          "source_url": "https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval",
+          "source_type": "regulatory",
+          "verified": true
+        },
+        {
+          "source_id": "S7",
+          "source_title": "FDA — Kisunla approval for Alzheimer’s disease",
+          "source_url": "https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease",
+          "source_type": "regulatory",
+          "verified": true
+        },
+        {
+          "source_id": "S8",
+          "source_title": "ClinicalTrials.gov NCT06709014 — Buntanetap Phase 3 early AD",
+          "source_url": "https://clinicaltrials.gov/study/NCT06709014",
+          "source_type": "clinical_registry",
+          "verified": true
+        },
+        {
+          "source_id": "S9",
+          "source_title": "PubMed — W2A-28 dual HDAC/Wnt modulator for AD",
+          "source_url": "https://pubmed.ncbi.nlm.nih.gov/42508295/",
+          "source_type": "peer_reviewed_publication",
+          "verified": true
+        },
+        {
+          "source_id": "S10",
+          "source_title": "ClinicalTrials.gov NCT07205601 — RB-ADSC Phase 2a AD",
+          "source_url": "https://clinicaltrials.gov/study/NCT07205601",
+          "source_type": "clinical_registry",
+          "verified": true
+        },
+        {
+          "source_id": "S11",
+          "source_title": "Alzheimer’s Association — 2026 Alzheimer’s Disease Facts and Figures",
+          "source_url": "https://www.alz.org/alzheimers-dementia/facts-figures",
+          "source_type": "epidemiology_market_context",
+          "verified": true
+        },
+        {
+          "source_id": "S12",
+          "source_title": "Saramin — CK Regeon company profile and financing summary",
+          "source_url": "https://www.saramin.co.kr/zf_user/company-info/view/csn/TXAvMk00aUtOMnJWMGZFeGxBWFdodz09/company_nm/%28%EC%A3%BC%29%EC%94%A8%EC%BC%80%EC%9D%B4%EB%A6%AC%EC%A0%9C%EC%98%A8",
+          "source_type": "company_profile",
+          "verified": true
+        },
+        {
+          "source_id": "S13",
+          "source_title": "LinkedIn — CK Regeon company profile",
+          "source_url": "https://www.linkedin.com/company/ckregeon",
+          "source_type": "company_profile",
+          "verified": true
+        },
+        {
+          "source_id": "S14",
+          "source_title": "Synapse — CK Regeon organization pipeline snapshot",
+          "source_url": "https://synapse.patsnap.com/organization/da31af23213025f08e00c752ce41a5b8",
+          "source_type": "drug_database",
+          "verified": true
+        },
+        {
+          "source_id": "F1",
+          "source_title": "Alzheimer's Program-CK Regeon-26-7-16.pdf",
+          "source_url": "",
+          "source_type": "user_uploaded_file",
+          "verified": true
+        },
+        {
+          "source_id": "F2",
+          "source_title": "CK Regeon Inc. Company Brief 2026.pdf",
+          "source_url": "",
+          "source_type": "user_uploaded_file",
+          "verified": true
+        },
+        {
+          "source_id": "F3",
+          "source_title": "CKRegeon_회의록.pdf",
+          "source_url": "",
+          "source_type": "user_uploaded_file",
+          "verified": true
+        },
+        {
+          "source_id": "F4",
+          "source_title": "List of ADMET studies (CKRegeon).pptx",
+          "source_url": "",
+          "source_type": "user_uploaded_file",
+          "verified": true
+        },
+        {
+          "source_id": "F5",
+          "source_title": "CK Regeon Alzheimers Disease vs Current Therapeutics.pdf",
+          "source_url": "",
+          "source_type": "user_uploaded_file",
           "verified": true
         }
       ]
     },
     "final_insight": {
-      "one_line_summary": "AD 적합성과 same-class functional MoA 검증으로 SELECT하되 CKR-492 자체 데이터는 아직 빈약합니다.",
-      "recommendation": "Run Full Scout",
-      "most_important_diligence_question": "CKR-492 자체가 CXXC5-Dvl에 결합/억제하고 AD 모델에서 효능을 보인 정량 데이터가 있는가?"
+      "one_line_summary": "CXXC5–Dvl/Wnt biology is differentiated and platform-supported, but CKR-492 itself lacks attributable development data and its 2026 relationship to CKR-519 is unresolved.",
+      "recommendation": "Deprioritize",
+      "most_important_diligence_question": "Is CKR-492 the same compound/program lineage as CKR-519, or has CKR-492 been superseded or inactivated? Provide a dated compound-code mapping and CKR-492-specific efficacy/PK/ADMET package."
     },
-    "triage": {
-      "status": "SELECT",
-      "identity_verified": true,
-      "active_asset": true,
-      "verified_public_source_count": 4,
-      "why": "CKR-492는 2026-08 현재 CK Regeon의 active preclinical AD project로 확인되며, 회사의 CXXC5-Dvl PPI inhibitor AD platform과 동물모델 functional validation이 있어 SELECT합니다.",
-      "missing_evidence_needed_for_full_scout": [
-        "CKR-492-specific compound identity and quantitative dataset",
-        "Direct target-engagement/PD data for CKR-492"
+    "company_profile": {
+      "headquarters": "Seoul, Republic of Korea",
+      "company_stage": "Private biotech; founded 2016",
+      "platform_summary": "CXXC5–Dvl PPI inhibitor discovery platform intended to restore suppressed Wnt/β-catenin signaling across regenerative-disease programs."
+    },
+    "competitive_analysis": {
+      "competitive_density": "High",
+      "similarity_summary": {
+        "similar_pipeline_count": 5,
+        "high_similarity_count": 0,
+        "medium_similarity_count": 2,
+        "low_similarity_count": 3
+      },
+      "competitor_table": [
+        {
+          "competitor_asset": "W2A-28",
+          "company": "Mayo Clinic research group",
+          "modality": "Small molecule",
+          "target_or_moa": "Class I HDAC1/2/3 inhibition plus LRP6 stabilization/Wnt-β-catenin activation",
+          "stage": "Preclinical",
+          "similarity_level": "Medium",
+          "why_it_matters": "Same AD indication and Wnt-pathway biology; different direct target.",
+          "source_url": "https://pubmed.ncbi.nlm.nih.gov/42508295/"
+        },
+        {
+          "competitor_asset": "RB-ADSC",
+          "company": "Regeneration Biomedical, Inc.",
+          "modality": "Cell therapy",
+          "target_or_moa": "Ex vivo expanded autologous Wnt-activated adipose-derived stem cells",
+          "stage": "Phase 2a, not yet recruiting in registry record",
+          "similarity_level": "Medium",
+          "why_it_matters": "Same AD indication and Wnt-pathway regenerative concept; different modality and direct mechanism.",
+          "source_url": "https://clinicaltrials.gov/study/NCT07205601"
+        },
+        {
+          "competitor_asset": "Leqembi (lecanemab)",
+          "company": "Eisai / Biogen",
+          "modality": "Antibody",
+          "target_or_moa": "Amyloid-beta-directed antibody",
+          "stage": "Approved / marketed",
+          "similarity_level": "Low",
+          "why_it_matters": "Approved disease-modifying AD benchmark and major commercial/clinical incumbent.",
+          "source_url": "https://www.fda.gov/news-events/press-announcements/fda-converts-novel-alzheimers-disease-treatment-traditional-approval"
+        },
+        {
+          "competitor_asset": "Kisunla (donanemab)",
+          "company": "Eli Lilly",
+          "modality": "Antibody",
+          "target_or_moa": "Amyloid-beta-directed antibody targeting plaque",
+          "stage": "Approved / marketed",
+          "similarity_level": "Low",
+          "why_it_matters": "Approved disease-modifying AD benchmark with demonstrated slowing of decline.",
+          "source_url": "https://www.fda.gov/drugs/news-events-human-drugs/fda-approves-treatment-adults-alzheimers-disease"
+        },
+        {
+          "competitor_asset": "Buntanetap (posiphen)",
+          "company": "Annovis Bio",
+          "modality": "Small molecule",
+          "target_or_moa": "Oral small molecule; distinct AD mechanism",
+          "stage": "Phase 3",
+          "similarity_level": "Low",
+          "why_it_matters": "Late-stage oral AD competitor relevant to future entry timing and convenience positioning.",
+          "source_url": "https://clinicaltrials.gov/study/NCT06709014"
+        }
+      ],
+      "similar_pipelines": [
+        {
+          "company": "Mayo Clinic research group",
+          "asset_name": "W2A-28",
+          "similarity_score": 75,
+          "matched_dimensions": [
+            "Alzheimer's disease",
+            "Wnt/β-catenin pathway",
+            "Small molecule"
+          ],
+          "shared_data_points": [
+            "Preclinical",
+            "Wnt-pathway activation"
+          ]
+        },
+        {
+          "company": "Regeneration Biomedical, Inc.",
+          "asset_name": "RB-ADSC",
+          "similarity_score": 50,
+          "matched_dimensions": [
+            "Alzheimer's disease",
+            "Wnt-pathway regenerative biology"
+          ],
+          "shared_data_points": [
+            "Clinical development",
+            "Wnt activation"
+          ]
+        },
+        {
+          "company": "Eisai / Biogen",
+          "asset_name": "Leqembi (lecanemab)",
+          "similarity_score": 25,
+          "matched_dimensions": [
+            "Alzheimer's disease"
+          ],
+          "shared_data_points": [
+            "Disease-modifying intent",
+            "Approved"
+          ]
+        },
+        {
+          "company": "Eli Lilly",
+          "asset_name": "Kisunla (donanemab)",
+          "similarity_score": 25,
+          "matched_dimensions": [
+            "Alzheimer's disease"
+          ],
+          "shared_data_points": [
+            "Disease-modifying intent",
+            "Approved"
+          ]
+        },
+        {
+          "company": "Annovis Bio",
+          "asset_name": "Buntanetap (posiphen)",
+          "similarity_score": 25,
+          "matched_dimensions": [
+            "Alzheimer's disease"
+          ],
+          "shared_data_points": [
+            "Oral development",
+            "Phase 3"
+          ]
+        }
       ]
     }
   },

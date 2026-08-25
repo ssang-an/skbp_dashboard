@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-24T19:06:21"
+generated_at: "2026-08-24T18:37:35"
 record_id: "AULBIO Co., Ltd._AUL003"
 company: "AULBIO Co., Ltd."
 country: "Republic of Korea"

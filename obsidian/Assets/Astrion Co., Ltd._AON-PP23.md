@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-24T19:06:21"
+generated_at: "2026-08-24T18:37:35"
 record_id: "Astrion Co., Ltd._AON-PP23"
 company: "Astrion Co., Ltd."
 country: "Republic of Korea"
@@ -476,8 +476,8 @@ AON-PP23 has strong PD/alpha-synuclein proteostasis fit and early biochemical/ce
         "new_value": "GPT 원문 재업로드"
       },
       {
-        "id": "6837d713e1c14fa6b65ed69f18901a20",
-        "changed_at": "2026-08-24T10:06:20.350469+00:00",
+        "id": "d77b1544ce554f15b25cf1d604fdde4c",
+        "changed_at": "2026-08-24T09:37:33.910311+00:00",
         "actor_ip": "127.0.0.1",
         "actor_name": "",
         "source": "paste_json_upsert",
@@ -486,7 +486,7 @@ AON-PP23 has strong PD/alpha-synuclein proteostasis fit and early biochemical/ce
         "new_value": "GPT 원문 재업로드"
       }
     ],
-    "last_edited_at": "2026-08-24T10:06:20.350469+00:00",
+    "last_edited_at": "2026-08-24T09:37:33.910311+00:00",
     "last_edited_by": "127.0.0.1",
     "storage_profile": "dashboard_hybrid_v1"
   },

@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-24T19:06:21"
+generated_at: "2026-08-24T18:37:35"
 record_id: "ADEL, Inc._ADEL-Y04"
 company: "ADEL, Inc."
 country: "Republic of Korea"

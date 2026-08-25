@@ -1,6 +1,6 @@
 ---
 generated_from: "json/pipeline-records.json"
-generated_at: "2026-08-24T19:06:21"
+generated_at: "2026-08-24T18:37:35"
 record_id: "Dong-A ST_intractable brain diseases therapy, Dong-AST"
 company: "Dong-A ST"
 country: "Republic of Korea"

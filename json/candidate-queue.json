@@ -536,14 +536,6 @@
     "added_at": "2026-08-18T01:28:43.535867+00:00"
   },
   {
-    "id": "cq_50404d44",
-    "asset_input": "CKR-492",
-    "company_input": "CK Regeon Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
     "id": "cq_f469becb",
     "asset_input": "Compound #15",
     "company_input": "Korea University College of Medicine",
