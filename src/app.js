@@ -8708,6 +8708,15 @@ function renderInputValidation(result, { savedMessage = '' } = {}) {
   `;
 }
 
+function canRunAiReparse(validation) {
+  return Boolean(
+    validation
+    && validation.rawMarkdown
+    && Array.isArray(validation.errors)
+    && validation.errors.length > 0
+  );
+}
+
 async function previewPastedReportParsing() {
   setDataUploadStatus('validating');
   elements.previewInputButton.disabled = true;
@@ -8757,10 +8766,14 @@ async function previewPastedReportParsing() {
       }
     : null;
   renderInputValidation(result);
-  elements.previewInputButton.disabled = false;
+  // Once validation passes, the next available action is saving. Editing the
+  // input re-enables review and resets this state through the input handler.
+  elements.previewInputButton.disabled = result.canSave;
   elements.saveJsonButton.disabled = !result.canSave;
   if (elements.aiReparseButton) {
-    elements.aiReparseButton.disabled = !(result.rawMarkdown && result.errors.length > 0);
+    // AI recovery is intentionally available only for a blocking validation
+    // error. Warnings are safe to save and must not consume OpenRouter tokens.
+    elements.aiReparseButton.disabled = !canRunAiReparse(result);
   }
   setDataUploadStatus(result.canSave ? 'valid' : 'error', result.errors.length);
   return result;
@@ -8829,6 +8842,12 @@ async function runAiReparse() {
   const expectedMode = activeTableMode() === 'triage' ? 'triage' : 'full';
   const currentInput = elements.gptResponseInput.value;
   const currentValidation = validateCombinedInput(currentInput, expectedMode);
+  if (!canRunAiReparse(currentValidation)) {
+    // Keep the client-side guard even if a click is triggered programmatically.
+    // This prevents normal/warning-only results from spending a reparse request.
+    elements.aiReparseButton.disabled = true;
+    return;
+  }
   const split = splitCombinedGptResponse(currentInput);
   const rawMarkdown = (split.rawMarkdown || currentInput || '').trim();
   if (!rawMarkdown) {
@@ -8974,14 +8993,14 @@ async function runAiReparse() {
     restoreInputState();
     if (blockingOperation.signal.aborted || error?.name === 'AbortError') {
       setDataUploadStatus('waiting');
-      elements.aiReparseButton.disabled = false;
+      elements.aiReparseButton.disabled = !canRunAiReparse(validateCombinedInput(elements.gptResponseInput.value, expectedMode));
       return;
     }
     const failed = validateCombinedInput(elements.gptResponseInput.value, expectedMode);
     addInputIssue(failed.errors, 'error', 'AI 2차 파싱', formatAiReparseFailure(error));
     renderInputValidation(failed);
     setDataUploadStatus('error', failed.errors.length);
-    elements.aiReparseButton.disabled = false;
+    elements.aiReparseButton.disabled = !canRunAiReparse(failed);
     return;
   }
   closeBlockingOperation(blockingOperation.token);
@@ -8998,6 +9017,7 @@ async function saveStructuredJsonInput() {
   renderInputValidation(validation);
   if (!validation.canSave || !reviewed) {
     elements.saveJsonButton.disabled = true;
+    if (elements.aiReparseButton) elements.aiReparseButton.disabled = !canRunAiReparse(validation);
     setDataUploadStatus(validation.canSave ? 'review-needed' : 'error', validation.errors.length);
     return;
   }
@@ -11235,6 +11255,7 @@ async function loadStep0Progress({ renderOnlyWhenChanged = false } = {}) {
     renderStep0ProgressTable();
     renderStep0StatStrip();
     renderStep0SelectedCount();
+    restorePendingStep0MetadataTarget();
   } catch (error) {
     // A quiet re-entry refresh must not replace the cached dashboard with an
     // error state when the user already has usable progress data on screen.
@@ -11380,7 +11401,7 @@ function step0CommentFeed(row) {
   if (entries.length) return entries.filter((entry) => entry && String(entry.body || '').trim() && !/contact/i.test(String(entry.source || '')));
   const fallback = String(row?.metadata?.comment || '').trim();
   if (fallback) {
-    const author = String(row?.metadata?.comment_author || 'Team Review');
+    const author = String(row?.metadata?.comment_author || 'Team');
     const isBulkImport = row?.metadata?.comment_source === 'team_review_import';
     const source = isBulkImport
       ? '일괄 업로드: Tab 0 · Comment'
@@ -11403,10 +11424,61 @@ function step0ContactFeed(row) {
   if (!fallback || /^(?:x|[-–—]+)$/i.test(fallback)) return [];
   return [{
     source: 'Tab 0 · Contact History',
-    author: String(row?.metadata?.contact_author || 'Team Review'),
+    author: String(row?.metadata?.contact_author || 'Team'),
     created_at: String(row?.metadata?.contact_updated_at || row?.metadata?.updated_at || ''),
     body: fallback
   }];
+}
+
+function step0MetadataOwnedByCurrentUser(metadata, prefix, user) {
+  const authorId = String(metadata?.[`${prefix}_author_user_id`] || '').trim();
+  const userId = String(user?.id || '').trim();
+  if (authorId) return Boolean(userId) && authorId === userId;
+  const authorEmail = String(metadata?.[`${prefix}_author_email`] || '').trim().toLowerCase();
+  const userEmail = String(user?.email || '').trim().toLowerCase();
+  if (authorEmail) return Boolean(userEmail) && authorEmail === userEmail;
+  // Legacy posts predate stored account identity. New posts use ID/email above.
+  const author = String(metadata?.[`${prefix}_author`] || '').trim().toLocaleLowerCase('ko');
+  const actor = String(user?.name || user?.email || '').trim().toLocaleLowerCase('ko');
+  return Boolean(author) && author === actor;
+}
+
+const STEP0_METADATA_TARGET_STORAGE_KEY = 'skbp.step0.metadata-target.v1';
+
+function restorePendingStep0MetadataTarget() {
+  let target;
+  try {
+    target = JSON.parse(sessionStorage.getItem(STEP0_METADATA_TARGET_STORAGE_KEY) || 'null');
+  } catch {
+    sessionStorage.removeItem(STEP0_METADATA_TARGET_STORAGE_KEY);
+    return;
+  }
+  const field = target?.field === 'contact' ? 'contact' : target?.field === 'comment' ? 'comment' : '';
+  const recordId = String(target?.recordId || '').trim();
+  if (!field || !recordId) return;
+  const row = state.step0Rows.find((candidate) => [
+    candidate?.metadata_owner?.record_id,
+    candidate?.fast_triage?.record_id,
+    candidate?.full_scout?.record_id
+  ].some((id) => String(id || '') === recordId));
+  if (!row) return;
+
+  state.step0Query = '';
+  state.step0Filters = { country: [], modality: [], theme: [], cluster: [], indication: [], stage: [] };
+  const rows = step0FilteredSortedRows();
+  const rowIndex = Math.max(0, rows.indexOf(row));
+  state.step0Page = Math.floor(rowIndex / state.step0PageSize) + 1;
+  renderStep0FilterControls();
+  renderStep0ProgressTable();
+  sessionStorage.removeItem(STEP0_METADATA_TARGET_STORAGE_KEY);
+
+  window.requestAnimationFrame(() => {
+    const selector = `[data-step0-metadata][data-step0-row-identity="${CSS.escape(String(row.identity || ''))}"][data-step0-metadata-field="${field}"]`;
+    const anchor = elements.step0ProgressTableBody?.querySelector(selector);
+    if (!anchor) return;
+    anchor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    openStep0MetadataPopover(anchor, row, field, { editing: false });
+  });
 }
 
 function step0ListingCommentCanEdit(row) {
@@ -11418,9 +11490,7 @@ function step0ListingCommentCanEdit(row) {
   const source = String(metadata.comment_source || '').trim();
   if (source === 'team_review_import') return true;
   if (source !== 'admin_listing_post') return false;
-  const author = String(metadata.comment_author || '').trim().toLocaleLowerCase('ko');
-  const actor = String(user.name || user.email || '').trim().toLocaleLowerCase('ko');
-  return Boolean(author) && author === actor;
+  return step0MetadataOwnedByCurrentUser(metadata, 'comment', user);
 }
 
 function step0ContactHistoryCanEdit(row) {
@@ -11432,9 +11502,7 @@ function step0ContactHistoryCanEdit(row) {
   const source = String(metadata.contact_source || '').trim();
   if (source === 'team_review_import') return true;
   if (source !== 'admin_contact_post') return false;
-  const author = String(metadata.contact_author || '').trim().toLocaleLowerCase('ko');
-  const actor = String(user.name || user.email || '').trim().toLocaleLowerCase('ko');
-  return Boolean(author) && author === actor;
+  return step0MetadataOwnedByCurrentUser(metadata, 'contact', user);
 }
 
 function step0MetadataCellHtml(row, field) {

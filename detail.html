@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260823-qualitative-status-pills-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260825-partner-material-density-1" />
   </head>
   <body>
     <div class="app-shell detail-shell">
@@ -80,6 +80,12 @@
               <span id="detailAttachmentCount" class="material-count">0</span>
             </div>
             <div class="detail-material-body" aria-label="파트너사 자료 업로드 및 파일 목록">
+              <div id="detailPartnerMaterialFlags" class="oi-material-flags partner-material-presence" role="group" aria-label="파트너 자료 보유 여부">
+                <span class="oi-material-toggle" data-material-key="ncdp"><span class="oi-material-dot" aria-hidden="true"></span>NCDP</span>
+                <span class="oi-material-toggle" data-material-key="cdp"><span class="oi-material-dot" aria-hidden="true"></span>CDP</span>
+                <span class="oi-material-toggle" data-material-key="admet"><span class="oi-material-dot" aria-hidden="true"></span>ADMET</span>
+                <span class="oi-material-toggle" data-material-key="ir"><span class="oi-material-dot" aria-hidden="true"></span>IR</span>
+              </div>
               <div
                 id="detailAttachmentDropzone"
                 class="attachment-dropzone"
@@ -104,9 +110,6 @@
                 </span>
               </div>
               <p id="detailPartnerMaterialPermissionNote" class="attachment-permission-note" hidden>Partner Materials 업로드·삭제는 관리자만 가능합니다.</p>
-              <button id="detailAttachmentAddButton" class="secondary-button material-add-button" type="button">
-                내 컴퓨터에서 파일 선택
-              </button>
               <input
                 id="detailAttachmentInput"
                 type="file"
@@ -334,11 +337,12 @@
                   <span id="detailDDReportFileCount" class="workspace-upload-count" aria-label="DD 리포트 첨부 파일 개수" hidden>0</span>
                   <input id="detailDDReportAttachmentInput" type="file" accept=".ppt,.pptx,.pdf,.txt,.doc,.docx,.xls,.xlsx" hidden />
                 </div>
-                <div id="qualitativeCriterionStatusPills" class="qualitative-criterion-status-pills" role="group" aria-label="Due Diligence 평가 항목 의견 상태">
-                  <span class="qualitative-criterion-status-label">의견 상태</span>
+                <div id="qualitativeCriterionStatusPills" class="qualitative-criterion-status-pills" role="group" aria-label="Due Diligence 의견 및 자료 보유 상태">
+                  <span class="qualitative-criterion-status-label">의견 / 자료 보유</span>
                   <button type="button" data-qualitative-jump="efficacy" aria-pressed="false" title="Efficacy 의견 입력란으로 이동"><i aria-hidden="true"></i><span class="qualitative-criterion-status-value">Efficacy<b>0</b></span></button>
                   <button type="button" data-qualitative-jump="commercial_appeal" aria-pressed="false" title="Commercial 의견 입력란으로 이동"><i aria-hidden="true"></i><span class="qualitative-criterion-status-value">Commercial<b>0</b></span></button>
                   <button type="button" data-qualitative-jump="execution_risk" aria-pressed="false" title="Dev. & Partnership Risk 의견 입력란으로 이동"><i aria-hidden="true"></i><span class="qualitative-criterion-status-value">Dev. &amp; Risk<b>0</b></span></button>
+                  <button type="button" data-qualitative-jump="dd_report" aria-pressed="false" title="Due Diligence 파일 업로드"><i aria-hidden="true"></i><span class="qualitative-criterion-status-value">DD<b>0</b></span></button>
                 </div>
                 <div class="qualitative-panel-heading-actions">
                   <button
@@ -415,8 +419,8 @@
                     type="button"
                     class="panel-icon-button workspace-upload-button help-tooltip"
                     id="detailContactHistoryUploadButton"
-                    data-tooltip="회의록 파일 업로드 (최대 30MB)"
-                    aria-label="회의록 파일 업로드"
+                    data-tooltip="회의록, 이메일 내용이 포함된 파일 등을 업로드할 수 있습니다. (최대 30MB)"
+                    aria-label="회의록, 이메일 내용이 포함된 파일 업로드"
                   ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7.5 8.5 12 4l4.5 4.5"></path><path d="M5 13v6h14v-6"></path></svg></button>
                   <span id="detailContactHistoryFileCount" class="workspace-upload-count" aria-label="Contact History 첨부 파일 개수" hidden>0</span>
                   <input
@@ -452,6 +456,10 @@
           </div>
         </aside>
       </main>
+      <footer class="detail-page-footer" aria-label="Dashboard information and feedback">
+        <span>Designed &amp; Developed by <strong>OIC AI Champion</strong> · Kate Joo Won Jung</span>
+        <span>Have feedback or questions? <a href="mailto:joowon.jung@sk.com">Reach out to joowon.jung@sk.com</a> · © 2026 Open Innovation Center. All rights reserved.</span>
+      </footer>
     </div>
 
     <div class="report-modal-backdrop" id="reportModalBackdrop" hidden>
@@ -860,6 +868,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260825-comment-provenance-1"></script>
+    <script type="module" src="./src/detail.js?v=20260825-contact-sync-cleanup-1"></script>
   </body>
 </html>

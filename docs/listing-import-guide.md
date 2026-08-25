@@ -142,11 +142,17 @@ Tab 0~3 Pipeline Table 검색과 Tab 4 Knowledge Wiki Map 키워드 검색은 **
 | Full Scout 존재 | Tab 2 상세 Workspace로 우선 동기화 |
 | Fast Triage와 Full Scout 모두 존재 | Full Scout가 공식 Workspace. Tab 1 운영 메모도 Tab 2로 동기화 |
 
+Tab 0에서 작성·가져온 Comment·Contact는 Tab 0 원본에서만 수정·삭제합니다. Full Scout가 생긴 뒤 Fast Triage에서 작성한 Comment·기준 메모·Contact History는 Tab 2에 표시되며, 원 작성자는 Tab 2에서 수정·삭제할 수 있습니다. 이때 시스템은 Tab 2 사본만 고치는 대신 Tab 1 원본을 갱신하고 다시 동기화하므로 두 Workspace의 내용이 갈라지지 않습니다.
+
 Comment와 Contact History는 같은 Pipeline으로 **연결한 경우에만** 서로 누적됩니다. `별도 신규 Pipeline으로 추가`와 `등록하지 않기`는 기존 Pipeline으로 어떤 메모도 이동시키지 않습니다.
 
 Contact 열의 `O`, 날짜, 담당자·이메일·미팅 내용은 Contact History가 있음을 뜻하며 Tab 0의 Contact 표식이 활성화됩니다. `O`가 없어도 상세 문구가 있으면 동일하게 Contact History로 기록합니다. `X`, `-`, `–`, `—`만 있는 셀은 **이번 Listing Contact 정보 없음**이라는 명시값으로, Excel에서 온 Contact 요약값만 비웁니다. `X` 뒤에 메모가 있으면 Contact History를 만들지 않고 그 메모를 Comment에 다음 줄로 누적합니다. 이미 Tab 1·2에 사람이 작성한 Contact History 글이나 일반 Comment를 지우거나 다른 분류로 옮기지는 않습니다.
 
 Contact History의 기준 Workspace는 Full Scout가 있으면 Tab 2, 없으면 Tab 1입니다. Tab 0 Excel Contact와 Tab 1 Contact History 글은 기준 Workspace의 Contact History에도 출처와 작성자를 유지한 채 동기화됩니다. Tab 2의 기준 Workspace 글은 Tab 1에 역복제하지 않으며, Tab 1 표와 상세 이동은 Tab 2 기준 화면으로 연결됩니다.
+
+Tab 0에서 직접 `Post`한 Comment·Contact History는 표시 이름과 함께 계정 ID·이메일을 저장합니다. 이후 수정·삭제는 같은 계정만 할 수 있으며, Excel 일괄 업로드만 작성자가 `Team`입니다. 이전에 저장되어 계정 식별값이 없는 수기 글은 다음 수정 전까지 기존 작성자 이름 비교를 유지합니다.
+
+Tab 1·2에 보이는 Tab 0 유래 Comment·Contact History는 별도 편집본이 아니라 원본의 동기화 표시입니다. 해당 글을 더블클릭하면 Tab 0의 같은 Pipeline·필드가 열리며, 원본에서 수정·삭제한 결과가 기준 Workspace에 반영됩니다.
 
 ## 7. 공식 조사 결과 보호 원칙
 

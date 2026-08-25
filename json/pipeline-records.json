@@ -19720,22 +19720,6 @@
             "updated_at": "2026-08-22T14:57:13.783836+00:00"
           },
           {
-            "id": "faedac1eca7e4b3e9e0ffb9d62f08fb5",
-            "parent_id": null,
-            "author": "정주원",
-            "author_user_id": "",
-            "author_email": "",
-            "actor_ip": "system",
-            "body": "df",
-            "created_at": "2026-08-22T15:00:04.055430+00:00",
-            "updated_at": "2026-08-23T01:41:03.819539+00:00",
-            "source": "listing_contact_post",
-            "label": "Tab 0 · Contact History Post",
-            "category": "contact_history",
-            "import_key": "2ecd7b9c461bb0f0b34717a2cdc9f334e502db23df6df0237ec362e590d78ed0",
-            "system_import": true
-          },
-          {
             "id": "a35d5f1cd5a84a999170777ba768d3df",
             "parent_id": null,
             "author": "정주원",
@@ -19752,8 +19736,8 @@
             "label": "Tab 0 · Contact History"
           }
         ],
-        "updated_at": "2026-08-24T09:37:33.933670+00:00",
-        "comment_count": 3
+        "updated_at": "2026-08-25T05:06:00.713954+00:00",
+        "comment_count": 2
       },
       "pipeline_metadata": {
         "listed_at": "2026-08-22T15:00:04.055430+00:00",
@@ -26285,6 +26269,96 @@
           "field": "attachments",
           "previous_value": "AST001_GP_Proposal (회의록)-부문장님 공유_NCDP.pptx",
           "new_value": null
+        },
+        {
+          "id": "24c73806d8334728b2e72a9e723c7d70",
+          "changed_at": "2026-08-25T04:30:15.449925+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_comment_delete",
+          "field": "collaboration.comments",
+          "previous_value": "FW RE FW 글로벌 개발 사업 제안의 건_ASD 핵심증상 치료제 _ Idea_Confidential.txt",
+          "new_value": "deleted"
+        },
+        {
+          "id": "25c12c0c61634dbd888456280ec29f3b",
+          "changed_at": "2026-08-25T04:30:23.324554+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_comment_delete",
+          "field": "collaboration.comments",
+          "previous_value": "AST001_GP_Proposal (회의록)-부문장님 공유.pptx",
+          "new_value": "deleted"
+        },
+        {
+          "id": "dd148171da434a5b8f397c93a644f813",
+          "changed_at": "2026-08-25T04:30:31.199383+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "FW RE FW 글로벌 개발 사업 제안의 건_ASD 핵심증상 치료제 _ Idea_Confidential.txt",
+          "new_value": null
+        },
+        {
+          "id": "7a90ff2c9d0c4db6be529042bfd22360",
+          "changed_at": "2026-08-25T04:30:33.845365+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "AST001_GP_Proposal (회의록)-부문장님 공유.pptx",
+          "new_value": null
+        },
+        {
+          "id": "a48d19eca2444555a8bdca6594e6ed43",
+          "changed_at": "2026-08-25T04:32:21.212377+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "분 실 사 유 서 정주원.pdf"
+        },
+        {
+          "id": "f6cf792db2a549d49aca2be9c7f1c87e",
+          "changed_at": "2026-08-25T04:38:54.220436+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_comment",
+          "field": "collaboration.comments",
+          "previous_value": null,
+          "new_value": null
+        },
+        {
+          "id": "7f9faa12b73d4be2be900eed06e7c500",
+          "changed_at": "2026-08-25T04:39:01.208241+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "분 실 사 유 서 정주원.pdf",
+          "new_value": null
+        },
+        {
+          "id": "27bef06c2904463b8c4e7f6809b2f310",
+          "changed_at": "2026-08-25T04:42:03.052681+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_upload",
+          "field": "attachments",
+          "previous_value": null,
+          "new_value": "의견 상태Efficacy1Commercial0Dev. & Ris.txt"
+        },
+        {
+          "id": "b3d59d813d5d49d6a1d73e9fecef8874",
+          "changed_at": "2026-08-25T04:42:11.127755+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_attachment_delete",
+          "field": "attachments",
+          "previous_value": "의견 상태Efficacy1Commercial0Dev. & Ris.txt",
+          "new_value": null
         }
       ],
       "attachments": [
@@ -26497,216 +26571,25 @@
             "processed_at": "2026-08-25T01:56:51.325994+00:00"
           },
           "processing_error": ""
-        },
-        {
-          "id": "9ba81d3e95764089bd19e83de01ff7a7",
-          "filename": "FW RE FW 글로벌 개발 사업 제안의 건_ASD 핵심증상 치료제 _ Idea_Confidential.txt",
-          "stored_path": "/attachments/Astrogen, inc._AST-001 (Speragen)/930ea8f461b7405ba1ec1e45485670e4_FW RE FW 글로벌 개발 사업 제안의 건_ASD 핵심증상 치료제 _ Idea_Confidential.txt",
-          "content_type": "text/plain",
-          "size_bytes": 11758,
-          "uploaded_by": "정주원",
-          "uploaded_at": "2026-08-25T02:13:02.121952+00:00",
-          "processing_status": "not_applicable"
-        },
-        {
-          "id": "07d9a5c8ef0b4bb789fede56a94a00a0",
-          "filename": "AST001_GP_Proposal (회의록)-부문장님 공유.pptx",
-          "stored_path": "/attachments/Astrogen, inc._AST-001 (Speragen)/88a4f05f40974b808a1a48e95903e124_AST001_GP_Proposal (회의록)-부문장님 공유.pptx",
-          "content_type": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-          "size_bytes": 1035870,
-          "uploaded_by": "정주원",
-          "uploaded_at": "2026-08-25T02:13:43.832503+00:00",
-          "processing_status": "completed",
-          "document_processing": {
-            "document_id": "bb50c0eec683497f9fa843da6df821d3",
-            "file_sha256": "a176eeea641423dfb05fd24d4d234ab8de8a545ea87b550c03071fe576514494",
-            "filename": "AST001_GP_Proposal (회의록)-부문장님 공유.pptx",
-            "status": "completed",
-            "extraction": {
-              "method": "native_pptx_text",
-              "pages_or_slides": [
-                {
-                  "number": 1,
-                  "text": "AST-001 Glycerophosphate Conjugate (LS-001 GP)\n경쟁 우위 · 차별성 · 특허 전략 제안서\n콜린알포세레이트(Alpha-GPC) 방법론의 L-세린 적용\n글라이세롤포스페이트 포스포에스터 결합을 통한 BBB 투과도 향상 및 이중 시너지 메커니즘\nBBB 투과도 향상\n이중 메커니즘\n특허 진보성\nConfidential  |  2026"
-                },
-                {
-                  "number": 2,
-                  "text": "Executive Summary\n핵심 요약\n🎯  문제 정의\nL-세린(AST-001)은 신경계 필수 아미노산이나 BBB 투과도가 낮음\nASCT1/ASCT2 트랜스포터는 포화 가능(saturable)하여 뇌 내 유효 농도 유지가 어려움\nSLC1A4 변이 시 뇌 발달 지연·저수초화 유발 → 세린 뇌 공급이 임상적으로 중요\n기존 L-세린 보충 요법의 뇌 도달률 한계 극복이 핵심 과제\n높은 투여 용량(4~28g)에 따른 위장계 부작용\n💡  해결 전략\n콜린알포세레이트(Alpha-GPC) 방법론 적용: 글라이세롤포스페이트 모이어티 결합\nL-세린-O-인산-O-글라이세롤 구조 형성 → 지질친화성↑, 인지질 수송 경로 이용\n뇌 내 효소(포스포리파제) 분해 → L-세린 + 글라이세롤-3-인산 동시 유리\n포스파티딜세린(PS) 생합성 촉진 + NMDA 공동효능제(D-세린) 공급 이중 시너지\n🏆  경쟁 우위\nAlpha-GPC 대비: 콜린 대신 세린 전달 — 뇌 신경 특이적 기능\n포스파티딜세린(PS) 대비: 분자량 小, 경구 흡수↑, BBB 직접 투과\nL-세린 단독 대비: 인지질 수송 경로 추가 개방 → Papp 2~5배 향상 예상\n조성물 특허 + 방법 특허 + 진보성 3축 확보 가능\nBBB 투과 대폭 개선 – tablet 복용 편의성 극대화 (~20g solution vs. 하루 아침 저녁 1~2알)"
-                },
-                {
-                  "number": 3,
-                  "text": "Alpha-GPC 메커니즘 — 적용 기준 사례\n참조 모델\n①\n경구 복용 후 소장 흡수 → 혈중 글라이세로포스포콜린(GPC) 형태로 순환\n②\n인지질 수송 경로 이용 → BBB 지질 이중층을 수동 확산 및 LPC 수송체 통해 투과\n③\n뇌 내 포스포리파제 D 분해 → 콜린 + 글라이세롤-3-인산 동시 유리\n④\n콜린 → 아세틸콜린 합성, 글라이세롤-3-인산 → 포스파티딜콜린 막 강화 (이중 시너지)\n💡  핵심 인사이트: Alpha-GPC의 우수한 뇌 전달력의 원천은 '인지질 유사 구조'를 통한 이중층 투과 + 뇌 내 이중 활성 물질 유리 → 이 원리를 L-세린에  그대로 적용하는 것이 LS 001-GP 전략의 핵심"
-                },
-                {
-                  "number": 4,
-                  "text": "구조식 비교: L-세린 vs L-세린 글라이세롤포스페이트\nL-Serine  (AST-001)\nSMILES: N[C@@H](CO)C(=O)O\n분자량\n105.09 Da\nLogP\n-2.74\nTPSA\n63.32 Å²\nHBD/HBA\n3 / 4\nLipinski\nPass ✓\nBBB 투과도\n낮음 ⚠️\nVS\nL-Serine Glycerophosphate  (AST-001-GP)\nSMILES: N[C@@H](COP(=O)(O)OCC(O)CO)C(=O)O\n분자량\n259.15 Da\nLogP\n-1.42 (↑)\nTPSA\n111.9 Å² *\nHBD/HBA\n5 / 8\nLipinski\nPass ✓\nBBB 투과도\n향상 예측 ✅\n* TPSA는 높지만 인지질 수송 경로를 통해 BBB 투과 가능 (Alpha-GPC 유사 메커니즘)"
-                },
-                {
-                  "number": 5,
-                  "text": "AST-001-GP 이중 작용 메커니즘 (Dual-Action)\n작용 메커니즘\n경구 투여\nAST-001-GP\n소장 흡수\n혈중 유입\nBBB 투과\n(인지질 경로)\n포스포리파제\n분해\n이중 유리\n뇌 내 작용\n경로 ①  L-세린 유리 → 신경 기능\nD-세린 합성 촉진 → NMDA 수용체 공동작용제 (학습·기억 관련 신경가소성)\n세린팔미토일전달효소(SPT) 기질 → 스핑고리피드 생합성 → 신경 미엘린 보호\nPHGDH 결핍 환자 등 선천성 세린 부족 질환 치료 가능성\n경로 ②  글라이세롤-3-인산 유리 → 막 강화\n포스파티딜세린(PS) 생합성 기질 → 신경 세포막 유동성·무결성 향상\n포스파티딜콜린·포스파티딜에탄올아민 공급 → 시냅스 막 리모델링 지원\n글라이세롤-3-인산 → 에너지 대사 경로(DHAP 전구체) 공급 → 신경 보호\n시너지\n효과"
-                },
-                {
-                  "number": 6,
-                  "text": "BBB 투과도 향상 근거 및 예측 메커니즘\nBBB 과학적 근거\n① 인지질 수송 경로 활용\n포스포에스터 결합 도입 → 인지질 유사 구조 부여\nLPC(라이소포스파티딜콜린) 수송체(SLC25A17, Mfsd2a) 유사 기질 가능\nAlpha-GPC의 BBB 투과 메커니즘과 구조적 동일 원리\n수동 확산 + 능동 수송 이중 경로 개방 (시너지)\n② 지질친화성 최적화\nL-세린(LogP -2.74) → AST-001-GP(LogP -1.42): 약 1.3 단위 향상\n인지질 bilayer 파티셔닝 계수(Kp) 증가 예측\nPapp(PAMPA assay) 2~5배 향상 기대 (Alpha-GPC 선례 기반)\nTPSA 증가는 인지질 경로 이용 시 극복 가능 (Alpha-GPC 선례)\n③ 프로드럭 전략의 과학적 근거\n98%+ CNS 약물이 BBB 투과 실패 → 프로드럭 가장 검증된 해결책\n뇌 내 포스포리파제 D·C 풍부 분포 → 선택적 뇌 내 분해 가능\n말초 조기 분해 최소화 구조 설계 가능 (에스터 결합 안정성 조절)\n유사 구조 GPC 선례: 뇌 내 24시간 내 인지질 편입 확인 (동물 실험)\n📊  검증 계획: in vitro PAMPA assay → Caco-2 세포 투과 실험 → 래트 뇌 내 농도 측정(CSF 및 뇌 조직 LC-MS/MS) → 임상 PK 연구"
-                },
-                {
-                  "number": 7,
-                  "text": "경쟁 우위 분석 — Competitive Landscape\n화합물\n주요 타겟\nBBB 투과\n세린 전달\n인지질 시너지\n특허 상태\nAST-001-GP 우위\nL-세린\n(AST-001)\n뇌 세린 공급\n신경 보호\n낮음 ❌\n직접 전달\n없음 ✗\n원료 공개\nBBB 투과↑\n이중 메커니즘\nAlpha-GPC\n(콜린알포세레이트)\n콜린 전달\n인지 기능\n높음 ✅\n없음 ✗\nPC 합성 ✅\n특허 만료\n세린 특이적\n신경 기능\n포스파티딜\n세린 (PS)\n신경 막 강화\nAD 예방\n일부 ⚠️\n간접적\nPS 공급 ✅\n일부 특허\n소분자, 경구\n흡수 우위\nD-세린\nNMDA 공동\n작용제\n중등도\n없음 ✗\n없음 ✗\n연구 단계\nL형 공급 →\n내인성 전환\nLS-001-GP\n(제안)\n뇌 세린 공급\n막 강화\n높음 ✅\n고효율 ✅\nPS·PC 시너지\n✅\n신규 특허\n가능 🏆\n— 최고의 프로파일 —\n★  AST-001-GP는 세린 전달 + 인지질 시너지 + 높은 BBB 투과를 동시에 갖춘 유일한 후보물질입니다"
-                },
-                {
-                  "number": 8,
-                  "text": "특허 전략 — 진보성 확보 방안\n특허 전략\n조성물 특허\n(Composition)\n1\nL-세린-O-글라이세롤포스페이트 에스터 신규 화합물 (청구항 1)\n2\n광학이성질체(S형), 염(나트륨, 칼슘) 포함 청구 범위\n3\n제형 특허: 경구용, 비경구용, 서방형 포함\n4\n프로드럭으로의 설계 개념 포함\n방법 특허\n(Method of Use)\n1\nBBB 투과 향상 방법으로서의 적용 청구\n2\n신경퇴행성 질환(ALS, 알츠하이머, 파킨슨) 치료 방법\n3\n선천성 세린 결핍(PHGDH 결핍증, SLC1A4 변이) 치료\n4\nNMDA 수용체 기능 향상을 통한 신경 기능 개선\n진보성 근거\n(Inventive Step)\n1\nAlpha-GPC의 콜린 → L-세린으로의 치환: 비자명적(Non-obvious)\n2\n예상치 못한 효과: 이중 메커니즘 (세린 + 인지질 전구체)\n3\nBBB 투과도 정량적 개선 데이터 (PAMPA 등)\n4\nCNS 농도 증가 in vivo 데이터로 진보성 입증"
-                },
-                {
-                  "number": 9,
-                  "text": "특허 청구범위 구조 — Claim Architecture\n청구범위 설계\n독립 청구항 (Independent Claims)\n청구항 1\n하기 구조를 갖는 L-세린 글라이세롤포스페이트 화합물 또는 이의 약학적으로 허용가능한 염:\nN[C@@H](COP(=O)(OH)OCC(OH)CO)C(=O)O\n청구항 2\n청구항 1의 화합물을 유효성분으로 포함하는 혈뇌장벽(BBB) 투과 향상용 약학적 조성물\n청구항 3\n청구항 1의 화합물을 유효성분으로 포함하는 신경퇴행성 질환 예방 또는 치료용 약학적 조성물\n종속 청구항 (Dependent Claims) — 진보성 강화 전략\n4\n서방형 제형 (controlled-release formulation) — 뇌 내 지속 농도 유지\n5\nALS·PHGDH 결핍증·SLC1A4 변이 관련 신경 질환 치료 방법 (Method claim)\n6\n리포솜 또는 나노입자 제형을 통한 BBB 투과 더욱 향상 조성물\n7\nD-세린 병용 투여를 통한 NMDA 수용체 기능 증진 조합물 (Combination)"
-                },
-                {
-                  "number": 10,
-                  "text": "개발 로드맵 — Development Roadmap\nPhase 1\n합성·검증\n0 ~ 3M\nAST-001-GP 합성 최적화\n(수율·순도 95%+)\n물리화학적 특성 분석\n(LogP, 용해도, 안정성)\nPAMPA / Caco-2\nBBB in vitro 투과 측정\nPhase 2\nin vivo PK\n3 ~ 6M\n래트 경구 PK 연구\n(혈장·CSF·뇌 조직 농도)\n대사체 프로파일링\n(뇌 내 세린·GP 유리 확인)\n독성 예비 평가\n(GLP-ready 독성)\nPhase 3\n특허 출원\n6 ~ 12M\nPCT 국제 출원\n(조성물+방법 동시)\nBBB 투과 in vivo 데이터\n포함 진보성 보완\nUS·EU·KR·JP\n주요 시장 진입 전략\nPhase 4\n임상 준비\n12 ~ 30\nIND 신청 준비\n(GLP 독성·CMC 완성)\n적응증 선정\n(ALS / PHGDH 결핍 우선)\n파트너십 탐색\n(기술이전·공동 개발)\n🏁  최종 목표: 글로벌 PCT 특허 포트폴리오 구축 + 신경 질환 파이프라인 확장 → IND Filing → Phase 1 임상 진입"
-                },
-                {
-                  "number": 11,
-                  "text": "결론 및 제언\n01\n구조적 신규성 확보\nL-세린-글라이세롤포스페이트 에스터는 현재 문헌 및 특허 데이터베이스에서 CNS 전달 목적으로의 적용 선례가 없어 조성물 특허 등록 가능성 높음\n02\n과학적 진보성 명확\nAlpha-GPC의 BBB 투과 메커니즘을 L-세린에 적용하는 비자명적 개념 + 이중 활성 물질(세린+글라이세롤인산) 유리의 예상치 못한 시너지 효과로 특허 진보성 충족\n03\n시장 차별성 명확\nAlpha-GPC(콜린 전달), PS(복잡한 인지질), L-세린 단독(낮은 BBB) 대비 — 소분자 경구 투여·고효율 뇌 세린 공급·인지질 막 강화의 3가지 속성을 동시에 충족하는 유일한 후보\n04\n즉각적 Next Step\n① AST-001-GP 합성 착수 → ② PAMPA BBB in vitro 투과 실험 → ③ 선행기술 조사(Freedom-to-Operate) → ④ PCT 특허 출원 준비 (12개월 내 완료 목표)\nLS-001-GP는 검증된 Alpha-GPC 메커니즘 + 세린 신경생물학의 융합으로 강력한 특허 포트폴리오와 차별화된 CNS 파이프라인을 구축할 수 있는 최적의 전략"
-                },
-                {
-                  "number": 12,
-                  "text": "[참고] BBB Simulation"
-                },
-                {
-                  "number": 13,
-                  "text": "[참고] BBB Simulation"
-                }
-              ],
-              "page_or_slide_count": 13,
-              "parsed_text": "[SLIDE 1]\nAST-001 Glycerophosphate Conjugate (LS-001 GP)\n경쟁 우위 · 차별성 · 특허 전략 제안서\n콜린알포세레이트(Alpha-GPC) 방법론의 L-세린 적용\n글라이세롤포스페이트 포스포에스터 결합을 통한 BBB 투과도 향상 및 이중 시너지 메커니즘\nBBB 투과도 향상\n이중 메커니즘\n특허 진보성\nConfidential  |  2026\n\n[SLIDE 2]\nExecutive Summary\n핵심 요약\n🎯  문제 정의\nL-세린(AST-001)은 신경계 필수 아미노산이나 BBB 투과도가 낮음\nASCT1/ASCT2 트랜스포터는 포화 가능(saturable)하여 뇌 내 유효 농도 유지가 어려움\nSLC1A4 변이 시 뇌 발달 지연·저수초화 유발 → 세린 뇌 공급이 임상적으로 중요\n기존 L-세린 보충 요법의 뇌 도달률 한계 극복이 핵심 과제\n높은 투여 용량(4~28g)에 따른 위장계 부작용\n💡  해결 전략\n콜린알포세레이트(Alpha-GPC) 방법론 적용: 글라이세롤포스페이트 모이어티 결합\nL-세린-O-인산-O-글라이세롤 구조 형성 → 지질친화성↑, 인지질 수송 경로 이용\n뇌 내 효소(포스포리파제) 분해 → L-세린 + 글라이세롤-3-인산 동시 유리\n포스파티딜세린(PS) 생합성 촉진 + NMDA 공동효능제(D-세린) 공급 이중 시너지\n🏆  경쟁 우위\nAlpha-GPC 대비: 콜린 대신 세린 전달 — 뇌 신경 특이적 기능\n포스파티딜세린(PS) 대비: 분자량 小, 경구 흡수↑, BBB 직접 투과\nL-세린 단독 대비: 인지질 수송 경로 추가 개방 → Papp 2~5배 향상 예상\n조성물 특허 + 방법 특허 + 진보성 3축 확보 가능\nBBB 투과 대폭 개선 – tablet 복용 편의성 극대화 (~20g solution vs. 하루 아침 저녁 1~2알)\n\n[SLIDE 3]\nAlpha-GPC 메커니즘 — 적용 기준 사례\n참조 모델\n①\n경구 복용 후 소장 흡수 → 혈중 글라이세로포스포콜린(GPC) 형태로 순환\n②\n인지질 수송 경로 이용 → BBB 지질 이중층을 수동 확산 및 LPC 수송체 통해 투과\n③\n뇌 내 포스포리파제 D 분해 → 콜린 + 글라이세롤-3-인산 동시 유리\n④\n콜린 → 아세틸콜린 합성, 글라이세롤-3-인산 → 포스파티딜콜린 막 강화 (이중 시너지)\n💡  핵심 인사이트: Alpha-GPC의 우수한 뇌 전달력의 원천은 '인지질 유사 구조'를 통한 이중층 투과 + 뇌 내 이중 활성 물질 유리 → 이 원리를 L-세린에  그대로 적용하는 것이 LS 001-GP 전략의 핵심\n\n[SLIDE 4]\n구조식 비교: L-세린 vs L-세린 글라이세롤포스페이트\nL-Serine  (AST-001)\nSMILES: N[C@@H](CO)C(=O)O\n분자량\n105.09 Da\nLogP\n-2.74\nTPSA\n63.32 Å²\nHBD/HBA\n3 / 4\nLipinski\nPass ✓\nBBB 투과도\n낮음 ⚠️\nVS\nL-Serine Glycerophosphate  (AST-001-GP)\nSMILES: N[C@@H](COP(=O)(O)OCC(O)CO)C(=O)O\n분자량\n259.15 Da\nLogP\n-1.42 (↑)\nTPSA\n111.9 Å² *\nHBD/HBA\n5 / 8\nLipinski\nPass ✓\nBBB 투과도\n향상 예측 ✅\n* TPSA는 높지만 인지질 수송 경로를 통해 BBB 투과 가능 (Alpha-GPC 유사 메커니즘)\n\n[SLIDE 5]\nAST-001-GP 이중 작용 메커니즘 (Dual-Action)\n작용 메커니즘\n경구 투여\nAST-001-GP\n소장 흡수\n혈중 유입\nBBB 투과\n(인지질 경로)\n포스포리파제\n분해\n이중 유리\n뇌 내 작용\n경로 ①  L-세린 유리 → 신경 기능\nD-세린 합성 촉진 → NMDA 수용체 공동작용제 (학습·기억 관련 신경가소성)\n세린팔미토일전달효소(SPT) 기질 → 스핑고리피드 생합성 → 신경 미엘린 보호\nPHGDH 결핍 환자 등 선천성 세린 부족 질환 치료 가능성\n경로 ②  글라이세롤-3-인산 유리 → 막 강화\n포스파티딜세린(PS) 생합성 기질 → 신경 세포막 유동성·무결성 향상\n포스파티딜콜린·포스파티딜에탄올아민 공급 → 시냅스 막 리모델링 지원\n글라이세롤-3-인산 → 에너지 대사 경로(DHAP 전구체) 공급 → 신경 보호\n시너지\n효과\n\n[SLIDE 6]\nBBB 투과도 향상 근거 및 예측 메커니즘\nBBB 과학적 근거\n① 인지질 수송 경로 활용\n포스포에스터 결합 도입 → 인지질 유사 구조 부여\nLPC(라이소포스파티딜콜린) 수송체(SLC25A17, Mfsd2a) 유사 기질 가능\nAlpha-GPC의 BBB 투과 메커니즘과 구조적 동일 원리\n수동 확산 + 능동 수송 이중 경로 개방 (시너지)\n② 지질친화성 최적화\nL-세린(LogP -2.74) → AST-001-GP(LogP -1.42): 약 1.3 단위 향상\n인지질 bilayer 파티셔닝 계수(Kp) 증가 예측\nPapp(PAMPA assay) 2~5배 향상 기대 (Alpha-GPC 선례 기반)\nTPSA 증가는 인지질 경로 이용 시 극복 가능 (Alpha-GPC 선례)\n③ 프로드럭 전략의 과학적 근거\n98%+ CNS 약물이 BBB 투과 실패 → 프로드럭 가장 검증된 해결책\n뇌 내 포스포리파제 D·C 풍부 분포 → 선택적 뇌 내 분해 가능\n말초 조기 분해 최소화 구조 설계 가능 (에스터 결합 안정성 조절)\n유사 구조 GPC 선례: 뇌 내 24시간 내 인지질 편입 확인 (동물 실험)\n📊  검증 계획: in vitro PAMPA assay → Caco-2 세포 투과 실험 → 래트 뇌 내 농도 측정(CSF 및 뇌 조직 LC-MS/MS) → 임상 PK 연구\n\n[SLIDE 7]\n경쟁 우위 분석 — Competitive Landscape\n화합물\n주요 타겟\nBBB 투과\n세린 전달\n인지질 시너지\n특허 상태\nAST-001-GP 우위\nL-세린\n(AST-001)\n뇌 세린 공급\n신경 보호\n낮음 ❌\n직접 전달\n없음 ✗\n원료 공개\nBBB 투과↑\n이중 메커니즘\nAlpha-GPC\n(콜린알포세레이트)\n콜린 전달\n인지 기능\n높음 ✅\n없음 ✗\nPC 합성 ✅\n특허 만료\n세린 특이적\n신경 기능\n포스파티딜\n세린 (PS)\n신경 막 강화\nAD 예방\n일부 ⚠️\n간접적\nPS 공급 ✅\n일부 특허\n소분자, 경구\n흡수 우위\nD-세린\nNMDA 공동\n작용제\n중등도\n없음 ✗\n없음 ✗\n연구 단계\nL형 공급 →\n내인성 전환\nLS-001-GP\n(제안)\n뇌 세린 공급\n막 강화\n높음 ✅\n고효율 ✅\nPS·PC 시너지\n✅\n신규 특허\n가능 🏆\n— 최고의 프로파일 —\n★  AST-001-GP는 세린 전달 + 인지질 시너지 + 높은 BBB 투과를 동시에 갖춘 유일한 후보물질입니다\n\n[SLIDE 8]\n특허 전략 — 진보성 확보 방안\n특허 전략\n조성물 특허\n(Composition)\n1\nL-세린-O-글라이세롤포스페이트 에스터 신규 화합물 (청구항 1)\n2\n광학이성질체(S형), 염(나트륨, 칼슘) 포함 청구 범위\n3\n제형 특허: 경구용, 비경구용, 서방형 포함\n4\n프로드럭으로의 설계 개념 포함\n방법 특허\n(Method of Use)\n1\nBBB 투과 향상 방법으로서의 적용 청구\n2\n신경퇴행성 질환(ALS, 알츠하이머, 파킨슨) 치료 방법\n3\n선천성 세린 결핍(PHGDH 결핍증, SLC1A4 변이) 치료\n4\nNMDA 수용체 기능 향상을 통한 신경 기능 개선\n진보성 근거\n(Inventive Step)\n1\nAlpha-GPC의 콜린 → L-세린으로의 치환: 비자명적(Non-obvious)\n2\n예상치 못한 효과: 이중 메커니즘 (세린 + 인지질 전구체)\n3\nBBB 투과도 정량적 개선 데이터 (PAMPA 등)\n4\nCNS 농도 증가 in vivo 데이터로 진보성 입증\n\n[SLIDE 9]\n특허 청구범위 구조 — Claim Architecture\n청구범위 설계\n독립 청구항 (Independent Claims)\n청구항 1\n하기 구조를 갖는 L-세린 글라이세롤포스페이트 화합물 또는 이의 약학적으로 허용가능한 염:\nN[C@@H](COP(=O)(OH)OCC(OH)CO)C(=O)O\n청구항 2\n청구항 1의 화합물을 유효성분으로 포함하는 혈뇌장벽(BBB) 투과 향상용 약학적 조성물\n청구항 3\n청구항 1의 화합물을 유효성분으로 포함하는 신경퇴행성 질환 예방 또는 치료용 약학적 조성물\n종속 청구항 (Dependent Claims) — 진보성 강화 전략\n4\n서방형 제형 (controlled-release formulation) — 뇌 내 지속 농도 유지\n5\nALS·PHGDH 결핍증·SLC1A4 변이 관련 신경 질환 치료 방법 (Method claim)\n6\n리포솜 또는 나노입자 제형을 통한 BBB 투과 더욱 향상 조성물\n7\nD-세린 병용 투여를 통한 NMDA 수용체 기능 증진 조합물 (Combination)\n\n[SLIDE 10]\n개발 로드맵 — Development Roadmap\nPhase 1\n합성·검증\n0 ~ 3M\nAST-001-GP 합성 최적화\n(수율·순도 95%+)\n물리화학적 특성 분석\n(LogP, 용해도, 안정성)\nPAMPA / Caco-2\nBBB in vitro 투과 측정\nPhase 2\nin vivo PK\n3 ~ 6M\n래트 경구 PK 연구\n(혈장·CSF·뇌 조직 농도)\n대사체 프로파일링\n(뇌 내 세린·GP 유리 확인)\n독성 예비 평가\n(GLP-ready 독성)\nPhase 3\n특허 출원\n6 ~ 12M\nPCT 국제 출원\n(조성물+방법 동시)\nBBB 투과 in vivo 데이터\n포함 진보성 보완\nUS·EU·KR·JP\n주요 시장 진입 전략\nPhase 4\n임상 준비\n12 ~ 30\nIND 신청 준비\n(GLP 독성·CMC 완성)\n적응증 선정\n(ALS / PHGDH 결핍 우선)\n파트너십 탐색\n(기술이전·공동 개발)\n🏁  최종 목표: 글로벌 PCT 특허 포트폴리오 구축 + 신경 질환 파이프라인 확장 → IND Filing → Phase 1 임상 진입\n\n[SLIDE 11]\n결론 및 제언\n01\n구조적 신규성 확보\nL-세린-글라이세롤포스페이트 에스터는 현재 문헌 및 특허 데이터베이스에서 CNS 전달 목적으로의 적용 선례가 없어 조성물 특허 등록 가능성 높음\n02\n과학적 진보성 명확\nAlpha-GPC의 BBB 투과 메커니즘을 L-세린에 적용하는 비자명적 개념 + 이중 활성 물질(세린+글라이세롤인산) 유리의 예상치 못한 시너지 효과로 특허 진보성 충족\n03\n시장 차별성 명확\nAlpha-GPC(콜린 전달), PS(복잡한 인지질), L-세린 단독(낮은 BBB) 대비 — 소분자 경구 투여·고효율 뇌 세린 공급·인지질 막 강화의 3가지 속성을 동시에 충족하는 유일한 후보\n04\n즉각적 Next Step\n① AST-001-GP 합성 착수 → ② PAMPA BBB in vitro 투과 실험 → ③ 선행기술 조사(Freedom-to-Operate) → ④ PCT 특허 출원 준비 (12개월 내 완료 목표)\nLS-001-GP는 검증된 Alpha-GPC 메커니즘 + 세린 신경생물학의 융합으로 강력한 특허 포트폴리오와 차별화된 CNS 파이프라인을 구축할 수 있는 최적의 전략\n\n[SLIDE 12]\n[참고] BBB Simulation\n\n[SLIDE 13]\n[참고] BBB Simulation",
-              "quality": {
-                "sufficient": true,
-                "quality_score": 6,
-                "character_count": 4031,
-                "corrupted_character_ratio": 0.0,
-                "repeated_character_ratio": 0.0,
-                "text_unit_ratio": 1.0,
-                "text_units": 13,
-                "total_units": 13,
-                "keyword_hits": [
-                  "in vitro",
-                  "in vivo",
-                  "pk",
-                  "독성",
-                  "유효성",
-                  "효능"
-                ],
-                "reasons": []
-              }
-            },
-            "parser": null,
-            "deepseek_analysis": {
-              "status": "completed",
-              "model": "deepseek/deepseek-v4-flash",
-              "structured_output_supported": true,
-              "structured_output_used": true,
-              "analyzed_at": "2026-08-25T02:14:40.914395+00:00",
-              "result": {
-                "target_indication": {
-                  "verdict": "true",
-                  "rationale": "The document explicitly lists ALS, Alzheimer's disease, and Parkinson's disease as target indications for the proposed compound.",
-                  "evidence": [
-                    {
-                      "page_or_slide": 8,
-                      "location_status": "located",
-                      "text": "신경퇴행성 질환(ALS, 알츠하이머, 파킨슨) 치료 방법"
-                    }
-                  ]
-                },
-                "small_molecule": {
-                  "verdict": "true",
-                  "rationale": "The document describes a small molecule conjugate (L-serine glycerophosphate) with molecular weight 259.15 Da, which is a small molecule.",
-                  "evidence": []
-                },
-                "ind_enabling": {
-                  "verdict": "unknown",
-                  "rationale": "The document mentions a development roadmap up to IND preparation (Phase 4: 12~30 months) but does not state that IND-enabling studies have been completed or that the stage is IND-enabling.",
-                  "evidence": [
-                    {
-                      "page_or_slide": 10,
-                      "location_status": "located",
-                      "text": "Phase 4 임상 준비 12 ~ 30 IND 신청 준비 (GLP 독성·CMC 완성)"
-                    }
-                  ]
-                },
-                "in_vivo_efficacy": {
-                  "verdict": "unknown",
-                  "rationale": "The document proposes in vivo PK studies (rat) in Phase 2 (3~6M) but does not report any positive efficacy or activity result from an in vivo experiment.",
-                  "evidence": [
-                    {
-                      "page_or_slide": 10,
-                      "location_status": "located",
-                      "text": "Phase 2 in vivo PK 3 ~ 6M 래트 경구 PK 연구 (혈장·CSF·뇌 조직 농도)"
-                    }
-                  ]
-                },
-                "in_vitro_efficacy": {
-                  "verdict": "unknown",
-                  "rationale": "The document mentions planned in vitro assays (PAMPA, Caco-2) but does not report any positive efficacy or activity result from an in vitro experiment.",
-                  "evidence": [
-                    {
-                      "page_or_slide": 6,
-                      "location_status": "located",
-                      "text": "📊 검증 계획: in vitro PAMPA assay → Caco-2 세포 투과 실험"
-                    }
-                  ]
-                },
-                "admet_at_least_25": {
-                  "verdict": "unknown",
-                  "rationale": "The document does not contain any ADMET study names, statuses, or scores. No ADMET Partner Material is uploaded or referenced.",
-                  "evidence": []
-                },
-                "admet_completed_count": null,
-                "matched_indication": null,
-                "concise_summary": "The document proposes a novel small molecule conjugate (AST-001-GP) for CNS delivery of L-serine, targeting Alzheimer's disease, Parkinson's disease, and ALS. It is pre-IND-enabling with no reported in vivo or in vitro efficacy results and no ADMET data. The compound is a small molecule (MW 259.15 Da)."
-              },
-              "error": null
-            },
-            "viewer_conversion": {
-              "status": "unavailable",
-              "pdf_path": null,
-              "error": "LibreOffice was not found."
-            },
-            "processed_at": "2026-08-25T02:14:40.915537+00:00"
-          },
-          "processing_error": ""
         }
       ],
       "collaboration": {
         "comments": [
           {
-            "id": "b56568f3e5fd4e808f1e32708506f898",
+            "id": "7825c3ff5d3244c182158e07becf1f90",
             "parent_id": null,
             "author": "정주원",
-            "author_user_id": "3dd1472cc5bd4f888238b0a6d1776816",
+            "author_user_id": "9979fce95e884382853e0aed85d6901e",
             "author_email": "joowon.jung@sk.com",
             "actor_ip": "127.0.0.1",
-            "body": "FW RE FW 글로벌 개발 사업 제안의 건_ASD 핵심증상 치료제 _ Idea_Confidential.txt",
-            "created_at": "2026-08-25T02:13:02.843185+00:00",
-            "updated_at": "2026-08-25T02:18:05.748050+00:00",
-            "category": "contact_history"
-          },
-          {
-            "id": "bbdd7661b8a44fd1a65f6037cc3622c2",
-            "parent_id": null,
-            "author": "정주원",
-            "author_user_id": "3dd1472cc5bd4f888238b0a6d1776816",
-            "author_email": "joowon.jung@sk.com",
-            "actor_ip": "127.0.0.1",
-            "body": "AST001_GP_Proposal (회의록)-부문장님 공유.pptx",
-            "created_at": "2026-08-25T02:14:41.445931+00:00",
-            "updated_at": "2026-08-25T02:14:41.445931+00:00",
+            "body": "hello",
+            "created_at": "2026-08-25T04:38:54.220249+00:00",
+            "updated_at": "2026-08-25T04:38:54.220249+00:00",
             "category": "contact_history"
           }
         ],
-        "updated_at": "2026-08-25T02:18:05.748050+00:00",
-        "comment_count": 2
+        "updated_at": "2026-08-25T04:38:54.220249+00:00",
+        "comment_count": 1
       }
     },
     "source_report": {
@@ -34171,13 +34054,14 @@
               "error": null
             },
             "viewer_conversion": {
-              "status": "unavailable",
+              "status": "converted",
               "pdf_path": null,
-              "error": "LibreOffice was not found."
+              "error": null
             },
             "processed_at": "2026-08-25T02:31:01.291516+00:00"
           },
-          "processing_error": ""
+          "processing_error": "",
+          "preview_pdf_path": "/attachments/CK Regeon Inc._CKR-492/converted/66897f208afc47c79983c8a8c32925a8_AST001_GP_Proposal (회의록)-부문장님 공유_NCDP.pdf"
         }
       ],
       "focus_management": {
@@ -34202,7 +34086,7 @@
         "in_vivo_status_source": "deepseek",
         "in_vitro_status": "X",
         "in_vitro_status_source": "deepseek",
-        "admet_completed": 8,
+        "admet_completed": 9,
         "admet_completed_source": "study_status",
         "filter3_document_analyses": [
           {
@@ -34374,7 +34258,7 @@
             }
           }
         ],
-        "filter3_document_analysis_updated_at": "2026-08-25T02:31:01.294905+00:00",
+        "filter3_document_analysis_updated_at": "2026-08-25T04:47:32.618725+00:00",
         "partnership_auto_suggestion": "n_a",
         "partnership_auto_note": "OI Partnership 분류 조건 미충족 / In Vivo X / In Vitro X",
         "partnership_auto_evidence_sources": [
@@ -34392,7 +34276,7 @@
           "Partner Materials: AST001_GP_Proposal (회의록)-부문장님 공유_NCDP.pptx"
         ],
         "partnership_classification_source": "auto",
-        "partnership_classified_at": "2026-08-25T02:31:01.295026+00:00",
+        "partnership_classified_at": "2026-08-25T04:47:32.618804+00:00",
         "updated_at": "2026-08-25T02:24:15.878440+00:00",
         "updated_source": "dashboard_tab3",
         "updated_by": "127.0.0.1"

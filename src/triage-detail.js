@@ -183,27 +183,67 @@ function currentUserOwnsOperationalComment(comment) {
   return Boolean(sameId || sameEmail);
 }
 
+function displayOperationalAuthor(value, fallback = 'Team') {
+  const author = textValue(value, fallback);
+  return ['team review', 'tab 0 team review'].includes(author.trim().toLowerCase()) ? 'Team' : author;
+}
+
 function listingCommentDisplay(record, entry) {
   const metadata = objectValue(objectValue(record?.meta).pipeline_metadata);
   const isBulk = String(metadata.comment_source || '') === 'team_review_import';
   return {
     breadcrumb: isBulk ? '일괄 업로드: Tab 0 · Comment' : 'Tab 0 · Comment',
-    author: isBulk ? 'Team' : textValue(metadata.comment_author, textValue(entry.author, 'Team Review')),
+    author: isBulk ? 'Team' : displayOperationalAuthor(metadata.comment_author || entry.author),
     timestamp: textValue(metadata.comment_updated_at, textValue(metadata.comment_created_at, textValue(entry.created_at, '')))
   };
 }
 
+function isListingContactSource(entry) {
+  const source = String(entry?.source || '');
+  return source === 'listing_contact_history' || source === 'listing_contact_post';
+}
+
 function contactHistoryDisplay(record, entry) {
-  if (String(entry?.source || '') !== 'listing_contact_history') {
+  if (!isListingContactSource(entry)) {
     return { breadcrumb: 'Tab 1 · Fast Triage · Contact History', author: entry.author, timestamp: entry.updated_at || entry.created_at };
   }
   const metadata = objectValue(objectValue(record?.meta).pipeline_metadata);
   const isBulk = String(metadata.contact_source || '') === 'team_review_import';
   return {
     breadcrumb: isBulk ? '일괄 업로드: Tab 0 · Contact History' : 'Tab 0 · Contact History',
-    author: isBulk ? 'Team' : textValue(metadata.contact_author, textValue(entry.author, 'Team Review')),
+    author: isBulk ? 'Team' : displayOperationalAuthor(metadata.contact_author || entry.author),
     timestamp: textValue(metadata.contact_updated_at, textValue(metadata.contact_created_at, textValue(entry.created_at, '')))
   };
+}
+
+function openListingSourceManagement(field) {
+  const label = field === 'contact' ? 'Contact History' : 'Comment';
+  const backdrop = document.createElement('div');
+  backdrop.className = 'operation-modal-backdrop operation-confirm-backdrop';
+  backdrop.innerHTML = `
+    <section class="operation-modal operation-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="listingSourceManageTitle">
+      <header class="operation-modal-header">
+        <span class="operation-modal-mark operation-confirm-mark" aria-hidden="true">i</span>
+        <div><p class="operation-modal-eyebrow">TAB 0 ORIGINAL</p><h2 id="listingSourceManageTitle">Tab 0 원본에서 관리합니다</h2></div>
+      </header>
+      <p class="operation-modal-copy">이 ${label}는 Tab 0에서 작성되어 동기화된 내용입니다. 이곳에서는 수정할 수 없으며, Tab 0 원본을 수정하거나 삭제하면 기준 Workspace에도 반영됩니다.</p>
+      <footer class="operation-modal-actions operation-confirm-actions"><button type="button" class="operation-modal-cancel" data-listing-source-cancel>닫기</button><button type="button" class="operation-modal-confirm" data-listing-source-go>Tab 0에서 열기</button></footer>
+    </section>`;
+  const close = () => {
+    backdrop.remove();
+    document.body.classList.remove('operation-modal-open');
+  };
+  backdrop.addEventListener('click', (event) => { if (event.target === backdrop) close(); });
+  backdrop.querySelector('[data-listing-source-cancel]')?.addEventListener('click', close);
+  backdrop.querySelector('[data-listing-source-go]')?.addEventListener('click', () => {
+    try {
+      sessionStorage.setItem('skbp.step0.metadata-target.v1', JSON.stringify({ recordId, field }));
+    } catch (_) {}
+    window.location.assign('/?tab=step0');
+  });
+  document.body.appendChild(backdrop);
+  document.body.classList.add('operation-modal-open');
+  backdrop.querySelector('[data-listing-source-go]')?.focus();
 }
 
 function objectValue(value) {
@@ -843,7 +883,7 @@ function triageSyncedListingCommentsMarkup(record) {
   if (!entries.length) return '';
   return `<section class="triage-final-comment-posts" aria-label="Listing Comments">${entries.map((entry) => {
     const display = listingCommentDisplay(record, entry);
-    return `<article class="triage-score-note"><p>${escapeHtml(entry.body || '')}</p><small>${escapeHtml(commentByline(display.breadcrumb, display.author, formatTimestamp(display.timestamp)))}</small></article>`;
+    return `<article class="triage-score-note is-listing-source" data-listing-source-field="comment" title="Tab 0 원본에서 관리"><p>${escapeHtml(entry.body || '')}</p><small>${escapeHtml(commentByline(display.breadcrumb, display.author, formatTimestamp(display.timestamp)))}</small></article>`;
   }).join('')}</section>`;
 }
 
@@ -858,7 +898,8 @@ function triageContactHistoryMarkup(record) {
         <small>해당 Pipeline과 관련해 수행한 미팅·통화·이메일·후속 조치 등 Contact History를 기록하세요.</small>
       </div>
       ${entries.length ? `<div class="triage-score-note-list">${entries.map((entry) => {
-        const isOwn = currentUserOwnsOperationalComment(entry);
+        const listingSource = isListingContactSource(entry);
+        const isOwn = !listingSource && currentUserOwnsOperationalComment(entry);
         const display = contactHistoryDisplay(record, entry);
         return `<article class="triage-score-note${isOwn ? ' is-editable' : ''}"${isOwn ? ` data-triage-contact-history-edit data-comment-id="${escapeHtml(entry.id)}" title="두 번 클릭하여 수정"` : ''}>
           ${isOwn ? `<button type="button" class="triage-note-delete" data-triage-contact-history-delete data-comment-id="${escapeHtml(entry.id)}" aria-label="내 Contact History 삭제" title="내 Contact History 삭제">×</button>` : ''}
@@ -1141,6 +1182,14 @@ function renderQuickSummary(record) {
     ${triageContactHistoryMarkup(record)}
     ${renderTriageReviewHistory(record)}
   `;
+  const contactEntries = arrayValue(objectValue(objectValue(record?.meta).collaboration).comments)
+    .filter((entry) => objectValue(entry).category === 'contact_history');
+  elements.quickSummary.querySelectorAll('.triage-contact-history .triage-score-note').forEach((card, index) => {
+    if (!isListingContactSource(contactEntries[index])) return;
+    card.classList.add('is-listing-source');
+    card.dataset.listingSourceField = 'contact';
+    card.title = 'Tab 0 원본에서 관리';
+  });
 }
 
 function triageRubricResetSuffix(record, entry) {
@@ -1665,6 +1714,12 @@ elements.quickSummary?.addEventListener('click', (event) => {
   }
 });
 elements.quickSummary?.addEventListener('dblclick', (event) => {
+  const listingSource = event.target.closest('[data-listing-source-field]');
+  if (listingSource && !event.target.closest('button, textarea, form')) {
+    event.preventDefault();
+    openListingSourceManagement(listingSource.dataset.listingSourceField);
+    return;
+  }
   const finalPost = event.target.closest('[data-triage-final-post-edit]');
   if (finalPost && !event.target.closest('button, textarea, form')) {
     event.preventDefault();

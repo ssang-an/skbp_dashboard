@@ -3608,6 +3608,65 @@ def pdf_text_preview(file_path: Path) -> str:
     return "\n\n".join(pages_text)[:ATTACHMENT_PREVIEW_TEXT_LIMIT]
 
 
+def read_text_attachment(file_path: Path) -> str:
+    """Read user-supplied text files without assuming UTF-8.
+
+    Korean mail exports and copied Outlook text are commonly CP949/EUC-KR.
+    Decoding them as UTF-8 with replacement turns readable text into mojibake
+    and also makes the material unusable as Agent context.
+    """
+    raw = file_path.read_bytes()
+    encodings: list[str] = []
+    if raw.startswith((b"\xff\xfe", b"\xfe\xff")):
+        encodings.append("utf-16")
+    elif raw.startswith(b"\xef\xbb\xbf"):
+        encodings.append("utf-8-sig")
+    elif raw.count(b"\x00") > max(8, len(raw) // 20):
+        # UTF-16 exports do not always include a BOM.
+        encodings.extend(("utf-16", "utf-16-le", "utf-16-be"))
+    encodings.extend(("utf-8-sig", "cp949", "euc-kr"))
+
+    attempted: set[str] = set()
+    for encoding in encodings:
+        if encoding in attempted:
+            continue
+        attempted.add(encoding)
+        try:
+            return raw.decode(encoding)[:ATTACHMENT_PREVIEW_TEXT_LIMIT]
+        except UnicodeDecodeError:
+            continue
+    # Keep a readable fallback for genuinely mixed or damaged text files.
+    return raw.decode("utf-8", errors="replace")[:ATTACHMENT_PREVIEW_TEXT_LIMIT]
+
+
+def ensure_office_attachment_preview(attachment: dict[str, Any], file_path: Path) -> bool:
+    """Create a browser-viewable PDF for an Office attachment when needed.
+
+    Existing attachments may have been uploaded on a machine without
+    LibreOffice. Retrying lazily lets those records gain a slide/document
+    preview after LibreOffice becomes available, without rerunning Agent or
+    Filter 3 analysis.
+    """
+    if file_path.suffix.lower() not in {".ppt", ".pptx", ".doc", ".docx"}:
+        return False
+    conversion = document_pipeline.convert_office_to_pdf(file_path)
+    preview_file = conversion.get("pdf_path") if isinstance(conversion, dict) else None
+    if not preview_file:
+        return False
+
+    attachment["preview_pdf_path"] = attachment_url_for_path(Path(str(preview_file)))
+    processing = attachment.get("document_processing")
+    if not isinstance(processing, dict):
+        processing = {}
+        attachment["document_processing"] = processing
+    viewer_conversion = processing.get("viewer_conversion")
+    if not isinstance(viewer_conversion, dict):
+        viewer_conversion = {}
+        processing["viewer_conversion"] = viewer_conversion
+    viewer_conversion.update({"status": "converted", "pdf_path": None, "error": None})
+    return True
+
+
 def extract_attachment_text(attachment: dict[str, Any]) -> str:
     processing = attachment.get("document_processing")
     if isinstance(processing, dict):
@@ -3621,7 +3680,7 @@ def extract_attachment_text(attachment: dict[str, Any]) -> str:
     suffix = file_path.suffix.lower()
     try:
         if suffix == ".txt":
-            return file_path.read_text(encoding="utf-8", errors="replace")[:ATTACHMENT_PREVIEW_TEXT_LIMIT]
+            return read_text_attachment(file_path)
         if suffix in {".pptx", ".docx"}:
             return openxml_text_preview(file_path)
         if suffix == ".xlsx":
@@ -3661,7 +3720,7 @@ ADMET_CANONICAL_STUDY_ALIASES: dict[str, tuple[str, ...]] = {
     "rat_pk": ("rat pk",),
     "dog_pk": ("dog pk", "canine pk"),
     "monkey_pk": ("monkey pk", "primate pk", "nhp pk"),
-    "bbb_penetration": ("bbb penetration", "blood brain barrier", "brain penetration"),
+    "bbb_penetration": ("bbb", "bbb penetration", "blood brain barrier", "brain penetration"),
     "brain_tissue_binding": ("brain tissue binding", "brain binding"),
     "plasma_protein_binding": ("plasma protein binding", "ppb"),
     "liver_microsome_stability": ("liver microsome stability", "microsomal stability", "hlm stability"),
@@ -3707,8 +3766,48 @@ def partner_material_category(filename: Any) -> str | None:
 def attachment_partner_material_category(attachment: Any) -> str | None:
     if not isinstance(attachment, dict):
         return None
+    if str(attachment.get("source") or "").strip().casefold() == "contact_history":
+        return None
     declared = str(attachment.get("partner_material_category") or "").strip().casefold()
     return declared if declared in PARTNER_MATERIAL_CATEGORIES else partner_material_category(attachment.get("filename"))
+
+
+def normalize_contact_history_attachment_scopes(record: dict[str, Any]) -> bool:
+    """Migrate legacy filename-only Contact History posts to attachment scope.
+
+    Earlier clients uploaded a general attachment and then wrote its filename as a
+    Contact History comment. The comment's attachment ID is enough to safely
+    recover its intended workspace without treating the file as Partner Material.
+    """
+    meta = record.get("meta")
+    if not isinstance(meta, dict):
+        return False
+    attachments = meta.get("attachments")
+    collaboration = meta.get("collaboration")
+    comments = collaboration.get("comments") if isinstance(collaboration, dict) else None
+    if not isinstance(attachments, list) or not isinstance(comments, list):
+        return False
+    contact_attachment_ids = {
+        str(comment.get("attachment_id") or "")
+        for comment in comments
+        if isinstance(comment, dict)
+        and comment.get("category") == "contact_history"
+        and comment.get("attachment_id")
+    }
+    changed = False
+    for attachment in attachments:
+        if not isinstance(attachment, dict) or str(attachment.get("id") or "") not in contact_attachment_ids:
+            continue
+        if attachment.get("source") != "contact_history":
+            attachment["source"] = "contact_history"
+            changed = True
+        if attachment.pop("partner_material_category", None) is not None:
+            changed = True
+    if changed:
+        focus = meta.get("focus_management")
+        if isinstance(focus, dict):
+            clear_removed_partner_material_flags(focus, attachments)
+    return changed
 
 
 def clear_removed_partner_material_flags(focus: dict[str, Any], attachments: list[Any]) -> None:
@@ -4375,6 +4474,7 @@ def load_records() -> list[dict[str, Any]]:
     ensure_data_file()
     records = normalize_records(read_json(DATA_FILE))
     for record in records:
+        normalize_contact_history_attachment_scopes(record)
         normalize_marketability_global_conversion(record)
         synchronize_full_scout_source_revision_metadata(record)
     return records
@@ -5135,11 +5235,15 @@ def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
         "listed_at": str(raw.get("listed_at") or "").strip(),
         "comment": str(raw.get("comment") or "").strip(),
         "comment_author": str(raw.get("comment_author") or "").strip(),
+        "comment_author_user_id": str(raw.get("comment_author_user_id") or "").strip(),
+        "comment_author_email": str(raw.get("comment_author_email") or "").strip().casefold(),
         "comment_source": str(raw.get("comment_source") or "").strip(),
         "comment_created_at": str(raw.get("comment_created_at") or "").strip(),
         "comment_updated_at": str(raw.get("comment_updated_at") or "").strip(),
         "contact": normalize_pipeline_contact(raw.get("contact")),
         "contact_author": str(raw.get("contact_author") or "").strip(),
+        "contact_author_user_id": str(raw.get("contact_author_user_id") or "").strip(),
+        "contact_author_email": str(raw.get("contact_author_email") or "").strip().casefold(),
         "contact_source": str(raw.get("contact_source") or "").strip(),
         "contact_created_at": str(raw.get("contact_created_at") or "").strip(),
         "contact_updated_at": str(raw.get("contact_updated_at") or "").strip(),
@@ -5193,11 +5297,11 @@ def merge_pipeline_metadata(
             else:
                 result[field] = update[field]
             if field == "comment" and (update[field] or field in allow_empty_fields):
-                for provenance_field in ("comment_author", "comment_source", "comment_created_at", "comment_updated_at"):
+                for provenance_field in ("comment_author", "comment_author_user_id", "comment_author_email", "comment_source", "comment_created_at", "comment_updated_at"):
                     if update[provenance_field]:
                         result[provenance_field] = update[provenance_field]
             if field == "contact" and (update[field] or field in allow_empty_fields):
-                for provenance_field in ("contact_author", "contact_source", "contact_created_at", "contact_updated_at"):
+                for provenance_field in ("contact_author", "contact_author_user_id", "contact_author_email", "contact_source", "contact_created_at", "contact_updated_at"):
                     if update[provenance_field]:
                         result[provenance_field] = update[provenance_field]
     for field in ("asset_aliases", "company_aliases"):
@@ -5214,32 +5318,43 @@ def candidate_queue_entry_metadata(entry: dict[str, Any]) -> dict[str, str]:
     )
 
 
-def can_edit_listing_comment(metadata: dict[str, str], actor_name: str) -> bool:
-    """Only the named administrator may alter a direct Tab 0 Listing post."""
-    comment = str(metadata.get("comment") or "").strip()
-    if not comment:
+def listing_metadata_owned_by_account(metadata: dict[str, str], prefix: str, account: dict[str, Any]) -> bool:
+    """Check a direct Tab 0 post against its account identity, not its display name."""
+    author_id = str(metadata.get(f"{prefix}_author_user_id") or "").strip()
+    actor_id = str(account.get("id") or "").strip()
+    if author_id:
+        return bool(actor_id) and secrets.compare_digest(author_id, actor_id)
+
+    author_email = str(metadata.get(f"{prefix}_author_email") or "").strip().casefold()
+    actor_email = str(account.get("email") or "").strip().casefold()
+    if author_email:
+        return bool(actor_email) and secrets.compare_digest(author_email, actor_email)
+
+    # Records created before account identity was stored remain manageable by
+    # their displayed author. Every new direct post takes the stricter branch.
+    author_name = str(metadata.get(f"{prefix}_author") or "").strip().casefold()
+    actor_name = str(account.get("name") or account.get("email") or "").strip().casefold()
+    return bool(author_name) and author_name == actor_name
+
+
+def can_edit_listing_comment(metadata: dict[str, str], account: dict[str, Any]) -> bool:
+    """Only its author account may alter a direct Tab 0 Listing post."""
+    if not str(metadata.get("comment") or "").strip():
         return True
     source = str(metadata.get("comment_source") or "").strip()
     if source == "team_review_import":
         return True
-    if source != "admin_listing_post":
-        return False
-    author = str(metadata.get("comment_author") or "").strip()
-    return bool(author) and author.casefold() == str(actor_name or "").strip().casefold()
+    return source == "admin_listing_post" and listing_metadata_owned_by_account(metadata, "comment", account)
 
 
-def can_edit_listing_contact(metadata: dict[str, str], actor_name: str) -> bool:
-    """Only the named administrator may alter a direct Tab 0 Contact History post."""
-    contact = str(metadata.get("contact") or "").strip()
-    if not contact:
+def can_edit_listing_contact(metadata: dict[str, str], account: dict[str, Any]) -> bool:
+    """Only its author account may alter a direct Tab 0 Contact History post."""
+    if not str(metadata.get("contact") or "").strip():
         return True
     source = str(metadata.get("contact_source") or "").strip()
     if source == "team_review_import":
         return True
-    if source != "admin_contact_post":
-        return False
-    author = str(metadata.get("contact_author") or "").strip()
-    return bool(author) and author.casefold() == str(actor_name or "").strip().casefold()
+    return source == "admin_contact_post" and listing_metadata_owned_by_account(metadata, "contact", account)
 
 
 def normalize_listing_details(value: Any) -> dict[str, str]:
@@ -5459,7 +5574,7 @@ def pipeline_human_comment_feed(
     if base_comment:
         entries.append({
             "source": "Tab 0 Team Review · Listing Comment",
-            "author": str((metadata or {}).get("comment_author") or "Team Review").strip(),
+            "author": str((metadata or {}).get("comment_author") or "Team").strip(),
             "created_at": str((metadata or {}).get("comment_updated_at") or (metadata or {}).get("comment_created_at") or "").strip(),
             "body": base_comment,
         })
@@ -5541,7 +5656,7 @@ def pipeline_human_comment_feed(
     base_entries = entries[:1] if entries and entries[0].get("source") == "Tab 0 Team Review · Listing Comment" else []
     if base_entries:
         comment_source = str((metadata or {}).get("comment_source") or "").strip()
-        comment_author = str((metadata or {}).get("comment_author") or "Team Review").strip()
+        comment_author = str((metadata or {}).get("comment_author") or "Team").strip()
         # Only an explicit Excel import is labelled as a bulk upload.  Older direct
         # Tab 0 posts may not have a stored author, but must not be misrepresented
         # as an import merely because their legacy fallback author is Team Review.
@@ -5591,6 +5706,11 @@ def upsert_system_comment(
     created_at: str = "",
     category: str = "comment",
     label: str = "",
+    origin_record_id: str = "",
+    origin_item_id: str = "",
+    origin_kind: str = "",
+    origin_author_user_id: str = "",
+    origin_author_email: str = "",
 ) -> bool:
     """Create/update a durable cross-workflow comment without duplicate posts."""
     body = str(body or "").strip()
@@ -5620,6 +5740,11 @@ def upsert_system_comment(
             or existing.get("source") != source
             or existing.get("category") != category
             or existing.get("label") != label
+            or existing.get("origin_record_id") != origin_record_id
+            or existing.get("origin_item_id") != origin_item_id
+            or existing.get("origin_kind") != origin_kind
+            or existing.get("origin_author_user_id") != origin_author_user_id
+            or existing.get("origin_author_email") != origin_author_email
         )
         if not changed:
             return False
@@ -5629,6 +5754,11 @@ def upsert_system_comment(
             "source": source,
             "category": category,
             "label": label,
+            "origin_record_id": origin_record_id,
+            "origin_item_id": origin_item_id,
+            "origin_kind": origin_kind,
+            "origin_author_user_id": origin_author_user_id,
+            "origin_author_email": origin_author_email,
             "updated_at": now,
             "system_import": True,
         })
@@ -5648,6 +5778,11 @@ def upsert_system_comment(
             "system_import": True,
             "category": category,
             "label": label,
+            "origin_record_id": origin_record_id,
+            "origin_item_id": origin_item_id,
+            "origin_kind": origin_kind,
+            "origin_author_user_id": origin_author_user_id,
+            "origin_author_email": origin_author_email,
         })
         changed = True
     collaboration["updated_at"] = now
@@ -5674,6 +5809,188 @@ def remove_system_comment(record: dict[str, Any], import_key: str) -> bool:
     return True
 
 
+def remove_legacy_listing_contact_posts(record: dict[str, Any]) -> bool:
+    """Remove the pre-standardisation Tab 0 Contact History mirror.
+
+    Earlier builds used ``listing_contact_post`` for Contact History. The
+    canonical mirror is now ``listing_contact_history``; keeping both displays
+    the same Tab 0 post twice and gives the legacy copy the wrong permissions.
+    """
+    meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+    collaboration = meta.get("collaboration") if isinstance(meta.get("collaboration"), dict) else {}
+    comments = collaboration.get("comments") if isinstance(collaboration.get("comments"), list) else []
+    remaining = [
+        comment for comment in comments
+        if not (
+            isinstance(comment, dict)
+            and comment.get("system_import") is True
+            and str(comment.get("category") or "") == "contact_history"
+            and str(comment.get("source") or "") == "listing_contact_post"
+        )
+    ]
+    if len(remaining) == len(comments):
+        return False
+    collaboration["comments"] = remaining
+    collaboration["comment_count"] = len(remaining)
+    collaboration["updated_at"] = datetime.now(timezone.utc).isoformat()
+    meta["collaboration"] = collaboration
+    record["meta"] = meta
+    return True
+
+
+DELEGATED_TRIAGE_COMMENT_KINDS = {
+    "triage_final_comment",
+    "triage_topic_note",
+    "triage_contact_history",
+}
+
+
+def delegated_triage_comment_origin(
+    records: list[dict[str, Any]], imported_comment: dict[str, Any]
+) -> tuple[int, dict[str, Any], str] | None:
+    """Resolve a Tab 2 mirror back to its owned Tab 1 note.
+
+    A Full Scout workspace is the durable display workspace once it exists, but
+    Tab 1 remains the source of Fast Triage-owned operational notes.  Editing a
+    mirror must therefore update that source and re-run sync, never fork it.
+    """
+    if not imported_comment.get("system_import"):
+        return None
+    kind = str(imported_comment.get("origin_kind") or "")
+    origin_record_id = str(imported_comment.get("origin_record_id") or "")
+    if kind not in DELEGATED_TRIAGE_COMMENT_KINDS or not origin_record_id:
+        return None
+    for index, record in enumerate(records):
+        if record_key(record) == origin_record_id and is_fast_triage_record(record):
+            return index, record, kind
+    return None
+
+
+def account_owns_delegated_triage_comment(imported_comment: dict[str, Any], account: dict[str, Any]) -> bool:
+    return comment_owned_by_account(
+        {
+            "author_user_id": imported_comment.get("origin_author_user_id"),
+            "author_email": imported_comment.get("origin_author_email"),
+        },
+        account,
+    )
+
+
+def update_delegated_triage_comment(
+    records: list[dict[str, Any]],
+    imported_comment: dict[str, Any],
+    account: dict[str, Any],
+    body: str,
+    request: Request,
+) -> bool:
+    resolved = delegated_triage_comment_origin(records, imported_comment)
+    if resolved is None:
+        return False
+    if not account_owns_delegated_triage_comment(imported_comment, account):
+        raise HTTPException(status_code=403, detail="Only the original Tab 1 author can edit this note.")
+    index, origin, kind = resolved
+    now = datetime.now(timezone.utc).isoformat()
+    actor_name = str(account.get("name") or "").strip()
+    origin_meta = origin.setdefault("meta", {})
+    previous = ""
+    if kind == "triage_final_comment":
+        review = origin_meta.setdefault("human_review", {})
+        overrides = review.setdefault("overrides", {})
+        previous = str(overrides.get("final_comment") or "")
+        if not previous:
+            raise HTTPException(status_code=404, detail="The original Tab 1 comment was not found.")
+        overrides["final_comment"] = body
+        review["final_comment_updated_at"] = now
+    elif kind == "triage_topic_note":
+        note_id = str(imported_comment.get("origin_item_id") or "")
+        notes = origin_meta.get("topic_notes") if isinstance(origin_meta.get("topic_notes"), list) else []
+        note = next((item for item in notes if isinstance(item, dict) and str(item.get("id") or "") == note_id), None)
+        if note is None:
+            raise HTTPException(status_code=404, detail="The original Tab 1 note was not found.")
+        previous = str(note.get("body") or "")
+        note["body"] = body
+        note["updated_at"] = now
+    else:
+        comment_id = str(imported_comment.get("origin_item_id") or "")
+        collaboration = origin_meta.get("collaboration") if isinstance(origin_meta.get("collaboration"), dict) else {}
+        comments = collaboration.get("comments") if isinstance(collaboration.get("comments"), list) else []
+        comment = next((item for item in comments if isinstance(item, dict) and str(item.get("id") or "") == comment_id), None)
+        if comment is None:
+            raise HTTPException(status_code=404, detail="The original Tab 1 Contact History was not found.")
+        previous = str(comment.get("body") or "")
+        comment["body"] = body
+        comment["updated_at"] = now
+        collaboration["updated_at"] = now
+    append_edit_history(
+        origin,
+        source="delegated_triage_comment_edit",
+        actor_ip=get_client_ip(request),
+        actor_name=actor_name,
+        field="collaboration.comments.delegated_from_tab2",
+        previous_value=previous,
+        new_value=body,
+    )
+    records[index] = origin
+    synchronize_cross_workflow_comments(records)
+    return True
+
+
+def delete_delegated_triage_comment(
+    records: list[dict[str, Any]],
+    imported_comment: dict[str, Any],
+    account: dict[str, Any],
+    request: Request,
+) -> bool:
+    resolved = delegated_triage_comment_origin(records, imported_comment)
+    if resolved is None:
+        return False
+    if not account_owns_delegated_triage_comment(imported_comment, account):
+        raise HTTPException(status_code=403, detail="Only the original Tab 1 author can delete this note.")
+    index, origin, kind = resolved
+    origin_meta = origin.setdefault("meta", {})
+    previous = ""
+    if kind == "triage_final_comment":
+        review = origin_meta.setdefault("human_review", {})
+        overrides = review.setdefault("overrides", {})
+        previous = str(overrides.get("final_comment") or "")
+        if not previous:
+            raise HTTPException(status_code=404, detail="The original Tab 1 comment was not found.")
+        overrides.pop("final_comment", None)
+        for key in ("final_comment_author_id", "final_comment_author_name", "final_comment_updated_at"):
+            review.pop(key, None)
+    elif kind == "triage_topic_note":
+        note_id = str(imported_comment.get("origin_item_id") or "")
+        notes = origin_meta.get("topic_notes") if isinstance(origin_meta.get("topic_notes"), list) else []
+        note = next((item for item in notes if isinstance(item, dict) and str(item.get("id") or "") == note_id), None)
+        if note is None:
+            raise HTTPException(status_code=404, detail="The original Tab 1 note was not found.")
+        previous = str(note.get("body") or "")
+        origin_meta["topic_notes"] = [item for item in notes if item is not note]
+    else:
+        comment_id = str(imported_comment.get("origin_item_id") or "")
+        collaboration = origin_meta.get("collaboration") if isinstance(origin_meta.get("collaboration"), dict) else {}
+        comments = collaboration.get("comments") if isinstance(collaboration.get("comments"), list) else []
+        comment = next((item for item in comments if isinstance(item, dict) and str(item.get("id") or "") == comment_id), None)
+        if comment is None:
+            raise HTTPException(status_code=404, detail="The original Tab 1 Contact History was not found.")
+        previous = str(comment.get("body") or "")
+        collaboration["comments"] = [item for item in comments if item is not comment]
+        collaboration["comment_count"] = len(collaboration["comments"])
+        collaboration["updated_at"] = datetime.now(timezone.utc).isoformat()
+    append_edit_history(
+        origin,
+        source="delegated_triage_comment_delete",
+        actor_ip=get_client_ip(request),
+        actor_name=str(account.get("name") or ""),
+        field="collaboration.comments.delegated_from_tab2",
+        previous_value=previous,
+        new_value="deleted",
+    )
+    records[index] = origin
+    synchronize_cross_workflow_comments(records)
+    return True
+
+
 def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
     """Promote Listing and Fast Triage human notes into their durable destinations.
 
@@ -5696,9 +6013,9 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
         canonical_workspace_records = full_scout_records or fast_triage_records
 
         if listing_comment:
-            listing_author = str(metadata.get("comment_author") or "Team Review").strip()
+            listing_author = str(metadata.get("comment_author") or "Team").strip()
             if str(metadata.get("comment_source") or "").strip() == "team_review_import" or listing_author in {"Tab 0 Team Review", "Team Review"}:
-                listing_author = "Team Review"
+                listing_author = "Team"
             for target in canonical_workspace_records:
                 if upsert_system_comment(
                     target,
@@ -5717,6 +6034,15 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
                     changed_count += 1
 
         listing_contact_key = imported_comment_key("tab0-contact", identity)
+        for target in canonical_workspace_records:
+            if remove_legacy_listing_contact_posts(target):
+                append_edit_history(
+                    target,
+                    source="cross_workflow_contact_sync",
+                    actor_ip="system",
+                    field="collaboration.comments.tab0_contact_legacy_cleanup",
+                )
+                changed_count += 1
         if listing_contact:
             listing_author = str(metadata.get("contact_author") or "Team Review").strip()
             if str(metadata.get("contact_source") or "").strip() == "team_review_import" or listing_author in {"Tab 0 Team Review", "Team Review"}:
@@ -5764,15 +6090,26 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
                     if upsert_system_comment(
                         target,
                         import_key=imported_comment_key("fast-triage-final", triage_key),
-                        author="Fast Triage · Final Comment",
+                        author=str(human_review.get("final_comment_author_name") or "Fast Triage").strip(),
                         body=final_comment,
                         source="fast_triage_final_comment",
                         created_at=str(human_review.get("final_comment_updated_at") or ""),
+                        label="Tab 1 · Fast Triage · Comment",
+                        origin_record_id=triage_key,
+                        origin_kind="triage_final_comment",
+                        origin_author_user_id=str(human_review.get("final_comment_author_id") or ""),
                     ):
+                        append_edit_history(target, source="cross_workflow_comment_sync", actor_ip="system", field="collaboration.comments.fast_triage_final")
+                        changed_count += 1
+            else:
+                final_import_key = imported_comment_key("fast-triage-final", triage_key)
+                for target in full_scout_records:
+                    if remove_system_comment(target, final_import_key):
                         append_edit_history(target, source="cross_workflow_comment_sync", actor_ip="system", field="collaboration.comments.fast_triage_final")
                         changed_count += 1
 
             notes = triage_meta.get("topic_notes") if isinstance(triage_meta.get("topic_notes"), list) else []
+            desired_note_import_keys: set[str] = set()
             for note in notes:
                 if not isinstance(note, dict) or note.get("is_ai") is True:
                     continue
@@ -5781,17 +6118,40 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
                 if not topic_id.startswith("triage-score-") or not body:
                     continue
                 note_key = str(note.get("id") or imported_comment_key(topic_id, body))
+                import_key = imported_comment_key("fast-triage-criterion", triage_key, note_key)
+                desired_note_import_keys.add(import_key)
                 label = triage_comment_criterion_label(note)
                 for target in full_scout_records:
                     if upsert_system_comment(
                         target,
-                        import_key=imported_comment_key("fast-triage-criterion", triage_key, note_key),
-                        author=f"Fast Triage · {label}",
+                        import_key=import_key,
+                        author=str(note.get("author_name") or "Fast Triage").strip(),
                         body=body,
                         source="fast_triage_criterion_comment",
                         created_at=str(note.get("created_at") or note.get("updated_at") or ""),
+                        label=f"Tab 1 · Fast Triage · {label}",
+                        origin_record_id=triage_key,
+                        origin_item_id=str(note.get("id") or ""),
+                        origin_kind="triage_topic_note",
+                        origin_author_user_id=str(note.get("author_id") or ""),
                     ):
                         append_edit_history(target, source="cross_workflow_comment_sync", actor_ip="system", field=f"collaboration.comments.fast_triage_{topic_id}")
+                        changed_count += 1
+
+            for target in full_scout_records:
+                collaboration = ((target.get("meta") or {}).get("collaboration") or {})
+                obsolete_note_import_keys = [
+                    str(item.get("import_key") or "")
+                    for item in (collaboration.get("comments") or [])
+                    if isinstance(item, dict)
+                    and item.get("system_import") is True
+                    and item.get("origin_kind") == "triage_topic_note"
+                    and item.get("origin_record_id") == triage_key
+                    and str(item.get("import_key") or "") not in desired_note_import_keys
+                ]
+                for import_key in obsolete_note_import_keys:
+                    if remove_system_comment(target, import_key):
+                        append_edit_history(target, source="cross_workflow_comment_sync", actor_ip="system", field="collaboration.comments.fast_triage_topic")
                         changed_count += 1
 
             contact_comments = (
@@ -5821,6 +6181,11 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
                         created_at=str(comment.get("created_at") or comment.get("updated_at") or ""),
                         category="contact_history",
                         label="Tab 1 · Fast Triage · Contact History",
+                        origin_record_id=triage_key,
+                        origin_item_id=str(comment.get("id") or ""),
+                        origin_kind="triage_contact_history",
+                        origin_author_user_id=str(comment.get("author_user_id") or ""),
+                        origin_author_email=str(comment.get("author_email") or "").strip().casefold(),
                     ):
                         append_edit_history(target, source="cross_workflow_contact_sync", actor_ip="system", field="collaboration.comments.fast_triage_contact")
                         changed_count += 1
@@ -8946,7 +9311,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
         incoming_metadata = {
             "listed_at": added_at,
             "comment": row.get("comment", ""),
-            "comment_author": "Team Review" if row.get("comment", "") else "",
+            "comment_author": "Team" if row.get("comment", "") else "",
             "comment_source": "team_review_import" if row.get("comment", "") else "",
             "comment_created_at": added_at if row.get("comment", "") else "",
             "comment_updated_at": added_at if row.get("comment", "") else "",
@@ -9300,11 +9665,15 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
     actor_name = str(account.get("name") or account.get("email") or "Administrator").strip()
     direct_comment_metadata = {
         "comment_author": actor_name,
+        "comment_author_user_id": str(account.get("id") or "").strip(),
+        "comment_author_email": str(account.get("email") or "").strip().casefold(),
         "comment_source": "admin_listing_post",
         "comment_created_at": changed_at,
         "comment_updated_at": changed_at,
     } if field == "comment" else ({
         "contact_author": actor_name,
+        "contact_author_user_id": str(account.get("id") or "").strip(),
+        "contact_author_email": str(account.get("email") or "").strip().casefold(),
         "contact_source": "admin_contact_post",
         "contact_created_at": changed_at,
         "contact_updated_at": changed_at,
@@ -9317,9 +9686,9 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
         entry = next((item for item in queue if str(item.get("id") or "") == queue_id), None)
         if entry is None:
             raise HTTPException(status_code=404, detail="Listing entry was not found.")
-        if field == "comment" and not can_edit_listing_comment(candidate_queue_entry_metadata(entry), actor_name):
+        if field == "comment" and not can_edit_listing_comment(candidate_queue_entry_metadata(entry), account):
             raise HTTPException(status_code=403, detail="Listing Comment는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
-        if field == "contact" and not can_edit_listing_contact(candidate_queue_entry_metadata(entry), actor_name):
+        if field == "contact" and not can_edit_listing_contact(candidate_queue_entry_metadata(entry), account):
             raise HTTPException(status_code=403, detail="Contact History는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
         updated = merge_pipeline_metadata(
             candidate_queue_entry_metadata(entry),
@@ -9342,9 +9711,9 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
         )
         if group is None:
             raise HTTPException(status_code=404, detail="Pipeline record was not found.")
-        if field == "comment" and not can_edit_listing_comment(pipeline_metadata_for_group(group), actor_name):
+        if field == "comment" and not can_edit_listing_comment(pipeline_metadata_for_group(group), account):
             raise HTTPException(status_code=403, detail="Listing Comment는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
-        if field == "contact" and not can_edit_listing_contact(pipeline_metadata_for_group(group), actor_name):
+        if field == "contact" and not can_edit_listing_contact(pipeline_metadata_for_group(group), account):
             raise HTTPException(status_code=403, detail="Contact History는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
         actor_ip = get_client_ip(request)
         for record in group.get("records") or []:
@@ -11035,6 +11404,9 @@ def delete_record_comment(record_id: str, comment_id: str, request: Request) -> 
         if target is None:
             raise HTTPException(status_code=404, detail="Comment was not found.")
         if target.get("system_import") is True:
+            if delete_delegated_triage_comment(records, target, account, request):
+                save_records(records)
+                return {"ok": True, "record_id": record_id, "record": record, "deleted_id": comment_id}
             if not is_auth_admin(account):
                 raise HTTPException(status_code=403, detail="Only administrators can remove imported comments.")
         else:
@@ -11097,6 +11469,16 @@ async def update_record_comment(record_id: str, comment_id: str, request: Reques
         if target is None:
             raise HTTPException(status_code=404, detail="Comment was not found.")
         if target.get("system_import") is True:
+            if update_delegated_triage_comment(records, target, account, body, request):
+                save_records(records)
+                updated = next(
+                    (
+                        comment for comment in ((record.get("meta") or {}).get("collaboration") or {}).get("comments", [])
+                        if isinstance(comment, dict) and str(comment.get("id") or "") == comment_id
+                    ),
+                    target,
+                )
+                return {"ok": True, "record_id": record_id, "record": record, "comment": updated}
             raise HTTPException(status_code=403, detail="Imported comments are read-only.")
         if not comment_owned_by_account(target, account):
             raise HTTPException(status_code=403, detail="Only the author can edit this comment.")
@@ -11265,6 +11647,7 @@ async def upload_record_attachment(
     file: UploadFile = File(...),
     uploaded_by: str = Form(""),
     partner_material_category_value: str = Form(""),
+    attachment_source: str = Form(""),
 ) -> dict[str, Any]:
     original_name = file.filename or "attachment"
     extension = Path(original_name).suffix.lower()
@@ -11301,10 +11684,24 @@ async def upload_record_attachment(
             "uploaded_at": created_at,
             "processing_status": "processing" if extension in {".pdf", ".ppt", ".pptx"} else "not_applicable",
         }
+        source = str(attachment_source or "").strip().casefold()
+        if source and source not in {"contact_history", "due_diligence"}:
+            raise HTTPException(status_code=400, detail="Attachment source must be Contact History or Due Diligence when specified.")
+        if source:
+            attachment["source"] = source
+
         requested_category = str(partner_material_category_value or "").strip().casefold()
         if requested_category and requested_category not in PARTNER_MATERIAL_CATEGORIES:
             raise HTTPException(status_code=400, detail="Partner Materials category must be IR, CDP, NCDP, ADMET, or DD Report.")
-        material_category = requested_category or partner_material_category(original_name)
+        # Contact History and Due Diligence files live in their respective Team
+        # Review workspaces. DD files still retain their category for counting.
+        material_category = (
+            ""
+            if source == "contact_history"
+            else "dd_report"
+            if source == "due_diligence"
+            else (requested_category or partner_material_category(original_name))
+        )
         if material_category:
             attachment["partner_material_category"] = material_category
 
@@ -11327,7 +11724,7 @@ async def upload_record_attachment(
                     "processed_at": datetime.now(timezone.utc).isoformat(),
                     "error": str(exc)[:1000],
                 }
-        if not is_fast_triage_record(record):
+        if not is_fast_triage_record(record) and source != "contact_history":
             focus = meta.setdefault("focus_management", {})
             if material_category:
                 focus.setdefault("partner_material_flags", {})[material_category] = True
@@ -11380,6 +11777,12 @@ async def preview_record_attachment(attachment_id: str, record_id: str) -> dict[
 
         file_path = resolve_attachment_path(attachment)
         suffix = file_path.suffix.lower()
+        # Prefer a PDF rendition for PowerPoint/Word. This preserves the
+        # original slide or page layout in the existing viewer; the original
+        # Office file remains available through the download action.
+        if suffix in {".ppt", ".pptx", ".doc", ".docx"} and not attachment.get("preview_pdf_path"):
+            if ensure_office_attachment_preview(attachment, file_path):
+                save_records(records)
         response: dict[str, Any] = {
             "ok": True,
             "record_id": record_id,
@@ -11401,9 +11804,7 @@ async def preview_record_attachment(attachment_id: str, record_id: str) -> dict[
             response["preview_type"] = "pdf"
         elif suffix == ".txt":
             response["preview_type"] = "text"
-            response["text"] = file_path.read_text(encoding="utf-8", errors="replace")[
-                :ATTACHMENT_PREVIEW_TEXT_LIMIT
-            ]
+            response["text"] = read_text_attachment(file_path)
         elif suffix in {".pptx", ".docx"}:
             try:
                 extracted_text = openxml_text_preview(file_path)
@@ -11450,6 +11851,18 @@ async def delete_record_attachment(record_id: str, attachment_id: str, request: 
                 preview_file_path.unlink()
 
         attachments.remove(match)
+        # Legacy Contact History uploads created a filename-only collaboration post.
+        # Remove that companion post with the file so no orphaned editable filename remains.
+        collaboration = meta.get("collaboration")
+        if isinstance(collaboration, dict) and isinstance(collaboration.get("comments"), list):
+            collaboration["comments"] = [
+                comment
+                for comment in collaboration["comments"]
+                if not (
+                    isinstance(comment, dict)
+                    and str(comment.get("attachment_id") or "") == str(attachment_id)
+                )
+            ]
         focus = meta.get("focus_management")
         if isinstance(focus, dict):
             clear_removed_partner_material_flags(focus, attachments)
