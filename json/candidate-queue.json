@@ -557,7 +557,36 @@
     "company_input": "Genixcure Inc",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "공동연구 가능성, 울트라 올판 시장. 상업적 가치는 매우 낮음. 다만 빠른 플랫폼 POC 후 다른 파이프라인에 대한 플랫폼 검증 수단으로 가능성있음",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "6/8 (O), 인터비즈에서 미팅 예정",
+      "contact_author": "Team",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "team_review_import",
+      "contact_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "website": "https://www.genix-cure.com",
+      "asset_aliases": "GXC-301",
+      "company_aliases": "Genixcure Inc",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Suwon, Korea",
+      "modality": "Gene therapy",
+      "target": "EPM2A",
+      "main_indication": "Lafora Disease (Unverricht Disease)",
+      "stage": "Preclinical",
+      "website": "https://www.genix-cure.com"
+    }
   },
   {
     "id": "cq_fe178df3",
@@ -813,7 +842,36 @@
     "company_input": "Kine Sciences",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "Peptide를 이용한 microglia의 a-beta phagocytosis를 enhancement 시킨다는데 기전의 확인 필요. Stage 단계도 전임상단계\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://www.kinesciences.com",
+      "asset_aliases": "KINE-501A",
+      "company_aliases": "Kine Sciences",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seongnam, Korea",
+      "modality": "Peptide",
+      "target": "Microglia",
+      "main_indication": "Alzheimer's disease",
+      "stage": "Preclinical",
+      "website": "https://www.kinesciences.com"
+    }
   },
   {
     "id": "cq_7471aa53",
@@ -885,7 +943,36 @@
     "company_input": "Mepsgen Co Ltd",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "개발단계에 대한 설명 없음. 해당 기술에 대한 진척도와 개발 가능성에 대한 확인 필요\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://mepsgen.com",
+      "asset_aliases": "MG-PE3",
+      "company_aliases": "MEPSGEN\nMepsgen Co Ltd",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seoul, Korea",
+      "modality": "Lipid Nanoparticle",
+      "target": "Amyloid-β clearance",
+      "main_indication": "Alzheimer's disease",
+      "stage": "Preclinical",
+      "website": "https://mepsgen.com"
+    }
   },
   {
     "id": "cq_844afc9c",
@@ -893,7 +980,36 @@
     "company_input": "Mepsgen Co Ltd",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "개발단계에 대한 설명 없음. 해당 기술에 대한 진척도와 개발 가능성에 대한 확인 필요\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://mepsgen.com",
+      "asset_aliases": "MG-Sh19",
+      "company_aliases": "MEPSGEN\nMepsgen Co Ltd",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seoul, Korea",
+      "modality": "Lipid Nanoparticle",
+      "target": "activated microglia",
+      "main_indication": "Alzheimer's disease",
+      "stage": "Preclinical",
+      "website": "https://mepsgen.com"
+    }
   },
   {
     "id": "cq_371f23db",
@@ -909,7 +1025,36 @@
     "company_input": "MitoImmune Therapeutics Inc",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "동물실험 진행 중, In vivo efficay 미확인, 개발 단계 낮음. ROS 제거 기전을 통한 Ferroptosis 억제 기대하는 Disease Modifying Therapy로 개발 중. '23년 임상1상 승인 계획이었지만 이후 추가 업데이트 없음, 개발 후순위 추정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "컨택 후 진척도 파악 필요(NCDP 요청 완료)",
+      "contact_author": "Team",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "team_review_import",
+      "contact_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "website": "https://mitoimmune.com/",
+      "asset_aliases": "MIT-003",
+      "company_aliases": "MitoImmune Therapeutics",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seoul, Korea",
+      "modality": "Small molecule",
+      "target": "Ferroptosis",
+      "main_indication": "Friedreich's ataxia, Parkinson's disease, Alzheimer's disease",
+      "stage": "Preclinical",
+      "website": "https://mitoimmune.com/"
+    }
   },
   {
     "id": "cq_bb6ab2c5",
@@ -1013,7 +1158,36 @@
     "company_input": "Novel Pharma Inc",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "ICV 투여를 통해 결핍된 단백질을 ICV 경로를 통해 주입하여 치료 기대, Rare Diseae로서 전략적 정합성 낮음\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://novelp.com/?act=info.page&pcode=e_main",
+      "asset_aliases": "NP-3031",
+      "company_aliases": "Novel Pharma Inc",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seoul, Korea",
+      "modality": "Recombinant Protein (ICV 투여)",
+      "target": "GALC",
+      "main_indication": "Globoid Cell Leukodystrophy (Krabbe Disease)",
+      "stage": "IND-enabling",
+      "website": "https://novelp.com/?act=info.page&pcode=e_main"
+    }
   },
   {
     "id": "cq_31deaed8",
@@ -1117,7 +1291,36 @@
     "company_input": "Neuroventi Co Ltd",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "ASD에 대한 비임상 유효성 검사 완료, PK 및 비임상 독성 테스트 진행중\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://www.neuroventi.com/",
+      "asset_aliases": "NV01-062",
+      "company_aliases": "Neuroventi Co Ltd",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seoul, Korea",
+      "modality": "Small molecule",
+      "target": "Imidazoline RcNMDA Rc",
+      "main_indication": "Autism Spectrum Disorder (ASD); Depression",
+      "stage": "Preclinical",
+      "website": "https://www.neuroventi.com/"
+    }
   },
   {
     "id": "cq_9cd58f87",
@@ -1141,7 +1344,36 @@
     "company_input": "Nexmos Inc",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "압타민C 기술을 응용한 NXP031은 뇌 내 산화스트레스 및 신경염증을 감소시켜 신경세포를 보호하며, 항산화 물질의 안정적인 전달만으로\n질병을 일으키는 독성 단백질 플라크 (아밀로이드베타, 알파시뉴클레인)를 감소 가능한지 확인 필요함, DMT는 아니라고 판단됨.\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://www.nexmos.com/",
+      "asset_aliases": "NXP-031",
+      "company_aliases": "Nexmos Inc",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Yongin, Korea",
+      "modality": "Aptamer",
+      "target": "ROS Removal",
+      "main_indication": "Parkinson's disease, Alzheimer's disease, ALS, Multiple Scerosis",
+      "stage": "Preclinical",
+      "website": "https://www.nexmos.com/"
+    }
   },
   {
     "id": "cq_414789ec",
@@ -1277,7 +1509,36 @@
     "company_input": "Rudacure Co Ltd",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "MOR은 CNS target인데 TRPV1이 주로 Peripheral이라, 완벽히 CNS 약물이라기보다는 Pain therapeutics 관점.\n그래도 한번 자료는 받거나 컨택해서 물어는 볼 것\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://www.rudacure.com/ko",
+      "asset_aliases": "RCI002",
+      "company_aliases": "RudaCure",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Incheon, Korea",
+      "modality": "Small Molecule",
+      "target": "TRPV1/MOR",
+      "main_indication": "Pain, neuropathic",
+      "stage": "Preclinical",
+      "website": "https://www.rudacure.com/ko"
+    }
   },
   {
     "id": "cq_ea81d0fe",
@@ -1293,7 +1554,36 @@
     "company_input": "Regeners Inc",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "Autologous Cell Therapy로 환자 유래 세포를 사용하며, 해당 asset은 전체 PD환자의 90%를 차지하는 sporadic을 타겟으로 함.\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://www.regenersinc.com/en/index.php",
+      "asset_aliases": "RG-101",
+      "company_aliases": "Regeners Inc",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Daejeon, Korea",
+      "modality": "Cell Therapy",
+      "target": "N/A",
+      "main_indication": "Parkinson's disease, Sporadic",
+      "stage": "Preclinical",
+      "website": "https://www.regenersinc.com/en/index.php"
+    }
   },
   {
     "id": "cq_587bad92",
@@ -1301,7 +1591,36 @@
     "company_input": "Regeners Inc",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "Allogenic Cell Therapy로 다른 사람의 세포를 사용하며, genetic PD 환자를 타겟으로함. 대량 생산에 용이하고 상업화에 유리한 asset\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://www.regenersinc.com/en/index.php",
+      "asset_aliases": "RG-111",
+      "company_aliases": "Regeners Inc",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Daejeon, Korea",
+      "modality": "Cell Therapy",
+      "target": "N/A",
+      "main_indication": "Parkinson's disease, Genetic",
+      "stage": "Preclinical",
+      "website": "https://www.regenersinc.com/en/index.php"
+    }
   },
   {
     "id": "cq_a3738ec5",
@@ -1509,7 +1828,36 @@
     "company_input": "Vivozon Inc",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "3중 타겟을 하는 CNS asset으로, 바이어마커 실험에서도 일관된 긍정적 결과를 확인했다고 함.\n\n'27년 국내 1상을 목표로 하고 있는만큼, stage상 align이 높다고 판단됨.\n\n다만, 홈페이지의 설명만으로는 platform, concept을 충분히 정보를 얻을 수 없어, contact 후 정보 확인이 필요해 보임",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "O",
+      "contact_author": "Team",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "team_review_import",
+      "contact_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "website": "https://www.vivozon.com/",
+      "asset_aliases": "VVZ-3416",
+      "company_aliases": "Vivozon",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Yongin, Korea",
+      "modality": "Oral Small molecule",
+      "target": "MAO-B mGluR5 HDAC6",
+      "main_indication": "Parkinson's diseaseAlzheimer's disease",
+      "stage": "Preclinical",
+      "website": "https://www.vivozon.com/"
+    }
   },
   {
     "id": "cq_70a621bd",
@@ -1533,7 +1881,36 @@
     "company_input": "Whan In Pharm Co Ltd",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "홈페이지 indication으로 update\n홈페이지에, 기업 platform 및 \n기술력에 대해서 상세히 설명 되어 있지 않음.\n\n다양한 기업/학교과 공동연구개발을 하는것을 보아 ('22까지 update 有) NCDP 요청하면 회사 소개 및 기술 소개자료는 충분히 받을 수 있을 것으로 판단됨.\n\nNCDP 검토 후 추가 f/up 결정 의견",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "O",
+      "contact_author": "Team",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "team_review_import",
+      "contact_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "website": "https://www.whanin.com/",
+      "asset_aliases": "WIL-1901",
+      "company_aliases": "Whan In Pharm Co Ltd",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seoul, Korea",
+      "modality": "Undisclosed",
+      "target": "Undisclosed",
+      "main_indication": "Dementia",
+      "stage": "Preclinical",
+      "website": "https://www.whanin.com/"
+    }
   },
   {
     "id": "cq_75bfada3",
@@ -1973,7 +2350,36 @@
     "company_input": "Eflask Co Ltd",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "정보제한, NRDO 회사로 소개. 판교역로에 위치.",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "6/8 (O), 협업 가능성 없음 확인완료",
+      "contact_author": "Team",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "team_review_import",
+      "contact_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "website": "https://www.eflask.co.kr/",
+      "asset_aliases": "EFL-101",
+      "company_aliases": "Eflask Co Ltd",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seongnam, Korea",
+      "modality": "Undisclosed",
+      "target": "Undisclosed",
+      "main_indication": "Neurodegenerative Diseases",
+      "stage": "Discovery",
+      "website": "https://www.eflask.co.kr/"
+    }
   },
   {
     "id": "cq_7d12d526",
@@ -2053,7 +2459,36 @@
     "company_input": "Gifted MS Co Ltd",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "4세대 ASO를 플랫폼으로 항바이러스 제제를 개발하는 회사. 현재 CNS 질환을 타겟하는 리드단계의 파이프라인이 라고 명시. Monogenic disorder일 확률이 높음.",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "6/8 (O), 인터비즈에서 미팅 예정",
+      "contact_author": "Team",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "team_review_import",
+      "contact_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "website": "https://www.giftedms.com/index#PIPELINE",
+      "asset_aliases": "GMSP-11",
+      "company_aliases": "Gifted MS Co Ltd",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Incheon, Korea",
+      "modality": "ASO",
+      "target": "Undisclosed",
+      "main_indication": "Unspecified Central Nervous System Disorders",
+      "stage": "Discovery",
+      "website": "https://www.giftedms.com/index#PIPELINE"
+    }
   },
   {
     "id": "cq_c41b2c8f",
@@ -2125,7 +2560,36 @@
     "company_input": "iN Therapeutics Inc",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "ALS의 Symptomatic therapy 이지만, 기존 약물과 차별성이 있는지 확인 필요. ALSFRS-R decline 시킬수 있는가? 여부 확인\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "http://www.intherapeutics.com/",
+      "asset_aliases": "iN-3011K23",
+      "company_aliases": "iN Therapeutics Inc",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Yongin, Korea",
+      "modality": "small molecule",
+      "target": "Kv7.2/3",
+      "main_indication": "Amyotrophic Lateral Sclerosis",
+      "stage": "Discovery",
+      "website": "http://www.intherapeutics.com/"
+    }
   },
   {
     "id": "cq_490b7fb9",
@@ -2525,7 +2989,36 @@
     "company_input": "Elisigen Inc",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "Discovery X -> Preclinical 로 정정, FAM19A5의 인간 통증 타깃 검증 데이터 부족. follow-up은 필요\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://www.elisigen.com/pipeline/",
+      "asset_aliases": "NG-201NP",
+      "company_aliases": "Elisigen Inc",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seoul, Korea",
+      "modality": "AAV Gene therapy",
+      "target": "anti-FAM19A5 scFv",
+      "main_indication": "Neuropathic Pain (Neuralgia)",
+      "stage": "Preclinical",
+      "website": "https://www.elisigen.com/pipeline/"
+    }
   },
   {
     "id": "cq_4fdd12c2",
@@ -2541,7 +3034,36 @@
     "company_input": "Neuramedy Co Ltd",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "현재 Discovery 단계로 현재 전략적 정합성 낮음, NM-101과 동일한 Concept이지만 BBB penetration 개선된 것으로 파악됨\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "http://neuramedy.com/",
+      "asset_aliases": "NM-201",
+      "company_aliases": "Neuramedy",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seoul, Korea",
+      "modality": "Antibody (BBB Penetrating)",
+      "target": "TLR2",
+      "main_indication": "Parkinson's disease, other CNS disease",
+      "stage": "Discovery",
+      "website": "http://neuramedy.com/"
+    }
   },
   {
     "id": "cq_df325927",
@@ -2629,7 +3151,36 @@
     "company_input": "Orgasis Inc",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "공식홈페이지 pipeline 상 2025년 비임상 착수라고 되어있는데, 실제 update 된 내용이나 기사가 전혀 없음.\n세포 소기관 항상성 제어가 핵심 기술, 해당 asset은 기사들을 통해 미루어볼때 PINK1-Parkin axis 기반 mitophagy activator로 추측됨.\n연락해서 Stage를 파악해보는 건 괜찮지만, 26년 6월 오가시스가 글로벌 뷰티 기업 로레알의 혁신 프로그램 '빅뱅'에 선정되었다는 기사가 있음.",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "O, 인터비즈 행사에서 만나기로 함",
+      "contact_author": "Team",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "team_review_import",
+      "contact_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "website": "http://www.orgasis.co.kr/index.asp",
+      "asset_aliases": "OGS-101",
+      "company_aliases": "Orgasis Inc",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Suwon, Korea",
+      "modality": "Small molecule (추정)",
+      "target": "Undisclosed",
+      "main_indication": "Parkinson's disease",
+      "stage": "Discovery",
+      "website": "http://www.orgasis.co.kr/index.asp"
+    }
   },
   {
     "id": "cq_3d8eaf63",
@@ -2645,7 +3196,36 @@
     "company_input": "Oncozen Co Ltd",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "PROTAC/Degrader 기반 치료제\nChaperone-Mediated Protein Degradation\nDrug development 단계라고 적혀있는데, 설명은 또 discovery 단계같음.\n우선 연락해서 NCDP 받아보기\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://www.oncozen.co.kr/",
+      "asset_aliases": "OZC-006",
+      "company_aliases": "Oncozen Co Ltd",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Cheongju, Korea",
+      "modality": "Small molecule",
+      "target": "Tau",
+      "main_indication": "Neurodegenerative Diseases",
+      "stage": "Discovery",
+      "website": "https://www.oncozen.co.kr/"
+    }
   },
   {
     "id": "cq_241952ff",
@@ -2813,7 +3393,36 @@
     "company_input": "Rznomics Inc",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "APOE4 표적 RNA 치환효소 AAV 벡터 기반 AD 치료제, 단계는 Discovery로 분류는 되어 있지만, 우선 컨택은 해볼 것\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://www.rznomics.com/index.php",
+      "asset_aliases": "RZ-003",
+      "company_aliases": "Rznomics Inc",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seongnam, Korea",
+      "modality": "Gene therapy",
+      "target": "APOE4",
+      "main_indication": "Alzheimer's disease",
+      "stage": "Discovery",
+      "website": "https://www.rznomics.com/index.php"
+    }
   },
   {
     "id": "cq_fb87a904",
@@ -2821,7 +3430,36 @@
     "company_input": "Rznomics Inc",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "정보가 없어서 RZ-003 문의하면서 같이 해보기\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://www.rznomics.com/index.php",
+      "asset_aliases": "RZ-005",
+      "company_aliases": "Rznomics Inc",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seongnam, Korea",
+      "modality": "Gene therapy",
+      "target": "Undisclosed",
+      "main_indication": "Rett Syndrome",
+      "stage": "Discovery",
+      "website": "https://www.rznomics.com/index.php"
+    }
   },
   {
     "id": "cq_94f60d04",
@@ -2837,7 +3475,36 @@
     "company_input": "Checkmate Therapeutics Co Ltd",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "axonal neuropathy 의 어느 영역에서 개발중인지 확인 필요.ALS OR CMT?\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://www.lmito.com",
+      "asset_aliases": "SARM1",
+      "company_aliases": "Lmito Therapeutics",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seongnam, Korea",
+      "modality": "small molecule",
+      "target": "SARM1",
+      "main_indication": "Other neurological indications",
+      "stage": "Preclinical",
+      "website": "https://www.lmito.com"
+    }
   },
   {
     "id": "cq_6890d5b2",
@@ -2957,7 +3624,36 @@
     "company_input": "Whan In Pharm Co Ltd",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
+    "added_at": "2026-08-18T01:28:43.535867+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "홈페이지에, 기업 platform 및 기술력에 대해서 상세히 설명 되어 있지 않음.\n\n다양한 기업/학교과 공동연구개발을 하는것을 보아 ('22까지 update 有) NCDP 요청하면 회사 소개 및 기술 소개자료는 충분히 받을 수 있을 것으로 판단됨.\n\nNCDP 검토 후 추가 f/up 결정 의견",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "O",
+      "contact_author": "Team",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "team_review_import",
+      "contact_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "website": "https://www.whanin.com/",
+      "asset_aliases": "WIG-2404",
+      "company_aliases": "Whan In Pharm Co Ltd",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seoul, Korea",
+      "modality": "Undisclosed",
+      "target": "Undisclosed",
+      "main_indication": "Depression",
+      "stage": "Discovery",
+      "website": "https://www.whanin.com/"
+    }
   },
   {
     "id": "cq_acccdb8c",
@@ -3453,7 +4149,36 @@
     "company_input": "HLB",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:29:17.183393+00:00"
+    "added_at": "2026-08-18T01:29:17.183393+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "DMT PD가 아닌 Symptomatic 시장을 타겟. 특허 기간 확인필요\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://hlbneurotobe.com/kor/rnd/nt-1.html",
+      "asset_aliases": "NT-3",
+      "company_aliases": "HLB neurotobe",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Cheongju, Korea",
+      "modality": "ASO",
+      "target": "CAV3.1",
+      "main_indication": "Parkinson's disease",
+      "stage": "IND Enabling",
+      "website": "https://hlbneurotobe.com/kor/rnd/nt-1.html"
+    }
   },
   {
     "id": "cq_53e4e71e",
@@ -3493,7 +4218,36 @@
     "company_input": "Vivozon",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:29:17.183393+00:00"
+    "added_at": "2026-08-18T01:29:17.183393+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "25 DART 기준 보다 구체적 indication 변경",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "O",
+      "contact_author": "Team",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "team_review_import",
+      "contact_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "website": "https://www.vivozon.com/",
+      "asset_aliases": "VVZ-E2",
+      "company_aliases": "Vivozon",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Yongin, Korea",
+      "modality": "Small molecule",
+      "target": "Undisclosed",
+      "main_indication": "PD-LID(Parkinson's Disease Levodopa-Induced Dyskinesia)",
+      "stage": "Discovery",
+      "website": "https://www.vivozon.com/"
+    }
   },
   {
     "id": "cq_3a15f91e",
@@ -3821,7 +4575,36 @@
     "company_input": "S&K Therapeutics",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:29:17.183393+00:00"
+    "added_at": "2026-08-18T01:29:17.183393+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "NLRP3 target으로 AD 치료제를 개발하고 있음. BBB 투과가 가능하다는 전제하에 컨택",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "O, 인터비즈 행사에서 만나기로 함",
+      "contact_author": "Team",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "team_review_import",
+      "contact_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "website": "https://www.snktherapeutics.com/",
+      "asset_aliases": "S&K201",
+      "company_aliases": "S&K Therapeutics",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Suwon, Korea",
+      "modality": "Small molecule",
+      "target": "NLRP3",
+      "main_indication": "Alzheimer's disease; Multiple sclerosis (symptoms)",
+      "stage": "Discovery",
+      "website": "https://www.snktherapeutics.com/"
+    }
   },
   {
     "id": "cq_f81e5a53",
@@ -4269,7 +5052,36 @@
     "company_input": "HLB",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:29:17.183393+00:00"
+    "added_at": "2026-08-18T01:29:17.183393+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "근긴장이상증, 5HT-2A 타겟의 선택성 확인 후, 추가논의 가능성이 있음. 특허기간 확인필요\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://hlbneurotobe.com/kor/rnd/nt-1.html",
+      "asset_aliases": "NT-1",
+      "company_aliases": "HLB neurotobe",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Cheongju, Korea",
+      "modality": "small molecule",
+      "target": "5-HT 2a Antagonist",
+      "main_indication": "Dystonia",
+      "stage": "Phase 1",
+      "website": "https://hlbneurotobe.com/kor/rnd/nt-1.html"
+    }
   },
   {
     "id": "cq_f86a4e46",
@@ -4589,7 +5401,36 @@
     "company_input": "S&K Therapeutics",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:29:17.183393+00:00"
+    "added_at": "2026-08-18T01:29:17.183393+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "S&K201 asset 컨택할때 같이 문의해볼 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "O, 인터비즈 행사에서 만나기로 함",
+      "contact_author": "Team",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "team_review_import",
+      "contact_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "website": "https://www.snktherapeutics.com/",
+      "asset_aliases": "S&K601",
+      "company_aliases": "S&K Therapeutics",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Suwon, Korea",
+      "modality": "Small molecule",
+      "target": "Undisclosed",
+      "main_indication": "Multiple sclerosis (symptoms)",
+      "stage": "Discovery",
+      "website": "https://www.snktherapeutics.com/"
+    }
   },
   {
     "id": "cq_4725c4bf",
@@ -4605,7 +5446,36 @@
     "company_input": "Lmito Therapeutics",
     "status": "pending",
     "source": "paste_import",
-    "added_at": "2026-08-18T01:29:17.183393+00:00"
+    "added_at": "2026-08-18T01:29:17.183393+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "axonal neuropathy 의 어느 영역에서 개발중인지 확인 필요.ALS OR CMT?\nContact: 컨택 예정",
+      "comment_author": "Team",
+      "comment_author_user_id": "",
+      "comment_author_email": "",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "",
+      "contact_author": "",
+      "contact_author_user_id": "",
+      "contact_author_email": "",
+      "contact_source": "",
+      "contact_created_at": "",
+      "contact_updated_at": "",
+      "website": "https://www.lmito.com",
+      "asset_aliases": "Charcot-Marie-Tooth Disease Discovery",
+      "company_aliases": "Lmito Therapeutics",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Seongnam, Korea",
+      "modality": "small molecule",
+      "target": "Undisclosed",
+      "main_indication": "Charcot-Marie-Tooth disease",
+      "stage": "Preclinical",
+      "website": "https://www.lmito.com"
+    }
   },
   {
     "id": "cq_c1dfc07c",
@@ -5918,6 +6788,39 @@
       "main_indication": "PD",
       "stage": "Hit screening",
       "website": ""
+    }
+  },
+  {
+    "id": "cq_4c0b0049",
+    "asset_input": "BX1001",
+    "company_input": "Brainimmunex",
+    "status": "pending",
+    "source": "paste_import",
+    "added_at": "2026-08-25T10:11:40.715464+00:00",
+    "pipeline_metadata": {
+      "listed_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment": "Microglia rejuvenation 타겟으로, NCKAP1 추측. Immune aging 접근. 새로운 방식의 치료컨셉",
+      "comment_author": "Team",
+      "comment_source": "team_review_import",
+      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact": "O",
+      "contact_author": "Team",
+      "contact_source": "team_review_import",
+      "contact_created_at": "2026-08-25T10:11:40.715464+00:00",
+      "contact_updated_at": "2026-08-25T10:11:40.715464+00:00",
+      "website": "https://www.brainimmunex.com",
+      "asset_aliases": "BX1001",
+      "company_aliases": "Brainimmunex",
+      "updated_at": "2026-08-25T10:11:40.715464+00:00"
+    },
+    "listing_details": {
+      "country": "Suwon, Korea",
+      "modality": "Small molecule",
+      "target": "Undisclosed",
+      "main_indication": "Alzheimer's disease",
+      "stage": "preclinical",
+      "website": "https://www.brainimmunex.com"
     }
   }
 ]

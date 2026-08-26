@@ -5486,46 +5486,60 @@ def listing_import_record_candidate(record: dict[str, Any]) -> dict[str, str]:
 
 
 def listing_import_review_matches(
-    rows: list[dict[str, str]], records: list[dict[str, Any]], queue: list[dict[str, Any]]
+    rows: list[dict[str, str]],
+    records: list[dict[str, Any]],
+    queue: list[dict[str, Any]],
+    *,
+    groups: list[dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
     """Find only ambiguous Listing matches; exact matches remain automatic."""
+    # A review match is possible only within the same normalized company. Build
+    # this once instead of running the full record/queue scan for every pasted
+    # row; a 50+ row Excel import otherwise repeats identical comparisons.
+    groups = groups if groups is not None else dashboard_identity_groups(records)
+    candidates_by_company: dict[str, list[dict[str, str]]] = {}
+
+    def add_candidate(candidate: dict[str, str]) -> None:
+        company_key = normalized_pipeline_identity_text(candidate.get("company"))
+        if company_key:
+            candidates_by_company.setdefault(company_key, []).append(candidate)
+
+    for group in groups:
+        group_records = [record for record in group.get("records") or [] if isinstance(record, dict)]
+        full_records = [record for record in group_records if not is_fast_triage_record(record)]
+        fast_records = [record for record in group_records if is_fast_triage_record(record)]
+        representative = dashboard_latest_record(full_records) if full_records else dashboard_latest_record(fast_records)
+        if representative is not None:
+            add_candidate(listing_import_record_candidate(representative))
+
+    for entry in queue:
+        entry_id = str(entry.get("id") or "")
+        if not entry_id:
+            continue
+        add_candidate({
+            "target": f"queue:{entry_id}",
+            "target_type": "queue",
+            "asset": str(entry.get("asset_input") or "Unknown"),
+            "company": str(entry.get("company_input") or "Unknown"),
+            "stage": candidate_queue_entry_details(entry).get("stage") or "Unknown",
+            "workflow": "Listing",
+        })
+
     candidates_by_row: list[dict[str, Any]] = []
     for row_index, row in enumerate(rows):
         asset = str(row.get("asset_input") or "")
         company = str(row.get("company_input") or "")
         candidates: list[dict[str, str]] = []
         seen_targets: set[str] = set()
-        for group in dashboard_identity_groups(records):
-            group_records = [record for record in group.get("records") or [] if isinstance(record, dict)]
-            full_records = [record for record in group_records if not is_fast_triage_record(record)]
-            fast_records = [record for record in group_records if is_fast_triage_record(record)]
-            representative = dashboard_latest_record(full_records) if full_records else dashboard_latest_record(fast_records)
-            if representative is None:
-                continue
-            candidate = listing_import_record_candidate(representative)
+        company_key = normalized_pipeline_identity_text(company)
+        for source_candidate in candidates_by_company.get(company_key, []):
+            candidate = dict(source_candidate)
             match = pipeline_asset_match_reason(asset, candidate["asset"], company, candidate["company"])
             if not match or match[0] != "review" or candidate["target"] in seen_targets:
                 continue
             candidate["reason"] = match[1]
             candidates.append(candidate)
             seen_targets.add(candidate["target"])
-        for entry in queue:
-            candidate_asset = str(entry.get("asset_input") or "Unknown")
-            candidate_company = str(entry.get("company_input") or "Unknown")
-            match = pipeline_asset_match_reason(asset, candidate_asset, company, candidate_company)
-            target = f"queue:{entry.get('id') or ''}"
-            if not match or match[0] != "review" or not entry.get("id") or target in seen_targets:
-                continue
-            candidates.append({
-                "target": target,
-                "target_type": "queue",
-                "asset": candidate_asset,
-                "company": candidate_company,
-                "stage": candidate_queue_entry_details(entry).get("stage") or "Unknown",
-                "workflow": "Listing",
-                "reason": match[1],
-            })
-            seen_targets.add(target)
         if candidates:
             candidates_by_row.append({
                 "row_index": row_index,
@@ -9234,12 +9248,14 @@ async def preview_candidate_queue_import(request: Request) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise HTTPException(status_code=400, detail="Expected a Listing grid payload.")
     parsed = normalize_candidate_queue_rows(payload.get("rows"))
+    records = load_records()
+    queue = load_candidate_queue()
     return {
         "ok": True,
         "parsed": len(parsed["rows"]),
         "unparsed_lines": parsed["unparsed"],
         "review_matches": listing_import_review_matches(
-            parsed["rows"], load_records(), load_candidate_queue()
+            parsed["rows"], records, queue, groups=dashboard_identity_groups(records)
         ),
     }
 
@@ -9265,9 +9281,10 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
     records = load_records()
     groups = dashboard_identity_groups(records)
     queue = load_candidate_queue()
+    original_queue = copy.deepcopy(queue)
     review_candidates = {
         int(match["row_index"]): {str(candidate["target"]) for candidate in match["candidates"]}
-        for match in listing_import_review_matches(rows, records, queue)
+        for match in listing_import_review_matches(rows, records, queue, groups=groups)
     }
     raw_decisions = payload.get("review_decisions", [])
     if raw_decisions is None:
@@ -9416,11 +9433,29 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
         queue.append(entry)
         added_entries.append(entry)
 
-    if added_entries or metadata_updated:
-        save_candidate_queue(queue)
     if records_updated:
         synchronize_cross_workflow_comments(records)
-        save_records(records)
+    # Queue and researched records are separate JSON files. All matching and
+    # merging above has already completed in memory; if the second write fails,
+    # restore the first file so an import never reports a full failure while
+    # leaving only part of its changes persisted.
+    queue_saved = False
+    try:
+        if added_entries or metadata_updated:
+            save_candidate_queue(queue)
+            queue_saved = True
+        if records_updated:
+            save_records(records)
+    except Exception:
+        if queue_saved:
+            try:
+                save_candidate_queue(original_queue)
+            except Exception:
+                # Preserve the original storage exception; a failed rollback is
+                # operationally visible through the server log and must not be
+                # misrepresented as a successful import.
+                pass
+        raise
 
     return {
         "ok": True,

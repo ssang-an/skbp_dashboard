@@ -16686,6 +16686,14 @@ body.operation-modal-open { overflow: hidden; }
 .operation-modal-confirm:hover,
 .operation-modal-confirm:focus-visible { background: #9e4040; border-color: #9e4040; }
 .operation-modal-confirm:focus-visible { outline: 2px solid color-mix(in srgb, #b54f4f 40%, transparent); outline-offset: 2px; }
+.listing-import-error-mark {
+  color: #b54f4f;
+  border-color: color-mix(in srgb, #c15c5c 24%, var(--line));
+  background: color-mix(in srgb, #c15c5c 9%, var(--surface, #fff));
+  font-size: 20px;
+  font-weight: 950;
+  line-height: 1;
+}
 .operation-modal-cancel {
   min-height: 34px;
   padding: 0 13px;
@@ -23655,6 +23663,37 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
   color: var(--muted);
   font-size: 11px;
   font-weight: 700;
+}
+
+/* Evaluation Progress labels double as compact AND-filters. Keep their
+   neutral table-header appearance until the user actively selects one. */
+.step0-progress-table .step0-evaluation-filter {
+  width: 100%;
+  min-height: 24px;
+  padding: 3px 5px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  line-height: 1.15;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.step0-progress-table .step0-evaluation-filter:hover,
+.step0-progress-table .step0-evaluation-filter:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--line));
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+  color: var(--accent-strong);
+  outline: none;
+}
+
+.step0-progress-table .step0-evaluation-filter.is-active {
+  border-color: color-mix(in srgb, var(--accent) 48%, var(--line));
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+  color: var(--accent-strong);
+  font-weight: 850;
 }
 
 

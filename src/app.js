@@ -358,6 +358,7 @@ const state = {
   step0Query: '',
   step0SearchTokens: [],
   step0StatusFilterValues: new Set(),
+  step0EvaluationFilterValues: new Set(),
   step0Filters: { country: [], modality: [], theme: [], cluster: [], indication: [], stage: [] },
   step0ColorByFilter: '',
   step0FilterSelectionOrder: [],
@@ -4477,6 +4478,7 @@ const STEP0_PROGRESS_FILTER_OPTIONS = [
   { value: 'full_scout', label: 'Full Scout' },
   { value: 'shortlisting', label: 'Shortlisting' }
 ];
+const STEP0_EVALUATION_FILTER_KEYS = ['pending', 'fast_triage', 'full_scout', 'shortlisting', 'comment', 'contact'];
 
 function closeStep0MultiFilters(except = null) {
   STEP0_FILTER_KEYS.forEach((key) => {
@@ -10710,12 +10712,13 @@ function deactivateStep0Panel() {
   renderTableTabs();
 }
 
-function renderStep0ImportSummary(result) {
+function renderStep0ImportSummary(result, { skippedRequiredRows = [] } = {}) {
   if (!elements.step0ImportSummary || !result) return;
   const unparsedCount = result.unparsed_lines?.length || 0;
+  const skippedRequiredCount = skippedRequiredRows.length;
   elements.step0ImportSummary.hidden = false;
-  const badgeClass = unparsedCount ? 'warning' : '';
-  const badgeText = unparsedCount ? '일부 제외' : '가져오기 완료';
+  const badgeClass = unparsedCount || skippedRequiredCount ? 'warning' : '';
+  const badgeText = unparsedCount || skippedRequiredCount ? '일부 제외' : '가져오기 완료';
   const rows = [
     {
       level: 'ok',
@@ -10758,13 +10761,19 @@ function renderStep0ImportSummary(result) {
       label: '경고',
       path: '파싱 실패',
       message: `${unparsedCount}줄을 파싱하지 못했습니다.`
+    }] : []),
+    ...(skippedRequiredCount ? [{
+      level: 'warning',
+      label: '제외',
+      path: '필수값 누락',
+      message: `${skippedRequiredRows.map(({ row, reason }) => `${row}행(${reason})`).join(', ')}은 등록하지 않았습니다. 나머지 행은 계속 가져왔습니다.`
     }] : [])
   ];
   elements.step0ImportSummary.innerHTML = `
     <div class="input-validation-summary">
       <span class="input-validation-badge ${badgeClass}">${escapeHtml(badgeText)}</span>
       <strong>후보 목록 업로드</strong>
-      <span>${result.parsed}줄 파싱 · 신규 ${result.added} · 제외 ${result.already_researched_skipped} · 중복 ${result.duplicate_in_queue_skipped}</span>
+      <span>${result.parsed}줄 파싱 · 신규 ${result.added} · 제외 ${result.already_researched_skipped} · 중복 ${result.duplicate_in_queue_skipped}${skippedRequiredCount ? ` · 필수값 누락 ${skippedRequiredCount}` : ''}</span>
     </div>
     <ul class="input-validation-list">
       ${rows.map((row) => `
@@ -10833,25 +10842,26 @@ function appendStep0EntryRows(count = 1) {
 
 function collectStep0EntryRows() {
   const rows = [];
-  const incomplete = [];
-  const invalidAssets = [];
+  const skippedRequiredRows = [];
   elements.step0EntryGridBody?.querySelectorAll('tr').forEach((tr, index) => {
     const row = {};
     tr.querySelectorAll('[data-step0-entry-field]').forEach((input) => {
       row[input.dataset.step0EntryField] = input.value.trim();
     });
     if (!Object.values(row).some(Boolean)) return;
-    if (!row.company_input || !row.asset_input) {
-      incomplete.push(index + 1);
-      return;
-    }
-    if (isStep0InvalidAsset(row.asset_input)) {
-      invalidAssets.push(index + 1);
+    const missingCompany = !row.company_input;
+    const invalidAsset = !row.asset_input || isStep0InvalidAsset(row.asset_input);
+    if (missingCompany || invalidAsset) {
+      const reason = [
+        missingCompany ? 'Company 없음' : '',
+        invalidAsset ? (row.asset_input ? 'Pipeline(Asset) X/- 표식' : 'Pipeline(Asset) 없음') : ''
+      ].filter(Boolean).join(', ');
+      skippedRequiredRows.push({ row: index + 1, reason });
       return;
     }
     rows.push(row);
   });
-  return { rows, incomplete, invalidAssets };
+  return { rows, skippedRequiredRows };
 }
 
 function isStep0AssetPlaceholder(value) {
@@ -11155,22 +11165,98 @@ function pasteIntoStep0EntryGrid(event) {
   });
 }
 
+async function listingImportJsonResponse(response) {
+  const payload = await response.json().catch(() => ({}));
+  if (response.ok) return payload;
+  const error = new Error(String(payload?.detail || payload?.message || `HTTP ${response.status}`));
+  error.status = response.status;
+  throw error;
+}
+
+function listingImportFailureCopy(error) {
+  const status = Number(error?.status || 0);
+  const message = String(error?.message || '').trim();
+  if (status === 401 || status === 403) {
+    return {
+      title: '가져오기 권한이 없습니다',
+      message: '저장하지 않았습니다. 관리자 계정으로 로그인한 뒤 다시 시도해 주세요.',
+      status: '로그인 또는 관리자 권한을 확인해 주세요.'
+    };
+  }
+  if (error?.name === 'TypeError' || /failed to fetch|networkerror|network request failed/i.test(message)) {
+    return {
+      title: '서버에 연결할 수 없습니다',
+      message: '서버 연결 또는 네트워크 상태를 확인한 뒤 다시 시도해 주세요.',
+      status: '연결이 끊긴 경우 저장 결과를 바로 확인할 수 없습니다. 먼저 Pipeline Table에서 저장 여부를 새로 확인해 주세요.',
+      action: 'refresh',
+      actionLabel: '저장 여부 새로고침'
+    };
+  }
+  if (status >= 500 || /permission denied|access is denied|write_json|json.*(?:write|save)|disk|read-only/i.test(message)) {
+    return {
+      title: '데이터 파일을 저장하지 못했습니다',
+      message: '서버의 JSON 파일 쓰기 권한 또는 저장 공간을 확인한 뒤 다시 시도해 주세요.',
+      status: '문제가 반복되면 관리자에게 아래 오류 정보를 전달해 주세요.',
+      action: 'retry',
+      actionLabel: '다시 시도'
+    };
+  }
+  return {
+    title: '가져오기에 실패했습니다',
+    message: '저장하지 않았습니다. 입력 내용 또는 현재 Pipeline 상태를 확인한 뒤 다시 시도해 주세요.',
+    status: message || '예기치 않은 저장 오류가 발생했습니다.',
+    action: 'retry',
+    actionLabel: '다시 시도'
+  };
+}
+
+function showListingImportFailureDialog(error) {
+  const copy = listingImportFailureCopy(error);
+  return new Promise((resolve) => {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'operation-modal-backdrop listing-import-error-backdrop';
+    backdrop.innerHTML = `
+      <section class="operation-modal listing-import-error-modal" role="dialog" aria-modal="true" aria-labelledby="listingImportErrorTitle" aria-describedby="listingImportErrorMessage">
+        <header class="operation-modal-header">
+          <span class="operation-modal-mark listing-import-error-mark" aria-hidden="true">!</span>
+          <div><p class="operation-modal-eyebrow">IMPORT ERROR</p><h2 id="listingImportErrorTitle">${escapeHtml(copy.title)}</h2></div>
+        </header>
+        <p class="operation-modal-copy" id="listingImportErrorMessage">${escapeHtml(copy.message)}</p>
+        <p class="operation-modal-status">${escapeHtml(copy.status)}</p>
+        <footer class="operation-modal-actions operation-confirm-actions">
+          <button type="button" class="operation-modal-cancel" data-listing-import-error-close>확인</button>
+          <button type="button" class="operation-modal-confirm listing-import-error-retry" data-listing-import-error-action>${escapeHtml(copy.actionLabel || '다시 시도')}</button>
+        </footer>
+      </section>`;
+    const finish = (action = 'close') => {
+      document.removeEventListener('keydown', onKeydown);
+      backdrop.remove();
+      document.body.classList.remove('operation-modal-open');
+      resolve(action);
+    };
+    const onKeydown = (event) => { if (event.key === 'Escape') finish(); };
+    backdrop.addEventListener('click', (event) => { if (event.target === backdrop) finish(); });
+    backdrop.querySelector('[data-listing-import-error-close]')?.addEventListener('click', () => finish());
+    backdrop.querySelector('[data-listing-import-error-action]')?.addEventListener('click', () => finish(copy.action || 'retry'));
+    document.body.appendChild(backdrop);
+    document.body.classList.add('operation-modal-open');
+    document.addEventListener('keydown', onKeydown);
+    backdrop.querySelector('[data-listing-import-error-retry]')?.focus();
+  });
+}
+
 async function importStep0Candidates() {
   if (!getCurrentUser()?.is_admin) {
-    showStep0Message('Listing uploads require an administrator account.', 'warning');
+    showStep0Message('가져오기 권한이 없습니다. 안내창의 내용을 확인해 주세요.', 'warning');
+    const action = await showListingImportFailureDialog(Object.assign(new Error('Administrator access is required.'), { status: 403 }));
+    if (action === 'retry') window.setTimeout(() => importStep0Candidates(), 0);
     return;
   }
-  const { rows, incomplete, invalidAssets } = collectStep0EntryRows();
-  if (incomplete.length) {
-    showStep0Message(`${incomplete.join(', ')}행에는 Company와 Asset이 모두 필요합니다.`, 'warning');
-    return;
-  }
-  if (invalidAssets.length) {
-    showStep0Message(`${invalidAssets.join(', ')}행의 Asset은 빈 값, - 또는 X로 입력할 수 없습니다.`, 'warning');
-    return;
-  }
+  const { rows, skippedRequiredRows } = collectStep0EntryRows();
   if (!rows.length) {
-    showStep0Message('입력된 Listing 항목이 없습니다.', 'warning');
+    showStep0Message(skippedRequiredRows.length
+      ? `${skippedRequiredRows.length}개 Pipeline은 Company 또는 Pipeline(Asset) 필수값 누락으로 등록하지 않았습니다. Company와 Pipeline(Asset)을 입력한 뒤 다시 시도해 주세요.`
+      : '입력된 Listing 항목이 없습니다.', 'warning');
     return;
   }
   if (elements.step0ImportButton) elements.step0ImportButton.disabled = true;
@@ -11187,8 +11273,7 @@ async function importStep0Candidates() {
         body: JSON.stringify({ rows }),
         signal
       });
-      if (!response.ok) throw new Error(await response.text());
-      return response.json();
+      return listingImportJsonResponse(response);
     });
     if (preview === OPERATION_CANCELLED) {
       setStep0SaveStatus('waiting');
@@ -11218,21 +11303,31 @@ async function importStep0Candidates() {
         body: JSON.stringify({ rows, review_decisions: reviewDecisions }),
         signal
       });
-      if (!response.ok) throw new Error(await response.text());
-      return response.json();
+      return listingImportJsonResponse(response);
     });
     if (result === OPERATION_CANCELLED) {
       setStep0SaveStatus('waiting');
       return;
     }
-    renderStep0ImportSummary(result);
+    renderStep0ImportSummary(result, { skippedRequiredRows });
     renderStep0EntryGrid();
     showStep0PasteFeedback('');
     setStep0SaveStatus('saved');
     await loadStep0Progress();
   } catch (error) {
-    showStep0Message(`가져오기 실패: ${error.message}`, 'error');
+    showStep0Message('가져오기에 실패했습니다. 안내창의 내용을 확인한 뒤 다시 시도해 주세요.', 'error');
     setStep0SaveStatus('error');
+    const action = await showListingImportFailureDialog(error);
+    if (action === 'refresh') {
+      try {
+        await loadStep0Progress();
+        showStep0Message('Pipeline Table을 새로 불러왔습니다. 저장된 항목이 없다면 가져오기를 다시 시도해 주세요.', 'warning');
+      } catch (refreshError) {
+        showStep0Message('Pipeline Table도 새로 불러오지 못했습니다. 서버 연결을 확인한 뒤 다시 시도해 주세요.', 'error');
+      }
+    } else if (action === 'retry') {
+      window.setTimeout(() => importStep0Candidates(), 0);
+    }
   } finally {
     if (elements.step0ImportButton) elements.step0ImportButton.disabled = false;
   }
@@ -11699,6 +11794,24 @@ function step0IsInvestigationPending(row) {
   return Boolean(row?.pending?.done && !row?.fast_triage?.done && !row?.full_scout?.done);
 }
 
+function step0RowHasEvaluationProgress(row, key) {
+  if (['pending', 'fast_triage', 'full_scout', 'shortlisting'].includes(key)) {
+    return Boolean(row?.[key]?.done);
+  }
+  if (key === 'comment') return step0CommentFeed(row).length > 0;
+  if (key === 'contact') return step0ContactFeed(row).length > 0;
+  return false;
+}
+
+function renderStep0EvaluationProgressFilters() {
+  const selected = state.step0EvaluationFilterValues || new Set();
+  document.querySelectorAll('[data-step0-evaluation-filter]').forEach((button) => {
+    const active = selected.has(button.dataset.step0EvaluationFilter);
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+}
+
 function step0FilterOptions(key) {
   if (key === 'progress') return STEP0_PROGRESS_FILTER_OPTIONS;
   const values = [...new Set(state.step0Rows.flatMap((row) => step0RowFilterValues(row, key)))];
@@ -11769,6 +11882,7 @@ function renderStep0FilterControls() {
     }
     renderStep0MultiFilter(element, key, options);
   });
+  renderStep0EvaluationProgressFilters();
 }
 
 const STEP0_WORKFLOW_MAP_STAGES = [
@@ -12205,6 +12319,15 @@ function updateStep0MultiFilter(key, value) {
   renderStep0FilteredResults();
 }
 
+function toggleStep0EvaluationProgressFilter(key) {
+  if (!STEP0_EVALUATION_FILTER_KEYS.includes(key)) return;
+  if (state.step0EvaluationFilterValues.has(key)) state.step0EvaluationFilterValues.delete(key);
+  else state.step0EvaluationFilterValues.add(key);
+  state.step0Page = 1;
+  renderStep0EvaluationProgressFilters();
+  renderStep0FilteredResults();
+}
+
 function renderStep0FilteredResults() {
   renderStep0ProgressTable();
   renderStep0StatStrip();
@@ -12531,6 +12654,7 @@ function step0FilteredSortedRows() {
     .map(normalizedDashboardSearchText)
     .filter(Boolean);
   const statusFilters = state.step0StatusFilterValues;
+  const evaluationFilters = state.step0EvaluationFilterValues;
 
   let rows = state.step0Rows.filter((row) => {
     if (searchTerms.length) {
@@ -12547,6 +12671,9 @@ function step0FilteredSortedRows() {
       if (!searchTerms.every((term) => haystack.includes(term))) return false;
     }
     if (statusFilters.size && ![...statusFilters].some((status) => step0RowFilterValues(row, 'progress').includes(status))) return false;
+    // Evaluation Progress headers are requirements, not alternative workflow
+    // states: selecting Comment + Contact means a pipeline must have both.
+    if (evaluationFilters.size && ![...evaluationFilters].every((key) => step0RowHasEvaluationProgress(row, key))) return false;
     if (['country', 'modality', 'theme', 'cluster', 'indication', 'stage'].some((key) => {
       const selected = step0SelectedFilterValues(key);
       return selected.length > 0 && !selected.some((value) => step0RowFilterValues(row, key).includes(value));
@@ -12861,6 +12988,7 @@ function resetStep0Filters() {
   state.step0Query = '';
   state.step0SearchTokens = [];
   state.step0StatusFilterValues.clear();
+  state.step0EvaluationFilterValues.clear();
   state.step0Filters = { country: [], modality: [], theme: [], cluster: [], indication: [], stage: [] };
   state.step0ColorByFilter = '';
   state.step0FilterSelectionOrder = [];
@@ -13044,6 +13172,9 @@ elements.step0WorkflowStatColumns?.forEach((column) => {
   });
 });
 elements.step0ResetFiltersButton?.addEventListener('click', resetStep0Filters);
+document.querySelectorAll('[data-step0-evaluation-filter]').forEach((button) => {
+  button.addEventListener('click', () => toggleStep0EvaluationProgressFilter(button.dataset.step0EvaluationFilter));
+});
 document.querySelectorAll('button[data-step0-sort]').forEach((button) => {
   button.addEventListener('click', () => sortStep0Column(button.dataset.step0Sort));
 });

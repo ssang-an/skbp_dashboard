@@ -304,16 +304,16 @@
                   <th rowspan="2">Target</th>
                   <th rowspan="2">Main indication</th>
                   <th rowspan="2">Pipeline Stage</th>
-                  <th class="step0-progress-group score-group-head" colspan="6">Evaluation Progress</th>
+                  <th class="step0-progress-group score-group-head help-tooltip" colspan="6" data-tooltip="아래 항목을 복수 선택하면, 선택한 모든 평가 진행 조건을 충족한 Pipeline만 표시합니다.">Evaluation Progress</th>
                   <th rowspan="2">Website</th>
                 </tr>
                 <tr>
-                  <th><button data-step0-sort="pending" type="button">Listing</button></th>
-                  <th><button data-step0-sort="fast_triage" type="button">Fast Triage</button></th>
-                  <th><button data-step0-sort="full_scout" type="button">Full Scout</button></th>
-                  <th><button data-step0-sort="shortlisting" type="button">Shortlisting</button></th>
-                  <th>Comment</th>
-                  <th>Contact</th>
+                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="pending" type="button" aria-pressed="false" data-tooltip="Listing 등록이 완료된 Pipeline만 표시합니다.">Listing</button></th>
+                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="fast_triage" type="button" aria-pressed="false" data-tooltip="Fast Triage가 완료된 Pipeline만 표시합니다.">Fast Triage</button></th>
+                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="full_scout" type="button" aria-pressed="false" data-tooltip="Full Scout가 완료된 Pipeline만 표시합니다.">Full Scout</button></th>
+                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="shortlisting" type="button" aria-pressed="false" data-tooltip="Shortlisting에 등록된 Pipeline만 표시합니다.">Shortlisting</button></th>
+                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="comment" type="button" aria-pressed="false" data-tooltip="Comment가 하나 이상 있는 Pipeline만 표시합니다.">Comment</button></th>
+                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="contact" type="button" aria-pressed="false" data-tooltip="Contact History가 하나 이상 있는 Pipeline만 표시합니다.">Contact</button></th>
                 </tr>
               </thead>
               <tbody id="step0ProgressTableBody">
@@ -1390,7 +1390,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260825-location-moa-stage-1"></script>
+  <script type="module" src="./src/app.js?v=20260825-listing-import-error-dialog-1"></script>
   <script src="./src/sigma_graph.js?v=20260824-deferred-wiki-export-1" defer></script>
   </body>
 </html>
