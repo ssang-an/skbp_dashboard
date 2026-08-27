@@ -360,14 +360,6 @@
     "added_at": "2026-08-18T01:28:43.535867+00:00"
   },
   {
-    "id": "cq_ff160f3a",
-    "asset_input": "DM-3159",
-    "company_input": "DigmBio Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
     "id": "cq_56237ef6",
     "asset_input": "DM-3190",
     "company_input": "DigmBio Inc",
@@ -1821,43 +1813,6 @@
     "status": "pending",
     "source": "paste_import",
     "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_1595867f",
-    "asset_input": "VVZ-3416",
-    "company_input": "Vivozon Inc",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00",
-    "pipeline_metadata": {
-      "listed_at": "2026-08-25T10:11:40.715464+00:00",
-      "comment": "3중 타겟을 하는 CNS asset으로, 바이어마커 실험에서도 일관된 긍정적 결과를 확인했다고 함.\n\n'27년 국내 1상을 목표로 하고 있는만큼, stage상 align이 높다고 판단됨.\n\n다만, 홈페이지의 설명만으로는 platform, concept을 충분히 정보를 얻을 수 없어, contact 후 정보 확인이 필요해 보임",
-      "comment_author": "Team",
-      "comment_author_user_id": "",
-      "comment_author_email": "",
-      "comment_source": "team_review_import",
-      "comment_created_at": "2026-08-25T10:11:40.715464+00:00",
-      "comment_updated_at": "2026-08-25T10:11:40.715464+00:00",
-      "contact": "O",
-      "contact_author": "Team",
-      "contact_author_user_id": "",
-      "contact_author_email": "",
-      "contact_source": "team_review_import",
-      "contact_created_at": "2026-08-25T10:11:40.715464+00:00",
-      "contact_updated_at": "2026-08-25T10:11:40.715464+00:00",
-      "website": "https://www.vivozon.com/",
-      "asset_aliases": "VVZ-3416",
-      "company_aliases": "Vivozon",
-      "updated_at": "2026-08-25T10:11:40.715464+00:00"
-    },
-    "listing_details": {
-      "country": "Yongin, Korea",
-      "modality": "Oral Small molecule",
-      "target": "MAO-B mGluR5 HDAC6",
-      "main_indication": "Parkinson's diseaseAlzheimer's disease",
-      "stage": "Preclinical",
-      "website": "https://www.vivozon.com/"
-    }
   },
   {
     "id": "cq_70a621bd",
