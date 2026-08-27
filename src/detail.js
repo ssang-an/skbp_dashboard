@@ -100,8 +100,6 @@ const elements = {
   detailOiPartnershipType: document.querySelector('#detailOiPartnershipType'),
   detailOiPartnershipNoteShell: document.querySelector('#detailOiPartnershipNoteShell'),
   detailOiPartnershipNote: document.querySelector('#detailOiPartnershipNote'),
-  detailOiMaterialFlags: document.querySelector('#detailOiMaterialFlags'),
-  detailOiMaterialButtons: document.querySelectorAll('#detailOiMaterialFlags .oi-material-toggle[data-material-key]'),
   detailPartnerMaterialButtons: document.querySelectorAll('#detailPartnerMaterialFlags .oi-material-toggle[data-material-key]'),
   detailCollaborationStatus: document.querySelector('#detailCollaborationStatus'),
   collaborationScroll: document.querySelector('.collaboration-scroll'),
@@ -199,11 +197,11 @@ if (elements.detailBackLink && viewTab) {
 
 const scoringLabels = {
   target_relevance: 'Target Area Relevance',
-  competitive_landscape: 'Competitive Landscape',
   moa_validity: 'MoA Validity',
+  data_maturity: 'Data Maturity',
+  competitive_landscape: 'Competitive Landscape',
   platform_attractiveness: 'Platform Attractiveness',
   expansion_potential: 'Expansion Potential',
-  data_maturity: 'Data Maturity',
   marketability: 'Marketability'
 };
 
@@ -493,21 +491,21 @@ function computeHardFilter(record) {
   const reasons = [];
 
   const failBlocker = record.hard_filter?.hard_blocker === true || hasAffirmedHardBlocker(notes);
-  const reviewUncertainty = hasScopedFullScoutReviewUncertainty(notes);
-
   if (Number.isFinite(total) && total <= 8) reasons.push(`Total score ${total} <= 8`);
-  if (Number.isFinite(targetScore) && targetScore <= 1) reasons.push(`Target Area Relevance ${targetScore} <= 1`);
+  [['Target Area Relevance', targetScore], ['MoA Validity', moaScore], ['Data Maturity', dataScore]]
+    .filter(([, score]) => score === 0)
+    .forEach(([label]) => reasons.push(`${label} = 0`));
   if (failBlocker) reasons.push('Hard blocker keyword detected');
 
   if (reasons.length) {
     return { status: 'FAIL', reason: reasons.join('; ') };
   }
 
-  const passScores = total >= 14 && targetScore >= 3 && moaScore >= 2 && dataScore >= 2;
-  if (passScores && !reviewUncertainty) {
+  const passScores = total >= 14 && targetScore >= 2 && moaScore === 3 && dataScore === 3;
+  if (passScores) {
     return {
       status: 'PASS',
-      reason: `Total ${total} >= 14, TR ${targetScore} >= 3, MOA ${moaScore} >= 2, Data ${dataScore} >= 2, hard blocker 없음`
+      reason: `Total ${total} >= 14, TR ${targetScore} >= 2, MOA ${moaScore} = 3, Data ${dataScore} = 3`
     };
   }
 
@@ -517,10 +515,6 @@ function computeHardFilter(record) {
   if (!passScores) {
     reasons.push(`PASS score gate 미충족: Total ${total ?? '-'}, TR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
   }
-  if (reviewUncertainty) {
-    reasons.push('Pipeline Stage/rights/asset identity/source 불확실성 확인 필요');
-  }
-
   return { status: 'REVIEW', reason: reasons.join('; ') || '추가 diligence 필요' };
 }
 
@@ -1106,11 +1100,11 @@ function resizeOiPartnershipNoteInput() {
 
 const reviewScoreOrder = [
   ['target_relevance', 'TR'],
-  ['competitive_landscape', 'CL'],
   ['moa_validity', 'MoA'],
+  ['data_maturity', 'DM'],
+  ['competitive_landscape', 'CL'],
   ['platform_attractiveness', 'PA'],
   ['expansion_potential', 'EP'],
-  ['data_maturity', 'DM'],
   ['marketability', 'MKT']
 ];
 
@@ -1412,7 +1406,7 @@ function renderCollaborationPanel(record) {
   const statusIsHuman = hasManualReviewField(record, 'filter_status');
   const reasonIsHuman = hasManualReviewField(record, 'status_reason');
   const reviewScores = effectiveReviewScores(record);
-  const canManagePartnerMaterials = renderPartnerMaterialPermissions();
+  renderPartnerMaterialPermissions();
   if (elements.detailFocusToggle) {
     elements.detailFocusToggle.dataset.focusAction = trackingCopy.action;
     elements.detailFocusToggle.classList.toggle('add', !tracked);
@@ -1514,38 +1508,7 @@ function renderCollaborationPanel(record) {
   if (elements.detailOiPartnershipNoteShell) {
     elements.detailOiPartnershipNoteShell.classList.toggle('is-human', partnershipNoteIsManual);
   }
-  const materialFlags = focus.partner_material_flags && typeof focus.partner_material_flags === 'object'
-    ? focus.partner_material_flags
-    : {};
-  const materialOverrides = focus.partner_material_flag_overrides
-    && typeof focus.partner_material_flag_overrides === 'object'
-    ? focus.partner_material_flag_overrides
-    : {};
   const autoMaterialFlags = detectPartnerMaterialFlags(attachments);
-  elements.detailOiMaterialButtons?.forEach((button) => {
-    const key = button.dataset.materialKey;
-    const hasManualOverride = typeof materialOverrides[key] === 'boolean';
-    const manualActive = hasManualOverride
-      ? materialOverrides[key] === true
-      : materialFlags[key] === true;
-    const autoActive = autoMaterialFlags[key] === true;
-    const active = autoActive || manualActive;
-    const label = partnerMaterialLabels[key] || key.toUpperCase();
-    button.classList.toggle('is-active', active);
-    button.classList.toggle('is-auto', autoActive);
-    button.classList.toggle('is-manual', hasManualOverride || manualActive);
-    button.setAttribute('aria-pressed', String(active));
-    button.dataset.manualActive = String(manualActive);
-    button.dataset.hasManualOverride = String(hasManualOverride);
-    button.dataset.autoActive = String(autoActive);
-    const isDDReport = key === 'dd_report';
-    button.disabled = isDDReport ? !canManagePartnerMaterials : true;
-    button.classList.toggle('is-read-only', !isDDReport || !canManagePartnerMaterials);
-    button.classList.remove('is-saving');
-    button.title = isDDReport && canManagePartnerMaterials
-      ? 'Due Diligence 파일 업로드'
-      : (active ? `${label} 자료 보유` : `${label} 자료 없음`);
-  });
   elements.detailPartnerMaterialButtons?.forEach((pill) => {
     const key = pill.dataset.materialKey;
     const active = autoMaterialFlags[key] === true;
@@ -4077,8 +4040,8 @@ async function refreshOiPartnership() {
 
 function aiRevisionInstruction(record) {
   return isFastTriageRecord(record)
-    ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.3 update applied from chat answer.'
-    : 'Detail AI Agent Full Scout v3.4 re-evaluation applied from chat answer.';
+    ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.4 update applied from chat answer.'
+    : 'Detail AI Agent Full Scout v3.6 re-evaluation applied from chat answer.';
 }
 
 function setAiApplyModalStatus(message = '', tone = '') {
@@ -4846,14 +4809,6 @@ elements.qualitativeCriterionStatusPills?.addEventListener('click', (event) => {
     return;
   }
   jumpToQualitativeCriterion(button.dataset.qualitativeJump);
-});
-
-elements.detailOiMaterialFlags?.addEventListener('click', (event) => {
-  const button = event.target.closest('.oi-material-toggle[data-material-key="dd_report"]');
-  if (!button || button.disabled) return;
-  event.preventDefault();
-  if (elements.detailDDReportAttachmentInput) elements.detailDDReportAttachmentInput.value = '';
-  elements.detailDDReportAttachmentInput?.click();
 });
 
 elements.detailCommentsToggle?.addEventListener('click', () => {

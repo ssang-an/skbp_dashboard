@@ -1,20 +1,22 @@
 {
   "manifest_schema_version": "1.0",
-  "release_id": "skbp-rubric-2026-08-06-protein-homeostasis",
-  "released_at": "2026-08-06",
+  "release_id": "skbp-rubric-2026-08-26-full-status-gates",
+  "released_at": "2026-08-26",
   "workflows": {
     "fast_triage": {
-      "instruction_version": "3.3",
-      "rubric_version": "3.3",
-      "schema_version": "3.2",
-      "rubric_file": "config/scoring_criteria/v3_3_triage.md"
-    },
-    "full_scout": {
       "instruction_version": "3.4",
       "rubric_version": "3.4",
+      "display_version": "3.4",
       "schema_version": "3.2",
-      "rubric_file": "config/scoring_criteria/v3_4_full.md",
-      "display_file": "config/scoring_criteria/v3_4_display.md"
+      "rubric_file": "config/scoring_criteria/v3_4_triage.md"
+    },
+    "full_scout": {
+      "instruction_version": "3.6",
+      "rubric_version": "3.6",
+      "display_version": "3.6",
+      "schema_version": "3.2",
+      "rubric_file": "config/scoring_criteria/v3_6_full.md",
+      "display_file": "config/scoring_criteria/v3_6_display.md"
     }
   },
   "calculations": {

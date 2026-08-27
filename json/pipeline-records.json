@@ -25501,6 +25501,28 @@
             }
           }
         }
+      ],
+      "rubric_reviewed_version": "3.4",
+      "rubric_reviewed_at": "2026-08-26T12:14:28.096621+00:00",
+      "rubric_reviewed_by": "127.0.0.1",
+      "rubric_review_result": "already_current",
+      "rubric_refresh_history": [
+        {
+          "version": "3.4",
+          "reviewed_at": "2026-08-26T12:14:09.060641+00:00",
+          "result": "already_current",
+          "actor_ip": "127.0.0.1",
+          "reason": "Official GPT scoring is already current for this rubric.",
+          "changes": []
+        },
+        {
+          "version": "3.4",
+          "reviewed_at": "2026-08-26T12:14:28.096621+00:00",
+          "result": "already_current",
+          "actor_ip": "127.0.0.1",
+          "reason": "Official GPT scoring is already current for this rubric.",
+          "changes": []
+        }
       ]
     },
     "source_report": {

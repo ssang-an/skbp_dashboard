@@ -915,11 +915,11 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
 
         parameters = (
             ('TR', 'Target Area Relevance'),
-            ('COMP', 'Competitive Landscape'),
             ('MoA', 'MoA Validity'),
+            ('DATA', 'Data Maturity'),
+            ('COMP', 'Competitive Landscape'),
             ('PLATFORM', 'Platform Attractiveness'),
             ('EXPANSION', 'Expansion Potential'),
-            ('DATA', 'Data Maturity'),
             ('MARKET', 'Marketability'),
         )
         positions = []
@@ -2686,6 +2686,9 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('class="review-info-stack is-collapsed"', workspace)
         self.assertIn('<p class="review-column-heading">Full Scout</p>', workspace)
         self.assertIn('<p class="review-column-heading">Shortlisting</p>', workspace)
+        self.assertNotIn('id="detailOiMaterialFlags"', workspace)
+        self.assertIn('id="detailPartnerMaterialFlags"', DETAIL_HTML)
+        self.assertIn('id="qualitativeCriterionStatusPills"', DETAIL_HTML)
         self.assertNotIn("Key Takeaway", workspace)
         self.assertNotIn("review-column-context", workspace)
         self.assertIn('id="detailReviewInfoToggle"', workspace)
@@ -2702,10 +2705,12 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         toggle_row = compact[compact.index(".review-info-toggle-row {") : compact.index(".review-info-toggle svg {")]
         self.assertIn("border-top: 1px solid var(--glass-border)", toggle_row)
         self.assertIn("padding: 6px 8px 7px", toggle_row)
+        self.assertIn("padding-bottom: 2px", compact)
+        self.assertIn("gap: 4px", compact)
+        self.assertIn("min-height: 42px", compact)
         for hidden_selector in (
             "#detailReviewReasonShell",
             ".oi-classification-summary",
-            "#detailOiMaterialFlags",
             "#detailActionOwner",
             "#detailActionPlan",
         ):
@@ -2754,14 +2759,14 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("detailReviewReasonOrigin", DETAIL_JS)
 
         note_start = DETAIL_HTML.index('id="detailOiPartnershipNoteShell"')
-        note_end = DETAIL_HTML.index('id="detailOiMaterialFlags"', note_start)
+        note_end = DETAIL_HTML.index('class="review-info-label action-date-label"', note_start)
         note_markup = DETAIL_HTML[note_start:note_end]
         self.assertNotIn("detailOiPartnershipNoteOrigin", note_markup)
         self.assertNotIn("자동 분류 v1.0", note_markup)
         self.assertNotIn("detailOiPartnershipNoteOrigin", DETAIL_JS)
         self.assertIn('title="OI 파트너십 분류 근거를 짧게 요약합니다."', note_markup)
         self.assertNotIn("review-reason-edit-icon", note_markup)
-        self.assertIn("detail.js?v=20260819-manual-score-chip-3", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260827-review-workspace-density-1", DETAIL_HTML)
 
     def test_partner_material_body_scrolls_below_fixed_header(self):
         header_index = DETAIL_HTML.index('class="detail-material-header"')

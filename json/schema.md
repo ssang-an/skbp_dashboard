@@ -1,6 +1,6 @@
-# SKBP Pipeline Shortlist JSON Structure — Fast Triage v3.2 / Full Scout v3.3
+# SKBP Pipeline Shortlist JSON Structure — Fast Triage v3.4 / Full Scout v3.6
 
-`drug-valuation.schema.json` defines the persisted `dashboard_hybrid_v1` record. GPT Markdown remains the complete research/audit document. Persisted JSON is a compact display projection: dashboard columns, chart/filter inputs, scores, the small amount of criterion evidence needed by score hover/detail views, source/competitor graph links, the preserved Markdown, and dashboard-owned operational state. New Fast Triage records use instruction/rubric v3.2 and Full Scout records use v3.3.
+`drug-valuation.schema.json` defines the persisted `dashboard_hybrid_v1` record. GPT Markdown remains the complete research/audit document. Persisted JSON is a compact display projection: dashboard columns, chart/filter inputs, scores, the small amount of criterion evidence needed by score hover/detail views, source/competitor graph links, the preserved Markdown, and dashboard-owned operational state. New Fast Triage records use instruction/rubric v3.4 and Full Scout records use v3.6.
 
 ## Dashboard GPT Response Ingestion
 
@@ -28,7 +28,7 @@ Every persisted criterion contains `score`, concise hover/detail fields (`eviden
 - `company_profile`: Full Scout optional-column values only: headquarters, company stage, and platform summary.
 - `json_summary`: Theme, Cluster, and the short description rendered by target cards/popovers.
 - `structured_table`: Home/detail identity and grouping columns. New Compact v2 prompts keep `sources` empty; storage derives at most one primary source link from the canonical registry.
-- `hard_filter`: Full Scout uses PASS / REVIEW / FAIL. Fast Triage uses SELECT / REJECT / UNVERIFIED.
+- `hard_filter`: Full Scout uses PASS / REVIEW / FAIL. Fast Triage uses SELECT / REJECT / INSUFFICIENT.
 - `scoring`: Three Fast Triage or seven Full Scout hybrid criterion projections plus stored Total/maximum.
 - `competitive_analysis`: Full Scout density/counts plus the minimal competitor and similar-pipeline rows used by exports/graphs.
 - `validation`: Decision uncertainty, cross-checked facts, and the canonical source registry.
@@ -42,25 +42,27 @@ Versioned files in `config/scoring_criteria/` define how to score. `scoring.crit
 
 Use this rule for `hard_filter.status` and dashboard interpretation:
 
-- `PASS`: `total_score >= 14`, `Target Relevance >= 3`, `MoA Validity >= 2`, `Data Maturity >= 2`, and no hard blocker.
-- `REVIEW`: `total_score` is 9-13, or the score is high but stage / rights / asset identity / source uncertainty exists.
-- `FAIL`: `total_score <= 8`, `Target Relevance <= 1`, or a confirmed hard blocker.
+- `PASS`: `total_score >= 14`, `Target Relevance >= 2`, `MoA Validity = 3`, and `Data Maturity = 3`.
+- `REVIEW`: a completed assessment that meets neither PASS nor FAIL.
+- `FAIL`: `total_score <= 8`, `Target Relevance = 0`, `MoA Validity = 0`, `Data Maturity = 0`, or a confirmed hard blocker.
 
-Lack of direct SKBP Theme / Cluster fit alone is not an automatic Full Scout FAIL condition.
+SKBP Theme / Cluster is classification and exploration metadata, not a Target Relevance score basis or an automatic Full Scout FAIL condition.
 
-## Fast Triage v3.2 Contract
+`scoring.total_score`, `scoring.max_score`, and the workflow status fields are dashboard-owned derived fields. On paste, AI second parsing, and save, the dashboard recalculates them from the submitted criterion scores and current hard-filter rule. It preserves GPT-authored criterion scores, evidence, and rationale; a stale GPT total or PASS/REVIEW/FAIL (or Fast Triage SELECT/REJECT/INSUFFICIENT) label is aligned rather than blocking storage. Full Scout preserves the authored `hard_filter.reason`; criterion/validation fields remain the audit trail for the decision.
+
+## Fast Triage v3.4 Contract
 
 Fast Triage uses three final status values only:
 
-- `SELECT`: `identity_verified = true`, the asset is active, `Target Relevance >= 2`, and at least one of `MoA Validity >= 2` or `Data Maturity >= 2`.
-- `REJECT`: asset identity is verified but SELECT criteria are not met, or a confirmed inactive/discontinued/terminated/withdrawn/suspended/dormant/clearly-failed blocker exists.
-- `UNVERIFIED`: credible public sources do not establish the candidate as a specific biotech/pharma pipeline asset.
+- `SELECT`: `identity_verified = true`, the asset is active, `Target Relevance >= 2`, `MoA Validity >= 1`, and `Data Maturity >= 2`.
+- `REJECT`: identity is verified, no terminal lifecycle is confirmed, and TR/MoA/Data are all at least 1, but the SELECT gate is not met. `active_asset = null` is REJECT.
+- `INSUFFICIENT`: identity cannot be verified, a terminal lifecycle is confirmed, or identity is verified but any of TR/MoA/Data is 0. Identity/lifecycle early stops display core scores as `—`; schema placeholder zeroes are not completed score evaluations.
 
-Unknown target, MoA, indication, or development stage does not by itself produce `UNVERIFIED`; write `Unknown` in the factual field and continue scoring. New v3.2 records must use the same status in `hard_filter.status`, `triage.status`, the Markdown result, and the recommendation mapping. Legacy records may retain historical values for read compatibility, but new saves and prompt output use the v3.2 vocabulary.
+Unknown target, MoA, indication, or development stage does not by itself produce an identity early stop; write `Unknown` in the factual field and continue scoring. New v3.4 records must use the same status in `hard_filter.status`, `triage.status`, the Markdown result, and the recommendation mapping. Legacy `UNVERIFIED` records are mapped to `INSUFFICIENT` for read compatibility, but new saves and prompt output use the current vocabulary.
 
 `triage.active_asset` is required: use `true` only for confirmed active status, `false` for confirmed inactivity, and `null` when current activity cannot be established. `SELECT` requires `true`; an identity-verified record with `null` cannot pass the SELECT gate. `triage.verified_public_source_count` retains the deduplicated count shown in the Quick Summary card while source details remain in Markdown.
 
-The recommendation mapping is fixed: `SELECT` → `Run Full Scout`, `REJECT` → `Do not run Full Scout`, and `UNVERIFIED` → `Verify asset identity`.
+The recommendation mapping is fixed: `SELECT` → `Run Full Scout`, `REJECT` → `Monitor / gather more evidence`, and `INSUFFICIENT` → `Do not run Full Scout`.
 
 Fast Triage evaluates only `target_relevance`, `moa_validity`, and `data_maturity`. Compact v2 derives their aggregate with `max_score: 9`. Migrated legacy records may retain historical null/maximum values so existing display semantics do not change.
 
@@ -168,7 +170,7 @@ Every record's `meta` carries two kinds of provenance:
 
 - **Source provenance** (when/how the raw data was obtained): `meta.generated_at` is the date the GPT report/search underlying this record was produced. It is required by schema and, if a saved record omits it, `main.py`'s `ensure_meta_defaults` backfills it with today's UTC date on save. `meta.rubric_version` records which rubric/guideline version (full-scout `SCORING_CRITERIA_VERSION` or triage `TRIAGE_CRITERIA_VERSION`) was used to score it. Both are shown as a hover tooltip on dashboard table rows and in the detail-page metadata panel.
 - **Edit provenance** (when/who changed the GPT source report versus other dashboard activity): for every Full Scout record, `meta.last_edited_at` / `meta.last_edited_by` are derived from the newest exact `meta.edit_history[].field == "source_report.raw_markdown"` event whenever records are loaded or saved. This visible timestamp therefore represents an actual GPT source-report replacement or explicit report edit; score-only rubric refreshes cannot change it. Human or AI-assisted score overrides, qualitative reviews, focus-management fields, comments, attachments, and Full Scout AI `source_report.revision_note` events also cannot change this visible timestamp. An AI Revision Note is classified as Team Review provenance rather than a GPT-original modification. `meta.edit_history` remains the append-only audit log of all dashboard activity (newest last, capped at 200 server-side). The detail page separates it into the GPT source/score timestamp and a scrollable `Team Review 변경 이력` containing all non-source events. SSO login isn't wired up yet, so `actor_ip` remains stored as a technical fallback; loopback addresses are displayed as `Local workspace`, while rubric events are displayed as their rubric version. Do not hand-write `edit_history` entries; they are stamped server-side from the request.
-- **Rubric recalculation provenance**: TAB2's home-row refresh and detail-page Score refresh share the AI rubric-review endpoint for all seven Full Scout criteria. TAB1's row refresh uses the same guarded endpoint with the latest Fast Triage rubric and limits score changes to TR, MoA, and Data before recalculating SELECT/REJECT/UNVERIFIED. Each workflow evaluates the current asset against a bounded 24,000-character excerpt of its preserved GPT source report plus up to 16,000 characters of extractable uploaded attachment text. A criterion changes only when the model returns a valid, non-conflicting verdict with clear evidence; provider errors, malformed responses, or conflicts preserve the current record. Every valid, non-conflicting review records `meta.rubric_reviewed_version`, `meta.rubric_reviewed_at`, `meta.rubric_review_result`, and an entry in `meta.rubric_refresh_history`, even when no score changes. A successful score change additionally records `meta.rescored_*`, recalculates the workflow total and Filter 1 or Filter 2, clears active manual criterion/Total overrides while retaining their append-only history, and adds a `scoring` edit event. Rubric refresh never rewrites `source_report.raw_markdown`, its original score/status wording, or GPT-source modified provenance.
+- **Rubric recalculation provenance**: TAB2's home-row refresh and detail-page Score refresh share the AI rubric-review endpoint for all seven Full Scout criteria. TAB1's row refresh uses the same guarded endpoint with the latest Fast Triage rubric and limits score changes to TR, MoA, and Data before recalculating SELECT/REJECT/INSUFFICIENT. Each workflow evaluates the current asset against a bounded 24,000-character excerpt of its preserved GPT source report plus up to 16,000 characters of extractable uploaded attachment text. A criterion changes only when the model returns a valid, non-conflicting verdict with clear evidence; provider errors, malformed responses, or conflicts preserve the current record. Every valid, non-conflicting review records `meta.rubric_reviewed_version`, `meta.rubric_reviewed_at`, `meta.rubric_review_result`, and an entry in `meta.rubric_refresh_history`, even when no score changes. A successful score change additionally records `meta.rescored_*`, recalculates the workflow total and Filter 1 or Filter 2, clears active manual criterion/Total overrides while retaining their append-only history, and adds a `scoring` edit event. Rubric refresh never rewrites `source_report.raw_markdown`, its original score/status wording, or GPT-source modified provenance.
 
 ## Detail Page Attachments and Qualitative Review
 
@@ -192,9 +194,9 @@ Loosely-typed `meta` sub-objects support detail-page workflows that live outside
 
 ## Rubric Version Management
 
-`config/rubric-release.json` is the canonical release manifest for the active Fast Triage and Full Scout workflow versions, schema versions, rubric/display file paths, storage contract, and deterministic calculation constants such as the Marketability Global multiplier. `main.py` loads its version constants and rubric paths from this file and refuses to start when required manifest entries or files are missing. Current Full Scout definitions live in the files declared by the manifest (`v3_3_full.md` / `v3_3_display.md`), while Fast Triage uses the declared `v3_2_triage.md`. The release consistency test also checks that the copied GPT guidance and visible frontend version labels match the manifest.
+`config/rubric-release.json` is the canonical release manifest for the active Fast Triage and Full Scout workflow versions, schema versions, rubric/display file paths, storage contract, and deterministic calculation constants such as the Marketability Global multiplier. `main.py` loads its version constants and rubric paths from this file and refuses to start when required manifest entries or files are missing. Current Full Scout definitions live in the files declared by the manifest (`v3_6_full.md` / `v3_6_display.md`), while Fast Triage uses the declared `v3_4_triage.md`. The release consistency test also checks that the copied GPT guidance and visible frontend version labels match the manifest.
 
-The manifest coordinates a release; it does not infer scoring code from edited prose. A research-only wording change can remain within an instruction file. Any change that can alter a criterion score must update the relevant rubric file and release version, while structural fields or deterministic formulas additionally require the compact contract, schema/parser/storage/render surfaces, and regression tests to change in the same release.
+The manifest coordinates a release; it does not infer scoring code from edited prose. A research-only wording change can remain within an instruction file. Before a release is used to generate or rescore records, a score-changing change may be finalized within that unreleased version, but the active rubric, display guidance, GPT instruction, visible frontend guidance, and relevant regression tests must change together. Once a release has been used to generate or rescore records, any score-changing change requires a new rubric version; structural fields or deterministic formulas additionally require the compact contract, schema/parser/storage/render surfaces, and regression tests to change in the same release.
 
 `meta.rubric_version` on a record is the version that was active when its GPT report/score was originally generated ("원본" — the original), and is never overwritten after the fact. `meta.rescored_rubric_version` identifies the latest rubric that actually changed official scores; `meta.rubric_reviewed_version` identifies the latest successfully checked rubric even when no score changed. Prompt-only author/language/output-format boilerplate is not persisted.
 

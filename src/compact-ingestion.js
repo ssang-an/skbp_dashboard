@@ -366,8 +366,8 @@ function expandedMeta(record, mode) {
   const meta = { ...objectValue(record.meta) };
   const triage = mode === 'triage';
   meta.schema_version ||= '3.2';
-  meta.instruction_version ||= triage ? '3.3' : '3.4';
-  meta.rubric_version ||= triage ? '3.3' : '3.4';
+  meta.instruction_version ||= triage ? '3.4' : '3.5';
+  meta.rubric_version ||= triage ? '3.4' : '3.5';
   meta.review_type ||= triage ? 'fast_triage' : 'full_scout';
   meta.language ||= 'ko';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(textValue(meta.generated_at)) || /Y{4}/i.test(textValue(meta.generated_at))) {
@@ -534,7 +534,7 @@ function expandMinimalCompactInputRecord(inputRecord, requestedMode = '') {
 
   if (triage) {
     record.triage = {
-      instruction_version: '3.3',
+      instruction_version: '3.4',
       status: textValue(record.triage?.status, record.hard_filter.status),
       identity_verified: record.triage?.identity_verified === true,
       active_asset: typeof record.triage?.active_asset === 'boolean'
@@ -693,7 +693,7 @@ export function expandCompactInputRecord(inputRecord, requestedMode = '') {
 
   if (triage) {
     record.triage = {
-      instruction_version: '3.3',
+      instruction_version: '3.4',
       identity_verified: false,
       active_asset: null,
       missing_evidence_needed_for_full_scout: [],

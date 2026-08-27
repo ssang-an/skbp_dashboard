@@ -203,11 +203,11 @@ CRITERION_ALIASES = {
 
 CRITERION_IDS = [
     "target_relevance",
-    "competitive_landscape",
     "moa_validity",
+    "data_maturity",
+    "competitive_landscape",
     "platform_attractiveness",
     "expansion_potential",
-    "data_maturity",
     "marketability",
 ]
 
@@ -220,8 +220,10 @@ EVIDENCE_TYPE_ALLOWED_VALUES = {
 }
 
 SCORE_ALLOWED_VALUES = {0, 1, 2, 3}
-FAST_TRIAGE_STATUS_ALLOWED_VALUES = {"SELECT", "REJECT", "UNVERIFIED"}
-FAST_TRIAGE_LEGACY_STATUS_VALUES = {"N/A"}
+FAST_TRIAGE_STATUS_ALLOWED_VALUES = {"SELECT", "REJECT", "INSUFFICIENT"}
+# Older persisted Fast Triage records retain their historical labels.  They are
+# mapped to the current vocabulary only when rendered or re-evaluated.
+FAST_TRIAGE_LEGACY_STATUS_VALUES = {"N/A", "UNVERIFIED"}
 FAST_TRIAGE_EVIDENCE_BASIS_ALLOWED_VALUES = {
     "user_input_only",
     "public_source",
@@ -284,11 +286,11 @@ MARKETABILITY_COMMERCIAL_RATIONALE_STATUS_ALLOWED_VALUES = {
 
 RULE_PREFIXES = {
     "target_relevance": "TR",
-    "competitive_landscape": "CL",
     "moa_validity": "MOA",
+    "data_maturity": "DM",
+    "competitive_landscape": "CL",
     "platform_attractiveness": "PA",
     "expansion_potential": "EP",
-    "data_maturity": "DM",
     "marketability": "MK",
 }
 
@@ -1283,18 +1285,20 @@ def calculate_target_relevance_score(
     if not text or text.casefold() in {"unknown", "n/a", "na", "none", "undisclosed", "-"}:
         return 0
     if match_skbp_interest_indication(text):
-        if target_moa_contradiction:
-            return 1
-        return 3 if direct_biology_fit else 2
+        # TR measures indication scope only. Disease-biology fit, Theme/Cluster, and
+        # target/MoA contradictions are assessed separately and do not change TR.
+        return 3
     if re.search(
-        r"\b(?:pain|neurolog(?:ic|ical|y)|neurodegenerat(?:ive|ion)|neuroimmune|"
-        r"neuroinflammator(?:y|ion)|central nervous system|cns|brain|spinal|neuropath)\b|"
+        r"\b(?:pain|psychiatr(?:ic|y)|mental health|depress(?:ion|ive)|anxiety|"
+        r"schizophreni[ac]|bipolar|psychosis|neurolog(?:ic|ical|y)|"
+        r"neurodegenerat(?:ive|ion)|neuroimmune|neuroinflammator(?:y|ion)|"
+        r"central nervous system|cns|brain|spinal|neuropath)\b|"
         r"신경|통증|뇌|척수",
         text,
         flags=re.IGNORECASE,
     ):
-        return 1
-    return 0
+        return 2
+    return 1
 
 
 def calculate_moa_validity_score(
@@ -1543,12 +1547,14 @@ def calculate_fast_triage_status(
     active_asset: bool | None = None,
     hard_blocker: bool = False,
 ) -> str:
-    """Return SELECT, REJECT, or UNVERIFIED using the current Fast Triage gate."""
+    """Return SELECT, REJECT, or INSUFFICIENT using the current Fast Triage gate."""
     if identity_verified is not True:
-        return "UNVERIFIED"
-    if active_asset is not True or hard_blocker:
-        return "REJECT"
-    if target_relevance >= 2 and (moa_validity >= 2 or data_maturity >= 2):
+        return "INSUFFICIENT"
+    if active_asset is False or hard_blocker:
+        return "INSUFFICIENT"
+    if min(target_relevance, moa_validity, data_maturity) == 0:
+        return "INSUFFICIENT"
+    if active_asset is True and target_relevance >= 2 and moa_validity >= 1 and data_maturity >= 2:
         return "SELECT"
     return "REJECT"
 
@@ -2117,7 +2123,7 @@ def is_current_fast_triage_contract(record: dict[str, Any]) -> bool:
     return bool(
         str(meta.get("schema_version") or "").strip() == TRIAGE_SCHEMA_VERSION
         or str(meta.get("instruction_version") or "").strip().lstrip("vV") == TRIAGE_CRITERIA_VERSION
-        or str(triage.get("status") or "").strip().upper() == "UNVERIFIED"
+        or str(triage.get("status") or "").strip().upper() == "INSUFFICIENT"
         or any(
             isinstance(criterion, dict) and "evidence_basis" in criterion
             for criterion in criteria.values()
@@ -2702,7 +2708,7 @@ def validate_minimal_dashboard_record(
         triage_status = str(triage.get("status") or "").strip().upper()
         if status not in FAST_TRIAGE_STATUS_ALLOWED_VALUES or triage_status != status:
             validation_error(
-                f"record[{index}] Fast Triage hard_filter.status and triage.status must match SELECT, REJECT, or UNVERIFIED."
+                f"record[{index}] Fast Triage hard_filter.status and triage.status must match SELECT, REJECT, or INSUFFICIENT."
             )
         if not isinstance(triage.get("identity_verified"), bool):
             validation_error(f"record[{index}].triage.identity_verified must be true or false.")
@@ -2736,8 +2742,8 @@ def validate_minimal_dashboard_record(
                 validation_error(f"record[{index}] Fast Triage status must be {expected_status}; got {status}.")
             expected_recommendation = {
                 "SELECT": "Run Full Scout",
-                "REJECT": "Do not run Full Scout",
-                "UNVERIFIED": "Verify asset identity",
+                "REJECT": "Monitor / gather more evidence",
+                "INSUFFICIENT": "Do not run Full Scout",
             }[status]
             if str(final_insight.get("recommendation") or "").strip() != expected_recommendation:
                 validation_error(
@@ -2857,6 +2863,7 @@ def validate_records_for_save(
     *,
     allow_server_owned_pipeline_metadata: bool = False,
 ) -> None:
+    synchronize_server_derived_scoring_fields(records)
     for index, record in enumerate(records):
         ensure_meta_defaults(record)
         normalize_marketability_global_conversion(record)
@@ -2941,7 +2948,7 @@ def validate_records_for_save(
                     if legacy_rows:
                         validation_error(
                             f"record[{index}].source_report.raw_markdown uses legacy Fast Triage status N/A; "
-                            "use SELECT, REJECT, or UNVERIFIED."
+                            "use SELECT, REJECT, or INSUFFICIENT."
                         )
                     invalid_rows = [
                         row for row in markdown_rows if row["status"] not in FAST_TRIAGE_STATUS_ALLOWED_VALUES
@@ -3050,8 +3057,8 @@ def validate_records_for_save(
                     )
                 recommendation_map = {
                     "SELECT": "Run Full Scout",
-                    "REJECT": "Do not run Full Scout",
-                    "UNVERIFIED": "Verify asset identity",
+                    "REJECT": "Monitor / gather more evidence",
+                    "INSUFFICIENT": "Do not run Full Scout",
                 }
                 final_insight = record.get("final_insight")
                 if not isinstance(final_insight, dict):
@@ -4489,6 +4496,7 @@ def save_records(records: list[dict[str, Any]]) -> None:
     for record in records:
         normalize_marketability_global_conversion(record)
     minimized_records = [minimize_record_for_dashboard_storage(record) for record in records]
+    synchronize_server_derived_scoring_fields(minimized_records)
     for record in minimized_records:
         synchronize_full_scout_source_revision_metadata(record)
     # Validate a copy because canonical-stage validation may normalize legacy display
@@ -4974,7 +4982,7 @@ def is_fast_triage_record(record: dict[str, Any]) -> bool:
     return triage_signal and not full_signal
 
 
-DASHBOARD_FAST_STATUS_ORDER = ("SELECT", "REJECT", "UNVERIFIED")
+DASHBOARD_FAST_STATUS_ORDER = ("SELECT", "REJECT", "INSUFFICIENT")
 DASHBOARD_FULL_STATUS_ORDER = ("PASS", "REVIEW", "FAIL")
 DASHBOARD_PARTNERSHIP_ORDER = ("investment", "value_up", "joint_research")
 DASHBOARD_PARTNERSHIP_DISTRIBUTION_ORDER = (*DASHBOARD_PARTNERSHIP_ORDER, "tbd")
@@ -6407,7 +6415,9 @@ def dashboard_fast_status(record: dict[str, Any]) -> str:
     triage = record.get("triage") if isinstance(record.get("triage"), dict) else {}
     hard_filter = record.get("hard_filter") if isinstance(record.get("hard_filter"), dict) else {}
     status = non_empty_text(hard_filter.get("status"), triage.get("status"), record.get("triage_status")).upper()
-    return status if status in DASHBOARD_FAST_STATUS_ORDER else "UNVERIFIED"
+    legacy_status_map = {"UNVERIFIED": "INSUFFICIENT", "N/A": "INSUFFICIENT"}
+    status = legacy_status_map.get(status, status)
+    return status if status in DASHBOARD_FAST_STATUS_ORDER else "INSUFFICIENT"
 
 
 def dashboard_full_status(record: dict[str, Any]) -> str:
@@ -6715,7 +6725,7 @@ def build_dashboard_summary(
                     "assets": len(fast_assets),
                     "select": fast_statuses.count("SELECT"),
                     "reject": fast_statuses.count("REJECT"),
-                    "unverified": fast_statuses.count("UNVERIFIED"),
+                    "insufficient": fast_statuses.count("INSUFFICIENT"),
                     "average_total_score": round(sum(fast_totals) / len(fast_totals), 1) if fast_totals else 0,
                     "max_score": 9,
                 },
@@ -8036,6 +8046,7 @@ def parse_llm_reparse_answer(
     if not reparsed_records or not all(isinstance(item, dict) for item in reparsed_records):
         return None, "LLM이 유효한 record 객체를 반환하지 않았습니다."
 
+    server_derived_adjustments = synchronize_server_derived_scoring_fields(reparsed_records)
     raw_new_warning = parsed.get("new_warning") if isinstance(parsed, dict) else None
     new_warning = str(raw_new_warning).strip() if isinstance(raw_new_warning, str) else ""
     return {
@@ -8043,6 +8054,7 @@ def parse_llm_reparse_answer(
         "mode": mode,
         "records": reparsed_records,
         "corrected_fields": corrected_fields,
+        "server_derived_adjustments": server_derived_adjustments,
         "new_warning": new_warning or None,
     }, None
 
@@ -10170,8 +10182,8 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
             hard_filter["reason"] = f"Fast Triage rubric v{latest_rubric_version} AI score refresh"
             candidate.setdefault("final_insight", {})["recommendation"] = {
                 "SELECT": "Run Full Scout",
-                "REJECT": "Do not run Full Scout",
-                "UNVERIFIED": "Verify asset identity",
+                "REJECT": "Monitor / gather more evidence",
+                "INSUFFICIENT": "Do not run Full Scout",
             }[status]
         else:
             synchronize_full_scout_hard_filter(candidate)
@@ -10442,16 +10454,17 @@ def calculate_latest_full_scout_filter(record: dict[str, Any]) -> dict[str, Any]
     notes = full_scout_rubric_filter_text(record)
     hard_filter = record.get("hard_filter") if isinstance(record.get("hard_filter"), dict) else {}
     fail_blocker = hard_filter.get("hard_blocker") is True or full_scout_has_hard_blocker(notes)
-    review_uncertainty = (
-        hard_filter.get("decision_uncertainty") is True
-        or storage_full_scout_has_decision_uncertainty(notes)
-    )
     reasons: list[str] = []
 
     if total is not None and total <= 8:
         reasons.append(f"Total score {total} <= 8")
-    if target_score is not None and target_score <= 1:
-        reasons.append(f"Target Relevance {target_score} <= 1")
+    for criterion_label, score in (
+        ("Target Relevance", target_score),
+        ("MoA Validity", moa_score),
+        ("Data Maturity", data_score),
+    ):
+        if score == 0:
+            reasons.append(f"{criterion_label} = 0")
     if fail_blocker:
         reasons.append("Hard blocker 확인")
     if reasons:
@@ -10461,19 +10474,19 @@ def calculate_latest_full_scout_filter(record: dict[str, Any]) -> dict[str, Any]
         total is not None
         and total >= 14
         and target_score is not None
-        and target_score >= 3
+        and target_score >= 2
         and moa_score is not None
-        and moa_score >= 2
+        and moa_score >= 3
         and data_score is not None
-        and data_score >= 2
+        and data_score >= 3
     )
-    if pass_scores and not review_uncertainty:
+    if pass_scores:
         return {
             "status": "PASS",
             "reason": (
                 f"Rubric v{SCORING_CRITERIA_VERSION}: Total {total} >= 14, "
-                f"TR {target_score} >= 3, MOA {moa_score} >= 2, "
-                f"Data {data_score} >= 2, hard blocker 없음"
+                f"TR {target_score} >= 2, MOA {moa_score} = 3, "
+                f"Data {data_score} = 3"
             ),
             "total_score": total,
         }
@@ -10487,13 +10500,102 @@ def calculate_latest_full_scout_filter(record: dict[str, Any]) -> dict[str, Any]
             f"MOA {moa_score if moa_score is not None else '-'}, "
             f"Data {data_score if data_score is not None else '-'}"
         )
-    if review_uncertainty:
-        reasons.append("stage/rights/asset identity/source 불확실성 확인 필요")
     return {
         "status": "REVIEW",
         "reason": "; ".join(reasons) or "추가 diligence 필요",
         "total_score": total,
     }
+
+
+def synchronize_server_derived_scoring_fields(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Align dashboard-owned totals and filter statuses without changing GPT research scores.
+
+    Scores, evidence, and free-text rationale remain authored research fields.  Totals and
+    status labels are deterministic consequences of those fields and must not cause an upload
+    to fail merely because a GPT response used an earlier rubric's status wording.
+    """
+    adjustments: list[dict[str, Any]] = []
+
+    def sync_value(record_index: int, container: dict[str, Any], field: str, value: Any, path: str) -> None:
+        previous = container.get(field)
+        if previous == value:
+            return
+        container[field] = value
+        adjustments.append(
+            {
+                "record_index": record_index,
+                "path": path,
+                "previous": previous,
+                "current": value,
+            }
+        )
+
+    for record_index, record in enumerate(records):
+        if not isinstance(record, dict):
+            continue
+        scoring = record.get("scoring")
+        hard_filter = record.get("hard_filter")
+        if not isinstance(scoring, dict) or not isinstance(hard_filter, dict):
+            continue
+        criteria = scoring.get("criteria")
+        if not isinstance(criteria, dict):
+            continue
+
+        if is_fast_triage_record(record):
+            triage = record.get("triage")
+            if not isinstance(triage, dict):
+                continue
+            score_map = {
+                criterion_id: (criteria.get(criterion_id) or {}).get("score")
+                if isinstance(criteria.get(criterion_id), dict)
+                else None
+                for criterion_id in TRIAGE_MANUAL_REVIEW_SCORE_FIELDS
+            }
+            if not all(isinstance(score, int) and not isinstance(score, bool) and 0 <= score <= 3 for score in score_map.values()):
+                continue
+            identity_verified = triage.get("identity_verified")
+            active_asset = triage.get("active_asset")
+            if not isinstance(identity_verified, bool) or active_asset not in {True, False, None}:
+                continue
+            sync_value(record_index, scoring, "total_score", sum(score_map.values()), "scoring.total_score")
+            sync_value(record_index, scoring, "max_score", 9, "scoring.max_score")
+            status = calculate_fast_triage_status(
+                identity_verified=identity_verified,
+                target_relevance=score_map["target_relevance"],
+                moa_validity=score_map["moa_validity"],
+                data_maturity=score_map["data_maturity"],
+                active_asset=active_asset,
+                hard_blocker=fast_triage_record_has_hard_blocker(record),
+            )
+            sync_value(record_index, hard_filter, "status", status, "hard_filter.status")
+            sync_value(record_index, triage, "status", status, "triage.status")
+            final_insight = record.get("final_insight")
+            if isinstance(final_insight, dict):
+                recommendation = {
+                    "SELECT": "Run Full Scout",
+                    "REJECT": "Monitor / gather more evidence",
+                    "INSUFFICIENT": "Do not run Full Scout",
+                }[status]
+                sync_value(
+                    record_index,
+                    final_insight,
+                    "recommendation",
+                    recommendation,
+                    "final_insight.recommendation",
+                )
+            continue
+
+        score_map = full_scout_rubric_score_map(record)
+        if not all(isinstance(score, int) and not isinstance(score, bool) and 0 <= score <= 3 for score in score_map.values()):
+            continue
+        sync_value(record_index, scoring, "total_score", sum(score_map.values()), "scoring.total_score")
+        sync_value(record_index, scoring, "max_score", 21, "scoring.max_score")
+        # Preserve the authored detailed reason.  The status itself is server-owned;
+        # research notes and uncertainties continue to live in criteria/validation.
+        status = calculate_latest_full_scout_filter(record)["status"]
+        sync_value(record_index, hard_filter, "status", status, "hard_filter.status")
+
+    return adjustments
 
 
 def synchronize_full_scout_hard_filter(record: dict[str, Any]) -> None:
@@ -10664,8 +10766,8 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
             final_insight = record.setdefault("final_insight", {})
             final_insight["recommendation"] = {
                 "SELECT": "Run Full Scout",
-                "REJECT": "Do not run Full Scout",
-                "UNVERIFIED": "Verify asset identity",
+                "REJECT": "Monitor / gather more evidence",
+                "INSUFFICIENT": "Do not run Full Scout",
             }[status]
             meta["rubric_recalculation"] = {
                 "version": TRIAGE_CRITERIA_VERSION,

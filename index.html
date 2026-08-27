@@ -12,7 +12,43 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20260825-detail-upload-tooltip-1" />
+    <script>
+      // Keep a module-startup failure from leaving the static loading shell active
+      // with no explanation or interactive controls.
+      (() => {
+        const showStartupFailure = (message) => {
+          const apply = () => {
+            const dashboard = document.querySelector('#step0SummaryDashboard');
+            const status = document.querySelector('#dataStatus');
+            const saveStatus = document.querySelector('#saveStatus');
+            if (dashboard) {
+              dashboard.classList.remove('is-loading');
+              dashboard.setAttribute('aria-busy', 'false');
+            }
+            if (status) status.textContent = '화면 초기화 실패';
+            if (saveStatus) {
+              saveStatus.textContent = `화면을 초기화하지 못했습니다. 새로고침 후에도 반복되면 관리자에게 전달해 주세요. (${message})`;
+            }
+          };
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', apply, { once: true });
+          } else {
+            apply();
+          }
+        };
+        window.addEventListener('error', (event) => {
+          const source = String(event.filename || '');
+          if (!window.__skbpAppModuleReady && (source.includes('/src/') || source.includes('app.js'))) {
+            showStartupFailure(event.message || 'JavaScript module error');
+          }
+        }, true);
+        window.addEventListener('unhandledrejection', (event) => {
+          const message = event.reason?.message || String(event.reason || 'Unhandled startup error');
+          if (!window.__skbpAppModuleReady) showStartupFailure(message);
+        });
+      })();
+    </script>
+  <link rel="stylesheet" href="./src/styles.css?v=20260827-review-workspace-density-1" />
   <link rel="stylesheet" href="./src/knowledge_graph.css?v=20260823-atlas-search-pill-alignment-1" />
   <link rel="stylesheet" href="./src/sigma_graph.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js" defer></script>
@@ -83,15 +119,15 @@
                 class="help-tooltip"
                 type="button"
                 hidden
-                data-tooltip="GPT Fast Triage v3.3 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / UNVERIFIED로 screening할 때 사용합니다."
-                aria-label="GPT Fast Triage v3.3 지침 복사"
+                data-tooltip="GPT Fast Triage v3.4 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / INSUFFICIENT로 screening할 때 사용합니다."
+                aria-label="GPT Fast Triage v3.4 지침 복사"
               ><span aria-hidden="true">GPT</span><b>지침 1</b></button>
               <button
                 id="copyPromptTopButton"
                 class="help-tooltip"
                 type="button"
-                data-tooltip="GPT Full Scout v3.4 지침을 복사합니다. Fast Triage에서 SELECT된 asset을 심층 검토할 때 사용합니다."
-                aria-label="GPT Full Scout v3.4 지침 복사"
+                data-tooltip="GPT Full Scout v3.6 지침을 복사합니다. Fast Triage에서 SELECT된 asset을 심층 검토할 때 사용합니다."
+                aria-label="GPT Full Scout v3.6 지침 복사"
               ><span aria-hidden="true">GPT</span><b>지침 2</b></button>
               <button
                 class="data-utility-segment data-upload-shortcut help-tooltip"
@@ -814,54 +850,56 @@
           <p class="eyebrow" id="criteriaDrawerScopeLabel">AI Champion</p>
           <div class="criteria-drawer-title-row">
             <h2>판단근거</h2>
-            <span id="criteriaDrawerVersionBadge" class="criteria-version-badge">v3.3</span>
+            <span id="criteriaDrawerVersionBadge" class="criteria-version-badge">v3.4</span>
           </div>
           <p id="criteriaDrawerSubtitle" class="criteria-drawer-subtitle">Full Scout 검토 후보를 선별하기 위한 3-point screening 기준</p>
         </div>
-        <button id="criteriaDrawerClose" class="criteria-drawer-close" type="button" aria-label="판단근거 닫기"><span>닫기</span><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17" /></svg></button>
+        <div class="criteria-drawer-actions">
+          <div id="criteriaLanguageToggle" class="criteria-language-toggle" role="group" aria-label="Judgment-guide language">
+            <button type="button" data-criteria-language="ko" aria-pressed="true">KR</button>
+            <button type="button" data-criteria-language="en" aria-pressed="false">EN</button>
+          </div>
+          <button id="criteriaDrawerClose" class="criteria-drawer-close" type="button" aria-label="판단근거 닫기"><span>닫기</span><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17" /></svg></button>
+        </div>
       </div>
 
       <div class="criteria-drawer-body">
         <section class="criteria-rule criteria-triage-rule" data-criteria-tab="triage">
-          <h3>GPT 지침 1 — Fast Triage · v3.3 기준</h3>
+          <h3>GPT 지침 1 — Fast Triage · v3.4 기준</h3>
           <p>
             지침 1은 여러 후보 중 지침 2 Full Scout로 넘길 대상을 빠르게 고르는 1차 screening입니다.
             <code>Target Area Relevance</code>, <code>MoA Validity</code>, <code>Data Maturity</code>를 독립적으로 예비 평가하고
-            <code>SELECT</code>, <code>REJECT</code>, <code>UNVERIFIED</code>로 분류합니다.
+            <code>SELECT</code>, <code>REJECT</code>, <code>INSUFFICIENT</code>로 분류합니다.
           </p>
         </section>
 
-        <section class="criteria-pass-grid triage-status-grid criteria-guide-section" aria-label="SELECT REJECT UNVERIFIED triage criteria" data-criteria-tab="triage">
+        <section class="criteria-pass-grid triage-status-grid criteria-guide-section" aria-label="SELECT REJECT INSUFFICIENT triage criteria" data-criteria-tab="triage">
           <div class="criteria-guide-section-heading">
             <span class="criteria-guide-step-number" aria-hidden="true">1</span>
-            <span class="criteria-guide-section-copy"><h3>Final Status</h3><p>SELECT / REJECT / UNVERIFIED의 최종 판정 기준</p></span>
+            <span class="criteria-guide-section-copy"><h3>Final Status</h3><p>SELECT / REJECT / INSUFFICIENT의 최종 판정 기준</p></span>
           </div>
           <article class="criteria-status-card" data-triage-status="select">
             <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></svg></span><h3>SELECT</h3></div>
             <p class="criteria-status-subtitle">Full Scout 심층 검토 대상입니다. 최종 BD recommendation을 의미하지 않습니다.</p>
             <ul>
-              <li>Asset identity 확인</li>
-              <li>Active asset</li>
               <li>TR 2점 이상</li>
-              <li>MoA 또는 Data 중 하나 이상 2점 이상</li>
+              <li>MoA 1점 이상, Data 2점 이상</li>
             </ul>
           </article>
           <article class="criteria-status-card" data-triage-status="reject">
             <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6M15 9l-6 6" /></svg></span><h3>REJECT</h3></div>
-            <p class="criteria-status-subtitle">현재 공개 근거 및 개발 상태 기준, Full Scout 우선순위가 충분하지 않습니다.</p>
+            <p class="criteria-status-subtitle">현재 공개 근거의 한계로 Full Scout 조사 대상은 아니지만, 추후 공개 근거 확인 후 재평가 대상입니다.</p>
             <ul>
               <li>Asset identity는 확인됐으나 SELECT 기준 미충족</li>
-              <li>MoA 또는 Data 근거가 Full Scout 우선순위를 뒷받침하지 못함</li>
-              <li>Inactive, discontinued 또는 명확한 hard blocker가 있는 경우</li>
+              <li>TR·MoA·Data 모두 1점 이상이지만 SELECT 기준 미충족</li>
             </ul>
           </article>
-          <article class="criteria-status-card" data-triage-status="unverified">
-            <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="11" cy="11" r="7" /><path d="m16.5 16.5 4 4M11 8.5v3M11 14.5h.01" /></svg></span><h3>UNVERIFIED</h3></div>
-            <p class="criteria-status-subtitle">공개 자료에서 해당 후보를 특정 biotech/pharma pipeline asset으로 확인하지 못했습니다.</p>
+          <article class="criteria-status-card" data-triage-status="insufficient">
+            <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="11" cy="11" r="7" /><path d="m16.5 16.5 4 4M11 8.5v3M11 14.5h.01" /></svg></span><h3>INSUFFICIENT</h3></div>
+            <p class="criteria-status-subtitle">조사 조기 종료 사유가 확인됐거나, 추가 조사를 수행할 수 있는 최소 근거가 확인되지 않았습니다.</p>
             <ul>
-              <li>Asset명 또는 compound code를 실제 의약품 개발 프로그램으로 확인할 수 없음</li>
-              <li>검색 결과가 비의약품, 동명 코드 또는 불명확한 약어와 혼재함</li>
-              <li>공식 pipeline page, clinical trial registry 또는 publication 등 identity 확인 source가 필요함</li>
+              <li>Asset identity 미확인 또는 영구 중단 시 조사 조기 종료</li>
+              <li>Identity는 확인됐지만 TR·MoA·Data 중 하나가 0점</li>
             </ul>
           </article>
         </section>
@@ -892,31 +930,31 @@
               <tbody>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg></span><span><b>TR</b>Target Area Relevance</span></span></th>
-                  <td>SKBP 관련성을 판단할 정보가 부족하거나 관심 질환 범위 밖</td>
-                  <td>신경계·신경면역·신경퇴행·통증 관련 질환이지만 SKBP 우선 관심 적응증에는 해당하지 않음</td>
-                  <td>SKBP 우선 관심 적응증에 해당</td>
-                  <td>SKBP 우선 관심 적응증에 해당하며, target/MoA가 해당 질환 biology 또는 SKBP Theme/Cluster에 직접 연결</td>
+                  <td>Identity 확인 후 indication/relevance 판단 정보 부족</td>
+                  <td>확인된 asset이나 넓은 SKBP 범위 밖</td>
+                  <td>넓은 SKBP 범위 내이나 6개 우선 적응증 밖</td>
+                  <td><strong>6개 SKBP 우선 적응증</strong> 중 하나</td>
                 </tr>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 4h8M10 4v5l-5 9a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 18l-5-9V4" /><path d="M8 15h8" /></svg></span><span><b>MoA</b>MoA Validity</span></span></th>
                   <td>Target 또는 작용기전을 확인할 수 없어 평가 불가</td>
                   <td>작용기전 설명은 있으나 회사 주장 또는 이론적 근거 중심</td>
                   <td>기전이 실제로 작동함을 보여주는 기능적 실험 또는 동일 target/class의 독립 검증 근거 있음</td>
-                  <td>해당 asset에서 target engagement, mechanism-linked PD/biomarker 또는 직접적인 작용기전 검증이 확인됨</td>
+                  <td><strong>평가 asset 자체에서 제안된 MoA가 직접 검증됨</strong><br />(target engagement, 기전 연계 PD/biomarker, 또는 직접 functional effect 중 하나 이상)</td>
                 </tr>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /><path d="M3 20h18" /></svg></span><span><b>Data</b>Data Maturity</span></span></th>
                   <td>공개된 asset-specific 결과 없음</td>
                   <td>정성적 claim 또는 단편적 결과만 있어 Pipeline Stage 대비 불충분</td>
-                  <td>Pipeline Stage에 맞는 해석 가능한 정량 데이터 영역 1개 이상</td>
-                  <td>Pipeline Stage에 맞는 상호보완적 정량 데이터 영역 2개 이상</td>
+                  <td><strong>Pipeline Stage에 맞는 해석 가능한 정량 데이터 영역 1개 이상</strong></td>
+                  <td><strong>상호보완적·Pipeline Stage 적합 정량 데이터 영역 2개 이상</strong> + 최소 1개 program progression 직접 지지</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <ul class="criteria-table-footnote">
-            <li><span class="triage-status-badge unverified criteria-footnote-status">UNVERIFIED</span><span>asset identity 자체를 확인하지 못한 경우에만 사용합니다.</span></li>
-            <li>Identity는 확인됐지만 평가 근거가 없거나 asset이 inactive·discontinued(개발 중단) 상태이면 해당 항목을 0점으로 기록합니다.</li>
+            <li><span class="triage-status-badge insufficient criteria-footnote-status">INSUFFICIENT</span><span>asset identity 미확인·영구 중단 조기 종료 또는 TR/MoA/Data 중 하나가 0점인 경우에 사용합니다.</span></li>
+            <li>Identity 확인 후 TR/MoA/Data 중 하나가 0점이면 실제 평가 점수로 INSUFFICIENT입니다.</li>
           </ul>
 
         </section>
@@ -929,7 +967,7 @@
           <div class="criteria-detail-grid compact-criteria-detail-grid triage-parameter-grid" aria-label="Fast Triage parameter guide">
             <article class="parameter-card-wide target-parameter-card parameter-breakdown-card">
               <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4M9.5 12a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z" /></svg></span><h3><b>TR</b><span>Target Area Relevance</span></h3></div>
-              <p>SKBP 우선 관심 적응증 및 R&amp;D Theme/Cluster와의 적합성을 평가합니다.</p>
+              <p>확인된 asset의 indication이 SKBP 전략 범위와 얼마나 맞는지 평가합니다. Theme/Cluster와 disease biology 연결성은 별도 분류 및 MoA 평가에 사용합니다.</p>
               <ul class="parameter-evidence-list" aria-label="Target Area Relevance priority indications and themes">
                 <li><strong>SKBP 우선 관심 적응증</strong><span class="criteria-keyword-list"><span>Alzheimer's disease</span><span>Parkinson's disease</span><span>Amyotrophic lateral sclerosis / motor neuron disease</span><span>Multiple sclerosis / neuroinflammatory disease</span><span>Neuropathic pain</span><span>Epilepsy / seizure disorders</span></span></li>
                 <li><strong>R&amp;D Theme 1 · E/I Balance</strong><span class="criteria-keyword-list"><span>Ion Channel</span><span>Inhibitory Tone</span><span>Synaptic Transmission</span><span>Chloride Homeostasis</span><span>Network Modulation</span></span></li>
@@ -949,7 +987,7 @@
         </section>
 
         <section class="criteria-rule criteria-full-rule" data-criteria-tab="full">
-          <h3>GPT 지침 2 — Full Scout · v3.4 기준</h3>
+          <h3>GPT 지침 2 — Full Scout · v3.6 기준</h3>
           <p>
             지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
             지침 1에서 예비로 본 TR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
@@ -977,34 +1015,28 @@
           </div>
           <article class="criteria-status-card" data-full-status="pass">
             <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></svg></span><h3>PASS</h3></div>
-            <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">Full Scout의 총점과 필수 기준을 모두 충족하고 active development가 확인된 후속 BD 우선 검토 후보입니다.</p></div>
+            <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">Full Scout의 총점과 필수 점수 기준을 모두 충족한 후속 BD 우선 검토 후보입니다.</p></div>
             <ul>
-              <li>Total Score ≥ 15</li>
+              <li>Total Score ≥ 14</li>
               <li>Target Area Relevance ≥ 2</li>
-              <li>MoA Validity ≥ 2</li>
-              <li>Data Maturity ≥ 2</li>
-              <li>Asset identity verified</li>
-              <li>Active development program confirmed</li>
+              <li>MoA Validity = 3, Data Maturity = 3</li>
             </ul>
           </article>
           <article class="criteria-status-card" data-full-status="review">
             <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="11" cy="11" r="7" /><path d="m16.5 16.5 4 4M11 8.5v3M11 14.5h.01" /></svg></span><h3>REVIEW</h3></div>
-            <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">잠재력은 있으나 총점, 필수 기준 또는 active status와 핵심 근거가 충분하지 않아 추가 확인이 필요한 후보입니다.</p></div>
+            <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">PASS 또는 FAIL에 해당하지 않으며, 추후 추가 공개 근거 확인 후 재평가하거나 내부 모니터링할 후보입니다.</p></div>
             <ul>
-              <li>Total Score 9–14</li>
-              <li>또는 Total Score ≥ 15이지만 TR, MoA 또는 Data 필수조건 미충족</li>
-              <li>또는 active status, Pipeline Stage 또는 핵심 evidence 불확실</li>
-              <li>추가 diligence 후 PASS/FAIL 재판정</li>
+              <li>PASS/FAIL 어느 쪽에도 해당하지 않는 완료 평가</li>
+              <li>예: Total Score 9–13 또는 PASS 점수 조건 미충족</li>
+              <li>추후 추가 공개 근거 확인 후 재평가 또는 내부 모니터링</li>
             </ul>
           </article>
           <article class="criteria-status-card" data-full-status="fail">
             <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6M15 9l-6 6" /></svg></span><h3>FAIL</h3></div>
-            <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">현재 확인된 근거 또는 개발 상태가 Full Scout 통과 기준에 미달하거나 명확한 제외 조건에 해당하는 후보입니다.</p></div>
+            <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">필요한 핵심 정보가 부족하거나, 개발 상태 또는 점수가 Full Scout 통과 기준에 미달한 후보입니다.</p></div>
             <ul>
               <li>Total Score ≤ 8</li>
-              <li>또는 Target Area Relevance ≤ 1</li>
-              <li>또는 Asset identity not verified</li>
-              <li>또는 Discontinued / Terminated / Withdrawn / Inactive / Clearly failed</li>
+              <li>또는 TR / MoA / Data 중 하나가 0점</li>
             </ul>
           </article>
         </section>
@@ -1035,10 +1067,24 @@
               <tbody>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg></span><span><b>TR</b>Target Area Relevance</span></span></th>
-                  <td>SKBP 관련성 판단 근거 부족 또는 관심 질환 범위 밖</td>
-                  <td>신경·신경면역·신경퇴행·통증 관련이나 6개 우선 관심 적응증에는 해당하지 않음</td>
-                  <td>SKBP 우선 관심 적응증 확인</td>
-                  <td>관심 적응증이며 target/MoA가 disease biology 또는 SKBP Theme/Cluster에 직접 연결</td>
+                  <td>Identity 확인 후 indication/relevance 판단 정보 부족<br />(identity 미확인 시 조사 조기 종료)</td>
+                  <td>확인된 asset이나 넓은 SKBP 범위 밖</td>
+                  <td>넓은 SKBP 범위 내이나 6개 우선 적응증 밖</td>
+                  <td><strong>6개 SKBP 우선 적응증</strong> 중 하나</td>
+                </tr>
+                <tr>
+                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 4h8M10 4v5l-5 9a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 18l-5-9V4" /><path d="M8 15h8" /></svg></span><span><b>MoA</b>MoA Validity</span></span></th>
+                  <td>Target 또는 MoA 확인 불가</td>
+                  <td>회사 주장 또는 theoretical rationale 수준</td>
+                  <td>Functional evidence 또는 independent same-target/class validation</td>
+                  <td><strong>Assessed asset directly validates the proposed MoA</strong><br />(target engagement, mechanism-linked PD/biomarker, or direct functional effect)</td>
+                </tr>
+                <tr>
+                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /><path d="M3 20h18" /></svg></span><span><b>DATA</b>Data Maturity</span></span></th>
+                  <td>Asset-specific 결과 미확인</td>
+                  <td>정성적 claim 또는 단편적 결과</td>
+                  <td><strong>Pipeline Stage에 맞는 해석 가능한 정량 데이터 영역 1개 이상</strong></td>
+                  <td><strong>상호보완적·Pipeline Stage 적합 정량 데이터 영역 2개 이상</strong> + 최소 1개 program progression 직접 지지</td>
                 </tr>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="7" r="2.5" /><circle cx="18" cy="17" r="2.5" /><path d="m8.5 11 7-3M8.5 13l7 3" /></svg></span><span><b>COMP</b>Competitive Landscape</span></span></th>
@@ -1048,32 +1094,18 @@
                   <td>충분한 검색 후 high-similarity 경쟁자가 제한적이고 강한 정량 차별성 또는 선도 위치 확인</td>
                 </tr>
                 <tr>
-                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 4h8M10 4v5l-5 9a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 18l-5-9V4" /><path d="M8 15h8" /></svg></span><span><b>MoA</b>MoA Validity</span></span></th>
-                  <td>Target 또는 MoA 확인 불가</td>
-                  <td>회사 주장 또는 theoretical rationale 수준</td>
-                  <td>Functional evidence 또는 independent same-target/class validation</td>
-                  <td>Asset-specific target engagement, mechanism-linked PD/biomarker 또는 직접 functional validation</td>
-                </tr>
-                <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 3 8 4-8 4-8-4 8-4Z" /><path d="m4 12 8 4 8-4M4 17l8 4 8-4" /></svg></span><span><b>PLATFORM</b>Platform Attractiveness</span></span></th>
                   <td>재사용 가능한 Platform 또는 검증 가능한 기술 장점 미확인</td>
                   <td>재사용 구조와 rationale은 있으나 차별성은 claim 수준</td>
                   <td>적절한 comparator 대비 정량적 기술 우위 최소 1건</td>
-                  <td>2점 조건 충족 후 반복 정량 검증 또는 Platform-derived Asset FPD</td>
+                  <td>2점 정량 근거 + 복수 조건/platform 적용 자산에서 정량 우위 재현·외부 검증, 또는 Platform 적용 자산 FPD</td>
                 </tr>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="5" r="2" /><circle cx="18" cy="7" r="2" /><circle cx="18" cy="18" r="2" /><path d="M6 7v5a6 6 0 0 0 6 6h4M8 7h4a6 6 0 0 1 6 6v3" /></svg></span><span><b>EXPANSION</b>Expansion Potential</span></span></th>
                   <td>Main indication 외 추가 적응증 미확인</td>
                   <td>추가 적응증과 biological rationale은 있으나 회사 설명·이론 수준</td>
                   <td>하나 이상의 추가 적응증에서 asset-specific 초기 정량 데이터 확인</td>
-                  <td>복수 추가 적응증 + 최소 1개 공식 전임상·IND-enabling·임상 개발 프로그램 + 해당 적응증 정량 데이터</td>
-                </tr>
-                <tr>
-                  <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /><path d="M3 20h18" /></svg></span><span><b>DATA</b>Data Maturity</span></span></th>
-                  <td>Asset-specific 결과 미확인</td>
-                  <td>정성적 claim 또는 단편적 결과</td>
-                  <td>Pipeline Stage에 맞는 정량 evidence domain 1개 이상</td>
-                  <td>Complementary quantitative evidence domain 2개 이상이며 최소 하나가 program progression 지지</td>
+                  <td>복수 추가 적응증 + 최소 1개 공식 전임상·IND-enabling·임상 개발 프로그램 + 추가 적응증 중 최소 1개의 asset-specific 정량 데이터</td>
                 </tr>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 19V9M10 19V5M16 19v-7M3 19h18" /><path d="m4 8 6-4 6 6 4-3" /></svg></span><span><b>MARKET</b>Marketability</span></span></th>
@@ -1095,7 +1127,7 @@
           <div class="criteria-detail-grid compact-criteria-detail-grid full-parameter-grid" aria-label="Detailed scoring guidance">
             <article class="target-parameter-card parameter-breakdown-card full-parameter-card">
               <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4M9.5 12a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z" /></svg></span><h3><b>TR</b><span>Target Area Relevance</span></h3></div>
-              <p>SKBP 6개 우선 관심 적응증 해당 여부와, 확인된 target/MoA가 disease biology 또는 SKBP Theme/Cluster에 직접 연결되는지를 평가합니다.</p>
+              <p>확인된 asset의 indication이 SKBP 전략 범위와 얼마나 맞는지 평가합니다. 6개 우선 적응증이면 3점, 넓은 SKBP 범위 내의 비우선 적응증이면 2점, 그 밖이면 1점입니다.</p>
               <ul class="parameter-evidence-list" aria-label="Target Area Relevance priority indications and themes">
                 <li><strong>SKBP 우선 관심 적응증</strong><span class="criteria-keyword-list"><span>Alzheimer's disease</span><span>Parkinson's disease</span><span>Amyotrophic lateral sclerosis / motor neuron disease</span><span>Multiple sclerosis / neuroinflammatory disease</span><span>Neuropathic pain</span><span>Epilepsy / seizure disorders</span></span></li>
                 <li><strong>R&amp;D Theme 1 · E/I Balance</strong><span class="criteria-keyword-list"><span>Ion Channel</span><span>Inhibitory Tone</span><span>Synaptic Transmission</span><span>Chloride Homeostasis</span><span>Network Modulation</span></span></li>
@@ -1103,25 +1135,25 @@
                 <li><strong>R&amp;D Theme 3 · Protein Homeostasis</strong><span class="criteria-keyword-list"><span>Protein folding / chaperone</span><span>Ubiquitin-proteasome</span><span>Autophagy-lysosome</span><span>ER stress / UPR</span><span>Aggregate clearance</span></span></li>
               </ul>
             </article>
-            <article class="competitive-parameter-card full-parameter-card">
-              <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="7" r="2.5" /><circle cx="18" cy="17" r="2.5" /><path d="m8.5 11 7-3M8.5 13l7 3" /></svg></span><h3><b>COMP</b><span>Competitive Landscape</span></h3></div>
-              <p>충분한 경쟁검색을 전제로 direct/high-similarity competitor 대비 경쟁 위치와 asset-specific 정량 차별성을 평가합니다.</p>
-            </article>
             <article class="full-parameter-card">
               <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 4h8M10 4v5l-5 9a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 18l-5-9V4" /><path d="M8 15h8" /></svg></span><h3><b>MoA</b><span>MoA Validity</span></h3></div>
               <p>Target/MoA의 biological plausibility와 functional, independent class-level 및 asset-specific mechanism validation 수준을 평가합니다.</p>
             </article>
             <article class="full-parameter-card">
+              <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /><path d="M3 20h18" /></svg></span><h3><b>DATA</b><span>Data Maturity</span></h3></div>
+              <p>현재 개발단계에서 기대되는 Asset-specific 정량 efficacy, PK/PD, safety, CMC 또는 clinical evidence의 성숙도를 평가합니다.</p>
+            </article>
+            <article class="competitive-parameter-card full-parameter-card">
+              <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="7" r="2.5" /><circle cx="18" cy="17" r="2.5" /><path d="m8.5 11 7-3M8.5 13l7 3" /></svg></span><h3><b>COMP</b><span>Competitive Landscape</span></h3></div>
+              <p>충분한 경쟁검색을 전제로 direct/high-similarity competitor 대비 경쟁 위치와 asset-specific 정량 차별성을 평가합니다.</p>
+            </article>
+            <article class="full-parameter-card">
               <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 3 8 4-8 4-8-4 8-4Z" /><path d="m4 12 8 4 8-4M4 17l8 4 8-4" /></svg></span><h3><b>PLATFORM</b><span>Platform Attractiveness</span></h3></div>
-              <p>복수 후보 또는 프로그램에 반복 적용 가능한 재사용 기술체계와 comparator 대비 정량적 기술 우위를 평가합니다.</p>
+              <p>복수 후보 또는 프로그램에 반복 적용 가능한 재사용 기술체계와 comparator 대비 정량적 기술 우위를 평가합니다. 3점은 2점 근거에 더해 정량 우위가 복수 조건 또는 복수 platform 적용 자산에서 재현되고 외부 검증·사용이 확인되거나, 공식 연결된 platform 적용 자산이 First Patient Dosed에 도달해야 합니다.</p>
             </article>
             <article class="full-parameter-card">
               <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="5" r="2" /><circle cx="18" cy="7" r="2" /><circle cx="18" cy="18" r="2" /><path d="M6 7v5a6 6 0 0 0 6 6h4M8 7h4a6 6 0 0 1 6 6v3" /></svg></span><h3><b>EXPANSION</b><span>Expansion Potential</span></h3></div>
               <p>조사 Asset의 main indication 외 추가 적응증에 대한 asset-specific 근거와 공식 개발 진행 여부를 평가합니다.</p>
-            </article>
-            <article class="full-parameter-card">
-              <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /><path d="M3 20h18" /></svg></span><h3><b>DATA</b><span>Data Maturity</span></h3></div>
-              <p>현재 개발단계에서 기대되는 Asset-specific 정량 efficacy, PK/PD, safety, CMC 또는 clinical evidence의 성숙도를 평가합니다.</p>
             </article>
             <article class="parameter-card-wide marketability-parameter-card parameter-horizontal-card parameter-breakdown-card full-parameter-card">
               <div class="parameter-horizontal-copy">
@@ -1390,7 +1422,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260825-listing-import-error-dialog-1"></script>
+  <script type="module" src="./src/app.js?v=20260827-criteria-language-1"></script>
   <script src="./src/sigma_graph.js?v=20260824-deferred-wiki-export-1" defer></script>
   </body>
 </html>

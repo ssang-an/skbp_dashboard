@@ -14,11 +14,11 @@ STORAGE_PROFILE = "dashboard_hybrid_v1"
 LEGACY_STORAGE_PROFILES = {"dashboard_minimal_v1", STORAGE_PROFILE}
 FULL_CRITERION_IDS = (
     "target_relevance",
-    "competitive_landscape",
     "moa_validity",
+    "data_maturity",
+    "competitive_landscape",
     "platform_attractiveness",
     "expansion_potential",
-    "data_maturity",
     "marketability",
 )
 TRIAGE_CRITERION_IDS = ("target_relevance", "moa_validity", "data_maturity")

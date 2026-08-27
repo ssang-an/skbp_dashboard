@@ -802,7 +802,8 @@
 }
 
 .triage-status-badge.na,
-.triage-status-badge.unverified {
+.triage-status-badge.unverified,
+.triage-status-badge.insufficient {
   background: var(--surface-soft);
   color: var(--muted);
 }
@@ -1378,7 +1379,8 @@
 }
 
 .triage-status-guide dt.na,
-.triage-status-guide dt.unverified {
+.triage-status-guide dt.unverified,
+.triage-status-guide dt.insufficient {
   background: var(--surface);
   color: var(--muted);
 }
@@ -13599,7 +13601,6 @@ html[data-theme="dark"] .detail-material-panel {
 .review-info-column .filter-decision-line,
 .review-info-column .review-reason-shell,
 .review-info-column .oi-classification-summary,
-.review-info-column .oi-material-flags,
 .review-info-column .action-info-fields,
 .review-info-column .review-row-note {
   grid-column: 1;
@@ -18546,6 +18547,44 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
   color: var(--text);
 }
 
+.criteria-drawer-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.criteria-language-toggle {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  border: 1px solid var(--presentation-border);
+  border-radius: 999px;
+  background: var(--readable-soft);
+}
+
+.criteria-language-toggle button {
+  min-width: 32px;
+  min-height: 28px;
+  padding: 3px 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.criteria-language-toggle button[aria-pressed="true"] {
+  background: var(--criteria-header-accent, var(--accent));
+  color: #fff;
+}
+
+.criteria-language-toggle button:focus-visible {
+  outline: 2px solid var(--criteria-header-accent, var(--accent));
+  outline-offset: 2px;
+}
+
 .criteria-drawer-close svg {
   width: 15px;
   height: 15px;
@@ -18616,7 +18655,7 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
   padding: 17px;
 }
 
-.triage-status-grid .criteria-status-card[data-triage-status="unverified"] {
+.triage-status-grid .criteria-status-card[data-triage-status="insufficient"] {
   --criteria-status-color: #8a6d1d;
 }
 
@@ -18931,6 +18970,16 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
     justify-content: center;
   }
 
+  .criteria-drawer-actions {
+    gap: 5px;
+  }
+
+  .criteria-language-toggle button {
+    min-width: 29px;
+    min-height: 27px;
+    padding-inline: 6px;
+  }
+
   .criteria-drawer[data-active-criteria-tab="triage"] .criteria-drawer-body {
     gap: 15px;
     padding: 14px;
@@ -19095,9 +19144,9 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
   --criteria-status-color: #b05258;
 }
 
-.criteria-status-card[data-triage-status="unverified"],
+.criteria-status-card[data-triage-status="insufficient"],
 .criteria-status-card[data-full-status="review"] {
-  --criteria-status-color: #987222;
+  --criteria-status-color: #8a6d1d;
 }
 
 .full-status-grid {
@@ -19987,7 +20036,7 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
   display: grid;
   align-self: start;
   gap: 7px;
-  margin: 12px 0 0;
+  margin: 8px 0 0;
   padding-left: 18px;
 }
 
@@ -20632,14 +20681,17 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
   }
 
   .criteria-drawer-body .full-status-grid[data-criteria-tab="full"] .criteria-full-status-summary-slot {
+    display: flex;
     width: 100%;
     height: 78px;
   }
 
   .criteria-drawer-body .full-status-grid[data-criteria-tab="full"] .criteria-full-status-summary {
+    display: flex;
+    align-items: center;
     width: 100%;
     min-height: 0;
-    height: auto;
+    height: 100%;
   }
 
   .criteria-drawer-body .full-status-grid[data-criteria-tab="full"] .criteria-status-card > ul {
@@ -21238,7 +21290,7 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
 }
 
 .review-info-stack.is-collapsed .review-info-columns {
-  padding-bottom: 6px;
+  padding-bottom: 2px;
 }
 
 .review-info-stack.is-collapsed .qualitative-review-panel {
@@ -21247,7 +21299,7 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
 
 .review-info-stack.is-collapsed .review-info-column {
   align-content: start;
-  gap: 6px;
+  gap: 4px;
   padding: 8px;
 }
 
@@ -21259,6 +21311,14 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
 .review-info-stack.is-collapsed #detailActionOwner,
 .review-info-stack.is-collapsed #detailActionPlan {
   display: none;
+}
+
+/* The compact summary keeps Filter 2 readable without reserving a blank
+   score-panel row after the duplicate material-presence pills are removed. */
+.review-info-stack.is-collapsed #detailFilter2Row .filter-score-panel {
+  min-height: 42px;
+  gap: 4px;
+  padding: 0;
 }
 
 .review-info-stack.is-collapsed .review-info-column .action-info-fields {

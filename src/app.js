@@ -9,6 +9,7 @@ import {
   isMinimalCompactIngestionRecord
 } from './compact-ingestion.js?v=20260806-theme-indication-3';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260820-url-repair-6';
+import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260827-language-1';
 
 const API_URL = '/api/records';
 const DASHBOARD_SUMMARY_URL = '/api/dashboard-summary';
@@ -25,6 +26,7 @@ const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
 const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v4';
 const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v6';
 const VISUAL_DASHBOARD_HIDDEN_KEY = 'skbp.dashboard.visualDashboardHidden.v1';
+const CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY = 'skbp.dashboard.criteriaGuideLanguage.v1';
 
 function readStoredJson(key, fallback, validator) {
   try {
@@ -152,11 +154,11 @@ const FOCUS_MIN_COLUMN_WIDTHS = {
 
 const MAX_COLUMN_WIDTH = 720;
 const PROMPT_TOOLTIP =
-  'GPT Full Scout v3.4 지침을 복사합니다. Fast Triage에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
+  'GPT Full Scout v3.6 지침을 복사합니다. Fast Triage에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
 const TRIAGE_PROMPT_TOOLTIP =
-  'GPT Fast Triage v3.3 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / UNVERIFIED로 screening합니다.';
-const LATEST_TRIAGE_RUBRIC_VERSION = '3.3';
-const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.4';
+  'GPT Fast Triage v3.4 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / INSUFFICIENT로 screening합니다.';
+const LATEST_TRIAGE_RUBRIC_VERSION = '3.4';
+const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.6';
 const FAST_TRIAGE_SCHEMA_VERSION = '3.2';
 const FULL_SCOUT_SCHEMA_VERSION = '3.2';
 const FULL_SCOUT_AGENT_INPUT_PLACEHOLDER =
@@ -398,6 +400,8 @@ const elements = {
   criteriaDrawer: document.querySelector('#criteriaDrawer'),
   criteriaBackdrop: document.querySelector('#criteriaBackdrop'),
   criteriaDrawerClose: document.querySelector('#criteriaDrawerClose'),
+  criteriaDrawerBody: document.querySelector('#criteriaDrawer .criteria-drawer-body'),
+  criteriaLanguageToggle: document.querySelector('#criteriaLanguageToggle'),
   criteriaDrawerScopeLabel: document.querySelector('#criteriaDrawerScopeLabel'),
   criteriaDrawerVersionBadge: document.querySelector('#criteriaDrawerVersionBadge'),
   criteriaDrawerSubtitle: document.querySelector('#criteriaDrawerSubtitle'),
@@ -2145,22 +2149,21 @@ function computeHardFilter(record, criteria) {
   const reasons = [];
 
   const failBlocker = record.hard_filter?.hard_blocker === true || hasAffirmedHardBlocker(notes);
-  const reviewUncertainty = record.hard_filter?.decision_uncertainty === true
-    || hasScopedFullScoutReviewUncertainty(notes);
-
   if (Number.isFinite(total) && total <= 8) reasons.push(`Total score ${total} <= 8`);
-  if (Number.isFinite(targetScore) && targetScore <= 1) reasons.push(`Target Area Relevance ${targetScore} <= 1`);
+  [['Target Area Relevance', targetScore], ['MoA Validity', moaScore], ['Data Maturity', dataScore]]
+    .filter(([, score]) => score === 0)
+    .forEach(([label]) => reasons.push(`${label} = 0`));
   if (failBlocker) reasons.push('Hard blocker keyword detected');
 
   if (reasons.length) {
     return { status: 'FAIL', reason: reasons.join('; ') };
   }
 
-  const passScores = total >= 14 && targetScore >= 3 && moaScore >= 2 && dataScore >= 2;
-  if (passScores && !reviewUncertainty) {
+  const passScores = total >= 14 && targetScore >= 2 && moaScore === 3 && dataScore === 3;
+  if (passScores) {
     return {
       status: 'PASS',
-      reason: `Total ${total} >= 14, TR ${targetScore} >= 3, MOA ${moaScore} >= 2, Data ${dataScore} >= 2, hard blocker 없음`
+      reason: `Total ${total} >= 14, TR ${targetScore} >= 2, MOA ${moaScore} = 3, Data ${dataScore} = 3`
     };
   }
 
@@ -2170,27 +2173,124 @@ function computeHardFilter(record, criteria) {
   if (!passScores) {
     reasons.push(`PASS score gate 미충족: Total ${total ?? '-'}, TR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
   }
-  if (reviewUncertainty) {
-    reasons.push('Pipeline Stage/rights/asset identity/source 불확실성 확인 필요');
+  return { status: 'REVIEW', reason: reasons.join('; ') || '추가 diligence 필요' };
+}
+
+function synchronizeDashboardOwnedInputFields(record) {
+  // GPT owns research scores and evidence. Totals and Filter 2/triage labels are
+  // deterministic dashboard fields, so normalize them before client validation
+  // and let the server repeat the same normalization at its save boundary.
+  if (!isInputObject(record) || !isInputObject(record.scoring) || !isInputObject(record.hard_filter)) return [];
+  const criteria = isInputObject(record.scoring.criteria) ? record.scoring.criteria : {};
+  const adjustments = [];
+  const synchronize = (container, field, value, path) => {
+    if (!isInputObject(container) || container[field] === value) return;
+    adjustments.push({ path, previous: container[field], current: value });
+    container[field] = value;
+  };
+  const isScore = (value) => Number.isInteger(value) && value >= 0 && value <= 3;
+  const triageMode = detectInputRecordMode(record).mode === 'triage';
+
+  if (triageMode) {
+    const triage = isInputObject(record.triage) ? record.triage : null;
+    const scores = ['target_relevance', 'moa_validity', 'data_maturity']
+      .map((criterionId) => criteria[criterionId]?.score);
+    if (!triage || !scores.every(isScore)
+      || typeof triage.identity_verified !== 'boolean'
+      || ![true, false, null].includes(triage.active_asset)) {
+      return adjustments;
+    }
+    synchronize(record.scoring, 'total_score', scores.reduce((sum, score) => sum + score, 0), 'scoring.total_score');
+    synchronize(record.scoring, 'max_score', 9, 'scoring.max_score');
+    const hasHardBlocker = triage.active_asset === false
+      || canonicalDevelopmentStage(record.structured_table?.development_stage) === 'Discontinued / inactive'
+      || hasAffirmedLifecycleBlocker(record.hard_filter.flags || []);
+    const status = triage.identity_verified !== true || triage.active_asset === false || hasHardBlocker
+      ? 'INSUFFICIENT'
+      : Math.min(...scores) === 0
+        ? 'INSUFFICIENT'
+        : triage.active_asset === true && scores[0] >= 2 && scores[1] >= 1 && scores[2] >= 2
+          ? 'SELECT'
+          : 'REJECT';
+    synchronize(record.hard_filter, 'status', status, 'hard_filter.status');
+    synchronize(triage, 'status', status, 'triage.status');
+    if (isInputObject(record.final_insight)) {
+      synchronize(
+        record.final_insight,
+        'recommendation',
+        {
+          SELECT: 'Run Full Scout',
+          REJECT: 'Monitor / gather more evidence',
+          INSUFFICIENT: 'Do not run Full Scout'
+        }[status],
+        'final_insight.recommendation'
+      );
+    }
+    return adjustments;
   }
 
-  return { status: 'REVIEW', reason: reasons.join('; ') || '추가 diligence 필요' };
+  const scores = INPUT_FULL_CRITERIA.map((criterionId) => criteria[criterionId]?.score);
+  if (!scores.every(isScore)) return adjustments;
+  synchronize(record.scoring, 'total_score', scores.reduce((sum, score) => sum + score, 0), 'scoring.total_score');
+  synchronize(record.scoring, 'max_score', 21, 'scoring.max_score');
+  const filter = computeHardFilter(record, {
+    target: criteria.target_relevance,
+    competitive: criteria.competitive_landscape,
+    moa: criteria.moa_validity,
+    platform: criteria.platform_attractiveness,
+    expansion: criteria.expansion_potential,
+    data: criteria.data_maturity,
+    market: criteria.marketability
+  });
+  synchronize(record.hard_filter, 'status', filter.status, 'hard_filter.status');
+  return adjustments;
 }
 
 function normalizeTriageStatus(value) {
   const text = String(value || '').trim().toUpperCase();
-  if (['SELECT', 'REJECT', 'UNVERIFIED'].includes(text)) {
+  if (['SELECT', 'REJECT', 'INSUFFICIENT'].includes(text)) {
     return text;
   }
-  if (['N/A', 'NA'].includes(text)) {
-    return 'UNVERIFIED';
-  }
+  if (['UNVERIFIED', 'N/A', 'NA'].includes(text)) return 'INSUFFICIENT';
   return '';
 }
 
 function normalizeFullStatus(value) {
   const text = String(value || '').trim().toUpperCase();
   return ['PASS', 'REVIEW', 'FAIL'].includes(text) ? text : '';
+}
+
+function earlyStopInfo(record) {
+  const triageRecord = isTriageRecord(record);
+  const table = record?.structured_table || {};
+  const stage = canonicalDevelopmentStage(table.development_stage || table.development_stage_source || '');
+  const reason = String(
+    record?.hard_filter?.reason
+    || record?.triage?.reason
+    || record?.triage_reason
+    || ''
+  );
+  const parserStatus = String(record?.source_report?.parser_status || '');
+
+  if (triageRecord && record?.triage?.identity_verified === false) {
+    return {
+      type: 'identity',
+      reason: 'Asset identity를 확인하지 못해 점수 평가를 수행하지 않았습니다.'
+    };
+  }
+  if (!triageRecord && /asset[\s_-]*identity[^\n]*not[\s_-]*verified|identity[^\n]*not[\s_-]*verified/i.test(`${reason}\n${parserStatus}`)) {
+    return {
+      type: 'identity',
+      reason: 'Asset identity를 확인하지 못해 Full Scout를 조기 종료했습니다.'
+    };
+  }
+  if (stage === 'Discontinued / inactive') {
+    return {
+      type: 'lifecycle',
+      reason: 'Pipeline 전체의 영구 중단이 확인되어 조사를 조기 종료했습니다.'
+    };
+  }
+  return null;
 }
 
 function humanReviewOverrides(record) {
@@ -2229,7 +2329,7 @@ function isCurrentFastTriageContract(record) {
   const criteria = record?.scoring?.criteria || {};
   return schemaVersion === FAST_TRIAGE_SCHEMA_VERSION
     || instructionVersion === LATEST_TRIAGE_RUBRIC_VERSION
-    || triageStatus === 'UNVERIFIED'
+    || triageStatus === 'INSUFFICIENT'
     || Object.values(criteria).some((item) => item && typeof item === 'object' && 'evidence_basis' in item);
 }
 
@@ -2238,7 +2338,7 @@ function recordFilterStatus(record, computedHardFilter) {
   const stage = canonicalDevelopmentStage(record?.structured_table?.development_stage || '');
   if (triageRecord && stage === 'Discontinued / inactive') {
     return {
-      status: 'REJECT',
+      status: 'INSUFFICIENT',
       reason: 'Fast triage auto-reject: discontinued / inactive pipeline'
     };
   }
@@ -2266,7 +2366,7 @@ function recordFilter1Status(record) {
   const stage = canonicalDevelopmentStage(record?.structured_table?.development_stage || '');
   if (triageRecord && stage === 'Discontinued / inactive') {
     return {
-      status: 'REJECT',
+      status: 'INSUFFICIENT',
       reason: 'Fast triage auto-reject: discontinued / inactive pipeline'
     };
   }
@@ -2282,7 +2382,7 @@ function recordFilter1Status(record) {
   return { status: '-', reason: '' };
 }
 
-const FILTER1_SORT_RANK = { SELECT: 0, REJECT: 1, UNVERIFIED: 2 };
+const FILTER1_SORT_RANK = { SELECT: 0, REJECT: 1, INSUFFICIENT: 2 };
 const FILTER2_SORT_RANK = { PASS: 0, REVIEW: 1, FAIL: 2 };
 
 function recordFilter2Status(record, computedHardFilter) {
@@ -2405,9 +2505,10 @@ function flattenRecord(record, index) {
   const filter1Status = recordFilter1Status(record);
   const filter2Status = recordFilter2Status(record, computedHardFilter);
   const filterStatus = filter1Status.status !== '-' ? filter1Status : filter2Status;
+  const earlyStop = earlyStopInfo(record);
   const identityUnverified = isTriage && (
     record?.triage?.identity_verified === false
-    || filter1Status.status === 'UNVERIFIED'
+    || filter1Status.status === 'INSUFFICIENT'
     || /asset_identity_not_verified/i.test(String(record?.source_report?.parser_status || ''))
   );
   const rawTheme = summary.theme || get(champion, 'matched_theme.name', '-');
@@ -2469,6 +2570,7 @@ function flattenRecord(record, index) {
     isTriage,
     filter1: filter1Status.status,
     filter2: filter2Status.status,
+    earlyStop,
     filter3: effectivePartnershipType,
     filter3Note: String(focusManagement?.partnership_note || ''),
     filter3Source: hasHumanPartnership ? 'manual' : 'auto',
@@ -3092,7 +3194,7 @@ function renderFilters() {
     ? [
         { value: 'SELECT', label: 'SELECT' },
         { value: 'REJECT', label: 'REJECT' },
-        { value: 'UNVERIFIED', label: 'UNVERIFIED' }
+        { value: 'INSUFFICIENT', label: 'INSUFFICIENT' }
       ]
     : activeTableMode() === 'focus'
       ? [
@@ -3356,7 +3458,7 @@ function fallbackTabSummary(mode, filteredRows = null) {
         assets: triageRows.length,
         select: triageRows.filter((row) => row.filter1 === 'SELECT').length,
         reject: triageRows.filter((row) => row.filter1 === 'REJECT').length,
-        unverified: triageRows.filter((row) => row.filter1 === 'UNVERIFIED').length,
+        insufficient: triageRows.filter((row) => row.filter1 === 'INSUFFICIENT').length,
         average_total_score: average(triageRows.map(fastTriageRowTotal)),
         max_score: 9
       },
@@ -3364,7 +3466,7 @@ function fallbackTabSummary(mode, filteredRows = null) {
         scope: hasFilteredRows ? 'filtered_rows' : 'active_tab',
         assets: triageRows.length
       },
-      status_distribution: fallbackDistribution(triageRows, (row) => row.filter1, ['SELECT', 'REJECT', 'UNVERIFIED']),
+      status_distribution: fallbackDistribution(triageRows, (row) => row.filter1, ['SELECT', 'REJECT', 'INSUFFICIENT']),
       indication_distribution: indicationDistribution(triageRows),
       modality_distribution: fallbackModalityDistribution(triageRows),
       awaiting_full_scout: awaiting
@@ -3551,7 +3653,7 @@ function renderMetrics() {
         ['metricTotal', { label: 'Fast Triage Assets', value: kpis.assets ?? 0, icon: 'assets', tone: 'blue' }],
         ['metricPass', { label: 'SELECT', value: kpis.select ?? 0, icon: 'check', tone: 'green' }],
         ['metricScore', { label: 'REJECT', value: kpis.reject ?? 0, icon: 'reject', tone: 'red' }],
-        ['metricTarget', { label: 'UNVERIFIED', value: kpis.unverified ?? 0, icon: 'question', tone: 'gray' }],
+        ['metricTarget', { label: 'INSUFFICIENT', value: kpis.insufficient ?? 0, icon: 'question', tone: 'gray' }],
         ['metricCountries', { label: '평균 총점 / 9', value: scoreValue, icon: 'score', tone: 'blue', hidden: true }]
       ]
     : mode === 'focus'
@@ -3666,7 +3768,7 @@ function donutChart(entries, kind) {
     REJECT: '#b84f5f',
     FAIL: '#b84f5f',
     REVIEW: '#b47c25',
-    UNVERIFIED: 'var(--chart-other)',
+    INSUFFICIENT: 'var(--chart-other)',
     투자: '#2f73c9',
     'Value Up': '#7657c9',
     공동연구: '#0f9f8f'
@@ -3949,13 +4051,15 @@ function workflowIdentityKeys(row) {
 }
 
 function fullScoutTriageAlias(row) {
+  const earlyStop = row.earlyStop;
+  const status = earlyStop ? 'INSUFFICIENT' : 'SELECT';
   return {
     ...row,
     isTriage: true,
     isVirtualTriage: true,
-    filter1: 'SELECT',
-    hardFilter: 'SELECT',
-    hardFilterReason: 'Full Scout 완료로 Fast Triage 공통 기준(TR, MOA, Data)을 충족한 것으로 표시됩니다.'
+    filter1: status,
+    hardFilter: status,
+    hardFilterReason: earlyStop?.reason || 'Full Scout 완료로 Fast Triage 공통 기준(TR, MOA, Data)을 충족한 것으로 표시됩니다.'
   };
 }
 
@@ -4694,6 +4798,16 @@ function scoreBadge(score, max = 3, tooltip = '', extraClass = '') {
   return `<span class="${className}" tabindex="0" aria-label="${safeTooltip}" data-tooltip="${safeTooltip}" title="${safeTooltip}">${score ?? '-'}</span>`;
 }
 
+function earlyStopScoreBadge(row) {
+  const tooltip = row?.earlyStop?.reason || '조기 종료되어 점수 평가를 수행하지 않았습니다.';
+  const safeTooltip = escapeHtml(tooltip);
+  return `<span class="score pending early-stop-score" tabindex="0" aria-label="${safeTooltip}" data-tooltip="${safeTooltip}" title="${safeTooltip}">—</span>`;
+}
+
+function pipelineScoreBadge(row, score, max = 3, tooltip = '') {
+  return row?.earlyStop ? earlyStopScoreBadge(row) : scoreBadge(score, max, tooltip);
+}
+
 function selectOption(value, currentValue, label = value) {
   return `<option value="${escapeHtml(value)}" ${String(value) === String(currentValue) ? 'selected' : ''}>${escapeHtml(label)}</option>`;
 }
@@ -4701,10 +4815,12 @@ function selectOption(value, currentValue, label = value) {
 function statusEditSelect(row, filterKey) {
   const value = row[filterKey];
   if (row.isVirtualTriage) {
-    return `<span class="pill pass" title="Full Scout 완료로 표시된 Fast Triage 상태입니다. Tab 2 결과를 엽니다.">${escapeHtml(value)}</span>`;
+    const title = row.earlyStop?.reason || 'Full Scout 완료로 표시된 Fast Triage 상태입니다. Tab 2 결과를 엽니다.';
+    return `<span class="pill ${filterToneClass(value)}" title="${escapeHtml(title)}">${escapeHtml(value)}</span>`;
   }
-  const options = row.isTriage ? ['SELECT', 'REJECT', 'UNVERIFIED'] : ['PASS', 'REVIEW', 'FAIL'];
+  const options = row.isTriage ? ['SELECT', 'REJECT', 'INSUFFICIENT'] : ['PASS', 'REVIEW', 'FAIL'];
   const isManual = Object.prototype.hasOwnProperty.call(humanReviewOverrides(row.raw), 'filter_status');
+  const title = row.earlyStop?.reason || 'AI initial status; editable by a human reviewer';
   return `
     <select
       class="table-edit-select status-edit ${filterToneClass(value)} ${isManual ? 'is-human' : 'is-auto'}"
@@ -4712,7 +4828,7 @@ function statusEditSelect(row, filterKey) {
       data-edit-kind="status"
       data-previous-value="${escapeHtml(value)}"
       aria-label="${escapeHtml(row.asset)} reviewer status"
-      title="AI initial status; editable by a human reviewer"
+      title="${escapeHtml(title)}"
     >
       ${options.map((option) => selectOption(option, value)).join('')}
     </select>
@@ -4850,6 +4966,7 @@ function admetEditSelect(row) {
 }
 
 function scoreEditSelect(row, scoreKey, criterionId, label) {
+  if (row.earlyStop) return earlyStopScoreBadge(row);
   const value = row[scoreKey];
   if (row.isVirtualTriage) {
     return scoreBadge(value, 3, `${label}: Tab 2 Full Scout 결과에서 가져온 읽기 전용 점수`);
@@ -4890,6 +5007,7 @@ function hasManualTotalScoreOverride(record) {
 }
 
 function totalScoreEditCircle(row) {
+  if (row.earlyStop) return earlyStopScoreBadge(row);
   const isManual = hasManualTotalScoreOverride(row.raw);
   const displayValue = row.totalScore ?? '';
   const tone = displayValue >= row.maxScore
@@ -4996,14 +5114,14 @@ function pendingScoreBadge(message = `Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VER
 
 function fullReviewScoreBadge(row, scoreKey, criterionKey, label) {
   if (row.isTriage) return pendingScoreBadge();
-  return scoreBadge(row[scoreKey], 3, scoreTooltip(label, row.criteria[criterionKey], 3));
+  return pipelineScoreBadge(row, row[scoreKey], 3, scoreTooltip(label, row.criteria[criterionKey], 3));
 }
 
 function filterToneClass(status) {
   if (!status || status === '-') return 'empty';
   if (['PASS', 'SELECT'].includes(status)) return 'pass select';
   if (status === 'FAIL') return 'fail';
-  if (['REJECT', 'UNVERIFIED', 'N/A'].includes(status)) return 'na reject';
+  if (['INSUFFICIENT', 'N/A'].includes(status)) return 'na reject';
   return 'review';
 }
 
@@ -5194,9 +5312,9 @@ function renderTableLegacy() {
               <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${stageEditSelect(row)}</td>
               <td class="filter-cell"><span class="${filter1Class}">${escapeHtml(row.filter1)}</span></td>
               <td class="filter-cell"><span class="${filter2Class}">${escapeHtml(row.filter2)}</span></td>
-              <td class="score-cell">${scoreBadge(row.targetScore, 3, scoreTooltip('Target Area Relevance', row.criteria.target, 3))}</td>
-              <td class="score-cell">${scoreBadge(row.moaScore, 3, scoreTooltip('MOA Validity', row.criteria.moa, 3))}</td>
-              <td class="score-cell">${scoreBadge(row.dataScore, 3, scoreTooltip('Data Maturity', row.criteria.data, 3))}</td>
+              <td class="score-cell">${pipelineScoreBadge(row, row.targetScore, 3, scoreTooltip('Target Area Relevance', row.criteria.target, 3))}</td>
+              <td class="score-cell">${pipelineScoreBadge(row, row.moaScore, 3, scoreTooltip('MOA Validity', row.criteria.moa, 3))}</td>
+              <td class="score-cell">${pipelineScoreBadge(row, row.dataScore, 3, scoreTooltip('Data Maturity', row.criteria.data, 3))}</td>
               <td class="score-cell">${fullReviewScoreBadge(row, 'competitiveScore', 'competitive', 'Competitive Landscape')}</td>
               <td class="score-cell">${fullReviewScoreBadge(row, 'platformScore', 'platform', 'Platform Attractiveness')}</td>
               <td class="score-cell">${fullReviewScoreBadge(row, 'expansionScore', 'expansion', 'Expansion Potential')}</td>
@@ -6623,10 +6741,55 @@ const CRITERIA_DRAWER_SUBTITLES = {
   focus: 'Shortlisted 후보의 OI Partnership Type 자동분류 및 후속 관리 기준'
 };
 
+const criteriaGuideKoreanMarkup = elements.criteriaDrawerBody?.innerHTML || '';
+let criteriaGuideLanguage = localStorage.getItem(CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY) === 'en' ? 'en' : 'ko';
+
+function criteriaGuideChrome() {
+  if (criteriaGuideLanguage !== 'en') {
+    return {
+      title: '판단근거',
+      close: '닫기',
+      closeAriaLabel: '판단근거 닫기',
+      scopes: CRITERIA_DRAWER_SCOPE_LABELS,
+      subtitles: CRITERIA_DRAWER_SUBTITLES
+    };
+  }
+  return ENGLISH_CRITERIA_DRAWER_CHROME;
+}
+
+function updateCriteriaGuideLanguageControls() {
+  elements.criteriaLanguageToggle?.querySelectorAll('[data-criteria-language]').forEach((button) => {
+    const selected = button.dataset.criteriaLanguage === criteriaGuideLanguage;
+    button.setAttribute('aria-pressed', String(selected));
+  });
+}
+
+function applyCriteriaGuideLanguage(language) {
+  const nextLanguage = language === 'en' ? 'en' : 'ko';
+  criteriaGuideLanguage = nextLanguage;
+  if (elements.criteriaDrawerBody) {
+    elements.criteriaDrawerBody.innerHTML = nextLanguage === 'en'
+      ? englishCriteriaGuideMarkup()
+      : criteriaGuideKoreanMarkup;
+    elements.criteriaDrawerBody.lang = nextLanguage;
+  }
+  const title = elements.criteriaDrawer?.querySelector('.criteria-drawer-title-row h2');
+  if (title) title.textContent = criteriaGuideChrome().title;
+  if (elements.criteriaDrawerClose) {
+    elements.criteriaDrawerClose.setAttribute('aria-label', criteriaGuideChrome().closeAriaLabel);
+    const closeLabel = elements.criteriaDrawerClose.querySelector('span');
+    if (closeLabel) closeLabel.textContent = criteriaGuideChrome().close;
+  }
+  updateCriteriaGuideLanguageControls();
+  localStorage.setItem(CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY, nextLanguage);
+  updateCriteriaDrawerScope();
+}
+
 function updateCriteriaDrawerScope() {
   const mode = activeTableMode();
+  const chrome = criteriaGuideChrome();
   if (elements.criteriaDrawerScopeLabel) {
-    elements.criteriaDrawerScopeLabel.textContent = CRITERIA_DRAWER_SCOPE_LABELS[mode] || '';
+    elements.criteriaDrawerScopeLabel.textContent = chrome.scopes[mode] || '';
   }
   if (elements.criteriaDrawerVersionBadge) {
     const version = mode === 'triage'
@@ -6637,10 +6800,10 @@ function updateCriteriaDrawerScope() {
     elements.criteriaDrawerVersionBadge.textContent = `v${version}`;
   }
   if (elements.criteriaDrawerSubtitle) {
-    elements.criteriaDrawerSubtitle.textContent = CRITERIA_DRAWER_SUBTITLES[mode] || '';
+    elements.criteriaDrawerSubtitle.textContent = chrome.subtitles[mode] || '';
   }
   if (elements.criteriaDrawer) elements.criteriaDrawer.dataset.activeCriteriaTab = mode;
-  document.querySelectorAll('[data-criteria-tab]').forEach((section) => {
+  elements.criteriaDrawerBody?.querySelectorAll('[data-criteria-tab]').forEach((section) => {
     const scopes = section.dataset.criteriaTab.split(' ');
     section.hidden = !scopes.includes(mode);
   });
@@ -7298,7 +7461,7 @@ const INPUT_MARKETABILITY_STATUSES = new Set([
   'established',
   'not_established'
 ]);
-const INPUT_TRIAGE_STATUSES = new Set(['SELECT', 'REJECT', 'UNVERIFIED']);
+const INPUT_TRIAGE_STATUSES = new Set(['SELECT', 'REJECT', 'INSUFFICIENT']);
 const INPUT_FULL_STATUSES = new Set(['PASS', 'REVIEW', 'FAIL']);
 // Keep manual-entry validation on the same Canonical Modality Library used by
 // imports, tables, and filters. Raw source wording is preserved separately.
@@ -8351,11 +8514,27 @@ function validateCombinedInput(value, expectedMode = '') {
   const modes = [];
   const lockedMode = ['triage', 'full'].includes(expectedMode) ? expectedMode : '';
   const compactInput = split.records.some((record) => isInputObject(record) && isCompactIngestionRecord(record));
-  const records = split.records.map((record) => (
-    isInputObject(record)
-      ? normalizeExpandedInputFilterFields(expandCompactInputRecord(record, lockedMode))
-      : record
-  ));
+  const derivedFieldAdjustments = [];
+  const records = split.records.map((record, index) => {
+    if (!isInputObject(record)) return record;
+    const expanded = normalizeExpandedInputFilterFields(expandCompactInputRecord(record, lockedMode));
+    synchronizeDashboardOwnedInputFields(expanded).forEach((adjustment) => {
+      derivedFieldAdjustments.push({ recordIndex: index, ...adjustment });
+    });
+    return expanded;
+  });
+
+  derivedFieldAdjustments.forEach((adjustment) => {
+    const before = adjustment.previous === undefined || adjustment.previous === ''
+      ? '미입력'
+      : String(adjustment.previous);
+    addInputIssue(
+      warnings,
+      'warning',
+      `record[${adjustment.recordIndex}].${adjustment.path}`,
+      `대시보드 저장 규칙으로 자동 정렬: ${before} → ${String(adjustment.current)}`
+    );
+  });
 
   if (split.payload !== null && lockedMode === 'triage' && !Array.isArray(split.payload)) {
     addInputIssue(errors, 'error', 'JSON 최상위', 'TAB1 Fast Triage는 여러 후보를 일관되게 처리하기 위해 최상위 JSON 배열 [...]이 필요합니다.');
@@ -8419,7 +8598,7 @@ function validateCombinedInput(value, expectedMode = '') {
       const triageStatus = String(record.triage?.status || '').trim().toUpperCase();
       const status = hardStatus || triageStatus;
       if (!INPUT_TRIAGE_STATUSES.has(status)) {
-        addInputIssue(errors, 'error', `${recordPath}.hard_filter.status`, `Fast Triage v${LATEST_TRIAGE_RUBRIC_VERSION} 판정은 SELECT, REJECT, UNVERIFIED 중 하나여야 합니다.`);
+        addInputIssue(errors, 'error', `${recordPath}.hard_filter.status`, `Fast Triage v${LATEST_TRIAGE_RUBRIC_VERSION} 판정은 SELECT, REJECT, INSUFFICIENT 중 하나여야 합니다.`);
       }
       if (hardStatus && triageStatus && hardStatus !== triageStatus) {
         addInputIssue(errors, 'error', `${recordPath}.triage.status`, `hard_filter.status(${hardStatus})와 triage.status(${triageStatus})가 일치해야 합니다.`);
@@ -8462,11 +8641,11 @@ function validateCombinedInput(value, expectedMode = '') {
       const hasHardBlocker = activeAsset === false
         || canonicalDevelopmentStage(record.structured_table?.development_stage) === 'Discontinued / inactive'
         || hasAffirmedLifecycleBlocker(record.hard_filter?.flags || []);
-      const expectedStatus = identityVerified !== true
-        ? 'UNVERIFIED'
-        : activeAsset !== true || hasHardBlocker
-          ? 'REJECT'
-          : trScore >= 2 && (moaScore >= 2 || dataScore >= 2)
+      const expectedStatus = identityVerified !== true || activeAsset === false || hasHardBlocker
+        ? 'INSUFFICIENT'
+        : Math.min(trScore, moaScore, dataScore) === 0
+          ? 'INSUFFICIENT'
+          : activeAsset === true && trScore >= 2 && moaScore >= 1 && dataScore >= 2
             ? 'SELECT'
             : 'REJECT';
       if (INPUT_TRIAGE_STATUSES.has(status) && status !== expectedStatus) {
@@ -8479,8 +8658,8 @@ function validateCombinedInput(value, expectedMode = '') {
       }
       const expectedRecommendation = {
         SELECT: 'Run Full Scout',
-        REJECT: 'Do not run Full Scout',
-        UNVERIFIED: 'Verify asset identity'
+        REJECT: 'Monitor / gather more evidence',
+        INSUFFICIENT: 'Do not run Full Scout'
       }[status];
       if (expectedRecommendation && record.final_insight?.recommendation !== expectedRecommendation) {
         addInputIssue(
@@ -8606,11 +8785,11 @@ function validateCombinedInput(value, expectedMode = '') {
       }
       markdownRows.forEach((row, index) => {
         if (['N/A', 'NA'].includes(row.status)) {
-          addInputIssue(errors, 'error', `Markdown.Triage[${index}]`, `Fast Triage v${LATEST_TRIAGE_RUBRIC_VERSION}에서는 legacy N/A 대신 UNVERIFIED를 사용해야 합니다.`);
+          addInputIssue(errors, 'error', `Markdown.Triage[${index}]`, `Fast Triage v${LATEST_TRIAGE_RUBRIC_VERSION}에서는 legacy N/A 대신 INSUFFICIENT를 사용해야 합니다.`);
           return;
         }
         if (!INPUT_TRIAGE_STATUSES.has(row.status)) {
-          addInputIssue(errors, 'error', `Markdown.Triage[${index}]`, 'SELECT, REJECT, UNVERIFIED 중 하나만 사용해야 합니다.');
+          addInputIssue(errors, 'error', `Markdown.Triage[${index}]`, 'SELECT, REJECT, INSUFFICIENT 중 하나만 사용해야 합니다.');
           return;
         }
         const record = records[index];
@@ -8967,6 +9146,9 @@ async function runAiReparse() {
     const result = await previewPastedReportParsing();
     const correctedCount = Object.values(state.dataUploadLlmReparseFields.fieldsByIndex)
       .reduce((total, fields) => total + (Array.isArray(fields) ? fields.length : 0), 0);
+    const serverDerivedCount = Array.isArray(data.server_derived_adjustments)
+      ? data.server_derived_adjustments.length
+      : 0;
     if (correctedCount > 0) {
       result.warnings.push({
         level: 'warning',
@@ -8981,7 +9163,14 @@ async function runAiReparse() {
         message: `이번에 발견된 실수 패턴을 GPT 지침 ${expectedMode === 'triage' ? '1' : '2'} 하단 주의사항에 추가했습니다: "${data.new_warning}"`
       });
     }
-    if (correctedCount > 0 || data.new_warning) {
+    if (serverDerivedCount > 0) {
+      result.warnings.push({
+        level: 'warning',
+        path: '대시보드 저장 규칙',
+        message: `AI 재파싱 결과의 총점·판정 ${serverDerivedCount}개를 현재 대시보드 기준으로 자동 정렬했습니다.`
+      });
+    }
+    if (correctedCount > 0 || data.new_warning || serverDerivedCount > 0) {
       renderInputValidation(result);
     }
     if (correctedCount > 0 && elements.inputValidationResults) {
@@ -9159,14 +9348,14 @@ const SHARED_INTEREST_AND_CORE_RUBRIC = `SKBP Interest Indications:
 - Neuropathic pain
 - Epilepsy / seizure disorders
 
-Use the most specific confirmed indication wording for Target Relevance. Neuropathic pain and explicit neuropathic subtypes/synonyms are interest indications. If only generic Pain is confirmed, the subtype is unknown, or the pain is acute, postoperative, or non-neuropathic, apply the TR 1 rule.
+Use the most specific confirmed indication wording for Target Relevance. Neuropathic pain and explicit neuropathic subtypes/synonyms are one of the six interest indications and receive TR 3. Generic Pain, acute pain, postoperative pain, and non-neuropathic pain are within the broad SKBP pain scope but outside the six priority indications and receive TR 2.
 
-Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.3 and Full Scout v3.4):
+Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.4 and Full Scout v3.6):
 - For Target Relevance, always evaluate in descending order: 3, then 2, then 1, then 0. If more than one rule appears applicable, assign only the single highest applicable score.
-- Target Relevance 0: insufficient information to judge SKBP relevance, or confirmed indication is outside the SKBP-related disease scope.
-- Target Relevance 1: neurologic, neuroimmune, neurodegenerative, or pain-related disease outside the six interest indications; also use 1 when a claimed interest indication clearly contradicts the verified target/MoA.
-- Target Relevance 2: a confirmed detailed indication is one of the six interest indications, even if target/MoA is undisclosed or direct biology fit is not established.
-- Target Relevance 3: a confirmed interest indication plus a verified target/MoA directly linked to that disease biology or an SKBP Theme/Cluster. Undisclosed target/MoA is not a contradiction.
+- Target Relevance 0: asset identity is verified, but there is still insufficient indication/relevance information to assess strategic scope. Asset identity not verified is an INSUFFICIENT early stop, not a completed TR 0.
+- Target Relevance 1: a verified asset's confirmed indication is outside the broad SKBP neurologic, psychiatric, neuroimmune, neurodegenerative, or pain scope.
+- Target Relevance 2: a verified asset's confirmed indication is within that broad SKBP scope but outside the six priority interest indications.
+- Target Relevance 3: a verified asset's confirmed indication is one of the six priority interest indications. Target/MoA disease-biology fit and Theme/Cluster are not TR score bases.
 - MoA Validity 0: target or MoA cannot be confirmed.
 - MoA Validity 1: mechanism description exists but is supported only by a company claim or theoretical rationale.
 - MoA Validity 2: functional evidence shows the mechanism works, or independent same-target/class validation exists.
@@ -9190,13 +9379,13 @@ Hit Discovery; Lead Optimization; Preclinical Candidate; IND-enabling; Preclinic
 Canonicalize only an explicitly confirmed current stage or a completed/started milestone. Do not promote stage from plans, expectations, targets, financing, hiring, or adjacent programs. Generic preclinical -> Preclinical unspecified. Candidate nominated/selected -> Preclinical Candidate. Ongoing GLP tox, IND-directed CMC, or explicit IND-enabling work -> IND-enabling. IND/CTA submitted, filed, accepted, effective, or cleared -> IND filed/cleared. An explicitly ongoing clinical/pivotal/registrational trial with no phase -> Clinical unspecified; never infer Phase 3 from "pivotal" or "registrational" alone. Hit ID/hit identification, an explicit research program/project, or an explicit discovery program/project -> Hit Discovery; FIH, Ph1, Ph1a, or Ph1b -> Phase 1; a confirmed Ph1b/2a -> Phase 1/2; FDA/EMA/NMPA approved -> Approved / marketed. Planned IND submission alone does not establish IND filed/cleared; "preclinical; IND planned" remains Preclinical unspecified. A planned Phase 2 or Phase 2/3 trial does not establish that phase: retain an explicitly confirmed earlier current phase, otherwise use Unknown. For multi-indication assets, use the lead/currently most advanced confirmed stage as the single dashboard value and move indication-specific status detail to evidence or notes; for example, "FOS Phase II recruiting; pain stage unclear" -> Phase 2. Map only explicitly confirmed discontinued, terminated, withdrawn, inactive, dormant, or abandoned programs to Discontinued / inactive. A suspended or halted program is not automatically terminal: retain the confirmed stage when available, record the pause in hard_filter.flags/notes, and set triage.active_asset=null unless inactivity is independently confirmed. Do not map speculative wording such as "likely preclinical or dormant" or a different historical alias marked discontinued to the current asset's Discontinued / inactive status. Use Unknown only when the relevant current stage itself is unresolved or conflicting.`;
 
 const SHARED_CANONICAL_MODALITY_RULE = `Canonical Modality — structured_table.modality_platform must be exactly one of: Targeted protein degrader, Oncolytic virus, Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Microbiome therapy, Vaccine, Radiopharmaceutical, Others, or Unknown.
-Preserve the researched wording in structured_table.modality_source and use the canonical label in modality_platform. Examples: "TPD", "PROTAC", "molecular glue degrader", "SNIPER", "AUTOTAC", and "LYTAC" -> Targeted protein degrader; "oral small molecule" -> Small molecule; "IV antibody" -> Antibody; "live biotherapeutic product" -> Microbiome therapy. Route, dosage form, and technical qualifiers belong in MoA, source evidence, company_profile.platform_summary, or notes. modality_tags may contain multiple supported canonical labels only when the source explicitly evidences a hybrid format (for example, an antibody-targeted degrader can carry Antibody and Targeted protein degrader); never place raw labels such as TPD or PROTAC in modality_tags.`;
+Preserve the researched wording in structured_table.modality_source and use the canonical label in modality_platform. Examples: "TPD", "PROTAC", "molecular glue degrader", "SNIPER", "AUTOTAC", and "LYTAC" -> Targeted protein degrader; "oral small molecule" -> Small molecule; "oral small-molecule / tablet" and "small-molecule CNS discovery platform" -> Small molecule; "IV antibody" -> Antibody; "topical peptide" -> Peptide; "live biotherapeutic product" -> Microbiome therapy. Route, dosage form, and technical qualifiers belong in MoA, source evidence, company_profile.platform_summary, or notes. modality_tags may contain multiple supported canonical labels only when the source explicitly evidences a hybrid format (for example, an antibody-targeted degrader can carry Antibody and Targeted protein degrader); never place raw labels such as TPD or PROTAC in modality_tags.`;
 
 const SHARED_CANONICAL_INDICATION_RULE = `Canonical Main Indication — structured_table.main_indication must be exactly one of: Alzheimer's disease; Parkinson's disease; Lewy body dementia; Epilepsy / seizure disorders; Multiple sclerosis / neuroinflammatory disease; Amyotrophic lateral sclerosis / motor neuron disease; Frontotemporal dementia; Huntington's disease; Stroke; Migraine / headache disorders; Pain; Major depressive disorder; Schizophrenia / psychosis; Bipolar disorder; Anxiety disorders; Autism spectrum disorder; ADHD; Sleep / wake disorders; Chronic cough; Inflammatory bowel disease; Systemic lupus erythematosus; Other autoimmune / inflammatory disease; or Unknown.
 main_indication is mandatory. Never omit the key and never use null, an empty string, N/A, or an unnormalized disease phrase. If the lead can be determined, always write its canonical dashboard bucket. Use Unknown only when the lead genuinely cannot be distinguished after the following priority.
 When several indications are confirmed, retain every confirmed disease wording in structured_table.indication and provide structured_table.indication_list as its canonical array; do not replace confirmed indications with Unknown.
-Lead-indication selection priority: (1) use an indication explicitly identified as lead, primary, initial, or the sole current indication for the assessed asset on an official company pipeline page or current official company material; (2) if no official lead is designated, use the indication targeted by the single most advanced confirmed active clinical program, comparing only registered, started, recruiting, ongoing, or dosed programs; (3) if no lead can still be established but one or more confirmed indications are listed, set main_indication to the first canonical indication in the source's textual/listed order and preserve every canonical indication in indication_list. Use Unknown only when no confirmed canonical indication is available. Exclude planned/expected indications, competitor programs, historical or discontinued programs, and platform-expansion claims.
-Keep complete disease wording and all secondary indications in structured_table.indication and Markdown. In Markdown state the source-based reason for the selected lead or source-order fallback. Examples: "Lead disclosed indication: inflammatory bowel disease; expansion potential for MS" -> Inflammatory bowel disease; "FOS Phase 2 recruiting; MDD planned; pain stage unclear" -> Epilepsy / seizure disorders; "CNS hypotheses include stroke and status epilepticus; no official lead or active trial" -> Stroke with indication_list also containing Epilepsy / seizure disorders.`;
+Lead-indication selection priority: (1) use an indication explicitly identified as lead, primary, initial, or the sole current indication for the assessed asset on an official company pipeline page or current official company material; (2) if no official lead is designated, use the indication targeted by the single most advanced confirmed active clinical program, comparing only registered, started, recruiting, ongoing, or dosed programs; (3) if no lead can still be established but one or more confirmed indications are listed, set main_indication to the first canonical indication in the source's textual/listed order and preserve every canonical indication in indication_list. Never select an indication merely because it appears first before applying this priority. Use Unknown only when no confirmed canonical indication is available. Exclude planned/expected indications, competitor programs, historical or discontinued programs, and platform-expansion claims.
+Keep complete disease wording and all secondary indications in structured_table.indication and Markdown. In Markdown state the source-based reason for the selected lead or source-order fallback. Examples: "Lead disclosed indication: inflammatory bowel disease; expansion potential for MS" -> Inflammatory bowel disease; "FOS Phase 2 recruiting; MDD planned; pain stage unclear" -> Epilepsy / seizure disorders; "CNS hypotheses include stroke and status epilepticus; no official lead or active trial" -> Unknown.`;
 
 const SHARED_CANONICAL_THEME_RULE = `Canonical R&D Theme — json_summary.theme must be exactly one of E/I Balance, Neuroimmune, Protein Homeostasis, Others, or Unknown. Determine Theme from researched evidence for the assessed asset's target and MoA, not from disease association alone.
 Use Protein Homeostasis only when the target/MoA directly modulates proteostasis, such as protein folding or chaperone function, ubiquitin-proteasome activity, autophagy-lysosome function, ER stress/UPR, or pathogenic protein aggregate clearance. The mere presence of protein aggregates in a disease does not establish this Theme. Use Others only when the identified target/MoA is confirmed outside all three R&D Themes, and Unknown when target/MoA evidence is insufficient. Because no Protein Homeostasis sub-cluster taxonomy is approved yet, use cluster="Unknown" for this Theme. Never use N/A or No Theme.`;
@@ -9230,13 +9419,13 @@ const COMPACT_TRIAGE_JSON_TEMPLATE = `[
       "sources": []
     },
     "hard_filter": {
-      "status": "UNVERIFIED",
+      "status": "INSUFFICIENT",
       "reason": "",
       "flags": [],
       "decision_uncertainty": false
     },
     "triage": {
-      "status": "UNVERIFIED",
+      "status": "INSUFFICIENT",
       "identity_verified": false,
       "active_asset": null,
       "verified_public_source_count": 0,
@@ -9345,7 +9534,7 @@ const COMPACT_FULL_SCOUT_JSON_TEMPLATE = `{
         "uncertain_points": [],
         "source_ids": []
       },
-      "competitive_landscape": {
+      "moa_validity": {
         "score": 0,
         "evidence_type": "E0_not_found_or_not_assessable",
         "evidence_type_reason": "",
@@ -9356,7 +9545,18 @@ const COMPACT_FULL_SCOUT_JSON_TEMPLATE = `{
         "uncertain_points": [],
         "source_ids": []
       },
-      "moa_validity": {
+      "data_maturity": {
+        "score": 0,
+        "evidence_type": "E0_not_found_or_not_assessable",
+        "evidence_type_reason": "",
+        "evidence_basis": "",
+        "main_line_summary": "",
+        "why_not_higher": "",
+        "investigation_note": "",
+        "uncertain_points": [],
+        "source_ids": []
+      },
+      "competitive_landscape": {
         "score": 0,
         "evidence_type": "E0_not_found_or_not_assessable",
         "evidence_type_reason": "",
@@ -9379,17 +9579,6 @@ const COMPACT_FULL_SCOUT_JSON_TEMPLATE = `{
         "source_ids": []
       },
       "expansion_potential": {
-        "score": 0,
-        "evidence_type": "E0_not_found_or_not_assessable",
-        "evidence_type_reason": "",
-        "evidence_basis": "",
-        "main_line_summary": "",
-        "why_not_higher": "",
-        "investigation_note": "",
-        "uncertain_points": [],
-        "source_ids": []
-      },
-      "data_maturity": {
         "score": 0,
         "evidence_type": "E0_not_found_or_not_assessable",
         "evidence_type_reason": "",
@@ -9472,10 +9661,10 @@ function buildTriageInstructionPromptLegacy() {
   return `You are an expert biotech pipeline scout for SKBP Pipeline Finder.
 
 Mission:
-Run FAST TRIAGE on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.3 in-depth review.
+Run FAST TRIAGE on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.6 in-depth review.
 
-This is GPT instruction 1: Fast Triage v3.3.
-Use GPT instruction 2 only after a candidate receives SELECT and needs Full Scout v3.4 review.
+This is GPT instruction 1: Fast Triage v3.4.
+Use GPT instruction 2 only after a candidate receives SELECT and needs Full Scout v3.6 review.
 
 Evidence Discipline (apply to every factual field and every score):
 ${SHARED_EVIDENCE_DISCIPLINE}
@@ -9493,10 +9682,10 @@ Core rule:
 
 Important distinction:
 - Triage status is not a final Full Scout recommendation.
-- SELECT means worth sending to Full Scout v3.4.
-- REJECT means not worth full review based on current quick evidence.
-- UNVERIFIED means asset identity itself cannot be verified as a biotech/pharma pipeline asset from credible public sources.
-- A REJECT or UNVERIFIED can change later if better identity, target, MoA, data, company, or source evidence becomes available.
+- SELECT means worth sending to Full Scout v3.6.
+- REJECT means the asset is identified but does not currently meet the SELECT gate; monitor or gather more evidence.
+- INSUFFICIENT means identity/lifecycle caused an early stop, or one of TR, MoA, or Data received 0 after identity was confirmed.
+- A REJECT or INSUFFICIENT result can change later if better identity, target, MoA, data, company, or source evidence becomes available.
 
 Input:
 The user may provide structured rows copied from Excel/TSV/CSV/plain text or a simple asset list.
@@ -9543,17 +9732,18 @@ Research rules:
 - Search only enough to support triage.
 - Prefer credible biotech/pharma source types: official company/pipeline page, clinical trial registry, regulatory source, peer-reviewed publication, reputable biotech news, company presentation, or patent/source clearly linking asset to target/indication.
 - Do not invent facts or URLs.
-- When evidence is ambiguous, apply each criterion's exact rule and record unresolved factual conflicts as Unknown. Do not lower a confirmed interest indication below TR 2 solely because direct target/MoA biology is missing or weak; only a verified contradiction triggers the TR 1 rule.
-- If credible public sources cannot verify the named item as a specific biotech/pharma pipeline asset, classify it as UNVERIFIED.
+- When evidence is ambiguous, apply each criterion's exact rule and record unresolved factual conflicts as Unknown.
+- If credible public sources cannot verify the named item as a specific biotech/pharma pipeline asset, classify it as INSUFFICIENT.
 
 Early stop rules:
-- Apply UNVERIFIED before scoring only when the asset identity itself cannot be verified as a biotech/pharma pipeline asset. Missing target, MoA, indication, or stage alone does not make an asset UNVERIFIED; use Unknown and continue scoring.
-- Apply REJECT before scoring only if the Pipeline Stage is Discontinued / inactive or credible evidence confirms terminated, withdrawn, inactive, dormant, abandoned, or clearly failed. A suspended or halted program needs a pause-status note and active-status confirmation; it is not an automatic REJECT.
-- For UNVERIFIED or Discontinued / inactive cases, keep the markdown and research depth short. Do not perform full diligence, marketability, competitor landscaping, or extended source chasing.
-- Early stop never shortens the required dashboard JSON contract: every record must still contain all three TR/MoA/Data criterion score objects. Put evidence basis, score rationale, sources, and limitations in the Markdown table/notes, not in duplicated JSON fields. An inactive asset remains REJECT because of the lifecycle hard blocker regardless of otherwise available preliminary scores.
+- Apply INSUFFICIENT before scoring only when the asset identity itself cannot be verified as a biotech/pharma pipeline asset, or a terminal lifecycle is confirmed. Missing target, MoA, indication, or stage alone does not make an asset identity unverified; use Unknown and continue scoring.
+- A suspended or halted program needs a pause-status note and active-status confirmation; it is not an automatic early stop.
+- For identity or terminal-lifecycle early stops, keep the markdown and research depth short. Do not perform additional target/MoA/data research, full diligence, marketability, competitor landscaping, or extended source chasing.
+- For an identity early stop, set hard_filter.reason and triage.why exactly to "Asset identity not verified from public biotech/pharma sources." For a lifecycle early stop, set hard_filter.reason and triage.why to a short "Lifecycle stopped: ..." statement with the confirmed status and source.
+- In the Markdown table, write \`—\` for TR, MoA, and Data for either early-stop case. Early stop never shortens the required dashboard JSON contract: every record must still contain all three TR/MoA/Data criterion score objects. Use score 0 only as a schema placeholder with no_supporting_basis, keep scoring.total_score and max_score null, and do not describe the placeholder as a completed zero-score evaluation. The status is INSUFFICIENT.
 
 Triage scoring:
-- Use the same scoring direction as Full Scout v3.4, but only for these three matching criteria:
+- Use the same scoring direction as Full Scout v3.6, but only for these three matching criteria:
   - Full Scout criterion 1: Target Relevance (TR)
   - Full Scout criterion 3: MoA Validity (MOA)
   - Full Scout criterion 6: Data Maturity (Data)
@@ -9583,15 +9773,15 @@ Summary rule:
 
 Triage status rule:
 - active_asset is required and must be true, false, or null: true only when current activity is confirmed, false when inactivity is confirmed, and null when activity cannot be established.
-- SELECT only if identity_verified=true, active_asset=true, TR >= 2, and either MoA >= 2 or Data >= 2.
-- REJECT if asset identity is verified but active_asset is false/null, or SKBP fit, MoA, or Data is too weak for Full Scout priority.
-- REJECT if development_stage is Discontinued / inactive or evidence confirms terminated, withdrawn, inactive, dormant, abandoned, or clearly failed, even if target/MoA look interesting. Do not reject solely because a program is suspended or halted.
-- UNVERIFIED if asset identity itself is not verified as a biotech/pharma pipeline asset.
+- SELECT only if identity_verified=true, active_asset=true, TR >= 2, MoA >= 1, and Data >= 2.
+- INSUFFICIENT if asset identity is not verified, a terminal lifecycle is confirmed, or any of TR, MoA, or Data is 0 after identity is confirmed.
+- REJECT for every remaining identity-verified, non-terminal candidate that does not meet SELECT; active_asset=null is REJECT, not INSUFFICIENT.
 - If unsure between SELECT and REJECT, choose REJECT and explain the missing evidence needed.
 
 Controlled vocabulary:
-- For an identity-verified asset, use Unknown when country, Pipeline Stage, modality, main indication, target, or another factual field cannot be established. UNVERIFIED is reserved for failure of asset identity itself.
-- company_country is the company's HQ / official company location, never the drug, sales, market, trial, or launch geography. It may contain up to two explicitly stated canonical countries, separated by \` / \`. For example, "China / United States operations" -> "China / United States". If no canonical country can be identified, retain the original wording rather than replacing it with Unknown.
+- For an identity-verified asset, use Unknown when country, Pipeline Stage, modality, main indication, target, or another factual field cannot be established. INSUFFICIENT is reserved for the defined early stops or a completed core-criterion score of 0.
+- company_country is the company's HQ / official company location, never the drug, sales, market, trial, or launch geography. Use the documented HQ where a single country is required; for example, "China / United States operations" -> China. It may otherwise retain up to two explicitly stated canonical countries, separated by \` / \`. If no canonical country can be identified, retain the original wording rather than replacing it with Unknown.
+${SHARED_CANONICAL_INDICATION_RULE}
 ${SHARED_CANONICAL_STAGE_RULE}
 ${SHARED_CANONICAL_MODALITY_RULE}
 ${SHARED_CANONICAL_INDICATION_RULE}
@@ -9608,13 +9798,13 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
 \`\`\`text
 # SKBP Fast Triage Result
 
-> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.
+> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.4. Full Scout v3.6 has not been run.
 
-중요: 한 문장으로 triage 결론과 filter rationale을 먼저 씁니다. 예: 공개 자료상 asset identity는 확인되지만 개발 단계가 Discontinued / inactive로 확인되어 REJECT로 처리합니다.
+중요: 한 문장으로 triage 결론과 filter rationale을 먼저 씁니다. 예: 공개 자료상 asset identity는 확인되지만 개발 단계가 Discontinued / inactive로 확인되어 INSUFFICIENT로 처리합니다.
 
 | # | Asset | Company | Target/MoA | Modality | Main indication | Pipeline Stage | Location | TR | MOA | Data | Triage | Why | Source |
 |---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|
-| 1 |  |  |  |  |  |  |  |  |  |  | SELECT/REJECT/UNVERIFIED |  |  |
+| 1 |  |  |  |  |  |  |  |  |  |  | SELECT/REJECT/INSUFFICIENT |  |  |
 
 ## Notes
 - Keep notes short.
@@ -9626,8 +9816,8 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
   {
     "meta": {
       "schema_version": "3.2",
-      "instruction_version": "3.3",
-      "rubric_version": "3.3",
+      "instruction_version": "3.4",
+      "rubric_version": "3.4",
       "review_type": "fast_triage",
       "generated_at": "YYYY-MM-DD",
       "language": "ko",
@@ -9643,7 +9833,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
       "raw_markdown": "",
       "source_format": "fast_triage_markdown",
       "parser_status": "fast_triage",
-    "parser_note": "GPT instruction 1 Fast Triage v3.3 output. Full Scout v3.4 review has not been run."
+    "parser_note": "GPT instruction 1 Fast Triage v3.4 output. Full Scout v3.6 review has not been run."
     },
     "json_summary": {
       "company": "Unknown",
@@ -9668,13 +9858,13 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
       "sources": []
     },
     "hard_filter": {
-      "status": "UNVERIFIED",
+      "status": "INSUFFICIENT",
       "reason": "Asset identity has not yet been verified from credible public sources.",
       "flags": []
     },
     "triage": {
-      "instruction_version": "3.3",
-      "status": "UNVERIFIED",
+      "instruction_version": "3.4",
+      "status": "INSUFFICIENT",
       "identity_verified": false,
       "active_asset": null,
       "why": "Asset identity has not yet been verified from credible public sources.",
@@ -9715,7 +9905,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
     },
     "validation": {
       "instruction_version": "3.2",
-      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.3; Full Scout v3.4 not run.",
+      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.4; Full Scout v3.6 not run.",
       "cross_checked_facts": [],
       "uncertain_points": [],
       "source_registry": []
@@ -9741,8 +9931,8 @@ Remember:
 - Keep source_report.raw_markdown as an empty string because the dashboard inserts the Markdown portion. Keep JSON summaries concise and do not duplicate full Markdown paragraphs across multiple fields.
 - For one input entry, output a JSON array with one object.
 - For multiple input entries, output one JSON array item per candidate in the original order, up to 50.
-- Do not leave pipe-delimited template choices such as "SELECT | REJECT | UNVERIFIED" in the final JSON; choose exactly one allowed value.
-- Recommendation mapping is exact: SELECT -> "Run Full Scout"; REJECT -> "Do not run Full Scout"; UNVERIFIED -> "Verify asset identity".
+- Do not leave pipe-delimited template choices such as "SELECT | REJECT | INSUFFICIENT" in the final JSON; choose exactly one allowed value.
+- Recommendation mapping is exact: SELECT -> "Run Full Scout"; REJECT -> "Monitor / gather more evidence"; INSUFFICIENT -> "Do not run Full Scout".
 - Keep hard_filter.decision_uncertainty=false for Fast Triage; its status is determined by identity, activity, and the three scores.
 - The user will copy this one combined block and paste it once into the dashboard; the dashboard will split the Markdown and JSON automatically.
 - Do not include Full Scout-only criteria, marketability, competitor tables, or peak sales.`;
@@ -9763,7 +9953,7 @@ function buildGptInstructionPromptLegacy() {
 Mission:
 Evaluate exactly one biotech/pharma pipeline asset through company research, attachment review, public-source verification, competitor search, seven-criterion scoring, and evidence tracking. Return exactly one copyable fenced code block containing the Markdown report first and the valid JSON second.
 
-This is GPT instruction 2: Full Scout v3.4. State v3.4 in the Markdown report. In compact JSON, do not repeat schema/instruction/rubric version fields; the dashboard adds schema 3.2 and instruction/rubric 3.4 during deterministic expansion.
+This is GPT instruction 2: Full Scout v3.6. State v3.6 in the Markdown report. In compact JSON, do not repeat schema/instruction/rubric version fields; the dashboard adds schema 3.2 and instruction/rubric 3.6 during deterministic expansion.
 
 Evidence Discipline (apply to every factual field and every scoring criterion):
 ${SHARED_EVIDENCE_DISCIPLINE}
@@ -9788,7 +9978,7 @@ SKBP Interest Indications:
 - Neuropathic pain
 - Epilepsy / seizure disorders
 
-For Target Relevance, generic, acute, postoperative, or otherwise unverified-as-neuropathic pain is related disease only (score 1), not a six-interest indication.
+For Target Relevance, score 0 only when identity is verified but indication/relevance information remains insufficient; score 1 for a confirmed asset outside the broader SKBP neurological/psychiatric/neuroimmune/neurodegenerative/pain scope; score 2 for that broader scope but outside the six priority indications; and score 3 for one of the six priority indications. Generic Pain, acute pain, postoperative pain, and non-neuropathic pain are broad-scope TR 2, while neuropathic pain is priority TR 3. Identity-not-verified is an INSUFFICIENT early stop, not a completed TR score.
 
 ${SHARED_CANONICAL_STAGE_RULE}
 
@@ -9801,8 +9991,8 @@ Identity Gate / identity-not-verified early stop:
 - Use only a short identity check at this gate. Check for at least one credible biotech source type: official company/pipeline page, clinical trial registry, regulatory source, peer-reviewed publication, reputable biotech news, company presentation, patent/source that clearly links the asset to a drug target or indication.
 - Fail this gate only when the named asset itself cannot be verified as a specific biotech/pharma pipeline asset from credible public sources. Missing target, MoA, modality, indication, stage, country, or ownership does not fail the gate; write Unknown for that factual field, record the uncertainty, and continue the full review and scoring.
 - If search results are mostly unrelated SKUs, tools, electronics, finance tickers, unrelated abbreviations, or ambiguous non-drug references and no credible source verifies a specific drug-development asset, classify it as identity not verified.
-- If the asset identity is not verified, stop Full Scout and return FAIL / Deprioritize. Also return FAIL regardless of score when a credible source confirms the lifecycle as Discontinued, Terminated, Withdrawn, Abandoned, Inactive, Dormant, or Clearly failed. Suspended or Halted alone is a pause signal, not a terminal lifecycle conclusion.
-- Lifecycle-confirmed early stop: after verifying the asset identity and one credible terminal lifecycle source, stop the Full Scout. Keep the Markdown short: state the confirmed inactive status, source, and any known stop reason/date. Do not perform competitive landscaping, marketability, expansion, or extended source chasing. Keep the required Compact v2 JSON contract with structured_table.development_stage="Discontinued / inactive", hard_filter.status="FAIL", hard_filter.hard_blocker=true, final_insight.recommendation="Deprioritize", and concise zero-score/uncertainty entries where deeper diligence was intentionally skipped. For a suspended/halted program, continue only enough to establish whether inactivity is confirmed; otherwise use REVIEW and document the pause.
+- If the asset identity is not verified, stop Full Scout and return FAIL / Deprioritize. Set hard_filter.reason exactly to "Asset identity not verified from public biotech/pharma sources." Also return FAIL regardless of score when a credible source confirms the lifecycle as Discontinued, Terminated, Withdrawn, Abandoned, Inactive, Dormant, or Clearly failed. Suspended or Halted alone is a pause signal, not a terminal lifecycle conclusion.
+- Lifecycle-confirmed early stop: after verifying the asset identity and one credible terminal lifecycle source, stop the Full Scout. Keep the Markdown short: state the confirmed inactive status, source, and any known stop reason/date. Do not perform additional target/MoA/data research, competitive landscaping, marketability, expansion, or extended source chasing. Set hard_filter.reason to a short "Lifecycle stopped: ..." statement. Keep the required Compact v2 JSON contract with structured_table.development_stage="Discontinued / inactive", hard_filter.status="FAIL", hard_filter.hard_blocker=true, final_insight.recommendation="Deprioritize", and concise zero-score/uncertainty entries where deeper diligence was intentionally skipped. In either early-stop case, show \`—\` for every score in Markdown; JSON score 0 values are schema placeholders only, not completed zero-score evaluations. For a suspended/halted program, continue only enough to establish whether inactivity is confirmed; otherwise use REVIEW and document the pause.
 - Uncertain rights or exact stage alone is REVIEW, not automatic FAIL.
 - In the identity-not-verified case, the final answer must still be exactly one combined fenced code block, but both the Markdown and JSON portions must be short.
 - Identity-not-verified markdown block format:
@@ -9831,7 +10021,7 @@ Non-negotiable rules:
 8. Competitive Landscape Markdown must include the complete search and analysis. JSON keeps competitive_density, the four similarity counts, competitor_table rows needed by the competitor graph, and similar_pipelines needed by the existing comparison view. competitor_table row keys are competitor_asset, company, modality, target_or_moa, stage, similarity_level, why_it_matters, source_url, and source_ids. similar_pipelines row keys are company, asset_name, similarity_score, matched_dimensions, and shared_data_points.
 9. Marketability may use an internal calculation, an external forecast, both, or insufficient evidence. Show A/B/C/D when calculation is performed; show external forecast references when used.
 10. Express every sales output in million USD in Markdown. JSON keeps the final Marketability score plus only the minimal A/B/C/D output projection used for score audit and detail display; complete inputs and rationale stay in Markdown.
-11. Hard Filter is canonical: PASS when Total >= 14, Target Relevance >= 3, MoA Validity >= 2, Data Maturity >= 2, asset identity is verified, an active development program is confirmed, and no hard blocker/decision-critical uncertainty remains. REVIEW when Total is 9-13; or a PASS gate is missed without a FAIL rule; or active status, key evidence, source, rights, or stage uncertainty prevents a firm conclusion. FAIL when Total <= 8, Target Relevance <= 1, asset identity is unverified, or a lifecycle FAIL condition is confirmed.
+11. Hard Filter is canonical: PASS when Total >= 14, Target Relevance >= 2, MoA Validity = 3, and Data Maturity = 3. FAIL when Total <= 8 or any of Target Relevance, MoA Validity, or Data Maturity is 0. REVIEW is every completed assessment that meets neither PASS nor FAIL. Asset identity not verified and a confirmed terminal lifecycle are early-stop cases, not completed score assessments.
 11a. Set hard_filter.hard_blocker=true only for a confirmed FAIL blocker. Set hard_filter.decision_uncertainty=true only when stage, rights/license/ownership, asset identity, source/registry, sponsor, or active-program uncertainty prevents an otherwise firm decision. These booleans keep Filter 2 deterministic after research prose stays in Markdown.
 11b. Copy the exact assessed company and asset identifiers into input.company_input and input.asset_input. These two aliases are used only to join the Fast Triage and Full Scout rows for the same asset. When the user appended relevant free-text context, copy it faithfully into input.user_context; otherwise keep user_context as an empty string.
 12. If the latest stage, ownership, financing, or trial status is unclear, mark it as uncertain and state what source is needed.
@@ -9840,7 +10030,7 @@ Non-negotiable rules:
 15. The JSON template defaults Marketability to score 0. A reliable calculation or asset-specific external forecast may support scores 1–3; document the complete method and numbers in Markdown.
 16. Keep source_report.raw_markdown as an empty string because the dashboard inserts the Markdown portion. Do not add keys not present in the Compact v2 template; research details already present in Markdown must not be duplicated in JSON.
 
-Scoring v3.3 rules:
+Scoring v3.6 rules:
 - Each scoring criterion must be scored independently using its own criterion-specific scoring table.
 - Do not apply a universal scoring rule across all criteria.
 - For every criterion, assign exactly one integer score: 0, 1, 2, or 3.
@@ -9857,11 +10047,11 @@ Scoring v3.3 rules:
 - If evidence is ambiguous, select the single closest score and explain uncertainty in Markdown plus validation.uncertain_points when it affects the dashboard decision.
 
 Criterion-specific scoring (canonical; do not replace with a universal evidence ladder):
-- Target Relevance — 0: insufficient SKBP-relevance evidence or confirmed indication outside the relevant disease scope; 1: neurologic/neuroimmune/neurodegenerative/pain disease outside the six SKBP interests; 2: one six-interest indication is specifically confirmed; 3: score-2 indication plus verified target/MoA directly linked to its disease biology or an SKBP Theme/Cluster.
+- Target Relevance — 0: asset identity is verified but indication/relevance information remains insufficient; 1: confirmed indication outside the broad SKBP neurologic/psychiatric/neuroimmune/neurodegenerative/pain scope; 2: confirmed indication within that broad scope but outside the six priority interests; 3: confirmed indication is one of the six priority interests. Generic Pain, acute pain, postoperative pain, and non-neuropathic pain are TR 2; neuropathic pain is TR 3. Target/MoA disease-biology fit and Theme/Cluster are classification or MoA information, not TR score bases.
 - MoA Validity — 0: target or MoA unconfirmed; 1: company claim or theoretical rationale only; 2: functional evidence or independent same-target/class validation; 3: assessed-asset target engagement, mechanism-linked PD/biomarker, or direct functional validation.
 - Data Maturity — 0: no asset-specific result in public sources or readable attachments; 1: qualitative claim or fragmentary result only; 2: at least one asset-specific quantitative evidence domain appropriate to the current stage; 3: at least two complementary quantitative domains addressing different development questions, with at least one directly supporting program progression. Source count, endpoint count, and repeated presentations of one experiment do not create extra domains.
 - Competitive Landscape evaluates competitive position and differentiation only; patient counts, price, market size, and peak sales belong only to Marketability. Similarity is High for same indication + same target/MoA + similar modality; Medium for same indication + same pathway/biology; Low for same indication only. Score 0: search scope/evidence insufficient to judge a direct competitor set; 1: competitors found but differentiation is claim/concept only with no asset-specific quantitative comparison; 2: asset-specific quantitative differentiation versus an appropriate comparator or realistic entry space; 3: sufficient search completed, high-similarity competitors are limited, and strong quantitative differentiation or a leading position is verified. Never award 3 merely because no competitor was found or by competitor count alone. Search at minimum: asset name/aliases; same indication + target/MoA; same indication + pathway/biology; approved, Phase 3, clinical, and major preclinical competitors; trial registries; and recent review, official-pipeline, or patent sources. Separate direct/high-similarity from broader competitors and record scope and limitations.
-- Platform Attractiveness evaluates a reusable technical system whose common principles/design/manufacturing/delivery can generate multiple candidates/programs or improve performance. Score 0: no reusable structure or verifiable technical advantage; 1: reusable structure with plausible rationale but claim/concept-level differentiation; 2: at least one quantitative result showing technical advantage versus an appropriate comparator; 3: score 2 plus repeated quantitative advantage across multiple conditions or multiple platform-derived assets, or a platform-derived asset has reached First Patient Dosed. FPD alone is insufficient without score-2 quantitative evidence. Do not award points merely for preferred modality, indication expansion, multiple assets, or pipeline breadth.
+- Platform Attractiveness evaluates a reusable technical system whose common principles/design/manufacturing/delivery can generate multiple candidates/programs or improve performance. Score 0: no reusable structure or verifiable technical advantage; 1: reusable structure with plausible rationale but claim/concept-level differentiation; 2: at least one quantitative result showing technical advantage versus an appropriate comparator; 3: score 2 plus quantitative advantage reproduced across multiple conditions or multiple platform-derived assets and independent/external validation or use, or an officially linked platform-derived asset has reached First Patient Dosed. FPD alone is insufficient without score-2 quantitative evidence. Do not award points merely for preferred modality, indication expansion, multiple assets, or pipeline breadth.
 - Expansion Potential evaluates only additional indications for the assessed asset beyond its main indication. Score 0: none confirmed; 1: additional indication with biological rationale only; 2: asset-specific early quantitative data in at least one additional indication; 3: at least two distinct additional indications, at least one confirmed as an active asset-specific program, and asset-specific quantitative efficacy, PD, or biomarker data in that additional indication. An active program may be separately listed on the official pipeline or be in preclinical, IND-enabling, trial registration/authorization, or dosing; it is not limited to clinical development. Future opportunity, possible/planned evaluation, an indication list, platform-level expansion not tied to the asset, wording variants of one disease, and patient subgroups are not separate programs/indications. Do not award points for platform reuse, multiple platform assets, or platform breadth.
 
 Marketability method and score (document complete inputs in Markdown; JSON keeps the score and minimal A/B/C/D outputs):
@@ -9882,7 +10072,7 @@ Controlled vocabulary for dashboard filters:
 - Use canonical values for filter-facing fields so the dashboard can group comparable assets.
 - For an identity-verified asset, use Unknown (never N/A) when country, Pipeline Stage, modality, main indication, target, or another factual field cannot be established from public sources.
 ${SHARED_CANONICAL_THEME_RULE}
-- json_summary.company_country and structured_table.company_country mean the company's HQ / official company location, not a drug, sales, market, trial, or launch geography. They may retain up to two explicitly stated canonical countries/regions, separated by \` / \`. Examples: China, Republic of Korea, United States, Japan, Europe/UK; "China / United States operations" -> "China / United States". Preserve unrecognized country wording rather than replacing it with Unknown.
+- json_summary.company_country and structured_table.company_country mean the company's HQ / official company location, not a drug, sales, market, trial, or launch geography. Use the documented HQ where a single country is required; for example, "China / United States operations" -> China. They may otherwise retain up to two explicitly stated canonical countries/regions, separated by \` / \`. Examples: China, Republic of Korea, United States, Japan, Europe/UK. Preserve unrecognized country wording rather than replacing it with Unknown.
 ${SHARED_CANONICAL_INDICATION_RULE}
 - structured_table.development_stage must follow the Canonical Pipeline Stage rule above. Put exact raw wording, trial status, indication-specific stage, and future milestone timing in source evidence, notes, or validation.uncertain_points.
 - Map clinical synonyms conservatively: P1/Ph1/Phase I/FIH -> Phase 1 and P2/Ph2/Phase II -> Phase 2 only when the phase is current or started. A future plan must not be promoted to current stage.
@@ -9893,7 +10083,7 @@ Use this exact report structure inside the Markdown portion of the single combin
 
 # [Company] Pipeline Scout Report: **[Asset]**
 
- Briefly state that this report was researched and scored with GPT instruction 2 — Full Scout v3.4 (schema v3.2), and that URLs are included for auditability.
+Briefly state that this report was researched and scored with GPT instruction 2 — Full Scout v3.6 (schema v3.2), and that URLs are included for auditability.
 
 중요: 한 문장으로 filter/recommendation rationale을 먼저 씁니다. 예: 공개 자료상 active asset명·compound code·임상 단계가 명확히 확인되지 않아 stage/ownership은 uncertain / REVIEW로 처리합니다.
 
@@ -9943,11 +10133,11 @@ Allowed clusters:
 | Criterion | Score (maximum 3 points each) | One-line judgment | Evidence used |
 |---|---:|---|---|
 | Target Relevance | [single score]점 |  | URL/source |
-| Competitive Landscape | [single score]점 |  | URL/source |
 | MoA Validity | [single score]점 |  | URL/source |
+| Data Maturity | [single score]점 |  | URL/source |
+| Competitive Landscape | [single score]점 |  | URL/source |
 | Platform Attractiveness | [single score]점 |  | URL/source |
 | Expansion Potential | [single score]점 |  | URL/source |
-| Data Maturity | [single score]점 |  | URL/source |
 | Marketability | [single score]점 | State method, score basis, and assessed global peak sales | URL/source |
 | **Total** | **[total]점** | Maximum total: 21점 |  |
 
@@ -9960,7 +10150,6 @@ Main line:
 What was checked:
 - Target identity
 - Disease/biology relevance
-- SKBP Theme / Cluster fit
 - General neurodegeneration / neuroinflammation / epilepsy relevance
 
 Evidence trail:
@@ -9969,7 +10158,42 @@ Evidence trail:
 Investigation note:
 - Explain why this score was selected instead of adjacent scores.
 
-### 4.2 Competitive Landscape
+### 4.2 MoA Validity
+Score:
+Main line:
+
+What was checked:
+- Journal publication / PMID / DOI
+- Mechanistic consistency
+- Functional readout
+- Disease linkage
+- Safety-relevant signal
+
+Evidence trail:
+- Cite exact paper, abstract, company page, or source URL.
+
+Investigation note:
+- 2점 이상이면 publication or equivalent technical evidence must be visible.
+
+### 4.3 Data Maturity
+Score:
+Main line:
+
+What was checked:
+- In vitro data
+- In vivo data
+- Quantitative result
+- Reproducibility
+- IND-enabling / GLP tox / PK/PD / CMC / human data availability
+
+Evidence trail:
+- Cite publication, abstract, poster, company data page, or trial registry.
+
+Investigation note:
+- This score should be driven by preclinical experimental evidence, not market excitement.
+- Data Maturity must be based only on asset-specific, stage-appropriate evidence; platform-wide or other-asset data must not increase this score.
+
+### 4.4 Competitive Landscape
 Score:
 Main line:
 
@@ -9988,24 +10212,7 @@ Competitor table:
 Investigation note:
 - Start from same disease and biology, then separate true same-MoA front runners from broader indication competitors.
 
-### 4.3 MoA Validity
-Score:
-Main line:
-
-What was checked:
-- Journal publication / PMID / DOI
-- Mechanistic consistency
-- Functional readout
-- Disease linkage
-- Safety-relevant signal
-
-Evidence trail:
-- Cite exact paper, abstract, company page, or source URL.
-
-Investigation note:
-- 2점 이상이면 publication or equivalent technical evidence must be visible.
-
-### 4.4 Platform Attractiveness
+### 4.5 Platform Attractiveness
 Score:
 Main line:
 
@@ -10013,6 +10220,7 @@ What was checked:
 - Is the platform real and reproducible?
 - Is differentiation supported by data?
 - Is the underlying technical system reusable across candidates, programs, or conditions?
+- Is the quantitative advantage reproduced across multiple conditions or platform-derived assets and independently/externally validated or used?
 
 Evidence trail:
 - Cite platform page, paper, patent, data page, or company technical material.
@@ -10024,12 +10232,12 @@ Platform vs Data Maturity separation:
 - Platform Attractiveness evaluates platform-level technical advantage and may use evidence from other assets officially linked to the same platform.
 - Data Maturity evaluates only the assessed asset's stage-appropriate development evidence.
 - A 2-point Platform score requires at least one quantitative experimental result directly testing the claimed technical advantage against an appropriate comparator.
-- A 3-point Platform score requires the 2-point evidence plus repeated quantitative advantage across multiple conditions/assets, or First Patient Dosed for an officially linked platform asset.
+- A 3-point Platform score requires the 2-point evidence plus quantitative advantage reproduced across multiple conditions/assets and independent/external validation or use, or First Patient Dosed for an officially linked platform asset.
 - First Patient Dosed alone is insufficient without the 2-point quantitative technical evidence.
 - IND clearance, trial registration, financing, patent, MOU, or partnership announcement alone is insufficient for 3 points.
 - The same endpoint must not be double-counted in Platform Attractiveness and Data Maturity.
 
-### 4.5 Expansion Potential
+### 4.6 Expansion Potential
 Score:
 Main line:
 
@@ -10044,24 +10252,6 @@ Evidence trail:
 Investigation note:
 - Adjacent indication means outside the main indication, not merely a different wording of the same disease.
 - Future/planned opportunities, indication lists, platform-wide expansion, and patient subgroups are not separate active programs or indications.
-
-### 4.6 Data Maturity
-Score:
-Main line:
-
-What was checked:
-- In vitro data
-- In vivo data
-- Quantitative result
-- Reproducibility
-- IND-enabling / GLP tox / PK/PD / CMC / human data availability
-
-Evidence trail:
-- Cite publication, abstract, poster, company data page, or trial registry.
-
-Investigation note:
-- This score should be driven by preclinical experimental evidence, not market excitement.
-- Data Maturity must be based only on asset-specific, stage-appropriate evidence; platform-wide or other-asset data must not increase this score.
 
 ### 4.7 Marketability
 Score:
@@ -10131,14 +10321,14 @@ End the Markdown portion after References. The next line in this template is the
 {
   "meta": {
     "schema_version": "3.2",
-    "instruction_version": "3.4",
+    "instruction_version": "3.6",
     "review_type": "full_scout",
     "generated_at": "YYYY-MM-DD",
     "language": "ko",
     "analyst_role": "[OIT] PreC Pipeline Shortlister",
     "output_format": ["markdown_report", "json"],
     "output_filename_base": "Company_Asset_YYYYMMDD",
-    "rubric_version": "3.4",
+    "rubric_version": "3.6",
     "rubric_author": "kate"
   },
   "input": {
@@ -10152,7 +10342,7 @@ End the Markdown portion after References. The next line in this template is the
     "raw_markdown": "",
     "source_format": "gpt_markdown_report",
     "parser_status": "gpt_structured_output",
-    "parser_note": "GPT instruction 2 Full Scout v3.4 output using schema v3.2; Markdown report and JSON were generated together from the same evidence set."
+    "parser_note": "GPT instruction 2 Full Scout v3.6 output using schema v3.2; Markdown report and JSON were generated together from the same evidence set."
   },
   "company_profile": {
     "company_name": "",
@@ -10378,9 +10568,9 @@ End the Markdown portion after References. The next line in this template is the
 }
 
 Final validation before output:
-- Keep the Markdown version statement at instruction/rubric 3.3. The dashboard deterministically adds JSON schema 3.2 and instruction/rubric 3.3.
+- Keep the Markdown version statement at instruction/rubric 3.6. The dashboard deterministically adds JSON schema 3.2 and instruction/rubric 3.6.
 - Internally verify that the seven integer criterion scores sum correctly; the dashboard derives total_score and max_score.
-- Apply PASS >= 14 plus TR >= 3, MoA >= 2, Data >= 2, verified identity, confirmed active program, and no hard blocker/decision-critical uncertainty; apply identity and lifecycle FAIL rules.
+- Apply PASS >= 14 plus TR >= 2, MoA = 3, and Data = 3. Apply FAIL for Total <= 8 or any TR/MoA/Data score of 0. Apply identity and terminal-lifecycle early-stop rules before completing the scorecard.
 - Do not infer Competitive Landscape 3 from no competitors; record search sufficiency, scope, and limitations.
 - Keep Platform and Expansion separate; accept preclinical, IND-enabling, or clinical programs for Expansion 3, but not plans or indication lists.
 - Permit Marketability from calculation or a reliable external forecast alone. Do not double-count benchmark price and pricing power inputs.
@@ -12376,26 +12566,30 @@ function closeStep0EditLockedModal() {
   activeStep0LockedRecordId = null;
 }
 
-function openStep0EditLockedModal(mode, { commentWorkspace = false, recordId = '', shortlisting = false } = {}) {
+function openStep0EditLockedModal(mode, { commentWorkspace = false, recordId = '', shortlisting = false, fullScoutAlias = false } = {}) {
   const targetMode = mode === 'full' ? 'full' : 'triage';
   const label = targetMode === 'full' ? 'Tab 2 · Full Scout' : 'Tab 1 · Fast Triage';
   activeStep0LockedEditMode = targetMode;
   activeStep0LockedRecordId = String(recordId || '');
   if (elements.step0EditLockedTitle) {
-    elements.step0EditLockedTitle.textContent = shortlisting
+    elements.step0EditLockedTitle.textContent = fullScoutAlias
+      ? 'Full Scout 원문 리포트는 Tab 2에서 확인합니다'
+      : shortlisting
       ? `${label}에서 수정하세요`
       : commentWorkspace
       ? `${label} Team Workspace에서 수정하세요`
       : `${label}에서 수정하세요`;
   }
   if (elements.step0EditLockedMessage) {
-    elements.step0EditLockedMessage.textContent = shortlisting
+    elements.step0EditLockedMessage.textContent = fullScoutAlias
+      ? '이 asset은 Full Scout 조사가 완료되어 Fast Triage에도 함께 표시되고 있습니다. 해당 GPT 원문 리포트와 상세 점수는 Tab 2 · Full Scout에서 열람할 수 있습니다.'
+      : shortlisting
       ? 'Shortlisting에는 Full Scout의 공식 Pipeline 정보가 읽기 전용으로 표시됩니다. Company·Location·Asset·Modality·Target·Main indication·Pipeline Stage 수정은 Tab 2 · Full Scout에서 진행합니다.'
       : commentWorkspace
       ? `Tab 0에는 원본 Team Workspace 코멘트가 읽기 전용으로 표시됩니다. 이 코멘트의 수정 및 삭제는 ${label} Team Workspace에서 진행합니다.`
       : `이미 수행된 ${targetMode === 'full' ? 'Full Scout' : 'Fast Triage'}의 공식 조사값이 Tab 0에 표시되고 있습니다. 원본 조사값 수정은 ${label} Pipeline Table에서 진행합니다.`;
   }
-  if (elements.step0EditLockedGo) elements.step0EditLockedGo.textContent = commentWorkspace || shortlisting ? `Tab ${targetMode === 'full' ? '2' : '1'} 상세 페이지로 이동` : `${label}로 이동`;
+  if (elements.step0EditLockedGo) elements.step0EditLockedGo.textContent = commentWorkspace || shortlisting || fullScoutAlias ? `Tab ${targetMode === 'full' ? '2' : '1'} 상세 페이지로 이동` : `${label}로 이동`;
   if (elements.step0EditLockedModal) elements.step0EditLockedModal.hidden = false;
   elements.step0EditLockedGo?.focus();
 }
@@ -13677,7 +13871,7 @@ elements.pipelineTable.addEventListener('click', (event) => {
   if (!rowElement) return;
   const recordId = rowElement.dataset.recordId;
   if (rowElement.dataset.fullScoutAlias === 'true') {
-    window.location.href = `/detail?id=${encodeURIComponent(recordId)}&tab=full`;
+    openStep0EditLockedModal('full', { recordId, fullScoutAlias: true });
     return;
   }
   if (activeTableMode() === 'triage') {
@@ -14107,6 +14301,12 @@ document.addEventListener('keydown', (event) => {
 elements.criteriaDrawerButton.addEventListener('click', openCriteriaDrawer);
 elements.criteriaDrawerClose.addEventListener('click', closeCriteriaDrawer);
 elements.criteriaBackdrop.addEventListener('click', closeCriteriaDrawer);
+elements.criteriaLanguageToggle?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-criteria-language]');
+  if (!button) return;
+  applyCriteriaGuideLanguage(button.dataset.criteriaLanguage);
+});
+applyCriteriaGuideLanguage(criteriaGuideLanguage);
 elements.dataReuploadList?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-reupload-action]');
   if (!button) return;
@@ -14544,6 +14744,8 @@ if (initialViewMode === 'map') {
 } else if (elements.step0Panel && !elements.step0Panel.hidden) {
   deactivateStep0Panel();
 }
+
+window.__skbpAppModuleReady = true;
 
 loadRecords().catch((error) => {
   elements.dataStatus.textContent = 'Load failed';

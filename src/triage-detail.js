@@ -38,7 +38,7 @@ const scoreDefinitions = [
     key: 'target_relevance',
     shortLabel: 'TR',
     label: 'Target Area Relevance',
-    description: 'SKBP 우선 관심 적응증 및 R&D Theme/Cluster와의 적합성'
+    description: 'SKBP 우선 관심 적응증 및 해당 질환 biology와의 적합성'
   },
   {
     key: 'moa_validity',
@@ -603,16 +603,15 @@ function isFastTriageRecord(record) {
 
 function reviewStatus(record) {
   const override = record?.meta?.human_review?.overrides?.filter_status;
-  const baseline = override || record?.hard_filter?.status || record?.triage?.status || 'UNVERIFIED';
+  const baseline = override || record?.hard_filter?.status || record?.triage?.status || 'INSUFFICIENT';
   const status = String(baseline).trim().toUpperCase();
-  if (status === 'N/A') return 'UNVERIFIED';
-  return ['SELECT', 'REJECT', 'UNVERIFIED'].includes(status) ? status : 'UNVERIFIED';
+  if (['UNVERIFIED', 'N/A'].includes(status)) return 'INSUFFICIENT';
+  return ['SELECT', 'REJECT', 'INSUFFICIENT'].includes(status) ? status : 'INSUFFICIENT';
 }
 
 function identityIsVerified(record) {
   const parserStatus = String(record?.source_report?.parser_status || '');
   return record?.triage?.identity_verified !== false
-    && reviewStatus(record) !== 'UNVERIFIED'
     && !/asset_identity_not_verified/i.test(parserStatus);
 }
 
@@ -726,7 +725,7 @@ function isCurrentFastTriageContract(record) {
   const criteria = objectValue(objectValue(record?.scoring).criteria);
   return schemaVersion === '3.2'
     || instructionVersion === '3.2'
-    || triageStatus === 'UNVERIFIED'
+    || triageStatus === 'INSUFFICIENT'
     || Object.values(criteria).some((item) => item && typeof item === 'object' && 'evidence_basis' in item);
 }
 

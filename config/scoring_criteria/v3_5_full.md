@@ -1,0 +1,254 @@
+# SKBP Pipeline Finder v3.5 — Full Scoring Criteria
+
+## 0. Scoring Operating Principle
+
+각 scoring criterion은 서로 독립적으로 평가한다.
+
+- 모든 score는 반드시 `0`, `1`, `2`, `3` 중 하나의 단일 정수다.
+- 범위형 점수는 사용하지 않는다.
+- 불확실성은 `investigation_note`, `why_not_higher`, `uncertain_points`에 기록한다.
+- Evidence Type은 score를 자동 결정하는 rule이 아니라 score의 근거 수준을 보여주는 audit label이다.
+
+## 1. Evidence Discipline
+
+Use only asset-specific facts explicitly provided by the user or verified from credible public sources.
+
+Canonicalize confirmed facts into approved dashboard values, but do not infer unconfirmed facts or completed/current status from plans, expectations, financing, hiring activity, adjacent programs, class assumptions, or general scientific knowledge.
+
+General scientific knowledge may only be used to map confirmed facts to the scoring rubric. If a fact cannot be established or conflicting sources cannot be resolved, use Unknown and record the uncertainty.
+
+이 원칙은 모든 factual field와 scoring criterion에 적용한다. 일반 과학지식으로 새로운 asset-specific target, MoA, indication, stage, ownership, status 또는 data를 생성하지 않는다.
+
+## 2. Evidence Type
+
+| Evidence Type | Definition | Examples |
+|---|---|---|
+| **E0. Not found / Not assessable** | 신뢰 가능한 근거가 없거나 판단 불가 | target 미공개, MoA 미공개, 경쟁 정보 확인 불가 |
+| **E1. Company claim or scientific rationale only** | 회사 주장·과학적 논리는 있으나 실험값/임상값 미공개 | “BBB penetrant”, “highly selective” claim |
+| **E2. Indirect or class-level evidence** | 동일 target/MoA class, 경쟁 asset, 문헌, 질환 biology 등 간접 근거 | 동일 MoA 승인약, 독립 연구 |
+| **E3. Asset-specific preclinical or technical evidence** | 평가 asset 자체의 전임상·기술 근거 | in vitro, in vivo, PK/PD, selectivity, tox, CMC |
+| **E4. Asset-specific clinical evidence** | 평가 asset 자체의 임상 근거 | human PK/PD, biomarker, efficacy |
+
+## 3. SKBP Interest Indications
+
+- Alzheimer's disease
+- Parkinson's disease
+- Amyotrophic lateral sclerosis / motor neuron disease
+- Multiple sclerosis / neuroinflammatory disease
+- Neuropathic pain
+- Epilepsy / seizure disorders
+
+TR에는 조사 과정에서 확인된 가장 구체적인 indication wording을 사용한다. Neuropathic pain 및 명확한 subtype/synonym은 6개 interest indication으로 TR 3점에 해당한다. `Pain`만 확인되거나 acute/postoperative/non-neuropathic pain이면 넓은 SKBP pain 범위 내의 비우선 indication으로 TR 2점에 해당한다. TR은 indication의 전략 범위만 평가하며, target/MoA의 질환 biology 연결성은 MoA Validity에서 평가한다.
+
+## 3.1 R&D Theme Taxonomy
+
+- `E/I Balance`
+- `Neuroimmune`
+- `Protein Homeostasis`
+
+Theme은 조사로 확인한 assessed asset의 target/MoA가 직접 연결될 때만 매핑한다. `Protein Homeostasis`는 protein folding/chaperone, ubiquitin-proteasome, autophagy-lysosome, ER stress/UPR 또는 pathogenic aggregate clearance를 직접 조절하는 경우에 한한다. 질환에 단백질 응집이 존재한다는 사실만으로는 해당 Theme을 부여하지 않는다. Protein Homeostasis의 하위 Cluster taxonomy는 아직 승인되지 않았으므로 Cluster는 `Unknown`을 사용한다.
+
+## 4. Summary Scoring Table
+
+| Criterion | What this criterion evaluates | 0점 | 1점 | 2점 | 3점 |
+|---|---|---|---|---|---|
+| **Target Relevance** | 확인된 asset의 indication이 SKBP 전략 범위와 얼마나 맞는지 평가합니다. Theme/Cluster와 disease biology 연결성은 별도 분류 및 MoA 평가에 사용합니다. | Identity 확인 후에도 indication/relevance 판단 정보 부족 (identity 미확인은 조기 종료) | SKBP의 넓은 신경계·정신과·신경면역·신경퇴행·통증 범위 밖 | 넓은 SKBP 범위에는 속하지만 6개 우선 적응증 밖 | 6개 SKBP 우선 적응증 중 하나에 해당 |
+| **Competitive Landscape** | 같은 target/same MoA front runner가 얼마나 많고 FIC/BIC 가능성이 있는가 | 정보 부족/판단 불가 또는 front runner 5개 이상 | front runner 3~4개 또는 차별화 약함 | front runner 1~2개, BIC 가능 | front runner 0개 또는 사실상 없음, FIC 가능 |
+| **MoA Validity** | 작용기전이 얼마나 구체적으로 정의되어 있고 이를 뒷받침하는 기능적·과학적 근거가 어느 수준인지 평가합니다. | Target 또는 작용기전을 확인할 수 없어 평가 불가 | 작용기전 설명은 있으나 회사 주장 또는 이론적 근거 중심 | 기전이 실제로 작동함을 보여주는 기능적 실험 또는 동일 target/class의 독립 검증 근거 있음 | 해당 asset에서 target engagement, mechanism-linked PD/biomarker 또는 직접적인 작용기전 검증이 확인됨 |
+| **Platform Attractiveness** | 다른 프로그램에도 반복 적용 가능한 platform-level 기술적 우위가 있는가 | Platform 실재 또는 구현 가능성 불명확 | 차별성 claim·이론적 rationale 중심 | Comparator 대비 정량적 기술 우위가 확인되나 단일·전임상 조건에 제한 | 2점 정량 근거를 충족한 뒤 복수 조건·platform 적용 자산에서 정량 우위가 재현되고 외부 검증/사용이 확인되거나, Platform 적용 자산 First Patient Dosed 확인 |
+| **Expansion Potential** | assessed asset의 main indication 외 추가 indication 확장이 확인되는가 | 추가 indication 미확인 | 추가 indication과 biology rationale만 확인 | 하나 이상의 추가 indication에서 asset-specific 초기 정량 데이터 확인 | 복수 추가 indication, 최소 1개 공식 전임상·IND-enabling·임상 프로그램, 그리고 그 추가 indication 중 최소 1개의 asset-specific 정량 데이터 확인 |
+| **Data Maturity** | 해당 asset의 개발 단계에 맞는 공개 데이터가 얼마나 충분하고 해석 가능한지 평가합니다. | 공개된 asset-specific 결과 없음 | 정성적 claim 또는 단편적 결과만 있어 개발 단계 대비 불충분 | 개발 단계에 맞는 해석 가능한 정량적 evidence domain이 1개 이상 공개 | 상호보완적·stage-appropriate 정량 evidence domain이 2개 이상이고, 그중 최소 1개가 program progression을 직접 지지 |
+| **Marketability** | credible product hypothesis와 obtainable peak sales가 성립하는가 | 상업적 rationale 또는 계산 불가 | assessed Global peak sales < USD 1B | assessed Global peak sales >= USD 1B and < USD 2B | assessed Global peak sales >= USD 2B |
+
+## 5. Detailed Criterion Rules
+
+### 5.1 Target Relevance
+
+항상 높은 점수부터 판정하며 여러 조건에 해당하면 가장 높은 적용 가능 점수 하나만 부여한다.
+
+- **3점:** 확인된 상세 indication이 6개 SKBP 우선 적응증 중 하나다.
+- **2점:** 확인된 상세 indication은 넓은 SKBP 신경계·정신과·신경면역·신경퇴행·통증 범위에 속하지만 6개 우선 적응증에는 해당하지 않는다.
+- **1점:** asset identity와 indication은 확인됐지만 넓은 SKBP 범위 밖이다.
+- **0점:** identity가 확인된 뒤에도 indication/relevance를 평가할 수 있는 최소 정보가 없을 때만 부여한다.
+
+Asset identity 자체를 확인할 수 없으면 TR 0점 평가 대신 조기 종료를 사용한다. Target/MoA의 질환 biology 연결성은 TR 점수에 반영하지 않는다. Source trail, investigation note, why_not_higher 및 uncertain points를 상세히 기록한다.
+
+### 5.2 Competitive Landscape
+
+Broader same-disease competitor와 true same-target/same-MoA competitor를 구분한다.
+
+- 정보 부족/판단 불가 또는 front runner 5개 이상: 0점
+- front runner 3~4개: 1점
+- front runner 1~2개: 2점
+- front runner 0개 또는 사실상 없음: 3점
+
+### 5.3 MoA Validity
+
+- **Functional evidence:** target/pathway 조절 뒤 예상되는 functional 또는 downstream biological effect가 실험에서 확인된 근거.
+- **Same target/class validation:** 평가 asset이 아닌 다른 약물, 독립 연구 또는 동일 class에서 target/mechanism이 검증된 근거.
+- **Asset-specific validation:** 평가 asset 자체에서 target engagement, mechanism-linked PD/biomarker 또는 직접 functional effect가 확인된 근거.
+
+일반적인 clinical efficacy만으로 MoA 3점을 주지 않는다. Clinical evidence를 쓰려면 proposed mechanism과 연결된 mechanism-linked clinical PoC여야 한다.
+
+### 5.4 Platform Attractiveness
+
+개별 asset의 성숙도가 아니라 modality, delivery, chemistry, manufacturing 등 underlying technology/platform의 반복 적용 가능한 기술적 우위를 평가한다.
+
+- 0점: Platform 실재성·구현 가능성·성능을 평가할 공개 근거가 없음.
+- 1점: 회사 claim, 이론적 rationale, 특허 또는 diagram만 있고 comparator 대비 정량 기술 데이터 없음.
+- 2점: 적절한 comparator 대비 delivery, potency, selectivity, durability, safety 또는 manufacturability의 정량 우위가 확인되나 단일 asset/payload/model/species 또는 회사 자체 전임상 조건에 제한됨.
+- 3점: 2점의 정량 comparator 근거를 충족한 뒤, Platform 적용 자산이 실제 First Patient Dosed를 달성했거나, 임상 전 정량 우위가 복수 조건/복수 platform-derived asset에서 재현되고 독립 검증/외부 사용이 확인됨.
+
+#### Platform 2점 기술 데이터의 최소 정의
+
+다음 내용을 모두 확인할 수 있어야 한다.
+
+1. 평가 asset 또는 payload와 platform의 연결
+2. 정량적 endpoint
+3. 적절한 comparator
+4. model, species, dose, route, time point 등 실험 맥락
+5. delivery, potency, selectivity, durability, safety, manufacturability 중 검증한 기술적 장점
+
+인정 가능한 예:
+
+- AAV9 대비 brain expression 8배 증가
+- Parent siRNA 대비 target knockdown 25%에서 70%로 개선
+- Comparator 대비 liver exposure 80% 감소
+- 기존 공정 대비 생산수율 3배 증가
+- 동일 효능에서 투여량 5분의 1 감소
+
+정성적 회사 주장, 특허, MOU·공동연구 발표, 투자유치, IND 제출·clearance, trial registration, pipeline asset 수 또는 임상단계라는 사실만으로는 기술 데이터로 인정하지 않는다.
+
+#### First Patient Dosed 운영 규칙
+
+- 임상 진입 자산이 평가 대상 platform을 사용한다는 공식 근거가 있어야 한다.
+- First Patient Dosed는 회사 보도자료, trial update 또는 임상등록 업데이트 등 신뢰 가능한 출처에서 확인되어야 한다.
+- 같은 platform의 다른 asset이 First Patient Dosed를 달성해도 Platform Attractiveness에는 3점을 줄 수 있으나 assessed asset의 Data Maturity에는 반영하지 않는다.
+- IND clearance, trial registration, recruitment planned 또는 trial initiation announced만으로는 3점을 주지 않는다.
+- First Patient Dosed는 human implementation 확인 기준이며 임상 효능 입증을 의미하지 않는다.
+- First Patient Dosed만으로는 3점을 주지 않으며, 반드시 2점의 정량 comparator 근거가 함께 있어야 한다.
+
+### 5.5 Expansion Potential
+
+Main indication의 다른 표현, patient subgroup, platform-wide indication list 또는 미래 계획은 expansion으로 계산하지 않는다.
+
+- 0점: assessed asset의 main indication 외 추가 indication이 확인되지 않음.
+- 1점: 추가 indication과 biology rationale만 확인되고 asset-specific 데이터나 공식 개발 program은 없음.
+- 2점: 하나 이상의 추가 indication에서 assessed asset의 초기 정량 efficacy, PD 또는 biomarker 데이터가 확인됨.
+- 3점: 복수의 구분되는 추가 indication이 확인되고, 그중 최소 1개가 assessed asset의 공식 전임상·IND-enabling·임상 개발 program이며, 해당 추가 indication에서 asset-specific 정량 efficacy, PD 또는 biomarker 데이터가 확인됨.
+
+### 5.6 Data Maturity
+
+Evidence domain은 서로 다른 개발 질문에 답하는 데이터 범주다. 예: in vitro activity/selectivity, target engagement/PD, in vivo efficacy, PK/PD, safety/tolerability, clinical outcome.
+
+- 동일 underlying experiment의 endpoint, dose, figure 또는 반복 source는 한 domain이다.
+- 하나의 공개 source에 서로 다른 개발 질문에 답하는 in vivo efficacy와 PK/PD 같은 결과가 함께 있으면 서로 다른 두 domain으로 평가할 수 있다. Source 개수 자체로 점수를 제한하지 않는다.
+- Potency와 selectivity는 하나의 in vitro characterization domain이다.
+- Data 3은 complementary, stage-appropriate domain이 최소 2개이고 그중 하나가 program progression을 직접 뒷받침해야 한다.
+- Human data는 필수조건이 아니다.
+- 다른 asset 또는 platform-wide data는 assessed asset의 Data Maturity를 올리지 않는다.
+
+Source trail, missing data, stage-data alignment, why_not_higher 및 uncertain points를 상세히 기록한다.
+
+#### Platform Attractiveness와의 구분
+
+| 데이터 또는 질문 | Platform Attractiveness | Data Maturity |
+|---|---|---|
+| 다른 asset에서 동일 platform 성능 확인 | 반영 가능 | 반영 불가 |
+| 복수 payload에서 delivery 우위 재현 | 핵심 근거 | 직접 반영하지 않음 |
+| assessed asset의 in vitro/in vivo efficacy | platform 기여를 comparator로 분리한 경우만 | 핵심 근거 |
+| assessed asset의 dose-response, PK/PD | platform claim을 직접 검증할 때만 보조 반영 | 핵심 근거 |
+| 다른 asset의 First Patient Dosed | 3점 가능 | 반영 불가 |
+| assessed asset의 First Patient Dosed | 3점 가능 | 공개된 stage-appropriate domain으로 평가 |
+| 다른 asset의 human data | human platform validation으로 반영 가능 | 반영 불가 |
+| assessed asset의 human target engagement 또는 PoC | platform claim 관련 endpoint만 반영 | 핵심 근거 |
+| 공통 제조공정의 수율·batch consistency | Platform 근거 | 직접 반영하지 않음 |
+| assessed asset의 GLP tox·clinical batch·release assay | 공통 platform 특성이 아니면 제한적 | 핵심 근거 |
+| MOU·투자·특허·IND clearance | 단독 가점 불가 | asset data로 가점 불가 |
+
+동일 source를 두 criterion에 인용할 수 있지만 동일 endpoint를 양쪽에 중복 가점하지 않는다.
+
+### 5.7 Marketability
+
+Credible commercial product hypothesis와 obtainable peak sales가 성립하는지 평가한다.
+
+Hard 0 Gate:
+
+- Indication이 불명확하다.
+- Target patient population을 정의할 수 없다.
+- Therapeutic use case를 정의할 수 없다.
+- Target/MoA가 너무 불명확하여 credible product hypothesis가 성립하지 않는다.
+- Asset의 과학적 rationale이 부족하여 상업적 제품 가정이 불가능하다.
+- TAP를 합리적으로 계산할 수 없다.
+- Annual price 또는 treatment model을 합리적으로 가정할 수 없다.
+- Broad disease market은 크지만 해당 asset이 그 market에 들어갈 논리가 없다.
+
+Commercial rationale이 성립하지 않으면 Marketability는 0점이고 A/B/C/D 결과는 `null`이다. 계산 가능할 때:
+
+- A. US TAP = US Patient Pool × Diagnosis Rate × Eligibility Rate × Treatable Subgroup Rate
+- B. US Unrisked Peak Sales = US TAP × Benchmark Annualized Net Price × Peak Penetration × Treatment Duration Factor
+- C. US Obtainable Peak Sales = US Unrisked Peak Sales × Competition Haircut × Pricing Power Adjustment
+- D. Global Obtainable Peak Sales = C. US Obtainable Peak Sales × 1.5
+
+`×1.5`는 미국 기준 C 또는 미국 기준 외부 peak-sales forecast에 정확히 한 번만 적용한다. 이미 Global인 forecast에는 다시 적용하지 않는다. Expansion Capacity Adjustment는 산식에서 제외하며, 구버전 호환 필드가 있으면 1.0으로 고정하고 점수에 사용하지 않는다.
+
+Score:
+
+- 0점: Commercial rationale 또는 신뢰 가능한 Global peak sales를 합리적으로 수립할 수 없음.
+- 1점: Assessed Global Peak Sales < USD 1B.
+- 2점: Assessed Global Peak Sales >= USD 1B and < USD 2B.
+- 3점: Assessed Global Peak Sales >= USD 2B.
+
+Controlled vocabulary:
+
+`commercial_rationale_status`는 아래 값 중 정확히 하나만 사용한다.
+
+- `established`
+- `not_established`
+- `evidence_based`
+- `assumption_based`
+- `assumption_based_scenario`
+- `insufficient_evidence`
+
+`provisional`, `uncertain`, `partial`, `pending` 같은 값을 쓰지 않는다. 불확실성은 `commercial_rationale_failure_reason`, `investigation_note`, `uncertain_points`에 기록한다. Status가 `not_established` 또는 `insufficient_evidence`면 A/B/C/D calculated field는 `null`로 두고 이유를 명시한다.
+
+## 6. Canonical Development Stage
+
+`structured_table.development_stage`는 아래 값 중 정확히 하나만 사용한다.
+
+- Hit Discovery
+- Lead Optimization
+- Preclinical Candidate
+- IND-enabling
+- Preclinical unspecified
+- IND filed/cleared
+- Clinical unspecified
+- Phase 1
+- Phase 1/2
+- Phase 2
+- Phase 2/3
+- Phase 3
+- Registration
+- Approved / marketed
+- Discontinued / inactive
+- Unknown
+
+확인된 명시적 stage 또는 완료·착수 milestone만 canonicalize한다. 계획·예상·목표, 투자 유치, 채용공고로 현재 stage를 추론하지 않는다. `Hit ID`/`hit identification`, 명시적인 `research program`/`research project`/`discovery program`/`discovery project`는 `Hit Discovery`, `FIH`/`Ph1`/`Ph1a`/`Ph1b`는 `Phase 1`, 확인된 `Ph1b/2a`는 `Phase 1/2`, `FDA approved`는 `Approved / marketed`, `pre-PCC`는 `Lead Optimization`이다. `Phase 2 planned` 또는 `Phase 2/3 planned`는 해당 phase를 확정하지 않으므로 명시적으로 확인된 이전 current phase가 없으면 `Unknown`이다. `preclinical`만 있으면 `Preclinical unspecified`, candidate nominated/selected면 `Preclinical Candidate`, 실제 GLP tox/IND-directed CMC/IND-enabling study 진행은 `IND-enabling`, IND/CTA submitted/filed/accepted/effective/cleared는 `IND filed/cleared`다. 시작·진행 중인 clinical/pivotal/registrational trial에서 phase가 없으면 `Clinical unspecified`이며, pivotal/registrational만으로 `Phase 3`를 추론하지 않는다. 명시적으로 확인된 `discontinued`, `terminated`, `withdrawn`, `inactive`, `dormant`, `abandoned`만 `Discontinued / inactive`다. `suspended`/`halted`는 pause signal이므로 영구 비활성이 확인되기 전까지 FAIL로 처리하지 않고 REVIEW와 pause note를 남긴다. 임상 synonym은 확인된 표현을 canonical bucket으로 mapping하고 trial status는 source evidence/notes에 보존한다. 상충을 해소할 수 없으면 `Unknown`과 uncertainty를 기록한다.
+
+## 7. Full Scout Hard Filter
+
+v3.5 PASS 기준은 total score와 세 핵심 criterion의 최소 충족 조건을 함께 적용한다.
+
+- **PASS:** total score 14점 이상, TR 2점 이상, MoA 3점, Data 3점.
+- **REVIEW:** PASS와 FAIL 어느 쪽에도 해당하지 않는 완료 평가.
+- **FAIL:** total score 8점 이하, 또는 TR/MoA/Data 중 하나가 0점.
+
+`decision_uncertainty`는 criterion notes에 기록해 REVIEW 이유를 설명할 수 있으나, 완료 평가의 score-based PASS를 독립적으로 막지 않는다. 확인된 hard blocker는 안전상 FAIL condition으로 유지한다.
+
+SKBP Theme/Cluster는 분류·탐색 정보이며 TR 점수 또는 PASS/FAIL의 직접 조건이 아니다. `no SKBP Theme / Cluster fit`은 FAIL condition이 아니다.
+
+신뢰할 수 있는 출처에서 lifecycle 중단이 확인되면 Full Scout는 짧은 lifecycle FAIL로 조기 종료한다. Asset identity와 중단 상태·근거 URL·알려진 중단 사유/시점만 확인하고, 경쟁 환경·시장성·확장성·추가 소스 조사는 수행하지 않는다. Compact v2 JSON의 필수 구조는 유지하되 `development_stage`는 `Discontinued / inactive`, `hard_filter.status`는 `FAIL`, `hard_filter.hard_blocker`는 `true`, `final_insight.recommendation`은 `Deprioritize`로 기록한다.
+
+## 8. Required Output for Each Criterion
+
+각 criterion의 Markdown section에는 score, evidence type, 핵심 판단, 확인 항목, evidence trail/source, investigation note, why-not-higher, uncertainty를 모두 기록한다. Compact v2 JSON criterion에는 대시보드 표시용 정수 `score`, 짧은 판단/근거/불확실성 필드, 그리고 중앙 `source_registry`를 가리키는 `source_ids`만 저장하며, Markdown의 전체 조사 내용을 중복하지 않는다. `structured_table.sources`는 `[]`로 유지하고 대시보드 Source 열은 `validation.source_registry`에서 파생한다. 범위형 score를 쓰지 않고, 회사 claim은 명확히 claim으로 표시한다.

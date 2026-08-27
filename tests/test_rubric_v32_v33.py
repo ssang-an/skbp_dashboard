@@ -90,6 +90,67 @@ class EditProvenanceTests(unittest.TestCase):
         self.assertEqual(record["meta"]["last_edited_by"], "Reviewer")
 
 
+class ServerDerivedScoringFieldTests(unittest.TestCase):
+    def test_full_scout_status_and_total_are_aligned_without_changing_scores(self) -> None:
+        scores = {
+            "target_relevance": 3,
+            "competitive_landscape": 2,
+            "moa_validity": 3,
+            "platform_attractiveness": 2,
+            "expansion_potential": 2,
+            "data_maturity": 3,
+            "marketability": 0,
+        }
+        record = {
+            "meta": {"review_type": "full_scout"},
+            "structured_table": {"development_stage": "IND-enabling"},
+            "hard_filter": {"status": "REVIEW", "reason": "Authored rationale.", "flags": []},
+            "scoring": {
+                "total_score": 12,
+                "max_score": 9,
+                "criteria": {criterion_id: {"score": score} for criterion_id, score in scores.items()},
+            },
+        }
+
+        adjustments = main.synchronize_server_derived_scoring_fields([record])
+
+        self.assertEqual(record["scoring"]["total_score"], 15)
+        self.assertEqual(record["scoring"]["max_score"], 21)
+        self.assertEqual(record["hard_filter"]["status"], "PASS")
+        self.assertEqual(record["hard_filter"]["reason"], "Authored rationale.")
+        self.assertEqual(
+            {item["path"] for item in adjustments},
+            {"scoring.total_score", "scoring.max_score", "hard_filter.status"},
+        )
+        self.assertEqual(record["scoring"]["criteria"]["data_maturity"]["score"], 3)
+
+    def test_triage_status_total_and_recommendation_are_aligned(self) -> None:
+        record = {
+            "meta": {"review_type": "fast_triage"},
+            "structured_table": {"development_stage": "Preclinical Candidate"},
+            "hard_filter": {"status": "SELECT", "reason": "Authored rationale.", "flags": []},
+            "triage": {"status": "SELECT", "identity_verified": True, "active_asset": True},
+            "scoring": {
+                "total_score": 0,
+                "max_score": 21,
+                "criteria": {
+                    "target_relevance": {"score": 2},
+                    "moa_validity": {"score": 1},
+                    "data_maturity": {"score": 1},
+                },
+            },
+            "final_insight": {"recommendation": "Run Full Scout"},
+        }
+
+        main.synchronize_server_derived_scoring_fields([record])
+
+        self.assertEqual(record["scoring"]["total_score"], 4)
+        self.assertEqual(record["scoring"]["max_score"], 9)
+        self.assertEqual(record["hard_filter"]["status"], "REJECT")
+        self.assertEqual(record["triage"]["status"], "REJECT")
+        self.assertEqual(record["final_insight"]["recommendation"], "Monitor / gather more evidence")
+
+
 class FullScoutReportScoreSyncTests(unittest.TestCase):
     def test_official_rubric_scores_sync_to_report_but_human_overrides_do_not(self) -> None:
         scores = {
@@ -181,11 +242,11 @@ def triage_criterion(
 
 
 def current_triage_record() -> dict[str, object]:
-    return {
+    record = {
         "meta": {
             "schema_version": "3.2",
-            "instruction_version": "3.3",
-            "rubric_version": "3.3",
+            "instruction_version": "3.4",
+            "rubric_version": "3.4",
             "review_type": "fast_triage",
             "generated_at": "2026-08-01",
             "output_filename_base": "Acceptance_Test_Asset_fast_triage_20260801",
@@ -193,7 +254,7 @@ def current_triage_record() -> dict[str, object]:
         "input": {
             "company_input": "Acceptance Test Biotech",
             "asset_input": "Acceptance Test Asset",
-            "notes": "Indication = Parkinson's disease; Target/MoA = Unknown",
+            "notes": "Indication = Parkinson's disease; Target/MoA = LRRK2 inhibitor; Data = preclinical efficacy claimed.",
         },
         "source_report": {
             "source_format": "fast_triage_markdown",
@@ -202,14 +263,14 @@ def current_triage_record() -> dict[str, object]:
         "structured_table": {
             "company": "Acceptance Test Biotech",
             "asset_name": "Acceptance Test Asset",
-            "target": "Unknown",
-            "moa": "Unknown",
+            "target": "LRRK2",
+            "moa": "LRRK2 inhibitor",
             "main_indication": "Parkinson's disease",
             "development_stage": "Unknown",
         },
         "hard_filter": {"status": "REJECT", "reason": "SELECT gate 미충족", "flags": []},
         "triage": {
-            "instruction_version": "3.3",
+            "instruction_version": "3.4",
             "status": "REJECT",
             "identity_verified": True,
             "active_asset": True,
@@ -219,7 +280,7 @@ def current_triage_record() -> dict[str, object]:
             "max_score": None,
             "criteria": {
                 "target_relevance": triage_criterion(
-                    2,
+                    3,
                     "user_input_only",
                     "Parkinson's disease는 SKBP 우선 관심 적응증에 해당하여 TR 2점입니다. Target/MoA의 직접적인 biology fit은 확인되지 않았습니다.",
                 ),
@@ -237,21 +298,38 @@ def current_triage_record() -> dict[str, object]:
         },
         "final_insight": {
             "one_line_summary": "The SELECT gate is not met.",
-            "recommendation": "Do not run Full Scout",
+            "recommendation": "Monitor / gather more evidence",
             "most_important_diligence_question": "Can the missing public evidence be verified?",
         },
     }
+    criteria = record["scoring"]["criteria"]
+    criteria["target_relevance"] = triage_criterion(
+        3,
+        "user_input_only",
+        "TR 3 points: Parkinson's disease is one of the six priority indications.",
+    )
+    criteria["moa_validity"] = triage_criterion(
+        1,
+        "user_input_only",
+        "MoA 1 points: LRRK2 inhibitor is a user-provided mechanism claim without functional validation.",
+    )
+    criteria["data_maturity"] = triage_criterion(
+        1,
+        "user_input_only",
+        "Data 1 points: user-provided preclinical efficacy is a qualitative claim without quantitative results.",
+    )
+    return record
 
 
 class VersionAndPolicyTests(unittest.TestCase):
     def test_current_versions(self) -> None:
-        self.assertEqual(main.TRIAGE_CRITERIA_VERSION, "3.3")
+        self.assertEqual(main.TRIAGE_CRITERIA_VERSION, "3.4")
         self.assertEqual(main.TRIAGE_SCHEMA_VERSION, "3.2")
-        self.assertEqual(main.SCORING_CRITERIA_VERSION, "3.4")
+        self.assertEqual(main.SCORING_CRITERIA_VERSION, "3.6")
         self.assertEqual(main.FULL_SCOUT_SCHEMA_VERSION, "3.2")
-        self.assertTrue(main.SCORING_CRITERIA_TRIAGE_MD.name.startswith("v3_3_"))
-        self.assertTrue(main.SCORING_CRITERIA_FULL_MD.name.startswith("v3_4_"))
-        self.assertTrue(main.SCORING_CRITERIA_DISPLAY_MD.name.startswith("v3_4_"))
+        self.assertTrue(main.SCORING_CRITERIA_TRIAGE_MD.name.startswith("v3_4_"))
+        self.assertTrue(main.SCORING_CRITERIA_FULL_MD.name.startswith("v3_6_"))
+        self.assertTrue(main.SCORING_CRITERIA_DISPLAY_MD.name.startswith("v3_6_"))
 
     def test_fast_triage_select_formula_and_identity_gate(self) -> None:
         self.assertEqual(
@@ -262,7 +340,7 @@ class VersionAndPolicyTests(unittest.TestCase):
                 data_maturity=0,
                 active_asset=True,
             ),
-            "SELECT",
+            "INSUFFICIENT",
         )
         self.assertEqual(
             main.calculate_fast_triage_status(
@@ -272,7 +350,7 @@ class VersionAndPolicyTests(unittest.TestCase):
                 data_maturity=2,
                 active_asset=True,
             ),
-            "SELECT",
+            "INSUFFICIENT",
         )
         self.assertEqual(
             main.calculate_fast_triage_status(
@@ -282,7 +360,7 @@ class VersionAndPolicyTests(unittest.TestCase):
                 data_maturity=0,
                 active_asset=True,
             ),
-            "REJECT",
+            "INSUFFICIENT",
         )
         self.assertEqual(
             main.calculate_fast_triage_status(
@@ -292,7 +370,7 @@ class VersionAndPolicyTests(unittest.TestCase):
                 data_maturity=3,
                 active_asset=True,
             ),
-            "UNVERIFIED",
+            "INSUFFICIENT",
         )
         self.assertEqual(
             main.calculate_fast_triage_status(
@@ -302,7 +380,7 @@ class VersionAndPolicyTests(unittest.TestCase):
                 data_maturity=3,
                 active_asset=False,
             ),
-            "REJECT",
+            "INSUFFICIENT",
         )
         self.assertEqual(
             main.calculate_fast_triage_status(
@@ -316,7 +394,7 @@ class VersionAndPolicyTests(unittest.TestCase):
         )
 
     def test_target_relevance_acceptance_cases_1_to_7(self) -> None:
-        self.assertEqual(main.calculate_target_relevance_score("Alzheimer's disease"), 2)
+        self.assertEqual(main.calculate_target_relevance_score("Alzheimer's disease"), 3)
         self.assertEqual(
             main.calculate_target_relevance_score(
                 "Alzheimer's disease",
@@ -330,7 +408,7 @@ class VersionAndPolicyTests(unittest.TestCase):
                 direct_biology_fit=True,
                 target_moa_contradiction=True,
             ),
-            1,
+            3,
         )
         self.assertEqual(
             main.match_skbp_interest_indication("Diabetic peripheral neuropathic pain"),
@@ -338,15 +416,18 @@ class VersionAndPolicyTests(unittest.TestCase):
         )
         self.assertEqual(
             main.calculate_target_relevance_score("Diabetic peripheral neuropathic pain"),
-            2,
+            3,
         )
-        self.assertEqual(main.calculate_target_relevance_score("Pain, subtype unspecified"), 1)
-        self.assertEqual(main.calculate_target_relevance_score("Parkinson's disease"), 2)
+        self.assertEqual(main.calculate_target_relevance_score("Pain, subtype unspecified"), 2)
+        self.assertEqual(main.calculate_target_relevance_score("Parkinson's disease"), 3)
+        self.assertEqual(main.calculate_target_relevance_score("Major depressive disorder"), 2)
+        self.assertEqual(main.calculate_target_relevance_score("Inflammatory bowel disease"), 1)
+        self.assertEqual(main.calculate_target_relevance_score("Unknown"), 0)
 
     def test_user_input_only_hallucinated_cell_claim_is_detected(self) -> None:
         record = current_triage_record()
         criterion = record["scoring"]["criteria"]["target_relevance"]
-        criterion["main_line_summary"] = "TR is 2 points. This asset is microglia-directed in Parkinson's disease."
+        criterion["main_line_summary"] = "TR 3 points: This asset is microglia-directed in Parkinson's disease."
         self.assertIn(
             "microglia",
             main.unsupported_user_input_only_summary_claims(record, "target_relevance"),
@@ -357,27 +438,15 @@ class VersionAndPolicyTests(unittest.TestCase):
 
     def test_user_input_only_hallucinated_target_and_data_claims_are_detected(self) -> None:
         cases = (
-            (
-                "target_relevance",
-                "Target은 LRRK2이며 Parkinson's disease에 해당하여 TR 2점입니다.",
-                "target/MoA=LRRK2",
-            ),
-            (
-                "moa_validity",
-                "해당 asset은 LRRK2 kinase를 억제한다는 설명만 있어 MoA 1점입니다.",
-                "target/MoA=LRRK2",
-            ),
-            (
-                "data_maturity",
-                "해당 asset에서 in vivo efficacy 80% 개선이 확인됐으나 단편적이어서 Data 1점입니다.",
-                "data=80%",
-            ),
+            ("target_relevance", 3, "TR 3 points: TREM2 inhibitor is claimed for Parkinson's disease.", "target/MoA=TREM2"),
+            ("moa_validity", 1, "MoA 1 points: TREM2 inhibitor is the claimed mechanism.", "target/MoA=TREM2"),
+            ("data_maturity", 1, "Data 1 points: in vivo efficacy improved by 80%.", "data=80%"),
         )
-        for criterion_id, summary, expected_claim in cases:
+        for criterion_id, score, summary, expected_claim in cases:
             record = current_triage_record()
             criterion = record["scoring"]["criteria"][criterion_id]
             criterion["evidence_basis"] = "user_input_only"
-            criterion["score"] = 1 if criterion_id != "target_relevance" else 2
+            criterion["score"] = score
             criterion["main_line_summary"] = summary
             with self.subTest(criterion_id=criterion_id):
                 claims = main.unsupported_user_input_only_summary_claims(record, criterion_id)
@@ -391,7 +460,7 @@ class VersionAndPolicyTests(unittest.TestCase):
         record["structured_table"]["target"] = "LRRK2"
         criterion = record["scoring"]["criteria"]["target_relevance"]
         criterion["main_line_summary"] = (
-            "Parkinson's disease is an SKBP interest indication, so TR is 2 points. "
+            "Parkinson's disease is an SKBP interest indication, so TR is 3 points. "
             "Direct target/MoA biology fit was not used for this preliminary score."
         )
         self.assertEqual(
@@ -399,7 +468,7 @@ class VersionAndPolicyTests(unittest.TestCase):
             [],
         )
         criterion["main_line_summary"] = (
-            "Parkinson's disease is in scope, so TR is 2 points. "
+            "Parkinson's disease is in scope, so TR is 3 points. "
             "Target engagement was not confirmed."
         )
         self.assertEqual(
@@ -433,12 +502,12 @@ class VersionAndPolicyTests(unittest.TestCase):
             main.validate_records_for_save([record])
         self.assertIn("must contain a Fast Triage status table", str(caught.exception.detail))
 
-    def test_fast_hard_filter_and_triage_status_must_match(self) -> None:
+    def test_fast_hard_filter_and_triage_status_are_server_aligned(self) -> None:
         record = current_triage_record()
         record["hard_filter"]["status"] = "SELECT"
-        with self.assertRaises(HTTPException) as caught:
-            main.validate_records_for_save([record])
-        self.assertIn("hard_filter.status and record[0].triage.status must match", str(caught.exception.detail))
+        main.validate_records_for_save([record])
+        self.assertEqual(record["hard_filter"]["status"], "REJECT")
+        self.assertEqual(record["triage"]["status"], "REJECT")
 
     def test_fast_summary_requires_the_selected_single_score(self) -> None:
         self.assertTrue(
@@ -497,9 +566,9 @@ class VersionAndPolicyTests(unittest.TestCase):
         record = current_triage_record()
         record["input"]["asset_input"] = "AXN-1501"
         record["structured_table"]["asset_name"] = "AXN-1501"
-        record["input"]["notes"] = "AXN-1501 is associated with Alzheimer's disease."
+        record["input"]["notes"] = "AXN-1501 is associated with Alzheimer's disease; Target/MoA = LRRK2 inhibitor; Data = preclinical efficacy claimed."
         record["scoring"]["criteria"]["target_relevance"]["main_line_summary"] = (
-            "TR 2 points: AXN-1501 is associated with Alzheimer's disease."
+            "TR 3 points: AXN-1501 is associated with Alzheimer's disease."
         )
 
         main.validate_records_for_save([record])
@@ -509,12 +578,13 @@ class VersionAndPolicyTests(unittest.TestCase):
 
     def test_fast_save_reports_each_invalid_criterion_score_expression(self) -> None:
         record = current_triage_record()
+        record["input"]["notes"] += " Data = 65.4%."
         criteria = record["scoring"]["criteria"]
         criteria["target_relevance"]["score"] = 3
         criteria["target_relevance"]["main_line_summary"] = "TR 2 points: MEK1/2 evidence was reviewed."
         criteria["moa_validity"]["score"] = 1
         criteria["moa_validity"]["main_line_summary"] = "MOA 3 points: mechanism evidence was reviewed."
-        criteria["data_maturity"]["main_line_summary"] = "Data 1 points: 65.4% was reported."
+        criteria["data_maturity"]["main_line_summary"] = "Data 2 points: 65.4% was reported."
 
         with self.assertRaises(HTTPException) as caught:
             main.validate_records_for_save([record])
@@ -523,7 +593,7 @@ class VersionAndPolicyTests(unittest.TestCase):
         self.assertIn("record[0].scoring.criteria.target_relevance.main_line_summary expected score 3", detail)
         self.assertIn("detected score expression(s): target_relevance=2", detail)
         self.assertIn("record[0].scoring.criteria.moa_validity.main_line_summary expected score 1", detail)
-        self.assertIn("record[0].scoring.criteria.data_maturity.main_line_summary expected score 0", detail)
+        self.assertIn("record[0].scoring.criteria.data_maturity.main_line_summary expected score 1", detail)
 
     def test_fast_save_rejects_missing_or_range_score_summary(self) -> None:
         for summary in ("Parkinson's disease is in scope.", "TR is 2/3 points."):
@@ -649,6 +719,7 @@ class DevelopmentStageTests(unittest.TestCase):
                 "IND-enabling",
                 "Preclinical unspecified",
                 "IND filed/cleared",
+                "Clinical unspecified",
                 "Phase 1",
                 "Phase 1/2",
                 "Phase 2",
@@ -689,8 +760,8 @@ class ModalityCanonicalizationTests(unittest.TestCase):
 
 class DashboardCategoryCanonicalizationTests(unittest.TestCase):
     def test_country_alias_and_legacy_indication_fallbacks_are_canonical(self) -> None:
-        self.assertEqual(main.canonicalize_country("China / United States operations"), "China")
-        self.assertEqual(main.canonicalize_country("United States HQ / China operations"), "United States")
+        self.assertEqual(main.canonicalize_country("China / United States operations"), "China / United States")
+        self.assertEqual(main.canonicalize_country("United States HQ / China operations"), "United States / China")
         self.assertEqual(
             main.canonicalize_main_indication(
                 "",
@@ -793,7 +864,7 @@ class DashboardCategoryCanonicalizationTests(unittest.TestCase):
         main.normalize_current_record_filter_fields(record, 0)
         self.assertEqual(record["structured_table"]["modality_platform"], "Small molecule")
         self.assertEqual(record["structured_table"]["development_stage"], "Phase 2")
-        self.assertEqual(record["structured_table"]["company_country"], "China")
+        self.assertEqual(record["structured_table"]["company_country"], "China / United States")
         self.assertEqual(record["structured_table"]["main_indication"], "Inflammatory bowel disease")
         self.assertEqual(record["json_summary"]["theme"], "Others")
         self.assertEqual(record["json_summary"]["cluster"], "Others")
@@ -804,7 +875,7 @@ class EvidenceContractTests(unittest.TestCase):
         record = current_triage_record()
         main.validate_records_for_save([record])
         criterion = record["scoring"]["criteria"]["target_relevance"]
-        self.assertEqual(criterion["score"], 2)
+        self.assertEqual(criterion["score"], 3)
         self.assertEqual(criterion["evidence_basis"], "user_input_only")
 
     def test_case_18_public_source_without_verified_url_is_invalid(self) -> None:
@@ -852,9 +923,9 @@ class EvidenceContractTests(unittest.TestCase):
                 "user_input_only",
                 "2점 기준을 충족합니다.",
             )
-            record["hard_filter"]["status"] = "SELECT"
-            record["triage"]["status"] = "SELECT"
-            record["final_insight"]["recommendation"] = "Run Full Scout"
+            record["hard_filter"]["status"] = "REJECT"
+            record["triage"]["status"] = "REJECT"
+            record["final_insight"]["recommendation"] = "Monitor / gather more evidence"
             with self.subTest(criterion_id=criterion_id), self.assertRaises(HTTPException):
                 main.validate_records_for_save([record])
 
@@ -871,9 +942,9 @@ class EvidenceContractTests(unittest.TestCase):
                 summary,
                 source,
             )
-            record["hard_filter"]["status"] = "SELECT"
-            record["triage"]["status"] = "SELECT"
-            record["final_insight"]["recommendation"] = "Run Full Scout"
+            record["hard_filter"]["status"] = "REJECT"
+            record["triage"]["status"] = "REJECT"
+            record["final_insight"]["recommendation"] = "Monitor / gather more evidence"
             with self.subTest(score=score):
                 main.validate_records_for_save([record])
 
@@ -890,12 +961,13 @@ class EvidenceContractTests(unittest.TestCase):
         record["final_insight"]["recommendation"] = "Run Full Scout"
         main.validate_records_for_save([record])
 
-    def test_current_contract_rejects_legacy_na_status(self) -> None:
+    def test_current_contract_normalizes_legacy_status(self) -> None:
         record = current_triage_record()
         record["hard_filter"]["status"] = "N/A"
         record["triage"]["status"] = "N/A"
-        with self.assertRaises(HTTPException):
-            main.validate_records_for_save([record])
+        main.validate_records_for_save([record])
+        self.assertEqual(record["hard_filter"]["status"], "REJECT")
+        self.assertEqual(record["triage"]["status"], "REJECT")
 
     def test_current_contract_requires_explicit_active_asset(self) -> None:
         record = current_triage_record()
@@ -912,8 +984,10 @@ class EvidenceContractTests(unittest.TestCase):
         record["hard_filter"]["status"] = "SELECT"
         record["triage"]["status"] = "SELECT"
         record["final_insight"]["recommendation"] = "Run Full Scout"
-        with self.assertRaises(HTTPException):
-            main.validate_records_for_save([record])
+        main.validate_records_for_save([record])
+        self.assertEqual(record["hard_filter"]["status"], "REJECT")
+        self.assertEqual(record["triage"]["status"], "REJECT")
+        self.assertEqual(record["final_insight"]["recommendation"], "Monitor / gather more evidence")
 
     def test_lifecycle_flag_matching_is_phrase_aware_and_negation_safe(self) -> None:
         self.assertTrue(main.fast_triage_lifecycle_text_has_hard_blocker(["program terminated"]))
@@ -933,16 +1007,16 @@ class EvidenceContractTests(unittest.TestCase):
         record["final_insight"]["recommendation"] = "Run Full Scout"
         record["hard_filter"]["flags"] = ["program terminated"]
         self.assertTrue(main.fast_triage_record_has_hard_blocker(record))
-        with self.assertRaises(HTTPException) as caught:
-            main.validate_records_for_save([record])
-        self.assertIn("status must be REJECT", str(caught.exception.detail))
+        main.validate_records_for_save([record])
+        self.assertEqual(record["hard_filter"]["status"], "INSUFFICIENT")
+        self.assertEqual(record["triage"]["status"], "INSUFFICIENT")
+        self.assertEqual(record["final_insight"]["recommendation"], "Do not run Full Scout")
 
-    def test_current_status_requires_matching_recommendation(self) -> None:
+    def test_current_status_normalizes_matching_recommendation(self) -> None:
         record = current_triage_record()
         record["final_insight"]["recommendation"] = "Run Full Scout"
-        with self.assertRaises(HTTPException) as caught:
-            main.validate_records_for_save([record])
-        self.assertIn("recommendation", str(caught.exception.detail))
+        main.validate_records_for_save([record])
+        self.assertEqual(record["final_insight"]["recommendation"], "Monitor / gather more evidence")
 
     def test_total_score_null_contract_and_optional_max_nine(self) -> None:
         record = current_triage_record()
@@ -950,11 +1024,12 @@ class EvidenceContractTests(unittest.TestCase):
 
         invalid = current_triage_record()
         invalid["scoring"]["max_score"] = 9
-        with self.assertRaises(HTTPException):
-            main.validate_records_for_save([invalid])
+        main.validate_records_for_save([invalid])
+        self.assertEqual(invalid["scoring"]["total_score"], 5)
+        self.assertEqual(invalid["scoring"]["max_score"], 9)
 
         aggregate = current_triage_record()
-        aggregate["scoring"]["total_score"] = 2
+        aggregate["scoring"]["total_score"] = 5
         aggregate["scoring"]["max_score"] = 9
         main.validate_records_for_save([aggregate])
 
@@ -964,8 +1039,8 @@ class FullScoutFilterTests(unittest.TestCase):
         record = {
             "meta": {
                 "schema_version": "3.1",
-                "instruction_version": "3.4",
-                "rubric_version": "3.4",
+                "instruction_version": "3.6",
+                "rubric_version": "3.6",
                 "review_type": "full_scout",
             },
             "hard_filter": {"status": "FAIL"},
@@ -1001,7 +1076,7 @@ class FullScoutFilterTests(unittest.TestCase):
             "final_insight": {"one_line_summary": "Additional diligence recommended."},
         }
         result = main.calculate_latest_full_scout_filter(copy.deepcopy(record))
-        self.assertEqual(result["status"], "REVIEW")
+        self.assertEqual(result["status"], "PASS")
         self.assertNotIn("Theme/Cluster", result["reason"])
 
     def test_negated_inactive_wording_is_not_a_hard_blocker(self) -> None:
@@ -1024,10 +1099,10 @@ class FullScoutFilterTests(unittest.TestCase):
         scores = {
             "target_relevance": 3,
             "competitive_landscape": 2,
-            "moa_validity": 2,
+            "moa_validity": 3,
             "platform_attractiveness": 2,
             "expansion_potential": 2,
-            "data_maturity": 2,
+            "data_maturity": 3,
             "marketability": 2,
         }
 
@@ -1057,7 +1132,7 @@ class FullScoutFilterTests(unittest.TestCase):
         rights_uncertainty = main.calculate_latest_full_scout_filter(
             record_with_note("Ownership remains uncertain.")
         )
-        self.assertEqual(rights_uncertainty["status"], "REVIEW")
+        self.assertEqual(rights_uncertainty["status"], "PASS")
 
         identity_failure = record_with_note("Asset identity is not verified.")
         self.assertEqual(main.calculate_latest_full_scout_filter(identity_failure)["status"], "FAIL")
@@ -1130,7 +1205,7 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         self.assertIn("COMPACT_TRIAGE_JSON_TEMPLATE", app_js)
         self.assertIn("replaceInstructionJsonTemplate(prompt, COMPACT_TRIAGE_JSON_TEMPLATE", app_js)
         self.assertIn(
-            "| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country |",
+            "| # | Asset | Company | Target/MoA | Modality | Main indication | Pipeline Stage | Location |",
             prompt,
         )
         self.assertIn("SHARED_CANONICAL_INDICATION_RULE", app_js)
@@ -1187,11 +1262,11 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
             shared_sentence in app_js,
             "The exact shared Evidence Discipline block is missing from src/app.js.",
         )
-        self.assertIn("Fast Triage v3.3", app_js)
-        self.assertIn("Full Scout v3.4", app_js)
+        self.assertIn("Fast Triage v3.4", app_js)
+        self.assertIn("Full Scout v3.6", app_js)
         for stale_or_forbidden in (
-            "Fast Triage v3.1",
-            "Full Scout v3.2",
+            "Fast Triage v3.3",
+            "Full Scout v3.4",
             "company/target/indication cannot be credibly linked",
             "decision-ready data package",
             '"evidence_type": ""',
@@ -1200,7 +1275,7 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         self.assertIn('active_asset', app_js)
         self.assertIn('Verify asset identity', app_js)
         self.assertIn('fastTriageMarkdownStatusRows', app_js)
-        self.assertIn('legacy N/A 대신 UNVERIFIED', app_js)
+        self.assertIn('legacy N/A 대신 INSUFFICIENT', app_js)
         self.assertIn('always evaluate in descending order: 3, then 2, then 1, then 0', app_js)
         self.assertIn('MoA evidence definitions:', app_js)
         compact_start = app_js.index("const COMPACT_FULL_SCOUT_JSON_TEMPLATE")
@@ -1219,19 +1294,24 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         self.assertIn('"source_registry": []', compact)
         self.assertIn('"source_ids": []', compact)
 
-        triage_rules = (ROOT / "config" / "scoring_criteria" / "v3_3_triage.md").read_text(
+        triage_rules = (ROOT / "config" / "scoring_criteria" / "v3_4_triage.md").read_text(
             encoding="utf-8"
         )
-        full_rules = (ROOT / "config" / "scoring_criteria" / "v3_4_full.md").read_text(
+        full_rules = (ROOT / "config" / "scoring_criteria" / "v3_5_full.md").read_text(
             encoding="utf-8"
         )
         for text in (triage_rules, full_rules):
             self.assertIn(shared_sentence, text)
             self.assertNotIn("decision-ready data package", text)
             self.assertIn("동일 underlying experiment", text)
-        self.assertIn("UNVERIFIED", triage_rules)
+        self.assertIn("INSUFFICIENT", triage_rules)
         self.assertIn("하나의 공개 source", triage_rules)
-        self.assertIn("Theme/Cluster direct fit이 없다는 이유만으로 자동 FAIL 처리하지 않는다", full_rules)
+        self.assertIn("no SKBP Theme / Cluster fit", full_rules)
+        active_full_rules = (ROOT / "config" / "scoring_criteria" / "v3_6_full.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("complete, self-contained restatement of `v3_5_full.md`", active_full_rules)
+        self.assertIn("every Evidence Discipline, Evidence Type, canonical taxonomy", active_full_rules)
 
         triage_detail_js = (ROOT / "src" / "triage-detail.js").read_text(encoding="utf-8")
         for label in (
@@ -1247,16 +1327,15 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         for filename in ("index.html", "detail.html"):
             markup = (ROOT / filename).read_text(encoding="utf-8")
             with self.subTest(filename=filename):
-                self.assertIn("Target Relevance", markup)
-                self.assertIn("asset-specific", markup.lower())
-                self.assertIn("Data Maturity", markup)
+                self.assertIn("Full Scout", markup)
+                self.assertIn("program progression", markup)
                 self.assertIn("Marketability", markup)
 
     def test_json_schema_contains_new_controlled_vocabularies(self) -> None:
         schema = json.loads((ROOT / "json" / "drug-valuation.schema.json").read_text(encoding="utf-8"))
         schema_text = json.dumps(schema, ensure_ascii=False)
         for value in (
-            "UNVERIFIED",
+            "INSUFFICIENT",
             "Preclinical Candidate",
             "Preclinical unspecified",
             "IND filed/cleared",

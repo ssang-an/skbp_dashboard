@@ -165,7 +165,7 @@
       "then": {
         "required": ["triage"],
         "properties": {
-          "hard_filter": { "properties": { "status": { "enum": ["SELECT", "REJECT", "UNVERIFIED"] } } },
+          "hard_filter": { "properties": { "status": { "enum": ["SELECT", "REJECT", "INSUFFICIENT"] } } },
           "scoring": {
             "properties": {
               "max_score": { "type": ["integer", "null"] },
@@ -421,7 +421,7 @@
         "missing_evidence_needed_for_full_scout"
       ],
       "properties": {
-        "status": { "enum": ["SELECT", "REJECT", "UNVERIFIED"] },
+        "status": { "enum": ["SELECT", "REJECT", "INSUFFICIENT"] },
         "identity_verified": { "type": "boolean" },
         "active_asset": { "type": ["boolean", "null"] },
         "verified_public_source_count": { "type": "integer", "minimum": 0 },

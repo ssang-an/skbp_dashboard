@@ -254,8 +254,8 @@ class RubricAiRefreshTests(unittest.TestCase):
         updated = result["record"]
         self.assertEqual(updated["scoring"]["total_score"], 5)
         self.assertEqual(updated["scoring"]["max_score"], 9)
-        self.assertEqual(updated["triage"]["status"], "SELECT")
-        self.assertEqual(updated["hard_filter"]["status"], "SELECT")
+        self.assertEqual(updated["triage"]["status"], "REJECT")
+        self.assertEqual(updated["hard_filter"]["status"], "REJECT")
         self.assertEqual(updated["source_report"]["raw_markdown"], original_report)
         self.assertEqual(result["rubric_version"], main.TRIAGE_CRITERIA_VERSION)
 
