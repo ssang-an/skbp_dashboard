@@ -6,8 +6,8 @@ SKBP의 Fast Triage와 Full Scout는 rubric, GPT instruction, backend validator/
 
 | Workflow | Current rubric/instruction | Current display | Schema |
 |---|---:|---:|---:|
-| Fast Triage | 3.4 | 3.4 | 3.2 |
-| Full Scout | 3.6 | 3.6 | 3.2 |
+| Fast Triage | 3.5 | 3.5 | 3.2 |
+| Full Scout | 3.7 | 3.7 | 3.2 |
 
 `rubric_version`과 `instruction_version`은 서로 다른 의미(점수/판정의 의미 vs 그 점수에 도달하는 조사·기록·출력 절차)를 가지지만, **항상 같은 값으로 움직인다** — `main.py`의 manifest loader가 두 값이 다르면 서버 기동 자체를 거부한다(`if workflow["instruction_version"] != workflow["rubric_version"]: raise RuntimeError(...)`). 즉 이 둘을 독립적으로 올리는 것은 설계 의도가 아니라 **실행 불가능**이다. `display_version`만 이 둘과 독립적으로 움직인다.
 
@@ -21,6 +21,7 @@ SKBP의 Fast Triage와 Full Scout는 rubric, GPT instruction, backend validator/
 | 화면의 줄바꿈·순서·용어 다듬기처럼 점수/상태/조사 행동이 바뀌지 않는 가독성 변경 | `display_version`만 | 판단근거 문장 축약, 표 헤더 교정 |
 | 지침/프롬프트 파일의 기술적 결함(문법 오류, escape 누락, JSON 템플릿 파손 등)으로 실행이 깨지거나 GPT 응답 파싱이 실패하는 **버그 수정**. 조사 범위·점수·출력 계약은 바뀌지 않는다 | 버전 변경 없음 | `src/app.js` 지침 텍스트 안 백틱 escape 누락으로 대시보드 전체가 로드되지 않던 문제 |
 | GPT의 반복적인 작성 실수를 막기 위한 **주의사항만 추가** | 버전 변경 없음 — `config/instruction_warnings.json`에 별도로 누적되며 `rubric-release.json` 버전과 무관하게 동작 | “JSON 문법 오류 방지를 위해 모든 필드를 빠짐없이 옮기세요” 같은 자동 caution note |
+| scoring, hard_filter, status derivation, 또는 JSON 필수 계약에 전혀 관여하지 않는 순수 대시보드 메타데이터 필드(예: Theme/Cluster)의 canonical 값 안내가 Fast Triage·Full Scout 두 GPT instruction 사이에서 누락되거나 서로 어긋나 있어 이를 맞추는 **비-scoring 메타데이터 정합성 보완** | 버전 변경 없음 | Fast Triage 지침에 Full Scout와 동일한 Cluster taxonomy 목록을 추가 |
 
 문구가 가독성 변경인지 애매하면 다음 질문으로 판단한다: **그 문구를 읽은 GPT 또는 사용자가 이전과 다른 score, status, 조사 범위를 선택할 수 있는가?** 그렇다면 rubric/instruction 변경이다. 아니라면 display-only 변경이다. 버그 수정과 주의사항 추가는 이 질문과 별개로, **애초에 조사 범위·점수·출력 계약을 바꾸려는 의도가 없는 경우에만** 해당하며, 실제로 바뀐 것이 있다면 위 표의 다른 행을 따른다.
 
@@ -39,10 +40,11 @@ rubric 문서에 적힌 내용을 고친다고 항상 backend까지 바뀌는 �
 
 예를 들어 “Platform 3점은 외부 검증을 찾는다”처럼 3점 인정 조건 자체가 달라지면 backend까지 검토해야 한다. 반대로 “동일한 3점 조건을 확인할 때 회사 자료·논문·partner 발표를 이 순서로 탐색한다”처럼 점수 의미를 바꾸지 않는 검색 순서 변경은 backend를 건드리지 않는다 — 다만 버전은 두 필드 모두 함께 올린다.
 
-### 버전 없이 처리하는 두 가지 예외
+### 버전 없이 처리하는 세 가지 예외
 
 - **기술적 버그 수정**: 지침/프롬프트 파일 자체의 결함(예: JS 문자열 안 이스케이프 누락, JSON 템플릿의 괄호/쉼표 불일치)으로 대시보드가 로드되지 않거나 GPT 응답 파싱이 실패하는 경우. 조사 범위나 점수 의미는 전혀 바뀌지 않으므로 rubric/instruction/display 버전 중 어느 것도 올리지 않는다. 즉시 수정하고, `node --check` 등으로 검증한 뒤 changelog에만 기록한다.
 - **주의사항(caution note) 추가**: GPT가 과거에 반복한 특정 작성 실수를 막기 위한 안내문은 `main.py`의 `append_instruction_warning`/`load_instruction_warnings`가 `config/instruction_warnings.json`에 누적하고, `src/app.js`의 `copyPromptToClipboard`가 지침 1/2 복사 텍스트 끝에 자동으로 붙인다. 이 경로는 의도적으로 버전 체계 밖에 있다 — 점수·조사범위·출력 계약을 바꾸는 게 아니라 “이미 정의된 절차를 지침대로 안 따랐을 때”의 재발 방지 노트이기 때문이다. 점수/조사범위/출력 계약 자체를 바꾸고 싶다면 이 경로 대신 위 표의 해당 행(rubric/instruction 변경)을 따른다.
+- **비-scoring 메타데이터 canonical 값 정합성 보완**: `json_summary.theme`/`cluster`처럼 이미 JSON contract에 존재하지만 scoring·hard_filter·status derivation에는 전혀 관여하지 않는 순수 대시보드 그룹핑/표시용 필드에 대해, Fast Triage와 Full Scout 두 GPT instruction이 서로 다른(또는 한쪽에는 아예 없는) canonical 값 안내를 주고 있던 것을 맞추는 경우. 점수·상태·조사범위·JSON 계약을 바꾸는 것이 아니라 이미 승인된 taxonomy(예: `main.py`의 `THEMES`/`CLUSTERS`)를 두 instruction 텍스트에 동일하게 반영하는 것뿐이므로 rubric/instruction/display 버전 중 어느 것도 올리지 않는다. 재발 방지를 위해 두 instruction이 같은 shared prompt 상수를 참조하도록 정리하고, regression test와 changelog에 기록한다. 필드가 실제로 scoring이나 status에 관여하게 되면 이 경로가 아니라 위 표의 rubric/instruction 변경 행을 따른다.
 
 아직 배포 전이고 저장 결과도 생성되지 않은 작업 묶음은 사용자의 명시적 승인 아래 같은 release version 안에서 통합 수정할 수 있다. 배포 또는 결과 저장 후에는 과거 version 문서를 덮어쓰지 않고 새 instruction/rubric release를 만든다.
 
@@ -97,7 +99,7 @@ This is a backend/ingestion consistency change, not automatically a rubric-versi
 
 모든 release, display-only, 버전 없는 버그 수정·주의사항 추가 변경은 `docs/changelog/YYYY/YYYY-MM-DD.md`에 다음을 짧게 남긴다.
 
-- 변경 유형: rubric / instruction / schema / display-only / bug-fix / caution-note
+- 변경 유형: rubric / instruction / schema / display-only / bug-fix / caution-note / metadata-consistency-fix
 - 영향 workflow: Fast Triage / Full Scout
-- 변경한 version과 핵심 규칙 (bug-fix·caution-note는 "버전 변경 없음"으로 명시)
+- 변경한 version과 핵심 규칙 (bug-fix·caution-note·metadata-consistency-fix는 "버전 변경 없음"으로 명시)
 - 실행한 검증

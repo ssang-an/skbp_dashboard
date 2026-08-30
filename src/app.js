@@ -1,7 +1,7 @@
 import { setupThemeToggle } from './theme.js?v=20260802-header-icons-1';
 import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
 import { initPageJumpControls } from './page-jump.js?v=20260823-page-jump-1';
-import { initPipelineHeaderFreeze } from './table-header-freeze.js?v=20260823-1';
+import { initPipelineHeaderFreeze } from './table-header-freeze.js?v=20260830-1';
 import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260803-personal-group-1';
 import {
   expandCompactInputRecord,
@@ -9,7 +9,7 @@ import {
   isMinimalCompactIngestionRecord
 } from './compact-ingestion.js?v=20260806-theme-indication-3';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260820-url-repair-6';
-import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260827-language-1';
+import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260831-tar-scope-display-1';
 
 const API_URL = '/api/records';
 const DASHBOARD_SUMMARY_URL = '/api/dashboard-summary';
@@ -27,6 +27,8 @@ const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v4';
 const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v6';
 const VISUAL_DASHBOARD_HIDDEN_KEY = 'skbp.dashboard.visualDashboardHidden.v1';
 const CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY = 'skbp.dashboard.criteriaGuideLanguage.v1';
+const PIPELINE_RETURN_FOCUS_STORAGE_KEY = 'skbp.pipeline.return-focus.v1';
+const PIPELINE_ROW_HIGHLIGHT_MS = 3000;
 
 function readStoredJson(key, fallback, validator) {
   try {
@@ -58,7 +60,8 @@ const DEFAULT_COLUMN_WIDTHS = {
   target: 180,
   mainIndication: 120,
   stage: 94,
-  filter1: 64,
+  // Leave room for the full INSUFFICIENT pill after the cell and pill padding.
+  filter1: 104,
   filter2: 72,
   filter3: 72,
   filter3Note: 280,
@@ -75,6 +78,7 @@ const DEFAULT_COLUMN_WIDTHS = {
   inVivo: 74,
   inVitro: 74,
   admet: 84,
+  dd: 46,
   focusDueDate: 140,
   focusManage: 90,
   generatedAt: 116,
@@ -90,7 +94,8 @@ const MIN_COLUMN_WIDTHS = {
   target: 170,
   mainIndication: 105,
   stage: 86,
-  filter1: 62,
+  // This minimum also upgrades older widths saved in localStorage on the next render.
+  filter1: 102,
   filter2: 62,
   filter3: 62,
   filter3Note: 210,
@@ -107,6 +112,7 @@ const MIN_COLUMN_WIDTHS = {
   inVivo: 64,
   inVitro: 64,
   admet: 70,
+  dd: 40,
   focusDueDate: 120,
   focusManage: 70,
   generatedAt: 102,
@@ -129,6 +135,7 @@ const FOCUS_DEFAULT_COLUMN_WIDTHS = {
   inVivo: 56,
   inVitro: 56,
   admet: 60,
+  dd: 42,
   focusDueDate: 108,
   focusManage: 106
 };
@@ -148,17 +155,18 @@ const FOCUS_MIN_COLUMN_WIDTHS = {
   inVivo: 48,
   inVitro: 48,
   admet: 50,
+  dd: 38,
   focusDueDate: 88,
   focusManage: 62
 };
 
 const MAX_COLUMN_WIDTH = 720;
 const PROMPT_TOOLTIP =
-  'GPT Full Scout v3.6 지침을 복사합니다. Fast Triage에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
+  'GPT Full Scout v3.7 지침을 복사합니다. Fast Triage에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
 const TRIAGE_PROMPT_TOOLTIP =
-  'GPT Fast Triage v3.4 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / INSUFFICIENT로 screening합니다.';
-const LATEST_TRIAGE_RUBRIC_VERSION = '3.4';
-const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.6';
+  'GPT Fast Triage v3.5 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / INSUFFICIENT로 screening합니다.';
+const LATEST_TRIAGE_RUBRIC_VERSION = '3.5';
+const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.7';
 const FAST_TRIAGE_SCHEMA_VERSION = '3.2';
 const FULL_SCOUT_SCHEMA_VERSION = '3.2';
 const FULL_SCOUT_AGENT_INPUT_PLACEHOLDER =
@@ -338,11 +346,13 @@ const state = {
   indication: [],
   country: [],
   pass: [],
+  scoreFilters: { targetScore: [], moaScore: [], dataScore: [], competitiveScore: [], platformScore: [], expansionScore: [], marketScore: [] },
+  focusFilters: emptyFocusFilters(),
   duePeriod: 'all',
   filtersByMode: {
-    triage: { query: '', searchTokens: [], stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [] },
-    full: { query: '', searchTokens: [], stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [] },
-    focus: { query: '', searchTokens: [], stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [] }
+    triage: { query: '', searchTokens: [], stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [], scoreFilters: { targetScore: [], moaScore: [], dataScore: [], competitiveScore: [], platformScore: [], expansionScore: [], marketScore: [] }, focusFilters: emptyFocusFilters() },
+    full: { query: '', searchTokens: [], stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [], scoreFilters: { targetScore: [], moaScore: [], dataScore: [], competitiveScore: [], platformScore: [], expansionScore: [], marketScore: [] }, focusFilters: emptyFocusFilters() },
+    focus: { query: '', searchTokens: [], stage: [], theme: [], cluster: [], modality: [], indication: [], country: [], pass: [], scoreFilters: { targetScore: [], moaScore: [], dataScore: [], competitiveScore: [], platformScore: [], expansionScore: [], marketScore: [] }, focusFilters: emptyFocusFilters() }
   },
   tableMode: initialTableMode,
   sortKey: initialSort.key,
@@ -2089,24 +2099,6 @@ function hasAffirmedHardBlocker(notes) {
   });
 }
 
-function hasAffirmedLifecycleBlocker(values) {
-  const blockerPattern = /\b(?:inactive|discontinued|terminated|withdrawn|dormant|abandoned|clearly[\s_-]+failed|hard[\s_-]*blocker)\b|(?:개발|프로그램|임상)\s*(?:이\s*)?(?:종료|철회|휴면|비활성|포기)/gi;
-  const items = Array.isArray(values) ? values : [values];
-  return items.some((value) => {
-    const text = String(value || '');
-    blockerPattern.lastIndex = 0;
-    let match;
-    while ((match = blockerPattern.exec(text)) !== null) {
-      const prefix = text.slice(Math.max(0, match.index - 28), match.index);
-      const suffix = text.slice(match.index + match[0].length, match.index + match[0].length + 20);
-      if (/\b(?:not|without|never|no)\b[^|.;\n]{0,20}$|(?:아니|없)는?\s*$/i.test(prefix)) continue;
-      if (/^\s*(?:없(?:음|다)?|아님|아니|not\b|false\b)/i.test(suffix)) continue;
-      return true;
-    }
-    return false;
-  });
-}
-
 function hasScopedFullScoutReviewUncertainty(notes) {
   const text = String(notes || '');
   const subject = '(?:stage|rights?|licen[cs]e|ownership|asset\\s+identity|source|registry|sponsor)';
@@ -2148,7 +2140,13 @@ function computeHardFilter(record, criteria) {
   const notes = collectHardFilterNotes(record);
   const reasons = [];
 
-  const failBlocker = record.hard_filter?.hard_blocker === true || hasAffirmedHardBlocker(notes);
+  const developmentStage = canonicalDevelopmentStage(record.structured_table?.development_stage);
+  const nonLifecycleNotes = String(notes || '').replace(
+    /\b(?:discontinued|terminated|withdrawn|suspended|dormant|inactive|abandoned|clearly\s+failed)\b|(?:개발|프로그램|임상)\s*(?:이\s*)?(?:종료|철회|휴면|비활성|포기)/gi,
+    ''
+  );
+  const failBlocker = record.hard_filter?.hard_blocker === true || hasAffirmedHardBlocker(nonLifecycleNotes);
+  if (developmentStage === 'Discontinued / inactive') reasons.push('Development stage = Discontinued / inactive');
   if (Number.isFinite(total) && total <= 8) reasons.push(`Total score ${total} <= 8`);
   [['Target Area Relevance', targetScore], ['MoA Validity', moaScore], ['Data Maturity', dataScore]]
     .filter(([, score]) => score === 0)
@@ -2159,11 +2157,11 @@ function computeHardFilter(record, criteria) {
     return { status: 'FAIL', reason: reasons.join('; ') };
   }
 
-  const passScores = total >= 14 && targetScore >= 2 && moaScore === 3 && dataScore === 3;
+  const passScores = total >= 14 && targetScore >= 3 && moaScore === 3 && dataScore === 3;
   if (passScores) {
     return {
       status: 'PASS',
-      reason: `Total ${total} >= 14, TR ${targetScore} >= 2, MOA ${moaScore} = 3, Data ${dataScore} = 3`
+      reason: `Total ${total} >= 14, TR ${targetScore} >= 3, MOA ${moaScore} = 3, Data ${dataScore} = 3`
     };
   }
 
@@ -2196,20 +2194,19 @@ function synchronizeDashboardOwnedInputFields(record) {
     const scores = ['target_relevance', 'moa_validity', 'data_maturity']
       .map((criterionId) => criteria[criterionId]?.score);
     if (!triage || !scores.every(isScore)
-      || typeof triage.identity_verified !== 'boolean'
-      || ![true, false, null].includes(triage.active_asset)) {
+      || typeof triage.identity_verified !== 'boolean') {
       return adjustments;
     }
     synchronize(record.scoring, 'total_score', scores.reduce((sum, score) => sum + score, 0), 'scoring.total_score');
     synchronize(record.scoring, 'max_score', 9, 'scoring.max_score');
-    const hasHardBlocker = triage.active_asset === false
-      || canonicalDevelopmentStage(record.structured_table?.development_stage) === 'Discontinued / inactive'
-      || hasAffirmedLifecycleBlocker(record.hard_filter.flags || []);
-    const status = triage.identity_verified !== true || triage.active_asset === false || hasHardBlocker
+    // v3.5: development_stage is the sole activity gate (active_asset and the
+    // hard_filter.flags keyword scan were dropped as redundant/ambiguous).
+    const developmentStage = canonicalDevelopmentStage(record.structured_table?.development_stage);
+    const status = triage.identity_verified !== true || developmentStage === 'Discontinued / inactive'
       ? 'INSUFFICIENT'
       : Math.min(...scores) === 0
         ? 'INSUFFICIENT'
-        : triage.active_asset === true && scores[0] >= 2 && scores[1] >= 1 && scores[2] >= 2
+        : scores[0] >= 3 && scores[1] >= 1 && scores[2] >= 2
           ? 'SELECT'
           : 'REJECT';
     synchronize(record.hard_filter, 'status', status, 'hard_filter.status');
@@ -2425,6 +2422,18 @@ function sourceReportEditLabel(entry) {
   return 'GPT 원문 갱신일';
 }
 
+function hasDueDiligenceAttachment(record) {
+  const attachments = get(record, 'meta.attachments', []);
+  return Array.isArray(attachments) && attachments.some((attachment) => (
+    attachment
+    && typeof attachment === 'object'
+    && (
+      String(attachment.source || '').toLowerCase() === 'due_diligence'
+      || String(attachment.partner_material_category || '').toLowerCase() === 'dd_report'
+    )
+  ));
+}
+
 function flattenRecord(record, index) {
   const summary = record.json_summary || {};
   const table = record.structured_table || {};
@@ -2584,6 +2593,7 @@ function flattenRecord(record, index) {
     inVitroSource: String(focusManagement?.in_vitro_status_source || 'auto'),
     admetCompleted: Number.isFinite(focusManagement?.admet_completed) ? focusManagement.admet_completed : null,
     admetSource: String(focusManagement?.admet_completed_source || 'auto'),
+    ddStatus: hasDueDiligenceAttachment(record) ? 'O' : 'X',
     hardFilter: filterStatus.status,
     hardFilterReason: filterStatus.reason,
     targetScore,
@@ -2660,7 +2670,6 @@ const FULL_SCOUT_EXTRA_COLUMN_DEFINITIONS = [
 
 const FAST_TRIAGE_EXTRA_COLUMN_DEFINITIONS = [
   { key: 'moa', label: 'MoA', path: 'structured_table.moa' },
-  { key: 'activeAsset', label: 'Active asset', path: 'triage.active_asset' },
   { key: 'verifiedSourceCount', label: 'Verified sources', path: 'triage.verified_public_source_count' },
   { key: 'triageWhy', label: 'Triage rationale', path: 'triage.why' },
   { key: 'fullScoutEvidence', label: 'Full Scout evidence needed', path: 'triage.missing_evidence_needed_for_full_scout' },
@@ -2675,11 +2684,6 @@ function activeExtraColumnDefinitions() {
 }
 
 function formatExtraColumnValue(value, column = null) {
-  if (column?.key === 'activeAsset') {
-    if (value === true) return 'Confirmed active';
-    if (value === false) return 'Inactive';
-    return 'Unconfirmed';
-  }
   if (column?.key === 'verifiedSourceCount') {
     const count = Number(value);
     return Number.isFinite(count) ? `${count} verified` : '-';
@@ -2752,7 +2756,46 @@ function resizeHandle(key) {
 }
 
 function sortableHeader(label, sortKey, columnKey, attrs = '') {
-  return `<th ${attrs} ${columnAttrs(columnKey)}><button data-sort="${escapeHtml(sortKey)}" type="button">${escapeHtml(label)}</button>${resizeHandle(columnKey)}</th>`;
+  return `<th ${attrs} ${columnAttrs(columnKey)}><button data-sort="${escapeHtml(sortKey)}" data-sort-label="${escapeHtml(label)}" type="button">${escapeHtml(label)}</button>${resizeHandle(columnKey)}</th>`;
+}
+
+function scoreFilterHeader(label, sortKey, columnKey) {
+  const definition = SCORE_HEADER_FILTERS[sortKey];
+  if (!definition) return sortableHeader(label, sortKey, columnKey);
+  const summary = scoreFilterSummary(sortKey);
+  const hasSelection = Boolean(summary);
+  return `<th class="score-filter-header${hasSelection ? ' has-score-filter' : ''}" ${columnAttrs(columnKey)}>
+    <div class="score-filter-header-controls">
+      <button
+        class="score-filter-header-trigger"
+        type="button"
+        data-score-filter-trigger="${escapeHtml(sortKey)}"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        aria-label="${escapeHtml(`${definition.criterion} 점수 필터${summary ? `: ${summary}` : ''}`)}"
+        title="${escapeHtml(summary ? `${definition.criterion}: ${summary}` : `${definition.criterion} 점수 필터`)}"
+      >${escapeHtml(label)}<span class="score-filter-header-dot" aria-hidden="true"></span></button>
+      <button class="table-score-sort-button" data-sort="${escapeHtml(sortKey)}" data-sort-label="${escapeHtml(label)}" type="button" aria-label="${escapeHtml(`${label} sort`)}" title="${escapeHtml(`${label} sort`)}"><span class="score-sort-glyph" aria-hidden="true"></span></button>
+    </div>${resizeHandle(columnKey)}</th>`;
+}
+
+function focusFilterHeader(label, sortKey, columnKey) {
+  const definition = FOCUS_HEADER_FILTERS[sortKey];
+  if (!definition) return sortableHeader(label, sortKey, columnKey);
+  const summary = focusFilterSummary(sortKey);
+  return `<th class="score-filter-header${summary ? ' has-score-filter' : ''}" ${columnAttrs(columnKey)}>
+    <div class="score-filter-header-controls">
+      <button
+        class="score-filter-header-trigger"
+        type="button"
+        data-focus-filter-trigger="${escapeHtml(sortKey)}"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        aria-label="${escapeHtml(`${definition.label} filter${summary ? `: ${summary}` : ''}`)}"
+        title="${escapeHtml(summary ? `${definition.label}: ${summary}` : `${definition.label} filter`)}"
+      >${escapeHtml(label)}<span class="score-filter-header-dot" aria-hidden="true"></span></button>
+      <button class="table-score-sort-button" data-sort="${escapeHtml(sortKey === 'admet' ? 'admetCompleted' : `${sortKey}Status`)}" data-sort-label="${escapeHtml(label)}" type="button" aria-label="${escapeHtml(`${label} sort`)}" title="${escapeHtml(`${label} sort`)}"><span class="score-sort-glyph" aria-hidden="true"></span></button>
+    </div>${resizeHandle(columnKey)}</th>`;
 }
 
 function updateSortIndicators() {
@@ -2772,6 +2815,14 @@ function updateSortIndicators() {
       'aria-label',
       `${button.textContent.trim()} 정렬${isActive ? `, 현재 ${direction}` : ', 현재 원본 순서'}`
     );
+    if (button.dataset.sortLabel) {
+      button.setAttribute(
+        'aria-label',
+        `${button.dataset.sortLabel} 정렬${isActive ? `, 현재 ${direction}` : ', 현재 원본 순서'}`
+      );
+    }
+    const glyph = button.querySelector('.score-sort-glyph');
+    if (glyph) glyph.textContent = isActive ? (state.sortDirection === 'asc' ? '↑' : '↓') : '';
     const header = button.closest('th');
     if (header) header.setAttribute('aria-sort', isActive ? (state.sortDirection === 'asc' ? 'ascending' : 'descending') : 'none');
   });
@@ -2859,6 +2910,7 @@ const FOCUS_TABLE_COLUMN_KEYS = [
   'filter2',
   'totalScore',
   'filter3',
+  'dd',
   'inVivo',
   'inVitro',
   'admet',
@@ -3073,6 +3125,145 @@ function dueHalfLabel(period) {
 }
 
 const MULTI_FILTER_KEYS = ['theme', 'cluster', 'modality', 'country', 'indication', 'stage', 'pass'];
+const SCORE_HEADER_FILTERS = {
+  targetScore: { label: 'TR', criterion: 'Target Area Relevance' },
+  moaScore: { label: 'MoA', criterion: 'MoA Validity' },
+  dataScore: { label: 'Data', criterion: 'Data Maturity' },
+  competitiveScore: { label: 'Comp', criterion: 'Competitive Landscape' },
+  platformScore: { label: 'Plat', criterion: 'Platform Attractiveness' },
+  expansionScore: { label: 'Exp', criterion: 'Expansion Potential' },
+  marketScore: { label: 'Market', criterion: 'Marketability' }
+};
+const SCORE_FILTER_OPTIONS = [
+  { value: 'gte:1', label: '≥ 1점' },
+  { value: 'gte:2', label: '≥ 2점' },
+  { value: 'gte:3', label: '≥ 3점' },
+  { value: 'eq:0', label: '= 0점' },
+  { value: 'eq:1', label: '= 1점' },
+  { value: 'eq:2', label: '= 2점' },
+  { value: 'eq:3', label: '= 3점' }
+];
+const FOCUS_HEADER_FILTERS = {
+  admet: { label: 'ADMET', kind: 'numeric', description: 'Completed studies (out of 25)' },
+  inVivo: { label: 'In-vivo', kind: 'status', description: 'In-vivo efficacy evidence' },
+  inVitro: { label: 'In-vitro', kind: 'status', description: 'In-vitro efficacy evidence' },
+  dd: { label: 'DD', kind: 'status', description: 'Due Diligence file uploaded' }
+};
+const FOCUS_STATUS_FILTER_OPTIONS = [
+  { value: 'O', label: 'O' },
+  { value: 'X', label: 'X' }
+];
+
+function emptyFocusFilters() {
+  return { admet: [], inVivo: [], inVitro: [], dd: [] };
+}
+
+function normalizeAdmetFilterExpression(value) {
+  const input = String(value || '')
+    .trim()
+    .toLowerCase()
+    .replaceAll(' ', '')
+    .replace(/^=</, '<=')
+    .replace(/^=>/, '>=');
+  if (!input) return '';
+  const match = input.match(/^(>=|<=|>|<|=)?(\d{1,2})(이상|이하)?$/);
+  if (!match) return '';
+  const rawOperator = match[1] || '';
+  const valueNumber = Number(match[2]);
+  if (!Number.isInteger(valueNumber) || valueNumber < 0 || valueNumber > ADMET_TOTAL_ITEMS) return '';
+  const operator = match[3] === '이상' ? '>='
+    : match[3] === '이하' ? '<='
+      : rawOperator;
+  if (operator === '>') return valueNumber < ADMET_TOTAL_ITEMS ? `gte:${valueNumber + 1}` : '';
+  if (operator === '<') return valueNumber > 0 ? `lte:${valueNumber - 1}` : '';
+  if (operator === '>=') return `gte:${valueNumber}`;
+  if (operator === '<=') return `lte:${valueNumber}`;
+  return `eq:${valueNumber}`;
+}
+
+function focusFilterSelections(key) {
+  const values = state.focusFilters?.[key];
+  if (!Array.isArray(values)) return [];
+  if (FOCUS_HEADER_FILTERS[key]?.kind === 'status') {
+    return [...new Set(values.filter((value) => FOCUS_STATUS_FILTER_OPTIONS.some((option) => option.value === value)))];
+  }
+  return [...new Set(values.filter((value) => /^(gte|lte|eq):(?:[0-9]|1\d|2[0-5])$/.test(value)))];
+}
+
+function focusFilterLabel(value) {
+  const [operator, rawValue] = String(value).split(':');
+  const prefix = operator === 'gte' ? '≥ ' : operator === 'lte' ? '≤ ' : '= ';
+  return `${prefix}${rawValue}`;
+}
+
+function focusFilterSummary(key) {
+  const selected = focusFilterSelections(key);
+  if (!selected.length) return '';
+  const labels = selected.map((value) => (
+    FOCUS_HEADER_FILTERS[key]?.kind === 'numeric' ? focusFilterLabel(value) : value
+  ));
+  return labels.length === 1 ? labels[0] : `${labels.length} conditions`;
+}
+
+function focusFilterMatches(row) {
+  if (activeTableMode() !== 'focus') return true;
+  const admetSelections = focusFilterSelections('admet');
+  const admetMatches = !admetSelections.length || (
+    Number.isInteger(row.admetCompleted) && admetSelections.some((selection) => {
+      const [operator, rawValue] = selection.split(':');
+      const value = Number(rawValue);
+      return operator === 'gte' ? row.admetCompleted >= value
+        : operator === 'lte' ? row.admetCompleted <= value
+          : row.admetCompleted === value;
+    })
+  );
+  const statusMatches = (key, value) => {
+    const selected = focusFilterSelections(key);
+    return !selected.length || selected.includes(value);
+  };
+  return admetMatches
+    && statusMatches('inVivo', row.inVivoStatus)
+    && statusMatches('inVitro', row.inVitroStatus)
+    && statusMatches('dd', row.ddStatus);
+}
+
+function scoreFilterSelections(key) {
+  const values = state.scoreFilters?.[key];
+  return Array.isArray(values)
+    ? [...new Set(values.filter((value) => SCORE_FILTER_OPTIONS.some((option) => option.value === value)))]
+    : [];
+}
+
+function scoreFilterMatches(key, score) {
+  const selections = scoreFilterSelections(key);
+  if (!selections.length) return true;
+  if (!Number.isInteger(score)) return false;
+  return selections.some((selection) => {
+    const [operator, rawValue] = selection.split(':');
+    const value = Number(rawValue);
+    return operator === 'gte' ? score >= value : score === value;
+  });
+}
+
+function scoreFilterSummary(key) {
+  const selected = scoreFilterSelections(key);
+  if (!selected.length) return '';
+  const labels = selected
+    .map((value) => SCORE_FILTER_OPTIONS.find((option) => option.value === value)?.label || value);
+  return labels.length === 1 ? labels[0] : `${labels.length}개 조건`;
+}
+
+function parseScoreFilterExpression(value) {
+  const input = String(value || '').trim().toLowerCase().replaceAll(' ', '');
+  if (!input) return '';
+  const match = input.match(/(>=|≥|>|=)?([0-3])(?:점)?(?:이상|\+)?$/);
+  if (!match) return '';
+  const operator = match[1] || '';
+  const score = Number(match[2]);
+  const isThreshold = operator === '>=' || operator === '≥' || input.includes('이상') || input.endsWith('+');
+  if (operator === '>') return score < 3 ? `gte:${score + 1}` : '';
+  return isThreshold ? `gte:${score}` : `eq:${score}`;
+}
 
 function selectedFilterValues(value) {
   if (Array.isArray(value)) return [...new Set(value.filter(Boolean))];
@@ -3108,6 +3299,258 @@ function closeMultiFilters(except = null) {
     const menu = filter.querySelector('.filter-multiselect-menu');
     if (menu) menu.hidden = true;
   });
+}
+
+let activeScoreHeaderFilter = null;
+
+function scoreFilterPopoverElement() {
+  let element = document.querySelector('#tableScoreFilterPopover');
+  if (element) return element;
+  element = document.createElement('div');
+  element.id = 'tableScoreFilterPopover';
+  element.className = 'table-score-filter-popover';
+  element.hidden = true;
+  element.setAttribute('role', 'dialog');
+  element.setAttribute('aria-modal', 'false');
+  document.body.append(element);
+  return element;
+}
+
+function closeScoreHeaderFilter() {
+  if (activeScoreHeaderFilter?.trigger?.isConnected) {
+    activeScoreHeaderFilter.trigger.setAttribute('aria-expanded', 'false');
+  }
+  activeScoreHeaderFilter = null;
+  const popover = document.querySelector('#tableScoreFilterPopover');
+  if (popover) {
+    popover.hidden = true;
+    popover.innerHTML = '';
+  }
+}
+
+function positionScoreHeaderFilterPopover() {
+  const popover = document.querySelector('#tableScoreFilterPopover');
+  const trigger = activeScoreHeaderFilter?.trigger;
+  if (!popover || popover.hidden || !trigger?.isConnected) return;
+  const rect = trigger.getBoundingClientRect();
+  const width = Math.min(292, window.innerWidth - 24);
+  const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+  popover.style.width = `${width}px`;
+  popover.style.left = `${left}px`;
+  const height = Math.min(popover.offsetHeight || 360, window.innerHeight - 24);
+  popover.style.top = `${Math.max(12, Math.min(rect.bottom + 6, window.innerHeight - height - 12))}px`;
+}
+
+function renderScoreHeaderFilterPopover({ focusExpression = false } = {}) {
+  const active = activeScoreHeaderFilter;
+  if (!active) return;
+  const definition = SCORE_HEADER_FILTERS[active.key];
+  if (!definition) return;
+  const popover = scoreFilterPopoverElement();
+  const selected = active.selected;
+  const optionButton = (option) => `
+    <button type="button" class="table-score-filter-option${selected.has(option.value) ? ' is-selected' : ''}" data-score-filter-option="${escapeHtml(option.value)}" role="option" aria-selected="${selected.has(option.value) ? 'true' : 'false'}">
+      <span class="table-score-filter-dot" aria-hidden="true"></span><span>${escapeHtml(option.label)}</span>
+    </button>`;
+  popover.innerHTML = `
+    <div class="table-score-filter-popover-heading">
+      <div><strong>${escapeHtml(definition.label)} 점수</strong><span>${escapeHtml(definition.criterion)}</span></div>
+      <button type="button" class="table-score-filter-close" data-score-filter-close aria-label="점수 필터 닫기">×</button>
+    </div>
+    <div class="table-score-filter-expression-row">
+      <button type="button" class="table-score-filter-all${selected.size === 0 ? ' is-selected' : ''}" data-score-filter-all aria-pressed="${selected.size === 0 ? 'true' : 'false'}">전체</button>
+      <label><span class="sr-only">Score expression</span><input type="search" data-score-filter-expression value="${escapeHtml(active.expression || '')}" placeholder="≥2, >1, =2" autocomplete="off" /></label>
+      <button type="button" class="table-score-filter-add" data-score-filter-expression-add>추가</button>
+    </div>
+    <p class="table-score-filter-group-label">점수 이상</p>
+    <div class="table-score-filter-option-grid" role="listbox" aria-label="${escapeHtml(definition.label)} minimum score" aria-multiselectable="true">
+      ${SCORE_FILTER_OPTIONS.filter((option) => option.value.startsWith('gte:')).map(optionButton).join('')}
+    </div>
+    <p class="table-score-filter-group-label">정확한 점수 · 복수 선택 가능</p>
+    <div class="table-score-filter-option-grid" role="listbox" aria-label="${escapeHtml(definition.label)} exact score" aria-multiselectable="true">
+      ${SCORE_FILTER_OPTIONS.filter((option) => option.value.startsWith('eq:')).map(optionButton).join('')}
+    </div>
+    <p class="table-score-filter-helper">한 기준 안의 여러 조건은 OR, TR·MoA·Data 등 기준 간 조건은 AND로 적용됩니다.</p>
+    <div class="table-score-filter-actions"><button type="button" data-score-filter-done>완료</button></div>`;
+  popover.hidden = false;
+  positionScoreHeaderFilterPopover();
+  if (focusExpression) {
+    window.requestAnimationFrame(() => popover.querySelector('[data-score-filter-expression]')?.focus());
+  }
+}
+
+function toggleScoreHeaderFilter(trigger) {
+  const key = trigger?.dataset.scoreFilterTrigger;
+  if (!SCORE_HEADER_FILTERS[key]) return;
+  if (activeScoreHeaderFilter?.key === key) {
+    closeScoreHeaderFilter();
+    return;
+  }
+  closeMultiFilters();
+  closeScoreHeaderFilter();
+  activeScoreHeaderFilter = {
+    key,
+    trigger,
+    selected: new Set(scoreFilterSelections(key)),
+    expression: ''
+  };
+  trigger.setAttribute('aria-expanded', 'true');
+  renderScoreHeaderFilterPopover({ focusExpression: true });
+}
+
+function addScoreHeaderFilterExpression() {
+  const active = activeScoreHeaderFilter;
+  const input = document.querySelector('#tableScoreFilterPopover [data-score-filter-expression]');
+  if (!active || !input) return;
+  const parsed = parseScoreFilterExpression(input.value);
+  if (!parsed) {
+    input.setCustomValidity('Use ≥2, >1, =2, or 2점 이상.');
+    input.reportValidity();
+    return;
+  }
+  active.selected.add(parsed);
+  active.expression = '';
+  renderScoreHeaderFilterPopover({ focusExpression: true });
+}
+
+function commitScoreHeaderFilter() {
+  const active = activeScoreHeaderFilter;
+  if (!active) return;
+  state.scoreFilters = {
+    ...state.scoreFilters,
+    [active.key]: [...active.selected]
+  };
+  state.page = 1;
+  captureModeFilters();
+  closeScoreHeaderFilter();
+  renderFilteredDashboard();
+}
+
+let activeFocusHeaderFilter = null;
+
+function focusFilterPopoverElement() {
+  let element = document.querySelector('#focusTableFilterPopover');
+  if (element) return element;
+  element = document.createElement('div');
+  element.id = 'focusTableFilterPopover';
+  element.className = 'table-score-filter-popover';
+  element.hidden = true;
+  element.setAttribute('role', 'dialog');
+  element.setAttribute('aria-modal', 'false');
+  document.body.append(element);
+  return element;
+}
+
+function closeFocusHeaderFilter() {
+  if (activeFocusHeaderFilter?.trigger?.isConnected) {
+    activeFocusHeaderFilter.trigger.setAttribute('aria-expanded', 'false');
+  }
+  activeFocusHeaderFilter = null;
+  const popover = document.querySelector('#focusTableFilterPopover');
+  if (popover) {
+    popover.hidden = true;
+    popover.innerHTML = '';
+  }
+}
+
+function positionFocusHeaderFilterPopover() {
+  const popover = document.querySelector('#focusTableFilterPopover');
+  const trigger = activeFocusHeaderFilter?.trigger;
+  if (!popover || popover.hidden || !trigger?.isConnected) return;
+  const rect = trigger.getBoundingClientRect();
+  const width = Math.min(292, window.innerWidth - 24);
+  const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+  popover.style.width = `${width}px`;
+  popover.style.left = `${left}px`;
+  const height = Math.min(popover.offsetHeight || 280, window.innerHeight - 24);
+  popover.style.top = `${Math.max(12, Math.min(rect.bottom + 6, window.innerHeight - height - 12))}px`;
+}
+
+function renderFocusHeaderFilterPopover({ focusExpression = false } = {}) {
+  const active = activeFocusHeaderFilter;
+  if (!active) return;
+  const definition = FOCUS_HEADER_FILTERS[active.key];
+  if (!definition) return;
+  const popover = focusFilterPopoverElement();
+  const selected = active.selected;
+  const allButton = `<button type="button" class="table-score-filter-all${selected.size === 0 ? ' is-selected' : ''}" data-focus-filter-all aria-pressed="${selected.size === 0 ? 'true' : 'false'}">전체</button>`;
+  const optionButton = (option) => `
+    <button type="button" class="table-score-filter-option${selected.has(option.value) ? ' is-selected' : ''}" data-focus-filter-option="${escapeHtml(option.value)}" role="option" aria-selected="${selected.has(option.value) ? 'true' : 'false'}">
+      <span class="table-score-filter-dot" aria-hidden="true"></span><span>${escapeHtml(option.label)}</span>
+    </button>`;
+  const body = definition.kind === 'numeric'
+    ? `
+      <div class="table-score-filter-expression-row">
+        ${allButton}
+        <label><span class="sr-only">ADMET score expression</span><input type="search" data-focus-filter-expression value="${escapeHtml(active.expression || '')}" placeholder=">=15, <=10, =10" autocomplete="off" /></label>
+        <button type="button" class="table-score-filter-add" data-focus-filter-expression-add>추가</button>
+      </div>
+      <p class="table-score-filter-helper">예: ≥15는 15점 이상, ≤10 또는 =<10은 10점 이하입니다. 여러 조건은 OR로 적용됩니다.</p>`
+    : `
+      <div class="table-score-filter-expression-row">${allButton}</div>
+      <p class="table-score-filter-group-label">표시 상태 · 복수 선택 가능</p>
+      <div class="table-score-filter-option-grid focus-status-filter-options" role="listbox" aria-label="${escapeHtml(definition.label)} status" aria-multiselectable="true">
+        ${FOCUS_STATUS_FILTER_OPTIONS.map(optionButton).join('')}
+      </div>`;
+  popover.innerHTML = `
+    <div class="table-score-filter-popover-heading">
+      <div><strong>${escapeHtml(definition.label)} filter</strong><span>${escapeHtml(definition.description)}</span></div>
+      <button type="button" class="table-score-filter-close" data-focus-filter-close aria-label="Filter close">×</button>
+    </div>
+    ${body}
+    <p class="table-score-filter-helper">기준 간 조건은 AND로 적용됩니다.</p>
+    <div class="table-score-filter-actions"><button type="button" data-focus-filter-done>완료</button></div>`;
+  popover.hidden = false;
+  positionFocusHeaderFilterPopover();
+  if (focusExpression && definition.kind === 'numeric') {
+    window.requestAnimationFrame(() => popover.querySelector('[data-focus-filter-expression]')?.focus());
+  }
+}
+
+function toggleFocusHeaderFilter(trigger) {
+  const key = trigger?.dataset.focusFilterTrigger;
+  if (!FOCUS_HEADER_FILTERS[key]) return;
+  if (activeFocusHeaderFilter?.key === key) {
+    closeFocusHeaderFilter();
+    return;
+  }
+  closeMultiFilters();
+  closeFocusHeaderFilter();
+  closeScoreHeaderFilter();
+  closeFocusHeaderFilter();
+  activeFocusHeaderFilter = {
+    key,
+    trigger,
+    selected: new Set(focusFilterSelections(key)),
+    expression: ''
+  };
+  trigger.setAttribute('aria-expanded', 'true');
+  renderFocusHeaderFilterPopover({ focusExpression: FOCUS_HEADER_FILTERS[key].kind === 'numeric' });
+}
+
+function addFocusHeaderFilterExpression() {
+  const active = activeFocusHeaderFilter;
+  const input = document.querySelector('#focusTableFilterPopover [data-focus-filter-expression]');
+  if (!active || !input) return;
+  const parsed = normalizeAdmetFilterExpression(input.value);
+  if (!parsed) {
+    input.setCustomValidity('Use >=15, <=10, =<10, =10, 15 이상, or 10 이하.');
+    input.reportValidity();
+    return;
+  }
+  active.selected.add(parsed);
+  active.expression = '';
+  renderFocusHeaderFilterPopover({ focusExpression: true });
+}
+
+function commitFocusHeaderFilter() {
+  const active = activeFocusHeaderFilter;
+  if (!active) return;
+  state.focusFilters = { ...state.focusFilters, [active.key]: [...active.selected] };
+  state.page = 1;
+  captureModeFilters();
+  closeFocusHeaderFilter();
+  renderFilteredDashboard();
 }
 
 function getVisibleRows(includeQuery = true) {
@@ -3148,7 +3591,15 @@ function getVisibleRows(includeQuery = true) {
         (selectedFilterValues(state.indication).length === 0 || selectedFilterValues(state.indication).some((value) => row.indicationList.includes(value) || (value === 'Unknown' && !row.indicationList.length))) &&
         selectedCountryFilterMatches(state.country, row.country) &&
         selectedFilterMatches(state.stage, row.stage) &&
-        selectedFilterMatches(state.pass, row[filterKey])
+        selectedFilterMatches(state.pass, row[filterKey]) &&
+        scoreFilterMatches('targetScore', row.targetScore) &&
+        scoreFilterMatches('moaScore', row.moaScore) &&
+        scoreFilterMatches('dataScore', row.dataScore) &&
+        scoreFilterMatches('competitiveScore', row.competitiveScore) &&
+        scoreFilterMatches('platformScore', row.platformScore) &&
+        scoreFilterMatches('expansionScore', row.expansionScore) &&
+        scoreFilterMatches('marketScore', row.marketScore) &&
+        focusFilterMatches(row)
       );
     });
 
@@ -4411,7 +4862,9 @@ function syncTopDataActionsForVisibleTab() {
   const isStep0Visible = Boolean(elements.step0Panel && !elements.step0Panel.hidden);
   if (isStep0Visible) {
     setDataUploadShortcutVisibility(true);
-    setTopPromptShortcutVisibility({ triage: true, full: true });
+    // Listing has its own selected-candidate prompt action; the global Fast
+    // Triage and Full Scout shortcuts belong to their respective workflow tabs.
+    setTopPromptShortcutVisibility();
     return;
   }
 
@@ -4448,7 +4901,9 @@ function renderWorkflowMode(summary = activeTabSummary()) {
       <span class="workflow-description-filter">${escapeHtml(copy.filterLabel)}</span>`;
   }
   if (elements.summaryScopeNote) {
-    elements.summaryScopeNote.textContent = '현재 Tab·Filter 기준';
+    elements.summaryScopeNote.textContent = activeSummaryFilterCount() > 0
+      ? `Filter 결과 ${distributionAssets}개`
+      : '현재 Tab·Filter 기준';
   }
   if (elements.indicationSummarySubtitle) {
     elements.indicationSummarySubtitle.textContent = activeSummaryFilterCount() > 0
@@ -4801,7 +5256,7 @@ function scoreBadge(score, max = 3, tooltip = '', extraClass = '') {
 function earlyStopScoreBadge(row) {
   const tooltip = row?.earlyStop?.reason || '조기 종료되어 점수 평가를 수행하지 않았습니다.';
   const safeTooltip = escapeHtml(tooltip);
-  return `<span class="score pending early-stop-score" tabindex="0" aria-label="${safeTooltip}" data-tooltip="${safeTooltip}" title="${safeTooltip}">—</span>`;
+  return `<span class="table-edit-select status-edit na is-readonly early-stop-score" tabindex="0" aria-label="${safeTooltip}" data-tooltip="${safeTooltip}" title="${safeTooltip}">—</span>`;
 }
 
 function pipelineScoreBadge(row, score, max = 3, tooltip = '') {
@@ -4816,7 +5271,7 @@ function statusEditSelect(row, filterKey) {
   const value = row[filterKey];
   if (row.isVirtualTriage) {
     const title = row.earlyStop?.reason || 'Full Scout 완료로 표시된 Fast Triage 상태입니다. Tab 2 결과를 엽니다.';
-    return `<span class="pill ${filterToneClass(value)}" title="${escapeHtml(title)}">${escapeHtml(value)}</span>`;
+    return `<span class="table-edit-select status-edit ${filterToneClass(value)} is-readonly" title="${escapeHtml(title)}">${escapeHtml(value)}</span>`;
   }
   const options = row.isTriage ? ['SELECT', 'REJECT', 'INSUFFICIENT'] : ['PASS', 'REVIEW', 'FAIL'];
   const isManual = Object.prototype.hasOwnProperty.call(humanReviewOverrides(row.raw), 'filter_status');
@@ -4920,21 +5375,38 @@ function evidenceSourceLabel(source) {
   return '자동 판단 (GPT 원문 리포트 + 첨부파일 키워드 기반, 실험 데이터 확인 필요)';
 }
 
+function evidenceStatusMeaning(value) {
+  if (value === 'O') return 'asset-specific efficacy 근거 확인';
+  if (value === 'X') return '검토 가능한 자료에서는 해당 근거 없음';
+  return '자료·분석 근거 부족으로 O/X 판정 불가';
+}
+
 function evidenceEditSelect(row, field, sourceField, label) {
   const value = row[field] || 'N/A';
   const source = row[sourceField];
+  const tooltip = evidenceStatusMeaning(value);
   return `
-    <select
-      class="evidence-edit ${evidenceToneClass(value)} ${source === 'manual' ? 'is-human' : 'is-auto'}"
-      data-record-id="${escapeHtml(row.id)}"
-      data-evidence-field="${escapeHtml(field)}"
-      data-previous-value="${escapeHtml(value)}"
-      aria-label="${escapeHtml(row.asset)} ${escapeHtml(label)}"
-      title="${escapeHtml(`${label}: ${evidenceSourceLabel(source)}`)}"
-    >
-      ${EVIDENCE_STATUS_OPTIONS.map((option) => selectOption(option, value)).join('')}
-    </select>
+    <span class="evidence-tooltip help-tooltip" data-tooltip="${escapeHtml(tooltip)}">
+      <select
+        class="evidence-edit ${evidenceToneClass(value)} ${source === 'manual' ? 'is-human' : 'is-auto'}"
+        data-record-id="${escapeHtml(row.id)}"
+        data-evidence-field="${escapeHtml(field)}"
+        data-previous-value="${escapeHtml(value)}"
+        aria-label="${escapeHtml(`${row.asset} ${label}: ${tooltip}`)}"
+      >
+        ${EVIDENCE_STATUS_OPTIONS.map((option) => selectOption(option, value)).join('')}
+      </select>
+    </span>
   `;
+}
+
+function dueDiligenceStatusBadge(row) {
+  const value = row.ddStatus === 'O' ? 'O' : 'X';
+  const tone = value === 'O' ? 'high' : 'low';
+  if (value !== 'O') return `<span class="total-score-edit-circle dd-status-circle ${tone}" aria-label="DD Report 없음">${value}</span>`;
+  const tooltip = 'DD Report가 상세 페이지에 업로드 되었음';
+  const href = `/detail?id=${encodeURIComponent(row.id)}&tab=focus&open=dd`;
+  return `<a class="total-score-edit-circle dd-status-circle dd-status-link ${tone} help-tooltip" href="${escapeHtml(href)}" data-tooltip="${escapeHtml(tooltip)}" aria-label="${escapeHtml(tooltip)}">${value}</a>`;
 }
 
 function admetToneClass(value) {
@@ -4969,7 +5441,9 @@ function scoreEditSelect(row, scoreKey, criterionId, label) {
   if (row.earlyStop) return earlyStopScoreBadge(row);
   const value = row[scoreKey];
   if (row.isVirtualTriage) {
-    return scoreBadge(value, 3, `${label}: Tab 2 Full Scout 결과에서 가져온 읽기 전용 점수`);
+    const tone = value >= 3 ? 'high' : value >= 2 ? 'mid' : 'low';
+    const tooltip = `${label}: Tab 2 Full Scout 결과에서 가져온 읽기 전용 점수`;
+    return `<span class="table-edit-select score-edit ${tone} is-readonly" title="${escapeHtml(tooltip)}">${escapeHtml(value ?? '-')}</span>`;
   }
   const tone = value >= 3 ? 'high' : value >= 2 ? 'mid' : 'low';
   const isManual = Object.prototype.hasOwnProperty.call(
@@ -5542,6 +6016,15 @@ function countryDisplayMarkup(country) {
   return `<span class="country-cell-content" aria-label="${escapeHtml(countries.join(' / '))}">${countryFlagSvg(countries[0])}<span>${escapeHtml(displayLabel)}</span></span>`;
 }
 
+let pipelineHeaderFreezeController = null;
+
+function refreshPipelineHeaderFreeze() {
+  // Header markup and column widths are rebuilt on every table render. Refresh
+  // the viewport mirror after that work completes instead of relying only on
+  // MutationObserver timing, which could leave the header blank after a rerender.
+  window.requestAnimationFrame(() => pipelineHeaderFreezeController?.refresh());
+}
+
 function renderFocusTable() {
   const visibleRows = getVisibleRows();
   const allModeRows = state.rows.filter(rowMatchesActiveTableMode);
@@ -5572,6 +6055,7 @@ function renderFocusTable() {
       <col class="pipeline-col-filter" data-col-key="filter2" style="${columnWidthStyle('filter2')}" />
       <col class="pipeline-col-score" data-col-key="totalScore" style="${columnWidthStyle('totalScore')}" />
       <col class="pipeline-col-filter" data-col-key="filter3" style="${columnWidthStyle('filter3')}" />
+      <col class="pipeline-col-filter" data-col-key="dd" style="${columnWidthStyle('dd')}" />
       <col class="pipeline-col-filter" data-col-key="inVivo" style="${columnWidthStyle('inVivo')}" />
       <col class="pipeline-col-filter" data-col-key="inVitro" style="${columnWidthStyle('inVitro')}" />
       <col class="pipeline-col-filter" data-col-key="admet" style="${columnWidthStyle('admet')}" />
@@ -5593,16 +6077,17 @@ function renderFocusTable() {
         ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
         ${sortableHeader('Pipeline Stage', 'stage', 'stage', 'rowspan="2"')}
         <th class="score-group-head focus-group-head" colspan="2">Full Scout</th>
-        <th class="score-group-head focus-group-head" colspan="5">Shortlisting</th>
+        <th class="score-group-head focus-group-head" colspan="6">Shortlisting</th>
         ${plainHeader('관리', 'focusManage', 'focus-action-head', 'rowspan="2"')}
       </tr>
       <tr class="pipeline-score-row focus-column-label-row">
         ${sortableHeader('Filter 2', 'filter2', 'filter2')}
         ${sortableHeader('Total Score', 'focusTotalScore', 'totalScore')}
         ${sortableHeader('Filter 3', 'filter3', 'filter3')}
-        ${sortableHeader('In-vivo', 'inVivoStatus', 'inVivo')}
-        ${sortableHeader('In-vitro', 'inVitroStatus', 'inVitro')}
-        ${sortableHeader('ADMET', 'admetCompleted', 'admet')}
+        ${focusFilterHeader('DD', 'dd', 'dd')}
+        ${focusFilterHeader('In-vivo', 'inVivo', 'inVivo')}
+        ${focusFilterHeader('In-vitro', 'inVitro', 'inVitro')}
+        ${focusFilterHeader('ADMET', 'admet', 'admet')}
         ${sortableHeader('Action date', 'focusDueDate', 'focusDueDate')}
       </tr>
     `;
@@ -5652,6 +6137,7 @@ function renderFocusTable() {
           <td class="filter-cell">${statusEditSelect(row, 'filter2')}</td>
           <td class="score-cell total-score-cell">${totalScoreEditCircle(row)}</td>
           <td class="focus-status-cell">${partnershipEditSelect(row)}</td>
+          <td class="score-cell total-score-cell dd-status-cell">${dueDiligenceStatusBadge(row)}</td>
           <td class="focus-status-cell">${evidenceEditSelect(row, 'inVivoStatus', 'inVivoSource', 'In-vivo efficacy')}</td>
           <td class="focus-status-cell">${evidenceEditSelect(row, 'inVitroStatus', 'inVitroSource', 'In-vitro efficacy')}</td>
           <td class="focus-status-cell">${admetEditSelect(row)}</td>
@@ -5674,7 +6160,7 @@ function renderFocusTable() {
       }).join('')
     : `
       <tr>
-        <td colspan="16" class="empty-cell focus-empty-state">
+        <td colspan="17" class="empty-cell focus-empty-state">
           <strong>${allModeRows.length ? '현재 조건에 맞는 Shortlisting asset이 없습니다.' : '아직 Shortlisting에 추가된 약물이 없습니다.'}</strong>
           <span>${allModeRows.length ? '필터를 조정하거나 초기화해 주세요.' : 'TAB2 Full Scout의 오른쪽 ‘즐겨찾기’ 버튼으로 관리 대상을 추가하세요.'}</span>
         </td>
@@ -5685,6 +6171,7 @@ function renderFocusTable() {
   updateSelectionControls(pageRows);
   updateFrozenColumnOffsets();
   updateSortIndicators();
+  refreshPipelineHeaderFreeze();
 }
 
 function renderTable() {
@@ -5715,7 +6202,7 @@ function renderTable() {
   const modeLabel = mode === 'triage' ? 'Fast Triage' : 'Full Scout';
   const scoreLabels = {
     targetScore: 'TR',
-    moaScore: 'MOA',
+    moaScore: 'MoA',
     dataScore: 'Data',
     competitiveScore: 'Comp',
     platformScore: 'Plat',
@@ -5771,7 +6258,7 @@ function renderTable() {
         ${mode === 'full' ? plainHeader('관리', 'focusAction', 'focus-action-head', 'rowspan="2"') : ''}
       </tr>
       <tr class="pipeline-score-row">
-        ${scoreColumns.map((key) => sortableHeader(scoreLabels[key] || key, key, key)).join('')}
+        ${scoreColumns.map((key) => scoreFilterHeader(scoreLabels[key] || key, key, key)).join('')}
         ${extraColumns.map((column) => plainHeader(column.label, extraColumnKey(column), 'extra-column-head')).join('')}
       </tr>
     `;
@@ -5856,6 +6343,7 @@ function renderTable() {
   updateSelectionControls(pageRows);
   updateFrozenColumnOffsets();
   updateSortIndicators();
+  refreshPipelineHeaderFreeze();
 }
 
 function updateSelectionControls(pageRows = null) {
@@ -5940,6 +6428,11 @@ function currentDisplayedTabMode() {
   return activeTableMode();
 }
 
+function syncKnowledgeMapTabState(isActive = currentDisplayedTabMode() === 'map') {
+  elements.knowledgeMapTab?.classList.toggle('active', isActive);
+  elements.knowledgeMapTab?.setAttribute('aria-selected', isActive ? 'true' : 'false');
+}
+
 function renderTableTabs() {
   if (elements.focusTabCount) {
     elements.focusTabCount.textContent = String(state.rows.filter((row) => !row.isTriage && row.focusTracked).length);
@@ -5950,6 +6443,7 @@ function renderTableTabs() {
     tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
     tab.tabIndex = isActive ? 0 : -1;
   });
+  syncKnowledgeMapTabState();
   renderAgentIdentity();
 }
 
@@ -5985,7 +6479,9 @@ function activeFilterCount() {
     hasSelectedFilterValues(state.country),
     hasSelectedFilterValues(state.indication),
     hasSelectedFilterValues(state.stage),
-    hasSelectedFilterValues(state.pass)
+    hasSelectedFilterValues(state.pass),
+    ...Object.keys(SCORE_HEADER_FILTERS).map((key) => scoreFilterSelections(key).length > 0),
+    ...Object.keys(FOCUS_HEADER_FILTERS).map((key) => focusFilterSelections(key).length > 0)
   ].filter(Boolean).length;
 }
 
@@ -5997,7 +6493,9 @@ function activeSummaryFilterCount() {
     hasSelectedFilterValues(state.country),
     hasSelectedFilterValues(state.indication),
     hasSelectedFilterValues(state.stage),
-    hasSelectedFilterValues(state.pass)
+    hasSelectedFilterValues(state.pass),
+    ...Object.keys(SCORE_HEADER_FILTERS).map((key) => scoreFilterSelections(key).length > 0),
+    ...Object.keys(FOCUS_HEADER_FILTERS).map((key) => focusFilterSelections(key).length > 0)
   ].filter(Boolean).length;
 }
 
@@ -6239,6 +6737,52 @@ function setStep0SummaryLoading(isLoading) {
   dashboard.setAttribute('aria-busy', String(isLoading));
 }
 
+// Jumps the Pipeline Table to whichever page currently contains recordId (its
+// sort position can move after a rubric re-score or a data refresh) and gives
+// the row a brief, soft highlight so the user can find it again without
+// re-scanning the whole table. Returns false if the row isn't visible under
+// the current filters.
+function scrollAndHighlightPipelineRow(recordId) {
+  if (!recordId) return false;
+  const visibleRows = getVisibleRows();
+  const rowIndex = visibleRows.findIndex((row) => row.id === recordId);
+  if (rowIndex === -1) return false;
+  const targetPage = Math.floor(rowIndex / state.pageSize) + 1;
+  if (state.page !== targetPage) {
+    state.page = targetPage;
+    renderTable();
+  }
+  const rowElement = elements.pipelineTable?.querySelector(`tr[data-record-id="${CSS.escape(recordId)}"]`);
+  if (!rowElement) return false;
+  rowElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  rowElement.classList.remove('pipeline-row-return-highlight');
+  // Force reflow so re-adding the class restarts the fade if it's still running
+  // (e.g. two rescores of the same row in quick succession).
+  void rowElement.offsetWidth;
+  rowElement.classList.add('pipeline-row-return-highlight');
+  window.setTimeout(() => rowElement.classList.remove('pipeline-row-return-highlight'), PIPELINE_ROW_HIGHLIGHT_MS);
+  return true;
+}
+
+// Pairs with the sessionStorage write in the Pipeline Table row click handler:
+// when a row is opened into its detail page, we remember which record and
+// which tab it was opened from so that coming back via the detail page's
+// "Fast Triage 목록" / "Full Scout" link lands on the same page and row
+// instead of resetting to page 1.
+function restorePendingPipelineReturnFocus() {
+  let target;
+  try {
+    target = JSON.parse(sessionStorage.getItem(PIPELINE_RETURN_FOCUS_STORAGE_KEY) || 'null');
+  } catch {
+    target = null;
+  }
+  sessionStorage.removeItem(PIPELINE_RETURN_FOCUS_STORAGE_KEY);
+  const recordId = String(target?.recordId || '').trim();
+  const mode = String(target?.mode || '').trim();
+  if (!recordId || !mode || mode !== activeTableMode()) return;
+  window.requestAnimationFrame(() => scrollAndHighlightPipelineRow(recordId));
+}
+
 async function loadRecords({ signal } = {}) {
   setStep0SummaryLoading(true);
   elements.dataStatus.textContent = 'Loading';
@@ -6260,6 +6804,7 @@ async function loadRecords({ signal } = {}) {
     state.page = 1;
     renderFilters();
     render();
+    restorePendingPipelineReturnFocus();
     elements.agentContextCount.textContent = `${state.rows.length} pipelines`;
   } finally {
     setStep0SummaryLoading(false);
@@ -6554,6 +7099,7 @@ async function recalculateLatestRubric(button) {
     await refreshDashboardSummary();
     renderFilters();
     render();
+    scrollAndHighlightPipelineRow(recordId);
     updateHeaderRecordCount();
   } catch (error) {
     elements.dataStatus.textContent = `${workflowLabel} 재평가 실패: ${error.message}`;
@@ -8626,26 +9172,20 @@ function validateCombinedInput(value, expectedMode = '') {
       });
 
       const identityVerified = record.triage?.identity_verified;
-      const activeAsset = record.triage?.active_asset;
       if (typeof identityVerified !== 'boolean') {
         addInputIssue(errors, 'error', `${recordPath}.triage.identity_verified`, 'true 또는 false가 필요합니다.');
-      }
-      if (!isInputObject(record.triage) || !Object.prototype.hasOwnProperty.call(record.triage, 'active_asset')) {
-        addInputIssue(errors, 'error', `${recordPath}.triage.active_asset`, '필수 필드입니다. true, false, null 중 하나가 필요합니다.');
-      } else if (activeAsset !== null && typeof activeAsset !== 'boolean') {
-        addInputIssue(errors, 'error', `${recordPath}.triage.active_asset`, 'true, false, null 중 하나가 필요합니다.');
       }
       const trScore = criteria.target_relevance?.score;
       const moaScore = criteria.moa_validity?.score;
       const dataScore = criteria.data_maturity?.score;
-      const hasHardBlocker = activeAsset === false
-        || canonicalDevelopmentStage(record.structured_table?.development_stage) === 'Discontinued / inactive'
-        || hasAffirmedLifecycleBlocker(record.hard_filter?.flags || []);
-      const expectedStatus = identityVerified !== true || activeAsset === false || hasHardBlocker
+      // v3.5: development_stage is the sole activity gate (active_asset and the
+      // hard_filter.flags keyword scan were dropped as redundant/ambiguous).
+      const developmentStage = canonicalDevelopmentStage(record.structured_table?.development_stage);
+      const expectedStatus = identityVerified !== true || developmentStage === 'Discontinued / inactive'
         ? 'INSUFFICIENT'
         : Math.min(trScore, moaScore, dataScore) === 0
           ? 'INSUFFICIENT'
-          : activeAsset === true && trScore >= 2 && moaScore >= 1 && dataScore >= 2
+          : trScore >= 3 && moaScore >= 1 && dataScore >= 2
             ? 'SELECT'
             : 'REJECT';
       if (INPUT_TRIAGE_STATUSES.has(status) && status !== expectedStatus) {
@@ -9350,7 +9890,7 @@ const SHARED_INTEREST_AND_CORE_RUBRIC = `SKBP Interest Indications:
 
 Use the most specific confirmed indication wording for Target Relevance. Neuropathic pain and explicit neuropathic subtypes/synonyms are one of the six interest indications and receive TR 3. Generic Pain, acute pain, postoperative pain, and non-neuropathic pain are within the broad SKBP pain scope but outside the six priority indications and receive TR 2.
 
-Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.4 and Full Scout v3.6):
+Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.5 and Full Scout v3.7):
 - For Target Relevance, always evaluate in descending order: 3, then 2, then 1, then 0. If more than one rule appears applicable, assign only the single highest applicable score.
 - Target Relevance 0: asset identity is verified, but there is still insufficient indication/relevance information to assess strategic scope. Asset identity not verified is an INSUFFICIENT early stop, not a completed TR 0.
 - Target Relevance 1: a verified asset's confirmed indication is outside the broad SKBP neurologic, psychiatric, neuroimmune, neurodegenerative, or pain scope.
@@ -9376,7 +9916,7 @@ Evidence domains answer different development questions, such as in vitro activi
 const SHARED_CANONICAL_STAGE_RULE = `Canonical Pipeline Stage — structured_table.development_stage must be exactly one of:
 Hit Discovery; Lead Optimization; Preclinical Candidate; IND-enabling; Preclinical unspecified; IND filed/cleared; Clinical unspecified; Phase 1; Phase 1/2; Phase 2; Phase 2/3; Phase 3; Registration; Approved / marketed; Discontinued / inactive; Unknown.
 
-Canonicalize only an explicitly confirmed current stage or a completed/started milestone. Do not promote stage from plans, expectations, targets, financing, hiring, or adjacent programs. Generic preclinical -> Preclinical unspecified. Candidate nominated/selected -> Preclinical Candidate. Ongoing GLP tox, IND-directed CMC, or explicit IND-enabling work -> IND-enabling. IND/CTA submitted, filed, accepted, effective, or cleared -> IND filed/cleared. An explicitly ongoing clinical/pivotal/registrational trial with no phase -> Clinical unspecified; never infer Phase 3 from "pivotal" or "registrational" alone. Hit ID/hit identification, an explicit research program/project, or an explicit discovery program/project -> Hit Discovery; FIH, Ph1, Ph1a, or Ph1b -> Phase 1; a confirmed Ph1b/2a -> Phase 1/2; FDA/EMA/NMPA approved -> Approved / marketed. Planned IND submission alone does not establish IND filed/cleared; "preclinical; IND planned" remains Preclinical unspecified. A planned Phase 2 or Phase 2/3 trial does not establish that phase: retain an explicitly confirmed earlier current phase, otherwise use Unknown. For multi-indication assets, use the lead/currently most advanced confirmed stage as the single dashboard value and move indication-specific status detail to evidence or notes; for example, "FOS Phase II recruiting; pain stage unclear" -> Phase 2. Map only explicitly confirmed discontinued, terminated, withdrawn, inactive, dormant, or abandoned programs to Discontinued / inactive. A suspended or halted program is not automatically terminal: retain the confirmed stage when available, record the pause in hard_filter.flags/notes, and set triage.active_asset=null unless inactivity is independently confirmed. Do not map speculative wording such as "likely preclinical or dormant" or a different historical alias marked discontinued to the current asset's Discontinued / inactive status. Use Unknown only when the relevant current stage itself is unresolved or conflicting.`;
+Canonicalize only an explicitly confirmed current stage or a completed/started milestone. Do not promote stage from plans, expectations, targets, financing, hiring, or adjacent programs. Generic preclinical -> Preclinical unspecified. Candidate nominated/selected -> Preclinical Candidate. Ongoing GLP tox, IND-directed CMC, or explicit IND-enabling work -> IND-enabling. IND/CTA submitted, filed, accepted, effective, or cleared -> IND filed/cleared. An explicitly ongoing clinical/pivotal/registrational trial with no phase -> Clinical unspecified; never infer Phase 3 from "pivotal" or "registrational" alone. Hit ID/hit identification, an explicit research program/project, or an explicit discovery program/project -> Hit Discovery; FIH, Ph1, Ph1a, or Ph1b -> Phase 1; a confirmed Ph1b/2a -> Phase 1/2; FDA/EMA/NMPA approved -> Approved / marketed. Planned IND submission alone does not establish IND filed/cleared; "preclinical; IND planned" remains Preclinical unspecified. A planned Phase 2 or Phase 2/3 trial does not establish that phase: retain an explicitly confirmed earlier current phase, otherwise use Unknown. For multi-indication assets, use the lead/currently most advanced confirmed stage as the single dashboard value and move indication-specific status detail to evidence or notes; for example, "FOS Phase II recruiting; pain stage unclear" -> Phase 2. Map only explicitly confirmed discontinued, terminated, withdrawn, inactive, dormant, or abandoned programs to Discontinued / inactive. A suspended or halted program is not automatically terminal: retain the confirmed stage when available and record the pause in hard_filter.flags/notes; do not map it to Discontinued / inactive unless inactivity is independently confirmed. Do not map speculative wording such as "likely preclinical or dormant" or a different historical alias marked discontinued to the current asset's Discontinued / inactive status. Use Unknown only when the relevant current stage itself is unresolved or conflicting.`;
 
 const SHARED_CANONICAL_MODALITY_RULE = `Canonical Modality — structured_table.modality_platform must be exactly one of: Targeted protein degrader, Oncolytic virus, Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Microbiome therapy, Vaccine, Radiopharmaceutical, Others, or Unknown.
 Preserve the researched wording in structured_table.modality_source and use the canonical label in modality_platform. Examples: "TPD", "PROTAC", "molecular glue degrader", "SNIPER", "AUTOTAC", and "LYTAC" -> Targeted protein degrader; "oral small molecule" -> Small molecule; "oral small-molecule / tablet" and "small-molecule CNS discovery platform" -> Small molecule; "IV antibody" -> Antibody; "topical peptide" -> Peptide; "live biotherapeutic product" -> Microbiome therapy. Route, dosage form, and technical qualifiers belong in MoA, source evidence, company_profile.platform_summary, or notes. modality_tags may contain multiple supported canonical labels only when the source explicitly evidences a hybrid format (for example, an antibody-targeted degrader can carry Antibody and Targeted protein degrader); never place raw labels such as TPD or PROTAC in modality_tags.`;
@@ -9388,7 +9928,20 @@ Lead-indication selection priority: (1) use an indication explicitly identified 
 Keep complete disease wording and all secondary indications in structured_table.indication and Markdown. In Markdown state the source-based reason for the selected lead or source-order fallback. Examples: "Lead disclosed indication: inflammatory bowel disease; expansion potential for MS" -> Inflammatory bowel disease; "FOS Phase 2 recruiting; MDD planned; pain stage unclear" -> Epilepsy / seizure disorders; "CNS hypotheses include stroke and status epilepticus; no official lead or active trial" -> Unknown.`;
 
 const SHARED_CANONICAL_THEME_RULE = `Canonical R&D Theme — json_summary.theme must be exactly one of E/I Balance, Neuroimmune, Protein Homeostasis, Others, or Unknown. Determine Theme from researched evidence for the assessed asset's target and MoA, not from disease association alone.
-Use Protein Homeostasis only when the target/MoA directly modulates proteostasis, such as protein folding or chaperone function, ubiquitin-proteasome activity, autophagy-lysosome function, ER stress/UPR, or pathogenic protein aggregate clearance. The mere presence of protein aggregates in a disease does not establish this Theme. Use Others only when the identified target/MoA is confirmed outside all three R&D Themes, and Unknown when target/MoA evidence is insufficient. Because no Protein Homeostasis sub-cluster taxonomy is approved yet, use cluster="Unknown" for this Theme. Never use N/A or No Theme.`;
+Use Protein Homeostasis only when the target/MoA directly modulates proteostasis, such as protein folding or chaperone function, ubiquitin-proteasome activity, autophagy-lysosome function, ER stress/UPR, or pathogenic protein aggregate clearance. The mere presence of protein aggregates in a disease does not establish this Theme. Use Others only when the identified target/MoA is confirmed outside all three R&D Themes, and Unknown when target/MoA evidence is insufficient. Because no Protein Homeostasis sub-cluster taxonomy is approved yet, use cluster="Unknown" for this Theme. Never use N/A or No Theme.
+When Theme is Others, cluster must also be Others. When Theme is Unknown, cluster must also be Unknown.`;
+
+const SHARED_CANONICAL_CLUSTER_RULE = `Allowed Theme values:
+- E/I Balance
+- Neuroimmune
+- Protein Homeostasis
+- Others (identity-verified asset confirmed outside E/I Balance, Neuroimmune, and Protein Homeostasis)
+- Unknown (target or MoA evidence insufficient to map)
+
+Allowed clusters:
+- E/I Balance: Ion Channel, Inhibitory Tone 강화, Synaptic Transmission, Chloride Homeostasis, Network Modulation
+- Neuroimmune: CNS 손상 면역반응, 교세포 향상성, Cytokine 신경조절, 손상/질환 면역조절, 말초 면역기관 연결
+- Protein Homeostasis: Unknown (no approved sub-cluster taxonomy yet)`;
 
 const COMPACT_TRIAGE_JSON_TEMPLATE = `[
   {
@@ -9427,7 +9980,6 @@ const COMPACT_TRIAGE_JSON_TEMPLATE = `[
     "triage": {
       "status": "INSUFFICIENT",
       "identity_verified": false,
-      "active_asset": null,
       "verified_public_source_count": 0,
       "why": "Asset identity has not yet been verified from credible public sources.",
       "missing_evidence_needed_for_full_scout": []
@@ -9661,10 +10213,10 @@ function buildTriageInstructionPromptLegacy() {
   return `You are an expert biotech pipeline scout for SKBP Pipeline Finder.
 
 Mission:
-Run FAST TRIAGE on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.6 in-depth review.
+Run FAST TRIAGE on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.7 in-depth review.
 
-This is GPT instruction 1: Fast Triage v3.4.
-Use GPT instruction 2 only after a candidate receives SELECT and needs Full Scout v3.6 review.
+This is GPT instruction 1: Fast Triage v3.5.
+Use GPT instruction 2 only after a candidate receives SELECT and needs Full Scout v3.7 review.
 
 Evidence Discipline (apply to every factual field and every score):
 ${SHARED_EVIDENCE_DISCIPLINE}
@@ -9682,7 +10234,7 @@ Core rule:
 
 Important distinction:
 - Triage status is not a final Full Scout recommendation.
-- SELECT means worth sending to Full Scout v3.6.
+- SELECT means worth sending to Full Scout v3.7.
 - REJECT means the asset is identified but does not currently meet the SELECT gate; monitor or gather more evidence.
 - INSUFFICIENT means identity/lifecycle caused an early stop, or one of TR, MoA, or Data received 0 after identity was confirmed.
 - A REJECT or INSUFFICIENT result can change later if better identity, target, MoA, data, company, or source evidence becomes available.
@@ -9743,7 +10295,7 @@ Early stop rules:
 - In the Markdown table, write \`—\` for TR, MoA, and Data for either early-stop case. Early stop never shortens the required dashboard JSON contract: every record must still contain all three TR/MoA/Data criterion score objects. Use score 0 only as a schema placeholder with no_supporting_basis, keep scoring.total_score and max_score null, and do not describe the placeholder as a completed zero-score evaluation. The status is INSUFFICIENT.
 
 Triage scoring:
-- Use the same scoring direction as Full Scout v3.6, but only for these three matching criteria:
+- Use the same scoring direction as Full Scout v3.7, but only for these three matching criteria:
   - Full Scout criterion 1: Target Relevance (TR)
   - Full Scout criterion 3: MoA Validity (MOA)
   - Full Scout criterion 6: Data Maturity (Data)
@@ -9772,10 +10324,10 @@ Summary rule:
 - General disease biology alone cannot explain an asset score. For user_input_only, do not introduce facts absent from the user input.
 
 Triage status rule:
-- active_asset is required and must be true, false, or null: true only when current activity is confirmed, false when inactivity is confirmed, and null when activity cannot be established.
-- SELECT only if identity_verified=true, active_asset=true, TR >= 2, MoA >= 1, and Data >= 2.
-- INSUFFICIENT if asset identity is not verified, a terminal lifecycle is confirmed, or any of TR, MoA, or Data is 0 after identity is confirmed.
-- REJECT for every remaining identity-verified, non-terminal candidate that does not meet SELECT; active_asset=null is REJECT, not INSUFFICIENT.
+- There is no separate active/inactive field. structured_table.development_stage is the sole activity signal: Discontinued / inactive is a confirmed early stop; every other canonical stage value, including Unknown, proceeds to normal TR/MoA/Data scoring.
+- SELECT only if identity_verified=true, development_stage is not Discontinued / inactive, TR >= 3, MoA >= 1, and Data >= 2.
+- INSUFFICIENT if asset identity is not verified, development_stage is confirmed Discontinued / inactive, or any of TR, MoA, or Data is 0 after identity is confirmed.
+- REJECT for every remaining identity-verified, non-terminal candidate that does not meet SELECT.
 - If unsure between SELECT and REJECT, choose REJECT and explain the missing evidence needed.
 
 Controlled vocabulary:
@@ -9787,6 +10339,7 @@ ${SHARED_CANONICAL_MODALITY_RULE}
 ${SHARED_CANONICAL_INDICATION_RULE}
 - structured_table.indication must preserve the most specific confirmed wording (for example, diabetic peripheral neuropathic pain). Use that detailed indication—not the broader main_indication bucket—for TR and the neuropathic-pain rule.
 ${SHARED_CANONICAL_THEME_RULE}
+${SHARED_CANONICAL_CLUSTER_RULE}
 
 Output language:
 Korean. English is allowed for scientific terms.
@@ -9798,7 +10351,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
 \`\`\`text
 # SKBP Fast Triage Result
 
-> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.4. Full Scout v3.6 has not been run.
+> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.5. Full Scout v3.7 has not been run.
 
 중요: 한 문장으로 triage 결론과 filter rationale을 먼저 씁니다. 예: 공개 자료상 asset identity는 확인되지만 개발 단계가 Discontinued / inactive로 확인되어 INSUFFICIENT로 처리합니다.
 
@@ -9816,8 +10369,8 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
   {
     "meta": {
       "schema_version": "3.2",
-      "instruction_version": "3.4",
-      "rubric_version": "3.4",
+      "instruction_version": "3.5",
+      "rubric_version": "3.5",
       "review_type": "fast_triage",
       "generated_at": "YYYY-MM-DD",
       "language": "ko",
@@ -9833,7 +10386,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
       "raw_markdown": "",
       "source_format": "fast_triage_markdown",
       "parser_status": "fast_triage",
-    "parser_note": "GPT instruction 1 Fast Triage v3.4 output. Full Scout v3.6 review has not been run."
+    "parser_note": "GPT instruction 1 Fast Triage v3.5 output. Full Scout v3.7 review has not been run."
     },
     "json_summary": {
       "company": "Unknown",
@@ -9863,10 +10416,9 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
       "flags": []
     },
     "triage": {
-      "instruction_version": "3.4",
+      "instruction_version": "3.5",
       "status": "INSUFFICIENT",
       "identity_verified": false,
-      "active_asset": null,
       "why": "Asset identity has not yet been verified from credible public sources.",
       "missing_evidence_needed_for_full_scout": []
     },
@@ -9905,7 +10457,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
     },
     "validation": {
       "instruction_version": "3.2",
-      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.4; Full Scout v3.6 not run.",
+      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.5; Full Scout v3.7 not run.",
       "cross_checked_facts": [],
       "uncertain_points": [],
       "source_registry": []
@@ -9953,7 +10505,7 @@ function buildGptInstructionPromptLegacy() {
 Mission:
 Evaluate exactly one biotech/pharma pipeline asset through company research, attachment review, public-source verification, competitor search, seven-criterion scoring, and evidence tracking. Return exactly one copyable fenced code block containing the Markdown report first and the valid JSON second.
 
-This is GPT instruction 2: Full Scout v3.6. State v3.6 in the Markdown report. In compact JSON, do not repeat schema/instruction/rubric version fields; the dashboard adds schema 3.2 and instruction/rubric 3.6 during deterministic expansion.
+This is GPT instruction 2: Full Scout v3.7. State v3.7 in the Markdown report. In compact JSON, do not repeat schema/instruction/rubric version fields; the dashboard adds schema 3.2 and instruction/rubric 3.7 during deterministic expansion.
 
 Evidence Discipline (apply to every factual field and every scoring criterion):
 ${SHARED_EVIDENCE_DISCIPLINE}
@@ -9991,8 +10543,8 @@ Identity Gate / identity-not-verified early stop:
 - Use only a short identity check at this gate. Check for at least one credible biotech source type: official company/pipeline page, clinical trial registry, regulatory source, peer-reviewed publication, reputable biotech news, company presentation, patent/source that clearly links the asset to a drug target or indication.
 - Fail this gate only when the named asset itself cannot be verified as a specific biotech/pharma pipeline asset from credible public sources. Missing target, MoA, modality, indication, stage, country, or ownership does not fail the gate; write Unknown for that factual field, record the uncertainty, and continue the full review and scoring.
 - If search results are mostly unrelated SKUs, tools, electronics, finance tickers, unrelated abbreviations, or ambiguous non-drug references and no credible source verifies a specific drug-development asset, classify it as identity not verified.
-- If the asset identity is not verified, stop Full Scout and return FAIL / Deprioritize. Set hard_filter.reason exactly to "Asset identity not verified from public biotech/pharma sources." Also return FAIL regardless of score when a credible source confirms the lifecycle as Discontinued, Terminated, Withdrawn, Abandoned, Inactive, Dormant, or Clearly failed. Suspended or Halted alone is a pause signal, not a terminal lifecycle conclusion.
-- Lifecycle-confirmed early stop: after verifying the asset identity and one credible terminal lifecycle source, stop the Full Scout. Keep the Markdown short: state the confirmed inactive status, source, and any known stop reason/date. Do not perform additional target/MoA/data research, competitive landscaping, marketability, expansion, or extended source chasing. Set hard_filter.reason to a short "Lifecycle stopped: ..." statement. Keep the required Compact v2 JSON contract with structured_table.development_stage="Discontinued / inactive", hard_filter.status="FAIL", hard_filter.hard_blocker=true, final_insight.recommendation="Deprioritize", and concise zero-score/uncertainty entries where deeper diligence was intentionally skipped. In either early-stop case, show \`—\` for every score in Markdown; JSON score 0 values are schema placeholders only, not completed zero-score evaluations. For a suspended/halted program, continue only enough to establish whether inactivity is confirmed; otherwise use REVIEW and document the pause.
+- If the asset identity is not verified, stop Full Scout and return FAIL / Deprioritize. Set hard_filter.reason exactly to "Asset identity not verified from public biotech/pharma sources." A confirmed terminal lifecycle must be represented only by structured_table.development_stage="Discontinued / inactive"; that canonical stage is the sole lifecycle status gate. Suspended or Halted alone is a pause signal, not a terminal lifecycle conclusion.
+- Lifecycle-confirmed early stop: after verifying the asset identity and one credible terminal lifecycle source, set structured_table.development_stage="Discontinued / inactive" and stop the Full Scout. Keep the Markdown short: state the confirmed inactive status, source, and any known stop reason/date. Do not perform additional target/MoA/data research, competitive landscaping, marketability, expansion, or extended source chasing. Set hard_filter.reason to a short "Lifecycle stopped: ..." statement. Keep the required Compact v2 JSON contract with hard_filter.status="FAIL", hard_filter.hard_blocker=true, final_insight.recommendation="Deprioritize", and concise zero-score/uncertainty entries where deeper diligence was intentionally skipped. In either early-stop case, show \`—\` for every score in Markdown; JSON score 0 values are schema placeholders only, not completed zero-score evaluations. For a suspended/halted program, retain a confirmed stage where available, otherwise use Unknown; continue the completed assessment and document the pause.
 - Uncertain rights or exact stage alone is REVIEW, not automatic FAIL.
 - In the identity-not-verified case, the final answer must still be exactly one combined fenced code block, but both the Markdown and JSON portions must be short.
 - Identity-not-verified markdown block format:
@@ -10021,7 +10573,7 @@ Non-negotiable rules:
 8. Competitive Landscape Markdown must include the complete search and analysis. JSON keeps competitive_density, the four similarity counts, competitor_table rows needed by the competitor graph, and similar_pipelines needed by the existing comparison view. competitor_table row keys are competitor_asset, company, modality, target_or_moa, stage, similarity_level, why_it_matters, source_url, and source_ids. similar_pipelines row keys are company, asset_name, similarity_score, matched_dimensions, and shared_data_points.
 9. Marketability may use an internal calculation, an external forecast, both, or insufficient evidence. Show A/B/C/D when calculation is performed; show external forecast references when used.
 10. Express every sales output in million USD in Markdown. JSON keeps the final Marketability score plus only the minimal A/B/C/D output projection used for score audit and detail display; complete inputs and rationale stay in Markdown.
-11. Hard Filter is canonical: PASS when Total >= 14, Target Relevance >= 2, MoA Validity = 3, and Data Maturity = 3. FAIL when Total <= 8 or any of Target Relevance, MoA Validity, or Data Maturity is 0. REVIEW is every completed assessment that meets neither PASS nor FAIL. Asset identity not verified and a confirmed terminal lifecycle are early-stop cases, not completed score assessments.
+11. Hard Filter is canonical: PASS when Total >= 14, Target Relevance >= 3, MoA Validity = 3, and Data Maturity = 3. FAIL when Total <= 8 or any of Target Relevance, MoA Validity, or Data Maturity is 0. REVIEW is every completed assessment that meets neither PASS nor FAIL. Asset identity not verified and a confirmed terminal lifecycle are early-stop cases, not completed score assessments.
 11a. Set hard_filter.hard_blocker=true only for a confirmed FAIL blocker. Set hard_filter.decision_uncertainty=true only when stage, rights/license/ownership, asset identity, source/registry, sponsor, or active-program uncertainty prevents an otherwise firm decision. These booleans keep Filter 2 deterministic after research prose stays in Markdown.
 11b. Copy the exact assessed company and asset identifiers into input.company_input and input.asset_input. These two aliases are used only to join the Fast Triage and Full Scout rows for the same asset. When the user appended relevant free-text context, copy it faithfully into input.user_context; otherwise keep user_context as an empty string.
 12. If the latest stage, ownership, financing, or trial status is unclear, mark it as uncertain and state what source is needed.
@@ -10030,7 +10582,7 @@ Non-negotiable rules:
 15. The JSON template defaults Marketability to score 0. A reliable calculation or asset-specific external forecast may support scores 1–3; document the complete method and numbers in Markdown.
 16. Keep source_report.raw_markdown as an empty string because the dashboard inserts the Markdown portion. Do not add keys not present in the Compact v2 template; research details already present in Markdown must not be duplicated in JSON.
 
-Scoring v3.6 rules:
+Scoring v3.7 rules:
 - Each scoring criterion must be scored independently using its own criterion-specific scoring table.
 - Do not apply a universal scoring rule across all criteria.
 - For every criterion, assign exactly one integer score: 0, 1, 2, or 3.
@@ -10083,7 +10635,7 @@ Use this exact report structure inside the Markdown portion of the single combin
 
 # [Company] Pipeline Scout Report: **[Asset]**
 
-Briefly state that this report was researched and scored with GPT instruction 2 — Full Scout v3.6 (schema v3.2), and that URLs are included for auditability.
+Briefly state that this report was researched and scored with GPT instruction 2 — Full Scout v3.7 (schema v3.2), and that URLs are included for auditability.
 
 중요: 한 문장으로 filter/recommendation rationale을 먼저 씁니다. 예: 공개 자료상 active asset명·compound code·임상 단계가 명확히 확인되지 않아 stage/ownership은 uncertain / REVIEW로 처리합니다.
 
@@ -10116,17 +10668,7 @@ Briefly state that this report was researched and scored with GPT instruction 2 
 | Pipeline Stage |  | official pipeline page, clinical trial registry, company deck, or uncertainty note |
 | Key data |  | paper / abstract / poster / company page URL |
 
-Allowed Theme values:
-- E/I Balance
-- Neuroimmune
-- Protein Homeostasis
-- Others (identity-verified asset confirmed outside E/I Balance, Neuroimmune, and Protein Homeostasis)
-- Unknown (target or MoA evidence insufficient to map)
-
-Allowed clusters:
-- E/I Balance: Ion Channel, Inhibitory Tone 강화, Synaptic Transmission, Chloride Homeostasis, Network Modulation
-- Neuroimmune: CNS 손상 면역반응, 교세포 향상성, Cytokine 신경조절, 손상/질환 면역조절, 말초 면역기관 연결
-- Protein Homeostasis: Unknown (no approved sub-cluster taxonomy yet)
+${SHARED_CANONICAL_CLUSTER_RULE}
 
 ## 3) Scorecard Summary
 
@@ -10321,14 +10863,14 @@ End the Markdown portion after References. The next line in this template is the
 {
   "meta": {
     "schema_version": "3.2",
-    "instruction_version": "3.6",
+    "instruction_version": "3.7",
     "review_type": "full_scout",
     "generated_at": "YYYY-MM-DD",
     "language": "ko",
     "analyst_role": "[OIT] PreC Pipeline Shortlister",
     "output_format": ["markdown_report", "json"],
     "output_filename_base": "Company_Asset_YYYYMMDD",
-    "rubric_version": "3.6",
+    "rubric_version": "3.7",
     "rubric_author": "kate"
   },
   "input": {
@@ -10342,7 +10884,7 @@ End the Markdown portion after References. The next line in this template is the
     "raw_markdown": "",
     "source_format": "gpt_markdown_report",
     "parser_status": "gpt_structured_output",
-    "parser_note": "GPT instruction 2 Full Scout v3.6 output using schema v3.2; Markdown report and JSON were generated together from the same evidence set."
+    "parser_note": "GPT instruction 2 Full Scout v3.7 output using schema v3.2; Markdown report and JSON were generated together from the same evidence set."
   },
   "company_profile": {
     "company_name": "",
@@ -10568,9 +11110,9 @@ End the Markdown portion after References. The next line in this template is the
 }
 
 Final validation before output:
-- Keep the Markdown version statement at instruction/rubric 3.6. The dashboard deterministically adds JSON schema 3.2 and instruction/rubric 3.6.
+- Keep the Markdown version statement at instruction/rubric 3.7. The dashboard deterministically adds JSON schema 3.2 and instruction/rubric 3.7.
 - Internally verify that the seven integer criterion scores sum correctly; the dashboard derives total_score and max_score.
-- Apply PASS >= 14 plus TR >= 2, MoA = 3, and Data = 3. Apply FAIL for Total <= 8 or any TR/MoA/Data score of 0. Apply identity and terminal-lifecycle early-stop rules before completing the scorecard.
+- Apply PASS >= 14 plus TR >= 3, MoA = 3, and Data = 3. Apply FAIL for Total <= 8 or any TR/MoA/Data score of 0. Apply identity and terminal-lifecycle early-stop rules before completing the scorecard.
 - Do not infer Competitive Landscape 3 from no competitors; record search sufficiency, scope, and limitations.
 - Keep Platform and Expansion separate; accept preclinical, IND-enabling, or clinical programs for Expansion 3, but not plans or indication lists.
 - Permit Marketability from calculation or a reliable external forecast alone. Do not double-count benchmark price and pricing power inputs.
@@ -10858,8 +11400,7 @@ function activateKnowledgeMapPanel() {
     tab.setAttribute('aria-selected', 'false');
     tab.tabIndex = -1;
   });
-  elements.knowledgeMapTab?.classList.add('active');
-  elements.knowledgeMapTab?.setAttribute('aria-selected', 'true');
+  syncKnowledgeMapTabState(true);
   requestAnimationFrame(() => window.restartKnowledgeMapPhysics?.());
   renderAgentIdentity();
 }
@@ -10870,6 +11411,7 @@ function updateStep0HeaderCount() {
 
 function activateStep0Panel() {
   showKnowledgeMapPanel(false);
+  syncKnowledgeMapTabState(false);
   elements.pipelineTableTabs?.forEach((tab) => {
     const isActive = tab.dataset.tableMode === 'step0';
     tab.classList.toggle('active', isActive);
@@ -11790,7 +12332,7 @@ function step0ListingCommentCanEdit(row) {
   const comment = String(metadata.comment || '').trim();
   if (!comment) return true;
   const source = String(metadata.comment_source || '').trim();
-  if (source === 'team_review_import') return true;
+  if (source === 'team_review_import') return Boolean(user?.is_developer);
   if (source !== 'admin_listing_post') return false;
   return step0MetadataOwnedByCurrentUser(metadata, 'comment', user);
 }
@@ -11802,7 +12344,7 @@ function step0ContactHistoryCanEdit(row) {
   const contact = String(metadata.contact || '').trim();
   if (!contact) return true;
   const source = String(metadata.contact_source || '').trim();
-  if (source === 'team_review_import') return true;
+  if (source === 'team_review_import') return Boolean(user?.is_developer);
   if (source !== 'admin_contact_post') return false;
   return step0MetadataOwnedByCurrentUser(metadata, 'contact', user);
 }
@@ -12582,7 +13124,7 @@ function openStep0EditLockedModal(mode, { commentWorkspace = false, recordId = '
   }
   if (elements.step0EditLockedMessage) {
     elements.step0EditLockedMessage.textContent = fullScoutAlias
-      ? '이 asset은 Full Scout 조사가 완료되어 Fast Triage에도 함께 표시되고 있습니다. 해당 GPT 원문 리포트와 상세 점수는 Tab 2 · Full Scout에서 열람할 수 있습니다.'
+      ? '이 asset은 Full Scout 조사가 완료되어 Fast Triage에도 함께 표시되고 있습니다.'
       : shortlisting
       ? 'Shortlisting에는 Full Scout의 공식 Pipeline 정보가 읽기 전용으로 표시됩니다. Company·Location·Asset·Modality·Target·Main indication·Pipeline Stage 수정은 Tab 2 · Full Scout에서 진행합니다.'
       : commentWorkspace
@@ -12729,7 +13271,7 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
   const admin = Boolean(getCurrentUser()?.is_admin);
   if (editing && !admin) return;
   if (editing && field === 'comment' && !step0ListingCommentCanEdit(row)) return;
-  const label = field === 'comment' ? 'Listing Comment Post' : field === 'contact' ? 'Contact History' : 'Website';
+  const label = field === 'comment' ? 'Comment' : field === 'contact' ? 'Contact History' : 'Website';
   const value = step0MetadataValue(row, field);
   const commentFeed = field === 'comment' ? step0CommentFeed(row) : field === 'contact' ? step0ContactFeed(row) : [];
   const popover = document.createElement('section');
@@ -12752,7 +13294,7 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
     `;
   if (!editing && (field === 'comment' || field === 'contact')) {
     const isContactHistory = field === 'contact';
-    const postLabel = isContactHistory ? 'Contact History' : 'Listing Comment Post';
+    const postLabel = isContactHistory ? 'Contact History' : 'Comment';
     const canEditListingComment = isContactHistory ? step0ContactHistoryCanEdit(row) : step0ListingCommentCanEdit(row);
     const commentCards = commentFeed.length
       ? commentFeed.map((entry) => {
@@ -13575,6 +14117,8 @@ const DESCENDING_FIRST_SORT_KEYS = new Set([
 ]);
 
 function sortByColumn(key) {
+  closeScoreHeaderFilter();
+  closeFocusHeaderFilter();
   const firstDirection = DESCENDING_FIRST_SORT_KEYS.has(key) ? 'desc' : 'asc';
 
   if (state.sortKey !== key || !state.sortDirection) {
@@ -13611,8 +14155,9 @@ const SORT_KEYS_BY_MODE = {
     'focusTotalScore',
     'filter3',
     'inVivoStatus',
-    'inVitroStatus',
-    'admetCompleted',
+  'inVitroStatus',
+  'admetCompleted',
+    'ddStatus',
     'focusDueDate',
     'focusAddedAt'
   ])
@@ -13625,16 +14170,31 @@ function normalizeSortForMode(mode) {
   state.sortDirection = 'desc';
 }
 
-const TABLE_FILTER_STATE_KEYS = ['query', 'searchTokens', 'stage', 'theme', 'cluster', 'modality', 'indication', 'country', 'pass'];
+const TABLE_FILTER_STATE_KEYS = ['query', 'searchTokens', 'stage', 'theme', 'cluster', 'modality', 'indication', 'country', 'pass', 'scoreFilters', 'focusFilters'];
 
 function captureModeFilters(mode = activeTableMode()) {
   state.filtersByMode[mode] = Object.fromEntries(
-    TABLE_FILTER_STATE_KEYS.map((key) => [key, cloneFilterValue(state[key])])
+    TABLE_FILTER_STATE_KEYS.map((key) => [
+      key,
+      key === 'scoreFilters'
+        ? Object.fromEntries(Object.keys(SCORE_HEADER_FILTERS).map((scoreKey) => [scoreKey, scoreFilterSelections(scoreKey)]))
+        : key === 'focusFilters'
+          ? Object.fromEntries(Object.keys(FOCUS_HEADER_FILTERS).map((focusKey) => [focusKey, focusFilterSelections(focusKey)]))
+        : cloneFilterValue(state[key])
+    ])
   );
 }
 
 function restoreModeFilters(mode) {
   Object.assign(state, state.filtersByMode[mode] || {});
+  state.scoreFilters = Object.fromEntries(Object.keys(SCORE_HEADER_FILTERS).map((key) => [
+    key,
+    Array.isArray(state.scoreFilters?.[key]) ? state.scoreFilters[key] : []
+  ]));
+  state.focusFilters = Object.fromEntries(Object.keys(FOCUS_HEADER_FILTERS).map((key) => [
+    key,
+    Array.isArray(state.focusFilters?.[key]) ? state.focusFilters[key] : []
+  ]));
   if (elements.searchInput) elements.searchInput.value = state.query;
 }
 
@@ -13766,16 +14326,112 @@ function handleMultiFilterControlsClick(event) {
 }
 
 document.addEventListener('click', (event) => {
+  const focusPopover = event.target.closest('#focusTableFilterPopover');
+  if (focusPopover && activeFocusHeaderFilter) {
+    const option = event.target.closest('[data-focus-filter-option]');
+    if (option) {
+      const value = option.dataset.focusFilterOption;
+      if (activeFocusHeaderFilter.selected.has(value)) {
+        activeFocusHeaderFilter.selected.delete(value);
+      } else {
+        activeFocusHeaderFilter.selected.add(value);
+      }
+      renderFocusHeaderFilterPopover();
+      return;
+    }
+    if (event.target.closest('[data-focus-filter-all]')) {
+      activeFocusHeaderFilter.selected.clear();
+      activeFocusHeaderFilter.expression = '';
+      renderFocusHeaderFilterPopover();
+      return;
+    }
+    if (event.target.closest('[data-focus-filter-expression-add]')) {
+      addFocusHeaderFilterExpression();
+      return;
+    }
+    if (event.target.closest('[data-focus-filter-done]')) {
+      commitFocusHeaderFilter();
+      return;
+    }
+    if (event.target.closest('[data-focus-filter-close]')) {
+      closeFocusHeaderFilter();
+      return;
+    }
+    return;
+  }
+  const scorePopover = event.target.closest('#tableScoreFilterPopover');
+  if (scorePopover && activeScoreHeaderFilter) {
+    const option = event.target.closest('[data-score-filter-option]');
+    if (option) {
+      const value = option.dataset.scoreFilterOption;
+      if (activeScoreHeaderFilter.selected.has(value)) {
+        activeScoreHeaderFilter.selected.delete(value);
+      } else {
+        activeScoreHeaderFilter.selected.add(value);
+      }
+      renderScoreHeaderFilterPopover();
+      return;
+    }
+    if (event.target.closest('[data-score-filter-all]')) {
+      activeScoreHeaderFilter.selected.clear();
+      activeScoreHeaderFilter.expression = '';
+      renderScoreHeaderFilterPopover();
+      return;
+    }
+    if (event.target.closest('[data-score-filter-expression-add]')) {
+      addScoreHeaderFilterExpression();
+      return;
+    }
+    if (event.target.closest('[data-score-filter-done]')) {
+      commitScoreHeaderFilter();
+      return;
+    }
+    if (event.target.closest('[data-score-filter-close]')) {
+      closeScoreHeaderFilter();
+      return;
+    }
+    return;
+  }
+  if (event.target.closest('[data-score-filter-trigger], [data-focus-filter-trigger]')) return;
   if (!event.target.closest('.filter-multiselect')) {
     closeMultiFilters();
     closeStep0MultiFilters();
   }
+  closeScoreHeaderFilter();
+  closeFocusHeaderFilter();
 });
 
 document.addEventListener('keydown', (event) => {
+  const focusExpressionInput = event.target.closest?.('[data-focus-filter-expression]');
+  if (focusExpressionInput && event.key === 'Enter') {
+    event.preventDefault();
+    addFocusHeaderFilterExpression();
+    return;
+  }
+  const expressionInput = event.target.closest?.('[data-score-filter-expression]');
+  if (expressionInput && event.key === 'Enter') {
+    event.preventDefault();
+    addScoreHeaderFilterExpression();
+    return;
+  }
   if (event.key !== 'Escape') return;
   closeMultiFilters();
   closeStep0MultiFilters();
+  closeScoreHeaderFilter();
+  closeFocusHeaderFilter();
+});
+
+document.addEventListener('input', (event) => {
+  const focusExpressionInput = event.target.closest?.('[data-focus-filter-expression]');
+  if (focusExpressionInput && activeFocusHeaderFilter) {
+    activeFocusHeaderFilter.expression = focusExpressionInput.value;
+    focusExpressionInput.setCustomValidity('');
+    return;
+  }
+  const expressionInput = event.target.closest?.('[data-score-filter-expression]');
+  if (!expressionInput || !activeScoreHeaderFilter) return;
+  activeScoreHeaderFilter.expression = expressionInput.value;
+  expressionInput.setCustomValidity('');
 });
 
 elements.pageSizeSelect?.addEventListener('change', (event) => {
@@ -13874,6 +14530,12 @@ elements.pipelineTable.addEventListener('click', (event) => {
     openStep0EditLockedModal('full', { recordId, fullScoutAlias: true });
     return;
   }
+  try {
+    sessionStorage.setItem(
+      PIPELINE_RETURN_FOCUS_STORAGE_KEY,
+      JSON.stringify({ recordId, mode: activeTableMode() })
+    );
+  } catch (_) {}
   if (activeTableMode() === 'triage') {
     window.location.href = `/triage-detail?id=${encodeURIComponent(recordId)}`;
     return;
@@ -14029,6 +14691,18 @@ elements.selectPageRows?.addEventListener('change', (event) => {
 
 elements.pipelineTableHead?.addEventListener('click', (event) => {
   if (event.target.closest('[data-resize-column]')) return;
+  const scoreFilterTrigger = event.target.closest('[data-score-filter-trigger]');
+  if (scoreFilterTrigger) {
+    event.preventDefault();
+    toggleScoreHeaderFilter(scoreFilterTrigger);
+    return;
+  }
+  const focusFilterTrigger = event.target.closest('[data-focus-filter-trigger]');
+  if (focusFilterTrigger) {
+    event.preventDefault();
+    toggleFocusHeaderFilter(focusFilterTrigger);
+    return;
+  }
   const button = event.target.closest('button[data-sort]');
   if (!button) return;
   sortByColumn(button.dataset.sort);
@@ -14052,6 +14726,14 @@ elements.pipelineTableHead?.addEventListener('pointerdown', beginColumnResize);
 elements.pipelineTableHead?.addEventListener('dblclick', resetColumnWidth);
 document.addEventListener('pointermove', updateColumnResize);
 document.addEventListener('pointerup', endColumnResize);
+window.addEventListener('resize', () => {
+  positionScoreHeaderFilterPopover();
+  positionFocusHeaderFilterPopover();
+});
+window.addEventListener('scroll', () => {
+  positionScoreHeaderFilterPopover();
+  positionFocusHeaderFilterPopover();
+}, true);
 
 elements.pipelineTableHead?.addEventListener('change', (event) => {
   if (event.target.id !== 'selectPageRows') return;
@@ -14194,6 +14876,8 @@ elements.resetFiltersButton?.addEventListener('click', () => {
   state.indication = [];
   state.stage = [];
   state.pass = [];
+  state.scoreFilters = { targetScore: [], moaScore: [], dataScore: [], competitiveScore: [], platformScore: [], expansionScore: [], marketScore: [] };
+  state.focusFilters = emptyFocusFilters();
   state.page = 1;
   elements.searchInput.value = '';
   captureModeFilters();
@@ -14208,6 +14892,7 @@ function activatePipelineTab(mode) {
   }
   const wasKnowledgeMapVisible = Boolean(elements.knowledgeMapPanel && !elements.knowledgeMapPanel.hidden);
   showKnowledgeMapPanel(false);
+  syncKnowledgeMapTabState(false);
   if (mode === 'step0') {
     activateStep0Panel();
     return;
@@ -14677,13 +15362,11 @@ floatingAgentController = initFloatingAgent({
   initialHeight: 680,
   focusTarget: elements.agentInput
   });
-  const isMapActive = currentDisplayedTabMode() === 'map';
-  elements.knowledgeMapTab?.classList.toggle('active', isMapActive);
-  elements.knowledgeMapTab?.setAttribute('aria-selected', isMapActive ? 'true' : 'false');
+  syncKnowledgeMapTabState();
   renderAgentIdentity();
 setupThemeToggle();
 initPageJumpControls();
-initPipelineHeaderFreeze();
+pipelineHeaderFreezeController = initPipelineHeaderFreeze();
 initAuthUI();
 initializeAgentSessions();
 function renderActiveKnowledgeNodeContext() {

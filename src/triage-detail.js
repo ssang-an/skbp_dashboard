@@ -846,13 +846,16 @@ function finalCommentMarkup(record) {
         <small>${escapeHtml(commentByline('Tab 1 · Fast Triage · Comment', authorName, updatedAt ? formatTimestamp(updatedAt) : ''))}</small>
       </article>` : ''}
       ${canManage ? `
-        <button type="button" class="triage-note-trigger" data-triage-final-comment-open>＋ 최종 코멘트 입력</button>
+        <div class="triage-note-actions">
+          <button type="button" class="triage-note-trigger" data-triage-final-comment-open>＋ 최종 코멘트 입력</button>
+          ${triageContactHistoryTrigger()}
+          ${triageRubricRefreshButton()}
+        </div>
         <form class="triage-inline-note-form" data-triage-final-comment-form hidden>
           <textarea rows="3" maxlength="4000" placeholder="최종 판단에 대한 관리자 의견을 남겨주세요." aria-label="최종 코멘트">${escapeHtml(finalComment)}</textarea>
           <div><span data-triage-final-comment-status></span><button type="button" data-triage-final-comment-cancel>취소</button><button type="submit">저장</button></div>
         </form>
-      ` : ''}
-      ${triageContactHistoryTrigger()}
+      ` : `<div class="triage-note-actions">${triageContactHistoryTrigger()}${triageRubricRefreshButton()}</div>`}
     </section>
   `;
 }
@@ -874,6 +877,11 @@ function triageFinalCommentPostsMarkup(record) {
       ${isOwn ? `<form class="triage-inline-note-form" data-triage-final-post-edit-form data-comment-id="${escapeHtml(entry.id)}" hidden><textarea rows="3" maxlength="5000" aria-label="최종 코멘트 수정">${escapeHtml(entry.body || '')}</textarea><div><span data-triage-final-post-status></span><button type="button" data-triage-final-post-edit-cancel>취소</button><button type="submit">저장</button></div></form>` : ''}
     </article>`;
   }).join('')}</section>`;
+}
+
+function triageRubricRefreshButton() {
+  if (!currentUserIsAdmin()) return '';
+  return `<button type="button" class="triage-rubric-refresh" data-triage-rubric-refresh aria-label="최신 Score 기준 갱신" title="최신 Score 기준 갱신"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.2 6.5L3 16m0 0v5m0-5h5M3 12A9 9 0 0 1 18.2 5.5L21 8m0 0V3m0 5h-5"></path></svg></button>`;
 }
 
 function triageSyncedListingCommentsMarkup(record) {
@@ -1558,6 +1566,38 @@ async function deleteCurrentRecord() {
   }
 }
 
+async function refreshTriageRubric(button) {
+  if (!currentRecord || !recordId || !button) return;
+  button.disabled = true;
+  button.classList.add('is-saving');
+  const closeProgress = showTriageProgress(
+    '최신 기준으로 업데이트 중입니다',
+    '최신 Fast Triage 기준으로 기존 근거와 점수를 다시 확인하고 있습니다.'
+  );
+  try {
+    const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/refresh-rubric`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'Score 기준 갱신에 실패했습니다.');
+    if (data.status === 'error') throw new Error(data.message || 'Score 기준 갱신에 실패했습니다.');
+    if (data.record) {
+      currentRecord = data.record;
+      renderRecord(currentRecord);
+    }
+    elements.loadStatus.textContent = data.message || 'Score 기준 갱신 완료';
+  } catch (error) {
+    window.alert(error.message);
+  } finally {
+    closeProgress();
+    if (button.isConnected) {
+      button.disabled = false;
+      button.classList.remove('is-saving');
+    }
+  }
+}
+
 async function loadRecord() {
   if (!recordId) throw new Error('Fast Triage record id가 없습니다.');
   const response = await fetch(`/api/records/${encodeURIComponent(recordId)}`);
@@ -1665,6 +1705,11 @@ elements.scoreGrid?.addEventListener('submit', async (event) => {
   }
 });
 elements.quickSummary?.addEventListener('click', (event) => {
+  const rubricRefresh = event.target.closest('[data-triage-rubric-refresh]');
+  if (rubricRefresh) {
+    refreshTriageRubric(rubricRefresh);
+    return;
+  }
   const deleteFinalPost = event.target.closest('[data-triage-final-post-delete]');
   if (deleteFinalPost) {
     confirmTriageCommentDelete({ title: '최종 코멘트를 삭제할까요?' }).then((confirmed) => {

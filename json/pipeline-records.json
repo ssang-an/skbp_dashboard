@@ -3672,10 +3672,10 @@
       ],
       "pipeline_metadata": {
         "listed_at": "2026-08-22T09:14:12.984162+00:00",
-        "comment": "df",
+        "comment": "",
         "contact": "",
         "website": "",
-        "updated_at": "2026-08-22T09:14:12.984162+00:00"
+        "updated_at": "2026-08-30T15:28:28.673Z"
       },
       "edit_history": [
         {
@@ -3757,34 +3757,22 @@
           "field": "collaboration.comments.tab0_listing",
           "previous_value": null,
           "new_value": null
+        },
+        {
+          "id": "7d96d31f67b247b6ab63b707d4c5c11e",
+          "changed_at": "2026-08-30T15:28:28.673Z",
+          "actor_ip": "system",
+          "actor_name": "Codex",
+          "source": "legacy_listing_comment_cleanup",
+          "field": "pipeline_metadata.comment",
+          "previous_value": "df",
+          "new_value": ""
         }
       ],
       "collaboration": {
-        "comments": [
-          {
-            "id": "d356645d30b84ce2824307ed724b23ca",
-            "parent_id": null,
-            "author": "Team",
-            "author_user_id": "",
-            "author_email": "",
-            "actor_ip": "system",
-            "body": "df",
-            "created_at": "2026-08-22T09:14:13.020965+00:00",
-            "updated_at": "2026-08-25T07:39:42.545674+00:00",
-            "source": "listing_comment_post",
-            "import_key": "8f7d7db4d063b90ff0370d7059bab1e74f06e5639b8dc3b4bf9791e6df852bdf",
-            "system_import": true,
-            "label": "",
-            "category": "comment",
-            "origin_record_id": "",
-            "origin_item_id": "",
-            "origin_kind": "",
-            "origin_author_user_id": "",
-            "origin_author_email": ""
-          }
-        ],
-        "updated_at": "2026-08-25T07:39:42.545674+00:00",
-        "comment_count": 1
+        "comments": [],
+        "updated_at": "2026-08-30T15:28:28.673Z",
+        "comment_count": 0
       }
     },
     "source_report": {
@@ -12998,7 +12986,43 @@
       "review_type": "fast_triage",
       "generated_at": "2026-06-23",
       "output_filename_base": "Humanwell_CXJM-66_fast_triage_20260623",
-      "storage_profile": "dashboard_hybrid_v1"
+      "storage_profile": "dashboard_hybrid_v1",
+      "rubric_reviewed_version": "3.4",
+      "rubric_reviewed_at": "2026-08-28T01:42:07.725117+00:00",
+      "rubric_reviewed_by": "manual-correction:claude-code",
+      "rubric_review_result": "updated",
+      "rubric_refresh_history": [
+        {
+          "version": "3.4",
+          "reviewed_at": "2026-08-27T23:31:43.681565+00:00",
+          "result": "no_change",
+          "actor_ip": "127.0.0.1",
+          "reason": "기존 점수(TR 3, MoA 2, Data 3)가 최신 루브릭 v3.4 기준과 일치하며, 변경을 정당화할 구체적인 새로운 증거가 없습니다.",
+          "changes": []
+        },
+        {
+          "version": "3.4",
+          "reviewed_at": "2026-08-27T23:46:46.946136+00:00",
+          "result": "already_current",
+          "actor_ip": "127.0.0.1",
+          "reason": "Official GPT scoring is already current for this rubric.",
+          "changes": []
+        },
+        {
+          "version": "3.4",
+          "reviewed_at": "2026-08-28T01:42:07.725117+00:00",
+          "result": "updated",
+          "actor_ip": "manual-correction:claude-code",
+          "reason": "v3.4 룰 재확인 결과 TR은 acute/postoperative pain(neuropathic pain 아님)이라 3->2, Data는 임상시험 등록/승인만으로는 정량 evidence domain 2개 기준을 충족하지 못해 3->2로 정정. hard_filter.reason/triage.why도 active_asset=null이 REJECT의 실제 근거임을 명시하도록 수정.",
+          "changes": [
+            "scoring.criteria.target_relevance.score: 3 -> 2",
+            "scoring.criteria.data_maturity.score: 3 -> 2",
+            "hard_filter.reason clarified (active_asset gate)",
+            "triage.why clarified (indication + active_asset gate)"
+          ],
+          "changed_at": "2026-08-28T01:42:07.725117+00:00"
+        }
+      ]
     },
     "source_report": {
       "raw_markdown": "# SKBP Fast Triage Result\n\n중요: 총 47개 후보 중 **SELECT 6개 / REJECT 27개 / N/A 14개**로 빠르게 분류했으며, SELECT는 full SKBP Pipeline Finder v3.1 검토 후보일 뿐 최종 추천은 아닙니다.\n\n| # | Asset | Company | Target/MoA | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | WT-1-2.0 | Hangzhou Vitan Pharmaceutical Technology Co Ltd | P2X3 | Pain | Hit discovery | China | 0 | 0 | 0 | N/A | WT-1108/P2X3는 확인되나 WT-1-2.0 자체 public asset identity는 quick check에서 불충분 | http://www.westanpharma.com/Default.aspx; https://synapse.patsnap.com/drug/0b28edb3230146bca084e523c94678b2 |\n| 2 | Fusion Protein for Allergic Asthma, Multiple Sclerosis and Transplant Rejection | Hanyang University | T cell fusion protein | Multiple sclerosis / neuroinflammatory disease | IND-enabling | Republic of Korea | 2 | 1 | 1 | REJECT | MS/T-cell biology는 plausibility 있으나 asset명·spin-off/Jemmune pipeline identity 및 공개 개발 근거가 부족 | source_url_not_provided |\n| 3 | Lead compound | Hanyang University | Microglia fusion protein | Parkinson's disease | Hit discovery | Republic of Korea | 2 | 1 | 1 | REJECT | Microglia-PD는 theme fit 가능하나 asset identity와 target/MoA가 너무 일반적 | source_url_not_provided |\n| 4 | CNS XDC | Harbour BioMed (Guangzhou) Co Ltd | Undisclosed CNS XDC antibody | Unknown | Hit discovery | China | 1 | 1 | 1 | REJECT | 회사/platform은 credible이나 CNS asset target·indication·data 미공개 | https://www.harbourbiomed.com/ |\n| 5 | Next-Generation Biologics | Harbour BioMed (Guangzhou) Co Ltd | Undisclosed bispecific/multispecific antibody | Unknown | Hit discovery | China | 1 | 1 | 1 | REJECT | broad platform 후보로 CNS-specific asset identity와 MoA가 불명확 | https://www.harbourbiomed.com/ |\n| 6 | HB-02 | HealthBiome Inc | Gut microbiome LBP | Alzheimer's disease | IND-enabling | Republic of Korea | 2 | 2 | 2 | SELECT | dementia/AD LBP identity와 preclinical status가 확인되어 full scout에서 microbiome-CNS 근거 확인 가치 | https://healthbiome.co.kr/; https://synapse.patsnap.com/drug/3877c8e8f53a4437bc903307d8cec6a0 |\n| 7 | HB-03 | HealthBiome Inc | Gut microbiome LBP | Alzheimer's disease | Hit discovery | Republic of Korea | 1 | 1 | 1 | REJECT | neurodegenerative LBP concept은 있으나 HB-03 asset-specific 공개 근거 부족 | https://healthbiome.co.kr/ |\n| 8 | HB-05 | HealthBiome Inc | Gut microbiome LBP | Alzheimer's disease | IND-enabling | Republic of Korea | 1 | 1 | 1 | REJECT | cognitive disorder LBP concept은 있으나 HB-05 asset identity/data 확인 불충분 | https://healthbiome.co.kr/ |\n| 9 | HZR-061 | HealZen Therapeutics Co Ltd | STAT3 TPD | Multiple sclerosis / neuroinflammatory disease | IND-enabling | China | 2 | 1 | 1 | REJECT | STAT3-MS biology는 plausible하나 HZR-061 specific public source가 quick check에서 부족 | https://www.healzentx.com/ |\n| 10 | glycoprotein 29-modified deferoxamine | Hebei Normal University | BBB DFO nanoparticle / iron chelation | Parkinson's disease | IND-enabling | China | 2 | 2 | 1 | SELECT | PD iron-chelation DDS concept은 target/MoA가 명확해 full scout 가치 있으나 translational maturity 확인 필요 | https://en.hbnu.edu.cn/main.htm |\n| 11 | HEC20002 | HEC Pharm | MAO-B small molecule | Parkinson's disease | IND-enabling | China | 1 | 2 | 1 | REJECT | MAO-B는 validated target이나 crowded/symptomatic이고 HEC20002 asset-specific 공개 근거 제한 | https://www.hecpharm.com/en |\n| 12 | HB018 | Hefei Huafang Pharmaceutical Sciences and Technology | Undisclosed | Schizophrenia / psychosis | IND-enabling | China | 0 | 0 | 0 | N/A | source URL과 public identity가 없어 biotech/pharma pipeline asset으로 검증 불가 | source_url_not_provided |\n| 13 | HLDP-0603 | Hefei Licheng Pharmaceutical Co Ltd | Undisclosed | Unknown | Hit discovery | China | 0 | 0 | 0 | N/A | source URL과 target/indication 연결 근거가 없어 identity gate 통과 불가 | source_url_not_provided |\n| 14 | NM301 | Helixmith | HGF AAV gene therapy | Amyotrophic lateral sclerosis / motor neuron disease | IND-enabling | Republic of Korea | 2 | 2 | 1 | SELECT | ALS-HGF neurotrophic biology와 AAV modality가 plausible하여 full scout 후보이나 asset-specific public data 필요 | https://www.helixmith.com/ |\n| 15 | NM-101 | Helixmith Co Ltd | IGF-1 plasmid DNA gene therapy | Pain | IND-enabling | Republic of Korea | 2 | 2 | 1 | SELECT | neuropathic pain + IGF-1 gene therapy rationale가 있어 검토 가치 있으나 clinical/data visibility는 낮음 | https://www.helixmith.com/ |\n| 16 | pIKO | Helixmith Co Ltd | SDF-1a plasmid DNA gene therapy | Unknown | IND-enabling | Republic of Korea | 1 | 1 | 1 | REJECT | neurology indication이 너무 broad하고 target-disease linkage가 불명확 | https://www.helixmith.com/ |\n| 17 | VM-507 | Helixmith Co Ltd | c-Met antibody | Amyotrophic lateral sclerosis / motor neuron disease | IND-enabling | Republic of Korea | 2 | 1 | 1 | REJECT | ALS relevance는 가능하나 c-Met Ab MoA와 asset-specific data 공개 근거 부족 | https://www.helixmith.com/ |\n| 18 | HMM-910 | Help Therapeutics | iPSC cell therapy | Amyotrophic lateral sclerosis / motor neuron disease | IND-enabling | China | 2 | 1 | 1 | REJECT | motor neuron disease cell therapy concept은 있으나 product identity/data가 sparse | https://en.helptherapeutics.com/ |\n| 19 | HMM-920 | Help Therapeutics | iPSC cell therapy | Amyotrophic lateral sclerosis / motor neuron disease | IND-enabling | China | 2 | 1 | 1 | REJECT | related-row candidate; HMM-910과 유사하게 target/MoA와 data 공개 부족 | https://en.helptherapeutics.com/ |\n| 20 | HiN610 | Help Therapeutics | iPSC cell therapy | Unknown | IND-enabling | China | 1 | 1 | 1 | REJECT | indication이 broad하고 CNS-specific differentiation 확인 부족 | https://en.helptherapeutics.com/ |\n| 21 | HiN620 | Help Therapeutics | iPSC cell therapy | Unknown | IND-enabling | China | 1 | 1 | 1 | REJECT | indication 공백 및 asset-specific source 부족 | https://en.helptherapeutics.com/ |\n| 22 | Autism Research Project (HEMP) | HEM Pharma | Gut microbiome LBP | Unknown | Hit discovery | Republic of Korea | 1 | 1 | 1 | REJECT | ASD microbiome concept은 있으나 canonical target·asset identity·data가 부족 | https://www.hempharma.bio/ |\n| 23 | Small Molecule to Block TRPV1 for Pain | Henan University | TRPV1 blockade | Pain | IND-enabling | China | 1 | 1 | 1 | REJECT | TRPV1 pain biology는 known이나 specific compound/source 부재 | source_url_not_provided |\n| 24 | Compound A1 | Henan University Of Chinese Medicine | LSD1 / natural product | Alzheimer's disease | IND-enabling | China | 1 | 1 | 1 | REJECT | natural product-LSD1 AD rationale는 있으나 asset identity/public source 불충분 | source_url_not_provided |\n| 25 | CNS Research Project | Highlightll Pharma | NLRP3 / TYK2-JAK1 CNS small molecules | Parkinson's disease | Phase 1 | China | 3 | 2 | 3 | SELECT | HL-400 NLRP3 Phase 1 및 BHV-8000/TLL-041 PD Phase 2/3 연계가 보여 full scout 우선순위 높음 | https://www.highlightpharma.com/en.php; https://www.highlightpharma.com/en.php/news/show/id/1356; https://ichgcp.net/clinical-trials-registry/NCT06997484 |\n| 26 | HTF-1057 | HighTide Therapeutics Inc | Mitochondrial uncoupler | Parkinson's disease | IND-enabling | China | 2 | 1 | 1 | REJECT | mitochondrial neurodegeneration fit은 있으나 HTF-1057 specific source/data 부족 | https://www.hightidetx.com/ |\n| 27 | Mitochondria Uncoupler Plus | HighTide Therapeutics Inc | Mitochondrial uncoupler | Parkinson's disease | Hit discovery | China | 2 | 1 | 1 | REJECT | related-row 후보; target concept은 plausible하나 discovery generic project | https://www.hightidetx.com/ |\n| 28 | To Be Determined | HiPaiTech / HepaiTech | Undisclosed | Schizophrenia / psychosis | Hit discovery | Unknown | 0 | 0 | 0 | N/A | 회사명·asset명·source 모두 불확실해 identity gate 통과 불가 | source_url_not_provided |\n| 29 | Huntington’s Disease Research Program (LOQU) | HitGen | MutSβ small molecule | Huntington's disease | IND-enabling | China | 3 | 3 | 2 | SELECT | LQT-23/LoQus23 MutSβ HD candidate가 public source로 확인되어 full scout 가치 높음 | https://www.hitgen.com/en; https://loqus23.com/; https://loqus23.com/loqus23-therapeutics-nominates-lqt-23-as-first-in-class-oral-drug-candidate-for-huntingtons-disease/ |\n| 30 | Neurodegenerative Disorders Research Project | HitGen | Undisclosed DEL collaboration | Unknown | Hit discovery | China | 1 | 1 | 1 | REJECT | collaboration/platform은 credible이나 asset/target/indication 특정성 부족 | https://www.hitgen.com/en |\n| 31 | NT-1 | HLB Neurotov | 5-HT2A small molecule | Unknown | IND-enabling | Republic of Korea | 1 | 1 | 1 | REJECT | dystonia relevance는 possible이나 public asset-specific evidence 부족 | https://www.hlbneurotobe.com/kor/main/main.html |\n| 32 | NT-3 | HLB Neurotov | CaV3.1 ASO | Parkinson's disease | IND-enabling | Republic of Korea | 3 | 3 | 2 | SELECT | CaV3.1 ASO / PD KDDF 과제 및 비임상 개발 근거가 확인되어 full scout 후보 | https://www.hlbneurotobe.com/kor/main/main.html; https://www.biospectator.com/news/view/25498 |\n| 33 | NT-5 | HLB Neurotov | Undisclosed | Alzheimer's disease | IND-enabling | Republic of Korea | 1 | 0 | 1 | REJECT | indications는 흥미롭지만 target/MoA 미공개로 full scout 우선순위 낮음 | https://www.hlbneurotobe.com/kor/main/main.html |\n| 34 | MFP-037 | HLB Pharmaceutical Co Ltd | Long-acting injection DDS | Alzheimer's disease | Hit discovery | Republic of Korea | 1 | 1 | 1 | REJECT | 개량신약/DDS 성격으로 novel CNS biology fit이 약함 | https://www.hlbpharma.co.kr/eng/main/main.php |\n| 35 | DDA-279 | HLB Science Inc | Endotoxin peptide | Alzheimer's disease | IND-enabling | Republic of Korea | 1 | 1 | 1 | REJECT | AD indication은 있으나 endotoxin peptide MoA와 CNS relevance 공개 근거 부족 | https://www.hlbscience.com/ |\n| 36 | DDA-280 | HLB Science Inc | Endotoxin peptide follow-on | Alzheimer's disease | Hit discovery | Republic of Korea | 1 | 1 | 1 | REJECT | DDA-279 related-row; follow-on identity/data 부족 | https://www.hlbscience.com/ |\n| 37 | ZL-0018 | HQ Pharma | Muscarinic M1/M4 receptor | Schizophrenia / psychosis | IND-enabling | China | 2 | 2 | 1 | SELECT | M1/M4 schizophrenia biology는 strong fit이나 HQ/Shandong Zezheng asset source 확인 필요 | https://www.hqdds.com/cphpkx |\n| 38 | HMS 5678 | Hua Medicine | GK + GLP-1 combination | Alzheimer's disease | IND-enabling | China | 1 | 1 | 1 | REJECT | metabolic/GLP-1 AD hypothesis는 indirect이고 combination asset-specific CNS data 부족 | https://www.huamedicine.com/En |\n| 39 | mGLUR5 NAM | Hua Medicine Shanghai Ltd | mGluR5 NAM | Parkinson's disease | Discontinued / inactive | China | 0 | 0 | 0 | REJECT | Discontinued로 입력되어 early stop REJECT | https://www.huamedicine.com/En |\n| 40 | Poterepatide | Huadong Medicine | GLP-1/GIPR peptide | Unknown | IND-enabling | China | 0 | 1 | 1 | REJECT | OSA는 SKBP CNS canonical bucket 외이며 GLP-1/GIPR pain/neuro theme fit 낮음 | https://www.eastchinapharm.com/en/index.html |\n| 41 | Aukontals | Huadong Medicine | Free radical scavenger | Unknown | IND-enabling | China | 0 | 1 | 1 | REJECT | altitude sickness indication은 SKBP CNS pipeline priority와 거리가 있음 | https://www.eastchinapharm.com/en/index.html |\n| 42 | HWS111 | Hubei Biological Medicine Industrial Technology Institute | Undisclosed | Migraine / headache disorders | IND-enabling | China | 0 | 0 | 0 | N/A | source URL과 target/MoA 확인 근거가 없어 identity gate 통과 불가 | source_url_not_provided |\n| 43 | Fatigue Research Project | Hubei Qianjiang Pharmaceutical | Natural product, undisclosed | Unknown | Hit discovery | China | 0 | 0 | 0 | N/A | chronic fatigue project가 biotech/pharma asset으로 public verification 불충분 | http://www.qjzy.com/ |\n| 44 | Huntington's disease therapy, Hui-Gene Therapeutics | HuidaGene Therapeutics | mHTT mRNA allele-selective knockdown | Huntington's disease | Hit discovery | China | 3 | 2 | 1 | SELECT | HD/mHTT knockdown is strong target fit, but HG304 추정 및 asset identity 확인 필요 | https://www.huidagene.com/ |\n| 45 | HG-303 | HuidaGene Therapeutics Co Ltd | CRISPR/hfCas12Max AAV editing | Amyotrophic lateral sclerosis / motor neuron disease | IND-enabling | China | 2 | 2 | 1 | SELECT | ALS gene-editing modality는 full scout 가치 있으나 exact target/data 공개 확인 필요 | https://www.huidagene.com/ |\n| 46 | RNA-Editing Therapy | HuidaGene Therapeutics Co Ltd | RNA editing gene therapy | Alzheimer's disease | IND-enabling | China | 1 | 1 | 1 | REJECT | RNA-editing platform은 흥미롭지만 AD asset target·MoA·data가 불명확 | https://www.huidagene.com/ |\n| 47 | HG2A-2019 | HuidaGene Therapeutics Co Ltd | Gene therapy, undisclosed | Huntington's disease | Hit discovery | China | 2 | 1 | 1 | REJECT | HD fit은 있으나 target/MoA 및 asset identity가 불충분 | https://www.huidagene.com/ |\n| 48 | HG-001 | HUIGENE Therapeutics | SMN1 gene therapy | Amyotrophic lateral sclerosis / motor neuron disease | Discontinued / inactive | China | 0 | 0 | 0 | REJECT | Discontinued로 입력되어 early stop REJECT | https://www.huidagene.com/ |\n| 49 | Neurological Diseases Research Project 2 | HUIGENE Therapeutics | Gene therapy, undisclosed | Unknown | Hit discovery | China | 0 | 0 | 0 | N/A | asset명·target·indication이 generic하고 source도 pipeline-specific이 아님 | https://www.huidagene.com/ |\n| 50 | CXJM-66 Injection | Humanwell Healthcare Group | VGSCs small molecule | Pain | Phase 1 | China | 3 | 2 | 3 | SELECT | CTR20250872 Phase 1 및 NMPA clinical trial approval로 identity/data maturity 확인 | https://en.humanwell.com.cn/; https://en.likang-pharma.com/news/213.html; https://synapse.patsnap.com/drug/09e0b67b6d02474ea75e89ed532a7df5 |\n\n## Notes\n- 입력은 50개 행으로 해석했고, 50개 전부 처리했습니다.\n- SELECT 우선순위 후보: CXJM-66 Injection, Highlightll CNS Research Project/HL-400, HitGen/LoQus23 LQT-23, HLB Neurotov NT-3, HealthBiome HB-02, ZL-0018, HuidaGene HD/ALS gene therapy candidates.\n- N/A는 “없는 asset”이라는 뜻이 아니라, quick public identity check에서 asset-company-target-indication 연결이 충분히 확인되지 않았다는 뜻입니다.\n- Full Scout 전에 가장 먼저 확인할 질문: “asset-specific 공식 pipeline/registry/publication이 있는가, 아니면 내부/비공개 scouting row인가?”",
@@ -13018,7 +13042,7 @@
       "asset_name": "CXJM-66 Injection",
       "target": "VGSCs",
       "moa": "Voltage-gated sodium channel modulation for surgical anesthesia and postoperative pain management",
-      "modality_platform": "SM",
+      "modality_platform": "Small molecule",
       "main_indication": "Pain",
       "indication": "Acute pain; surgical anesthesia and postoperative pain management",
       "development_stage": "Phase 1",
@@ -13032,7 +13056,7 @@
     },
     "hard_filter": {
       "status": "REJECT",
-      "reason": "Identity verified and TR/MOA/Data scores are all >=2.",
+      "reason": "TR/MoA/Data 재점검 결과 SELECT 기준(TR>=2, MoA>=1, Data>=2)은 충족하지만, 공개 근거로 active asset 여부를 확인할 수 없어(active_asset=null) SELECT 대신 REJECT로 유지됩니다.",
       "flags": [
         "phase_1",
         "acute_pain_positioning"
@@ -13043,12 +13067,12 @@
     "scoring": {
       "criteria": {
         "target_relevance": {
-          "score": 3,
+          "score": 2,
           "evidence_type": "triage_only",
           "evidence_type_reason": "",
           "evidence_basis": "",
-          "main_line_summary": "VGSCs are directly relevant to pain and E/I ion-channel theme.",
-          "why_not_higher": "",
+          "main_line_summary": "TR 2 points: Confirmed indication is acute pain / surgical anesthesia and postoperative pain management, within SKBP's broad pain scope but not neuropathic pain.",
+          "why_not_higher": "Not neuropathic pain, so it does not qualify for TR 3 under the six SKBP priority indications.",
           "investigation_note": "",
           "uncertain_points": [
             "Exact sodium channel subtype not confirmed."
@@ -13074,12 +13098,12 @@
           ]
         },
         "data_maturity": {
-          "score": 3,
+          "score": 2,
           "evidence_type": "triage_only",
           "evidence_type_reason": "",
           "evidence_basis": "",
-          "main_line_summary": "Phase 1/CTR source visible.",
-          "why_not_higher": "",
+          "main_line_summary": "Data 2 points: CTR20250872 Phase 1 registration and NMPA trial approval confirm stage-appropriate program progression, but no additional quantitative evidence domain (e.g., PK/PD, efficacy, or safety data) is publicly available.",
+          "why_not_higher": "Only one stage-appropriate evidence domain (trial registration/approval) is confirmed; Data 3 requires two or more complementary quantitative domains.",
           "investigation_note": "",
           "uncertain_points": [
             "Trial result details not checked."
@@ -13089,7 +13113,7 @@
           ]
         }
       },
-      "total_score": 8,
+      "total_score": 6,
       "max_score": 9
     },
     "validation": {
@@ -13137,11 +13161,12 @@
       "identity_verified": true,
       "active_asset": null,
       "verified_public_source_count": 2,
-      "why": "Ion-channel pain asset with clinical-stage evidence is suitable for full scout.",
+      "why": "VGSC 조절 기반 pain asset으로 임상 단계 근거는 있으나, 확인된 적응증(acute/postoperative pain)은 6개 SKBP 우선 적응증에 해당하지 않고, activity 상태도 공개 근거로 확인되지 않아 REJECT입니다.",
       "missing_evidence_needed_for_full_scout": [
         "Exact VGSC subtype selectivity",
         "Phase 1 PK/PD results",
-        "Differentiation versus local anesthetics and Nav blockers"
+        "Differentiation versus local anesthetics and Nav blockers",
+        "Confirmation of current program activity status (active vs. discontinued/paused)"
       ]
     }
   },
@@ -43230,7 +43255,40 @@
         "updated_at": ""
       },
       "dashboard_uploaded_at": "2026-08-25T08:09:11.890337+00:00",
-      "storage_profile": "dashboard_hybrid_v1"
+      "storage_profile": "dashboard_hybrid_v1",
+      "rescored_rubric_version": "3.4",
+      "rescored_at": "2026-08-27T23:23:20.847353+00:00",
+      "rescored_by": "127.0.0.1",
+      "rubric_reviewed_version": "3.4",
+      "rubric_reviewed_at": "2026-08-27T23:23:20.847353+00:00",
+      "rubric_reviewed_by": "127.0.0.1",
+      "rubric_review_result": "updated",
+      "rubric_refresh_history": [
+        {
+          "version": "3.4",
+          "reviewed_at": "2026-08-27T23:23:20.847353+00:00",
+          "result": "updated",
+          "actor_ip": "127.0.0.1",
+          "reason": "확인된 적응증(advanced colorectal cancer)이 SKBP 광범위 신경계 범위 밖으로 확인되어, SKBP 우선 적응증에 해당하지 않으므로 TR 점수를 1로 조정해야 함.",
+          "changes": [
+            "target_relevance.score 0 -> 1"
+          ],
+          "changed_at": "2026-08-27T23:23:20.847353+00:00",
+          "cleared_manual_scoring_overrides": {}
+        }
+      ],
+      "edit_history": [
+        {
+          "id": "80b122180c884e4c9e9bf3569aefd4f8",
+          "changed_at": "2026-08-27T23:23:20.847583+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_rubric_refresh",
+          "field": "scoring",
+          "previous_value": "rubric v3.3",
+          "new_value": "rubric v3.4"
+        }
+      ]
     },
     "source_report": {
       "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 20개 후보의 quick public-source triage 결과 SELECT 10개, REJECT 10개, UNVERIFIED 0개이며, SELECT는 Full Scout v3.4 검토 가치가 있다는 뜻이지 최종 추천이 아닙니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Pipeline Stage | Location | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| 1 | AD-302 | AddPharma | Unknown; Unknown | Unknown | Pain — Pain treatment | Unknown | South Korea | TR 1 points: 공개 파이프라인의 적응증은 generic Pain treatment로만 확인되어 neuropathic pain 여부가 확정되지 않는다. | MoA 0 points: AD-302의 표적 또는 작용기전은 확인된 공개 근거가 없다. | Data 0 points: AD-302의 asset-specific 공개 결과는 확인되지 않았다. | REJECT | 공식 파이프라인에서 active identity는 확인되지만 generic pain만 확인되고 표적·MoA·asset-specific data가 없다. | C01S1 |\n| 2 | ADEL-Y03 | ADEL | free β2m; selective neutralization/blockade | Antibody | Alzheimer's disease | Preclinical unspecified | South Korea | TR 3 points: Alzheimer’s disease와 free β2m 표적이 확인되고 β2m 차단이 Aβ·염증·인지 병리와 직접 연결된다. | MoA 3 points: ADEL-Y03 자체가 free β2m 선택성, 기능적 차단, brain/plasma β2m 감소와 AD 병리 개선을 보였다. | Data 2 points: 전임상에서 인지·병리·표적 관련 정량 결과가 공개됐지만 임상 데이터는 아직 없다. | SELECT | AD interest fit과 asset-specific free-β2m mechanism validation 및 정량 전임상 결과가 확인됐다. | C02S1–C02S3 |\n| 3 | ADY-73001 | ADEL Inc | Aggregated tau; ADTAC targeted degradation | Targeted protein degrader | Alzheimer's disease | Lead Optimization | South Korea | TR 3 points: Alzheimer’s disease에서 응집 tau를 직접 분해하도록 설계된 ADTAC program임이 확인된다. | MoA 1 points: tau targeted degradation 기전은 회사 파이프라인 설명으로 확인되지만 ADY-73001 자체 기능 검증 데이터는 찾지 못했다. | Data 0 points: ADY-73001의 asset-specific 공개 결과는 확인되지 않았다. | REJECT | AD/tau fit은 높지만 asset-specific degradation/functional data가 공개 확인되지 않았다. | C03S1 |\n| 4 | GV1001 (tertomotide) | GemVax & KAEL Co Ltd | BDKRB1/B1R; GnRHR; receptor-linked neuroprotection and microglial modulation | Peptide | Alzheimer's disease | Phase 2 | South Korea | TR 3 points: Alzheimer’s disease에서 B1R/GnRHR-linked microglial·neuroprotective 작용이 직접 disease biology와 연결된다. | MoA 3 points: GV1001 자체의 B1R 결합, receptor-dependence, microglial phagocytosis 및 GnRHR-linked signaling이 실험적으로 확인됐다. | Data 3 points: 전임상 기전 데이터와 96명 무작위 Phase 2 임상 결과가 상보적으로 공개되어 있다. | SELECT | Interest fit, asset-specific MoA 및 randomized Phase 2 data가 모두 확인된다. | C04S1–C04S5 |\n| 5 | SVG103 (paxalisib) | SoVarGen Co Ltd | PI3K/mTOR; dual inhibition | Small molecule | Epilepsy / seizure disorders — TSC/FCD II epilepsy | Phase 1/2 | South Korea | TR 3 points: TSC-associated epilepsy가 확인되며 PI3K/mTOR 과활성은 해당 질환의 직접적인 병태 경로다. | MoA 2 points: SVG103의 PI3K/mTOR inhibition 기전과 독립적인 mTOR inhibitor의 TSC seizure 임상 validation이 확인된다. | Data 0 points: SVG103/paxalisib의 TSC/FCD epilepsy asset-specific 결과는 아직 공개되지 않았다. | SELECT | Interest indication과 mTOR class validation이 있고 2026 active Phase 1b/2a가 확인된다. | C05S1–C05S3 |\n| 6 | NXP032 (ascorbic acid + Aptamin C320) | Nexmos Inc | Oxidative stress/Aβ/neuroinflammation; stabilized ascorbic acid antioxidant action | Others | Alzheimer's disease | Unknown | South Korea | TR 3 points: Alzheimer’s disease 모델에서 NXP032의 antioxidant stabilization이 Aβ·neuroinflammation·인지 병리와 직접 연결된다. | MoA 3 points: NXP032 자체가 5xFAD에서 인지, Aβ, glial activation 및 neuronal degeneration을 기능적으로 변화시켰다. | Data 2 points: 5xFAD에서 여러 정량 전임상 endpoint가 공개됐지만 임상 또는 공식 개발진행 근거는 없다. | REJECT | Preclinical evidence는 있으나 현재 active development를 확인하지 못해 active_asset=null이다. | C06S1 |\n| 7 | PT320 (SR-exenatide) | Peptron Inc | GLP-1 receptor; sustained GLP-1R agonism | Peptide | Parkinson's disease | Phase 2 | South Korea | TR 3 points: Parkinson’s disease와 GLP-1R-mediated neuroprotection/regeneration이 직접 연결된 program이다. | MoA 3 points: PT320 자체가 MitoPark에서 행동 개선과 dopamine release/reuptake 보호 등 mechanism-linked 기능을 보였다. | Data 1 points: 국내 Phase 2 종료는 공식 확인되지만 공개된 환자 arm-level 정량 결과를 빠른 검증에서 확보하지 못했다. | SELECT | PD fit과 asset-specific preclinical MoA validation이 강하고 Phase 2 완료가 확인된다. | C07S1–C07S2 |\n| 8 | JBPOS-0101 | Bio-Pharm Solutions Co Ltd | mGluRs; mGluR antagonism with Aβ/tau/glial modulation | Small molecule | Alzheimer's disease | Phase 2 | South Korea | TR 3 points: Alzheimer’s disease에서 mGluR-targeting asset이 Aβ·tau·glial pathology와 memory deficit을 직접 개선한 근거가 있다. | MoA 2 points: JBPOS0101 자체가 5xFAD에서 Aβ, tau/GSK3β 및 glial activation을 변화시키는 functional evidence를 보였다. | Data 1 points: 정량 전임상 결과는 있으나 현재 Phase 2 수준에서 해석 가능한 임상 efficacy dataset은 확인되지 않았다. | SELECT | 2026 database의 active AD status와 asset-specific functional evidence를 근거로 Full Scout 가치가 있다. | C08S1–C08S3 |\n| 9 | KLS-2031 | Kolon Life Science Inc | GAD65/GDNF/IL-10; pain-signal, neuroprotection and neuroinflammation modulation | Gene therapy | Pain — neuropathic pain | Phase 1/2 | South Korea | TR 3 points: KLS-2031은 명시적 neuropathic pain program이며 GAD65·GDNF·IL-10이 pain signaling과 neuroinflammation에 직접 작용한다. | MoA 3 points: KLS-2031 자체가 neuropathy model에서 지속 analgesia와 DRG/spinal immune modulation을 보였다. | Data 1 points: 임상 1/2a 안전성 완료와 전임상 efficacy는 확인되지만 공개 임상 정량 efficacy 데이터가 부족하다. | SELECT | Neuropathic-pain fit, direct functional MoA 및 ongoing long-term follow-up이 확인된다. | C09S1–C09S2 |\n| 10 | METI-101 | MetiMedi Pharmaceuticals Co Ltd | Calcium homeostasis/metabolic delivery; Calcium-Based Therapy | Others | Unknown — advanced/refractory colorectal cancer | Phase 1/2 | South Korea | TR 0 points: 확인된 lead indication이 advanced colorectal cancer로 SKBP 관련 질환 범위 밖이다. | MoA 1 points: calcium-based therapy의 homeostasis bypass 기전은 회사 설명으로 확인되지만 asset-specific mechanistic validation은 제한적이다. | Data 2 points: METI-101 임상에서 median overall survival 23.4개월이라는 정량 결과가 회사 자료에 공개됐다. | REJECT | 임상 signal은 있으나 colorectal cancer로 SKBP disease scope 밖이다. | C10S1–C10S3 |\n| 11 | PAX-1 | Komipharm International Co Ltd | IL-1β/IL-18 pathway; cytokine production/release suppression | Small molecule | Pain — cancer-related pain | Phase 2 | South Korea | TR 1 points: lead indication은 cancer-related pain이며 neuropathic subtype으로 확정되지 않는다. | MoA 1 points: IL-1β 및 IL-18 생성·분비 억제 기전은 회사 설명으로 확인되지만 독립적 asset validation은 부족하다. | Data 1 points: 임상 efficacy 주장은 있으나 해석 가능한 정량 trial result는 빠른 검증에서 확보하지 못했다. | REJECT | Cancer pain은 확인되나 neuropathic pain으로 확정되지 않고 evidence가 회사 주장 중심이다. | C11S1–C11S2 |\n| 12 | TED-A9 | S.Biomedics Co Ltd | Lost nigrostriatal dopaminergic neurons; hESC-derived dopaminergic cell replacement | Cell therapy | Parkinson's disease | Phase 1/2 | South Korea | TR 3 points: Parkinson’s disease에서 소실된 dopaminergic neuron을 대체하는 cell-replacement mechanism이 직접 질환 병태와 연결된다. | MoA 3 points: TED-A9 이식 후 DAT PET SBR 증가가 확인되어 세포대체 mechanism과 연결된 임상 biomarker evidence가 있다. | Data 3 points: 12명 Phase 1/2a에서 운동기능, OFF/ON time, DAT PET 및 안전성의 상보적 정량 결과가 24개월까지 공개됐다. | SELECT | PD cell-replacement MoA와 임상 기능·imaging·safety evidence가 모두 확인된다. | C12S1–C12S2 |\n| 13 | VVZ-2471 | Vivozon Inc | mGluR5/5-HT2A; dual antagonism | Small molecule | Pain — postherpetic neuralgia | Phase 2 | South Korea | TR 3 points: postherpetic neuralgia는 명시적 neuropathic pain이며 mGluR5/5-HT2A dual antagonism이 pain signaling과 직접 연결된다. | MoA 3 points: VVZ-2471 자체의 receptor potency, downstream signaling 및 antinociceptive functional evidence가 확인된다. | Data 3 points: Phase 1 PK/PD와 randomized Phase 2 PHN topline이 상보적인 정량 human evidence를 제공한다. | SELECT | Neuropathic pain fit, direct MoA validation 및 Phase 1/2 human data가 확인된다. | C13S1–C13S3 |\n| 14 | ABF-101 | AptaBio Therapeutics Inc | NOX; NOX inhibition | Unknown | Unknown — age-related macular degeneration | Phase 1 | South Korea | TR 0 points: 확인된 적응증은 age-related macular degeneration으로 SKBP 관련 질환 범위 밖이다. | MoA 1 points: NOX inhibition과 angiogenesis 억제 기전은 회사의 ABF-101/103 묶음 자료로 확인되지만 ABF-101 단독 validation은 부족하다. | Data 0 points: ABF-101의 공개 asset-specific 임상 결과는 확인되지 않았다. | REJECT | FDA Clinical Hold 해제와 Phase 1 재개 승인은 확인되지만 AMD는 SKBP scope 밖이다. | C14S1–C14S2 |\n| 15 | CX213 | Cenyx Biotech Inc | ROS; self-regenerating cerium-oxide nanozyme ROS scavenging | Others | Stroke — subarachnoid hemorrhage | Phase 1 | South Korea | TR 1 points: subarachnoid hemorrhage는 neurologic cerebrovascular indication이지만 여섯 SKBP interest indication에는 포함되지 않는다. | MoA 1 points: self-regenerating cerium-oxide nanozyme의 ROS scavenging mechanism은 개발 프로그램 설명으로 확인되지만 직접 asset validation은 제한적이다. | Data 0 points: CX213의 asset-specific 공개 결과는 빠른 검증에서 확인되지 않았다. | REJECT | Phase 1 SAH program은 확인되지만 interest indication 밖이고 asset-specific result가 없다. | C15S1 |\n| 16 | DA-7503 | Dong-A ST Co Ltd | Tau; inhibition of tau aggregation/phosphorylation | Small molecule | Alzheimer's disease | Phase 1 | South Korea | TR 3 points: Alzheimer’s disease에서 tau aggregation을 직접 억제하는 저분자 program으로 disease biology와 직접 연결된다. | MoA 3 points: DA-7503 자체가 tau aggregation/phosphorylation 억제, cognition 개선 및 exposure-linked CSF tau 감소를 보였다. | Data 2 points: 임상 진입을 뒷받침한 정량 전임상 efficacy·biomarker evidence가 공개됐지만 human result는 아직 없다. | SELECT | Direct tau MoA evidence와 2026 current Phase 1이 확인된다. | C16S1–C16S2 |\n| 17 | FB-101 | 1st Bio Therapeutics Inc | c-Abl; inhibition of alpha-synuclein-linked pathogenesis | Small molecule | Parkinson's disease | Phase 1 | South Korea | TR 3 points: Parkinson’s disease에서 c-Abl–alpha-synuclein pathology를 겨냥하는 CNS program으로 직접 disease biology와 연결된다. | MoA 2 points: FB-101의 c-Abl inhibition 기전과 독립적인 c-Abl/alpha-synuclein disease validation은 확인되지만 asset-specific target engagement는 없다. | Data 1 points: Phase 1 SAD에서 안전성, dose-proportional PK 및 CSF penetration은 공개됐지만 상세 정량값과 PD 결과가 제한적이다. | SELECT | Current PD/c-Abl program, BBB penetration 및 independent target validation이 확인된다. | C17S1–C17S3 |\n| 18 | KNP-502 | Oscotec Inc | EP2/EP4; dual PGE2-receptor antagonism | Small molecule | Unknown — solid tumors | Phase 1 | South Korea | TR 0 points: 확인된 적응증은 solid tumors로 SKBP 관련 질환 범위 밖이다. | MoA 1 points: EP2/EP4 dual antagonism과 PGE2 pathway 억제 기전은 공식 개발자료로 확인되지만 asset-specific direct validation은 공개되지 않았다. | Data 0 points: KNP-502의 공개 asset-specific 임상 결과는 아직 확인되지 않았다. | REJECT | Current Phase 1 oncology program은 확인되지만 SKBP disease scope 밖이다. | C18S1 |\n| 19 | MS-1901 | Medinno Inc | Unknown; HIEstem MSC neuro-regenerative therapy | Cell therapy | Unknown — neonatal hypoxic-ischemic encephalopathy | Phase 1 | South Korea | TR 1 points: neonatal hypoxic-ischemic encephalopathy는 neurologic disease지만 여섯 SKBP interest indication에는 포함되지 않는다. | MoA 1 points: HIEstem mesenchymal stem-cell neuro-regenerative approach는 확인되지만 구체적 target-engagement 또는 direct mechanism validation은 부족하다. | Data 1 points: Phase 1 이력과 early-result 주장은 있으나 공개 정량 결과는 제한적이다. | REJECT | HIE는 interest indication 밖이고 quantitative/mechanistic evidence가 제한적이다. | C19S1–C19S2 |\n| 20 | MS-2001 | Medinno Inc | Unknown; HIEstem MSC neuro-regenerative therapy | Cell therapy | Unknown — cerebral intraventricular hemorrhage | Phase 1 | South Korea | TR 1 points: neonatal cerebral intraventricular hemorrhage는 neurologic disease지만 여섯 SKBP interest indication에는 포함되지 않는다. | MoA 1 points: HIEstem mesenchymal stem-cell neuro-regenerative approach는 확인되지만 구체적 target-engagement 또는 direct mechanism validation은 부족하다. | Data 1 points: Phase 1 이력은 확인되지만 MS-2001 코드에 연결된 공개 정량 결과는 제한적이다. | REJECT | IVH는 interest indication 밖이고 asset-code-specific quantitative data가 제한적이다. | C20S1–C20S2 |\n\n## Notes\n- 입력 후보 목록과 원래 순서는를 기준으로 유지했습니다.\n- Alias canonicalization: ADY-73001은 ADEL-Y07 하위 asset, tertomotide는 GV1001, exenatide SR은 PT320, TEDA-9는 공개표기 TED-A9, CX-213은 KDDF 표기 CX213으로 매핑했습니다.\n- NXP032은 2025 peer-reviewed AD data는 확인되지만 현재 공식 개발활동을 확인하지 못해 active_asset=null로 REJECT했습니다.\n- JBPOS-0101은 2026 commercial pipeline database에서 AD active로 표시되지만 공식 회사 source로 current status를 재확인하는 것이 Full Scout의 핵심 diligence point입니다.\n- SELECT: ADEL-Y03, GV1001 (tertomotide), SVG103 (paxalisib), PT320, JBPOS-0101, KLS-2031, TED-A9, VVZ-2471, DA-7503, FB-101.\n\n## References\n- C01S1 [AddPharma R&D Pipeline](https://www.addpharma.co.kr/eng/research/pipe)\n- C02S1 [ADEL-Y03 official pipeline](https://adelpharm.com/en/adel-y03/)\n- C02S2 [Selective targeting free beta-2 microglobulin as a promising therapeutic strategy for Alzheimer’s Disease](https://pmc.ncbi.nlm.nih.gov/articles/PMC11709532/)\n- C02S3 [WO2026024136A1 anti-β2m antibody patent](https://patents.google.com/patent/WO2026024136A1/ko)\n- C03S1 [ADEL-Y07 / ADY-73001 official pipeline](https://adelpharm.com/adel-y07/)\n- C04S1 [GemVax & KAEL pipeline](https://www.gemvax.com/sub/pipeline.php)\n- C04S2 [GemVax GV1001 development status](https://gemvax.com/sub/expand_access.php)\n- C04S3 [GV1001 and GnRHR](https://pubmed.ncbi.nlm.nih.gov/37884161/)\n- C04S4 [GV1001 and B1R](https://www.nature.com/articles/s12276-026-01729-9)\n- C04S5 [GV1001 Alzheimer’s Phase 2 RCT](https://pmc.ncbi.nlm.nih.gov/articles/PMC7995588/)\n- C05S1 [SoVarGen R&D Pipeline](https://www.sovargen.com/rd)\n- C05S2 [Monash SVG103 Phase 1b/2a project](https://research.monash.edu/en/projects/an-open-label-phase-1b2a-study-to-evaluate-the-safety-and-tolerab/)\n- C05S3 [EXIST-3 everolimus trial](https://pubmed.ncbi.nlm.nih.gov/27613521/)\n- C06S1 [NXP032 in 5xFAD AD model](https://www.frontiersin.org/journals/pharmacology/articles/10.3389/fphar.2025.1632640/full)\n- C07S1 [Peptron annual report / PT320](https://kind.krx.co.kr/external/2026/03/18/001924/20260318008812/11011.htm)\n- C07S2 [PT320 in MitoPark mice](https://pubmed.ncbi.nlm.nih.gov/33860208/)\n- C08S1 [JBPOS-0101 current pipeline profile](https://synapse.patsnap.com/drug/ffa52e2fba9341769c0422fa5d82632d)\n- C08S2 [JBPOS0101 AD model](https://pubmed.ncbi.nlm.nih.gov/32791516/)\n- C08S3 [JBPOS0101 clinical pharmacology](https://pmc.ncbi.nlm.nih.gov/articles/PMC11260762/)\n- C09S1 [Kolon KLS-2031 program](https://www.kolon.com/en/media/newsDtl?detailsKey=8350)\n- C09S2 [Kolon KLS-2031 diabetic peripheral neuropathy study](https://www.kolon.com/en/media/newsDtl?detailsKey=8432)\n- C10S1 [MetiMedi METI-101 pipeline](https://www.metimedi.com/en/page?no=9)\n- C10S2 [MetiMedi Calcium-Based Therapy](https://www.metimedi.com/en/page?no=8)\n- C10S3 [MetiMedi press releases](https://www.metimedi.com/en/board/board_list?code=press)\n- C11S1 [Komipharm PAX-1 pipeline](https://komipharm.co.kr/en/medi_develop_01.php)\n- C11S2 [Komipharm PAX-1 mechanism](https://www.komipharm.co.kr/en/medi_project_02.php)\n- C12S1 [S.Biomedics 2026 Q1 filing](https://kind.krx.co.kr/external/2026/05/14/001080/20260514002359/11013.htm)\n- C12S2 [TED-A9 24-month Phase 1/2a results](https://www.seoul.co.kr/news/economy/2026/06/15/20260615500037)\n- C13S1 [VVZ-2471 first-in-human study](https://pubmed.ncbi.nlm.nih.gov/40234362/)\n- C13S2 [VVZ-2471 preclinical dual-target validation](https://pmc.ncbi.nlm.nih.gov/articles/PMC12564658/)\n- C13S3 [VVZ-2471 Phase 2 PHN topline](https://view.asiae.co.kr/en/article/2026070610000910854)\n- C14S1 [ABF-101 FDA Clinical Hold removal](https://kind.krx.co.kr/external/2026/06/16/000253/20260612000138/72050.htm)\n- C14S2 [AptaBio NOX/AMD program](https://aptabio.com/science/science03.php)\n- C15S1 [KDDF CX213 Phase 1 development sheet](https://kddf.org/upload/files/1755051866_ada9c71f161fe0fbf18b.pdf)\n- C16S1 [Dong-A ST 2026 R&D update](https://www.donga-st.com/html/news_detail.php?bo_table=board_news&wr_id=574)\n- C16S2 [Dong-A ST DA-7503 Phase 1/preclinical evidence](https://www.donga-st.com/html/news_detail.php?bo_table=board_news&wr_id=451)\n- C17S1 [1ST Biotherapeutics FB-101](https://www.1stbio.com/disease-areas/)\n- C17S2 [FB-101 Phase I SAD data](https://www.globenewswire.com/news-release/2022/10/18/2536020/0/en/1st-biotherapeutics-inc-announces-positive-phase-i-data-of-c-abl-inhibitor-in-neurodegeneration.html)\n- C17S3 [c-Abl / alpha-synuclein biology](https://pmc.ncbi.nlm.nih.gov/articles/PMC10459316/)\n- C18S1 [Kanaph annual report / KNP-502](https://kind.krx.co.kr/external/2026/03/19/001000/20260319004202/11011.htm)\n- C19S1 [Medinno pipeline profile](https://synapse.patsnap.com/organization/df41b05a6cdc8cbcb02f85b992bcb55a)\n- C19S2 [MS-1901 profile](https://synapse.patsnap.com/drug/03b9b17ba3254e72bc5045f775030712)\n- C20S1 [Medinno pipeline profile](https://synapse.patsnap.com/organization/df41b05a6cdc8cbcb02f85b992bcb55a)\n- C20S2 [MS-2001 HIEstem profile](https://data.pharmacodia.com/drugs/details/1745315442710282468)",
@@ -43263,8 +43321,8 @@
       ]
     },
     "hard_filter": {
-      "status": "INSUFFICIENT",
-      "reason": "Does not meet Fast Triage SELECT rule.",
+      "status": "REJECT",
+      "reason": "Fast Triage rubric v3.4 AI score refresh",
       "flags": [],
       "hard_blocker": false,
       "decision_uncertainty": false
@@ -43272,14 +43330,16 @@
     "scoring": {
       "criteria": {
         "target_relevance": {
-          "score": 0,
+          "score": 1,
           "evidence_type": "triage_only",
           "evidence_type_reason": "Fast Triage v3.3.",
           "evidence_basis": "public_source",
-          "main_line_summary": "TR 0 points: 확인된 lead indication이 advanced colorectal cancer로 SKBP 관련 질환 범위 밖이다.",
+          "main_line_summary": "AI Agent Fast Triage Rubric v3.4 re-evaluation update. Applied from detail chat answer: Target Relevance: 1 - 확인된 적응증은 대장암으로 SKBP 신경계·통증 범위 밖이나 identity와 indication은 확인됨.",
           "why_not_higher": "SKBP-related indication 미확인.",
-          "investigation_note": "",
-          "uncertain_points": [],
+          "investigation_note": "Updated through AI draft chat. Rubric text is stored separately in the rubric section.",
+          "uncertain_points": [
+            "AI draft update. Reviewer should confirm source-level evidence."
+          ],
           "source_ids": [
             "C10S1"
           ]
@@ -43311,7 +43371,7 @@
           ]
         }
       },
-      "total_score": 3,
+      "total_score": 4,
       "max_score": 9
     },
     "validation": {
@@ -43345,11 +43405,11 @@
     },
     "final_insight": {
       "one_line_summary": "Clinical signal은 있으나 colorectal cancer로 SKBP scope 밖이다.",
-      "recommendation": "Do not run Full Scout",
+      "recommendation": "Monitor / gather more evidence",
       "most_important_diligence_question": "SKBP interest disease로의 공식 asset-level development가 존재하는가?"
     },
     "triage": {
-      "status": "INSUFFICIENT",
+      "status": "REJECT",
       "identity_verified": true,
       "active_asset": true,
       "verified_public_source_count": 3,

@@ -3758,6 +3758,15 @@ td {
   border-color: color-mix(in srgb, currentColor 35%, var(--line));
 }
 
+/* Full Scout aliases shown in Fast Triage are read-only, but retain the same
+   rectangular status and score geometry as native Fast Triage rows. */
+.pipeline-table .table-edit-select.is-readonly {
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  cursor: inherit;
+}
+
 .table-edit-select.status-edit.pass,
 .table-edit-select.status-edit.select,
 .table-edit-select.score-edit.high {
@@ -3848,6 +3857,13 @@ td {
 .evidence-edit.is-saving {
   cursor: wait;
   opacity: 0.55;
+}
+
+.evidence-edit.is-readonly {
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  cursor: default;
 }
 
 .partnership-edit-select {
@@ -4125,6 +4141,47 @@ td {
   color: var(--red);
 }
 
+.dd-status-circle {
+  display: inline-grid;
+  width: 26px;
+  min-width: 26px;
+  height: 26px;
+  min-height: 26px;
+  place-items: center;
+  line-height: 1;
+  cursor: default;
+}
+
+.dd-status-circle.dd-status-link {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.focus-management-table .evidence-tooltip.help-tooltip {
+  display: block;
+  min-width: 0;
+}
+
+.focus-management-table .evidence-tooltip.help-tooltip::after {
+  top: auto;
+  right: auto;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  z-index: 50;
+  width: min(250px, 70vw);
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.45;
+  transform: translate(-50%, 4px);
+}
+
+.focus-management-table .evidence-tooltip.help-tooltip:hover::after,
+.focus-management-table .evidence-tooltip.help-tooltip:focus-within::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
 .total-score-edit-circle::-webkit-inner-spin-button,
 .total-score-edit-circle::-webkit-outer-spin-button {
   margin: 0;
@@ -4309,19 +4366,32 @@ html[data-theme="dark"] .bar-track {
 
 html[data-theme="dark"] .pill.pass,
 html[data-theme="dark"] .score.high,
-html[data-theme="dark"] .score-chip.tone-high {
+html[data-theme="dark"] .score-chip.tone-high,
+html[data-theme="dark"] .table-edit-select.status-edit.pass,
+html[data-theme="dark"] .table-edit-select.status-edit.select,
+html[data-theme="dark"] .table-edit-select.score-edit.high,
+html[data-theme="dark"] .total-score-edit-circle.high,
+html[data-theme="dark"] .evidence-edit.pass {
   background: rgba(52, 211, 153, 0.14);
 }
 
 html[data-theme="dark"] .pill.fail,
 html[data-theme="dark"] .score.low,
-html[data-theme="dark"] .score-chip.tone-low {
+html[data-theme="dark"] .score-chip.tone-low,
+html[data-theme="dark"] .table-edit-select.status-edit.fail,
+html[data-theme="dark"] .table-edit-select.score-edit.low,
+html[data-theme="dark"] .total-score-edit-circle.low,
+html[data-theme="dark"] .evidence-edit.fail {
   background: rgba(251, 113, 133, 0.14);
 }
 
 html[data-theme="dark"] .pill.review,
 html[data-theme="dark"] .score.mid,
-html[data-theme="dark"] .score-chip.tone-mid {
+html[data-theme="dark"] .score-chip.tone-mid,
+html[data-theme="dark"] .table-edit-select.status-edit.review,
+html[data-theme="dark"] .table-edit-select.score-edit.mid,
+html[data-theme="dark"] .total-score-edit-circle.mid,
+html[data-theme="dark"] .evidence-edit.review {
   background: rgba(251, 191, 36, 0.16);
 }
 
@@ -4333,9 +4403,29 @@ html[data-theme="dark"] .pill.waiting {
 html[data-theme="dark"] .pill.na,
 html[data-theme="dark"] .pill.empty,
 html[data-theme="dark"] .score.pending,
-html[data-theme="dark"] .score-chip.tone-pending {
+html[data-theme="dark"] .score-chip.tone-pending,
+html[data-theme="dark"] .table-edit-select.status-edit.na,
+html[data-theme="dark"] .table-edit-select.status-edit.reject,
+html[data-theme="dark"] .table-edit-select.status-edit.empty,
+html[data-theme="dark"] .evidence-edit.na,
+html[data-theme="dark"] .partnership-edit-select.na,
+html[data-theme="dark"] .partnership-edit-select.empty {
   background: rgba(148, 163, 184, 0.16);
   color: #cbd5e1;
+}
+
+html[data-theme="dark"] .partnership-edit-select.investment {
+  background: rgba(122, 162, 255, 0.16);
+}
+
+html[data-theme="dark"] .partnership-edit-select.value-up {
+  background: rgba(167, 139, 250, 0.18);
+  color: #c4b5fd !important;
+}
+
+html[data-theme="dark"] .partnership-edit-select.joint-research {
+  background: rgba(251, 146, 60, 0.16);
+  color: #fdba74;
 }
 
 html[data-theme="dark"] .score-chip {
@@ -12176,6 +12266,18 @@ html[data-theme="dark"] .pipeline-table .clickable-row.selected-row:hover td {
   background: color-mix(in srgb, var(--accent) 27%, var(--readable-surface));
 }
 
+/* Brief, soft highlight for a row that just moved (rubric re-score) or that the
+   user is being returned to (came back from its detail page), so it's easy to
+   spot without a jarring flash. */
+@keyframes pipeline-row-return-highlight {
+  0% { background: color-mix(in srgb, var(--accent) 30%, var(--readable-surface)); }
+  100% { background: transparent; }
+}
+
+.pipeline-table .clickable-row.pipeline-row-return-highlight td {
+  animation: pipeline-row-return-highlight 3s ease-out;
+}
+
 .pipeline-table th,
 .pipeline-table td {
   border-color: color-mix(in srgb, var(--glass-border) 82%, transparent);
@@ -17255,6 +17357,12 @@ html[data-theme="dark"] .admin-state.is-inactive { background: #481d24; color: #
   color: #5eead4;
   font-size: 10px;
   line-height: 1;
+  transition: transform 150ms ease;
+}
+
+/* Give every header tab button's leading icon a hover-grow affordance. */
+.topbar-top .workflow-navigation-shell .pipeline-table-tabs button:hover .tab-step {
+  transform: scale(1.12);
 }
 
 .topbar-top .workflow-navigation-shell .pipeline-table-tabs .tab-step-star {
@@ -17580,25 +17688,26 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
   min-height: 38px;
   gap: 5px;
   padding: 4px 8px;
-  border-radius: 0;
+  /* Match the rounded interaction shape used by the workflow tabs. */
+  border-radius: 8px;
   color: rgba(255, 255, 255, 0.7);
 }
 
 .app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .workflow-knowledge-map-link:hover {
   border-color: transparent;
-  background: rgba(255, 255, 255, 0.045);
+  background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
 
 .app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .workflow-knowledge-map-link.active {
-  border-color: transparent;
-  background: transparent;
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.11);
   color: #ffffff;
-  box-shadow: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .pipeline-table-tabs button + .workflow-knowledge-map-link {
-  border-left: 1px solid rgba(255, 255, 255, 0.11);
+  border-left: none;
 }
 
 .app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .workflow-knowledge-map-link.active::after {
@@ -17606,7 +17715,7 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
   bottom: 0;
   left: 12px;
   height: 2px;
-  border-radius: 0;
+  border-radius: 3px 3px 0 0;
 }
 
 .workflow-knowledge-map-link b {
@@ -17625,15 +17734,20 @@ html[data-theme="dark"] .app-shell:not(.detail-shell):not(.triage-detail-shell):
   color: #ffffff;
 }
 
-/* Atlas keeps its original Gemini-style indigo insight marker. */
-.topbar-top .workflow-knowledge-map-link .knowledge-map-icon,
-.topbar-top .workflow-knowledge-map-link:hover .knowledge-map-icon,
-.topbar-top .workflow-knowledge-map-link.active .knowledge-map-icon {
+/* Keep Wiki Map's header star lavender even before the tab is hovered. */
+.app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .workflow-knowledge-map-link .knowledge-map-icon,
+.app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .workflow-knowledge-map-link:hover .knowledge-map-icon,
+.app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .workflow-knowledge-map-link.active .knowledge-map-icon {
   color: #c4b5fd;
   font-size: 16px;
   font-weight: 900;
   letter-spacing: 0;
   text-shadow: 0 0 10px rgba(167, 139, 250, 0.48);
+}
+
+.app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .workflow-knowledge-map-link:hover .knowledge-map-icon,
+.app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .workflow-knowledge-map-link:focus-visible .knowledge-map-icon {
+  transform: scale(1.12);
 }
 
 @media (min-width: 1281px) {
@@ -18192,6 +18306,13 @@ html[data-workflow-mode="full"] .paste-panel,
   background: color-mix(in srgb, var(--data-upload-accent) 4%, var(--surface));
 }
 
+/* The Listing guide's first step alone contains an input-format example box.
+   Keep that box on the same neutral surface as every Quick Guide step card. */
+#step0GuideSteps > li > .data-upload-step-copy > pre {
+  border-color: color-mix(in srgb, var(--line) 76%, transparent);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+}
+
 .data-upload-guide-steps pre span {
   display: flex;
   align-items: center;
@@ -18686,7 +18807,7 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
 
 .triage-status-grid .criteria-status-subtitle {
   min-height: 0;
-  margin-bottom: 12px;
+  margin-bottom: 0;
   color: color-mix(in srgb, var(--text) 82%, var(--muted));
   font-size: 13px;
   font-weight: 600;
@@ -19712,21 +19833,18 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
   background: color-mix(in srgb, var(--criteria-section-accent) 7%, var(--readable-surface));
 }
 
-/* Align the three Tab 1 status-card bullet lists to one shared vertical start. */
+/* Let each Tab 1 status card's colored summary hug its own text instead of
+   forcing a shared fixed-height row (which left unfilled blank space below
+   shorter summaries). */
 @media (min-width: 901px) {
   .criteria-drawer-body .triage-status-grid[data-criteria-tab="triage"] .criteria-status-card {
     display: grid;
-    grid-template-rows: auto minmax(74px, auto) 1fr;
+    grid-template-rows: auto auto 1fr;
     align-content: start;
-  }
-
-  .criteria-drawer-body .triage-status-grid[data-criteria-tab="triage"] .criteria-status-subtitle {
-    min-height: 74px;
   }
 
   .criteria-drawer-body .triage-status-grid[data-criteria-tab="triage"] .criteria-status-card > ul {
     align-self: start;
-    margin: 0;
   }
 }
 
@@ -19790,9 +19908,16 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
   min-height: 0;
   height: auto;
   align-self: start;
+  margin: 0;
   border: 0;
   background: color-mix(in srgb, var(--criteria-status-color) 8%, var(--readable-surface));
   box-shadow: none;
+}
+
+/* Match the Full Scout Final Status gap: the summary box carries no margin of
+   its own, so this is the single source of space before the bullet list. */
+.criteria-drawer-body .triage-status-grid[data-criteria-tab="triage"] .criteria-status-card > ul {
+  margin: 8px 0 0;
 }
 
 /* Tab 2 evidence records use the same concise three-card rhythm as Tab 1. */
@@ -20674,31 +20799,6 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
   }
 }
 
-/* Final desktop alignment for the three Full Scout Total Score bullet starts. */
-@media (min-width: 901px) {
-  .criteria-drawer-body .full-status-grid[data-criteria-tab="full"] .criteria-status-card {
-    grid-template-rows: auto 78px 1fr;
-  }
-
-  .criteria-drawer-body .full-status-grid[data-criteria-tab="full"] .criteria-full-status-summary-slot {
-    display: flex;
-    width: 100%;
-    height: 78px;
-  }
-
-  .criteria-drawer-body .full-status-grid[data-criteria-tab="full"] .criteria-full-status-summary {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    min-height: 0;
-    height: 100%;
-  }
-
-  .criteria-drawer-body .full-status-grid[data-criteria-tab="full"] .criteria-status-card > ul {
-    margin-top: 8px;
-  }
-}
-
 /* OI Partnership Type cards exactly follow the Final Status helper-and-bullet hierarchy. */
 .criteria-drawer-body .criteria-focus-decision-grid .criteria-focus-decision-card {
   display: grid;
@@ -21546,6 +21646,18 @@ html[data-theme="dark"] .detail-shell #detailActionDate:focus-visible {
 html[data-theme="dark"] .detail-page-footer { color: #8d8d95; }
 html[data-theme="dark"] .detail-page-footer strong { color: #b1b1b8; }
 
+/* Fast Triage has one continuous document; keep its attribution after the
+   content instead of pinning it over the viewport while the user scrolls. */
+.triage-detail-shell > .detail-page-footer {
+  position: static;
+  box-sizing: border-box;
+  width: min(1740px, calc(100% - 40px));
+  margin: 20px auto 16px;
+  border-top: 1px solid var(--line);
+  padding: 12px 4px 0;
+  pointer-events: auto;
+}
+
 @media (max-width: 980px) {
   .detail-page-footer {
     position: static;
@@ -22201,7 +22313,10 @@ body.report-reupload-open {
 .step0-summary-dashboard-heading[aria-expanded="false"] {
   margin-bottom: 0;
   border: 1px solid color-mix(in srgb, var(--line) 84%, #dfe5e9);
-  border-radius: 10px;
+  /* Collapsing hides the workflow graphs but keeps the metric-card body.
+     Keep the header joined to that body rather than rounding its lower edge. */
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
 }
 
 .step0-summary-dashboard-title {
@@ -23506,15 +23621,48 @@ html[data-theme="dark"] .auth-modal input:focus-visible {
 
 .triage-contact-history > .triage-contact-history-trigger { display: none; }
 
+.triage-note-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  vertical-align: middle;
+}
+
 .triage-final-comment .triage-contact-history-trigger {
   display: inline-flex;
   min-height: 30px;
   align-items: center;
   justify-content: center;
-  margin-left: 5px;
   padding: 5px 10px;
-  vertical-align: middle;
 }
+
+.triage-rubric-refresh {
+  display: inline-grid;
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  place-items: center;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.triage-rubric-refresh:hover,
+.triage-rubric-refresh:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--line));
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+  color: var(--accent-strong);
+  outline: none;
+}
+
+.triage-rubric-refresh:disabled { cursor: wait; opacity: .56; }
+.triage-rubric-refresh svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.triage-rubric-refresh.is-saving svg { animation: triage-rubric-refresh-spin .9s linear infinite; }
+
+@keyframes triage-rubric-refresh-spin { to { transform: rotate(360deg); } }
 
 .triage-contact-history-form {
   border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
@@ -24192,4 +24340,199 @@ html[data-theme="dark"] .step0-edit-locked-modal { background: #0f1828; }
   .step0-entry-grid-panel { padding: 9px; }
   .step0-entry-grid-label { align-items: flex-start; flex-direction: column; gap: 3px; }
   .step0-entry-grid { min-width: 760px; }
+}
+
+/* Pipeline score headers keep sorting and filtering as separate, compact actions.
+   The popover is appended to body so it stays visible above the scrolling table. */
+.pipeline-table th.score-filter-header {
+  overflow: visible;
+  padding-inline: 3px;
+}
+
+.score-filter-header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+
+.score-filter-header-trigger,
+.table-score-sort-button {
+  min-height: 25px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.score-filter-header-trigger {
+  display: inline-flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 3px 1px 3px 4px;
+  cursor: pointer;
+}
+
+.table-score-sort-button {
+  width: 14px;
+  min-width: 14px;
+  padding: 3px 1px;
+  cursor: pointer;
+}
+
+.score-filter-header-trigger:hover,
+.table-score-sort-button:hover,
+.score-filter-header-trigger:focus-visible,
+.table-score-sort-button:focus-visible {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent-strong);
+  outline: none;
+}
+
+.score-filter-header-dot,
+.table-score-filter-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.score-filter-header-dot { display: none; }
+.score-filter-header.has-score-filter .score-filter-header-dot { display: inline-block; }
+
+.pipeline-table th .table-score-sort-button.sort-active::after { display: none; }
+.score-sort-glyph { display: inline-block; font-size: 13px; font-weight: 850; }
+
+.table-score-filter-popover {
+  position: fixed;
+  z-index: 1000;
+  max-height: calc(100vh - 24px);
+  padding: 10px;
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--line) 88%, #8e8e93);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, .18), 0 2px 8px rgba(15, 23, 42, .08);
+  color: var(--text);
+}
+
+.table-score-filter-popover[hidden] { display: none; }
+
+.table-score-filter-popover-heading,
+.table-score-filter-expression-row,
+.table-score-filter-actions {
+  display: flex;
+  align-items: center;
+}
+
+.table-score-filter-popover-heading {
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.table-score-filter-popover-heading > div { display: grid; gap: 2px; }
+.table-score-filter-popover-heading strong { font-size: 12px; }
+.table-score-filter-popover-heading span,
+.table-score-filter-helper { color: var(--muted); font-size: 10px; line-height: 1.45; }
+
+.table-score-filter-close {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.table-score-filter-close:hover,
+.table-score-filter-close:focus-visible { background: var(--surface-soft); color: var(--text); outline: none; }
+
+.table-score-filter-expression-row { gap: 5px; margin-top: 9px; }
+.table-score-filter-expression-row label { min-width: 0; flex: 1 1 auto; }
+.table-score-filter-expression-row input {
+  width: 100%;
+  min-height: 30px;
+  box-sizing: border-box;
+  padding: 5px 7px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--input-bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 11px;
+}
+
+.table-score-filter-expression-row input:focus-visible { border-color: var(--accent); outline: none; }
+
+.table-score-filter-all,
+.table-score-filter-add,
+.table-score-filter-actions button {
+  min-height: 30px;
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.table-score-filter-all.is-selected,
+.table-score-filter-actions button,
+.table-score-filter-all:hover,
+.table-score-filter-add:hover {
+  border-color: color-mix(in srgb, var(--accent) 52%, var(--line));
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--accent-strong);
+}
+
+.table-score-filter-group-label { margin: 10px 0 4px; color: var(--muted); font-size: 10px; font-weight: 800; }
+.table-score-filter-option-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+.focus-status-filter-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.table-score-filter-option-grid + .table-score-filter-group-label { margin-top: 9px; }
+
+.table-score-filter-option {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 5px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.table-score-filter-dot { visibility: hidden; }
+.table-score-filter-option.is-selected { border-color: color-mix(in srgb, var(--accent) 58%, var(--line)); background: color-mix(in srgb, var(--accent) 9%, var(--surface)); color: var(--accent-strong); }
+.table-score-filter-option.is-selected .table-score-filter-dot { visibility: visible; }
+.table-score-filter-option:hover,
+.table-score-filter-option:focus-visible { border-color: color-mix(in srgb, var(--accent) 48%, var(--line)); outline: none; }
+
+.table-score-filter-helper { margin: 9px 1px 0; }
+.table-score-filter-actions { justify-content: flex-end; margin-top: 9px; }
+.table-score-filter-actions button { min-width: 54px; }
+
+@media (max-width: 640px) {
+  .table-score-filter-popover { width: min(292px, calc(100vw - 24px)) !important; }
 }

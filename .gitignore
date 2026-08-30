@@ -15,3 +15,5 @@ node_modules/
 tmp/
 local-backups/
 data/users.json
+graphify-out/
+.claude/settings.json.graphify-bak

@@ -1544,17 +1544,22 @@ def calculate_fast_triage_status(
     target_relevance: int,
     moa_validity: int,
     data_maturity: int,
-    active_asset: bool | None = None,
-    hard_blocker: bool = False,
+    development_stage: str | None = None,
 ) -> str:
-    """Return SELECT, REJECT, or INSUFFICIENT using the current Fast Triage gate."""
+    """Return SELECT, REJECT, or INSUFFICIENT using the current Fast Triage gate.
+
+    v3.5 dropped the separate ``active_asset`` tri-state field: it overlapped
+    with ``development_stage`` and its "confirmed inactive" bar was undefined
+    in evidentiary/recency terms. Development stage's existing
+    ``Discontinued / inactive`` canonical value is now the sole activity gate.
+    """
     if identity_verified is not True:
         return "INSUFFICIENT"
-    if active_asset is False or hard_blocker:
+    if development_stage == "Discontinued / inactive":
         return "INSUFFICIENT"
     if min(target_relevance, moa_validity, data_maturity) == 0:
         return "INSUFFICIENT"
-    if active_asset is True and target_relevance >= 2 and moa_validity >= 1 and data_maturity >= 2:
+    if target_relevance >= 3 and moa_validity >= 1 and data_maturity >= 2:
         return "SELECT"
     return "REJECT"
 
@@ -2181,41 +2186,6 @@ def normalize_current_record_filter_fields(record: dict[str, Any], index: int) -
             summary["company_country"] = table["company_country"]
 
 
-def fast_triage_record_has_hard_blocker(record: dict[str, Any]) -> bool:
-    table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else {}
-    if canonicalize_development_stage(table.get("development_stage")) == "Discontinued / inactive":
-        return True
-    triage = record.get("triage") if isinstance(record.get("triage"), dict) else {}
-    if triage.get("active_asset") is False:
-        return True
-    hard_filter = record.get("hard_filter") if isinstance(record.get("hard_filter"), dict) else {}
-    flags = hard_filter.get("flags") if isinstance(hard_filter.get("flags"), list) else []
-    return fast_triage_lifecycle_text_has_hard_blocker(flags)
-
-
-FAST_TRIAGE_LIFECYCLE_BLOCKER_RE = re.compile(
-    r"\b(?:inactive|discontinued|terminated|withdrawn|dormant|abandoned|clearly[\s_-]+failed|hard[\s_-]*blocker)\b|"
-    r"(?:개발|프로그램|임상)\s*(?:이\s*)?(?:종료|철회|휴면|비활성|포기)",
-    flags=re.IGNORECASE,
-)
-
-
-def fast_triage_lifecycle_text_has_hard_blocker(values: Any) -> bool:
-    """Recognize affirmed lifecycle blockers in free-form flags without negation false positives."""
-    items = values if isinstance(values, list) else [values]
-    for item in items:
-        text = str(item or "")
-        for match in FAST_TRIAGE_LIFECYCLE_BLOCKER_RE.finditer(text):
-            prefix = text[max(0, match.start() - 28) : match.start()]
-            suffix = text[match.end() : match.end() + 20]
-            if re.search(r"\b(?:not|without|never|no)\b[^|.;\n]{0,20}$|(?:아니|없)는?\s*$", prefix, re.IGNORECASE):
-                continue
-            if re.match(r"\s*(?:없(?:음|다)?|아님|아니|not\b|false\b)", suffix, re.IGNORECASE):
-                continue
-            return True
-    return False
-
-
 def is_minimal_dashboard_contract(record: dict[str, Any]) -> bool:
     meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
     storage_profile = str(meta.get("storage_profile") or "").strip().lower()
@@ -2735,8 +2705,9 @@ def validate_minimal_dashboard_record(
                 target_relevance=criteria["target_relevance"]["score"],
                 moa_validity=criteria["moa_validity"]["score"],
                 data_maturity=criteria["data_maturity"]["score"],
-                active_asset=triage.get("active_asset"),
-                hard_blocker=fast_triage_record_has_hard_blocker(record),
+                development_stage=canonicalize_development_stage(
+                    (record.get("structured_table") or {}).get("development_stage")
+                ),
             )
             if status != expected_status:
                 validation_error(f"record[{index}] Fast Triage status must be {expected_status}; got {status}.")
@@ -2978,13 +2949,6 @@ def validate_records_for_save(
                 identity_verified = triage.get("identity_verified")
                 if not isinstance(identity_verified, bool):
                     validation_error(f"record[{index}].triage.identity_verified must be true or false.")
-                if "active_asset" not in triage or (
-                    triage.get("active_asset") is not None
-                    and not isinstance(triage.get("active_asset"), bool)
-                ):
-                    validation_error(
-                        f"record[{index}].triage.active_asset is required and must be true, false, or null."
-                    )
                 normalize_current_record_filter_fields(record, index)
             triage_summary_errors: list[str] = []
             for criterion_id in ["target_relevance", "moa_validity", "data_maturity"]:
@@ -3048,8 +3012,9 @@ def validate_records_for_save(
                     target_relevance=tr_score,
                     moa_validity=moa_score,
                     data_maturity=data_score,
-                    active_asset=triage["active_asset"],
-                    hard_blocker=fast_triage_record_has_hard_blocker(record),
+                    development_stage=canonicalize_development_stage(
+                        (record.get("structured_table") or {}).get("development_stage")
+                    ),
                 )
                 if filter_status != expected_status:
                     validation_error(
@@ -5352,22 +5317,22 @@ def listing_metadata_owned_by_account(metadata: dict[str, str], prefix: str, acc
 
 
 def can_edit_listing_comment(metadata: dict[str, str], account: dict[str, Any]) -> bool:
-    """Only its author account may alter a direct Tab 0 Listing post."""
+    """Only its author account may alter a direct Tab 0 Listing post; bulk-imported posts are developer-only."""
     if not str(metadata.get("comment") or "").strip():
         return True
     source = str(metadata.get("comment_source") or "").strip()
     if source == "team_review_import":
-        return True
+        return has_auth_role(account, ROLE_DEVELOPER)
     return source == "admin_listing_post" and listing_metadata_owned_by_account(metadata, "comment", account)
 
 
 def can_edit_listing_contact(metadata: dict[str, str], account: dict[str, Any]) -> bool:
-    """Only its author account may alter a direct Tab 0 Contact History post."""
+    """Only its author account may alter a direct Tab 0 Contact History post; bulk-imported posts are developer-only."""
     if not str(metadata.get("contact") or "").strip():
         return True
     source = str(metadata.get("contact_source") or "").strip()
     if source == "team_review_import":
-        return True
+        return has_auth_role(account, ROLE_DEVELOPER)
     return source == "admin_contact_post" and listing_metadata_owned_by_account(metadata, "contact", account)
 
 
@@ -10164,17 +10129,14 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
         if triage_workflow:
             triage = candidate.setdefault("triage", {})
             criteria = candidate.setdefault("scoring", {}).setdefault("criteria", {})
-            hard_blocker = fast_triage_record_has_hard_blocker(candidate)
-            active_asset = triage.get("active_asset")
-            if not isinstance(active_asset, bool):
-                active_asset = not hard_blocker
             status = calculate_fast_triage_status(
                 identity_verified=triage.get("identity_verified") is True,
                 target_relevance=int((criteria.get("target_relevance") or {}).get("score")),
                 moa_validity=int((criteria.get("moa_validity") or {}).get("score")),
                 data_maturity=int((criteria.get("data_maturity") or {}).get("score")),
-                active_asset=active_asset,
-                hard_blocker=hard_blocker,
+                development_stage=canonicalize_development_stage(
+                    (candidate.get("structured_table") or {}).get("development_stage")
+                ),
             )
             triage["status"] = status
             hard_filter = candidate.setdefault("hard_filter", {})
@@ -10441,7 +10403,16 @@ FULL_SCOUT_UNCERTAINTY_RE = re.compile(
 
 
 def full_scout_has_hard_blocker(notes: str) -> bool:
-    return storage_full_scout_has_hard_blocker(notes)
+    # Lifecycle is a stage-only gate.  Preserve automatic detection for other
+    # hard-blocker wording, but ignore lifecycle terms in prose/flags.
+    non_lifecycle_notes = re.sub(
+        r"\b(?:discontinued|terminated|withdrawn|suspended|dormant|inactive|abandoned|clearly\s+failed)\b|"
+        r"(?:개발|프로그램|임상)\s*(?:이\s*)?(?:종료|철회|휴면|비활성|포기)",
+        "",
+        str(notes or ""),
+        flags=re.IGNORECASE,
+    )
+    return storage_full_scout_has_hard_blocker(non_lifecycle_notes)
 
 
 def calculate_latest_full_scout_filter(record: dict[str, Any]) -> dict[str, Any]:
@@ -10453,6 +10424,10 @@ def calculate_latest_full_scout_filter(record: dict[str, Any]) -> dict[str, Any]
     data_score = score_map.get("data_maturity")
     notes = full_scout_rubric_filter_text(record)
     hard_filter = record.get("hard_filter") if isinstance(record.get("hard_filter"), dict) else {}
+    development_stage = canonicalize_development_stage(
+        (record.get("structured_table") or {}).get("development_stage")
+    )
+    lifecycle_stopped = development_stage == "Discontinued / inactive"
     fail_blocker = hard_filter.get("hard_blocker") is True or full_scout_has_hard_blocker(notes)
     reasons: list[str] = []
 
@@ -10465,6 +10440,8 @@ def calculate_latest_full_scout_filter(record: dict[str, Any]) -> dict[str, Any]
     ):
         if score == 0:
             reasons.append(f"{criterion_label} = 0")
+    if lifecycle_stopped:
+        reasons.append("Development stage = Discontinued / inactive")
     if fail_blocker:
         reasons.append("Hard blocker 확인")
     if reasons:
@@ -10474,7 +10451,7 @@ def calculate_latest_full_scout_filter(record: dict[str, Any]) -> dict[str, Any]
         total is not None
         and total >= 14
         and target_score is not None
-        and target_score >= 2
+        and target_score >= 3
         and moa_score is not None
         and moa_score >= 3
         and data_score is not None
@@ -10485,7 +10462,7 @@ def calculate_latest_full_scout_filter(record: dict[str, Any]) -> dict[str, Any]
             "status": "PASS",
             "reason": (
                 f"Rubric v{SCORING_CRITERIA_VERSION}: Total {total} >= 14, "
-                f"TR {target_score} >= 2, MOA {moa_score} = 3, "
+                f"TR {target_score} >= 3, MOA {moa_score} = 3, "
                 f"Data {data_score} = 3"
             ),
             "total_score": total,
@@ -10554,8 +10531,7 @@ def synchronize_server_derived_scoring_fields(records: list[dict[str, Any]]) -> 
             if not all(isinstance(score, int) and not isinstance(score, bool) and 0 <= score <= 3 for score in score_map.values()):
                 continue
             identity_verified = triage.get("identity_verified")
-            active_asset = triage.get("active_asset")
-            if not isinstance(identity_verified, bool) or active_asset not in {True, False, None}:
+            if not isinstance(identity_verified, bool):
                 continue
             sync_value(record_index, scoring, "total_score", sum(score_map.values()), "scoring.total_score")
             sync_value(record_index, scoring, "max_score", 9, "scoring.max_score")
@@ -10564,8 +10540,9 @@ def synchronize_server_derived_scoring_fields(records: list[dict[str, Any]]) -> 
                 target_relevance=score_map["target_relevance"],
                 moa_validity=score_map["moa_validity"],
                 data_maturity=score_map["data_maturity"],
-                active_asset=active_asset,
-                hard_blocker=fast_triage_record_has_hard_blocker(record),
+                development_stage=canonicalize_development_stage(
+                    (record.get("structured_table") or {}).get("development_stage")
+                ),
             )
             sync_value(record_index, hard_filter, "status", status, "hard_filter.status")
             sync_value(record_index, triage, "status", status, "triage.status")
@@ -10748,17 +10725,14 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
                     detail="Fast Triage 재평가에 필요한 TR, MOA, Data 점수를 확인할 수 없습니다.",
                 )
 
-            hard_blocker = fast_triage_record_has_hard_blocker(record)
-            active_asset = triage.get("active_asset")
-            if not isinstance(active_asset, bool):
-                active_asset = not hard_blocker
             status = calculate_fast_triage_status(
                 identity_verified=triage.get("identity_verified") is True,
                 target_relevance=tr_score,
                 moa_validity=moa_score,
                 data_maturity=data_score,
-                active_asset=active_asset,
-                hard_blocker=hard_blocker,
+                development_stage=canonicalize_development_stage(
+                    (record.get("structured_table") or {}).get("development_stage")
+                ),
             )
             triage["status"] = status
             hard_filter = record.setdefault("hard_filter", {})

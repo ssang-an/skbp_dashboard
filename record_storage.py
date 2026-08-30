@@ -22,7 +22,7 @@ FULL_CRITERION_IDS = (
     "marketability",
 )
 TRIAGE_CRITERION_IDS = ("target_relevance", "moa_validity", "data_maturity")
-TRIAGE_STATUSES = {"SELECT", "REJECT", "UNVERIFIED"}
+TRIAGE_STATUSES = {"SELECT", "REJECT", "INSUFFICIENT"}
 
 FULL_SCOUT_HARD_BLOCKER_RE = re.compile(
     r"\boutside\s+(?:the\s+)?(?:primary\s+)?(?:therapeutic\s+area|indication|disease)\s+scope\b|"
@@ -393,8 +393,8 @@ def _minimal_scoring(
 
 
 def _normalized_triage_status(*values: Any) -> str:
-    status = _text(*values, default="UNVERIFIED").upper()
-    return "UNVERIFIED" if status in {"N/A", "NA"} else status
+    status = _text(*values, default="INSUFFICIENT").upper()
+    return "INSUFFICIENT" if status in {"N/A", "NA", "UNVERIFIED"} else status
 
 
 def _verified_triage_source_count(record: dict[str, Any]) -> int:
@@ -441,9 +441,16 @@ def _verified_triage_source_count(record: dict[str, Any]) -> int:
 
 def full_scout_has_hard_blocker(notes: str) -> bool:
     """Detect an affirmed blocker without treating explicit negation as a blocker."""
-    for match in FULL_SCOUT_HARD_BLOCKER_RE.finditer(str(notes or "")):
-        prefix = notes[max(0, match.start() - 28) : match.start()]
-        suffix = notes[match.end() : match.end() + 20]
+    text = re.sub(
+        r"\b(?:discontinued|terminated|withdrawn|suspended|dormant|inactive|abandoned|clearly\s+failed)\b|"
+        r"(?:개발|프로그램|임상)\s*(?:이\s*)?(?:종료|철회|휴면|비활성|포기)",
+        "",
+        str(notes or ""),
+        flags=re.IGNORECASE,
+    )
+    for match in FULL_SCOUT_HARD_BLOCKER_RE.finditer(text):
+        prefix = text[max(0, match.start() - 28) : match.start()]
+        suffix = text[match.end() : match.end() + 20]
         if re.search(r"\b(?:not|without|never)\b[^|.;\n]{0,20}$|(?:아니|없)는?\s*$", prefix, re.IGNORECASE):
             continue
         if re.match(r"\s*(?:없(?:음|다)?|아님|아니|not\b|false\b)", suffix, re.IGNORECASE):
@@ -482,6 +489,8 @@ def _full_filter_text(record: dict[str, Any]) -> str:
 
 def _derived_full_hard_blocker(record: dict[str, Any]) -> bool:
     explicit = _object(record.get("hard_filter")).get("hard_blocker")
+    # Lifecycle is determined only by canonical development_stage.  The helper
+    # deliberately ignores lifecycle prose while retaining other hard blockers.
     return explicit if isinstance(explicit, bool) else full_scout_has_hard_blocker(_full_filter_text(record))
 
 

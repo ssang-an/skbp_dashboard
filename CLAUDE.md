@@ -75,3 +75,13 @@ Plain HTML + vanilla JS, one file per page, sharing `src/styles.css` and `src/th
 ### Generated Obsidian vaults — do not hand-edit
 
 `obsidian/` (simple export: Pipeline_Index, Assets, Companies, Themes, Clusters) and `skbp_pipeline_wiki/` (richer graph vault: numbered folders `00_System` … `13_Graph_Exports`, entity notes per asset/company/target/MoA/modality/indication/competitor/evidence-source, scorecards, graph CSV/JSON exports) are both fully regenerated from `json/pipeline-records.json` by the scripts in `scripts/`. Each `skbp_pipeline_wiki/*/CLAUDE.md` documents the note conventions (frontmatter fields, wikilink rules, naming rules) for that folder — read the relevant one before hand-authoring or reasoning about notes in that folder, but treat the notes themselves as disposable build output: fix the exporter or the source JSON, not the generated Markdown.
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+Rules:
+- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).

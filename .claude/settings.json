@@ -36,5 +36,27 @@
       "Bash(node \"C:\\\\Users\\\\ssang\\\\.claude\\\\skills\\\\browser-automation\\\\browser.mjs\" \"http://127.0.0.1:8000/\" --wait \"#dataUploadShortcutButton\" --timeout 60000 --eval \"\\(async\\(\\)=>{const logs=[];const orig=console.error.bind\\(console\\);console.error=function\\(...a\\){logs.push\\(a.join\\(' '\\)\\);orig\\(...a\\);};console.error\\('SANITY CHECK MARKER'\\);return {logs};}\\)\\(\\)\")",
       "Bash(node \"C:\\\\Users\\\\ssang\\\\.claude\\\\skills\\\\browser-automation\\\\browser.mjs\" \"http://127.0.0.1:8000/\" --wait \"#dataUploadShortcutButton\" --timeout 60000 --eval \"\\(async\\(\\)=>{await new Promise\\(r=>setTimeout\\(r,2000\\)\\);const tab=document.querySelector\\('[data-table-mode=\\\\\"full\\\\\"]'\\);tab?.click\\(\\);await new Promise\\(r=>setTimeout\\(r,500\\)\\);const btn=document.querySelector\\('#dataUploadShortcutButton'\\);btn.click\\(\\);await new Promise\\(r=>setTimeout\\(r,500\\)\\);return {title: document.title};}\\)\\(\\)\")"
     ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "C:/Users/ssang/.local/bin/graphify.EXE hook-guard search"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "C:/Users/ssang/.local/bin/graphify.EXE hook-guard read"
+          }
+        ]
+      }
+    ]
   }
 }

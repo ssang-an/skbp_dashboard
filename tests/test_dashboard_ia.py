@@ -2031,14 +2031,18 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("min-height: 0", summary.split("}", 1)[0])
         self.assertNotIn("min-height: 88px", summary.split("}", 1)[0])
 
-    def test_full_status_total_score_rules_share_a_desktop_baseline(self):
-        alignment = CSS[CSS.index("Final desktop alignment for the three Full Scout Total Score") :]
-        self.assertIn("@media (min-width: 901px)", alignment)
-        self.assertIn("grid-template-rows: auto 78px 1fr", alignment)
-        self.assertIn(".criteria-full-status-summary-slot", alignment)
-        self.assertIn("height: 78px", alignment)
-        self.assertIn("height: auto", alignment)
-        self.assertIn("margin-top: 8px", alignment)
+    def test_full_status_summary_hugs_its_content_instead_of_a_fixed_slot(self):
+        # A shared fixed-height slot (78px) used to force every PASS/REVIEW/FAIL
+        # summary box to the same height regardless of its own text length,
+        # leaving an uncolored gap below shorter summaries before the bullet
+        # list. The box now sizes to its own content, and a single unconditional
+        # margin on the bullet list is the sole source of the gap.
+        self.assertNotIn("grid-template-rows: auto 78px 1fr", CSS)
+        self.assertNotIn("criteria-full-status-summary-slot", CSS)
+        gap_rule = CSS[CSS.index(
+            '.criteria-drawer-body .full-status-grid[data-criteria-tab="full"] .criteria-status-card > ul {'
+        ):]
+        self.assertIn("margin: 8px 0 0;", gap_rule)
 
     def test_tab1_inner_cards_match_quick_guide_step_surface(self):
         quick_guide = CSS[CSS.rindex("Tab 1 inner cards mirror the neutral Quick Guide") :]
@@ -2063,15 +2067,24 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             self.assertNotIn(reminder, HTML)
             self.assertNotIn(reminder, TRIAGE_DETAIL_HTML)
 
-    def test_triage_status_bullet_lists_share_vertical_start(self):
-        alignment = CSS[CSS.rindex("Align the three Tab 1 status-card bullet lists") :]
-        self.assertIn("@media (min-width: 901px)", alignment)
-        self.assertIn("grid-template-rows: auto minmax(74px, auto) 1fr", alignment)
-        self.assertIn(".criteria-status-subtitle", alignment)
-        self.assertIn("min-height: 74px", alignment)
-        self.assertIn(".criteria-status-card > ul", alignment)
-        self.assertIn("align-self: start", alignment)
-        self.assertIn("margin: 0", alignment)
+    def test_triage_status_summary_hugs_its_content_instead_of_a_fixed_row(self):
+        # A shared minmax(74px, auto) row used to force every SELECT/REJECT/
+        # INSUFFICIENT summary box's row to the same minimum height regardless
+        # of its own text length, leaving an uncolored gap below shorter
+        # summaries before the bullet list. The box now sizes to its own
+        # content, matching the Full Scout Final Status cards' single
+        # unconditional 8px gap before the bullet list.
+        self.assertNotIn("grid-template-rows: auto minmax(74px, auto) 1fr", CSS)
+        triage_status_block = CSS[CSS.index(
+            'Let each Tab 1 status card\'s colored summary hug its own text'
+        ):CSS.index(
+            '.criteria-drawer-body .triage-status-grid[data-criteria-tab="triage"] .criteria-status-card > ul {'
+        )]
+        self.assertNotIn("min-height: 74px", triage_status_block)
+        gap_rule = CSS[CSS.rindex(
+            '.criteria-drawer-body .triage-status-grid[data-criteria-tab="triage"] .criteria-status-card > ul {'
+        ):]
+        self.assertIn("margin: 8px 0 0;", gap_rule)
 
     def test_final_status_cards_keep_semantic_text_color_on_neutral_surface(self):
         final_status = CSS[CSS.rindex("Tab 1 inner cards mirror the neutral Quick Guide") :]
@@ -2101,6 +2114,26 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("background: var(--button-glass)", styles)
         self.assertIn("width: 22px", styles)
         self.assertIn("border-radius: 50%", styles)
+
+    def test_triage_final_comment_actions_include_compact_rubric_refresh(self):
+        final_comment = function_body(TRIAGE_DETAIL_JS, "finalCommentMarkup")
+        refresh = function_body(TRIAGE_DETAIL_JS, "refreshTriageRubric")
+
+        self.assertIn("triage-note-actions", final_comment)
+        self.assertIn("triageRubricRefreshButton()", final_comment)
+        self.assertIn("data-triage-rubric-refresh", TRIAGE_DETAIL_JS)
+        self.assertIn("최신 Score 기준 갱신", TRIAGE_DETAIL_JS)
+        self.assertIn("/refresh-rubric", refresh)
+        self.assertIn(".triage-rubric-refresh", CSS)
+        self.assertIn("triage-rubric-refresh-spin", CSS)
+
+    def test_triage_detail_footer_follows_the_page_content_instead_of_the_viewport(self):
+        footer_rule = CSS[CSS.index(".triage-detail-shell > .detail-page-footer {"):]
+
+        self.assertIn("position: static;", footer_rule.split("}", 1)[0])
+        self.assertIn("margin: 20px auto 16px;", footer_rule.split("}", 1)[0])
+        self.assertIn("border-top: 1px solid var(--line);", footer_rule.split("}", 1)[0])
+        self.assertIn("styles.css?v=20260828-triage-footer-flow-1", TRIAGE_DETAIL_HTML)
 
     def test_minimal_json_score_views_point_to_the_original_report(self):
         tooltip = function_body(JS, "scoreTooltip")
@@ -2645,10 +2678,13 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("var(--fluent-amber) 72%", CSS)
         self.assertIn('#detailScoreSequence .score-chip[data-manual-score="true"]', CSS)
         self.assertIn("outline: none !important", CSS)
-        self.assertIn("styles.css?v=20260819-manual-score-chip-9", DETAIL_HTML)
-        self.assertIn("detail.js?v=20260819-manual-score-chip-9", DETAIL_HTML)
+        self.assertIn("styles.css?v=20260827-review-workspace-density-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260828-rubric-refresh-progress-1", DETAIL_HTML)
         self.assertNotIn("button.textContent", score_refresh)
         self.assertIn("button.classList.add('is-saving')", score_refresh)
+        self.assertIn("showDetailProgress(", score_refresh)
+        self.assertIn("최신 기준으로 업데이트 중입니다", score_refresh)
+        self.assertIn("closeProgress();", score_refresh)
         self.assertIn("/recalculate-oi-partnership", oi_refresh)
         self.assertIn("renderCollaborationPanel(currentRecord)", oi_refresh)
         self.assertIn("elements.oiPartnershipRefreshButton?.addEventListener('click', refreshOiPartnership)", DETAIL_JS)
@@ -2849,6 +2885,109 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         dropzone_style = CSS[CSS.index(".attachment-dropzone small {") :]
         self.assertIn("font-size: 9px", dropzone_style.split("}", 1)[0])
         self.assertIn("line-height: 1.4", dropzone_style.split("}", 1)[0])
+
+    def test_pipeline_score_headers_keep_sorting_and_add_multi_score_filtering(self):
+        table = function_body(JS, "renderTable")
+        visible_rows = function_body(JS, "getVisibleRows")
+        summary = function_body(JS, "activeSummaryFilterCount")
+
+        self.assertIn("scoreFilterHeader(scoreLabels[key] || key, key, key)", table)
+        self.assertIn("data-score-filter-trigger", JS)
+        self.assertIn("data-sort-label", JS)
+        self.assertIn("scoreFilterMatches('targetScore', row.targetScore)", visible_rows)
+        self.assertIn("scoreFilterMatches('moaScore', row.moaScore)", visible_rows)
+        self.assertIn("scoreFilterMatches('dataScore', row.dataScore)", visible_rows)
+        self.assertIn("scoreFilterMatches('competitiveScore', row.competitiveScore)", visible_rows)
+        self.assertIn("scoreFilterMatches('platformScore', row.platformScore)", visible_rows)
+        self.assertIn("scoreFilterMatches('expansionScore', row.expansionScore)", visible_rows)
+        self.assertIn("scoreFilterMatches('marketScore', row.marketScore)", visible_rows)
+        self.assertIn("SCORE_HEADER_FILTERS", summary)
+        self.assertIn("한 기준 안의 여러 조건은 OR", JS)
+        self.assertIn("score-filter-header", CSS)
+        self.assertIn("table-score-filter-popover", CSS)
+        self.assertIn("color: var(--muted)", CSS)
+        self.assertIn("font-weight: 700", CSS)
+
+    def test_shortlisting_has_admet_range_and_evidence_dd_filters(self):
+        focus_table = function_body(JS, "renderFocusTable")
+        visible_rows = function_body(JS, "getVisibleRows")
+
+        self.assertIn("focusFilterHeader('In-vivo', 'inVivo', 'inVivo')", focus_table)
+        self.assertIn("focusFilterHeader('In-vitro', 'inVitro', 'inVitro')", focus_table)
+        self.assertIn("focusFilterHeader('ADMET', 'admet', 'admet')", focus_table)
+        self.assertIn("focusFilterHeader('DD', 'dd', 'dd')", focus_table)
+        self.assertIn("dueDiligenceStatusBadge(row)", focus_table)
+        self.assertIn("focusFilterMatches(row)", visible_rows)
+        self.assertIn("normalizeAdmetFilterExpression", JS)
+        self.assertIn("replace(/^=</, '<=')", JS)
+        self.assertIn("data-focus-filter-trigger", JS)
+        self.assertIn("hasDueDiligenceAttachment", JS)
+        self.assertIn("partner_material_category", JS)
+        self.assertIn(".focus-status-filter-options", CSS)
+        self.assertLess(
+            focus_table.index("focusFilterHeader('DD', 'dd', 'dd')"),
+            focus_table.index("focusFilterHeader('In-vivo', 'inVivo', 'inVivo')")
+        )
+        self.assertLess(
+            focus_table.index('data-col-key="dd"'),
+            focus_table.index('data-col-key="inVivo"')
+        )
+        self.assertLess(
+            focus_table.index('dd-status-cell'),
+            focus_table.index("'inVivoStatus'")
+        )
+        dd_badge = function_body(JS, "dueDiligenceStatusBadge")
+        self.assertIn("total-score-edit-circle dd-status-circle", dd_badge)
+        self.assertIn(".dd-status-circle", CSS)
+        self.assertIn("function evidenceStatusMeaning", JS)
+
+    def test_shortlisting_evidence_tooltips_and_dd_detail_link_follow_shared_ui_rules(self):
+        evidence_select = function_body(JS, "evidenceEditSelect")
+        dd_badge = function_body(JS, "dueDiligenceStatusBadge")
+        detail_load = function_body(DETAIL_JS, "loadRecord")
+        requested_section = function_body(DETAIL_JS, "openRequestedDetailSection")
+
+        self.assertIn("asset-specific efficacy 근거 확인", JS)
+        self.assertIn("검토 가능한 자료에서는 해당 근거 없음", JS)
+        self.assertIn("자료·분석 근거 부족으로 O/X 판정 불가", JS)
+        self.assertIn('class="evidence-tooltip help-tooltip"', evidence_select)
+        self.assertNotIn('title="${escapeHtml', evidence_select)
+        self.assertIn(".evidence-tooltip.help-tooltip::after", CSS)
+        self.assertIn("focus-within::after", CSS)
+        self.assertIn("DD Report가 상세 페이지에 업로드 되었음", dd_badge)
+        self.assertIn("&open=dd", dd_badge)
+        self.assertIn("setQualitativeReviewExpanded(true)", requested_section)
+        self.assertIn("openRequestedDetailSection();", detail_load)
+
+    def test_filter_one_width_keeps_insufficient_status_visible(self):
+        self.assertIn("filter1: 90", JS)
+        self.assertIn("filter1: 86", JS)
+
+    def test_detail_and_triage_rubric_refreshes_use_the_blocking_progress_modal(self):
+        full_refresh = function_body(DETAIL_JS, "refreshRubric")
+        triage_refresh = function_body(TRIAGE_DETAIL_JS, "refreshTriageRubric")
+
+        self.assertIn("showDetailProgress(", full_refresh)
+        self.assertIn("최신 기준으로 업데이트 중입니다", full_refresh)
+        self.assertIn("closeProgress();", full_refresh)
+        self.assertIn("showTriageProgress(", triage_refresh)
+        self.assertIn("최신 기준으로 업데이트 중입니다", triage_refresh)
+        self.assertIn("closeProgress();", triage_refresh)
+
+    def test_full_scout_aliases_use_fast_triage_score_geometry_and_short_notice(self):
+        status = function_body(JS, "statusEditSelect")
+        score = function_body(JS, "scoreEditSelect")
+        notice_start = JS.index("function openStep0EditLockedModal")
+        notice_end = JS.index("async function saveStep0ListingFieldEdit", notice_start)
+        alias_notice = JS[notice_start:notice_end]
+
+        self.assertIn("table-edit-select status-edit", status)
+        self.assertIn("is-readonly", status)
+        self.assertIn("table-edit-select score-edit", score)
+        self.assertIn("is-readonly", score)
+        self.assertIn(".table-edit-select.is-readonly", CSS)
+        self.assertIn("Fast Triage에도 함께 표시되고 있습니다.", alias_notice)
+        self.assertNotIn("해당 GPT 원문 리포트와 상세 점수", alias_notice)
 
 
 if __name__ == "__main__":

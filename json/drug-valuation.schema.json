@@ -415,7 +415,6 @@
       "required": [
         "status",
         "identity_verified",
-        "active_asset",
         "verified_public_source_count",
         "why",
         "missing_evidence_needed_for_full_scout"

@@ -245,8 +245,8 @@ def current_triage_record() -> dict[str, object]:
     record = {
         "meta": {
             "schema_version": "3.2",
-            "instruction_version": "3.4",
-            "rubric_version": "3.4",
+            "instruction_version": "3.5",
+            "rubric_version": "3.5",
             "review_type": "fast_triage",
             "generated_at": "2026-08-01",
             "output_filename_base": "Acceptance_Test_Asset_fast_triage_20260801",
@@ -270,10 +270,9 @@ def current_triage_record() -> dict[str, object]:
         },
         "hard_filter": {"status": "REJECT", "reason": "SELECT gate 미충족", "flags": []},
         "triage": {
-            "instruction_version": "3.4",
+            "instruction_version": "3.5",
             "status": "REJECT",
             "identity_verified": True,
-            "active_asset": True,
         },
         "scoring": {
             "total_score": None,
@@ -323,22 +322,47 @@ def current_triage_record() -> dict[str, object]:
 
 class VersionAndPolicyTests(unittest.TestCase):
     def test_current_versions(self) -> None:
-        self.assertEqual(main.TRIAGE_CRITERIA_VERSION, "3.4")
+        self.assertEqual(main.TRIAGE_CRITERIA_VERSION, "3.5")
         self.assertEqual(main.TRIAGE_SCHEMA_VERSION, "3.2")
-        self.assertEqual(main.SCORING_CRITERIA_VERSION, "3.6")
+        self.assertEqual(main.SCORING_CRITERIA_VERSION, "3.7")
         self.assertEqual(main.FULL_SCOUT_SCHEMA_VERSION, "3.2")
-        self.assertTrue(main.SCORING_CRITERIA_TRIAGE_MD.name.startswith("v3_4_"))
-        self.assertTrue(main.SCORING_CRITERIA_FULL_MD.name.startswith("v3_6_"))
-        self.assertTrue(main.SCORING_CRITERIA_DISPLAY_MD.name.startswith("v3_6_"))
+        self.assertTrue(main.SCORING_CRITERIA_TRIAGE_MD.name.startswith("v3_5_"))
+        self.assertTrue(main.SCORING_CRITERIA_FULL_MD.name.startswith("v3_7_"))
+        self.assertTrue(main.SCORING_CRITERIA_DISPLAY_MD.name.startswith("v3_7_"))
 
     def test_fast_triage_select_formula_and_identity_gate(self) -> None:
+        # v3.5 dropped the separate active_asset tri-state field: it overlapped
+        # with development_stage and its "confirmed inactive" bar was undefined
+        # in evidentiary/recency terms. development_stage == "Discontinued /
+        # inactive" is now the sole activity gate; Unknown no longer blocks
+        # SELECT the way active_asset=None used to force REJECT.
+        self.assertEqual(
+            main.calculate_fast_triage_status(
+                identity_verified=True,
+                target_relevance=2,
+                moa_validity=2,
+                data_maturity=2,
+                development_stage="Phase 1",
+            ),
+            "REJECT",
+        )
+        self.assertEqual(
+            main.calculate_fast_triage_status(
+                identity_verified=True,
+                target_relevance=3,
+                moa_validity=1,
+                data_maturity=2,
+                development_stage="Phase 1",
+            ),
+            "SELECT",
+        )
         self.assertEqual(
             main.calculate_fast_triage_status(
                 identity_verified=True,
                 target_relevance=2,
                 moa_validity=2,
                 data_maturity=0,
-                active_asset=True,
+                development_stage="Phase 1",
             ),
             "INSUFFICIENT",
         )
@@ -348,7 +372,7 @@ class VersionAndPolicyTests(unittest.TestCase):
                 target_relevance=2,
                 moa_validity=0,
                 data_maturity=2,
-                active_asset=True,
+                development_stage="Phase 1",
             ),
             "INSUFFICIENT",
         )
@@ -358,7 +382,7 @@ class VersionAndPolicyTests(unittest.TestCase):
                 target_relevance=2,
                 moa_validity=0,
                 data_maturity=0,
-                active_asset=True,
+                development_stage="Phase 1",
             ),
             "INSUFFICIENT",
         )
@@ -368,7 +392,7 @@ class VersionAndPolicyTests(unittest.TestCase):
                 target_relevance=3,
                 moa_validity=3,
                 data_maturity=3,
-                active_asset=True,
+                development_stage="Phase 1",
             ),
             "INSUFFICIENT",
         )
@@ -378,7 +402,7 @@ class VersionAndPolicyTests(unittest.TestCase):
                 target_relevance=3,
                 moa_validity=3,
                 data_maturity=3,
-                active_asset=False,
+                development_stage="Discontinued / inactive",
             ),
             "INSUFFICIENT",
         )
@@ -388,9 +412,9 @@ class VersionAndPolicyTests(unittest.TestCase):
                 target_relevance=3,
                 moa_validity=3,
                 data_maturity=3,
-                active_asset=None,
+                development_stage="Unknown",
             ),
-            "REJECT",
+            "SELECT",
         )
 
     def test_target_relevance_acceptance_cases_1_to_7(self) -> None:
@@ -969,48 +993,73 @@ class EvidenceContractTests(unittest.TestCase):
         self.assertEqual(record["hard_filter"]["status"], "REJECT")
         self.assertEqual(record["triage"]["status"], "REJECT")
 
-    def test_current_contract_requires_explicit_active_asset(self) -> None:
+    def test_current_contract_no_longer_requires_active_asset(self) -> None:
+        # v3.5 dropped active_asset: development_stage is now the sole activity
+        # signal, so a record that never included active_asset at all must
+        # still save and score normally.
         record = current_triage_record()
-        del record["triage"]["active_asset"]
-        with self.assertRaises(HTTPException) as caught:
-            main.validate_records_for_save([record])
-        self.assertIn("active_asset", str(caught.exception.detail))
-
-    def test_unknown_activity_is_explicit_null_and_cannot_select(self) -> None:
-        record = current_triage_record()
-        record["triage"]["active_asset"] = None
+        record["triage"].pop("active_asset", None)
         main.validate_records_for_save([record])
 
+    def test_unknown_development_stage_does_not_block_select(self) -> None:
+        # Unknown development_stage ("activity cannot be established") is no
+        # longer a REJECT gate the way active_asset=None used to be — only a
+        # confirmed "Discontinued / inactive" stage forces an early stop.
+        # SELECT/REJECT/INSUFFICIENT are now determined purely by TR/MoA/Data.
+        record = current_triage_record()
+        record["structured_table"]["development_stage"] = "Unknown"
+        record["scoring"]["criteria"]["data_maturity"] = triage_criterion(
+            2,
+            "public_source",
+            "Data 2 points: one stage-appropriate quantitative evidence domain is confirmed.",
+            [{"source_url": "https://example.org/data", "verified": True}],
+        )
         record["hard_filter"]["status"] = "SELECT"
         record["triage"]["status"] = "SELECT"
         record["final_insight"]["recommendation"] = "Run Full Scout"
         main.validate_records_for_save([record])
-        self.assertEqual(record["hard_filter"]["status"], "REJECT")
-        self.assertEqual(record["triage"]["status"], "REJECT")
-        self.assertEqual(record["final_insight"]["recommendation"], "Monitor / gather more evidence")
+        self.assertEqual(record["hard_filter"]["status"], "SELECT")
+        self.assertEqual(record["triage"]["status"], "SELECT")
+        self.assertEqual(record["final_insight"]["recommendation"], "Run Full Scout")
 
-    def test_lifecycle_flag_matching_is_phrase_aware_and_negation_safe(self) -> None:
-        self.assertTrue(main.fast_triage_lifecycle_text_has_hard_blocker(["program terminated"]))
-        self.assertTrue(main.fast_triage_lifecycle_text_has_hard_blocker(["development clearly_failed"]))
-        self.assertFalse(main.fast_triage_lifecycle_text_has_hard_blocker(["not discontinued"]))
-        self.assertFalse(main.fast_triage_lifecycle_text_has_hard_blocker(["개발 중단 없음"]))
-
+    def test_discontinued_development_stage_forces_insufficient(self) -> None:
+        # development_stage == "Discontinued / inactive" is now the only early
+        # stop for activity — hard_filter.flags keyword text (the old
+        # fast_triage_record_has_hard_blocker regex scan) no longer gates
+        # Fast Triage status on its own.
         record = current_triage_record()
-        record["scoring"]["criteria"]["moa_validity"] = triage_criterion(
+        record["structured_table"]["development_stage"] = "Discontinued / inactive"
+        record["hard_filter"]["status"] = "SELECT"
+        record["triage"]["status"] = "SELECT"
+        record["final_insight"]["recommendation"] = "Run Full Scout"
+        record["hard_filter"]["flags"] = []
+        main.validate_records_for_save([record])
+        self.assertEqual(record["hard_filter"]["status"], "INSUFFICIENT")
+        self.assertEqual(record["triage"]["status"], "INSUFFICIENT")
+        self.assertEqual(record["final_insight"]["recommendation"], "Do not run Full Scout")
+
+    def test_hard_filter_flags_text_no_longer_gates_fast_triage_status(self) -> None:
+        # Previously a "terminated"/"discontinued" keyword in hard_filter.flags
+        # alone (via fast_triage_lifecycle_text_has_hard_blocker) forced
+        # INSUFFICIENT even when development_stage said otherwise. That
+        # duplicate signal is retired; only development_stage gates now.
+        record = current_triage_record()
+        record["scoring"]["criteria"]["data_maturity"] = triage_criterion(
             2,
             "public_source",
-            "동일 target/class의 독립 functional validation이 확인되어 MoA 2점입니다.",
-            [{"source_url": "https://example.org/mechanism", "verified": True}],
+            "Data 2 points: one stage-appropriate quantitative evidence domain is confirmed.",
+            [{"source_url": "https://example.org/data", "verified": True}],
         )
         record["hard_filter"]["status"] = "SELECT"
         record["triage"]["status"] = "SELECT"
         record["final_insight"]["recommendation"] = "Run Full Scout"
         record["hard_filter"]["flags"] = ["program terminated"]
-        self.assertTrue(main.fast_triage_record_has_hard_blocker(record))
         main.validate_records_for_save([record])
-        self.assertEqual(record["hard_filter"]["status"], "INSUFFICIENT")
-        self.assertEqual(record["triage"]["status"], "INSUFFICIENT")
-        self.assertEqual(record["final_insight"]["recommendation"], "Do not run Full Scout")
+        self.assertEqual(record["hard_filter"]["status"], "SELECT")
+        self.assertEqual(record["triage"]["status"], "SELECT")
+        self.assertEqual(record["final_insight"]["recommendation"], "Run Full Scout")
+        self.assertFalse(hasattr(main, "fast_triage_record_has_hard_blocker"))
+        self.assertFalse(hasattr(main, "fast_triage_lifecycle_text_has_hard_blocker"))
 
     def test_current_status_normalizes_matching_recommendation(self) -> None:
         record = current_triage_record()
@@ -1039,8 +1088,8 @@ class FullScoutFilterTests(unittest.TestCase):
         record = {
             "meta": {
                 "schema_version": "3.1",
-                "instruction_version": "3.6",
-                "rubric_version": "3.6",
+                "instruction_version": "3.7",
+                "rubric_version": "3.7",
                 "review_type": "full_scout",
             },
             "hard_filter": {"status": "FAIL"},
@@ -1052,7 +1101,7 @@ class FullScoutFilterTests(unittest.TestCase):
 
     def test_theme_cluster_non_fit_alone_is_not_fail(self) -> None:
         scores = {
-            "target_relevance": 2,
+            "target_relevance": 3,
             "competitive_landscape": 3,
             "moa_validity": 3,
             "platform_attractiveness": 3,
@@ -1079,21 +1128,11 @@ class FullScoutFilterTests(unittest.TestCase):
         self.assertEqual(result["status"], "PASS")
         self.assertNotIn("Theme/Cluster", result["reason"])
 
-    def test_negated_inactive_wording_is_not_a_hard_blocker(self) -> None:
+    def test_lifecycle_wording_in_notes_is_not_a_hard_blocker(self) -> None:
         for note in ("개발 중단 없음", "The asset is not discontinued."):
             with self.subTest(note=note):
                 self.assertFalse(main.full_scout_has_hard_blocker(note))
-        for blocker in (
-            "discontinued",
-            "terminated",
-            "withdrawn",
-            "suspended",
-            "dormant",
-            "inactive",
-            "clearly failed",
-        ):
-            with self.subTest(blocker=blocker):
-                self.assertTrue(main.full_scout_has_hard_blocker(f"The asset was {blocker}."))
+        self.assertFalse(main.full_scout_has_hard_blocker("The asset was terminated."))
 
     def test_review_uncertainty_is_limited_to_stage_rights_identity_or_source(self) -> None:
         scores = {
@@ -1137,7 +1176,7 @@ class FullScoutFilterTests(unittest.TestCase):
         identity_failure = record_with_note("Asset identity is not verified.")
         self.assertEqual(main.calculate_latest_full_scout_filter(identity_failure)["status"], "FAIL")
 
-    def test_full_scout_discontinued_stage_and_flags_are_hard_blockers(self) -> None:
+    def test_full_scout_discontinued_stage_is_the_lifecycle_gate(self) -> None:
         scores = {
             "target_relevance": 3,
             "competitive_landscape": 2,
@@ -1168,7 +1207,7 @@ class FullScoutFilterTests(unittest.TestCase):
 
         flag_blocked = passing_record()
         flag_blocked["hard_filter"]["flags"] = ["terminated"]
-        self.assertEqual(main.calculate_latest_full_scout_filter(flag_blocked)["status"], "FAIL")
+        self.assertEqual(main.calculate_latest_full_scout_filter(flag_blocked)["status"], "REVIEW")
 
 
 class StaticInstructionAndSchemaTests(unittest.TestCase):
@@ -1252,6 +1291,41 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         self.assertNotIn("second copyable box", prompt)
         self.assertNotIn("one markdown fenced code block followed by one JSON fenced code block", prompt)
 
+    def test_fast_triage_and_full_scout_share_the_cluster_taxonomy(self) -> None:
+        # json_summary.theme/cluster are non-scoring dashboard-grouping metadata (they
+        # feed no TR/MoA/Data score, hard_filter, or status derivation), but both GPT
+        # instructions must still tell GPT the same canonical Theme/Cluster values so
+        # the dashboard's fixed taxonomy (main.py's THEMES/CLUSTERS) is actually
+        # populated instead of drifting to free text. Adding "Protein Homeostasis"
+        # once consolidated the Theme rule into SHARED_CANONICAL_THEME_RULE but left
+        # Fast Triage without the "Allowed clusters:" list Full Scout already had;
+        # this guards against that regression recurring.
+        app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
+
+        triage_start = app_js.index("function buildTriageInstructionPromptLegacy()")
+        triage_end = app_js.index("function buildTriageInstructionPrompt()", triage_start)
+        triage_prompt = app_js[triage_start:triage_end]
+
+        full_start = app_js.index("function buildGptInstructionPromptLegacy()")
+        full_end = app_js.index("function buildGptInstructionPrompt()", full_start)
+        full_prompt = app_js[full_start:full_end]
+
+        for prompt in (triage_prompt, full_prompt):
+            self.assertIn("${SHARED_CANONICAL_THEME_RULE}", prompt)
+            self.assertIn("${SHARED_CANONICAL_CLUSTER_RULE}", prompt)
+
+        self.assertIn(
+            "When Theme is Others, cluster must also be Others. When Theme is Unknown, cluster must also be Unknown.",
+            app_js,
+        )
+        cluster_rule_start = app_js.index("const SHARED_CANONICAL_CLUSTER_RULE")
+        cluster_rule_end = app_js.index("`;", cluster_rule_start)
+        cluster_rule = app_js[cluster_rule_start:cluster_rule_end]
+        self.assertIn("Allowed Theme values:", cluster_rule)
+        self.assertIn("Allowed clusters:", cluster_rule)
+        self.assertIn("Ion Channel, Inhibitory Tone 강화, Synaptic Transmission, Chloride Homeostasis, Network Modulation", cluster_rule)
+        self.assertIn("CNS 손상 면역반응, 교세포 향상성, Cytokine 신경조절, 손상/질환 면역조절, 말초 면역기관 연결", cluster_rule)
+
     def test_shared_prompt_and_versioned_rubric_files(self) -> None:
         app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
         shared_sentence = (
@@ -1262,8 +1336,8 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
             shared_sentence in app_js,
             "The exact shared Evidence Discipline block is missing from src/app.js.",
         )
-        self.assertIn("Fast Triage v3.4", app_js)
-        self.assertIn("Full Scout v3.6", app_js)
+        self.assertIn("Fast Triage v3.5", app_js)
+        self.assertIn("Full Scout v3.7", app_js)
         for stale_or_forbidden in (
             "Fast Triage v3.3",
             "Full Scout v3.4",
@@ -1294,10 +1368,10 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         self.assertIn('"source_registry": []', compact)
         self.assertIn('"source_ids": []', compact)
 
-        triage_rules = (ROOT / "config" / "scoring_criteria" / "v3_4_triage.md").read_text(
+        triage_rules = (ROOT / "config" / "scoring_criteria" / "v3_5_triage.md").read_text(
             encoding="utf-8"
         )
-        full_rules = (ROOT / "config" / "scoring_criteria" / "v3_5_full.md").read_text(
+        full_rules = (ROOT / "config" / "scoring_criteria" / "v3_7_full.md").read_text(
             encoding="utf-8"
         )
         for text in (triage_rules, full_rules):
@@ -1307,11 +1381,8 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         self.assertIn("INSUFFICIENT", triage_rules)
         self.assertIn("하나의 공개 source", triage_rules)
         self.assertIn("no SKBP Theme / Cluster fit", full_rules)
-        active_full_rules = (ROOT / "config" / "scoring_criteria" / "v3_6_full.md").read_text(
-            encoding="utf-8"
-        )
-        self.assertIn("complete, self-contained restatement of `v3_5_full.md`", active_full_rules)
-        self.assertIn("every Evidence Discipline, Evidence Type, canonical taxonomy", active_full_rules)
+        self.assertIn("complete, self-contained restatement of `v3_6_full.md`", full_rules)
+        self.assertIn("every Evidence Discipline, Evidence Type, canonical taxonomy", full_rules)
 
         triage_detail_js = (ROOT / "src" / "triage-detail.js").read_text(encoding="utf-8")
         for label in (

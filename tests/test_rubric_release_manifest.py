@@ -80,8 +80,8 @@ class RubricReleaseManifestTests(unittest.TestCase):
         self.assertIn('data-criteria-language="en"', index_html)
         self.assertIn("CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY", app_js)
         self.assertIn("applyCriteriaGuideLanguage", app_js)
-        self.assertIn("Assessed asset directly validates the proposed MoA", english_guide)
-        self.assertIn("평가 asset 자체에서 제안된 MoA가 직접 검증됨", index_html)
+        self.assertIn("Direct asset-specific evidence relevant to the proposed MoA", english_guide)
+        self.assertIn("평가 asset에서 제안된 MoA 관련 직접 근거가 확인됨", index_html)
         self.assertIn("Target Area Relevance</span></h3></div><p>Assesses whether the verified asset indication", english_guide)
         self.assertNotIn('<article class="target-parameter-card full-parameter-card"><h3>Target Relevance</h3>', english_guide)
 
@@ -96,14 +96,14 @@ class RubricReleaseManifestTests(unittest.TestCase):
             self.assertIn("Data 2점 이상", surface)
             self.assertNotIn("MoA 또는 Data 중 하나 이상 2점 이상", surface)
 
-        self.assertIn("trScore >= 2 && moaScore >= 1 && dataScore >= 2", app_js)
+        self.assertIn("trScore >= 3 && moaScore >= 1 && dataScore >= 2", app_js)
 
         for surface in (index_html, detail_html):
             self.assertIn("MoA Validity = 3", surface)
             self.assertIn("Data Maturity = 3", surface)
             self.assertIn("TR / MoA / Data 중 하나가 0점", surface)
 
-        self.assertIn("targetScore >= 2 && moaScore === 3 && dataScore === 3", app_js)
+        self.assertIn("targetScore >= 3 && moaScore === 3 && dataScore === 3", app_js)
         self.assertIn("['Target Area Relevance', targetScore], ['MoA Validity', moaScore], ['Data Maturity', dataScore]", app_js)
 
     def test_marketability_release_rule_is_present_on_managed_surfaces(self) -> None:

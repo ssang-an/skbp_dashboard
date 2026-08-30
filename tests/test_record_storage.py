@@ -105,13 +105,13 @@ def _target_card_description(record: dict[str, Any]) -> str:
 def _recalculated_fast_status(record: dict[str, Any]) -> str:
     triage = _object(record.get("triage"))
     criteria = _object(_object(record.get("scoring")).get("criteria"))
+    structured_table = _object(record.get("structured_table"))
     return main.calculate_fast_triage_status(
         identity_verified=triage.get("identity_verified"),
-        active_asset=triage.get("active_asset"),
         target_relevance=_object(criteria.get("target_relevance")).get("score"),
         moa_validity=_object(criteria.get("moa_validity")).get("score"),
         data_maturity=_object(criteria.get("data_maturity")).get("score"),
-        hard_blocker=main.fast_triage_record_has_hard_blocker(record),
+        development_stage=main.canonicalize_development_stage(structured_table.get("development_stage")),
     )
 
 
@@ -738,8 +738,8 @@ class RecordStorageDatasetDifferentialTests(unittest.TestCase):
                 "modality_platform": "Unknown", "main_indication": "Unknown", "indication": "Unknown",
                 "development_stage": "Unknown", "company_country": "Unknown", "sources": [],
             },
-            "hard_filter": {"status": "UNVERIFIED", "reason": "", "flags": []},
-            "triage": {"status": "UNVERIFIED", "identity_verified": False, "active_asset": None},
+            "hard_filter": {"status": "INSUFFICIENT", "reason": "", "flags": []},
+            "triage": {"status": "INSUFFICIENT", "identity_verified": False, "active_asset": None},
             "scoring": {"criteria": {key: {"score": 0} for key in TRIAGE_SCORE_IDS}, "total_score": 0, "max_score": 9},
             "validation": {"uncertain_points": []},
             "final_insight": {"one_line_summary": "", "recommendation": "Verify asset identity"},

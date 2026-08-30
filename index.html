@@ -48,7 +48,7 @@
         });
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20260827-review-workspace-density-1" />
+  <link rel="stylesheet" href="./src/styles.css?v=20260831-wiki-map-tab-radius-1" />
   <link rel="stylesheet" href="./src/knowledge_graph.css?v=20260823-atlas-search-pill-alignment-1" />
   <link rel="stylesheet" href="./src/sigma_graph.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js" defer></script>
@@ -90,7 +90,7 @@
                 </span>
                 <b>Shortlisting</b>
               </button>
-              <a id="knowledgeMapTab" class="workflow-knowledge-map-link help-tooltip" href="/?tab=map" role="tab" aria-controls="knowledgeMapPanel" aria-label="Wiki Map 열기" data-tooltip="Pipeline과 Company·Target·MoA·근거의 연결을 탐색합니다.">
+              <a id="knowledgeMapTab" class="workflow-knowledge-map-link help-tooltip" href="/?tab=map" role="tab" aria-controls="knowledgeMapPanel" aria-label="Wiki Map 열기" data-tooltip="저장된 Pipeline을 Company·Target·MoA·근거 중심의 지식 그래프로 탐색합니다.">
                 <span class="tab-step knowledge-map-icon" aria-hidden="true">✦</span>
                 <b>Wiki Map</b>
               </a>
@@ -119,15 +119,15 @@
                 class="help-tooltip"
                 type="button"
                 hidden
-                data-tooltip="GPT Fast Triage v3.4 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / INSUFFICIENT로 screening할 때 사용합니다."
-                aria-label="GPT Fast Triage v3.4 지침 복사"
+                data-tooltip="GPT Fast Triage v3.5 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / INSUFFICIENT로 screening할 때 사용합니다."
+                aria-label="GPT Fast Triage v3.5 지침 복사"
               ><span aria-hidden="true">GPT</span><b>지침 1</b></button>
               <button
                 id="copyPromptTopButton"
                 class="help-tooltip"
                 type="button"
-                data-tooltip="GPT Full Scout v3.6 지침을 복사합니다. Fast Triage에서 SELECT된 asset을 심층 검토할 때 사용합니다."
-                aria-label="GPT Full Scout v3.6 지침 복사"
+                data-tooltip="GPT Full Scout v3.7 지침을 복사합니다. Fast Triage에서 SELECT된 asset을 심층 검토할 때 사용합니다."
+                aria-label="GPT Full Scout v3.7 지침 복사"
               ><span aria-hidden="true">GPT</span><b>지침 2</b></button>
               <button
                 class="data-utility-segment data-upload-shortcut help-tooltip"
@@ -850,7 +850,7 @@
           <p class="eyebrow" id="criteriaDrawerScopeLabel">AI Champion</p>
           <div class="criteria-drawer-title-row">
             <h2>판단근거</h2>
-            <span id="criteriaDrawerVersionBadge" class="criteria-version-badge">v3.4</span>
+            <span id="criteriaDrawerVersionBadge" class="criteria-version-badge">v3.5</span>
           </div>
           <p id="criteriaDrawerSubtitle" class="criteria-drawer-subtitle">Full Scout 검토 후보를 선별하기 위한 3-point screening 기준</p>
         </div>
@@ -865,7 +865,7 @@
 
       <div class="criteria-drawer-body">
         <section class="criteria-rule criteria-triage-rule" data-criteria-tab="triage">
-          <h3>GPT 지침 1 — Fast Triage · v3.4 기준</h3>
+          <h3>GPT 지침 1 — Fast Triage · v3.5 기준</h3>
           <p>
             지침 1은 여러 후보 중 지침 2 Full Scout로 넘길 대상을 빠르게 고르는 1차 screening입니다.
             <code>Target Area Relevance</code>, <code>MoA Validity</code>, <code>Data Maturity</code>를 독립적으로 예비 평가하고
@@ -882,7 +882,7 @@
             <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></svg></span><h3>SELECT</h3></div>
             <p class="criteria-status-subtitle">Full Scout 심층 검토 대상입니다. 최종 BD recommendation을 의미하지 않습니다.</p>
             <ul>
-              <li>TR 2점 이상</li>
+              <li>TR 3점 이상</li>
               <li>MoA 1점 이상, Data 2점 이상</li>
             </ul>
           </article>
@@ -931,16 +931,16 @@
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg></span><span><b>TR</b>Target Area Relevance</span></span></th>
                   <td>Identity 확인 후 indication/relevance 판단 정보 부족</td>
-                  <td>확인된 asset이나 넓은 SKBP 범위 밖</td>
-                  <td>넓은 SKBP 범위 내이나 6개 우선 적응증 밖</td>
+                  <td>확인된 asset이나 신경계·정신과·신경면역·신경퇴행·통증 범위 밖</td>
+                  <td>신경계·정신과·신경면역·신경퇴행·통증 범위에는 속하지만 6개 우선 적응증 밖</td>
                   <td><strong>6개 SKBP 우선 적응증</strong> 중 하나</td>
                 </tr>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 4h8M10 4v5l-5 9a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 18l-5-9V4" /><path d="M8 15h8" /></svg></span><span><b>MoA</b>MoA Validity</span></span></th>
                   <td>Target 또는 작용기전을 확인할 수 없어 평가 불가</td>
                   <td>작용기전 설명은 있으나 회사 주장 또는 이론적 근거 중심</td>
-                  <td>기전이 실제로 작동함을 보여주는 기능적 실험 또는 동일 target/class의 독립 검증 근거 있음</td>
-                  <td><strong>평가 asset 자체에서 제안된 MoA가 직접 검증됨</strong><br />(target engagement, 기전 연계 PD/biomarker, 또는 직접 functional effect 중 하나 이상)</td>
+                  <td><strong>Target/pathway functional evidence 또는 independent same-target/class validation</strong></td>
+                  <td><strong>평가 asset에서 제안된 MoA 관련 직접 근거가 확인됨</strong><br />(target engagement, mechanism-linked PD/biomarker, or direct functional effect)</td>
                 </tr>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /><path d="M3 20h18" /></svg></span><span><b>Data</b>Data Maturity</span></span></th>
@@ -987,7 +987,7 @@
         </section>
 
         <section class="criteria-rule criteria-full-rule" data-criteria-tab="full">
-          <h3>GPT 지침 2 — Full Scout · v3.6 기준</h3>
+          <h3>GPT 지침 2 — Full Scout · v3.7 기준</h3>
           <p>
             지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
             지침 1에서 예비로 본 TR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
@@ -1018,7 +1018,7 @@
             <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">Full Scout의 총점과 필수 점수 기준을 모두 충족한 후속 BD 우선 검토 후보입니다.</p></div>
             <ul>
               <li>Total Score ≥ 14</li>
-              <li>Target Area Relevance ≥ 2</li>
+              <li>Target Area Relevance ≥ 3</li>
               <li>MoA Validity = 3, Data Maturity = 3</li>
             </ul>
           </article>
@@ -1068,16 +1068,16 @@
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></svg></span><span><b>TR</b>Target Area Relevance</span></span></th>
                   <td>Identity 확인 후 indication/relevance 판단 정보 부족<br />(identity 미확인 시 조사 조기 종료)</td>
-                  <td>확인된 asset이나 넓은 SKBP 범위 밖</td>
-                  <td>넓은 SKBP 범위 내이나 6개 우선 적응증 밖</td>
+                  <td>확인된 asset이나 신경계·정신과·신경면역·신경퇴행·통증 범위 밖</td>
+                  <td>신경계·정신과·신경면역·신경퇴행·통증 범위에는 속하지만 6개 우선 적응증 밖</td>
                   <td><strong>6개 SKBP 우선 적응증</strong> 중 하나</td>
                 </tr>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 4h8M10 4v5l-5 9a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 18l-5-9V4" /><path d="M8 15h8" /></svg></span><span><b>MoA</b>MoA Validity</span></span></th>
                   <td>Target 또는 MoA 확인 불가</td>
                   <td>회사 주장 또는 theoretical rationale 수준</td>
-                  <td>Functional evidence 또는 independent same-target/class validation</td>
-                  <td><strong>Assessed asset directly validates the proposed MoA</strong><br />(target engagement, mechanism-linked PD/biomarker, or direct functional effect)</td>
+                  <td><strong>Target/pathway functional evidence 또는 independent same-target/class validation</strong></td>
+                  <td><strong>Direct asset-specific evidence relevant to the proposed MoA</strong><br />(target engagement, mechanism-linked PD/biomarker, or direct functional effect)</td>
                 </tr>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V10M12 20V4M19 20v-7" /><path d="M3 20h18" /></svg></span><span><b>DATA</b>Data Maturity</span></span></th>
@@ -1127,7 +1127,7 @@
           <div class="criteria-detail-grid compact-criteria-detail-grid full-parameter-grid" aria-label="Detailed scoring guidance">
             <article class="target-parameter-card parameter-breakdown-card full-parameter-card">
               <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4M9.5 12a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z" /></svg></span><h3><b>TR</b><span>Target Area Relevance</span></h3></div>
-              <p>확인된 asset의 indication이 SKBP 전략 범위와 얼마나 맞는지 평가합니다. 6개 우선 적응증이면 3점, 넓은 SKBP 범위 내의 비우선 적응증이면 2점, 그 밖이면 1점입니다.</p>
+              <p>확인된 asset의 indication이 SKBP 전략 범위와 얼마나 맞는지 평가합니다. 6개 우선 적응증이면 3점, 신경계·정신과·신경면역·신경퇴행·통증 범위에는 속하지만 비우선 적응증이면 2점, 그 밖이면 1점입니다.</p>
               <ul class="parameter-evidence-list" aria-label="Target Area Relevance priority indications and themes">
                 <li><strong>SKBP 우선 관심 적응증</strong><span class="criteria-keyword-list"><span>Alzheimer's disease</span><span>Parkinson's disease</span><span>Amyotrophic lateral sclerosis / motor neuron disease</span><span>Multiple sclerosis / neuroinflammatory disease</span><span>Neuropathic pain</span><span>Epilepsy / seizure disorders</span></span></li>
                 <li><strong>R&amp;D Theme 1 · E/I Balance</strong><span class="criteria-keyword-list"><span>Ion Channel</span><span>Inhibitory Tone</span><span>Synaptic Transmission</span><span>Chloride Homeostasis</span><span>Network Modulation</span></span></li>
@@ -1422,7 +1422,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260827-criteria-language-1"></script>
+  <script type="module" src="./src/app.js?v=20260831-listing-hide-global-prompts-1"></script>
   <script src="./src/sigma_graph.js?v=20260824-deferred-wiki-export-1" defer></script>
   </body>
 </html>

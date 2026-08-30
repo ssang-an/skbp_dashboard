@@ -9,6 +9,7 @@ import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
 const viewTab = params.get('tab'); // 'full' | 'focus' | null — which dashboard tab this record was opened from
+const requestedDetailSection = params.get('open');
 
 function detailUrlForCurrentRecord() {
   const query = new URLSearchParams({ id: currentRecordId });
@@ -501,7 +502,7 @@ function computeHardFilter(record) {
     return { status: 'FAIL', reason: reasons.join('; ') };
   }
 
-  const passScores = total >= 14 && targetScore >= 2 && moaScore === 3 && dataScore === 3;
+  const passScores = total >= 14 && targetScore >= 3 && moaScore === 3 && dataScore === 3;
   if (passScores) {
     return {
       status: 'PASS',
@@ -3000,6 +3001,16 @@ function renderRecord(record) {
   renderCollaborationPanel(record);
 }
 
+function openRequestedDetailSection() {
+  if (requestedDetailSection !== 'dd') return;
+  setQualitativeReviewExpanded(true);
+  window.requestAnimationFrame(() => {
+    const ddFiles = elements.detailDDReportFilesList;
+    if (!ddFiles || ddFiles.hidden) return;
+    ddFiles.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+}
+
 function buildReadableSourceReport(record) {
   const summary = record.json_summary || {};
   const table = record.structured_table || {};
@@ -3982,6 +3993,10 @@ async function refreshRubric() {
 
   button.disabled = true;
   button.classList.add('is-saving');
+  const closeProgress = showDetailProgress(
+    '최신 기준으로 업데이트 중입니다',
+    '최신 Full Scout 기준으로 기존 근거와 점수를 다시 확인하고 있습니다.'
+  );
   setCollaborationStatus('Score 기준 갱신 검토 중…');
 
   try {
@@ -3995,13 +4010,14 @@ async function refreshRubric() {
     const tone = data.status === 'updated' ? 'success' : data.status === 'error' ? 'error' : '';
     setCollaborationStatus(data.message || '', tone);
 
-    if (data.status === 'updated' && data.record) {
+    if (data.record) {
       currentRecord = data.record;
       await loadRecord();
     }
   } catch (error) {
     setCollaborationStatus(error.message, 'error');
   } finally {
+    closeProgress();
     button.disabled = false;
     button.classList.remove('is-saving');
   }
@@ -4040,8 +4056,8 @@ async function refreshOiPartnership() {
 
 function aiRevisionInstruction(record) {
   return isFastTriageRecord(record)
-    ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.4 update applied from chat answer.'
-    : 'Detail AI Agent Full Scout v3.6 re-evaluation applied from chat answer.';
+    ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.5 update applied from chat answer.'
+    : 'Detail AI Agent Full Scout v3.7 re-evaluation applied from chat answer.';
 }
 
 function setAiApplyModalStatus(message = '', tone = '') {
@@ -4322,6 +4338,7 @@ async function loadRecord() {
   currentRecord = data.record;
   currentRecordId = data.record_id;
   renderRecord(currentRecord);
+  openRequestedDetailSection();
   initializeChatSessions();
 }
 

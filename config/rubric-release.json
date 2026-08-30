@@ -1,22 +1,22 @@
 {
   "manifest_schema_version": "1.0",
-  "release_id": "skbp-rubric-2026-08-26-full-status-gates",
-  "released_at": "2026-08-26",
+  "release_id": "skbp-rubric-2026-08-31-tar-scope-display-clarity",
+  "released_at": "2026-08-31",
   "workflows": {
     "fast_triage": {
-      "instruction_version": "3.4",
-      "rubric_version": "3.4",
-      "display_version": "3.4",
+      "instruction_version": "3.5",
+      "rubric_version": "3.5",
+      "display_version": "3.7",
       "schema_version": "3.2",
-      "rubric_file": "config/scoring_criteria/v3_4_triage.md"
+      "rubric_file": "config/scoring_criteria/v3_5_triage.md"
     },
     "full_scout": {
-      "instruction_version": "3.6",
-      "rubric_version": "3.6",
-      "display_version": "3.6",
+      "instruction_version": "3.7",
+      "rubric_version": "3.7",
+      "display_version": "3.9",
       "schema_version": "3.2",
-      "rubric_file": "config/scoring_criteria/v3_6_full.md",
-      "display_file": "config/scoring_criteria/v3_6_display.md"
+      "rubric_file": "config/scoring_criteria/v3_7_full.md",
+      "display_file": "config/scoring_criteria/v3_9_display.md"
     }
   },
   "calculations": {

@@ -559,7 +559,7 @@
 
       <div class="criteria-drawer-body" id="criteriaDrawerBody">
         <section class="criteria-rule criteria-full-rule" data-criteria-tab="full">
-          <h3>GPT 지침 2 — Full Scout · v3.6 기준</h3>
+          <h3>GPT 지침 2 — Full Scout · v3.7 기준</h3>
           <p>
             지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
             지침 1에서 예비로 본 TR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
@@ -593,7 +593,7 @@
             <h3>PASS</h3>
             <ul>
               <li>Total score >= 14</li>
-              <li>Target Area Relevance >= 2</li>
+              <li>Target Area Relevance >= 3</li>
               <li>MoA Validity = 3</li>
               <li>Data Maturity = 3</li>
             </ul>
@@ -642,16 +642,16 @@
                 <tr>
                   <th>Target Area Relevance</th>
                   <td>Identity 확인 후 indication/relevance 판단 정보 부족<br />(identity 미확인 시 조사 조기 종료)</td>
-                  <td>확인된 asset이나 넓은 SKBP 범위 밖</td>
-                  <td>넓은 SKBP 범위 내이나 6개 우선 적응증 밖</td>
+                  <td>확인된 asset이나 신경계·정신과·신경면역·신경퇴행·통증 범위 밖</td>
+                  <td>신경계·정신과·신경면역·신경퇴행·통증 범위에는 속하지만 6개 우선 적응증 밖</td>
                   <td><strong>6개 SKBP 우선 적응증</strong> 중 하나</td>
                 </tr>
                 <tr>
                   <th>MoA Validity</th>
                   <td>Target 또는 작용기전을 확인할 수 없어 평가 불가</td>
                   <td>작용기전 설명은 있으나 회사 주장 또는 이론적 근거 중심</td>
-                  <td>기전이 실제로 작동함을 보여주는 기능적 실험 또는 동일 target/class의 독립 검증 근거 있음</td>
-                  <td><strong>평가 asset 자체에서 제안된 MoA가 직접 검증됨</strong><br />(target engagement, 기전 연계 PD/biomarker, 또는 직접 functional effect 중 하나 이상)</td>
+                  <td><strong>Target/pathway functional evidence 또는 independent same-target/class validation</strong></td>
+                  <td><strong>평가 asset에서 제안된 MoA 관련 직접 근거가 확인됨</strong><br />(target engagement, mechanism-linked PD/biomarker, or direct functional effect)</td>
                 </tr>
                 <tr>
                   <th>Data Maturity</th>
@@ -843,6 +843,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260827-review-workspace-density-1"></script>
+    <script type="module" src="./src/detail.js?v=20260830-tr3-gates-1"></script>
   </body>
 </html>

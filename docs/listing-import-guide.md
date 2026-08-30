@@ -188,7 +188,7 @@ Tab 1·2에 보이는 Tab 0 유래 Comment·Contact History는 별도 편집본�
 - `PCC`, `PCC completion`, `PCC selected`는 Dashboard Canonical Stage에서 `Preclinical Candidate`로 분류합니다.
 - 명시적인 `research program`, `research project`, `discovery program`, `discovery project`는 Dashboard Canonical Stage에서 `Hit Discovery`로 분류합니다. 계획 표현만 있는 경우에는 현재 단계를 승격하지 않습니다.
 - 시작·진행 중인 임상/피보탈/registrational trial인데 phase가 명시되지 않은 경우에는 `Clinical unspecified`으로 분류합니다. `pivotal` 또는 `registrational`이라는 단어만으로 `Phase 3`로 올리지 않습니다.
-- 명시적으로 확인된 `discontinued`, `terminated`, `withdrawn`, `inactive`, `dormant`, `abandoned`만 Dashboard Canonical Stage에서 `Discontinued / inactive`로 분류합니다. `suspended`, `halted`는 일시 중단일 수 있으므로 기존에 확인된 Stage는 유지하고, 원문·중단 사유는 운영 메모/Flag에 남깁니다. Fast Triage에서는 영구 비활성이 독립 확인되기 전까지 `active_asset`을 `null`로 둡니다.
+- 명시적으로 확인된 `discontinued`, `terminated`, `withdrawn`, `inactive`, `dormant`, `abandoned`만 Dashboard Canonical Stage에서 `Discontinued / inactive`로 분류합니다. `suspended`, `halted`는 일시 중단일 수 있으므로 기존에 확인된 Stage는 유지하고, 원문·중단 사유는 운영 메모/Flag에 남깁니다. Fast Triage와 Full Scout 모두 `development_stage`만 lifecycle 판정에 사용하며, 별도 `active_asset` 값은 사용하지 않습니다.
 - 같은 Company명 또는 Asset의 Company 접두어만 겹치는 경우에는 유사 Pipeline 확인 대상으로 올리지 않습니다. 예: `Anlong-APP`와 `Anlong-KCNT`는 별도 Pipeline입니다.
 
 ## 9. 빠른 판단 예시

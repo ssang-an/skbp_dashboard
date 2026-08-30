@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260827-review-workspace-density-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260828-triage-footer-flow-1" />
     <link rel="stylesheet" href="./src/triage-score.css?v=20260820-score-pill-readable-1" />
   </head>
   <body>
@@ -167,7 +167,7 @@
           <p class="eyebrow">TAB 1 · FAST TRIAGE · SCORING GUIDE</p>
           <div class="criteria-drawer-title-row">
             <h2>판단근거</h2>
-            <span class="criteria-version-badge">v3.4</span>
+            <span class="criteria-version-badge">v3.5</span>
           </div>
           <p class="criteria-drawer-subtitle">Full Scout 검토 후보를 선별하기 위한 3-point screening 기준</p>
         </div>
@@ -176,7 +176,7 @@
 
       <div class="criteria-drawer-body" id="triageCriteriaDrawerBody">
         <section class="criteria-rule criteria-triage-rule" data-criteria-tab="triage">
-          <h3>GPT 지침 1 — Fast Triage · v3.4 기준</h3>
+          <h3>GPT 지침 1 — Fast Triage · v3.5 기준</h3>
           <p>
             지침 1은 여러 후보 중 지침 2 Full Scout로 넘길 대상을 빠르게 고르는 1차 screening입니다.
             <code>Target Area Relevance</code>, <code>MoA Validity</code>, <code>Data Maturity</code>를 예비 평가하고
@@ -189,7 +189,7 @@
             <h3>SELECT</h3>
             <p class="criteria-status-subtitle">Full Scout 심층 검토 대상입니다. 최종 BD recommendation을 의미하지 않습니다.</p>
             <ul>
-              <li>TR 2점 이상</li>
+              <li>TR 3점 이상</li>
               <li>MoA 1점 이상, Data 2점 이상</li>
             </ul>
           </article>
@@ -238,16 +238,16 @@
                 <tr>
                   <th>Target Area Relevance</th>
                   <td>Identity 확인 후 indication/relevance 판단 정보 부족</td>
-                  <td>확인된 asset이나 넓은 SKBP 범위 밖</td>
-                  <td>넓은 SKBP 범위 내이나 6개 우선 적응증 밖</td>
+                  <td>확인된 asset이나 신경계·정신과·신경면역·신경퇴행·통증 범위 밖</td>
+                  <td>신경계·정신과·신경면역·신경퇴행·통증 범위에는 속하지만 6개 우선 적응증 밖</td>
                   <td><strong>6개 SKBP 우선 적응증</strong> 중 하나</td>
                 </tr>
                 <tr>
                   <th>MoA Validity</th>
                   <td>Target 또는 작용기전을 확인할 수 없어 평가 불가</td>
                   <td>작용기전 설명은 있으나 회사 주장 또는 이론적 근거 중심</td>
-                  <td>기전이 실제로 작동함을 보여주는 기능적 실험 또는 동일 target/class의 독립 검증 근거 있음</td>
-                  <td><strong>평가 asset 자체에서 제안된 MoA가 직접 검증됨</strong><br />(target engagement, 기전 연계 PD/biomarker, 또는 직접 functional effect 중 하나 이상)</td>
+                  <td><strong>Target/pathway functional evidence 또는 independent same-target/class validation</strong></td>
+                  <td><strong>평가 asset에서 제안된 MoA 관련 직접 근거가 확인됨</strong><br />(target engagement, mechanism-linked PD/biomarker, or direct functional effect)</td>
                 </tr>
                 <tr>
                   <th>Data Maturity</th>
@@ -294,7 +294,7 @@
         <section class="criteria-rule target-theme-note" data-criteria-tab="triage">
           <h3>Target Area Relevance — 적응증 범위</h3>
           <p>
-            6개 우선 관심 적응증이면 3점, 넓은 SKBP 범위 내의 비우선 적응증이면 2점, 그 밖의 확인된 asset이면 1점입니다.
+            6개 우선 관심 적응증이면 3점, 신경계·정신과·신경면역·신경퇴행·통증 범위에는 속하지만 비우선 적응증이면 2점, 그 밖의 확인된 asset이면 1점입니다.
             Theme/Cluster와 disease biology 연결성은 점수와 분리된 분류·MoA 평가 정보입니다.
           </p>
         </section>
@@ -349,6 +349,6 @@
       </section>
     </div>
 
-    <script type="module" src="./src/triage-detail.js?v=20260826-rubric-v3-6-1"></script>
+    <script type="module" src="./src/triage-detail.js?v=20260830-tr3-gates-1"></script>
   </body>
 </html>
