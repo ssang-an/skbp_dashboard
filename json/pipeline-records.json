@@ -9015,7 +9015,7 @@
       ]
     },
     "hard_filter": {
-      "status": "REJECT",
+      "status": "SELECT",
       "reason": "Asset identity verified and TR/MOA/Data are all >=2; strong same-target benchmark for NS-041.",
       "flags": [
         "fast_triage_only",
@@ -9100,11 +9100,11 @@
     },
     "final_insight": {
       "one_line_summary": "Strong same-target Kv7 benchmark; run Full Scout.",
-      "recommendation": "Monitor / gather more evidence",
+      "recommendation": "Run Full Scout",
       "most_important_diligence_question": "How does azetukalner's efficacy and safety profile define the bar for NS-041 differentiation?"
     },
     "triage": {
-      "status": "REJECT",
+      "status": "SELECT",
       "identity_verified": true,
       "active_asset": null,
       "verified_public_source_count": 2,
@@ -9264,7 +9264,7 @@
       ]
     },
     "hard_filter": {
-      "status": "REJECT",
+      "status": "SELECT",
       "reason": "Asset identity verified and TR/MOA/Data are all >=2; same-class competitor to NS-041.",
       "flags": [
         "fast_triage_only",
@@ -9350,11 +9350,11 @@
     },
     "final_insight": {
       "one_line_summary": "Strong same-class Kv7.2/7.3 comparator; run Full Scout.",
-      "recommendation": "Monitor / gather more evidence",
+      "recommendation": "Run Full Scout",
       "most_important_diligence_question": "Does opakalim show better tolerability or variant coverage than azetukalner/NS-041?"
     },
     "triage": {
-      "status": "REJECT",
+      "status": "SELECT",
       "identity_verified": true,
       "active_asset": null,
       "verified_public_source_count": 2,
@@ -9420,7 +9420,7 @@
       ]
     },
     "hard_filter": {
-      "status": "REJECT",
+      "status": "SELECT",
       "reason": "Asset identity verified and TR/MOA are >=2; Data is adequate for triage but lower than later-stage assets.",
       "flags": [
         "fast_triage_only",
@@ -9500,11 +9500,11 @@
     },
     "final_insight": {
       "one_line_summary": "Early but relevant Kv7.2/7.3 opener; run Full Scout if prioritizing class map.",
-      "recommendation": "Monitor / gather more evidence",
+      "recommendation": "Run Full Scout",
       "most_important_diligence_question": "Is QRL-101 meaningfully differentiated from other Kv7.2/7.3 openers in potency, tolerability, or disease positioning?"
     },
     "triage": {
-      "status": "REJECT",
+      "status": "SELECT",
       "identity_verified": true,
       "active_asset": null,
       "verified_public_source_count": 1,
@@ -9715,7 +9715,7 @@
       ]
     },
     "hard_filter": {
-      "status": "REJECT",
+      "status": "SELECT",
       "reason": "Asset identity verified and TR/MOA/Data are all >=2; novel E/I Balance synaptic MoA with visible Phase 2a efficacy.",
       "flags": [
         "fast_triage_only",
@@ -9801,11 +9801,11 @@
     },
     "final_insight": {
       "one_line_summary": "Novel synaptic E/I Balance asset with visible Phase 2 signal; run Full Scout.",
-      "recommendation": "Monitor / gather more evidence",
+      "recommendation": "Run Full Scout",
       "most_important_diligence_question": "Is the RNS long-episode biomarker sufficiently validated to predict durable clinical seizure benefit?"
     },
     "triage": {
-      "status": "REJECT",
+      "status": "SELECT",
       "identity_verified": true,
       "active_asset": null,
       "verified_public_source_count": 2,
@@ -9858,7 +9858,7 @@
       ]
     },
     "hard_filter": {
-      "status": "REJECT",
+      "status": "SELECT",
       "reason": "Asset identity verified and at least two of TR/MOA/Data are >=2; genetically defined ion-channel epilepsy asset.",
       "flags": [
         "fast_triage_only",
@@ -9946,11 +9946,11 @@
     },
     "final_insight": {
       "one_line_summary": "Genetically defined rare epilepsy ion-channel asset; run Full Scout.",
-      "recommendation": "Monitor / gather more evidence",
+      "recommendation": "Run Full Scout",
       "most_important_diligence_question": "Does ABS-1230 inhibit the clinically relevant KCNT1 variants with a sufficient CNS safety window?"
     },
     "triage": {
-      "status": "REJECT",
+      "status": "SELECT",
       "identity_verified": true,
       "active_asset": null,
       "verified_public_source_count": 2,
@@ -10003,7 +10003,7 @@
       ]
     },
     "hard_filter": {
-      "status": "REJECT",
+      "status": "SELECT",
       "reason": "Asset identity verified and TR/MOA/Data are all >=2; disease-modifying genetic epilepsy asset in Phase 3.",
       "flags": [
         "fast_triage_only",
@@ -10089,11 +10089,11 @@
     },
     "final_insight": {
       "one_line_summary": "High-priority Dravet disease-modifying ASO; run Full Scout.",
-      "recommendation": "Monitor / gather more evidence",
+      "recommendation": "Run Full Scout",
       "most_important_diligence_question": "Does zorevunersen's disease-modifying efficacy justify intrathecal treatment burden and support expansion beyond Dravet?"
     },
     "triage": {
-      "status": "REJECT",
+      "status": "SELECT",
       "identity_verified": true,
       "active_asset": null,
       "verified_public_source_count": 2,
@@ -10146,7 +10146,7 @@
       ]
     },
     "hard_filter": {
-      "status": "REJECT",
+      "status": "SELECT",
       "reason": "Asset identity verified and TR/MOA/Data are all >=2; disease-modifying Dravet gene therapy with Phase 1/2 data.",
       "flags": [
         "fast_triage_only",
@@ -10233,11 +10233,11 @@
     },
     "final_insight": {
       "one_line_summary": "High-relevance Dravet gene therapy; run Full Scout.",
-      "recommendation": "Monitor / gather more evidence",
+      "recommendation": "Run Full Scout",
       "most_important_diligence_question": "Can ETX101 demonstrate durable benefit with acceptable AAV safety in very young Dravet patients?"
     },
     "triage": {
-      "status": "REJECT",
+      "status": "SELECT",
       "identity_verified": true,
       "active_asset": null,
       "verified_public_source_count": 2,
@@ -24611,6 +24611,66 @@
           "field": "collaboration.comments",
           "previous_value": null,
           "new_value": null
+        },
+        {
+          "id": "4c0532ad78cf4539afb463fcb1739c09",
+          "changed_at": "2026-08-31T02:18:46.133772+00:00",
+          "actor_ip": "10.145.144.159",
+          "actor_name": "정영찬",
+          "source": "detail_topic_note_add",
+          "field": "topic_notes.topic-moa-validity",
+          "previous_value": null,
+          "new_value": "VTA-27 자체에서 H₂O₂ 감소 및 STAT3 activation 억제 등 제안된 PRX-mimetic MoA와 직접 연결되는 functional PD가 확인되어 2점보다는 3점에 부합. 다만 in vivo에서의 완전한 MoA causal chain 및 Aβ 감소 mechanism은 추가 validation이 필요함.\n\nVTA-27의 in vivo exposure/target engagement에서 시작하여 pSTAT3 감소 → astrocyte reactivity 감소 → cytokine 감소 → neuronal protection/cognition 개선으로 이어지는 전체 causal chain이 하나의 in vivo PK/PD study에서 직접 입증된 것은 아님.\n또한 VTA-27 투여 후 Aβ plaque 감소는 확인되었으나, 회사가 제안하는 ADAM10/APP processing을 통한 Aβ production 감소 mechanism은 아직 potential mechanism 단계로 직접 검증되지 않음."
+        },
+        {
+          "id": "c157acbd33fc408f923a1fdb7aac546e",
+          "changed_at": "2026-08-31T02:19:18.485281+00:00",
+          "actor_ip": "10.145.144.159",
+          "actor_name": "정영찬",
+          "source": "detail_topic_note_add",
+          "field": "topic_notes.topic-competitive-landscape",
+          "previous_value": null,
+          "new_value": "AD 치료제 개발 경쟁은 매우 높은 수준이며, anti-Aβ 항체를 포함한 다양한 disease-modifying approach가 임상 개발 중으로 VTA-27의 명확한 선도적 위치 또는 강한 임상적 차별성은 아직 확인되지 않음. 다만 PRX–redox–astrocyte 기반의 차별화된 MoA를 보유하고 있으며, 향후 vascular safety가 입증될 경우 anti-Aβ 항체 투여가 unsuitable/high-risk인 환자군에서 차별화된 진입 가능성이 존재함."
+        },
+        {
+          "id": "44b401b41c744e809626db23e229ffd2",
+          "changed_at": "2026-08-31T02:19:37.217158+00:00",
+          "actor_ip": "10.145.144.159",
+          "actor_name": "정영찬",
+          "source": "detail_topic_note_add",
+          "field": "topic_notes.topic-platform-attractiveness",
+          "previous_value": null,
+          "new_value": "단순 NCDP나 CDP만으로는 확인되지않고, 홈페이지 내 다른 아이템에 대한 검색이 필요. Redoxizyme™ 기반 PRX-mimetic platform이 PAH, AD 등 복수 적응증의 후보물질에 적용되고 있으며, 동일 platform에서 개발된 VTB-10이 FDA/MFDS IND 승인을 거쳐 2026년 Phase 1 FIH dosing에 진입함. 이를 통해 platform의 후보물질 창출 및 임상개발 단계까지의 translation 가능성은 일정 수준 검증된 것으로 판단. 다만 아직 human PD/efficacy를 통한 platform biology의 임상적 validation은 확인되지 않음"
+        },
+        {
+          "id": "18dab77fdbd243f0a2044694c45ddad7",
+          "changed_at": "2026-08-31T02:19:58.321792+00:00",
+          "actor_ip": "10.145.144.159",
+          "actor_name": "정영찬",
+          "source": "detail_topic_note_add",
+          "field": "topic_notes.topic-expansion-potential",
+          "previous_value": null,
+          "new_value": "미팅 후, 회사에서 주장 하고 있는 것은 PD 환자에서의 적용 가능성을 주장하지만, 현재 수준에서는 설득력이 낮음."
+        },
+        {
+          "id": "6721635f60b4447d99252358236ffcfd",
+          "changed_at": "2026-08-31T02:20:22.669669+00:00",
+          "actor_ip": "10.145.144.159",
+          "actor_name": "정영찬",
+          "source": "detail_topic_note_add",
+          "field": "topic_notes.topic-marketability",
+          "previous_value": null,
+          "new_value": "현재 실존 데이터로만으로는 보수적으로 2점이지만, 임상 진입시점에는 3점이가능. 실제 valuation을 해보면, Anti-Aβ therapy 확산에 따라 biomarker-positive early AD 환자의 treatment funnel이 확대되고, MRI/vascular risk 등에 따른 anti-Aβ unsuitable population이 상당 규모 존재할 가능성이 확인됨. VTA-27이 해당 population에서 disease modification과 vascular safety를 입증하고, 향후 post-anti-Aβ maintenance 및 broader early AD로 확장할 경우 Global Peak Sales USD 2B+ 잠재력이 존재한다고 생각. 실제로 레케네맙과 도나네맙의 25년 매출은 각각, 555M과 249M에 그쳤지만 30년 까지 각각 3.5, 2.0b로 예측 하고 있음."
+        },
+        {
+          "id": "2daa87ae045444799cbe0cbb2188d660",
+          "changed_at": "2026-08-31T02:20:38.831796+00:00",
+          "actor_ip": "10.145.144.159",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.partnership_type",
+          "previous_value": "n_a",
+          "new_value": "value_up"
         }
       ],
       "focus_management": {
@@ -24620,8 +24680,8 @@
         "due_date": "",
         "owner_name": "",
         "action_plan": "",
-        "partnership_type": "n_a",
-        "partnership_classification_status": "auto_classified",
+        "partnership_type": "value_up",
+        "partnership_classification_status": "manual_override",
         "partner_material_flags": {
           "cdp": false,
           "ncdp": false,
@@ -24797,21 +24857,23 @@
           "Tab2 구조화 데이터",
           "Full Scout 원문 리포트: VASTHERA Co., Ltd._VTA-27",
           "Partner Materials: List of ADMET studies_VTA-27 (Vasthera).pdf",
-          "Partner Materials: [VASTHERA] VTA-27 program CD_(Aug 2026).pdf"
+          "Partner Materials: [VASTHERA] VTA-27 program CD_(Aug 2026).pdf",
+          "Partner Materials: [VASTHERA] VTA-27 NCD (2026).pdf"
         ],
         "partnership_classification_criteria_version": "1.4",
-        "partnership_note": "OI Partnership 분류 조건 미충족 / Development Stage IND-enabling (IND-enabling 미만 아님)",
+        "partnership_note": "담당자 수동 분류 / 자동 제안 N/A: OI Partnership 분류 조건 미충족 / Development Stage IND-enabling (IND-enabling 미만 아님)",
         "partnership_evidence_sources": [
           "Tab2 구조화 데이터",
           "Full Scout 원문 리포트: VASTHERA Co., Ltd._VTA-27",
           "Partner Materials: List of ADMET studies_VTA-27 (Vasthera).pdf",
-          "Partner Materials: [VASTHERA] VTA-27 program CD_(Aug 2026).pdf"
+          "Partner Materials: [VASTHERA] VTA-27 program CD_(Aug 2026).pdf",
+          "Partner Materials: [VASTHERA] VTA-27 NCD (2026).pdf"
         ],
-        "partnership_classification_source": "auto",
-        "partnership_classified_at": "2026-08-22T07:19:29.228919+00:00",
-        "updated_at": "2026-08-22T07:19:29.226168+00:00",
+        "partnership_classification_source": "manual",
+        "partnership_classified_at": "2026-08-31T02:20:38.831669+00:00",
+        "updated_at": "2026-08-31T02:20:38.831669+00:00",
         "updated_source": "dashboard_tab3",
-        "updated_by": "정주원",
+        "updated_by": "10.145.144.159",
         "partnership_evidence_updated_at": "2026-08-12T05:15:55.702205+00:00",
         "partner_material_flag_overrides": {
           "cdp": false
@@ -24872,6 +24934,61 @@
           "author_name": "정주원",
           "created_at": "2026-08-21T04:57:34.649467+00:00",
           "updated_at": "2026-08-21T04:57:34.649467+00:00"
+        },
+        {
+          "id": "0ad5d512a0c84dc19e4b4261b7ec3f1f",
+          "topic_id": "topic-moa-validity",
+          "topic_key": "moa-validity",
+          "topic_title": "4.3 MoA Validity",
+          "body": "VTA-27 자체에서 H₂O₂ 감소 및 STAT3 activation 억제 등 제안된 PRX-mimetic MoA와 직접 연결되는 functional PD가 확인되어 2점보다는 3점에 부합. 다만 in vivo에서의 완전한 MoA causal chain 및 Aβ 감소 mechanism은 추가 validation이 필요함.\n\nVTA-27의 in vivo exposure/target engagement에서 시작하여 pSTAT3 감소 → astrocyte reactivity 감소 → cytokine 감소 → neuronal protection/cognition 개선으로 이어지는 전체 causal chain이 하나의 in vivo PK/PD study에서 직접 입증된 것은 아님.\n또한 VTA-27 투여 후 Aβ plaque 감소는 확인되었으나, 회사가 제안하는 ADAM10/APP processing을 통한 Aβ production 감소 mechanism은 아직 potential mechanism 단계로 직접 검증되지 않음.",
+          "author_id": "bae32c0ce9714de7bfc31ceaa8665ad7",
+          "author_name": "정영찬",
+          "created_at": "2026-08-31T02:18:46.133469+00:00",
+          "updated_at": "2026-08-31T02:18:46.133469+00:00"
+        },
+        {
+          "id": "7d217198dc20429e90a611366a61bf10",
+          "topic_id": "topic-competitive-landscape",
+          "topic_key": "competitive-landscape",
+          "topic_title": "4.2 Competitive Landscape",
+          "body": "AD 치료제 개발 경쟁은 매우 높은 수준이며, anti-Aβ 항체를 포함한 다양한 disease-modifying approach가 임상 개발 중으로 VTA-27의 명확한 선도적 위치 또는 강한 임상적 차별성은 아직 확인되지 않음. 다만 PRX–redox–astrocyte 기반의 차별화된 MoA를 보유하고 있으며, 향후 vascular safety가 입증될 경우 anti-Aβ 항체 투여가 unsuitable/high-risk인 환자군에서 차별화된 진입 가능성이 존재함.",
+          "author_id": "bae32c0ce9714de7bfc31ceaa8665ad7",
+          "author_name": "정영찬",
+          "created_at": "2026-08-31T02:19:18.485171+00:00",
+          "updated_at": "2026-08-31T02:19:18.485171+00:00"
+        },
+        {
+          "id": "6a99cd41d6d847bb8b2ab2a850e34c42",
+          "topic_id": "topic-platform-attractiveness",
+          "topic_key": "platform-attractiveness",
+          "topic_title": "4.4 Platform Attractiveness",
+          "body": "단순 NCDP나 CDP만으로는 확인되지않고, 홈페이지 내 다른 아이템에 대한 검색이 필요. Redoxizyme™ 기반 PRX-mimetic platform이 PAH, AD 등 복수 적응증의 후보물질에 적용되고 있으며, 동일 platform에서 개발된 VTB-10이 FDA/MFDS IND 승인을 거쳐 2026년 Phase 1 FIH dosing에 진입함. 이를 통해 platform의 후보물질 창출 및 임상개발 단계까지의 translation 가능성은 일정 수준 검증된 것으로 판단. 다만 아직 human PD/efficacy를 통한 platform biology의 임상적 validation은 확인되지 않음",
+          "author_id": "bae32c0ce9714de7bfc31ceaa8665ad7",
+          "author_name": "정영찬",
+          "created_at": "2026-08-31T02:19:37.217081+00:00",
+          "updated_at": "2026-08-31T02:19:37.217081+00:00"
+        },
+        {
+          "id": "7d971da884dd409baba60f9a63045f14",
+          "topic_id": "topic-expansion-potential",
+          "topic_key": "expansion-potential",
+          "topic_title": "4.5 Expansion Potential",
+          "body": "미팅 후, 회사에서 주장 하고 있는 것은 PD 환자에서의 적용 가능성을 주장하지만, 현재 수준에서는 설득력이 낮음.",
+          "author_id": "bae32c0ce9714de7bfc31ceaa8665ad7",
+          "author_name": "정영찬",
+          "created_at": "2026-08-31T02:19:58.321720+00:00",
+          "updated_at": "2026-08-31T02:19:58.321720+00:00"
+        },
+        {
+          "id": "340737be71814c4488bd70728980ef6b",
+          "topic_id": "topic-marketability",
+          "topic_key": "marketability",
+          "topic_title": "4.7 Marketability",
+          "body": "현재 실존 데이터로만으로는 보수적으로 2점이지만, 임상 진입시점에는 3점이가능. 실제 valuation을 해보면, Anti-Aβ therapy 확산에 따라 biomarker-positive early AD 환자의 treatment funnel이 확대되고, MRI/vascular risk 등에 따른 anti-Aβ unsuitable population이 상당 규모 존재할 가능성이 확인됨. VTA-27이 해당 population에서 disease modification과 vascular safety를 입증하고, 향후 post-anti-Aβ maintenance 및 broader early AD로 확장할 경우 Global Peak Sales USD 2B+ 잠재력이 존재한다고 생각. 실제로 레케네맙과 도나네맙의 25년 매출은 각각, 555M과 249M에 그쳤지만 30년 까지 각각 3.5, 2.0b로 예측 하고 있음.",
+          "author_id": "bae32c0ce9714de7bfc31ceaa8665ad7",
+          "author_name": "정영찬",
+          "created_at": "2026-08-31T02:20:22.669560+00:00",
+          "updated_at": "2026-08-31T02:20:22.669560+00:00"
         }
       ],
       "report_reupload_history": [
@@ -30235,7 +30352,7 @@
       ]
     },
     "hard_filter": {
-      "status": "SELECT",
+      "status": "REJECT",
       "reason": "현재 epilepsy preclinical program과 partnering activity가 확인되고 TR 2/Data 2로 SELECT 기준을 충족합니다.",
       "flags": [],
       "hard_blocker": false,
@@ -30323,11 +30440,11 @@
     },
     "final_insight": {
       "one_line_summary": "Target 비공개 리스크는 있으나 정량 전임상 신호로 SELECT입니다.",
-      "recommendation": "Run Full Scout",
+      "recommendation": "Monitor / gather more evidence",
       "most_important_diligence_question": "12–18주 seizure suppression이 어떤 epilepsy model과 exposure/target-knockdown 수준에서 재현되며 comparator 대비 effect size는 얼마인가?"
     },
     "triage": {
-      "status": "SELECT",
+      "status": "REJECT",
       "identity_verified": true,
       "active_asset": true,
       "verified_public_source_count": 3,
@@ -34885,7 +35002,7 @@
       ]
     },
     "hard_filter": {
-      "status": "SELECT",
+      "status": "REJECT",
       "reason": "AUKONTALS는 Shanghai Auzone의 edaravone tablet로 identity와 현재 NDA/registration 상태가 확인되며, ALS 적합성(TR 2)과 asset-specific 정량 임상 데이터(Data 2)가 확인됩니다.",
       "flags": [],
       "hard_blocker": false,
@@ -34989,11 +35106,11 @@
     },
     "final_insight": {
       "one_line_summary": "AUKONTALS는 ALS registration-stage asset으로 identity가 확실하고 정량 임상 데이터가 있어 SELECT입니다.",
-      "recommendation": "Run Full Scout",
+      "recommendation": "Monitor / gather more evidence",
       "most_important_diligence_question": "ALS용 NDA 219846의 최신 regulatory status와 AUKONTALS 자체 ALS 데이터 package가 무엇인가?"
     },
     "triage": {
-      "status": "SELECT",
+      "status": "REJECT",
       "identity_verified": true,
       "active_asset": true,
       "verified_public_source_count": 4,
@@ -42669,7 +42786,7 @@
       ]
     },
     "hard_filter": {
-      "status": "REJECT",
+      "status": "SELECT",
       "reason": "Current activity not established; REJECT.",
       "flags": [
         "current_activity_unconfirmed"
@@ -42739,11 +42856,11 @@
     },
     "final_insight": {
       "one_line_summary": "AD preclinical evidence는 있으나 current activity가 확립되지 않아 REJECT.",
-      "recommendation": "Monitor / gather more evidence",
+      "recommendation": "Run Full Scout",
       "most_important_diligence_question": "NXP032가 현재 Nexmos의 개발 pipeline에 남아 있는가?"
     },
     "triage": {
-      "status": "REJECT",
+      "status": "SELECT",
       "identity_verified": true,
       "active_asset": null,
       "verified_public_source_count": 1,
