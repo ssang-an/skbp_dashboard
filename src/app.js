@@ -27,7 +27,7 @@ const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v4';
 const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v7';
 const CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY = 'skbp.dashboard.criteriaGuideLanguage.v1';
 const PIPELINE_RETURN_FOCUS_STORAGE_KEY = 'skbp.pipeline.return-focus.v1';
-const PIPELINE_ROW_HIGHLIGHT_MS = 3000;
+const PIPELINE_ROW_HIGHLIGHT_MS = 1800;
 
 function encodeRecordIdForPath(recordId) {
   return encodeURIComponent(String(recordId ?? ''))
@@ -544,6 +544,7 @@ const elements = {
   step0PasteProcessingModal: document.querySelector('#step0PasteProcessingModal'),
   step0PasteProcessingDialog: document.querySelector('#step0PasteProcessingDialog'),
   step0PasteProcessingStatus: document.querySelector('#step0PasteProcessingStatus'),
+  step0EntryGridMappingStatus: document.querySelector('#step0EntryGridMappingStatus'),
   pipelineWebsiteModal: document.querySelector('#pipelineWebsiteModal'),
   pipelineWebsiteModalInput: document.querySelector('#pipelineWebsiteModalInput'),
   pipelineWebsiteModalStatus: document.querySelector('#pipelineWebsiteModalStatus'),
@@ -752,7 +753,13 @@ function normalizedDashboardSearchText(value) {
 // Descriptive Listing names often share formulation scaffolding.  These words
 // do not identify the program itself, so descriptive names need two meaningful
 // asset terms in common before they create a review match.
-const GENERIC_ASSET_WORDS = new Set(['therapy', 'drug', 'treatment', 'research', 'project', 'program', 'pipeline', 'disease', 'disorder', 'candidate', 'small', 'molecule', 'inhibit', 'inhibits', 'inhibiting', 'inhibition', 'to', 'for', 'of', 'the', 'and']);
+const GENERIC_ASSET_WORDS = new Set([
+  'therapy', 'therapies', 'drug', 'drugs', 'treatment', 'treatments',
+  'research', 'project', 'program', 'pipeline', 'disease', 'diseases',
+  'disorder', 'disorders', 'candidate', 'small', 'molecule', 'molecules',
+  'inhibit', 'inhibits', 'inhibiting', 'inhibition', 'inhibitor', 'inhibitors',
+  'target', 'targets', 'targeting', 'to', 'for', 'of', 'the', 'and', 'a', 'an'
+]);
 const HIGH_CONFIDENCE_ASSET_ALIASES = new Map([
   ['ad', 'alzheimer'], ['alzheimers', 'alzheimer'],
   ['pd', 'parkinson'], ['parkinsons', 'parkinson']
@@ -800,7 +807,7 @@ function isSimpleCodeWithPrefixAndNumber(value) {
 function descriptiveAssetsSemanticallyOverlap(left, right) {
   const meaningfulTokens = (value) => new Set(assetWords(value)
     .map((word) => HIGH_CONFIDENCE_ASSET_ALIASES.get(word) || word)
-    .filter((word) => !GENERIC_ASSET_WORDS.has(word)));
+    .filter((word) => word.length > 1 && !GENERIC_ASSET_WORDS.has(word)));
   const leftTokens = meaningfulTokens(left);
   const rightTokens = meaningfulTokens(right);
   return [...leftTokens].filter((token) => rightTokens.has(token)).length >= 2;
@@ -1158,10 +1165,14 @@ function step0ListingIdentity(asset, company) {
   };
 }
 
-function step0ListingAssetsMatch(leftAsset, leftCompany, rightAsset, rightCompany) {
-  return comparePipelineAssets(
-    step0ListingIdentity(leftAsset, leftCompany),
-    step0ListingIdentity(rightAsset, rightCompany)
+function sameStep0ListingIdentity(leftAsset, leftCompany, rightAsset, rightCompany) {
+  const left = step0ListingIdentity(leftAsset, leftCompany);
+  const right = step0ListingIdentity(rightAsset, rightCompany);
+  return Boolean(
+    left.normalizedAsset
+    && left.normalizedCompany
+    && left.normalizedAsset === right.normalizedAsset
+    && left.normalizedCompany === right.normalizedCompany
   );
 }
 
@@ -1175,14 +1186,17 @@ function reciprocalStep0MergeSelections(rowIndex, selectedTarget) {
   // yet, so group the direct reverse pair and apply one merge decision to both.
   return activeStep0ImportReviewMatches.flatMap((other) => {
     if (other.row_index === rowIndex) return [];
-    const selectedCandidateIsOtherRow = step0ListingAssetsMatch(
+    // A reciprocal decision must use the exact incoming/candidate identities,
+    // not the broader human-review similarity rule. This makes the reverse
+    // pair deterministic even when a descriptive-name review was surfaced.
+    const selectedCandidateIsOtherRow = sameStep0ListingIdentity(
       selectedCandidate.asset,
       selectedCandidate.company,
       other.asset,
       other.company
     );
     if (!selectedCandidateIsOtherRow) return [];
-    const reverseCandidate = (other.candidates || []).find((candidate) => step0ListingAssetsMatch(
+    const reverseCandidate = (other.candidates || []).find((candidate) => sameStep0ListingIdentity(
       candidate.asset,
       candidate.company,
       current.asset,
@@ -1235,8 +1249,8 @@ function renderStep0ImportReviewList() {
                     <legend>충돌 시 우선 표시할 Listing 값</legend>
                     <p>선택한 쪽의 Asset·Company·Stage·Target 등은 유지하고, 빈 칸·Unknown·N/A·Not Available·- 표기만 반대쪽 값으로 보완합니다. Comment·Contact·이름 별칭은 함께 보존됩니다.</p>
                     <div>
-                      <button type="button" class="identity-modal-cancel${representative === 'incoming' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="incoming">새 입력 Listing 값 우선</button>
-                      <button type="button" class="identity-modal-cancel${representative === 'existing' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="existing">기존 Listing 값 우선</button>
+                      <button type="button" class="identity-modal-cancel step0-import-representative-incoming${representative === 'incoming' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="incoming">새 입력 Listing 값 우선</button>
+                      <button type="button" class="identity-modal-cancel step0-import-representative-existing${representative === 'existing' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="existing">기존 Listing 값 우선</button>
                     </div>
                   </fieldset>` : selected && candidate.target_type === 'record' ? `
                   <p class="step0-import-alias-guidance">Fast Triage·Full Scout의 공식 Asset·Company 표기는 유지됩니다. 이번 Listing의 이름은 검색용 별칭으로 자동 보존됩니다.</p>` : ''}
@@ -3952,10 +3966,10 @@ function fallbackInterestIndicationLabel(value) {
   const text = String(value || '').toLowerCase();
   if (/alzheimer|\bad\b/.test(text)) return "Alzheimer's disease";
   if (/parkinson|\bpd\b/.test(text)) return "Parkinson's disease";
-  if (/amyotrophic lateral sclerosis|motor neuron disease|\bals\b/.test(text)) return 'Amyotrophic lateral sclerosis';
-  if (/multiple sclerosis|neuroinflamm|\bms\b/.test(text)) return 'Multiple sclerosis';
+  if (/amyotrophic lateral sclerosis|motor neuron disease|\bals\b/.test(text)) return 'Amyotrophic lateral sclerosis / motor neuron disease';
+  if (/multiple sclerosis|neuroinflamm|\bms\b/.test(text)) return 'Multiple sclerosis / neuroinflammatory disease';
   if (/neuropathic pain|neuralgia|peripheral neuropath/.test(text)) return 'Neuropathic pain';
-  if (/epilep|seizure/.test(text)) return 'Epilepsy';
+  if (/epilep|seizure/.test(text)) return 'Epilepsy / seizure disorders';
   return 'Others';
 }
 
@@ -4017,10 +4031,10 @@ function fallbackTabSummary(mode, filteredRows = null) {
   const interestLabels = [
     "Alzheimer's disease",
     "Parkinson's disease",
-    'Amyotrophic lateral sclerosis',
-    'Multiple sclerosis',
+    'Amyotrophic lateral sclerosis / motor neuron disease',
+    'Multiple sclerosis / neuroinflammatory disease',
     'Neuropathic pain',
-    'Epilepsy',
+    'Epilepsy / seizure disorders',
     'Others'
   ];
   const indicationDistribution = (rows) => fallbackDistribution(
@@ -12013,11 +12027,20 @@ let step0PasteProcessingTimer = null;
 let step0PasteProcessingReturnFocus = null;
 let step0PasteProcessingShownAt = 0;
 
+function setStep0EntryGridMappingStatus(message = '', active = false) {
+  const status = elements.step0EntryGridMappingStatus;
+  if (!status) return;
+  status.hidden = !active;
+  const label = status.querySelector('span');
+  if (label) label.textContent = message;
+}
+
 function beginStep0PasteProcessing() {
   const token = Symbol('step0-paste-processing');
   step0PasteProcessingToken = token;
   step0PasteProcessingReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   elements.step0EntryGrid?.setAttribute('aria-busy', 'true');
+  setStep0EntryGridMappingStatus('엑셀 데이터를 Listing 표에 매핑하고 있습니다. 잠시만 기다려 주세요.', true);
   const showProcessingModal = () => {
     if (step0PasteProcessingToken !== token) return;
     if (elements.step0PasteProcessingModal) elements.step0PasteProcessingModal.hidden = false;
@@ -12036,6 +12059,7 @@ function beginStep0PasteProcessing() {
 function setStep0PasteProcessingStatus(token, message) {
   if (step0PasteProcessingToken !== token) return;
   if (elements.step0PasteProcessingStatus) elements.step0PasteProcessingStatus.textContent = message;
+  setStep0EntryGridMappingStatus(message, true);
 }
 
 async function endStep0PasteProcessing(token) {
@@ -12050,6 +12074,7 @@ async function endStep0PasteProcessing(token) {
   step0PasteProcessingToken = null;
   step0PasteProcessingShownAt = 0;
   elements.step0EntryGrid?.setAttribute('aria-busy', 'false');
+  setStep0EntryGridMappingStatus('', false);
   if (elements.step0PasteProcessingModal) elements.step0PasteProcessingModal.hidden = true;
   if (elements.operationModal?.hidden !== false) document.body.classList.remove('operation-modal-open');
   const returnFocus = step0PasteProcessingReturnFocus;
@@ -12058,7 +12083,9 @@ async function endStep0PasteProcessing(token) {
 }
 
 function yieldStep0PasteWork() {
-  return new Promise((resolve) => window.setTimeout(resolve, 0));
+  return new Promise((resolve) => {
+    window.setTimeout(() => window.requestAnimationFrame(resolve), 0);
+  });
 }
 
 async function pasteIntoStep0EntryGrid(event) {
@@ -12072,6 +12099,9 @@ async function pasteIntoStep0EntryGrid(event) {
     // Two frames guarantee the immediate feedback is painted before clipboard
     // parsing and potentially large DOM updates begin.
     await new Promise((resolve) => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
+    // Yield once through the task queue as well. This gives slower remote/VDI
+    // browsers a paint opportunity before a large clipboard parse starts.
+    await yieldStep0PasteWork();
   const inputRows = [...elements.step0EntryGridBody.querySelectorAll('tr')];
   const startRow = Math.max(0, inputRows.indexOf(input.closest('tr')));
   const startColumn = Math.max(0, STEP0_ENTRY_FIELDS.findIndex((field) => field.key === input.dataset.step0EntryField));

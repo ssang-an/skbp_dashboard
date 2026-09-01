@@ -7637,8 +7637,17 @@ html[data-theme="dark"] .knowledge-map-panel .kg-graph-card .kg-card-head > p {
 
 .step0-import-representative-choice > div {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+.step0-import-representative-incoming {
+  order: 1;
+}
+
+.step0-import-representative-existing {
+  order: 2;
 }
 
 .step0-import-representative-choice button {
@@ -12265,32 +12274,33 @@ html[data-theme="dark"] .wiki-note-panel {
 }
 
 .pipeline-table .clickable-row:hover td {
-  background: color-mix(in srgb, var(--accent) 16%, var(--readable-surface));
+  background: var(--table-row-hover);
 }
 
 .pipeline-table .clickable-row.selected-row:hover td {
-  background: color-mix(in srgb, var(--accent) 25%, var(--readable-surface));
+  background: var(--table-row-hover-selected);
 }
 
 html[data-theme="dark"] .pipeline-table .clickable-row:hover td {
-  background: color-mix(in srgb, var(--accent) 18%, var(--readable-surface));
+  background: var(--table-row-hover);
 }
 
 html[data-theme="dark"] .pipeline-table .clickable-row.selected-row:hover td {
-  background: color-mix(in srgb, var(--accent) 27%, var(--readable-surface));
+  background: var(--table-row-hover-selected);
 }
 
 /* Brief, soft highlight for a row that just moved (rubric re-score) or that the
    user is being returned to (came back from its detail page), so it's easy to
    spot without a jarring flash. */
 @keyframes pipeline-row-return-highlight {
-  0% { background: var(--table-row-hover); }
-  70% { background: var(--table-row-hover); }
-  100% { background: transparent; }
+  0%, 70% { background-color: var(--table-row-hover); }
+  100% { background-color: transparent; }
 }
 
-.pipeline-table .clickable-row.pipeline-row-return-highlight td {
-  animation: pipeline-row-return-highlight 3s ease-out;
+.pipeline-table .clickable-row.pipeline-row-return-highlight > td {
+  /* Must be the identical neutral-grey token used by a normal pipeline-row hover. */
+  background-color: var(--table-row-hover);
+  animation: pipeline-row-return-highlight 1.8s ease-out;
 }
 
 .pipeline-table th,
@@ -24299,6 +24309,36 @@ html[data-theme="dark"] .step0-edit-locked-modal { background: #0f1828; }
 .step0-entry-grid-toolbar .step0-entry-grid-label {
   min-width: 0;
   margin-bottom: 0;
+}
+
+.step0-entry-grid-mapping-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 18px;
+  margin: -3px 0 9px;
+  color: var(--accent-strong);
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.step0-entry-grid-mapping-status[hidden] { display: none; }
+
+.step0-entry-grid-mapping-status svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: step0-entry-grid-mapping-pulse 1.05s ease-in-out infinite;
+}
+
+@keyframes step0-entry-grid-mapping-pulse {
+  50% { opacity: .42; transform: translateY(1px); }
 }
 
 .step0-entry-clear-button {

@@ -605,6 +605,16 @@ class Step0PipelineMetadataTests(unittest.TestCase):
 
         self.assertIsNone(reason)
 
+    def test_descriptive_listing_match_ignores_plural_molecule_target_scaffolding(self) -> None:
+        reason = main.pipeline_asset_match_reason(
+            "Small Molecules to Target 5-HT7R for Sleep Disorders",
+            "Small Molecules to Target TSPO for Alzheimer's Disease",
+            "Korea Institute of Science and Technology",
+            "Korea Institute of Science and Technology",
+        )
+
+        self.assertIsNone(reason)
+
     def test_descriptive_listing_match_requires_two_meaningful_terms(self) -> None:
         self.assertIsNone(main.pipeline_asset_match_reason(
             "Gene therapy for CNS disease",

@@ -1630,7 +1630,7 @@ async function refreshTriageRubric(button) {
     '최신 Fast Triage 기준으로 기존 근거와 점수를 다시 확인하고 있습니다.'
   );
   try {
-    const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/refresh-rubric`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/recalculate-rubric`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });

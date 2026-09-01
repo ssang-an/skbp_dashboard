@@ -3618,7 +3618,13 @@ def normalized_pipeline_asset_identity(value: Any) -> str:
 
 # Descriptive Listing names frequently share generic formulation scaffolding.
 # A review candidate still needs at least two program-identifying tokens in common.
-GENERIC_ASSET_WORDS = {"therapy", "drug", "treatment", "research", "project", "program", "pipeline", "disease", "disorder", "candidate", "small", "molecule", "inhibit", "inhibits", "inhibiting", "inhibition", "to", "for", "of", "the", "and"}
+GENERIC_ASSET_WORDS = {
+    "therapy", "therapies", "drug", "drugs", "treatment", "treatments",
+    "research", "project", "program", "pipeline", "disease", "diseases",
+    "disorder", "disorders", "candidate", "small", "molecule", "molecules",
+    "inhibit", "inhibits", "inhibiting", "inhibition", "inhibitor", "inhibitors",
+    "target", "targets", "targeting", "to", "for", "of", "the", "and", "a", "an",
+}
 HIGH_CONFIDENCE_ASSET_ALIASES = {"ad": "alzheimer", "alzheimers": "alzheimer", "pd": "parkinson", "parkinsons": "parkinson"}
 
 
@@ -3668,7 +3674,7 @@ def descriptive_assets_semantically_overlap(left_asset: Any, right_asset: Any, c
         return {
             HIGH_CONFIDENCE_ASSET_ALIASES.get(word, word)
             for word in asset_words(value)
-            if word not in GENERIC_ASSET_WORDS
+            if len(word) > 1 and word not in GENERIC_ASSET_WORDS
         }
     company_tokens = meaningful_tokens(company)
     shared_tokens = meaningful_tokens(left_asset) & meaningful_tokens(right_asset)
@@ -10768,7 +10774,7 @@ def reset_manual_scoring_overrides_after_rubric_review(
     return cleared
 
 
-@app.post("/api/records/{record_id:path}/refresh-rubric")
+@app.post("/api/records/{record_id:path}/legacy-ai-rubric-refresh")
 async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, Any]:
     # Developer has a higher role rank than administrator, so the admin gate
     # intentionally permits both approved administrators and developers.
@@ -11705,6 +11711,17 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
         }
 
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
+
+
+@app.post("/api/records/{record_id:path}/refresh-rubric")
+def refresh_record_rubric_compatibility(record_id: str, request: Request) -> dict[str, Any]:
+    """Keep cached pre-migration dashboard clients on deterministic recalculation.
+
+    The original AI route remains available only under its explicit legacy path
+    for audited maintenance.  Interactive Score 기준 갱신 must never depend on
+    an OpenRouter key or a model response.
+    """
+    return recalculate_record_with_latest_rubric(record_id, request)
 
 
 @app.post("/api/records/{record_id:path}/recalculate-oi-partnership")

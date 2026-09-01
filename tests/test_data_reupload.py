@@ -95,9 +95,9 @@ class DataReuploadTests(unittest.TestCase):
         self.assertEqual(main.pipeline_asset_match_reason("ABC101", "XYZ101", "AriBio", "AriBio")[0], "review")
         self.assertIsNone(main.pipeline_asset_match_reason("AR1001", "1001", "AriBio", "Other Co"))
 
-    def test_descriptive_assets_are_company_scoped_and_semantic(self):
-        self.assertEqual(main.pipeline_asset_match_reason("AD Therapy", "Alzheimer's Disease Therapy", "AriBio", "AriBio")[0], "review")
-        self.assertEqual(main.pipeline_asset_match_reason("CNS Research Program", "CNS Disease Research Program", "AriBio", "AriBio")[0], "review")
+    def test_descriptive_assets_are_company_scoped_and_require_two_specific_terms(self):
+        self.assertIsNone(main.pipeline_asset_match_reason("AD Therapy", "Alzheimer's Disease Therapy", "AriBio", "AriBio"))
+        self.assertIsNone(main.pipeline_asset_match_reason("CNS Research Program", "CNS Disease Research Program", "AriBio", "AriBio"))
         self.assertIsNone(main.pipeline_asset_match_reason("AD Therapy", "Alzheimer's Disease Therapy", "AriBio", "Other Co"))
         self.assertIsNone(main.pipeline_asset_match_reason("CNS Research Program", "CNS Research Program", "AriBio", "Other Co"))
 

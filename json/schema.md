@@ -211,13 +211,11 @@ When the SKBP team manually revises the rubric definitions or Shortlisting crite
 2. Keep prior JSON records unchanged unless they are intentionally rescored.
 3. New or rescored assets should use the current rubric version.
 
-### Detail-page "Score 기준 갱신" (single-record rubric refresh, v1)
+### Detail-page "Score 기준 갱신" (single-record deterministic recalculation)
 
-`POST /api/records/{id}/refresh-rubric` lets a reviewer ask OpenRouter to re-check one record's preserved GPT source report plus uploaded attachments against the current workflow rubric. Full Scout reviews seven criteria and recalculates Total/Filter 2 when scores change; Fast Triage reviews TR/MoA/Data and recalculates Total/Filter 1. The detail AI Agent is Q&A-only; it has no JSON/source apply endpoint. Rubric refresh does not overwrite the human-managed `config/scoring_criteria/*.md` files.
+`POST /api/records/{id}/recalculate-rubric` recalculates a stored record under the current workflow release without an OpenRouter/LLM call: Full Scout recalculates its Total Score and Filter 2 from the seven stored criterion scores, and Fast Triage recalculates Filter 1 from stored TR/MoA/Data. It stamps the current rubric version, recalculation metadata, and a visible Team Review history event. The compatibility URL `/refresh-rubric` performs the same deterministic operation so a cached older page cannot fail because an OpenRouter key or response is unavailable. Rubric recalculation does not overwrite the human-managed `config/scoring_criteria/*.md` files or rewrite the GPT original report.
 
-Every valid, non-conflicting review stamps `meta.rubric_reviewed_version`, `meta.rubric_reviewed_at`, `meta.rubric_reviewed_by`, and `meta.rubric_review_result`. When official scores actually change it also stamps `meta.rescored_rubric_version`, `meta.rescored_at`, and `meta.rescored_by`; the original `meta.rubric_version` remains unchanged. Fast Triage Quick scan shows `Recalculated at` / `Rubric used to recalculate` after an actual score change, or `Latest rubric reviewed at` / `Rubric used for review` when the latest rubric was checked without a score change. Source conflicts, malformed responses, OpenRouter failures, and missing API keys write no successful-review metadata.
-
-When a refresh succeeds, the official criterion and Total Score values are also synchronized into existing GPT Markdown Scorecard rows and criterion-detail score labels before the revision note is appended. This makes the `Recalculated` banner, structured `scoring`, and visible report scores agree. Human score/Total Score overrides never run this synchronization and remain visible only through the effective dashboard/detail score layer plus Team Review audit history.
+The legacy AI implementation remains at `/legacy-ai-rubric-refresh` only for audited maintenance; it is not used by any Dashboard, Team Review, Detail, or Fast Triage refresh control. The detail AI Agent is Q&A-only and has no JSON/source apply endpoint.
 
 ### Confirmed GPT source reupload
 

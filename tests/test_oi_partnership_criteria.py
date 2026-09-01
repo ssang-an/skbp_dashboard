@@ -21,6 +21,11 @@ def record(*, modality: str, stage: str, platform_score: int = 1, admet_uploaded
 
 
 class OiPartnershipCriteriaTests(unittest.TestCase):
+    def test_filter3_criteria_document_declares_the_same_canonical_six(self):
+        criteria = (main.ROOT / "config" / "oi_partnership_criteria.md").read_text(encoding="utf-8")
+        for indication in main.SKBP_INTEREST_INDICATIONS:
+            self.assertIn(f"- {indication}", criteria)
+
     def test_shortlisting_reuses_full_scout_priority_indication_canonicalization(self):
         cases = (
             ("AD", "Alzheimer's disease"),

@@ -9,8 +9,16 @@
 
 ## Target indications
 
-Alzheimer's Disease (AD), Parkinson's Disease (PD), Amyotrophic Lateral Sclerosis (ALS),
-Multiple Sclerosis (MS), Neuropathic Pain, and Epilepsy.
+Filter 3 uses the same six canonical priority-indication values and synonym mapping as Full Scout Target Relevance:
+
+- Alzheimer's disease
+- Parkinson's disease
+- Amyotrophic lateral sclerosis / motor neuron disease
+- Multiple sclerosis / neuroinflammatory disease
+- Neuropathic pain
+- Epilepsy / seizure disorders
+
+Source wording such as AD, PD/PDD, ALS/MND, MS/RRMS/PPMS/SPMS, neuralgia/PHN, and seizure/focal-onset/DEE is mapped to the corresponding canonical value before classification.
 
 Non-target indications are `n_a` with the note `대상 적응증 아님`.
 

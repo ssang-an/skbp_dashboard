@@ -52,6 +52,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
     def test_listing_excel_paste_shows_the_shared_processing_popup_before_mapping(self):
         self.assertIn('id="step0PasteProcessingModal"', HTML)
         self.assertIn('id="step0PasteProcessingDialog"', HTML)
+        self.assertIn('id="step0EntryGridMappingStatus"', HTML)
         self.assertIn('LISTING · EXCEL PASTE', HTML)
         self.assertIn('엑셀 데이터를 Listing 표에 매핑하고 있습니다.', HTML)
         self.assertIn('const STEP0_PASTE_PROCESSING_DELAY_MS = 0', JS)
@@ -60,14 +61,18 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('beginStep0PasteProcessing()', JS)
         self.assertIn('requestAnimationFrame(() => window.requestAnimationFrame(resolve))', JS)
         self.assertIn('await yieldStep0PasteWork()', JS)
+        self.assertIn('function setStep0EntryGridMappingStatus', JS)
+        self.assertIn('setStep0EntryGridMappingStatus(message, true)', JS)
         self.assertIn('await endStep0PasteProcessing(processingToken)', JS)
+        self.assertIn('.step0-entry-grid-mapping-status', CSS)
 
     def test_listing_descriptive_matching_ignores_generic_formulation_scaffolding(self):
         generic_words = JS[JS.index('const GENERIC_ASSET_WORDS') : JS.index('const HIGH_CONFIDENCE_ASSET_ALIASES')]
-        for word in ("'small'", "'molecule'", "'inhibit'", "'inhibits'", "'inhibiting'", "'inhibition'", "'to'"):
+        for word in ("'small'", "'molecule'", "'molecules'", "'inhibit'", "'inhibits'", "'inhibiting'", "'inhibition'", "'target'", "'targets'", "'to'"):
             self.assertIn(word, generic_words)
         overlap = function_body(JS, "descriptiveAssetsSemanticallyOverlap")
         self.assertIn(".length >= 2", overlap)
+        self.assertIn("word.length > 1", overlap)
 
     def test_full_scout_attachment_upload_uses_the_cancellable_processing_modal(self):
         upload = function_body(DETAIL_JS, "uploadAttachment")
@@ -677,6 +682,14 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("styles.css?v=20260820-filter-menu-event-fix-1", HTML)
         self.assertIn("app.js?v=20260820-filter-menu-event-fix-1", HTML)
 
+    def test_pipeline_return_highlight_reuses_the_neutral_hover_style(self):
+        return_highlight = CSS[CSS.index("@keyframes pipeline-row-return-highlight"):CSS.index(".pipeline-table th,", CSS.index("@keyframes pipeline-row-return-highlight"))]
+
+        self.assertIn("background-color: var(--table-row-hover)", return_highlight)
+        self.assertIn("animation: pipeline-row-return-highlight 1.8s ease-out", return_highlight)
+        self.assertNotIn("var(--accent)", return_highlight)
+        self.assertIn("const PIPELINE_ROW_HIGHLIGHT_MS = 1800", JS)
+
     def test_summary_cards_share_geometry_without_internal_scrollbars(self):
         block = CSS[CSS.index("/* Precision-align Summary cards"):CSS.index(".pass-rate-chart .donut-center small")]
         self.assertRegex(block, r"\.visual-grid\.workflow-summary-grid > \.panel\s*\{[^}]*grid-template-rows: 64px minmax\(0, 1fr\);[^}]*height: 332px;")
@@ -868,6 +881,17 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("Shortlisted Pool ${distributionAssets}개 · 상위 6개와 Others", workflow)
         self.assertIn("`Filter 결과 ${distributionAssets}개 · 상위 6개와 Others`", workflow)
         self.assertNotIn("Full Scout 전체", workflow)
+
+    def test_fallback_priority_indication_labels_match_the_full_scout_canonical_six(self):
+        labels = function_body(JS, "fallbackInterestIndicationLabel")
+        fallback = function_body(JS, "fallbackTabSummary")
+        for canonical in (
+            "Amyotrophic lateral sclerosis / motor neuron disease",
+            "Multiple sclerosis / neuroinflammatory disease",
+            "Epilepsy / seizure disorders",
+        ):
+            self.assertIn(canonical, labels)
+            self.assertIn(canonical, fallback)
 
     def test_summary_dashboard_ignores_search_query_but_keeps_filters(self):
         visible = function_body(JS, "getVisibleRows")
@@ -2999,6 +3023,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
 
         self.assertIn("selectedCandidateIsOtherRow", review)
         self.assertIn("reverseCandidate", review)
+        self.assertIn("sameStep0ListingIdentity", review)
         self.assertIn("reciprocalStep0MergeSelections(rowIndex, requestedTarget)", click_handler)
         self.assertLess(
             render.index('data-representative="incoming"'),
@@ -3006,6 +3031,10 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         )
         self.assertIn("decision.representative === 'existing' ? 'existing' : 'incoming'", render)
         self.assertIn("decision.representative === 'existing' ? 'existing' : 'incoming'", decisions)
+        self.assertIn("step0-import-representative-incoming", render)
+        self.assertIn("step0-import-representative-existing", render)
+        self.assertIn(".step0-import-representative-incoming", CSS)
+        self.assertIn(".step0-import-representative-existing", CSS)
 
     def test_listing_review_explains_canonical_missing_value_fallback(self):
         review = function_body(JS, "renderStep0ImportReviewList")

@@ -11,10 +11,19 @@ from tests.test_rubric_v32_v33 import current_triage_record
 
 
 class RubricAiRefreshTests(unittest.TestCase):
-    def test_home_full_scout_uses_same_ai_refresh_endpoint_as_detail(self):
+    def test_dashboard_uses_deterministic_recalculation_instead_of_ai_refresh(self):
         source = (main.ROOT / "src" / "app.js").read_text(encoding="utf-8")
-        self.assertIn("`/api/records/${encodeURIComponent(recordId)}/refresh-rubric`", source)
-        self.assertNotIn("const endpoint = isTriage ? 'recalculate-rubric' : 'refresh-rubric';", source)
+        triage_source = (main.ROOT / "src" / "triage-detail.js").read_text(encoding="utf-8")
+        self.assertIn("/recalculate-rubric", source)
+        self.assertIn("/recalculate-rubric", triage_source)
+        self.assertNotIn("/refresh-rubric", source)
+        self.assertNotIn("/refresh-rubric", triage_source)
+
+    def test_legacy_refresh_url_is_deterministic_compatibility_route(self):
+        source = (main.ROOT / "main.py").read_text(encoding="utf-8")
+        compatibility_start = source.index('def refresh_record_rubric_compatibility')
+        compatibility = source[compatibility_start:source.index('@app.post(', compatibility_start)]
+        self.assertIn('return recalculate_record_with_latest_rubric(record_id, request)', compatibility)
 
     def test_ai_refresh_changes_scores_without_rewriting_source_report(self):
         record = full_scout_record()
