@@ -11,6 +11,12 @@ const recordId = params.get('id');
 const viewTab = params.get('tab'); // 'full' | 'focus' | null — which dashboard tab this record was opened from
 const requestedDetailSection = params.get('open');
 
+function encodeRecordIdForPath(recordId) {
+  return encodeURIComponent(String(recordId ?? ''))
+    .replace(/%2F/gi, '%252F')
+    .replace(/%5C/gi, '%255C');
+}
+
 function detailUrlForCurrentRecord() {
   const query = new URLSearchParams({ id: currentRecordId });
   if (viewTab) query.set('tab', viewTab);
@@ -379,15 +385,24 @@ function getDisplayRubricAuthor(record) {
   return getRubricMetadata(record).author;
 }
 
-function getAppliedScoreRubricVersion(record) {
+function getAppliedScoreRubricMetadata(record) {
   const meta = record?.meta || {};
   const recalculation = meta.rubric_recalculation || {};
-  return String(
-    meta.rubric_reviewed_version
-    || meta.rescored_rubric_version
-    || recalculation.version
-    || getDisplayRubricVersion(record)
-  ).replace(/^v/i, '');
+  const candidates = [
+    { version: meta.rubric_reviewed_version, at: meta.rubric_reviewed_at },
+    { version: meta.rescored_rubric_version, at: meta.rescored_at },
+    { version: recalculation.version, at: recalculation.recalculated_at },
+    { version: getDisplayRubricVersion(record), at: meta.generated_at }
+  ].filter((candidate) => String(candidate.version || '').trim());
+  return candidates.reduce((latest, candidate) => {
+    const latestTime = Date.parse(latest.at || '') || 0;
+    const candidateTime = Date.parse(candidate.at || '') || 0;
+    return candidateTime > latestTime ? candidate : latest;
+  }, candidates[0] || { version: '', at: '' });
+}
+
+function getAppliedScoreRubricVersion(record) {
+  return String(getAppliedScoreRubricMetadata(record).version || '').replace(/^v/i, '');
 }
 
 function isFastTriageRecord(record) {
@@ -1303,7 +1318,7 @@ async function deleteRecordComment(commentId) {
   })) return;
   try {
     const closeProgress = showDetailProgress('잠시만 기다려 주세요', '코멘트를 삭제하고 있습니다.');
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE' }).finally(closeProgress);
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE' }).finally(closeProgress);
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.detail || '코멘트를 삭제하지 못했습니다.');
     currentRecord = data.record;
@@ -1321,6 +1336,37 @@ function showDetailProgress(title = '잠시만 기다려 주세요', message = '
   document.body.appendChild(backdrop);
   document.body.classList.add('operation-modal-open');
   return () => { backdrop.remove(); document.body.classList.remove('operation-modal-open'); };
+}
+
+function showDetailActionFailureDialog(title, message) {
+  return new Promise((resolve) => {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'operation-modal-backdrop listing-import-error-backdrop';
+    backdrop.innerHTML = `
+      <section class="operation-modal listing-import-error-modal" role="dialog" aria-modal="true" aria-labelledby="detailActionFailureTitle" aria-describedby="detailActionFailureMessage">
+        <header class="operation-modal-header">
+          <span class="operation-modal-mark listing-import-error-mark" aria-hidden="true">!</span>
+          <div><p class="operation-modal-eyebrow">SCORE REFRESH</p><h2 id="detailActionFailureTitle">${escapeHtml(title)}</h2></div>
+        </header>
+        <p class="operation-modal-copy" id="detailActionFailureMessage">${escapeHtml(message)}</p>
+        <footer class="operation-modal-actions operation-confirm-actions">
+          <button type="button" class="operation-modal-confirm" data-detail-action-failure-close>확인</button>
+        </footer>
+      </section>`;
+    const close = () => {
+      document.removeEventListener('keydown', onKeydown);
+      backdrop.remove();
+      document.body.classList.remove('operation-modal-open');
+      resolve();
+    };
+    const onKeydown = (event) => { if (event.key === 'Escape') close(); };
+    backdrop.addEventListener('click', (event) => { if (event.target === backdrop) close(); });
+    backdrop.querySelector('[data-detail-action-failure-close]')?.addEventListener('click', close);
+    document.body.appendChild(backdrop);
+    document.body.classList.add('operation-modal-open');
+    document.addEventListener('keydown', onKeydown);
+    backdrop.querySelector('[data-detail-action-failure-close]')?.focus();
+  });
 }
 
 function confirmDetailCommentDelete({ title, message }) {
@@ -1355,7 +1401,7 @@ function confirmDetailCommentDelete({ title, message }) {
 
 async function updateRecordComment(commentId, body) {
   const closeProgress = showDetailProgress('잠시만 기다려 주세요', '코멘트를 수정하고 있습니다.');
-  const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/comments/${encodeURIComponent(commentId)}`, {
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/comments/${encodeURIComponent(commentId)}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ body })
@@ -1491,9 +1537,9 @@ function renderCollaborationPanel(record) {
     elements.detailDecisionStatus.classList.toggle('is-human', statusIsHuman);
   }
   if (elements.detailDecisionOrigin) {
+    const appliedRubric = getAppliedScoreRubricMetadata(record);
     const appliedVersion = getAppliedScoreRubricVersion(record);
-    const appliedAt = record?.meta?.rubric_reviewed_at || record?.meta?.rescored_at
-      || record?.meta?.rubric_recalculation?.recalculated_at;
+    const appliedAt = appliedRubric.at;
     elements.detailDecisionOrigin.textContent = `Score 기준 v${appliedVersion}`;
     elements.detailDecisionOrigin.title = appliedAt
       ? `현재 Filter 2 점수·판정에 적용된 Rubric v${appliedVersion} · ${formatCommentTime(appliedAt)}`
@@ -2072,7 +2118,7 @@ async function uploadAttachment(file, materialCategory) {
     formData.append('file', file);
     formData.append('uploaded_by', getStoredIdentity());
     formData.append('partner_material_category_value', materialCategory);
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/attachments`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/attachments`, {
       method: 'POST',
       body: formData,
       signal: operation.signal
@@ -2373,7 +2419,7 @@ async function deleteAttachment(attachmentId) {
   setAttachmentStatus('파일 삭제 중…');
   try {
     const response = await fetch(
-      `/api/records/${encodeURIComponent(currentRecordId)}/attachments/${encodeURIComponent(attachmentId)}`,
+      `/api/records/${encodeRecordIdForPath(currentRecordId)}/attachments/${encodeURIComponent(attachmentId)}`,
       { method: 'DELETE' }
     );
     const data = await response.json().catch(() => ({}));
@@ -2612,7 +2658,7 @@ async function submitQualitativeOpinion(criterionId, form) {
   }
   setCollaborationStatus('의견 저장 중…');
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/qualitative-review`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ criterion_id: criterionId, author, body })
@@ -2638,7 +2684,7 @@ async function deleteQualitativeOpinion(entryId) {
   setCollaborationStatus('의견 삭제 중…');
   try {
     const response = await fetch(
-      `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/${encodeURIComponent(entryId)}`,
+      `/api/records/${encodeRecordIdForPath(currentRecordId)}/qualitative-review/${encodeURIComponent(entryId)}`,
       { method: 'DELETE' }
     );
     const data = await response.json().catch(() => ({}));
@@ -2661,7 +2707,7 @@ async function generateQualitativeAiOpinion(criterionId, button) {
   setCollaborationStatus('원문·업로드 자료를 분석해 AI 초안을 생성하는 중입니다…');
   try {
     const response = await fetch(
-      `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/ai-generate`,
+      `/api/records/${encodeRecordIdForPath(currentRecordId)}/qualitative-review/ai-generate`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2701,7 +2747,7 @@ async function generateAllQualitativeAiOpinions(button) {
       setCollaborationStatus(`${criterion.label} AI 초안을 생성하는 중입니다… (${index + 1}/${fixedCriteria.length})`);
       try {
         const response = await fetch(
-          `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/ai-generate`,
+          `/api/records/${encodeRecordIdForPath(currentRecordId)}/qualitative-review/ai-generate`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -2742,7 +2788,7 @@ async function addCustomQualitativeCriterion(form) {
   setCollaborationStatus('평가 항목 등록 중…');
   try {
     const response = await fetch(
-      `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/criteria`,
+      `/api/records/${encodeRecordIdForPath(currentRecordId)}/qualitative-review/criteria`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2765,7 +2811,7 @@ async function loadQualitativeCriterionSuggestions(form) {
   if (!container || !currentRecordId) return;
   try {
     const response = await fetch(
-      `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/criteria/suggestions`
+      `/api/records/${encodeRecordIdForPath(currentRecordId)}/qualitative-review/criteria/suggestions`
     );
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.detail || '추천 평가 항목을 불러오지 못했습니다.');
@@ -2815,7 +2861,7 @@ async function importQualitativeCriterion(button) {
   setCollaborationStatus('추천 평가 항목을 가져오는 중…');
   try {
     const response = await fetch(
-      `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/criteria`,
+      `/api/records/${encodeRecordIdForPath(currentRecordId)}/qualitative-review/criteria`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2846,7 +2892,7 @@ async function deleteCustomQualitativeCriterion(criterionId) {
   setCollaborationStatus('평가 항목 삭제 중…');
   try {
     const response = await fetch(
-      `/api/records/${encodeURIComponent(currentRecordId)}/qualitative-review/criteria/${encodeURIComponent(criterionId)}`,
+      `/api/records/${encodeRecordIdForPath(currentRecordId)}/qualitative-review/criteria/${encodeURIComponent(criterionId)}`,
       { method: 'DELETE' }
     );
     const data = await response.json().catch(() => ({}));
@@ -2875,7 +2921,7 @@ async function saveDetailFocus(action, trigger = elements.detailFocusToggle) {
       : ['우선 검토 Shortlisting에 추가 중…', '우선 검토 Shortlisting에 추가했습니다.'];
   setCollaborationStatus(statusCopy[0]);
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/focus-management`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/focus-management`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action })
@@ -2898,7 +2944,7 @@ async function saveDetailFocusField(field, value, control, label) {
   control.disabled = true;
   setCollaborationStatus(`${label} 저장 중…`);
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/focus-management`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/focus-management`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'update', field, value })
@@ -2958,7 +3004,7 @@ async function saveDetailMaterialFlag(key, active, control) {
   control.classList.add('is-saving');
   setCollaborationStatus(`${label} 자료 표시 저장 중…`);
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/focus-management`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/focus-management`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -2996,7 +3042,7 @@ async function saveDetailDecisionStatus(value) {
   elements.detailDecisionStatus.disabled = true;
   setCollaborationStatus(`${value}로 변경 중…`);
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/manual-review`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/manual-review`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ kind: 'status', value, previous_value: previousValue, actor_name: actorName })
@@ -3029,7 +3075,7 @@ async function saveDetailReviewReason(value) {
   elements.detailReviewSummary.classList.add('is-saving');
   setCollaborationStatus('Review 한 줄 근거 저장 중…');
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/manual-review`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/manual-review`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -3065,7 +3111,7 @@ async function submitDetailComment() {
   }
   setCollaborationStatus('댓글 저장 중…');
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/comments`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -3340,7 +3386,7 @@ async function submitDetailContactHistory() {
   setCollaborationStatus('Contact History를 저장하고 있습니다.');
   try {
     const closeProgress = showDetailProgress('잠시만 기다려 주세요', '댓글을 저장하고 있습니다.');
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/comments`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ author, body, category: 'contact_history' })
@@ -3374,7 +3420,7 @@ async function uploadContactHistoryAttachment(file) {
     formData.append('file', file);
     formData.append('uploaded_by', author);
     formData.append('attachment_source', 'contact_history');
-    const uploadResponse = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/attachments`, {
+    const uploadResponse = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/attachments`, {
       method: 'POST',
       body: formData,
       signal: operation.signal
@@ -3417,7 +3463,7 @@ async function uploadDDReportAttachment(file) {
     formData.append('uploaded_by', getStoredIdentity());
     formData.append('partner_material_category_value', 'dd_report');
     formData.append('attachment_source', 'due_diligence');
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/attachments`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/attachments`, {
       method: 'POST',
       body: formData,
       signal: operation.signal
@@ -3462,7 +3508,7 @@ async function saveEditHistoryReason(form) {
   if (submitButton) submitButton.disabled = true;
   setCollaborationStatus('점수 변경 사유 저장 중…');
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/manual-review-history-reason`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/manual-review-history-reason`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -3597,7 +3643,7 @@ function renderTopicNotes(record = currentRecord) {
 }
 
 async function saveTopicNote(panel, body) {
-  const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/topic-notes`, {
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/topic-notes`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -3614,7 +3660,7 @@ async function saveTopicNote(panel, body) {
 }
 
 async function editTopicNote(noteId, body) {
-  const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/topic-notes/${encodeURIComponent(noteId)}`, {
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/topic-notes/${encodeURIComponent(noteId)}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ body })
@@ -3626,7 +3672,7 @@ async function editTopicNote(noteId, body) {
 }
 
 async function deleteTopicNote(noteId) {
-  const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/topic-notes/${encodeURIComponent(noteId)}`, {
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/topic-notes/${encodeURIComponent(noteId)}`, {
     method: 'DELETE'
   });
   const data = await response.json().catch(() => ({}));
@@ -4108,6 +4154,13 @@ async function refreshRubric() {
   if (!currentRecord || !currentRecordId) return;
   const button = elements.rubricRefreshButton;
   if (!button) return;
+  const user = await requireAuth();
+  if (!user?.is_admin && !user?.is_developer) {
+    const message = 'Score 기준 갱신은 Developer 또는 관리자 권한이 필요합니다. 로그인한 계정의 권한을 확인해 주세요.';
+    setCollaborationStatus(message, 'error');
+    await showDetailActionFailureDialog('Score 기준 갱신을 실행할 수 없습니다', message);
+    return;
+  }
 
   button.disabled = true;
   button.classList.add('is-saving');
@@ -4118,15 +4171,21 @@ async function refreshRubric() {
   setCollaborationStatus('Score 기준 갱신 검토 중…');
 
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/refresh-rubric`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/recalculate-rubric`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.detail || 'Score 재계산에 실패했습니다.');
+    if (!response.ok) {
+      const message = data.detail || 'Score 재계산에 실패했습니다.';
+      await showDetailActionFailureDialog('Score 기준 갱신에 실패했습니다', message);
+      throw new Error(message);
+    }
 
-    const tone = data.status === 'updated' ? 'success' : data.status === 'error' ? 'error' : '';
-    setCollaborationStatus(data.message || '', tone);
+    setCollaborationStatus(
+      data.message || `Score 기준 v${data.rubric_version || ''} 재계산을 완료했습니다. 변경 이력에 저장되었습니다.`,
+      data.status === 'error' ? 'error' : 'success'
+    );
 
     if (data.record) {
       currentRecord = data.record;
@@ -4145,6 +4204,13 @@ async function refreshOiPartnership() {
   if (!currentRecord || !currentRecordId) return;
   const button = elements.oiPartnershipRefreshButton;
   if (!button) return;
+  const user = await requireAuth();
+  if (!user?.is_admin && !user?.is_developer) {
+    const message = 'Filter 3 기준 갱신은 Developer 또는 관리자 권한이 필요합니다. 로그인한 계정의 권한을 확인해 주세요.';
+    setCollaborationStatus(message, 'error');
+    await showDetailActionFailureDialog('Filter 3 기준 갱신을 실행할 수 없습니다', message);
+    return;
+  }
 
   button.disabled = true;
   button.classList.add('is-saving');
@@ -4152,18 +4218,22 @@ async function refreshOiPartnership() {
 
   try {
     const response = await fetch(
-      `/api/records/${encodeURIComponent(currentRecordId)}/recalculate-oi-partnership`,
+      `/api/records/${encodeRecordIdForPath(currentRecordId)}/recalculate-oi-partnership`,
       { method: 'POST' }
     );
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.detail || 'OI Partnership 재분류에 실패했습니다.');
+    if (!response.ok) {
+      const message = data.detail || 'OI Partnership 재분류에 실패했습니다.';
+      await showDetailActionFailureDialog('Filter 3 기준 갱신에 실패했습니다', message);
+      throw new Error(message);
+    }
 
     currentRecord = data.record;
-    renderCollaborationPanel(currentRecord);
     setCollaborationStatus(
-      `OI Partnership v${data.oi_partnership_criteria_version || '1.7'} 기준 갱신 완료`,
+      `OI Partnership v${data.oi_partnership_criteria_version || '1.7'} 기준 갱신을 완료했습니다. 변경 이력에 저장되었습니다.`,
       'success'
     );
+    await loadRecord();
   } catch (error) {
     setCollaborationStatus(error.message, 'error');
   } finally {
@@ -4319,7 +4389,7 @@ async function requestAiApplyPreview() {
   button.textContent = '변경 계산 중…';
   setAiApplyModalStatus('저장하지 않고 변경 전·후를 계산하고 있습니다.', 'working');
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/preview-ai-revision`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/preview-ai-revision`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -4351,7 +4421,7 @@ async function commitAiApplyPreview() {
   button.textContent = '반영 중…';
   setAiApplyModalStatus('확인한 변경을 저장하고 Wiki export를 재생성하고 있습니다.', 'working');
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}/apply-ai-revision`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/apply-ai-revision`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -4401,7 +4471,7 @@ async function createAiReplyJsonDraft(button) {
 
 async function saveRecord(payload, statusTarget = null) {
   if (statusTarget) statusTarget.textContent = '저장 중';
-  const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}`, {
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -4429,7 +4499,7 @@ async function deleteCurrentRecord() {
   elements.status.textContent = 'Deleting';
   elements.deleteRecordButton.disabled = true;
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}`, {
       method: 'DELETE'
     });
     const data = await response.json().catch(() => ({}));
@@ -4450,7 +4520,7 @@ async function loadRecord() {
     return;
   }
 
-  const response = await fetch(`/api/records/${encodeURIComponent(currentRecordId)}`);
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}`);
   if (!response.ok) throw new Error(await response.text());
   const data = await response.json();
   currentRecord = data.record;

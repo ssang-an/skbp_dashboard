@@ -12284,7 +12284,8 @@ html[data-theme="dark"] .pipeline-table .clickable-row.selected-row:hover td {
    user is being returned to (came back from its detail page), so it's easy to
    spot without a jarring flash. */
 @keyframes pipeline-row-return-highlight {
-  0% { background: color-mix(in srgb, var(--accent) 30%, var(--readable-surface)); }
+  0% { background: var(--table-row-hover); }
+  70% { background: var(--table-row-hover); }
   100% { background: transparent; }
 }
 

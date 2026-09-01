@@ -49,15 +49,25 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         chat_end = JS.index("window.addEventListener('keydown'", chat_start)
         self.assertNotIn('runBlockingOperation', JS[chat_start:chat_end])
 
-    def test_listing_excel_paste_uses_the_shared_deferred_processing_popup(self):
+    def test_listing_excel_paste_shows_the_shared_processing_popup_before_mapping(self):
         self.assertIn('id="step0PasteProcessingModal"', HTML)
         self.assertIn('id="step0PasteProcessingDialog"', HTML)
         self.assertIn('LISTING · EXCEL PASTE', HTML)
-        self.assertIn('const STEP0_PASTE_PROCESSING_DELAY_MS = 180', JS)
+        self.assertIn('엑셀 데이터를 Listing 표에 매핑하고 있습니다.', HTML)
+        self.assertIn('const STEP0_PASTE_PROCESSING_DELAY_MS = 0', JS)
+        self.assertIn('const STEP0_PASTE_PROCESSING_MINIMUM_VISIBLE_MS = 260', JS)
         self.assertIn('async function pasteIntoStep0EntryGrid', JS)
         self.assertIn('beginStep0PasteProcessing()', JS)
+        self.assertIn('requestAnimationFrame(() => window.requestAnimationFrame(resolve))', JS)
         self.assertIn('await yieldStep0PasteWork()', JS)
-        self.assertIn('endStep0PasteProcessing(processingToken)', JS)
+        self.assertIn('await endStep0PasteProcessing(processingToken)', JS)
+
+    def test_listing_descriptive_matching_ignores_generic_formulation_scaffolding(self):
+        generic_words = JS[JS.index('const GENERIC_ASSET_WORDS') : JS.index('const HIGH_CONFIDENCE_ASSET_ALIASES')]
+        for word in ("'small'", "'molecule'", "'inhibit'", "'inhibits'", "'inhibiting'", "'inhibition'", "'to'"):
+            self.assertIn(word, generic_words)
+        overlap = function_body(JS, "descriptiveAssetsSemanticallyOverlap")
+        self.assertIn(".length >= 2", overlap)
 
     def test_full_scout_attachment_upload_uses_the_cancellable_processing_modal(self):
         upload = function_body(DETAIL_JS, "uploadAttachment")
@@ -2978,6 +2988,28 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('colspan="6">Shortlisting', focus_table)
         self.assertNotIn("partnerMaterialFlags: uploadedPartnerMaterialFlags(record)", flatten)
         self.assertNotIn("shortlisting-material-pill", CSS)
+
+    def test_listing_review_groups_reciprocal_alias_pairs_and_defaults_to_incoming_values(self):
+        review = function_body(JS, "reciprocalStep0MergeSelections")
+        render = function_body(JS, "renderStep0ImportReviewList")
+        decisions = function_body(JS, "reviewedStep0ImportDecisions")
+        handler_start = JS.index("elements.step0ImportReviewList?.addEventListener('click'")
+        handler_end = JS.index("elements.step0ImportReviewApply?.addEventListener('click'", handler_start)
+        click_handler = JS[handler_start:handler_end]
+
+        self.assertIn("selectedCandidateIsOtherRow", review)
+        self.assertIn("reverseCandidate", review)
+        self.assertIn("reciprocalStep0MergeSelections(rowIndex, requestedTarget)", click_handler)
+        self.assertLess(
+            render.index('data-representative="incoming"'),
+            render.index('data-representative="existing"')
+        )
+        self.assertIn("decision.representative === 'existing' ? 'existing' : 'incoming'", render)
+        self.assertIn("decision.representative === 'existing' ? 'existing' : 'incoming'", decisions)
+
+    def test_listing_review_explains_canonical_missing_value_fallback(self):
+        review = function_body(JS, "renderStep0ImportReviewList")
+        self.assertIn('빈 칸·Unknown·N/A·Not Available·- 표기만 반대쪽 값으로 보완합니다.', review)
 
     def test_shortlisting_evidence_tooltips_and_dd_detail_link_follow_shared_ui_rules(self):
         evidence_select = function_body(JS, "evidenceEditSelect")

@@ -7,6 +7,12 @@ const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
 let currentRecord = null;
 
+function encodeRecordIdForPath(recordId) {
+  return encodeURIComponent(String(recordId ?? ''))
+    .replace(/%2F/gi, '%252F')
+    .replace(/%5C/gi, '%255C');
+}
+
 const elements = {
   title: document.querySelector('#triageDetailTitle'),
   subtitle: document.querySelector('#triageDetailSubtitle'),
@@ -1367,7 +1373,7 @@ function renderRecord(record) {
 }
 
 async function updateTriageManualReview(payload) {
-  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/manual-review`, {
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/manual-review`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -1382,7 +1388,7 @@ async function updateTriageManualReview(payload) {
 async function saveTriageContactHistory(body) {
   const author = await requireAuth();
   if (!author?.name) throw new Error('로그인 후 Contact History를 입력할 수 있습니다.');
-  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/comments`, {
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/comments`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ author: author.name, body, category: 'contact_history' })
@@ -1395,7 +1401,7 @@ async function saveTriageContactHistory(body) {
 
 async function updateTriageContactHistory(commentId, body) {
   const closeProgress = showTriageProgress('잠시만 기다려 주세요', 'Contact History를 수정하고 있습니다.');
-  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/comments/${encodeURIComponent(commentId)}`, {
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/comments/${encodeURIComponent(commentId)}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ body })
@@ -1408,7 +1414,7 @@ async function updateTriageContactHistory(commentId, body) {
 
 async function deleteTriageContactHistory(commentId) {
   const closeProgress = showTriageProgress('잠시만 기다려 주세요', 'Contact History를 삭제하고 있습니다.');
-  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE' }).finally(closeProgress);
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE' }).finally(closeProgress);
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.detail || 'Contact History 삭제에 실패했습니다.');
   currentRecord = data.record;
@@ -1419,7 +1425,7 @@ async function saveTriageFinalComment(body) {
   const author = await requireAuth();
   if (!author?.name) throw new Error('로그인 후 최종 코멘트를 입력할 수 있습니다.');
   const closeProgress = showTriageProgress('잠시만 기다려 주세요', '최종 코멘트를 저장하고 있습니다.');
-  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/comments`, {
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/comments`, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ author: author.name, body, category: 'final_comment' })
   }).finally(closeProgress);
@@ -1431,7 +1437,7 @@ async function saveTriageFinalComment(body) {
 
 async function updateTriageFinalComment(commentId, body) {
   const closeProgress = showTriageProgress('잠시만 기다려 주세요', '최종 코멘트를 수정하고 있습니다.');
-  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/comments/${encodeURIComponent(commentId)}`, {
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/comments/${encodeURIComponent(commentId)}`, {
     method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ body })
   }).finally(closeProgress);
   const data = await response.json().catch(() => ({}));
@@ -1442,7 +1448,7 @@ async function updateTriageFinalComment(commentId, body) {
 
 async function deleteTriageFinalComment(commentId) {
   const closeProgress = showTriageProgress('잠시만 기다려 주세요', '최종 코멘트를 삭제하고 있습니다.');
-  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE' }).finally(closeProgress);
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE' }).finally(closeProgress);
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.detail || '최종 코멘트 삭제에 실패했습니다.');
   currentRecord = data.record;
@@ -1499,8 +1505,8 @@ function openTriageScoreInlineEditor(button) {
 
 async function saveTriageScoreNote(panel, body, noteId = '') {
   const response = await fetch(noteId
-    ? `/api/records/${encodeURIComponent(recordId)}/topic-notes/${encodeURIComponent(noteId)}`
-    : `/api/records/${encodeURIComponent(recordId)}/topic-notes`, {
+    ? `/api/records/${encodeRecordIdForPath(recordId)}/topic-notes/${encodeURIComponent(noteId)}`
+    : `/api/records/${encodeRecordIdForPath(recordId)}/topic-notes`, {
     method: noteId ? 'PATCH' : 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(noteId ? { body } : {
@@ -1517,7 +1523,7 @@ async function saveTriageScoreNote(panel, body, noteId = '') {
 }
 
 async function deleteTriageScoreNote(noteId) {
-  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/topic-notes/${encodeURIComponent(noteId)}`, {
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/topic-notes/${encodeURIComponent(noteId)}`, {
     method: 'DELETE'
   });
   const data = await response.json().catch(() => ({}));
@@ -1601,7 +1607,7 @@ async function deleteCurrentRecord() {
   elements.loadStatus.textContent = 'Deleting';
   elements.deleteRecordButton.disabled = true;
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(recordId)}`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}`, {
       method: 'DELETE'
     });
     const data = await response.json().catch(() => ({}));
@@ -1624,7 +1630,7 @@ async function refreshTriageRubric(button) {
     '최신 Fast Triage 기준으로 기존 근거와 점수를 다시 확인하고 있습니다.'
   );
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/refresh-rubric`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/refresh-rubric`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
@@ -1649,7 +1655,7 @@ async function refreshTriageRubric(button) {
 
 async function loadRecord() {
   if (!recordId) throw new Error('Fast Triage record id가 없습니다.');
-  const response = await fetch(`/api/records/${encodeURIComponent(recordId)}`);
+  const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}`);
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
   renderRecord(data.record);

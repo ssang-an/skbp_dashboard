@@ -25,7 +25,7 @@ import subprocess
 import sys
 import uuid
 import zipfile
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 from xml.etree import ElementTree
 from zoneinfo import ZoneInfo
 
@@ -44,6 +44,7 @@ from record_storage import (
 from openpyxl import load_workbook
 from pypdf import PdfReader
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi.routing import APIRoute
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, ValidationError
@@ -419,7 +420,25 @@ QUALITATIVE_REVIEW_CRITERIA = {
 QUALITATIVE_REVIEW_AI_AUTHOR = "AI"
 QUALITATIVE_AI_CONTEXT_LIMIT = 9000
 
+class DecodedRecordIdRoute(APIRoute):
+    """Allow opaque record ids to safely include URL-encoded path separators."""
+
+    def get_route_handler(self) -> Any:
+        original_handler = super().get_route_handler()
+
+        async def decoded_record_id_handler(request: Request) -> Any:
+            record_id = request.path_params.get("record_id")
+            if isinstance(record_id, str) and "%" in record_id:
+                request.path_params["record_id"] = unquote(record_id)
+            return await original_handler(request)
+
+        return decoded_record_id_handler
+
+
 app = FastAPI(title="SKBP Pipeline Dashboard")
+# A browser/server stack may decode %2F before routing.  Clients therefore
+# double-encode record-id separators; decode them once only after route matching.
+app.router.route_class = DecodedRecordIdRoute
 
 
 @app.middleware("http")
@@ -3597,7 +3616,9 @@ def normalized_pipeline_asset_identity(value: Any) -> str:
     return re.sub(r"(?<=[a-z])0+(?=\d)", "", normalized)
 
 
-GENERIC_ASSET_WORDS = {"therapy", "drug", "treatment", "research", "project", "program", "pipeline", "disease", "disorder", "candidate", "for", "of", "the", "and"}
+# Descriptive Listing names frequently share generic formulation scaffolding.
+# A review candidate still needs at least two program-identifying tokens in common.
+GENERIC_ASSET_WORDS = {"therapy", "drug", "treatment", "research", "project", "program", "pipeline", "disease", "disorder", "candidate", "small", "molecule", "inhibit", "inhibits", "inhibiting", "inhibition", "to", "for", "of", "the", "and"}
 HIGH_CONFIDENCE_ASSET_ALIASES = {"ad": "alzheimer", "alzheimers": "alzheimer", "pd": "parkinson", "parkinsons": "parkinson"}
 
 
@@ -3642,7 +3663,7 @@ def is_simple_code_with_prefix_and_number(value: Any) -> bool:
 
 
 def descriptive_assets_semantically_overlap(left_asset: Any, right_asset: Any, company: Any = "") -> bool:
-    """Require an Asset-specific overlap, not merely a shared company prefix."""
+    """Require two Asset-specific overlaps, not merely a shared company prefix."""
     def meaningful_tokens(value: Any) -> set[str]:
         return {
             HIGH_CONFIDENCE_ASSET_ALIASES.get(word, word)
@@ -3651,7 +3672,7 @@ def descriptive_assets_semantically_overlap(left_asset: Any, right_asset: Any, c
         }
     company_tokens = meaningful_tokens(company)
     shared_tokens = meaningful_tokens(left_asset) & meaningful_tokens(right_asset)
-    return bool(shared_tokens - company_tokens)
+    return len(shared_tokens - company_tokens) >= 2
 
 
 def pipeline_asset_match_reason(
@@ -3692,7 +3713,7 @@ def pipeline_asset_match_reason(
         if left_normalized == right_normalized:
             return "exact", "same company and identical descriptive asset name"
         if descriptive_assets_semantically_overlap(left_asset, right_asset, left_company):
-            return "review", "same company and overlapping meaningful descriptive terms"
+            return "review", "same company and at least two overlapping meaningful descriptive terms"
     return None
 
 
@@ -5648,6 +5669,10 @@ LISTING_WEBSITE_HOST_PATTERN = re.compile(
     flags=re.IGNORECASE,
 )
 LISTING_ASSET_PLACEHOLDER_PATTERN = re.compile(r"^(?:-|x|×)$", flags=re.IGNORECASE)
+LISTING_MISSING_VALUE_PATTERN = re.compile(
+    r"^(?:unknown|n\s*(?:[/._-]\s*)?a|not[\s_-]*available|[-–—]+)$",
+    flags=re.IGNORECASE,
+)
 
 
 LISTING_ASSET_PLACEHOLDER_PATTERN = re.compile(r"^(?:-|x|\u00d7|\ud69e)$", flags=re.IGNORECASE)
@@ -5896,8 +5921,25 @@ def normalize_listing_details(value: Any) -> dict[str, str]:
     return result
 
 
+def listing_detail_value_is_missing(field: str, value: Any) -> bool:
+    """Treat canonical Listing absence markers as omitted values during a merge."""
+    normalized = str(value or "").strip()
+    return not normalized or bool(LISTING_MISSING_VALUE_PATTERN.fullmatch(normalized))
+
+
+def merge_listing_identity_value(existing: Any, incoming: Any, *, preference: str) -> str:
+    """Prefer the reviewer-selected Asset/Company label unless it is a missing marker."""
+    primary, fallback = (incoming, existing) if preference == "incoming" else (existing, incoming)
+    primary_text = str(primary or "").strip()
+    fallback_text = str(fallback or "").strip()
+    return fallback_text if listing_detail_value_is_missing("identity", primary_text) else primary_text
+
+
 def listing_details_completeness(value: Any) -> int:
-    return sum(bool(item) for item in normalize_listing_details(value).values())
+    return sum(
+        not listing_detail_value_is_missing(field, item)
+        for field, item in normalize_listing_details(value).items()
+    )
 
 
 def merge_listing_details(existing: Any, incoming: Any) -> dict[str, str]:
@@ -5906,7 +5948,10 @@ def merge_listing_details(existing: Any, incoming: Any) -> dict[str, str]:
     update = normalize_listing_details(incoming)
     incoming_is_richer = listing_details_completeness(update) > listing_details_completeness(result)
     for field, value in update.items():
-        if value and (not result.get(field) or incoming_is_richer):
+        if (
+            not listing_detail_value_is_missing(field, value)
+            and (listing_detail_value_is_missing(field, result.get(field)) or incoming_is_richer)
+        ):
             result[field] = value
     return result
 
@@ -5926,7 +5971,7 @@ def merge_listing_details_with_preference(
         else (existing_details, incoming_details)
     )
     return {
-        field: primary[field] or fallback[field]
+        field: fallback[field] if listing_detail_value_is_missing(field, primary[field]) else primary[field]
         for field in LISTING_DETAIL_FIELDS
     }
 
@@ -9937,7 +9982,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
         review_decisions[row_index] = {
             "action": action,
             "target": target,
-            "representative": "incoming" if raw_decision.get("representative") == "incoming" else "existing",
+            "representative": "existing" if raw_decision.get("representative") == "existing" else "incoming",
         }
     missing_review_decisions = set(review_candidates) - set(review_decisions)
     if missing_review_decisions:
@@ -10038,8 +10083,17 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
                 if decision and decision["action"] == "merge"
                 else "incoming"
             )
+            existing_entry_metadata = candidate_queue_entry_metadata(existing_entry)
+            # The primary Entry label is not itself in metadata. Preserve it as
+            # an alias before a reviewer-selected incoming label replaces it.
+            existing_entry_metadata["asset_aliases"] = merge_pipeline_metadata_aliases(
+                existing_entry_metadata.get("asset_aliases", ""), existing_entry.get("asset_input", "")
+            )
+            existing_entry_metadata["company_aliases"] = merge_pipeline_metadata_aliases(
+                existing_entry_metadata.get("company_aliases", ""), existing_entry.get("company_input", "")
+            )
             merged = merge_pipeline_metadata(
-                candidate_queue_entry_metadata(existing_entry),
+                existing_entry_metadata,
                 incoming_metadata,
                 website_preference=representative_preference,
             )
@@ -10066,9 +10120,17 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
                     duplicate_in_queue_richer_replaced += 1
                 else:
                     duplicate_in_queue_enriched += 1
-            if decision and decision["representative"] == "incoming":
-                existing_entry["asset_input"] = asset_input
-                existing_entry["company_input"] = company_input
+            if decision and decision["action"] == "merge":
+                merged_asset = merge_listing_identity_value(
+                    existing_entry.get("asset_input"), asset_input, preference=representative_preference
+                )
+                merged_company = merge_listing_identity_value(
+                    existing_entry.get("company_input"), company_input, preference=representative_preference
+                )
+                if existing_entry.get("asset_input") != merged_asset or existing_entry.get("company_input") != merged_company:
+                    existing_entry["asset_input"] = merged_asset
+                    existing_entry["company_input"] = merged_company
+                    metadata_updated += 1
             continue
         entry = {
             "id": f"cq_{uuid.uuid4().hex[:8]}",
@@ -10708,6 +10770,8 @@ def reset_manual_scoring_overrides_after_rubric_review(
 
 @app.post("/api/records/{record_id:path}/refresh-rubric")
 async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, Any]:
+    # Developer has a higher role rank than administrator, so the admin gate
+    # intentionally permits both approved administrators and developers.
     account = require_auth_admin(request) or {}
     records = load_records()
     for index, record in enumerate(records):
@@ -11078,7 +11142,7 @@ async def delete_records(request: Request) -> dict[str, Any]:
     }
 
 
-@app.get("/api/records/{record_id}")
+@app.get("/api/records/{record_id:path}")
 def get_record(record_id: str) -> dict[str, Any]:
     records = load_records()
     refreshed = refresh_tracked_oi_classifications(records)
@@ -11492,6 +11556,8 @@ def annotate_rubric_recalculation(
 
 @app.post("/api/records/{record_id:path}/recalculate-rubric")
 def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> dict[str, Any]:
+    # Keep this aligned with the dashboard and Team Review controls: both
+    # administrators and developers may run a stored-score recalculation.
     account = require_auth_admin(request) or {}
     actor_name = str(account.get("name") or "").strip()
     records = load_records()
@@ -11541,6 +11607,14 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
             }
             source_report = record.setdefault("source_report", {})
             source_report["rubric_recalculation"] = copy.deepcopy(meta["rubric_recalculation"])
+            record_successful_rubric_review(
+                record,
+                rubric_version=TRIAGE_CRITERIA_VERSION,
+                reviewed_at=recalculated_at,
+                actor_ip=get_client_ip(request),
+                result="recalculated",
+                reason="Stored Fast Triage criterion scores and the Filter 1 decision were recalculated under the current rubric.",
+            )
             append_rubric_refresh_audit(
                 record,
                 rubric_version=TRIAGE_CRITERIA_VERSION,
@@ -11592,6 +11666,14 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
         }
         source_report = record.setdefault("source_report", {})
         source_report["rubric_recalculation"] = copy.deepcopy(meta["rubric_recalculation"])
+        record_successful_rubric_review(
+            record,
+            rubric_version=SCORING_CRITERIA_VERSION,
+            reviewed_at=recalculated_at,
+            actor_ip=get_client_ip(request),
+            result="recalculated",
+            reason="Stored Full Scout criterion scores, total score, and the Filter 2 decision were recalculated under the current rubric.",
+        )
         # Recalculation changes stored scores only.  The pasted GPT original
         # report is evidence/provenance and must not receive a generated banner
         # or scorecard rewrite.
@@ -11627,7 +11709,10 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
 
 @app.post("/api/records/{record_id:path}/recalculate-oi-partnership")
 def recalculate_record_oi_partnership(record_id: str, request: Request) -> dict[str, Any]:
-    require_auth_admin(request)
+    # The administrator threshold includes the higher Developer role.
+    account = require_auth_admin(request)
+    actor_ip = get_client_ip(request)
+    actor_name = str(account.get("name") or "").strip()
     records = load_records()
     for index, record in enumerate(records):
         if record_key(record) != record_id:
@@ -11666,6 +11751,17 @@ def recalculate_record_oi_partnership(record_id: str, request: Request) -> dict[
         }
         focus["updated_at"] = recalculated_at
         focus["updated_source"] = "dashboard_tab3_oi_partnership_refresh"
+        append_edit_history(
+            record,
+            source="dashboard_tab3_oi_partnership_refresh",
+            actor_ip=actor_ip,
+            actor_name=actor_name,
+            field="focus_management.partnership_refresh",
+            previous_value=f"OI Partnership v{previous_version or '-'} / {previous_type or '-'} / {previous_source or '-'}",
+            new_value=f"OI Partnership v{OI_PARTNERSHIP_CRITERIA_VERSION} / {result['partnership_type']}",
+            instruction_version=OI_PARTNERSHIP_CRITERIA_VERSION,
+            audit_label=f"Filter 3 recalculated by OI Partnership v{OI_PARTNERSHIP_CRITERIA_VERSION}",
+        )
 
         records[index] = record
         save_records(records)

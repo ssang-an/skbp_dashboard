@@ -29,6 +29,12 @@ const CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY = 'skbp.dashboard.criteriaGuideLanguag
 const PIPELINE_RETURN_FOCUS_STORAGE_KEY = 'skbp.pipeline.return-focus.v1';
 const PIPELINE_ROW_HIGHLIGHT_MS = 3000;
 
+function encodeRecordIdForPath(recordId) {
+  return encodeURIComponent(String(recordId ?? ''))
+    .replace(/%2F/gi, '%252F')
+    .replace(/%5C/gi, '%255C');
+}
+
 function readStoredJson(key, fallback, validator) {
   try {
     const raw = localStorage.getItem(key);
@@ -682,6 +688,37 @@ async function runBlockingOperation(options, operation) {
   }
 }
 
+function showRubricRefreshFailureDialog(title, message) {
+  return new Promise((resolve) => {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'operation-modal-backdrop listing-import-error-backdrop';
+    backdrop.innerHTML = `
+      <section class="operation-modal listing-import-error-modal" role="dialog" aria-modal="true" aria-labelledby="rubricRefreshErrorTitle" aria-describedby="rubricRefreshErrorMessage">
+        <header class="operation-modal-header">
+          <span class="operation-modal-mark listing-import-error-mark" aria-hidden="true">!</span>
+          <div><p class="operation-modal-eyebrow">SCORE REFRESH</p><h2 id="rubricRefreshErrorTitle">${escapeHtml(title)}</h2></div>
+        </header>
+        <p class="operation-modal-copy" id="rubricRefreshErrorMessage">${escapeHtml(message)}</p>
+        <footer class="operation-modal-actions operation-confirm-actions">
+          <button type="button" class="operation-modal-confirm" data-rubric-refresh-error-close>확인</button>
+        </footer>
+      </section>`;
+    const close = () => {
+      document.removeEventListener('keydown', onKeydown);
+      backdrop.remove();
+      document.body.classList.remove('operation-modal-open');
+      resolve();
+    };
+    const onKeydown = (event) => { if (event.key === 'Escape') close(); };
+    backdrop.addEventListener('click', (event) => { if (event.target === backdrop) close(); });
+    backdrop.querySelector('[data-rubric-refresh-error-close]')?.addEventListener('click', close);
+    document.body.appendChild(backdrop);
+    document.body.classList.add('operation-modal-open');
+    document.addEventListener('keydown', onKeydown);
+    backdrop.querySelector('[data-rubric-refresh-error-close]')?.focus();
+  });
+}
+
 async function ensureDashboardActorName() {
   const user = getCurrentUser() || await requireAuth();
   const actorName = String(user?.name || '').trim();
@@ -712,7 +749,10 @@ function normalizedDashboardSearchText(value) {
     .replace(/(?<=[a-z])0+(?=\d)/g, '');
 }
 
-const GENERIC_ASSET_WORDS = new Set(['therapy', 'drug', 'treatment', 'research', 'project', 'program', 'pipeline', 'disease', 'disorder', 'candidate', 'for', 'of', 'the', 'and']);
+// Descriptive Listing names often share formulation scaffolding.  These words
+// do not identify the program itself, so descriptive names need two meaningful
+// asset terms in common before they create a review match.
+const GENERIC_ASSET_WORDS = new Set(['therapy', 'drug', 'treatment', 'research', 'project', 'program', 'pipeline', 'disease', 'disorder', 'candidate', 'small', 'molecule', 'inhibit', 'inhibits', 'inhibiting', 'inhibition', 'to', 'for', 'of', 'the', 'and']);
 const HIGH_CONFIDENCE_ASSET_ALIASES = new Map([
   ['ad', 'alzheimer'], ['alzheimers', 'alzheimer'],
   ['pd', 'parkinson'], ['parkinsons', 'parkinson']
@@ -763,7 +803,7 @@ function descriptiveAssetsSemanticallyOverlap(left, right) {
     .filter((word) => !GENERIC_ASSET_WORDS.has(word)));
   const leftTokens = meaningfulTokens(left);
   const rightTokens = meaningfulTokens(right);
-  return [...leftTokens].some((token) => rightTokens.has(token));
+  return [...leftTokens].filter((token) => rightTokens.has(token)).length >= 2;
 }
 
 function comparePipelineAssets(leftIdentity, rightIdentity) {
@@ -1109,6 +1149,49 @@ async function reviewDataReuploadMatches(matches) {
   return openDataReuploadModal(matches);
 }
 
+function step0ListingIdentity(asset, company) {
+  return {
+    asset: String(asset || '').trim(),
+    company: String(company || '').trim(),
+    normalizedAsset: normalizedPipelineAssetIdentity(asset),
+    normalizedCompany: normalizedPipelineIdentityText(company)
+  };
+}
+
+function step0ListingAssetsMatch(leftAsset, leftCompany, rightAsset, rightCompany) {
+  return comparePipelineAssets(
+    step0ListingIdentity(leftAsset, leftCompany),
+    step0ListingIdentity(rightAsset, rightCompany)
+  );
+}
+
+function reciprocalStep0MergeSelections(rowIndex, selectedTarget) {
+  const current = activeStep0ImportReviewMatches.find((match) => match.row_index === rowIndex);
+  const selectedCandidate = current?.candidates?.find((candidate) => candidate.target === selectedTarget);
+  if (!current || !selectedCandidate) return [];
+
+  // Two pasted Listing rows can be reciprocal aliases of two already-separate
+  // queue rows (for example BMD-001 ↔ BIOK-001). They have no shared target
+  // yet, so group the direct reverse pair and apply one merge decision to both.
+  return activeStep0ImportReviewMatches.flatMap((other) => {
+    if (other.row_index === rowIndex) return [];
+    const selectedCandidateIsOtherRow = step0ListingAssetsMatch(
+      selectedCandidate.asset,
+      selectedCandidate.company,
+      other.asset,
+      other.company
+    );
+    if (!selectedCandidateIsOtherRow) return [];
+    const reverseCandidate = (other.candidates || []).find((candidate) => step0ListingAssetsMatch(
+      candidate.asset,
+      candidate.company,
+      current.asset,
+      current.company
+    ));
+    return reverseCandidate ? [{ rowIndex: other.row_index, target: reverseCandidate.target }] : [];
+  });
+}
+
 function renderStep0ImportReviewList() {
   if (!elements.step0ImportReviewList) return;
   elements.step0ImportReviewList.innerHTML = activeStep0ImportReviewMatches.map((match) => {
@@ -1131,7 +1214,7 @@ function renderStep0ImportReviewList() {
             const canChooseRepresentative = selected
               && candidate.target_type === 'queue'
               && step0ListingValuesConflict(match, candidate);
-            const representative = decision.representative === 'incoming' ? 'incoming' : 'existing';
+            const representative = decision.representative === 'existing' ? 'existing' : 'incoming';
             return `
               <section class="data-reupload-candidate${selected ? ' is-selected' : ''}">
                 <div class="data-reupload-candidate-heading">
@@ -1150,10 +1233,10 @@ function renderStep0ImportReviewList() {
                 ${canChooseRepresentative ? `
                   <fieldset class="step0-import-representative-choice">
                     <legend>충돌 시 우선 표시할 Listing 값</legend>
-                    <p>선택한 쪽의 Asset·Company·Stage·Target 등은 유지하고, 빈 칸만 반대쪽 값으로 보완합니다. Comment·Contact·이름 별칭은 함께 보존됩니다.</p>
+                    <p>선택한 쪽의 Asset·Company·Stage·Target 등은 유지하고, 빈 칸·Unknown·N/A·Not Available·- 표기만 반대쪽 값으로 보완합니다. Comment·Contact·이름 별칭은 함께 보존됩니다.</p>
                     <div>
-                      <button type="button" class="identity-modal-cancel${representative === 'existing' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="existing">기존 Listing 값 우선</button>
                       <button type="button" class="identity-modal-cancel${representative === 'incoming' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="incoming">새 입력 Listing 값 우선</button>
+                      <button type="button" class="identity-modal-cancel${representative === 'existing' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="existing">기존 Listing 값 우선</button>
                     </div>
                   </fieldset>` : selected && candidate.target_type === 'record' ? `
                   <p class="step0-import-alias-guidance">Fast Triage·Full Scout의 공식 Asset·Company 표기는 유지됩니다. 이번 Listing의 이름은 검색용 별칭으로 자동 보존됩니다.</p>` : ''}
@@ -1201,7 +1284,7 @@ function openStep0ImportReviewModal(matches) {
 function reviewedStep0ImportDecisions() {
   return activeStep0ImportReviewMatches.map((match) => {
     const decision = activeStep0ImportReviewDecisions.get(match.row_index) || { action: 'pending' };
-    return { row_index: match.row_index, action: decision.action, target: decision.target || '', representative: decision.representative === 'incoming' ? 'incoming' : 'existing' };
+    return { row_index: match.row_index, action: decision.action, target: decision.target || '', representative: decision.representative === 'existing' ? 'existing' : 'incoming' };
   });
 }
 
@@ -5942,16 +6025,19 @@ function rubricReevaluationButton(row) {
   const isTriage = row.isTriage;
   const workflowLabel = isTriage ? 'Fast Triage' : 'Full Scout';
   const latestVersion = isTriage ? LATEST_TRIAGE_RUBRIC_VERSION : LATEST_FULL_SCOUT_RUBRIC_VERSION;
-  const appliedVersion = String(
-    get(row.raw, 'meta.rubric_reviewed_version', '')
-    || get(row.raw, 'meta.rescored_rubric_version', '')
-    || get(row.raw, 'meta.rubric_recalculation.version', row.criteriaVersion || '-')
-  );
-  const evaluatedAt = get(
-    row.raw,
-    'meta.rubric_reviewed_at',
-    get(row.raw, 'meta.rubric_recalculation.recalculated_at', row.generatedAt || '-')
-  );
+  const appliedCandidates = [
+    { version: get(row.raw, 'meta.rubric_reviewed_version', ''), at: get(row.raw, 'meta.rubric_reviewed_at', '') },
+    { version: get(row.raw, 'meta.rescored_rubric_version', ''), at: get(row.raw, 'meta.rescored_at', '') },
+    { version: get(row.raw, 'meta.rubric_recalculation.version', ''), at: get(row.raw, 'meta.rubric_recalculation.recalculated_at', '') },
+    { version: row.criteriaVersion || '-', at: row.generatedAt || '' }
+  ].filter((candidate) => String(candidate.version || '').trim());
+  const appliedRubric = appliedCandidates.reduce((latest, candidate) => {
+    const latestTime = Date.parse(latest.at || '') || 0;
+    const candidateTime = Date.parse(candidate.at || '') || 0;
+    return candidateTime > latestTime ? candidate : latest;
+  }, appliedCandidates[0] || { version: '-', at: '' });
+  const appliedVersion = String(appliedRubric.version || '-');
+  const evaluatedAt = appliedRubric.at || row.generatedAt || '-';
   const hasManualScoreOverride = Object.keys(humanReviewOverrides(row.raw)?.scores || {}).length > 0
     || hasManualTotalScoreOverride(row.raw);
   const hasCurrentDefinition = isTriage
@@ -6835,7 +6921,8 @@ function restorePendingPipelineReturnFocus() {
   sessionStorage.removeItem(PIPELINE_RETURN_FOCUS_STORAGE_KEY);
   const recordId = String(target?.recordId || '').trim();
   const mode = String(target?.mode || '').trim();
-  if (!recordId || !mode || mode !== activeTableMode()) return;
+  if (!recordId || !mode) return;
+  if (mode !== activeTableMode()) setTableMode(mode);
   window.requestAnimationFrame(() => scrollAndHighlightPipelineRow(recordId));
 }
 
@@ -6903,7 +6990,7 @@ async function saveManualReviewEdit(select) {
   elements.dataStatus.textContent = 'Saving human review';
 
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/manual-review`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/manual-review`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -6955,7 +7042,7 @@ async function saveManualTableTextEdit(input) {
   input.classList.add('is-saving');
   elements.dataStatus.textContent = 'Saving human review';
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/manual-review`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/manual-review`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ kind, value, previous_value: previousValue })
@@ -7093,7 +7180,7 @@ async function saveUnknownTargetEdit(anchor) {
   anchor.classList.add('is-saving');
   elements.dataStatus.textContent = 'Target human review 저장 중';
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/manual-review`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/manual-review`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ kind: 'target', value: nextValue, previous_value: previousValue })
@@ -7122,6 +7209,13 @@ function replaceRecordFromApi(recordId, record) {
 async function recalculateLatestRubric(button) {
   const recordId = button?.dataset.recordId;
   if (!recordId) return;
+  const user = await requireAuth();
+  if (!user?.is_admin && !user?.is_developer) {
+    const message = 'Score 기준 갱신은 Developer 또는 관리자 권한이 필요합니다. 로그인한 계정의 권한을 확인해 주세요.';
+    elements.dataStatus.textContent = message;
+    await showRubricRefreshFailureDialog('Score 기준 갱신을 실행할 수 없습니다', message);
+    return;
+  }
   const isTriage = button.dataset.reviewType === 'triage';
   const workflowLabel = isTriage ? 'Fast Triage' : 'Full Scout';
   const latestVersion = isTriage ? LATEST_TRIAGE_RUBRIC_VERSION : LATEST_FULL_SCOUT_RUBRIC_VERSION;
@@ -7136,11 +7230,15 @@ async function recalculateLatestRubric(button) {
       status: '점수와 판단 근거를 갱신하고 있습니다.'
     }, async (signal) => {
       const response = await fetch(
-        `/api/records/${encodeURIComponent(recordId)}/refresh-rubric`,
+        `/api/records/${encodeRecordIdForPath(recordId)}/recalculate-rubric`,
         { method: 'POST', signal }
       );
       const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.detail || `HTTP ${response.status}`);
+      if (!response.ok) {
+        const message = result.detail || `HTTP ${response.status}`;
+        await showRubricRefreshFailureDialog('Score 기준 갱신에 실패했습니다', message);
+        throw new Error(message);
+      }
       return result;
     });
     if (data === OPERATION_CANCELLED) {
@@ -7148,6 +7246,10 @@ async function recalculateLatestRubric(button) {
       return;
     }
     if (!data.record || ['error', 'conflict'].includes(data.status)) {
+      await showRubricRefreshFailureDialog(
+        'Score 기준 갱신에 실패했습니다',
+        data.message || data.reason || `${workflowLabel} 재평가를 완료하지 못했습니다.`
+      );
       throw new Error(data.message || data.reason || `${workflowLabel} 최신 루브릭 재평가를 완료하지 못했습니다.`);
     }
     replaceRecordFromApi(recordId, data.record);
@@ -7156,6 +7258,7 @@ async function recalculateLatestRubric(button) {
     render();
     scrollAndHighlightPipelineRow(recordId);
     updateHeaderRecordCount();
+    elements.dataStatus.textContent = `${workflowLabel} Score 기준 v${data.rubric_version || latestVersion} 재계산을 완료했습니다. 변경 이력에 저장되었습니다.`;
   } catch (error) {
     elements.dataStatus.textContent = `${workflowLabel} 재평가 실패: ${error.message}`;
   } finally {
@@ -7217,6 +7320,13 @@ async function copyTriageFullScoutPrompt(button) {
 async function recalculateLatestOiPartnership(button) {
   const recordId = button?.dataset.recordId;
   if (!recordId) return;
+  const user = await requireAuth();
+  if (!user?.is_admin && !user?.is_developer) {
+    const message = 'Filter 3 기준 갱신은 Developer 또는 관리자 권한이 필요합니다. 로그인한 계정의 권한을 확인해 주세요.';
+    elements.dataStatus.textContent = message;
+    await showRubricRefreshFailureDialog('Filter 3 기준 갱신을 실행할 수 없습니다', message);
+    return;
+  }
   button.disabled = true;
   button.classList.add('is-saving');
   const latestVersion = state.latestOiPartnershipCriteriaVersion;
@@ -7229,11 +7339,15 @@ async function recalculateLatestOiPartnership(button) {
       status: 'OI Partnership 결과를 계산하고 있습니다.'
     }, async (signal) => {
       const response = await fetch(
-        `/api/records/${encodeURIComponent(recordId)}/recalculate-oi-partnership`,
+        `/api/records/${encodeRecordIdForPath(recordId)}/recalculate-oi-partnership`,
         { method: 'POST', signal }
       );
       const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.detail || `HTTP ${response.status}`);
+      if (!response.ok) {
+        const message = result.detail || `HTTP ${response.status}`;
+        await showRubricRefreshFailureDialog('Filter 3 기준 갱신에 실패했습니다', message);
+        throw new Error(message);
+      }
       return result;
     });
     if (data === OPERATION_CANCELLED) {
@@ -7244,6 +7358,7 @@ async function recalculateLatestOiPartnership(button) {
     renderFilters();
     render();
     updateHeaderRecordCount();
+    elements.dataStatus.textContent = `OI Partnership v${data.oi_partnership_criteria_version || latestVersion} 재분류를 완료했습니다. 변경 이력에 저장되었습니다.`;
   } catch (error) {
     elements.dataStatus.textContent = `Filter 3 재분류 실패: ${error.message}`;
   } finally {
@@ -7267,7 +7382,7 @@ async function performFocusManagementSave(recordId, payload, control = null) {
   elements.dataStatus.textContent = 'Saving TAB3';
 
   try {
-    const response = await fetch(`/api/records/${encodeURIComponent(recordId)}/focus-management`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/focus-management`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -11891,22 +12006,30 @@ function parseStep0ClipboardTable(clipboardText) {
   return { rows, unclosedQuote: inQuotes };
 }
 
-const STEP0_PASTE_PROCESSING_DELAY_MS = 180;
+const STEP0_PASTE_PROCESSING_DELAY_MS = 0;
+const STEP0_PASTE_PROCESSING_MINIMUM_VISIBLE_MS = 260;
 let step0PasteProcessingToken = null;
 let step0PasteProcessingTimer = null;
 let step0PasteProcessingReturnFocus = null;
+let step0PasteProcessingShownAt = 0;
 
 function beginStep0PasteProcessing() {
   const token = Symbol('step0-paste-processing');
   step0PasteProcessingToken = token;
   step0PasteProcessingReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   elements.step0EntryGrid?.setAttribute('aria-busy', 'true');
-  step0PasteProcessingTimer = window.setTimeout(() => {
+  const showProcessingModal = () => {
     if (step0PasteProcessingToken !== token) return;
     if (elements.step0PasteProcessingModal) elements.step0PasteProcessingModal.hidden = false;
     document.body.classList.add('operation-modal-open');
     elements.step0PasteProcessingDialog?.focus();
-  }, STEP0_PASTE_PROCESSING_DELAY_MS);
+    step0PasteProcessingShownAt = performance.now();
+  };
+  if (STEP0_PASTE_PROCESSING_DELAY_MS === 0) {
+    showProcessingModal();
+  } else {
+    step0PasteProcessingTimer = window.setTimeout(showProcessingModal, STEP0_PASTE_PROCESSING_DELAY_MS);
+  }
   return token;
 }
 
@@ -11915,11 +12038,17 @@ function setStep0PasteProcessingStatus(token, message) {
   if (elements.step0PasteProcessingStatus) elements.step0PasteProcessingStatus.textContent = message;
 }
 
-function endStep0PasteProcessing(token) {
+async function endStep0PasteProcessing(token) {
   if (step0PasteProcessingToken !== token) return;
   window.clearTimeout(step0PasteProcessingTimer);
   step0PasteProcessingTimer = null;
+  const remainingVisibleMs = step0PasteProcessingShownAt
+    ? Math.max(0, STEP0_PASTE_PROCESSING_MINIMUM_VISIBLE_MS - (performance.now() - step0PasteProcessingShownAt))
+    : 0;
+  if (remainingVisibleMs) await new Promise((resolve) => window.setTimeout(resolve, remainingVisibleMs));
+  if (step0PasteProcessingToken !== token) return;
   step0PasteProcessingToken = null;
+  step0PasteProcessingShownAt = 0;
   elements.step0EntryGrid?.setAttribute('aria-busy', 'false');
   if (elements.step0PasteProcessingModal) elements.step0PasteProcessingModal.hidden = true;
   if (elements.operationModal?.hidden !== false) document.body.classList.remove('operation-modal-open');
@@ -11940,8 +12069,9 @@ async function pasteIntoStep0EntryGrid(event) {
   if (step0PasteProcessingToken) return;
   const processingToken = beginStep0PasteProcessing();
   try {
-    // Give the browser one frame before large clipboard parsing and DOM updates.
-    await new Promise((resolve) => window.requestAnimationFrame(resolve));
+    // Two frames guarantee the immediate feedback is painted before clipboard
+    // parsing and potentially large DOM updates begin.
+    await new Promise((resolve) => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
   const inputRows = [...elements.step0EntryGridBody.querySelectorAll('tr')];
   const startRow = Math.max(0, inputRows.indexOf(input.closest('tr')));
   const startColumn = Math.max(0, STEP0_ENTRY_FIELDS.findIndex((field) => field.key === input.dataset.step0EntryField));
@@ -12033,7 +12163,7 @@ async function pasteIntoStep0EntryGrid(event) {
     console.error('Listing Excel paste failed:', error);
     showStep0PasteFeedback('엑셀 데이터를 표에 반영하는 중 문제가 발생했습니다. 내용을 확인한 뒤 다시 붙여넣어 주세요.', 'error');
   } finally {
-    endStep0PasteProcessing(processingToken);
+    await endStep0PasteProcessing(processingToken);
   }
 }
 
@@ -14741,6 +14871,10 @@ window.addEventListener('resize', () => {
   applyColumnWidths();
 });
 
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) restorePendingPipelineReturnFocus();
+});
+
 elements.pipelineTable.addEventListener('click', (event) => {
   const pipelineWebsite = event.target.closest('[data-pipeline-website]');
   if (pipelineWebsite) {
@@ -15313,14 +15447,32 @@ elements.step0ImportReviewList?.addEventListener('click', (event) => {
     && (requestedAction !== 'merge' || current.target === requestedTarget);
   if (isSameChoice) {
     activeStep0ImportReviewDecisions.delete(rowIndex);
+    if (requestedAction === 'merge') {
+      reciprocalStep0MergeSelections(rowIndex, requestedTarget).forEach((linked) => {
+        const linkedDecision = activeStep0ImportReviewDecisions.get(linked.rowIndex);
+        if (linkedDecision?.action === 'merge' && linkedDecision.target === linked.target) {
+          activeStep0ImportReviewDecisions.delete(linked.rowIndex);
+        }
+      });
+    }
     renderStep0ImportReviewList();
     return;
   }
+  const representative = current.representative === 'existing' ? 'existing' : 'incoming';
   activeStep0ImportReviewDecisions.set(rowIndex, {
     action: requestedAction,
     target: requestedTarget,
-    representative: 'existing'
+    representative
   });
+  if (requestedAction === 'merge') {
+    reciprocalStep0MergeSelections(rowIndex, requestedTarget).forEach((linked) => {
+      activeStep0ImportReviewDecisions.set(linked.rowIndex, {
+        action: 'merge',
+        target: linked.target,
+        representative
+      });
+    });
+  }
   renderStep0ImportReviewList();
 });
 elements.step0ImportReviewApply?.addEventListener('click', () => {

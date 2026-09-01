@@ -543,6 +543,82 @@ class Step0PipelineMetadataTests(unittest.TestCase):
             },
         )
 
+    def test_listing_merge_treats_unknown_stage_as_blank_for_the_other_listing_value(self) -> None:
+        existing = {"stage": "Unknown", "target": "Existing target"}
+        incoming = {"stage": "Discovery", "target": "Incoming target"}
+
+        self.assertEqual(
+            main.merge_listing_details_with_preference(existing, incoming, preference="existing"),
+            {
+                "country": "",
+                "modality": "",
+                "target": "Existing target",
+                "main_indication": "",
+                "stage": "Discovery",
+                "website": "",
+            },
+        )
+
+    def test_listing_merge_fills_all_canonical_missing_markers_from_the_other_row(self) -> None:
+        existing = {
+            "country": "Unknown",
+            "modality": "-",
+            "target": "N/A",
+            "main_indication": "Not Available",
+            "stage": " ",
+        }
+        incoming = {
+            "country": "Republic of Korea",
+            "modality": "Small molecule",
+            "target": "DAPK1",
+            "main_indication": "Alzheimer's disease",
+            "stage": "Discovery",
+        }
+
+        self.assertEqual(
+            main.merge_listing_details_with_preference(existing, incoming, preference="existing"),
+            {
+                "country": "Republic of Korea",
+                "modality": "Small molecule",
+                "target": "DAPK1",
+                "main_indication": "Alzheimer's disease",
+                "stage": "Discovery",
+                "website": "",
+            },
+        )
+        self.assertEqual(
+            main.merge_listing_identity_value("Unknown", "New Asset", preference="existing"),
+            "New Asset",
+        )
+        self.assertEqual(
+            main.merge_listing_identity_value("Existing Asset", "N/A", preference="incoming"),
+            "Existing Asset",
+        )
+
+    def test_descriptive_listing_match_ignores_small_molecule_inhibit_scaffolding(self) -> None:
+        reason = main.pipeline_asset_match_reason(
+            "Small Molecule to Inhibit DAPK1 and CSF1R for Tauopathies",
+            "Small Molecule to Inhibit Dopamine Transporter, Noradrenaline Transporter and Serotonin Transporter for Major Depressive Disorder",
+            "Korea Institute of Science and Technology",
+            "Korea Institute of Science and Technology",
+        )
+
+        self.assertIsNone(reason)
+
+    def test_descriptive_listing_match_requires_two_meaningful_terms(self) -> None:
+        self.assertIsNone(main.pipeline_asset_match_reason(
+            "Gene therapy for CNS disease",
+            "Gene therapy for neuromuscular disease",
+            "GenKOre",
+            "GenKOre",
+        ))
+        self.assertEqual(main.pipeline_asset_match_reason(
+            "Gene therapy for neuromuscular disease",
+            "Neuromuscular gene therapy",
+            "GenKOre",
+            "GenKOre",
+        ), ("review", "same company and at least two overlapping meaningful descriptive terms"))
+
     def test_listing_website_respects_representative_without_retaining_other_url(self) -> None:
         existing = {"website": "https://existing.example"}
         incoming = {"website": "https://incoming.example"}
