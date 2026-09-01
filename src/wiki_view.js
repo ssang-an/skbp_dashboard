@@ -1,6 +1,6 @@
 import { setupThemeToggle } from './theme.js';
 
-import { initAuthUI } from './auth.js?v=20260802-required-login-1';
+import { initAuthUI } from './auth.js?v=20260831-password-reset-2';
 
 const params = new URLSearchParams(window.location.search);
 const notePath = params.get('path') || '';

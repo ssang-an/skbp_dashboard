@@ -101,7 +101,7 @@ class RubricReleaseManifestTests(unittest.TestCase):
         for surface in (index_html, detail_html):
             self.assertIn("MoA Validity = 3", surface)
             self.assertIn("Data Maturity = 3", surface)
-            self.assertIn("TR / MoA / Data 중 하나가 0점", surface)
+            self.assertIn("TAR / MoA / Data 중 하나가 0점", surface)
 
         self.assertIn("targetScore >= 3 && moaScore === 3 && dataScore === 3", app_js)
         self.assertIn("['Target Area Relevance', targetScore], ['MoA Validity', moaScore], ['Data Maturity', dataScore]", app_js)
@@ -162,7 +162,7 @@ class RubricReleaseManifestTests(unittest.TestCase):
             "Target Relevance": "우선 적응증",
             "MoA Validity": "Functional evidence",
             "Data Maturity": "program progression",
-            "Competitive Landscape": "front runner",
+            "Competitive Landscape": "head-to-head",
             "Platform Attractiveness": "First Patient Dosed",
             "Expansion Potential": "additional indication",
             "Marketability": "Global Obtainable Peak Sales",

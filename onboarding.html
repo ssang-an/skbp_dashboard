@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b1426" />
+    <title>PRISM · How it works</title>
+    <link rel="icon" type="image/svg+xml" href="./src/prism.svg" />
+    <link rel="stylesheet" href="./src/onboarding.css?v=20260901-27" />
+    <script src="./src/onboarding-config.js?v=20260901-2"></script>
+  </head>
+  <body class="onboarding-page-shell">
+    <header class="onboarding-topbar">
+      <a class="onboarding-wordmark" href="/" aria-label="Enter PRISM dashboard">
+        <img src="./src/prism.svg" alt="" />
+        <span><strong class="onboarding-wordmark-org">SKBP PIPELINE FINDER</strong><i>·</i><strong>PRISM</strong></span>
+      </a>
+      <div class="onboarding-topbar-actions">
+        <span class="onboarding-topbar-label">PLATFORM INTRO</span>
+        <button class="onboarding-skip" type="button" data-onboarding-exit>Skip to dashboard <span aria-hidden="true">→</span></button>
+      </div>
+    </header>
+
+    <main class="onboarding-scroll" id="onboardingExperience" aria-label="How PRISM works">
+      <section class="onboarding-screen intro-screen" id="onboarding-intro" data-onboarding-screen="1">
+        <div class="screen-index" aria-hidden="true"><span>01</span><i></i><small>02</small></div>
+        <div class="intro-layout">
+          <div class="intro-copy">
+            <h1>PRISM</h1>
+            <p class="intro-system">PIPELINE RESEARCH<br />INTELLIGENCE SYSTEM</p>
+          </div>
+          <div class="intro-visual" aria-hidden="true">
+            <img class="hero-art" src="./src/prism-onboarding-hero-v2.png" alt="" fetchpriority="high" decoding="async" />
+          </div>
+          <p class="intro-note">Your AI-Powered Hub for Pipeline Search &amp; Evaluation.</p>
+        </div>
+        <a class="scroll-next" href="#onboarding-focus"><span>Scroll to explore</span><b aria-hidden="true">↓</b></a>
+      </section>
+
+      <section class="onboarding-screen focus-screen" id="onboarding-focus" data-onboarding-screen="2">
+        <div class="screen-index" aria-hidden="true"><small>01</small><i></i><span>02</span></div>
+        <div class="focus-heading">
+          <p class="eyebrow">THE PRISM METHOD</p>
+          <h2>From Noise to <strong>Focus.</strong></h2>
+          <p>PRISM analyzes thousands of pipelines through seven signals, narrowing them down to the ones that deserve your attention.</p>
+        </div>
+        <div class="workflow-shell">
+          <div class="workflow-labels" aria-hidden="true">
+            <span class="workflow-label-many"><b>01</b> Many pipelines</span>
+            <span class="workflow-label-triage"><b>02</b> Fast Triage <small>3 key criteria</small></span>
+            <span class="workflow-label-scout"><b>03</b> Full Scout <small>7 considerations</small></span>
+            <span class="workflow-label-shortlist"><b>04</b> Shortlisted Assets</span>
+          </div>
+          <div class="workflow-visual">
+            <img class="workflow-art" src="./src/prism-onboarding-workflow-v8.png" alt="Pipelines move through Fast Triage and Full Scout into a focused shortlist." loading="lazy" decoding="async" />
+          </div>
+        </div>
+        <div class="focus-footer">
+          <span class="focus-note">A practical path from signal to decision.</span>
+          <button class="enter-prism" type="button" data-onboarding-exit>Enter PRISM, Focus Better <span aria-hidden="true">→</span></button>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./src/onboarding.js?v=20260901-1"></script>
+  </body>
+</html>

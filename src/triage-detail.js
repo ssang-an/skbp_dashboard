@@ -1,7 +1,7 @@
 import { setupThemeToggle } from './theme.js';
 
 import { initPageJumpControls } from './page-jump.js?v=20260823-page-jump-1';
-import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260802-required-login-1';
+import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260831-password-reset-2';
 
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
@@ -36,7 +36,7 @@ const elements = {
 const scoreDefinitions = [
   {
     key: 'target_relevance',
-    shortLabel: 'TR',
+    shortLabel: 'TAR',
     label: 'Target Area Relevance',
     description: 'SKBP 우선 관심 적응증 및 해당 질환 biology와의 적합성'
   },
@@ -650,13 +650,24 @@ function finalCommentValue(record) {
 
 function currentUserCanDeleteNote(note) {
   const user = getCurrentUser();
-  return Boolean(user?.is_admin && note?.author_id && String(note.author_id) === String(user.id || ''));
+  const sameId = user?.id && note?.author_id && String(note.author_id) === String(user.id);
+  const sameEmail = user?.email && note?.author_email
+    && String(note.author_email).trim().toLowerCase() === String(user.email).trim().toLowerCase();
+  return Boolean(user?.is_admin && (sameId || sameEmail));
+}
+
+function currentUserOwnsFinalComment(record) {
+  const user = getCurrentUser();
+  const humanReview = objectValue(objectValue(record?.meta).human_review);
+  const ownerId = textValue(humanReview.final_comment_author_id, '');
+  const ownerEmail = textValue(humanReview.final_comment_author_email, '');
+  const sameId = user?.id && ownerId && ownerId === String(user.id);
+  const sameEmail = user?.email && ownerEmail && ownerEmail.toLowerCase() === String(user.email).trim().toLowerCase();
+  return Boolean(sameId || sameEmail);
 }
 
 function canDeleteFinalComment(record) {
-  const user = getCurrentUser();
-  const ownerId = textValue(objectValue(objectValue(record?.meta).human_review).final_comment_author_id, '');
-  return Boolean(user?.is_admin && ownerId && ownerId === String(user.id || ''));
+  return Boolean(getCurrentUser()?.is_admin && currentUserOwnsFinalComment(record));
 }
 
 function canEditFinalComment(record) {
@@ -1214,9 +1225,13 @@ function triageRubricResetSuffix(record, entry) {
 
 function triageHistoryLabel(record, entry) {
   const field = String(entry?.field || '');
+  if (entry?.source === 'dashboard_rubric_refresh' && field === 'rubric_refresh') {
+    const version = String(entry?.instruction_version || '').replace(/^v/i, '');
+    return entry?.audit_label || `Score recalculated by Fast Triage Rubric${version ? ` v${version}` : ''}`;
+  }
   const resetSuffix = triageRubricResetSuffix(record, entry);
   const labels = {
-    'scores.target_relevance': 'TR 점수',
+    'scores.target_relevance': 'TAR 점수',
     'scores.moa_validity': 'MoA 점수',
     'scores.data_maturity': 'Data 점수',
     total_score: 'Total score',
@@ -1234,6 +1249,39 @@ function triageHistoryLabel(record, entry) {
   return field || 'Fast Triage 검토';
 }
 
+function triageVisibleReviewHistory(record) {
+  const meta = objectValue(record?.meta);
+  const auditHistory = arrayValue(meta.edit_history);
+  const rubricHistory = arrayValue(meta.rubric_refresh_history);
+  const syntheticScoreReviews = rubricHistory
+    .filter((entry) => objectValue(entry).reviewed_at)
+    .filter((entry) => !auditHistory.some((auditEntry) => {
+      const audit = objectValue(auditEntry);
+      const review = objectValue(entry);
+      if (audit.source !== 'dashboard_rubric_refresh' || audit.field !== 'rubric_refresh') return false;
+      if (String(audit.instruction_version || '') !== String(review.version || '')) return false;
+      const auditTime = Date.parse(audit.changed_at || '');
+      const reviewTime = Date.parse(review.reviewed_at || '');
+      return Number.isFinite(auditTime) && Number.isFinite(reviewTime) && Math.abs(auditTime - reviewTime) < 5000;
+    }))
+    .map((entry) => {
+      const review = objectValue(entry);
+      return {
+        id: `rubric-review-${review.reviewed_at}-${review.version || ''}`,
+        changed_at: review.reviewed_at,
+        actor_name: review.actor_name || '',
+        actor_ip: review.actor_ip || '',
+        source: 'dashboard_rubric_refresh',
+        field: 'rubric_refresh',
+        instruction_version: review.version || '',
+        audit_label: `Score recalculated by Fast Triage Rubric v${review.version || '?'}`,
+        previous_value: '',
+        new_value: review.result || 'reviewed'
+      };
+    });
+  return [...auditHistory, ...syntheticScoreReviews];
+}
+
 function triageHistoryValue(value) {
   if (value === null || value === undefined || value === '') return 'Auto';
   const text = typeof value === 'object' ? JSON.stringify(value) : String(value);
@@ -1241,20 +1289,21 @@ function triageHistoryValue(value) {
 }
 
 function renderTriageReviewHistory(record) {
-  const history = arrayValue(objectValue(record?.meta).edit_history);
+  const history = triageVisibleReviewHistory(record);
   if (!history.length) return '';
   const items = history
     .slice(-20)
     .reverse()
     .map((entry) => {
       const when = formatTimestamp(entry?.changed_at);
-      const who = entry?.actor_name || entry?.actor_ip || 'Local workspace';
+      const who = entry?.actor_name || '';
       const label = triageHistoryLabel(record, entry);
       const change = `${triageHistoryValue(entry?.previous_value)} → ${triageHistoryValue(entry?.new_value)}`;
+      const actorAndChange = who ? `${who} · ${change}` : change;
       return `<li${entry?.actor_name ? ' class="is-human"' : ''}>
         <span>${escapeHtml(when)}</span>
         <strong>${escapeHtml(label)}</strong>
-        <small>${escapeHtml(who)} · ${escapeHtml(change)}</small>
+        <small>${escapeHtml(actorAndChange)}</small>
       </li>`;
     })
     .join('');

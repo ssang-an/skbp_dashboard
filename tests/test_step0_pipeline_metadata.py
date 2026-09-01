@@ -301,6 +301,22 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(feed[0]["source"], "일괄 Excel 업로드: Tab 0 · Listing Comment")
         self.assertEqual(feed[0]["author"], "Team Review")
 
+    def test_administrator_can_manage_bulk_and_legacy_listing_comments(self) -> None:
+        administrator = {"role": main.ROLE_ADMIN, "id": "admin-1"}
+        standard_user = {"role": main.ROLE_USER, "id": "user-1"}
+
+        self.assertTrue(main.can_edit_listing_comment({
+            "comment": "Imported team note",
+            "comment_source": "team_review_import",
+        }, administrator))
+        self.assertTrue(main.can_edit_listing_comment({
+            "comment": "Legacy note without provenance",
+        }, administrator))
+        self.assertFalse(main.can_edit_listing_comment({
+            "comment": "Imported team note",
+            "comment_source": "team_review_import",
+        }, standard_user))
+
     def test_explicit_edit_can_clear_a_metadata_field(self) -> None:
         merged = main.merge_pipeline_metadata(
             {"comment": "Remove me", "contact": "owner@acme.test"},
@@ -467,6 +483,85 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         ])
         self.assertEqual(feed[0]["author"], "Team Review")
         self.assertFalse(any("AI response" in entry["body"] for entry in feed))
+
+    def test_previously_merged_listing_alias_does_not_reopen_reverse_pair_review(self) -> None:
+        queue = [{
+            "id": "cq_molgen",
+            "asset_input": "MG-TA",
+            "company_input": "Molgen Bio Co Ltd",
+            "pipeline_metadata": {
+                "asset_aliases": "MG-TA\nMG-RZ",
+                "company_aliases": "Molgen Bio Co Ltd",
+            },
+        }]
+        rows = [{
+            "asset_input": "MG-RZ",
+            "company_input": "Molgen Bio Co Ltd",
+            "stage": "Discovery",
+        }]
+
+        self.assertEqual(main.listing_import_review_matches(rows, [], queue), [])
+        self.assertIn(
+            main.normalized_pipeline_asset_identity("MG-RZ"),
+            main.candidate_queue_entry_asset_aliases(queue[0]),
+        )
+
+    def test_representative_listing_values_win_conflicts_and_fill_only_their_blanks(self) -> None:
+        existing = {
+            "target": "Existing target",
+            "main_indication": "Existing indication",
+            "stage": "Preclinical",
+            "website": "https://existing.example",
+        }
+        incoming = {
+            "modality": "Small molecule",
+            "target": "Incoming target",
+            "stage": "Phase 1",
+            "website": "https://incoming.example",
+        }
+
+        self.assertEqual(
+            main.merge_listing_details_with_preference(existing, incoming, preference="existing"),
+            {
+                "country": "",
+                "modality": "Small molecule",
+                "target": "Existing target",
+                "main_indication": "Existing indication",
+                "stage": "Preclinical",
+                "website": "https://existing.example",
+            },
+        )
+        self.assertEqual(
+            main.merge_listing_details_with_preference(existing, incoming, preference="incoming"),
+            {
+                "country": "",
+                "modality": "Small molecule",
+                "target": "Incoming target",
+                "main_indication": "Existing indication",
+                "stage": "Phase 1",
+                "website": "https://incoming.example",
+            },
+        )
+
+    def test_listing_website_respects_representative_without_retaining_other_url(self) -> None:
+        existing = {"website": "https://existing.example"}
+        incoming = {"website": "https://incoming.example"}
+
+        existing_primary = main.merge_pipeline_metadata(
+            existing,
+            incoming,
+            website_preference="existing",
+        )
+        incoming_primary = main.merge_pipeline_metadata(
+            existing,
+            incoming,
+            website_preference="incoming",
+        )
+
+        self.assertEqual(existing_primary["website"], "https://existing.example")
+        self.assertEqual(incoming_primary["website"], "https://incoming.example")
+        self.assertNotIn("website_alternates", existing_primary)
+        self.assertNotIn("website_alternates", incoming_primary)
 
 
 if __name__ == "__main__":

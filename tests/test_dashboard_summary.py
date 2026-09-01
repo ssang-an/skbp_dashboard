@@ -114,6 +114,22 @@ def distribution_counts(rows: list[dict[str, object]]) -> dict[str, int]:
 
 
 class DashboardSummaryTests(unittest.TestCase):
+    def test_action_date_summary_status_uses_practical_time_buckets(self) -> None:
+        self.assertEqual(
+            [main.action_date_summary_status(days) for days in (-1, 0, 1, 7, 8, 30, 31, 90, 91)],
+            [
+                "OVERDUE",
+                "TODAY",
+                "WITHIN_7_DAYS",
+                "WITHIN_7_DAYS",
+                "WITHIN_30_DAYS",
+                "WITHIN_30_DAYS",
+                "WITHIN_90_DAYS",
+                "WITHIN_90_DAYS",
+                "LONG_TERM",
+            ],
+        )
+
     def test_unique_asset_identity_and_awaiting_full_scout(self) -> None:
         records = [
             fast_record(
@@ -355,7 +371,7 @@ class DashboardSummaryTests(unittest.TestCase):
         )
         self.assertEqual(
             [item["action_status"] for item in shortlist["action_required"]],
-            ["OVERDUE", "WITHIN_30_DAYS", "SCHEDULED", "SCHEDULED"],
+            ["OVERDUE", "WITHIN_30_DAYS", "LONG_TERM", "LONG_TERM"],
         )
         self.assertTrue(all(item["action_date"] for item in shortlist["action_required"]))
         self.assertNotIn("MISS-1", [item["asset"] for item in shortlist["action_required"]])

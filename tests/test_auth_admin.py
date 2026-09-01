@@ -1,6 +1,8 @@
 import asyncio
+import hashlib
 import tempfile
 import unittest
+from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -97,6 +99,131 @@ class AuthAdminTests(unittest.TestCase):
         with self.assertRaises(HTTPException) as error:
             asyncio.run(main.update_admin_user(admin["id"], FakeRequest(token, {"active": False})))
         self.assertEqual(error.exception.status_code, 400)
+
+    def test_self_service_password_reset_emails_a_new_password_and_revokes_sessions(self):
+        user, _ = self.create_user("user@sk.com")
+        delivery = {}
+
+        def capture_delivery(recipient, new_password):
+            delivery["recipient"] = recipient
+            delivery["new_password"] = new_password
+
+        with (
+            patch.object(main, "password_reset_email_configured", return_value=True),
+            patch.object(main, "send_password_reset_email", side_effect=capture_delivery),
+        ):
+            result = asyncio.run(main.request_password_reset(FakeRequest(payload={"email": "user@sk.com"})))
+
+        self.assertTrue(result["ok"])
+        self.assertEqual(delivery["recipient"], "user@sk.com")
+        self.assertGreaterEqual(len(delivery["new_password"]), 12)
+
+        saved = next(item for item in main.load_users() if item["id"] == user["id"])
+        _, expected_digest = main.password_hash(delivery["new_password"], saved["password_salt"])
+        self.assertEqual(saved["password_hash"], expected_digest)
+        self.assertEqual(saved["sessions"], [])
+
+    def test_password_reset_delivery_failure_leaves_the_existing_password_usable(self):
+        user, _ = self.create_user("user@sk.com")
+        saved_before = next(item for item in main.load_users() if item["id"] == user["id"])
+
+        with (
+            patch.object(main, "password_reset_email_configured", return_value=True),
+            patch.object(main, "send_password_reset_email", side_effect=RuntimeError("smtp down")),
+        ):
+            with self.assertRaises(HTTPException) as error:
+                asyncio.run(main.request_password_reset(FakeRequest(payload={"email": "user@sk.com"})))
+
+        self.assertEqual(error.exception.status_code, 503)
+        saved_after = next(item for item in main.load_users() if item["id"] == user["id"])
+        self.assertEqual(saved_after["password_hash"], saved_before["password_hash"])
+        self.assertEqual(saved_after["sessions"], saved_before["sessions"])
+
+    def test_password_reset_resend_is_rate_limited(self):
+        user, _ = self.create_user("user@sk.com")
+        deliveries = []
+
+        with (
+            patch.object(main, "password_reset_email_configured", return_value=True),
+            patch.object(main, "send_password_reset_email", side_effect=lambda recipient, new_password: deliveries.append(new_password)),
+        ):
+            first = asyncio.run(main.request_password_reset(FakeRequest(payload={"email": "user@sk.com"})))
+            second = asyncio.run(main.request_password_reset(FakeRequest(payload={"email": "user@sk.com"})))
+
+        self.assertTrue(first["ok"])
+        self.assertTrue(second["ok"])
+        self.assertEqual(len(deliveries), 1)
+        self.assertIn("이미 재설정 이메일을 요청했습니다", second["message"])
+        saved = next(item for item in main.load_users() if item["id"] == user["id"])
+        _, expected_digest = main.password_hash(deliveries[0], saved["password_salt"])
+        self.assertEqual(saved["password_hash"], expected_digest)
+
+    def test_change_password_requires_current_password_and_prunes_other_sessions(self):
+        user, token = self.create_user("user@sk.com")
+        other_token, _ = main.start_user_session(user)
+        users = main.load_users()
+        stored = next(item for item in users if item["id"] == user["id"])
+        stored["sessions"] = user["sessions"]
+        stored["password_is_temporary"] = True
+        main.save_users(users)
+
+        with self.assertRaises(HTTPException) as error:
+            asyncio.run(main.change_password(FakeRequest(token, {
+                "current_password": "wrong-password",
+                "new_password": "brand-new-pw-1",
+                "new_password_confirmation": "brand-new-pw-1",
+            })))
+        self.assertEqual(error.exception.status_code, 401)
+
+        result = asyncio.run(main.change_password(FakeRequest(token, {
+            "current_password": "test1234",
+            "new_password": "brand-new-pw-1",
+            "new_password_confirmation": "brand-new-pw-1",
+        })))
+        self.assertTrue(result["ok"])
+        self.assertFalse(result["user"]["password_is_temporary"])
+
+        saved = next(item for item in main.load_users() if item["id"] == user["id"])
+        _, expected_digest = main.password_hash("brand-new-pw-1", saved["password_salt"])
+        self.assertEqual(saved["password_hash"], expected_digest)
+        self.assertEqual(len(saved["sessions"]), 1)
+        self.assertEqual(saved["sessions"][0]["token_hash"], hashlib.sha256(token.encode("utf-8")).hexdigest())
+        self.assertNotEqual(saved["sessions"][0]["token_hash"], hashlib.sha256(other_token.encode("utf-8")).hexdigest())
+
+    def test_action_date_reminder_sends_once_to_resolved_shortlisting_owner(self):
+        owner, _ = self.create_user("owner@sk.com", name="Action Owner")
+        record = {
+            "meta": {
+                "review_type": "full_scout",
+                "focus_management": {
+                    "is_tracked": True,
+                    "due_date": "2026-08-31",
+                    "owner_name": "Action Owner",
+                    "owner_user_id": owner["id"],
+                    "owner_email": owner["email"],
+                    "action_plan": "Confirm next meeting",
+                },
+            },
+            "structured_table": {"asset_name": "Asset-1", "company": "Test Co"},
+            "json_summary": {},
+        }
+        deliveries = []
+        now = datetime(2026, 8, 31, 0, 0, tzinfo=timezone.utc)  # 09:00 KST, on the Action Date.
+        with (
+            patch.object(main, "password_reset_email_configured", return_value=True),
+            patch.object(main, "load_records", return_value=[record]),
+            patch.object(main, "load_users", return_value=[owner]),
+            patch.object(main, "save_records") as save_records,
+            patch.object(main, "send_action_date_reminder_email", side_effect=lambda recipient, **kwargs: deliveries.append((recipient, kwargs))),
+        ):
+            result = main.run_action_date_reminders(now)
+            repeat = main.run_action_date_reminders(now)
+
+        self.assertEqual(result["sent"], 1)
+        self.assertEqual(repeat["sent"], 0)
+        self.assertEqual(deliveries[0][0], "owner@sk.com")
+        self.assertEqual(record["meta"]["focus_management"]["action_date_reminders"][0]["days_until_due"], 0)
+        self.assertTrue(save_records.called)
 
 
     def test_manual_review_requires_authentication(self):

@@ -60,7 +60,11 @@ class RubricAiRefreshTests(unittest.TestCase):
         self.assertEqual(updated["source_report"]["raw_markdown"], original_report)
         self.assertEqual(updated["meta"]["rubric_version"], "3.2")
         self.assertEqual(updated["meta"]["rescored_rubric_version"], main.SCORING_CRITERIA_VERSION)
-        self.assertEqual(updated["meta"]["edit_history"][-1]["field"], "scoring")
+        self.assertEqual(updated["meta"]["edit_history"][-1]["field"], "rubric_refresh")
+        self.assertEqual(
+            updated["meta"]["edit_history"][-1]["audit_label"],
+            f"Score recalculated by Full Scout Rubric v{main.SCORING_CRITERIA_VERSION}",
+        )
         self.assertNotIn("last_edited_at", updated["meta"])
         self.assertEqual(saved[0][0]["source_report"]["raw_markdown"], original_report)
 
@@ -71,6 +75,14 @@ class RubricAiRefreshTests(unittest.TestCase):
         self.assertIn("Re-evaluate all seven Full Scout criterion scores", user_prompt)
         self.assertEqual(main.RUBRIC_REFRESH_REPORT_LIMIT, 24000)
         self.assertEqual(main.RUBRIC_REFRESH_ATTACHMENTS_LIMIT, 16000)
+
+    def test_full_scout_v37_review_without_the_competitive_definition_revision_is_stale(self):
+        record = full_scout_record()
+        record["meta"]["rubric_reviewed_version"] = main.SCORING_CRITERIA_VERSION
+        self.assertFalse(main.record_has_current_rubric_evaluation(record, main.SCORING_CRITERIA_VERSION))
+
+        record["meta"]["full_scout_rubric_definition_revision"] = main.FULL_SCOUT_RUBRIC_DEFINITION_REVISION
+        self.assertTrue(main.record_has_current_rubric_evaluation(record, main.SCORING_CRITERIA_VERSION))
 
     def test_fast_triage_no_change_review_is_persisted_for_quick_scan(self):
         record = current_triage_record()
@@ -118,6 +130,7 @@ class RubricAiRefreshTests(unittest.TestCase):
             actor_name="Reviewer Kim",
             actor_ip="127.0.0.1",
         )["record"]
+        edited["meta"]["full_scout_rubric_definition_revision"] = main.FULL_SCOUT_RUBRIC_DEFINITION_REVISION
         saved: list[list[dict[str, object]]] = []
         request = main.Request({
             "type": "http", "method": "POST", "path": "/", "headers": [],

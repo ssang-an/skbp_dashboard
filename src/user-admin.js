@@ -1,4 +1,4 @@
-import { initAuthUI } from './auth.js?v=20260823-active-time-1';
+import { initAuthUI } from './auth.js?v=20260831-password-reset-2';
 import { setupThemeToggle } from './theme.js';
 
 const state = { users: [], summary: {}, query: '', sortKey: 'created_at', sortDirection: -1, selectedId: null };

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import csv
+import logging
 from io import StringIO
 import copy
 import difflib
@@ -10,9 +11,14 @@ import math
 import secrets
 import os
 import re
+import smtplib
+import ssl
+import string
 import tempfile
+import threading
 import unicodedata
 from datetime import date, datetime, timedelta, timezone
+from email.message import EmailMessage
 from pathlib import Path
 from typing import Any
 import subprocess
@@ -21,6 +27,7 @@ import uuid
 import zipfile
 from urllib.parse import urlsplit
 from xml.etree import ElementTree
+from zoneinfo import ZoneInfo
 
 import requests
 import urllib3
@@ -42,6 +49,8 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, ValidationError
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+LOGGER = logging.getLogger("prism.api")
 
 ROOT = Path(__file__).resolve().parent
 JSON_DIR = ROOT / "json"
@@ -105,6 +114,9 @@ FULL_SCOUT_SCHEMA_VERSION = str(FULL_SCOUT_RELEASE["schema_version"])
 SCORING_CRITERIA_FULL_MD = ROOT / str(FULL_SCOUT_RELEASE["rubric_file"])
 SCORING_CRITERIA_TRIAGE_MD = ROOT / str(TRIAGE_RELEASE["rubric_file"])
 SCORING_CRITERIA_DISPLAY_MD = ROOT / str(FULL_SCOUT_RELEASE["display_file"])
+# A scoring-rule correction within the published v3.7 document must still
+# trigger a one-time review for records already marked as v3.7.
+FULL_SCOUT_RUBRIC_DEFINITION_REVISION = "competitive-evidence-2026-09-01"
 CATEGORY_SYNONYMS_FILE = ROOT / "config" / "category-synonyms.json"
 OPENROUTER_DEFAULT_MODEL = "openrouter/free"
 OPENROUTER_DEFAULT_FALLBACK_MODELS = [
@@ -190,6 +202,48 @@ LLM_REPARSE_RETRY_MAX_TOKENS = max(
     LLM_REPARSE_INITIAL_MAX_TOKENS,
     int(os.getenv("OPENROUTER_REPARSE_RETRY_MAX_TOKENS", "16000")),
 )
+
+
+def env_flag(name: str, default: bool = False) -> bool:
+    return str(os.getenv(name, str(default))).strip().casefold() in {"1", "true", "yes", "on"}
+
+
+def env_positive_int(name: str, default: int) -> int:
+    try:
+        return max(1, int(str(os.getenv(name, default)).strip()))
+    except (TypeError, ValueError):
+        return default
+
+
+PASSWORD_RESET_RESEND_SECONDS = env_positive_int("PASSWORD_RESET_RESEND_SECONDS", 60)
+SMTP_HOST = str(os.getenv("SMTP_HOST", "")).strip()
+SMTP_PORT = env_positive_int("SMTP_PORT", 587)
+SMTP_USERNAME = str(os.getenv("SMTP_USERNAME", "")).strip()
+SMTP_PASSWORD = str(os.getenv("SMTP_PASSWORD", ""))
+SMTP_FROM_EMAIL = str(os.getenv("SMTP_FROM_EMAIL", "")).strip()
+SMTP_FROM_NAME = str(os.getenv("SMTP_FROM_NAME", "SKBP Pipeline Finder")).strip() or "SKBP Pipeline Finder"
+SMTP_USE_SSL = env_flag("SMTP_USE_SSL", False)
+SMTP_STARTTLS = env_flag("SMTP_STARTTLS", True)
+ACTION_DATE_REMINDERS_ENABLED = env_flag("ACTION_DATE_REMINDERS_ENABLED", True)
+
+
+def env_nonnegative_int_list(name: str, default: tuple[int, ...]) -> tuple[int, ...]:
+    values: list[int] = []
+    for item in str(os.getenv(name, ",".join(str(value) for value in default))).split(","):
+        try:
+            value = int(item.strip())
+        except (TypeError, ValueError):
+            continue
+        if value >= 0 and value not in values:
+            values.append(value)
+    return tuple(values or default)
+
+
+ACTION_DATE_REMINDER_DAYS = env_nonnegative_int_list("ACTION_DATE_REMINDER_DAYS", (0,))
+KOREA_TIME_ZONE = ZoneInfo("Asia/Seoul")
+ACTION_DATE_REMINDER_STOP = threading.Event()
+ACTION_DATE_REMINDER_LOCK = threading.Lock()
+ACTION_DATE_REMINDER_THREAD: threading.Thread | None = None
 
 CRITERION_ALIASES = {
     "target_relevance": ["target_relevance", "target relevance", "타깃", "타겟", "target"],
@@ -351,6 +405,21 @@ QUALITATIVE_REVIEW_AI_AUTHOR = "AI"
 QUALITATIVE_AI_CONTEXT_LIMIT = 9000
 
 app = FastAPI(title="SKBP Pipeline Dashboard")
+
+
+@app.middleware("http")
+async def log_bad_request_responses(request: Request, call_next: Any):
+    """Keep development diagnostics for otherwise opaque client-side 400s."""
+    response = await call_next(request)
+    if response.status_code == 400:
+        LOGGER.warning(
+            "HTTP 400: method=%s path=%s query=%s content_type=%s",
+            request.method,
+            request.url.path,
+            request.url.query or "-",
+            request.headers.get("content-type") or "-",
+        )
+    return response
 app.mount("/src", StaticFiles(directory=ROOT / "src"), name="src")
 app.mount("/json", StaticFiles(directory=JSON_DIR), name="json")
 WIKI_DIR.mkdir(exist_ok=True)
@@ -359,6 +428,25 @@ if OBSIDIAN_DIR.exists():
     app.mount("/obsidian", StaticFiles(directory=OBSIDIAN_DIR), name="obsidian")
 app.mount("/wiki", StaticFiles(directory=WIKI_DIR), name="wiki")
 app.mount("/attachments", StaticFiles(directory=ATTACHMENTS_DIR), name="attachments")
+
+
+@app.on_event("startup")
+def start_action_date_reminder_scheduler() -> None:
+    global ACTION_DATE_REMINDER_THREAD
+    if not ACTION_DATE_REMINDERS_ENABLED or ACTION_DATE_REMINDER_THREAD is not None:
+        return
+    ACTION_DATE_REMINDER_STOP.clear()
+    ACTION_DATE_REMINDER_THREAD = threading.Thread(
+        target=action_date_reminder_scheduler,
+        name="skbp-action-date-reminders",
+        daemon=True,
+    )
+    ACTION_DATE_REMINDER_THREAD.start()
+
+
+@app.on_event("shutdown")
+def stop_action_date_reminder_scheduler() -> None:
+    ACTION_DATE_REMINDER_STOP.set()
 
 AUTH_COOKIE_NAME = "skbp_session"
 AUTH_SESSION_DAYS = 30
@@ -400,24 +488,274 @@ def password_hash(password: str, salt_hex: str | None = None) -> tuple[str, str]
     return salt.hex(), digest.hex()
 
 
+def password_reset_email_configured() -> bool:
+    """Only report email delivery as successful after a real SMTP hand-off is possible."""
+    return bool(SMTP_HOST and SMTP_FROM_EMAIL)
+
+
+PASSWORD_RESET_CHARSET = "".join(sorted(set(string.ascii_letters + string.digits) - set("0O1lI")))
+
+
+def generate_temporary_password(length: int = 14) -> str:
+    return "".join(secrets.choice(PASSWORD_RESET_CHARSET) for _ in range(length))
+
+
+def send_smtp_message(message: EmailMessage) -> None:
+    if not password_reset_email_configured():
+        raise RuntimeError("SMTP email is not configured.")
+    context = ssl.create_default_context()
+    if SMTP_USE_SSL:
+        with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=20, context=context) as client:
+            if SMTP_USERNAME:
+                client.login(SMTP_USERNAME, SMTP_PASSWORD)
+            client.send_message(message)
+        return
+
+    with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20) as client:
+        client.ehlo()
+        if SMTP_STARTTLS:
+            client.starttls(context=context)
+            client.ehlo()
+        if SMTP_USERNAME:
+            client.login(SMTP_USERNAME, SMTP_PASSWORD)
+        client.send_message(message)
+
+
+def send_password_reset_email(recipient: str, new_password: str) -> None:
+    """Send the newly issued temporary password through the configured SMTP relay."""
+    if not password_reset_email_configured():
+        raise RuntimeError("Password-reset email is not configured.")
+
+    message = EmailMessage()
+    message["Subject"] = "SKBP Pipeline Finder 비밀번호 재설정"
+    message["From"] = f"{SMTP_FROM_NAME} <{SMTP_FROM_EMAIL}>"
+    message["To"] = recipient
+    message.set_content(
+        "SKBP Pipeline Finder 비밀번호 재설정 요청이 접수되어 새 비밀번호가 발급되었습니다.\n\n"
+        f"새 비밀번호: {new_password}\n\n"
+        "위 비밀번호로 로그인해 주세요. 기존 로그인 세션은 모두 종료되었습니다.\n"
+        "본인이 요청하지 않았다면 즉시 관리자에게 문의해 주세요."
+    )
+
+    send_smtp_message(message)
+
+
+def action_date_owner_account(focus: dict[str, Any], users: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """Resolve the stored Shortlisting owner to exactly one active local account."""
+    active_users = [user for user in users if user.get("active") is not False and normalized_identity_email(user.get("email"))]
+    owner_id = str(focus.get("owner_user_id") or "").strip()
+    if owner_id:
+        return next((user for user in active_users if str(user.get("id") or "") == owner_id), None)
+
+    owner_email = normalized_identity_email(focus.get("owner_email"))
+    if owner_email:
+        return next((user for user in active_users if normalized_identity_email(user.get("email")) == owner_email), None)
+
+    owner_name = str(focus.get("owner_name") or "").strip().casefold()
+    if not owner_name:
+        return None
+    matches = [user for user in active_users if str(user.get("name") or "").strip().casefold() == owner_name]
+    return matches[0] if len(matches) == 1 else None
+
+
+def registered_action_owner(value: str, users: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """Accept an exact active account name or email for a Shortlisting Action Date owner."""
+    normalized_value = value.strip().casefold()
+    if not normalized_value:
+        return None
+    matches = [
+        user for user in users
+        if user.get("active") is not False
+        and (
+            normalized_identity_email(user.get("email")) == normalized_value
+            or str(user.get("name") or "").strip().casefold() == normalized_value
+        )
+    ]
+    return matches[0] if len(matches) == 1 else None
+
+
+def send_action_date_reminder_email(
+    recipient: str,
+    *,
+    owner_name: str,
+    company: str,
+    asset: str,
+    due_date: date,
+    days_until_due: int,
+    action_plan: str,
+) -> None:
+    timing = "오늘이" if days_until_due == 0 else f"{days_until_due}일 후가"
+    message = EmailMessage()
+    message["Subject"] = f"[SKBP] Action Date 알림 · {asset} · {due_date.isoformat()}"
+    message["From"] = f"{SMTP_FROM_NAME} <{SMTP_FROM_EMAIL}>"
+    message["To"] = recipient
+    message.set_content(
+        f"{owner_name or '담당자'}님,\n\n"
+        f"Shortlisting Action Date가 {timing} 예정되어 있습니다.\n\n"
+        f"Asset: {asset}\n"
+        f"Company: {company}\n"
+        f"Action Date: {due_date.isoformat()} (KST)\n"
+        f"F/U 계획: {action_plan or '-'}\n\n"
+        "SKBP Pipeline Finder에서 후속 조치 상태를 확인해 주세요."
+    )
+    send_smtp_message(message)
+
+
+def action_date_summary_status(days_until_due: int) -> str:
+    """Classify a dated Shortlisting follow-up for the Summary Dashboard."""
+    if days_until_due < 0:
+        return "OVERDUE"
+    if days_until_due == 0:
+        return "TODAY"
+    if days_until_due <= 7:
+        return "WITHIN_7_DAYS"
+    if days_until_due <= 30:
+        return "WITHIN_30_DAYS"
+    if days_until_due <= 90:
+        return "WITHIN_90_DAYS"
+    return "LONG_TERM"
+
+
+def run_action_date_reminders(now: datetime | None = None) -> dict[str, int]:
+    """Send each configured KST Action Date reminder at most once per owner/date/lead-time."""
+    if not ACTION_DATE_REMINDERS_ENABLED or not password_reset_email_configured():
+        return {"sent": 0, "skipped": 0, "failed": 0}
+
+    with ACTION_DATE_REMINDER_LOCK:
+        current_kst = (now or datetime.now(timezone.utc)).astimezone(KOREA_TIME_ZONE)
+        today = current_kst.date()
+        users = load_users()
+        records = load_records()
+        sent = skipped = failed = 0
+        records_changed = False
+
+        for record in records:
+            if is_fast_triage_record(record):
+                continue
+            meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+            focus = meta.get("focus_management") if isinstance(meta.get("focus_management"), dict) else {}
+            if focus.get("is_tracked") is not True:
+                continue
+            try:
+                due_date = date.fromisoformat(str(focus.get("due_date") or ""))
+            except ValueError:
+                skipped += 1
+                continue
+            days_until_due = (due_date - today).days
+            if days_until_due not in ACTION_DATE_REMINDER_DAYS:
+                continue
+
+            owner = action_date_owner_account(focus, users)
+            if owner is None:
+                skipped += 1
+                continue
+            recipient = normalized_identity_email(owner.get("email"))
+            reminder_key = f"{due_date.isoformat()}:{days_until_due}:{recipient}"
+            history = focus.get("action_date_reminders")
+            history = history if isinstance(history, list) else []
+            if any(str(item.get("key") or "") == reminder_key for item in history if isinstance(item, dict)):
+                continue
+
+            table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else {}
+            summary = record.get("json_summary") if isinstance(record.get("json_summary"), dict) else {}
+            asset = str(table.get("asset_name") or summary.get("asset_name") or "Unknown asset")
+            company = str(table.get("company") or summary.get("company") or "Unknown company")
+            try:
+                send_action_date_reminder_email(
+                    recipient,
+                    owner_name=str(owner.get("name") or focus.get("owner_name") or "담당자"),
+                    company=company,
+                    asset=asset,
+                    due_date=due_date,
+                    days_until_due=days_until_due,
+                    action_plan=str(focus.get("action_plan") or ""),
+                )
+            except (OSError, RuntimeError, smtplib.SMTPException) as exc:
+                print(f"Action-date reminder delivery failed for {record_key(record)}: {exc}", file=sys.stderr)
+                failed += 1
+                continue
+
+            history.append({
+                "key": reminder_key,
+                "sent_at": current_kst.isoformat(),
+                "recipient_email": recipient,
+                "due_date": due_date.isoformat(),
+                "days_until_due": days_until_due,
+            })
+            focus["action_date_reminders"] = history[-100:]
+            append_edit_history(
+                record,
+                source="action_date_reminder_email",
+                actor_ip="system",
+                actor_name="Scheduler",
+                field="focus_management.action_date_reminders",
+                new_value=f"Action Date reminder sent ({days_until_due} days before due date)",
+            )
+            sent += 1
+            records_changed = True
+
+        if records_changed:
+            save_records(records)
+        return {"sent": sent, "skipped": skipped, "failed": failed}
+
+
+def action_date_reminder_scheduler() -> None:
+    """Run once per day at 09:00 Korea Standard Time while this local server is running."""
+    while not ACTION_DATE_REMINDER_STOP.is_set():
+        now = datetime.now(KOREA_TIME_ZONE)
+        next_run = now.replace(hour=9, minute=0, second=0, microsecond=0)
+        if now >= next_run:
+            next_run += timedelta(days=1)
+        if ACTION_DATE_REMINDER_STOP.wait(max(0.0, (next_run - now).total_seconds())):
+            return
+        try:
+            run_action_date_reminders()
+        except Exception as exc:  # Keep a transient scheduler failure from terminating future reminders.
+            print(f"Action-date reminder scheduler failed: {exc}", file=sys.stderr)
+
+
 def normalized_identity_email(email: Any) -> str:
     return str(email or "").strip().casefold()
 
 
 def comment_owned_by_account(comment: dict[str, Any], account: dict[str, Any]) -> bool:
-    """Match a normal comment to its author across an ID migration on another workspace.
-
-    Account ID remains authoritative.  A verified, exact email match is a compatibility
-    fallback for old comments created before home/company workspaces shared user IDs.
-    Display names are deliberately never used for authorization.
-    """
+    """Match a comment only by its stable account ID or verified company email."""
     author_id = str(comment.get("author_user_id") or "")
     account_id = str(account.get("id") or "")
     if author_id and account_id and author_id == account_id:
         return True
     author_email = normalized_identity_email(comment.get("author_email"))
     account_email = normalized_identity_email(account.get("email"))
-    return bool(author_email and account_email and author_email == account_email)
+    if author_email and account_email and author_email == account_email:
+        return True
+    return False
+
+
+def final_comment_owned_by_account(human_review: dict[str, Any], account: dict[str, Any]) -> bool:
+    """Resolve Final Comment ownership with the same ID/email-only rule."""
+    owner_id = str(human_review.get("final_comment_author_id") or "").strip()
+    owner_email = normalized_identity_email(human_review.get("final_comment_author_email"))
+    owner_name = str(human_review.get("final_comment_author_name") or "").strip()
+    ownership = {
+        "author_user_id": owner_id,
+        "author_email": owner_email,
+        "author": owner_name,
+    }
+    if comment_owned_by_account(ownership, account):
+        return True
+    return False
+
+
+def topic_note_owned_by_account(note: dict[str, Any], account: dict[str, Any]) -> bool:
+    """Apply the shared ID/email/retired-ID ownership rules to Topic notes."""
+    return comment_owned_by_account(
+        {
+            "author_user_id": note.get("author_id"),
+            "author_email": note.get("author_email"),
+            "author": note.get("author_name") or note.get("author"),
+        },
+        account,
+    )
 
 
 def initial_role_for_identity(name: Any, email: Any) -> str:
@@ -452,6 +790,7 @@ def public_user(user: dict[str, Any]) -> dict[str, Any]:
         "role": auth_role(user),
         "is_admin": is_auth_admin(user),
         "is_developer": has_auth_role(user, ROLE_DEVELOPER),
+        "password_is_temporary": bool(user.get("password_is_temporary")),
     }
 
 
@@ -552,6 +891,103 @@ async def signin(request: Request):
     return response
 
 
+@app.post("/api/auth/password-reset/request")
+async def request_password_reset(request: Request) -> dict[str, Any]:
+    """Issue a new temporary password by email without exposing whether an email has an account."""
+    payload = await request.json()
+    email = normalized_identity_email(payload.get("email"))
+    generic_message = "가입된 이메일이 있으면 새 비밀번호를 이메일로 발송했습니다. 이메일을 확인해 주세요."
+    if not email or "@" not in email or len(email) > 254:
+        # Keep the response identical to a valid-but-unregistered address.
+        return {"ok": True, "message": generic_message}
+    if not password_reset_email_configured():
+        raise HTTPException(
+            status_code=503,
+            detail="비밀번호 재설정 이메일 발송이 아직 설정되지 않았습니다. 관리자에게 문의해 주세요.",
+        )
+
+    users = load_users()
+    user = next((item for item in users if normalized_identity_email(item.get("email")) == email), None)
+    if user is None or user.get("active") is False:
+        return {"ok": True, "message": generic_message}
+
+    now = datetime.now(timezone.utc)
+    try:
+        previous_request = datetime.fromisoformat(str(user.get("password_reset_last_sent_at") or ""))
+    except (TypeError, ValueError):
+        previous_request = None
+    if previous_request and previous_request + timedelta(seconds=PASSWORD_RESET_RESEND_SECONDS) > now:
+        return {
+            "ok": True,
+            "message": "이미 재설정 이메일을 요청했습니다. 받은편지함을 확인한 뒤 잠시 후 다시 시도해 주세요.",
+        }
+
+    new_password = generate_temporary_password()
+    try:
+        send_password_reset_email(email, new_password)
+    except (OSError, RuntimeError, smtplib.SMTPException) as exc:
+        # The password is deliberately never applied if SMTP did not accept the message,
+        # so a failed delivery never locks the user out of their existing password.
+        print(f"Password-reset email delivery failed: {exc}", file=sys.stderr)
+        raise HTTPException(
+            status_code=503,
+            detail="재설정 이메일을 보낼 수 없습니다. 잠시 후 다시 시도하거나 관리자에게 문의해 주세요.",
+        ) from None
+
+    sent_at = now.isoformat()
+    salt, digest = password_hash(new_password)
+    user["password_salt"] = salt
+    user["password_hash"] = digest
+    user["password_is_temporary"] = True
+    user["sessions"] = []
+    user["password_reset_last_sent_at"] = sent_at
+    user.setdefault("activity_log", []).append({
+        "event": "password_reset_email_delivered",
+        "at": sent_at,
+        "actor_ip": get_client_ip(request),
+    })
+    user["activity_log"] = user["activity_log"][-2000:]
+    save_users(users)
+    return {"ok": True, "message": generic_message}
+
+
+@app.post("/api/auth/change-password")
+async def change_password(request: Request) -> dict[str, Any]:
+    """Let a signed-in user set their own password, keeping only the current session alive."""
+    account = require_authenticated_user(request)
+    payload = await request.json()
+    current_password = str(payload.get("current_password") or "")
+    new_password = str(payload.get("new_password") or "")
+    new_password_confirmation = str(payload.get("new_password_confirmation") or "")
+    if len(new_password) < 4 or len(new_password) > 200:
+        raise HTTPException(status_code=400, detail="새 비밀번호는 4~200자여야 합니다.")
+    if not secrets.compare_digest(new_password, new_password_confirmation):
+        raise HTTPException(status_code=400, detail="새 비밀번호와 확인 비밀번호가 일치하지 않습니다.")
+
+    users = load_users()
+    user = next((item for item in users if str(item.get("id") or "") == str(account.get("id") or "")), None)
+    if not user:
+        raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
+    _, current_digest = password_hash(current_password, str(user.get("password_salt") or ""))
+    if not secrets.compare_digest(current_digest, str(user.get("password_hash") or "")):
+        raise HTTPException(status_code=401, detail="현재 비밀번호가 일치하지 않습니다.")
+
+    current_token_hash = hashlib.sha256(request.cookies.get(AUTH_COOKIE_NAME, "").encode("utf-8")).hexdigest()
+    salt, digest = password_hash(new_password)
+    user["password_salt"] = salt
+    user["password_hash"] = digest
+    user["password_is_temporary"] = False
+    user["sessions"] = [
+        session for session in user.get("sessions", [])
+        if secrets.compare_digest(str(session.get("token_hash") or ""), current_token_hash)
+    ]
+    now = datetime.now(timezone.utc).isoformat()
+    user.setdefault("activity_log", []).append({"event": "password_changed", "at": now, "actor_ip": get_client_ip(request)})
+    user["activity_log"] = user["activity_log"][-2000:]
+    save_users(users)
+    return {"ok": True, "message": "비밀번호가 변경되었습니다.", "user": public_user(user)}
+
+
 @app.get("/api/auth/me")
 async def auth_me(request: Request):
     user = authenticated_user(request)
@@ -638,14 +1074,15 @@ async def reset_admin_user_password(user_id: str, request: Request) -> dict[str,
     require_auth_developer(request)
     payload = await request.json()
     password = str(payload.get("password") or "")
-    if len(password) < 8 or len(password) > 200:
-        raise HTTPException(status_code=400, detail="재설정 비밀번호는 8~200자여야 합니다.")
+    if len(password) < 4 or len(password) > 200:
+        raise HTTPException(status_code=400, detail="재설정 비밀번호는 4~200자여야 합니다.")
     users = load_users()
     user = next((item for item in users if str(item.get("id") or "") == user_id), None)
     if not user:
         raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
     salt, digest = password_hash(password)
     user["password_salt"], user["password_hash"], user["sessions"] = salt, digest, []
+    user["password_is_temporary"] = True
     user.setdefault("activity_log", []).append({"event": "password_reset", "at": datetime.now(timezone.utc).isoformat(), "actor_ip": get_client_ip(request)})
     save_users(users)
     return {"ok": True, "user_id": user_id}
@@ -3018,7 +3455,7 @@ def validate_records_for_save(
                 )
                 if filter_status != expected_status:
                     validation_error(
-                        f"record[{index}] Fast Triage status must be {expected_status} from identity/activity/TR/MoA/Data, got {filter_status}."
+                        f"record[{index}] Fast Triage status must be {expected_status} from identity/activity/TAR/MoA/Data, got {filter_status}."
                     )
                 recommendation_map = {
                     "SELECT": "Run Full Scout",
@@ -3373,6 +3810,8 @@ def append_edit_history(
     old_meta: dict[str, Any] | None = None,
     update_last_edited: bool = False,
     change_method: str = "",
+    instruction_version: str = "",
+    audit_label: str = "",
 ) -> dict[str, Any]:
     """Append a human/dashboard activity event to a record's audit trail.
 
@@ -3397,6 +3836,10 @@ def append_edit_history(
     }
     if change_method:
         entry["change_method"] = change_method
+    if instruction_version:
+        entry["instruction_version"] = instruction_version
+    if audit_label:
+        entry["audit_label"] = audit_label
     history.append(entry)
     meta["edit_history"] = history[-200:]
     if update_last_edited:
@@ -4413,6 +4856,9 @@ def append_report_reupload_snapshot(
     existing: dict[str, Any],
     *,
     actor_ip: str,
+    actor_name: str = "",
+    actor_user_id: str = "",
+    actor_email: str = "",
 ) -> None:
     """Keep a recoverable pre-reupload report/data snapshot without recursive history nesting."""
     snapshot = copy.deepcopy(existing)
@@ -4426,6 +4872,9 @@ def append_report_reupload_snapshot(
         "id": uuid.uuid4().hex,
         "replaced_at": datetime.now(timezone.utc).isoformat(),
         "actor_ip": actor_ip,
+        "actor_name": actor_name,
+        "actor_user_id": actor_user_id,
+        "actor_email": actor_email,
         "previous_record_id": record_key(existing),
         "previous_rubric_version": (existing.get("meta") or {}).get("rubric_version"),
         "previous_source_report": copy.deepcopy(existing.get("source_report") or {}),
@@ -5138,7 +5587,7 @@ def find_matching_identity_group(
     return None
 
 
-PIPELINE_METADATA_FIELDS = ("comment", "contact", "website")
+PIPELINE_METADATA_FIELDS = ("comment", "contact")
 LISTING_DETAIL_FIELDS = ("country", "modality", "target", "main_indication", "stage", "website")
 LISTING_QUEUE_EDITABLE_FIELDS = ("company", "asset", *LISTING_DETAIL_FIELDS)
 CONTACT_HISTORY_ABSENCE_PATTERN = re.compile(r"^(?:x|[-–—]+)$", flags=re.IGNORECASE)
@@ -5248,6 +5697,18 @@ def merge_pipeline_metadata_aliases(existing: str, incoming: str) -> str:
     return "\n".join(values)
 
 
+def merge_pipeline_metadata_website(
+    existing: dict[str, str],
+    incoming: dict[str, str],
+    *,
+    preference: str = "incoming",
+) -> str:
+    """Use the reviewer-selected Listing URL, falling back only when it is blank."""
+    preferred = existing["website"] if preference == "existing" else incoming["website"]
+    fallback = incoming["website"] if preference == "existing" else existing["website"]
+    return preferred or fallback
+
+
 def merge_pipeline_metadata(
     existing: Any,
     incoming: Any,
@@ -5255,6 +5716,7 @@ def merge_pipeline_metadata(
     allow_empty_fields: set[str] | None = None,
     replace_comment: bool = False,
     replace_contact: bool = False,
+    website_preference: str = "incoming",
 ) -> dict[str, str]:
     """Merge dashboard-owned pipeline metadata without letting a blank paste erase a note."""
     allow_empty_fields = allow_empty_fields or set()
@@ -5283,6 +5745,14 @@ def merge_pipeline_metadata(
                 for provenance_field in ("contact_author", "contact_author_user_id", "contact_author_email", "contact_source", "contact_created_at", "contact_updated_at"):
                     if update[provenance_field]:
                         result[provenance_field] = update[provenance_field]
+    if "website" in allow_empty_fields and not update["website"]:
+        result["website"] = ""
+    else:
+        result["website"] = merge_pipeline_metadata_website(
+            result,
+            update,
+            preference="existing" if website_preference == "existing" else "incoming",
+        )
     for field in ("asset_aliases", "company_aliases"):
         result[field] = merge_pipeline_metadata_aliases(result[field], update[field])
     if update["updated_at"]:
@@ -5295,6 +5765,37 @@ def candidate_queue_entry_metadata(entry: dict[str, Any]) -> dict[str, str]:
         {"listed_at": entry.get("added_at")},
         entry.get("pipeline_metadata"),
     )
+
+
+def candidate_queue_entry_asset_aliases(entry: dict[str, Any]) -> set[str]:
+    """Return the Listing primary asset plus all previously merged asset aliases."""
+    metadata = candidate_queue_entry_metadata(entry)
+    return asset_aliases_from_text(entry.get("asset_input")) | asset_aliases_from_text(
+        metadata.get("asset_aliases")
+    )
+
+
+def candidate_queue_entry_company_aliases(entry: dict[str, Any]) -> set[str]:
+    """Return the Listing primary company plus all previously merged company aliases."""
+    metadata = candidate_queue_entry_metadata(entry)
+    return company_aliases_from_text(entry.get("company_input")) | company_aliases_from_text(
+        metadata.get("company_aliases")
+    )
+
+
+def candidate_queue_entry_asset_match_values(entry: dict[str, Any]) -> list[str]:
+    """Keep raw aliases available for conservative review/exact-match comparison."""
+    metadata = candidate_queue_entry_metadata(entry)
+    values: list[str] = []
+    seen: set[str] = set()
+    for raw_value in (entry.get("asset_input"), metadata.get("asset_aliases")):
+        for value in str(raw_value or "").splitlines():
+            value = value.strip()
+            normalized = normalized_pipeline_asset_identity(value)
+            if value and normalized and normalized not in seen:
+                values.append(value)
+                seen.add(normalized)
+    return values
 
 
 def listing_metadata_owned_by_account(metadata: dict[str, str], prefix: str, account: dict[str, Any]) -> bool:
@@ -5317,12 +5818,12 @@ def listing_metadata_owned_by_account(metadata: dict[str, str], prefix: str, acc
 
 
 def can_edit_listing_comment(metadata: dict[str, str], account: dict[str, Any]) -> bool:
-    """Only its author account may alter a direct Tab 0 Listing post; bulk-imported posts are developer-only."""
+    """Administrators manage shared imports/legacy comments; direct posts stay author-owned."""
     if not str(metadata.get("comment") or "").strip():
         return True
     source = str(metadata.get("comment_source") or "").strip()
-    if source == "team_review_import":
-        return has_auth_role(account, ROLE_DEVELOPER)
+    if source == "team_review_import" or not source:
+        return is_auth_admin(account)
     return source == "admin_listing_post" and listing_metadata_owned_by_account(metadata, "comment", account)
 
 
@@ -5332,7 +5833,7 @@ def can_edit_listing_contact(metadata: dict[str, str], account: dict[str, Any]) 
         return True
     source = str(metadata.get("contact_source") or "").strip()
     if source == "team_review_import":
-        return has_auth_role(account, ROLE_DEVELOPER)
+        return is_auth_admin(account)
     return source == "admin_contact_post" and listing_metadata_owned_by_account(metadata, "contact", account)
 
 
@@ -5357,6 +5858,26 @@ def merge_listing_details(existing: Any, incoming: Any) -> dict[str, str]:
         if value and (not result.get(field) or incoming_is_richer):
             result[field] = value
     return result
+
+
+def merge_listing_details_with_preference(
+    existing: Any,
+    incoming: Any,
+    *,
+    preference: str,
+) -> dict[str, str]:
+    """Use the chosen Listing row for conflicts and the other row only for blanks."""
+    existing_details = normalize_listing_details(existing)
+    incoming_details = normalize_listing_details(incoming)
+    primary, fallback = (
+        (incoming_details, existing_details)
+        if preference == "incoming"
+        else (existing_details, incoming_details)
+    )
+    return {
+        field: primary[field] or fallback[field]
+        for field in LISTING_DETAIL_FIELDS
+    }
 
 
 def candidate_queue_entry_details(entry: dict[str, Any]) -> dict[str, str]:
@@ -5444,16 +5965,26 @@ def normalize_candidate_queue_rows(raw_rows: Any) -> dict[str, Any]:
     return {"rows": rows, "unparsed": unparsed}
 
 
-def listing_import_record_candidate(record: dict[str, Any]) -> dict[str, str]:
+def listing_import_record_candidate(record: dict[str, Any]) -> dict[str, Any]:
     """Return the representative fields shown when a Listing row needs review."""
     table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else {}
     summary = record.get("json_summary") if isinstance(record.get("json_summary"), dict) else {}
+    metadata = record_pipeline_metadata(record)
+    listing_details = {
+        "country": non_empty_text(table.get("company_country"), summary.get("company_country")),
+        "modality": non_empty_text(table.get("modality"), summary.get("modality")),
+        "target": non_empty_text(table.get("target"), summary.get("target")),
+        "main_indication": non_empty_text(table.get("main_indication"), summary.get("main_indication")),
+        "stage": non_empty_text(table.get("development_stage"), summary.get("development_stage"), "Unknown"),
+        "website": metadata.get("website", ""),
+    }
     return {
         "target": f"record:{record_key(record)}",
         "target_type": "record",
         "asset": non_empty_text(table.get("asset_name"), summary.get("asset_name"), "Unknown"),
         "company": non_empty_text(table.get("company"), summary.get("company"), "Unknown"),
-        "stage": non_empty_text(table.get("development_stage"), summary.get("development_stage"), "Unknown"),
+        "stage": listing_details["stage"],
+        "listing_details": listing_details,
         "workflow": "Fast Triage" if is_fast_triage_record(record) else "Full Scout",
     }
 
@@ -5470,9 +6001,9 @@ def listing_import_review_matches(
     # this once instead of running the full record/queue scan for every pasted
     # row; a 50+ row Excel import otherwise repeats identical comparisons.
     groups = groups if groups is not None else dashboard_identity_groups(records)
-    candidates_by_company: dict[str, list[dict[str, str]]] = {}
+    candidates_by_company: dict[str, list[dict[str, Any]]] = {}
 
-    def add_candidate(candidate: dict[str, str]) -> None:
+    def add_candidate(candidate: dict[str, Any]) -> None:
         company_key = normalized_pipeline_identity_text(candidate.get("company"))
         if company_key:
             candidates_by_company.setdefault(company_key, []).append(candidate)
@@ -5495,19 +6026,26 @@ def listing_import_review_matches(
             "asset": str(entry.get("asset_input") or "Unknown"),
             "company": str(entry.get("company_input") or "Unknown"),
             "stage": candidate_queue_entry_details(entry).get("stage") or "Unknown",
+            "listing_details": candidate_queue_entry_details(entry),
             "workflow": "Listing",
+            "asset_match_values": candidate_queue_entry_asset_match_values(entry),
         })
 
     candidates_by_row: list[dict[str, Any]] = []
     for row_index, row in enumerate(rows):
         asset = str(row.get("asset_input") or "")
         company = str(row.get("company_input") or "")
-        candidates: list[dict[str, str]] = []
+        candidates: list[dict[str, Any]] = []
         seen_targets: set[str] = set()
         company_key = normalized_pipeline_identity_text(company)
         for source_candidate in candidates_by_company.get(company_key, []):
             candidate = dict(source_candidate)
-            match = pipeline_asset_match_reason(asset, candidate["asset"], company, candidate["company"])
+            matches = [
+                pipeline_asset_match_reason(asset, candidate_asset, company, candidate["company"])
+                for candidate_asset in candidate.get("asset_match_values", [candidate["asset"]])
+            ]
+            exact_match = next((match for match in matches if match and match[0] == "exact"), None)
+            match = exact_match or next((match for match in matches if match and match[0] == "review"), None)
             if not match or match[0] != "review" or candidate["target"] in seen_targets:
                 continue
             candidate["reason"] = match[1]
@@ -5519,6 +6057,7 @@ def listing_import_review_matches(
                 "asset": asset,
                 "company": company,
                 "stage": str(row.get("stage") or "Unknown"),
+                "listing_details": normalize_listing_details(row),
                 "candidates": candidates,
             })
     return candidates_by_row
@@ -5535,6 +6074,7 @@ def update_record_pipeline_metadata(
     *,
     allow_empty_fields: set[str] | None = None,
     replace_comment: bool = False,
+    replace_contact: bool = False,
 ) -> bool:
     meta = record.setdefault("meta", {})
     current = normalize_pipeline_metadata(meta.get("pipeline_metadata"))
@@ -5543,6 +6083,7 @@ def update_record_pipeline_metadata(
         incoming_metadata,
         allow_empty_fields=allow_empty_fields,
         replace_comment=replace_comment,
+        replace_contact=replace_contact,
     )
     if current == merged:
         return False
@@ -5802,6 +6343,37 @@ def remove_system_comment(record: dict[str, Any], import_key: str) -> bool:
     return True
 
 
+def remove_listing_metadata_mirrors(record: dict[str, Any], field: str) -> bool:
+    """Remove every derived Tab 0 mirror for a deleted Listing field.
+
+    Earlier versions keyed a Tab 0 mirror from a then-current asset identity.
+    An alias/representative-name change can therefore leave an old import key
+    behind. Deleting the Listing source must remove those stale mirrors too.
+    """
+    sources = {"listing_comment_post"} if field == "comment" else {
+        "listing_contact_history", "listing_contact_post"
+    }
+    meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+    collaboration = meta.get("collaboration") if isinstance(meta.get("collaboration"), dict) else {}
+    comments = collaboration.get("comments") if isinstance(collaboration.get("comments"), list) else []
+    remaining = [
+        comment for comment in comments
+        if not (
+            isinstance(comment, dict)
+            and comment.get("system_import") is True
+            and str(comment.get("source") or "") in sources
+        )
+    ]
+    if len(remaining) == len(comments):
+        return False
+    collaboration["comments"] = remaining
+    collaboration["comment_count"] = len(remaining)
+    collaboration["updated_at"] = datetime.now(timezone.utc).isoformat()
+    meta["collaboration"] = collaboration
+    record["meta"] = meta
+    return True
+
+
 def remove_legacy_listing_contact_posts(record: dict[str, Any]) -> bool:
     """Remove the pre-standardisation Tab 0 Contact History mirror.
 
@@ -5864,6 +6436,10 @@ def account_owns_delegated_triage_comment(imported_comment: dict[str, Any], acco
         {
             "author_user_id": imported_comment.get("origin_author_user_id"),
             "author_email": imported_comment.get("origin_author_email"),
+            # Older synchronized Tab 1 comments have no author ID or email.  Their
+            # visible author is retained as a legacy-only, uniquely-resolvable
+            # fallback by comment_owned_by_account.
+            "author": imported_comment.get("origin_author") or imported_comment.get("author"),
         },
         account,
     )
@@ -5949,7 +6525,7 @@ def delete_delegated_triage_comment(
         if not previous:
             raise HTTPException(status_code=404, detail="The original Tab 1 comment was not found.")
         overrides.pop("final_comment", None)
-        for key in ("final_comment_author_id", "final_comment_author_name", "final_comment_updated_at"):
+        for key in ("final_comment_author_id", "final_comment_author_name", "final_comment_author_email", "final_comment_updated_at"):
             review.pop(key, None)
     elif kind == "triage_topic_note":
         note_id = str(imported_comment.get("origin_item_id") or "")
@@ -6005,6 +6581,7 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
         full_scout_records = [record for record in group_records if not is_fast_triage_record(record)]
         canonical_workspace_records = full_scout_records or fast_triage_records
 
+        listing_comment_key = imported_comment_key("tab0-listing", identity)
         if listing_comment:
             listing_author = str(metadata.get("comment_author") or "Team").strip()
             if str(metadata.get("comment_source") or "").strip() == "team_review_import" or listing_author in {"Tab 0 Team Review", "Team Review"}:
@@ -6012,12 +6589,26 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
             for target in canonical_workspace_records:
                 if upsert_system_comment(
                     target,
-                    import_key=imported_comment_key("tab0-listing", identity),
+                    import_key=listing_comment_key,
                     author=listing_author,
                     body=listing_comment,
                     source="listing_comment_post",
                     created_at=str(metadata.get("comment_created_at") or metadata.get("comment_updated_at") or ""),
                 ):
+                    append_edit_history(
+                        target,
+                        source="cross_workflow_comment_sync",
+                        actor_ip="system",
+                        field="collaboration.comments.tab0_listing",
+                    )
+                    changed_count += 1
+        else:
+            # A Tab 0 Comment is mirrored into the canonical Team Review
+            # workspace.  Removing its source must also remove that mirror;
+            # otherwise users see a stale "Tab 0 · Comment" card after a
+            # successful deletion in the Pipeline Table.
+            for target in canonical_workspace_records:
+                if remove_system_comment(target, listing_comment_key):
                     append_edit_history(
                         target,
                         source="cross_workflow_comment_sync",
@@ -6091,6 +6682,7 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
                         origin_record_id=triage_key,
                         origin_kind="triage_final_comment",
                         origin_author_user_id=str(human_review.get("final_comment_author_id") or ""),
+                        origin_author_email=normalized_identity_email(human_review.get("final_comment_author_email")),
                     ):
                         append_edit_history(target, source="cross_workflow_comment_sync", actor_ip="system", field="collaboration.comments.fast_triage_final")
                         changed_count += 1
@@ -6127,6 +6719,7 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
                         origin_item_id=str(note.get("id") or ""),
                         origin_kind="triage_topic_note",
                         origin_author_user_id=str(note.get("author_id") or ""),
+                        origin_author_email=normalized_identity_email(note.get("author_email")),
                     ):
                         append_edit_history(target, source="cross_workflow_comment_sync", actor_ip="system", field=f"collaboration.comments.fast_triage_{topic_id}")
                         changed_count += 1
@@ -6643,7 +7236,7 @@ def build_dashboard_summary(
         if due_date is None:
             continue
         days_until_due = (due_date - today).days
-        action_status = "OVERDUE" if due_date < today else "WITHIN_30_DAYS" if due_date <= today + timedelta(days=30) else "SCHEDULED"
+        action_status = action_date_summary_status(days_until_due)
         item = dashboard_record_item(record, identity)
         item.update(
             {
@@ -9155,6 +9748,12 @@ def index() -> FileResponse:
     return FileResponse(ROOT / "index.html")
 
 
+@app.get("/onboarding")
+def onboarding() -> FileResponse:
+    """Versioned first-visit PRISM onboarding; always available for manual reopening."""
+    return FileResponse(ROOT / "onboarding.html")
+
+
 @app.get("/detail")
 def detail() -> FileResponse:
     return FileResponse(ROOT / "detail.html")
@@ -9295,6 +9894,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
     duplicate_in_queue_skipped = 0
     duplicate_in_queue_enriched = 0
     duplicate_in_queue_richer_replaced = 0
+    duplicate_in_queue_representative_applied = 0
     metadata_updated = 0
     records_updated = False
     user_skipped = 0
@@ -9370,8 +9970,8 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
                         asset_input,
                         company_input,
                         [{
-                            "asset_aliases": asset_aliases_from_text(entry.get("asset_input")),
-                            "company_aliases": company_aliases_from_text(entry.get("company_input")),
+                            "asset_aliases": candidate_queue_entry_asset_aliases(entry),
+                            "company_aliases": candidate_queue_entry_company_aliases(entry),
                         }],
                     ) is not None
                 ),
@@ -9379,17 +9979,36 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             )
         if existing_entry is not None:
             duplicate_in_queue_skipped += 1
-            merged = merge_pipeline_metadata(candidate_queue_entry_metadata(existing_entry), incoming_metadata)
+            representative_preference = (
+                decision["representative"]
+                if decision and decision["action"] == "merge"
+                else "incoming"
+            )
+            merged = merge_pipeline_metadata(
+                candidate_queue_entry_metadata(existing_entry),
+                incoming_metadata,
+                website_preference=representative_preference,
+            )
             if candidate_queue_entry_metadata(existing_entry) != merged:
                 existing_entry["pipeline_metadata"] = merged
                 metadata_updated += 1
             existing_details = candidate_queue_entry_details(existing_entry)
             incoming_is_richer = listing_details_completeness(incoming_details) > listing_details_completeness(existing_details)
-            merged_details = merge_listing_details(existing_details, incoming_details)
+            merged_details = (
+                merge_listing_details_with_preference(
+                    existing_details,
+                    incoming_details,
+                    preference=representative_preference,
+                )
+                if decision and decision["action"] == "merge"
+                else merge_listing_details(existing_details, incoming_details)
+            )
             if candidate_queue_entry_details(existing_entry) != merged_details:
                 existing_entry["listing_details"] = merged_details
                 metadata_updated += 1
-                if incoming_is_richer:
+                if decision and decision["action"] == "merge":
+                    duplicate_in_queue_representative_applied += 1
+                elif incoming_is_richer:
                     duplicate_in_queue_richer_replaced += 1
                 else:
                     duplicate_in_queue_enriched += 1
@@ -9423,7 +10042,11 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             queue_saved = True
         if records_updated:
             save_records(records)
-    except Exception:
+    except Exception as exc:
+        LOGGER.exception(
+            "Listing import persistence failed: parsed=%d added=%d metadata_updated=%d records_updated=%s",
+            len(rows), len(added_entries), metadata_updated, records_updated,
+        )
         if queue_saved:
             try:
                 save_candidate_queue(original_queue)
@@ -9432,7 +10055,10 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
                 # operationally visible through the server log and must not be
                 # misrepresented as a successful import.
                 pass
-        raise
+        raise HTTPException(
+            status_code=500,
+            detail=f"Listing 저장 중 서버 파일 처리 오류가 발생했습니다: {type(exc).__name__}: {exc}",
+        ) from None
 
     return {
         "ok": True,
@@ -9443,6 +10069,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
         "duplicate_in_queue_skipped": duplicate_in_queue_skipped,
         "duplicate_in_queue_enriched": duplicate_in_queue_enriched,
         "duplicate_in_queue_richer_replaced": duplicate_in_queue_richer_replaced,
+        "duplicate_in_queue_representative_applied": duplicate_in_queue_representative_applied,
         "metadata_updated": metadata_updated,
         "unparsed_lines": parsed["unparsed"],
         "added_entries": added_entries,
@@ -9665,14 +10292,19 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
+        LOGGER.warning("Listing metadata update rejected: invalid JSON (%s)", exc.msg)
         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
     if not isinstance(payload, dict):
+        LOGGER.warning("Listing metadata update rejected: JSON root is %s", type(payload).__name__)
         raise HTTPException(status_code=400, detail="Expected metadata update object.")
     field = str(payload.get("field") or "").strip().lower()
-    if field not in PIPELINE_METADATA_FIELDS:
+    if field not in (*PIPELINE_METADATA_FIELDS, "website"):
+        LOGGER.warning("Listing metadata update rejected: unsupported field=%r", field)
         raise HTTPException(status_code=400, detail="field must be comment, contact, or website.")
     value = str(payload.get("value") or "").strip()
+    is_deleting = field in PIPELINE_METADATA_FIELDS and bool(payload.get("delete"))
     if len(value) > 5000:
+        LOGGER.warning("Listing metadata update rejected: field=%s value is too long", field)
         raise HTTPException(status_code=400, detail="Pipeline metadata values must be 5,000 characters or fewer.")
     if field == "website":
         if len(LISTING_WEBSITE_PATTERN.findall(value)) > 1:
@@ -9696,6 +10328,9 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
         "contact_created_at": changed_at,
         "contact_updated_at": changed_at,
     } if field == "contact" else {})
+    if is_deleting:
+        # Do not attach a fresh author/source marker to a deleted empty value.
+        direct_comment_metadata = {}
     owner_type = str(payload.get("owner_type") or "").strip()
 
     if owner_type == "queue":
@@ -9704,9 +10339,13 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
         entry = next((item for item in queue if str(item.get("id") or "") == queue_id), None)
         if entry is None:
             raise HTTPException(status_code=404, detail="Listing entry was not found.")
-        if field == "comment" and not can_edit_listing_comment(candidate_queue_entry_metadata(entry), account):
+        if field == "comment" and not can_edit_listing_comment(candidate_queue_entry_metadata(entry), account) and not (
+            is_deleting and str(candidate_queue_entry_metadata(entry).get("comment_source") or "") == "team_review_import"
+        ):
             raise HTTPException(status_code=403, detail="Listing Comment는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
-        if field == "contact" and not can_edit_listing_contact(candidate_queue_entry_metadata(entry), account):
+        if field == "contact" and not can_edit_listing_contact(candidate_queue_entry_metadata(entry), account) and not (
+            is_deleting and str(candidate_queue_entry_metadata(entry).get("contact_source") or "") == "team_review_import"
+        ):
             raise HTTPException(status_code=403, detail="Contact History는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
         updated = merge_pipeline_metadata(
             candidate_queue_entry_metadata(entry),
@@ -9729,9 +10368,13 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
         )
         if group is None:
             raise HTTPException(status_code=404, detail="Pipeline record was not found.")
-        if field == "comment" and not can_edit_listing_comment(pipeline_metadata_for_group(group), account):
+        if field == "comment" and not can_edit_listing_comment(pipeline_metadata_for_group(group), account) and not (
+            is_deleting and str(pipeline_metadata_for_group(group).get("comment_source") or "") == "team_review_import"
+        ):
             raise HTTPException(status_code=403, detail="Listing Comment는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
-        if field == "contact" and not can_edit_listing_contact(pipeline_metadata_for_group(group), account):
+        if field == "contact" and not can_edit_listing_contact(pipeline_metadata_for_group(group), account) and not (
+            is_deleting and str(pipeline_metadata_for_group(group).get("contact_source") or "") == "team_review_import"
+        ):
             raise HTTPException(status_code=403, detail="Contact History는 작성한 관리자만 수정하거나 삭제할 수 있습니다.")
         actor_ip = get_client_ip(request)
         for record in group.get("records") or []:
@@ -9754,6 +10397,18 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
                     )
         if field in {"comment", "contact"}:
             synchronize_cross_workflow_comments(records)
+            if is_deleting:
+                for target in group.get("records") or []:
+                    if remove_listing_metadata_mirrors(target, field):
+                        append_edit_history(
+                            target,
+                            source="dashboard_pipeline_metadata_delete",
+                            actor_ip=actor_ip,
+                            actor_name=actor_name,
+                            field=f"pipeline_metadata.{field}.mirrors",
+                            previous_value="derived Tab 0 mirror",
+                            new_value="deleted",
+                        )
         save_records(records)
         return {
             "ok": True,
@@ -9763,6 +10418,7 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
             "edited_by": actor_name,
         }
 
+    LOGGER.warning("Listing metadata update rejected: owner_type=%r", owner_type)
     raise HTTPException(status_code=400, detail="owner_type must be queue or record.")
 
 
@@ -9883,6 +10539,8 @@ def record_successful_rubric_review(
 ) -> None:
     meta = record.setdefault("meta", {})
     meta["rubric_reviewed_version"] = rubric_version
+    if not is_fast_triage_record(record):
+        meta["full_scout_rubric_definition_revision"] = FULL_SCOUT_RUBRIC_DEFINITION_REVISION
     meta["rubric_reviewed_at"] = reviewed_at
     meta["rubric_reviewed_by"] = actor_ip
     meta["rubric_review_result"] = result
@@ -9905,6 +10563,45 @@ def record_successful_rubric_review(
         meta["rubric_refresh_history"] = history[-20:]
 
 
+def append_rubric_refresh_audit(
+    record: dict[str, Any],
+    *,
+    rubric_version: str,
+    previous_rubric_version: str,
+    reviewed_at: str,
+    actor_ip: str,
+    actor_name: str,
+    result: str,
+    triage_workflow: bool,
+) -> None:
+    """Expose every successful score review in the visible change history.
+
+    The source report is intentionally not changed by a score review.  The
+    durable rubric_refresh_history remains the machine audit log; this concise
+    companion event is the human-facing audit trail shown on the detail page.
+    """
+    workflow_label = "Fast Triage Rubric" if triage_workflow else "Full Scout Rubric"
+    result_label = {
+        "updated": "scores updated",
+        "manual_override_reset": "manual score overrides reset",
+        "no_change": "no score change",
+        "no_score_changes": "no applicable score change",
+        "already_current": "already current",
+        "recalculated": "stored scores and decision recalculated",
+    }.get(result, result.replace("_", " "))
+    append_edit_history(
+        record,
+        source="dashboard_rubric_refresh",
+        actor_ip=actor_ip,
+        actor_name=actor_name,
+        field="rubric_refresh",
+        previous_value=f"Rubric v{previous_rubric_version or '-'}",
+        new_value=result_label,
+        instruction_version=str(rubric_version or "").lstrip("vV"),
+        audit_label=f"Score recalculated by {workflow_label} v{str(rubric_version or '').lstrip('vV')}",
+    )
+
+
 def record_has_current_rubric_evaluation(record: dict[str, Any], rubric_version: str) -> bool:
     """Return whether the stored official scoring has already been checked at this rubric version."""
     meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
@@ -9918,7 +10615,12 @@ def record_has_current_rubric_evaluation(record: dict[str, Any], rubric_version:
         recalculation.get("version") if isinstance(recalculation, dict) else None,
         meta.get("rubric_version"),
     )
-    return any(str(value or "").strip().lstrip("vV") == expected for value in applied_versions)
+    version_is_current = any(str(value or "").strip().lstrip("vV") == expected for value in applied_versions)
+    if not version_is_current:
+        return False
+    if not is_fast_triage_record(record):
+        return meta.get("full_scout_rubric_definition_revision") == FULL_SCOUT_RUBRIC_DEFINITION_REVISION
+    return True
 
 
 def reset_manual_scoring_overrides_after_rubric_review(
@@ -9952,7 +10654,7 @@ def reset_manual_scoring_overrides_after_rubric_review(
 
 @app.post("/api/records/{record_id:path}/refresh-rubric")
 async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, Any]:
-    require_auth_admin(request)
+    account = require_auth_admin(request) or {}
     records = load_records()
     for index, record in enumerate(records):
         if record_key(record) != record_id:
@@ -9964,6 +10666,7 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
             meta.get("rescored_rubric_version") or meta.get("rubric_version") or latest_rubric_version
         )
         actor_ip = get_client_ip(request)
+        actor_name = str(account.get("name") or "").strip()
 
         # Dashboard edits are a display-layer override.  If official GPT scoring
         # is already current, restore it without another identical AI request.
@@ -9983,6 +10686,16 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
                 actor_ip=actor_ip,
                 result=("manual_override_reset" if cleared_manual_scoring_overrides else "already_current"),
                 reason="Official GPT scoring is already current for this rubric.",
+            )
+            append_rubric_refresh_audit(
+                record,
+                rubric_version=latest_rubric_version,
+                previous_rubric_version=current_version,
+                reviewed_at=reviewed_at,
+                actor_ip=actor_ip,
+                actor_name=actor_name,
+                result="manual_override_reset" if cleared_manual_scoring_overrides else "already_current",
+                triage_workflow=triage_workflow,
             )
             validate_records_for_save([record])
             records[index] = record
@@ -10060,6 +10773,16 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
                 result="manual_override_reset" if cleared_manual_scoring_overrides else "no_change",
                 reason=verdict["reason"],
             )
+            append_rubric_refresh_audit(
+                record,
+                rubric_version=latest_rubric_version,
+                previous_rubric_version=current_version,
+                reviewed_at=reviewed_at,
+                actor_ip=actor_ip,
+                actor_name=actor_name,
+                result="manual_override_reset" if cleared_manual_scoring_overrides else "no_change",
+                triage_workflow=triage_workflow,
+            )
             validate_records_for_save([record])
             records[index] = record
             save_records(records)
@@ -10106,6 +10829,16 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
                 actor_ip=actor_ip,
                 result="manual_override_reset" if cleared_manual_scoring_overrides else "no_score_changes",
                 reason=verdict["reason"],
+            )
+            append_rubric_refresh_audit(
+                record,
+                rubric_version=latest_rubric_version,
+                previous_rubric_version=current_version,
+                reviewed_at=reviewed_at,
+                actor_ip=actor_ip,
+                actor_name=actor_name,
+                result="manual_override_reset" if cleared_manual_scoring_overrides else "no_score_changes",
+                triage_workflow=triage_workflow,
             )
             validate_records_for_save([record])
             records[index] = record
@@ -10183,14 +10916,15 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
         if not triage_workflow and isinstance(focus, dict) and focus.get("is_tracked") is True:
             apply_auto_oi_partnership(focus, record)
 
-        append_edit_history(
+        append_rubric_refresh_audit(
             record,
-            source="dashboard_rubric_refresh",
+            rubric_version=latest_rubric_version,
+            previous_rubric_version=current_version,
+            reviewed_at=changed_at,
             actor_ip=actor_ip,
-            field="scoring",
-            previous_value=f"rubric v{current_version}",
-            new_value=f"rubric v{latest_rubric_version}",
-            update_last_edited=False,
+            actor_name=actor_name,
+            result="updated",
+            triage_workflow=triage_workflow,
         )
 
         validate_records_for_save([record])
@@ -10462,7 +11196,7 @@ def calculate_latest_full_scout_filter(record: dict[str, Any]) -> dict[str, Any]
             "status": "PASS",
             "reason": (
                 f"Rubric v{SCORING_CRITERIA_VERSION}: Total {total} >= 14, "
-                f"TR {target_score} >= 3, MOA {moa_score} = 3, "
+                f"TAR {target_score} >= 3, MOA {moa_score} = 3, "
                 f"Data {data_score} = 3"
             ),
             "total_score": total,
@@ -10473,7 +11207,7 @@ def calculate_latest_full_scout_filter(record: dict[str, Any]) -> dict[str, Any]
     if not pass_scores:
         reasons.append(
             f"PASS gate 미충족: Total {total if total is not None else '-'}, "
-            f"TR {target_score if target_score is not None else '-'}, "
+            f"TAR {target_score if target_score is not None else '-'}, "
             f"MOA {moa_score if moa_score is not None else '-'}, "
             f"Data {data_score if data_score is not None else '-'}"
         )
@@ -10704,7 +11438,8 @@ def annotate_rubric_recalculation(
 
 @app.post("/api/records/{record_id:path}/recalculate-rubric")
 def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> dict[str, Any]:
-    require_auth_admin(request)
+    account = require_auth_admin(request) or {}
+    actor_name = str(account.get("name") or "").strip()
     records = load_records()
     for index, record in enumerate(records):
         if record_key(record) != record_id:
@@ -10722,7 +11457,7 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
             except (TypeError, ValueError):
                 raise HTTPException(
                     status_code=400,
-                    detail="Fast Triage 재평가에 필요한 TR, MOA, Data 점수를 확인할 수 없습니다.",
+                    detail="Fast Triage 재평가에 필요한 TAR, MOA, Data 점수를 확인할 수 없습니다.",
                 )
 
             status = calculate_fast_triage_status(
@@ -10752,6 +11487,16 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
             }
             source_report = record.setdefault("source_report", {})
             source_report["rubric_recalculation"] = copy.deepcopy(meta["rubric_recalculation"])
+            append_rubric_refresh_audit(
+                record,
+                rubric_version=TRIAGE_CRITERIA_VERSION,
+                previous_rubric_version=previous_version,
+                reviewed_at=recalculated_at,
+                actor_ip=get_client_ip(request),
+                actor_name=actor_name,
+                result="recalculated",
+                triage_workflow=True,
+            )
             records[index] = record
             save_records(records)
             exports = deferred_markdown_exports()
@@ -10788,29 +11533,25 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
             "previous_version": previous_version or None,
             "recalculated_at": recalculated_at,
             "source": "dashboard_tab2_rubric_refresh",
-            "scope": "stored_criterion_scores_total_filter2_and_source_report_scorecard_reset_manual_scoring_overrides",
+            "scope": "stored_criterion_scores_total_filter2_and_manual_scoring_overrides",
             "cleared_manual_scoring_overrides": copy.deepcopy(cleared_manual_scoring_overrides),
         }
         source_report = record.setdefault("source_report", {})
-        previous_raw_markdown = str(source_report.get("raw_markdown") or "")
-        source_report_score_sync = synchronize_full_scout_report_scores(record)
-        updated_raw_markdown = annotate_rubric_recalculation(
-            str(source_report.get("raw_markdown") or ""),
-            SCORING_CRITERIA_VERSION,
-            recalculated_at[:10],
-        )
-        source_report["raw_markdown"] = updated_raw_markdown
         source_report["rubric_recalculation"] = copy.deepcopy(meta["rubric_recalculation"])
-        if updated_raw_markdown != previous_raw_markdown:
-            append_edit_history(
-                record,
-                source="dashboard_tab2_rubric_recalculation",
-                actor_ip=get_client_ip(request),
-                field="source_report.raw_markdown",
-                previous_value=f"rubric v{previous_version or '-'}",
-                new_value=f"rubric v{SCORING_CRITERIA_VERSION}",
-                update_last_edited=True,
-            )
+        # Recalculation changes stored scores only.  The pasted GPT original
+        # report is evidence/provenance and must not receive a generated banner
+        # or scorecard rewrite.
+        source_report_score_sync: list[str] = []
+        append_rubric_refresh_audit(
+            record,
+            rubric_version=SCORING_CRITERIA_VERSION,
+            previous_rubric_version=previous_version,
+            reviewed_at=recalculated_at,
+            actor_ip=get_client_ip(request),
+            actor_name=actor_name,
+            result="recalculated",
+            triage_workflow=False,
+        )
 
         records[index] = record
         save_records(records)
@@ -10986,28 +11727,26 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
                 raise HTTPException(status_code=400, detail="Final comment must be 4,000 characters or fewer.")
             field_key = "final_comment"
             previous = str(overrides.get(field_key) or "")
-            owner_id = str(human_review.get("final_comment_author_id") or "")
-            if previous and (not owner_id or owner_id != actor_id):
+            if previous and not final_comment_owned_by_account(human_review, account):
                 raise HTTPException(status_code=403, detail="Only the administrator who wrote this final comment can edit it.")
             if field_key not in overrides:
                 baseline.setdefault(field_key, previous)
             overrides[field_key] = value
             human_review["final_comment_author_id"] = actor_id
             human_review["final_comment_author_name"] = actor_name
+            human_review["final_comment_author_email"] = normalized_identity_email(account.get("email"))
             human_review["final_comment_updated_at"] = changed_at
         elif edit_kind == "final_comment_delete":
             field_key = "final_comment"
             previous = str(overrides.get(field_key) or "")
-            owner_id = str(human_review.get("final_comment_author_id") or "")
             if not previous:
                 raise HTTPException(status_code=404, detail="Final comment was not found.")
-            if not owner_id or owner_id != actor_id:
+            if not final_comment_owned_by_account(human_review, account):
                 raise HTTPException(status_code=403, detail="Only the administrator who wrote this final comment can delete it.")
             value = ""
             overrides.pop(field_key, None)
-            human_review.pop("final_comment_author_id", None)
-            human_review.pop("final_comment_author_name", None)
-            human_review.pop("final_comment_updated_at", None)
+            for key in ("final_comment_author_id", "final_comment_author_name", "final_comment_author_email", "final_comment_updated_at"):
+                human_review.pop(key, None)
         elif edit_kind == "stage":
             value = canonicalize_development_stage(payload.get("value"))
             if value not in CANONICAL_DEVELOPMENT_STAGE_SET:
@@ -11278,7 +12017,21 @@ async def update_focus_management(record_id: str, request: Request) -> dict[str,
                 value = str(payload.get("value") or "").strip()
                 if len(value) > 100:
                     raise HTTPException(status_code=400, detail="Owner name must be 100 characters or fewer.")
-                focus[field] = value
+                if not value:
+                    focus["owner_name"] = ""
+                    focus.pop("owner_user_id", None)
+                    focus.pop("owner_email", None)
+                else:
+                    owner = registered_action_owner(value, load_users())
+                    if owner is None:
+                        raise HTTPException(
+                            status_code=400,
+                            detail="담당자는 가입된 활성 사용자 이름 또는 이메일과 정확히 일치해야 합니다.",
+                        )
+                    focus["owner_name"] = str(owner.get("name") or "").strip()
+                    focus["owner_user_id"] = str(owner.get("id") or "").strip()
+                    focus["owner_email"] = normalized_identity_email(owner.get("email"))
+                    value = focus["owner_name"]
             elif field == "due_date":
                 value = str(payload.get("value") or "").strip()
                 if value:
@@ -11650,6 +12403,7 @@ async def add_record_topic_note(record_id: str, request: Request) -> dict[str, A
             "topic_title": topic_title or topic_id,
             "body": body,
             "author_id": str(account.get("id") or ""),
+            "author_email": normalized_identity_email(account.get("email")),
             "author_name": str(account.get("name") or ""),
             "created_at": now,
             "updated_at": now,
@@ -11676,11 +12430,11 @@ async def add_record_topic_note(record_id: str, request: Request) -> dict[str, A
 
 
 def can_manage_topic_note(account: dict[str, Any], note: dict[str, Any]) -> bool:
-    return is_auth_admin(account) and str(note.get("author_id") or "") == str(account.get("id") or "")
+    return is_auth_admin(account) and topic_note_owned_by_account(note, account)
 
 
 def can_delete_topic_note(account: dict[str, Any], note: dict[str, Any]) -> bool:
-    return is_auth_admin(account) and str(note.get("author_id") or "") == str(account.get("id") or "")
+    return is_auth_admin(account) and topic_note_owned_by_account(note, account)
 
 
 @app.patch("/api/records/{record_id:path}/topic-notes/{note_id}")
@@ -12430,6 +13184,7 @@ async def create_qualitative_review_entry(record_id: str, request: Request) -> d
             "id": uuid.uuid4().hex,
             "author": author,
             "author_id": str(account.get("id") or ""),
+            "author_email": normalized_identity_email(account.get("email")),
             "body": body,
             "is_ai": False,
             "created_at": created_at,
@@ -12838,6 +13593,10 @@ async def upsert_records(request: Request) -> dict[str, Any]:
 
     index_by_key = {record_key(record): i for i, record in enumerate(records)}
     actor_ip = get_client_ip(request)
+    account = authenticated_user(request) or {}
+    actor_name = str(account.get("name") or "").strip()
+    actor_user_id = str(account.get("id") or "").strip()
+    actor_email = str(account.get("email") or "").strip()
     inserted = 0
     updated = 0
     uploaded_at = datetime.now(timezone.utc).isoformat()
@@ -12852,7 +13611,14 @@ async def upsert_records(request: Request) -> dict[str, Any]:
             )
             preserve_dashboard_meta(record, existing_record)
             if confirmed_reupload and source_report_changed:
-                append_report_reupload_snapshot(record, existing_record, actor_ip=actor_ip)
+                append_report_reupload_snapshot(
+                    record,
+                    existing_record,
+                    actor_ip=actor_ip,
+                    actor_name=actor_name,
+                    actor_user_id=actor_user_id,
+                    actor_email=actor_email,
+                )
             reset_at = datetime.now(timezone.utc).isoformat()
             cleared_manual_scoring_overrides = (
                 clear_manual_scoring_overrides_for_rubric_refresh(
@@ -12878,11 +13644,17 @@ async def upsert_records(request: Request) -> dict[str, Any]:
                 record,
                 source="paste_json_upsert",
                 actor_ip=actor_ip,
+                actor_name=actor_name,
                 field="source_report.raw_markdown" if source_report_changed else "record",
                 previous_value="기존 GPT 원문 리포트" if source_report_changed else None,
                 new_value="GPT 원문 재업로드" if source_report_changed else None,
                 old_meta=existing_record.get("meta"),
                 update_last_edited=source_report_changed,
+                instruction_version=str(
+                    ((record.get("meta") or {}).get("instruction_version")
+                    or (record.get("meta") or {}).get("rubric_version")
+                    or "")
+                ).lstrip("vV") if source_report_changed else "",
             )
             records[index_by_key[key]] = record
             updated += 1

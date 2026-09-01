@@ -62,6 +62,7 @@ function authMarkup() {
     <div class="auth-menu" data-auth-menu hidden>
       <strong data-auth-menu-name></strong><span data-auth-menu-email></span>
       <a class="auth-admin-link" href="/admin/users" data-auth-admin hidden>사용자 관리</a>
+      <button type="button" data-auth-change-password>비밀번호 변경</button>
       <button type="button" data-auth-signout>로그아웃</button>
     </div>`;
 }
@@ -75,12 +76,21 @@ function modalMarkup() {
       <p class="auth-modal-copy" data-auth-copy>SKBP Pipeline Finder를 사용하려면 로그인해주세요.</p>
       <form data-auth-form novalidate>
         <label data-auth-name-field hidden><span>이름</span><input name="name" maxlength="100" autocomplete="name" placeholder="이름" /></label>
-        <label><span>이메일</span><input name="email" type="email" maxlength="254" autocomplete="email" placeholder="name@company.com" required /></label>
-        <label><span>비밀번호</span><input name="password" type="password" minlength="4" maxlength="200" autocomplete="current-password" placeholder="4자 이상" required /></label>
+        <label data-auth-email-field><span>이메일</span><input name="email" type="email" maxlength="254" autocomplete="email" placeholder="name@company.com" required /></label>
+        <label data-auth-password-field><span data-auth-password-label>비밀번호</span><input name="password" type="password" minlength="4" maxlength="200" autocomplete="current-password" placeholder="4자 이상" required /></label>
+        <label data-auth-new-password-field hidden><span>새 비밀번호</span><input name="new_password" type="password" minlength="4" maxlength="200" autocomplete="new-password" placeholder="4자 이상" /></label>
+        <label data-auth-new-password-confirm-field hidden><span>새 비밀번호 확인</span><input name="new_password_confirmation" type="password" minlength="4" maxlength="200" autocomplete="new-password" placeholder="새 비밀번호를 다시 입력하세요" /></label>
         <p class="auth-form-status" data-auth-status role="status" aria-live="polite"></p>
         <button class="auth-submit" type="submit">로그인</button>
       </form>
+      <button class="auth-forgot-password" type="button" data-auth-forgot-password>비밀번호를 잊으셨나요?</button>
       <button class="auth-mode-switch" type="button" data-auth-mode-switch>처음이신가요? <b>간단 회원가입</b></button>
+      <button class="auth-back-to-signin" type="button" data-auth-back-to-signin hidden>로그인으로 돌아가기</button>
+      <div class="auth-processing" data-auth-processing hidden role="status" aria-live="polite">
+        <span class="auth-processing-icon" aria-hidden="true">⌛</span>
+        <strong>새 비밀번호를 이메일로 보내고 있습니다</strong>
+        <span>잠시만 기다려 주세요.</span>
+      </div>
     </section>
   </div>`;
 }
@@ -98,22 +108,76 @@ function renderAuth() {
   document.querySelectorAll('[data-auth-menu-name]').forEach((node) => { node.textContent = currentUser?.name || ''; });
   document.querySelectorAll('[data-auth-menu-email]').forEach((node) => { node.textContent = currentUser?.email || ''; });
   document.querySelectorAll('[data-auth-admin]').forEach((node) => { node.hidden = !currentUser?.is_developer; });
+  document.querySelectorAll('[data-auth-change-password]').forEach((node) => {
+    node.textContent = currentUser?.password_is_temporary ? '비밀번호 변경 (필요)' : '비밀번호 변경';
+  });
 }
 
 function setMode(mode) {
   const signup = mode === 'signup';
+  const resetRequest = mode === 'password-reset-request';
+  const passwordChange = mode === 'password-change';
   const modal = document.querySelector('[data-auth-modal]');
+  const passwordInput = modal.querySelector('input[name="password"]');
+  const emailInput = modal.querySelector('input[name="email"]');
   modal.dataset.mode = mode;
-  modal.querySelector('#authModalTitle').textContent = signup ? '간단 회원가입' : '로그인';
-  modal.querySelector('[data-auth-copy]').textContent = signup
-    ? '이름, 이메일, 비밀번호만 입력하면 바로 시작할 수 있습니다.'
-    : 'SKBP Pipeline Finder를 사용하려면 로그인해주세요.';
+  modal.querySelector('#authModalTitle').textContent = resetRequest
+    ? '비밀번호 찾기'
+    : (passwordChange ? '비밀번호 변경' : (signup ? '간단 회원가입' : '로그인'));
+  modal.querySelector('[data-auth-copy]').textContent = resetRequest
+    ? '가입한 이메일 주소를 입력하면 새 비밀번호를 이메일로 보내드립니다.'
+    : (passwordChange
+      ? (currentUser?.password_is_temporary
+        ? '임시 비밀번호로 로그인하셨습니다. 아래에서 새 비밀번호로 변경해 주세요.'
+        : '현재 비밀번호와 새 비밀번호를 입력하세요. 변경하면 다른 기기의 로그인은 모두 종료됩니다.')
+      : (signup ? '이름, 이메일, 비밀번호만 입력하면 바로 시작할 수 있습니다.' : 'SKBP Pipeline Finder를 사용하려면 로그인해주세요.'));
   modal.querySelector('[data-auth-name-field]').hidden = !signup;
+  modal.querySelector('[data-auth-email-field]').hidden = passwordChange;
+  modal.querySelector('[data-auth-password-field]').hidden = resetRequest;
+  modal.querySelector('[data-auth-new-password-field]').hidden = !passwordChange;
+  modal.querySelector('[data-auth-new-password-confirm-field]').hidden = !passwordChange;
   modal.querySelector('input[name="name"]').required = signup;
-  modal.querySelector('input[name="password"]').autocomplete = signup ? 'new-password' : 'current-password';
-  modal.querySelector('.auth-submit').textContent = signup ? '가입하고 시작하기' : '로그인';
+  emailInput.required = !passwordChange;
+  passwordInput.required = !resetRequest;
+  passwordInput.minLength = 4;
+  passwordInput.autocomplete = passwordChange ? 'current-password' : (signup ? 'new-password' : 'current-password');
+  passwordInput.placeholder = passwordChange ? '현재 비밀번호' : '4자 이상';
+  modal.querySelector('[data-auth-password-label]').textContent = passwordChange ? '현재 비밀번호' : '비밀번호';
+  modal.querySelector('input[name="new_password"]').required = passwordChange;
+  modal.querySelector('input[name="new_password_confirmation"]').required = passwordChange;
+  modal.querySelector('.auth-submit').textContent = resetRequest
+    ? '새 비밀번호 이메일로 받기'
+    : (passwordChange ? '비밀번호 변경' : (signup ? '가입하고 시작하기' : '로그인'));
+  modal.querySelector('[data-auth-forgot-password]').hidden = mode !== 'signin';
+  modal.querySelector('[data-auth-mode-switch]').hidden = resetRequest || passwordChange;
   modal.querySelector('[data-auth-mode-switch]').innerHTML = signup ? '이미 계정이 있나요? <b>로그인</b>' : '처음이신가요? <b>간단 회원가입</b>';
+  modal.querySelector('[data-auth-back-to-signin]').hidden = !resetRequest && !passwordChange;
+  modal.querySelector('[data-auth-back-to-signin]').textContent = passwordChange ? '취소' : '로그인으로 돌아가기';
   modal.querySelector('[data-auth-status]').textContent = '';
+  modal.querySelector('[data-auth-status]').classList.remove('is-success');
+}
+
+function setAuthProcessing(modal, processing) {
+  const panel = modal.querySelector('[data-auth-processing]');
+  if (processing && !panel.dataset.sharedProcessingModal) {
+    panel.className = 'auth-processing operation-modal-backdrop';
+    panel.innerHTML = `
+      <section class="operation-modal" role="status" aria-live="polite">
+        <header class="operation-modal-header">
+          <span class="operation-modal-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false"><path d="M7 3h10M7 21h10M8.5 3c0 4 1 5.5 3.5 7.3 2.5-1.8 3.5-3.3 3.5-7.3M8.5 21c0-4 1-5.5 3.5-7.3 2.5 1.8 3.5 3.3 3.5 7.3" /><path d="M9.5 17h5" /></svg>
+          </span>
+          <div>
+            <p class="operation-modal-eyebrow">PROCESSING</p>
+            <h2>새 비밀번호를 이메일로 보내고 있습니다</h2>
+          </div>
+        </header>
+        <p class="operation-modal-copy">잠시만 기다려 주세요.</p>
+      </section>`;
+    panel.dataset.sharedProcessingModal = 'true';
+  }
+  panel.hidden = !processing;
+  modal.classList.toggle('is-processing', processing);
 }
 
 function setRequiredGate(required) {
@@ -130,7 +194,8 @@ export function openAuthModal(mode = 'signin', options = {}) {
   setMode(mode);
   setRequiredGate(Boolean(options.required));
   modal.hidden = false;
-  modal.querySelector(mode === 'signup' ? 'input[name="name"]' : 'input[name="email"]')?.focus();
+  const focusTarget = mode === 'signup' ? 'input[name="name"]' : 'input[name="email"]';
+  modal.querySelector(focusTarget)?.focus();
   return new Promise((resolve) => { pendingAuthResolve = resolve; });
 }
 
@@ -196,6 +261,21 @@ export function initAuthUI() {
       setMode(document.querySelector('[data-auth-modal]').dataset.mode === 'signup' ? 'signin' : 'signup');
       return;
     }
+    if (event.target.closest('[data-auth-forgot-password]')) {
+      setMode('password-reset-request');
+      return;
+    }
+    if (event.target.closest('[data-auth-change-password]')) {
+      document.querySelectorAll('[data-auth-menu]').forEach((menu) => { menu.hidden = true; });
+      openAuthModal('password-change');
+      return;
+    }
+    if (event.target.closest('[data-auth-back-to-signin]')) {
+      const modal = document.querySelector('[data-auth-modal]');
+      if (modal.dataset.mode === 'password-change') closeAuthModal();
+      else setMode('signin');
+      return;
+    }
     if (event.target.closest('[data-auth-close]') || event.target.matches('[data-auth-modal]')) closeAuthModal();
     if (event.target.closest('[data-auth-signout]')) {
       await fetch('/api/auth/signout', { method: 'POST' });
@@ -211,15 +291,40 @@ export function initAuthUI() {
     event.preventDefault();
     const form = event.currentTarget;
     const mode = form.closest('[data-auth-modal]').dataset.mode;
+    const modal = form.closest('[data-auth-modal]');
     const status = form.querySelector('[data-auth-status]');
     const submit = form.querySelector('.auth-submit');
     const payload = Object.fromEntries(new FormData(form).entries());
     status.textContent = '';
+    status.classList.remove('is-success');
     submit.disabled = true;
+    const resetRequest = mode === 'password-reset-request';
+    const passwordChange = mode === 'password-change';
+    if (resetRequest) setAuthProcessing(modal, true);
     try {
-      const response = await fetch(`/api/auth/${mode}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const endpoint = resetRequest
+        ? '/api/auth/password-reset/request'
+        : (passwordChange ? '/api/auth/change-password' : `/api/auth/${mode}`);
+      const requestBody = passwordChange
+        ? { current_password: payload.password, new_password: payload.new_password, new_password_confirmation: payload.new_password_confirmation }
+        : payload;
+      const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.detail || '처리하지 못했습니다.');
+      if (resetRequest) {
+        status.textContent = data.message || '가입된 이메일이 있으면 새 비밀번호를 이메일로 발송했습니다. 이메일을 확인해 주세요.';
+        status.classList.add('is-success');
+        return;
+      }
+      if (passwordChange) {
+        currentUser = data.user || currentUser;
+        renderAuth();
+        emitAuthChange();
+        form.reset();
+        status.textContent = data.message || '비밀번호가 변경되었습니다.';
+        status.classList.add('is-success');
+        return;
+      }
       currentUser = data.user;
       renderAuth();
       emitAuthChange();
@@ -227,9 +332,13 @@ export function initAuthUI() {
       closeAuthModal(currentUser);
       postAuthActivity();
       startActivityTracking();
+      if (currentUser?.password_is_temporary) {
+        window.setTimeout(() => openAuthModal('password-change'), 300);
+      }
     } catch (error) {
       status.textContent = error.message;
     } finally {
+      if (resetRequest) setAuthProcessing(modal, false);
       submit.disabled = false;
     }
   });

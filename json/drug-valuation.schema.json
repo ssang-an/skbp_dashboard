@@ -33,7 +33,13 @@
           "type": "object",
           "properties": {
             "is_tracked": { "type": "boolean" },
-            "tracking_status": { "enum": ["priority", "stationary"] }
+            "tracking_status": { "enum": ["priority", "stationary"] },
+            "due_date": { "type": "string", "pattern": "^$|^\\d{4}-\\d{2}-\\d{2}$" },
+            "owner_name": { "type": "string", "maxLength": 100 },
+            "owner_user_id": { "type": "string", "maxLength": 200 },
+            "owner_email": { "type": "string", "maxLength": 320 },
+            "action_plan": { "type": "string", "maxLength": 500 },
+            "action_date_reminders": { "type": "array", "items": { "type": "object", "additionalProperties": true } }
           },
           "additionalProperties": true
         },

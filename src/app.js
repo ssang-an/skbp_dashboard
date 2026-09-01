@@ -2,7 +2,7 @@ import { setupThemeToggle } from './theme.js?v=20260802-header-icons-1';
 import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
 import { initPageJumpControls } from './page-jump.js?v=20260823-page-jump-1';
 import { initPipelineHeaderFreeze } from './table-header-freeze.js?v=20260830-1';
-import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260803-personal-group-1';
+import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260831-password-reset-2';
 import {
   expandCompactInputRecord,
   isCompactIngestionRecord,
@@ -25,7 +25,6 @@ const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
 const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
 const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v4';
 const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v6';
-const VISUAL_DASHBOARD_HIDDEN_KEY = 'skbp.dashboard.visualDashboardHidden.v1';
 const CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY = 'skbp.dashboard.criteriaGuideLanguage.v1';
 const PIPELINE_RETURN_FOCUS_STORAGE_KEY = 'skbp.pipeline.return-focus.v1';
 const PIPELINE_ROW_HIGHLIGHT_MS = 3000;
@@ -167,6 +166,7 @@ const TRIAGE_PROMPT_TOOLTIP =
   'GPT Fast Triage v3.5 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / INSUFFICIENT로 screening합니다.';
 const LATEST_TRIAGE_RUBRIC_VERSION = '3.5';
 const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.7';
+const LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION = 'competitive-evidence-2026-09-01';
 const FAST_TRIAGE_SCHEMA_VERSION = '3.2';
 const FULL_SCOUT_SCHEMA_VERSION = '3.2';
 const FULL_SCOUT_AGENT_INPUT_PLACEHOLDER =
@@ -660,12 +660,21 @@ function closeBlockingOperation(token) {
 
 async function runBlockingOperation(options, operation) {
   const blockingOperation = openBlockingOperation(options);
+  const startedAt = performance.now();
+  // A local JSON request can finish before the browser gets a chance to paint
+  // the overlay. Yielding two frames makes the shared hourglass feedback
+  // visible for quick saves as well as slower server operations.
+  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
   try {
     return await operation(blockingOperation.signal);
   } catch (error) {
     if (blockingOperation.signal.aborted || error?.name === 'AbortError') return OPERATION_CANCELLED;
     throw error;
   } finally {
+    if (elements.operationCancelButton) elements.operationCancelButton.disabled = true;
+    const minimumVisibleMs = Number(options?.minimumVisibleMs ?? 360);
+    const remainingMs = Math.max(0, minimumVisibleMs - (performance.now() - startedAt));
+    if (remainingMs) await new Promise((resolve) => window.setTimeout(resolve, remainingMs));
     closeBlockingOperation(blockingOperation.token);
   }
 }
@@ -920,17 +929,37 @@ function dataReuploadDecisionFor(decisionKey) {
   return activeDataReuploadDecisions.get(decisionKey) || { action: 'pending' };
 }
 
-function renderDataReuploadComparisonColumn(title, asset, company, stage) {
+function renderDataReuploadComparisonColumn(title, asset, company, stageOrDetails) {
+  const stage = typeof stageOrDetails === 'object' && stageOrDetails !== null
+    ? stageOrDetails.stage
+    : stageOrDetails;
+  const fields = [
+    ['Asset', asset || 'Unknown asset'],
+    ['Company', company || 'Unknown company'],
+    ['Pipeline Stage', stage || 'Unknown']
+  ];
   return `
     <section class="data-reupload-comparison-column">
       <p>${escapeHtml(title)}</p>
       <dl>
-        <div><dt>Asset</dt><dd>${escapeHtml(asset || 'Unknown asset')}</dd></div>
-        <div><dt>Company</dt><dd>${escapeHtml(company || 'Unknown company')}</dd></div>
-        <div><dt>Pipeline Stage</dt><dd>${escapeHtml(stage || 'Unknown')}</dd></div>
+        ${fields.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}
       </dl>
     </section>
   `;
+}
+
+function step0ListingValuesConflict(match, candidate) {
+  if (String(match.asset || '').trim() !== String(candidate.asset || '').trim()
+    || String(match.company || '').trim() !== String(candidate.company || '').trim()) {
+    return true;
+  }
+  const incomingDetails = match.listing_details || {};
+  const existingDetails = candidate.listing_details || {};
+  return ['country', 'modality', 'target', 'main_indication', 'stage', 'website'].some((field) => {
+    const incomingValue = String(incomingDetails[field] || '').trim();
+    const existingValue = String(existingDetails[field] || '').trim();
+    return incomingValue && existingValue && incomingValue !== existingValue;
+  });
 }
 
 function renderDataReuploadReviewList() {
@@ -1083,6 +1112,7 @@ function renderStep0ImportReviewList() {
     const decision = activeStep0ImportReviewDecisions.get(match.row_index) || { action: 'pending' };
     const isNew = decision.action === 'new';
     const isSkipped = decision.action === 'skip';
+    const hasSelection = decision.action !== 'pending';
     return `
       <article class="data-reupload-review-card${isNew || isSkipped ? ' is-skipped' : ''}">
         <header class="data-reupload-review-card-header">
@@ -1092,9 +1122,12 @@ function renderStep0ImportReviewList() {
         <div class="data-reupload-candidate-stack">
           ${(match.candidates || []).map((candidate) => {
             const selected = decision.action === 'merge' && decision.target === candidate.target;
-            const labelsDiffer = String(match.asset || '').trim() !== String(candidate.asset || '').trim()
-              || String(match.company || '').trim() !== String(candidate.company || '').trim();
-            const canChooseRepresentative = selected && candidate.target_type === 'queue' && labelsDiffer;
+            const mergeChoiceClass = selected
+              ? ' is-choice-selected'
+              : hasSelection ? ' is-choice-muted' : '';
+            const canChooseRepresentative = selected
+              && candidate.target_type === 'queue'
+              && step0ListingValuesConflict(match, candidate);
             const representative = decision.representative === 'incoming' ? 'incoming' : 'existing';
             return `
               <section class="data-reupload-candidate${selected ? ' is-selected' : ''}">
@@ -1104,20 +1137,20 @@ function renderStep0ImportReviewList() {
                 </div>
                 <div class="data-reupload-comparison-scroll" tabindex="0">
                   <div class="data-reupload-comparison-grid">
-                    ${renderDataReuploadComparisonColumn('이번 가져오기', match.asset, match.company, match.stage)}
-                    ${renderDataReuploadComparisonColumn('기존 Pipeline', candidate.asset, candidate.company, candidate.stage)}
+                    ${renderDataReuploadComparisonColumn('이번 가져오기', match.asset, match.company, match.listing_details || match.stage)}
+                    ${renderDataReuploadComparisonColumn('기존 Pipeline', candidate.asset, candidate.company, candidate.listing_details || candidate.stage)}
                   </div>
                 </div>
                 <div class="data-reupload-candidate-actions">
-                  <button type="button" class="identity-modal-submit" data-step0-import-review-action="merge" data-row-index="${match.row_index}" data-target="${escapeHtml(candidate.target)}">같은 Pipeline으로 연결</button>
+                  <button type="button" class="identity-modal-submit${mergeChoiceClass}" data-step0-import-review-action="merge" data-row-index="${match.row_index}" data-target="${escapeHtml(candidate.target)}" aria-pressed="${selected}">같은 Pipeline으로 연결</button>
                 </div>
                 ${canChooseRepresentative ? `
                   <fieldset class="step0-import-representative-choice">
-                    <legend>표에 표시할 대표 이름</legend>
-                    <p>나머지 Listing 정보는 보완 규칙으로 합쳐집니다.</p>
+                    <legend>충돌 시 우선 표시할 Listing 값</legend>
+                    <p>선택한 쪽의 Asset·Company·Stage·Target 등은 유지하고, 빈 칸만 반대쪽 값으로 보완합니다. Comment·Contact·이름 별칭은 함께 보존됩니다.</p>
                     <div>
-                      <button type="button" class="identity-modal-cancel${representative === 'existing' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="existing">기존 대표 표기 유지</button>
-                      <button type="button" class="identity-modal-cancel${representative === 'incoming' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="incoming">새 입력값을 대표 표기로 적용</button>
+                      <button type="button" class="identity-modal-cancel${representative === 'existing' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="existing">기존 Listing 값 우선</button>
+                      <button type="button" class="identity-modal-cancel${representative === 'incoming' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="incoming">새 입력 Listing 값 우선</button>
                     </div>
                   </fieldset>` : selected && candidate.target_type === 'record' ? `
                   <p class="step0-import-alias-guidance">Fast Triage·Full Scout의 공식 Asset·Company 표기는 유지됩니다. 이번 Listing의 이름은 검색용 별칭으로 자동 보존됩니다.</p>` : ''}
@@ -1125,8 +1158,8 @@ function renderStep0ImportReviewList() {
             `;
           }).join('')}
           <div class="data-reupload-candidate-actions">
-            <button type="button" class="identity-modal-cancel" data-step0-import-review-action="new" data-row-index="${match.row_index}"${decision.action === 'merge' ? ' disabled title="같은 Pipeline 연결을 선택했습니다."' : ''}>별도 신규 Pipeline으로 추가</button>
-            <button type="button" class="identity-modal-cancel" data-step0-import-review-action="skip" data-row-index="${match.row_index}"${decision.action === 'merge' ? ' disabled title="같은 Pipeline 연결을 선택했습니다."' : ''}>등록하지 않기</button>
+            <button type="button" class="identity-modal-cancel${isNew ? ' is-choice-selected' : hasSelection ? ' is-choice-muted' : ''}" data-step0-import-review-action="new" data-row-index="${match.row_index}" aria-pressed="${isNew}">별도 신규 Pipeline으로 추가</button>
+            <button type="button" class="identity-modal-cancel${isSkipped ? ' is-choice-selected' : hasSelection ? ' is-choice-muted' : ''}" data-step0-import-review-action="skip" data-row-index="${match.row_index}" aria-pressed="${isSkipped}">등록하지 않기</button>
           </div>
           ${decision.action === 'merge' ? `
             <div class="step0-import-alias-guidance">
@@ -2161,7 +2194,7 @@ function computeHardFilter(record, criteria) {
   if (passScores) {
     return {
       status: 'PASS',
-      reason: `Total ${total} >= 14, TR ${targetScore} >= 3, MOA ${moaScore} = 3, Data ${dataScore} = 3`
+      reason: `Total ${total} >= 14, TAR ${targetScore} >= 3, MOA ${moaScore} = 3, Data ${dataScore} = 3`
     };
   }
 
@@ -2169,7 +2202,7 @@ function computeHardFilter(record, criteria) {
     reasons.push(`Total score ${total} is REVIEW range 9-13`);
   }
   if (!passScores) {
-    reasons.push(`PASS score gate 미충족: Total ${total ?? '-'}, TR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
+    reasons.push(`PASS score gate 미충족: Total ${total ?? '-'}, TAR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
   }
   return { status: 'REVIEW', reason: reasons.join('; ') || '추가 diligence 필요' };
 }
@@ -3126,7 +3159,7 @@ function dueHalfLabel(period) {
 
 const MULTI_FILTER_KEYS = ['theme', 'cluster', 'modality', 'country', 'indication', 'stage', 'pass'];
 const SCORE_HEADER_FILTERS = {
-  targetScore: { label: 'TR', criterion: 'Target Area Relevance' },
+  targetScore: { label: 'TAR', criterion: 'Target Area Relevance' },
   moaScore: { label: 'MoA', criterion: 'MoA Validity' },
   dataScore: { label: 'Data', criterion: 'Data Maturity' },
   competitiveScore: { label: 'Comp', criterion: 'Competitive Landscape' },
@@ -3370,7 +3403,7 @@ function renderScoreHeaderFilterPopover({ focusExpression = false } = {}) {
     <div class="table-score-filter-option-grid" role="listbox" aria-label="${escapeHtml(definition.label)} exact score" aria-multiselectable="true">
       ${SCORE_FILTER_OPTIONS.filter((option) => option.value.startsWith('eq:')).map(optionButton).join('')}
     </div>
-    <p class="table-score-filter-helper">한 기준 안의 여러 조건은 OR, TR·MoA·Data 등 기준 간 조건은 AND로 적용됩니다.</p>
+    <p class="table-score-filter-helper">한 기준 안의 여러 조건은 OR, TAR·MoA·Data 등 기준 간 조건은 AND로 적용됩니다.</p>
     <div class="table-score-filter-actions"><button type="button" data-score-filter-done>완료</button></div>`;
   popover.hidden = false;
   positionScoreHeaderFilterPopover();
@@ -3795,6 +3828,24 @@ const PARTNERSHIP_LABELS = {
   '': 'Unknown'
 };
 
+function actionDateSummaryStatus(daysUntilDue) {
+  if (daysUntilDue < 0) return 'OVERDUE';
+  if (daysUntilDue === 0) return 'TODAY';
+  if (daysUntilDue <= 7) return 'WITHIN_7_DAYS';
+  if (daysUntilDue <= 30) return 'WITHIN_30_DAYS';
+  if (daysUntilDue <= 90) return 'WITHIN_90_DAYS';
+  return 'LONG_TERM';
+}
+
+const ACTION_DATE_SUMMARY_DETAILS = {
+  OVERDUE: { label: 'Overdue', tone: 'fail' },
+  TODAY: { label: 'Today', tone: 'urgent' },
+  WITHIN_7_DAYS: { label: '7일 이내', tone: 'review' },
+  WITHIN_30_DAYS: { label: '30일 이내', tone: 'review' },
+  WITHIN_90_DAYS: { label: '90일 이내', tone: 'neutral' },
+  LONG_TERM: { label: '중장기', tone: 'neutral' }
+};
+
 function uniqueAssetKey(row) {
   return `${String(row.company || '').trim().toLowerCase()}::${String(row.asset || '').trim().toLowerCase()}`;
 }
@@ -3936,7 +3987,7 @@ function fallbackTabSummary(mode, filteredRows = null) {
       .map((row) => {
         const due = new Date(`${row.focusDueDate}T00:00:00`);
         const days = Math.ceil((due - now) / 86400000);
-        const actionStatus = days < 0 ? 'OVERDUE' : days <= 30 ? 'WITHIN_30_DAYS' : 'SCHEDULED';
+        const actionStatus = actionDateSummaryStatus(days);
         return {
           ...fallbackCommonListItem(row),
           filter2: row.filter2,
@@ -4510,14 +4561,14 @@ function fullScoutTriageAlias(row) {
     isVirtualTriage: true,
     filter1: status,
     hardFilter: status,
-    hardFilterReason: earlyStop?.reason || 'Full Scout 완료로 Fast Triage 공통 기준(TR, MOA, Data)을 충족한 것으로 표시됩니다.'
+    hardFilterReason: earlyStop?.reason || 'Full Scout 완료로 Fast Triage 공통 기준(TAR, MOA, Data)을 충족한 것으로 표시됩니다.'
   };
 }
 
 function buildDashboardRows(records) {
   const rows = records.map(flattenRecord);
   const fullScoutIdentities = new Set(rows.filter((row) => !row.isTriage).flatMap((row) => [...workflowIdentityKeys(row)]));
-  // Once a Full Scout exists, its shared TR/MoA/Data assessment is the
+  // Once a Full Scout exists, its shared TAR/MoA/Data assessment is the
   // canonical Fast Triage view as well.  Keep no competing Tab 1 detail row.
   const triageRows = rows.filter((row) => !row.isTriage || ![...workflowIdentityKeys(row)].some((identity) => fullScoutIdentities.has(identity)));
   const fullScoutAliases = rows
@@ -4662,18 +4713,13 @@ function renderWorkflowPriorityList(summary) {
         const company = item.company || 'Unknown company';
         const indication = item.detailed_indication || item.main_indication || 'Unknown';
         if (mode === 'focus') {
-          const actionLabels = {
-            OVERDUE: 'Overdue',
-            WITHIN_30_DAYS: '30일 이내',
-            SCHEDULED: '예정'
-          };
-          const actionTone = item.action_status === 'OVERDUE' ? 'fail' : item.action_status === 'WITHIN_30_DAYS' ? 'review' : 'neutral';
+          const actionDetail = ACTION_DATE_SUMMARY_DETAILS[item.action_status] || { label: '확인 필요', tone: 'neutral' };
           return `
             <button type="button" class="priority-item workflow-priority-item" data-record-id="${escapeHtml(recordId)}">
               <span class="workflow-priority-main"><strong>${escapeHtml(asset)}</strong><small>${escapeHtml(company)}</small></span>
               <span class="workflow-priority-context">${escapeHtml(PARTNERSHIP_LABELS[item.partnership_type] || item.partnership_label || 'Unknown')} · ${escapeHtml(item.action_date)}</span>
               <span class="workflow-priority-badges">
-                ${workflowListBadge(actionLabels[item.action_status] || '확인 필요', actionTone)}
+                ${workflowListBadge(actionDetail.label, actionDetail.tone)}
                 ${item.human_override || item.partnership_source === 'manual' ? workflowListBadge('HUMAN', 'human') : ''}
               </span>
             </button>
@@ -4683,7 +4729,7 @@ function renderWorkflowPriorityList(summary) {
         return `
           <button type="button" class="priority-item workflow-priority-item" data-record-id="${escapeHtml(recordId)}">
             <span class="workflow-priority-main"><strong>${escapeHtml(asset)}</strong><small>${escapeHtml(company)}</small></span>
-            <span class="workflow-priority-context">${escapeHtml(item.main_indication || indication)} · Data ${item.data_maturity ?? '-'} · TR ${item.target_relevance ?? '-'}</span>
+            <span class="workflow-priority-context">${escapeHtml(item.main_indication || indication)} · Data ${item.data_maturity ?? '-'} · TAR ${item.target_relevance ?? '-'}</span>
             <span class="workflow-priority-badges">${workflowListBadge(decision, decision.toLowerCase())}<b class="workflow-total-score">${item.total_score ?? '-'} / ${item.max_score ?? 21}</b></span>
           </button>
         `;
@@ -4855,8 +4901,10 @@ function syncTopDataActionsForVisibleTab() {
   }
 
   if (elements.refreshButton) {
-    elements.refreshButton.dataset.tooltip = '저장된 Pipeline JSON을 다시 불러와 대시보드를 갱신합니다.';
+    elements.refreshButton.dataset.tooltip = '현재 페이지를 새로고침합니다. Score 기준 갱신은 각 Pipeline의 재평가 버튼에서 실행하세요.';
     elements.refreshButton.setAttribute('aria-label', '새로고침');
+    const label = elements.refreshButton.querySelector('.data-refresh-label');
+    if (label) label.textContent = '새로고침';
   }
 
   const isStep0Visible = Boolean(elements.step0Panel && !elements.step0Panel.hidden);
@@ -5678,7 +5726,7 @@ function renderTableLegacy() {
       <th><button data-sort="stage" type="button">Pipeline Stage</button></th>
       <th><button data-sort="filter1" type="button">Filter 1</button></th>
       <th><button data-sort="filter2" type="button">Filter 2</button></th>
-      <th><button data-sort="targetScore" type="button">TR</button></th>
+      <th><button data-sort="targetScore" type="button">TAR</button></th>
       <th><button data-sort="moaScore" type="button">MOA</button></th>
       <th><button data-sort="dataScore" type="button">Data</button></th>
       <th><button data-sort="competitiveScore" type="button">Comp</button></th>
@@ -5710,7 +5758,7 @@ function renderTableLegacy() {
         ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
       </tr>
       <tr class="pipeline-score-row">
-        <th><button data-sort="targetScore" type="button">TR</button></th>
+        <th><button data-sort="targetScore" type="button">TAR</button></th>
         <th><button data-sort="moaScore" type="button">MOA</button></th>
         <th><button data-sort="dataScore" type="button">Data</button></th>
         <th><button data-sort="competitiveScore" type="button">Comp</button></th>
@@ -5743,7 +5791,7 @@ function renderTableLegacy() {
         ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
       </tr>
       <tr class="pipeline-score-row">
-        ${sortableHeader('TR', 'targetScore', 'targetScore')}
+        ${sortableHeader('TAR', 'targetScore', 'targetScore')}
         ${sortableHeader('MOA', 'moaScore', 'moaScore')}
         ${sortableHeader('Data', 'dataScore', 'dataScore')}
         ${sortableHeader('Comp', 'competitiveScore', 'competitiveScore')}
@@ -5903,7 +5951,12 @@ function rubricReevaluationButton(row) {
   );
   const hasManualScoreOverride = Object.keys(humanReviewOverrides(row.raw)?.scores || {}).length > 0
     || hasManualTotalScoreOverride(row.raw);
-  const isCurrent = !hasManualScoreOverride && appliedVersion.replace(/^v/i, '') === latestVersion;
+  const hasCurrentDefinition = isTriage
+    || get(row.raw, 'meta.full_scout_rubric_definition_revision', '')
+      === LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION;
+  const isCurrent = !hasManualScoreOverride
+    && appliedVersion.replace(/^v/i, '') === latestVersion
+    && hasCurrentDefinition;
   const title = [
     isTriage
       ? `최신 ${workflowLabel} Rubric으로 배치 GPT 원문을 AI 재채점`
@@ -6201,7 +6254,7 @@ function renderTable() {
   const scoreColumns = activeScoreColumnKeys();
   const modeLabel = mode === 'triage' ? 'Fast Triage' : 'Full Scout';
   const scoreLabels = {
-    targetScore: 'TR',
+    targetScore: 'TAR',
     moaScore: 'MoA',
     dataScore: 'Data',
     competitiveScore: 'Comp',
@@ -7092,8 +7145,7 @@ async function recalculateLatestRubric(button) {
       return;
     }
     if (!data.record || ['error', 'conflict'].includes(data.status)) {
-      updateHeaderRecordCount();
-      return;
+      throw new Error(data.message || data.reason || `${workflowLabel} 최신 루브릭 재평가를 완료하지 못했습니다.`);
     }
     replaceRecordFromApi(recordId, data.record);
     await refreshDashboardSummary();
@@ -7817,7 +7869,7 @@ function buildDashboardAgentContext() {
         `cluster=${row.cluster}`,
         `stage=${row.stage}`,
         `scores=${row.totalScore}/${row.maxScore}`,
-        `TR=${row.targetScore}`,
+        `TAR=${row.targetScore}`,
         `Data=${row.dataScore}`,
         `Market=${row.marketScore}`,
         `filter1=${row.filter1}`,
@@ -9193,7 +9245,7 @@ function validateCombinedInput(value, expectedMode = '') {
           errors,
           'error',
           `${recordPath}.triage.status`,
-          `identity/activity/TR/MoA/Data 산식에 따른 status는 ${expectedStatus}여야 합니다. 현재 값: ${status}`
+          `identity/activity/TAR/MoA/Data 산식에 따른 status는 ${expectedStatus}여야 합니다. 현재 값: ${status}`
         );
       }
       const expectedRecommendation = {
@@ -9219,7 +9271,7 @@ function validateCombinedInput(value, expectedMode = '') {
       } else {
         const expectedTotal = trScore + moaScore + dataScore;
         if (!Number.isInteger(totalScore) || totalScore !== expectedTotal) {
-          addInputIssue(errors, 'error', `${recordPath}.scoring.total_score`, `TR/MoA/Data 합계 ${expectedTotal}와 일치해야 합니다.`);
+          addInputIssue(errors, 'error', `${recordPath}.scoring.total_score`, `TAR/MoA/Data 합계 ${expectedTotal}와 일치해야 합니다.`);
         }
         if (maxScore !== 9) {
           addInputIssue(errors, 'error', `${recordPath}.scoring.max_score`, 'Fast Triage total_score를 사용하면 max_score는 9여야 합니다.');
@@ -10505,7 +10557,7 @@ function buildGptInstructionPromptLegacy() {
 Mission:
 Evaluate exactly one biotech/pharma pipeline asset through company research, attachment review, public-source verification, competitor search, seven-criterion scoring, and evidence tracking. Return exactly one copyable fenced code block containing the Markdown report first and the valid JSON second.
 
-This is GPT instruction 2: Full Scout v3.7. State v3.7 in the Markdown report. In compact JSON, do not repeat schema/instruction/rubric version fields; the dashboard adds schema 3.2 and instruction/rubric 3.7 during deterministic expansion.
+This is GPT instruction 2: Full Scout v3.7. State v3.7 in the Markdown report as the original-report provenance, not as a later dashboard score-recalculation notice. In compact JSON, do not repeat schema/instruction/rubric version fields; the dashboard adds schema 3.2 and instruction/rubric 3.7 during deterministic expansion.
 
 Evidence Discipline (apply to every factual field and every scoring criterion):
 ${SHARED_EVIDENCE_DISCIPLINE}
@@ -10602,7 +10654,7 @@ Criterion-specific scoring (canonical; do not replace with a universal evidence 
 - Target Relevance — 0: asset identity is verified but indication/relevance information remains insufficient; 1: confirmed indication outside the broad SKBP neurologic/psychiatric/neuroimmune/neurodegenerative/pain scope; 2: confirmed indication within that broad scope but outside the six priority interests; 3: confirmed indication is one of the six priority interests. Generic Pain, acute pain, postoperative pain, and non-neuropathic pain are TR 2; neuropathic pain is TR 3. Target/MoA disease-biology fit and Theme/Cluster are classification or MoA information, not TR score bases.
 - MoA Validity — 0: target or MoA unconfirmed; 1: company claim or theoretical rationale only; 2: functional evidence or independent same-target/class validation; 3: assessed-asset target engagement, mechanism-linked PD/biomarker, or direct functional validation.
 - Data Maturity — 0: no asset-specific result in public sources or readable attachments; 1: qualitative claim or fragmentary result only; 2: at least one asset-specific quantitative evidence domain appropriate to the current stage; 3: at least two complementary quantitative domains addressing different development questions, with at least one directly supporting program progression. Source count, endpoint count, and repeated presentations of one experiment do not create extra domains.
-- Competitive Landscape evaluates competitive position and differentiation only; patient counts, price, market size, and peak sales belong only to Marketability. Similarity is High for same indication + same target/MoA + similar modality; Medium for same indication + same pathway/biology; Low for same indication only. Score 0: search scope/evidence insufficient to judge a direct competitor set; 1: competitors found but differentiation is claim/concept only with no asset-specific quantitative comparison; 2: asset-specific quantitative differentiation versus an appropriate comparator or realistic entry space; 3: sufficient search completed, high-similarity competitors are limited, and strong quantitative differentiation or a leading position is verified. Never award 3 merely because no competitor was found or by competitor count alone. Search at minimum: asset name/aliases; same indication + target/MoA; same indication + pathway/biology; approved, Phase 3, clinical, and major preclinical competitors; trial registries; and recent review, official-pipeline, or patent sources. Separate direct/high-similarity from broader competitors and record scope and limitations.
+- Competitive Landscape evaluates competitive position and differentiation only; patient counts, price, market size, and peak sales belong only to Marketability. Similarity is High only when the intended indication and primary therapeutic intervention are substantially aligned: the target/pathway intervention and therapeutic effector mechanism must both substantially overlap. Sharing only disease, pathological protein/biomarker, endpoint, or modality is insufficient and must be recorded as a broader/reference competitor. Score 0: search scope/evidence insufficient to judge a direct competitor set; 1: competitors found but differentiation is claim/concept only with no asset-specific quantitative comparison; 2: asset-specific quantitative differentiation versus an appropriate comparator, or a realistic entry space supported by a clear unresolved need in current care and asset-specific target/MoA, route, safety, or access evidence; unmet need, market size, or company positioning claim alone is insufficient. Direct head-to-head advantage need not yet be verified for Score 2. Score 3: sufficient documented search shows high-similarity competitors are limited, and assessed-asset direct head-to-head quantitative data against an appropriate high-similarity comparator in matched or comparable preclinical or clinical conditions demonstrates a material advantage in a decision-critical endpoint (efficacy, safety, PK/PD, delivery, or therapeutic window), supporting a leading position. Never award 3 merely because no competitor was found, from a cross-study comparison, or by competitor count alone. Search at minimum: asset name/aliases; same indication + target/MoA; same indication + pathway/biology; approved, Phase 3, clinical, and major preclinical competitors; trial registries; and recent review, official-pipeline, or patent sources. Separate direct/high-similarity from broader competitors and record scope and limitations.
 - Platform Attractiveness evaluates a reusable technical system whose common principles/design/manufacturing/delivery can generate multiple candidates/programs or improve performance. Score 0: no reusable structure or verifiable technical advantage; 1: reusable structure with plausible rationale but claim/concept-level differentiation; 2: at least one quantitative result showing technical advantage versus an appropriate comparator; 3: score 2 plus quantitative advantage reproduced across multiple conditions or multiple platform-derived assets and independent/external validation or use, or an officially linked platform-derived asset has reached First Patient Dosed. FPD alone is insufficient without score-2 quantitative evidence. Do not award points merely for preferred modality, indication expansion, multiple assets, or pipeline breadth.
 - Expansion Potential evaluates only additional indications for the assessed asset beyond its main indication. Score 0: none confirmed; 1: additional indication with biological rationale only; 2: asset-specific early quantitative data in at least one additional indication; 3: at least two distinct additional indications, at least one confirmed as an active asset-specific program, and asset-specific quantitative efficacy, PD, or biomarker data in that additional indication. An active program may be separately listed on the official pipeline or be in preclinical, IND-enabling, trial registration/authorization, or dosing; it is not limited to clinical development. Future opportunity, possible/planned evaluation, an indication list, platform-level expansion not tied to the asset, wording variants of one disease, and patient subgroups are not separate programs/indications. Do not award points for platform reuse, multiple platform assets, or platform breadth.
 
@@ -10635,7 +10687,7 @@ Use this exact report structure inside the Markdown portion of the single combin
 
 # [Company] Pipeline Scout Report: **[Asset]**
 
-Briefly state that this report was researched and scored with GPT instruction 2 — Full Scout v3.7 (schema v3.2), and that URLs are included for auditability.
+Include this short provenance statement near the top: "Original report provenance: researched and scored with GPT instruction 2 — Full Scout v3.7 (schema v3.2); URLs are included for auditability." Do not add later recalculation dates or revision history to the original report; the dashboard records those separately in change history.
 
 중요: 한 문장으로 filter/recommendation rationale을 먼저 씁니다. 예: 공개 자료상 active asset명·compound code·임상 단계가 명확히 확인되지 않아 stage/ownership은 uncertain / REVIEW로 처리합니다.
 
@@ -11482,6 +11534,12 @@ function renderStep0ImportSummary(result, { skippedRequiredRows = [] } = {}) {
       path: '대기열 중복',
       message: `새 행의 입력 항목이 더 많은 ${result.duplicate_in_queue_richer_replaced}건은 Listing 정보로 갱신했습니다.`
     }] : []),
+    ...(result.duplicate_in_queue_representative_applied ? [{
+      level: 'ok',
+      label: '선택 적용',
+      path: '유사 Pipeline 연결',
+      message: `${result.duplicate_in_queue_representative_applied}건은 선택한 Listing 값을 우선 적용하고 빈 칸을 보완했습니다.`
+    }] : []),
     ...(result.metadata_updated ? [{
       level: 'ok',
       label: '메모',
@@ -11529,6 +11587,18 @@ function showStep0Message(text, level = 'ok') {
       <span>${escapeHtml(text)}</span>
     </div>
   `;
+}
+
+let step0ActionNoticeTimer = null;
+function showStep0ActionNotice(text, level = 'success') {
+  document.querySelector('.step0-action-notice')?.remove();
+  if (step0ActionNoticeTimer) window.clearTimeout(step0ActionNoticeTimer);
+  const notice = document.createElement('div');
+  notice.className = `step0-action-notice is-${level}`;
+  notice.setAttribute('role', 'status');
+  notice.innerHTML = `<span aria-hidden="true">${level === 'success' ? '✓' : '!'}</span><p>${escapeHtml(text)}</p>`;
+  document.body.appendChild(notice);
+  step0ActionNoticeTimer = window.setTimeout(() => notice.remove(), 4200);
 }
 
 const STEP0_ENTRY_FIELDS = [
@@ -11899,7 +11969,12 @@ function pasteIntoStep0EntryGrid(event) {
 
 async function listingImportJsonResponse(response) {
   const payload = await response.json().catch(() => ({}));
-  if (response.ok) return payload;
+  if (response.ok && payload && typeof payload === 'object' && payload.ok === true) return payload;
+  if (response.ok) {
+    const error = new Error('서버가 Listing 저장 결과를 확인할 수 없는 형식으로 반환했습니다. Pipeline Table을 새로고침하여 반영 여부를 확인해 주세요.');
+    error.status = 502;
+    throw error;
+  }
   const error = new Error(String(payload?.detail || payload?.message || `HTTP ${response.status}`));
   error.status = response.status;
   throw error;
@@ -11913,6 +11988,15 @@ function listingImportFailureCopy(error) {
       title: '가져오기 권한이 없습니다',
       message: '저장하지 않았습니다. 관리자 계정으로 로그인한 뒤 다시 시도해 주세요.',
       status: '로그인 또는 관리자 권한을 확인해 주세요.'
+    };
+  }
+  if (status === 409 && /similar Listing|no longer available|review decision|Select an action/i.test(message)) {
+    return {
+      title: 'Listing 목록이 변경되어 다시 확인이 필요합니다',
+      message: '다른 사용자의 저장 또는 삭제로 방금 선택한 연결 대상이 달라졌습니다. 현재 Pipeline Table을 새로고침한 뒤 다시 선택해 주세요.',
+      status: '입력한 Listing은 이번 요청으로 저장되지 않았습니다.',
+      action: 'refresh',
+      actionLabel: '목록 새로고침'
     };
   }
   if (error?.name === 'TypeError' || /failed to fetch|networkerror|network request failed/i.test(message)) {
@@ -11977,6 +12061,56 @@ function showListingImportFailureDialog(error) {
   });
 }
 
+function showListingImportRefreshDialog({ title, message, status, actionLabel = '목록 새로고침' }) {
+  return new Promise((resolve) => {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'operation-modal-backdrop listing-import-error-backdrop';
+    backdrop.innerHTML = `
+      <section class="operation-modal listing-import-error-modal" role="dialog" aria-modal="true" aria-labelledby="listingImportRefreshTitle" aria-describedby="listingImportRefreshMessage">
+        <header class="operation-modal-header">
+          <span class="operation-modal-mark listing-import-error-mark" aria-hidden="true">!</span>
+          <div><p class="operation-modal-eyebrow">LISTING STATUS</p><h2 id="listingImportRefreshTitle">${escapeHtml(title)}</h2></div>
+        </header>
+        <p class="operation-modal-copy" id="listingImportRefreshMessage">${escapeHtml(message)}</p>
+        <p class="operation-modal-status">${escapeHtml(status)}</p>
+        <footer class="operation-modal-actions operation-confirm-actions">
+          <button type="button" class="operation-modal-cancel" data-listing-refresh-close>나중에 확인</button>
+          <button type="button" class="operation-modal-confirm listing-import-error-retry" data-listing-refresh-action>${escapeHtml(actionLabel)}</button>
+        </footer>
+      </section>`;
+    const finish = (action = 'close') => {
+      document.removeEventListener('keydown', onKeydown);
+      backdrop.remove();
+      document.body.classList.remove('operation-modal-open');
+      resolve(action);
+    };
+    const onKeydown = (event) => { if (event.key === 'Escape') finish(); };
+    backdrop.addEventListener('click', (event) => { if (event.target === backdrop) finish(); });
+    backdrop.querySelector('[data-listing-refresh-close]')?.addEventListener('click', () => finish());
+    backdrop.querySelector('[data-listing-refresh-action]')?.addEventListener('click', () => finish('refresh'));
+    document.body.appendChild(backdrop);
+    document.body.classList.add('operation-modal-open');
+    document.addEventListener('keydown', onKeydown);
+    backdrop.querySelector('[data-listing-refresh-action]')?.focus();
+  });
+}
+
+async function refreshListingProgressAfterSave({ successMessage = '', failureMessage = '' } = {}) {
+  try {
+    await loadStep0Progress({ throwOnError: true });
+    if (successMessage) {
+      showStep0Message(successMessage, 'warning');
+      showStep0ActionNotice(successMessage, 'warning');
+    }
+    return true;
+  } catch (_error) {
+    const message = failureMessage || 'Pipeline Table을 불러오지 못했습니다. 네트워크를 확인한 뒤 페이지를 새로고침해 주세요.';
+    showStep0Message(message, 'warning');
+    showStep0ActionNotice(message, 'warning');
+    return false;
+  }
+}
+
 async function importStep0Candidates() {
   if (!getCurrentUser()?.is_admin) {
     showStep0Message('가져오기 권한이 없습니다. 안내창의 내용을 확인해 주세요.', 'warning');
@@ -12039,24 +12173,49 @@ async function importStep0Candidates() {
     });
     if (result === OPERATION_CANCELLED) {
       setStep0SaveStatus('waiting');
+      const action = await showListingImportRefreshDialog({
+        title: '저장 취소를 요청했습니다',
+        message: '브라우저 요청은 중단했지만 서버 저장이 이미 시작되었다면 일부 또는 전체가 반영됐을 수 있습니다.',
+        status: '목록을 새로고침해 실제 저장 결과를 확인해 주세요.',
+        actionLabel: '저장 결과 확인'
+      });
+      if (action === 'refresh') {
+        await refreshListingProgressAfterSave({
+          successMessage: '취소 요청 뒤 최신 Pipeline Table을 불러왔습니다. 방금 입력한 Listing의 반영 여부를 확인해 주세요.',
+          failureMessage: '취소 요청 후 저장 결과를 확인하려 했지만 Pipeline Table을 불러오지 못했습니다. 네트워크를 확인한 뒤 페이지를 새로고침해 주세요.'
+        });
+      }
       return;
     }
     renderStep0ImportSummary(result, { skippedRequiredRows });
     renderStep0EntryGrid();
     showStep0PasteFeedback('');
     setStep0SaveStatus('saved');
-    await loadStep0Progress();
+    const savedMessage = `Listing 저장이 완료되었습니다. 신규 ${result.added}건, 기존 Pipeline 연결·보완 ${result.metadata_updated}건을 반영했습니다.`;
+    showStep0ActionNotice(savedMessage, 'success');
+    const refreshed = await refreshListingProgressAfterSave({
+      failureMessage: 'Listing 저장은 완료되었지만 Pipeline Table을 불러오지 못했습니다. 네트워크를 확인한 뒤 페이지를 새로고침해 주세요.'
+    });
+    if (!refreshed) {
+      const action = await showListingImportRefreshDialog({
+        title: 'Listing 저장은 완료되었습니다',
+        message: '그러나 Pipeline Table을 새로 불러오지 못해 화면에 바로 표시되지 않을 수 있습니다.',
+        status: '저장 자체는 완료됐습니다. 목록을 다시 불러오거나 페이지를 새로고침해 결과를 확인해 주세요.'
+      });
+      if (action === 'refresh') await refreshListingProgressAfterSave();
+    }
   } catch (error) {
-    showStep0Message('가져오기에 실패했습니다. 안내창의 내용을 확인한 뒤 다시 시도해 주세요.', 'error');
+    const failureCopy = listingImportFailureCopy(error);
+    const failureMessage = `${failureCopy.title}: ${failureCopy.status}`;
+    showStep0Message(failureMessage, 'error');
     setStep0SaveStatus('error');
     const action = await showListingImportFailureDialog(error);
+    if (action === 'close') showStep0ActionNotice(failureMessage, 'error');
     if (action === 'refresh') {
-      try {
-        await loadStep0Progress();
-        showStep0Message('Pipeline Table을 새로 불러왔습니다. 저장된 항목이 없다면 가져오기를 다시 시도해 주세요.', 'warning');
-      } catch (refreshError) {
-        showStep0Message('Pipeline Table도 새로 불러오지 못했습니다. 서버 연결을 확인한 뒤 다시 시도해 주세요.', 'error');
-      }
+      await refreshListingProgressAfterSave({
+        successMessage: 'Pipeline Table을 새로 불러왔습니다. 앞선 요청의 저장 여부를 확인해 주세요.',
+        failureMessage: 'Pipeline Table을 새로 불러오지 못했습니다. 서버 연결을 확인한 뒤 다시 시도해 주세요.'
+      });
     } else if (action === 'retry') {
       window.setTimeout(() => importStep0Candidates(), 0);
     }
@@ -12069,7 +12228,7 @@ function step0ProgressSnapshot(rows, stats, recentStats) {
   return JSON.stringify({ rows, stats, recentStats });
 }
 
-async function loadStep0Progress({ renderOnlyWhenChanged = false } = {}) {
+async function loadStep0Progress({ renderOnlyWhenChanged = false, throwOnError = false } = {}) {
   const requestId = (state.step0ProgressLoadRequestId || 0) + 1;
   state.step0ProgressLoadRequestId = requestId;
   try {
@@ -12108,6 +12267,7 @@ async function loadStep0Progress({ renderOnlyWhenChanged = false } = {}) {
       elements.step0ProgressTableBody.innerHTML =
         `<tr><td colspan="14" class="step0-empty-state">진척 현황을 불러오지 못했습니다: ${escapeHtml(error.message)}</td></tr>`;
     }
+    if (throwOnError) throw error;
   }
 }
 
@@ -12332,7 +12492,9 @@ function step0ListingCommentCanEdit(row) {
   const comment = String(metadata.comment || '').trim();
   if (!comment) return true;
   const source = String(metadata.comment_source || '').trim();
-  if (source === 'team_review_import') return Boolean(user?.is_developer);
+  // Imported and pre-provenance Listing comments are shared Tab 0 content.
+  // Any administrator can correct or remove them; direct posts stay author-owned.
+  if (source === 'team_review_import' || !source) return true;
   if (source !== 'admin_listing_post') return false;
   return step0MetadataOwnedByCurrentUser(metadata, 'comment', user);
 }
@@ -13237,13 +13399,14 @@ function step0MetadataValue(row, field) {
   return String(row?.metadata?.[field] || '').trim();
 }
 
-async function saveStep0Metadata(row, field, value, status) {
+async function saveStep0Metadata(row, field, value, status, { deleting = false } = {}) {
   const owner = row?.metadata_owner || {};
   const payload = {
     owner_type: owner.type,
     field,
     value: String(value || '').trim()
   };
+  if (deleting) payload.delete = true;
   if (owner.type === 'queue') payload.queue_id = owner.queue_id;
   if (owner.type === 'record') payload.record_id = owner.record_id;
   if (!payload.owner_type || (!payload.queue_id && !payload.record_id)) {
@@ -13261,7 +13424,14 @@ async function saveStep0Metadata(row, field, value, status) {
   closeStep0MetadataPopover();
   await loadStep0Progress();
   const savedLabel = field === 'comment' ? 'Comment' : field === 'contact' ? 'Contact' : 'Website';
-  showStep0Message(`${savedLabel}를 저장했습니다.`, 'success');
+  const wasDeleted = !String(payload.value || '').trim();
+  const successMessage = wasDeleted && field === 'contact'
+    ? 'Contact History를 삭제했습니다. Pipeline Table과 연결된 Team Review 표시에 반영했습니다.'
+    : wasDeleted
+      ? `${savedLabel}를 삭제했습니다. Pipeline Table과 연결된 Team Review 표시에 반영했습니다.`
+      : `${savedLabel}를 저장했습니다.`;
+  showStep0Message(successMessage, 'success');
+  showStep0ActionNotice(successMessage, 'success');
 }
 
 function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) {
@@ -13361,11 +13531,21 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
     if (!await confirmDashboardDelete({ title: `${postLabel}를 삭제할까요?`, message: `삭제한 ${postLabel}는 복구할 수 없습니다.` })) return;
     const button = event.currentTarget;
     button.disabled = true;
+    button.classList.add('is-deleting');
+    button.setAttribute('aria-label', `${postLabel} 삭제 중`);
+    button.title = '삭제 중';
+    button.textContent = '…';
     try {
-      await saveStep0Metadata(row, field, '');
+      showStep0ActionNotice(`${postLabel}를 삭제하고 있습니다.`, 'success');
+      await saveStep0Metadata(row, field, '', null, { deleting: true });
     } catch (error) {
       button.disabled = false;
+      button.classList.remove('is-deleting');
+      button.setAttribute('aria-label', `${postLabel} 삭제`);
+      button.title = '삭제';
+      button.textContent = '×';
       showStep0Message(error.message || `${postLabel}를 삭제하지 못했습니다.`, 'warning');
+      showStep0ActionNotice(error.message || `${postLabel}를 삭제하지 못했습니다.`, 'error');
     }
   });
   popover.querySelector('[data-step0-metadata-form]')?.addEventListener('submit', async (event) => {
@@ -14208,10 +14388,11 @@ function setTableMode(mode) {
   state.selectedIds.clear();
   normalizeSortForMode(nextMode);
 
-  const nextUrl = new URL(window.location.href);
-  nextUrl.searchParams.set('tab', nextMode);
-  window.history.replaceState(null, '', `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
-
+  // Deliberately does not rewrite the URL to ?tab=<mode>: this used to make a
+  // plain page refresh reopen whatever tab was last clicked instead of the
+  // intended default landing tab (Shortlisting). Explicit ?tab= deep links
+  // (e.g. a detail page's back link) still work since those set the initial
+  // tab directly from the URL at load time, before any tab click happens.
   renderFilters();
   render();
   if (elements.criteriaDrawer.classList.contains('open')) updateCriteriaDrawerScope();
@@ -14765,16 +14946,7 @@ elements.refreshButton.addEventListener('click', () => {
     });
     return;
   }
-  runBlockingOperation({
-    title: '대시보드를 새로고침하고 있습니다',
-    message: '최신 파이프라인과 요약 정보를 불러오고 있습니다.',
-    status: '불러오기가 끝날 때까지 잠시만 기다려 주세요.'
-  }, (signal) => loadRecords({ signal })).then((result) => {
-    if (result === OPERATION_CANCELLED) elements.dataStatus.textContent = '새로고침 취소 요청됨';
-  }).catch((error) => {
-    elements.dataStatus.textContent = 'Load failed';
-    elements.saveStatus.textContent = error.message;
-  });
+  window.location.reload();
 });
 
 elements.dataUploadShortcutButton?.addEventListener('click', scrollToDataUpload);
@@ -14834,18 +15006,18 @@ function applyStep0SummaryDashboardHidden(hidden) {
   }
 }
 
-applyVisualDashboardHidden(localStorage.getItem(VISUAL_DASHBOARD_HIDDEN_KEY) === 'true');
-applyStep0SummaryDashboardHidden(localStorage.getItem('skbp.dashboard.step0SummaryDashboardHidden.v1') === 'true');
+// Always start expanded on every load/tab, regardless of any prior session's
+// toggle choice — a collapsed default was surprising users landing here fresh.
+applyVisualDashboardHidden(false);
+applyStep0SummaryDashboardHidden(false);
 
 elements.visualDashboardToggleButton?.addEventListener('click', () => {
   const hidden = !elements.visualGrid?.classList.contains('is-collapsed');
   applyVisualDashboardHidden(hidden);
-  localStorage.setItem(VISUAL_DASHBOARD_HIDDEN_KEY, String(hidden));
 });
 elements.step0SummaryDashboardToggleButton?.addEventListener('click', () => {
   const hidden = !elements.step0WorkflowCardCanvases?.[0]?.classList.contains('is-collapsed');
   applyStep0SummaryDashboardHidden(hidden);
-  localStorage.setItem('skbp.dashboard.step0SummaryDashboardHidden.v1', String(hidden));
   if (!hidden) {
     // Rebuild from scratch so re-expanding replays the same staggered
     // entry animation as the first Tab 0 load, instead of resuming
@@ -14926,7 +15098,6 @@ elements.pipelineTableTabs?.forEach((tab) => {
 
 elements.knowledgeMapTab?.addEventListener('click', (event) => {
   event.preventDefault();
-  window.history.replaceState(null, '', '/?tab=map');
   activatePipelineTab('map');
 });
 
@@ -15063,11 +15234,21 @@ elements.step0ImportReviewList?.addEventListener('click', (event) => {
     renderStep0ImportReviewList();
     return;
   }
+  const requestedAction = button.dataset.step0ImportReviewAction === 'merge'
+    ? 'merge'
+    : button.dataset.step0ImportReviewAction === 'skip' ? 'skip' : 'new';
+  const requestedTarget = button.dataset.target || '';
+  const current = activeStep0ImportReviewDecisions.get(rowIndex) || { action: 'pending', target: '' };
+  const isSameChoice = current.action === requestedAction
+    && (requestedAction !== 'merge' || current.target === requestedTarget);
+  if (isSameChoice) {
+    activeStep0ImportReviewDecisions.delete(rowIndex);
+    renderStep0ImportReviewList();
+    return;
+  }
   activeStep0ImportReviewDecisions.set(rowIndex, {
-    action: button.dataset.step0ImportReviewAction === 'merge'
-      ? 'merge'
-      : button.dataset.step0ImportReviewAction === 'skip' ? 'skip' : 'new',
-    target: button.dataset.target || '',
+    action: requestedAction,
+    target: requestedTarget,
     representative: 'existing'
   });
   renderStep0ImportReviewList();

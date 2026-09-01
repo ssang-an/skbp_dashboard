@@ -239,7 +239,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
 
     def test_tab1_and_tab2_tr_groups_have_subtle_frames(self):
         self.assertEqual(HTML.count('aria-label="Target Area Relevance priority indications and themes"'), 2)
-        tr_group_styles = CSS[CSS.index("Gently frame the three TR indication/theme groups") :]
+        tr_group_styles = CSS[CSS.index("Gently frame the three TAR indication/theme groups") :]
         self.assertIn(".target-parameter-card > .parameter-evidence-list > li", tr_group_styles)
         self.assertIn("border: 1px solid color-mix", tr_group_styles)
         self.assertIn("var(--line) 62%", tr_group_styles)
@@ -483,7 +483,9 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             step0.index('class="step0-summary-dashboard"'),
         )
         self.assertIn('function applyStep0SummaryDashboardHidden', JS)
-        self.assertIn("skbp.dashboard.step0SummaryDashboardHidden.v1", JS)
+        # Always starts expanded regardless of any earlier session's toggle choice.
+        self.assertIn('applyVisualDashboardHidden(false);', JS)
+        self.assertIn('applyStep0SummaryDashboardHidden(false);', JS)
         self.assertIn('.step0-summary-dashboard-heading', CSS)
         self.assertIn('step0WorkflowCardCanvases', JS)
         self.assertIn('.step0-workflow-card-canvas.is-collapsed', CSS)
@@ -914,7 +916,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('class="parameter-card-wide marketability-parameter-card parameter-horizontal-card parameter-breakdown-card full-parameter-card"', section)
 
         parameters = (
-            ('TR', 'Target Area Relevance'),
+            ('TAR', 'Target Area Relevance'),
             ('MoA', 'MoA Validity'),
             ('DATA', 'Data Maturity'),
             ('COMP', 'Competitive Landscape'),
@@ -991,7 +993,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         scoring = HTML[start:end]
         self.assertEqual(scoring.count('class="criteria-table-criterion"'), 7)
         for abbreviation, label in (
-            ("TR", "Target Area Relevance"),
+            ("TAR", "Target Area Relevance"),
             ("COMP", "Competitive Landscape"),
             ("MoA", "MoA Validity"),
             ("PLATFORM", "Platform Attractiveness"),
@@ -1204,7 +1206,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         styles = CSS[CSS.index("/* Tab 1 Parameter titles mirror") :]
 
         self.assertEqual(parameter.count('class="criteria-parameter-heading criteria-parameter-title-row"'), 3)
-        for short_label, title in (("TR", "Target Area Relevance"), ("MoA", "MoA Validity"), ("Data", "Data Maturity")):
+        for short_label, title in (("TAR", "Target Area Relevance"), ("MoA", "MoA Validity"), ("Data", "Data Maturity")):
             self.assertIn(f'<h3><b>{short_label}</b><span>{title}</span></h3>', parameter)
         self.assertNotIn("1. Target Relevance", parameter)
         self.assertNotIn("2. MoA Validity", parameter)
@@ -1239,7 +1241,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("criteria-full-scoring-helpers", full)
         self.assertEqual(full.count('class="criteria-table-criterion"'), 7)
         for abbreviation, criterion in (
-            ("TR", "Target Area Relevance"),
+            ("TAR", "Target Area Relevance"),
             ("COMP", "Competitive Landscape"),
             ("MoA", "MoA Validity"),
             ("PLATFORM", "Platform Attractiveness"),
@@ -1841,7 +1843,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         fallback_summary = function_body(JS, "fallbackTabSummary")
         self.assertIn("if (!row.focusDueDate) return false;", fallback_summary)
         self.assertIn("Number(a.action_due_at) - Number(b.action_due_at)", fallback_summary)
-        self.assertIn("SCHEDULED", fallback_summary)
+        self.assertIn("actionDateSummaryStatus(days)", fallback_summary)
+        self.assertIn("LONG_TERM", JS)
         self.assertNotIn("Action 우선순위", JS)
         priority_scroll = CSS[CSS.index(".workflow-priority-list {") :]
         self.assertIn("max-height: 260px", priority_scroll)
@@ -1983,9 +1986,9 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
 
         for copy in (
             "점수에 사용되는 근거와 출처 원칙",
-            "TR 평가에 사용 가능",
+            "TAR 평가에 사용 가능",
             "판단에 사용된 출처와 핵심 사실 표시",
-            "TR: 사용자 입력정보 및 공개자료 모두 사용 가능",
+            "TAR: 사용자 입력정보 및 공개자료 모두 사용 가능",
             "MoA·Data 2점 이상: 공개 asset-specific 근거 필요",
             "출처 개수 자체로 점수를 결정하지 않습니다.",
         ):
@@ -2001,7 +2004,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         balance = CSS[CSS.rindex("Give the longer Tab 1 evaluation-principle copy more horizontal room") :]
         self.assertIn("@media (min-width: 761px)", balance)
         self.assertIn("minmax(0, 0.875fr) minmax(0, 0.875fr) minmax(0, 1.25fr)", balance)
-        self.assertNotIn("TR: 사용자 입력정보 및 공개자료 모두 사용 가능.</li>", evidence)
+        self.assertNotIn("TAR: 사용자 입력정보 및 공개자료 모두 사용 가능.</li>", evidence)
 
 
     def test_triage_evidence_definition_cards_use_bullet_lists(self):
@@ -2661,7 +2664,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         collaboration = function_body(DETAIL_JS, "renderCollaborationPanel")
         score_refresh = function_body(DETAIL_JS, "refreshRubric")
         oi_refresh = function_body(DETAIL_JS, "refreshOiPartnership")
-        self.assertIn("detailDecisionOrigin.textContent = `Rubric v${getDisplayRubricVersion(record)}`", collaboration)
+        self.assertIn("detailDecisionOrigin.textContent = `Score 기준 v${appliedVersion}`", collaboration)
         self.assertIn("detailOiPartnershipOrigin.textContent = `OI Partnership v${", collaboration)
         self.assertIn("const manualScoreOverrides = record?.meta?.human_review?.overrides?.scores || {};", collaboration)
         self.assertIn("Object.prototype.hasOwnProperty.call(manualScoreOverrides, criterionId)", collaboration)
@@ -2874,8 +2877,9 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("GPT 원문 갱신일", labels)
         self.assertIn("paste_json_upsert", labels)
         self.assertIn("GPT 원문 재업로드일", labels)
-        self.assertIn("dashboard_tab2_rubric_recalculation", labels)
-        self.assertIn("GPT 원문·Score 갱신일", labels)
+        self.assertNotIn("dashboard_tab2_rubric_recalculation", labels)
+        rubric_label = function_body(DETAIL_JS, "rubricRefreshAuditLabel")
+        self.assertIn("Score recalculated by Full Scout Rubric", rubric_label)
         return
         scope_style = CSS[CSS.index(".attachments-empty,\n.attachment-ai-scope") :]
         scope_only = scope_style[scope_style.index(".attachment-ai-scope {\n  font-size") :]

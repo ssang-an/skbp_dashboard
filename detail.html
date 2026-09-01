@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pipeline Detail</title>
-    <link rel="icon" type="image/svg+xml" href="./src/sk-butterfly.svg?v=20260802-1" />
+    <title>PRISM · Pipeline Detail</title>
+    <link rel="icon" type="image/svg+xml" href="./src/prism.svg?v=20260831-1" />
     <script>
       (() => {
         const stored = localStorage.getItem('skbp.ui.theme');
@@ -12,13 +12,13 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260827-review-workspace-density-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260901-detail-brand-without-icon-1" />
   </head>
   <body>
     <div class="app-shell detail-shell">
       <header class="topbar">
         <a class="topbar-home-link" href="/" aria-label="홈 대시보드로 이동">
-          <p class="eyebrow">SKBP Pipeline Finder</p>
+          <p class="eyebrow detail-brand-lockup">SKBP PIPELINE FINDER <i>·</i> PRISM</p>
           <h1 id="detailTitle">Details : Loading</h1>
         </a>
         <div class="top-actions" aria-label="Detail actions">
@@ -273,7 +273,7 @@
                   </div>
                   <div class="action-info-fields">
                     <input id="detailActionDate" type="date" autocomplete="off" aria-label="Action date" />
-                    <input id="detailActionOwner" type="text" maxlength="100" autocomplete="off" placeholder="담당자" aria-label="담당자 이름" />
+                    <input id="detailActionOwner" type="text" maxlength="100" autocomplete="off" placeholder="담당자 이름 또는 이메일" aria-label="담당자 이름 또는 이메일" title="가입된 활성 사용자 이름 또는 이메일을 정확히 입력하세요. 해당 계정으로 Action Date 알림이 발송됩니다." />
                   </div>
                   <input
                     id="detailActionPlan"
@@ -305,9 +305,8 @@
                     <p class="eyebrow" id="qualitativeWorkspaceTitle">DUE DILIGENCE</p>
                   <button
                     type="button"
-                    class="panel-icon-button workspace-upload-button help-tooltip"
+                    class="panel-icon-button workspace-upload-button"
                     id="detailDDReportUploadButton"
-                    data-tooltip="DD 리포트 파일 업로드 (최대 30MB)"
                     aria-label="DD 리포트 파일 업로드"
                   ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7.5 8.5 12 4l4.5 4.5"></path><path d="M5 13v6h14v-6"></path></svg></button>
                   <span id="detailDDReportFileCount" class="workspace-upload-count" aria-label="DD 리포트 첨부 파일 개수" hidden>0</span>
@@ -393,9 +392,8 @@
                   <p class="eyebrow" id="detailContactHistoryTitle">Contact History</p>
                   <button
                     type="button"
-                    class="panel-icon-button workspace-upload-button help-tooltip"
+                    class="panel-icon-button workspace-upload-button"
                     id="detailContactHistoryUploadButton"
-                    data-tooltip="회의록, 이메일 내용이 포함된 파일 등을 업로드할 수 있습니다. (최대 30MB)"
                     aria-label="회의록, 이메일 내용이 포함된 파일 업로드"
                   ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7.5 8.5 12 4l4.5 4.5"></path><path d="M5 13v6h14v-6"></path></svg></button>
                   <span id="detailContactHistoryFileCount" class="workspace-upload-count" aria-label="Contact History 첨부 파일 개수" hidden>0</span>
@@ -562,7 +560,7 @@
           <h3>GPT 지침 2 — Full Scout · v3.7 기준</h3>
           <p>
             지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
-            지침 1에서 예비로 본 TR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
+            지침 1에서 예비로 본 TAR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
             Competitive Landscape, Platform, Expansion, Marketability까지 완성해 최종 <code>PASS</code>, <code>REVIEW</code>, <code>FAIL</code>로 판단합니다.
           </p>
         </section>
@@ -610,7 +608,7 @@
             <h3>FAIL</h3>
             <ul>
               <li>Total score <= 8</li>
-              <li>또는 TR / MoA / Data 중 하나가 0점</li>
+              <li>또는 TAR / MoA / Data 중 하나가 0점</li>
             </ul>
           </article>
         </section>
@@ -662,10 +660,10 @@
                 </tr>
                 <tr>
                   <th>Competitive Landscape</th>
-                  <td>정보 부족 또는 front runner 5개 이상</td>
+                  <td>검색 또는 근거 부족으로 direct competitor와 경쟁구도 판단 불가</td>
                   <td>경쟁자는 확인되나 차별성은 claim 또는 이론 수준</td>
-                  <td>Comparator 대비 asset-specific 정량 차별성 또는 현실적 진입공간 확인</td>
-                  <td>충분한 검색 후 high-similarity 경쟁자가 제한적이고 강한 정량 차별성 또는 선도 위치 확인</td>
+                  <td>Comparator 대비 asset-specific 정량 차별성, 또는 뚜렷한 미충족 수요를 asset-specific 근거로 해결할 진입공간</td>
+                  <td>제한적인 high-similarity 경쟁 + 직접 head-to-head 정량 우위로 선도 위치 확인</td>
                 </tr>
                 <tr>
                   <th>Platform Attractiveness</th>
@@ -843,6 +841,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260830-tr3-gates-1"></script>
+    <script type="module" src="./src/detail.js?v=20260901-ai-revision-note-visibility-1"></script>
   </body>
 </html>

@@ -2,7 +2,7 @@ import { setupThemeToggle } from './theme.js';
 
 import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
 import { initPageJumpControls } from './page-jump.js?v=20260823-page-jump-1';
-import { getCurrentUser, initAuthUI, openAuthModal, requireAuth } from './auth.js?v=20260802-required-login-1';
+import { getCurrentUser, initAuthUI, openAuthModal, requireAuth } from './auth.js?v=20260831-password-reset-2';
 import { expandCompactInputRecord } from './compact-ingestion.js?v=20260806-theme-indication-3';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260805-ingestion-guard-5';
 
@@ -330,11 +330,25 @@ function isPlaceholderRawMarkdown(value) {
     || text === 'Markdown report is provided separately in the MD copy box.';
 }
 
-function normalizeGptOriginalReport(value) {
-  return String(value || '')
+function normalizeGptOriginalReport(value, { showAiRevisionNote = false } = {}) {
+  const normalized = String(value || '')
     .replace(/[ \t]*:contentReference\[[^\]\r\n]*\]\{[^}\r\n]*\}/gi, '')
     .replace(/[ \t]*\[?oaicite:[^\]\s}]+\]?/gi, '')
-    .replace(/(?:<|&lt;)\s*br\s*\/?\s*(?:>|&gt;)/gi, '\n');
+    .replace(/(?:<|&lt;)\s*br\s*\/?\s*(?:>|&gt;)/gi, '\n')
+    // Older dashboard releases wrote recalculation and AI-agent revision
+    // notices into the source report. Keep the stored source recoverable, but
+    // keep the GPT Original Report viewer limited to the original research.
+    .replace(/^>\s*\*\*Recalculated by (?:Full Scout|Fast Triage) Rubric v[^\n]*\*\*[^\n]*(?:\r?\n){1,2}/gim, '')
+    .replace(/^>\s*\*\*기준 업데이트\s*\(v[^)]*\):\*\*[^\n]*(?:\r?\n){1,2}/gim, '');
+  return showAiRevisionNote
+    ? normalized
+    : normalized.replace(/\r?\n?---\s*\r?\n\s*## AI Agent Revision Note \([^\n]*\)[\s\S]*$/im, '');
+}
+
+function sourceReportHasCurrentAiRevision(record) {
+  const revisionHistory = record?.source_report?.revision_history;
+  return Array.isArray(revisionHistory)
+    && revisionHistory.some((entry) => entry?.source === 'detail_ai_agent');
 }
 
 function getRubricMetadata(record) {
@@ -362,6 +376,17 @@ function getDisplayRubricVersion(record) {
 
 function getDisplayRubricAuthor(record) {
   return getRubricMetadata(record).author;
+}
+
+function getAppliedScoreRubricVersion(record) {
+  const meta = record?.meta || {};
+  const recalculation = meta.rubric_recalculation || {};
+  return String(
+    meta.rubric_reviewed_version
+    || meta.rescored_rubric_version
+    || recalculation.version
+    || getDisplayRubricVersion(record)
+  ).replace(/^v/i, '');
 }
 
 function isFastTriageRecord(record) {
@@ -506,7 +531,7 @@ function computeHardFilter(record) {
   if (passScores) {
     return {
       status: 'PASS',
-      reason: `Total ${total} >= 14, TR ${targetScore} >= 2, MOA ${moaScore} = 3, Data ${dataScore} = 3`
+      reason: `Total ${total} >= 14, TAR ${targetScore} >= 2, MOA ${moaScore} = 3, Data ${dataScore} = 3`
     };
   }
 
@@ -514,7 +539,7 @@ function computeHardFilter(record) {
     reasons.push(`Total score ${total} is REVIEW range 9-13`);
   }
   if (!passScores) {
-    reasons.push(`PASS score gate 미충족: Total ${total ?? '-'}, TR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
+    reasons.push(`PASS score gate 미충족: Total ${total ?? '-'}, TAR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
   }
   return { status: 'REVIEW', reason: reasons.join('; ') || '추가 diligence 필요' };
 }
@@ -1100,7 +1125,7 @@ function resizeOiPartnershipNoteInput() {
 }
 
 const reviewScoreOrder = [
-  ['target_relevance', 'TR'],
+  ['target_relevance', 'TAR'],
   ['moa_validity', 'MoA'],
   ['data_maturity', 'DM'],
   ['competitive_landscape', 'CL'],
@@ -1433,7 +1458,13 @@ function renderCollaborationPanel(record) {
     elements.detailDecisionStatus.classList.toggle('is-human', statusIsHuman);
   }
   if (elements.detailDecisionOrigin) {
-    elements.detailDecisionOrigin.textContent = `Rubric v${getDisplayRubricVersion(record)}`;
+    const appliedVersion = getAppliedScoreRubricVersion(record);
+    const appliedAt = record?.meta?.rubric_reviewed_at || record?.meta?.rescored_at
+      || record?.meta?.rubric_recalculation?.recalculated_at;
+    elements.detailDecisionOrigin.textContent = `Score 기준 v${appliedVersion}`;
+    elements.detailDecisionOrigin.title = appliedAt
+      ? `현재 Filter 2 점수·판정에 적용된 Rubric v${appliedVersion} · ${formatCommentTime(appliedAt)}`
+      : `현재 Filter 2 점수·판정에 적용된 Rubric v${appliedVersion}`;
     elements.detailDecisionOrigin.classList.toggle('is-human', statusIsHuman);
   }
   if (elements.detailTotalScore) {
@@ -1532,36 +1563,32 @@ function renderMetaInfoBar(record) {
   if (!elements.detailMetaInfo) return;
   const meta = record?.meta || {};
   const generatedAt = meta.generated_at || '-';
-  const rubricVersion = getDisplayRubricVersion(record);
-  const rescoredVersion = String(meta.rescored_rubric_version || '');
-  const rescoredLabel = rescoredVersion && rescoredVersion !== String(rubricVersion)
-    ? ` · Score recalculated with rubric v${rescoredVersion}`
-    : '';
   const history = Array.isArray(meta.edit_history) ? meta.edit_history : [];
   const sourceReportEdit = [...history]
     .reverse()
     .find((entry) => entry?.field === 'source_report.raw_markdown');
   const lastEditedAt = sourceReportEdit?.changed_at ? formatCommentTime(sourceReportEdit.changed_at) : null;
   const lastEditedBy = sourceRevisionActorLabel(sourceReportEdit);
+  const sourceInstruction = sourceRevisionInstructionLabel(sourceReportEdit)
+    || originalReportInstructionLabel(record);
   const sourceRevisionLabel = sourceReportEditLabel(sourceReportEdit);
 
-  const items = [
-    `<span class="meta-info-item">GPT 검색일 <strong>${escapeHtml(generatedAt)}</strong></span>`,
-    `<span class="meta-info-item">원본 스코어링 지침 <strong>v${escapeHtml(rubricVersion)}</strong>${escapeHtml(rescoredLabel)}</span>`
-  ];
+  const items = [];
   if (lastEditedAt) {
     items.push(
       `<span class="meta-info-item">${escapeHtml(sourceRevisionLabel)} <strong>${escapeHtml(lastEditedAt)}</strong>${
         lastEditedBy ? ` · ${escapeHtml(lastEditedBy)}` : ''
-      }</span>`
+      }${sourceInstruction ? ` · ${escapeHtml(sourceInstruction)}` : ''}</span>`
     );
+  } else if (sourceInstruction) {
+    items.push(`<span class="meta-info-item">GPT 원문 작성 기준 <strong>${escapeHtml(sourceInstruction)}</strong></span>`);
   }
+  items.push(`<span class="meta-info-item">GPT 검색일 <strong>${escapeHtml(generatedAt)}</strong></span>`);
   elements.detailMetaInfo.innerHTML = items.join('');
   elements.detailMetaInfo.title = [
     `GPT 검색일: ${generatedAt}`,
-    `원본 스코어링 지침 버전: v${rubricVersion}${rescoredLabel}`,
     lastEditedAt
-      ? `${sourceRevisionLabel}: ${lastEditedAt} · ${lastEditedBy || 'unknown'}`
+      ? `${sourceRevisionLabel}: ${lastEditedAt}${lastEditedBy ? ` · ${lastEditedBy}` : ''}${sourceInstruction ? ` · ${sourceInstruction}` : ''}`
       : null
   ]
     .filter(Boolean)
@@ -1572,37 +1599,78 @@ function sourceReportEditLabel(entry) {
   const source = String(entry?.source || '');
   if (source === 'detail_json_editor') return 'GPT 원문 갱신일';
   if (source === 'paste_json_upsert') return 'GPT 원문 재업로드일';
-  if (['dashboard_rubric_refresh', 'dashboard_tab2_rubric_recalculation'].includes(source)) {
-    return 'GPT 원문·Score 갱신일';
-  }
   return 'GPT 원문 갱신일';
 }
 
 function sourceRevisionActorLabel(entry) {
   if (!entry) return null;
-  if (['dashboard_rubric_refresh', 'dashboard_tab2_rubric_recalculation'].includes(entry.source)) {
-    const rubricVersion = String(entry.new_value || '').match(/rubric\s+v([^\s]+)/i)?.[1];
-    return rubricVersion ? `Rubric v${rubricVersion}` : 'Rubric recalculation';
-  }
   if (entry.actor_name) return String(entry.actor_name);
-  if (['127.0.0.1', '::1', 'localhost'].includes(String(entry.actor_ip || '').toLowerCase())) {
-    return 'Local workspace';
-  }
-  return entry.actor_ip ? String(entry.actor_ip) : null;
+  return null;
+}
+
+function sourceRevisionInstructionLabel(entry) {
+  if (!entry || !['paste_json_upsert', 'detail_json_editor'].includes(String(entry.source || ''))) return null;
+  const version = String(entry.instruction_version || '').replace(/^v/i, '');
+  return version ? `GPT 지침 v${version}` : null;
+}
+
+function originalReportInstructionLabel(record) {
+  const meta = record?.meta || {};
+  const sourceReport = record?.source_report || {};
+  const version = String(
+    sourceReport.instruction_version || meta.instruction_version || getDisplayRubricVersion(record) || ''
+  ).replace(/^v/i, '');
+  return version ? `GPT 지침 v${version}` : null;
+}
+
+function rubricRefreshAuditLabel(entry) {
+  if (String(entry?.source || '') !== 'dashboard_rubric_refresh') return null;
+  if (entry?.audit_label) return String(entry.audit_label);
+  const version = String(entry?.instruction_version || entry?.new_value || '')
+    .match(/(?:rubric\s+)?v?([0-9]+(?:\.[0-9]+)+)/i)?.[1];
+  return `Score recalculated by Full Scout Rubric${version ? ` v${version}` : ''}`;
 }
 
 function teamReviewActorLabel(entry) {
-  if (entry?.actor_name) return String(entry.actor_name);
-  if (['127.0.0.1', '::1', 'localhost'].includes(String(entry?.actor_ip || '').toLowerCase())) {
-    return 'Local workspace';
+  if (String(entry?.source || '') === 'dashboard_rubric_refresh') {
+    return entry?.actor_name ? String(entry.actor_name) : 'System audit';
   }
-  return String(entry?.actor_ip || 'unknown');
+  if (entry?.actor_name) return String(entry.actor_name);
+  return '';
+}
+
+function visibleEditHistoryEntries(record) {
+  const auditHistory = Array.isArray(record?.meta?.edit_history) ? record.meta.edit_history : [];
+  const rubricHistory = Array.isArray(record?.meta?.rubric_refresh_history) ? record.meta.rubric_refresh_history : [];
+  const reviewEntries = rubricHistory
+    .filter((entry) => entry && entry.reviewed_at)
+    .filter((entry) => !auditHistory.some((auditEntry) => {
+      if (auditEntry?.source !== 'dashboard_rubric_refresh' || auditEntry?.field !== 'rubric_refresh') return false;
+      if (String(auditEntry?.instruction_version || '') !== String(entry.version || '')) return false;
+      const auditTime = Date.parse(auditEntry.changed_at || '');
+      const reviewTime = Date.parse(entry.reviewed_at || '');
+      return Number.isFinite(auditTime) && Number.isFinite(reviewTime) && Math.abs(auditTime - reviewTime) < 5000;
+    }))
+    .map((entry) => ({
+      id: `rubric-review-${entry.reviewed_at}-${entry.version || ''}`,
+      changed_at: entry.reviewed_at,
+      actor_ip: entry.actor_ip || '',
+      actor_name: entry.actor_name || '',
+      source: 'dashboard_rubric_refresh',
+      field: 'rubric_refresh',
+      previous_value: `Rubric v${entry.previous_version || '-'}`,
+      new_value: entry.result || 'reviewed',
+      instruction_version: entry.version || '',
+      audit_label: `Score recalculated by Full Scout Rubric v${entry.version || '?'}`
+    }));
+  return [...auditHistory, ...reviewEntries]
+    .filter((entry) => entry?.field !== 'source_report.raw_markdown');
 }
 
 function renderEditHistory(record) {
   if (!elements.detailEditHistory) return;
   const auditHistory = Array.isArray(record?.meta?.edit_history) ? record.meta.edit_history : [];
-  const history = auditHistory.filter((entry) => entry?.field !== 'source_report.raw_markdown');
+  const history = visibleEditHistoryEntries(record);
   if (!history.length) {
     elements.detailEditHistory.innerHTML = '';
     return;
@@ -1624,6 +1692,7 @@ function renderEditHistory(record) {
           && String(candidate?.new_value || '') === String(entry?.previous_value || ''))
       );
       const sourceLabels = {
+        dashboard_rubric_refresh: rubricRefreshAuditLabel(entry),
         dashboard_table_manual_review: 'Review status/점수',
         dashboard_tab3_focus_management: '집중관리 정보',
         dashboard_comment: '팀 코멘트',
@@ -1641,7 +1710,7 @@ function renderEditHistory(record) {
       const fieldLabels = {
         filter_status: 'Review status',
         status_reason: 'Review 한 줄 근거',
-        'scores.target_relevance': 'TR 점수',
+        'scores.target_relevance': 'TAR 점수',
         'scores.competitive_landscape': 'Competitive 점수',
         'scores.moa_validity': 'MoA 점수',
         'scores.platform_attractiveness': 'Platform 점수',
@@ -1657,7 +1726,9 @@ function renderEditHistory(record) {
         'focus_management.total_score_override': 'Tab3 Total Score'
       };
       const fieldSource = fieldLabels[field];
-      const baseSource = entry?.source === 'paste_json_score_reset' && fieldSource
+      const baseSource = entry?.source === 'dashboard_rubric_refresh'
+        ? rubricRefreshAuditLabel(entry)
+        : entry?.source === 'paste_json_score_reset' && fieldSource
         ? `${fieldSource} · GPT 원문 재업로드`
         : fieldSource || sourceLabels[entry?.source] || entry?.field || '레코드';
       const qualitativeCriterionId = (isAiQualitativeGeneration || isAiQualitativeDeletion)
@@ -1698,7 +1769,8 @@ function renderEditHistory(record) {
             ${reasonForm}
           </div>`
         : '';
-      return `<li${humanClass}><span>${escapeHtml(when)}</span><strong title="${escapeHtml(source)}">${escapeHtml(source)}</strong><small title="${escapeHtml(`${who} · ${change}`)}">${escapeHtml(who)} · ${escapeHtml(change)}</small>${reasonMarkup}</li>`;
+      const actorAndChange = who ? `${who} · ${change}` : change;
+      return `<li${humanClass}><span>${escapeHtml(when)}</span><strong title="${escapeHtml(source)}">${escapeHtml(source)}</strong><small title="${escapeHtml(actorAndChange)}">${escapeHtml(actorAndChange)}</small>${reasonMarkup}</li>`;
     })
     .join('');
   elements.detailEditHistory.innerHTML = `
@@ -2009,7 +2081,8 @@ function renderSourceReport(record = currentRecord) {
   attachmentPreviewController = null;
   activeAttachmentId = '';
   const sourceReport = record.source_report || {};
-  const rawMarkdown = isPlaceholderRawMarkdown(sourceReport.raw_markdown) ? '' : normalizeGptOriginalReport(sourceReport.raw_markdown);
+  const rawMarkdown = isPlaceholderRawMarkdown(sourceReport.raw_markdown) ? '' : sourceReport.raw_markdown;
+  const showAiRevisionNote = sourceReportHasCurrentAiRevision(record);
   if (elements.detailViewerTitle) elements.detailViewerTitle.textContent = 'GPT ORIGINAL REPORT';
   if (elements.subtitle) {
     elements.subtitle.textContent = '';
@@ -2026,7 +2099,7 @@ function renderSourceReport(record = currentRecord) {
   if (elements.detailViewerCopyButton) elements.detailViewerCopyButton.hidden = false;
   elements.sourceReportViewer.classList.remove('showing-attachment');
   elements.sourceReportViewer.innerHTML = rawMarkdown
-    ? renderMarkdown(rawMarkdown)
+    ? renderMarkdown(rawMarkdown, { showAiRevisionNote })
     : renderMarkdown(buildReadableSourceReport(record));
   renderTopicNotes(record);
   renderAttachments(record);
@@ -3140,8 +3213,8 @@ function renderWikiLink(rawTarget, rawLabel) {
   return `<a class="wikilink" href="/wiki-view?path=${encodeURIComponent(path)}">${label}</a>`;
 }
 
-function renderMarkdown(markdown) {
-  const { frontmatter, body } = parseFrontmatter(normalizeGptOriginalReport(markdown));
+function renderMarkdown(markdown, options = {}) {
+  const { frontmatter, body } = parseFrontmatter(normalizeGptOriginalReport(markdown, options));
   const lines = body.split('\n');
   const blocks = [renderFrontmatter(frontmatter)];
 
@@ -3407,7 +3480,10 @@ function reportTopicDescriptors() {
 
 function currentUserCanManageTopicNote(note) {
   const user = getCurrentUser();
-  return Boolean(user?.is_admin && String(note?.author_id || '') === String(user.id || ''));
+  const sameId = user?.id && note?.author_id && String(note.author_id) === String(user.id);
+  const sameEmail = user?.email && note?.author_email
+    && String(note.author_email).trim().toLowerCase() === String(user.email).trim().toLowerCase();
+  return Boolean(user?.is_admin && (sameId || sameEmail));
 }
 
 function topicNoteMarkup(note) {
@@ -3564,7 +3640,11 @@ function openMarkdownInNewWindow(title, rawMarkdown) {
 function getCurrentSourceMarkdown() {
   if (!currentRecord) return '';
   const sourceReport = currentRecord.source_report || {};
-  const rawMarkdown = isPlaceholderRawMarkdown(sourceReport.raw_markdown) ? '' : normalizeGptOriginalReport(sourceReport.raw_markdown);
+  const rawMarkdown = isPlaceholderRawMarkdown(sourceReport.raw_markdown)
+    ? ''
+    : normalizeGptOriginalReport(sourceReport.raw_markdown, {
+      showAiRevisionNote: sourceReportHasCurrentAiRevision(currentRecord)
+    });
   return rawMarkdown || buildReadableSourceReport(currentRecord);
 }
 
@@ -3611,7 +3691,9 @@ async function copyCurrentSourceMarkdown(button) {
 function openReportModal() {
   const text = getCurrentSourceMarkdown();
   if (!text || !elements.reportModalBackdrop || !elements.reportModalBody) return;
-  elements.reportModalBody.innerHTML = renderMarkdown(text);
+  elements.reportModalBody.innerHTML = renderMarkdown(text, {
+    showAiRevisionNote: sourceReportHasCurrentAiRevision(currentRecord)
+  });
   elements.reportModalBackdrop.hidden = false;
   document.body.classList.add('report-modal-open');
   elements.reportModalCloseButton?.focus();
