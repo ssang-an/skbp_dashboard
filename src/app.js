@@ -9,7 +9,7 @@ import {
   isMinimalCompactIngestionRecord
 } from './compact-ingestion.js?v=20260806-theme-indication-3';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260820-url-repair-6';
-import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260901-full-scout-v3-8-expansion-display-7';
+import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260901-oi-v1-7-1';
 
 const API_URL = '/api/records';
 const DASHBOARD_SUMMARY_URL = '/api/dashboard-summary';
@@ -24,7 +24,7 @@ const BOM_PREFIX = String.fromCharCode(0xfeff);
 const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
 const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
 const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v4';
-const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v6';
+const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v7';
 const CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY = 'skbp.dashboard.criteriaGuideLanguage.v1';
 const PIPELINE_RETURN_FOCUS_STORAGE_KEY = 'skbp.pipeline.return-focus.v1';
 const PIPELINE_ROW_HIGHLIGHT_MS = 3000;
@@ -166,7 +166,7 @@ const TRIAGE_PROMPT_TOOLTIP =
   'GPT Fast Triage v3.5 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / INSUFFICIENT로 screening합니다.';
 const LATEST_TRIAGE_RUBRIC_VERSION = '3.5';
 const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.8';
-const LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION = 'v3-8-comparator-material-evidence-2026-09-01';
+const LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION = 'v3-8-moa-expansion-investigation-notes-2026-09-01';
 const FAST_TRIAGE_SCHEMA_VERSION = '3.2';
 const FULL_SCOUT_SCHEMA_VERSION = '3.2';
 const FULL_SCOUT_AGENT_INPUT_PLACEHOLDER =
@@ -535,6 +535,9 @@ const elements = {
   operationModalMessage: document.querySelector('#operationModalMessage'),
   operationModalStatus: document.querySelector('#operationModalStatus'),
   operationCancelButton: document.querySelector('#operationCancelButton'),
+  step0PasteProcessingModal: document.querySelector('#step0PasteProcessingModal'),
+  step0PasteProcessingDialog: document.querySelector('#step0PasteProcessingDialog'),
+  step0PasteProcessingStatus: document.querySelector('#step0PasteProcessingStatus'),
   pipelineWebsiteModal: document.querySelector('#pipelineWebsiteModal'),
   pipelineWebsiteModalInput: document.querySelector('#pipelineWebsiteModalInput'),
   pipelineWebsiteModalStatus: document.querySelector('#pipelineWebsiteModalStatus'),
@@ -10658,6 +10661,10 @@ Criterion-specific scoring (canonical; do not replace with a universal evidence 
 - Platform Attractiveness evaluates a reusable technical system whose common principles/design/manufacturing/delivery can generate multiple candidates/programs or improve performance. Score 0: no reusable structure or verifiable technical advantage; 1: reusable structure with plausible rationale but claim/concept-level differentiation; 2: at least one quantitative result showing technical advantage versus an appropriate comparator, normally limited to a single condition or platform-derived asset; 3: score-2 evidence plus either (a) the same quantitative advantage reproduced across multiple independent conditions (for example, model, species, or dose) or officially linked platform-derived assets, or (b) an officially linked platform-derived asset has reached First Patient Dosed. FPD alone is insufficient without score-2 quantitative evidence. Do not award points merely for preferred modality, indication expansion, multiple assets, or pipeline breadth.
 - Expansion Potential evaluates only additional indications for the assessed asset beyond its main indication. Score 0: none confirmed; 1: additional indication with biological rationale only and no asset-specific data or official development program; 2: asset-specific early quantitative efficacy, PD, or biomarker data in at least one additional indication; 3: asset-specific early quantitative efficacy, PD, or biomarker data and an official preclinical, IND-enabling, or clinical assessed-asset program are both confirmed in the same additional indication. Multiple additional indications are not required for Score 3. An official program may be separately listed on the official pipeline or be confirmed as active preclinical, IND-enabling, trial registration/authorization, or dosing; it is not limited to clinical development. Future opportunity, possible/planned evaluation, an indication list, platform-level expansion not tied to the asset, wording variants of one disease, and patient subgroups are not separate programs/indications. Do not award points for platform reuse, multiple platform assets, or platform breadth.
 
+Investigation-note requirements (use only the evidence already identified while scoring; do not perform a new search for these notes):
+- MoA score 2 or 3: in that criterion's investigation_note, use at most one sentence to state whether the verified scoring evidence connects to a disease-relevant phenotype, efficacy, or biomarker, or remains limited to proximal evidence such as a cellular-signaling marker. Omit this statement for MoA score 0 or 1. If the distinction cannot be assessed from existing evidence, write '확인 불가'; do not infer.
+- Expansion Potential score 1, 2, or 3: in that criterion's investigation_note, state whether the confirmed additional indication(s) are single or multiple and briefly give each indication's assessed-asset program/data status. If unavailable from existing scoring evidence, write '확인 불가'; do not infer.
+
 Marketability method and score (document complete inputs in Markdown; JSON keeps the score and minimal A/B/C/D outputs):
 - assessment_method is exactly calculation, external_forecast, both, or insufficient_evidence. Do not force A/B/C/D when no reliable internal calculation exists.
 - score_basis_type must equal calculation for assessment_method calculation or both, external_forecast for external_forecast, and insufficient_evidence for insufficient_evidence. When both exist, calculation is the primary score basis and external forecast is a cross-check.
@@ -10767,7 +10774,7 @@ Evidence trail:
 - Cite exact paper, abstract, company page, or source URL.
 
 Investigation note:
-- 2점 이상이면 publication or equivalent technical evidence must be visible.
+- Score 2 or 3: in one sentence, state whether the evidence already used for scoring connects to a disease-relevant phenotype, efficacy, or biomarker, or remains limited to a proximal measure such as a cellular-signaling marker. If that distinction is not supported by existing evidence, write '확인 불가'; do not infer or search anew for this note. Do not write this distinction for Score 0 or 1.
 
 ### 4.3 Data Maturity
 Score:
@@ -10846,6 +10853,7 @@ Evidence trail:
 Investigation note:
 - Adjacent indication means outside the main indication, not merely a different wording of the same disease.
 - Future/planned opportunities, indication lists, platform-wide expansion, and patient subgroups are not separate active programs or indications.
+- Score 1, 2, or 3: state whether confirmed additional indications are single or multiple and briefly give each indication's assessed-asset program/data status. Use only evidence already identified for this score; if insufficient, write '확인 불가' without inference or a new search.
 
 ### 4.7 Marketability
 Score:
@@ -11883,11 +11891,57 @@ function parseStep0ClipboardTable(clipboardText) {
   return { rows, unclosedQuote: inQuotes };
 }
 
-function pasteIntoStep0EntryGrid(event) {
+const STEP0_PASTE_PROCESSING_DELAY_MS = 180;
+let step0PasteProcessingToken = null;
+let step0PasteProcessingTimer = null;
+let step0PasteProcessingReturnFocus = null;
+
+function beginStep0PasteProcessing() {
+  const token = Symbol('step0-paste-processing');
+  step0PasteProcessingToken = token;
+  step0PasteProcessingReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  elements.step0EntryGrid?.setAttribute('aria-busy', 'true');
+  step0PasteProcessingTimer = window.setTimeout(() => {
+    if (step0PasteProcessingToken !== token) return;
+    if (elements.step0PasteProcessingModal) elements.step0PasteProcessingModal.hidden = false;
+    document.body.classList.add('operation-modal-open');
+    elements.step0PasteProcessingDialog?.focus();
+  }, STEP0_PASTE_PROCESSING_DELAY_MS);
+  return token;
+}
+
+function setStep0PasteProcessingStatus(token, message) {
+  if (step0PasteProcessingToken !== token) return;
+  if (elements.step0PasteProcessingStatus) elements.step0PasteProcessingStatus.textContent = message;
+}
+
+function endStep0PasteProcessing(token) {
+  if (step0PasteProcessingToken !== token) return;
+  window.clearTimeout(step0PasteProcessingTimer);
+  step0PasteProcessingTimer = null;
+  step0PasteProcessingToken = null;
+  elements.step0EntryGrid?.setAttribute('aria-busy', 'false');
+  if (elements.step0PasteProcessingModal) elements.step0PasteProcessingModal.hidden = true;
+  if (elements.operationModal?.hidden !== false) document.body.classList.remove('operation-modal-open');
+  const returnFocus = step0PasteProcessingReturnFocus;
+  step0PasteProcessingReturnFocus = null;
+  if (returnFocus?.isConnected) returnFocus.focus();
+}
+
+function yieldStep0PasteWork() {
+  return new Promise((resolve) => window.setTimeout(resolve, 0));
+}
+
+async function pasteIntoStep0EntryGrid(event) {
   const input = event.target.closest('[data-step0-entry-field]');
   const clipboardText = event.clipboardData?.getData('text/plain') || '';
   if (!input || !clipboardText || (!clipboardText.includes('\t') && !clipboardText.includes('\n'))) return;
   event.preventDefault();
+  if (step0PasteProcessingToken) return;
+  const processingToken = beginStep0PasteProcessing();
+  try {
+    // Give the browser one frame before large clipboard parsing and DOM updates.
+    await new Promise((resolve) => window.requestAnimationFrame(resolve));
   const inputRows = [...elements.step0EntryGridBody.querySelectorAll('tr')];
   const startRow = Math.max(0, inputRows.indexOf(input.closest('tr')));
   const startColumn = Math.max(0, STEP0_ENTRY_FIELDS.findIndex((field) => field.key === input.dataset.step0EntryField));
@@ -11902,15 +11956,21 @@ function pasteIntoStep0EntryGrid(event) {
     || (matrix[0]?.length === 1 && headerMapping.recognized === 1);
   const dataMatrix = firstRowIsHeader ? matrix.slice(1) : matrix;
   if (!dataMatrix.length) return;
+  setStep0PasteProcessingStatus(processingToken, `${dataMatrix.length}개 행을 읽고 있습니다.`);
   const availableColumns = firstRowIsHeader ? headerMapping.targets.length : STEP0_ENTRY_FIELDS.length - startColumn;
   const overflowingRow = dataMatrix.find((cells) => cells.length > availableColumns && cells.slice(availableColumns).some((value) => String(value).trim()));
   if (overflowingRow) {
     showStep0PasteFeedback(`붙여넣기 범위가 ${availableColumns}개 입력 열을 넘습니다. 초과 값이 사라지는 것을 막기 위해 붙여넣지 않았습니다.`, 'error');
     return;
   }
-  while (elements.step0EntryGridBody.querySelectorAll('tr').length < startRow + dataMatrix.length) appendStep0EntryRows();
+  while (elements.step0EntryGridBody.querySelectorAll('tr').length < startRow + dataMatrix.length) {
+    const remaining = startRow + dataMatrix.length - elements.step0EntryGridBody.querySelectorAll('tr').length;
+    appendStep0EntryRows(Math.min(48, remaining));
+    if (remaining > 48) await yieldStep0PasteWork();
+  }
   const tableRows = [...elements.step0EntryGridBody.querySelectorAll('tr')];
-  dataMatrix.forEach((cells, rowOffset) => {
+  for (let rowOffset = 0; rowOffset < dataMatrix.length; rowOffset += 1) {
+    const cells = dataMatrix[rowOffset];
     const inputs = [...tableRows[startRow + rowOffset].querySelectorAll('[data-step0-entry-field]')];
     const assignedFields = new Set();
     cells.forEach((value, columnOffset) => {
@@ -11929,7 +11989,11 @@ function pasteIntoStep0EntryGrid(event) {
       target.value = incoming;
       assignedFields.add(field);
     });
-  });
+    if ((rowOffset + 1) % 24 === 0 && rowOffset + 1 < dataMatrix.length) {
+      setStep0PasteProcessingStatus(processingToken, `${dataMatrix.length}개 행 중 ${rowOffset + 1}개 행을 표에 반영했습니다.`);
+      await yieldStep0PasteWork();
+    }
+  }
   elements.step0EntryGridBody.querySelectorAll('textarea[data-step0-entry-field]').forEach(resizeStep0CommentCell);
   const labels = firstRowIsHeader
     ? [...new Set(headerMapping.targets.filter(Boolean))].map((key) => STEP0_ENTRY_FIELDS.find((field) => field.key === key)?.label).filter(Boolean).join(' · ')
@@ -11965,6 +12029,12 @@ function pasteIntoStep0EntryGrid(event) {
   renderStep0PasteFeedback(rows, {
     summary: `${dataMatrix.length}행 · ${columnCount}열 · 필드 ${firstRowIsHeader ? headerMapping.recognized : columnCount}개`
   });
+  } catch (error) {
+    console.error('Listing Excel paste failed:', error);
+    showStep0PasteFeedback('엑셀 데이터를 표에 반영하는 중 문제가 발생했습니다. 내용을 확인한 뒤 다시 붙여넣어 주세요.', 'error');
+  } finally {
+    endStep0PasteProcessing(processingToken);
+  }
 }
 
 async function listingImportJsonResponse(response) {

@@ -49,6 +49,16 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         chat_end = JS.index("window.addEventListener('keydown'", chat_start)
         self.assertNotIn('runBlockingOperation', JS[chat_start:chat_end])
 
+    def test_listing_excel_paste_uses_the_shared_deferred_processing_popup(self):
+        self.assertIn('id="step0PasteProcessingModal"', HTML)
+        self.assertIn('id="step0PasteProcessingDialog"', HTML)
+        self.assertIn('LISTING · EXCEL PASTE', HTML)
+        self.assertIn('const STEP0_PASTE_PROCESSING_DELAY_MS = 180', JS)
+        self.assertIn('async function pasteIntoStep0EntryGrid', JS)
+        self.assertIn('beginStep0PasteProcessing()', JS)
+        self.assertIn('await yieldStep0PasteWork()', JS)
+        self.assertIn('endStep0PasteProcessing(processingToken)', JS)
+
     def test_full_scout_attachment_upload_uses_the_cancellable_processing_modal(self):
         upload = function_body(DETAIL_JS, "uploadAttachment")
 
@@ -62,13 +72,18 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
     def test_shortlisting_material_pills_upload_multiple_forced_categories(self):
         upload = function_body(DETAIL_JS, "uploadAttachments")
 
-        for key in ("ir", "cdp", "ncdp", "admet", "dd_report"):
+        for key in ("ir", "cdp", "ncdp", "admet"):
             self.assertIn(f'data-material-key="{key}"', DETAIL_HTML)
-        self.assertIn("choosePartnerMaterialUpload(key)", DETAIL_JS)
+        self.assertIn("choosePartnerMaterialUpload(pill.dataset.materialKey)", DETAIL_JS)
         self.assertIn("fileWithPartnerMaterialSuffix(file, materialCategory)", upload)
         self.assertIn("selectedCategory || partnerMaterialCategoryForFilename(file.name)", upload)
-        self.assertIn("partnerMaterialCategoriesForFilename(file.name).includes(category)", DETAIL_JS)
-        for key in ("ir", "cdp", "ncdp", "admet", "dd_report"):
+        self.assertIn("partnerMaterialCategoriesForFilename(file.name).includes(materialCategory)", DETAIL_JS)
+        self.assertIn("(?:ncdp|ndp|ncd|nc|non[ _-]*confidential)", DETAIL_JS)
+        self.assertIn("(?:cdp|cp|confidential)", DETAIL_JS)
+        self.assertIn("invest(?:or|er)[ _-]*relations?", DETAIL_JS)
+        self.assertIn("invest(?:or|er)[ _-]*(?:presentation|deck)", DETAIL_JS)
+        self.assertIn("(?:admet|adme", DETAIL_JS)
+        for key in ("ir", "cdp", "ncdp", "admet"):
             self.assertIn(f"{key}: '", DETAIL_JS)
         self.assertIn("partnerMaterialCategoriesForFilename(attachment?.filename)", DETAIL_JS)
         self.assertIn("categories.forEach", DETAIL_JS)
@@ -1644,10 +1659,10 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("TAB 3 · SHORTLISTING · DECISION GUIDE", JS)
         self.assertIn("Shortlisted 후보의 OI Partnership Type 자동분류 및 후속 관리 기준", JS)
         self.assertIn("state.latestOiPartnershipCriteriaVersion", scope)
-        self.assertIn("Filter 3 — OI Partnership 자동 분류 · v1.4 기준", focus)
+        self.assertIn("Filter 3 — OI Partnership 자동 분류 · v1.7 기준", focus)
         intro = (
             "Tab 3는 Full Scout 검토 후 Shortlisting에 등록된 후보를 대상으로, "
-            "SKBP 우선 관심 적응증 여부와 확인된 modality·stage·Platform Attractiveness·"
+            "SKBP 우선 관심 적응증 여부와 확인된 Modality·Pipeline Stage·Platform Attractiveness·"
             "In-vivo·In-vitro·ADMET 값을 사용해 투자, Value Up, 공동연구, Unknown 또는 N/A로 자동 분류합니다."
         )
         self.assertIn(f"<p>{intro}</p>", focus)
@@ -1667,12 +1682,12 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             self.assertIn(f'<h3>{title}</h3><p>{subtitle}</p>', section)
 
         for indication in (
-            "Alzheimer’s disease",
-            "Parkinson’s disease",
-            "Amyotrophic lateral sclerosis",
-            "Multiple sclerosis",
+            "Alzheimer's disease",
+            "Parkinson's disease",
+            "Amyotrophic lateral sclerosis / motor neuron disease",
+            "Multiple sclerosis / neuroinflammatory disease",
             "Neuropathic pain",
-            "Epilepsy",
+            "Epilepsy / seizure disorders",
         ):
             self.assertIn(f"<span>{indication}</span>", focus)
 
@@ -2118,6 +2133,14 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("width: 22px", styles)
         self.assertIn("border-radius: 50%", styles)
 
+    def test_dashboard_header_shift_excludes_detail_pages_and_triage_header_stays_text_only(self):
+        dashboard_header_selector = ".app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .topbar-home-link"
+        dashboard_header = CSS[CSS.index(dashboard_header_selector):CSS.index(".app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .brand-default-lockup")]
+
+        self.assertIn("transform: translateX(-4px);", dashboard_header)
+        self.assertIn('<p class="eyebrow">GPT 1 · Fast Triage</p>', TRIAGE_DETAIL_HTML)
+        self.assertNotIn('<img src="./src/prism.svg"', TRIAGE_DETAIL_HTML)
+
     def test_triage_final_comment_actions_include_compact_rubric_refresh(self):
         final_comment = function_body(TRIAGE_DETAIL_JS, "finalCommentMarkup")
         refresh = function_body(TRIAGE_DETAIL_JS, "refreshTriageRubric")
@@ -2136,7 +2159,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("position: static;", footer_rule.split("}", 1)[0])
         self.assertIn("margin: 20px auto 16px;", footer_rule.split("}", 1)[0])
         self.assertIn("border-top: 1px solid var(--line);", footer_rule.split("}", 1)[0])
-        self.assertIn("styles.css?v=20260828-triage-footer-flow-1", TRIAGE_DETAIL_HTML)
+        self.assertIn("styles.css?v=20260901-triage-header-restore-3", TRIAGE_DETAIL_HTML)
 
     def test_minimal_json_score_views_point_to_the_original_report(self):
         tooltip = function_body(JS, "scoreTooltip")
@@ -2655,7 +2678,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('id="rubricRefreshButton" class="criteria-refresh-pill"', workspace)
         self.assertIn('id="oiPartnershipRefreshButton" class="criteria-refresh-pill"', workspace)
         self.assertIn("<span>Score 기준 갱신</span>", workspace)
-        self.assertIn("<span>v1.4 기준 갱신</span>", workspace)
+        self.assertIn("<span>v1.7 기준 갱신</span>", workspace)
         self.assertGreaterEqual(workspace.count('class="metadata-divider"'), 3)
         self.assertIn('<span class="review-info-primary-label">Action Date</span>', workspace)
         self.assertIn("<small>Set by Asset Owner</small>", workspace)
@@ -2681,8 +2704,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("var(--fluent-amber) 72%", CSS)
         self.assertIn('#detailScoreSequence .score-chip[data-manual-score="true"]', CSS)
         self.assertIn("outline: none !important", CSS)
-        self.assertIn("styles.css?v=20260827-review-workspace-density-1", DETAIL_HTML)
-        self.assertIn("detail.js?v=20260828-rubric-refresh-progress-1", DETAIL_HTML)
+        self.assertIn("styles.css?v=20260901-shortlisting-materials-3", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260901-shortlisting-materials-5", DETAIL_HTML)
         self.assertNotIn("button.textContent", score_refresh)
         self.assertIn("button.classList.add('is-saving')", score_refresh)
         self.assertIn("showDetailProgress(", score_refresh)
@@ -2944,6 +2967,17 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("total-score-edit-circle dd-status-circle", dd_badge)
         self.assertIn(".dd-status-circle", CSS)
         self.assertIn("function evidenceStatusMeaning", JS)
+
+    def test_shortlisting_table_does_not_show_partner_material_pills(self):
+        focus_table = function_body(JS, "renderFocusTable")
+        flatten = function_body(JS, "flattenRecord")
+
+        self.assertNotIn('data-col-key="materials"', focus_table)
+        self.assertNotIn("plainHeader('Materials', 'materials', 'focus-materials-head')", focus_table)
+        self.assertNotIn("partnerMaterialsStatusPills(row)", focus_table)
+        self.assertIn('colspan="6">Shortlisting', focus_table)
+        self.assertNotIn("partnerMaterialFlags: uploadedPartnerMaterialFlags(record)", flatten)
+        self.assertNotIn("shortlisting-material-pill", CSS)
 
     def test_shortlisting_evidence_tooltips_and_dd_detail_link_follow_shared_ui_rules(self):
         evidence_select = function_body(JS, "evidenceEditSelect")

@@ -328,7 +328,7 @@ class VersionAndPolicyTests(unittest.TestCase):
         self.assertEqual(main.FULL_SCOUT_SCHEMA_VERSION, "3.2")
         self.assertTrue(main.SCORING_CRITERIA_TRIAGE_MD.name.startswith("v3_5_"))
         self.assertTrue(main.SCORING_CRITERIA_FULL_MD.name.startswith("v3_8_"))
-        self.assertTrue(main.SCORING_CRITERIA_DISPLAY_MD.name.startswith("v3_9_"))
+        self.assertTrue(main.SCORING_CRITERIA_DISPLAY_MD.name.startswith("v3_10_"))
 
     def test_fast_triage_select_formula_and_identity_gate(self) -> None:
         # v3.5 dropped the separate active_asset tri-state field: it overlapped

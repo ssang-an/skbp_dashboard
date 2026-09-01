@@ -12952,8 +12952,13 @@ html[data-theme="dark"] .detail-material-panel {
   min-height: 22px;
   padding: 3px 7px;
   font-size: 8px;
-  cursor: default;
-  pointer-events: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.partner-material-presence .oi-material-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .partner-material-presence .oi-material-dot {
@@ -15699,6 +15704,7 @@ html[data-theme="dark"] .pipeline-table .clickable-row.selected-row:hover > td {
   align-items: center;
   gap: 6px;
   position: relative;
+  transform: translateX(-4px);
 }
 
 .app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .brand-default-lockup {
@@ -15713,19 +15719,6 @@ html[data-theme="dark"] .pipeline-table .clickable-row.selected-row:hover > td {
   height: 17px;
   flex: 0 0 auto;
   filter: drop-shadow(0 0 6px rgba(164,132,255,.5));
-}
-
-.topbar .detail-brand-lockup {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 720;
-  letter-spacing: .045em;
-}
-
-.topbar .detail-brand-lockup i {
-  color: rgba(255,255,255,.48);
-  font-style: normal;
 }
 
 .app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .brand-expanded-name {

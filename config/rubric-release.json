@@ -1,6 +1,6 @@
 {
   "manifest_schema_version": "1.0",
-  "release_id": "skbp-rubric-2026-09-01-full-scout-v3-8-comparator-material-evidence",
+  "release_id": "skbp-rubric-2026-09-01-full-scout-v3-8-shortlisting-v1-7",
   "released_at": "2026-09-01",
   "workflows": {
     "fast_triage": {
@@ -13,10 +13,16 @@
     "full_scout": {
       "instruction_version": "3.8",
       "rubric_version": "3.8",
-      "display_version": "3.9",
+      "display_version": "3.10",
       "schema_version": "3.2",
       "rubric_file": "config/scoring_criteria/v3_8_full.md",
-      "display_file": "config/scoring_criteria/v3_9_display.md"
+      "display_file": "config/scoring_criteria/v3_10_display.md"
+    },
+    "shortlisting": {
+      "criteria_version": "1.7",
+      "display_version": "1.7",
+      "criteria_file": "config/oi_partnership_criteria.md",
+      "release_history_file": "config/oi_partnership_release_history.md"
     }
   },
   "calculations": {

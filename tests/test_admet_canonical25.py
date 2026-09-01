@@ -28,6 +28,49 @@ class AdmetCanonical25Tests(unittest.TestCase):
             "dd_report",
         )
 
+    def test_partner_material_category_canonicalizes_ncdp_filename_aliases(self):
+        for filename in (
+            "Threebrooks_NDP_deck.pdf",
+            "Threebrooks_NC deck.pdf",
+            "Threebrooks_NCD.pdf",
+            "Threebrooks_nonconfidential deck.pdf",
+            "Threebrooks_non-confidential_data.pdf",
+        ):
+            self.assertEqual(main.partner_material_category(filename), "ncdp")
+
+    def test_partner_material_category_canonicalizes_cdp_filename_aliases(self):
+        for filename in (
+            "Threebrooks_CDP.pdf",
+            "Threebrooks_CP deck.pdf",
+            "Threebrooks_confidential deck.pdf",
+            "Threebrooks_confidential-data.pdf",
+        ):
+            self.assertEqual(main.partner_material_category(filename), "cdp")
+
+    def test_partner_material_category_canonicalizes_ir_admet_and_dd_filename_aliases(self):
+        for filename in (
+            "Threebrooks_Investor Relations.pdf",
+            "Threebrooks_Invester Relations.pdf",
+            "Threebrooks_Investor Relation.pdf",
+            "Threebrooks_Investor Presentation.pdf",
+            "Threebrooks_Investor Deck.pdf",
+        ):
+            self.assertEqual(main.partner_material_category(filename), "ir")
+        for filename in (
+            "Threebrooks_ADME.pdf",
+            "Threebrooks_ADME-Tox.pdf",
+            "Threebrooks_ADME Toxicology.pdf",
+            "Threebrooks_DMPK.pdf",
+        ):
+            self.assertEqual(main.partner_material_category(filename), "admet")
+        for filename in (
+            "Threebrooks_DD.pdf",
+            "Threebrooks_DD Report.pdf",
+            "Threebrooks_Due Diligence.pdf",
+            "Threebrooks_Due-Diligence Report.pdf",
+        ):
+            self.assertEqual(main.partner_material_category(filename), "dd_report")
+
     def test_removing_last_direct_upload_clears_each_material_pill_flag(self):
         focus = {
             "partner_material_flags": {key: True for key in main.PARTNER_MATERIAL_FLAG_KEYS},

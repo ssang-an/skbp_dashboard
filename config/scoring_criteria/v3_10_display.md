@@ -1,4 +1,4 @@
-# 판단근거 — SKBP Pipeline Finder v3.9
+# 판단근거 — SKBP Pipeline Finder v3.10
 
 This display release reflects the active Full Scout v3.8 decision rules, including the `Global Obtainable Peak Sales` calculation using the `1.5` US-to-global multiplier, the identity/lifecycle-as-pre-research-gate framing, the MoA 2/3 clarification, the Competitive Landscape comparator-backed direct-comparison requirement for Score 3, and the Expansion Potential program-plus-data requirement for Score 3. Criteria are presented Target Relevance / MoA Validity / Data Maturity first (the three Fast Triage-shared criteria), then Competitive Landscape / Platform Attractiveness / Expansion Potential / Marketability, matching the Pipeline Table and Team Review Workspace order.
 
@@ -47,7 +47,7 @@ This display release reflects the active Full Scout v3.8 decision rules, includi
 | **MoA Validity** | 기전의 구체성과 기능적·과학적 검증 수준 | target/MoA 확인 불가 | claim·이론 중심 | Target/pathway functional evidence 또는 independent same-target/class validation | Direct asset-specific evidence relevant to the proposed MoA (target engagement, mechanism-linked PD/biomarker, or direct functional effect) |
 | **Data Maturity** | stage에 맞는 공개 data의 충분성과 해석 가능성 | asset-specific 결과 없음 | 정성 claim·단편 결과 | 정량 evidence domain 1개 이상 | 상호보완적·stage-appropriate 정량 domain 2개 이상 + 최소 1개 program progression 직접 지지 |
 | **Competitive Landscape** | comparator 대비 확인된 차별성과 현실적 진입 가능성 | comparator와 경쟁구도 판단 불가 | 경쟁자는 확인되나 차별성은 claim 또는 이론 수준 | 적절한 benchmark comparator 대비 asset-specific 정량 차별성, 또는 asset-specific 근거로 확인된 현실적 진입공간 | 2점 조건 + 적절한 comparator와 직접 head-to-head 정량 비교로 material advantage 확인 |
-| **Platform Attractiveness** | 반복 적용 가능한 platform 기술 우위 | 실재/구현 근거 불명확 | claim·이론 중심 | 적절한 comparator 대비 정량 기술 우위 1건 (단일 조건 또는 단일 platform 적용 asset 수준) | 2점 근거 + (같은 우위가 복수 독립 조건 또는 복수 공식 연결 platform 적용 asset에서 재현됨, 또는 공식 연결 platform 적용 asset First Patient Dosed) |
+| **Platform Attractiveness** | 반복 적용 가능한 platform 기술 우위 | 실재/구현 근거 불명확 | claim·이론 중심 | 적절한 comparator 대비 정량 기술 우위 1건 (단일 조건 또는 단일 platform 적용 asset 수준) | 2점 조건 충족 + (같은 우위가 복수 독립 조건 또는 복수 공식 연결 platform 적용 asset에서 재현됨, 또는 공식 연결 platform 적용 asset First Patient Dosed) |
 | **Expansion Potential** | assessed asset의 main indication 외 확장성 | 추가 indication 근거 없음 | biology rationale만 있음 | 하나 이상의 추가 indication에서 assessed asset의 초기 정량 efficacy·PD·biomarker data 확인 | 2점 조건 + 그 추가 indication에서 assessed asset의 공식 전임상·IND-enabling·임상 program 확인 |
 | **Marketability** | commercial product와 Global obtainable peak sales 성립성 | rationale/신뢰 가능한 산출 불가 | Global < USD 1B | Global USD 1B–2B | Global ≥ USD 2B |
 

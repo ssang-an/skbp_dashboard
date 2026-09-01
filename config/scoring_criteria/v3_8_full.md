@@ -94,6 +94,10 @@ Asset identity 자체를 확인할 수 없으면 TR 0점 평가 대신 조기 �
 
 일반적인 clinical efficacy만으로 MoA 3점을 주지 않는다. Clinical evidence를 쓰려면 proposed mechanism과 연결된 mechanism-linked clinical PoC여야 한다.
 
+#### Investigation note 기록 규칙
+
+MoA 2점 또는 3점이면 `investigation_note`에, 이미 점수 산정에 사용한 확인 근거가 disease-relevant phenotype·efficacy·biomarker와 연결되는지 또는 세포신호 marker 등 proximal 지표에 그치는지를 한 문장 이내로 기록한다. MoA 0점 또는 1점에는 이 구분을 작성하지 않는다. 판단할 근거가 불충분하면 `확인 불가`로 기록하며, 추측하거나 이 기록을 위해 새 검색을 요구하지 않는다.
+
 ### 5.3 Data Maturity
 
 Evidence domain은 서로 다른 개발 질문에 답하는 데이터 범주다. 예: in vitro activity/selectivity, target engagement/PD, in vivo efficacy, PK/PD, safety/tolerability, clinical outcome.
@@ -180,6 +184,10 @@ Main indication의 다른 표현, patient subgroup, platform-wide indication lis
 - 1점: 추가 indication과 biology rationale만 확인되고 asset-specific 데이터나 공식 개발 program은 없음.
 - 2점: 하나 이상의 추가 indication에서 assessed asset의 초기 정량 efficacy, PD 또는 biomarker 데이터가 확인됨.
 - 3점: 하나 이상의 추가 indication에서 assessed asset의 초기 정량 efficacy, PD 또는 biomarker 데이터와 assessed asset의 공식 전임상·IND-enabling·임상 개발 program이 함께 확인됨. 복수 추가 indication은 요구하지 않는다.
+
+#### Investigation note 기록 규칙
+
+Expansion Potential 1점 이상이면 `investigation_note`에 확인된 추가 indication이 단일인지 복수인지, 그리고 각 additional indication의 assessed-asset program 및 data 상태를 간단히 기록한다. 이 기록에는 이미 점수 산정에 사용한 근거만 사용한다. 판단할 근거가 불충분하면 `확인 불가`로 기록하며, 추측하거나 이 기록을 위해 새 검색을 요구하지 않는다.
 
 ### 5.7 Marketability
 
@@ -271,5 +279,7 @@ SKBP Theme/Cluster는 분류·탐색 정보이며 TR 점수 또는 PASS/FAIL의 
 ## 8. Required Output for Each Criterion
 
 각 criterion의 Markdown section에는 score, evidence type, 핵심 판단, 확인 항목, evidence trail/source, investigation note, why-not-higher, uncertainty를 모두 기록한다. Compact v2 JSON criterion에는 대시보드 표시용 정수 `score`, 짧은 판단/근거/불확실성 필드, 그리고 중앙 `source_registry`를 가리키는 `source_ids`만 저장하며, Markdown의 전체 조사 내용을 중복하지 않는다. `structured_table.sources`는 `[]`로 유지하고 대시보드 Source 열은 `validation.source_registry`에서 파생한다. 범위형 score를 쓰지 않고, 회사 claim은 명확히 claim으로 표시한다.
+
+MoA 및 Expansion Potential의 위 `investigation_note` 기록은 이미 score 산정에 사용한 근거를 짧게 요약하는 절차이며, 추가 검색이나 점수 규칙 변경을 요구하지 않는다.
 
 Retain the v3.5 Compact v2 JSON structure and all criterion-level source, uncertainty, and why-not-higher requirements. For early-stop identity/lifecycle results, preserve the required JSON contract while displaying the three core score cells as `—`; do not portray schema placeholder zeroes as completed assessments.

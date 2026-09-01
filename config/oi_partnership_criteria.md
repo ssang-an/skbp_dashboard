@@ -1,6 +1,8 @@
 # Tab3 OI Partnership 자동 분류 기준
 
-- Version: 1.4
+- Version: 1.7
+- Active-release source: `config/rubric-release.json` → `workflows.shortlisting`
+- Release history: `config/oi_partnership_release_history.md`
 - Scope: Full Scout records tracked in Tab3
 - Evidence priority: Tab3 structured values → Full Scout detailed/raw report → Partner Materials
 - No inference: an absent or unclear value remains unknown.
@@ -16,7 +18,7 @@ Non-target indications are `n_a` with the note `대상 적응증 아님`.
 
 | Stored value | Display | Rule |
 | --- | --- | --- |
-| `investment` | 투자 | Target indication + Non-Small Molecule + Stage >= IND-enabling |
+| `investment` | 투자 | Target indication + All Modality + Stage >= IND-enabling (Non-Small Molecule preferred) |
 | `value_up` | Value Up | Target indication + Small Molecule + Stage < IND-enabling + In Vivo O + In Vitro O + ADMET uploaded and scored |
 | `joint_research` | 공동 연구 | Target indication + All Modality + Platform Attractiveness exactly 3 |
 | `unknown` | Unknown | Target indication, but at least one required input is missing or unclear |
@@ -30,7 +32,7 @@ investment, begin the note with `투자 또한 해당`.
 - Only an explicit `Small Molecule` label is treated as Small Molecule.
 - Biologic, Antibody, Peptide, Protein, Gene Therapy, Cell Therapy, RNA, ASO, siRNA,
   mRNA, Vaccine, and oligonucleotide labels are Non-Small Molecule.
-- Investment includes `IND-enabling`, `IND filed/cleared`, `Clinical unspecified`, and Phase 1 or later canonical stages.
+- Investment applies to every modality and includes `IND-enabling`, `IND filed/cleared`, `Clinical unspecified`, and Phase 1 or later canonical stages. Non-Small Molecule is a preference signal only, not an eligibility gate.
 - Value Up requires a confirmed pre-IND-enabling canonical stage only: `Hit Discovery`,
   `Lead Optimization`, `Preclinical Candidate`, or `Preclinical unspecified`. `IND-enabling`,
   `IND filed/cleared`, `Clinical unspecified`, and Phase 1 or later do not satisfy Value Up.
