@@ -21,13 +21,42 @@ def record(*, modality: str, stage: str, platform_score: int = 1, admet_uploaded
 
 
 class OiPartnershipCriteriaTests(unittest.TestCase):
-    def test_investment_includes_ind_enabling_and_later_stages(self):
-        for stage in ("IND-enabling", "IND filed/cleared", "Phase 1", "Phase 2", "Approved / marketed"):
-            with self.subTest(stage=stage):
-                result = main.classify_oi_partnership(record(modality="Antibody", stage=stage), {})
+    def test_shortlisting_reuses_full_scout_priority_indication_canonicalization(self):
+        cases = (
+            ("AD", "Alzheimer's disease"),
+            ("Alzheimer’s disease", "Alzheimer's disease"),
+            ("PDD", "Parkinson's disease"),
+            ("Parkinson’s disease", "Parkinson's disease"),
+            ("MND", "Amyotrophic lateral sclerosis / motor neuron disease"),
+            ("RRMS", "Multiple sclerosis / neuroinflammatory disease"),
+            ("PHN", "Neuropathic pain"),
+            ("DEE", "Epilepsy / seizure disorders"),
+        )
+        for wording, canonical in cases:
+            with self.subTest(wording=wording):
+                self.assertEqual(main.match_skbp_interest_indication(wording), canonical)
+                self.assertEqual(main.oi_match_target_indication(wording), canonical)
+
+    def test_blank_main_indication_uses_detailed_focal_onset_seizure_as_target(self):
+        candidate = record(modality="Small molecule", stage="Phase 2")
+        candidate["structured_table"].update({
+            "main_indication": "",
+            "indication": "Focal onset seizure; major depressive disorder; pain",
+        })
+        state, indication, source = main.oi_indication_state(candidate, main.oi_text_sources(candidate))
+        self.assertEqual(state, "target")
+        self.assertEqual(indication, "Epilepsy / seizure disorders")
+        self.assertEqual(source, "Tab2 구조화 데이터")
+
+    def test_investment_includes_all_modalities_at_ind_enabling_and_later_stages(self):
+        for modality in ("Small molecule", "Antibody", "Unknown"):
+            for stage in ("IND-enabling", "IND filed/cleared", "Phase 1", "Phase 2", "Approved / marketed"):
+                with self.subTest(modality=modality, stage=stage):
+                    result = main.classify_oi_partnership(record(modality=modality, stage=stage), {})
                 self.assertEqual(result["partnership_type"], "investment")
                 self.assertIn("IND-enabling 이상", result["note"])
-                self.assertEqual(result["criteria_version"], "1.4")
+                self.assertIn("All Modality", result["note"])
+                self.assertEqual(result["criteria_version"], "1.7")
 
     def test_value_up_requires_pre_ind_enabling_stage(self):
         evidence = {"in_vivo_status": "O", "in_vitro_status": "O", "admet_completed": 0}
@@ -41,8 +70,8 @@ class OiPartnershipCriteriaTests(unittest.TestCase):
                 result = main.classify_oi_partnership(
                     record(modality="Small molecule", stage=stage, admet_uploaded=True), evidence
                 )
-                self.assertEqual(result["partnership_type"], "n_a")
-                self.assertIn("IND-enabling 미만 아님", result["note"])
+                self.assertEqual(result["partnership_type"], "investment")
+                self.assertIn("All Modality", result["note"])
 
     def test_value_up_requires_confirmed_stage(self):
         result = main.classify_oi_partnership(
@@ -71,8 +100,27 @@ class OiPartnershipCriteriaTests(unittest.TestCase):
 
         self.assertTrue(main.refresh_tracked_oi_classifications([tracked]))
         focus = tracked["meta"]["focus_management"]
-        self.assertEqual(focus["partnership_classification_criteria_version"], "1.4")
-        self.assertEqual(focus["partnership_type"], "n_a")
+        self.assertEqual(focus["partnership_classification_criteria_version"], "1.7")
+        self.assertEqual(focus["partnership_type"], "investment")
+        self.assertEqual(len(focus["partnership_classification_history"]), 1)
+        self.assertEqual(focus["partnership_classification_history"][0]["automatic_result"], "investment")
+        self.assertTrue(focus["partnership_classification_history"][0]["applied_to_final"])
+
+    def test_current_shortlisting_record_without_history_receives_one_audit_entry(self):
+        tracked = record(modality="Antibody", stage="Phase 1")
+        tracked["meta"]["focus_management"] = {
+            "is_tracked": True,
+            "partnership_type": "investment",
+            "partnership_classification_source": "auto",
+            "partnership_classification_status": "auto_classified",
+            "partnership_classification_criteria_version": "1.7",
+        }
+
+        self.assertTrue(main.refresh_tracked_oi_classifications([tracked]))
+        history = tracked["meta"]["focus_management"]["partnership_classification_history"]
+        self.assertEqual(len(history), 1)
+        self.assertEqual(history[0]["criteria_version"], "1.7")
+        self.assertEqual(history[0]["automatic_result"], "investment")
 
     def test_value_up_requires_an_uploaded_scored_admet_material(self):
         result = main.classify_oi_partnership(

@@ -12,13 +12,13 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260901-detail-brand-without-icon-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260901-full-scout-header-gpt2-1" />
   </head>
   <body>
     <div class="app-shell detail-shell">
       <header class="topbar">
         <a class="topbar-home-link" href="/" aria-label="홈 대시보드로 이동">
-          <p class="eyebrow detail-brand-lockup">SKBP PIPELINE FINDER <i>·</i> PRISM</p>
+          <p class="eyebrow">GPT 2 · Full Scout</p>
           <h1 id="detailTitle">Details : Loading</h1>
         </a>
         <div class="top-actions" aria-label="Detail actions">
@@ -81,10 +81,10 @@
             </div>
             <div class="detail-material-body" aria-label="파트너사 자료 업로드 및 파일 목록">
               <div id="detailPartnerMaterialFlags" class="oi-material-flags partner-material-presence" role="group" aria-label="파트너 자료 보유 여부">
-                <span class="oi-material-toggle" data-material-key="ncdp"><span class="oi-material-dot" aria-hidden="true"></span>NCDP</span>
-                <span class="oi-material-toggle" data-material-key="cdp"><span class="oi-material-dot" aria-hidden="true"></span>CDP</span>
-                <span class="oi-material-toggle" data-material-key="admet"><span class="oi-material-dot" aria-hidden="true"></span>ADMET</span>
-                <span class="oi-material-toggle" data-material-key="ir"><span class="oi-material-dot" aria-hidden="true"></span>IR</span>
+                <button type="button" class="oi-material-toggle" data-material-key="ncdp"><span class="oi-material-dot" aria-hidden="true"></span>NCDP</button>
+                <button type="button" class="oi-material-toggle" data-material-key="cdp"><span class="oi-material-dot" aria-hidden="true"></span>CDP</button>
+                <button type="button" class="oi-material-toggle" data-material-key="admet"><span class="oi-material-dot" aria-hidden="true"></span>ADMET</button>
+                <button type="button" class="oi-material-toggle" data-material-key="ir"><span class="oi-material-dot" aria-hidden="true"></span>IR</button>
               </div>
               <div
                 id="detailAttachmentDropzone"
@@ -233,11 +233,11 @@
                     <div class="review-info-label">
                       <span>Filter 3</span>
                       <div class="review-info-label-row">
-                        <small id="detailOiPartnershipOrigin">OI Partnership v1.4</small>
+                        <small id="detailOiPartnershipOrigin">OI Partnership v1.7</small>
                         <span class="metadata-divider" aria-hidden="true">·</span>
                         <button id="oiPartnershipRefreshButton" class="criteria-refresh-pill" type="button" title="최신 OI Partnership 기준으로 Filter 3와 분류 근거를 갱신합니다. 수동 분류와 Note는 자동 결과로 초기화됩니다." aria-label="최신 OI Partnership 기준으로 재분류">
                           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.2 6.5L3 16m0 0v5m0-5h5M3 12A9 9 0 0 1 18.2 5.5L21 8m0 0V3m0 5h-5"></path></svg>
-                          <span>v1.4 기준 갱신</span>
+                          <span>v1.7 기준 갱신</span>
                         </button>
                       </div>
                     </div>
@@ -670,7 +670,7 @@
                   <td>Platform 실재 또는 구현 가능성 불명확</td>
                   <td>차별성 claim·이론적 rationale 중심</td>
                   <td>적절한 comparator 대비 정량 기술 우위 1건 (단일 조건 또는 단일 platform 적용 asset 수준)</td>
-                  <td>2점 근거 + (같은 우위가 복수 독립 조건 또는 복수 공식 연결 platform 적용 asset에서 재현됨, 또는 공식 연결 platform 적용 asset First Patient Dosed)</td>
+                  <td>2점 조건 충족 + (같은 우위가 복수 독립 조건 또는 복수 공식 연결 platform 적용 asset에서 재현됨, 또는 공식 연결 platform 적용 asset First Patient Dosed)</td>
                 </tr>
                 <tr>
                   <th>Expansion Potential</th>
@@ -709,7 +709,7 @@
           </article>
           <article>
             <h3>2. MoA Validity</h3>
-            <p>작용기전이 얼마나 구체적으로 정의되어 있고, 이를 뒷받침하는 기능적·과학적 근거가 어느 수준인지 평가합니다.</p>
+            <p>작용기전이 얼마나 구체적으로 정의되어 있고, 이를 뒷받침하는 기능적·과학적 근거가 어느 수준인지 평가합니다. 2~3점이면 <code>investigation_note</code>에 기존 점수 근거가 disease-relevant phenotype·efficacy·biomarker 연결인지, 또는 세포신호 marker 등 proximal 지표 수준인지를 한 문장 이내로 기록합니다. 0~1점에는 이 구분을 쓰지 않으며, 판단 불가면 <code>확인 불가</code>로 기록합니다.</p>
           </article>
           <article>
             <h3>3. Data Maturity</h3>
@@ -725,7 +725,7 @@
           </article>
           <article>
             <h3>6. Expansion Potential</h3>
-            <p>조사 asset의 main indication 외 추가 적응증을 평가합니다. 2점은 추가 적응증에서의 assessed-asset 초기 정량 efficacy·PD·biomarker data, 3점은 2점 조건을 충족하면서 그 추가 적응증에서 공식 전임상·IND-enabling·임상 program이 확인돼야 하며 복수 추가 적응증은 요구하지 않습니다.</p>
+            <p>조사 asset의 main indication 외 추가 적응증을 평가합니다. 2점은 추가 적응증에서의 assessed-asset 초기 정량 efficacy·PD·biomarker data, 3점은 2점 조건을 충족하면서 그 추가 적응증에서 공식 전임상·IND-enabling·임상 program이 확인돼야 하며 복수 추가 적응증은 요구하지 않습니다. 1점 이상이면 <code>investigation_note</code>에 추가 indication이 단일/복수인지와 각 indication의 assessed-asset program/data 상태를 기존 점수 근거만으로 간단히 기록하고, 판단 불가면 <code>확인 불가</code>로 기록합니다.</p>
           </article>
           <article class="parameter-card-wide marketability-parameter-card parameter-breakdown-card">
             <h3>7. Marketability</h3>
@@ -765,20 +765,20 @@
         </section>
 
         <section class="criteria-rule criteria-other-card oi-partnership-guide" data-criteria-tab="focus">
-          <h3>OI Partnership 자동 분류 v1.4</h3>
+          <h3>OI Partnership 자동 분류 v1.7</h3>
           <p>
-            대상 적응증은 AD, PD, ALS, MS, Neuropathic Pain, Epilepsy입니다.
+            대상 적응증은 Alzheimer's disease, Parkinson's disease, Amyotrophic lateral sclerosis / motor neuron disease, Multiple sclerosis / neuroinflammatory disease, Neuropathic pain, Epilepsy / seizure disorders입니다.
             Tab3 구조화 값을 우선 사용하고, 부족한 값만 Full Scout 원문·상세 리포트와 Partner Materials에서 확인합니다.
           </p>
           <div class="oi-criteria-grid">
-            <article><strong>투자</strong><span>Non-Small Molecule + Pipeline Stage ≥ IND-enabling</span></article>
+            <article><strong>투자</strong><span>All Modality + Pipeline Stage ≥ IND-enabling · Non-Small Molecule preferred</span></article>
             <article><strong>Value Up</strong><span>Small Molecule + Pipeline Stage &lt; IND-enabling + In Vivo O + In Vitro O + ADMET uploaded + scored (완료 Study / 25)</span></article>
             <article><strong>공동 연구</strong><span>All Modality + Platform Attractiveness 3</span></article>
             <article><strong>중복</strong><span>투자와 공동 연구 동시 해당 시 공동 연구 우선</span></article>
             <article><strong>Unknown</strong><span>판정 필수 정보 부족</span></article>
             <article><strong>N/A</strong><span>대상 적응증 아님 또는 조건 미충족</span></article>
           </div>
-          <p class="criteria-footnote">수동 수정은 자동 결과보다 우선하며, <code>v1.4 기준 갱신</code> 버튼으로 최신 자동 결과로 되돌릴 수 있습니다.</p>
+          <p class="criteria-footnote">수동 수정은 자동 결과보다 우선하며, <code>v1.7 기준 갱신</code> 버튼으로 최신 자동 결과로 되돌릴 수 있습니다.</p>
         </section>
       </div>
     </aside>
@@ -841,6 +841,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260901-ai-revision-note-visibility-1"></script>
+    <script type="module" src="./src/detail.js?v=20260901-all-refresh-history-3"></script>
   </body>
 </html>

@@ -4,10 +4,23 @@ SKBP의 Fast Triage와 Full Scout는 rubric, GPT instruction, backend validator/
 
 현재 release identity의 단일 기준은 `config/rubric-release.json`이다.
 
-| Workflow | Current rubric/instruction | Current display | Schema |
+| Workflow | Current rubric/instruction or criteria | Current display | Schema / record audit |
 |---|---:|---:|---:|
 | Fast Triage | 3.5 | 3.5 | 3.2 |
-| Full Scout | 3.8 | 3.9 | 3.2 |
+| Full Scout | 3.8 | 3.10 | 3.2 |
+| Shortlisting / Filter 3 | 1.7 deterministic criteria | 1.7 | `focus_management.partnership_classification_criteria_version` and history |
+
+### Shortlisting / Filter 3 release rule
+
+Filter 3 is a deterministic classification workflow, not a GPT scoring rubric.
+When its indication mapping, eligibility gates, priority order, or output
+meaning changes, update the `workflows.shortlisting` manifest entry, the
+criteria document, the release-history document, backend classifier, visible
+Shortlisting wording, existing tracked-record synchronization, and regression
+tests together. Keep the six-indication matcher shared with Full Scout; do not
+introduce a local synonym list. A new criteria version must preserve each
+tracked record's prior result in `partnership_classification_history` and then
+write the version and automatic result of the current classification.
 
 `rubric_version`과 `instruction_version`은 서로 다른 의미(점수/판정의 의미 vs 그 점수에 도달하는 조사·기록·출력 절차)를 가지지만, **항상 같은 값으로 움직인다** — `main.py`의 manifest loader가 두 값이 다르면 서버 기동 자체를 거부한다(`if workflow["instruction_version"] != workflow["rubric_version"]: raise RuntimeError(...)`). 즉 이 둘을 독립적으로 올리는 것은 설계 의도가 아니라 **실행 불가능**이다. `display_version`만 이 둘과 독립적으로 움직인다.
 

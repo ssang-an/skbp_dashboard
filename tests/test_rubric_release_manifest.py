@@ -22,6 +22,7 @@ class RubricReleaseManifestTests(unittest.TestCase):
     def test_backend_versions_paths_and_calculation_come_from_manifest(self) -> None:
         triage = self.manifest["workflows"]["fast_triage"]
         full = self.manifest["workflows"]["full_scout"]
+        shortlisting = self.manifest["workflows"]["shortlisting"]
         marketability = self.manifest["calculations"]["marketability"]
 
         self.assertEqual(main.TRIAGE_CRITERIA_VERSION, triage["rubric_version"])
@@ -31,13 +32,17 @@ class RubricReleaseManifestTests(unittest.TestCase):
         self.assertEqual(main.SCORING_CRITERIA_TRIAGE_MD, ROOT / triage["rubric_file"])
         self.assertEqual(main.SCORING_CRITERIA_FULL_MD, ROOT / full["rubric_file"])
         self.assertEqual(main.SCORING_CRITERIA_DISPLAY_MD, ROOT / full["display_file"])
+        self.assertEqual(main.OI_PARTNERSHIP_CRITERIA_VERSION, shortlisting["criteria_version"])
+        self.assertEqual(main.OI_PARTNERSHIP_CRITERIA_MD, ROOT / shortlisting["criteria_file"])
+        self.assertEqual(main.OI_PARTNERSHIP_RELEASE_HISTORY_MD, ROOT / shortlisting["release_history_file"])
         self.assertEqual(main.MARKETABILITY_GLOBAL_MULTIPLIER, marketability["global_multiplier"])
         self.assertEqual(self.manifest["contracts"]["storage_profile"], record_storage.STORAGE_PROFILE)
         self.assertTrue(str(triage["display_version"]).strip())
         self.assertTrue(str(full["display_version"]).strip())
 
     def test_declared_rubric_documents_identify_the_release_versions(self) -> None:
-        for workflow_id, workflow in self.manifest["workflows"].items():
+        for workflow_id in ("fast_triage", "full_scout"):
+            workflow = self.manifest["workflows"][workflow_id]
             rubric_text = (ROOT / workflow["rubric_file"]).read_text(encoding="utf-8")
             self.assertIn(
                 f"v{workflow['rubric_version']}",
@@ -47,6 +52,15 @@ class RubricReleaseManifestTests(unittest.TestCase):
         full = self.manifest["workflows"]["full_scout"]
         display_text = (ROOT / full["display_file"]).read_text(encoding="utf-8")
         self.assertIn(f"v{full['display_version']}", display_text)
+
+    def test_shortlisting_release_is_versioned_and_has_a_history_document(self) -> None:
+        shortlisting = self.manifest["workflows"]["shortlisting"]
+        criteria_text = (ROOT / shortlisting["criteria_file"]).read_text(encoding="utf-8")
+        history_text = (ROOT / shortlisting["release_history_file"]).read_text(encoding="utf-8")
+
+        self.assertIn(f"Version: {shortlisting['criteria_version']}", criteria_text)
+        self.assertIn(f"v{shortlisting['criteria_version']}", history_text)
+        self.assertIn("workflows.shortlisting", history_text)
 
     def test_frontend_release_labels_match_manifest(self) -> None:
         app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
@@ -164,6 +178,34 @@ class RubricReleaseManifestTests(unittest.TestCase):
         for surface in (index_html, detail_html):
             self.assertIn("단일 조건", surface)
             self.assertIn("First Patient Dosed만으로는 3점이 아닙니다", surface)
+
+        for surface in (display, index_html, detail_html):
+            self.assertIn("2점 조건 충족 +", surface)
+        self.assertIn("Score-2 conditions met plus", (ROOT / "src" / "criteria-guide-i18n.js").read_text(encoding="utf-8"))
+
+    def test_full_scout_investigation_note_rules_are_aligned(self) -> None:
+        """MoA/Expansion note requirements are active output instructions, not
+        schema additions or score rules. Keep the active rubric, prompt, refresh
+        path, and Korean/English judgment guides synchronized."""
+        full = self.manifest["workflows"]["full_scout"]
+        full_rubric = (ROOT / full["rubric_file"]).read_text(encoding="utf-8")
+        display = (ROOT / full["display_file"]).read_text(encoding="utf-8")
+        app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
+        main_py = (ROOT / "main.py").read_text(encoding="utf-8")
+        index_html = (ROOT / "index.html").read_text(encoding="utf-8")
+        detail_html = (ROOT / "detail.html").read_text(encoding="utf-8")
+        english_guide = (ROOT / "src" / "criteria-guide-i18n.js").read_text(encoding="utf-8")
+
+        for surface in (full_rubric, display, app_js, index_html, detail_html):
+            self.assertIn("disease-relevant phenotype", surface)
+            self.assertIn("확인 불가", surface)
+        self.assertIn("각 additional indication", full_rubric)
+        for surface in (display, index_html, detail_html):
+            self.assertIn("각 indication", surface)
+        self.assertIn("each indication's assessed-asset program/data status", app_js)
+        self.assertIn("Score 2 or 3", english_guide)
+        self.assertIn("Score 1–3", english_guide)
+        self.assertIn("do not initiate a new search", main_py)
 
     def test_full_scout_rubric_and_display_docs_are_complete_not_thin_deltas(self) -> None:
         """Regression guard: a version's active rubric/display doc must literally

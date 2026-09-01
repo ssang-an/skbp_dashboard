@@ -28,11 +28,11 @@ class HeaderChromeAlignmentTests(unittest.TestCase):
         self.assertIn("@media (max-width: 820px)", alignment)
         self.assertIn("padding-inline: 18px;", alignment)
 
-    def test_detail_brand_lockup_uses_text_only(self):
-        lockup = DETAIL_HTML[DETAIL_HTML.index('class="eyebrow detail-brand-lockup"'):]
-        lockup = lockup.split("</p>", 1)[0]
-        self.assertNotIn("<img", lockup)
-        self.assertIn("SKBP PIPELINE FINDER", lockup)
+    def test_detail_header_uses_the_triage_gpt_workflow_label_style(self):
+        header = DETAIL_HTML[DETAIL_HTML.index('<header class="topbar">'):]
+        header = header.split("</header>", 1)[0]
+        self.assertIn('<p class="eyebrow">GPT 2 · Full Scout</p>', header)
+        self.assertNotIn("detail-brand-lockup", header)
 
 
 if __name__ == "__main__":
