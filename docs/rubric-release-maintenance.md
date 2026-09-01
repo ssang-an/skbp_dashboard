@@ -7,7 +7,7 @@ SKBP의 Fast Triage와 Full Scout는 rubric, GPT instruction, backend validator/
 | Workflow | Current rubric/instruction | Current display | Schema |
 |---|---:|---:|---:|
 | Fast Triage | 3.5 | 3.5 | 3.2 |
-| Full Scout | 3.7 | 3.7 | 3.2 |
+| Full Scout | 3.8 | 3.9 | 3.2 |
 
 `rubric_version`과 `instruction_version`은 서로 다른 의미(점수/판정의 의미 vs 그 점수에 도달하는 조사·기록·출력 절차)를 가지지만, **항상 같은 값으로 움직인다** — `main.py`의 manifest loader가 두 값이 다르면 서버 기동 자체를 거부한다(`if workflow["instruction_version"] != workflow["rubric_version"]: raise RuntimeError(...)`). 즉 이 둘을 독립적으로 올리는 것은 설계 의도가 아니라 **실행 불가능**이다. `display_version`만 이 둘과 독립적으로 움직인다.
 
@@ -96,6 +96,19 @@ git diff --check
 `scoring.total_score`, `scoring.max_score`, `hard_filter.status`, Fast Triage `triage.status`, and the Fast Triage recommendation are deterministic dashboard-owned fields. The paste validator, AI second-parser response, and server save boundary must calculate the same values from the submitted criterion scores and the active hard-filter rule. A GPT response with an old total or status must be aligned and saved; do not reject otherwise valid research evidence solely for that mismatch.
 
 This is a backend/ingestion consistency change, not automatically a rubric-version change. Bump the rubric/instruction version only when the score definitions, status thresholds, hard-blocker semantics, or research scope change. If only the implementation is fixed so that it faithfully applies the already-released rule, keep the release version and add regression coverage plus a changelog entry.
+
+## Mandatory cross-surface alignment for scoring releases
+
+For every score definition, threshold, evidence-standard, status-gate, or research-scope change, treat this as a release gate. A rubric change is not complete until all of the following are aligned and checked in the same change set:
+
+1. **Source rule and version:** create or update the versioned rubric, then update `config/rubric-release.json` so `rubric_version` and `instruction_version` match the active workflow. Update the display release/file when its score explanation changes.
+2. **Backend and refresh invalidation:** update any deterministic validator/calculator/status rule that implements the change. For Full Scout, advance `FULL_SCOUT_RUBRIC_DEFINITION_REVISION` in `main.py` and the matching `LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION` in `src/app.js` whenever a definition changes within the same nominal version, so a record cannot incorrectly return `already_current`.
+3. **AI scoring instruction:** update every active scoring/re-evaluation prompt, report outline, version statement, JSON template/default, and compact-ingestion default that can supply the affected workflow.
+4. **Displayed judgment basis:** update the active display guide, Dashboard table/parameter text, detail-page table/parameter text, and dynamic English criteria guide. The 0/1/2/3 wording shown to an administrator must state the same threshold as the active prompt and rubric.
+5. **Both workflow controls:** verify Tab 1's rubric refresh resolves the active Fast Triage release and Tab 2's rubric refresh resolves the active Full Scout release. For an intentionally stale record, verify each refresh sends the active instruction/rubric context and writes its provenance; the Dashboard header reload must remain a page/data reload only, not a rubric rescore.
+6. **Regression and release audit:** update release-alignment tests, test the changed 0/1/2/3 boundary, run the release test set, and search active files for retired wording. Do not auto-rescore all stored records; re-evaluate through the explicit per-record refresh flow unless a separately approved migration is required.
+
+Use this sequence even for a wording change that could alter how GPT assigns a score. If the wording only improves readability and cannot change a score, status, research scope, or stored contract, it may be treated as display-only; otherwise use the full release checklist above.
 
 모든 release, display-only, 버전 없는 버그 수정·주의사항 추가 변경은 `docs/changelog/YYYY/YYYY-MM-DD.md`에 다음을 짧게 남긴다.
 

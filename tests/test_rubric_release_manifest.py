@@ -141,8 +141,29 @@ class RubricReleaseManifestTests(unittest.TestCase):
 
         for surface in (full_rubric, display):
             self.assertIn("official preclinical, IND-enabling, or clinical", surface)
+            self.assertIn("multiple additional indications are not required", surface)
+        self.assertIn("Multiple additional indications are not required for Score 3", app_js)
         for surface in (index_html, detail_html):
-            self.assertIn("최소 1개 공식 전임상·IND-enabling·임상", surface)
+            self.assertIn("IND-enabling", surface)
+            self.assertIn("assessed asset의 초기 정량 efficacy·PD·biomarker", surface)
+            self.assertIn("2점 조건 + 그 추가 indication", surface)
+
+        for surface in (full_rubric, display, app_js):
+            self.assertTrue("single condition" in surface or "one condition" in surface)
+            self.assertIn("First Patient Dosed", surface)
+            self.assertNotIn("independent/external validation", surface)
+
+        for surface in (full_rubric, display, app_js):
+            self.assertIn("material advantage", surface)
+            self.assertNotIn("decision-critical endpoint", surface)
+            self.assertNotIn("high-similarity", surface)
+        for surface in (index_html, detail_html):
+            self.assertIn("material advantage", surface)
+            self.assertNotIn("decision-critical endpoint", surface)
+            self.assertNotIn("high-similarity", surface)
+        for surface in (index_html, detail_html):
+            self.assertIn("단일 조건", surface)
+            self.assertIn("First Patient Dosed만으로는 3점이 아닙니다", surface)
 
     def test_full_scout_rubric_and_display_docs_are_complete_not_thin_deltas(self) -> None:
         """Regression guard: a version's active rubric/display doc must literally

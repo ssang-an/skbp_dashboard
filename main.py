@@ -114,9 +114,9 @@ FULL_SCOUT_SCHEMA_VERSION = str(FULL_SCOUT_RELEASE["schema_version"])
 SCORING_CRITERIA_FULL_MD = ROOT / str(FULL_SCOUT_RELEASE["rubric_file"])
 SCORING_CRITERIA_TRIAGE_MD = ROOT / str(TRIAGE_RELEASE["rubric_file"])
 SCORING_CRITERIA_DISPLAY_MD = ROOT / str(FULL_SCOUT_RELEASE["display_file"])
-# A scoring-rule correction within the published v3.7 document must still
-# trigger a one-time review for records already marked as v3.7.
-FULL_SCOUT_RUBRIC_DEFINITION_REVISION = "competitive-evidence-2026-09-01"
+# The active Full Scout release and each scoring-rule correction must trigger a
+# one-time review instead of treating a previously evaluated record as current.
+FULL_SCOUT_RUBRIC_DEFINITION_REVISION = "v3-8-comparator-material-evidence-2026-09-01"
 CATEGORY_SYNONYMS_FILE = ROOT / "config" / "category-synonyms.json"
 OPENROUTER_DEFAULT_MODEL = "openrouter/free"
 OPENROUTER_DEFAULT_FALLBACK_MODELS = [

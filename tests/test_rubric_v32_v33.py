@@ -324,11 +324,11 @@ class VersionAndPolicyTests(unittest.TestCase):
     def test_current_versions(self) -> None:
         self.assertEqual(main.TRIAGE_CRITERIA_VERSION, "3.5")
         self.assertEqual(main.TRIAGE_SCHEMA_VERSION, "3.2")
-        self.assertEqual(main.SCORING_CRITERIA_VERSION, "3.7")
+        self.assertEqual(main.SCORING_CRITERIA_VERSION, "3.8")
         self.assertEqual(main.FULL_SCOUT_SCHEMA_VERSION, "3.2")
         self.assertTrue(main.SCORING_CRITERIA_TRIAGE_MD.name.startswith("v3_5_"))
-        self.assertTrue(main.SCORING_CRITERIA_FULL_MD.name.startswith("v3_7_"))
-        self.assertTrue(main.SCORING_CRITERIA_DISPLAY_MD.name.startswith("v3_7_"))
+        self.assertTrue(main.SCORING_CRITERIA_FULL_MD.name.startswith("v3_8_"))
+        self.assertTrue(main.SCORING_CRITERIA_DISPLAY_MD.name.startswith("v3_9_"))
 
     def test_fast_triage_select_formula_and_identity_gate(self) -> None:
         # v3.5 dropped the separate active_asset tri-state field: it overlapped
@@ -1088,8 +1088,8 @@ class FullScoutFilterTests(unittest.TestCase):
         record = {
             "meta": {
                 "schema_version": "3.1",
-                "instruction_version": "3.7",
-                "rubric_version": "3.7",
+                "instruction_version": "3.8",
+                "rubric_version": "3.8",
                 "review_type": "full_scout",
             },
             "hard_filter": {"status": "FAIL"},
@@ -1337,7 +1337,7 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
             "The exact shared Evidence Discipline block is missing from src/app.js.",
         )
         self.assertIn("Fast Triage v3.5", app_js)
-        self.assertIn("Full Scout v3.7", app_js)
+        self.assertIn("Full Scout v3.8", app_js)
         for stale_or_forbidden in (
             "Fast Triage v3.3",
             "Full Scout v3.4",
@@ -1371,7 +1371,7 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         triage_rules = (ROOT / "config" / "scoring_criteria" / "v3_5_triage.md").read_text(
             encoding="utf-8"
         )
-        full_rules = (ROOT / "config" / "scoring_criteria" / "v3_7_full.md").read_text(
+        full_rules = (ROOT / "config" / "scoring_criteria" / "v3_8_full.md").read_text(
             encoding="utf-8"
         )
         for text in (triage_rules, full_rules):
@@ -1381,8 +1381,8 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         self.assertIn("INSUFFICIENT", triage_rules)
         self.assertIn("하나의 공개 source", triage_rules)
         self.assertIn("no SKBP Theme / Cluster fit", full_rules)
-        self.assertIn("complete, self-contained restatement of `v3_6_full.md`", full_rules)
-        self.assertIn("every Evidence Discipline, Evidence Type, canonical taxonomy", full_rules)
+        self.assertIn("complete, self-contained decision reference", full_rules)
+        self.assertIn("retains the v3.7 Evidence Discipline, Evidence Type, canonical taxonomy", full_rules)
 
         triage_detail_js = (ROOT / "src" / "triage-detail.js").read_text(encoding="utf-8")
         for label in (

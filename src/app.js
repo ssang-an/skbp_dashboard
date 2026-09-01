@@ -9,7 +9,7 @@ import {
   isMinimalCompactIngestionRecord
 } from './compact-ingestion.js?v=20260806-theme-indication-3';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260820-url-repair-6';
-import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260831-tar-scope-display-1';
+import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260901-full-scout-v3-8-expansion-display-7';
 
 const API_URL = '/api/records';
 const DASHBOARD_SUMMARY_URL = '/api/dashboard-summary';
@@ -161,12 +161,12 @@ const FOCUS_MIN_COLUMN_WIDTHS = {
 
 const MAX_COLUMN_WIDTH = 720;
 const PROMPT_TOOLTIP =
-  'GPT Full Scout v3.7 지침을 복사합니다. Fast Triage에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
+  'GPT Full Scout v3.8 지침을 복사합니다. Fast Triage에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
 const TRIAGE_PROMPT_TOOLTIP =
   'GPT Fast Triage v3.5 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / INSUFFICIENT로 screening합니다.';
 const LATEST_TRIAGE_RUBRIC_VERSION = '3.5';
-const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.7';
-const LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION = 'competitive-evidence-2026-09-01';
+const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.8';
+const LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION = 'v3-8-comparator-material-evidence-2026-09-01';
 const FAST_TRIAGE_SCHEMA_VERSION = '3.2';
 const FULL_SCOUT_SCHEMA_VERSION = '3.2';
 const FULL_SCOUT_AGENT_INPUT_PLACEHOLDER =
@@ -6728,7 +6728,7 @@ function exportPipelineTable() {
     'Total Score',
     'Max Score',
     'Similar Pipeline Count',
-    'High Similarity Count',
+    'Direct Competitor Count',
     'One Line Summary',
     'Record ID',
     ...extraColumns.map((column) => column.label)
@@ -7852,7 +7852,7 @@ function mockAgentReply(question) {
     'Dashboard context에서 우선 볼 후보:',
     summary || '- 현재 필터 조건에 맞는 후보가 없습니다.',
     '',
-    'Obsidian mock: 관련 note alias/tags를 확인하고, Agentic Search mock은 target, modality, front runner, marketability 근거를 보강하는 흐름으로 구성됩니다.'
+    'Obsidian mock: 관련 note alias/tags를 확인하고, Agentic Search mock은 target, modality, direct competitor, marketability 근거를 보강하는 흐름으로 구성됩니다.'
   ].join('\n');
 }
 
@@ -9942,7 +9942,7 @@ const SHARED_INTEREST_AND_CORE_RUBRIC = `SKBP Interest Indications:
 
 Use the most specific confirmed indication wording for Target Relevance. Neuropathic pain and explicit neuropathic subtypes/synonyms are one of the six interest indications and receive TR 3. Generic Pain, acute pain, postoperative pain, and non-neuropathic pain are within the broad SKBP pain scope but outside the six priority indications and receive TR 2.
 
-Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.5 and Full Scout v3.7):
+Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.5 and Full Scout v3.8):
 - For Target Relevance, always evaluate in descending order: 3, then 2, then 1, then 0. If more than one rule appears applicable, assign only the single highest applicable score.
 - Target Relevance 0: asset identity is verified, but there is still insufficient indication/relevance information to assess strategic scope. Asset identity not verified is an INSUFFICIENT early stop, not a completed TR 0.
 - Target Relevance 1: a verified asset's confirmed indication is outside the broad SKBP neurologic, psychiatric, neuroimmune, neurodegenerative, or pain scope.
@@ -10265,10 +10265,10 @@ function buildTriageInstructionPromptLegacy() {
   return `You are an expert biotech pipeline scout for SKBP Pipeline Finder.
 
 Mission:
-Run FAST TRIAGE on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.7 in-depth review.
+Run FAST TRIAGE on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.8 in-depth review.
 
 This is GPT instruction 1: Fast Triage v3.5.
-Use GPT instruction 2 only after a candidate receives SELECT and needs Full Scout v3.7 review.
+Use GPT instruction 2 only after a candidate receives SELECT and needs Full Scout v3.8 review.
 
 Evidence Discipline (apply to every factual field and every score):
 ${SHARED_EVIDENCE_DISCIPLINE}
@@ -10286,7 +10286,7 @@ Core rule:
 
 Important distinction:
 - Triage status is not a final Full Scout recommendation.
-- SELECT means worth sending to Full Scout v3.7.
+- SELECT means worth sending to Full Scout v3.8.
 - REJECT means the asset is identified but does not currently meet the SELECT gate; monitor or gather more evidence.
 - INSUFFICIENT means identity/lifecycle caused an early stop, or one of TR, MoA, or Data received 0 after identity was confirmed.
 - A REJECT or INSUFFICIENT result can change later if better identity, target, MoA, data, company, or source evidence becomes available.
@@ -10347,7 +10347,7 @@ Early stop rules:
 - In the Markdown table, write \`—\` for TR, MoA, and Data for either early-stop case. Early stop never shortens the required dashboard JSON contract: every record must still contain all three TR/MoA/Data criterion score objects. Use score 0 only as a schema placeholder with no_supporting_basis, keep scoring.total_score and max_score null, and do not describe the placeholder as a completed zero-score evaluation. The status is INSUFFICIENT.
 
 Triage scoring:
-- Use the same scoring direction as Full Scout v3.7, but only for these three matching criteria:
+- Use the same scoring direction as Full Scout v3.8, but only for these three matching criteria:
   - Full Scout criterion 1: Target Relevance (TR)
   - Full Scout criterion 3: MoA Validity (MOA)
   - Full Scout criterion 6: Data Maturity (Data)
@@ -10403,7 +10403,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
 \`\`\`text
 # SKBP Fast Triage Result
 
-> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.5. Full Scout v3.7 has not been run.
+> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.5. Full Scout v3.8 has not been run.
 
 중요: 한 문장으로 triage 결론과 filter rationale을 먼저 씁니다. 예: 공개 자료상 asset identity는 확인되지만 개발 단계가 Discontinued / inactive로 확인되어 INSUFFICIENT로 처리합니다.
 
@@ -10438,7 +10438,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
       "raw_markdown": "",
       "source_format": "fast_triage_markdown",
       "parser_status": "fast_triage",
-    "parser_note": "GPT instruction 1 Fast Triage v3.5 output. Full Scout v3.7 review has not been run."
+    "parser_note": "GPT instruction 1 Fast Triage v3.5 output. Full Scout v3.8 review has not been run."
     },
     "json_summary": {
       "company": "Unknown",
@@ -10509,7 +10509,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
     },
     "validation": {
       "instruction_version": "3.2",
-      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.5; Full Scout v3.7 not run.",
+      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.5; Full Scout v3.8 not run.",
       "cross_checked_facts": [],
       "uncertain_points": [],
       "source_registry": []
@@ -10557,7 +10557,7 @@ function buildGptInstructionPromptLegacy() {
 Mission:
 Evaluate exactly one biotech/pharma pipeline asset through company research, attachment review, public-source verification, competitor search, seven-criterion scoring, and evidence tracking. Return exactly one copyable fenced code block containing the Markdown report first and the valid JSON second.
 
-This is GPT instruction 2: Full Scout v3.7. State v3.7 in the Markdown report as the original-report provenance, not as a later dashboard score-recalculation notice. In compact JSON, do not repeat schema/instruction/rubric version fields; the dashboard adds schema 3.2 and instruction/rubric 3.7 during deterministic expansion.
+This is GPT instruction 2: Full Scout v3.8. State v3.8 in the Markdown report as the original-report provenance, not as a later dashboard score-recalculation notice. In compact JSON, do not repeat schema/instruction/rubric version fields; the dashboard adds schema 3.2 and instruction/rubric 3.8 during deterministic expansion.
 
 Evidence Discipline (apply to every factual field and every scoring criterion):
 ${SHARED_EVIDENCE_DISCIPLINE}
@@ -10634,7 +10634,7 @@ Non-negotiable rules:
 15. The JSON template defaults Marketability to score 0. A reliable calculation or asset-specific external forecast may support scores 1–3; document the complete method and numbers in Markdown.
 16. Keep source_report.raw_markdown as an empty string because the dashboard inserts the Markdown portion. Do not add keys not present in the Compact v2 template; research details already present in Markdown must not be duplicated in JSON.
 
-Scoring v3.7 rules:
+Scoring v3.8 rules:
 - Each scoring criterion must be scored independently using its own criterion-specific scoring table.
 - Do not apply a universal scoring rule across all criteria.
 - For every criterion, assign exactly one integer score: 0, 1, 2, or 3.
@@ -10654,9 +10654,9 @@ Criterion-specific scoring (canonical; do not replace with a universal evidence 
 - Target Relevance — 0: asset identity is verified but indication/relevance information remains insufficient; 1: confirmed indication outside the broad SKBP neurologic/psychiatric/neuroimmune/neurodegenerative/pain scope; 2: confirmed indication within that broad scope but outside the six priority interests; 3: confirmed indication is one of the six priority interests. Generic Pain, acute pain, postoperative pain, and non-neuropathic pain are TR 2; neuropathic pain is TR 3. Target/MoA disease-biology fit and Theme/Cluster are classification or MoA information, not TR score bases.
 - MoA Validity — 0: target or MoA unconfirmed; 1: company claim or theoretical rationale only; 2: functional evidence or independent same-target/class validation; 3: assessed-asset target engagement, mechanism-linked PD/biomarker, or direct functional validation.
 - Data Maturity — 0: no asset-specific result in public sources or readable attachments; 1: qualitative claim or fragmentary result only; 2: at least one asset-specific quantitative evidence domain appropriate to the current stage; 3: at least two complementary quantitative domains addressing different development questions, with at least one directly supporting program progression. Source count, endpoint count, and repeated presentations of one experiment do not create extra domains.
-- Competitive Landscape evaluates competitive position and differentiation only; patient counts, price, market size, and peak sales belong only to Marketability. Similarity is High only when the intended indication and primary therapeutic intervention are substantially aligned: the target/pathway intervention and therapeutic effector mechanism must both substantially overlap. Sharing only disease, pathological protein/biomarker, endpoint, or modality is insufficient and must be recorded as a broader/reference competitor. Score 0: search scope/evidence insufficient to judge a direct competitor set; 1: competitors found but differentiation is claim/concept only with no asset-specific quantitative comparison; 2: asset-specific quantitative differentiation versus an appropriate comparator, or a realistic entry space supported by a clear unresolved need in current care and asset-specific target/MoA, route, safety, or access evidence; unmet need, market size, or company positioning claim alone is insufficient. Direct head-to-head advantage need not yet be verified for Score 2. Score 3: sufficient documented search shows high-similarity competitors are limited, and assessed-asset direct head-to-head quantitative data against an appropriate high-similarity comparator in matched or comparable preclinical or clinical conditions demonstrates a material advantage in a decision-critical endpoint (efficacy, safety, PK/PD, delivery, or therapeutic window), supporting a leading position. Never award 3 merely because no competitor was found, from a cross-study comparison, or by competitor count alone. Search at minimum: asset name/aliases; same indication + target/MoA; same indication + pathway/biology; approved, Phase 3, clinical, and major preclinical competitors; trial registries; and recent review, official-pipeline, or patent sources. Separate direct/high-similarity from broader competitors and record scope and limitations.
-- Platform Attractiveness evaluates a reusable technical system whose common principles/design/manufacturing/delivery can generate multiple candidates/programs or improve performance. Score 0: no reusable structure or verifiable technical advantage; 1: reusable structure with plausible rationale but claim/concept-level differentiation; 2: at least one quantitative result showing technical advantage versus an appropriate comparator; 3: score 2 plus quantitative advantage reproduced across multiple conditions or multiple platform-derived assets and independent/external validation or use, or an officially linked platform-derived asset has reached First Patient Dosed. FPD alone is insufficient without score-2 quantitative evidence. Do not award points merely for preferred modality, indication expansion, multiple assets, or pipeline breadth.
-- Expansion Potential evaluates only additional indications for the assessed asset beyond its main indication. Score 0: none confirmed; 1: additional indication with biological rationale only; 2: asset-specific early quantitative data in at least one additional indication; 3: at least two distinct additional indications, at least one confirmed as an active asset-specific program, and asset-specific quantitative efficacy, PD, or biomarker data in that additional indication. An active program may be separately listed on the official pipeline or be in preclinical, IND-enabling, trial registration/authorization, or dosing; it is not limited to clinical development. Future opportunity, possible/planned evaluation, an indication list, platform-level expansion not tied to the asset, wording variants of one disease, and patient subgroups are not separate programs/indications. Do not award points for platform reuse, multiple platform assets, or platform breadth.
+- Competitive Landscape evaluates competitive position and differentiation only; patient counts, price, market size, and peak sales belong only to Marketability. Record broader/reference competitors separately from direct competitors: a direct competitor has substantially aligned intended indication, target/pathway intervention, and therapeutic effector mechanism. This classification and competitor count do not determine the score. Score 0: search scope/evidence insufficient to judge appropriate comparators and the competitive context; 1: competitors found but differentiation is claim/concept only with no asset-specific quantitative comparison; 2: asset-specific quantitative differentiation versus an appropriate benchmark comparator, or a realistic entry space supported by a clear unresolved need in current care and asset-specific target/MoA, route, safety, or access evidence; unmet need, market size, or company positioning claim alone is insufficient. Score 3: Score-2 evidence plus assessed-asset direct head-to-head quantitative comparison against an appropriate comparator in matched or comparable preclinical or clinical conditions confirms material advantage. Material advantage is a quantitatively meaningful difference that is decision-relevant against that comparator; do not treat a trivial numerical difference as material. Never award 3 from a cross-study comparison, claim, no-competitor finding, or competitor count alone. Search at minimum: asset name/aliases; same indication + target/MoA; same indication + pathway/biology; approved, Phase 3, clinical, and major preclinical competitors; trial registries; and recent review, official-pipeline, or patent sources. Record search scope and limitations.
+- Platform Attractiveness evaluates a reusable technical system whose common principles/design/manufacturing/delivery can generate multiple candidates/programs or improve performance. Score 0: no reusable structure or verifiable technical advantage; 1: reusable structure with plausible rationale but claim/concept-level differentiation; 2: at least one quantitative result showing technical advantage versus an appropriate comparator, normally limited to a single condition or platform-derived asset; 3: score-2 evidence plus either (a) the same quantitative advantage reproduced across multiple independent conditions (for example, model, species, or dose) or officially linked platform-derived assets, or (b) an officially linked platform-derived asset has reached First Patient Dosed. FPD alone is insufficient without score-2 quantitative evidence. Do not award points merely for preferred modality, indication expansion, multiple assets, or pipeline breadth.
+- Expansion Potential evaluates only additional indications for the assessed asset beyond its main indication. Score 0: none confirmed; 1: additional indication with biological rationale only and no asset-specific data or official development program; 2: asset-specific early quantitative efficacy, PD, or biomarker data in at least one additional indication; 3: asset-specific early quantitative efficacy, PD, or biomarker data and an official preclinical, IND-enabling, or clinical assessed-asset program are both confirmed in the same additional indication. Multiple additional indications are not required for Score 3. An official program may be separately listed on the official pipeline or be confirmed as active preclinical, IND-enabling, trial registration/authorization, or dosing; it is not limited to clinical development. Future opportunity, possible/planned evaluation, an indication list, platform-level expansion not tied to the asset, wording variants of one disease, and patient subgroups are not separate programs/indications. Do not award points for platform reuse, multiple platform assets, or platform breadth.
 
 Marketability method and score (document complete inputs in Markdown; JSON keeps the score and minimal A/B/C/D outputs):
 - assessment_method is exactly calculation, external_forecast, both, or insufficient_evidence. Do not force A/B/C/D when no reliable internal calculation exists.
@@ -10687,7 +10687,7 @@ Use this exact report structure inside the Markdown portion of the single combin
 
 # [Company] Pipeline Scout Report: **[Asset]**
 
-Include this short provenance statement near the top: "Original report provenance: researched and scored with GPT instruction 2 — Full Scout v3.7 (schema v3.2); URLs are included for auditability." Do not add later recalculation dates or revision history to the original report; the dashboard records those separately in change history.
+Include this short provenance statement near the top: "Original report provenance: researched and scored with GPT instruction 2 — Full Scout v3.8 (schema v3.2); URLs are included for auditability." Do not add later recalculation dates or revision history to the original report; the dashboard records those separately in change history.
 
 중요: 한 문장으로 filter/recommendation rationale을 먼저 씁니다. 예: 공개 자료상 active asset명·compound code·임상 단계가 명확히 확인되지 않아 stage/ownership은 uncertain / REVIEW로 처리합니다.
 
@@ -10792,10 +10792,9 @@ Score:
 Main line:
 
 What was checked:
-- Same disease competitors
-- Same target competitors
-- Same or similar MoA competitors
-- Front runner count
+- Appropriate benchmark comparators
+- Direct competitors and broader/reference competitors
+- Comparator stage, model, dose, route, and endpoint compatibility
 - Approved / Phase 3 / clinical / preclinical status
 
 Competitor table:
@@ -10804,7 +10803,8 @@ Competitor table:
 |---|---|---|---|---|---|---|
 
 Investigation note:
-- Start from same disease and biology, then separate true same-MoA front runners from broader indication competitors.
+- Record search scope and distinguish direct competitors from broader/reference competitors; competitor count alone does not determine the score.
+- For Score 3, document the matched or comparable head-to-head conditions, the compared quantitative result, and why the observed difference is material.
 
 ### 4.5 Platform Attractiveness
 Score:
@@ -10814,7 +10814,7 @@ What was checked:
 - Is the platform real and reproducible?
 - Is differentiation supported by data?
 - Is the underlying technical system reusable across candidates, programs, or conditions?
-- Is the quantitative advantage reproduced across multiple conditions or platform-derived assets and independently/externally validated or used?
+- Is the same quantitative advantage reproduced across multiple independent conditions (for example, model, species, or dose) or officially linked platform-derived assets?
 
 Evidence trail:
 - Cite platform page, paper, patent, data page, or company technical material.
@@ -10825,8 +10825,8 @@ Investigation note:
 Platform vs Data Maturity separation:
 - Platform Attractiveness evaluates platform-level technical advantage and may use evidence from other assets officially linked to the same platform.
 - Data Maturity evaluates only the assessed asset's stage-appropriate development evidence.
-- A 2-point Platform score requires at least one quantitative experimental result directly testing the claimed technical advantage against an appropriate comparator.
-- A 3-point Platform score requires the 2-point evidence plus quantitative advantage reproduced across multiple conditions/assets and independent/external validation or use, or First Patient Dosed for an officially linked platform asset.
+- A 2-point Platform score requires at least one quantitative experimental result directly testing the claimed technical advantage against an appropriate comparator, normally in a single condition or platform-derived asset.
+- A 3-point Platform score first requires the 2-point evidence and then either the same advantage reproduced across multiple independent conditions/officially linked platform-derived assets, or First Patient Dosed for an officially linked platform asset.
 - First Patient Dosed alone is insufficient without the 2-point quantitative technical evidence.
 - IND clearance, trial registration, financing, patent, MOU, or partnership announcement alone is insufficient for 3 points.
 - The same endpoint must not be double-counted in Platform Attractiveness and Data Maturity.
@@ -10915,14 +10915,14 @@ End the Markdown portion after References. The next line in this template is the
 {
   "meta": {
     "schema_version": "3.2",
-    "instruction_version": "3.7",
+    "instruction_version": "3.8",
     "review_type": "full_scout",
     "generated_at": "YYYY-MM-DD",
     "language": "ko",
     "analyst_role": "[OIT] PreC Pipeline Shortlister",
     "output_format": ["markdown_report", "json"],
     "output_filename_base": "Company_Asset_YYYYMMDD",
-    "rubric_version": "3.7",
+    "rubric_version": "3.8",
     "rubric_author": "kate"
   },
   "input": {
@@ -10936,7 +10936,7 @@ End the Markdown portion after References. The next line in this template is the
     "raw_markdown": "",
     "source_format": "gpt_markdown_report",
     "parser_status": "gpt_structured_output",
-    "parser_note": "GPT instruction 2 Full Scout v3.7 output using schema v3.2; Markdown report and JSON were generated together from the same evidence set."
+    "parser_note": "GPT instruction 2 Full Scout v3.8 output using schema v3.2; Markdown report and JSON were generated together from the same evidence set."
   },
   "company_profile": {
     "company_name": "",
@@ -11162,7 +11162,7 @@ End the Markdown portion after References. The next line in this template is the
 }
 
 Final validation before output:
-- Keep the Markdown version statement at instruction/rubric 3.7. The dashboard deterministically adds JSON schema 3.2 and instruction/rubric 3.7.
+- Keep the Markdown version statement at instruction/rubric 3.8. The dashboard deterministically adds JSON schema 3.2 and instruction/rubric 3.8.
 - Internally verify that the seven integer criterion scores sum correctly; the dashboard derives total_score and max_score.
 - Apply PASS >= 14 plus TR >= 3, MoA = 3, and Data = 3. Apply FAIL for Total <= 8 or any TR/MoA/Data score of 0. Apply identity and terminal-lifecycle early-stop rules before completing the scorecard.
 - Do not infer Competitive Landscape 3 from no competitors; record search sufficiency, scope, and limitations.

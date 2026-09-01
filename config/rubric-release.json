@@ -1,7 +1,7 @@
 {
   "manifest_schema_version": "1.0",
-  "release_id": "skbp-rubric-2026-08-31-tar-scope-display-clarity",
-  "released_at": "2026-08-31",
+  "release_id": "skbp-rubric-2026-09-01-full-scout-v3-8-comparator-material-evidence",
+  "released_at": "2026-09-01",
   "workflows": {
     "fast_triage": {
       "instruction_version": "3.5",
@@ -11,11 +11,11 @@
       "rubric_file": "config/scoring_criteria/v3_5_triage.md"
     },
     "full_scout": {
-      "instruction_version": "3.7",
-      "rubric_version": "3.7",
+      "instruction_version": "3.8",
+      "rubric_version": "3.8",
       "display_version": "3.9",
       "schema_version": "3.2",
-      "rubric_file": "config/scoring_criteria/v3_7_full.md",
+      "rubric_file": "config/scoring_criteria/v3_8_full.md",
       "display_file": "config/scoring_criteria/v3_9_display.md"
     }
   },

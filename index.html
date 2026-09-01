@@ -145,8 +145,8 @@
                 id="copyPromptTopButton"
                 class="help-tooltip"
                 type="button"
-                data-tooltip="GPT Full Scout v3.7 지침을 복사합니다. Fast Triage에서 SELECT된 asset을 심층 검토할 때 사용합니다."
-                aria-label="GPT Full Scout v3.7 지침 복사"
+                data-tooltip="GPT Full Scout v3.8 지침을 복사합니다. Fast Triage에서 SELECT된 asset을 심층 검토할 때 사용합니다."
+                aria-label="GPT Full Scout v3.8 지침 복사"
               ><span aria-hidden="true">GPT</span><b>지침 2</b></button>
               <button
                 class="data-utility-segment data-upload-shortcut help-tooltip"
@@ -1006,7 +1006,7 @@
         </section>
 
         <section class="criteria-rule criteria-full-rule" data-criteria-tab="full">
-          <h3>GPT 지침 2 — Full Scout · v3.7 기준</h3>
+          <h3>GPT 지침 2 — Full Scout · v3.8 기준</h3>
           <p>
             지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
             지침 1에서 예비로 본 TAR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
@@ -1107,24 +1107,24 @@
                 </tr>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="7" r="2.5" /><circle cx="18" cy="17" r="2.5" /><path d="m8.5 11 7-3M8.5 13l7 3" /></svg></span><span><b>COMP</b>Competitive Landscape</span></span></th>
-                  <td>검색 또는 근거 부족으로 direct competitor와 경쟁구도 판단 불가</td>
+                  <td>검색 또는 근거 부족으로 comparator와 경쟁구도 판단 불가</td>
                   <td>경쟁자는 확인되나 차별성은 claim 또는 이론 수준</td>
-                  <td>Comparator 대비 asset-specific 정량 차별성, 또는 뚜렷한 미충족 수요를 asset-specific 근거로 해결할 진입공간</td>
-                  <td>제한적인 high-similarity 경쟁 + 직접 head-to-head 정량 우위로 선도 위치 확인</td>
+                  <td>적절한 benchmark comparator 대비 asset-specific 정량 차별성, 또는 asset-specific 근거로 확인된 현실적 진입공간</td>
+                  <td>2점 조건 + 적절한 comparator와 직접 head-to-head 정량 비교로 material advantage 확인</td>
                 </tr>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 3 8 4-8 4-8-4 8-4Z" /><path d="m4 12 8 4 8-4M4 17l8 4 8-4" /></svg></span><span><b>PLATFORM</b>Platform Attractiveness</span></span></th>
                   <td>재사용 가능한 Platform 또는 검증 가능한 기술 장점 미확인</td>
                   <td>재사용 구조와 rationale은 있으나 차별성은 claim 수준</td>
-                  <td>적절한 comparator 대비 정량적 기술 우위 최소 1건</td>
-                  <td>2점 정량 근거 + 복수 조건/platform 적용 자산에서 정량 우위 재현·외부 검증, 또는 Platform 적용 자산 FPD</td>
+                  <td>적절한 comparator 대비 정량 기술 우위 1건 (단일 조건 또는 단일 platform 적용 asset 수준)</td>
+                  <td>2점 근거 + (같은 우위가 복수 독립 조건 또는 복수 공식 연결 platform 적용 asset에서 재현됨, 또는 공식 연결 platform 적용 asset First Patient Dosed)</td>
                 </tr>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="5" r="2" /><circle cx="18" cy="7" r="2" /><circle cx="18" cy="18" r="2" /><path d="M6 7v5a6 6 0 0 0 6 6h4M8 7h4a6 6 0 0 1 6 6v3" /></svg></span><span><b>EXPANSION</b>Expansion Potential</span></span></th>
                   <td>Main indication 외 추가 적응증 미확인</td>
                   <td>추가 적응증과 biological rationale은 있으나 회사 설명·이론 수준</td>
-                  <td>하나 이상의 추가 적응증에서 asset-specific 초기 정량 데이터 확인</td>
-                  <td>복수 추가 적응증 + 최소 1개 공식 전임상·IND-enabling·임상 개발 프로그램 + 추가 적응증 중 최소 1개의 asset-specific 정량 데이터</td>
+                  <td>하나 이상의 추가 indication에서 assessed asset의 초기 정량 efficacy·PD·biomarker 데이터 확인</td>
+                  <td>2점 조건 + 그 추가 indication에서 assessed asset의 공식 전임상·IND-enabling·임상 개발 program 확인</td>
                 </tr>
                 <tr>
                   <th><span class="criteria-table-criterion"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 19V9M10 19V5M16 19v-7M3 19h18" /><path d="m4 8 6-4 6 6 4-3" /></svg></span><span><b>MARKET</b>Marketability</span></span></th>
@@ -1164,11 +1164,11 @@
             </article>
             <article class="competitive-parameter-card full-parameter-card">
               <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="12" r="2.5" /><circle cx="18" cy="7" r="2.5" /><circle cx="18" cy="17" r="2.5" /><path d="m8.5 11 7-3M8.5 13l7 3" /></svg></span><h3><b>COMP</b><span>Competitive Landscape</span></h3></div>
-              <p>충분한 경쟁검색을 전제로 direct/high-similarity competitor 대비 경쟁 위치와 asset-specific 정량 차별성을 평가합니다.</p>
+              <p>충분한 경쟁검색을 전제로 comparator 대비 경쟁 위치와 asset-specific 정량 차별성을 평가합니다. 3점은 직접 head-to-head 정량 비교로 material advantage가 확인돼야 하며, 사소한 수치 차이는 해당하지 않습니다.</p>
             </article>
             <article class="full-parameter-card">
               <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 3 8 4-8 4-8-4 8-4Z" /><path d="m4 12 8 4 8-4M4 17l8 4 8-4" /></svg></span><h3><b>PLATFORM</b><span>Platform Attractiveness</span></h3></div>
-              <p>복수 후보 또는 프로그램에 반복 적용 가능한 재사용 기술체계와 comparator 대비 정량적 기술 우위를 평가합니다. 3점은 2점 근거에 더해 정량 우위가 복수 조건 또는 복수 platform 적용 자산에서 재현되고 외부 검증·사용이 확인되거나, 공식 연결된 platform 적용 자산이 First Patient Dosed에 도달해야 합니다.</p>
+              <p>복수 후보 또는 프로그램에 반복 적용 가능한 재사용 기술체계와 comparator 대비 정량적 기술 우위를 평가합니다. 2점은 단일 조건 또는 단일 asset 수준의 정량 우위 1건입니다. 3점은 이 근거에 더해 같은 우위가 복수 독립 조건(예: 모델·종·용량) 또는 복수 공식 연결 asset에서 재현되거나, 공식 연결 asset의 First Patient Dosed가 확인돼야 합니다. First Patient Dosed만으로는 3점이 아닙니다.</p>
             </article>
             <article class="full-parameter-card">
               <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="6" cy="5" r="2" /><circle cx="18" cy="7" r="2" /><circle cx="18" cy="18" r="2" /><path d="M6 7v5a6 6 0 0 0 6 6h4M8 7h4a6 6 0 0 1 6 6v3" /></svg></span><h3><b>EXPANSION</b><span>Expansion Potential</span></h3></div>
@@ -1441,7 +1441,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260901-header-refresh-and-rubric-errors-1"></script>
+  <script type="module" src="./src/app.js?v=20260901-full-scout-v3-8-expansion-display-7"></script>
   <script src="./src/sigma_graph.js?v=20260824-deferred-wiki-export-1" defer></script>
   </body>
 </html>

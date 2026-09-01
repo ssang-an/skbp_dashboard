@@ -4139,7 +4139,7 @@ async function refreshOiPartnership() {
 function aiRevisionInstruction(record) {
   return isFastTriageRecord(record)
     ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.5 update applied from chat answer.'
-    : 'Detail AI Agent Full Scout v3.7 re-evaluation applied from chat answer.';
+    : 'Detail AI Agent Full Scout v3.8 re-evaluation applied from chat answer.';
 }
 
 function setAiApplyModalStatus(message = '', tone = '') {

@@ -366,8 +366,8 @@ function expandedMeta(record, mode) {
   const meta = { ...objectValue(record.meta) };
   const triage = mode === 'triage';
   meta.schema_version ||= '3.2';
-  meta.instruction_version ||= triage ? '3.5' : '3.7';
-  meta.rubric_version ||= triage ? '3.5' : '3.7';
+  meta.instruction_version ||= triage ? '3.5' : '3.8';
+  meta.rubric_version ||= triage ? '3.5' : '3.8';
   meta.review_type ||= triage ? 'fast_triage' : 'full_scout';
   meta.language ||= 'ko';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(textValue(meta.generated_at)) || /Y{4}/i.test(textValue(meta.generated_at))) {

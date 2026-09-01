@@ -1,6 +1,6 @@
 # 판단근거 — SKBP Pipeline Finder v3.9
 
-This display release reflects the active Full Scout v3.7 decision rules, including the `Global Obtainable Peak Sales` calculation using the `1.5` US-to-global multiplier, the identity/lifecycle-as-pre-research-gate framing, the MoA 2/3 clarification, and the Competitive Landscape direct-comparison requirement for Score 3. Criteria are presented Target Relevance / MoA Validity / Data Maturity first (the three Fast Triage-shared criteria), then Competitive Landscape / Platform Attractiveness / Expansion Potential / Marketability, matching the Pipeline Table and Team Review Workspace order.
+This display release reflects the active Full Scout v3.8 decision rules, including the `Global Obtainable Peak Sales` calculation using the `1.5` US-to-global multiplier, the identity/lifecycle-as-pre-research-gate framing, the MoA 2/3 clarification, the Competitive Landscape comparator-backed direct-comparison requirement for Score 3, and the Expansion Potential program-plus-data requirement for Score 3. Criteria are presented Target Relevance / MoA Validity / Data Maturity first (the three Fast Triage-shared criteria), then Competitive Landscape / Platform Attractiveness / Expansion Potential / Marketability, matching the Pipeline Table and Team Review Workspace order.
 
 ## Scoring 원칙
 
@@ -32,9 +32,9 @@ This display release reflects the active Full Scout v3.7 decision rules, includi
 - **TR:** 0 is only for an identity-verified asset with insufficient indication/relevance information; 1 is outside the neurologic, psychiatric, neuroimmune, neurodegenerative, or pain scope; 2 is within that scope but outside the six priority indications; 3 is one of the six priority indications. Identity not verified is an early stop, not TR 0.
 - **MoA 2 / 3:** MoA 2 is supported by target/pathway functional evidence or independent same-target/class validation. MoA 3 has direct asset-specific evidence relevant to the proposed MoA through one or more of target engagement, a mechanism-linked PD/biomarker, or a direct functional effect. Target engagement is not mandatory.
 - **Data 3:** at least two complementary, stage-appropriate quantitative domains, including at least one domain that directly supports program progression.
-- **Competitive Landscape 3:** sufficient search confirms high-similarity competitors are limited, and assessed-asset direct head-to-head quantitative evidence against an appropriate high-similarity comparator supports a material advantage/leading position. Never 3 merely because no competitor was found, from cross-study comparison, or by competitor count alone.
-- **Platform 3:** first requires the 2-point quantitative comparator evidence. Then either the quantitative advantage must be reproduced across multiple conditions or platform-derived assets and independently/externally validated or used, or an officially linked platform asset must have reached First Patient Dosed.
-- **Expansion 2 / 3:** 2 requires asset-specific early quantitative data in at least one additional indication. 3 requires multiple additional indications, at least one official preclinical, IND-enabling, or clinical program, and quantitative data in that additional indication.
+- **Competitive Landscape 2 / 3:** 2 requires asset-specific quantitative differentiation versus an appropriate benchmark comparator or a substantiated entry space. 3 requires that 2-point evidence plus assessed-asset direct head-to-head quantitative evidence against an appropriate comparator in matched or comparable conditions confirming material advantage. Material advantage is a decision-relevant quantitative difference versus that comparator, not a trivial numerical difference. Never 3 from a cross-study comparison, claim, no-competitor finding, or competitor count alone.
+- **Platform 2 / 3:** 2 requires at least one quantitative technical advantage versus an appropriate comparator, normally limited to one condition or platform-derived asset. 3 first requires that 2-point evidence, then either reproduction of the same advantage across multiple independent conditions (for example, model, species, or dose) or officially linked platform-derived assets, or First Patient Dosed by an officially linked platform-derived asset. First Patient Dosed alone is insufficient.
+- **Expansion 2 / 3:** 2 requires asset-specific early quantitative data in at least one additional indication. 3 requires an official preclinical, IND-enabling, or clinical program and asset-specific quantitative data in the same additional indication; multiple additional indications are not required.
 - **Marketability:** assessed Global peak sales determines 1/2/3; Expansion Capacity Adjustment is not used.
 
 ## Summary Scoring Table
@@ -44,9 +44,9 @@ This display release reflects the active Full Scout v3.7 decision rules, includi
 | **Target Relevance** | 확인된 asset의 indication과 SKBP 전략 범위 적합성 (Theme/Cluster와 disease biology는 별도 분류/MoA 평가) | Identity 확인 후에도 indication/relevance 판단 정보 부족 (identity 미확인은 조기 종료) | 신경계·정신과·신경면역·신경퇴행·통증 범위 밖 | 신경계·정신과·신경면역·신경퇴행·통증 범위에는 속하지만 6개 우선 적응증 밖 | 6개 우선 적응증 중 하나 |
 | **MoA Validity** | 기전의 구체성과 기능적·과학적 검증 수준 | target/MoA 확인 불가 | claim·이론 중심 | Target/pathway functional evidence 또는 independent same-target/class validation | Direct asset-specific evidence relevant to the proposed MoA (target engagement, mechanism-linked PD/biomarker, or direct functional effect) |
 | **Data Maturity** | stage에 맞는 공개 data의 충분성과 해석 가능성 | asset-specific 결과 없음 | 정성 claim·단편 결과 | 정량 evidence domain 1개 이상 | 상호보완적·stage-appropriate 정량 domain 2개 이상 + 최소 1개 program progression 직접 지지 |
-| **Competitive Landscape** | direct/high-similarity 경쟁 대비 확인된 차별성과 현실적 진입 가능성 | direct competitor와 경쟁구도 판단 불가 | 경쟁자는 확인되나 차별성은 claim 또는 이론 수준 | comparator 대비 asset-specific 정량 차별성, 또는 뚜렷한 미충족 수요를 asset-specific 근거로 해결할 진입공간 | 제한적인 high-similarity 경쟁 + 직접 head-to-head 정량 우위로 선도 위치 확인 |
-| **Platform Attractiveness** | 반복 적용 가능한 platform 기술 우위 | 실재/구현 근거 불명확 | claim·이론 중심 | comparator 대비 정량 우위 | 2점 근거 충족 후 복수 조건·platform 적용 자산에서 정량 우위 재현 및 외부 검증/사용, 또는 human implementation |
-| **Expansion Potential** | assessed asset의 main indication 외 확장성 | 추가 indication 근거 없음 | biology rationale만 있음 | 추가 indication에서 asset-specific 초기 정량 data | 복수 추가 indication + 최소 1개 공식 전임상·IND-enabling·임상 program + 해당 indication 정량 data |
+| **Competitive Landscape** | comparator 대비 확인된 차별성과 현실적 진입 가능성 | comparator와 경쟁구도 판단 불가 | 경쟁자는 확인되나 차별성은 claim 또는 이론 수준 | 적절한 benchmark comparator 대비 asset-specific 정량 차별성, 또는 asset-specific 근거로 확인된 현실적 진입공간 | 2점 조건 + 적절한 comparator와 직접 head-to-head 정량 비교로 material advantage 확인 |
+| **Platform Attractiveness** | 반복 적용 가능한 platform 기술 우위 | 실재/구현 근거 불명확 | claim·이론 중심 | 적절한 comparator 대비 정량 기술 우위 1건 (단일 조건 또는 단일 platform 적용 asset 수준) | 2점 근거 + (같은 우위가 복수 독립 조건 또는 복수 공식 연결 platform 적용 asset에서 재현됨, 또는 공식 연결 platform 적용 asset First Patient Dosed) |
+| **Expansion Potential** | assessed asset의 main indication 외 확장성 | 추가 indication 근거 없음 | biology rationale만 있음 | 하나 이상의 추가 indication에서 assessed asset의 초기 정량 efficacy·PD·biomarker data 확인 | 2점 조건 + 그 추가 indication에서 assessed asset의 공식 전임상·IND-enabling·임상 program 확인 |
 | **Marketability** | commercial product와 Global obtainable peak sales 성립성 | rationale/신뢰 가능한 산출 불가 | Global < USD 1B | Global USD 1B–2B | Global ≥ USD 2B |
 
 ## Parameter Guide
@@ -69,15 +69,15 @@ This display release reflects the active Full Scout v3.7 decision rules, includi
 
 ### Competitive Landscape
 
-Broader same-disease competitor와 direct/high-similarity competitor를 구분합니다. High similarity는 주 적응증, target/pathway intervention, therapeutic effector mechanism이 모두 실질적으로 겹칠 때만 적용합니다. 질환명·병리 단백질·biomarker·endpoint·modality 하나만 같은 경우는 reference competitor이며 direct competitor 수에 자동 합산하지 않습니다. 2점의 현실적 진입공간은 단순 unmet need가 아니라 기존 치료의 뚜렷한 미충족 수요를 assessed asset의 target/MoA·route·safety 또는 접근성 근거로 해결할 가능성이 확인된 경우입니다. 3점은 제한적인 direct 경쟁군에 더해 적절한 high-similarity comparator와의 직접 head-to-head 정량 우위가 필요합니다. 정보 부족은 경쟁 없음이 아니라 판단 불가입니다.
+Broader/reference competitor와 direct competitor를 검색 기록에서 구분합니다. Direct competitor는 주 적응증, target/pathway intervention, therapeutic effector mechanism이 모두 실질적으로 겹치는 경우이며, 이 분류와 경쟁자 수는 점수를 자동 결정하지 않습니다. 2점의 현실적 진입공간은 단순 unmet need가 아니라 기존 치료의 뚜렷한 미충족 수요를 assessed asset의 target/MoA·route·safety 또는 접근성 근거로 해결할 가능성이 확인된 경우입니다. 3점은 2점 근거에 더해 적절한 comparator와 동일하거나 비교 가능한 조건의 직접 head-to-head 정량 비교로 material advantage가 확인돼야 합니다. Material advantage는 해당 comparator 대비 의사결정에 의미 있는 크기의 정량 우위이며, 사소한 수치 차이만으로는 충족하지 않습니다. 정보 부족은 경쟁 없음이 아니라 판단 불가입니다.
 
 ### Platform Attractiveness
 
-다른 프로그램에도 반복 적용 가능한 기술적 우위를 평가합니다. 정성 claim, 특허, 투자, IND clearance만으로는 정량 기술 검증이 되지 않습니다.
+다른 프로그램에도 반복 적용 가능한 기술적 우위를 평가합니다. 2점은 적절한 comparator 대비 정량 기술 우위 1건이지만 단일 조건 또는 단일 platform 적용 asset 수준에 머문 경우입니다. 3점은 그 2점 근거를 전제로, (a) 같은 우위가 복수의 독립 조건(예: 모델·종·용량) 또는 복수의 공식 연결 platform 적용 asset에서 재현되거나, (b) 공식 연결 platform 적용 asset의 First Patient Dosed가 확인된 경우입니다. First Patient Dosed만으로는 3점이 아니며, 정성 claim·특허·투자·IND clearance도 정량 기술 검증이 아닙니다.
 
 ### Expansion Potential
 
-Main indication의 다른 표현, patient subgroup, platform-wide indication list 또는 미래 계획은 expansion이 아닙니다. 2점은 assessed asset의 추가 indication asset-specific 초기 정량 data가, 3점은 복수 추가 indication과 최소 1개 공식 전임상·IND-enabling·임상 program 및 해당 indication 정량 data가 필요합니다.
+Main indication의 다른 표현, patient subgroup, platform-wide indication list 또는 미래 계획은 expansion이 아닙니다. 2점은 하나 이상의 추가 indication에서 assessed asset의 초기 정량 efficacy·PD·biomarker data가 확인된 경우이고, 3점은 2점 조건을 충족하면서 그 추가 indication에서 assessed asset의 공식 전임상·IND-enabling·임상 program이 확인된 경우입니다. 복수 추가 indication은 요구하지 않습니다.
 
 ### Marketability
 
