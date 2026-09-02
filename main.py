@@ -334,6 +334,8 @@ CANONICAL_MODALITIES = (
     "Microbiome therapy",
     "Vaccine",
     "Radiopharmaceutical",
+    "Natural product",
+    "Exosome / EV Therapy",
     "Others",
     "Unknown",
 )
@@ -1606,7 +1608,7 @@ def canonicalize_modality_tags(source_wording: Any, primary: str = "") -> list[s
 def canonicalize_country(source_wording: Any) -> str:
     """Normalize every explicitly stated known country while retaining unknown wording."""
     raw = re.sub(r"\s+", " ", str(source_wording or "").strip())
-    if not raw or raw.casefold() in {"-", "unknown", "not known", "not available", "n/a", "na"}:
+    if not raw or raw.casefold() in {"-", "unknown", "not known", "not available", "not disclosed", "undisclosed", "n/a", "na", "?", "정보 없음"}:
         return "Unknown"
     entries = category_synonym_dictionary().get("country") or []
     normalized_raw = raw.casefold()
@@ -1690,7 +1692,7 @@ def explicit_legacy_lead_indication(detailed_indication: Any) -> str | None:
 def canonicalize_main_indication(main_indication: Any, detailed_indication: Any = None) -> str:
     """Return the canonical dashboard lead, falling back to source order when needed."""
     primary = re.sub(r"\s+", " ", str(main_indication or "").strip())
-    if primary and primary.casefold() not in {"-", "unknown", "not known", "n/a", "na"}:
+    if primary and primary.casefold() not in {"-", "unknown", "not known", "not available", "not disclosed", "undisclosed", "n/a", "na", "?", "정보 없음"}:
         canonical = canonicalize_dictionary_category("indication", primary, earliest=True)
         if canonical:
             return canonical
@@ -5815,6 +5817,54 @@ def find_matching_identity_group(
     return None
 
 
+def listing_pair_is_exact_for_group(
+    asset_input: Any,
+    company_input: Any,
+    group: dict[str, Any] | None,
+) -> bool:
+    """Require both Asset and Company identity before preferring incoming Tab 0 values."""
+    if not isinstance(group, dict):
+        return False
+    incoming_companies = company_aliases_from_text(company_input)
+    group_companies = group.get("company_aliases") or set()
+    if not incoming_companies or not (incoming_companies & set(group_companies)):
+        return False
+    for candidate_asset in group.get("asset_aliases") or set():
+        match = pipeline_asset_match_reason(
+            asset_input,
+            candidate_asset,
+            company_input,
+            company_input,
+        )
+        if match and match[0] == "exact":
+            return True
+    return False
+
+
+def listing_pair_is_exact_for_queue_entry(
+    asset_input: Any,
+    company_input: Any,
+    entry: dict[str, Any] | None,
+) -> bool:
+    """Apply the same Asset+Company exactness rule to a pending Listing row."""
+    if not isinstance(entry, dict):
+        return False
+    incoming_companies = company_aliases_from_text(company_input)
+    existing_companies = candidate_queue_entry_company_aliases(entry)
+    if not incoming_companies or not (incoming_companies & existing_companies):
+        return False
+    for candidate_asset in candidate_queue_entry_asset_match_values(entry):
+        match = pipeline_asset_match_reason(
+            asset_input,
+            candidate_asset,
+            company_input,
+            company_input,
+        )
+        if match and match[0] == "exact":
+            return True
+    return False
+
+
 PIPELINE_METADATA_FIELDS = ("comment", "contact")
 LISTING_DETAIL_FIELDS = ("country", "modality", "target", "main_indication", "stage", "website")
 LISTING_QUEUE_EDITABLE_FIELDS = ("company", "asset", *LISTING_DETAIL_FIELDS)
@@ -5889,7 +5939,72 @@ def is_listing_asset_placeholder(value: Any) -> bool:
     return bool(LISTING_ASSET_PLACEHOLDER_PATTERN.fullmatch(str(value or "").strip()))
 
 
-def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
+def normalized_listing_comment_text(value: Any) -> str:
+    """Compare Listing comments conservatively while ignoring cosmetic whitespace."""
+    return re.sub(r"\s+", " ", str(value or "")).strip().casefold()
+
+
+def normalize_pipeline_comment_entries(value: Any) -> list[dict[str, str]]:
+    """Return durable, display-ready Listing Comment import entries.
+
+    ``pipeline_metadata.comment`` remains the legacy aggregate used by older
+    exports and integrations.  This collection preserves the actual import
+    events, so the Tab 0 Comment popover can show one dated card per distinct
+    comment instead of presenting a single undifferentiated multi-line block.
+    """
+    raw_entries = value if isinstance(value, list) else []
+    entries: list[dict[str, str]] = []
+    seen_ids: set[str] = set()
+    for raw_entry in raw_entries:
+        if not isinstance(raw_entry, dict):
+            continue
+        body = str(raw_entry.get("body") or "").strip()
+        if not body:
+            continue
+        entry_id = str(raw_entry.get("id") or "").strip()
+        if not entry_id:
+            entry_id = hashlib.sha256(
+                "\x1f".join((
+                    str(raw_entry.get("source") or ""),
+                    str(raw_entry.get("created_at") or ""),
+                    body,
+                )).encode("utf-8")
+            ).hexdigest()
+        if entry_id in seen_ids:
+            continue
+        seen_ids.add(entry_id)
+        entries.append({
+            "id": entry_id,
+            "body": body[:5000],
+            "author": str(raw_entry.get("author") or "Team").strip()[:200] or "Team",
+            "source": str(raw_entry.get("source") or "team_review_import").strip() or "team_review_import",
+            "created_at": str(raw_entry.get("created_at") or "").strip(),
+            "import_batch_id": str(raw_entry.get("import_batch_id") or "").strip(),
+        })
+    return entries
+
+
+def listing_comment_entry(
+    body: Any,
+    *,
+    entry_id: str,
+    author: str,
+    source: str,
+    created_at: str,
+    import_batch_id: str = "",
+) -> dict[str, str]:
+    """Build one explicit Listing Comment event for dashboard storage."""
+    return {
+        "id": entry_id,
+        "body": str(body or "").strip(),
+        "author": str(author or "Team").strip() or "Team",
+        "source": str(source or "team_review_import").strip() or "team_review_import",
+        "created_at": str(created_at or "").strip(),
+        "import_batch_id": str(import_batch_id or "").strip(),
+    }
+
+
+def normalize_pipeline_metadata(value: Any) -> dict[str, Any]:
     raw = value if isinstance(value, dict) else {}
     metadata = {
         "listed_at": str(raw.get("listed_at") or "").strip(),
@@ -5900,6 +6015,10 @@ def normalize_pipeline_metadata(value: Any) -> dict[str, str]:
         "comment_source": str(raw.get("comment_source") or "").strip(),
         "comment_created_at": str(raw.get("comment_created_at") or "").strip(),
         "comment_updated_at": str(raw.get("comment_updated_at") or "").strip(),
+        "comment_entries": normalize_pipeline_comment_entries(raw.get("comment_entries")),
+        # These values are Tab 0 display context only.  They deliberately do
+        # not replace Fast Triage/Full Scout structured research fields.
+        "listing_details": normalize_listing_details(raw.get("listing_details")),
         "contact": normalize_pipeline_contact(raw.get("contact")),
         "contact_author": str(raw.get("contact_author") or "").strip(),
         "contact_author_user_id": str(raw.get("contact_author_user_id") or "").strip(),
@@ -5949,9 +6068,11 @@ def merge_pipeline_metadata(
     replace_comment: bool = False,
     replace_contact: bool = False,
     website_preference: str = "incoming",
-) -> dict[str, str]:
+    listing_details_preference: str = "existing",
+) -> dict[str, Any]:
     """Merge dashboard-owned pipeline metadata without letting a blank paste erase a note."""
     allow_empty_fields = allow_empty_fields or set()
+    existing_raw = existing if isinstance(existing, dict) else {}
     incoming_raw = incoming if isinstance(incoming, dict) else {}
     result = normalize_pipeline_metadata(existing)
     update = normalize_pipeline_metadata(incoming)
@@ -5977,6 +6098,49 @@ def merge_pipeline_metadata(
                 for provenance_field in ("contact_author", "contact_author_user_id", "contact_author_email", "contact_source", "contact_created_at", "contact_updated_at"):
                     if update[provenance_field]:
                         result[provenance_field] = update[provenance_field]
+    # Keep the legacy aggregate for existing exports, while preserving a
+    # separate event for every distinct import.  A historical aggregate that
+    # predates event storage becomes one legacy card when a later import adds
+    # its first event.
+    existing_entries = normalize_pipeline_comment_entries(result.get("comment_entries"))
+    incoming_entries = normalize_pipeline_comment_entries(incoming_raw.get("comment_entries"))
+    if not existing_entries and str(existing_raw.get("comment") or "").strip() and incoming_entries:
+        legacy_body = str(existing_raw.get("comment") or "").strip()
+        existing_entries = [listing_comment_entry(
+            legacy_body,
+            entry_id="legacy-" + hashlib.sha256(legacy_body.encode("utf-8")).hexdigest(),
+            author=str(existing_raw.get("comment_author") or "Team"),
+            source=str(existing_raw.get("comment_source") or "legacy_listing_comment"),
+            created_at=str(existing_raw.get("comment_created_at") or existing_raw.get("comment_updated_at") or ""),
+        )]
+    if replace_comment:
+        result["comment_entries"] = incoming_entries if update["comment"] else []
+    elif incoming_entries:
+        retained = list(existing_entries)
+        known_bodies = {normalized_listing_comment_text(item.get("body")) for item in retained}
+        # Include legacy aggregate text in the duplicate check even before it
+        # has been migrated to an event, so an identical re-import does not
+        # create a duplicate card.
+        known_bodies.add(normalized_listing_comment_text(existing_raw.get("comment")))
+        for entry in incoming_entries:
+            normalized_body = normalized_listing_comment_text(entry.get("body"))
+            if normalized_body and normalized_body not in known_bodies:
+                retained.append(entry)
+                known_bodies.add(normalized_body)
+        result["comment_entries"] = retained
+    else:
+        result["comment_entries"] = existing_entries
+    if listing_details_preference == "incoming":
+        result["listing_details"] = merge_listing_details_with_preference(
+            result.get("listing_details"),
+            update.get("listing_details"),
+            preference="incoming",
+        )
+    else:
+        result["listing_details"] = merge_listing_details(
+            result.get("listing_details"),
+            update.get("listing_details"),
+        )
     if "website" in allow_empty_fields and not update["website"]:
         result["website"] = ""
     else:
@@ -6327,6 +6491,7 @@ def update_record_pipeline_metadata(
     allow_empty_fields: set[str] | None = None,
     replace_comment: bool = False,
     replace_contact: bool = False,
+    listing_details_preference: str = "existing",
 ) -> bool:
     meta = record.setdefault("meta", {})
     current = normalize_pipeline_metadata(meta.get("pipeline_metadata"))
@@ -6336,6 +6501,7 @@ def update_record_pipeline_metadata(
         allow_empty_fields=allow_empty_fields,
         replace_comment=replace_comment,
         replace_contact=replace_contact,
+        listing_details_preference=listing_details_preference,
     )
     if current == merged:
         return False
@@ -6352,12 +6518,22 @@ def pipeline_metadata_for_group(group: dict[str, Any]) -> dict[str, str]:
 
 
 def pipeline_human_comment_feed(
-    group: dict[str, Any], metadata: dict[str, str] | None = None
+    group: dict[str, Any], metadata: dict[str, Any] | None = None
 ) -> list[dict[str, str]]:
     """Build the Tab 0 operational comment stream without mixing it into GPT evidence."""
     entries: list[dict[str, str]] = []
+    listing_entries = normalize_pipeline_comment_entries((metadata or {}).get("comment_entries"))
+    for item in listing_entries:
+        is_bulk_import = item.get("source") == "team_review_import"
+        entries.append({
+            "source": "일괄 업로드: Tab 0 · Comment" if is_bulk_import else "Tab 0 · Comment",
+            "author": "Team" if is_bulk_import else str(item.get("author") or "Team").strip(),
+            "created_at": str(item.get("created_at") or "").strip(),
+            "body": str(item.get("body") or "").strip(),
+            "listing_comment_entry_id": str(item.get("id") or "").strip(),
+        })
     base_comment = str((metadata or {}).get("comment") or "").strip()
-    if base_comment:
+    if base_comment and not listing_entries:
         entries.append({
             "source": "Tab 0 Team Review · Listing Comment",
             "author": str((metadata or {}).get("comment_author") or "Team").strip(),
@@ -6439,17 +6615,20 @@ def pipeline_human_comment_feed(
                 "body": body,
             })
 
-    base_entries = entries[:1] if entries and entries[0].get("source") == "Tab 0 Team Review · Listing Comment" else []
+    base_entries = entries[:len(listing_entries)] if listing_entries else (
+        entries[:1] if entries and entries[0].get("source") == "Tab 0 Team Review · Listing Comment" else []
+    )
     if base_entries:
         comment_source = str((metadata or {}).get("comment_source") or "").strip()
         comment_author = str((metadata or {}).get("comment_author") or "Team").strip()
         # Only an explicit Excel import is labelled as a bulk upload.  Older direct
         # Tab 0 posts may not have a stored author, but must not be misrepresented
         # as an import merely because their legacy fallback author is Team Review.
-        is_bulk_import = comment_source == "team_review_import"
-        base_entries[0]["source"] = "일괄 업로드: Tab 0 · Comment" if is_bulk_import else "Tab 0 · Comment"
-        if is_bulk_import:
-            base_entries[0]["author"] = "Team"
+        if not listing_entries:
+            is_bulk_import = comment_source == "team_review_import"
+            base_entries[0]["source"] = "일괄 업로드: Tab 0 · Comment" if is_bulk_import else "Tab 0 · Comment"
+            if is_bulk_import:
+                base_entries[0]["author"] = "Team"
     operational_entries = entries[len(base_entries):]
     operational_entries.sort(key=lambda item: str(item.get("created_at") or ""))
     return base_entries + operational_entries
@@ -6836,8 +7015,54 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
         full_scout_records = [record for record in group_records if not is_fast_triage_record(record)]
         canonical_workspace_records = full_scout_records or fast_triage_records
 
+        listing_comment_entries = normalize_pipeline_comment_entries(metadata.get("comment_entries"))
         listing_comment_key = imported_comment_key("tab0-listing", identity)
-        if listing_comment:
+        if listing_comment_entries:
+            desired_listing_comment_keys: set[str] = set()
+            for entry in listing_comment_entries:
+                entry_key = imported_comment_key("tab0-listing-entry", identity, entry.get("id"))
+                desired_listing_comment_keys.add(entry_key)
+                entry_author = str(entry.get("author") or "Team").strip()
+                if entry.get("source") == "team_review_import":
+                    entry_author = "Team"
+                for target in canonical_workspace_records:
+                    if upsert_system_comment(
+                        target,
+                        import_key=entry_key,
+                        author=entry_author,
+                        body=str(entry.get("body") or ""),
+                        source="listing_comment_post",
+                        created_at=str(entry.get("created_at") or ""),
+                        origin_item_id=str(entry.get("id") or ""),
+                        origin_kind="listing_comment_entry",
+                    ):
+                        append_edit_history(
+                            target,
+                            source="cross_workflow_comment_sync",
+                            actor_ip="system",
+                            field="collaboration.comments.tab0_listing",
+                        )
+                        changed_count += 1
+            for target in canonical_workspace_records:
+                collaboration = ((target.get("meta") or {}).get("collaboration") or {})
+                stale_keys = [
+                    str(item.get("import_key") or "")
+                    for item in (collaboration.get("comments") or [])
+                    if isinstance(item, dict)
+                    and item.get("system_import") is True
+                    and item.get("source") == "listing_comment_post"
+                    and str(item.get("import_key") or "") not in desired_listing_comment_keys
+                ]
+                for stale_key in stale_keys:
+                    if remove_system_comment(target, stale_key):
+                        append_edit_history(
+                            target,
+                            source="cross_workflow_comment_sync",
+                            actor_ip="system",
+                            field="collaboration.comments.tab0_listing",
+                        )
+                        changed_count += 1
+        elif listing_comment:
             listing_author = str(metadata.get("comment_author") or "Team").strip()
             if str(metadata.get("comment_source") or "").strip() == "team_review_import" or listing_author in {"Tab 0 Team Review", "Team Review"}:
                 listing_author = "Team"
@@ -10247,6 +10472,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
     records_updated = False
     user_skipped = 0
     added_at = datetime.now(timezone.utc).isoformat()
+    import_batch_id = f"listing-{uuid.uuid4().hex}"
     actor_ip = get_client_ip(request)
 
     for row_index, row in enumerate(rows):
@@ -10256,6 +10482,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
         if decision and decision["action"] == "skip":
             user_skipped += 1
             continue
+        incoming_details = normalize_listing_details(row)
         incoming_metadata = {
             "listed_at": added_at,
             "comment": row.get("comment", ""),
@@ -10263,6 +10490,14 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             "comment_source": "team_review_import" if row.get("comment", "") else "",
             "comment_created_at": added_at if row.get("comment", "") else "",
             "comment_updated_at": added_at if row.get("comment", "") else "",
+            "comment_entries": [listing_comment_entry(
+                row.get("comment", ""),
+                entry_id=f"listing-comment-{uuid.uuid4().hex}",
+                author="Team",
+                source="team_review_import",
+                created_at=added_at,
+                import_batch_id=import_batch_id,
+            )] if row.get("comment", "") else [],
             "contact": row.get("contact", ""),
             "contact_author": "Team" if normalize_pipeline_contact(row.get("contact", "")) else "",
             "contact_source": "team_review_import" if normalize_pipeline_contact(row.get("contact", "")) else "",
@@ -10273,9 +10508,9 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             # researched records without changing the official report labels.
             "asset_aliases": asset_input,
             "company_aliases": company_input,
+            "listing_details": incoming_details,
             "updated_at": added_at,
         }
-        incoming_details = normalize_listing_details(row)
         existing_group = find_matching_identity_group(asset_input, company_input, groups)
         existing_entry = None
         if decision and decision["action"] == "new":
@@ -10298,8 +10533,15 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
                 existing_group = None
         if existing_group is not None:
             already_researched_skipped += 1
+            exact_listing_identity = listing_pair_is_exact_for_group(
+                asset_input, company_input, existing_group
+            )
             for existing_record in existing_group.get("records") or []:
-                if isinstance(existing_record, dict) and update_record_pipeline_metadata(existing_record, incoming_metadata):
+                if isinstance(existing_record, dict) and update_record_pipeline_metadata(
+                    existing_record,
+                    incoming_metadata,
+                    listing_details_preference="incoming" if exact_listing_identity else "existing",
+                ):
                     append_edit_history(
                         existing_record,
                         source="tab0_listing_import_metadata_sync",
@@ -10327,10 +10569,13 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             )
         if existing_entry is not None:
             duplicate_in_queue_skipped += 1
+            exact_listing_identity = not (decision and decision["action"] == "merge") and listing_pair_is_exact_for_queue_entry(
+                asset_input, company_input, existing_entry
+            )
             representative_preference = (
                 decision["representative"]
                 if decision and decision["action"] == "merge"
-                else "incoming"
+                else "incoming" if exact_listing_identity else "existing"
             )
             existing_entry_metadata = candidate_queue_entry_metadata(existing_entry)
             # The primary Entry label is not itself in metadata. Preserve it as
@@ -10357,7 +10602,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
                     incoming_details,
                     preference=representative_preference,
                 )
-                if decision and decision["action"] == "merge"
+                if (decision and decision["action"] == "merge") or exact_listing_identity
                 else merge_listing_details(existing_details, incoming_details)
             )
             if candidate_queue_entry_details(existing_entry) != merged_details:
@@ -10369,7 +10614,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
                     duplicate_in_queue_richer_replaced += 1
                 else:
                     duplicate_in_queue_enriched += 1
-            if decision and decision["action"] == "merge":
+            if (decision and decision["action"] == "merge") or exact_listing_identity:
                 merged_asset = merge_listing_identity_value(
                     existing_entry.get("asset_input"), asset_input, preference=representative_preference
                 )
@@ -10488,15 +10733,24 @@ def get_candidate_queue_progress() -> dict[str, Any]:
         fast_profile = (fast_record.get("company_profile") if fast_record else None) or {}
         asset_label = non_empty_text(rep_table.get("asset_name"), rep_summary.get("asset_name"), "Unknown")
         company_label = non_empty_text(rep_table.get("company"), rep_summary.get("company"), "Unknown")
-        listing_details = normalize_listing_details({
+        pipeline_metadata = pipeline_metadata_for_group(group)
+        official_listing_details = normalize_listing_details({
             "country": non_empty_text(full_table.get("company_country"), full_table.get("country"), full_summary.get("country"), full_summary.get("company_country"), fast_table.get("company_country"), fast_table.get("country"), fast_summary.get("country"), fast_summary.get("company_country")),
             "modality": non_empty_text(full_table.get("modality_platform"), full_summary.get("modality"), fast_table.get("modality_platform"), fast_summary.get("modality")),
             "target": non_empty_text(full_table.get("target"), full_summary.get("target"), fast_table.get("target"), fast_summary.get("target")),
             "main_indication": non_empty_text(full_table.get("indication"), full_table.get("main_indication"), full_summary.get("main_indication"), full_summary.get("indication"), fast_table.get("indication"), fast_table.get("main_indication"), fast_summary.get("main_indication"), fast_summary.get("indication")),
             "stage": non_empty_text(full_table.get("development_stage"), full_summary.get("development_stage"), full_summary.get("stage"), fast_table.get("development_stage"), fast_summary.get("development_stage"), fast_summary.get("stage")),
-            "website": non_empty_text(full_profile.get("website"), full_profile.get("company_website"), fast_profile.get("website"), fast_profile.get("company_website"), pipeline_metadata_for_group(group).get("website")),
+            "website": non_empty_text(full_profile.get("website"), full_profile.get("company_website"), fast_profile.get("website"), fast_profile.get("company_website"), pipeline_metadata.get("website")),
         })
-        pipeline_metadata = pipeline_metadata_for_group(group)
+        # A later exact Asset+Company Listing import owns the Tab 0 operational
+        # display.  Its missing markers still fall back to the official record
+        # value, and this remains a display overlay rather than a research-data
+        # write-back.
+        listing_details = merge_listing_details_with_preference(
+            official_listing_details,
+            pipeline_metadata.get("listing_details"),
+            preference="incoming",
+        )
         # Historical Fast/Full records predate the Listing queue. They are already part of
         # the pipeline inventory, so render Listing as complete instead of showing a broken
         # "- → Fast Triage" sequence; new Listing timestamps remain explicit metadata.
@@ -10685,6 +10939,13 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
         "comment_source": "admin_listing_post",
         "comment_created_at": changed_at,
         "comment_updated_at": changed_at,
+        "comment_entries": [listing_comment_entry(
+            value,
+            entry_id=f"listing-comment-{uuid.uuid4().hex}",
+            author=actor_name,
+            source="admin_listing_post",
+            created_at=changed_at,
+        )] if value else [],
     } if field == "comment" else ({
         "contact_author": actor_name,
         "contact_author_user_id": str(account.get("id") or "").strip(),

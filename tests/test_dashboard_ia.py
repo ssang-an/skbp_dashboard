@@ -3143,6 +3143,18 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("Fast Triage에도 함께 표시되고 있습니다.", alias_notice)
         self.assertNotIn("해당 GPT 원문 리포트와 상세 점수", alias_notice)
 
+    def test_main_indication_hover_keeps_full_source_wording_in_all_dashboard_tabs(self):
+        self.assertIn("function indicationFullHoverTitle", JS)
+        self.assertIn("function sourceFieldHoverTitle", JS)
+        self.assertIn("sourceFieldHoverTitle('Indication", JS)
+        self.assertIn("title: indicationFullHoverTitle(row)", JS)
+        self.assertIn("title: indicationFullHoverTitle({ indication: display.indicationRaw }, display.indication)", JS)
+        self.assertIn('title="${escapeHtml(indicationFullHoverTitle(row))}"', JS)
+        self.assertIn("function modalityFullHoverTitle", JS)
+        self.assertIn("function pipelineStageFullHoverTitle", JS)
+        self.assertIn("title: modalityFullHoverTitle(row)", JS)
+        self.assertIn("title: pipelineStageFullHoverTitle(row)", JS)
+
 
 if __name__ == "__main__":
     unittest.main()

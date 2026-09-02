@@ -265,6 +265,99 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         duplicate = main.merge_pipeline_metadata(merged, {"comment": "follow-up   requested"})
         self.assertEqual(duplicate["comment"], "Initial meeting note\nFollow-up requested")
 
+    def test_distinct_listing_import_comments_remain_dated_tab0_cards(self) -> None:
+        first = {
+            "comment": "Initial meeting note",
+            "comment_source": "team_review_import",
+            "comment_entries": [main.listing_comment_entry(
+                "Initial meeting note",
+                entry_id="import-a",
+                author="Team",
+                source="team_review_import",
+                created_at="2026-09-02T01:00:00+00:00",
+                import_batch_id="batch-a",
+            )],
+        }
+        second = {
+            "comment": "Follow-up requested",
+            "comment_source": "team_review_import",
+            "comment_entries": [main.listing_comment_entry(
+                "Follow-up requested",
+                entry_id="import-b",
+                author="Team",
+                source="team_review_import",
+                created_at="2026-09-02T02:00:00+00:00",
+                import_batch_id="batch-b",
+            )],
+        }
+        merged = main.merge_pipeline_metadata(first, second)
+        duplicate = main.merge_pipeline_metadata(merged, {
+            "comment": "follow-up   requested",
+            "comment_entries": [main.listing_comment_entry(
+                "follow-up   requested",
+                entry_id="import-c",
+                author="Team",
+                source="team_review_import",
+                created_at="2026-09-02T03:00:00+00:00",
+                import_batch_id="batch-c",
+            )],
+        })
+
+        self.assertEqual(merged["comment"], "Initial meeting note\nFollow-up requested")
+        self.assertEqual([entry["body"] for entry in merged["comment_entries"]], [
+            "Initial meeting note", "Follow-up requested",
+        ])
+        self.assertEqual([entry["body"] for entry in duplicate["comment_entries"]], [
+            "Initial meeting note", "Follow-up requested",
+        ])
+        feed = main.pipeline_human_comment_feed({}, merged)
+        self.assertEqual([entry["source"] for entry in feed], [
+            "일괄 업로드: Tab 0 · Comment", "일괄 업로드: Tab 0 · Comment",
+        ])
+        self.assertEqual([entry["created_at"] for entry in feed], [
+            "2026-09-02T01:00:00+00:00", "2026-09-02T02:00:00+00:00",
+        ])
+
+        record = pipeline_record()
+        record["meta"]["pipeline_metadata"] = merged
+        main.synchronize_cross_workflow_comments([record])
+        mirrored = [
+            item for item in record["meta"]["collaboration"]["comments"]
+            if item.get("source") == "listing_comment_post"
+        ]
+        self.assertEqual([item["body"] for item in mirrored], [
+            "Initial meeting note", "Follow-up requested",
+        ])
+
+    def test_exact_asset_company_listing_values_prefer_incoming_and_fill_missing(self) -> None:
+        existing = {
+            "listing_details": {
+                "target": "Existing target",
+                "main_indication": "Multiple sclerosis",
+                "stage": "Preclinical",
+            }
+        }
+        incoming = {
+            "listing_details": {
+                "target": "Newly listed target",
+                "main_indication": "Unknown",
+                "stage": "",
+            }
+        }
+        merged = main.merge_pipeline_metadata(
+            existing,
+            incoming,
+            listing_details_preference="incoming",
+        )
+        self.assertEqual(merged["listing_details"]["target"], "Newly listed target")
+        self.assertEqual(merged["listing_details"]["main_indication"], "Multiple sclerosis")
+        self.assertEqual(merged["listing_details"]["stage"], "Preclinical")
+
+        record = pipeline_record("AX-101", "Acme Bio")
+        group = main.dashboard_identity_groups([record])[0]
+        self.assertTrue(main.listing_pair_is_exact_for_group("AX-101", "Acme Bio", group))
+        self.assertFalse(main.listing_pair_is_exact_for_group("AX-101", "Different Company", group))
+
     def test_admin_listing_comment_post_replaces_bulk_comment_and_records_author(self) -> None:
         merged = main.merge_pipeline_metadata(
             {

@@ -293,6 +293,8 @@ const CANONICAL_MODALITIES = [
   'Microbiome therapy',
   'Vaccine',
   'Radiopharmaceutical',
+  'Natural product',
+  'Exosome / EV Therapy',
   'Others',
   'Unknown'
 ];
@@ -1628,7 +1630,7 @@ function explicitLegacyLeadIndication(value) {
 
 function canonicalMainIndication(mainIndication, detailedIndication = '') {
   const primary = String(mainIndication || '').trim();
-  if (primary && !/^(?:-|unknown|not known|n\/?a)$/i.test(primary)) {
+  if (primary && !/^(?:-|unknown|not known|not available|not disclosed|undisclosed|n\/?a|\?+|정보\s*없음)$/i.test(primary)) {
     const canonical = canonicalFromDictionary('indication', primary);
     if (canonical) return canonical;
   }
@@ -1798,6 +1800,26 @@ function indicationDisplay(row) {
   );
 }
 
+function sourceFieldHoverTitle(label, rawValue, fallback = '') {
+  const raw = String(rawValue || fallback || '').trim();
+  return `${label} 원문: ${raw || '확인 불가'}`;
+}
+
+function indicationFullHoverTitle(row, fallback = '') {
+  // Filters can match a secondary indication that is intentionally omitted
+  // from the concise Main indication cell. Preserve the entire source wording
+  // in the native hover title across the dashboard tables.
+  return sourceFieldHoverTitle('Indication 전체', row?.indication || row?.mainIndicationRaw, fallback);
+}
+
+function modalityFullHoverTitle(row, fallback = '') {
+  return sourceFieldHoverTitle('Modality', row?.modalityRaw, fallback || row?.modality);
+}
+
+function pipelineStageFullHoverTitle(row, fallback = '') {
+  return sourceFieldHoverTitle('Pipeline Stage', row?.stageRaw, fallback || row?.stage);
+}
+
 function canonicalCountry(value) {
   const text = String(value || '').trim();
   return canonicalCountryValues(text).join(' / ');
@@ -1810,7 +1832,7 @@ function isExplicitCountryInputPart(value) {
 
 function canonicalCountryValues(value) {
   const text = String(value || '').trim();
-  if (!text || text === '-' || /^n\/?a$/i.test(text)) return ['Unknown'];
+  if (!text || /^(?:-|unknown|not known|not available|not disclosed|undisclosed|n\/?a|\?+|정보\s*없음)$/i.test(text)) return ['Unknown'];
   const entries = orderedDictionaryEntries('country');
   const commaParts = text.split(',').map((part) => part.trim()).filter(Boolean);
   // In an address such as "Cambridge, UK", the right-most exact country
@@ -5750,8 +5772,9 @@ function totalScoreEditCircle(row) {
 function stageEditSelect(row) {
   const user = getCurrentUser();
   const isManual = hasManualTableFieldEdit(row.raw, 'development_stage');
-  if (row.isVirtualTriage) return `<span class="table-manual-text" title="Tab 2 Full Scout 결과에서 가져온 값">${escapeHtml(row.stage)}</span>`;
-  if (!user?.is_admin) return `<span class="table-manual-text${isManual ? ' is-human' : ''}" title="${escapeHtml(row.stageRaw)}">${escapeHtml(row.stage)}</span>`;
+  const stageTitle = pipelineStageFullHoverTitle(row);
+  if (row.isVirtualTriage) return `<span class="table-manual-text" title="${escapeHtml(`${stageTitle}\nTab 2 Full Scout 결과에서 가져온 값`)}">${escapeHtml(row.stage)}</span>`;
+  if (!user?.is_admin) return `<span class="table-manual-text${isManual ? ' is-human' : ''}" title="${escapeHtml(stageTitle)}">${escapeHtml(row.stage)}</span>`;
   return `<span
     class="table-manual-text${isManual ? ' is-human' : ''} is-editable"
     data-table-stage-edit
@@ -5759,7 +5782,7 @@ function stageEditSelect(row) {
     data-previous-value="${escapeHtml(row.stage)}"
     role="button"
     tabindex="0"
-    title="${escapeHtml(row.stageRaw)} (더블클릭하여 Pipeline Stage 선택)"
+    title="${escapeHtml(stageTitle)} (더블클릭하여 Pipeline Stage 선택)"
     aria-label="${escapeHtml(row.asset)} Pipeline Stage: double-click to edit"
   >${escapeHtml(row.stage)}</span>`;
 }
@@ -5771,6 +5794,7 @@ function modalityEditValue(row) {
   const tags = Array.isArray(row.modalityTags) ? row.modalityTags.filter((tag) => tag && tag !== row.modalityCanonical) : [];
   const source = String(row.modalityRaw || '').trim();
   const label = [
+    modalityFullHoverTitle(row),
     `Canonical: ${row.modalityCanonical || row.modality}`,
     source && normalizedDashboardSearchText(source) !== normalizedDashboardSearchText(row.modalityCanonical || row.modality) ? `Source: ${source}` : '',
     tags.length ? `Tags: ${tags.join(', ')}` : ''
@@ -5803,7 +5827,11 @@ function focusOfficialFieldValue(row, value, label, { html = '', className = '',
   const tooltip = editable
     ? `더블클릭하여 Tab 2 · Full Scout에서 ${label} 수정 안내 보기`
     : (title || value || '');
-  return `<span class="${classes}"${attributes} title="${escapeHtml(tooltip)}">${html || escapeHtml(value || '-')}</span>`;
+  // Keep a field's source tooltip visible to administrators as well as the
+  // edit guidance. This is especially important for Main indication, whose
+  // concise canonical value can differ from the filtered source wording.
+  const finalTooltip = title && editable ? `${title}\n${tooltip}` : tooltip;
+  return `<span class="${classes}"${attributes} title="${escapeHtml(finalTooltip)}">${html || escapeHtml(value || '-')}</span>`;
 }
 
 function tableTextEditValue(row, kind, value, { title = '', strong = false, className = '' } = {}) {
@@ -6019,8 +6047,8 @@ function renderTableLegacy() {
                   <span>Cluster: ${escapeHtml(row.cluster)}</span>
                 </div>
               </td>
-              <td class="indication-cell" title="${escapeHtml(row.indication)}">${escapeHtml(indicationDisplay(row))}</td>
-              <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${stageEditSelect(row)}</td>
+              <td class="indication-cell" title="${escapeHtml(indicationFullHoverTitle(row))}">${escapeHtml(indicationDisplay(row))}</td>
+              <td class="stage-cell" title="${escapeHtml(pipelineStageFullHoverTitle(row))}">${stageEditSelect(row)}</td>
               <td class="filter-cell"><span class="${filter1Class}">${escapeHtml(row.filter1)}</span></td>
               <td class="filter-cell"><span class="${filter2Class}">${escapeHtml(row.filter2)}</span></td>
               <td class="score-cell">${pipelineScoreBadge(row, row.targetScore, 3, scoreTooltip('Target Area Relevance', row.criteria.target, 3))}</td>
@@ -6370,7 +6398,7 @@ function renderFocusTable() {
             data-description="${escapeHtml(row.targetDescription)}"
             aria-label="${escapeHtml(`${row.modality}. Theme ${row.theme}. Cluster ${row.cluster}. Description ${row.targetDescription}`)}"
           >
-            ${focusOfficialFieldValue(row, row.modality, 'Modality', { className: 'single-line-cell' })}
+            ${focusOfficialFieldValue(row, row.modality, 'Modality', { className: 'single-line-cell', title: modalityFullHoverTitle(row) })}
           </td>
           <td
             class="target-column-cell target-context-cell"
@@ -6384,8 +6412,8 @@ function renderFocusTable() {
             ${focusOfficialFieldValue(row, row.target, 'Target', { className: 'target-single-line' })}
             <span class="target-context-indicator" aria-hidden="true">i</span>
           </td>
-          <td class="indication-cell">${focusOfficialFieldValue(row, indicationDisplay(row), 'Main indication', { title: row.indication })}</td>
-          <td class="stage-cell">${focusOfficialFieldValue(row, row.stage, 'Pipeline Stage', { title: row.stageRaw })}</td>
+          <td class="indication-cell">${focusOfficialFieldValue(row, indicationDisplay(row), 'Main indication', { title: indicationFullHoverTitle(row) })}</td>
+          <td class="stage-cell">${focusOfficialFieldValue(row, row.stage, 'Pipeline Stage', { title: pipelineStageFullHoverTitle(row) })}</td>
           <td class="filter-cell">${statusEditSelect(row, 'filter2')}</td>
           <td class="score-cell total-score-cell">${totalScoreEditCircle(row)}</td>
           <td class="focus-status-cell">${partnershipEditSelect(row)}</td>
@@ -6560,8 +6588,8 @@ function renderTable() {
                 ${tableTextEditValue(row, 'target', row.target, { className: 'target-single-line' })}
                 <span class="target-context-indicator" aria-hidden="true">i</span>
               </td>
-              <td class="indication-cell">${tableTextEditValue(row, 'main_indication', row.mainIndication, { title: row.indication })}</td>
-              <td class="stage-cell" title="${escapeHtml(row.stageRaw)}">${stageEditSelect(row)}</td>
+              <td class="indication-cell">${tableTextEditValue(row, 'main_indication', row.mainIndication, { title: indicationFullHoverTitle(row) })}</td>
+              <td class="stage-cell" title="${escapeHtml(pipelineStageFullHoverTitle(row))}">${stageEditSelect(row)}</td>
               <td class="filter-cell">${statusEditSelect(row, filterKey)}</td>
               <td class="score-cell">${mode === 'full' || mode === 'triage'
                 ? scoreEditSelect(row, 'targetScore', 'target_relevance', 'Target Area Relevance')
@@ -10246,10 +10274,10 @@ Hit Discovery; Lead Optimization; Preclinical Candidate; IND-enabling; Preclinic
 
 Canonicalize only an explicitly confirmed current stage or a completed/started milestone. Do not promote stage from plans, expectations, targets, financing, hiring, or adjacent programs. Generic preclinical -> Preclinical unspecified. Candidate nominated/selected -> Preclinical Candidate. Ongoing GLP tox, IND-directed CMC, or explicit IND-enabling work -> IND-enabling. IND/CTA submitted, filed, accepted, effective, or cleared -> IND filed/cleared. An explicitly ongoing clinical/pivotal/registrational trial with no phase -> Clinical unspecified; never infer Phase 3 from "pivotal" or "registrational" alone. Hit ID/hit identification, an explicit research program/project, or an explicit discovery program/project -> Hit Discovery; FIH, Ph1, Ph1a, or Ph1b -> Phase 1; a confirmed Ph1b/2a -> Phase 1/2; FDA/EMA/NMPA approved -> Approved / marketed. Planned IND submission alone does not establish IND filed/cleared; "preclinical; IND planned" remains Preclinical unspecified. A planned Phase 2 or Phase 2/3 trial does not establish that phase: retain an explicitly confirmed earlier current phase, otherwise use Unknown. For multi-indication assets, use the lead/currently most advanced confirmed stage as the single dashboard value and move indication-specific status detail to evidence or notes; for example, "FOS Phase II recruiting; pain stage unclear" -> Phase 2. Map only explicitly confirmed discontinued, terminated, withdrawn, inactive, dormant, or abandoned programs to Discontinued / inactive. A suspended or halted program is not automatically terminal: retain the confirmed stage when available and record the pause in hard_filter.flags/notes; do not map it to Discontinued / inactive unless inactivity is independently confirmed. Do not map speculative wording such as "likely preclinical or dormant" or a different historical alias marked discontinued to the current asset's Discontinued / inactive status. Use Unknown only when the relevant current stage itself is unresolved or conflicting.`;
 
-const SHARED_CANONICAL_MODALITY_RULE = `Canonical Modality — structured_table.modality_platform must be exactly one of: Targeted protein degrader, Oncolytic virus, Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Microbiome therapy, Vaccine, Radiopharmaceutical, Others, or Unknown.
+const SHARED_CANONICAL_MODALITY_RULE = `Canonical Modality — structured_table.modality_platform must be exactly one of: Targeted protein degrader, Oncolytic virus, Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Microbiome therapy, Vaccine, Radiopharmaceutical, Natural product, Exosome / EV Therapy, Others, or Unknown.
 Preserve the researched wording in structured_table.modality_source and use the canonical label in modality_platform. Examples: "TPD", "PROTAC", "molecular glue degrader", "SNIPER", "AUTOTAC", and "LYTAC" -> Targeted protein degrader; "oral small molecule" -> Small molecule; "oral small-molecule / tablet" and "small-molecule CNS discovery platform" -> Small molecule; "IV antibody" -> Antibody; "topical peptide" -> Peptide; "live biotherapeutic product" -> Microbiome therapy. Route, dosage form, and technical qualifiers belong in MoA, source evidence, company_profile.platform_summary, or notes. modality_tags may contain multiple supported canonical labels only when the source explicitly evidences a hybrid format (for example, an antibody-targeted degrader can carry Antibody and Targeted protein degrader); never place raw labels such as TPD or PROTAC in modality_tags.`;
 
-const SHARED_CANONICAL_INDICATION_RULE = `Canonical Main Indication — structured_table.main_indication must be exactly one of: Alzheimer's disease; Parkinson's disease; Lewy body dementia; Epilepsy / seizure disorders; Multiple sclerosis / neuroinflammatory disease; Amyotrophic lateral sclerosis / motor neuron disease; Frontotemporal dementia; Huntington's disease; Stroke; Migraine / headache disorders; Pain; Major depressive disorder; Schizophrenia / psychosis; Bipolar disorder; Anxiety disorders; Autism spectrum disorder; ADHD; Sleep / wake disorders; Chronic cough; Inflammatory bowel disease; Systemic lupus erythematosus; Other autoimmune / inflammatory disease; or Unknown.
+const SHARED_CANONICAL_INDICATION_RULE = `Canonical Main Indication — structured_table.main_indication must be exactly one of: Alzheimer's disease; Parkinson's disease; Lewy body dementia; Epilepsy / seizure disorders; Multiple sclerosis / neuroinflammatory disease; Amyotrophic lateral sclerosis / motor neuron disease; Frontotemporal dementia; Huntington's disease; Stroke; Migraine / headache disorders; Pain; Major depressive disorder; Schizophrenia / psychosis; Bipolar disorder; Anxiety disorders; Autism spectrum disorder; ADHD; Sleep / wake disorders; Chronic cough; Inflammatory bowel disease; Systemic lupus erythematosus; Other autoimmune / inflammatory disease; Spinal cord injury; Spinal muscular atrophy; or Unknown.
 main_indication is mandatory. Never omit the key and never use null, an empty string, N/A, or an unnormalized disease phrase. If the lead can be determined, always write its canonical dashboard bucket. Use Unknown only when the lead genuinely cannot be distinguished after the following priority.
 When several indications are confirmed, retain every confirmed disease wording in structured_table.indication and provide structured_table.indication_list as its canonical array; do not replace confirmed indications with Unknown.
 Lead-indication selection priority: (1) use an indication explicitly identified as lead, primary, initial, or the sole current indication for the assessed asset on an official company pipeline page or current official company material; (2) if no official lead is designated, use the indication targeted by the single most advanced confirmed active clinical program, comparing only registered, started, recruiting, ongoing, or dosed programs; (3) if no lead can still be established but one or more confirmed indications are listed, set main_indication to the first canonical indication in the source's textual/listed order and preserve every canonical indication in indication_list. Never select an indication merely because it appears first before applying this priority. Use Unknown only when no confirmed canonical indication is available. Exclude planned/expected indications, competitor programs, historical or discontinued programs, and platform-expansion claims.
@@ -12894,7 +12922,10 @@ function step0MetadataCellHtml(row, field) {
   const hasValue = field === 'comment' || field === 'contact' ? metadataFeed.length > 0 : Boolean(value) && hasContactHistory;
   if (!owner.type) return '<span class="pill empty step0-metadata-empty">-</span>';
   const ownerId = owner.type === 'queue' ? owner.queue_id : owner.record_id;
-  const title = hasValue ? `${label} 확인 · 두 번 클릭하여 수정` : `${label} 없음 · 두 번 클릭하여 입력`;
+  const datedImportHistory = field === 'comment' && Array.isArray(row?.metadata?.comment_entries) && row.metadata.comment_entries.length > 1;
+  const title = hasValue
+    ? datedImportHistory ? `${label} 확인 · 일괄 업로드별 기록 보기` : `${label} 확인 · 두 번 클릭하여 수정`
+    : `${label} 없음 · 두 번 클릭하여 입력`;
   return `<button
     type="button"
     class="pill ${hasValue ? 'pass has-value' : 'empty is-empty'} step0-metadata-indicator"
@@ -13840,6 +13871,10 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
     const isContactHistory = field === 'contact';
     const postLabel = isContactHistory ? 'Contact History' : 'Comment';
     const canEditListingComment = isContactHistory ? step0ContactHistoryCanEdit(row) : step0ListingCommentCanEdit(row);
+    // Import events are deliberately kept as separate audit cards.  Editing a
+    // single aggregate field would otherwise silently collapse several dated
+    // Tab 0 import comments back into one card.
+    const canEditSingleListingComment = canEditListingComment && commentFeed.length <= 1;
     const commentCards = commentFeed.length
       ? commentFeed.map((entry) => {
         const source = escapeHtml(String(entry.source || 'Comment'));
@@ -13848,7 +13883,7 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
         const body = escapeHtml(String(entry.body || '')).replaceAll('\n', '<br>');
         const byline = [author, createdAt].filter(Boolean).join(' · ');
         const sourceText = String(entry.source || '');
-        const isEditableListingComment = canEditListingComment && sourceText.includes(isContactHistory ? 'Tab 0 · Contact History' : 'Tab 0 · Comment');
+        const isEditableListingComment = canEditSingleListingComment && sourceText.includes(isContactHistory ? 'Tab 0 · Contact History' : 'Tab 0 · Comment');
         const sourceWorkspaceMode = sourceText.includes('Tab 2') && sourceText.includes('Full Scout')
           ? 'full'
           : sourceText.includes('Tab 1') && sourceText.includes('Fast Triage')
@@ -13871,7 +13906,7 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
     popover.innerHTML = `
       <header><strong>${postLabel}</strong><button type="button" class="step0-metadata-close" aria-label="Close">×</button></header>
       <div class="step0-comment-feed">${commentCards}</div>
-      ${canEditListingComment ? `<footer><button type="button" class="is-primary" data-step0-metadata-edit>${postLabel}</button></footer>` : ''}
+      ${canEditSingleListingComment ? `<footer><button type="button" class="is-primary" data-step0-metadata-edit>${postLabel}</button></footer>` : ''}
     `;
   }
   document.body.appendChild(popover);
@@ -14135,10 +14170,10 @@ function renderStep0ProgressTable() {
           <td class="step0-company-cell">${step0ListingFieldMarkup(row, 'company', row.company, { className: 'single-line-cell' })}</td>
           <td>${step0ListingFieldMarkup(row, 'country', display.countryRaw, { html: display.country === '-' ? '-' : countryDisplayMarkup(display.country), title: display.countryRaw && display.countryRaw !== display.country ? display.countryRaw : display.country })}</td>
           <td class="step0-asset-cell">${step0ListingFieldMarkup(row, 'asset', row.asset, { className: 'single-line-cell' })}</td>
-          <td>${step0ListingFieldMarkup(row, 'modality', display.modalityRaw, { html: escapeHtml(display.modality), title: display.modalityRaw && display.modalityRaw !== display.modality ? display.modalityRaw : display.modality, className: 'single-line-cell' })}</td>
+          <td>${step0ListingFieldMarkup(row, 'modality', display.modalityRaw, { html: escapeHtml(display.modality), title: modalityFullHoverTitle({ modalityRaw: display.modalityRaw, modality: display.modality }), className: 'single-line-cell' })}</td>
           <td class="step0-target-cell">${step0ListingFieldMarkup(row, 'target', row.listing_details?.target || '', { className: 'target-single-line' })}</td>
-          <td>${step0ListingFieldMarkup(row, 'main_indication', display.indicationRaw, { html: escapeHtml(display.indication), title: display.indicationRaw && display.indicationRaw !== display.indication ? display.indicationRaw : display.indication })}</td>
-          <td>${step0ListingFieldMarkup(row, 'stage', display.stageRaw, { html: escapeHtml(display.stage), title: display.stageRaw && display.stageRaw !== display.stage ? display.stageRaw : display.stage })}</td>
+          <td>${step0ListingFieldMarkup(row, 'main_indication', display.indicationRaw, { html: escapeHtml(display.indication), title: indicationFullHoverTitle({ indication: display.indicationRaw }, display.indication) })}</td>
+          <td>${step0ListingFieldMarkup(row, 'stage', display.stageRaw, { html: escapeHtml(display.stage), title: pipelineStageFullHoverTitle({ stageRaw: display.stageRaw, stage: display.stage })})}</td>
           <td>${step0StageCellHtml('pending', { ...row.pending, row })}</td>
           <td>${step0StageCellHtml('fast_triage', row.fast_triage, row.full_scout)}</td>
           <td>${step0StageCellHtml('full_scout', row.full_scout)}</td>

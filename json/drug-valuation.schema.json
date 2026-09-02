@@ -60,6 +60,36 @@
             "comment_source": { "enum": ["", "team_review_import", "admin_listing_post"] },
             "comment_created_at": { "type": "string" },
             "comment_updated_at": { "type": "string" },
+            "comment_entries": {
+              "type": "array",
+              "description": "Durable, non-duplicate Listing Comment events for the Tab 0 popover. The legacy comment field remains an aggregate for compatibility.",
+              "items": {
+                "type": "object",
+                "required": ["id", "body", "author", "source", "created_at"],
+                "properties": {
+                  "id": { "type": "string", "maxLength": 200 },
+                  "body": { "type": "string", "maxLength": 5000 },
+                  "author": { "type": "string", "maxLength": 200 },
+                  "source": { "enum": ["team_review_import", "admin_listing_post", "legacy_listing_comment"] },
+                  "created_at": { "type": "string" },
+                  "import_batch_id": { "type": "string", "maxLength": 200 }
+                },
+                "additionalProperties": false
+              }
+            },
+            "listing_details": {
+              "type": "object",
+              "description": "Latest exact-identity Tab 0 display values. These are operational Listing context and never overwrite the scientific report fields.",
+              "properties": {
+                "country": { "type": "string", "maxLength": 500 },
+                "modality": { "type": "string", "maxLength": 500 },
+                "target": { "type": "string", "maxLength": 1000 },
+                "main_indication": { "type": "string", "maxLength": 1000 },
+                "stage": { "type": "string", "maxLength": 500 },
+                "website": { "type": "string", "maxLength": 2048 }
+              },
+              "additionalProperties": false
+            },
             "contact": { "type": "string", "maxLength": 5000 },
             "contact_author": { "type": "string", "maxLength": 200 },
             "contact_author_user_id": { "type": "string", "maxLength": 200 },

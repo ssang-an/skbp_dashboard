@@ -13,7 +13,8 @@
         "Hong Kong",
         "HK",
         "China / Hong Kong",
-        "Greater China"
+        "Greater China",
+        "CN"
       ],
       "patterns": [
         "\\bchina\\b",
@@ -493,10 +494,13 @@
     {
       "canonical": "Unknown",
       "synonyms": [
-        "Unknown"
+        "Unknown",
+        "Not disclosed",
+        "Undisclosed"
       ],
       "patterns": [
-        "^unknown$"
+        "^unknown$",
+        "^(?:not disclosed|undisclosed)$"
       ]
     }
   ],
@@ -513,8 +517,8 @@
     },
     {
       "canonical": "Small molecule",
-      "synonyms": ["Small molecule", "Small-molecule", "SM", "Oral compound", "Chemical compound"],
-      "patterns": ["small[\\s-]?molecule", "\\bsm\\b", "oral compound", "chemical compound"]
+      "synonyms": ["Small molecule", "Small-molecule", "SM", "Oral compound", "Chemical compound", "제네릭"],
+      "patterns": ["small[\\s-]?molecule", "\\bsm\\b", "oral compound", "chemical compound", "제네릭"]
     },
     {
       "canonical": "Peptide",
@@ -528,8 +532,8 @@
     },
     {
       "canonical": "Cell therapy",
-      "synonyms": ["Cell therapy", "Cellular therapy", "Stem cell", "CAR-T", "TCR-T", "CAR-NK", "CAR-NKT", "iPSC therapy"],
-      "patterns": ["car[\\s-]?(?:t|nk|nkt)", "tcr[\\s-]?t", "cell(?:ular)? therapy", "stem cell", "\\bipsc\\b"]
+      "synonyms": ["Cell therapy", "Cellular therapy", "Stem cell", "CAR-T", "TCR-T", "CAR-NK", "CAR-NKT", "iPSC therapy", "MSC", "Mesenchymal stem cell"],
+      "patterns": ["car[\\s-]?(?:t|nk|nkt)", "tcr[\\s-]?t", "cell(?:ular)? therapy", "stem cell", "\\bipsc\\b", "줄기세포"]
     },
     {
       "canonical": "Gene therapy",
@@ -538,12 +542,12 @@
     },
     {
       "canonical": "Antibody",
-      "synonyms": ["Antibody", "Ab", "mAb", "Bispecific antibody", "Antibody-drug conjugate", "ADC", "Antibody-oligonucleotide conjugate", "AOC"],
+      "synonyms": ["Antibody", "Ab", "mAb", "Bispecific antibody", "Antibody-drug conjugate", "ADC", "Antibody-oligonucleotide conjugate", "AOC", "Grabody"],
       "patterns": ["antibod(?:y|ies)", "\\bmab\\b", "bispecific", "antibody[\\s-]?(?:drug|oligonucleotide) conjugate", "\\b(?:adc|aoc)\\b", "\\bab\\b"]
     },
     {
       "canonical": "Protein biologic",
-      "synonyms": ["Protein biologic", "Fusion protein", "Recombinant protein", "Enzyme replacement"],
+      "synonyms": ["Protein biologic", "Fusion protein", "Recombinant protein", "Enzyme replacement", "rProtein"],
       "patterns": ["protein biologic", "fusion protein", "recombinant protein", "enzyme replacement"]
     },
     {
@@ -562,14 +566,24 @@
       "patterns": ["radiopharmaceutical", "radioligand", "radioisotope", "radiotherapeutic"]
     },
     {
+      "canonical": "Natural product",
+      "synonyms": ["Natural product", "Natural Product", "Herbal formulation", "Herbal medicine"],
+      "patterns": ["natural product", "herbal (?:formulation|medicine)", "천연물"]
+    },
+    {
+      "canonical": "Exosome / EV Therapy",
+      "synonyms": ["Exosome", "Exosome therapy", "EV Therapy", "Extracellular vesicle", "Extracellular vesicle therapy"],
+      "patterns": ["exosome", "extracellular vesicle"]
+    },
+    {
       "canonical": "Others",
       "synonyms": ["Others", "Other"],
       "patterns": ["^others?$"]
     },
     {
       "canonical": "Unknown",
-      "synonyms": ["Unknown", "Not known", "Not available", "Not disclosed", "N/A"],
-      "patterns": ["^(?:unknown|not known|not available|not disclosed|n/?a)$"]
+      "synonyms": ["Unknown", "Not known", "Not available", "Not disclosed", "Undisclosed", "N/A", "X"],
+      "patterns": ["^(?:unknown|not known|not available|not disclosed|undisclosed|n/?a|-|x|\\?+)$"]
     }
   ],
   "theme": [
@@ -595,8 +609,8 @@
     },
     {
       "canonical": "Unknown",
-      "synonyms": ["Unknown", "Not known"],
-      "patterns": ["^(?:unknown|not known)$"]
+      "synonyms": ["Unknown", "Not known", "Not disclosed", "Undisclosed"],
+      "patterns": ["^(?:unknown|not known|not disclosed|undisclosed)$"]
     }
   ],
   "indication": [
@@ -706,13 +720,21 @@
         "Motor neuron disease",
         "Motor neurone disease",
         "MND",
-        "Lou Gehrig's disease"
+        "Lou Gehrig's disease",
+        "Kennedy's disease",
+        "Kennedy disease",
+        "Spinal and bulbar muscular atrophy",
+        "Spinobulbar muscular atrophy",
+        "SBMA"
       ],
       "patterns": [
         "amyotrophic lateral sclerosis",
         "\\bals\\b",
         "motor neuro",
-        "\\bmnd\\b"
+        "\\bmnd\\b",
+        "kennedy.?s? disease",
+        "spinal and bulbar muscular atrophy",
+        "\\bsbma\\b"
       ]
     },
     {
@@ -960,6 +982,33 @@
       ],
       "patterns": [
         "autoimmune"
+      ]
+    },
+    {
+      "canonical": "Spinal cord injury",
+      "synonyms": [
+        "Spinal cord injury",
+        "SCI",
+        "Traumatic spinal cord injury",
+        "Acute spinal cord injury",
+        "Spinal cord disorders",
+        "Unspecified spinal cord disorders"
+      ],
+      "patterns": [
+        "spinal cord injur",
+        "spinal cord disorder",
+        "\\bsci\\b"
+      ]
+    },
+    {
+      "canonical": "Spinal muscular atrophy",
+      "synonyms": [
+        "Spinal muscular atrophy",
+        "SMA"
+      ],
+      "patterns": [
+        "spinal muscular atrophy",
+        "\\bsma\\b"
       ]
     }
   ]
