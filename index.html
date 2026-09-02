@@ -72,7 +72,7 @@
         });
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20260901-pipeline-return-hover-gray-2" />
+  <link rel="stylesheet" href="./src/styles.css?v=20260901-wiki-map-title-tooltip-1" />
   <link rel="stylesheet" href="./src/knowledge_graph.css?v=20260823-atlas-search-pill-alignment-1" />
   <link rel="stylesheet" href="./src/sigma_graph.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js" defer></script>
@@ -149,8 +149,8 @@
                 class="help-tooltip"
                 type="button"
                 hidden
-                data-tooltip="GPT Fast Triage v3.5 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / INSUFFICIENT로 screening할 때 사용합니다."
-                aria-label="GPT Fast Triage v3.5 지침 복사"
+                data-tooltip="GPT Fast Triage v3.6 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / INSUFFICIENT로 screening할 때 사용합니다."
+                aria-label="GPT Fast Triage v3.6 지침 복사"
               ><span aria-hidden="true">GPT</span><b>지침 1</b></button>
               <button
                 id="copyPromptTopButton"
@@ -722,7 +722,8 @@
           <div class="atlas-filter-fields">
             <label class="sg-explorer-view help-tooltip map-explorer-view-help" data-tooltip="Node 선택 편의성을 위해 핵심 연결만 보며 관심 영역을 좁히세요. 더 많은 Node를 보려면 전체 지식 맵 · 넓게 보기를 선택하세요."><span>Map Display 조정</span><select id="sgView"><option value="overview" selected>Overview · 핵심 연결</option><option value="all">전체 지식 맵 · 넓게 보기</option></select></label>
             <label class="sg-keyword-filter">
-              <span class="help-tooltip map-filter-label-help" tabindex="0" data-tooltip="구조화된 MoA 예: P2X3 receptor antagonism · TRPM7 antagonist · KCNQ2/3 activator. 원문에만 있는 표현은 검색되지 않을 수 있습니다.">검색</span>
+              <span class="help-tooltip map-filter-label-help sg-search-tooltip" tabindex="0" data-tooltip="검색하면 관련 Node 위주로 지식 맵이 좁혀져 원하는 Node를 빠르게 찾아 선택할 수 있습니다.
+원문 리포트 워딩은 검색이 어렵고, Wiki상 구조화된 키워드는 검색 가능합니다.">검색</span>
               <div class="step0-search-composer">
                 <div class="step0-search-entry">
                 <input id="sgSearch" type="search" placeholder="Company · Asset · Target · MoA 등 검색" autocomplete="off" />
@@ -730,10 +731,10 @@
                 </div>
               </div>
             </label>
-            <div id="sgThemeFilter" class="filter-multiselect" aria-label="Theme filter"><span class="filter-multiselect-label">Theme</span><button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false"><span data-sg-theme-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button><div class="filter-multiselect-menu" role="listbox" aria-label="Theme" aria-multiselectable="true" hidden></div></div>
+            <div id="sgThemeFilter" class="filter-multiselect" aria-label="Theme filter"><span class="filter-multiselect-label help-tooltip map-filter-label-help" tabindex="0" data-tooltip="선택한 Theme와 연결된 노드·관계만 Map에 표시합니다.">Theme</span><button type="button" class="filter-multiselect-trigger help-tooltip" data-tooltip="현재는 전체 범위를 표시합니다. 값을 선택하면 Map 범위를 좁힙니다." aria-haspopup="listbox" aria-expanded="false"><span data-sg-theme-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button><div class="filter-multiselect-menu" role="listbox" aria-label="Theme" aria-multiselectable="true" hidden></div></div>
             <div id="sgIndicationFilter" class="filter-multiselect sg-indication-filter" aria-label="Main indication filter">
-              <span class="filter-multiselect-label">Main indication</span>
-              <button type="button" class="filter-multiselect-trigger" aria-haspopup="listbox" aria-expanded="false"><span data-sg-indication-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
+              <span class="filter-multiselect-label help-tooltip map-filter-label-help" tabindex="0" data-tooltip="선택한 주 적응증과 연결된 노드·관계만 Map에 표시합니다.">Main indication</span>
+              <button type="button" class="filter-multiselect-trigger help-tooltip" data-tooltip="현재는 전체 범위를 표시합니다. 값을 선택하면 Map 범위를 좁힙니다." aria-haspopup="listbox" aria-expanded="false"><span data-sg-indication-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button>
               <div class="filter-multiselect-menu" role="listbox" aria-label="Main indication" aria-multiselectable="true" hidden></div>
             </div>
             <div id="sgTypeFilter" class="filter-multiselect" aria-label="Entity type filter"><span class="filter-multiselect-label help-tooltip map-filter-label-help" tabindex="0" data-tooltip="Knowledge Wiki Map에 표시할 연결 정보 종류를 고릅니다. 여러 항목을 선택하면 해당 종류의 Node만 표시합니다.">표시할 항목</span><button type="button" class="filter-multiselect-trigger help-tooltip" data-tooltip="Knowledge Wiki Map에 표시할 연결 정보 종류를 고릅니다. 여러 항목을 선택하면 해당 종류의 Node만 표시합니다." aria-haspopup="listbox" aria-expanded="false"><span data-sg-type-summary>전체</span><span class="filter-multiselect-caret" aria-hidden="true">⌄</span></button><div class="filter-multiselect-menu" role="listbox" aria-label="표시할 항목" aria-multiselectable="true" hidden></div></div>
@@ -744,7 +745,7 @@
           </div>
         </section>
         <section class="kg-workspace">
-          <section class="kg-card kg-graph-card"><div class="kg-card-head atlas-graph-head"><h2>Knowledge Wiki Map</h2><p id="sgScope">Knowledge Wiki Map을 준비 중입니다…</p></div><div class="atlas-graph-stage"><div id="sgCanvas" class="kg-canvas"></div><div id="sgLegend" class="kg-legend atlas-graph-legend" aria-label="그래프 표시 범례"></div><aside id="sgInspectorPanel" class="kg-side atlas-node-popover" role="dialog" aria-label="Selected node details" hidden><section class="kg-card"><div id="sgInspectorDrag" class="kg-card-head atlas-selected-node-head" tabindex="0" aria-label="Selected node 창 이동"><div><span class="atlas-card-eyebrow">SELECTED NODE</span><p>선택한 노드와 직접 연결된 정보·원문을 확인하세요. Agent가 이를 우선 검토할 예정입니다.</p></div><button id="sgInspectorBack" class="atlas-inspector-close" type="button" aria-label="선택 해제">×</button></div><div id="sgInspector" class="kg-empty">노드를 클릭하면 연결 노드와 Agent 질문을 표시합니다.</div></section></aside></div></section>
+          <section class="kg-card kg-graph-card"><div class="kg-card-head atlas-graph-head"><h2 class="help-tooltip sg-title-tooltip" tabindex="0" data-tooltip="위 필터 드롭다운 메뉴로 Map 범위를 좁힌 뒤 노드를 선택하면, 해당 범위의 기록을 중심으로 Q&amp;A를 진행합니다.">Knowledge Wiki Map</h2><p id="sgScope">Knowledge Wiki Map을 준비 중입니다…</p></div><div class="atlas-graph-stage"><div id="sgCanvas" class="kg-canvas help-tooltip sg-canvas-empty-help" data-tooltip="위 필터 드롭다운 메뉴로 Map 범위를 좁힌 뒤 노드를 선택하면, 해당 범위의 기록을 중심으로 Q&amp;A를 진행합니다."></div><div id="sgLegend" class="kg-legend atlas-graph-legend" aria-label="그래프 표시 범례"></div><aside id="sgInspectorPanel" class="kg-side atlas-node-popover" role="dialog" aria-label="Selected node details" hidden><section class="kg-card"><div id="sgInspectorDrag" class="kg-card-head atlas-selected-node-head" tabindex="0" aria-label="Selected node 창 이동"><div><span class="atlas-card-eyebrow">SELECTED NODE</span><p>선택한 노드와 직접 연결된 정보·원문을 확인하세요. Agent가 이를 우선 검토할 예정입니다.</p></div><button id="sgInspectorBack" class="atlas-inspector-close" type="button" aria-label="선택 해제">×</button></div><div id="sgInspector" class="kg-empty">노드를 클릭하면 연결 노드와 Agent 질문을 표시합니다.</div></section></aside></div></section>
           <aside class="data-upload-guide wiki-map-quick-guide" aria-labelledby="wikiMapQuickGuideTitle">
             <div class="data-upload-guide-header">
               <div>
@@ -884,7 +885,7 @@
           <p class="eyebrow" id="criteriaDrawerScopeLabel">AI Champion</p>
           <div class="criteria-drawer-title-row">
             <h2>판단근거</h2>
-            <span id="criteriaDrawerVersionBadge" class="criteria-version-badge">v3.5</span>
+            <span id="criteriaDrawerVersionBadge" class="criteria-version-badge">v3.6</span>
           </div>
           <p id="criteriaDrawerSubtitle" class="criteria-drawer-subtitle">Full Scout 검토 후보를 선별하기 위한 3-point screening 기준</p>
         </div>
@@ -899,7 +900,7 @@
 
       <div class="criteria-drawer-body">
         <section class="criteria-rule criteria-triage-rule" data-criteria-tab="triage">
-          <h3>GPT 지침 1 — Fast Triage · v3.5 기준</h3>
+          <h3>GPT 지침 1 — Fast Triage · v3.6 기준</h3>
           <p>
             지침 1은 여러 후보 중 지침 2 Full Scout로 넘길 대상을 빠르게 고르는 1차 screening입니다.
             <code>Target Area Relevance</code>, <code>MoA Validity</code>, <code>Data Maturity</code>를 독립적으로 예비 평가하고
@@ -1268,9 +1269,34 @@
           <p>Tab 3는 Full Scout 검토 후 Shortlisting에 등록된 후보를 대상으로, SKBP 우선 관심 적응증 여부와 확인된 Modality·Pipeline Stage·Platform Attractiveness·In-vivo·In-vitro·ADMET 값을 사용해 투자, Value Up, 공동연구, Unknown 또는 N/A로 자동 분류합니다.</p>
         </section>
 
-        <section class="criteria-focus-section criteria-guide-section" data-criteria-tab="focus" data-focus-section="eligibility">
+        <section class="criteria-focus-section criteria-guide-section" data-criteria-tab="focus" data-focus-section="partnership">
           <div class="criteria-guide-section-heading criteria-focus-section-heading">
             <span class="criteria-guide-step-number" aria-hidden="true">1</span>
+            <span class="criteria-focus-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 7V5h8v2M4 9h16v10H4V9Z" /><path d="M4 13h16M10 13v2h4v-2" /></svg></span>
+            <span class="criteria-guide-section-copy"><h3>OI Partnership Type</h3><p>투자·Value Up·공동연구의 핵심 자동분류 조건</p></span>
+          </div>
+          <div class="criteria-focus-grid criteria-focus-decision-grid">
+            <article class="criteria-focus-decision-card" data-focus-decision="investment">
+              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 7V5h8v2M4 9h16v10H4V9Z" /><path d="M4 13h16" /></svg></span><h4>투자</h4></div>
+              <p class="criteria-focus-card-summary">모든 modality에서 IND-enabling 이상이면 투자 검토 유형으로 분류합니다.</p>
+              <ul class="criteria-focus-condition-list" aria-label="투자 자동분류 조건"><li><strong>All modality</strong></li><li><strong>Non-small molecule preferred</strong></li><li><strong>Pipeline Stage ≥ IND-enabling</strong></li><li class="criteria-focus-condition-note">IND filed/cleared 및 Phase 1 이상 포함</li></ul>
+            </article>
+            <article class="criteria-focus-decision-card" data-focus-decision="value-up">
+              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m7 14 4-4 3 3 4-5M15 8h3v3" /></svg></span><h4>Value Up</h4></div>
+              <p class="criteria-focus-card-summary">IND-enabling 이전 전임상 소분자 자산이 추가 개발 지원 조건을 충족한 경우입니다.</p>
+              <ul class="criteria-focus-condition-list" aria-label="Value Up 자동분류 조건"><li><strong>Small molecule</strong></li><li><strong>Pipeline Stage &lt; IND-enabling</strong></li><li class="criteria-focus-condition-inline"><strong>In-vivo = O, In-vitro = O</strong></li><li><strong>ADMET uploaded + scored (완료 Study / 25)</strong></li></ul>
+            </article>
+            <article class="criteria-focus-decision-card" data-focus-decision="joint-research">
+              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="7" cy="12" r="3" /><circle cx="17" cy="12" r="3" /><path d="M10 12h4M4 19c.7-2.6 2-4 3-4s2.3 1.4 3 4M14 19c.7-2.6 2-4 3-4s2.3 1.4 3 4" /></svg></span><h4>공동연구</h4></div>
+              <p class="criteria-focus-card-summary">모든 modality 자산에서 Platform Attractiveness가 높은 경우 공동연구 검토 유형으로 분류합니다.</p>
+              <ul class="criteria-focus-condition-list" aria-label="공동연구 자동분류 조건"><li><strong>All modality</strong></li><li><strong>Platform Attractiveness = 3</strong></li></ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="criteria-focus-section criteria-guide-section" data-criteria-tab="focus" data-focus-section="eligibility">
+          <div class="criteria-guide-section-heading criteria-focus-section-heading">
+            <span class="criteria-guide-step-number" aria-hidden="true">2</span>
             <span class="criteria-focus-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M9 4h6l1 3h3v13H5V7h3l1-3Z" /><path d="m9 13 2 2 4-5" /></svg></span>
             <span class="criteria-guide-section-copy"><h3>Eligibility &amp; Input Basis</h3><p>자동분류 대상과 사용하는 정보</p></span>
           </div>
@@ -1286,31 +1312,6 @@
             <article class="criteria-focus-info-card">
               <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 3 5 6v5c0 4.7 2.8 8 7 10 4.2-2 7-5.3 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></svg></span><h4>확인된 정보 사용</h4></div>
               <p>구조화된 Dashboard 값과 확인된 Full Scout 및 Partner Materials 정보를 사용하며, 확인되지 않은 값은 임의로 추정하지 않습니다.</p>
-            </article>
-          </div>
-        </section>
-
-        <section class="criteria-focus-section criteria-guide-section" data-criteria-tab="focus" data-focus-section="partnership">
-          <div class="criteria-guide-section-heading criteria-focus-section-heading">
-            <span class="criteria-guide-step-number" aria-hidden="true">2</span>
-            <span class="criteria-focus-section-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 7V5h8v2M4 9h16v10H4V9Z" /><path d="M4 13h16M10 13v2h4v-2" /></svg></span>
-            <span class="criteria-guide-section-copy"><h3>OI Partnership Type</h3><p>투자·Value Up·공동연구의 핵심 자동분류 조건</p></span>
-          </div>
-          <div class="criteria-focus-grid criteria-focus-decision-grid">
-            <article class="criteria-focus-decision-card" data-focus-decision="investment">
-              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M8 7V5h8v2M4 9h16v10H4V9Z" /><path d="M4 13h16" /></svg></span><h4>투자</h4></div>
-              <p class="criteria-focus-card-summary">모든 modality에서 IND-enabling 이상이면 투자 검토 유형으로 분류합니다.</p>
-              <ul class="criteria-focus-condition-list" aria-label="투자 자동분류 조건"><li><strong>All modality</strong></li><li><strong>Pipeline Stage ≥ IND-enabling</strong></li><li class="criteria-focus-condition-note">Non-small molecule preferred · IND filed/cleared 및 Phase 1 이상 포함</li></ul>
-            </article>
-            <article class="criteria-focus-decision-card" data-focus-decision="value-up">
-              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m7 14 4-4 3 3 4-5M15 8h3v3" /></svg></span><h4>Value Up</h4></div>
-              <p class="criteria-focus-card-summary">IND-enabling 이전 전임상 소분자 자산이 추가 개발 지원 조건을 충족한 경우입니다.</p>
-              <ul class="criteria-focus-condition-list" aria-label="Value Up 자동분류 조건"><li><strong>Small molecule</strong></li><li><strong>Pipeline Stage &lt; IND-enabling</strong></li><li class="criteria-focus-condition-inline"><strong>In-vivo = O, In-vitro = O</strong></li><li><strong>ADMET uploaded + scored (완료 Study / 25)</strong></li></ul>
-            </article>
-            <article class="criteria-focus-decision-card" data-focus-decision="joint-research">
-              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="7" cy="12" r="3" /><circle cx="17" cy="12" r="3" /><path d="M10 12h4M4 19c.7-2.6 2-4 3-4s2.3 1.4 3 4M14 19c.7-2.6 2-4 3-4s2.3 1.4 3 4" /></svg></span><h4>공동연구</h4></div>
-              <p class="criteria-focus-card-summary">모든 modality 자산에서 Platform Attractiveness가 높은 경우 공동연구 검토 유형으로 분류합니다.</p>
-              <ul class="criteria-focus-condition-list" aria-label="공동연구 자동분류 조건"><li><strong>All modality</strong></li><li><strong>Platform Attractiveness = 3</strong></li></ul>
             </article>
           </div>
         </section>
@@ -1472,7 +1473,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260901-pipeline-return-hover-gray-2"></script>
+  <script type="module" src="./src/app.js?v=20260901-score-refresh-toast-12"></script>
   <script src="./src/sigma_graph.js?v=20260824-deferred-wiki-export-1" defer></script>
   </body>
 </html>

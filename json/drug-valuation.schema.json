@@ -39,6 +39,11 @@
             "owner_user_id": { "type": "string", "maxLength": 200 },
             "owner_email": { "type": "string", "maxLength": 320 },
             "action_plan": { "type": "string", "maxLength": 500 },
+            "partnership_note": { "type": "string", "maxLength": 500 },
+            "partnership_note_source": {
+              "enum": ["auto", "manual"],
+              "description": "Whether the visible OI Note is automatically generated rationale or reviewer-authored text."
+            },
             "action_date_reminders": { "type": "array", "items": { "type": "object", "additionalProperties": true } }
           },
           "additionalProperties": true

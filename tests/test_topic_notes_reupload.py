@@ -93,6 +93,74 @@ class TopicNotesAndReuploadTests(unittest.TestCase):
         self.assertEqual(main.normalized_topic_note_key("4.1 Target Relevance"), "target-relevance")
         self.assertEqual(main.normalized_topic_note_key("5.2 Target Relevance"), "target-relevance")
 
+    def test_reupload_moves_unmatched_topic_note_to_comment(self):
+        incoming = full_scout_record()
+        incoming["source_report"]["raw_markdown"] = "# New Full Scout report\n\n## 4.2 MoA Validity"
+        incoming["meta"]["topic_notes"] = [{
+            "id": "note-1",
+            "topic_id": "topic-target-relevance",
+            "topic_key": "target-relevance",
+            "topic_title": "4.1 Target Relevance",
+            "body": "Keep this operational context",
+            "author_name": "Reviewer Kim",
+            "author_id": "reviewer-1",
+            "author_email": "reviewer@example.com",
+        }]
+
+        moved = main.move_unmatched_topic_notes_to_comments(incoming)
+
+        self.assertEqual(moved, ["note-1"])
+        self.assertEqual(incoming["meta"]["topic_notes"], [])
+        comment = incoming["meta"]["collaboration"]["comments"][0]
+        self.assertEqual(comment["source"], "report_reupload_unmatched_topic_note")
+        self.assertEqual(comment["author"], "Reviewer Kim")
+        self.assertEqual(comment["author_user_id"], "reviewer-1")
+        self.assertEqual(comment["author_email"], "reviewer@example.com")
+        self.assertIn("매핑되지 않은 Topic 메모", comment["body"])
+        self.assertIn("Keep this operational context", comment["body"])
+
+    def test_confirmed_reupload_records_admin_and_moves_unmatched_topic_note(self):
+        existing = full_scout_record()
+        existing["meta"].update({"review_type": "full_scout", "output_filename_base": "Acme_AX-101"})
+        existing["meta"]["topic_notes"] = [{
+            "id": "note-1",
+            "topic_id": "topic-target-relevance",
+            "topic_key": "target-relevance",
+            "topic_title": "4.1 Target Relevance",
+            "body": "Keep this operational context",
+            "author_name": "Reviewer Kim",
+        }]
+        incoming = copy.deepcopy(existing)
+        incoming["source_report"]["raw_markdown"] = "# New Full Scout report\n\n## 4.2 MoA Validity"
+        request = json_request({
+            "records": [incoming],
+            "confirmed_replacements": [{
+                "incoming_record_id": main.record_key(incoming),
+                "existing_record_id": main.record_key(existing),
+            }],
+        })
+        saved: list[list[dict[str, object]]] = []
+        admin = {"id": "admin-1", "name": "Review Admin", "email": "admin@example.com", "role": "administrator"}
+        with (
+            patch.object(main, "require_auth_admin", return_value=admin),
+            patch.object(main, "load_records", return_value=[copy.deepcopy(existing)]),
+            patch.object(main, "load_candidate_queue", return_value=[]),
+            patch.object(main, "save_candidate_queue"),
+            patch.object(main, "save_records", side_effect=lambda records: saved.append(copy.deepcopy(records))),
+            patch.object(main, "deferred_markdown_exports", return_value={"exports": []}),
+        ):
+            result = asyncio.run(main.upsert_records(request))
+
+        self.assertEqual(result["confirmed_reuploads"], 1)
+        updated = saved[-1][0]
+        snapshot = updated["meta"]["report_reupload_history"][-1]
+        self.assertEqual(snapshot["actor_name"], "Review Admin")
+        self.assertEqual(updated["meta"]["topic_notes"], [])
+        self.assertEqual(
+            updated["meta"]["collaboration"]["comments"][0]["source"],
+            "report_reupload_unmatched_topic_note",
+        )
+
     def test_detail_reupload_and_admin_json_controls_are_separated(self):
         self.assertIn('id="detailReuploadButton"', DETAIL_HTML)
         self.assertIn('M12 16V4M7.5 8.5 12 4l4.5 4.5', DETAIL_HTML)

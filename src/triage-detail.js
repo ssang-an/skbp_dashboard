@@ -6,6 +6,7 @@ import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260831-pa
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
 let currentRecord = null;
+const RUBRIC_REFRESH_OUTCOME_DURATION_MS = 3000;
 
 function encodeRecordIdForPath(recordId) {
   return encodeURIComponent(String(recordId ?? ''))
@@ -132,6 +133,105 @@ function showTriageProgress(title = '잠시만 기다려 주세요', message = '
   document.body.appendChild(backdrop);
   document.body.classList.add('operation-modal-open');
   return () => { backdrop.remove(); document.body.classList.remove('operation-modal-open'); };
+}
+
+function showTriageActionFailureDialog(title, message) {
+  return new Promise((resolve) => {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'operation-modal-backdrop listing-import-error-backdrop';
+    backdrop.innerHTML = `
+      <section class="operation-modal listing-import-error-modal" role="dialog" aria-modal="true" aria-labelledby="triageActionFailureTitle" aria-describedby="triageActionFailureMessage">
+        <header class="operation-modal-header">
+          <span class="operation-modal-mark listing-import-error-mark" aria-hidden="true">!</span>
+          <div><p class="operation-modal-eyebrow">SCORE REFRESH</p><h2 id="triageActionFailureTitle">${escapeHtml(title)}</h2></div>
+        </header>
+        <p class="operation-modal-copy" id="triageActionFailureMessage">${escapeHtml(message)}</p>
+        <footer class="operation-modal-actions operation-confirm-actions">
+          <button type="button" class="operation-modal-confirm" data-triage-action-failure-close>확인</button>
+        </footer>
+      </section>`;
+    const close = () => {
+      document.removeEventListener('keydown', onKeydown);
+      backdrop.remove();
+      document.body.classList.remove('operation-modal-open');
+      resolve();
+    };
+    const onKeydown = (event) => { if (event.key === 'Escape') close(); };
+    backdrop.addEventListener('click', (event) => { if (event.target === backdrop) close(); });
+    backdrop.querySelector('[data-triage-action-failure-close]')?.addEventListener('click', close);
+    document.body.appendChild(backdrop);
+    document.body.classList.add('operation-modal-open');
+    document.addEventListener('keydown', onKeydown);
+    backdrop.querySelector('[data-triage-action-failure-close]')?.focus();
+  });
+}
+
+function showTriageActionOutcomeToast(title, message, eyebrow = 'FILTER 1') {
+  document.querySelector('#rubricRefreshOutcomeToast')?.remove();
+  const toast = document.createElement('section');
+  toast.id = 'rubricRefreshOutcomeToast';
+  toast.className = 'operation-modal rubric-refresh-toast';
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+  toast.innerHTML = `
+    <header class="operation-modal-header">
+      <span class="operation-modal-mark rubric-refresh-success-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m5 12 4.2 4.2L19 6.5" /></svg></span>
+      <div><p class="operation-modal-eyebrow">${escapeHtml(eyebrow)}</p><h2>${escapeHtml(title)}</h2></div>
+    </header>
+    <p class="operation-modal-copy">${escapeHtml(message)}</p>`;
+  document.body.appendChild(toast);
+  window.setTimeout(() => toast.remove(), RUBRIC_REFRESH_OUTCOME_DURATION_MS);
+}
+
+function triageRubricRefreshOutcomeCopy(data, latestVersion) {
+  const appliedVersion = data.rubric_version || latestVersion;
+  const cleared = Array.isArray(data.cleared_manual_scoring_override_fields)
+    ? data.cleared_manual_scoring_override_fields
+    : [];
+  if (data.status === 'updated') {
+    return {
+      title: 'Filter 1 AI 재평가 완료',
+      message: `Fast Triage v${appliedVersion} 기준으로 GPT 원문 리포트와 첨부 자료를 다시 평가했습니다. criterion 점수, Total Score, Filter 1 결과를 갱신했고 변경 이력에 기록했습니다.`
+    };
+  }
+  if (['no_evidence', 'no_score_changes'].includes(data.status)) {
+    return {
+      title: 'Filter 1 AI 재평가 완료 · 점수 유지',
+      message: `Fast Triage v${appliedVersion} 기준으로 GPT 원문 리포트와 첨부 자료를 검토했습니다. 변경을 뒷받침할 근거가 없어 기존 criterion 점수와 Filter 1 결과를 유지했고 변경 이력에 기록했습니다.`
+    };
+  }
+  if (data.status === 'recalculated') {
+    return {
+      title: 'Filter 1 재계산 완료',
+      message: `Fast Triage v${appliedVersion} 기준을 적용했습니다. 저장된 criterion 점수는 유지하고 Total Score와 Filter 1 결과를 다시 계산했으며, 변경 이력에 기록했습니다.`
+    };
+  }
+  const resetItems = [
+    cleared.includes('scores') ? '수동 기준별 점수' : '',
+    cleared.includes('total_score') ? '수동 Total Score' : ''
+  ].filter(Boolean).join(' 및 ') || '수동 점수 설정';
+  if (cleared.length && data.official_recalculation_applied === true) {
+    return {
+      title: '최신 Score 기준 갱신 완료',
+      message: `Fast Triage v${appliedVersion} 기준을 적용했습니다. ${resetItems} 오버라이드를 해제하고 저장된 GPT 공식 점수로 다시 계산했습니다. 변경 이력에 기록했습니다.`
+    };
+  }
+  if (data.status === 'manual_override_reset' || cleared.length) {
+    return {
+      title: '수동 점수 오버라이드 해제 완료',
+      message: `Fast Triage v${appliedVersion}은 이미 적용되어 있어 ${resetItems}만 해제했습니다. 저장된 GPT 공식 점수로 복원했고, 변경 이력에 기록했습니다.`
+    };
+  }
+  if (data.status === 'already_current' || data.changed === false) {
+    return {
+      title: '이미 최신 Fast Triage 기준입니다',
+      message: `Fast Triage v${appliedVersion} 기준과 현재 점수·결과가 이미 적용되어 있습니다. 변경 사항이 없어 변경 이력은 추가하지 않았습니다.`
+    };
+  }
+  return {
+    title: 'Score 기준 갱신 완료',
+    message: `Fast Triage v${appliedVersion} 기준 갱신을 완료했고, 변경 이력에 기록했습니다.`
+  };
 }
 
 function textValue(value, fallback = '') {
@@ -897,7 +997,6 @@ function triageFinalCommentPostsMarkup(record) {
 }
 
 function triageRubricRefreshButton() {
-  if (!currentUserIsAdmin()) return '';
   return `<button type="button" class="triage-rubric-refresh" data-triage-rubric-refresh aria-label="최신 Score 기준 갱신" title="최신 Score 기준 갱신"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.2 6.5L3 16m0 0v5m0-5h5M3 12A9 9 0 0 1 18.2 5.5L21 8m0 0V3m0 5h-5"></path></svg></button>`;
 }
 
@@ -1161,12 +1260,37 @@ function renderQuickSummary(record) {
     criterionSources(criterion, { requireExplicitVerification, registry }).forEach((url) => verifiedCriterionUrls.add(url));
   });
   const lastEditedAt = meta.last_edited_at ? formatTimestamp(meta.last_edited_at) : null;
-  const rescoredAt = meta.rescored_at ? formatTimestamp(meta.rescored_at) : null;
-  const reviewedAt = meta.rubric_reviewed_at ? formatTimestamp(meta.rubric_reviewed_at) : null;
+  const originalInstructionVersion = String(
+    sourceReport.instruction_version || meta.instruction_version || triage.instruction_version || ''
+  ).replace(/^v/i, '');
+  const originalResearchSummary = [
+    originalInstructionVersion ? `GPT 지침 v${originalInstructionVersion}` : 'GPT 지침 버전 미기록',
+    meta.generated_at || '생성일 미기록'
+  ].join(' · ');
+  const latestScoreEvaluation = [
+    meta.rescored_rubric_version && meta.rescored_at ? {
+      label: '원문 기반 마지막 재평가',
+      version: meta.rescored_rubric_version,
+      at: meta.rescored_at
+    } : null,
+    meta.rubric_reviewed_version && meta.rubric_reviewed_at ? {
+      label: '원문 기반 마지막 재평가',
+      version: meta.rubric_reviewed_version,
+      at: meta.rubric_reviewed_at
+    } : null
+  ].filter(Boolean).reduce((latest, candidate) => {
+    if (!latest) return candidate;
+    return (Date.parse(candidate.at || '') || 0) > (Date.parse(latest.at || '') || 0)
+      ? candidate
+      : latest;
+  }, null);
+  const currentScoreVersion = String(
+    meta.rubric_version || meta.rubric_reviewed_version || triage.instruction_version || meta.schema_version || ''
+  ).replace(/^v/i, '');
   const rows = [
     ['Triage status', status],
-    ['Rubric version', meta.rubric_version || triage.instruction_version || meta.schema_version],
-    ['Generated at', meta.generated_at],
+    ['원문 생성', originalResearchSummary],
+    ['현재 점수 기준', currentScoreVersion ? `Fast Triage 기준 v${currentScoreVersion}` : '기준 버전 미기록'],
     ['Identity verified', identityIsVerified(record) ? 'Yes' : 'Needs review'],
     ['Parser status', sourceReport.parser_status],
     [
@@ -1176,17 +1300,12 @@ function renderQuickSummary(record) {
         : verifiedCriterionUrls.size)
     ]
   ];
-  if (rescoredAt && meta.rescored_rubric_version) {
-    rows.push(
-      ['Recalculated at', rescoredAt],
-      ['Rubric used to recalculate', meta.rescored_rubric_version]
-    );
-  } else if (reviewedAt && meta.rubric_reviewed_version) {
-    rows.push(
-      ['Latest rubric reviewed at', reviewedAt],
-      ['Rubric used for review', meta.rubric_reviewed_version],
-      ['Review result', meta.rubric_review_result === 'no_change' ? 'No score change' : 'No applicable score change']
-    );
+  if (latestScoreEvaluation) {
+    const evaluationVersion = String(latestScoreEvaluation.version || '').replace(/^v/i, '');
+    rows.splice(3, 0, [
+      latestScoreEvaluation.label,
+      `Fast Triage 기준 v${evaluationVersion || '?'} · ${formatTimestamp(latestScoreEvaluation.at)}`
+    ]);
   }
   if (lastEditedAt) {
     rows.push(['Last edited', `${lastEditedAt} · ${meta.last_edited_by || 'unknown'}`]);
@@ -1462,7 +1581,16 @@ async function saveTriageScore(select) {
   if (!criterion || !Number.isInteger(value)) return;
   select.disabled = true;
   try {
-    await updateTriageManualReview({ kind: 'score', criterion, value, previous_value: previousValue });
+    const data = await updateTriageManualReview({ kind: 'score', criterion, value, previous_value: previousValue });
+    const updates = Array.isArray(data.derived_score_updates) ? data.derived_score_updates : [];
+    const synchronized = updates.map((item) => item.label || (item.field === 'total_score' ? 'Total Score' : 'Filter 1')).join(' · ');
+    void showTriageActionOutcomeToast(
+      '수동 점수를 반영했습니다',
+      synchronized
+        ? `점수 변경에 따라 ${synchronized}을(를) 자동 동기화하고 변경 이력에 기록했습니다.`
+        : '점수를 수동 수정하고 변경 이력에 기록했습니다.',
+      'FILTER 1'
+    );
   } catch (error) {
     window.alert(error.message);
     select.value = String(previousValue ?? 0);
@@ -1623,27 +1751,50 @@ async function deleteCurrentRecord() {
 
 async function refreshTriageRubric(button) {
   if (!currentRecord || !recordId || !button) return;
+  const user = await requireAuth();
+  if (!user?.is_admin && !user?.is_developer) {
+    await showTriageActionFailureDialog(
+      'Score 기준 갱신을 실행할 수 없습니다',
+      'Score 기준 갱신은 Developer 또는 관리자 권한이 필요합니다. 로그인한 계정의 권한을 확인해 주세요.'
+    );
+    return;
+  }
   button.disabled = true;
   button.classList.add('is-saving');
   const closeProgress = showTriageProgress(
     '최신 기준으로 업데이트 중입니다',
     '최신 Fast Triage 기준으로 기존 근거와 점수를 다시 확인하고 있습니다.'
   );
+  let failureShown = false;
   try {
-    const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/recalculate-rubric`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}/reassess-rubric`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.detail || 'Score 기준 갱신에 실패했습니다.');
-    if (data.status === 'error') throw new Error(data.message || 'Score 기준 갱신에 실패했습니다.');
+    if (!response.ok) {
+      const message = data.detail || 'Score 기준 갱신에 실패했습니다.';
+      failureShown = true;
+      await showTriageActionFailureDialog('Score 기준 갱신에 실패했습니다', message);
+      throw new Error(message);
+    }
+    if (!data.record || data.status === 'error' || data.status === 'conflict') {
+      const message = data.message || 'Score 기준 갱신을 완료하지 못했습니다.';
+      failureShown = true;
+      await showTriageActionFailureDialog('Score 기준 갱신에 실패했습니다', message);
+      throw new Error(message);
+    }
     if (data.record) {
       currentRecord = data.record;
       renderRecord(currentRecord);
     }
-    elements.loadStatus.textContent = data.message || 'Score 기준 갱신 완료';
+    const outcome = triageRubricRefreshOutcomeCopy(data, '3.6');
+    elements.loadStatus.textContent = outcome.message;
+    void showTriageActionOutcomeToast(outcome.title, outcome.message, 'FILTER 1');
   } catch (error) {
-    window.alert(error.message);
+    if (!failureShown) {
+      await showTriageActionFailureDialog('Score 기준 갱신에 실패했습니다', error.message || '예상하지 못한 오류가 발생했습니다.');
+    }
   } finally {
     closeProgress();
     if (button.isConnected) {

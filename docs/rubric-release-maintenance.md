@@ -6,7 +6,7 @@ SKBP의 Fast Triage와 Full Scout는 rubric, GPT instruction, backend validator/
 
 | Workflow | Current rubric/instruction or criteria | Current display | Schema / record audit |
 |---|---:|---:|---:|
-| Fast Triage | 3.5 | 3.5 | 3.2 |
+| Fast Triage | 3.6 | 3.6 | 3.2 |
 | Full Scout | 3.8 | 3.10 | 3.2 |
 | Shortlisting / Filter 3 | 1.7 deterministic criteria | 1.7 | `focus_management.partnership_classification_criteria_version` and history |
 
@@ -74,7 +74,7 @@ Fast 또는 Full의 점수·상태·조사 행동을 바꾸면 아래 항목을 
 7. 현재 release tests와 fixture를 새 계약으로 갱신한다. 새 rubric의 경계 사례(0/1/2/3, SELECT/REJECT/INSUFFICIENT, PASS/REVIEW/FAIL, early stop)를 최소 하나씩 추가한다.
 8. 기존 저장 record를 자동 재점수하지 않는다. 필요하면 별도 rescore workflow와 provenance field를 사용한다.
 
-운영 원리 변경만인 경우에는 위 목록에서 **1–2의 rubric version 변경, 3의 backend 계산 변경, 6의 schema 변경은 수행하지 않는다.** 대신 active rubric 문서의 절차 설명, `src/app.js` prompt, `instruction_version`, 관련 화면 안내가 같은 행동을 설명하는지 대조한다.
+운영 원리 변경만인 경우에도 **1–2의 `rubric_version`과 `instruction_version`은 함께 변경한다.** 다만 score/status/canonical value/calculation/JSON contract가 그대로라면 3의 backend calculator/validator 변경과 6의 schema 변경은 필요하지 않을 수 있다. 이 경우에도 active rubric 문서의 절차 설명, `src/app.js` prompt, version field, 관련 화면 안내가 같은 행동을 설명하는지 대조한다.
 
 ## 3. Display-only 변경 체크리스트
 
@@ -118,7 +118,7 @@ For every score definition, threshold, evidence-standard, status-gate, or resear
 2. **Backend and refresh invalidation:** update any deterministic validator/calculator/status rule that implements the change. For Full Scout, advance `FULL_SCOUT_RUBRIC_DEFINITION_REVISION` in `main.py` and the matching `LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION` in `src/app.js` whenever a definition changes within the same nominal version, so a record cannot incorrectly return `already_current`.
 3. **AI scoring instruction:** update every active scoring/re-evaluation prompt, report outline, version statement, JSON template/default, and compact-ingestion default that can supply the affected workflow.
 4. **Displayed judgment basis:** update the active display guide, Dashboard table/parameter text, detail-page table/parameter text, and dynamic English criteria guide. The 0/1/2/3 wording shown to an administrator must state the same threshold as the active prompt and rubric.
-5. **Both workflow controls:** verify Tab 1's rubric refresh resolves the active Fast Triage release and Tab 2's rubric refresh resolves the active Full Scout release. For an intentionally stale record, verify each refresh sends the active instruction/rubric context and writes its provenance; the Dashboard header reload must remain a page/data reload only, not a rubric rescore.
+5. **Both workflow controls:** verify Tab 1's rubric refresh resolves the active Fast Triage release and Tab 2's rubric refresh resolves the active Full Scout release. Every public Filter 1/2 refresh route must re-evaluate the stored original report and attachments against the active instruction/rubric, save the criterion-level result, recompute Total and Filter 1/2, and write provenance/change history. Do not expose a public refresh route that only re-adds stored criterion scores. A same-version AI reassessment may return `already_current` without a duplicate model call; the Dashboard header reload must remain a page/data reload only, not a rubric rescore.
 6. **Regression and release audit:** update release-alignment tests, test the changed 0/1/2/3 boundary, run the release test set, and search active files for retired wording. Do not auto-rescore all stored records; re-evaluate through the explicit per-record refresh flow unless a separately approved migration is required.
 
 Use this sequence even for a wording change that could alter how GPT assigns a score. If the wording only improves readability and cannot change a score, status, research scope, or stored contract, it may be treated as display-only; otherwise use the full release checklist above.

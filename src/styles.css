@@ -2215,6 +2215,22 @@ h2 {
   transform: translate(0, 4px);
 }
 
+/* Preserve the line break between the search tooltip's benefit sentence
+   and its structured-vs-original-report caveat. */
+.knowledge-map-panel .sg-search-tooltip::after {
+  white-space: pre-line;
+}
+
+/* The graph title sits near the left edge of a wide card; the shared
+   help-tooltip default (right: 0) would push a 420px-wide box off the left
+   side of the viewport. Anchor it to the title's own left edge instead. */
+.knowledge-map-panel .sg-title-tooltip::after {
+  right: auto;
+  left: 0;
+  width: max-content;
+  max-width: min(320px, calc(100vw - 32px));
+}
+
 .knowledge-map-panel .atlas-filter-fields .map-filter-label-help:hover::after,
 .knowledge-map-panel .atlas-filter-fields .map-filter-label-help:focus-visible::after {
   transform: translate(0, 0);
@@ -7183,6 +7199,22 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   height: auto;
 }
 
+/* Anchor the canvas hint inside its own top-left corner instead of the
+   default below-the-element placement, which would land far past a tall
+   graph canvas. */
+.knowledge-map-panel .sg-canvas-empty-help::after {
+  top: 12px;
+  right: auto;
+  bottom: auto;
+  left: 12px;
+  width: max-content;
+  max-width: min(280px, calc(100% - 24px));
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
 .knowledge-map-panel .atlas-graph-legend {
   position: static;
   z-index: 8;
@@ -7666,6 +7698,13 @@ html[data-theme="dark"] .knowledge-map-panel .kg-graph-card .kg-card-head > p {
   border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
   background: color-mix(in srgb, var(--accent) 12%, var(--surface));
   color: var(--accent-strong);
+}
+
+.step0-import-reciprocal-default-note {
+  margin: 7px 0 -2px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
 }
 
 @media (max-width: 640px) {
@@ -16877,6 +16916,31 @@ body.operation-modal-open { overflow: hidden; }
 .operation-modal-confirm:hover,
 .operation-modal-confirm:focus-visible { background: #9e4040; border-color: #9e4040; }
 .operation-modal-confirm:focus-visible { outline: 2px solid color-mix(in srgb, #b54f4f 40%, transparent); outline-offset: 2px; }
+.rubric-refresh-success-mark {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface, #fff));
+}
+.rubric-refresh-toast {
+  position: fixed;
+  z-index: 10040;
+  top: max(18px, env(safe-area-inset-top));
+  right: max(18px, env(safe-area-inset-right));
+  width: min(400px, calc(100vw - 36px));
+  padding: 16px 18px;
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--line));
+  box-shadow: 0 18px 42px rgba(2, 6, 23, .22);
+  animation: rubric-refresh-toast-in .18s ease-out both;
+}
+.rubric-refresh-toast .operation-modal-copy {
+  margin: 11px 0 0;
+  font-size: 13px;
+}
+.rubric-refresh-toast h2 { font-size: 16px; }
+@keyframes rubric-refresh-toast-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .listing-import-error-mark {
   color: #b54f4f;
   border-color: color-mix(in srgb, #c15c5c 24%, var(--line));

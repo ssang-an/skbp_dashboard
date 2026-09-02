@@ -61,11 +61,14 @@ investment, begin the note with `투자 또한 해당`.
 
 ## Human override
 
-Automatic classification stores the final value, note, evidence-source list, source/status,
-criteria version, and latest automatic suggestion. A human change sets the final source to
-`manual`; subsequent evidence refreshes update the auto suggestion but do not overwrite the
-human decision. Selecting `Auto` in the UI removes that precedence and recalculates the final
-value using this version.
+Automatic classification stores the final value, note, note source (`auto`), evidence-source
+list, source/status, criteria version, and latest automatic suggestion. A reviewer-authored OI
+Note is stored with note source `manual`. Filter 3 criteria refresh always recalculates the final
+classification: it regenerates an `auto` rationale with the latest classification, but retains a
+`manual` reviewer note unchanged. A human classification change sets the final source to `manual`;
+subsequent evidence refreshes update the auto suggestion but do not overwrite the human decision.
+Selecting `Auto` in the UI removes that precedence and recalculates the final value using this
+version.
 
 ## Uploaded-document evidence
 

@@ -245,8 +245,8 @@ def current_triage_record() -> dict[str, object]:
     record = {
         "meta": {
             "schema_version": "3.2",
-            "instruction_version": "3.5",
-            "rubric_version": "3.5",
+            "instruction_version": "3.6",
+            "rubric_version": "3.6",
             "review_type": "fast_triage",
             "generated_at": "2026-08-01",
             "output_filename_base": "Acceptance_Test_Asset_fast_triage_20260801",
@@ -270,7 +270,7 @@ def current_triage_record() -> dict[str, object]:
         },
         "hard_filter": {"status": "REJECT", "reason": "SELECT gate 미충족", "flags": []},
         "triage": {
-            "instruction_version": "3.5",
+            "instruction_version": "3.6",
             "status": "REJECT",
             "identity_verified": True,
         },
@@ -322,11 +322,11 @@ def current_triage_record() -> dict[str, object]:
 
 class VersionAndPolicyTests(unittest.TestCase):
     def test_current_versions(self) -> None:
-        self.assertEqual(main.TRIAGE_CRITERIA_VERSION, "3.5")
+        self.assertEqual(main.TRIAGE_CRITERIA_VERSION, "3.6")
         self.assertEqual(main.TRIAGE_SCHEMA_VERSION, "3.2")
         self.assertEqual(main.SCORING_CRITERIA_VERSION, "3.8")
         self.assertEqual(main.FULL_SCOUT_SCHEMA_VERSION, "3.2")
-        self.assertTrue(main.SCORING_CRITERIA_TRIAGE_MD.name.startswith("v3_5_"))
+        self.assertTrue(main.SCORING_CRITERIA_TRIAGE_MD.name.startswith("v3_6_"))
         self.assertTrue(main.SCORING_CRITERIA_FULL_MD.name.startswith("v3_8_"))
         self.assertTrue(main.SCORING_CRITERIA_DISPLAY_MD.name.startswith("v3_10_"))
 
@@ -1336,7 +1336,7 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
             shared_sentence in app_js,
             "The exact shared Evidence Discipline block is missing from src/app.js.",
         )
-        self.assertIn("Fast Triage v3.5", app_js)
+        self.assertIn("Fast Triage v3.6", app_js)
         self.assertIn("Full Scout v3.8", app_js)
         for stale_or_forbidden in (
             "Fast Triage v3.3",

@@ -16,6 +16,7 @@ import ssl
 import string
 import tempfile
 import threading
+import time
 import unicodedata
 from datetime import date, datetime, timedelta, timezone
 from email.message import EmailMessage
@@ -1212,13 +1213,32 @@ def canonicalize_dictionary_category(kind: str, source_wording: Any, *, earliest
     return min(matches, key=lambda item: item[1])[2]
 
 
+JSON_ATOMIC_REPLACE_ATTEMPTS = 5
+JSON_ATOMIC_REPLACE_RETRY_SECONDS = 0.15
+
+
 def write_json_atomic(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile("w", encoding="utf-8", delete=False, dir=path.parent, suffix=".tmp") as tmp:
         json.dump(payload, tmp, ensure_ascii=False, indent=2)
         tmp.write("\n")
         temp_name = tmp.name
-    Path(temp_name).replace(path)
+    temporary_path = Path(temp_name)
+    try:
+        for attempt in range(JSON_ATOMIC_REPLACE_ATTEMPTS):
+            try:
+                temporary_path.replace(path)
+                return
+            except PermissionError:
+                if attempt + 1 >= JSON_ATOMIC_REPLACE_ATTEMPTS:
+                    raise
+                # Windows can briefly lock the target while a local server,
+                # antivirus scanner, or file indexer has it open. Retrying the
+                # final atomic replace preserves all-or-nothing file contents.
+                time.sleep(JSON_ATOMIC_REPLACE_RETRY_SECONDS * (attempt + 1))
+    finally:
+        if temporary_path.exists():
+            temporary_path.unlink(missing_ok=True)
 
 
 def apply_llm_reparse_disclaimer(record: dict[str, Any]) -> None:
@@ -4866,11 +4886,49 @@ def apply_auto_oi_partnership(
         return result
     focus["partnership_type"] = result["partnership_type"]
     focus["partnership_note"] = result["note"]
+    # Keep the OI Note's authoring origin separate from the classification
+    # origin. A reviewer may manually choose a Filter 3 type while retaining
+    # an automatically generated rationale.
+    focus["partnership_note_source"] = "auto"
     focus["partnership_evidence_sources"] = result["evidence_sources"]
     focus["partnership_classification_source"] = "auto"
     focus["partnership_classification_status"] = "auto_classified"
     focus["partnership_classified_at"] = classified_at
     return result
+
+
+def partnership_note_is_human_authored(focus: dict[str, Any]) -> bool:
+    """Return whether the stored OI Note is a reviewer-authored note.
+
+    ``partnership_note_source`` is explicit on newly saved records. The
+    fallback keeps existing records safe: a manual classification is treated
+    as a human note unless it has the historical auto-generated manual-choice
+    prefix.
+    """
+    source = str(focus.get("partnership_note_source") or "").strip().lower()
+    if source in {"manual", "auto"}:
+        return source == "manual"
+    note = str(focus.get("partnership_note") or "").strip()
+    if note.startswith("담당자 수동 분류 / 자동 제안"):
+        return False
+    return (
+        str(focus.get("partnership_classification_source") or "").strip().lower() == "manual"
+        or str(focus.get("partnership_classification_status") or "").strip().lower() == "manual_override"
+    )
+
+
+def oi_partnership_recalculation_snapshot(focus: dict[str, Any]) -> dict[str, Any]:
+    """Return the meaningful Filter 3 state, excluding a refresh timestamp alone."""
+    snapshot = copy.deepcopy(focus)
+    for volatile_key in (
+        "partnership_recalculation",
+        "partnership_classified_at",
+        "filter3_document_analysis_updated_at",
+        "updated_at",
+        "updated_source",
+    ):
+        snapshot.pop(volatile_key, None)
+    return snapshot
 
 
 def refresh_tracked_oi_classifications(records: list[dict[str, Any]]) -> bool:
@@ -4895,8 +4953,22 @@ def refresh_tracked_oi_classifications(records: list[dict[str, Any]]) -> bool:
         if not needs_refresh:
             continue
         before = copy.deepcopy(focus)
+        human_oi_note = partnership_note_is_human_authored(before)
         apply_auto_detected_evidence(focus, record)
-        apply_auto_oi_partnership(focus, record)
+        result = apply_auto_oi_partnership(focus, record)
+        # Background release migration intentionally preserves a manual final
+        # Filter 3 classification. It must nevertheless refresh an automatic
+        # OI rationale; a reviewer-authored note remains immutable.
+        if not human_oi_note:
+            previous_note = str(before.get("partnership_note") or "")
+            previous_auto_note = str(before.get("partnership_auto_note") or "")
+            if previous_auto_note and previous_note.endswith(previous_auto_note):
+                focus["partnership_note"] = (
+                    previous_note[:-len(previous_auto_note)] + str(result["note"])
+                )
+            else:
+                focus["partnership_note"] = result["note"]
+            focus["partnership_note_source"] = "auto"
         if focus != before:
             changed = True
     return changed
@@ -4927,6 +4999,84 @@ def preserve_dashboard_meta(incoming: dict[str, Any], existing: dict[str, Any]) 
             existing_pipeline_metadata,
             incoming_pipeline_metadata,
         )
+
+
+def source_report_heading_keys(record: dict[str, Any]) -> set[str]:
+    """Return stable Topic-note keys available in the current GPT report."""
+    source_report = record.get("source_report") if isinstance(record.get("source_report"), dict) else {}
+    raw_markdown = str(source_report.get("raw_markdown") or "")
+    keys: set[str] = set()
+    heading_index = 0
+    for line in raw_markdown.splitlines():
+        heading = re.match(r"^\s{0,3}(#{1,6})\s+(.+?)\s*#*\s*$", line)
+        if not heading:
+            continue
+        level = len(heading.group(1))
+        title = heading.group(2)
+        is_report_title = heading_index == 0 and level == 1
+        heading_index += 1
+        # Keep server mapping identical to Detail's Topic-note anchors.
+        if level > 3 or is_report_title:
+            continue
+        key = normalized_topic_note_key(title)
+        if key:
+            keys.add(key)
+    return keys
+
+
+def move_unmatched_topic_notes_to_comments(record: dict[str, Any]) -> list[str]:
+    """Keep reupload-orphaned Topic notes visible in Comments instead of hiding them.
+
+    A Topic note is anchored to a GPT-report heading.  When an overwritten
+    report no longer has that heading, it cannot be shown in-place safely.  It
+    becomes a clearly-labelled, system-imported Comment while retaining author
+    and provenance; matching Topic notes stay attached to their heading.
+    """
+    meta = record.setdefault("meta", {})
+    notes = meta.get("topic_notes")
+    if not isinstance(notes, list) or not notes:
+        return []
+    heading_keys = source_report_heading_keys(record)
+    if not heading_keys:
+        # A report without headings cannot safely receive any Topic mapping.
+        heading_keys = set()
+
+    retained: list[Any] = []
+    moved_ids: list[str] = []
+    for note in notes:
+        if not isinstance(note, dict):
+            retained.append(note)
+            continue
+        note_key = normalized_topic_note_key(note.get("topic_key") or note.get("topic_title"))
+        body = str(note.get("body") or "").strip()
+        if note_key and note_key in heading_keys:
+            retained.append(note)
+            continue
+        if not body:
+            retained.append(note)
+            continue
+
+        note_id = str(note.get("id") or uuid.uuid4().hex)
+        topic_title = str(note.get("topic_title") or note.get("topic_id") or "Previous report topic").strip()
+        upsert_system_comment(
+            record,
+            import_key=imported_comment_key("report_reupload_unmatched_topic_note", note_id),
+            author=str(note.get("author_name") or note.get("author") or "Team").strip() or "Team",
+            body=f"[GPT 원문 재업로드 · 매핑되지 않은 Topic 메모]\n{topic_title}: {body}",
+            source="report_reupload_unmatched_topic_note",
+            created_at=str(note.get("created_at") or note.get("updated_at") or ""),
+            category="comment",
+            label="GPT 원문 재업로드 전 Topic 메모",
+            origin_record_id=record_key(record),
+            origin_item_id=note_id,
+            origin_kind="topic_note",
+            origin_author_user_id=str(note.get("author_id") or ""),
+            origin_author_email=normalized_identity_email(note.get("author_email")),
+        )
+        moved_ids.append(note_id)
+    if moved_ids:
+        meta["topic_notes"] = retained
+    return moved_ids
 
 
 def append_report_reupload_snapshot(
@@ -6386,6 +6536,8 @@ def upsert_system_comment(
             return False
         existing.update({
             "author": author,
+            "author_user_id": origin_author_user_id,
+            "author_email": origin_author_email,
             "body": body,
             "source": source,
             "category": category,
@@ -6403,8 +6555,8 @@ def upsert_system_comment(
             "id": uuid.uuid4().hex,
             "parent_id": None,
             "author": author,
-            "author_user_id": "",
-            "author_email": "",
+            "author_user_id": origin_author_user_id,
+            "author_email": origin_author_email,
             "actor_ip": "system",
             "body": body,
             "created_at": created_at or now,
@@ -6509,6 +6661,7 @@ DELEGATED_TRIAGE_COMMENT_KINDS = {
     "triage_final_comment",
     "triage_topic_note",
     "triage_contact_history",
+    "triage_team_comment",
 }
 
 
@@ -6793,6 +6946,67 @@ def synchronize_cross_workflow_comments(records: list[dict[str, Any]]) -> int:
                 for target in full_scout_records:
                     if remove_system_comment(target, final_import_key):
                         append_edit_history(target, source="cross_workflow_comment_sync", actor_ip="system", field="collaboration.comments.fast_triage_final")
+                        changed_count += 1
+
+            # General human Team Review comments are durable workflow context too.
+            # They follow the same one-way Tab 1 -> Tab 2 provenance model as
+            # Fast Triage Final/criterion comments; imported posts remain
+            # read-only in Full Scout and are refreshed from their Tab 1 source.
+            team_comments = (
+                ((triage_record.get("meta") or {}).get("collaboration") or {}).get("comments") or []
+            )
+            desired_comment_import_keys: set[str] = set()
+            for comment in team_comments:
+                if (
+                    not isinstance(comment, dict)
+                    or comment.get("system_import") is True
+                    or str(comment.get("category") or "comment") not in {"comment", "final_comment"}
+                ):
+                    continue
+                body = str(comment.get("body") or "").strip()
+                if not body:
+                    continue
+                comment_key = str(comment.get("id") or imported_comment_key(body, comment.get("created_at")))
+                import_key = imported_comment_key("fast-triage-team-comment", triage_key, comment_key)
+                desired_comment_import_keys.add(import_key)
+                category = str(comment.get("category") or "comment")
+                label = (
+                    "Tab 1 · Fast Triage · Final Comment"
+                    if category == "final_comment"
+                    else "Tab 1 · Fast Triage · Comment"
+                )
+                for target in full_scout_records:
+                    if upsert_system_comment(
+                        target,
+                        import_key=import_key,
+                        author=str(comment.get("author") or "").strip() or "Fast Triage",
+                        body=body,
+                        source=f"fast_triage_team_comment:{triage_key}",
+                        created_at=str(comment.get("created_at") or comment.get("updated_at") or ""),
+                        category=category,
+                        label=label,
+                        origin_record_id=triage_key,
+                        origin_item_id=str(comment.get("id") or ""),
+                        origin_kind="triage_team_comment",
+                        origin_author_user_id=str(comment.get("author_user_id") or ""),
+                        origin_author_email=str(comment.get("author_email") or "").strip().casefold(),
+                    ):
+                        append_edit_history(target, source="cross_workflow_comment_sync", actor_ip="system", field="collaboration.comments.fast_triage_team_comment")
+                        changed_count += 1
+
+            for target in full_scout_records:
+                collaboration = ((target.get("meta") or {}).get("collaboration") or {})
+                imported_comment_keys = [
+                    str(item.get("import_key") or "")
+                    for item in (collaboration.get("comments") or [])
+                    if isinstance(item, dict)
+                    and item.get("system_import") is True
+                    and item.get("origin_kind") == "triage_team_comment"
+                    and item.get("origin_record_id") == triage_key
+                ]
+                for import_key in imported_comment_keys:
+                    if import_key not in desired_comment_import_keys and remove_system_comment(target, import_key):
+                        append_edit_history(target, source="cross_workflow_comment_sync", actor_ip="system", field="collaboration.comments.fast_triage_team_comment")
                         changed_count += 1
 
             notes = triage_meta.get("topic_notes") if isinstance(triage_meta.get("topic_notes"), list) else []
@@ -7551,6 +7765,35 @@ def apply_ai_revision_scores(record: dict[str, Any], answer_markdown: str, chang
         update_score(record, criterion_id, new_score, reason, changes)
         if len(changes) > previous_change_count:
             changes[-1] = f"{criterion_id}.score {old_score} -> {new_score}"
+
+
+def apply_ai_rubric_refresh_scores(record: dict[str, Any], answer_markdown: str, changes: list[str]) -> None:
+    """Apply the legacy rubric-review answer without overwriting research prose.
+
+    That endpoint asks OpenRouter only for changed integer scores and a short
+    verdict reason.  It does not receive enough structured evidence to replace
+    the criterion's display rationale, investigation note, why-not-higher, or
+    uncertainty fields.  Those remain the original report's provenance.
+    """
+    criteria = record.setdefault("scoring", {}).setdefault("criteria", {})
+    for criterion_id, new_score in extract_ai_revision_scores(record, answer_markdown).items():
+        criterion = criteria.get(criterion_id)
+        if not isinstance(criterion, dict):
+            continue
+        old_score = criterion.get("score")
+        if old_score == new_score:
+            continue
+        if criterion_id == "marketability":
+            marketability_candidate = copy.deepcopy(criterion)
+            marketability_candidate["score"] = new_score
+            try:
+                validate_marketability(marketability_candidate)
+            except HTTPException:
+                continue
+        criterion["score"] = new_score
+        if criterion_id == "target_relevance":
+            record.setdefault("json_summary", {})["target_relevance_score"] = new_score
+        changes.append(f"{criterion_id}.score {old_score} -> {new_score}")
 
 
 def apply_ai_revision_score_overrides(
@@ -10703,14 +10946,28 @@ def append_rubric_refresh_audit(
     companion event is the human-facing audit trail shown on the detail page.
     """
     workflow_label = "Fast Triage Rubric" if triage_workflow else "Full Scout Rubric"
+    filter_label = "Filter 1" if triage_workflow else "Filter 2"
     result_label = {
-        "updated": "scores updated",
-        "manual_override_reset": "manual score overrides reset",
-        "no_change": "no score change",
-        "no_score_changes": "no applicable score change",
+        "updated": "scores updated by AI rubric review",
+        "manual_override_reset": "manual score overrides cleared; stored GPT scores restored",
+        "no_change": "AI rubric review completed; no score change",
+        "no_score_changes": "AI rubric review completed; no applicable score change",
         "already_current": "already current",
-        "recalculated": "stored scores and decision recalculated",
+        "recalculated": f"{filter_label} recalculated from stored criterion scores",
     }.get(result, result.replace("_", " "))
+    audit_label = (
+        f"{filter_label} recalculated with {workflow_label} v{str(rubric_version or '').lstrip('vV')}"
+        if result == "recalculated"
+        else (
+            f"Scores updated by AI review with {workflow_label} v{str(rubric_version or '').lstrip('vV')}"
+            if result == "updated"
+            else (
+                f"AI rubric review completed with {workflow_label} v{str(rubric_version or '').lstrip('vV')}; no score change"
+                if result in {"no_change", "no_score_changes"}
+                else f"Score recalculated by {workflow_label} v{str(rubric_version or '').lstrip('vV')}"
+            )
+        )
+    )
     append_edit_history(
         record,
         source="dashboard_rubric_refresh",
@@ -10720,7 +10977,7 @@ def append_rubric_refresh_audit(
         previous_value=f"Rubric v{previous_rubric_version or '-'}",
         new_value=result_label,
         instruction_version=str(rubric_version or "").lstrip("vV"),
-        audit_label=f"Score recalculated by {workflow_label} v{str(rubric_version or '').lstrip('vV')}",
+        audit_label=audit_label,
     )
 
 
@@ -10743,6 +11000,30 @@ def record_has_current_rubric_evaluation(record: dict[str, Any], rubric_version:
     if not is_fast_triage_record(record):
         return meta.get("full_scout_rubric_definition_revision") == FULL_SCOUT_RUBRIC_DEFINITION_REVISION
     return True
+
+
+def record_has_current_ai_rubric_reassessment(record: dict[str, Any], rubric_version: str) -> bool:
+    """Return whether OpenRouter has already reviewed this record at the release version.
+
+    A deterministic total/filter recalculation deliberately does *not* qualify:
+    it never re-reads the original report and must therefore remain eligible for
+    the interactive original-report reassessment control.
+    """
+    meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+    expected = str(rubric_version or "").strip().lstrip("vV")
+    if not expected:
+        return False
+    if str(meta.get("rescored_rubric_version") or "").strip().lstrip("vV") == expected:
+        return True
+    history = meta.get("rubric_refresh_history")
+    if not isinstance(history, list):
+        return False
+    return any(
+        isinstance(entry, dict)
+        and str(entry.get("version") or "").strip().lstrip("vV") == expected
+        and str(entry.get("result") or "") in {"updated", "no_change", "no_score_changes"}
+        for entry in history
+    )
 
 
 def reset_manual_scoring_overrides_after_rubric_review(
@@ -10794,7 +11075,7 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
 
         # Dashboard edits are a display-layer override.  If official GPT scoring
         # is already current, restore it without another identical AI request.
-        if record_has_current_rubric_evaluation(record, latest_rubric_version):
+        if record_has_current_ai_rubric_reassessment(record, latest_rubric_version):
             reviewed_at = datetime.now(timezone.utc).isoformat()
             cleared_manual_scoring_overrides = reset_manual_scoring_overrides_after_rubric_review(
                 record,
@@ -10803,12 +11084,22 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
                 rubric_version=latest_rubric_version,
                 previous_rubric_version=current_version,
             )
+            if not cleared_manual_scoring_overrides:
+                return {
+                    "ok": True,
+                    "status": "already_current",
+                    "changed": False,
+                    "message": f"Rubric v{latest_rubric_version}는 이미 최신 상태입니다.",
+                    "record": record,
+                    "rubric_reviewed_version": latest_rubric_version,
+                    "cleared_manual_scoring_override_fields": [],
+                }
             record_successful_rubric_review(
                 record,
                 rubric_version=latest_rubric_version,
                 reviewed_at=reviewed_at,
                 actor_ip=actor_ip,
-                result=("manual_override_reset" if cleared_manual_scoring_overrides else "already_current"),
+                result="manual_override_reset",
                 reason="Official GPT scoring is already current for this rubric.",
             )
             append_rubric_refresh_audit(
@@ -10818,7 +11109,7 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
                 reviewed_at=reviewed_at,
                 actor_ip=actor_ip,
                 actor_name=actor_name,
-                result="manual_override_reset" if cleared_manual_scoring_overrides else "already_current",
+                result="manual_override_reset",
                 triage_workflow=triage_workflow,
             )
             validate_records_for_save([record])
@@ -10826,12 +11117,8 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
             save_records(records)
             return {
                 "ok": True,
-                "status": "manual_override_reset" if cleared_manual_scoring_overrides else "already_current",
-                "message": (
-                    f"Rubric v{latest_rubric_version}의 저장된 GPT 공식 점수로 복원했습니다."
-                    if cleared_manual_scoring_overrides
-                    else f"Rubric v{latest_rubric_version}는 이미 최신 상태입니다."
-                ),
+                "status": "manual_override_reset",
+                "message": f"Rubric v{latest_rubric_version}의 저장된 GPT 공식 점수로 복원했습니다.",
                 "record": record,
                 "rubric_reviewed_version": latest_rubric_version,
                 "rubric_reviewed_at": reviewed_at,
@@ -10935,7 +11222,7 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
             "version": latest_rubric_version,
         }
         changes: list[str] = []
-        apply_ai_revision_scores(candidate, answer, changes)
+        apply_ai_rubric_refresh_scores(candidate, answer, changes)
         candidate.pop("_revision_context", None)
         if not changes:
             reviewed_at = datetime.now(timezone.utc).isoformat()
@@ -11073,6 +11360,17 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
 
 
+@app.post("/api/records/{record_id:path}/reassess-rubric")
+async def reassess_record_rubric(record_id: str, request: Request) -> dict[str, Any]:
+    """Re-evaluate stale official scores from the original report via OpenRouter.
+
+    Interactive Filter 1/2 refresh controls use this route.  A record already
+    evaluated under the active rubric never makes a duplicate model call; it
+    only releases an active manual score override when one exists.
+    """
+    return await refresh_record_rubric(record_id, request)
+
+
 @app.get("/api/obsidian/assets/{record_id:path}")
 def get_obsidian_asset(record_id: str) -> dict[str, Any]:
     records = load_records()
@@ -11174,6 +11472,75 @@ TRIAGE_MANUAL_REVIEW_SCORE_FIELDS = {
     "moa_validity",
     "data_maturity",
 }
+
+
+def synchronize_manual_score_override_derived_fields(
+    record: dict[str, Any],
+    *,
+    is_triage: bool,
+) -> list[dict[str, Any]]:
+    """Persist Total and Filter 1/2 consequences of manual criterion scores.
+
+    The original GPT criterion scores remain intact.  Reviewer scores live in
+    ``human_review.overrides`` and this function keeps the effective Total and
+    decision in that same layer, so a later original-report reassessment can
+    deliberately clear the complete manual layer and restore the official
+    result.  Filter 3 is not a score-derived filter; it is refreshed only when
+    its existing platform-score input actually changes.
+    """
+    meta = record.setdefault("meta", {})
+    human_review = meta.setdefault("human_review", {})
+    overrides = human_review.setdefault("overrides", {})
+    baseline = human_review.setdefault("ai_baseline", {})
+    criteria = ((record.get("scoring") or {}).get("criteria") or {})
+    criterion_ids = TRIAGE_MANUAL_REVIEW_SCORE_FIELDS if is_triage else MANUAL_REVIEW_SCORE_FIELDS
+    effective_scores: dict[str, int] = {}
+    for criterion_id in criterion_ids:
+        override_scores = overrides.get("scores") if isinstance(overrides.get("scores"), dict) else {}
+        raw = override_scores.get(criterion_id)
+        if raw is None:
+            criterion = criteria.get(criterion_id) if isinstance(criteria, dict) else {}
+            raw = criterion.get("score") if isinstance(criterion, dict) else None
+        if isinstance(raw, bool) or not isinstance(raw, int) or raw not in {0, 1, 2, 3}:
+            return []
+        effective_scores[criterion_id] = raw
+
+    updates: list[dict[str, Any]] = []
+    scoring = record.setdefault("scoring", {})
+    total = sum(effective_scores.values())
+    previous_total = overrides.get("total_score", scoring.get("total_score"))
+    baseline.setdefault("total_score", scoring.get("total_score"))
+    overrides["total_score"] = total
+    if previous_total != total:
+        updates.append({"field": "total_score", "previous": previous_total, "current": total})
+
+    if is_triage:
+        triage = record.get("triage") if isinstance(record.get("triage"), dict) else {}
+        status = calculate_fast_triage_status(
+            identity_verified=triage.get("identity_verified") is True,
+            target_relevance=effective_scores["target_relevance"],
+            moa_validity=effective_scores["moa_validity"],
+            data_maturity=effective_scores["data_maturity"],
+            development_stage=canonicalize_development_stage(
+                (record.get("structured_table") or {}).get("development_stage")
+            ),
+        )
+        filter_label = "Filter 1"
+    else:
+        candidate = copy.deepcopy(record)
+        candidate_criteria = candidate.setdefault("scoring", {}).setdefault("criteria", {})
+        for criterion_id, score in effective_scores.items():
+            candidate_criteria.setdefault(criterion_id, {})["score"] = score
+        candidate.setdefault("scoring", {})["total_score"] = total
+        status = calculate_latest_full_scout_filter(candidate)["status"]
+        filter_label = "Filter 2"
+
+    previous_status = overrides.get("filter_status", (record.get("hard_filter") or {}).get("status"))
+    baseline.setdefault("filter_status", (record.get("hard_filter") or {}).get("status"))
+    overrides["filter_status"] = status
+    if previous_status != status:
+        updates.append({"field": "filter_status", "previous": previous_status, "current": status, "label": filter_label})
+    return updates
 
 
 def full_scout_rubric_score_map(record: dict[str, Any]) -> dict[str, int | float | None]:
@@ -11340,6 +11707,18 @@ def calculate_latest_full_scout_filter(record: dict[str, Any]) -> dict[str, Any]
         "reason": "; ".join(reasons) or "추가 diligence 필요",
         "total_score": total,
     }
+
+
+def rubric_recalculation_snapshot(record: dict[str, Any]) -> dict[str, Any]:
+    """Return persisted scoring state without refresh-only audit metadata."""
+    snapshot = copy.deepcopy(record)
+    meta = snapshot.get("meta")
+    if isinstance(meta, dict):
+        meta.pop("rubric_recalculation", None)
+    source_report = snapshot.get("source_report")
+    if isinstance(source_report, dict):
+        source_report.pop("rubric_recalculation", None)
+    return snapshot
 
 
 def synchronize_server_derived_scoring_fields(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -11560,10 +11939,14 @@ def annotate_rubric_recalculation(
     return f"{banner}\n\n{text}".rstrip()
 
 
-@app.post("/api/records/{record_id:path}/recalculate-rubric")
-def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> dict[str, Any]:
-    # Keep this aligned with the dashboard and Team Review controls: both
-    # administrators and developers may run a stored-score recalculation.
+def _recalculate_record_with_stored_scores(record_id: str, request: Request) -> dict[str, Any]:
+    """Internal repair helper; never use this as an interactive rubric refresh.
+
+    The dashboard's Filter 1/2 refresh contract is original-report reassessment.
+    This retained helper only supports narrowly scoped data-repair work where
+    criterion scores were already authoritatively supplied and only derived
+    dashboard fields need reconstruction.
+    """
     account = require_auth_admin(request) or {}
     actor_name = str(account.get("name") or "").strip()
     records = load_records()
@@ -11571,9 +11954,17 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
         if record_key(record) != record_id:
             continue
         if is_fast_triage_record(record):
+            record_before = copy.deepcopy(record)
+            meaningful_before = rubric_recalculation_snapshot(record_before)
             recalculated_at = datetime.now(timezone.utc).isoformat()
             meta = record.setdefault("meta", {})
             previous_version = str(meta.get("rubric_version") or "")
+            official_recalculation_applied = previous_version != TRIAGE_CRITERIA_VERSION
+            cleared_manual_scoring_overrides = clear_manual_scoring_overrides_for_rubric_refresh(
+                record,
+                recalculated_at,
+                reset_source="dashboard_tab1_rubric_refresh",
+            )
             triage = record.setdefault("triage", {})
             criteria = ((record.get("scoring") or {}).get("criteria") or {})
             try:
@@ -11604,6 +11995,24 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
                 "REJECT": "Monitor / gather more evidence",
                 "INSUFFICIENT": "Do not run Full Scout",
             }[status]
+            meta["rubric_version"] = TRIAGE_CRITERIA_VERSION
+            if meaningful_before == rubric_recalculation_snapshot(record):
+                record.clear()
+                record.update(record_before)
+                return {
+                    "ok": True,
+                    "status": "already_current",
+                    "changed": False,
+                    "message": f"Fast Triage rubric v{TRIAGE_CRITERIA_VERSION} is already current.",
+                    "record_id": record_id,
+                    "record": record,
+                    "rubric_version": TRIAGE_CRITERIA_VERSION,
+                    "previous_version": previous_version or None,
+                    "recalculated_at": None,
+                    "cleared_manual_scoring_override_fields": [],
+                    "official_recalculation_applied": False,
+                    "exports": [],
+                }
             meta["rubric_recalculation"] = {
                 "version": TRIAGE_CRITERIA_VERSION,
                 "previous_version": previous_version or None,
@@ -11613,12 +12022,17 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
             }
             source_report = record.setdefault("source_report", {})
             source_report["rubric_recalculation"] = copy.deepcopy(meta["rubric_recalculation"])
+            refresh_result = (
+                "recalculated"
+                if official_recalculation_applied or not cleared_manual_scoring_overrides
+                else "manual_override_reset"
+            )
             record_successful_rubric_review(
                 record,
                 rubric_version=TRIAGE_CRITERIA_VERSION,
                 reviewed_at=recalculated_at,
                 actor_ip=get_client_ip(request),
-                result="recalculated",
+                result=refresh_result,
                 reason="Stored Fast Triage criterion scores and the Filter 1 decision were recalculated under the current rubric.",
             )
             append_rubric_refresh_audit(
@@ -11628,25 +12042,46 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
                 reviewed_at=recalculated_at,
                 actor_ip=get_client_ip(request),
                 actor_name=actor_name,
-                result="recalculated",
+                result=refresh_result,
                 triage_workflow=True,
+            )
+            append_scoring_override_reset_history(
+                record,
+                cleared_manual_scoring_overrides,
+                actor_ip=get_client_ip(request),
+                source="dashboard_tab1_rubric_refresh",
+                changed_at=recalculated_at,
+                change_method=(
+                    f"rubric_refresh_latest_v{TRIAGE_CRITERIA_VERSION}"
+                    if official_recalculation_applied
+                    else f"rubric_refresh_existing_v{TRIAGE_CRITERIA_VERSION}"
+                ),
             )
             records[index] = record
             save_records(records)
             exports = deferred_markdown_exports()
             return {
                 "ok": True,
+                "status": refresh_result,
+                "changed": True,
                 "record_id": record_id,
                 "record": record,
                 "rubric_version": TRIAGE_CRITERIA_VERSION,
                 "previous_version": previous_version or None,
                 "recalculated_at": recalculated_at,
-                "cleared_manual_scoring_override_fields": [],
+                "cleared_manual_scoring_override_fields": sorted(cleared_manual_scoring_overrides),
+                "official_recalculation_applied": official_recalculation_applied,
                 "exports": exports,
             }
 
+        record_before = copy.deepcopy(record)
+        meaningful_before = rubric_recalculation_snapshot(record_before)
         recalculated_at = datetime.now(timezone.utc).isoformat()
         previous_version = str((record.get("meta") or {}).get("rubric_version") or "")
+        official_recalculation_applied = not record_has_current_rubric_evaluation(
+            record_before,
+            SCORING_CRITERIA_VERSION,
+        )
         result = calculate_latest_full_scout_filter(record)
         cleared_manual_scoring_overrides = clear_manual_scoring_overrides_for_rubric_refresh(
             record,
@@ -11662,6 +12097,24 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
 
         meta = record.setdefault("meta", {})
         meta["rubric_version"] = SCORING_CRITERIA_VERSION
+        if meaningful_before == rubric_recalculation_snapshot(record):
+            record.clear()
+            record.update(record_before)
+            return {
+                "ok": True,
+                "status": "already_current",
+                "changed": False,
+                "message": f"Full Scout rubric v{SCORING_CRITERIA_VERSION} is already current.",
+                "record_id": record_id,
+                "record": record,
+                "rubric_version": SCORING_CRITERIA_VERSION,
+                "previous_version": previous_version or None,
+                "recalculated_at": None,
+                "cleared_manual_scoring_override_fields": sorted(cleared_manual_scoring_overrides),
+                "official_recalculation_applied": official_recalculation_applied,
+                "source_report_score_sync": [],
+                "exports": [],
+            }
         meta["rubric_recalculation"] = {
             "version": SCORING_CRITERIA_VERSION,
             "previous_version": previous_version or None,
@@ -11672,12 +12125,17 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
         }
         source_report = record.setdefault("source_report", {})
         source_report["rubric_recalculation"] = copy.deepcopy(meta["rubric_recalculation"])
+        refresh_result = (
+            "recalculated"
+            if official_recalculation_applied or not cleared_manual_scoring_overrides
+            else "manual_override_reset"
+        )
         record_successful_rubric_review(
             record,
             rubric_version=SCORING_CRITERIA_VERSION,
             reviewed_at=recalculated_at,
             actor_ip=get_client_ip(request),
-            result="recalculated",
+            result=refresh_result,
             reason="Stored Full Scout criterion scores, total score, and the Filter 2 decision were recalculated under the current rubric.",
         )
         # Recalculation changes stored scores only.  The pasted GPT original
@@ -11691,7 +12149,7 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
             reviewed_at=recalculated_at,
             actor_ip=get_client_ip(request),
             actor_name=actor_name,
-            result="recalculated",
+            result=refresh_result,
             triage_workflow=False,
         )
 
@@ -11700,12 +12158,15 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
         exports = deferred_markdown_exports()
         return {
             "ok": True,
+            "status": refresh_result,
+            "changed": True,
             "record_id": record_id,
             "record": record,
             "rubric_version": SCORING_CRITERIA_VERSION,
             "previous_version": previous_version or None,
             "recalculated_at": recalculated_at,
             "cleared_manual_scoring_override_fields": sorted(cleared_manual_scoring_overrides),
+            "official_recalculation_applied": official_recalculation_applied,
             "source_report_score_sync": source_report_score_sync,
             "exports": exports,
         }
@@ -11713,15 +12174,16 @@ def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> d
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
 
 
-@app.post("/api/records/{record_id:path}/refresh-rubric")
-def refresh_record_rubric_compatibility(record_id: str, request: Request) -> dict[str, Any]:
-    """Keep cached pre-migration dashboard clients on deterministic recalculation.
+@app.post("/api/records/{record_id:path}/recalculate-rubric")
+async def recalculate_record_with_latest_rubric(record_id: str, request: Request) -> dict[str, Any]:
+    """Legacy public URL: preserve the original-report reassessment contract."""
+    return await reassess_record_rubric(record_id, request)
 
-    The original AI route remains available only under its explicit legacy path
-    for audited maintenance.  Interactive Score 기준 갱신 must never depend on
-    an OpenRouter key or a model response.
-    """
-    return recalculate_record_with_latest_rubric(record_id, request)
+
+@app.post("/api/records/{record_id:path}/refresh-rubric")
+async def refresh_record_rubric_compatibility(record_id: str, request: Request) -> dict[str, Any]:
+    """Keep cached dashboard clients on the same original-report reassessment flow."""
+    return await reassess_record_rubric(record_id, request)
 
 
 @app.post("/api/records/{record_id:path}/recalculate-oi-partnership")
@@ -11748,15 +12210,55 @@ def recalculate_record_oi_partnership(record_id: str, request: Request) -> dict[
                 detail="Add this Full Scout record to TAB3 before recalculating Filter 3.",
             )
 
-        recalculated_at = datetime.now(timezone.utc).isoformat()
+        focus_before = copy.deepcopy(focus)
+        meaningful_before = oi_partnership_recalculation_snapshot(focus_before)
         previous_version = str(focus.get("partnership_classification_criteria_version") or "")
         previous_type = str(focus.get("partnership_type") or "")
         previous_source = str(focus.get("partnership_classification_source") or "")
+        manual_classification_reset = (
+            previous_source == "manual"
+            or str(focus.get("partnership_classification_status") or "") == "manual_override"
+        )
+        human_oi_note = partnership_note_is_human_authored(focus_before)
+        preserved_partnership_note = copy.deepcopy(focus_before.get("partnership_note"))
 
-        # Preserve human-entered evidence inputs, but reset the final Filter 3
-        # override and classify it with the latest OI Partnership criteria.
+        # A refresh always resets the Filter 3 classification and applies the
+        # latest deterministic criteria. Human OI Notes are review context and
+        # remain untouched; automatically generated rationale is regenerated
+        # alongside the refreshed classification.
         apply_auto_detected_evidence(focus, record)
         result = apply_auto_oi_partnership(focus, record, force=True)
+        if human_oi_note:
+            focus["partnership_note"] = preserved_partnership_note
+            focus["partnership_note_source"] = "manual"
+            oi_note_action = "human_note_retained"
+        else:
+            oi_note_action = "auto_rationale_updated"
+        changed = meaningful_before != oi_partnership_recalculation_snapshot(focus)
+        if not changed:
+            # A no-op must neither alter a classification timestamp nor create
+            # an audit event. The response still confirms the latest criteria
+            # were checked successfully.
+            meta["focus_management"] = focus_before
+            return {
+                "ok": True,
+                "changed": False,
+                "outcome": "already_current",
+                "record_id": record_id,
+                "record": record,
+                "oi_partnership_criteria_version": OI_PARTNERSHIP_CRITERIA_VERSION,
+                "previous_version": previous_version or None,
+                "previous_type": previous_type or None,
+                "previous_source": previous_source or None,
+                "partnership_type": previous_type or result["partnership_type"],
+                "partnership_note": str(focus_before.get("partnership_note") or ""),
+                "manual_classification_reset": False,
+                "oi_note_action": "human_note_retained" if human_oi_note else "auto_rationale_current",
+                "recalculated_at": None,
+                "exports": [],
+            }
+
+        recalculated_at = datetime.now(timezone.utc).isoformat()
         focus["partnership_recalculation"] = {
             "version": OI_PARTNERSHIP_CRITERIA_VERSION,
             "previous_version": previous_version or None,
@@ -11764,7 +12266,11 @@ def recalculate_record_oi_partnership(record_id: str, request: Request) -> dict[
             "previous_source": previous_source or None,
             "recalculated_at": recalculated_at,
             "source": "dashboard_tab3_oi_partnership_refresh",
-            "scope": "filter3_and_partnership_note_reset_to_latest_auto_classification",
+            "scope": (
+                "filter3_classification_reset_to_latest_auto_classification_human_oi_note_retained"
+                if human_oi_note
+                else "filter3_classification_reset_to_latest_auto_classification_auto_oi_rationale_refreshed"
+            ),
         }
         focus["updated_at"] = recalculated_at
         focus["updated_source"] = "dashboard_tab3_oi_partnership_refresh"
@@ -11777,7 +12283,18 @@ def recalculate_record_oi_partnership(record_id: str, request: Request) -> dict[
             previous_value=f"OI Partnership v{previous_version or '-'} / {previous_type or '-'} / {previous_source or '-'}",
             new_value=f"OI Partnership v{OI_PARTNERSHIP_CRITERIA_VERSION} / {result['partnership_type']}",
             instruction_version=OI_PARTNERSHIP_CRITERIA_VERSION,
-            audit_label=f"Filter 3 recalculated by OI Partnership v{OI_PARTNERSHIP_CRITERIA_VERSION}",
+            audit_label=(
+                (
+                    f"Filter 3 manual classification reset by OI Partnership v{OI_PARTNERSHIP_CRITERIA_VERSION}"
+                    if manual_classification_reset
+                    else f"Filter 3 recalculated by OI Partnership v{OI_PARTNERSHIP_CRITERIA_VERSION}"
+                )
+                + (
+                    "; human OI Note retained"
+                    if human_oi_note
+                    else "; auto OI rationale refreshed"
+                )
+            ),
         )
 
         records[index] = record
@@ -11785,6 +12302,8 @@ def recalculate_record_oi_partnership(record_id: str, request: Request) -> dict[
         exports = deferred_markdown_exports()
         return {
             "ok": True,
+            "changed": True,
+            "outcome": "updated",
             "record_id": record_id,
             "record": record,
             "oi_partnership_criteria_version": OI_PARTNERSHIP_CRITERIA_VERSION,
@@ -11792,7 +12311,9 @@ def recalculate_record_oi_partnership(record_id: str, request: Request) -> dict[
             "previous_type": previous_type or None,
             "previous_source": previous_source or None,
             "partnership_type": result["partnership_type"],
-            "partnership_note": result["note"],
+            "partnership_note": str(focus.get("partnership_note") or ""),
+            "manual_classification_reset": manual_classification_reset,
+            "oi_note_action": oi_note_action,
             "recalculated_at": recalculated_at,
             "exports": exports,
         }
@@ -11828,6 +12349,7 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
         overrides = human_review.setdefault("overrides", {})
         baseline = human_review.setdefault("ai_baseline", {})
         changed_at = datetime.now(timezone.utc).isoformat()
+        derived_score_updates: list[dict[str, Any]] = []
 
         if edit_kind == "status":
             value = str(payload.get("value") or "").strip().upper()
@@ -11873,19 +12395,36 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
                 baseline_scores.setdefault(criterion_id, previous)
             score_overrides[criterion_id] = value
             field_key = f"scores.{criterion_id}"
+            derived_score_updates = synchronize_manual_score_override_derived_fields(
+                record,
+                is_triage=is_triage,
+            )
+            # Filter 3 is a separate OI classification, not a Total-score
+            # threshold. Its automatic classifier does, however, use the
+            # effective Platform Attractiveness score for tracked Full Scout
+            # records, so refresh that one input when it was manually changed.
+            focus = meta.get("focus_management")
+            if (
+                not is_triage
+                and criterion_id == "platform_attractiveness"
+                and isinstance(focus, dict)
+                and focus.get("is_tracked") is True
+            ):
+                before_type = str(focus.get("partnership_type") or "")
+                apply_auto_oi_partnership(focus, record)
+                after_type = str(focus.get("partnership_type") or "")
+                if before_type != after_type:
+                    derived_score_updates.append({
+                        "field": "filter3_partnership_type",
+                        "previous": before_type,
+                        "current": after_type,
+                        "label": "Filter 3",
+                    })
         elif edit_kind == "total_score":
-            value = payload.get("value")
-            max_total_score = 9 if is_triage else 21
-            if isinstance(value, bool) or not isinstance(value, int) or not 0 <= value <= max_total_score:
-                raise HTTPException(status_code=400, detail=f"Total Score must be an integer from 0 to {max_total_score}.")
-            field_key = "total_score"
-            previous = overrides.get(field_key)
-            if previous is None:
-                previous = payload.get("previous_value")
-                if previous is None:
-                    previous = (record.get("scoring") or {}).get("total_score")
-                baseline.setdefault(field_key, previous)
-            overrides[field_key] = value
+            raise HTTPException(
+                status_code=400,
+                detail="Total Score is derived automatically from the criterion scores and cannot be edited directly.",
+            )
         elif edit_kind == "final_comment":
             value = str(payload.get("value") or "").strip()
             if not value:
@@ -12017,16 +12556,35 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
             previous_value=previous,
             new_value=value,
         )
-        focus = meta.get("focus_management")
-        if (
-            edit_kind == "score"
-            and criterion_id == "platform_attractiveness"
-            and isinstance(focus, dict)
-            and focus.get("is_tracked") is True
-        ):
-            apply_auto_oi_partnership(focus, record)
+        for derived in derived_score_updates:
+            derived_field = str(derived.get("field") or "")
+            history.append({
+                "changed_at": changed_at,
+                "actor_ip": actor_ip,
+                "actor_name": actor_name,
+                "source": "dashboard_manual_score_sync",
+                "field": derived_field,
+                "previous_value": derived.get("previous"),
+                "new_value": derived.get("current"),
+            })
+            append_edit_history(
+                record,
+                source="dashboard_manual_score_sync",
+                actor_ip=actor_ip,
+                actor_name=actor_name,
+                field=derived_field,
+                previous_value=derived.get("previous"),
+                new_value=derived.get("current"),
+                audit_label=(
+                    f"Manual criterion score changed; {derived.get('label') or 'Total Score'} synchronized"
+                ),
+            )
+        if len(history) > 100:
+            human_review["history"] = history[-100:]
 
         records[index] = record
+        if is_triage and edit_kind in {"final_comment", "final_comment_delete"}:
+            synchronize_cross_workflow_comments(records)
         save_records(records)
         exports = deferred_markdown_exports()
         return {
@@ -12034,6 +12592,7 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
             "record_id": record_id,
             "record": record,
             "human_review": human_review,
+            "derived_score_updates": derived_score_updates,
             "exports": exports,
         }
 
@@ -12094,8 +12653,6 @@ async def update_manual_review_history_reason(record_id: str, request: Request) 
         match["review_reason_updated_at"] = datetime.now(timezone.utc).isoformat()
         match["review_reason_updated_by"] = actor_name or get_client_ip(request)
         records[index] = record
-        if is_triage and edit_kind in {"final_comment", "final_comment_delete"}:
-            synchronize_cross_workflow_comments(records)
         save_records(records)
         return {"ok": True, "record_id": record_id, "record": record}
 
@@ -12239,6 +12796,7 @@ async def update_focus_management(record_id: str, request: Request) -> dict[str,
                         "담당자 수동 분류 / 자동 제안 "
                         f"{OI_PARTNERSHIP_LABELS[auto_result['partnership_type']]}: {auto_result['note']}"
                     )
+                    focus["partnership_note_source"] = "auto"
                     focus["partnership_evidence_sources"] = auto_result["evidence_sources"]
                     focus["partnership_classification_source"] = "manual"
                     focus["partnership_classification_status"] = "manual_override"
@@ -12252,6 +12810,7 @@ async def update_focus_management(record_id: str, request: Request) -> dict[str,
                 if len(value) > 500:
                     raise HTTPException(status_code=400, detail="partnership_note must be 500 characters or fewer.")
                 focus["partnership_note"] = value
+                focus["partnership_note_source"] = "manual"
                 focus["partnership_classification_source"] = "manual"
                 focus["partnership_classification_status"] = "manual_override"
                 focus["partnership_classified_at"] = changed_at
@@ -12411,7 +12970,7 @@ async def create_record_comment(record_id: str, request: Request) -> dict[str, A
             field="collaboration.comments",
         )
         records[index] = record
-        if category == "contact_history" and is_fast_triage_record(record):
+        if is_fast_triage_record(record):
             synchronize_cross_workflow_comments(records)
         save_records(records)
         return {
@@ -12470,7 +13029,7 @@ def delete_record_comment(record_id: str, comment_id: str, request: Request) -> 
             new_value="deleted",
         )
         records[index] = record
-        if str(target.get("category") or "") == "contact_history" and is_fast_triage_record(record):
+        if is_fast_triage_record(record):
             synchronize_cross_workflow_comments(records)
         save_records(records)
         return {"ok": True, "record_id": record_id, "record": record, "deleted_id": comment_id}
@@ -12525,7 +13084,7 @@ async def update_record_comment(record_id: str, comment_id: str, request: Reques
         collaboration["updated_at"] = changed_at
         append_edit_history(record, source="dashboard_comment_edit", actor_ip=get_client_ip(request), actor_name=actor_name, field="collaboration.comments", previous_value=previous, new_value=body)
         records[index] = record
-        if str(target.get("category") or "") == "contact_history" and is_fast_triage_record(record):
+        if is_fast_triage_record(record):
             synchronize_cross_workflow_comments(records)
         save_records(records)
         return {"ok": True, "record_id": record_id, "record": record, "comment": target}
@@ -13435,7 +13994,7 @@ async def delete_qualitative_review_entry(record_id: str, entry_id: str, request
 
 @app.put("/api/records/{record_id:path}")
 async def update_record(record_id: str, request: Request) -> dict[str, Any]:
-    require_auth_admin(request)
+    account = require_auth_admin(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -13450,6 +14009,7 @@ async def update_record(record_id: str, request: Request) -> dict[str, Any]:
 
     records = load_records()
     actor_ip = get_client_ip(request)
+    actor_name = str(account.get("name") or account.get("email") or "").strip()
     for index, record in enumerate(records):
         if record_key(record) == record_id:
             source_report_changed = str((payload.get("source_report") or {}).get("raw_markdown") or "") != str(
@@ -13472,6 +14032,17 @@ async def update_record(record_id: str, request: Request) -> dict[str, Any]:
                     detail=f"Another record already uses record id: {updated_key}",
                 )
             preserve_dashboard_meta(payload, record)
+            moved_topic_note_ids: list[str] = []
+            if source_report_changed:
+                append_report_reupload_snapshot(
+                    payload,
+                    record,
+                    actor_ip=actor_ip,
+                    actor_name=actor_name,
+                    actor_user_id=str(account.get("id") or ""),
+                    actor_email=str(account.get("email") or ""),
+                )
+                moved_topic_note_ids = move_unmatched_topic_notes_to_comments(payload)
             focus = (payload.get("meta") or {}).get("focus_management")
             if isinstance(focus, dict) and focus.get("is_tracked") is True:
                 apply_auto_detected_evidence(focus, payload)
@@ -13480,10 +14051,22 @@ async def update_record(record_id: str, request: Request) -> dict[str, Any]:
                 payload,
                 source="detail_json_editor",
                 actor_ip=actor_ip,
+                actor_name=actor_name,
                 field="source_report.raw_markdown" if source_report_changed else "record",
                 old_meta=record.get("meta"),
                 update_last_edited=source_report_changed,
             )
+            if moved_topic_note_ids:
+                append_edit_history(
+                    payload,
+                    source="detail_json_editor",
+                    actor_ip=actor_ip,
+                    actor_name=actor_name,
+                    field="topic_notes",
+                    previous_value=f"{len(moved_topic_note_ids)} unmatched Topic note(s)",
+                    new_value="moved to collaboration comments",
+                    audit_label="Unmatched Topic notes moved to Comments after GPT report overwrite",
+                )
             records[index] = payload
             save_records(records)
             exports = deferred_markdown_exports()
@@ -13739,6 +14322,12 @@ async def upsert_records(request: Request) -> dict[str, Any]:
     except json.JSONDecodeError as exc:
         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
 
+    requested_replacements = payload.get("confirmed_replacements") if isinstance(payload, dict) else None
+    # A same-pipeline report overwrite is destructive to the current official
+    # report. Require an administrator so the recovery snapshot and visible
+    # history always identify the person who approved it.
+    account = require_auth_admin(request) if requested_replacements else (authenticated_user(request) or {})
+
     incoming = normalize_records(payload, sanitize_source_report=True)
     # Keep the Compact v2 contract strict for the external GPT response before
     # adding Dashboard-owned Listing fields from a matching Pipeline or queue.
@@ -13750,7 +14339,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
     confirmed_replacement_ids = apply_confirmed_reupload_replacements(
         incoming,
         records,
-        payload.get("confirmed_replacements") if isinstance(payload, dict) else None,
+        requested_replacements,
     )
     validate_records_for_save(incoming, allow_server_owned_pipeline_metadata=True)
     duplicate_incoming_groups = duplicate_record_key_groups(incoming)
@@ -13760,8 +14349,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
 
     index_by_key = {record_key(record): i for i, record in enumerate(records)}
     actor_ip = get_client_ip(request)
-    account = authenticated_user(request) or {}
-    actor_name = str(account.get("name") or "").strip()
+    actor_name = str(account.get("name") or account.get("email") or "").strip()
     actor_user_id = str(account.get("id") or "").strip()
     actor_email = str(account.get("email") or "").strip()
     inserted = 0
@@ -13776,6 +14364,11 @@ async def upsert_records(request: Request) -> dict[str, Any]:
             source_report_changed = str((record.get("source_report") or {}).get("raw_markdown") or "") != str(
                 (existing_record.get("source_report") or {}).get("raw_markdown") or ""
             )
+            if source_report_changed and not is_auth_admin(account):
+                account = require_auth_admin(request)
+                actor_name = str(account.get("name") or account.get("email") or "").strip()
+                actor_user_id = str(account.get("id") or "").strip()
+                actor_email = str(account.get("email") or "").strip()
             preserve_dashboard_meta(record, existing_record)
             if confirmed_reupload and source_report_changed:
                 append_report_reupload_snapshot(
@@ -13786,6 +14379,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
                     actor_user_id=actor_user_id,
                     actor_email=actor_email,
                 )
+            moved_topic_note_ids = move_unmatched_topic_notes_to_comments(record) if source_report_changed else []
             reset_at = datetime.now(timezone.utc).isoformat()
             cleared_manual_scoring_overrides = (
                 clear_manual_scoring_overrides_for_rubric_refresh(
@@ -13823,6 +14417,17 @@ async def upsert_records(request: Request) -> dict[str, Any]:
                     or "")
                 ).lstrip("vV") if source_report_changed else "",
             )
+            if moved_topic_note_ids:
+                append_edit_history(
+                    record,
+                    source="paste_json_upsert",
+                    actor_ip=actor_ip,
+                    actor_name=actor_name,
+                    field="topic_notes",
+                    previous_value=f"{len(moved_topic_note_ids)} unmatched Topic note(s)",
+                    new_value="moved to collaboration comments",
+                    audit_label="Unmatched Topic notes moved to Comments after GPT report reupload",
+                )
             records[index_by_key[key]] = record
             updated += 1
         else:

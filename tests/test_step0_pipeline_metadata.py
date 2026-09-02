@@ -381,13 +381,39 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 3)
         comments = full["meta"]["collaboration"]["comments"]
         self.assertEqual([(item["author"], item["body"]) for item in comments], [
-            ("Team Review", "Tab 0 meeting note"),
-            ("Fast Triage · Final Comment", "Proceed after BD confirmation."),
-            ("Fast Triage · Target Area Relevance", "Confirm the target genetics evidence."),
+            ("Team", "Tab 0 meeting note"),
+            ("Fast Triage", "Proceed after BD confirmation."),
+            ("Admin", "Confirm the target genetics evidence."),
         ])
         self.assertNotIn("collaboration", triage["meta"])
         self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 0)
         self.assertEqual(len(full["meta"]["collaboration"]["comments"]), 3)
+
+    def test_cross_workflow_comment_sync_promotes_human_team_comments_to_full_scout(self) -> None:
+        triage = pipeline_record("AX-101", "Acme Bio")
+        triage["meta"]["collaboration"] = {
+            "comments": [{
+                "id": "triage-comment-1",
+                "author": "J. Lee",
+                "author_user_id": "user-1",
+                "author_email": "j.lee@example.test",
+                "body": "Confirm BD timing before outreach.",
+                "created_at": "2026-08-22T11:00:00+00:00",
+                "category": "comment",
+            }]
+        }
+        full = pipeline_record("AX101", "Acme Bio")
+        full["meta"]["review_type"] = "full_scout"
+
+        self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 1)
+        comments = full["meta"]["collaboration"]["comments"]
+        self.assertEqual(len(comments), 1)
+        self.assertEqual(comments[0]["body"], "Confirm BD timing before outreach.")
+        self.assertEqual(comments[0]["label"], "Tab 1 · Fast Triage · Comment")
+        self.assertEqual(comments[0]["origin_kind"], "triage_team_comment")
+        self.assertTrue(comments[0]["system_import"])
+        self.assertIsNotNone(main.delegated_triage_comment_origin([triage, full], comments[0]))
+        self.assertEqual(main.synchronize_cross_workflow_comments([triage, full]), 0)
 
     def test_contact_history_syncs_to_full_scout_and_x_clears_only_listing_contact(self) -> None:
         triage = pipeline_record("AX-101", "Acme Bio")

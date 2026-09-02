@@ -1702,8 +1702,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn(f"<p>{intro}</p>", focus)
 
         sections = (
-            ("eligibility", "1", "Eligibility &amp; Input Basis", "자동분류 대상과 사용하는 정보"),
-            ("partnership", "2", "OI Partnership Type", "투자·Value Up·공동연구의 핵심 자동분류 조건"),
+            ("partnership", "1", "OI Partnership Type", "투자·Value Up·공동연구의 핵심 자동분류 조건"),
+            ("eligibility", "2", "Eligibility &amp; Input Basis", "자동분류 대상과 사용하는 정보"),
             ("exceptions", "3", "Priority &amp; Exceptions", "중복 조건과 정보 부족 처리 기준"),
         )
         for key, step, title, subtitle in sections:
@@ -2183,7 +2183,11 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("triageRubricRefreshButton()", final_comment)
         self.assertIn("data-triage-rubric-refresh", TRIAGE_DETAIL_JS)
         self.assertIn("최신 Score 기준 갱신", TRIAGE_DETAIL_JS)
-        self.assertIn("/refresh-rubric", refresh)
+        self.assertIn("/reassess-rubric", refresh)
+        self.assertIn("showTriageActionFailureDialog", refresh)
+        self.assertIn("showTriageActionOutcomeToast", refresh)
+        self.assertIn("triageRubricRefreshOutcomeCopy", refresh)
+        self.assertIn("RUBRIC_REFRESH_OUTCOME_DURATION_MS = 3000", TRIAGE_DETAIL_JS)
         self.assertIn(".triage-rubric-refresh", CSS)
         self.assertIn("triage-rubric-refresh-spin", CSS)
 
@@ -2721,6 +2725,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         collaboration = function_body(DETAIL_JS, "renderCollaborationPanel")
         score_refresh = function_body(DETAIL_JS, "refreshRubric")
         oi_refresh = function_body(DETAIL_JS, "refreshOiPartnership")
+        dashboard_oi_refresh = function_body(JS, "recalculateLatestOiPartnership")
         self.assertIn("detailDecisionOrigin.textContent = `Score 기준 v${appliedVersion}`", collaboration)
         self.assertIn("detailOiPartnershipOrigin.textContent = `OI Partnership v${", collaboration)
         self.assertIn("const manualScoreOverrides = record?.meta?.human_review?.overrides?.scores || {};", collaboration)
@@ -2738,16 +2743,32 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("var(--fluent-amber) 72%", CSS)
         self.assertIn('#detailScoreSequence .score-chip[data-manual-score="true"]', CSS)
         self.assertIn("outline: none !important", CSS)
-        self.assertIn("styles.css?v=20260901-shortlisting-materials-3", DETAIL_HTML)
-        self.assertIn("detail.js?v=20260901-shortlisting-materials-5", DETAIL_HTML)
+        self.assertIn("styles.css?v=20260901-score-refresh-toast-6", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260901-score-refresh-toast-12", DETAIL_HTML)
         self.assertNotIn("button.textContent", score_refresh)
         self.assertIn("button.classList.add('is-saving')", score_refresh)
         self.assertIn("showDetailProgress(", score_refresh)
         self.assertIn("최신 기준으로 업데이트 중입니다", score_refresh)
         self.assertIn("closeProgress();", score_refresh)
         self.assertIn("/recalculate-oi-partnership", oi_refresh)
-        self.assertIn("renderCollaborationPanel(currentRecord)", oi_refresh)
+        self.assertIn("await loadRecord();", oi_refresh)
+        self.assertIn("data.changed === true", oi_refresh)
+        self.assertIn("showDetailActionOutcomeToast", oi_refresh)
+        self.assertIn("void showDetailActionOutcomeToast", oi_refresh)
+        self.assertIn("dashboard_tab3_oi_partnership_refresh", DETAIL_JS)
+        self.assertIn("const RUBRIC_REFRESH_OUTCOME_DURATION_MS = 3000", DETAIL_JS)
+        self.assertIn("window.setTimeout(() => toast.remove(), RUBRIC_REFRESH_OUTCOME_DURATION_MS)", DETAIL_JS)
+        self.assertIn("rubric-refresh-toast", DETAIL_JS)
         self.assertIn("elements.oiPartnershipRefreshButton?.addEventListener('click', refreshOiPartnership)", DETAIL_JS)
+        self.assertIn("data.changed === true", dashboard_oi_refresh)
+        self.assertIn("void showRubricRefreshOutcomeToast", dashboard_oi_refresh)
+        self.assertIn("const RUBRIC_REFRESH_OUTCOME_DURATION_MS = 3000", JS)
+        self.assertIn("rubricRefreshOutcomeCopy", JS)
+        self.assertIn("Filter 1 재계산 완료", JS)
+        self.assertIn("Filter 2 재계산 완료", DETAIL_JS)
+        self.assertIn("GPT 원문 리포트와 첨부 자료를 다시 평가했습니다", JS)
+        self.assertIn("rubric-refresh-toast", CSS)
+        self.assertIn("manual_override_reset", JS)
 
         pill_style = CSS[CSS.index(".criteria-refresh-pill {") : CSS.index(".review-info-row input,")]
         self.assertIn("border-radius: 999px", pill_style)
@@ -2928,6 +2949,20 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("overscroll-behavior: contain", rounded)
         self.assertIn("scrollbar-gutter: stable", rounded)
         self.assertIn("border-radius: 0 0 11px 11px", rounded)
+    def test_fast_triage_quick_summary_separates_original_research_from_score_evaluation(self):
+        summary = function_body(TRIAGE_DETAIL_JS, "renderQuickSummary")
+
+        self.assertIn("원문 생성", summary)
+        self.assertIn("GPT 지침 v${originalInstructionVersion}", summary)
+        self.assertIn("원문 기반 마지막 재평가", summary)
+        self.assertIn("현재 점수 기준", summary)
+        self.assertNotIn("rubric_recalculation", summary)
+        self.assertIn("rescored_rubric_version", summary)
+        reassessment = function_body(DETAIL_JS, "getOriginalReportReassessmentMetadata")
+        self.assertIn("rubric_refresh_history", reassessment)
+        self.assertIn("no_score_changes", reassessment)
+        self.assertIn("원문 기반 마지막 재평가", function_body(DETAIL_JS, "renderCollaborationPanel"))
+
     def test_source_report_timestamp_label_reflects_update_origin(self):
         labels = function_body(DETAIL_JS, "sourceReportEditLabel")
         self.assertIn("detail_json_editor", labels)
@@ -3013,8 +3048,9 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("partnerMaterialFlags: uploadedPartnerMaterialFlags(record)", flatten)
         self.assertNotIn("shortlisting-material-pill", CSS)
 
-    def test_listing_review_groups_reciprocal_alias_pairs_and_defaults_to_incoming_values(self):
+    def test_listing_review_prefills_only_later_reciprocal_alias_pairs(self):
         review = function_body(JS, "reciprocalStep0MergeSelections")
+        defaults = function_body(JS, "reciprocalStep0DefaultSelections")
         render = function_body(JS, "renderStep0ImportReviewList")
         decisions = function_body(JS, "reviewedStep0ImportDecisions")
         handler_start = JS.index("elements.step0ImportReviewList?.addEventListener('click'")
@@ -3024,7 +3060,15 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("selectedCandidateIsOtherRow", review)
         self.assertIn("reverseCandidate", review)
         self.assertIn("sameStep0ListingIdentity", review)
-        self.assertIn("reciprocalStep0MergeSelections(rowIndex, requestedTarget)", click_handler)
+        self.assertIn("rowIndex < linked.rowIndex", defaults)
+        self.assertIn("reciprocal_auto_from", JS)
+        self.assertIn("reciprocalStep0DefaultSelections(rowIndex, current.target)", click_handler)
+        self.assertIn("reciprocalStep0DefaultSelections(rowIndex, requestedAction === 'merge' ? requestedTarget : '')", click_handler)
+        self.assertIn("shouldApplyStep0ReciprocalDefault", click_handler)
+        self.assertIn("step0ManualReviewDecision", click_handler)
+        self.assertIn("action: requestedAction", click_handler)
+        self.assertIn("representative", click_handler)
+        self.assertIn("위 행의 선택이 적용되었습니다.", render)
         self.assertLess(
             render.index('data-representative="incoming"'),
             render.index('data-representative="existing"')
@@ -3035,6 +3079,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("step0-import-representative-existing", render)
         self.assertIn(".step0-import-representative-incoming", CSS)
         self.assertIn(".step0-import-representative-existing", CSS)
+        self.assertIn(".step0-import-reciprocal-default-note", CSS)
 
     def test_listing_review_explains_canonical_missing_value_fallback(self):
         review = function_body(JS, "renderStep0ImportReviewList")
@@ -3063,12 +3108,22 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("filter1: 86", JS)
 
     def test_detail_and_triage_rubric_refreshes_use_the_blocking_progress_modal(self):
+        dashboard_refresh = function_body(JS, "recalculateLatestRubric")
         full_refresh = function_body(DETAIL_JS, "refreshRubric")
         triage_refresh = function_body(TRIAGE_DETAIL_JS, "refreshTriageRubric")
 
+        self.assertIn("runBlockingOperation(", dashboard_refresh)
+        self.assertIn("showRubricRefreshOutcomeToast", dashboard_refresh)
+        self.assertIn("let failureShown = false", dashboard_refresh)
+        self.assertIn("저장하지 못했으며 기존 점수와 변경 이력은 유지됩니다", dashboard_refresh)
+        self.assertIn("showRubricRefreshFailureDialog", dashboard_refresh)
         self.assertIn("showDetailProgress(", full_refresh)
         self.assertIn("최신 기준으로 업데이트 중입니다", full_refresh)
         self.assertIn("closeProgress();", full_refresh)
+        self.assertIn("let failureShown = false", full_refresh)
+        self.assertIn("기존 점수와 변경 이력은 유지됩니다", full_refresh)
+        self.assertIn("showDetailActionFailureDialog", full_refresh)
+        self.assertIn("['error', 'conflict'].includes(data.status)", full_refresh)
         self.assertIn("showTriageProgress(", triage_refresh)
         self.assertIn("최신 기준으로 업데이트 중입니다", triage_refresh)
         self.assertIn("closeProgress();", triage_refresh)

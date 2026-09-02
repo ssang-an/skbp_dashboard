@@ -26,6 +26,7 @@ function detailUrlForCurrentRecord() {
 const DETAIL_CHAT_SESSION_PREFIX = 'skbp.detail.chatSessions.v1';
 const DETAIL_CHAT_ACTIVE_PREFIX = 'skbp.detail.activeChatSession.v1';
 const DETAIL_COMMENT_AUTHOR_KEY = 'skbp.detail.commentAuthor';
+const RUBRIC_REFRESH_OUTCOME_DURATION_MS = 3000;
 
 function getStoredIdentity() {
   return getCurrentUser()?.name || '';
@@ -403,6 +404,25 @@ function getAppliedScoreRubricMetadata(record) {
 
 function getAppliedScoreRubricVersion(record) {
   return String(getAppliedScoreRubricMetadata(record).version || '').replace(/^v/i, '');
+}
+
+function getOriginalReportReassessmentMetadata(record) {
+  const meta = record?.meta || {};
+  const candidates = [];
+  if (meta.rescored_rubric_version && meta.rescored_at) {
+    candidates.push({ version: meta.rescored_rubric_version, at: meta.rescored_at });
+  }
+  (Array.isArray(meta.rubric_refresh_history) ? meta.rubric_refresh_history : []).forEach((entry) => {
+    if (!entry?.version || !entry?.reviewed_at) return;
+    if (!['updated', 'no_change', 'no_score_changes', 'manual_override_reset'].includes(String(entry.result || ''))) return;
+    candidates.push({ version: entry.version, at: entry.reviewed_at });
+  });
+  return candidates.reduce((latest, candidate) => {
+    if (!latest) return candidate;
+    return (Date.parse(candidate.at || '') || 0) > (Date.parse(latest.at || '') || 0)
+      ? candidate
+      : latest;
+  }, null);
 }
 
 function isFastTriageRecord(record) {
@@ -1369,6 +1389,79 @@ function showDetailActionFailureDialog(title, message) {
   });
 }
 
+function showDetailActionOutcomeToast(title, message, eyebrow = 'FILTER 2') {
+  document.querySelector('#rubricRefreshOutcomeToast')?.remove();
+  const toast = document.createElement('section');
+  toast.id = 'rubricRefreshOutcomeToast';
+  toast.className = 'operation-modal rubric-refresh-toast';
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+  toast.innerHTML = `
+    <header class="operation-modal-header">
+      <span class="operation-modal-mark rubric-refresh-success-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m5 12 4.2 4.2L19 6.5" /></svg></span>
+      <div><p class="operation-modal-eyebrow">${escapeHtml(eyebrow)}</p><h2>${escapeHtml(title)}</h2></div>
+    </header>
+    <p class="operation-modal-copy">${escapeHtml(message)}</p>`;
+  document.body.appendChild(toast);
+  window.setTimeout(() => toast.remove(), RUBRIC_REFRESH_OUTCOME_DURATION_MS);
+}
+
+function rubricRefreshOutcomeCopy(data, workflowLabel, latestVersion) {
+  const appliedVersion = data.rubric_version || latestVersion;
+  const cleared = Array.isArray(data.cleared_manual_scoring_override_fields)
+    ? data.cleared_manual_scoring_override_fields
+    : [];
+  const filterLabel = workflowLabel === 'Fast Triage' ? 'Filter 1' : 'Filter 2';
+  if (data.status === 'updated') {
+    return {
+      title: `${filterLabel} AI 재평가 완료`,
+      message: `${workflowLabel} v${appliedVersion} 기준으로 GPT 원문 리포트와 첨부 자료를 다시 평가했습니다. criterion 점수, Total Score, ${filterLabel} 결과를 갱신했고 변경 이력에 기록했습니다.`
+    };
+  }
+  if (['no_evidence', 'no_score_changes'].includes(data.status)) {
+    return {
+      title: `${filterLabel} AI 재평가 완료 · 점수 유지`,
+      message: `${workflowLabel} v${appliedVersion} 기준으로 GPT 원문 리포트와 첨부 자료를 검토했습니다. 변경을 뒷받침할 근거가 없어 기존 criterion 점수와 ${filterLabel} 결과를 유지했고 변경 이력에 기록했습니다.`
+    };
+  }
+  if (data.status === 'recalculated') {
+    return {
+      title: `${filterLabel} 재계산 완료`,
+      message: `${workflowLabel} v${appliedVersion} 기준을 적용했습니다. 저장된 criterion 점수는 유지하고 Total Score와 ${filterLabel} 결과를 다시 계산했으며, 변경 이력에 기록했습니다.`
+    };
+  }
+  if (cleared.length && data.official_recalculation_applied === true) {
+    const resetItems = [
+      cleared.includes('scores') ? '수동 기준별 점수' : '',
+      cleared.includes('total_score') ? '수동 Total Score' : ''
+    ].filter(Boolean).join(' 및 ') || '수동 점수 설정';
+    return {
+      title: '최신 Score 기준 갱신 완료',
+      message: `${workflowLabel} v${appliedVersion} 기준을 적용했습니다. ${resetItems}는 해제되고 GPT 원문에 저장된 공식 점수로 Total과 Filter를 다시 계산했습니다.`
+    };
+  }
+  if (data.status === 'manual_override_reset' || cleared.length) {
+    const resetItems = [
+      cleared.includes('scores') ? '수동 기준별 점수' : '',
+      cleared.includes('total_score') ? '수동 Total Score' : ''
+    ].filter(Boolean).join(' 및 ') || '수동 점수 설정';
+    return {
+      title: '수동 점수 오버라이드 해제 완료',
+      message: `${workflowLabel} v${appliedVersion}은 이미 적용되어 있어 ${resetItems}만 해제했습니다. GPT 원문에 저장된 공식 점수로 복원했고, 변경 이력에 기록했습니다.`
+    };
+  }
+  if (data.status === 'already_current' || data.changed === false) {
+    return {
+      title: `이미 최신 ${workflowLabel} 기준입니다`,
+      message: `${workflowLabel} v${appliedVersion} 기준과 현재 점수·Filter 결과가 이미 적용되어 있습니다. 변경 사항이 없어 변경 이력은 추가하지 않았습니다.`
+    };
+  }
+  return {
+    title: 'Score 기준 재계산 완료',
+    message: `${workflowLabel} Score 기준 v${appliedVersion} 재계산을 완료했고, 변경 이력에 기록했습니다.`
+  };
+}
+
 function confirmDetailCommentDelete({ title, message }) {
   return new Promise((resolve) => {
     const backdrop = document.createElement('div');
@@ -1540,10 +1633,17 @@ function renderCollaborationPanel(record) {
     const appliedRubric = getAppliedScoreRubricMetadata(record);
     const appliedVersion = getAppliedScoreRubricVersion(record);
     const appliedAt = appliedRubric.at;
+    const reassessment = getOriginalReportReassessmentMetadata(record);
+    if (reassessment) {
+      const reassessmentVersion = String(reassessment.version || '').replace(/^v/i, '');
+      elements.detailDecisionOrigin.textContent = `원문 기반 마지막 재평가 · Full Scout 기준 v${reassessmentVersion}`;
+      elements.detailDecisionOrigin.title = `저장된 GPT 원문·첨부 기반 재평가 · Full Scout 기준 v${reassessmentVersion} · ${formatCommentTime(reassessment.at)}`;
+    } else {
     elements.detailDecisionOrigin.textContent = `Score 기준 v${appliedVersion}`;
     elements.detailDecisionOrigin.title = appliedAt
       ? `현재 Filter 2 점수·판정에 적용된 Rubric v${appliedVersion} · ${formatCommentTime(appliedAt)}`
       : `현재 Filter 2 점수·판정에 적용된 Rubric v${appliedVersion}`;
+    }
     elements.detailDecisionOrigin.classList.toggle('is-human', statusIsHuman);
   }
   if (elements.detailTotalScore) {
@@ -1713,7 +1813,10 @@ function rubricRefreshAuditLabel(entry) {
 }
 
 function teamReviewActorLabel(entry) {
-  if (String(entry?.source || '') === 'dashboard_rubric_refresh') {
+  if ([
+    'dashboard_rubric_refresh',
+    'dashboard_tab3_oi_partnership_refresh'
+  ].includes(String(entry?.source || ''))) {
     return entry?.actor_name ? String(entry.actor_name) : 'System audit';
   }
   if (entry?.actor_name) return String(entry.actor_name);
@@ -1774,6 +1877,7 @@ function renderEditHistory(record) {
       );
       const sourceLabels = {
         dashboard_rubric_refresh: rubricRefreshAuditLabel(entry),
+        dashboard_tab3_oi_partnership_refresh: entry?.audit_label || 'Filter 3 기준 갱신',
         dashboard_table_manual_review: 'Review status/점수',
         dashboard_tab3_focus_management: '집중관리 정보',
         dashboard_comment: '팀 코멘트',
@@ -1799,6 +1903,7 @@ function renderEditHistory(record) {
         'scores.data_maturity': 'Data 점수',
         'scores.marketability': 'Market 점수',
         total_score: 'Tab2 Total Score',
+        'focus_management.partnership_refresh': 'Filter 3 기준 갱신',
         'structured_table.company': 'Company',
         'structured_table.asset_name': 'Asset',
         'structured_table.main_indication': 'Main indication',
@@ -4169,30 +4274,49 @@ async function refreshRubric() {
     '최신 Full Scout 기준으로 기존 근거와 점수를 다시 확인하고 있습니다.'
   );
   setCollaborationStatus('Score 기준 갱신 검토 중…');
+  let failureShown = false;
 
   try {
-    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/recalculate-rubric`, {
+    const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/reassess-rubric`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
       const message = data.detail || 'Score 재계산에 실패했습니다.';
-      await showDetailActionFailureDialog('Score 기준 갱신에 실패했습니다', message);
+      failureShown = true;
+      await showDetailActionFailureDialog(
+        'Score 기준 갱신에 실패했습니다',
+        `${message}\n\n저장하지 못했으며 기존 점수와 변경 이력은 유지됩니다. 잠시 후 새로고침을 다시 눌러주세요.`
+      );
+      throw new Error(message);
+    }
+    if (!data.record || ['error', 'conflict'].includes(data.status)) {
+      const message = data.message || data.reason || 'Score 재계산을 완료하지 못했습니다.';
+      failureShown = true;
+      await showDetailActionFailureDialog(
+        'Score 기준 갱신에 실패했습니다',
+        `${message}\n\n저장하지 못했으며 기존 점수와 변경 이력은 유지됩니다. 잠시 후 새로고침을 다시 눌러주세요.`
+      );
       throw new Error(message);
     }
 
-    setCollaborationStatus(
-      data.message || `Score 기준 v${data.rubric_version || ''} 재계산을 완료했습니다. 변경 이력에 저장되었습니다.`,
-      data.status === 'error' ? 'error' : 'success'
-    );
+    const outcome = rubricRefreshOutcomeCopy(data, 'Full Scout', '3.8');
+    setCollaborationStatus(outcome.message, data.status === 'error' ? 'error' : 'success');
 
     if (data.record) {
       currentRecord = data.record;
       await loadRecord();
     }
+    void showDetailActionOutcomeToast(outcome.title, outcome.message, 'FILTER 2');
   } catch (error) {
     setCollaborationStatus(error.message, 'error');
+    if (!failureShown) {
+      await showDetailActionFailureDialog(
+        'Score 기준 갱신에 실패했습니다',
+        `${error.message || '예상하지 못한 오류가 발생했습니다.'}\n\n저장하지 못했으며 기존 점수와 변경 이력은 유지됩니다. 잠시 후 새로고침을 다시 눌러주세요.`
+      );
+    }
   } finally {
     closeProgress();
     button.disabled = false;
@@ -4229,11 +4353,28 @@ async function refreshOiPartnership() {
     }
 
     currentRecord = data.record;
-    setCollaborationStatus(
-      `OI Partnership v${data.oi_partnership_criteria_version || '1.7'} 기준 갱신을 완료했습니다. 변경 이력에 저장되었습니다.`,
-      'success'
-    );
+    const appliedVersion = data.oi_partnership_criteria_version || '1.7';
+    const changed = data.changed === true;
+    const manualClassificationReset = data.manual_classification_reset === true;
+    const oiNoteAction = String(data.oi_note_action || '');
+    const oiNoteMessage = oiNoteAction === 'human_note_retained'
+      ? '사람이 입력한 OI Note는 그대로 보존했습니다.'
+      : oiNoteAction === 'auto_rationale_updated'
+        ? '자동 생성 OI rationale도 최신 기준으로 함께 갱신했습니다.'
+        : oiNoteAction === 'auto_rationale_current'
+          ? '자동 생성 OI rationale도 이미 최신 기준입니다.'
+          : '';
+    const title = manualClassificationReset
+      ? '수동 Filter 3 분류 초기화 완료'
+      : changed ? 'Filter 3 기준 갱신 완료' : '이미 최신 Filter 3 기준입니다';
+    const message = manualClassificationReset
+      ? `수동으로 조정한 Filter 3 분류를 OI Partnership v${appliedVersion} 자동 분류로 초기화했습니다. ${oiNoteMessage} 변경 이력에 기록했습니다.`
+      : changed
+      ? `OI Partnership v${appliedVersion} 기준으로 분류를 갱신했습니다. ${oiNoteMessage} 변경 사항을 Team Review 변경 이력에 기록했습니다.`
+      : `OI Partnership v${appliedVersion} 기준과 현재 분류 결과가 이미 적용되어 있습니다. ${oiNoteMessage} 변경 사항이 없어 변경 이력은 추가하지 않았습니다.`;
+    setCollaborationStatus(message, 'success');
     await loadRecord();
+    void showDetailActionOutcomeToast(title, message, 'FILTER 3');
   } catch (error) {
     setCollaborationStatus(error.message, 'error');
   } finally {
@@ -4244,7 +4385,7 @@ async function refreshOiPartnership() {
 
 function aiRevisionInstruction(record) {
   return isFastTriageRecord(record)
-    ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.5 update applied from chat answer.'
+    ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.6 update applied from chat answer.'
     : 'Detail AI Agent Full Scout v3.8 re-evaluation applied from chat answer.';
 }
 
@@ -4702,7 +4843,7 @@ async function reviewReportReupload() {
     const noteCount = Array.isArray(currentRecord?.meta?.topic_notes) ? currentRecord.meta.topic_notes.length : 0;
     elements.reportReuploadValidation.dataset.tone = 'success';
     const recoveryNote = parsed.recoveryCount ? ` · 형식 보정 ${parsed.recoveryCount}건` : '';
-    elements.reportReuploadValidation.textContent = `검증 완료 · ${incoming.company} · ${incoming.asset} · Topic 메모 ${noteCount}개 유지${recoveryNote}`;
+    elements.reportReuploadValidation.textContent = `검증 완료 · ${incoming.company} · ${incoming.asset} · Topic 메모 ${noteCount}개 확인${recoveryNote}`;
     elements.reportReuploadSave.disabled = false;
   } catch (error) {
     pendingReuploadRecord = null;
@@ -4718,7 +4859,7 @@ async function saveReportReupload() {
   if (!pendingReuploadRecord || !currentRecordId) return;
   const identity = recordIdentityParts(currentRecord);
   const confirmed = window.confirm(
-    `${identity.company} · ${identity.asset} Full Scout 원문과 구조화 데이터를 교체할까요?\n\nTopic 메모, 팀 코멘트, 파트너사 자료는 유지됩니다.`
+    `${identity.company} · ${identity.asset} Full Scout 원문과 구조화 데이터를 교체할까요?\n\n새 원문 heading에 매핑되는 Topic 메모와 팀 코멘트, 파트너사 자료는 유지됩니다. 매핑되지 않는 Topic 메모는 Team Review Comments로 이동합니다.`
   );
   if (!confirmed) return;
   const incomingId = recordKeyForDetailReupload(pendingReuploadRecord);

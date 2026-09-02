@@ -9,7 +9,7 @@ const scoreHeader = `
 export function englishCriteriaGuideMarkup() {
   return `
     <section class="criteria-rule criteria-triage-rule" data-criteria-tab="triage">
-      <h3>GPT Instruction 1 — Fast Triage · v3.5</h3>
+      <h3>GPT Instruction 1 — Fast Triage · v3.6</h3>
       <p>Fast Triage rapidly identifies candidates that merit Full Scout review. It independently assesses Target Area Relevance, MoA Validity, and Data Maturity, then assigns SELECT, REJECT, or INSUFFICIENT.</p>
     </section>
 

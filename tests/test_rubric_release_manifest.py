@@ -53,6 +53,16 @@ class RubricReleaseManifestTests(unittest.TestCase):
         display_text = (ROOT / full["display_file"]).read_text(encoding="utf-8")
         self.assertIn(f"v{full['display_version']}", display_text)
 
+    def test_schema_guide_identifies_active_workflow_rubric_versions(self) -> None:
+        """The schema guide is an active ingestion reference, so its prose must
+        not advertise a superseded scoring release."""
+        schema_guide = (ROOT / "json" / "schema.md").read_text(encoding="utf-8")
+        triage = self.manifest["workflows"]["fast_triage"]
+        full = self.manifest["workflows"]["full_scout"]
+
+        self.assertIn(f"instruction/rubric v{triage['rubric_version']}", schema_guide)
+        self.assertIn(f"Full Scout records use v{full['rubric_version']}", schema_guide)
+
     def test_shortlisting_release_is_versioned_and_has_a_history_document(self) -> None:
         shortlisting = self.manifest["workflows"]["shortlisting"]
         criteria_text = (ROOT / shortlisting["criteria_file"]).read_text(encoding="utf-8")

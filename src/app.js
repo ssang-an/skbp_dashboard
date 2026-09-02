@@ -28,6 +28,7 @@ const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v7';
 const CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY = 'skbp.dashboard.criteriaGuideLanguage.v1';
 const PIPELINE_RETURN_FOCUS_STORAGE_KEY = 'skbp.pipeline.return-focus.v1';
 const PIPELINE_ROW_HIGHLIGHT_MS = 1800;
+const RUBRIC_REFRESH_OUTCOME_DURATION_MS = 3000;
 
 function encodeRecordIdForPath(recordId) {
   return encodeURIComponent(String(recordId ?? ''))
@@ -169,8 +170,8 @@ const MAX_COLUMN_WIDTH = 720;
 const PROMPT_TOOLTIP =
   'GPT Full Scout v3.8 지침을 복사합니다. Fast Triage에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
 const TRIAGE_PROMPT_TOOLTIP =
-  'GPT Fast Triage v3.5 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / INSUFFICIENT로 screening합니다.';
-const LATEST_TRIAGE_RUBRIC_VERSION = '3.5';
+  'GPT Fast Triage v3.6 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / INSUFFICIENT로 screening합니다.';
+const LATEST_TRIAGE_RUBRIC_VERSION = '3.6';
 const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.8';
 const LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION = 'v3-8-moa-expansion-investigation-notes-2026-09-01';
 const FAST_TRIAGE_SCHEMA_VERSION = '3.2';
@@ -720,6 +721,79 @@ function showRubricRefreshFailureDialog(title, message) {
   });
 }
 
+function showRubricRefreshOutcomeToast(title, message, eyebrow = 'FILTER 2') {
+  document.querySelector('#rubricRefreshOutcomeToast')?.remove();
+  const toast = document.createElement('section');
+  toast.id = 'rubricRefreshOutcomeToast';
+  toast.className = 'operation-modal rubric-refresh-toast';
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+  toast.innerHTML = `
+    <header class="operation-modal-header">
+      <span class="operation-modal-mark rubric-refresh-success-mark" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m5 12 4.2 4.2L19 6.5" /></svg></span>
+      <div><p class="operation-modal-eyebrow">${escapeHtml(eyebrow)}</p><h2>${escapeHtml(title)}</h2></div>
+    </header>
+    <p class="operation-modal-copy">${escapeHtml(message)}</p>`;
+  document.body.appendChild(toast);
+  window.setTimeout(() => toast.remove(), RUBRIC_REFRESH_OUTCOME_DURATION_MS);
+}
+
+function rubricRefreshOutcomeCopy(data, workflowLabel, latestVersion) {
+  const appliedVersion = data.rubric_version || latestVersion;
+  const cleared = Array.isArray(data.cleared_manual_scoring_override_fields)
+    ? data.cleared_manual_scoring_override_fields
+    : [];
+  const filterLabel = workflowLabel === 'Fast Triage' ? 'Filter 1' : 'Filter 2';
+  if (data.status === 'updated') {
+    return {
+      title: `${filterLabel} AI 재평가 완료`,
+      message: `${workflowLabel} v${appliedVersion} 기준으로 GPT 원문 리포트와 첨부 자료를 다시 평가했습니다. criterion 점수, Total Score, ${filterLabel} 결과를 갱신했고 변경 이력에 기록했습니다.`
+    };
+  }
+  if (['no_evidence', 'no_score_changes'].includes(data.status)) {
+    return {
+      title: `${filterLabel} AI 재평가 완료 · 점수 유지`,
+      message: `${workflowLabel} v${appliedVersion} 기준으로 GPT 원문 리포트와 첨부 자료를 검토했습니다. 변경을 뒷받침할 근거가 없어 기존 criterion 점수와 ${filterLabel} 결과를 유지했고 변경 이력에 기록했습니다.`
+    };
+  }
+  if (data.status === 'recalculated') {
+    return {
+      title: `${filterLabel} 재계산 완료`,
+      message: `${workflowLabel} v${appliedVersion} 기준을 적용했습니다. 저장된 criterion 점수는 유지하고 Total Score와 ${filterLabel} 결과를 다시 계산했으며, 변경 이력에 기록했습니다.`
+    };
+  }
+  if (cleared.length && data.official_recalculation_applied === true) {
+    const resetItems = [
+      cleared.includes('scores') ? '수동 기준별 점수' : '',
+      cleared.includes('total_score') ? '수동 Total Score' : ''
+    ].filter(Boolean).join(' 및 ') || '수동 점수 설정';
+    return {
+      title: '최신 Score 기준 갱신 완료',
+      message: `${workflowLabel} v${appliedVersion} 기준을 적용했습니다. ${resetItems}는 해제되고 GPT 원문에 저장된 공식 점수로 Total과 Filter를 다시 계산했습니다.`
+    };
+  }
+  if (data.status === 'manual_override_reset' || cleared.length) {
+    const resetItems = [
+      cleared.includes('scores') ? '수동 기준별 점수' : '',
+      cleared.includes('total_score') ? '수동 Total Score' : ''
+    ].filter(Boolean).join(' 및 ') || '수동 점수 설정';
+    return {
+      title: '수동 점수 오버라이드 해제 완료',
+      message: `${workflowLabel} v${appliedVersion}은 이미 적용되어 있어 ${resetItems}만 해제했습니다. GPT 원문에 저장된 공식 점수로 복원했고, 변경 이력에 기록했습니다.`
+    };
+  }
+  if (data.status === 'already_current' || data.changed === false) {
+    return {
+      title: `이미 최신 ${workflowLabel} 기준입니다`,
+      message: `${workflowLabel} v${appliedVersion} 기준과 현재 점수·Filter 결과가 이미 적용되어 있습니다. 변경 사항이 없어 변경 이력은 추가하지 않았습니다.`
+    };
+  }
+  return {
+    title: 'Score 기준 재계산 완료',
+    message: `${workflowLabel} Score 기준 v${appliedVersion} 재계산을 완료했고, 변경 이력에 기록했습니다.`
+  };
+}
+
 async function ensureDashboardActorName() {
   const user = getCurrentUser() || await requireAuth();
   const actorName = String(user?.name || '').trim();
@@ -1176,10 +1250,13 @@ function sameStep0ListingIdentity(leftAsset, leftCompany, rightAsset, rightCompa
   );
 }
 
-function reciprocalStep0MergeSelections(rowIndex, selectedTarget) {
+function reciprocalStep0MergeSelections(rowIndex, selectedTarget = '') {
   const current = activeStep0ImportReviewMatches.find((match) => match.row_index === rowIndex);
-  const selectedCandidate = current?.candidates?.find((candidate) => candidate.target === selectedTarget);
-  if (!current || !selectedCandidate) return [];
+  if (!current) return [];
+  const selectedCandidates = selectedTarget
+    ? (current.candidates || []).filter((candidate) => candidate.target === selectedTarget)
+    : (current.candidates || []);
+  if (!selectedCandidates.length) return [];
 
   // Two pasted Listing rows can be reciprocal aliases of two already-separate
   // queue rows (for example BMD-001 ↔ BIOK-001). They have no shared target
@@ -1189,12 +1266,12 @@ function reciprocalStep0MergeSelections(rowIndex, selectedTarget) {
     // A reciprocal decision must use the exact incoming/candidate identities,
     // not the broader human-review similarity rule. This makes the reverse
     // pair deterministic even when a descriptive-name review was surfaced.
-    const selectedCandidateIsOtherRow = sameStep0ListingIdentity(
+    const selectedCandidateIsOtherRow = selectedCandidates.some((selectedCandidate) => sameStep0ListingIdentity(
       selectedCandidate.asset,
       selectedCandidate.company,
       other.asset,
       other.company
-    );
+    ));
     if (!selectedCandidateIsOtherRow) return [];
     const reverseCandidate = (other.candidates || []).find((candidate) => sameStep0ListingIdentity(
       candidate.asset,
@@ -1206,6 +1283,24 @@ function reciprocalStep0MergeSelections(rowIndex, selectedTarget) {
   });
 }
 
+function reciprocalStep0DefaultSelections(rowIndex, selectedTarget = '') {
+  // The first pasted row is the template row. Its decision can prefill a
+  // later reciprocal row, but a later row never writes back to the template.
+  return reciprocalStep0MergeSelections(rowIndex, selectedTarget)
+    .filter((linked) => rowIndex < linked.rowIndex);
+}
+
+function step0ManualReviewDecision(current, updates) {
+  const { reciprocal_auto_from: _autoFrom, ...manualDecision } = current || {};
+  return { ...manualDecision, ...updates };
+}
+
+function shouldApplyStep0ReciprocalDefault(decision, templateRowIndex) {
+  return !decision
+    || decision.action === 'pending'
+    || decision.reciprocal_auto_from === templateRowIndex;
+}
+
 function renderStep0ImportReviewList() {
   if (!elements.step0ImportReviewList) return;
   elements.step0ImportReviewList.innerHTML = activeStep0ImportReviewMatches.map((match) => {
@@ -1213,12 +1308,15 @@ function renderStep0ImportReviewList() {
     const isNew = decision.action === 'new';
     const isSkipped = decision.action === 'skip';
     const hasSelection = decision.action !== 'pending';
+    const isReciprocalDefault = Number.isInteger(decision.reciprocal_auto_from)
+      && decision.reciprocal_auto_from < match.row_index;
     return `
       <article class="data-reupload-review-card${isNew || isSkipped ? ' is-skipped' : ''}">
         <header class="data-reupload-review-card-header">
           <div><strong>${escapeHtml(match.asset || 'Unknown asset')}</strong><span>${escapeHtml(match.company || 'Unknown company')} · ${escapeHtml(match.stage || 'Unknown')}</span></div>
           <span class="data-reupload-review-state" data-state="${escapeHtml(decision.action)}">${decision.action === 'merge' ? '같은 Pipeline으로 연결' : isNew ? '별도 신규 Pipeline' : isSkipped ? '등록하지 않음' : '선택 필요'}</span>
         </header>
+        ${isReciprocalDefault ? '<p class="step0-import-reciprocal-default-note">위 행의 선택이 적용되었습니다. 이 행에서 변경하면 개별 선택으로 유지됩니다.</p>' : ''}
         <div class="data-reupload-candidate-stack">
           ${(match.candidates || []).map((candidate) => {
             const selected = decision.action === 'merge' && decision.target === candidate.target;
@@ -5641,20 +5739,11 @@ function totalScoreEditCircle(row) {
     ? `HUMAN · 담당자가 Tab2 Total Score를 ${displayValue}점으로 수정했습니다.`
     : `AUTO · 원본 Full Scout Total Score ${displayValue}점. Tab2에서 독립적으로 수정할 수 있습니다.`;
   return `
-    <input
+    <span
       class="total-score-edit-circle ${tone} ${isManual ? 'is-human' : 'is-auto'}"
-      type="number"
-      min="0"
-      max="21"
-      step="1"
-      inputmode="numeric"
-      data-record-id="${escapeHtml(row.id)}"
-      data-edit-kind="total_score"
-      data-previous-value="${escapeHtml(displayValue)}"
-      value="${escapeHtml(displayValue)}"
       aria-label="${escapeHtml(row.asset)} Tab2 Total Score"
       title="${escapeHtml(title)}"
-    />
+    >${escapeHtml(displayValue)}</span>
   `;
 }
 
@@ -6057,8 +6146,15 @@ function rubricReevaluationButton(row) {
   const hasCurrentDefinition = isTriage
     || get(row.raw, 'meta.full_scout_rubric_definition_revision', '')
       === LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION;
+  const aiReassessmentHistory = get(row.raw, 'meta.rubric_refresh_history', []);
+  const hasCurrentAiReassessment = String(get(row.raw, 'meta.rescored_rubric_version', '')).replace(/^v/i, '')
+    === latestVersion
+    || (Array.isArray(aiReassessmentHistory) && aiReassessmentHistory.some((entry) => (
+      String(entry?.version || '').replace(/^v/i, '') === latestVersion
+      && ['updated', 'no_change', 'no_score_changes'].includes(String(entry?.result || ''))
+    )));
   const isCurrent = !hasManualScoreOverride
-    && appliedVersion.replace(/^v/i, '') === latestVersion
+    && hasCurrentAiReassessment
     && hasCurrentDefinition;
   const title = [
     isTriage
@@ -6100,7 +6196,7 @@ function oiPartnershipRefreshButton(row) {
       class="focus-action-button icon-only rubric-refresh-button oi-partnership-refresh-button ${isCurrent ? 'is-current' : ''}"
       data-oi-partnership-refresh
       data-record-id="${escapeHtml(row.id)}"
-      title="최신 OI Partnership v${escapeHtml(latestVersion)} 기준으로 Filter 3와 OI Note를 다시 자동 분류합니다. 수동 Filter 3·Note와 붉은 표시는 자동 결과로 초기화되며, In-vivo·In-vitro·ADMET 입력과 업로드 자료는 유지됩니다. 현재 표시 버전: v${escapeHtml(currentVersion)}"
+      title="최신 OI Partnership v${escapeHtml(latestVersion)} 기준으로 Filter 3 분류를 다시 계산합니다. 수동 Filter 3 분류와 붉은 표시는 자동 결과로 초기화됩니다. 사람이 입력한 OI Note는 유지하고, 자동 생성 rationale은 최신 근거로 갱신합니다. In-vivo·In-vitro·ADMET 입력과 업로드 자료는 유지됩니다. 현재 표시 버전: v${escapeHtml(currentVersion)}"
       aria-label="${escapeHtml(row.asset)} 최신 OI Partnership v${escapeHtml(latestVersion)} 재분류"
     >
       <span aria-hidden="true">↻</span>
@@ -7012,15 +7108,22 @@ async function saveManualReviewEdit(select) {
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
 
-    const rowIndex = state.rows.findIndex((row) => row.id === recordId);
-    if (rowIndex >= 0 && data.record) {
-      state.rawRecords[rowIndex] = data.record;
-      state.rows = buildDashboardRows(state.rawRecords);
-    }
+    if (data.record) replaceRecordFromApi(recordId, data.record);
     await refreshDashboardSummary();
     renderFilters();
     render();
     updateHeaderRecordCount();
+    if (kind === 'score') {
+      const updates = Array.isArray(data.derived_score_updates) ? data.derived_score_updates : [];
+      const synchronized = updates.map((item) => item.label || (item.field === 'total_score' ? 'Total Score' : 'Filter 1/2')).join(' · ');
+      const row = state.rows.find((item) => item.id === recordId);
+      const filterLabel = row?.isTriage ? 'FILTER 1' : 'FILTER 2';
+      const message = synchronized
+        ? `수동 점수 변경에 따라 ${synchronized}을(를) 자동 동기화하고 변경 이력에 기록했습니다.`
+        : '수동 점수 변경을 변경 이력에 기록했습니다.';
+      elements.dataStatus.textContent = message;
+      void showRubricRefreshOutcomeToast('수동 점수를 반영했습니다', message, filterLabel);
+    }
   } catch (error) {
     select.value = previousValue;
     select.disabled = false;
@@ -7213,11 +7316,18 @@ async function saveUnknownTargetEdit(anchor) {
 }
 
 function replaceRecordFromApi(recordId, record) {
-  const rowIndex = state.rows.findIndex((row) => row.id === recordId);
-  if (rowIndex < 0 || !record) return;
-  state.rawRecords[rowIndex] = record;
+  if (!record) return false;
+  // `state.rows` can contain a Full Scout-derived, read-only Fast Triage
+  // alias and therefore does not share the persisted-record array's indexes.
+  // Always replace by the stable record ID, never the rendered table index.
+  const rawIndex = state.rawRecords.findIndex((candidate, index) =>
+    recordIdentifier(candidate, index) === recordId
+  );
+  if (rawIndex < 0) return false;
+  state.rawRecords[rawIndex] = record;
   state.rows = buildDashboardRows(state.rawRecords);
   state.dashboardSummary = null;
+  return true;
 }
 
 async function recalculateLatestRubric(button) {
@@ -7236,6 +7346,7 @@ async function recalculateLatestRubric(button) {
   button.disabled = true;
   button.classList.add('is-saving');
   elements.dataStatus.textContent = `${workflowLabel} 지침 v${latestVersion} 재평가 중`;
+  let failureShown = false;
 
   try {
     const data = await runBlockingOperation({
@@ -7244,13 +7355,15 @@ async function recalculateLatestRubric(button) {
       status: '점수와 판단 근거를 갱신하고 있습니다.'
     }, async (signal) => {
       const response = await fetch(
-        `/api/records/${encodeRecordIdForPath(recordId)}/recalculate-rubric`,
+        `/api/records/${encodeRecordIdForPath(recordId)}/reassess-rubric`,
         { method: 'POST', signal }
       );
       const result = await response.json().catch(() => ({}));
       if (!response.ok) {
         const message = result.detail || `HTTP ${response.status}`;
-        await showRubricRefreshFailureDialog('Score 기준 갱신에 실패했습니다', message);
+        const failureMessage = `${message}\n\n저장하지 못했으며 기존 점수와 변경 이력은 유지됩니다. 잠시 후 새로고침을 다시 눌러주세요.`;
+        failureShown = true;
+        await showRubricRefreshFailureDialog('Score 기준 갱신에 실패했습니다', failureMessage);
         throw new Error(message);
       }
       return result;
@@ -7260,11 +7373,13 @@ async function recalculateLatestRubric(button) {
       return;
     }
     if (!data.record || ['error', 'conflict'].includes(data.status)) {
+      const message = data.message || data.reason || `${workflowLabel} 재평가를 완료하지 못했습니다.`;
+      failureShown = true;
       await showRubricRefreshFailureDialog(
         'Score 기준 갱신에 실패했습니다',
-        data.message || data.reason || `${workflowLabel} 재평가를 완료하지 못했습니다.`
+        `${message}\n\n저장하지 못했으며 기존 점수와 변경 이력은 유지됩니다. 잠시 후 새로고침을 다시 눌러주세요.`
       );
-      throw new Error(data.message || data.reason || `${workflowLabel} 최신 루브릭 재평가를 완료하지 못했습니다.`);
+      throw new Error(message);
     }
     replaceRecordFromApi(recordId, data.record);
     await refreshDashboardSummary();
@@ -7272,9 +7387,18 @@ async function recalculateLatestRubric(button) {
     render();
     scrollAndHighlightPipelineRow(recordId);
     updateHeaderRecordCount();
-    elements.dataStatus.textContent = `${workflowLabel} Score 기준 v${data.rubric_version || latestVersion} 재계산을 완료했습니다. 변경 이력에 저장되었습니다.`;
+    const outcome = rubricRefreshOutcomeCopy(data, workflowLabel, latestVersion);
+    elements.dataStatus.textContent = outcome.message;
+    void showRubricRefreshOutcomeToast(outcome.title, outcome.message, isTriage ? 'FILTER 1' : 'FILTER 2');
   } catch (error) {
-    elements.dataStatus.textContent = `${workflowLabel} 재평가 실패: ${error.message}`;
+    const message = error.message || '예상하지 못한 오류가 발생했습니다.';
+    elements.dataStatus.textContent = `${workflowLabel} 재평가 실패: ${message}`;
+    if (!failureShown) {
+      await showRubricRefreshFailureDialog(
+        'Score 기준 갱신에 실패했습니다',
+        `${message}\n\n저장하지 못했으며 기존 점수와 변경 이력은 유지됩니다. 잠시 후 새로고침을 다시 눌러주세요.`
+      );
+    }
   } finally {
     button.disabled = false;
     button.classList.remove('is-saving');
@@ -7372,7 +7496,27 @@ async function recalculateLatestOiPartnership(button) {
     renderFilters();
     render();
     updateHeaderRecordCount();
-    elements.dataStatus.textContent = `OI Partnership v${data.oi_partnership_criteria_version || latestVersion} 재분류를 완료했습니다. 변경 이력에 저장되었습니다.`;
+    const appliedVersion = data.oi_partnership_criteria_version || latestVersion;
+    const changed = data.changed === true;
+    const manualClassificationReset = data.manual_classification_reset === true;
+    const oiNoteAction = String(data.oi_note_action || '');
+    const oiNoteMessage = oiNoteAction === 'human_note_retained'
+      ? '사람이 입력한 OI Note는 그대로 보존했습니다.'
+      : oiNoteAction === 'auto_rationale_updated'
+        ? '자동 생성 OI rationale도 최신 기준으로 함께 갱신했습니다.'
+        : oiNoteAction === 'auto_rationale_current'
+          ? '자동 생성 OI rationale도 이미 최신 기준입니다.'
+          : '';
+    const title = manualClassificationReset
+      ? '수동 Filter 3 분류 초기화 완료'
+      : changed ? 'Filter 3 기준 갱신 완료' : '이미 최신 Filter 3 기준입니다';
+    const message = manualClassificationReset
+      ? `수동으로 조정한 Filter 3 분류를 OI Partnership v${appliedVersion} 자동 분류로 초기화했습니다. ${oiNoteMessage} 변경 이력에 기록했습니다.`
+      : changed
+      ? `OI Partnership v${appliedVersion} 기준으로 분류를 갱신했습니다. ${oiNoteMessage} 변경 사항을 Team Review 변경 이력에 기록했습니다.`
+      : `OI Partnership v${appliedVersion} 기준과 현재 분류 결과가 이미 적용되어 있습니다. ${oiNoteMessage} 변경 사항이 없어 변경 이력은 추가하지 않았습니다.`;
+    elements.dataStatus.textContent = message;
+    void showRubricRefreshOutcomeToast(title, message, 'FILTER 3');
   } catch (error) {
     elements.dataStatus.textContent = `Filter 3 재분류 실패: ${error.message}`;
   } finally {
@@ -10074,7 +10218,7 @@ const SHARED_INTEREST_AND_CORE_RUBRIC = `SKBP Interest Indications:
 
 Use the most specific confirmed indication wording for Target Relevance. Neuropathic pain and explicit neuropathic subtypes/synonyms are one of the six interest indications and receive TR 3. Generic Pain, acute pain, postoperative pain, and non-neuropathic pain are within the broad SKBP pain scope but outside the six priority indications and receive TR 2.
 
-Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.5 and Full Scout v3.8):
+Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.6 and Full Scout v3.8):
 - For Target Relevance, always evaluate in descending order: 3, then 2, then 1, then 0. If more than one rule appears applicable, assign only the single highest applicable score.
 - Target Relevance 0: asset identity is verified, but there is still insufficient indication/relevance information to assess strategic scope. Asset identity not verified is an INSUFFICIENT early stop, not a completed TR 0.
 - Target Relevance 1: a verified asset's confirmed indication is outside the broad SKBP neurologic, psychiatric, neuroimmune, neurodegenerative, or pain scope.
@@ -10399,7 +10543,7 @@ function buildTriageInstructionPromptLegacy() {
 Mission:
 Run FAST TRIAGE on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.8 in-depth review.
 
-This is GPT instruction 1: Fast Triage v3.5.
+This is GPT instruction 1: Fast Triage v3.6.
 Use GPT instruction 2 only after a candidate receives SELECT and needs Full Scout v3.8 review.
 
 Evidence Discipline (apply to every factual field and every score):
@@ -10535,7 +10679,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
 \`\`\`text
 # SKBP Fast Triage Result
 
-> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.5. Full Scout v3.8 has not been run.
+> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.6. Full Scout v3.8 has not been run.
 
 중요: 한 문장으로 triage 결론과 filter rationale을 먼저 씁니다. 예: 공개 자료상 asset identity는 확인되지만 개발 단계가 Discontinued / inactive로 확인되어 INSUFFICIENT로 처리합니다.
 
@@ -10553,8 +10697,8 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
   {
     "meta": {
       "schema_version": "3.2",
-      "instruction_version": "3.5",
-      "rubric_version": "3.5",
+      "instruction_version": "3.6",
+      "rubric_version": "3.6",
       "review_type": "fast_triage",
       "generated_at": "YYYY-MM-DD",
       "language": "ko",
@@ -10570,7 +10714,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
       "raw_markdown": "",
       "source_format": "fast_triage_markdown",
       "parser_status": "fast_triage",
-    "parser_note": "GPT instruction 1 Fast Triage v3.5 output. Full Scout v3.8 review has not been run."
+    "parser_note": "GPT instruction 1 Fast Triage v3.6 output. Full Scout v3.8 review has not been run."
     },
     "json_summary": {
       "company": "Unknown",
@@ -10600,7 +10744,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
       "flags": []
     },
     "triage": {
-      "instruction_version": "3.5",
+      "instruction_version": "3.6",
       "status": "INSUFFICIENT",
       "identity_verified": false,
       "why": "Asset identity has not yet been verified from credible public sources.",
@@ -10641,7 +10785,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
     },
     "validation": {
       "instruction_version": "3.2",
-      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.5; Full Scout v3.8 not run.",
+      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.6; Full Scout v3.8 not run.",
       "cross_checked_facts": [],
       "uncertain_points": [],
       "source_registry": []
@@ -15461,9 +15605,16 @@ elements.step0ImportReviewList?.addEventListener('click', (event) => {
   if (button.dataset.step0ImportReviewAction === 'representative') {
     const current = activeStep0ImportReviewDecisions.get(rowIndex) || { action: 'pending', target: '' };
     if (current.action !== 'merge') return;
-    activeStep0ImportReviewDecisions.set(rowIndex, {
-      ...current,
-      representative: button.dataset.representative === 'incoming' ? 'incoming' : 'existing'
+    const representative = button.dataset.representative === 'incoming' ? 'incoming' : 'existing';
+    activeStep0ImportReviewDecisions.set(rowIndex, step0ManualReviewDecision(current, { representative }));
+    reciprocalStep0DefaultSelections(rowIndex, current.target).forEach((linked) => {
+      const linkedDecision = activeStep0ImportReviewDecisions.get(linked.rowIndex);
+      if (linkedDecision?.action !== 'merge' || linkedDecision.target !== linked.target) return;
+      if (linkedDecision.reciprocal_auto_from !== rowIndex) return;
+      activeStep0ImportReviewDecisions.set(linked.rowIndex, {
+        ...linkedDecision,
+        representative
+      });
     });
     renderStep0ImportReviewList();
     return;
@@ -15477,32 +15628,33 @@ elements.step0ImportReviewList?.addEventListener('click', (event) => {
     && (requestedAction !== 'merge' || current.target === requestedTarget);
   if (isSameChoice) {
     activeStep0ImportReviewDecisions.delete(rowIndex);
-    if (requestedAction === 'merge') {
-      reciprocalStep0MergeSelections(rowIndex, requestedTarget).forEach((linked) => {
-        const linkedDecision = activeStep0ImportReviewDecisions.get(linked.rowIndex);
-        if (linkedDecision?.action === 'merge' && linkedDecision.target === linked.target) {
-          activeStep0ImportReviewDecisions.delete(linked.rowIndex);
-        }
-      });
-    }
+    reciprocalStep0DefaultSelections(rowIndex, requestedAction === 'merge' ? requestedTarget : '').forEach((linked) => {
+      const linkedDecision = activeStep0ImportReviewDecisions.get(linked.rowIndex);
+      const isMatchingAction = linkedDecision?.action === requestedAction
+        && (requestedAction !== 'merge' || linkedDecision.target === linked.target);
+      if (isMatchingAction && linkedDecision.reciprocal_auto_from === rowIndex) {
+        activeStep0ImportReviewDecisions.delete(linked.rowIndex);
+      }
+    });
     renderStep0ImportReviewList();
     return;
   }
   const representative = current.representative === 'existing' ? 'existing' : 'incoming';
-  activeStep0ImportReviewDecisions.set(rowIndex, {
+  activeStep0ImportReviewDecisions.set(rowIndex, step0ManualReviewDecision(current, {
     action: requestedAction,
     target: requestedTarget,
     representative
-  });
-  if (requestedAction === 'merge') {
-    reciprocalStep0MergeSelections(rowIndex, requestedTarget).forEach((linked) => {
-      activeStep0ImportReviewDecisions.set(linked.rowIndex, {
-        action: 'merge',
-        target: linked.target,
-        representative
-      });
+  }));
+  reciprocalStep0DefaultSelections(rowIndex, requestedAction === 'merge' ? requestedTarget : '').forEach((linked) => {
+    const linkedDecision = activeStep0ImportReviewDecisions.get(linked.rowIndex);
+    if (!shouldApplyStep0ReciprocalDefault(linkedDecision, rowIndex)) return;
+    activeStep0ImportReviewDecisions.set(linked.rowIndex, {
+      action: requestedAction,
+      target: requestedAction === 'merge' ? linked.target : '',
+      representative,
+      reciprocal_auto_from: rowIndex
     });
-  }
+  });
   renderStep0ImportReviewList();
 });
 elements.step0ImportReviewApply?.addEventListener('click', () => {
