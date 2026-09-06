@@ -24,6 +24,9 @@ function detailUrlForCurrentRecord() {
   return `/detail?${query.toString()}`;
 }
 
+const DEFAULT_SHORTLISTING_PROJECT_ID = 'oic_default';
+const SHORTLISTING_PROJECTS_URL = '/api/shortlisting/projects';
+
 const DETAIL_CHAT_SESSION_PREFIX = 'skbp.detail.chatSessions.v1';
 const DETAIL_CHAT_ACTIVE_PREFIX = 'skbp.detail.activeChatSession.v1';
 const DETAIL_COMMENT_AUTHOR_KEY = 'skbp.detail.commentAuthor';
@@ -110,6 +113,15 @@ const elements = {
   detailOiPartnershipType: document.querySelector('#detailOiPartnershipType'),
   detailOiPartnershipNoteShell: document.querySelector('#detailOiPartnershipNoteShell'),
   detailOiPartnershipNote: document.querySelector('#detailOiPartnershipNote'),
+  detailCustomProjectSwitch: document.querySelector('#detailCustomProjectSwitch'),
+  detailCustomProjectSwitchButton: document.querySelector('#detailCustomProjectSwitchButton'),
+  detailCustomProjectSwitchLabel: document.querySelector('#detailCustomProjectSwitchLabel'),
+  detailCustomProjectSwitchMenu: document.querySelector('#detailCustomProjectSwitchMenu'),
+  detailCustomScore: document.querySelector('#detailCustomScore'),
+  detailCustomScoreInput: document.querySelector('#detailCustomScoreInput'),
+  detailCustomProjectBody: document.querySelector('#detailCustomProjectBody'),
+  detailOicFilter3Body: document.querySelector('#detailOicFilter3Body'),
+  detailCustomMetricTable: document.querySelector('#detailCustomMetricTable'),
   detailPartnerMaterialButtons: document.querySelectorAll('#detailPartnerMaterialFlags .oi-material-toggle[data-material-key]'),
   detailCollaborationStatus: document.querySelector('#detailCollaborationStatus'),
   collaborationScroll: document.querySelector('.collaboration-scroll'),
@@ -249,6 +261,8 @@ const qualitativeReviewCriteria = [
 
 let currentRecord = null;
 let currentRecordId = recordId;
+let shortlistingProjects = [];
+let selectedCustomProjectId = null;
 let activeAttachmentId = '';
 let attachmentPreviewController = null;
 let floatingAttachmentViewerSerial = 0;
@@ -1702,33 +1716,14 @@ function renderCollaborationPanel(record) {
   if (elements.detailReviewReasonShell) {
     elements.detailReviewReasonShell.classList.toggle('is-human', reasonIsHuman);
   }
-  // Full Scout (Filter 2) and 집중 관리 (OI partnership) now show side by side.
-  // Filter 2 always applies (every Full Scout record has a scored decision); the
-  // 집중 관리 column only makes sense once the record is actually tracked.
+  // Full Scout (Filter 2) and the Custom panel (OIC Filter 3, or a custom
+  // Shortlisting Project's own metrics) now show side by side. Filter 2
+  // always applies; the Custom panel only renders once the record is
+  // tracked in at least one Shortlisting Project.
   if (elements.detailFilter2Row) {
     elements.detailFilter2Row.hidden = false;
   }
-  if (elements.detailOiPartnershipRow) {
-    elements.detailOiPartnershipRow.hidden = !tracked;
-  }
-  if (elements.detailOiPartnershipType) {
-    elements.detailOiPartnershipType.value = String(focus.partnership_type || '');
-  }
-  const partnershipNoteIsManual = focus.partnership_classification_source === 'manual';
-  if (elements.detailOiPartnershipOrigin) {
-    elements.detailOiPartnershipOrigin.textContent = `OI Partnership v${focus.partnership_classification_criteria_version || '1.7'}`;
-    elements.detailOiPartnershipOrigin.classList.toggle('is-human', partnershipNoteIsManual);
-  }
-  if (elements.detailOiPartnershipNote) {
-    const note = String(focus.partnership_note || '');
-    elements.detailOiPartnershipNote.value = note;
-    elements.detailOiPartnershipNote.dataset.previousValue = note;
-    elements.detailOiPartnershipNote.title = 'OI 파트너십 분류 근거를 짧게 요약합니다.';
-    resizeOiPartnershipNoteInput();
-  }
-  if (elements.detailOiPartnershipNoteShell) {
-    elements.detailOiPartnershipNoteShell.classList.toggle('is-human', partnershipNoteIsManual);
-  }
+  renderCustomProjectPanel(record);
   const autoMaterialFlags = detectPartnerMaterialFlags(attachments);
   const canManagePartnerMaterials = Boolean(getCurrentUser()?.is_admin);
   elements.detailPartnerMaterialButtons?.forEach((pill) => {
@@ -1748,6 +1743,191 @@ function renderCollaborationPanel(record) {
   renderContactHistoryFilesList(record);
   renderDDReportFilesList(record);
   renderQualitativeReview(record);
+}
+
+function customProjectDisplayName(project) {
+  return project?.name || (project?.id === DEFAULT_SHORTLISTING_PROJECT_ID ? 'Open Innovation Center' : project?.id || '');
+}
+
+function customProjectRoleFor(projectId) {
+  return shortlistingProjects.find((project) => project.id === projectId)?.current_user_role || 'read';
+}
+
+function customProjectMetricValue(record, projectId, metricId) {
+  if (projectId === DEFAULT_SHORTLISTING_PROJECT_ID) return undefined;
+  return record?.meta?.shortlisting_projects?.[projectId]?.metric_values?.[metricId];
+}
+
+function customProjectCustomScore(record, projectId) {
+  const raw = projectId === DEFAULT_SHORTLISTING_PROJECT_ID
+    ? record?.meta?.focus_management?.custom_score
+    : record?.meta?.shortlisting_projects?.[projectId]?.custom_score;
+  const value = Number(raw);
+  return Number.isFinite(value) && value >= 0 && value <= 9 ? Math.round(value) : 0;
+}
+
+function closeCustomProjectSwitchMenu() {
+  if (elements.detailCustomProjectSwitchMenu) elements.detailCustomProjectSwitchMenu.hidden = true;
+  elements.detailCustomProjectSwitchButton?.setAttribute('aria-expanded', 'false');
+}
+
+function metricValueEditControlMarkup(projectId, column, rawValue, disabled) {
+  const disabledAttr = disabled ? ' disabled' : '';
+  const baseAttrs = `data-project-id="${escapeHtml(projectId)}" data-metric-id="${escapeHtml(column.id)}" data-return-type="${escapeHtml(column.return_type)}"${disabledAttr}`;
+  if (column.return_type === 'boolean') {
+    const current = rawValue === true ? 'true' : rawValue === false ? 'false' : '';
+    return `
+      <select class="evidence-edit metric-value-edit" ${baseAttrs} data-previous-value="${escapeHtml(current)}">
+        <option value="" ${current === '' ? 'selected' : ''}>-</option>
+        <option value="true" ${current === 'true' ? 'selected' : ''}>Pass</option>
+        <option value="false" ${current === 'false' ? 'selected' : ''}>Fail</option>
+      </select>`;
+  }
+  if (column.return_type === 'list') {
+    const options = Array.isArray(column.options) ? column.options : [];
+    const current = typeof rawValue === 'string' ? rawValue : '';
+    return `
+      <select class="evidence-edit metric-value-edit" ${baseAttrs} data-previous-value="${escapeHtml(current)}">
+        <option value="" ${current === '' ? 'selected' : ''}>-</option>
+        ${options.map((option) => `<option value="${escapeHtml(option)}" ${option === current ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}
+      </select>`;
+  }
+  if (column.return_type === 'number') {
+    const current = typeof rawValue === 'number' ? rawValue : '';
+    const boundsAttrs = Number.isFinite(column.max_value) ? ` min="0" max="${column.max_value}"` : '';
+    return `<input type="number" class="focus-due-input metric-value-edit" step="any"${boundsAttrs} ${baseAttrs} data-previous-value="${escapeHtml(String(current))}" value="${escapeHtml(String(current))}" />`;
+  }
+  if (column.return_type === 'date') {
+    const current = typeof rawValue === 'string' ? rawValue : '';
+    return `<input type="date" class="focus-due-input metric-value-edit" ${baseAttrs} data-previous-value="${escapeHtml(current)}" value="${escapeHtml(current)}" />`;
+  }
+  const current = typeof rawValue === 'string' ? rawValue : '';
+  return `<input type="text" class="focus-due-input metric-value-edit" maxlength="2000" ${baseAttrs} data-previous-value="${escapeHtml(current)}" value="${escapeHtml(current)}" />`;
+}
+
+function customMetricRowMarkup(record, project, column, disabled) {
+  return `
+    <div class="custom-metric-row" data-metric-id="${escapeHtml(column.id)}">
+      <span class="custom-metric-label" title="${escapeHtml(column.description || '')}">${escapeHtml(column.label || column.id)}</span>
+      ${metricValueEditControlMarkup(project.id, column, customProjectMetricValue(record, project.id, column.id), disabled)}
+    </div>
+  `;
+}
+
+const CUSTOM_METRIC_PREVIEW_COUNT = 2;
+
+function renderCustomMetricTable(record, project) {
+  if (!elements.detailCustomMetricTable) return;
+  const columns = Array.isArray(project?.metric_columns) ? project.metric_columns : [];
+  if (!columns.length) {
+    elements.detailCustomMetricTable.innerHTML = '<p class="custom-metric-empty">등록된 지표가 없습니다.</p>';
+    return;
+  }
+  const disabled = customProjectRoleFor(project.id) === 'read';
+  const previewColumns = columns.slice(0, CUSTOM_METRIC_PREVIEW_COUNT);
+  const extraColumns = columns.slice(CUSTOM_METRIC_PREVIEW_COUNT);
+  elements.detailCustomMetricTable.innerHTML = [
+    previewColumns.map((column) => customMetricRowMarkup(record, project, column, disabled)).join(''),
+    extraColumns.length
+      ? `<div class="custom-metric-extra">${extraColumns.map((column) => customMetricRowMarkup(record, project, column, disabled)).join('')}</div>`
+      : ''
+  ].join('');
+}
+
+function renderCustomProjectSwitch(trackedProjects, selectedProject) {
+  if (!elements.detailCustomProjectSwitch) return;
+  elements.detailCustomProjectSwitch.hidden = false;
+  if (elements.detailCustomProjectSwitchLabel) {
+    elements.detailCustomProjectSwitchLabel.textContent = customProjectDisplayName(selectedProject);
+  }
+  const isMulti = trackedProjects.length > 1;
+  elements.detailCustomProjectSwitch.classList.toggle('is-static', !isMulti);
+  if (elements.detailCustomProjectSwitchButton) {
+    elements.detailCustomProjectSwitchButton.disabled = !isMulti;
+    elements.detailCustomProjectSwitchButton.setAttribute('aria-haspopup', isMulti ? 'listbox' : 'false');
+  }
+  if (!isMulti) {
+    closeCustomProjectSwitchMenu();
+    return;
+  }
+  if (elements.detailCustomProjectSwitchMenu) {
+    elements.detailCustomProjectSwitchMenu.innerHTML = trackedProjects.map((project) => `
+      <button
+        type="button"
+        class="custom-project-switch-option${project.id === selectedProject?.id ? ' is-active' : ''}"
+        role="option"
+        aria-selected="${project.id === selectedProject?.id}"
+        data-custom-project-pick="${escapeHtml(project.id)}"
+      >${escapeHtml(customProjectDisplayName(project))}</button>
+    `).join('');
+  }
+}
+
+function renderCustomProjectPanel(record) {
+  if (!elements.detailOiPartnershipRow) return;
+  const trackedProjects = trackedShortlistingProjects(record);
+  if (!trackedProjects.length) {
+    elements.detailOiPartnershipRow.hidden = true;
+    closeCustomProjectSwitchMenu();
+    return;
+  }
+  elements.detailOiPartnershipRow.hidden = false;
+
+  if (!selectedCustomProjectId || !trackedProjects.some((project) => project.id === selectedCustomProjectId)) {
+    const defaultTracked = trackedProjects.find((project) => project.id === DEFAULT_SHORTLISTING_PROJECT_ID);
+    selectedCustomProjectId = defaultTracked ? defaultTracked.id : trackedProjects[0].id;
+  }
+  const selectedProject = trackedProjects.find((project) => project.id === selectedCustomProjectId) || trackedProjects[0];
+  const isDefault = selectedProject.id === DEFAULT_SHORTLISTING_PROJECT_ID;
+
+  renderCustomProjectSwitch(trackedProjects, selectedProject);
+
+  const focus = record?.meta?.focus_management || {};
+  const customScoreValue = customProjectCustomScore(record, selectedProject.id);
+  if (elements.detailCustomScore) {
+    const canWriteScore = customProjectRoleFor(selectedProject.id) !== 'read';
+    elements.detailCustomScore.hidden = false;
+    elements.detailCustomScore.textContent = `${customScoreValue} / 9`;
+    elements.detailCustomScore.dataset.projectId = selectedProject.id;
+    elements.detailCustomScore.dataset.previousValue = String(customScoreValue);
+    elements.detailCustomScore.classList.toggle('is-editable', canWriteScore);
+    elements.detailCustomScore.title = canWriteScore
+      ? `Custom Score: ${customScoreValue} · 더블클릭하여 0~9 입력`
+      : `Custom Score: ${customScoreValue} · 읽기 전용`;
+    elements.detailCustomScore.setAttribute('tabindex', canWriteScore ? '0' : '-1');
+  }
+  if (elements.detailCustomScoreInput) {
+    elements.detailCustomScoreInput.hidden = true;
+  }
+
+  if (isDefault) {
+    if (elements.detailOicFilter3Body) elements.detailOicFilter3Body.hidden = false;
+    if (elements.detailCustomMetricTable) elements.detailCustomMetricTable.hidden = true;
+    if (elements.detailOiPartnershipType) {
+      elements.detailOiPartnershipType.value = String(focus.partnership_type || '');
+    }
+    const partnershipNoteIsManual = focus.partnership_classification_source === 'manual';
+    if (elements.detailOiPartnershipOrigin) {
+      elements.detailOiPartnershipOrigin.textContent = `OI Partnership v${focus.partnership_classification_criteria_version || '1.7'}`;
+      elements.detailOiPartnershipOrigin.classList.toggle('is-human', partnershipNoteIsManual);
+    }
+    if (elements.detailOiPartnershipNote) {
+      const note = String(focus.partnership_note || '');
+      elements.detailOiPartnershipNote.value = note;
+      elements.detailOiPartnershipNote.dataset.previousValue = note;
+      elements.detailOiPartnershipNote.title = 'OI 파트너십 분류 근거를 짧게 요약합니다.';
+      resizeOiPartnershipNoteInput();
+    }
+    if (elements.detailOiPartnershipNoteShell) {
+      elements.detailOiPartnershipNoteShell.classList.toggle('is-human', partnershipNoteIsManual);
+    }
+  } else {
+    if (elements.detailOicFilter3Body) elements.detailOicFilter3Body.hidden = true;
+    if (elements.detailCustomMetricTable) {
+      elements.detailCustomMetricTable.hidden = false;
+      renderCustomMetricTable(record, selectedProject);
+    }
+  }
 }
 
 function renderMetaInfoBar(record) {
@@ -3115,6 +3295,113 @@ async function saveDetailFocusField(field, value, control, label) {
   } finally {
     control.disabled = false;
   }
+}
+
+async function saveDetailShortlistingProjectField(projectId, field, value, control, label, extra = {}) {
+  if (!currentRecordId || !currentRecord || !control) return null;
+  const previousValue = control.dataset.previousValue ?? '';
+  control.disabled = true;
+  setCollaborationStatus(`${label} 저장 중…`);
+  try {
+    const response = await fetch(
+      `/api/records/${encodeRecordIdForPath(currentRecordId)}/shortlisting-projects/${encodeURIComponent(projectId)}`,
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'update', field, value, ...extra })
+      }
+    );
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || `${label} 저장에 실패했습니다.`);
+    currentRecord = data.record;
+    renderCollaborationPanel(currentRecord);
+    setCollaborationStatus(`${label}을(를) 저장했습니다.`, 'success');
+    return data;
+  } catch (error) {
+    if ('value' in control) control.value = previousValue;
+    setCollaborationStatus(error.message, 'error');
+    return null;
+  } finally {
+    control.disabled = false;
+  }
+}
+
+function openDetailCustomScoreEdit() {
+  const anchor = elements.detailCustomScore;
+  const input = elements.detailCustomScoreInput;
+  if (!anchor || !input) return;
+  const projectId = anchor.dataset.projectId;
+  if (!projectId || customProjectRoleFor(projectId) === 'read') return;
+  const previousValue = String(anchor.dataset.previousValue || '0');
+  input.value = previousValue;
+  input.dataset.projectId = projectId;
+  input.dataset.previousValue = previousValue;
+  delete input.dataset.cancelled;
+  anchor.hidden = true;
+  input.hidden = false;
+  input.focus();
+  input.select();
+}
+
+async function saveDetailCustomScoreEdit(input) {
+  const previousValue = input.dataset.previousValue ?? '0';
+  const nextRaw = input.value ?? '';
+  if (previousValue === nextRaw) {
+    renderCustomProjectPanel(currentRecord);
+    return;
+  }
+  const numeric = Number(nextRaw);
+  if (!Number.isFinite(numeric) || numeric < 0 || numeric > 9) {
+    setCollaborationStatus('Custom Score는 0~9 정수로 입력해주세요', 'error');
+    renderCustomProjectPanel(currentRecord);
+    return;
+  }
+  const projectId = input.dataset.projectId;
+  const value = Math.round(numeric);
+  if (projectId === DEFAULT_SHORTLISTING_PROJECT_ID) {
+    await saveDetailFocusField('custom_score', value, input, 'Custom Score');
+  } else {
+    await saveDetailShortlistingProjectField(projectId, 'custom_score', value, input, 'Custom Score');
+  }
+  renderCustomProjectPanel(currentRecord);
+}
+
+function saveDetailMetricValue(control) {
+  const previousValue = control.dataset.previousValue ?? '';
+  const nextRaw = control.value ?? '';
+  if (previousValue === nextRaw) return;
+  const returnType = control.dataset.returnType;
+  if (nextRaw === '' && returnType !== 'text' && returnType !== 'date') return;
+  const value = returnType === 'boolean'
+    ? nextRaw === 'true'
+    : returnType === 'number'
+      ? Number(nextRaw)
+      : nextRaw;
+  const projectId = control.dataset.projectId;
+  const metricId = control.dataset.metricId;
+  const label = control.closest('.custom-metric-row')?.querySelector('.custom-metric-label')?.textContent || '지표';
+  saveDetailShortlistingProjectField(projectId, 'metric_value', value, control, label, { metric_id: metricId });
+}
+
+function pickCustomProject(projectId) {
+  if (!currentRecord || projectId === selectedCustomProjectId) {
+    closeCustomProjectSwitchMenu();
+    return;
+  }
+  selectedCustomProjectId = projectId;
+  closeCustomProjectSwitchMenu();
+  renderCustomProjectPanel(currentRecord);
+}
+
+function toggleCustomProjectSwitchMenu() {
+  if (!elements.detailCustomProjectSwitchMenu) return;
+  const isOpen = !elements.detailCustomProjectSwitchMenu.hidden;
+  if (isOpen) {
+    closeCustomProjectSwitchMenu();
+    return;
+  }
+  elements.detailCustomProjectSwitchMenu.hidden = false;
+  elements.detailCustomProjectSwitchButton?.setAttribute('aria-expanded', 'true');
 }
 
 async function saveDetailActionDate(value) {
@@ -4708,6 +4995,28 @@ async function deleteCurrentRecord() {
   }
 }
 
+async function loadShortlistingProjects() {
+  try {
+    const response = await fetch(SHORTLISTING_PROJECTS_URL, { cache: 'no-store' });
+    if (!response.ok) return;
+    const data = await response.json();
+    shortlistingProjects = Array.isArray(data.projects)
+      ? data.projects.filter((project) => project && !project.archived)
+      : [];
+  } catch (error) {
+    // Non-fatal: the Custom panel falls back to the OIC default Project only.
+    console.warn('Failed to load shortlisting projects', error);
+  }
+}
+
+function trackedShortlistingProjects(record) {
+  return shortlistingProjects.filter((project) =>
+    project.id === DEFAULT_SHORTLISTING_PROJECT_ID
+      ? record?.meta?.focus_management?.is_tracked === true
+      : record?.meta?.shortlisting_projects?.[project.id]?.is_tracked === true
+  );
+}
+
 async function loadRecord() {
   if (!currentRecordId) {
     elements.status.textContent = 'Missing id';
@@ -4715,11 +5024,15 @@ async function loadRecord() {
     return;
   }
 
-  const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}`);
+  const [response] = await Promise.all([
+    fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}`),
+    loadShortlistingProjects()
+  ]);
   if (!response.ok) throw new Error(await response.text());
   const data = await response.json();
   currentRecord = data.record;
   currentRecordId = data.record_id;
+  selectedCustomProjectId = null;
   renderRecord(currentRecord);
   openRequestedDetailSection();
   initializeChatSessions();
@@ -5283,6 +5596,55 @@ elements.detailActionOwner?.addEventListener('change', (event) => {
 
 elements.detailActionPlan?.addEventListener('change', (event) => {
   saveDetailActionPlan(event.target.value || '');
+});
+
+elements.detailCustomProjectSwitchButton?.addEventListener('click', () => {
+  toggleCustomProjectSwitchMenu();
+});
+
+elements.detailCustomProjectSwitchMenu?.addEventListener('click', (event) => {
+  const option = event.target.closest('[data-custom-project-pick]');
+  if (!option) return;
+  pickCustomProject(option.dataset.customProjectPick);
+});
+
+document.addEventListener('click', (event) => {
+  if (!elements.detailCustomProjectSwitch || elements.detailCustomProjectSwitchMenu?.hidden) return;
+  if (elements.detailCustomProjectSwitch.contains(event.target)) return;
+  closeCustomProjectSwitchMenu();
+});
+
+elements.detailCustomScore?.addEventListener('dblclick', () => {
+  openDetailCustomScoreEdit();
+});
+
+elements.detailCustomScore?.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter' && event.key !== ' ') return;
+  event.preventDefault();
+  openDetailCustomScoreEdit();
+});
+
+elements.detailCustomScoreInput?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    saveDetailCustomScoreEdit(elements.detailCustomScoreInput);
+    return;
+  }
+  if (event.key !== 'Escape') return;
+  event.preventDefault();
+  elements.detailCustomScoreInput.dataset.cancelled = 'true';
+  renderCustomProjectPanel(currentRecord);
+});
+
+elements.detailCustomScoreInput?.addEventListener('blur', () => {
+  if (elements.detailCustomScoreInput.dataset.cancelled === 'true') return;
+  saveDetailCustomScoreEdit(elements.detailCustomScoreInput);
+});
+
+elements.detailCustomMetricTable?.addEventListener('change', (event) => {
+  const control = event.target.closest('.metric-value-edit');
+  if (!control) return;
+  saveDetailMetricValue(control);
 });
 
 elements.detailOiPartnershipType?.addEventListener('change', (event) => {

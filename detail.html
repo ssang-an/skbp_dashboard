@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260905-attachment-dragdrop-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260907-custom-project-panel-1" />
   </head>
   <body>
     <div class="app-shell detail-shell">
@@ -203,7 +203,7 @@
                       <option value="FAIL">T·Down</option>
                     </select>
                     <div class="filter-score-summary" aria-label="Total score">
-                      <span>Total Score <strong id="detailTotalScore">- / 21</strong></span>
+                      <span>Advanced Score <strong id="detailTotalScore">- / 21</strong></span>
                     </div>
                   </div>
                   <div class="filter-score-panel" aria-label="Seven criterion scores">
@@ -226,61 +226,81 @@
 
                 <section id="detailOiPartnershipRow" class="review-info-row oi-info-row review-info-column">
                   <p class="review-column-heading">Custom</p>
-                  <div class="oi-filter3-control-row">
-                    <div class="review-info-label">
-                      <span>Filter 3</span>
-                      <div class="review-info-label-row">
-                        <small id="detailOiPartnershipOrigin">OI Partnership v1.7</small>
-                        <span class="metadata-divider" aria-hidden="true">·</span>
-                        <button id="oiPartnershipRefreshButton" class="criteria-refresh-pill" type="button" title="최신 OI Partnership 기준으로 Filter 3와 분류 근거를 갱신합니다. 수동 분류와 Note는 자동 결과로 초기화됩니다." aria-label="최신 OI Partnership 기준으로 재분류">
-                          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.2 6.5L3 16m0 0v5m0-5h5M3 12A9 9 0 0 1 18.2 5.5L21 8m0 0V3m0 5h-5"></path></svg>
-                          <span>v1.7 기준 갱신</span>
-                        </button>
+                  <div class="filter-decision-line custom-decision-line">
+                    <div id="detailCustomProjectSwitch" class="custom-project-switch">
+                      <button type="button" id="detailCustomProjectSwitchButton" class="custom-project-switch-button" aria-haspopup="listbox" aria-expanded="false" aria-label="Custom Review Project 선택">
+                        <span id="detailCustomProjectSwitchLabel">Open Innovation Center</span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"></path></svg>
+                      </button>
+                      <div id="detailCustomProjectSwitchMenu" class="custom-project-switch-menu" role="listbox" hidden></div>
+                    </div>
+                    <div class="filter-score-summary custom-score-summary" aria-label="Custom score">
+                      <span>Custom Score
+                        <strong id="detailCustomScore" role="button" tabindex="0" title="Custom Score: 0 · 더블클릭하여 0~9 입력">0 / 9</strong>
+                        <input id="detailCustomScoreInput" type="number" min="0" max="9" step="1" class="custom-score-input" hidden autocomplete="off" aria-label="Custom Score edit" />
+                      </span>
+                    </div>
+                  </div>
+                  <div id="detailCustomProjectBody" class="custom-project-body">
+                    <div id="detailOicFilter3Body" class="oic-filter3-body">
+                      <div class="oi-filter3-control-row">
+                        <div class="review-info-label">
+                          <span>Filter 3</span>
+                          <div class="review-info-label-row">
+                            <small id="detailOiPartnershipOrigin">OI Partnership v1.7</small>
+                            <span class="metadata-divider" aria-hidden="true">·</span>
+                            <button id="oiPartnershipRefreshButton" class="criteria-refresh-pill" type="button" title="최신 OI Partnership 기준으로 Filter 3와 분류 근거를 갱신합니다. 수동 분류와 Note는 자동 결과로 초기화됩니다." aria-label="최신 OI Partnership 기준으로 재분류">
+                              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.2 6.5L3 16m0 0v5m0-5h5M3 12A9 9 0 0 1 18.2 5.5L21 8m0 0V3m0 5h-5"></path></svg>
+                              <span>v1.7 기준 갱신</span>
+                            </button>
+                          </div>
+                        </div>
+                        <select id="detailOiPartnershipType" autocomplete="off" aria-label="OI partnership 분류">
+                          <option value="" disabled>분류 미확인</option>
+                          <option value="investment">투자</option>
+                          <option value="value_up">Value Up</option>
+                          <option value="joint_research">공동 연구</option>
+                          <option value="n_a">N/A</option>
+                          <option value="unknown">Unknown</option>
+                        </select>
                       </div>
-                    </div>
-                    <select id="detailOiPartnershipType" autocomplete="off" aria-label="OI partnership 분류">
-                      <option value="" disabled>분류 미확인</option>
-                      <option value="investment">투자</option>
-                      <option value="value_up">Value Up</option>
-                      <option value="joint_research">공동 연구</option>
-                      <option value="n_a">N/A</option>
-                      <option value="unknown">Unknown</option>
-                    </select>
-                  </div>
-                  <div class="oi-classification-summary">
-                    <div id="detailOiPartnershipNoteShell" class="review-reason-shell oi-note-shell">
-                      <textarea
-                        id="detailOiPartnershipNote"
-                        class="review-reason-input"
+                      <div class="oi-classification-summary">
+                        <div id="detailOiPartnershipNoteShell" class="review-reason-shell oi-note-shell">
+                          <textarea
+                            id="detailOiPartnershipNote"
+                            class="review-reason-input"
+                            maxlength="500"
+                            rows="2"
+                            autocomplete="off"
+                            placeholder="OI Partnership 분류 근거를 입력"
+                            aria-label="OI Partnership 분류 근거"
+                            title="OI 파트너십 분류 근거를 짧게 요약합니다."
+                          ></textarea>
+                        </div>
+                      </div>
+                      <div class="review-info-label action-date-label">
+                        <div class="review-info-label-row action-date-meta-row">
+                          <span class="review-info-primary-label">Action Date</span>
+                          <span class="metadata-divider" aria-hidden="true">·</span>
+                          <small>Set by Asset Owner</small>
+                        </div>
+                      </div>
+                      <div class="action-info-fields">
+                        <input id="detailActionDate" type="date" autocomplete="off" aria-label="Action date" />
+                        <input id="detailActionOwner" type="text" maxlength="100" autocomplete="off" placeholder="담당자 이름 또는 이메일" aria-label="담당자 이름 또는 이메일" title="가입된 활성 사용자 이름 또는 이메일을 정확히 입력하세요. 해당 계정으로 Action Date 알림이 발송됩니다." />
+                      </div>
+                      <input
+                        id="detailActionPlan"
+                        class="review-row-note"
+                        type="text"
                         maxlength="500"
-                        rows="2"
                         autocomplete="off"
-                        placeholder="OI Partnership 분류 근거를 입력"
-                        aria-label="OI Partnership 분류 근거"
-                        title="OI 파트너십 분류 근거를 짧게 요약합니다."
-                      ></textarea>
+                        placeholder="확인할 데이터 또는 향후 F/U 계획을 한 문장으로 입력"
+                        aria-label="확인할 데이터 또는 향후 계획"
+                      />
                     </div>
+                    <div id="detailCustomMetricTable" class="custom-metric-table" hidden></div>
                   </div>
-                  <div class="review-info-label action-date-label">
-                    <div class="review-info-label-row action-date-meta-row">
-                      <span class="review-info-primary-label">Action Date</span>
-                      <span class="metadata-divider" aria-hidden="true">·</span>
-                      <small>Set by Asset Owner</small>
-                    </div>
-                  </div>
-                  <div class="action-info-fields">
-                    <input id="detailActionDate" type="date" autocomplete="off" aria-label="Action date" />
-                    <input id="detailActionOwner" type="text" maxlength="100" autocomplete="off" placeholder="담당자 이름 또는 이메일" aria-label="담당자 이름 또는 이메일" title="가입된 활성 사용자 이름 또는 이메일을 정확히 입력하세요. 해당 계정으로 Action Date 알림이 발송됩니다." />
-                  </div>
-                  <input
-                    id="detailActionPlan"
-                    class="review-row-note"
-                    type="text"
-                    maxlength="500"
-                    autocomplete="off"
-                    placeholder="확인할 데이터 또는 향후 F/U 계획을 한 문장으로 입력"
-                    aria-label="확인할 데이터 또는 향후 계획"
-                  />
                 </section>
               </div>
               <div class="review-info-toggle-row">
@@ -846,6 +866,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260905-monitor-reason-text"></script>
+    <script type="module" src="./src/detail.js?v=20260907-custom-project-panel-1"></script>
   </body>
 </html>
