@@ -92,7 +92,15 @@
     "created_by_user_id": null,
     "created_by_email": null,
     "created_at": "2026-09-06T01:59:30.006611+00:00",
-    "updated_at": "2026-09-06T01:59:30.006611+00:00"
+    "updated_at": "2026-09-06T15:58:45.214866+00:00",
+    "members": [
+      {
+        "email": "joowon.jung@sk.com",
+        "role": "owner",
+        "added_by": "joowon.jung@sk.com",
+        "added_at": "2026-09-06T15:58:45.214866+00:00"
+      }
+    ]
   },
   {
     "id": "proj_6c24a10eb5",

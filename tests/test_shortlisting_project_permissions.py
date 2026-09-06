@@ -76,8 +76,17 @@ class RoleResolutionTests(unittest.TestCase):
         user = make_account("owner@bar.com")
         self.assertEqual(main.shortlisting_project_role_for_account(project, user), "owner")
 
-    def test_oic_default_has_no_members_key(self) -> None:
-        self.assertNotIn("members", main.default_shortlisting_project())
+    def test_oic_default_starts_with_empty_members(self) -> None:
+        oic_project = main.default_shortlisting_project()
+        self.assertEqual(oic_project.get("members"), [])
+        # No explicit member yet: only site admins can act as owner.
+        self.assertEqual(main.shortlisting_project_role_for_account(oic_project, make_account("nobody@x.com")), "read")
+        self.assertEqual(main.shortlisting_project_role_for_account(oic_project, make_account("admin@x.com", role="admin")), "owner")
+
+    def test_oic_default_can_be_granted_explicit_members(self) -> None:
+        oic_project = main.default_shortlisting_project()
+        oic_project["members"].append({"email": "writer@x.com", "role": "write", "added_by": "admin@x.com", "added_at": "now"})
+        self.assertEqual(main.shortlisting_project_role_for_account(oic_project, make_account("writer@x.com")), "write")
 
 
 class RecordStateEndpointPermissionTests(unittest.TestCase):
@@ -311,6 +320,68 @@ class ActionDateReminderPerProjectTests(unittest.TestCase):
         mock_send.assert_called_once()
         self.assertEqual(result["sent"], 1)
         self.assertEqual(len(record["meta"]["shortlisting_projects"]["proj_x"]["action_date_reminders"]), 1)
+
+
+class OicPermissionParityTests(unittest.TestCase):
+    """oic_default now shares the same members[]/role model as custom Projects
+    for /focus-management, while column management stays permanently blocked
+    (its 7 columns are hardcoded, not user-managed)."""
+
+    def call_focus_management(self, oic_project: dict, account: dict, payload: dict):
+        record = full_scout_record()
+        record_id = main.record_key(record)
+        with (
+            patch.object(main, "require_authenticated_user", return_value=account),
+            patch.object(main, "load_shortlisting_projects", return_value=[oic_project]),
+            patch.object(main, "load_records", return_value=[record]),
+            patch.object(main, "save_records"),
+        ):
+            return asyncio.run(main.update_focus_management(record_id, FakeRequest(payload)))
+
+    def test_oic_write_member_can_use_focus_management(self) -> None:
+        oic_project = main.default_shortlisting_project()
+        oic_project["members"].append({"email": "writer@x.com", "role": "write", "added_by": "x", "added_at": "now"})
+        result = self.call_focus_management(oic_project, make_account("writer@x.com"), {"action": "add"})
+        self.assertTrue(result["ok"])
+
+    def test_oic_unlisted_user_cannot_use_focus_management(self) -> None:
+        oic_project = main.default_shortlisting_project()
+        with self.assertRaises(HTTPException) as ctx:
+            self.call_focus_management(oic_project, make_account("stranger@x.com"), {"action": "add"})
+        self.assertEqual(ctx.exception.status_code, 403)
+
+    def test_oic_admin_still_works_without_membership(self) -> None:
+        oic_project = main.default_shortlisting_project()
+        result = self.call_focus_management(oic_project, make_account("admin@x.com", role="admin"), {"action": "add"})
+        self.assertTrue(result["ok"])
+
+    def test_oic_column_add_blocked_even_for_owner(self) -> None:
+        oic_project = main.default_shortlisting_project()
+        oic_project["members"].append({"email": "owner@x.com", "role": "owner", "added_by": "x", "added_at": "now"})
+        with (
+            patch.object(main, "require_authenticated_user", return_value=make_account("owner@x.com")),
+            patch.object(main, "load_shortlisting_projects", return_value=[oic_project]),
+            patch.object(main, "save_shortlisting_projects"),
+        ):
+            with self.assertRaises(HTTPException) as ctx:
+                asyncio.run(main.create_shortlisting_metric_column(
+                    main.DEFAULT_SHORTLISTING_PROJECT_ID,
+                    FakeRequest({"label": "새 지표", "description": "", "return_type": "boolean"}),
+                ))
+        self.assertEqual(ctx.exception.status_code, 400)
+
+    def test_oic_members_can_now_be_managed(self) -> None:
+        oic_project = main.default_shortlisting_project()
+        with (
+            patch.object(main, "require_authenticated_user", return_value=make_account("admin@x.com", role="admin")),
+            patch.object(main, "load_shortlisting_projects", return_value=[oic_project]),
+            patch.object(main, "save_shortlisting_projects"),
+        ):
+            result = asyncio.run(main.upsert_shortlisting_project_member(
+                main.DEFAULT_SHORTLISTING_PROJECT_ID, FakeRequest({"email": "new@x.com", "role": "write"})
+            ))
+        self.assertTrue(result["ok"])
+        self.assertEqual(len(oic_project["members"]), 1)
 
 
 if __name__ == "__main__":

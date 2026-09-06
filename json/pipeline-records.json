@@ -12,7 +12,7 @@
         "added_at": "2026-07-28T14:52:28.874464+00:00",
         "user_comment": "",
         "due_date": "2026-08-27",
-        "updated_at": "2026-09-06T12:43:31.138654+00:00",
+        "updated_at": "2026-09-06T15:51:26.497715+00:00",
         "updated_source": "dashboard_tab3",
         "updated_by": "127.0.0.1",
         "owner_name": "",
@@ -2484,6 +2484,26 @@
           "field": "focus_management.add",
           "previous_value": false,
           "new_value": true
+        },
+        {
+          "id": "6634a44d9c6f4e0b8d38cd1eb47be955",
+          "changed_at": "2026-09-06T15:51:15.555692+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.user_comment",
+          "previous_value": "",
+          "new_value": "qa test write comment"
+        },
+        {
+          "id": "95422da164ce4a759c2e3a5f1b000dad",
+          "changed_at": "2026-09-06T15:51:26.497733+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.user_comment",
+          "previous_value": "qa test write comment",
+          "new_value": ""
         }
       ],
       "storage_profile": "dashboard_hybrid_v1",

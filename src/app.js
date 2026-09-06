@@ -560,6 +560,7 @@ const elements = {
   shortlistingSettingsMembersPane: document.querySelector('#shortlistingSettingsMembersPane'),
   shortlistingSettingsMetricsPane: document.querySelector('#shortlistingSettingsMetricsPane'),
   shortlistingMemberManagerBody: document.querySelector('#shortlistingMemberManagerBody'),
+  shortlistingMemberSearchInput: document.querySelector('#shortlistingMemberSearchInput'),
   shortlistingMemberPickerList: document.querySelector('#shortlistingMemberPickerList'),
   shortlistingMemberRoleSelect: document.querySelector('#shortlistingMemberRoleSelect'),
   shortlistingMemberAddButton: document.querySelector('#shortlistingMemberAddButton'),
@@ -7109,10 +7110,18 @@ async function loadUserDirectory() {
   }
 }
 
+function userDirectoryNameFor(email) {
+  const normalized = String(email || '').trim().toLowerCase();
+  return state.userDirectory.find((user) => user.email === normalized)?.name || '';
+}
+
 function renderShortlistingMemberPicker() {
   if (!elements.shortlistingMemberPickerList) return;
   const existingEmails = new Set((settingsModalProject()?.members || []).map((member) => member.email));
-  const candidates = state.userDirectory.filter((user) => !existingEmails.has(user.email));
+  const searchTerm = (elements.shortlistingMemberSearchInput?.value || '').trim().toLowerCase();
+  const candidates = state.userDirectory
+    .filter((user) => !existingEmails.has(user.email))
+    .filter((user) => !searchTerm || `${user.name} ${user.email}`.toLowerCase().includes(searchTerm));
   elements.shortlistingMemberPickerList.innerHTML = candidates.length
     ? candidates.map((user) => `
       <label class="shortlisting-member-picker-row">
@@ -7121,7 +7130,7 @@ function renderShortlistingMemberPicker() {
         <span class="shortlisting-member-picker-email">${escapeHtml(user.email)}</span>
       </label>
     `).join('')
-    : `<p class="shortlisting-member-picker-empty">추가할 수 있는 계정이 없습니다.</p>`;
+    : `<p class="shortlisting-member-picker-empty">${searchTerm ? '검색 결과가 없습니다.' : '추가할 수 있는 계정이 없습니다.'}</p>`;
 }
 
 function openShortlistingProjectSettingsModal(projectId) {
@@ -7136,7 +7145,11 @@ function openShortlistingProjectSettingsModal(projectId) {
     elements.shortlistingMemberModalStatus.classList.remove('is-error');
   }
   if (elements.shortlistingMemberRoleSelect) elements.shortlistingMemberRoleSelect.value = 'write';
-  loadUserDirectory().then(renderShortlistingMemberPicker);
+  if (elements.shortlistingMemberSearchInput) elements.shortlistingMemberSearchInput.value = '';
+  loadUserDirectory().then(() => {
+    renderShortlistingMemberPicker();
+    renderShortlistingMemberManagerTable();
+  });
   switchShortlistingSettingsTab('members');
   elements.shortlistingMetricModal.hidden = false;
 }
@@ -7152,12 +7165,13 @@ function renderShortlistingMemberManagerTable() {
   elements.shortlistingMemberManagerBody.innerHTML = members.length
     ? members.map((member) => `
       <tr data-member-email="${escapeHtml(member.email)}">
+        <td>${escapeHtml(userDirectoryNameFor(member.email) || '-')}</td>
         <td>${escapeHtml(member.email)}</td>
         <td>${escapeHtml(member.role)}</td>
         <td><button type="button" class="shortlisting-metric-manager-delete-button" data-delete-member-email="${escapeHtml(member.email)}">삭제</button></td>
       </tr>
     `).join('')
-    : `<tr class="shortlisting-metric-manager-empty-row"><td colspan="3">등록된 멤버가 없습니다 (owner 제외 모두 읽기 전용).</td></tr>`;
+    : `<tr class="shortlisting-metric-manager-empty-row"><td colspan="4">등록된 멤버가 없습니다 (owner 제외 모두 읽기 전용).</td></tr>`;
 }
 
 function setShortlistingMemberStatus(message, isError) {
@@ -7190,7 +7204,7 @@ async function addShortlistingMember(projectId, email, role) {
 
 async function submitShortlistingMemberAdd() {
   const projectId = state.settingsModalProjectId;
-  if (!projectId || projectId === DEFAULT_SHORTLISTING_PROJECT_ID) return;
+  if (!projectId) return;
   const role = elements.shortlistingMemberRoleSelect?.value || 'write';
   const checkedEmails = Array.from(
     elements.shortlistingMemberPickerList?.querySelectorAll('[data-member-picker-checkbox]:checked') || []
@@ -7222,7 +7236,7 @@ async function submitShortlistingMemberAdd() {
 
 async function deleteShortlistingMember(email) {
   const projectId = state.settingsModalProjectId;
-  if (!projectId || projectId === DEFAULT_SHORTLISTING_PROJECT_ID || !email) return;
+  if (!projectId || !email) return;
   if (!window.confirm(`${email} 멤버를 삭제하시겠습니까?`)) return;
   try {
     const response = await fetch(`${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/members/${encodeURIComponent(email)}`, {
@@ -17009,6 +17023,7 @@ elements.shortlistingMetricManagerBody?.addEventListener('click', (event) => {
   deleteShortlistingMetricColumn(deleteButton.dataset.deleteMetricId);
 });
 elements.shortlistingMemberAddButton?.addEventListener('click', submitShortlistingMemberAdd);
+elements.shortlistingMemberSearchInput?.addEventListener('input', renderShortlistingMemberPicker);
 elements.shortlistingMemberManagerBody?.addEventListener('click', (event) => {
   const deleteButton = event.target.closest('[data-delete-member-email]');
   if (!deleteButton) return;

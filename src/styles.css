@@ -6438,6 +6438,11 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   padding: 0 16px;
 }
 
+.shortlisting-member-picker-search {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
 .shortlisting-member-picker-list {
   max-height: 220px;
   overflow-y: auto;
