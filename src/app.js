@@ -14,6 +14,10 @@ import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './cr
 const API_URL = '/api/records';
 const DASHBOARD_SUMMARY_URL = '/api/dashboard-summary';
 const CATEGORY_SYNONYMS_URL = '/api/category-synonyms';
+const SHORTLISTING_PROJECTS_URL = '/api/shortlisting/projects';
+const USER_DIRECTORY_URL = '/api/users/directory';
+const DEFAULT_SHORTLISTING_PROJECT_ID = 'oic_default';
+const SHORTLISTING_PROJECT_STORAGE_KEY = 'skbp.dashboard.activeShortlistingProjectId.v1';
 const DEFAULT_PAGE_SIZE = 50;
 const PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.pageSize.v1';
 const STEP0_MAX_SELECTED_CANDIDATES = 20;
@@ -30,7 +34,7 @@ const BOM_PREFIX = String.fromCharCode(0xfeff);
 const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
 const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
 const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v4';
-const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v7';
+const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v9';
 const CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY = 'skbp.dashboard.criteriaGuideLanguage.v1';
 const PIPELINE_RETURN_FOCUS_STORAGE_KEY = 'skbp.pipeline.return-focus.v1';
 const PIPELINE_ROW_HIGHLIGHT_MS = 1800;
@@ -166,8 +170,9 @@ const FOCUS_DEFAULT_COLUMN_WIDTHS = {
   target: 170,
   mainIndication: 108,
   stage: 92,
+  totalScore30: 64,
   filter2: 82,
-  totalScore: 92,
+  totalScore: 64,
   filter3: 82,
   inVivo: 56,
   inVitro: 56,
@@ -175,6 +180,7 @@ const FOCUS_DEFAULT_COLUMN_WIDTHS = {
   dd: 42,
   diseaseLinkage: 58,
   focusDueDate: 108,
+  customScore: 64,
   focusManage: 106
 };
 
@@ -187,8 +193,9 @@ const FOCUS_MIN_COLUMN_WIDTHS = {
   target: 160,
   mainIndication: 96,
   stage: 84,
+  totalScore30: 52,
   filter2: 68,
-  totalScore: 76,
+  totalScore: 52,
   filter3: 66,
   inVivo: 48,
   inVitro: 48,
@@ -196,14 +203,15 @@ const FOCUS_MIN_COLUMN_WIDTHS = {
   dd: 38,
   diseaseLinkage: 46,
   focusDueDate: 88,
+  customScore: 52,
   focusManage: 62
 };
 
 const MAX_COLUMN_WIDTH = 720;
 const PROMPT_TOOLTIP =
-  'GPT Full Scout v3.8 지침을 복사합니다. Fast Triage에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
+  'GPT Advanced Research v3.8 지침을 복사합니다. Simple Research에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
 const TRIAGE_PROMPT_TOOLTIP =
-  'GPT Fast Triage v3.7 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / INSUFFICIENT로 screening합니다.';
+  'GPT Simple Research v3.7 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / INSUFFICIENT로 screening합니다.';
 const LATEST_TRIAGE_RUBRIC_VERSION = '3.7';
 const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.8';
 const LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION = 'v3-8-moa-expansion-investigation-notes-2026-09-01';
@@ -219,13 +227,13 @@ const AGENT_INPUT_PLACEHOLDERS = {
 };
 const DATA_UPLOAD_GUIDES = {
   triage: {
-    title: 'Fast Triage 실행 가이드',
+    title: 'Simple Research 실행 가이드',
     recommendation: 'TAB1 전용 · GPT High · 권장 10–20개/회',
     inputLabel: 'GPT 지침 1 전체 응답',
     placeholder: [
-      '새 브라우저 탭에서 GPT를 열고, 오른쪽 Fast Triage 실행 가이드 순서대로 조사를 완료한 뒤 생성된 전체 응답을 그대로 붙여넣으세요.',
+      '새 브라우저 탭에서 GPT를 열고, 오른쪽 Simple Research 실행 가이드 순서대로 조사를 완료한 뒤 생성된 전체 응답을 그대로 붙여넣으세요.',
       '',
-      '이 입력란은 Fast Triage 형식만 검증합니다. 지침 1은 최대 50개까지 처리할 수 있으나 안정적인 조사를 위해 10~20개씩 실행하는 것을 권장합니다.'
+      '이 입력란은 Simple Research 형식만 검증합니다. 지침 1은 최대 50개까지 처리할 수 있으나 안정적인 조사를 위해 10~20개씩 실행하는 것을 권장합니다.'
     ].join('\n'),
     steps: [
       {
@@ -258,13 +266,13 @@ const DATA_UPLOAD_GUIDES = {
     ]
   },
   full: {
-    title: 'Full Scout 실행 가이드',
+    title: 'Advanced Research 실행 가이드',
     recommendation: 'TAB2 전용 · GPT High · 1개/회',
     inputLabel: 'GPT 지침 2 전체 응답',
     placeholder: [
-      '새 브라우저 탭에서 GPT를 열고, 오른쪽 Full Scout 실행 가이드 순서대로 심층조사를 완료한 뒤 생성된 전체 응답을 그대로 붙여넣으세요.',
+      '새 브라우저 탭에서 GPT를 열고, 오른쪽 Advanced Research 실행 가이드 순서대로 심층조사를 완료한 뒤 생성된 전체 응답을 그대로 붙여넣으세요.',
       '',
-      '이 입력란은 Full Scout 형식만 검증합니다. 관련 NCDP 파일이 있다면 GPT 실행 시 GPT 지침 2와 함께 첨부할 수 있습니다.'
+      '이 입력란은 Advanced Research 형식만 검증합니다. 관련 NCDP 파일이 있다면 GPT 실행 시 GPT 지침 2와 함께 첨부할 수 있습니다.'
     ].join('\n'),
     steps: [
       {
@@ -436,7 +444,12 @@ const state = {
   activeAgentSessionId: localStorage.getItem(AGENT_ACTIVE_SESSION_KEY) || '',
   categorySynonyms: { country: [], stage: [], modality: [], theme: [], indication: [] },
   categorySynonymsLoaded: false,
-  latestOiPartnershipCriteriaVersion: '1.0'
+  latestOiPartnershipCriteriaVersion: '1.0',
+  shortlistingProjects: [],
+  activeShortlistingProjectId: localStorage.getItem(SHORTLISTING_PROJECT_STORAGE_KEY) || DEFAULT_SHORTLISTING_PROJECT_ID,
+  settingsModalProjectId: null,
+  userDirectory: [],
+  userDirectoryLoaded: false
 };
 
 const elements = {
@@ -529,6 +542,39 @@ const elements = {
   columnSettingsButton: document.querySelector('#columnSettingsButton'),
   columnSettingsPanel: document.querySelector('#columnSettingsPanel'),
   columnSettingsGrid: document.querySelector('#columnSettingsGrid'),
+  topShortlistingActions: document.querySelector('.top-shortlisting-actions'),
+  shortlistingProjectSwitchButton: document.querySelector('#shortlistingProjectSwitchButton'),
+  shortlistingProjectSwitchLabel: document.querySelector('#shortlistingProjectSwitchLabel'),
+  shortlistingProjectSwitchMenu: document.querySelector('#shortlistingProjectSwitchMenu'),
+  addShortlistingProjectButton: document.querySelector('#addShortlistingProjectButton'),
+  shortlistingProjectModal: document.querySelector('#shortlistingProjectModal'),
+  shortlistingProjectNameInput: document.querySelector('#shortlistingProjectNameInput'),
+  shortlistingProjectDescriptionInput: document.querySelector('#shortlistingProjectDescriptionInput'),
+  shortlistingProjectModalStatus: document.querySelector('#shortlistingProjectModalStatus'),
+  shortlistingProjectModalCancel: document.querySelector('#shortlistingProjectModalCancel'),
+  shortlistingProjectModalSave: document.querySelector('#shortlistingProjectModalSave'),
+  shortlistingMetricModal: document.querySelector('#shortlistingMetricModal'),
+  shortlistingMetricModalTitle: document.querySelector('#shortlistingMetricModalTitle'),
+  shortlistingSettingsMembersTab: document.querySelector('#shortlistingSettingsMembersTab'),
+  shortlistingSettingsMetricsTab: document.querySelector('#shortlistingSettingsMetricsTab'),
+  shortlistingSettingsMembersPane: document.querySelector('#shortlistingSettingsMembersPane'),
+  shortlistingSettingsMetricsPane: document.querySelector('#shortlistingSettingsMetricsPane'),
+  shortlistingMemberManagerBody: document.querySelector('#shortlistingMemberManagerBody'),
+  shortlistingMemberPickerList: document.querySelector('#shortlistingMemberPickerList'),
+  shortlistingMemberRoleSelect: document.querySelector('#shortlistingMemberRoleSelect'),
+  shortlistingMemberAddButton: document.querySelector('#shortlistingMemberAddButton'),
+  shortlistingMemberModalStatus: document.querySelector('#shortlistingMemberModalStatus'),
+  shortlistingMetricManagerBody: document.querySelector('#shortlistingMetricManagerBody'),
+  shortlistingMetricLabelInput: document.querySelector('#shortlistingMetricLabelInput'),
+  shortlistingMetricDescriptionInput: document.querySelector('#shortlistingMetricDescriptionInput'),
+  shortlistingMetricReturnTypeSelect: document.querySelector('#shortlistingMetricReturnTypeSelect'),
+  shortlistingMetricListOptionsInput: document.querySelector('#shortlistingMetricListOptionsInput'),
+  shortlistingMetricMaxValueInput: document.querySelector('#shortlistingMetricMaxValueInput'),
+  shortlistingMetricModalStatus: document.querySelector('#shortlistingMetricModalStatus'),
+  shortlistingMetricModalCancel: document.querySelector('#shortlistingMetricModalCancel'),
+  shortlistingMetricModalSave: document.querySelector('#shortlistingMetricModalSave'),
+  shortlistingMetricLockedNote: document.querySelector('#shortlistingMetricLockedNote'),
+  shortlistingMetricAddRow: document.querySelector('#shortlistingMetricAddRow'),
   pipelineTableTabs: document.querySelectorAll('[data-table-mode]'),
   knowledgeMapTab: document.querySelector('#knowledgeMapTab'),
   knowledgeMapPanel: document.querySelector('#knowledgeMapPanel'),
@@ -670,6 +716,7 @@ let step0StatStripLastRenderKey = null;
 let dashboardDonutAnimationFrames = [];
 let dashboardDonutAnimationTimers = [];
 const focusSaveQueues = new Map();
+const shortlistingProjectSaveQueues = new Map();
 let dataReuploadResolve = null;
 let activeDataReuploadMatches = [];
 let activeDataReuploadDecisions = new Map();
@@ -783,7 +830,7 @@ function rubricRefreshOutcomeCopy(data, workflowLabel, latestVersion) {
   const cleared = Array.isArray(data.cleared_manual_scoring_override_fields)
     ? data.cleared_manual_scoring_override_fields
     : [];
-  const filterLabel = workflowLabel === 'Fast Triage' ? 'Filter 1' : 'Filter 2';
+  const filterLabel = workflowLabel === 'Simple Research' ? 'Filter 1' : 'Filter 2';
   if (data.status === 'updated') {
     return {
       title: `${filterLabel} AI 재평가 완료`,
@@ -1391,7 +1438,7 @@ function renderStep0ImportReviewList() {
                       <button type="button" class="identity-modal-cancel step0-import-representative-existing${representative === 'existing' ? ' is-active' : ''}" data-step0-import-review-action="representative" data-row-index="${match.row_index}" data-representative="existing">기존 Listing 값 우선</button>
                     </div>
                   </fieldset>` : selected && candidate.target_type === 'record' ? `
-                  <p class="step0-import-alias-guidance">Fast Triage·Full Scout의 공식 Asset·Company 표기는 유지됩니다. 이번 Listing의 이름은 검색용 별칭으로 자동 보존됩니다.</p>` : ''}
+                  <p class="step0-import-alias-guidance">Simple Research·Advanced Research의 공식 Asset·Company 표기는 유지됩니다. 이번 Listing의 이름은 검색용 별칭으로 자동 보존됩니다.</p>` : ''}
               </section>
             `;
           }).join('')}
@@ -2596,7 +2643,7 @@ function earlyStopInfo(record) {
   if (!triageRecord && /asset[\s_-]*identity[^\n]*not[\s_-]*verified|identity[^\n]*not[\s_-]*verified/i.test(`${reason}\n${parserStatus}`)) {
     return {
       type: 'identity',
-      reason: 'Asset identity를 확인하지 못해 Full Scout를 조기 종료했습니다.'
+      reason: 'Asset identity를 확인하지 못해 Advanced Research를 조기 종료했습니다.'
     };
   }
   if (stage === 'Discontinued / inactive') {
@@ -2709,7 +2756,7 @@ function filter2StatusLabel(value) {
 
 function recordFilter2Status(record, computedHardFilter) {
   if (isTriageRecord(record)) {
-    return { status: '-', reason: `Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} not run yet` };
+    return { status: '-', reason: `Advanced Research v${LATEST_FULL_SCOUT_RUBRIC_VERSION} not run yet` };
   }
   const manualStatus = normalizeFullStatus(humanReviewOverrides(record).filter_status);
   return manualStatus
@@ -2764,6 +2811,7 @@ function flattenRecord(record, index) {
   const table = record.structured_table || {};
   const scoring = record.scoring || {};
   const focusManagement = get(record, 'meta.focus_management', {});
+  const shortlistingProjectsState = get(record, 'meta.shortlisting_projects', {});
   const storedPartnershipType = String(focusManagement?.partnership_type || '').trim();
   const storedPartnershipSource = String(focusManagement?.partnership_classification_source || 'auto').trim().toLowerCase();
   const autoPartnershipType = String(focusManagement?.partnership_auto_suggestion || '').trim();
@@ -2901,6 +2949,17 @@ function flattenRecord(record, index) {
     focusOwner: String(focusManagement?.owner_name || ''),
     focusActionPlan: String(focusManagement?.action_plan || ''),
     focusAddedAt: String(focusManagement?.added_at || ''),
+    shortlistingProjectTracked: Object.fromEntries(
+      Object.entries(shortlistingProjectsState || {}).map(([projectId, projectState]) => [projectId, projectState?.is_tracked === true])
+    ),
+    shortlistingProjectTrackingStatus: Object.fromEntries(
+      Object.entries(shortlistingProjectsState || {}).map(([projectId, projectState]) => [
+        projectId,
+        projectState?.is_tracked === true && projectState?.tracking_status === 'stationary' ? 'stationary'
+          : projectState?.is_tracked === true ? 'priority'
+          : 'untracked'
+      ])
+    ),
     teamCommentCount: teamComments.length,
     latestTeamComment: String(latestTeamComment?.body || ''),
     latestTeamCommentAuthor: String(latestTeamComment?.author || ''),
@@ -3003,7 +3062,7 @@ const FAST_TRIAGE_EXTRA_COLUMN_DEFINITIONS = [
   { key: 'moa', label: 'MoA', path: 'structured_table.moa' },
   { key: 'verifiedSourceCount', label: 'Verified sources', path: 'triage.verified_public_source_count' },
   { key: 'triageWhy', label: 'Triage rationale', path: 'triage.why' },
-  { key: 'fullScoutEvidence', label: 'Full Scout evidence needed', path: 'triage.missing_evidence_needed_for_full_scout' },
+  { key: 'fullScoutEvidence', label: 'Advanced Research evidence needed', path: 'triage.missing_evidence_needed_for_full_scout' },
   { key: 'firstSource', label: 'First source URL', path: 'structured_table.sources.0.source_url' },
   { key: 'uncertainPoints', label: 'Uncertain points', path: 'validation.uncertain_points' }
 ];
@@ -3090,12 +3149,12 @@ function sortableHeader(label, sortKey, columnKey, attrs = '') {
   return `<th ${attrs} ${columnAttrs(columnKey)}><button data-sort="${escapeHtml(sortKey)}" data-sort-label="${escapeHtml(label)}" type="button">${escapeHtml(label)}</button>${resizeHandle(columnKey)}</th>`;
 }
 
-function scoreFilterHeader(label, sortKey, columnKey, filterKey = sortKey) {
+function scoreFilterHeader(label, sortKey, columnKey, filterKey = sortKey, extraClass = '') {
   const definition = SCORE_HEADER_FILTERS[filterKey];
-  if (!definition) return sortableHeader(label, sortKey, columnKey);
+  if (!definition) return sortableHeader(label, sortKey, columnKey, extraClass ? `class="${extraClass}"` : '');
   const summary = scoreFilterSummary(filterKey);
   const hasSelection = Boolean(summary);
-  return `<th class="score-filter-header${hasSelection ? ' has-score-filter' : ''}" ${columnAttrs(columnKey)}>
+  return `<th class="score-filter-header${hasSelection ? ' has-score-filter' : ''}${extraClass ? ` ${extraClass}` : ''}" ${columnAttrs(columnKey)}>
     <div class="score-filter-header-controls">
       <button
         class="score-filter-header-trigger"
@@ -3248,7 +3307,10 @@ function activeScoreColumnKeys() {
 
 function rowMatchesActiveTableMode(row) {
   if (activeTableMode() === 'focus') {
-    return !row.isTriage && row.focusTracked;
+    if (state.activeShortlistingProjectId === DEFAULT_SHORTLISTING_PROJECT_ID) {
+      return !row.isTriage && row.focusTracked;
+    }
+    return !row.isTriage && row.shortlistingProjectTracked?.[state.activeShortlistingProjectId] === true;
   }
   if (activeTableMode() === 'full') {
     return !row.isTriage;
@@ -3257,7 +3319,7 @@ function rowMatchesActiveTableMode(row) {
   return Boolean(row.isVirtualTriage || (status && status !== '-'));
 }
 
-const FOCUS_TABLE_COLUMN_KEYS = [
+const FOCUS_TABLE_FIXED_LEFT_COLUMN_KEYS = [
   'select',
   'company',
   'country',
@@ -3267,19 +3329,58 @@ const FOCUS_TABLE_COLUMN_KEYS = [
   'mainIndication',
   'stage',
   'filter2',
-  'totalScore',
-  'filter3',
-  'dd',
-  'inVivo',
-  'inVitro',
-  'admet',
-  'diseaseLinkage',
+  'totalScore'
+];
+// 'dd' (Due Diligence) intentionally omitted from the OIC default Project's
+// visible columns for now — hidden from the Custom Review table per request.
+const FOCUS_TABLE_OIC_METRIC_COLUMN_KEYS = ['filter3', 'inVivo', 'inVitro', 'admet', 'diseaseLinkage'];
+
+const FOCUS_TABLE_COLUMN_KEYS = [
+  ...FOCUS_TABLE_FIXED_LEFT_COLUMN_KEYS,
+  ...FOCUS_TABLE_OIC_METRIC_COLUMN_KEYS,
   'focusDueDate',
+  'customScore',
+  'totalScore30',
   'focusManage'
 ];
 
+function activeShortlistingMetricColumns() {
+  if (state.activeShortlistingProjectId === DEFAULT_SHORTLISTING_PROJECT_ID) return [];
+  return activeShortlistingProject()?.metric_columns || [];
+}
+
+function focusTableColumnKeys() {
+  if (state.activeShortlistingProjectId === DEFAULT_SHORTLISTING_PROJECT_ID) return FOCUS_TABLE_COLUMN_KEYS;
+  return [
+    ...FOCUS_TABLE_FIXED_LEFT_COLUMN_KEYS,
+    ...activeShortlistingMetricColumns().map((column) => `metric:${column.id}`),
+    'focusDueDate',
+    'customScore',
+    'totalScore30',
+    'focusManage'
+  ];
+}
+
+function recomputeShortlistingScoreFields() {
+  const projectId = state.activeShortlistingProjectId;
+  const isDefaultProject = projectId === DEFAULT_SHORTLISTING_PROJECT_ID;
+  for (const row of state.rows) {
+    const rawCustomScore = isDefaultProject
+      ? get(row.raw, 'meta.focus_management.custom_score', 0)
+      : get(row.raw, `meta.shortlisting_projects.${projectId}.custom_score`, 0);
+    const customScore = Number.isFinite(rawCustomScore) ? rawCustomScore : 0;
+    row.customScore = customScore;
+    row.totalScore30 = Number.isFinite(row.totalScore) ? row.totalScore + customScore : null;
+    row.focusDueDate = String(
+      (isDefaultProject
+        ? get(row.raw, 'meta.focus_management.due_date', '')
+        : get(row.raw, `meta.shortlisting_projects.${projectId}.due_date`, '')) || ''
+    );
+  }
+}
+
 function visibleColumnKeys(extraColumns = selectedExtraColumns()) {
-  if (activeTableMode() === 'focus') return FOCUS_TABLE_COLUMN_KEYS;
+  if (activeTableMode() === 'focus') return focusTableColumnKeys();
   const keys = [
     'select',
     'company',
@@ -3524,7 +3625,7 @@ const FOCUS_HEADER_FILTERS = {
   filter2: {
     label: 'Filter 2',
     kind: 'status',
-    description: 'Full Scout 최종 판정',
+    description: 'Advanced Research 최종 판정',
     options: [
       { value: 'PASS', label: 'PASS' },
       { value: 'REVIEW', label: filter2StatusLabel('REVIEW') },
@@ -4287,9 +4388,9 @@ function renderMultiFilter(element, key, values) {
 const WORKFLOW_COPY = {
   triage: {
     stage: '1차 스크리닝',
-    description: '관심 적응증과 공개 근거를 기준으로 Full Scout 검토 후보를 빠르게 선별합니다.',
+    description: '관심 적응증과 공개 근거를 기준으로 Advanced Research 검토 후보를 빠르게 선별합니다.',
     filterLabel: 'Filter 1',
-    priorityTitle: 'Full Scout 대기 후보',
+    priorityTitle: 'Advanced Research 대기 후보',
     prioritySubtitle: 'SELECT 후보 · Pipeline Stage 분포'
   },
   full: {
@@ -4301,7 +4402,7 @@ const WORKFLOW_COPY = {
   },
   focus: {
     stage: '3차 집중 관리',
-    description: '즐겨찾기로 등록한 Full Scout 후보의 OI Partnership Type과 후속 Action을 관리합니다.',
+    description: '즐겨찾기로 등록한 Advanced Research 후보의 OI Partnership Type과 후속 Action을 관리합니다.',
     filterLabel: 'Filter 3',
     priorityTitle: 'F/U Action',
     prioritySubtitle: 'Action date 설정 항목 · 임박 순'
@@ -4642,7 +4743,7 @@ function renderMetrics() {
   }
   const slots = mode === 'triage'
     ? [
-        ['metricTotal', { label: 'Fast Triage Assets', value: kpis.assets ?? 0, icon: 'assets', tone: 'blue' }],
+        ['metricTotal', { label: 'Simple Assets', value: kpis.assets ?? 0, icon: 'assets', tone: 'blue' }],
         ['metricPass', { label: 'SELECT', value: kpis.select ?? 0, icon: 'check', tone: 'green' }],
         ['metricScore', { label: 'REJECT', value: kpis.reject ?? 0, icon: 'reject', tone: 'red' }],
         ['metricTarget', { label: 'INSUFFICIENT', value: kpis.insufficient ?? 0, icon: 'question', tone: 'gray' }],
@@ -4650,14 +4751,14 @@ function renderMetrics() {
       ]
     : mode === 'focus'
       ? [
-          ['metricTotal', { label: 'Shortlisting Pipelines', value: kpis.pipelines ?? 0, icon: 'assets', tone: 'purple' }],
+          ['metricTotal', { label: 'Custom Pipelines', value: kpis.pipelines ?? 0, icon: 'assets', tone: 'purple' }],
           ['metricPass', { label: '투자', value: kpis.investment ?? 0, icon: 'investment', tone: 'green' }],
           ['metricScore', { label: 'Value Up', value: kpis.value_up ?? 0, icon: 'value', tone: 'blue' }],
           ['metricTarget', { label: '공동연구', value: kpis.joint_research ?? 0, icon: 'research', tone: 'purple' }],
           ['metricCountries', { label: '평균 총점 / 21', value: scoreValue, icon: 'score', tone: 'blue', hidden: true }]
         ]
       : [
-          ['metricTotal', { label: 'Full Scout Assets', value: kpis.assets ?? 0, icon: 'assets', tone: 'blue' }],
+          ['metricTotal', { label: 'Advanced Assets', value: kpis.assets ?? 0, icon: 'assets', tone: 'blue' }],
           ['metricPass', { label: 'PASS', value: kpis.pass ?? 0, icon: 'check', tone: 'green' }],
           ['metricScore', { label: filter2StatusLabel('REVIEW'), value: kpis.review ?? 0, icon: 'review', tone: 'amber' }],
           ['metricTarget', { label: filter2StatusLabel('FAIL'), value: kpis.fail ?? 0, icon: 'reject', tone: 'red' }],
@@ -4713,7 +4814,7 @@ function distributionDisplayLabel(kind, label) {
 function distributionDescription(kind, label) {
   const value = String(label || '').trim();
   if (kind === 'partnership' && /^TBD$/i.test(value)) {
-    return 'Shortlisting 후 OI Partnership 분류가 아직 이루어지지 않은 그룹입니다.';
+    return 'Custom Review 후 OI Partnership 분류가 아직 이루어지지 않은 그룹입니다.';
   }
   if ((kind === 'modality' || kind === 'modality-summary') && value === 'CGT') {
     return 'Cell Therapy와 Gene Therapy를 합산한 차트 전용 분류입니다.';
@@ -4741,7 +4842,7 @@ function distributionDescription(kind, label) {
   if (value === 'N/A') {
     return kind === 'theme'
       ? '파이프라인은 확인됐지만 SKBP 관심 Theme/Cluster 범위에 부합하지 않는 것으로 확인된 경우입니다.'
-      : '해당 항목이 적용되지 않거나, Fast Triage에서 파이프라인 identity를 확인하지 못한 경우입니다.';
+      : '해당 항목이 적용되지 않거나, Simple Research에서 파이프라인 identity를 확인하지 못한 경우입니다.';
   }
   return '';
 }
@@ -5052,7 +5153,7 @@ function fullScoutTriageAlias(row) {
     isVirtualTriage: true,
     filter1: status,
     hardFilter: status,
-    hardFilterReason: earlyStop?.reason || 'Full Scout 완료로 Fast Triage 공통 기준(TAR, MOA, Data)을 충족한 것으로 표시됩니다.'
+    hardFilterReason: earlyStop?.reason || 'Advanced Research 완료로 Simple Research 공통 기준(TAR, MOA, Data)을 충족한 것으로 표시됩니다.'
   };
 }
 
@@ -5165,7 +5266,7 @@ function renderWorkflowPriorityList(summary) {
       ? summary.action_required || []
       : summary.priority_pipelines || [];
   const emptyMessage = mode === 'triage'
-    ? '현재 Full Scout 대기 후보가 없습니다.'
+    ? '현재 Advanced Research 대기 후보가 없습니다.'
     : mode === 'focus'
       ? '현재 확인이 필요한 Action이 없습니다.'
       : '현재 표시할 Priority Pipeline이 없습니다.';
@@ -5383,6 +5484,7 @@ function syncTopDataActionsForVisibleTab() {
   // inherit the last table tab's upload or GPT-instruction actions on entry.
   if (isKnowledgeMapVisible) {
     if (elements.refreshButton) {
+      elements.refreshButton.hidden = false;
       elements.refreshButton.dataset.tooltip = '저장된 Pipeline으로 Knowledge Wiki Map을 최신화합니다.';
       elements.refreshButton.setAttribute('aria-label', 'Knowledge Wiki Map 최신화');
     }
@@ -5391,12 +5493,9 @@ function syncTopDataActionsForVisibleTab() {
     return;
   }
 
-  if (elements.refreshButton) {
-    elements.refreshButton.dataset.tooltip = '현재 페이지를 새로고침합니다. Score 기준 갱신은 각 Pipeline의 재평가 버튼에서 실행하세요.';
-    elements.refreshButton.setAttribute('aria-label', '새로고침');
-    const label = elements.refreshButton.querySelector('.data-refresh-label');
-    if (label) label.textContent = '새로고침';
-  }
+  // Outside Knowledge Map, this button was just an alias for a browser reload
+  // (see the click handler) — remove it rather than keep a no-op control.
+  if (elements.refreshButton) elements.refreshButton.hidden = true;
 
   const isStep0Visible = Boolean(elements.step0Panel && !elements.step0Panel.hidden);
   if (isStep0Visible) {
@@ -5572,9 +5671,9 @@ const STEP0_FILTER_KEYS = ['country', 'modality', 'theme', 'cluster', 'indicatio
 const STEP0_PROGRESS_FILTER_OPTIONS = [
   { value: 'pending', label: 'Listing' },
   { value: 'investigation_pending', label: '조사 대기' },
-  { value: 'fast_triage', label: 'Fast Triage' },
-  { value: 'full_scout', label: 'Full Scout' },
-  { value: 'shortlisting', label: 'Shortlisting' }
+  { value: 'fast_triage', label: 'Simple' },
+  { value: 'full_scout', label: 'Advanced' },
+  { value: 'shortlisting', label: 'Custom' }
 ];
 const STEP0_EVALUATION_FILTER_KEYS = ['pending', 'fast_triage', 'full_scout', 'shortlisting', 'comment', 'contact'];
 
@@ -5809,7 +5908,7 @@ function selectOption(value, currentValue, label = value) {
 function statusEditSelect(row, filterKey) {
   const value = row[filterKey];
   if (row.isVirtualTriage) {
-    const title = row.earlyStop?.reason || 'Full Scout 완료로 표시된 Fast Triage 상태입니다. Tab 2 결과를 엽니다.';
+    const title = row.earlyStop?.reason || 'Advanced Research 완료로 표시된 Simple Research 상태입니다. Tab 2 결과를 엽니다.';
     return `<span class="table-edit-select status-edit ${filterToneClass(value)} is-readonly" title="${escapeHtml(title)}">${escapeHtml(filter2StatusLabel(value))}</span>`;
   }
   const options = row.isTriage ? ['SELECT', 'REJECT', 'INSUFFICIENT'] : ['PASS', 'REVIEW', 'FAIL'];
@@ -5860,13 +5959,14 @@ function partnershipEditSelect(row) {
       ? 'HUMAN · 담당자 수동 분류'
       : `AUTO · OI Partnership v${row.filter3CriteriaVersion || state.latestOiPartnershipCriteriaVersion}`}`
   ].join('\n');
+  const disabledAttr = shortlistingRoleFor(DEFAULT_SHORTLISTING_PROJECT_ID) === 'read' ? ' disabled' : '';
   return `
     <select
       class="partnership-edit-select ${partnershipToneClass(value)} ${isManual ? 'is-human' : 'is-auto'}"
       data-record-id="${escapeHtml(row.id)}"
       data-previous-value="${escapeHtml(value)}"
       aria-label="${escapeHtml(row.asset)} filter 3 (partnership type)"
-      title="${escapeHtml(hoverText)}"
+      title="${escapeHtml(hoverText)}"${disabledAttr}
     >
       ${PARTNERSHIP_TYPE_OPTIONS.map((option) => selectOption(option.value, value, option.label)).join('')}
     </select>
@@ -5925,6 +6025,7 @@ function evidenceEditSelect(row, field, sourceField, label) {
   const value = row[field] || 'N/A';
   const source = row[sourceField];
   const tooltip = evidenceStatusMeaning(value);
+  const disabledAttr = shortlistingRoleFor(DEFAULT_SHORTLISTING_PROJECT_ID) === 'read' ? ' disabled' : '';
   return `
     <span class="evidence-tooltip help-tooltip" data-tooltip="${escapeHtml(tooltip)}">
       <select
@@ -5932,7 +6033,7 @@ function evidenceEditSelect(row, field, sourceField, label) {
         data-record-id="${escapeHtml(row.id)}"
         data-evidence-field="${escapeHtml(field)}"
         data-previous-value="${escapeHtml(value)}"
-        aria-label="${escapeHtml(`${row.asset} ${label}: ${tooltip}`)}"
+        aria-label="${escapeHtml(`${row.asset} ${label}: ${tooltip}`)}"${disabledAttr}
       >
         ${EVIDENCE_STATUS_OPTIONS.map((option) => selectOption(option, value)).join('')}
       </select>
@@ -5969,6 +6070,7 @@ function diseaseLinkageStatusMeaning(value) {
 function diseaseLinkageEditSelect(row) {
   const value = row.diseaseLinkageStatus === 'O' || row.diseaseLinkageStatus === 'X' ? row.diseaseLinkageStatus : 'NA';
   const tooltip = diseaseLinkageStatusMeaning(value);
+  const disabledAttr = shortlistingRoleFor(DEFAULT_SHORTLISTING_PROJECT_ID) === 'read' ? ' disabled' : '';
   return `
     <span class="evidence-tooltip help-tooltip" data-tooltip="${escapeHtml(tooltip)}">
       <select
@@ -5977,7 +6079,7 @@ function diseaseLinkageEditSelect(row) {
         data-evidence-field="diseaseLinkageStatus"
         data-disease-linkage-jump="${escapeHtml(row.id)}"
         data-previous-value="${escapeHtml(value)}"
-        aria-label="${escapeHtml(`${row.asset} Disease Linkage: ${tooltip}`)}"
+        aria-label="${escapeHtml(`${row.asset} Disease Linkage: ${tooltip}`)}"${disabledAttr}
       >
         ${DISEASE_LINKAGE_STATUS_OPTIONS.map((option) => `<option value="${escapeHtml(option.value)}" title="${escapeHtml(option.title)}" ${option.value === value ? 'selected' : ''}>${escapeHtml(option.label)}</option>`).join('')}
       </select>
@@ -5999,6 +6101,7 @@ function admetEditSelect(row) {
     ...Array.from({ length: ADMET_TOTAL_ITEMS + 1 }, (_, count) => ({ value: String(count), label: `${count}/${ADMET_TOTAL_ITEMS}` }))
   ];
   const currentValue = value === null ? '' : String(value);
+  const disabledAttr = shortlistingRoleFor(DEFAULT_SHORTLISTING_PROJECT_ID) === 'read' ? ' disabled' : '';
   return `
     <select
       class="evidence-edit ${admetToneClass(value)} ${row.admetSource === 'manual' ? 'is-human' : 'is-auto'}"
@@ -6006,7 +6109,7 @@ function admetEditSelect(row) {
       data-evidence-field="admetCompleted"
       data-previous-value="${escapeHtml(currentValue)}"
       aria-label="${escapeHtml(row.asset)} ADMET completed"
-      title="${escapeHtml(`ADMET: ${evidenceSourceLabel(row.admetSource)}`)}"
+      title="${escapeHtml(`ADMET: ${evidenceSourceLabel(row.admetSource)}`)}"${disabledAttr}
     >
       ${options.map((option) => selectOption(option.value, currentValue, option.label)).join('')}
     </select>
@@ -6018,7 +6121,7 @@ function scoreEditSelect(row, scoreKey, criterionId, label) {
   const value = row[scoreKey];
   if (row.isVirtualTriage) {
     const tone = value >= 3 ? 'high' : value >= 2 ? 'mid' : 'low';
-    const tooltip = `${label}: Tab 2 Full Scout 결과에서 가져온 읽기 전용 점수`;
+    const tooltip = `${label}: Tab 2 Advanced Research 결과에서 가져온 읽기 전용 점수`;
     return `<span class="table-edit-select score-edit ${tone} is-readonly" title="${escapeHtml(tooltip)}">${escapeHtml(value ?? '-')}</span>`;
   }
   const tone = value >= 3 ? 'high' : value >= 2 ? 'mid' : 'low';
@@ -6071,7 +6174,7 @@ function totalScoreEditCircle(row) {
       : 'low';
   const title = isManual
     ? `HUMAN · 담당자가 Tab2 Total Score를 ${displayValue}점으로 수정했습니다.`
-    : `AUTO · 원본 Full Scout Total Score ${displayValue}점. Tab2에서 독립적으로 수정할 수 있습니다.`;
+    : `AUTO · 원본 Advanced Research Total Score ${displayValue}점. Tab2에서 독립적으로 수정할 수 있습니다.`;
   return `
     <span
       class="total-score-edit-circle ${tone} ${isManual ? 'is-human' : 'is-auto'}"
@@ -6085,7 +6188,7 @@ function stageEditSelect(row) {
   const user = getCurrentUser();
   const isManual = hasManualTableFieldEdit(row.raw, 'development_stage');
   const stageTitle = pipelineStageFullHoverTitle(row);
-  if (row.isVirtualTriage) return `<span class="table-manual-text" title="${escapeHtml(`${stageTitle}\nTab 2 Full Scout 결과에서 가져온 값`)}">${escapeHtml(row.stage)}</span>`;
+  if (row.isVirtualTriage) return `<span class="table-manual-text" title="${escapeHtml(`${stageTitle}\nTab 2 Advanced Research 결과에서 가져온 값`)}">${escapeHtml(row.stage)}</span>`;
   if (!user?.is_admin) return `<span class="table-manual-text${isManual ? ' is-human' : ''}" title="${escapeHtml(stageTitle)}">${escapeHtml(row.stage)}</span>`;
   return `<span
     class="table-manual-text${isManual ? ' is-human' : ''} is-editable"
@@ -6134,10 +6237,10 @@ function focusOfficialFieldValue(row, value, label, { html = '', className = '',
     .filter(Boolean)
     .join(' ');
   const attributes = editable
-    ? ` data-focus-official-locked data-record-id="${escapeHtml(row.id)}" role="button" tabindex="0" aria-label="${escapeHtml(label)}: open Full Scout editing guidance"`
+    ? ` data-focus-official-locked data-record-id="${escapeHtml(row.id)}" role="button" tabindex="0" aria-label="${escapeHtml(label)}: open Advanced Research editing guidance"`
     : '';
   const tooltip = editable
-    ? `더블클릭하여 Tab 2 · Full Scout에서 ${label} 수정 안내 보기`
+    ? `더블클릭하여 Tab 2 · Advanced Research에서 ${label} 수정 안내 보기`
     : (title || value || '');
   // Keep a field's source tooltip visible to administrators as well as the
   // edit guidance. This is especially important for Main indication, whose
@@ -6158,7 +6261,7 @@ function tableTextEditValue(row, kind, value, { title = '', strong = false, clas
   return `<span class="${classes}"${attributes} title="${escapeHtml(title || value || '')}"${editable ? ' role="button" tabindex="0" aria-label="Double-click to edit"' : ''}>${strong ? `<strong>${content}</strong>` : content}</span>`;
 }
 
-function pendingScoreBadge(message = `Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} review not run yet`) {
+function pendingScoreBadge(message = `Advanced Research v${LATEST_FULL_SCOUT_RUBRIC_VERSION} review not run yet`) {
   const safeTooltip = escapeHtml(message);
   return `<span class="score pending" tabindex="0" aria-label="${safeTooltip}" data-tooltip="${safeTooltip}" title="${safeTooltip}">-</span>`;
 }
@@ -6282,8 +6385,8 @@ function renderTableLegacy() {
         <th rowspan="2"><button data-sort="stage" type="button">Pipeline Stage</button></th>
         <th rowspan="2"><button data-sort="filter1" type="button">Filter 1</button></th>
         <th rowspan="2"><button data-sort="filter2" type="button">Filter 2</button></th>
-        <th class="score-group-head" colspan="3">Fast Triage</th>
-        <th class="score-group-head" colspan="5">Full Scout only</th>
+        <th class="score-group-head" colspan="3">Simple Research</th>
+        <th class="score-group-head" colspan="5">Advanced Research only</th>
         ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
       </tr>
       <tr class="pipeline-score-row">
@@ -6315,8 +6418,8 @@ function renderTableLegacy() {
         ${sortableHeader('Pipeline Stage', 'stage', 'stage', 'rowspan="2"')}
         ${passFilterHeader('Filter 1', 'filter1', 'filter1', 'rowspan="2"')}
         ${passFilterHeader('Filter 2', 'filter2', 'filter2', 'rowspan="2"')}
-        <th class="score-group-head" colspan="3">Fast Triage</th>
-        <th class="score-group-head" colspan="5">Full Scout only</th>
+        <th class="score-group-head" colspan="3">Simple Research</th>
+        <th class="score-group-head" colspan="5">Advanced Research only</th>
         ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
       </tr>
       <tr class="pipeline-score-row">
@@ -6370,7 +6473,7 @@ function renderTableLegacy() {
               <td class="score-cell">${fullReviewScoreBadge(row, 'platformScore', 'platform', 'Platform Attractiveness')}</td>
               <td class="score-cell">${fullReviewScoreBadge(row, 'expansionScore', 'expansion', 'Expansion Potential')}</td>
               <td class="score-cell">${fullReviewScoreBadge(row, 'marketScore', 'market', 'Marketability')}</td>
-              <td class="score-cell total-score-cell">${row.isTriage ? pendingScoreBadge('Full Scout total score not available for triage rows') : totalScoreEditCircle(row)}</td>
+              <td class="score-cell total-score-cell">${row.isTriage ? pendingScoreBadge('Advanced Research total score not available for triage rows') : totalScoreEditCircle(row)}</td>
               ${extraColumns.map((column) => {
                 const value = formatExtraColumnValue(get(row.raw, column.path, '-'), column);
                 return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
@@ -6385,35 +6488,90 @@ function renderTableLegacy() {
   updateSelectionControls(pageRows);
 }
 
-function focusActionButton(row, location = 'full') {
-  const isTracked = row.focusTracked;
-  const trackingStatus = row.focusTrackingStatus || (isTracked ? 'priority' : 'untracked');
+function canWriteFocusProject(projectId) {
+  // oic_default now also carries a real members[]/current_user_role from the
+  // backend (site admins auto-owner, others via explicit membership), so the
+  // same read/write/owner check applies uniformly to every Project.
+  return shortlistingRoleFor(projectId) !== 'read';
+}
+
+function writableFocusProjectOptions() {
+  const projects = state.shortlistingProjects.length
+    ? state.shortlistingProjects
+    : [{ id: DEFAULT_SHORTLISTING_PROJECT_ID, name: 'Open Innovation Center' }];
+  return projects.filter((project) => canWriteFocusProject(project.id));
+}
+
+function isRowTrackedInProject(row, projectId) {
+  return projectId === DEFAULT_SHORTLISTING_PROJECT_ID
+    ? Boolean(row.focusTracked)
+    : row.shortlistingProjectTracked?.[projectId] === true;
+}
+
+function focusProjectPickerButton(row, writableProjects) {
+  const isTrackedAnywhere = writableProjects.some((project) => isRowTrackedInProject(row, project.id));
+  return `
+    <button
+      type="button"
+      class="focus-action-button icon-only ${isTrackedAnywhere ? 'remove priority' : 'add'}"
+      data-focus-project-picker-trigger
+      data-record-id="${escapeHtml(row.id)}"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      title="Custom Review에 추가/제거할 Project 선택"
+      aria-label="Custom Review에 추가/제거할 Project 선택"
+    >
+      <span aria-hidden="true">${isTrackedAnywhere ? '★' : '☆'}</span>
+    </button>
+  `;
+}
+
+function focusActionButton(row, location = 'full', projectId = state.activeShortlistingProjectId) {
+  if (location === 'full') {
+    const writableProjects = writableFocusProjectOptions();
+    // No Project this account can write to: nothing to add the record to, so
+    // don't show a star that would just 403 on click.
+    if (writableProjects.length === 0) return '';
+    if (writableProjects.length > 1) return focusProjectPickerButton(row, writableProjects);
+    // Exactly one writable Project — target it directly rather than whatever
+    // Project happens to be selected in the Custom Review tab's switcher,
+    // which the user may only have read access to.
+    projectId = writableProjects[0].id;
+  }
+  const isDefaultProject = projectId === DEFAULT_SHORTLISTING_PROJECT_ID;
+  const isTracked = isDefaultProject ? row.focusTracked : row.shortlistingProjectTracked?.[projectId] === true;
+  const trackingStatus = isDefaultProject
+    ? (row.focusTrackingStatus || (isTracked ? 'priority' : 'untracked'))
+    : (row.shortlistingProjectTrackingStatus?.[projectId] || (isTracked ? 'priority' : 'untracked'));
   const statusCopy = {
     untracked: {
       action: 'add',
-      title: 'Shortlisting 미등록 · 클릭하여 우선 검토 대상으로 추가',
-      ariaLabel: 'Shortlisting에 우선 검토 대상으로 추가'
+      title: 'Custom Review 미등록 · 클릭하여 우선 검토 대상으로 추가',
+      ariaLabel: 'Custom Review에 우선 검토 대상으로 추가'
     },
     priority: {
       action: 'stationary',
-      title: 'Shortlisted · Priority review · 클릭하여 Stationary로 변경',
-      ariaLabel: '우선 검토 Shortlisting 상태 · 클릭하여 Stationary로 변경'
+      title: 'Custom Review 대상 · Priority review · 클릭하여 Stationary로 변경',
+      ariaLabel: '우선 검토 Custom Review 상태 · 클릭하여 Stationary로 변경'
     },
     stationary: {
       action: 'remove',
-      title: 'Shortlisting에는 적절하나, 현재 Partnership 검토를 보류할 제약이 있습니다. 클릭하여 Shortlisting에서 제거',
-      ariaLabel: 'Shortlisting 유지 · Partnership 검토 보류 상태 · 클릭하여 Shortlisting에서 제거'
+      title: 'Custom Review에는 적절하나, 현재 Partnership 검토를 보류할 제약이 있습니다. 클릭하여 Custom Review에서 제거',
+      ariaLabel: 'Custom Review 유지 · Partnership 검토 보류 상태 · 클릭하여 Custom Review에서 제거'
     }
   }[trackingStatus];
+  const canWrite = canWriteFocusProject(projectId);
   return `
     <button
       type="button"
       class="focus-action-button icon-only ${trackingStatus === 'priority' ? 'remove priority' : trackingStatus === 'stationary' ? 'stationary' : 'add'}"
       data-focus-action="${statusCopy.action}"
       data-record-id="${escapeHtml(row.id)}"
+      data-project-id="${escapeHtml(projectId)}"
       data-tracking-status="${trackingStatus}"
-      title="${escapeHtml(statusCopy.title)}"
-      aria-label="${escapeHtml(statusCopy.ariaLabel)}"
+      title="${canWrite ? escapeHtml(statusCopy.title) : '이 Project에 대한 write 권한이 없습니다.'}"
+      aria-label="${canWrite ? escapeHtml(statusCopy.ariaLabel) : 'write 권한이 없어 비활성화됨'}"
+      ${canWrite ? '' : 'disabled'}
     >
       <span aria-hidden="true">${isTracked ? '★' : '☆'}</span>
     </button>
@@ -6451,7 +6609,7 @@ function pipelineWebsiteRowButton(row) {
 }
 
 function triageFullScoutCopyButton(row) {
-  const title = `GPT 지침 2와 ${row.asset} / ${row.company} Fast Triage 리서치 내용을 함께 복사합니다.`;
+  const title = `GPT 지침 2와 ${row.asset} / ${row.company} Simple Research 내용을 함께 복사합니다.`;
   return `
     <button
       type="button"
@@ -6459,14 +6617,14 @@ function triageFullScoutCopyButton(row) {
       data-triage-full-copy
       data-record-id="${escapeHtml(row.id)}"
       title="${escapeHtml(title)}"
-      aria-label="${escapeHtml(`${row.asset} Full Scout 지침 복사`)}"
+      aria-label="${escapeHtml(`${row.asset} Advanced Research 지침 복사`)}"
     ><svg class="pipeline-row-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></svg></button>
   `;
 }
 
 function rubricReevaluationButton(row) {
   const isTriage = row.isTriage;
-  const workflowLabel = isTriage ? 'Fast Triage' : 'Full Scout';
+  const workflowLabel = isTriage ? 'Simple Research' : 'Advanced Research';
   const latestVersion = isTriage ? LATEST_TRIAGE_RUBRIC_VERSION : LATEST_FULL_SCOUT_RUBRIC_VERSION;
   const appliedCandidates = [
     { version: get(row.raw, 'meta.rubric_reviewed_version', ''), at: get(row.raw, 'meta.rubric_reviewed_at', '') },
@@ -6545,9 +6703,10 @@ function oiPartnershipRefreshButton(row) {
 }
 
 function focusRowActions(row) {
+  const isDefaultProject = state.activeShortlistingProjectId === DEFAULT_SHORTLISTING_PROJECT_ID;
   return `
     <div class="full-scout-row-actions">
-      ${oiPartnershipRefreshButton(row)}
+      ${isDefaultProject ? oiPartnershipRefreshButton(row) : ''}
       ${focusActionButton(row, 'focus')}
       ${pipelineWebsiteRowButton(row)}
     </div>
@@ -6617,7 +6776,639 @@ function refreshPipelineHeaderFreeze() {
   window.requestAnimationFrame(() => pipelineHeaderFreezeController?.refresh());
 }
 
+async function loadShortlistingProjects(signal) {
+  try {
+    const response = await fetch(SHORTLISTING_PROJECTS_URL, { cache: 'no-store', signal });
+    if (!response.ok) return;
+    const data = await response.json();
+    state.shortlistingProjects = Array.isArray(data.projects)
+      ? data.projects.filter((project) => project && !project.archived)
+      : [];
+  } catch (error) {
+    if (signal?.aborted || error?.name === 'AbortError') return;
+    // Non-fatal: Shortlisting still renders the OIC default project from hardcoded logic.
+    console.warn('Failed to load shortlisting projects', error);
+  }
+}
+
+function activeShortlistingProject() {
+  return (
+    state.shortlistingProjects.find((project) => project.id === state.activeShortlistingProjectId)
+    || state.shortlistingProjects.find((project) => project.id === DEFAULT_SHORTLISTING_PROJECT_ID)
+    || null
+  );
+}
+
+function settingsModalProject() {
+  return state.shortlistingProjects.find((project) => project.id === state.settingsModalProjectId) || null;
+}
+
+function setActiveShortlistingProjectId(projectId) {
+  state.activeShortlistingProjectId = projectId;
+  localStorage.setItem(SHORTLISTING_PROJECT_STORAGE_KEY, projectId);
+  state.page = 1;
+  renderShortlistingProjectControl();
+  renderTable();
+}
+
+function openShortlistingProjectSwitchMenu() {
+  if (!elements.shortlistingProjectSwitchMenu) return;
+  elements.shortlistingProjectSwitchMenu.hidden = false;
+  elements.shortlistingProjectSwitchButton?.setAttribute('aria-expanded', 'true');
+}
+
+function closeShortlistingProjectSwitchMenu() {
+  if (!elements.shortlistingProjectSwitchMenu) return;
+  elements.shortlistingProjectSwitchMenu.hidden = true;
+  elements.shortlistingProjectSwitchButton?.setAttribute('aria-expanded', 'false');
+}
+
+function renderShortlistingProjectControl() {
+  // state.tableMode only tracks the last-selected Fast Triage/Full Scout/Shortlisting
+  // table tab and is untouched when switching to the separate Step0/Knowledge Map
+  // panels, so activeTableMode() alone can't tell those apart — check panel
+  // visibility directly too, or this header group leaks into those panels.
+  const isStep0Visible = Boolean(elements.step0Panel && !elements.step0Panel.hidden);
+  const isKnowledgeMapVisible = Boolean(elements.knowledgeMapPanel && !elements.knowledgeMapPanel.hidden);
+  const isFocusMode = !isStep0Visible && !isKnowledgeMapVisible && activeTableMode() === 'focus';
+  if (elements.topShortlistingActions) elements.topShortlistingActions.hidden = !isFocusMode;
+  if (!isFocusMode) return;
+  const projects = state.shortlistingProjects.length
+    ? state.shortlistingProjects
+    : [{ id: DEFAULT_SHORTLISTING_PROJECT_ID, name: 'Open Innovation Center' }];
+  if (!projects.some((project) => project.id === state.activeShortlistingProjectId)) {
+    state.activeShortlistingProjectId = DEFAULT_SHORTLISTING_PROJECT_ID;
+    localStorage.setItem(SHORTLISTING_PROJECT_STORAGE_KEY, DEFAULT_SHORTLISTING_PROJECT_ID);
+  }
+  const activeProject = projects.find((project) => project.id === state.activeShortlistingProjectId);
+  if (elements.shortlistingProjectSwitchLabel) {
+    elements.shortlistingProjectSwitchLabel.textContent = activeProject?.name || 'Open Innovation Center';
+  }
+  if (elements.shortlistingProjectSwitchMenu) {
+    elements.shortlistingProjectSwitchMenu.innerHTML = projects
+      .map((project) => `
+        <div class="shortlisting-project-switch-row">
+          <button
+            type="button"
+            class="shortlisting-project-switch-option${project.id === state.activeShortlistingProjectId ? ' is-active' : ''}"
+            role="option"
+            aria-selected="${project.id === state.activeShortlistingProjectId}"
+            data-project-id="${escapeHtml(project.id)}"
+          >${escapeHtml(project.name)}</button>
+          ${project.current_user_role === 'owner' ? `
+            <button
+              type="button"
+              class="shortlisting-project-settings-button"
+              data-project-settings-id="${escapeHtml(project.id)}"
+              title="${escapeHtml(project.name)} 설정"
+              aria-label="${escapeHtml(project.name)} 설정"
+            ><span aria-hidden="true">⚙</span></button>
+          ` : ''}
+        </div>
+      `)
+      .join('');
+  }
+}
+
+function shortlistingRoleFor(projectId) {
+  return state.shortlistingProjects.find((project) => project.id === projectId)?.current_user_role || 'read';
+}
+
+let activeFocusProjectPicker = null;
+
+function focusProjectPickerPopoverElement() {
+  let element = document.querySelector('#tableFocusProjectPicker');
+  if (element) return element;
+  element = document.createElement('div');
+  element.id = 'tableFocusProjectPicker';
+  element.className = 'table-focus-project-picker';
+  element.hidden = true;
+  element.setAttribute('role', 'menu');
+  document.body.append(element);
+  return element;
+}
+
+function closeFocusProjectPicker() {
+  if (activeFocusProjectPicker?.trigger?.isConnected) {
+    activeFocusProjectPicker.trigger.setAttribute('aria-expanded', 'false');
+  }
+  activeFocusProjectPicker = null;
+  const popover = document.querySelector('#tableFocusProjectPicker');
+  if (popover) {
+    popover.hidden = true;
+    popover.innerHTML = '';
+  }
+}
+
+function positionFocusProjectPickerPopover() {
+  const popover = document.querySelector('#tableFocusProjectPicker');
+  const trigger = activeFocusProjectPicker?.trigger;
+  if (!popover || popover.hidden || !trigger?.isConnected) return;
+  const rect = trigger.getBoundingClientRect();
+  const width = Math.min(240, window.innerWidth - 24);
+  const left = Math.max(12, Math.min(rect.right - width, window.innerWidth - width - 12));
+  popover.style.width = `${width}px`;
+  popover.style.left = `${left}px`;
+  const height = Math.min(popover.offsetHeight || 240, window.innerHeight - 24);
+  popover.style.top = `${Math.max(12, Math.min(rect.bottom + 6, window.innerHeight - height - 12))}px`;
+}
+
+function renderFocusProjectPickerPopover(row) {
+  const active = activeFocusProjectPicker;
+  if (!active) return;
+  const popover = focusProjectPickerPopoverElement();
+  const projects = writableFocusProjectOptions();
+  popover.innerHTML = `
+    <div class="table-focus-project-picker-heading">Custom Review Project 선택</div>
+    <div class="table-focus-project-picker-list" role="none">
+      ${projects.map((project) => {
+        const isTracked = isRowTrackedInProject(row, project.id);
+        return `
+          <button
+            type="button"
+            class="table-focus-project-picker-option${isTracked ? ' is-tracked' : ''}"
+            role="menuitemcheckbox"
+            aria-checked="${isTracked ? 'true' : 'false'}"
+            data-focus-project-pick="${escapeHtml(project.id)}"
+          >
+            <span class="table-focus-project-picker-star" aria-hidden="true">${isTracked ? '★' : '☆'}</span>
+            <span>${escapeHtml(project.name)}</span>
+          </button>`;
+      }).join('')}
+    </div>
+  `;
+  popover.hidden = false;
+  positionFocusProjectPickerPopover();
+}
+
+function toggleFocusProjectPicker(trigger) {
+  const recordId = trigger?.dataset.recordId;
+  if (!recordId) return;
+  if (activeFocusProjectPicker?.recordId === recordId) {
+    closeFocusProjectPicker();
+    return;
+  }
+  const row = state.rows.find((item) => item.id === recordId);
+  if (!row) return;
+  closeMultiFilters();
+  closeScoreHeaderFilter();
+  closeFocusHeaderFilter();
+  closePassHeaderFilter();
+  closeFocusProjectPicker();
+  activeFocusProjectPicker = { recordId, trigger };
+  trigger.setAttribute('aria-expanded', 'true');
+  renderFocusProjectPickerPopover(row);
+}
+
+function pickFocusProjectFromPicker(projectId) {
+  const active = activeFocusProjectPicker;
+  if (!active) return;
+  const row = state.rows.find((item) => item.id === active.recordId);
+  if (!row) {
+    closeFocusProjectPicker();
+    return;
+  }
+  const action = isRowTrackedInProject(row, projectId) ? 'remove' : 'add';
+  if (projectId === DEFAULT_SHORTLISTING_PROJECT_ID) {
+    saveFocusManagement(active.recordId, { action });
+  } else {
+    saveShortlistingProjectField(active.recordId, projectId, { action });
+  }
+  closeFocusProjectPicker();
+}
+
+function openShortlistingProjectModal() {
+  if (!elements.shortlistingProjectModal) return;
+  if (elements.shortlistingProjectNameInput) elements.shortlistingProjectNameInput.value = '';
+  if (elements.shortlistingProjectDescriptionInput) elements.shortlistingProjectDescriptionInput.value = '';
+  if (elements.shortlistingProjectModalStatus) elements.shortlistingProjectModalStatus.textContent = '';
+  elements.shortlistingProjectModal.hidden = false;
+  elements.shortlistingProjectNameInput?.focus();
+}
+
+function closeShortlistingProjectModal() {
+  if (elements.shortlistingProjectModal) elements.shortlistingProjectModal.hidden = true;
+}
+
+async function submitShortlistingProjectModal() {
+  const name = elements.shortlistingProjectNameInput?.value.trim() || '';
+  const description = elements.shortlistingProjectDescriptionInput?.value.trim() || '';
+  if (!name) {
+    if (elements.shortlistingProjectModalStatus) {
+      elements.shortlistingProjectModalStatus.textContent = 'Project 이름을 입력하세요.';
+      elements.shortlistingProjectModalStatus.classList.add('is-error');
+    }
+    return;
+  }
+  if (elements.shortlistingProjectModalSave) elements.shortlistingProjectModalSave.disabled = true;
+  try {
+    const response = await fetch(SHORTLISTING_PROJECTS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, description })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'Project 생성에 실패했습니다.');
+    state.shortlistingProjects.push(data.project);
+    closeShortlistingProjectModal();
+    setActiveShortlistingProjectId(data.project.id);
+  } catch (error) {
+    if (elements.shortlistingProjectModalStatus) {
+      elements.shortlistingProjectModalStatus.textContent = error.message || 'Project 생성에 실패했습니다.';
+      elements.shortlistingProjectModalStatus.classList.add('is-error');
+    }
+  } finally {
+    if (elements.shortlistingProjectModalSave) elements.shortlistingProjectModalSave.disabled = false;
+  }
+}
+
+const SHORTLISTING_METRIC_RETURN_TYPE_LABELS = {
+  boolean: 'True/False',
+  list: 'List',
+  number: 'Number',
+  date: 'Date',
+  text: 'Text'
+};
+
+function shortlistingMetricReturnTypeSummary(column) {
+  const label = SHORTLISTING_METRIC_RETURN_TYPE_LABELS[column.return_type] || column.return_type;
+  if (column.return_type === 'list' && Array.isArray(column.options)) {
+    return `${label}: ${column.options.join(', ')}`;
+  }
+  if (column.return_type === 'number' && Number.isFinite(column.max_value)) {
+    return `${label} (최대 ${column.max_value})`;
+  }
+  return label;
+}
+
+function updateShortlistingMetricModalConditionalFields() {
+  const returnType = elements.shortlistingMetricReturnTypeSelect?.value || 'boolean';
+  if (elements.shortlistingMetricListOptionsInput) elements.shortlistingMetricListOptionsInput.hidden = returnType !== 'list';
+  if (elements.shortlistingMetricMaxValueInput) elements.shortlistingMetricMaxValueInput.hidden = returnType !== 'number';
+}
+
+function renderShortlistingMetricManagerTable() {
+  if (!elements.shortlistingMetricManagerBody) return;
+  const project = settingsModalProject();
+  const customColumns = (project?.metric_columns || []).filter((column) => !column.is_builtin);
+  elements.shortlistingMetricManagerBody.innerHTML = customColumns.length
+    ? customColumns.map((column) => `
+      <tr data-metric-id="${escapeHtml(column.id)}">
+        <td>${escapeHtml(column.label)}</td>
+        <td>${escapeHtml(column.description || '-')}</td>
+        <td>${escapeHtml(shortlistingMetricReturnTypeSummary(column))}</td>
+        <td><button type="button" class="shortlisting-metric-manager-delete-button" data-delete-metric-id="${escapeHtml(column.id)}">삭제</button></td>
+      </tr>
+    `).join('')
+    : `<tr class="shortlisting-metric-manager-empty-row"><td colspan="4">등록된 커스텀 지표가 없습니다.</td></tr>`;
+}
+
+function resetShortlistingMetricAddForm() {
+  if (elements.shortlistingMetricLabelInput) elements.shortlistingMetricLabelInput.value = '';
+  if (elements.shortlistingMetricDescriptionInput) elements.shortlistingMetricDescriptionInput.value = '';
+  if (elements.shortlistingMetricReturnTypeSelect) elements.shortlistingMetricReturnTypeSelect.value = 'boolean';
+  if (elements.shortlistingMetricListOptionsInput) elements.shortlistingMetricListOptionsInput.value = '';
+  if (elements.shortlistingMetricMaxValueInput) elements.shortlistingMetricMaxValueInput.value = '';
+  if (elements.shortlistingMetricModalStatus) {
+    elements.shortlistingMetricModalStatus.textContent = '';
+    elements.shortlistingMetricModalStatus.classList.remove('is-error');
+  }
+  updateShortlistingMetricModalConditionalFields();
+  const isOic = state.settingsModalProjectId === DEFAULT_SHORTLISTING_PROJECT_ID;
+  if (elements.shortlistingMetricLockedNote) elements.shortlistingMetricLockedNote.hidden = !isOic;
+  if (elements.shortlistingMetricAddRow) elements.shortlistingMetricAddRow.hidden = isOic;
+}
+
+function switchShortlistingSettingsTab(tabName) {
+  const isMembers = tabName !== 'metrics';
+  elements.shortlistingSettingsMembersTab?.classList.toggle('is-active', isMembers);
+  elements.shortlistingSettingsMembersTab?.setAttribute('aria-selected', String(isMembers));
+  elements.shortlistingSettingsMetricsTab?.classList.toggle('is-active', !isMembers);
+  elements.shortlistingSettingsMetricsTab?.setAttribute('aria-selected', String(!isMembers));
+  if (elements.shortlistingSettingsMembersPane) elements.shortlistingSettingsMembersPane.hidden = !isMembers;
+  if (elements.shortlistingSettingsMetricsPane) elements.shortlistingSettingsMetricsPane.hidden = isMembers;
+  if (isMembers) {
+    renderShortlistingMemberManagerTable();
+    renderShortlistingMemberPicker();
+  } else {
+    resetShortlistingMetricAddForm();
+    renderShortlistingMetricManagerTable();
+  }
+}
+
+async function loadUserDirectory() {
+  if (state.userDirectoryLoaded) return;
+  try {
+    const response = await fetch(USER_DIRECTORY_URL, { cache: 'no-store' });
+    if (!response.ok) return;
+    const data = await response.json();
+    state.userDirectory = Array.isArray(data.users) ? data.users : [];
+    state.userDirectoryLoaded = true;
+  } catch (error) {
+    console.warn('Failed to load user directory', error);
+  }
+}
+
+function renderShortlistingMemberPicker() {
+  if (!elements.shortlistingMemberPickerList) return;
+  const existingEmails = new Set((settingsModalProject()?.members || []).map((member) => member.email));
+  const candidates = state.userDirectory.filter((user) => !existingEmails.has(user.email));
+  elements.shortlistingMemberPickerList.innerHTML = candidates.length
+    ? candidates.map((user) => `
+      <label class="shortlisting-member-picker-row">
+        <input type="checkbox" value="${escapeHtml(user.email)}" data-member-picker-checkbox />
+        <span>${escapeHtml(user.name || user.email)}</span>
+        <span class="shortlisting-member-picker-email">${escapeHtml(user.email)}</span>
+      </label>
+    `).join('')
+    : `<p class="shortlisting-member-picker-empty">추가할 수 있는 계정이 없습니다.</p>`;
+}
+
+function openShortlistingProjectSettingsModal(projectId) {
+  if (!elements.shortlistingMetricModal) return;
+  state.settingsModalProjectId = projectId;
+  const project = settingsModalProject();
+  if (elements.shortlistingMetricModalTitle) {
+    elements.shortlistingMetricModalTitle.textContent = project ? `Project 설정 · ${project.name}` : 'Project 설정';
+  }
+  if (elements.shortlistingMemberModalStatus) {
+    elements.shortlistingMemberModalStatus.textContent = '';
+    elements.shortlistingMemberModalStatus.classList.remove('is-error');
+  }
+  if (elements.shortlistingMemberRoleSelect) elements.shortlistingMemberRoleSelect.value = 'write';
+  loadUserDirectory().then(renderShortlistingMemberPicker);
+  switchShortlistingSettingsTab('members');
+  elements.shortlistingMetricModal.hidden = false;
+}
+
+function closeShortlistingProjectSettingsModal() {
+  if (elements.shortlistingMetricModal) elements.shortlistingMetricModal.hidden = true;
+  state.settingsModalProjectId = null;
+}
+
+function renderShortlistingMemberManagerTable() {
+  if (!elements.shortlistingMemberManagerBody) return;
+  const members = settingsModalProject()?.members || [];
+  elements.shortlistingMemberManagerBody.innerHTML = members.length
+    ? members.map((member) => `
+      <tr data-member-email="${escapeHtml(member.email)}">
+        <td>${escapeHtml(member.email)}</td>
+        <td>${escapeHtml(member.role)}</td>
+        <td><button type="button" class="shortlisting-metric-manager-delete-button" data-delete-member-email="${escapeHtml(member.email)}">삭제</button></td>
+      </tr>
+    `).join('')
+    : `<tr class="shortlisting-metric-manager-empty-row"><td colspan="3">등록된 멤버가 없습니다 (owner 제외 모두 읽기 전용).</td></tr>`;
+}
+
+function setShortlistingMemberStatus(message, isError) {
+  if (!elements.shortlistingMemberModalStatus) return;
+  elements.shortlistingMemberModalStatus.textContent = message || '';
+  elements.shortlistingMemberModalStatus.classList.toggle('is-error', Boolean(isError));
+}
+
+function applyShortlistingProjectUpdate(project) {
+  if (!project) return;
+  const index = state.shortlistingProjects.findIndex((entry) => entry.id === project.id);
+  if (index >= 0) {
+    state.shortlistingProjects[index] = project;
+  } else {
+    state.shortlistingProjects.push(project);
+  }
+  renderShortlistingProjectControl();
+}
+
+async function addShortlistingMember(projectId, email, role) {
+  const response = await fetch(`${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/members`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, role })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.detail || `${email} 추가에 실패했습니다.`);
+  return data.project;
+}
+
+async function submitShortlistingMemberAdd() {
+  const projectId = state.settingsModalProjectId;
+  if (!projectId || projectId === DEFAULT_SHORTLISTING_PROJECT_ID) return;
+  const role = elements.shortlistingMemberRoleSelect?.value || 'write';
+  const checkedEmails = Array.from(
+    elements.shortlistingMemberPickerList?.querySelectorAll('[data-member-picker-checkbox]:checked') || []
+  ).map((checkbox) => checkbox.value);
+  if (!checkedEmails.length) {
+    setShortlistingMemberStatus('추가할 계정을 하나 이상 선택하세요.', true);
+    return;
+  }
+  if (elements.shortlistingMemberAddButton) elements.shortlistingMemberAddButton.disabled = true;
+  const failures = [];
+  let latestProject = null;
+  for (const email of checkedEmails) {
+    try {
+      latestProject = await addShortlistingMember(projectId, email, role);
+    } catch (error) {
+      failures.push(error.message || email);
+    }
+  }
+  if (latestProject) applyShortlistingProjectUpdate(latestProject);
+  renderShortlistingMemberManagerTable();
+  renderShortlistingMemberPicker();
+  if (failures.length) {
+    setShortlistingMemberStatus(`일부 추가 실패: ${failures.join(', ')}`, true);
+  } else {
+    setShortlistingMemberStatus(`${checkedEmails.length}명을 추가했습니다.`);
+  }
+  if (elements.shortlistingMemberAddButton) elements.shortlistingMemberAddButton.disabled = false;
+}
+
+async function deleteShortlistingMember(email) {
+  const projectId = state.settingsModalProjectId;
+  if (!projectId || projectId === DEFAULT_SHORTLISTING_PROJECT_ID || !email) return;
+  if (!window.confirm(`${email} 멤버를 삭제하시겠습니까?`)) return;
+  try {
+    const response = await fetch(`${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/members/${encodeURIComponent(email)}`, {
+      method: 'DELETE'
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '멤버 삭제에 실패했습니다.');
+    applyShortlistingProjectUpdate(data.project);
+    setShortlistingMemberStatus('');
+    renderShortlistingMemberManagerTable();
+  } catch (error) {
+    setShortlistingMemberStatus(error.message || '멤버 삭제에 실패했습니다.', true);
+  }
+}
+
+async function submitShortlistingMetricModal() {
+  const projectId = state.settingsModalProjectId;
+  if (!projectId || projectId === DEFAULT_SHORTLISTING_PROJECT_ID) return;
+  const label = elements.shortlistingMetricLabelInput?.value.trim() || '';
+  const description = elements.shortlistingMetricDescriptionInput?.value.trim() || '';
+  const returnType = elements.shortlistingMetricReturnTypeSelect?.value || 'boolean';
+  const setStatus = (message) => {
+    if (elements.shortlistingMetricModalStatus) {
+      elements.shortlistingMetricModalStatus.textContent = message;
+      elements.shortlistingMetricModalStatus.classList.add('is-error');
+    }
+  };
+  if (!label) {
+    setStatus('지표 이름을 입력하세요.');
+    return;
+  }
+  const payload = { label, description, return_type: returnType };
+  if (returnType === 'list') {
+    const options = (elements.shortlistingMetricListOptionsInput?.value || '')
+      .split(',')
+      .map((option) => option.trim())
+      .filter(Boolean);
+    if (!options.length) {
+      setStatus('최소 1개의 선택지를 입력하세요.');
+      return;
+    }
+    payload.options = options;
+  } else if (returnType === 'number') {
+    const rawMaxValue = elements.shortlistingMetricMaxValueInput?.value || '';
+    if (rawMaxValue.trim()) {
+      const maxValue = Number(rawMaxValue);
+      if (!Number.isFinite(maxValue) || maxValue < 1) {
+        setStatus('최대값은 1 이상의 숫자로 입력하세요.');
+        return;
+      }
+      payload.max_value = Math.round(maxValue);
+    }
+  }
+  if (elements.shortlistingMetricModalSave) elements.shortlistingMetricModalSave.disabled = true;
+  try {
+    const response = await fetch(`${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/columns`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '지표 추가에 실패했습니다.');
+    applyShortlistingProjectUpdate(data.project);
+    resetShortlistingMetricAddForm();
+    renderShortlistingMetricManagerTable();
+    renderTable();
+  } catch (error) {
+    setStatus(error.message || '지표 추가에 실패했습니다.');
+  } finally {
+    if (elements.shortlistingMetricModalSave) elements.shortlistingMetricModalSave.disabled = false;
+  }
+}
+
+async function deleteShortlistingMetricColumn(columnId) {
+  const projectId = state.settingsModalProjectId;
+  if (!projectId || projectId === DEFAULT_SHORTLISTING_PROJECT_ID || !columnId) return;
+  if (!window.confirm('이 지표를 삭제하시겠습니까? 이미 입력된 값도 더 이상 표시되지 않습니다.')) return;
+  try {
+    const response = await fetch(`${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/columns/${encodeURIComponent(columnId)}`, {
+      method: 'DELETE'
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '지표 삭제에 실패했습니다.');
+    applyShortlistingProjectUpdate(data.project);
+    renderShortlistingMetricManagerTable();
+    renderTable();
+  } catch (error) {
+    if (elements.shortlistingMetricModalStatus) {
+      elements.shortlistingMetricModalStatus.textContent = error.message || '지표 삭제에 실패했습니다.';
+      elements.shortlistingMetricModalStatus.classList.add('is-error');
+    }
+  }
+}
+
+function shortlistingTotalScoreBadge(row) {
+  const score = row.totalScore30;
+  if (!Number.isFinite(score)) return `<span class="total-score-edit-circle low">-</span>`;
+  const tone = score >= 20 ? 'high' : score >= 13 ? 'mid' : 'low';
+  const title = `Score (Advanced) ${row.totalScore ?? '-'} + Score (Custom) ${row.customScore ?? 0} = Total Score ${score} / 30`;
+  return `<span class="total-score-edit-circle ${tone}" title="${escapeHtml(title)}">${escapeHtml(String(score))}</span>`;
+}
+
+function customScoreCircle(row) {
+  const projectId = state.activeShortlistingProjectId;
+  const value = Number.isFinite(row.customScore) ? row.customScore : 0;
+  const tone = value >= 7 ? 'high' : value >= 4 ? 'mid' : 'low';
+  const canWrite = shortlistingRoleFor(projectId) !== 'read';
+  if (!canWrite) {
+    return `<span class="total-score-edit-circle ${tone}" title="Score (Custom): ${escapeHtml(String(value))} · 읽기 전용">${escapeHtml(String(value))}</span>`;
+  }
+  return `<span
+    class="total-score-edit-circle ${tone}"
+    data-custom-score-edit
+    data-record-id="${escapeHtml(row.id)}"
+    data-project-id="${escapeHtml(projectId)}"
+    data-previous-value="${escapeHtml(String(value))}"
+    role="button"
+    tabindex="0"
+    title="Score (Custom): ${escapeHtml(String(value))} · 더블클릭하여 0~9 입력"
+    aria-label="${escapeHtml(row.asset)} Score (Custom): double-click to edit"
+  >${escapeHtml(String(value))}</span>`;
+}
+
+function actionDateCell(row) {
+  const projectId = state.activeShortlistingProjectId;
+  const disabledAttr = shortlistingRoleFor(projectId) === 'read' ? ' disabled' : '';
+  return `
+    <td class="focus-due-cell ${focusDueState(row.focusDueDate)}">
+      <input
+        class="focus-due-input"
+        type="date"
+        data-record-id="${escapeHtml(row.id)}"
+        data-project-id="${escapeHtml(projectId)}"
+        data-focus-field="due_date"
+        data-previous-value="${escapeHtml(row.focusDueDate)}"
+        value="${escapeHtml(row.focusDueDate)}"
+        aria-label="${escapeHtml(row.asset)} action date"${disabledAttr}
+      />
+      ${focusDueState(row.focusDueDate) === 'overdue' ? '<span class="due-label">Overdue</span>' : ''}
+      ${focusDueState(row.focusDueDate) === 'due-today' ? '<span class="due-label">Today</span>' : ''}
+    </td>
+  `;
+}
+
+function shortlistingMetricValue(row, metricId) {
+  return get(row.raw, `meta.shortlisting_projects.${state.activeShortlistingProjectId}.metric_values.${metricId}`, undefined);
+}
+
+function shortlistingMetricEditControl(row, column) {
+  const projectId = state.activeShortlistingProjectId;
+  const rawValue = shortlistingMetricValue(row, column.id);
+  const disabledAttr = shortlistingRoleFor(projectId) === 'read' ? ' disabled' : '';
+  const baseAttrs = `data-record-id="${escapeHtml(row.id)}" data-project-id="${escapeHtml(projectId)}" data-metric-id="${escapeHtml(column.id)}" data-return-type="${escapeHtml(column.return_type)}"${disabledAttr}`;
+  if (column.return_type === 'boolean') {
+    const current = rawValue === true ? 'true' : rawValue === false ? 'false' : '';
+    return `
+      <select class="evidence-edit metric-value-edit" ${baseAttrs} data-previous-value="${escapeHtml(current)}">
+        <option value="" ${current === '' ? 'selected' : ''}>-</option>
+        <option value="true" ${current === 'true' ? 'selected' : ''}>Pass</option>
+        <option value="false" ${current === 'false' ? 'selected' : ''}>Fail</option>
+      </select>`;
+  }
+  if (column.return_type === 'list') {
+    const options = Array.isArray(column.options) ? column.options : [];
+    const current = typeof rawValue === 'string' ? rawValue : '';
+    return `
+      <select class="evidence-edit metric-value-edit" ${baseAttrs} data-previous-value="${escapeHtml(current)}">
+        <option value="" ${current === '' ? 'selected' : ''}>-</option>
+        ${options.map((option) => `<option value="${escapeHtml(option)}" ${option === current ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}
+      </select>`;
+  }
+  if (column.return_type === 'number') {
+    const current = typeof rawValue === 'number' ? rawValue : '';
+    const boundsAttrs = Number.isFinite(column.max_value) ? ` min="0" max="${column.max_value}"` : '';
+    return `<input type="number" class="focus-due-input metric-value-edit" step="any"${boundsAttrs} ${baseAttrs} data-previous-value="${escapeHtml(String(current))}" value="${escapeHtml(String(current))}" />`;
+  }
+  if (column.return_type === 'date') {
+    const current = typeof rawValue === 'string' ? rawValue : '';
+    return `<input type="date" class="focus-due-input metric-value-edit" ${baseAttrs} data-previous-value="${escapeHtml(current)}" value="${escapeHtml(current)}" />`;
+  }
+  const current = typeof rawValue === 'string' ? rawValue : '';
+  return `<input type="text" class="focus-due-input metric-value-edit" maxlength="2000" ${baseAttrs} data-previous-value="${escapeHtml(current)}" value="${escapeHtml(current)}" />`;
+}
+
 function renderFocusTable() {
+  recomputeShortlistingScoreFields();
   const visibleRows = getVisibleRows();
   const allModeRows = state.rows.filter(rowMatchesActiveTableMode);
   const pageCount = Math.max(1, Math.ceil(visibleRows.length / state.pageSize));
@@ -6625,6 +7416,9 @@ function renderFocusTable() {
   const start = (state.page - 1) * state.pageSize;
   const pageRows = visibleRows.slice(start, start + state.pageSize);
   const tableElement = elements.pipelineTable?.closest('table');
+  const isDefaultProject = state.activeShortlistingProjectId === DEFAULT_SHORTLISTING_PROJECT_ID;
+  const metricColumns = activeShortlistingMetricColumns();
+  const columnCount = focusTableColumnKeys().length;
 
   if (tableElement) {
     tableElement.classList.add('focus-management-table');
@@ -6645,18 +7439,31 @@ function renderFocusTable() {
       <col class="pipeline-col-indication" data-col-key="mainIndication" style="${columnWidthStyle('mainIndication')}" />
       <col class="pipeline-col-stage" data-col-key="stage" style="${columnWidthStyle('stage')}" />
       <col class="pipeline-col-filter" data-col-key="filter2" style="${columnWidthStyle('filter2')}" />
-      <col class="pipeline-col-score" data-col-key="totalScore" style="${columnWidthStyle('totalScore')}" />
+      <col class="pipeline-col-score score-subtotal-col" data-col-key="totalScore" style="${columnWidthStyle('totalScore')}" />
+      ${isDefaultProject ? `
       <col class="pipeline-col-filter" data-col-key="filter3" style="${columnWidthStyle('filter3')}" />
-      <col class="pipeline-col-filter" data-col-key="dd" style="${columnWidthStyle('dd')}" />
       <col class="pipeline-col-filter" data-col-key="inVivo" style="${columnWidthStyle('inVivo')}" />
       <col class="pipeline-col-filter" data-col-key="inVitro" style="${columnWidthStyle('inVitro')}" />
       <col class="pipeline-col-filter" data-col-key="admet" style="${columnWidthStyle('admet')}" />
       <col class="pipeline-col-filter" data-col-key="diseaseLinkage" style="${columnWidthStyle('diseaseLinkage')}" />
+      ` : metricColumns.map((column) => `<col class="pipeline-col-filter" data-col-key="metric:${escapeHtml(column.id)}" style="${columnWidthStyle(`metric:${column.id}`)}" />`).join('')}
       <col data-col-key="focusDueDate" style="${columnWidthStyle('focusDueDate')}" />
+      <col class="pipeline-col-score score-subtotal-col" data-col-key="customScore" style="${columnWidthStyle('customScore')}" />
+      <col class="pipeline-col-score score-grandtotal-col" data-col-key="totalScore30" style="${columnWidthStyle('totalScore30')}" />
       <col data-col-key="focusManage" style="${columnWidthStyle('focusManage')}" />
     `;
   }
   if (elements.pipelineTableHead) {
+    const metricHeaderCells = isDefaultProject
+      ? `
+        ${passFilterHeader('Filter 3', 'filter3', 'filter3')}
+        ${focusFilterHeader('In-vivo', 'inVivo', 'inVivo')}
+        ${focusFilterHeader('In-vitro', 'inVitro', 'inVitro')}
+        ${focusFilterHeader('ADMET', 'admet', 'admet')}
+        ${focusFilterHeader('D·Link', 'diseaseLinkage', 'diseaseLinkage')}
+      `
+      : metricColumns.map((column) => plainHeader(column.label, `metric:${column.id}`, 'extra-column-head')).join('');
+    const shortlistingGroupColspan = (isDefaultProject ? 5 : metricColumns.length) + 2;
     elements.pipelineTableHead.innerHTML = `
       <tr id="pipelineHeaderRow" class="pipeline-group-row focus-pipeline-group-row">
         <th class="select-col" rowspan="2" ${columnAttrs('select')}>
@@ -6669,20 +7476,19 @@ function renderFocusTable() {
         ${sortableHeader('Target', 'target', 'target', 'rowspan="2"')}
         ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
         ${sortableHeader('Pipeline Stage', 'stage', 'stage', 'rowspan="2"')}
-        <th class="score-group-head focus-group-head" colspan="2">Full Scout</th>
-        <th class="score-group-head focus-group-head" colspan="7">Shortlisting</th>
+        <th class="score-group-head focus-group-head" colspan="2">Advanced Research</th>
+        <th class="score-group-head focus-group-head" colspan="${shortlistingGroupColspan}">Custom Review</th>
+        <th class="score-group-head focus-group-head score-grandtotal-col" rowspan="2" ${columnAttrs('totalScore30')}>
+          <button data-sort="totalScore30" data-sort-label="Total Score" type="button">Total<br />Score</button>${resizeHandle('totalScore30')}
+        </th>
         ${plainHeader('관리', 'focusManage', 'focus-action-head', 'rowspan="2"')}
       </tr>
       <tr class="pipeline-score-row focus-column-label-row">
         ${focusFilterHeader('Filter 2', 'filter2', 'filter2', 'focusPriority')}
-        ${scoreFilterHeader('Total Score', 'focusTotalScore', 'totalScore', 'totalScore')}
-        ${passFilterHeader('Filter 3', 'filter3', 'filter3')}
-        ${focusFilterHeader('DD', 'dd', 'dd')}
-        ${focusFilterHeader('In-vivo', 'inVivo', 'inVivo')}
-        ${focusFilterHeader('In-vitro', 'inVitro', 'inVitro')}
-        ${focusFilterHeader('ADMET', 'admet', 'admet')}
-        ${focusFilterHeader('D·Link', 'diseaseLinkage', 'diseaseLinkage')}
+        ${scoreFilterHeader('Score', 'focusTotalScore', 'totalScore', 'totalScore', 'score-subtotal-col')}
+        ${metricHeaderCells}
         ${sortableHeader('Action date', 'focusDueDate', 'focusDueDate')}
+        ${sortableHeader('Score', 'customScore', 'customScore', 'class="score-subtotal-col"')}
       </tr>
     `;
     elements.pipelineHeaderRow = document.querySelector('#pipelineHeaderRow');
@@ -6695,6 +7501,15 @@ function renderFocusTable() {
     ? pageRows.map((row) => {
         const isSelected = state.selectedIds.has(row.id);
         const checked = isSelected ? 'checked' : '';
+        const metricCells = isDefaultProject
+          ? `
+          <td class="focus-status-cell">${partnershipEditSelect(row)}</td>
+          <td class="focus-status-cell">${evidenceEditSelect(row, 'inVivoStatus', 'inVivoSource', 'In-vivo efficacy')}</td>
+          <td class="focus-status-cell">${evidenceEditSelect(row, 'inVitroStatus', 'inVitroSource', 'In-vitro efficacy')}</td>
+          <td class="focus-status-cell">${admetEditSelect(row)}</td>
+          <td class="focus-status-cell disease-linkage-cell">${diseaseLinkageEditSelect(row)}</td>
+          `
+          : metricColumns.map((column) => `<td class="focus-status-cell">${shortlistingMetricEditControl(row, column)}</td>`).join('');
         return `
         <tr class="clickable-row focus-management-row${isSelected ? ' selected-row' : ''}" data-record-id="${escapeHtml(row.id)}" title="${escapeHtml(rowHoverTitle(row))}">
           <td class="select-col">
@@ -6729,35 +7544,20 @@ function renderFocusTable() {
           <td class="indication-cell">${focusOfficialFieldValue(row, indicationDisplay(row), 'Main indication', { title: indicationFullHoverTitle(row) })}</td>
           <td class="stage-cell">${focusOfficialFieldValue(row, row.stage, 'Pipeline Stage', { title: pipelineStageFullHoverTitle(row) })}</td>
           <td class="filter-cell">${statusEditSelect(row, 'filter2')}</td>
-          <td class="score-cell total-score-cell">${totalScoreEditCircle(row)}</td>
-          <td class="focus-status-cell">${partnershipEditSelect(row)}</td>
-          <td class="score-cell total-score-cell dd-status-cell">${dueDiligenceStatusBadge(row)}</td>
-          <td class="focus-status-cell">${evidenceEditSelect(row, 'inVivoStatus', 'inVivoSource', 'In-vivo efficacy')}</td>
-          <td class="focus-status-cell">${evidenceEditSelect(row, 'inVitroStatus', 'inVitroSource', 'In-vitro efficacy')}</td>
-          <td class="focus-status-cell">${admetEditSelect(row)}</td>
-          <td class="focus-status-cell disease-linkage-cell">${diseaseLinkageEditSelect(row)}</td>
-          <td class="focus-due-cell ${focusDueState(row.focusDueDate)}">
-            <input
-              class="focus-due-input"
-              type="date"
-              data-record-id="${escapeHtml(row.id)}"
-              data-focus-field="due_date"
-              data-previous-value="${escapeHtml(row.focusDueDate)}"
-              value="${escapeHtml(row.focusDueDate)}"
-              aria-label="${escapeHtml(row.asset)} action date"
-            />
-            ${focusDueState(row.focusDueDate) === 'overdue' ? '<span class="due-label">Overdue</span>' : ''}
-            ${focusDueState(row.focusDueDate) === 'due-today' ? '<span class="due-label">Today</span>' : ''}
-          </td>
+          <td class="score-cell total-score-cell score-subtotal-col">${totalScoreEditCircle(row)}</td>
+          ${metricCells}
+          ${actionDateCell(row)}
+          <td class="score-cell total-score-cell score-subtotal-col">${customScoreCircle(row)}</td>
+          <td class="score-cell total-score-cell score-grandtotal-col">${shortlistingTotalScoreBadge(row)}</td>
           <td class="focus-action-cell">${focusRowActions(row)}</td>
         </tr>
       `;
       }).join('')
     : `
       <tr>
-        <td colspan="18" class="empty-cell focus-empty-state">
-          <strong>${allModeRows.length ? '현재 조건에 맞는 Shortlisting asset이 없습니다.' : '아직 Shortlisting에 추가된 약물이 없습니다.'}</strong>
-          <span>${allModeRows.length ? '필터를 조정하거나 초기화해 주세요.' : 'TAB2 Full Scout의 오른쪽 ‘즐겨찾기’ 버튼으로 관리 대상을 추가하세요.'}</span>
+        <td colspan="${columnCount}" class="empty-cell focus-empty-state">
+          <strong>${allModeRows.length ? '현재 조건에 맞는 Custom Review asset이 없습니다.' : '아직 Custom Review에 추가된 약물이 없습니다.'}</strong>
+          <span>${allModeRows.length ? '필터를 조정하거나 초기화해 주세요.' : 'TAB2 Advanced Research의 오른쪽 ‘즐겨찾기’ 버튼으로 관리 대상을 추가하세요.'}</span>
         </td>
       </tr>
     `;
@@ -6778,6 +7578,7 @@ function renderTable() {
   elements.pipelineTable
     ?.closest('.table-wrap')
     ?.classList.toggle('focus-management-table-wrap', mode === 'focus');
+  renderShortlistingProjectControl();
   if (mode === 'focus') {
     renderFocusTable();
     return;
@@ -6795,7 +7596,7 @@ function renderTable() {
   const filterKey = activeFilterKey();
   const filterLabel = activeFilterLabel();
   const scoreColumns = activeScoreColumnKeys();
-  const modeLabel = mode === 'triage' ? 'Fast Triage' : 'Full Scout';
+  const modeLabel = mode === 'triage' ? 'Simple Research' : 'Advanced Research';
   const scoreLabels = {
     targetScore: 'TAR',
     moaScore: 'MoA',
@@ -6847,8 +7648,8 @@ function renderTable() {
         ${sortableHeader('Pipeline Stage', 'stage', 'stage', 'rowspan="2"')}
         ${passFilterHeader(filterLabel, filterKey, filterKey, 'rowspan="2"')}
         ${mode === 'triage'
-          ? '<th class="score-group-head" colspan="3">Fast Triage</th>'
-          : '<th class="score-group-head" colspan="3">Fast Triage</th><th class="score-group-head" colspan="5">Full Scout only</th>'}
+          ? '<th class="score-group-head" colspan="3">Simple Research</th>'
+          : '<th class="score-group-head" colspan="3">Simple Research</th><th class="score-group-head" colspan="5">Advanced Research only</th>'}
         ${mode === 'triage' ? plainHeader('재평가', 'rubricAction', 'focus-action-head', 'rowspan="2"') : ''}
         ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
         ${mode === 'full' ? plainHeader('관리', 'focusAction', 'focus-action-head', 'rowspan="2"') : ''}
@@ -7401,10 +8202,14 @@ async function loadRecords({ signal } = {}) {
       }
     });
     const synonymsPromise = loadCategorySynonyms(signal);
+    const shortlistingProjectsPromise = loadShortlistingProjects(signal).then(() => {
+      renderShortlistingProjectControl();
+    });
     const [response] = await Promise.all([
       fetch(API_URL, { cache: 'no-store', signal }),
       summaryPromise,
-      synonymsPromise
+      synonymsPromise,
+      shortlistingProjectsPromise
     ]);
     if (!response.ok) throw new Error(await response.text());
     const data = await response.json();
@@ -7743,7 +8548,7 @@ async function recalculateLatestRubric(button) {
     return;
   }
   const isTriage = button.dataset.reviewType === 'triage';
-  const workflowLabel = isTriage ? 'Fast Triage' : 'Full Scout';
+  const workflowLabel = isTriage ? 'Simple Research' : 'Advanced Research';
   const latestVersion = isTriage ? LATEST_TRIAGE_RUBRIC_VERSION : LATEST_FULL_SCOUT_RUBRIC_VERSION;
   button.disabled = true;
   button.classList.add('is-saving');
@@ -7823,7 +8628,7 @@ async function copyTriageFullScoutPrompt(button) {
 
   button.disabled = true;
   button.classList.add('is-saving');
-  elements.dataStatus.textContent = `${row.asset} Full Scout 지침 복사 중`;
+  elements.dataStatus.textContent = `${row.asset} Advanced Research 지침 복사 중`;
 
   const buildCopyText = (promptText) => [
     promptText,
@@ -7875,7 +8680,7 @@ async function recalculateLatestOiPartnership(button) {
   try {
     const data = await runBlockingOperation({
       title: 'Filter 3 분류를 갱신하고 있습니다',
-      message: '현재 Shortlisting 판단 기준으로 파이프라인을 다시 분류하고 있습니다.',
+      message: '현재 Custom Review 판단 기준으로 파이프라인을 다시 분류하고 있습니다.',
       status: 'OI Partnership 결과를 계산하고 있습니다.'
     }, async (signal) => {
       const response = await fetch(
@@ -8001,20 +8806,87 @@ function saveFocusManagement(recordId, payload, control = null) {
   return next;
 }
 
+async function performShortlistingProjectSave(recordId, projectId, payload, control = null) {
+  if (!recordId || !projectId) return false;
+  const actorName = await ensureDashboardActorName();
+  if (!actorName) {
+    elements.dataStatus.textContent = '로그인 사용자 정보를 확인할 수 없어 변경하지 않았습니다';
+    return false;
+  }
+  if (!payload.actor_name) payload = { ...payload, actor_name: actorName };
+  if (control) {
+    control.disabled = true;
+    control.classList.add('is-saving');
+  }
+  elements.dataStatus.textContent = 'Saving Custom Review Project';
+
+  try {
+    const response = await fetch(
+      `/api/records/${encodeRecordIdForPath(recordId)}/shortlisting-projects/${encodeURIComponent(projectId)}`,
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }
+    );
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
+    replaceRecordFromApi(recordId, data.record);
+    if (payload.action === 'update') {
+      if (control) {
+        control.disabled = false;
+        control.classList.remove('is-saving');
+        control.dataset.previousValue = String(payload.value ?? '');
+      }
+      renderTableTabs();
+      renderTable();
+    } else {
+      renderFilters();
+      render();
+    }
+    updateHeaderRecordCount();
+    return true;
+  } catch (error) {
+    if (control) {
+      control.disabled = false;
+      control.classList.remove('is-saving');
+      if ('value' in control && control.dataset.previousValue !== undefined) {
+        control.value = control.dataset.previousValue;
+      }
+    }
+    renderTable();
+    elements.dataStatus.textContent = `Custom Review Project 저장 실패: ${error.message}`;
+    return false;
+  }
+}
+
+function saveShortlistingProjectField(recordId, projectId, payload, control = null) {
+  const queueKey = `${recordId}::${projectId}`;
+  const previous = shortlistingProjectSaveQueues.get(queueKey) || Promise.resolve();
+  const next = previous
+    .catch(() => false)
+    .then(() => performShortlistingProjectSave(recordId, projectId, payload, control));
+  shortlistingProjectSaveQueues.set(queueKey, next);
+  next.finally(() => {
+    if (shortlistingProjectSaveQueues.get(queueKey) === next) shortlistingProjectSaveQueues.delete(queueKey);
+  });
+  return next;
+}
+
 let floatingAgentController = null;
 let activeKnowledgeMapNodeContext = null;
 const defaultAgentSuggestionsMarkup = document.querySelector('#agentSuggestions')?.innerHTML || '';
 
 const CRITERIA_DRAWER_SCOPE_LABELS = {
-  triage: 'TAB 1 · FAST TRIAGE · SCORING GUIDE',
-  full: 'TAB 2 · FULL SCOUT · SCORING GUIDE',
-  focus: 'TAB 3 · SHORTLISTING · DECISION GUIDE'
+  triage: 'TAB 1 · SIMPLE RESEARCH · SCORING GUIDE',
+  full: 'TAB 2 · ADVANCED RESEARCH · SCORING GUIDE',
+  focus: 'TAB 3 · CUSTOM REVIEW · DECISION GUIDE'
 };
 
 const CRITERIA_DRAWER_SUBTITLES = {
-  triage: 'Full Scout 검토 후보를 선별하기 위한 3-point screening 기준',
-  full: '과학성·차별성·개발성·사업성을 평가하는 Full Scout 기준',
-  focus: 'Shortlisted 후보의 OI Partnership Type 자동분류 및 후속 관리 기준'
+  triage: 'Advanced Research 검토 후보를 선별하기 위한 3-point screening 기준',
+  full: '과학성·차별성·개발성·사업성을 평가하는 Advanced Research 기준',
+  focus: 'Custom Review 후보의 OI Partnership Type 자동분류 및 후속 관리 기준'
 };
 
 const criteriaGuideKoreanMarkup = elements.criteriaDrawerBody?.innerHTML || '';
@@ -10547,11 +11419,11 @@ async function saveStructuredJsonInput() {
       ...(payload.confirmed_replacements.length ? {
         title: '기존 Pipeline을 덮어쓰고 있습니다',
         message: '웹 서칭 조사 내용을 최신 내용으로 덮어쓰기하는 중입니다.',
-        status: '기존에 업로드된 파일과 Comments·Contact History 기록은 그대로 유지됩니다. Tab 0의 Comment·Contact History는 Full Scout가 있으면 Tab 2, 없으면 Tab 1에 추가됩니다.'
+        status: '기존에 업로드된 파일과 Comments·Contact History 기록은 그대로 유지됩니다. Tab 0의 Comment·Contact History는 Advanced Research가 있으면 Tab 2, 없으면 Tab 1에 추가됩니다.'
       } : hasSkippedReupload ? {
         title: '기존 Pipeline을 유지하고 있습니다',
         message: '이번 조사 결과는 저장하지 않고, 선택한 기존 Pipeline을 유지합니다.',
-        status: `${payload.preserved_aliases.length ? '유사 Asset·Company 이름은 검색용 메타데이터로 저장됩니다. ' : ''}Tab 0의 Comment·Contact History는 Full Scout가 있으면 Tab 2, 없으면 Tab 1에 추가됩니다.`
+        status: `${payload.preserved_aliases.length ? '유사 Asset·Company 이름은 검색용 메타데이터로 저장됩니다. ' : ''}Tab 0의 Comment·Contact History는 Advanced Research가 있으면 Tab 2, 없으면 Tab 1에 추가됩니다.`
       } : {})
     }, async (signal) => {
       const response = await fetch(API_URL, {
@@ -11960,7 +12832,7 @@ async function copyPromptToClipboard(kind = 'full') {
 
 function setPromptCopyFeedback(kind = 'full') {
   if (elements.promptCopyStatus) {
-    elements.promptCopyStatus.textContent = kind === 'triage' ? 'Triage 지침 복사 완료' : 'Full Scout 지침 복사 완료';
+    elements.promptCopyStatus.textContent = kind === 'triage' ? 'Simple Research 지침 복사 완료' : 'Advanced Research 지침 복사 완료';
   }
 
   const button = kind === 'triage' ? elements.copyTriagePromptTopButton : elements.copyPromptTopButton;
@@ -11968,13 +12840,13 @@ function setPromptCopyFeedback(kind = 'full') {
 
   const label = button.querySelector('b');
   const idleLabel = kind === 'triage' ? '지침 1' : '지침 2';
-  const idleTooltip = kind === 'triage' ? TRIAGE_PROMPT_TOOLTIP : `GPT Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} 지침을 복사합니다. Triage에서 SELECT된 asset을 심층 검토할 때 사용합니다.`;
+  const idleTooltip = kind === 'triage' ? TRIAGE_PROMPT_TOOLTIP : `GPT Advanced Research v${LATEST_FULL_SCOUT_RUBRIC_VERSION} 지침을 복사합니다. Simple Research에서 SELECT된 asset을 심층 검토할 때 사용합니다.`;
   if (label) {
     label.textContent = '복사됨';
   }
   button.dataset.tooltip = kind === 'triage'
-    ? `GPT Fast Triage v${LATEST_TRIAGE_RUBRIC_VERSION} 지침을 복사했습니다.`
-    : `GPT Full Scout v${LATEST_FULL_SCOUT_RUBRIC_VERSION} 지침을 복사했습니다.`;
+    ? `GPT Simple Research v${LATEST_TRIAGE_RUBRIC_VERSION} 지침을 복사했습니다.`
+    : `GPT Advanced Research v${LATEST_FULL_SCOUT_RUBRIC_VERSION} 지침을 복사했습니다.`;
 
   window.clearTimeout(promptCopyFeedbackTimer);
   promptCopyFeedbackTimer = window.setTimeout(() => {
@@ -12010,11 +12882,11 @@ const STEP0_GUIDE_STEPS = [
   },
   {
     title: '가져오기',
-    body: '신규 Pipeline을 Listing 합니다. 가져오는 중 특정 Pipeline이 이미 Fast Triage나 Full Scout가 수행되었다면, 기존 서칭 기록을 유지합니다. Comment·Contact History는 따로 추가됩니다.'
+    body: '신규 Pipeline을 Listing 합니다. 가져오는 중 특정 Pipeline이 이미 Simple Research나 Advanced Research가 수행되었다면, 기존 서칭 기록을 유지합니다. Comment·Contact History는 따로 추가됩니다.'
   },
   {
-    title: '조사 대기 항목 GPT 1 Fast Triage 웹서칭 준비',
-    body: '조사 대기중인 파이프라인을 여러 개 선택한 뒤 {{copy}}를 누르세요. 선택한 후보 목록과 입력된 Modality·Target 등의 보조 정보가 Fast Triage 지침 1에 함께 포함됩니다.',
+    title: '조사 대기 항목 GPT 1 Simple Research 웹서칭 준비',
+    body: '조사 대기중인 파이프라인을 여러 개 선택한 뒤 {{copy}}를 누르세요. 선택한 후보 목록과 입력된 Modality·Target 등의 보조 정보가 Simple Research 지침 1에 함께 포함됩니다.',
     actions: [
       { token: 'copy', kind: 'copy-instructions', icon: 'clipboard', label: 'GPT 지침 복사' }
     ]
@@ -12028,7 +12900,7 @@ function step0GuideBodyMarkup(step) {
   (Array.isArray(step.actions) ? step.actions : []).forEach((action) => {
     const token = `{{${action.token}}}`;
     const title = action.kind === 'copy-instructions'
-      ? '선택한 Listing 항목을 포함해 GPT Fast Triage 지침 1을 복사합니다.'
+      ? '선택한 Listing 항목을 포함해 GPT Simple Research 지침 1을 복사합니다.'
       : action.label;
     const pill = `<button
       type="button"
@@ -12129,6 +13001,7 @@ function activateKnowledgeMapPanel() {
   }
   showKnowledgeMapPanel(true);
   syncTopDataActionsForVisibleTab();
+  renderShortlistingProjectControl();
   updateHeaderRecordCount();
   elements.pipelineTableTabs?.forEach((tab) => {
     tab.classList.remove('active');
@@ -12157,6 +13030,7 @@ function activateStep0Panel() {
   // Reapply the visible-tab contract immediately; this prevents a prior tab
   // or delayed dashboard render from leaking its header state into Listing.
   syncTopDataActionsForVisibleTab();
+  renderShortlistingProjectControl();
   renderStep0Guide();
   updateStep0HeaderCount();
   if (state.step0Loaded) {
@@ -13235,9 +14109,9 @@ function renderStep0StatStrip() {
 
 const STEP0_STAGE_LABELS = {
   pending: 'Listing',
-  fast_triage: 'Fast Triage',
-  full_scout: 'Full Scout',
-  shortlisting: 'Shortlisting'
+  fast_triage: 'Simple Research',
+  full_scout: 'Advanced Research',
+  shortlisting: 'Custom Review'
 };
 
 function step0StageCellHtml(stage, cell, fullScoutCell = null) {
@@ -13248,10 +14122,10 @@ function step0StageCellHtml(stage, cell, fullScoutCell = null) {
   const label = isInvestigationPending ? '<span aria-hidden="true">✓</span>' : done ? '<span aria-hidden="true">✓</span>' : '-';
   const fullScoutCoversFastTriage = stage === 'fast_triage' && Boolean(fullScoutCell?.done);
   if (fullScoutCoversFastTriage) {
-    return `<span class="pill pass" title="Full Scout 완료 · Fast Triage는 완료 표시만 제공합니다. Tab 1 행을 선택하면 Full Scout 상세를 엽니다.">${label}</span>`;
+    return `<span class="pill pass" title="Advanced Research 완료 · Simple Research는 완료 표시만 제공합니다. Tab 1 행을 선택하면 Advanced Research 상세를 엽니다.">${label}</span>`;
   }
   const title = isInvestigationPending
-    ? ` title="${escapeHtml('조사 대기 중 · Fast Triage 및 Full Scout 미수행')}"`
+    ? ` title="${escapeHtml('조사 대기 중 · Simple Research 및 Advanced Research 미수행')}"`
     : done ? ` title="${escapeHtml(`${stageLabel} 완료 · 상세 보기`)}"` : '';
   if (stage === 'pending' || !done || !cell?.record_id) {
     return `<span class="pill ${tone}"${title}>${label}</span>`;
@@ -13458,6 +14332,71 @@ function openManualTableCountryEdit(anchor) {
   }, { once: true });
 }
 
+function saveCustomScoreEdit(input) {
+  const previousValue = input.dataset.previousValue ?? '0';
+  const nextRaw = input.value ?? '';
+  if (previousValue === nextRaw) {
+    renderTable();
+    return;
+  }
+  const numeric = Number(nextRaw);
+  if (!Number.isFinite(numeric) || numeric < 0 || numeric > 9) {
+    elements.dataStatus.textContent = 'Score는 0~9 정수로 입력해주세요';
+    renderTable();
+    return;
+  }
+  const projectId = input.dataset.projectId;
+  const payload = { action: 'update', field: 'custom_score', value: Math.round(numeric) };
+  if (projectId === DEFAULT_SHORTLISTING_PROJECT_ID) {
+    saveFocusManagement(input.dataset.recordId, payload, input);
+  } else {
+    saveShortlistingProjectField(input.dataset.recordId, projectId, payload, input);
+  }
+}
+
+function openCustomScoreEdit(anchor) {
+  if (!anchor || anchor.dataset.editing === 'true') return;
+  const recordId = anchor.dataset.recordId;
+  const projectId = anchor.dataset.projectId;
+  const previousValue = String(anchor.dataset.previousValue || '0');
+  if (!recordId || !projectId) return;
+  if (shortlistingRoleFor(projectId) === 'read') return;
+
+  anchor.dataset.editing = 'true';
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.min = '0';
+  input.max = '9';
+  input.step = '1';
+  input.className = 'focus-due-input custom-score-input';
+  input.value = previousValue;
+  input.dataset.recordId = recordId;
+  input.dataset.projectId = projectId;
+  input.dataset.previousValue = previousValue;
+  input.setAttribute('aria-label', 'Score (Custom) edit');
+  input.title = 'Score (Custom) 0~9. Enter to save, Escape to cancel.';
+  anchor.replaceWith(input);
+  input.focus();
+  input.select();
+
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      saveCustomScoreEdit(input);
+      return;
+    }
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      input.dataset.cancelled = 'true';
+      renderTable();
+    }
+  });
+  input.addEventListener('blur', () => {
+    if (input.classList.contains('is-saving') || input.dataset.cancelled === 'true') return;
+    saveCustomScoreEdit(input);
+  }, { once: true });
+}
+
 function isExplicitUnknownListingValue(value) {
   return /^(?:-|unknown|not known|not available|not disclosed|n\/?a)$/i.test(String(value || '').trim());
 }
@@ -13631,9 +14570,9 @@ function renderStep0FilterControls() {
 
 const STEP0_WORKFLOW_MAP_STAGES = [
   { key: 'pending', label: 'Listing', index: 0 },
-  { key: 'fast_triage', label: 'Fast Triage', index: 1 },
-  { key: 'full_scout', label: 'Full Scout', index: 2 },
-  { key: 'shortlisting', label: 'Shortlisting', index: 3 }
+  { key: 'fast_triage', label: 'Simple Research', index: 1 },
+  { key: 'full_scout', label: 'Advanced Research', index: 2 },
+  { key: 'shortlisting', label: 'Custom Review', index: 3 }
 ];
 
 const STEP0_WORKFLOW_STAGE_STAGGER_MS = 420;
@@ -14191,12 +15130,12 @@ function closeStep0EditLockedModal() {
 
 function openStep0EditLockedModal(mode, { commentWorkspace = false, recordId = '', shortlisting = false, fullScoutAlias = false } = {}) {
   const targetMode = mode === 'full' ? 'full' : 'triage';
-  const label = targetMode === 'full' ? 'Tab 2 · Full Scout' : 'Tab 1 · Fast Triage';
+  const label = targetMode === 'full' ? 'Tab 2 · Advanced Research' : 'Tab 1 · Simple Research';
   activeStep0LockedEditMode = targetMode;
   activeStep0LockedRecordId = String(recordId || '');
   if (elements.step0EditLockedTitle) {
     elements.step0EditLockedTitle.textContent = fullScoutAlias
-      ? 'Full Scout 원문 리포트는 Tab 2에서 확인합니다'
+      ? 'Advanced Research 원문 리포트는 Tab 2에서 확인합니다'
       : shortlisting
       ? `${label}에서 수정하세요`
       : commentWorkspace
@@ -14205,12 +15144,12 @@ function openStep0EditLockedModal(mode, { commentWorkspace = false, recordId = '
   }
   if (elements.step0EditLockedMessage) {
     elements.step0EditLockedMessage.textContent = fullScoutAlias
-      ? '이 asset은 Full Scout 조사가 완료되어 Fast Triage에도 함께 표시되고 있습니다.'
+      ? '이 asset은 Advanced Research 조사가 완료되어 Simple Research에도 함께 표시되고 있습니다.'
       : shortlisting
-      ? 'Shortlisting에는 Full Scout의 공식 Pipeline 정보가 읽기 전용으로 표시됩니다. Company·Location·Asset·Modality·Target·Main indication·Pipeline Stage 수정은 Tab 2 · Full Scout에서 진행합니다.'
+      ? 'Custom Review에는 Advanced Research의 공식 Pipeline 정보가 읽기 전용으로 표시됩니다. Company·Location·Asset·Modality·Target·Main indication·Pipeline Stage 수정은 Tab 2 · Advanced Research에서 진행합니다.'
       : commentWorkspace
       ? `Tab 0에는 원본 Team Workspace 코멘트가 읽기 전용으로 표시됩니다. 이 코멘트의 수정 및 삭제는 ${label} Team Workspace에서 진행합니다.`
-      : `이미 수행된 ${targetMode === 'full' ? 'Full Scout' : 'Fast Triage'}의 공식 조사값이 Tab 0에 표시되고 있습니다. 원본 조사값 수정은 ${label} Pipeline Table에서 진행합니다.`;
+      : `이미 수행된 ${targetMode === 'full' ? 'Advanced Research' : 'Simple Research'}의 공식 조사값이 Tab 0에 표시되고 있습니다. 원본 조사값 수정은 ${label} Pipeline Table에서 진행합니다.`;
   }
   if (elements.step0EditLockedGo) elements.step0EditLockedGo.textContent = commentWorkspace || shortlisting || fullScoutAlias ? `Tab ${targetMode === 'full' ? '2' : '1'} 상세 페이지로 이동` : `${label}로 이동`;
   if (elements.step0EditLockedModal) elements.step0EditLockedModal.hidden = false;
@@ -14710,7 +15649,7 @@ function renderStep0ProgressTable() {
 
 function exportStep0Table() {
   const rows = step0FilteredSortedRows();
-  const headers = ['Company', 'Location', 'Asset', 'Modality', 'Target', 'Main indication', 'Pipeline Stage', 'Listing', 'Fast Triage', 'Full Scout', 'Shortlisting', 'Comment', 'Contact', 'Website'];
+  const headers = ['Company', 'Location', 'Asset', 'Modality', 'Target', 'Main indication', 'Pipeline Stage', 'Listing', 'Simple Research', 'Advanced Research', 'Custom Review', 'Comment', 'Contact', 'Website'];
   const body = rows.map((row) => {
     const display = step0DashboardFieldDisplay(row);
     return [
@@ -15257,6 +16196,8 @@ const SORT_KEYS_BY_MODE = {
     ...COMMON_SORT_KEYS,
     'filter2',
     'focusTotalScore',
+    'totalScore30',
+    'customScore',
     'filter3',
     'inVivoStatus',
   'inVitroStatus',
@@ -15526,7 +16467,16 @@ document.addEventListener('click', (event) => {
     }
     return;
   }
-  if (event.target.closest('[data-score-filter-trigger], [data-focus-filter-trigger], [data-pass-filter-trigger]')) return;
+  const projectPickerPopover = event.target.closest('#tableFocusProjectPicker');
+  if (projectPickerPopover && activeFocusProjectPicker) {
+    const option = event.target.closest('[data-focus-project-pick]');
+    if (option) {
+      pickFocusProjectFromPicker(option.dataset.focusProjectPick);
+      return;
+    }
+    return;
+  }
+  if (event.target.closest('[data-score-filter-trigger], [data-focus-filter-trigger], [data-pass-filter-trigger], [data-focus-project-picker-trigger]')) return;
   if (!event.target.closest('.filter-multiselect')) {
     closeMultiFilters();
     closeStep0MultiFilters();
@@ -15534,6 +16484,7 @@ document.addEventListener('click', (event) => {
   closeScoreHeaderFilter();
   closeFocusHeaderFilter();
   closePassHeaderFilter();
+  closeFocusProjectPicker();
 });
 
 document.addEventListener('keydown', (event) => {
@@ -15554,6 +16505,7 @@ document.addEventListener('keydown', (event) => {
   closeStep0MultiFilters();
   closeScoreHeaderFilter();
   closeFocusHeaderFilter();
+  closeFocusProjectPicker();
 });
 
 document.addEventListener('input', (event) => {
@@ -15651,16 +16603,31 @@ elements.pipelineTable.addEventListener('click', (event) => {
     recalculateLatestOiPartnership(oiPartnershipRefresh);
     return;
   }
-  const focusAction = event.target.closest('[data-focus-action]');
-  if (focusAction) {
-    saveFocusManagement(
-      focusAction.dataset.recordId,
-      { action: focusAction.dataset.focusAction },
-      focusAction
-    );
+  const projectPickerTrigger = event.target.closest('[data-focus-project-picker-trigger]');
+  if (projectPickerTrigger) {
+    toggleFocusProjectPicker(projectPickerTrigger);
     return;
   }
-  if (event.target.closest('[data-table-text-edit], [data-table-modality-edit], [data-table-stage-edit], [data-table-country-edit], [data-focus-official-locked]')) return;
+  const focusAction = event.target.closest('[data-focus-action]');
+  if (focusAction) {
+    const focusActionProjectId = focusAction.dataset.projectId || DEFAULT_SHORTLISTING_PROJECT_ID;
+    if (focusActionProjectId === DEFAULT_SHORTLISTING_PROJECT_ID) {
+      saveFocusManagement(
+        focusAction.dataset.recordId,
+        { action: focusAction.dataset.focusAction },
+        focusAction
+      );
+    } else {
+      saveShortlistingProjectField(
+        focusAction.dataset.recordId,
+        focusActionProjectId,
+        { action: focusAction.dataset.focusAction },
+        focusAction
+      );
+    }
+    return;
+  }
+  if (event.target.closest('[data-table-text-edit], [data-table-modality-edit], [data-table-stage-edit], [data-table-country-edit], [data-focus-official-locked], [data-custom-score-edit]')) return;
   if (event.target.closest('input, select, textarea, button, a, label')) return;
   const rowElement = event.target.closest('[data-record-id]');
   if (!rowElement) return;
@@ -15707,6 +16674,13 @@ elements.pipelineTable.addEventListener('dblclick', (event) => {
     openManualTableTextEdit(textEdit);
     return;
   }
+  const customScoreEdit = event.target.closest('[data-custom-score-edit]');
+  if (customScoreEdit) {
+    event.preventDefault();
+    event.stopPropagation();
+    openCustomScoreEdit(customScoreEdit);
+    return;
+  }
   const modalityEdit = event.target.closest('[data-table-modality-edit]');
   if (modalityEdit) {
     event.preventDefault();
@@ -15740,6 +16714,29 @@ elements.pipelineTable.addEventListener('dblclick', (event) => {
 });
 
 elements.pipelineTable.addEventListener('change', (event) => {
+  // Checked before .evidence-edit/.focus-due-input below: metric-value-edit controls
+  // reuse those classes for shared styling, so this branch must win the match first.
+  const metricValueEdit = event.target.closest('.metric-value-edit');
+  if (metricValueEdit) {
+    const previousValue = metricValueEdit.dataset.previousValue ?? '';
+    const nextRaw = metricValueEdit.value ?? '';
+    if (previousValue === nextRaw) return;
+    const returnType = metricValueEdit.dataset.returnType;
+    if (nextRaw === '' && returnType !== 'text' && returnType !== 'date') return;
+    const value = returnType === 'boolean'
+      ? nextRaw === 'true'
+      : returnType === 'number'
+        ? Number(nextRaw)
+        : nextRaw;
+    saveShortlistingProjectField(
+      metricValueEdit.dataset.recordId,
+      metricValueEdit.dataset.projectId,
+      { action: 'update', field: 'metric_value', metric_id: metricValueEdit.dataset.metricId, value },
+      metricValueEdit
+    );
+    return;
+  }
+
   const editSelect = event.target.closest('.table-edit-select, .total-score-edit-circle');
   if (editSelect) {
     saveManualReviewEdit(editSelect);
@@ -15792,11 +16789,21 @@ elements.pipelineTable.addEventListener('change', (event) => {
     const previousValue = dueInput.dataset.previousValue || '';
     const nextValue = dueInput.value || '';
     if (previousValue === nextValue) return;
-    saveFocusManagement(
-      dueInput.dataset.recordId,
-      { action: 'update', field: 'due_date', value: nextValue },
-      dueInput
-    );
+    const dueProjectId = dueInput.dataset.projectId;
+    if (!dueProjectId || dueProjectId === DEFAULT_SHORTLISTING_PROJECT_ID) {
+      saveFocusManagement(
+        dueInput.dataset.recordId,
+        { action: 'update', field: 'due_date', value: nextValue },
+        dueInput
+      );
+    } else {
+      saveShortlistingProjectField(
+        dueInput.dataset.recordId,
+        dueProjectId,
+        { action: 'update', field: 'due_date', value: nextValue },
+        dueInput
+      );
+    }
     return;
   }
 
@@ -15882,10 +16889,12 @@ document.addEventListener('pointerup', endColumnResize);
 window.addEventListener('resize', () => {
   positionScoreHeaderFilterPopover();
   positionFocusHeaderFilterPopover();
+  positionFocusProjectPickerPopover();
 });
 window.addEventListener('scroll', () => {
   positionScoreHeaderFilterPopover();
   positionFocusHeaderFilterPopover();
+  positionFocusProjectPickerPopover();
 }, true);
 
 elements.pipelineTableHead?.addEventListener('change', (event) => {
@@ -15943,6 +16952,76 @@ elements.workflowPriorityList?.addEventListener('click', (event) => {
 });
 elements.columnSettingsButton?.addEventListener('click', () => {
   elements.columnSettingsPanel.hidden = !elements.columnSettingsPanel.hidden;
+});
+
+elements.shortlistingProjectSwitchButton?.addEventListener('click', () => {
+  const isOpen = !elements.shortlistingProjectSwitchMenu?.hidden;
+  closeShortlistingProjectSwitchMenu();
+  if (!isOpen) openShortlistingProjectSwitchMenu();
+});
+elements.shortlistingProjectSwitchMenu?.addEventListener('click', (event) => {
+  const settingsButton = event.target.closest('[data-project-settings-id]');
+  if (settingsButton) {
+    event.preventDefault();
+    event.stopPropagation();
+    closeShortlistingProjectSwitchMenu();
+    openShortlistingProjectSettingsModal(settingsButton.dataset.projectSettingsId);
+    return;
+  }
+  const option = event.target.closest('.shortlisting-project-switch-option');
+  if (!option) return;
+  closeShortlistingProjectSwitchMenu();
+  if (option.dataset.projectId !== state.activeShortlistingProjectId) {
+    setActiveShortlistingProjectId(option.dataset.projectId);
+  }
+});
+document.addEventListener('click', (event) => {
+  if (elements.shortlistingProjectSwitchMenu?.hidden) return;
+  if (event.target.closest('.shortlisting-project-switcher')) return;
+  closeShortlistingProjectSwitchMenu();
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !elements.shortlistingProjectSwitchMenu?.hidden) {
+    closeShortlistingProjectSwitchMenu();
+  }
+});
+elements.addShortlistingProjectButton?.addEventListener('click', openShortlistingProjectModal);
+elements.shortlistingProjectModalCancel?.addEventListener('click', closeShortlistingProjectModal);
+elements.shortlistingProjectModalSave?.addEventListener('click', submitShortlistingProjectModal);
+elements.shortlistingProjectModal?.addEventListener('click', (event) => {
+  if (event.target === elements.shortlistingProjectModal) closeShortlistingProjectModal();
+});
+elements.shortlistingProjectModal?.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    closeShortlistingProjectModal();
+  }
+});
+
+elements.shortlistingSettingsMembersTab?.addEventListener('click', () => switchShortlistingSettingsTab('members'));
+elements.shortlistingSettingsMetricsTab?.addEventListener('click', () => switchShortlistingSettingsTab('metrics'));
+elements.shortlistingMetricReturnTypeSelect?.addEventListener('change', updateShortlistingMetricModalConditionalFields);
+elements.shortlistingMetricModalCancel?.addEventListener('click', closeShortlistingProjectSettingsModal);
+elements.shortlistingMetricModalSave?.addEventListener('click', submitShortlistingMetricModal);
+elements.shortlistingMetricManagerBody?.addEventListener('click', (event) => {
+  const deleteButton = event.target.closest('[data-delete-metric-id]');
+  if (!deleteButton) return;
+  deleteShortlistingMetricColumn(deleteButton.dataset.deleteMetricId);
+});
+elements.shortlistingMemberAddButton?.addEventListener('click', submitShortlistingMemberAdd);
+elements.shortlistingMemberManagerBody?.addEventListener('click', (event) => {
+  const deleteButton = event.target.closest('[data-delete-member-email]');
+  if (!deleteButton) return;
+  deleteShortlistingMember(deleteButton.dataset.deleteMemberEmail);
+});
+elements.shortlistingMetricModal?.addEventListener('click', (event) => {
+  if (event.target === elements.shortlistingMetricModal) closeShortlistingProjectSettingsModal();
+});
+elements.shortlistingMetricModal?.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    closeShortlistingProjectSettingsModal();
+  }
 });
 
 function applyVisualDashboardHidden(hidden) {
@@ -16048,6 +17127,13 @@ function activatePipelineTab(mode) {
   if (elements.step0Panel && !elements.step0Panel.hidden) deactivateStep0Panel();
   setTableMode(mode);
   if (wasKnowledgeMapVisible) renderTableTabs();
+  // setTableMode() no-ops (skips its render() call) when mode matches the
+  // already-active table mode, e.g. leaving Knowledge Map back to the same
+  // Fast Triage/Full Scout/Shortlisting tab that was active before it — but
+  // the header controls below still need to be resynced against the panel
+  // that's newly visible now, so refresh them unconditionally here too.
+  syncTopDataActionsForVisibleTab();
+  renderShortlistingProjectControl();
 }
 
 elements.pipelineTableTabs?.forEach((tab) => {
@@ -16400,8 +17486,8 @@ function autoRouteDataUploadTab() {
   state.dataUploadDrafts[currentMode] = previousDraft;
   elements.gptResponseInput.value = rawText;
 
-  const fromLabel = currentMode === 'triage' ? 'TAB1 Fast Triage' : 'TAB2 Full Scout';
-  const toLabel = detectedMode === 'triage' ? 'TAB1 Fast Triage' : 'TAB2 Full Scout';
+  const fromLabel = currentMode === 'triage' ? 'TAB1 Simple Research' : 'TAB2 Advanced Research';
+  const toLabel = detectedMode === 'triage' ? 'TAB1 Simple Research' : 'TAB2 Advanced Research';
   return `붙여넣은 내용이 ${toLabel} 형식으로 보여 ${fromLabel}에서 ${toLabel} 탭으로 자동 전환했습니다.`;
 }
 

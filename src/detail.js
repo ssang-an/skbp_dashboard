@@ -1421,7 +1421,7 @@ function rubricRefreshOutcomeCopy(data, workflowLabel, latestVersion) {
   const cleared = Array.isArray(data.cleared_manual_scoring_override_fields)
     ? data.cleared_manual_scoring_override_fields
     : [];
-  const filterLabel = workflowLabel === 'Fast Triage' ? 'Filter 1' : 'Filter 2';
+  const filterLabel = workflowLabel === 'Simple Research' ? 'Filter 1' : 'Filter 2';
   if (data.status === 'updated') {
     return {
       title: `${filterLabel} AI 재평가 완료`,
@@ -1595,18 +1595,18 @@ function renderCollaborationPanel(record) {
   const trackingCopy = {
     untracked: {
       action: 'add',
-      title: 'Shortlisting 미등록 · 클릭하여 우선 검토 대상으로 추가',
-      ariaLabel: 'Shortlisting에 우선 검토 대상으로 추가'
+      title: 'Custom Review 미등록 · 클릭하여 우선 검토 대상으로 추가',
+      ariaLabel: 'Custom Review에 우선 검토 대상으로 추가'
     },
     priority: {
       action: 'stationary',
-      title: 'Shortlisted · Priority review · 클릭하여 Stationary로 변경',
-      ariaLabel: '우선 검토 Shortlisting 상태 · 클릭하여 Stationary로 변경'
+      title: 'Custom Review 대상 · Priority review · 클릭하여 Stationary로 변경',
+      ariaLabel: '우선 검토 Custom Review 상태 · 클릭하여 Stationary로 변경'
     },
     stationary: {
       action: 'remove',
-      title: 'Shortlisted · Stationary (보류 모니터링) · 클릭하여 Shortlisting에서 제거',
-      ariaLabel: 'Stationary 보류 모니터링 상태 · 클릭하여 Shortlisting에서 제거'
+      title: 'Custom Review 대상 · Stationary (보류 모니터링) · 클릭하여 Custom Review에서 제거',
+      ariaLabel: 'Stationary 보류 모니터링 상태 · 클릭하여 Custom Review에서 제거'
     }
   }[trackingStatus];
   const attachments = (Array.isArray(record?.meta?.attachments) ? record.meta.attachments : [])
@@ -1646,8 +1646,8 @@ function renderCollaborationPanel(record) {
     const reassessment = getOriginalReportReassessmentMetadata(record);
     if (reassessment) {
       const reassessmentVersion = String(reassessment.version || '').replace(/^v/i, '');
-      elements.detailDecisionOrigin.textContent = `원문 기반 마지막 재평가 · Full Scout 기준 v${reassessmentVersion}`;
-      elements.detailDecisionOrigin.title = `저장된 GPT 원문·첨부 기반 재평가 · Full Scout 기준 v${reassessmentVersion} · ${formatCommentTime(reassessment.at)}`;
+      elements.detailDecisionOrigin.textContent = `원문 기반 마지막 재평가 · Advanced Research 기준 v${reassessmentVersion}`;
+      elements.detailDecisionOrigin.title = `저장된 GPT 원문·첨부 기반 재평가 · Advanced Research 기준 v${reassessmentVersion} · ${formatCommentTime(reassessment.at)}`;
     } else {
     elements.detailDecisionOrigin.textContent = `Score 기준 v${appliedVersion}`;
     elements.detailDecisionOrigin.title = appliedAt
@@ -1819,7 +1819,7 @@ function rubricRefreshAuditLabel(entry) {
   if (entry?.audit_label) return String(entry.audit_label);
   const version = String(entry?.instruction_version || entry?.new_value || '')
     .match(/(?:rubric\s+)?v?([0-9]+(?:\.[0-9]+)+)/i)?.[1];
-  return `Score recalculated by Full Scout Rubric${version ? ` v${version}` : ''}`;
+  return `Score recalculated by Advanced Research Rubric${version ? ` v${version}` : ''}`;
 }
 
 function teamReviewActorLabel(entry) {
@@ -1855,7 +1855,7 @@ function visibleEditHistoryEntries(record) {
       previous_value: `Rubric v${entry.previous_version || '-'}`,
       new_value: entry.result || 'reviewed',
       instruction_version: entry.version || '',
-      audit_label: `Score recalculated by Full Scout Rubric v${entry.version || '?'}`
+      audit_label: `Score recalculated by Advanced Research Rubric v${entry.version || '?'}`
     }));
   return [...auditHistory, ...reviewEntries]
     .filter((entry) => entry?.field !== 'source_report.raw_markdown');
@@ -1918,7 +1918,7 @@ function renderEditHistory(record) {
         'structured_table.asset_name': 'Asset',
         'structured_table.main_indication': 'Main indication',
         'structured_table.development_stage': 'Pipeline Stage',
-        'focus_management.tracking_status': 'Shortlisting 상태',
+        'focus_management.tracking_status': 'Custom Review 상태',
         'focus_management.total_score_override': 'Tab3 Total Score'
       };
       const fieldSource = fieldLabels[field];
@@ -3068,10 +3068,10 @@ async function saveDetailFocus(action, trigger = elements.detailFocusToggle) {
   if (!currentRecordId || !currentRecord) return;
   if (trigger) trigger.disabled = true;
   const statusCopy = action === 'remove'
-    ? ['Shortlisting에서 제거 중…', 'Shortlisting에서 제거했습니다.']
+    ? ['Custom Review에서 제거 중…', 'Custom Review에서 제거했습니다.']
     : action === 'stationary'
       ? ['Stationary 보류 모니터링으로 변경 중…', 'Stationary 보류 모니터링으로 변경했습니다.']
-      : ['우선 검토 Shortlisting에 추가 중…', '우선 검토 Shortlisting에 추가했습니다.'];
+      : ['우선 검토 Custom Review에 추가 중…', '우선 검토 Custom Review에 추가했습니다.'];
   setCollaborationStatus(statusCopy[0]);
   try {
     const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/focus-management`, {
@@ -4325,7 +4325,7 @@ async function refreshRubric() {
   button.classList.add('is-saving');
   const closeProgress = showDetailProgress(
     '최신 기준으로 업데이트 중입니다',
-    '최신 Full Scout 기준으로 기존 근거와 점수를 다시 확인하고 있습니다.'
+    '최신 Advanced Research 기준으로 기존 근거와 점수를 다시 확인하고 있습니다.'
   );
   setCollaborationStatus('Score 기준 갱신 검토 중…');
   let failureShown = false;
@@ -4355,7 +4355,7 @@ async function refreshRubric() {
       throw new Error(message);
     }
 
-    const outcome = rubricRefreshOutcomeCopy(data, 'Full Scout', '3.8');
+    const outcome = rubricRefreshOutcomeCopy(data, 'Advanced Research', '3.8');
     setCollaborationStatus(outcome.message, data.status === 'error' ? 'error' : 'success');
 
     if (data.record) {

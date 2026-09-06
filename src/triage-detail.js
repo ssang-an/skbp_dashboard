@@ -195,19 +195,19 @@ function triageRubricRefreshOutcomeCopy(data, latestVersion) {
   if (data.status === 'updated') {
     return {
       title: 'Filter 1 AI 재평가 완료',
-      message: `Fast Triage v${appliedVersion} 기준으로 GPT 원문 리포트와 첨부 자료를 다시 평가했습니다. criterion 점수, Total Score, Filter 1 결과를 갱신했고 변경 이력에 기록했습니다.`
+      message: `Simple Research v${appliedVersion} 기준으로 GPT 원문 리포트와 첨부 자료를 다시 평가했습니다. criterion 점수, Total Score, Filter 1 결과를 갱신했고 변경 이력에 기록했습니다.`
     };
   }
   if (['no_evidence', 'no_score_changes'].includes(data.status)) {
     return {
       title: 'Filter 1 AI 재평가 완료 · 점수 유지',
-      message: `Fast Triage v${appliedVersion} 기준으로 GPT 원문 리포트와 첨부 자료를 검토했습니다. 변경을 뒷받침할 근거가 없어 기존 criterion 점수와 Filter 1 결과를 유지했고 변경 이력에 기록했습니다.`
+      message: `Simple Research v${appliedVersion} 기준으로 GPT 원문 리포트와 첨부 자료를 검토했습니다. 변경을 뒷받침할 근거가 없어 기존 criterion 점수와 Filter 1 결과를 유지했고 변경 이력에 기록했습니다.`
     };
   }
   if (data.status === 'recalculated') {
     return {
       title: 'Filter 1 재계산 완료',
-      message: `Fast Triage v${appliedVersion} 기준을 적용했습니다. 저장된 criterion 점수는 유지하고 Total Score와 Filter 1 결과를 다시 계산했으며, 변경 이력에 기록했습니다.`
+      message: `Simple Research v${appliedVersion} 기준을 적용했습니다. 저장된 criterion 점수는 유지하고 Total Score와 Filter 1 결과를 다시 계산했으며, 변경 이력에 기록했습니다.`
     };
   }
   const resetItems = [
@@ -217,24 +217,24 @@ function triageRubricRefreshOutcomeCopy(data, latestVersion) {
   if (cleared.length && data.official_recalculation_applied === true) {
     return {
       title: '최신 Score 기준 갱신 완료',
-      message: `Fast Triage v${appliedVersion} 기준을 적용했습니다. ${resetItems} 오버라이드를 해제하고 저장된 GPT 공식 점수로 다시 계산했습니다. 변경 이력에 기록했습니다.`
+      message: `Simple Research v${appliedVersion} 기준을 적용했습니다. ${resetItems} 오버라이드를 해제하고 저장된 GPT 공식 점수로 다시 계산했습니다. 변경 이력에 기록했습니다.`
     };
   }
   if (data.status === 'manual_override_reset' || cleared.length) {
     return {
       title: '수동 점수 오버라이드 해제 완료',
-      message: `Fast Triage v${appliedVersion}은 이미 적용되어 있어 ${resetItems}만 해제했습니다. 저장된 GPT 공식 점수로 복원했고, 변경 이력에 기록했습니다.`
+      message: `Simple Research v${appliedVersion}은 이미 적용되어 있어 ${resetItems}만 해제했습니다. 저장된 GPT 공식 점수로 복원했고, 변경 이력에 기록했습니다.`
     };
   }
   if (data.status === 'already_current' || data.changed === false) {
     return {
-      title: '이미 최신 Fast Triage 기준입니다',
-      message: `Fast Triage v${appliedVersion} 기준과 현재 점수·결과가 이미 적용되어 있습니다. 변경 사항이 없어 변경 이력은 추가하지 않았습니다.`
+      title: '이미 최신 Simple Research 기준입니다',
+      message: `Simple Research v${appliedVersion} 기준과 현재 점수·결과가 이미 적용되어 있습니다. 변경 사항이 없어 변경 이력은 추가하지 않았습니다.`
     };
   }
   return {
     title: 'Score 기준 갱신 완료',
-    message: `Fast Triage v${appliedVersion} 기준 갱신을 완료했고, 변경 이력에 기록했습니다.`
+    message: `Simple Research v${appliedVersion} 기준 갱신을 완료했고, 변경 이력에 기록했습니다.`
   };
 }
 
@@ -791,7 +791,7 @@ function renderDecision(record) {
   const finalInsight = record.final_insight || {};
   const headline = displayValue(
     finalInsight.one_line_summary || summary.one_line_summary || triage.why,
-    'Fast Triage 판단 요약이 없습니다.'
+    'Simple Research 판단 요약이 없습니다.'
   );
   const reason = displayValue(
     triage.why || record.hard_filter?.reason,
@@ -1243,7 +1243,7 @@ function renderDiligence(record) {
         <strong>${escapeHtml(question)}</strong>
       </blockquote>
     ` : ''}
-    ${renderListBlock('Full Scout에서 추가할 근거', missing, 'missing')}
+    ${renderListBlock('Advanced Research에서 추가할 근거', missing, 'missing')}
     ${renderListBlock('교차 확인된 사실', verified, 'verified')}
     ${renderListBlock('현재 불확실한 부분', uncertain, 'uncertain')}
     ${!missing.length && !verified.length && !uncertain.length && !question
@@ -1294,7 +1294,7 @@ function renderQuickSummary(record) {
   const rows = [
     ['Triage status', status],
     ['원문 생성', originalResearchSummary],
-    ['현재 점수 기준', currentScoreVersion ? `Fast Triage 기준 v${currentScoreVersion}` : '기준 버전 미기록'],
+    ['현재 점수 기준', currentScoreVersion ? `Simple Research 기준 v${currentScoreVersion}` : '기준 버전 미기록'],
     ['Identity verified', identityIsVerified(record) ? 'Yes' : 'Needs review'],
     ['Parser status', sourceReport.parser_status],
     [
@@ -1308,7 +1308,7 @@ function renderQuickSummary(record) {
     const evaluationVersion = String(latestScoreEvaluation.version || '').replace(/^v/i, '');
     rows.splice(3, 0, [
       latestScoreEvaluation.label,
-      `Fast Triage 기준 v${evaluationVersion || '?'} · ${formatTimestamp(latestScoreEvaluation.at)}`
+      `Simple Research 기준 v${evaluationVersion || '?'} · ${formatTimestamp(latestScoreEvaluation.at)}`
     ]);
   }
   if (lastEditedAt) {
@@ -1356,7 +1356,7 @@ function triageHistoryLabel(record, entry) {
   const field = String(entry?.field || '');
   if (entry?.source === 'dashboard_rubric_refresh' && field === 'rubric_refresh') {
     const version = String(entry?.instruction_version || '').replace(/^v/i, '');
-    return entry?.audit_label || `Score recalculated by Fast Triage Rubric${version ? ` v${version}` : ''}`;
+    return entry?.audit_label || `Score recalculated by Simple Research Rubric${version ? ` v${version}` : ''}`;
   }
   const resetSuffix = triageRubricResetSuffix(record, entry);
   const labels = {
@@ -1375,7 +1375,7 @@ function triageHistoryLabel(record, entry) {
     return entry?.source === 'detail_topic_note_delete' ? '기준별 코멘트 삭제' : '기준별 코멘트 입력';
   }
   if (field === 'filter_status') return resetSuffix ? `Triage status · ${resetSuffix}` : 'Triage status';
-  return field || 'Fast Triage 검토';
+  return field || 'Simple Research 검토';
 }
 
 function triageVisibleReviewHistory(record) {
@@ -1403,7 +1403,7 @@ function triageVisibleReviewHistory(record) {
         source: 'dashboard_rubric_refresh',
         field: 'rubric_refresh',
         instruction_version: review.version || '',
-        audit_label: `Score recalculated by Fast Triage Rubric v${review.version || '?'}`,
+        audit_label: `Score recalculated by Simple Research Rubric v${review.version || '?'}`,
         previous_value: '',
         new_value: review.result || 'reviewed'
       };
@@ -1478,9 +1478,9 @@ function renderRecord(record) {
   const verified = identityIsVerified(record);
   const theme = verified ? dashboardThemeLabel(summary.theme) : 'Unknown';
   const cluster = verified ? dashboardClusterLabel(summary.cluster, summary.theme) : 'Unknown';
-  elements.title.textContent = `Fast Triage : ${asset}`;
+  elements.title.textContent = `Simple : ${asset}`;
   elements.subtitle.textContent = `${company} · ${displayValue(table.development_stage)} · ${theme} / ${cluster}`;
-  document.title = `${asset} · Fast Triage`;
+  document.title = `${asset} · Simple`;
   renderPipelineWebsiteAction(record);
   renderDecision(record);
   renderIdentity(record);
@@ -1492,7 +1492,7 @@ function renderRecord(record) {
   const rawMarkdown = String(record?.source_report?.raw_markdown || '').trim();
   elements.rawReport.innerHTML = rawMarkdown
     ? renderMarkdown(rawMarkdown)
-    : '<div class="triage-empty">저장된 Fast Triage 원본 Markdown이 없습니다.</div>';
+    : '<div class="triage-empty">저장된 Simple Research 원본 Markdown이 없습니다.</div>';
 }
 
 async function updateTriageManualReview(payload) {
@@ -1677,8 +1677,8 @@ let cachedDashboardCriteriaBody = null;
 const KOREAN_CRITERIA_DRAWER_CHROME = {
   title: '판단근거',
   close: '닫기',
-  closeAriaLabel: 'Fast Triage 판단근거 닫기',
-  subtitle: 'Full Scout 검토 후보를 선별하기 위한 3-point screening 기준'
+  closeAriaLabel: 'Simple Research 판단근거 닫기',
+  subtitle: 'Advanced Research 검토 후보를 선별하기 위한 3-point screening 기준'
 };
 
 function criteriaGuideChrome() {
@@ -1788,7 +1788,7 @@ async function deleteCurrentRecord() {
   const asset = displayValue(summary.asset_name || table.asset_name, recordId);
   const company = displayValue(summary.company || table.company, 'Company unknown');
   const confirmed = window.confirm(
-    `${asset} · ${company} Fast Triage record를 삭제할까요?\n\n저장된 대시보드 레코드와 연결된 Obsidian 문서가 함께 갱신됩니다.`
+    `${asset} · ${company} Simple Research record를 삭제할까요?\n\n저장된 대시보드 레코드와 연결된 Obsidian 문서가 함께 갱신됩니다.`
   );
   if (!confirmed) return;
 
@@ -1823,7 +1823,7 @@ async function refreshTriageRubric(button) {
   button.classList.add('is-saving');
   const closeProgress = showTriageProgress(
     '최신 기준으로 업데이트 중입니다',
-    '최신 Fast Triage 기준으로 기존 근거와 점수를 다시 확인하고 있습니다.'
+    '최신 Simple Research 기준으로 기존 근거와 점수를 다시 확인하고 있습니다.'
   );
   let failureShown = false;
   try {
@@ -1865,7 +1865,7 @@ async function refreshTriageRubric(button) {
 }
 
 async function loadRecord() {
-  if (!recordId) throw new Error('Fast Triage record id가 없습니다.');
+  if (!recordId) throw new Error('Simple Research record id가 없습니다.');
   const response = await fetch(`/api/records/${encodeRecordIdForPath(recordId)}`);
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
@@ -2134,7 +2134,7 @@ syncCriteriaDrawerFromDashboard().catch((error) => {
 });
 loadRecord().catch((error) => {
   elements.loadStatus.textContent = 'Load failed';
-  elements.title.textContent = 'Fast Triage : Load failed';
+  elements.title.textContent = 'Simple : Load failed';
   elements.subtitle.textContent = error.message;
   elements.decisionHero.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`;
 });

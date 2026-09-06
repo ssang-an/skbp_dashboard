@@ -1,0 +1,8 @@
+{'id': '4924c428e91544b7b5894918e510b565', 'filename': 'List of ADMET studies_VTA-27 (Vasthera).pdf', 'stored_path': '/attachments/VASTHERA Co., Ltd._VTA-27/bff25ae10dc14c848954102a58c5c384_List of ADMET studies_VTA-27 (Vasthera).pdf', 'content_type': 'application/pdf', 'size_bytes': 338325, 'uploaded_by': '정영찬', 'uploaded_at': '2026-08-12T05:13:17.712303+00:00', 'processing_status': 'completed', 'document_processing': 'dict', 'processing_error': ''}
+doc_processing keys: ['document_id', 'file_sha256', 'filename', 'status', 'extraction', 'parser', 'deepseek_analysis', 'viewer_conversion', 'processed_at']
+viewer_conversion: {'status': 'not_required', 'pdf_path': None, 'error': None}
+status: completed
+{'id': '1b83ad196c6b4c8e9caa5869bab45fe4', 'filename': 'List of ADMET studies (CKRegeon).pptx', 'stored_path': '/attachments/CK Regeon Inc._CKR-492/fea9b23013904b4f98040f323bade2a1_List of ADMET studies (CKRegeon).pptx', 'content_type': 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'size_bytes': 284821, 'uploaded_by': '정주원', 'uploaded_at': '2026-08-25T02:23:42.473501+00:00', 'processing_status': 'completed', 'partner_material_category': 'admet', 'document_processing': 'dict', 'processing_error': ''}
+doc_processing keys: ['document_id', 'file_sha256', 'filename', 'status', 'extraction', 'parser', 'deepseek_analysis', 'viewer_conversion', 'processed_at']
+viewer_conversion: {'status': 'unavailable', 'pdf_path': None, 'error': 'LibreOffice was not found.'}
+status: completed

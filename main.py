@@ -58,6 +58,7 @@ ROOT = Path(__file__).resolve().parent
 JSON_DIR = ROOT / "json"
 DATA_FILE = JSON_DIR / "pipeline-records.json"
 CANDIDATE_QUEUE_FILE = JSON_DIR / "candidate-queue.json"
+SHORTLISTING_PROJECTS_FILE = JSON_DIR / "shortlisting-projects.json"
 USERS_FILE = ROOT / "data" / "users.json"
 SAMPLE_FILE = JSON_DIR / "drug-valuations.sample.json"
 SCHEMA_FILE = JSON_DIR / "drug-valuation.schema.json"
@@ -659,7 +660,14 @@ def action_date_summary_status(days_until_due: int) -> str:
 
 
 def run_action_date_reminders(now: datetime | None = None) -> dict[str, int]:
-    """Send each configured KST Action Date reminder at most once per owner/date/lead-time."""
+    """Send each configured KST Action Date reminder at most once per owner/date/lead-time.
+
+    Scans both the OIC default Project (meta.focus_management.due_date) and every
+    custom Shortlisting Project (meta.shortlisting_projects.<project_id>.due_date)
+    independently — each Project keeps its own due_date/owner/reminder history, so a
+    record tracked in multiple Projects can have a different Action Date (and a
+    different reminder recipient) per Project.
+    """
     if not ACTION_DATE_REMINDERS_ENABLED or not password_reset_email_configured():
         return {"sent": 0, "skipped": 0, "failed": 0}
 
@@ -667,36 +675,38 @@ def run_action_date_reminders(now: datetime | None = None) -> dict[str, int]:
         current_kst = (now or datetime.now(timezone.utc)).astimezone(KOREA_TIME_ZONE)
         today = current_kst.date()
         users = load_users()
+        project_names = {
+            project.get("id"): str(project.get("name") or "")
+            for project in load_shortlisting_projects()
+            if isinstance(project, dict)
+        }
         records = load_records()
         sent = skipped = failed = 0
         records_changed = False
 
-        for record in records:
-            if is_fast_triage_record(record):
-                continue
-            meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
-            focus = meta.get("focus_management") if isinstance(meta.get("focus_management"), dict) else {}
-            if focus.get("is_tracked") is not True:
-                continue
+        def process_bucket(record: dict[str, Any], bucket: dict[str, Any], history_field: str, project_label: str | None) -> None:
+            nonlocal sent, skipped, failed, records_changed
+            if bucket.get("is_tracked") is not True:
+                return
             try:
-                due_date = date.fromisoformat(str(focus.get("due_date") or ""))
+                due_date = date.fromisoformat(str(bucket.get("due_date") or ""))
             except ValueError:
                 skipped += 1
-                continue
+                return
             days_until_due = (due_date - today).days
             if days_until_due not in ACTION_DATE_REMINDER_DAYS:
-                continue
+                return
 
-            owner = action_date_owner_account(focus, users)
+            owner = action_date_owner_account(bucket, users)
             if owner is None:
                 skipped += 1
-                continue
+                return
             recipient = normalized_identity_email(owner.get("email"))
             reminder_key = f"{due_date.isoformat()}:{days_until_due}:{recipient}"
-            history = focus.get("action_date_reminders")
+            history = bucket.get("action_date_reminders")
             history = history if isinstance(history, list) else []
             if any(str(item.get("key") or "") == reminder_key for item in history if isinstance(item, dict)):
-                continue
+                return
 
             table = record.get("structured_table") if isinstance(record.get("structured_table"), dict) else {}
             summary = record.get("json_summary") if isinstance(record.get("json_summary"), dict) else {}
@@ -705,17 +715,17 @@ def run_action_date_reminders(now: datetime | None = None) -> dict[str, int]:
             try:
                 send_action_date_reminder_email(
                     recipient,
-                    owner_name=str(owner.get("name") or focus.get("owner_name") or "담당자"),
+                    owner_name=str(owner.get("name") or bucket.get("owner_name") or "담당자"),
                     company=company,
-                    asset=asset,
+                    asset=f"{asset} · {project_label}" if project_label else asset,
                     due_date=due_date,
                     days_until_due=days_until_due,
-                    action_plan=str(focus.get("action_plan") or ""),
+                    action_plan=str(bucket.get("action_plan") or ""),
                 )
             except (OSError, RuntimeError, smtplib.SMTPException) as exc:
                 print(f"Action-date reminder delivery failed for {record_key(record)}: {exc}", file=sys.stderr)
                 failed += 1
-                continue
+                return
 
             history.append({
                 "key": reminder_key,
@@ -724,17 +734,38 @@ def run_action_date_reminders(now: datetime | None = None) -> dict[str, int]:
                 "due_date": due_date.isoformat(),
                 "days_until_due": days_until_due,
             })
-            focus["action_date_reminders"] = history[-100:]
+            bucket["action_date_reminders"] = history[-100:]
             append_edit_history(
                 record,
                 source="action_date_reminder_email",
                 actor_ip="system",
                 actor_name="Scheduler",
-                field="focus_management.action_date_reminders",
+                field=history_field,
                 new_value=f"Action Date reminder sent ({days_until_due} days before due date)",
             )
             sent += 1
             records_changed = True
+
+        for record in records:
+            if is_fast_triage_record(record):
+                continue
+            meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+
+            focus = meta.get("focus_management") if isinstance(meta.get("focus_management"), dict) else None
+            if focus is not None:
+                process_bucket(record, focus, "focus_management.action_date_reminders", None)
+
+            projects_state = meta.get("shortlisting_projects") if isinstance(meta.get("shortlisting_projects"), dict) else {}
+            for project_id, state in projects_state.items():
+                if not isinstance(state, dict):
+                    continue
+                project_label = project_names.get(project_id) or str(project_id)
+                process_bucket(
+                    record,
+                    state,
+                    f"shortlisting_projects.{project_id}.action_date_reminders",
+                    project_label,
+                )
 
         if records_changed:
             save_records(records)
@@ -1074,6 +1105,24 @@ async def list_admin_users(request: Request):
     require_auth_developer(request)
     users = sorted(load_users(), key=lambda item: str(item.get("created_at") or ""), reverse=True)
     return {"users": [admin_user_payload(user) for user in users]}
+
+
+@app.get("/api/users/directory")
+def list_user_directory(request: Request) -> dict[str, Any]:
+    """Minimal name/email directory of active accounts, for member-picker UIs
+    (e.g. Shortlisting Project 구성원 추가). Login-only, not admin-gated, and
+    exposes no role/session/activity fields."""
+    require_authenticated_user(request)
+    entries: dict[str, dict[str, str]] = {}
+    for user in load_users():
+        if user.get("active") is False:
+            continue
+        email = normalized_identity_email(user.get("email"))
+        if not email or email in entries:
+            continue
+        entries[email] = {"name": str(user.get("name") or "").strip(), "email": email}
+    directory = sorted(entries.values(), key=lambda entry: (entry["name"].casefold(), entry["email"]))
+    return {"ok": True, "users": directory}
 
 
 @app.patch("/api/admin/users/{user_id}")
@@ -4201,7 +4250,7 @@ EVIDENCE_POSITIVE_CUES = re.compile(
     r"\b(demonstrat(?:e|ed|es|ing)|show(?:ed|s|n)?|confirm(?:ed|s)?|validated?|positive|"
     r"effective(?:ly|ness)?|significant(?:ly)?|improv(?:e|ed|ement)|reduc(?:e|ed|tion)|"
     r"proof[\s\-]?of[\s\-]?concept|dose[\s\-]?dependent)\b|"
-    r"(유효성|입증|개선|감소|억제|양성|통계적\s*유의)",
+    r"(유효성|입증|개선|감소|억제|양성|통계적\s*유의|확인\w*|관찰\w*|재현\w*)",
     re.IGNORECASE,
 )
 ADMET_COMPLETED_PATTERN = re.compile(r"^(?:y(?:\b.*)?|yes(?:\b.*)?|complete(?:d)?\b.*|.*(?:수행\s*)?완료.*)$", re.IGNORECASE)
@@ -5288,6 +5337,185 @@ def load_candidate_queue() -> list[dict[str, Any]]:
 
 def save_candidate_queue(entries: list[dict[str, Any]]) -> None:
     write_json_atomic(CANDIDATE_QUEUE_FILE, entries)
+
+
+DEFAULT_SHORTLISTING_PROJECT_ID = "oic_default"
+SHORTLISTING_METRIC_RETURN_TYPES = {"boolean", "list", "number", "date", "text"}
+SHORTLISTING_CUSTOM_COLUMN_CAP = 20
+SHORTLISTING_LIST_OPTION_CAP = 20
+
+
+def oic_builtin_shortlisting_metric_columns() -> list[dict[str, Any]]:
+    """Descriptive-only metadata for OIC's 7 legacy columns.
+
+    These entries never drive rendering/validation (that logic stays hardcoded
+    exactly as before) — they exist only so 'how many columns does this
+    project have' is answerable uniformly across default and custom projects.
+    """
+    return [
+        {
+            "id": "builtin_filter3",
+            "label": "Filter 3 (OI Partnership)",
+            "description": "OI Partnership 자동/수동 분류 (투자/Value Up/공동연구/Unknown/N/A).",
+            "return_type": "list",
+            "is_builtin": True,
+            "options": list(OI_PARTNERSHIP_LABELS.values()),
+            "max_value": None,
+        },
+        {
+            "id": "builtin_dd",
+            "label": "DD",
+            "description": "Due Diligence 자료 보유 여부 (첨부파일 기반 자동 판정).",
+            "return_type": "boolean",
+            "is_builtin": True,
+            "options": None,
+            "max_value": None,
+        },
+        {
+            "id": "builtin_in_vivo",
+            "label": "In-vivo",
+            "description": "In-vivo efficacy 근거 확인 여부 (O/X/N/A).",
+            "return_type": "list",
+            "is_builtin": True,
+            "options": ["O", "X", "N/A"],
+            "max_value": None,
+        },
+        {
+            "id": "builtin_in_vitro",
+            "label": "In-vitro",
+            "description": "In-vitro efficacy 근거 확인 여부 (O/X/N/A).",
+            "return_type": "list",
+            "is_builtin": True,
+            "options": ["O", "X", "N/A"],
+            "max_value": None,
+        },
+        {
+            "id": "builtin_admet",
+            "label": "ADMET",
+            "description": f"ADMET 스터디 완료 항목 수 (0-{ADMET_TOTAL_ITEMS}).",
+            "return_type": "number",
+            "is_builtin": True,
+            "options": None,
+            "max_value": ADMET_TOTAL_ITEMS,
+        },
+        {
+            "id": "builtin_disease_linkage",
+            "label": "D·Link",
+            "description": "MoA가 실제 질환 병리·기능과 연결됐는지 표시 (O/X/N/A).",
+            "return_type": "list",
+            "is_builtin": True,
+            "options": ["O", "X", "NA"],
+            "max_value": None,
+        },
+        {
+            "id": "builtin_action_date",
+            "label": "Action date",
+            "description": "다음 액션 예정일.",
+            "return_type": "text",
+            "is_builtin": True,
+            "options": None,
+            "max_value": None,
+        },
+    ]
+
+
+def default_shortlisting_project() -> dict[str, Any]:
+    now = datetime.now(timezone.utc).isoformat()
+    return {
+        "id": DEFAULT_SHORTLISTING_PROJECT_ID,
+        "name": "Open Innovation Center",
+        "description": "OIC Shortlisting 기본 시트 (Filter3/DD/In-vivo/In-vitro/ADMET/D·Link/Action date).",
+        "is_default": True,
+        "archived": False,
+        "metric_columns": oic_builtin_shortlisting_metric_columns(),
+        "members": [],
+        "created_by_name": "system",
+        "created_by_user_id": None,
+        "created_by_email": None,
+        "created_at": now,
+        "updated_at": now,
+    }
+
+
+def load_shortlisting_projects() -> list[dict[str, Any]]:
+    """Load Shortlisting project definitions, lazy-seeding the OIC default project
+    and backfilling a `members` list (creator as owner) on any project that predates
+    the per-project permission system."""
+    if not SHORTLISTING_PROJECTS_FILE.exists():
+        projects = [default_shortlisting_project()]
+        write_json_atomic(SHORTLISTING_PROJECTS_FILE, projects)
+        return projects
+    payload = read_json(SHORTLISTING_PROJECTS_FILE)
+    projects = [entry for entry in payload if isinstance(entry, dict)] if isinstance(payload, list) else []
+    changed = False
+    if not any(project.get("id") == DEFAULT_SHORTLISTING_PROJECT_ID for project in projects):
+        projects.insert(0, default_shortlisting_project())
+        changed = True
+    for project in projects:
+        if isinstance(project.get("members"), list):
+            continue
+        members: list[dict[str, Any]] = []
+        creator_email = normalized_identity_email(project.get("created_by_email"))
+        if creator_email:
+            members.append({
+                "email": creator_email,
+                "role": "owner",
+                "added_by": creator_email,
+                "added_at": project.get("created_at") or datetime.now(timezone.utc).isoformat(),
+            })
+        project["members"] = members
+        changed = True
+    if changed:
+        write_json_atomic(SHORTLISTING_PROJECTS_FILE, projects)
+    return projects
+
+
+def save_shortlisting_projects(projects: list[dict[str, Any]]) -> None:
+    write_json_atomic(SHORTLISTING_PROJECTS_FILE, projects)
+
+
+def find_shortlisting_project(projects: list[dict[str, Any]], project_id: str) -> dict[str, Any] | None:
+    return next((project for project in projects if project.get("id") == project_id), None)
+
+
+def shortlisting_project_role_for_account(project: dict[str, Any], account: dict[str, Any] | None) -> str:
+    """Return 'owner', 'write', or 'read' for account's effective permission on project.
+
+    Site admins are always 'owner' (bypass, never persisted to members[]). Works
+    identically for oic_default, whose members[] starts empty (only site admins
+    can manage it) until an admin grants explicit owner/write access via Project
+    Settings.
+    """
+    if account is None:
+        return "read"
+    if is_auth_admin(account):
+        return "owner"
+    email = normalized_identity_email(account.get("email"))
+    if not email:
+        return "read"
+    members = project.get("members") if isinstance(project.get("members"), list) else []
+    match = next((m for m in members if normalized_identity_email(m.get("email")) == email), None)
+    role = str((match or {}).get("role") or "").strip().lower()
+    return role if role in {"owner", "write"} else "read"
+
+
+def shortlisting_project_role_at_least(project: dict[str, Any], account: dict[str, Any] | None, minimum: str) -> bool:
+    rank = {"read": 0, "write": 1, "owner": 2}
+    return rank.get(shortlisting_project_role_for_account(project, account), 0) >= rank[minimum]
+
+
+def require_shortlisting_project_role(request: Request, project: dict[str, Any], minimum: str) -> dict[str, Any]:
+    account = require_authenticated_user(request)
+    if not shortlisting_project_role_at_least(project, account, minimum):
+        raise HTTPException(status_code=403, detail="이 Project에 대한 권한이 없습니다.")
+    return account
+
+
+def serialize_shortlisting_project(project: dict[str, Any], account: dict[str, Any] | None) -> dict[str, Any]:
+    """Shallow-copy project with an ephemeral current_user_role — never persisted."""
+    result = dict(project)
+    result["current_user_role"] = shortlisting_project_role_for_account(project, account)
+    return result
 
 
 def run_obsidian_export() -> dict[str, Any]:
@@ -7634,6 +7862,22 @@ def dashboard_effective_total_score(record: dict[str, Any]) -> int | float | Non
     scoring = record.get("scoring") if isinstance(record.get("scoring"), dict) else {}
     score = scoring.get("total_score")
     return score if not isinstance(score, bool) and isinstance(score, (int, float)) else None
+
+
+def shortlisting_total_score(record: dict[str, Any], project_id: str) -> int | float | None:
+    """Scout Score (Full Scout, 0-21) + this project's manual Custom Score (0-9) = Total Score (0-30)."""
+    scout_score = dashboard_effective_total_score(record)
+    if scout_score is None:
+        return None
+    meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+    if project_id == DEFAULT_SHORTLISTING_PROJECT_ID:
+        project_state = meta.get("focus_management") if isinstance(meta.get("focus_management"), dict) else {}
+    else:
+        projects_state = meta.get("shortlisting_projects") if isinstance(meta.get("shortlisting_projects"), dict) else {}
+        project_state = projects_state.get(project_id) if isinstance(projects_state.get(project_id), dict) else {}
+    custom_score = project_state.get("custom_score")
+    custom_score = custom_score if isinstance(custom_score, (int, float)) and not isinstance(custom_score, bool) else 0
+    return scout_score + custom_score
 
 
 def dashboard_effective_fast_total_score(record: dict[str, Any]) -> int | float | None:
@@ -10530,6 +10774,316 @@ def get_dashboard_summary() -> dict[str, Any]:
     return build_dashboard_summary(load_records())
 
 
+@app.get("/api/shortlisting/projects")
+def list_shortlisting_projects(request: Request) -> dict[str, Any]:
+    account = authenticated_user(request)
+    projects = [serialize_shortlisting_project(project, account) for project in load_shortlisting_projects()]
+    return {"ok": True, "projects": projects}
+
+
+@app.post("/api/shortlisting/projects")
+async def create_shortlisting_project(request: Request) -> dict[str, Any]:
+    account = require_authenticated_user(request)
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected a project object.")
+
+    name = str(payload.get("name") or "").strip()
+    description = str(payload.get("description") or "").strip()
+    if not name:
+        raise HTTPException(status_code=400, detail="Project 이름을 입력하세요.")
+    if len(name) > 80:
+        raise HTTPException(status_code=400, detail="Project 이름은 80자 이하여야 합니다.")
+    if len(description) > 400:
+        raise HTTPException(status_code=400, detail="Project 설명은 400자 이하여야 합니다.")
+
+    projects = load_shortlisting_projects()
+    duplicate = next(
+        (
+            project for project in projects
+            if not project.get("archived") and str(project.get("name") or "").strip().casefold() == name.casefold()
+        ),
+        None,
+    )
+    if duplicate is not None:
+        raise HTTPException(status_code=409, detail="동일한 이름의 Project가 이미 존재합니다.")
+
+    now = datetime.now(timezone.utc).isoformat()
+    creator_email = normalized_identity_email(account.get("email"))
+    project = {
+        "id": f"proj_{uuid.uuid4().hex[:10]}",
+        "name": name,
+        "description": description,
+        "is_default": False,
+        "archived": False,
+        "metric_columns": [],
+        "members": (
+            [{"email": creator_email, "role": "owner", "added_by": creator_email, "added_at": now}]
+            if creator_email else []
+        ),
+        "created_by_name": str(account.get("name") or "").strip(),
+        "created_by_user_id": str(account.get("id") or "").strip() or None,
+        "created_by_email": creator_email,
+        "created_at": now,
+        "updated_at": now,
+    }
+    projects.append(project)
+    save_shortlisting_projects(projects)
+    return {"ok": True, "project": serialize_shortlisting_project(project, account)}
+
+
+@app.patch("/api/shortlisting/projects/{project_id}")
+async def update_shortlisting_project(project_id: str, request: Request) -> dict[str, Any]:
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected a project update object.")
+
+    projects = load_shortlisting_projects()
+    project = find_shortlisting_project(projects, project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    account = require_shortlisting_project_role(request, project, "owner")
+
+    if "name" in payload:
+        name = str(payload.get("name") or "").strip()
+        if not name:
+            raise HTTPException(status_code=400, detail="Project 이름을 입력하세요.")
+        if len(name) > 80:
+            raise HTTPException(status_code=400, detail="Project 이름은 80자 이하여야 합니다.")
+        project["name"] = name
+    if "description" in payload:
+        description = str(payload.get("description") or "").strip()
+        if len(description) > 400:
+            raise HTTPException(status_code=400, detail="Project 설명은 400자 이하여야 합니다.")
+        project["description"] = description
+
+    project["updated_at"] = datetime.now(timezone.utc).isoformat()
+    save_shortlisting_projects(projects)
+    return {"ok": True, "project": serialize_shortlisting_project(project, account)}
+
+
+@app.delete("/api/shortlisting/projects/{project_id}")
+async def delete_shortlisting_project(project_id: str, request: Request) -> dict[str, Any]:
+    if project_id == DEFAULT_SHORTLISTING_PROJECT_ID:
+        raise HTTPException(status_code=400, detail="기본 Project는 삭제할 수 없습니다.")
+
+    projects = load_shortlisting_projects()
+    project = find_shortlisting_project(projects, project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    account = require_shortlisting_project_role(request, project, "owner")
+
+    project["archived"] = True
+    project["updated_at"] = datetime.now(timezone.utc).isoformat()
+    save_shortlisting_projects(projects)
+    return {"ok": True, "project": serialize_shortlisting_project(project, account)}
+
+
+@app.post("/api/shortlisting/projects/{project_id}/columns")
+async def create_shortlisting_metric_column(project_id: str, request: Request) -> dict[str, Any]:
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected a metric column object.")
+
+    if project_id == DEFAULT_SHORTLISTING_PROJECT_ID:
+        raise HTTPException(status_code=400, detail="OIC 기본 Project의 지표는 현재 추가할 수 없습니다 (하드코딩된 기본 지표만 사용).")
+
+    projects = load_shortlisting_projects()
+    project = find_shortlisting_project(projects, project_id)
+    if project is None or project.get("archived"):
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    account = require_shortlisting_project_role(request, project, "owner")
+
+    label = str(payload.get("label") or "").strip()
+    description = str(payload.get("description") or "").strip()
+    return_type = str(payload.get("return_type") or "").strip().lower()
+    if not label:
+        raise HTTPException(status_code=400, detail="지표 이름을 입력하세요.")
+    if len(label) > 60:
+        raise HTTPException(status_code=400, detail="지표 이름은 60자 이하여야 합니다.")
+    if len(description) > 400:
+        raise HTTPException(status_code=400, detail="지표 설명은 400자 이하여야 합니다.")
+    if return_type not in SHORTLISTING_METRIC_RETURN_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail="return_type must be boolean, list, number, date, or text.",
+        )
+
+    options: list[str] | None = None
+    max_value: int | None = None
+    if return_type == "list":
+        raw_options = payload.get("options")
+        if not isinstance(raw_options, list):
+            raise HTTPException(status_code=400, detail="list 타입은 options 배열이 필요합니다.")
+        seen: set[str] = set()
+        options = []
+        for raw_option in raw_options:
+            option = str(raw_option or "").strip()
+            if not option or len(option) > 40:
+                continue
+            key = option.casefold()
+            if key in seen:
+                continue
+            seen.add(key)
+            options.append(option)
+        if not options:
+            raise HTTPException(status_code=400, detail="list 타입은 최소 1개의 옵션이 필요합니다.")
+        if len(options) > SHORTLISTING_LIST_OPTION_CAP:
+            raise HTTPException(
+                status_code=400,
+                detail=f"list 옵션은 최대 {SHORTLISTING_LIST_OPTION_CAP}개까지 등록할 수 있습니다.",
+            )
+    elif return_type == "number":
+        raw_max_value = payload.get("max_value")
+        if raw_max_value not in (None, ""):
+            try:
+                max_value = int(raw_max_value)
+            except (TypeError, ValueError):
+                raise HTTPException(status_code=400, detail="max_value는 정수여야 합니다.") from None
+            if not 1 <= max_value <= 1_000_000:
+                raise HTTPException(status_code=400, detail="max_value는 1-1,000,000 사이의 정수여야 합니다.")
+
+    metric_columns = project.setdefault("metric_columns", [])
+    custom_column_count = sum(1 for column in metric_columns if not column.get("is_builtin"))
+    if custom_column_count >= SHORTLISTING_CUSTOM_COLUMN_CAP:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Project당 커스텀 지표는 최대 {SHORTLISTING_CUSTOM_COLUMN_CAP}개까지 등록할 수 있습니다.",
+        )
+    duplicate = next(
+        (
+            column for column in metric_columns
+            if str(column.get("label") or "").strip().casefold() == label.casefold()
+        ),
+        None,
+    )
+    if duplicate is not None:
+        raise HTTPException(status_code=409, detail="동일한 이름의 지표가 이미 등록되어 있습니다.")
+
+    column = {
+        "id": f"metric_{uuid.uuid4().hex[:10]}",
+        "label": label,
+        "description": description,
+        "return_type": return_type,
+        "is_builtin": False,
+        "options": options,
+        "max_value": max_value,
+        "created_by_name": str(account.get("name") or "").strip(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    metric_columns.append(column)
+    project["updated_at"] = column["created_at"]
+    save_shortlisting_projects(projects)
+    return {"ok": True, "project": serialize_shortlisting_project(project, account), "column": column}
+
+
+@app.delete("/api/shortlisting/projects/{project_id}/columns/{column_id}")
+async def delete_shortlisting_metric_column(project_id: str, column_id: str, request: Request) -> dict[str, Any]:
+    if not column_id.startswith("metric_"):
+        raise HTTPException(status_code=400, detail="기본 제공 지표는 삭제할 수 없습니다.")
+
+    projects = load_shortlisting_projects()
+    project = find_shortlisting_project(projects, project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    account = require_shortlisting_project_role(request, project, "owner")
+
+    metric_columns = project.get("metric_columns")
+    match = next(
+        (column for column in metric_columns if isinstance(column, dict) and column.get("id") == column_id),
+        None,
+    ) if isinstance(metric_columns, list) else None
+    if match is None:
+        raise HTTPException(status_code=404, detail=f"Column not found: {column_id}")
+
+    metric_columns.remove(match)
+    project["updated_at"] = datetime.now(timezone.utc).isoformat()
+    save_shortlisting_projects(projects)
+    return {"ok": True, "project": serialize_shortlisting_project(project, account), "column_id": column_id}
+
+
+@app.post("/api/shortlisting/projects/{project_id}/members")
+async def upsert_shortlisting_project_member(project_id: str, request: Request) -> dict[str, Any]:
+    projects = load_shortlisting_projects()
+    project = find_shortlisting_project(projects, project_id)
+    if project is None or project.get("archived"):
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    account = require_shortlisting_project_role(request, project, "owner")
+
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected a member object.")
+
+    email = normalized_identity_email(payload.get("email"))
+    role = str(payload.get("role") or "").strip().lower()
+    if not email or "@" not in email:
+        raise HTTPException(status_code=400, detail="유효한 이메일을 입력하세요.")
+    if role not in {"owner", "write"}:
+        raise HTTPException(status_code=400, detail="role must be owner or write.")
+
+    members = project.setdefault("members", [])
+    existing = next((m for m in members if normalized_identity_email(m.get("email")) == email), None)
+    if existing is not None and str(existing.get("role") or "").lower() == "owner" and role != "owner":
+        remaining_owners = [
+            m for m in members
+            if m is not existing and str(m.get("role") or "").strip().lower() == "owner"
+        ]
+        if not remaining_owners:
+            raise HTTPException(status_code=400, detail="Project에는 최소 1명의 owner가 있어야 합니다.")
+
+    actor_email = normalized_identity_email(account.get("email"))
+    now = datetime.now(timezone.utc).isoformat()
+    if existing is not None:
+        existing["role"] = role
+        existing["added_by"] = actor_email
+        existing.setdefault("added_at", now)
+    else:
+        members.append({"email": email, "role": role, "added_by": actor_email, "added_at": now})
+    project["updated_at"] = now
+    save_shortlisting_projects(projects)
+    return {"ok": True, "project": serialize_shortlisting_project(project, account)}
+
+
+@app.delete("/api/shortlisting/projects/{project_id}/members/{member_email}")
+async def remove_shortlisting_project_member(project_id: str, member_email: str, request: Request) -> dict[str, Any]:
+    projects = load_shortlisting_projects()
+    project = find_shortlisting_project(projects, project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    account = require_shortlisting_project_role(request, project, "owner")
+
+    email = normalized_identity_email(member_email)
+    members = project.get("members") if isinstance(project.get("members"), list) else []
+    target = next((m for m in members if normalized_identity_email(m.get("email")) == email), None)
+    if target is None:
+        raise HTTPException(status_code=404, detail="Member not found.")
+
+    if str(target.get("role") or "").strip().lower() == "owner":
+        remaining_owners = [
+            m for m in members
+            if m is not target and str(m.get("role") or "").strip().lower() == "owner"
+        ]
+        if not remaining_owners:
+            raise HTTPException(status_code=400, detail="Project에는 최소 1명의 owner가 있어야 합니다.")
+
+    members.remove(target)
+    project["updated_at"] = datetime.now(timezone.utc).isoformat()
+    save_shortlisting_projects(projects)
+    return {"ok": True, "project": serialize_shortlisting_project(project, account)}
+
+
 @app.post("/api/candidate-queue/import/preview")
 async def preview_candidate_queue_import(request: Request) -> dict[str, Any]:
     """Return ambiguous Listing matches before any Tab 0 import is persisted."""
@@ -13249,7 +13803,8 @@ async def update_manual_review_history_reason(record_id: str, request: Request) 
 
 @app.patch("/api/records/{record_id:path}/focus-management")
 async def update_focus_management(record_id: str, request: Request) -> dict[str, Any]:
-    require_auth_admin(request)
+    oic_project = find_shortlisting_project(load_shortlisting_projects(), DEFAULT_SHORTLISTING_PROJECT_ID)
+    require_shortlisting_project_role(request, oic_project or {}, "write")
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -13461,12 +14016,23 @@ async def update_focus_management(record_id: str, request: Request) -> dict[str,
                 focus["admet_completed"] = value
                 focus["admet_completed_source"] = "manual"
                 apply_auto_oi_partnership(focus, record)
+            elif field == "custom_score":
+                raw_value = payload.get("value")
+                if isinstance(raw_value, bool):
+                    raise HTTPException(status_code=400, detail="custom_score must be an integer between 0 and 9.")
+                try:
+                    value = int(raw_value)
+                except (TypeError, ValueError):
+                    raise HTTPException(status_code=400, detail="custom_score must be an integer between 0 and 9.") from None
+                if not 0 <= value <= 9:
+                    raise HTTPException(status_code=400, detail="custom_score must be an integer between 0 and 9.")
+                focus["custom_score"] = value
             else:
                 raise HTTPException(
                     status_code=400,
                     detail=(
                         "field must be user_comment, due_date, owner_name, action_plan, tracking_status, partnership_type, partnership_note, "
-                        "partner_material_flag, in_vivo_status, in_vitro_status, disease_linkage_status, or admet_completed."
+                        "partner_material_flag, in_vivo_status, in_vitro_status, disease_linkage_status, admet_completed, or custom_score."
                     ),
                 )
             new_value = value
@@ -13492,6 +14058,223 @@ async def update_focus_management(record_id: str, request: Request) -> dict[str,
             "record_id": record_id,
             "record": record,
             "focus_management": focus,
+        }
+
+    raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
+
+
+@app.patch("/api/records/{record_id:path}/shortlisting-projects/{project_id}")
+async def update_shortlisting_project_record_state(record_id: str, project_id: str, request: Request) -> dict[str, Any]:
+    """Non-default-Project counterpart of /focus-management (main.py:13596).
+
+    The OIC default Project keeps using /focus-management untouched; this endpoint
+    exists only for custom, team-defined Projects and is intentionally login-only
+    (not admin-gated) so other teams can adopt Shortlisting without admin access.
+    """
+    account = require_authenticated_user(request)
+    if project_id == DEFAULT_SHORTLISTING_PROJECT_ID:
+        raise HTTPException(status_code=404, detail="기본 Project는 /focus-management 엔드포인트를 사용하세요.")
+
+    projects = load_shortlisting_projects()
+    project = find_shortlisting_project(projects, project_id)
+    if project is None or project.get("archived"):
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    if not shortlisting_project_role_at_least(project, account, "write"):
+        raise HTTPException(status_code=403, detail="이 Project에 기록할 권한이 없습니다.")
+
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected a shortlisting project update object.")
+
+    action = str(payload.get("action") or "").strip().lower()
+    if action not in {"add", "stationary", "remove", "update"}:
+        raise HTTPException(status_code=400, detail="action must be add, stationary, remove, or update.")
+
+    actor_name = str(payload.get("actor_name") or "").strip() or str(account.get("name") or "").strip()
+    if len(actor_name) > 100:
+        raise HTTPException(status_code=400, detail="actor_name must be 100 characters or fewer.")
+
+    records = load_records()
+    actor_ip = get_client_ip(request)
+    for index, record in enumerate(records):
+        if record_key(record) != record_id:
+            continue
+        if is_fast_triage_record(record):
+            raise HTTPException(status_code=400, detail="Only Full Scout records can be added to Shortlisting.")
+
+        changed_at = datetime.now(timezone.utc).isoformat()
+        meta = record.setdefault("meta", {})
+        projects_state = meta.setdefault("shortlisting_projects", {})
+        state = projects_state.setdefault(project_id, {})
+        history_field = f"shortlisting_projects.{project_id}.{action}"
+        previous_value: Any = None
+        new_value: Any = None
+
+        if action == "add":
+            previous_value = state.get("is_tracked", False)
+            state["is_tracked"] = True
+            state["tracking_status"] = "priority"
+            state.setdefault("added_at", changed_at)
+            state.setdefault("custom_score", 0)
+            state.setdefault("metric_values", {})
+            state.setdefault("due_date", "")
+            state.setdefault("owner_name", "")
+            state.setdefault("action_plan", "")
+            state.setdefault("user_comment", "")
+            state.pop("removed_at", None)
+            new_value = True
+        elif action == "stationary":
+            history_field = f"shortlisting_projects.{project_id}.tracking_status"
+            previous_value = state.get("tracking_status") if state.get("is_tracked") is True else "untracked"
+            state["is_tracked"] = True
+            state["tracking_status"] = "stationary"
+            state.setdefault("added_at", changed_at)
+            new_value = "stationary"
+        elif action == "remove":
+            previous_value = state.get("is_tracked", False)
+            state["is_tracked"] = False
+            state.pop("tracking_status", None)
+            state["removed_at"] = changed_at
+            new_value = False
+        else:
+            field = str(payload.get("field") or "").strip()
+            history_field = f"shortlisting_projects.{project_id}.{field}"
+            previous_value = state.get(field)
+            if field in {"user_comment", "action_plan"}:
+                value = str(payload.get("value") or "")
+                max_length = 5000 if field == "user_comment" else 500
+                if len(value) > max_length:
+                    raise HTTPException(status_code=400, detail=f"{field} must be {max_length} characters or fewer.")
+                state[field] = value
+            elif field == "owner_name":
+                value = str(payload.get("value") or "").strip()
+                if len(value) > 100:
+                    raise HTTPException(status_code=400, detail="Owner name must be 100 characters or fewer.")
+                if not value:
+                    state["owner_name"] = ""
+                    state.pop("owner_user_id", None)
+                    state.pop("owner_email", None)
+                else:
+                    owner = registered_action_owner(value, load_users())
+                    if owner is None:
+                        raise HTTPException(
+                            status_code=400,
+                            detail="담당자는 가입된 활성 사용자 이름 또는 이메일과 정확히 일치해야 합니다.",
+                        )
+                    state["owner_name"] = str(owner.get("name") or "").strip()
+                    state["owner_user_id"] = str(owner.get("id") or "").strip()
+                    state["owner_email"] = normalized_identity_email(owner.get("email"))
+                    value = state["owner_name"]
+            elif field == "due_date":
+                value = str(payload.get("value") or "").strip()
+                if value:
+                    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+                        raise HTTPException(status_code=400, detail="Due date must use YYYY-MM-DD.")
+                    try:
+                        date.fromisoformat(value)
+                    except ValueError:
+                        raise HTTPException(
+                            status_code=400,
+                            detail="Due date must be a valid calendar date in YYYY-MM-DD format.",
+                        ) from None
+                state["due_date"] = value
+            elif field == "tracking_status":
+                value = str(payload.get("value") or "").strip().lower()
+                if value not in {"priority", "stationary"}:
+                    raise HTTPException(status_code=400, detail="tracking_status must be priority or stationary.")
+                state["tracking_status"] = value
+            elif field == "custom_score":
+                raw_value = payload.get("value")
+                if isinstance(raw_value, bool):
+                    raise HTTPException(status_code=400, detail="custom_score must be an integer between 0 and 9.")
+                try:
+                    value = int(raw_value)
+                except (TypeError, ValueError):
+                    raise HTTPException(status_code=400, detail="custom_score must be an integer between 0 and 9.") from None
+                if not 0 <= value <= 9:
+                    raise HTTPException(status_code=400, detail="custom_score must be an integer between 0 and 9.")
+                state["custom_score"] = value
+            elif field == "metric_value":
+                metric_id = str(payload.get("metric_id") or "").strip()
+                metric_columns = project.get("metric_columns") if isinstance(project.get("metric_columns"), list) else []
+                column = next((item for item in metric_columns if item.get("id") == metric_id), None)
+                if column is None:
+                    raise HTTPException(status_code=404, detail=f"Metric column not found: {metric_id}")
+                history_field = f"shortlisting_projects.{project_id}.metric_values.{metric_id}"
+                metric_values = state.setdefault("metric_values", {})
+                previous_value = metric_values.get(metric_id)
+                raw_value = payload.get("value")
+                return_type = column.get("return_type")
+                if return_type == "boolean":
+                    if not isinstance(raw_value, bool):
+                        raise HTTPException(status_code=400, detail="metric value must be true or false for a boolean column.")
+                    value = raw_value
+                elif return_type == "list":
+                    value = str(raw_value or "").strip()
+                    options = column.get("options") if isinstance(column.get("options"), list) else []
+                    if value not in options:
+                        raise HTTPException(status_code=400, detail=f"metric value must be one of: {', '.join(options)}.")
+                elif return_type == "number":
+                    if isinstance(raw_value, bool):
+                        raise HTTPException(status_code=400, detail="metric value must be a number.")
+                    try:
+                        value = float(raw_value)
+                    except (TypeError, ValueError):
+                        raise HTTPException(status_code=400, detail="metric value must be a number.") from None
+                    if value == int(value):
+                        value = int(value)
+                    max_value = column.get("max_value")
+                    if isinstance(max_value, int) and not 0 <= value <= max_value:
+                        raise HTTPException(status_code=400, detail=f"metric value must be a number between 0 and {max_value}.")
+                elif return_type == "date":
+                    value = str(raw_value or "").strip()
+                    if value:
+                        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+                            raise HTTPException(status_code=400, detail="metric value must use YYYY-MM-DD.")
+                        try:
+                            date.fromisoformat(value)
+                        except ValueError:
+                            raise HTTPException(status_code=400, detail="metric value must be a valid calendar date.") from None
+                else:
+                    value = str(raw_value or "")
+                    if len(value) > 2000:
+                        raise HTTPException(status_code=400, detail="metric value must be 2000 characters or fewer.")
+                metric_values[metric_id] = value
+            else:
+                raise HTTPException(
+                    status_code=400,
+                    detail=(
+                        "field must be user_comment, action_plan, owner_name, due_date, tracking_status, "
+                        "custom_score, or metric_value."
+                    ),
+                )
+            new_value = value
+            state["is_tracked"] = True
+            state.setdefault("added_at", changed_at)
+
+        state["updated_at"] = changed_at
+        state["updated_source"] = "dashboard_shortlisting_project"
+        state["updated_by"] = actor_name or actor_ip
+        append_edit_history(
+            record,
+            source="dashboard_shortlisting_project",
+            actor_ip=actor_ip,
+            actor_name=actor_name,
+            field=history_field,
+            previous_value=previous_value,
+            new_value=new_value,
+        )
+        records[index] = record
+        save_records(records)
+        return {
+            "ok": True,
+            "record_id": record_id,
+            "project_id": project_id,
+            "record": record,
+            "shortlisting_project_state": state,
         }
 
     raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")

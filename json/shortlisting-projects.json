@@ -1,0 +1,211 @@
+[
+  {
+    "id": "oic_default",
+    "name": "Open Innovation Center",
+    "description": "OIC Shortlisting 기본 시트 (Filter3/DD/In-vivo/In-vitro/ADMET/D·Link/Action date).",
+    "is_default": true,
+    "archived": false,
+    "metric_columns": [
+      {
+        "id": "builtin_filter3",
+        "label": "Filter 3 (OI Partnership)",
+        "description": "OI Partnership 자동/수동 분류 (투자/Value Up/공동연구/Unknown/N/A).",
+        "return_type": "list",
+        "is_builtin": true,
+        "options": [
+          "투자",
+          "Value Up",
+          "공동 연구",
+          "N/A",
+          "Unknown"
+        ],
+        "max_value": null
+      },
+      {
+        "id": "builtin_dd",
+        "label": "DD",
+        "description": "Due Diligence 자료 보유 여부 (첨부파일 기반 자동 판정).",
+        "return_type": "boolean",
+        "is_builtin": true,
+        "options": null,
+        "max_value": null
+      },
+      {
+        "id": "builtin_in_vivo",
+        "label": "In-vivo",
+        "description": "In-vivo efficacy 근거 확인 여부 (O/X/N/A).",
+        "return_type": "list",
+        "is_builtin": true,
+        "options": [
+          "O",
+          "X",
+          "N/A"
+        ],
+        "max_value": null
+      },
+      {
+        "id": "builtin_in_vitro",
+        "label": "In-vitro",
+        "description": "In-vitro efficacy 근거 확인 여부 (O/X/N/A).",
+        "return_type": "list",
+        "is_builtin": true,
+        "options": [
+          "O",
+          "X",
+          "N/A"
+        ],
+        "max_value": null
+      },
+      {
+        "id": "builtin_admet",
+        "label": "ADMET",
+        "description": "ADMET 스터디 완료 항목 수 (0-25).",
+        "return_type": "integer",
+        "is_builtin": true,
+        "options": null,
+        "max_value": 25
+      },
+      {
+        "id": "builtin_disease_linkage",
+        "label": "D·Link",
+        "description": "MoA가 실제 질환 병리·기능과 연결됐는지 표시 (O/X/N/A).",
+        "return_type": "list",
+        "is_builtin": true,
+        "options": [
+          "O",
+          "X",
+          "NA"
+        ],
+        "max_value": null
+      },
+      {
+        "id": "builtin_action_date",
+        "label": "Action date",
+        "description": "다음 액션 예정일.",
+        "return_type": "text",
+        "is_builtin": true,
+        "options": null,
+        "max_value": null
+      }
+    ],
+    "created_by_name": "system",
+    "created_by_user_id": null,
+    "created_by_email": null,
+    "created_at": "2026-09-06T01:59:30.006611+00:00",
+    "updated_at": "2026-09-06T01:59:30.006611+00:00"
+  },
+  {
+    "id": "proj_6c24a10eb5",
+    "name": "CNS Discovery Team",
+    "description": "브라우저 스모크 테스트용 프로젝트",
+    "is_default": false,
+    "archived": true,
+    "metric_columns": [
+      {
+        "id": "metric_8e1b9a7784",
+        "label": "특허 상태",
+        "description": "해당 자산의 특허 출원/등록 상태",
+        "return_type": "list",
+        "is_builtin": false,
+        "options": [
+          "출원",
+          "등록",
+          "없음"
+        ],
+        "max_value": null,
+        "created_by_name": "정주원",
+        "created_at": "2026-09-06T02:16:36.502596+00:00"
+      }
+    ],
+    "created_by_name": "정주원",
+    "created_by_user_id": "9979fce95e884382853e0aed85d6901e",
+    "created_by_email": "joowon.jung@sk.com",
+    "created_at": "2026-09-06T02:06:30.991933+00:00",
+    "updated_at": "2026-09-06T02:27:22.168090+00:00",
+    "members": [
+      {
+        "email": "joowon.jung@sk.com",
+        "role": "owner",
+        "added_by": "joowon.jung@sk.com",
+        "added_at": "2026-09-06T02:06:30.991933+00:00"
+      }
+    ]
+  },
+  {
+    "id": "proj_08b16e1526",
+    "name": "test",
+    "description": "test",
+    "is_default": false,
+    "archived": false,
+    "metric_columns": [
+      {
+        "id": "metric_2a769cb27a",
+        "label": "자료등록여부",
+        "description": "abc",
+        "return_type": "boolean",
+        "is_builtin": false,
+        "options": null,
+        "max_value": null,
+        "created_by_name": "정주원",
+        "created_at": "2026-09-06T02:35:18.016792+00:00"
+      }
+    ],
+    "created_by_name": "정주원",
+    "created_by_user_id": "9979fce95e884382853e0aed85d6901e",
+    "created_by_email": "joowon.jung@sk.com",
+    "created_at": "2026-09-06T02:34:44.666871+00:00",
+    "updated_at": "2026-09-06T12:37:08.381305+00:00",
+    "members": [
+      {
+        "email": "joowon.jung@sk.com",
+        "role": "owner",
+        "added_by": "joowon.jung@sk.com",
+        "added_at": "2026-09-06T02:34:44.666871+00:00"
+      }
+    ]
+  },
+  {
+    "id": "proj_8b5acb138f",
+    "name": "test2",
+    "description": "추가 테스트 중",
+    "is_default": false,
+    "archived": false,
+    "metric_columns": [
+      {
+        "id": "metric_e80d6ad075",
+        "label": "특허여부",
+        "description": "",
+        "return_type": "boolean",
+        "is_builtin": false,
+        "options": null,
+        "max_value": null,
+        "created_by_name": "정주원",
+        "created_at": "2026-09-06T02:54:52.161068+00:00"
+      },
+      {
+        "id": "metric_3bb03ba0a0",
+        "label": "특허이름",
+        "description": "특허 이름과 번호를 여기 입력한다",
+        "return_type": "text",
+        "is_builtin": false,
+        "options": null,
+        "max_value": null,
+        "created_by_name": "정주원",
+        "created_at": "2026-09-06T02:55:07.559951+00:00"
+      }
+    ],
+    "created_by_name": "정주원",
+    "created_by_user_id": "9979fce95e884382853e0aed85d6901e",
+    "created_by_email": "joowon.jung@sk.com",
+    "created_at": "2026-09-06T02:54:35.654222+00:00",
+    "updated_at": "2026-09-06T03:10:06.574688+00:00",
+    "members": [
+      {
+        "email": "joowon.jung@sk.com",
+        "role": "owner",
+        "added_by": "joowon.jung@sk.com",
+        "added_at": "2026-09-06T02:54:35.654222+00:00"
+      }
+    ]
+  }
+]

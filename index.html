@@ -72,7 +72,7 @@
         });
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20260905-step0-dot-idle-wobble" />
+  <link rel="stylesheet" href="./src/styles.css?v=20260906-focus-project-picker-1" />
   <link rel="stylesheet" href="./src/knowledge_graph.css?v=20260823-atlas-search-pill-alignment-1" />
   <link rel="stylesheet" href="./src/sigma_graph.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js" defer></script>
@@ -104,21 +104,21 @@
                 <span class="tab-step" aria-hidden="true">0</span>
                 <b>진척 현황</b>
               </button>
-              <button id="fastTriageTableTab" class="help-tooltip" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="triage" data-tooltip="Fast Triage 결과로 후보를 빠르게 1차 선별합니다.">
+              <button id="fastTriageTableTab" class="help-tooltip" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="triage" data-tooltip="Simple Research 결과로 후보를 빠르게 1차 선별합니다.">
                 <span class="tab-step" aria-hidden="true">1</span>
-                <b>Fast Triage</b>
+                <b>Simple</b>
               </button>
-              <button id="fullScoutTableTab" class="help-tooltip" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="full" data-tooltip="Full Scout의 심층 조사와 평가 결과를 확인합니다.">
+              <button id="fullScoutTableTab" class="help-tooltip" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="full" data-tooltip="Advanced Research의 심층 조사와 평가 결과를 확인합니다.">
                 <span class="tab-step" aria-hidden="true">2</span>
-                <b>Full Scout</b>
+                <b>Advanced</b>
               </button>
-              <button id="focusManagementTableTab" class="help-tooltip" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="focus" data-tooltip="후속 BD 검토 대상으로 추적 중인 Shortlisting 목록입니다.">
+              <button id="focusManagementTableTab" class="help-tooltip" type="button" role="tab" aria-selected="false" aria-controls="pipelineContent" tabindex="-1" data-table-mode="focus" data-tooltip="후속 BD 검토 대상으로 추적 중인 Custom Review 목록입니다.">
                 <span class="tab-step tab-step-star" aria-hidden="true">
                   <svg viewBox="0 0 24 24" focusable="false">
                     <path d="m12 2.75 2.78 5.64 6.22.9-4.5 4.39 1.06 6.2L12 16.95l-5.56 2.93 1.06-6.2L3 9.29l6.22-.9L12 2.75Z" />
                   </svg>
                 </span>
-                <b>Shortlisting</b>
+                <b>Custom</b>
               </button>
               <a id="knowledgeMapTab" class="workflow-knowledge-map-link help-tooltip" href="/?tab=map" role="tab" aria-controls="knowledgeMapPanel" aria-label="Wiki Map 열기" data-tooltip="저장된 Pipeline을 Company·Target·MoA·근거 중심의 지식 그래프로 탐색합니다.">
                 <span class="tab-step knowledge-map-icon" aria-hidden="true">✦</span>
@@ -149,15 +149,15 @@
                 class="help-tooltip"
                 type="button"
                 hidden
-                data-tooltip="GPT Fast Triage v3.7 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / INSUFFICIENT로 screening할 때 사용합니다."
-                aria-label="GPT Fast Triage v3.7 지침 복사"
+                data-tooltip="GPT Simple Research v3.7 지침을 복사합니다. 여러 asset을 빠르게 SELECT / REJECT / INSUFFICIENT로 screening할 때 사용합니다."
+                aria-label="GPT Simple Research v3.7 지침 복사"
               ><span aria-hidden="true">GPT</span><b>지침 1</b></button>
               <button
                 id="copyPromptTopButton"
                 class="help-tooltip"
                 type="button"
-                data-tooltip="GPT Full Scout v3.8 지침을 복사합니다. Fast Triage에서 SELECT된 asset을 심층 검토할 때 사용합니다."
-                aria-label="GPT Full Scout v3.8 지침 복사"
+                data-tooltip="GPT Advanced Research v3.8 지침을 복사합니다. Simple Research에서 SELECT된 asset을 심층 검토할 때 사용합니다."
+                aria-label="GPT Advanced Research v3.8 지침 복사"
               ><span aria-hidden="true">GPT</span><b>지침 2</b></button>
               <button
                 class="data-utility-segment data-upload-shortcut help-tooltip"
@@ -167,6 +167,26 @@
                 aria-label="PIPELINE 업로드"
                 aria-controls="dataUploadPanel"
               ><span class="data-utility-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 16V4M7.5 8.5 12 4l4.5 4.5" /><path d="M5 13v6h14v-6" /></svg></span><b><span class="data-upload-label-full">PIPELINE 업로드</span><span class="data-upload-label-compact">업로드</span></b></button>
+            </div>
+            <div class="top-action-group top-shortlisting-actions" role="group" aria-label="Custom Review project actions" hidden>
+              <div class="shortlisting-project-switcher">
+                <button
+                  id="shortlistingProjectSwitchButton"
+                  class="help-tooltip"
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                  aria-controls="shortlistingProjectSwitchMenu"
+                  data-tooltip="현재 Custom Review Project입니다. 클릭하여 다른 Project로 전환합니다."
+                ><span aria-hidden="true">▤</span><b id="shortlistingProjectSwitchLabel">Open Innovation Center</b></button>
+                <div id="shortlistingProjectSwitchMenu" class="shortlisting-project-switch-menu" role="listbox" aria-label="Custom Review Project 선택" hidden></div>
+              </div>
+              <button
+                id="addShortlistingProjectButton"
+                class="help-tooltip"
+                type="button"
+                data-tooltip="새 팀 전용 Custom Review Project를 만듭니다."
+              ><span aria-hidden="true">+</span><b>프로젝트 추가</b></button>
             </div>
             <div class="top-action-group top-personal-actions" aria-label="Personal and appearance">
               <button
@@ -195,7 +215,7 @@
           </span>
           <span class="workflow-description-copy">
             <strong>후보 목록 관리<span class="workflow-description-separator" aria-hidden="true">·</span></strong>
-            <span>후보 목록을 등록하고 Fast Triage·Full Scout·Shortlisting까지의 조사 진척을 한 곳에서 확인합니다.</span>
+            <span>후보 목록을 등록하고 Simple Research·Advanced Research·Custom Review까지의 조사 진척을 한 곳에서 확인합니다.</span>
           </span>
           <span class="workflow-description-filter">조사 진행 단계</span>
         </section>
@@ -230,25 +250,25 @@
             <div class="step0-workflow-card-canvas" data-step0-workflow-map="pending" role="region" tabindex="0" aria-label="Listing Pipeline node graph" aria-live="polite"></div>
             </section>
             <section class="step0-stat-column" data-workflow-stage="fast_triage">
-            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="fast_triage" data-tooltip="Fast Triage는 공개 정보로 후보를 빠르게 1차 선별하는 단계입니다. 클릭하면 Fast Triage가 완료된 모든 Pipeline을 Table에 표시합니다." aria-label="Fast Triage 완료 Pipeline으로 필터">
-              <span class="step0-stat-label">Fast Triage</span>
+            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="fast_triage" data-tooltip="Simple Research는 공개 정보로 후보를 빠르게 1차 선별하는 단계입니다. 클릭하면 Simple Research가 완료된 모든 Pipeline을 Table에 표시합니다." aria-label="Simple Research 완료 Pipeline으로 필터">
+              <span class="step0-stat-label">Simple</span>
               <span class="step0-stat-value"><strong id="step0StatFastTriage">0</strong><em id="step0RecentFastTriage" class="step0-stat-recent" hidden>▲ 0</em></span>
             </button>
-            <div class="step0-workflow-card-canvas" data-step0-workflow-map="fast_triage" role="region" tabindex="0" aria-label="Fast Triage Pipeline node graph" aria-live="polite"></div>
+            <div class="step0-workflow-card-canvas" data-step0-workflow-map="fast_triage" role="region" tabindex="0" aria-label="Simple Research Pipeline node graph" aria-live="polite"></div>
             </section>
             <section class="step0-stat-column" data-workflow-stage="full_scout">
-            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="full_scout" data-tooltip="Full Scout는 타깃·근거·경쟁 환경·사업성을 심층 검토하는 단계입니다. 클릭하면 Full Scout가 완료된 모든 Pipeline을 Table에 표시합니다." aria-label="Full Scout 완료 Pipeline으로 필터">
-              <span class="step0-stat-label">Full Scout</span>
+            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="full_scout" data-tooltip="Advanced Research는 타깃·근거·경쟁 환경·사업성을 심층 검토하는 단계입니다. 클릭하면 Advanced Research가 완료된 모든 Pipeline을 Table에 표시합니다." aria-label="Advanced Research 완료 Pipeline으로 필터">
+              <span class="step0-stat-label">Advanced</span>
               <span class="step0-stat-value"><strong id="step0StatFullScout">0</strong><em id="step0RecentFullScout" class="step0-stat-recent" hidden>▲ 0</em></span>
             </button>
-            <div class="step0-workflow-card-canvas" data-step0-workflow-map="full_scout" role="region" tabindex="0" aria-label="Full Scout Pipeline node graph" aria-live="polite"></div>
+            <div class="step0-workflow-card-canvas" data-step0-workflow-map="full_scout" role="region" tabindex="0" aria-label="Advanced Research Pipeline node graph" aria-live="polite"></div>
             </section>
             <section class="step0-stat-column" data-workflow-stage="shortlisting">
-            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="shortlisting" data-tooltip="Shortlisting은 Full Scout 검토 후 후속 BD 검토 대상으로 추적 중인 Pipeline입니다. 클릭하면 해당 목록만 Table에 표시합니다." aria-label="Shortlisting Pipeline으로 필터">
-              <span class="step0-stat-label">Shortlisting</span>
+            <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="shortlisting" data-tooltip="Custom Review는 Advanced Research 검토 후 후속 BD 검토 대상으로 추적 중인 Pipeline입니다. 클릭하면 해당 목록만 Table에 표시합니다." aria-label="Custom Review Pipeline으로 필터">
+              <span class="step0-stat-label">Custom</span>
               <span class="step0-stat-value"><strong id="step0StatShortlisted">0</strong><em id="step0RecentShortlisted" class="step0-stat-recent" hidden>▲ 0</em></span>
             </button>
-            <div class="step0-workflow-card-canvas" data-step0-workflow-map="shortlisting" role="region" tabindex="0" aria-label="Shortlisting Pipeline node graph" aria-live="polite"></div>
+            <div class="step0-workflow-card-canvas" data-step0-workflow-map="shortlisting" role="region" tabindex="0" aria-label="Custom Review Pipeline node graph" aria-live="polite"></div>
             </section>
           </div>
         </section>
@@ -331,7 +351,7 @@
                 id="step0CopyInstructionsButton"
                 type="button"
                 class="step0-copy-instructions-button help-tooltip"
-                data-tooltip="선택한 Listing 항목을 포함해 GPT Fast Triage 지침 1을 복사합니다."
+                data-tooltip="선택한 Listing 항목을 포함해 GPT Simple Research 지침 1을 복사합니다."
               ><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></svg><span class="step0-copy-gpt" aria-hidden="true">GPT</span><b>지침 복사</b></button>
               <button id="step0ExportExcelButton" class="excel-export-button help-tooltip" type="button" data-tooltip="현재 필터 결과를 Excel용 CSV로 내보냅니다." disabled>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h5M3 9h9v9H3zM5.5 11.5l4 4m0-4-4 4"/></svg>
@@ -375,9 +395,9 @@
                 </tr>
                 <tr>
                   <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="pending" type="button" aria-pressed="false" data-tooltip="Listing 등록이 완료된 Pipeline만 표시합니다.">Listing</button></th>
-                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="fast_triage" type="button" aria-pressed="false" data-tooltip="Fast Triage가 완료된 Pipeline만 표시합니다.">Fast Triage</button></th>
-                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="full_scout" type="button" aria-pressed="false" data-tooltip="Full Scout가 완료된 Pipeline만 표시합니다.">Full Scout</button></th>
-                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="shortlisting" type="button" aria-pressed="false" data-tooltip="Shortlisting에 등록된 Pipeline만 표시합니다.">Shortlisting</button></th>
+                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="fast_triage" type="button" aria-pressed="false" data-tooltip="Simple Research가 완료된 Pipeline만 표시합니다.">Simple Research</button></th>
+                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="full_scout" type="button" aria-pressed="false" data-tooltip="Advanced Research가 완료된 Pipeline만 표시합니다.">Advanced Research</button></th>
+                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="shortlisting" type="button" aria-pressed="false" data-tooltip="Custom Review에 등록된 Pipeline만 표시합니다.">Custom Review</button></th>
                   <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="comment" type="button" aria-pressed="false" data-tooltip="Comment가 하나 이상 있는 Pipeline만 표시합니다.">Comment</button></th>
                   <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="contact" type="button" aria-pressed="false" data-tooltip="Contact History가 하나 이상 있는 Pipeline만 표시합니다.">Contact</button></th>
                 </tr>
@@ -491,7 +511,7 @@
           <article class="panel" id="passRatePanel">
             <div class="panel-header">
               <h2 id="workflowStatusTitle">PASS Rate</h2>
-              <span id="passRateSubtitle">PASS / Full Scout Assets</span>
+              <span id="passRateSubtitle">PASS / Advanced Assets</span>
             </div>
             <div class="chart-stack pass-rate-chart" id="passRateChart"></div>
           </article>
@@ -684,7 +704,7 @@
                     <b id="dataUploadInputLabel">GPT 지침 2 전체 응답</b>
                   </span>
                   <div class="data-upload-textarea-shell">
-                    <textarea id="gptResponseInput" spellcheck="false" placeholder="새 브라우저 탭에서 GPT를 열고, 오른쪽 Full Scout 실행 가이드 순서대로 심층조사를 완료한 뒤 생성된 전체 응답을 그대로 붙여넣으세요.&#10;이 입력란은 TAB2 Full Scout 형식만 검증합니다. 관련 NCDP 파일은 GPT 지침 2 실행 시 함께 첨부할 수 있습니다."></textarea>
+                    <textarea id="gptResponseInput" spellcheck="false" placeholder="새 브라우저 탭에서 GPT를 열고, 오른쪽 Advanced Research 실행 가이드 순서대로 심층조사를 완료한 뒤 생성된 전체 응답을 그대로 붙여넣으세요.&#10;이 입력란은 TAB2 Advanced Research 형식만 검증합니다. 관련 NCDP 파일은 GPT 지침 2 실행 시 함께 첨부할 수 있습니다."></textarea>
                   </div>
                 </label>
               </div>
@@ -700,7 +720,7 @@
               <div class="data-upload-guide-header">
                 <div>
                   <span class="data-upload-guide-eyebrow">QUICK GUIDE</span>
-                  <h3 id="dataUploadGuideTitle">Full Scout 실행 가이드</h3>
+                  <h3 id="dataUploadGuideTitle">Advanced Research 실행 가이드</h3>
                 </div>
                 <span id="dataUploadRecommendation" class="data-upload-recommendation">High 이상 · 1개/회</span>
               </div>
@@ -776,7 +796,7 @@
             </ol>
             <section class="wiki-map-legend-guide" aria-label="Legend 사용 안내">
               <div class="wiki-map-legend-guide-heading"><span>LEGEND · 화면 표시</span><small>질문 범위 영향 없음</small></div>
-              <p><b>Listing · Fast Triage</b> 등을 클릭하면 해당 조사 진행 단계의 Asset만 그래프에서 잠시 숨깁니다.</p>
+              <p><b>Listing · Simple</b> 등을 클릭하면 해당 조사 진행 단계의 Asset만 그래프에서 잠시 숨깁니다.</p>
               <p><b>company · Target · MoA</b> 등을 클릭하면 해당 종류의 노드와 연결선만 잠시 숨깁니다.</p>
             </section>
           </aside>
@@ -887,7 +907,7 @@
             <h2>판단근거</h2>
             <span id="criteriaDrawerVersionBadge" class="criteria-version-badge">v3.7</span>
           </div>
-          <p id="criteriaDrawerSubtitle" class="criteria-drawer-subtitle">Full Scout 검토 후보를 선별하기 위한 3-point screening 기준</p>
+          <p id="criteriaDrawerSubtitle" class="criteria-drawer-subtitle">Advanced Research 검토 후보를 선별하기 위한 3-point screening 기준</p>
         </div>
         <div class="criteria-drawer-actions">
           <div id="criteriaLanguageToggle" class="criteria-language-toggle" role="group" aria-label="Judgment-guide language">
@@ -900,9 +920,9 @@
 
       <div class="criteria-drawer-body">
         <section class="criteria-rule criteria-triage-rule" data-criteria-tab="triage">
-          <h3>GPT 지침 1 — Fast Triage · v3.7 기준</h3>
+          <h3>GPT 지침 1 — Simple Research · v3.7 기준</h3>
           <p>
-            지침 1은 여러 후보 중 지침 2 Full Scout로 넘길 대상을 빠르게 고르는 1차 screening입니다.
+            지침 1은 여러 후보 중 지침 2 Advanced Research로 넘길 대상을 빠르게 고르는 1차 screening입니다.
             <code>Target Area Relevance</code>, <code>MoA Validity</code>, <code>Data Maturity</code>를 독립적으로 예비 평가하고
             <code>SELECT</code>, <code>REJECT</code>, <code>INSUFFICIENT</code>로 분류합니다.
           </p>
@@ -915,7 +935,7 @@
           </div>
           <article class="criteria-status-card" data-triage-status="select">
             <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></svg></span><h3>SELECT</h3></div>
-            <p class="criteria-status-subtitle">Full Scout 심층 검토 대상입니다. 최종 BD recommendation을 의미하지 않습니다.</p>
+            <p class="criteria-status-subtitle">Advanced Research 심층 검토 대상입니다. 최종 BD recommendation을 의미하지 않습니다.</p>
             <ul>
               <li>TAR 3점 이상</li>
               <li>MoA 1점 이상, Data 2점 이상</li>
@@ -923,7 +943,7 @@
           </article>
           <article class="criteria-status-card" data-triage-status="reject">
             <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6M15 9l-6 6" /></svg></span><h3>REJECT</h3></div>
-            <p class="criteria-status-subtitle">현재 공개 근거의 한계로 Full Scout 조사 대상은 아니지만, 추후 공개 근거 확인 후 재평가 대상입니다.</p>
+            <p class="criteria-status-subtitle">현재 공개 근거의 한계로 Advanced Research 조사 대상은 아니지만, 추후 공개 근거 확인 후 재평가 대상입니다.</p>
             <ul>
               <li>Asset identity는 확인됐으나 SELECT 기준 미충족</li>
               <li>TAR·MoA·Data 모두 1점 이상이지만 SELECT 기준 미충족</li>
@@ -999,7 +1019,7 @@
             <span class="criteria-guide-step-number" aria-hidden="true">3</span>
             <span class="criteria-guide-section-copy"><h3>Parameter Guide</h3><p>세 평가항목이 실제로 확인하는 범위</p></span>
           </div>
-          <div class="criteria-detail-grid compact-criteria-detail-grid triage-parameter-grid" aria-label="Fast Triage parameter guide">
+          <div class="criteria-detail-grid compact-criteria-detail-grid triage-parameter-grid" aria-label="Simple Research parameter guide">
             <article class="parameter-card-wide target-parameter-card parameter-breakdown-card">
               <div class="criteria-parameter-heading criteria-parameter-title-row"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4M9.5 12a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z" /></svg></span><h3><b>TAR</b><span>Target Area Relevance</span></h3></div>
               <p>확인된 asset의 indication이 SKBP 전략 범위와 얼마나 맞는지 평가합니다. Theme/Cluster와 disease biology 연결성은 별도 분류 및 MoA 평가에 사용합니다.</p>
@@ -1022,7 +1042,7 @@
         </section>
 
         <section class="criteria-rule criteria-full-rule" data-criteria-tab="full">
-          <h3>GPT 지침 2 — Full Scout · v3.8 기준</h3>
+          <h3>GPT 지침 2 — Advanced Research · v3.8 기준</h3>
           <p>
             지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
             지침 1에서 예비로 본 TAR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
@@ -1050,7 +1070,7 @@
           </div>
           <article class="criteria-status-card" data-full-status="pass">
             <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></svg></span><h3>PASS</h3></div>
-            <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">Full Scout의 총점과 필수 점수 기준을 모두 충족한 후속 BD 우선 검토 후보입니다.</p></div>
+            <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">Advanced Research의 총점과 필수 점수 기준을 모두 충족한 후속 BD 우선 검토 후보입니다.</p></div>
             <ul>
               <li>Total Score ≥ 14</li>
               <li>Target Area Relevance ≥ 3</li>
@@ -1068,7 +1088,7 @@
           </article>
           <article class="criteria-status-card" data-full-status="fail">
             <div class="criteria-status-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6M15 9l-6 6" /></svg></span><h3>T·Down</h3></div>
-            <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">필요한 핵심 정보가 부족하거나, 개발 상태 또는 점수가 Full Scout 통과 기준에 미달한 후보입니다.</p></div>
+            <div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">필요한 핵심 정보가 부족하거나, 개발 상태 또는 점수가 Advanced Research 통과 기준에 미달한 후보입니다.</p></div>
             <ul>
               <li>Total Score ≤ 8</li>
               <li>또는 TAR / MoA / Data 중 하나가 0점</li>
@@ -1266,7 +1286,7 @@
 
         <section class="criteria-rule criteria-focus-rule" data-criteria-tab="focus">
           <h3>Filter 3 — OI Partnership 자동 분류 · v1.7 기준</h3>
-          <p>Tab 3는 Full Scout 검토 후 Shortlisting에 등록된 후보를 대상으로, SKBP 우선 관심 적응증 여부와 확인된 Modality·Pipeline Stage·Platform Attractiveness·In-vivo·In-vitro·ADMET 값을 사용해 투자, Value Up, 공동연구, Unknown 또는 N/A로 자동 분류합니다.</p>
+          <p>Tab 3는 Advanced Research 검토 후 Custom Review에 등록된 후보를 대상으로, SKBP 우선 관심 적응증 여부와 확인된 Modality·Pipeline Stage·Platform Attractiveness·In-vivo·In-vitro·ADMET 값을 사용해 투자, Value Up, 공동연구, Unknown 또는 N/A로 자동 분류합니다.</p>
         </section>
 
         <section class="criteria-focus-section criteria-guide-section" data-criteria-tab="focus" data-focus-section="partnership">
@@ -1302,8 +1322,8 @@
           </div>
           <div class="criteria-focus-grid criteria-focus-input-grid">
             <article class="criteria-focus-info-card">
-              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" /></svg></span><h4>Shortlisting 후보</h4></div>
-              <p>Full Scout 검토 후 사용자가 Shortlisting에 등록한 pipeline을 자동분류 대상으로 사용합니다.</p>
+              <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" /></svg></span><h4>Custom Review 후보</h4></div>
+              <p>Advanced Research 검토 후 사용자가 Custom Review에 등록한 pipeline을 자동분류 대상으로 사용합니다.</p>
             </article>
             <article class="criteria-focus-info-card criteria-focus-indication-card">
               <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8" /><path d="M12 2v4M12 18v4M2 12h4M18 12h4M9.5 12a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0Z" /></svg></span><h4>SKBP 우선 관심 적응증</h4></div>
@@ -1311,7 +1331,7 @@
             </article>
             <article class="criteria-focus-info-card">
               <div class="criteria-focus-card-heading"><span class="criteria-guide-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 3 5 6v5c0 4.7 2.8 8 7 10 4.2-2 7-5.3 7-10V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></svg></span><h4>확인된 정보 사용</h4></div>
-              <p>구조화된 Dashboard 값과 확인된 Full Scout 및 Partner Materials 정보를 사용하며, 확인되지 않은 값은 임의로 추정하지 않습니다.</p>
+              <p>구조화된 Dashboard 값과 확인된 Advanced Research 및 Partner Materials 정보를 사용하며, 확인되지 않은 값은 임의로 추정하지 않습니다.</p>
             </article>
           </div>
         </section>
@@ -1350,7 +1370,7 @@
             <svg viewBox="0 0 24 24" focusable="false"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></svg>
           </span>
           <div>
-            <h3 id="dataReuploadTitle">기존 Full Scout 레코드가 발견되었습니다.</h3>
+            <h3 id="dataReuploadTitle">기존 Advanced Research 레코드가 발견되었습니다.</h3>
           </div>
         </div>
         <p id="dataReuploadSummary" class="identity-modal-hint data-reupload-summary"></p>
@@ -1455,6 +1475,117 @@
       </section>
     </div>
 
+    <div class="identity-modal-backdrop" id="shortlistingProjectModal" hidden>
+      <section class="identity-modal shortlisting-project-modal" role="dialog" aria-modal="true" aria-labelledby="shortlistingProjectModalTitle" aria-describedby="shortlistingProjectModalHint">
+        <div class="data-reupload-modal-heading">
+          <span class="data-reupload-modal-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
+          <div><h3 id="shortlistingProjectModalTitle">Custom Review Project 추가</h3></div>
+        </div>
+        <p id="shortlistingProjectModalHint" class="identity-modal-hint">팀 전용 Custom Review 시트를 새로 만듭니다. 생성 후 "+ 지표 추가"로 관리할 지표(컬럼)를 자유롭게 정의할 수 있습니다.</p>
+        <label class="pipeline-website-modal-label" for="shortlistingProjectNameInput">Project 이름</label>
+        <input id="shortlistingProjectNameInput" type="text" maxlength="80" placeholder="예: CNS Discovery Team" />
+        <label class="pipeline-website-modal-label" for="shortlistingProjectDescriptionInput">설명 (선택)</label>
+        <textarea id="shortlistingProjectDescriptionInput" maxlength="400" rows="3" placeholder="이 Project의 용도를 간단히 설명하세요."></textarea>
+        <p id="shortlistingProjectModalStatus" class="pipeline-website-modal-status" role="status" aria-live="polite"></p>
+        <div class="identity-modal-actions data-reupload-modal-actions">
+          <button id="shortlistingProjectModalCancel" type="button" class="identity-modal-cancel">취소</button>
+          <button id="shortlistingProjectModalSave" type="button" class="identity-modal-submit">만들기</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="identity-modal-backdrop" id="shortlistingMetricModal" hidden>
+      <section class="identity-modal shortlisting-metric-manager-modal" role="dialog" aria-modal="true" aria-labelledby="shortlistingMetricModalTitle">
+        <div class="data-reupload-modal-heading">
+          <span class="data-reupload-modal-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+          </span>
+          <div><h3 id="shortlistingMetricModalTitle">Project 설정</h3></div>
+        </div>
+        <div class="identity-modal-tabs" role="tablist" aria-label="Project 설정 탭">
+          <button type="button" class="identity-modal-tab is-active" role="tab" id="shortlistingSettingsMembersTab" aria-selected="true" aria-controls="shortlistingSettingsMembersPane" data-settings-tab="members">멤버 관리</button>
+          <button type="button" class="identity-modal-tab" role="tab" id="shortlistingSettingsMetricsTab" aria-selected="false" aria-controls="shortlistingSettingsMetricsPane" data-settings-tab="metrics">지표 관리</button>
+        </div>
+
+        <div id="shortlistingSettingsMembersPane" class="identity-modal-tab-pane" role="tabpanel" aria-labelledby="shortlistingSettingsMembersTab">
+          <p class="identity-modal-hint">이메일별로 write(입력) 또는 owner(관리) 권한을 부여합니다. 목록에 없는 사용자는 읽기 전용입니다.</p>
+          <div class="shortlisting-metric-manager-table-wrap">
+            <table class="shortlisting-metric-manager-table shortlisting-member-manager-table">
+              <thead>
+                <tr>
+                  <th>이름</th>
+                  <th>이메일</th>
+                  <th>권한</th>
+                  <th aria-label="삭제"></th>
+                </tr>
+              </thead>
+              <tbody id="shortlistingMemberManagerBody">
+                <tr class="shortlisting-metric-manager-empty-row">
+                  <td colspan="4">등록된 멤버가 없습니다 (owner 제외 모두 읽기 전용).</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="identity-modal-hint">가입된 계정 중에서 체크한 뒤 권한을 선택하고 구성원 추가를 누르면 한 번에 여러 명이 추가됩니다.</p>
+          <input id="shortlistingMemberSearchInput" type="search" class="shortlisting-member-picker-search" placeholder="이름 또는 이메일로 검색" aria-label="구성원 후보 검색: 이름, 이메일" />
+          <div id="shortlistingMemberPickerList" class="shortlisting-member-picker-list">
+            <p class="shortlisting-member-picker-empty">추가할 수 있는 계정이 없습니다.</p>
+          </div>
+          <div class="shortlisting-metric-manager-add-row shortlisting-member-add-row">
+            <select id="shortlistingMemberRoleSelect" aria-label="권한">
+              <option value="write">Write</option>
+              <option value="owner">Owner</option>
+            </select>
+            <button id="shortlistingMemberAddButton" type="button" class="identity-modal-submit">구성원 추가</button>
+          </div>
+          <p id="shortlistingMemberModalStatus" class="pipeline-website-modal-status" role="status" aria-live="polite"></p>
+        </div>
+
+        <div id="shortlistingSettingsMetricsPane" class="identity-modal-tab-pane" role="tabpanel" aria-labelledby="shortlistingSettingsMetricsTab" hidden>
+          <p class="identity-modal-hint">이 Project의 커스텀 지표 컬럼을 확인·추가·삭제합니다.</p>
+          <p id="shortlistingMetricLockedNote" class="identity-modal-hint shortlisting-metric-locked-note" hidden>OIC 기본 Project의 지표(Filter3/DD/In-vivo/In-vitro/ADMET/D·Link/Action date)는 하드코딩되어 있어 현재 추가/삭제할 수 없습니다.</p>
+          <div class="shortlisting-metric-manager-table-wrap">
+            <table class="shortlisting-metric-manager-table">
+              <thead>
+                <tr>
+                  <th>지표</th>
+                  <th>설명</th>
+                  <th>입력</th>
+                  <th aria-label="삭제"></th>
+                </tr>
+              </thead>
+              <tbody id="shortlistingMetricManagerBody">
+                <tr class="shortlisting-metric-manager-empty-row">
+                  <td colspan="4">등록된 커스텀 지표가 없습니다.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="shortlistingMetricAddRow" class="shortlisting-metric-manager-add-row">
+            <input id="shortlistingMetricLabelInput" type="text" maxlength="60" placeholder="지표 이름" aria-label="새 지표 이름" />
+            <input id="shortlistingMetricDescriptionInput" type="text" maxlength="400" placeholder="설명" aria-label="새 지표 설명" />
+            <select id="shortlistingMetricReturnTypeSelect" aria-label="입력 타입">
+              <option value="boolean">True/False</option>
+              <option value="list">List</option>
+              <option value="number">Number</option>
+              <option value="date">Date</option>
+              <option value="text">Text</option>
+            </select>
+            <input id="shortlistingMetricListOptionsInput" type="text" placeholder="선택지 (쉼표로 구분)" aria-label="List 선택지" hidden />
+            <input id="shortlistingMetricMaxValueInput" type="number" min="1" step="1" placeholder="최대값 (선택)" aria-label="Number 최대값" hidden />
+            <button id="shortlistingMetricModalSave" type="button" class="identity-modal-submit">+ 추가</button>
+          </div>
+          <p id="shortlistingMetricModalStatus" class="pipeline-website-modal-status" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="identity-modal-actions data-reupload-modal-actions">
+          <button id="shortlistingMetricModalCancel" type="button" class="identity-modal-cancel">닫기</button>
+        </div>
+      </section>
+    </div>
+
     <div class="step0-edit-locked-backdrop" id="step0EditLockedModal" hidden>
       <section class="step0-edit-locked-modal" role="dialog" aria-modal="true" aria-labelledby="step0EditLockedTitle" aria-describedby="step0EditLockedMessage">
         <header>
@@ -1473,7 +1604,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260905-step0-dots-idle-wobble"></script>
+  <script type="module" src="./src/app.js?v=20260906-focus-project-picker-2"></script>
   <script src="./src/sigma_graph.js?v=20260824-deferred-wiki-export-1" defer></script>
   </body>
 </html>

@@ -2020,6 +2020,8 @@ h2 {
 .topbar #copyPromptTopButton,
 .topbar #deleteRecordButton,
 .topbar #editJsonButton,
+.topbar #shortlistingProjectSwitchButton,
+.topbar #addShortlistingProjectButton,
 .topbar .theme-toggle,
 .topbar .secondary-link {
   display: inline-flex;
@@ -2309,6 +2311,88 @@ h2 {
   flex-wrap: wrap;
   gap: 12px;
   min-width: 0;
+}
+
+.shortlisting-project-switcher {
+  position: relative;
+  display: inline-flex;
+}
+
+.shortlisting-project-switch-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  max-width: 280px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.shortlisting-project-switch-menu[hidden] {
+  display: none;
+}
+
+.shortlisting-project-switch-option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 7px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.shortlisting-project-switch-option:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.shortlisting-project-switch-option.is-active {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent);
+}
+
+.shortlisting-project-switch-row {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  width: 100%;
+}
+
+.shortlisting-project-switch-row .shortlisting-project-switch-option {
+  flex: 1;
+  min-width: 0;
+}
+
+.shortlisting-project-settings-button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.shortlisting-project-settings-button:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
 }
 
 .panel-actions > span {
@@ -3571,6 +3655,24 @@ th button {
   padding: 0;
 }
 
+/* Custom Review tab: tint the Advanced Research / Custom Review subtotal
+   "Score" columns and the combined "Total Score" column so the relationship
+   between the two subtotals and their sum reads at a glance down the column.
+   Headers stay the same color as their neighboring columns — only the data
+   cells below get the tint. */
+.pipeline-table td.score-subtotal-col {
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+
+.pipeline-table td.score-grandtotal-col {
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+.pipeline-table th.score-grandtotal-col button {
+  text-align: center;
+  line-height: 1.25;
+}
+
 td {
   color: #2a3544;
 }
@@ -4220,6 +4322,10 @@ td {
 .total-score-edit-circle.is-saving {
   cursor: wait;
   opacity: 0.55;
+}
+
+.total-score-edit-circle[data-custom-score-edit] {
+  cursor: pointer;
 }
 
 .focus-management-row td {
@@ -6176,7 +6282,9 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   line-height: 1.45;
 }
 
-.identity-modal input {
+.identity-modal input,
+.identity-modal select,
+.identity-modal textarea {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -6184,12 +6292,194 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   background: var(--surface);
   color: var(--text);
   font-size: 13px;
+  font-family: inherit;
+  margin-bottom: 10px;
 }
 
-.identity-modal input:focus {
+.identity-modal textarea {
+  resize: vertical;
+}
+
+.identity-modal input:focus,
+.identity-modal select:focus,
+.identity-modal textarea:focus {
   border-color: var(--accent);
   outline: none;
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.shortlisting-metric-manager-modal {
+  width: min(680px, 100%);
+}
+
+.shortlisting-metric-manager-table-wrap {
+  max-height: 320px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.shortlisting-metric-manager-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.shortlisting-metric-manager-table th,
+.shortlisting-metric-manager-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  color: var(--text);
+  vertical-align: top;
+}
+
+.shortlisting-metric-manager-table th {
+  position: sticky;
+  top: 0;
+  background: var(--surface-soft, var(--surface));
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 11px;
+}
+
+.shortlisting-metric-manager-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.shortlisting-metric-manager-empty-row td {
+  color: var(--muted);
+  text-align: center;
+  padding: 18px 10px;
+}
+
+.shortlisting-metric-manager-delete-button {
+  border: 1px solid color-mix(in srgb, var(--red) 40%, var(--line));
+  border-radius: 7px;
+  padding: 4px 9px;
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 800;
+  background: transparent;
+  white-space: nowrap;
+}
+
+.shortlisting-metric-manager-delete-button:hover {
+  background: color-mix(in srgb, var(--red) 10%, transparent);
+}
+
+.shortlisting-metric-manager-add-row {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 0.85fr auto;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.shortlisting-metric-manager-add-row select,
+.shortlisting-metric-manager-add-row input {
+  margin-bottom: 0;
+}
+
+.shortlisting-metric-manager-add-row #shortlistingMetricListOptionsInput,
+.shortlisting-metric-manager-add-row #shortlistingMetricMaxValueInput {
+  grid-column: 1 / -1;
+}
+
+.shortlisting-metric-manager-add-row #shortlistingMetricModalSave {
+  min-height: 38px;
+  padding: 0 16px;
+}
+
+.identity-modal-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 10px 0 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.identity-modal-tab {
+  padding: 8px 14px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.identity-modal-tab:hover {
+  color: var(--text);
+}
+
+.identity-modal-tab.is-active {
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+
+.identity-modal-tab-pane[hidden] {
+  display: none;
+}
+
+.shortlisting-member-add-row {
+  display: grid;
+  grid-template-columns: 0.5fr auto;
+  justify-content: end;
+  gap: 8px;
+}
+
+.shortlisting-member-add-row select,
+.shortlisting-member-add-row input {
+  margin-bottom: 0;
+}
+
+.shortlisting-member-add-row #shortlistingMemberAddButton {
+  min-height: 38px;
+  padding: 0 16px;
+}
+
+.shortlisting-member-picker-list {
+  max-height: 220px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.shortlisting-member-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 7px;
+  font-size: 12px;
+}
+
+.shortlisting-member-picker-row:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.shortlisting-member-picker-row input[type="checkbox"] {
+  margin: 0;
+}
+
+.shortlisting-member-picker-row .shortlisting-member-picker-email {
+  color: var(--muted);
+}
+
+.shortlisting-metric-locked-note {
+  color: var(--yellow);
+  background: color-mix(in srgb, var(--yellow) 10%, transparent);
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.shortlisting-member-picker-empty {
+  padding: 12px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
 }
 
 .identity-modal-actions {
@@ -24826,6 +25116,62 @@ html[data-theme="dark"] .step0-edit-locked-modal { background: #0f1828; }
 @media (max-width: 640px) {
   .table-score-filter-popover { width: min(292px, calc(100vw - 24px)) !important; }
 }
+
+/* Full Scout row's "add to Custom Review" star, when 2+ Shortlisting Projects
+   are writable — lets the reviewer pick which Project to track the row in,
+   instead of silently acting on whichever Project happens to be selected in
+   the Custom Review tab's project switcher. */
+.table-focus-project-picker {
+  position: fixed;
+  z-index: 1000;
+  max-height: calc(100vh - 24px);
+  padding: 6px;
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--line) 88%, #8e8e93);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, .18), 0 2px 8px rgba(15, 23, 42, .08);
+  color: var(--text);
+}
+
+.table-focus-project-picker[hidden] { display: none; }
+
+.table-focus-project-picker-heading {
+  padding: 4px 6px 6px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.table-focus-project-picker-list { display: grid; gap: 2px; }
+
+.table-focus-project-picker-option {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 7px 8px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table-focus-project-picker-option:hover,
+.table-focus-project-picker-option:focus-visible {
+  background: var(--surface-soft);
+  outline: none;
+}
+
+.table-focus-project-picker-option.is-tracked { color: var(--accent-strong); font-weight: 800; }
+.table-focus-project-picker-star { font-size: 13px; }
 
 /* Keep the Dashboard's wide-screen product bar pixel-aligned with onboarding.
    Narrower desktop layouts deliberately wrap the workflow tabs, so only the

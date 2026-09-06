@@ -10,7 +10,7 @@ const DARK_TYPE_COLOR = {
   cluster: '#afcf76', competitor: '#ea909e', source: '#9aa8b9', scorecard: '#c29af3', workflow: '#9aa8b9',
 };
 const DARK_STAGE_COLOR = { listing: '#9aaabd', fast_triage: '#63bfe5', full_scout: '#a78bfa', shortlisting: '#efb45a' };
-const STAGE_LABEL = { listing: 'Listing', fast_triage: 'Fast Triage', full_scout: 'Full Scout', shortlisting: 'Shortlisting' };
+const STAGE_LABEL = { listing: 'Listing', fast_triage: 'Simple', full_scout: 'Advanced', shortlisting: 'Custom' };
 const TYPE_LEGEND_LABEL = {
   review: '조사 기록', company: 'company', target: 'target', moa: 'MoA', modality: 'modality'
 };
@@ -20,12 +20,12 @@ const TYPE_FILTER_LABEL = {
 };
 const STAGE_LEGEND_TOOLTIP = {
   listing: 'Tab 0에 등록된 후보입니다. 클릭하면 Listing Asset을 그래프에서만 숨기거나 다시 표시합니다.',
-  fast_triage: 'Fast Triage 1차 조사가 완료된 후보입니다. 클릭하면 해당 Asset을 그래프에서만 숨기거나 다시 표시합니다.',
-  full_scout: 'Full Scout 심층 조사가 완료된 후보입니다. 클릭하면 해당 Asset을 그래프에서만 숨기거나 다시 표시합니다.',
+  fast_triage: 'Simple Research 1차 조사가 완료된 후보입니다. 클릭하면 해당 Asset을 그래프에서만 숨기거나 다시 표시합니다.',
+  full_scout: 'Advanced Research 심층 조사가 완료된 후보입니다. 클릭하면 해당 Asset을 그래프에서만 숨기거나 다시 표시합니다.',
   shortlisting: '우선 검토 대상으로 관리 중인 후보입니다. 클릭하면 해당 Asset을 그래프에서만 숨기거나 다시 표시합니다.'
 };
 const TYPE_LEGEND_TOOLTIP = {
-  review: 'Fast Triage 또는 Full Scout가 수행된 개별 조사 기록입니다. 클릭하면 조사 기록 노드를 그래프에서만 숨기거나 다시 표시합니다.',
+  review: 'Simple Research 또는 Advanced Research가 수행된 개별 조사 기록입니다. 클릭하면 조사 기록 노드를 그래프에서만 숨기거나 다시 표시합니다.',
   company: 'Pipeline을 개발·보유하거나 권리를 가진 회사입니다. 클릭하면 회사 노드를 그래프에서만 숨기거나 다시 표시합니다.',
   target: 'Pipeline이 직접 겨냥하는 생물학적 표적입니다. 클릭하면 Target 노드를 그래프에서만 숨기거나 다시 표시합니다.',
   moa: 'Pipeline이 표적에 작용하는 기전입니다. 클릭하면 MoA 노드를 그래프에서만 숨기거나 다시 표시합니다.',
