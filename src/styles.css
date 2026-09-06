@@ -3292,6 +3292,7 @@ th button {
 
 .pipeline-score-row th {
   background: color-mix(in srgb, var(--accent) 6%, var(--surface-soft));
+  text-align: center;
 }
 
 .pipeline-score-row th button {
@@ -4128,17 +4129,21 @@ td {
 }
 
 .total-score-edit-circle {
+  display: inline-flex;
   box-sizing: border-box;
   width: 28px;
   min-width: 28px;
   height: 28px;
   min-height: 28px;
+  align-items: center;
+  justify-content: center;
   border: 1px solid transparent;
   border-radius: 50%;
   padding: 0;
   font-size: 12px;
   font-variant-numeric: tabular-nums;
   font-weight: 950;
+  line-height: 1;
   text-align: center;
   -moz-appearance: textfield;
 }
@@ -8230,7 +8235,7 @@ body.report-modal-open {
   font-weight: 900;
   letter-spacing: 0.025em;
   cursor: pointer;
-  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
 }
 
 .qualitative-criterion-status-pills button > i {
@@ -8272,6 +8277,16 @@ body.report-modal-open {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--qualitative-status-color) 14%, transparent);
 }
 
+.qualitative-criterion-status-pills button.is-dragover {
+  position: relative;
+  z-index: 2;
+  border-color: var(--qualitative-status-color);
+  background: color-mix(in srgb, var(--qualitative-status-color) 26%, var(--readable-surface));
+  color: var(--qualitative-status-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--qualitative-status-color) 26%, transparent);
+  transform: scale(1.14);
+}
+
 .qualitative-panel-heading.comment-thread-heading > small { grid-column: 1 / -1; }
 
 .panel-icon-button.workspace-upload-button {
@@ -8280,6 +8295,14 @@ body.report-modal-open {
   padding: 3px 7px;
   border-radius: 999px;
   color: var(--accent);
+}
+
+.panel-icon-button.is-dragover {
+  z-index: 2;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 36%, transparent);
+  filter: brightness(1.1) drop-shadow(0 1px 4px color-mix(in srgb, var(--accent) 46%, transparent));
+  transform: scale(1.3);
 }
 
 .workspace-upload-count {
@@ -14059,7 +14082,7 @@ html[data-theme="dark"] .detail-material-panel {
   cursor: pointer;
   pointer-events: auto;
   touch-action: manipulation;
-  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease, opacity 0.16s ease;
+  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease, opacity 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
 }
 
 .oi-material-toggle[data-material-key="cdp"] {
@@ -14098,6 +14121,15 @@ html[data-theme="dark"] .detail-material-panel {
 .oi-material-toggle.is-saving {
   cursor: wait;
   opacity: 0.62;
+}
+
+.oi-material-toggle.is-dragover {
+  z-index: 2;
+  border-color: var(--material-color);
+  background: color-mix(in srgb, var(--material-color) 30%, var(--readable-surface));
+  color: var(--material-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--material-color) 26%, transparent);
+  transform: scale(1.14);
 }
 
 .oi-material-dot {
@@ -22396,7 +22428,12 @@ body.report-reupload-open {
   content: "";
 }
 
-.step0-summary-dashboard.is-loading .step0-stat-value strong {
+/* Stat-value transparency/skeleton is keyed off its own class rather than the broader
+   .is-loading (which also covers the workflow-card-canvas below) so the numbers can
+   become visible as soon as ANY stats are on hand — a localStorage cache, or the fast
+   stats-only endpoint — well before the much slower full progress table finishes and
+   clears .is-loading itself. */
+.step0-summary-dashboard.is-stats-loading .step0-stat-value strong {
   min-width: 30px;
   color: transparent;
   border-radius: 5px;
@@ -22415,7 +22452,7 @@ body.report-reupload-open {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .step0-summary-dashboard.is-loading .step0-stat-value strong {
+  .step0-summary-dashboard.is-stats-loading .step0-stat-value strong {
     animation: none;
   }
 }
@@ -22749,7 +22786,22 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
   animation:
     step0-workflow-dot-enter 720ms cubic-bezier(.18, .78, .24, 1) var(--step0-dot-entry-delay, 0ms) both,
     step0-workflow-dot-settle var(--step0-dot-settle-duration, 1500ms) cubic-bezier(.2, .75, .25, 1) var(--step0-dot-settle-delay, 720ms) 1 both;
-  transition: opacity 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+  transition: opacity 260ms ease, transform 200ms ease, box-shadow 150ms ease, filter 260ms ease;
+}
+
+/* While the real progress table hasn't loaded yet, the cloud is drawn from just the
+   stat counts (see renderStep0WorkflowMapPlaceholder) — dimmer/desaturated, and its
+   settle wobble loops forever instead of resting, so the motion itself reads as "still
+   loading". Removing this class (once real data arrives with the same per-stage counts,
+   so the existing dots are kept rather than rebuilt) lets the settle animation finish
+   its current cycle and hold at rest, and opacity/filter transition up to the sharp,
+   final look — "becomes clear and finds its place" as the loading signal completes. */
+.step0-workflow-dot.is-placeholder {
+  opacity: .48;
+  filter: saturate(.4);
+  animation:
+    step0-workflow-dot-enter 720ms cubic-bezier(.18, .78, .24, 1) var(--step0-dot-entry-delay, 0ms) both,
+    step0-workflow-dot-settle var(--step0-dot-settle-duration, 1500ms) cubic-bezier(.2, .75, .25, 1) var(--step0-dot-settle-delay, 720ms) infinite both;
 }
 
 @keyframes step0-workflow-dot-enter {
@@ -22784,8 +22836,11 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .step0-workflow-dot {
+  .step0-workflow-dot,
+  .step0-workflow-dot.is-placeholder {
     animation: none;
+    opacity: .8;
+    filter: none;
   }
 }
 

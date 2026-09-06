@@ -3,8 +3,9 @@ import { setupThemeToggle } from './theme.js';
 import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
 import { initPageJumpControls } from './page-jump.js?v=20260823-page-jump-1';
 import { getCurrentUser, initAuthUI, openAuthModal, requireAuth } from './auth.js?v=20260831-password-reset-2';
-import { expandCompactInputRecord } from './compact-ingestion.js?v=20260806-theme-indication-3';
+import { expandCompactInputRecord } from './compact-ingestion.js?v=20260904-triage-v3-7-1';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260805-ingestion-guard-5';
+import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260904-triage-v3-7-1';
 
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
@@ -85,6 +86,7 @@ const elements = {
   qualitativeReviewToggle: document.querySelector('#qualitativeReviewToggle'),
   qualitativeAiGenerateAllButton: document.querySelector('#qualitativeAiGenerateAllButton'),
   qualitativeCriterionStatusPills: document.querySelector('#qualitativeCriterionStatusPills'),
+  detailDDReportPillButton: document.querySelector('#qualitativeCriterionStatusPills [data-qualitative-jump="dd_report"]'),
   detailFilter2Row: document.querySelector('#detailFilter2Row'),
   detailActionDate: document.querySelector('#detailActionDate'),
   detailActionOwner: document.querySelector('#detailActionOwner'),
@@ -172,6 +174,7 @@ const elements = {
   criteriaDrawerClose: document.querySelector('#criteriaDrawerClose'),
   criteriaDrawerScopeLabel: document.querySelector('#criteriaDrawerScopeLabel'),
   criteriaDrawerBody: document.querySelector('#criteriaDrawerBody'),
+  criteriaLanguageToggle: document.querySelector('#criteriaLanguageToggle'),
   deleteRecordButton: document.querySelector('#deleteRecordButton'),
   detailReuploadButton: document.querySelector('#detailReuploadButton'),
   aiDrawer: document.querySelector('#aiDrawer'),
@@ -263,6 +266,13 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
+}
+
+// Display-only relabel: hard_filter.status stays PASS/REVIEW/FAIL in the data/schema/GPT
+// contract everywhere — only the text shown to a reviewer changes here.
+const FILTER2_STATUS_LABELS = { REVIEW: 'MONITOR', FAIL: 'T·Down' };
+function filter2StatusLabel(value) {
+  return FILTER2_STATUS_LABELS[value] || value;
 }
 
 function safeDisplayText(value, fallback = '-') {
@@ -567,12 +577,12 @@ function computeHardFilter(record) {
   if (passScores) {
     return {
       status: 'PASS',
-      reason: `Total ${total} >= 14, TAR ${targetScore} >= 2, MOA ${moaScore} = 3, Data ${dataScore} = 3`
+      reason: `Total ${total} >= 14, TAR ${targetScore} >= 3, MOA ${moaScore} = 3, Data ${dataScore} = 3`
     };
   }
 
   if (Number.isFinite(total) && total >= 9 && total <= 13) {
-    reasons.push(`Total score ${total} is REVIEW range 9-13`);
+    reasons.push(`Total score ${total} is MONITOR range 9-13`);
   }
   if (!passScores) {
     reasons.push(`PASS score gate 미충족: Total ${total ?? '-'}, TAR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
@@ -766,7 +776,7 @@ function renderFilterRationale(record, hardFilter) {
     <section class="filter-rationale-card">
       <div>
         <span>Filter rationale</span>
-        <strong>${escapeHtml(rationale.status)}</strong>
+        <strong>${escapeHtml(filter2StatusLabel(rationale.status))}</strong>
       </div>
       <p>${escapeHtml(rationale.reason)}</p>
     </section>
@@ -897,7 +907,7 @@ function renderScoreEvidence(record) {
     ${renderCompanyProfile(record.company_profile || {})}
     <div class="score-evidence-summary">
       <div><span>Total Score</span><strong>${escapeHtml(formatScore(scoring.total_score))} / ${escapeHtml(formatScore(scoring.max_score || 21))}</strong></div>
-      <div><span>Pipeline Filter</span><strong>${escapeHtml(hardFilter.status)}</strong></div>
+      <div><span>Pipeline Filter</span><strong>${escapeHtml(filter2StatusLabel(hardFilter.status))}</strong></div>
       <div><span>Rubric</span><strong>${escapeHtml(getDisplayRubricVersion(record))} · ${escapeHtml(getDisplayRubricAuthor(record))}</strong></div>
     </div>
     <div class="score-evidence-list">${cards}</div>
@@ -1236,7 +1246,7 @@ const partnerMaterialLabels = {
 // patterns also recognize legacy filename-only attachments in the UI.
 const partnerMaterialFilenamePatterns = {
   ncdp: /(^|[^a-z0-9])(?:ncdp|ndp|ncd|nc|non[ _-]*confidential)([^a-z0-9]|$)/,
-  cdp: /(^|[^a-z0-9])(?:cdp|cp|confidential)([^a-z0-9]|$)/,
+  cdp: /(^|[^a-z0-9])(?:cdp|cp|cd|confidential)([^a-z0-9]|$)/,
   admet: /(^|[^a-z0-9])(?:admet|adme(?:[ _/\-]*(?:tox|toxicology))?|dmpk)([^a-z0-9]|$)/,
   dd_report: /(^|[^a-z0-9])(?:dd(?:[ _-]*report)?|due[ _-]*diligence(?:[ _-]*report)?)([^a-z0-9]|$)/,
   ir: /(^|[^a-z0-9])(?:ir|invest(?:or|er)[ _-]*relations?|invest(?:or|er)[ _-]*(?:presentation|deck))([^a-z0-9]|$)/
@@ -1932,6 +1942,7 @@ function renderEditHistory(record) {
       const formatAuditValue = (value) => {
         if (value === null || value === undefined || value === '') return 'Auto';
         if (typeof value === 'object') return JSON.stringify(value);
+        if (field === 'filter_status') return filter2StatusLabel(String(value));
         return String(value);
       };
       const change = isAiQualitativeGeneration || isAiQualitativeDeletion
@@ -2262,6 +2273,38 @@ async function uploadAttachments(files, selectedCategory = '') {
   }
 }
 
+// Lets a small icon/pill target (not just the large Partner Materials dropzone) accept a
+// dragged file: highlights via `.is-dragover` while hovering and dispatches on drop.
+// `isBlocked` mirrors that target's own click-time permission check so hover/drop stay silent
+// for the same cases the click handler already silently ignores (e.g. non-admin on the DD pill).
+function wireAttachmentDropTarget(target, handleFiles, { isBlocked } = {}) {
+  if (!target) return;
+  const blocked = () => Boolean(target.disabled) || Boolean(isBlocked?.());
+  ['dragenter', 'dragover'].forEach((eventName) => {
+    target.addEventListener(eventName, (event) => {
+      if (!event.dataTransfer?.types?.includes('Files')) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (!blocked()) target.classList.add('is-dragover');
+    });
+  });
+  ['dragleave', 'dragend'].forEach((eventName) => {
+    target.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      target.classList.remove('is-dragover');
+    });
+  });
+  target.addEventListener('drop', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    target.classList.remove('is-dragover');
+    if (blocked()) return;
+    const files = event.dataTransfer?.files;
+    if (files?.length) handleFiles(files);
+  });
+}
+
 function renderSourceReport(record = currentRecord) {
   if (!record || !elements.sourceReportViewer) return;
   attachmentPreviewController?.abort();
@@ -2311,6 +2354,11 @@ function attachmentPreviewBodyMarkup(data, attachment) {
 }
 
 function openAttachmentViewer(attachmentId) {
+  if (String(attachmentId || '') === activeAttachmentId && currentRecord) {
+    attachmentPreviewController?.abort();
+    renderSourceReport(currentRecord);
+    return;
+  }
   if (elements.sourceReportViewer?.classList.contains('showing-attachment')) {
     return showFloatingAttachmentPreview(attachmentId);
   }
@@ -2491,7 +2539,7 @@ async function showAttachmentPreview(attachmentId) {
         <div class="attachment-preview-empty">
           <span class="attachment-type-badge large">${escapeHtml(String(attachment.filename || '').split('.').pop()?.toUpperCase() || 'FILE')}</span>
           <strong>브라우저 내 미리보기를 지원하지 않는 파일입니다.</strong>
-          <p>PPT 바이너리 및 Excel 파일은 원본 열기로 확인할 수 있습니다. PPTX·PDF·TXT는 이 영역에서 내용을 확인할 수 있습니다.</p>
+          <p>Office 변환이 불가능한 파일은 원본 열기로 확인할 수 있습니다. PPT·PPTX·Word·PDF는 변환된 페이지 뷰어로, TXT는 텍스트 뷰어로 확인할 수 있습니다.</p>
         </div>
       `;
     }
@@ -3262,6 +3310,12 @@ function renderRecord(record) {
 }
 
 function openRequestedDetailSection() {
+  if (requestedDetailSection === 'moa-note') {
+    window.requestAnimationFrame(() => {
+      navigateToCriterionReportSection('moa_validity', { block: 'center' });
+    });
+    return;
+  }
   if (requestedDetailSection !== 'dd') return;
   setQualitativeReviewExpanded(true);
   window.requestAnimationFrame(() => {
@@ -3958,14 +4012,14 @@ function reportCriterionHeading(criterionId) {
     || null;
 }
 
-function scrollReportHeadingIntoView(heading) {
+function scrollReportHeadingIntoView(heading, { block = 'start' } = {}) {
   if (!heading) return false;
   activeReportJumpHeading?.classList.remove('criterion-jump-highlight');
   window.clearTimeout(reportJumpHighlightTimer);
   activeReportJumpHeading = heading;
   heading.classList.add('criterion-jump-highlight');
   heading.setAttribute('tabindex', '-1');
-  heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  heading.scrollIntoView({ behavior: 'smooth', block });
   heading.focus({ preventScroll: true });
   reportJumpHighlightTimer = window.setTimeout(() => {
     heading.classList.remove('criterion-jump-highlight');
@@ -3974,11 +4028,11 @@ function scrollReportHeadingIntoView(heading) {
   return true;
 }
 
-function navigateToCriterionReportSection(criterionId) {
+function navigateToCriterionReportSection(criterionId, { block } = {}) {
   if (!criterionId || !currentRecord) return;
   if (activeAttachmentId) renderSourceReport(currentRecord);
   const heading = reportCriterionHeading(criterionId);
-  if (scrollReportHeadingIntoView(heading)) {
+  if (scrollReportHeadingIntoView(heading, { block })) {
     setCollaborationStatus(`${scoringLabels[criterionId] || criterionId} GPT 원문 근거로 이동했습니다.`, 'success');
     return;
   }
@@ -4385,7 +4439,7 @@ async function refreshOiPartnership() {
 
 function aiRevisionInstruction(record) {
   return isFastTriageRecord(record)
-    ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.6 update applied from chat answer.'
+    ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.7 update applied from chat answer.'
     : 'Detail AI Agent Full Scout v3.8 re-evaluation applied from chat answer.';
 }
 
@@ -4674,21 +4728,59 @@ async function loadRecord() {
 let floatingAgentController = null;
 
 const CRITERIA_DRAWER_SCOPE_LABELS = {
-  full: 'TAB2 · Full Scout (PASS/REVIEW/FAIL)',
-  focus: 'TAB3 · 집중관리 (OI Partnership Type)'
+  full: 'TAB 2 · FULL SCOUT · SCORING GUIDE',
+  focus: 'TAB 3 · SHORTLISTING · DECISION GUIDE'
 };
+
+const CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY = 'skbp.dashboard.criteriaGuideLanguage.v1';
+let criteriaGuideLanguage = localStorage.getItem(CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY) === 'en' ? 'en' : 'ko';
+let cachedDashboardCriteriaBody = null;
+
+const KOREAN_CRITERIA_DRAWER_CHROME = {
+  title: '판단근거',
+  close: '닫기',
+  closeAriaLabel: '판단근거 닫기',
+  scopes: CRITERIA_DRAWER_SCOPE_LABELS
+};
+
+function criteriaGuideChrome() {
+  return criteriaGuideLanguage === 'en' ? ENGLISH_CRITERIA_DRAWER_CHROME : KOREAN_CRITERIA_DRAWER_CHROME;
+}
+
+function englishCriteriaBody() {
+  const doc = new DOMParser().parseFromString(`<div>${englishCriteriaGuideMarkup()}</div>`, 'text/html');
+  return doc.body.firstElementChild;
+}
 
 function updateCriteriaDrawerScope() {
   const isFocusTracked = currentRecord?.meta?.focus_management?.is_tracked === true;
   const mode = viewTab === 'focus' && isFocusTracked ? 'focus' : 'full';
+  const chrome = criteriaGuideChrome();
   if (elements.criteriaDrawerScopeLabel) {
-    elements.criteriaDrawerScopeLabel.textContent = CRITERIA_DRAWER_SCOPE_LABELS[mode] || '';
+    elements.criteriaDrawerScopeLabel.textContent = chrome.scopes[mode] || '';
   }
   elements.criteriaDrawerBody?.querySelectorAll('[data-criteria-tab]').forEach((section) => {
     section.hidden = section.dataset.criteriaTab !== mode;
   });
   if (elements.criteriaDrawer) elements.criteriaDrawer.dataset.activeCriteriaTab = mode;
   return mode;
+}
+
+function renderCriteriaDrawerBody(mode) {
+  const sourceBody = criteriaGuideLanguage === 'en' ? englishCriteriaBody() : cachedDashboardCriteriaBody;
+  if (!sourceBody || !elements.criteriaDrawerBody) return;
+  const activeSections = [...sourceBody.children]
+    .filter((section) => section.dataset.criteriaTab === mode);
+  if (!activeSections.length) throw new Error(`Dashboard ${mode} 판단근거가 비어 있습니다.`);
+  const fragment = document.createDocumentFragment();
+  activeSections.forEach((section) => {
+    const clone = section.cloneNode(true);
+    clone.hidden = false;
+    fragment.append(clone);
+  });
+  elements.criteriaDrawerBody.replaceChildren(fragment);
+  elements.criteriaDrawerBody.lang = criteriaGuideLanguage;
+  elements.criteriaDrawer.dataset.activeCriteriaTab = mode;
 }
 
 async function syncCriteriaDrawerFromDashboard(mode) {
@@ -4700,20 +4792,34 @@ async function syncCriteriaDrawerFromDashboard(mode) {
   if (!dashboardBody || !elements.criteriaDrawerBody) {
     throw new Error('Dashboard 판단근거를 찾을 수 없습니다.');
   }
-  const activeSections = [...dashboardBody.children]
-    .filter((section) => section.dataset.criteriaTab === mode);
-  if (!activeSections.length) throw new Error(`Dashboard ${mode} 판단근거가 비어 있습니다.`);
-  const fragment = document.createDocumentFragment();
-  activeSections.forEach((section) => {
-    const clone = section.cloneNode(true);
-    clone.hidden = false;
-    fragment.append(clone);
+  cachedDashboardCriteriaBody = dashboardBody;
+  renderCriteriaDrawerBody(mode);
+}
+
+function applyCriteriaGuideChrome() {
+  const chrome = criteriaGuideChrome();
+  const title = elements.criteriaDrawer?.querySelector('.criteria-drawer-title-row h2');
+  if (title) title.textContent = chrome.title;
+  if (elements.criteriaDrawerClose) {
+    elements.criteriaDrawerClose.setAttribute('aria-label', chrome.closeAriaLabel);
+    const closeLabel = elements.criteriaDrawerClose.querySelector('span');
+    if (closeLabel) closeLabel.textContent = chrome.close;
+  }
+  elements.criteriaLanguageToggle?.querySelectorAll('[data-criteria-language]').forEach((button) => {
+    button.setAttribute('aria-pressed', String(button.dataset.criteriaLanguage === criteriaGuideLanguage));
   });
-  elements.criteriaDrawerBody.replaceChildren(fragment);
-  elements.criteriaDrawer.dataset.activeCriteriaTab = mode;
+}
+
+function applyCriteriaGuideLanguage(language) {
+  criteriaGuideLanguage = language === 'en' ? 'en' : 'ko';
+  localStorage.setItem(CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY, criteriaGuideLanguage);
+  applyCriteriaGuideChrome();
+  const mode = updateCriteriaDrawerScope();
+  renderCriteriaDrawerBody(mode);
 }
 
 async function openCriteriaDrawer() {
+  applyCriteriaGuideChrome();
   const mode = updateCriteriaDrawerScope();
   elements.criteriaDrawer.hidden = false;
   elements.criteriaBackdrop.hidden = false;
@@ -5402,6 +5508,7 @@ elements.detailAttachmentInput?.addEventListener('change', (event) => {
 
 elements.detailPartnerMaterialButtons?.forEach((pill) => {
   pill.addEventListener('click', () => choosePartnerMaterialUpload(pill.dataset.materialKey));
+  wireAttachmentDropTarget(pill, (files) => uploadAttachments(files, pill.dataset.materialKey));
 });
 
 elements.attachmentUploadCancelButton?.addEventListener('click', () => {
@@ -5495,6 +5602,11 @@ elements.detailContactHistoryUploadButton?.addEventListener('click', (event) => 
   elements.detailContactHistoryAttachmentInput?.click();
 });
 
+wireAttachmentDropTarget(elements.detailContactHistoryUploadButton, (files) => {
+  const [file] = files;
+  if (file) uploadContactHistoryAttachment(file);
+});
+
 elements.detailDDReportAttachmentInput?.addEventListener('change', (event) => {
   const [file] = event.target.files || [];
   if (file) uploadDDReportAttachment(file);
@@ -5505,6 +5617,17 @@ elements.detailDDReportUploadButton?.addEventListener('click', (event) => {
   if (elements.detailDDReportAttachmentInput) elements.detailDDReportAttachmentInput.value = '';
   elements.detailDDReportAttachmentInput?.click();
 });
+
+const handleDDReportFileDrop = (files) => {
+  const [file] = files;
+  if (file) uploadDDReportAttachment(file);
+};
+wireAttachmentDropTarget(elements.detailDDReportUploadButton, handleDDReportFileDrop);
+wireAttachmentDropTarget(
+  elements.detailDDReportPillButton,
+  handleDDReportFileDrop,
+  { isBlocked: () => !getCurrentUser()?.is_admin || Boolean(elements.detailDDReportUploadButton?.disabled) }
+);
 
 elements.detailContactHistoryFilesList?.addEventListener('click', (event) => {
   const previewButton = event.target.closest('[data-preview-attachment-id]');
@@ -5602,6 +5725,9 @@ elements.qualitativeReviewPanel?.addEventListener('click', (event) => {
 
 elements.criteriaDrawerButton.addEventListener('click', openCriteriaDrawer);
 elements.criteriaDrawerClose.addEventListener('click', closeCriteriaDrawer);
+elements.criteriaLanguageToggle?.querySelectorAll('[data-criteria-language]').forEach((button) => {
+  button.addEventListener('click', () => applyCriteriaGuideLanguage(button.dataset.criteriaLanguage));
+});
 elements.criteriaBackdrop.addEventListener('click', closeCriteriaDrawer);
 elements.deleteRecordButton.addEventListener('click', deleteCurrentRecord);
 elements.detailReuploadButton?.addEventListener('click', openReportReuploadModal);

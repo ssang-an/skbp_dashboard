@@ -665,10 +665,10 @@ def process_document(
         elif suffix == ".pptx":
             extraction = extract_pptx_native(file_path)
             conversion = convert_office_to_pdf(file_path)
-        elif suffix == ".ppt":
+        elif suffix in {".ppt", ".doc", ".docx"}:
             conversion = convert_office_to_pdf(file_path)
             if not conversion.get("pdf_path"):
-                raise RuntimeError(conversion.get("error") or "PPT conversion failed.")
+                raise RuntimeError(conversion.get("error") or "Office document conversion failed.")
             extraction = extract_pdf_native(Path(str(conversion["pdf_path"])))
             extraction["method"] = "libreoffice_pdf_native_text"
         else:

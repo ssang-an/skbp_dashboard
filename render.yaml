@@ -1,7 +1,6 @@
 services:
   - type: web
     name: skbp-pipeline-dashboard
-    env: python
+    env: docker
+    dockerfilePath: ./Dockerfile
     plan: free
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"

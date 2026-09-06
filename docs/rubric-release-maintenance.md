@@ -6,7 +6,7 @@ SKBP의 Fast Triage와 Full Scout는 rubric, GPT instruction, backend validator/
 
 | Workflow | Current rubric/instruction or criteria | Current display | Schema / record audit |
 |---|---:|---:|---:|
-| Fast Triage | 3.6 | 3.6 | 3.2 |
+| Fast Triage | 3.7 | 3.7 | 3.2 |
 | Full Scout | 3.8 | 3.10 | 3.2 |
 | Shortlisting / Filter 3 | 1.7 deterministic criteria | 1.7 | `focus_management.partnership_classification_criteria_version` and history |
 

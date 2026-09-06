@@ -9,7 +9,7 @@ const scoreHeader = `
 export function englishCriteriaGuideMarkup() {
   return `
     <section class="criteria-rule criteria-triage-rule" data-criteria-tab="triage">
-      <h3>GPT Instruction 1 — Fast Triage · v3.6</h3>
+      <h3>GPT Instruction 1 — Fast Triage · v3.7</h3>
       <p>Fast Triage rapidly identifies candidates that merit Full Scout review. It independently assesses Target Area Relevance, MoA Validity, and Data Maturity, then assigns SELECT, REJECT, or INSUFFICIENT.</p>
     </section>
 
@@ -34,7 +34,7 @@ export function englishCriteriaGuideMarkup() {
       <div class="criteria-guide-section-heading"><span class="criteria-guide-step-number" aria-hidden="true">3</span><span class="criteria-guide-section-copy"><h3>Parameter Guide</h3><p>What each Fast Triage criterion evaluates</p></span></div>
       <div class="criteria-detail-grid compact-criteria-detail-grid triage-parameter-grid">
         <article class="parameter-card-wide target-parameter-card parameter-breakdown-card"><div class="criteria-parameter-heading criteria-parameter-title-row"><h3><b>TAR</b><span>Target Area Relevance</span></h3></div><p>Assesses whether the verified asset indication fits SKBP strategic scope. Theme/Cluster and disease-biology linkage are classification and MoA inputs, not TAR score bases.</p><ul class="parameter-evidence-list"><li><strong>Priority indications</strong><span>Alzheimer's disease; Parkinson's disease; amyotrophic lateral sclerosis / motor neuron disease; multiple sclerosis / neuroinflammatory disease; neuropathic pain; epilepsy / seizure disorders</span></li><li><strong>Broad SKBP scope</strong><span>Neurological, psychiatric, neuroimmune, neurodegenerative, and pain conditions</span></li></ul></article>
-        <article><div class="criteria-parameter-heading criteria-parameter-title-row"><h3><b>MoA</b><span>MoA Validity</span></h3></div><p>Assesses how specifically the target and proposed mechanism are defined and validated by functional, independent, or asset-specific evidence.</p></article>
+        <article><div class="criteria-parameter-heading criteria-parameter-title-row"><h3><b>MoA</b><span>MoA Validity</span></h3></div><p>Assesses how specifically the target and proposed mechanism are defined and validated by functional, independent, or asset-specific evidence. For Score 2 or 3, use one investigation-note sentence to distinguish disease-relevant phenotype/efficacy/biomarker linkage from proximal evidence; omit it for Score 0 or 1 and write <code>확인 불가</code> if existing evidence cannot establish it.</p></article>
         <article><div class="criteria-parameter-heading criteria-parameter-title-row"><h3><b>Data</b><span>Data Maturity</span></h3></div><p>Assesses whether public quantitative data for the assessed asset are sufficient, complementary, and interpretable for its development stage.</p></article>
       </div>
     </section>
@@ -56,11 +56,11 @@ export function englishCriteriaGuideMarkup() {
 
     <section class="criteria-rule criteria-other-card" data-criteria-tab="full"><h3>Evidence Type</h3><div class="criteria-table-wrap"><table class="criteria-table evidence-type-table"><thead><tr><th>Type</th><th>Meaning</th></tr></thead><tbody><tr><td>E0</td><td>Not found / not assessable</td></tr><tr><td>E1</td><td>Company claim or scientific rationale only</td></tr><tr><td>E2</td><td>Indirect or class-level evidence</td></tr><tr><td>E3</td><td>Asset-specific preclinical or technical evidence</td></tr><tr><td>E4</td><td>Asset-specific clinical evidence</td></tr></tbody></table></div></section>
 
-    <section class="criteria-pass-grid full-status-grid criteria-guide-section" aria-label="PASS REVIEW FAIL criteria" data-criteria-tab="full">
-      <div class="criteria-guide-section-heading"><span class="criteria-guide-step-number" aria-hidden="true">1</span><span class="criteria-guide-section-copy"><h3>Final Status</h3><p>Decision rules for PASS, REVIEW, and FAIL</p></span></div>
+    <section class="criteria-pass-grid full-status-grid criteria-guide-section" aria-label="PASS MONITOR T·Down criteria" data-criteria-tab="full">
+      <div class="criteria-guide-section-heading"><span class="criteria-guide-step-number" aria-hidden="true">1</span><span class="criteria-guide-section-copy"><h3>Final Status</h3><p>Decision rules for PASS, MONITOR, and T·Down</p></span></div>
       <article class="criteria-status-card" data-full-status="pass"><div class="criteria-status-heading"><h3>PASS</h3></div><div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">Candidate meeting all Full Scout total-score and required-score gates for follow-up BD review.</p></div><ul><li>Total Score ≥ 14</li><li>Target Area Relevance ≥ 3</li><li>MoA Validity = 3 and Data Maturity = 3</li></ul></article>
-      <article class="criteria-status-card" data-full-status="review"><div class="criteria-status-heading"><h3>REVIEW</h3></div><div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">A completed assessment that is neither PASS nor FAIL; reassess after new public evidence or internal monitoring.</p></div><ul><li>Does not meet PASS or FAIL</li><li>For example, Total Score 9–13 or a PASS required-score gate is not met</li></ul></article>
-      <article class="criteria-status-card" data-full-status="fail"><div class="criteria-status-heading"><h3>FAIL</h3></div><div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">Core information is insufficient, or the development state or scores fall below Full Scout passing requirements.</p></div><ul><li>Total Score ≤ 8</li><li>Or any of TAR, MoA, or Data = 0</li></ul></article>
+      <article class="criteria-status-card" data-full-status="review"><div class="criteria-status-heading"><h3>MONITOR</h3></div><div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">A completed assessment that is neither PASS nor T·Down; reassess after new public evidence or internal monitoring.</p></div><ul><li>Does not meet PASS or T·Down</li><li>For example, Total Score 9–13 or a PASS required-score gate is not met</li></ul></article>
+      <article class="criteria-status-card" data-full-status="fail"><div class="criteria-status-heading"><h3>T·Down</h3></div><div class="criteria-full-status-summary-slot"><p class="criteria-full-status-summary">Core information is insufficient, or the development state or scores fall below Full Scout passing requirements.</p></div><ul><li>Total Score ≤ 8</li><li>Or any of TAR, MoA, or Data = 0</li></ul></article>
     </section>
 
     <section class="criteria-scoring-section criteria-guide-section" data-criteria-tab="full">

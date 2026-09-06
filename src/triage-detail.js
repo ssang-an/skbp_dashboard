@@ -2,6 +2,7 @@ import { setupThemeToggle } from './theme.js';
 
 import { initPageJumpControls } from './page-jump.js?v=20260823-page-jump-1';
 import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260831-password-reset-2';
+import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260904-triage-v3-7-1';
 
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
@@ -31,6 +32,9 @@ const elements = {
   criteriaBackdrop: document.querySelector('#triageCriteriaBackdrop'),
   criteriaDrawerClose: document.querySelector('#triageCriteriaDrawerClose'),
   criteriaDrawerBody: document.querySelector('#triageCriteriaDrawerBody'),
+  criteriaDrawerTitle: document.querySelector('#triageCriteriaDrawerTitle'),
+  criteriaDrawerSubtitle: document.querySelector('#triageCriteriaDrawerSubtitle'),
+  criteriaLanguageToggle: document.querySelector('#triageCriteriaLanguageToggle'),
   deleteRecordButton: document.querySelector('#triageDeleteRecordButton'),
   websiteButton: document.querySelector('#triageWebsiteButton'),
   pipelineWebsiteModal: document.querySelector('#pipelineWebsiteModal'),
@@ -1666,6 +1670,66 @@ function openTriageInlineForm(form) {
   form.querySelector('textarea')?.focus();
 }
 
+const CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY = 'skbp.dashboard.criteriaGuideLanguage.v1';
+let criteriaGuideLanguage = localStorage.getItem(CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY) === 'en' ? 'en' : 'ko';
+let cachedDashboardCriteriaBody = null;
+
+const KOREAN_CRITERIA_DRAWER_CHROME = {
+  title: '판단근거',
+  close: '닫기',
+  closeAriaLabel: 'Fast Triage 판단근거 닫기',
+  subtitle: 'Full Scout 검토 후보를 선별하기 위한 3-point screening 기준'
+};
+
+function criteriaGuideChrome() {
+  return criteriaGuideLanguage === 'en'
+    ? { title: ENGLISH_CRITERIA_DRAWER_CHROME.title, close: ENGLISH_CRITERIA_DRAWER_CHROME.close, closeAriaLabel: ENGLISH_CRITERIA_DRAWER_CHROME.closeAriaLabel, subtitle: ENGLISH_CRITERIA_DRAWER_CHROME.subtitles.triage }
+    : KOREAN_CRITERIA_DRAWER_CHROME;
+}
+
+function englishCriteriaBody() {
+  const doc = new DOMParser().parseFromString(`<div>${englishCriteriaGuideMarkup()}</div>`, 'text/html');
+  return doc.body.firstElementChild;
+}
+
+function renderCriteriaDrawerBody() {
+  const sourceBody = criteriaGuideLanguage === 'en' ? englishCriteriaBody() : cachedDashboardCriteriaBody;
+  if (!sourceBody || !elements.criteriaDrawerBody) return;
+  const triageSections = [...sourceBody.children]
+    .filter((section) => section.dataset.criteriaTab === 'triage');
+  if (!triageSections.length) throw new Error('Dashboard Tab 1 판단근거가 비어 있습니다.');
+  const fragment = document.createDocumentFragment();
+  triageSections.forEach((section) => {
+    const clone = section.cloneNode(true);
+    clone.hidden = false;
+    fragment.append(clone);
+  });
+  elements.criteriaDrawerBody.replaceChildren(fragment);
+  elements.criteriaDrawerBody.lang = criteriaGuideLanguage;
+  elements.criteriaDrawer.dataset.activeCriteriaTab = 'triage';
+}
+
+function applyCriteriaGuideChrome() {
+  const chrome = criteriaGuideChrome();
+  if (elements.criteriaDrawerTitle) elements.criteriaDrawerTitle.textContent = chrome.title;
+  if (elements.criteriaDrawerSubtitle) elements.criteriaDrawerSubtitle.textContent = chrome.subtitle;
+  if (elements.criteriaDrawerClose) {
+    elements.criteriaDrawerClose.setAttribute('aria-label', chrome.closeAriaLabel);
+    const closeLabel = elements.criteriaDrawerClose.querySelector('span');
+    if (closeLabel) closeLabel.textContent = chrome.close;
+  }
+  elements.criteriaLanguageToggle?.querySelectorAll('[data-criteria-language]').forEach((button) => {
+    button.setAttribute('aria-pressed', String(button.dataset.criteriaLanguage === criteriaGuideLanguage));
+  });
+}
+
+function applyCriteriaGuideLanguage(language) {
+  criteriaGuideLanguage = language === 'en' ? 'en' : 'ko';
+  localStorage.setItem(CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY, criteriaGuideLanguage);
+  applyCriteriaGuideChrome();
+  renderCriteriaDrawerBody();
+}
+
 let criteriaDrawerSyncPromise = null;
 
 function syncCriteriaDrawerFromDashboard() {
@@ -1679,13 +1743,8 @@ function syncCriteriaDrawerFromDashboard() {
     if (!dashboardBody || !elements.criteriaDrawerBody) {
       throw new Error('Dashboard Tab 1 판단근거를 찾을 수 없습니다.');
     }
-    const triageSections = [...dashboardBody.children]
-      .filter((section) => section.dataset.criteriaTab === 'triage');
-    if (!triageSections.length) throw new Error('Dashboard Tab 1 판단근거가 비어 있습니다.');
-    const fragment = document.createDocumentFragment();
-    triageSections.forEach((section) => fragment.append(section.cloneNode(true)));
-    elements.criteriaDrawerBody.replaceChildren(fragment);
-    elements.criteriaDrawer.dataset.activeCriteriaTab = 'triage';
+    cachedDashboardCriteriaBody = dashboardBody;
+    renderCriteriaDrawerBody();
   })().catch((error) => {
     criteriaDrawerSyncPromise = null;
     throw error;
@@ -1694,6 +1753,7 @@ function syncCriteriaDrawerFromDashboard() {
 }
 
 async function openCriteriaDrawer() {
+  applyCriteriaGuideChrome();
   elements.criteriaDrawer.hidden = false;
   elements.criteriaBackdrop.hidden = false;
   requestAnimationFrame(() => {
@@ -1788,7 +1848,7 @@ async function refreshTriageRubric(button) {
       currentRecord = data.record;
       renderRecord(currentRecord);
     }
-    const outcome = triageRubricRefreshOutcomeCopy(data, '3.6');
+    const outcome = triageRubricRefreshOutcomeCopy(data, '3.7');
     elements.loadStatus.textContent = outcome.message;
     void showTriageActionOutcomeToast(outcome.title, outcome.message, 'FILTER 1');
   } catch (error) {
@@ -1815,6 +1875,9 @@ async function loadRecord() {
 
 elements.criteriaDrawerButton?.addEventListener('click', openCriteriaDrawer);
 elements.criteriaDrawerClose?.addEventListener('click', closeCriteriaDrawer);
+elements.criteriaLanguageToggle?.querySelectorAll('[data-criteria-language]').forEach((button) => {
+  button.addEventListener('click', () => applyCriteriaGuideLanguage(button.dataset.criteriaLanguage));
+});
 elements.criteriaBackdrop?.addEventListener('click', closeCriteriaDrawer);
 elements.deleteRecordButton?.addEventListener('click', deleteCurrentRecord);
 elements.websiteButton?.addEventListener('click', () => {

@@ -1,6 +1,6 @@
-# SKBP Pipeline Shortlist JSON Structure — Fast Triage v3.6 / Full Scout v3.8 / Shortlisting v1.7
+# SKBP Pipeline Shortlist JSON Structure — Fast Triage v3.7 / Full Scout v3.8 / Shortlisting v1.7
 
-`drug-valuation.schema.json` defines the persisted `dashboard_hybrid_v1` record. GPT Markdown remains the complete research/audit document. Persisted JSON is a compact display projection: dashboard columns, chart/filter inputs, scores, the small amount of criterion evidence needed by score hover/detail views, source/competitor graph links, the preserved Markdown, and dashboard-owned operational state. New Fast Triage records use instruction/rubric v3.6 and Full Scout records use v3.8.
+`drug-valuation.schema.json` defines the persisted `dashboard_hybrid_v1` record. GPT Markdown remains the complete research/audit document. Persisted JSON is a compact display projection: dashboard columns, chart/filter inputs, scores, the small amount of criterion evidence needed by score hover/detail views, source/competitor graph links, the preserved Markdown, and dashboard-owned operational state. New Fast Triage records use instruction/rubric v3.7 and Full Scout records use v3.8.
 
 ## Dashboard GPT Response Ingestion
 
@@ -18,7 +18,7 @@ When first-pass paste validation reports JSON syntax errors or missing required 
 
 Two deliberately large sections remain: `source_report.raw_markdown` is required to render/re-upload the GPT original and to support rubric refresh; dashboard-owned operational `meta` is required for team notes, attachments, manual overrides, audit history, TAB3, and Listing metadata. They are not duplicate GPT research fields and are not removed by compaction.
 
-Every persisted criterion contains `score`, concise hover/detail fields (`evidence_type`, `evidence_type_reason`, `evidence_basis`, `main_line_summary`, `why_not_higher`, `investigation_note`, `uncertain_points`), and `source_ids`. Source objects are stored once in `validation.source_registry`; duplicated criterion-level `evidence_sources` are not persisted. Full evidence stays in Markdown. For Full Scout v3.8+, the existing `investigation_note` field additionally records the rubric-defined MoA 2–3 evidence-context sentence and Expansion 1–3 additional-indication program/data-state summary, using only score evidence already found; this does not change the persisted schema. Marketability alone may retain its compact A/B/C/D display calculation. `hard_filter.hard_blocker` and `hard_filter.decision_uncertainty` remain so Filter 2 stays deterministic.
+Every persisted criterion contains `score`, concise hover/detail fields (`evidence_type`, `evidence_type_reason`, `evidence_basis`, `main_line_summary`, `why_not_higher`, `investigation_note`, `uncertain_points`), and `source_ids`. Source objects are stored once in `validation.source_registry`; duplicated criterion-level `evidence_sources` are not persisted. Full evidence stays in Markdown. For Fast Triage v3.7+ and Full Scout v3.8+, the existing `investigation_note` field additionally records the rubric-defined MoA 2–3 evidence-context sentence, using only score evidence already found. Full Scout v3.8+ also records its Expansion 1–3 additional-indication program/data-state summary there. This does not change the persisted schema. Marketability alone may retain its compact A/B/C/D display calculation. `hard_filter.hard_blocker` and `hard_filter.decision_uncertainty` remain so Filter 2 stays deterministic.
 
 ## Top-Level Sections
 
@@ -50,7 +50,7 @@ SKBP Theme / Cluster is classification and exploration metadata, not a Target Re
 
 `scoring.total_score`, `scoring.max_score`, and the workflow status fields are dashboard-owned derived fields. On paste, AI second parsing, and save, the dashboard recalculates them from the submitted criterion scores and current hard-filter rule. It preserves GPT-authored criterion scores, evidence, and rationale; a stale GPT total or PASS/REVIEW/FAIL (or Fast Triage SELECT/REJECT/INSUFFICIENT) label is aligned rather than blocking storage. Full Scout preserves the authored `hard_filter.reason`; criterion/validation fields remain the audit trail for the decision.
 
-## Fast Triage v3.6 Contract
+## Fast Triage v3.7 Contract
 
 Fast Triage uses three final status values only:
 
@@ -58,7 +58,7 @@ Fast Triage uses three final status values only:
 - `REJECT`: identity is verified, `development_stage` is not `Discontinued / inactive`, and TR/MoA/Data are all at least 1, but the SELECT gate is not met.
 - `INSUFFICIENT`: identity cannot be verified, `development_stage` is confirmed `Discontinued / inactive`, or identity is verified but any of TR/MoA/Data is 0. Identity/lifecycle early stops display core scores as `—`; schema placeholder zeroes are not completed score evaluations.
 
-Unknown target, MoA, indication, or development stage does not by itself produce an identity early stop; write `Unknown` in the factual field and continue scoring. `development_stage = Unknown` proceeds to normal scoring the same as any other non-terminal stage — it is exposed as reference information only and does not gate SELECT/REJECT/INSUFFICIENT. New v3.6 records must use the same status in `hard_filter.status`, `triage.status`, the Markdown result, and the recommendation mapping. Legacy `UNVERIFIED` records are mapped to `INSUFFICIENT` for read compatibility, but new saves and prompt output use the current vocabulary.
+Unknown target, MoA, indication, or development stage does not by itself produce an identity early stop; write `Unknown` in the factual field and continue scoring. `development_stage = Unknown` proceeds to normal scoring the same as any other non-terminal stage — it is exposed as reference information only and does not gate SELECT/REJECT/INSUFFICIENT. New v3.7 records must use the same status in `hard_filter.status`, `triage.status`, the Markdown result, and the recommendation mapping. Legacy `UNVERIFIED` records are mapped to `INSUFFICIENT` for read compatibility, but new saves and prompt output use the current vocabulary.
 
 There is no separate activity field. `structured_table.development_stage` is the sole activity signal — `Discontinued / inactive` is a confirmed early stop, and every other canonical stage value (including `Unknown`) proceeds to scoring. `triage.active_asset` (the pre-v3.5 tri-state `true`/`false`/`null` field) is no longer part of the contract: it is optional, unused by status derivation, and kept in the schema only so records saved before v3.5 remain valid. `triage.verified_public_source_count` retains the deduplicated count shown in the Quick Summary card while source details remain in Markdown.
 
@@ -82,6 +82,7 @@ GPT Markdown quality rules (the Compact v2 JSON validator enforces the score/sta
 - `moa_validity.score >= 2` or `data_maturity.score >= 2` requires at least one verified public source URL.
 - `public_source` and `user_input_and_public_source` require at least one verified public source URL.
 - `user_input_only` must not introduce asset-specific target, MoA, cell type, or data absent from the user input.
+- For `moa_validity.score` 2 or 3, `investigation_note` contains one sentence stating whether already-scored evidence has disease-relevant phenotype/efficacy/biomarker linkage or only proximal evidence; use `확인 불가` when that distinction is unsupported. This does not require a new search and does not alter the score rule.
 
 ## Shared Evidence Discipline
 

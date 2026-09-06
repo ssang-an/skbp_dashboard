@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260901-pipeline-return-hover-gray-2" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260905-attachment-dragdrop-1" />
     <link rel="stylesheet" href="./src/triage-score.css?v=20260820-score-pill-readable-1" />
   </head>
   <body>
@@ -166,17 +166,23 @@
         <div class="criteria-drawer-heading">
           <p class="eyebrow">TAB 1 · FAST TRIAGE · SCORING GUIDE</p>
           <div class="criteria-drawer-title-row">
-            <h2>판단근거</h2>
-            <span class="criteria-version-badge">v3.6</span>
+            <h2 id="triageCriteriaDrawerTitle">판단근거</h2>
+            <span class="criteria-version-badge">v3.7</span>
           </div>
-          <p class="criteria-drawer-subtitle">Full Scout 검토 후보를 선별하기 위한 3-point screening 기준</p>
+          <p id="triageCriteriaDrawerSubtitle" class="criteria-drawer-subtitle">Full Scout 검토 후보를 선별하기 위한 3-point screening 기준</p>
         </div>
-        <button id="triageCriteriaDrawerClose" class="criteria-drawer-close" type="button" aria-label="Fast Triage 판단근거 닫기"><span>닫기</span><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17" /></svg></button>
+        <div class="criteria-drawer-actions">
+          <div id="triageCriteriaLanguageToggle" class="criteria-language-toggle" role="group" aria-label="Judgment-guide language">
+            <button type="button" data-criteria-language="ko" aria-pressed="true">KR</button>
+            <button type="button" data-criteria-language="en" aria-pressed="false">EN</button>
+          </div>
+          <button id="triageCriteriaDrawerClose" class="criteria-drawer-close" type="button" aria-label="Fast Triage 판단근거 닫기"><span>닫기</span><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17" /></svg></button>
+        </div>
       </div>
 
       <div class="criteria-drawer-body" id="triageCriteriaDrawerBody">
         <section class="criteria-rule criteria-triage-rule" data-criteria-tab="triage">
-          <h3>GPT 지침 1 — Fast Triage · v3.6 기준</h3>
+          <h3>GPT 지침 1 — Fast Triage · v3.7 기준</h3>
           <p>
             지침 1은 여러 후보 중 지침 2 Full Scout로 넘길 대상을 빠르게 고르는 1차 screening입니다.
             <code>Target Area Relevance</code>, <code>MoA Validity</code>, <code>Data Maturity</code>를 예비 평가하고
@@ -282,6 +288,7 @@
             </article>
             <article>
               <h3>2. MoA Validity</h3>
+              <p>MoA 2~3점이면 기존 근거가 disease-relevant phenotype·efficacy·biomarker와 연결되는지 또는 proximal 지표에 그치는지를 <code>investigation_note</code>에 한 문장으로 기록하며, 판단 불가면 <code>확인 불가</code>로 기록합니다.</p>
               <p>작용기전이 얼마나 구체적으로 정의되어 있고, 이를 뒷받침하는 기능적·과학적 근거가 어느 수준인지 평가합니다.</p>
             </article>
             <article>
@@ -349,6 +356,6 @@
       </section>
     </div>
 
-      <script type="module" src="./src/triage-detail.js?v=20260901-deterministic-rubric-refresh-3"></script>
+      <script type="module" src="./src/triage-detail.js?v=20260904-criteria-en-toggle-1"></script>
   </body>
 </html>

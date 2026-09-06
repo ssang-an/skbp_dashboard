@@ -15,9 +15,17 @@ class DashboardFilterScrollUxTests(unittest.TestCase):
     def test_indication_filter_keeps_all_option_and_filters_selected_values(self):
         source = (main.ROOT / "src" / "app.js").read_text(encoding="utf-8")
         self.assertIn("indication: []", source)
-        self.assertIn('data-multi-filter-value="all"', source)
+        self.assertIn('${valueAttribute}="all"', source)
         self.assertIn("selectedFilterValues(state.indication).some", source)
         self.assertIn("function renderMultiFilter", source)
+
+    def test_unmapped_indications_remain_selectable_under_others(self):
+        source = (main.ROOT / "src" / "app.js").read_text(encoding="utf-8")
+        self.assertIn("function indicationFilterValues", source)
+        self.assertIn("function dashboardIndicationFilterValues", source)
+        self.assertIn("dashboardIndicationFilterValues(row).includes(value)", source)
+        self.assertIn("modeRows.flatMap((row) => dashboardIndicationFilterValues(row))", source)
+        self.assertIn("groupMarkup('Others', additionalOptions, false)", source)
 
     def test_priority_list_is_the_only_summary_body_with_vertical_scrolling(self):
         source = (main.ROOT / "src" / "styles.css").read_text(encoding="utf-8")

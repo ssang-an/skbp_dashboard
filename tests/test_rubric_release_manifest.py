@@ -217,6 +217,28 @@ class RubricReleaseManifestTests(unittest.TestCase):
         self.assertIn("Score 1–3", english_guide)
         self.assertIn("do not initiate a new search", main_py)
 
+    def test_fast_triage_moa_investigation_note_rule_is_release_aligned(self) -> None:
+        """The Fast Triage v3.7 note is a conditional reporting rule, not a
+        score, schema, or status change. Its active rubric, prompt, refresh
+        path, and visible Korean/English guides must nevertheless agree."""
+        triage = self.manifest["workflows"]["fast_triage"]
+        triage_rubric = (ROOT / triage["rubric_file"]).read_text(encoding="utf-8")
+        app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
+        main_py = (ROOT / "main.py").read_text(encoding="utf-8")
+        index_html = (ROOT / "index.html").read_text(encoding="utf-8")
+        triage_detail_html = (ROOT / "triage_detail.html").read_text(encoding="utf-8")
+        english_guide = (ROOT / "src" / "criteria-guide-i18n.js").read_text(encoding="utf-8")
+
+        self.assertEqual(triage["rubric_version"], "3.7")
+        self.assertEqual(triage["instruction_version"], "3.7")
+        self.assertEqual(triage["display_version"], "3.7")
+        for surface in (triage_rubric, app_js, index_html, triage_detail_html):
+            self.assertIn("disease-relevant phenotype", surface)
+            self.assertIn("확인 불가", surface)
+        self.assertIn("Score 2 or 3", english_guide)
+        self.assertIn("Fast Triage or Full Scout MoA investigation-note", main_py)
+        self.assertIn("perform a new search", triage_rubric)
+
     def test_full_scout_rubric_and_display_docs_are_complete_not_thin_deltas(self) -> None:
         """Regression guard: a version's active rubric/display doc must literally
         contain every criterion's scoring rule, not just reference an older

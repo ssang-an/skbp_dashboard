@@ -94,7 +94,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("selectedCategory || partnerMaterialCategoryForFilename(file.name)", upload)
         self.assertIn("partnerMaterialCategoriesForFilename(file.name).includes(materialCategory)", DETAIL_JS)
         self.assertIn("(?:ncdp|ndp|ncd|nc|non[ _-]*confidential)", DETAIL_JS)
-        self.assertIn("(?:cdp|cp|confidential)", DETAIL_JS)
+        self.assertIn("(?:cdp|cp|cd|confidential)", DETAIL_JS)
         self.assertIn("invest(?:or|er)[ _-]*relations?", DETAIL_JS)
         self.assertIn("invest(?:or|er)[ _-]*(?:presentation|deck)", DETAIL_JS)
         self.assertIn("(?:admet|adme", DETAIL_JS)
@@ -679,8 +679,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("pointerover", JS)
         self.assertIn("state.step0SelectedPendingIds.size >= STEP0_MAX_SELECTED_CANDIDATES", JS)
         self.assertIn("tbody.is-selection-dragging", CSS)
-        self.assertIn("styles.css?v=20260820-filter-menu-event-fix-1", HTML)
-        self.assertIn("app.js?v=20260820-filter-menu-event-fix-1", HTML)
+        self.assertIn("styles.css?v=20260905-attachment-dragdrop-1", HTML)
+        self.assertIn("app.js?v=20260904-triage-v3-7-cdp-2", HTML)
 
     def test_pipeline_return_highlight_reuses_the_neutral_hover_style(self):
         return_highlight = CSS[CSS.index("@keyframes pipeline-row-return-highlight"):CSS.index(".pipeline-table th,", CSS.index("@keyframes pipeline-row-return-highlight"))]
@@ -2197,7 +2197,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("position: static;", footer_rule.split("}", 1)[0])
         self.assertIn("margin: 20px auto 16px;", footer_rule.split("}", 1)[0])
         self.assertIn("border-top: 1px solid var(--line);", footer_rule.split("}", 1)[0])
-        self.assertIn("styles.css?v=20260901-triage-header-restore-3", TRIAGE_DETAIL_HTML)
+        self.assertIn("styles.css?v=20260905-attachment-dragdrop-1", TRIAGE_DETAIL_HTML)
 
     def test_minimal_json_score_views_point_to_the_original_report(self):
         tooltip = function_body(JS, "scoreTooltip")
@@ -2283,22 +2283,28 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('id="triageCriteriaDrawerBody"', TRIAGE_DETAIL_HTML)
         self.assertIn('data-active-criteria-tab="triage"', TRIAGE_DETAIL_HTML)
         self.assertIn('class="criteria-drawer-heading"', TRIAGE_DETAIL_HTML)
-        self.assertIn('class="criteria-version-badge">v3.3</span>', TRIAGE_DETAIL_HTML)
+        self.assertIn('class="criteria-version-badge">v3.7</span>', TRIAGE_DETAIL_HTML)
+        self.assertIn('id="triageCriteriaLanguageToggle" class="criteria-language-toggle"', TRIAGE_DETAIL_HTML)
         sync = function_body(TRIAGE_DETAIL_JS, "syncCriteriaDrawerFromDashboard")
         self.assertIn("fetch('/', { cache: 'no-store' })", sync)
         self.assertIn("#criteriaDrawer .criteria-drawer-body", sync)
-        self.assertIn("section.dataset.criteriaTab === 'triage'", sync)
-        self.assertIn("elements.criteriaDrawerBody.replaceChildren(fragment)", sync)
-        self.assertIn("elements.criteriaDrawer.dataset.activeCriteriaTab = 'triage'", sync)
+        render = function_body(TRIAGE_DETAIL_JS, "renderCriteriaDrawerBody")
+        self.assertIn("section.dataset.criteriaTab === 'triage'", render)
+        self.assertIn("elements.criteriaDrawerBody.replaceChildren(fragment)", render)
+        self.assertIn("elements.criteriaDrawer.dataset.activeCriteriaTab = 'triage'", render)
+        self.assertIn("englishCriteriaGuideMarkup", TRIAGE_DETAIL_JS)
 
     def test_pipeline_detail_criteria_drawer_syncs_current_dashboard_scope(self):
         self.assertIn('id="criteriaDrawerBody"', DETAIL_HTML)
+        self.assertIn('id="criteriaLanguageToggle" class="criteria-language-toggle"', DETAIL_HTML)
         sync = function_body(DETAIL_JS, "syncCriteriaDrawerFromDashboard")
         self.assertIn("fetch('/', { cache: 'no-store' })", sync)
         self.assertIn("#criteriaDrawer .criteria-drawer-body", sync)
-        self.assertIn("section.dataset.criteriaTab === mode", sync)
-        self.assertIn("elements.criteriaDrawerBody.replaceChildren(fragment)", sync)
-        self.assertIn("elements.criteriaDrawer.dataset.activeCriteriaTab = mode", sync)
+        render = function_body(DETAIL_JS, "renderCriteriaDrawerBody")
+        self.assertIn("section.dataset.criteriaTab === mode", render)
+        self.assertIn("elements.criteriaDrawerBody.replaceChildren(fragment)", render)
+        self.assertIn("elements.criteriaDrawer.dataset.activeCriteriaTab = mode", render)
+        self.assertIn("englishCriteriaGuideMarkup", DETAIL_JS)
         open_drawer = function_body(DETAIL_JS, "openCriteriaDrawer")
         self.assertIn("await syncCriteriaDrawerFromDashboard(mode)", open_drawer)
 
@@ -2337,7 +2343,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         context = function_body(JS, "buildDashboardAgentContext")
         self.assertIn("scopeRows.length", context)
         self.assertNotIn(".slice(0, 5)", context)
-        self.assertIn("app.js?v=20260806-theme-indication-3", HTML)
+        self.assertIn("app.js?v=20260904-triage-v3-7-cdp-2", HTML)
 
     def test_table_manual_review_uses_authenticated_user_without_identity_modal(self):
         actor = function_body(JS, "ensureDashboardActorName")
@@ -2387,7 +2393,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("state.dataUploadDrafts[mode]", guide)
         self.assertIn("expandCompactInputRecord(record, lockedMode)", validator)
         self.assertIn("isMinimalCompactIngestionRecord(split.records[index])", validator)
-        self.assertIn("compact-ingestion.js?v=20260806-theme-indication-3", JS)
+        self.assertIn("compact-ingestion.js?v=20260904-triage-v3-7-1", JS)
 
     def test_detail_agent_is_qa_only_without_apply_controls_or_routes(self):
         main_py = (ROOT / "main.py").read_text(encoding="utf-8")
@@ -2615,7 +2621,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn(".detail-material-body::-webkit-scrollbar", layout)
         self.assertIn("width: 6px", layout)
         self.assertIn("border-radius: 999px", layout)
-        self.assertIn("detail.js?v=20260819-manual-score-chip-3", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260905-attachment-dragdrop-1", DETAIL_HTML)
 
     def test_report_header_matches_review_workspace_and_uses_icon_actions(self):
         report_header = DETAIL_HTML[
@@ -2743,8 +2749,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("var(--fluent-amber) 72%", CSS)
         self.assertIn('#detailScoreSequence .score-chip[data-manual-score="true"]', CSS)
         self.assertIn("outline: none !important", CSS)
-        self.assertIn("styles.css?v=20260901-score-refresh-toast-6", DETAIL_HTML)
-        self.assertIn("detail.js?v=20260901-score-refresh-toast-12", DETAIL_HTML)
+        self.assertIn("styles.css?v=20260905-attachment-dragdrop-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260905-attachment-dragdrop-1", DETAIL_HTML)
         self.assertNotIn("button.textContent", score_refresh)
         self.assertIn("button.classList.add('is-saving')", score_refresh)
         self.assertIn("showDetailProgress(", score_refresh)
@@ -2793,7 +2799,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("var(--yellow) 72%", manual_score_styles)
         self.assertIn("var(--red) 72%", manual_score_styles)
         self.assertNotIn(".table-edit-select.status-edit.is-human,", manual_score_styles)
-        self.assertIn("styles.css?v=20260819-home-score-tone-1", HTML)
+        self.assertIn("styles.css?v=20260905-attachment-dragdrop-1", HTML)
 
     def test_review_workspace_defaults_to_compact_takeaway_summary(self):
         workspace = DETAIL_HTML[
@@ -2883,7 +2889,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("detailOiPartnershipNoteOrigin", DETAIL_JS)
         self.assertIn('title="OI 파트너십 분류 근거를 짧게 요약합니다."', note_markup)
         self.assertNotIn("review-reason-edit-icon", note_markup)
-        self.assertIn("detail.js?v=20260827-review-workspace-density-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260905-attachment-dragdrop-1", DETAIL_HTML)
 
     def test_partner_material_body_scrolls_below_fixed_header(self):
         header_index = DETAIL_HTML.index('class="detail-material-header"')
@@ -2910,8 +2916,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("overflow: visible", list_style)
         for filename in ("index.html", "detail.html", "triage_detail.html", "wiki_view.html", "user_admin.html"):
             markup = (ROOT / filename).read_text(encoding="utf-8")
-            self.assertRegex(markup, r'\./src/styles\.css\?v=20260805-[a-z0-9-]+')
-        self.assertIn('./src/styles.css?v=20260805-panel-titles-1', DETAIL_HTML)
+            self.assertRegex(markup, r'\./src/styles\.css\?v=[a-z0-9-]+')
+        self.assertIn('./src/styles.css?v=20260905-attachment-dragdrop-1', DETAIL_HTML)
 
     def test_data_upload_reviews_exact_and_similar_assets_before_replacing_existing_record(self):
         finder = function_body(JS, "findDataReuploadMatches")
@@ -3037,16 +3043,22 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn(".dd-status-circle", CSS)
         self.assertIn("function evidenceStatusMeaning", JS)
 
-    def test_shortlisting_table_does_not_show_partner_material_pills(self):
+    def test_shortlisting_table_has_no_cdp_column(self):
         focus_table = function_body(JS, "renderFocusTable")
         flatten = function_body(JS, "flattenRecord")
 
-        self.assertNotIn('data-col-key="materials"', focus_table)
-        self.assertNotIn("plainHeader('Materials', 'materials', 'focus-materials-head')", focus_table)
-        self.assertNotIn("partnerMaterialsStatusPills(row)", focus_table)
-        self.assertIn('colspan="6">Shortlisting', focus_table)
-        self.assertNotIn("partnerMaterialFlags: uploadedPartnerMaterialFlags(record)", flatten)
-        self.assertNotIn("shortlisting-material-pill", CSS)
+        self.assertNotIn('data-col-key="cdp"', focus_table)
+        self.assertNotIn("cdpStatusPill", focus_table)
+        self.assertNotIn("cdpStatusPill", JS)
+        self.assertNotIn("hasCdpAttachment", JS)
+        self.assertNotIn("focusFilterHeader('CDP', 'cdp', 'cdp')", focus_table)
+        self.assertNotIn("cdpStatus", flatten)
+
+    def test_partner_attachment_click_toggles_back_to_original_report(self):
+        viewer = function_body(DETAIL_JS, "openAttachmentViewer")
+
+        self.assertIn("String(attachmentId || '') === activeAttachmentId", viewer)
+        self.assertIn("renderSourceReport(currentRecord)", viewer)
 
     def test_listing_review_prefills_only_later_reciprocal_alias_pairs(self):
         review = function_body(JS, "reciprocalStep0MergeSelections")

@@ -7,19 +7,25 @@ import {
   expandCompactInputRecord,
   isCompactIngestionRecord,
   isMinimalCompactIngestionRecord
-} from './compact-ingestion.js?v=20260806-theme-indication-3';
+} from './compact-ingestion.js?v=20260904-triage-v3-7-1';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260820-url-repair-6';
-import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260901-oi-v1-7-1';
+import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260904-triage-v3-7-1';
 
 const API_URL = '/api/records';
 const DASHBOARD_SUMMARY_URL = '/api/dashboard-summary';
 const CATEGORY_SYNONYMS_URL = '/api/category-synonyms';
-const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 50;
 const PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.pageSize.v1';
 const STEP0_MAX_SELECTED_CANDIDATES = 20;
 const STEP0_PAGE_SIZE_OPTIONS = [50, 100, 200, 500];
 const STEP0_DEFAULT_PAGE_SIZE = 200;
 const STEP0_PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.step0PageSize.v1';
+// Last-known Step 0 stat-strip totals, kept across page loads/navigations so the
+// count-up animation can start instantly on the next visit (no network round-trip),
+// then get corrected once the real fetch resolves. Deliberately not scoped per-tab
+// or invalidated on a timer — showing last time's numbers for an instant is better
+// UX than showing zeros, and it's replaced within a second regardless.
+const STEP0_STATS_CACHE_KEY = 'skbp.dashboard.step0StatsCache.v1';
 const BOM_PREFIX = String.fromCharCode(0xfeff);
 const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
 const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
@@ -57,6 +63,29 @@ function storedStep0PageSize() {
   return STEP0_PAGE_SIZE_OPTIONS.includes(value) ? value : STEP0_DEFAULT_PAGE_SIZE;
 }
 
+function readStep0StatsCache() {
+  const cached = readStoredJson(
+    STEP0_STATS_CACHE_KEY,
+    null,
+    (value) => value && typeof value === 'object' && value.stats && typeof value.stats === 'object'
+  );
+  if (!cached) return null;
+  return {
+    stats: cached.stats,
+    recent_15_days: cached.recent_15_days && typeof cached.recent_15_days === 'object'
+      ? cached.recent_15_days
+      : { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 }
+  };
+}
+
+function writeStep0StatsCache(stats, recentStats) {
+  try {
+    localStorage.setItem(STEP0_STATS_CACHE_KEY, JSON.stringify({ stats, recent_15_days: recentStats }));
+  } catch {
+    // Storage full/unavailable — the cache is a nice-to-have, not required.
+  }
+}
+
 const DEFAULT_COLUMN_WIDTHS = {
   select: 34,
   company: 100,
@@ -85,6 +114,7 @@ const DEFAULT_COLUMN_WIDTHS = {
   inVitro: 74,
   admet: 84,
   dd: 46,
+  diseaseLinkage: 54,
   focusDueDate: 140,
   focusManage: 90,
   generatedAt: 116,
@@ -119,6 +149,7 @@ const MIN_COLUMN_WIDTHS = {
   inVitro: 64,
   admet: 70,
   dd: 40,
+  diseaseLinkage: 44,
   focusDueDate: 120,
   focusManage: 70,
   generatedAt: 102,
@@ -135,13 +166,14 @@ const FOCUS_DEFAULT_COLUMN_WIDTHS = {
   target: 170,
   mainIndication: 108,
   stage: 92,
-  filter2: 62,
-  totalScore: 62,
+  filter2: 82,
+  totalScore: 92,
   filter3: 82,
   inVivo: 56,
   inVitro: 56,
   admet: 60,
   dd: 42,
+  diseaseLinkage: 58,
   focusDueDate: 108,
   focusManage: 106
 };
@@ -155,13 +187,14 @@ const FOCUS_MIN_COLUMN_WIDTHS = {
   target: 160,
   mainIndication: 96,
   stage: 84,
-  filter2: 54,
-  totalScore: 52,
+  filter2: 68,
+  totalScore: 76,
   filter3: 66,
   inVivo: 48,
   inVitro: 48,
   admet: 50,
   dd: 38,
+  diseaseLinkage: 46,
   focusDueDate: 88,
   focusManage: 62
 };
@@ -170,8 +203,8 @@ const MAX_COLUMN_WIDTH = 720;
 const PROMPT_TOOLTIP =
   'GPT Full Scout v3.8 지침을 복사합니다. Fast Triage에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
 const TRIAGE_PROMPT_TOOLTIP =
-  'GPT Fast Triage v3.6 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / INSUFFICIENT로 screening합니다.';
-const LATEST_TRIAGE_RUBRIC_VERSION = '3.6';
+  'GPT Fast Triage v3.7 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / INSUFFICIENT로 screening합니다.';
+const LATEST_TRIAGE_RUBRIC_VERSION = '3.7';
 const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.8';
 const LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION = 'v3-8-moa-expansion-investigation-notes-2026-09-01';
 const FAST_TRIAGE_SCHEMA_VERSION = '3.2';
@@ -320,7 +353,7 @@ const initialTableMode = ['step0', 'map'].includes(initialViewMode) ? 'full' : i
 const initialSort = initialTableMode === 'triage'
   ? { key: 'targetScore', direction: 'desc' }
   : initialTableMode === 'focus'
-    ? { key: 'focusAddedAt', direction: 'desc' }
+    ? { key: 'focusPriority', direction: 'desc' }
     : { key: 'totalScore', direction: 'desc' };
 
 function storedMainColumnWidths() {
@@ -629,6 +662,11 @@ let step0WorkflowG6RetryTimer = null;
 let step0WorkflowG6AnimationFrames = [];
 let step0StatAnimationFrames = [];
 let step0StatAnimationTimers = [];
+// Lets renderStep0StatStrip() skip resetting to 0 and replaying the count-up when
+// called again with the exact same totals it just showed — expected now that a
+// render can be triggered up to three times in quick succession (cache, the fast
+// stats-only endpoint, the full progress table) and they usually all agree.
+let step0StatStripLastRenderKey = null;
 let dashboardDonutAnimationFrames = [];
 let dashboardDonutAnimationTimers = [];
 const focusSaveQueues = new Map();
@@ -1787,6 +1825,33 @@ function canonicalIndicationList(values, detailedIndication = '', mainIndication
     : [...new Set(list)];
 }
 
+function indicationFilterValues(rawValue, canonicalValues = []) {
+  const raw = String(rawValue || '').trim();
+  const canonical = canonicalIndicationList(canonicalValues, raw, '');
+  if (!raw) return canonical.length ? canonical : ['Unknown'];
+
+  // Preserve source-only disease wording as an explicit filter option. This
+  // keeps a non-library indication searchable without pretending that it is
+  // the generic Unknown bucket, and mirrors the Listing-table behavior.
+  const sourceValues = raw
+    .split(/\s*(?:;|\||,|\band\b)\s*/i)
+    .map((part) => part.trim())
+    .filter((part) => (
+      part
+      && !isExplicitUnknownListingValue(part)
+      && canonicalIndicationMatches(part).length === 0
+    ));
+  const values = [...new Set([...canonical, ...sourceValues])];
+  return values.length ? values : ['Unknown'];
+}
+
+function dashboardIndicationFilterValues(row) {
+  return indicationFilterValues(
+    row?.indication || row?.mainIndicationRaw || '',
+    Array.isArray(row?.indicationList) ? row.indicationList : []
+  );
+}
+
 function indicationDisplay(row) {
   const canonical = String(row?.mainIndication || '').trim() || 'Unknown';
   // The table is a comparison surface, so it shows one concise canonical
@@ -2419,7 +2484,7 @@ function computeHardFilter(record, criteria) {
   }
 
   if (Number.isFinite(total) && total >= 9 && total <= 13) {
-    reasons.push(`Total score ${total} is REVIEW range 9-13`);
+    reasons.push(`Total score ${total} is MONITOR range 9-13`);
   }
   if (!passScores) {
     reasons.push(`PASS score gate 미충족: Total ${total ?? '-'}, TAR ${targetScore ?? '-'}, MOA ${moaScore ?? '-'}, Data ${dataScore ?? '-'}`);
@@ -2634,6 +2699,13 @@ function recordFilter1Status(record) {
 
 const FILTER1_SORT_RANK = { SELECT: 0, REJECT: 1, INSUFFICIENT: 2 };
 const FILTER2_SORT_RANK = { PASS: 0, REVIEW: 1, FAIL: 2 };
+// Display-only relabel: the stored/derived hard_filter.status values stay PASS/REVIEW/FAIL
+// everywhere (schema, sorting, tone classes, GPT contract) — only the text shown to a
+// reviewer changes, so nothing downstream of this label needs to change.
+const FILTER2_STATUS_LABELS = { REVIEW: 'MONITOR', FAIL: 'T·Down' };
+function filter2StatusLabel(value) {
+  return FILTER2_STATUS_LABELS[value] || value;
+}
 
 function recordFilter2Status(record, computedHardFilter) {
   if (isTriageRecord(record)) {
@@ -2821,6 +2893,9 @@ function flattenRecord(record, index) {
       : focusManagement?.is_tracked === true
         ? 'priority'
         : 'untracked',
+    focusPriorityRank: focusManagement?.is_tracked === true && focusManagement?.tracking_status === 'stationary'
+      ? 1
+      : 0,
     focusComment: String(focusManagement?.user_comment || ''),
     focusDueDate: String(focusManagement?.due_date || ''),
     focusOwner: String(focusManagement?.owner_name || ''),
@@ -2847,6 +2922,9 @@ function flattenRecord(record, index) {
     admetCompleted: Number.isFinite(focusManagement?.admet_completed) ? focusManagement.admet_completed : null,
     admetSource: String(focusManagement?.admet_completed_source || 'auto'),
     ddStatus: hasDueDiligenceAttachment(record) ? 'O' : 'X',
+    diseaseLinkageStatus: focusManagement?.disease_linkage_status ?? null,
+    diseaseLinkageScoreUsed: focusManagement?.disease_linkage_score_used ?? null,
+    diseaseLinkageSource: String(focusManagement?.disease_linkage_status_source || 'auto'),
     hardFilter: filterStatus.status,
     hardFilterReason: filterStatus.reason,
     targetScore,
@@ -3012,17 +3090,17 @@ function sortableHeader(label, sortKey, columnKey, attrs = '') {
   return `<th ${attrs} ${columnAttrs(columnKey)}><button data-sort="${escapeHtml(sortKey)}" data-sort-label="${escapeHtml(label)}" type="button">${escapeHtml(label)}</button>${resizeHandle(columnKey)}</th>`;
 }
 
-function scoreFilterHeader(label, sortKey, columnKey) {
-  const definition = SCORE_HEADER_FILTERS[sortKey];
+function scoreFilterHeader(label, sortKey, columnKey, filterKey = sortKey) {
+  const definition = SCORE_HEADER_FILTERS[filterKey];
   if (!definition) return sortableHeader(label, sortKey, columnKey);
-  const summary = scoreFilterSummary(sortKey);
+  const summary = scoreFilterSummary(filterKey);
   const hasSelection = Boolean(summary);
   return `<th class="score-filter-header${hasSelection ? ' has-score-filter' : ''}" ${columnAttrs(columnKey)}>
     <div class="score-filter-header-controls">
       <button
         class="score-filter-header-trigger"
         type="button"
-        data-score-filter-trigger="${escapeHtml(sortKey)}"
+        data-score-filter-trigger="${escapeHtml(filterKey)}"
         aria-haspopup="dialog"
         aria-expanded="false"
         aria-label="${escapeHtml(`${definition.criterion} 점수 필터${summary ? `: ${summary}` : ''}`)}"
@@ -3032,22 +3110,23 @@ function scoreFilterHeader(label, sortKey, columnKey) {
     </div>${resizeHandle(columnKey)}</th>`;
 }
 
-function focusFilterHeader(label, sortKey, columnKey) {
-  const definition = FOCUS_HEADER_FILTERS[sortKey];
-  if (!definition) return sortableHeader(label, sortKey, columnKey);
-  const summary = focusFilterSummary(sortKey);
+function focusFilterHeader(label, filterKey, columnKey, sortKey = filterKey === 'admet' ? 'admetCompleted' : `${filterKey}Status`) {
+  const definition = FOCUS_HEADER_FILTERS[filterKey];
+  if (!definition) return sortableHeader(label, filterKey, columnKey);
+  const summary = focusFilterSummary(filterKey);
+  const baseDescription = definition.description || `${definition.label} filter`;
   return `<th class="score-filter-header${summary ? ' has-score-filter' : ''}" ${columnAttrs(columnKey)}>
     <div class="score-filter-header-controls">
       <button
         class="score-filter-header-trigger"
         type="button"
-        data-focus-filter-trigger="${escapeHtml(sortKey)}"
+        data-focus-filter-trigger="${escapeHtml(filterKey)}"
         aria-haspopup="dialog"
         aria-expanded="false"
-        aria-label="${escapeHtml(`${definition.label} filter${summary ? `: ${summary}` : ''}`)}"
-        title="${escapeHtml(summary ? `${definition.label}: ${summary}` : `${definition.label} filter`)}"
+        aria-label="${escapeHtml(summary ? `${baseDescription}: ${summary}` : baseDescription)}"
+        title="${escapeHtml(summary ? `${baseDescription}: ${summary}` : baseDescription)}"
       >${escapeHtml(label)}<span class="score-filter-header-dot" aria-hidden="true"></span></button>
-      <button class="table-score-sort-button" data-sort="${escapeHtml(sortKey === 'admet' ? 'admetCompleted' : `${sortKey}Status`)}" data-sort-label="${escapeHtml(label)}" type="button" aria-label="${escapeHtml(`${label} sort`)}" title="${escapeHtml(`${label} sort`)}"><span class="score-sort-glyph" aria-hidden="true"></span></button>
+      <button class="table-score-sort-button" data-sort="${escapeHtml(sortKey)}" data-sort-label="${escapeHtml(label)}" type="button" aria-label="${escapeHtml(`${label} sort`)}" title="${escapeHtml(`${label} sort`)}"><span class="score-sort-glyph" aria-hidden="true"></span></button>
     </div>${resizeHandle(columnKey)}</th>`;
 }
 
@@ -3126,6 +3205,33 @@ function activeFilterLabel() {
   return 'Filter 2';
 }
 
+// Whichever of Filter 1/2/3 is currently visible+editable via the top "Filter N" multiselect
+// (state.pass, keyed by activeFilterKey()) — shared by that multiselect and the header-click
+// filter popover on the same column, so both surfaces always agree.
+function activeStatusFilterOptions() {
+  if (activeTableMode() === 'triage') {
+    return [
+      { value: 'SELECT', label: 'SELECT' },
+      { value: 'REJECT', label: 'REJECT' },
+      { value: 'INSUFFICIENT', label: 'INSUFFICIENT' }
+    ];
+  }
+  if (activeTableMode() === 'focus') {
+    return [
+      { value: 'investment', label: '투자' },
+      { value: 'value_up', label: 'Value Up' },
+      { value: 'joint_research', label: '공동연구' },
+      { value: 'unknown', label: 'Unknown' },
+      { value: 'n_a', label: 'N/A' }
+    ];
+  }
+  return [
+    { value: 'PASS', label: 'PASS' },
+    { value: 'REVIEW', label: filter2StatusLabel('REVIEW') },
+    { value: 'FAIL', label: filter2StatusLabel('FAIL') }
+  ];
+}
+
 function activeScoreColumnKeys() {
   const triageCore = ['targetScore', 'moaScore', 'dataScore'];
   if (activeTableMode() === 'triage') return triageCore;
@@ -3167,6 +3273,7 @@ const FOCUS_TABLE_COLUMN_KEYS = [
   'inVivo',
   'inVitro',
   'admet',
+  'diseaseLinkage',
   'focusDueDate',
   'focusManage'
 ];
@@ -3385,7 +3492,8 @@ const SCORE_HEADER_FILTERS = {
   competitiveScore: { label: 'Comp', criterion: 'Competitive Landscape' },
   platformScore: { label: 'Plat', criterion: 'Platform Attractiveness' },
   expansionScore: { label: 'Exp', criterion: 'Expansion Potential' },
-  marketScore: { label: 'Market', criterion: 'Marketability' }
+  marketScore: { label: 'Market', criterion: 'Marketability' },
+  totalScore: { label: 'Total Score', criterion: 'Total Score (0–21)' }
 };
 const SCORE_FILTER_OPTIONS = [
   { value: 'gte:1', label: '≥ 1점' },
@@ -3396,11 +3504,33 @@ const SCORE_FILTER_OPTIONS = [
   { value: 'eq:2', label: '= 2점' },
   { value: 'eq:3', label: '= 3점' }
 ];
+// Total Score spans 0-21 (vs. 0-3 for the criteria above), so listing every value would be
+// unusable — instead offer just the three tiers that also drive the score circle's color
+// (Filter 2's PASS/REVIEW/FAIL total_score cutoffs, json/schema.md).
+const TOTAL_SCORE_FILTER_OPTIONS = [
+  { value: 'gte:14', label: 'Total Score ≥ 14' },
+  { value: 'range:9:13', label: 'Total Score 9–13' },
+  { value: 'lte:8', label: 'Total Score ≤ 8' }
+];
+function scoreFilterOptionsFor(key) {
+  return key === 'totalScore' ? TOTAL_SCORE_FILTER_OPTIONS : SCORE_FILTER_OPTIONS;
+}
 const FOCUS_HEADER_FILTERS = {
   admet: { label: 'ADMET', kind: 'numeric', description: 'Completed studies (out of 25)' },
   inVivo: { label: 'In-vivo', kind: 'status', description: 'In-vivo efficacy evidence' },
   inVitro: { label: 'In-vitro', kind: 'status', description: 'In-vitro efficacy evidence' },
-  dd: { label: 'DD', kind: 'status', description: 'Due Diligence file uploaded' }
+  dd: { label: 'DD', kind: 'status', description: 'Due Diligence file uploaded' },
+  diseaseLinkage: { label: 'D·Link', kind: 'status', description: 'MoA가 실제 질환 병리·기능과 연결됐는지 표시' },
+  filter2: {
+    label: 'Filter 2',
+    kind: 'status',
+    description: 'Full Scout 최종 판정',
+    options: [
+      { value: 'PASS', label: 'PASS' },
+      { value: 'REVIEW', label: filter2StatusLabel('REVIEW') },
+      { value: 'FAIL', label: filter2StatusLabel('FAIL') }
+    ]
+  }
 };
 const FOCUS_STATUS_FILTER_OPTIONS = [
   { value: 'O', label: 'O' },
@@ -3408,7 +3538,7 @@ const FOCUS_STATUS_FILTER_OPTIONS = [
 ];
 
 function emptyFocusFilters() {
-  return { admet: [], inVivo: [], inVitro: [], dd: [] };
+  return { admet: [], inVivo: [], inVitro: [], dd: [], diseaseLinkage: [], filter2: [] };
 }
 
 function normalizeAdmetFilterExpression(value) {
@@ -3438,7 +3568,8 @@ function focusFilterSelections(key) {
   const values = state.focusFilters?.[key];
   if (!Array.isArray(values)) return [];
   if (FOCUS_HEADER_FILTERS[key]?.kind === 'status') {
-    return [...new Set(values.filter((value) => FOCUS_STATUS_FILTER_OPTIONS.some((option) => option.value === value)))];
+    const options = FOCUS_HEADER_FILTERS[key]?.options || FOCUS_STATUS_FILTER_OPTIONS;
+    return [...new Set(values.filter((value) => options.some((option) => option.value === value)))];
   }
   return [...new Set(values.filter((value) => /^(gte|lte|eq):(?:[0-9]|1\d|2[0-5])$/.test(value)))];
 }
@@ -3452,8 +3583,11 @@ function focusFilterLabel(value) {
 function focusFilterSummary(key) {
   const selected = focusFilterSelections(key);
   if (!selected.length) return '';
+  const options = FOCUS_HEADER_FILTERS[key]?.options;
   const labels = selected.map((value) => (
-    FOCUS_HEADER_FILTERS[key]?.kind === 'numeric' ? focusFilterLabel(value) : value
+    FOCUS_HEADER_FILTERS[key]?.kind === 'numeric'
+      ? focusFilterLabel(value)
+      : options?.find((option) => option.value === value)?.label || value
   ));
   return labels.length === 1 ? labels[0] : `${labels.length} conditions`;
 }
@@ -3477,13 +3611,16 @@ function focusFilterMatches(row) {
   return admetMatches
     && statusMatches('inVivo', row.inVivoStatus)
     && statusMatches('inVitro', row.inVitroStatus)
-    && statusMatches('dd', row.ddStatus);
+    && statusMatches('dd', row.ddStatus)
+    && statusMatches('diseaseLinkage', row.diseaseLinkageStatus)
+    && statusMatches('filter2', row.filter2);
 }
 
 function scoreFilterSelections(key) {
   const values = state.scoreFilters?.[key];
+  const options = scoreFilterOptionsFor(key);
   return Array.isArray(values)
-    ? [...new Set(values.filter((value) => SCORE_FILTER_OPTIONS.some((option) => option.value === value)))]
+    ? [...new Set(values.filter((value) => options.some((option) => option.value === value)))]
     : [];
 }
 
@@ -3492,17 +3629,20 @@ function scoreFilterMatches(key, score) {
   if (!selections.length) return true;
   if (!Number.isInteger(score)) return false;
   return selections.some((selection) => {
-    const [operator, rawValue] = selection.split(':');
-    const value = Number(rawValue);
-    return operator === 'gte' ? score >= value : score === value;
+    const [operator, a, b] = selection.split(':');
+    if (operator === 'gte') return score >= Number(a);
+    if (operator === 'lte') return score <= Number(a);
+    if (operator === 'range') return score >= Number(a) && score <= Number(b);
+    return score === Number(a);
   });
 }
 
 function scoreFilterSummary(key) {
   const selected = scoreFilterSelections(key);
   if (!selected.length) return '';
+  const options = scoreFilterOptionsFor(key);
   const labels = selected
-    .map((value) => SCORE_FILTER_OPTIONS.find((option) => option.value === value)?.label || value);
+    .map((value) => options.find((option) => option.value === value)?.label || value);
   return labels.length === 1 ? labels[0] : `${labels.length}개 조건`;
 }
 
@@ -3605,29 +3745,41 @@ function renderScoreHeaderFilterPopover({ focusExpression = false } = {}) {
     <button type="button" class="table-score-filter-option${selected.has(option.value) ? ' is-selected' : ''}" data-score-filter-option="${escapeHtml(option.value)}" role="option" aria-selected="${selected.has(option.value) ? 'true' : 'false'}">
       <span class="table-score-filter-dot" aria-hidden="true"></span><span>${escapeHtml(option.label)}</span>
     </button>`;
+  const allButton = `<button type="button" class="table-score-filter-all${selected.size === 0 ? ' is-selected' : ''}" data-score-filter-all aria-pressed="${selected.size === 0 ? 'true' : 'false'}">전체</button>`;
+  // Total Score spans 0-21, too wide to list every value like the 0-3 criteria below —
+  // just the three tiers that also drive the score circle's color.
+  const body = active.key === 'totalScore'
+    ? `
+      <div class="table-score-filter-expression-row">${allButton}</div>
+      <p class="table-score-filter-group-label">표시 범위 · 복수 선택 가능</p>
+      <div class="table-score-filter-option-grid" role="listbox" aria-label="${escapeHtml(definition.label)} range" aria-multiselectable="true">
+        ${TOTAL_SCORE_FILTER_OPTIONS.map(optionButton).join('')}
+      </div>`
+    : `
+      <div class="table-score-filter-expression-row">
+        ${allButton}
+        <label><span class="sr-only">Score expression</span><input type="search" data-score-filter-expression value="${escapeHtml(active.expression || '')}" placeholder="≥2, >1, =2" autocomplete="off" /></label>
+        <button type="button" class="table-score-filter-add" data-score-filter-expression-add>추가</button>
+      </div>
+      <p class="table-score-filter-group-label">점수 이상</p>
+      <div class="table-score-filter-option-grid" role="listbox" aria-label="${escapeHtml(definition.label)} minimum score" aria-multiselectable="true">
+        ${SCORE_FILTER_OPTIONS.filter((option) => option.value.startsWith('gte:')).map(optionButton).join('')}
+      </div>
+      <p class="table-score-filter-group-label">정확한 점수 · 복수 선택 가능</p>
+      <div class="table-score-filter-option-grid" role="listbox" aria-label="${escapeHtml(definition.label)} exact score" aria-multiselectable="true">
+        ${SCORE_FILTER_OPTIONS.filter((option) => option.value.startsWith('eq:')).map(optionButton).join('')}
+      </div>`;
   popover.innerHTML = `
     <div class="table-score-filter-popover-heading">
       <div><strong>${escapeHtml(definition.label)} 점수</strong><span>${escapeHtml(definition.criterion)}</span></div>
       <button type="button" class="table-score-filter-close" data-score-filter-close aria-label="점수 필터 닫기">×</button>
     </div>
-    <div class="table-score-filter-expression-row">
-      <button type="button" class="table-score-filter-all${selected.size === 0 ? ' is-selected' : ''}" data-score-filter-all aria-pressed="${selected.size === 0 ? 'true' : 'false'}">전체</button>
-      <label><span class="sr-only">Score expression</span><input type="search" data-score-filter-expression value="${escapeHtml(active.expression || '')}" placeholder="≥2, >1, =2" autocomplete="off" /></label>
-      <button type="button" class="table-score-filter-add" data-score-filter-expression-add>추가</button>
-    </div>
-    <p class="table-score-filter-group-label">점수 이상</p>
-    <div class="table-score-filter-option-grid" role="listbox" aria-label="${escapeHtml(definition.label)} minimum score" aria-multiselectable="true">
-      ${SCORE_FILTER_OPTIONS.filter((option) => option.value.startsWith('gte:')).map(optionButton).join('')}
-    </div>
-    <p class="table-score-filter-group-label">정확한 점수 · 복수 선택 가능</p>
-    <div class="table-score-filter-option-grid" role="listbox" aria-label="${escapeHtml(definition.label)} exact score" aria-multiselectable="true">
-      ${SCORE_FILTER_OPTIONS.filter((option) => option.value.startsWith('eq:')).map(optionButton).join('')}
-    </div>
+    ${body}
     <p class="table-score-filter-helper">한 기준 안의 여러 조건은 OR, TAR·MoA·Data 등 기준 간 조건은 AND로 적용됩니다.</p>
     <div class="table-score-filter-actions"><button type="button" data-score-filter-done>완료</button></div>`;
   popover.hidden = false;
   positionScoreHeaderFilterPopover();
-  if (focusExpression) {
+  if (focusExpression && active.key !== 'totalScore') {
     window.requestAnimationFrame(() => popover.querySelector('[data-score-filter-expression]')?.focus());
   }
 }
@@ -3677,6 +3829,134 @@ function commitScoreHeaderFilter() {
   captureModeFilters();
   closeScoreHeaderFilter();
   renderFilteredDashboard();
+}
+
+// Header-click filter for whichever of Filter 1/2/3 is visible in the active tab (Filter 1 in
+// Fast Triage, Filter 2 in Full Scout, Filter 3/OI Partnership in Shortlisting). Same popover
+// style as the DD/ADMET/etc. status filters, but backed by state.pass so it stays in sync with
+// the existing "Filter N" multiselect above the table rather than tracking a second copy of the
+// same selection. (Shortlisting's own Filter 2 column is separate — see FOCUS_HEADER_FILTERS.filter2 —
+// because state.pass there is already spoken for by Filter 3.)
+let activePassHeaderFilter = null;
+
+function passFilterPopoverElement() {
+  let element = document.querySelector('#passTableFilterPopover');
+  if (element) return element;
+  element = document.createElement('div');
+  element.id = 'passTableFilterPopover';
+  element.className = 'table-score-filter-popover';
+  element.hidden = true;
+  element.setAttribute('role', 'dialog');
+  element.setAttribute('aria-modal', 'false');
+  document.body.append(element);
+  return element;
+}
+
+function closePassHeaderFilter() {
+  if (activePassHeaderFilter?.trigger?.isConnected) {
+    activePassHeaderFilter.trigger.setAttribute('aria-expanded', 'false');
+  }
+  activePassHeaderFilter = null;
+  const popover = document.querySelector('#passTableFilterPopover');
+  if (popover) {
+    popover.hidden = true;
+    popover.innerHTML = '';
+  }
+}
+
+function positionPassHeaderFilterPopover() {
+  const popover = document.querySelector('#passTableFilterPopover');
+  const trigger = activePassHeaderFilter?.trigger;
+  if (!popover || popover.hidden || !trigger?.isConnected) return;
+  const rect = trigger.getBoundingClientRect();
+  const width = Math.min(292, window.innerWidth - 24);
+  const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+  popover.style.width = `${width}px`;
+  popover.style.left = `${left}px`;
+  const height = Math.min(popover.offsetHeight || 280, window.innerHeight - 24);
+  popover.style.top = `${Math.max(12, Math.min(rect.bottom + 6, window.innerHeight - height - 12))}px`;
+}
+
+function passFilterSummary() {
+  const selected = selectedFilterValues(state.pass);
+  if (!selected.length) return '';
+  const options = activeStatusFilterOptions();
+  const labels = selected.map((value) => options.find((option) => option.value === value)?.label || value);
+  return labels.length === 1 ? labels[0] : `${labels.length} conditions`;
+}
+
+function renderPassHeaderFilterPopover() {
+  const active = activePassHeaderFilter;
+  if (!active) return;
+  const popover = passFilterPopoverElement();
+  const selected = active.selected;
+  const options = activeStatusFilterOptions();
+  const label = activeFilterLabel();
+  const optionButton = (option) => `
+    <button type="button" class="table-score-filter-option${selected.has(option.value) ? ' is-selected' : ''}" data-pass-filter-option="${escapeHtml(option.value)}" role="option" aria-selected="${selected.has(option.value) ? 'true' : 'false'}">
+      <span class="table-score-filter-dot" aria-hidden="true"></span><span>${escapeHtml(option.label)}</span>
+    </button>`;
+  popover.innerHTML = `
+    <div class="table-score-filter-popover-heading">
+      <div><strong>${escapeHtml(label)} filter</strong><span>판정 상태</span></div>
+      <button type="button" class="table-score-filter-close" data-pass-filter-close aria-label="Filter close">×</button>
+    </div>
+    <div class="table-score-filter-expression-row"><button type="button" class="table-score-filter-all${selected.size === 0 ? ' is-selected' : ''}" data-pass-filter-all aria-pressed="${selected.size === 0 ? 'true' : 'false'}">전체</button></div>
+    <p class="table-score-filter-group-label">표시 상태 · 복수 선택 가능</p>
+    <div class="table-score-filter-option-grid focus-status-filter-options" role="listbox" aria-label="${escapeHtml(label)} status" aria-multiselectable="true">
+      ${options.map(optionButton).join('')}
+    </div>
+    <p class="table-score-filter-helper">기준 간 조건은 AND로 적용됩니다.</p>
+    <div class="table-score-filter-actions"><button type="button" data-pass-filter-done>완료</button></div>`;
+  popover.hidden = false;
+  positionPassHeaderFilterPopover();
+}
+
+function togglePassHeaderFilter(trigger) {
+  if (activePassHeaderFilter?.trigger === trigger) {
+    closePassHeaderFilter();
+    return;
+  }
+  closeMultiFilters();
+  closeFocusHeaderFilter();
+  closeScoreHeaderFilter();
+  closePassHeaderFilter();
+  activePassHeaderFilter = {
+    trigger,
+    selected: new Set(selectedFilterValues(state.pass))
+  };
+  trigger.setAttribute('aria-expanded', 'true');
+  renderPassHeaderFilterPopover();
+}
+
+function commitPassHeaderFilter() {
+  const active = activePassHeaderFilter;
+  if (!active) return;
+  state.pass = [...active.selected];
+  state.page = 1;
+  captureModeFilters();
+  closePassHeaderFilter();
+  renderFilters();
+  renderFilteredDashboard();
+}
+
+function passFilterHeader(label, sortKey, columnKey, attrs = '') {
+  const summary = passFilterSummary();
+  const hasSelection = Boolean(summary);
+  const filterLabel = activeFilterLabel();
+  return `<th ${attrs} class="score-filter-header${hasSelection ? ' has-score-filter' : ''}" ${columnAttrs(columnKey)}>
+    <div class="score-filter-header-controls">
+      <button
+        class="score-filter-header-trigger"
+        type="button"
+        data-pass-filter-trigger
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        aria-label="${escapeHtml(`${filterLabel} 필터${summary ? `: ${summary}` : ''}`)}"
+        title="${escapeHtml(summary ? `${filterLabel}: ${summary}` : `${filterLabel} 필터`)}"
+      >${escapeHtml(label)}<span class="score-filter-header-dot" aria-hidden="true"></span></button>
+      <button class="table-score-sort-button" data-sort="${escapeHtml(sortKey)}" data-sort-label="${escapeHtml(label)}" type="button" aria-label="${escapeHtml(`${label} sort`)}" title="${escapeHtml(`${label} sort`)}"><span class="score-sort-glyph" aria-hidden="true"></span></button>
+    </div>${resizeHandle(columnKey)}</th>`;
 }
 
 let activeFocusHeaderFilter = null;
@@ -3743,7 +4023,7 @@ function renderFocusHeaderFilterPopover({ focusExpression = false } = {}) {
       <div class="table-score-filter-expression-row">${allButton}</div>
       <p class="table-score-filter-group-label">표시 상태 · 복수 선택 가능</p>
       <div class="table-score-filter-option-grid focus-status-filter-options" role="listbox" aria-label="${escapeHtml(definition.label)} status" aria-multiselectable="true">
-        ${FOCUS_STATUS_FILTER_OPTIONS.map(optionButton).join('')}
+        ${(definition.options || FOCUS_STATUS_FILTER_OPTIONS).map(optionButton).join('')}
       </div>`;
   popover.innerHTML = `
     <div class="table-score-filter-popover-heading">
@@ -3841,7 +4121,7 @@ function getVisibleRows(includeQuery = true) {
         (selectedFilterValues(state.modality).length === 0 || selectedFilterValues(state.modality).some((value) => (
           row.modalityTags?.includes(value) || row.modalityCanonical === value
         ))) &&
-        (selectedFilterValues(state.indication).length === 0 || selectedFilterValues(state.indication).some((value) => row.indicationList.includes(value) || (value === 'Unknown' && !row.indicationList.length))) &&
+        (selectedFilterValues(state.indication).length === 0 || selectedFilterValues(state.indication).some((value) => dashboardIndicationFilterValues(row).includes(value))) &&
         selectedCountryFilterMatches(state.country, row.country) &&
         selectedFilterMatches(state.stage, row.stage) &&
         selectedFilterMatches(state.pass, row[filterKey]) &&
@@ -3852,6 +4132,7 @@ function getVisibleRows(includeQuery = true) {
         scoreFilterMatches('platformScore', row.platformScore) &&
         scoreFilterMatches('expansionScore', row.expansionScore) &&
         scoreFilterMatches('marketScore', row.marketScore) &&
+        scoreFilterMatches('totalScore', row.totalScore) &&
         focusFilterMatches(row)
       );
     });
@@ -3862,6 +4143,13 @@ function getVisibleRows(includeQuery = true) {
       const av = a[state.sortKey];
       const bv = b[state.sortKey];
       const direction = state.sortDirection === 'asc' ? 1 : -1;
+
+      if (state.sortKey === 'focusPriority') {
+        const sign = state.sortDirection === 'asc' ? -1 : 1;
+        const rankDiff = ((a.focusPriorityRank ?? 0) - (b.focusPriorityRank ?? 0)) * sign;
+        if (rankDiff !== 0) return rankDiff;
+        return ((b.focusTotalScore ?? -Infinity) - (a.focusTotalScore ?? -Infinity)) * sign;
+      }
 
       if (state.sortKey === 'filter1' || state.sortKey === 'filter2') {
         const rankMap = state.sortKey === 'filter1' ? FILTER1_SORT_RANK : FILTER2_SORT_RANK;
@@ -3885,7 +4173,7 @@ function renderFilters() {
   const clusters = [...new Set(modeRows.map((row) => row.cluster).filter(Boolean))].sort();
   const modalities = [...new Set(modeRows.flatMap((row) => row.modalityTags?.length ? row.modalityTags : [row.modalityCanonical]).filter(Boolean))].sort();
   const countries = [...new Set(modeRows.flatMap((row) => canonicalCountryValues(row.country)).filter(Boolean))].sort();
-  const indications = [...new Set(modeRows.flatMap((row) => row.indicationList.length ? row.indicationList : ['Unknown']))].sort();
+  const indications = [...new Set(modeRows.flatMap((row) => dashboardIndicationFilterValues(row)))].sort();
   const stages = [...new Set(modeRows.map((row) => row.stage).filter(Boolean))]
     .sort((a, b) => {
       const aIndex = CANONICAL_DEVELOPMENT_STAGES.indexOf(a);
@@ -3894,25 +4182,7 @@ function renderFilters() {
       const bRank = bIndex < 0 ? CANONICAL_DEVELOPMENT_STAGES.length : bIndex;
       return aRank - bRank || a.localeCompare(b, 'en');
     });
-  const filterStatuses = activeTableMode() === 'triage'
-    ? [
-        { value: 'SELECT', label: 'SELECT' },
-        { value: 'REJECT', label: 'REJECT' },
-        { value: 'INSUFFICIENT', label: 'INSUFFICIENT' }
-      ]
-    : activeTableMode() === 'focus'
-      ? [
-          { value: 'investment', label: '투자' },
-          { value: 'value_up', label: 'Value Up' },
-          { value: 'joint_research', label: '공동연구' },
-          { value: 'unknown', label: 'Unknown' },
-          { value: 'n_a', label: 'N/A' }
-        ]
-      : [
-          { value: 'PASS', label: 'PASS' },
-          { value: 'REVIEW', label: 'REVIEW' },
-          { value: 'FAIL', label: 'FAIL' }
-        ];
+  const filterStatuses = activeStatusFilterOptions();
   const resetInvalidSelections = (key, values) => {
     state[key] = selectedFilterValues(state[key]).filter((value) => values.includes(value));
   };
@@ -3963,7 +4233,7 @@ function multiFilterMenuMarkup(key, options, selected, valueAttribute, query = '
   return [
     `<div class="filter-multiselect-menu-topbar"><button type="button" class="filter-multiselect-option filter-multiselect-all-option${selected.length === 0 ? ' is-selected' : ''}" ${valueAttribute}="all" role="option" aria-selected="${selected.length === 0}"><span class="filter-multiselect-check" aria-hidden="true">${selected.length === 0 ? '✓' : ''}</span><span>전체</span></button><label class="filter-multiselect-menu-search"><span class="sr-only">${escapeHtml(key)} 검색</span><input type="search" data-filter-menu-search value="${escapeHtml(query)}" placeholder="검색" autocomplete="off" /></label></div>`,
     groupMarkup(hasCanonicalLibrary ? 'Canonical Library' : 'Available values', canonicalOptions, hasCanonicalLibrary),
-    groupMarkup('Source values', additionalOptions, false)
+    groupMarkup('Others', additionalOptions, false)
   ];
 }
 
@@ -4389,8 +4659,8 @@ function renderMetrics() {
       : [
           ['metricTotal', { label: 'Full Scout Assets', value: kpis.assets ?? 0, icon: 'assets', tone: 'blue' }],
           ['metricPass', { label: 'PASS', value: kpis.pass ?? 0, icon: 'check', tone: 'green' }],
-          ['metricScore', { label: 'REVIEW', value: kpis.review ?? 0, icon: 'review', tone: 'amber' }],
-          ['metricTarget', { label: 'FAIL', value: kpis.fail ?? 0, icon: 'reject', tone: 'red' }],
+          ['metricScore', { label: filter2StatusLabel('REVIEW'), value: kpis.review ?? 0, icon: 'review', tone: 'amber' }],
+          ['metricTarget', { label: filter2StatusLabel('FAIL'), value: kpis.fail ?? 0, icon: 'reject', tone: 'red' }],
           ['metricCountries', { label: '평균 총점 / 21', value: scoreValue, icon: 'score', tone: 'blue', hidden: true }]
         ];
   slots.forEach(([slot, config]) => setMetricSlot(slot, config));
@@ -4408,6 +4678,7 @@ const DONUT_OTHERS_COLOR = 'var(--chart-other)';
 
 function distributionDisplayLabel(kind, label) {
   const value = String(label || '');
+  if (kind === 'status') return filter2StatusLabel(value);
   if (kind === 'interest-indication') {
     if (/alzheimer/i.test(value)) return 'AD';
     if (/parkinson/i.test(value)) return 'PD';
@@ -4950,7 +5221,7 @@ function renderWorkflowPriorityList(summary) {
           <button type="button" class="priority-item workflow-priority-item" data-record-id="${escapeHtml(recordId)}">
             <span class="workflow-priority-main"><strong>${escapeHtml(asset)}</strong><small>${escapeHtml(company)}</small></span>
             <span class="workflow-priority-context">${escapeHtml(item.main_indication || indication)} · Data ${item.data_maturity ?? '-'} · TAR ${item.target_relevance ?? '-'}</span>
-            <span class="workflow-priority-badges">${workflowListBadge(decision, decision.toLowerCase())}<b class="workflow-total-score">${item.total_score ?? '-'} / ${item.max_score ?? 21}</b></span>
+            <span class="workflow-priority-badges">${workflowListBadge(filter2StatusLabel(decision), decision.toLowerCase())}<b class="workflow-total-score">${item.total_score ?? '-'} / ${item.max_score ?? 21}</b></span>
           </button>
         `;
       }).join('')
@@ -5539,7 +5810,7 @@ function statusEditSelect(row, filterKey) {
   const value = row[filterKey];
   if (row.isVirtualTriage) {
     const title = row.earlyStop?.reason || 'Full Scout 완료로 표시된 Fast Triage 상태입니다. Tab 2 결과를 엽니다.';
-    return `<span class="table-edit-select status-edit ${filterToneClass(value)} is-readonly" title="${escapeHtml(title)}">${escapeHtml(value)}</span>`;
+    return `<span class="table-edit-select status-edit ${filterToneClass(value)} is-readonly" title="${escapeHtml(title)}">${escapeHtml(filter2StatusLabel(value))}</span>`;
   }
   const options = row.isTriage ? ['SELECT', 'REJECT', 'INSUFFICIENT'] : ['PASS', 'REVIEW', 'FAIL'];
   const isManual = Object.prototype.hasOwnProperty.call(humanReviewOverrides(row.raw), 'filter_status');
@@ -5553,7 +5824,7 @@ function statusEditSelect(row, filterKey) {
       aria-label="${escapeHtml(row.asset)} reviewer status"
       title="${escapeHtml(title)}"
     >
-      ${options.map((option) => selectOption(option, value)).join('')}
+      ${options.map((option) => selectOption(option, value, filter2StatusLabel(option))).join('')}
     </select>
   `;
 }
@@ -5628,7 +5899,8 @@ const ADMET_TOTAL_ITEMS = 25;
 const EVIDENCE_FIELD_TO_BACKEND = {
   inVivoStatus: 'in_vivo_status',
   inVitroStatus: 'in_vitro_status',
-  admetCompleted: 'admet_completed'
+  admetCompleted: 'admet_completed',
+  diseaseLinkageStatus: 'disease_linkage_status'
 };
 
 function evidenceToneClass(value) {
@@ -5675,6 +5947,42 @@ function dueDiligenceStatusBadge(row) {
   const tooltip = 'DD Report가 상세 페이지에 업로드 되었음';
   const href = `/detail?id=${encodeURIComponent(row.id)}&tab=focus&open=dd`;
   return `<a class="total-score-edit-circle dd-status-circle dd-status-link ${tone} help-tooltip" href="${escapeHtml(href)}" data-tooltip="${escapeHtml(tooltip)}" aria-label="${escapeHtml(tooltip)}">${value}</a>`;
+}
+
+const DISEASE_LINKAGE_STATUS_OPTIONS = [
+  { value: 'O', label: 'O', title: 'O: 확인됨 — MoA 근거가 실제 질환 병리·기능(disease phenotype·biomarker)과의 연결까지 확인됨' },
+  { value: 'X', label: 'X', title: 'X: 미확인 — MoA 근거가 실제 질환 병리·기능과의 연결까지는 확인되지 않음' },
+  { value: 'NA', label: 'N/A', title: 'N/A: 판단 불가 — 정보 부족으로 연결 여부를 판단할 수 없음' }
+];
+
+function diseaseLinkageStatusMeaning(value) {
+  if (value === 'O') return 'O: 확인됨 — MoA 근거가 실제 질환 병리·기능(disease phenotype·biomarker)과의 연결까지 확인됨';
+  if (value === 'X') return 'X: 미확인 — MoA 근거가 실제 질환 병리·기능과의 연결까지는 확인되지 않음';
+  return 'N/A: 판단 불가 — 정보 부족으로 연결 여부를 판단할 수 없음. 더블클릭하면 GPT 원문의 MoA Validity 근거로 이동합니다';
+}
+
+// Single click opens this native dropdown (same as ADMET/In-vivo/In-vitro) so a reviewer can
+// manually override the AI verdict; picking a value marks it 'manual' and the background
+// auto-classifier (scheduleDiseaseLinkageClassification) then leaves it alone permanently,
+// mirroring in_vivo_status/in_vitro_status/admet_completed. Double-click jumps to the source
+// investigation_note (wired in the shared dblclick handler below).
+function diseaseLinkageEditSelect(row) {
+  const value = row.diseaseLinkageStatus === 'O' || row.diseaseLinkageStatus === 'X' ? row.diseaseLinkageStatus : 'NA';
+  const tooltip = diseaseLinkageStatusMeaning(value);
+  return `
+    <span class="evidence-tooltip help-tooltip" data-tooltip="${escapeHtml(tooltip)}">
+      <select
+        class="evidence-edit ${evidenceToneClass(value)} ${row.diseaseLinkageSource === 'manual' ? 'is-human' : 'is-auto'}"
+        data-record-id="${escapeHtml(row.id)}"
+        data-evidence-field="diseaseLinkageStatus"
+        data-disease-linkage-jump="${escapeHtml(row.id)}"
+        data-previous-value="${escapeHtml(value)}"
+        aria-label="${escapeHtml(`${row.asset} Disease Linkage: ${tooltip}`)}"
+      >
+        ${DISEASE_LINKAGE_STATUS_OPTIONS.map((option) => `<option value="${escapeHtml(option.value)}" title="${escapeHtml(option.title)}" ${option.value === value ? 'selected' : ''}>${escapeHtml(option.label)}</option>`).join('')}
+      </select>
+    </span>
+  `;
 }
 
 function admetToneClass(value) {
@@ -5752,9 +6060,13 @@ function totalScoreEditCircle(row) {
   if (row.earlyStop) return earlyStopScoreBadge(row);
   const isManual = hasManualTotalScoreOverride(row.raw);
   const displayValue = row.totalScore ?? '';
-  const tone = displayValue >= row.maxScore
+  // Mirrors the Filter 2 (hard_filter.status) PASS/REVIEW/FAIL total_score cutoffs
+  // (>=14 / 9-13 / <=8, json/schema.md) so the circle's color matches what Filter 2
+  // would derive from this score alone. Filter 2 itself can diverge after a manual
+  // override — that's expected and not something this circle needs to track.
+  const tone = displayValue >= 14
     ? 'high'
-    : displayValue >= row.maxScore * 0.6
+    : displayValue >= 9
       ? 'mid'
       : 'low';
   const title = isManual
@@ -6001,8 +6313,8 @@ function renderTableLegacy() {
         ${sortableHeader('Target / Modality / Theme / Cluster', 'target', 'target', 'rowspan="2"')}
         ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
         ${sortableHeader('Pipeline Stage', 'stage', 'stage', 'rowspan="2"')}
-        ${sortableHeader('Filter 1', 'filter1', 'filter1', 'rowspan="2"')}
-        ${sortableHeader('Filter 2', 'filter2', 'filter2', 'rowspan="2"')}
+        ${passFilterHeader('Filter 1', 'filter1', 'filter1', 'rowspan="2"')}
+        ${passFilterHeader('Filter 2', 'filter2', 'filter2', 'rowspan="2"')}
         <th class="score-group-head" colspan="3">Fast Triage</th>
         <th class="score-group-head" colspan="5">Full Scout only</th>
         ${extraColumns.length ? `<th class="extra-group-head" colspan="${extraColumns.length}">Custom Fields</th>` : ''}
@@ -6015,7 +6327,7 @@ function renderTableLegacy() {
         ${sortableHeader('Plat', 'platformScore', 'platformScore')}
         ${sortableHeader('Exp', 'expansionScore', 'expansionScore')}
         ${sortableHeader('Market', 'marketScore', 'marketScore')}
-        ${sortableHeader('Total', 'totalScore', 'totalScore')}
+        ${scoreFilterHeader('Total', 'totalScore', 'totalScore')}
         ${extraColumns.map((column) => plainHeader(column.label, extraColumnKey(column), 'extra-column-head')).join('')}
       </tr>
     `;
@@ -6050,7 +6362,7 @@ function renderTableLegacy() {
               <td class="indication-cell" title="${escapeHtml(indicationFullHoverTitle(row))}">${escapeHtml(indicationDisplay(row))}</td>
               <td class="stage-cell" title="${escapeHtml(pipelineStageFullHoverTitle(row))}">${stageEditSelect(row)}</td>
               <td class="filter-cell"><span class="${filter1Class}">${escapeHtml(row.filter1)}</span></td>
-              <td class="filter-cell"><span class="${filter2Class}">${escapeHtml(row.filter2)}</span></td>
+              <td class="filter-cell"><span class="${filter2Class}">${escapeHtml(filter2StatusLabel(row.filter2))}</span></td>
               <td class="score-cell">${pipelineScoreBadge(row, row.targetScore, 3, scoreTooltip('Target Area Relevance', row.criteria.target, 3))}</td>
               <td class="score-cell">${pipelineScoreBadge(row, row.moaScore, 3, scoreTooltip('MOA Validity', row.criteria.moa, 3))}</td>
               <td class="score-cell">${pipelineScoreBadge(row, row.dataScore, 3, scoreTooltip('Data Maturity', row.criteria.data, 3))}</td>
@@ -6339,6 +6651,7 @@ function renderFocusTable() {
       <col class="pipeline-col-filter" data-col-key="inVivo" style="${columnWidthStyle('inVivo')}" />
       <col class="pipeline-col-filter" data-col-key="inVitro" style="${columnWidthStyle('inVitro')}" />
       <col class="pipeline-col-filter" data-col-key="admet" style="${columnWidthStyle('admet')}" />
+      <col class="pipeline-col-filter" data-col-key="diseaseLinkage" style="${columnWidthStyle('diseaseLinkage')}" />
       <col data-col-key="focusDueDate" style="${columnWidthStyle('focusDueDate')}" />
       <col data-col-key="focusManage" style="${columnWidthStyle('focusManage')}" />
     `;
@@ -6357,17 +6670,18 @@ function renderFocusTable() {
         ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
         ${sortableHeader('Pipeline Stage', 'stage', 'stage', 'rowspan="2"')}
         <th class="score-group-head focus-group-head" colspan="2">Full Scout</th>
-        <th class="score-group-head focus-group-head" colspan="6">Shortlisting</th>
+        <th class="score-group-head focus-group-head" colspan="7">Shortlisting</th>
         ${plainHeader('관리', 'focusManage', 'focus-action-head', 'rowspan="2"')}
       </tr>
       <tr class="pipeline-score-row focus-column-label-row">
-        ${sortableHeader('Filter 2', 'filter2', 'filter2')}
-        ${sortableHeader('Total Score', 'focusTotalScore', 'totalScore')}
-        ${sortableHeader('Filter 3', 'filter3', 'filter3')}
+        ${focusFilterHeader('Filter 2', 'filter2', 'filter2', 'focusPriority')}
+        ${scoreFilterHeader('Total Score', 'focusTotalScore', 'totalScore', 'totalScore')}
+        ${passFilterHeader('Filter 3', 'filter3', 'filter3')}
         ${focusFilterHeader('DD', 'dd', 'dd')}
         ${focusFilterHeader('In-vivo', 'inVivo', 'inVivo')}
         ${focusFilterHeader('In-vitro', 'inVitro', 'inVitro')}
         ${focusFilterHeader('ADMET', 'admet', 'admet')}
+        ${focusFilterHeader('D·Link', 'diseaseLinkage', 'diseaseLinkage')}
         ${sortableHeader('Action date', 'focusDueDate', 'focusDueDate')}
       </tr>
     `;
@@ -6421,6 +6735,7 @@ function renderFocusTable() {
           <td class="focus-status-cell">${evidenceEditSelect(row, 'inVivoStatus', 'inVivoSource', 'In-vivo efficacy')}</td>
           <td class="focus-status-cell">${evidenceEditSelect(row, 'inVitroStatus', 'inVitroSource', 'In-vitro efficacy')}</td>
           <td class="focus-status-cell">${admetEditSelect(row)}</td>
+          <td class="focus-status-cell disease-linkage-cell">${diseaseLinkageEditSelect(row)}</td>
           <td class="focus-due-cell ${focusDueState(row.focusDueDate)}">
             <input
               class="focus-due-input"
@@ -6440,7 +6755,7 @@ function renderFocusTable() {
       }).join('')
     : `
       <tr>
-        <td colspan="17" class="empty-cell focus-empty-state">
+        <td colspan="18" class="empty-cell focus-empty-state">
           <strong>${allModeRows.length ? '현재 조건에 맞는 Shortlisting asset이 없습니다.' : '아직 Shortlisting에 추가된 약물이 없습니다.'}</strong>
           <span>${allModeRows.length ? '필터를 조정하거나 초기화해 주세요.' : 'TAB2 Full Scout의 오른쪽 ‘즐겨찾기’ 버튼으로 관리 대상을 추가하세요.'}</span>
         </td>
@@ -6452,6 +6767,7 @@ function renderFocusTable() {
   updateFrozenColumnOffsets();
   updateSortIndicators();
   refreshPipelineHeaderFreeze();
+  void scheduleDiseaseLinkageClassification(pageRows);
 }
 
 function renderTable() {
@@ -6529,7 +6845,7 @@ function renderTable() {
         ${sortableHeader('Target', 'target', 'target', 'rowspan="2"')}
         ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
         ${sortableHeader('Pipeline Stage', 'stage', 'stage', 'rowspan="2"')}
-        ${sortableHeader(filterLabel, filterKey, filterKey, 'rowspan="2"')}
+        ${passFilterHeader(filterLabel, filterKey, filterKey, 'rowspan="2"')}
         ${mode === 'triage'
           ? '<th class="score-group-head" colspan="3">Fast Triage</th>'
           : '<th class="score-group-head" colspan="3">Fast Triage</th><th class="score-group-head" colspan="5">Full Scout only</th>'}
@@ -7017,6 +7333,14 @@ function setStep0SummaryLoading(isLoading) {
   dashboard.setAttribute('aria-busy', String(isLoading));
 }
 
+// Separate from setStep0SummaryLoading: that one also dims the workflow-card-canvas
+// graph, which genuinely does need the full progress table. The stat numbers
+// themselves can go visible as soon as ANY source has them — a cached value or the
+// fast stats-only endpoint — well before that full fetch finishes.
+function setStep0StatsLoading(isLoading) {
+  elements.step0SummaryDashboard?.classList.toggle('is-stats-loading', isLoading);
+}
+
 // Jumps the Pipeline Table to whichever page currently contains recordId (its
 // sort position can move after a rubric re-score or a data refresh) and gives
 // the row a brief, soft highlight so the user can find it again without
@@ -7065,13 +7389,22 @@ function restorePendingPipelineReturnFocus() {
 }
 
 async function loadRecords({ signal } = {}) {
-  setStep0SummaryLoading(true);
   elements.dataStatus.textContent = 'Loading';
   try {
-    await loadCategorySynonyms(signal);
+    // The Summary Dashboard's KPI cards/donuts only need refreshDashboardSummary's
+    // (small, fast) response, not the full records list below — paint them the moment
+    // it resolves instead of waiting on whichever of the two happens to be slower.
+    const summaryPromise = refreshDashboardSummary(signal).then((ok) => {
+      if (ok) {
+        renderMetrics();
+        renderCharts();
+      }
+    });
+    const synonymsPromise = loadCategorySynonyms(signal);
     const [response] = await Promise.all([
       fetch(API_URL, { cache: 'no-store', signal }),
-      refreshDashboardSummary(signal)
+      summaryPromise,
+      synonymsPromise
     ]);
     if (!response.ok) throw new Error(await response.text());
     const data = await response.json();
@@ -7087,8 +7420,9 @@ async function loadRecords({ signal } = {}) {
     render();
     restorePendingPipelineReturnFocus();
     elements.agentContextCount.textContent = `${state.rows.length} pipelines`;
-  } finally {
-    setStep0SummaryLoading(false);
+  } catch (error) {
+    if (signal?.aborted || error?.name === 'AbortError') return;
+    throw error;
   }
 }
 
@@ -7356,6 +7690,46 @@ function replaceRecordFromApi(recordId, record) {
   state.rows = buildDashboardRows(state.rawRecords);
   state.dashboardSummary = null;
   return true;
+}
+
+const diseaseLinkageInFlight = new Set();
+
+// Shortlisting-only, background, no blocking modal: each call classifies one small
+// investigation_note field (a few hundred tokens in, a single verdict out), so it is cheap
+// enough to fire quietly per visible row and just fill the badge in once the result lands.
+// A row only re-fires when never classified yet, or when a manual MoA Validity score override
+// (row.moaScore, which already reflects human_review.overrides) has moved since the cached
+// disease_linkage_score_used was recorded — the backend re-checks eligibility and re-classifies
+// (or clears the badge) in that case instead of keeping a now-stale cached O/X/NA forever.
+async function scheduleDiseaseLinkageClassification(pageRows) {
+  const candidates = pageRows.filter((row) =>
+    !row.isTriage
+    && !row.isVirtualTriage
+    && row.diseaseLinkageSource !== 'manual'
+    && (row.diseaseLinkageStatus == null || row.diseaseLinkageScoreUsed !== row.moaScore)
+    && !diseaseLinkageInFlight.has(row.id)
+  );
+  if (!candidates.length) return;
+  candidates.forEach((row) => diseaseLinkageInFlight.add(row.id));
+
+  const outcomes = await Promise.allSettled(
+    candidates.map((row) =>
+      fetch(`/api/records/${encodeRecordIdForPath(row.id)}/disease-linkage-classify`, { method: 'POST' })
+        .then((response) => response.json().catch(() => ({})))
+        .then((data) => ({ id: row.id, data }))
+    )
+  );
+
+  let anyChanged = false;
+  outcomes.forEach((outcome) => {
+    if (outcome.status !== 'fulfilled') return;
+    const { id, data } = outcome.value;
+    diseaseLinkageInFlight.delete(id);
+    if (data?.record && replaceRecordFromApi(id, data.record)) anyChanged = true;
+  });
+  candidates.forEach((row) => diseaseLinkageInFlight.delete(row.id));
+
+  if (anyChanged && activeTableMode() === 'focus') render();
 }
 
 async function recalculateLatestRubric(button) {
@@ -9719,7 +10093,7 @@ function validateCombinedInput(value, expectedMode = '') {
   };
 }
 
-function renderInputValidation(result, { savedMessage = '' } = {}) {
+function renderInputValidation(result, { savedMessage = '', wikiExportDeferred = false } = {}) {
   if (!elements.inputValidationResults) return;
   elements.inputValidationResults.hidden = false;
   const modeLabel = result.mode === 'triage'
@@ -9773,6 +10147,7 @@ function renderInputValidation(result, { savedMessage = '' } = {}) {
       <span class="input-validation-badge ${badgeClass}">${escapeHtml(badgeText)}</span>
       <strong>${escapeHtml(modeLabel)}</strong>
       <span>${result.records.length}건 · 오류 ${result.errors.length} · 경고 ${result.warnings.length}</span>
+      ${wikiExportDeferred ? '<span>Wiki Map은 Wiki Map 탭에서 새로고침하면 최신화됩니다</span>' : ''}
     </div>
     <ul class="input-validation-list">
       ${rows.map((row) => `
@@ -10202,10 +10577,8 @@ async function saveStructuredJsonInput() {
       setDataUploadStatus('review-needed');
       return;
     }
-    const savedMessage = result?.exports?.deferred
-      ? '저장 완료 · Wiki Map 새로고침 필요'
-      : '저장 완료';
-    renderInputValidation(validation, { savedMessage });
+    const savedMessage = '저장 완료';
+    renderInputValidation(validation, { savedMessage, wikiExportDeferred: Boolean(result?.exports?.deferred) });
     setDataUploadStatus('saved');
     state.dataUploadReview = null;
     state.dataUploadLlmReparseFields = null;
@@ -10246,7 +10619,7 @@ const SHARED_INTEREST_AND_CORE_RUBRIC = `SKBP Interest Indications:
 
 Use the most specific confirmed indication wording for Target Relevance. Neuropathic pain and explicit neuropathic subtypes/synonyms are one of the six interest indications and receive TR 3. Generic Pain, acute pain, postoperative pain, and non-neuropathic pain are within the broad SKBP pain scope but outside the six priority indications and receive TR 2.
 
-Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.6 and Full Scout v3.8):
+Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.7 and Full Scout v3.8):
 - For Target Relevance, always evaluate in descending order: 3, then 2, then 1, then 0. If more than one rule appears applicable, assign only the single highest applicable score.
 - Target Relevance 0: asset identity is verified, but there is still insufficient indication/relevance information to assess strategic scope. Asset identity not verified is an INSUFFICIENT early stop, not a completed TR 0.
 - Target Relevance 1: a verified asset's confirmed indication is outside the broad SKBP neurologic, psychiatric, neuroimmune, neurodegenerative, or pain scope.
@@ -10571,7 +10944,7 @@ function buildTriageInstructionPromptLegacy() {
 Mission:
 Run FAST TRIAGE on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.8 in-depth review.
 
-This is GPT instruction 1: Fast Triage v3.6.
+This is GPT instruction 1: Fast Triage v3.7.
 Use GPT instruction 2 only after a candidate receives SELECT and needs Full Scout v3.8 review.
 
 Evidence Discipline (apply to every factual field and every score):
@@ -10671,6 +11044,7 @@ Criterion Evidence Basis:
 - public_source and user_input_and_public_source require at least one unique verified http(s) URL. user_input_only and no_supporting_basis must contain zero verified public URLs.
 - score >= 2 cannot use no_supporting_basis. MoA >= 2 and Data >= 2 each require at least one citable, verified public technical/source URL for that criterion. TR may preliminarily score from explicit user input.
 - Each Compact v2 criterion keeps score, evidence_type="triage_only", evidence_type_reason, evidence_basis, a one-sentence main_line_summary, why_not_higher, investigation_note, uncertain_points, and source_ids. Begin main_line_summary with exactly one matching score label: "TR N points:", "MoA N points:", or "Data N points:" (N must equal that JSON criterion's score). Keep detailed quantitative evidence (percentages, ratios, sample sizes, phases, and asset codes) in Markdown reasoning or investigation_note whenever possible; never state another criterion's score in main_line_summary.
+- MoA score 2 or 3 only: write at most one sentence in that criterion's investigation_note stating whether evidence already identified while scoring connects to a disease-relevant phenotype, efficacy, or biomarker, or remains limited to proximal evidence such as a cellular-signaling marker. Omit this sentence for MoA score 0 or 1. If existing evidence cannot distinguish this, write "확인 불가". Do not infer or perform a new search for this note; it records context only and does not change the score.
 - triage.verified_public_source_count must exactly equal the unique verified public URL count after removing duplicates and trailing-slash variants. It is retained only for the Quick Summary card; source count itself does not determine the score.
 - Copy the exact user/company identifiers into input.company_input and input.asset_input. These two aliases are used only to join the Fast Triage and Full Scout rows for the same asset. When the user appended relevant free-text context, copy it faithfully into input.user_context; otherwise keep user_context as an empty string.
 
@@ -10707,7 +11081,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
 \`\`\`text
 # SKBP Fast Triage Result
 
-> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.6. Full Scout v3.8 has not been run.
+> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.7. Full Scout v3.8 has not been run.
 
 중요: 한 문장으로 triage 결론과 filter rationale을 먼저 씁니다. 예: 공개 자료상 asset identity는 확인되지만 개발 단계가 Discontinued / inactive로 확인되어 INSUFFICIENT로 처리합니다.
 
@@ -10725,8 +11099,8 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
   {
     "meta": {
       "schema_version": "3.2",
-      "instruction_version": "3.6",
-      "rubric_version": "3.6",
+      "instruction_version": "3.7",
+      "rubric_version": "3.7",
       "review_type": "fast_triage",
       "generated_at": "YYYY-MM-DD",
       "language": "ko",
@@ -10742,7 +11116,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
       "raw_markdown": "",
       "source_format": "fast_triage_markdown",
       "parser_status": "fast_triage",
-    "parser_note": "GPT instruction 1 Fast Triage v3.6 output. Full Scout v3.8 review has not been run."
+    "parser_note": "GPT instruction 1 Fast Triage v3.7 output. Full Scout v3.8 review has not been run."
     },
     "json_summary": {
       "company": "Unknown",
@@ -10772,7 +11146,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
       "flags": []
     },
     "triage": {
-      "instruction_version": "3.6",
+      "instruction_version": "3.7",
       "status": "INSUFFICIENT",
       "identity_verified": false,
       "why": "Asset identity has not yet been verified from credible public sources.",
@@ -10813,7 +11187,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
     },
     "validation": {
       "instruction_version": "3.2",
-      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.6; Full Scout v3.8 not run.",
+      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.7; Full Scout v3.8 not run.",
       "cross_checked_facts": [],
       "uncertain_points": [],
       "source_registry": []
@@ -11789,12 +12163,33 @@ function activateStep0Panel() {
     // Rebuild the cached graph synchronously after the panel becomes visible.
     // The refresh below only repaints when data actually changed, preventing the
     // previous static graph from flashing before the left-to-right entry motion.
+    // Force both the dot cloud and the count-up to replay on this re-entry — they
+    // otherwise skip replaying when nothing has actually changed since their last
+    // render, which is exactly true here (nothing changed while on a different tab)
+    // but re-entry is meant to replay anyway, same as the first-ever load.
+    step0WorkflowMapLastCountsKey = null;
     renderStep0FilterControls();
     renderStep0ProgressTable();
+    step0StatStripLastRenderKey = null;
     renderStep0StatStrip();
     renderStep0SelectedCount();
     loadStep0Progress({ renderOnlyWhenChanged: true });
     return;
+  }
+  // Paint last-known numbers instantly — zero network wait — from a small localStorage
+  // cache while the real fetch is still in flight below, so the count-up animation
+  // always starts right away regardless of how fast the network/server happen to be
+  // right now. renderStep0StatStrip() already prefers state.step0Stats over the (still
+  // nonexistent) row list whenever state.step0Loaded is false, so this just seeds that.
+  const cachedStats = readStep0StatsCache();
+  if (cachedStats) {
+    state.step0Stats = cachedStats.stats;
+    state.step0RecentStats = cachedStats.recent_15_days;
+    setStep0StatsLoading(false);
+    renderStep0StatStrip();
+    renderStep0WorkflowMapPlaceholder(cachedStats.stats);
+  } else {
+    setStep0StatsLoading(true);
   }
   loadStep0Progress();
 }
@@ -12633,6 +13028,32 @@ function step0ProgressSnapshot(rows, stats, recentStats) {
 async function loadStep0Progress({ renderOnlyWhenChanged = false, throwOnError = false } = {}) {
   const requestId = (state.step0ProgressLoadRequestId || 0) + 1;
   state.step0ProgressLoadRequestId = requestId;
+  // Only show the loading skeleton on the true first load — a background refresh
+  // (renderOnlyWhenChanged) already has real numbers on screen and shouldn't flash back
+  // to a loading state while it quietly checks for changes.
+  const showLoadingState = !state.step0Loaded;
+  if (showLoadingState) {
+    setStep0SummaryLoading(true);
+    // The full progress table below (currently ~1,300+ Listing rows) is the slow part;
+    // the stat-strip counts don't need any of that per-row detail. Fetch the small,
+    // fast stats-only endpoint in parallel so the dot/count-up animation can start
+    // immediately instead of waiting on the full table fetch below. If the full fetch
+    // (still in flight) beats this back, state.step0Loaded is already true by the time
+    // this resolves and it's a no-op — the real, filter-aware numbers win.
+    fetch('/api/candidate-queue/stats')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data) return;
+        if (data.stats) writeStep0StatsCache(data.stats, data.recent_15_days || state.step0RecentStats);
+        if (requestId !== state.step0ProgressLoadRequestId || state.step0Loaded) return;
+        state.step0Stats = data.stats || state.step0Stats;
+        state.step0RecentStats = data.recent_15_days || state.step0RecentStats;
+        setStep0StatsLoading(false);
+        renderStep0StatStrip();
+        renderStep0WorkflowMapPlaceholder(state.step0Stats);
+      })
+      .catch(() => {});
+  }
   try {
     const response = await fetch('/api/candidate-queue/progress');
     if (!response.ok) throw new Error(await response.text());
@@ -12641,6 +13062,8 @@ async function loadStep0Progress({ renderOnlyWhenChanged = false, throwOnError =
     const nextRows = Array.isArray(data.rows) ? data.rows : [];
     const nextStats = data.stats || { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 };
     const nextRecentStats = data.recent_15_days || { pending: 0, fast_triage: 0, full_scout: 0, shortlisted: 0 };
+    writeStep0StatsCache(nextStats, nextRecentStats);
+    setStep0StatsLoading(false);
     const nextSnapshot = step0ProgressSnapshot(nextRows, nextStats, nextRecentStats);
     const hasChanged = !state.step0Loaded || nextSnapshot !== state.step0ProgressSnapshot;
     state.step0Rows = nextRows;
@@ -12670,6 +13093,8 @@ async function loadStep0Progress({ renderOnlyWhenChanged = false, throwOnError =
         `<tr><td colspan="14" class="step0-empty-state">진척 현황을 불러오지 못했습니다: ${escapeHtml(error.message)}</td></tr>`;
     }
     if (throwOnError) throw error;
+  } finally {
+    if (showLoadingState) setStep0SummaryLoading(false);
   }
 }
 
@@ -12715,8 +13140,24 @@ function renderStep0StatStrip() {
     ['full_scout', elements.step0StatFullScout, elements.step0RecentFullScout],
     ['shortlisted', elements.step0StatShortlisted, elements.step0RecentShortlisted]
   ];
-  const filteredRows = step0FilteredSortedRows();
-  const { stats, recent } = step0FilteredStageStats(filteredRows);
+  // Before the full progress table has loaded, there's nothing to filter yet — show the
+  // fast stats-only endpoint's raw totals so the count-up animation can start immediately.
+  // Once state.step0Rows arrives, this always recomputes from the (possibly filtered) rows,
+  // same as before.
+  const filteredRows = state.step0Loaded ? step0FilteredSortedRows() : [];
+  const { stats, recent } = state.step0Loaded
+    ? step0FilteredStageStats(filteredRows)
+    : { stats: state.step0Stats, recent: state.step0RecentStats };
+  // Compare on `stats` only, not `recent`: the backend's recent_15_days aggregate
+  // (used verbatim before rows load) and step0FilteredStageStats()'s own per-row
+  // "recent" scan (used once rows are in) are computed by genuinely different logic
+  // and routinely disagree by a little even when the 4 headline numbers are byte-
+  // identical — comparing both was defeating the skip on the very case it was meant
+  // for (the fast-stats render and the full-progress render agreeing on `stats`).
+  const statsRenderKey = JSON.stringify(stats);
+  const isFirstRender = step0StatStripLastRenderKey === null;
+  const skipReplay = statsRenderKey === step0StatStripLastRenderKey;
+  step0StatStripLastRenderKey = statsRenderKey;
   const recentPipelineCount = filteredRows.filter((row) => [
     row?.pending,
     row?.fast_triage,
@@ -12730,7 +13171,7 @@ function renderStep0StatStrip() {
     if (recentPipelineCount > 0) {
       const recentTimer = setTimeout(() => {
         const startedAt = performance.now();
-        const duration = 1280;
+        const duration = isFirstRender ? 2600 : 500;
         const tick = (now) => {
           const progress = Math.max(0, Math.min(1, (now - startedAt) / duration));
           const eased = 1 - Math.pow(1 - progress, 3);
@@ -12743,19 +13184,38 @@ function renderStep0StatStrip() {
     }
   }
   statEntries.forEach(([key, statElement, badge], index) => {
+    const total = Math.max(0, Number(stats[key] || 0));
+    const recentCount = Math.max(0, Number(recent[key] || 0));
+    if (skipReplay) {
+      // Same totals as the last render (cache → fast stats → full progress typically
+      // all agree) — leave the number where it already settled instead of resetting
+      // to 0 and replaying the count-up for no visible reason.
+      if (statElement) statElement.textContent = String(total);
+      if (badge) {
+        badge.hidden = recentCount === 0;
+        if (recentCount > 0) {
+          badge.textContent = `▲ ${recentCount}`;
+          badge.setAttribute('aria-label', `최근 15일 신규 업로드 ${recentCount}건`);
+        }
+      }
+      return;
+    }
     if (statElement) statElement.textContent = '0';
     if (badge) {
       badge.hidden = true;
       badge.textContent = '▲ 0';
     }
-    const total = Math.max(0, Number(stats[key] || 0));
-    const recentCount = Math.max(0, Number(recent[key] || 0));
     // Start after this card's first dot wave has entered; the count then grows
     // alongside the staggered 720ms dot arrival instead of preceding it.
     const startDelay = index * STEP0_WORKFLOW_STAGE_STAGGER_MS + 220;
     const timer = setTimeout(() => {
       const startedAt = performance.now();
-      const duration = 1120;
+      // Slower and more leisurely on the very first render only — that's the number
+      // the user watches while the full table loads behind it, so it shouldn't finish
+      // counting and then just sit there waiting. A later correction (the rare case
+      // where a subsequent fetch actually disagrees with what's already on screen)
+      // should just snap into place quickly instead of replaying the same slow climb.
+      const duration = isFirstRender ? 2600 : 500;
       const tick = (now) => {
         const progress = Math.max(0, Math.min(1, (now - startedAt) / duration));
         const eased = 1 - Math.pow(1 - progress, 3);
@@ -13016,22 +13476,7 @@ function canonicalListingCountry(value) {
 }
 
 function step0ListingIndicationValues(value) {
-  const raw = String(value || '').trim();
-  if (!raw) return [];
-  const canonicalValues = canonicalIndicationList([], raw, '');
-  if (!canonicalValues.length) {
-    return [step0CanonicalDisplay(raw, canonicalMainIndication('', raw), ['Unknown'])];
-  }
-  // Preserve an unclassified indication when it shares a Listing cell with a
-  // recognized one (for example, "AD, rare neurodegenerative disease").
-  const rawParts = raw
-    .split(/\s*(?:;|\||,|\band\b)\s*/i)
-    .map((part) => part.trim())
-    .filter(Boolean);
-  const unclassifiedParts = rawParts.filter((part) => (
-    !isExplicitUnknownListingValue(part) && canonicalIndicationMatches(part).length === 0
-  ));
-  return [...canonicalValues, ...unclassifiedParts.filter((part) => !canonicalValues.includes(part))];
+  return indicationFilterValues(value, []);
 }
 
 function step0DashboardFieldDisplay(row) {
@@ -13461,9 +13906,67 @@ function renderStep0WorkflowDotCloud(groups) {
   });
 }
 
+// Maps a workflow-map stage key to its counterpart in the {pending, fast_triage,
+// full_scout, shortlisted} stats object — everything lines up except this one.
+const STEP0_STAGE_STATS_KEY = { pending: 'pending', fast_triage: 'fast_triage', full_scout: 'full_scout', shortlisting: 'shortlisted' };
+
+// Every render of the dot cloud (placeholder or real) tears down and rebuilds the whole
+// thing, which restarts every dot's entrance animation from scratch — each dot sits
+// invisible (opacity 0) until its own staggered entry delay elapses, so an unnecessary
+// rebuild reads as "the dots all disappeared, then faded back in". Skip the rebuild
+// entirely when the per-stage counts haven't changed since the last render: going from
+// the placeholder (generic rows) to the real progress table (actual named rows) is
+// exactly that case whenever the totals agree, and per earlier feedback nobody reads an
+// individual dot's tooltip anyway, so leaving the placeholder dots in place rather than
+// replacing them with identically-sized "real" ones is not a loss.
+let step0WorkflowMapLastCountsKey = null;
+
+function step0WorkflowStageCounts(groups) {
+  return STEP0_WORKFLOW_MAP_STAGES.map((stage) => (groups.get(stage.key) || []).length);
+}
+
+// Ends the placeholder cloud's dim, endlessly-wobbling "still loading" look: removing
+// this class lets each dot's settle animation finish its current cycle and hold at
+// rest instead of looping, while opacity/filter transition up to the sharp, final
+// look — the visible "becomes clear and finds its place" signal that loading is done.
+function step0WorkflowMapFinalizeDots() {
+  document.querySelectorAll('.step0-workflow-dot.is-placeholder')
+    .forEach((dot) => dot.classList.remove('is-placeholder'));
+}
+
+// Draws the dot cloud from just the stat counts (cache or the fast stats-only
+// endpoint), before the full progress table — and each row's actual asset/company —
+// has loaded. Nobody reads an individual dot's tooltip; what matters is the cloud
+// existing and roughly the right size immediately. renderStep0WorkflowMap() replaces
+// this with the real, correctly-labeled dots the moment full rows are available.
+function renderStep0WorkflowMapPlaceholder(stats) {
+  if (!elements.step0WorkflowMaps?.length) return;
+  const total = STEP0_WORKFLOW_MAP_STAGES.reduce(
+    (sum, stage) => sum + Math.max(0, Number(stats?.[STEP0_STAGE_STATS_KEY[stage.key]]) || 0),
+    0
+  );
+  if (elements.step0WorkflowMap) {
+    elements.step0WorkflowMap.setAttribute('aria-label', `Pipeline Workflow Map · 집계 ${total}건 (상세 정보 로딩 중)`);
+  }
+  if (!total) {
+    destroyStep0WorkflowGraph();
+    renderStep0WorkflowMapFallback('진척 현황을 불러오는 중입니다.');
+    return;
+  }
+  const groups = new Map(STEP0_WORKFLOW_MAP_STAGES.map((stage) => {
+    const count = Math.max(0, Number(stats?.[STEP0_STAGE_STATS_KEY[stage.key]]) || 0);
+    return [stage.key, Array.from({ length: count }, () => ({}))];
+  }));
+  const countsKey = JSON.stringify(step0WorkflowStageCounts(groups));
+  if (countsKey === step0WorkflowMapLastCountsKey) return;
+  step0WorkflowMapLastCountsKey = countsKey;
+  destroyStep0WorkflowGraph();
+  renderStep0WorkflowDotCloud(groups);
+  document.querySelectorAll('.step0-workflow-dot').forEach((dot) => dot.classList.add('is-placeholder'));
+}
+
 function renderStep0WorkflowMap() {
   if (!elements.step0WorkflowMaps?.length) return;
-  destroyStep0WorkflowGraph();
   const rows = step0FilteredSortedRows();
   elements.step0WorkflowMap.setAttribute('aria-label', `Pipeline Workflow Map · 현재 필터 결과 ${rows.length}건`);
   const groups = new Map(STEP0_WORKFLOW_MAP_STAGES.map((stage) => [stage.key, []]));
@@ -13473,9 +13976,20 @@ function renderStep0WorkflowMap() {
     });
   });
   if (!rows.length) {
+    destroyStep0WorkflowGraph();
     renderStep0WorkflowMapFallback('현재 필터 조건에 맞는 Pipeline이 없습니다.');
     return;
   }
+  const countsKey = JSON.stringify(step0WorkflowStageCounts(groups));
+  if (countsKey === step0WorkflowMapLastCountsKey) {
+    // Same per-stage counts as last render — the common case is the placeholder cloud
+    // already showing exactly this many dots. Leave the existing dots in place (no
+    // rebuild/re-entrance) and just end their "still loading" wobble.
+    step0WorkflowMapFinalizeDots();
+    return;
+  }
+  step0WorkflowMapLastCountsKey = countsKey;
+  destroyStep0WorkflowGraph();
   // Render with regular DOM nodes, rather than depending on an externally loaded
   // chart library. This is the original dot-field interaction and remains visible
   // even when a corporate network blocks the G6 CDN.
@@ -14702,7 +15216,8 @@ const DESCENDING_FIRST_SORT_KEYS = new Set([
   'platformScore',
   'expansionScore',
   'marketScore',
-  'totalScore'
+  'totalScore',
+  'focusPriority'
 ]);
 
 function sortByColumn(key) {
@@ -14748,14 +15263,15 @@ const SORT_KEYS_BY_MODE = {
   'admetCompleted',
     'ddStatus',
     'focusDueDate',
-    'focusAddedAt'
+    'focusAddedAt',
+    'focusPriority'
   ])
 };
 
 function normalizeSortForMode(mode) {
   if (!state.sortKey) return;
   if (SORT_KEYS_BY_MODE[mode]?.has(state.sortKey)) return;
-  state.sortKey = mode === 'triage' ? 'targetScore' : mode === 'focus' ? 'focusAddedAt' : 'totalScore';
+  state.sortKey = mode === 'triage' ? 'targetScore' : mode === 'focus' ? 'focusPriority' : 'totalScore';
   state.sortDirection = 'desc';
 }
 
@@ -14982,13 +15498,42 @@ document.addEventListener('click', (event) => {
     }
     return;
   }
-  if (event.target.closest('[data-score-filter-trigger], [data-focus-filter-trigger]')) return;
+  const passPopover = event.target.closest('#passTableFilterPopover');
+  if (passPopover && activePassHeaderFilter) {
+    const option = event.target.closest('[data-pass-filter-option]');
+    if (option) {
+      const value = option.dataset.passFilterOption;
+      if (activePassHeaderFilter.selected.has(value)) {
+        activePassHeaderFilter.selected.delete(value);
+      } else {
+        activePassHeaderFilter.selected.add(value);
+      }
+      renderPassHeaderFilterPopover();
+      return;
+    }
+    if (event.target.closest('[data-pass-filter-all]')) {
+      activePassHeaderFilter.selected.clear();
+      renderPassHeaderFilterPopover();
+      return;
+    }
+    if (event.target.closest('[data-pass-filter-done]')) {
+      commitPassHeaderFilter();
+      return;
+    }
+    if (event.target.closest('[data-pass-filter-close]')) {
+      closePassHeaderFilter();
+      return;
+    }
+    return;
+  }
+  if (event.target.closest('[data-score-filter-trigger], [data-focus-filter-trigger], [data-pass-filter-trigger]')) return;
   if (!event.target.closest('.filter-multiselect')) {
     closeMultiFilters();
     closeStep0MultiFilters();
   }
   closeScoreHeaderFilter();
   closeFocusHeaderFilter();
+  closePassHeaderFilter();
 });
 
 document.addEventListener('keydown', (event) => {
@@ -15138,6 +15683,14 @@ elements.pipelineTable.addEventListener('click', (event) => {
 });
 
 elements.pipelineTable.addEventListener('dblclick', (event) => {
+  const diseaseLinkageJump = event.target.closest('[data-disease-linkage-jump]');
+  if (diseaseLinkageJump) {
+    event.preventDefault();
+    event.stopPropagation();
+    const recordId = diseaseLinkageJump.dataset.diseaseLinkageJump;
+    if (recordId) window.location.href = `/detail?id=${encodeURIComponent(recordId)}&tab=focus&open=moa-note`;
+    return;
+  }
   const pipelineWebsite = event.target.closest('[data-pipeline-website]');
   if (pipelineWebsite) {
     event.preventDefault();
@@ -15295,6 +15848,12 @@ elements.pipelineTableHead?.addEventListener('click', (event) => {
   if (focusFilterTrigger) {
     event.preventDefault();
     toggleFocusHeaderFilter(focusFilterTrigger);
+    return;
+  }
+  const passFilterTrigger = event.target.closest('[data-pass-filter-trigger]');
+  if (passFilterTrigger) {
+    event.preventDefault();
+    togglePassHeaderFilter(passFilterTrigger);
     return;
   }
   const button = event.target.closest('button[data-sort]');

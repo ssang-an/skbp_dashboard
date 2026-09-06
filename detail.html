@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260901-score-refresh-toast-6" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260905-attachment-dragdrop-1" />
   </head>
   <body>
     <div class="app-shell detail-shell">
@@ -33,7 +33,7 @@
               id="criteriaDrawerButton"
               class="detail-header-action-pill help-tooltip"
               type="button"
-              data-tooltip="SKBP 평가 기준, PASS/REVIEW/FAIL 조건, 점수표를 확인합니다."
+              data-tooltip="SKBP 평가 기준, PASS/MONITOR/T·Down 조건, 점수표를 확인합니다."
             ><span aria-hidden="true">?</span><b>판단근거</b></button>
             <button
               id="detailReuploadButton"
@@ -194,16 +194,13 @@
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.2 6.5L3 16m0 0v5m0-5h5M3 12A9 9 0 0 1 18.2 5.5L21 8m0 0V3m0 5h-5"></path></svg>
                         <span>Score 기준 갱신</span>
                       </button>
-                      <button id="detailWebsiteButton" class="criteria-refresh-pill website-action-pill" type="button" hidden aria-label="Pipeline Website 열기" title="Pipeline Website · 한 번 클릭하여 열기, 두 번 클릭하여 주소 수정">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14 14 10M8.5 7.5H7a3 3 0 0 0-3 3V17a3 3 0 0 0 3-3v-1.5M13 4h7v7M20 4l-9 9"></path></svg>
-                      </button>
                     </div>
                   </div>
                   <div class="filter-decision-line">
                     <select id="detailDecisionStatus" autocomplete="off" aria-label="Filter 2 decision">
                       <option value="PASS">PASS</option>
-                      <option value="REVIEW">REVIEW</option>
-                      <option value="FAIL">FAIL</option>
+                      <option value="REVIEW">MONITOR</option>
+                      <option value="FAIL">T·Down</option>
                     </select>
                     <div class="filter-score-summary" aria-label="Total score">
                       <span>Total Score <strong id="detailTotalScore">- / 21</strong></span>
@@ -548,11 +545,19 @@
     <div class="drawer-backdrop" id="criteriaBackdrop" hidden></div>
     <aside class="ai-drawer criteria-drawer" id="criteriaDrawer" role="dialog" aria-modal="true" aria-label="Scoring criteria dialog" aria-hidden="true" hidden>
       <div class="ai-drawer-header">
-        <div>
+        <div class="criteria-drawer-heading">
           <p class="eyebrow" id="criteriaDrawerScopeLabel">AI Champion</p>
-          <h2>판단근거</h2>
+          <div class="criteria-drawer-title-row">
+            <h2>판단근거</h2>
+          </div>
         </div>
-        <button id="criteriaDrawerClose" type="button" aria-label="Close criteria drawer">닫기</button>
+        <div class="criteria-drawer-actions">
+          <div id="criteriaLanguageToggle" class="criteria-language-toggle" role="group" aria-label="Judgment-guide language">
+            <button type="button" data-criteria-language="ko" aria-pressed="true">KR</button>
+            <button type="button" data-criteria-language="en" aria-pressed="false">EN</button>
+          </div>
+          <button id="criteriaDrawerClose" type="button" aria-label="Close criteria drawer"><span>닫기</span></button>
+        </div>
       </div>
 
       <div class="criteria-drawer-body" id="criteriaDrawerBody">
@@ -561,7 +566,7 @@
           <p>
             지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
             지침 1에서 예비로 본 TAR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
-            Competitive Landscape, Platform, Expansion, Marketability까지 완성해 최종 <code>PASS</code>, <code>REVIEW</code>, <code>FAIL</code>로 판단합니다.
+            Competitive Landscape, Platform, Expansion, Marketability까지 완성해 최종 <code>PASS</code>, <code>MONITOR</code>, <code>T·Down</code>으로 판단합니다.
           </p>
         </section>
 
@@ -586,7 +591,7 @@
           </div>
         </section>
 
-        <section class="criteria-pass-grid full-status-grid" aria-label="PASS REVIEW FAIL criteria" data-criteria-tab="full">
+        <section class="criteria-pass-grid full-status-grid" aria-label="PASS MONITOR T·Down criteria" data-criteria-tab="full">
           <article>
             <h3>PASS</h3>
             <ul>
@@ -597,15 +602,15 @@
             </ul>
           </article>
           <article>
-            <h3>REVIEW</h3>
+            <h3>MONITOR</h3>
             <ul>
-              <li>PASS/FAIL 어느 쪽에도 해당하지 않는 완료 평가</li>
+              <li>PASS/T·Down 어느 쪽에도 해당하지 않는 완료 평가</li>
               <li>예: Total score 9-13 또는 PASS 점수 조건 미충족</li>
               <li>추후 추가 공개 근거 확인 후 재평가 또는 내부 모니터링</li>
             </ul>
           </article>
           <article>
-            <h3>FAIL</h3>
+            <h3>T·Down</h3>
             <ul>
               <li>Total score <= 8</li>
               <li>또는 TAR / MoA / Data 중 하나가 0점</li>
@@ -841,6 +846,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260901-score-refresh-toast-12"></script>
+    <script type="module" src="./src/detail.js?v=20260905-monitor-reason-text"></script>
   </body>
 </html>
