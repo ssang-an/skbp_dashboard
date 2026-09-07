@@ -555,6 +555,8 @@ const elements = {
   shortlistingProjectModalSave: document.querySelector('#shortlistingProjectModalSave'),
   shortlistingMetricModal: document.querySelector('#shortlistingMetricModal'),
   shortlistingMetricModalTitle: document.querySelector('#shortlistingMetricModalTitle'),
+  shortlistingProjectRenameButton: document.querySelector('#shortlistingProjectRenameButton'),
+  shortlistingProjectRenameInput: document.querySelector('#shortlistingProjectRenameInput'),
   shortlistingSettingsMembersTab: document.querySelector('#shortlistingSettingsMembersTab'),
   shortlistingSettingsMetricsTab: document.querySelector('#shortlistingSettingsMetricsTab'),
   shortlistingSettingsMembersPane: document.querySelector('#shortlistingSettingsMembersPane'),
@@ -576,6 +578,15 @@ const elements = {
   shortlistingMetricModalSave: document.querySelector('#shortlistingMetricModalSave'),
   shortlistingMetricLockedNote: document.querySelector('#shortlistingMetricLockedNote'),
   shortlistingMetricAddRow: document.querySelector('#shortlistingMetricAddRow'),
+  shortlistingSettingsClassificationsTab: document.querySelector('#shortlistingSettingsClassificationsTab'),
+  shortlistingSettingsClassificationsPane: document.querySelector('#shortlistingSettingsClassificationsPane'),
+  shortlistingClassificationManagerBody: document.querySelector('#shortlistingClassificationManagerBody'),
+  shortlistingClassificationLabelInput: document.querySelector('#shortlistingClassificationLabelInput'),
+  shortlistingClassificationDescriptionInput: document.querySelector('#shortlistingClassificationDescriptionInput'),
+  shortlistingClassificationModalSave: document.querySelector('#shortlistingClassificationModalSave'),
+  shortlistingClassificationModalStatus: document.querySelector('#shortlistingClassificationModalStatus'),
+  shortlistingClassificationLockedNote: document.querySelector('#shortlistingClassificationLockedNote'),
+  shortlistingClassificationAddRow: document.querySelector('#shortlistingClassificationAddRow'),
   pipelineTableTabs: document.querySelectorAll('[data-table-mode]'),
   knowledgeMapTab: document.querySelector('#knowledgeMapTab'),
   knowledgeMapPanel: document.querySelector('#knowledgeMapPanel'),
@@ -3339,9 +3350,9 @@ const FOCUS_TABLE_OIC_METRIC_COLUMN_KEYS = ['filter3', 'inVivo', 'inVitro', 'adm
 const FOCUS_TABLE_COLUMN_KEYS = [
   ...FOCUS_TABLE_FIXED_LEFT_COLUMN_KEYS,
   ...FOCUS_TABLE_OIC_METRIC_COLUMN_KEYS,
-  'focusDueDate',
   'customScore',
   'totalScore30',
+  'focusDueDate',
   'focusManage'
 ];
 
@@ -3355,9 +3366,9 @@ function focusTableColumnKeys() {
   return [
     ...FOCUS_TABLE_FIXED_LEFT_COLUMN_KEYS,
     ...activeShortlistingMetricColumns().map((column) => `metric:${column.id}`),
-    'focusDueDate',
     'customScore',
     'totalScore30',
+    'focusDueDate',
     'focusManage'
   ];
 }
@@ -7080,20 +7091,59 @@ function resetShortlistingMetricAddForm() {
   if (elements.shortlistingMetricAddRow) elements.shortlistingMetricAddRow.hidden = isOic;
 }
 
+function renderShortlistingClassificationManagerTable() {
+  if (!elements.shortlistingClassificationManagerBody) return;
+  const project = settingsModalProject();
+  const classifications = project?.classification_columns || [];
+  elements.shortlistingClassificationManagerBody.innerHTML = classifications.length
+    ? classifications.map((classification, index) => `
+      <tr data-classification-id="${escapeHtml(classification.id)}">
+        <td>${index + 1}</td>
+        <td>${escapeHtml(classification.label)}</td>
+        <td>${escapeHtml(classification.description || '-')}</td>
+        <td><button type="button" class="shortlisting-metric-manager-delete-button" data-delete-classification-id="${escapeHtml(classification.id)}">삭제</button></td>
+      </tr>
+    `).join('')
+    : `<tr class="shortlisting-metric-manager-empty-row"><td colspan="4">등록된 분류가 없습니다.</td></tr>`;
+}
+
+function resetShortlistingClassificationAddForm() {
+  if (elements.shortlistingClassificationLabelInput) elements.shortlistingClassificationLabelInput.value = '';
+  if (elements.shortlistingClassificationDescriptionInput) elements.shortlistingClassificationDescriptionInput.value = '';
+  if (elements.shortlistingClassificationModalStatus) {
+    elements.shortlistingClassificationModalStatus.textContent = '';
+    elements.shortlistingClassificationModalStatus.classList.remove('is-error');
+  }
+  const isOic = state.settingsModalProjectId === DEFAULT_SHORTLISTING_PROJECT_ID;
+  if (elements.shortlistingClassificationLockedNote) elements.shortlistingClassificationLockedNote.hidden = !isOic;
+  if (elements.shortlistingClassificationAddRow) elements.shortlistingClassificationAddRow.hidden = isOic;
+}
+
+const SHORTLISTING_SETTINGS_TAB_NAMES = ['members', 'metrics', 'classifications'];
+
 function switchShortlistingSettingsTab(tabName) {
-  const isMembers = tabName !== 'metrics';
-  elements.shortlistingSettingsMembersTab?.classList.toggle('is-active', isMembers);
-  elements.shortlistingSettingsMembersTab?.setAttribute('aria-selected', String(isMembers));
-  elements.shortlistingSettingsMetricsTab?.classList.toggle('is-active', !isMembers);
-  elements.shortlistingSettingsMetricsTab?.setAttribute('aria-selected', String(!isMembers));
-  if (elements.shortlistingSettingsMembersPane) elements.shortlistingSettingsMembersPane.hidden = !isMembers;
-  if (elements.shortlistingSettingsMetricsPane) elements.shortlistingSettingsMetricsPane.hidden = isMembers;
-  if (isMembers) {
+  const activeTab = SHORTLISTING_SETTINGS_TAB_NAMES.includes(tabName) ? tabName : 'members';
+  const tabElements = {
+    members: [elements.shortlistingSettingsMembersTab, elements.shortlistingSettingsMembersPane],
+    metrics: [elements.shortlistingSettingsMetricsTab, elements.shortlistingSettingsMetricsPane],
+    classifications: [elements.shortlistingSettingsClassificationsTab, elements.shortlistingSettingsClassificationsPane]
+  };
+  SHORTLISTING_SETTINGS_TAB_NAMES.forEach((name) => {
+    const [tab, pane] = tabElements[name];
+    const isActive = name === activeTab;
+    tab?.classList.toggle('is-active', isActive);
+    tab?.setAttribute('aria-selected', String(isActive));
+    if (pane) pane.hidden = !isActive;
+  });
+  if (activeTab === 'members') {
     renderShortlistingMemberManagerTable();
     renderShortlistingMemberPicker();
-  } else {
+  } else if (activeTab === 'metrics') {
     resetShortlistingMetricAddForm();
     renderShortlistingMetricManagerTable();
+  } else {
+    resetShortlistingClassificationAddForm();
+    renderShortlistingClassificationManagerTable();
   }
 }
 
@@ -7133,6 +7183,56 @@ function renderShortlistingMemberPicker() {
     : `<p class="shortlisting-member-picker-empty">${searchTerm ? '검색 결과가 없습니다.' : '추가할 수 있는 계정이 없습니다.'}</p>`;
 }
 
+function closeShortlistingProjectRenameEdit() {
+  if (elements.shortlistingMetricModalTitle) elements.shortlistingMetricModalTitle.hidden = false;
+  if (elements.shortlistingProjectRenameButton) elements.shortlistingProjectRenameButton.hidden = false;
+  if (elements.shortlistingProjectRenameInput) elements.shortlistingProjectRenameInput.hidden = true;
+}
+
+function openShortlistingProjectRenameEdit() {
+  const project = settingsModalProject();
+  if (!project || !elements.shortlistingProjectRenameInput) return;
+  if (elements.shortlistingMetricModalTitle) elements.shortlistingMetricModalTitle.hidden = true;
+  if (elements.shortlistingProjectRenameButton) elements.shortlistingProjectRenameButton.hidden = true;
+  delete elements.shortlistingProjectRenameInput.dataset.cancelled;
+  elements.shortlistingProjectRenameInput.value = project.name;
+  elements.shortlistingProjectRenameInput.hidden = false;
+  elements.shortlistingProjectRenameInput.focus();
+  elements.shortlistingProjectRenameInput.select();
+}
+
+async function saveShortlistingProjectRename() {
+  const input = elements.shortlistingProjectRenameInput;
+  if (!input) return;
+  const projectId = state.settingsModalProjectId;
+  const project = settingsModalProject();
+  const nextName = input.value.trim();
+  if (!projectId || !project || !nextName || nextName === project.name) {
+    closeShortlistingProjectRenameEdit();
+    return;
+  }
+  input.disabled = true;
+  try {
+    const response = await fetch(`${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: nextName })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'Project 이름 변경에 실패했습니다.');
+    applyShortlistingProjectUpdate(data.project);
+    if (elements.shortlistingMetricModalTitle) {
+      elements.shortlistingMetricModalTitle.textContent = `Project 설정 · ${data.project.name}`;
+    }
+    setShortlistingMemberStatus(`Project 이름을 "${data.project.name}"(으)로 변경했습니다.`);
+  } catch (error) {
+    setShortlistingMemberStatus(error.message || 'Project 이름 변경에 실패했습니다.', true);
+  } finally {
+    input.disabled = false;
+    closeShortlistingProjectRenameEdit();
+  }
+}
+
 function openShortlistingProjectSettingsModal(projectId) {
   if (!elements.shortlistingMetricModal) return;
   state.settingsModalProjectId = projectId;
@@ -7140,6 +7240,7 @@ function openShortlistingProjectSettingsModal(projectId) {
   if (elements.shortlistingMetricModalTitle) {
     elements.shortlistingMetricModalTitle.textContent = project ? `Project 설정 · ${project.name}` : 'Project 설정';
   }
+  closeShortlistingProjectRenameEdit();
   if (elements.shortlistingMemberModalStatus) {
     elements.shortlistingMemberModalStatus.textContent = '';
     elements.shortlistingMemberModalStatus.classList.remove('is-error');
@@ -7156,6 +7257,7 @@ function openShortlistingProjectSettingsModal(projectId) {
 
 function closeShortlistingProjectSettingsModal() {
   if (elements.shortlistingMetricModal) elements.shortlistingMetricModal.hidden = true;
+  closeShortlistingProjectRenameEdit();
   state.settingsModalProjectId = null;
 }
 
@@ -7331,6 +7433,60 @@ async function deleteShortlistingMetricColumn(columnId) {
   }
 }
 
+async function submitShortlistingClassificationModal() {
+  const projectId = state.settingsModalProjectId;
+  if (!projectId || projectId === DEFAULT_SHORTLISTING_PROJECT_ID) return;
+  const label = elements.shortlistingClassificationLabelInput?.value.trim() || '';
+  const description = elements.shortlistingClassificationDescriptionInput?.value.trim() || '';
+  const setStatus = (message) => {
+    if (elements.shortlistingClassificationModalStatus) {
+      elements.shortlistingClassificationModalStatus.textContent = message;
+      elements.shortlistingClassificationModalStatus.classList.add('is-error');
+    }
+  };
+  if (!label) {
+    setStatus('분류 이름을 입력하세요.');
+    return;
+  }
+  if (elements.shortlistingClassificationModalSave) elements.shortlistingClassificationModalSave.disabled = true;
+  try {
+    const response = await fetch(`${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/classifications`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ label, description })
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '분류 추가에 실패했습니다.');
+    applyShortlistingProjectUpdate(data.project);
+    resetShortlistingClassificationAddForm();
+    renderShortlistingClassificationManagerTable();
+  } catch (error) {
+    setStatus(error.message || '분류 추가에 실패했습니다.');
+  } finally {
+    if (elements.shortlistingClassificationModalSave) elements.shortlistingClassificationModalSave.disabled = false;
+  }
+}
+
+async function deleteShortlistingClassification(classificationId) {
+  const projectId = state.settingsModalProjectId;
+  if (!projectId || projectId === DEFAULT_SHORTLISTING_PROJECT_ID || !classificationId) return;
+  if (!window.confirm('이 분류를 삭제하시겠습니까?')) return;
+  try {
+    const response = await fetch(`${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/classifications/${encodeURIComponent(classificationId)}`, {
+      method: 'DELETE'
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '분류 삭제에 실패했습니다.');
+    applyShortlistingProjectUpdate(data.project);
+    renderShortlistingClassificationManagerTable();
+  } catch (error) {
+    if (elements.shortlistingClassificationModalStatus) {
+      elements.shortlistingClassificationModalStatus.textContent = error.message || '분류 삭제에 실패했습니다.';
+      elements.shortlistingClassificationModalStatus.classList.add('is-error');
+    }
+  }
+}
+
 function shortlistingTotalScoreBadge(row) {
   const score = row.totalScore30;
   if (!Number.isFinite(score)) return `<span class="total-score-edit-circle low">-</span>`;
@@ -7461,9 +7617,9 @@ function renderFocusTable() {
       <col class="pipeline-col-filter" data-col-key="admet" style="${columnWidthStyle('admet')}" />
       <col class="pipeline-col-filter" data-col-key="diseaseLinkage" style="${columnWidthStyle('diseaseLinkage')}" />
       ` : metricColumns.map((column) => `<col class="pipeline-col-filter" data-col-key="metric:${escapeHtml(column.id)}" style="${columnWidthStyle(`metric:${column.id}`)}" />`).join('')}
-      <col data-col-key="focusDueDate" style="${columnWidthStyle('focusDueDate')}" />
       <col class="pipeline-col-score score-subtotal-col" data-col-key="customScore" style="${columnWidthStyle('customScore')}" />
       <col class="pipeline-col-score score-grandtotal-col" data-col-key="totalScore30" style="${columnWidthStyle('totalScore30')}" />
+      <col class="pipeline-col-focus-date" data-col-key="focusDueDate" style="${columnWidthStyle('focusDueDate')}" />
       <col data-col-key="focusManage" style="${columnWidthStyle('focusManage')}" />
     `;
   }
@@ -7477,7 +7633,7 @@ function renderFocusTable() {
         ${focusFilterHeader('D·Link', 'diseaseLinkage', 'diseaseLinkage')}
       `
       : metricColumns.map((column) => plainHeader(column.label, `metric:${column.id}`, 'extra-column-head')).join('');
-    const shortlistingGroupColspan = (isDefaultProject ? 5 : metricColumns.length) + 2;
+    const shortlistingGroupColspan = (isDefaultProject ? 5 : metricColumns.length) + 1;
     elements.pipelineTableHead.innerHTML = `
       <tr id="pipelineHeaderRow" class="pipeline-group-row focus-pipeline-group-row">
         <th class="select-col" rowspan="2" ${columnAttrs('select')}>
@@ -7495,13 +7651,15 @@ function renderFocusTable() {
         <th class="score-group-head focus-group-head score-grandtotal-col" rowspan="2" ${columnAttrs('totalScore30')}>
           <button data-sort="totalScore30" data-sort-label="Total Score" type="button">Total<br />Score</button>${resizeHandle('totalScore30')}
         </th>
+        <th class="score-group-head focus-group-head focus-action-date-col" rowspan="2" ${columnAttrs('focusDueDate')}>
+          <button data-sort="focusDueDate" data-sort-label="Action Date" type="button">Action<br />Date</button>${resizeHandle('focusDueDate')}
+        </th>
         ${plainHeader('관리', 'focusManage', 'focus-action-head', 'rowspan="2"')}
       </tr>
       <tr class="pipeline-score-row focus-column-label-row">
         ${focusFilterHeader('Filter 2', 'filter2', 'filter2', 'focusPriority')}
         ${scoreFilterHeader('Score', 'focusTotalScore', 'totalScore', 'totalScore', 'score-subtotal-col')}
         ${metricHeaderCells}
-        ${sortableHeader('Action date', 'focusDueDate', 'focusDueDate')}
         ${sortableHeader('Score', 'customScore', 'customScore', 'class="score-subtotal-col"')}
       </tr>
     `;
@@ -7560,9 +7718,9 @@ function renderFocusTable() {
           <td class="filter-cell">${statusEditSelect(row, 'filter2')}</td>
           <td class="score-cell total-score-cell score-subtotal-col">${totalScoreEditCircle(row)}</td>
           ${metricCells}
-          ${actionDateCell(row)}
           <td class="score-cell total-score-cell score-subtotal-col">${customScoreCircle(row)}</td>
           <td class="score-cell total-score-cell score-grandtotal-col">${shortlistingTotalScoreBadge(row)}</td>
+          ${actionDateCell(row)}
           <td class="focus-action-cell">${focusRowActions(row)}</td>
         </tr>
       `;
@@ -8947,28 +9105,85 @@ function applyCriteriaGuideLanguage(language) {
   updateCriteriaDrawerScope();
 }
 
+function ensureCriteriaDrawerCustomProjectPanel() {
+  if (!elements.criteriaDrawerBody) return null;
+  let panel = elements.criteriaDrawerBody.querySelector('#criteriaDrawerCustomProjectPanel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'criteriaDrawerCustomProjectPanel';
+    panel.className = 'criteria-custom-project-panel';
+    elements.criteriaDrawerBody.append(panel);
+  }
+  return panel;
+}
+
+function renderCriteriaDrawerCustomProjectContent(project) {
+  const panel = ensureCriteriaDrawerCustomProjectPanel();
+  if (!panel) return;
+  const classifications = project?.classification_columns || [];
+  const listMarkup = classifications.length
+    ? classifications.map((item, index) => `
+        <article class="criteria-focus-info-card">
+          <div class="criteria-focus-card-heading"><h4>${index + 1}. ${escapeHtml(item.label)}</h4></div>
+          <p>${escapeHtml(item.description || '설명이 등록되지 않았습니다.')}</p>
+        </article>
+      `).join('')
+    : `<p class="criteria-custom-project-empty">이 Project는 아직 분류 기준이 등록되지 않았습니다. Project 설정 → 분류 관리에서 추가할 수 있습니다.</p>`;
+  panel.innerHTML = `
+    <section class="criteria-rule criteria-focus-rule">
+      <h3>${escapeHtml(project?.name || '')} — 분류 기준</h3>
+      <p>이 Project에서 설정한 지표를 종합해 판단하는 최종 분류 기준입니다.</p>
+    </section>
+    <section class="criteria-focus-section criteria-guide-section">
+      <div class="criteria-focus-grid criteria-focus-input-grid">${listMarkup}</div>
+    </section>
+  `;
+}
+
 function updateCriteriaDrawerScope() {
-  const mode = activeTableMode();
+  const tableMode = activeTableMode();
+  const isOicFocus = tableMode === 'focus' && state.activeShortlistingProjectId === DEFAULT_SHORTLISTING_PROJECT_ID;
+  const isCustomProjectFocus = tableMode === 'focus' && !isOicFocus;
+  const activeProject = isCustomProjectFocus
+    ? state.shortlistingProjects.find((project) => project.id === state.activeShortlistingProjectId)
+    : null;
+  // Static sections below only cover triage/full/OIC-focus content. A non-OIC
+  // Shortlisting Project has no fixed rubric, so its own owner-configured
+  // classification_columns render into a dynamic panel instead of falling
+  // back to Tab 2 or reusing OIC's hardcoded partnership rules.
+  const mode = tableMode === 'triage' ? 'triage' : isOicFocus ? 'focus' : 'full';
   const chrome = criteriaGuideChrome();
   if (elements.criteriaDrawerScopeLabel) {
-    elements.criteriaDrawerScopeLabel.textContent = chrome.scopes[mode] || '';
+    elements.criteriaDrawerScopeLabel.textContent = isCustomProjectFocus
+      ? `TAB 3 · ${(activeProject?.name || '').toUpperCase()} · 분류 기준`
+      : (chrome.scopes[mode] || '');
   }
   if (elements.criteriaDrawerVersionBadge) {
-    const version = mode === 'triage'
-      ? LATEST_TRIAGE_RUBRIC_VERSION
-      : mode === 'full'
-        ? LATEST_FULL_SCOUT_RUBRIC_VERSION
-        : state.latestOiPartnershipCriteriaVersion;
-    elements.criteriaDrawerVersionBadge.textContent = `v${version}`;
+    elements.criteriaDrawerVersionBadge.hidden = isCustomProjectFocus;
+    if (!isCustomProjectFocus) {
+      const version = mode === 'triage'
+        ? LATEST_TRIAGE_RUBRIC_VERSION
+        : mode === 'full'
+          ? LATEST_FULL_SCOUT_RUBRIC_VERSION
+          : state.latestOiPartnershipCriteriaVersion;
+      elements.criteriaDrawerVersionBadge.textContent = `v${version}`;
+    }
   }
   if (elements.criteriaDrawerSubtitle) {
-    elements.criteriaDrawerSubtitle.textContent = chrome.subtitles[mode] || '';
+    elements.criteriaDrawerSubtitle.textContent = isCustomProjectFocus
+      ? `${activeProject?.name || ''} Project에서 설정한 지표 기반 분류 기준`
+      : (chrome.subtitles[mode] || '');
   }
-  if (elements.criteriaDrawer) elements.criteriaDrawer.dataset.activeCriteriaTab = mode;
+  if (elements.criteriaDrawer) elements.criteriaDrawer.dataset.activeCriteriaTab = isCustomProjectFocus ? 'focus-custom' : mode;
   elements.criteriaDrawerBody?.querySelectorAll('[data-criteria-tab]').forEach((section) => {
     const scopes = section.dataset.criteriaTab.split(' ');
-    section.hidden = !scopes.includes(mode);
+    section.hidden = isCustomProjectFocus ? true : !scopes.includes(mode);
   });
+  const customPanel = ensureCriteriaDrawerCustomProjectPanel();
+  if (customPanel) {
+    customPanel.hidden = !isCustomProjectFocus;
+    if (isCustomProjectFocus) renderCriteriaDrawerCustomProjectContent(activeProject);
+  }
 }
 
 function openCriteriaDrawer() {
@@ -17014,9 +17229,34 @@ elements.shortlistingProjectModal?.addEventListener('keydown', (event) => {
 
 elements.shortlistingSettingsMembersTab?.addEventListener('click', () => switchShortlistingSettingsTab('members'));
 elements.shortlistingSettingsMetricsTab?.addEventListener('click', () => switchShortlistingSettingsTab('metrics'));
+elements.shortlistingSettingsClassificationsTab?.addEventListener('click', () => switchShortlistingSettingsTab('classifications'));
+elements.shortlistingClassificationModalSave?.addEventListener('click', submitShortlistingClassificationModal);
+elements.shortlistingClassificationManagerBody?.addEventListener('click', (event) => {
+  const deleteButton = event.target.closest('[data-delete-classification-id]');
+  if (!deleteButton) return;
+  deleteShortlistingClassification(deleteButton.dataset.deleteClassificationId);
+});
 elements.shortlistingMetricReturnTypeSelect?.addEventListener('change', updateShortlistingMetricModalConditionalFields);
 elements.shortlistingMetricModalCancel?.addEventListener('click', closeShortlistingProjectSettingsModal);
 elements.shortlistingMetricModalSave?.addEventListener('click', submitShortlistingMetricModal);
+elements.shortlistingProjectRenameButton?.addEventListener('click', openShortlistingProjectRenameEdit);
+elements.shortlistingProjectRenameInput?.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    saveShortlistingProjectRename();
+  } else if (event.key === 'Escape') {
+    event.stopPropagation();
+    elements.shortlistingProjectRenameInput.dataset.cancelled = 'true';
+    elements.shortlistingProjectRenameInput.blur();
+  }
+});
+elements.shortlistingProjectRenameInput?.addEventListener('blur', () => {
+  if (elements.shortlistingProjectRenameInput.dataset.cancelled === 'true') {
+    closeShortlistingProjectRenameEdit();
+    return;
+  }
+  saveShortlistingProjectRename();
+});
 elements.shortlistingMetricManagerBody?.addEventListener('click', (event) => {
   const deleteButton = event.target.closest('[data-delete-metric-id]');
   if (!deleteButton) return;

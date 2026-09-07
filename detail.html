@@ -12,7 +12,7 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    <link rel="stylesheet" href="./src/styles.css?v=20260907-custom-project-panel-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260907-custom-card-pill-summary-1" />
   </head>
   <body>
     <div class="app-shell detail-shell">
@@ -177,7 +177,7 @@
                     <path d="M12 3.4l2.66 5.39 5.95.86-4.31 4.2 1.02 5.93L12 17l-5.32 2.78 1.02-5.93-4.31-4.2 5.95-.86L12 3.4Z" />
                   </svg>
                 </button>
-                <span id="detailCommentCount" class="comment-count">0</span>
+                <span id="detailCommentCount" class="comment-count help-tooltip" data-tooltip="총 업로드된 파일 수: 0개" aria-label="총 업로드된 파일 수 0개" tabindex="0">0</span>
               </div>
             </div>
 
@@ -278,6 +278,9 @@
                           ></textarea>
                         </div>
                       </div>
+                    </div>
+                    <div id="detailCustomMetricTable" class="custom-metric-table" hidden></div>
+                    <div id="detailActionDateBody" class="action-date-body">
                       <div class="review-info-label action-date-label">
                         <div class="review-info-label-row action-date-meta-row">
                           <span class="review-info-primary-label">Action Date</span>
@@ -299,7 +302,6 @@
                         aria-label="확인할 데이터 또는 향후 계획"
                       />
                     </div>
-                    <div id="detailCustomMetricTable" class="custom-metric-table" hidden></div>
                   </div>
                 </section>
               </div>
@@ -866,6 +868,6 @@
       </div>
     </aside>
 
-    <script type="module" src="./src/detail.js?v=20260907-custom-project-panel-1"></script>
+    <script type="module" src="./src/detail.js?v=20260907-custom-card-pill-summary-1"></script>
   </body>
 </html>

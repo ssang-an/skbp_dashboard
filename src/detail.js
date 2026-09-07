@@ -26,6 +26,7 @@ function detailUrlForCurrentRecord() {
 
 const DEFAULT_SHORTLISTING_PROJECT_ID = 'oic_default';
 const SHORTLISTING_PROJECTS_URL = '/api/shortlisting/projects';
+const SHORTLISTING_PROJECT_STORAGE_KEY = 'skbp.dashboard.activeShortlistingProjectId.v1';
 
 const DETAIL_CHAT_SESSION_PREFIX = 'skbp.detail.chatSessions.v1';
 const DETAIL_CHAT_ACTIVE_PREFIX = 'skbp.detail.activeChatSession.v1';
@@ -1105,10 +1106,6 @@ function openListingSourceManagement(field) {
 function renderCommentThread(record) {
   if (!elements.detailCommentThread) return;
   const comments = collaborationComments(record);
-  if (elements.detailCommentCount) {
-    elements.detailCommentCount.textContent = String(comments.length);
-    elements.detailCommentCount.setAttribute('aria-label', `댓글 ${comments.length}개`);
-  }
   if (!comments.length) {
     elements.detailCommentThread.innerHTML = `
       <div class="comment-empty-state">
@@ -1660,8 +1657,8 @@ function renderCollaborationPanel(record) {
     const reassessment = getOriginalReportReassessmentMetadata(record);
     if (reassessment) {
       const reassessmentVersion = String(reassessment.version || '').replace(/^v/i, '');
-      elements.detailDecisionOrigin.textContent = `원문 기반 마지막 재평가 · Advanced Research 기준 v${reassessmentVersion}`;
-      elements.detailDecisionOrigin.title = `저장된 GPT 원문·첨부 기반 재평가 · Advanced Research 기준 v${reassessmentVersion} · ${formatCommentTime(reassessment.at)}`;
+      elements.detailDecisionOrigin.textContent = `원문 기반 마지막 재평가 · Advanced v${reassessmentVersion}`;
+      elements.detailDecisionOrigin.title = `저장된 GPT 원문·첨부 기반 재평가 · Advanced v${reassessmentVersion} · ${formatCommentTime(reassessment.at)}`;
     } else {
     elements.detailDecisionOrigin.textContent = `Score 기준 v${appliedVersion}`;
     elements.detailDecisionOrigin.title = appliedAt
@@ -1805,33 +1802,75 @@ function metricValueEditControlMarkup(projectId, column, rawValue, disabled) {
   return `<input type="text" class="focus-due-input metric-value-edit" maxlength="2000" ${baseAttrs} data-previous-value="${escapeHtml(current)}" value="${escapeHtml(current)}" />`;
 }
 
-function customMetricRowMarkup(record, project, column, disabled) {
+function formatMetricPillValue(column, rawValue) {
+  if (column.return_type === 'boolean') {
+    if (rawValue === true) return 'Pass';
+    if (rawValue === false) return 'Fail';
+    return '-';
+  }
+  if (column.return_type === 'number') {
+    return typeof rawValue === 'number' && Number.isFinite(rawValue) ? String(rawValue) : '-';
+  }
+  if (typeof rawValue !== 'string' || !rawValue) return '-';
+  return rawValue.length > 24 ? `${rawValue.slice(0, 24)}…` : rawValue;
+}
+
+function customMetricPillRowMarkup(record, project, column, disabled) {
+  const rawValue = customProjectMetricValue(record, project.id, column.id);
+  const label = column.label || column.id;
+  const displayValue = formatMetricPillValue(column, rawValue);
+  const pillTitle = column.description || (disabled ? label : '클릭하여 수정');
+  if (disabled) {
+    return `
+      <span class="custom-metric-row" data-metric-id="${escapeHtml(column.id)}">
+        <span class="score-chip" title="${escapeHtml(pillTitle)}">
+          <span class="score-chip-label">${escapeHtml(label)}</span><span class="score-chip-value">${escapeHtml(displayValue)}</span>
+        </span>
+      </span>
+    `;
+  }
   return `
-    <div class="custom-metric-row" data-metric-id="${escapeHtml(column.id)}">
-      <span class="custom-metric-label" title="${escapeHtml(column.description || '')}">${escapeHtml(column.label || column.id)}</span>
-      ${metricValueEditControlMarkup(project.id, column, customProjectMetricValue(record, project.id, column.id), disabled)}
+    <span class="custom-metric-row" data-metric-id="${escapeHtml(column.id)}">
+      <button type="button" class="score-chip score-chip-link metric-summary-pill" title="${escapeHtml(pillTitle)}">
+        <span class="score-chip-label">${escapeHtml(label)}</span><span class="score-chip-value">${escapeHtml(displayValue)}</span>
+      </button>
+      <span class="metric-edit-control-wrap" hidden>${metricValueEditControlMarkup(project.id, column, rawValue, disabled)}</span>
+    </span>
+  `;
+}
+
+function customProjectClassificationSummaryMarkup(project) {
+  const classifications = Array.isArray(project?.classification_columns) ? project.classification_columns : [];
+  if (!classifications.length) return '';
+  return `
+    <div class="custom-classification-summary">
+      ${classifications.map((item) => `
+        <div class="custom-classification-item">
+          <strong>${escapeHtml(item.label || '')}</strong>
+          <span>${escapeHtml(item.description || '')}</span>
+        </div>
+      `).join('')}
     </div>
   `;
 }
 
-const CUSTOM_METRIC_PREVIEW_COUNT = 2;
-
 function renderCustomMetricTable(record, project) {
   if (!elements.detailCustomMetricTable) return;
   const columns = Array.isArray(project?.metric_columns) ? project.metric_columns : [];
+  const classificationMarkup = customProjectClassificationSummaryMarkup(project);
   if (!columns.length) {
-    elements.detailCustomMetricTable.innerHTML = '<p class="custom-metric-empty">등록된 지표가 없습니다.</p>';
+    elements.detailCustomMetricTable.innerHTML = `${classificationMarkup}<p class="custom-metric-empty">등록된 지표가 없습니다.</p>`;
     return;
   }
   const disabled = customProjectRoleFor(project.id) === 'read';
-  const previewColumns = columns.slice(0, CUSTOM_METRIC_PREVIEW_COUNT);
-  const extraColumns = columns.slice(CUSTOM_METRIC_PREVIEW_COUNT);
-  elements.detailCustomMetricTable.innerHTML = [
-    previewColumns.map((column) => customMetricRowMarkup(record, project, column, disabled)).join(''),
-    extraColumns.length
-      ? `<div class="custom-metric-extra">${extraColumns.map((column) => customMetricRowMarkup(record, project, column, disabled)).join('')}</div>`
-      : ''
-  ].join('');
+  const pillsMarkup = columns.map((column) => customMetricPillRowMarkup(record, project, column, disabled)).join('');
+  elements.detailCustomMetricTable.innerHTML = `
+    ${classificationMarkup}
+    <div class="filter-score-panel">
+      <span class="filter-score-panel-label">Criteria Scores</span>
+      <div class="filter-score-sequence">${pillsMarkup}</div>
+    </div>
+  `;
 }
 
 function renderCustomProjectSwitch(trackedProjects, selectedProject) {
@@ -2281,7 +2320,8 @@ function renderAttachments(record) {
   if (!elements.detailAttachmentsList) return;
   const canDelete = Boolean(getCurrentUser()?.is_admin);
   const contactAttachmentIds = contactHistoryAttachmentIds(record);
-  const attachments = (Array.isArray(record?.meta?.attachments) ? record.meta.attachments : [])
+  const allAttachments = Array.isArray(record?.meta?.attachments) ? record.meta.attachments : [];
+  const attachments = allAttachments
     .filter((attachment) => !contactAttachmentIds.has(String(attachment?.id || '')) && attachment?.partner_material_category !== 'dd_report');
   if (elements.detailAttachmentAiScope) {
     elements.detailAttachmentAiScope.hidden = attachments.length > 0;
@@ -2289,6 +2329,11 @@ function renderAttachments(record) {
   if (elements.detailAttachmentCount) {
     elements.detailAttachmentCount.textContent = String(attachments.length);
     elements.detailAttachmentCount.setAttribute('aria-label', `첨부자료 ${attachments.length}개`);
+  }
+  if (elements.detailCommentCount) {
+    elements.detailCommentCount.textContent = String(allAttachments.length);
+    elements.detailCommentCount.setAttribute('aria-label', `총 업로드된 파일 수 ${allAttachments.length}개`);
+    elements.detailCommentCount.setAttribute('data-tooltip', `총 업로드된 파일 수: ${allAttachments.length}개`);
   }
   if (!attachments.length) {
     elements.detailAttachmentsList.innerHTML = '';
@@ -3379,7 +3424,7 @@ function saveDetailMetricValue(control) {
       : nextRaw;
   const projectId = control.dataset.projectId;
   const metricId = control.dataset.metricId;
-  const label = control.closest('.custom-metric-row')?.querySelector('.custom-metric-label')?.textContent || '지표';
+  const label = control.closest('.custom-metric-row')?.querySelector('.score-chip-label')?.textContent || '지표';
   saveDetailShortlistingProjectField(projectId, 'metric_value', value, control, label, { metric_id: metricId });
 }
 
@@ -5032,7 +5077,7 @@ async function loadRecord() {
   const data = await response.json();
   currentRecord = data.record;
   currentRecordId = data.record_id;
-  selectedCustomProjectId = null;
+  selectedCustomProjectId = localStorage.getItem(SHORTLISTING_PROJECT_STORAGE_KEY) || null;
   renderRecord(currentRecord);
   openRequestedDetailSection();
   initializeChatSessions();
@@ -5065,16 +5110,56 @@ function englishCriteriaBody() {
   return doc.body.firstElementChild;
 }
 
+function renderCriteriaDrawerCustomProjectContent(project) {
+  if (!elements.criteriaDrawerBody) return;
+  const classifications = project?.classification_columns || [];
+  const listMarkup = classifications.length
+    ? classifications.map((item, index) => `
+        <article class="criteria-focus-info-card">
+          <div class="criteria-focus-card-heading"><h4>${index + 1}. ${escapeHtml(item.label)}</h4></div>
+          <p>${escapeHtml(item.description || '설명이 등록되지 않았습니다.')}</p>
+        </article>
+      `).join('')
+    : `<p class="criteria-custom-project-empty">이 Project는 아직 분류 기준이 등록되지 않았습니다. Project 설정 → 분류 관리에서 추가할 수 있습니다.</p>`;
+  elements.criteriaDrawerBody.innerHTML = `
+    <section class="criteria-rule criteria-focus-rule">
+      <h3>${escapeHtml(project?.name || '')} — 분류 기준</h3>
+      <p>이 Project에서 설정한 지표를 종합해 판단하는 최종 분류 기준입니다.</p>
+    </section>
+    <section class="criteria-focus-section criteria-guide-section">
+      <div class="criteria-focus-grid criteria-focus-input-grid">${listMarkup}</div>
+    </section>
+  `;
+  elements.criteriaDrawerBody.lang = 'ko';
+  if (elements.criteriaDrawer) elements.criteriaDrawer.dataset.activeCriteriaTab = 'focus-custom';
+}
+
 function updateCriteriaDrawerScope() {
-  const isFocusTracked = currentRecord?.meta?.focus_management?.is_tracked === true;
-  const mode = viewTab === 'focus' && isFocusTracked ? 'focus' : 'full';
+  // The Custom card's 판단근거 (OIC classification rules) only applies while the
+  // card is currently showing the built-in OIC project. Other Shortlisting
+  // Projects have no such fixed rubric — instead of falling back to Tab 2,
+  // render that Project's own owner-configured classification_columns (see
+  // renderCriteriaDrawerCustomProjectContent), same as the dashboard's Custom
+  // Review tab for a non-OIC Project.
+  const isOicCustomView = viewTab === 'focus' && selectedCustomProjectId === DEFAULT_SHORTLISTING_PROJECT_ID
+    && currentRecord?.meta?.focus_management?.is_tracked === true;
+  const isCustomProjectView = viewTab === 'focus' && !isOicCustomView
+    && selectedCustomProjectId && selectedCustomProjectId !== DEFAULT_SHORTLISTING_PROJECT_ID;
+  const mode = isOicCustomView ? 'focus' : isCustomProjectView ? 'focus-custom' : 'full';
   const chrome = criteriaGuideChrome();
+  const activeProject = isCustomProjectView
+    ? shortlistingProjects.find((project) => project.id === selectedCustomProjectId)
+    : null;
   if (elements.criteriaDrawerScopeLabel) {
-    elements.criteriaDrawerScopeLabel.textContent = chrome.scopes[mode] || '';
+    elements.criteriaDrawerScopeLabel.textContent = isCustomProjectView
+      ? `TAB 3 · ${(activeProject?.name || '').toUpperCase()} · 분류 기준`
+      : (chrome.scopes[mode] || '');
   }
-  elements.criteriaDrawerBody?.querySelectorAll('[data-criteria-tab]').forEach((section) => {
-    section.hidden = section.dataset.criteriaTab !== mode;
-  });
+  if (mode !== 'focus-custom') {
+    elements.criteriaDrawerBody?.querySelectorAll('[data-criteria-tab]').forEach((section) => {
+      section.hidden = section.dataset.criteriaTab !== mode;
+    });
+  }
   if (elements.criteriaDrawer) elements.criteriaDrawer.dataset.activeCriteriaTab = mode;
   return mode;
 }
@@ -5128,7 +5213,11 @@ function applyCriteriaGuideLanguage(language) {
   localStorage.setItem(CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY, criteriaGuideLanguage);
   applyCriteriaGuideChrome();
   const mode = updateCriteriaDrawerScope();
-  renderCriteriaDrawerBody(mode);
+  if (mode === 'focus-custom') {
+    renderCriteriaDrawerCustomProjectContent(shortlistingProjects.find((project) => project.id === selectedCustomProjectId));
+  } else {
+    renderCriteriaDrawerBody(mode);
+  }
 }
 
 async function openCriteriaDrawer() {
@@ -5141,6 +5230,10 @@ async function openCriteriaDrawer() {
     elements.criteriaBackdrop.classList.add('open');
     elements.criteriaDrawer.setAttribute('aria-hidden', 'false');
   });
+  if (mode === 'focus-custom') {
+    renderCriteriaDrawerCustomProjectContent(shortlistingProjects.find((project) => project.id === selectedCustomProjectId));
+    return;
+  }
   if (elements.criteriaDrawerBody) elements.criteriaDrawerBody.setAttribute('aria-busy', 'true');
   try {
     await syncCriteriaDrawerFromDashboard(mode);
@@ -5645,6 +5738,39 @@ elements.detailCustomMetricTable?.addEventListener('change', (event) => {
   const control = event.target.closest('.metric-value-edit');
   if (!control) return;
   saveDetailMetricValue(control);
+});
+
+elements.detailCustomMetricTable?.addEventListener('click', (event) => {
+  const pill = event.target.closest('.metric-summary-pill');
+  if (!pill) return;
+  const row = pill.closest('.custom-metric-row');
+  const wrap = row?.querySelector('.metric-edit-control-wrap');
+  const control = wrap?.querySelector('.metric-value-edit');
+  if (!wrap || !control) return;
+  pill.hidden = true;
+  wrap.hidden = false;
+  control.focus();
+  if (typeof control.select === 'function') control.select();
+});
+
+elements.detailCustomMetricTable?.addEventListener('focusout', (event) => {
+  const control = event.target.closest('.metric-value-edit');
+  if (!control) return;
+  setTimeout(() => {
+    if (!control.isConnected) return;
+    const row = control.closest('.custom-metric-row');
+    const wrap = row?.querySelector('.metric-edit-control-wrap');
+    const pill = row?.querySelector('.metric-summary-pill');
+    if (wrap) wrap.hidden = true;
+    if (pill) pill.hidden = false;
+  }, 150);
+});
+
+elements.detailCustomMetricTable?.addEventListener('keydown', (event) => {
+  const control = event.target.closest('.metric-value-edit');
+  if (!control || event.key !== 'Escape') return;
+  event.preventDefault();
+  renderCustomProjectPanel(currentRecord);
 });
 
 elements.detailOiPartnershipType?.addEventListener('change', (event) => {

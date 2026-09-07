@@ -3668,7 +3668,8 @@ th button {
   background: color-mix(in srgb, var(--accent) 6%, transparent);
 }
 
-.pipeline-table th.score-grandtotal-col button {
+.pipeline-table th.score-grandtotal-col button,
+.pipeline-table th.focus-action-date-col button {
   text-align: center;
   line-height: 1.25;
 }
@@ -3984,6 +3985,18 @@ td {
   place-items: center;
   box-sizing: border-box;
   cursor: default;
+}
+
+.evidence-edit.metric-value-edit,
+.focus-due-input.metric-value-edit {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.evidence-edit.metric-value-edit:hover,
+.evidence-edit.metric-value-edit:focus,
+.focus-due-input.metric-value-edit:focus {
+  color: var(--text);
 }
 
 .partnership-edit-select {
@@ -6378,12 +6391,77 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
 
 .shortlisting-metric-manager-add-row select,
 .shortlisting-metric-manager-add-row input {
+  min-height: 34px;
   margin-bottom: 0;
 }
 
 .shortlisting-metric-manager-add-row #shortlistingMetricListOptionsInput,
 .shortlisting-metric-manager-add-row #shortlistingMetricMaxValueInput {
   grid-column: 1 / -1;
+}
+
+.shortlisting-classification-add-row {
+  grid-template-columns: 1fr 1.3fr auto;
+}
+
+.shortlisting-classification-manager-table th:first-child,
+.shortlisting-classification-manager-table td:first-child {
+  width: 44px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.criteria-custom-project-panel[hidden] {
+  display: none;
+}
+
+.criteria-custom-project-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.shortlisting-action-pill {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 15px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 850;
+  white-space: nowrap;
+  transition: transform 140ms ease, box-shadow 140ms ease, opacity 140ms ease;
+}
+
+.shortlisting-action-pill svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.shortlisting-action-pill:hover,
+.shortlisting-action-pill:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 30%, transparent);
+  outline: none;
+}
+
+.shortlisting-action-pill:disabled {
+  cursor: wait;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
 }
 
 .shortlisting-metric-manager-add-row #shortlistingMetricModalSave {
@@ -6430,12 +6508,8 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
 
 .shortlisting-member-add-row select,
 .shortlisting-member-add-row input {
+  min-height: 34px;
   margin-bottom: 0;
-}
-
-.shortlisting-member-add-row #shortlistingMemberAddButton {
-  min-height: 38px;
-  padding: 0 16px;
 }
 
 .shortlisting-member-picker-search {
@@ -6559,6 +6633,23 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.shortlisting-settings-title-wrap {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#shortlistingProjectRenameInput.shortlisting-settings-rename-input {
+  width: 100%;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.criteria-refresh-pill.shortlisting-rename-pill {
+  --criteria-refresh-accent: var(--accent);
+  flex: 0 0 auto;
 }
 
 .data-reupload-modal-hint {
@@ -13750,7 +13841,7 @@ html[data-theme="dark"] .detail-material-panel {
 }
 
 #detailOiPartnershipRow .review-info-primary-label {
-  color: var(--fluent-purple);
+  color: var(--accent);
 }
 
 .criteria-refresh-pill {
@@ -14197,14 +14288,15 @@ html[data-theme="dark"] .detail-material-panel {
 .custom-project-switch-button {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  max-width: 160px;
-  padding: 3px 8px;
-  border: 1px solid var(--glass-border);
-  border-radius: 999px;
-  background: var(--readable-surface);
-  color: var(--muted);
-  font-size: 10px;
+  gap: 6px;
+  min-height: 26px;
+  max-width: 190px;
+  padding: 5px 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--glass-border));
+  border-radius: 6px;
+  background: var(--surface-soft);
+  color: var(--text);
+  font-size: 11px;
   font-weight: 800;
   white-space: nowrap;
   overflow: hidden;
@@ -14213,14 +14305,15 @@ html[data-theme="dark"] .detail-material-panel {
 
 .custom-project-switch-button:hover,
 .custom-project-switch-button:focus-visible {
-  border-color: color-mix(in srgb, var(--accent) 42%, var(--glass-border));
+  border-color: color-mix(in srgb, var(--accent) 54%, var(--glass-border));
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface-soft));
   color: var(--accent);
   outline: none;
 }
 
 .custom-project-switch-button svg {
-  width: 10px;
-  height: 10px;
+  width: 11px;
+  height: 11px;
   flex: none;
   fill: none;
   stroke: currentColor;
@@ -14230,14 +14323,7 @@ html[data-theme="dark"] .detail-material-panel {
 }
 
 .custom-project-switch.is-static .custom-project-switch-button {
-  border-color: transparent;
-  background: transparent;
-  padding-left: 0;
   cursor: default;
-}
-
-.custom-project-switch.is-static .custom-project-switch-button svg {
-  display: none;
 }
 
 .custom-project-switch-menu {
@@ -14310,29 +14396,20 @@ html[data-theme="dark"] .detail-material-panel {
   gap: 6px;
 }
 
-.custom-metric-table,
-.custom-metric-extra {
+.action-date-body {
   display: grid;
-  gap: 0;
+  gap: 6px;
+}
+
+.custom-metric-table {
+  display: grid;
+  gap: 8px;
 }
 
 .custom-metric-row {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
   min-width: 0;
-  padding: 4px 0;
-  border-bottom: 1px solid var(--glass-border);
-}
-
-.custom-metric-label {
-  overflow: hidden;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .custom-metric-row .metric-value-edit {
@@ -14345,6 +14422,29 @@ html[data-theme="dark"] .detail-material-panel {
   margin: 0;
   color: var(--muted);
   font-size: 12px;
+}
+
+.custom-classification-summary {
+  display: grid;
+  gap: 4px;
+}
+
+.custom-classification-item {
+  display: grid;
+  gap: 1px;
+}
+
+.custom-classification-item strong {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.custom-classification-item span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .website-action-pill {
@@ -22059,9 +22159,7 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
 
 .review-info-stack.is-collapsed #detailReviewReasonShell,
 .review-info-stack.is-collapsed .oi-classification-summary,
-.review-info-stack.is-collapsed #detailActionOwner,
-.review-info-stack.is-collapsed #detailActionPlan,
-.review-info-stack.is-collapsed .custom-metric-extra {
+.review-info-stack.is-collapsed #detailActionOwner {
   display: none;
 }
 

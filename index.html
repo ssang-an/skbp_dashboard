@@ -72,7 +72,7 @@
         });
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20260906-member-checkbox-size-1" />
+  <link rel="stylesheet" href="./src/styles.css?v=20260907-classification-management-1" />
   <link rel="stylesheet" href="./src/knowledge_graph.css?v=20260823-atlas-search-pill-alignment-1" />
   <link rel="stylesheet" href="./src/sigma_graph.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js" defer></script>
@@ -395,9 +395,9 @@
                 </tr>
                 <tr>
                   <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="pending" type="button" aria-pressed="false" data-tooltip="Listing 등록이 완료된 Pipeline만 표시합니다.">Listing</button></th>
-                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="fast_triage" type="button" aria-pressed="false" data-tooltip="Simple Research가 완료된 Pipeline만 표시합니다.">Simple Research</button></th>
-                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="full_scout" type="button" aria-pressed="false" data-tooltip="Advanced Research가 완료된 Pipeline만 표시합니다.">Advanced Research</button></th>
-                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="shortlisting" type="button" aria-pressed="false" data-tooltip="Custom Review에 등록된 Pipeline만 표시합니다.">Custom Review</button></th>
+                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="fast_triage" type="button" aria-pressed="false" data-tooltip="Simple Research가 완료된 Pipeline만 표시합니다.">Simple</button></th>
+                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="full_scout" type="button" aria-pressed="false" data-tooltip="Advanced Research가 완료된 Pipeline만 표시합니다.">Advanced</button></th>
+                  <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="shortlisting" type="button" aria-pressed="false" data-tooltip="Custom Review에 등록된 Pipeline만 표시합니다.">Custom</button></th>
                   <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="comment" type="button" aria-pressed="false" data-tooltip="Comment가 하나 이상 있는 Pipeline만 표시합니다.">Comment</button></th>
                   <th><button class="step0-evaluation-filter help-tooltip" data-step0-evaluation-filter="contact" type="button" aria-pressed="false" data-tooltip="Contact History가 하나 이상 있는 Pipeline만 표시합니다.">Contact</button></th>
                 </tr>
@@ -1498,15 +1498,23 @@
 
     <div class="identity-modal-backdrop" id="shortlistingMetricModal" hidden>
       <section class="identity-modal shortlisting-metric-manager-modal" role="dialog" aria-modal="true" aria-labelledby="shortlistingMetricModalTitle">
-        <div class="data-reupload-modal-heading">
+        <div class="data-reupload-modal-heading shortlisting-settings-heading">
           <span class="data-reupload-modal-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
           </span>
-          <div><h3 id="shortlistingMetricModalTitle">Project 설정</h3></div>
+          <div class="shortlisting-settings-title-wrap">
+            <h3 id="shortlistingMetricModalTitle">Project 설정</h3>
+            <input id="shortlistingProjectRenameInput" type="text" maxlength="80" class="shortlisting-settings-rename-input" hidden aria-label="Project 이름" />
+          </div>
+          <button type="button" id="shortlistingProjectRenameButton" class="criteria-refresh-pill shortlisting-rename-pill" aria-label="Project 이름 수정">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            <span>이름 수정</span>
+          </button>
         </div>
         <div class="identity-modal-tabs" role="tablist" aria-label="Project 설정 탭">
           <button type="button" class="identity-modal-tab is-active" role="tab" id="shortlistingSettingsMembersTab" aria-selected="true" aria-controls="shortlistingSettingsMembersPane" data-settings-tab="members">멤버 관리</button>
           <button type="button" class="identity-modal-tab" role="tab" id="shortlistingSettingsMetricsTab" aria-selected="false" aria-controls="shortlistingSettingsMetricsPane" data-settings-tab="metrics">지표 관리</button>
+          <button type="button" class="identity-modal-tab" role="tab" id="shortlistingSettingsClassificationsTab" aria-selected="false" aria-controls="shortlistingSettingsClassificationsPane" data-settings-tab="classifications">분류 관리</button>
         </div>
 
         <div id="shortlistingSettingsMembersPane" class="identity-modal-tab-pane" role="tabpanel" aria-labelledby="shortlistingSettingsMembersTab">
@@ -1538,7 +1546,10 @@
               <option value="write">Write</option>
               <option value="owner">Owner</option>
             </select>
-            <button id="shortlistingMemberAddButton" type="button" class="identity-modal-submit">구성원 추가</button>
+            <button id="shortlistingMemberAddButton" type="button" class="shortlisting-action-pill">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>
+              <span>구성원 추가</span>
+            </button>
           </div>
           <p id="shortlistingMemberModalStatus" class="pipeline-website-modal-status" role="status" aria-live="polite"></p>
         </div>
@@ -1575,9 +1586,43 @@
             </select>
             <input id="shortlistingMetricListOptionsInput" type="text" placeholder="선택지 (쉼표로 구분)" aria-label="List 선택지" hidden />
             <input id="shortlistingMetricMaxValueInput" type="number" min="1" step="1" placeholder="최대값 (선택)" aria-label="Number 최대값" hidden />
-            <button id="shortlistingMetricModalSave" type="button" class="identity-modal-submit">+ 추가</button>
+            <button id="shortlistingMetricModalSave" type="button" class="shortlisting-action-pill">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>
+              <span>지표 추가</span>
+            </button>
           </div>
           <p id="shortlistingMetricModalStatus" class="pipeline-website-modal-status" role="status" aria-live="polite"></p>
+        </div>
+
+        <div id="shortlistingSettingsClassificationsPane" class="identity-modal-tab-pane" role="tabpanel" aria-labelledby="shortlistingSettingsClassificationsTab" hidden>
+          <p class="identity-modal-hint">이 Project의 지표들을 종합해 내릴 수 있는 최종 분류(예: OIC의 투자·Value Up·공동연구)를 정의합니다. 자동 분류 로직은 없으며, 판단근거에 표시할 분류명과 설명만 등록합니다.</p>
+          <p id="shortlistingClassificationLockedNote" class="identity-modal-hint shortlisting-metric-locked-note" hidden>OIC 기본 Project의 분류(투자/Value Up/공동연구 등)는 하드코딩되어 있어 현재 추가/삭제할 수 없습니다.</p>
+          <div class="shortlisting-metric-manager-table-wrap">
+            <table class="shortlisting-metric-manager-table shortlisting-classification-manager-table">
+              <thead>
+                <tr>
+                  <th>순번</th>
+                  <th>분류</th>
+                  <th>설명</th>
+                  <th aria-label="삭제"></th>
+                </tr>
+              </thead>
+              <tbody id="shortlistingClassificationManagerBody">
+                <tr class="shortlisting-metric-manager-empty-row">
+                  <td colspan="4">등록된 분류가 없습니다.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="shortlistingClassificationAddRow" class="shortlisting-metric-manager-add-row shortlisting-classification-add-row">
+            <input id="shortlistingClassificationLabelInput" type="text" maxlength="60" placeholder="분류 이름" aria-label="새 분류 이름" />
+            <input id="shortlistingClassificationDescriptionInput" type="text" maxlength="400" placeholder="설명" aria-label="새 분류 설명" />
+            <button id="shortlistingClassificationModalSave" type="button" class="shortlisting-action-pill">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>
+              <span>분류 추가</span>
+            </button>
+          </div>
+          <p id="shortlistingClassificationModalStatus" class="pipeline-website-modal-status" role="status" aria-live="polite"></p>
         </div>
 
         <div class="identity-modal-actions data-reupload-modal-actions">
@@ -1604,7 +1649,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260906-oic-permission-parity-2"></script>
+  <script type="module" src="./src/app.js?v=20260907-classification-management-1"></script>
   <script src="./src/sigma_graph.js?v=20260824-deferred-wiki-export-1" defer></script>
   </body>
 </html>

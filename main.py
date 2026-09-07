@@ -5343,6 +5343,7 @@ DEFAULT_SHORTLISTING_PROJECT_ID = "oic_default"
 SHORTLISTING_METRIC_RETURN_TYPES = {"boolean", "list", "number", "date", "text"}
 SHORTLISTING_CUSTOM_COLUMN_CAP = 20
 SHORTLISTING_LIST_OPTION_CAP = 20
+SHORTLISTING_CLASSIFICATION_CAP = 12
 
 
 def oic_builtin_shortlisting_metric_columns() -> list[dict[str, Any]]:
@@ -11009,6 +11010,87 @@ async def delete_shortlisting_metric_column(project_id: str, column_id: str, req
     project["updated_at"] = datetime.now(timezone.utc).isoformat()
     save_shortlisting_projects(projects)
     return {"ok": True, "project": serialize_shortlisting_project(project, account), "column_id": column_id}
+
+
+@app.post("/api/shortlisting/projects/{project_id}/classifications")
+async def create_shortlisting_classification(project_id: str, request: Request) -> dict[str, Any]:
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected a classification object.")
+
+    if project_id == DEFAULT_SHORTLISTING_PROJECT_ID:
+        raise HTTPException(status_code=400, detail="OIC 기본 Project의 분류는 현재 추가할 수 없습니다 (하드코딩된 기본 분류만 사용).")
+
+    projects = load_shortlisting_projects()
+    project = find_shortlisting_project(projects, project_id)
+    if project is None or project.get("archived"):
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    account = require_shortlisting_project_role(request, project, "owner")
+
+    label = str(payload.get("label") or "").strip()
+    description = str(payload.get("description") or "").strip()
+    if not label:
+        raise HTTPException(status_code=400, detail="분류 이름을 입력하세요.")
+    if len(label) > 60:
+        raise HTTPException(status_code=400, detail="분류 이름은 60자 이하여야 합니다.")
+    if len(description) > 400:
+        raise HTTPException(status_code=400, detail="분류 설명은 400자 이하여야 합니다.")
+
+    classifications = project.setdefault("classification_columns", [])
+    if len(classifications) >= SHORTLISTING_CLASSIFICATION_CAP:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Project당 분류는 최대 {SHORTLISTING_CLASSIFICATION_CAP}개까지 등록할 수 있습니다.",
+        )
+    duplicate = next(
+        (
+            item for item in classifications
+            if str(item.get("label") or "").strip().casefold() == label.casefold()
+        ),
+        None,
+    )
+    if duplicate is not None:
+        raise HTTPException(status_code=409, detail="동일한 이름의 분류가 이미 등록되어 있습니다.")
+
+    classification = {
+        "id": f"class_{uuid.uuid4().hex[:10]}",
+        "label": label,
+        "description": description,
+        "created_by_name": str(account.get("name") or "").strip(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    classifications.append(classification)
+    project["updated_at"] = classification["created_at"]
+    save_shortlisting_projects(projects)
+    return {"ok": True, "project": serialize_shortlisting_project(project, account), "classification": classification}
+
+
+@app.delete("/api/shortlisting/projects/{project_id}/classifications/{classification_id}")
+async def delete_shortlisting_classification(project_id: str, classification_id: str, request: Request) -> dict[str, Any]:
+    if not classification_id.startswith("class_"):
+        raise HTTPException(status_code=400, detail="기본 제공 분류는 삭제할 수 없습니다.")
+
+    projects = load_shortlisting_projects()
+    project = find_shortlisting_project(projects, project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    account = require_shortlisting_project_role(request, project, "owner")
+
+    classifications = project.get("classification_columns")
+    match = next(
+        (item for item in classifications if isinstance(item, dict) and item.get("id") == classification_id),
+        None,
+    ) if isinstance(classifications, list) else None
+    if match is None:
+        raise HTTPException(status_code=404, detail=f"Classification not found: {classification_id}")
+
+    classifications.remove(match)
+    project["updated_at"] = datetime.now(timezone.utc).isoformat()
+    save_shortlisting_projects(projects)
+    return {"ok": True, "project": serialize_shortlisting_project(project, account), "classification_id": classification_id}
 
 
 @app.post("/api/shortlisting/projects/{project_id}/members")
