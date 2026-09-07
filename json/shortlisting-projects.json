@@ -162,13 +162,19 @@
     "created_by_user_id": "9979fce95e884382853e0aed85d6901e",
     "created_by_email": "joowon.jung@sk.com",
     "created_at": "2026-09-06T02:34:44.666871+00:00",
-    "updated_at": "2026-09-06T12:37:08.381305+00:00",
+    "updated_at": "2026-09-06T22:28:14.793926+00:00",
     "members": [
       {
         "email": "joowon.jung@sk.com",
         "role": "owner",
         "added_by": "joowon.jung@sk.com",
         "added_at": "2026-09-06T02:34:44.666871+00:00"
+      },
+      {
+        "email": "jeongtae_lee@sk.com",
+        "role": "owner",
+        "added_by": "joowon.jung@sk.com",
+        "added_at": "2026-09-06T22:28:14.793926+00:00"
       }
     ]
   },
