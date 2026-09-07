@@ -169,6 +169,12 @@
         "role": "owner",
         "added_by": "joowon.jung@sk.com",
         "added_at": "2026-09-06T02:34:44.666871+00:00"
+      },
+      {
+        "email": "jeongtae_lee@sk.com",
+        "role": "owner",
+        "added_by": "joowon.jung@sk.com",
+        "added_at": "2026-09-06T22:28:14.793926+00:00"
       }
     ],
     "classification_columns": []

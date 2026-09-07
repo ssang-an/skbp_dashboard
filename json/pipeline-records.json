@@ -5141,11 +5141,21 @@
           "field": "focus_management.add",
           "previous_value": false,
           "new_value": true
+        },
+        {
+          "id": "dca8133be80b4f7ea5d1c0564d487b56",
+          "changed_at": "2026-09-07T06:34:01.543097+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.tracking_status",
+          "previous_value": "priority",
+          "new_value": "stationary"
         }
       ],
       "focus_management": {
         "is_tracked": true,
-        "tracking_status": "priority",
+        "tracking_status": "stationary",
         "added_at": "2026-09-06T12:40:11.985714+00:00",
         "user_comment": "",
         "due_date": "",
@@ -5195,7 +5205,7 @@
         ],
         "partnership_classification_source": "auto",
         "partnership_classified_at": "2026-09-06T12:40:11.991334+00:00",
-        "updated_at": "2026-09-06T12:40:11.985714+00:00",
+        "updated_at": "2026-09-07T06:34:01.543040+00:00",
         "updated_source": "dashboard_tab3",
         "updated_by": "정주원",
         "disease_linkage_status": "NA",
@@ -25977,6 +25987,16 @@
           "field": "focus_management.add",
           "previous_value": false,
           "new_value": true
+        },
+        {
+          "id": "11e0a3ae5a9b4b619d8e4033e09e25c8",
+          "changed_at": "2026-09-07T01:06:46.692257+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.tracking_status",
+          "previous_value": "priority",
+          "new_value": "stationary"
         },
         {
           "id": "bd309dd25f1b42268ff2409d9bd36d23",
@@ -55432,9 +55452,9 @@
         ],
         "partnership_classification_source": "auto",
         "partnership_classified_at": "2026-09-05T00:04:20.064491+00:00",
-        "updated_at": "2026-09-05T00:04:20.059579+00:00",
+        "updated_at": "2026-09-07T06:29:40.465548+00:00",
         "updated_source": "dashboard_tab3",
-        "updated_by": "정주원",
+        "updated_by": "127.0.0.1",
         "partnership_recalculation": {
           "version": "1.4",
           "previous_version": "1.4",
@@ -55522,7 +55542,7 @@
           }
         ],
         "partnership_note_source": "auto",
-        "tracking_status": "priority",
+        "tracking_status": "stationary",
         "disease_linkage_status": "NA",
         "disease_linkage_status_source": "auto",
         "disease_linkage_score_used": 2,
@@ -55749,6 +55769,16 @@
           "field": "focus_management.add",
           "previous_value": false,
           "new_value": true
+        },
+        {
+          "id": "f38d66ce3a694e30a8e3c88eef8fb2da",
+          "changed_at": "2026-09-07T06:29:40.475416+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.tracking_status",
+          "previous_value": "priority",
+          "new_value": "stationary"
         }
       ],
       "rubric_recalculation": {
