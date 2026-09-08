@@ -5990,6 +5990,26 @@
           "field": "shortlisting_projects.proj_08b16e1526.metric_values.metric_2a769cb27a",
           "previous_value": null,
           "new_value": true
+        },
+        {
+          "id": "c5141d16939f485090074a91a0bdf991",
+          "changed_at": "2026-09-08T04:49:11.274795+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_shortlisting_project",
+          "field": "shortlisting_projects.proj_08b16e1526.metric_values.metric_81ba8c46a7",
+          "previous_value": null,
+          "new_value": 1
+        },
+        {
+          "id": "0357314a8a95465c9b2c250b0de7ad3d",
+          "changed_at": "2026-09-08T07:45:43.074896+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_shortlisting_project",
+          "field": "shortlisting_projects.proj_08b16e1526.metric_values.metric_ea497710fc",
+          "previous_value": null,
+          "new_value": true
         }
       ],
       "full_scout_rubric_definition_revision": "v3-8-moa-expansion-investigation-notes-2026-09-01",
@@ -6000,13 +6020,15 @@
           "added_at": "2026-09-06T12:24:57.360170+00:00",
           "custom_score": 0,
           "metric_values": {
-            "metric_2a769cb27a": true
+            "metric_2a769cb27a": true,
+            "metric_81ba8c46a7": 1,
+            "metric_ea497710fc": true
           },
           "due_date": "",
           "owner_name": "",
           "action_plan": "",
           "user_comment": "",
-          "updated_at": "2026-09-07T05:49:50.869089+00:00",
+          "updated_at": "2026-09-08T07:45:43.074533+00:00",
           "updated_source": "dashboard_shortlisting_project",
           "updated_by": "정주원"
         }
