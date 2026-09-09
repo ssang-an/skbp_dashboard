@@ -3396,6 +3396,11 @@ th button {
   overflow-wrap: normal;
   word-break: keep-all;
   white-space: nowrap;
+  /* plainHeader() renders a <span>, not the <button> other column headers use, so it missed
+     the th button { color: var(--muted) } rule and rendered in the default (near-black) text
+     color instead of matching neighboring headers like Company/Filter 2/Total Score. */
+  color: var(--muted);
+  font-weight: 900;
 }
 
 .extra-column-cell {
@@ -3999,6 +4004,28 @@ td {
   color: var(--text);
 }
 
+/* Tone the light-gray metric-value-edit baseline above per return_type/value so Custom
+   Project metric cells read the same as OIC's own pass/review/fail evidence pills. */
+.metric-value-edit.pass {
+  background-color: #e1f6eb;
+  color: var(--green);
+}
+
+.metric-value-edit.fail {
+  background-color: #fae7e7;
+  color: var(--red);
+}
+
+.metric-value-edit.review {
+  background-color: #fff2d7;
+  color: var(--yellow);
+}
+
+.metric-value-edit.na {
+  background-color: #eef2f7;
+  color: #64748b;
+}
+
 .partnership-edit-select {
   appearance: none;
   -webkit-appearance: none;
@@ -4042,6 +4069,23 @@ td {
 .partnership-edit-select.empty {
   background-color: #eef2f7;
   color: #64748b;
+}
+
+/* Custom Project classification (Filter 3) tones: Tier 1/2/3-style labels read as
+   green/yellow/red, pass/fail-style labels read as green/red — see classificationLabelTone(). */
+.partnership-edit-select.pass {
+  background-color: #e1f6eb;
+  color: var(--green);
+}
+
+.partnership-edit-select.fail {
+  background-color: #fae7e7;
+  color: var(--red);
+}
+
+.partnership-edit-select.review {
+  background-color: #fff2d7;
+  color: var(--yellow);
 }
 
 .partnership-edit-select.is-human {
@@ -4581,6 +4625,26 @@ html[data-theme="dark"] .partnership-edit-select.value-up {
 html[data-theme="dark"] .partnership-edit-select.joint-research {
   background: rgba(251, 146, 60, 0.16);
   color: #fdba74;
+}
+
+html[data-theme="dark"] .partnership-edit-select.pass,
+html[data-theme="dark"] .metric-value-edit.pass {
+  background: rgba(52, 211, 153, 0.14);
+}
+
+html[data-theme="dark"] .partnership-edit-select.fail,
+html[data-theme="dark"] .metric-value-edit.fail {
+  background: rgba(251, 113, 133, 0.14);
+}
+
+html[data-theme="dark"] .partnership-edit-select.review,
+html[data-theme="dark"] .metric-value-edit.review {
+  background: rgba(251, 191, 36, 0.16);
+}
+
+html[data-theme="dark"] .metric-value-edit.na {
+  background: rgba(148, 163, 184, 0.16);
+  color: #cbd5e1;
 }
 
 html[data-theme="dark"] .score-chip {
@@ -6396,6 +6460,34 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   background: color-mix(in srgb, var(--red) 10%, transparent);
 }
 
+.shortlisting-metric-manager-translate-button {
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+  border-radius: 7px;
+  padding: 4px 9px;
+  margin-right: 4px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+  background: transparent;
+  white-space: nowrap;
+}
+
+.shortlisting-metric-manager-translate-button:hover {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.shortlisting-metric-manager-translate-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.shortlisting-manager-en-hint {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+  font-style: italic;
+}
+
 .shortlisting-metric-manager-add-row {
   display: grid;
   grid-template-columns: 1fr 1.3fr 0.85fr auto;
@@ -6423,6 +6515,12 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   width: 44px;
   text-align: center;
   color: var(--muted);
+}
+
+.criteria-custom-project-panel {
+  display: grid;
+  gap: 16px;
+  --criteria-tab-accent: #7657c9;
 }
 
 .criteria-custom-project-panel[hidden] {

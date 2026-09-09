@@ -10979,10 +10979,23 @@ async def create_shortlisting_metric_column(project_id: str, request: Request) -
     if duplicate is not None:
         raise HTTPException(status_code=409, detail="동일한 이름의 지표가 이미 등록되어 있습니다.")
 
+    label_en = ""
+    description_en = ""
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    if api_key:
+        translated, translate_error = call_openrouter_translate_ko_to_en(label, description, api_key)
+        if translated:
+            label_en = translated.get("label_en", "")
+            description_en = translated.get("description_en", "")
+        elif translate_error:
+            print(f"[shortlisting-metric-translate] {project_id}/{label}: {translate_error}")
+
     column = {
         "id": f"metric_{uuid.uuid4().hex[:10]}",
         "label": label,
         "description": description,
+        "label_en": label_en,
+        "description_en": description_en,
         "return_type": return_type,
         "is_builtin": False,
         "options": options,
@@ -11100,6 +11113,51 @@ def call_openrouter_translate_ko_to_en(label: str, description: str, api_key: st
     return None, " / ".join(errors[:4]) or "OpenRouter returned no usable response."
 
 
+def retranslate_shortlisting_item(item: dict[str, Any]) -> str | None:
+    """Re-run KO->EN translation for an existing metric/classification item in place.
+
+    Backfills label_en/description_en for items created before this feature existed
+    (or whose first attempt failed/was skipped because OPENROUTER_API_KEY was unset).
+    Returns an error string on failure (item left unmodified) or None on success.
+    """
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        return "OPENROUTER_API_KEY가 설정되어 있지 않습니다."
+    translated, error = call_openrouter_translate_ko_to_en(
+        str(item.get("label") or ""), str(item.get("description") or ""), api_key
+    )
+    if not translated:
+        return error or "번역에 실패했습니다."
+    item["label_en"] = translated.get("label_en", "")
+    item["description_en"] = translated.get("description_en", "")
+    return None
+
+
+@app.post("/api/shortlisting/projects/{project_id}/columns/{column_id}/translate")
+async def translate_shortlisting_metric_column(project_id: str, column_id: str, request: Request) -> dict[str, Any]:
+    projects = load_shortlisting_projects()
+    project = find_shortlisting_project(projects, project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    account = require_shortlisting_project_role(request, project, "owner")
+
+    metric_columns = project.get("metric_columns")
+    match = next(
+        (column for column in metric_columns if isinstance(column, dict) and column.get("id") == column_id),
+        None,
+    ) if isinstance(metric_columns, list) else None
+    if match is None:
+        raise HTTPException(status_code=404, detail=f"Column not found: {column_id}")
+
+    error = retranslate_shortlisting_item(match)
+    if error:
+        raise HTTPException(status_code=502, detail=f"번역에 실패했습니다: {error}")
+
+    project["updated_at"] = datetime.now(timezone.utc).isoformat()
+    save_shortlisting_projects(projects)
+    return {"ok": True, "project": serialize_shortlisting_project(project, account), "column": match}
+
+
 @app.post("/api/shortlisting/projects/{project_id}/classifications")
 async def create_shortlisting_classification(project_id: str, request: Request) -> dict[str, Any]:
     try:
@@ -11193,6 +11251,31 @@ async def delete_shortlisting_classification(project_id: str, classification_id:
     project["updated_at"] = datetime.now(timezone.utc).isoformat()
     save_shortlisting_projects(projects)
     return {"ok": True, "project": serialize_shortlisting_project(project, account), "classification_id": classification_id}
+
+
+@app.post("/api/shortlisting/projects/{project_id}/classifications/{classification_id}/translate")
+async def translate_shortlisting_classification(project_id: str, classification_id: str, request: Request) -> dict[str, Any]:
+    projects = load_shortlisting_projects()
+    project = find_shortlisting_project(projects, project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    account = require_shortlisting_project_role(request, project, "owner")
+
+    classifications = project.get("classification_columns")
+    match = next(
+        (item for item in classifications if isinstance(item, dict) and item.get("id") == classification_id),
+        None,
+    ) if isinstance(classifications, list) else None
+    if match is None:
+        raise HTTPException(status_code=404, detail=f"Classification not found: {classification_id}")
+
+    error = retranslate_shortlisting_item(match)
+    if error:
+        raise HTTPException(status_code=502, detail=f"번역에 실패했습니다: {error}")
+
+    project["updated_at"] = datetime.now(timezone.utc).isoformat()
+    save_shortlisting_projects(projects)
+    return {"ok": True, "project": serialize_shortlisting_project(project, account), "classification": match}
 
 
 @app.post("/api/shortlisting/projects/{project_id}/members")

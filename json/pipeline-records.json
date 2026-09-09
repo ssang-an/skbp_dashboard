@@ -6010,6 +6010,46 @@
           "field": "shortlisting_projects.proj_08b16e1526.metric_values.metric_ea497710fc",
           "previous_value": null,
           "new_value": true
+        },
+        {
+          "id": "71ab21af50044836bdaaa649c4459f8f",
+          "changed_at": "2026-09-09T02:00:52.937596+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_shortlisting_project",
+          "field": "shortlisting_projects.proj_08b16e1526.classification",
+          "previous_value": null,
+          "new_value": "class_197c15205c"
+        },
+        {
+          "id": "0447f429f2984ccea94157feddc300f6",
+          "changed_at": "2026-09-09T02:01:12.717033+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_shortlisting_project",
+          "field": "shortlisting_projects.proj_08b16e1526.classification",
+          "previous_value": "class_197c15205c",
+          "new_value": ""
+        },
+        {
+          "id": "53ec0ab4017c4b01be76ea59a51b8b23",
+          "changed_at": "2026-09-09T04:10:18.384126+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_shortlisting_project",
+          "field": "shortlisting_projects.proj_08b16e1526.metric_values.metric_81ba8c46a7",
+          "previous_value": 1,
+          "new_value": 2
+        },
+        {
+          "id": "6b046565e9534e9facf5a5ca86bc46a8",
+          "changed_at": "2026-09-09T04:10:21.329298+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_shortlisting_project",
+          "field": "shortlisting_projects.proj_08b16e1526.metric_values.metric_81ba8c46a7",
+          "previous_value": 2,
+          "new_value": 1
         }
       ],
       "full_scout_rubric_definition_revision": "v3-8-moa-expansion-investigation-notes-2026-09-01",
@@ -6028,9 +6068,10 @@
           "owner_name": "",
           "action_plan": "",
           "user_comment": "",
-          "updated_at": "2026-09-08T07:45:43.074533+00:00",
+          "updated_at": "2026-09-09T04:10:21.329266+00:00",
           "updated_source": "dashboard_shortlisting_project",
-          "updated_by": "정주원"
+          "updated_by": "정주원",
+          "classification": ""
         }
       }
     },

@@ -5285,16 +5285,40 @@ function englishCriteriaBody() {
   return doc.body.firstElementChild;
 }
 
+function shortlistingMetricReturnTypeHint(column, isEnglish) {
+  if (column.return_type === 'list' && Array.isArray(column.options) && column.options.length) {
+    return isEnglish ? ` (options: ${column.options.join(', ')})` : ` (선택지: ${column.options.join(', ')})`;
+  }
+  if (column.return_type === 'boolean') return ' (Pass/Fail)';
+  if (column.return_type === 'number' && Number.isFinite(column.max_value)) {
+    return isEnglish ? ` (0–${column.max_value})` : ` (0~${column.max_value})`;
+  }
+  return '';
+}
+
 function renderCriteriaDrawerCustomProjectContent(project) {
   if (!elements.criteriaDrawerBody) return;
   const isEnglish = criteriaGuideLanguage === 'en';
+  const metricColumns = project?.metric_columns || [];
   const classifications = project?.classification_columns || [];
   const labelFor = (item) => (isEnglish && item.label_en) ? item.label_en : item.label;
   const descriptionFor = (item) => {
     if (isEnglish && item.description_en) return item.description_en;
     return item.description || (isEnglish ? 'No description provided.' : '설명이 등록되지 않았습니다.');
   };
-  const listMarkup = classifications.length
+
+  const metricListMarkup = metricColumns.length
+    ? metricColumns.map((column) => `
+        <article class="criteria-focus-info-card">
+          <div class="criteria-focus-card-heading"><h4>${escapeHtml(labelFor(column))}${escapeHtml(shortlistingMetricReturnTypeHint(column, isEnglish))}</h4></div>
+          <p>${escapeHtml(descriptionFor(column))}</p>
+        </article>
+      `).join('')
+    : `<p class="criteria-custom-project-empty">${isEnglish
+        ? 'This Project has no metrics yet. Add some from Project Settings → Metric Management.'
+        : '이 Project는 아직 등록된 지표가 없습니다. Project 설정 → 지표 관리에서 추가할 수 있습니다.'}</p>`;
+
+  const classificationListMarkup = classifications.length
     ? classifications.map((item, index) => `
         <article class="criteria-focus-info-card">
           <div class="criteria-focus-card-heading"><h4>${index + 1}. ${escapeHtml(labelFor(item))}</h4></div>
@@ -5304,15 +5328,27 @@ function renderCriteriaDrawerCustomProjectContent(project) {
     : `<p class="criteria-custom-project-empty">${isEnglish
         ? 'This Project has no classification criteria yet. Add some from Project Settings → Classification Management.'
         : '이 Project는 아직 분류 기준이 등록되지 않았습니다. Project 설정 → 분류 관리에서 추가할 수 있습니다.'}</p>`;
+
   elements.criteriaDrawerBody.innerHTML = `
     <section class="criteria-rule criteria-focus-rule">
-      <h3>${escapeHtml(project?.name || '')} ${isEnglish ? '- Classification Criteria' : '— 분류 기준'}</h3>
+      <h3>${escapeHtml(project?.name || '')} ${isEnglish ? '- Review Criteria' : '— 검토 기준'}</h3>
       <p>${isEnglish
-        ? 'The final classification criteria this Project defined by combining its metrics.'
-        : '이 Project에서 설정한 지표를 종합해 판단하는 최종 분류 기준입니다.'}</p>
+        ? 'This Project’s own metrics and the final classification criteria derived from them.'
+        : '이 Project에서 설정한 지표와, 이를 종합해 판단하는 최종 분류 기준입니다.'}</p>
     </section>
-    <section class="criteria-focus-section criteria-guide-section">
-      <div class="criteria-focus-grid criteria-focus-input-grid">${listMarkup}</div>
+    <section class="criteria-focus-section criteria-guide-section" data-criteria-tab="focus">
+      <div class="criteria-guide-section-heading">
+        <span class="criteria-guide-step-number" aria-hidden="true">1</span>
+        <span class="criteria-guide-section-copy"><h3>${isEnglish ? 'Classification' : '분류'}</h3><p>${isEnglish ? 'Final judgment combining the metrics below' : '아래 지표를 종합해 내리는 최종 판단'}</p></span>
+      </div>
+      <div class="criteria-focus-grid criteria-focus-input-grid">${classificationListMarkup}</div>
+    </section>
+    <section class="criteria-focus-section criteria-guide-section" data-criteria-tab="focus">
+      <div class="criteria-guide-section-heading">
+        <span class="criteria-guide-step-number" aria-hidden="true">2</span>
+        <span class="criteria-guide-section-copy"><h3>${isEnglish ? 'Metrics' : '지표'}</h3><p>${isEnglish ? 'What this Project tracks per pipeline' : '이 Project가 pipeline별로 기록하는 항목'}</p></span>
+      </div>
+      <div class="criteria-focus-grid criteria-focus-input-grid">${metricListMarkup}</div>
     </section>
   `;
   elements.criteriaDrawerBody.lang = isEnglish ? 'en' : 'ko';

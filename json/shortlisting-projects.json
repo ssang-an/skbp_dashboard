@@ -213,14 +213,16 @@
         "options": null,
         "max_value": null,
         "created_by_name": "정주원",
-        "created_at": "2026-09-08T07:45:38.917005+00:00"
+        "created_at": "2026-09-08T07:45:38.917005+00:00",
+        "label_en": "CMC Ready",
+        "description_en": "If the API/DS DP production site, stability data/GMP conditions, and CMC strategy review show that CMC issues are manageable, then O."
       }
     ],
     "created_by_name": "정주원",
     "created_by_user_id": "9979fce95e884382853e0aed85d6901e",
     "created_by_email": "joowon.jung@sk.com",
     "created_at": "2026-09-06T02:34:44.666871+00:00",
-    "updated_at": "2026-09-08T07:45:38.917005+00:00",
+    "updated_at": "2026-09-09T05:54:17.895075+00:00",
     "members": [
       {
         "email": "joowon.jung@sk.com",
@@ -241,21 +243,27 @@
         "label": "Tier 1",
         "description": "경쟁사 고려 차별점 있으며, CoM 충분함",
         "created_by_name": "정주원",
-        "created_at": "2026-09-08T04:47:35.259414+00:00"
+        "created_at": "2026-09-08T04:47:35.259414+00:00",
+        "label_en": "Tier 1",
+        "description_en": "Has differentiators considering competitors, and CoM is sufficient."
       },
       {
         "id": "class_17191e2e9e",
         "label": "Tier 2",
         "description": "경쟁사 고려 차별점 확보 여부는 향후 임상 지표 확인 필요",
         "created_by_name": "정주원",
-        "created_at": "2026-09-08T04:48:20.780468+00:00"
+        "created_at": "2026-09-08T04:48:20.780468+00:00",
+        "label_en": "Tier 2",
+        "description_en": "Whether a differentiation point considering competitors is secured needs confirmation through future clinical indicators."
       },
       {
         "id": "class_b2c867f74f",
         "label": "Tier 3",
         "description": "차별점 및 유효 CoM 연수 빈약",
         "created_by_name": "정주원",
-        "created_at": "2026-09-08T04:48:46.221533+00:00"
+        "created_at": "2026-09-08T04:48:46.221533+00:00",
+        "label_en": "Tier 3",
+        "description_en": "Poor differentiation and insufficient effective CoM training"
       }
     ]
   },

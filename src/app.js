@@ -3116,16 +3116,39 @@ function extraColumnKey(column) {
   return `extra:${column.key}`;
 }
 
+// Custom Project metric columns (Filter 3 지표) have no fixed key, so they'd otherwise fall back to
+// the generic "extra" width (180px) sized for free-text extra columns — much wider than OIC's own
+// builtin metric columns (In-vivo/In-vitro/ADMET/D·Link, 42-84px). Size them by return_type instead
+// so a Custom Project's table reads at the same density as OIC's.
+const METRIC_COLUMN_TYPE_DEFAULT_WIDTHS = { boolean: 76, number: 84, list: 96, date: 108, text: 140 };
+const METRIC_COLUMN_TYPE_MIN_WIDTHS = { boolean: 64, number: 70, list: 80, date: 92, text: 110 };
+
+function metricColumnTypeWidth(key, widthsByType) {
+  if (typeof key !== 'string' || !key.startsWith('metric:')) return null;
+  const metricId = key.slice('metric:'.length);
+  const column = activeShortlistingMetricColumns().find((item) => item.id === metricId);
+  if (!column) return null;
+  return widthsByType[column.return_type] || widthsByType.text;
+}
+
 function defaultColumnWidth(key) {
   if (activeTableMode() === 'focus') {
-    return FOCUS_DEFAULT_COLUMN_WIDTHS[key] || FOCUS_DEFAULT_COLUMN_WIDTHS.extra;
+    return (
+      metricColumnTypeWidth(key, METRIC_COLUMN_TYPE_DEFAULT_WIDTHS) ||
+      FOCUS_DEFAULT_COLUMN_WIDTHS[key] ||
+      FOCUS_DEFAULT_COLUMN_WIDTHS.extra
+    );
   }
   return DEFAULT_COLUMN_WIDTHS[key] || DEFAULT_COLUMN_WIDTHS.extra;
 }
 
 function minColumnWidth(key) {
   if (activeTableMode() === 'focus') {
-    return FOCUS_MIN_COLUMN_WIDTHS[key] || FOCUS_MIN_COLUMN_WIDTHS.extra;
+    return (
+      metricColumnTypeWidth(key, METRIC_COLUMN_TYPE_MIN_WIDTHS) ||
+      FOCUS_MIN_COLUMN_WIDTHS[key] ||
+      FOCUS_MIN_COLUMN_WIDTHS.extra
+    );
   }
   return MIN_COLUMN_WIDTHS[key] || MIN_COLUMN_WIDTHS.extra;
 }
@@ -3290,6 +3313,10 @@ function activeStatusFilterOptions() {
     ];
   }
   if (activeTableMode() === 'focus') {
+    if (state.activeShortlistingProjectId !== DEFAULT_SHORTLISTING_PROJECT_ID) {
+      const classifications = activeShortlistingProject()?.classification_columns || [];
+      return classifications.map((item) => ({ value: item.id, label: item.label }));
+    }
     return [
       { value: 'investment', label: '투자' },
       { value: 'value_up', label: 'Value Up' },
@@ -4208,6 +4235,7 @@ function getVisibleRows(includeQuery = true) {
     .map(normalizedDashboardSearchText)
     .filter(Boolean);
   const filterKey = activeFilterKey();
+  const isCustomFocusFilter = activeTableMode() === 'focus' && state.activeShortlistingProjectId !== DEFAULT_SHORTLISTING_PROJECT_ID;
   const rows = state.rows.filter((row) => {
       const searchable = [
         row.company,
@@ -4240,7 +4268,12 @@ function getVisibleRows(includeQuery = true) {
         (selectedFilterValues(state.indication).length === 0 || selectedFilterValues(state.indication).some((value) => dashboardIndicationFilterValues(row).includes(value))) &&
         selectedCountryFilterMatches(state.country, row.country) &&
         selectedFilterMatches(state.stage, row.stage) &&
-        selectedFilterMatches(state.pass, row[filterKey]) &&
+        selectedFilterMatches(
+          state.pass,
+          isCustomFocusFilter
+            ? get(row.raw, `meta.shortlisting_projects.${state.activeShortlistingProjectId}.classification`, '')
+            : row[filterKey]
+        ) &&
         scoreFilterMatches('targetScore', row.targetScore) &&
         scoreFilterMatches('moaScore', row.moaScore) &&
         scoreFilterMatches('dataScore', row.dataScore) &&
@@ -4336,9 +4369,15 @@ function multiFilterMenuMarkup(key, options, selected, valueAttribute, query = '
   const canonicalOptions = hasCanonicalLibrary
     ? canonicalOrder.map((value) => byValue.get(value)).filter(Boolean)
     : options;
-  const additionalOptions = options
-    .filter((option) => !canonicalValues.has(option.value))
-    .sort((a, b) => a.label.localeCompare(b.label, 'en'));
+  // When a key has no canonical dictionary at all (e.g. Filter 3 / 'pass' — it isn't a
+  // category-synonyms field), canonicalOptions above already equals the full options list, so
+  // there is nothing left over for "Others". Without this guard, canonicalValues is an empty
+  // Set and every option fails `!canonicalValues.has(...)`, duplicating the whole list into Others.
+  const additionalOptions = hasCanonicalLibrary
+    ? options
+        .filter((option) => !canonicalValues.has(option.value))
+        .sort((a, b) => a.label.localeCompare(b.label, 'en'))
+    : [];
   const optionMarkup = (option, isCanonical) => {
     const isSelected = selected.includes(option.value);
     return `<button type="button" class="filter-multiselect-option${isSelected ? ' is-selected' : ''}${isCanonical ? ' is-canonical' : ''}" ${valueAttribute}="${escapeHtml(option.value)}" data-filter-menu-option role="option" aria-selected="${isSelected}"><span class="filter-multiselect-check" aria-hidden="true">${isSelected ? '✓' : ''}</span><span>${escapeHtml(option.label)}</span></button>`;
@@ -4418,6 +4457,7 @@ const WORKFLOW_COPY = {
   focus: {
     stage: '3차 집중 관리',
     description: '즐겨찾기로 등록한 Advanced Research 후보의 OI Partnership Type과 후속 Action을 관리합니다.',
+    descriptionCustomProject: '즐겨찾기로 등록한 Advanced Research 후보의 팀 내 추가 고려 사항, 추가 가산점 및 후속 Action을 기록할 수 있습니다.',
     filterLabel: 'Filter 3',
     priorityTitle: 'F/U Action',
     prioritySubtitle: 'Action date 설정 항목 · 임박 순'
@@ -4581,8 +4621,27 @@ function fallbackTabSummary(mode, filteredRows = null) {
     };
   }
   if (mode === 'focus') {
-    const ongoingPartnershipTypes = ['investment', 'value_up', 'joint_research'];
-    const ongoingFocusRows = focusRows.filter((row) => ongoingPartnershipTypes.includes(row.filter3));
+    // OIC's default Project has a fixed auto-classifier (row.filter3: 투자/Value Up/공동연구).
+    // Custom Projects have no such fixed taxonomy — their Filter 3 value lives per-project at
+    // meta.shortlisting_projects.<id>.classification and its labels come from that Project's own
+    // classification_columns. Read through this indirection so the Summary Dashboard's OI
+    // Partnership panel reflects each Project's own classification instead of OIC's.
+    const isDefaultFocusProject = state.activeShortlistingProjectId === DEFAULT_SHORTLISTING_PROJECT_ID;
+    const projectClassifications = isDefaultFocusProject ? [] : (activeShortlistingProject()?.classification_columns || []);
+    const rowClassificationValue = (row) => (
+      isDefaultFocusProject
+        ? row.filter3
+        : get(row.raw, `meta.shortlisting_projects.${state.activeShortlistingProjectId}.classification`, '')
+    );
+    const classificationLabelFor = (value) => {
+      if (isDefaultFocusProject) return PARTNERSHIP_LABELS[value] || value || 'Unknown';
+      if (!value) return '미분류';
+      return projectClassifications.find((item) => item.id === value)?.label || value;
+    };
+    const ongoingPartnershipTypes = isDefaultFocusProject
+      ? ['investment', 'value_up', 'joint_research']
+      : projectClassifications.map((item) => item.id);
+    const ongoingFocusRows = focusRows.filter((row) => ongoingPartnershipTypes.includes(rowClassificationValue(row)));
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     const actionRows = focusRows
@@ -4594,12 +4653,13 @@ function fallbackTabSummary(mode, filteredRows = null) {
         const due = new Date(`${row.focusDueDate}T00:00:00`);
         const days = Math.ceil((due - now) / 86400000);
         const actionStatus = actionDateSummaryStatus(days);
+        const classificationValue = rowClassificationValue(row);
         return {
           ...fallbackCommonListItem(row),
           filter2: row.filter2,
           total_score: row.totalScore,
-          partnership_type: row.filter3 || 'unknown',
-          partnership_label: PARTNERSHIP_LABELS[row.filter3] || row.filter3,
+          partnership_type: classificationValue || 'unknown',
+          partnership_label: classificationLabelFor(classificationValue),
           partnership_source: row.filter3Source,
           human_override: row.filter3Source === 'manual',
           action_date: row.focusDueDate,
@@ -4618,10 +4678,10 @@ function fallbackTabSummary(mode, filteredRows = null) {
       kpis: {
         pipelines: focusRows.length,
         ongoing: ongoingFocusRows.length,
-        investment: focusRows.filter((row) => row.filter3 === 'investment').length,
-        value_up: focusRows.filter((row) => row.filter3 === 'value_up').length,
-        joint_research: focusRows.filter((row) => row.filter3 === 'joint_research').length,
-        unknown: focusRows.filter((row) => !row.filter3 || row.filter3 === 'unknown').length,
+        investment: focusRows.filter((row) => rowClassificationValue(row) === 'investment').length,
+        value_up: focusRows.filter((row) => rowClassificationValue(row) === 'value_up').length,
+        joint_research: focusRows.filter((row) => rowClassificationValue(row) === 'joint_research').length,
+        unknown: focusRows.filter((row) => !rowClassificationValue(row) || rowClassificationValue(row) === 'unknown').length,
         average_total_score: average(focusRows.map((row) => row.totalScore)),
         max_score: 21
       },
@@ -4631,10 +4691,10 @@ function fallbackTabSummary(mode, filteredRows = null) {
       },
       partnership_distribution: fallbackDistribution(
         focusRows,
-        (row) => ongoingPartnershipTypes.includes(row.filter3) ? row.filter3 : 'tbd',
+        (row) => ongoingPartnershipTypes.includes(rowClassificationValue(row)) ? rowClassificationValue(row) : 'tbd',
         [...ongoingPartnershipTypes, 'tbd']
       )
-        .map((item) => ({ ...item, label: PARTNERSHIP_LABELS[item.key] })),
+        .map((item) => ({ ...item, label: item.key === 'tbd' ? '미분류' : classificationLabelFor(item.key) })),
       indication_distribution: indicationDistribution(focusRows),
       modality_distribution: fallbackModalityDistribution(focusRows),
       action_required: actionRows
@@ -4678,7 +4738,12 @@ function fallbackTabSummary(mode, filteredRows = null) {
 
 function activeTabSummary() {
   const mode = activeTableMode();
-  if (activeSummaryFilterCount() > 0) {
+  // The server-computed dashboardSummary.tabs.shortlisting bucket has no per-Project dimension —
+  // it's a single mode-wide aggregate. For any Custom Project other than OIC, always compute the
+  // summary client-side from getVisibleRows() (already scoped via rowMatchesActiveTableMode) so
+  // charts/KPIs show that Project's own assets instead of every Shortlisting-tracked row.
+  const isCustomFocusProject = mode === 'focus' && state.activeShortlistingProjectId !== DEFAULT_SHORTLISTING_PROJECT_ID;
+  if (activeSummaryFilterCount() > 0 || isCustomFocusProject) {
     return fallbackTabSummary(mode, getVisibleRows(false));
   }
   const key = mode === 'triage'
@@ -4882,7 +4947,7 @@ function donutChart(entries, kind) {
     'Value Up': '#7657c9',
     공동연구: '#0f9f8f'
   };
-  const isNeutralDonutLabel = (label) => /^(others?|unknown|n\/?a|other\s*\/\s*unknown|기타\s*\/\s*미확인)$/i.test(String(label).trim());
+  const isNeutralDonutLabel = (label) => /^(others?|unknown|n\/?a|other\s*\/\s*unknown|기타\s*\/\s*미확인|미분류)$/i.test(String(label).trim());
   const segmentColor = (label, index) => {
     if (kind === 'partnership' && /^TBD$/i.test(String(label).trim())) {
       return DONUT_OTHERS_COLOR;
@@ -5324,7 +5389,7 @@ function renderWorkflowPriorityList(summary) {
           return `
             <button type="button" class="priority-item workflow-priority-item" data-record-id="${escapeHtml(recordId)}">
               <span class="workflow-priority-main"><strong>${escapeHtml(asset)}</strong><small>${escapeHtml(company)}</small></span>
-              <span class="workflow-priority-context">${escapeHtml(PARTNERSHIP_LABELS[item.partnership_type] || item.partnership_label || 'Unknown')} · ${escapeHtml(item.action_date)}</span>
+              <span class="workflow-priority-context">${escapeHtml(item.partnership_label || PARTNERSHIP_LABELS[item.partnership_type] || 'Unknown')} · ${escapeHtml(item.action_date)}</span>
               <span class="workflow-priority-badges">
                 ${workflowListBadge(actionDetail.label, actionDetail.tone)}
                 ${item.human_override || item.partnership_source === 'manual' ? workflowListBadge('HUMAN', 'human') : ''}
@@ -5539,6 +5604,8 @@ function renderWorkflowMode(summary = activeTabSummary()) {
   const copy = WORKFLOW_COPY[mode];
   const distributionAssets = Number(summary?.distribution_population?.assets) || 0;
   if (elements.workflowModeDescription) {
+    const isCustomFocusProject = mode === 'focus' && state.activeShortlistingProjectId !== DEFAULT_SHORTLISTING_PROJECT_ID;
+    const description = isCustomFocusProject && copy.descriptionCustomProject ? copy.descriptionCustomProject : copy.description;
     elements.workflowModeDescription.dataset.workflowMode = mode;
     elements.workflowModeDescription.innerHTML = `
       <span class="workflow-description-icon" aria-hidden="true">
@@ -5549,7 +5616,7 @@ function renderWorkflowMode(summary = activeTabSummary()) {
       </span>
       <span class="workflow-description-copy">
         <strong>${escapeHtml(copy.stage)}<span class="workflow-description-separator" aria-hidden="true">·</span></strong>
-        <span>${escapeHtml(copy.description)}</span>
+        <span>${escapeHtml(description)}</span>
       </span>
       <span class="workflow-description-filter">${escapeHtml(copy.filterLabel)}</span>`;
   }
@@ -5722,8 +5789,12 @@ function renderCharts() {
 
   if (elements.passRateChart) {
     const mode = activeTableMode();
+    const isDefaultFocusProjectChart = state.activeShortlistingProjectId === DEFAULT_SHORTLISTING_PROJECT_ID;
     const sourceDistribution = mode === 'focus'
-      ? partnershipSummaryDistribution(summary.partnership_distribution)
+      // OIC's fixed 투자/Value Up/공동연구/TBD legend only applies to OIC's own auto-classifier;
+      // a Custom Project's classification_columns are arbitrary, so pass its distribution through
+      // untouched instead of collapsing every non-OIC key into "TBD" (partnershipSummaryDistribution).
+      ? (isDefaultFocusProjectChart ? partnershipSummaryDistribution(summary.partnership_distribution) : summary.partnership_distribution)
       : summary.status_distribution;
     const distributionKind = mode === 'focus' ? 'partnership' : 'status';
     const statusEntries = summaryDistributionPairs(sourceDistribution, distributionKind);
@@ -5750,10 +5821,11 @@ function renderCharts() {
     if (center) center.insertAdjacentHTML('beforeend', `<small>${mode === 'focus' ? 'ONGOING' : leadLabel}</small>`);
     animateDashboardDonut(elements.passRateChart, 180);
     if (elements.workflowStatusTitle) {
+      const isDefaultFocusProject = state.activeShortlistingProjectId === DEFAULT_SHORTLISTING_PROJECT_ID;
       elements.workflowStatusTitle.textContent = mode === 'triage'
         ? 'SELECT Rate'
         : mode === 'focus'
-          ? 'OI Partnership 분포'
+          ? (isDefaultFocusProject ? 'OI Partnership 분포' : 'Filter 3 분포')
           : 'PASS Rate';
     }
     if (elements.passRateSubtitle) {
@@ -6011,15 +6083,24 @@ function partnershipNoteEditor(row) {
 
 // Custom Shortlisting Projects have no automatic classifier like OIC's Filter 3
 // (partnershipEditSelect above); this is a manual pick from the Project's own
-// classification_columns, styled with the same pill control cycling OIC's four
-// tone colors by option index so a Project's UI still reads as "Filter 3-like".
-const CLASSIFICATION_TONE_CYCLE = ['investment', 'value-up', 'joint-research', 'na'];
+// classification_columns. Tone is inferred from the option's label so the pill
+// still reads consistently with OIC's pass/review/fail palette: Tier 1/2/3-style
+// labels map to green/yellow/red, pass/fail-style labels map to green/red, and
+// anything else falls back to the same neutral gray as an unclassified row.
+function classificationLabelTone(label) {
+  const trimmed = (label || '').trim();
+  const tierMatch = trimmed.match(/tier\s*([1-3])\b/i);
+  if (tierMatch) return { 1: 'pass', 2: 'review', 3: 'fail' }[tierMatch[1]];
+  if (/^(pass|합격|승인|우수|적합)$/i.test(trimmed)) return 'pass';
+  if (/^(fail|불합격|반려|부적합|탈락)$/i.test(trimmed)) return 'fail';
+  return null;
+}
 
 function classificationToneClass(classifications, value) {
-  if (!value) return 'empty';
-  const index = classifications.findIndex((item) => item.id === value);
-  if (index < 0) return 'empty';
-  return CLASSIFICATION_TONE_CYCLE[index % CLASSIFICATION_TONE_CYCLE.length];
+  if (!value) return 'na';
+  const option = classifications.find((item) => item.id === value);
+  if (!option) return 'na';
+  return classificationLabelTone(option.label) || 'na';
 }
 
 function classificationEditSelect(row, project) {
@@ -6855,8 +6936,16 @@ function setActiveShortlistingProjectId(projectId) {
   state.activeShortlistingProjectId = projectId;
   localStorage.setItem(SHORTLISTING_PROJECT_STORAGE_KEY, projectId);
   state.page = 1;
+  // Filter 3 selections are keyed by the previous Project's classification ids (e.g. OIC's
+  // 'investment') which are meaningless for the newly active Project, so drop them rather than
+  // silently carrying over a stale/impossible selection.
+  state.pass = [];
   renderShortlistingProjectControl();
-  renderTable();
+  // Only renderTable() was called here before, so switching Projects updated the Pipeline Table
+  // but left the Summary Dashboard (charts/KPIs/F-U Action) and the Filter 3 dropdown showing
+  // whichever Project was active at last full render — typically OIC from initial page load.
+  renderFilters();
+  renderFilteredDashboard();
 }
 
 function openShortlistingProjectSwitchMenu() {
@@ -7103,9 +7192,15 @@ function renderShortlistingMetricManagerTable() {
     ? customColumns.map((column) => `
       <tr data-metric-id="${escapeHtml(column.id)}">
         <td>${escapeHtml(column.label)}</td>
-        <td>${escapeHtml(column.description || '-')}</td>
+        <td>
+          ${escapeHtml(column.description || '-')}
+          ${column.label_en ? `<div class="shortlisting-manager-en-hint">EN: ${escapeHtml(column.label_en)}${column.description_en ? ` — ${escapeHtml(column.description_en)}` : ''}</div>` : ''}
+        </td>
         <td>${escapeHtml(shortlistingMetricReturnTypeSummary(column))}</td>
-        <td><button type="button" class="shortlisting-metric-manager-delete-button" data-delete-metric-id="${escapeHtml(column.id)}">삭제</button></td>
+        <td>
+          <button type="button" class="shortlisting-metric-manager-translate-button" data-translate-metric-id="${escapeHtml(column.id)}" title="판단근거 영문 번역 생성/갱신">${column.label_en ? '재번역' : '번역'}</button>
+          <button type="button" class="shortlisting-metric-manager-delete-button" data-delete-metric-id="${escapeHtml(column.id)}">삭제</button>
+        </td>
       </tr>
     `).join('')
     : `<tr class="shortlisting-metric-manager-empty-row"><td colspan="4">등록된 커스텀 지표가 없습니다.</td></tr>`;
@@ -7136,8 +7231,14 @@ function renderShortlistingClassificationManagerTable() {
       <tr data-classification-id="${escapeHtml(classification.id)}">
         <td>${index + 1}</td>
         <td>${escapeHtml(classification.label)}</td>
-        <td>${escapeHtml(classification.description || '-')}</td>
-        <td><button type="button" class="shortlisting-metric-manager-delete-button" data-delete-classification-id="${escapeHtml(classification.id)}">삭제</button></td>
+        <td>
+          ${escapeHtml(classification.description || '-')}
+          ${classification.label_en ? `<div class="shortlisting-manager-en-hint">EN: ${escapeHtml(classification.label_en)}${classification.description_en ? ` — ${escapeHtml(classification.description_en)}` : ''}</div>` : ''}
+        </td>
+        <td>
+          <button type="button" class="shortlisting-metric-manager-translate-button" data-translate-classification-id="${escapeHtml(classification.id)}" title="판단근거 영문 번역 생성/갱신">${classification.label_en ? '재번역' : '번역'}</button>
+          <button type="button" class="shortlisting-metric-manager-delete-button" data-delete-classification-id="${escapeHtml(classification.id)}">삭제</button>
+        </td>
       </tr>
     `).join('')
     : `<tr class="shortlisting-metric-manager-empty-row"><td colspan="4">등록된 분류가 없습니다.</td></tr>`;
@@ -7469,6 +7570,32 @@ async function deleteShortlistingMetricColumn(columnId) {
   }
 }
 
+async function translateShortlistingMetricColumn(columnId, button) {
+  const projectId = state.settingsModalProjectId;
+  if (!projectId || projectId === DEFAULT_SHORTLISTING_PROJECT_ID || !columnId) return;
+  if (button) button.disabled = true;
+  try {
+    const response = await fetch(`${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/columns/${encodeURIComponent(columnId)}/translate`, {
+      method: 'POST'
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '번역에 실패했습니다.');
+    applyShortlistingProjectUpdate(data.project);
+    renderShortlistingMetricManagerTable();
+    if (elements.shortlistingMetricModalStatus) {
+      elements.shortlistingMetricModalStatus.textContent = '';
+      elements.shortlistingMetricModalStatus.classList.remove('is-error');
+    }
+  } catch (error) {
+    if (elements.shortlistingMetricModalStatus) {
+      elements.shortlistingMetricModalStatus.textContent = error.message || '번역에 실패했습니다.';
+      elements.shortlistingMetricModalStatus.classList.add('is-error');
+    }
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+
 async function submitShortlistingClassificationModal() {
   const projectId = state.settingsModalProjectId;
   if (!projectId || projectId === DEFAULT_SHORTLISTING_PROJECT_ID) return;
@@ -7522,6 +7649,32 @@ async function deleteShortlistingClassification(classificationId) {
       elements.shortlistingClassificationModalStatus.textContent = error.message || '분류 삭제에 실패했습니다.';
       elements.shortlistingClassificationModalStatus.classList.add('is-error');
     }
+  }
+}
+
+async function translateShortlistingClassification(classificationId, button) {
+  const projectId = state.settingsModalProjectId;
+  if (!projectId || projectId === DEFAULT_SHORTLISTING_PROJECT_ID || !classificationId) return;
+  if (button) button.disabled = true;
+  try {
+    const response = await fetch(`${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/classifications/${encodeURIComponent(classificationId)}/translate`, {
+      method: 'POST'
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || '번역에 실패했습니다.');
+    applyShortlistingProjectUpdate(data.project);
+    renderShortlistingClassificationManagerTable();
+    if (elements.shortlistingClassificationModalStatus) {
+      elements.shortlistingClassificationModalStatus.textContent = '';
+      elements.shortlistingClassificationModalStatus.classList.remove('is-error');
+    }
+  } catch (error) {
+    if (elements.shortlistingClassificationModalStatus) {
+      elements.shortlistingClassificationModalStatus.textContent = error.message || '번역에 실패했습니다.';
+      elements.shortlistingClassificationModalStatus.classList.add('is-error');
+    }
+  } finally {
+    if (button) button.disabled = false;
   }
 }
 
@@ -7579,15 +7732,33 @@ function shortlistingMetricValue(row, metricId) {
   return get(row.raw, `meta.shortlisting_projects.${state.activeShortlistingProjectId}.metric_values.${metricId}`, undefined);
 }
 
+// Mirrors OIC's evidence-edit palette (pass/review/fail/na) so Custom Project metric cells read
+// consistently with In-vivo/In-vitro/ADMET/D·Link: boolean metrics are inherently pass/fail;
+// list metrics get the same Tier/pass-fail label detection as the classification pill; number/
+// text/date metrics have no pass/fail meaning, so they're unified to the same neutral gray box.
+function shortlistingMetricToneClass(column, rawValue) {
+  if (column.return_type === 'boolean') {
+    if (rawValue === true) return 'pass';
+    if (rawValue === false) return 'fail';
+    return 'na';
+  }
+  if (column.return_type === 'list') {
+    if (typeof rawValue !== 'string' || !rawValue) return 'na';
+    return classificationLabelTone(rawValue) || 'na';
+  }
+  return 'na';
+}
+
 function shortlistingMetricEditControl(row, column) {
   const projectId = state.activeShortlistingProjectId;
   const rawValue = shortlistingMetricValue(row, column.id);
   const disabledAttr = shortlistingRoleFor(projectId) === 'read' ? ' disabled' : '';
+  const toneClass = shortlistingMetricToneClass(column, rawValue);
   const baseAttrs = `data-record-id="${escapeHtml(row.id)}" data-project-id="${escapeHtml(projectId)}" data-metric-id="${escapeHtml(column.id)}" data-return-type="${escapeHtml(column.return_type)}"${disabledAttr}`;
   if (column.return_type === 'boolean') {
     const current = rawValue === true ? 'true' : rawValue === false ? 'false' : '';
     return `
-      <select class="evidence-edit metric-value-edit" ${baseAttrs} data-previous-value="${escapeHtml(current)}">
+      <select class="evidence-edit metric-value-edit ${toneClass}" ${baseAttrs} data-previous-value="${escapeHtml(current)}">
         <option value="" ${current === '' ? 'selected' : ''}>-</option>
         <option value="true" ${current === 'true' ? 'selected' : ''}>Pass</option>
         <option value="false" ${current === 'false' ? 'selected' : ''}>Fail</option>
@@ -7597,7 +7768,7 @@ function shortlistingMetricEditControl(row, column) {
     const options = Array.isArray(column.options) ? column.options : [];
     const current = typeof rawValue === 'string' ? rawValue : '';
     return `
-      <select class="evidence-edit metric-value-edit" ${baseAttrs} data-previous-value="${escapeHtml(current)}">
+      <select class="evidence-edit metric-value-edit ${toneClass}" ${baseAttrs} data-previous-value="${escapeHtml(current)}">
         <option value="" ${current === '' ? 'selected' : ''}>-</option>
         ${options.map((option) => `<option value="${escapeHtml(option)}" ${option === current ? 'selected' : ''}>${escapeHtml(option)}</option>`).join('')}
       </select>`;
@@ -7605,14 +7776,14 @@ function shortlistingMetricEditControl(row, column) {
   if (column.return_type === 'number') {
     const current = typeof rawValue === 'number' ? rawValue : '';
     const boundsAttrs = Number.isFinite(column.max_value) ? ` min="0" max="${column.max_value}"` : '';
-    return `<input type="number" class="focus-due-input metric-value-edit" step="any"${boundsAttrs} ${baseAttrs} data-previous-value="${escapeHtml(String(current))}" value="${escapeHtml(String(current))}" />`;
+    return `<input type="number" class="focus-due-input metric-value-edit ${toneClass}" step="any"${boundsAttrs} ${baseAttrs} data-previous-value="${escapeHtml(String(current))}" value="${escapeHtml(String(current))}" />`;
   }
   if (column.return_type === 'date') {
     const current = typeof rawValue === 'string' ? rawValue : '';
-    return `<input type="date" class="focus-due-input metric-value-edit" ${baseAttrs} data-previous-value="${escapeHtml(current)}" value="${escapeHtml(current)}" />`;
+    return `<input type="date" class="focus-due-input metric-value-edit ${toneClass}" ${baseAttrs} data-previous-value="${escapeHtml(current)}" value="${escapeHtml(current)}" />`;
   }
   const current = typeof rawValue === 'string' ? rawValue : '';
-  return `<input type="text" class="focus-due-input metric-value-edit" maxlength="2000" ${baseAttrs} data-previous-value="${escapeHtml(current)}" value="${escapeHtml(current)}" />`;
+  return `<input type="text" class="focus-due-input metric-value-edit ${toneClass}" maxlength="2000" ${baseAttrs} data-previous-value="${escapeHtml(current)}" value="${escapeHtml(current)}" />`;
 }
 
 function renderFocusTable() {
@@ -7675,7 +7846,7 @@ function renderFocusTable() {
         ${focusFilterHeader('D·Link', 'diseaseLinkage', 'diseaseLinkage')}
       `
       : [
-        plainHeader('분류', 'classification', 'extra-column-head'),
+        plainHeader('Filter 3', 'classification', 'extra-column-head'),
         ...metricColumns.map((column) => plainHeader(column.label, `metric:${column.id}`, 'extra-column-head'))
       ].join('');
     const shortlistingGroupColspan = (isDefaultProject ? 5 : metricColumns.length + 1) + 1;
@@ -9155,17 +9326,41 @@ function ensureCriteriaDrawerCustomProjectPanel() {
   return panel;
 }
 
+function shortlistingMetricReturnTypeHint(column, isEnglish) {
+  if (column.return_type === 'list' && Array.isArray(column.options) && column.options.length) {
+    return isEnglish ? ` (options: ${column.options.join(', ')})` : ` (선택지: ${column.options.join(', ')})`;
+  }
+  if (column.return_type === 'boolean') return isEnglish ? ' (Pass/Fail)' : ' (Pass/Fail)';
+  if (column.return_type === 'number' && Number.isFinite(column.max_value)) {
+    return isEnglish ? ` (0–${column.max_value})` : ` (0~${column.max_value})`;
+  }
+  return '';
+}
+
 function renderCriteriaDrawerCustomProjectContent(project) {
   const panel = ensureCriteriaDrawerCustomProjectPanel();
   if (!panel) return;
   const isEnglish = criteriaGuideLanguage === 'en';
+  const metricColumns = project?.metric_columns || [];
   const classifications = project?.classification_columns || [];
   const labelFor = (item) => (isEnglish && item.label_en) ? item.label_en : item.label;
   const descriptionFor = (item) => {
     if (isEnglish && item.description_en) return item.description_en;
     return item.description || (isEnglish ? 'No description provided.' : '설명이 등록되지 않았습니다.');
   };
-  const listMarkup = classifications.length
+
+  const metricListMarkup = metricColumns.length
+    ? metricColumns.map((column) => `
+        <article class="criteria-focus-info-card">
+          <div class="criteria-focus-card-heading"><h4>${escapeHtml(labelFor(column))}${escapeHtml(shortlistingMetricReturnTypeHint(column, isEnglish))}</h4></div>
+          <p>${escapeHtml(descriptionFor(column))}</p>
+        </article>
+      `).join('')
+    : `<p class="criteria-custom-project-empty">${isEnglish
+        ? 'This Project has no metrics yet. Add some from Project Settings → Metric Management.'
+        : '이 Project는 아직 등록된 지표가 없습니다. Project 설정 → 지표 관리에서 추가할 수 있습니다.'}</p>`;
+
+  const classificationListMarkup = classifications.length
     ? classifications.map((item, index) => `
         <article class="criteria-focus-info-card">
           <div class="criteria-focus-card-heading"><h4>${index + 1}. ${escapeHtml(labelFor(item))}</h4></div>
@@ -9175,15 +9370,27 @@ function renderCriteriaDrawerCustomProjectContent(project) {
     : `<p class="criteria-custom-project-empty">${isEnglish
         ? 'This Project has no classification criteria yet. Add some from Project Settings → Classification Management.'
         : '이 Project는 아직 분류 기준이 등록되지 않았습니다. Project 설정 → 분류 관리에서 추가할 수 있습니다.'}</p>`;
+
   panel.innerHTML = `
     <section class="criteria-rule criteria-focus-rule">
-      <h3>${escapeHtml(project?.name || '')} ${isEnglish ? '- Classification Criteria' : '— 분류 기준'}</h3>
+      <h3>${escapeHtml(project?.name || '')} ${isEnglish ? '- Review Criteria' : '— 검토 기준'}</h3>
       <p>${isEnglish
-        ? 'The final classification criteria this Project defined by combining its metrics.'
-        : '이 Project에서 설정한 지표를 종합해 판단하는 최종 분류 기준입니다.'}</p>
+        ? 'This Project’s own metrics and the final classification criteria derived from them.'
+        : '이 Project에서 설정한 지표와, 이를 종합해 판단하는 최종 분류 기준입니다.'}</p>
     </section>
-    <section class="criteria-focus-section criteria-guide-section">
-      <div class="criteria-focus-grid criteria-focus-input-grid">${listMarkup}</div>
+    <section class="criteria-focus-section criteria-guide-section" data-criteria-tab="focus">
+      <div class="criteria-guide-section-heading">
+        <span class="criteria-guide-step-number" aria-hidden="true">1</span>
+        <span class="criteria-guide-section-copy"><h3>${isEnglish ? 'Classification' : '분류'}</h3><p>${isEnglish ? 'Final judgment combining the metrics below' : '아래 지표를 종합해 내리는 최종 판단'}</p></span>
+      </div>
+      <div class="criteria-focus-grid criteria-focus-input-grid">${classificationListMarkup}</div>
+    </section>
+    <section class="criteria-focus-section criteria-guide-section" data-criteria-tab="focus">
+      <div class="criteria-guide-section-heading">
+        <span class="criteria-guide-step-number" aria-hidden="true">2</span>
+        <span class="criteria-guide-section-copy"><h3>${isEnglish ? 'Metrics' : '지표'}</h3><p>${isEnglish ? 'What this Project tracks per pipeline' : '이 Project가 pipeline별로 기록하는 항목'}</p></span>
+      </div>
+      <div class="criteria-focus-grid criteria-focus-input-grid">${metricListMarkup}</div>
     </section>
   `;
   panel.lang = isEnglish ? 'en' : 'ko';
@@ -17297,6 +17504,11 @@ elements.shortlistingSettingsMetricsTab?.addEventListener('click', () => switchS
 elements.shortlistingSettingsClassificationsTab?.addEventListener('click', () => switchShortlistingSettingsTab('classifications'));
 elements.shortlistingClassificationModalSave?.addEventListener('click', submitShortlistingClassificationModal);
 elements.shortlistingClassificationManagerBody?.addEventListener('click', (event) => {
+  const translateButton = event.target.closest('[data-translate-classification-id]');
+  if (translateButton) {
+    translateShortlistingClassification(translateButton.dataset.translateClassificationId, translateButton);
+    return;
+  }
   const deleteButton = event.target.closest('[data-delete-classification-id]');
   if (!deleteButton) return;
   deleteShortlistingClassification(deleteButton.dataset.deleteClassificationId);
@@ -17323,6 +17535,11 @@ elements.shortlistingProjectRenameInput?.addEventListener('blur', () => {
   saveShortlistingProjectRename();
 });
 elements.shortlistingMetricManagerBody?.addEventListener('click', (event) => {
+  const translateButton = event.target.closest('[data-translate-metric-id]');
+  if (translateButton) {
+    translateShortlistingMetricColumn(translateButton.dataset.translateMetricId, translateButton);
+    return;
+  }
   const deleteButton = event.target.closest('[data-delete-metric-id]');
   if (!deleteButton) return;
   deleteShortlistingMetricColumn(deleteButton.dataset.deleteMetricId);

@@ -1,5 +1,5 @@
 {
-  "version": "1.4",
+  "version": "1.5",
   "description": "Shared frontend/backend canonical category dictionary for dashboard filter grouping. Add synonyms here when new source wording should map to an existing category.",
   "country": [
     {
@@ -625,12 +625,15 @@
         "Mild cognitive impairment due to AD",
         "MCI due to AD",
         "Early Alzheimer's disease",
-        "Prodromal AD"
+        "Prodromal AD",
+        "Mild cognitive impairment"
       ],
       "patterns": [
         "alzheimer",
         "\\bad\\b",
-        "\\bmci due to ad\\b"
+        "\\bmci due to ad\\b",
+        "\\bmci\\b",
+        "mild cognitive impairment"
       ]
     },
     {
@@ -641,11 +644,13 @@
         "Parkinson's",
         "PD",
         "Parkinson's disease dementia",
-        "PDD"
+        "PDD",
+        "Morning akinesia"
       ],
       "patterns": [
         "parkinson",
-        "\\bpd\\b"
+        "\\bpd\\b",
+        "morning akinesia"
       ]
     },
     {
@@ -659,6 +664,20 @@
       "patterns": [
         "lewy body",
         "\\bdlb\\b"
+      ]
+    },
+    {
+      "canonical": "Vascular dementia",
+      "synonyms": [
+        "Vascular dementia",
+        "Dementia, cerebrovascular",
+        "Cerebrovascular dementia",
+        "Multi-infarct dementia"
+      ],
+      "patterns": [
+        "vascular dementia",
+        "cerebrovascular dementia",
+        "multi-infarct dementia"
       ]
     },
     {
@@ -700,7 +719,9 @@
         "SPMS",
         "Neuroinflammation",
         "Neuroinflammatory disease",
-        "Demyelinating disease"
+        "Demyelinating disease",
+        "Neuromyelitis optica",
+        "NMO"
       ],
       "patterns": [
         "multiple sclerosis",
@@ -709,7 +730,9 @@
         "\\bppms\\b",
         "\\bspms\\b",
         "neuroinflamm",
-        "demyelinating"
+        "demyelinating",
+        "neuromyelitis optica",
+        "\\bnmo\\b"
       ]
     },
     {
@@ -757,6 +780,26 @@
       ]
     },
     {
+      "canonical": "Progressive supranuclear palsy / atypical parkinsonism",
+      "synonyms": [
+        "Progressive supranuclear palsy",
+        "PSP",
+        "Tauopathy",
+        "Tauopathies",
+        "Corticobasal degeneration",
+        "CBD",
+        "Atypical parkinsonism"
+      ],
+      "patterns": [
+        "progressive supranuclear palsy",
+        "\\bpsp\\b",
+        "tauopath",
+        "corticobasal degeneration",
+        "\\bcbd\\b",
+        "atypical parkinsonism"
+      ]
+    },
+    {
       "canonical": "Huntington's disease",
       "synonyms": [
         "Huntington's disease",
@@ -778,7 +821,9 @@
         "Haemorrhagic stroke",
         "Hemorrhagic stroke",
         "Cerebral ischemia",
-        "Post-stroke"
+        "Post-stroke",
+        "Subarachnoid hemorrhage",
+        "Brain hemorrhage"
       ],
       "patterns": [
         "stroke",
@@ -1009,6 +1054,39 @@
       "patterns": [
         "spinal muscular atrophy",
         "\\bsma\\b"
+      ]
+    },
+    {
+      "canonical": "Charcot-Marie-Tooth disease / hereditary neuropathy",
+      "synonyms": [
+        "Charcot-Marie-Tooth disease",
+        "CMT",
+        "CMT1",
+        "CMT2C",
+        "Hereditary motor and sensory neuropathy",
+        "HMSN",
+        "Hereditary neuropathy"
+      ],
+      "patterns": [
+        "charcot-marie-tooth",
+        "\\bcmt\\d*[a-z]?\\b",
+        "hereditary (?:motor and sensory )?neuropathy",
+        "\\bhmsn\\b"
+      ]
+    },
+    {
+      "canonical": "Ataxia (spinocerebellar / Friedreich)",
+      "synonyms": [
+        "Spinocerebellar ataxia",
+        "SCA",
+        "Friedreich's ataxia",
+        "Friedreich ataxia",
+        "Hereditary ataxia"
+      ],
+      "patterns": [
+        "spinocerebellar ataxia",
+        "\\bsca\\d*\\b",
+        "friedreich"
       ]
     }
   ]
