@@ -30,7 +30,7 @@ def full_scout_record() -> dict:
 class ShortlistingTrackingStatusTests(unittest.TestCase):
     def apply(self, record: dict, action: str) -> dict:
         record_id = main.record_key(record)
-        admin_account = {"id": "admin1", "name": "Admin", "email": "admin@example.com", "role": "admin"}
+        admin_account = {"id": "admin1", "name": "Admin", "email": "admin@example.com", "role": "developer"}
         with (
             patch.object(main, "require_authenticated_user", return_value=admin_account),
             patch.object(main, "load_shortlisting_projects", return_value=[main.default_shortlisting_project()]),

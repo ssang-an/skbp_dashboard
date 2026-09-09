@@ -40,7 +40,7 @@ class FastTriageManualReviewTests(unittest.TestCase):
     def update(self, record, payload):
         record_id = main.record_key(record)
         with (
-            patch.object(main, "require_auth_admin", return_value={"id": "review-admin", "name": "Review Admin"}),
+            patch.object(main, "require_authenticated_user", return_value={"id": "review-admin", "name": "Review Admin"}),
             patch.object(main, "load_records", return_value=[record]),
             patch.object(main, "save_records"),
             patch.object(main, "run_markdown_exports", return_value={}),
@@ -150,7 +150,7 @@ class FastTriageManualReviewTests(unittest.TestCase):
 
         other_admin = {"id": "other-admin", "name": "Other Admin"}
         with (
-            patch.object(main, "require_auth_admin", return_value=other_admin),
+            patch.object(main, "require_authenticated_user", return_value=other_admin),
             patch.object(main, "load_records", return_value=[created]),
             patch.object(main, "save_records"),
             patch.object(main, "run_markdown_exports", return_value={}),
@@ -166,12 +166,12 @@ class FastTriageManualReviewTests(unittest.TestCase):
         self.assertEqual(deleted["meta"]["edit_history"][-1]["field"], "final_comment")
         self.assertEqual(deleted["meta"]["edit_history"][-1]["source"], "detail_final_comment_delete")
 
-    def test_topic_note_delete_is_limited_to_its_author_admin(self):
-        note = {"author_id": "review-admin"}
+    def test_topic_note_delete_is_limited_to_its_author(self):
+        note = {"author_id": "review-user"}
 
-        self.assertTrue(main.can_delete_topic_note({"id": "review-admin", "role": "admin"}, note))
-        self.assertFalse(main.can_delete_topic_note({"id": "other-admin", "role": "admin"}, note))
-        self.assertFalse(main.can_delete_topic_note({"id": "review-admin", "role": "user"}, note))
+        self.assertTrue(main.can_delete_topic_note({"id": "review-user", "role": "user"}, note))
+        self.assertFalse(main.can_delete_topic_note({"id": "other-user", "role": "user"}, note))
+        self.assertTrue(main.can_delete_topic_note({"id": "review-user", "role": "admin"}, note))
 
 
 if __name__ == "__main__":

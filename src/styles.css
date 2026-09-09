@@ -4426,6 +4426,20 @@ td {
   text-align: center;
 }
 
+/* Custom Shortlisting metric columns (number/date/text return types) reuse
+   .focus-due-input for their edit control, but that base rule has no fixed
+   height like .evidence-edit/.table-edit-select/.partnership-edit-select do
+   (all 30px) — without it, a plain <input> renders at browser-default height
+   and looks oversized next to Filter 2's pill. Scoped to table cells only, so
+   the Action Date column and other .focus-due-input usages outside the table
+   (e.g. the detail page) keep their own sizing. */
+.focus-status-cell .focus-due-input {
+  height: 30px;
+  min-height: 30px;
+  max-height: 30px;
+  box-sizing: border-box;
+}
+
 .focus-due-cell.overdue .focus-due-input {
   border-color: color-mix(in srgb, var(--red) 45%, var(--line));
   background: color-mix(in srgb, var(--red) 7%, var(--surface));

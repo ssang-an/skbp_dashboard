@@ -174,6 +174,7 @@ const FOCUS_DEFAULT_COLUMN_WIDTHS = {
   filter2: 82,
   totalScore: 64,
   filter3: 82,
+  classification: 82,
   inVivo: 56,
   inVitro: 56,
   admet: 60,
@@ -197,6 +198,7 @@ const FOCUS_MIN_COLUMN_WIDTHS = {
   filter2: 68,
   totalScore: 52,
   filter3: 66,
+  classification: 66,
   inVivo: 48,
   inVitro: 48,
   admet: 50,
@@ -3365,6 +3367,7 @@ function focusTableColumnKeys() {
   if (state.activeShortlistingProjectId === DEFAULT_SHORTLISTING_PROJECT_ID) return FOCUS_TABLE_COLUMN_KEYS;
   return [
     ...FOCUS_TABLE_FIXED_LEFT_COLUMN_KEYS,
+    'classification',
     ...activeShortlistingMetricColumns().map((column) => `metric:${column.id}`),
     'customScore',
     'totalScore30',
@@ -6006,6 +6009,39 @@ function partnershipNoteEditor(row) {
   `;
 }
 
+// Custom Shortlisting Projects have no automatic classifier like OIC's Filter 3
+// (partnershipEditSelect above); this is a manual pick from the Project's own
+// classification_columns, styled with the same pill control cycling OIC's four
+// tone colors by option index so a Project's UI still reads as "Filter 3-like".
+const CLASSIFICATION_TONE_CYCLE = ['investment', 'value-up', 'joint-research', 'na'];
+
+function classificationToneClass(classifications, value) {
+  if (!value) return 'empty';
+  const index = classifications.findIndex((item) => item.id === value);
+  if (index < 0) return 'empty';
+  return CLASSIFICATION_TONE_CYCLE[index % CLASSIFICATION_TONE_CYCLE.length];
+}
+
+function classificationEditSelect(row, project) {
+  if (!project) return '<span class="table-manual-text">-</span>';
+  const projectId = project.id;
+  const classifications = project.classification_columns || [];
+  const value = get(row.raw, `meta.shortlisting_projects.${projectId}.classification`, '') || '';
+  const disabledAttr = shortlistingRoleFor(projectId) === 'read' ? ' disabled' : '';
+  const options = [{ id: '', label: '미분류' }, ...classifications];
+  return `
+    <select
+      class="partnership-edit-select classification-edit-select ${classificationToneClass(classifications, value)}"
+      data-record-id="${escapeHtml(row.id)}"
+      data-project-id="${escapeHtml(projectId)}"
+      data-previous-value="${escapeHtml(value)}"
+      aria-label="${escapeHtml(row.asset)} 분류"${disabledAttr}
+    >
+      ${options.map((option) => selectOption(option.id, value, option.label)).join('')}
+    </select>
+  `;
+}
+
 const EVIDENCE_STATUS_OPTIONS = ['O', 'X', 'N/A'];
 const ADMET_TOTAL_ITEMS = 25;
 const EVIDENCE_FIELD_TO_BACKEND = {
@@ -6201,7 +6237,7 @@ function stageEditSelect(row) {
   const isManual = hasManualTableFieldEdit(row.raw, 'development_stage');
   const stageTitle = pipelineStageFullHoverTitle(row);
   if (row.isVirtualTriage) return `<span class="table-manual-text" title="${escapeHtml(`${stageTitle}\nTab 2 Advanced Research 결과에서 가져온 값`)}">${escapeHtml(row.stage)}</span>`;
-  if (!user?.is_admin) return `<span class="table-manual-text${isManual ? ' is-human' : ''}" title="${escapeHtml(stageTitle)}">${escapeHtml(row.stage)}</span>`;
+  if (!user) return `<span class="table-manual-text${isManual ? ' is-human' : ''}" title="${escapeHtml(stageTitle)}">${escapeHtml(row.stage)}</span>`;
   return `<span
     class="table-manual-text${isManual ? ' is-human' : ''} is-editable"
     data-table-stage-edit
@@ -6216,7 +6252,7 @@ function stageEditSelect(row) {
 
 function modalityEditValue(row) {
   const isManual = hasManualTableFieldEdit(row.raw, 'modality_platform');
-  const editable = !row.isVirtualTriage && row.modality === 'Unknown' && Boolean(getCurrentUser()?.is_admin);
+  const editable = !row.isVirtualTriage && row.modality === 'Unknown' && Boolean(getCurrentUser());
   const className = `single-line-cell table-manual-text${isManual ? ' is-human' : ''}${editable ? ' is-editable modality-editable' : ''}`;
   const tags = Array.isArray(row.modalityTags) ? row.modalityTags.filter((tag) => tag && tag !== row.modalityCanonical) : [];
   const source = String(row.modalityRaw || '').trim();
@@ -6229,22 +6265,22 @@ function modalityEditValue(row) {
   const attributes = editable
     ? ` data-table-modality-edit data-record-id="${escapeHtml(row.id)}" data-previous-value="${escapeHtml(row.modality)}" role="button" tabindex="0" aria-label="Double-click to select modality"`
     : '';
-  return `<span class="${className}"${attributes} title="${escapeHtml(editable ? '관리자: 더블클릭하여 Modality 선택' : label)}">${escapeHtml(row.modality)}</span>`;
+  return `<span class="${className}"${attributes} title="${escapeHtml(editable ? '더블클릭하여 Modality 선택' : label)}">${escapeHtml(row.modality)}</span>`;
 }
 
 function countryEditValue(row) {
   const isManual = hasManualTableFieldEdit(row.raw, 'company_country');
-  const editable = !row.isVirtualTriage && Boolean(getCurrentUser()?.is_admin);
+  const editable = !row.isVirtualTriage && Boolean(getCurrentUser());
   const value = row.country || 'Unknown';
   const classes = `table-manual-text country-cell-content${isManual ? ' is-human' : ''}${editable ? ' is-editable' : ''}`;
   const attributes = editable
     ? ` data-table-country-edit data-record-id="${escapeHtml(row.id)}" data-previous-value="${escapeHtml(value)}" role="button" tabindex="0" aria-label="Double-click to edit Location"`
     : '';
-  return `<span class="${classes}"${attributes} title="${escapeHtml(editable ? '관리자: 더블클릭하여 Location 입력' : row.countryRaw || value)}">${countryDisplayMarkup(value)}</span>`;
+  return `<span class="${classes}"${attributes} title="${escapeHtml(editable ? '더블클릭하여 Location 입력' : row.countryRaw || value)}">${countryDisplayMarkup(value)}</span>`;
 }
 
 function focusOfficialFieldValue(row, value, label, { html = '', className = '', title = '' } = {}) {
-  const editable = Boolean(getCurrentUser()?.is_admin);
+  const editable = Boolean(getCurrentUser());
   const classes = ['table-manual-text', 'focus-official-field', className, editable ? 'is-research-locked' : '']
     .filter(Boolean)
     .join(' ');
@@ -6264,7 +6300,7 @@ function focusOfficialFieldValue(row, value, label, { html = '', className = '',
 function tableTextEditValue(row, kind, value, { title = '', strong = false, className = '' } = {}) {
   const field = kind === 'asset' ? 'asset_name' : kind;
   const isManual = hasManualTableFieldEdit(row.raw, field);
-  const editable = !row.isVirtualTriage && Boolean(getCurrentUser()?.is_admin);
+  const editable = !row.isVirtualTriage && Boolean(getCurrentUser());
   const classes = `table-manual-text${isManual ? ' is-human' : ''}${editable ? ' is-editable' : ''}${className ? ` ${className}` : ''}`;
   const attributes = editable
     ? ` data-table-text-edit data-record-id="${escapeHtml(row.id)}" data-edit-kind="${escapeHtml(kind)}" data-previous-value="${escapeHtml(value)}"`
@@ -7460,6 +7496,7 @@ async function submitShortlistingClassificationModal() {
     applyShortlistingProjectUpdate(data.project);
     resetShortlistingClassificationAddForm();
     renderShortlistingClassificationManagerTable();
+    renderTable();
   } catch (error) {
     setStatus(error.message || '분류 추가에 실패했습니다.');
   } finally {
@@ -7479,6 +7516,7 @@ async function deleteShortlistingClassification(classificationId) {
     if (!response.ok) throw new Error(data.detail || '분류 삭제에 실패했습니다.');
     applyShortlistingProjectUpdate(data.project);
     renderShortlistingClassificationManagerTable();
+    renderTable();
   } catch (error) {
     if (elements.shortlistingClassificationModalStatus) {
       elements.shortlistingClassificationModalStatus.textContent = error.message || '분류 삭제에 실패했습니다.';
@@ -7587,6 +7625,7 @@ function renderFocusTable() {
   const pageRows = visibleRows.slice(start, start + state.pageSize);
   const tableElement = elements.pipelineTable?.closest('table');
   const isDefaultProject = state.activeShortlistingProjectId === DEFAULT_SHORTLISTING_PROJECT_ID;
+  const activeProject = activeShortlistingProject();
   const metricColumns = activeShortlistingMetricColumns();
   const columnCount = focusTableColumnKeys().length;
 
@@ -7616,7 +7655,10 @@ function renderFocusTable() {
       <col class="pipeline-col-filter" data-col-key="inVitro" style="${columnWidthStyle('inVitro')}" />
       <col class="pipeline-col-filter" data-col-key="admet" style="${columnWidthStyle('admet')}" />
       <col class="pipeline-col-filter" data-col-key="diseaseLinkage" style="${columnWidthStyle('diseaseLinkage')}" />
-      ` : metricColumns.map((column) => `<col class="pipeline-col-filter" data-col-key="metric:${escapeHtml(column.id)}" style="${columnWidthStyle(`metric:${column.id}`)}" />`).join('')}
+      ` : `
+      <col class="pipeline-col-filter" data-col-key="classification" style="${columnWidthStyle('classification')}" />
+      ${metricColumns.map((column) => `<col class="pipeline-col-filter" data-col-key="metric:${escapeHtml(column.id)}" style="${columnWidthStyle(`metric:${column.id}`)}" />`).join('')}
+      `}
       <col class="pipeline-col-score score-subtotal-col" data-col-key="customScore" style="${columnWidthStyle('customScore')}" />
       <col class="pipeline-col-score score-grandtotal-col" data-col-key="totalScore30" style="${columnWidthStyle('totalScore30')}" />
       <col class="pipeline-col-focus-date" data-col-key="focusDueDate" style="${columnWidthStyle('focusDueDate')}" />
@@ -7632,8 +7674,11 @@ function renderFocusTable() {
         ${focusFilterHeader('ADMET', 'admet', 'admet')}
         ${focusFilterHeader('D·Link', 'diseaseLinkage', 'diseaseLinkage')}
       `
-      : metricColumns.map((column) => plainHeader(column.label, `metric:${column.id}`, 'extra-column-head')).join('');
-    const shortlistingGroupColspan = (isDefaultProject ? 5 : metricColumns.length) + 1;
+      : [
+        plainHeader('분류', 'classification', 'extra-column-head'),
+        ...metricColumns.map((column) => plainHeader(column.label, `metric:${column.id}`, 'extra-column-head'))
+      ].join('');
+    const shortlistingGroupColspan = (isDefaultProject ? 5 : metricColumns.length + 1) + 1;
     elements.pipelineTableHead.innerHTML = `
       <tr id="pipelineHeaderRow" class="pipeline-group-row focus-pipeline-group-row">
         <th class="select-col" rowspan="2" ${columnAttrs('select')}>
@@ -7681,7 +7726,10 @@ function renderFocusTable() {
           <td class="focus-status-cell">${admetEditSelect(row)}</td>
           <td class="focus-status-cell disease-linkage-cell">${diseaseLinkageEditSelect(row)}</td>
           `
-          : metricColumns.map((column) => `<td class="focus-status-cell">${shortlistingMetricEditControl(row, column)}</td>`).join('');
+          : [
+            `<td class="focus-status-cell">${classificationEditSelect(row, activeProject)}</td>`,
+            ...metricColumns.map((column) => `<td class="focus-status-cell">${shortlistingMetricEditControl(row, column)}</td>`)
+          ].join('');
         return `
         <tr class="clickable-row focus-management-row${isSelected ? ' selected-row' : ''}" data-record-id="${escapeHtml(row.id)}" title="${escapeHtml(rowHoverTitle(row))}">
           <td class="select-col">
@@ -8520,7 +8568,7 @@ async function saveManualTableTextEdit(input) {
 }
 
 function openManualTableTextEdit(anchor) {
-  if (!anchor || !getCurrentUser()?.is_admin || anchor.dataset.editing === 'true') return;
+  if (!anchor || !getCurrentUser() || anchor.dataset.editing === 'true') return;
   const recordId = anchor.dataset.recordId;
   const kind = anchor.dataset.editKind;
   const previousValue = String(anchor.dataset.previousValue || '').trim();
@@ -8561,7 +8609,7 @@ function openManualTableTextEdit(anchor) {
 }
 
 function openManualTableModalityEdit(anchor) {
-  if (!anchor || !getCurrentUser()?.is_admin || anchor.dataset.editing === 'true') return;
+  if (!anchor || !getCurrentUser() || anchor.dataset.editing === 'true') return;
   const recordId = anchor.dataset.recordId;
   const previousValue = String(anchor.dataset.previousValue || '').trim();
   if (!recordId || previousValue !== 'Unknown') return;
@@ -8590,7 +8638,7 @@ function openManualTableModalityEdit(anchor) {
 }
 
 function openManualTableStageEdit(anchor) {
-  if (!anchor || !getCurrentUser()?.is_admin || anchor.dataset.editing === 'true') return;
+  if (!anchor || !getCurrentUser() || anchor.dataset.editing === 'true') return;
   const recordId = anchor.dataset.recordId;
   const previousValue = String(anchor.dataset.previousValue || '').trim();
   if (!recordId) return;
@@ -8621,7 +8669,7 @@ function openManualTableStageEdit(anchor) {
 async function saveUnknownTargetEdit(anchor) {
   const recordId = anchor?.dataset.recordId;
   const previousValue = String(anchor?.textContent || '').trim();
-  if (!recordId || previousValue !== 'Unknown' || !getCurrentUser()?.is_admin) return;
+  if (!recordId || previousValue !== 'Unknown' || !getCurrentUser()) return;
 
   const value = window.prompt('Target 이름을 입력하세요.', '');
   const nextValue = String(value || '').trim();
@@ -8713,12 +8761,7 @@ async function recalculateLatestRubric(button) {
   const recordId = button?.dataset.recordId;
   if (!recordId) return;
   const user = await requireAuth();
-  if (!user?.is_admin && !user?.is_developer) {
-    const message = 'Score 기준 갱신은 Developer 또는 관리자 권한이 필요합니다. 로그인한 계정의 권한을 확인해 주세요.';
-    elements.dataStatus.textContent = message;
-    await showRubricRefreshFailureDialog('Score 기준 갱신을 실행할 수 없습니다', message);
-    return;
-  }
+  if (!user) return;
   const isTriage = button.dataset.reviewType === 'triage';
   const workflowLabel = isTriage ? 'Simple Research' : 'Advanced Research';
   const latestVersion = isTriage ? LATEST_TRIAGE_RUBRIC_VERSION : LATEST_FULL_SCOUT_RUBRIC_VERSION;
@@ -8838,12 +8881,7 @@ async function recalculateLatestOiPartnership(button) {
   const recordId = button?.dataset.recordId;
   if (!recordId) return;
   const user = await requireAuth();
-  if (!user?.is_admin && !user?.is_developer) {
-    const message = 'Filter 3 기준 갱신은 Developer 또는 관리자 권한이 필요합니다. 로그인한 계정의 권한을 확인해 주세요.';
-    elements.dataStatus.textContent = message;
-    await showRubricRefreshFailureDialog('Filter 3 기준 갱신을 실행할 수 없습니다', message);
-    return;
-  }
+  if (!user) return;
   button.disabled = true;
   button.classList.add('is-saving');
   const latestVersion = state.latestOiPartnershipCriteriaVersion;
@@ -9120,24 +9158,35 @@ function ensureCriteriaDrawerCustomProjectPanel() {
 function renderCriteriaDrawerCustomProjectContent(project) {
   const panel = ensureCriteriaDrawerCustomProjectPanel();
   if (!panel) return;
+  const isEnglish = criteriaGuideLanguage === 'en';
   const classifications = project?.classification_columns || [];
+  const labelFor = (item) => (isEnglish && item.label_en) ? item.label_en : item.label;
+  const descriptionFor = (item) => {
+    if (isEnglish && item.description_en) return item.description_en;
+    return item.description || (isEnglish ? 'No description provided.' : '설명이 등록되지 않았습니다.');
+  };
   const listMarkup = classifications.length
     ? classifications.map((item, index) => `
         <article class="criteria-focus-info-card">
-          <div class="criteria-focus-card-heading"><h4>${index + 1}. ${escapeHtml(item.label)}</h4></div>
-          <p>${escapeHtml(item.description || '설명이 등록되지 않았습니다.')}</p>
+          <div class="criteria-focus-card-heading"><h4>${index + 1}. ${escapeHtml(labelFor(item))}</h4></div>
+          <p>${escapeHtml(descriptionFor(item))}</p>
         </article>
       `).join('')
-    : `<p class="criteria-custom-project-empty">이 Project는 아직 분류 기준이 등록되지 않았습니다. Project 설정 → 분류 관리에서 추가할 수 있습니다.</p>`;
+    : `<p class="criteria-custom-project-empty">${isEnglish
+        ? 'This Project has no classification criteria yet. Add some from Project Settings → Classification Management.'
+        : '이 Project는 아직 분류 기준이 등록되지 않았습니다. Project 설정 → 분류 관리에서 추가할 수 있습니다.'}</p>`;
   panel.innerHTML = `
     <section class="criteria-rule criteria-focus-rule">
-      <h3>${escapeHtml(project?.name || '')} — 분류 기준</h3>
-      <p>이 Project에서 설정한 지표를 종합해 판단하는 최종 분류 기준입니다.</p>
+      <h3>${escapeHtml(project?.name || '')} ${isEnglish ? '- Classification Criteria' : '— 분류 기준'}</h3>
+      <p>${isEnglish
+        ? 'The final classification criteria this Project defined by combining its metrics.'
+        : '이 Project에서 설정한 지표를 종합해 판단하는 최종 분류 기준입니다.'}</p>
     </section>
     <section class="criteria-focus-section criteria-guide-section">
       <div class="criteria-focus-grid criteria-focus-input-grid">${listMarkup}</div>
     </section>
   `;
+  panel.lang = isEnglish ? 'en' : 'ko';
 }
 
 function updateCriteriaDrawerScope() {
@@ -9155,7 +9204,7 @@ function updateCriteriaDrawerScope() {
   const chrome = criteriaGuideChrome();
   if (elements.criteriaDrawerScopeLabel) {
     elements.criteriaDrawerScopeLabel.textContent = isCustomProjectFocus
-      ? `TAB 3 · ${(activeProject?.name || '').toUpperCase()} · 분류 기준`
+      ? `TAB 3 · ${(activeProject?.name || '').toUpperCase()} · ${criteriaGuideLanguage === 'en' ? 'CLASSIFICATION CRITERIA' : '분류 기준'}`
       : (chrome.scopes[mode] || '');
   }
   if (elements.criteriaDrawerVersionBadge) {
@@ -9171,7 +9220,9 @@ function updateCriteriaDrawerScope() {
   }
   if (elements.criteriaDrawerSubtitle) {
     elements.criteriaDrawerSubtitle.textContent = isCustomProjectFocus
-      ? `${activeProject?.name || ''} Project에서 설정한 지표 기반 분류 기준`
+      ? (criteriaGuideLanguage === 'en'
+        ? `Classification criteria this ${activeProject?.name || ''} Project defined from its metrics`
+        : `${activeProject?.name || ''} Project에서 설정한 지표 기반 분류 기준`)
       : (chrome.subtitles[mode] || '');
   }
   if (elements.criteriaDrawer) elements.criteriaDrawer.dataset.activeCriteriaTab = isCustomProjectFocus ? 'focus-custom' : mode;
@@ -14012,9 +14063,9 @@ async function refreshListingProgressAfterSave({ successMessage = '', failureMes
 }
 
 async function importStep0Candidates() {
-  if (!getCurrentUser()?.is_admin) {
-    showStep0Message('가져오기 권한이 없습니다. 안내창의 내용을 확인해 주세요.', 'warning');
-    const action = await showListingImportFailureDialog(Object.assign(new Error('Administrator access is required.'), { status: 403 }));
+  if (!getCurrentUser()) {
+    showStep0Message('가져오기는 로그인 후 가능합니다.', 'warning');
+    const action = await showListingImportFailureDialog(Object.assign(new Error('Login is required.'), { status: 401 }));
     if (action === 'retry') window.setTimeout(() => importStep0Candidates(), 0);
     return;
   }
@@ -14452,13 +14503,13 @@ function restorePendingStep0MetadataTarget() {
 
 function step0ListingCommentCanEdit(row) {
   const user = getCurrentUser();
-  if (!user?.is_admin) return false;
+  if (!user) return false;
   const metadata = row?.metadata || {};
   const comment = String(metadata.comment || '').trim();
   if (!comment) return true;
   const source = String(metadata.comment_source || '').trim();
   // Imported and pre-provenance Listing comments are shared Tab 0 content.
-  // Any administrator can correct or remove them; direct posts stay author-owned.
+  // Any logged-in user can correct or remove them; direct posts stay author-owned.
   if (source === 'team_review_import' || !source) return true;
   if (source !== 'admin_listing_post') return false;
   return step0MetadataOwnedByCurrentUser(metadata, 'comment', user);
@@ -14466,12 +14517,12 @@ function step0ListingCommentCanEdit(row) {
 
 function step0ContactHistoryCanEdit(row) {
   const user = getCurrentUser();
-  if (!user?.is_admin) return false;
+  if (!user) return false;
   const metadata = row?.metadata || {};
   const contact = String(metadata.contact || '').trim();
   if (!contact) return true;
   const source = String(metadata.contact_source || '').trim();
-  if (source === 'team_review_import') return Boolean(user?.is_developer);
+  if (source === 'team_review_import') return true;
   if (source !== 'admin_contact_post') return false;
   return step0MetadataOwnedByCurrentUser(metadata, 'contact', user);
 }
@@ -14524,7 +14575,7 @@ function step0WebsiteCellHtml(row) {
 }
 
 function openManualTableCountryEdit(anchor) {
-  if (!anchor || !getCurrentUser()?.is_admin || anchor.dataset.editing === 'true') return;
+  if (!anchor || !getCurrentUser() || anchor.dataset.editing === 'true') return;
   const recordId = anchor.dataset.recordId;
   const previousValue = String(anchor.dataset.previousValue || '').trim() || 'Unknown';
   if (!recordId) return;
@@ -15330,9 +15381,9 @@ function step0ListingFieldMarkup(row, field, value, { html = '', title = '', cla
   const queueId = String(row?.pending?.queue_id || '');
   const isManual = Boolean(row?.listing_manual_fields?.[field]);
   const researchMode = step0ResearchEditMode(row);
-  const admin = Boolean(getCurrentUser()?.is_admin);
-  const editable = Boolean(queueId && admin && !researchMode);
-  const locked = Boolean(researchMode && admin);
+  const loggedIn = Boolean(getCurrentUser());
+  const editable = Boolean(queueId && loggedIn && !researchMode);
+  const locked = Boolean(researchMode && loggedIn);
   const classes = [
     'step0-table-value',
     'table-manual-text',
@@ -15421,7 +15472,7 @@ async function saveStep0ListingFieldEdit(input) {
 }
 
 function openStep0ListingFieldEdit(anchor) {
-  if (!anchor || !getCurrentUser()?.is_admin || anchor.dataset.editing === 'true') return;
+  if (!anchor || !getCurrentUser() || anchor.dataset.editing === 'true') return;
   const queueId = String(anchor.dataset.queueId || '');
   const field = String(anchor.dataset.step0Field || '');
   const previousValue = String(anchor.dataset.previousValue || '').trim();
@@ -15525,8 +15576,8 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
   closeStep0MetadataPopover();
   const owner = row?.metadata_owner || {};
   if (!owner.type) return;
-  const admin = Boolean(getCurrentUser()?.is_admin);
-  if (editing && !admin) return;
+  const loggedIn = Boolean(getCurrentUser());
+  if (editing && !loggedIn) return;
   if (editing && field === 'comment' && !step0ListingCommentCanEdit(row)) return;
   const label = field === 'comment' ? 'Comment' : field === 'contact' ? 'Contact History' : 'Website';
   const value = step0MetadataValue(row, field);
@@ -16969,6 +17020,20 @@ elements.pipelineTable.addEventListener('change', (event) => {
   const editSelect = event.target.closest('.table-edit-select, .total-score-edit-circle');
   if (editSelect) {
     saveManualReviewEdit(editSelect);
+    return;
+  }
+
+  const classificationSelect = event.target.closest('.classification-edit-select');
+  if (classificationSelect) {
+    const previousValue = classificationSelect.dataset.previousValue || '';
+    const nextValue = classificationSelect.value || '';
+    if (previousValue === nextValue) return;
+    saveShortlistingProjectField(
+      classificationSelect.dataset.recordId,
+      classificationSelect.dataset.projectId,
+      { action: 'update', field: 'classification', value: nextValue },
+      classificationSelect
+    );
     return;
   }
 

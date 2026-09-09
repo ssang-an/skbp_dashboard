@@ -225,7 +225,7 @@ class OiPartnershipCriteriaTests(unittest.TestCase):
         })
 
         with (
-            patch.object(main, "require_auth_admin", return_value={"name": "Review Admin"}),
+            patch.object(main, "require_authenticated_user", return_value={"name": "Review Admin"}),
             patch.object(main, "load_records", return_value=[tracked]),
             patch.object(main, "save_records") as save_records,
         ):
@@ -254,7 +254,7 @@ class OiPartnershipCriteriaTests(unittest.TestCase):
         })
 
         with (
-            patch.object(main, "require_auth_admin", return_value={"name": "Review Admin"}),
+            patch.object(main, "require_authenticated_user", return_value={"name": "Review Admin"}),
             patch.object(main, "load_records", return_value=[tracked]),
             patch.object(main, "save_records") as save_records,
             patch.object(main, "deferred_markdown_exports", return_value={"exports": []}),
@@ -290,7 +290,7 @@ class OiPartnershipCriteriaTests(unittest.TestCase):
         })
 
         with (
-            patch.object(main, "require_auth_admin", return_value={"name": "Review Admin"}),
+            patch.object(main, "require_authenticated_user", return_value={"name": "Review Admin"}),
             patch.object(main, "load_records", return_value=[tracked]),
             patch.object(main, "save_records"),
             patch.object(main, "deferred_markdown_exports", return_value={"exports": []}),

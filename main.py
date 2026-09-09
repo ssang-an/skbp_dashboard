@@ -140,6 +140,12 @@ FULL_SCOUT_RUBRIC_DEFINITION_REVISION = "v3-8-moa-expansion-investigation-notes-
 # when the score is 2 or 3. Earlier reports and lower scores fail safe to "NA" (rendered "—").
 DISEASE_LINKAGE_MIN_RUBRIC_VERSION = "3.8"
 DISEASE_LINKAGE_MIN_MOA_SCORE = 2
+# v3.8 rubric: MoA score 3 requires the proposed MoA's direct evidence to be confirmed, while
+# score 2 is only target/pathway-level or independent same-target/class validation. A
+# disease-relevant linkage can therefore only genuinely be "confirmed" (O) once the underlying
+# MoA evidence itself is confirmed at score 3 - score-2 rows are deterministically X regardless
+# of the investigation_note, which also keeps the LLM from ever needing to be asked for O there.
+DISEASE_LINKAGE_CONFIRMED_MOA_SCORE = 3
 CATEGORY_SYNONYMS_FILE = ROOT / "config" / "category-synonyms.json"
 OPENROUTER_DEFAULT_MODEL = "openrouter/free"
 OPENROUTER_DEFAULT_FALLBACK_MODELS = [
@@ -853,6 +859,10 @@ def has_auth_role(user: dict[str, Any], minimum: str) -> bool:
 
 def is_auth_admin(user: dict[str, Any]) -> bool:
     return has_auth_role(user, ROLE_ADMIN)
+
+
+def is_auth_developer(user: dict[str, Any]) -> bool:
+    return has_auth_role(user, ROLE_DEVELOPER)
 
 
 def public_user(user: dict[str, Any]) -> dict[str, Any]:
@@ -5482,14 +5492,13 @@ def find_shortlisting_project(projects: list[dict[str, Any]], project_id: str) -
 def shortlisting_project_role_for_account(project: dict[str, Any], account: dict[str, Any] | None) -> str:
     """Return 'owner', 'write', or 'read' for account's effective permission on project.
 
-    Site admins are always 'owner' (bypass, never persisted to members[]). Works
-    identically for oic_default, whose members[] starts empty (only site admins
-    can manage it) until an admin grants explicit owner/write access via Project
-    Settings.
+    The site developer is always 'owner' (bypass, never persisted to members[]).
+    Works identically for oic_default, whose members[] starts empty until the
+    developer grants explicit owner/write access via Project Settings.
     """
     if account is None:
         return "read"
-    if is_auth_admin(account):
+    if is_auth_developer(account):
         return "owner"
     email = normalized_identity_email(account.get("email"))
     if not email:
@@ -6583,22 +6592,22 @@ def listing_metadata_owned_by_account(metadata: dict[str, str], prefix: str, acc
 
 
 def can_edit_listing_comment(metadata: dict[str, str], account: dict[str, Any]) -> bool:
-    """Administrators manage shared imports/legacy comments; direct posts stay author-owned."""
+    """Any logged-in user manages shared imports/legacy comments; direct posts stay author-owned."""
     if not str(metadata.get("comment") or "").strip():
         return True
     source = str(metadata.get("comment_source") or "").strip()
     if source == "team_review_import" or not source:
-        return is_auth_admin(account)
+        return bool(account)
     return source == "admin_listing_post" and listing_metadata_owned_by_account(metadata, "comment", account)
 
 
 def can_edit_listing_contact(metadata: dict[str, str], account: dict[str, Any]) -> bool:
-    """Only its author account may alter a direct Tab 0 Contact History post; bulk-imported posts are developer-only."""
+    """Only its author account may alter a direct Tab 0 Contact History post; bulk-imported posts are shared team edits."""
     if not str(metadata.get("contact") or "").strip():
         return True
     source = str(metadata.get("contact_source") or "").strip()
     if source == "team_review_import":
-        return is_auth_admin(account)
+        return bool(account)
     return source == "admin_contact_post" and listing_metadata_owned_by_account(metadata, "contact", account)
 
 
@@ -11012,6 +11021,85 @@ async def delete_shortlisting_metric_column(project_id: str, column_id: str, req
     return {"ok": True, "project": serialize_shortlisting_project(project, account), "column_id": column_id}
 
 
+def call_openrouter_translate_ko_to_en(label: str, description: str, api_key: str) -> tuple[dict[str, str] | None, str | None]:
+    """Best-effort literal KO->EN translation for a short classification label/description.
+
+    Used only to populate label_en/description_en on a custom Shortlisting Project's
+    classification_columns so the 판단근거 (criteria) drawer's English toggle has
+    something to show; callers must treat failure as non-fatal (keep the Korean-only
+    fields and move on) rather than blocking classification creation on OpenRouter.
+    """
+    system_prompt = (
+        "You are a precise Korean-to-English translator for a biotech pipeline review tool. "
+        "Translate the given short label and description literally and concisely, preserving "
+        "any technical/biotech terminology as-is. Respond with strict JSON only in the form "
+        '{"label_en": "...", "description_en": "..."} with no surrounding text or markdown fences.'
+    )
+    user_prompt = json.dumps({"label": label, "description": description}, ensure_ascii=False)
+    base_payload = {
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        "temperature": 0,
+        "max_tokens": 300,
+    }
+
+    errors: list[str] = []
+    for model in openrouter_models_to_try():
+        payload = {**base_payload, "model": model}
+        try:
+            response = post_openrouter(payload, api_key)
+            data = response.json()
+        except requests.HTTPError as exc:
+            response = exc.response
+            status_code = response.status_code if response is not None else 0
+            detail = response.text if response is not None else str(exc)
+            errors.append(f"{model}: HTTP {status_code} - {summarize_openrouter_error(detail)}")
+            if status_code in {401, 402, 403} or "free-models-per-day" in detail.lower():
+                break
+            continue
+        except Exception as exc:
+            errors.append(f"{model}: request failed - {exc}")
+            continue
+
+        error = data.get("error") if isinstance(data, dict) else None
+        if error:
+            detail = json.dumps(data, ensure_ascii=False)
+            errors.append(f"{model}: {summarize_openrouter_error(detail)}")
+            if "free-models-per-day" in detail.lower():
+                break
+            continue
+
+        try:
+            content = data["choices"][0]["message"]["content"]
+        except (KeyError, IndexError, TypeError):
+            errors.append(f"{model}: unexpected response - {json.dumps(data, ensure_ascii=False)[:500]}")
+            continue
+        if not content:
+            errors.append(f"{model}: empty response")
+            continue
+
+        cleaned = content.strip()
+        if cleaned.startswith("```"):
+            cleaned = cleaned.strip("`")
+            if cleaned.lower().startswith("json"):
+                cleaned = cleaned[4:]
+        try:
+            parsed = json.loads(cleaned)
+        except json.JSONDecodeError:
+            errors.append(f"{model}: non-JSON response - {cleaned[:200]}")
+            continue
+
+        label_en = str(parsed.get("label_en") or "").strip() if isinstance(parsed, dict) else ""
+        description_en = str(parsed.get("description_en") or "").strip() if isinstance(parsed, dict) else ""
+        if label_en:
+            return {"label_en": label_en, "description_en": description_en}, None
+        errors.append(f"{model}: missing label_en in response")
+
+    return None, " / ".join(errors[:4]) or "OpenRouter returned no usable response."
+
+
 @app.post("/api/shortlisting/projects/{project_id}/classifications")
 async def create_shortlisting_classification(project_id: str, request: Request) -> dict[str, Any]:
     try:
@@ -11055,10 +11143,24 @@ async def create_shortlisting_classification(project_id: str, request: Request) 
     if duplicate is not None:
         raise HTTPException(status_code=409, detail="동일한 이름의 분류가 이미 등록되어 있습니다.")
 
+    label_en = ""
+    description_en = ""
+    translate_error: str | None = None
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    if api_key:
+        translated, translate_error = call_openrouter_translate_ko_to_en(label, description, api_key)
+        if translated:
+            label_en = translated.get("label_en", "")
+            description_en = translated.get("description_en", "")
+    if translate_error:
+        print(f"[shortlisting-classification-translate] {project_id}/{label}: {translate_error}")
+
     classification = {
         "id": f"class_{uuid.uuid4().hex[:10]}",
         "label": label,
         "description": description,
+        "label_en": label_en,
+        "description_en": description_en,
         "created_by_name": str(account.get("name") or "").strip(),
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -11169,7 +11271,7 @@ async def remove_shortlisting_project_member(project_id: str, member_email: str,
 @app.post("/api/candidate-queue/import/preview")
 async def preview_candidate_queue_import(request: Request) -> dict[str, Any]:
     """Return ambiguous Listing matches before any Tab 0 import is persisted."""
-    require_auth_admin(request)
+    require_authenticated_user(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -11192,7 +11294,7 @@ async def preview_candidate_queue_import(request: Request) -> dict[str, Any]:
 @app.post("/api/candidate-queue/import")
 async def import_candidate_queue(request: Request) -> dict[str, Any]:
     """Step 0: import Listing-grid rows into the Listing queue."""
-    require_auth_admin(request)
+    require_authenticated_user(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -11752,8 +11854,8 @@ def get_candidate_queue_stats() -> dict[str, Any]:
 
 @app.patch("/api/candidate-queue/listing-details")
 async def update_candidate_queue_listing_details(request: Request) -> dict[str, Any]:
-    """Admin-only inline edits for a pending Listing row in Tab 0."""
-    account = require_auth_admin(request)
+    """Inline edits for a pending Listing row in Tab 0."""
+    account = require_authenticated_user(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -11799,7 +11901,7 @@ async def update_candidate_queue_listing_details(request: Request) -> dict[str, 
 @app.patch("/api/candidate-queue/metadata")
 async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]:
     """Edit a single internal Comment or Contact value from Tab 0."""
-    account = require_auth_admin(request)
+    account = require_authenticated_user(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -11943,7 +12045,7 @@ async def update_candidate_pipeline_metadata(request: Request) -> dict[str, Any]
 @app.delete("/api/candidate-queue/{queue_id}")
 def delete_candidate_queue_entry(queue_id: str, request: Request) -> dict[str, Any]:
     """Step 0: remove a mis-pasted or no-longer-needed pending candidate."""
-    require_auth_admin(request)
+    require_authenticated_user(request)
     queue = load_candidate_queue()
     remaining = [entry for entry in queue if entry.get("id") != queue_id]
     if len(remaining) == len(queue):
@@ -12210,9 +12312,7 @@ def reset_manual_scoring_overrides_after_rubric_review(
 
 @app.post("/api/records/{record_id:path}/legacy-ai-rubric-refresh")
 async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, Any]:
-    # Developer has a higher role rank than administrator, so the admin gate
-    # intentionally permits both approved administrators and developers.
-    account = require_auth_admin(request) or {}
+    account = require_authenticated_user(request) or {}
     records = load_records()
     for index, record in enumerate(records):
         if record_key(record) != record_id:
@@ -12559,7 +12659,7 @@ def get_obsidian_asset(record_id: str) -> dict[str, Any]:
 
 @app.post("/api/records/delete")
 async def delete_records(request: Request) -> dict[str, Any]:
-    require_auth_admin(request)
+    require_authenticated_user(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -12649,6 +12749,21 @@ def classify_record_disease_linkage(record_id: str) -> dict[str, Any]:
 
     note = disease_linkage_investigation_note(record)
     signature = disease_linkage_note_signature(note, score)
+
+    if score < DISEASE_LINKAGE_CONFIRMED_MOA_SCORE:
+        # MoA score 2: never eligible for O (see DISEASE_LINKAGE_CONFIRMED_MOA_SCORE) - skip the
+        # LLM call entirely and cache X, same free-shortcut treatment as the "확인 불가" pattern.
+        changed = focus.get("disease_linkage_status") != "X" or focus.get("disease_linkage_note_signature") != signature
+        focus["disease_linkage_status"] = "X"
+        focus["disease_linkage_status_source"] = "auto"
+        focus["disease_linkage_score_used"] = score
+        focus["disease_linkage_note_signature"] = signature
+        focus["disease_linkage_classified_at"] = datetime.now(timezone.utc).isoformat()
+        focus.pop("disease_linkage_error", None)
+        if changed:
+            save_records(records)
+        return {"status": "score_below_confirmed", "disease_linkage_status": "X", "record": record}
+
     if focus.get("disease_linkage_status") in {"O", "X", "NA"} and focus.get("disease_linkage_note_signature") == signature:
         return {"status": "cached", "disease_linkage_status": focus["disease_linkage_status"], "record": record}
 
@@ -13412,8 +13527,7 @@ async def refresh_record_rubric_compatibility(record_id: str, request: Request) 
 
 @app.post("/api/records/{record_id:path}/recalculate-oi-partnership")
 def recalculate_record_oi_partnership(record_id: str, request: Request) -> dict[str, Any]:
-    # The administrator threshold includes the higher Developer role.
-    account = require_auth_admin(request)
+    account = require_authenticated_user(request)
     actor_ip = get_client_ip(request)
     actor_name = str(account.get("name") or "").strip()
     records = load_records()
@@ -13547,7 +13661,7 @@ def recalculate_record_oi_partnership(record_id: str, request: Request) -> dict[
 
 @app.patch("/api/records/{record_id:path}/manual-review")
 async def update_manual_review(record_id: str, request: Request) -> dict[str, Any]:
-    account = require_auth_admin(request)
+    account = require_authenticated_user(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -13825,7 +13939,7 @@ async def update_manual_review(record_id: str, request: Request) -> dict[str, An
 
 @app.patch("/api/records/{record_id:path}/manual-review-history-reason")
 async def update_manual_review_history_reason(record_id: str, request: Request) -> dict[str, Any]:
-    account = require_auth_admin(request)
+    account = require_authenticated_user(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -14325,12 +14439,22 @@ async def update_shortlisting_project_record_state(record_id: str, project_id: s
                     if len(value) > 2000:
                         raise HTTPException(status_code=400, detail="metric value must be 2000 characters or fewer.")
                 metric_values[metric_id] = value
+            elif field == "classification":
+                raw_value = payload.get("value")
+                classification_id = str(raw_value or "").strip()
+                if classification_id:
+                    classifications = project.get("classification_columns") if isinstance(project.get("classification_columns"), list) else []
+                    match = next((item for item in classifications if item.get("id") == classification_id), None)
+                    if match is None:
+                        raise HTTPException(status_code=404, detail=f"Classification not found: {classification_id}")
+                value = classification_id
+                state["classification"] = value
             else:
                 raise HTTPException(
                     status_code=400,
                     detail=(
                         "field must be user_comment, action_plan, owner_name, due_date, tracking_status, "
-                        "custom_score, or metric_value."
+                        "custom_score, metric_value, or classification."
                     ),
                 )
             new_value = value
@@ -14445,7 +14569,7 @@ async def create_record_comment(record_id: str, request: Request) -> dict[str, A
 
 @app.delete("/api/records/{record_id:path}/comments/{comment_id}")
 def delete_record_comment(record_id: str, comment_id: str, request: Request) -> dict[str, Any]:
-    """Authors may remove their own comments; administrators may remove imports."""
+    """Authors may remove their own comments; any logged-in user may remove system-imported ones."""
     account = require_authenticated_user(request)
     records = load_records()
     for index, record in enumerate(records):
@@ -14462,8 +14586,6 @@ def delete_record_comment(record_id: str, comment_id: str, request: Request) -> 
             if delete_delegated_triage_comment(records, target, account, request):
                 save_records(records)
                 return {"ok": True, "record_id": record_id, "record": record, "deleted_id": comment_id}
-            if not is_auth_admin(account):
-                raise HTTPException(status_code=403, detail="Only administrators can remove imported comments.")
         else:
             if not comment_owned_by_account(target, account):
                 raise HTTPException(status_code=403, detail="Only the author can delete this comment.")
@@ -14615,11 +14737,11 @@ async def add_record_topic_note(record_id: str, request: Request) -> dict[str, A
 
 
 def can_manage_topic_note(account: dict[str, Any], note: dict[str, Any]) -> bool:
-    return is_auth_admin(account) and topic_note_owned_by_account(note, account)
+    return topic_note_owned_by_account(note, account)
 
 
 def can_delete_topic_note(account: dict[str, Any], note: dict[str, Any]) -> bool:
-    return is_auth_admin(account) and topic_note_owned_by_account(note, account)
+    return topic_note_owned_by_account(note, account)
 
 
 @app.patch("/api/records/{record_id:path}/topic-notes/{note_id}")
@@ -14876,7 +14998,7 @@ async def preview_record_attachment(attachment_id: str, record_id: str) -> dict[
 
 @app.delete("/api/records/{record_id:path}/attachments/{attachment_id}")
 async def delete_record_attachment(record_id: str, attachment_id: str, request: Request) -> dict[str, Any]:
-    require_auth_admin(request)
+    require_authenticated_user(request)
     records = load_records()
     for index, record in enumerate(records):
         if record_key(record) != record_id:
@@ -15118,7 +15240,7 @@ def list_qualitative_review_criterion_suggestions(record_id: str) -> dict[str, A
 
 @app.post("/api/records/{record_id:path}/qualitative-review/criteria")
 async def create_qualitative_review_criterion(record_id: str, request: Request) -> dict[str, Any]:
-    require_auth_admin(request)
+    require_authenticated_user(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -15203,7 +15325,7 @@ async def create_qualitative_review_criterion(record_id: str, request: Request) 
 
 @app.delete("/api/records/{record_id:path}/qualitative-review/criteria/{criterion_id}")
 async def delete_qualitative_review_criterion(record_id: str, criterion_id: str, request: Request) -> dict[str, Any]:
-    require_auth_admin(request)
+    require_authenticated_user(request)
     if not criterion_id.startswith("custom_"):
         raise HTTPException(status_code=400, detail="기본 평가 항목은 삭제할 수 없습니다.")
 
@@ -15255,7 +15377,7 @@ async def delete_qualitative_review_criterion(record_id: str, criterion_id: str,
 
 @app.post("/api/records/{record_id:path}/qualitative-review/ai-generate")
 async def generate_qualitative_review_ai_entry(record_id: str, request: Request) -> dict[str, Any]:
-    require_auth_admin(request)
+    require_authenticated_user(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -15423,7 +15545,7 @@ async def delete_qualitative_review_entry(record_id: str, entry_id: str, request
 
         if match_entry is None or match_criterion_id is None:
             raise HTTPException(status_code=404, detail=f"Qualitative review entry not found: {entry_id}")
-        if not is_auth_admin(account) and str(match_entry.get("author_id") or "") != str(account.get("id") or ""):
+        if not bool(match_entry.get("is_ai")) and str(match_entry.get("author_id") or "") != str(account.get("id") or ""):
             raise HTTPException(status_code=403, detail="본인이 작성한 의견만 삭제할 수 있습니다.")
 
         criteria_state[match_criterion_id]["entries"].remove(match_entry)
@@ -15453,7 +15575,7 @@ async def delete_qualitative_review_entry(record_id: str, entry_id: str, request
 
 @app.put("/api/records/{record_id:path}")
 async def update_record(record_id: str, request: Request) -> dict[str, Any]:
-    account = require_auth_admin(request)
+    account = require_authenticated_user(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:
@@ -15541,7 +15663,7 @@ async def update_record(record_id: str, request: Request) -> dict[str, Any]:
 
 @app.delete("/api/records/{record_id:path}")
 def delete_record(record_id: str, request: Request) -> dict[str, Any]:
-    require_auth_admin(request)
+    require_authenticated_user(request)
     records = load_records()
     kept = [record for record in records if record_key(record) != record_id]
     deleted = len(records) - len(kept)
@@ -15782,10 +15904,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
 
     requested_replacements = payload.get("confirmed_replacements") if isinstance(payload, dict) else None
-    # A same-pipeline report overwrite is destructive to the current official
-    # report. Require an administrator so the recovery snapshot and visible
-    # history always identify the person who approved it.
-    account = require_auth_admin(request) if requested_replacements else (authenticated_user(request) or {})
+    account = require_authenticated_user(request)
 
     incoming = normalize_records(payload, sanitize_source_report=True)
     # Keep the Compact v2 contract strict for the external GPT response before
@@ -15823,11 +15942,6 @@ async def upsert_records(request: Request) -> dict[str, Any]:
             source_report_changed = str((record.get("source_report") or {}).get("raw_markdown") or "") != str(
                 (existing_record.get("source_report") or {}).get("raw_markdown") or ""
             )
-            if source_report_changed and not is_auth_admin(account):
-                account = require_auth_admin(request)
-                actor_name = str(account.get("name") or account.get("email") or "").strip()
-                actor_user_id = str(account.get("id") or "").strip()
-                actor_email = str(account.get("email") or "").strip()
             preserve_dashboard_meta(record, existing_record)
             if confirmed_reupload and source_report_changed:
                 append_report_reupload_snapshot(
@@ -15918,7 +16032,12 @@ async def upsert_records(request: Request) -> dict[str, Any]:
 
 @app.put("/api/records")
 async def replace_records(request: Request) -> dict[str, Any]:
-    require_auth_admin(request)
+    # Whole-dataset replace has no UI trigger/confirm dialog anywhere in the app
+    # (no frontend caller) - unlike the per-record actions opened up elsewhere,
+    # this stays developer-only since it is the single highest-blast-radius
+    # write in the API and would otherwise be reachable by anyone with zero
+    # client-side safety net.
+    require_auth_developer(request)
     try:
         payload = await request.json()
     except json.JSONDecodeError as exc:

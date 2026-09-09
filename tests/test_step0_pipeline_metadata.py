@@ -394,7 +394,7 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertEqual(feed[0]["source"], "일괄 Excel 업로드: Tab 0 · Listing Comment")
         self.assertEqual(feed[0]["author"], "Team Review")
 
-    def test_administrator_can_manage_bulk_and_legacy_listing_comments(self) -> None:
+    def test_any_logged_in_user_can_manage_bulk_and_legacy_listing_comments(self) -> None:
         administrator = {"role": main.ROLE_ADMIN, "id": "admin-1"}
         standard_user = {"role": main.ROLE_USER, "id": "user-1"}
 
@@ -405,10 +405,14 @@ class Step0PipelineMetadataTests(unittest.TestCase):
         self.assertTrue(main.can_edit_listing_comment({
             "comment": "Legacy note without provenance",
         }, administrator))
-        self.assertFalse(main.can_edit_listing_comment({
+        self.assertTrue(main.can_edit_listing_comment({
             "comment": "Imported team note",
             "comment_source": "team_review_import",
         }, standard_user))
+        self.assertFalse(main.can_edit_listing_comment({
+            "comment": "Imported team note",
+            "comment_source": "team_review_import",
+        }, {}))
 
     def test_explicit_edit_can_clear_a_metadata_field(self) -> None:
         merged = main.merge_pipeline_metadata(

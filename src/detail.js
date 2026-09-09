@@ -1022,9 +1022,10 @@ function renderCommentNode(comment, childrenByParent, depth = 0, visited = new S
   const attachmentId = comment.attachment_id ? String(comment.attachment_id) : '';
   const body = escapeHtml(comment.body || '').replaceAll('\n', '<br>');
   const isDelegatedTriageComment = currentUserOwnsDelegatedTriageComment(comment);
+  const isDelegatedTriageOrigin = String(comment?.origin_kind || '').startsWith('triage_');
   const isOwnAuthor = (!comment.system_import && currentUserOwnsComment(comment)) || isDelegatedTriageComment;
   const isOwnComment = isOwnAuthor && !attachmentId;
-  const canDelete = !listingSourceField(comment) && (isOwnAuthor || Boolean(getCurrentUser()?.is_admin && comment.system_import === true));
+  const canDelete = !listingSourceField(comment) && (isOwnAuthor || (comment.system_import === true && !isDelegatedTriageOrigin));
   const canDeleteImported = canDelete;
   const isEditing = activeCommentEditId === String(comment.id);
   const display = syncedCommentDisplay(comment, defaultBreadcrumb);
@@ -1312,7 +1313,7 @@ function closePipelineWebsiteModal() {
 }
 
 function openPipelineWebsiteModal() {
-  if (!currentRecord || !currentRecordId || !getCurrentUser()?.is_admin) return;
+  if (!currentRecord || !currentRecordId || !getCurrentUser()) return;
   if (websiteOpenTimer) window.clearTimeout(websiteOpenTimer);
   websiteOpenTimer = null;
   if (elements.pipelineWebsiteInput) elements.pipelineWebsiteInput.value = pipelineWebsite(currentRecord);
@@ -1323,7 +1324,7 @@ function openPipelineWebsiteModal() {
 }
 
 async function savePipelineWebsite() {
-  if (!currentRecordId || !currentRecord || !getCurrentUser()?.is_admin) return;
+  if (!currentRecordId || !currentRecord || !getCurrentUser()) return;
   const value = String(elements.pipelineWebsiteInput?.value || '').trim();
   if (value && !safeHttpUrl(value)) {
     if (elements.pipelineWebsiteStatus) elements.pipelineWebsiteStatus.textContent = 'http:// 또는 https:// 주소를 입력해 주세요.';
@@ -1353,10 +1354,18 @@ async function savePipelineWebsite() {
 
 async function deleteRecordComment(commentId) {
   if (!currentRecordId || !commentId || !getCurrentUser()) return;
-  if (!await confirmDetailCommentDelete({
-    title: '코멘트를 삭제할까요?',
-    message: '삭제한 코멘트는 복구할 수 없습니다.'
-  })) return;
+  const allComments = Array.isArray(currentRecord?.meta?.collaboration?.comments) ? currentRecord.meta.collaboration.comments : [];
+  const targetComment = allComments.find((comment) => String(comment?.id) === String(commentId));
+  const confirmCopy = targetComment?.system_import === true
+    ? {
+        title: '이 코멘트를 삭제할까요?',
+        message: 'Tab 0 팀 일괄 업로드로 동기화된 코멘트입니다. 삭제하면 동기화된 모든 페이지에서 이 코멘트 기록이 함께 삭제되며, 복구할 수 없습니다.'
+      }
+    : {
+        title: '코멘트를 삭제할까요?',
+        message: '삭제한 코멘트는 복구할 수 없습니다.'
+      };
+  if (!await confirmDetailCommentDelete(confirmCopy)) return;
   try {
     const closeProgress = showDetailProgress('잠시만 기다려 주세요', '코멘트를 삭제하고 있습니다.');
     const response = await fetch(`/api/records/${encodeRecordIdForPath(currentRecordId)}/comments/${encodeURIComponent(commentId)}`, { method: 'DELETE' }).finally(closeProgress);
@@ -1565,8 +1574,8 @@ function fileWithPartnerMaterialSuffix(file, materialCategory) {
 
 function choosePartnerMaterialUpload(materialCategory) {
   if (!partnerMaterialLabels[materialCategory]) return;
-  if (!getCurrentUser()?.is_admin) {
-    setAttachmentStatus('Partner Materials 업로드는 관리자만 가능합니다.', 'error');
+  if (!getCurrentUser()) {
+    setAttachmentStatus('Partner Materials 업로드는 로그인 후 가능합니다.', 'error');
     return;
   }
   pendingPartnerMaterialCategory = materialCategory;
@@ -1575,7 +1584,7 @@ function choosePartnerMaterialUpload(materialCategory) {
 }
 
 function renderPartnerMaterialPermissions() {
-  const canManage = Boolean(getCurrentUser()?.is_admin);
+  const canManage = Boolean(getCurrentUser());
   if (elements.detailAttachmentDropzone) elements.detailAttachmentDropzone.hidden = !canManage;
   if (elements.detailPartnerMaterialPermissionNote) elements.detailPartnerMaterialPermissionNote.hidden = canManage;
   if (elements.detailDDReportUploadButton) elements.detailDDReportUploadButton.hidden = !canManage;
@@ -1599,42 +1608,218 @@ function setReviewInfoExpanded(expanded) {
   if (label) label.textContent = isExpanded ? 'Hide' : 'Show';
 }
 
+const FOCUS_TRACKING_COPY = {
+  untracked: {
+    action: 'add',
+    title: 'Custom Review 미등록 · 클릭하여 우선 검토 대상으로 추가',
+    ariaLabel: 'Custom Review에 우선 검토 대상으로 추가'
+  },
+  priority: {
+    action: 'stationary',
+    title: 'Custom Review 대상 · Priority review · 클릭하여 Stationary로 변경',
+    ariaLabel: '우선 검토 Custom Review 상태 · 클릭하여 Stationary로 변경'
+  },
+  stationary: {
+    action: 'remove',
+    title: 'Custom Review 대상 · Stationary (보류 모니터링) · 클릭하여 Custom Review에서 제거',
+    ariaLabel: 'Stationary 보류 모니터링 상태 · 클릭하여 Custom Review에서 제거'
+  }
+};
+
+function writableFocusProjectOptions() {
+  const projects = shortlistingProjects.length
+    ? shortlistingProjects
+    : [{ id: DEFAULT_SHORTLISTING_PROJECT_ID, name: 'Open Innovation Center' }];
+  return projects.filter((project) => customProjectRoleFor(project.id) !== 'read');
+}
+
+function isRecordTrackedInProject(record, projectId) {
+  return projectId === DEFAULT_SHORTLISTING_PROJECT_ID
+    ? record?.meta?.focus_management?.is_tracked === true
+    : record?.meta?.shortlisting_projects?.[projectId]?.is_tracked === true;
+}
+
+function projectTrackingStatus(record, projectId) {
+  if (!isRecordTrackedInProject(record, projectId)) return 'untracked';
+  const status = projectId === DEFAULT_SHORTLISTING_PROJECT_ID
+    ? record?.meta?.focus_management?.tracking_status
+    : record?.meta?.shortlisting_projects?.[projectId]?.tracking_status;
+  return status === 'stationary' ? 'stationary' : 'priority';
+}
+
+function renderDetailFocusToggle(record) {
+  const button = elements.detailFocusToggle;
+  if (!button) return;
+  const writableProjects = writableFocusProjectOptions();
+  if (!writableProjects.length) {
+    button.hidden = true;
+    closeDetailFocusProjectPicker();
+    return;
+  }
+  button.hidden = false;
+  if (writableProjects.length > 1) {
+    const isTrackedAnywhere = writableProjects.some((project) => isRecordTrackedInProject(record, project.id));
+    delete button.dataset.focusAction;
+    delete button.dataset.projectId;
+    delete button.dataset.trackingStatus;
+    button.dataset.focusProjectPickerTrigger = 'true';
+    button.classList.toggle('add', !isTrackedAnywhere);
+    button.classList.toggle('remove', isTrackedAnywhere);
+    button.classList.remove('stationary');
+    button.setAttribute('aria-haspopup', 'menu');
+    button.setAttribute('aria-expanded', activeDetailFocusProjectPicker ? 'true' : 'false');
+    button.title = 'Custom Review에 추가/제거할 Project 선택';
+    button.setAttribute('aria-label', 'Custom Review에 추가/제거할 Project 선택');
+    if (activeDetailFocusProjectPicker) renderDetailFocusProjectPickerPopover();
+    return;
+  }
+  delete button.dataset.focusProjectPickerTrigger;
+  button.removeAttribute('aria-haspopup');
+  button.removeAttribute('aria-expanded');
+  closeDetailFocusProjectPicker();
+  const projectId = writableProjects[0].id;
+  const trackingStatus = projectTrackingStatus(record, projectId);
+  const copy = FOCUS_TRACKING_COPY[trackingStatus];
+  button.dataset.focusAction = copy.action;
+  button.dataset.projectId = projectId;
+  button.dataset.trackingStatus = trackingStatus;
+  button.classList.toggle('add', trackingStatus === 'untracked');
+  button.classList.toggle('remove', trackingStatus === 'priority');
+  button.classList.toggle('stationary', trackingStatus === 'stationary');
+  button.title = copy.title;
+  button.setAttribute('aria-label', copy.ariaLabel);
+}
+
+let activeDetailFocusProjectPicker = false;
+
+function detailFocusProjectPickerPopoverElement() {
+  let element = document.querySelector('#detailFocusProjectPicker');
+  if (element) return element;
+  element = document.createElement('div');
+  element.id = 'detailFocusProjectPicker';
+  element.className = 'table-focus-project-picker';
+  element.hidden = true;
+  element.setAttribute('role', 'menu');
+  document.body.append(element);
+  return element;
+}
+
+function positionDetailFocusProjectPickerPopover() {
+  const popover = document.querySelector('#detailFocusProjectPicker');
+  const trigger = elements.detailFocusToggle;
+  if (!popover || popover.hidden || !trigger?.isConnected) return;
+  const rect = trigger.getBoundingClientRect();
+  const width = Math.min(240, window.innerWidth - 24);
+  const left = Math.max(12, Math.min(rect.right - width, window.innerWidth - width - 12));
+  popover.style.width = `${width}px`;
+  popover.style.left = `${left}px`;
+  const height = Math.min(popover.offsetHeight || 240, window.innerHeight - 24);
+  popover.style.top = `${Math.max(12, Math.min(rect.bottom + 6, window.innerHeight - height - 12))}px`;
+}
+
+function closeDetailFocusProjectPicker() {
+  if (!activeDetailFocusProjectPicker) return;
+  activeDetailFocusProjectPicker = false;
+  elements.detailFocusToggle?.setAttribute('aria-expanded', 'false');
+  const popover = document.querySelector('#detailFocusProjectPicker');
+  if (popover) {
+    popover.hidden = true;
+    popover.innerHTML = '';
+  }
+}
+
+function renderDetailFocusProjectPickerPopover() {
+  if (!activeDetailFocusProjectPicker || !currentRecord) return;
+  const popover = detailFocusProjectPickerPopoverElement();
+  const projects = writableFocusProjectOptions();
+  popover.innerHTML = `
+    <div class="table-focus-project-picker-heading">Custom Review Project 선택</div>
+    <div class="table-focus-project-picker-list" role="none">
+      ${projects.map((project) => {
+        const isTracked = isRecordTrackedInProject(currentRecord, project.id);
+        return `
+          <button
+            type="button"
+            class="table-focus-project-picker-option${isTracked ? ' is-tracked' : ''}"
+            role="menuitemcheckbox"
+            aria-checked="${isTracked ? 'true' : 'false'}"
+            data-detail-focus-project-pick="${escapeHtml(project.id)}"
+          >
+            <span class="table-focus-project-picker-star" aria-hidden="true">${isTracked ? '★' : '☆'}</span>
+            <span>${escapeHtml(customProjectDisplayName(project))}</span>
+          </button>`;
+      }).join('')}
+    </div>
+  `;
+  popover.hidden = false;
+  positionDetailFocusProjectPickerPopover();
+}
+
+function toggleDetailFocusProjectPicker(trigger) {
+  if (activeDetailFocusProjectPicker) {
+    closeDetailFocusProjectPicker();
+    return;
+  }
+  activeDetailFocusProjectPicker = true;
+  trigger.setAttribute('aria-expanded', 'true');
+  renderDetailFocusProjectPickerPopover();
+}
+
+async function pickDetailFocusProjectFromPicker(projectId) {
+  if (!currentRecord) {
+    closeDetailFocusProjectPicker();
+    return;
+  }
+  const action = isRecordTrackedInProject(currentRecord, projectId) ? 'remove' : 'add';
+  closeDetailFocusProjectPicker();
+  await cycleDetailFocusTracking(projectId, action, elements.detailFocusToggle);
+}
+
+async function saveDetailShortlistingProjectTracking(projectId, action, trigger = elements.detailFocusToggle) {
+  if (!currentRecordId || !currentRecord) return;
+  if (trigger) trigger.disabled = true;
+  const statusCopy = action === 'remove'
+    ? ['Custom Review에서 제거 중…', 'Custom Review에서 제거했습니다.']
+    : action === 'stationary'
+      ? ['Stationary 보류 모니터링으로 변경 중…', 'Stationary 보류 모니터링으로 변경했습니다.']
+      : ['우선 검토 Custom Review에 추가 중…', '우선 검토 Custom Review에 추가했습니다.'];
+  setCollaborationStatus(statusCopy[0]);
+  try {
+    const response = await fetch(
+      `/api/records/${encodeRecordIdForPath(currentRecordId)}/shortlisting-projects/${encodeURIComponent(projectId)}`,
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action })
+      }
+    );
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'Custom Review Project 저장에 실패했습니다.');
+    currentRecord = data.record;
+    renderCollaborationPanel(currentRecord);
+    setCollaborationStatus(statusCopy[1], 'success');
+  } catch (error) {
+    setCollaborationStatus(error.message, 'error');
+  } finally {
+    if (trigger) trigger.disabled = false;
+  }
+}
+
+async function cycleDetailFocusTracking(projectId, action, trigger = elements.detailFocusToggle) {
+  return projectId === DEFAULT_SHORTLISTING_PROJECT_ID
+    ? saveDetailFocus(action, trigger)
+    : saveDetailShortlistingProjectTracking(projectId, action, trigger);
+}
+
 function renderCollaborationPanel(record) {
   const focus = record?.meta?.focus_management || {};
-  const tracked = focus.is_tracked === true;
-  const trackingStatus = tracked && focus.tracking_status === 'stationary' ? 'stationary' : tracked ? 'priority' : 'untracked';
-  const trackingCopy = {
-    untracked: {
-      action: 'add',
-      title: 'Custom Review 미등록 · 클릭하여 우선 검토 대상으로 추가',
-      ariaLabel: 'Custom Review에 우선 검토 대상으로 추가'
-    },
-    priority: {
-      action: 'stationary',
-      title: 'Custom Review 대상 · Priority review · 클릭하여 Stationary로 변경',
-      ariaLabel: '우선 검토 Custom Review 상태 · 클릭하여 Stationary로 변경'
-    },
-    stationary: {
-      action: 'remove',
-      title: 'Custom Review 대상 · Stationary (보류 모니터링) · 클릭하여 Custom Review에서 제거',
-      ariaLabel: 'Stationary 보류 모니터링 상태 · 클릭하여 Custom Review에서 제거'
-    }
-  }[trackingStatus];
   const attachments = (Array.isArray(record?.meta?.attachments) ? record.meta.attachments : [])
     .filter((attachment) => attachment?.source !== 'contact_history');
   const statusIsHuman = hasManualReviewField(record, 'filter_status');
   const reasonIsHuman = hasManualReviewField(record, 'status_reason');
   const reviewScores = effectiveReviewScores(record);
   renderPartnerMaterialPermissions();
-  if (elements.detailFocusToggle) {
-    elements.detailFocusToggle.dataset.focusAction = trackingCopy.action;
-    elements.detailFocusToggle.classList.toggle('add', !tracked);
-    elements.detailFocusToggle.classList.toggle('remove', trackingStatus === 'priority');
-    elements.detailFocusToggle.classList.toggle('stationary', trackingStatus === 'stationary');
-    elements.detailFocusToggle.dataset.trackingStatus = trackingStatus;
-    elements.detailFocusToggle.title = trackingCopy.title;
-    elements.detailFocusToggle.setAttribute('aria-label', trackingCopy.ariaLabel);
-  }
+  renderDetailFocusToggle(record);
   if (elements.detailActionDate) {
     elements.detailActionDate.value = String(focus.due_date || '');
   }
@@ -1722,7 +1907,7 @@ function renderCollaborationPanel(record) {
   }
   renderCustomProjectPanel(record);
   const autoMaterialFlags = detectPartnerMaterialFlags(attachments);
-  const canManagePartnerMaterials = Boolean(getCurrentUser()?.is_admin);
+  const canManagePartnerMaterials = Boolean(getCurrentUser());
   elements.detailPartnerMaterialButtons?.forEach((pill) => {
     const key = pill.dataset.materialKey;
     const active = autoMaterialFlags[key] === true;
@@ -2169,7 +2354,7 @@ function renderEditHistory(record) {
         : `${formatAuditValue(entry?.previous_value)} → ${formatAuditValue(entry?.new_value)}`;
       const humanClass = entry?.actor_name ? ' class="is-human"' : '';
       const existingReason = String(entry?.review_reason || '').trim();
-      const canEditReason = isManualScoreChange && Boolean(getCurrentUser()?.is_admin);
+      const canEditReason = isManualScoreChange && Boolean(getCurrentUser());
       const reasonForm = canEditReason
         ? `<form class="detail-edit-history-reason-form" data-edit-history-reason-form data-history-entry-id="${escapeHtml(entry?.id || '')}" data-history-changed-at="${escapeHtml(entry?.changed_at || '')}" data-history-field="${escapeHtml(field)}" data-previous-reason="${escapeHtml(existingReason)}"${existingReason ? ' hidden' : ''}>
             <textarea rows="2" maxlength="1000" aria-label="${escapeHtml(source)} 변경 사유" placeholder="점수 변경 사유를 남기세요.">${escapeHtml(existingReason)}</textarea>
@@ -2318,7 +2503,7 @@ function attachmentProcessingLabel(attachment) {
 
 function renderAttachments(record) {
   if (!elements.detailAttachmentsList) return;
-  const canDelete = Boolean(getCurrentUser()?.is_admin);
+  const canDelete = Boolean(getCurrentUser());
   const contactAttachmentIds = contactHistoryAttachmentIds(record);
   const allAttachments = Array.isArray(record?.meta?.attachments) ? record.meta.attachments : [];
   const attachments = allAttachments
@@ -2399,7 +2584,7 @@ function ddReportAttachments(record) {
 
 function renderAttachmentFileList(container, attachments, countBadge, variant = '') {
   if (!container) return;
-  const canDelete = Boolean(getCurrentUser()?.is_admin);
+  const canDelete = Boolean(getCurrentUser());
   container.hidden = !attachments.length;
   if (countBadge) {
     countBadge.hidden = !attachments.length;
@@ -2447,8 +2632,8 @@ function renderDDReportFilesList(record) {
 }
 
 async function uploadAttachment(file, materialCategory) {
-  if (!getCurrentUser()?.is_admin) {
-    setAttachmentStatus('Partner Materials 업로드는 관리자만 가능합니다.', 'error');
+  if (!getCurrentUser()) {
+    setAttachmentStatus('Partner Materials 업로드는 로그인 후 가능합니다.', 'error');
     return false;
   }
   if (!file || !currentRecordId) return;
@@ -2917,7 +3102,7 @@ function renderQualitativeCriterionSection(criterion, criteriaState) {
                   <strong>${escapeHtml(entry.author || '익명')}</strong>
                   <time>${escapeHtml(formatCommentTime(entry.created_at))}</time>
                 </div>
-                ${currentUser && (currentUser.is_admin || String(entry.author_id || '') === String(currentUser.id || '')) ? `<button
+                ${currentUser && (entry.is_ai || String(entry.author_id || '') === String(currentUser.id || '')) ? `<button
                   type="button"
                   class="qualitative-entry-delete"
                   data-delete-qualitative-entry-id="${escapeHtml(entry.id)}"
@@ -3937,8 +4122,8 @@ async function uploadContactHistoryAttachment(file) {
 }
 
 async function uploadDDReportAttachment(file) {
-  if (!getCurrentUser()?.is_admin) {
-    if (elements.detailDDReportAttachmentStatus) elements.detailDDReportAttachmentStatus.textContent = 'DD Report 업로드는 관리자만 가능합니다.';
+  if (!getCurrentUser()) {
+    if (elements.detailDDReportAttachmentStatus) elements.detailDDReportAttachmentStatus.textContent = 'DD Report 업로드는 로그인 후 가능합니다.';
     return;
   }
   if (!file || !currentRecordId) return;
@@ -4056,7 +4241,7 @@ function currentUserCanManageTopicNote(note) {
   const sameId = user?.id && note?.author_id && String(note.author_id) === String(user.id);
   const sameEmail = user?.email && note?.author_email
     && String(note.author_email).trim().toLowerCase() === String(user.email).trim().toLowerCase();
-  return Boolean(user?.is_admin && (sameId || sameEmail));
+  return Boolean(sameId || sameEmail);
 }
 
 function topicNoteMarkup(note) {
@@ -4080,7 +4265,7 @@ function topicNoteMarkup(note) {
 
 function topicNotePanelMarkup(topic, notes, unmatched = false) {
   const noteStateClass = notes.length ? ' has-notes' : ' is-empty';
-  const canAdd = Boolean(getCurrentUser()?.is_admin);
+  const canAdd = Boolean(getCurrentUser());
   return `
     <section class="topic-note-panel${unmatched ? ' is-unmatched' : ''}${noteStateClass}" data-topic-note-panel data-topic-id="${escapeHtml(topic.topicId)}" data-topic-key="${escapeHtml(topic.key)}" data-topic-title="${escapeHtml(topic.title)}">
       <div class="topic-note-panel-heading">
@@ -4646,12 +4831,7 @@ async function refreshRubric() {
   const button = elements.rubricRefreshButton;
   if (!button) return;
   const user = await requireAuth();
-  if (!user?.is_admin && !user?.is_developer) {
-    const message = 'Score 기준 갱신은 Developer 또는 관리자 권한이 필요합니다. 로그인한 계정의 권한을 확인해 주세요.';
-    setCollaborationStatus(message, 'error');
-    await showDetailActionFailureDialog('Score 기준 갱신을 실행할 수 없습니다', message);
-    return;
-  }
+  if (!user) return;
 
   button.disabled = true;
   button.classList.add('is-saving');
@@ -4715,12 +4895,7 @@ async function refreshOiPartnership() {
   const button = elements.oiPartnershipRefreshButton;
   if (!button) return;
   const user = await requireAuth();
-  if (!user?.is_admin && !user?.is_developer) {
-    const message = 'Filter 3 기준 갱신은 Developer 또는 관리자 권한이 필요합니다. 로그인한 계정의 권한을 확인해 주세요.';
-    setCollaborationStatus(message, 'error');
-    await showDetailActionFailureDialog('Filter 3 기준 갱신을 실행할 수 없습니다', message);
-    return;
-  }
+  if (!user) return;
 
   button.disabled = true;
   button.classList.add('is-saving');
@@ -5112,25 +5287,35 @@ function englishCriteriaBody() {
 
 function renderCriteriaDrawerCustomProjectContent(project) {
   if (!elements.criteriaDrawerBody) return;
+  const isEnglish = criteriaGuideLanguage === 'en';
   const classifications = project?.classification_columns || [];
+  const labelFor = (item) => (isEnglish && item.label_en) ? item.label_en : item.label;
+  const descriptionFor = (item) => {
+    if (isEnglish && item.description_en) return item.description_en;
+    return item.description || (isEnglish ? 'No description provided.' : '설명이 등록되지 않았습니다.');
+  };
   const listMarkup = classifications.length
     ? classifications.map((item, index) => `
         <article class="criteria-focus-info-card">
-          <div class="criteria-focus-card-heading"><h4>${index + 1}. ${escapeHtml(item.label)}</h4></div>
-          <p>${escapeHtml(item.description || '설명이 등록되지 않았습니다.')}</p>
+          <div class="criteria-focus-card-heading"><h4>${index + 1}. ${escapeHtml(labelFor(item))}</h4></div>
+          <p>${escapeHtml(descriptionFor(item))}</p>
         </article>
       `).join('')
-    : `<p class="criteria-custom-project-empty">이 Project는 아직 분류 기준이 등록되지 않았습니다. Project 설정 → 분류 관리에서 추가할 수 있습니다.</p>`;
+    : `<p class="criteria-custom-project-empty">${isEnglish
+        ? 'This Project has no classification criteria yet. Add some from Project Settings → Classification Management.'
+        : '이 Project는 아직 분류 기준이 등록되지 않았습니다. Project 설정 → 분류 관리에서 추가할 수 있습니다.'}</p>`;
   elements.criteriaDrawerBody.innerHTML = `
     <section class="criteria-rule criteria-focus-rule">
-      <h3>${escapeHtml(project?.name || '')} — 분류 기준</h3>
-      <p>이 Project에서 설정한 지표를 종합해 판단하는 최종 분류 기준입니다.</p>
+      <h3>${escapeHtml(project?.name || '')} ${isEnglish ? '- Classification Criteria' : '— 분류 기준'}</h3>
+      <p>${isEnglish
+        ? 'The final classification criteria this Project defined by combining its metrics.'
+        : '이 Project에서 설정한 지표를 종합해 판단하는 최종 분류 기준입니다.'}</p>
     </section>
     <section class="criteria-focus-section criteria-guide-section">
       <div class="criteria-focus-grid criteria-focus-input-grid">${listMarkup}</div>
     </section>
   `;
-  elements.criteriaDrawerBody.lang = 'ko';
+  elements.criteriaDrawerBody.lang = isEnglish ? 'en' : 'ko';
   if (elements.criteriaDrawer) elements.criteriaDrawer.dataset.activeCriteriaTab = 'focus-custom';
 }
 
@@ -5152,7 +5337,7 @@ function updateCriteriaDrawerScope() {
     : null;
   if (elements.criteriaDrawerScopeLabel) {
     elements.criteriaDrawerScopeLabel.textContent = isCustomProjectView
-      ? `TAB 3 · ${(activeProject?.name || '').toUpperCase()} · 분류 기준`
+      ? `TAB 3 · ${(activeProject?.name || '').toUpperCase()} · ${criteriaGuideLanguage === 'en' ? 'CLASSIFICATION CRITERIA' : '분류 기준'}`
       : (chrome.scopes[mode] || '');
   }
   if (mode !== 'focus-custom') {
@@ -5399,7 +5584,7 @@ async function saveReportReupload() {
 }
 
 function openEditDrawer() {
-  if (!currentRecord || !getCurrentUser()?.is_admin) return;
+  if (!currentRecord || !getCurrentUser()?.is_developer) return;
   elements.jsonEditor.value = JSON.stringify(currentRecord, null, 2);
   elements.editStatus.textContent = '편집 가능';
   elements.editDrawer.hidden = false;
@@ -5641,7 +5826,32 @@ elements.detailScoreSequence?.addEventListener('click', (event) => {
 });
 
 elements.detailFocusToggle?.addEventListener('click', () => {
-  saveDetailFocus(elements.detailFocusToggle.dataset.focusAction || 'add');
+  const button = elements.detailFocusToggle;
+  if (button.dataset.focusProjectPickerTrigger === 'true') {
+    toggleDetailFocusProjectPicker(button);
+    return;
+  }
+  const projectId = button.dataset.projectId || DEFAULT_SHORTLISTING_PROJECT_ID;
+  cycleDetailFocusTracking(projectId, button.dataset.focusAction || 'add', button);
+});
+
+document.addEventListener('click', (event) => {
+  if (!activeDetailFocusProjectPicker) return;
+  if (event.target.closest('#detailFocusProjectPicker')) {
+    const option = event.target.closest('[data-detail-focus-project-pick]');
+    if (option) pickDetailFocusProjectFromPicker(option.dataset.detailFocusProjectPick);
+    return;
+  }
+  if (event.target.closest('#detailFocusToggle')) return;
+  closeDetailFocusProjectPicker();
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && activeDetailFocusProjectPicker) closeDetailFocusProjectPicker();
+});
+
+window.addEventListener('resize', () => {
+  if (activeDetailFocusProjectPicker) positionDetailFocusProjectPickerPopover();
 });
 
 elements.rubricRefreshButton?.addEventListener('click', refreshRubric);
@@ -5661,7 +5871,7 @@ elements.qualitativeCriterionStatusPills?.addEventListener('click', (event) => {
   if (!button) return;
   if (button.dataset.qualitativeJump === 'dd_report') {
     event.preventDefault();
-    if (!getCurrentUser()?.is_admin) return;
+    if (!getCurrentUser()) return;
     if (elements.detailDDReportAttachmentInput) elements.detailDDReportAttachmentInput.value = '';
     elements.detailDDReportAttachmentInput?.click();
     return;
@@ -6114,7 +6324,7 @@ wireAttachmentDropTarget(elements.detailDDReportUploadButton, handleDDReportFile
 wireAttachmentDropTarget(
   elements.detailDDReportPillButton,
   handleDDReportFileDrop,
-  { isBlocked: () => !getCurrentUser()?.is_admin || Boolean(elements.detailDDReportUploadButton?.disabled) }
+  { isBlocked: () => !getCurrentUser() || Boolean(elements.detailDDReportUploadButton?.disabled) }
 );
 
 elements.detailContactHistoryFilesList?.addEventListener('click', (event) => {

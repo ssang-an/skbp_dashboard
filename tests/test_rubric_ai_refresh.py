@@ -231,7 +231,7 @@ class RubricAiRefreshTests(unittest.TestCase):
             "client": ("127.0.0.1", 12345),
         })
         with (
-            patch.object(main, "require_auth_admin", return_value=None),
+            patch.object(main, "require_authenticated_user", return_value=None),
             patch.object(main, "load_records", return_value=[copy.deepcopy(record)]),
             patch.object(main, "save_records", side_effect=lambda records: saved.append(copy.deepcopy(records))),
             patch.object(main, "run_markdown_exports", return_value=[]),
@@ -293,7 +293,7 @@ class RubricAiRefreshTests(unittest.TestCase):
             "client": ("127.0.0.1", 12345),
         })
         with (
-            patch.object(main, "require_auth_admin", return_value=None),
+            patch.object(main, "require_authenticated_user", return_value=None),
             patch.object(main, "load_records", return_value=[copy.deepcopy(record)]),
             patch.object(main, "save_records", side_effect=lambda records: saved.append(copy.deepcopy(records))),
             patch.object(main, "call_openrouter_rubric_refresh", return_value=(answer, None)),
@@ -331,7 +331,7 @@ class RubricAiRefreshTests(unittest.TestCase):
         })
 
         with (
-            patch.object(main, "require_auth_admin", return_value=None),
+            patch.object(main, "require_authenticated_user", return_value=None),
             patch.object(main, "load_records", return_value=[copy.deepcopy(edited)]),
             patch.object(main, "save_records", side_effect=lambda records: saved.append(copy.deepcopy(records))),
             patch.object(main, "call_openrouter_rubric_refresh") as refresh_ai,
@@ -365,7 +365,7 @@ class RubricAiRefreshTests(unittest.TestCase):
         })
 
         with (
-            patch.object(main, "require_auth_admin", return_value=None),
+            patch.object(main, "require_authenticated_user", return_value=None),
             patch.object(main, "load_records", return_value=[copy.deepcopy(record)]),
             patch.object(main, "save_records") as save_records,
             patch.object(main, "call_openrouter_rubric_refresh") as refresh_ai,
@@ -492,7 +492,7 @@ class RubricAiRefreshTests(unittest.TestCase):
             "client": ("127.0.0.1", 12345),
         })
         with (
-            patch.object(main, "require_auth_admin", return_value=None),
+            patch.object(main, "require_authenticated_user", return_value=None),
             patch.object(main, "load_records", return_value=[copy.deepcopy(record)]),
             patch.object(main, "save_records", return_value=None),
             patch.object(main, "run_markdown_exports", return_value=[]),
@@ -541,7 +541,7 @@ class RubricAiRefreshTests(unittest.TestCase):
 
         request.json = payload
         with (
-            patch.object(main, "require_auth_admin", return_value={"name": "Review Admin", "id": "admin"}),
+            patch.object(main, "require_authenticated_user", return_value={"name": "Review Admin", "id": "admin"}),
             patch.object(main, "load_records", return_value=[record]),
             patch.object(main, "save_records"),
             patch.object(main, "deferred_markdown_exports", return_value={"exports": []}),
@@ -569,7 +569,7 @@ class RubricAiRefreshTests(unittest.TestCase):
 
         request.json = payload
         with (
-            patch.object(main, "require_auth_admin", return_value={"name": "Review Admin", "id": "admin"}),
+            patch.object(main, "require_authenticated_user", return_value={"name": "Review Admin", "id": "admin"}),
             patch.object(main, "load_records", return_value=[record]),
             patch.object(main, "save_records"),
             patch.object(main, "deferred_markdown_exports", return_value={"exports": []}),

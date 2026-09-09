@@ -142,7 +142,7 @@ class TopicNotesAndReuploadTests(unittest.TestCase):
         saved: list[list[dict[str, object]]] = []
         admin = {"id": "admin-1", "name": "Review Admin", "email": "admin@example.com", "role": "administrator"}
         with (
-            patch.object(main, "require_auth_admin", return_value=admin),
+            patch.object(main, "require_authenticated_user", return_value=admin),
             patch.object(main, "load_records", return_value=[copy.deepcopy(existing)]),
             patch.object(main, "load_candidate_queue", return_value=[]),
             patch.object(main, "save_candidate_queue"),
@@ -190,9 +190,9 @@ class TopicNotesAndReuploadTests(unittest.TestCase):
         self.assertIn(".detail-shell .collaboration-title-row .collaboration-title-actions", CSS)
         self.assertIn(".detail-shell .collaboration-title-actions .comment-count", CSS)
 
-    def test_json_record_put_requires_configured_admin(self):
+    def test_json_record_put_requires_authenticated_user(self):
         source = inspect.getsource(main.update_record)
-        self.assertIn("require_auth_admin(request)", source)
+        self.assertIn("require_authenticated_user(request)", source)
 
 
 if __name__ == "__main__":

@@ -52,10 +52,15 @@ def full_scout_record() -> dict:
 
 
 class RoleResolutionTests(unittest.TestCase):
-    def test_admin_is_owner_without_membership(self) -> None:
+    def test_developer_is_owner_without_membership(self) -> None:
+        project = custom_project()
+        developer = make_account("dev@example.com", role="developer")
+        self.assertEqual(main.shortlisting_project_role_for_account(project, developer), "owner")
+
+    def test_admin_without_membership_is_read(self) -> None:
         project = custom_project()
         admin = make_account("admin@example.com", role="admin")
-        self.assertEqual(main.shortlisting_project_role_for_account(project, admin), "owner")
+        self.assertEqual(main.shortlisting_project_role_for_account(project, admin), "read")
 
     def test_unlisted_user_is_read(self) -> None:
         project = custom_project()
@@ -79,9 +84,9 @@ class RoleResolutionTests(unittest.TestCase):
     def test_oic_default_starts_with_empty_members(self) -> None:
         oic_project = main.default_shortlisting_project()
         self.assertEqual(oic_project.get("members"), [])
-        # No explicit member yet: only site admins can act as owner.
+        # No explicit member yet: only the site developer can act as owner.
         self.assertEqual(main.shortlisting_project_role_for_account(oic_project, make_account("nobody@x.com")), "read")
-        self.assertEqual(main.shortlisting_project_role_for_account(oic_project, make_account("admin@x.com", role="admin")), "owner")
+        self.assertEqual(main.shortlisting_project_role_for_account(oic_project, make_account("dev@x.com", role="developer")), "owner")
 
     def test_oic_default_can_be_granted_explicit_members(self) -> None:
         oic_project = main.default_shortlisting_project()
@@ -116,9 +121,9 @@ class RecordStateEndpointPermissionTests(unittest.TestCase):
             self.call(project, account, {"action": "add"})
         self.assertEqual(ctx.exception.status_code, 403)
 
-    def test_admin_can_track_record_without_membership(self) -> None:
+    def test_developer_can_track_record_without_membership(self) -> None:
         project = custom_project()
-        account = make_account("admin@x.com", role="admin")
+        account = make_account("dev@x.com", role="developer")
         result = self.call(project, account, {"action": "add"})
         self.assertTrue(result["ok"])
 
@@ -163,6 +168,72 @@ class ProjectAndColumnOwnerGateTests(unittest.TestCase):
             with self.assertRaises(HTTPException) as ctx:
                 asyncio.run(main.update_shortlisting_project(project["id"], FakeRequest({"name": "Renamed"})))
         self.assertEqual(ctx.exception.status_code, 403)
+
+    def test_write_member_cannot_add_classification(self) -> None:
+        project = custom_project(members=[{"email": "writer@x.com", "role": "write", "added_by": "x", "added_at": "now"}])
+        account = make_account("writer@x.com")
+        with (
+            patch.object(main, "require_authenticated_user", return_value=account),
+            patch.object(main, "load_shortlisting_projects", return_value=[project]),
+            patch.object(main, "save_shortlisting_projects"),
+            patch.object(main, "call_openrouter_translate_ko_to_en", return_value=(None, None)),
+        ):
+            with self.assertRaises(HTTPException) as ctx:
+                asyncio.run(main.create_shortlisting_classification(
+                    project["id"], FakeRequest({"label": "적극 검토", "description": "설명"})
+                ))
+        self.assertEqual(ctx.exception.status_code, 403)
+
+    def test_owner_can_add_and_delete_classification(self) -> None:
+        project = custom_project(members=[{"email": "owner@x.com", "role": "owner", "added_by": "x", "added_at": "now"}])
+        account = make_account("owner@x.com")
+        with (
+            patch.object(main, "require_authenticated_user", return_value=account),
+            patch.object(main, "load_shortlisting_projects", return_value=[project]),
+            patch.object(main, "save_shortlisting_projects"),
+            patch.object(main, "call_openrouter_translate_ko_to_en", return_value=({"label_en": "Priority Review", "description_en": "desc"}, None)),
+        ):
+            result = asyncio.run(main.create_shortlisting_classification(
+                project["id"], FakeRequest({"label": "적극 검토", "description": "설명"})
+            ))
+            self.assertTrue(result["ok"])
+            self.assertEqual(len(project["classification_columns"]), 1)
+            classification = project["classification_columns"][0]
+            self.assertEqual(classification["label_en"], "Priority Review")
+            self.assertTrue(classification["id"].startswith("class_"))
+
+            delete_result = asyncio.run(main.delete_shortlisting_classification(
+                project["id"], classification["id"], FakeRequest({})
+            ))
+        self.assertTrue(delete_result["ok"])
+        self.assertEqual(project["classification_columns"], [])
+
+    def test_oic_default_cannot_add_classification(self) -> None:
+        account = make_account("admin@x.com", role="admin")
+        with patch.object(main, "require_authenticated_user", return_value=account):
+            with self.assertRaises(HTTPException) as ctx:
+                asyncio.run(main.create_shortlisting_classification(
+                    main.DEFAULT_SHORTLISTING_PROJECT_ID, FakeRequest({"label": "투자", "description": ""})
+                ))
+        self.assertEqual(ctx.exception.status_code, 400)
+
+    def test_record_update_rejects_unknown_classification_id(self) -> None:
+        project = custom_project(members=[{"email": "writer@x.com", "role": "write", "added_by": "x", "added_at": "now"}])
+        account = make_account("writer@x.com")
+        record = full_scout_record()
+        with (
+            patch.object(main, "require_authenticated_user", return_value=account),
+            patch.object(main, "load_shortlisting_projects", return_value=[project]),
+            patch.object(main, "load_records", return_value=[record]),
+            patch.object(main, "save_records"),
+            patch.object(main, "record_key", return_value="Acme_AX-101"),
+        ):
+            with self.assertRaises(HTTPException) as ctx:
+                asyncio.run(main.update_shortlisting_project_record_state(
+                    "Acme_AX-101", project["id"],
+                    FakeRequest({"action": "update", "field": "classification", "value": "class_doesnotexist"})
+                ))
+        self.assertEqual(ctx.exception.status_code, 404)
 
     def test_owner_can_rename_and_archive_project(self) -> None:
         project = custom_project(members=[{"email": "owner@x.com", "role": "owner", "added_by": "x", "added_at": "now"}])
@@ -350,9 +421,9 @@ class OicPermissionParityTests(unittest.TestCase):
             self.call_focus_management(oic_project, make_account("stranger@x.com"), {"action": "add"})
         self.assertEqual(ctx.exception.status_code, 403)
 
-    def test_oic_admin_still_works_without_membership(self) -> None:
+    def test_oic_developer_still_works_without_membership(self) -> None:
         oic_project = main.default_shortlisting_project()
-        result = self.call_focus_management(oic_project, make_account("admin@x.com", role="admin"), {"action": "add"})
+        result = self.call_focus_management(oic_project, make_account("dev@x.com", role="developer"), {"action": "add"})
         self.assertTrue(result["ok"])
 
     def test_oic_column_add_blocked_even_for_owner(self) -> None:
@@ -373,7 +444,7 @@ class OicPermissionParityTests(unittest.TestCase):
     def test_oic_members_can_now_be_managed(self) -> None:
         oic_project = main.default_shortlisting_project()
         with (
-            patch.object(main, "require_authenticated_user", return_value=make_account("admin@x.com", role="admin")),
+            patch.object(main, "require_authenticated_user", return_value=make_account("dev@x.com", role="developer")),
             patch.object(main, "load_shortlisting_projects", return_value=[oic_project]),
             patch.object(main, "save_shortlisting_projects"),
         ):

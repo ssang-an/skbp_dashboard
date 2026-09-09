@@ -99,6 +99,42 @@
         "role": "owner",
         "added_by": "joowon.jung@sk.com",
         "added_at": "2026-09-06T15:58:45.214866+00:00"
+      },
+      {
+        "email": "yeonjoo@sk.com",
+        "role": "write",
+        "added_by": "joowon.jung@sk.com",
+        "added_at": "2026-09-08T12:18:15.763254+00:00"
+      },
+      {
+        "email": "jeonghwan.hur@sk.com",
+        "role": "write",
+        "added_by": "joowon.jung@sk.com",
+        "added_at": "2026-09-08T12:18:15.763254+00:00"
+      },
+      {
+        "email": "jeongtae_lee@sk.com",
+        "role": "write",
+        "added_by": "joowon.jung@sk.com",
+        "added_at": "2026-09-08T12:18:15.763254+00:00"
+      },
+      {
+        "email": "taegsang.you@sk.com",
+        "role": "write",
+        "added_by": "joowon.jung@sk.com",
+        "added_at": "2026-09-08T12:18:15.763254+00:00"
+      },
+      {
+        "email": "jiyoungseo@sk.com",
+        "role": "write",
+        "added_by": "joowon.jung@sk.com",
+        "added_at": "2026-09-08T12:18:15.763254+00:00"
+      },
+      {
+        "email": "alex_jeong@sk.com",
+        "role": "write",
+        "added_by": "joowon.jung@sk.com",
+        "added_at": "2026-09-08T12:18:15.763254+00:00"
       }
     ]
   },

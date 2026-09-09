@@ -2364,7 +2364,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         text_open = function_body(JS, "openManualTableTextEdit")
         modal_open = function_body(JS, "openManualTableModalityEdit")
 
-        self.assertIn("Boolean(getCurrentUser()?.is_admin)", JS)
+        self.assertIn("Boolean(getCurrentUser())", JS)
         self.assertIn("['company', 'asset', 'main_indication', 'target']", text_open)
         self.assertIn("data-table-modality-edit", modality_editor)
         self.assertIn("row.modality === 'Unknown'", modality_editor)
@@ -2621,7 +2621,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn(".detail-material-body::-webkit-scrollbar", layout)
         self.assertIn("width: 6px", layout)
         self.assertIn("border-radius: 999px", layout)
-        self.assertIn("detail.js?v=20260907-custom-card-pill-summary-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260908-focus-project-picker-1", DETAIL_HTML)
 
     def test_report_header_matches_review_workspace_and_uses_icon_actions(self):
         report_header = DETAIL_HTML[
@@ -2750,8 +2750,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("var(--fluent-amber) 72%", CSS)
         self.assertIn('#detailScoreSequence .score-chip[data-manual-score="true"]', CSS)
         self.assertIn("outline: none !important", CSS)
-        self.assertIn("styles.css?v=20260907-custom-card-pill-summary-1", DETAIL_HTML)
-        self.assertIn("detail.js?v=20260907-custom-card-pill-summary-1", DETAIL_HTML)
+        self.assertIn("styles.css?v=20260908-metric-input-size-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260908-focus-project-picker-1", DETAIL_HTML)
         self.assertNotIn("button.textContent", score_refresh)
         self.assertIn("button.classList.add('is-saving')", score_refresh)
         self.assertIn("showDetailProgress(", score_refresh)
@@ -2890,7 +2890,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("detailOiPartnershipNoteOrigin", DETAIL_JS)
         self.assertIn('title="OI 파트너십 분류 근거를 짧게 요약합니다."', note_markup)
         self.assertNotIn("review-reason-edit-icon", note_markup)
-        self.assertIn("detail.js?v=20260907-custom-card-pill-summary-1", DETAIL_HTML)
+        self.assertIn("detail.js?v=20260908-focus-project-picker-1", DETAIL_HTML)
 
     def test_partner_material_body_scrolls_below_fixed_header(self):
         header_index = DETAIL_HTML.index('class="detail-material-header"')
@@ -2918,7 +2918,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         for filename in ("index.html", "detail.html", "triage_detail.html", "wiki_view.html", "user_admin.html"):
             markup = (ROOT / filename).read_text(encoding="utf-8")
             self.assertRegex(markup, r'\./src/styles\.css\?v=[a-z0-9-]+')
-        self.assertIn('./src/styles.css?v=20260907-custom-card-pill-summary-1', DETAIL_HTML)
+        self.assertIn('./src/styles.css?v=20260908-metric-input-size-1', DETAIL_HTML)
 
     def test_data_upload_reviews_exact_and_similar_assets_before_replacing_existing_record(self):
         finder = function_body(JS, "findDataReuploadMatches")

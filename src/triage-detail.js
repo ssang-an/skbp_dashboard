@@ -417,7 +417,7 @@ function closePipelineWebsiteModal() {
 }
 
 function openPipelineWebsiteModal() {
-  if (!currentRecord || !recordId || !currentUserIsAdmin()) return;
+  if (!currentRecord || !recordId || !currentUserIsLoggedIn()) return;
   if (websiteOpenTimer) window.clearTimeout(websiteOpenTimer);
   websiteOpenTimer = null;
   if (elements.pipelineWebsiteInput) elements.pipelineWebsiteInput.value = pipelineWebsite(currentRecord);
@@ -428,7 +428,7 @@ function openPipelineWebsiteModal() {
 }
 
 async function savePipelineWebsite() {
-  if (!currentRecord || !recordId || !currentUserIsAdmin()) return;
+  if (!currentRecord || !recordId || !currentUserIsLoggedIn()) return;
   const value = String(elements.pipelineWebsiteInput?.value || '').trim();
   if (value && !safeHttpUrl(value)) {
     if (elements.pipelineWebsiteStatus) elements.pipelineWebsiteStatus.textContent = 'http:// 또는 https:// 주소를 입력해 주세요.';
@@ -738,8 +738,8 @@ function statusTone(status) {
   return 'na';
 }
 
-function currentUserIsAdmin() {
-  return Boolean(getCurrentUser()?.is_admin);
+function currentUserIsLoggedIn() {
+  return Boolean(getCurrentUser());
 }
 
 function scoreHasHumanOverride(record, criterionId) {
@@ -763,7 +763,7 @@ function currentUserCanDeleteNote(note) {
   const sameId = user?.id && note?.author_id && String(note.author_id) === String(user.id);
   const sameEmail = user?.email && note?.author_email
     && String(note.author_email).trim().toLowerCase() === String(user.email).trim().toLowerCase();
-  return Boolean(user?.is_admin && (sameId || sameEmail));
+  return Boolean(sameId || sameEmail);
 }
 
 function currentUserOwnsFinalComment(record) {
@@ -777,7 +777,7 @@ function currentUserOwnsFinalComment(record) {
 }
 
 function canDeleteFinalComment(record) {
-  return Boolean(getCurrentUser()?.is_admin && currentUserOwnsFinalComment(record));
+  return Boolean(getCurrentUser() && currentUserOwnsFinalComment(record));
 }
 
 function canEditFinalComment(record) {
@@ -1093,7 +1093,7 @@ function renderScores(record) {
     );
     const evidenceMetadata = [visibleEvidenceType, evidenceBasis].filter(Boolean);
     const isHumanScore = scoreHasHumanOverride(record, definition.key);
-    const scoreHeader = currentUserIsAdmin()
+    const scoreHeader = currentUserIsLoggedIn()
       ? `<button type="button" class="triage-score-value" data-triage-score-edit data-criterion="${escapeHtml(definition.key)}" data-score="${score ?? 0}" aria-label="${escapeHtml(definition.label)} ${escapeHtml(scoreLabel)}. 클릭하여 점수 수정" title="클릭하여 점수 수정"><span>${escapeHtml(scoreLabel)}</span><small>최대 3점</small></button>`
       : `<strong>${escapeHtml(scoreLabel)}<small>최대 3점</small></strong>`;
     return `
@@ -1604,7 +1604,7 @@ async function saveTriageScore(select) {
 }
 
 function openTriageScoreInlineEditor(button) {
-  if (!button || !currentUserIsAdmin() || button.dataset.editing === 'true') return;
+  if (!button || !currentUserIsLoggedIn() || button.dataset.editing === 'true') return;
   const criterion = String(button.dataset.criterion || '');
   const currentScore = scoreFor(currentRecord, criterion);
   if (!criterion || !Number.isInteger(currentScore)) return;
@@ -1812,13 +1812,7 @@ async function deleteCurrentRecord() {
 async function refreshTriageRubric(button) {
   if (!currentRecord || !recordId || !button) return;
   const user = await requireAuth();
-  if (!user?.is_admin && !user?.is_developer) {
-    await showTriageActionFailureDialog(
-      'Score 기준 갱신을 실행할 수 없습니다',
-      'Score 기준 갱신은 Developer 또는 관리자 권한이 필요합니다. 로그인한 계정의 권한을 확인해 주세요.'
-    );
-    return;
-  }
+  if (!user) return;
   button.disabled = true;
   button.classList.add('is-saving');
   const closeProgress = showTriageProgress(
@@ -1904,7 +1898,7 @@ elements.pipelineWebsiteInput?.addEventListener('keydown', (event) => {
 });
 elements.scoreGrid?.addEventListener('change', (event) => {
   const select = event.target.closest('[data-triage-score-select]');
-  if (select && currentUserIsAdmin()) saveTriageScore(select);
+  if (select && currentUserIsLoggedIn()) saveTriageScore(select);
 });
 elements.scoreGrid?.addEventListener('click', (event) => {
   const button = event.target.closest('[data-triage-score-edit]');
@@ -2101,7 +2095,7 @@ elements.quickSummary?.addEventListener('submit', async (event) => {
     return;
   }
   const form = event.target.closest('[data-triage-final-comment-form]');
-  if (!form || !currentUserIsAdmin()) return;
+  if (!form || !currentUserIsLoggedIn()) return;
   event.preventDefault();
   const value = String(form.querySelector('textarea')?.value || '').trim();
   const status = form.querySelector('[data-triage-final-comment-status]');
