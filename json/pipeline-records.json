@@ -5787,7 +5787,7 @@
         "in_vitro_status_source": "auto",
         "in_vivo_status": "O",
         "in_vivo_status_source": "auto",
-        "is_tracked": true,
+        "is_tracked": false,
         "owner_name": "",
         "partner_material_flags": {
           "cdp": false,
@@ -5811,7 +5811,7 @@
         "partnership_evidence_updated_at": "2026-08-03T13:35:38.312831+00:00",
         "partnership_note": "All Modality / IND-enabling 이상 (Non-Small Molecule 선호)",
         "partnership_type": "investment",
-        "updated_at": "2026-09-07T04:53:03.862053+00:00",
+        "updated_at": "2026-09-10T08:43:08.791606+00:00",
         "updated_by": "정주원",
         "updated_source": "dashboard_tab3",
         "user_comment": "",
@@ -5834,8 +5834,8 @@
         "disease_linkage_score_used": 2,
         "disease_linkage_note_signature": "8784559f1c516d90",
         "disease_linkage_classified_at": "2026-09-06T12:26:55.361114+00:00",
-        "tracking_status": "priority",
-        "partnership_note_source": "auto"
+        "partnership_note_source": "auto",
+        "removed_at": "2026-09-10T08:43:08.791606+00:00"
       },
       "generated_at": "2026-06-22",
       "human_review": {
@@ -6070,6 +6070,26 @@
           "field": "shortlisting_projects.proj_08b16e1526.metric_values.metric_81ba8c46a7",
           "previous_value": 2,
           "new_value": 1
+        },
+        {
+          "id": "abf4eeba42ba46f482435783b31715c6",
+          "changed_at": "2026-09-10T08:43:02.695965+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.tracking_status",
+          "previous_value": "priority",
+          "new_value": "stationary"
+        },
+        {
+          "id": "9f0e3f8284b64f59a185589fa9cae9a6",
+          "changed_at": "2026-09-10T08:43:08.791630+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_tab3_focus_management",
+          "field": "focus_management.remove",
+          "previous_value": true,
+          "new_value": false
         }
       ],
       "full_scout_rubric_definition_revision": "v3-8-moa-expansion-investigation-notes-2026-09-01",
