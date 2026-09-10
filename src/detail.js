@@ -122,6 +122,7 @@ const elements = {
   detailCustomScoreInput: document.querySelector('#detailCustomScoreInput'),
   detailCustomProjectBody: document.querySelector('#detailCustomProjectBody'),
   detailOicFilter3Body: document.querySelector('#detailOicFilter3Body'),
+  detailOicMetricPills: document.querySelector('#detailOicMetricPills'),
   detailCustomMetricTable: document.querySelector('#detailCustomMetricTable'),
   detailPartnerMaterialButtons: document.querySelectorAll('#detailPartnerMaterialFlags .oi-material-toggle[data-material-key]'),
   detailCollaborationStatus: document.querySelector('#detailCollaborationStatus'),
@@ -1940,6 +1941,35 @@ function customProjectMetricValue(record, projectId, metricId) {
   return record?.meta?.shortlisting_projects?.[projectId]?.metric_values?.[metricId];
 }
 
+function customProjectClassificationValue(record, projectId) {
+  if (projectId === DEFAULT_SHORTLISTING_PROJECT_ID) return '';
+  return record?.meta?.shortlisting_projects?.[projectId]?.classification || '';
+}
+
+// Mirrors app.js's classificationLabelTone()/classificationToneClass() so a
+// Custom Project's classification select reads with the same pass/review/fail/na
+// palette as the OIC Filter 3 select (see the Custom Project classification tone
+// rules already defined on .partnership-edit-select in styles.css).
+function classificationLabelTone(label) {
+  const trimmed = (label || '').trim();
+  const tierMatch = trimmed.match(/tier\s*([1-3])\b/i);
+  if (tierMatch) return { 1: 'pass', 2: 'review', 3: 'fail' }[tierMatch[1]];
+  if (/^(pass|합격|승인|우수|적합)$/i.test(trimmed)) return 'pass';
+  if (/^(fail|불합격|반려|부적합|탈락)$/i.test(trimmed)) return 'fail';
+  return null;
+}
+
+function classificationToneClass(classifications, value) {
+  if (!value) return 'na';
+  const option = classifications.find((item) => item.id === value);
+  if (!option) return 'na';
+  return classificationLabelTone(option.label) || 'na';
+}
+
+function selectOption(value, currentValue, label = value) {
+  return `<option value="${escapeHtml(value)}" ${String(value) === String(currentValue) ? 'selected' : ''}>${escapeHtml(label)}</option>`;
+}
+
 function customProjectCustomScore(record, projectId) {
   const raw = projectId === DEFAULT_SHORTLISTING_PROJECT_ID
     ? record?.meta?.focus_management?.custom_score
@@ -2024,10 +2054,61 @@ function customMetricPillRowMarkup(record, project, column, disabled) {
   `;
 }
 
-function customProjectClassificationSummaryMarkup(project) {
+function oicScoreChipMarkup(label, value, title) {
+  return `
+    <span class="custom-metric-row">
+      <span class="score-chip" title="${escapeHtml(title || label)}">
+        <span class="score-chip-label">${escapeHtml(label)}</span><span class="score-chip-value">${escapeHtml(value)}</span>
+      </span>
+    </span>
+  `;
+}
+
+// OIC's four auto-judged builtin metrics (Filter 3/Action date have their own
+// dedicated controls already; DD is intentionally excluded — the Pipeline
+// Table dashboard doesn't surface it as a column either) read from
+// focus_management, not the generic shortlisting_projects.<id>.metric_values
+// path custom Projects use — see customProjectMetricValue()'s early return
+// for DEFAULT_SHORTLISTING_PROJECT_ID.
+function renderOicMetricPills(record) {
+  if (!elements.detailOicMetricPills) return;
+  const focus = record?.meta?.focus_management || {};
+  const inVivo = String(focus.in_vivo_status || 'N/A');
+  const inVitro = String(focus.in_vitro_status || 'N/A');
+  const admet = Number.isFinite(focus.admet_completed) ? `${focus.admet_completed}/25` : '-/25';
+  const diseaseLinkage = focus.disease_linkage_status === 'O' || focus.disease_linkage_status === 'X'
+    ? focus.disease_linkage_status
+    : 'NA';
+  const pills = [
+    oicScoreChipMarkup('In-vivo', inVivo, 'In-vivo efficacy 근거 확인 여부'),
+    oicScoreChipMarkup('In-vitro', inVitro, 'In-vitro efficacy 근거 확인 여부'),
+    oicScoreChipMarkup('ADMET', admet, 'ADMET 스터디 완료 항목 수 (0-25)'),
+    oicScoreChipMarkup('D·Link', diseaseLinkage, 'MoA가 실제 질환 병리·기능과 연결됐는지 표시'),
+  ].join('');
+  elements.detailOicMetricPills.innerHTML = `
+    <span class="filter-score-panel-label">Criteria Scores</span>
+    <div class="filter-score-sequence">${pills}</div>
+  `;
+}
+
+function customProjectClassificationSummaryMarkup(record, project, disabled) {
   const classifications = Array.isArray(project?.classification_columns) ? project.classification_columns : [];
   if (!classifications.length) return '';
+  const value = customProjectClassificationValue(record, project.id);
+  const options = [{ id: '', label: '미분류' }, ...classifications];
+  const disabledAttr = disabled ? ' disabled' : '';
   return `
+    <div class="oi-filter3-control-row">
+      <div class="review-info-label"><span>Classification</span></div>
+      <select
+        class="partnership-edit-select classification-edit-select ${classificationToneClass(classifications, value)}"
+        data-project-id="${escapeHtml(project.id)}"
+        data-previous-value="${escapeHtml(value)}"
+        aria-label="Classification"${disabledAttr}
+      >
+        ${options.map((option) => selectOption(option.id, value, option.label)).join('')}
+      </select>
+    </div>
     <div class="custom-classification-summary">
       ${classifications.map((item) => `
         <div class="custom-classification-item">
@@ -2042,12 +2123,12 @@ function customProjectClassificationSummaryMarkup(project) {
 function renderCustomMetricTable(record, project) {
   if (!elements.detailCustomMetricTable) return;
   const columns = Array.isArray(project?.metric_columns) ? project.metric_columns : [];
-  const classificationMarkup = customProjectClassificationSummaryMarkup(project);
+  const disabled = customProjectRoleFor(project.id) === 'read';
+  const classificationMarkup = customProjectClassificationSummaryMarkup(record, project, disabled);
   if (!columns.length) {
     elements.detailCustomMetricTable.innerHTML = `${classificationMarkup}<p class="custom-metric-empty">등록된 지표가 없습니다.</p>`;
     return;
   }
-  const disabled = customProjectRoleFor(project.id) === 'read';
   const pillsMarkup = columns.map((column) => customMetricPillRowMarkup(record, project, column, disabled)).join('');
   elements.detailCustomMetricTable.innerHTML = `
     ${classificationMarkup}
@@ -2127,6 +2208,7 @@ function renderCustomProjectPanel(record) {
   if (isDefault) {
     if (elements.detailOicFilter3Body) elements.detailOicFilter3Body.hidden = false;
     if (elements.detailCustomMetricTable) elements.detailCustomMetricTable.hidden = true;
+    renderOicMetricPills(record);
     if (elements.detailOiPartnershipType) {
       elements.detailOiPartnershipType.value = String(focus.partnership_type || '');
     }
@@ -3611,6 +3693,14 @@ function saveDetailMetricValue(control) {
   const metricId = control.dataset.metricId;
   const label = control.closest('.custom-metric-row')?.querySelector('.score-chip-label')?.textContent || '지표';
   saveDetailShortlistingProjectField(projectId, 'metric_value', value, control, label, { metric_id: metricId });
+}
+
+function saveDetailClassificationSelect(control) {
+  const previousValue = control.dataset.previousValue ?? '';
+  const nextValue = control.value ?? '';
+  if (previousValue === nextValue) return;
+  const projectId = control.dataset.projectId;
+  saveDetailShortlistingProjectField(projectId, 'classification', nextValue, control, 'Classification');
 }
 
 function pickCustomProject(projectId) {
@@ -5981,6 +6071,11 @@ elements.detailCustomScoreInput?.addEventListener('blur', () => {
 });
 
 elements.detailCustomMetricTable?.addEventListener('change', (event) => {
+  const classificationSelect = event.target.closest('.classification-edit-select');
+  if (classificationSelect) {
+    saveDetailClassificationSelect(classificationSelect);
+    return;
+  }
   const control = event.target.closest('.metric-value-edit');
   if (!control) return;
   saveDetailMetricValue(control);

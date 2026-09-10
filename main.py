@@ -11034,6 +11034,113 @@ async def delete_shortlisting_metric_column(project_id: str, column_id: str, req
     return {"ok": True, "project": serialize_shortlisting_project(project, account), "column_id": column_id}
 
 
+@app.patch("/api/shortlisting/projects/{project_id}/columns/{column_id}")
+async def update_shortlisting_metric_column(project_id: str, column_id: str, request: Request) -> dict[str, Any]:
+    if not column_id.startswith("metric_"):
+        raise HTTPException(status_code=400, detail="기본 제공 지표는 수정할 수 없습니다.")
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected a metric column object.")
+
+    projects = load_shortlisting_projects()
+    project = find_shortlisting_project(projects, project_id)
+    if project is None or project.get("archived"):
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    account = require_shortlisting_project_role(request, project, "owner")
+
+    metric_columns = project.get("metric_columns")
+    match = next(
+        (column for column in metric_columns if isinstance(column, dict) and column.get("id") == column_id),
+        None,
+    ) if isinstance(metric_columns, list) else None
+    if match is None:
+        raise HTTPException(status_code=404, detail=f"Column not found: {column_id}")
+
+    label = str(payload.get("label") or "").strip()
+    description = str(payload.get("description") or "").strip()
+    return_type = str(payload.get("return_type") or "").strip().lower()
+    if not label:
+        raise HTTPException(status_code=400, detail="지표 이름을 입력하세요.")
+    if len(label) > 60:
+        raise HTTPException(status_code=400, detail="지표 이름은 60자 이하여야 합니다.")
+    if len(description) > 400:
+        raise HTTPException(status_code=400, detail="지표 설명은 400자 이하여야 합니다.")
+    if return_type not in SHORTLISTING_METRIC_RETURN_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail="return_type must be boolean, list, number, date, or text.",
+        )
+
+    options: list[str] | None = None
+    max_value: int | None = None
+    if return_type == "list":
+        raw_options = payload.get("options")
+        if not isinstance(raw_options, list):
+            raise HTTPException(status_code=400, detail="list 타입은 options 배열이 필요합니다.")
+        seen: set[str] = set()
+        options = []
+        for raw_option in raw_options:
+            option = str(raw_option or "").strip()
+            if not option or len(option) > 40:
+                continue
+            key = option.casefold()
+            if key in seen:
+                continue
+            seen.add(key)
+            options.append(option)
+        if not options:
+            raise HTTPException(status_code=400, detail="list 타입은 최소 1개의 옵션이 필요합니다.")
+        if len(options) > SHORTLISTING_LIST_OPTION_CAP:
+            raise HTTPException(
+                status_code=400,
+                detail=f"list 옵션은 최대 {SHORTLISTING_LIST_OPTION_CAP}개까지 등록할 수 있습니다.",
+            )
+    elif return_type == "number":
+        raw_max_value = payload.get("max_value")
+        if raw_max_value not in (None, ""):
+            try:
+                max_value = int(raw_max_value)
+            except (TypeError, ValueError):
+                raise HTTPException(status_code=400, detail="max_value는 정수여야 합니다.") from None
+            if not 1 <= max_value <= 1_000_000:
+                raise HTTPException(status_code=400, detail="max_value는 1-1,000,000 사이의 정수여야 합니다.")
+
+    duplicate = next(
+        (
+            column for column in metric_columns
+            if column is not match and str(column.get("label") or "").strip().casefold() == label.casefold()
+        ),
+        None,
+    )
+    if duplicate is not None:
+        raise HTTPException(status_code=409, detail="동일한 이름의 지표가 이미 등록되어 있습니다.")
+
+    content_changed = label != match.get("label") or description != match.get("description")
+    match["label"] = label
+    match["description"] = description
+    match["return_type"] = return_type
+    match["options"] = options
+    match["max_value"] = max_value
+    if content_changed:
+        # Stale translations would otherwise silently mismatch the edited Korean text.
+        match["label_en"] = ""
+        match["description_en"] = ""
+        api_key = os.getenv("OPENROUTER_API_KEY")
+        if api_key:
+            translated, translate_error = call_openrouter_translate_ko_to_en(label, description, api_key)
+            if translated:
+                match["label_en"] = translated.get("label_en", "")
+                match["description_en"] = translated.get("description_en", "")
+            elif translate_error:
+                print(f"[shortlisting-metric-translate] {project_id}/{label}: {translate_error}")
+    project["updated_at"] = datetime.now(timezone.utc).isoformat()
+    save_shortlisting_projects(projects)
+    return {"ok": True, "project": serialize_shortlisting_project(project, account), "column": match}
+
+
 def call_openrouter_translate_ko_to_en(label: str, description: str, api_key: str) -> tuple[dict[str, str] | None, str | None]:
     """Best-effort literal KO->EN translation for a short classification label/description.
 
@@ -11251,6 +11358,70 @@ async def delete_shortlisting_classification(project_id: str, classification_id:
     project["updated_at"] = datetime.now(timezone.utc).isoformat()
     save_shortlisting_projects(projects)
     return {"ok": True, "project": serialize_shortlisting_project(project, account), "classification_id": classification_id}
+
+
+@app.patch("/api/shortlisting/projects/{project_id}/classifications/{classification_id}")
+async def update_shortlisting_classification(project_id: str, classification_id: str, request: Request) -> dict[str, Any]:
+    if not classification_id.startswith("class_"):
+        raise HTTPException(status_code=400, detail="기본 제공 분류는 수정할 수 없습니다.")
+    try:
+        payload = await request.json()
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Expected a classification object.")
+
+    projects = load_shortlisting_projects()
+    project = find_shortlisting_project(projects, project_id)
+    if project is None or project.get("archived"):
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    account = require_shortlisting_project_role(request, project, "owner")
+
+    classifications = project.get("classification_columns")
+    match = next(
+        (item for item in classifications if isinstance(item, dict) and item.get("id") == classification_id),
+        None,
+    ) if isinstance(classifications, list) else None
+    if match is None:
+        raise HTTPException(status_code=404, detail=f"Classification not found: {classification_id}")
+
+    label = str(payload.get("label") or "").strip()
+    description = str(payload.get("description") or "").strip()
+    if not label:
+        raise HTTPException(status_code=400, detail="분류 이름을 입력하세요.")
+    if len(label) > 60:
+        raise HTTPException(status_code=400, detail="분류 이름은 60자 이하여야 합니다.")
+    if len(description) > 400:
+        raise HTTPException(status_code=400, detail="분류 설명은 400자 이하여야 합니다.")
+
+    duplicate = next(
+        (
+            item for item in classifications
+            if item is not match and str(item.get("label") or "").strip().casefold() == label.casefold()
+        ),
+        None,
+    )
+    if duplicate is not None:
+        raise HTTPException(status_code=409, detail="동일한 이름의 분류가 이미 등록되어 있습니다.")
+
+    content_changed = label != match.get("label") or description != match.get("description")
+    match["label"] = label
+    match["description"] = description
+    if content_changed:
+        # Stale translations would otherwise silently mismatch the edited Korean text.
+        match["label_en"] = ""
+        match["description_en"] = ""
+        api_key = os.getenv("OPENROUTER_API_KEY")
+        if api_key:
+            translated, translate_error = call_openrouter_translate_ko_to_en(label, description, api_key)
+            if translated:
+                match["label_en"] = translated.get("label_en", "")
+                match["description_en"] = translated.get("description_en", "")
+            elif translate_error:
+                print(f"[shortlisting-classification-translate] {project_id}/{label}: {translate_error}")
+    project["updated_at"] = datetime.now(timezone.utc).isoformat()
+    save_shortlisting_projects(projects)
+    return {"ok": True, "project": serialize_shortlisting_project(project, account), "classification": match}
 
 
 @app.post("/api/shortlisting/projects/{project_id}/classifications/{classification_id}/translate")

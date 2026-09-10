@@ -2504,6 +2504,26 @@
           "field": "focus_management.user_comment",
           "previous_value": "qa test write comment",
           "new_value": ""
+        },
+        {
+          "id": "eeb73196bf1b4ba0b88682d762f4e7b6",
+          "changed_at": "2026-09-10T00:35:16.709975+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_shortlisting_project",
+          "field": "shortlisting_projects.proj_08b16e1526.tracking_status",
+          "previous_value": null,
+          "new_value": "stationary"
+        },
+        {
+          "id": "c44bc40b2ac74365b210891bc9578110",
+          "changed_at": "2026-09-10T00:35:22.531133+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_shortlisting_project",
+          "field": "shortlisting_projects.proj_08b16e1526.remove",
+          "previous_value": true,
+          "new_value": false
         }
       ],
       "storage_profile": "dashboard_hybrid_v1",
@@ -2606,7 +2626,7 @@
       },
       "shortlisting_projects": {
         "proj_08b16e1526": {
-          "is_tracked": true,
+          "is_tracked": false,
           "added_at": "2026-09-06T11:04:11.201566+00:00",
           "custom_score": 0,
           "metric_values": {},
@@ -2614,10 +2634,10 @@
           "owner_name": "",
           "action_plan": "",
           "user_comment": "",
-          "updated_at": "2026-09-06T11:05:24.046193+00:00",
+          "updated_at": "2026-09-10T00:35:22.531078+00:00",
           "updated_source": "dashboard_shortlisting_project",
           "updated_by": "정주원",
-          "removed_at": "2026-09-06T11:04:48.311789+00:00"
+          "removed_at": "2026-09-10T00:35:22.531078+00:00"
         }
       }
     },
@@ -26070,6 +26090,46 @@
           "field": "focus_management.tracking_status",
           "previous_value": "priority",
           "new_value": "stationary"
+        },
+        {
+          "id": "d5475222abef4ba7bcfcdabdd4e756ee",
+          "changed_at": "2026-09-10T00:35:26.780328+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_shortlisting_project",
+          "field": "shortlisting_projects.proj_08b16e1526.tracking_status",
+          "previous_value": "priority",
+          "new_value": "stationary"
+        },
+        {
+          "id": "96917f8a843e4957b6eb80fea0126954",
+          "changed_at": "2026-09-10T00:35:31.482136+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_shortlisting_project",
+          "field": "shortlisting_projects.proj_08b16e1526.tracking_status",
+          "previous_value": "stationary",
+          "new_value": "stationary"
+        },
+        {
+          "id": "3933c95e7aac471c898436143ca717b1",
+          "changed_at": "2026-09-10T00:35:36.067475+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_shortlisting_project",
+          "field": "shortlisting_projects.proj_08b16e1526.tracking_status",
+          "previous_value": "stationary",
+          "new_value": "stationary"
+        },
+        {
+          "id": "76b328cffa814628898569709bb0e4b8",
+          "changed_at": "2026-09-10T00:35:40.792938+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "정주원",
+          "source": "dashboard_shortlisting_project",
+          "field": "shortlisting_projects.proj_08b16e1526.remove",
+          "previous_value": true,
+          "new_value": false
         }
       ],
       "focus_management": {
@@ -26508,7 +26568,7 @@
           "removed_at": "2026-09-06T02:19:54.190846+00:00"
         },
         "proj_08b16e1526": {
-          "is_tracked": true,
+          "is_tracked": false,
           "added_at": "2026-09-06T02:35:25.227782+00:00",
           "custom_score": 1,
           "metric_values": {
@@ -26518,10 +26578,10 @@
           "owner_name": "",
           "action_plan": "",
           "user_comment": "",
-          "updated_at": "2026-09-06T12:38:38.537095+00:00",
+          "updated_at": "2026-09-10T00:35:40.792906+00:00",
           "updated_source": "dashboard_shortlisting_project",
           "updated_by": "정주원",
-          "tracking_status": "priority"
+          "removed_at": "2026-09-10T00:35:40.792906+00:00"
         },
         "proj_8b5acb138f": {
           "is_tracked": true,

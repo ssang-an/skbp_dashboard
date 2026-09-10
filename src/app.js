@@ -450,6 +450,8 @@ const state = {
   shortlistingProjects: [],
   activeShortlistingProjectId: localStorage.getItem(SHORTLISTING_PROJECT_STORAGE_KEY) || DEFAULT_SHORTLISTING_PROJECT_ID,
   settingsModalProjectId: null,
+  editingMetricColumnId: null,
+  editingClassificationId: null,
   userDirectory: [],
   userDirectoryLoaded: false
 };
@@ -580,6 +582,7 @@ const elements = {
   shortlistingMetricModalSave: document.querySelector('#shortlistingMetricModalSave'),
   shortlistingMetricLockedNote: document.querySelector('#shortlistingMetricLockedNote'),
   shortlistingMetricAddRow: document.querySelector('#shortlistingMetricAddRow'),
+  shortlistingMetricModalEditCancel: document.querySelector('#shortlistingMetricModalEditCancel'),
   shortlistingSettingsClassificationsTab: document.querySelector('#shortlistingSettingsClassificationsTab'),
   shortlistingSettingsClassificationsPane: document.querySelector('#shortlistingSettingsClassificationsPane'),
   shortlistingClassificationManagerBody: document.querySelector('#shortlistingClassificationManagerBody'),
@@ -589,6 +592,7 @@ const elements = {
   shortlistingClassificationModalStatus: document.querySelector('#shortlistingClassificationModalStatus'),
   shortlistingClassificationLockedNote: document.querySelector('#shortlistingClassificationLockedNote'),
   shortlistingClassificationAddRow: document.querySelector('#shortlistingClassificationAddRow'),
+  shortlistingClassificationModalEditCancel: document.querySelector('#shortlistingClassificationModalEditCancel'),
   pipelineTableTabs: document.querySelectorAll('[data-table-mode]'),
   knowledgeMapTab: document.querySelector('#knowledgeMapTab'),
   knowledgeMapPanel: document.querySelector('#knowledgeMapPanel'),
@@ -5568,6 +5572,7 @@ function syncTopDataActionsForVisibleTab() {
       elements.refreshButton.dataset.tooltip = '저장된 Pipeline으로 Knowledge Wiki Map을 최신화합니다.';
       elements.refreshButton.setAttribute('aria-label', 'Knowledge Wiki Map 최신화');
     }
+    if (elements.criteriaDrawerButton) elements.criteriaDrawerButton.hidden = false;
     setDataUploadShortcutVisibility(false);
     setTopPromptShortcutVisibility();
     return;
@@ -5578,6 +5583,9 @@ function syncTopDataActionsForVisibleTab() {
   if (elements.refreshButton) elements.refreshButton.hidden = true;
 
   const isStep0Visible = Boolean(elements.step0Panel && !elements.step0Panel.hidden);
+  // Tab 0 (Listing) has no scoring yet, so the SKBP criteria drawer has
+  // nothing to show there — hide the whole button, not just its icon.
+  if (elements.criteriaDrawerButton) elements.criteriaDrawerButton.hidden = isStep0Visible;
   if (isStep0Visible) {
     setDataUploadShortcutVisibility(true);
     // Listing has its own selected-candidate prompt action; the global Fast
@@ -6997,9 +7005,9 @@ function renderShortlistingProjectControl() {
               type="button"
               class="shortlisting-project-settings-button"
               data-project-settings-id="${escapeHtml(project.id)}"
-              title="${escapeHtml(project.name)} 설정"
-              aria-label="${escapeHtml(project.name)} 설정"
-            ><span aria-hidden="true">⚙</span></button>
+              title="Project 권한, 지표, 분류 기준 수정"
+              aria-label="${escapeHtml(project.name)} 설정 - Project 권한, 지표, 분류 기준 수정"
+            ><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82A1.65 1.65 0 005.51 15H5.4a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1h.09a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
           ` : ''}
         </div>
       `)
@@ -7198,6 +7206,7 @@ function renderShortlistingMetricManagerTable() {
         </td>
         <td>${escapeHtml(shortlistingMetricReturnTypeSummary(column))}</td>
         <td>
+          <button type="button" class="shortlisting-metric-manager-edit-button" data-edit-metric-id="${escapeHtml(column.id)}">수정</button>
           <button type="button" class="shortlisting-metric-manager-translate-button" data-translate-metric-id="${escapeHtml(column.id)}" title="판단근거 영문 번역 생성/갱신">${column.label_en ? '재번역' : '번역'}</button>
           <button type="button" class="shortlisting-metric-manager-delete-button" data-delete-metric-id="${escapeHtml(column.id)}">삭제</button>
         </td>
@@ -7207,6 +7216,7 @@ function renderShortlistingMetricManagerTable() {
 }
 
 function resetShortlistingMetricAddForm() {
+  state.editingMetricColumnId = null;
   if (elements.shortlistingMetricLabelInput) elements.shortlistingMetricLabelInput.value = '';
   if (elements.shortlistingMetricDescriptionInput) elements.shortlistingMetricDescriptionInput.value = '';
   if (elements.shortlistingMetricReturnTypeSelect) elements.shortlistingMetricReturnTypeSelect.value = 'boolean';
@@ -7216,6 +7226,11 @@ function resetShortlistingMetricAddForm() {
     elements.shortlistingMetricModalStatus.textContent = '';
     elements.shortlistingMetricModalStatus.classList.remove('is-error');
   }
+  if (elements.shortlistingMetricModalSave) {
+    const label = elements.shortlistingMetricModalSave.querySelector('span');
+    if (label) label.textContent = '지표 추가';
+  }
+  if (elements.shortlistingMetricModalEditCancel) elements.shortlistingMetricModalEditCancel.hidden = true;
   updateShortlistingMetricModalConditionalFields();
   const isOic = state.settingsModalProjectId === DEFAULT_SHORTLISTING_PROJECT_ID;
   if (elements.shortlistingMetricLockedNote) elements.shortlistingMetricLockedNote.hidden = !isOic;
@@ -7236,6 +7251,7 @@ function renderShortlistingClassificationManagerTable() {
           ${classification.label_en ? `<div class="shortlisting-manager-en-hint">EN: ${escapeHtml(classification.label_en)}${classification.description_en ? ` — ${escapeHtml(classification.description_en)}` : ''}</div>` : ''}
         </td>
         <td>
+          <button type="button" class="shortlisting-metric-manager-edit-button" data-edit-classification-id="${escapeHtml(classification.id)}">수정</button>
           <button type="button" class="shortlisting-metric-manager-translate-button" data-translate-classification-id="${escapeHtml(classification.id)}" title="판단근거 영문 번역 생성/갱신">${classification.label_en ? '재번역' : '번역'}</button>
           <button type="button" class="shortlisting-metric-manager-delete-button" data-delete-classification-id="${escapeHtml(classification.id)}">삭제</button>
         </td>
@@ -7245,15 +7261,42 @@ function renderShortlistingClassificationManagerTable() {
 }
 
 function resetShortlistingClassificationAddForm() {
+  state.editingClassificationId = null;
   if (elements.shortlistingClassificationLabelInput) elements.shortlistingClassificationLabelInput.value = '';
   if (elements.shortlistingClassificationDescriptionInput) elements.shortlistingClassificationDescriptionInput.value = '';
   if (elements.shortlistingClassificationModalStatus) {
     elements.shortlistingClassificationModalStatus.textContent = '';
     elements.shortlistingClassificationModalStatus.classList.remove('is-error');
   }
+  if (elements.shortlistingClassificationModalSave) {
+    const label = elements.shortlistingClassificationModalSave.querySelector('span');
+    if (label) label.textContent = '분류 추가';
+  }
+  if (elements.shortlistingClassificationModalEditCancel) elements.shortlistingClassificationModalEditCancel.hidden = true;
   const isOic = state.settingsModalProjectId === DEFAULT_SHORTLISTING_PROJECT_ID;
   if (elements.shortlistingClassificationLockedNote) elements.shortlistingClassificationLockedNote.hidden = !isOic;
   if (elements.shortlistingClassificationAddRow) elements.shortlistingClassificationAddRow.hidden = isOic;
+}
+
+function beginEditShortlistingClassification(classificationId) {
+  const project = settingsModalProject();
+  const classification = project?.classification_columns?.find((item) => item.id === classificationId);
+  if (!classification) return;
+  state.editingClassificationId = classificationId;
+  if (elements.shortlistingClassificationLabelInput) elements.shortlistingClassificationLabelInput.value = classification.label || '';
+  if (elements.shortlistingClassificationDescriptionInput) elements.shortlistingClassificationDescriptionInput.value = classification.description || '';
+  if (elements.shortlistingClassificationModalSave) elements.shortlistingClassificationModalSave.querySelector('span').textContent = '분류 수정 저장';
+  if (elements.shortlistingClassificationModalEditCancel) elements.shortlistingClassificationModalEditCancel.hidden = false;
+  if (elements.shortlistingClassificationModalStatus) {
+    elements.shortlistingClassificationModalStatus.textContent = '';
+    elements.shortlistingClassificationModalStatus.classList.remove('is-error');
+  }
+  elements.shortlistingClassificationLabelInput?.focus();
+}
+
+function cancelEditShortlistingClassification() {
+  state.editingClassificationId = null;
+  resetShortlistingClassificationAddForm();
 }
 
 const SHORTLISTING_SETTINGS_TAB_NAMES = ['members', 'metrics', 'classifications'];
@@ -7395,6 +7438,8 @@ function openShortlistingProjectSettingsModal(projectId) {
 function closeShortlistingProjectSettingsModal() {
   if (elements.shortlistingMetricModal) elements.shortlistingMetricModal.hidden = true;
   closeShortlistingProjectRenameEdit();
+  resetShortlistingMetricAddForm();
+  resetShortlistingClassificationAddForm();
   state.settingsModalProjectId = null;
 }
 
@@ -7529,24 +7574,53 @@ async function submitShortlistingMetricModal() {
       payload.max_value = Math.round(maxValue);
     }
   }
+  const editingId = state.editingMetricColumnId;
+  const url = editingId
+    ? `${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/columns/${encodeURIComponent(editingId)}`
+    : `${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/columns`;
   if (elements.shortlistingMetricModalSave) elements.shortlistingMetricModalSave.disabled = true;
   try {
-    const response = await fetch(`${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/columns`, {
-      method: 'POST',
+    const response = await fetch(url, {
+      method: editingId ? 'PATCH' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.detail || '지표 추가에 실패했습니다.');
+    if (!response.ok) throw new Error(data.detail || (editingId ? '지표 수정에 실패했습니다.' : '지표 추가에 실패했습니다.'));
     applyShortlistingProjectUpdate(data.project);
     resetShortlistingMetricAddForm();
     renderShortlistingMetricManagerTable();
     renderTable();
   } catch (error) {
-    setStatus(error.message || '지표 추가에 실패했습니다.');
+    setStatus(error.message || (editingId ? '지표 수정에 실패했습니다.' : '지표 추가에 실패했습니다.'));
   } finally {
     if (elements.shortlistingMetricModalSave) elements.shortlistingMetricModalSave.disabled = false;
   }
+}
+
+function beginEditShortlistingMetricColumn(columnId) {
+  const project = settingsModalProject();
+  const column = project?.metric_columns?.find((item) => item.id === columnId);
+  if (!column) return;
+  state.editingMetricColumnId = columnId;
+  if (elements.shortlistingMetricLabelInput) elements.shortlistingMetricLabelInput.value = column.label || '';
+  if (elements.shortlistingMetricDescriptionInput) elements.shortlistingMetricDescriptionInput.value = column.description || '';
+  if (elements.shortlistingMetricReturnTypeSelect) elements.shortlistingMetricReturnTypeSelect.value = column.return_type || 'boolean';
+  if (elements.shortlistingMetricListOptionsInput) elements.shortlistingMetricListOptionsInput.value = Array.isArray(column.options) ? column.options.join(', ') : '';
+  if (elements.shortlistingMetricMaxValueInput) elements.shortlistingMetricMaxValueInput.value = Number.isFinite(column.max_value) ? String(column.max_value) : '';
+  updateShortlistingMetricModalConditionalFields();
+  if (elements.shortlistingMetricModalSave) elements.shortlistingMetricModalSave.querySelector('span').textContent = '지표 수정 저장';
+  if (elements.shortlistingMetricModalEditCancel) elements.shortlistingMetricModalEditCancel.hidden = false;
+  if (elements.shortlistingMetricModalStatus) {
+    elements.shortlistingMetricModalStatus.textContent = '';
+    elements.shortlistingMetricModalStatus.classList.remove('is-error');
+  }
+  elements.shortlistingMetricLabelInput?.focus();
+}
+
+function cancelEditShortlistingMetricColumn() {
+  state.editingMetricColumnId = null;
+  resetShortlistingMetricAddForm();
 }
 
 async function deleteShortlistingMetricColumn(columnId) {
@@ -7611,21 +7685,25 @@ async function submitShortlistingClassificationModal() {
     setStatus('분류 이름을 입력하세요.');
     return;
   }
+  const editingId = state.editingClassificationId;
+  const url = editingId
+    ? `${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/classifications/${encodeURIComponent(editingId)}`
+    : `${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/classifications`;
   if (elements.shortlistingClassificationModalSave) elements.shortlistingClassificationModalSave.disabled = true;
   try {
-    const response = await fetch(`${SHORTLISTING_PROJECTS_URL}/${encodeURIComponent(projectId)}/classifications`, {
-      method: 'POST',
+    const response = await fetch(url, {
+      method: editingId ? 'PATCH' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ label, description })
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.detail || '분류 추가에 실패했습니다.');
+    if (!response.ok) throw new Error(data.detail || (editingId ? '분류 수정에 실패했습니다.' : '분류 추가에 실패했습니다.'));
     applyShortlistingProjectUpdate(data.project);
     resetShortlistingClassificationAddForm();
     renderShortlistingClassificationManagerTable();
     renderTable();
   } catch (error) {
-    setStatus(error.message || '분류 추가에 실패했습니다.');
+    setStatus(error.message || (editingId ? '분류 수정에 실패했습니다.' : '분류 추가에 실패했습니다.'));
   } finally {
     if (elements.shortlistingClassificationModalSave) elements.shortlistingClassificationModalSave.disabled = false;
   }
@@ -12699,6 +12777,11 @@ Investigation-note requirements (use only the evidence already identified while 
 - MoA score 2 or 3: in that criterion's investigation_note, use at most one sentence to state whether the verified scoring evidence connects to a disease-relevant phenotype, efficacy, or biomarker, or remains limited to proximal evidence such as a cellular-signaling marker. Omit this statement for MoA score 0 or 1. If the distinction cannot be assessed from existing evidence, write '확인 불가'; do not infer.
 - Expansion Potential score 1, 2, or 3: in that criterion's investigation_note, state whether the confirmed additional indication(s) are single or multiple and briefly give each indication's assessed-asset program/data status. If unavailable from existing scoring evidence, write '확인 불가'; do not infer.
 
+IP & Launch Outlook investigation rules (Section 2A; contextual diligence only — this does not affect the seven Full Scout scores or Hard Filter):
+- For Core Patent / CoM: search public patent sources for protection directly relevant to the assessed asset. Classify the relevant protection as Composition of Matter (CoM), Method of Use, Formulation, Salt/Polymorph, Dosing, Combination, Manufacturing/Process, Delivery/Device, or Other. Do not misclassify Method-of-Use as CoM. Report the representative patent/family, Earliest Priority Date, and expected or confirmed expiry where available. Distinguish PTA and PTE when identifiable and do not assume hypothetical PTE. If expiry is estimated, label it "Estimated" and briefly state the basis. If no relevant CoM can be verified, write "No CoM identified" or "Unknown"; do not infer.
+- For Expected Launch Year: prefer explicit company guidance, then credible analyst forecasts. If neither is available, a stage-based internal estimate may be used; for an internally modeled estimate, briefly state the logic from the verified current stage through remaining development, filing/review, and launch. If a meaningful estimate cannot be supported, write "Unknown". If both launch year and relevant patent expiry are available, calculate approximate Patent Runway at Launch; otherwise write "Not assessable".
+Keep Section 2A concise; it is contextual diligence information only and does not affect the seven Full Scout scores or Hard Filter.
+
 Marketability method and score (document complete inputs in Markdown; JSON keeps the score and minimal A/B/C/D outputs):
 - assessment_method is exactly calculation, external_forecast, both, or insufficient_evidence. Do not force A/B/C/D when no reliable internal calculation exists.
 - score_basis_type must equal calculation for assessment_method calculation or both, external_forecast for external_forecast, and insufficient_evidence for insufficient_evidence. When both exist, calculation is the primary score basis and external forecast is a cross-check.
@@ -12762,6 +12845,16 @@ Include this short provenance statement near the top: "Original report provenanc
 | Key data |  | paper / abstract / poster / company page URL |
 
 ${SHARED_CANONICAL_CLUSTER_RULE}
+
+## 2A) IP & Launch Outlook
+
+| Field | Assessment | Evidence / Basis |
+|---|---|---|
+| Core Patent / CoM |  | patent type, representative patent/family, source URL |
+| Earliest Priority Date |  | patent source |
+| Expected Patent Expiry / PTE |  | confirmed expiry or estimated basis |
+| Expected Launch Year |  | company guidance / analyst forecast / internal estimate |
+| Patent Runway at Launch |  | expiry year - launch year, when assessable |
 
 ## 3) Scorecard Summary
 
@@ -17504,6 +17597,11 @@ elements.shortlistingSettingsMetricsTab?.addEventListener('click', () => switchS
 elements.shortlistingSettingsClassificationsTab?.addEventListener('click', () => switchShortlistingSettingsTab('classifications'));
 elements.shortlistingClassificationModalSave?.addEventListener('click', submitShortlistingClassificationModal);
 elements.shortlistingClassificationManagerBody?.addEventListener('click', (event) => {
+  const editButton = event.target.closest('[data-edit-classification-id]');
+  if (editButton) {
+    beginEditShortlistingClassification(editButton.dataset.editClassificationId);
+    return;
+  }
   const translateButton = event.target.closest('[data-translate-classification-id]');
   if (translateButton) {
     translateShortlistingClassification(translateButton.dataset.translateClassificationId, translateButton);
@@ -17513,6 +17611,7 @@ elements.shortlistingClassificationManagerBody?.addEventListener('click', (event
   if (!deleteButton) return;
   deleteShortlistingClassification(deleteButton.dataset.deleteClassificationId);
 });
+elements.shortlistingClassificationModalEditCancel?.addEventListener('click', cancelEditShortlistingClassification);
 elements.shortlistingMetricReturnTypeSelect?.addEventListener('change', updateShortlistingMetricModalConditionalFields);
 elements.shortlistingMetricModalCancel?.addEventListener('click', closeShortlistingProjectSettingsModal);
 elements.shortlistingMetricModalSave?.addEventListener('click', submitShortlistingMetricModal);
@@ -17535,6 +17634,11 @@ elements.shortlistingProjectRenameInput?.addEventListener('blur', () => {
   saveShortlistingProjectRename();
 });
 elements.shortlistingMetricManagerBody?.addEventListener('click', (event) => {
+  const editButton = event.target.closest('[data-edit-metric-id]');
+  if (editButton) {
+    beginEditShortlistingMetricColumn(editButton.dataset.editMetricId);
+    return;
+  }
   const translateButton = event.target.closest('[data-translate-metric-id]');
   if (translateButton) {
     translateShortlistingMetricColumn(translateButton.dataset.translateMetricId, translateButton);
@@ -17544,6 +17648,7 @@ elements.shortlistingMetricManagerBody?.addEventListener('click', (event) => {
   if (!deleteButton) return;
   deleteShortlistingMetricColumn(deleteButton.dataset.deleteMetricId);
 });
+elements.shortlistingMetricModalEditCancel?.addEventListener('click', cancelEditShortlistingMetricColumn);
 elements.shortlistingMemberAddButton?.addEventListener('click', submitShortlistingMemberAdd);
 elements.shortlistingMemberSearchInput?.addEventListener('input', renderShortlistingMemberPicker);
 elements.shortlistingMemberManagerBody?.addEventListener('click', (event) => {

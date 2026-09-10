@@ -2387,7 +2387,6 @@ h2 {
   border-radius: 7px;
   background: transparent;
   color: var(--muted);
-  font-size: 14px;
 }
 
 .shortlisting-project-settings-button:hover {
@@ -6445,15 +6444,39 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
   padding: 18px 10px;
 }
 
+.shortlisting-metric-manager-edit-button,
+.shortlisting-metric-manager-translate-button,
 .shortlisting-metric-manager-delete-button {
-  border: 1px solid color-mix(in srgb, var(--red) 40%, var(--line));
-  border-radius: 7px;
-  padding: 4px 9px;
-  color: var(--red);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 26px;
+  padding: 4px 11px;
+  border-radius: 999px;
   font-size: 11px;
   font-weight: 800;
-  background: transparent;
   white-space: nowrap;
+  background: transparent;
+  transition: background 120ms ease, opacity 120ms ease;
+}
+
+.shortlisting-metric-manager-edit-button,
+.shortlisting-metric-manager-translate-button {
+  margin-right: 4px;
+}
+
+.shortlisting-metric-manager-edit-button {
+  border: 1px solid color-mix(in srgb, var(--blue) 40%, var(--line));
+  color: var(--blue);
+}
+
+.shortlisting-metric-manager-edit-button:hover {
+  background: color-mix(in srgb, var(--blue) 10%, transparent);
+}
+
+.shortlisting-metric-manager-delete-button {
+  border: 1px solid color-mix(in srgb, var(--red) 40%, var(--line));
+  color: var(--red);
 }
 
 .shortlisting-metric-manager-delete-button:hover {
@@ -6462,14 +6485,7 @@ html[data-theme="dark"] .data-upload-status[data-state="error"] {
 
 .shortlisting-metric-manager-translate-button {
   border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
-  border-radius: 7px;
-  padding: 4px 9px;
-  margin-right: 4px;
   color: var(--accent);
-  font-size: 11px;
-  font-weight: 800;
-  background: transparent;
-  white-space: nowrap;
 }
 
 .shortlisting-metric-manager-translate-button:hover {
@@ -14614,6 +14630,11 @@ html[data-theme="dark"] .detail-material-panel {
   width: 126px;
 }
 
+.oi-filter3-control-row .classification-edit-select {
+  flex: 0 0 126px;
+  width: 126px;
+}
+
 .oi-classification-summary .oi-note-shell {
   grid-column: 1;
 }
@@ -14631,6 +14652,11 @@ html[data-theme="dark"] .detail-material-panel {
   }
 
   .oi-filter3-control-row #detailOiPartnershipType {
+    flex: 1 1 132px;
+    width: auto;
+  }
+
+  .oi-filter3-control-row .classification-edit-select {
     flex: 1 1 132px;
     width: auto;
   }
@@ -22271,6 +22297,7 @@ html[data-theme="dark"] .criteria-drawer-body .criteria-table thead th {
 
 .review-info-stack.is-collapsed #detailReviewReasonShell,
 .review-info-stack.is-collapsed .oi-classification-summary,
+.review-info-stack.is-collapsed .custom-classification-summary,
 .review-info-stack.is-collapsed #detailActionOwner {
   display: none;
 }
