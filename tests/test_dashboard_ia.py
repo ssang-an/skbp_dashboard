@@ -16,7 +16,16 @@ CSS = (ROOT / "src" / "styles.css").read_text(encoding="utf-8")
 def function_body(source: str, name: str) -> str:
     marker = f"function {name}("
     start = source.index(marker)
-    brace = source.index("{", start)
+    # Skip the complete parameter list, including destructured option defaults.
+    parameter_depth = 0
+    for parameter_end in range(source.index("(", start), len(source)):
+        if source[parameter_end] == "(":
+            parameter_depth += 1
+        elif source[parameter_end] == ")":
+            parameter_depth -= 1
+            if parameter_depth == 0:
+                break
+    brace = source.index("{", parameter_end + 1)
     depth = 0
     for index in range(brace, len(source)):
         if source[index] == "{":
@@ -489,6 +498,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             self.assertNotIn(f'id="{removed_id}"', HTML)
 
     def test_step0_progress_summary_shows_recent_fifteen_day_upload_increases_on_cards_only(self):
+        load = function_body(JS, "loadStep0Progress")
         self.assertNotIn('id="step0RecentUploadNote"', HTML)
         self.assertNotIn('최근 15일 신규 업로드</span>', HTML)
         for element_id in ("step0RecentPending", "step0RecentFastTriage", "step0RecentFullScout", "step0RecentShortlisted"):
@@ -649,6 +659,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("step0-status-toggle", step0_controls)
         self.assertIn('id="step0ResetFiltersButton"', step0_controls)
         self.assertIn("#step0Panel .controls", CSS)
+        self.assertIn("@media (min-width: 721px) and (max-width: 1200px)", CSS)
+        self.assertIn("grid-template-columns: minmax(220px, 1.5fr) repeat(3, minmax(130px, 1fr));", CSS)
         self.assertIn(".step0-progress-table th.step0-asset-header", CSS)
         self.assertIn("#step0CopyInstructionsButton.step0-copy-instructions-button", CSS)
         self.assertIn("const STEP0_MAX_SELECTED_CANDIDATES = 20", JS)
@@ -1015,7 +1027,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             self.assertIn(f'<span>{component}</span>', section)
         self.assertNotIn('Expansion Capacity Adjustment', section)
 
-        styles = CSS[CSS.rindex("Full Scout Parameter Guide shares the Fast Triage parameter-card system") :]
+        styles = CSS[CSS.rindex("Advanced Research Parameter Guide shares the Simple Research parameter-card system") :]
         self.assertIn('grid-template-columns: repeat(2, minmax(0, 1fr))', styles)
         self.assertIn('grid-column: 1 / -1', styles)
         self.assertIn('background: var(--readable-surface)', styles)
@@ -1028,7 +1040,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn('var(--criteria-section-accent) 11%', styles)
         self.assertIn('@media (max-width: 760px)', styles)
         self.assertIn('grid-template-columns: 1fr', styles)
-        pair_styles = CSS[CSS.rindex("Pair Full Scout parameters two-up; Target Relevance and Marketability span both columns") :]
+        pair_styles = CSS[CSS.rindex("Pair Advanced Research parameters two-up; Target Relevance and Marketability span both columns") :]
         self.assertIn('.target-parameter-card.full-parameter-card', pair_styles)
         self.assertIn('grid-column: 1 / -1', pair_styles)
         self.assertIn('grid-template-columns: minmax(0, 1.35fr) repeat(2, minmax(0, 1fr))', pair_styles)
@@ -1137,13 +1149,13 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         evidence_end = HTML.index('class="criteria-rule criteria-other-header criteria-guide-section', evidence_start)
         evidence = HTML[evidence_start:evidence_end]
         scope = function_body(JS, "updateCriteriaDrawerScope")
-        cosmetic = CSS[CSS.index("/* Fast Triage judgment guide"):]
+        cosmetic = CSS[CSS.index("/* Simple Research judgment guide"):]
 
         self.assertIn('id="criteriaDrawerVersionBadge"', HTML)
         self.assertIn('id="criteriaDrawerSubtitle"', HTML)
         self.assertIn('class="criteria-drawer-close"', HTML)
         self.assertIn("TAB 1 · FAST TRIAGE · SCORING GUIDE", JS)
-        self.assertIn("Full Scout 검토 후보를 선별하기 위한 3-point screening 기준", JS)
+        self.assertIn("Advanced Research 검토 후보를 선별하기 위한 3-point screening 기준", JS)
         self.assertIn("LATEST_TRIAGE_RUBRIC_VERSION", scope)
         self.assertIn(".triage-evidence-note .criteria-evidence-definitions", CSS)
         self.assertIn("grid-template-columns: repeat(3, minmax(0, 1fr))", CSS)
@@ -1216,7 +1228,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         status_end = HTML.index('class="criteria-scoring-section', status_start)
         status_markup = HTML[status_start:status_end]
         self.assertNotIn('class="criteria-guide-section-icon"', status_markup)
-        self.assertIn('<h3>Final Status</h3><p>SELECT / REJECT / UNVERIFIED의 최종 판정 기준</p>', status_markup)
+        self.assertIn('<h3>Final Status</h3><p>SELECT / REJECT / INSUFFICIENT의 최종 판정 기준</p>', status_markup)
         self.assertIn('content: "·"', CSS)
 
     def test_parameter_and_evidence_cards_share_status_card_visual_family(self):
@@ -1277,7 +1289,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("border: 0", helper)
         self.assertIn("background: color-mix(in srgb, var(--criteria-status-color) 8%", helper)
         self.assertIn("box-shadow: none", helper)
-        for status, color in (("select", "#16836f"), ("reject", "#b05258"), ("unverified", "#987222")):
+        for status, color in (("select", "#16836f"), ("reject", "#b05258"), ("insufficient", "#987222")):
             self.assertIn(f'.criteria-status-card[data-triage-status="{status}"]', CSS)
             self.assertIn(f"--criteria-status-color: {color}", CSS)
 
@@ -1494,8 +1506,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertEqual(JS.count("새 GPT 창 열기 및 모드 선택"), 2)
         self.assertEqual(JS.count("새 브라우저 탭에서 GPT를 열고 High 이상의 추론 모드를 선택합니다."), 2)
         self.assertIn("지침 1은 최대 50개까지 처리할 수 있으나", JS)
-        self.assertIn("새 브라우저 탭에서 GPT를 열고, 오른쪽 Fast Triage 실행 가이드 순서대로 조사를 완료한 뒤", JS)
-        self.assertIn("새 브라우저 탭에서 GPT를 열고, 오른쪽 Full Scout 실행 가이드 순서대로 심층조사를 완료한 뒤", JS)
+        self.assertIn("새 브라우저 탭에서 GPT를 열고, 오른쪽 Simple Research 실행 가이드 순서대로 조사를 완료한 뒤", JS)
+        self.assertIn("새 브라우저 탭에서 GPT를 열고, 오른쪽 Advanced Research 실행 가이드 순서대로 심층조사를 완료한 뒤", JS)
         self.assertIn("생성된 전체 응답을 그대로 붙여넣으세요.", JS)
         self.assertIn("생성된 전체 응답을 그대로 붙여넣으세요.", HTML)
         self.assertNotIn("응답을 아래에 그대로", JS)
@@ -1652,8 +1664,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertRegex(CSS, r"\.paste-panel \.editor-actions \.header-action-button\s*\{[^}]*min-height: 38px;[^}]*border-radius: 999px;")
 
     def test_data_upload_placeholders_use_prominent_spaced_body_copy(self):
-        self.assertIn("오른쪽 Fast Triage 실행 가이드 순서대로", JS)
-        self.assertIn("이 입력란은 Fast Triage 형식만 검증합니다.", JS)
+        self.assertIn("오른쪽 Simple Research 실행 가이드 순서대로", JS)
+        self.assertIn("이 입력란은 Simple Research 형식만 검증합니다.", JS)
         self.assertIn("지침 1은 최대 50개까지 처리할 수 있으나 안정적인 조사를 위해 10~20개씩 실행하는 것을 권장합니다.", JS)
         self.assertIn(".paste-panel #gptResponseInput::placeholder", CSS)
         placeholder_styles = CSS[CSS.index(".paste-panel #gptResponseInput::placeholder"):]
@@ -1696,7 +1708,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("state.latestOiPartnershipCriteriaVersion", scope)
         self.assertIn("Filter 3 — OI Partnership 자동 분류 · v1.7 기준", focus)
         intro = (
-            "Tab 3는 Full Scout 검토 후 Shortlisting에 등록된 후보를 대상으로, "
+            "Tab 3는 Advanced Research 검토 후 Shortlisting에 등록된 후보를 대상으로, "
             "SKBP 우선 관심 적응증 여부와 확인된 Modality·Pipeline Stage·Platform Attractiveness·"
             "In-vivo·In-vitro·ADMET 값을 사용해 투자, Value Up, 공동연구, Unknown 또는 N/A로 자동 분류합니다."
         )
@@ -1753,7 +1765,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("충족 시 <strong>→ Value Up</strong>", focus)
         self.assertNotIn("충족 시 <strong>→ 공동연구</strong>", focus)
         self.assertNotIn("Stage = IND-enabling", focus)
-        self.assertIn("Full Scout 및 Partner Materials 정보를 사용", focus)
+        self.assertIn("Advanced Research 및 Partner Materials 정보를 사용", focus)
 
         self.assertIn("공동연구</strong><span>&gt;</span><span>투자 · Value Up", focus)
         priority_pills = CSS[CSS.index(".criteria-focus-priority-formula {") : CSS.index(".criteria-focus-comparison-strip")]
@@ -1871,7 +1883,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("border-bottom-width: 1px", shared)
 
     def test_triage_scoring_notes_highlight_unverified_and_cover_inactive_assets(self):
-        self.assertIn('class="triage-status-badge unverified criteria-footnote-status">UNVERIFIED</span>', HTML)
+        self.assertIn('class="triage-status-badge insufficient criteria-footnote-status">INSUFFICIENT</span>', HTML)
         self.assertIn("inactive·discontinued(개발 중단) 상태이면 해당 항목을 0점", HTML)
         self.assertIn(".criteria-table-footnote .criteria-footnote-status", CSS)
 
@@ -1934,7 +1946,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         status_section = HTML[start:end]
         expected = {
             "pass": (
-                "Full Scout의 총점과 필수 기준을 모두 충족하고 active development가 확인된 후속 BD 우선 검토 후보입니다.",
+                "Advanced Research의 총점과 필수 기준을 모두 충족하고 active development가 확인된 후속 BD 우선 검토 후보입니다.",
                 ("Total Score ≥ 15", "Target Relevance ≥ 2", "MoA Validity ≥ 2", "Data Maturity ≥ 2", "Asset identity verified", "Active development program confirmed"),
             ),
             "review": (
@@ -1942,7 +1954,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
                 ("Total Score 9–14", "또는 Total Score ≥ 15이지만 TR, MoA 또는 Data 필수조건 미충족", "또는 active status, stage 또는 핵심 evidence 불확실", "추가 diligence 후 PASS/FAIL 재판정"),
             ),
             "fail": (
-                "현재 확인된 근거 또는 개발 상태가 Full Scout 통과 기준에 미달하거나 명확한 제외 조건에 해당하는 후보입니다.",
+                "현재 확인된 근거 또는 개발 상태가 Advanced Research 통과 기준에 미달하거나 명확한 제외 조건에 해당하는 후보입니다.",
                 ("Total Score ≤ 8", "또는 Target Relevance ≤ 1", "또는 Asset identity not verified", "또는 Discontinued / Terminated / Withdrawn / Inactive / Clearly failed"),
             ),
         }
@@ -1968,7 +1980,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("border: 1px solid color-mix(in srgb, var(--line) 76%, transparent)", hierarchy)
         self.assertIn("border-radius: 11px", hierarchy)
         self.assertIn("background: color-mix(in srgb, var(--surface) 92%, transparent)", hierarchy)
-        styles = CSS[CSS.rindex("Full Scout status summaries sit between the status name and unchanged rules") :]
+        styles = CSS[CSS.rindex("Advanced Research status summaries sit between the status name and unchanged rules") :]
         self.assertIn("var(--criteria-status-color) 8%", styles)
         self.assertIn("font-size: 12px", styles)
         self.assertIn("font-weight: 650", styles)
@@ -2173,7 +2185,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         dashboard_header = CSS[CSS.index(dashboard_header_selector):CSS.index(".app-shell:not(.detail-shell):not(.triage-detail-shell):not(.wiki-shell) > .topbar .brand-default-lockup")]
 
         self.assertIn("transform: translateX(-4px);", dashboard_header)
-        self.assertIn('<p class="eyebrow">GPT 1 · Fast Triage</p>', TRIAGE_DETAIL_HTML)
+        self.assertIn('<p class="eyebrow">GPT 1 · Simple Research</p>', TRIAGE_DETAIL_HTML)
         self.assertNotIn('<img src="./src/prism.svg"', TRIAGE_DETAIL_HTML)
 
     def test_triage_final_comment_actions_include_compact_rubric_refresh(self):
@@ -2809,7 +2821,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             DETAIL_HTML.index('id="detailCollaborationStatus"')
         ]
         self.assertIn('class="review-info-stack is-collapsed"', workspace)
-        self.assertIn('<p class="review-column-heading">Full Scout</p>', workspace)
+        self.assertIn('<p class="review-column-heading">Advanced Research</p>', workspace)
         self.assertIn('<p class="review-column-heading">Shortlisting</p>', workspace)
         self.assertNotIn('id="detailOiMaterialFlags"', workspace)
         self.assertIn('id="detailPartnerMaterialFlags"', DETAIL_HTML)
@@ -2979,7 +2991,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("GPT 원문 재업로드일", labels)
         self.assertNotIn("dashboard_tab2_rubric_recalculation", labels)
         rubric_label = function_body(DETAIL_JS, "rubricRefreshAuditLabel")
-        self.assertIn("Score recalculated by Full Scout Rubric", rubric_label)
+        self.assertIn("Score recalculated by Advanced Research Rubric", rubric_label)
         return
         scope_style = CSS[CSS.index(".attachments-empty,\n.attachment-ai-scope") :]
         scope_only = scope_style[scope_style.index(".attachment-ai-scope {\n  font-size") :]
@@ -3154,7 +3166,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("table-edit-select score-edit", score)
         self.assertIn("is-readonly", score)
         self.assertIn(".table-edit-select.is-readonly", CSS)
-        self.assertIn("Fast Triage에도 함께 표시되고 있습니다.", alias_notice)
+        self.assertIn("Simple Research에도 함께 표시되고 있습니다.", alias_notice)
         self.assertNotIn("해당 GPT 원문 리포트와 상세 점수", alias_notice)
 
     def test_main_indication_hover_keeps_full_source_wording_in_all_dashboard_tabs(self):

@@ -24395,6 +24395,19 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
   }
 }
 
+/* The Tab 0 desktop filter row has more controls than the other Pipeline
+   tabs.  Collapse it to two rows on tablet widths so the page itself never
+   acquires a horizontal scrollbar; data tables retain their own scroll area. */
+@media (min-width: 721px) and (max-width: 1200px) {
+  #step0Panel .controls {
+    grid-template-columns: minmax(220px, 1.5fr) repeat(3, minmax(130px, 1fr));
+  }
+
+  #step0Panel .controls > .step0-search-tokens.is-controls-token-row {
+    grid-row: auto;
+  }
+}
+
 .step0-search-token {
   display: inline-flex;
   min-width: 0;

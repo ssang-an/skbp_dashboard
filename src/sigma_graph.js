@@ -32,12 +32,35 @@ const TYPE_LEGEND_TOOLTIP = {
   modality: '치료 플랫폼의 Canonical 분류입니다. 클릭하면 Modality 노드를 그래프에서만 숨기거나 다시 표시합니다.'
 };
 const CANONICAL_INDICATIONS = [
-  "Alzheimer's disease", "Parkinson's disease", 'Lewy body dementia', 'Epilepsy / seizure disorders',
-  'Multiple sclerosis / neuroinflammatory disease', 'Amyotrophic lateral sclerosis / motor neuron disease',
-  'Frontotemporal dementia', "Huntington's disease", 'Stroke', 'Migraine / headache disorders', 'Pain',
-  'Major depressive disorder', 'Schizophrenia / psychosis', 'Bipolar disorder', 'Anxiety disorders',
-  'Autism spectrum disorder', 'ADHD', 'Sleep / wake disorders', 'Chronic cough',
-  'Inflammatory bowel disease', 'Systemic lupus erythematosus', 'Other autoimmune / inflammatory disease', 'Unknown'
+  "Alzheimer's disease",
+  "Parkinson's disease",
+  "Lewy body dementia",
+  "Vascular dementia",
+  "Epilepsy / seizure disorders",
+  "Multiple sclerosis / neuroinflammatory disease",
+  "Amyotrophic lateral sclerosis / motor neuron disease",
+  "Frontotemporal dementia",
+  "Progressive supranuclear palsy / atypical parkinsonism",
+  "Huntington's disease",
+  "Stroke",
+  "Migraine / headache disorders",
+  "Pain",
+  "Major depressive disorder",
+  "Schizophrenia / psychosis",
+  "Bipolar disorder",
+  "Anxiety disorders",
+  "Autism spectrum disorder",
+  "ADHD",
+  "Sleep / wake disorders",
+  "Chronic cough",
+  "Inflammatory bowel disease",
+  "Systemic lupus erythematosus",
+  "Other autoimmune / inflammatory disease",
+  "Spinal cord injury",
+  "Spinal muscular atrophy",
+  "Charcot-Marie-Tooth disease / hereditary neuropathy",
+  "Ataxia (spinocerebellar / Friedreich)",
+  "Unknown"
 ];
 const $ = selector => document.querySelector(selector);
 const ui = {
@@ -53,6 +76,7 @@ const hiddenLegendFilters = new Set();
 let adjacency = new Map();
 let stageByAsset = new Map();
 let renderer;
+let cameraAnimationFrame = null;
 let simulation;
 let loadPromise;
 let wikiRefreshPromise;
@@ -636,7 +660,59 @@ function seedNodes(nodes) {
   });
 }
 
+function stopCameraAnimation() {
+  if (cameraAnimationFrame !== null) cancelAnimationFrame(cameraAnimationFrame);
+  cameraAnimationFrame = null;
+}
+
+function moveMapCamera(nodeId = null) {
+  stopCameraAnimation();
+  if (!renderer) return;
+  const activeRenderer = renderer;
+  const camera = renderer.getCamera();
+  const start = camera.getState();
+  const focusing = nodeId !== null;
+  const destination = () => {
+    const node = focusing ? activeRenderer.getNodeDisplayData(nodeId) : null;
+    if (focusing && (!node || node.hidden)) return null;
+    return { x: node?.x ?? 0.5, y: node?.y ?? 0.5, ratio: focusing ? 0.42 : 1.15, angle: 0 };
+  };
+  const target = destination();
+  if (!target) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    camera.setState(target);
+    return;
+  }
+  const duration = focusing ? 900 : 550;
+  const peakRatio = Math.max(start.ratio, target.ratio) * 1.28;
+  const startedAt = performance.now();
+  const ease = value => value * value * (3 - 2 * value);
+  const frame = now => {
+    cameraAnimationFrame = null;
+    if (renderer !== activeRenderer) return;
+    // Read the latest normalized position while the force layout is settling.
+    const end = destination();
+    if (!end) return;
+    const progress = Math.min(1, (now - startedAt) / duration);
+    const pan = ease(progress);
+    const ratio = !focusing
+      ? start.ratio + (end.ratio - start.ratio) * pan
+      : progress < 0.35
+        ? start.ratio + (peakRatio - start.ratio) * ease(progress / 0.35)
+        : peakRatio + (end.ratio - peakRatio) * ease((progress - 0.35) / 0.65);
+    camera.setState({
+      x: start.x + (end.x - start.x) * pan,
+      y: start.y + (end.y - start.y) * pan,
+      angle: start.angle * (1 - pan),
+      ratio,
+    });
+    if (progress < 1) cameraAnimationFrame = requestAnimationFrame(frame);
+  };
+  cameraAnimationFrame = requestAnimationFrame(frame);
+}
+
 function clearSelection() {
+  stopCameraAnimation();
   renderer?.setSetting('nodeReducer', null);
   renderer?.setSetting('edgeReducer', null);
   ui.inspector.textContent = '노드를 클릭하면 연결된 노드만 강조됩니다.';
@@ -673,9 +749,11 @@ function inspectNode(id) {
     return { ...attributes, color: connected ? graphFocusedEdgeColor() : graphMutedEdgeColor(), size: connected ? 1.35 : 0.25 };
   });
   renderer.refresh();
+  moveMapCamera(id);
 }
 
 function buildGraph() {
+  stopCameraAnimation();
   syncMapResetButton();
   const data = selectedGraph();
   const layout = seedNodes(data.nodes);
@@ -721,7 +799,10 @@ function buildGraph() {
     });
 
   let dragged;
+  let didDrag = false;
   renderer.on('downNode', ({ node, event }) => {
+    stopCameraAnimation();
+    didDrag = false;
     dragged = positions.get(node);
     if (!dragged) return;
     dragged.fx = dragged.x;
@@ -731,8 +812,11 @@ function buildGraph() {
     event?.preventSigmaDefault?.();
   });
   const mouse = renderer.getMouseCaptor();
+  mouse.on('mousedown', stopCameraAnimation);
+  mouse.on('wheel', stopCameraAnimation);
   mouse.on('mousemovebody', event => {
     if (!dragged) return;
+    didDrag = true;
     const point = renderer.viewportToGraph(event);
     dragged.fx = point.x;
     dragged.fy = point.y;
@@ -748,7 +832,9 @@ function buildGraph() {
     dragged = null;
     renderer.getCamera().enable();
   });
-  renderer.on('doubleClickNode', ({ node }) => {
+  renderer.on('doubleClickNode', ({ node, event }) => {
+    event.preventSigmaDefault();
+    stopCameraAnimation();
     const item = positions.get(node);
     if (!item) return;
     item.fx = null;
@@ -756,8 +842,16 @@ function buildGraph() {
     simulation.alpha(0.25).restart();
     ui.scope.textContent = '노드 고정을 해제했습니다. 주변 연결망을 다시 배치합니다.';
   });
-  renderer.on('clickNode', ({ node }) => inspectNode(node));
+  renderer.on('clickNode', ({ node }) => {
+    if (!didDrag) inspectNode(node);
+    didDrag = false;
+  });
   renderer.on('clickStage', clearSelection);
+  renderer.on('doubleClickStage', ({ event }) => {
+    event.preventSigmaDefault();
+    clearSelection();
+    moveMapCamera();
+  });
 }
 
 async function refreshWikiStatus() {

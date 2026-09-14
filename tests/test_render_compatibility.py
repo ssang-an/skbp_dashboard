@@ -338,6 +338,7 @@ def fake_dom_prelude() -> str:
     return r"""
       function fakeNode(tagName = 'DIV') {
         const classes = new Set();
+        const attributes = new Map();
         return {
           tagName, innerHTML: '', textContent: '', value: '', title: '', href: '',
           hidden: false, disabled: false, scrollHeight: 0, clientWidth: 0, dataset: {},
@@ -352,7 +353,10 @@ def fake_dom_prelude() -> str:
               return enabled;
             },
           },
-          setAttribute() {}, removeAttribute() {}, append() {}, appendChild() {},
+          setAttribute(name, value) { attributes.set(name, String(value)); },
+          getAttribute(name) { return attributes.get(name) ?? null; },
+          removeAttribute(name) { attributes.delete(name); },
+          addEventListener() {}, removeEventListener() {}, append() {}, appendChild() {},
           insertBefore() {}, replaceChildren() {}, scrollTo() {}, focus() {}, reset() {},
           closest() { return this; },
           querySelector() { return null; }, querySelectorAll() { return []; },
@@ -385,6 +389,7 @@ def fake_dom_prelude() -> str:
         value: { clipboard: { writeText: async () => {} } }, configurable: true,
       });
       globalThis.requestAnimationFrame = (callback) => { callback(); return 1; };
+      window.requestAnimationFrame = globalThis.requestAnimationFrame;
       globalThis.cancelAnimationFrame = () => {};
       globalThis.getComputedStyle = () => ({ getPropertyValue: () => '' });
       globalThis.getCurrentUser = () => ({ id: 'tester', name: 'Tester', is_admin: true });
@@ -392,6 +397,7 @@ def fake_dom_prelude() -> str:
       globalThis.openAuthModal = async () => null;
       globalThis.initAuthUI = () => {};
       globalThis.setupThemeToggle = () => {};
+      globalThis.bindClipboardCopyGesture = () => {};
       globalThis.initFloatingAgent = () => ({});
       globalThis.expandCompactInputRecord = (record) => record;
       globalThis.splitAtRecoverableJsonSeparator = () => null;

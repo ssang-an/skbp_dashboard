@@ -7,6 +7,7 @@ import os
 import re
 import shutil
 import subprocess
+import tempfile
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -225,22 +226,27 @@ def convert_office_to_pdf(file_path: Path) -> dict[str, Any]:
         return {"status": "unavailable", "pdf_path": None, "error": "LibreOffice was not found."}
     output_dir = file_path.parent / "converted"
     output_dir.mkdir(parents=True, exist_ok=True)
-    completed = subprocess.run(
-        [
-            str(soffice),
-            "--headless",
-            "--convert-to",
-            "pdf",
-            "--outdir",
-            str(output_dir),
-            str(file_path),
-        ],
-        cwd=str(file_path.parent),
-        capture_output=True,
-        text=True,
-        timeout=180,
-        check=False,
-    )
+    try:
+        # An isolated profile prevents an open LibreOffice window or another
+        # conversion from consuming this request without creating its PDF.
+        with tempfile.TemporaryDirectory(prefix="prism-office-") as profile:
+            completed = subprocess.run(
+                [
+                    str(soffice),
+                    f"-env:UserInstallation={Path(profile).as_uri()}",
+                    "--headless",
+                    "--convert-to", "pdf",
+                    "--outdir", str(output_dir), str(file_path),
+                ],
+                cwd=str(file_path.parent),
+                capture_output=True,
+                text=True,
+                timeout=180,
+                check=False,
+                creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
+            )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {"status": "failed", "pdf_path": None, "error": str(exc)[:500]}
     output_path = output_dir / f"{file_path.stem}.pdf"
     if completed.returncode == 0 and output_path.is_file():
         return {"status": "converted", "pdf_path": str(output_path), "error": None}

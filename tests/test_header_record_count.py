@@ -9,7 +9,16 @@ JS = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
 def function_body(source: str, name: str) -> str:
     marker = f"function {name}("
     start = source.index(marker)
-    brace = source.index("{", start)
+    # Skip the complete parameter list, including destructured option defaults.
+    parameter_depth = 0
+    for parameter_end in range(source.index("(", start), len(source)):
+        if source[parameter_end] == "(":
+            parameter_depth += 1
+        elif source[parameter_end] == ")":
+            parameter_depth -= 1
+            if parameter_depth == 0:
+                break
+    brace = source.index("{", parameter_end + 1)
     depth = 0
     for index in range(brace, len(source)):
         if source[index] == "{":

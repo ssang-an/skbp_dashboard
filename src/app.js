@@ -10182,27 +10182,33 @@ const INPUT_MODALITIES = new Set(CANONICAL_MODALITIES);
 const INPUT_INDICATIONS = new Set([
   "Alzheimer's disease",
   "Parkinson's disease",
-  'Lewy body dementia',
-  'Epilepsy / seizure disorders',
-  'Multiple sclerosis / neuroinflammatory disease',
-  'Amyotrophic lateral sclerosis / motor neuron disease',
-  'Frontotemporal dementia',
+  "Lewy body dementia",
+  "Vascular dementia",
+  "Epilepsy / seizure disorders",
+  "Multiple sclerosis / neuroinflammatory disease",
+  "Amyotrophic lateral sclerosis / motor neuron disease",
+  "Frontotemporal dementia",
+  "Progressive supranuclear palsy / atypical parkinsonism",
   "Huntington's disease",
-  'Stroke',
-  'Migraine / headache disorders',
-  'Pain',
-  'Major depressive disorder',
-  'Schizophrenia / psychosis',
-  'Bipolar disorder',
-  'Anxiety disorders',
-  'Autism spectrum disorder',
-  'ADHD',
-  'Sleep / wake disorders',
-  'Chronic cough',
-  'Inflammatory bowel disease',
-  'Systemic lupus erythematosus',
-  'Other autoimmune / inflammatory disease',
-  'Unknown'
+  "Stroke",
+  "Migraine / headache disorders",
+  "Pain",
+  "Major depressive disorder",
+  "Schizophrenia / psychosis",
+  "Bipolar disorder",
+  "Anxiety disorders",
+  "Autism spectrum disorder",
+  "ADHD",
+  "Sleep / wake disorders",
+  "Chronic cough",
+  "Inflammatory bowel disease",
+  "Systemic lupus erythematosus",
+  "Other autoimmune / inflammatory disease",
+  "Spinal cord injury",
+  "Spinal muscular atrophy",
+  "Charcot-Marie-Tooth disease / hereditary neuropathy",
+  "Ataxia (spinocerebellar / Friedreich)",
+  "Unknown"
 ]);
 const INPUT_STAGES = new Set(CANONICAL_DEVELOPMENT_STAGES);
 const INPUT_EVIDENCE_BASES = new Set([
@@ -12087,7 +12093,7 @@ Canonicalize only an explicitly confirmed current stage or a completed/started m
 const SHARED_CANONICAL_MODALITY_RULE = `Canonical Modality — structured_table.modality_platform must be exactly one of: Targeted protein degrader, Oncolytic virus, Small molecule, Peptide, RNA therapy, Cell therapy, Gene therapy, Antibody, Protein biologic, Microbiome therapy, Vaccine, Radiopharmaceutical, Natural product, Exosome / EV Therapy, Others, or Unknown.
 Preserve the researched wording in structured_table.modality_source and use the canonical label in modality_platform. Examples: "TPD", "PROTAC", "molecular glue degrader", "SNIPER", "AUTOTAC", and "LYTAC" -> Targeted protein degrader; "oral small molecule" -> Small molecule; "oral small-molecule / tablet" and "small-molecule CNS discovery platform" -> Small molecule; "IV antibody" -> Antibody; "topical peptide" -> Peptide; "live biotherapeutic product" -> Microbiome therapy. Route, dosage form, and technical qualifiers belong in MoA, source evidence, company_profile.platform_summary, or notes. modality_tags may contain multiple supported canonical labels only when the source explicitly evidences a hybrid format (for example, an antibody-targeted degrader can carry Antibody and Targeted protein degrader); never place raw labels such as TPD or PROTAC in modality_tags.`;
 
-const SHARED_CANONICAL_INDICATION_RULE = `Canonical Main Indication — structured_table.main_indication must be exactly one of: Alzheimer's disease; Parkinson's disease; Lewy body dementia; Epilepsy / seizure disorders; Multiple sclerosis / neuroinflammatory disease; Amyotrophic lateral sclerosis / motor neuron disease; Frontotemporal dementia; Huntington's disease; Stroke; Migraine / headache disorders; Pain; Major depressive disorder; Schizophrenia / psychosis; Bipolar disorder; Anxiety disorders; Autism spectrum disorder; ADHD; Sleep / wake disorders; Chronic cough; Inflammatory bowel disease; Systemic lupus erythematosus; Other autoimmune / inflammatory disease; Spinal cord injury; Spinal muscular atrophy; or Unknown.
+const SHARED_CANONICAL_INDICATION_RULE = `Canonical Main Indication — structured_table.main_indication must be exactly one of: Alzheimer's disease; Parkinson's disease; Lewy body dementia; Epilepsy / seizure disorders; Multiple sclerosis / neuroinflammatory disease; Amyotrophic lateral sclerosis / motor neuron disease; Frontotemporal dementia; Huntington's disease; Stroke; Migraine / headache disorders; Pain; Major depressive disorder; Schizophrenia / psychosis; Bipolar disorder; Anxiety disorders; Autism spectrum disorder; ADHD; Sleep / wake disorders; Chronic cough; Inflammatory bowel disease; Systemic lupus erythematosus; Other autoimmune / inflammatory disease; Spinal cord injury; Spinal muscular atrophy; Vascular dementia; Progressive supranuclear palsy / atypical parkinsonism; Charcot-Marie-Tooth disease / hereditary neuropathy; Ataxia (spinocerebellar / Friedreich); or Unknown.
 main_indication is mandatory. Never omit the key and never use null, an empty string, N/A, or an unnormalized disease phrase. If the lead can be determined, always write its canonical dashboard bucket. Use Unknown only when the lead genuinely cannot be distinguished after the following priority.
 When several indications are confirmed, retain every confirmed disease wording in structured_table.indication and provide structured_table.indication_list as its canonical array; do not replace confirmed indications with Unknown.
 Lead-indication selection priority: (1) use an indication explicitly identified as lead, primary, initial, or the sole current indication for the assessed asset on an official company pipeline page or current official company material; (2) if no official lead is designated, use the indication targeted by the single most advanced confirmed active clinical program, comparing only registered, started, recruiting, ongoing, or dosed programs; (3) if no lead can still be established but one or more confirmed indications are listed, set main_indication to the first canonical indication in the source's textual/listed order and preserve every canonical indication in indication_list. Never select an indication merely because it appears first before applying this priority. Use Unknown only when no confirmed canonical indication is available. Exclude planned/expected indications, competitor programs, historical or discontinued programs, and platform-expansion claims.
@@ -15898,7 +15904,7 @@ function openStep0MetadataPopover(anchor, row, field, { editing = false } = {}) 
     : `
       <header><strong>${label}</strong><button type="button" class="step0-metadata-close" aria-label="닫기">×</button></header>
       <p class="step0-metadata-value${value ? '' : ' is-empty'}">${value ? escapeHtml(value).replaceAll('\n', '<br>') : `저장된 ${label}이 없습니다.`}</p>
-      ${admin ? '<footer><button type="button" class="is-primary" data-step0-metadata-edit>수정</button></footer>' : ''}
+      ${loggedIn ? '<footer><button type="button" class="is-primary" data-step0-metadata-edit>수정</button></footer>' : ''}
     `;
   if (!editing && (field === 'comment' || field === 'contact')) {
     const isContactHistory = field === 'contact';

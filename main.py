@@ -4195,7 +4195,7 @@ def ensure_office_attachment_preview(attachment: dict[str, Any], file_path: Path
     preview after LibreOffice becomes available, without rerunning Agent or
     Filter 3 analysis.
     """
-    if file_path.suffix.lower() not in {".ppt", ".pptx", ".doc", ".docx"}:
+    if file_path.suffix.lower() not in {".ppt", ".pptx", ".doc", ".docx", ".xls"}:
         return False
     conversion = document_pipeline.convert_office_to_pdf(file_path)
     preview_file = conversion.get("pdf_path") if isinstance(conversion, dict) else None
@@ -6300,14 +6300,19 @@ def normalize_listing_website(value: Any) -> str:
     raw = str(value or "").strip()
     match = LISTING_WEBSITE_PATTERN.match(raw)
     if match:
-        candidate = match.group(0).rstrip(".,;:)]}")
+        candidate = match.group(0).rstrip(".,;:)}")
     else:
         candidate = raw.rstrip(".,;:)]}")
         if not LISTING_WEBSITE_HOST_PATTERN.fullmatch(candidate):
             return ""
         candidate = f"https://{candidate}"
-    parsed = urlsplit(candidate)
-    if parsed.scheme.lower() not in {"http", "https"} or not parsed.netloc:
+    try:
+        parsed = urlsplit(candidate)
+        # urlsplit validates bracketed hosts; accessing port also validates its range.
+        parsed.port
+    except ValueError:
+        return ""
+    if parsed.scheme.lower() not in {"http", "https"} or not parsed.hostname:
         return ""
     return candidate
 
@@ -6646,9 +6651,18 @@ def merge_listing_details(existing: Any, incoming: Any) -> dict[str, str]:
     update = normalize_listing_details(incoming)
     incoming_is_richer = listing_details_completeness(update) > listing_details_completeness(result)
     for field, value in update.items():
+        existing_value = result.get(field, "")
+        more_specific_modality = (
+            field == "modality"
+            and bool(existing_value)
+            and len(value) > len(existing_value)
+            and re.search(r"\b" + re.escape(existing_value) + r"\b", value, re.IGNORECASE) is not None
+            and canonicalize_modality(value) == canonicalize_modality(existing_value) != "Unknown"
+            and listing_details_completeness(update) >= listing_details_completeness(result)
+        )
         if (
             not listing_detail_value_is_missing(field, value)
-            and (listing_detail_value_is_missing(field, result.get(field)) or incoming_is_richer)
+            and (listing_detail_value_is_missing(field, existing_value) or incoming_is_richer or more_specific_modality)
         ):
             result[field] = value
     return result
@@ -13039,18 +13053,6 @@ def classify_record_disease_linkage(record_id: str) -> dict[str, Any]:
     return {"status": "ok", "disease_linkage_status": verdict, "record": record}
 
 
-@app.get("/api/records/{record_id:path}")
-def get_record(record_id: str) -> dict[str, Any]:
-    records = load_records()
-    refreshed = refresh_tracked_oi_classifications(records)
-    if refreshed:
-        save_records(records)
-    for record in records:
-        if record_key(record) == record_id:
-            return {"record": record, "record_id": record_id}
-    raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
-
-
 MANUAL_REVIEW_SCORE_FIELDS = {
     "target_relevance",
     "competitive_landscape",
@@ -15187,7 +15189,7 @@ async def upload_record_attachment(
 
 
 @app.get("/api/attachment-preview/{attachment_id}")
-async def preview_record_attachment(attachment_id: str, record_id: str) -> dict[str, Any]:
+def preview_record_attachment(attachment_id: str, record_id: str) -> dict[str, Any]:
     records = load_records()
     for record in records:
         if record_key(record) != record_id:
@@ -15212,7 +15214,14 @@ async def preview_record_attachment(attachment_id: str, record_id: str) -> dict[
         # Prefer a PDF rendition for PowerPoint/Word. This preserves the
         # original slide or page layout in the existing viewer; the original
         # Office file remains available through the download action.
-        if suffix in {".ppt", ".pptx", ".doc", ".docx"} and not attachment.get("preview_pdf_path"):
+        valid_preview = False
+        if attachment.get("preview_pdf_path"):
+            try:
+                resolve_attachment_url(str(attachment["preview_pdf_path"]))
+                valid_preview = True
+            except HTTPException:
+                pass
+        if suffix in {".ppt", ".pptx", ".doc", ".docx", ".xls"} and not valid_preview:
             if ensure_office_attachment_preview(attachment, file_path):
                 save_records(records)
         response: dict[str, Any] = {
@@ -15237,6 +15246,12 @@ async def preview_record_attachment(attachment_id: str, record_id: str) -> dict[
         elif suffix == ".txt":
             response["preview_type"] = "text"
             response["text"] = read_text_attachment(file_path)
+        elif suffix == ".xlsx":
+            try:
+                response["text"] = xlsx_text_preview(file_path)
+                response["preview_type"] = "text"
+            except (OSError, ValueError, KeyError, zipfile.BadZipFile, ElementTree.ParseError):
+                pass
         elif suffix in {".pptx", ".docx"}:
             try:
                 extracted_text = openxml_text_preview(file_path)
@@ -15490,6 +15505,20 @@ def list_qualitative_review_criterion_suggestions(record_id: str) -> dict[str, A
         key=lambda item: (-item["usage_count"], item["label"].casefold()),
     )
     return {"ok": True, "record_id": record_id, "suggestions": suggestions[:20]}
+
+
+# Register the catch-all GET only after the record subresource GET routes.
+# Otherwise :path consumes /qualitative-review/criteria/suggestions as part of the id.
+@app.get("/api/records/{record_id:path}")
+def get_record(record_id: str) -> dict[str, Any]:
+    records = load_records()
+    refreshed = refresh_tracked_oi_classifications(records)
+    if refreshed:
+        save_records(records)
+    for record in records:
+        if record_key(record) == record_id:
+            return {"record": record, "record_id": record_id}
+    raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
 
 
 @app.post("/api/records/{record_id:path}/qualitative-review/criteria")
