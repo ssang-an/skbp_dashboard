@@ -227,16 +227,25 @@ function expandCriterion(value, lookup) {
 
 function expandHybridCriterion(value, _lookup, { triage = false } = {}) {
   const source = objectValue(value);
-  const sourceIds = uniqueTextValues(
+  let sourceIds = uniqueTextValues(
     source.source_ids,
     listValue(source.evidence_sources).map((item) => compactSourceId(item)),
     listValue(source.verified_evidence_sources).map((item) => compactSourceId(item))
   );
+  const evidenceBasis = textValue(source.evidence_basis);
+  // A source reference means that the criterion was supported by that public
+  // source.  Some model outputs nevertheless attach a registry source to a
+  // zero-score “no supporting basis” row.  The declared evidence basis is the
+  // more specific audit instruction, so safely remove the contradictory link
+  // instead of blocking an otherwise valid batch upload.
+  if (triage && ['no_supporting_basis', 'user_input_only'].includes(evidenceBasis)) {
+    sourceIds = [];
+  }
   const criterion = {
     score: numericValue(source.score),
     evidence_type: textValue(source.evidence_type, triage ? 'triage_only' : ''),
     evidence_type_reason: textValue(source.evidence_type_reason),
-    evidence_basis: textValue(source.evidence_basis),
+    evidence_basis: evidenceBasis,
     main_line_summary: textValue(source.main_line_summary, source.reason),
     why_not_higher: textValue(source.why_not_higher),
     investigation_note: textValue(source.investigation_note),

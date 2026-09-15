@@ -123,6 +123,53 @@ class CompactIngestionTests(unittest.TestCase):
         )
         main.validate_records_for_save([expanded])
 
+    def test_triage_basis_without_public_evidence_drops_contradictory_source_ids(self):
+        compact = {
+            "meta": {"ingestion_format": "compact_v2", "review_type": "fast_triage"},
+            "structured_table": {"company": "Test Co", "asset_name": "T-0", "development_stage": "Unknown"},
+            "scoring": {"criteria": {
+                "target_relevance": {
+                    "score": 0,
+                    "evidence_type": "triage_only",
+                    "evidence_basis": "no_supporting_basis",
+                    "main_line_summary": "TR 0 points: no support.",
+                    "source_ids": ["S1"],
+                },
+            }},
+            "validation": {"source_registry": [{
+                "source_id": "S1", "source_title": "Unrelated pipeline", "source_url": "https://example.com/source", "verified": True,
+            }]},
+        }
+        expanded = self.expand(compact, "triage")
+        target = expanded["scoring"]["criteria"]["target_relevance"]
+        self.assertEqual(target["source_ids"], [])
+
+        # The save boundary repeats the repair for old browser bundles and
+        # direct API callers, before strict evidence validation runs.
+        target["source_ids"] = ["S1"]
+        main.normalize_fast_triage_evidence_source_references([expanded])
+        self.assertEqual(target["source_ids"], [])
+        target["evidence_basis"] = "user_input_only"
+        target["source_ids"] = ["S1"]
+        main.normalize_fast_triage_evidence_source_references([expanded])
+        self.assertEqual(target["source_ids"], [])
+
+        valid_compact = self.final_json_template(
+            self.rendered_prompts()["triage"],
+            "\nRemember:",
+        )[0]
+        valid_compact["validation"]["source_registry"] = [{
+            "source_id": "S1",
+            "source_title": "Unrelated pipeline",
+            "source_url": "https://example.com/source",
+            "source_type": "official_company_pipeline",
+            "verified": True,
+        }]
+        valid_compact["scoring"]["criteria"]["target_relevance"]["source_ids"] = ["S1"]
+        valid = self.expand(valid_compact, "triage")
+        main.validate_records_for_save([valid])
+        self.assertEqual(valid["scoring"]["criteria"]["target_relevance"]["source_ids"], [])
+
     def test_route_qualified_modality_is_canonicalized_during_expansion(self):
         compact = {
             "meta": {"ingestion_format": "compact_v2", "review_type": "full_scout"},
@@ -1065,6 +1112,8 @@ format reminder
     def test_ai_reparse_ui_distinguishes_recovery_failure_categories(self):
         app_js = (ROOT / "src" / "app.js").read_text(encoding="utf-8")
         self.assertIn("function formatAiReparseFailure", app_js)
+        self.assertIn("window.requestAnimationFrame(() => window.requestAnimationFrame(resolve))", app_js)
+        self.assertIn('input-validation-progress input-validation-failure', app_js)
         self.assertIn("OpenRouter 인증/권한", app_js)
         self.assertIn("OpenRouter 요청 한도", app_js)
         self.assertIn("AI 제공자 일시 오류", app_js)

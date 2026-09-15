@@ -5420,8 +5420,16 @@ html[data-theme="dark"] .criteria-table thead th {
   font-weight: 700;
 }
 
+.input-validation-progress.input-validation-failure {
+  color: #b42318;
+}
+
 html[data-theme="dark"] .input-validation-progress {
   color: #fbd38d;
+}
+
+html[data-theme="dark"] .input-validation-progress.input-validation-failure {
+  color: #fda4af;
 }
 
 .ai-reparse-diff-panel {

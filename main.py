@@ -3386,11 +3386,39 @@ def validate_minimal_dashboard_record(
             )
 
 
+def normalize_fast_triage_evidence_source_references(records: list[dict[str, Any]]) -> None:
+    """Remove source links that contradict a Compact v2 triage evidence basis.
+
+    A ``source_ids`` entry is a positive citation: it says the listed public
+    source supports that criterion.  Compact-v2 GPT output occasionally places
+    one on a ``no_supporting_basis`` or ``user_input_only`` row despite the
+    declared basis.  Keeping the declared basis and dropping only that
+    contradictory reference preserves the research registry for other rows and
+    lets an otherwise valid batch proceed without an unnecessary LLM retry.
+    """
+    for record in records:
+        meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
+        if str(meta.get("ingestion_format") or "").strip().lower() != "compact_v2":
+            continue
+        if not is_fast_triage_record(record):
+            continue
+        criteria = ((record.get("scoring") or {}).get("criteria") or {})
+        if not isinstance(criteria, dict):
+            continue
+        for criterion in criteria.values():
+            if not isinstance(criterion, dict):
+                continue
+            evidence_basis = str(criterion.get("evidence_basis") or "").strip()
+            if evidence_basis in {"no_supporting_basis", "user_input_only"}:
+                criterion["source_ids"] = []
+
+
 def validate_records_for_save(
     records: list[dict[str, Any]],
     *,
     allow_server_owned_pipeline_metadata: bool = False,
 ) -> None:
+    normalize_fast_triage_evidence_source_references(records)
     synchronize_server_derived_scoring_fields(records)
     for index, record in enumerate(records):
         ensure_meta_defaults(record)

@@ -7,7 +7,7 @@ import {
   expandCompactInputRecord,
   isCompactIngestionRecord,
   isMinimalCompactIngestionRecord
-} from './compact-ingestion.js?v=20260904-triage-v3-7-1';
+} from './compact-ingestion.js?v=20260915-triage-source-reference-repair-1';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260820-url-repair-6';
 import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260904-triage-v3-7-1';
 
@@ -11763,6 +11763,9 @@ async function runAiReparse() {
     message: '업로드한 원문과 구조화 데이터를 비교해 보완하고 있습니다.',
     status: '업로드 준비를 위해 잠시만 기다려 주세요.'
   });
+  // Let the blocking dialog paint before opening the SSE connection. Without
+  // this yield, a fast first response can make the in-progress state invisible.
+  await new Promise((resolve) => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
 
   let streamedText = '';
   const renderStreamProgress = () => {
@@ -11902,8 +11905,15 @@ async function runAiReparse() {
       return;
     }
     const failed = validateCombinedInput(elements.gptResponseInput.value, expectedMode);
-    addInputIssue(failed.errors, 'error', 'AI 2차 파싱', formatAiReparseFailure(error));
+    const failureMessage = formatAiReparseFailure(error);
+    addInputIssue(failed.errors, 'error', 'AI 2차 파싱', failureMessage);
     renderInputValidation(failed);
+    if (elements.inputValidationResults) {
+      elements.inputValidationResults.insertAdjacentHTML(
+        'afterbegin',
+        `<div class="input-validation-progress input-validation-failure" role="alert">${escapeHtml(failureMessage)}</div>`
+      );
+    }
     setDataUploadStatus('error', failed.errors.length);
     elements.aiReparseButton.disabled = !canRunAiReparse(failed);
     return;
