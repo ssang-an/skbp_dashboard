@@ -1375,12 +1375,14 @@
         </div>
         <p id="dataReuploadSummary" class="identity-modal-hint data-reupload-summary"></p>
         <p class="identity-modal-hint data-reupload-modal-hint">
-          동일하거나 유사한 Pipeline은 자동으로 병합하지 않습니다. 유지할 조사 결과 또는 덮어쓰기 대상을 직접 선택하세요.
+          동일하거나 유사한 Pipeline은 자동으로 병합하지 않습니다. 새 레코드 추가, 기존 결과 덮어쓰기, 이름 별칭 저장 중 필요한 방식을 선택하세요.
         </p>
         <div id="dataReuploadList" class="data-reupload-review-list" aria-live="polite"></div>
         <div class="identity-modal-actions data-reupload-modal-actions">
           <button id="dataReuploadCancel" type="button" class="identity-modal-cancel">취소</button>
-          <button id="dataReuploadContinue" type="button" class="identity-modal-cancel">검토 없이 모두 업로드</button>
+          <button id="dataReuploadSaveAliasesAll" type="button" class="identity-modal-cancel">업로드 없이 유사 이름만 저장</button>
+          <button id="dataReuploadOverwriteAll" type="button" class="identity-modal-cancel">표시된 항목 모두 덮어쓰기</button>
+          <button id="dataReuploadContinue" type="button" class="identity-modal-cancel">검토 없이 모두 신규 업로드</button>
           <button id="dataReuploadApply" type="button" class="identity-modal-submit">선택 적용</button>
         </div>
       </section>
@@ -1651,7 +1653,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260915-triage-upload-repair-2"></script>
+  <script type="module" src="./src/app.js?v=20260915-reupload-batch-actions-2"></script>
   <script src="./src/sigma_graph.js?v=20260913-camera-motion-1" defer></script>
   </body>
 </html>

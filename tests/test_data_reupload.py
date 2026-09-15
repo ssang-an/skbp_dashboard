@@ -137,6 +137,56 @@ class DataReuploadTests(unittest.TestCase):
         self.assertEqual(confirmed, {"Legacy_Azetukalner_20260801"})
         self.assertEqual(main.record_key(new), "Legacy_Azetukalner_20260801")
 
+    def test_company_aliases_ignore_punctuation_and_legal_or_sector_suffixes(self):
+        source_aliases = main.company_aliases_from_text("P.S.K. Biosciences Ltd.")
+        target_aliases = main.company_aliases_from_text("PSK Bioscience")
+
+        self.assertTrue(source_aliases & target_aliases)
+        self.assertIn("psk", source_aliases)
+        self.assertIn("psk", target_aliases)
+        self.assertEqual(
+            main.pipeline_asset_match_reason("AR1001", "1001", "P.S.K. Biosciences Ltd.", "PSK Bioscience")[0],
+            "review",
+        )
+
+    def test_skipped_reupload_persists_asset_and_company_aliases(self):
+        existing = full_record("PSK_Bioscience_PSK01", company="PSK Bioscience", asset="PSK-01")
+
+        updated = main.apply_preserved_reupload_aliases(
+            [existing],
+            [{
+                "existing_record_id": "PSK_Bioscience_PSK01",
+                "asset": "PSK01",
+                "company": "P.S.K. Biosciences Ltd.",
+            }],
+            actor_ip="127.0.0.1",
+            actor_name="Dashboard User",
+        )
+
+        metadata = existing["meta"]["pipeline_metadata"]
+        self.assertEqual(updated, 1)
+        self.assertEqual(metadata["asset_aliases"].splitlines(), ["PSK-01", "PSK01"])
+        self.assertEqual(metadata["company_aliases"].splitlines(), ["PSK Bioscience", "P.S.K. Biosciences Ltd."])
+        self.assertEqual(existing["meta"]["edit_history"][-1]["source"], "paste_json_reupload_alias")
+
+    def test_confirmed_reupload_alias_request_keeps_old_and_new_labels(self):
+        existing = full_record("PSK_Bioscience_PSK01", company="PSK Bioscience", asset="PSK-01")
+        incoming = full_record("PSK_Ltd_PSK01", company="P.S.K. Biosciences Ltd.", asset="PSK01")
+        replacements = [{
+            "incoming_record_id": "PSK_Ltd_PSK01",
+            "existing_record_id": "PSK_Bioscience_PSK01",
+            "preserve_asset_aliases": True,
+        }]
+
+        alias_updates = main.confirmed_reupload_alias_updates([incoming], [existing], replacements)
+        main.apply_confirmed_reupload_replacements([incoming], [existing], replacements)
+        main.preserve_dashboard_meta(incoming, existing)
+        self.assertTrue(main.update_record_pipeline_metadata(incoming, alias_updates["PSK_Bioscience_PSK01"]))
+
+        metadata = incoming["meta"]["pipeline_metadata"]
+        self.assertEqual(metadata["asset_aliases"].splitlines(), ["PSK-01", "PSK01"])
+        self.assertEqual(metadata["company_aliases"].splitlines(), ["PSK Bioscience", "P.S.K. Biosciences Ltd."])
+
     def test_reupload_clears_active_score_override_and_keeps_audit_values(self):
         record = full_record("Xenon_Azetukalner_20260801")
         original_history = copy.deepcopy(record["meta"]["human_review"]["history"])

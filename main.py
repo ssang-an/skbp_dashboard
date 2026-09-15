@@ -3795,6 +3795,22 @@ def descriptive_assets_semantically_overlap(left_asset: Any, right_asset: Any, c
     return len(shared_tokens - company_tokens) >= 2
 
 
+def pipeline_companies_equivalent(left_company: Any, right_company: Any) -> bool:
+    """Recognize conservative legal-name variants without auto-merging records."""
+    left_aliases = company_aliases_from_text(left_company)
+    right_aliases = company_aliases_from_text(right_company)
+    if not left_aliases or not right_aliases:
+        return False
+    if left_aliases & right_aliases:
+        return True
+    return any(
+        len(shorter) >= 5 and shorter in longer
+        for left in left_aliases
+        for right in right_aliases
+        for shorter, longer in ((left, right), (right, left))
+    )
+
+
 def pipeline_asset_match_reason(
     left_asset: Any,
     right_asset: Any,
@@ -3806,8 +3822,7 @@ def pipeline_asset_match_reason(
     right_type = pipeline_asset_archetype(right_asset)
     left_normalized = normalized_pipeline_asset_identity(left_asset)
     right_normalized = normalized_pipeline_asset_identity(right_asset)
-    left_company_normalized = normalized_pipeline_identity_text(left_company)
-    same_company = bool(left_company_normalized) and left_company_normalized == normalized_pipeline_identity_text(right_company)
+    same_company = pipeline_companies_equivalent(left_company, right_company)
     if not left_normalized or not right_normalized:
         return None
     if left_type == right_type == "code":
@@ -3927,6 +3942,98 @@ def apply_confirmed_reupload_replacements(
         confirmed_existing_ids.add(existing_id)
         used_incoming_ids.add(incoming_id)
     return confirmed_existing_ids
+
+
+def reupload_alias_metadata(existing_record: dict[str, Any], asset: Any, company: Any) -> dict[str, str]:
+    """Return search-only prior/current labels for an explicitly reviewed reupload."""
+    existing_table = existing_record.get("structured_table") if isinstance(existing_record.get("structured_table"), dict) else {}
+    existing_summary = existing_record.get("json_summary") if isinstance(existing_record.get("json_summary"), dict) else {}
+    existing_asset = non_empty_text(existing_table.get("asset_name"), existing_summary.get("asset_name"))
+    existing_company = non_empty_text(existing_table.get("company"), existing_summary.get("company"))
+    return {
+        "asset_aliases": "\n".join(value for value in (existing_asset, non_empty_text(asset)) if value),
+        "company_aliases": "\n".join(value for value in (existing_company, non_empty_text(company)) if value),
+    }
+
+
+def confirmed_reupload_alias_updates(
+    incoming: list[dict[str, Any]],
+    existing_records: list[dict[str, Any]],
+    replacements: Any,
+) -> dict[str, dict[str, str]]:
+    """Collect optional alias preservation requested with valid replacements."""
+    if replacements in (None, []):
+        return {}
+    if not isinstance(replacements, list):
+        raise HTTPException(status_code=400, detail="confirmed_replacements must be an array.")
+    incoming_by_key = {record_key(record): record for record in incoming}
+    existing_by_key = {record_key(record): record for record in existing_records}
+    updates: dict[str, dict[str, str]] = {}
+    for item in replacements:
+        if not isinstance(item, dict) or item.get("preserve_asset_aliases") is not True:
+            continue
+        incoming_id = str(item.get("incoming_record_id") or "").strip()
+        existing_id = str(item.get("existing_record_id") or "").strip()
+        incoming_record = incoming_by_key.get(incoming_id)
+        existing_record = existing_by_key.get(existing_id)
+        if incoming_record is None or existing_record is None or not pipeline_records_match(incoming_record, existing_record):
+            # apply_confirmed_reupload_replacements produces the user-facing
+            # validation error; this guard keeps alias metadata just as strict.
+            continue
+        incoming_table = incoming_record.get("structured_table") if isinstance(incoming_record.get("structured_table"), dict) else {}
+        incoming_summary = incoming_record.get("json_summary") if isinstance(incoming_record.get("json_summary"), dict) else {}
+        updates[existing_id] = reupload_alias_metadata(
+            existing_record,
+            non_empty_text(incoming_table.get("asset_name"), incoming_summary.get("asset_name")),
+            non_empty_text(incoming_table.get("company"), incoming_summary.get("company")),
+        )
+    return updates
+
+
+def apply_preserved_reupload_aliases(
+    existing_records: list[dict[str, Any]],
+    preserved_aliases: Any,
+    *,
+    actor_ip: str,
+    actor_name: str,
+) -> int:
+    """Persist aliases when a reviewer keeps the existing report and skips the new one."""
+    if preserved_aliases in (None, []):
+        return 0
+    if not isinstance(preserved_aliases, list):
+        raise HTTPException(status_code=400, detail="preserved_aliases must be an array.")
+    existing_by_key = {record_key(record): record for record in existing_records}
+    updated = 0
+    seen_existing_ids: set[str] = set()
+    for item in preserved_aliases:
+        if not isinstance(item, dict):
+            raise HTTPException(status_code=400, detail="Each preserved alias must be an object.")
+        existing_id = str(item.get("existing_record_id") or "").strip()
+        asset = non_empty_text(item.get("asset"))
+        company = non_empty_text(item.get("company"))
+        existing_record = existing_by_key.get(existing_id)
+        if not existing_id or existing_record is None:
+            raise HTTPException(status_code=409, detail=f"Existing reupload target not found: {existing_id or '(blank)'}")
+        if existing_id in seen_existing_ids:
+            raise HTTPException(status_code=409, detail=f"Duplicate preserved alias target: {existing_id}")
+        existing_table = existing_record.get("structured_table") if isinstance(existing_record.get("structured_table"), dict) else {}
+        existing_summary = existing_record.get("json_summary") if isinstance(existing_record.get("json_summary"), dict) else {}
+        existing_asset = non_empty_text(existing_table.get("asset_name"), existing_summary.get("asset_name"))
+        existing_company = non_empty_text(existing_table.get("company"), existing_summary.get("company"))
+        if not asset or pipeline_asset_match_reason(asset, existing_asset, company, existing_company) is None:
+            raise HTTPException(status_code=409, detail="Preserved alias must match the existing Pipeline asset.")
+        seen_existing_ids.add(existing_id)
+        if update_record_pipeline_metadata(existing_record, reupload_alias_metadata(existing_record, asset, company)):
+            append_edit_history(
+                existing_record,
+                source="paste_json_reupload_alias",
+                actor_ip=actor_ip,
+                actor_name=actor_name,
+                field="meta.pipeline_metadata",
+                new_value="Reupload Asset/Company aliases synchronized",
+            )
+            updated += 1
+    return updated
 
 
 def get_client_ip(request: Request) -> str:
@@ -6446,13 +6553,15 @@ def normalize_pipeline_metadata(value: Any) -> dict[str, Any]:
 
 
 def merge_pipeline_metadata_aliases(existing: str, incoming: str) -> str:
-    """Retain raw previous/current names once, for search and identity matching only."""
+    """Retain raw previous/current labels once, for search and identity matching only."""
     values: list[str] = []
     seen: set[str] = set()
     for raw_value in (existing, incoming):
         for item in str(raw_value or "").splitlines():
             value = item.strip()
-            identity = normalized_pipeline_identity_text(value)
+            # Keep meaningful formatting variants visible to the reviewer:
+            # PSK-01 and PSK01 search alike, but both can be a source label.
+            identity = unicodedata.normalize("NFKC", value).casefold()
             if value and identity and identity not in seen:
                 values.append(value)
                 seen.add(identity)
@@ -16215,6 +16324,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {exc}") from None
 
     requested_replacements = payload.get("confirmed_replacements") if isinstance(payload, dict) else None
+    requested_preserved_aliases = payload.get("preserved_aliases") if isinstance(payload, dict) else None
     account = require_authenticated_user(request)
 
     incoming = normalize_records(payload, sanitize_source_report=True)
@@ -16225,6 +16335,11 @@ async def upsert_records(request: Request) -> dict[str, Any]:
     queue = load_candidate_queue()
     hydrate_records_pipeline_metadata_from_existing(incoming, records)
     consumed_listing_ids = promote_candidate_queue_metadata(incoming, queue)
+    confirmed_alias_updates = confirmed_reupload_alias_updates(
+        incoming,
+        records,
+        requested_replacements,
+    )
     confirmed_replacement_ids = apply_confirmed_reupload_replacements(
         incoming,
         records,
@@ -16241,6 +16356,12 @@ async def upsert_records(request: Request) -> dict[str, Any]:
     actor_name = str(account.get("name") or account.get("email") or "").strip()
     actor_user_id = str(account.get("id") or "").strip()
     actor_email = str(account.get("email") or "").strip()
+    preserved_alias_updates = apply_preserved_reupload_aliases(
+        records,
+        requested_preserved_aliases,
+        actor_ip=actor_ip,
+        actor_name=actor_name,
+    )
     inserted = 0
     updated = 0
     uploaded_at = datetime.now(timezone.utc).isoformat()
@@ -16254,6 +16375,8 @@ async def upsert_records(request: Request) -> dict[str, Any]:
                 (existing_record.get("source_report") or {}).get("raw_markdown") or ""
             )
             preserve_dashboard_meta(record, existing_record)
+            if confirmed_reupload and key in confirmed_alias_updates:
+                update_record_pipeline_metadata(record, confirmed_alias_updates[key])
             if confirmed_reupload and source_report_changed:
                 append_report_reupload_snapshot(
                     record,
@@ -16334,6 +16457,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
         "inserted": inserted,
         "updated": updated,
         "confirmed_reuploads": len(confirmed_replacement_ids),
+        "preserved_alias_updates": preserved_alias_updates,
         "promoted_listing_metadata": len(consumed_listing_ids),
         "total": len(records),
         "data_file": str(DATA_FILE.relative_to(ROOT)).replace("\\", "/"),

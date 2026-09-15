@@ -629,6 +629,8 @@ const elements = {
   dataReuploadSummary: document.querySelector('#dataReuploadSummary'),
   dataReuploadList: document.querySelector('#dataReuploadList'),
   dataReuploadCancel: document.querySelector('#dataReuploadCancel'),
+  dataReuploadSaveAliasesAll: document.querySelector('#dataReuploadSaveAliasesAll'),
+  dataReuploadOverwriteAll: document.querySelector('#dataReuploadOverwriteAll'),
   dataReuploadContinue: document.querySelector('#dataReuploadContinue'),
   dataReuploadApply: document.querySelector('#dataReuploadApply'),
   step0ImportReviewModal: document.querySelector('#step0ImportReviewModal'),
@@ -912,6 +914,46 @@ function normalizedPipelineIdentityText(value) {
     .replace(/[^\p{L}\p{N}]+/gu, '');
 }
 
+// Company labels are often copied from registries and differ only in legal or
+// sector suffixes (for example "P.S.K. Biosciences Ltd." and "PSK
+// Bioscience").  These variants help rank and label a reupload candidate;
+// they never merge or overwrite records without an explicit user action.
+const PIPELINE_COMPANY_SUFFIX_PATTERN = /\b(?:incorporated|inc|limited|ltd|corporation|corp|company|co|plc|llc|llp|gmbh|ag|bv|sarl|sa|pharmaceuticals?|therapeutics?|biosciences?|biotechnology|biotech)\b/giu;
+
+function pipelineCompanyNameVariants(value) {
+  const text = String(value || '').normalize('NFKC').trim();
+  if (!text) return new Set();
+  const parts = [text, ...text.split(/\s*(?:[\n/|;,()\[\]])\s*/u)];
+  const variants = new Set();
+  parts.forEach((part) => {
+    const normalized = normalizedPipelineIdentityText(part);
+    const withoutSuffix = normalizedPipelineIdentityText(part.replace(PIPELINE_COMPANY_SUFFIX_PATTERN, ' '));
+    if (normalized) variants.add(normalized);
+    if (withoutSuffix) variants.add(withoutSuffix);
+  });
+  return variants;
+}
+
+function pipelineCompanyMatchKind(leftCompany, rightCompany) {
+  const leftNormalized = normalizedPipelineIdentityText(leftCompany);
+  const rightNormalized = normalizedPipelineIdentityText(rightCompany);
+  if (!leftNormalized || !rightNormalized) return 'different';
+  if (leftNormalized === rightNormalized) return 'exact';
+  const leftVariants = pipelineCompanyNameVariants(leftCompany);
+  const rightVariants = pipelineCompanyNameVariants(rightCompany);
+  if ([...leftVariants].some((variant) => rightVariants.has(variant))) return 'variant';
+  const hasDistinctiveContainment = [...leftVariants].some((left) => [...rightVariants].some((right) => {
+    const shorter = left.length <= right.length ? left : right;
+    const longer = left.length <= right.length ? right : left;
+    return shorter.length >= 5 && longer.includes(shorter);
+  }));
+  return hasDistinctiveContainment ? 'variant' : 'different';
+}
+
+function pipelineCompaniesEquivalent(leftCompany, rightCompany) {
+  return pipelineCompanyMatchKind(leftCompany, rightCompany) !== 'different';
+}
+
 function normalizedPipelineAssetIdentity(value) {
   return normalizedPipelineIdentityText(value).replace(/(?<=[a-z])0+(?=\d)/g, '');
 }
@@ -995,8 +1037,7 @@ function descriptiveAssetsSemanticallyOverlap(left, right) {
 function comparePipelineAssets(leftIdentity, rightIdentity) {
   const left = leftIdentity.asset;
   const right = rightIdentity.asset;
-  const sameCompany = Boolean(leftIdentity.normalizedCompany)
-    && leftIdentity.normalizedCompany === rightIdentity.normalizedCompany;
+  const sameCompany = pipelineCompaniesEquivalent(leftIdentity.company, rightIdentity.company);
   const leftType = pipelineAssetArchetype(left);
   const rightType = pipelineAssetArchetype(right);
   if (!leftIdentity.normalizedAsset || !rightIdentity.normalizedAsset) return false;
@@ -1090,8 +1131,8 @@ function findDataReuploadMatches(records) {
         const identityB = dataUploadRecordIdentity(b);
         const exactA = Number(identityA.normalizedAsset === incomingIdentity.normalizedAsset);
         const exactB = Number(identityB.normalizedAsset === incomingIdentity.normalizedAsset);
-        const sameCompanyA = Number(identityA.normalizedCompany === incomingIdentity.normalizedCompany);
-        const sameCompanyB = Number(identityB.normalizedCompany === incomingIdentity.normalizedCompany);
+        const sameCompanyA = Number(pipelineCompaniesEquivalent(identityA.company, incomingIdentity.company));
+        const sameCompanyB = Number(pipelineCompaniesEquivalent(identityB.company, incomingIdentity.company));
         return exactB - exactA || sameCompanyB - sameCompanyA || dataUploadRecordRecency(b) - dataUploadRecordRecency(a);
       });
     if (!candidates.length) return [];
@@ -1107,8 +1148,7 @@ function findDataReuploadMatches(records) {
       candidates: candidates.map((candidate) => {
         const identity = dataUploadRecordIdentity(candidate);
         const exactAsset = identity.normalizedAsset === incomingIdentity.normalizedAsset;
-        const sameCompany = Boolean(incomingIdentity.normalizedCompany)
-          && identity.normalizedCompany === incomingIdentity.normalizedCompany;
+        const companyMatch = pipelineCompanyMatchKind(incomingIdentity.company, identity.company);
         return {
           id: recordIdentifier(candidate),
           asset: identity.asset,
@@ -1116,7 +1156,8 @@ function findDataReuploadMatches(records) {
           stage: String(candidate?.structured_table?.development_stage || 'Unknown'),
           matchType: exactAsset ? 'exact' : 'similar',
           similarity: exactAsset ? '정규화 자산명 일치' : '유사 자산명',
-          sameCompany
+          sameCompany: companyMatch !== 'different',
+          companyMatch
         };
       })
     }];
@@ -1244,7 +1285,7 @@ function renderDataReuploadReviewList() {
               <section class="data-reupload-candidate${selected ? ' is-selected' : ''}" data-candidate-id="${escapeHtml(candidate.id)}">
                 <div class="data-reupload-candidate-heading">
                   <span class="data-reupload-match-badge ${escapeHtml(candidate.matchType)}">${candidate.matchType === 'exact' ? '정규화 일치' : '유사 이름'}</span>
-                  <span class="data-reupload-company-match">${candidate.sameCompany ? '회사 일치' : '회사 다름 · 확인 필요'}</span>
+                  <span class="data-reupload-company-match">${candidate.companyMatch === 'exact' ? '회사 일치' : candidate.companyMatch === 'variant' ? '회사명 표기 유사' : '회사 다름 · 확인 필요'}</span>
                 </div>
                 <div class="data-reupload-comparison-scroll" tabindex="0" aria-label="새 업로드와 기존 Pipeline 비교">
                   <div class="data-reupload-comparison-grid">
@@ -1270,7 +1311,7 @@ function renderDataReuploadReviewList() {
   }).join('');
 }
 
-function reviewedDataReuploadDecisions(defaultAction = 'continue', applyToAll = false) {
+function reviewedDataReuploadDecisions(defaultAction = 'continue', applyToAll = false, preserveAliases = false) {
   return activeDataReuploadMatches.map((match) => {
     const decision = dataReuploadDecisionFor(match.decisionKey);
     if (match.kind === 'incoming-duplicate') {
@@ -1287,12 +1328,13 @@ function reviewedDataReuploadDecisions(defaultAction = 'continue', applyToAll = 
       };
     }
     const action = applyToAll || decision.action === 'pending' ? defaultAction : decision.action;
+    const firstCandidate = match.candidates?.[0] || null;
     return {
       ...match,
-      existingRecordId: decision.existingRecordId || null,
+      existingRecordId: decision.existingRecordId || (applyToAll ? firstCandidate?.id || null : null),
       replaceExisting: action === 'replace',
       skipIncoming: action === 'skip',
-      preserveAssetAliases: decision.preserveAssetAliases === true
+      preserveAssetAliases: preserveAliases || decision.preserveAssetAliases === true
     };
   });
 }
@@ -1300,6 +1342,8 @@ function reviewedDataReuploadDecisions(defaultAction = 'continue', applyToAll = 
 function closeDataReuploadModal(decisions = null) {
   if (elements.dataReuploadModal) elements.dataReuploadModal.hidden = true;
   if (elements.dataReuploadContinue) elements.dataReuploadContinue.hidden = false;
+  if (elements.dataReuploadSaveAliasesAll) elements.dataReuploadSaveAliasesAll.hidden = false;
+  if (elements.dataReuploadOverwriteAll) elements.dataReuploadOverwriteAll.hidden = false;
   const resolve = dataReuploadResolve;
   dataReuploadResolve = null;
   if (resolve) resolve(decisions);
@@ -1322,9 +1366,12 @@ function openDataReuploadModal(matches) {
     if (elements.dataReuploadSummary) {
       elements.dataReuploadSummary.innerHTML = incomingDuplicateMatches.length
         ? `동일 Pipeline으로 인식된 조사 결과는 자동 병합하지 않습니다. 각 항목에서 <span class="data-reupload-inline-action is-replace"><svg viewBox="0 0 24" focusable="false" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" /></svg>이 항목 유지</span>를 하나 선택하면 나머지는 이번 업로드에서 제외됩니다.`
-        : `비교 후 각 항목별로 <span class="data-reupload-inline-action is-replace"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 5v6h-6" /></svg>덮어쓰기</span>를 선택한 뒤 <span class="data-reupload-inline-action is-apply"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" /></svg>선택 적용</span>하면 반영됩니다.`;
+        : `새 레코드로 추가하려면 <strong>검토 없이 모두 신규 업로드</strong>, 이번 조사 결과로 갱신하려면 <strong>표시된 항목 모두 덮어쓰기</strong>, 조사 결과는 유지하고 이름 표기만 보존하려면 <strong>업로드 없이 유사 이름만 저장</strong>을 선택하세요. 각 항목을 직접 선택한 뒤 <span class="data-reupload-inline-action is-apply"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" /></svg>선택 적용</span>할 수도 있습니다.`;
     }
-    if (elements.dataReuploadContinue) elements.dataReuploadContinue.hidden = incomingDuplicateMatches.length > 0;
+    const hasIncomingDuplicates = incomingDuplicateMatches.length > 0;
+    if (elements.dataReuploadContinue) elements.dataReuploadContinue.hidden = hasIncomingDuplicates;
+    if (elements.dataReuploadSaveAliasesAll) elements.dataReuploadSaveAliasesAll.hidden = hasIncomingDuplicates;
+    if (elements.dataReuploadOverwriteAll) elements.dataReuploadOverwriteAll.hidden = hasIncomingDuplicates;
     renderDataReuploadReviewList();
     elements.dataReuploadModal.hidden = false;
     elements.dataReuploadApply?.focus();
@@ -17924,6 +17971,8 @@ elements.dataReuploadApply?.addEventListener('click', () => {
   closeDataReuploadModal(decisions);
 });
 elements.dataReuploadContinue?.addEventListener('click', () => closeDataReuploadModal(reviewedDataReuploadDecisions('continue', true)));
+elements.dataReuploadSaveAliasesAll?.addEventListener('click', () => closeDataReuploadModal(reviewedDataReuploadDecisions('skip', true, true)));
+elements.dataReuploadOverwriteAll?.addEventListener('click', () => closeDataReuploadModal(reviewedDataReuploadDecisions('replace', true, true)));
 elements.dataReuploadCancel?.addEventListener('click', () => closeDataReuploadModal(null));
 elements.dataReuploadModal?.addEventListener('click', (event) => {
   if (event.target === elements.dataReuploadModal) closeDataReuploadModal(null);
