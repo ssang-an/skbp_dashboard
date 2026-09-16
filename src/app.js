@@ -916,8 +916,8 @@ function normalizedPipelineIdentityText(value) {
 
 // Company labels are often copied from registries and differ only in legal or
 // sector suffixes (for example "P.S.K. Biosciences Ltd." and "PSK
-// Bioscience").  These variants help rank and label a reupload candidate;
-// they never merge or overwrite records without an explicit user action.
+// Bioscience"). Shared aliases can confirm a company for automatic reupload;
+// substring-only similarity still requires review.
 const PIPELINE_COMPANY_SUFFIX_PATTERN = /\b(?:incorporated|inc|limited|ltd|corporation|corp|company|co|plc|llc|llp|gmbh|ag|bv|sarl|sa|pharmaceuticals?|therapeutics?|biosciences?|biotechnology|biotech)\b/giu;
 
 function pipelineCompanyNameVariants(value) {
@@ -952,6 +952,25 @@ function pipelineCompanyMatchKind(leftCompany, rightCompany) {
 
 function pipelineCompaniesEquivalent(leftCompany, rightCompany) {
   return pipelineCompanyMatchKind(leftCompany, rightCompany) !== 'different';
+}
+
+function hasConfirmedCompanyAliasOverlap(leftCompany, rightCompany, rightStoredAliases = '') {
+  // Keep automatic identity aligned with main.py company_aliases_from_text;
+  // the broader company similarity matcher is only for review suggestions.
+  const confirmedAliases = (value) => {
+    const text = String(value || '').normalize('NFKC').trim();
+    const suffix = /\b(?:incorporated|inc|limited|ltd|corporation|corp|company|co|pharmaceuticals?|therapeutics?|biosciences?|biotechnology)\b/giu;
+    return new Set([text, ...text.split(/\s*(?:[\n/|;,()\[\]])\s*/u)]
+      .flatMap((part) => [part, part.replace(suffix, ' ')])
+      .map(normalizedPipelineIdentityText)
+      .filter((alias) => alias && !AUTO_REUPLOAD_PLACEHOLDER_IDENTITIES.has(alias)));
+  };
+  const leftAliases = confirmedAliases(leftCompany);
+  const rightAliases = new Set([
+    ...confirmedAliases(rightCompany),
+    ...confirmedAliases(rightStoredAliases)
+  ]);
+  return [...leftAliases].some((alias) => rightAliases.has(alias));
 }
 
 function normalizedPipelineAssetIdentity(value) {
@@ -1153,6 +1172,11 @@ function findDataReuploadMatches(records) {
           id: recordIdentifier(candidate),
           asset: identity.asset,
           company: identity.company,
+          companyAliases: [
+            candidate?.json_summary?.company,
+            candidate?.input?.company_input,
+            candidate?.meta?.pipeline_metadata?.company_aliases
+          ].filter(Boolean).join('\n'),
           stage: String(candidate?.structured_table?.development_stage || 'Unknown'),
           matchType: exactAsset ? 'exact' : 'similar',
           similarity: exactAsset ? '정규화 자산명 일치' : '유사 자산명',
@@ -1162,6 +1186,34 @@ function findDataReuploadMatches(records) {
       })
     }];
   });
+}
+
+const AUTO_REUPLOAD_PLACEHOLDER_IDENTITIES = new Set(['unknown', 'na', 'tbd', 'asset', 'company']);
+
+function automaticExactReuploadDecision(match) {
+  if (match?.kind !== 'existing-record' || (match.candidates || []).length !== 1) return null;
+  const candidate = match.candidates[0];
+  const assetIdentity = normalizedPipelineAssetIdentity(match.asset);
+  const companyIdentity = normalizedPipelineIdentityText(match.company);
+  if (
+    !assetIdentity
+    || !companyIdentity
+    || AUTO_REUPLOAD_PLACEHOLDER_IDENTITIES.has(assetIdentity)
+    || AUTO_REUPLOAD_PLACEHOLDER_IDENTITIES.has(companyIdentity)
+    || candidate.matchType !== 'exact'
+    || !hasConfirmedCompanyAliasOverlap(match.company, candidate.company, candidate.companyAliases)
+  ) return null;
+  // A single exact Asset plus a confirmed Company alias is the same Pipeline.
+  // As in Tab 0, punctuation, legal suffixes, and stored company aliases do
+  // not require a redundant confirmation modal. Saving still requires Save.
+  return {
+    ...match,
+    existingRecordId: candidate.id,
+    replaceExisting: true,
+    skipIncoming: false,
+    preserveAssetAliases: true,
+    automaticExactMatch: true,
+  };
 }
 
 function findIncomingDuplicateMatches(records, duplicateGroups = []) {
@@ -1303,8 +1355,8 @@ function renderDataReuploadReviewList() {
           }).join('')}
           ${['replace', 'skip'].includes(decision.action) ? `
             <div class="step0-import-alias-guidance">
-              <span>기존·변경 Asset/Company 이름을 검색용 메타데이터로 함께 저장할 수 있습니다.</span>
-              <button type="button" class="identity-modal-cancel${decision.preserveAssetAliases ? ' is-active' : ''}" data-reupload-action="preserve-aliases" data-match-key="${escapeHtml(match.decisionKey)}">${decision.preserveAssetAliases ? '유사 Asset / Company 이름 저장됨' : '유사 Asset / Company 이름도 함께 저장'}</button>
+              <span>기존·변경 Asset/Company 이름은 검색용 메타데이터로 기본 저장됩니다. 우연히 비슷한 이름이거나 오탈자 정정이라 저장이 불필요하면 꺼주세요.</span>
+              <button type="button" class="identity-modal-cancel${decision.preserveAssetAliases !== false ? ' is-active' : ''}" data-reupload-action="preserve-aliases" data-match-key="${escapeHtml(match.decisionKey)}">${decision.preserveAssetAliases !== false ? '유사 Asset / Company 이름 저장됨' : '유사 Asset / Company 이름 저장 안 함'}</button>
             </div>` : ''}
         </div>
       </article>
@@ -1335,7 +1387,7 @@ function reviewedDataReuploadDecisions(defaultAction = 'continue', applyToAll = 
       existingRecordId: decision.existingRecordId || (applyToAll ? firstCandidate?.id || null : null),
       replaceExisting: action === 'replace',
       skipIncoming: action === 'skip',
-      preserveAssetAliases: preserveAliases || decision.preserveAssetAliases === true
+      preserveAssetAliases: preserveAliases || decision.preserveAssetAliases !== false
     };
   });
 }
@@ -11626,7 +11678,7 @@ function renderInputValidation(result, { savedMessage = '', wikiExportDeferred =
         : 'JSON을 추출하지 못했습니다.'
     },
     ...result.errors.map((issue) => ({ ...issue, label: '차단' })),
-    ...result.warnings.map((issue) => ({ ...issue, label: '경고' })),
+    ...result.warnings.map((issue) => ({ ...issue, label: issue.level === 'ok' ? '자동 갱신' : '경고' })),
     ...(Array.isArray(result.reuploadDecisions) ? result.reuploadDecisions.map((decision) => ({
       level: decision.skipIncoming || decision.replaceExisting ? 'warning' : 'ok',
       label: decision.skipIncoming ? '제외' : decision.replaceExisting ? '갱신' : '신규',
@@ -11694,8 +11746,21 @@ async function previewPastedReportParsing() {
       ...findIncomingDuplicateMatches(result.records, result.incomingDuplicateGroups),
       ...findDataReuploadMatches(result.records)
     ];
-    if (matches.length) {
-      const decisions = await reviewDataReuploadMatches(matches);
+    const automaticDecisions = matches
+      .map(automaticExactReuploadDecision)
+      .filter(Boolean);
+    const automaticDecisionKeys = new Set(automaticDecisions.map((decision) => decision.decisionKey));
+    const reviewMatches = matches.filter((match) => !automaticDecisionKeys.has(match.decisionKey));
+    if (automaticDecisions.length) {
+      result.reuploadDecisions = automaticDecisions;
+      result.warnings.push({
+        level: 'ok',
+        path: '동일 Pipeline 자동 갱신',
+        message: `Asset과 Company(확정 별칭 포함)가 동일한 ${automaticDecisions.length}건은 이번 업로드 결과로 자동 덮어쓰기합니다.`
+      });
+    }
+    if (reviewMatches.length) {
+      const decisions = await reviewDataReuploadMatches(reviewMatches);
       if (decisions === null) {
         result.canSave = false;
         result.warnings.push({
@@ -11704,7 +11769,7 @@ async function previewPastedReportParsing() {
           message: '갱신 여부를 확인해야 저장할 수 있습니다.'
         });
       } else {
-        result.reuploadDecisions = decisions;
+        result.reuploadDecisions = [...automaticDecisions, ...decisions];
       }
     }
   }
@@ -17955,14 +18020,15 @@ elements.dataReuploadList?.addEventListener('click', (event) => {
     if (!['replace', 'skip'].includes(current.action)) return;
     activeDataReuploadDecisions.set(decisionKey, {
       ...current,
-      preserveAssetAliases: !current.preserveAssetAliases
+      preserveAssetAliases: current.preserveAssetAliases === false ? true : false
     });
   } else if (button.dataset.reuploadAction === 'skip') {
     const current = dataReuploadDecisionFor(decisionKey);
+    const enteringSkip = current.action !== 'skip';
     activeDataReuploadDecisions.set(decisionKey, {
-      action: current.action === 'skip' ? 'pending' : 'skip',
+      action: enteringSkip ? 'skip' : 'pending',
       existingRecordId: button.dataset.existingId || current.existingRecordId || null,
-      preserveAssetAliases: current.action === 'skip' ? false : current.preserveAssetAliases === true
+      preserveAssetAliases: enteringSkip ? current.preserveAssetAliases !== false : false
     });
   }
   renderDataReuploadReviewList();
