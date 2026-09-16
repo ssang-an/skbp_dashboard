@@ -1272,6 +1272,7 @@ function renderDataReuploadReviewList() {
       `;
     }
     const isSkipped = decision.action === 'skip';
+    const overwriteLabel = match.mode === 'full' ? '이번 결과로 덮어쓰기' : '덮어쓰기';
     return `
       <article class="data-reupload-review-card${isSkipped ? ' is-skipped' : ''}" data-reupload-incoming="${escapeHtml(match.decisionKey)}">
         <header class="data-reupload-review-card-header">
@@ -1294,7 +1295,7 @@ function renderDataReuploadReviewList() {
                   </div>
                 </div>
                 <div class="data-reupload-candidate-actions">
-                  <button type="button" class="identity-modal-submit" data-reupload-action="replace" data-match-key="${escapeHtml(match.decisionKey)}" data-existing-id="${escapeHtml(candidate.id)}">덮어쓰기</button>
+                  <button type="button" class="identity-modal-submit" data-reupload-action="replace" data-match-key="${escapeHtml(match.decisionKey)}" data-existing-id="${escapeHtml(candidate.id)}">${overwriteLabel}</button>
                   <button type="button" class="identity-modal-cancel" data-reupload-action="skip" data-match-key="${escapeHtml(match.decisionKey)}" data-existing-id="${escapeHtml(candidate.id)}">이번 업로드 제외</button>
                 </div>
               </section>
@@ -1359,19 +1360,25 @@ function openDataReuploadModal(matches) {
     activeDataReuploadDecisions = new Map();
     const incomingDuplicateMatches = matches.filter((match) => match.kind === 'incoming-duplicate');
     const existingMatches = matches.filter((match) => match.kind !== 'incoming-duplicate');
+    const isTriageReupload = activeTableMode() === 'triage';
     const candidateCount = matches.reduce((count, match) => count + (match.candidates || []).length, 0);
     elements.dataReuploadTitle.textContent = incomingDuplicateMatches.length
       ? `이번 업로드 안에 동일 Pipeline 후보가 ${incomingDuplicateMatches.length}건 있습니다.`
-      : `유사한 기존 Pipeline이 ${existingMatches.length}건 있습니다.`;
+      : `${isTriageReupload ? '유사한 기존 Pipeline' : '유사한 기존 Full Scout 리포트'}이 ${existingMatches.length}건 있습니다.`;
     if (elements.dataReuploadSummary) {
       elements.dataReuploadSummary.innerHTML = incomingDuplicateMatches.length
         ? `동일 Pipeline으로 인식된 조사 결과는 자동 병합하지 않습니다. 각 항목에서 <span class="data-reupload-inline-action is-replace"><svg viewBox="0 0 24" focusable="false" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" /></svg>이 항목 유지</span>를 하나 선택하면 나머지는 이번 업로드에서 제외됩니다.`
-        : `새 레코드로 추가하려면 <strong>검토 없이 모두 신규 업로드</strong>, 이번 조사 결과로 갱신하려면 <strong>표시된 항목 모두 덮어쓰기</strong>, 조사 결과는 유지하고 이름 표기만 보존하려면 <strong>업로드 없이 유사 이름만 저장</strong>을 선택하세요. 각 항목을 직접 선택한 뒤 <span class="data-reupload-inline-action is-apply"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" /></svg>선택 적용</span>할 수도 있습니다.`;
+        : isTriageReupload
+          ? `새 레코드로 추가하려면 <strong>검토 없이 모두 신규 업로드</strong>, 이번 조사 결과로 갱신하려면 <strong>모두 이번 결과로 덮어쓰기</strong>, 조사 결과는 유지하고 이름 표기만 보존하려면 <strong>업로드 없이 유사 이름만 저장</strong>을 선택하세요. 각 항목을 직접 선택한 뒤 <span class="data-reupload-inline-action is-apply"><svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" /></svg>선택 적용</span>할 수도 있습니다.`
+          : `같은 Full Scout를 갱신하려면 <strong>모두 이번 결과로 덮어쓰기</strong>를 선택하세요. 기존 리포트는 이력 스냅샷으로 보관되고, 첨부파일·Comments·Contact History는 유지됩니다. 별도 자산이면 <strong>검토 없이 모두 신규 업로드</strong>를 선택하세요.`;
     }
     const hasIncomingDuplicates = incomingDuplicateMatches.length > 0;
     if (elements.dataReuploadContinue) elements.dataReuploadContinue.hidden = hasIncomingDuplicates;
-    if (elements.dataReuploadSaveAliasesAll) elements.dataReuploadSaveAliasesAll.hidden = hasIncomingDuplicates;
+    if (elements.dataReuploadSaveAliasesAll) elements.dataReuploadSaveAliasesAll.hidden = hasIncomingDuplicates || !isTriageReupload;
     if (elements.dataReuploadOverwriteAll) elements.dataReuploadOverwriteAll.hidden = hasIncomingDuplicates;
+    if (elements.dataReuploadOverwriteAll) {
+      elements.dataReuploadOverwriteAll.textContent = '모두 이번 결과로 덮어쓰기';
+    }
     renderDataReuploadReviewList();
     elements.dataReuploadModal.hidden = false;
     elements.dataReuploadApply?.focus();

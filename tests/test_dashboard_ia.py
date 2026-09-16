@@ -2957,6 +2957,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertIn("data-reupload-comparison-scroll", JS)
         self.assertIn("pipelineCompanyMatchKind", JS)
         self.assertIn("dataReuploadSaveAliasesAll", JS)
+        self.assertIn("isTriageReupload", JS)
+        self.assertIn("표시된 항목을 이번 결과로 덮어쓰기", JS)
         self.assertIn(".data-reupload-review-list", CSS)
         self.assertIn("overflow-y: auto", CSS)
         self.assertIn(".data-reupload-comparison-scroll", CSS)
