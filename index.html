@@ -615,7 +615,7 @@
               </label>
               <button id="columnSettingsButton" class="help-tooltip" type="button" data-tooltip="테이블에 표시할 추가 JSON 컬럼을 선택합니다.">컬럼 설정</button>
               <button id="deleteSelectedButton" class="danger-link-button help-tooltip" type="button" data-tooltip="체크한 Pipeline 레코드를 삭제합니다." disabled>선택 삭제</button>
-              <button id="exportExcelButton" class="excel-export-button help-tooltip" type="button" data-tooltip="현재 필터 결과를 Excel용 CSV로 내보냅니다." disabled>
+              <button id="exportExcelButton" class="excel-export-button help-tooltip" type="button" data-tooltip="현재 필터에 해당하는 전체 행을 Excel용 CSV로 내보냅니다. Simple·Advanced는 각 조사 항목의 근거·미확인 정보·다음 확인 질문·출처를 포함합니다." disabled>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h5M3 9h9v9H3zM5.5 11.5l4 4m0-4-4 4"/></svg>
                 <span>Excel export</span>
               </button>
@@ -624,7 +624,7 @@
           <div class="column-settings-panel" id="columnSettingsPanel" hidden>
             <div>
               <strong>추가 컬럼</strong>
-              <p>JSON 원본에 있는 항목을 파이프라인 테이블에 추가로 표시합니다. 너무 많은 컬럼을 켜면 표가 촘촘해질 수 있습니다.</p>
+              <p>조사 요약·비교 약물·추가 확인 질문을 표에 추가합니다. 각 항목에 마우스를 올리면 의미를 확인할 수 있습니다. 비교 약물 수는 해당 보고서의 기록이며 시장 전체 수가 아닙니다.</p>
             </div>
             <div class="column-settings-grid" id="columnSettingsGrid"></div>
           </div>
@@ -1653,7 +1653,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260916-alias-reupload-autoupdate-2"></script>
+  <script type="module" src="./src/app.js?v=20260917-research-columns-2"></script>
   <script src="./src/sigma_graph.js?v=20260913-camera-motion-1" defer></script>
   </body>
 </html>

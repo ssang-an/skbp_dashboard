@@ -269,11 +269,40 @@ Each criterion is scored from 0 to 3. Total score is 21.
 
 ## Competitive Analysis
 
-Persist only `competitive_analysis.competitive_density` and
-`competitive_analysis.similarity_summary`'s total/high/medium/low counts because
-those values feed dashboard columns and visuals. The report-style competitor table,
-matched dimensions, shared/differentiating data, search scope, and sources belong in
-the preserved Markdown report and are not duplicated in JSON.
+`competitive_analysis` preserves competitive density, the reported total/high/medium/low
+similarity counts, minimal `competitor_table` rows (asset, company, modality, target/MoA,
+stage, similarity level, comparison rationale, source URL), and minimal `similar_pipelines`
+rows. These fields are retained by `record_storage.py` for dashboard comparisons.
+Complete search scope, limitations, and detailed evidence remain in the Markdown report.
+
+`similar_pipeline_count` is the report's recorded peer count, not a census of all market
+competitors. Neither the active prompt nor the schema imposes a fixed maximum count.
+High similarity is not independently validated as direct competition by the dashboard.
+The optional `Peer count in report` and `Peer drugs in report` columns expose the reported
+count and competitor-table names separately; names fall back to `similar_pipelines` only
+when the competitor table is empty. Missing counts are not displayed as zero.
+
+## Research columns and CSV export
+
+`src/research-columns.js` maps existing fields into optional research columns and
+workflow-specific exports. `AI assessment` reads `final_insight.recommendation` (legacy
+fallback: `scoring.recommendation`); it is separate from manual decisions. Parser status
+remains internal input-processing metadata and is not a selectable research column.
+Research summary, key diligence question, evidence gaps, comparator names/context, and
+source links do not require additional LLM calls or a change to the JSON input contract.
+Peer comparison evidence, Research sources, and Primary source URL are excluded from
+table column settings in both workflows. Full source lists and Advanced peer comparison
+evidence remain in CSV exports; original report evidence remains available in detail views.
+
+The Excel button downloads UTF-8 CSV for all filtered rows, not just the current page.
+Simple exports its three criteria; Advanced exports seven. Each criterion includes its
+score, rationale, evidence gaps, research note, and sources. Both include conclusions,
+next diligence questions, research date/version, and full source lists. Arrays are not
+limited to the first three entries. Early-stop placeholder scores are left blank and
+explained in Assessment status. Research origin identifies Advanced records projected
+into the Simple view; these rows are not independent Simple investigations. Custom
+Review retains its existing export. Original Markdown and persisted research values are
+not modified by column selection or export.
 
 ## Files
 

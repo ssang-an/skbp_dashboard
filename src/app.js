@@ -10,6 +10,8 @@ import {
 } from './compact-ingestion.js?v=20260915-triage-source-reference-repair-1';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260820-url-repair-6';
 import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260904-triage-v3-7-1';
+import { FULL_SCOUT_EXTRA_COLUMN_DEFINITIONS, FAST_TRIAGE_EXTRA_COLUMN_DEFINITIONS,
+  researchColumnValue, buildResearchExport } from './research-columns.js?v=20260917-2';
 
 const API_URL = '/api/records';
 const DASHBOARD_SUMMARY_URL = '/api/dashboard-summary';
@@ -3169,28 +3171,6 @@ function triageRowHoverTitle(row) {
   ].join('\n');
 }
 
-const FULL_SCOUT_EXTRA_COLUMN_DEFINITIONS = [
-  { key: 'moa', label: 'MoA', path: 'structured_table.moa' },
-  { key: 'headquarters', label: 'HQ', path: 'company_profile.headquarters' },
-  { key: 'companyStage', label: 'Company stage', path: 'company_profile.company_stage' },
-  { key: 'platformSummary', label: 'Platform summary', path: 'company_profile.platform_summary' },
-  { key: 'competitiveDensity', label: 'Competition', path: 'competitive_analysis.competitive_density' },
-  { key: 'similarCount', label: 'Similar count', path: 'competitive_analysis.similarity_summary.similar_pipeline_count' },
-  { key: 'recommendation', label: 'Recommendation', path: 'scoring.recommendation' },
-  { key: 'parserStatus', label: 'Parser status', path: 'source_report.parser_status' },
-  { key: 'firstSource', label: 'First source URL', path: 'structured_table.sources.0.source_url' },
-  { key: 'uncertainPoints', label: 'Uncertain points', path: 'validation.uncertain_points' }
-];
-
-const FAST_TRIAGE_EXTRA_COLUMN_DEFINITIONS = [
-  { key: 'moa', label: 'MoA', path: 'structured_table.moa' },
-  { key: 'verifiedSourceCount', label: 'Verified sources', path: 'triage.verified_public_source_count' },
-  { key: 'triageWhy', label: 'Triage rationale', path: 'triage.why' },
-  { key: 'fullScoutEvidence', label: 'Advanced Research evidence needed', path: 'triage.missing_evidence_needed_for_full_scout' },
-  { key: 'firstSource', label: 'First source URL', path: 'structured_table.sources.0.source_url' },
-  { key: 'uncertainPoints', label: 'Uncertain points', path: 'validation.uncertain_points' }
-];
-
 function activeExtraColumnDefinitions() {
   if (activeTableMode() === 'triage') return FAST_TRIAGE_EXTRA_COLUMN_DEFINITIONS;
   if (activeTableMode() === 'full') return FULL_SCOUT_EXTRA_COLUMN_DEFINITIONS;
@@ -3198,16 +3178,15 @@ function activeExtraColumnDefinitions() {
 }
 
 function formatExtraColumnValue(value, column = null) {
+  if (value === null || value === undefined || value === '') return '-';
   if (column?.key === 'verifiedSourceCount') {
     const count = Number(value);
     return Number.isFinite(count) ? `${count} verified` : '-';
   }
-  if (value === null || value === undefined || value === '') return '-';
   if (Array.isArray(value)) {
     return value
       .map((item) => (typeof item === 'object' ? JSON.stringify(item) : String(item)))
       .filter(Boolean)
-      .slice(0, 3)
       .join(' | ') || '-';
   }
   if (typeof value === 'object') return JSON.stringify(value);
@@ -5958,7 +5937,7 @@ function renderColumnSettings() {
   if (!elements.columnSettingsGrid) return;
   elements.columnSettingsGrid.innerHTML = activeExtraColumnDefinitions().map((column) => {
     return `
-      <label class="column-option is-compact">
+      <label class="column-option is-compact" title="${escapeHtml(column.description || column.label)}">
         <input
           type="checkbox"
           value="${escapeHtml(column.key)}"
@@ -6718,7 +6697,7 @@ function renderTableLegacy() {
               <td class="score-cell">${fullReviewScoreBadge(row, 'marketScore', 'market', 'Marketability')}</td>
               <td class="score-cell total-score-cell">${row.isTriage ? pendingScoreBadge('Advanced Research total score not available for triage rows') : totalScoreEditCircle(row)}</td>
               ${extraColumns.map((column) => {
-                const value = formatExtraColumnValue(get(row.raw, column.path, '-'), column);
+                const value = formatExtraColumnValue(researchColumnValue(row.raw, column), column);
                 return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
               }).join('')}
             </tr>
@@ -8301,7 +8280,7 @@ function renderTable() {
               ` : ''}
               ${mode === 'triage' ? `<td class="focus-action-cell">${rubricReevaluationCell(row)}</td>` : ''}
               ${extraColumns.map((column) => {
-                const value = formatExtraColumnValue(get(row.raw, column.path, '-'), column);
+                const value = formatExtraColumnValue(researchColumnValue(row.raw, column), column);
                 return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
               }).join('')}
               ${mode === 'full' ? `<td class="focus-action-cell">${fullScoutRowActions(row)}</td>` : ''}
@@ -8527,7 +8506,7 @@ function scoreExportFields(row, key) {
 function exportPipelineTable() {
   const rows = getVisibleRows();
   const extraColumns = selectedExtraColumns();
-  const headers = [
+  let headers = [
     'Company',
     'Location',
     'Asset',
@@ -8653,7 +8632,7 @@ function exportPipelineTable() {
     ...extraColumns.map((column) => column.label)
   ];
 
-  const body = rows.map((row) => [
+  let body = rows.map((row) => [
     row.company,
     row.country,
     row.asset,
@@ -8685,8 +8664,13 @@ function exportPipelineTable() {
     row.highSimilarityCount ?? '',
     row.summary,
     row.id,
-    ...extraColumns.map((column) => formatExtraColumnValue(get(row.raw, column.path, '-'), column))
+    ...extraColumns.map((column) => formatExtraColumnValue(researchColumnValue(row.raw, column), column))
   ]);
+
+  const mode = activeTableMode();
+  if (mode === 'triage' || mode === 'full') {
+    ({ headers, body } = buildResearchExport(rows, mode, extraColumns));
+  }
 
   const csv = [headers, ...body].map((line) => line.map(csvValue).join(',')).join('\r\n');
   const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
@@ -8694,7 +8678,7 @@ function exportPipelineTable() {
   const stamp = new Date().toISOString().slice(0, 10).replaceAll('-', '');
   const link = document.createElement('a');
   link.href = url;
-  link.download = `skbp_pipeline_table_${stamp}.csv`;
+  link.download = `skbp_${mode === 'triage' ? 'simple_research' : mode === 'full' ? 'advanced_research' : 'pipeline_table'}_${stamp}.csv`;
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -13715,6 +13699,7 @@ function activateKnowledgeMapPanel() {
     elements.pipelineContent.style.display = 'none';
   }
   showKnowledgeMapPanel(true);
+  window.scrollTo({ top: 0, behavior: 'auto' });
   syncTopDataActionsForVisibleTab();
   renderShortlistingProjectControl();
   updateHeaderRecordCount();
