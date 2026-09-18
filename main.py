@@ -26,6 +26,7 @@ import subprocess
 import sys
 import uuid
 import chat_history
+import auth_activity
 import zipfile
 from urllib.parse import unquote, urlsplit
 from xml.etree import ElementTree
@@ -48,7 +49,7 @@ from openpyxl import load_workbook
 from pypdf import PdfReader
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.routing import APIRoute
-from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, ValidationError
 
@@ -889,6 +890,8 @@ def authenticated_user(request: Request) -> dict[str, Any] | None:
     token_hash = hashlib.sha256(token.encode("utf-8")).hexdigest()
     now = datetime.now(timezone.utc)
     for user in load_users():
+        if user.get("active") is False:
+            continue
         for session in user.get("sessions", []):
             if not secrets.compare_digest(str(session.get("token_hash") or ""), token_hash):
                 continue
@@ -1089,17 +1092,18 @@ async def auth_me(request: Request):
 async def record_auth_activity(request: Request):
     account = require_authenticated_user(request)
     payload = await request.json()
-    path = str(payload.get("path") or "/")[:500]
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="활동 정보는 JSON 객체여야 합니다.")
     users = load_users()
     user = next((item for item in users if str(item.get("id") or "") == str(account.get("id") or "")), None)
     if not user:
         raise HTTPException(status_code=404, detail="사용자를 찾을 수 없습니다.")
-    now = datetime.now(timezone.utc).isoformat()
-    user["last_seen_at"] = now
-    user.setdefault("activity_log", []).append({"event": "page_view", "at": now, "actor_ip": get_client_ip(request), "path": path})
-    user["activity_log"] = user["activity_log"][-2000:]
+    if user.get("active") is False:
+        raise HTTPException(status_code=403, detail="비활성화된 계정입니다.")
+    event = auth_activity.record_activity(user, payload, datetime.now(timezone.utc),
+                                          get_client_ip(request), request.client.host if request.client else "unknown")
     save_users(users)
-    return {"ok": True}
+    return {"ok": True, "recorded_at": event["at"], "user_id": user["id"], "active_seconds": event["active_seconds"]}
 
 
 def admin_user_payload(user: dict[str, Any]) -> dict[str, Any]:
@@ -1111,18 +1115,26 @@ def admin_user_payload(user: dict[str, Any]) -> dict[str, Any]:
         "active": user.get("active") is not False,
         "created_at": str(user.get("created_at") or ""),
         "last_login_at": str(user.get("last_login_at") or ""),
-        "last_seen_at": str(user.get("last_seen_at") or user.get("last_login_at") or ""),
+        "last_seen_at": auth_activity.last_seen(user),
         "active_session_count": len(sessions),
         "activity_count": len(activities),
         "activity_log": activities,
+        **auth_activity.user_metrics(user, datetime.now(timezone.utc)),
     }
 
 
 @app.get("/api/admin/users")
-async def list_admin_users(request: Request):
+async def list_admin_users(request: Request, response: Response = None):
     require_auth_developer(request)
-    users = sorted(load_users(), key=lambda item: str(item.get("created_at") or ""), reverse=True)
-    return {"users": [admin_user_payload(user) for user in users]}
+    users = sorted(load_users(), key=auth_activity.last_seen, reverse=True)
+    now = datetime.now(timezone.utc)
+    server_name = os.environ.get("COMPUTERNAME") or os.environ.get("HOSTNAME") or "server"
+    instance_id = hashlib.sha256(f"{server_name}:{USERS_FILE.resolve()}".encode()).hexdigest()[:10]
+    if response is not None:
+        response.headers["Cache-Control"] = "no-store"
+    return {"users": [admin_user_payload(user) for user in users],
+                         "summary": auth_activity.summary(users, now),
+                         "server": {"name": server_name, "instance_id": instance_id, "storage": "local", "updated_at": now.isoformat()}}
 
 
 @app.get("/api/users/directory")

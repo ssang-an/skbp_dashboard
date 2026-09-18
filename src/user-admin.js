@@ -1,17 +1,22 @@
-import { initAuthUI } from './auth.js?v=20260831-password-reset-2';
+import { initAuthUI } from './auth.js?v=20260917-private-chat-1';
 import { setupThemeToggle } from './theme.js';
 
-const state = { users: [], summary: {}, query: '', sortKey: 'created_at', sortDirection: -1, selectedId: null };
+const state = { users: [], summary: {}, query: '', sortKey: 'last_seen_at', sortDirection: -1, selectedId: null };
+let loading = false;
+let lastPayload = '';
+let authGeneration = 0;
 const eventLabels = {
   signup: '회원가입', signin: '로그인', signout: '로그아웃', page_view: '페이지 접속',
   account_activated: '계정 활성화', account_deactivated: '계정 비활성화', role_changed: '권한 변경',
+  active_heartbeat: '사용 중 확인', password_changed: '비밀번호 변경', password_reset: '비밀번호 재설정',
+  password_reset_requested: '비밀번호 재설정 요청', password_reset_email_delivered: '재설정 메일 발송',
 };
 
 const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
-const formatDate = (value) => value ? new Intl.DateTimeFormat('ko-KR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(value)) : '-';
+const formatDate = (value) => value && Number.isFinite(Date.parse(value)) ? new Intl.DateTimeFormat('ko-KR', { dateStyle: 'short', timeStyle: 'medium', timeZone: 'Asia/Seoul' }).format(new Date(value)) : '-';
 const formatDuration = (seconds) => {
   const value = Math.max(0, Number(seconds) || 0);
-  if (value < 60) return value ? `${Math.floor(value)}초` : '-';
+  if (value < 60) return `${Math.floor(value)}초`;
   const hours = Math.floor(value / 3600);
   const minutes = Math.floor((value % 3600) / 60);
   return hours ? `${hours}시간 ${minutes}분` : `${minutes}분`;
@@ -35,13 +40,14 @@ function filteredUsers() {
 }
 
 function renderSummary() {
-  const today = new Date().toLocaleDateString('en-CA');
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
   document.querySelector('#adminTotalUsers').textContent = state.users.length;
   document.querySelector('#adminActiveUsers').textContent = state.users.filter((user) => user.active).length;
   document.querySelector('#adminActiveSessions').textContent = state.users.reduce((sum, user) => sum + user.active_session_count, 0);
-  document.querySelector('#adminTodayUsers').textContent = state.users.filter((user) => user.last_seen_at && new Date(user.last_seen_at).toLocaleDateString('en-CA') === today).length;
-  document.querySelector('#adminMonthlyActiveUsers').textContent = state.users.filter((user) => Number(user.active_seconds_30d) > 0).length;
-  document.querySelector('#adminMonthlyActiveTime').textContent = formatDuration(state.users.reduce((sum, user) => sum + (Number(user.active_seconds_30d) || 0), 0));
+  document.querySelector('#adminTodayUsers').textContent = state.users.filter((user) => user.last_seen_at && new Date(user.last_seen_at).toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' }) === today).length;
+  document.querySelector('#adminMonthlyActiveUsers').textContent = state.users.filter((user) => Number(user.active_days_30d) > 0).length;
+  document.querySelector('#adminMonthlyActiveTime').textContent = state.summary.activity_measurement_started_at
+    ? formatDuration(state.users.reduce((sum, user) => sum + (Number(user.active_seconds_30d) || 0), 0)) : '미수집';
 }
 
 function renderMiniChart(element, values, valueKey, label, maxBars = 100, unit = '명') {
@@ -81,11 +87,12 @@ function renderExecutiveSummary() {
   const pipelineTotal = pipelineTrend.at(-1)?.cumulative_count || 0;
   const pipelineStart = summary.pipeline_registration_start_date;
   const granularity = summary.pipeline_registration_granularity || '일';
-  document.querySelector('#adminActiveChartTotal').textContent = formatDuration(activeTotal);
+  document.querySelector('#adminActiveChartTotal').textContent = summary.activity_measurement_started_at ? formatDuration(activeTotal) : '미수집';
   document.querySelector('#adminSignupChartTotal').textContent = `${signupTotal}명`;
-  document.querySelector('#adminPipelineChartTotal').textContent = `${pipelineTotal}건`;
-  document.querySelector('#adminPipelineChartRange').textContent = pipelineStart ? `${formatChartDate(pipelineStart)} ~ 오늘 · ${granularity} 단위 누적` : '등록 이력이 없습니다.';
-  document.querySelector('#adminExecutiveUpdated').textContent = '활성·가입: 최근 100일';
+  document.querySelector('#adminPipelineChartTotal').textContent = Array.isArray(summary.pipeline_registration_trend) ? `${pipelineTotal}건` : '집계 미제공';
+  document.querySelector('#adminPipelineChartRange').textContent = pipelineStart ? `${formatChartDate(pipelineStart)} ~ 오늘 · ${granularity} 단위 누적` : '이 서버에서 분석 등록 추이를 제공하지 않습니다.';
+  document.querySelector('#adminExecutiveUpdated').textContent = summary.activity_measurement_started_at
+    ? `활성 시간 수집 시작: ${formatDate(summary.activity_measurement_started_at)}` : '과거 활성 시간은 수집되지 않아 복원할 수 없습니다.';
   renderMiniChart(document.querySelector('#adminActiveTimeChart'), activityWeeks, 'active_seconds', '주간 활성 시간');
   renderMiniChart(document.querySelector('#adminSignupChart'), signupWeeks, 'count', '주간 신규 가입');
   renderMiniChart(document.querySelector('#adminPipelineChart'), pipelineTrend, 'cumulative_count', '누적 분석 리포트', 100, '건');
@@ -102,7 +109,7 @@ function renderUsers() {
       <td><span class="admin-state ${user.active ? 'is-active' : 'is-inactive'}">${user.active ? '활성' : '비활성'}</span></td>
       <td>${formatDate(user.created_at)}</td><td>${formatDate(user.last_login_at)}</td><td>${formatDate(user.last_seen_at)}</td>
       <td>${user.activity_count}</td>
-      <td>${formatDuration(user.active_seconds_30d)}</td>
+      <td>${user.activity_measurement_started_at ? formatDuration(user.active_seconds_30d) : '미수집'}</td>
       <td><button class="admin-account-toggle secondary-button" type="button" data-user-toggle="${escapeHtml(user.id)}" data-next-active="${!user.active}" ${user.is_admin ? 'disabled title="관리자 계정은 비활성화할 수 없습니다."' : ''}>${user.active ? '비활성화' : '활성화'}</button></td>
     </tr>`).join('') : '<tr><td colspan="10" class="admin-empty">조건에 맞는 사용자가 없습니다.</td></tr>';
 }
@@ -110,27 +117,45 @@ function renderUsers() {
 function renderActivity(user) {
   state.selectedId = user?.id || null;
   document.querySelector('#adminActivityTitle').textContent = user ? `${user.name} · ${user.email}` : '사용자를 선택해주세요';
-  const activities = [...(user?.activity_log || [])].reverse();
-  document.querySelector('#adminActivityCount').textContent = user ? `이벤트 ${activities.length}건 · 30일 활성 ${formatDuration(user.active_seconds_30d)}` : '';
+  const activities = [...(user?.activity_log || [])].sort((a, b) => (Date.parse(b.at) || 0) - (Date.parse(a.at) || 0));
+  document.querySelector('#adminActivityCount').textContent = user ? `최근 이벤트 ${activities.length}건 (최대 ${user.activity_log_limit || 2000}건 보관) · 30일 활성 ${user.activity_measurement_started_at ? formatDuration(user.active_seconds_30d) : '미수집'}` : '';
   document.querySelector('#adminActivityBody').innerHTML = activities.length ? activities.map((item) => `<tr>
-    <td>${formatDate(item.at)}</td><td>${escapeHtml(eventLabels[item.event] || item.event)}</td><td>${escapeHtml(item.path || '-')}</td><td>${escapeHtml(item.actor_ip || '-')}</td>
+    <td>${formatDate(item.at)}</td><td>${escapeHtml(eventLabels[item.event] || item.event)}${item.active_seconds ? ` · ${formatDuration(item.active_seconds)}` : ''}</td><td>${escapeHtml(item.path || '-')}</td><td>${escapeHtml(item.actor_ip || '-')}${item.peer_ip && item.peer_ip !== item.actor_ip ? `<br><small>서버 연결 IP: ${escapeHtml(item.peer_ip)}</small>` : ''}</td>
   </tr>`).join('') : '<tr><td colspan="4" class="admin-empty">저장된 활동 이력이 없습니다.</td></tr>';
   renderUsers();
 }
 
-async function loadUsers() {
+async function loadUsers({ silent = false } = {}) {
+  if (loading) return;
+  if (silent && (document.hidden || document.activeElement?.matches('[data-user-role]'))) return;
+  loading = true;
+  const generation = authGeneration;
   const status = document.querySelector('#adminStatus');
-  status.textContent = '불러오는 중…';
+  if (!silent) status.textContent = '불러오는 중…';
   try {
-    const response = await fetch('/api/admin/users');
+    const response = await fetch('/api/admin/users', { cache: 'no-store', signal: AbortSignal.timeout(10000) });
     const data = await response.json().catch(() => ({}));
+    if (generation !== authGeneration) return;
+    if ([401, 403].includes(response.status)) {
+      state.users = []; state.summary = {}; state.selectedId = null; lastPayload = '';
+      renderSummary(); renderExecutiveSummary(); renderActivity(null);
+    }
     if (!response.ok) throw new Error(data.detail || '사용자 목록을 불러오지 못했습니다.');
+    const snapshot = JSON.stringify([data.users, data.summary]);
     state.users = data.users || [];
     state.summary = data.summary || {};
-    renderSummary(); renderExecutiveSummary(); renderUsers();
-    if (state.selectedId) renderActivity(state.users.find((user) => user.id === state.selectedId));
-    status.textContent = `마지막 갱신 ${new Date().toLocaleTimeString('ko-KR')}`;
-  } catch (error) { status.textContent = error.message; }
+    if (snapshot !== lastPayload) {
+      renderSummary(); renderExecutiveSummary();
+      renderActivity(state.users.find((user) => user.id === state.selectedId) || filteredUsers()[0]);
+      lastPayload = snapshot;
+    }
+    document.querySelector('#adminServerScope').textContent = `현재 조회 서버: ${location.origin} · ${data.server?.name || '서버'} / ${data.server?.instance_id || '식별 정보 없음'}. 이 서버에 로그인한 계정의 기록입니다. 다른 PC에서 별도로 실행한 서버의 기록은 합쳐지지 않습니다.`;
+    status.textContent = `마지막 갱신 ${formatDate(data.server?.updated_at || new Date().toISOString())} · 화면을 보는 동안 15초마다 자동 갱신`;
+  } catch (error) { if (generation === authGeneration) status.textContent = `갱신 실패: ${error.message} · 서버 연결을 확인해 주세요.`; }
+  finally {
+    loading = false;
+    if (generation !== authGeneration) void loadUsers();
+  }
 }
 
 async function toggleUser(button) {
@@ -149,7 +174,7 @@ async function updateRole(select) {
 
 function exportCsv() {
   const header = ['이름', '이메일', '권한', '계정 상태', '가입일', '최근 로그인', '최근 접속', '이벤트 수', '30일 활성 시간(초)', '누적 활성 시간(초)', '유효 세션'];
-  const rows = filteredUsers().map((user) => [user.name, user.email, user.is_admin ? '관리자' : '사용자', user.active ? '활성' : '비활성', user.created_at, user.last_login_at, user.last_seen_at, user.activity_count, user.active_seconds_30d || 0, user.active_seconds_total || 0, user.active_session_count]);
+  const rows = filteredUsers().map((user) => [user.name, user.email, user.role, user.active ? '활성' : '비활성', user.created_at, user.last_login_at, user.last_seen_at, user.activity_count, user.activity_measurement_started_at ? user.active_seconds_30d : '', user.activity_measurement_started_at ? user.active_seconds_total : '', user.active_session_count]);
   const csv = [header, ...rows].map((row) => row.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(',')).join('\r\n');
   const link = document.createElement('a');
   link.href = URL.createObjectURL(new Blob([`\ufeff${csv}`], { type: 'text/csv;charset=utf-8' }));
@@ -179,3 +204,12 @@ document.querySelector('#adminCsvExport').addEventListener('click', exportCsv);
 setupThemeToggle();
 await initAuthUI();
 await loadUsers();
+window.setInterval(() => void loadUsers({ silent: true }), 15000);
+window.addEventListener('focus', () => void loadUsers({ silent: true }));
+document.addEventListener('visibilitychange', () => { if (!document.hidden) void loadUsers({ silent: true }); });
+window.addEventListener('skbp:authchange', () => {
+  authGeneration += 1;
+  state.users = []; state.summary = {}; state.selectedId = null; lastPayload = '';
+  renderSummary(); renderExecutiveSummary(); renderActivity(null);
+  void loadUsers();
+});
