@@ -1,8 +1,8 @@
-# SKBP Pipeline Finder v3.7 — Fast Triage Criteria
+# SKBP Pipeline Finder v3.7 — Simple Research Criteria
 
 ## Purpose
 
-Fast Triage는 확인 가능한 biotech/pharma pipeline asset을 빠르게 선별해 Full Scout 심층 검토 대상으로 보낼지 결정한다. 최종 BD recommendation이 아니다.
+Simple Research는 확인 가능한 biotech/pharma pipeline asset을 빠르게 선별해 Advanced Research 심층 검토 대상으로 보낼지 결정한다. 최종 BD recommendation이 아니다.
 
 ## Evidence Discipline
 

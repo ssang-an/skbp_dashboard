@@ -8,6 +8,7 @@ import json
 import re
 from typing import Any
 from urllib.parse import urlsplit, urlunsplit
+from ip_launch import normalize_ip_launch
 
 
 STORAGE_PROFILE = "dashboard_hybrid_v1"
@@ -478,7 +479,8 @@ def _full_filter_text(record: dict[str, Any]) -> str:
             for key in ("main_line_summary", "investigation_note", "why_not_higher")
         )
         values.extend(_list(item.get("uncertain_points")))
-    values.extend(_list(_object(record.get("validation")).get("uncertain_points")))
+    values.extend(value for value in _list(_object(record.get("validation")).get("uncertain_points"))
+                  if not str(value).startswith("ip_launch_outlook"))
     insight = _object(record.get("final_insight"))
     values.extend(
         insight.get(key)
@@ -684,6 +686,9 @@ def minimize_record_for_dashboard_storage(record: dict[str, Any]) -> dict[str, A
             ),
         }
     else:
+        if "ip_launch_outlook" in record:
+            result["ip_launch_outlook"] = copy.deepcopy(record["ip_launch_outlook"])
+            normalize_ip_launch(result)
         result["company_profile"] = {
             "headquarters": _text(profile.get("headquarters")),
             "company_stage": _text(profile.get("company_stage")),

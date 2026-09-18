@@ -6,6 +6,16 @@ let activityLastSentAt = 0;
 let activityLastEngagedAt = 0;
 const ACTIVITY_HEARTBEAT_MS = 60_000;
 const ACTIVITY_ENGAGEMENT_WINDOW_MS = 120_000;
+const AUTH_IDENTITY_KEY = 'skbp.auth.identity.v1';
+
+window.addEventListener('storage', (event) => {
+  if (event.key !== AUTH_IDENTITY_KEY) return;
+  // Clear private UI immediately while rechecking the shared login cookie.
+  currentUser = null;
+  renderAuth();
+  window.dispatchEvent(new CustomEvent('skbp:authchange', { detail: { user: null } }));
+  void loadCurrentUser();
+});
 
 function activityPath() {
   return `${location.pathname}${location.search}`;
@@ -96,6 +106,10 @@ function modalMarkup() {
 }
 
 function emitAuthChange() {
+  try {
+    const identity = String(currentUser?.id || '');
+    if (localStorage.getItem(AUTH_IDENTITY_KEY) !== identity) localStorage.setItem(AUTH_IDENTITY_KEY, identity);
+  } catch { /* Account events in this tab remain available without localStorage. */ }
   window.dispatchEvent(new CustomEvent('skbp:authchange', { detail: { user: currentUser } }));
 }
 

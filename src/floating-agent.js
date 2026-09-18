@@ -39,16 +39,18 @@ export function initFloatingAgent({
   dragHandle,
   resizeHandle,
   storageKey,
-  initialWidth = 560,
-  initialHeight = 680,
+  initialWidth = 760,
+  initialHeight = 820,
   focusTarget
 }) {
   if (!launcher || !panel) return null;
+  // Ancestor transforms/overflow (including the map workspace) must not clip a fixed window.
+  document.body.append(panel);
 
   const mobileMedia = window.matchMedia(MOBILE_QUERY);
   const margin = 16;
-  const minimumWidth = 360;
-  const minimumHeight = 480;
+  const minimumWidth = 520;
+  const minimumHeight = 620;
   let closeTimer = 0;
   let lastFocused = null;
   let geometry = readGeometry(storageKey);
@@ -140,8 +142,8 @@ export function initFloatingAgent({
   }
 
   function bounds() {
-    const maxWidth = Math.max(280, window.innerWidth - margin * 2);
-    const maxHeight = Math.max(360, window.innerHeight - margin * 2);
+    const maxWidth = Math.max(1, window.innerWidth - margin * 2);
+    const maxHeight = Math.max(1, window.innerHeight - margin * 2);
     return {
       minWidth: Math.min(minimumWidth, maxWidth),
       minHeight: Math.min(minimumHeight, maxHeight),

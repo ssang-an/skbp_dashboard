@@ -122,6 +122,9 @@ class CompactIngestionTests(unittest.TestCase):
             "https://example.com/source",
         )
         main.validate_records_for_save([expanded])
+        renamed = copy.deepcopy(expanded)
+        renamed['final_insight']['recommendation'] = 'Do not run Advanced Research'
+        main.validate_records_for_save([renamed])
 
     def test_triage_basis_without_public_evidence_drops_contradictory_source_ids(self):
         compact = {
@@ -1135,6 +1138,11 @@ format reminder
 
     def test_rendered_instructions_emit_valid_compact_templates(self):
         prompts = self.rendered_prompts()
+        self.assertIn('GPT instruction 1: Simple Research', prompts['triage'])
+        self.assertIn('GPT instruction 2: Advanced Research', prompts['full'])
+        for prompt in prompts.values():
+            self.assertNotIn('Fast Triage', prompt)
+            self.assertNotIn('Full Scout', prompt)
         self.assertEqual(prompts["triage"].count("--- JSON DATA ---"), 1)
         self.assertEqual(prompts["full"].count("--- JSON DATA ---"), 1)
         self.assertNotIn("source_report", prompts["triage"])
@@ -1157,7 +1165,10 @@ format reminder
         )
         self.assertIn("source_ids", full["scoring"]["criteria"]["target_relevance"])
         self.assertNotIn("schema_version", full["meta"])
-        self.assertNotIn("instruction_version", full["meta"])
+        self.assertEqual(full["meta"]["instruction_version"], "3.9")
+        self.assertEqual(full["meta"]["rubric_version"], "3.9")
+        self.assertEqual(full["ip_launch_outlook"], {"com_expiry_year": None, "expected_launch_year": None})
+        self.assertNotIn("ip_launch_outlook", triage[0])
         self.assertIn("evidence_type_reason", full["scoring"]["criteria"]["target_relevance"])
         self.assertIn("investigation_note", full["scoring"]["criteria"]["target_relevance"])
         self.assertNotIn("what_was_checked", full["scoring"]["criteria"]["target_relevance"])

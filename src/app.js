@@ -1,17 +1,18 @@
+import { createPrivateConversations } from './private-conversations.js?v=20260917-1';
 import { setupThemeToggle } from './theme.js?v=20260802-header-icons-1';
-import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
+import { initFloatingAgent } from './floating-agent.js?v=20260917-1';
 import { initPageJumpControls } from './page-jump.js?v=20260823-page-jump-1';
 import { initPipelineHeaderFreeze } from './table-header-freeze.js?v=20260830-1';
-import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260831-password-reset-2';
+import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260917-private-chat-1';
 import {
   expandCompactInputRecord,
   isCompactIngestionRecord,
   isMinimalCompactIngestionRecord
-} from './compact-ingestion.js?v=20260915-triage-source-reference-repair-1';
+} from './compact-ingestion.js?v=20260917-ip-launch-1';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260820-url-repair-6';
-import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260904-triage-v3-7-1';
+import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260917-advanced-v39-1';
 import { FULL_SCOUT_EXTRA_COLUMN_DEFINITIONS, FAST_TRIAGE_EXTRA_COLUMN_DEFINITIONS,
-  researchColumnValue, buildResearchExport } from './research-columns.js?v=20260917-2';
+  researchColumnValue, buildResearchExport, RECOMMENDED_RESEARCH_COLUMNS, ipLaunchAssessment } from './research-columns.js?v=20260917-ip-launch-1';
 
 const API_URL = '/api/records';
 const DASHBOARD_SUMMARY_URL = '/api/dashboard-summary';
@@ -33,8 +34,6 @@ const STEP0_PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.step0PageSize.v1';
 // UX than showing zeros, and it's replaced within a second regardless.
 const STEP0_STATS_CACHE_KEY = 'skbp.dashboard.step0StatsCache.v1';
 const BOM_PREFIX = String.fromCharCode(0xfeff);
-const AGENT_SESSION_STORAGE_KEY = 'skbp.dashboard.agentSessions.v1';
-const AGENT_ACTIVE_SESSION_KEY = 'skbp.dashboard.activeAgentSession.v1';
 const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v4';
 const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v9';
 const CRITERIA_GUIDE_LANGUAGE_STORAGE_KEY = 'skbp.dashboard.criteriaGuideLanguage.v1';
@@ -213,11 +212,12 @@ const FOCUS_MIN_COLUMN_WIDTHS = {
 
 const MAX_COLUMN_WIDTH = 720;
 const PROMPT_TOOLTIP =
-  'GPT Advanced Research v3.8 지침을 복사합니다. Simple Research에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
+  'GPT Advanced Research v3.9 지침을 복사합니다. Simple Research에서 SELECT된 단일 asset을 근거 중심으로 심층 조사합니다.';
 const TRIAGE_PROMPT_TOOLTIP =
   'GPT Simple Research v3.7 지침을 복사합니다. 최대 50개 asset을 SELECT / REJECT / INSUFFICIENT로 screening합니다.';
 const LATEST_TRIAGE_RUBRIC_VERSION = '3.7';
-const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.8';
+const LATEST_FULL_SCOUT_RUBRIC_VERSION = '3.9';
+const FULL_SCOUT_SCORING_COMPATIBLE_VERSIONS = ['3.8', '3.9'];
 const LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION = 'v3-8-moa-expansion-investigation-notes-2026-09-01';
 const FAST_TRIAGE_SCHEMA_VERSION = '3.2';
 const FULL_SCOUT_SCHEMA_VERSION = '3.2';
@@ -432,11 +432,10 @@ const state = {
   step0SortDirection: null,
   step0Page: 1,
   step0PageSize: storedStep0PageSize(),
-  extraColumns: new Set(readStoredJson(
-    'skbp.dashboard.extraColumns',
-    [],
-    (value) => Array.isArray(value) && value.every((item) => typeof item === 'string')
-  )),
+  extraColumnsByMode: readStoredJson('skbp.dashboard.extraColumnsByMode.v2', {},
+    value => value && typeof value === 'object' && !Array.isArray(value)
+      && Object.values(value).every(keys => Array.isArray(keys) && keys.every(key => typeof key === 'string'))),
+  extraColumnsOpened: new Set(),
   columnWidths: storedMainColumnWidths(),
   focusColumnWidths: readStoredJson(
     FOCUS_COLUMN_WIDTH_STORAGE_KEY,
@@ -445,7 +444,7 @@ const state = {
   ),
   fittedColumnWidths: {},
   agentSessions: [],
-  activeAgentSessionId: localStorage.getItem(AGENT_ACTIVE_SESSION_KEY) || '',
+  activeAgentSessionId: '',
   categorySynonyms: { country: [], stage: [], modality: [], theme: [], indication: [] },
   categorySynonymsLoaded: false,
   latestOiPartnershipCriteriaVersion: '1.0',
@@ -2707,9 +2706,9 @@ function synchronizeDashboardOwnedInputFields(record) {
         record.final_insight,
         'recommendation',
         {
-          SELECT: 'Run Full Scout',
+          SELECT: 'Run Advanced Research',
           REJECT: 'Monitor / gather more evidence',
-          INSUFFICIENT: 'Do not run Full Scout'
+          INSUFFICIENT: 'Do not run Advanced Research'
         }[status],
         'final_insight.recommendation'
       );
@@ -3194,11 +3193,30 @@ function formatExtraColumnValue(value, column = null) {
 }
 
 function selectedExtraColumns() {
-  return activeExtraColumnDefinitions().filter((column) => state.extraColumns.has(column.key));
+  if (!state.extraColumnsOpened.has(activeTableMode())) return [];
+  return activeExtraColumnDefinitions().filter((column) => activeExtraColumnKeys().has(column.key));
+}
+
+function researchExtraCell(row, column) {
+  const value = formatExtraColumnValue(researchColumnValue(row.raw, column), column);
+  if (!['comExpiryYear', 'expectedLaunchYear'].includes(column.key)) {
+    return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
+  }
+  const assessment = ipLaunchAssessment(row.raw, column.key);
+  return `<td class="extra-column-cell" title="${escapeHtml(assessment.basis)}">
+    <span>${escapeHtml(value)}</span>
+    <details class="ip-launch-evidence"><summary>근거 보기</summary>
+      <p>${escapeHtml(assessment.basis)}</p>
+      <a href="${escapeHtml(recordDetailHref(row, 'full'))}&section=ip-launch" target="_blank" rel="noopener">원문 리포트 열기 ↗</a>
+    </details></td>`;
+}
+
+function activeExtraColumnKeys() {
+  return new Set(state.extraColumnsByMode[activeTableMode()] || []);
 }
 
 function persistExtraColumns() {
-  localStorage.setItem('skbp.dashboard.extraColumns', JSON.stringify([...state.extraColumns]));
+  localStorage.setItem('skbp.dashboard.extraColumnsByMode.v2', JSON.stringify(state.extraColumnsByMode));
 }
 
 function extraColumnKey(column) {
@@ -5941,7 +5959,7 @@ function renderColumnSettings() {
         <input
           type="checkbox"
           value="${escapeHtml(column.key)}"
-          ${state.extraColumns.has(column.key) ? 'checked' : ''}
+          ${activeExtraColumnKeys().has(column.key) ? 'checked' : ''}
         />
         <span>${escapeHtml(column.label)}</span>
       </label>
@@ -6696,10 +6714,7 @@ function renderTableLegacy() {
               <td class="score-cell">${fullReviewScoreBadge(row, 'expansionScore', 'expansion', 'Expansion Potential')}</td>
               <td class="score-cell">${fullReviewScoreBadge(row, 'marketScore', 'market', 'Marketability')}</td>
               <td class="score-cell total-score-cell">${row.isTriage ? pendingScoreBadge('Advanced Research total score not available for triage rows') : totalScoreEditCircle(row)}</td>
-              ${extraColumns.map((column) => {
-                const value = formatExtraColumnValue(researchColumnValue(row.raw, column), column);
-                return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
-              }).join('')}
+              ${extraColumns.map((column) => researchExtraCell(row, column)).join('')}
             </tr>
           `;
         })
@@ -6867,10 +6882,11 @@ function rubricReevaluationButton(row) {
     || get(row.raw, 'meta.full_scout_rubric_definition_revision', '')
       === LATEST_FULL_SCOUT_RUBRIC_DEFINITION_REVISION;
   const aiReassessmentHistory = get(row.raw, 'meta.rubric_refresh_history', []);
-  const hasCurrentAiReassessment = String(get(row.raw, 'meta.rescored_rubric_version', '')).replace(/^v/i, '')
-    === latestVersion
+  const scoreVersionMatches = value => (isTriage ? [latestVersion] : FULL_SCOUT_SCORING_COMPATIBLE_VERSIONS)
+    .includes(String(value || '').replace(/^v/i, ''));
+  const hasCurrentAiReassessment = scoreVersionMatches(get(row.raw, 'meta.rescored_rubric_version', ''))
     || (Array.isArray(aiReassessmentHistory) && aiReassessmentHistory.some((entry) => (
-      String(entry?.version || '').replace(/^v/i, '') === latestVersion
+      scoreVersionMatches(entry?.version)
       && ['updated', 'no_change', 'no_score_changes'].includes(String(entry?.result || ''))
     )));
   const isCurrent = !hasManualScoreOverride
@@ -8279,10 +8295,7 @@ function renderTable() {
                 <td class="score-cell total-score-cell">${totalScoreEditCircle(row)}</td>
               ` : ''}
               ${mode === 'triage' ? `<td class="focus-action-cell">${rubricReevaluationCell(row)}</td>` : ''}
-              ${extraColumns.map((column) => {
-                const value = formatExtraColumnValue(researchColumnValue(row.raw, column), column);
-                return `<td class="extra-column-cell" title="${escapeHtml(value)}">${escapeHtml(value)}</td>`;
-              }).join('')}
+              ${extraColumns.map((column) => researchExtraCell(row, column)).join('')}
               ${mode === 'full' ? `<td class="focus-action-cell">${fullScoutRowActions(row)}</td>` : ''}
             </tr>
           `;
@@ -8418,6 +8431,7 @@ function renderAgentIdentity() {
   }
   if (elements.aiDrawerTitle) elements.aiDrawerTitle.textContent = title;
   if (elements.aiDrawer) elements.aiDrawer.setAttribute('aria-label', title);
+  refreshAgentScopeLabel();
 }
 
 function activeFilterCount() {
@@ -8783,7 +8797,7 @@ async function loadRecords({ signal } = {}) {
     renderFilters();
     render();
     restorePendingPipelineReturnFocus();
-    elements.agentContextCount.textContent = `${state.rows.length} pipelines`;
+    refreshAgentScopeLabel();
   } catch (error) {
     if (signal?.aborted || error?.name === 'AbortError') return;
     throw error;
@@ -9190,7 +9204,7 @@ async function copyTriageFullScoutPrompt(button) {
     `Asset name: ${row.asset}`,
     `Company name: ${row.company}`,
     '',
-    'Fast Triage researched content:',
+    'Simple Research researched content:',
     triageSourceReportText(row.raw)
   ].join('\n');
 
@@ -9814,32 +9828,11 @@ function createAgentSession(title = '새 대화') {
   };
 }
 
-function loadAgentSessions() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(AGENT_SESSION_STORAGE_KEY) || '[]');
-    state.agentSessions = Array.isArray(parsed) ? parsed.filter((session) => session && session.id) : [];
-  } catch {
-    state.agentSessions = [];
-  }
-  if (!state.agentSessions.length) {
-    state.agentSessions = [createAgentSession('Pipeline discovery')];
-  }
-  if (!state.agentSessions.some((session) => session.id === state.activeAgentSessionId)) {
-    state.activeAgentSessionId = state.agentSessions[0].id;
-  }
-  saveAgentSessions();
-}
-
+let agentConversations = null;
+let agentRequestController = null;
+let agentBusy = false;
 function saveAgentSessions() {
-  const trimmed = state.agentSessions
-    .slice(-12)
-    .map((session) => ({
-      ...session,
-      messages: (session.messages || []).slice(-60)
-    }));
-  state.agentSessions = trimmed;
-  localStorage.setItem(AGENT_SESSION_STORAGE_KEY, JSON.stringify(trimmed));
-  localStorage.setItem(AGENT_ACTIVE_SESSION_KEY, state.activeAgentSessionId);
+  agentConversations?.save(state.agentSessions);
 }
 
 function activeAgentSession() {
@@ -9870,13 +9863,14 @@ function renderAgentSessionControls() {
   elements.agentSessionSelect.innerHTML = state.agentSessions
     .map((session) => {
       const count = Math.max(0, (session.messages || []).filter((message) => message.role === 'user').length);
-      return `<option value="${escapeHtml(session.id)}">${escapeHtml(session.title || '새 대화')} · ${count}Q</option>`;
+      return `<option value="${escapeHtml(session.id)}">${agentConversations?.readonly() ? escapeHtml(session.owner_name || '') + ' · ' : ''}${escapeHtml(session.title || '새 대화')} · ${count}Q</option>`;
     })
     .join('');
   elements.agentSessionSelect.value = state.activeAgentSessionId;
   if (elements.agentDeleteSessionButton) {
     elements.agentDeleteSessionButton.disabled = state.agentSessions.length <= 1;
   }
+  agentConversations?.applyState();
 }
 
 function renderAgentMessagesFromSession() {
@@ -9894,12 +9888,32 @@ function renderAgentMessagesFromSession() {
 }
 
 function initializeAgentSessions() {
-  loadAgentSessions();
-  renderAgentSessionControls();
-  renderAgentMessagesFromSession();
+  agentConversations = createPrivateConversations({
+    getUser: getCurrentUser, getScope: () => 'dashboard',
+    bar: document.querySelector('#aiDrawer .agent-sessionbar'), form: elements.agentForm,
+    controls: [elements.agentSessionSelect, elements.agentNewSessionButton, elements.agentDeleteSessionButton],
+    onLoad(sessions, readonly) {
+      state.agentSessions = sessions.length || readonly ? sessions : [createAgentSession()];
+      state.activeAgentSessionId = state.agentSessions[0]?.id || '';
+      elements.agentMessages.innerHTML = '';
+      renderAgentSessionControls();
+      renderAgentMessagesFromSession();
+    }
+  });
+  window.addEventListener('skbp:authchange', () => {
+    agentRequestController?.abort();
+    agentRequestController = null;
+    agentBusy = false;
+    elements.agentInput.value = '';
+    closeAgentResponseModal();
+    void agentConversations.load({ resetView: true });
+  });
+  void agentConversations.load();
 }
 
 function startNewAgentSession(title = '새 대화') {
+  if (agentBusy || !agentConversations?.writable()) return;
+  elements.agentInput.value = '';
   const session = createAgentSession(title);
   state.agentSessions.push(session);
   state.activeAgentSessionId = session.id;
@@ -9910,11 +9924,12 @@ function startNewAgentSession(title = '새 대화') {
 }
 
 function deleteActiveAgentSession() {
-  if (state.agentSessions.length <= 1) return;
+  if (agentBusy || !agentConversations?.writable()) return;
   const current = activeAgentSession();
   const confirmed = window.confirm(`'${current?.title || '현재 대화'}' 세션을 삭제할까요?`);
   if (!confirmed) return;
   state.agentSessions = state.agentSessions.filter((session) => session.id !== state.activeAgentSessionId);
+  if (!state.agentSessions.length) state.agentSessions = [createAgentSession()];
   state.activeAgentSessionId = state.agentSessions[0]?.id || '';
   saveAgentSessions();
   renderAgentSessionControls();
@@ -10023,6 +10038,7 @@ function closeAgentResponseModal() {
 }
 
 function updateAgentMessage(bubble, text, options = {}) {
+  if (!bubble?.isConnected) return;
   const textNode = bubble.querySelector('.agent-message-text');
   if (textNode) textNode.innerHTML = renderAgentText(text);
   if (options.done) bubble.classList.remove('pending');
@@ -10062,7 +10078,11 @@ function mockAgentReply(question) {
 }
 
 function buildDashboardAgentContext() {
-  const visibleRows = getVisibleRows();
+  const visibleRows = dashboardAgentRows();
+  if (elements.step0Panel && !elements.step0Panel.hidden) {
+    return `Listing scope: ${visibleRows.length} candidates. Listing entries are unassessed; do not infer scores.\n`
+      + visibleRows.map(row => `${row.asset} | ${row.company} | ${JSON.stringify(row.raw?.structured_table || {})}`).join('\n');
+  }
   const mode = activeTableMode();
   const scopeRows = [...visibleRows]
     .sort((a, b) => (b.totalScore ?? -1) - (a.totalScore ?? -1));
@@ -10108,11 +10128,34 @@ function buildDashboardAgentContext() {
 }
 
 function dashboardAgentCandidateRecordIds() {
-  return [...new Set(getVisibleRows().map((row) => row.id).filter(Boolean))];
+  return [...new Set(dashboardAgentRows().map((row) => row.id).filter(Boolean))];
+}
+
+function dashboardAgentRows() {
+  if (elements.knowledgeMapPanel && !elements.knowledgeMapPanel.hidden) return state.rawRecords.map(flattenRecord);
+  if (elements.step0Panel && !elements.step0Panel.hidden) {
+    const byId = new Map(state.rawRecords.map(flattenRecord).map(row => [row.id, row]));
+    return step0FilteredSortedRows().flatMap(row => {
+      const ids = [...new Set([row.fast_triage?.record_id, row.full_scout?.record_id, row.shortlisting?.record_id].filter(Boolean))];
+      const records = ids.map(id => byId.get(id)).filter(Boolean);
+      if (records.length) return records;
+      return row.pending?.queue_id ? [{ id: `listing:${row.pending.queue_id}`, asset: row.asset, company: row.company,
+        raw: { structured_table: row.listing_details || {} } }] : [];
+    });
+  }
+  return getVisibleRows();
+}
+
+function refreshAgentScopeLabel() {
+  if (!elements.agentContextCount) return;
+  const map = elements.knowledgeMapPanel && !elements.knowledgeMapPanel.hidden;
+  const listing = elements.step0Panel && !elements.step0Panel.hidden;
+  const label = map ? 'Wiki Map · 전체 조사' : listing ? 'Listing · 현재 필터' : activeTableMode() === 'triage' ? 'Simple · 현재 필터' : activeTableMode() === 'full' ? 'Advanced · 현재 필터' : 'Custom · 현재 필터';
+  elements.agentContextCount.textContent = `${label} · ${dashboardAgentCandidateRecordIds().length}건`;
 }
 
 function getAgentAnchorRecordId(question = '') {
-  const visibleRows = getVisibleRows();
+  const visibleRows = dashboardAgentRows();
   const lowerQuestion = question.toLowerCase();
   if (lowerQuestion.includes('e/i') || lowerQuestion.includes('excitation') || lowerQuestion.includes('inhibition')) {
     const eiRow = visibleRows
@@ -10138,7 +10181,7 @@ function getAgentAnchorRecordId(question = '') {
 async function requestDashboardAgentReply(question) {
   const recordId = getAgentAnchorRecordId(question);
   if (!recordId) {
-    return '분석할 pipeline JSON이 없습니다. 먼저 json 폴더에 데이터를 추가해 주세요.';
+    return '현재 화면에 질문할 후보가 없습니다. 필터를 조정하거나 후보를 등록해 주세요.';
   }
 
   const response = await fetch('/api/chat', {
@@ -10173,21 +10216,20 @@ function parseSseEvent(block) {
   }
 }
 
-async function streamDashboardAgentReply(question, bubble) {
-  const recordId = getAgentAnchorRecordId(question);
+async function streamDashboardAgentReply(question, bubble, requestContext) {
+  const recordId = requestContext.record_id;
   if (!recordId) {
-    updateAgentMessage(bubble, '분석할 pipeline JSON이 없습니다. 먼저 json 폴더에 데이터를 추가해 주세요.', { done: true });
+    updateAgentMessage(bubble, '현재 화면에 질문할 후보가 없습니다. 필터를 조정하거나 후보를 등록해 주세요.', { done: true });
     return;
   }
 
   const response = await fetch('/api/chat/stream', {
     method: 'POST',
+    signal: agentRequestController?.signal,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      record_id: recordId,
-      candidate_record_ids: dashboardAgentCandidateRecordIds(),
+      ...requestContext,
       message: question,
-      dashboard_context: buildDashboardAgentContext(),
       allow_draft: false
     })
   });
@@ -11370,6 +11412,18 @@ function validateCombinedInput(value, expectedMode = '') {
     }
 
     validateCompactInputTypes(split.records[index], recordPath, errors);
+    if (validationMode === 'full') {
+      const outlook = record.ip_launch_outlook;
+      if (outlook !== undefined || String(record.meta?.instruction_version || '').replace(/^v/i, '') === '3.9') {
+        for (const field of ['com_expiry_year', 'expected_launch_year']) {
+          const value = outlook?.[field];
+          const acceptable = value === null || ((typeof value === 'number' || typeof value === 'string')
+            && (/^(?:19|20|21)\d{2}$/.test(String(value).trim()) || /^(?:unknown|n\/a|null|확인 불가|미확인)?$/i.test(String(value).trim())));
+          if (!acceptable) addInputIssue(warnings, 'warning', `${recordPath}.ip_launch_outlook.${field}`,
+            '선택 조사 정보가 누락되었거나 단일 연도가 아닙니다. 원문과 확인 안내를 보존하며, 이 항목 때문에 저장을 차단하지 않습니다.');
+        }
+      }
+    }
     validateCompactSourceReferences(minimalCompactInput ? record : split.records[index], recordPath, errors);
     if (String(split.records[index]?.meta?.ingestion_format || '').trim().toLowerCase() === 'compact_v1'
       && !Object.prototype.hasOwnProperty.call(split.records[index], 'input')) {
@@ -11460,11 +11514,11 @@ function validateCombinedInput(value, expectedMode = '') {
         );
       }
       const expectedRecommendation = {
-        SELECT: 'Run Full Scout',
+        SELECT: 'Run Advanced Research',
         REJECT: 'Monitor / gather more evidence',
-        INSUFFICIENT: 'Do not run Full Scout'
+        INSUFFICIENT: 'Do not run Advanced Research'
       }[status];
-      if (expectedRecommendation && record.final_insight?.recommendation !== expectedRecommendation) {
+      if (expectedRecommendation && String(record.final_insight?.recommendation || '').replace(/Full Scout/g, 'Advanced Research') !== expectedRecommendation) {
         addInputIssue(
           errors,
           'error',
@@ -11548,10 +11602,10 @@ function validateCombinedInput(value, expectedMode = '') {
     if (fullSchemaVersion !== FULL_SCOUT_SCHEMA_VERSION) {
       addInputIssue(errors, 'error', `${recordPath}.meta.schema_version`, `Full Scout schema_version은 ${FULL_SCOUT_SCHEMA_VERSION}를 유지해야 합니다.`);
     }
-    if (fullRubricVersion !== LATEST_FULL_SCOUT_RUBRIC_VERSION) {
+    if (!FULL_SCOUT_SCORING_COMPATIBLE_VERSIONS.includes(fullRubricVersion)) {
       addInputIssue(errors, 'error', `${recordPath}.meta.rubric_version`, `Full Scout rubric_version은 ${LATEST_FULL_SCOUT_RUBRIC_VERSION}이어야 합니다.`);
     }
-    if (fullInstructionVersion !== LATEST_FULL_SCOUT_RUBRIC_VERSION) {
+    if (!FULL_SCOUT_SCORING_COMPATIBLE_VERSIONS.includes(fullInstructionVersion)) {
       addInputIssue(errors, 'error', `${recordPath}.meta.instruction_version`, `Full Scout instruction_version은 ${LATEST_FULL_SCOUT_RUBRIC_VERSION}이어야 합니다.`);
     }
   });
@@ -12175,7 +12229,7 @@ const SHARED_INTEREST_AND_CORE_RUBRIC = `SKBP Interest Indications:
 
 Use the most specific confirmed indication wording for Target Relevance. Neuropathic pain and explicit neuropathic subtypes/synonyms are one of the six interest indications and receive TR 3. Generic Pain, acute pain, postoperative pain, and non-neuropathic pain are within the broad SKBP pain scope but outside the six priority indications and receive TR 2.
 
-Shared TR / MoA / Data scoring rubric (use the same direction in Fast Triage v3.7 and Full Scout v3.8):
+Shared TR / MoA / Data scoring rubric (use the same direction in Simple Research v3.7 and Advanced Research v3.9):
 - For Target Relevance, always evaluate in descending order: 3, then 2, then 1, then 0. If more than one rule appears applicable, assign only the single highest applicable score.
 - Target Relevance 0: asset identity is verified, but there is still insufficient indication/relevance information to assess strategic scope. Asset identity not verified is an INSUFFICIENT early stop, not a completed TR 0.
 - Target Relevance 1: a verified asset's confirmed indication is outside the broad SKBP neurologic, psychiatric, neuroimmune, neurodegenerative, or pain scope.
@@ -12322,7 +12376,13 @@ const COMPACT_TRIAGE_JSON_TEMPLATE = `[
 const COMPACT_FULL_SCOUT_JSON_TEMPLATE = `{
   "meta": {
     "ingestion_format": "compact_v2",
-    "review_type": "full_scout"
+    "review_type": "full_scout",
+    "instruction_version": "3.9",
+    "rubric_version": "3.9"
+  },
+  "ip_launch_outlook": {
+    "com_expiry_year": null,
+    "expected_launch_year": null
   },
   "input": {
     "company_input": "Unknown",
@@ -12498,10 +12558,10 @@ function buildTriageInstructionPromptLegacy() {
   return `You are an expert biotech pipeline scout for SKBP Pipeline Finder.
 
 Mission:
-Run FAST TRIAGE on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.8 in-depth review.
+Run SIMPLE RESEARCH on biotech/pharma pipeline assets. The purpose is to decide which assets should proceed to the full SKBP Pipeline Finder v3.9 in-depth review.
 
-This is GPT instruction 1: Fast Triage v3.7.
-Use GPT instruction 2 only after a candidate receives SELECT and needs Full Scout v3.8 review.
+This is GPT instruction 1: Simple Research v3.7.
+Use GPT instruction 2 only after a candidate receives SELECT and needs Advanced Research v3.9 review.
 
 Evidence Discipline (apply to every factual field and every score):
 ${SHARED_EVIDENCE_DISCIPLINE}
@@ -12518,8 +12578,8 @@ Core rule:
 - Only perform quick source-aware triage.
 
 Important distinction:
-- Triage status is not a final Full Scout recommendation.
-- SELECT means worth sending to Full Scout v3.8.
+- Triage status is not a final Advanced Research recommendation.
+- SELECT means worth sending to Advanced Research v3.9.
 - REJECT means the asset is identified but does not currently meet the SELECT gate; monitor or gather more evidence.
 - INSUFFICIENT means identity/lifecycle caused an early stop, or one of TR, MoA, or Data received 0 after identity was confirmed.
 - A REJECT or INSUFFICIENT result can change later if better identity, target, MoA, data, company, or source evidence becomes available.
@@ -12580,12 +12640,12 @@ Early stop rules:
 - In the Markdown table, write \`—\` for TR, MoA, and Data for either early-stop case. Early stop never shortens the required dashboard JSON contract: every record must still contain all three TR/MoA/Data criterion score objects. Use score 0 only as a schema placeholder with no_supporting_basis, keep scoring.total_score and max_score null, and do not describe the placeholder as a completed zero-score evaluation. The status is INSUFFICIENT.
 
 Triage scoring:
-- Use the same scoring direction as Full Scout v3.8, but only for these three matching criteria:
-  - Full Scout criterion 1: Target Relevance (TR)
-  - Full Scout criterion 3: MoA Validity (MOA)
-  - Full Scout criterion 6: Data Maturity (Data)
+- Use the same scoring direction as Advanced Research v3.9, but only for these three matching criteria:
+  - Advanced Research criterion 1: Target Relevance (TR)
+  - Advanced Research criterion 3: MoA Validity (MOA)
+  - Advanced Research criterion 6: Data Maturity (Data)
 - Assign preliminary integer scores only: 0, 1, 2, or 3. Do not output ranges such as 1-2.
-- Use evidence_type="triage_only". Do not assign E0-E4 or require Full Scout-length source trails.
+- Use evidence_type="triage_only". Do not assign E0-E4 or require Advanced Research-length source trails.
 - The difference from GPT instruction 2 is depth, not scoring direction: instruction 1 is a fast preliminary read; instruction 2 is the full evidence-based review.
 
 ${SHARED_INTEREST_AND_CORE_RUBRIC}
@@ -12602,7 +12662,7 @@ Criterion Evidence Basis:
 - Each Compact v2 criterion keeps score, evidence_type="triage_only", evidence_type_reason, evidence_basis, a one-sentence main_line_summary, why_not_higher, investigation_note, uncertain_points, and source_ids. Begin main_line_summary with exactly one matching score label: "TR N points:", "MoA N points:", or "Data N points:" (N must equal that JSON criterion's score). Keep detailed quantitative evidence (percentages, ratios, sample sizes, phases, and asset codes) in Markdown reasoning or investigation_note whenever possible; never state another criterion's score in main_line_summary.
 - MoA score 2 or 3 only: write at most one sentence in that criterion's investigation_note stating whether evidence already identified while scoring connects to a disease-relevant phenotype, efficacy, or biomarker, or remains limited to proximal evidence such as a cellular-signaling marker. Omit this sentence for MoA score 0 or 1. If existing evidence cannot distinguish this, write "확인 불가". Do not infer or perform a new search for this note; it records context only and does not change the score.
 - triage.verified_public_source_count must exactly equal the unique verified public URL count after removing duplicates and trailing-slash variants. It is retained only for the Quick Summary card; source count itself does not determine the score.
-- Copy the exact user/company identifiers into input.company_input and input.asset_input. These two aliases are used only to join the Fast Triage and Full Scout rows for the same asset. When the user appended relevant free-text context, copy it faithfully into input.user_context; otherwise keep user_context as an empty string.
+- Copy the exact user/company identifiers into input.company_input and input.asset_input. These two aliases are used only to join the Simple Research and Advanced Research rows for the same asset. When the user appended relevant free-text context, copy it faithfully into input.user_context; otherwise keep user_context as an empty string.
 
 Summary rule:
 - In the Markdown table/notes, each criterion judgment must be a non-empty 1–2 sentence explanation containing the confirmed asset-specific fact, why it maps to the selected score, and the key limitation.
@@ -12635,9 +12695,9 @@ The final answer must contain exactly one copyable fenced code block. Inside tha
 The TAB1 importer splits on that exact separator and parses the entire suffix once. Therefore the JSON suffix must be one complete top-level array, not several JSON objects or partial fragments.
 
 \`\`\`text
-# SKBP Fast Triage Result
+# SKBP Simple Research Result
 
-> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.7. Full Scout v3.8 has not been run.
+> Version statement: This result was researched and scored with GPT instruction 1 — Simple Research v3.7. Advanced Research v3.9 has not been run.
 
 중요: 한 문장으로 triage 결론과 filter rationale을 먼저 씁니다. 예: 공개 자료상 asset identity는 확인되지만 개발 단계가 Discontinued / inactive로 확인되어 INSUFFICIENT로 처리합니다.
 
@@ -12647,7 +12707,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
 
 ## Notes
 - Keep notes short.
-- Mention only source uncertainty, duplicate rows, or reason to run Full Scout.
+- Mention only source uncertainty, duplicate rows, or reason to run Advanced Research.
 
 --- JSON DATA ---
 
@@ -12672,7 +12732,7 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
       "raw_markdown": "",
       "source_format": "fast_triage_markdown",
       "parser_status": "fast_triage",
-    "parser_note": "GPT instruction 1 Fast Triage v3.7 output. Full Scout v3.8 review has not been run."
+    "parser_note": "GPT instruction 1 Simple Research v3.7 output. Advanced Research v3.9 review has not been run."
     },
     "json_summary": {
       "company": "Unknown",
@@ -12743,13 +12803,13 @@ The TAB1 importer splits on that exact separator and parses the entire suffix on
     },
     "validation": {
       "instruction_version": "3.2",
-      "version_statement": "Researched and scored with GPT instruction 1 — Fast Triage v3.7; Full Scout v3.8 not run.",
+      "version_statement": "Researched and scored with GPT instruction 1 — Simple Research v3.7; Advanced Research v3.9 not run.",
       "cross_checked_facts": [],
       "uncertain_points": [],
       "source_registry": []
     },
     "final_insight": {
-      "one_line_summary": "Asset identity must be verified before Full Scout.",
+      "one_line_summary": "Asset identity must be verified before Advanced Research.",
       "recommendation": "Verify asset identity",
       "most_important_diligence_question": ""
     }
@@ -12770,10 +12830,10 @@ Remember:
 - For one input entry, output a JSON array with one object.
 - For multiple input entries, output one JSON array item per candidate in the original order, up to 50.
 - Do not leave pipe-delimited template choices such as "SELECT | REJECT | INSUFFICIENT" in the final JSON; choose exactly one allowed value.
-- Recommendation mapping is exact: SELECT -> "Run Full Scout"; REJECT -> "Monitor / gather more evidence"; INSUFFICIENT -> "Do not run Full Scout".
-- Keep hard_filter.decision_uncertainty=false for Fast Triage; its status is determined by identity, activity, and the three scores.
+- Recommendation mapping is exact: SELECT -> "Run Advanced Research"; REJECT -> "Monitor / gather more evidence"; INSUFFICIENT -> "Do not run Advanced Research".
+- Keep hard_filter.decision_uncertainty=false for Simple Research; its status is determined by identity, activity, and the three scores.
 - The user will copy this one combined block and paste it once into the dashboard; the dashboard will split the Markdown and JSON automatically.
-- Do not include Full Scout-only criteria, marketability, competitor tables, or peak sales.`;
+- Do not include Advanced Research-only criteria, marketability, competitor tables, or peak sales.`;
 }
 
 function buildTriageInstructionPrompt() {
@@ -12791,7 +12851,7 @@ function buildGptInstructionPromptLegacy() {
 Mission:
 Evaluate exactly one biotech/pharma pipeline asset through company research, attachment review, public-source verification, competitor search, seven-criterion scoring, and evidence tracking. Return exactly one copyable fenced code block containing the Markdown report first and the valid JSON second.
 
-This is GPT instruction 2: Full Scout v3.8. State v3.8 in the Markdown report as the original-report provenance, not as a later dashboard score-recalculation notice. In compact JSON, do not repeat schema/instruction/rubric version fields; the dashboard adds schema 3.2 and instruction/rubric 3.8 during deterministic expansion.
+This is GPT instruction 2: Advanced Research v3.9. State v3.9 in the Markdown report and JSON meta.instruction_version/meta.rubric_version as original-report provenance. The dashboard adds schema 3.2. The seven scoring rules and thresholds are unchanged from v3.8; this release adds contextual IP/launch fields only.
 
 Evidence Discipline (apply to every factual field and every scoring criterion):
 ${SHARED_EVIDENCE_DISCIPLINE}
@@ -12829,12 +12889,12 @@ Identity Gate / identity-not-verified early stop:
 - Use only a short identity check at this gate. Check for at least one credible biotech source type: official company/pipeline page, clinical trial registry, regulatory source, peer-reviewed publication, reputable biotech news, company presentation, patent/source that clearly links the asset to a drug target or indication.
 - Fail this gate only when the named asset itself cannot be verified as a specific biotech/pharma pipeline asset from credible public sources. Missing target, MoA, modality, indication, stage, country, or ownership does not fail the gate; write Unknown for that factual field, record the uncertainty, and continue the full review and scoring.
 - If search results are mostly unrelated SKUs, tools, electronics, finance tickers, unrelated abbreviations, or ambiguous non-drug references and no credible source verifies a specific drug-development asset, classify it as identity not verified.
-- If the asset identity is not verified, stop Full Scout and return FAIL / Deprioritize. Set hard_filter.reason exactly to "Asset identity not verified from public biotech/pharma sources." A confirmed terminal lifecycle must be represented only by structured_table.development_stage="Discontinued / inactive"; that canonical stage is the sole lifecycle status gate. Suspended or Halted alone is a pause signal, not a terminal lifecycle conclusion.
-- Lifecycle-confirmed early stop: after verifying the asset identity and one credible terminal lifecycle source, set structured_table.development_stage="Discontinued / inactive" and stop the Full Scout. Keep the Markdown short: state the confirmed inactive status, source, and any known stop reason/date. Do not perform additional target/MoA/data research, competitive landscaping, marketability, expansion, or extended source chasing. Set hard_filter.reason to a short "Lifecycle stopped: ..." statement. Keep the required Compact v2 JSON contract with hard_filter.status="FAIL", hard_filter.hard_blocker=true, final_insight.recommendation="Deprioritize", and concise zero-score/uncertainty entries where deeper diligence was intentionally skipped. In either early-stop case, show \`—\` for every score in Markdown; JSON score 0 values are schema placeholders only, not completed zero-score evaluations. For a suspended/halted program, retain a confirmed stage where available, otherwise use Unknown; continue the completed assessment and document the pause.
+- If the asset identity is not verified, stop Advanced Research and return FAIL / Deprioritize. Set hard_filter.reason exactly to "Asset identity not verified from public biotech/pharma sources." A confirmed terminal lifecycle must be represented only by structured_table.development_stage="Discontinued / inactive"; that canonical stage is the sole lifecycle status gate. Suspended or Halted alone is a pause signal, not a terminal lifecycle conclusion.
+- Lifecycle-confirmed early stop: after verifying the asset identity and one credible terminal lifecycle source, set structured_table.development_stage="Discontinued / inactive" and stop the Advanced Research. Keep the Markdown short: state the confirmed inactive status, source, and any known stop reason/date. Do not perform additional target/MoA/data research, competitive landscaping, marketability, expansion, or extended source chasing. Set hard_filter.reason to a short "Lifecycle stopped: ..." statement. Keep the required Compact v2 JSON contract with hard_filter.status="FAIL", hard_filter.hard_blocker=true, final_insight.recommendation="Deprioritize", and concise zero-score/uncertainty entries where deeper diligence was intentionally skipped. In either early-stop case, show \`—\` for every score in Markdown; JSON score 0 values are schema placeholders only, not completed zero-score evaluations. For a suspended/halted program, retain a confirmed stage where available, otherwise use Unknown; continue the completed assessment and document the pause.
 - Uncertain rights or exact stage alone is REVIEW, not automatic FAIL.
 - In the identity-not-verified case, the final answer must still be exactly one combined fenced code block, but both the Markdown and JSON portions must be short.
 - Identity-not-verified markdown block format:
-  - Title: "# Pipeline Scout Result — Asset Identity Not Verified: **[ASSET_NAME]**"
+  - Title: "# Advanced Research Result — Asset Identity Not Verified: **[ASSET_NAME]**"
   - One-line conclusion: "Public-source identity check did not verify this as a biotech/pharma pipeline asset."
   - Include only 3 short bullets: what was searched, what was found, what source would be needed to proceed.
   - Include references only for the few sources that explain the non-match or ambiguity.
@@ -12861,14 +12921,14 @@ Non-negotiable rules:
 10. Express every sales output in million USD in Markdown. JSON keeps the final Marketability score plus only the minimal A/B/C/D output projection used for score audit and detail display; complete inputs and rationale stay in Markdown.
 11. Hard Filter is canonical: PASS when Total >= 14, Target Relevance >= 3, MoA Validity = 3, and Data Maturity = 3. FAIL when Total <= 8 or any of Target Relevance, MoA Validity, or Data Maturity is 0. REVIEW is every completed assessment that meets neither PASS nor FAIL. Asset identity not verified and a confirmed terminal lifecycle are early-stop cases, not completed score assessments.
 11a. Set hard_filter.hard_blocker=true only for a confirmed FAIL blocker. Set hard_filter.decision_uncertainty=true only when stage, rights/license/ownership, asset identity, source/registry, sponsor, or active-program uncertainty prevents an otherwise firm decision. These booleans keep Filter 2 deterministic after research prose stays in Markdown.
-11b. Copy the exact assessed company and asset identifiers into input.company_input and input.asset_input. These two aliases are used only to join the Fast Triage and Full Scout rows for the same asset. When the user appended relevant free-text context, copy it faithfully into input.user_context; otherwise keep user_context as an empty string.
+11b. Copy the exact assessed company and asset identifiers into input.company_input and input.asset_input. These two aliases are used only to join the Simple Research and Advanced Research rows for the same asset. When the user appended relevant free-text context, copy it faithfully into input.user_context; otherwise keep user_context as an empty string.
 12. If the latest stage, ownership, financing, or trial status is unclear, mark it as uncertain and state what source is needed.
 13. Do not invent URLs. If a URL cannot be verified, describe the missing source in Markdown and validation.uncertain_points.
 14. Work out commercial_rationale_status, method, A/B/C/D, and any external forecast in Markdown. Put the resulting 0–3 score and the minimal A/B/C/D output projection shown in the Compact v2 template in JSON.
 15. The JSON template defaults Marketability to score 0. A reliable calculation or asset-specific external forecast may support scores 1–3; document the complete method and numbers in Markdown.
 16. Keep source_report.raw_markdown as an empty string because the dashboard inserts the Markdown portion. Do not add keys not present in the Compact v2 template; research details already present in Markdown must not be duplicated in JSON.
 
-Scoring v3.8 rules:
+Scoring v3.9 rules:
 - Each scoring criterion must be scored independently using its own criterion-specific scoring table.
 - Do not apply a universal scoring rule across all criteria.
 - For every criterion, assign exactly one integer score: 0, 1, 2, or 3.
@@ -12896,10 +12956,10 @@ Investigation-note requirements (use only the evidence already identified while 
 - MoA score 2 or 3: in that criterion's investigation_note, use at most one sentence to state whether the verified scoring evidence connects to a disease-relevant phenotype, efficacy, or biomarker, or remains limited to proximal evidence such as a cellular-signaling marker. Omit this statement for MoA score 0 or 1. If the distinction cannot be assessed from existing evidence, write '확인 불가'; do not infer.
 - Expansion Potential score 1, 2, or 3: in that criterion's investigation_note, state whether the confirmed additional indication(s) are single or multiple and briefly give each indication's assessed-asset program/data status. If unavailable from existing scoring evidence, write '확인 불가'; do not infer.
 
-IP & Launch Outlook investigation rules (Section 2A; contextual diligence only — this does not affect the seven Full Scout scores or Hard Filter):
+IP & Launch Outlook investigation rules (Section 2A; contextual diligence only — this does not affect the seven Advanced Research scores or Hard Filter):
 - For Core Patent / CoM: search public patent sources for protection directly relevant to the assessed asset. Classify the relevant protection as Composition of Matter (CoM), Method of Use, Formulation, Salt/Polymorph, Dosing, Combination, Manufacturing/Process, Delivery/Device, or Other. Do not misclassify Method-of-Use as CoM. Report the representative patent/family, Earliest Priority Date, and expected or confirmed expiry where available. Distinguish PTA and PTE when identifiable and do not assume hypothetical PTE. If expiry is estimated, label it "Estimated" and briefly state the basis. If no relevant CoM can be verified, write "No CoM identified" or "Unknown"; do not infer.
 - For Expected Launch Year: prefer explicit company guidance, then credible analyst forecasts. If neither is available, a stage-based internal estimate may be used; for an internally modeled estimate, briefly state the logic from the verified current stage through remaining development, filing/review, and launch. If a meaningful estimate cannot be supported, write "Unknown". If both launch year and relevant patent expiry are available, calculate approximate Patent Runway at Launch; otherwise write "Not assessable".
-Keep Section 2A concise; it is contextual diligence information only and does not affect the seven Full Scout scores or Hard Filter.
+Keep Section 2A concise. JSON ip_launch_outlook contains only com_expiry_year and expected_launch_year, each a single integer year or null. For com_expiry_year use the assessed asset's verified basic Composition-of-Matter expiry only, excluding PTA/PTE, use/formulation/process patents, and unrelated or competitor patents. Do not choose the latest patent date or infer expiry from priority date alone. If only a range is supported or no defensible single-year estimate exists, use null; never invent a midpoint or exact date. State the representative patent, jurisdiction, expiry basis, launch geography, source/estimate type and URLs in Section 2A only. Distinguish Unknown (researched but not established) from Not researched (not assessed). This context never changes scores or Hard Filter.
 
 Marketability method and score (document complete inputs in Markdown; JSON keeps the score and minimal A/B/C/D outputs):
 - assessment_method is exactly calculation, external_forecast, both, or insufficient_evidence. Do not force A/B/C/D when no reliable internal calculation exists.
@@ -12928,9 +12988,9 @@ ${SHARED_CANONICAL_MODALITY_RULE}
 
 Use this exact report structure inside the Markdown portion of the single combined code block:
 
-# [Company] Pipeline Scout Report: **[Asset]**
+# [Company] Advanced Research Report: **[Asset]**
 
-Include this short provenance statement near the top: "Original report provenance: researched and scored with GPT instruction 2 — Full Scout v3.8 (schema v3.2); URLs are included for auditability." Do not add later recalculation dates or revision history to the original report; the dashboard records those separately in change history.
+Include this short provenance statement near the top: "Original report provenance: researched and scored with GPT instruction 2 — Advanced Research v3.9 (schema v3.2); URLs are included for auditability." Do not add later recalculation dates or revision history to the original report; the dashboard records those separately in change history.
 
 중요: 한 문장으로 filter/recommendation rationale을 먼저 씁니다. 예: 공개 자료상 active asset명·compound code·임상 단계가 명확히 확인되지 않아 stage/ownership은 uncertain / REVIEW로 처리합니다.
 
@@ -12971,9 +13031,9 @@ ${SHARED_CANONICAL_CLUSTER_RULE}
 |---|---|---|
 | Core Patent / CoM |  | patent type, representative patent/family, source URL |
 | Earliest Priority Date |  | patent source |
-| Expected Patent Expiry / PTE |  | confirmed expiry or estimated basis |
+| Expected CoM Base Expiry Year (excluding PTA/PTE) |  | representative CoM, jurisdiction, expiry basis, URL; other patents/extensions separately here |
 | Expected Launch Year |  | company guidance / analyst forecast / internal estimate |
-| Patent Runway at Launch |  | expiry year - launch year, when assessable |
+| Patent Runway at Launch |  | basic CoM expiry year - launch year in the same geography, when assessable; exclude extensions |
 
 ## 3) Scorecard Summary
 
@@ -13169,14 +13229,14 @@ End the Markdown portion after References. The next line in this template is the
 {
   "meta": {
     "schema_version": "3.2",
-    "instruction_version": "3.8",
+    "instruction_version": "3.9",
     "review_type": "full_scout",
     "generated_at": "YYYY-MM-DD",
     "language": "ko",
     "analyst_role": "[OIT] PreC Pipeline Shortlister",
     "output_format": ["markdown_report", "json"],
     "output_filename_base": "Company_Asset_YYYYMMDD",
-    "rubric_version": "3.8",
+    "rubric_version": "3.9",
     "rubric_author": "kate"
   },
   "input": {
@@ -13190,7 +13250,7 @@ End the Markdown portion after References. The next line in this template is the
     "raw_markdown": "",
     "source_format": "gpt_markdown_report",
     "parser_status": "gpt_structured_output",
-    "parser_note": "GPT instruction 2 Full Scout v3.8 output using schema v3.2; Markdown report and JSON were generated together from the same evidence set."
+    "parser_note": "GPT instruction 2 Advanced Research v3.9 output using schema v3.2; Markdown report and JSON were generated together from the same evidence set."
   },
   "company_profile": {
     "company_name": "",
@@ -13233,7 +13293,7 @@ End the Markdown portion after References. The next line in this template is the
   },
   "hard_filter": {
     "status": "FAIL",
-    "reason": "Default template state: replace with the evidence-based Full Scout decision.",
+    "reason": "Default template state: replace with the evidence-based Advanced Research decision.",
     "flags": []
   },
   "scoring": {
@@ -13416,7 +13476,7 @@ End the Markdown portion after References. The next line in this template is the
 }
 
 Final validation before output:
-- Keep the Markdown version statement at instruction/rubric 3.8. The dashboard deterministically adds JSON schema 3.2 and instruction/rubric 3.8.
+- Keep Markdown and JSON meta.instruction_version/meta.rubric_version at 3.9. The dashboard adds schema 3.2; do not relabel historical reports.
 - Internally verify that the seven integer criterion scores sum correctly; the dashboard derives total_score and max_score.
 - Apply PASS >= 14 plus TR >= 3, MoA = 3, and Data = 3. Apply FAIL for Total <= 8 or any TR/MoA/Data score of 0. Apply identity and terminal-lifecycle early-stop rules before completing the scorecard.
 - Do not infer Competitive Landscape 3 from no competitors; record search sufficiency, scope, and limitations.
@@ -16949,6 +17009,8 @@ function setTableMode(mode) {
   if (state.tableMode === nextMode) return;
   captureModeFilters(activeTableMode());
   state.tableMode = nextMode;
+  if (elements.columnSettingsPanel) elements.columnSettingsPanel.hidden = true;
+  elements.columnSettingsButton?.setAttribute('aria-expanded', 'false');
   restoreModeFilters(nextMode);
   state.page = 1;
   state.selectedIds.clear();
@@ -17328,7 +17390,7 @@ elements.pipelineTable.addEventListener('click', (event) => {
     return;
   }
   if (event.target.closest('[data-table-text-edit], [data-table-modality-edit], [data-table-stage-edit], [data-table-country-edit], [data-focus-official-locked], [data-custom-score-edit]')) return;
-  if (event.target.closest('input, select, textarea, button, a, label')) return;
+  if (event.target.closest('input, select, textarea, button, a, label, details')) return;
   const rowElement = event.target.closest('[data-record-id]');
   if (!rowElement) return;
   const recordId = rowElement.dataset.recordId;
@@ -17666,6 +17728,17 @@ elements.workflowPriorityList?.addEventListener('click', (event) => {
 });
 elements.columnSettingsButton?.addEventListener('click', () => {
   elements.columnSettingsPanel.hidden = !elements.columnSettingsPanel.hidden;
+  elements.columnSettingsButton.setAttribute('aria-expanded', String(!elements.columnSettingsPanel.hidden));
+  if (!elements.columnSettingsPanel.hidden) {
+    const mode = activeTableMode();
+    if (!Object.hasOwn(state.extraColumnsByMode, mode)) {
+      state.extraColumnsByMode[mode] = [...(RECOMMENDED_RESEARCH_COLUMNS[mode] || [])];
+      persistExtraColumns();
+    }
+    state.extraColumnsOpened.add(mode);
+    renderColumnSettings();
+    renderTable();
+  }
 });
 
 elements.shortlistingProjectSwitchButton?.addEventListener('click', () => {
@@ -17842,11 +17915,10 @@ elements.step0SummaryDashboardToggleButton?.addEventListener('click', () => {
 elements.columnSettingsGrid?.addEventListener('change', (event) => {
   const checkbox = event.target.closest('input[type="checkbox"]');
   if (!checkbox) return;
-  if (checkbox.checked) {
-    state.extraColumns.add(checkbox.value);
-  } else {
-    state.extraColumns.delete(checkbox.value);
-  }
+  const selected = activeExtraColumnKeys();
+  if (checkbox.checked) selected.add(checkbox.value);
+  else selected.delete(checkbox.value);
+  state.extraColumnsByMode[activeTableMode()] = [...selected];
   persistExtraColumns();
   renderTable();
 });
@@ -18162,12 +18234,16 @@ elements.agentInput.addEventListener('keydown', (event) => {
 
 elements.agentForm.addEventListener('submit', async (event) => {
   event.preventDefault();
-  if (activeTableMode() === 'triage') return;
+  if (agentBusy || !agentConversations?.writable()) return;
   const userQuestion = elements.agentInput.value.trim();
   if (!userQuestion) return;
-  const question = activeKnowledgeMapNodeContext?.context && !userQuestion.includes('[선택 노드:')
+  const question = !elements.knowledgeMapPanel.hidden && activeKnowledgeMapNodeContext?.context && !userQuestion.includes('[선택 노드:')
     ? `${activeKnowledgeMapNodeContext.context}\n\n[사용자 질문]\n${userQuestion}`
     : userQuestion;
+  agentBusy = true;
+  agentRequestController = new AbortController();
+  const requestController = agentRequestController;
+  agentConversations.setBusy(true);
   elements.agentInput.value = '';
   retitleActiveSessionFromQuestion(userQuestion);
   addAgentMessage('user', userQuestion);
@@ -18180,11 +18256,24 @@ elements.agentForm.addEventListener('submit', async (event) => {
     submitButton.innerHTML = '<svg class="agent-send-progress" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" /></svg>';
   }
   const responseBubble = addAgentMessage('assistant', '질문 분석 중...', { pending: true });
+  const requestContext = {
+    record_id: getAgentAnchorRecordId(question),
+    conversation_id: state.activeAgentSessionId,
+    scope_mode: elements.step0Panel && !elements.step0Panel.hidden ? 'listing' : 'research',
+    candidate_record_ids: dashboardAgentCandidateRecordIds(),
+    dashboard_context: buildDashboardAgentContext()
+  };
   try {
-    await streamDashboardAgentReply(question, responseBubble);
+    await agentConversations.flush();
+    if (requestController.signal.aborted) return;
+    await streamDashboardAgentReply(question, responseBubble, requestContext);
+    await agentConversations.flush();
   } catch (error) {
     updateAgentMessage(responseBubble, `AI 응답 오류: ${error.message}`, { done: true });
   } finally {
+    if (requestController !== agentRequestController) return;
+    agentBusy = false;
+    agentConversations.setBusy(false);
     if (submitButton) {
       submitButton.disabled = false;
       submitButton.removeAttribute('aria-busy');
@@ -18387,9 +18476,9 @@ floatingAgentController = initFloatingAgent({
   maximizeButton: elements.aiDrawer.querySelector('[data-floating-agent-maximize]'),
   dragHandle: elements.aiDrawer.querySelector('[data-floating-agent-drag]'),
   resizeHandle: elements.aiDrawer.querySelector('[data-floating-agent-resize]'),
-  storageKey: 'skbp.dashboard.floatingAgentGeometry.v3',
-  initialWidth: 560,
-  initialHeight: 680,
+  storageKey: 'skbp.dashboard.floatingAgentGeometry.v4',
+  initialWidth: 760,
+  initialHeight: 820,
   focusTarget: elements.agentInput
   });
   syncKnowledgeMapTabState();
@@ -18399,6 +18488,7 @@ initPageJumpControls();
 pipelineHeaderFreezeController = initPipelineHeaderFreeze();
 initAuthUI();
 initializeAgentSessions();
+elements.aiDrawerButton?.addEventListener('click', refreshAgentScopeLabel);
 function renderActiveKnowledgeNodeContext() {
   const context = activeKnowledgeMapNodeContext;
   if (!elements.agentKnowledgeNodeContext || !elements.agentKnowledgeNodeLabel) return;
@@ -18436,6 +18526,7 @@ window.addEventListener('skbp:open-agent', (event) => {
   const prompt = String(event.detail?.prompt || '').trim();
   if (prompt && elements.agentInput) elements.agentInput.value = prompt;
   renderActiveKnowledgeNodeContext();
+  refreshAgentScopeLabel();
   floatingAgentController?.open();
 });
 const agentLaunchParams = new URLSearchParams(window.location.search);

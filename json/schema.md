@@ -1,6 +1,6 @@
-# SKBP Pipeline Shortlist JSON Structure — Fast Triage v3.7 / Full Scout v3.8 / Shortlisting v1.7
+# SKBP Pipeline Shortlist JSON Structure — Fast Triage v3.7 / Full Scout v3.9 / Shortlisting v1.7
 
-`drug-valuation.schema.json` defines the persisted `dashboard_hybrid_v1` record. GPT Markdown remains the complete research/audit document. Persisted JSON is a compact display projection: dashboard columns, chart/filter inputs, scores, the small amount of criterion evidence needed by score hover/detail views, source/competitor graph links, the preserved Markdown, and dashboard-owned operational state. New Fast Triage records use instruction/rubric v3.7 and Full Scout records use v3.8.
+`drug-valuation.schema.json` defines the persisted `dashboard_hybrid_v1` record. GPT Markdown remains the complete research/audit document. Persisted JSON is a compact display projection: dashboard columns, chart/filter inputs, scores, the small amount of criterion evidence needed by score hover/detail views, source/competitor graph links, the preserved Markdown, and dashboard-owned operational state. New Fast Triage records use instruction/rubric v3.7 and Full Scout records use v3.9.
 
 ## Dashboard GPT Response Ingestion
 
@@ -200,7 +200,7 @@ Loosely-typed `meta` sub-objects support detail-page workflows that live outside
 
 ## Rubric Version Management
 
-`config/rubric-release.json` is the canonical release manifest for the active Fast Triage, Full Scout, and Shortlisting workflow versions, schema versions, criteria/rubric/display file paths, storage contract, and deterministic calculation constants such as the Marketability Global multiplier. `main.py` loads its version constants and rubric paths from this file and refuses to start when required manifest entries or files are missing. Current Full Scout definitions live in the files declared by the manifest (`v3_8_full.md` / `v3_10_display.md`), Fast Triage uses the declared `v3_5_triage.md`, and Shortlisting uses the deterministic `config/oi_partnership_criteria.md` plus its release-history file. The release consistency test also checks that the copied GPT guidance and visible frontend version labels match the manifest.
+`config/rubric-release.json` is the canonical release manifest for the active Fast Triage, Full Scout, and Shortlisting workflow versions, schema versions, criteria/rubric/display file paths, storage contract, and deterministic calculation constants such as the Marketability Global multiplier. `main.py` loads its version constants and rubric paths from this file and refuses to start when required manifest entries or files are missing. Current Full Scout definitions live in the files declared by the manifest (`v3_9_full.md` / `v3_10_display.md`), Fast Triage uses the declared `v3_7_triage.md`, and Shortlisting uses the deterministic `config/oi_partnership_criteria.md` plus its release-history file. The release consistency test also checks that the copied GPT guidance and visible frontend version labels match the manifest.
 
 The manifest coordinates a release; it does not infer scoring code from edited prose. A research-only wording change can remain within an instruction file. Before a release is used to generate or rescore records, a score-changing change may be finalized within that unreleased version, but the active rubric, display guidance, GPT instruction, visible frontend guidance, and relevant regression tests must change together. Once a release has been used to generate or rescore records, any score-changing change requires a new rubric version; structural fields or deterministic formulas additionally require the compact contract, schema/parser/storage/render surfaces, and regression tests to change in the same release.
 
@@ -283,6 +283,30 @@ count and competitor-table names separately; names fall back to `similar_pipelin
 when the competitor table is empty. Missing counts are not displayed as zero.
 
 ## Research columns and CSV export
+
+### Advanced v3.9: optional IP and launch outlook
+
+Instruction and rubric move together to 3.9; Display stays 3.10, schema 3.2 and Compact v2 remain compatible. Seven scores/thresholds and the scoring-definition fingerprint are unchanged from 3.8. The release manifest lists scoring-compatible versions so this contextual addition does not invalidate prior reviews. Never relabel stored original provenance. New Advanced templates explicitly emit `meta.instruction_version` and `meta.rubric_version` as 3.9; versionless older Compact input keeps its 3.8 fallback.
+
+Optional Advanced-only `ip_launch_outlook` has two keys: `com_expiry_year` and `expected_launch_year`, each an integer 1900–2199 or null. The former is basic CoM expiry, excluding PTA/PTE and other patent types, not a computed maximum over patents. Exact dates, ranges, jurisdiction, representative patent, source URLs and estimate type remain in original Markdown Section 2A. No midpoint or expiry-from-priority-date calculation is performed by the dashboard.
+
+Absence is preserved for historical records; the read-only table checks explicitly labelled subject-asset fields in the original report. No field in an old original means `미조사`; explicit unknown/null means `확인 불가`; an incomplete v3.9 object means `조사 항목 누락`; ambiguous evidence or invalid input means `원문 확인 필요`. General patent mentions, references, competitor launches and publication years are not estimates. A new Markdown assessment may explicitly say `Not researched`. Original text/scores are never rewritten for these projections.
+
+`ip_launch.py` normalizes digit strings and unknown values; malformed optional values are omitted and preserved as warnings in existing `validation.uncertain_points`, without blocking the entire upload. `record_storage.py` preserves valid optional values. Advanced column settings add **CoM base expiry year** and **Expected launch year**, initially unchecked; existing presets stay unchanged. Each column exposes evidence and a link to the original report. Advanced CSV exports both columns even when hidden. Simple does not receive these fields or columns.
+
+User-facing workflow names are **Simple Research** (instruction 1) and
+**Advanced Research** (instruction 2). Machine identifiers `fast_triage`, `full_scout`,
+`triage_only`, JSON keys, and rubric versions remain unchanged. Simple recommendation
+strings `Run Advanced Research` and `Do not run Advanced Research` are accepted alongside
+the legacy `Run Full Scout` and `Do not run Full Scout` values. Original stored reports
+are not rewritten by this terminology update.
+
+Additional table columns start hidden on page load. Opening column settings activates
+the current workflow's saved selection, or its recommended preset on first use. Simple
+defaults: mechanism, key data evidence, key diligence question, evidence needed next.
+Advanced defaults: research summary, mechanism, key data evidence, evidence gaps,
+competitive differentiation, key diligence question. Selections are stored separately
+per workflow; closing the settings keeps the selected columns visible until reload.
 
 `src/research-columns.js` maps existing fields into optional research columns and
 workflow-specific exports. `AI assessment` reads `final_insight.recommendation` (legacy

@@ -1,10 +1,16 @@
-# SKBP Pipeline Finder v3.8 — Full Scoring Criteria
+# SKBP Pipeline Finder v3.9 — Full Scoring Criteria
+
+## v3.9 release note — IP / Launch display projection
+
+Released 2026-09-17. Instruction and rubric are versioned together as Advanced Research v3.9. The seven scoring definitions, thresholds, evidence requirements and scoring-definition fingerprint are unchanged from v3.8. Existing v3.8 scores/reviews remain compatible; original report versions are preserved. Display document version remains v3.10.
+
+Advanced reports additionally emit optional `ip_launch_outlook.com_expiry_year` and `expected_launch_year` (integer year or null). These are contextual research, never scoring inputs. CoM is the assessed asset's basic composition-of-matter expiry, excluding PTA/PTE and other patent types; never infer it from a priority date alone or choose the latest patent in a portfolio. Keep jurisdiction, representative patent, source, estimation basis and launch geography in Markdown Section 2A. Ranges remain in Markdown, with null in JSON. Omitted legacy information is not researched, not evidence of no patent. New JSON explicitly records original instruction/rubric 3.9; versionless historical Compact input retains its legacy 3.8 fallback.
 
 This release is a complete, self-contained decision reference. It retains the v3.7 Evidence Discipline, Evidence Type, canonical taxonomy, and Marketability `Global Obtainable Peak Sales` calculation with its `1.5` US-to-global multiplier, while applying the active score rules: the Advanced Research PASS Target Relevance gate is `TR >= 3`; Competitive Landscape is determined by comparator-backed evidence rather than competitor count; Platform Attractiveness Score 3 requires reproducibility or official First Patient Dosed after the Score-2 evidence; and Expansion Potential Score 3 requires an official additional-indication program plus asset-specific quantitative data in that same indication, without a separate multiple-indication gate. Identity/lifecycle remains a pre-research gate and Section 8 retains the early-stop display rule. Theme/Cluster remains classification and exploration metadata only; it is not a Target Relevance score basis.
 
 ## Canonical Score-Rule Alignment
 
-The following inherited rules are restated here as the active v3.8 decision reference:
+The following inherited rules are restated here as the active v3.9 decision reference:
 
 - **Target Relevance:** 0 is only for an identity-verified asset with insufficient indication/relevance information; 1 is outside the broad SKBP neurologic/psychiatric/neuroimmune/neurodegenerative/pain scope; 2 is within that broad scope but outside the six priority indications; 3 is one of the six priority indications. Generic, acute, postoperative, and non-neuropathic pain are TR 2; neuropathic pain is TR 3. Identity not verified is an early stop, not TR 0.
 - **Platform Attractiveness:** Score 2 requires at least one quantitative technical advantage versus an appropriate comparator, normally limited to a single condition or platform-derived asset. Score 3 first requires that Score-2 evidence, then either (a) reproduction of the same advantage across multiple independent conditions (for example, model, species, or dose) or officially linked platform-derived assets, or (b) First Patient Dosed by an officially linked platform-derived asset. First Patient Dosed alone is insufficient.

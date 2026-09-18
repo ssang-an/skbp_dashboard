@@ -214,7 +214,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         launcher = HTML[HTML.index('id="aiDrawerButton"') - 40 : HTML.index('id="aiDrawerButton"') + 500]
         self.assertIn("hidden", launcher)
         identity = function_body(JS, "renderAgentIdentity")
-        self.assertIn("activeTableMode() !== 'triage'", identity)
+        self.assertIn("const isAvailable = true", identity)
         self.assertIn("const title = 'All Pipelines Agent'", identity)
         self.assertNotIn("Pipeline Discovery Agent", HTML)
         self.assertNotIn("Pipeline Discovery Agent", JS)
@@ -224,7 +224,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         self.assertNotIn("후보 선별 Agent", identity)
         self.assertNotIn("집중 관리 Agent", identity)
         submit = JS[JS.index("elements.agentForm.addEventListener('submit'") :]
-        self.assertIn("if (activeTableMode() === 'triage') return", submit)
+        self.assertNotIn("if (activeTableMode() === 'triage') return", submit)
+        self.assertIn("agentBusy || !agentConversations?.writable()", submit)
         context = function_body(JS, "buildDashboardAgentContext")
         for field in (
             "oi_partnership=",

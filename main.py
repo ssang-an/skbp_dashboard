@@ -25,6 +25,7 @@ from typing import Any
 import subprocess
 import sys
 import uuid
+import chat_history
 import zipfile
 from urllib.parse import unquote, urlsplit
 from xml.etree import ElementTree
@@ -33,6 +34,7 @@ from zoneinfo import ZoneInfo
 import requests
 import urllib3
 import document_pipeline
+from ip_launch import normalize_ip_launch
 from record_storage import (
     FULL_CRITERION_IDS as STORAGE_FULL_CRITERION_IDS,
     LEGACY_STORAGE_PROFILES,
@@ -123,6 +125,7 @@ TRIAGE_RELEASE = RUBRIC_WORKFLOWS["fast_triage"]
 FULL_SCOUT_RELEASE = RUBRIC_WORKFLOWS["full_scout"]
 SHORTLISTING_RELEASE = RUBRIC_WORKFLOWS["shortlisting"]
 SCORING_CRITERIA_VERSION = str(FULL_SCOUT_RELEASE["rubric_version"])
+FULL_SCOUT_SCORING_COMPATIBLE_VERSIONS = set(FULL_SCOUT_RELEASE.get("scoring_compatible_versions", [SCORING_CRITERIA_VERSION]))
 TRIAGE_CRITERIA_VERSION = str(TRIAGE_RELEASE["rubric_version"])
 TRIAGE_SCHEMA_VERSION = str(TRIAGE_RELEASE["schema_version"])
 FULL_SCOUT_SCHEMA_VERSION = str(FULL_SCOUT_RELEASE["schema_version"])
@@ -132,8 +135,8 @@ SCORING_CRITERIA_DISPLAY_MD = ROOT / str(FULL_SCOUT_RELEASE["display_file"])
 OI_PARTNERSHIP_CRITERIA_VERSION = str(SHORTLISTING_RELEASE["criteria_version"])
 OI_PARTNERSHIP_CRITERIA_MD = ROOT / str(SHORTLISTING_RELEASE["criteria_file"])
 OI_PARTNERSHIP_RELEASE_HISTORY_MD = ROOT / str(SHORTLISTING_RELEASE["release_history_file"])
-# The active Full Scout release and each scoring-rule correction must trigger a
-# one-time review instead of treating a previously evaluated record as current.
+# Only scoring-rule corrections change this fingerprint. v3.9 adds optional
+# contextual research; existing v3.8 evaluations remain valid.
 FULL_SCOUT_RUBRIC_DEFINITION_REVISION = "v3-8-moa-expansion-investigation-notes-2026-09-01"
 # Disease Linkage badge (Shortlisting tab): only Full Scout v3.8+ reports are contractually
 # required to record a disease-relevant-vs-proximal sentence in moa_validity.investigation_note
@@ -460,6 +463,8 @@ app.router.route_class = DecodedRecordIdRoute
 async def log_bad_request_responses(request: Request, call_next: Any):
     """Keep development diagnostics for otherwise opaque client-side 400s."""
     response = await call_next(request)
+    if request.url.path.startswith('/api/chat'):
+        response.headers['Cache-Control'] = 'no-store'
     if response.status_code == 400:
         LOGGER.warning(
             "HTTP 400: method=%s path=%s query=%s content_type=%s",
@@ -914,6 +919,9 @@ def require_auth_developer(request: Request) -> dict[str, Any]:
     if not has_auth_role(user, ROLE_DEVELOPER):
         raise HTTPException(status_code=403, detail="개발자 권한이 필요합니다.")
     return user
+
+
+app.include_router(chat_history.router(require_authenticated_user, require_auth_developer))
 
 
 def start_user_session(user: dict[str, Any]) -> tuple[str, str]:
@@ -2698,8 +2706,8 @@ def is_current_full_scout_contract(record: dict[str, Any]) -> bool:
     if isinstance(meta.get("rubric_recalculation"), dict):
         return False
     return bool(
-        version_at_least(meta.get("instruction_version"), SCORING_CRITERIA_VERSION)
-        or version_at_least(meta.get("rubric_version"), SCORING_CRITERIA_VERSION)
+        version_at_least(meta.get("instruction_version"), "3.8")
+        or version_at_least(meta.get("rubric_version"), "3.8")
     )
 
 
@@ -2809,6 +2817,7 @@ def validate_minimal_dashboard_record(
             "triage",
             "company_profile",
             "competitive_analysis",
+            "ip_launch_outlook",
         }
         unexpected = sorted(set(record) - allowed_top_level)
         if unexpected:
@@ -3269,11 +3278,11 @@ def validate_minimal_dashboard_record(
             if status != expected_status:
                 validation_error(f"record[{index}] Fast Triage status must be {expected_status}; got {status}.")
             expected_recommendation = {
-                "SELECT": "Run Full Scout",
+                "SELECT": "Run Advanced Research",
                 "REJECT": "Monitor / gather more evidence",
-                "INSUFFICIENT": "Do not run Full Scout",
+                "INSUFFICIENT": "Do not run Advanced Research",
             }[status]
-            if str(final_insight.get("recommendation") or "").strip() != expected_recommendation:
+            if str(final_insight.get("recommendation") or "").strip().replace("Full Scout", "Advanced Research") != expected_recommendation:
                 validation_error(
                     f"record[{index}].final_insight.recommendation must be {expected_recommendation!r}."
                 )
@@ -3422,6 +3431,7 @@ def validate_records_for_save(
     synchronize_server_derived_scoring_fields(records)
     for index, record in enumerate(records):
         ensure_meta_defaults(record)
+        normalize_ip_launch(record)
         normalize_marketability_global_conversion(record)
         if is_minimal_dashboard_contract(record):
             validate_minimal_dashboard_record(
@@ -3606,16 +3616,16 @@ def validate_records_for_save(
                         f"record[{index}] Fast Triage status must be {expected_status} from identity/activity/TAR/MoA/Data, got {filter_status}."
                     )
                 recommendation_map = {
-                    "SELECT": "Run Full Scout",
+                    "SELECT": "Run Advanced Research",
                     "REJECT": "Monitor / gather more evidence",
-                    "INSUFFICIENT": "Do not run Full Scout",
+                    "INSUFFICIENT": "Do not run Advanced Research",
                 }
                 final_insight = record.get("final_insight")
                 if not isinstance(final_insight, dict):
                     validation_error(f"record[{index}].final_insight is required and must be an object.")
                 recommendation = str(final_insight.get("recommendation") or "").strip()
                 expected_recommendation = recommendation_map[expected_status]
-                if recommendation != expected_recommendation:
+                if recommendation.replace("Full Scout", "Advanced Research") != expected_recommendation:
                     validation_error(
                         f"record[{index}].final_insight.recommendation must be {expected_recommendation!r} "
                         f"when Fast Triage status is {expected_status}."
@@ -3630,11 +3640,11 @@ def validate_records_for_save(
                     f"record[{index}].meta.schema_version must remain {FULL_SCOUT_SCHEMA_VERSION} "
                     f"for Full Scout v{SCORING_CRITERIA_VERSION}."
                 )
-            if str(meta.get("instruction_version") or "").strip().lstrip("vV") != SCORING_CRITERIA_VERSION:
+            if str(meta.get("instruction_version") or "").strip().lstrip("vV") not in FULL_SCOUT_SCORING_COMPATIBLE_VERSIONS:
                 validation_error(
                     f"record[{index}].meta.instruction_version must be {SCORING_CRITERIA_VERSION} for current Full Scout output."
                 )
-            if str(meta.get("rubric_version") or "").strip().lstrip("vV") != SCORING_CRITERIA_VERSION:
+            if str(meta.get("rubric_version") or "").strip().lstrip("vV") not in FULL_SCOUT_SCORING_COMPATIBLE_VERSIONS:
                 validation_error(
                     f"record[{index}].meta.rubric_version must be {SCORING_CRITERIA_VERSION} for current Full Scout output."
                 )
@@ -10562,6 +10572,7 @@ def call_openrouter_chat(
     message: str,
     dashboard_context: str = "",
     context_records: list[dict[str, Any]] | None = None,
+    conversation_history: list[dict[str, str]] | None = None,
 ) -> tuple[str | None, str | None, list[dict[str, str | int]]]:
     selected_records = context_records or [record]
     primary_record = selected_records[0]
@@ -10596,6 +10607,7 @@ def call_openrouter_chat(
                     "Keep the answer concise enough to fit in a chat panel, usually under 450 words."
                 ),
             },
+            *(conversation_history or []),
             {
                 "role": "user",
                 "content": (
@@ -10730,6 +10742,7 @@ def stream_openrouter_chat(
     message: str,
     dashboard_context: str = "",
     context_records: list[dict[str, Any]] | None = None,
+    conversation_history: list[dict[str, str]] | None = None,
 ) -> tuple[Any, list[dict[str, str | int]], str | None]:
     selected_records = context_records or [record]
     primary_record = selected_records[0]
@@ -10761,6 +10774,7 @@ def stream_openrouter_chat(
                     "Keep the answer concise enough to fit in a chat panel, usually under 450 words."
                 ),
             },
+            *(conversation_history or []),
             {
                 "role": "user",
                 "content": (
@@ -12641,6 +12655,15 @@ def append_rubric_refresh_audit(
     )
 
 
+def compatible_score_version(record: dict[str, Any], value: Any, expected: str) -> bool:
+    actual = str(value or "").strip().lstrip("vV")
+    return actual == expected or (
+        not is_fast_triage_record(record)
+        and expected in FULL_SCOUT_SCORING_COMPATIBLE_VERSIONS
+        and actual in FULL_SCOUT_SCORING_COMPATIBLE_VERSIONS
+    )
+
+
 def record_has_current_rubric_evaluation(record: dict[str, Any], rubric_version: str) -> bool:
     """Return whether the stored official scoring has already been checked at this rubric version."""
     meta = record.get("meta") if isinstance(record.get("meta"), dict) else {}
@@ -12654,7 +12677,7 @@ def record_has_current_rubric_evaluation(record: dict[str, Any], rubric_version:
         recalculation.get("version") if isinstance(recalculation, dict) else None,
         meta.get("rubric_version"),
     )
-    version_is_current = any(str(value or "").strip().lstrip("vV") == expected for value in applied_versions)
+    version_is_current = any(compatible_score_version(record, value, expected) for value in applied_versions)
     if not version_is_current:
         return False
     if not is_fast_triage_record(record):
@@ -12673,14 +12696,14 @@ def record_has_current_ai_rubric_reassessment(record: dict[str, Any], rubric_ver
     expected = str(rubric_version or "").strip().lstrip("vV")
     if not expected:
         return False
-    if str(meta.get("rescored_rubric_version") or "").strip().lstrip("vV") == expected:
+    if compatible_score_version(record, meta.get("rescored_rubric_version"), expected):
         return True
     history = meta.get("rubric_refresh_history")
     if not isinstance(history, list):
         return False
     return any(
         isinstance(entry, dict)
-        and str(entry.get("version") or "").strip().lstrip("vV") == expected
+        and compatible_score_version(record, entry.get("version"), expected)
         and str(entry.get("result") or "") in {"updated", "no_change", "no_score_changes"}
         for entry in history
     )
@@ -12945,9 +12968,9 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
             hard_filter["status"] = status
             hard_filter["reason"] = f"Fast Triage rubric v{latest_rubric_version} AI score refresh"
             candidate.setdefault("final_insight", {})["recommendation"] = {
-                "SELECT": "Run Full Scout",
+                "SELECT": "Run Advanced Research",
                 "REJECT": "Monitor / gather more evidence",
-                "INSUFFICIENT": "Do not run Full Scout",
+                "INSUFFICIENT": "Do not run Advanced Research",
             }[status]
         else:
             synchronize_full_scout_hard_filter(candidate)
@@ -13320,7 +13343,7 @@ def full_scout_rubric_filter_text(record: dict[str, Any]) -> str:
     validation = record.get("validation") if isinstance(record.get("validation"), dict) else {}
     uncertain_points = validation.get("uncertain_points")
     if isinstance(uncertain_points, list):
-        values.extend(str(item) for item in uncertain_points if item)
+        values.extend(str(item) for item in uncertain_points if item and not str(item).startswith("ip_launch_outlook"))
     final_insight = record.get("final_insight") if isinstance(record.get("final_insight"), dict) else {}
     for key in ("one_line_summary", "most_important_diligence_question"):
         if final_insight.get(key):
@@ -13518,9 +13541,9 @@ def synchronize_server_derived_scoring_fields(records: list[dict[str, Any]]) -> 
             final_insight = record.get("final_insight")
             if isinstance(final_insight, dict):
                 recommendation = {
-                    "SELECT": "Run Full Scout",
+                    "SELECT": "Run Advanced Research",
                     "REJECT": "Monitor / gather more evidence",
-                    "INSUFFICIENT": "Do not run Full Scout",
+                    "INSUFFICIENT": "Do not run Advanced Research",
                 }[status]
                 sync_value(
                     record_index,
@@ -13723,9 +13746,9 @@ def _recalculate_record_with_stored_scores(record_id: str, request: Request) -> 
             hard_filter["status"] = status
             final_insight = record.setdefault("final_insight", {})
             final_insight["recommendation"] = {
-                "SELECT": "Run Full Scout",
+                "SELECT": "Run Advanced Research",
                 "REJECT": "Monitor / gather more evidence",
-                "INSUFFICIENT": "Do not run Full Scout",
+                "INSUFFICIENT": "Do not run Advanced Research",
             }[status]
             meta["rubric_version"] = TRIAGE_CRITERIA_VERSION
             if meaningful_before == rubric_recalculation_snapshot(record):
@@ -16601,9 +16624,28 @@ def export_markdown_layers() -> dict[str, Any]:
     return {"ok": True, "exports": run_markdown_exports()}
 
 
+def load_chat_scope_records(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    records = load_records()
+    if payload.get('scope_mode') == 'listing':
+        for entry in load_candidate_queue():
+            details = candidate_queue_entry_details(entry)
+            records.append({
+                'meta': {'output_filename_base': f"listing:{entry['id']}"},
+                'structured_table': {
+                    'asset_name': entry.get('asset_input'), 'company': entry.get('company_input'),
+                    'target': details.get('target'), 'indication': details.get('main_indication'),
+                    'development_stage': details.get('stage'), 'modality_platform': details.get('modality'),
+                },
+                'final_insight': {'one_line_summary': 'Listing only; research and scoring not yet completed.'},
+            })
+    return records
+
+
 @app.post("/api/chat")
 async def chat_with_record_openrouter(request: Request) -> dict[str, Any]:
+    user = require_authenticated_user(request)
     payload = await request.json()
+    history = chat_history.model_history(user, payload.get("conversation_id"))
     record_id = payload.get("record_id")
     message = (payload.get("message") or "").strip()
     dashboard_context = (payload.get("dashboard_context") or "").strip()
@@ -16618,18 +16660,23 @@ async def chat_with_record_openrouter(request: Request) -> dict[str, Any]:
     if not record_id or not message:
         raise HTTPException(status_code=400, detail="record_id and message are required.")
 
-    records = load_records()
+    records = load_chat_scope_records(payload)
     record = next((item for item in records if record_key(item) == record_id), None)
     if record is None:
         raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
 
     draft = build_ai_draft(record, message) if allow_draft else None
-    context_records = select_chat_context_records(records, record, message, candidate_record_ids)
+    retrieval_question = message
+    if re.search(r"그 후보|이 후보|해당|앞서|위의|이어서|\b(it|those|that|them)\b", message, re.I):
+        prior_questions = [item['content'] for item in history if item['role'] == 'user']
+        retrieval_question = "\n".join(prior_questions[-2:] + [message])
+    context_records = select_chat_context_records(records, record, retrieval_question, candidate_record_ids)
     reply, ai_error, wiki_sources = call_openrouter_chat(
         record,
         message,
         dashboard_context,
         context_records=context_records,
+        conversation_history=history,
     )
     if not reply:
         reply = local_agentic_reply(record, message, dashboard_context, wiki_sources, ai_error)
@@ -16654,7 +16701,9 @@ async def chat_with_record_openrouter(request: Request) -> dict[str, Any]:
 
 @app.post("/api/chat/stream")
 async def chat_with_record_stream(request: Request) -> StreamingResponse:
+    user = require_authenticated_user(request)
     payload = await request.json()
+    history = chat_history.model_history(user, payload.get("conversation_id"))
     record_id = payload.get("record_id")
     message = (payload.get("message") or "").strip()
     dashboard_context = (payload.get("dashboard_context") or "").strip()
@@ -16668,12 +16717,16 @@ async def chat_with_record_stream(request: Request) -> StreamingResponse:
     if not record_id or not message:
         raise HTTPException(status_code=400, detail="record_id and message are required.")
 
-    records = load_records()
+    records = load_chat_scope_records(payload)
     record = next((item for item in records if record_key(item) == record_id), None)
     if record is None:
         raise HTTPException(status_code=404, detail=f"Record not found: {record_id}")
 
-    context_records = select_chat_context_records(records, record, message, candidate_record_ids)
+    retrieval_question = message
+    if re.search(r"그 후보|이 후보|해당|앞서|위의|이어서|\b(it|those|that|them)\b", message, re.I):
+        prior_questions = [item['content'] for item in history if item['role'] == 'user']
+        retrieval_question = "\n".join(prior_questions[-2:] + [message])
+    context_records = select_chat_context_records(records, record, retrieval_question, candidate_record_ids)
 
     def event_generator():
         stream, wiki_sources, ai_error = stream_openrouter_chat(
@@ -16681,6 +16734,7 @@ async def chat_with_record_stream(request: Request) -> StreamingResponse:
             message,
             dashboard_context,
             context_records=context_records,
+            conversation_history=history,
         )
         yield sse_event("sources", wiki_sources)
         yield sse_event("status", {"message": "관련 원문·업로드 자료·wiki note를 검색했습니다. AI 답변을 생성합니다."})
@@ -16692,6 +16746,7 @@ async def chat_with_record_stream(request: Request) -> StreamingResponse:
             yield sse_event("done", {"fallback": True})
             return
 
+        received_text = False
         try:
             for raw_line in stream:
                 line = raw_line.decode("utf-8", errors="replace").strip()
@@ -16704,9 +16759,14 @@ async def chat_with_record_stream(request: Request) -> StreamingResponse:
                     data = json.loads(data_text)
                 except json.JSONDecodeError:
                     continue
+                if isinstance(data, dict) and data.get('error'):
+                    raise RuntimeError(summarize_openrouter_error(json.dumps(data)))
                 delta = data.get("choices", [{}])[0].get("delta", {}).get("content")
                 if delta:
+                    received_text = True
                     yield sse_event("delta", {"text": delta})
+            if not received_text:
+                raise RuntimeError('OpenRouter returned an empty response.')
         except Exception as exc:
             fallback = local_agentic_reply(record, message, dashboard_context, wiki_sources, str(exc))
             for chunk in chunk_text(fallback):

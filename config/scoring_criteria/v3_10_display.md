@@ -1,9 +1,10 @@
 # 판단근거 — SKBP Pipeline Finder v3.10
 
-This display release reflects the active Full Scout v3.8 decision rules, including the `Global Obtainable Peak Sales` calculation using the `1.5` US-to-global multiplier, the identity/lifecycle-as-pre-research-gate framing, the MoA 2/3 clarification, the Competitive Landscape comparator-backed direct-comparison requirement for Score 3, and the Expansion Potential program-plus-data requirement for Score 3. Criteria are presented Target Relevance / MoA Validity / Data Maturity first (the three Fast Triage-shared criteria), then Competitive Landscape / Platform Attractiveness / Expansion Potential / Marketability, matching the Pipeline Table and Team Review Workspace order.
+This display release reflects the active Advanced Research v3.9 decision rules, including the `Global Obtainable Peak Sales` calculation using the `1.5` US-to-global multiplier, the identity/lifecycle-as-pre-research-gate framing, the MoA 2/3 clarification, the Competitive Landscape comparator-backed direct-comparison requirement for Score 3, and the Expansion Potential program-plus-data requirement for Score 3. Criteria are presented Target Relevance / MoA Validity / Data Maturity first (the three Simple Research-shared criteria), then Competitive Landscape / Platform Attractiveness / Expansion Potential / Marketability, matching the Pipeline Table and Team Review Workspace order.
 
 ## Scoring 원칙
 
+- Advanced Research 지침·평가는 v3.9이며 Display 문서 버전은 v3.10을 유지합니다. v3.8 대비 점수·판정 규칙 변경 없이 CoM 기본 만료연도와 예상 출시연도의 선택 컬럼만 추가했습니다. 두 항목은 점수에 영향을 주지 않으며, 근거는 원문에서 확인합니다. 과거 원문의 해당 항목 부재는 `미조사`, 조사 후 미확인은 `확인 불가`로 구분합니다.
 - 확인된 사용자 입력정보 또는 credible public source의 asset-specific 사실만 사용합니다.
 - 계획·예상·정황은 현재 사실이나 완료 milestone로 간주하지 않습니다.
 - 확인할 수 없거나 source 충돌을 해소할 수 없으면 `Unknown`으로 표시합니다.
@@ -96,7 +97,7 @@ Commercial rationale이 성립하지 않으면 TAP/peak sales를 억지로 계�
 
 미국 기준 계산값 또는 미국 기준 외부 forecast에만 `×1.5`를 정확히 한 번 적용합니다. 이미 Global인 forecast에는 재적용하지 않으며, 최종 점수는 assessed Global peak sales를 기준으로 판정합니다.
 
-## Full Scout Status
+## Advanced Research Status
 
 Identity 및 lifecycle 확인은 본조사 전 pre-research gate로 처리합니다. Asset identity 미확인 또는 영구 중단이 확인되면 조사 전 조기 종료하며, 이 경우에는 상세 점수 대신 `—`로 표시합니다 (JSON의 schema placeholder 0점을 완료 평가로 서술하지 않습니다).
 

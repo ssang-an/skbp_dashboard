@@ -15,5 +15,6 @@ node_modules/
 tmp/
 local-backups/
 data/users.json
+data/chat-history.sqlite3*
 graphify-out/
 .claude/settings.json.graphify-bak

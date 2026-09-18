@@ -600,6 +600,9 @@ function expandMinimalCompactInputRecord(inputRecord, requestedMode = '') {
   } else {
     normalized.company_profile = record.company_profile;
     normalized.competitive_analysis = record.competitive_analysis;
+    // Preserve optional input for tolerant server normalization; absence remains
+    // meaningful for historical reports and must not become a null assessment.
+    if ('ip_launch_outlook' in record) normalized.ip_launch_outlook = record.ip_launch_outlook;
   }
   return normalized;
 }

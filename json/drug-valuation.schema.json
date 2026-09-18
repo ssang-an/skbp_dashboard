@@ -118,6 +118,15 @@
       },
       "additionalProperties": true
     },
+    "ip_launch_outlook": {
+      "type": "object",
+      "description": "Advanced-only contextual research, never a score input. Omitted on historical reports. Missing keys mean incomplete input; null means no single verified estimate. Evidence remains in original Markdown.",
+      "properties": {
+        "com_expiry_year": { "type": ["integer", "null"], "minimum": 1900, "maximum": 2199, "description": "Basic CoM expiry year, excluding PTA/PTE and other patent types." },
+        "expected_launch_year": { "type": ["integer", "null"], "minimum": 1900, "maximum": 2199 }
+      },
+      "additionalProperties": false
+    },
     "source_report": {
       "type": "object",
       "required": ["raw_markdown", "parser_status"],

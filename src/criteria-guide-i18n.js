@@ -50,7 +50,8 @@ export function englishCriteriaGuideMarkup() {
     </section>
 
     <section class="criteria-rule criteria-full-rule" data-criteria-tab="full">
-      <h3>GPT Instruction 2 — Advanced Research · v3.8</h3>
+      <h3>GPT Instruction 2 — Advanced Research · v3.9</h3>
+      <p>v3.9 adds contextual CoM base expiry and expected launch years. The seven scoring rules and decision thresholds are unchanged from v3.8. IP/launch information does not affect scores.</p>
       <p>Advanced Research conducts an in-depth assessment of SELECT candidates across all seven criteria: Target Area Relevance, MoA Validity, Data Maturity, Competitive Landscape, Platform Attractiveness, Expansion Potential, and Marketability.</p>
     </section>
 

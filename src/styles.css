@@ -11405,8 +11405,8 @@ body.agent-response-modal-open { overflow: hidden; }
   inset: auto;
   right: auto;
   z-index: 70;
-  min-width: 360px;
-  min-height: 480px;
+  min-width: min(520px, calc(100vw - 32px));
+  min-height: min(620px, calc(100dvh - 32px));
   max-width: calc(100vw - 32px);
   max-height: calc(100dvh - 32px);
   border: 1px solid color-mix(in srgb, var(--line) 82%, #94a3b8);
@@ -11541,7 +11541,9 @@ body.agent-response-modal-open { overflow: hidden; }
 }
 
 .floating-agent-window .agent-messages {
-  min-height: 96px;
+  min-height: 0;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
   padding: 14px 16px;
   overscroll-behavior: contain;
 }
@@ -24403,6 +24405,32 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
   }
 }
 
+.agent-history-tools {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.agent-history-tools select { max-width: 200px; min-width: 0; color: var(--text); background: var(--surface); }
+.agent-history-tools span { min-width: 0; overflow-wrap: anywhere; }
+.floating-agent-window .agent-message { min-width: 0; overflow-wrap: anywhere; }
+.floating-agent-window .agent-context { gap: 6px; padding: 8px 16px; }
+.floating-agent-window .agent-context div { padding: 6px 8px; }
+.floating-agent-window .agent-context span { margin-bottom: 2px; font-size: 11px; }
+.floating-agent-window .agent-context strong { font-size: 13px; }
+.floating-agent-window .agent-suggestions { flex-wrap: nowrap; overflow-x: auto; }
+.floating-agent-window .agent-suggestions button { flex-shrink: 0; }
+.floating-agent-window [hidden] { display: none !important; }
+
+@media (max-height: 600px) {
+  .floating-agent-window .agent-suggestions,
+  .floating-agent-window .agent-context { display: none; }
+  .floating-agent-window .agent-form textarea { min-height: 44px; }
+}
+
 /* The Tab 0 desktop filter row has more controls than the other Pipeline
    tabs.  Collapse it to two rows on tablet widths so the page itself never
    acquires a horizontal scrollbar; data tables retain their own scroll area. */
@@ -25653,4 +25681,22 @@ html[data-theme="dark"] .step0-edit-locked-modal { background: #0f1828; }
     width: 20px;
     height: 20px;
   }
+}
+.ip-launch-evidence { margin-top: 5px; font-size: 11px; font-weight: normal; }
+.ip-launch-evidence summary { cursor: pointer; color: var(--accent, #087c76); }
+.ip-launch-evidence p { max-width: 380px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* Extra research columns scroll beneath the pinned identity cells. Use an
+   opaque backing so text cannot show through the glass surface/hover colors. */
+html .pipeline-table td:is(.select-col, .company-cell, .asset-cell) {
+  background-image: linear-gradient(var(--readable-surface), var(--readable-surface)), linear-gradient(var(--surface), var(--surface));
+}
+html .pipeline-table th:is(.select-col, [data-col-key="company"], [data-col-key="asset"]) {
+  background-image: linear-gradient(var(--readable-soft), var(--readable-soft)), linear-gradient(var(--surface), var(--surface));
+}
+html .pipeline-table .clickable-row:hover > td:is(.select-col, .company-cell, .asset-cell) {
+  background-image: linear-gradient(var(--table-row-hover), var(--table-row-hover)), linear-gradient(var(--surface), var(--surface));
+}
+html .pipeline-table .clickable-row.selected-row > td:is(.select-col, .company-cell, .asset-cell) {
+  background-image: linear-gradient(var(--table-row-hover-selected), var(--table-row-hover-selected)), linear-gradient(var(--surface), var(--surface));
 }

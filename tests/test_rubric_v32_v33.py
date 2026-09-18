@@ -324,10 +324,10 @@ class VersionAndPolicyTests(unittest.TestCase):
     def test_current_versions(self) -> None:
         self.assertEqual(main.TRIAGE_CRITERIA_VERSION, "3.7")
         self.assertEqual(main.TRIAGE_SCHEMA_VERSION, "3.2")
-        self.assertEqual(main.SCORING_CRITERIA_VERSION, "3.8")
+        self.assertEqual(main.SCORING_CRITERIA_VERSION, "3.9")
         self.assertEqual(main.FULL_SCOUT_SCHEMA_VERSION, "3.2")
         self.assertTrue(main.SCORING_CRITERIA_TRIAGE_MD.name.startswith("v3_7_"))
-        self.assertTrue(main.SCORING_CRITERIA_FULL_MD.name.startswith("v3_8_"))
+        self.assertTrue(main.SCORING_CRITERIA_FULL_MD.name.startswith("v3_9_"))
         self.assertTrue(main.SCORING_CRITERIA_DISPLAY_MD.name.startswith("v3_10_"))
 
     def test_fast_triage_select_formula_and_identity_gate(self) -> None:
@@ -1020,7 +1020,7 @@ class EvidenceContractTests(unittest.TestCase):
         main.validate_records_for_save([record])
         self.assertEqual(record["hard_filter"]["status"], "SELECT")
         self.assertEqual(record["triage"]["status"], "SELECT")
-        self.assertEqual(record["final_insight"]["recommendation"], "Run Full Scout")
+        self.assertEqual(record["final_insight"]["recommendation"], "Run Advanced Research")
 
     def test_discontinued_development_stage_forces_insufficient(self) -> None:
         # development_stage == "Discontinued / inactive" is now the only early
@@ -1036,7 +1036,7 @@ class EvidenceContractTests(unittest.TestCase):
         main.validate_records_for_save([record])
         self.assertEqual(record["hard_filter"]["status"], "INSUFFICIENT")
         self.assertEqual(record["triage"]["status"], "INSUFFICIENT")
-        self.assertEqual(record["final_insight"]["recommendation"], "Do not run Full Scout")
+        self.assertEqual(record["final_insight"]["recommendation"], "Do not run Advanced Research")
 
     def test_hard_filter_flags_text_no_longer_gates_fast_triage_status(self) -> None:
         # Previously a "terminated"/"discontinued" keyword in hard_filter.flags
@@ -1057,7 +1057,7 @@ class EvidenceContractTests(unittest.TestCase):
         main.validate_records_for_save([record])
         self.assertEqual(record["hard_filter"]["status"], "SELECT")
         self.assertEqual(record["triage"]["status"], "SELECT")
-        self.assertEqual(record["final_insight"]["recommendation"], "Run Full Scout")
+        self.assertEqual(record["final_insight"]["recommendation"], "Run Advanced Research")
         self.assertFalse(hasattr(main, "fast_triage_record_has_hard_blocker"))
         self.assertFalse(hasattr(main, "fast_triage_lifecycle_text_has_hard_blocker"))
 
@@ -1336,8 +1336,8 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
             shared_sentence in app_js,
             "The exact shared Evidence Discipline block is missing from src/app.js.",
         )
-        self.assertIn("Fast Triage v3.7", app_js)
-        self.assertIn("Full Scout v3.8", app_js)
+        self.assertIn("Simple Research v3.7", app_js)
+        self.assertIn("Advanced Research v3.9", app_js)
         for stale_or_forbidden in (
             "Fast Triage v3.3",
             "Full Scout v3.4",
@@ -1398,7 +1398,7 @@ class StaticInstructionAndSchemaTests(unittest.TestCase):
         for filename in ("index.html", "detail.html"):
             markup = (ROOT / filename).read_text(encoding="utf-8")
             with self.subTest(filename=filename):
-                self.assertIn("Full Scout", markup)
+                self.assertIn("Advanced Research", markup)
                 self.assertIn("program progression", markup)
                 self.assertIn("Marketability", markup)
 

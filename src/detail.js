@@ -1,11 +1,12 @@
+import { createPrivateConversations } from './private-conversations.js?v=20260917-1';
 import { setupThemeToggle } from './theme.js';
 
-import { initFloatingAgent } from './floating-agent.js?v=20260801-draggable-launcher-1';
+import { initFloatingAgent } from './floating-agent.js?v=20260917-1';
 import { initPageJumpControls } from './page-jump.js?v=20260823-page-jump-1';
-import { getCurrentUser, initAuthUI, openAuthModal, requireAuth } from './auth.js?v=20260831-password-reset-2';
-import { expandCompactInputRecord } from './compact-ingestion.js?v=20260904-triage-v3-7-1';
+import { getCurrentUser, initAuthUI, openAuthModal, requireAuth } from './auth.js?v=20260917-private-chat-1';
+import { expandCompactInputRecord } from './compact-ingestion.js?v=20260917-ip-launch-1';
 import { splitAtRecoverableJsonSeparator } from './combined-ingestion.js?v=20260805-ingestion-guard-5';
-import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260904-triage-v3-7-1';
+import { ENGLISH_CRITERIA_DRAWER_CHROME, englishCriteriaGuideMarkup } from './criteria-guide-i18n.js?v=20260917-advanced-v39-1';
 
 const params = new URLSearchParams(window.location.search);
 const recordId = params.get('id');
@@ -28,8 +29,6 @@ const DEFAULT_SHORTLISTING_PROJECT_ID = 'oic_default';
 const SHORTLISTING_PROJECTS_URL = '/api/shortlisting/projects';
 const SHORTLISTING_PROJECT_STORAGE_KEY = 'skbp.dashboard.activeShortlistingProjectId.v1';
 
-const DETAIL_CHAT_SESSION_PREFIX = 'skbp.detail.chatSessions.v1';
-const DETAIL_CHAT_ACTIVE_PREFIX = 'skbp.detail.activeChatSession.v1';
 const DETAIL_COMMENT_AUTHOR_KEY = 'skbp.detail.commentAuthor';
 const RUBRIC_REFRESH_OUTCOME_DURATION_MS = 3000;
 
@@ -2826,6 +2825,11 @@ function renderSourceReport(record = currentRecord) {
   renderTopicNotes(record);
   renderAttachments(record);
   renderDetailOutline();
+  if (new URLSearchParams(location.search).get('section') === 'ip-launch') {
+    const heading = [...elements.sourceReportViewer.querySelectorAll('h1,h2,h3,h4')]
+      .find(node => /IP\s*&\s*Launch|특허.*출시/i.test(node.textContent));
+    if (heading) requestAnimationFrame(() => heading.scrollIntoView({ block: 'start' }));
+  }
 }
 
 function attachmentPreviewBodyMarkup(data, attachment) {
@@ -4646,14 +4650,6 @@ function navigateToCriterionReportSection(criterionId, { block } = {}) {
   setCollaborationStatus(`${scoringLabels[criterionId] || criterionId} 원문 섹션을 찾지 못했습니다.`, 'error');
 }
 
-function detailChatStorageKey() {
-  return `${DETAIL_CHAT_SESSION_PREFIX}:${currentRecordId || 'unknown'}`;
-}
-
-function detailChatActiveKey() {
-  return `${DETAIL_CHAT_ACTIVE_PREFIX}:${currentRecordId || 'unknown'}`;
-}
-
 function createChatMessageId() {
   return `msg_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 }
@@ -4688,34 +4684,11 @@ function createChatSession(title = '새 대화') {
   };
 }
 
-function loadChatSessions() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(detailChatStorageKey()) || '[]');
-    chatSessions = Array.isArray(parsed) ? parsed.filter((session) => session && session.id) : [];
-  } catch {
-    chatSessions = [];
-  }
-
-  activeChatSessionId = localStorage.getItem(detailChatActiveKey()) || '';
-  if (!chatSessions.length) {
-    chatSessions = [createChatSession('Asset evidence')];
-  }
-  if (!chatSessions.some((session) => session.id === activeChatSessionId)) {
-    activeChatSessionId = chatSessions[0].id;
-  }
-  saveChatSessions();
-}
-
+let detailConversations = null;
+let detailRequestController = null;
+let detailChatBusy = false;
 function saveChatSessions() {
-  const trimmed = chatSessions
-    .slice(-12)
-    .map((session) => ({
-      ...session,
-      messages: (session.messages || []).slice(-60)
-    }));
-  chatSessions = trimmed;
-  localStorage.setItem(detailChatStorageKey(), JSON.stringify(trimmed));
-  localStorage.setItem(detailChatActiveKey(), activeChatSessionId);
+  detailConversations?.save(chatSessions);
 }
 
 function activeChatSession() {
@@ -4732,13 +4705,14 @@ function renderChatSessionControls() {
   elements.chatSessionSelect.innerHTML = chatSessions
     .map((session) => {
       const count = Math.max(0, (session.messages || []).filter((message) => message.role === 'user').length);
-      return `<option value="${escapeHtml(session.id)}">${escapeHtml(session.title || '새 대화')} · ${count}Q</option>`;
+      return `<option value="${escapeHtml(session.id)}">${detailConversations?.readonly() ? escapeHtml(session.owner_name || '') + ' · ' : ''}${escapeHtml(session.title || '새 대화')} · ${count}Q</option>`;
     })
     .join('');
   elements.chatSessionSelect.value = activeChatSessionId;
   if (elements.chatDeleteSessionButton) {
     elements.chatDeleteSessionButton.disabled = chatSessions.length <= 1;
   }
+  detailConversations?.applyState();
 }
 
 function updateChatSessionMessage(message) {
@@ -4843,6 +4817,7 @@ async function copyChatMessage(text, button) {
 }
 
 function updateMessage(bubble, text, options = {}) {
+  if (!bubble?.isConnected) return;
   const textNode = bubble.querySelector('.agent-message-text');
   if (textNode) textNode.innerHTML = renderMarkdown(text);
   if (options.done) bubble.classList.remove('pending');
@@ -4877,12 +4852,26 @@ function renderMessagesFromChatSession() {
 }
 
 function initializeChatSessions() {
-  loadChatSessions();
-  renderChatSessionControls();
-  renderMessagesFromChatSession();
+  if (!detailConversations) {
+    detailConversations = createPrivateConversations({
+      getUser: getCurrentUser, getScope: () => `detail:${currentRecordId}`,
+      bar: document.querySelector('#aiDrawer .agent-sessionbar'), form: elements.form,
+      controls: [elements.chatSessionSelect, elements.chatNewSessionButton, elements.chatDeleteSessionButton],
+      onLoad(sessions, readonly) {
+        chatSessions = sessions.length || readonly ? sessions : [createChatSession()];
+        activeChatSessionId = chatSessions[0]?.id || '';
+        elements.messages.innerHTML = '';
+        renderChatSessionControls();
+        renderMessagesFromChatSession();
+      }
+    });
+  }
+  void detailConversations.load({ resetView: true });
 }
 
 function startNewChatSession(title = '새 대화') {
+  if (detailChatBusy || !detailConversations?.writable()) return;
+  elements.input.value = '';
   const session = createChatSession(title);
   chatSessions.push(session);
   activeChatSessionId = session.id;
@@ -4893,11 +4882,12 @@ function startNewChatSession(title = '새 대화') {
 }
 
 function deleteActiveChatSession() {
-  if (chatSessions.length <= 1) return;
+  if (detailChatBusy || !detailConversations?.writable()) return;
   const current = activeChatSession();
   const confirmed = window.confirm(`'${current?.title || '현재 대화'}' 세션을 삭제할까요?`);
   if (!confirmed) return;
   chatSessions = chatSessions.filter((session) => session.id !== activeChatSessionId);
+  if (!chatSessions.length) chatSessions = [createChatSession()];
   activeChatSessionId = chatSessions[0]?.id || '';
   saveChatSessions();
   renderChatSessionControls();
@@ -4957,7 +4947,7 @@ async function refreshRubric() {
       throw new Error(message);
     }
 
-    const outcome = rubricRefreshOutcomeCopy(data, 'Advanced Research', '3.8');
+    const outcome = rubricRefreshOutcomeCopy(data, 'Advanced Research', '3.9');
     setCollaborationStatus(outcome.message, data.status === 'error' ? 'error' : 'success');
 
     if (data.record) {
@@ -5037,7 +5027,7 @@ async function refreshOiPartnership() {
 function aiRevisionInstruction(record) {
   return isFastTriageRecord(record)
     ? 'Detail AI Agent GPT 지침 1 Fast Triage v3.7 update applied from chat answer.'
-    : 'Detail AI Agent Full Scout v3.8 re-evaluation applied from chat answer.';
+    : 'Detail AI Agent Advanced Research v3.9 re-evaluation applied from chat answer.';
 }
 
 function setAiApplyModalStatus(message = '', tone = '') {
@@ -5810,9 +5800,11 @@ function parseSseEvent(block) {
 async function streamDetailChatReply(message, bubble) {
   const response = await fetch('/api/chat/stream', {
     method: 'POST',
+    signal: detailRequestController?.signal,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       record_id: currentRecordId,
+      conversation_id: activeChatSessionId,
       message,
       dashboard_context: '',
       allow_draft: false
@@ -5866,7 +5858,11 @@ async function streamDetailChatReply(message, bubble) {
 elements.form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const message = elements.input.value.trim();
-  if (!message || !currentRecord) return;
+  if (!message || !currentRecord || detailChatBusy || !detailConversations?.writable()) return;
+  detailChatBusy = true;
+  detailRequestController = new AbortController();
+  const requestController = detailRequestController;
+  detailConversations.setBusy(true);
 
   elements.input.value = '';
   retitleActiveChatSessionFromQuestion(message);
@@ -5882,10 +5878,16 @@ elements.form.addEventListener('submit', async (event) => {
   const responseBubble = addMessage('assistant', '질문 분석 중…', { pending: true });
 
   try {
+    await detailConversations.flush();
+    if (requestController.signal.aborted) return;
     await streamDetailChatReply(message, responseBubble);
+    await detailConversations.flush();
   } catch (error) {
     updateMessage(responseBubble, `채팅 응답 오류: ${error.message}`, { done: true });
   } finally {
+    if (requestController !== detailRequestController) return;
+    detailChatBusy = false;
+    detailConversations.setBusy(false);
     if (submitButton) {
       submitButton.disabled = false;
       submitButton.removeAttribute('aria-busy');
@@ -6673,9 +6675,9 @@ floatingAgentController = initFloatingAgent({
   maximizeButton: elements.aiDrawer.querySelector('[data-floating-agent-maximize]'),
   dragHandle: elements.aiDrawer.querySelector('[data-floating-agent-drag]'),
   resizeHandle: elements.aiDrawer.querySelector('[data-floating-agent-resize]'),
-  storageKey: 'skbp.detail.floatingAgentGeometry.v1',
-  initialWidth: 600,
-  initialHeight: 700,
+  storageKey: 'skbp.detail.floatingAgentGeometry.v2',
+  initialWidth: 760,
+  initialHeight: 820,
   focusTarget: elements.input
 });
 setupThemeToggle();
@@ -6683,6 +6685,11 @@ initPageJumpControls();
 initAuthUI();
 renderCommentIdentity();
 window.addEventListener('skbp:authchange', () => {
+  detailRequestController?.abort();
+  detailRequestController = null;
+  detailChatBusy = false;
+  elements.input.value = '';
+  if (currentRecord) initializeChatSessions();
   renderCommentIdentity();
   if (currentRecord) {
     renderCollaborationPanel(currentRecord);

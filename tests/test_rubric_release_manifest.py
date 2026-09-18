@@ -88,7 +88,7 @@ class RubricReleaseManifestTests(unittest.TestCase):
             rf"const LATEST_FULL_SCOUT_RUBRIC_VERSION = ['\"]{full_version}['\"]",
         )
         expected_heading = (
-            "GPT 지침 2 — Full Scout · "
+            "GPT 지침 2 — Advanced Research · "
             f"v{self.manifest['workflows']['full_scout']['rubric_version']} 기준"
         )
         self.assertIn(expected_heading, index_html)

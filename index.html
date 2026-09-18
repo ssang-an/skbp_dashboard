@@ -72,7 +72,7 @@
         });
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20260910-shortlisting-row-action-pill-1" />
+  <link rel="stylesheet" href="./src/styles.css?v=20260917-ip-launch-1" />
   <link rel="stylesheet" href="./src/knowledge_graph.css?v=20260823-atlas-search-pill-alignment-1" />
   <link rel="stylesheet" href="./src/sigma_graph.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js" defer></script>
@@ -156,8 +156,8 @@
                 id="copyPromptTopButton"
                 class="help-tooltip"
                 type="button"
-                data-tooltip="GPT Advanced Research v3.8 지침을 복사합니다. Simple Research에서 SELECT된 asset을 심층 검토할 때 사용합니다."
-                aria-label="GPT Advanced Research v3.8 지침 복사"
+                data-tooltip="GPT Advanced Research v3.9 지침을 복사합니다. Simple Research에서 SELECT된 asset을 심층 검토할 때 사용합니다."
+                aria-label="GPT Advanced Research v3.9 지침 복사"
               ><span aria-hidden="true">GPT</span><b>지침 2</b></button>
               <button
                 class="data-utility-segment data-upload-shortcut help-tooltip"
@@ -624,7 +624,7 @@
           <div class="column-settings-panel" id="columnSettingsPanel" hidden>
             <div>
               <strong>추가 컬럼</strong>
-              <p>조사 요약·비교 약물·추가 확인 질문을 표에 추가합니다. 각 항목에 마우스를 올리면 의미를 확인할 수 있습니다. 비교 약물 수는 해당 보고서의 기록이며 시장 전체 수가 아닙니다.</p>
+              <p>처음 열면 이 탭의 추천 컬럼을 자동 선택합니다. 선택을 바꾸면 탭별로 기억하며, 설정을 닫아도 표에 유지됩니다. 새로고침 후에는 기본 표로 시작하고 설정을 열면 저장한 선택을 적용합니다. 각 항목에 마우스를 올리면 의미를 확인할 수 있습니다.</p>
             </div>
             <div class="column-settings-grid" id="columnSettingsGrid"></div>
           </div>
@@ -1042,7 +1042,8 @@
         </section>
 
         <section class="criteria-rule criteria-full-rule" data-criteria-tab="full">
-          <h3>GPT 지침 2 — Advanced Research · v3.8 기준</h3>
+          <h3>GPT 지침 2 — Advanced Research · v3.9 기준</h3>
+          <p>v3.9: CoM 기본 만료연도·예상 출시연도 조사 정보 추가. v3.8의 7개 채점·판정 규칙은 동일합니다. 특허·출시 정보는 점수에 반영하지 않습니다.</p>
           <p>
             지침 2는 SELECT된 후보를 대상으로 7개 criteria 전체를 심층 평가합니다.
             지침 1에서 예비로 본 TAR / MOA / Data도 여기서 evidence type, why_not_higher, source trail까지 포함해 다시 검토하고,
@@ -1653,7 +1654,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260917-research-columns-2"></script>
+  <script type="module" src="./src/app.js?v=20260917-ip-launch-1"></script>
   <script src="./src/sigma_graph.js?v=20260913-camera-motion-1" defer></script>
   </body>
 </html>
