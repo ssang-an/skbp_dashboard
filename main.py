@@ -1466,6 +1466,12 @@ def canonicalize_development_stage(source_wording: Any) -> str:
     exact = {value.casefold(): value for value in CANONICAL_DEVELOPMENT_STAGES}
     if raw.casefold() in exact:
         return exact[raw.casefold()]
+    # Only whole-value aliases: a dictionary substring must not promote a planned milestone.
+    for entry in category_synonym_dictionary().get("stage", []):
+        if entry.get("canonical") in CANONICAL_DEVELOPMENT_STAGE_SET and any(
+            raw.casefold() == str(alias).strip().casefold() for alias in entry.get("synonyms", [])
+        ):
+            return entry["canonical"]
 
     text = re.sub(r"[_–—]+", "-", raw.casefold())
     text = re.sub(r"\s+", " ", text).strip()
@@ -1529,6 +1535,12 @@ def canonicalize_development_stage(source_wording: Any) -> str:
         )
         return bool(planned_before or planned_after)
 
+    def confirmed(pattern, *, phase=False):
+        return next((match for match in re.finditer(pattern, text)
+                     if not match_is_planned(match) and not match_is_uncertain(match)
+                     and not (phase and re.search(r"/\s*$", text[:match.start()]))
+                     and not re.search(r"\b(?:not|never)\s+$", text[max(0, match.start() - 16):match.start()])), None)
+
     inactive_match = re.search(
         r"\b(?:discontinued|inactive|terminated|withdrawn|dormant|abandoned|clearly failed)\b|"
         r"종료|철회|휴면|포기",
@@ -1547,31 +1559,22 @@ def canonicalize_development_stage(source_wording: Any) -> str:
         ):
             return "Discontinued / inactive"
 
-    if re.search(
-        r"\b(?:ind|cta)\s*(?:submitted|filed|accepted|effective|cleared|approved|approval)\b|"
-        r"\b(?:submitted|filed|accepted|effective|cleared|approved)\s+(?:an?\s+)?(?:ind|cta)\b|"
-        r"(?:ind|cta)\s*(?:제출|승인|수리|효력)",
-        text,
-    ):
-        return "IND filed/cleared"
-    if re.search(
-        r"\b(?:registration|nda|bla|maa)\s+(?:submitted|filed|accepted|review|under review)\b|"
-        r"\b(?:submitted|filed|accepted)\s+(?:an?\s+)?(?:nda|bla|maa)\b|허가\s*(?:신청|제출|심사)",
-        text,
-    ):
-        return "Registration"
-    if re.search(
+    if confirmed(
         r"^(?:approved|marketed|commercial(?:ized|ised))$|"
-        r"\b(?:fda|ema|nmpa)\s+approved\b|"
+        r"\b(?:fda|ema|nmpa)\s+approved\b(?!\s+(?:an?\s+)?(?:ind|cta)\b)|"
         r"\b(?:nda|bla|maa)\s+(?:approved|approval)\b|"
         r"\b(?:approved|marketed|commercial(?:ized|ised))\s+(?:drug|medicine|product|therapy|therapeutic|asset)\b|"
         r"\b(?:drug|medicine|product|therapy|therapeutic|asset)\s+(?:approved|marketed|commercial(?:ized|ised))\b|"
         r"\b(?:marketed|commercial(?:ized|ised))\b|"
-        r"(?:품목\s*)?허가\s*(?:승인|완료)?|시판",
-        text,
+        r"(?:품목\s*)?허가\s*(?:승인|완료)|시판",
     ):
         return "Approved / marketed"
 
+    if confirmed(
+        r"\b(?:registration|nda|bla|maa)\s+(?:submitted|filed|accepted|review|under review)\b|"
+        r"\b(?:submitted|filed|accepted)\s+(?:an?\s+)?(?:nda|bla|maa)\b|허가\s*(?:신청|제출|심사)",
+    ):
+        return "Registration"
     phase_patterns = (
         ("Phase 3", r"\b(?:ph(?:ase)?\s*(?:iii|3)(?!\s*/)|p3)\b"),
         ("Phase 2/3", r"\b(?:ph(?:ase)?\s*(?:ii|2)(?:a|b)?\s*/\s*(?:iii|3)(?:a|b)?|p2(?:a|b)?\s*/\s*p?3(?:a|b)?)\b"),
@@ -1579,11 +1582,11 @@ def canonicalize_development_stage(source_wording: Any) -> str:
         ("Phase 2", r"\b(?:ph(?:ase)?\s*(?:ii|2)(?:a|b)?(?!\s*/)|p2(?:a|b)?(?!\s*/))\b"),
         ("Phase 1", r"\b(?:ph(?:ase)?\s*(?:i|1)(?:a|b)?(?!\s*/)|p1(?:a|b)?(?!\s*/)|fih|sad\s*/\s*mad)\b"),
     )
-    # Combined phases must be tested before their component phases.
-    phase_patterns = (phase_patterns[1], phase_patterns[2], phase_patterns[0], phase_patterns[3], phase_patterns[4])
+    # Highest confirmed phase wins; slash guards prevent matching a combined phase as a component.
+    phase_patterns = (phase_patterns[0], phase_patterns[1], phase_patterns[3], phase_patterns[2], phase_patterns[4])
     for canonical, pattern in phase_patterns:
-        phase_match = re.search(pattern, text)
-        if phase_match and not match_is_planned(phase_match) and not match_is_uncertain(phase_match):
+        phase_match = confirmed(pattern, phase=True)
+        if phase_match:
             return canonical
     clinical_match = re.search(
         r"\b(?:clinical development|clinical[- ]stage|clinical trial|clinical study|"
@@ -1592,17 +1595,34 @@ def canonicalize_development_stage(source_wording: Any) -> str:
     )
     if clinical_match and not match_is_planned(clinical_match) and not match_is_uncertain(clinical_match):
         return "Clinical unspecified"
+    if confirmed(
+        r"\b(?:ind|cta)\s*(?:submitted|filed|accepted|effective|cleared|approved|approval)\b|"
+        r"\b(?:submitted|filed|accepted|effective|cleared|approved)\s+(?:an?\s+)?(?:ind|cta)\b|"
+        r"(?:ind|cta)\s*(?:제출|승인|수리|효력)",
+    ):
+        return "IND filed/cleared"
     if re.search(
         r"\b(?:unclear|uncertain|not\s+(?:confirmed|verified|established))\b|불명확|불확실|미확인",
         text,
     ):
         return "Unknown"
 
+    ind_enabling_activity = re.search(
+        r"\bind[- ]?enabling(?:\s+stud(?:y|ies))?\b|"
+        r"\bglp\s+(?:toxicology|tox)\b|"
+        r"\bind[- ]directed\s+cmc\b|"
+        r"\bind\s+preparation\b|"
+        r"\bpreparing\s+(?:an?\s+)?ind\b|"
+        r"ind\s*준비|glp\s*독성",
+        text,
+    )
+    if ind_enabling_activity and not match_is_planned(ind_enabling_activity):
+        return "IND-enabling"
     pre_pcc_match = re.search(r"\bpre[-\s]?pcc\b", text)
     if pre_pcc_match and not match_is_planned(pre_pcc_match):
         return "Lead Optimization"
-    if re.search(r"\b(?:development\s+candidate|preclinical\s+candidate)\s+(?:selected|nominated)\b|"
-                 r"\bcandidate\s+nominated\b|\b(?:pcc|dc)(?:\s+(?:selected|nominated|completion|completed))?\b|개발\s*후보(?:물질)?\s*(?:선정|지명)", text):
+    if confirmed(r"\b(?:development\s+candidate|preclinical\s+candidate)\s+(?:selected|nominated)\b|"
+                 r"\bcandidate\s+nominated\b|\b(?:pcc|dc)(?:\s+(?:selected|nominated|completion|completed))?\b|개발\s*후보(?:물질)?\s*(?:선정|지명)"):
         return "Preclinical Candidate"
     lead_match = re.search(r"\b(?:candidate|lead)\s+selection\s+(?:ongoing|underway|in progress)\b|"
                            r"\blead\s+optimization\b|리드\s*최적화", text)
@@ -1617,17 +1637,6 @@ def canonicalize_development_stage(source_wording: Any) -> str:
     if hit_match and not match_is_planned(hit_match):
         return "Hit Discovery"
 
-    ind_enabling_activity = re.search(
-        r"\bind[- ]?enabling(?:\s+stud(?:y|ies))?\b|"
-        r"\bglp\s+(?:toxicology|tox)\b|"
-        r"\bind[- ]directed\s+cmc\b|"
-        r"\bind\s+preparation\b|"
-        r"\bpreparing\s+(?:an?\s+)?ind\b|"
-        r"IND\s*준비|GLP\s*독성",
-        text,
-    )
-    if ind_enabling_activity and not match_is_planned(ind_enabling_activity):
-        return "IND-enabling"
     preclinical_match = re.search(r"\bpreclinical\b|비임상", text)
     if preclinical_match and not match_is_planned(preclinical_match):
         return "Preclinical unspecified"

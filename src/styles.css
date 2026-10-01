@@ -24213,6 +24213,7 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
 }
 
 /* Keep Tab0's GPT action aligned with the header GPT lavender palette. */
+#copySelectedFullPromptButton.step0-copy-instructions-button,
 #step0CopyInstructionsButton.step0-copy-instructions-button {
   display: inline-flex;
   min-height: 26px;
@@ -24229,6 +24230,7 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
   white-space: nowrap;
 }
 
+#copySelectedFullPromptButton.step0-copy-instructions-button svg,
 #step0CopyInstructionsButton.step0-copy-instructions-button svg {
   width: 14px;
   height: 14px;
@@ -24239,6 +24241,7 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
   stroke-linejoin: round;
 }
 
+#copySelectedFullPromptButton.step0-copy-instructions-button .step0-copy-gpt,
 #step0CopyInstructionsButton.step0-copy-instructions-button .step0-copy-gpt {
   display: inline-grid;
   min-width: 22px;
@@ -24252,6 +24255,8 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
   letter-spacing: 0.02em;
 }
 
+#copySelectedFullPromptButton.step0-copy-instructions-button:hover:not(:disabled),
+#copySelectedFullPromptButton.step0-copy-instructions-button:focus-visible:not(:disabled),
 #step0CopyInstructionsButton.step0-copy-instructions-button:hover:not(:disabled),
 #step0CopyInstructionsButton.step0-copy-instructions-button:focus-visible:not(:disabled) {
   border-color: color-mix(in srgb, #786493 52%, var(--line));
@@ -24404,6 +24409,9 @@ html[data-theme="dark"] .step0-summary-recent-upload { color: #f08b8b; }
     grid-row: 2;
   }
 }
+
+#copySelectedFullPromptButton[hidden], .selected-prompt-status[hidden] { display: none; }
+.selected-prompt-status { margin: 0; padding: 0 16px 10px; font-size: 12px; color: var(--muted); }
 
 .agent-history-tools {
   display: flex;
@@ -25454,7 +25462,10 @@ html[data-theme="dark"] .step0-edit-locked-modal { background: #0f1828; }
 
 .pipeline-table th .table-score-sort-button.sort-active::after { display: none; }
 .score-sort-glyph { display: inline-block; font-size: 13px; font-weight: 850; }
-
+.table-score-sort-button[data-sort="stage"] { width: 20px; min-width: 20px; flex: 0 0 20px; }
+.stage-sort-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; margin-bottom: 10px; }
+.stage-sort-actions button:last-child { grid-column: 1 / -1; }
+.stage-range-presets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin-bottom: 12px; }
 .table-score-filter-popover {
   position: fixed;
   z-index: 1000;
@@ -25547,6 +25558,7 @@ html[data-theme="dark"] .step0-edit-locked-modal { background: #0f1828; }
 
 .table-score-filter-group-label { margin: 10px 0 4px; color: var(--muted); font-size: 10px; font-weight: 800; }
 .table-score-filter-option-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+.table-score-filter-option-grid.stage-filter-options { grid-template-columns: 1fr; max-height: 300px; overflow-y: auto; }
 .focus-status-filter-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .table-score-filter-option-grid + .table-score-filter-group-label { margin-top: 9px; }
 

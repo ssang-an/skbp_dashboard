@@ -72,7 +72,7 @@
         });
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20260917-ip-launch-1" />
+  <link rel="stylesheet" href="./src/styles.css?v=20261001-stage-presets-2" />
   <link rel="stylesheet" href="./src/knowledge_graph.css?v=20260823-atlas-search-pill-alignment-1" />
   <link rel="stylesheet" href="./src/sigma_graph.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js" defer></script>
@@ -613,6 +613,7 @@
                   <option value="100">100</option>
                 </select>
               </label>
+              <button id="copySelectedFullPromptButton" class="step0-copy-instructions-button help-tooltip" type="button" data-tooltip="Pipeline 1개만 선택하세요. 해당 Asset·Company와 기본 정보를 포함해 Advanced Research 지침 2를 복사합니다." hidden disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></svg><span class="step0-copy-gpt" aria-hidden="true">GPT</span><b>지침 2 복사</b></button>
               <button id="columnSettingsButton" class="help-tooltip" type="button" data-tooltip="테이블에 표시할 추가 JSON 컬럼을 선택합니다.">컬럼 설정</button>
               <button id="deleteSelectedButton" class="danger-link-button help-tooltip" type="button" data-tooltip="체크한 Pipeline 레코드를 삭제합니다." disabled>선택 삭제</button>
               <button id="exportExcelButton" class="excel-export-button help-tooltip" type="button" data-tooltip="현재 필터에 해당하는 전체 행을 Excel용 CSV로 내보냅니다. Simple·Advanced는 각 조사 항목의 근거·미확인 정보·다음 확인 질문·출처를 포함합니다." disabled>
@@ -621,6 +622,7 @@
               </button>
             </div>
           </div>
+          <p id="selectedFullPromptStatus" class="selected-prompt-status" role="status" aria-live="polite" hidden></p>
           <div class="column-settings-panel" id="columnSettingsPanel" hidden>
             <div>
               <strong>추가 컬럼</strong>
@@ -1654,7 +1656,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20260917-ip-launch-1"></script>
+  <script type="module" src="./src/app.js?v=20261001-stage-presets-2"></script>
   <script src="./src/sigma_graph.js?v=20260913-camera-motion-1" defer></script>
   </body>
 </html>
