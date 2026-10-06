@@ -40872,14 +40872,14 @@
       "dashboard_uploaded_at": "2026-08-20T04:07:29.233591+00:00",
       "storage_profile": "dashboard_hybrid_v1",
       "pipeline_metadata": {
-        "listed_at": "2026-09-18T03:16:22.784823+00:00",
+        "listed_at": "2026-10-06T01:22:28.817347+00:00",
         "comment": "NLY02는 경구용 저분자화합물로 신경염증을 조절할 수 있는 새로운 타겟인 RIPK2 (RIP Kinase 2)의 활성을 억제하여 파킨슨 및 알츠하이머 질환 등 퇴행성 뇌질환의 진행 조절\n디앤디파마텍과 공동개발 체결 이후 디앤디파마텍이 임상전략 수립, 시험설계\n디앤디파마텍과 공동개발 체결 이후 디앤디파마텍이 임상전략 수립 ,시험 설계\n해당 asset은 1st biotherapeutics와 공동연구 진행중이고, 1ST-103 으로도 불림.\n단계는 Preclinical 단계지만 현재 1st에서 개발중인 화합물이고, D&D Pharmatech의 이슬기 대표가 Neuraly를 자회사로 합병하고 가져온 화합물임. (Neuraly도 이슬기대표 회사였음)",
         "comment_author": "Team",
         "comment_author_user_id": "",
         "comment_author_email": "",
         "comment_source": "team_review_import",
-        "comment_created_at": "2026-09-18T03:16:22.784823+00:00",
-        "comment_updated_at": "2026-09-18T03:16:22.784823+00:00",
+        "comment_created_at": "2026-10-06T01:22:28.817347+00:00",
+        "comment_updated_at": "2026-10-06T01:22:28.817347+00:00",
         "comment_entries": [
           {
             "id": "legacy-a6e0a37e7c4fe12e41965bb5ca09711d0f574c97130db92e469f3f3b5ccaf210",
@@ -40907,24 +40907,24 @@
           }
         ],
         "listing_details": {
-          "country": "Seongnam, Korea",
+          "country": "Youngin, Korea",
           "modality": "Small molecule",
           "target": "RIPK2",
-          "main_indication": "Parkinson's disease; Alzheimer's disease",
+          "main_indication": "Alzheimer's disease; Parkinson's disease",
           "stage": "Preclinical",
-          "website": "https://www.ddpharmatech.com/"
+          "website": "https://www.1stbio.com/"
         },
-        "contact": "",
+        "contact": "O (2/25), 전략팀 최초 공식 메일 일자",
         "contact_author": "Team",
         "contact_author_user_id": "",
         "contact_author_email": "",
         "contact_source": "team_review_import",
-        "contact_created_at": "2026-09-18T03:16:22.784823+00:00",
-        "contact_updated_at": "2026-09-18T03:16:22.784823+00:00",
-        "website": "https://www.ddpharmatech.com/",
+        "contact_created_at": "2026-10-06T01:22:28.817347+00:00",
+        "contact_updated_at": "2026-10-06T01:22:28.817347+00:00",
+        "website": "https://www.1stbio.com/",
         "asset_aliases": "NLY02\n1ST-103",
         "company_aliases": "D&D Pharmatech\n1st Bio Therapeutics Inc",
-        "updated_at": "2026-09-18T03:16:22.784823+00:00"
+        "updated_at": "2026-10-06T01:22:28.817347+00:00"
       },
       "collaboration": {
         "comments": [
@@ -41133,6 +41133,16 @@
         {
           "id": "3ddb064e256d4c47bf27ede33944e1a8",
           "changed_at": "2026-09-18T03:16:46.762129+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "tab0_listing_import_metadata_sync",
+          "field": "meta.pipeline_metadata",
+          "previous_value": null,
+          "new_value": "Tab 0 Listing metadata and searchable Asset/Company aliases synchronized"
+        },
+        {
+          "id": "04e9c8ffe33948d1bc338d4423ad7e2b",
+          "changed_at": "2026-10-06T01:22:28.819615+00:00",
           "actor_ip": "127.0.0.1",
           "actor_name": "",
           "source": "tab0_listing_import_metadata_sync",
@@ -48107,23 +48117,21 @@
   },
   {
     "meta": {
-      "review_type": "fast_triage",
+      "review_type": "full_scout",
       "schema_version": "3.2",
-      "instruction_version": "3.3",
-      "rubric_version": "3.6",
-      "generated_at": "2026-08-20",
+      "instruction_version": "3.9",
+      "rubric_version": "3.9",
+      "generated_at": "2026-10-02",
       "output_filename_base": "1ST Biotherapeutics_1ST-103 (NLY02)",
-      "dashboard_uploaded_at": "2026-08-20T05:24:19.551257+00:00",
-      "storage_profile": "dashboard_hybrid_v1",
       "pipeline_metadata": {
-        "listed_at": "2026-09-18T03:16:22.784823+00:00",
+        "listed_at": "2026-10-06T01:22:28.817347+00:00",
         "comment": "NLY02는 경구용 저분자화합물로 신경염증을 조절할 수 있는 새로운 타겟인 RIPK2 (RIP Kinase 2)의 활성을 억제하여 파킨슨 및 알츠하이머 질환 등 퇴행성 뇌질환의 진행 조절\n디앤디파마텍과 공동개발 체결 이후 디앤디파마텍이 임상전략 수립, 시험설계\n디앤디파마텍과 공동개발 체결 이후 디앤디파마텍이 임상전략 수립 ,시험 설계\n해당 asset은 1st biotherapeutics와 공동연구 진행중이고, 1ST-103 으로도 불림.\n단계는 Preclinical 단계지만 현재 1st에서 개발중인 화합물이고, D&D Pharmatech의 이슬기 대표가 Neuraly를 자회사로 합병하고 가져온 화합물임. (Neuraly도 이슬기대표 회사였음)",
         "comment_author": "Team",
         "comment_author_user_id": "",
         "comment_author_email": "",
         "comment_source": "team_review_import",
-        "comment_created_at": "2026-09-18T03:16:22.784823+00:00",
-        "comment_updated_at": "2026-09-18T03:16:22.784823+00:00",
+        "comment_created_at": "2026-10-06T01:22:28.817347+00:00",
+        "comment_updated_at": "2026-10-06T01:22:28.817347+00:00",
         "comment_entries": [
           {
             "id": "legacy-a6e0a37e7c4fe12e41965bb5ca09711d0f574c97130db92e469f3f3b5ccaf210",
@@ -48151,25 +48159,26 @@
           }
         ],
         "listing_details": {
-          "country": "Seongnam, Korea",
+          "country": "Youngin, Korea",
           "modality": "Small molecule",
           "target": "RIPK2",
-          "main_indication": "Parkinson's disease; Alzheimer's disease",
+          "main_indication": "Alzheimer's disease; Parkinson's disease",
           "stage": "Preclinical",
-          "website": "https://www.ddpharmatech.com/"
+          "website": "https://www.1stbio.com/"
         },
-        "contact": "",
+        "contact": "O (2/25), 전략팀 최초 공식 메일 일자",
         "contact_author": "Team",
         "contact_author_user_id": "",
         "contact_author_email": "",
         "contact_source": "team_review_import",
-        "contact_created_at": "2026-09-18T03:16:22.784823+00:00",
-        "contact_updated_at": "2026-09-18T03:16:22.784823+00:00",
-        "website": "https://www.ddpharmatech.com/",
+        "contact_created_at": "2026-10-06T01:22:28.817347+00:00",
+        "contact_updated_at": "2026-10-06T01:22:28.817347+00:00",
+        "website": "https://www.1stbio.com/",
         "asset_aliases": "NLY02\n1ST-103",
         "company_aliases": "D&D Pharmatech\n1st Bio Therapeutics Inc",
-        "updated_at": "2026-09-18T03:16:22.784823+00:00"
+        "updated_at": "2026-10-06T01:22:28.817347+00:00"
       },
+      "dashboard_uploaded_at": "2026-08-20T05:24:19.551257+00:00",
       "collaboration": {
         "comments": [
           {
@@ -48234,33 +48243,32 @@
             "origin_kind": "listing_comment_entry",
             "origin_author_user_id": "",
             "origin_author_email": ""
+          },
+          {
+            "id": "67de95be61c6465c9a41cb035f2407a9",
+            "parent_id": null,
+            "author": "Team",
+            "author_user_id": "",
+            "author_email": "",
+            "actor_ip": "system",
+            "body": "O (2/25), 전략팀 최초 공식 메일 일자",
+            "created_at": "2026-10-06T01:22:28.817347+00:00",
+            "updated_at": "2026-10-06T01:22:29.597686+00:00",
+            "source": "listing_contact_history",
+            "import_key": "d25b31a4b501d1a30a3dd17b7ef340101c34b13851ddb6468bd06580a0fc0a3e",
+            "system_import": true,
+            "category": "contact_history",
+            "label": "Tab 0 · Contact History",
+            "origin_record_id": "",
+            "origin_item_id": "",
+            "origin_kind": "",
+            "origin_author_user_id": "",
+            "origin_author_email": ""
           }
         ],
-        "updated_at": "2026-09-02T08:51:46.455094+00:00",
-        "comment_count": 3
+        "updated_at": "2026-10-06T01:22:29.597686+00:00",
+        "comment_count": 4
       },
-      "rubric_recalculation": {
-        "version": "3.6",
-        "previous_version": "3.3",
-        "recalculated_at": "2026-09-01T21:46:07.052846+00:00",
-        "source": "dashboard_tab1_rubric_refresh",
-        "scope": "stored_triage_scores_identity_activity_and_filter1"
-      },
-      "rubric_reviewed_version": "3.6",
-      "rubric_reviewed_at": "2026-09-01T21:46:07.052846+00:00",
-      "rubric_reviewed_by": "local-batch-recalculation",
-      "rubric_review_result": "recalculated",
-      "rubric_refresh_history": [
-        {
-          "version": "3.6",
-          "reviewed_at": "2026-09-01T21:46:07.052846+00:00",
-          "result": "recalculated",
-          "actor_ip": "local-batch-recalculation",
-          "reason": "Stored Fast Triage criterion scores and the Filter 1 decision were recalculated under the current rubric.",
-          "changes": [],
-          "changed_at": "2026-09-01T21:46:07.052846+00:00"
-        }
-      ],
       "edit_history": [
         {
           "id": "feb56b380909409aa7e9eeb134d5a01e",
@@ -48383,137 +48391,550 @@
           "field": "meta.pipeline_metadata",
           "previous_value": null,
           "new_value": "Tab 0 Listing metadata and searchable Asset/Company aliases synchronized"
+        },
+        {
+          "id": "ed4ae43266f0440caf7b65046b1929e8",
+          "changed_at": "2026-10-02T01:20:48.069179+00:00",
+          "actor_ip": "10.145.144.107",
+          "actor_name": "정주원",
+          "source": "paste_json_upsert",
+          "field": "source_report.raw_markdown",
+          "previous_value": "기존 GPT 원문 리포트",
+          "new_value": "GPT 원문 재업로드",
+          "instruction_version": "3.9"
+        },
+        {
+          "id": "781e5b8ac80b4a988ae1ad05452dcc54",
+          "changed_at": "2026-10-06T01:22:28.820053+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "tab0_listing_import_metadata_sync",
+          "field": "meta.pipeline_metadata",
+          "previous_value": null,
+          "new_value": "Tab 0 Listing metadata and searchable Asset/Company aliases synchronized"
+        },
+        {
+          "id": "b1097fa2af8b4e17867a0458a481bea4",
+          "changed_at": "2026-10-06T01:22:29.597771+00:00",
+          "actor_ip": "system",
+          "actor_name": "",
+          "source": "cross_workflow_contact_sync",
+          "field": "collaboration.comments.tab0_contact",
+          "previous_value": null,
+          "new_value": null
         }
-      ]
+      ],
+      "last_edited_at": "2026-10-02T01:20:48.069179+00:00",
+      "last_edited_by": "정주원",
+      "storage_profile": "dashboard_hybrid_v1"
     },
     "source_report": {
-      "raw_markdown": "# SKBP Fast Triage Result\n\n> Version statement: This result was researched and scored with GPT instruction 1 — Fast Triage v3.3. Full Scout v3.4 has not been run.\n\n중요: 20개 입력 중 SELECT 7건, REJECT 11건, UNVERIFIED 2건입니다. SELECT는 1ST-103/NLY02, SNR1611, SRN-008, ISU203(중복 2행), AB-12 (IV)이며, inactive hard blocker·현재 activity 불명·정확한 asset identity 불명·또는 MOA/Data threshold 미달은 보수적으로 REJECT/UNVERIFIED 처리했습니다.\n\n| # | Asset | Company | Target/MoA | Modality | Main indication | Stage | Country | TR | MOA | Data | Triage | Why | Source |\n|---:|---|---|---|---|---|---|---|---:|---:|---:|---|---|---|\n| 1 | BEY4101A | BeyondBio | Unknown | Unknown | Alzheimer's disease | Discontinued / inactive | Republic of Korea | 2 | 0 | 0 | REJECT | Exact asset identity is supported, but it is listed as discontinued/inactive; lifecycle hard blocker. | BeyondBio current pipeline + Synapse |\n| 2 | SJP1801 | Samjin Pharmaceutical | Unknown | Unknown | Parkinson's disease | Discontinued / inactive | Republic of Korea | 2 | 0 | 0 | REJECT | KRX disclosure reports failure to derive a candidate; inactive program. | Samjin KRX filing |\n| 3 | S701 | Amyloid Solution | Aβ/APP; tau | Small molecule | Alzheimer's disease | Discontinued / inactive | Republic of Korea | 3 | 1 | 0 | REJECT | Canonicalized to AS-S701/AS-701; biologically relevant but current database status is terminated/inactive. | KHIDI + Synapse |\n| 4 | M801 | Amyloid Solution | TLR2 | Antibody | Unknown | Unknown | Republic of Korea | 3 | 1 | 0 | REJECT | AS-M801 mechanism/AD-PD identity is supported, but current 2026 activity and stage are unresolved. | KHIDI + BioSpectator |\n| 5 | AR1002 | AriBio | Unknown | Unknown | Unknown | Unknown | Unknown | 0 | 0 | 0 | UNVERIFIED | Exact AR1002 could not be verified as an AriBio asset; do not substitute AR1001 without evidence. | Exact-name verification failed; related AriBio public program is AR1001 |\n| 6 | 1ST-103 | 1ST Biotherapeutics | RIPK2 | Small molecule | Unknown | IND-enabling | Republic of Korea | 3 | 2 | 2 | SELECT | Current alias 1ST-103/NLY02 and 2026 IND-enabling status support Full Scout. | 1ST pipeline + D&D 2026 IR |\n| 7 | CKD-513 | Chong Kun Dang | HDAC6 | Small molecule | Unknown | Preclinical unspecified | Republic of Korea | 1 | 1 | 0 | REJECT | Active HDAC6 neurological-disease program, but no specific SKBP interest indication or asset result was verified. | CKD current pipeline |\n| 8 | SNR1611 | GENUV | MEK1/2 | Small molecule | Amyotrophic lateral sclerosis / motor neuron disease | Phase 1/2 | Republic of Korea | 2 | 2 | 1 | SELECT | Current Phase I/IIa ALS program plus asset-specific preclinical functional evidence meets threshold. | GENUV pipeline + platform |\n| 9 | S301 | Amyloid Solution | TAU | Gene therapy | Alzheimer's disease | Hit Discovery | Republic of Korea | 3 | 1 | 0 | REJECT | Canonicalized to AS-301; active tau/AD discovery program but functional/data maturity is insufficient. | Synapse current AS-301 profile |\n| 10 | YHC2133 | Yuhan | Unknown | Unknown | Alzheimer's disease | Hit Discovery | Republic of Korea | 2 | 1 | 0 | REJECT | Active discovery-stage CNS immunomodulation program; target and asset-specific data remain undisclosed. | Yuhan current pipeline + official report |\n| 11 | intractable brain diseases therapy, Dong-AST | Dong-A ST | Unknown | Unknown | Unknown | Unknown | Republic of Korea | 0 | 0 | 0 | UNVERIFIED | The phrase maps to a research collaboration topic, not a specific named pipeline asset. | Dong-A ST collaboration report |\n| 12 | LB-P4 | LISCure Biosciences | Unknown | Other | Unknown | Preclinical unspecified | Republic of Korea | 2 | 1 | 1 | REJECT | Active PD/AD microbiome program, but specific target and quantitative public data are insufficient. | LISCure current materials |\n| 13 | SRN-008 | siRNAgen Therapeutics | BACE1; MAPT | RNA therapy | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 1 | SELECT | Dual-target RNAi patent provides asset-specific mechanism-linked in-vivo evidence; current preclinical identity is supported. | Patent + current database |\n| 14 | ISU203 | ISU ABXIS | ASM | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 2 | SELECT | Anti-ASM asset has direct preclinical neuroinflammation/plaque/cognition evidence and current pipeline support. | ISU ABXIS + peer-reviewed abstract + 2025 IR |\n| 15 | ISU203 | Kyungpook National University | ASM | Antibody | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 2 | SELECT | Duplicate/related row for the same joint ISU203 program; collaboration and functional evidence are supported. | ISU ABXIS + peer-reviewed abstract + 2025 IR |\n| 16 | AB-12 (IV) | AUTOTAC Bio | Tau oligomers/aggregates | Other | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 3 | 2 | SELECT | Active preclinical tau-degrader with asset-specific tau degradation and functional rescue in animal models. | Nature Biopharma Dealmakers + AdisInsight |\n| 17 | Alzheimer’s disease vaccine | EuBiologics | Amyloid; tau antigens | Other | Alzheimer's disease | Preclinical unspecified | Republic of Korea | 3 | 1 | 1 | REJECT | Current AD vaccine program is active, but planned IND timing and qualitative primate updates do not establish Data ≥2. | EuBiologics + current database |\n| 18 | NLY02 | 1ST Biotherapeutics | RIPK2 | Small molecule | Unknown | IND-enabling | Republic of Korea | 3 | 2 | 2 | SELECT | Officially the alias of 1ST-103; same active IND-enabling RIPK2 program and same triage outcome. | 1ST pipeline + D&D 2026 IR |\n| 19 | NG201 | Neuracle Science | Unknown | Gene therapy | Pain | Preclinical unspecified | Republic of Korea | 2 | 0 | 0 | REJECT | Neuropathic-pain asset is linked to Neuracle Genetics, a Neuracle Science subsidiary; target/MoA and public data are insufficient. | Neuracle Science history + BIO-Europe agenda |\n| 20 | MDH-014 | MD Healthcare | Unknown | Other | Unknown | IND filed/cleared | Republic of Korea | 2 | 1 | 1 | REJECT | Australian IND/Phase 1 clearance milestone is supported, but current 2026 activity/trial start and human results are unresolved. | MD Healthcare deck + Edaily |\n\n## Notes\n- BEY4101A, SJP1801, AS-S701/AS-701은 lifecycle hard blocker 때문에 관련성 점수가 높더라도 REJECT입니다. M801과 MDH-014는 exact identity/milestone은 확인되지만 **현재 2026 activity**가 확정되지 않아 REJECT입니다.\n- 1ST-103와 NLY02는 공식적으로 같은 asset alias이며, ISU203 두 행도 같은 joint program의 duplicate/related input입니다. Dashboard join을 위해 `input.company_input`/`input.asset_input`은 원문 그대로 유지했습니다.\n- AR1002는 AriBio의 AR1001로 자동 보정하지 않았고, Dong-A ST 항목도 특정 candidate code가 없어 UNVERIFIED로 유지했습니다.\n- 드릴다운 질문 1: 1ST-103/NLY02의 `IND-enabling`은 2026 partner IR에 기반합니다. 실제 IND 제출/clearance가 이미 일어났는지 최신 규제/registry에서 다시 확인하면 SELECT 우선순위가 바뀔 수 있습니까?\n- 드릴다운 질문 2: M801·MDH-014처럼 과거 개발 milestone은 있으나 현재 activity가 불명확한 자산을 REJECT로 두는 것이 맞는지, 혹은 내부 BD 정보로 `active_asset=true`를 보완할 근거가 있습니까?\n- 드릴다운 질문 3: S701→AS-S701/AS-701, S301→AS-301, NG201→Neuracle Genetics처럼 code/company normalization이 들어간 행은 원본 database key와 실제 법적 owner를 다시 매칭해야 하지 않습니까?",
-      "parser_status": "fast_triage",
-      "rubric_recalculation": {
-        "version": "3.6",
-        "previous_version": "3.3",
-        "recalculated_at": "2026-09-01T21:46:07.052846+00:00",
-        "source": "dashboard_tab1_rubric_refresh",
-        "scope": "stored_triage_scores_identity_activity_and_filter1"
-      }
+      "raw_markdown": "# 1ST Biotherapeutics Advanced Research Report: **1ST-103 (NLY02)**\n\nOriginal report provenance: researched and scored with GPT instruction 2 — Advanced Research v3.9 (schema v3.2); URLs are included for auditability.\n\n중요: NLY02는 RIPK2를 표적하는 Parkinson's disease 우선 자산으로 identity와 IND-enabling 개발은 확인되지만, 공개된 NLY02-specific 정량 데이터가 부족하고 D&D/Neuraly에 사업·상업화 권리가 독점 귀속되어 있어 **Hard Filter REVIEW / Recommendation: Watch**로 평가합니다.\n\nIdentity Gate: **PASS** — 1ST Biotherapeutics와 D&D Pharmatech의 공식 pipeline/공동 보도자료에서 1ST-103(NLY02)이 RIPK2 inhibitor, Parkinson's/Alzheimer's disease 프로그램으로 확인됩니다. [1]-[5]\n\n입력 식별자는 `1ST-103 (NLY02)` / `1ST Biotherapeutics`이며, 첨부 Simple Research 값은 자산 식별에만 사용하고 stage·target·indication을 독립 재검증했습니다. :chatgpt-content-reference{index=\"0\"}\n\n## 1) Company Profile\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | 1ST Biotherapeutics | [1], [9] |\n| Legal name / aliases | 1ST Biotherapeutics, Inc. / 주식회사 퍼스트바이오테라퓨틱스 | [10] |\n| Location (company HQ) | Republic of Korea | [9], [10] |\n| Headquarters | Yongin-si, Gyeonggi-do, Republic of Korea | [9], [10] |\n| Website | https://www.1stbio.com/ | [9] |\n| Company type / stage | Private clinical-stage biotechnology company; 2026-01 Series D 31.7 billion KRW, cumulative funding about 108 billion KRW, IPO preparation disclosed | [11] |\n| Focus areas | Neurodegenerative disease, immuno-oncology, rare disease, genomic-based neurodegenerative target/biomarker discovery | [9] |\n| Platform summary | Current company pipeline lists `1ST-501 AI Drug Discovery Engine` and `1ST-S ADC payload platform`; neither is publicly linked to NLY02, so they are not used to increase NLY02 Platform Attractiveness | [1] |\n| Financing / partnership signals | 31.7 billion KRW Series D completed in Jan-2026; NLY02 is jointly developed with D&D/Neuraly, with D&D leading MoA/preclinical/clinical/partnering and 1STBIO leading optimization/toxicology according to D&D IR | [3], [11] |\n| Lead pipeline summary | 1STBIO's current webpage lists `1ST-103 (NLY02)` under RIPK2, Parkinson's/Alzheimer's. The same page visually labels it “Discovery”, while D&D's current pipeline, joint 2025/2026 releases and 2026 IR explicitly state **IND-enabling**; this discrepancy is retained as an uncertainty | [1]-[5] |\n\n## 2) Pipeline Snapshot\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | 1ST Biotherapeutics; co-development with D&D Pharmatech / Neuraly | [3]-[5] |\n| Lead asset | 1ST-103 / NLY02 | [1], [2] |\n| Target | RIPK2 (Receptor-interacting serine/threonine-protein kinase 2) | [2]-[5] |\n| Theme / Cluster | Theme: **Neuroimmune** / Cluster: **교세포 향상성** | RIPK2/NOD2 signaling, microglial activation, reactive astrocyte formation and neuroinflammation evidence [3], [12], [13] |\n| MoA | BBB-penetrant selective RIPK2 inhibitor intended to suppress microglia/astrocyte-driven neuroinflammation and protect neurons | [2]-[5], [12] |\n| Modality / Platform | BBB-penetrant oral small molecule; no reusable NLY02-linked technical platform publicly verified | [2]-[5] |\n| Indication | Parkinson's disease; Alzheimer's disease; D&D 2026 IR additionally lists MS among intended neurodegenerative indications | [2], [3] |\n| Pipeline Stage | **IND-enabling**; D&D current pipeline, 2026 IR and joint 2025/2026 NLY02 releases explicitly use IND-enabling. 1STBIO current pipeline page shows “Discovery”, creating source inconsistency | [1]-[5] |\n| Key data | Public NLY02-specific evidence is qualitative: high selectivity/BBB penetration and nonclinical safety completion are company-reported; PD mouse model reportedly showed suppressed neuroinflammation and dopaminergic-neuron protection. Exact NLY02-linked IC50, brain exposure/target coverage, effect size and GLP tox margin were not found publicly | [3], [4] |\n\nLead-indication selection: no registered active clinical program establishes a lead by clinical advancement. D&D's current pipeline lists **Parkinson's disease / Alzheimer's disease** in that order, while NLY02 patent/program communications repeatedly foreground Parkinson's disease. Under source-order fallback, canonical `main_indication` is therefore **Parkinson's disease**. [2], [4]\n\nRights note: D&D's 2026 IR states that NLY02 business rights are **exclusively vested in D&D Pharmatech**, with future proceeds shared with 1STBIO; D&D's public annual-report mirror further describes Neuraly's exclusive license to the 1STBIO-filed NLY02 material patent for neurodegenerative-disease development/commercialization. This materially limits an assumption that rights can be obtained directly from 1STBIO. [3], [23]\n\n## 2A) IP & Launch Outlook\n\n| Field | Assessment | Evidence / Basis |\n|---|---|---|\n| Core Patent / CoM | **Composition of Matter**. Representative family: US12398156B2 / EP4200299B1, “Compounds for prevention or treatment of neurodegenerative disorders”; official NLY02 releases explicitly describe the U.S./European grants as NLY02 material/substance patents | [4]-[8] |\n| Earliest Priority Date | **2020-08-21** | US12398156B2 / EP4200299B1 family metadata [6], [7] |\n| Expected CoM Base Expiry Year (excluding PTA/PTE) | **2041**. Public reporting specifically states U.S. NLY02 material-patent protection through 2041; EP family metadata gives anticipated expiration 2041-08-20. Google Patents shows a later U.S. legal-status expiry date, which may reflect term adjustment and is therefore not used as the basic CoM year | [7], [8] |\n| Expected Launch Year | **2034 — internal stage-based estimate, not company guidance.** Model: IND-enabling in 2026 → IND/FIH ~2027-2028 → Phase 2 ~2029-2030 → pivotal development ~2031-2033 → filing/review/launch ~2034. No company launch guidance was found | [2]-[5] |\n| Patent Runway at Launch | Approx. **7 years** using basic CoM 2041 minus modeled U.S. launch 2034; PTA/PTE excluded | [8] |\n\n## 3) Scorecard Summary\n\n| Criterion | Score (maximum 3 points each) | One-line judgment | Evidence used |\n|---|---:|---|---|\n| Target Relevance | **3점** | Confirmed primary development indication is Parkinson's disease, an SKBP priority indication | [1]-[4] |\n| MoA Validity | **2점** | NLY02-specific PD-model functional phenotype plus RIPK2/NOD2 disease-biology validation support the mechanism, but direct asset-specific quantitative target engagement/PD biomarker is not public | [3], [4], [12], [13] |\n| Data Maturity | **1점** | Asset-specific preclinical results are disclosed qualitatively, but no publicly verifiable NLY02-specific quantitative development domain was found | [3], [4] |\n| Competitive Landscape | **2점** | No approved PD disease-modifying therapy and NLY02 has a differentiated oral neuroimmune mechanism, but no quantitative comparator or head-to-head advantage is public | [14]-[19] |\n| Platform Attractiveness | **0점** | No reusable technical platform demonstrably linked to NLY02 and no platform-level quantitative advantage was verified | [1]-[4] |\n| Expansion Potential | **1점** | AD and MS are identified as additional NLY02 indications, but no asset-specific quantitative data in either additional indication was verified | [2], [3] |\n| Marketability | **1점** | `calculation`; screening global obtainable peak sales **895.75 million USD**, below 1,000 million USD | [14], [20]-[22] |\n| **Total** | **10점** | Maximum total: 21점 |  |\n\nHard Filter: **REVIEW** — Total 10 is above the FAIL threshold of 8, and TR/MoA/Data are all non-zero; however Total <14, MoA <3 and Data <3, so PASS conditions are not met.\n\n## 4) Criterion Detail Pages\n\n### 4.1 Target Relevance\nScore: **3점**\n\nMain line: NLY02's confirmed development focus includes Parkinson's disease, which is one of the six SKBP priority indications.\n\nWhat was checked:\n- Target identity: RIPK2 [2]-[5]\n- Disease/biology relevance: neuroinflammatory RIPK2 signaling in PD [12], [13]\n- General neurodegeneration / neuroinflammation / epilepsy relevance: Parkinson's and Alzheimer's programs [1]-[4]\n\nEvidence trail:\n- 1STBIO current pipeline identifies `RIPK2 / Parkinson's, Alzheimer's / 1ST-103 (NLY02)`. [1]\n- D&D current pipeline identifies NLY02 as RIPK2 inhibitor for Parkinson's disease / Alzheimer's disease. [2]\n- Joint patent communications likewise state PD/AD development. [4], [5]\n\nCriterion rule: Score 3 requires one of the six priority indications. Parkinson's disease qualifies directly.\n\nWhy not higher:\n- 3점이 최대점수입니다.\n\nInvestigation note:\n- Target Relevance 점수는 RIPK2 biology가 아니라 confirmed indication인 Parkinson's disease를 기준으로 부여했습니다.\n\n### 4.2 MoA Validity\nScore: **2점**\n\nMain line: RIPK2 inhibition has functional PD/neuroinflammation support and NLY02-specific animal phenotype claims, but the public package does not establish asset-specific quantitative target engagement or a mechanism-linked PD biomarker sufficient for Score 3.\n\nWhat was checked:\n- Journal publication / PMID / DOI\n- Mechanistic consistency\n- Functional readout\n- Disease linkage\n- Safety-relevant signal\n\nEvidence trail:\n- **Asset-specific E3, company-generated:** joint 1STBIO/D&D communication states NLY02 inhibited neuroinflammation and protected dopaminergic neurons in a Parkinson's mouse model. [4]\n- **Asset-specific E3, company-generated:** D&D 2026 IR reports high selectivity, BBB penetration and completion of nonclinical safety validation. No values are disclosed. [3]\n- **Target/class E2:** a 2024 PD preprint reports pathological α-synuclein → NOD2/RIPK2 activation in microglia, with genetic depletion of RIPK2 reducing neuroinflammation and protecting dopamine neurons in an α-syn PFF model. This is target-level evidence, not NLY02 evidence. [12]\n- **Independent review E2:** a peer-reviewed Molecular Neurobiology review identifies RIPK2 as a relevant neuroinflammatory target and describes NOD1/2-RIPK2 → NF-κB/MAPK cytokine signaling in neurological inflammation. [13]\n\nCriterion rule: Score 2 requires functional evidence or independent same-target/class validation. Both are present.\n\nWhy not 3점:\n- Public sources do not disclose an exact NLY02-linked quantitative RIPK2 engagement assay, mechanism-linked in vivo PD biomarker, or other direct asset-specific quantitative validation meeting the higher threshold.\n- Patent-family compounds contain quantitative medicinal-chemistry data, but the publicly readable material does not establish which specific example is NLY02; those data were therefore not attributed to NLY02.\n\nInvestigation note:\n- 공개 scoring evidence는 PD 마우스 모델의 신경염증 억제·도파민 신경세포 보호라는 disease-relevant phenotype에 연결되지만, NLY02-specific quantitative target-engagement biomarker는 공개 확인되지 않았습니다.\n\n### 4.3 Data Maturity\nScore: **1점**\n\nMain line: NLY02-specific preclinical efficacy, BBB/selectivity and nonclinical-safety claims exist, but they remain qualitative or fragmentary in checked public sources.\n\nWhat was checked:\n- In vitro data\n- In vivo data\n- Quantitative result\n- Reproducibility\n- IND-enabling / GLP tox / PK/PD / CMC / human data availability\n\nEvidence trail:\n- PD mouse model: neuroinflammation suppression and dopaminergic-neuron protection reported, with no public effect size, dose-response, n, statistical result or exposure information found. [4]\n- D&D IR: “high selectivity & BBB penetration confirmed” and “nonclinical safety validation complete”, but no numerical selectivity panel, Kp,uu, brain/plasma exposure, NOAEL or safety margin is disclosed. [3]\n- IND-enabling status is repeatedly confirmed. [2]-[5]\n- No NLY02 human data or NLY02-specific registered clinical trial was identified in the public-source search.\n\nCriterion rule: Score 1 covers qualitative claims or fragmentary asset-specific results.\n\nWhy not 2점:\n- Score 2 requires at least one **asset-specific quantitative evidence domain** appropriate to stage. No checked public source supplied a quantitative result that could confidently be mapped to NLY02 itself.\n\nInvestigation note:\n- Patent chemistry or RIPK2-class data not uniquely mapped to NLY02 were excluded rather than used to inflate Data Maturity.\n\n### 4.4 Competitive Landscape\nScore: **2점**\n\nMain line: Parkinson's disease has a large unresolved disease-modification need and NLY02 offers an oral BBB-penetrant neuroimmune approach, but its development is well behind multiple clinical-stage disease-modifying programs and no direct quantitative differentiation has been disclosed.\n\nWhat was checked:\n- Asset aliases: NLY02 / 1ST-103\n- Same indication + RIPK2\n- Same indication + neuroinflammation / kinase biology\n- Approved disease-modifying competitors\n- Phase 3, Phase 2 and major preclinical programs\n- Trial registries and recent PD disease-modification reviews\n\nSearch finding:\n- No other **verified same-indication + RIPK2** clinical competitor was identified; therefore no direct competitor is claimed.\n- This absence does not increase the score.\n- The broader PD disease-modifying field is crowded and includes anti-inflammatory, kinase and α-synuclein programs. [14]-[19]\n\nCompetitor table:\n\n| Competitor | Company | Modality | Target / MoA | Pipeline Stage | Why it matters | Source |\n|---|---|---|---|---|---|---|\n| Dapansutrile | Olatec Therapeutics | Small molecule | NLRP3 inhibitor / neuroinflammation | Phase 2 | **Broader/reference**: oral anti-inflammatory disease-modification strategy in PD; overlaps with NLY02's neuroimmune rationale but not RIPK2 | [15] |\n| NEU-411 | Neuron23 | Small molecule | LRRK2 inhibitor | Phase 2 | **Broader/reference**: brain-penetrant oral kinase inhibitor in biomarker-selected early PD; relevant benchmark for target engagement and patient stratification | [16] |\n| Risvodetinib | ABLi Therapeutics | Small molecule | c-Abl inhibitor | Phase 2 | **Broader/reference**: brain-penetrant once-daily kinase inhibitor with randomized human PD safety data | [17] |\n| Prasinezumab | Roche / Prothena | Antibody | Anti-α-synuclein | Phase 3 | **Broader/reference**: advanced disease-modifying PD program; PARAISO Phase 3 is ongoing | [18] |\n\nAdditional competitive signal:\n- BIIB122/DNL151, an oral LRRK2 inhibitor, failed its idiopathic-PD Phase 2b LUMA primary/secondary endpoints in May 2026 despite strong peripheral/CSF pharmacodynamic signals; development in idiopathic PD was discontinued. This illustrates that target engagement alone does not establish PD disease modification. [19]\n- A 2026 systematic review states that no disease-modifying therapy is yet approved for Parkinsonian disorders. [14]\n\nCriterion rule: Score 2 can be supported by a realistic entry space where current-care unmet need is clear and asset-specific target/MoA, route, safety or access evidence exists.\n\nWhy 2점:\n- PD disease modification remains an unresolved need. [14]\n- NLY02 has asset-specific BBB-penetrant oral RIPK2 positioning, PD-model phenotype, and reported nonclinical safety completion. [3], [4]\n\nWhy not 3점:\n- No direct head-to-head study against an appropriate comparator, no matched quantitative comparison, and no material advantage demonstrated under comparable conditions.\n\nInvestigation note:\n- Direct competitor search covered RIPK2+PD and found none verified; dapansutrile, NEU-411, risvodetinib and prasinezumab are intentionally classified as broader/reference competitors rather than direct competitors.\n\n### 4.5 Platform Attractiveness\nScore: **0점**\n\nMain line: NLY02 is a small-molecule candidate, but checked sources do not link it to a reusable technical platform with verified quantitative platform advantage.\n\nWhat was checked:\n- Reusable platform structure\n- Quantitative technical differentiation\n- Reuse across candidates/programs\n- Independent conditions or platform-derived assets\n- First Patient Dosed from a platform-derived asset\n\nEvidence trail:\n- 1STBIO separately lists `1ST-501 AI Drug Discovery Engine` and `1ST-S ADC payload platform`. [1]\n- No checked source states that NLY02 was generated by either platform.\n- NLY02 is described instead as a joint D&D/1STBIO medicinal-chemistry program, with target/MoA work and compound optimization divided between the partners. [3]-[5]\n- No platform-level quantitative comparator result tied to NLY02 was found.\n\nCriterion rule: Score 0 applies when no reusable structure or verifiable technical platform advantage is established for the assessed asset.\n\nWhy not 1점:\n- A company having unrelated platforms or multiple pipeline assets is not sufficient; a reusable system must be linked to NLY02.\n\nInvestigation note:\n- No NLY02-linked reusable platform evidence was verified, so the generic company platforms were deliberately excluded.\n\n### 4.6 Expansion Potential\nScore: **1점**\n\nMain line: Alzheimer's disease and MS are additional NLY02 indications in official material, but no NLY02-specific quantitative efficacy/PD/biomarker result in those additional indications was publicly verified.\n\nWhat was checked:\n- Expansion beyond Parkinson's disease\n- NLY02-specific quantitative data in additional indications\n- Confirmed preclinical, IND-enabling or clinical additional-indication programs\n\nEvidence trail:\n- D&D current pipeline lists NLY02 for Parkinson's disease and Alzheimer's disease. [2]\n- D&D 2026 IR lists “PD, AD, MS etc.” as intended neurodegenerative indications. [3]\n- The same IR describes a broad microglia/astrocyte neuroinflammation concept, but no quantitative NLY02 AD or MS dataset is disclosed. [3]\n\nCriterion rule: Score 1 covers an additional indication supported primarily by biological rationale/official positioning without asset-specific quantitative data.\n\nWhy not 2점:\n- No checked source supplied NLY02-specific quantitative efficacy, PD or biomarker data in AD or MS.\n\nInvestigation note:\n- 추가 적응증은 **복수**입니다: AD는 current official pipeline에 포함되고 MS는 2026 IR에 포함되지만, 두 적응증 모두 checked public evidence에서 NLY02-specific quantitative data 또는 별도의 active formal program status를 확인하지 못했습니다.\n\n### 4.7 Marketability\nScore: **1점**\n\nMain line: No reliable asset-specific external peak-sales forecast was found; therefore a transparent U.S.-base internal screening calculation was performed. Estimated Global Obtainable Peak Sales = **895.75 million USD**.\n\nAssessment method: **calculation**  \nScore basis type: **calculation**  \nCalculation status: **performed**  \nAssessed global peak sales: **895.75 million USD**\n\nWhat was checked:\n- U.S. Parkinson's prevalence\n- Closest practical public oral-PD price benchmark\n- Once-daily benchmark dosing\n- Competitive density and entry timing\n- Asset-specific evidence sufficient to justify any pricing premium\n- External asset-specific peak-sales forecast: none reliable found\n\nWorksheet:\n\n| Step | Calculation | Evidence / assumption |\n|---|---|---|\n| A. US TAP | 1,112,643 × 0.90 × 0.60 × 0.75 = **450,620 patients** | US prevalence 1,112,643 from Parkinson's Foundation [20]. Diagnosis Rate **0.90**, Eligibility **0.60**, Treatable Subgroup **0.75** are conservative analyst screening assumptions because NLY02's eventual label/biomarker population is unknown |\n| B. US Unrisked Peak Sales | 450,620.415 × 13,252.10 USD × 0.20 × 1.0 = **1,194.33 million USD** | XADAGO 100 mg public average pharmacy acquisition cost net of discounts = 36.30713 USD/tablet [21]; approved dosing is once daily [22], so annualized benchmark = **13,252.10 USD**. Peak penetration **0.20** is analyst assumption; duration factor **1.0** for chronic annual therapy |\n| C. US Obtainable Peak Sales | 1,194.33 × 0.50 × 1.00 = **597.17 million USD** | Competition Haircut **0.50** reflects preclinical/IND-enabling stage and multiple Phase 2/3 PD DMT programs [14]-[19]. Pricing Power Adjustment **1.00** because no human efficacy/safety differentiation supports a premium |\n| D. Global Obtainable Peak Sales | 597.17 × 1.5 = **895.75 million USD** | User-defined screening policy; multiplier applied once |\n| External Peak Sales Reference | **Not available / not used** | No reliable asset-specific NLY02 peak-sales forecast located |\n| Final score basis | **1점: 895.75 million USD < 1,000 million USD** | v3.9 threshold |\n\nCalculation caveats:\n- Prevalence is used rather than incidence because NLY02 is positioned as a chronic disease-modifying oral therapy rather than a one-time therapy.\n- XADAGO is an approved symptomatic adjunct, not a disease-modifying drug. It is used only as a publicly observable once-daily oral PD price benchmark because no approved PD DMT exists. [14], [21], [22]\n- Diagnosis, eligibility, subgroup, penetration and competition haircut are explicitly analyst screening assumptions, not company forecasts.\n- No asset-specific efficacy or tolerability premium was applied.\n- The modeled **895.75 million USD** is a screening output, not a valuation forecast or rNPV.\n\nInvestigation note:\n- Marketability remains low-confidence because clinical label, responder population, human efficacy, dosing and actual net pricing are all unestablished at the IND-enabling stage.\n\n## 5) Validation Notes\n\nCross-checked facts:\n- **Identity/alias:** 1STBIO current pipeline directly identifies `1ST-103 (NLY02)`; D&D materials identify NLY02 as the joint RIPK2 program. [1]-[3]\n- **Target/MoA:** D&D pipeline, D&D IR and joint NLY02 patent releases consistently identify selective RIPK2 inhibition and oral/BBB-penetrant small-molecule positioning. [2]-[5]\n- **Stage:** D&D current pipeline, 2026 IR, Aug-2025 joint U.S. patent release and Mar-2026 joint EPO release all say **IND-enabling**. [2]-[5]\n- **Stage discrepancy:** 1STBIO's current pipeline webpage displays `1ST-103 (NLY02) / Discovery`. [1]\n- **Rights:** D&D IR explicitly says NLY02 business rights are exclusively vested in D&D and proceeds are shared with 1STBIO. [3]\n- **IP:** official releases link NLY02 to U.S./European material patents; US12398156B2 and EP4200299B1 share the 2020-08-21 priority family. [4]-[8]\n- **PD unmet need:** 2026 systematic review reports no approved disease-modifying therapy. [14]\n\nUncertain points:\n- Exact reason for the `Discovery` label on 1STBIO's current pipeline versus repeated `IND-enabling` designation in joint/D&D sources is unresolved. A dated current 1STBIO program-status statement would remove this discrepancy.\n- No NLY02-specific quantitative RIPK2 IC50/kinome panel, brain Kp,uu/exposure, target-coverage multiple, PD-model dose-response/effect size or GLP tox margin was found in checked public sources.\n- No asset-specific human trial or clinical registry entry was verified.\n- Exact IND submission target date and jurisdiction were not publicly established.\n- Exact sublicense/out-license availability is uncertain even though D&D/Neuraly control of commercial rights is publicly described.\n- The internal 2034 launch year is an analyst stage-based estimate, not management guidance.\n- Marketability assumptions are screening assumptions because NLY02's human target population and product profile are unestablished.\n\nSearch log:\n- Official company page: 1STBIO website, contact and corporate pages [1], [9]-[11]\n- Pipeline page: 1STBIO pipeline and D&D current pipeline [1], [2]\n- Platform page: 1STBIO pipeline/platform technologies; no NLY02 linkage verified [1]\n- Publications: RIPK2/NOD2 PD preprint and independent RIPK neuroinflammation review [12], [13]\n- Regulatory / trial registry: public registry searches for NLY02/1ST-103; no asset-specific human trial verified\n- Patent sources: official U.S./EPO NLY02 releases; US12398156B2; EP4200299B1 [4]-[8]\n- Competitor sources: 2026 PD DMT review, Dapansutrile, NEU-411, risvodetinib, prasinezumab, BIIB122 [14]-[19]\n- Market / epidemiology sources: Parkinson's Foundation prevalence, XADAGO price and dosing [20]-[22]\n- Financing / partnership sources: 1STBIO Series D and D&D NLY02 partnership/rights disclosures [3], [11], [23]\n\n## 6) Final Take\n\nOne-line summary:\n\nNLY02는 **Parkinson's disease priority fit + plausible RIPK2 neuroimmune biology + oral BBB-penetrant small-molecule profile + IND-enabling/IP position**을 갖추고 있지만, 공개 evidence가 qualitative preclinical 수준에 머물고 있어 현재 핵심 제약은 **asset-specific quantitative data gap과 D&D/Neuraly의 독점 사업권 구조**입니다.\n\nRecommendation:\n- **Watch**\n\nMost important diligence question:\n\n**D&D/Neuraly가 보유한 독점 개발·상업화 권리 아래 실제 partnering 가능 범위는 무엇이며, 동시에 NLY02에 직접 귀속되는 RIPK2 potency/selectivity, unbound brain exposure/target coverage, PD-model quantitative efficacy 및 IND-enabling tox margin을 확인할 수 있는가?**\n\n## References\n\n[1]: https://www.1stbio.com/rd-pipeline/ \"1ST Biotherapeutics R&D Pipeline\"\n[2]: https://www.ddpharmatech.com/en/m23.php \"D&D Pharmatech Other Pipeline — NLY02\"\n[3]: https://kind.krx.co.kr/external/dst/irReference/17985/%5B%EB%94%94%EC%95%A4%EB%94%94%ED%8C%8C%EB%A7%88%ED%85%8D%5D%20IR%20%EC%9E%90%EB%A3%8C_202602_NH%20%ED%95%B4%EC%99%B8IR.pdf \"D&D Pharmatech 2026 IR Material\"\n[4]: https://www.1stbio.com/wp-content/uploads/2026/01/1STBIO-DnD_USPTO.pdf \"1STBIO-D&D NLY02 U.S. Patent Registration Decision\"\n[5]: https://www.1stbio.com/wp-content/uploads/2026/03/NLY02_EPO.pdf \"1STBIO-D&D NLY02 European Patent\"\n[6]: https://patents.google.com/patent/US12398156B2/en \"US12398156B2 — Compounds for prevention or treatment of neurodegenerative disorders\"\n[7]: https://patents.google.com/patent/EP4200299B1/en \"EP4200299B1 — Compounds for prevention or treatment of neurodegenerative disorders\"\n[8]: https://www.biospectator.com/news/view/25967 \"BioSpectator — NLY02 U.S. material patent protection through 2041\"\n[9]: https://www.1stbio.com/ \"1ST Biotherapeutics\"\n[10]: https://www.1stbio.com/contact-us/ \"1ST Biotherapeutics Contact\"\n[11]: https://www.1stbio.com/wp-content/uploads/2026/01/1STBIO_Series_D_completed.pdf \"1STBIO Series D Financing\"\n[12]: https://www.biorxiv.org/content/10.1101/2024.02.19.580982v1 \"Pathologic alpha-Synuclein-NOD2 Interaction and RIPK2 Activation Drives Microglia-Induced Neuroinflammation in Parkinson's Disease\"\n[13]: https://pubmed.ncbi.nlm.nih.gov/38349514/ \"Ripks and Neuroinflammation\"\n[14]: https://pubmed.ncbi.nlm.nih.gov/42104724/ \"A Systematic Review on Disease-Modifying Therapies in Parkinsonian Disorders\"\n[15]: https://www.clinical-neuroscience.cam.ac.uk/news/first-parkinsons-patient-treated-landmark-phase-2-trial-dapansutrile \"Dapansutrile Phase 2 Parkinson's Trial\"\n[16]: https://neuron23.com/pipeline/ \"Neuron23 Pipeline — NEU-411\"\n[17]: https://www.nature.com/articles/s43587-026-01084-4 \"Phase 2 Risvodetinib in Untreated Parkinson's Disease\"\n[18]: https://ir.prothena.com/investors/press-releases/news-details/2026/Prothena-Reports-Second-Quarter-2026-Financial-Results-and-Business-Highlights/default.aspx \"Prothena — Prasinezumab Phase 3 PARAISO\"\n[19]: https://investors.biogen.com/news-releases/news-release-details/biogen-and-denali-therapeutics-provide-update-phase-2b-luma \"Biogen/Denali BIIB122 Phase 2b LUMA Update\"\n[20]: https://www.parkinson.org/understanding-parkinsons/statistics \"Parkinson's Foundation Statistics\"\n[21]: https://www.drugpatentwatch.com/p/drug-price/drugname/XADAGO \"XADAGO U.S. Price Trends\"\n[22]: https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c4d65f28-983f-42b4-bb23-023ae0fe81b2 \"DailyMed XADAGO Prescribing Information\"\n[23]: https://financialfilings.com/filings/dd-pharmatech-inc/annual-report/2026/32997349/ \"D&D Pharmatech 2025 Annual Report Mirror — NLY02 Joint Development and Exclusive License\"",
+      "parser_status": "gpt_structured_output"
     },
     "input": {
       "company_input": "1ST Biotherapeutics",
-      "asset_input": "1ST-103"
+      "asset_input": "1ST-103 (NLY02)"
     },
     "json_summary": {
       "theme": "Neuroimmune",
-      "cluster": "Unknown",
-      "target_description": "Oral brain-penetrant RIPK2 inhibitor for neurodegenerative/neuroinflammatory diseases."
+      "cluster": "교세포 향상성",
+      "target_description": "BBB-penetrant RIPK2 inhibition intended to suppress microglia/astrocyte-driven neuroinflammation in Parkinson's disease."
     },
     "structured_table": {
       "company": "1ST Biotherapeutics",
       "asset_name": "1ST-103 (NLY02)",
       "target": "RIPK2",
-      "moa": "RIPK2 inhibitor",
+      "moa": "Selective BBB-penetrant RIPK2 inhibition intended to suppress NOD2/RIPK2-linked neuroinflammatory signaling and microglia/reactive-astrocyte activation.",
       "modality_platform": "Small molecule",
       "main_indication": "Parkinson's disease",
-      "indication": "Parkinson's disease; Alzheimer's disease; Multiple sclerosis / neuroinflammatory disease",
+      "indication": "Parkinson's disease; Alzheimer's disease; multiple sclerosis",
       "development_stage": "IND-enabling",
       "company_country": "Republic of Korea",
       "sources": [
         {
-          "source_title": "1ST Biotherapeutics current R&D pipeline",
+          "source_title": "1ST Biotherapeutics R&D Pipeline",
           "source_url": "https://www.1stbio.com/rd-pipeline/"
         }
       ]
     },
     "hard_filter": {
-      "status": "SELECT",
-      "reason": "Meets SELECT threshold with confirmed activity, TR 3 and MOA/Data ≥2.",
-      "flags": [],
+      "status": "REVIEW",
+      "reason": "Total 10점이며 Target Relevance 3점이나 MoA Validity 2점, Data Maturity 1점으로 PASS 요건을 충족하지 못하고 FAIL 조건에도 해당하지 않는다.",
+      "flags": [
+        "1STBIO current pipeline webpage displays Discovery while D&D current pipeline, joint releases and 2026 IR explicitly state IND-enabling.",
+        "D&D Pharmatech states that NLY02 business rights are exclusively vested in D&D, with future proceeds shared with 1STBIO.",
+        "No NLY02-specific quantitative public dataset or human clinical trial was verified."
+      ],
       "hard_blocker": false,
-      "decision_uncertainty": false
+      "decision_uncertainty": true
     },
     "scoring": {
       "criteria": {
         "target_relevance": {
           "score": 3,
-          "evidence_type": "triage_only",
-          "evidence_type_reason": "Fast Triage v3.3 quick public-source review.",
-          "evidence_basis": "public_source",
-          "main_line_summary": "TR 3점: PD/AD/MS indications plus a RIPK2 neuroimmune mechanism are verified.",
-          "why_not_higher": "No single lead indication is clearly designated.",
-          "investigation_note": "",
+          "evidence_type": "E1_company_claim_or_scientific_rationale_only",
+          "evidence_type_reason": "Official current pipeline and joint program materials confirm Parkinson's disease as an NLY02 indication.",
+          "evidence_basis": "Official 1STBIO and D&D pipeline/program disclosures",
+          "main_line_summary": "Confirmed Parkinson's disease development places NLY02 directly within an SKBP priority indication.",
+          "why_not_higher": "3점이 최대점수다.",
+          "investigation_note": "Target Relevance는 RIPK2 biology가 아니라 confirmed Parkinson's disease indication을 기준으로 부여했다.",
           "uncertain_points": [],
           "source_ids": [
-            "S1",
-            "S2"
+            "SRC01",
+            "SRC02",
+            "SRC03",
+            "SRC04"
           ]
         },
         "moa_validity": {
           "score": 2,
-          "evidence_type": "triage_only",
-          "evidence_type_reason": "Fast Triage v3.3 quick public-source review.",
-          "evidence_basis": "public_source",
-          "main_line_summary": "MOA 2점: RIPK2 inhibition is verified and preclinical sources report target selectivity/brain penetration consistent with functional development validation.",
-          "why_not_higher": "Direct target-engagement or mechanism-linked PD sufficient for MOA 3 was not verified.",
-          "investigation_note": "",
-          "uncertain_points": [],
+          "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+          "evidence_type_reason": "NLY02-specific PD-model functional phenotype is reported and independent RIPK2/NOD2 disease-biology evidence supports the pathway.",
+          "evidence_basis": "Asset-specific qualitative PD-model evidence plus target-level mechanistic validation",
+          "main_line_summary": "RIPK2 inhibition is functionally supported, but public NLY02 data do not establish quantitative target engagement or a mechanism-linked PD biomarker.",
+          "why_not_higher": "No verified NLY02-specific quantitative target-engagement, PD/biomarker or direct mechanistic dataset sufficient for Score 3 was found.",
+          "investigation_note": "공개 근거는 PD 마우스 모델의 신경염증 억제·도파민 신경세포 보호라는 disease-relevant phenotype에 연결되지만 NLY02-specific quantitative target-engagement biomarker는 확인되지 않았다.",
+          "uncertain_points": [
+            "Exact NLY02 RIPK2 IC50, kinome selectivity, brain exposure and target coverage are not public in checked sources."
+          ],
           "source_ids": [
-            "S2"
+            "SRC03",
+            "SRC04",
+            "SRC12",
+            "SRC13"
           ]
         },
         "data_maturity": {
-          "score": 2,
-          "evidence_type": "triage_only",
-          "evidence_type_reason": "Fast Triage v3.3 quick public-source review.",
-          "evidence_basis": "public_source",
-          "main_line_summary": "Data 2점: stage-appropriate preclinical evidence includes BBB penetration and safety/selectivity characterization supporting IND-enabling progression.",
-          "why_not_higher": "Complementary quantitative domains sufficient for Data 3 were not established in quick review.",
-          "investigation_note": "",
-          "uncertain_points": [],
+          "score": 1,
+          "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+          "evidence_type_reason": "NLY02-specific efficacy, BBB/selectivity and nonclinical-safety evidence is disclosed qualitatively but without a verifiable quantitative domain.",
+          "evidence_basis": "Qualitative asset-specific IND-enabling and animal-model disclosures",
+          "main_line_summary": "Asset-specific preclinical signals exist, but public evidence is fragmentary and non-quantitative.",
+          "why_not_higher": "No asset-specific quantitative evidence domain with exact NLY02 mapping was verified.",
+          "investigation_note": "Patent-family or RIPK2-class values not uniquely mapped to NLY02 were excluded from Data Maturity.",
+          "uncertain_points": [
+            "PD-model effect size, dose-response, n and statistics are undisclosed.",
+            "Brain PK/PD, Kp,uu, exposure margin, GLP tox NOAEL and safety margin are undisclosed.",
+            "No NLY02 human result was verified."
+          ],
           "source_ids": [
-            "S2"
+            "SRC02",
+            "SRC03",
+            "SRC04",
+            "SRC05"
           ]
+        },
+        "competitive_landscape": {
+          "score": 2,
+          "evidence_type": "E3_asset_specific_preclinical_or_technical_evidence",
+          "evidence_type_reason": "A clear PD disease-modification unmet need and NLY02-specific oral BBB/neuroimmune positioning support a realistic entry space, but no quantitative head-to-head differentiation exists.",
+          "evidence_basis": "Current PD disease-modification landscape plus NLY02 route/MoA/nonclinical positioning",
+          "main_line_summary": "Differentiated RIPK2 neuroimmune entry space exists, but NLY02 trails multiple clinical programs and lacks comparator-level quantitative differentiation.",
+          "why_not_higher": "No matched direct head-to-head comparison establishes a material advantage over an appropriate competitor.",
+          "investigation_note": "Search covered NLY02 aliases, PD+RIPK2, PD+neuroinflammation, approved/DMT landscape and Phase 2/3 programs; no verified direct RIPK2 PD competitor was identified, so listed comparators are broader/reference competitors.",
+          "uncertain_points": [
+            "Clinical differentiation cannot be judged before NLY02 human PK/PD and efficacy data."
+          ],
+          "source_ids": [
+            "SRC03",
+            "SRC04",
+            "SRC14",
+            "SRC15",
+            "SRC16",
+            "SRC17",
+            "SRC18",
+            "SRC19"
+          ]
+        },
+        "platform_attractiveness": {
+          "score": 0,
+          "evidence_type": "E0_not_found_or_not_assessable",
+          "evidence_type_reason": "No reusable technical platform demonstrably linked to NLY02 or quantitative platform advantage was verified.",
+          "evidence_basis": "1STBIO platform search and NLY02 program-development disclosures",
+          "main_line_summary": "NLY02 is a conventional jointly developed small-molecule program without a verified reusable asset-linked platform.",
+          "why_not_higher": "Unrelated company platforms and general medicinal-chemistry capability do not satisfy the reusable-platform criterion.",
+          "investigation_note": "1ST-501 and 1ST-S are listed corporate platforms but no checked source links either to NLY02.",
+          "uncertain_points": [
+            "A proprietary reusable NLY02 discovery platform may exist internally but was not publicly verified."
+          ],
+          "source_ids": [
+            "SRC01",
+            "SRC03"
+          ]
+        },
+        "expansion_potential": {
+          "score": 1,
+          "evidence_type": "E1_company_claim_or_scientific_rationale_only",
+          "evidence_type_reason": "AD and MS are listed as additional indications, but no NLY02-specific quantitative data in those indications was verified.",
+          "evidence_basis": "Official D&D pipeline and 2026 IR additional-indication listings",
+          "main_line_summary": "Multiple additional neurodegenerative indications are identified, but expansion remains rationale/program-positioning level publicly.",
+          "why_not_higher": "No NLY02-specific quantitative efficacy, PD or biomarker result was verified in AD or MS.",
+          "investigation_note": "추가 적응증은 복수이며 AD는 current pipeline, MS는 2026 IR에 포함되지만 두 적응증 모두 NLY02-specific quantitative data나 별도 active formal program status는 공개 확인되지 않았다.",
+          "uncertain_points": [
+            "Whether AD or MS has a separately budgeted active NLY02 preclinical development program is not publicly clear."
+          ],
+          "source_ids": [
+            "SRC02",
+            "SRC03"
+          ]
+        },
+        "marketability": {
+          "score": 1,
+          "evidence_type": "E2_indirect_or_class_level_evidence",
+          "evidence_type_reason": "Commercial score is based on a transparent internal PD prevalence/benchmark-price calculation rather than asset-specific sales history or forecast.",
+          "evidence_basis": "calculation using U.S. PD prevalence, XADAGO once-daily price benchmark and conservative analyst assumptions",
+          "main_line_summary": "Calculated global obtainable peak sales are 895.75 million USD, below the 1,000 million USD threshold.",
+          "why_not_higher": "The assessed global peak value is below 1,000 million USD and no reliable higher asset-specific external forecast was found.",
+          "investigation_note": "The calculation is low-confidence because label, human efficacy, eligible population, dosing and net price for NLY02 are not established.",
+          "uncertain_points": [
+            "Diagnosis, eligibility, treatable-subgroup, penetration and competition-haircut rates are analyst screening assumptions.",
+            "XADAGO is a symptomatic oral comparator rather than an approved disease-modifying therapy."
+          ],
+          "source_ids": [
+            "SRC14",
+            "SRC20",
+            "SRC21",
+            "SRC22"
+          ],
+          "calculation": {
+            "commercial_rationale_status": "calculation",
+            "commercial_rationale_failure_reason": "",
+            "A_targetable_addressable_patient": {
+              "targetable_addressable_patient": 450620.415,
+              "formula": "US TAP = US Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate"
+            },
+            "B_unrisked_peak_sales": {
+              "unrisked_peak_sales": 1194.3335811283032,
+              "sales_unit": "million USD",
+              "formula": "US Unrisked Peak Sales = US TAP x Benchmark Annualized Net Price x Peak Penetration x Treatment Duration Factor"
+            },
+            "C_obtainable_peak_sales": {
+              "obtainable_peak_sales": 597.1667905641516,
+              "sales_unit": "million USD",
+              "formula": "US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment"
+            },
+            "D_global_obtainable_peak_sales": {
+              "source_geography": "US",
+              "global_multiplier": 1.5,
+              "global_obtainable_peak_sales": 895.750186,
+              "sales_unit": "million USD",
+              "formula": "Global Obtainable Peak Sales = US Obtainable Peak Sales x 1.5"
+            }
+          }
         }
       },
-      "total_score": 7,
-      "max_score": 9
+      "total_score": 10,
+      "max_score": 21
     },
     "validation": {
       "uncertain_points": [
-        "Official webpage text rendering and partner IR differ in how stage is displayed; IND-enabling is based on the dated 2026 IR."
+        "1STBIO current pipeline displays Discovery whereas D&D current pipeline, joint releases and 2026 IR state IND-enabling; IND-enabling is used because it is explicitly repeated in multiple program-specific current sources.",
+        "No NLY02-specific quantitative RIPK2 potency, kinome selectivity, unbound brain exposure, target coverage, PD-model effect size or tox margin was verified.",
+        "No NLY02-specific human trial or human result was verified.",
+        "D&D/Neuraly control of development/commercialization rights is disclosed, but exact current sublicensing or partnering availability is not public.",
+        "Expected launch year 2034 is an internal stage-based estimate and not company guidance.",
+        "Marketability assumptions are screening assumptions because the eventual NLY02 label and commercial product profile are unknown."
       ],
       "cross_checked_facts": [
-        "1ST official page confirms alias 1ST-103 (NLY02); 2026 partner IR supports IND-enabling status."
+        "1ST-103 and NLY02 are the same RIPK2 program based on the current 1STBIO pipeline and D&D program materials.",
+        "IND-enabling status is independently repeated in D&D's current pipeline, 2026 IR and joint NLY02 U.S./European patent releases.",
+        "Parkinson's and Alzheimer's indications and oral small-molecule RIPK2 mechanism are consistent across current company sources.",
+        "NLY02-linked U.S. and European composition-of-matter patents were cross-checked against official company releases and patent-family records.",
+        "The U.S. basic material-patent protection year of 2041 is supported by NLY02-specific public reporting and aligns with the EP family's anticipated 2041 expiration.",
+        "Parkinson's disease still lacks an approved disease-modifying therapy according to a 2026 systematic review."
       ],
       "source_registry": [
         {
-          "source_id": "S1",
-          "source_title": "1ST Biotherapeutics current R&D pipeline",
+          "source_id": "SRC01",
+          "source_title": "1ST Biotherapeutics R&D Pipeline",
           "source_url": "https://www.1stbio.com/rd-pipeline/",
           "source_type": "official_company",
           "verified": true
         },
         {
-          "source_id": "S2",
-          "source_title": "D&D Pharmatech 2026 IR",
-          "source_url": "https://kind.krx.co.kr/external/dst/irReference/18082/%5B%EB%94%94%EC%95%A4%EB%94%94%ED%8C%8C%EB%A7%88%ED%85%8D%5D%20IR%20%EC%9E%90%EB%A3%8C_202602_%ED%95%9C%ED%88%AC%20%ED%95%B4%EC%99%B8IR_EN.pdf",
-          "source_type": "regulatory_filing",
+          "source_id": "SRC02",
+          "source_title": "D&D Pharmatech Other Pipeline — NLY02",
+          "source_url": "https://www.ddpharmatech.com/en/m23.php",
+          "source_type": "official_company",
+          "verified": true
+        },
+        {
+          "source_id": "SRC03",
+          "source_title": "D&D Pharmatech 2026 IR Material",
+          "source_url": "https://kind.krx.co.kr/external/dst/irReference/17985/%5B%EB%94%94%EC%95%A4%EB%94%94%ED%8C%8C%EB%A7%88%ED%85%8D%5D%20IR%20%EC%9E%90%EB%A3%8C_202602_NH%20%ED%95%B4%EC%99%B8IR.pdf",
+          "source_type": "company_investor_material",
+          "verified": true
+        },
+        {
+          "source_id": "SRC04",
+          "source_title": "1STBIO-D&D NLY02 U.S. Patent Registration Decision",
+          "source_url": "https://www.1stbio.com/wp-content/uploads/2026/01/1STBIO-DnD_USPTO.pdf",
+          "source_type": "official_company",
+          "verified": true
+        },
+        {
+          "source_id": "SRC05",
+          "source_title": "1STBIO-D&D NLY02 European Patent",
+          "source_url": "https://www.1stbio.com/wp-content/uploads/2026/03/NLY02_EPO.pdf",
+          "source_type": "official_company",
+          "verified": true
+        },
+        {
+          "source_id": "SRC06",
+          "source_title": "US12398156B2 — Compounds for prevention or treatment of neurodegenerative disorders",
+          "source_url": "https://patents.google.com/patent/US12398156B2/en",
+          "source_type": "patent_database",
+          "verified": true
+        },
+        {
+          "source_id": "SRC07",
+          "source_title": "EP4200299B1 — Compounds for prevention or treatment of neurodegenerative disorders",
+          "source_url": "https://patents.google.com/patent/EP4200299B1/en",
+          "source_type": "patent_database",
+          "verified": true
+        },
+        {
+          "source_id": "SRC08",
+          "source_title": "BioSpectator — NLY02 U.S. material patent protection through 2041",
+          "source_url": "https://www.biospectator.com/news/view/25967",
+          "source_type": "biotech_news",
+          "verified": true
+        },
+        {
+          "source_id": "SRC09",
+          "source_title": "1ST Biotherapeutics Corporate Website",
+          "source_url": "https://www.1stbio.com/",
+          "source_type": "official_company",
+          "verified": true
+        },
+        {
+          "source_id": "SRC10",
+          "source_title": "1ST Biotherapeutics Contact",
+          "source_url": "https://www.1stbio.com/contact-us/",
+          "source_type": "official_company",
+          "verified": true
+        },
+        {
+          "source_id": "SRC11",
+          "source_title": "1STBIO Series D Financing",
+          "source_url": "https://www.1stbio.com/wp-content/uploads/2026/01/1STBIO_Series_D_completed.pdf",
+          "source_type": "official_company",
+          "verified": true
+        },
+        {
+          "source_id": "SRC12",
+          "source_title": "Pathologic alpha-Synuclein-NOD2 Interaction and RIPK2 Activation Drives Microglia-Induced Neuroinflammation in Parkinson's Disease",
+          "source_url": "https://www.biorxiv.org/content/10.1101/2024.02.19.580982v1",
+          "source_type": "scientific_preprint",
+          "verified": true
+        },
+        {
+          "source_id": "SRC13",
+          "source_title": "Ripks and Neuroinflammation",
+          "source_url": "https://pubmed.ncbi.nlm.nih.gov/38349514/",
+          "source_type": "peer_reviewed_publication",
+          "verified": true
+        },
+        {
+          "source_id": "SRC14",
+          "source_title": "A Systematic Review on Disease-Modifying Therapies in Parkinsonian Disorders",
+          "source_url": "https://pubmed.ncbi.nlm.nih.gov/42104724/",
+          "source_type": "peer_reviewed_publication",
+          "verified": true
+        },
+        {
+          "source_id": "SRC15",
+          "source_title": "First Parkinson's Patient Treated in Phase 2 Dapansutrile Trial",
+          "source_url": "https://www.clinical-neuroscience.cam.ac.uk/news/first-parkinsons-patient-treated-landmark-phase-2-trial-dapansutrile",
+          "source_type": "academic_clinical_source",
+          "verified": true
+        },
+        {
+          "source_id": "SRC16",
+          "source_title": "Neuron23 Pipeline — NEU-411",
+          "source_url": "https://neuron23.com/pipeline/",
+          "source_type": "competitor_official",
+          "verified": true
+        },
+        {
+          "source_id": "SRC17",
+          "source_title": "Phase 2 Risvodetinib in Untreated Parkinson's Disease",
+          "source_url": "https://www.nature.com/articles/s43587-026-01084-4",
+          "source_type": "peer_reviewed_publication",
+          "verified": true
+        },
+        {
+          "source_id": "SRC18",
+          "source_title": "Prothena — Prasinezumab Phase 3 PARAISO",
+          "source_url": "https://ir.prothena.com/investors/press-releases/news-details/2026/Prothena-Reports-Second-Quarter-2026-Financial-Results-and-Business-Highlights/default.aspx",
+          "source_type": "competitor_official",
+          "verified": true
+        },
+        {
+          "source_id": "SRC19",
+          "source_title": "Biogen and Denali Phase 2b LUMA Update for BIIB122",
+          "source_url": "https://investors.biogen.com/news-releases/news-release-details/biogen-and-denali-therapeutics-provide-update-phase-2b-luma",
+          "source_type": "competitor_official",
+          "verified": true
+        },
+        {
+          "source_id": "SRC20",
+          "source_title": "Parkinson's Foundation Statistics",
+          "source_url": "https://www.parkinson.org/understanding-parkinsons/statistics",
+          "source_type": "epidemiology",
+          "verified": true
+        },
+        {
+          "source_id": "SRC21",
+          "source_title": "XADAGO U.S. Drug Price Trends",
+          "source_url": "https://www.drugpatentwatch.com/p/drug-price/drugname/XADAGO",
+          "source_type": "market_price_source",
+          "verified": true
+        },
+        {
+          "source_id": "SRC22",
+          "source_title": "DailyMed XADAGO Prescribing Information",
+          "source_url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c4d65f28-983f-42b4-bb23-023ae0fe81b2",
+          "source_type": "regulatory_label",
+          "verified": true
+        },
+        {
+          "source_id": "SRC23",
+          "source_title": "D&D Pharmatech 2025 Annual Report Mirror — NLY02 Joint Development and Exclusive License",
+          "source_url": "https://financialfilings.com/filings/dd-pharmatech-inc/annual-report/2026/32997349/",
+          "source_type": "regulatory_filing_mirror",
           "verified": true
         }
       ]
     },
     "final_insight": {
-      "one_line_summary": "Priority Full Scout candidate: active IND-enabling RIPK2 program.",
-      "recommendation": "Run Advanced Research",
-      "most_important_diligence_question": "Can Full Scout verify asset-specific PK/PD, target engagement, GLP tox, and exact IND timing?"
+      "one_line_summary": "NLY02 is an IND-enabling RIPK2 neuroimmune Parkinson's program with attractive oral BBB/IP positioning, but public evidence remains qualitative and D&D/Neuraly controls the commercial rights.",
+      "recommendation": "Watch",
+      "most_important_diligence_question": "D&D/Neuraly의 독점 개발·상업화 권리 아래 실제 partnering 가능 범위는 무엇이며, NLY02-specific RIPK2 potency/selectivity, unbound brain exposure/target coverage, PD-model quantitative efficacy 및 IND-enabling tox margin을 확인할 수 있는가?"
     },
-    "triage": {
-      "status": "SELECT",
-      "identity_verified": true,
-      "active_asset": true,
-      "verified_public_source_count": 2,
-      "why": "Current sources identify 1ST-103/NLY02 as an active RIPK2 inhibitor and a 2026 partner IR places it in IND-enabling development.",
-      "missing_evidence_needed_for_full_scout": [
-        "Exact IND filing/clearance status.",
-        "Full quantitative PK/PD and disease-model datasets."
+    "ip_launch_outlook": {
+      "com_expiry_year": 2041,
+      "expected_launch_year": 2034
+    },
+    "company_profile": {
+      "headquarters": "Yongin-si, Gyeonggi-do, Republic of Korea",
+      "company_stage": "Private clinical-stage biotechnology company; Series D completed in 2026 and preparing for IPO",
+      "platform_summary": "1STBIO lists 1ST-501 AI Drug Discovery Engine and 1ST-S ADC payload platform, but neither is publicly linked to NLY02."
+    },
+    "competitive_analysis": {
+      "competitive_density": "High",
+      "similarity_summary": {
+        "similar_pipeline_count": 4,
+        "high_similarity_count": 0,
+        "medium_similarity_count": 3,
+        "low_similarity_count": 1
+      },
+      "competitor_table": [
+        {
+          "competitor_asset": "Dapansutrile",
+          "company": "Olatec Therapeutics",
+          "modality": "Small molecule",
+          "target_or_moa": "NLRP3 inhibitor; anti-neuroinflammatory approach",
+          "stage": "Phase 2",
+          "similarity_level": "Medium",
+          "why_it_matters": "Oral anti-inflammatory disease-modification strategy in Parkinson's disease, overlapping with the neuroimmune rationale but using a different target.",
+          "source_url": "https://www.clinical-neuroscience.cam.ac.uk/news/first-parkinsons-patient-treated-landmark-phase-2-trial-dapansutrile"
+        },
+        {
+          "competitor_asset": "NEU-411",
+          "company": "Neuron23",
+          "modality": "Small molecule",
+          "target_or_moa": "Brain-penetrant selective LRRK2 inhibitor",
+          "stage": "Phase 2",
+          "similarity_level": "Medium",
+          "why_it_matters": "Oral brain-penetrant kinase inhibitor in biomarker-selected early Parkinson's disease and a useful benchmark for target-engagement strategy.",
+          "source_url": "https://neuron23.com/pipeline/"
+        },
+        {
+          "competitor_asset": "Risvodetinib",
+          "company": "ABLi Therapeutics",
+          "modality": "Small molecule",
+          "target_or_moa": "Brain-penetrant c-Abl inhibitor",
+          "stage": "Phase 2",
+          "similarity_level": "Medium",
+          "why_it_matters": "Once-daily brain-penetrant kinase inhibitor with randomized clinical experience in early untreated Parkinson's disease.",
+          "source_url": "https://www.nature.com/articles/s43587-026-01084-4"
+        },
+        {
+          "competitor_asset": "Prasinezumab",
+          "company": "Roche / Prothena",
+          "modality": "Antibody",
+          "target_or_moa": "Anti-alpha-synuclein",
+          "stage": "Phase 3",
+          "similarity_level": "Low",
+          "why_it_matters": "Advanced disease-modifying Parkinson's program that defines the late-stage competitive and evidentiary bar despite a different modality and target.",
+          "source_url": "https://ir.prothena.com/investors/press-releases/news-details/2026/Prothena-Reports-Second-Quarter-2026-Financial-Results-and-Business-Highlights/default.aspx"
+        }
+      ],
+      "similar_pipelines": [
+        {
+          "company": "Olatec Therapeutics",
+          "asset_name": "Dapansutrile",
+          "similarity_score": 0.72,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "oral small molecule",
+            "neuroinflammation",
+            "disease-modification intent"
+          ],
+          "shared_data_points": [
+            "anti-inflammatory CNS strategy",
+            "oral administration",
+            "different NLRP3 target"
+          ]
+        },
+        {
+          "company": "Neuron23",
+          "asset_name": "NEU-411",
+          "similarity_score": 0.7,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "small molecule",
+            "brain-penetrant kinase inhibitor",
+            "disease-modification intent"
+          ],
+          "shared_data_points": [
+            "brain-penetrant kinase approach",
+            "early Parkinson's population",
+            "different LRRK2 target"
+          ]
+        },
+        {
+          "company": "ABLi Therapeutics",
+          "asset_name": "Risvodetinib",
+          "similarity_score": 0.66,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "small molecule",
+            "brain-penetrant kinase inhibitor",
+            "once-daily development"
+          ],
+          "shared_data_points": [
+            "oral kinase inhibition",
+            "brain penetration",
+            "different c-Abl target"
+          ]
+        },
+        {
+          "company": "Roche / Prothena",
+          "asset_name": "Prasinezumab",
+          "similarity_score": 0.38,
+          "matched_dimensions": [
+            "Parkinson's disease",
+            "disease-modification intent"
+          ],
+          "shared_data_points": [
+            "early Parkinson's development",
+            "Phase 3 competitive benchmark",
+            "different antibody modality and alpha-synuclein target"
+          ]
+        }
       ]
     }
   },
@@ -52515,14 +52936,14 @@
       "dashboard_uploaded_at": "2026-08-20T05:24:19.551257+00:00",
       "storage_profile": "dashboard_hybrid_v1",
       "pipeline_metadata": {
-        "listed_at": "2026-09-18T03:16:22.784823+00:00",
+        "listed_at": "2026-10-06T01:22:28.817347+00:00",
         "comment": "NLY02는 경구용 저분자화합물로 신경염증을 조절할 수 있는 새로운 타겟인 RIPK2 (RIP Kinase 2)의 활성을 억제하여 파킨슨 및 알츠하이머 질환 등 퇴행성 뇌질환의 진행 조절\n디앤디파마텍과 공동개발 체결 이후 디앤디파마텍이 임상전략 수립, 시험설계\n디앤디파마텍과 공동개발 체결 이후 디앤디파마텍이 임상전략 수립 ,시험 설계\n해당 asset은 1st biotherapeutics와 공동연구 진행중이고, 1ST-103 으로도 불림.\n단계는 Preclinical 단계지만 현재 1st에서 개발중인 화합물이고, D&D Pharmatech의 이슬기 대표가 Neuraly를 자회사로 합병하고 가져온 화합물임. (Neuraly도 이슬기대표 회사였음)",
         "comment_author": "Team",
         "comment_author_user_id": "",
         "comment_author_email": "",
         "comment_source": "team_review_import",
-        "comment_created_at": "2026-09-18T03:16:22.784823+00:00",
-        "comment_updated_at": "2026-09-18T03:16:22.784823+00:00",
+        "comment_created_at": "2026-10-06T01:22:28.817347+00:00",
+        "comment_updated_at": "2026-10-06T01:22:28.817347+00:00",
         "comment_entries": [
           {
             "id": "legacy-a6e0a37e7c4fe12e41965bb5ca09711d0f574c97130db92e469f3f3b5ccaf210",
@@ -52550,24 +52971,24 @@
           }
         ],
         "listing_details": {
-          "country": "Seongnam, Korea",
+          "country": "Youngin, Korea",
           "modality": "Small molecule",
           "target": "RIPK2",
-          "main_indication": "Parkinson's disease; Alzheimer's disease",
+          "main_indication": "Alzheimer's disease; Parkinson's disease",
           "stage": "Preclinical",
-          "website": "https://www.ddpharmatech.com/"
+          "website": "https://www.1stbio.com/"
         },
-        "contact": "",
+        "contact": "O (2/25), 전략팀 최초 공식 메일 일자",
         "contact_author": "Team",
         "contact_author_user_id": "",
         "contact_author_email": "",
         "contact_source": "team_review_import",
-        "contact_created_at": "2026-09-18T03:16:22.784823+00:00",
-        "contact_updated_at": "2026-09-18T03:16:22.784823+00:00",
-        "website": "https://www.ddpharmatech.com/",
+        "contact_created_at": "2026-10-06T01:22:28.817347+00:00",
+        "contact_updated_at": "2026-10-06T01:22:28.817347+00:00",
+        "website": "https://www.1stbio.com/",
         "asset_aliases": "NLY02\n1ST-103",
         "company_aliases": "D&D Pharmatech\n1st Bio Therapeutics Inc",
-        "updated_at": "2026-09-18T03:16:22.784823+00:00"
+        "updated_at": "2026-10-06T01:22:28.817347+00:00"
       },
       "collaboration": {
         "comments": [
@@ -52797,6 +53218,16 @@
         {
           "id": "ce88c59525fd485e8ea0e12042693210",
           "changed_at": "2026-09-18T03:16:46.764174+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "tab0_listing_import_metadata_sync",
+          "field": "meta.pipeline_metadata",
+          "previous_value": null,
+          "new_value": "Tab 0 Listing metadata and searchable Asset/Company aliases synchronized"
+        },
+        {
+          "id": "c256b848499244dfa982b5892200dc5c",
+          "changed_at": "2026-10-06T01:22:28.820440+00:00",
           "actor_ip": "127.0.0.1",
           "actor_name": "",
           "source": "tab0_listing_import_metadata_sync",
@@ -71294,14 +71725,14 @@
       "generated_at": "2026-08-25",
       "output_filename_base": "1st Bio Therapeutics Inc_FB-101",
       "pipeline_metadata": {
-        "listed_at": "2026-09-18T03:16:22.784823+00:00",
+        "listed_at": "2026-10-06T01:22:28.817347+00:00",
         "comment": "Phase 1\n미국에서 Phase1 진행 중, PD보다는 ALS로 먼저 개발 고려 중, 1STBIO는 임상 asset에만 FB 코드명 붙임",
         "comment_author": "Team",
         "comment_author_user_id": "",
         "comment_author_email": "",
         "comment_source": "team_review_import",
-        "comment_created_at": "2026-09-18T03:16:22.784823+00:00",
-        "comment_updated_at": "2026-09-18T03:16:22.784823+00:00",
+        "comment_created_at": "2026-10-06T01:22:28.817347+00:00",
+        "comment_updated_at": "2026-10-06T01:22:28.817347+00:00",
         "comment_entries": [
           {
             "id": "legacy-e20821b54c00670666aa2115dea26eb08a6e548ce8deb64f4ca00a054c87eece",
@@ -71333,12 +71764,12 @@
         "contact_author_user_id": "",
         "contact_author_email": "",
         "contact_source": "team_review_import",
-        "contact_created_at": "2026-09-18T03:16:22.784823+00:00",
-        "contact_updated_at": "2026-09-18T03:16:22.784823+00:00",
+        "contact_created_at": "2026-10-06T01:22:28.817347+00:00",
+        "contact_updated_at": "2026-10-06T01:22:28.817347+00:00",
         "website": "https://www.1stbio.com/",
         "asset_aliases": "FB-101",
         "company_aliases": "1st Bio Therapeutics Inc",
-        "updated_at": "2026-09-18T03:16:22.784823+00:00"
+        "updated_at": "2026-10-06T01:22:28.817347+00:00"
       },
       "dashboard_uploaded_at": "2026-08-25T08:09:11.890337+00:00",
       "storage_profile": "dashboard_hybrid_v1",
@@ -71450,6 +71881,16 @@
         {
           "id": "74b6da5e7f8c484c9324b659d4112919",
           "changed_at": "2026-09-18T03:16:22.785878+00:00",
+          "actor_ip": "127.0.0.1",
+          "actor_name": "",
+          "source": "tab0_listing_import_metadata_sync",
+          "field": "meta.pipeline_metadata",
+          "previous_value": null,
+          "new_value": "Tab 0 Listing metadata and searchable Asset/Company aliases synchronized"
+        },
+        {
+          "id": "c0c521513b684fdb9e78eb8d18933ee6",
+          "changed_at": "2026-10-06T01:22:28.818365+00:00",
           "actor_ip": "127.0.0.1",
           "actor_name": "",
           "source": "tab0_listing_import_metadata_sync",
@@ -89318,6 +89759,474 @@
       "why": "Asset identity not verified from public biotech/pharma sources.",
       "missing_evidence_needed_for_full_scout": [
         "Prodegre와 named LRRK2 degrader를 연결하는 official pipeline/patent/poster"
+      ]
+    }
+  },
+  {
+    "meta": {
+      "review_type": "full_scout",
+      "schema_version": "3.2",
+      "instruction_version": "3.9",
+      "rubric_version": "3.9",
+      "generated_at": "2026-10-02",
+      "output_filename_base": "Biohaven_Opakalim / BHV-7000",
+      "dashboard_uploaded_at": "2026-10-02T01:02:13.520924+00:00",
+      "storage_profile": "dashboard_hybrid_v1"
+    },
+    "source_report": {
+      "raw_markdown": "# Biohaven Advanced Research Report: **Opakalim / BHV-7000**\n\nOriginal report provenance: researched and scored with GPT instruction 2 — Advanced Research v3.9 (schema v3.2); URLs are included for auditability.\n\n중요: 정량 score는 **19/21점으로 Hard Filter PASS**이지만, 2026-09-04 FDA partial clinical hold(신규 환자 등록만 중단), RISE3 blinded topline 미공개, SKBP license closing 미확인은 현재 핵심 diligence gate이므로 최종 Recommendation은 **Watch**로 둡니다.\n\nIdentity Gate: **PASS** — official Biohaven pipeline, SEC filings 및 ClinicalTrials.gov에서 Opakalim/BHV-7000이 특정 biotech/pharma pipeline asset으로 확인됩니다. [1], [3], [6], [7]\n\n입력 식별자는 Biohaven / Opakalim / BHV-7000이며, 첨부된 Simple Research 값은 자산 식별에만 사용하고 모든 현황·점수는 별도 공개자료로 재검증했습니다. :chatgpt-content-reference{index=\"0\"}\n\n## 1) Company Profile\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Biohaven | [1], [3] |\n| Legal name / aliases | Biohaven Ltd.; 주요 운영 법인으로 Biohaven Pharmaceuticals, Inc. 및 Biohaven Bioscience Ireland Limited가 공개자료에 등장 | [3], [15] |\n| Location (company HQ) | United States | [3] |\n| Headquarters | 215 Church Street, New Haven, Connecticut 06510, United States | [3] |\n| Website | https://www.biohaven.com/ | [1] |\n| Company type / stage | Public clinical-stage biopharmaceutical company; NYSE: BHVN. 2026-06-30 10-Q 기준 제품매출은 아직 없음 | [3], [4] |\n| Focus areas | Immunology, neuroscience, oncology | [15] |\n| Platform summary | Kv7 ion-channel modulation platform: structure-based design, in silico modeling, large Kv7-activator chemical library를 활용해 selectivity/potency와 GABA_A off-target profile을 개선하는 small-molecule system | [2], [5] |\n| Financing / partnership signals | 2026-08-26 SK Biopharmaceuticals와 Kv7 platform 및 opakalim에 대해 최대 795 million USD 규모의 global license agreement 체결. 2026-09-09 Biohaven SEC filing 시점에는 HSR submission/closing 절차가 진행 중이었고, 권리는 closing 시 효력 발생 | [3], [14], [15] |\n| Lead pipeline summary | Opakalim은 Biohaven Kv7 platform의 lead asset. 현재 Biohaven pipeline page는 “Phase 3”로 표시하지만, SEC와 ClinicalTrials.gov의 pivotal program은 Phase 2/3로 기술되어 dashboard canonical stage는 Phase 2/3로 유지 | [1], [3], [6], [7] |\n\n## 2) Pipeline Snapshot\n\n| Field | Content | Evidence |\n|---|---|---|\n| Company | Biohaven | [1], [3] |\n| Lead asset | Opakalim; BHV-7000; former KB-3061 | [4], [5] |\n| Target | Kv7.2/Kv7.3 | [1], [2], [11] |\n| Theme / Cluster | Theme: **E/I Balance** / Cluster: **Ion Channel** | Kv7.2/7.3 M-current가 neuronal excitability의 “brake” 역할을 하고 activation이 hyperexcitability를 낮춘다는 근거 [5], [12] |\n| MoA | Selective Kv7.2/Kv7.3 potassium-channel activator; M-current/neuronal hyperpolarization을 증가시켜 hyperexcitability를 낮추며 GABA_A receptor activity는 최소화하도록 설계 | [2], [11], [12] |\n| Modality / Platform | Small molecule / Kv7 ion-channel modulation platform | [2], [11] |\n| Indication | Lead: refractory focal-onset epilepsy. 추가로 IGE, MDD, bipolar disorder, KCNQ2-DEE에서 assessed-asset 연구가 공개됨 | [4], [5] |\n| Pipeline Stage | **Phase 2/3**. RISE2/RISE3는 registry상 Phase 2/3; RISE3는 fully enrolled. 2026-09-04 FDA partial clinical hold로 신규 등록만 pause되고 이미 randomized 환자와 RISE3 dosing은 계속 | [3], [6], [7] |\n| Key data | Preclinical: Kv7.2/7.3 EC50 0.6 μM, rat MES brain EC50 0.12 μM, TD50 >20 mg/kg; Phase 1 EEG: dose- and concentration-dependent CNS PD; Phase 1 MAD: no serious/severe AE or DLT, no somnolence; focal OLE: 54%가 any consecutive 6-month period에서 ≥50% seizure reduction (n>100) | [4], [9], [10], [11] |\n\nLead-indication selection: 공식 Biohaven pipeline과 current pivotal development가 focal epilepsy를 명확히 주 적응증으로 두고 있으므로 canonical main indication은 **Epilepsy / seizure disorders**입니다. [1], [3], [6], [7]\n\nCurrent-status note: 2026-09-04 FDA는 rodent nonclinical study에서 특정 metabolite의 human-risk 평가에 정보가 부족하다는 이유로 **partial clinical hold**를 발행했습니다. 이 조치는 신규 환자 등록에 한정되며, 이미 randomized된 600명 이상의 환자 dosing, fully enrolled RISE3 및 OLE dosing은 계속된다고 Biohaven이 SEC에 보고했습니다. 이 pause는 terminal lifecycle이 아니므로 `Discontinued / inactive`로 매핑하지 않습니다. [3]\n\n## 2A) IP & Launch Outlook\n\n| Field | Assessment | Evidence / Basis |\n|---|---|---|\n| Core Patent / CoM | **Composition of Matter**: U.S. Patent **10,851,067 / US10851067B2**, Biohaven 10-K가 opakalim을 claim한다고 명시 | [5], [13] |\n| Earliest Priority Date | **2018-03-19** | Google Patents patent-family metadata [13] |\n| Expected CoM Base Expiry Year (excluding PTA/PTE) | **2039**; Biohaven 10-K는 U.S. ‘067 patent가 March 2039에 만료된다고 명시. PTA/PTE는 확인된 연장분을 가정하지 않음 | [5], [13] |\n| Expected Launch Year | **2029**; SK Biopharmaceuticals가 U.S. launch를 “as early as 2029”로 공식 제시. 이는 company guidance이며 승인 확정일이 아님 | [14] |\n| Patent Runway at Launch | 약 **10 years** (2039 - 2029), U.S. base CoM 기준. PTA/PTE 제외 | [5], [13], [14] |\n\n추가 IP 맥락: Biohaven 10-K는 U.S. Patent 9,481,653이 opakalim을 포함하는 class를 claim하며 September 2035 base expiry라고 기술하고, 2023년 출원된 다른 Kv7 chemotype/combination families도 공개합니다. 다만 JSON `com_expiry_year`에는 지침에 따라 assessed asset의 verified basic CoM인 ‘067 patent의 2039만 사용했습니다. [5]\n\n## 3) Scorecard Summary\n\n| Criterion | Score (maximum 3 points each) | One-line judgment | Evidence used |\n|---|---:|---|---|\n| Target Relevance | **3점** | Lead indication이 SKBP priority인 Epilepsy / seizure disorders | [1], [3], [6], [7] |\n| MoA Validity | **3점** | Asset-specific Kv7 functional validation + human CNS PD/EEG target-engagement evidence | [9], [11], [12] |\n| Data Maturity | **3점** | Preclinical functional/efficacy, Phase 1 PD/safety, patient OLE/IGE 등 복수 정량 도메인 | [4], [9], [10], [11] |\n| Competitive Landscape | **2점** | 현실적 차별화 근거는 있으나 direct matched head-to-head material advantage는 없음 | [4], [16], [17], [18] |\n| Platform Attractiveness | **3점** | Reusable Kv7 discovery system + quantitative technical evidence + platform-derived lead의 human dosing/late-stage progression | [2], [5], [11] |\n| Expansion Potential | **2점** | IGE에서 asset-specific randomized quantitative signal은 있으나 동일 적응증 active formal program은 확인되지 않음 | [4], [5] |\n| Marketability | **3점** | **external_forecast**; Shinhan Accounting model의 U.S. peak 2,079.13 million USD를 global x1.5로 정규화한 **3,118.695 million USD**가 score basis | [19], [14] |\n| **Total** | **19점** | Maximum total: 21점 |  |\n\nHard Filter: **PASS** — Total 19 >= 14, Target Relevance 3, MoA Validity 3, Data Maturity 3을 모두 충족합니다. 다만 partial clinical hold와 license closing 불확실성은 decision uncertainty flag로 별도 유지합니다.\n\n## 4) Criterion Detail Pages\n\n### 4.1 Target Relevance\nScore: **3점**\n\nMain line: 현재 주 개발 적응증인 refractory focal epilepsy는 SKBP Interest Indication의 **Epilepsy / seizure disorders**에 직접 해당합니다.\n\nWhat was checked:\n- Target identity: Kv7.2/Kv7.3 [1], [2], [11]\n- Disease/biology relevance: Kv7.2/7.3 M-current와 neuronal hyperexcitability/seizure biology [5], [12]\n- General neurodegeneration / neuroinflammation / epilepsy relevance: focal epilepsy pivotal program 및 trial registry [3], [6], [7]\n\nEvidence trail:\n- Biohaven current pipeline은 Opakalim을 focal epilepsy asset로 제시합니다. [1]\n- SEC 8-K는 두 pivotal refractory focal-epilepsy study와 Phase 2/3 program을 명시합니다. [3]\n- ClinicalTrials.gov NCT06132893은 refractory focal epilepsy에서 Phase 2/3 study임을 확인합니다. [6]\n- 독립 review는 Kv7.2/7.3가 seizure susceptibility와 연관된 clinically validated channel biology임을 정리합니다. [12]\n\nInvestigation note:\n- Target Relevance는 target biology가 아니라 **confirmed indication** 기준으로 점수화했습니다.\n- 3점이 최대점수이므로 더 높은 점수는 없습니다.\n\n### 4.2 MoA Validity\nScore: **3점**\n\nMain line: Opakalim은 assessed asset 수준에서 Kv7.2/Kv7.3 functional activation이 확인되고, human Phase 1 pharmaco-EEG에서 dose/concentration-dependent CNS PD가 확인되어 direct functional validation / mechanism-linked PD 기준을 충족합니다.\n\nWhat was checked:\n- Journal publication / PMID / DOI: Neurology AAN abstracts 및 independent CNS Drugs review [9], [11], [12]\n- Mechanistic consistency: Kv7.2/7.3 activation → M-current 증가 → neuronal hyperpolarization / excitability 감소 [11], [12]\n- Functional readout: cortical-neuron hyperpolarization, W236 dependence, MES seizure protection [11]\n- Disease linkage: epilepsy hyperexcitability 및 seizure phenotype [11], [12]\n- Safety-relevant signal: minimal GABA_A activity, cardiac ion-channel screen, Phase 1 CNS AE profile [10], [11]\n\nEvidence trail:\n- **Company-generated, asset-specific E3:** BHV-7000은 Kv7.2/7.3 EC50 0.6 μM, cortical neuron에서 concentration-dependent hyperpolarization, Kv7.2 W236 dependence를 보였습니다. [11]\n- **Company-generated, asset-specific E3:** Rat MES에서는 brain EC50 0.12 μM, TD50 >20 mg/kg, rotarod motor effect 없음이 보고됐습니다. [11]\n- **Company-generated, asset-specific E4:** Phase 1 EEG study(n=11)는 10/25/50 mg에서 EEG spectral power의 dose-dependent 변화와 plasma concentration-response correlation을 보였습니다. [9]\n- **Independent, class-level E2:** CNS Drugs review는 Kv7.2/7.3 activation의 epilepsy class rationale과 BHV-7000의 공개 functional/Phase 1 evidence를 검토합니다. [12]\n\n왜 3점인가: rubric 3점의 “assessed-asset target engagement, mechanism-linked PD/biomarker, or direct functional validation”을 충족합니다.  \n왜 더 높지 않은가: 3점이 최대점수입니다.\n\nInvestigation note:\n- 기존 scoring evidence는 preclinical seizure phenotype과 임상 EEG PD biomarker에 연결되며, EEG는 disease efficacy 자체가 아니라 mechanism-linked proximal CNS PD로 해석합니다.\n\n### 4.3 Data Maturity\nScore: **3점**\n\nMain line: 현재 단계에 맞는 asset-specific 정량 evidence가 최소 두 개의 상이한 development question을 다루며, 임상 진행을 직접 뒷받침하는 human PD/safety와 환자 임상 신호가 존재합니다.\n\nWhat was checked:\n- In vitro: Kv7 functional electrophysiology, GABA_A/cardiac selectivity [11]\n- In vivo: rat MES efficacy/tolerability [11]\n- Quantitative result: EC50, TD50, EEG concentration-response, AE rates, OLE responder rate, IGE randomized POC [4], [9]-[11]\n- Reproducibility: 여러 preclinical/Phase 1 datasets와 공식 filings에서 일관된 방향성; 단, pivotal efficacy replication은 아직 미공개\n- IND-enabling / GLP tox / PK/PD / CMC / human data availability: Phase 1 human PD/safety와 late-stage clinical exposure는 확인되나 현재 metabolite nonclinical clarification이 regulatory issue [3], [9], [10]\n\nEvidence trail:\n- Preclinical quantitative domain: EC50 0.6 μM, MES brain EC50 0.12 μM, TD50 >20 mg/kg. [11]\n- Human PD domain: Phase 1 EEG dose/concentration response. [9]\n- Human safety domain: pooled MAD 66 participants(53 active/13 placebo), no serious/severe AEs or DLT, no somnolence; 75 mg ER n=12에서 AE 없음. [10]\n- Patient efficacy-signal domain: focal OLE에서 n>100 중 54%가 any consecutive 6-month period에 ≥50% seizure reduction; preliminary exposure-response relationship도 보고됨. [4]\n- Additional clinical domain: IGE POC는 n=27로 조기 종료되어 formal statistical testing은 없었으나 median time to second GTC seizure 141 vs 47 days, 24-week second-seizure-free 33% vs 0%를 보였습니다. [4]\n\n왜 3점인가: 복수의 complementary quantitative domains가 있고, 그중 Phase 1 PD/safety 및 환자 임상 데이터가 프로그램 progression을 직접 지원했습니다.  \n왜 더 높지 않은가: 3점이 최대이나, **RISE3 blinded placebo-controlled pivotal efficacy result는 아직 공개되지 않았고** FDA metabolite issue의 추가 비임상 결과도 미공개입니다. [3]\n\nInvestigation note:\n- Data Maturity는 Opakalim 자체 데이터만 사용했으며, 다른 Kv7 platform compounds의 데이터는 점수에 가산하지 않았습니다.\n\n### 4.4 Competitive Landscape\nScore: **2점**\n\nMain line: refractory focal epilepsy에는 큰 잔존 미충족 수요가 있고 Opakalim의 asset-specific efficacy/tolerability evidence가 현실적 entry space를 뒷받침하지만, 동일 Kv7 mechanism의 azetukalner 대비 matched direct head-to-head material advantage는 확인되지 않았습니다.\n\nWhat was checked:\n- Asset aliases: Opakalim, BHV-7000, KB-3061\n- Same indication + target/MoA: focal seizures + Kv7; direct competitor azetukalner\n- Same indication + broader pathway/biology: focal seizures + ion-channel ASMs\n- Approved: XCOPRI/cenobamate\n- Registration / Phase 3: azetukalner NDA submitted 2026-09-17\n- Other late-stage clinical: vormatrigine Phase 2/3, program reassessment after POWER1\n- Trial registries: RISE2/RISE3/OLE\n- Recent independent review: Kv7 class review including ezogabine historical benchmark [12]\n\nCompetitor table:\n\n| Competitor | Company | Modality | Target / MoA | Pipeline Stage | Why it matters | Source |\n|---|---|---|---|---|---|---|\n| Azetukalner (XEN1101) | Xenon Pharmaceuticals | Small molecule | Kv7 potassium-channel opener | **Registration**; NDA submitted 2026-09-17 | **Direct competitor**: same focal-seizure indication + same Kv7 intervention class; positive Phase 3 package already supports NDA | [16] |\n| XCOPRI (cenobamate) | SK Life Science / SK Biopharmaceuticals | Small molecule | Antiseizure small molecule; sodium-current/GABA_A pharmacology | **Approved / marketed** | **Broader/reference comparator**: approved U.S. focal-seizure standard and same commercial prescriber base, but different mechanism | [17] |\n| Vormatrigine (PRAX-628) | Praxis Precision Medicines | Small molecule | Functionally selective NaV-channel modulator | Phase 2/3; POWER2 enrollment paused for reassessment | **Broader/reference comparator**: same focal-onset seizure setting and oral ion-channel strategy; POWER1 missed primary success measure | [18] |\n\nCompetitive-density assessment: **High**. 이유는 단순 competitor 수가 아니라, 동일 mechanism/indication의 azetukalner가 이미 NDA 단계이며 동시에 approved focal-seizure options와 다른 late-stage ion-channel programs가 존재하기 때문입니다. [16]-[18]\n\nDifferentiation evidence:\n- Opakalim focal OLE: 54% ≥50% responder rate over any consecutive six months, n>100. Biohaven은 azetukalner Phase 2b OLE의 published 56%와 유사한 수준이라고 cross-study로 기술했습니다. [4]\n- Opakalim Phase 1 MAD에서는 no somnolence 및 낮은 CNS AE profile이 보고됐습니다. [10]\n- XCOPRI FDA label은 common adverse reactions에 somnolence, dizziness, fatigue 등을 포함합니다. [17]\n- 그러나 위 비교들은 matched head-to-head clinical trial이 아니며, Biohaven 10-K의 일부 preclinical comparator data도 independent experiments/cross-study 성격입니다. 따라서 3점 근거로 쓰지 않았습니다. [5]\n\n왜 2점인가: rubric의 “realistic entry space supported by clear unresolved need plus asset-specific target/MoA, route, safety or access evidence”를 충족합니다.  \n왜 3점이 아닌가: azetukalner 등 appropriate direct comparator에 대한 **matched/comparable direct head-to-head quantitative material advantage**가 없습니다.\n\nInvestigation note:\n- Direct competitor는 azetukalner로 분류했고, XCOPRI와 vormatrigine은 broader/reference comparators로 분리했습니다.\n- Search limitation: RISE3 randomized pivotal result가 아직 공개되지 않아 late-stage efficacy differentiation을 동일 조건으로 비교할 수 없습니다.\n\n### 4.5 Platform Attractiveness\nScore: **3점**\n\nMain line: Kv7 platform은 reusable structure-based small-molecule discovery system으로 확인되며, comparator 대비 quantitative technical evidence가 있고 platform-derived lead인 Opakalim이 human dosing을 넘어 late-stage clinical development에 진입했습니다.\n\nWhat was checked:\n- Reusable structure: Kv7.2/7.3 activator library, structure-based design, in silico modeling, multiple chemotypes [2], [5]\n- Differentiation data: potency/selectivity, GABA_A sparing, MES efficacy/tolerability [5], [11]\n- Reuse across candidates/programs: platform acquisition and related compounds explicitly covered by SKBP license [3], [14], [15]\n- Reproduction / progression: Opakalim is platform-derived and has completed FIH/Phase 1 and entered Phase 2/3 [4], [5]\n\nEvidence trail:\n- **Company-generated platform evidence:** Biohaven은 large library와 structure-based approach를 이용해 ezogabine 대비 selectivity/potency 및 off-target profile 개선을 목표로 한 reusable discovery system을 설명합니다. [5]\n- **Company-generated, asset-specific quantitative E3:** BHV-7000은 MES brain EC50 0.12 μM, TD50 >20 mg/kg, little/no GABA_A effect at 10 μM 등 technical readouts를 보였습니다. [11]\n- **Quantitative comparator foundation for Score 2:** Biohaven 10-K의 rat MES independent-experiment comparison은 opakalim ED50 0.5 mg/kg, therapeutic index >40x versus ezogabine ED50 20 mg/kg, therapeutic index <3x를 제시합니다. 별도 실험이므로 direct head-to-head superiority로 확대해석하지 않았지만, appropriate historical Kv7 comparator 대비 정량 기술차별화 근거로 사용했습니다. [5]\n- **Clinical progression E4:** Platform-derived lead Opakalim은 FIH를 완료하고 Phase 2/3 pivotal program까지 진행했습니다. [4], [6], [7]\n\n왜 3점인가: 2점에 필요한 quantitative technical-advantage evidence가 있고, rubric의 추가 조건인 **officially linked platform-derived asset reaching First Patient Dosed**를 충족합니다.  \n왜 더 높지 않은가: 3점이 최대입니다. 다만 여러 독립 platform-derived assets에서 동일 advantage가 반복 재현됐다는 공개 근거는 제한적입니다.\n\nInvestigation note:\n- Platform Attractiveness에는 platform architecture와 preclinical technical differentiation 및 FPD/progression만 사용했고, Data Maturity에서 사용한 focal OLE efficacy endpoint를 중복 가산하지 않았습니다.\n\n### 4.6 Expansion Potential\nScore: **2점**\n\nMain line: main indication인 focal epilepsy 밖에서 IGE에 대해 assessed-asset randomized quantitative clinical signal이 존재하지만, 동일 추가 적응증의 현재 active official development program은 확인되지 않습니다.\n\nWhat was checked:\n- Expansion beyond main indication: IGE, MDD, bipolar disorder, KCNQ2-DEE [2], [4], [5]\n- Asset-specific quantitative data: IGE randomized POC, MDD/BPD clinical outcomes, KCNQ2-mutant channel work [4], [5]\n- Confirmed active programs: current formal active status 여부를 별도 확인\n\nEvidence trail:\n- IGE POC NCT06425159: 27 subjects(15 opakalim/12 placebo), prespecified sample size 이전에 enrollment challenge와 portfolio prioritization으로 종료; formal stats 미실시. Median time to second GTC seizure 141 vs 47 days, 24-week second-seizure-free 33% vs 0%, seizure-free 20% vs 0%. [4]\n- MDD Phase 2는 primary endpoint를 충족하지 못했고 Biohaven은 portfolio prioritization으로 추가 psychiatric clinical trials를 계획하지 않는다고 밝혔습니다. [5]\n- Bipolar program도 primary YMRS에서 통계적 separation을 달성하지 못한 것으로 2025 10-K에 보고됐습니다. [5]\n- Current Biohaven Kv7 platform page는 KCNQ2-DEE에서 Opakalim을 탐색 중이라고 명시하지만, rubric 3점에 필요한 formal active preclinical/IND-enabling/clinical program은 공개자료만으로 확정되지 않았습니다. [2]\n\n왜 2점인가: 추가 적응증 IGE에서 asset-specific quantitative clinical data가 있어 2점 조건을 충족합니다.  \n왜 3점이 아닌가: 동일 추가 적응증에서 **quantitative data + 현재 active official development program**의 동시 충족을 확인하지 못했습니다.\n\nInvestigation note:\n- 확인된 추가 적응증은 **복수**입니다: IGE는 randomized POC 정량 데이터 후 조기 종료; MDD/BPD는 임상시험 종료 및 추가 psychiatric trial 미계획; KCNQ2-DEE는 asset-specific 연구/탐색 근거가 있으나 formal active-program status는 확인 불가.\n\n### 4.7 Marketability\nScore: **3점**\n\nMain line: reliable asset-specific external valuation forecast를 primary score basis로 사용했으며, U.S. peak net sales **2,079.13 million USD**를 지침의 U.S.-to-global x1.5 screening policy로 정규화한 assessed global peak sales는 **3,118.695 million USD**입니다.\n\nAssessment method: **external_forecast**  \nScore basis type: **external_forecast**  \nAssessed global peak sales: **3,118.695 million USD**\n\nWhat was checked:\n- Internal A/B/C/D calculation: **not performed**\n- Reliable asset-specific external peak-sales forecast: **available**\n- Competition/pricing assumptions: external valuation model에 내재; 내부 calculation과 중복 적용하지 않음\n\nWorksheet:\n\n| Step | What to fill | Evidence / assumption |\n|---|---|---|\n| A. US TAP | Not performed | External-forecast-only assessment; internal epidemiology calculation을 강제로 생성하지 않음 |\n| B. US Unrisked Peak Sales | Not performed | External-forecast-only assessment |\n| C. US Obtainable Peak Sales | Not performed | External-forecast-only assessment |\n| D. Global Obtainable Peak Sales | Not performed as internal calculation | x1.5는 external U.S. peak forecast를 global normalization할 때 한 번만 적용 |\n| External Peak Sales Reference | Shinhan Accounting Corporation external valuation; reported 2026-09-09; U.S.; 2042 peak **2,079.13 million USD**; normalized Global **3,118.695 million USD**; confidence **Medium** | DailyPharm report [19] |\n| Final score basis | **3점** because assessed global value >= 2,000 million USD | v3.9 threshold |\n\nExternal forecast details:\n- Source/Type: Shinhan Accounting Corporation external valuation, DailyPharm secondary reporting.\n- Date: 2026-09-09 report.\n- Geography: United States.\n- Forecast year: 2042.\n- U.S. peak sales: **2,079.13 million USD**.\n- Normalized global peak: **2,079.13 x 1.5 = 3,118.695 million USD**.\n- Confidence: **Medium** — concrete asset-specific number이지만 long-horizon DCF/commercial assumptions이며 pivotal readout, regulatory hold resolution, approval timing, price/share assumptions에 민감합니다. [19]\n- Model also assumes 2029 U.S. launch, consistent with SKBP’s official “as early as 2029” target. [14]\n- Mirae Asset report의 2035 consensus context는 보조 cross-check로만 보았으며, available webpage에서 동일한 peak definition/geography로 확인되지 않아 primary score basis에 섞지 않았습니다. [20]\n\nInvestigation note:\n- Marketability score는 rNPV가 아니라 normalized obtainable/forecast peak sales threshold를 따릅니다.\n- 내부 A/B/C/D를 수행하지 않았으므로 patient pool, diagnosis rate, penetration, net price 등을 임의로 채우지 않았습니다.\n- Partial hold가 장기화되거나 azetukalner의 earlier entry가 예상보다 강하면 2029 launch/market-share assumptions이 낮아질 수 있습니다.\n\n## 5) Validation Notes\n\nCross-checked facts:\n- **Identity/target/indication**: Biohaven pipeline, SEC filings, SKBP release, ClinicalTrials.gov가 Opakalim/BHV-7000, Kv7.2/Kv7.3, focal epilepsy를 일관되게 확인. [1], [3], [6], [7], [14]\n- **MoA**: company platform material, asset-specific Neurology data, independent CNS Drugs review를 교차 확인. [2], [11], [12]\n- **Clinical stage**: ClinicalTrials.gov와 2026-09-04 SEC filing은 Phase 2/3 program을 확인. Biohaven pipeline webpage는 Phase 3 표시이므로 raw-source discrepancy를 기록하되 canonical dashboard value는 Phase 2/3로 유지. [1], [3], [6], [7]\n- **Partial hold**: SEC 8-K가 new enrollment only pause, ongoing randomized dosing/RISE3 continuation을 명시. [3]\n- **Patent**: Biohaven 10-K와 US10851067B2 metadata가 opakalim claim 및 2039 base expiry/2018-03-19 priority를 상호 지지. [5], [13]\n- **License**: 양사 2026-08-26 official releases와 2026-09-09 SEC filing으로 서명 및 closing 조건을 교차 확인. [3], [14], [15]\n\nUncertain points:\n- 2026-10-02 기준 최신 확인 공개자료에서 **FDA partial clinical hold 해제** 또는 metabolite package에 대한 FDA 수용을 확인할 공식 후속자료를 찾지 못했습니다. 필요한 source: FDA/Biohaven/SKBP official update or subsequent SEC filing.\n- **RISE3 blinded topline** 결과를 최신 확인 공개자료에서 찾지 못했습니다. 필요한 source: Biohaven/SKBP topline release 또는 trial-results disclosure.\n- **SKBP license closing** 완료를 확인할 후속 official filing/press release를 찾지 못했습니다. 2026-09-09 SEC filing은 closing을 위한 HSR 절차가 진행 중이라고만 기재합니다. [3]\n- Current corporate pipeline webpage의 “Phase 3”와 registry/SEC의 “Phase 2/3” 표기 차이가 있으나, 실제 registered study phase를 dashboard canonical stage의 우선 근거로 사용했습니다.\n- Market forecast는 2042 장기 전망이며 실제 launch, label, competition, pricing에 따라 크게 달라질 수 있습니다.\n\nSearch log:\n- Official company page: Biohaven pipeline [1], Kv7 platform [2]\n- Pipeline page: Biohaven current pipeline [1]\n- Platform page: Biohaven Kv7 innovation engine [2]\n- Publications: Neurology preclinical/EEG/Phase 1 safety [9]-[11]; independent CNS Drugs review [12]\n- Regulatory / trial registry: SEC 8-K/10-Q/10-K [3]-[5]; ClinicalTrials.gov RISE2/RISE3/OLE [6]-[8]\n- Competitor sources: Xenon azetukalner NDA [16]; FDA XCOPRI label [17]; Praxis vormatrigine update [18]; historical ezogabine context [12]\n- Market / epidemiology sources: external asset valuation [19]; Mirae analyst context [20]. Epidemiology was not used for internal A/B/C/D because calculation was not performed.\n- Financing / partnership sources: Biohaven-SKBP official releases and SEC [3], [14], [15]\n- Patent sources: Biohaven 10-K and US10851067B2 [5], [13]\n\n## 6) Final Take\n\nOne-line summary:\n\nOpakalim은 epilepsy priority fit, asset-specific mechanism validation, 복수의 quantitative development domains, reusable Kv7 platform, 그리고 external valuation상 >3,000 million USD normalized global peak potential을 갖춘 late-stage asset이지만, **unresolved partial clinical hold + pending RISE3 pivotal readout + license closing 미확정**이 현재 가장 중요한 near-term risk입니다.\n\nRecommendation:\n- **Watch**\n\nMost important diligence question:\n\n**FDA가 특정 metabolite 우려를 해소하기 위해 요구한 추가 nonclinical package를 언제 수용하고 partial clinical hold를 해제할 것인가, 그리고 그 timing이 RISE2/registration plan 및 2029 U.S. launch assumption에 어떤 영향을 주는가?**\n\n## References\n\n[1]: https://www.biohaven.com/pipeline/ \"Biohaven Pipeline\"\n[2]: https://www.biohaven.com/pipeline/innovation-engine/kv7/ \"Biohaven Kv7 Ion Channel Modulation Platform\"\n[3]: https://www.sec.gov/Archives/edgar/data/1935979/000193597926000077/bhvn-20260904.htm \"Biohaven Form 8-K, September 4 2026 program update\"\n[4]: https://www.sec.gov/Archives/edgar/data/1935979/000193597926000066/bhvn-20260630.htm \"Biohaven Form 10-Q, quarter ended June 30 2026\"\n[5]: https://www.sec.gov/Archives/edgar/data/1935979/000193597926000020/bhvn-20251231.htm \"Biohaven Form 10-K, year ended December 31 2025\"\n[6]: https://clinicaltrials.gov/study/NCT06132893 \"ClinicalTrials.gov NCT06132893 RISE 2\"\n[7]: https://clinicaltrials.gov/study/NCT06309966 \"ClinicalTrials.gov NCT06309966 RISE 3\"\n[8]: https://clinicaltrials.gov/study/NCT06443463 \"ClinicalTrials.gov NCT06443463 Open-Label Extension\"\n[9]: https://www.neurology.org/doi/10.1212/WNL.0000000000206367 \"BHV-7000 Phase 1 pharmaco-EEG\"\n[10]: https://www.neurology.org/doi/10.1212/WNL.0000000000211227 \"BHV-7000 Phase 1 multiple-ascending-dose safety\"\n[11]: https://www.neurology.org/doi/10.1212/WNL.0000000000206250 \"Characterization of BHV-7000\"\n[12]: https://link.springer.com/article/10.1007/s40263-024-01155-3 \"Targeting Kv7 Potassium Channels for Epilepsy\"\n[13]: https://patents.google.com/patent/US10851067B2 \"US10851067B2 Kv7 channel activators compositions and methods of use\"\n[14]: https://www.skbp.com/eng/news/view.do?boardCode=BDCD0001&boardSeq=795&currentPage=1&search= \"SK Biopharmaceuticals to In-License Epilepsy Drug Candidate Opakalim\"\n[15]: https://ir.biohaven.com/news-releases/news-release-details/biohaven-and-sk-biopharmaceuticals-enter-strategic-global \"Biohaven and SK Biopharmaceuticals Enter Strategic Global Licensing Agreement\"\n[16]: https://xenonpharma.gcs-web.com/news-releases/news-release-details/xenon-announces-azetukalner-nda-submission-fda-focal-seizures \"Xenon Announces Azetukalner NDA Submission\"\n[17]: https://www.accessdata.fda.gov/drugsatfda_docs/label/2024/212839s009s010lbl.pdf \"FDA XCOPRI Prescribing Information\"\n[18]: https://investors.praxismedicines.com/news-releases/news-release-details/praxis-precision-medicines-provides-vormatrigine-program-update \"Praxis Vormatrigine Program Update\"\n[19]: https://dailypharm.com/eng/user/news/8450 \"DailyPharm report on Shinhan Accounting Opakalim valuation\"\n[20]: https://securities.miraeasset.com/newir/view/pc/en/investor/researchReportsView.jsp?messageId=2342325 \"Mirae Asset Securities research report\"",
+      "parser_status": "gpt_structured_output"
+    },
+    "input": {
+      "company_input": "Biohaven",
+      "asset_input": "Opakalim / BHV-7000"
+    },
+    "json_summary": {
+      "theme": "E/I Balance",
+      "cluster": "Ion Channel",
+      "target_description": "Selective Kv7.2/Kv7.3 M-current activation to reduce neuronal hyperexcitability in epilepsy."
+    },
+    "structured_table": {
+      "company": "Biohaven",
+      "asset_name": "Opakalim / BHV-7000",
+      "target": "Kv7.2/Kv7.3",
+      "moa": "Selective Kv7.2/Kv7.3 potassium-channel activator that increases neuronal M-current/hyperpolarization and reduces hyperexcitability with minimal GABA_A receptor activity.",
+      "modality_platform": "Small molecule",
+      "main_indication": "Epilepsy / seizure disorders",
+      "indication": "Refractory focal-onset epilepsy; idiopathic generalized epilepsy; major depressive disorder; bipolar disorder; KCNQ2 developmental and epileptic encephalopathy",
+      "development_stage": "Phase 2/3",
+      "company_country": "United States",
+      "sources": [
+        {
+          "source_title": "Biohaven Pipeline — Opakalim (BHV-7000)",
+          "source_url": "https://www.biohaven.com/pipeline/"
+        }
+      ]
+    },
+    "hard_filter": {
+      "status": "PASS",
+      "reason": "19/21점이며 Target Relevance, MoA Validity, Data Maturity가 모두 3점으로 정량 PASS 요건을 충족한다.",
+      "flags": [
+        "FDA partial clinical hold issued 2026-09-04: new enrollment paused; already-randomized dosing and fully enrolled RISE3 continue.",
+        "RISE3 blinded topline data remained pending in the latest checked public sources as of 2026-10-02.",
+        "SKBP global license was signed 2026-08-26, but public checked sources did not establish transaction closing as of 2026-10-02."
+      ],
+      "hard_blocker": false,
+      "decision_uncertainty": true
+    },
+    "scoring": {
+      "criteria": {
+        "target_relevance": {
+          "score": 3,
+          "evidence_type": "E4_asset_specific_clinical_evidence",
+          "evidence_type_reason": "현재 focal epilepsy 임상 프로그램이 자산별로 확인된다.",
+          "evidence_basis": "public_web; official pipeline, SEC filing, ClinicalTrials.gov",
+          "main_line_summary": "주 적응증 focal epilepsy는 SKBP 우선 관심질환인 Epilepsy / seizure disorders에 해당한다.",
+          "why_not_higher": "3점이 최대점수다.",
+          "investigation_note": "점수는 적응증 기준으로 부여했으며 target biology 자체를 Target Relevance 점수 근거로 사용하지 않았다.",
+          "uncertain_points": [],
+          "source_ids": [
+            "SRC01",
+            "SRC03",
+            "SRC06",
+            "SRC07"
+          ]
+        },
+        "moa_validity": {
+          "score": 3,
+          "evidence_type": "E4_asset_specific_clinical_evidence",
+          "evidence_type_reason": "자산별 직접 기능검증과 임상 CNS PD/EEG concentration-response가 있다.",
+          "evidence_basis": "asset-specific electrophysiology/MES plus Phase 1 pharmaco-EEG",
+          "main_line_summary": "Kv7.2/Kv7.3 직접 활성화와 CNS PD가 자산 수준에서 정량 검증됐다.",
+          "why_not_higher": "3점이 최대점수다.",
+          "investigation_note": "검증 근거는 preclinical seizure phenotype과 임상 EEG PD biomarker에 연결되며, EEG는 질환 효능 자체가 아니라 mechanism-linked proximal CNS PD로 해석한다.",
+          "uncertain_points": [
+            "직접 receptor/channel occupancy 임상 biomarker는 공개자료에서 확인되지 않았다."
+          ],
+          "source_ids": [
+            "SRC02",
+            "SRC09",
+            "SRC11",
+            "SRC12"
+          ]
+        },
+        "data_maturity": {
+          "score": 3,
+          "evidence_type": "E4_asset_specific_clinical_evidence",
+          "evidence_type_reason": "preclinical functional/efficacy, Phase 1 PD/safety, 환자 OLE/IGE 임상 정량 데이터가 보완적으로 존재한다.",
+          "evidence_basis": "multiple complementary asset-specific quantitative domains",
+          "main_line_summary": "두 개 이상 상이한 정량 도메인이 있고 임상진행을 지지하는 Phase 1 PD/safety 및 환자 데이터가 있다.",
+          "why_not_higher": "3점이 최대점수지만 pivotal randomized RISE3 efficacy 결과는 아직 공개되지 않았다.",
+          "investigation_note": "평가는 assessed asset 데이터만 사용했으며 플랫폼 타 자산 데이터는 가산하지 않았다.",
+          "uncertain_points": [
+            "RISE3 blinded pivotal topline 결과가 최신 확인 공개자료에서 아직 없다.",
+            "metabolite nonclinical package 결과와 hold 해제 여부가 미확인이다."
+          ],
+          "source_ids": [
+            "SRC03",
+            "SRC04",
+            "SRC09",
+            "SRC10",
+            "SRC11"
+          ]
+        },
+        "competitive_landscape": {
+          "score": 2,
+          "evidence_type": "E4_asset_specific_clinical_evidence",
+          "evidence_type_reason": "환자 OLE와 임상 tolerability 데이터로 현실적 차별화 여지가 보이지만 direct matched head-to-head는 없다.",
+          "evidence_basis": "direct Kv7 competitor plus approved and late-stage focal-seizure comparators",
+          "main_line_summary": "미충족 수요와 asset-specific efficacy/tolerability 근거는 있으나 azetukalner 대비 직접 head-to-head 우월성은 확인되지 않았다.",
+          "why_not_higher": "3점에 필요한 matched/comparable direct head-to-head material advantage가 없다; 공개 비교는 cross-study 또는 별도 실험이다.",
+          "investigation_note": "Opakalim/BHV-7000/KB-3061, focal epilepsy+Kv7, focal epilepsy+ion-channel, approved/registration/late-stage competitors, registries와 independent review를 검색했다.",
+          "uncertain_points": [
+            "RISE3 placebo-controlled 결과가 공개되기 전까지 임상 차별화 크기는 불확실하다."
+          ],
+          "source_ids": [
+            "SRC04",
+            "SRC12",
+            "SRC16",
+            "SRC17",
+            "SRC18"
+          ]
+        },
+        "platform_attractiveness": {
+          "score": 3,
+          "evidence_type": "E4_asset_specific_clinical_evidence",
+          "evidence_type_reason": "재사용 가능한 Kv7 discovery platform의 정량 기술차별화 근거와 platform-derived lead의 human dosing이 모두 확인된다.",
+          "evidence_basis": "reusable structure-based Kv7 platform; quantitative preclinical technical advantage; clinical FPD/progression of lead asset",
+          "main_line_summary": "구조기반 재사용 플랫폼에 정량 비교근거가 있고 그 platform-derived lead가 임상 투약을 넘어 late-stage까지 진입했다.",
+          "why_not_higher": "3점이 최대점수다; 비교실험 일부는 독립 실험/cross-study 성격이라 절대적 우월성으로 확대해석하지 않았다.",
+          "investigation_note": "Platform 점수는 Kv7 discovery system과 technical selectivity/potency evidence 및 platform-derived asset의 FPD를 사용했고, Data Maturity의 환자 효능 endpoint를 중복 가산하지 않았다.",
+          "uncertain_points": [
+            "동일한 기술적 advantage가 여러 독립 platform-derived assets에서 재현됐는지는 공개자료가 제한적이다."
+          ],
+          "source_ids": [
+            "SRC02",
+            "SRC05",
+            "SRC11"
+          ]
+        },
+        "expansion_potential": {
+          "score": 2,
+          "evidence_type": "E4_asset_specific_clinical_evidence",
+          "evidence_type_reason": "IGE에서 자산별 randomized clinical quantitative signal이 확인된다.",
+          "evidence_basis": "additional-indication IGE POC quantitative results; KCNQ2-DEE asset-specific research",
+          "main_line_summary": "IGE에서 정량 임상 신호가 있으나 해당 연구가 조기 종료되어 동일 적응증의 active official program까지는 확인되지 않았다.",
+          "why_not_higher": "3점에는 같은 추가 적응증의 quantitative data와 active official preclinical/IND-enabling/clinical program이 모두 필요하지만 확인되지 않았다.",
+          "investigation_note": "추가 적응증은 복수로 확인되며 IGE는 randomized POC 정량 데이터 후 조기 종료, MDD/BPD는 임상 종료·추가 psychiatric trial 미계획, KCNQ2-DEE는 자산별 연구/탐색 근거가 있으나 active formal program은 확인되지 않았다.",
+          "uncertain_points": [
+            "KCNQ2-DEE의 정식 active development-program status는 공개자료만으로 확정할 수 없다."
+          ],
+          "source_ids": [
+            "SRC02",
+            "SRC04",
+            "SRC05"
+          ]
+        },
+        "marketability": {
+          "score": 3,
+          "evidence_type": "E2_indirect_or_class_level_evidence",
+          "evidence_type_reason": "독립 외부가치평가의 asset-specific 매출 전망을 사용했지만 임상 evidence가 아니라 commercial model이다.",
+          "evidence_basis": "external_forecast; Shinhan Accounting valuation reported by DailyPharm",
+          "main_line_summary": "US peak 2,079.13 million USD를 정책상 x1.5로 global 3,118.695 million USD로 정규화해 3점이다.",
+          "why_not_higher": "3점이 최대점수다.",
+          "investigation_note": "외부 전망은 2029 launch, 승인성공, 점유율·가격 가정에 민감하며 partial hold와 pivotal readout 전이라는 불확실성이 있다.",
+          "uncertain_points": [
+            "2042 장기 예측치이며 실제 승인·launch timing·경쟁강도에 따라 크게 달라질 수 있다."
+          ],
+          "source_ids": [
+            "SRC19",
+            "SRC14",
+            "SRC20"
+          ],
+          "calculation": {
+            "commercial_rationale_status": "external_forecast",
+            "commercial_rationale_failure_reason": "",
+            "A_targetable_addressable_patient": {
+              "targetable_addressable_patient": null,
+              "formula": "US TAP = US Patient Pool x Diagnosis Rate x Eligibility Rate x Treatable Subgroup Rate"
+            },
+            "B_unrisked_peak_sales": {
+              "unrisked_peak_sales": null,
+              "sales_unit": "million USD",
+              "formula": "US Unrisked Peak Sales = US TAP x Benchmark Annualized Net Price x Peak Penetration x Treatment Duration Factor"
+            },
+            "C_obtainable_peak_sales": {
+              "obtainable_peak_sales": null,
+              "sales_unit": "million USD",
+              "formula": "US Obtainable Peak Sales = US Unrisked Peak Sales x Competition Haircut x Pricing Power Adjustment"
+            },
+            "D_global_obtainable_peak_sales": {
+              "source_geography": "US",
+              "global_multiplier": 1.5,
+              "global_obtainable_peak_sales": null,
+              "sales_unit": "million USD",
+              "formula": "Global Obtainable Peak Sales = US Obtainable Peak Sales x 1.5"
+            }
+          }
+        }
+      },
+      "total_score": 19,
+      "max_score": 21
+    },
+    "validation": {
+      "uncertain_points": [
+        "2026-09-04 FDA partial clinical hold의 해제 여부를 확인할 후속 FDA 또는 Biohaven 공식 공지가 최신 검색에서 확인되지 않았다.",
+        "RISE3 blinded topline efficacy/safety 결과가 최신 확인 공개자료에서 아직 발표되지 않았다.",
+        "2026-08-26 SKBP license agreement의 closing 완료 여부가 확인된 공식 공개자료에서 확정되지 않았다.",
+        "Biohaven current pipeline webpage는 Opakalim을 Phase 3로 표시하지만 SEC filing과 ClinicalTrials.gov의 pivotal program은 Phase 2/3로 기술한다; dashboard stage는 등록 임상 정의를 따라 Phase 2/3로 유지했다."
+      ],
+      "cross_checked_facts": [
+        "Opakalim/BHV-7000 identity, Kv7.2/Kv7.3 target, focal epilepsy and late-stage status were cross-checked across Biohaven, SEC, SKBP and ClinicalTrials.gov.",
+        "Phase 1 CNS target-engagement and preclinical Kv7 functional evidence were cross-checked across Biohaven materials, Neurology abstracts and an independent CNS Drugs review.",
+        "US CoM expiry in March 2039 was cross-checked between Biohaven 10-K and US10851067B2 patent metadata.",
+        "2029 launch target was confirmed in SK Biopharmaceuticals' 2026-08-26 official release and also used by the external valuation model."
+      ],
+      "source_registry": [
+        {
+          "source_id": "SRC01",
+          "source_title": "Biohaven Pipeline — Opakalim (BHV-7000)",
+          "source_url": "https://www.biohaven.com/pipeline/",
+          "source_type": "official_company",
+          "verified": true
+        },
+        {
+          "source_id": "SRC02",
+          "source_title": "Biohaven Kv7 Ion Channel Modulation Platform",
+          "source_url": "https://www.biohaven.com/pipeline/innovation-engine/kv7/",
+          "source_type": "official_company",
+          "verified": true
+        },
+        {
+          "source_id": "SRC03",
+          "source_title": "Biohaven Form 8-K — September 4, 2026 partial clinical hold update",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1935979/000193597926000077/bhvn-20260904.htm",
+          "source_type": "regulatory_filing",
+          "verified": true
+        },
+        {
+          "source_id": "SRC04",
+          "source_title": "Biohaven Form 10-Q — quarter ended June 30, 2026",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1935979/000193597926000066/bhvn-20260630.htm",
+          "source_type": "regulatory_filing",
+          "verified": true
+        },
+        {
+          "source_id": "SRC05",
+          "source_title": "Biohaven Form 10-K — year ended December 31, 2025",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1935979/000193597926000020/bhvn-20251231.htm",
+          "source_type": "regulatory_filing",
+          "verified": true
+        },
+        {
+          "source_id": "SRC06",
+          "source_title": "ClinicalTrials.gov NCT06132893 — RISE 2",
+          "source_url": "https://clinicaltrials.gov/study/NCT06132893",
+          "source_type": "clinical_registry",
+          "verified": true
+        },
+        {
+          "source_id": "SRC07",
+          "source_title": "ClinicalTrials.gov NCT06309966 — RISE 3",
+          "source_url": "https://clinicaltrials.gov/study/NCT06309966",
+          "source_type": "clinical_registry",
+          "verified": true
+        },
+        {
+          "source_id": "SRC08",
+          "source_title": "ClinicalTrials.gov NCT06443463 — Opakalim open-label extension",
+          "source_url": "https://clinicaltrials.gov/study/NCT06443463",
+          "source_type": "clinical_registry",
+          "verified": true
+        },
+        {
+          "source_id": "SRC09",
+          "source_title": "Neurology — BHV-7000 dose-dependent pharmacodynamic EEG effects",
+          "source_url": "https://www.neurology.org/doi/10.1212/WNL.0000000000206367",
+          "source_type": "peer_reviewed_publication",
+          "verified": true
+        },
+        {
+          "source_id": "SRC10",
+          "source_title": "Neurology — Phase 1 multiple ascending dose safety and tolerability of BHV-7000",
+          "source_url": "https://www.neurology.org/doi/10.1212/WNL.0000000000211227",
+          "source_type": "peer_reviewed_publication",
+          "verified": true
+        },
+        {
+          "source_id": "SRC11",
+          "source_title": "Neurology — Characterization of BHV-7000, a novel Kv7.2/7.3 activator",
+          "source_url": "https://www.neurology.org/doi/10.1212/WNL.0000000000206250",
+          "source_type": "peer_reviewed_publication",
+          "verified": true
+        },
+        {
+          "source_id": "SRC12",
+          "source_title": "CNS Drugs — Targeting Kv7 Potassium Channels for Epilepsy",
+          "source_url": "https://link.springer.com/article/10.1007/s40263-024-01155-3",
+          "source_type": "independent_peer_reviewed_review",
+          "verified": true
+        },
+        {
+          "source_id": "SRC13",
+          "source_title": "US10851067B2 — Kv7 channel activators compositions and methods of use",
+          "source_url": "https://patents.google.com/patent/US10851067B2",
+          "source_type": "patent_database",
+          "verified": true
+        },
+        {
+          "source_id": "SRC14",
+          "source_title": "SK Biopharmaceuticals to In-License Epilepsy Drug Candidate Opakalim",
+          "source_url": "https://www.skbp.com/eng/news/view.do?boardCode=BDCD0001&boardSeq=795&currentPage=1&search=",
+          "source_type": "official_company",
+          "verified": true
+        },
+        {
+          "source_id": "SRC15",
+          "source_title": "Biohaven and SK Biopharmaceuticals Enter Strategic Global Licensing Agreement",
+          "source_url": "https://ir.biohaven.com/news-releases/news-release-details/biohaven-and-sk-biopharmaceuticals-enter-strategic-global",
+          "source_type": "official_company",
+          "verified": true
+        },
+        {
+          "source_id": "SRC16",
+          "source_title": "Xenon Announces Azetukalner NDA Submission to FDA for Focal Seizures",
+          "source_url": "https://xenonpharma.gcs-web.com/news-releases/news-release-details/xenon-announces-azetukalner-nda-submission-fda-focal-seizures",
+          "source_type": "competitor_official",
+          "verified": true
+        },
+        {
+          "source_id": "SRC17",
+          "source_title": "FDA Prescribing Information — XCOPRI (cenobamate)",
+          "source_url": "https://www.accessdata.fda.gov/drugsatfda_docs/label/2024/212839s009s010lbl.pdf",
+          "source_type": "regulatory",
+          "verified": true
+        },
+        {
+          "source_id": "SRC18",
+          "source_title": "Praxis Precision Medicines Provides Vormatrigine Program Update",
+          "source_url": "https://investors.praxismedicines.com/news-releases/news-release-details/praxis-precision-medicines-provides-vormatrigine-program-update",
+          "source_type": "competitor_official",
+          "verified": true
+        },
+        {
+          "source_id": "SRC19",
+          "source_title": "DailyPharm — Expectations and concerns around Opakalim, in-licensed at KRW 1T",
+          "source_url": "https://dailypharm.com/eng/user/news/8450",
+          "source_type": "analyst_generated_secondary_report",
+          "verified": true
+        },
+        {
+          "source_id": "SRC20",
+          "source_title": "Mirae Asset Securities Research Report — SK Biopharmaceuticals / Opakalim context",
+          "source_url": "https://securities.miraeasset.com/newir/view/pc/en/investor/researchReportsView.jsp?messageId=2342325",
+          "source_type": "analyst_generated",
+          "verified": true
+        }
+      ]
+    },
+    "final_insight": {
+      "one_line_summary": "Late-stage focal-epilepsy Kv7.2/Kv7.3 asset with strong mechanistic/data maturity and large modeled commercial potential, but the unresolved partial hold, pivotal readout and license closing remain near-term gates.",
+      "recommendation": "Watch",
+      "most_important_diligence_question": "FDA metabolite concern을 해소하는 추가 비임상 package가 언제 수용되어 partial clinical hold가 해제되고, 그 결과가 RISE2/registration timeline과 2029 launch assumption에 어떤 영향을 주는가?"
+    },
+    "ip_launch_outlook": {
+      "com_expiry_year": 2039,
+      "expected_launch_year": 2029
+    },
+    "company_profile": {
+      "headquarters": "New Haven, Connecticut, United States",
+      "company_stage": "Public clinical-stage biopharmaceutical company (NYSE: BHVN)",
+      "platform_summary": "Kv7 ion-channel modulation platform using structure-based small-molecule design; opakalim is the lead Kv7.2/Kv7.3 activator."
+    },
+    "competitive_analysis": {
+      "competitive_density": "High",
+      "similarity_summary": {
+        "similar_pipeline_count": 3,
+        "high_similarity_count": 1,
+        "medium_similarity_count": 2,
+        "low_similarity_count": 0
+      },
+      "competitor_table": [
+        {
+          "competitor_asset": "Azetukalner (XEN1101)",
+          "company": "Xenon Pharmaceuticals",
+          "modality": "Small molecule",
+          "target_or_moa": "Kv7 potassium-channel opener",
+          "stage": "Registration",
+          "similarity_level": "High",
+          "why_it_matters": "Same focal-seizure indication and same Kv7 mechanism; NDA submitted 2026-09-17 after positive Phase 3 data.",
+          "source_url": "https://xenonpharma.gcs-web.com/news-releases/news-release-details/xenon-announces-azetukalner-nda-submission-fda-focal-seizures"
+        },
+        {
+          "competitor_asset": "XCOPRI (cenobamate)",
+          "company": "SK Life Science / SK Biopharmaceuticals",
+          "modality": "Small molecule",
+          "target_or_moa": "Antiseizure small molecule; voltage-gated sodium-current inhibition and GABA_A modulation are described pharmacologically",
+          "stage": "Approved / marketed",
+          "similarity_level": "Medium",
+          "why_it_matters": "Approved U.S. focal-seizure benchmark and relevant efficacy/tolerability standard, but different mechanism.",
+          "source_url": "https://www.accessdata.fda.gov/drugsatfda_docs/label/2024/212839s009s010lbl.pdf"
+        },
+        {
+          "competitor_asset": "Vormatrigine (PRAX-628)",
+          "company": "Praxis Precision Medicines",
+          "modality": "Small molecule",
+          "target_or_moa": "Functionally selective NaV-channel modulator",
+          "stage": "Phase 2/3; POWER2 enrollment paused for program reassessment",
+          "similarity_level": "Medium",
+          "why_it_matters": "Same adult focal-onset seizure setting and oral ion-channel strategy; POWER1 missed its primary success measure.",
+          "source_url": "https://investors.praxismedicines.com/news-releases/news-release-details/praxis-precision-medicines-provides-vormatrigine-program-update"
+        }
+      ],
+      "similar_pipelines": [
+        {
+          "company": "Xenon Pharmaceuticals",
+          "asset_name": "Azetukalner (XEN1101)",
+          "similarity_score": 0.95,
+          "matched_dimensions": [
+            "focal seizures",
+            "Kv7 modulation",
+            "small molecule",
+            "late-stage/registration"
+          ],
+          "shared_data_points": [
+            "same intended indication",
+            "same ion-channel pathway",
+            "once-daily oral development"
+          ]
+        },
+        {
+          "company": "SK Life Science / SK Biopharmaceuticals",
+          "asset_name": "XCOPRI (cenobamate)",
+          "similarity_score": 0.6,
+          "matched_dimensions": [
+            "focal seizures",
+            "small molecule",
+            "oral antiseizure therapy"
+          ],
+          "shared_data_points": [
+            "approved focal-seizure benchmark",
+            "same neurology prescriber base",
+            "different molecular mechanism"
+          ]
+        },
+        {
+          "company": "Praxis Precision Medicines",
+          "asset_name": "Vormatrigine (PRAX-628)",
+          "similarity_score": 0.55,
+          "matched_dimensions": [
+            "focal seizures",
+            "small molecule",
+            "ion-channel modulation",
+            "late-stage development"
+          ],
+          "shared_data_points": [
+            "same adult focal-seizure setting",
+            "once-daily oral development",
+            "different NaV target"
+          ]
+        }
       ]
     }
   }

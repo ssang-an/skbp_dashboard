@@ -5296,14 +5296,14 @@
     "source": "paste_import",
     "added_at": "2026-08-18T01:28:43.535867+00:00",
     "pipeline_metadata": {
-      "listed_at": "2026-09-18T03:16:22.784823+00:00",
+      "listed_at": "2026-10-06T01:22:28.817347+00:00",
       "comment": "GALC 효소 결핍으로 인해, Psychosine 분해 안되고 축적되면 Oligodendrocyte & schwann cell death, 조기 발병, 3세 이전 사망. 미국 추정 5000명 미만 환자수 추정되나, 실제로 수백명 수준의 규모 예상\nLysosome 효소의 M6P tagging 실패로 인한 Lysosome 으로의 이동 실패로 인해 lysosome 효소가 없음. 소아사망. 환자수 5000명 이하로 실제 수백명도 안 될 가능성이 높음\nDDS (Drug Delivery System) platform, AI 기반 AAV Capsid engineering 기술 보유, LSD (Lysosomal Storage Disease) 질환 pipeline 2개 있으며 Krabbe disease, Mucolipidosis임.\n26년 서울바이오허브 지원사로 SKBP와의 협업 구조가 보이지 않음",
       "comment_author": "Team",
       "comment_author_user_id": "",
       "comment_author_email": "",
       "comment_source": "team_review_import",
-      "comment_created_at": "2026-09-18T03:16:22.784823+00:00",
-      "comment_updated_at": "2026-09-18T03:16:22.784823+00:00",
+      "comment_created_at": "2026-10-06T01:22:28.817347+00:00",
+      "comment_updated_at": "2026-10-06T01:22:28.817347+00:00",
       "comment_entries": [
         {
           "id": "legacy-b5d0b3336c78ebf80ea969ab2630812f82fbe94682fecaf4633ccf9307b8968e",
@@ -5340,7 +5340,7 @@
       "website": "https://aavatartps.com/",
       "asset_aliases": "LSD\nLSD (Lysosomal Storage disease)",
       "company_aliases": "Aavatar Therapeutics Co Ltd\nAAVATAR Therapeutics\nAavatar Therapeutics Co Ltd ->",
-      "updated_at": "2026-09-18T03:16:22.784823+00:00"
+      "updated_at": "2026-10-06T01:22:28.817347+00:00"
     },
     "listing_details": {
       "country": "Hanam, Korea",
@@ -9555,14 +9555,6 @@
     "id": "cq_94eec2ff",
     "asset_input": "ZCS-1",
     "company_input": "Zincure Corp",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00"
-  },
-  {
-    "id": "cq_d2b25fa6",
-    "asset_input": "1ST-103",
-    "company_input": "1st Bio Therapeutics Inc",
     "status": "pending",
     "source": "paste_import",
     "added_at": "2026-08-18T01:28:43.535867+00:00"
@@ -19818,14 +19810,6 @@
     }
   },
   {
-    "id": "cq_a1538352",
-    "asset_input": "NLY02",
-    "company_input": "D&D Pharmatech",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:29:17.183393+00:00"
-  },
-  {
     "id": "cq_b18f43f1",
     "asset_input": "YKP10461",
     "company_input": "SK Biopharmaceuticals",
@@ -21672,14 +21656,14 @@
     "source": "paste_import",
     "added_at": "2026-08-18T01:29:17.183393+00:00",
     "pipeline_metadata": {
-      "listed_at": "2026-09-18T03:16:22.784823+00:00",
+      "listed_at": "2026-10-06T01:22:28.817347+00:00",
       "comment": "26년 상반기 SKBP에서 지분투자 및 공동연구 추진하였으나, Denali-Biogen 임상 실패 및 중단 발표됨.(LUMA, Phase 2b, LRRK2, idiopathic 환자군)\n내부 부문장, 본부장, 유관부서 미팅 후 deal 추진 중단 결정",
       "comment_author": "Team",
       "comment_author_user_id": "",
       "comment_author_email": "",
       "comment_source": "team_review_import",
-      "comment_created_at": "2026-09-18T03:16:22.784823+00:00",
-      "comment_updated_at": "2026-09-18T03:16:22.784823+00:00",
+      "comment_created_at": "2026-10-06T01:22:28.817347+00:00",
+      "comment_updated_at": "2026-10-06T01:22:28.817347+00:00",
       "comment_entries": [
         {
           "id": "listing-comment-a81270f83c31428fa2969dc7ccc448cd",
@@ -21703,12 +21687,12 @@
       "contact_author_user_id": "",
       "contact_author_email": "",
       "contact_source": "team_review_import",
-      "contact_created_at": "2026-09-18T03:16:22.784823+00:00",
-      "contact_updated_at": "2026-09-18T03:16:22.784823+00:00",
+      "contact_created_at": "2026-10-06T01:22:28.817347+00:00",
+      "contact_updated_at": "2026-10-06T01:22:28.817347+00:00",
       "website": "https://www.1stbio.com/",
       "asset_aliases": "1ST-105\n1ST-105 (1ST-104추정, 105 라는 코드 없음)",
       "company_aliases": "1ST Biotherapeutics",
-      "updated_at": "2026-09-18T03:16:22.784823+00:00"
+      "updated_at": "2026-10-06T01:22:28.817347+00:00"
     },
     "listing_details": {
       "country": "Youngin, Korea",
@@ -26009,14 +25993,14 @@
     "source": "paste_import",
     "added_at": "2026-08-18T01:29:17.183393+00:00",
     "pipeline_metadata": {
-      "listed_at": "2026-09-18T03:16:22.784823+00:00",
+      "listed_at": "2026-10-06T01:22:28.817347+00:00",
       "comment": "DDS (Drug Delivery System) platform, AI 기반 AAV Capsid engineering 기술 보유, LSD (Lysosomal Storage Disease) 질환 pipeline 2개 있으며 Krabbe disease, Mucolipidosis임.\n26년 서울바이오허브 지원사로 SKBP와의 협업 구조가 보이지 않음",
       "comment_author": "Team",
       "comment_author_user_id": "",
       "comment_author_email": "",
       "comment_source": "team_review_import",
-      "comment_created_at": "2026-09-18T03:16:22.784823+00:00",
-      "comment_updated_at": "2026-09-18T03:16:22.784823+00:00",
+      "comment_created_at": "2026-10-06T01:22:28.817347+00:00",
+      "comment_updated_at": "2026-10-06T01:22:28.817347+00:00",
       "comment_entries": [
         {
           "id": "listing-comment-c224729885ed4f00bfb7e37d385e5736",
@@ -26045,7 +26029,7 @@
       "website": "https://aavatartps.com/",
       "asset_aliases": "CNS Disease Research Program (AAVR)",
       "company_aliases": "AAVATAR Therapeutics",
-      "updated_at": "2026-09-18T03:16:22.784823+00:00"
+      "updated_at": "2026-10-06T01:22:28.817347+00:00"
     },
     "listing_details": {
       "country": "Hanam, Korea",
@@ -26636,14 +26620,14 @@
     "source": "paste_import",
     "added_at": "2026-08-18T01:29:17.183393+00:00",
     "pipeline_metadata": {
-      "listed_at": "2026-09-18T03:16:22.784823+00:00",
+      "listed_at": "2026-10-06T01:22:28.817347+00:00",
       "comment": "FB-101 phase 1b 환자 선정 툴로 개발하는 진단제",
       "comment_author": "Team",
       "comment_author_user_id": "",
       "comment_author_email": "",
       "comment_source": "team_review_import",
-      "comment_created_at": "2026-09-18T03:16:22.784823+00:00",
-      "comment_updated_at": "2026-09-18T03:16:22.784823+00:00",
+      "comment_created_at": "2026-10-06T01:22:28.817347+00:00",
+      "comment_updated_at": "2026-10-06T01:22:28.817347+00:00",
       "comment_entries": [
         {
           "id": "listing-comment-6d919e6c72fc473da5266f45a737879f",
@@ -26667,12 +26651,12 @@
       "contact_author_user_id": "",
       "contact_author_email": "",
       "contact_source": "team_review_import",
-      "contact_created_at": "2026-09-18T03:16:22.784823+00:00",
-      "contact_updated_at": "2026-09-18T03:16:22.784823+00:00",
+      "contact_created_at": "2026-10-06T01:22:28.817347+00:00",
+      "contact_updated_at": "2026-10-06T01:22:28.817347+00:00",
       "website": "https://www.1stbio.com/",
       "asset_aliases": "FB610",
       "company_aliases": "1ST Biotherapeutics",
-      "updated_at": "2026-09-18T03:16:22.784823+00:00"
+      "updated_at": "2026-10-06T01:22:28.817347+00:00"
     },
     "listing_details": {
       "country": "Youngin, Korea",
