@@ -53,6 +53,7 @@
           "description": "Dashboard-owned internal Listing metadata. It must not affect GPT research, rubric scoring, or source-report content.",
           "properties": {
             "listed_at": { "type": "string" },
+            "listing_imported_at": { "type": "string", "description": "Server-owned timestamp of the last Listing import that changed content; excludes no-op imports and manual edits." },
             "comment": { "type": "string", "maxLength": 5000 },
             "comment_author": { "type": "string", "maxLength": 200 },
             "comment_author_user_id": { "type": "string", "maxLength": 200 },

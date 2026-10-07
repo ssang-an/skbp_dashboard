@@ -170,6 +170,13 @@ CHAT_WIKI_SNIPPET_LIMIT = 1100
 CHAT_WIKI_TOP_K = 5
 CHAT_WIKI_AGENT_SEARCH_TOP_K = 8
 CHAT_WIKI_LINK_EXPANSION_LIMIT = 16
+CHAT_ANSWER_GUIDANCE = (
+    "Answer the latest user question directly; do not merely rephrase it or describe a plan to answer. "
+    "When asked for N candidates, name N candidates from the current filtered pipeline scope when supported, "
+    "with a concrete rationale, evidence reference, and caveat for each. If fewer are supported, say so. "
+    "Count distinct Asset/Company pairs, not multiple research records for the same candidate. "
+    "Previous assistant replies are conversation context, not verified evidence. "
+)
 
 LLM_REPARSE_MARKDOWN_CONTEXT_LIMIT = 120000
 LLM_REPARSE_JSON_CONTEXT_LIMIT = 80000
@@ -6557,6 +6564,7 @@ def normalize_pipeline_metadata(value: Any) -> dict[str, Any]:
     raw = value if isinstance(value, dict) else {}
     metadata = {
         "listed_at": str(raw.get("listed_at") or "").strip(),
+        "listing_imported_at": str(raw.get("listing_imported_at") or "").strip(),
         "comment": str(raw.get("comment") or "").strip(),
         "comment_author": str(raw.get("comment_author") or "").strip(),
         "comment_author_user_id": str(raw.get("comment_author_user_id") or "").strip(),
@@ -6627,8 +6635,10 @@ def merge_pipeline_metadata(
     incoming_raw = incoming if isinstance(incoming, dict) else {}
     result = normalize_pipeline_metadata(existing)
     update = normalize_pipeline_metadata(incoming)
-    if update["listed_at"]:
+    if update["listed_at"] and not result["listed_at"]:
         result["listed_at"] = update["listed_at"]
+    if update["listing_imported_at"]:
+        result["listing_imported_at"] = latest_reflection_timestamp(result["listing_imported_at"], update["listing_imported_at"])
     for field in PIPELINE_METADATA_FIELDS:
         explicit_contact_absence = field == "contact" and is_pipeline_contact_absence_marker(incoming_raw.get("contact"))
         if update[field] or field in allow_empty_fields or explicit_contact_absence:
@@ -6705,6 +6715,23 @@ def merge_pipeline_metadata(
     if update["updated_at"]:
         result["updated_at"] = update["updated_at"]
     return result
+
+
+def listing_import_content(metadata: Any) -> dict[str, Any]:
+    normalized = normalize_pipeline_metadata(metadata)
+    return {key: normalized[key] for key in (
+        "comment", "contact", "website", "asset_aliases", "company_aliases", "listing_details"
+    )}
+
+
+def apply_listing_import_metadata(record: dict[str, Any], incoming: dict[str, Any], *, listing_details_preference: str) -> bool:
+    before = record_pipeline_metadata(record)
+    merged = merge_pipeline_metadata(before, incoming, listing_details_preference=listing_details_preference)
+    if listing_import_content(before) == listing_import_content(merged):
+        return False
+    merged["listing_imported_at"] = incoming["updated_at"]
+    record.setdefault("meta", {})["pipeline_metadata"] = merged
+    return True
 
 
 def candidate_queue_entry_metadata(entry: dict[str, Any]) -> dict[str, str]:
@@ -10278,7 +10305,7 @@ def wiki_path_is_safe(path: Path) -> bool:
     return True
 
 
-def resolve_wiki_link(link: str) -> Path | None:
+def resolve_wiki_link(link: str, note_paths: dict[str, Path] | None = None) -> Path | None:
     clean = link.strip().replace("\\", "/")
     if not clean:
         return None
@@ -10289,6 +10316,9 @@ def resolve_wiki_link(link: str) -> Path | None:
         return direct
 
     target_name = Path(relative).name.lower()
+    if note_paths is not None:
+        path = note_paths.get(target_name)
+        return path if path is not None and wiki_path_is_safe(path) else None
     for path in WIKI_DIR.rglob("*.md"):
         if path.name.lower() == target_name and wiki_path_is_safe(path):
             return path
@@ -10361,7 +10391,26 @@ def merge_wiki_result(
         existing["retrieval_stage"] = " + ".join(list(dict.fromkeys(stages))[:4])
 
 
-def search_wiki_notes(query: str, top_k: int = CHAT_WIKI_TOP_K) -> list[dict[str, str | int]]:
+def load_wiki_search_documents() -> list[dict[str, Any]]:
+    """Read one fresh snapshot per retrieval, shared by all queries and link hops."""
+    documents = []
+    for path in WIKI_DIR.rglob("*.md"):
+        try:
+            text = path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        relative = path.relative_to(WIKI_DIR).as_posix()
+        documents.append({
+            "path": path, "relative": relative, "text": text,
+            "name": path.name.lower(), "parent": str(path.parent.relative_to(WIKI_DIR)).lower(),
+            "haystack": f"{path.name}\n{path.relative_to(WIKI_DIR)}\n{text}".lower(),
+        })
+    return documents
+
+
+def search_wiki_notes(
+    query: str, top_k: int = CHAT_WIKI_TOP_K, *, documents: list[dict[str, Any]] | None = None,
+) -> list[dict[str, str | int]]:
     if not WIKI_DIR.exists():
         return []
 
@@ -10369,14 +10418,9 @@ def search_wiki_notes(query: str, top_k: int = CHAT_WIKI_TOP_K) -> list[dict[str
     if not terms:
         return []
 
-    results: list[dict[str, str | int]] = []
-    for path in WIKI_DIR.rglob("*.md"):
-        try:
-            text = path.read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            continue
-
-        haystack = f"{path.name}\n{path.relative_to(WIKI_DIR)}\n{text}".lower()
+    results = []
+    for document in documents if documents is not None else load_wiki_search_documents():
+        haystack = document["haystack"]
         score = 0
         matched_terms: list[str] = []
         for term in terms:
@@ -10384,24 +10428,23 @@ def search_wiki_notes(query: str, top_k: int = CHAT_WIKI_TOP_K) -> list[dict[str
             if count:
                 matched_terms.append(term)
                 score += min(count, 8)
-                if term in path.name.lower():
+                if term in document["name"]:
                     score += 8
-                if term in str(path.parent.relative_to(WIKI_DIR)).lower():
+                if term in document["parent"]:
                     score += 4
 
         if score <= 0:
             continue
 
-        relative_path = path.relative_to(WIKI_DIR).as_posix()
-        results.append({
-            "path": relative_path,
-            "score": score,
-            "matched_terms": ", ".join(matched_terms[:10]),
-            "snippet": make_wiki_snippet(text, set(matched_terms)),
-        })
+        results.append((score, document, matched_terms))
 
-    results.sort(key=lambda item: int(item["score"]), reverse=True)
-    return results[:top_k]
+    results.sort(key=lambda item: item[0], reverse=True)
+    # Snippet extraction is only needed for the retained hits, not every match.
+    return [{
+        "path": document["relative"], "score": score,
+        "matched_terms": ", ".join(matched_terms[:10]),
+        "snippet": make_wiki_snippet(document["text"], set(matched_terms)),
+    } for score, document, matched_terms in results[:top_k]]
 
 
 def build_agentic_wiki_queries(record: dict[str, Any], message: str, dashboard_context: str = "") -> list[str]:
@@ -10446,11 +10489,16 @@ def agentic_search_wiki_notes(
 
     merged: dict[str, dict[str, str | int]] = {}
     queries = build_agentic_wiki_queries(record, message, dashboard_context)
+    documents = load_wiki_search_documents()
+    documents_by_path = {document["path"]: document for document in documents}
+    note_paths: dict[str, Path] = {}
+    for document in documents:
+        note_paths.setdefault(document["name"], document["path"])
 
     for index, query in enumerate(queries):
         boost = max(0, 18 - index * 3)
         stage = "planned_query" if index == 0 else f"planned_query_{index + 1}"
-        for item in search_wiki_notes(query, top_k=CHAT_WIKI_AGENT_SEARCH_TOP_K):
+        for item in search_wiki_notes(query, top_k=CHAT_WIKI_AGENT_SEARCH_TOP_K, documents=documents):
             merge_wiki_result(merged, item, score_boost=boost, stage=stage)
 
     seed_items = sorted(merged.values(), key=lambda item: int(item.get("score") or 0), reverse=True)[:top_k]
@@ -10461,13 +10509,13 @@ def agentic_search_wiki_notes(
         path = WIKI_DIR / str(item.get("path") or "")
         if not path.exists() or not wiki_path_is_safe(path):
             continue
-        try:
-            text = path.read_text(encoding="utf-8", errors="replace")
-        except OSError:
+        document = documents_by_path.get(path)
+        if document is None:
             continue
+        text = document["text"]
 
         for link in extract_wiki_links(text):
-            linked_path = resolve_wiki_link(link)
+            linked_path = resolve_wiki_link(link, note_paths)
             if not linked_path:
                 continue
             relative = linked_path.relative_to(WIKI_DIR).as_posix()
@@ -10479,10 +10527,10 @@ def agentic_search_wiki_notes(
 
     linked_candidates.sort(key=lambda candidate: candidate[0], reverse=True)
     for priority, path, link in linked_candidates[:CHAT_WIKI_LINK_EXPANSION_LIMIT]:
-        try:
-            text = path.read_text(encoding="utf-8", errors="replace")
-        except OSError:
+        document = documents_by_path.get(path)
+        if document is None:
             continue
+        text = document["text"]
         relative_path = path.relative_to(WIKI_DIR).as_posix()
         link_terms = tokenize_for_search(link)
         snippet_terms = query_terms | link_terms
@@ -10614,6 +10662,7 @@ def call_openrouter_chat(
                 "role": "system",
                 "content": (
                     "You are an internal AI assistant for SKBP Pipeline Finder. "
+                    + CHAT_ANSWER_GUIDANCE +
                     "Answer in Korean unless the user asks otherwise. "
                     "Use only the provided compact JSON (including focus-management fields and team-review comments), dashboard rows, GPT source-report excerpts, "
                     "uploaded partner-material excerpts, and retrieved SKBP wiki notes. "
@@ -10784,6 +10833,7 @@ def stream_openrouter_chat(
                 "role": "system",
                 "content": (
                     "You are an internal AI assistant for SKBP Pipeline Finder. "
+                    + CHAT_ANSWER_GUIDANCE +
                     "Answer in Korean unless the user asks otherwise. "
                     "Use only the provided compact JSON (including focus-management fields and team-review comments), dashboard rows, GPT source-report excerpts, "
                     "uploaded partner-material excerpts, and retrieved SKBP wiki notes. "
@@ -11859,7 +11909,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
                 asset_input, company_input, existing_group
             )
             for existing_record in existing_group.get("records") or []:
-                if isinstance(existing_record, dict) and update_record_pipeline_metadata(
+                if isinstance(existing_record, dict) and apply_listing_import_metadata(
                     existing_record,
                     incoming_metadata,
                     listing_details_preference="incoming" if exact_listing_identity else "existing",
@@ -11890,6 +11940,8 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
                 None,
             )
         if existing_entry is not None:
+            before_entry = copy.deepcopy(existing_entry)
+            metadata_count_before = metadata_updated
             duplicate_in_queue_skipped += 1
             exact_listing_identity = not (decision and decision["action"] == "merge") and listing_pair_is_exact_for_queue_entry(
                 asset_input, company_input, existing_entry
@@ -11947,6 +11999,18 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
                     existing_entry["asset_input"] = merged_asset
                     existing_entry["company_input"] = merged_company
                     metadata_updated += 1
+            content_changed = (
+                listing_import_content(candidate_queue_entry_metadata(before_entry)) != listing_import_content(candidate_queue_entry_metadata(existing_entry))
+                or candidate_queue_entry_details(before_entry) != candidate_queue_entry_details(existing_entry)
+                or before_entry.get("asset_input") != existing_entry.get("asset_input")
+                or before_entry.get("company_input") != existing_entry.get("company_input")
+            )
+            if content_changed:
+                existing_entry.setdefault("pipeline_metadata", {})["listing_imported_at"] = added_at
+            else:
+                existing_entry.clear()
+                existing_entry.update(before_entry)
+                metadata_updated = metadata_count_before
             continue
         entry = {
             "id": f"cq_{uuid.uuid4().hex[:8]}",
@@ -11955,7 +12019,7 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
             "status": "pending",
             "source": "paste_import",
             "added_at": added_at,
-            "pipeline_metadata": incoming_metadata,
+            "pipeline_metadata": {**incoming_metadata, "listing_imported_at": added_at},
             "listing_details": incoming_details,
         }
         queue.append(entry)
@@ -12006,6 +12070,55 @@ async def import_candidate_queue(request: Request) -> dict[str, Any]:
         "unparsed_lines": parsed["unparsed"],
         "added_entries": added_entries,
     }
+
+
+def latest_reflection_timestamp(*values: Any) -> str:
+    now = datetime.now(timezone.utc)
+    valid = [(dashboard_parse_datetime(value), str(value)) for value in values if value]
+    valid = [(date, value) for date, value in valid if date is not None and date <= now]
+    return max(valid, key=lambda item: item[0])[1] if valid else ""
+
+
+def workflow_reflection_timestamps(group: dict[str, Any]) -> dict[str, str]:
+    dates: dict[str, list[str]] = {key: [] for key in ("pending", "fast_triage", "full_scout", "shortlisted")}
+    for record in group.get("records") or []:
+        meta = record.get("meta") or {}
+        listing = meta.get("pipeline_metadata") or {}
+        history = meta.get("edit_history") or []
+        # Never infer a Listing import from a research report or a manual comment edit.
+        imported = listing.get("listing_imported_at")
+        dates["pending"].append(imported or latest_reflection_timestamp(*[
+            event.get("changed_at") for event in history
+            if event.get("source") == "tab0_listing_import_metadata_sync"
+        ]))
+        workflow = "fast_triage" if is_fast_triage_record(record) else "full_scout"
+        dates[workflow].append(dashboard_record_completed_at(record))
+        dates[workflow].extend(event.get("changed_at") for event in history if (
+            event.get("source") in {"paste_json_upsert", "detail_json_editor"}
+            and event.get("field") in {"source_report.raw_markdown", "research_content"}
+        ))
+        focus = meta.get("focus_management") or {}
+        if focus.get("is_tracked") is True:
+            dates["shortlisted"].append(focus.get("added_at"))
+            dates["shortlisted"].extend(event.get("changed_at") for event in history if (
+                event.get("source") == "dashboard_tab3_focus_management"
+                and event.get("field") == "focus_management.add"
+                and event.get("previous_value") is False
+                and event.get("new_value") is True
+            ))
+    return {key: latest_reflection_timestamp(*values) for key, values in dates.items()}
+
+
+def listing_queue_reflected_at(entry: dict[str, Any]) -> str:
+    return latest_reflection_timestamp(entry.get("added_at"), (entry.get("pipeline_metadata") or {}).get("listing_imported_at"))
+
+
+def research_content_snapshot(record: dict[str, Any]) -> dict[str, Any]:
+    # Ignore upload/parser dates, operational comments and server-owned revision bookkeeping.
+    record = minimize_record_for_dashboard_storage(record)
+    return {**{key: record.get(key) for key in (
+        "input", "json_summary", "structured_table", "hard_filter", "scoring", "triage", "validation", "final_insight", "competitive_analysis", "company_profile"
+    )}, "raw_markdown": (record.get("source_report") or {}).get("raw_markdown", "")}
 
 
 @app.get("/api/candidate-queue/progress")
@@ -12068,6 +12181,7 @@ def get_candidate_queue_progress() -> dict[str, Any]:
         fast_profile = (fast_record.get("company_profile") if fast_record else None) or {}
         asset_label = non_empty_text(rep_table.get("asset_name"), rep_summary.get("asset_name"), "Unknown")
         company_label = non_empty_text(rep_table.get("company"), rep_summary.get("company"), "Unknown")
+        reflected = workflow_reflection_timestamps(group)
         pipeline_metadata = pipeline_metadata_for_group(group)
         official_listing_details = normalize_listing_details({
             "country": non_empty_text(full_table.get("company_country"), full_table.get("country"), full_summary.get("country"), full_summary.get("company_country"), fast_table.get("company_country"), fast_table.get("country"), fast_summary.get("country"), fast_summary.get("company_country")),
@@ -12122,18 +12236,21 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "theme": non_empty_text(full_summary.get("theme"), fast_summary.get("theme")),
                 "cluster": non_empty_text(full_summary.get("cluster"), fast_summary.get("cluster")),
                 "listing_manual_fields": {},
-                "pending": {"done": listing_done, "queue_id": None, "completed_at": listing_timestamp},
+                "pending": {"done": listing_done, "queue_id": None, "completed_at": listing_timestamp, "reflected_at": reflected["pending"]},
                 "fast_triage": {
                     "done": fast_triage_done,
                     "record_id": record_key(fast_record) if fast_record else None,
                     "completed_at": fast_triage_timestamp,
+                    "reflected_at": reflected["fast_triage"],
                 },
                 "full_scout": {
                     "done": full_record is not None,
                     "record_id": record_key(full_record) if full_record else None,
                     "completed_at": record_upload_timestamp(full_record) if full_record else "",
+                    "reflected_at": reflected["full_scout"],
                 },
                 "shortlisting": {
+                    "reflected_at": reflected["shortlisted"],
                     "done": shortlisted_record is not None,
                     "record_id": record_key(shortlisted_record) if shortlisted_record else None,
                     "completed_at": non_empty_text(
@@ -12148,20 +12265,20 @@ def get_candidate_queue_progress() -> dict[str, Any]:
         )
         if listing_done:
             stats["pending"] += 1
-            if is_recent_upload(listing_timestamp):
+            if is_recent_upload(reflected["pending"]):
                 recent_15_days["pending"] += 1
         if fast_triage_done:
             stats["fast_triage"] += 1
-            if is_recent_upload(fast_triage_timestamp):
+            if is_recent_upload(reflected["fast_triage"]):
                 recent_15_days["fast_triage"] += 1
         if full_record is not None:
             stats["full_scout"] += 1
-            if is_recent_upload(record_upload_timestamp(full_record)):
+            if is_recent_upload(reflected["full_scout"]):
                 recent_15_days["full_scout"] += 1
         if shortlisted_record is not None:
             stats["shortlisted"] += 1
             focus = (shortlisted_record.get("meta") or {}).get("focus_management") or {}
-            if is_recent_upload(focus.get("added_at")):
+            if is_recent_upload(reflected["shortlisted"]):
                 recent_15_days["shortlisted"] += 1
 
     for entry in queue:
@@ -12178,7 +12295,7 @@ def get_candidate_queue_progress() -> dict[str, Any]:
                 "theme": "",
                 "cluster": "",
                 "listing_manual_fields": candidate_queue_manual_fields(entry),
-                "pending": {"done": True, "queue_id": entry_id, "completed_at": str(entry.get("added_at") or "")},
+                "pending": {"done": True, "queue_id": entry_id, "completed_at": str(entry.get("added_at") or ""), "reflected_at": listing_queue_reflected_at(entry)},
                 "fast_triage": {"done": False, "record_id": None, "completed_at": ""},
                 "full_scout": {"done": False, "record_id": None, "completed_at": ""},
                 "shortlisting": {"done": False, "record_id": None, "completed_at": ""},
@@ -12188,7 +12305,7 @@ def get_candidate_queue_progress() -> dict[str, Any]:
             }
         )
         stats["pending"] += 1
-        if is_recent_upload(entry.get("added_at")):
+        if is_recent_upload(listing_queue_reflected_at(entry)):
             recent_15_days["pending"] += 1
 
     return {"ok": True, "stats": stats, "recent_15_days": recent_15_days, "rows": rows}
@@ -12242,6 +12359,7 @@ def get_candidate_queue_stats() -> dict[str, Any]:
         shortlisted_record = dashboard_latest_record(tracked_full_records) if tracked_full_records else None
         representative = full_record or fast_record
 
+        reflected = workflow_reflection_timestamps(group)
         pipeline_metadata = pipeline_metadata_for_group(group)
         listing_done = bool(pipeline_metadata.get("listed_at") or representative)
         listing_timestamp = non_empty_text(pipeline_metadata.get("listed_at"), record_upload_timestamp(representative))
@@ -12265,20 +12383,20 @@ def get_candidate_queue_stats() -> dict[str, Any]:
 
         if listing_done:
             stats["pending"] += 1
-            if is_recent_upload(listing_timestamp):
+            if is_recent_upload(reflected["pending"]):
                 recent_15_days["pending"] += 1
         if fast_triage_done:
             stats["fast_triage"] += 1
-            if is_recent_upload(fast_triage_timestamp):
+            if is_recent_upload(reflected["fast_triage"]):
                 recent_15_days["fast_triage"] += 1
         if full_record is not None:
             stats["full_scout"] += 1
-            if is_recent_upload(record_upload_timestamp(full_record)):
+            if is_recent_upload(reflected["full_scout"]):
                 recent_15_days["full_scout"] += 1
         if shortlisted_record is not None:
             stats["shortlisted"] += 1
             focus = (shortlisted_record.get("meta") or {}).get("focus_management") or {}
-            if is_recent_upload(focus.get("added_at")):
+            if is_recent_upload(reflected["shortlisted"]):
                 recent_15_days["shortlisted"] += 1
 
     for entry in queue:
@@ -12286,7 +12404,7 @@ def get_candidate_queue_stats() -> dict[str, Any]:
         if isinstance(entry_id, str) and entry_id in matched_queue_ids:
             continue
         stats["pending"] += 1
-        if is_recent_upload(entry.get("added_at")):
+        if is_recent_upload(listing_queue_reflected_at(entry)):
             recent_15_days["pending"] += 1
 
     return {"ok": True, "stats": stats, "recent_15_days": recent_15_days}
@@ -16076,6 +16194,7 @@ async def update_record(record_id: str, request: Request) -> dict[str, Any]:
                     status_code=409,
                     detail=f"Another record already uses record id: {updated_key}",
                 )
+            research_changed = research_content_snapshot(payload) != research_content_snapshot(record)
             preserve_dashboard_meta(payload, record)
             moved_topic_note_ids: list[str] = []
             if source_report_changed:
@@ -16097,7 +16216,7 @@ async def update_record(record_id: str, request: Request) -> dict[str, Any]:
                 source="detail_json_editor",
                 actor_ip=actor_ip,
                 actor_name=actor_name,
-                field="source_report.raw_markdown" if source_report_changed else "record",
+                field="source_report.raw_markdown" if source_report_changed else "research_content" if research_changed else "record",
                 old_meta=record.get("meta"),
                 update_last_edited=source_report_changed,
             )
@@ -16418,6 +16537,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
             source_report_changed = str((record.get("source_report") or {}).get("raw_markdown") or "") != str(
                 (existing_record.get("source_report") or {}).get("raw_markdown") or ""
             )
+            research_changed = research_content_snapshot(record) != research_content_snapshot(existing_record)
             preserve_dashboard_meta(record, existing_record)
             if confirmed_reupload and key in confirmed_alias_updates:
                 update_record_pipeline_metadata(record, confirmed_alias_updates[key])
@@ -16457,7 +16577,7 @@ async def upsert_records(request: Request) -> dict[str, Any]:
                 source="paste_json_upsert",
                 actor_ip=actor_ip,
                 actor_name=actor_name,
-                field="source_report.raw_markdown" if source_report_changed else "record",
+                field="source_report.raw_markdown" if source_report_changed else "research_content" if research_changed else "record",
                 previous_value="기존 GPT 원문 리포트" if source_report_changed else None,
                 new_value="GPT 원문 재업로드" if source_report_changed else None,
                 old_meta=existing_record.get("meta"),
@@ -16750,6 +16870,7 @@ async def chat_with_record_stream(request: Request) -> StreamingResponse:
     context_records = select_chat_context_records(records, record, retrieval_question, candidate_record_ids)
 
     def event_generator():
+        yield sse_event("status", {"message": "현재 필터의 후보와 이전 대화를 확인했습니다. 관련 근거를 검색하고 AI에 연결 중입니다."})
         stream, wiki_sources, ai_error = stream_openrouter_chat(
             record,
             message,

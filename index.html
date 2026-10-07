@@ -234,7 +234,7 @@
               <span class="step0-summary-loading-note" aria-live="polite">Pipeline 데이터를 정리하고 있습니다</span>
             </span>
             <span class="visual-dashboard-toggle-action">
-              <em id="step0SummaryRecentUpload" class="step0-summary-recent-upload" hidden>▲ 최근 15일간 0 증가</em>
+              <em id="step0SummaryRecentUpload" class="step0-summary-recent-upload" hidden>↻ 최근 15일 반영 0건</em>
               <span id="step0SummaryDashboardToggleLabel">접기</span>
               <span class="visual-dashboard-toggle-icon" aria-hidden="true">⌃</span>
             </span>
@@ -245,28 +245,28 @@
             <section class="step0-stat-column" data-workflow-stage="pending">
             <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="pending" data-tooltip="클릭 시 Listing 완료된 Pipeline List 중 조사 대기 중인 Pipeline을 표시합니다." aria-label="조사 대기 Listing Pipeline으로 필터">
               <span class="step0-stat-label">Listing</span>
-              <span class="step0-stat-value"><strong id="step0StatPending">0</strong><em id="step0RecentPending" class="step0-stat-recent" hidden>▲ 0</em></span>
+              <span class="step0-stat-value"><strong id="step0StatPending">0</strong><em id="step0RecentPending" class="step0-stat-recent" hidden>↻ 0</em></span>
             </button>
             <div class="step0-workflow-card-canvas" data-step0-workflow-map="pending" role="region" tabindex="0" aria-label="Listing Pipeline node graph" aria-live="polite"></div>
             </section>
             <section class="step0-stat-column" data-workflow-stage="fast_triage">
             <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="fast_triage" data-tooltip="Simple Research는 공개 정보로 후보를 빠르게 1차 선별하는 단계입니다. 클릭하면 Simple Research가 완료된 모든 Pipeline을 Table에 표시합니다." aria-label="Simple Research 완료 Pipeline으로 필터">
               <span class="step0-stat-label">Simple</span>
-              <span class="step0-stat-value"><strong id="step0StatFastTriage">0</strong><em id="step0RecentFastTriage" class="step0-stat-recent" hidden>▲ 0</em></span>
+              <span class="step0-stat-value"><strong id="step0StatFastTriage">0</strong><em id="step0RecentFastTriage" class="step0-stat-recent" hidden>↻ 0</em></span>
             </button>
             <div class="step0-workflow-card-canvas" data-step0-workflow-map="fast_triage" role="region" tabindex="0" aria-label="Simple Research Pipeline node graph" aria-live="polite"></div>
             </section>
             <section class="step0-stat-column" data-workflow-stage="full_scout">
             <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="full_scout" data-tooltip="Advanced Research는 타깃·근거·경쟁 환경·사업성을 심층 검토하는 단계입니다. 클릭하면 Advanced Research가 완료된 모든 Pipeline을 Table에 표시합니다." aria-label="Advanced Research 완료 Pipeline으로 필터">
               <span class="step0-stat-label">Advanced</span>
-              <span class="step0-stat-value"><strong id="step0StatFullScout">0</strong><em id="step0RecentFullScout" class="step0-stat-recent" hidden>▲ 0</em></span>
+              <span class="step0-stat-value"><strong id="step0StatFullScout">0</strong><em id="step0RecentFullScout" class="step0-stat-recent" hidden>↻ 0</em></span>
             </button>
             <div class="step0-workflow-card-canvas" data-step0-workflow-map="full_scout" role="region" tabindex="0" aria-label="Advanced Research Pipeline node graph" aria-live="polite"></div>
             </section>
             <section class="step0-stat-column" data-workflow-stage="shortlisting">
             <button class="step0-stat help-tooltip" type="button" data-step0-stat-filter="shortlisting" data-tooltip="Custom Review는 Advanced Research 검토 후 후속 BD 검토 대상으로 추적 중인 Pipeline입니다. 클릭하면 해당 목록만 Table에 표시합니다." aria-label="Custom Review Pipeline으로 필터">
               <span class="step0-stat-label">Custom</span>
-              <span class="step0-stat-value"><strong id="step0StatShortlisted">0</strong><em id="step0RecentShortlisted" class="step0-stat-recent" hidden>▲ 0</em></span>
+              <span class="step0-stat-value"><strong id="step0StatShortlisted">0</strong><em id="step0RecentShortlisted" class="step0-stat-recent" hidden>+ 0</em></span>
             </button>
             <div class="step0-workflow-card-canvas" data-step0-workflow-map="shortlisting" role="region" tabindex="0" aria-label="Custom Review Pipeline node graph" aria-live="polite"></div>
             </section>
@@ -353,7 +353,7 @@
                 class="step0-copy-instructions-button help-tooltip"
                 data-tooltip="선택한 Listing 항목을 포함해 GPT Simple Research 지침 1을 복사합니다."
               ><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></svg><span class="step0-copy-gpt" aria-hidden="true">GPT</span><b>지침 복사</b></button>
-              <button id="step0ExportExcelButton" class="excel-export-button help-tooltip" type="button" data-tooltip="현재 필터 결과를 Excel용 CSV로 내보냅니다." disabled>
+              <button id="step0ExportExcelButton" class="excel-export-button help-tooltip" type="button" data-tooltip="체크한 항목이 있으면 선택 항목만, 없으면 현재 필터·검색 결과 전체를 Excel용 CSV로 내보냅니다." disabled>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h5M3 9h9v9H3zM5.5 11.5l4 4m0-4-4 4"/></svg>
                 <span>Excel export</span>
               </button>
@@ -616,7 +616,7 @@
               <button id="copySelectedFullPromptButton" class="step0-copy-instructions-button help-tooltip" type="button" data-tooltip="Pipeline 1개만 선택하세요. 해당 Asset·Company와 기본 정보를 포함해 Advanced Research 지침 2를 복사합니다." hidden disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></svg><span class="step0-copy-gpt" aria-hidden="true">GPT</span><b>지침 2 복사</b></button>
               <button id="columnSettingsButton" class="help-tooltip" type="button" data-tooltip="테이블에 표시할 추가 JSON 컬럼을 선택합니다.">컬럼 설정</button>
               <button id="deleteSelectedButton" class="danger-link-button help-tooltip" type="button" data-tooltip="체크한 Pipeline 레코드를 삭제합니다." disabled>선택 삭제</button>
-              <button id="exportExcelButton" class="excel-export-button help-tooltip" type="button" data-tooltip="현재 필터에 해당하는 전체 행을 Excel용 CSV로 내보냅니다. Simple·Advanced는 각 조사 항목의 근거·미확인 정보·다음 확인 질문·출처를 포함합니다." disabled>
+              <button id="exportExcelButton" class="excel-export-button help-tooltip" type="button" data-tooltip="체크한 항목이 있으면 선택 항목만, 없으면 현재 필터·검색 결과 전체를 Excel용 CSV로 내보냅니다. Simple·Advanced는 조사 근거와 출처를 포함합니다." disabled>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h5M3 9h9v9H3zM5.5 11.5l4 4m0-4-4 4"/></svg>
                 <span>Excel export</span>
               </button>
@@ -1656,7 +1656,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20261001-stage-presets-2"></script>
-  <script src="./src/sigma_graph.js?v=20260913-camera-motion-1" defer></script>
+  <script type="module" src="./src/app.js?v=20261007-selected-excel-export-1"></script>
+  <script src="./src/sigma_graph.js?v=20261006-agent-scope-1" defer></script>
   </body>
 </html>

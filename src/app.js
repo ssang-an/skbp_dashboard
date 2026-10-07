@@ -32,7 +32,7 @@ const STEP0_PAGE_SIZE_STORAGE_KEY = 'skbp.dashboard.step0PageSize.v1';
 // then get corrected once the real fetch resolves. Deliberately not scoped per-tab
 // or invalidated on a timer — showing last time's numbers for an instant is better
 // UX than showing zeros, and it's replaced within a second regardless.
-const STEP0_STATS_CACHE_KEY = 'skbp.dashboard.step0StatsCache.v1';
+const STEP0_STATS_CACHE_KEY = 'skbp.dashboard.step0StatsCache.v3';
 const BOM_PREFIX = String.fromCharCode(0xfeff);
 const COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.columnWidths.v4';
 const FOCUS_COLUMN_WIDTH_STORAGE_KEY = 'skbp.dashboard.focusColumnWidths.v9';
@@ -8163,7 +8163,6 @@ function renderFocusTable() {
   }
 
   elements.tableCount.textContent = `검색 결과 ${uniqueAssetCount(visibleRows)} / 전체 ${uniqueAssetCount(allModeRows)} assets`;
-  if (elements.exportExcelButton) elements.exportExcelButton.disabled = visibleRows.length === 0;
   elements.pipelineTable.innerHTML = pageRows.length
     ? pageRows.map((row) => {
         const isSelected = state.selectedIds.has(row.id);
@@ -8334,7 +8333,6 @@ function renderTable() {
   }
 
   elements.tableCount.textContent = `검색 결과 ${uniqueAssetCount(visibleRows)} / 전체 ${uniqueAssetCount(allModeRows)} assets`;
-  if (elements.exportExcelButton) elements.exportExcelButton.disabled = visibleRows.length === 0;
   elements.pipelineTable.innerHTML = pageRows.length
     ? pageRows
         .map((row) => {
@@ -8411,6 +8409,7 @@ function renderTable() {
 }
 
 function updateSelectionControls(pageRows = null) {
+  updateExcelExportButton(elements.exportExcelButton, pipelineExportRows(), state.selectedIds.size > 0);
   const visibleRows = (pageRows || getVisibleRows().slice((state.page - 1) * state.pageSize, state.page * state.pageSize))
     .filter((row) => !row.isVirtualTriage);
   const selectedCount = state.selectedIds.size;
@@ -8634,8 +8633,44 @@ function scoreExportFields(row, key) {
   ];
 }
 
+function selectedOrFilteredExportRows(filteredRows, allRows, selectedIds, rowId) {
+  if (!selectedIds.size) return filteredRows;
+  // Keep visible table order first, then include selections retained on other
+  // pages or before a filter change. Never fall back to exporting unselected rows.
+  const seen = new Set();
+  return [...filteredRows, ...allRows].filter((row) => {
+    const id = rowId(row);
+    if (!id || !selectedIds.has(id) || seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+}
+
+function pipelineExportRows(filteredRows = getVisibleRows()) {
+  return selectedOrFilteredExportRows(filteredRows, state.rows.filter(rowMatchesActiveTableMode),
+    state.selectedIds, (row) => row.id);
+}
+
+function step0ExportRows(filteredRows = step0FilteredSortedRows()) {
+  return selectedOrFilteredExportRows(filteredRows, state.step0Rows,
+    state.step0SelectedPendingIds, (row) => row.pending?.queue_id);
+}
+
+function updateExcelExportButton(button, rows, hasSelection) {
+  if (!button) return;
+  const label = `${hasSelection ? '선택' : '전체'} ${rows.length}개 Excel export`;
+  const text = button.querySelector('span');
+  if (text) text.textContent = label;
+  button.disabled = rows.length === 0;
+  button.setAttribute('aria-label', label);
+  button.dataset.tooltip = hasSelection
+    ? `체크한 ${rows.length}개 항목만 Excel용 CSV로 내보냅니다. 다른 페이지나 필터 변경 전 선택한 항목도 포함합니다.`
+    : `선택된 항목이 없어 현재 필터·검색 결과 전체 ${rows.length}개를 Excel용 CSV로 내보냅니다. 다른 페이지의 결과도 포함합니다.`;
+}
+
 function exportPipelineTable() {
-  const rows = getVisibleRows();
+  const rows = pipelineExportRows();
+  if (!rows.length) return;
   const extraColumns = selectedExtraColumns();
   let headers = [
     'Company',
@@ -10196,6 +10231,8 @@ function mockAgentReply(question) {
 
 function buildDashboardAgentContext() {
   const visibleRows = dashboardAgentRows();
+  const mapScope = elements.knowledgeMapPanel && !elements.knowledgeMapPanel.hidden
+    ? window.getKnowledgeMapAgentScope?.() : null;
   if (elements.step0Panel && !elements.step0Panel.hidden) {
     return `Listing scope: ${visibleRows.length} candidates. Listing entries are unassessed; do not infer scores.\n`
       + visibleRows.map(row => `${row.asset} | ${row.company} | ${JSON.stringify(row.raw?.structured_table || {})}`).join('\n');
@@ -10237,7 +10274,9 @@ function buildDashboardAgentContext() {
     .join('\n');
 
   return [
-    `Dashboard current ${mode === 'focus' ? 'Shortlisting' : 'Tab/filter'} scope: ${scopeRows.length} pipelines.`,
+    mapScope
+      ? `Wiki Map current filter scope: ${scopeRows.length} pipelines. Theme=${mapScope.themes.join(', ') || 'All'}; Indication=${mapScope.indications.join(', ') || 'All'}; Research stage=${mapScope.stages.join(', ') || 'All'}; Search=${mapScope.keywords.join(', ') || 'None'}. Recommend only candidates in this scope.`
+      : `Dashboard current ${mode === 'focus' ? 'Shortlisting' : 'Tab/filter'} scope: ${scopeRows.length} pipelines.`,
     summary || '- No candidates match the current filters.',
     '',
     'Answer as a SKBP Pipeline Finder dashboard agent. Compare assets using the visible dashboard context and the selected anchor asset JSON context. If source evidence is missing, say what evidence is missing.'
@@ -10249,7 +10288,14 @@ function dashboardAgentCandidateRecordIds() {
 }
 
 function dashboardAgentRows() {
-  if (elements.knowledgeMapPanel && !elements.knowledgeMapPanel.hidden) return state.rawRecords.map(flattenRecord);
+  if (elements.knowledgeMapPanel && !elements.knowledgeMapPanel.hidden) {
+    const scope = window.getKnowledgeMapAgentScope?.();
+    if (!scope) return [];
+    const normalize = value => String(value || '').normalize('NFKC').toLocaleLowerCase('en').trim();
+    const assets = new Set(scope.assets.map(normalize));
+    return state.rawRecords.map(flattenRecord).filter(row => assets.has(normalize(row.asset))
+      && (!scope.themes.length || scope.themes.includes(row.theme)));
+  }
   if (elements.step0Panel && !elements.step0Panel.hidden) {
     const byId = new Map(state.rawRecords.map(flattenRecord).map(row => [row.id, row]));
     return step0FilteredSortedRows().flatMap(row => {
@@ -10267,7 +10313,7 @@ function refreshAgentScopeLabel() {
   if (!elements.agentContextCount) return;
   const map = elements.knowledgeMapPanel && !elements.knowledgeMapPanel.hidden;
   const listing = elements.step0Panel && !elements.step0Panel.hidden;
-  const label = map ? 'Wiki Map · 전체 조사' : listing ? 'Listing · 현재 필터' : activeTableMode() === 'triage' ? 'Simple · 현재 필터' : activeTableMode() === 'full' ? 'Advanced · 현재 필터' : 'Custom · 현재 필터';
+  const label = map ? 'Wiki Map · 현재 필터' : listing ? 'Listing · 현재 필터' : activeTableMode() === 'triage' ? 'Simple · 현재 필터' : activeTableMode() === 'full' ? 'Advanced · 현재 필터' : 'Custom · 현재 필터';
   elements.agentContextCount.textContent = `${label} · ${dashboardAgentCandidateRecordIds().length}건`;
 }
 
@@ -14936,7 +14982,7 @@ function step0FilteredStageStats(rows = step0FilteredSortedRows()) {
       // (Fast Triage/Full Scout/Shortlisting completion included). Clicking
       // it still filters down to the "조사 대기" subset separately.
       stats[statKey] += 1;
-      if (step0IsRecentCompletion(cell.completed_at)) recent[statKey] += 1;
+      if (step0IsRecentCompletion(cell.reflected_at)) recent[statKey] += 1;
     });
   });
   return { stats, recent };
@@ -14964,12 +15010,8 @@ function renderStep0StatStrip() {
   const { stats, recent } = state.step0Loaded
     ? step0FilteredStageStats(filteredRows)
     : { stats: state.step0Stats, recent: state.step0RecentStats };
-  // Compare on `stats` only, not `recent`: the backend's recent_15_days aggregate
-  // (used verbatim before rows load) and step0FilteredStageStats()'s own per-row
-  // "recent" scan (used once rows are in) are computed by genuinely different logic
-  // and routinely disagree by a little even when the 4 headline numbers are byte-
-  // identical — comparing both was defeating the skip on the very case it was meant
-  // for (the fast-stats render and the full-progress render agreeing on `stats`).
+  // Only headline totals drive count-up replay; reflection badges are refreshed independently.
+  // Both API aggregates and filtered rows use the server-provided reflection timestamps.
   const statsRenderKey = JSON.stringify(stats);
   const isFirstRender = step0StatStripLastRenderKey === null;
   const skipReplay = statsRenderKey === step0StatStripLastRenderKey;
@@ -14979,11 +15021,11 @@ function renderStep0StatStrip() {
     row?.fast_triage,
     row?.full_scout,
     row?.shortlisting
-  ].some((cell) => cell?.done && step0IsRecentCompletion(cell.completed_at))).length;
+  ].some((cell) => cell?.done && step0IsRecentCompletion(cell.reflected_at))).length;
   if (elements.step0SummaryRecentUpload) {
     elements.step0SummaryRecentUpload.hidden = recentPipelineCount === 0;
-    elements.step0SummaryRecentUpload.textContent = '▲ 최근 15일간 0 증가';
-    elements.step0SummaryRecentUpload.setAttribute('aria-label', `현재 Tab Filter 기준 최근 15일 신규 Pipeline ${recentPipelineCount}건`);
+    elements.step0SummaryRecentUpload.textContent = '↻ 최근 15일 반영 0건';
+    elements.step0SummaryRecentUpload.setAttribute('aria-label', `현재 Tab Filter 기준 최근 15일 반영 자산 ${recentPipelineCount}건 · 단계 간 중복 제외`);
     if (recentPipelineCount > 0) {
       const recentTimer = setTimeout(() => {
         const startedAt = performance.now();
@@ -14991,7 +15033,7 @@ function renderStep0StatStrip() {
         const tick = (now) => {
           const progress = Math.max(0, Math.min(1, (now - startedAt) / duration));
           const eased = 1 - Math.pow(1 - progress, 3);
-          elements.step0SummaryRecentUpload.textContent = `▲ 최근 15일간 ${Math.round(recentPipelineCount * eased)} 증가`;
+          elements.step0SummaryRecentUpload.textContent = `↻ 최근 15일 반영 ${Math.round(recentPipelineCount * eased)}건`;
           if (progress < 1) step0StatAnimationFrames.push(requestAnimationFrame(tick));
         };
         step0StatAnimationFrames.push(requestAnimationFrame(tick));
@@ -15002,6 +15044,9 @@ function renderStep0StatStrip() {
   statEntries.forEach(([key, statElement, badge], index) => {
     const total = Math.max(0, Number(stats[key] || 0));
     const recentCount = Math.max(0, Number(recent[key] || 0));
+    const recentAction = key === 'shortlisted' ? '추가' : '반영';
+    if (badge) badge.title = `최근 15일 ${recentAction} ${recentCount}건 · ${key === 'pending' ? 'Listing 가져오기로 신규 등록 또는 실제 병합·보완한 자산' : key === 'shortlisted' ? '별표로 Custom Review에 추가한 자산 · 관리 내용 수정은 제외' : '해당 Research 보고서를 신규 등록하거나 내용을 변경한 자산'} · 같은 자산은 1건`;
+
     if (skipReplay) {
       // Same totals as the last render (cache → fast stats → full progress typically
       // all agree) — leave the number where it already settled instead of resetting
@@ -15010,8 +15055,8 @@ function renderStep0StatStrip() {
       if (badge) {
         badge.hidden = recentCount === 0;
         if (recentCount > 0) {
-          badge.textContent = `▲ ${recentCount}`;
-          badge.setAttribute('aria-label', `최근 15일 신규 업로드 ${recentCount}건`);
+          badge.textContent = key === 'shortlisted' ? `+ ${recentCount}` : `↻ ${recentCount}`;
+          badge.setAttribute('aria-label', `최근 15일 ${recentAction} 자산 ${recentCount}건`);
         }
       }
       return;
@@ -15019,7 +15064,7 @@ function renderStep0StatStrip() {
     if (statElement) statElement.textContent = '0';
     if (badge) {
       badge.hidden = true;
-      badge.textContent = '▲ 0';
+      badge.textContent = key === 'shortlisted' ? '+ 0' : '↻ 0';
     }
     // Start after this card's first dot wave has entered; the count then grows
     // alongside the staggered 720ms dot arrival instead of preceding it.
@@ -15038,8 +15083,8 @@ function renderStep0StatStrip() {
         if (statElement) statElement.textContent = String(Math.round(total * eased));
         if (badge && recentCount > 0) {
           badge.hidden = false;
-          badge.textContent = `▲ ${Math.round(recentCount * eased)}`;
-          badge.setAttribute('aria-label', `최근 15일 신규 업로드 ${recentCount}건`);
+          badge.textContent = key === 'shortlisted' ? `+ ${Math.round(recentCount * eased)}` : `↻ ${Math.round(recentCount * eased)}`;
+          badge.setAttribute('aria-label', `최근 15일 ${recentAction} 자산 ${recentCount}건`);
         }
         if (progress < 1) step0StatAnimationFrames.push(requestAnimationFrame(tick));
       };
@@ -16539,7 +16584,7 @@ function renderStep0ProgressTable() {
   if (elements.step0TableCount) {
     elements.step0TableCount.textContent = `검색 결과 ${rows.length} / 전체 ${state.step0Rows.length} assets`;
   }
-  if (elements.step0ExportExcelButton) elements.step0ExportExcelButton.disabled = rows.length === 0;
+  updateExcelExportButton(elements.step0ExportExcelButton, step0ExportRows(rows), state.step0SelectedPendingIds.size > 0);
   state.step0VisiblePendingIds = pageRows
     .filter((row) => row.pending?.done && row.pending?.queue_id)
     .map((row) => row.pending.queue_id);
@@ -16588,7 +16633,8 @@ function renderStep0ProgressTable() {
 }
 
 function exportStep0Table() {
-  const rows = step0FilteredSortedRows();
+  const rows = step0ExportRows();
+  if (!rows.length) return;
   const headers = ['Company', 'Location', 'Asset', 'Modality', 'Target', 'Main indication', 'Pipeline Stage', 'Listing', 'Simple Research', 'Advanced Research', 'Custom Review', 'Comment', 'Contact', 'Website'];
   const body = rows.map((row) => {
     const display = step0DashboardFieldDisplay(row);
@@ -16641,6 +16687,7 @@ function updateStep0SelectAllState() {
 }
 
 function renderStep0SelectedCount() {
+  updateExcelExportButton(elements.step0ExportExcelButton, step0ExportRows(), state.step0SelectedPendingIds.size > 0);
   if (elements.step0SelectedCount) {
     elements.step0SelectedCount.textContent = `${state.step0SelectedPendingIds.size}/${STEP0_MAX_SELECTED_CANDIDATES} 선택됨`;
   }
@@ -18710,6 +18757,11 @@ function renderAgentSuggestions() {
     return button;
   }));
 }
+window.addEventListener('skbp:knowledge-scope-changed', () => {
+  activeKnowledgeMapNodeContext = null;
+  renderActiveKnowledgeNodeContext();
+  refreshAgentScopeLabel();
+});
 window.addEventListener('skbp:knowledge-node-selected', (event) => {
   const detail = event.detail;
   activeKnowledgeMapNodeContext = detail?.label ? {

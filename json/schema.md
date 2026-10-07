@@ -335,3 +335,12 @@ not modified by column selection or export.
 - `drug-valuations.sample.json`: Example analysis object.
 - `pipeline-records.json`: Local dashboard data source.
 - `drug-valuation.schema.json`: Draft 2020-12 JSON Schema.
+
+
+### Recent workflow reflections (2026-10-06)
+
+- Summary totals remain current inventory/completion counts. `recent_15_days` counts distinct current asset identities reflected in each workflow within the trailing 15 days, including content updates; it is not net inventory growth. The cross-workflow summary counts an asset once even if several workflows changed.
+- `meta.pipeline_metadata.listing_imported_at` (also supported in queue metadata) is server-owned and records the last Listing import with meaningful content changes. New queue entries, actual merge/enrichment and changed representatives count; repeated imports with identical content and manual operational edits do not. `listed_at` remains the initial known Listing timestamp on future writes. Research uploads never manufacture Listing reflections.
+- Research reflections use the initial dashboard upload date (legacy report date fallback) plus actual report reupload/structured-content audit events. Advanced completion may imply Simple completion, but never a Simple reflection without a Simple record. Custom Review counts currently tracked assets added through the star action, using the known addition date or an explicit untracked-to-tracked add event for re-additions. Management edits, repeated add requests while already tracked, and automatic recalculations do not count. Removed assets are excluded. Its badge says recent additions rather than reflections.
+- `/api/candidate-queue/progress` workflow cells expose `reflected_at` independently of `completed_at`. Both summary endpoints share reflection-date calculation. Filters and the browser summary use only `reflected_at`; empty dates must not fall back to workflow completion dates. Future or invalid timestamps are ignored.
+- Existing research records recover Listing reflections only from explicit Listing-import audit events, never a research date or generic metadata edit. Historical import events do not always contain before/after values, so historical no-op imports cannot always be distinguished; no operational data is backfilled or rewritten. Legacy queue entries without an import-update timestamp use their known creation date.

@@ -498,7 +498,7 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
         for removed_id in ("resultChart", "themeChart", "countryChart", "priorityList", "dueDateList"):
             self.assertNotIn(f'id="{removed_id}"', HTML)
 
-    def test_step0_progress_summary_shows_recent_fifteen_day_upload_increases_on_cards_only(self):
+    def test_step0_progress_summary_shows_recent_reflections_on_cards_only(self):
         load = function_body(JS, "loadStep0Progress")
         self.assertNotIn('id="step0RecentUploadNote"', HTML)
         self.assertNotIn('최근 15일 신규 업로드</span>', HTML)
@@ -506,7 +506,9 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             self.assertIn(f'id="{element_id}"', HTML)
         render = function_body(JS, "renderStep0StatStrip")
         self.assertIn("state.step0RecentStats = data.recent_15_days", load)
-        self.assertIn("▲ +${count}", render)
+        self.assertIn("↻ ${recentCount}", render)
+        self.assertIn("최근 15일 반영", render)
+        self.assertNotIn("신규 업로드", render)
         self.assertIn(".step0-stat-recent", CSS)
         self.assertNotIn(".step0-recent-upload-note", CSS)
         self.assertNotIn(".step0-recent-upload-legend", CSS)

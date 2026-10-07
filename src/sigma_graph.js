@@ -72,6 +72,7 @@ const ui = {
 };
 
 let raw = { nodes: [], edges: [] };
+let agentScope = null;
 const hiddenLegendFilters = new Set();
 let adjacency = new Map();
 let stageByAsset = new Map();
@@ -646,6 +647,24 @@ function selectedGraph() {
   };
 }
 
+function buildKnowledgeMapAgentScope() {
+  const nodes = nodeMap();
+  const keywords = searchKeywords.map(normalizedSearchKeyword).filter(Boolean);
+  // Research follows domain filters, independent of layout and expanded hops.
+  const assets = raw.nodes.filter(node => {
+    if (node.type !== 'asset') return false;
+    const neighbors = [...(adjacency.get(node.id) || [])].map(id => nodes.get(id)).filter(Boolean);
+    const related = (type, values) => !values.size || neighbors.some(item => item.type === type && values.has(item.label));
+    const searchable = [node, ...neighbors].flatMap(item => [item.label, item.tags, item.type])
+      .map(normalizedSearchKeyword).join(' ');
+    return keywords.every(keyword => searchable.includes(keyword))
+      && related('theme', selectedThemes) && related('indication', selectedIndications)
+      && (!selectedStages.size || selectedStages.has(STAGE_LABEL[stageByAsset.get(node.id) || 'listing']));
+  }).map(node => node.label);
+  return { assets, themes: [...selectedThemes], indications: [...selectedIndications],
+    stages: [...selectedStages], keywords: [...searchKeywords] };
+}
+
 function seedNodes(nodes) {
   const types = [...new Set(nodes.map(node => node.type))];
   const typeIndex = new Map(types.map((type, index) => [type, index]));
@@ -755,6 +774,8 @@ function inspectNode(id) {
 function buildGraph() {
   stopCameraAnimation();
   syncMapResetButton();
+  agentScope = buildKnowledgeMapAgentScope();
+  window.dispatchEvent(new CustomEvent('skbp:knowledge-scope-changed'));
   const data = selectedGraph();
   const layout = seedNodes(data.nodes);
   const positions = new Map(layout.map(node => [node.id, node]));
@@ -1058,6 +1079,7 @@ ui.agentLink?.addEventListener('click', (event) => {
   event.preventDefault();
   launchAgent(ui.agentLink.dataset.agentPrompt || 'Atlas에서 확인할 Pipeline 관계와 우선순위를 제안해줘.');
 });
+window.getKnowledgeMapAgentScope = () => agentScope;
 window.initKnowledgeMap = () => load().catch(error => {
   if (ui.status) ui.status.textContent = 'Unavailable';
   ui.canvas.textContent = error.message;
