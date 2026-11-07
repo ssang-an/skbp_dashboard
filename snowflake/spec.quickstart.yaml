@@ -1,0 +1,49 @@
+spec:
+  containers:
+  - name: dashboard
+    image: /beta_test_db/dev/skbp_repo/skbp-dashboard:v1
+    env:
+      PORT: "8000"
+      SKBP_IMAGE_TAG: "v1"
+      TZ: "Asia/Seoul"
+      # AI chat / score suggestions / reparse use Snowflake Cortex via the SPCS session token
+      # (no API key, no external access). Model ids must be Cortex names.
+      LLM_PROVIDER: "cortex"
+      OPENROUTER_MODEL: "claude-sonnet-4-6"
+      OPENROUTER_FALLBACK_MODELS: "claude-sonnet-4-5"
+      OPENROUTER_REPARSE_MODEL: "claude-sonnet-4-6"
+      CORTEX_MODEL: "claude-sonnet-4-6"
+      # Used only if the Cortex REST API rejects the service token (SQL AI_COMPLETE fallback).
+      CORTEX_SQL_WAREHOUSE: "WH_BETATEST"
+      # Quick-start: no external access integration and no secrets.
+      # Password-reset / reminder e-mails stay disabled; the OpenRouter PDF parser is off.
+      ENABLE_PDF_PARSER_FALLBACK: "false"
+      ENABLE_PAID_OCR: "false"
+      ACTION_DATE_REMINDERS_ENABLED: "false"
+    volumeMounts:
+    - name: app-state
+      mountPath: /app-state
+    readinessProbe:
+      port: 8000
+      path: /
+    resources:
+      requests:
+        cpu: 0.5
+        memory: 2Gi
+      limits:
+        cpu: 1
+        memory: 4Gi
+  endpoints:
+  - name: web
+    port: 8000
+    public: true
+  volumes:
+  - name: app-state
+    source: block
+    size: 10Gi
+    blockConfig:
+      snapshotOnDelete: true
+      snapshotDeleteAfter: 7d
+  logExporters:
+    eventTableConfig:
+      logLevel: INFO

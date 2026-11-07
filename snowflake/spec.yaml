@@ -1,0 +1,60 @@
+spec:
+  containers:
+  - name: dashboard
+    image: /beta_test_db/dev/skbp_repo/skbp-dashboard:v1
+    env:
+      PORT: "8000"
+      SKBP_IMAGE_TAG: "v1"
+      # Non-secret settings (same keys as .env). Replace the <...> values before running 03_create_service.sql.
+      OPENROUTER_MODEL: "<same value as .env OPENROUTER_MODEL>"
+      OPENROUTER_APP_TITLE: "SKBP Pipeline Finder"
+      OPENROUTER_SITE_URL: "<SPCS endpoint URL, filled in after first deploy>"
+      APP_BASE_URL: "<SPCS endpoint URL, filled in after first deploy>"
+      SMTP_HOST: "<same value as .env SMTP_HOST>"
+      SMTP_PORT: "<same value as .env SMTP_PORT>"
+      SMTP_FROM_EMAIL: "<same value as .env SMTP_FROM_EMAIL>"
+      SMTP_FROM_NAME: "SKBP Pipeline Finder"
+      SMTP_STARTTLS: "<same value as .env SMTP_STARTTLS>"
+      SMTP_USE_SSL: "<same value as .env SMTP_USE_SSL>"
+      ACTION_DATE_REMINDERS_ENABLED: "<same value as .env>"
+      TZ: "Asia/Seoul"
+    secrets:
+    - snowflakeSecret:
+        objectName: beta_test_db.dev.skbp_openrouter_api_key
+      envVarName: OPENROUTER_API_KEY
+      secretKeyRef: secret_string
+    - snowflakeSecret:
+        objectName: beta_test_db.dev.skbp_smtp_login
+      envVarName: SMTP_USERNAME
+      secretKeyRef: username
+    - snowflakeSecret:
+        objectName: beta_test_db.dev.skbp_smtp_login
+      envVarName: SMTP_PASSWORD
+      secretKeyRef: password
+    volumeMounts:
+    - name: app-state
+      mountPath: /app-state
+    readinessProbe:
+      port: 8000
+      path: /
+    resources:
+      requests:
+        cpu: 0.5
+        memory: 2Gi
+      limits:
+        cpu: 1
+        memory: 4Gi
+  endpoints:
+  - name: web
+    port: 8000
+    public: true
+  volumes:
+  - name: app-state
+    source: block
+    size: 10Gi
+    blockConfig:
+      snapshotOnDelete: true
+      snapshotDeleteAfter: 7d
+  logExporters:
+    eventTableConfig:
+      logLevel: INFO

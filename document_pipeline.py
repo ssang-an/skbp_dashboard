@@ -16,6 +16,7 @@ from typing import Any, Literal
 import fitz
 import requests
 import urllib3
+import llm_client
 from pptx import Presentation
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -308,6 +309,17 @@ def parse_pdf_with_openrouter(
     api_key: str,
     model: str,
 ) -> dict[str, Any]:
+    if llm_client.is_cortex():
+        # The OpenRouter file-parser/OCR plugin has no Cortex equivalent; report a normal parser failure.
+        return {
+            "status": "failed",
+            "parser_engine": engine,
+            "parsed_text": "",
+            "file_hash": "",
+            "file_annotations": [],
+            "parsed_at": utc_now(),
+            "error": "OpenRouter PDF parser is not available with LLM_PROVIDER=cortex.",
+        }
     data_url = "data:application/pdf;base64," + base64.b64encode(file_path.read_bytes()).decode("ascii")
     payload = {
         "model": model,
@@ -412,6 +424,9 @@ _MODEL_PARAMETER_CACHE: dict[str, set[str]] = {}
 
 
 def model_supported_parameters(model: str) -> set[str]:
+    if llm_client.is_cortex():
+        # Cortex chat/completions accepts response_format json_schema (verified on Claude and GPT-5.1).
+        return {"response_format", "structured_outputs"}
     if model in _MODEL_PARAMETER_CACHE:
         return _MODEL_PARAMETER_CACHE[model]
     try:
@@ -597,12 +612,12 @@ def analyze_filter3_with_deepseek(
                     "\n\nJSON Schema:\n" + json.dumps(schema, ensure_ascii=False)
                 )
             try:
-                response = requests.post(
-                    openrouter_chat_url(),
-                    headers=openrouter_headers(api_key),
-                    json=payload,
+                response = llm_client.post_chat(
+                    payload,
+                    api_key,
                     timeout=int(os.getenv("OPENROUTER_ANALYSIS_TIMEOUT_SECONDS", "180")),
-                    verify=False,
+                    openrouter_url=openrouter_chat_url,
+                    openrouter_headers=openrouter_headers,
                 )
                 response.raise_for_status()
                 data = response.json()
@@ -656,9 +671,10 @@ def process_document(
     file_sha256 = sha256_file(file_path)
     suffix = file_path.suffix.lower()
     minimum_characters = max(1, int(os.getenv("PDF_TEXT_MIN_CHARACTERS", "50")))
-    api_key = os.getenv("OPENROUTER_API_KEY", "").strip()
+    api_key = (llm_client.credential() or "").strip()
     model = os.getenv("OPENROUTER_MODEL", "").strip()
-    parser_enabled = env_bool("ENABLE_PDF_PARSER_FALLBACK", True)
+    # The OpenRouter file-parser plugin has no Cortex equivalent; local text extraction still runs.
+    parser_enabled = env_bool("ENABLE_PDF_PARSER_FALLBACK", True) and not llm_client.is_cortex()
     parser_engine = os.getenv("PDF_PARSER_ENGINE", DEFAULT_PDF_PARSER_ENGINE).strip() or DEFAULT_PDF_PARSER_ENGINE
     paid_ocr_enabled = env_bool("ENABLE_PAID_OCR", False)
     conversion = {"status": "not_required", "pdf_path": None, "error": None}

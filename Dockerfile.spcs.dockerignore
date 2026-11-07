@@ -1,0 +1,30 @@
+# Build context exclusions for Dockerfile.spcs (BuildKit picks this file up automatically).
+# Secrets must never enter the image: .env / .env.* are excluded; values come from Snowflake Secrets.
+.git/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
+.hermes/
+node_modules/
+tmp/
+local-backups/
+graphify-out/
+.claude/
+.codex/
+/.obsidian/
+.vscode/
+snowflake/
+data/*.tmp
+data/*.sqlite3-journal
+data/*.sqlite3-wal
+data/*.sqlite3-shm
+*.skbp-tmp

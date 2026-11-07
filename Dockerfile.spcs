@@ -1,0 +1,27 @@
+FROM --platform=linux/amd64 python:3.11-slim
+
+# Same system packages as the original Dockerfile:
+# LibreOffice powers the in-browser PPT/Word -> PDF preview
+# (document_pipeline.convert_office_to_pdf). fonts-nanum keeps Korean
+# text in slides/documents from rendering as tofu boxes during conversion.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libreoffice \
+    fonts-nanum \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+# Pristine copy of the repository. spcs/bootstrap.py syncs code from here into the
+# block volume on every start and seeds data from here exactly once.
+COPY . /opt/skbp/image
+# Strip Windows CRLF in case the file was saved on Windows; the shebang breaks otherwise.
+RUN sed -i 's/\r$//' /opt/skbp/image/spcs/docker-entrypoint.sh \
+    && chmod +x /opt/skbp/image/spcs/docker-entrypoint.sh
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PORT=8000
+
+EXPOSE 8000
+ENTRYPOINT ["/opt/skbp/image/spcs/docker-entrypoint.sh"]

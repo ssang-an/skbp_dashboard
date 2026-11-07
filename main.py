@@ -35,6 +35,7 @@ from zoneinfo import ZoneInfo
 import requests
 import urllib3
 import document_pipeline
+import llm_client
 from ip_launch import normalize_ip_launch
 from record_storage import (
     FULL_CRITERION_IDS as STORAGE_FULL_CRITERION_IDS,
@@ -210,16 +211,15 @@ def openrouter_headers(api_key: str) -> dict[str, str]:
 
 
 def post_openrouter(payload: dict[str, Any], api_key: str, *, stream: bool = False) -> requests.Response:
-    response = requests.post(
-        document_pipeline.openrouter_chat_url(),
-        json=payload,
-        headers=openrouter_headers(api_key),
-        timeout=120,
+    # LLM_PROVIDER=cortex sends the same payload to Snowflake Cortex instead (see llm_client).
+    return llm_client.post_chat(
+        payload,
+        api_key,
         stream=stream,
-        verify=False,
+        timeout=120,
+        openrouter_url=document_pipeline.openrouter_chat_url,
+        openrouter_headers=openrouter_headers,
     )
-    response.raise_for_status()
-    return response
 
 
 def load_local_env() -> None:
@@ -10652,7 +10652,7 @@ def call_openrouter_chat(
     source_report_context = format_chat_source_report_context(selected_records, message)
     attachment_context = format_chat_attachment_context(selected_records, message)
 
-    api_key = os.getenv("OPENROUTER_API_KEY")
+    api_key = llm_client.credential()
     if not api_key:
         return None, "OPENROUTER_API_KEY is not set.", wiki_snippets
 
@@ -10823,7 +10823,7 @@ def stream_openrouter_chat(
     source_report_context = format_chat_source_report_context(selected_records, message)
     attachment_context = format_chat_attachment_context(selected_records, message)
 
-    api_key = os.getenv("OPENROUTER_API_KEY")
+    api_key = llm_client.credential()
     if not api_key:
         return iter(()), wiki_snippets, "OPENROUTER_API_KEY is not set."
 
@@ -11217,7 +11217,7 @@ async def create_shortlisting_metric_column(project_id: str, request: Request) -
 
     label_en = ""
     description_en = ""
-    api_key = os.getenv("OPENROUTER_API_KEY")
+    api_key = llm_client.credential()
     if api_key:
         translated, translate_error = call_openrouter_translate_ko_to_en(label, description, api_key)
         if translated:
@@ -11364,7 +11364,7 @@ async def update_shortlisting_metric_column(project_id: str, column_id: str, req
         # Stale translations would otherwise silently mismatch the edited Korean text.
         match["label_en"] = ""
         match["description_en"] = ""
-        api_key = os.getenv("OPENROUTER_API_KEY")
+        api_key = llm_client.credential()
         if api_key:
             translated, translate_error = call_openrouter_translate_ko_to_en(label, description, api_key)
             if translated:
@@ -11463,7 +11463,7 @@ def retranslate_shortlisting_item(item: dict[str, Any]) -> str | None:
     (or whose first attempt failed/was skipped because OPENROUTER_API_KEY was unset).
     Returns an error string on failure (item left unmodified) or None on success.
     """
-    api_key = os.getenv("OPENROUTER_API_KEY")
+    api_key = llm_client.credential()
     if not api_key:
         return "OPENROUTER_API_KEY가 설정되어 있지 않습니다."
     translated, error = call_openrouter_translate_ko_to_en(
@@ -11547,7 +11547,7 @@ async def create_shortlisting_classification(project_id: str, request: Request) 
     label_en = ""
     description_en = ""
     translate_error: str | None = None
-    api_key = os.getenv("OPENROUTER_API_KEY")
+    api_key = llm_client.credential()
     if api_key:
         translated, translate_error = call_openrouter_translate_ko_to_en(label, description, api_key)
         if translated:
@@ -11647,7 +11647,7 @@ async def update_shortlisting_classification(project_id: str, classification_id:
         # Stale translations would otherwise silently mismatch the edited Korean text.
         match["label_en"] = ""
         match["description_en"] = ""
-        api_key = os.getenv("OPENROUTER_API_KEY")
+        api_key = llm_client.credential()
         if api_key:
             translated, translate_error = call_openrouter_translate_ko_to_en(label, description, api_key)
             if translated:
@@ -12945,7 +12945,7 @@ async def refresh_record_rubric(record_id: str, request: Request) -> dict[str, A
                 "cleared_manual_scoring_override_fields": sorted(cleared_manual_scoring_overrides),
             }
 
-        api_key = os.getenv("OPENROUTER_API_KEY")
+        api_key = llm_client.credential()
         if not api_key:
             return {
                 "ok": True,
@@ -13334,7 +13334,7 @@ def classify_record_disease_linkage(record_id: str) -> dict[str, Any]:
     if focus.get("disease_linkage_status") in {"O", "X", "NA"} and focus.get("disease_linkage_note_signature") == signature:
         return {"status": "cached", "disease_linkage_status": focus["disease_linkage_status"], "record": record}
 
-    api_key = os.getenv("OPENROUTER_API_KEY")
+    api_key = llm_client.credential()
     if not api_key:
         return {"status": "unavailable", "disease_linkage_status": None, "record": record}
 
@@ -15971,7 +15971,7 @@ async def generate_qualitative_review_ai_entry(record_id: str, request: Request)
     if not criterion_id:
         raise HTTPException(status_code=400, detail="criterion_id is required.")
 
-    api_key = os.getenv("OPENROUTER_API_KEY")
+    api_key = llm_client.credential()
     if not api_key:
         raise HTTPException(status_code=503, detail="OPENROUTER_API_KEY가 설정되지 않아 AI 생성을 사용할 수 없습니다.")
 
@@ -16289,7 +16289,7 @@ async def llm_reparse_pasted_report(request: Request) -> dict[str, Any]:
     if not raw_markdown:
         raise HTTPException(status_code=400, detail="raw_markdown is required to run LLM-assisted reparsing.")
 
-    api_key = os.getenv("OPENROUTER_API_KEY")
+    api_key = llm_client.credential()
     if not api_key:
         raise HTTPException(status_code=503, detail="OPENROUTER_API_KEY is not set.")
 
@@ -16333,7 +16333,7 @@ async def llm_reparse_pasted_report_stream(request: Request) -> StreamingRespons
     if not raw_markdown:
         raise HTTPException(status_code=400, detail="raw_markdown is required to run LLM-assisted reparsing.")
 
-    api_key = os.getenv("OPENROUTER_API_KEY")
+    api_key = llm_client.credential()
     if not api_key:
         raise HTTPException(status_code=503, detail="OPENROUTER_API_KEY is not set.")
 
