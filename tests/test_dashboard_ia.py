@@ -237,8 +237,8 @@ class DashboardInformationArchitectureTests(unittest.TestCase):
             self.assertIn(field, context)
 
     def test_floating_agent_window_controls_share_centered_svg_geometry(self):
-        for markup in (HTML, DETAIL_HTML):
-            self.assertEqual(markup.count('class="floating-agent-window-icon"'), 3)
+        for markup, control_count in ((HTML, 5), (DETAIL_HTML, 3)):
+            self.assertEqual(markup.count('class="floating-agent-window-icon"'), control_count)
             self.assertIn('<path d="M5 12h14" />', markup)
             self.assertIn('<rect x="5" y="5" width="14" height="14" rx="1.5" />', markup)
             self.assertIn('<path d="m6 6 12 12M18 6 6 18" />', markup)

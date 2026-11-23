@@ -72,7 +72,7 @@
         });
       })();
     </script>
-  <link rel="stylesheet" href="./src/styles.css?v=20261001-stage-presets-2" />
+  <link rel="stylesheet" href="./src/styles.css?v=20261122-agent-dock-table-scroll-1" />
   <link rel="stylesheet" href="./src/knowledge_graph.css?v=20260823-atlas-search-pill-alignment-1" />
   <link rel="stylesheet" href="./src/sigma_graph.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js" defer></script>
@@ -174,19 +174,15 @@
                   id="shortlistingProjectSwitchButton"
                   class="help-tooltip"
                   type="button"
-                  aria-haspopup="listbox"
                   aria-expanded="false"
                   aria-controls="shortlistingProjectSwitchMenu"
                   data-tooltip="현재 Custom Review Project입니다. 클릭하여 다른 Project로 전환합니다."
                 ><span aria-hidden="true">▤</span><b id="shortlistingProjectSwitchLabel">Open Innovation Center</b></button>
-                <div id="shortlistingProjectSwitchMenu" class="shortlisting-project-switch-menu" role="listbox" aria-label="Custom Review Project 선택" hidden></div>
+                <div id="shortlistingProjectSwitchMenu" class="shortlisting-project-switch-menu" role="group" aria-label="Custom Review Project" hidden>
+                  <div id="shortlistingProjectSwitchOptions"></div>
+                  <button id="addShortlistingProjectButton" class="shortlisting-project-create" type="button"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 2v8M2 6h8"/></svg>새 프로젝트 만들기</button>
+                </div>
               </div>
-              <button
-                id="addShortlistingProjectButton"
-                class="help-tooltip"
-                type="button"
-                data-tooltip="새 팀 전용 Custom Review Project를 만듭니다."
-              ><span aria-hidden="true">+</span><b>프로젝트 추가</b></button>
             </div>
             <div class="top-action-group top-personal-actions" aria-label="Personal and appearance">
               <button
@@ -359,7 +355,7 @@
               </button>
             </div>
           </div>
-          <div class="table-wrap">
+          <div class="table-wrap" tabindex="0" role="region" aria-label="Listing pipeline table">
             <table class="pipeline-table step0-progress-table">
               <colgroup>
                 <col class="step0-col-select" />
@@ -630,7 +626,7 @@
             </div>
             <div class="column-settings-grid" id="columnSettingsGrid"></div>
           </div>
-          <div class="table-wrap">
+          <div class="table-wrap" tabindex="0" role="region" aria-label="Pipeline table">
             <table class="pipeline-table">
               <colgroup id="pipelineColGroup">
                 <col class="pipeline-col-select" />
@@ -843,12 +839,15 @@
           <h2 id="aiDrawerTitle">All Pipelines Agent</h2>
         </div>
         <div class="floating-agent-window-actions" data-floating-agent-no-drag>
+          <button type="button" data-agent-dock="left" aria-label="왼쪽 분할" title="왼쪽 분할" aria-pressed="false"><span class="floating-agent-window-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M12 5v14"/><rect x="5" y="6" width="7" height="12" fill="currentColor" stroke="none" opacity=".35"/></svg></span></button>
+          <button type="button" data-agent-dock="right" aria-label="오른쪽 분할" title="오른쪽 분할" aria-pressed="false"><span class="floating-agent-window-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M12 5v14"/><rect x="12" y="6" width="7" height="12" fill="currentColor" stroke="none" opacity=".35"/></svg></span></button>
           <button type="button" data-floating-agent-minimize aria-label="에이전트 창 최소화" title="최소화"><span class="floating-agent-window-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 12h14" /></svg></span></button>
           <button type="button" data-floating-agent-maximize aria-label="에이전트 창 최대화" title="최대화"><span class="floating-agent-window-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><rect x="5" y="5" width="14" height="14" rx="1.5" /></svg></span></button>
           <button id="aiDrawerClose" type="button" aria-label="에이전트 창 닫기" title="닫기"><span class="floating-agent-window-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m6 6 12 12M18 6 6 18" /></svg></span></button>
         </div>
       </div>
 
+      <div class="agent-dock-divider" data-agent-dock-divider role="separator" tabindex="0" aria-orientation="vertical" aria-label="채팅창 너비 조절" hidden></div>
       <div class="agent-context">
         <div>
           <span>Loaded Context</span>
@@ -1656,7 +1655,7 @@
     </div>
 
   <script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js" defer></script>
-  <script type="module" src="./src/app.js?v=20261007-selected-excel-export-1"></script>
+  <script type="module" src="./src/app.js?v=20261122-agent-dock-2"></script>
   <script src="./src/sigma_graph.js?v=20261006-agent-scope-1" defer></script>
   </body>
 </html>

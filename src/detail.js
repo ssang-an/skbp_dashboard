@@ -3906,7 +3906,42 @@ async function submitDetailComment() {
   }
 }
 
+function renderNcdpPublicStop(record) {
+  const notice = document.querySelector('#ncdpPublicStop');
+  const prefix = 'NCDP_REVIEW_PUBLIC_STOP: ';
+  notice.hidden = true;
+  notice.replaceChildren();
+  if (record.structured_table?.development_stage !== 'Discontinued / inactive') return;
+  const fact = (record.validation?.cross_checked_facts || []).find(
+    (item) => item?.fact?.startsWith(prefix) && item.fact.slice(prefix.length).trim() &&
+      Array.isArray(item.sources) && item.sources.some((source) => /^https?:\/\//i.test(source))
+  );
+  if (!fact) return;
+
+  const heading = document.createElement('strong');
+  heading.textContent = '공개자료에서 개발 중단이 확인됐습니다.';
+  const text = document.createElement('p');
+  text.textContent = fact.fact.slice(prefix.length);
+  const links = document.createElement('ul');
+  for (const source of fact.sources) {
+    if (!/^https?:\/\//i.test(source)) continue;
+    const item = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = source;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = source;
+    item.append(link);
+    links.append(item);
+  }
+  const note = document.createElement('p');
+  note.textContent = '개발은 중단됐지만, 요청에 따라 NCDP를 기준으로 수행한 조사 결과는 아래와 같습니다.';
+  notice.append(heading, text, links, note);
+  notice.hidden = false;
+}
+
 function renderRecord(record) {
+  renderNcdpPublicStop(record);
   const summary = record.json_summary || {};
   const assetLabel = summary.asset_name || record.structured_table?.asset_name || 'Pipeline';
   const companyLabel = summary.company || record.structured_table?.company || '-';

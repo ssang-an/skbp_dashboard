@@ -57,6 +57,77 @@ export function initFloatingAgent({
   let launcherPosition = readLauncherPosition(storageKey);
   let restoreGeometry = null;
   let maximized = Boolean(geometry?.maximized);
+  const dockButtons = panel.querySelectorAll('[data-agent-dock]');
+  const dockDivider = panel.querySelector('[data-agent-dock-divider]');
+  const dockHeader = dockDivider ? document.querySelector('.app-shell > .topbar') : null;
+  const dockMedia = window.matchMedia('(min-width: 1000px)');
+  let dockSide = null;
+  let dockWidth = 420;
+  let isOpen = false;
+
+  function updateDockTop() {
+    if (!panel.dataset.dock || !dockHeader) return;
+    const bottom = Math.max(0, Math.ceil(dockHeader.getBoundingClientRect().bottom));
+    panel.style.setProperty('--agent-dock-top', `${bottom}px`);
+  }
+
+  if (dockHeader) {
+    new ResizeObserver(updateDockTop).observe(dockHeader);
+    window.addEventListener('scroll', updateDockTop, { passive: true });
+  }
+
+  function renderDock() {
+    if (!dockDivider) return false;
+    const canDock = dockMedia.matches;
+    const side = canDock && isOpen && !maximized && !panel.classList.contains('is-minimized')
+      ? dockSide : null;
+    dockButtons.forEach((button) => {
+      button.hidden = !canDock;
+      button.setAttribute('aria-pressed', String(button.dataset.agentDock === side));
+    });
+    panel.dataset.dock = side || '';
+    document.body.dataset.agentDock = side || '';
+    dockDivider.hidden = !side;
+    updateDockTop();
+    if (!side) {
+      document.body.style.removeProperty('--agent-dock-width');
+      return false;
+    }
+    const maxWidth = Math.floor(window.innerWidth * 0.55);
+    dockWidth = Math.max(340, Math.min(maxWidth, dockWidth));
+    document.body.style.setProperty('--agent-dock-width', `${dockWidth}px`);
+    dockDivider.setAttribute('aria-valuemin', '340');
+    dockDivider.setAttribute('aria-valuemax', String(maxWidth));
+    dockDivider.setAttribute('aria-valuenow', String(dockWidth));
+    panel.classList.remove('is-maximized');
+    return true;
+  }
+
+  dockButtons.forEach((button) => button.addEventListener('click', () => {
+    const side = button.dataset.agentDock;
+    dockSide = dockSide === side && !maximized && !panel.classList.contains('is-minimized') ? null : side;
+    if (maximized) toggleMaximized();
+    setMinimized(false);
+  }));
+
+  dockDivider?.addEventListener('pointerdown', (event) => {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    dockDivider.setPointerCapture(event.pointerId);
+  });
+  dockDivider?.addEventListener('pointermove', (event) => {
+    if (!dockDivider.hasPointerCapture(event.pointerId)) return;
+    dockWidth = Math.round(dockSide === 'left' ? event.clientX : window.innerWidth - event.clientX);
+    renderDock();
+  });
+  dockDivider?.addEventListener('keydown', (event) => {
+    if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+    event.preventDefault();
+    const movement = event.key === 'ArrowRight' ? 16 : -16;
+    dockWidth += dockSide === 'left' ? movement : -movement;
+    renderDock();
+  });
+
   let suppressLauncherClick = false;
 
   launcher.setAttribute('aria-controls', panel.id);
@@ -186,6 +257,7 @@ export function initFloatingAgent({
   }
 
   function renderGeometry() {
+    if (renderDock()) return;
     if (mobileMedia.matches) {
       panel.style.removeProperty('left');
       panel.style.removeProperty('top');
@@ -219,6 +291,7 @@ export function initFloatingAgent({
       return;
     }
     panel.classList.toggle('is-minimized', value);
+    renderGeometry();
     minimizeButton?.setAttribute('aria-label', value ? '에이전트 창 펼치기' : '에이전트 창 최소화');
     minimizeButton?.setAttribute('title', value ? '펼치기' : '최소화');
     minimizeButton?.setAttribute('aria-pressed', String(value));
@@ -229,6 +302,7 @@ export function initFloatingAgent({
     window.clearTimeout(closeTimer);
     lastFocused = document.activeElement;
     panel.hidden = false;
+    isOpen = true;
     setMinimized(false);
     renderGeometry();
     requestAnimationFrame(() => {
@@ -240,6 +314,8 @@ export function initFloatingAgent({
   }
 
   function close() {
+    isOpen = false;
+    renderDock();
     panel.classList.remove('open');
     panel.setAttribute('aria-hidden', 'true');
     launcher.setAttribute('aria-expanded', 'false');
@@ -271,7 +347,7 @@ export function initFloatingAgent({
   }
 
   function startPointerGesture(event, mode) {
-    if (mobileMedia.matches || event.button !== 0 || maximized) return;
+    if (mobileMedia.matches || event.button !== 0 || maximized || panel.dataset.dock) return;
     if (mode === 'drag' && isEditableTarget(event.target)) return;
     event.preventDefault();
     const start = clampGeometry(geometry || defaultGeometry());
@@ -301,7 +377,7 @@ export function initFloatingAgent({
   }
 
   function keyboardMove(event) {
-    if (mobileMedia.matches || maximized || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
+    if (mobileMedia.matches || maximized || panel.dataset.dock || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
     if (!event.altKey) return;
     event.preventDefault();
     const step = event.shiftKey ? 40 : 12;
@@ -318,7 +394,7 @@ export function initFloatingAgent({
   }
 
   function keyboardResize(event) {
-    if (mobileMedia.matches || maximized || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
+    if (mobileMedia.matches || maximized || panel.dataset.dock || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
     event.preventDefault();
     const step = event.shiftKey ? 40 : 12;
     const current = geometry || defaultGeometry();

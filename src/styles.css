@@ -2021,7 +2021,6 @@ h2 {
 .topbar #deleteRecordButton,
 .topbar #editJsonButton,
 .topbar #shortlistingProjectSwitchButton,
-.topbar #addShortlistingProjectButton,
 .topbar .theme-toggle,
 .topbar .secondary-link {
   display: inline-flex;
@@ -2318,6 +2317,32 @@ h2 {
   display: inline-flex;
 }
 
+#shortlistingProjectSwitchButton {
+  max-width: min(220px, 40vw);
+}
+
+#shortlistingProjectSwitchLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#shortlistingProjectSwitchOptions {
+  margin-bottom: 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar .shortlisting-project-create {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+}
+
 .shortlisting-project-switch-menu {
   position: absolute;
   top: calc(100% + 6px);
@@ -2340,9 +2365,8 @@ h2 {
   display: none;
 }
 
-.shortlisting-project-switch-option {
-  display: flex;
-  align-items: center;
+.shortlisting-project-switch-option,
+.topbar .shortlisting-project-create {
   width: 100%;
   padding: 8px 10px;
   border-radius: 7px;
@@ -2350,12 +2374,12 @@ h2 {
   font-size: 12px;
   font-weight: 700;
   text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
-.shortlisting-project-switch-option:hover {
+.shortlisting-project-switch-option:hover,
+.topbar .shortlisting-project-create:hover {
   background: color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
@@ -2383,10 +2407,15 @@ h2 {
   justify-content: center;
   width: 28px;
   height: 28px;
+  padding: 0;
   border: none;
   border-radius: 7px;
   background: transparent;
   color: var(--muted);
+}
+
+.shortlisting-project-settings-button svg {
+  flex: none;
 }
 
 .shortlisting-project-settings-button:hover {
@@ -25711,4 +25740,77 @@ html .pipeline-table .clickable-row:hover > td:is(.select-col, .company-cell, .a
 }
 html .pipeline-table .clickable-row.selected-row > td:is(.select-col, .company-cell, .asset-cell) {
   background-image: linear-gradient(var(--table-row-hover-selected), var(--table-row-hover-selected)), linear-gradient(var(--surface), var(--surface));
+}
+
+/* Docked dashboard chat reserves space alongside the dashboard. */
+body:is([data-agent-dock="left"], [data-agent-dock="right"]) > .app-shell {
+  isolation: auto;
+}
+
+body:is([data-agent-dock="left"], [data-agent-dock="right"]) .app-shell > .topbar {
+  z-index: 71;
+}
+
+body[data-agent-dock="left"] .app-shell > :is(#step0Panel, #pipelineContent, #knowledgeMapPanel, .dashboard-footer) {
+  margin-left: var(--agent-dock-width);
+}
+
+body[data-agent-dock="right"] .app-shell > :is(#step0Panel, #pipelineContent, #knowledgeMapPanel, .dashboard-footer) {
+  margin-right: var(--agent-dock-width);
+}
+
+#aiDrawer[data-dock="left"],
+#aiDrawer[data-dock="right"] {
+  top: var(--agent-dock-top, 0px) !important;
+  bottom: auto;
+  width: var(--agent-dock-width) !important;
+  height: calc(100dvh - var(--agent-dock-top, 0px)) !important;
+  min-height: 0;
+  min-width: 0;
+  max-width: none;
+  max-height: none;
+  border-radius: 0;
+}
+
+#aiDrawer[data-dock="left"] { left: 0 !important; right: auto; }
+#aiDrawer[data-dock="right"] { left: auto !important; right: 0; }
+
+#aiDrawer[data-dock]:not([data-dock=""]) [data-floating-agent-resize],
+#aiDrawer [data-agent-dock][hidden],
+#aiDrawer .agent-dock-divider[hidden] { display: none; }
+
+#aiDrawer [data-agent-dock][aria-pressed="true"] { color: var(--accent); }
+
+.agent-dock-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  z-index: 2;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+[data-dock="left"] .agent-dock-divider { right: 0; border-right: 2px solid var(--line); }
+[data-dock="right"] .agent-dock-divider { left: 0; border-left: 2px solid var(--line); }
+
+.agent-dock-divider:hover,
+.agent-dock-divider:focus-visible { background: color-mix(in srgb, var(--accent) 25%, transparent); }
+
+body:is([data-agent-dock="left"], [data-agent-dock="right"]) :is(#step0Panel, #pipelineContent) .pipeline-table-panel {
+  min-width: 0;
+}
+
+body:is([data-agent-dock="left"], [data-agent-dock="right"]) :is(#step0Panel, #pipelineContent) .table-wrap {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+body:is([data-agent-dock="left"], [data-agent-dock="right"]) :is(#step0Panel, #pipelineContent) .table-wrap > .pipeline-table {
+  min-width: 1080px;
+}
+
+body:is([data-agent-dock="left"], [data-agent-dock="right"]) #pipelineContent .table-wrap > .focus-management-table {
+  min-width: 1280px;
 }

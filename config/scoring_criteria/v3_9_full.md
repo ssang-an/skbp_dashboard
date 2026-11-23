@@ -289,3 +289,12 @@ SKBP Theme/Cluster는 분류·탐색 정보이며 TR 점수 또는 PASS/FAIL의 
 MoA 및 Expansion Potential의 위 `investigation_note` 기록은 이미 score 산정에 사용한 근거를 짧게 요약하는 절차이며, 추가 검색이나 점수 규칙 변경을 요구하지 않는다.
 
 Retain the v3.5 Compact v2 JSON structure and all criterion-level source, uncertainty, and why-not-higher requirements. For early-stop identity/lifecycle results, preserve the required JSON contract while displaying the three core score cells as `—`; do not portray schema placeholder zeroes as completed assessments.
+
+### Explicit NCDP attachment exception
+
+Apply this exception only when a human requests assessment and supplies a readable NCDP for the exact asset and company being assessed. A filename, listing row, unrelated attachment, or unconfirmed alias is insufficient. Without eligible material, follow the normal early-stop rules.
+
+- Confirm identity from the deck by citing the document title and page/slide. Continue the workflow's scientific scoring if the deck supports identity, even without public corroboration. Keep public corroboration separate. Cite the deck page for each supported criterion and distinguish company claims, plans, and observed results. Judge quantitative evidence by the existing criterion thresholds and the last supported stage. Do not count deck evidence as a verified public source or invent a public URL.
+- An eligible deck may meet the criterion's evidence-source requirement where the general rule calls for public evidence, if the deck provides equivalent, traceable asset-specific technical evidence. Do not substitute unsupported claims.
+- If a public source explicitly confirms termination of the same program, retain the completed deck-based scores for reference and set development_stage to Discontinued / inactive (Advanced FAIL; Simple INSUFFICIENT). Do not turn trial-only stops, pauses, or missing search results into program termination.
+- For this confirmed program termination plus completed deck assessment only, add an object to validation.cross_checked_facts with fact starting exactly with "NCDP_REVIEW_PUBLIC_STOP: " followed by the source date and scope. In sources include the actual public HTTPS URL (HTTP is also accepted). Start the Markdown with the same public termination and link, followed by the NCDP-based assessment. This exception overrides any instruction to stop scoring or display score placeholders after terminal lifecycle for this case only.

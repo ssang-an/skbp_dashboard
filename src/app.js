@@ -1,6 +1,6 @@
 import { createPrivateConversations } from './private-conversations.js?v=20260917-1';
 import { setupThemeToggle } from './theme.js?v=20260802-header-icons-1';
-import { initFloatingAgent } from './floating-agent.js?v=20260917-1';
+import { initFloatingAgent } from './floating-agent.js?v=20261122-agent-dock-2';
 import { initPageJumpControls } from './page-jump.js?v=20260823-page-jump-1';
 import { initPipelineHeaderFreeze } from './table-header-freeze.js?v=20260830-1';
 import { getCurrentUser, initAuthUI, requireAuth } from './auth.js?v=20260917-private-chat-1';
@@ -552,6 +552,7 @@ const elements = {
   shortlistingProjectSwitchButton: document.querySelector('#shortlistingProjectSwitchButton'),
   shortlistingProjectSwitchLabel: document.querySelector('#shortlistingProjectSwitchLabel'),
   shortlistingProjectSwitchMenu: document.querySelector('#shortlistingProjectSwitchMenu'),
+  shortlistingProjectSwitchOptions: document.querySelector('#shortlistingProjectSwitchOptions'),
   addShortlistingProjectButton: document.querySelector('#addShortlistingProjectButton'),
   shortlistingProjectModal: document.querySelector('#shortlistingProjectModal'),
   shortlistingProjectNameInput: document.querySelector('#shortlistingProjectNameInput'),
@@ -7188,17 +7189,18 @@ function renderShortlistingProjectControl() {
   }
   const activeProject = projects.find((project) => project.id === state.activeShortlistingProjectId);
   if (elements.shortlistingProjectSwitchLabel) {
-    elements.shortlistingProjectSwitchLabel.textContent = activeProject?.name || 'Open Innovation Center';
+    const projectName = activeProject?.name || 'Open Innovation Center';
+    elements.shortlistingProjectSwitchLabel.textContent = projectName;
+    elements.shortlistingProjectSwitchLabel.title = projectName;
   }
-  if (elements.shortlistingProjectSwitchMenu) {
-    elements.shortlistingProjectSwitchMenu.innerHTML = projects
+  if (elements.shortlistingProjectSwitchOptions) {
+    elements.shortlistingProjectSwitchOptions.innerHTML = projects
       .map((project) => `
         <div class="shortlisting-project-switch-row">
           <button
             type="button"
             class="shortlisting-project-switch-option${project.id === state.activeShortlistingProjectId ? ' is-active' : ''}"
-            role="option"
-            aria-selected="${project.id === state.activeShortlistingProjectId}"
+            aria-pressed="${project.id === state.activeShortlistingProjectId}"
             data-project-id="${escapeHtml(project.id)}"
           >${escapeHtml(project.name)}</button>
           ${project.current_user_role === 'owner' ? `
@@ -7208,7 +7210,7 @@ function renderShortlistingProjectControl() {
               data-project-settings-id="${escapeHtml(project.id)}"
               title="Project 권한, 지표, 분류 기준 수정"
               aria-label="${escapeHtml(project.name)} 설정 - Project 권한, 지표, 분류 기준 수정"
-            ><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82A1.65 1.65 0 005.51 15H5.4a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1h.09a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
+            ><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82A1.65 1.65 0 005.51 15H5.4a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1h.09a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
           ` : ''}
         </div>
       `)
@@ -18014,7 +18016,10 @@ document.addEventListener('keydown', (event) => {
     closeShortlistingProjectSwitchMenu();
   }
 });
-elements.addShortlistingProjectButton?.addEventListener('click', openShortlistingProjectModal);
+elements.addShortlistingProjectButton?.addEventListener('click', () => {
+  closeShortlistingProjectSwitchMenu();
+  openShortlistingProjectModal();
+});
 elements.shortlistingProjectModalCancel?.addEventListener('click', closeShortlistingProjectModal);
 elements.shortlistingProjectModalSave?.addEventListener('click', submitShortlistingProjectModal);
 elements.shortlistingProjectModal?.addEventListener('click', (event) => {
