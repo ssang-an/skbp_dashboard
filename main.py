@@ -270,6 +270,7 @@ SMTP_FROM_EMAIL = str(os.getenv("SMTP_FROM_EMAIL", "")).strip()
 SMTP_FROM_NAME = str(os.getenv("SMTP_FROM_NAME", "SKBP Pipeline Finder")).strip() or "SKBP Pipeline Finder"
 SMTP_USE_SSL = env_flag("SMTP_USE_SSL", False)
 SMTP_STARTTLS = env_flag("SMTP_STARTTLS", True)
+SMTP_STRICT_CERTIFICATES = env_flag("SMTP_STRICT_CERTIFICATES", False)
 ACTION_DATE_REMINDERS_ENABLED = env_flag("ACTION_DATE_REMINDERS_ENABLED", True)
 
 
@@ -572,6 +573,9 @@ def send_smtp_message(message: EmailMessage) -> None:
     if not password_reset_email_configured():
         raise RuntimeError("SMTP email is not configured.")
     context = ssl.create_default_context()
+    # Retain chain and hostname verification for corporate inspection certificates.
+    if not SMTP_STRICT_CERTIFICATES and hasattr(ssl, "VERIFY_X509_STRICT"):
+        context.verify_flags &= ~ssl.VERIFY_X509_STRICT
     if SMTP_USE_SSL:
         with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, timeout=20, context=context) as client:
             if SMTP_USERNAME:

@@ -34,3 +34,7 @@ Use the hostname, port, sender address, and credentials supplied by the chosen m
 The same SMTP settings send an Action Date reminder to a Shortlisting owner at 09:00 Korea Standard Time on the Action Date while the local server is running. `ACTION_DATE_REMINDER_DAYS=0` is the default; change it to a comma-separated list only if earlier reminders are wanted, or disable this feature with `ACTION_DATE_REMINDERS_ENABLED=false`.
 
 The owner must be entered as the exact name or email address of an active local dashboard account. The dashboard stores that account ID and email with the Shortlisting item, and records each successful reminder once per Action Date, reminder lead time, and recipient. If the local server is not running at 09:00 KST, it cannot send that day's scheduled reminder.
+
+## Corporate certificate compatibility
+
+SMTP retains certificate chain and hostname verification. Strict X.509 checks are disabled by default for trusted corporate certificates missing fields such as Authority Key Identifier. Set `SMTP_STRICT_CERTIFICATES=true` to enable strict checks; restart the server after changing settings. If verification still fails, ask IT to repair the certificate chain.
