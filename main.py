@@ -14991,14 +14991,16 @@ async def update_shortlisting_project_record_state(record_id: str, project_id: s
                 state["tracking_status"] = value
             elif field == "custom_score":
                 raw_value = payload.get("value")
+                configured_max = project.get("max_custom_score", 9)
+                max_custom_score = configured_max if isinstance(configured_max, int) and not isinstance(configured_max, bool) else 9
                 if isinstance(raw_value, bool):
-                    raise HTTPException(status_code=400, detail="custom_score must be an integer between 0 and 9.")
+                    raise HTTPException(status_code=400, detail=f"custom_score must be an integer between 0 and {max_custom_score}.")
                 try:
                     value = int(raw_value)
                 except (TypeError, ValueError):
-                    raise HTTPException(status_code=400, detail="custom_score must be an integer between 0 and 9.") from None
-                if not 0 <= value <= 9:
-                    raise HTTPException(status_code=400, detail="custom_score must be an integer between 0 and 9.")
+                    raise HTTPException(status_code=400, detail=f"custom_score must be an integer between 0 and {max_custom_score}.") from None
+                if not 0 <= value <= max_custom_score:
+                    raise HTTPException(status_code=400, detail=f"custom_score must be an integer between 0 and {max_custom_score}.")
                 state["custom_score"] = value
             elif field == "metric_value":
                 metric_id = str(payload.get("metric_id") or "").strip()

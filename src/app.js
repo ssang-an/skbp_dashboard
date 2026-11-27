@@ -176,6 +176,8 @@ const FOCUS_DEFAULT_COLUMN_WIDTHS = {
   totalScore: 64,
   filter3: 82,
   classification: 82,
+  'metric:oic2027_progress': 344,
+  customScore: 70,
   inVivo: 56,
   inVitro: 56,
   admet: 60,
@@ -200,6 +202,8 @@ const FOCUS_MIN_COLUMN_WIDTHS = {
   totalScore: 52,
   filter3: 66,
   classification: 66,
+  'metric:oic2027_progress': 320,
+  customScore: 64,
   inVivo: 48,
   inVitro: 48,
   admet: 50,
@@ -450,7 +454,7 @@ const state = {
   categorySynonymsLoaded: false,
   latestOiPartnershipCriteriaVersion: '1.0',
   shortlistingProjects: [],
-  activeShortlistingProjectId: localStorage.getItem(SHORTLISTING_PROJECT_STORAGE_KEY) || DEFAULT_SHORTLISTING_PROJECT_ID,
+  activeShortlistingProjectId: localStorage.getItem(SHORTLISTING_PROJECT_STORAGE_KEY) || 'oic_2027',
   settingsModalProjectId: null,
   editingMetricColumnId: null,
   editingClassificationId: null,
@@ -3245,11 +3249,18 @@ function metricColumnTypeWidth(key, widthsByType) {
   const metricId = key.slice('metric:'.length);
   const column = activeShortlistingMetricColumns().find((item) => item.id === metricId);
   if (!column) return null;
+  if (column.display_as_progress === true) {
+    return widthsByType === METRIC_COLUMN_TYPE_DEFAULT_WIDTHS ? 392 : 360;
+  }
   return widthsByType[column.return_type] || widthsByType.text;
 }
 
 function defaultColumnWidth(key) {
   if (activeTableMode() === 'focus') {
+    if (activeShortlistingProject()?.id === 'oic_2027') {
+      if (key === 'totalScore') return 56;
+      if (key === 'customScore') return 58;
+    }
     return (
       metricColumnTypeWidth(key, METRIC_COLUMN_TYPE_DEFAULT_WIDTHS) ||
       FOCUS_DEFAULT_COLUMN_WIDTHS[key] ||
@@ -3261,6 +3272,10 @@ function defaultColumnWidth(key) {
 
 function minColumnWidth(key) {
   if (activeTableMode() === 'focus') {
+    if (activeShortlistingProject()?.id === 'oic_2027') {
+      if (key === 'totalScore') return 52;
+      if (key === 'customScore') return 52;
+    }
     return (
       metricColumnTypeWidth(key, METRIC_COLUMN_TYPE_MIN_WIDTHS) ||
       FOCUS_MIN_COLUMN_WIDTHS[key] ||
@@ -3514,13 +3529,24 @@ function activeShortlistingMetricColumns() {
 
 function focusTableColumnKeys() {
   if (state.activeShortlistingProjectId === DEFAULT_SHORTLISTING_PROJECT_ID) return FOCUS_TABLE_COLUMN_KEYS;
+  const project = activeShortlistingProject();
+  const metricColumns = activeShortlistingMetricColumns();
+  const progressKeys = metricColumns
+    .filter((column) => column.display_as_progress === true)
+    .map((column) => `metric:${column.id}`);
+  const reviewMetricKeys = metricColumns
+    .filter((column) => column.display_as_progress !== true)
+    .map((column) => `metric:${column.id}`);
+  const fixedColumns = project?.progress_before_advanced
+    ? [...FOCUS_TABLE_FIXED_LEFT_COLUMN_KEYS.slice(0, 8), ...progressKeys, ...FOCUS_TABLE_FIXED_LEFT_COLUMN_KEYS.slice(8)]
+    : FOCUS_TABLE_FIXED_LEFT_COLUMN_KEYS;
   return [
-    ...FOCUS_TABLE_FIXED_LEFT_COLUMN_KEYS,
+    ...fixedColumns,
     'classification',
-    ...activeShortlistingMetricColumns().map((column) => `metric:${column.id}`),
-    'customScore',
-    'totalScore30',
-    'focusDueDate',
+    ...(project?.human_score_max ? ['customScore'] : []),
+    ...(project?.progress_before_advanced ? reviewMetricKeys : metricColumns.map((column) => `metric:${column.id}`)),
+    ...(project?.hide_score_columns ? [] : ['customScore', 'totalScore30']),
+    ...(project?.hide_action_date ? [] : ['focusDueDate']),
     'focusManage'
   ];
 }
@@ -3532,7 +3558,8 @@ function recomputeShortlistingScoreFields() {
     const rawCustomScore = isDefaultProject
       ? get(row.raw, 'meta.focus_management.custom_score', 0)
       : get(row.raw, `meta.shortlisting_projects.${projectId}.custom_score`, 0);
-    const customScore = Number.isFinite(rawCustomScore) ? rawCustomScore : 0;
+    const scoreCap = projectId === 'oic_2027' ? 4 : 9;
+    const customScore = Number.isFinite(rawCustomScore) ? Math.max(0, Math.min(scoreCap, rawCustomScore)) : 0;
     row.customScore = customScore;
     row.totalScore30 = Number.isFinite(row.totalScore) ? row.totalScore + customScore : null;
     row.focusDueDate = String(
@@ -6501,6 +6528,13 @@ function hasManualTotalScoreOverride(record) {
 }
 
 function totalScoreEditCircle(row) {
+  if (state.activeShortlistingProjectId === 'oic_2027') {
+    const adjustedScore = row.totalScore30;
+    if (!Number.isFinite(adjustedScore)) return `<span class="total-score-edit-circle low">-</span>`;
+    const tone = adjustedScore >= 18 ? 'high' : adjustedScore >= 13 ? 'mid' : 'low';
+    const title = `Total Score = Advanced Research ${row.totalScore ?? '-'} + H Score +${row.customScore ?? 0} = ${adjustedScore} / 25`;
+    return `<span class="total-score-edit-circle ${tone} oic2027-adjusted-score" title="${escapeHtml(title)}" aria-label="${escapeHtml(row.asset)} total score ${adjustedScore} out of 25">${escapeHtml(String(adjustedScore))}<small>/25</small></span>`;
+  }
   if (row.earlyStop) return earlyStopScoreBadge(row);
   const isManual = hasManualTotalScoreOverride(row.raw);
   const displayValue = row.totalScore ?? '';
@@ -7970,6 +8004,12 @@ function shortlistingTotalScoreBadge(row) {
 function customScoreCircle(row) {
   const projectId = state.activeShortlistingProjectId;
   const value = Number.isFinite(row.customScore) ? row.customScore : 0;
+  if (projectId === 'oic_2027') {
+    const canWrite = shortlistingRoleFor(projectId) !== 'read';
+    return `<select class="oic2027-hscore-select" data-oic2027-hscore-select data-record-id="${escapeHtml(row.id)}" data-project-id="${escapeHtml(projectId)}" data-previous-value="${escapeHtml(String(value))}" aria-label="${escapeHtml(row.asset)} H Score bonus" title="Add a Human in the Loop bonus to the total score"${canWrite ? '' : ' disabled'}>
+      ${[0, 1, 2, 3, 4].map((score) => `<option value="${score}"${score === value ? ' selected' : ''}>+${score}</option>`).join('')}
+    </select>`;
+  }
   const tone = value >= 7 ? 'high' : value >= 4 ? 'mid' : 'low';
   const canWrite = shortlistingRoleFor(projectId) !== 'read';
   if (!canWrite) {
@@ -8036,6 +8076,17 @@ function shortlistingMetricEditControl(row, column) {
   const disabledAttr = shortlistingRoleFor(projectId) === 'read' ? ' disabled' : '';
   const toneClass = shortlistingMetricToneClass(column, rawValue);
   const baseAttrs = `data-record-id="${escapeHtml(row.id)}" data-project-id="${escapeHtml(projectId)}" data-metric-id="${escapeHtml(column.id)}" data-return-type="${escapeHtml(column.return_type)}"${disabledAttr}`;
+  if (column.display_as_progress === true) {
+    const stages = Array.isArray(column.options) ? column.options : [];
+    const currentIndex = stages.indexOf(typeof rawValue === 'string' ? rawValue : '');
+    return `<div class="oic2027-progress" role="group" aria-label="${escapeHtml(row.asset)} collaboration progress">
+      ${stages.map((stage, index) => {
+        const stageState = index < currentIndex ? 'is-complete' : index === currentIndex ? 'is-current' : '';
+        const accessibleStage = `${index + 1}단계 ${stage}${index === currentIndex ? ', 현재 단계' : ''}`;
+        return `<button type="button" class="oic2027-progress-step ${stageState}" data-oic2027-progress-step data-record-id="${escapeHtml(row.id)}" data-project-id="${escapeHtml(projectId)}" data-metric-id="${escapeHtml(column.id)}" data-stage="${escapeHtml(stage)}" data-previous-value="${escapeHtml(typeof rawValue === 'string' ? rawValue : '')}" aria-label="${escapeHtml(accessibleStage)}" title="${escapeHtml(stage)}"${disabledAttr}><span class="oic2027-progress-dot" aria-hidden="true"></span><span class="oic2027-progress-label">${escapeHtml(stage)}</span></button>`;
+      }).join('')}
+    </div>`;
+  }
   if (column.return_type === 'boolean') {
     const current = rawValue === true ? 'true' : rawValue === false ? 'false' : '';
     return `
@@ -8079,6 +8130,12 @@ function renderFocusTable() {
   const isDefaultProject = state.activeShortlistingProjectId === DEFAULT_SHORTLISTING_PROJECT_ID;
   const activeProject = activeShortlistingProject();
   const metricColumns = activeShortlistingMetricColumns();
+  const progressColumns = metricColumns.filter((column) => column.display_as_progress === true);
+  const reviewMetricColumns = metricColumns.filter((column) => column.display_as_progress !== true);
+  const showProjectScores = isDefaultProject || activeProject?.hide_score_columns !== true;
+  const showHumanScore = !isDefaultProject && Number.isFinite(activeProject?.human_score_max);
+  const progressBeforeAdvanced = !isDefaultProject && activeProject?.progress_before_advanced === true;
+  const showActionDate = isDefaultProject || activeProject?.hide_action_date !== true;
   const columnCount = focusTableColumnKeys().length;
 
   if (tableElement) {
@@ -8099,6 +8156,7 @@ function renderFocusTable() {
       <col class="pipeline-col-target" data-col-key="target" style="${columnWidthStyle('target')}" />
       <col class="pipeline-col-indication" data-col-key="mainIndication" style="${columnWidthStyle('mainIndication')}" />
       <col class="pipeline-col-stage" data-col-key="stage" style="${columnWidthStyle('stage')}" />
+      ${progressBeforeAdvanced ? progressColumns.map((column) => `<col class="pipeline-col-filter oic2027-progress-column" data-col-key="metric:${escapeHtml(column.id)}" style="${columnWidthStyle(`metric:${column.id}`)}" />`).join('') : ''}
       <col class="pipeline-col-filter" data-col-key="filter2" style="${columnWidthStyle('filter2')}" />
       <col class="pipeline-col-score score-subtotal-col" data-col-key="totalScore" style="${columnWidthStyle('totalScore')}" />
       ${isDefaultProject ? `
@@ -8109,11 +8167,11 @@ function renderFocusTable() {
       <col class="pipeline-col-filter" data-col-key="diseaseLinkage" style="${columnWidthStyle('diseaseLinkage')}" />
       ` : `
       <col class="pipeline-col-filter" data-col-key="classification" style="${columnWidthStyle('classification')}" />
-      ${metricColumns.map((column) => `<col class="pipeline-col-filter" data-col-key="metric:${escapeHtml(column.id)}" style="${columnWidthStyle(`metric:${column.id}`)}" />`).join('')}
+      ${showHumanScore ? `<col class="pipeline-col-score score-subtotal-col oic2027-hscore-col" data-col-key="customScore" style="${columnWidthStyle('customScore')}" />` : ''}
+      ${(progressBeforeAdvanced ? reviewMetricColumns : metricColumns).map((column) => `<col class="pipeline-col-filter" data-col-key="metric:${escapeHtml(column.id)}" style="${columnWidthStyle(`metric:${column.id}`)}" />`).join('')}
       `}
-      <col class="pipeline-col-score score-subtotal-col" data-col-key="customScore" style="${columnWidthStyle('customScore')}" />
-      <col class="pipeline-col-score score-grandtotal-col" data-col-key="totalScore30" style="${columnWidthStyle('totalScore30')}" />
-      <col class="pipeline-col-focus-date" data-col-key="focusDueDate" style="${columnWidthStyle('focusDueDate')}" />
+      ${showProjectScores ? `<col class="pipeline-col-score score-subtotal-col" data-col-key="customScore" style="${columnWidthStyle('customScore')}" /><col class="pipeline-col-score score-grandtotal-col" data-col-key="totalScore30" style="${columnWidthStyle('totalScore30')}" />` : ''}
+      ${showActionDate ? `<col class="pipeline-col-focus-date" data-col-key="focusDueDate" style="${columnWidthStyle('focusDueDate')}" />` : ''}
       <col data-col-key="focusManage" style="${columnWidthStyle('focusManage')}" />
     `;
   }
@@ -8128,9 +8186,10 @@ function renderFocusTable() {
       `
       : [
         plainHeader('Filter 3', 'classification', 'extra-column-head'),
-        ...metricColumns.map((column) => plainHeader(column.label, `metric:${column.id}`, 'extra-column-head'))
+        ...(showHumanScore ? [`<th class="extra-column-head oic2027-hscore-head" ${columnAttrs('customScore')}><span title="H Score adds a Human in the Loop bonus to the Advanced Research score. The total is capped at 25 points.">H Score <span class="oic2027-hscore-info" aria-hidden="true">ⓘ</span></span>${resizeHandle('customScore')}</th>`] : []),
+        ...(progressBeforeAdvanced ? reviewMetricColumns : metricColumns).map((column) => plainHeader(column.label, `metric:${column.id}`, 'extra-column-head'))
       ].join('');
-    const shortlistingGroupColspan = (isDefaultProject ? 5 : metricColumns.length + 1) + 1;
+    const shortlistingGroupColspan = (isDefaultProject ? 5 : (progressBeforeAdvanced ? reviewMetricColumns.length : metricColumns.length) + 1 + (showHumanScore ? 1 : 0)) + (showProjectScores ? 1 : 0);
     elements.pipelineTableHead.innerHTML = `
       <tr id="pipelineHeaderRow" class="pipeline-group-row focus-pipeline-group-row">
         <th class="select-col" rowspan="2" ${columnAttrs('select')}>
@@ -8143,21 +8202,23 @@ function renderFocusTable() {
         ${sortableHeader('Target', 'target', 'target', 'rowspan="2"')}
         ${sortableHeader('Main indication', 'mainIndication', 'mainIndication', 'rowspan="2"')}
         ${stageFilterHeader('rowspan="2"')}
+        ${progressBeforeAdvanced ? `<th class="score-group-head focus-group-head oic2027-progress-group" colspan="${progressColumns.length}">Collaboration Progress</th>` : ''}
         <th class="score-group-head focus-group-head" colspan="2">Advanced Research</th>
         <th class="score-group-head focus-group-head" colspan="${shortlistingGroupColspan}">Custom Review</th>
-        <th class="score-group-head focus-group-head score-grandtotal-col" rowspan="2" ${columnAttrs('totalScore30')}>
+        ${showProjectScores ? `<th class="score-group-head focus-group-head score-grandtotal-col" rowspan="2" ${columnAttrs('totalScore30')}>
           <button data-sort="totalScore30" data-sort-label="Total Score" type="button">Total<br />Score</button>${resizeHandle('totalScore30')}
-        </th>
-        <th class="score-group-head focus-group-head focus-action-date-col" rowspan="2" ${columnAttrs('focusDueDate')}>
+        </th>` : ''}
+        ${showActionDate ? `<th class="score-group-head focus-group-head focus-action-date-col" rowspan="2" ${columnAttrs('focusDueDate')}>
           <button data-sort="focusDueDate" data-sort-label="Action Date" type="button">Action<br />Date</button>${resizeHandle('focusDueDate')}
-        </th>
+        </th>` : ''}
         ${plainHeader('관리', 'focusManage', 'focus-action-head', 'rowspan="2"')}
       </tr>
       <tr class="pipeline-score-row focus-column-label-row">
+        ${progressBeforeAdvanced ? progressColumns.map((column) => plainHeader(column.label, `metric:${column.id}`, 'extra-column-head oic2027-progress-head')).join('') : ''}
         ${focusFilterHeader('Filter 2', 'filter2', 'filter2', 'focusPriority')}
-        ${scoreFilterHeader('Score', 'focusTotalScore', 'totalScore', 'totalScore', 'score-subtotal-col')}
+        ${activeProject?.id === 'oic_2027' ? sortableHeader('Total / 25', 'totalScore30', 'totalScore', 'class="score-subtotal-col"') : scoreFilterHeader('Score', 'focusTotalScore', 'totalScore', 'totalScore', 'score-subtotal-col')}
         ${metricHeaderCells}
-        ${sortableHeader('Score', 'customScore', 'customScore', 'class="score-subtotal-col"')}
+        ${showProjectScores ? sortableHeader('Score', 'customScore', 'customScore', 'class="score-subtotal-col"') : ''}
       </tr>
     `;
     elements.pipelineHeaderRow = document.querySelector('#pipelineHeaderRow');
@@ -8169,6 +8230,9 @@ function renderFocusTable() {
     ? pageRows.map((row) => {
         const isSelected = state.selectedIds.has(row.id);
         const checked = isSelected ? 'checked' : '';
+        const progressMetricCells = !isDefaultProject
+          ? progressColumns.map((column) => `<td class="focus-status-cell oic2027-progress-cell">${shortlistingMetricEditControl(row, column)}</td>`).join('')
+          : '';
         const metricCells = isDefaultProject
           ? `
           <td class="focus-status-cell">${partnershipEditSelect(row)}</td>
@@ -8179,7 +8243,8 @@ function renderFocusTable() {
           `
           : [
             `<td class="focus-status-cell">${classificationEditSelect(row, activeProject)}</td>`,
-            ...metricColumns.map((column) => `<td class="focus-status-cell">${shortlistingMetricEditControl(row, column)}</td>`)
+            ...(showHumanScore ? [`<td class="score-cell total-score-cell score-subtotal-col oic2027-hscore-cell">${customScoreCircle(row)}</td>`] : []),
+            ...(progressBeforeAdvanced ? reviewMetricColumns : metricColumns).map((column) => `<td class="focus-status-cell">${shortlistingMetricEditControl(row, column)}</td>`)
           ].join('');
         return `
         <tr class="clickable-row focus-management-row${isSelected ? ' selected-row' : ''}" data-record-id="${escapeHtml(row.id)}" title="${escapeHtml(rowHoverTitle(row))}">
@@ -8214,12 +8279,12 @@ function renderFocusTable() {
           </td>
           <td class="indication-cell">${focusOfficialFieldValue(row, indicationDisplay(row), 'Main indication', { title: indicationFullHoverTitle(row) })}</td>
           <td class="stage-cell">${focusOfficialFieldValue(row, row.stage, 'Pipeline Stage', { title: pipelineStageFullHoverTitle(row) })}</td>
+          ${progressBeforeAdvanced ? progressMetricCells : ''}
           <td class="filter-cell">${statusEditSelect(row, 'filter2')}</td>
           <td class="score-cell total-score-cell score-subtotal-col">${totalScoreEditCircle(row)}</td>
           ${metricCells}
-          <td class="score-cell total-score-cell score-subtotal-col">${customScoreCircle(row)}</td>
-          <td class="score-cell total-score-cell score-grandtotal-col">${shortlistingTotalScoreBadge(row)}</td>
-          ${actionDateCell(row)}
+          ${showProjectScores ? `<td class="score-cell total-score-cell score-subtotal-col">${customScoreCircle(row)}</td><td class="score-cell total-score-cell score-grandtotal-col">${shortlistingTotalScoreBadge(row)}</td>` : ''}
+          ${showActionDate ? actionDateCell(row) : ''}
           <td class="focus-action-cell">${focusRowActions(row)}</td>
         </tr>
       `;
@@ -17588,6 +17653,20 @@ window.addEventListener('pageshow', (event) => {
 });
 
 elements.pipelineTable.addEventListener('click', (event) => {
+  const oic2027ProgressStep = event.target.closest('[data-oic2027-progress-step]');
+  if (oic2027ProgressStep) {
+    event.preventDefault();
+    event.stopPropagation();
+    const nextValue = oic2027ProgressStep.dataset.stage || '';
+    if (nextValue === (oic2027ProgressStep.dataset.previousValue || '')) return;
+    saveShortlistingProjectField(
+      oic2027ProgressStep.dataset.recordId,
+      oic2027ProgressStep.dataset.projectId,
+      { action: 'update', field: 'metric_value', metric_id: oic2027ProgressStep.dataset.metricId, value: nextValue },
+      oic2027ProgressStep
+    );
+    return;
+  }
   const pipelineWebsite = event.target.closest('[data-pipeline-website]');
   if (pipelineWebsite) {
     event.preventDefault();
@@ -17720,6 +17799,18 @@ elements.pipelineTable.addEventListener('dblclick', (event) => {
 });
 
 elements.pipelineTable.addEventListener('change', (event) => {
+  const hScoreSelect = event.target.closest('[data-oic2027-hscore-select]');
+  if (hScoreSelect) {
+    const previousValue = hScoreSelect.dataset.previousValue || '0';
+    if (previousValue === hScoreSelect.value) return;
+    saveShortlistingProjectField(
+      hScoreSelect.dataset.recordId,
+      hScoreSelect.dataset.projectId,
+      { action: 'update', field: 'custom_score', value: Number(hScoreSelect.value) },
+      hScoreSelect
+    );
+    return;
+  }
   // Checked before .evidence-edit/.focus-due-input below: metric-value-edit controls
   // reuse those classes for shared styling, so this branch must win the match first.
   const metricValueEdit = event.target.closest('.metric-value-edit');

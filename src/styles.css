@@ -4054,6 +4054,129 @@ td {
   color: #64748b;
 }
 
+/* OIC 2027 keeps the existing compact row rhythm while making each negotiation
+   milestone directly editable from the table. */
+.oic2027-progress {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: start;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 2px 1px;
+}
+
+.oic2027-progress-cell { padding-right: 5px; padding-left: 5px; }
+.oic2027-progress-head { text-align: center; }
+.oic2027-progress-group { color: #40536a; letter-spacing: 0.015em; }
+.oic2027-hscore-head { text-align: center; }
+.oic2027-hscore-head > span { display: inline-flex; align-items: center; gap: 3px; }
+.oic2027-hscore-info { color: #6b7d91; font-size: 11px; }
+.oic2027-hscore-cell { padding-right: 3px; padding-left: 3px; }
+.oic2027-hscore-select {
+  width: 48px;
+  min-width: 48px;
+  height: 28px;
+  border: 1px solid #cbd5df;
+  border-radius: 7px;
+  background: #f3f6f9;
+  color: #1f4e79;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+.oic2027-hscore-select:hover,
+.oic2027-hscore-select:focus-visible { border-color: #1f4e79; outline: 2px solid rgb(31 78 121 / 14%); }
+.oic2027-hscore-select:disabled { cursor: not-allowed; opacity: 0.7; }
+.oic2027-adjusted-score { white-space: nowrap; }
+.oic2027-adjusted-score small { margin-left: 2px; font-size: 9px; font-weight: 700; opacity: 0.8; }
+
+html[data-theme="dark"] .oic2027-progress-group { color: #c2cfdd; }
+html[data-theme="dark"] .oic2027-hscore-select { border-color: #566577; background: #273342; color: #bdd2e7; }
+
+.oic2027-progress-step {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 0 1px;
+  border: 0;
+  background: transparent;
+  color: #738096;
+  cursor: pointer;
+  font: inherit;
+}
+
+.oic2027-progress-step::before,
+.oic2027-progress-step::after {
+  position: absolute;
+  top: 7px;
+  z-index: 0;
+  height: 2px;
+  content: "";
+  background: #dfe5ec;
+}
+
+.oic2027-progress-step::before { right: 50%; left: 0; }
+.oic2027-progress-step::after { right: 0; left: 50%; }
+.oic2027-progress-step:first-child::before,
+.oic2027-progress-step:last-child::after { display: none; }
+.oic2027-progress-step.is-complete::before,
+.oic2027-progress-step.is-complete::after,
+.oic2027-progress-step.is-current::before { background: #1f4e79; }
+
+.oic2027-progress-dot {
+  position: relative;
+  z-index: 1;
+  width: 14px;
+  height: 14px;
+  box-sizing: border-box;
+  border: 2px solid #c4ccd6;
+  border-radius: 50%;
+  background: var(--surface, #fff);
+  transition: transform 120ms ease, background-color 120ms ease, border-color 120ms ease;
+}
+
+.oic2027-progress-label {
+  overflow: hidden;
+  max-width: 100%;
+  color: #667386;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.oic2027-progress-step.is-complete .oic2027-progress-dot,
+.oic2027-progress-step.is-current .oic2027-progress-dot {
+  border-color: #1f4e79;
+  background: #1f4e79;
+}
+
+.oic2027-progress-step.is-current .oic2027-progress-dot {
+  box-shadow: 0 0 0 3px rgb(31 78 121 / 14%);
+}
+
+.oic2027-progress-step.is-complete .oic2027-progress-label,
+.oic2027-progress-step.is-current .oic2027-progress-label { color: #1f4e79; }
+.oic2027-progress-step:hover .oic2027-progress-dot,
+.oic2027-progress-step:focus-visible .oic2027-progress-dot { transform: scale(1.15); }
+.oic2027-progress-step:focus-visible { outline: 2px solid #3974a7; outline-offset: 2px; border-radius: 4px; }
+.oic2027-progress-step:disabled { cursor: not-allowed; opacity: 0.65; }
+
+html[data-theme="dark"] .oic2027-progress-step::before,
+html[data-theme="dark"] .oic2027-progress-step::after { background: #465364; }
+html[data-theme="dark"] .oic2027-progress-step.is-complete::before,
+html[data-theme="dark"] .oic2027-progress-step.is-complete::after,
+html[data-theme="dark"] .oic2027-progress-step.is-current::before { background: #8eacc9; }
+html[data-theme="dark"] .oic2027-progress-dot { background: var(--surface, #1c2430); }
+html[data-theme="dark"] .oic2027-progress-step.is-complete .oic2027-progress-dot,
+html[data-theme="dark"] .oic2027-progress-step.is-current .oic2027-progress-dot { border-color: #8eacc9; background: #8eacc9; }
+html[data-theme="dark"] .oic2027-progress-step.is-complete .oic2027-progress-label,
+html[data-theme="dark"] .oic2027-progress-step.is-current .oic2027-progress-label { color: #b7cde3; }
+
 .partnership-edit-select {
   appearance: none;
   -webkit-appearance: none;
