@@ -17759,77 +17759,6 @@
     "added_at": "2026-08-18T01:28:43.535867+00:00"
   },
   {
-    "id": "cq_02f1c0a1",
-    "asset_input": "SARM1",
-    "company_input": "Lmito Therapeutics",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-08-18T01:28:43.535867+00:00",
-    "pipeline_metadata": {
-      "listed_at": "2026-09-18T03:16:22.784823+00:00",
-      "comment": "axonal neuropathy 의 어느 영역에서 개발중인지 확인 필요.ALS OR CMT?\nContact: 컨택 예정\nSARM1은 축삭(axon) 내에서 NMN/NAD⁺ 비율을 감지하여 NAD⁺를 니코틴아마이드와 ADPR/cADPR로 분해하는 효소이다.\n\n이 과정은 **축삭 퇴행(axon degeneration)**의 핵심 촉발 기전으로 작용한다.\n\nNMN/NAD⁺ 비율을 조절하는 효소를 약리학적으로 억제하거나 활성화하면,\n축삭 퇴행의 발생을 예방할 수 있으며\n\n그 결과 신경퇴행성 질환의 진행을 효과적으로 차단하거나 지연시킬 수 있는 치료 전략이 될 수 있다.\n1. Competitor 有: LY3873862 (Lilly), Phase 1 完, data release X\n2. 현재, KDDF로 LM801 아이템이 지정됨에 따라 metabolic regrogramming project에 focus되어 있음\n(Project Priority 下)\nindication이 공개되어 있지 않음.\nOncology 프로그램 2개, Neurology 프로그램 1개 있으며, lead pipeline은 oncology의 NAMPT target program임.",
-      "comment_author": "Team",
-      "comment_author_user_id": "",
-      "comment_author_email": "",
-      "comment_source": "team_review_import",
-      "comment_created_at": "2026-09-18T03:16:22.784823+00:00",
-      "comment_updated_at": "2026-09-18T03:16:22.784823+00:00",
-      "comment_entries": [
-        {
-          "id": "legacy-2ce9ae54a6c20243f3ee68828f6a4c8a4eb52d42785272cdf91175f08266a551",
-          "body": "axonal neuropathy 의 어느 영역에서 개발중인지 확인 필요.ALS OR CMT?\nContact: 컨택 예정\nSARM1은 축삭(axon) 내에서 NMN/NAD⁺ 비율을 감지하여 NAD⁺를 니코틴아마이드와 ADPR/cADPR로 분해하는 효소이다.\n\n이 과정은 **축삭 퇴행(axon degeneration)**의 핵심 촉발 기전으로 작용한다.\n\nNMN/NAD⁺ 비율을 조절하는 효소를 약리학적으로 억제하거나 활성화하면,\n축삭 퇴행의 발생을 예방할 수 있으며\n\n그 결과 신경퇴행성 질환의 진행을 효과적으로 차단하거나 지연시킬 수 있는 치료 전략이 될 수 있다.\n1. Competitor 有: LY3873862 (Lilly), Phase 1 完, data release X\n2. 현재, KDDF로 LM801 아이템이 지정됨에 따라 metabolic regrogramming project에 focus되어 있음\n(Project Priority 下)",
-          "author": "Team",
-          "source": "team_review_import",
-          "created_at": "2026-09-02T01:46:48.057170+00:00",
-          "import_batch_id": ""
-        },
-        {
-          "id": "listing-comment-87002f0aa38b463090e168884feabcbf",
-          "body": "indication이 공개되어 있지 않음.\nOncology 프로그램 2개, Neurology 프로그램 1개 있으며, lead pipeline은 oncology의 NAMPT target program임.",
-          "author": "Team",
-          "source": "team_review_import",
-          "created_at": "2026-09-02T08:50:35.419222+00:00",
-          "import_batch_id": "listing-7be464f769664b2a99beced5603185fb"
-        },
-        {
-          "id": "listing-comment-45db3f2d685d4d8995c1c68c554f31f1",
-          "body": "axonal neuropathy 의 어느 영역에서 개발중인지 확인 필요.ALS OR CMT?",
-          "author": "Team",
-          "source": "team_review_import",
-          "created_at": "2026-09-02T08:50:35.419222+00:00",
-          "import_batch_id": "listing-7be464f769664b2a99beced5603185fb"
-        }
-      ],
-      "listing_details": {
-        "country": "Seoul, Korea",
-        "modality": "Small molecule(추정)",
-        "target": "SARM1",
-        "main_indication": "Neurodegenerative Diseases",
-        "stage": "Discovery",
-        "website": "http://www.checkmatetx.com/"
-      },
-      "contact": "컨텍논의 필요",
-      "contact_author": "Team",
-      "contact_author_user_id": "",
-      "contact_author_email": "",
-      "contact_source": "team_review_import",
-      "contact_created_at": "2026-09-18T03:16:22.784823+00:00",
-      "contact_updated_at": "2026-09-18T03:16:22.784823+00:00",
-      "website": "https://www.lmito.com",
-      "asset_aliases": "SARM1",
-      "company_aliases": "Lmito Therapeutics\nCheckmate Therapeutics Co Ltd",
-      "updated_at": "2026-09-18T03:16:22.784823+00:00"
-    },
-    "listing_details": {
-      "country": "Seongnam, Korea",
-      "modality": "small molecule",
-      "target": "SARM1",
-      "main_indication": "Other neurological indications",
-      "stage": "Preclinical",
-      "website": "https://www.lmito.com"
-    }
-  },
-  {
     "id": "cq_6890d5b2",
     "asset_input": "SBP-201",
     "company_input": "Spark BioPharma",
@@ -39352,39 +39281,6 @@
     }
   },
   {
-    "id": "cq_08146b92",
-    "asset_input": "HJY-03",
-    "company_input": "Hangzhou Hygieia Biopharmaceutical Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-09-02T01:46:48.057170+00:00",
-    "pipeline_metadata": {
-      "listed_at": "2026-09-02T01:46:48.057170+00:00",
-      "comment": "정보 제한",
-      "comment_author": "Team",
-      "comment_source": "team_review_import",
-      "comment_created_at": "2026-09-02T01:46:48.057170+00:00",
-      "comment_updated_at": "2026-09-02T01:46:48.057170+00:00",
-      "contact": "",
-      "contact_author": "",
-      "contact_source": "",
-      "contact_created_at": "",
-      "contact_updated_at": "",
-      "website": "https://www.hygieiapharma.com/",
-      "asset_aliases": "HJY-03",
-      "company_aliases": "Hangzhou Hygieia Biopharmaceutical Co Ltd",
-      "updated_at": "2026-09-02T01:46:48.057170+00:00"
-    },
-    "listing_details": {
-      "country": "Shanghai, China",
-      "modality": "SiRNA",
-      "target": "undisclosed",
-      "main_indication": "Alzheimer's Disease",
-      "stage": "Preclinical",
-      "website": "https://www.hygieiapharma.com/"
-    }
-  },
-  {
     "id": "cq_9a7bdc24",
     "asset_input": "NSDP-02",
     "company_input": "Hangzhou Hygieia Biopharmaceutical Co Ltd",
@@ -43868,39 +43764,6 @@
     }
   },
   {
-    "id": "cq_435b1dab",
-    "asset_input": "LB-06",
-    "company_input": "LexBio",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-09-02T01:46:48.057170+00:00",
-    "pipeline_metadata": {
-      "listed_at": "2026-09-02T01:46:48.057170+00:00",
-      "comment": "정보 제한",
-      "comment_author": "Team",
-      "comment_source": "team_review_import",
-      "comment_created_at": "2026-09-02T01:46:48.057170+00:00",
-      "comment_updated_at": "2026-09-02T01:46:48.057170+00:00",
-      "contact": "",
-      "contact_author": "",
-      "contact_source": "",
-      "contact_created_at": "",
-      "contact_updated_at": "",
-      "website": "https://www.lexbiotx.com/en/",
-      "asset_aliases": "LB-06",
-      "company_aliases": "LexBio",
-      "updated_at": "2026-09-02T01:46:48.057170+00:00"
-    },
-    "listing_details": {
-      "country": "Sozhou, China",
-      "modality": "undisclosed",
-      "target": "undisclosed",
-      "main_indication": "Unspecified Central Nervous System Disorders",
-      "stage": "Discovery",
-      "website": "https://www.lexbiotx.com/en/"
-    }
-  },
-  {
     "id": "cq_5521485d",
     "asset_input": "Stem Cell Therapy",
     "company_input": "Liaoning Medical Diagnosis and Treatment Technology Research and Development Co Ltd",
@@ -45359,39 +45222,6 @@
       "target": "mAChR4 PAM",
       "main_indication": "Alzheimer's disease, Schizophrenia",
       "stage": "Preclinical, Phase 2",
-      "website": ""
-    }
-  },
-  {
-    "id": "cq_cd96bdef",
-    "asset_input": "NS-050, NeuShen Therapeutics",
-    "company_input": "NeuShen Therapeutics",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-09-02T01:46:48.057170+00:00",
-    "pipeline_metadata": {
-      "listed_at": "2026-09-02T01:46:48.057170+00:00",
-      "comment": "",
-      "comment_author": "",
-      "comment_source": "",
-      "comment_created_at": "",
-      "comment_updated_at": "",
-      "contact": "",
-      "contact_author": "",
-      "contact_source": "",
-      "contact_created_at": "",
-      "contact_updated_at": "",
-      "website": "",
-      "asset_aliases": "NS-050, NeuShen Therapeutics",
-      "company_aliases": "NeuShen Therapeutics",
-      "updated_at": "2026-09-02T01:46:48.057170+00:00"
-    },
-    "listing_details": {
-      "country": "",
-      "modality": "",
-      "target": "?",
-      "main_indication": "Alzheimer's disease, Parkinson's disease",
-      "stage": "Discovery",
       "website": ""
     }
   },
@@ -47845,39 +47675,6 @@
       "modality": "",
       "target": "HTT",
       "main_indication": "Huntington Disease",
-      "stage": "Discovery",
-      "website": ""
-    }
-  },
-  {
-    "id": "cq_e0225224",
-    "asset_input": "LRRK2",
-    "company_input": "Shanghai Argo Pharmaceutical Co Ltd",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-09-02T01:46:48.057170+00:00",
-    "pipeline_metadata": {
-      "listed_at": "2026-09-02T01:46:48.057170+00:00",
-      "comment": "",
-      "comment_author": "",
-      "comment_source": "",
-      "comment_created_at": "",
-      "comment_updated_at": "",
-      "contact": "",
-      "contact_author": "",
-      "contact_source": "",
-      "contact_created_at": "",
-      "contact_updated_at": "",
-      "website": "",
-      "asset_aliases": "LRRK2",
-      "company_aliases": "Shanghai Argo Pharmaceutical Co Ltd",
-      "updated_at": "2026-09-02T01:46:48.057170+00:00"
-    },
-    "listing_details": {
-      "country": "",
-      "modality": "",
-      "target": "LRRK2",
-      "main_indication": "Parkinson's Disease",
       "stage": "Discovery",
       "website": ""
     }
@@ -52545,39 +52342,6 @@
       "main_indication": "Hypoxic-Ischemic Encephalopathy",
       "stage": "Unknown",
       "website": "http://www.wepon.com.cn/en"
-    }
-  },
-  {
-    "id": "cq_ae998c8e",
-    "asset_input": "WB001, Wayne Bitechnology",
-    "company_input": "Wayne Biotechnology",
-    "status": "pending",
-    "source": "paste_import",
-    "added_at": "2026-09-02T01:46:48.057170+00:00",
-    "pipeline_metadata": {
-      "listed_at": "2026-09-02T01:46:48.057170+00:00",
-      "comment": "[Item] 정보 부족 + IND 임박, OIT 협력 가능 영역 확인 필요\n\n[Company] 자체 특징적 Platform 언급 X",
-      "comment_author": "Team",
-      "comment_source": "team_review_import",
-      "comment_created_at": "2026-09-02T01:46:48.057170+00:00",
-      "comment_updated_at": "2026-09-02T01:46:48.057170+00:00",
-      "contact": "",
-      "contact_author": "",
-      "contact_source": "",
-      "contact_created_at": "",
-      "contact_updated_at": "",
-      "website": "http://www.waynebiotech.com.cn/en/lingyu.html",
-      "asset_aliases": "WB001, Wayne Bitechnology",
-      "company_aliases": "Wayne Biotechnology",
-      "updated_at": "2026-09-02T01:46:48.057170+00:00"
-    },
-    "listing_details": {
-      "country": "China, Shanghai",
-      "modality": "Small Molecule",
-      "target": "SARM-1 Inhibitor",
-      "main_indication": "Other neurological indications",
-      "stage": "Preclinical",
-      "website": "http://www.waynebiotech.com.cn/en/lingyu.html"
     }
   },
   {
